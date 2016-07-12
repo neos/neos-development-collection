@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\Domain\Service;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Neos\Domain\Model\Site;
@@ -17,6 +17,7 @@ use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 
 /**
  * A service for manipulating sites
@@ -25,6 +26,11 @@ use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
  */
 class SiteService
 {
+    /**
+     * This is the node path of the root for all sites in neos.
+     */
+    const SITES_ROOT_PATH = '/sites';
+
     /**
      * @Flow\Inject
      * @var NodeDataRepository
@@ -50,6 +56,12 @@ class SiteService
     protected $workspaceRepository;
 
     /**
+     * @Flow\Inject
+     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     */
+    protected $persistenceManager;
+
+    /**
      * Remove given site all nodes for that site and all domains associated.
      *
      * @param Site $site
@@ -57,38 +69,36 @@ class SiteService
      */
     public function pruneSite(Site $site)
     {
-        $siteNodePath = '/sites/' . $site->getNodeName();
+        $siteNodePath = NodePaths::addNodePathSegment(static::SITES_ROOT_PATH, $site->getNodeName());
         $this->nodeDataRepository->removeAllInPath($siteNodePath);
         $siteNodes = $this->nodeDataRepository->findByPath($siteNodePath);
         foreach ($siteNodes as $siteNode) {
             $this->nodeDataRepository->remove($siteNode);
         }
 
+        $site->setPrimaryDomain(null);
+        $this->siteRepository->update($site);
+
         $domainsForSite = $this->domainRepository->findBySite($site);
         foreach ($domainsForSite as $domain) {
             $this->domainRepository->remove($domain);
         }
+        $this->persistenceManager->persistAll();
+
         $this->siteRepository->remove($site);
 
         $this->emitSitePruned($site);
     }
 
     /**
-     * Remove all nodes, workspaces, domains and sites.
+     * Remove all sites and their respective nodes and domains
      *
      * @return void
      */
     public function pruneAll()
     {
-        $sites = $this->siteRepository->findAll();
-
-        $this->nodeDataRepository->removeAll();
-        $this->workspaceRepository->removeAll();
-        $this->domainRepository->removeAll();
-        $this->siteRepository->removeAll();
-
-        foreach ($sites as $site) {
-            $this->emitSitePruned($site);
+        foreach ($this->siteRepository->findAll() as $site) {
+            $this->pruneSite($site);
         }
     }
 

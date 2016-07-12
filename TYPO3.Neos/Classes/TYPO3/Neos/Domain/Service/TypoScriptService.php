@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\Domain\Service;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\Files;
@@ -29,6 +29,12 @@ class TypoScriptService
      * @var \TYPO3\TypoScript\Core\Parser
      */
     protected $typoScriptParser;
+
+    /**
+     * @Flow\Inject
+     * @var DefaultPrototypeGeneratorInterface
+     */
+    protected $defaultPrototypeGenerator;
 
     /**
      * Pattern used for determining the TypoScript root file for a site
@@ -193,35 +199,7 @@ class TypoScriptService
      */
     protected function generateTypoScriptForNodeType(NodeType $nodeType)
     {
-        if (strpos($nodeType->getName(), ':') === false) {
-            return '';
-        }
-
-        if ($nodeType->isOfType('TYPO3.Neos:Content')) {
-            $basePrototypeName = 'TYPO3.Neos:Content';
-        } elseif ($nodeType->isOfType('TYPO3.Neos:Document')) {
-            $basePrototypeName = 'TYPO3.Neos:Document';
-        } else {
-            $basePrototypeName = 'TYPO3.TypoScript:Template';
-        }
-
-        $output = 'prototype(' . $nodeType->getName() . ') < prototype(' . $basePrototypeName . ') {' . chr(10);
-
-        list($packageKey, $relativeName) = explode(':', $nodeType->getName(), 2);
-        $templatePath = 'resource://' . $packageKey . '/Private/Templates/NodeTypes/' . $relativeName . '.html';
-        $output .= "\t" . 'templatePath = \'' . $templatePath . '\'' . chr(10);
-
-        foreach ($nodeType->getProperties() as $propertyName => $propertyConfiguration) {
-            if (isset($propertyName[0]) && $propertyName[0] !== '_') {
-                $output .= "\t" . $propertyName . ' = ${q(node).property("' . $propertyName . '")}' . chr(10);
-                if (isset($propertyConfiguration['type']) && isset($propertyConfiguration['ui']['inlineEditable']) && $propertyConfiguration['type'] === 'string' && $propertyConfiguration['ui']['inlineEditable'] === true) {
-                    $output .= "\t" . $propertyName . '.@process.convertUris = TYPO3.Neos:ConvertUris' . chr(10);
-                }
-            }
-        }
-
-        $output .= '}' . chr(10);
-        return $output;
+        return $this->defaultPrototypeGenerator->generate($nodeType);
     }
 
     /**

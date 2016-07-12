@@ -1,5 +1,5 @@
 /**
- * A simple, styled TYPO3 button.
+ * A simple, styled Neos button.
  */
 define(
 	[

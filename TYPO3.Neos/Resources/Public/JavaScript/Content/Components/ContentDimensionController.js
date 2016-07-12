@@ -8,7 +8,8 @@ define(
 	'Shared/EventDispatcher',
 	'Shared/HttpRestClient',
 	'vie',
-	'Content/Application'
+	'Content/Application',
+	'Shared/I18n'
 ],
 function(
 	Ember,
@@ -19,7 +20,8 @@ function(
 	EventDispatcher,
 	HttpRestClient,
 	vie,
-	ContentModule
+	ContentModule,
+	I18n
 ) {
 	var Dimension, Preset;
 
@@ -67,38 +69,8 @@ function(
 		 */
 		_loadConfiguration: function() {
 			var that = this;
-			HttpRestClient.getResource('neos-service-contentdimensions').then(function(result) {
-				var configuration = {};
-
-				$.each($('.contentdimensions', result.resource).children('li'), function(key, contentDimensionSnippet) {
-
-					var presets = {};
-					$.each($('.contentdimension-preset', contentDimensionSnippet), function(key, contentDimensionPresetSnippet) {
-
-						var values = [];
-						$.each($('.contentdimension-preset-values li', contentDimensionPresetSnippet), function(key, contentDimensionPresetValuesSnippet) {
-							values.push($(contentDimensionPresetValuesSnippet).text());
-						});
-
-						var presetIdentifier = $('.contentdimension-preset-identifier', contentDimensionPresetSnippet).text();
-						presets[presetIdentifier] = {
-							label: $('.contentdimension-preset-label', contentDimensionPresetSnippet).text(),
-							values: values,
-							disabled: false
-						};
-					});
-
-					var dimensionIdentifier = $('.contentdimension-identifier', contentDimensionSnippet).text();
-					configuration[dimensionIdentifier] = {
-						label: $('.contentdimension-label', contentDimensionSnippet).text(),
-						icon: $('.contentdimension-icon', contentDimensionSnippet).text(),
-						defaultPreset: $('.contentdimension-defaultpreset .contentdimension-preset-identifier', contentDimensionSnippet).text(),
-						presets: presets
-					};
-				});
+			ResourceCache.getItem(Configuration.get('ContentDimensionsUri')).then(function(configuration) {
 				that.set('configuration', configuration);
-			}, function(error) {
-				console.error('Failed loading dimension presets data.', error);
 			});
 		},
 
@@ -202,7 +174,7 @@ function(
 			});
 
 			return dimensions;
-		}.property('configuration', 'selectedDimensions'),
+		}.property('selectedDimensions'),
 
 		/**
 		 * Computed property of selected dimension values
@@ -218,7 +190,8 @@ function(
 		currentDimensionChoiceText: function() {
 			var dimensionText = [];
 			$.each(this.get('dimensions'), function(index, dimension) {
-				dimensionText.push(dimension.get('label') + ' ' + dimension.get('selected.label'));
+				var translatedLabel = I18n.translate(dimension.get('label'));
+				dimensionText.push(translatedLabel + ' ' + dimension.get('selected.label'));
 			});
 			return dimensionText.join(', ');
 		}.property('dimensions.@each.selected'),
@@ -258,7 +231,9 @@ function(
 				};
 
 			this.set('showInitialTranslationDialog', false);
+			ContentModule.set('httpClientFailureHandling', false);
 			HttpRestClient.getResource('neos-service-nodes', nodeIdentifier, {data: parameters}).then(function(result) {
+				ContentModule.set('httpClientFailureHandling', true);
 				that.set('selectorIsActive', false);
 				ContentModule.loadPage($('.node-frontend-uri', result.resource).attr('href'), false, function() {
 					EventDispatcher.trigger('contentDimensionsSelectionChanged');
@@ -267,10 +242,11 @@ function(
 					that.set('currentDocumentDimensionChoiceText', that.get('currentDimensionChoiceText'));
 				});
 			}, function(error) {
+				ContentModule.set('httpClientFailureHandling', true);
 				if (error.xhr.status === 404 && error.xhr.getResponseHeader('X-Neos-Node-Exists-In-Other-Dimensions')) {
 					that.set('showInitialTranslationDialog', {numberOfNodesMissingInRootline: parseInt(error.xhr.getResponseHeader('X-Neos-Nodes-Missing-On-Rootline'))});
 				} else {
-					Notification.error('Unexpected error while while fetching alternative content variants: ' + JSON.stringify(error));
+					Notification.error('Unexpected error while while fetching alternative content variants.');
 				}
 			});
 		},
@@ -309,8 +285,6 @@ function(
 					Notification.ok('Created ' + that.get('currentDimensionChoiceText'));
 					EventDispatcher.trigger('contentDimensionsSelectionChanged');
 				});
-			}, function(error) {
-				Notification.error('Unexpected error while creating a new content variant: ' + JSON.stringify(error));
 			});
 		}
 	}).create();

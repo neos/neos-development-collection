@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\Tests\Unit\ViewHelpers\Link;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Fluid\Core\Rendering\RenderingContextInterface;
@@ -47,10 +47,10 @@ class ModuleViewHelperTest extends UnitTestCase
     {
         parent::setUp();
         $this->viewHelper = $this->getAccessibleMock('TYPO3\Neos\ViewHelpers\Link\ModuleViewHelper', array('renderChildren'));
-        $this->tagBuilder = $this->getMock('TYPO3\Fluid\Core\ViewHelper\TagBuilder');
-        $this->uriModuleViewHelper = $this->getMock('TYPO3\Neos\ViewHelpers\Uri\ModuleViewHelper', array('setRenderingContext', 'render'));
+        $this->tagBuilder = $this->createMock('TYPO3\Fluid\Core\ViewHelper\TagBuilder');
+        $this->uriModuleViewHelper = $this->getMockBuilder('TYPO3\Neos\ViewHelpers\Uri\ModuleViewHelper')->setMethods(array('setRenderingContext', 'render'))->getMock();
 
-        $this->dummyRenderingContext = $this->getMock('TYPO3\Fluid\Core\Rendering\RenderingContextInterface');
+        $this->dummyRenderingContext = $this->createMock('TYPO3\Fluid\Core\Rendering\RenderingContextInterface');
         $this->inject($this->viewHelper, 'renderingContext', $this->dummyRenderingContext);
 
         $this->inject($this->viewHelper, 'tag', $this->tagBuilder);

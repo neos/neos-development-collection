@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TYPO3CR\Tests\Unit\FlowQueryOperations;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3CR".         *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 /**
  * Testcase for the FlowQuery FilterOperation
@@ -21,8 +21,8 @@ class FilterOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function filterWithIdentifierUsesNodeIdentifier()
     {
-        $node1 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-        $node2 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $node1 = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $node2 = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
         $node2->expects($this->any())->method('getIdentifier')->will($this->returnValue('node-identifier-uuid'));
 
         $context = array($node1, $node2);
@@ -39,8 +39,8 @@ class FilterOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function filterWithNodeInstanceIsSupported()
     {
-        $node1 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-        $node2 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $node1 = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $node2 = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 
         $context = array($node1, $node2);
         $q = new \TYPO3\Eel\FlowQuery\FlowQuery($context);

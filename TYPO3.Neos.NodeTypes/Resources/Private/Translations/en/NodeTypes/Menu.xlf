@@ -47,8 +47,14 @@
 			<trans-unit id="properties.selection" xml:space="preserve">
 				<source>Selection</source>
 			</trans-unit>
+			<trans-unit id="properties.startingPoint" xml:space="preserve">
+				<source>Starting Point</source>
+			</trans-unit>
 			<trans-unit id="properties.maximumLevels" xml:space="preserve">
 				<source>Maximum Levels</source>
+			</trans-unit>
+			<trans-unit id="content.emptyMenu" xml:space="preserve">
+				<source>Empty Menu</source>
 			</trans-unit>
 		</body>
 	</file>

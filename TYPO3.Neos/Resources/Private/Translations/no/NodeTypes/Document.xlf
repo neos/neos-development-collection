@@ -10,7 +10,7 @@
 			<target xml:lang="no" state="translated">URL-banesegment</target></trans-unit>
       <trans-unit id="properties._hiddenInIndex" xml:space="preserve">
 				<source>Hide in menus</source>
-			<target xml:lang="no" state="translated">Skjule menyer</target></trans-unit>
+			<target xml:lang="no" state="translated">Skjul i menyer</target><alt-trans><target xml:lang="no">Skjule menyer</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>

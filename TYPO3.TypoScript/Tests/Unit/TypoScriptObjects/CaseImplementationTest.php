@@ -1,15 +1,16 @@
 <?php
 namespace TYPO3\TypoScript\Tests\Unit\TypoScriptObjects;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.TypoScript".      *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TypoScript package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
 use TYPO3\Flow\Reflection\ObjectAccess;
 
 /**
@@ -25,7 +26,7 @@ class CaseImplementationTest extends \TYPO3\Flow\Tests\UnitTestCase
         $path = 'page/body/content/main';
         $ignoredProperties = array('nodePath');
 
-        $mockTsRuntime = $this->getMock('TYPO3\TypoScript\Core\Runtime', array(), array(), '', false);
+        $mockTsRuntime = $this->getMockBuilder('TYPO3\TypoScript\Core\Runtime')->disableOriginalConstructor()->getMock();
         $mockTsRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($evaluatePath, $that) use ($path, $ignoredProperties) {
             $relativePath = str_replace($path . '/', '', $evaluatePath);
             switch ($relativePath) {

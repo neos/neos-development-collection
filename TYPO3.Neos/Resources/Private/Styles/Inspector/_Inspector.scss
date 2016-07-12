@@ -74,7 +74,6 @@
 		background: $grayDarker;
 		line-height: $unit;
 		z-index: 10015;
-		overflow: hidden;
 	}
 
 	.neos-inspector-tabs {
@@ -94,6 +93,10 @@
 				line-height: 16px;
 			}
 
+			&:hover {
+				color: $blue;
+			}
+
 			&:focus {
 				outline: none;
 			}
@@ -108,9 +111,14 @@
 					top: $unit;
 					left: 0;
 					width: 100%;
-					border-bottom: 1px solid $grayDark;
+					border-bottom: 1px solid $blue;
 					content: '';
 				}
+			}
+
+			// Hide tabs from 7 onwards
+			&:nth-of-type(n+7) {
+				display: none;
 			}
 		}
 	}
@@ -134,7 +142,6 @@
 		#neos-content-breadcrumb {
 			max-width: $inspectorWidth - $defaultMargin * 2;
 			margin-right: -$relatedMargin;
-			cursor: pointer;
 			@include user-select(none);
 			position: relative;
 
@@ -145,7 +152,6 @@
 			}
 
 			i {
-				margin-top: 3px;
 				margin-right: 5px;
 			}
 
@@ -157,7 +163,6 @@
 				span {
 					display: block;
 					margin-right: $unit;
-					border-right: 1px solid $grayDark;
 					line-height: $unit;
 					height: $unit;
 					overflow: hidden;
@@ -165,25 +170,39 @@
 					white-space: nowrap;
 					padding: 0 $defaultMargin;
 				}
+			}
 
-				&:before,
-				&:after {
-					display: block;
-					position: absolute;
-					right: 15px;
-					font-family: Arial;
-					font-size: 17px;
-					line-height: $unit;
-					content: "▾";
-				}
+			&.neos-breadcrumb-multiple {
+				cursor: pointer;
 
-				&:before {
-					top: -4px;
-					@include rotate(180deg);
-				}
+				div {
+					span {
+						margin-right: $unit;
+					}
 
-				&:after {
-					top: 4px;
+					&:before {
+						display: block;
+						content: '';
+						position: absolute;
+						width: 1px;
+						height: $relatedMargin * 3;
+						top: $relatedMargin;
+						right: $unit + 1;
+						background-color: #fff;
+						opacity: .15;
+					}
+
+					&:after {
+						@include fa-icon();
+						content: $fa-var-caret-down;
+						display: block;
+						position: absolute;
+						width: $unit;
+						text-align: center;
+						line-height: $unit;
+						top: 0;
+						right: 0;
+					}
 				}
 			}
 
@@ -310,6 +329,10 @@
 		.neos-inspector-field {
 			padding: 0 $defaultMargin;
 
+			label {
+				cursor: default;
+			}
+
 			& > div {
 				padding-bottom: $defaultMargin;
 			}
@@ -406,13 +429,13 @@
 					border: 1px solid $green;
 				}
 
-				&:hover + span:before {
-					border: 1px solid $green;
-				}
-
 				&:checked + span:before {
 					background-color: $green;
 					border: 1px solid $green;
+				}
+
+				&:checked:hover + span:before {
+					border: 1px solid $blue;
 				}
 			}
 
@@ -424,25 +447,34 @@
 					.neos-select2-arrow {
 						width: $unit - 2px;
 
-						&::before,
-						&::after {
-							right: 13px;
+						&:before {
+							top: $relatedMargin - 2;
+							right: $unit - 2;
 						}
 
-						&::before {
-							top: -6px;
-						}
-
-						&::after {
-							top: 2px;
+						&:after {
+							width: $unit - 2;
+							height: $unit - 4;
+							line-height: $unit - 4;
 						}
 					}
 
 					.neos-select2-search-choice-close {
-						width: $unit - 2px;
+						right: $unit - 1;
 
 						i {
-							top: 10px;
+							line-height: $unit - 4;
+						}
+
+						&:before {
+							top: $relatedMargin - 2;
+							right: $unit - 2;
+						}
+
+						&:after {
+							width: $unit - 2;
+							height: $unit - 4;
+							line-height: $unit - 4;
 						}
 					}
 				}
@@ -551,6 +583,7 @@
 		}
 
 		@import "../Shared/Checkboxes";
+		@import "../Shared/Sortable";
 
 		.neos-input-prepend,
 		.neos-input-append {
@@ -675,6 +708,21 @@
 		.neos-widget-error i {
 			color: $warning;
 		}
+	}
+
+	.neos-help-message-button {
+		// Popover positions itself automatically and it's relative to this element.
+		// We need to add some offset to make space for Popover arrow
+		// and then de-offset it so it's not too far away from the label text.
+		margin-left: -10px;
+
+		.neos-help-message-icon {
+			margin-left: 12px;
+		}
+	}
+
+	.neos-popover {
+		width: $popoverSizeForHelpMessages;
 	}
 
 	@import "Views/ColumnView";

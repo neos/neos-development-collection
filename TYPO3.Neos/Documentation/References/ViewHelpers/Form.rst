@@ -3,7 +3,7 @@
 Form ViewHelper Reference
 =========================
 
-This reference was automatically generated from code on 2015-08-17
+This reference was automatically generated from code on 2016-06-21
 
 
 .. _`Form ViewHelper Reference: typo3.form:form`:
@@ -335,9 +335,6 @@ typo3.form:render
 
 Main Entry Point to render a Form into a Fluid Template
 
-Usage
-=====
-
 <pre>
 {namespace form=TYPO3\Form\ViewHelpers}
 <form:render factoryClass="NameOfYourCustomFactoryClass" />
@@ -422,6 +419,28 @@ Arguments
 * ``renderable`` (TYPO3\Form\Core\Model\Renderable\RootRenderableInterface)
 
 * ``as`` (string, *optional*)
+
+
+
+
+.. _`Form ViewHelper Reference: typo3.form:translateElementProperty`:
+
+typo3.form:translateElementProperty
+-----------------------------------
+
+ViewHelper to translate the property of a given form element based on its rendering options
+
+:Implementation: TYPO3\\Form\\ViewHelpers\\TranslateElementPropertyViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``property`` (string)
+
+* ``element`` (TYPO3\Form\Core\Model\FormElementInterface, *optional*)
 
 
 

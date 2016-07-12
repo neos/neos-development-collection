@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 =========================
 
-This reference was automatically generated from code on 2015-08-17
+This reference was automatically generated from code on 2016-06-07
 
 
 .. _`Neos ViewHelper Reference: neos:backend.authenticationProviderLabel`:
@@ -22,6 +22,27 @@ Arguments
 *********
 
 * ``identifier`` (string)
+
+
+
+
+.. _`Neos ViewHelper Reference: neos:backend.changeStats`:
+
+neos:backend.changeStats
+------------------------
+
+Displays a text-based "bar graph" giving an indication of the amount and type of
+changes done to something. Created for use in workspace management.
+
+:Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\ChangeStatsViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``changeCounts`` (array): Expected keys: new, changed, removed
 
 
 
@@ -113,6 +134,39 @@ neos:backend.cssBuiltVersion
 Returns a shortened md5 of the built CSS file
 
 :Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\CssBuiltVersionViewHelper
+
+
+
+
+
+.. _`Neos ViewHelper Reference: neos:backend.documentBreadcrumbPath`:
+
+neos:backend.documentBreadcrumbPath
+-----------------------------------
+
+Render a bread crumb path by using the labels of documents leading to the given node path
+
+:Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\DocumentBreadcrumbPathViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``node`` (TYPO3\TYPO3CR\Domain\Model\NodeInterface): A node
+
+
+
+
+.. _`Neos ViewHelper Reference: neos:backend.interfaceLanguage`:
+
+neos:backend.interfaceLanguage
+------------------------------
+
+ViewHelper for rendering the current backend users interface language.
+
+:Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\InterfaceLanguageViewHelper
 
 
 
@@ -275,6 +329,20 @@ Arguments
 *********
 
 * ``format`` (string, *optional*): Supported are "fullFirstName" and "initials
+
+
+
+
+.. _`Neos ViewHelper Reference: neos:backend.xliffCacheVersion`:
+
+neos:backend.xliffCacheVersion
+------------------------------
+
+ViewHelper for rendering the current version identifier for the
+xliff cache.
+
+:Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\XliffCacheVersionViewHelper
+
 
 
 
@@ -620,7 +688,7 @@ Expected result::
 
 **Generating a link with an absolute URI**::
 
-	<neos:link.node absolute="{true"}>bookmark this page</neos:link.node>
+	<neos:link.node absolute="{true}">bookmark this page</neos:link.node>
 
 
 Expected result::

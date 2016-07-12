@@ -1,21 +1,22 @@
 <?php
 namespace TYPO3\Media\Domain\Model;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Media package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Resource\Resource;
 use TYPO3\Flow\Utility\Arrays;
-use TYPO3\Media\Domain\Model\Adjustment\ResizeImageAdjustment;
+use TYPO3\Media\Domain\Strategy\ThumbnailGeneratorStrategy;
 use TYPO3\Media\Exception;
 
 /**
@@ -23,9 +24,9 @@ use TYPO3\Media\Exception;
  *
  * @Flow\Entity
  * @ORM\Table(
- *    indexes={
- * 		@ORM\Index(name="originalasset_configurationhash",columns={"originalasset", "configurationhash"})
- *    }
+ *  uniqueConstraints={
+ *      @ORM\UniqueConstraint(name="originalasset_configurationhash",columns={"originalasset", "configurationhash"})
+ *  }
  * )
  */
 class Thumbnail implements ImageInterface
@@ -33,10 +34,10 @@ class Thumbnail implements ImageInterface
     use DimensionsTrait;
 
     /**
-     * @var \TYPO3\Media\Domain\Service\ImageService
+     * @var ThumbnailGeneratorStrategy
      * @Flow\Inject
      */
-    protected $imageService;
+    protected $generatorStrategy;
 
     /**
      * @var Asset
@@ -46,12 +47,17 @@ class Thumbnail implements ImageInterface
     protected $originalAsset;
 
     /**
-     * @var \TYPO3\Flow\Resource\Resource
+     * @var Resource
      * @ORM\OneToOne(orphanRemoval = true, cascade={"all"})
-     * @Flow\Validate(type = "NotEmpty")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     protected $resource;
+
+    /**
+     * @var string Supports the 'resource://Package.Key/Public/File' format
+     * @ORM\Column(nullable=true)
+     */
+    protected $staticResource;
 
     /**
      * @var array<string>
@@ -70,26 +76,29 @@ class Thumbnail implements ImageInterface
      *
      * @param AssetInterface $originalAsset The original asset this variant is derived from
      * @param ThumbnailConfiguration $configuration
+     * @param boolean $async
      * @throws \TYPO3\Media\Exception
      */
     public function __construct(AssetInterface $originalAsset, ThumbnailConfiguration $configuration)
     {
-        if (!$originalAsset instanceof ImageInterface) {
-            throw new Exception(sprintf('Support for creating thumbnails of other than Image assets has not been implemented yet (given asset was a %s)', get_class($originalAsset)), 1378132300);
-        }
         $this->originalAsset = $originalAsset;
         $this->setConfiguration($configuration);
+        $this->async = $configuration->isAsync();
     }
 
     /**
      * Initializes this thumbnail
      *
      * @param integer $initializationCause
+     * @return void
      */
     public function initializeObject($initializationCause)
     {
         if ($initializationCause === ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
-            $this->refresh();
+            if ($this->async === false) {
+                $this->refresh();
+            }
+            $this->emitThumbnailCreated($this);
         }
     }
 
@@ -104,17 +113,8 @@ class Thumbnail implements ImageInterface
     }
 
     /**
-     * Resource of this thumbnail
-     *
-     * @return Resource
-     */
-    public function getResource()
-    {
-        return $this->resource;
-    }
-
-    /**
      * @param ThumbnailConfiguration $configuration
+     * @return void
      */
     protected function setConfiguration(ThumbnailConfiguration $configuration)
     {
@@ -126,9 +126,63 @@ class Thumbnail implements ImageInterface
      * @param string $value
      * @return mixed
      */
-    protected function getConfigurationValue($value)
+    public function getConfigurationValue($value)
     {
         return Arrays::getValueByPath($this->configuration, $value);
+    }
+
+    /**
+     * Resource of this thumbnail
+     *
+     * @return Resource
+     */
+    public function getResource()
+    {
+        return $this->resource;
+    }
+
+    /**
+     * @param Resource $resource
+     * @return void
+     */
+    public function setResource(Resource $resource)
+    {
+        $this->resource = $resource;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStaticResource()
+    {
+        return $this->staticResource;
+    }
+
+    /**
+     * @param string $staticResource
+     * @return void
+     */
+    public function setStaticResource($staticResource)
+    {
+        $this->staticResource = $staticResource;
+    }
+
+    /**
+     * @param integer $width
+     * @return void
+     */
+    public function setWidth($width)
+    {
+        $this->width = (integer)$width;
+    }
+
+    /**
+     * @param integer $height
+     * @return void
+     */
+    public function setHeight($height)
+    {
+        $this->height = (integer)$height;
     }
 
     /**
@@ -138,23 +192,19 @@ class Thumbnail implements ImageInterface
      */
     public function refresh()
     {
-        $adjustments = array(
-            new ResizeImageAdjustment(
-                array(
-                    'width' => $this->getConfigurationValue('width'),
-                    'maximumWidth' => $this->getConfigurationValue('maximumWidth'),
-                    'height' => $this->getConfigurationValue('height'),
-                    'maximumHeight' => $this->getConfigurationValue('maximumHeight'),
-                    'ratioMode' => $this->getConfigurationValue('ratioMode'),
-                    'allowUpScaling' => $this->getConfigurationValue('allowUpScaling')
-                )
-            )
-        );
+        $this->generatorStrategy->refresh($this);
+    }
 
-        $processedImageInfo = $this->imageService->processImage($this->originalAsset->getResource(), $adjustments);
-
-        $this->resource = $processedImageInfo['resource'];
-        $this->width = $processedImageInfo['width'];
-        $this->height = $processedImageInfo['height'];
+    /**
+     * Signals that a thumbnail was created.
+     * @deprecated Will be removed with next major version of TYPO3.Media.
+     * Use ThumbnailService::emitThumbnailCreated signal instead.
+     *
+     * @Flow\Signal
+     * @param Thumbnail $thumbnail
+     * @return void
+     */
+    protected function emitThumbnailCreated(Thumbnail $thumbnail)
+    {
     }
 }

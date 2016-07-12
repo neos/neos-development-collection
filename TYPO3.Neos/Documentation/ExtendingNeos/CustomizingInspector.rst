@@ -22,6 +22,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
         groups:
           advanced:
             label: 'Advanced'
+            icon: 'icon-fort-awesome'
             position: 2
     properties:
       hideSubheadline:
@@ -79,6 +80,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
           advanced:
             label: 'Advanced'
             position: 2
+            icon: 'icon-fort-awesome'
     properties:
       articleType:
         type: string
@@ -126,7 +128,9 @@ Select multiple options in a selectbox element
 
 For selecting more than one item with a slect box the type of the property has to be set to ``array``.
 
-Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
+Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml):
+
+.. code-block:: yaml
 
   'Vendor.Site:YourContentElementName':
     properties:
@@ -147,9 +151,12 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
 Use custom DataSources for a selectbox element
 ==============================================
 
-To add custom selectbox-options Neos uses :ref:`data-sources` for the inspector that can be implemented via php.
+To add custom selectbox-options, Neos uses *data sources* for the inspector that can be implemented in PHP.
+See :ref:`data-sources` for more details.
 
-Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
+Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml):
+
+.. code-block:: yaml
 
   'Vendor.Site:YourContentElementName':
     properties:
@@ -158,13 +165,14 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
           inspector:
             editor: Content/Inspector/Editors/SelectBoxEditor
             editorOptions:
-              dataSourceIdentifier: 'acme-yourpackage-test''
-
+              dataSourceIdentifier: 'acme-yourpackage-test'
 
 Remove fields from an existing Node Type
 ========================================
 
-Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
+Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml):
+
+.. code-block:: yaml
 
   'TYPO3.Neos:Plugin':
     properties:
@@ -174,11 +182,13 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
       action:     [ ]
 
 Remove a selectbox option from an existing Node Type
-=====================================================
+====================================================
 
 Removing a selectbox option, can be done by simply edition your NodeTypes.yaml.
 
-Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
+Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml):
+
+.. code-block:: yaml
 
   'TYPO3.Neos:Shortcut':
     properties:

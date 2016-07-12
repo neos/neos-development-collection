@@ -8,7 +8,7 @@
 #                                                                        #
 
 ##
-# TYPO3 Neos subroutes
+# Neos subroutes
 
 -
   name: 'TYPO3Neos'

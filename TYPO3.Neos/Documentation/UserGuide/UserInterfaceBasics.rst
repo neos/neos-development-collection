@@ -1,3 +1,5 @@
+.. _user-interface-basics:
+
 =====================
 User Interface Basics
 =====================
@@ -43,7 +45,8 @@ The Page tree is filterable and searchable and can be edited inline.
 Publish button(s)
 -----------------
 
-These publication buttons aggregate your changes which you can publish at your chosen time.
+These publication buttons aggregate your changes which you can publish at your chosen time. See
+:ref:`user-guide-workspaces` for more information on the use of workspaces.
 
 The Property Inspector
 ----------------------
@@ -55,8 +58,8 @@ The Structure tree
 ------------------
 
 The Structure tree is a nodetype tree which gives you detailed information of how your content is structured.
-It gives you information about which type, its position and its nesting level.
-This can also be used to navigate the content of a page.
+It gives you information about which type, its position and its nesting level. This can also be used to navigate
+the content of a page.
 
 The content canvas
 ------------------

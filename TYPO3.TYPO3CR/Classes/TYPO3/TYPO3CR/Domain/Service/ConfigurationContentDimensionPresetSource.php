@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TYPO3CR\Domain\Service;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3CR".         *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\PositionalArraySorter;
@@ -28,7 +28,7 @@ class ConfigurationContentDimensionPresetSource implements ContentDimensionPrese
      *
      * @var array
      */
-    protected $configuration;
+    protected $configuration = [];
 
     /**
      * {@inheritdoc}
@@ -54,8 +54,10 @@ class ConfigurationContentDimensionPresetSource implements ContentDimensionPrese
         if (isset($this->configuration[$dimensionName]['defaultPreset']) && isset($this->configuration[$dimensionName]['presets'][$this->configuration[$dimensionName]['defaultPreset']])) {
             $preset = $this->configuration[$dimensionName]['presets'][$this->configuration[$dimensionName]['defaultPreset']];
             $preset['identifier'] = $this->configuration[$dimensionName]['defaultPreset'];
+
             return $preset;
         }
+
         return null;
     }
 
@@ -68,10 +70,12 @@ class ConfigurationContentDimensionPresetSource implements ContentDimensionPrese
             foreach ($this->configuration[$dimensionName]['presets'] as $presetIdentifier => $presetConfiguration) {
                 if (isset($presetConfiguration['values']) && $presetConfiguration['values'] === $dimensionValues) {
                     $presetConfiguration['identifier'] = $presetIdentifier;
+
                     return $presetConfiguration;
                 }
             }
         }
+
         return null;
     }
 
@@ -89,7 +93,7 @@ class ConfigurationContentDimensionPresetSource implements ContentDimensionPrese
             return null;
         }
 
-        $dimensionConfiguration = array($dimensionName => $this->configuration[$dimensionName]);
+        $dimensionConfiguration = [$dimensionName => $this->configuration[$dimensionName]];
         $sorter = new PositionalArraySorter($dimensionConfiguration[$dimensionName]['presets']);
         $dimensionConfiguration[$dimensionName]['presets'] = $sorter->toArray();
 
@@ -130,6 +134,7 @@ class ConfigurationContentDimensionPresetSource implements ContentDimensionPrese
                 }
             }
         }
+
         return true;
     }
 
@@ -155,6 +160,7 @@ class ConfigurationContentDimensionPresetSource implements ContentDimensionPrese
         if (array_key_exists('*', $constraints[$dimensionName])) {
             return (boolean)$constraints[$dimensionName]['*'];
         }
+
         return true;
     }
 
@@ -172,5 +178,63 @@ class ConfigurationContentDimensionPresetSource implements ContentDimensionPrese
             }
         }
         $this->configuration = $configuration;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function findPresetsByTargetValues(array $targetValues)
+    {
+        $matchingPresets = [];
+        $allPresets = $this->getAllPresets();
+
+        foreach ($targetValues as $dimensionName => $dimensionValues) {
+            $matchingPresets[$dimensionName] = array_reduce($allPresets[$dimensionName]['presets'], function ($primaryPreset, $presetForDimension) use ($dimensionValues) {
+                return $this->comparePresetsForTargetValue($presetForDimension, $dimensionValues, $primaryPreset);
+            }, null);
+
+            if ($matchingPresets[$dimensionName] !== null) {
+                continue;
+            }
+
+            $matchingPresets[$dimensionName] = [
+                'label' => reset($dimensionValues),
+                'values' =>  $dimensionValues
+            ];
+        }
+
+        return $matchingPresets;
+    }
+
+    /**
+     * Compares the given $possibleBetterPreset to the $targetValues (based on the position of the contained values)
+     * and returns either $possibleBetterPreset or the $currentBestPreset, depending on the result.
+     *
+     * @param array $possibleBetterPreset
+     * @param array $targetValues
+     * @param array $currentBestPreset
+     * @return array
+     */
+    protected function comparePresetsForTargetValue(array $possibleBetterPreset, array $targetValues, array $currentBestPreset = null)
+    {
+        if (!isset($possibleBetterPreset['values'][0])) {
+            return $currentBestPreset;
+        }
+
+        if ($possibleBetterPreset['values'] === $targetValues) {
+            return $possibleBetterPreset;
+        }
+
+        if ($possibleBetterPreset['values'][0] === reset($targetValues)) {
+            return $possibleBetterPreset;
+        }
+
+        foreach ($targetValues as $targetValue) {
+            if ($currentBestPreset === null && in_array($targetValue, $possibleBetterPreset['values'])) {
+                return $possibleBetterPreset;
+            }
+        }
+
+        return $currentBestPreset;
     }
 }

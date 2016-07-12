@@ -19,7 +19,7 @@ define(
 
 		getResultThumbnail: function($result) {
 			if ($('[rel="thumbnail"]', $result).length > 0) {
-				return '<img src="' + $('[rel="thumbnail"]', $result).attr('href') + '" width="40" height="40" alt="' + $result.text() + '" />';
+				return '<span class="neos-list-thumbnail"><img src="' + $('[rel="thumbnail"]', $result).attr('href') + '" alt="' + $result.text() + '" /></span>';
 			}
 			return '';
 		},

@@ -14,6 +14,10 @@ TYPO3:
       globalObjects:
         userInformation: TYPO3\Neos\Service\UserService
 
+    core:
+      applicationPackageKey: 'TYPO3.Neos'
+      applicationName: 'Neos'
+
     security:
       authentication:
         providers:
@@ -56,7 +60,10 @@ TYPO3:
               layoutRootPath: 'resource://TYPO3.Neos/Private/Layouts/'
               format: 'html'
           'databaseConnectionExceptions':
-            matchingExceptionClassNames: ['TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseException']
+            matchingExceptionClassNames:
+              - 'TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseException'
+              - 'TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseConnectionException'
+              - 'TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseStructureException'
             options:
               templatePathAndFilename: 'resource://TYPO3.Neos/Private/Templates/Error/Index.html'
               layoutRootPath: 'resource://TYPO3.Neos/Private/Layouts/'
@@ -108,22 +115,36 @@ TYPO3:
         'TYPO3.TypoScript': TRUE
         'TYPO3.Neos': TRUE
 
+    routing:
+      # Setting this to TRUE allows to use an empty uriSegment for default dimensions.
+      # The only limitation is that all segments must be unique across all dimenions.
+      supportEmptySegmentForDimensions: TRUE
+
     nodeTypes:
       groups:
         general:
           position: 'start'
           label: 'TYPO3.Neos:Main:nodeTypes.groups.general'
+          collapsed: false
         structure:
           position: 100
           label: 'TYPO3.Neos:Main:nodeTypes.groups.structure'
+          collapsed: false
         plugins:
           position: 200
           label: 'TYPO3.Neos:Main:nodeTypes.groups.plugins'
+          collapsed: true
 
     userInterface:
-      # should minified JavaScript be loaded? For developing the TYPO3 Neos
+      # should minified JavaScript be loaded? For developing the Neos
       # Content Module, this should be set to FALSE.
       loadMinifiedJavascript: TRUE
+
+      # The number of seconds to wait before giving up on loading a script.
+      # The default in requireJs is 7 seconds but on slow clients with slow internetconnections
+      # in combination with big Document Nodes it can happen that the Inspector Editors and Aloha
+      # can not be loaded. http://requirejs.org/docs/api.html#config-waitSeconds
+      requireJsWaitSeconds: 30
 
       # Switch on to see all translated labels getting scrambled. You now can localize
       # everything that is still readable.
@@ -142,6 +163,8 @@ TYPO3:
       requireJsPathMapping:
         'TYPO3.Neos/Validation': 'resource://TYPO3.Neos/Public/JavaScript/Shared/Validation/'
         'TYPO3.Neos/Inspector/Editors': 'resource://TYPO3.Neos/Public/JavaScript/Content/Inspector/Editors/'
+        'TYPO3.Neos/Inspector/Handlers': 'resource://TYPO3.Neos/Public/JavaScript/Content/Inspector/Handlers/'
+        'TYPO3.Neos/Inspector/Views': 'resource://TYPO3.Neos/Public/JavaScript/Content/Inspector/Views/'
 
       # the default language for the backend interface (can be overridden by user preference through availableLanguages)
       defaultLanguage: 'en'
@@ -151,15 +174,18 @@ TYPO3:
         'da': 'Dansk – Danish'
         'de': 'Deutsch – German'
         'en': 'English – English'
-#        'es': 'Español – Spanish'
+        'es': 'Español – Spanish'
         'fi': 'Suomi – Finnish'
         'fr': 'Français – French'
-#        'km': 'ភាសាខ្មែរ – Khmer'
+        'km': 'ភាសាខ្មែរ – Khmer'
         'lv': 'Latviešu – Latvian'
         'nl': 'Nederlands – Dutch'
+        'no': 'Norsk bokmål – Norwegian Bokmål'
         'pl': 'Polski – Polish'
+        'pt-BR': 'Português (Brasil) – Portuguese (Brazil)'
         'ru': 'Pусский – Russian'
 #        'sv': 'Svenska – Swedish'
+        'zh-CN': '简体中文 – Chinese, Simplified'
 
       navigateComponent:
         nodeTree:
@@ -169,22 +195,34 @@ TYPO3:
 
           presets:
             default:
+              # Allows configuring the baseNodeType used in the node tree. It is a filter, so this also
+              # works: 'TYPO3.Neos:Document,!Acme.Com:SomeNodeTypeToIgnore'
               baseNodeType: 'TYPO3.Neos:Document'
+        structureTree:
+          # number of levels inside the structure tree which shall be loaded eagerly, at start.
+          # 0 means unlimited
+          loadingDepth: 4
 
       inspector:
         dataTypes:
           'string':
             editor: 'TYPO3.Neos/Inspector/Editors/TextFieldEditor'
+            defaultValue: ''
           'integer':
             editor: 'TYPO3.Neos/Inspector/Editors/TextFieldEditor'
+            defaultValue: 0
           'boolean':
             editor: 'TYPO3.Neos/Inspector/Editors/BooleanEditor'
+            defaultValue: FALSE
           'array':
+            typeConverter: 'TYPO3\Flow\Property\TypeConverter\TypedArrayConverter'
             editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
             editorOptions:
               multiple: TRUE
               placeholder: 'Choose'
+            defaultValue: []
           'TYPO3\Media\Domain\Model\ImageInterface':
+            typeConverter: 'TYPO3\Media\TypeConverter\ImageInterfaceJsonSerializer'
             editor: 'TYPO3.Neos/Inspector/Editors/ImageEditor'
             editorOptions:
               # With this option you can limit the maximum file size to the specified number of bytes.
@@ -222,18 +260,22 @@ TYPO3:
                     width: 0
                     height: 0
           'TYPO3\Media\Domain\Model\Asset':
+            typeConverter: 'TYPO3\Neos\TypeConverter\EntityToIdentityConverter'
             editor: 'TYPO3.Neos/Inspector/Editors/AssetEditor'
           'array<TYPO3\Media\Domain\Model\Asset>':
             editor: 'TYPO3.Neos/Inspector/Editors/AssetEditor'
             editorOptions:
               multiple: TRUE
           'DateTime':
+            typeConverter: 'TYPO3\Neos\Service\Mapping\DateStringConverter'
             editor: 'TYPO3.Neos/Inspector/Editors/DateTimeEditor'
             editorOptions:
               format: 'd-m-Y'
           'reference':
+            typeConverter: 'TYPO3\Neos\Service\Mapping\NodeReferenceConverter'
             editor: 'TYPO3.Neos/Inspector/Editors/ReferenceEditor'
           'references':
+            typeConverter: 'TYPO3\Neos\Service\Mapping\NodeReferenceConverter'
             editor: 'TYPO3.Neos/Inspector/Editors/ReferencesEditor'
         editors:
           'TYPO3.Neos/Inspector/Editors/CodeEditor':
@@ -294,6 +336,11 @@ TYPO3:
           typoScriptRenderingPath: ''
           title: 'TYPO3.Neos:Main:editPreviewModes.desktop'
           position: 100
+
+      backendLoginForm:
+        backgroundImage: 'resource://TYPO3.Neos/Public/Images/Login/Wallpaper22.jpg'
+        stylesheets:
+          'TYPO3.Neos:DefaultStyles': 'resource://TYPO3.Neos/Public/Styles/Login.css'
 
     moduleConfiguration:
       widgetTemplatePathAndFileName: 'resource://TYPO3.Neos/Private/Templates/Module/Widget.html'
@@ -388,6 +435,20 @@ TYPO3:
             authenticationProviderName: '${entity.authenticationProviderName}'
             name: '${entity.party.name.fullName}'
 
+    transliterationRules:
+      da:
+        'Å': 'Aa'
+        'Ø': 'Oe'
+        'å': 'aa'
+        'ø': 'oe'
+      de:
+        'Ä': 'Ae'
+        'Ö': 'Oe'
+        'Ü': 'Ue'
+        'ä': 'ae'
+        'ö': 'oe'
+        'ü': 'ue'
+
   Setup:
     stepOrder: ['neosRequirements', 'database', 'administrator', 'siteimport', 'final']
     steps:
@@ -407,6 +468,13 @@ TYPO3:
       title: 'Neos Setup'
 
   Media:
+    thumbnailPresets:
+      'TYPO3.Neos:Thumbnail':
+        maximumWidth: 250
+        maximumHeight: 250
+      'TYPO3.Neos:Preview':
+        maximumWidth: 1000
+        maximumHeight: 1000
     bodyClasses: 'neos neos-module media-browser'
     scripts:
       - resource://TYPO3.Neos/Public/Library/jquery/jquery-2.0.3.js
@@ -470,18 +538,20 @@ TYPO3:
           - 'Neos:FormViewHelpers'
           - 'Neos:NeosViewHelpers'
           - 'Neos:Typo3CrViewHelpers'
+          - 'Neos:TypoScriptViewHelpers'
           - 'Neos:FlowValidators'
           - 'Neos:PartyValidators'
           - 'Neos:MediaValidators'
           - 'Neos:FlowSignals'
           - 'Neos:NeosSignals'
+          - 'Neos:MediaSignals'
           - 'Neos:Typo3CrSignals'
           - 'Neos:FlowQueryOperations'
           - 'Neos:EelHelpers'
 
     commandReferences:
       'Neos:NeosCommands':
-        title: 'Neos Command Reference'
+        title: 'Command Reference'
         packageKeys:
           - 'TYPO3.Flow'
           - 'TYPO3.Party'
@@ -490,15 +560,16 @@ TYPO3:
           - 'TYPO3.Welcome'
           - 'TYPO3.Media'
           - 'TYPO3.TYPO3CR'
+          - 'TYPO3.Neos.Kickstarter'
           - 'TYPO3.Neos'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/CommandReference.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/CommandReference.rst'
 
     references:
 
       # View Helpers
       'Neos:FluidViewHelpers':
         title: 'Fluid ViewHelper Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/ViewHelpers/Fluid.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/ViewHelpers/Fluid.rst'
         affectedClasses:
           parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^TYPO3\\Fluid\\ViewHelpers\\.*$/i'
@@ -509,7 +580,7 @@ TYPO3:
               f: 'TYPO3\Fluid\ViewHelpers'
       'Neos:MediaViewHelpers':
         title: 'Media ViewHelper Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/ViewHelpers/Media.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/ViewHelpers/Media.rst'
         affectedClasses:
           parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^TYPO3\\Media\\ViewHelpers\\.*$/i'
@@ -520,7 +591,7 @@ TYPO3:
               'typo3.media': 'TYPO3\Media\ViewHelpers'
       'Neos:FormViewHelpers':
         title: 'Form ViewHelper Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/ViewHelpers/Form.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/ViewHelpers/Form.rst'
         affectedClasses:
           parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^TYPO3\\Form\\ViewHelpers\\.*$/i'
@@ -531,7 +602,7 @@ TYPO3:
               'typo3.form': 'TYPO3\Form\ViewHelpers'
       'Neos:NeosViewHelpers':
         title: 'Neos ViewHelper Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/ViewHelpers/Neos.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/ViewHelpers/Neos.rst'
         affectedClasses:
           parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^TYPO3\\Neos\\ViewHelpers\\.*$/i'
@@ -543,7 +614,7 @@ TYPO3:
               neos: 'TYPO3\Neos\ViewHelpers'
       'Neos:Typo3CrViewHelpers':
         title: 'Content Repository ViewHelper Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/ViewHelpers/TYPO3CR.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/ViewHelpers/TYPO3CR.rst'
         affectedClasses:
           parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^TYPO3\\TYPO3CR\\ViewHelpers\\.*$/i'
@@ -553,11 +624,23 @@ TYPO3:
             namespaces:
               f: 'TYPO3\Fluid\ViewHelpers'
               neos: 'TYPO3\Neos\ViewHelpers'
+      'Neos:TypoScriptViewHelpers':
+        title: 'TypoScript ViewHelper Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/ViewHelpers/TypoScript.rst'
+        affectedClasses:
+          parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
+          classNamePattern: '/^TYPO3\\TypoScript\\ViewHelpers\\.*$/i'
+        parser:
+          implementationClassName: 'TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser'
+          options:
+            namespaces:
+              f: 'TYPO3\Fluid\ViewHelpers'
+              ts: 'TYPO3\TypoScript\ViewHelpers'
 
       # Validators
       'Neos:FlowValidators':
         title: 'Flow Validator Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/Validators/Flow.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/Validators/Flow.rst'
         affectedClasses:
           parentClassName: 'TYPO3\Flow\Validation\Validator\AbstractValidator'
           classNamePattern: '/^TYPO3\\Flow\\Validation\\Validator\\.*$/i'
@@ -565,7 +648,7 @@ TYPO3:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\FlowValidatorClassParser'
       'Neos:PartyValidators':
         title: 'Party Validator Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/Validators/Party.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/Validators/Party.rst'
         affectedClasses:
           parentClassName: 'TYPO3\Flow\Validation\Validator\AbstractValidator'
           classNamePattern: '/^TYPO3\\Party\\Validation\\Validator\\.*$/i'
@@ -573,7 +656,7 @@ TYPO3:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\FlowValidatorClassParser'
       'Neos:MediaValidators':
         title: 'Media Validator Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/Validators/Media.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/Validators/Media.rst'
         affectedClasses:
           parentClassName: 'TYPO3\Flow\Validation\Validator\AbstractValidator'
           classNamePattern: '/^TYPO3\\Media\\Validator\\.*$/i'
@@ -583,7 +666,7 @@ TYPO3:
       # Signals
       'Neos:FlowSignals':
         title: 'Flow Signals Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/Signals/Flow.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/Signals/Flow.rst'
         affectedClasses:
           classesContainingMethodsAnnotatedWith: 'TYPO3\Flow\Annotations\Signal'
           classNamePattern: '/^TYPO3\\Flow\\.*$/i'
@@ -592,16 +675,25 @@ TYPO3:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\SignalsParser'
       'Neos:NeosSignals':
         title: 'Neos Signals Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/Signals/Neos.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/Signals/Neos.rst'
         affectedClasses:
           classesContainingMethodsAnnotatedWith: 'TYPO3\Flow\Annotations\Signal'
           classNamePattern: '/^TYPO3\\Neos\\.*$/i'
           includeAbstractClasses: TRUE
         parser:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\SignalsParser'
+      'Neos:MediaSignals':
+        title: 'Media Signals Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/Signals/Media.rst'
+        affectedClasses:
+          classesContainingMethodsAnnotatedWith: 'TYPO3\Flow\Annotations\Signal'
+          classNamePattern: '/^TYPO3\\Media\\.*$/i'
+          includeAbstractClasses: TRUE
+        parser:
+          implementationClassName: 'TYPO3\DocTools\Domain\Service\SignalsParser'
       'Neos:Typo3CrSignals':
         title: 'Content Repository Signals Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/Signals/TYPO3CR.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/Signals/TYPO3CR.rst'
         affectedClasses:
           classesContainingMethodsAnnotatedWith: 'TYPO3\Flow\Annotations\Signal'
           classNamePattern: '/^TYPO3\\TYPO3CR\\.*$/i'
@@ -612,7 +704,7 @@ TYPO3:
       # Flow Query
       'Neos:FlowQueryOperations':
         title: 'FlowQuery Operation Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/FlowQueryOperationReference.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/FlowQueryOperationReference.rst'
         affectedClasses:
           interface: 'TYPO3\Eel\FlowQuery\OperationInterface'
         parser:
@@ -621,10 +713,9 @@ TYPO3:
       # EelHelpers
       'Neos:EelHelpers':
         title: 'Eel Helpers Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Application/TYPO3.Neos/Documentation/References/EelHelpersReference.rst'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/EelHelpersReference.rst'
         affectedClasses:
           interface: 'TYPO3\Eel\ProtectedContextAwareInterface'
           classNamePattern: '/^.*Helper$/i'
         parser:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\EelHelperClassParser'
-

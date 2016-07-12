@@ -1,19 +1,21 @@
 <?php
 namespace TYPO3\Neos\Command;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\ConsoleOutput;
+use TYPO3\Neos\Domain\Service\SiteService;
+use TYPO3\Neos\Utility\NodeUriPathSegmentGenerator;
 use TYPO3\TYPO3CR\Command\NodeCommandControllerPluginInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
@@ -22,7 +24,6 @@ use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContentDimensionCombinator;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
-use TYPO3\TYPO3CR\Utility;
 
 /**
  * A plugin for the TYPO3CR NodeCommandController which adds a task adding missing URI segments to the node:repair
@@ -55,6 +56,12 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
      * @Flow\Inject
      */
     protected $dimensionCombinator;
+
+    /**
+     * @Flow\Inject
+     * @var NodeUriPathSegmentGenerator
+     */
+    protected $nodeUriPathSegmentGenerator;
 
     /**
      * @var ConsoleOutput
@@ -126,8 +133,14 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
     public function generateUriPathSegments($workspaceName, $dryRun)
     {
         $baseContext = $this->createContext($workspaceName, []);
-        $baseContextSiteNodes = $baseContext->getNode('/sites')->getChildNodes();
+        $baseContextSitesNode = $baseContext->getNode(SiteService::SITES_ROOT_PATH);
+        if (!$baseContextSitesNode) {
+            $this->output->outputLine('<error>Could not find "' . SiteService::SITES_ROOT_PATH . '" root node</error>');
+            return;
+        }
+        $baseContextSiteNodes = $baseContextSitesNode->getChildNodes();
         if ($baseContextSiteNodes === []) {
+            $this->output->outputLine('<error>Could not find any site nodes in "' . SiteService::SITES_ROOT_PATH . '" root node</error>');
             return;
         }
 
@@ -155,7 +168,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
     {
         if ((string)$node->getProperty('uriPathSegment') === '') {
             $name = $node->getLabel() ?: $node->getName();
-            $uriPathSegment = Utility::renderValidNodeName($name);
+            $uriPathSegment = $this->nodeUriPathSegmentGenerator->generateUriPathSegment($node);
             if ($dryRun === false) {
                 $node->setProperty('uriPathSegment', $uriPathSegment);
                 $this->output->outputLine('Added missing URI path segment for "%s" (%s) => %s', array($node->getPath(), $name, $uriPathSegment));

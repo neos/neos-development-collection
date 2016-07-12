@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\Domain\Service;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 
@@ -28,7 +28,7 @@ class DomainMatchingStrategy
      * The domains are sorted by their match exactness.
      * If none really matches an empty array is returned.
      *
-     * @param string $host The host to match against (eg. "localhost" or "www.typo3.org")
+     * @param string $host The host to match against (eg. "localhost" or "www.neos.io")
      * @param array<\TYPO3\Neos\Domain\Model\Domain> $domains The domains to check
      * @return array The matching domains
      */
@@ -39,7 +39,7 @@ class DomainMatchingStrategy
         $hostPartsReverse = array_reverse(explode('.', $host));
 
         foreach ($domains as $domain) {
-            $hostPattern = $domain->getHostPattern();
+            $hostPattern = is_string($domain) ? $domain : $domain->getHostPattern();
 
             if ($host === $hostPattern) {
                 $matchQuality = self::EXACTMATCH;

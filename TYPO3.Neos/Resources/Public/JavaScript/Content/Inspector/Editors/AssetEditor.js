@@ -7,9 +7,10 @@ define(
 	'Content/Inspector/SecondaryInspectorController',
 	'Shared/Utility',
 	'Shared/HttpClient',
-	'Shared/I18n'
+	'Shared/I18n',
+	'Library/sortable/Sortable'
 ],
-function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, HttpClient, I18n) {
+function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, HttpClient, I18n, Sortable) {
 
 	return FileUpload.extend({
 		removeButtonLabel: function() {
@@ -33,8 +34,15 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 
 			// Create new instance per asset editor to avoid side effects
 			this.set('_mediaBrowserView', Ember.View.extend({
-				template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-media-browser"]').attr('href') + '"></iframe>')
-			})),
+				template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-media-browser"]').attr('href') + '"></iframe>'),
+				didInsertElement: function() {
+					this.$().find('iframe').on('load', function(event) {
+						if (window.Typo3MediaBrowserCallbacks && window.Typo3MediaBrowserCallbacks.onLoad) {
+							window.Typo3MediaBrowserCallbacks.onLoad(event);
+						}
+					});
+				}
+			}));
 
 			this.set('assets', Ember.A());
 			this.set('_assetMetadataEndpointUri', $('link[rel="neos-asset-metadata"]').attr('href'));
@@ -42,11 +50,49 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 
 		didInsertElement: function() {
 			this._super();
-			this._readAndDeserializeValue();
 
 			if (!this.get('loadingLabel')) {
 				this.set('loadingLabel', I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...');
 			}
+
+			if (this.get('multiple') === true) {
+				this._makeSortable();
+			}
+		},
+
+		/**
+		 * Observe value to initialize list
+		 */
+		_valueDidChange: function() {
+			if (JSON.stringify(this.get('assets').mapBy('assetUuid')) !== this.get('value')) {
+				this.set('assets', Ember.A());
+				this._readAndDeserializeValue();
+			}
+		}.observes('value'),
+
+		_makeSortable: function() {
+			var itemList, sortable, that = this;
+			itemList = this.$().find('ul.neos-inspector-file-list').first().addClass('neos-sortable');
+			sortable = Sortable.create(itemList.get(0), {
+				ghostClass: 'neos-sortable-ghost',
+				chosenClass: 'neos-sortable-chosen',
+				onUpdate: function(event) {
+					var data = [];
+					itemList.find('li').each(function() {
+						var currentIdentifier = $(this).find('[data-neos-identifier]').data('neos-identifier');
+						$(that.get('assets')).each(function() {
+							if (!this.assetUuid) {
+								return;
+							}
+							if (this.assetUuid === currentIdentifier) {
+								data.push(this);
+							}
+						});
+					});
+					that.set('assets', data);
+					that._updateValue();
+				}
+			});
 		},
 
 		_loadingLabel: function() {
@@ -58,8 +104,11 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 
 		assetView: Ember.CollectionView.extend({
 			tagName: 'ul',
+			classNames: ['neos-inspector-file-list'],
 			itemViewClass: Ember.View.extend({
-				template: Ember.Handlebars.compile('<img src="{{unbound view.content.previewImageResourceUri}}" alt="" />{{view.content.filename}} <i class="icon-remove neos-pull-right" {{action remove target="view"}}> </i>'),
+				template: Ember.Handlebars.compile('<span data-neos-identifier="{{unbound view.content.assetUuid}}"><img src="{{unbound view.content.previewImageResourceUri}}" {{bind-attr alt="view.content.filename"}} /></span>{{view.content.filename}} <span class="neos-button neos-asset-editor-remove" {{action remove target="view"}}></span>'),
+				attributeBindings: ['title'],
+				titleBinding: 'content.filename',
 				actions: {
 					remove: function() {
 						this.get('_parentView._parentView').removeAsset(this.get('content'));
@@ -85,11 +134,9 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 
 			var that = this;
 
-			var assetIdentifiers;
-			if (this.multiple) {
-				assetIdentifiers = $.parseJSON(value);
-			} else {
-				assetIdentifiers = [$.parseJSON(value)];
+			var assetIdentifiers = JSON.parse(value);
+			if (!this.multiple) {
+				assetIdentifiers = assetIdentifiers !== null ? [assetIdentifiers] : [];
 			}
 
 			if (assetIdentifiers.length > 0) {

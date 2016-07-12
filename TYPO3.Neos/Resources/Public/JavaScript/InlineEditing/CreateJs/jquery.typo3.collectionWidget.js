@@ -47,7 +47,7 @@ define(
 				vie.entities.get(vie.service('rdfa').getElementSubject(this.element))._enclosingCollectionWidget = that;
 				_.each(this.options.collection.models, function(entity, iterator) {
 					entity._enclosingCollectionWidget = that;
-					var id = entity.id.substring(1, entity.id.length - 1),
+					var id = entity.id.slice(1, -1),
 						$element = $('[about="' + id + '"]').first();
 					if ($element.hasClass('neos-not-inline-editable')) {
 						NotInlineEditableOverlay.create({$element: $element, entity: entity}).appendTo($element);

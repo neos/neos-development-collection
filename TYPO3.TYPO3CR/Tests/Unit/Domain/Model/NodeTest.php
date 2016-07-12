@@ -1,16 +1,15 @@
 <?php
 namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
-use TYPO3\TYPO3CR\Domain\Model\Node;
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 /**
  * Testcase for the "Node" domain model
@@ -22,19 +21,19 @@ class NodeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function createNodeFromTemplateUsesWorkspaceFromContextForNodeData()
     {
-        $workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', false);
-        $parentNodeData = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array(), '', false);
-        $newNodeData = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array(), '', false);
+        $workspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
+        $parentNodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
+        $newNodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
 
-        $mockFirstLevelNodeCache = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Cache\FirstLevelNodeCache');
-        $newNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', false);
+        $mockFirstLevelNodeCache = $this->createMock('TYPO3\TYPO3CR\Domain\Service\Cache\FirstLevelNodeCache');
+        $newNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Node')->disableOriginalConstructor()->getMock();
         $context = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
         $context->expects($this->any())->method('getFirstLevelNodeCache')->will($this->returnValue($mockFirstLevelNodeCache));
         $nodeTemplate = new \TYPO3\TYPO3CR\Domain\Model\NodeTemplate();
 
         $context->expects($this->any())->method('getWorkspace')->will($this->returnValue($workspace));
 
-        $nodeFactory = $this->getMock('TYPO3\TYPO3CR\Domain\Factory\NodeFactory');
+        $nodeFactory = $this->createMock('TYPO3\TYPO3CR\Domain\Factory\NodeFactory');
 
         $parentNode = new \TYPO3\TYPO3CR\Domain\Model\Node($parentNodeData, $context);
 
@@ -62,7 +61,7 @@ class NodeTest extends \TYPO3\Flow\Tests\UnitTestCase
         $mockNodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->getMock();
         $this->inject($node, 'nodeDataRepository', $mockNodeDataRepository);
 
-        $expectedNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $expectedNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
         $mockNodeDataRepository->expects($this->once())->method('findFirstByParentAndNodeTypeInContext')->with('/foo/bar', null, $mockContext)->will($this->returnValue($expectedNode));
 
         $primaryChildNode = $node->getPrimaryChildNode();
@@ -81,7 +80,6 @@ class NodeTest extends \TYPO3\Flow\Tests\UnitTestCase
             'empty node path' => array(
                 'path' => '',
                 'expected' => array(
-                    0 => ''
                 )
             ),
             'node path starting with /' => array(
@@ -150,13 +148,38 @@ class NodeTest extends \TYPO3\Flow\Tests\UnitTestCase
     }
 
     /**
+     * @return array
+     */
+    public function dataSourceForInvalidContextPaths()
+    {
+        return [
+            'invalid dimension values' => [
+                'path' => 'features@user-admin;language=de_DE,mul_ZZ=something'
+            ],
+            'superfluous separator with more data' => [
+                'path' => 'features@user-admin;language=de_DE;mul_ZZ=multilanguage'
+            ]
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider dataSourceForInvalidContextPaths
+     */
+    public function contextPathPatternShouldNotMatchOnInvalidPaths($path)
+    {
+        $result = preg_match(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::MATCH_PATTERN_CONTEXTPATH, $path, $matches);
+        $this->assertEquals(0, $result, 'The invalid context path yielded matches: ' . print_r($matches, true));
+    }
+
+    /**
      * @test
      */
     public function createNodeWithAutoCreatedChildNodesAndNoIdentifierUsesGeneratedIdentifierOfNodeForChildNodes()
     {
         $mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
         $mockContext->expects($this->any())->method('getTargetDimensions')->will($this->returnValue(array('language' => 'mul_ZZ')));
-        $mockFirstLevelNodeCache = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Cache\FirstLevelNodeCache');
+        $mockFirstLevelNodeCache = $this->createMock('TYPO3\TYPO3CR\Domain\Service\Cache\FirstLevelNodeCache');
         $mockContext->expects($this->any())->method('getFirstLevelNodeCache')->will($this->returnValue($mockFirstLevelNodeCache));
 
         $mockNodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
@@ -170,9 +193,9 @@ class NodeTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $i = 0;
         $generatedIdentifiers = array();
-        $node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('createSingleNode'), array($mockNodeData, $mockContext));
+        $node = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Node')->setMethods(array('createSingleNode'))->setConstructorArgs(array($mockNodeData, $mockContext))->getMock();
         $node->expects($this->any())->method('createSingleNode')->will($this->returnCallback(function () use (&$i, &$generatedIdentifiers, $mockSubNodeType) {
-            $newNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+            $newNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
             $newNode->expects($this->any())->method('getIdentifier')->will($this->returnValue('node-' . $i++));
 
             $newNode->expects($this->once())->method('createNode')->with('subnode1', $mockSubNodeType, $this->callback(function ($identifier) use (&$generatedIdentifiers, $i) {

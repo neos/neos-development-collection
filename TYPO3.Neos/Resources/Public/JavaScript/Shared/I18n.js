@@ -39,6 +39,7 @@ define(
 	return Ember.Object.extend({
 		defaultPackage: 'TYPO3.Neos',
 		defaultSource: 'Main',
+		initialized: false,
 
 		/**
 		 * @return {void}
@@ -48,9 +49,17 @@ define(
 				translateHelperClosure;
 
 			translateHelperClosure = function (options) {
-				var attrs;
-				attrs = options.hash;
-				return self.translate(attrs.id, attrs.fallback, attrs.package, attrs.source);
+				var attrs = options.hash;
+				parameters = Object.keys(attrs).reduce(function(parameters, attr) {
+					if (!attr.match(/(id|fallback|package|source|boundOptions|(.+)Binding)$/)) {
+						parameters.push(attr);
+					}
+					return parameters;
+				}, []).reduce(function(parameters, attr) {
+					parameters[attr] = attrs[attr];
+					return parameters;
+				}, {});
+				return self.translate(attrs.id, attrs.fallback, attrs.package, attrs.source, parameters);
 			};
 
 			Ember.Handlebars.registerHelper('translate', translateHelperClosure);
@@ -72,6 +81,12 @@ define(
 		 * @returns {string}
 		 */
 		translate: function(id, fallback, packageKey, source, parameters, context) {
+			// Prevent caching missing keys when used too early
+			if (this.get('initialized') === false) {
+				console.error('Labels not initialized when trying to translate "' + id + '"');
+				return;
+			}
+
 			var translatedValue, translationParts;
 			fallback = fallback || id;
 			packageKey = packageKey || this.defaultPackage;
@@ -89,7 +104,7 @@ define(
 				return fallback;
 			}
 
-			if (parameters && parameters.length > 0) {
+			if (!_.isEmpty(parameters)) {
 				translatedValue = this._resolvePlaceholders(translatedValue, parameters);
 			}
 
@@ -163,7 +178,7 @@ define(
 				var placeholderElements = contentBetweenBrackets.replace(' ', '').split(',');
 
 				var valueIndex = placeholderElements[0];
-				if (!parameters[valueIndex]) {
+				if (typeof parameters[valueIndex] === undefined) {
 					window.console.error('Placeholder "' + valueIndex + '" was not provided, make sure you provide values for every placeholder.');
 					break;
 				}

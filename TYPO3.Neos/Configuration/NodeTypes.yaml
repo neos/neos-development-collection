@@ -1,6 +1,6 @@
 # Base node, which just configures the "removed" property of the node.
 'TYPO3.Neos:Node':
-  label: "${String.cropAtWord(String.trim(String.stripTags(q(node).property('title') || q(node).property('text') || ((I18n.translate(node.nodeType.label) || node.nodeType.name) + ' (' + node.name + ')'))), 100, '...')}"
+  label: "${String.cropAtWord(String.trim(String.stripTags(String.pregReplace(q(node).property('title') || q(node).property('text') || ((I18n.translate(node.nodeType.label) || node.nodeType.name) + (node.autoCreated ? ' (' + node.name + ')' : '')), '/<br\\W*?\\/?>|\\x{00a0}|[[^:print:]]|\\s+/u', ' '))), 100, '...')}"
   abstract: TRUE
   ui:
     inspector:
@@ -10,15 +10,18 @@
           position: 10
           icon: 'icon-pencil'
         meta:
+          label: i18n
           position: 20
           icon: 'icon-cog'
       groups:
         type:
           label: i18n
           tab: 'meta'
+          icon: 'icon-exchange'
           position: 990
         nodeInfo:
           label: i18n
+          icon: 'icon-info'
           tab: 'meta'
           position: 1000
           collapsed: true
@@ -26,7 +29,7 @@
         nodeInfo:
           label: i18n
           group: 'nodeInfo'
-          view: 'Content/Inspector/Views/NodeInfoView'
+          view: 'TYPO3.Neos/Inspector/Views/NodeInfoView'
   properties:
     _removed:
       type: boolean
@@ -48,7 +51,7 @@
         inspector:
           group: 'type'
           position: 100
-          editor: 'Content/Inspector/Editors/NodeTypeEditor'
+          editor: 'TYPO3.Neos/Inspector/Editors/NodeTypeEditor'
           editorOptions:
             placeholder: 'Loading ...'
             baseNodeType: ''
@@ -60,7 +63,8 @@
     inspector:
       groups:
         visibility:
-          label: 'i18n:TYPO3.Neos:Inspector:groups.visibility'
+          label: 'TYPO3.Neos:Inspector:groups.visibility'
+          icon: 'icon-eye'
           position: 100
           tab: meta
   properties:
@@ -80,6 +84,7 @@
       groups:
         visibility:
           label: 'TYPO3.Neos:Inspector:groups.visibility'
+          icon: 'icon-eye'
           position: 100
           tab: meta
   properties:
@@ -130,6 +135,7 @@
         document:
           label: i18n
           position: 10
+          icon: 'icon-file'
   properties:
     _nodeType:
       ui:
@@ -205,6 +211,10 @@
                 label: i18n
               selectedTarget:
                 label: i18n
+          editorListeners:
+            removeTargetIfNotUsed:
+              property: 'target'
+              handler: 'TYPO3.Neos/Inspector/Handlers/ShortcutHandler'
     target:
       type: string
       ui:
@@ -213,6 +223,10 @@
         inspector:
           group: 'document'
           editor: 'TYPO3.Neos/Inspector/Editors/LinkEditor'
+          editorListeners:
+            setTargetModeIfNotEmpty:
+              property: 'targetMode'
+              handler: 'TYPO3.Neos/Inspector/Handlers/ShortcutHandler'
 
 # Base class for all "Plugins"; that are PHP controllers being called during the rendering.
 'TYPO3.Neos:Plugin':
@@ -227,6 +241,7 @@
       groups:
         pluginSettings:
           label: i18n
+          icon: 'icon-sliders'
   postprocessors:
     'PluginPostprocessor':
       postprocessor: 'TYPO3\Neos\NodeTypePostprocessor\PluginNodeTypePostprocessor'
@@ -244,6 +259,7 @@
         pluginViews:
           label: i18n
           position: 100
+          icon: 'icon-puzzle-piece'
   properties:
     plugin:
       type: string
@@ -252,7 +268,7 @@
         reloadIfChanged: TRUE
         inspector:
           group: 'pluginViews'
-          position: 20
+          position: 10
           editor: 'TYPO3.Neos/Inspector/Editors/MasterPluginEditor'
     view:
       type: string
@@ -275,7 +291,7 @@
       '*': FALSE
   ui:
     label: i18n
-    icon: 'icon-unchecked'
+    icon: 'icon-square-o'
     group: 'general'
     search:
       searchCategory: 'Content'

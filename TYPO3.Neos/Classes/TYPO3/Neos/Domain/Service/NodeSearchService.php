@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\Domain\Service;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
@@ -48,7 +48,7 @@ class NodeSearchService implements NodeSearchServiceInterface
      *
      * TODO: Implement a better search when Flow offer the possibility
      *
-     * @param string $term
+     * @param string|array $term search term
      * @param array $searchNodeTypes
      * @param Context $context
      * @param NodeInterface $startingPoint
@@ -56,7 +56,7 @@ class NodeSearchService implements NodeSearchServiceInterface
      */
     public function findByProperties($term, array $searchNodeTypes, Context $context, NodeInterface $startingPoint = null)
     {
-        if (strlen($term) === 0) {
+        if (empty($term)) {
             throw new \InvalidArgumentException('"term" cannot be empty: provide a term to search for.', 1421329285);
         }
         $searchResult = array();

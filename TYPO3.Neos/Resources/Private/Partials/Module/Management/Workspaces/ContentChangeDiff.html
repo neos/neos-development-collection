@@ -1,0 +1,79 @@
+{namespace neos=TYPO3\Neos\ViewHelpers}
+{namespace m=TYPO3\Media\ViewHelpers}
+<div class="neos-content-diff">
+    <table class="neos-content-diff">
+        <tr>
+            <th>
+                <f:if condition="{change.configuration.ui.icon}">
+                    <i class="{change.configuration.ui.icon}" title="{f:if(condition: change.node.nodeType.label, then: '{neos:backend.translate(id: change.node.nodeType.label)}', else: '{change.node.nodeType.name}')}" data-neos-toggle="tooltip"></i>
+                </f:if>
+                {change.node.label}
+            </th>
+            <f:if condition="{contentDimensions}">
+                <th>
+                    <f:render partial="Module/Shared/NodeContentDimensionsInformation.html" arguments="{contentDimensions: contentDimensions, node: change.node.nodeData}" />
+                </th>
+            </f:if>
+            <th>
+                <span title="{neos:backend.translate(id: 'lastModification')}: {change.node.lastModificationDateTime -> f:format.date(format: 'Y-m-d H:i')}" data-neos-toggle="tooltip"><i class="icon-time"></i> {change.node.lastModificationDateTime -> m:format.relativeDate()}</span>
+            </th>
+        </tr>
+        <f:for each="{change.contentChanges}" key="propertyName" as="contentChanges">
+            <tr>
+                <th colspan="3">{neos:backend.translate(id: contentChanges.propertyLabel)}</th>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <f:if condition="{contentChanges.type} == 'text'">
+                        <table>
+                            <f:for each="{contentChanges.diff}" key="index" as="blocks">
+                                <f:for each="{blocks}" as="block">
+                                    <tr>
+                                        <td>
+                                            <f:for each="{block.base.lines}" as="line">
+                                                {line -> f:format.raw()}
+                                            </f:for>
+                                        </td>
+                                        <td>
+                                            <f:for each="{block.changed.lines}" as="line">
+                                                {line -> f:format.raw()}
+                                            </f:for>
+                                        </td>
+                                    </tr>
+                                </f:for>
+                            </f:for>
+                        </table>
+                    </f:if>
+                    <f:if condition="{contentChanges.type} == 'asset'">
+                        <table>
+                            <tr>
+                                <td>
+                                    <f:if condition="{contentChanges.original}">
+                                        <m:image asset="{contentChanges.original}" allowCropping="false" maximumWidth="500" maximumHeight="500" alt=""/>
+                                    </f:if>
+                                </td>
+                                <td>
+                                    <f:if condition="{contentChanges.changed}">
+                                        <m:image asset="{contentChanges.changed}" allowCropping="false" maximumWidth="500" maximumHeight="500" alt=""/>
+                                    </f:if>
+                                </td>
+                            </tr>
+                        </table>
+                    </f:if>
+                    <f:if condition="{contentChanges.type} == 'datetime'">
+                        <table>
+                            <tr>
+                                <td>
+                                    <f:format.date format="d.m.Y H:i:s" date="{contentChanges.original}" />
+                                </td>
+                                <td>
+                                    <f:format.date format="d.m.Y H:i:s" date="{contentChanges.changed}" />
+                                </td>
+                            </tr>
+                        </table>
+                    </f:if>
+                </td>
+            </tr>
+        </f:for>
+    </table>
+</div>

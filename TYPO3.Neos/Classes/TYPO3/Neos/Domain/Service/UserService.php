@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\Domain\Service;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Security\Account;
@@ -18,10 +18,12 @@ use TYPO3\Flow\Security\AccountRepository;
 use TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface;
 use TYPO3\Flow\Security\Authentication\Token\UsernamePassword;
 use TYPO3\Flow\Security\Authentication\TokenInterface;
+use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Security\Cryptography\HashService;
 use TYPO3\Flow\Security\Exception\NoSuchRoleException;
 use TYPO3\Flow\Security\Policy\PolicyService;
+use TYPO3\Flow\Security\Policy\Role;
 use TYPO3\Flow\Utility\Now;
 use TYPO3\Neos\Domain\Exception;
 use TYPO3\Neos\Domain\Model\User;
@@ -32,6 +34,7 @@ use TYPO3\Party\Domain\Repository\PartyRepository;
 use TYPO3\Party\Domain\Service\PartyService;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use TYPO3\Neos\Utility\User as UserUtility;
 
 /**
  * A service for managing users
@@ -41,6 +44,7 @@ use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
  */
 class UserService
 {
+
     /**
      * Might be configurable in the future, for now centralising this as a "constant"
      *
@@ -104,9 +108,16 @@ class UserService
 
     /**
      * @Flow\Inject
+     * @var PrivilegeManagerInterface
+     */
+    protected $privilegeManager;
+
+    /**
+     * @Flow\Inject
      * @var Context
      */
     protected $securityContext;
+
     /**
      * @Flow\Inject
      * @var HashService
@@ -118,6 +129,11 @@ class UserService
      * @var Now
      */
     protected $now;
+
+    /**
+     * @var array
+     */
+    protected $runtimeUserCache = [];
 
     /**
      * Retrieves a list of all existing users
@@ -135,12 +151,17 @@ class UserService
      *
      * @param string $username The username
      * @param string $authenticationProviderName Name of the authentication provider to use. Example: "Typo3BackendProvider"
-     * @return User The user, or NULL if the user does not exist
+     * @return User The user, or null if the user does not exist
      * @throws Exception
      * @api
      */
     public function getUser($username, $authenticationProviderName = null)
     {
+        if ($authenticationProviderName !== null && isset($this->runtimeUserCache['a_' . $authenticationProviderName][$username])) {
+            return $this->runtimeUserCache['a_' . $authenticationProviderName][$username];
+        } elseif (isset($this->runtimeUserCache['u_' . $username])) {
+            return $this->runtimeUserCache['u_' . $username];
+        }
         $account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, $authenticationProviderName ?: $this->defaultAuthenticationProviderName);
         if (!$account instanceof Account) {
             return null;
@@ -149,23 +170,55 @@ class UserService
         if (!$user instanceof User) {
             throw new Exception(sprintf('Unexpected user type "%s". An account with the identifier "%s" exists, but the corresponding party is not a Neos User.', get_class($user), $username), 1422270948);
         }
+        if ($authenticationProviderName !== null) {
+            if (!isset($this->runtimeUserCache['a_' . $authenticationProviderName])) {
+                $this->runtimeUserCache['a_' . $authenticationProviderName] = [];
+            }
+            $this->runtimeUserCache['a_' . $authenticationProviderName][$username] = $user;
+        } else {
+            $this->runtimeUserCache['u_' . $username] = $user;
+        }
         return $user;
+    }
+
+    /**
+     * Returns the username of the given user
+     *
+     * Technically, this method will look for the user's backend account (or, if authenticationProviderName is specified,
+     * for the account matching the given authentication provider) and return the account's identifier.
+     *
+     * @param User $user
+     * @param string $authenticationProviderName
+     * @return string The username or null if the given user does not have a backend account
+     */
+    public function getUsername(User $user, $authenticationProviderName = null)
+    {
+        $authenticationProviderName = $authenticationProviderName ?: $this->defaultAuthenticationProviderName;
+        foreach ($user->getAccounts() as $account) {
+            /** @var Account $account */
+            if ($account->getAuthenticationProviderName() === $authenticationProviderName) {
+                return $account->getAccountIdentifier();
+            }
+        }
+        return null;
     }
 
     /**
      * Returns the currently logged in user, if any
      *
-     * @return User The currently logged in user, or NULL
+     * @return User The currently logged in user, or null
      * @api
      */
     public function getCurrentUser()
     {
-        $account = $this->securityContext->getAccount();
-        if ($account !== null) {
-            return $this->getUser($account->getAccountIdentifier());
-        } else {
-            return null;
+        if ($this->securityContext->canBeInitialized() === true) {
+            $account = $this->securityContext->getAccount();
+            if ($account !== null) {
+                return $this->getUser($account->getAccountIdentifier());
+            }
         }
+
+        return null;
     }
 
     /**
@@ -215,14 +268,15 @@ class UserService
         }
         $roleIdentifiers = $this->normalizeRoleIdentifiers($roleIdentifiers);
         $account = $this->accountFactory->createAccountWithPassword($username, $password, $roleIdentifiers, $authenticationProviderName ?: $this->defaultAuthenticationProviderName);
-        $user->addAccount($account);
+        $this->partyService->assignAccountToParty($account, $user);
 
         $this->partyRepository->add($user);
         $this->accountRepository->add($account);
 
-        $this->createUserWorkspace($username);
+        $this->createPersonalWorkspace($user, $account);
 
         $this->emitUserCreated($user);
+
         return $user;
     }
 
@@ -232,6 +286,7 @@ class UserService
      * @param User $user The created user
      * @return void
      * @Flow\Signal
+     * @api
      */
     public function emitUserCreated(User $user)
     {
@@ -252,10 +307,13 @@ class UserService
         foreach ($user->getAccounts() as $account) {
             /** @var Account $account */
             if ($account->hasRole($backendUserRole)) {
-                $this->deleteUserWorkspaces($account->getAccountIdentifier());
+                $this->deletePersonalWorkspace($account->getAccountIdentifier());
             }
             $this->accountRepository->remove($account);
         }
+
+        $this->removeOwnerFromUsersWorkspaces($user);
+
         $this->partyRepository->remove($user);
         $this->emitUserDeleted($user);
     }
@@ -266,6 +324,7 @@ class UserService
      * @param User $user The created user
      * @return void
      * @Flow\Signal
+     * @api
      */
     public function emitUserDeleted(User $user)
     {
@@ -333,6 +392,7 @@ class UserService
         foreach ($user->getAccounts() as $account) {
             $counter += $this->addRoleToAccount($account, $roleIdentifier);
         }
+
         return $counter;
     }
 
@@ -351,6 +411,7 @@ class UserService
         foreach ($user->getAccounts() as $account) {
             $counter += $this->removeRoleFromAccount($account, $roleIdentifier);
         }
+
         return $counter;
     }
 
@@ -360,6 +421,7 @@ class UserService
      * @param User $user The created user
      * @return void
      * @Flow\Signal
+     * @api
      */
     public function emitUserUpdated(User $user)
     {
@@ -410,6 +472,7 @@ class UserService
             $account->addRole($role);
             $this->accountRepository->update($account);
             $this->emitRolesAdded($account, array($role));
+
             return 1;
         }
 
@@ -423,6 +486,7 @@ class UserService
      * @param array<Role> An array of Role objects which have been added for that account
      * @return void
      * @Flow\Signal
+     * @api
      */
     public function emitRolesAdded(Account $account, array $roles)
     {
@@ -447,6 +511,7 @@ class UserService
             $account->removeRole($role);
             $this->accountRepository->update($account);
             $this->emitRolesRemoved($account, array($role));
+
             return 1;
         }
 
@@ -460,6 +525,7 @@ class UserService
      * @param array<Role> An array of Role objects which have been removed
      * @return void
      * @Flow\Signal
+     * @api
      */
     public function emitRolesRemoved(Account $account, array $roles)
     {
@@ -488,6 +554,7 @@ class UserService
      * @param User $user The user
      * @return void
      * @Flow\Signal
+     * @api
      */
     public function emitUserActivated(User $user)
     {
@@ -502,8 +569,8 @@ class UserService
      */
     public function deactivateUser(User $user)
     {
+        /** @var Account $account */
         foreach ($user->getAccounts() as $account) {
-            /** @var Account $account */
             $account->setExpirationDate($this->now);
             $this->accountRepository->update($account);
         }
@@ -511,9 +578,105 @@ class UserService
     }
 
     /**
+     * Checks if the current user may publish to the given workspace according to one the roles of the user's accounts
+     *
+     * In future versions, this logic may be implemented in Neos in a more generic way (for example, by means of an
+     * ACL object), but for now, this method exists in order to at least centralize and encapsulate the required logic.
+     *
+     * @param Workspace $workspace The workspace
+     * @return boolean
+     */
+    public function currentUserCanPublishToWorkspace(Workspace $workspace)
+    {
+        if ($workspace->getName() === 'live') {
+            return $this->securityContext->hasRole('TYPO3.Neos:LivePublisher');
+        }
+
+        if ($workspace->getOwner() === $this->getCurrentUser() || $workspace->getOwner() === null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if the current user may read the given workspace according to one the roles of the user's accounts
+     *
+     * In future versions, this logic may be implemented in Neos in a more generic way (for example, by means of an
+     * ACL object), but for now, this method exists in order to at least centralize and encapsulate the required logic.
+     *
+     * @param Workspace $workspace The workspace
+     * @return boolean
+     */
+    public function currentUserCanReadWorkspace(Workspace $workspace)
+    {
+        if ($workspace->getName() === 'live') {
+            return true;
+        }
+
+        if ($workspace->getOwner() === $this->getCurrentUser() || $workspace->getOwner() === null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if the current user may manage the given workspace according to one the roles of the user's accounts
+     *
+     * In future versions, this logic may be implemented in Neos in a more generic way (for example, by means of an
+     * ACL object), but for now, this method exists in order to at least centralize and encapsulate the required logic.
+     *
+     * @param Workspace $workspace The workspace
+     * @return boolean
+     */
+    public function currentUserCanManageWorkspace(Workspace $workspace)
+    {
+        if ($workspace->isPersonalWorkspace()) {
+            return false;
+        }
+
+        if ($workspace->isInternalWorkspace()) {
+            return $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces');
+        }
+
+        if ($workspace->isPrivateWorkspace() && $workspace->getOwner() == $this->getCurrentUser()) {
+            return $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces');
+        }
+
+        if ($workspace->isPrivateWorkspace() && $workspace->getOwner() != $this->getCurrentUser()) {
+            return $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces');
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if the current user may transfer ownership of the given workspace
+     *
+     * In future versions, this logic may be implemented in Neos in a more generic way (for example, by means of an
+     * ACL object), but for now, this method exists in order to at least centralize and encapsulate the required logic.
+     *
+     * @param Workspace $workspace The workspace
+     * @return boolean
+     */
+    public function currentUserCanTransferOwnershipOfWorkspace(Workspace $workspace)
+    {
+        if ($workspace->isPersonalWorkspace()) {
+            return false;
+        }
+
+        // The privilege to manage shared workspaces is needed, because regular editors should not change ownerships
+        // of their internal workspaces, even if it was technically possible, because they wouldn't be able to change
+        // ownership back to themselves.
+        return $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces');
+    }
+
+    /**
      * Returns the default authentication provider name
      *
      * @return string
+     * @api
      */
     public function getDefaultAuthenticationProviderName()
     {
@@ -526,6 +689,7 @@ class UserService
      * @param User $user The user
      * @return void
      * @Flow\Signal
+     * @api
      */
     public function emitUserDeactivated(User $user)
     {
@@ -542,6 +706,7 @@ class UserService
         foreach ($roleIdentifiers as &$roleIdentifier) {
             $roleIdentifier = $this->normalizeRoleIdentifier($roleIdentifier);
         }
+
         return $roleIdentifiers;
     }
 
@@ -560,25 +725,65 @@ class UserService
         if (!$this->policyService->hasRole($roleIdentifier)) {
             throw new NoSuchRoleException(sprintf('The role %s does not exist.', $roleIdentifier), 1422540184);
         }
+
         return $roleIdentifier;
     }
 
     /**
-     * Creates a user workspace for the given user's account if it does not exist already.
+     * Returns an array with all roles of a user's accounts, including parent roles, the "Everybody" role and the
+     * "AuthenticatedUser" role, assuming that the user is logged in.
      *
-     * @param string $accountIdentifier Identifier of the user's account to create workspaces for
-     * @return void
+     * @param User $user The user
+     * @return array
      */
-    protected function createUserWorkspace($accountIdentifier)
+    protected function getAllRoles(User $user)
     {
-        $userWorkspace = $this->workspaceRepository->findByIdentifier('user-' . $accountIdentifier);
+        $roles = array(
+            'TYPO3.Flow:Everybody' => $this->policyService->getRole('TYPO3.Flow:Everybody'),
+            'TYPO3.Flow:AuthenticatedUser' => $this->policyService->getRole('TYPO3.Flow:AuthenticatedUser')
+        );
+
+        /** @var Account $account */
+        foreach ($user->getAccounts() as $account) {
+            $accountRoles = $account->getRoles();
+            /** @var $currentRole Role */
+            foreach ($accountRoles as $currentRole) {
+                if (!in_array($currentRole, $roles)) {
+                    $roles[$currentRole->getIdentifier()] = $currentRole;
+                }
+                /** @var $currentParentRole Role */
+                foreach ($currentRole->getAllParentRoles() as $currentParentRole) {
+                    if (!in_array($currentParentRole, $roles)) {
+                        $roles[$currentParentRole->getIdentifier()] = $currentParentRole;
+                    }
+                }
+            }
+        }
+
+        return $roles;
+    }
+
+    /**
+     * Creates a personal workspace for the given user's account if it does not exist already.
+     *
+     * @param User $user The new user to create a workspace for
+     * @param Account $account The user's backend account
+     * @throws \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
+     */
+    protected function createPersonalWorkspace(User $user, Account $account)
+    {
+        $userWorkspaceName = UserUtility::getPersonalWorkspaceNameForUsername($account->getAccountIdentifier());
+        $userWorkspace = $this->workspaceRepository->findByIdentifier($userWorkspaceName);
         if ($userWorkspace === null) {
             $liveWorkspace = $this->workspaceRepository->findByIdentifier('live');
             if (!($liveWorkspace instanceof Workspace)) {
                 $liveWorkspace = new Workspace('live');
+                $liveWorkspace->setTitle('Live');
                 $this->workspaceRepository->add($liveWorkspace);
             }
-            $userWorkspace = new Workspace('user-' . $accountIdentifier, $liveWorkspace);
+
+            $userWorkspace = new Workspace($userWorkspaceName, $liveWorkspace, $user);
+            $userWorkspace->setTitle((string)$user->getName());
             $this->workspaceRepository->add($userWorkspace);
         }
     }
@@ -590,12 +795,27 @@ class UserService
      * @param string $accountIdentifier Identifier of the user's account
      * @return void
      */
-    protected function deleteUserWorkspaces($accountIdentifier)
+    protected function deletePersonalWorkspace($accountIdentifier)
     {
-        $userWorkspace = $this->workspaceRepository->findByIdentifier('user-' . $accountIdentifier);
+        $userWorkspace = $this->workspaceRepository->findByIdentifier(UserUtility::getPersonalWorkspaceNameForUsername($accountIdentifier));
         if ($userWorkspace instanceof Workspace) {
             $this->publishingService->discardAllNodes($userWorkspace);
             $this->workspaceRepository->remove($userWorkspace);
+        }
+    }
+
+    /**
+     * Removes ownership of all workspaces currently owned by the given user
+     *
+     * @param User $user The user currently owning workspaces
+     * @return void
+     */
+    protected function removeOwnerFromUsersWorkspaces(User $user)
+    {
+        /** @var Workspace $workspace */
+        foreach ($this->workspaceRepository->findByOwner($user) as $workspace) {
+            $workspace->setOwner(null);
+            $this->workspaceRepository->update($workspace);
         }
     }
 }

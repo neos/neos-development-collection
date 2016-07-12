@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TypoScript\Tests\Unit\Core;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TypoScript".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TypoScript package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 /**
  * Testcase for the TypoScript Parser
@@ -33,11 +33,10 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     protected function setUp()
     {
-        $this->mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface', array(), array(), '', false);
+        $this->mockObjectManager = $this->createMock('TYPO3\Flow\Object\ObjectManagerInterface');
         $this->mockObjectManager->expects($this->any())->method('isRegistered')->will($this->returnCallback(array($this, 'objectManagerIsRegisteredCallback')));
 
-        $parserClassName = $this->buildAccessibleProxy('TYPO3\TypoScript\Core\Parser');
-        $this->parser = new $parserClassName();
+        $this->parser = $this->getAccessibleMock('TYPO3\TypoScript\Core\Parser', array('dummy'));
         $this->parser->_set('objectManager', $this->mockObjectManager);
     }
 
@@ -65,16 +64,16 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
         $arguments = array_merge(func_get_args(), array($this->mockObjectManager));
         $objectName = array_shift($arguments);
         switch ($objectName) {
-            case 'TYPO3\TypoScript\Fixtures\Text' :
-            case 'TYPO3\TypoScript\Fixtures\Page' :
-            case 'TYPO3\TypoScript\Fixtures\ContentArray' :
-            case 'TYPO3\TypoScript\Fixtures\ObjectWithArrayProperty' :
-            case 'TYPO3\TypoScript\Processors\WrapProcessor' :
-            case 'TYPO3\TypoScript\Processors\SubstringProcessor' :
-            case 'TYPO3\TypoScript\Processors\MultiplyProcessor' :
-            case 'TYPO3\SomeOther\Namespace\MyWrapProcessor' :
+            case 'TYPO3\TypoScript\Fixtures\Text':
+            case 'TYPO3\TypoScript\Fixtures\Page':
+            case 'TYPO3\TypoScript\Fixtures\ContentArray':
+            case 'TYPO3\TypoScript\Fixtures\ObjectWithArrayProperty':
+            case 'TYPO3\TypoScript\Processors\WrapProcessor':
+            case 'TYPO3\TypoScript\Processors\SubstringProcessor':
+            case 'TYPO3\TypoScript\Processors\MultiplyProcessor':
+            case 'TYPO3\SomeOther\Namespace\MyWrapProcessor':
                 return true;
-            default :
+            default:
                 return false;
         }
     }
@@ -307,6 +306,12 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'Overridden value'
+            ),
+            'firstObject4' => array(
+                '__objectType' => 'TYPO3.TypoScript:Text',
+                '__value' => null,
+                '__eelExpression' => null,
+                'value' => 'Ugly syntax with no space works!'
             ),
             'secondObject' => array(
                 'subObject' => array(

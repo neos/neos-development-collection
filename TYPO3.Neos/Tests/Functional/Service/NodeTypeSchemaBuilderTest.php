@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\Tests\Functional\Service;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Tests\FunctionalTestCase;
 
@@ -59,22 +59,14 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
     {
         $this->assertTrue(array_key_exists('TYPO3.Neos.BackendSchemaControllerTest:AlohaNodeType', $this->schema['nodeTypes']), 'AlohaNodeType');
 
-        $expectedSchema = array(
-            'superTypes' => array('TYPO3.Neos.BackendSchemaControllerTest:ParentAlohaNodeType' => true),
-            'properties' => array(
-                'text' => array(
-                    'ui' => array(
-                        'aloha' => array(
-                            'fallbackCase' => array('defined', 'as', 'plain', 'array'),
-                            'sampleCase' => array('h3', 'sup')
-                        )
-                    )
-                )
-            ),
-            'label' => ''
+        $expectedSuperTypes = array('TYPO3.Neos.BackendSchemaControllerTest:ParentAlohaNodeType' => true);
+        $expectedPropertyConfiguration = array(
+            'fallbackCase' => array('defined', 'as', 'plain', 'array'),
+            'sampleCase' => array('h3', 'sup')
         );
 
-        $this->assertEquals($expectedSchema, $this->schema['nodeTypes']['TYPO3.Neos.BackendSchemaControllerTest:AlohaNodeType']);
+        $this->assertEquals($expectedSuperTypes, $this->schema['nodeTypes']['TYPO3.Neos.BackendSchemaControllerTest:AlohaNodeType']['superTypes']);
+        $this->assertEquals($expectedPropertyConfiguration, $this->schema['nodeTypes']['TYPO3.Neos.BackendSchemaControllerTest:AlohaNodeType']['properties']['text']['ui']['aloha']);
     }
 
     /**
@@ -102,7 +94,7 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
 
         $this->assertArrayNotHasKey('h3', $alohaConfiguration['sampleCase']);
         $this->assertArrayNotHasKey('sup', $alohaConfiguration['sampleCase']);
-        $this->assertArrayNotHasKey('shouldBeExcluded',  $alohaConfiguration['sampleCase']);
+        $this->assertArrayNotHasKey('shouldBeExcluded', $alohaConfiguration['sampleCase']);
 
         $this->assertEquals(array('defined', 'as', 'plain', 'array'), $alohaConfiguration['fallbackCase']);
         $this->assertEquals(array('h3', 'sup'), $alohaConfiguration['sampleCase']);

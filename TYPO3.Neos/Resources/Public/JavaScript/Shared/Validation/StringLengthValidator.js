@@ -25,8 +25,8 @@ define(
 			 * @return {void}
 			 */
 			isValid: function(value) {
-				var minimum = parseInt(this.get('options.minimum'), 0),
-					maximum = parseInt(this.get('options.maximum'), 10000);
+				var minimum = parseInt(this.get('options.minimum'), 10),
+					maximum = parseInt(this.get('options.maximum'), 10);
 				if (maximum < minimum) {
 					throw 'The maximum is less than the minimum.';
 				}
@@ -38,7 +38,7 @@ define(
 					} else if (minimum > 0) {
 						this.addError(I18n.translate('content.inspector.validators.stringLength.smallerThanMinimum', null, null, null, {minimum: minimum}));
 					} else {
-						this.addError(I18n.translate('content.inspector.validators.stringLength.greaterThanMaximum', null, null, null, {minimum: minimum}));
+						this.addError(I18n.translate('content.inspector.validators.stringLength.greaterThanMaximum', null, null, null, {maximum: maximum}));
 					}
 				}
 			}

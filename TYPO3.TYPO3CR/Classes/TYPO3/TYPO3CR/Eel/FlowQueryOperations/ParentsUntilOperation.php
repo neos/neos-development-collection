@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TYPO3CR\Eel\FlowQueryOperations;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3CR".         *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Eel\FlowQuery\Operations\AbstractOperation;
@@ -61,19 +61,15 @@ class ParentsUntilOperation extends AbstractOperation
         $output = array();
         $outputNodePaths = array();
         foreach ($flowQuery->getContext() as $contextNode) {
-            $siteNode = $contextNode->getContext()->getCurrentSiteNode();
-            $parentNodes = $this->getParents($contextNode, $siteNode);
-
-            if (isset($arguments[0]) && !empty($arguments[0])) {
-                $untilQuery = new FlowQuery($parentNodes);
-                $untilQuery->pushOperation('filter', array($arguments[0]));
-
+            $parentNodes = $this->getParents($contextNode);
+            if (isset($arguments[0]) && !empty($arguments[0] && isset($parentNodes[0]))) {
+                $untilQuery = new FlowQuery(array($parentNodes[0]));
+                $untilQuery->pushOperation('closest', array($arguments[0]));
                 $until = $untilQuery->get();
             }
 
-            if (isset($until) && !empty($until)) {
-                $until = end($until);
-                $parentNodes = $this->getNodesUntil($parentNodes, $until);
+            if (isset($until) && is_array($until) && !empty($until) && isset($until[0])) {
+                $parentNodes = $this->getNodesUntil($parentNodes, $until[0]);
             }
 
             if (is_array($parentNodes)) {
@@ -93,10 +89,14 @@ class ParentsUntilOperation extends AbstractOperation
         }
     }
 
-    protected function getParents(NodeInterface $contextNode, NodeInterface $siteNode)
+    /**
+     * @param NodeInterface $contextNode
+     * @return array
+     */
+    protected function getParents(NodeInterface $contextNode)
     {
         $parents = array();
-        while ($contextNode !== $siteNode && $contextNode->getParent() !== null) {
+        while ($contextNode->getParent() !== null) {
             $contextNode = $contextNode->getParent();
             $parents[] = $contextNode;
         }

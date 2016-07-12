@@ -1,3 +1,4 @@
+@browser
 Feature: Backend Login
   In order to access the Neos backend
   As a user of the system
@@ -11,7 +12,7 @@ Feature: Backend Login
 
   @fixtures @remote
   Scenario Outline: Login to backend with different roles
-    Given I imported the site "TYPO3.NeosDemoTypo3Org"
+    Given I imported the site "Neos.Demo"
     And I am not authenticated
     And the following users exist:
       | username | password | firstname | lastname | roles   |
@@ -30,7 +31,7 @@ Feature: Backend Login
 
   @fixtures @remote
   Scenario: Logout from backend stays on last edited page
-    Given I imported the site "TYPO3.NeosDemoTypo3Org"
+    Given I imported the site "Neos.Demo"
     And the following users exist:
       | username | password | firstname | lastname | roles  |
       | jdoe     | password | John      | Doe      | Editor |

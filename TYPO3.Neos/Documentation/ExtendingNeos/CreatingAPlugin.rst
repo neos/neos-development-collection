@@ -199,9 +199,9 @@ In the controller of your plugin you can access the value from TypoScript like t
 Linking to a Plugin
 ===================
 
-Inside of your Plugin you can use the usual f:link and f:uri ViewHelpers from fluid to link to other ControllerActions::
+Inside of your Plugin you can use the usual ``f:link.action`` and ``f:uri.action`` ViewHelpers from fluid to link to other ControllerActions::
 
-  <f:link.uri package="sarkosh.cdcollection" controller="standard" action="show" arguments="{collection: collection}" />
+  <f:link.action package="sarkosh.cdcollection" controller="standard" action="show" arguments="{collection: collection}" />
 
 
 If you want to create links to your plugin from outside the plugin context you have to use one of the following methods.
@@ -286,7 +286,13 @@ Optimizing the URLs
 
 By default Neos will create pretty verbose urls for your plugin. To avoid that you have to configure a proper routing for your Package.
 
-.. warning:: The documentation is not covering all aspects yet. Please have a Look at the :ref:`How To` Section as well.
+Plugin Request and Response
+---------------------------
+
+The plugin controller action is called as a child request within the parent request. Alike that, the response is also a
+child response of the parent and will be handed up to the parent.
+
+.. warning:: The documentation is not covering all aspects yet. Please have a Look at the :ref:`how-to` Section as well.
 
 .. Neos-Aware Plugin Development
 .. =============================

@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\Controller\Service;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
@@ -37,6 +37,12 @@ class AssetsController extends ActionController
     protected $tagRepository;
 
     /**
+     * @Flow\InjectConfiguration(package="TYPO3.Media", path="asyncThumbnails")
+     * @var boolean
+     */
+    protected $asyncThumbnails;
+
+    /**
      * @var array
      */
     protected $viewFormatToObjectNameMap = array(
@@ -54,6 +60,15 @@ class AssetsController extends ActionController
         'text/html',
         'application/json'
     );
+
+    /**
+     * @param \TYPO3\Flow\Mvc\View\ViewInterface $view
+     * @return void
+     */
+    public function initializeView(\TYPO3\Flow\Mvc\View\ViewInterface $view)
+    {
+        $view->assign('asyncThumbnails', $this->asyncThumbnails);
+    }
 
     /**
      * Shows a list of assets

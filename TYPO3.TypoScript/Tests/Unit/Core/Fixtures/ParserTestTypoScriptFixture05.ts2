@@ -17,6 +17,9 @@ firstObject2 = Text {
 firstObject3 < firstObject2 {
 	value = "Overridden value"
 }
+firstObject4 = Text{
+	value = "Ugly syntax with no space works!"
+}
 
 secondObject {
 	subObject = Text

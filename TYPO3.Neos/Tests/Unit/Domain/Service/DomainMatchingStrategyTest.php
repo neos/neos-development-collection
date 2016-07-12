@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\Tests\Unit\Domain\Service;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 /**
  * Testcase for the Content Service
@@ -22,12 +22,12 @@ class DomainMatchingStrategyTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getSortedMatchesReturnsOneGivenDomainIfItMatchesExactly()
     {
-        $mockDomains = array($this->getMock('TYPO3\Neos\Domain\Model\Domain', array(), array(), '', false));
-        $mockDomains[0]->expects($this->any())->method('getHostPattern')->will($this->returnValue('www.typo3.org'));
+        $mockDomains = array($this->getMockBuilder('TYPO3\Neos\Domain\Model\Domain')->disableOriginalConstructor()->getMock());
+        $mockDomains[0]->expects($this->any())->method('getHostPattern')->will($this->returnValue('www.neos.io'));
         $expectedDomains = array($mockDomains[0]);
 
         $strategy = new \TYPO3\Neos\Domain\Service\DomainMatchingStrategy();
-        $actualDomains = $strategy->getSortedMatches('www.typo3.org', $mockDomains);
+        $actualDomains = $strategy->getSortedMatches('www.neos.io', $mockDomains);
         $this->assertSame($expectedDomains, $actualDomains);
     }
 
@@ -37,10 +37,10 @@ class DomainMatchingStrategyTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function getSortedMatchesFiltersTheGivenDomainsByTheSpecifiedHostAndReturnsThemSortedWithBestMatchesFirst()
     {
         $mockDomains = array(
-            $this->getMock('TYPO3\Neos\Domain\Model\Domain', array('dummy'), array(), '', false),
-            $this->getMock('TYPO3\Neos\Domain\Model\Domain', array('dummy'), array(), '', false),
-            $this->getMock('TYPO3\Neos\Domain\Model\Domain', array('dummy'), array(), '', false),
-            $this->getMock('TYPO3\Neos\Domain\Model\Domain', array('dummy'), array(), '', false),
+            $this->getMockBuilder('TYPO3\Neos\Domain\Model\Domain')->disableOriginalConstructor()->setMethods(array('dummy'))->getMock(),
+            $this->getMockBuilder('TYPO3\Neos\Domain\Model\Domain')->disableOriginalConstructor()->setMethods(array('dummy'))->getMock(),
+            $this->getMockBuilder('TYPO3\Neos\Domain\Model\Domain')->disableOriginalConstructor()->setMethods(array('dummy'))->getMock(),
+            $this->getMockBuilder('TYPO3\Neos\Domain\Model\Domain')->disableOriginalConstructor()->setMethods(array('dummy'))->getMock(),
         );
 
         $mockDomains[0]->setHostPattern('*.typo3.org');
@@ -65,7 +65,7 @@ class DomainMatchingStrategyTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function getSortedMatchesReturnsNoMatchIfDomainIsLongerThanHostname()
     {
         $mockDomains = array(
-            $this->getMock('TYPO3\Neos\Domain\Model\Domain', array('dummy'), array(), '', false),
+            $this->getMockBuilder('TYPO3\Neos\Domain\Model\Domain')->disableOriginalConstructor()->setMethods(array('dummy'))->getMock(),
         );
 
         $mockDomains[0]->setHostPattern('flow.typo3.org');

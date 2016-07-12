@@ -1,19 +1,21 @@
 <?php
 namespace TYPO3\TYPO3CR\Domain\Model;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Utility\Now;
 use TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface;
 use TYPO3\TYPO3CR\Exception\WorkspaceException;
@@ -26,6 +28,11 @@ use TYPO3\TYPO3CR\Exception\WorkspaceException;
  */
 class Workspace
 {
+    /**
+     * This prefix determines if a given workspace (name) is a user workspace.
+     */
+    const PERSONAL_WORKSPACE_PREFIX = 'user-';
+
     /**
      * @var string
      * @Flow\Identity
@@ -50,6 +57,21 @@ class Workspace
      * @Flow\Validate(type="StringLength", options={ "minimum"=0, "maximum"=500 })
      */
     protected $description;
+
+    /**
+     * This property contains a UUID of the User object which is the owner of this workspace.
+     * We can't use a real many-to-many relation here, because the User implementation will come from a different
+     * package (e.g. Neos) which TYPO3CR does not depend on.
+     *
+     * This relation may be implemented with a target entity listener at a later stage, when we implemented support
+     * for it in Flow core.
+     *
+     * See also: http://doctrine-orm.readthedocs.org/projects/doctrine-orm/en/latest/cookbook/resolve-target-entity-listener.html
+     *
+     * @var string
+     * @ORM\Column(type="string", length=40, nullable=true)
+     */
+    protected $owner;
 
     /**
      * Workspace (if any) this workspace is based on.
@@ -97,17 +119,31 @@ class Workspace
     protected $now;
 
     /**
+     * @Flow\Inject
+     * @var ReflectionService
+     */
+    protected $reflectionService;
+
+    /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
+
+    /**
      * Constructs a new workspace
      *
      * @param string $name Name of this workspace
      * @param Workspace $baseWorkspace A workspace this workspace is based on (if any)
+     * @param UserInterface $owner The user that created the workspace (if any, "system" workspaces have none)
      * @api
      */
-    public function __construct($name, Workspace $baseWorkspace = null)
+    public function __construct($name, Workspace $baseWorkspace = null, UserInterface $owner = null)
     {
         $this->name = $name;
         $this->title = $name;
         $this->baseWorkspace = $baseWorkspace;
+        $this->owner = $owner;
     }
 
     /**
@@ -123,6 +159,10 @@ class Workspace
         if ($initializationCause === ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
             $this->rootNodeData = new NodeData('/', $this);
             $this->nodeDataRepository->add($this->rootNodeData);
+
+            if ($this->owner instanceof UserInterface) {
+                $this->setOwner($this->owner);
+            }
         }
     }
 
@@ -141,6 +181,7 @@ class Workspace
      * Returns the workspace title
      *
      * @return string
+     * @api
      */
     public function getTitle()
     {
@@ -152,6 +193,7 @@ class Workspace
      *
      * @param string $title
      * @return void
+     * @api
      */
     public function setTitle($title)
     {
@@ -162,6 +204,7 @@ class Workspace
      * Returns the workspace description
      *
      * @return string
+     * @api
      */
     public function getDescription()
     {
@@ -173,6 +216,7 @@ class Workspace
      *
      * @param string $description
      * @return void
+     * @api
      */
     public function setDescription($description)
     {
@@ -180,7 +224,93 @@ class Workspace
     }
 
     /**
+     * Returns the workspace owner.
+     *
+     * @return UserInterface
+     * @api
+     */
+    public function getOwner()
+    {
+        if ($this->owner === null) {
+            return null;
+        }
+        return $this->persistenceManager->getObjectByIdentifier($this->owner, $this->reflectionService->getDefaultImplementationClassNameForInterface(UserInterface::class));
+    }
+
+    /**
+     * Returns the workspace owner.
+     *
+     * @param UserInterface|string $user The new user, or user's UUID
+     * @api
+     */
+    public function setOwner($user)
+    {
+        // Note: We need to do a bit of uuid juggling here, because we can't bind the workspaces Owner to a specific
+        // implementation, and creating entity relations via interfaces is not supported by Flow. Since the property
+        // mapper will call setOwner() with a string parameter (because the property $owner is string), but developers
+        // will want to use objects, we need to support both.
+        if ($user === null || $user === '') {
+            $this->owner = '';
+            return;
+        }
+        if (is_string($user) && preg_match('/^([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}$/', $user)) {
+            $this->owner = $user;
+            return;
+        }
+        if (!$user instanceof UserInterface) {
+            throw new \InvalidArgumentException(sprintf('$user must be an instance of UserInterface, %s given.', gettype($user)), 1447764244);
+        }
+        $this->owner = $this->persistenceManager->getIdentifierByObject($user);
+    }
+
+    /**
+     * Checks if this workspace is a user's personal workspace
+     *
+     * @return boolean
+     * @api
+     */
+    public function isPersonalWorkspace()
+    {
+        return strpos($this->name, static::PERSONAL_WORKSPACE_PREFIX) === 0;
+    }
+
+    /**
+     * Checks if this workspace is shared only across users with access to internal workspaces, for example "reviewers"
+     *
+     * @return boolean
+     * @api
+     */
+    public function isPrivateWorkspace()
+    {
+        return $this->owner !== null && !$this->isPersonalWorkspace();
+    }
+
+    /**
+     * Checks if this workspace is shared across all editors
+     *
+     * @return boolean
+     * @api
+     */
+    public function isInternalWorkspace()
+    {
+        return $this->baseWorkspace !== null && $this->owner === null;
+    }
+
+    /**
+     * Checks if this workspace is public to everyone, even without authentication
+     *
+     * @return boolean
+     * @api
+     */
+    public function isPublicWorkspace()
+    {
+        return $this->baseWorkspace === null && $this->owner === null;
+    }
+
+    /**
      * Sets the base workspace
+     *
+     * Note that this method is not part of the public API because further action is necessary for rebasing a workspace
      *
      * @param Workspace $baseWorkspace
      * @return void
@@ -219,6 +349,7 @@ class Workspace
             $baseWorkspaces[$baseWorkspace->getName()] = $baseWorkspace;
             $baseWorkspace = $baseWorkspace->getBaseWorkspace();
         }
+
         return $baseWorkspaces;
     }
 
@@ -280,6 +411,11 @@ class Workspace
             return;
         }
         if ($node->getWorkspace() !== $this) {
+            return;
+        }
+        // Might happen if a node which has been published during an earlier call of publishNode() is attempted to
+        // be published again:
+        if ($node->getWorkspace() === $targetWorkspace) {
             return;
         }
         $this->verifyPublishingTargetWorkspace($targetWorkspace);
@@ -396,8 +532,8 @@ class Workspace
      */
     protected function verifyPublishingTargetWorkspace(Workspace $targetWorkspace)
     {
-        $baseWorkspace = $this->baseWorkspace;
-        while ($targetWorkspace !== $baseWorkspace) {
+        $baseWorkspace = $this;
+        while ($baseWorkspace === null || $targetWorkspace->getName() !== $baseWorkspace->getName()) {
             if ($baseWorkspace === null) {
                 throw new WorkspaceException(sprintf('The specified workspace "%s" is not a base workspace of "%s".', $targetWorkspace->getName(), $this->getName()), 1289499117);
             }
@@ -407,7 +543,7 @@ class Workspace
 
     /**
      * Returns the NodeData instance with the given identifier from the target workspace.
-     * If no NodeData instance is found, NULL is returned.
+     * If no NodeData instance is found, null is returned.
      *
      * @param NodeInterface $node
      * @param Workspace $targetWorkspace
@@ -416,6 +552,7 @@ class Workspace
     protected function findNodeDataInTargetWorkspace(NodeInterface $node, Workspace $targetWorkspace)
     {
         $nodeData = $this->nodeDataRepository->findOneByIdentifier($node->getIdentifier(), $targetWorkspace, $node->getDimensions());
+
         return ($nodeData === null || $nodeData->getWorkspace() === $targetWorkspace) ? $nodeData : null;
     }
 
@@ -428,7 +565,7 @@ class Workspace
      * @return void
      * @Flow\Signal
      */
-    protected function emitBaseWorkspaceChanged(Workspace $workspace, Workspace $oldBaseWorkspace, Workspace $newBaseWorkspace)
+    protected function emitBaseWorkspaceChanged(Workspace $workspace, Workspace $oldBaseWorkspace = null, Workspace $newBaseWorkspace = null)
     {
     }
 

@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\TypoScript;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SystemLoggerInterface;
@@ -147,20 +147,20 @@ class PluginImplementation extends AbstractArrayTypoScriptObject
      */
     public function evaluate()
     {
-        try {
-            $currentContext = $this->tsRuntime->getCurrentContext();
-            $this->node = $currentContext['node'];
-            $this->documentNode = $currentContext['documentNode'];
-            /** @var $parentResponse Response */
-            $parentResponse = $this->tsRuntime->getControllerContext()->getResponse();
-            $pluginResponse = new Response($parentResponse);
+        $currentContext = $this->tsRuntime->getCurrentContext();
+        $this->node = $currentContext['node'];
+        $this->documentNode = $currentContext['documentNode'];
+        /** @var $parentResponse Response */
+        $parentResponse = $this->tsRuntime->getControllerContext()->getResponse();
+        $pluginResponse = new Response($parentResponse);
 
-            $this->dispatcher->dispatch($this->buildPluginRequest(), $pluginResponse);
-            $content = $pluginResponse->getContent();
-        } catch (\Exception $exception) {
-            $content = $this->tsRuntime->handleRenderingException($this->path, $exception);
+        $this->dispatcher->dispatch($this->buildPluginRequest(), $pluginResponse);
+
+        foreach ($pluginResponse->getHeaders()->getAll() as $key => $value) {
+            $parentResponse->getHeaders()->set($key, $value, true);
         }
-        return $content;
+
+        return $pluginResponse->getContent();
     }
 
     /**

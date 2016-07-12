@@ -49,7 +49,7 @@ Fundamental Installation
    .. code-block:: bash
 
       cd /your/htdocs/
-      php /path/to/composer.phar create-project typo3/neos-base-distribution Neos
+      php /path/to/composer.phar create-project neos/neos-base-distribution Neos
 
    Composer will take care of downloading all dependencies for running your Neos installation to the
    directory ``Neos``.
@@ -147,13 +147,18 @@ The Neos Setup Tool
 
 #. If all went well you'll get a confirmation the setup is completed, and you can enter the
    frontend or backend of your Neos website.
+   
+   .. warning::
+      If you install the Neos demo site and it is publicly accessible, make sure the "Try me" page in
+      the page tree is not publicly accessible because it has a form allowing you to create backend
+      editor accounts with rights to edit website content.)
 
    .. figure:: Images/StartPage.png
       :alt: The Neos start page
       :class: screenshot-fullsize
 
-      The Neos start page
+      The Neos demo site start page
 
-.. _Flow Documentation: http://docs.typo3.org/flow/TYPO3FlowDocumentation/Index.html
-.. _Flow Requirements Documentation: http://docs.typo3.org/flow/TYPO3FlowDocumentation/TheDefinitiveGuide/PartII/Requirements.html
-.. _Flow File Permissions: http://docs.typo3.org/flow/TYPO3FlowDocumentation/TheDefinitiveGuide/PartII/Installation.html#file-permissions
+.. _Flow Documentation: http://flowframework.readthedocs.org/en/stable/index.html
+.. _Flow Requirements Documentation: http://flowframework.readthedocs.org/en/stable/TheDefinitiveGuide/PartII/Requirements.html
+.. _Flow File Permissions: http://flowframework.readthedocs.org/en/stable/TheDefinitiveGuide/PartII/Installation.html#file-permissions

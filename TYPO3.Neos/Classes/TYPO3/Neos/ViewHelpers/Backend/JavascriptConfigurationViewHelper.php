@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\ViewHelpers\Backend;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
@@ -21,6 +21,7 @@ use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\PositionalArraySorter;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Neos\Domain\Repository\DomainRepository;
 
 /**
  * ViewHelper for the backend JavaScript configuration. Renders the required JS snippet to configure
@@ -75,10 +76,10 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
     protected $backendAssetsUtility;
 
     /**
-     * @Flow\InjectConfiguration("userInterface.defaultLocale")
-     * @var string
+     * @Flow\Inject
+     * @var DomainRepository
      */
-    protected $defaultLocale;
+    protected $domainRepository;
 
     /**
      * @param array $settings
@@ -96,8 +97,6 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
     {
         $configuration = array(
             'window.T3Configuration = {};',
-            'window.T3Configuration.locale = "' . $this->defaultLocale . '";',
-            'window.T3Configuration.localeInclude = ' . json_encode($this->getXliffAsJsonUri()) . ';',
             'window.T3Configuration.UserInterface = ' . json_encode($this->settings['userInterface']) . ';',
             'window.T3Configuration.nodeTypes = {};',
             'window.T3Configuration.nodeTypes.groups = ' . json_encode($this->getNodeTypeGroupsSettings()) . ';',
@@ -118,20 +117,11 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
             $configuration[] = 'window.T3Configuration.DevelopmentMode = true;';
         }
 
+        if ($activeDomain = $this->domainRepository->findOneByActiveRequest()) {
+            $configuration[] = 'window.T3Configuration.site = "' . $activeDomain->getSite()->getNodeName() . '";';
+        }
+
         return implode("\n", $configuration);
-    }
-
-    /**
-     * Returns the I18n json uri
-     *
-     * @return array
-     */
-    protected function getXliffAsJsonUri()
-    {
-        $uriBuilder = $this->controllerContext->getUriBuilder();
-        $uriBuilder->setCreateAbsoluteUri(true);
-
-        return $uriBuilder->uriFor('getXliffAsJson', array(), 'Backend\\Backend', 'TYPO3.Neos');
     }
 
     /**
@@ -203,7 +193,8 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
             }
             $settings[] = array(
                 'name' => $nodeTypeGroupName,
-                'label' => $nodeTypeGroupSettings['label']
+                'label' => $nodeTypeGroupSettings['label'],
+                'collapsed' => isset($nodeTypeGroupSettings['collapsed']) ? $nodeTypeGroupSettings['collapsed'] : true
             );
         }
 

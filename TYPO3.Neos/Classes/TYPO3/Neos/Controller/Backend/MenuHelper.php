@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\Controller\Backend;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
@@ -55,24 +55,29 @@ class MenuHelper
      */
     public function buildSiteList(ControllerContext $controllerContext)
     {
-        $requestUri = $controllerContext->getRequest()->getHttpRequest()->getUri();
-        $baseUri = $controllerContext->getRequest()->getHttpRequest()->getBaseUri();
+        $requestUriHost = $controllerContext->getRequest()->getHttpRequest()->getUri()->getHost();
 
         $domainsFound = false;
         $sites = array();
         foreach ($this->siteRepository->findOnline() as $site) {
             $uri = null;
+            $active = false;
             /** @var $site \TYPO3\Neos\Domain\Model\Site */
             if ($site->hasActiveDomains()) {
-                $uri = $controllerContext->getUriBuilder()
-                    ->reset()
-                    ->uriFor('index', array(), 'Backend\Backend', 'TYPO3.Neos');
-                $uri = sprintf('%s://%s%s%s',
-                    $requestUri->getScheme(),
-                    $site->getFirstActiveDomain()->getHostPattern(),
-                    rtrim($baseUri->getPath(), '/'), // remove trailing slash, $uri has leading slash already
-                    $uri
-                );
+                $activeHostPatterns = $site->getActiveDomains()->map(function ($domain) {
+                    return $domain->getHostPattern();
+                })->toArray();
+                $active = in_array($requestUriHost, $activeHostPatterns, true);
+                if ($active) {
+                    $uri = $controllerContext->getUriBuilder()
+                        ->reset()
+                        ->setCreateAbsoluteUri(true)
+                        ->uriFor('index', array(), 'Backend\Backend', 'TYPO3.Neos');
+                } else {
+                    $uri = $controllerContext->getUriBuilder()
+                        ->reset()
+                        ->uriFor('switchSite', array('site' => $site), 'Backend\Backend', 'TYPO3.Neos');
+                }
                 $domainsFound = true;
             }
 
@@ -80,7 +85,7 @@ class MenuHelper
                 'name' => $site->getName(),
                 'nodeName' => $site->getNodeName(),
                 'uri' => $uri,
-                'active' => parse_url($uri, PHP_URL_HOST) === $requestUri->getHost() ? true : false
+                'active' => $active
             );
         }
 

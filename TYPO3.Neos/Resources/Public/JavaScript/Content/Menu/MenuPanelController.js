@@ -24,9 +24,6 @@ define(
 			ResourceCache.getItem(Configuration.get('MenuDataUri')).then(
 				function(data) {
 					that.set('items', data);
-				},
-				function(error) {
-					console.error('Error loading menu data.', error);
 				}
 			);
 
@@ -68,8 +65,9 @@ define(
 		}.observes('isMenuPanelStickyModeShown'),
 
 		activeItem: function() {
-			var that = this;
-			if ($(document.body).hasClass('neos-module')) {
+			var that = this,
+				module = $(document.body).hasClass('neos-module');
+			if (module) {
 				var modules = this.get('items.modules');
 				if (typeof modules !== 'undefined') {
 					$.each(modules, function(moduleIndex, moduleConfiguration) {
@@ -89,15 +87,13 @@ define(
 						}
 					});
 				}
-			} else {
-				var sites = this.get('items.sites');
-				if (typeof sites !== 'undefined') {
-					$.each(sites, function(index, value) {
-						if (value.uri && value.uri.indexOf(location.hostname) !== -1) {
-							that.set('items.sites.' + index + '.active', true);
-						}
-					});
-				}
+			}
+			var sites = this.get('items.sites'),
+				currentSite = Configuration.get('site');
+			if (typeof sites !== 'undefined') {
+				$.each(sites, function(index, value) {
+					that.set('items.sites.' + index + '.active', module ? false : value.nodeName === currentSite);
+				});
 			}
 		}.observes('items').on('init')
 	}).create();

@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\Service\Controller;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Exception as FlowException;
@@ -99,31 +99,37 @@ abstract class AbstractServiceController extends ActionController
      */
     protected function convertException(\Exception $exception)
     {
-        $exceptionData = array(
-            'code' => $exception->getCode(),
-            'message' => $exception->getMessage(),
-        );
-        $splitMessagePattern = '/
-			(?<=                # Begin positive lookbehind.
-			  [.!?]\s           # Either an end of sentence punct,
-			| \n                # or line break
-			)
-			(?<!                # Begin negative lookbehind.
-			  i\.E\.\s          # Skip "i.E."
-			)                   # End negative lookbehind.
-			/ix';
-        $sentences = preg_split($splitMessagePattern, $exception->getMessage(), 2, PREG_SPLIT_NO_EMPTY);
-        if (!isset($sentences[1])) {
-            $exceptionData['message'] = $exception->getMessage();
+        if ($this->objectManager->getContext()->isProduction()) {
+            if ($exception instanceof FlowException) {
+                $exceptionData['message'] = 'When contacting the maintainer of this application please mention the following reference code:<br /><br />' . $exception->getReferenceCode();
+            }
         } else {
-            $exceptionData['message'] = trim($sentences[0]);
-            $exceptionData['details'] = trim($sentences[1]);
-        }
-        if ($exception instanceof FlowException) {
-            $exceptionData['referenceCode'] = $exception->getReferenceCode();
-        }
-        if ($exception->getPrevious() !== null) {
-            $exceptionData['previous'] = $this->convertException($exception->getPrevious());
+            $exceptionData = array(
+                'code' => $exception->getCode(),
+                'message' => $exception->getMessage(),
+            );
+            $splitMessagePattern = '/
+                (?<=                # Begin positive lookbehind.
+                  [.!?]\s           # Either an end of sentence punct,
+                | \n                # or line break
+                )
+                (?<!                # Begin negative lookbehind.
+                  i\.E\.\s          # Skip "i.E."
+                )                   # End negative lookbehind.
+                /ix';
+            $sentences = preg_split($splitMessagePattern, $exception->getMessage(), 2, PREG_SPLIT_NO_EMPTY);
+            if (!isset($sentences[1])) {
+                $exceptionData['message'] = $exception->getMessage();
+            } else {
+                $exceptionData['message'] = trim($sentences[0]);
+                $exceptionData['details'] = trim($sentences[1]);
+            }
+            if ($exception instanceof FlowException) {
+                $exceptionData['referenceCode'] = $exception->getReferenceCode();
+            }
+            if ($exception->getPrevious() !== null) {
+                $exceptionData['previous'] = $this->convertException($exception->getPrevious());
+            }
         }
         return $exceptionData;
     }

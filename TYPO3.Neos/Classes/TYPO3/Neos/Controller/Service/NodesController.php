@@ -1,30 +1,29 @@
 <?php
 namespace TYPO3\Neos\Controller\Service;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
-use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;
-use TYPO3\Neos\Domain\Repository\DomainRepository;
-use TYPO3\Neos\Domain\Repository\SiteRepository;
+use TYPO3\Neos\Controller\CreateContentContextTrait;
 use TYPO3\Neos\Domain\Service\ContentContext;
-use TYPO3\Neos\Domain\Service\ContentContextFactory;
 use TYPO3\Neos\Domain\Service\NodeSearchServiceInterface;
+use TYPO3\Neos\Domain\Service\SiteService;
+use TYPO3\Neos\Service\Mapping\NodePropertyConverterService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
-use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
+use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 
 /**
  * Rudimentary REST service for nodes
@@ -34,24 +33,7 @@ use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 class NodesController extends ActionController
 {
     use BackendUserTranslationTrait;
-
-    /**
-     * @Flow\Inject
-     * @var DomainRepository
-     */
-    protected $domainRepository;
-
-    /**
-     * @Flow\Inject
-     * @var SiteRepository
-     */
-    protected $siteRepository;
-
-    /**
-     * @Flow\Inject
-     * @var ContentContextFactory
-     */
-    protected $contextFactory;
+    use CreateContentContextTrait;
 
     /**
      * @Flow\Inject
@@ -70,6 +52,12 @@ class NodesController extends ActionController
      * @var PropertyMapper
      */
     protected $propertyMapper;
+
+    /**
+     * @Flow\Inject
+     * @var NodePropertyConverterService
+     */
+    protected $nodePropertyConverterService;
 
     /**
      * @var array
@@ -94,13 +82,14 @@ class NodesController extends ActionController
      * Shows a list of nodes
      *
      * @param string $searchTerm An optional search term used for filtering the list of nodes
+     * @param array $nodeIdentifiers An optional list of node identifiers
      * @param string $workspaceName Name of the workspace to search in, "live" by default
      * @param array $dimensions Optional list of dimensions and their values which should be used for querying
      * @param array $nodeTypes A list of node types the list should be filtered by
      * @param NodeInterface $contextNode a node to use as context for the search
      * @return string
      */
-    public function indexAction($searchTerm = '', $workspaceName = 'live', array $dimensions = array(), array $nodeTypes = array('TYPO3.Neos:Document'), NodeInterface $contextNode = null)
+    public function indexAction($searchTerm = '', array $nodeIdentifiers = array(), $workspaceName = 'live', array $dimensions = array(), array $nodeTypes = array('TYPO3.Neos:Document'), NodeInterface $contextNode = null)
     {
         $searchableNodeTypeNames = array();
         foreach ($nodeTypes as $nodeTypeName) {
@@ -116,7 +105,13 @@ class NodesController extends ActionController
         }
 
         $contentContext = $this->createContentContext($workspaceName, $dimensions);
-        $nodes = $this->nodeSearchService->findByProperties($searchTerm, $searchableNodeTypeNames, $contentContext, $contextNode);
+        if ($nodeIdentifiers === array()) {
+            $nodes = $this->nodeSearchService->findByProperties($searchTerm, $searchableNodeTypeNames, $contentContext, $contextNode);
+        } else {
+            $nodes = array_map(function ($identifier) use ($contentContext) {
+                return $contentContext->getNodeByIdentifier($identifier);
+            }, $nodeIdentifiers);
+        }
 
         $this->view->assign('nodes', $nodes);
     }
@@ -140,18 +135,9 @@ class NodesController extends ActionController
             $this->throwStatus(404);
         }
 
-        $convertedProperties = array();
-        foreach ($node->getProperties() as $propertyName => $propertyValue) {
-            try {
-                $convertedProperties[$propertyName] = $this->propertyMapper->convert($propertyValue, 'string');
-            } catch (\TYPO3\Flow\Property\Exception $exception) {
-                $convertedProperties[$propertyName] = '';
-            }
-        }
-
         $this->view->assignMultiple(array(
             'node' => $node,
-            'convertedNodeProperties' => $convertedProperties
+            'convertedNodeProperties' => $this->nodePropertyConverterService->getPropertiesArray($node)
         ));
     }
 
@@ -196,46 +182,13 @@ class NodesController extends ActionController
     }
 
     /**
-     * Create a ContentContext based on the given workspace name
-     *
-     * @param string $workspaceName Name of the workspace to set for the context
-     * @param array $dimensions Optional list of dimensions and their values which should be set
-     * @return ContentContext
-     */
-    protected function createContentContext($workspaceName, array $dimensions = array())
-    {
-        $contextProperties = array(
-            'workspaceName' => $workspaceName,
-            'invisibleContentShown' => true,
-            'inaccessibleContentShown' => true
-        );
-
-        if ($dimensions !== array()) {
-            $contextProperties['dimensions'] = $dimensions;
-            $contextProperties['targetDimensions'] = array_map(function ($dimensionValues) {
-                return array_shift($dimensionValues);
-            }, $dimensions);
-        }
-
-        $currentDomain = $this->domainRepository->findOneByActiveRequest();
-        if ($currentDomain !== null) {
-            $contextProperties['currentSite'] = $currentDomain->getSite();
-            $contextProperties['currentDomain'] = $currentDomain;
-        } else {
-            $contextProperties['currentSite'] = $this->siteRepository->findFirstOnline();
-        }
-
-        return $this->contextFactory->create($contextProperties);
-    }
-
-    /**
      * If the node is not found, we *first* want to figure out whether the node exists in other dimensions or is really non-existent
      *
      * @param $identifier
-     * @param Context $context
+     * @param ContentContext $context
      * @return void
      */
-    protected function addExistingNodeVariantInformationToResponse($identifier, Context $context)
+    protected function addExistingNodeVariantInformationToResponse($identifier, ContentContext $context)
     {
         $nodeVariants = $context->getNodeVariantsByIdentifier($identifier);
         if (count($nodeVariants) > 0) {
@@ -246,14 +199,19 @@ class NodesController extends ActionController
             // To find the node path for the given identifier, we just use the first result. This is a safe assumption at least for
             // "Document" nodes (aggregate=TRUE), because they are always moved in-sync.
             $node = reset($nodeVariants);
+            /** @var NodeInterface $node */
             if ($node->getNodeType()->isAggregate()) {
-                $pathSegments = count(explode('/', $node->getPath()));
-                $nodes = $context->getNodesOnPath('/', $node->getPath());
-                // We subtract 3 because:
-                // - /sites/ is never translated (first part of the rootline)
-                // - the actual document is not translated either (last part of the rootline). Otherwise, we wouldn't be inside this IF-branch.
-                // - we count the number of path segments, and the first path segment (before the / which indicates an absolute path) is always empty.
-                $this->response->setHeader('X-Neos-Nodes-Missing-On-Rootline', $pathSegments - count($nodes) - 3);
+                $pathSegmentsToSites = NodePaths::getPathDepth(SiteService::SITES_ROOT_PATH);
+                $pathSegmentsToNodeVariant = NodePaths::getPathDepth($node->getPath());
+                // Segments between the sites root "/sites" and the node variant (minimum 1)
+                $pathSegments = $pathSegmentsToNodeVariant - $pathSegmentsToSites;
+                // Nodes between (and including) the site root node and the node variant (minimum 1)
+                $siteNodePath = NodePaths::addNodePathSegment(SiteService::SITES_ROOT_PATH, $context->getCurrentSite()->getNodeName());
+                $nodes = $context->getNodesOnPath($siteNodePath, $node->getPath());
+                $missingNodesOnRootline = $pathSegments - count($nodes);
+                if ($missingNodesOnRootline > 0) {
+                    $this->response->setHeader('X-Neos-Nodes-Missing-On-Rootline', $missingNodesOnRootline);
+                }
             }
         }
     }
@@ -273,7 +231,7 @@ class NodesController extends ActionController
         $parentNode = $node;
         while ($parentNode = $parentNode->getParent()) {
             $visibleInContext = $contentContext->getNodeByIdentifier($parentNode->getIdentifier()) !== null;
-            if ($parentNode->getPath() !== '/' && $parentNode->getPath() !== '/sites' && !$visibleInContext) {
+            if ($parentNode->getPath() !== '/' && $parentNode->getPath() !== SiteService::SITES_ROOT_PATH && !$visibleInContext) {
                 $contentContext->adoptNode($parentNode, $copyContent);
             }
         }

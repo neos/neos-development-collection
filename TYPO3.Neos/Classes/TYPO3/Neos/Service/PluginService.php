@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\Service;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Security\Context;
@@ -75,11 +75,7 @@ class PluginService
     public function getPluginNodes(ContentContext $context)
     {
         $pluginNodeTypes = $this->nodeTypeManager->getSubNodeTypes('TYPO3.Neos:Plugin', false);
-        $pluginNodes = array();
-        foreach (array_keys($pluginNodeTypes) as $pluginNodeType) {
-            $pluginNodes = array_merge($pluginNodes, $this->getNodes($pluginNodeType, $context));
-        }
-        return $pluginNodes;
+        return $this->getNodes(array_keys($pluginNodeTypes), $context);
     }
 
     /**
@@ -90,10 +86,10 @@ class PluginService
      */
     public function getPluginNodesWithViewDefinitions(ContentContext $context)
     {
-        $pluginNodes = array();
+        $pluginNodes = [];
         foreach ($this->getPluginNodes($context) as $pluginNode) {
             /** @var NodeInterface $pluginNode */
-            if ($this->getPluginViewDefinitionsByPluginNodeType($pluginNode->getNodeType()) !== array()) {
+            if ($this->getPluginViewDefinitionsByPluginNodeType($pluginNode->getNodeType()) !== []) {
                 $pluginNodes[] = $pluginNode;
             }
         }
@@ -103,15 +99,15 @@ class PluginService
     /**
      * Find all nodes of a specific node type
      *
-     * @param string $nodeType
+     * @param array $nodeTypes
      * @param ContentContext $context current content context, see class doc comment for details
      * @return array<NodeInterface> all nodes of type $nodeType in the current $context
      */
-    protected function getNodes($nodeType, ContentContext $context)
+    protected function getNodes(array $nodeTypes, ContentContext $context)
     {
-        $nodes = array();
+        $nodes = [];
         $siteNode = $context->getCurrentSiteNode();
-        foreach ($this->nodeDataRepository->findByParentAndNodeTypeRecursively($siteNode->getPath(), $nodeType, $context->getWorkspace()) as $nodeData) {
+        foreach ($this->nodeDataRepository->findByParentAndNodeTypeRecursively($siteNode->getPath(), implode(',', $nodeTypes), $context->getWorkspace()) as $nodeData) {
             $nodes[] = $this->nodeFactory->createFromNodeData($nodeData, $context);
         }
         return $nodes;
@@ -125,7 +121,7 @@ class PluginService
      */
     public function getPluginViewDefinitionsByPluginNodeType(NodeType $pluginNodeType)
     {
-        $viewDefinitions = array();
+        $viewDefinitions = [];
         foreach ($this->getPluginViewConfigurationsByPluginNodeType($pluginNodeType) as $pluginViewName => $pluginViewConfiguration) {
             $viewDefinitions[] = new PluginViewDefinition($pluginNodeType, $pluginViewName, $pluginViewConfiguration);
         }
@@ -139,7 +135,7 @@ class PluginService
     protected function getPluginViewConfigurationsByPluginNodeType(NodeType $pluginNodeType)
     {
         $pluginNodeTypeOptions = $pluginNodeType->getOptions();
-        return isset($pluginNodeTypeOptions['pluginViews']) ? $pluginNodeTypeOptions['pluginViews'] : array();
+        return isset($pluginNodeTypeOptions['pluginViews']) ? $pluginNodeTypeOptions['pluginViews'] : [];
     }
 
     /**
@@ -184,7 +180,7 @@ class PluginService
     {
         $pluginNodeTypes = $this->nodeTypeManager->getSubNodeTypes('TYPO3.Neos:Plugin', false);
 
-        $matchingPluginViewDefinitions = array();
+        $matchingPluginViewDefinitions = [];
         foreach ($pluginNodeTypes as $pluginNodeType) {
             /** @var $pluginViewDefinition PluginViewDefinition */
             foreach ($this->getPluginViewDefinitionsByPluginNodeType($pluginNodeType) as $pluginViewDefinition) {
@@ -213,12 +209,12 @@ class PluginService
     {
         /** @var $context ContentContext */
         $context = $node->getContext();
-        foreach ($this->getNodes('TYPO3.Neos:PluginView', $context) as $pluginViewNode) {
+        foreach ($this->getNodes(['TYPO3.Neos:PluginView'], $context) as $pluginViewNode) {
             /** @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface $pluginViewNode */
             if ($pluginViewNode->isRemoved()) {
                 continue;
             }
-            if ($pluginViewNode->getProperty('plugin') === $node->getPath()
+            if ($pluginViewNode->getProperty('plugin') === $node->getIdentifier()
                 && $pluginViewNode->getProperty('view') === $viewName) {
                 return $pluginViewNode;
             }
