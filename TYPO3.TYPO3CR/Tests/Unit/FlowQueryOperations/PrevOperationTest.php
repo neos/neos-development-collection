@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TYPO3CR\Tests\Unit\FlowQueryOperations;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3CR".         *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
@@ -45,10 +45,10 @@ class PrevOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function setUp()
     {
-        $this->siteNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-        $this->firstNodeInLevel = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-        $this->secondNodeInLevel = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-        $this->thirdNodeInLevel = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $this->siteNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $this->firstNodeInLevel = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $this->secondNodeInLevel = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $this->thirdNodeInLevel = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 
         $this->siteNode->expects($this->any())->method('getPath')->will($this->returnValue('/site'));
         $this->siteNode->expects($this->any())->method('getChildNodes')->will($this->returnValue(array(
@@ -57,7 +57,6 @@ class PrevOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
             $this->thirdNodeInLevel
         )));
         $this->mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
-        $this->mockContext->expects($this->any())->method('getCurrentSiteNode')->will($this->returnValue($this->siteNode));
 
         $this->firstNodeInLevel->expects($this->any())->method('getParent')->will($this->returnValue($this->siteNode));
         $this->firstNodeInLevel->expects($this->any())->method('getPath')->will($this->returnValue('/site/first'));

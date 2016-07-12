@@ -1,3 +1,4 @@
+@browser
 Feature: Content module / Preview mode
   In order to preview changes
   As an editor
@@ -5,7 +6,7 @@ Feature: Content module / Preview mode
 
   @fixtures @javascript @remote
   Scenario: Toggle preview mode
-    Given I imported the site "TYPO3.NeosDemoTypo3Org"
+    Given I imported the site "Neos.Demo"
     And the following users exist:
       | username | password | firstname | lastname | roles  |
       | jdoe     | password | John      | Doe      | Editor |

@@ -1,25 +1,11 @@
 define([
-	'originalButton',
-	'ui/utils'
+	'originalButton'
 ], function (
-	OriginalButton,
-	Utils
+	OriginalButton
 ) {
 	'use strict';
-
-	// We patch this class to remove jQuery UI tooltip, replacing it by native browser titles.
 	return OriginalButton.extend({
-		init: function () {
-			this.createButtonElement();
-			Utils.makeButton(this.buttonElement, this)
-				.uibutton('widget')
-				.click(Aloha.jQuery.proxy(function () {
-					this._onClick();
-				}, this));
-		},
-
-		closeTooltip: function() {},
-
+		// Needed for the custom table buttons
 		adoptParent: function () {}
 	});
 });

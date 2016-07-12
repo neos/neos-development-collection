@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\Tests\Unit\Domain\Service;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 /**
  * Testcase for the Content Context
@@ -32,7 +32,7 @@ class ContentContextTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getCurrentSiteReturnsTheCurrentSite()
     {
-        $mockSite = $this->getMock('TYPO3\Neos\Domain\Model\Site', array(), array(), '', false);
+        $mockSite = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Site')->disableOriginalConstructor()->getMock();
 
         $contextProperties = array(
             'workspaceName' => null,
@@ -46,7 +46,7 @@ class ContentContextTest extends \TYPO3\Flow\Tests\UnitTestCase
             'currentDomain' => null
         );
 
-        $contentContext = $this->getMock($this->buildAccessibleProxy('TYPO3\Neos\Domain\Service\ContentContext'), array('dummy'), $contextProperties);
+        $contentContext = $this->getAccessibleMock('TYPO3\Neos\Domain\Service\ContentContext', array('dummy'), $contextProperties);
         $this->assertSame($mockSite, $contentContext->getCurrentSite());
     }
 
@@ -55,8 +55,7 @@ class ContentContextTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getCurrentDomainReturnsTheCurrentDomainIfAny()
     {
-        $mockDomain = $this->getMock('TYPO3\Neos\Domain\Model\Domain', array(), array(), '', false);
-
+        $mockDomain = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Domain')->disableOriginalConstructor()->getMock();
 
         $contextProperties = array(
             'workspaceName' => null,
@@ -69,7 +68,7 @@ class ContentContextTest extends \TYPO3\Flow\Tests\UnitTestCase
             'currentSite' => null,
             'currentDomain' => null
         );
-        $contentContext = $this->getMock($this->buildAccessibleProxy('TYPO3\Neos\Domain\Service\ContentContext'), array('dummy'), $contextProperties);
+        $contentContext = $this->getAccessibleMock('TYPO3\Neos\Domain\Service\ContentContext', array('dummy'), $contextProperties);
 
         $this->assertNull($contentContext->getCurrentDomain());
         $contentContext->_set('currentDomain', $mockDomain);

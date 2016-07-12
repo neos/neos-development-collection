@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TYPO3CR\Command;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3CR".         *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\QueryBuilder;
@@ -26,6 +26,7 @@ use TYPO3\TYPO3CR\Domain\Service\ContentDimensionCombinator;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException;
+use TYPO3\TYPO3CR\Utility;
 
 /**
  * Plugin for the TYPO3CR NodeCommandController which provides functionality for creating missing child nodes.
@@ -269,15 +270,24 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
                 }
                 foreach ($childNodes as $childNodeName => $childNodeType) {
                     try {
-                        $childNodeMissing = $node->getNode($childNodeName) ? false : true;
-                        if ($childNodeMissing) {
+                        $childNode = $node->getNode($childNodeName);
+                        $childNodeIdentifier = Utility::buildAutoCreatedChildNodeIdentifier($childNodeName, $node->getIdentifier());
+                        if ($childNode === null) {
                             if ($dryRun === false) {
-                                $node->createNode($childNodeName, $childNodeType);
+                                $node->createNode($childNodeName, $childNodeType, $childNodeIdentifier);
                                 $this->output->outputLine('Auto created node named "%s" in "%s"', array($childNodeName, $node->getPath()));
                             } else {
                                 $this->output->outputLine('Missing node named "%s" in "%s"', array($childNodeName, $node->getPath()));
                             }
                             $createdNodesCount++;
+                        } elseif ($childNode->getIdentifier() !== $childNodeIdentifier) {
+                            if ($dryRun === false) {
+                                $childNode->getNodeData()->setIdentifier($childNodeIdentifier);
+                                $this->nodeDataRepository->update($childNode->getNodeData());
+                                $this->output->outputLine('Updated identifier for child node "%s" in "%s"', array($childNodeName, $node->getPath()));
+                            } else {
+                                $this->output->outputLine('Child node "%s" in "%s" does not have a stable identifier', array($childNodeName, $node->getPath()));
+                            }
                         }
                     } catch (\Exception $exception) {
                         $this->output->outputLine('Could not create node named "%s" in "%s" (%s)', array($childNodeName, $node->getPath(), $exception->getMessage()));
@@ -358,6 +368,10 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
                     continue;
                 }
                 foreach ($defaultValues as $propertyName => $defaultValue) {
+                    if ($propertyName[0] === '_') {
+                        continue;
+                    }
+
                     if (!$node->hasProperty($propertyName)) {
                         $addedMissingDefaultValuesCount++;
                         if (!$dryRun) {
@@ -462,7 +476,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 
         $nodes = array();
         $nodeExceptionCount = 0;
-        $removeDisallowedChildNodes = function (NodeInterface $node) use (&$removeDisallowedChildNodes, &$nodes, &$nodeExceptionCount,$queryBuilder) {
+        $removeDisallowedChildNodes = function (NodeInterface $node) use (&$removeDisallowedChildNodes, &$nodes, &$nodeExceptionCount, $queryBuilder) {
             try {
                 foreach ($node->getChildNodes() as $childNode) {
                     /** @var $childNode NodeInterface */

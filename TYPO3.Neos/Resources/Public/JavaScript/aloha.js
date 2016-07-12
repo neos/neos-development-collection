@@ -31,7 +31,7 @@ function(
 		$.each(nodeTypes, function (nodeTypeName, nodeType) {
 			if (nodeType.properties && typeof nodeType.properties === 'object') {
 				$.each(nodeType.properties, function (propertyName, propertyConfiguration) {
-					var selector = '[typeof="typo3:' + nodeTypeName + '"] [property="typo3:' + propertyName + '"]:not([typeof="typo3:' + nodeTypeName + '"] [typeof] [property="typo3:' + propertyName + '"])';
+					var selector = '[data-neos-node-type="' + nodeTypeName + '"][property="typo3:' + propertyName + '"]';
 					$.each(['table', 'link', 'list', 'format', 'formatlesspaste'], function (i, mode) {
 						if (propertyConfiguration.ui && propertyConfiguration.ui.aloha && propertyConfiguration.ui.aloha[mode]) {
 							nodeSettings[mode] = nodeSettings[mode] || {};
@@ -225,22 +225,24 @@ function(
 						'h6': ['style'],
 						'p': ['class', 'style', 'id'],
 						'td': ['abbr', 'axis', 'colSpan', 'rowSpan', 'colspan', 'rowspan', 'style'],
-						'th': ['abbr', 'axis', 'colSpan', 'rowSpan', 'colspan', 'rowspan', 'scope']
+						'th': ['abbr', 'axis', 'colSpan', 'rowSpan', 'colspan', 'rowspan', 'scope'],
+						'ul': ['class'],
+						'ol': ['class']
 					},
 					protocols: {
-						'a': {'href': ['ftp', 'http', 'https', 'mailto', '__relative__', 'node', 'asset']},
+						'a': {'href': ['ftp', 'http', 'https', 'mailto', '__relative__', 'node', 'asset', 'tel', 'callto']},
 						'blockquote': {'cite': ['http', 'https', '__relative__']},
 						'q': {'cite': ['http', 'https', '__relative__']}
 					}
 				}
 			}
 		};
-
 		require(
 			{
 				context: 'aloha',
 				baseUrl: alohaBaseUrl,
-				urlArgs: Configuration.get('neosJavascriptVersion') ? 'bust=' +  Configuration.get('neosJavascriptVersion') : ''
+				urlArgs: Configuration.get('neosJavascriptVersion') ? 'bust=' +  Configuration.get('neosJavascriptVersion') : '',
+				waitSeconds: Configuration.get('UserInterface.requireJsWaitSeconds')
 			},
 			['aloha']
 		);

@@ -1,5 +1,7 @@
-Coding Guidelines
-=================
+.. _neos-guideline-reference:
+
+Coding Guideline Reference
+==========================
 
 .. toctree::
 	:titlesonly:

@@ -1,24 +1,26 @@
 <?php
 namespace TYPO3\Neos\Controller\Module\Management;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\View\ViewInterface;
 use TYPO3\Neos\Controller\Module\AbstractModuleController;
 use TYPO3\Neos\EventLog\Domain\Model\Event;
 use TYPO3\Neos\EventLog\Domain\Model\EventsOnDate;
-use TYPO3\Neos\EventLog\Domain\Model\NodeEvent;
 use TYPO3\Neos\EventLog\Domain\Repository\EventRepository;
 
+/**
+ * Controller for the history module of Neos, displaying the timeline of changes.
+ */
 class HistoryController extends AbstractModuleController
 {
     /**
@@ -34,18 +36,27 @@ class HistoryController extends AbstractModuleController
 
     /**
      * Show event overview.
-     *
+     * @param integer $offset
+     * @param integer $limit
      * @return void
      */
-    public function indexAction()
+    public function indexAction($offset = 0, $limit = 10)
     {
-        $events = $this->eventRepository->findRelevantEvents()->toArray();
+        $events = $this->eventRepository->findRelevantEventsByWorkspace($offset, $limit + 1, 'live')->toArray();
+
+        $nextPage = null;
+        if (count($events) > $limit) {
+            $events = array_slice($events, 0, $limit);
+
+            $nextPage = $this
+                ->controllerContext
+                ->getUriBuilder()
+                ->setCreateAbsoluteUri(true)
+                ->uriFor('Index', array('offset' => $offset + $limit), 'History', 'TYPO3.Neos');
+        }
 
         $eventsByDate = array();
         foreach ($events as $event) {
-            if ($event instanceof NodeEvent && $event->getWorkspaceName() !== 'live') {
-                continue;
-            }
             /* @var $event Event */
             $day = $event->getTimestamp()->format('Y-m-d');
             if (!isset($eventsByDate[$day])) {
@@ -57,7 +68,10 @@ class HistoryController extends AbstractModuleController
             $eventsOnThisDay->add($event);
         }
 
-        $this->view->assign('eventsByDate', $eventsByDate);
+        $this->view->assignMultiple(array(
+            'eventsByDate' => $eventsByDate,
+            'nextPage' => $nextPage
+        ));
     }
 
     /**

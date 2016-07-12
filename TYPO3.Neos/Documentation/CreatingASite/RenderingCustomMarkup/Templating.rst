@@ -1,7 +1,7 @@
-.. _`Templating`:
-
 .. ATTENTION - this is a copy of the templating section of the flow documentation
-.. all changes should be applied there first an afterwards be copied here.
+.. all changes should be applied there first and afterwards be copied here.
+
+.. _templating:
 
 ==========
 Templating
@@ -454,7 +454,7 @@ This is the concept which makes Fluid extremely versatile and extensible.
 
 If you want to create a view helper which you can call from your template (as a
 tag), you just write a plain PHP class which needs to inherit from
-``TYPO3\Fluid\Core\AbstractViewHelper`` (or its subclasses). You need to implement
+``TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper`` (or its subclasses). You need to implement
 only one method to write a view helper:
 
 .. code-block:: php
@@ -573,7 +573,7 @@ have without the ``AbstractTagBasedViewHelper``):
 
 .. code-block:: php
 
-	class ActionViewHelper extends \TYPO3\Fluid\Core\AbstractViewHelper {
+	class ActionViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	  public function initializeArguments() {
 		$this->registerArgument('class', 'string', 'CSS class to add to the link');

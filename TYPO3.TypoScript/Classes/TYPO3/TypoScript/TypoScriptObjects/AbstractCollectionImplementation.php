@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TypoScript\TypoScriptObjects;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TypoScript".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TypoScript package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TypoScript\Exception as TypoScriptException;
@@ -45,6 +45,14 @@ abstract class AbstractCollectionImplementation extends AbstractTypoScriptObject
     }
 
     /**
+     * @return string
+     */
+    public function getItemKey()
+    {
+        return $this->tsValue('itemKey');
+    }
+
+    /**
      * If set iteration data (index, cycle, isFirst, isLast) is available in context with the name given.
      *
      * @return string
@@ -73,11 +81,15 @@ abstract class AbstractCollectionImplementation extends AbstractTypoScriptObject
         if ($itemName === null) {
             throw new \TYPO3\TypoScript\Exception('The Collection needs an itemName to be set.', 1344325771);
         }
+        $itemKey = $this->getItemKey();
         $iterationName = $this->getIterationName();
         $collectionTotalCount = count($collection);
-        foreach ($collection as $collectionElement) {
+        foreach ($collection as $collectionKey => $collectionElement) {
             $context = $this->tsRuntime->getCurrentContext();
             $context[$itemName] = $collectionElement;
+            if ($itemKey !== null) {
+                $context[$itemKey] = $collectionKey;
+            }
             if ($iterationName !== null) {
                 $context[$iterationName] = $this->prepareIterationInformation($collectionTotalCount);
             }

@@ -9,11 +9,12 @@ define(
 	'Content/Inspector/InspectorController',
 	'Content/Model/NodeSelection',
 	'Content/Model/NodeActions',
-	'Content/Components/AbstractPositionSelectorButton',
+	'Content/Components/NewPositionSelectorButton',
+	'Content/Components/PastePositionSelectorButton',
 	'Shared/NodeTypeService',
 	'InlineEditing/ContentCommands',
 	'InlineEditing/Dialogs/DeleteNodeDialog',
-	'InlineEditing/InsertNodePanel'
+	'Shared/I18n'
 ],
 function (
 	$,
@@ -25,11 +26,12 @@ function (
 	InspectorController,
 	NodeSelection,
 	NodeActions,
-	AbstractPositionSelectorButton,
+	NewPositionSelectorButton,
+	PastePositionSelectorButton,
 	NodeTypeService,
 	ContentCommands,
 	DeleteNodeDialog,
-	InsertNodePanel
+	I18n
 ) {
 	return Ember.View.extend({
 		classNames: ['neos-handle-container'],
@@ -43,74 +45,54 @@ function (
 		// this property mirrors the _hidden property of the node (it's automatically updated)
 		_hidden: false,
 
-		NewPositionSelectorButton: AbstractPositionSelectorButton.extend({
+		NewPositionSelectorButton: NewPositionSelectorButton.extend({
 			allowedPositionsBinding: 'parentView.allowedNewPositions',
-			title: 'Create (hold to select position)',
-			iconClass: 'icon-plus',
-
-			mouseUp: function(event) {
-				clearTimeout(this.get('downTimer'));
-				this.set('downTimer', null);
-				if (this.get('isActive') === true && this.get('isDisabled') === false && this.get('isExpanded') === false) {
-					var newPosition = this.get('position');
-					ContentCommands.create(newPosition);
-				}
-				$(event.target).filter('button').click();
-			},
+			triggerAction: function(position) {
+				ContentCommands.create(position);
+			}
 		}),
 
-		PastePositionSelectorButton: AbstractPositionSelectorButton.extend({
+		PastePositionSelectorButton: PastePositionSelectorButton.extend({
 			allowedPositionsBinding: 'parentView.allowedPastePositions',
-			title: 'Paste (hold to select position)',
-			iconClass: 'icon-paste',
-
-			mouseUp: function(event) {
-				clearTimeout(this.get('downTimer'));
-				this.set('downTimer', null);
-				if (this.get('isActive') === true && this.get('isDisabled') === false && this.get('isExpanded') === false) {
-					var pastePosition = this.get('position');
-					ContentCommands.paste(pastePosition);
-				}
-				$(event.target).filter('button').click();
+			triggerAction: function(position) {
+				ContentCommands.paste(position);
 			}
 		}),
 
 		_onNodeSelectionChange: function() {
 			this.$().find('.action-new').trigger('hidePopover');
-			var selectedNode = this.get('nodeSelection.selectedNode'),
-				entity = selectedNode.get('_vieEntity');
-
-			if (selectedNode && entity) {
-				this.set('_node', selectedNode);
-
-				entity.on('change', this._entityChanged, this);
-				this._entityChanged();
-
-				if (selectedNode.isHideable()) {
-					this.set('_showHide', true);
-					this.set('_hidden', selectedNode.isHidden());
-				} else {
-					this.set('_showHide', false);
-					this.set('_hidden', false);
-				}
+			var selectedNode = NodeSelection.get('selectedNode');
+			if (!selectedNode) {
+				return;
 			}
+
+			if (selectedNode.get('nodeType') === 'ALOHA-CONTROL') {
+				selectedNode = selectedNode.node;
+			}
+
+			this.set('_node', selectedNode);
+
+			if (selectedNode.isHideable()) {
+				this.set('_showHide', true);
+				this.set('_hidden', selectedNode.isHidden());
+			} else {
+				this.set('_showHide', false);
+				this.set('_hidden', false);
+			}
+
+			var that = this;
+			selectedNode.addObserver('typo3:_hidden', function() {
+				that.set('_hidden', selectedNode.isHidden());
+			});
 		}.observes('nodeSelection.selectedNode'),
 
 		currentFocusedNodeCanBeModified: function() {
-			if (this.get('nodeSelection.selectedNode')) {
-				if (this.get('nodeSelection.selectedNode').$element.data('node-_is-autocreated')) {
-					return true;
-				} else {
-					return false;
-				}
-			} else {
-				return false;
-			}
-		}.property('nodeSelection.selectedNode'),
+			return this.get('_node') && !!this.get('_node').$element.data('node-_is-autocreated');
+		}.property('_node'),
 
 		allowedNewPositions: function() {
 			var positions = [],
-				selectedNode = this.get('nodeSelection.selectedNode');
+				selectedNode = this.get('_node');
 			if (!selectedNode || NodeTypeService.isOfType(selectedNode, 'TYPO3.Neos:Document')) {
 				return positions;
 			}
@@ -126,11 +108,11 @@ function (
 				positions.push('after');
 			}
 			return positions;
-		}.property('nodeSelection.selectedNode'),
+		}.property('_node'),
 
 		allowedPastePositions: function() {
 			var positions = [],
-				selectedNode = this.get('nodeSelection.selectedNode'),
+				selectedNode = this.get('_node'),
 				sourceNode = this.get('nodeActions.clipboard');
 			if (!selectedNode || !sourceNode || NodeTypeService.isOfType(selectedNode, 'TYPO3.Neos:Document')) {
 				return positions;
@@ -148,19 +130,15 @@ function (
 				positions.push('after');
 			}
 			return positions;
-		}.property('nodeSelection.selectedNode', 'nodeActions.clipboard'),
-
-		_entityChanged: function() {
-			this.set('_hidden', this.get('_node._vieEntity').get('typo3:_hidden'));
-		},
+		}.property('_node', 'nodeActions.clipboard'),
 
 		/** Content element actions **/
 		remove: function() {
-			DeleteNodeDialog.create({_node: this.get('nodeSelection.selectedNode')});
+			DeleteNodeDialog.create({_node: this.get('_node')});
 		},
 
 		_hideToggleTitle: function() {
-			return this.get('_hidden') === true ? 'Unhide' : 'Hide';
+			return this.get('_hidden') === true ? I18n.translate('TYPO3.Neos:Main:unhide', 'Unhide') : I18n.translate('TYPO3.Neos:Main:hide', 'Hide');
 		}.property('_hidden'),
 
 		_thisElementStartedCut: function() {
@@ -182,10 +160,9 @@ function (
 		}.property('nodeActions.clipboard', '_node'),
 
 		toggleHidden: function() {
-			var entity = this.get('_node._vieEntity'),
-				value = !entity.get('typo3:_hidden');
+			var node = this.get('_node'),
+				value = !node.getAttribute('_hidden');
 			this.set('_hidden', value);
-			entity.set('typo3:_hidden', value);
 			InspectorController.set('nodeProperties._hidden', value);
 			InspectorController.apply();
 		},
@@ -196,6 +173,10 @@ function (
 
 		copy: function() {
 			ContentCommands.copy();
+		},
+
+		didInsertElement: function() {
+			this.$('[neos-data-tooltip]').tooltip({container: '#neos-application'});
 		}
 	});
 });

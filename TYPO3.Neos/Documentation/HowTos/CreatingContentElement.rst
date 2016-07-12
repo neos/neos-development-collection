@@ -3,7 +3,7 @@ Creating a simple Content Element
 =================================
 
 If you need some specific content element, you can easly create a new Node Type with an attached HTML template. To add
-a new Node Type, follow this exemple, just replace "Vendor" by your own vendor prefix:
+a new Node Type, follow this example, just replace "Vendor" by your own vendor prefix:
 
 Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml)::
 
@@ -17,6 +17,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml)::
 	      groups:
 	        image:
 	          label: 'Image'
+	          icon: 'icon-image'
 	          position: 1
 	  properties:
 	    headline:
@@ -37,7 +38,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml)::
 	        label: 'Text'
 	        reloadIfChanged: TRUE
 	    image:
-	      type: TYPO3\Media\Domain\Model\ImageVariant
+	      type: TYPO3\Media\Domain\Model\ImageInterface
 	      ui:
 	        label: 'Image'
 	        reloadIfChanged: TRUE
@@ -71,7 +72,7 @@ HTML (Vendor.Site/Private/Templates/TypoScriptObjects/YourContentElementName.htm
 		</header>
 		<div>
 			{neos:contentElement.editable(property: 'text')}
-			<media:image image="{image}" maximumWidth="300" alt="{headline}" />
+			<f:if condition="{image}"><media:image image="{image}" maximumWidth="300" alt="{headline}" /></f:if>
 		</div>
 	</article>
 

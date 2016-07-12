@@ -1,26 +1,29 @@
 <?php
 namespace TYPO3\Neos\Controller\Backend;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\I18n\Locale;
+use TYPO3\Flow\Utility\Algorithms;
+use TYPO3\Neos\Domain\Model\Site;
 
 /**
- * The TYPO3 Backend controller
+ * The Neos Backend controller
  *
  * @Flow\Scope("singleton")
  */
 class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController
 {
+
     /**
      * @Flow\Inject
      * @var \TYPO3\Neos\Service\BackendRedirectionService
@@ -35,9 +38,21 @@ class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Service\UserService
+     * @var \TYPO3\Neos\Service\LinkingService
      */
-    protected $userService;
+    protected $linkingService;
+
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Flow\Cache\Frontend\StringFrontend
+     */
+    protected $loginTokenCache;
+
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Flow\Session\SessionInterface
+     */
+    protected $currentSession;
 
     /**
      * Default action of the backend controller.
@@ -54,15 +69,33 @@ class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController
     }
 
     /**
+     * Redirects to the Neos backend on the given site, passing a one-time login token
+     *
+     * @param Site $site
+     * @return void
+     */
+    public function switchSiteAction($site)
+    {
+        $token = Algorithms::generateRandomToken(32);
+        $this->loginTokenCache->set($token, $this->currentSession->getId());
+        $siteUri = $this->linkingService->createSiteUri($this->controllerContext, $site);
+
+        $loginUri = $this->controllerContext->getUriBuilder()
+            ->reset()
+            ->uriFor('tokenLogin', ['token' => $token], 'Login', 'TYPO3.Neos');
+        $this->redirectToUri($siteUri . $loginUri);
+    }
+
+    /**
      * Returns the cached json array with the xliff labels
      *
+     * @param string $locale
      * @return string
      */
-    public function getXliffAsJsonAction()
+    public function xliffAsJsonAction($locale)
     {
         $this->response->setHeader('Content-Type', 'application/json');
-        $locale = new Locale($this->userService->getInterfaceLanguage());
 
-        return $this->xliffService->getCachedJson($locale);
+        return $this->xliffService->getCachedJson(new Locale($locale));
     }
 }

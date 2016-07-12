@@ -1,29 +1,45 @@
-<div class="neos-modal neos-modal-wide neos-insert-node-panel">
-	<div class="neos-modal-header">
-		<button class="neos-close neos-button" title="{{translate id='close' value='Close'}}" {{action "cancel" target="view"}}></button>
-		<div class="neos-header">{{translate id="createNew" fallback="Create new"}}</div>
-	</div>
-	<div class="neos-modal-body">
-		{{#each view.nodeTypeGroups}}
-			<div class="neos-subheader">{{unbound label}}</div>
-			<ul class="neos-clearfix">
-				{{#each nodeTypes}}
-					<li class="neos-content-new-selecttype-button">
-						<button class="neos-content-new" {{bindAttr title="nodeType"}} {{action "insertNode" nodeType icon target="view"}}>
-							{{#if icon}}
-								<i class="{{unbound icon}}"></i>
-							{{else}}
-								<i class="icon-sign-blank"></i>
-							{{/if}}
-							{{unbound label}}
-						</button>
-					</li>
-				{{/each}}
-			</ul>
-		{{/each}}
-	</div>
-	<div class="neos-modal-footer">
-		<button class="neos-button" title="{{translate id='cancel' value='Cancel'}}" {{action "cancel" target="view"}}>{{translate id="cancel" value="Cancel"}}</button>
+<div class="neos-modal-centered neos-modal-wide neos-modal-fixed neos-insert-node-panel">
+	<div class="neos-modal-content">
+		<div class="neos-modal-header">
+			<button class="neos-close neos-button" title="{{translate id='close' fallback='Close'}}" {{action "cancel" target="view"}} data-neos-toggle></button>
+			<div class="neos-header">
+				{{translate id="createNew" fallback="Create new"}}
+				{{#if view._position}}
+					{{boundTranslate idBinding="view._position" fallbackBinding="view._position"}}
+					<i {{bindAttr class="view._positionIconClass"}}></i>
+				{{/if}}
+			</div>
+		</div>
+		<div class="neos-modal-body">
+			{{#each nodeTypeGroup in view.nodeTypeGroups}}
+				{{#if nodeTypeGroup.sortedNodeTypes}}
+					<div class="neos-subheader">
+						{{unbound nodeTypeGroup.label}}
+						{{view view.ToggleNodeTypeGroup nodeTypeGroupBinding="nodeTypeGroup"}}
+					</div>
+					<ul {{bindAttr class=":neos-clearfix"}}>
+						{{#each nodeTypeGroup.sortedNodeTypes}}
+							<li class="neos-content-new-selecttype-button">
+								<button class="neos-content-new" {{bindAttr title="nodeType"}} {{action "insertNode" nodeType icon target="view"}} data-neos-tooltip>
+									{{#if icon}}
+										<i class="{{unbound icon}}"></i>
+									{{else}}
+										<i class="icon-sign-blank"></i>
+									{{/if}}
+									{{unbound label}}
+								</button>
+								{{#if helpMessage}}
+									{{view view.HelpMessage titleBinding="label" contentBinding="helpMessage" popoverContainer=".neos-insert-node-panel"}}
+								{{/if}}
+							</li>
+						{{/each}}
+					</ul>
+				{{/if}}
+			{{/each}}
+		</div>
+		<div class="neos-modal-footer">
+			<button class="neos-button" {{action "cancel" target="view"}}>{{translate id="cancel" fallback="Cancel"}}</button>
+		</div>
 	</div>
 </div>
 <div class="neos-modal-backdrop neos-in"></div>

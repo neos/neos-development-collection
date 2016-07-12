@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TYPO3CR\Tests\Functional\Eel\FlowQueryOperations;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3CR".         *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\TYPO3CR\Tests\Functional\AbstractNodeTest;
@@ -161,6 +161,31 @@ class FilterOperationTest extends AbstractNodeTest
     /**
      * @test
      */
+    public function notInstanceofFilterUsingNodeTypeIsSupported()
+    {
+        $productsNode = $this->node->getNode('products');
+        $teaserNode = $this->node->getNode('teaser');
+        $sidebarNode = $this->node->getNode('sidebar');
+        $dummy = $sidebarNode->getNode('dummy43');
+        $q = new FlowQuery(array($this->node, $dummy, $productsNode, $teaserNode, $sidebarNode));
+        $foundNodes = $q->filter('[!instanceof TYPO3.TYPO3CR.Testing:Html]')->get();
+        $this->assertSame($this->node, $foundNodes[0]);
+        $this->assertSame($productsNode, $foundNodes[1]);
+        $this->assertSame($teaserNode, $foundNodes[2]);
+        $this->assertSame($sidebarNode, $foundNodes[3]);
+        $this->assertEquals(4, count($foundNodes));
+        $foundNodes = $q->filter('[!instanceof TYPO3.TYPO3CR.Testing:ContentCollection]')->get();
+        $this->assertSame($this->node, $foundNodes[0]);
+        $this->assertSame($dummy, $foundNodes[1]);
+        $this->assertSame($productsNode, $foundNodes[2]);
+        $this->assertEquals(3, count($foundNodes));
+        $foundNodes = $q->filter('[!instanceof X]')->get();
+        $this->assertEquals(5, count($foundNodes));
+    }
+
+    /**
+     * @test
+     */
     public function twoInstanceofFiltersUsingNodeTypeIsSupported()
     {
         $productsNode = $this->node->getNode('products');
@@ -211,5 +236,26 @@ class FilterOperationTest extends AbstractNodeTest
         $this->assertEquals(2, count($foundNodes));
         $foundNodes = $q->filter('[instanceof !X]')->get();
         $this->assertEquals(4, count($foundNodes));
+    }
+
+    /**
+     * @test
+     */
+    public function doubleNegatedInstanceofFilterUsingNodeTypeIsSupported()
+    {
+        $productsNode = $this->node->getNode('products');
+        $teaserNode = $this->node->getNode('teaser');
+        $sidebarNode = $this->node->getNode('sidebar');
+        $q = new FlowQuery(array($this->node, $productsNode, $teaserNode, $sidebarNode));
+        $foundNodes = $q->filter('[!instanceof !TYPO3.TYPO3CR.Testing:Page]')->get();
+        $this->assertSame($this->node, $foundNodes[0]);
+        $this->assertSame($productsNode, $foundNodes[1]);
+        $this->assertEquals(2, count($foundNodes));
+        $foundNodes = $q->filter('[!instanceof !TYPO3.TYPO3CR.Testing:ContentCollection]')->get();
+        $this->assertSame($teaserNode, $foundNodes[0]);
+        $this->assertSame($sidebarNode, $foundNodes[1]);
+        $this->assertEquals(2, count($foundNodes));
+        $foundNodes = $q->filter('[!instanceof !X]')->get();
+        $this->assertEquals(0, count($foundNodes));
     }
 }

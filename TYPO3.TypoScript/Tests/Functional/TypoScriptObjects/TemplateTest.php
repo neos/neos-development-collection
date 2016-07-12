@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TypoScript".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TypoScript package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 /**
  * Testcase for the TypoScript Template Object
@@ -65,5 +65,15 @@ class TemplateTest extends AbstractTypoScriptObjectTest
         $view = $this->buildView();
         $view->setTypoScriptPath('template/offsetAccessException');
         $this->assertStringStartsWith('Test TemplateException while rendering template', $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function expressionCanBeOverridenWithSimpleValueForTemplate()
+    {
+        $view = $this->buildView();
+        $view->setTypoScriptPath('template/overrideWithSimpleValueInTemplate');
+        $this->assertSame('3', $view->render(), 'JSON encoded value should be a number');
     }
 }

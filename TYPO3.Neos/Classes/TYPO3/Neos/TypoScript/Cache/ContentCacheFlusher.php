@@ -1,17 +1,20 @@
 <?php
 namespace TYPO3\Neos\TypoScript\Cache;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Media\Domain\Model\AssetInterface;
+use TYPO3\Media\Domain\Service\AssetService;
+use TYPO3\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TypoScript\Core\Cache\ContentCache;
@@ -45,6 +48,12 @@ class ContentCacheFlusher
     protected $tagsToFlush = array();
 
     /**
+     * @Flow\Inject
+     * @var AssetService
+     */
+    protected $assetService;
+
+    /**
      * Register a node change for a later cache flush. This method is triggered by a signal sent via TYPO3CR's Node
      * model or the Neos Publishing Service.
      *
@@ -72,6 +81,27 @@ class ContentCacheFlusher
             }
             $tagName = 'DescendantOf_' . $node->getIdentifier();
             $this->tagsToFlush[$tagName] = sprintf('which were tagged with "%s" because node "%s" has changed.', $tagName, $originalNode->getPath());
+        }
+    }
+
+    /**
+     * Fetches possible usages of the asset and registers nodes that use the asset as changed.
+     *
+     * @param AssetInterface $asset
+     * @return void
+     */
+    public function registerAssetResourceChange(AssetInterface $asset)
+    {
+        if (!$asset->isInUse()) {
+            return;
+        }
+
+        foreach ($this->assetService->getUsageReferences($asset) as $reference) {
+            if (!$reference instanceof AssetUsageInNodeProperties) {
+                continue;
+            }
+
+            $this->registerNodeChange($reference->getNode());
         }
     }
 

@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\Domain\Service;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\ObjectManagerInterface;
@@ -25,6 +25,7 @@ use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Model\ImageVariant;
 use TYPO3\Media\Domain\Repository\ImageRepository;
 use TYPO3\Media\Domain\Repository\AssetRepository;
+use TYPO3\Media\Domain\Service\AssetService;
 use TYPO3\Neos\Domain\Exception as DomainException;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
@@ -34,6 +35,7 @@ use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
+use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 
 /**
  * The "legacy" Site Import Service which understands the "old" XML format used in Neos 1.0 and 1.1 which does not
@@ -79,6 +81,12 @@ class LegacySiteImportService
      * @var AssetRepository
      */
     protected $assetRepository;
+
+    /**
+     * @Flow\Inject
+     * @var AssetService
+     */
+    protected $assetService;
 
     /**
      * @Flow\Inject
@@ -188,9 +196,9 @@ class LegacySiteImportService
 
             $rootNode = $contentContext->getRootNode();
 
-            $sitesNode = $rootNode->getNode('/sites');
+            $sitesNode = $rootNode->getNode(SiteService::SITES_ROOT_PATH);
             if ($sitesNode === null) {
-                $sitesNode = $rootNode->createSingleNode('sites');
+                $sitesNode = $rootNode->createSingleNode(NodePaths::getNodeNameFromPath(SiteService::SITES_ROOT_PATH));
             }
             // We fetch the workspace to be sure it's known to the persistence manager and persist all
             // so the workspace and site node are persisted before we import any nodes to it.
@@ -455,11 +463,10 @@ class LegacySiteImportService
                      * The AssetList node type has a custom implementation to work around this bug.
                      * @see NEOS-121
                      */
-                    $repositoryAction = $this->persistenceManager->isNewObject($entry) ? 'add' : 'update';
-                    if ($entry instanceof Image) {
-                        $this->imageRepository->$repositoryAction($entry);
+                    if ($this->persistenceManager->isNewObject($entry)) {
+                        $this->assetService->getRepository($entry)->add($entry);
                     } else {
-                        $this->assetRepository->$repositoryAction($entry);
+                        $this->assetService->getRepository($entry)->update($entry);
                     }
 
                     $entries[] = $entry;
@@ -597,7 +604,7 @@ class LegacySiteImportService
         if ((string)$objectXml->originalImage['__identifier'] !== '') {
             ObjectAccess::setProperty($image, 'Persistence_Object_Identifier', (string)$objectXml->originalImage['__identifier'], true);
         }
-        $this->imageRepository->add($image);
+        $this->assetService->getRepository($image)->add($image);
 
         return $this->objectManager->get($className, $image, $processingInstructions);
     }
@@ -637,7 +644,7 @@ class LegacySiteImportService
 
         $asset = $this->objectManager->get($className);
         $asset->setResource($resource);
-        $this->assetRepository->add($asset);
+        $this->assetService->getRepository($asset)->add($asset);
 
         return $asset;
     }

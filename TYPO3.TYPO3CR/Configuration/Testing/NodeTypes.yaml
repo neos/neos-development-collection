@@ -4,6 +4,8 @@
   properties:
     test1:
       defaultValue: 'default value 1'
+    test2:
+      defaultValue: 'default value 2'
   constraints:
     nodeTypes:
       'TYPO3.TYPO3CR.Testing:NodeType': TRUE

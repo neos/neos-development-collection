@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TYPO3CR\Tests\Unit\FlowQueryOperations;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3CR".         *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\TYPO3CR\Eel\FlowQueryOperations\CacheLifetimeOperation;
@@ -60,7 +60,7 @@ class CacheLifetimeOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function canEvaluateReturnsTrueIfNodeIsInContext()
     {
-        $mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $mockNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 
         $result = $this->operation->canEvaluate(array($mockNode));
         $this->assertTrue($result);
@@ -147,7 +147,7 @@ class CacheLifetimeOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $contextValues = array();
         foreach ($nodes as $nodeProperties) {
-            $mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+            $mockNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
             $mockNode->expects($this->any())->method('getHiddenBeforeDateTime')->will($this->returnValue($nodeProperties['hiddenBeforeDateTime'] !== null ? $this->dateFixtures[$nodeProperties['hiddenBeforeDateTime']] : null));
             $mockNode->expects($this->any())->method('getHiddenAfterDateTime')->will($this->returnValue($nodeProperties['hiddenAfterDateTime'] !== null ? $this->dateFixtures[$nodeProperties['hiddenAfterDateTime']] : null));
 

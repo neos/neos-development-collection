@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TypoScript\Tests\Unit\Core\Cache;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TypoScript".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TypoScript package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\TypoScript\Core\Cache\CacheSegmentParser;
@@ -45,9 +45,9 @@ class CacheSegmentParserTest extends UnitTestCase
 
     protected $expectedOuterContent = "
 		outer content
-		\x02123456789\x03
+		\x02CONTENT_CACHE123456789\x03CONTENT_CACHE
 		with some text
-		\x026789012345\x03
+		\x02CONTENT_CACHE6789012345\x03CONTENT_CACHE
 	";
 
     protected $expectedEntries = array(
@@ -74,7 +74,7 @@ class CacheSegmentParserTest extends UnitTestCase
 
         '4567890123' => array(
             'content' => "dolor
-				\x025678901234\x03
+				\x02CONTENT_CACHE5678901234\x03CONTENT_CACHE
 			sit",
             'identifier' => '4567890123',
             'type' => 'cached',
@@ -85,9 +85,9 @@ class CacheSegmentParserTest extends UnitTestCase
             'identifier' => '123456789',
             'type' => 'cached',
             'content' => "foo bar baz
-			bar bar \x022345678901\x03
-			foo foo \x023456789012\x03
-			baz baz \x024567890123\x03",
+			bar bar \x02CONTENT_CACHE2345678901\x03CONTENT_CACHE
+			foo foo \x02CONTENT_CACHE3456789012\x03CONTENT_CACHE
+			baz baz \x02CONTENT_CACHE4567890123\x03CONTENT_CACHE",
             'metadata' => 'AllDocumentNodes'
         ),
 
@@ -141,16 +141,16 @@ class CacheSegmentParserTest extends UnitTestCase
 
     protected $expectedOuterContentWithUncachedSegments = "
 		outer content
-		\x02123456789\x03
+		\x02CONTENT_CACHE123456789\x03CONTENT_CACHE
 		with some text
-		\x02eval=bar/baz\x1f{\"node\":\"/sites/demo/home\"}\x03
-		\x026789012345\x03
+		\x02CONTENT_CACHEeval=bar/baz\x1fCONTENT_CACHE{\"node\":\"/sites/demo/home\"}\x03CONTENT_CACHE
+		\x02CONTENT_CACHE6789012345\x03CONTENT_CACHE
 	";
 
     protected $expectedEntriesWithUncachedSegments = array(
         '4567890123' => array(
             'content' => "dolor
-				\x02eval=foo/bar\x1f{}\x03
+				\x02CONTENT_CACHEeval=foo/bar\x1fCONTENT_CACHE{}\x03CONTENT_CACHE
 			sit",
             'identifier' => '4567890123',
             'type' => 'cached',
@@ -161,7 +161,7 @@ class CacheSegmentParserTest extends UnitTestCase
             'identifier' => '123456789',
             'type' => 'cached',
             'content' => "foo bar baz
-			baz baz \x024567890123\x03",
+			baz baz \x02CONTENT_CACHE4567890123\x03CONTENT_CACHE",
             'metadata' => 'AllDocumentNodes'
         ),
 

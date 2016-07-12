@@ -55,15 +55,7 @@ define([
 				require({context: 'neos'}, ['Shared/Utility'], function(Utility) {
 					if (!Utility.isValidLink(value)) {
 						var url = 'http://' + value;
-						$(that.hrefField.getTargetObject()).attr('href', url);
-						if (that.target) {
-							that.hrefField.setAttribute(
-								'target',
-								that.target,
-								that.targetregex,
-								url
-							);
-						}
+						that.hrefField.setAttribute('href', url);
 					}
 				});
 			}

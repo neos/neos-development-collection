@@ -29,6 +29,19 @@ module.exports = function (grunt) {
 		},
 		concat: {
 			css: {
+				options: {
+					process: function (src, filepath) {
+						if (filepath.indexOf('jcrop') !== -1) {
+							console.log('jcrop', filepath);
+							src = src.replace('url("', 'url("../Library/jcrop/css/');
+						}
+						if (filepath.indexOf('jquery-ui') !== -1) {
+							console.log('jcrop', filepath);
+							src = src.replace(/url\(/g, 'url(../Library/jquery-ui/css/custom-theme/');
+						}
+						return src;
+					}
+				},
 				src: [
 					path.join(packagePath, 'Resources/Public/Styles/Neos.css'),
 					path.join(libraryPath, 'jquery-ui/css/custom-theme/jquery-ui-1.8.16.custom.css'),
@@ -116,6 +129,15 @@ module.exports = function (grunt) {
 						src = src.replace(/var componentNameByElement = {\n/, "var componentNameByElement = { 'code': 'code'," + "\n");
 						src = src.replace("availableButtons: [ 'u',", "availableButtons: [ 'code', 'u',");
 
+						// tooltips
+						src = src.replace(/tooltipClass: 'aloha aloha-ui-tooltip',/g, "placement: 'bottom',");
+						src = src.replace(".tooltip('close', null, true);", ".tooltip('hide');");
+						src = src.replace(".tooltip('disable');", ".tooltip('hide');");
+						src = src.replace(".tooltip('enable');", ".tooltip('show');");
+
+						// fix https://github.com/alohaeditor/Aloha-Editor/issues/1525
+						src = src.replace('RepositoryManager.markObject(targetObject, item);', 'executeForTargets(function (target) { RepositoryManager.markObject(target, item); });');
+
 						return src;
 					}
 				}
@@ -152,6 +174,7 @@ module.exports = function (grunt) {
 						// Tooltip
 						src = src.replace(/in top bottom left right/g, 'neos-in neos-top neos-bottom neos-left neos-right');
 						src = src.replace(/\.addClass\(placement\)/g, ".addClass('neos-' + placement)");
+						src = src.replace('delay: 0', "delay: { 'show': 500, 'hide': 100 }");
 
 						// Popover
 						src = src.replace(/fade top bottom left right in/g, 'neos-fade neos-top neos-bottom neos-left neos-right neos-in');

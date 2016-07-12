@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TYPO3CR\Domain\Service;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Security\Context as SecurityContext;
@@ -172,7 +172,7 @@ class ContextFactory implements ContextFactoryInterface
                 }
                 $stringValue = implode('&', $stringParts);
             } else {
-                $stringValue = $propertyValue instanceof \DateTime ? $propertyValue->getTimestamp() : (string)$propertyValue;
+                $stringValue = $propertyValue instanceof \DateTimeInterface ? $propertyValue->getTimestamp() : (string)$propertyValue;
             }
             $identifierSource .= ':' . $stringValue;
         }
@@ -208,7 +208,7 @@ class ContextFactory implements ContextFactoryInterface
             }
         }
         if (isset($contextProperties['currentDateTime'])) {
-            if (!$contextProperties['currentDateTime'] instanceof \DateTime) {
+            if (!$contextProperties['currentDateTime'] instanceof \DateTimeInterface) {
                 throw new InvalidNodeContextException('You tried to set currentDateTime in the context and did not provide a DateTime object as value.', 1373145297);
             }
         }
@@ -228,8 +228,8 @@ class ContextFactory implements ContextFactoryInterface
             if (!isset($contextProperties['dimensions'][$dimensionName])) {
                 throw new InvalidNodeContextException(sprintf('Failed creating a %s because the specified target dimension "%s" does not exist', $this->contextImplementation, $dimensionName), 1391340781);
             }
-            if (!in_array($dimensionValue, $contextProperties['dimensions'][$dimensionName])) {
-                throw new InvalidNodeContextException(sprintf('Failed creating a %s because the specified target dimension value %s for dimension %s is not in the list of dimension values (%s)', $this->contextImplementation, $dimensionValue, $dimensionName, implode(', ', $contextProperties['dimensions'][$dimensionName])), 1391340741);
+            if ($dimensionValue !== null && !in_array($dimensionValue, $contextProperties['dimensions'][$dimensionName])) {
+                throw new InvalidNodeContextException(sprintf('Failed creating a %s because the specified target dimension value "%s" for dimension "%s" is not in the list of dimension values (%s)', $this->contextImplementation, $dimensionValue, $dimensionName, implode(', ', $contextProperties['dimensions'][$dimensionName])), 1391340741);
             }
         }
     }

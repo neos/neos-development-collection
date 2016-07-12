@@ -12,7 +12,6 @@ define(
 		'Shared/EventDispatcher',
 		'Shared/Notification',
 		'Shared/NodeTypeService',
-		'vie',
 		'../Model/NodeSelection',
 		'../Model/PublishableNodes',
 		'./NavigatePanelController',
@@ -30,7 +29,6 @@ define(
 		EventDispatcher,
 		Notification,
 		NodeTypeService,
-		vieInstance,
 		NodeSelection,
 		PublishableNodes,
 		NavigatePanelController,
@@ -228,6 +226,7 @@ define(
 						if (PublishableNodes.get('workspaceWidePublishableEntitySubjects').findBy('documentNodeContextPath', node.data.key)) {
 							$(nodeSpan).addClass('neos-dynatree-dirty');
 						}
+						$('a[title]', nodeSpan).tooltip({container: '#neos-application'});
 					}
 				}));
 
@@ -277,7 +276,14 @@ define(
 				var isCurrentNode = node.data.key === this.get('pageNodePath');
 				if (isCurrentNode) {
 					ContentModule.loadPage(node.data.href);
+				} else {
+					// if the current viewed page is a children of the moved page load it
+					var explodedPath = node.data.key.split('@');
+					if (this.get('pageNodePath').indexOf(explodedPath[0]) === 0) {
+						ContentModule.loadPage(node.data.href);
+					}
 				}
+
 				EventDispatcher.trigger('nodeMoved', node);
 			},
 
@@ -331,12 +337,15 @@ define(
 						title;
 					// Re-enable mouse and keyboard handling
 					tree.$widget.bind();
-					node.activate();
 
 					if (prevTitle === newTitle || newTitle === '') {
-						title = croppedTitle;
+						node.render();
 					} else {
 						title = newTitle;
+						node.data.title = title;
+						node.data.fullTitle = title;
+						node.data.addClass += ' neos-dynatree-dirty';
+						node.render();
 						node.setLazyNodeStatus(that.statusCodes.loading);
 						NodeEndpoint.update(
 							{
@@ -345,36 +354,27 @@ define(
 							}
 						).then(
 							function(result) {
-								if (result !== null && result.success === true) {
-									var selectedNode = NodeSelection.get('selectedNode'),
-										entity = vieInstance.entities.get(vieInstance.service('rdfa').getElementSubject(selectedNode.$element));
-									if (entity) {
-										entity.set('typo3:title', title);
-									}
-									if (node.data.key === selectedNode.$element.attr('about')) {
+								node.data.href = result.data.nextUri;
+								node.setLazyNodeStatus(that.statusCodes.ok);
+								var nodeEntity = NodeSelection.getNode(node.data.key),
+									selectedNodeEntity = NodeSelection.get('selectedNode');
+								if (nodeEntity) {
+									nodeEntity.setAttribute('title', title);
+									nodeEntity.setAttribute('__workspaceName', result.data.workspaceNameOfNode, {silent: true});
+									if (nodeEntity === selectedNodeEntity) {
 										InspectorController.set('cleanProperties.title', title);
 										InspectorController.set('nodeProperties.title', title);
 									}
-									var isCurrentNode = node.data.key === that.get('pageNodePath');
-									node.data.href = result.data.nextUri;
-									node.data.title = title;
-									node.data.fullTitle = title;
-									node.setLazyNodeStatus(that.statusCodes.ok);
-									node.render();
-									if (isCurrentNode) {
-										ContentModule.loadPage(node.data.href);
-									}
-								} else {
-									Notification.error('Unexpected error while updating node: ' + JSON.stringify(result));
-									node.setLazyNodeStatus(that.statusCodes.error);
+									ContentModule.loadPage(node.data.href);
 								}
+								EventDispatcher.trigger('nodeUpdated');
+							},
+							function(error) {
+								node.setLazyNodeStatus(that.statusCodes.error);
 							}
 						);
 					}
-
 					node.activate();
-					input.parent().text(title);
-					input.remove();
 					setTimeout(function() {
 						that.set('editNodeTitleMode', false);
 					}, 50);
@@ -383,9 +383,11 @@ define(
 
 			createNode: function(activeNode, title, nodeType, iconClass, position) {
 				var that = this,
+					nodeTypeConfiguration = NodeTypeService.getNodeTypeDefinition(nodeType),
 					data = {
 						title: title,
 						nodeType: nodeType,
+						nodeTypeLabel: nodeTypeConfiguration ? nodeTypeConfiguration.label : '',
 						addClass: 'typo3_neos-page neos-matched',
 						iconClass: iconClass,
 						expand: false
@@ -402,7 +404,7 @@ define(
 					case 'into':
 						newNode = activeNode.addChild(data);
 				}
-				var prevTitle = newNode.data.tooltip,
+				var prevTitle = newNode.data.fullTitle,
 					tree = newNode.tree;
 
 				if (position === 'into') {
@@ -443,6 +445,7 @@ define(
 						that.set('editNodeTitleMode', false);
 						newNode.activate();
 						newNode.setTitle(title);
+						newNode.data.fullTitle = title;
 						that.persistNode(activeNode, newNode, nodeType, title, position);
 					}
 				});
@@ -498,7 +501,6 @@ define(
 									node.addChild(result.data);
 								} else {
 									node.setLazyNodeStatus(that.statusCodes.error);
-									Notification.error('Node Tree loading error.');
 								}
 							}
 						}

@@ -2,12 +2,11 @@ define(
 	[
 		'emberjs',
 		'Library/jquery-with-dependencies',
-		'Shared/LocalStorage',
 		'./MenuPanelController',
 		'Shared/EventDispatcher',
 		'Shared/I18n',
 		'text!./MenuPanel.html'
-	], function(Ember, $, LocalStorage, MenuPanelController, EventDispatcher, I18n, template) {
+	], function(Ember, $, MenuPanelController, EventDispatcher, I18n, template) {
 
 		return Ember.View.extend({
 			elementId: 'neos-menu-panel',
@@ -16,7 +15,10 @@ define(
 
 			ToggleMenuPanelHeadline: Ember.View.extend({
 				tagName: 'div',
+				'data-neos-tooltip': '',
+				'data-placement': 'right',
 				classNameBindings: ['collapsed:neos-collapsed:neos-open'],
+				attributeBindings: ['title', 'data-neos-tooltip', 'data-placement'],
 				_collapsed: false,
 
 				collapsed: function() {
@@ -26,6 +28,11 @@ define(
 						return this.get('_collapsed');
 					}
 				}.property('_collapsed', 'controller.menuPanelStickyMode'),
+
+				init: function() {
+					this._super();
+					this.set('title', I18n.translate('content.menu.menuPanel.toggleMenuGroup', 'Toggle menu group'));
+				},
 
 				// bound in handlebar
 				group: undefined,
@@ -64,23 +71,34 @@ define(
 
 			LinkView: Ember.View.extend({
 				tagName: 'a',
-				attributeBindings: ['href', 'title'],
+				attributeBindings: ['href', 'title', 'data-neos-tooltip', 'data-placement'],
 				description: '',
 				label: '',
 				href: '',
+				'data-neos-tooltip': '',
+				'data-placement': 'right',
 				shouldShowDescription: function() {
 					return !this.get('controller.menuPanelStickyMode');
 				}.property('controller.menuPanelStickyMode'),
 
 				title: function() {
 					return I18n.translate(this.get('shouldShowDescription') ? this.get('description') : this.get('label'));
-				}.property('description', 'label', 'shouldShowDescription')
+				}.property('description', 'label', 'shouldShowDescription'),
+
+				_titleDidChange: function() {
+					this.$().attr('data-original-title', this.get('title'));
+				}.observes('title')
 			}),
+
+			didInsertElement: function() {
+				this.$().find('[data-neos-tooltip]').tooltip();
+			},
 
 			mouseLeave: function(event) {
 				// We do not want the panel to close if we move from the panel back to the button because this
 				// leads to a confusing behaviour of the user.
-				if (this.get('controller.menuPanelStickyMode') === false && event.relatedTarget !== $('#neos-menu-button').get(0)) {
+				if (this.get('controller.menuPanelStickyMode') === false
+					&& (!$(event.relatedTarget).is('#neos-menu-button, .neos-tooltip'))) {
 					this.set('controller.menuPanelMode', false);
 				}
 			},

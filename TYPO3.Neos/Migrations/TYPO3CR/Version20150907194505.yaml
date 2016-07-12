@@ -1,0 +1,28 @@
+up:
+  comments: 'Migrate PluginViews references from node paths to identifiers.'
+  migration:
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos:PluginView'
+      transformations:
+        -
+          type: 'TYPO3\Neos\TYPO3CR\Transformations\PluginViewTransformation'
+          settings: []
+
+down:
+  comments: 'Migrate PluginViews references from identifiers to node paths.'
+  migration:
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'TYPO3.Neos:PluginView'
+      transformations:
+        -
+          type: 'TYPO3\Neos\TYPO3CR\Transformations\PluginViewTransformation'
+          settings:
+            reverse: TRUE

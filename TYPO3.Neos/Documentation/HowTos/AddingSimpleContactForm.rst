@@ -12,21 +12,7 @@ Yaml (Sites/Vendor.Site/Configuration/Settings.yaml) ::
       yamlPersistenceManager:
         savePath: 'resource://Vendor.Site/Private/Form/'
 
-Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
-
-  'TYPO3.Neos.NodeTypes:Form':
-    properties:
-      formIdentifier:
-        ui:
-          inspector:
-            editorOptions:
-              values:
-                '': ~
-                # Maps to the file Sites/Vendor.Site/Resources/Private/Form/contact-form.yaml
-                'contact-form':
-                  label: 'contact-form'
-
-Now place a valid TYPO3.Form Yaml configuration the Private/Form folder. Then add a Form Element where
+Now place a valid TYPO3.Form Yaml configuration in the Private/Form folder. Then add a Form Element where
 you wish the form to be displayed and select it from the dropdown in the Inspector.
 
 Yaml (Sites/Vendor.Site/Resources/Private/Form/contact-form.yaml) ::
@@ -35,7 +21,7 @@ Yaml (Sites/Vendor.Site/Resources/Private/Form/contact-form.yaml) ::
   identifier: contact-form
   label: Contact
   renderingOptions:
-      submitButtonLabel: Send
+    submitButtonLabel: Send
   renderables:
     -
       type: 'TYPO3.Form:Page'
@@ -99,7 +85,7 @@ Html (Sites/Vendor.Site/Resources/Private/Templates/Email/Message.txt) ::
   Hello,
 
   <f:for each="{form.formState.formValues}" as="value" key="label">
-      {label}: {value}
+    {label}: {value}
   </f:for>
 
   Thanks
@@ -107,4 +93,4 @@ Html (Sites/Vendor.Site/Resources/Private/Templates/Email/Message.txt) ::
 To find out more about how to create forms see the TYPO3.Form package. There is even a Click Form Builder that
 exports the Yaml settings files.
 
-.. warning:: Make sure the TYPO3.NeosDemoTypo3Org package (or other) is deactivated. Otherwise the setting ``TYPO3.Form.yamlPersistenceManager.savePath`` may be overwritten by another package. You can deactivate a package with the command ``./flow package:deactivate <PackageKey>``.
+.. warning:: Make sure the Neos.Demo package (or other) is deactivated. Otherwise the setting ``TYPO3.Form.yamlPersistenceManager.savePath`` may be overwritten by another package. You can deactivate a package with the command ``./flow package:deactivate <PackageKey>``.

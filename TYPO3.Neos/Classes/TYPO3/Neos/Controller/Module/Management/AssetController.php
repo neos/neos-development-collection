@@ -1,25 +1,42 @@
 <?php
 namespace TYPO3\Neos\Controller\Module\Management;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Error\Error;
 use TYPO3\Flow\Error\Message;
+use TYPO3\Flow\I18n\Locale;
+use TYPO3\Flow\Mvc\Exception\InvalidArgumentValueException;
+use TYPO3\Flow\Resource\Resource as FlowResource;
+use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Utility\TypeHandling;
+use TYPO3\Flow\Utility\MediaTypes;
+use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Media\Domain\Model\AssetCollection;
+use TYPO3\Media\Domain\Model\AssetInterface;
+use TYPO3\Media\Exception\AssetServiceException;
+use TYPO3\Neos\Controller\BackendUserTranslationTrait;
+use TYPO3\Neos\Controller\CreateContentContextTrait;
+use TYPO3\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
+use TYPO3\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
+use TYPO3\Neos\Domain\Service\UserService as DomainUserService;
+use TYPO3\Neos\Service\UserService;
+use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 
 /**
  * Controller for asset handling
@@ -28,11 +45,20 @@ use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
  */
 class AssetController extends \TYPO3\Media\Controller\AssetController
 {
+    use CreateContentContextTrait;
+    use BackendUserTranslationTrait;
+
     /**
      * @Flow\Inject
      * @var NodeDataRepository
      */
     protected $nodeDataRepository;
+
+    /**
+     * @Flow\Inject
+     * @var NodeFactory
+     */
+    protected $nodeFactory;
 
     /**
      * @Flow\Inject
@@ -51,6 +77,36 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
      * @var DomainRepository
      */
     protected $domainRepository;
+
+    /**
+     * @Flow\Inject
+     * @var Context
+     */
+    protected $securityContext;
+
+    /**
+     * @Flow\Inject
+     * @var WorkspaceRepository
+     */
+    protected $workspaceRepository;
+
+    /**
+     * @Flow\Inject
+     * @var UserService
+     */
+    protected $userService;
+
+    /**
+     * @Flow\Inject
+     * @var DomainUserService
+     */
+    protected $domainUserService;
+
+    /**
+     * @Flow\Inject
+     * @var ContentDimensionPresetSourceInterface
+     */
+    protected $contentDimensionPresetSource;
 
     /**
      * @return void
@@ -74,29 +130,78 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
      */
     public function deleteAction(\TYPO3\Media\Domain\Model\Asset $asset)
     {
-        $relationMap = [];
-        $relationMap[TypeHandling::getTypeForValue($asset)] = array($this->persistenceManager->getIdentifierByObject($asset));
-
-        if ($asset instanceof \TYPO3\Media\Domain\Model\Image) {
-            foreach ($asset->getVariants() as $variant) {
-                $type = TypeHandling::getTypeForValue($variant);
-                if (!isset($relationMap[$type])) {
-                    $relationMap[$type] = [];
-                }
-                $relationMap[$type][] = $this->persistenceManager->getIdentifierByObject($variant);
-            }
+        try {
+            $this->assetService->getRepository($asset)->remove($asset);
+            $this->addFlashMessage('assetHasBeenDeleted', '', Message::SEVERITY_OK, [$asset->getLabel()], 1412375050);
+        } catch (AssetServiceException $exception) {
+            $this->addFlashMessage('media.deleteRelatedNodes', '', Message::SEVERITY_WARNING, [], 1412422767);
         }
 
-        $relatedNodes = $this->nodeDataRepository->findNodesByRelatedEntities($relationMap);
-        if (count($relatedNodes) > 0) {
-            $this->addFlashMessage('Asset could not be deleted, because there are still Nodes using it.', '', Message::SEVERITY_WARNING, array(), 1412422767);
+        $this->redirect('index');
+    }
+
+    /**
+     * Update the resource on an asset.
+     *
+     * @param AssetInterface $asset
+     * @param FlowResource $resource
+     * @param array $options
+     * @throws InvalidArgumentValueException
+     * @return void
+     */
+    public function updateAssetResourceAction(AssetInterface $asset, FlowResource $resource, array $options = [])
+    {
+        $sourceMediaType = MediaTypes::parseMediaType($asset->getMediaType());
+        $replacementMediaType = MediaTypes::parseMediaType($resource->getMediaType());
+
+        // Prevent replacement of image, audio and video by a different mimetype because of possible rendering issues.
+        if (in_array($sourceMediaType['type'], ['image', 'audio', 'video']) && $sourceMediaType['type'] !== $replacementMediaType['type']) {
+            $this->addFlashMessage(
+                'Resources of type "%s" can only be replaced by a similar resource. Got type "%s"',
+                '',
+                Message::SEVERITY_WARNING,
+                [$sourceMediaType['type'], $resource->getMediaType()],
+                1462308179
+            );
             $this->redirect('index');
         }
 
-        // FIXME: Resources are not deleted, because we cannot be sure that the resource isn't used anywhere else.
-        $this->assetRepository->remove($asset);
-        $this->addFlashMessage(sprintf('Asset "%s" has been deleted.', $asset->getLabel()), null, null, array(), 1412375050);
-        $this->redirect('index');
+        parent::updateAssetResourceAction($asset, $resource, $options);
+    }
+
+    /**
+     * Get Related Nodes for an asset
+     *
+     * @param AssetInterface $asset
+     * @return void
+     */
+    public function relatedNodesAction(AssetInterface $asset)
+    {
+        $userWorkspace = $this->userService->getPersonalWorkspace();
+
+        $usageReferences = $this->assetService->getUsageReferences($asset);
+        $relatedNodes = [];
+
+        /** @var AssetUsageInNodeProperties $usage */
+        foreach ($usageReferences as $usage) {
+            $documentNodeIdentifier = $usage->getDocumentNode() instanceof NodeInterface ? $usage->getDocumentNode()->getIdentifier() : null;
+
+            $relatedNodes[$usage->getSite()->getNodeName()]['site'] = $usage->getSite();
+            $relatedNodes[$usage->getSite()->getNodeName()]['documentNodes'][$documentNodeIdentifier]['node'] = $usage->getDocumentNode();
+            $relatedNodes[$usage->getSite()->getNodeName()]['documentNodes'][$documentNodeIdentifier]['nodes'][] = [
+                'node' => $usage->getNode(),
+                'nodeData' => $usage->getNode()->getNodeData(),
+                'contextDocumentNode' => $usage->getDocumentNode(),
+                'accessible' => $usage->isAccessible()
+            ];
+        }
+
+        $this->view->assignMultiple([
+            'asset' => $asset,
+            'relatedNodes' => $relatedNodes,
+            'contentDimensions' => $this->contentDimensionPresetSource->getAllPresets(),
+            'userWorkspace' => $userWorkspace
+        ]);
     }
 
     /**
@@ -142,6 +247,26 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
         if ($this->objectManager->getContext()->isDevelopment()) {
             $errorMessage .= ' while trying to call %1$s->%2$s()';
         }
-        return new Error($errorMessage, null, array(get_class($this), $this->actionMethodName));
+        return new Error($errorMessage, null, [get_class($this), $this->actionMethodName]);
+    }
+
+    /**
+     * Add a translated flashMessage.
+     *
+     * @param string $messageBody The translation id for the message body.
+     * @param string $messageTitle The translation id for the message title.
+     * @param string $severity
+     * @param array $messageArguments
+     * @param integer $messageCode
+     * @return void
+     */
+    public function addFlashMessage($messageBody, $messageTitle = '', $severity = Message::SEVERITY_OK, array $messageArguments = array(), $messageCode = null)
+    {
+        if (is_string($messageBody)) {
+            $messageBody = $this->translator->translateById($messageBody, $messageArguments, null, null, 'Modules', 'TYPO3.Neos');
+        }
+        $messageTitle = $this->translator->translateById($messageTitle, $messageArguments, null, null, 'Modules', 'TYPO3.Neos');
+
+        parent::addFlashMessage($messageBody, $messageTitle, $severity, $messageArguments, $messageCode);
     }
 }

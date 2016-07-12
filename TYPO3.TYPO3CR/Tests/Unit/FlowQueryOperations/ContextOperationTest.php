@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TYPO3CR\Tests\Unit\FlowQueryOperations;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3CR".         *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\TYPO3CR\Eel\FlowQueryOperations\ContextOperation;
@@ -33,7 +33,7 @@ class ContextOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function setUp()
     {
         $this->operation = new ContextOperation();
-        $this->mockContextFactory = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
+        $this->mockContextFactory = $this->createMock('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
         $this->inject($this->operation, 'contextFactory', $this->mockContextFactory);
     }
 
@@ -42,7 +42,7 @@ class ContextOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function canEvaluateReturnsTrueIfNodeIsInContext()
     {
-        $mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $mockNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 
         $result = $this->operation->canEvaluate(array($mockNode));
         $this->assertTrue($result);
@@ -57,7 +57,7 @@ class ContextOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
         $nodeContextProperties = array('infiniteImprobabilityDrive' => false, 'autoRemoveUnsuitableContent' => true);
         $expectedModifiedContextProperties = array('infiniteImprobabilityDrive' => true, 'autoRemoveUnsuitableContent' => true);
 
-        $mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $mockNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
         $mockFlowQuery = $this->buildFlowQueryWithNodeInContext($mockNode, $nodeContextProperties);
 
         $modifiedNodeContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
@@ -76,12 +76,12 @@ class ContextOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
         $nodeContextProperties = array('infiniteImprobabilityDrive' => false, 'autoRemoveUnsuitableContent' => true);
         $nodeIdentifier = 'c575c430-c971-11e3-a6e7-14109fd7a2dd';
 
-        $mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $mockNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
         $mockNode->expects($this->any())->method('getIdentifier')->will($this->returnValue($nodeIdentifier));
         $mockFlowQuery = $this->buildFlowQueryWithNodeInContext($mockNode, $nodeContextProperties);
 
         $modifiedNodeContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
-        $nodeInModifiedContext = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $nodeInModifiedContext = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
         $nodeInModifiedContext->expects($this->any())->method('getPath')->will($this->returnValue('/foo/bar'));
         $this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($modifiedNodeContext));
 
@@ -100,7 +100,7 @@ class ContextOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
         $nodeContextProperties = array('infiniteImprobabilityDrive' => false, 'autoRemoveUnsuitableContent' => true);
         $nodeIdentifier = 'c575c430-c971-11e3-a6e7-14109fd7a2dd';
 
-        $mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $mockNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
         $mockNode->expects($this->any())->method('getIdentifier')->will($this->returnValue($nodeIdentifier));
         $mockFlowQuery = $this->buildFlowQueryWithNodeInContext($mockNode, $nodeContextProperties);
 

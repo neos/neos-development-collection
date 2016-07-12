@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\Service\Controller;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Eel\FlowQuery\FlowQuery;
@@ -43,7 +43,7 @@ class NodeController extends AbstractServiceController
      */
     protected $viewFormatToObjectNameMap = array(
         'html' => 'TYPO3\Neos\Service\View\NodeView',
-        'json' => 'TYPO3\Flow\Mvc\View\JsonView'
+        'json' => 'TYPO3\Neos\Service\View\NodeView'
     );
 
     /**
@@ -89,6 +89,12 @@ class NodeController extends AbstractServiceController
      * @var \TYPO3\Neos\Service\NodeOperations
      */
     protected $nodeOperations;
+
+    /**
+     * @Flow\Inject
+     * @var \TYPO3\Neos\Domain\Repository\DomainRepository
+     */
+    protected $domainRepository;
 
     /**
      * Select special error action
@@ -251,7 +257,7 @@ class NodeController extends AbstractServiceController
     public function moveAndRenderAction(Node $node, Node $targetNode, $position, $typoScriptPath)
     {
         $this->nodeOperations->move($node, $targetNode, $position);
-        $this->redirectToRenderNode($targetNode, $typoScriptPath);
+        $this->redirectToRenderNode($node, $typoScriptPath);
     }
 
     /**
@@ -302,8 +308,8 @@ class NodeController extends AbstractServiceController
      */
     public function copyAndRenderAction(Node $node, Node $targetNode, $position, $typoScriptPath, $nodeName = null)
     {
-        $this->nodeOperations->copy($node, $targetNode, $position, $nodeName);
-        $this->redirectToRenderNode($targetNode, $typoScriptPath);
+        $copiedNode = $this->nodeOperations->copy($node, $targetNode, $position, $nodeName);
+        $this->redirectToRenderNode($copiedNode, $typoScriptPath);
     }
 
     /**
@@ -331,7 +337,14 @@ class NodeController extends AbstractServiceController
         $q = new FlowQuery(array($node));
         $closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
         $nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $closestDocumentNode), 'Frontend\Node', 'TYPO3.Neos');
-        $this->view->assign('value', array('data' => array('workspaceNameOfNode' => $node->getWorkspace()->getName(), 'nextUri' => $nextUri), 'success' => true));
+        $this->view->assign('value', array(
+            'data' => array(
+                'workspaceNameOfNode' => $node->getWorkspace()->getName(),
+                'labelOfNode' => $node->getLabel(),
+                'nextUri' => $nextUri
+            ),
+            'success' => true
+        ));
     }
 
     /**
@@ -372,6 +385,7 @@ class NodeController extends AbstractServiceController
     /**
      * Search a page, needed for internal links.
      *
+     * @deprecated will be removed with 3.0, use Service/NodesController->indexAction() instead
      * @param string $query
      * @return void
      */
@@ -437,6 +451,12 @@ class NodeController extends AbstractServiceController
         $contextProperties = array(
             'workspaceName' => $workspaceName
         );
+
+        $currentDomain = $this->domainRepository->findOneByActiveRequest();
+        if ($currentDomain !== null) {
+            $contextProperties['currentSite'] = $currentDomain->getSite();
+            $contextProperties['currentDomain'] = $currentDomain;
+        }
 
         return $this->contextFactory->create($contextProperties);
     }

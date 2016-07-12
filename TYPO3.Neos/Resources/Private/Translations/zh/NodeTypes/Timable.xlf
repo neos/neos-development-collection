@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext" target-language="zh-TW">
+  <file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext" target-language="zh-CN">
     <body>
       <trans-unit id="properties._hiddenBeforeDateTime" xml:space="preserve">
 				<source>Hide before</source>
-			<target xml:lang="zh-TW" state="needs-translation">Hide before</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">隐藏前面的元素</target></trans-unit>
       <trans-unit id="properties._hiddenAfterDateTime" xml:space="preserve">
 				<source>Hide after</source>
-			<target xml:lang="zh-TW" state="needs-translation">Hide after</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">隐藏后面的元素</target></trans-unit>
     </body>
   </file>
 </xliff>

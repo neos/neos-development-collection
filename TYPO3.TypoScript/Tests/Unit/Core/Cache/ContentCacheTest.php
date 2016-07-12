@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TypoScript\Tests\Unit\Core\Cache;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TypoScript".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TypoScript package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\TypoScript\Core\Cache\CacheSegmentParser;
@@ -20,6 +20,7 @@ use TYPO3\TypoScript\Core\Cache\ContentCache;
  */
 class ContentCacheTest extends UnitTestCase
 {
+
     /**
      * @return array
      */
@@ -29,7 +30,10 @@ class ContentCacheTest extends UnitTestCase
             array('Everything', 'Everything'),
             array('Node_f6dc5e8e-03d9-306f-1572-92ab7a7bc4ef', 'Node_f6dc5e8e-03d9-306f-1572-92ab7a7bc4ef'),
             array('NodeType_TYPO3.Neos.NodeTypes:Page', 'NodeType_TYPO3_Neos_NodeTypes-Page'),
-            array('DescendentOf_f6dc5e8e-03d9-306f-1572-92ab7a7bc4ef', 'DescendentOf_f6dc5e8e-03d9-306f-1572-92ab7a7bc4ef')
+            array(
+                'DescendentOf_f6dc5e8e-03d9-306f-1572-92ab7a7bc4ef',
+                'DescendentOf_f6dc5e8e-03d9-306f-1572-92ab7a7bc4ef'
+            )
         );
     }
 
@@ -65,7 +69,7 @@ class ContentCacheTest extends UnitTestCase
     public function createCacheSegmentWithInvalidEntryIdentifierValueThrowsException($entryIdentifierValues)
     {
         $contentCache = new ContentCache();
-        $mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
+        $mockSecurityContext = $this->createMock('TYPO3\Flow\Security\Context');
         $this->inject($contentCache, 'securityContext', $mockSecurityContext);
         $contentCache->createCacheSegment('My content', '/foo/bar', $entryIdentifierValues);
     }
@@ -75,7 +79,7 @@ class ContentCacheTest extends UnitTestCase
      */
     public function validEntryIdentifierValues()
     {
-        $mockCacheAware = $this->getMock('TYPO3\Flow\Cache\CacheAwareInterface');
+        $mockCacheAware = $this->createMock('TYPO3\Flow\Cache\CacheAwareInterface');
         return array(
             'string value' => array(array('foo' => 'Bar')),
             'boolean value' => array(array('foo' => true)),
@@ -92,7 +96,7 @@ class ContentCacheTest extends UnitTestCase
     public function createCacheSegmentWithValidEntryIdentifierValueCreatesIdentifier($entryIdentifierValues)
     {
         $contentCache = new ContentCache();
-        $mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
+        $mockSecurityContext = $this->createMock('TYPO3\Flow\Security\Context');
         $this->inject($contentCache, 'securityContext', $mockSecurityContext);
         $segement = $contentCache->createCacheSegment('My content', '/foo/bar', $entryIdentifierValues);
         $this->assertNotEmpty($segement);
@@ -104,10 +108,10 @@ class ContentCacheTest extends UnitTestCase
     public function createCacheSegmentWithLifetimeStoresLifetimeAfterTagsInMetadata()
     {
         $contentCache = new ContentCache();
-        $mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
+        $mockSecurityContext = $this->createMock('TYPO3\Flow\Security\Context');
         $this->inject($contentCache, 'securityContext', $mockSecurityContext);
         $segement = $contentCache->createCacheSegment('My content', '/foo/bar', array(42), array('Foo', 'Bar'), 60);
-        $this->assertContains(ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . 'Foo,Bar;60' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN, $segement);
+        $this->assertContains('Foo,Bar;60' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN, $segement);
     }
 
     /**
@@ -116,17 +120,132 @@ class ContentCacheTest extends UnitTestCase
     public function processCacheSegmentsSetsLifetimeFromMetadata()
     {
         $contentCache = new ContentCache();
-        $mockSecurityContext = $this->getMock('TYPO3\Flow\Security\Context');
+        $mockSecurityContext = $this->createMock('TYPO3\Flow\Security\Context');
         $this->inject($contentCache, 'securityContext', $mockSecurityContext);
         $this->inject($contentCache, 'parser', new CacheSegmentParser());
 
-        $mockCache = $this->getMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
+        $mockCache = $this->createMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
         $this->inject($contentCache, 'cache', $mockCache);
 
         $segement = $contentCache->createCacheSegment('My content', '/foo/bar', array(42), array('Foo', 'Bar'), 60);
 
-        $mockCache->expects($this->once())->method('set')->with($this->anything(), $this->anything(), $this->anything(), 60);
+        $mockCache->expects($this->once())->method('set')->with($this->anything(), $this->anything(), $this->anything(),
+            60);
 
         $contentCache->processCacheSegments($segement);
+    }
+
+    /**
+     * @test
+     */
+    public function createCacheSegmentAndProcessCacheSegmentsDoesWorkWithCacheSegmentTokensInContent()
+    {
+        $contentCache = new ContentCache();
+        $mockSecurityContext = $this->createMock('TYPO3\Flow\Security\Context');
+        $this->inject($contentCache, 'securityContext', $mockSecurityContext);
+        $this->inject($contentCache, 'parser', new CacheSegmentParser());
+
+        $mockCache = $this->createMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
+        $this->inject($contentCache, 'cache', $mockCache);
+
+        $invalidContent = 'You should probably not use ' . ContentCache::CACHE_SEGMENT_START_TOKEN . ', ' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . ' or ' . ContentCache::CACHE_SEGMENT_END_TOKEN . ' inside your content.';
+
+        $content = $contentCache->createCacheSegment($invalidContent, 'some.typoscripth.path', array('node' => 'foo'),
+            array('mytag1', 'mytag2'));
+
+        $validContent = 'But the cache should not fail because of it.';
+
+        $content .= $contentCache->createCacheSegment($validContent, 'another.typoscripth.path', array('node' => 'bar'),
+            array('mytag2'), 86400);
+
+        $mockCache->expects($this->at(0))->method('set')->with($this->anything(), $invalidContent,
+            array('mytag1', 'mytag2'), null);
+        $mockCache->expects($this->at(1))->method('set')->with($this->anything(), $validContent, array('mytag2'),
+            86400);
+
+        $output = $contentCache->processCacheSegments($content);
+
+        $this->assertSame($invalidContent . $validContent, $output);
+    }
+
+    /**
+     * @test
+     */
+    public function createUncachedSegmentAndProcessCacheSegmentsDoesWorkWithCacheSegmentTokensInContent()
+    {
+        $contentCache = new ContentCache();
+
+        $mockPropertyMapper = $this->createMock('TYPO3\Flow\Property\PropertyMapper');
+        $mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnArgument(0));
+        $this->inject($contentCache, 'propertyMapper', $mockPropertyMapper);
+        $this->inject($contentCache, 'parser', new CacheSegmentParser());
+
+        $mockCache = $this->createMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
+        $this->inject($contentCache, 'cache', $mockCache);
+
+        $invalidContent = 'You should probably not use ' . ContentCache::CACHE_SEGMENT_START_TOKEN . ', ' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . ' or ' . ContentCache::CACHE_SEGMENT_END_TOKEN . ' inside your uncached content.';
+
+        $content = $contentCache->createUncachedSegment($invalidContent, 'uncached.typoscript.path',
+            array('node' => 'A node identifier'));
+
+        $output = $contentCache->processCacheSegments($content);
+
+        $this->assertSame($invalidContent, $output);
+    }
+
+    /**
+     * @test
+     */
+    public function getCachedSegmentWithExistingCacheEntryReplacesNestedCachedSegments()
+    {
+        $contentCache = new ContentCache();
+
+        $mockSecurityContext = $this->createMock('TYPO3\Flow\Security\Context');
+        $this->inject($contentCache, 'securityContext', $mockSecurityContext);
+
+        $mockPropertyMapper = $this->createMock('TYPO3\Flow\Property\PropertyMapper');
+        $mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnArgument(0));
+        $this->inject($contentCache, 'propertyMapper', $mockPropertyMapper);
+
+        $this->inject($contentCache, 'parser', new CacheSegmentParser());
+
+        $mockContext = $this->getMockBuilder('TYPO3\Flow\Core\ApplicationContext')->disableOriginalConstructor()->getMock();
+        $cacheBackend = new \TYPO3\Flow\Cache\Backend\TransientMemoryBackend($mockContext);
+        $cacheFrontend = new \TYPO3\Flow\Cache\Frontend\StringFrontend('foo', $cacheBackend);
+        $cacheBackend->setCache($cacheFrontend);
+        $this->inject($contentCache, 'cache', $cacheFrontend);
+
+        $invalidContent = 'You should probably not use ' . ContentCache::CACHE_SEGMENT_START_TOKEN . ', ' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . ' or ' . ContentCache::CACHE_SEGMENT_END_TOKEN . ' inside your content.';
+
+        $innerCachedContent = $contentCache->createCacheSegment($invalidContent, 'some.typoscripth.path.innerCached',
+            array('node' => 'foo'), array('mytag1', 'mytag2'));
+
+        $uncachedCommandOutput = 'This content is highly dynamic with ' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . ' and ' . ContentCache::CACHE_SEGMENT_END_TOKEN;
+        $innerUncachedContent = $contentCache->createUncachedSegment($uncachedCommandOutput,
+            'some.typoscripth.path.innerUncached', array('node' => 'A node identifier'));
+
+        $outerContentStart = 'You can nest cached segments like <';
+        $outerContentMiddle = '> or uncached segments like <';
+        $outerContentEnd = '> inside other segments.';
+
+        $outerContent = $outerContentStart . $innerCachedContent . $outerContentMiddle . $innerUncachedContent . $outerContentEnd;
+
+        $content = $contentCache->createCacheSegment($outerContent, 'some.typoscripth.path', array('node' => 'bar'),
+            array('mytag2'), 86400);
+        $output = $contentCache->processCacheSegments($content);
+
+        $expectedOutput = $outerContentStart . $invalidContent . $outerContentMiddle . $uncachedCommandOutput . $outerContentEnd;
+
+        $this->assertSame($expectedOutput, $output);
+
+        $cachedContent = $contentCache->getCachedSegment(function ($command) use ($uncachedCommandOutput) {
+            if ($command === 'eval=some.typoscripth.path.innerUncached') {
+                return $uncachedCommandOutput;
+            } else {
+                $this->fail('Unexpected command: ' . $command);
+            }
+        }, 'some.typoscripth.path', array('node' => 'bar'));
+
+        $this->assertSame($expectedOutput, $cachedContent);
     }
 }

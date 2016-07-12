@@ -4,7 +4,7 @@ additionalProperties:
   type: dictionary
   properties:
     'properties':
-      type: ['dictionary', 'null']
+      type: dictionary
       additionalProperties:
         # for each property...
         type: dictionary
@@ -17,6 +17,12 @@ additionalProperties:
             properties:
 
               'label': { type: string, description: "Human-readable label for this property." }
+
+              'help':
+                type: dictionary
+                additionalProperties: FALSE
+                properties:
+                  'message': { type: string, description: "Help text for this property. Supports markdown." }
 
               'reloadIfChanged': { type: boolean, description: "If this property changes, should a element refresh occur?" }
 
@@ -104,6 +110,16 @@ additionalProperties:
 
                   'editorOptions': { type: dictionary, description: 'options for the given editor' }
 
+                  'editorListeners':
+                    type: dictionary
+                    additionalProperties:
+                      type: dictionary
+                      additionalProperties: FALSE
+                      properties:
+                        'property': { type: ['string'], description: 'The name of an observed property in the same NodeType.' }
+                        'handler': { type: ['string'], description: 'The path to a handler JavaScript object, similar to custom editors and validators.' }
+                        'handlerOptions':  { type: dictionary, description: 'options for the given handler' }
+
     'ui':
       # here, we specify ONLY the "ui" part of the schema, as the remaining parts
       # are already specified in the NodeTypes schema of the TYPO3CR package
@@ -112,6 +128,12 @@ additionalProperties:
       properties:
 
         'label': { type: string, description: "Human-readable label for this Node Type." }
+
+        'help':
+          type: dictionary
+          additionalProperties: FALSE
+          properties:
+            'message': { type: string, description: "Help text for this Node Type. Supports markdown." }
 
         'icon': { type: string, description: "Icon class" }
 
@@ -157,6 +179,8 @@ additionalProperties:
                   'position': { type: integer, description: 'Position of the inspector group, small numbers are sorted on top' }
 
                   'collapsed': { type: boolean, description: 'If TRUE, the group in the inspector panel is collapsed by default.' }
+
+                  'icon': { type: string, description: "CSS Class for displaying an icon for each group." }
 
             'views':
               type: dictionary

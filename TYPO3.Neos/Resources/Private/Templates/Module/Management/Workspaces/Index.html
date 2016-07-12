@@ -2,180 +2,156 @@
 <f:layout name="BackendSubModule" />
 
 <f:section name="content">
-	<f:if condition="{sites}">
-		<f:then>
-			<f:form action="publishOrDiscardNodes">
-				<legend>{neos:backend.translate(id: 'workspaces.unpublishedChanges', source: 'Modules', package: 'TYPO3.Neos')}</legend>
-				<br />
-				<div class="neos-row-fluid">
-					<table class="neos-table">
-						<thead>
-							<tr>
-								<th class="check neos-priority1">
-									<label for="check-all" class="neos-checkbox">
-										<input type="checkbox" id="check-all" /><span></span>
-									</label>
-								</th>
-								<th class="legend neos-priority1"></th>
-								<th class="label neos-priority1">{neos:backend.translate(id: 'labelCaption', source: 'Main', package: 'TYPO3.Neos')}</th>
-								<th class="nodetype neos-priority3">{neos:backend.translate(id: 'nodeTypeCaption', source: 'Main', package: 'TYPO3.Neos')}</th>
-								<th class="relpath neos-priority4">{neos:backend.translate(id: 'relativePathCaption', source: 'Main', package: 'TYPO3.Neos')}</th>
-								<th class="neos-action neos-priority1"></th>
-							</tr>
-						</thead>
-						<tbody>
-							<f:for each="{sites}" as="site">
-								<f:for each="{site.documents}" key="documentPath" as="document">
-									<tr class="neos-folder">
-										<td colspan="5" class="neos-priority1">
-											<f:if condition="{sites -> f:count()} > 1">
-												<div class="neos-pull-right">
-													<strong><strong>{neos:backend.translate(id: 'site', value: 'Site')}: {f:if(condition: site.siteNode.name, then: site.siteNode.name, else: site.siteNode.nodeName)}</strong>
-												</div>
+	<div class="neos-row-fluid">
+		<table class="neos-table">
+			<thead>
+			<tr>
+				<th>&nbsp;</th>
+				<th>{neos:backend.translate(id: 'workspaces.workspace.title', source: 'Modules', package: 'TYPO3.Neos')}</th>
+				<th>{neos:backend.translate(id: 'workspaces.workspace.baseWorkspace', source: 'Modules', package: 'TYPO3.Neos')}</th>
+				<th>{neos:backend.translate(id: 'workspaces.workspace.owner', source: 'Modules', package: 'TYPO3.Neos')}</th>
+				<th class="neos-changes">{neos:backend.translate(id: 'workspaces.workspace.changes', source: 'Modules', package: 'TYPO3.Neos')}</th>
+				<th>&nbsp;</th>
+			</tr>
+			</thead>
+			<f:for each="{workspacesAndChangeCounts}" key="workspaceName" as="workspaceAndCounts" iteration="workspacesIterator">
+				<f:alias map="{workspace: workspaceAndCounts.workspace, changesCounts: workspaceAndCounts.changesCounts, canPublish: workspaceAndCounts.canPublish, canManage: workspaceAndCounts.canManage, dependentWorkspacesCount: workspaceAndCounts.dependentWorkspacesCount}">
+					<tr>
+						<td class="neos-workspace-type">
+							<f:if condition="{userWorkspace} == {workspace}">
+								<f:then>
+									<i class="icon-user" title="{neos:backend.translate(id: 'workspaces.personalWorkspace', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip"></i>
+								</f:then>
+								<f:else>
+									<f:if condition="{canPublish}">
+										<f:then>
+											<f:if condition="{workspace.privateWorkspace}">
+												<f:then>
+													<i class="icon-shield" title="{neos:backend.translate(id: 'workspaces.privateWorkspace', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip"></i>
+												</f:then>
+												<f:else>
+													<i class="icon-group" title="{neos:backend.translate(id: 'workspaces.internalWorkspace', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip"></i>
+												</f:else>
 											</f:if>
-											<strong>{neos:backend.translate(id: 'pathCaption', source: 'Main', package: 'TYPO3.Neos')}:
-												<f:if condition="{document.documentNode.removed}">
+										</f:then>
+										<f:else>
+											<i class="icon-lock" title="{neos:backend.translate(id: 'workspaces.readonlyWorkspace', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip"></i>
+										</f:else>
+									</f:if>
+								</f:else>
+							</f:if>
+						</td>
+						<td><span title="{workspace.name}" data-neos-toggle="tooltip">{workspace.title -> f:format.crop(maxCharacters: 25, append: '…')}</span></td>
+						<td>
+							<f:if condition="{workspace.baseWorkspace}">
+								<f:then>
+									<span title="{workspace.baseWorkspace.name}" data-neos-toggle="tooltip">{workspace.baseWorkspace.title -> f:format.crop(maxCharacters: 25, append: '…')}</span>
+								</f:then>
+								<f:else>
+									<span>-</span>
+								</f:else>
+							</f:if>
+						</td>
+						<td>
+							<f:security.ifAccess privilegeTarget="TYPO3.Neos:Backend.Module.Administration.Users">
+								<f:then>
+									<neos:link.module path="administration/users" action="show" arguments="{user: workspace.owner}">{workspace.owner.label}</neos:link.module>
+								</f:then>
+								<f:else>
+									{workspace.owner.label}
+								</f:else>
+							</f:security.ifAccess>
+						</td>
+						<td class="neos-changes">
+							<f:if condition="{workspace.baseWorkspace}">
+								<span title="{neos:backend.translate(id: 'workspaces.changesCounts', source: 'Modules', package: 'TYPO3.Neos', arguments: changesCounts)}" data-neos-toggle="tooltip">
+									<div class="neos-change-stats">
+										<f:if condition="{changesCounts.total} != 0">
+											<f:then>
+												<neos:backend.changeStats changeCounts="{changesCounts}">
+													<span class="new" style="width: {newCountRatio}%"></span><span class="changed" style="width: {changedCountRatio}%"></span><span class="removed" style="width: {removedCountRatio}%"></span>
+												</neos:backend.changeStats>
+											</f:then>
+											<f:else>
+												<span class="unchanged"></span>
+											</f:else>
+										</f:if>
+									</div>
+								</span>
+								<f:if condition="{changesCounts.total} != 0">
+									<f:link.action action="show" arguments="{workspace: workspace}" class="neos-button neos-button-primary">
+									<i class="icon-review"></i>
+									{neos:backend.translate(id: 'workspaces.review', source: 'Modules', package: 'TYPO3.Neos')}
+									</f:link.action>
+								</f:if>
+							</f:if>
+						</td>
+						<td class="neos-action">
+							<div class="neos-pull-right">
+								<f:if condition="{canManage}">
+									<f:link.action action="edit" arguments="{workspace: workspace}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'workspaces.editWorkspace', source: 'Modules', package: 'TYPO3.Neos', arguments: {0: workspace.title})}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
+										<i class="icon-pencil icon-white"></i>
+									</f:link.action>
+								</f:if>
+
+								<f:if condition="{userWorkspace} == {workspace}">
+									<f:then>
+										<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'workspaces.help.cantDeletePersonalWorkspace', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip"><i class="icon-trash icon-white"></i></button>
+									</f:then>
+									<f:else>
+										<f:if condition="{changesCounts.total} != 0">
+											<f:then>
+												<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'workspaces.help.workspaceContainsChanges', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip"><i class="icon-trash icon-white"></i></button>
+											</f:then>
+											<f:else>
+												<f:if condition="{dependentWorkspacesCount} != 0">
 													<f:then>
-														/{documentPath}
+														<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'workspaces.help.cantDeleteWorkspaceHasDependencies', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip"><i class="icon-trash icon-white"></i></button>
 													</f:then>
 													<f:else>
-														<neos:link.node node="{document.documentNode}" absolute="1">
-															/{documentPath}
-														</neos:link.node>
+														<f:if condition="{canManage}">
+															<button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'workspaces.deleteWorkspace', source: 'Modules', package: 'TYPO3.Neos')}" data-toggle="modal" href="#workspace-{workspacesIterator.index}" data-neos-toggle="tooltip">
+																<i class="icon-trash icon-white"></i>
+															</button>
+															<div class="neos-hide" id="workspace-{workspacesIterator.index}">
+																<div class="neos-modal-centered">
+																	<div class="neos-modal-content">
+																		<div class="neos-modal-header">
+																			<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+																			<div class="neos-header">{neos:backend.translate(id: 'workspaces.dialog.confirmWorkspaceDeletion', source: 'Modules', package: 'TYPO3.Neos', arguments: {0: workspace.title})}</div>
+																			<div>
+																				<div class="neos-subheader">
+																					<p>{neos:backend.translate(id: 'workspaces.dialog.thisWillDeleteTheWorkspace', source: 'Modules', package: 'TYPO3.Neos')}</p>
+																				</div>
+																			</div>
+																		</div>
+																		<div class="neos-modal-footer">
+																			<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', source: 'Modules', package: 'TYPO3.Neos')}</a>
+																			<f:form action="delete" arguments="{workspace: workspace}" class="neos-inline">
+																				<button type="submit" class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'workspaces.deleteWorkspace', source: 'Modules', package: 'TYPO3.Neos')}">
+																					{neos:backend.translate(id: 'workspaces.yesDeleteWorkspace', source: 'Modules', package: 'TYPO3.Neos')}
+																				</button>
+																			</f:form>
+																		</div>
+																	</div>
+																</div>
+																<div class="neos-modal-backdrop neos-in"></div>
+															</div>
+														</f:if>
 													</f:else>
 												</f:if>
-											</strong>
-										</td>
-										<td class="neos-priority1 neos-aRight">
-											<i class="fold-toggle icon-chevron-up icon-white" data-toggle="fold-{document.documentNode.identifier}"></i>
-										</td>
-									</tr>
-									<f:for each="{document.changes}" key="relativePath" as="change">
-										<tr class="fold-{document.documentNode.identifier}">
-											<td class="check neos-priority1">
-												<label for="{change.node.identifier}" class="neos-checkbox"><f:form.checkbox name="nodes[]" value="{change.node.contextPath}" id="{change.node.identifier}" /><span></span></label>
-											</td>
-											<td class="legend neos-priority1">
-												<label for="{change.node.identifier}">
-													<f:if condition="{change.node.removed}">
-														<f:then><i class="legend icon-trash icon-white" title="{neos:backend.translate(id: 'workspaces.legend.deleted', source: 'Modules', package: 'TYPO3.Neos')}"></i></f:then>
-														<f:else>
-															<f:if condition="{change.isNew}">
-																<f:then><i class="legend icon-star icon-white" title="{neos:backend.translate(id: 'workspaces.legend.created', source: 'Modules', package: 'TYPO3.Neos')}"></i></f:then>
-																<f:else>
-																	<f:if condition="{change.isMoved}">
-																		<f:then><i class="legend icon-move icon-white" title="{neos:backend.translate(id: 'workspaces.legend.moved', source: 'Modules', package: 'TYPO3.Neos')}"></i></f:then>
-																		<f:else>
-																			<f:if condition="{change.node.hidden}">
-																				<f:then>
-																					<i class="legend icon-eye-close icon-white" title="{neos:backend.translate(id: 'workspaces.legend.hidden', source: 'Modules', package: 'TYPO3.Neos')}"></i>
-																				</f:then>
-																				<f:else>
-																					<i class="legend icon-pencil icon-white" title="{neos:backend.translate(id: 'workspaces.legend.edited', source: 'Modules', package: 'TYPO3.Neos')}"></i>
-																				</f:else>
-																			</f:if>
-																		</f:else>
-																	</f:if>
-																</f:else>
-															</f:if>
-														</f:else>
-													</f:if>
-												</label>
-											</td>
-											<td class="label neos-priority1"><label for="{change.node.identifier}">{f:if(condition: change.node.label, then: change.node.label, else: '<em>{neos:backend.translate(id: "noTitle", source: "Main", package: "TYPO3.Neos")}</em>')}</label></td>
-											<td class="node-type neos-priority3" title="{change.node.nodeType.name}">
-												<label for="{change.node.identifier}">
-													<f:if condition="{change.configuration.ui.icon}">
-														<i class="{change.configuration.ui.icon}" title="{change.node.nodeType.name}"></i>
-													</f:if>
-													{f:if(condition: change.node.nodeType.label, then: '{neos:backend.translate(id:change.node.nodeType.label)}', else: change.node.nodeType.name)}
-												</label>
-											</td>
-											<td class="relpath neos-priority4"><label for="{change.node.identifier}">{f:if(condition: relativePath, then: relativePath, else: '&nbsp;')}</label></td>
-											<td class="neos-action neos-aRight neos-priority1">
-												<button form="postHelper" formaction="{f:uri.action(action: 'publishNode', arguments: {node: change.node.contextPath})}" type="submit" class="neos-button neos-button-success" title="{neos:backend.translate(id: 'publish', source: 'Main', package: 'TYPO3.Neos')}">
-													<i class="icon-check icon-white"></i>
-												</button>
-												<button form="postHelper" formaction="{f:uri.action(action: 'discardNode', arguments: {node: change.node.contextPath})}" type="submit" class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'discard', source: 'Main', package: 'TYPO3.Neos')}">
-													<i class="icon-trash icon-white"></i>
-												</button>
-											</td>
-										</tr>
-									</f:for>
-								</f:for>
-							</f:for>
-						</tbody>
-						<tfoot>
-							<td colspan="6">
-								{neos:backend.translate(id: 'workspaces.legendCaption', source: 'Modules', package: 'TYPO3.Neos')}:
-								<i class="legend icon-pencil icon-white"></i> {neos:backend.translate(id: 'workspaces.legend.edited', source: 'Modules', package: 'TYPO3.Neos')}
-								<i class="legend icon-move icon-white"></i> {neos:backend.translate(id: 'workspaces.legend.moved', source: 'Modules', package: 'TYPO3.Neos')}
-								<i class="legend icon-star icon-white"></i> {neos:backend.translate(id: 'workspaces.legend.created', source: 'Modules', package: 'TYPO3.Neos')}
-								<i class="legend icon-eye-close icon-white"></i> {neos:backend.translate(id: 'workspaces.legend.hidden', source: 'Modules', package: 'TYPO3.Neos')}
-								<i class="legend icon-trash icon-white"></i> {neos:backend.translate(id: 'workspaces.legend.deleted', source: 'Modules', package: 'TYPO3.Neos')}
-							</td>
-						</tfoot>
-					</table>
-				</div>
-				<f:render section="actions" arguments="{workspace: workspace}" />
-			</f:form>
-		</f:then>
-		<f:else>
-			<p>{neos:backend.translate(id: 'workspaces.thereAreNoUnpublishedChanges', source: 'Modules', package: 'TYPO3.Neos')}</p>
-		</f:else>
-	</f:if>
-
-	<div class="neos-hide" id="discard">
-		<div class="neos-modal">
-			<div class="neos-modal-header">
-				<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-				<div class="neos-header">{neos:backend.translate(id: 'workspaces.discardAllChangesInWorkspaceConfirmation', arguments: {0: workspace.name}, source: 'Modules', package: 'TYPO3.Neos')}</div>
-			</div>
-			<div class="neos-modal-footer">
-				<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', source: 'Main', package: 'TYPO3.Neos')}</a>
-				<button form="postHelper" formaction="{f:uri.action(action: 'discardWorkspace', arguments: {workspace: workspace})}" type="submit" class="neos-button neos-button-danger">
-					<i class="icon-trash icon-white"></i>
-					{neos:backend.translate(id: 'workspaces.discardAllChanges', source: 'Modules', package: 'TYPO3.Neos')}
-				</button>
-			</div>
-		</div>
-		<div class="neos-modal-backdrop neos-in"></div>
+											</f:else>
+										</f:if>
+									</f:else>
+								</f:if>
+							</div>
+						</td>
+					</tr>
+				</f:alias>
+			</f:for>
+		</table>
 	</div>
-
-	<f:form action="index" id="postHelper" method="post"></f:form>
-
-	<script>
-		(function($) {
-			$('#check-all').change(function() {
-				var value = false;
-				if ($(this).is(':checked')) {
-					value = true;
-					$('.batch-action').removeClass('neos-disabled').removeAttr('disabled');
-				} else {
-					$('.batch-action').addClass('neos-disabled').attr('disabled', 'disabled');
-				}
-				$('tbody input[type="checkbox"]').prop('checked', value);
-			});
-			$('tbody input[type="checkbox"]').change(function() {
-				if ($('tbody input[type="checkbox"]:checked').length > 0) {
-					$('.batch-action').removeClass('neos-disabled').removeAttr('disabled')
-				} else {
-					$('.batch-action').addClass('neos-disabled').attr('disabled', 'disabled');
-				}
-			});
-			$('.fold-toggle').click(function() {
-				$(this).toggleClass('icon-chevron-down icon-chevron-up');
-				$('tr.' + $(this).data('toggle')).toggle();
-			});
-		})(jQuery);
-	</script>
-</f:section>
-
-<f:section name="actions">
 	<div class="neos-footer">
-		<button type="submit" name="moduleArguments[action]" value="publish" class="neos-button neos-disabled batch-action" disabled="disabled">{neos:backend.translate(id: 'workspaces.publishSelectedChanges', source: 'Modules', package: 'TYPO3.Neos')}</button>
-		<button type="submit" name="moduleArguments[action]" value="discard" class="neos-button neos-disabled batch-action" disabled="disabled">{neos:backend.translate(id: 'workspaces.discardSelectedChanges', source: 'Modules', package: 'TYPO3.Neos')}</button>
-		<button class="neos-button neos-button-danger" data-toggle="modal" href="#discard">{neos:backend.translate(id: 'workspaces.discardAllChanges', source: 'Modules', package: 'TYPO3.Neos')}</button>
-		<button form="postHelper" formaction="{f:uri.action(action: 'publishWorkspace', arguments: {workspace: workspace})}" type="submit" class="neos-button neos-button-primary">{neos:backend.translate(id: 'workspaces.publishAllChanges', source: 'Modules', package: 'TYPO3.Neos')}</button>
+		<f:link.action action="new" class="neos-button neos-button-primary">{neos:backend.translate(id: 'workspaces.createNewWorkspace', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
 	</div>
 </f:section>

@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Core\Bootstrap;
@@ -18,7 +18,7 @@ use TYPO3\Neos\Utility\NodeUriPathSegmentGenerator;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
- * The TYPO3 Neos Package
+ * The Neos Package
  */
 class Package extends BasePackage
 {
@@ -60,6 +60,8 @@ class Package extends BasePackage
         $dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeRemoved', 'TYPO3\Neos\TypoScript\Cache\ContentCacheFlusher', 'registerNodeChange');
         $dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'beforeNodeMove', 'TYPO3\Neos\TypoScript\Cache\ContentCacheFlusher', 'registerNodeChange');
 
+        $dispatcher->connect('TYPO3\Media\Domain\Service\AssetService', 'assetResourceReplaced', 'TYPO3\Neos\TypoScript\Cache\ContentCacheFlusher', 'registerAssetResourceChange');
+
         $dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeAdded', NodeUriPathSegmentGenerator::class, '::setUniqueUriPathSegment');
         $dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodePropertyChanged', Service\ImageVariantGarbageCollector::class, 'removeUnusedImageVariant');
         $dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodePropertyChanged', function (NodeInterface $node, $propertyName) use ($bootstrap) {
@@ -77,7 +79,7 @@ class Package extends BasePackage
         $dispatcher->connect('TYPO3\Neos\Service\PublishingService', 'nodePublished', 'TYPO3\Neos\TypoScript\Cache\ContentCacheFlusher', 'registerNodeChange');
         $dispatcher->connect('TYPO3\Neos\Service\PublishingService', 'nodeDiscarded', 'TYPO3\Neos\TypoScript\Cache\ContentCacheFlusher', 'registerNodeChange');
 
-        $dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodePathChanged', 'TYPO3\Neos\Routing\Cache\RouteCacheFlusher', 'registerNodePathChange');
+        $dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodePathChanged', 'TYPO3\Neos\Routing\Cache\RouteCacheFlusher', 'registerNodeChange');
         $dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeRemoved', 'TYPO3\Neos\Routing\Cache\RouteCacheFlusher', 'registerNodeChange');
         $dispatcher->connect('TYPO3\Neos\Service\PublishingService', 'nodePublished', 'TYPO3\Neos\Routing\Cache\RouteCacheFlusher', 'registerNodeChange');
         $dispatcher->connect('TYPO3\Neos\Service\PublishingService', 'nodePublished', function ($node, $targetWorkspace) use ($bootstrap) {

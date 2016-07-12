@@ -1,17 +1,18 @@
 <?php
 namespace TYPO3\TypoScript\TypoScriptObjects;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TypoScript".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TypoScript package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TypoScript\Core\Runtime;
 
 /**
  * Base class for all TypoScript objects
@@ -19,7 +20,7 @@ use TYPO3\Flow\Annotations as Flow;
 abstract class AbstractTypoScriptObject implements \ArrayAccess
 {
     /**
-     * @var \TYPO3\TypoScript\Core\Runtime
+     * @var Runtime
      */
     protected $tsRuntime;
 
@@ -40,16 +41,16 @@ abstract class AbstractTypoScriptObject implements \ArrayAccess
     /**
      * @var array
      */
-    protected $tsValueCache = array();
+    protected $tsValueCache = [];
 
     /**
      * Constructor
      *
-     * @param \TYPO3\TypoScript\Core\Runtime $tsRuntime
+     * @param Runtime $tsRuntime
      * @param string $path
      * @param string $typoScriptObjectName
      */
-    public function __construct(\TYPO3\TypoScript\Core\Runtime $tsRuntime, $path, $typoScriptObjectName)
+    public function __construct(Runtime $tsRuntime, $path, $typoScriptObjectName)
     {
         $this->tsRuntime = $tsRuntime;
         $this->path = $path;
@@ -62,6 +63,16 @@ abstract class AbstractTypoScriptObject implements \ArrayAccess
      * @return mixed
      */
     abstract public function evaluate();
+
+    /**
+     * Get the TypoScript runtime this object was created in.
+     *
+     * @return Runtime
+     */
+    public function getTsRuntime()
+    {
+        return $this->tsRuntime;
+    }
 
     /**
      * Return the TypoScript value relative to this TypoScript object (with processors etc applied).

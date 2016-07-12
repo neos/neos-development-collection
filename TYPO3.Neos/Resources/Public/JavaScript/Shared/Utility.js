@@ -64,6 +64,24 @@ define(function() {
 		 */
 		removeContextPath: function(value) {
 			return value.replace(/@([^.]+)/, '');
+		},
+
+		/**
+		 * Get a JavaScript array containing objects of the form {name, value} with all given propertiesAndValues.
+		 *
+		 * @param {object} propertiesAndValues
+		 * @returns {array}
+		 */
+		getKeyValueArray: function(propertiesAndValues) {
+			var keyValueArray = [];
+
+			for(var index in propertiesAndValues) {
+				if (propertiesAndValues.hasOwnProperty(index)) {
+					keyValueArray.push({name: index, value: propertiesAndValues[index]});
+				}
+			}
+
+			return keyValueArray;
 		}
 	};
 });

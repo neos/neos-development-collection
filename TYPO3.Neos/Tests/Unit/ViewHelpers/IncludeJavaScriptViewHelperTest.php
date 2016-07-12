@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\Tests\Unit\ViewHelpers;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 /**
  * Testcase for the IncludeJavaScript view helper
@@ -29,9 +29,9 @@ class IncludeJavaScriptViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $this->request = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
         $this->request->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue('MyPackage'));
-        $this->controllerContext = $this->getMock('TYPO3\Flow\Mvc\Controller\ControllerContext', array(), array(), '', false);
+        $this->controllerContext = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\ControllerContext')->disableOriginalConstructor()->getMock();
         $this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($this->request));
-        $this->resourcePublisher = $this->getMock('TYPO3\Flow\Resource\Publishing\ResourcePublisher', array(), array(), '', false);
+        $this->resourcePublisher = $this->getMockBuilder('TYPO3\Flow\Resource\Publishing\ResourcePublisher')->disableOriginalConstructor()->getMock();
         $this->resourcePublisher->expects($this->any())->method('getStaticResourcesWebBaseUri')->will($this->returnValue('StaticResourceUri/'));
         $this->viewHelper = $this->getAccessibleMock('TYPO3\Neos\ViewHelpers\IncludeJavaScriptViewHelper', array('iterateDirectoryRecursively'));
         $renderingContext = new \TYPO3\Fluid\Core\Rendering\RenderingContext();
@@ -45,9 +45,9 @@ class IncludeJavaScriptViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function renderWithoutSubpackageMatchesIncludedFile()
     {
-        $includedFile = $this->getMock('File', array('getPathname'));
+        $includedFile = $this->getMockBuilder('File')->setMethods(array('getPathname'))->getMock();
         $includedFile->expects($this->any())->method('getPathname')->will($this->returnValue('resource://MyPackage/Public/JavaScript/Foo.js'));
-        $otherFile = $this->getMock('File', array('getPathname'));
+        $otherFile = $this->getMockBuilder('File')->setMethods(array('getPathname'))->getMock();
         $otherFile->expects($this->any())->method('getPathname')->will($this->returnValue('resource://MyPackage/Public/JavaScript/Bar.js'));
         $files = array($includedFile, $otherFile);
 
@@ -61,9 +61,9 @@ class IncludeJavaScriptViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function renderWithSubpackageIgnoresExcludedFile()
     {
-        $includedFile = $this->getMock('File', array('getPathname'));
+        $includedFile = $this->getMockBuilder('File')->setMethods(array('getPathname'))->getMock();
         $includedFile->expects($this->any())->method('getPathname')->will($this->returnValue('resource://MyPackage/Public/MySubpackage/JavaScript/Foo.js'));
-        $excludedFile = $this->getMock('File', array('getPathname'));
+        $excludedFile = $this->getMockBuilder('File')->setMethods(array('getPathname'))->getMock();
         $excludedFile->expects($this->any())->method('getPathname')->will($this->returnValue('resource://MyPackage/Public/MySubpackage/JavaScript/Bar.js'));
         $files = array($includedFile, $excludedFile);
 

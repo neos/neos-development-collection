@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Neos\TypoScript\ExceptionHandlers;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Neos".            *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
@@ -69,7 +69,7 @@ class PageHandler extends AbstractRenderingExceptionHandler
 
         if ($documentNode !== null && $documentNode->getContext()->getWorkspace()->getName() !== 'live' && $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.GeneralAccess')) {
             $isBackend = true;
-            $fluidView->assign('metaData', $this->contentElementWrappingService->wrapContentObject($documentNode, $typoScriptPath, '<div id="neos-document-metadata"></div>', true));
+            $fluidView->assign('metaData', $this->contentElementWrappingService->wrapCurrentDocumentMetadata($documentNode, '<div id="neos-document-metadata"></div>', $typoScriptPath));
         }
 
         $fluidView->assignMultiple(array(
@@ -93,8 +93,8 @@ class PageHandler extends AbstractRenderingExceptionHandler
         $fluidView->setLayoutRootPath('resource://TYPO3.Neos/Private/Layouts');
         // FIXME find a better way than using templates as partials
         $fluidView->setPartialRootPath('resource://TYPO3.Neos/Private/Templates/TypoScriptObjects');
-        $fluidView->setFormat('html');
         $fluidView->setControllerContext($this->runtime->getControllerContext());
+        $fluidView->setFormat('html');
         return $fluidView;
     }
 }

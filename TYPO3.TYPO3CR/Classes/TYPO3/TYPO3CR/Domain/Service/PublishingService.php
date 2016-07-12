@@ -1,20 +1,21 @@
 <?php
 namespace TYPO3\TYPO3CR\Domain\Service;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3CR".         *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Service\ContentDimensionPresetSourceInterface;
 use TYPO3\TYPO3CR\Exception\WorkspaceException;
 use TYPO3\TYPO3CR\Service\Utility\NodePublishingDependencySolver;
 
@@ -49,6 +50,12 @@ class PublishingService implements PublishingServiceInterface
      * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
      */
     protected $contextFactory;
+
+    /**
+     * @Flow\Inject
+     * @var ContentDimensionPresetSourceInterface
+     */
+    protected $contentDimensionPresetSource;
 
     /**
      * Returns a list of nodes contained in the given workspace which are not yet published
@@ -247,12 +254,17 @@ class PublishingService implements PublishingServiceInterface
      */
     protected function createContext(Workspace $workspace, array $dimensionValues, array $contextProperties = array())
     {
+        $presetsMatchingDimensionValues = $this->contentDimensionPresetSource->findPresetsByTargetValues($dimensionValues);
+        $dimensions = array_map(function ($preset) {
+            return $preset['values'];
+        }, $presetsMatchingDimensionValues);
+
         $contextProperties += array(
             'workspaceName' => $workspace->getName(),
             'inaccessibleContentShown' => true,
             'invisibleContentShown' => true,
             'removedContentShown' => true,
-            'dimensions' => $dimensionValues
+            'dimensions' => $dimensions
         );
 
         return $this->contextFactory->create($contextProperties);

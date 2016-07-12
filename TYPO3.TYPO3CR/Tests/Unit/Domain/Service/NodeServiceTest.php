@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Service;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 use TYPO3\TYPO3CR\Domain\Service\NodeService;
 
 /**
@@ -53,7 +53,7 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
     protected function createNodeService()
     {
         $nodeService = new NodeService();
-        $mockNodeTypeManager = $this->getMock('\TYPO3\TYPO3CR\Domain\Service\NodeTypeManager', array(), array(), '', false);
+        $mockNodeTypeManager = $this->getMockBuilder('\TYPO3\TYPO3CR\Domain\Service\NodeTypeManager')->disableOriginalConstructor()->getMock();
         $mockNodeTypeManager->expects($this->any())
             ->method('getSubNodeTypes')
             ->will($this->returnValue($this->subNodeTypesFixture));
@@ -74,7 +74,7 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     protected function mockNodeType($nodeTypeName)
     {
-        $mockNodeType = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\NodeType', array(), array(), '', false);
+        $mockNodeType = $this->getMockBuilder('\TYPO3\TYPO3CR\Domain\Model\NodeType')->disableOriginalConstructor()->getMock();
         $mockNodeType->expects($this->any())
             ->method('getName')
             ->will($this->returnValue($nodeTypeName));
@@ -92,7 +92,7 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $nodeService = $this->createNodeService();
 
-        $mockNode = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', false);
+        $mockNode = $this->getMockBuilder('\TYPO3\TYPO3CR\Domain\Model\Node')->disableOriginalConstructor()->getMock();
 
         $mockNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:Content');
 
@@ -125,7 +125,7 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $nodeService = $this->createNodeService();
 
-        $mockNode = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', false);
+        $mockNode = $this->getMockBuilder('\TYPO3\TYPO3CR\Domain\Model\Node')->disableOriginalConstructor()->getMock();
 
         $mockNodeType = $this->mockNodeType('TYPO3.Neos:Content');
 
@@ -158,7 +158,7 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $nodeService = $this->createNodeService();
 
-        $mockNode = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', false);
+        $mockNode = $this->getMockBuilder('\TYPO3\TYPO3CR\Domain\Model\Node')->disableOriginalConstructor()->getMock();
 
         $mockNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:Content');
 
@@ -190,7 +190,7 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $nodeService = $this->createNodeService();
 
-        $mockNode = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', false);
+        $mockNode = $this->getMockBuilder('\TYPO3\TYPO3CR\Domain\Model\Node')->disableOriginalConstructor()->getMock();
 
         $mockNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:Content');
         $firstChildNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:Content');
@@ -225,8 +225,8 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $nodeService = $this->createNodeService();
 
-        $mockNode = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', false);
-        $mockNodeData = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array(), '', false);
+        $mockNode = $this->getMockBuilder('\TYPO3\TYPO3CR\Domain\Model\Node')->disableOriginalConstructor()->getMock();
+        $mockNodeData = $this->getMockBuilder('\TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
         $mockNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:Content');
 
         $mockNodeData->expects($this->once())
@@ -274,13 +274,13 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $nodeService = $this->createNodeService();
 
-        $mockNode = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', false);
+        $mockNode = $this->getMockBuilder('\TYPO3\TYPO3CR\Domain\Model\Node')->disableOriginalConstructor()->getMock();
 
         $mockNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:Content');
 
         $mockContentNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:ContentCollection');
 
-        $mockFirstChildNode = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', false);
+        $mockFirstChildNode = $this->getMockBuilder('\TYPO3\TYPO3CR\Domain\Model\Node')->disableOriginalConstructor()->getMock();
         $mockFirstChildNode->expects($this->any())
             ->method('getNodeType')
             ->will($this->returnValue($mockContentNodeType));
@@ -290,7 +290,7 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
         $mockFirstChildNode->expects($this->never())
             ->method('remove');
 
-        $mockSecondChildNode = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', false);
+        $mockSecondChildNode = $this->getMockBuilder('\TYPO3\TYPO3CR\Domain\Model\Node')->disableOriginalConstructor()->getMock();
         $mockSecondChildNode->expects($this->any())
             ->method('getNodeType')
             ->will($this->returnValue($mockContentNodeType));
@@ -300,7 +300,7 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
         $mockSecondChildNode->expects($this->never())
             ->method('remove');
 
-        $mockThirdChildNode = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', false);
+        $mockThirdChildNode = $this->getMockBuilder('\TYPO3\TYPO3CR\Domain\Model\Node')->disableOriginalConstructor()->getMock();
         $mockThirdChildNode->expects($this->any())
             ->method('getNodeType')
             ->will($this->returnValue($mockContentNodeType));
@@ -345,13 +345,13 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $nodeService = $this->createNodeService();
 
-        $mockNode = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', false);
+        $mockNode = $this->getMockBuilder('\TYPO3\TYPO3CR\Domain\Model\Node')->disableOriginalConstructor()->getMock();
 
         $mockNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:Page');
 
         $mockContentNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:Document');
 
-        $mockFirstChildNode = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', false);
+        $mockFirstChildNode = $this->getMockBuilder('\TYPO3\TYPO3CR\Domain\Model\Node')->disableOriginalConstructor()->getMock();
         $mockFirstChildNode->expects($this->any())
             ->method('getNodeType')
             ->will($this->returnValue($mockContentNodeType));
@@ -388,7 +388,7 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $nodeService = $this->createNodeService();
 
-        $mockNode = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', false);
+        $mockNode = $this->getMockBuilder('\TYPO3\TYPO3CR\Domain\Model\Node')->disableOriginalConstructor()->getMock();
 
         $mockNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:MyFinalType');
 
@@ -407,7 +407,7 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $nodeService = $this->createNodeService();
 
-        $mockNode = $this->getMock('\TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', false);
+        $mockNode = $this->getMockBuilder('\TYPO3\TYPO3CR\Domain\Model\Node')->disableOriginalConstructor()->getMock();
 
         $mockNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:Document');
 

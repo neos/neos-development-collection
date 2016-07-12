@@ -1,17 +1,19 @@
 <?php
 namespace TYPO3\TYPO3CR\Tests\Functional;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3CR".         *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
-use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 
 /**
  * Base test case for nodes
@@ -45,7 +47,7 @@ abstract class AbstractNodeTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     protected $nodeContextPath = '/sites/example/home';
 
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+     * @var NodeInterface
      */
     protected $node;
 
@@ -103,7 +105,7 @@ abstract class AbstractNodeTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      * Retrieve a node through the property mapper
      *
      * @param $contextPath
-     * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+     * @return NodeInterface
      */
     protected function getNodeWithContextPath($contextPath)
     {

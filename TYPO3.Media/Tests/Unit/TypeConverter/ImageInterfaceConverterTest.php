@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Media\Tests\Unit\TypeConverter;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Media package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 /**
  * Testcase for the ImageConverter
@@ -27,13 +27,13 @@ class ImageInterfaceConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function setUp()
     {
         $this->converter = new \TYPO3\Media\TypeConverter\ImageInterfaceConverter();
-        $this->mockReflectionService = $this->getMock('TYPO3\Flow\Reflection\ReflectionService');
+        $this->mockReflectionService = $this->createMock('TYPO3\Flow\Reflection\ReflectionService');
         $this->inject($this->converter, 'reflectionService', $this->mockReflectionService);
 
-        $this->mockPersistenceManager = $this->getMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+        $this->mockPersistenceManager = $this->createMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
         $this->inject($this->converter, 'persistenceManager', $this->mockPersistenceManager);
 
-        $this->mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface');
+        $this->mockObjectManager = $this->createMock('TYPO3\Flow\Object\ObjectManagerInterface');
         $this->inject($this->converter, 'objectManager', $this->mockObjectManager);
     }
 
@@ -52,7 +52,7 @@ class ImageInterfaceConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function canConvertFromDataProvider()
     {
-        $dummyResource = $this->getMock('TYPO3\Flow\Resource\Resource');
+        $dummyResource = $this->createMock('TYPO3\Flow\Resource\Resource');
         return array(
             array(array('resource' => $dummyResource), 'TYPO3\Media\Domain\Model\Image', true),
             array(array('__identity' => 'foo'), 'TYPO3\Media\Domain\Model\Image', false),
@@ -75,12 +75,15 @@ class ImageInterfaceConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException
      */
     public function convertFromReturnsNullIfResourcePropertyIsNotConverted()
     {
-        $this->mockReflectionService->expects($this->any())->method('isClassAnnotatedWith')->with('TYPO3\Media\Domain\Model\Image', 'TYPO3\Flow\Annotations\ValueObject')->will($this->returnValue(true));
-        $this->assertNull($this->converter->convertFrom(array(), 'TYPO3\Media\Domain\Model\Image', array()));
-        $this->assertNull($this->converter->convertFrom(array(), 'TYPO3\Media\Domain\Model\Image', array('resource' => 'bar')));
+        $this->mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->will($this->returnCallback(function ($objectType) {
+            return $objectType;
+        }));
+        $configuration = new \TYPO3\Flow\Property\PropertyMappingConfiguration();
+        $configuration->setTypeConverterOption('TYPO3\Media\TypeConverter\ImageInterfaceConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
+
+        $this->assertNull($this->converter->convertFrom(array(), 'TYPO3\Media\Domain\Model\Image', array(), $configuration));
     }
 }

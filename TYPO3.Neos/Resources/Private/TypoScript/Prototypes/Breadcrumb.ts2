@@ -9,7 +9,7 @@ prototype(TYPO3.Neos:Breadcrumb) < prototype(TYPO3.TypoScript:Template) {
 	node = ${node}
 	items = ${q(node).add(q(node).parents('[instanceof TYPO3.Neos:Document]')).get()}
 
-	@exceptionHandler = 'TYPO3\\Neos\\TypoScript\\ExceptionHandlers\\NodeWrappingHandler'
+	@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\ContextDependentHandler'
 
 	@cache {
 		mode = 'cached'

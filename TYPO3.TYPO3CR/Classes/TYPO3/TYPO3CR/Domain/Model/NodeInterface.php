@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TYPO3CR\Domain\Model;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3CR".               *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 /**
  * Interface for a Node
@@ -28,32 +28,33 @@ interface NodeInterface
      * workspace name. This pattern is used at least in the route part handler.
      */
     const MATCH_PATTERN_CONTEXTPATH = '/^   # A Context Path consists of...
-		(?P<NodePath>                       # 1) a NODE PATH
-			\/?                             #    A node Path starts with optional slash
-			[a-z0-9\-]+                     #    followed by a path part
+		(?>(?P<NodePath>                       # 1) a NODE PATH
+			(?>
+			\/ [a-z0-9\-]+ |                # Which either starts with a slash followed by a node name
+			\/ |                            # OR just a slash (the root node)
+			[a-z0-9\-]+                     # OR only a node name (if it is a relative path)
+			)
 			(?:                             #    and (optionally) more path-parts)
 				\/
 				[a-z0-9\-]+
 			)*
-		)?
+		))
 		(?:                                 # 2) a CONTEXT
 			@                               #    which is delimited from the node path by the "@" sign
-			(?P<WorkspaceName>              #    followed by the workspace name (NON-EMPTY)
+			(?>(?P<WorkspaceName>              #    followed by the workspace name (NON-EMPTY)
 				[a-z0-9\-]+
-			)
+			))
 			(?:                             #    OPTIONALLY followed by dimension values
 				;                           #    ... which always start with ";"
 				(?P<Dimensions>
-					(?:                     #        A Dimension Value is a key=value structure, delimited by &
-						(?:
-							[a-zA-Z_]+
-							=
-							[^=&]+
-						)
-						&?
-					)+
-				))?
-		)?$/ix';
+					(?>                     #        A Dimension Value is a key=value structure
+						[a-zA-Z_]+
+						=
+						[^=&]+
+					)
+					(?>&(?-1))?             #        ... delimited by &
+				)){0,1}
+		){0,1}$/ix';
 
     /**
      * Regex pattern which matches a Node Name (ie. segment of a node path)
@@ -291,17 +292,6 @@ interface NodeInterface
      * @api
      */
     public function getAccessRoles();
-
-    /**
-     * Sets the absolute path of this node
-     *
-     * This method is only for internal use by the content repository. Changing
-     * the path of a node manually may lead to unexpected behavior and bad breath.
-     *
-     * @param string $path
-     * @return void
-     */
-    public function setPath($path);
 
     /**
      * Returns the path of this node

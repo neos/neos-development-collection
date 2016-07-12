@@ -13,10 +13,10 @@
 		</thead>
 		<tbody>
 			<f:for each="{sitePackagesAndSites}" as="sitePackageAndSite" key="sitePackageKey">
-				<tr class="neos-folder"{f:if(condition: sitePackageAndSite.package.packageMetaData.description, then: ' title="{sitePackageAndSite.package.packageMetaData.description}"')}>
+				<tr class="neos-folder">
 					<td class="neos-priority1" colspan="3">
 						{neos:backend.translate(id: 'package', value: 'Package')}:
-						<neos:link.module path="administration/packages" section="Sites">{sitePackageAndSite.packageKey}</neos:link.module>
+						<neos:link.module path="administration/packages" section="Sites" class="neos-label" title="{sitePackageAndSite.package.packageMetaData.description}" additionalAttributes="{data-neos-toggle: 'tooltip'}">{sitePackageAndSite.packageKey}</neos:link.module>
 						<f:if condition="{sitePackageAndSite.package}">
 							<f:then>
 								<f:if condition="{sitePackageAndSite.packageIsActive}"><f:else><span class="neos-badge neos-badge-{f:if(condition: sitePackageAndSite.sites, then: 'important', else: 'warning')}">{neos:backend.translate(id: 'deactivated', value: 'Deactivated')}</span></f:else></f:if>
@@ -40,45 +40,47 @@
 										</f:else>
 									</f:if>
 								</td>
-								<td>{site.nodeName}</td>
-								<td><span class="neos-badge neos-badge-{f:if(condition: '{site.domains -> f:count()} > 0', then: 'info', else: '{f:if(condition: multipleSites, then: \'important\', else: \'inverse\')}')}">{site.domains -> f:count()}</span><f:if condition="{site.activeDomains}"> <span class="neos-label neos-label-inverse">{site.firstActiveDomain.hostPattern}</span></f:if></td>
+								<td><span class="neos-label">{site.nodeName}</span></td>
+								<td><span class="neos-badge neos-badge-{f:if(condition: '{site.activeDomains -> f:count()} > 0', then: 'info', else: '{f:if(condition: multipleSites, then: \'important\', else: \'inverse\')}')}">{site.domains -> f:count()}</span><f:if condition="{site.activeDomains}"> <span class="neos-label neos-label-inverse">{site.primaryDomain}</span></f:if></td>
 								<td class="neos-action">
 									<div class="neos-pull-right">
-										<f:link.action action="edit" arguments="{site: site}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'clickToEdit', value: 'Click to edit')}">
+										<f:link.action action="edit" arguments="{site: site}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'clickToEdit', value: 'Click to edit')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
 											<i class="icon-pencil icon-white"></i>
 										</f:link.action>
 										<f:if condition="{site.state} == 1">
 											<f:then>
 												<f:form action="deactivateSite" arguments="{site: site}" class="neos-inline">
-													<button class="neos-button neos-button-warning" title="{neos:backend.translate(id: 'clickToDeactivate', value: 'Click to deactivate')}">
+													<button class="neos-button neos-button-warning" title="{neos:backend.translate(id: 'clickToDeactivate', value: 'Click to deactivate')}" data-neos-toggle="tooltip">
 														<i class="icon-minus-sign icon-white"></i>
 													</button>
 												</f:form>
 											</f:then>
 											<f:else>
 												<f:form action="activateSite" arguments="{site: site}" class="neos-inline">
-													<button class="neos-button neos-button-success" title="{neos:backend.translate(id: 'clickToActivate', value: 'Click to activate')}">
+													<button class="neos-button neos-button-success" title="{neos:backend.translate(id: 'clickToActivate', value: 'Click to activate')}" data-neos-toggle="tooltip">
 														<i class="icon-plus-sign icon-white"></i>
 													</button>
 												</f:form>
 											</f:else>
 										</f:if>
-										<button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'clickToDelete', value: 'Click to delete')}" data-toggle="modal" href="#{site.nodeName}">
+										<button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'clickToDelete', value: 'Click to delete')}" data-toggle="modal" href="#{site.nodeName}" data-neos-toggle="tooltip">
 											<i class="icon-trash icon-white"></i>
 										</button>
 										<div class="neos-hide" id="{site.nodeName}">
-											<div class="neos-modal">
-												<div class="neos-modal-header">
-													<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-													<div class="neos-header">Do you really want to delete "{site.name}"? This action cannot be undone.</div>
-												</div>
-												<div class="neos-modal-footer">
-													<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</a>
-													<f:form action="deleteSite" arguments="{site: site}" class="neos-inline">
-														<button class="neos-button neos-button-danger" title="Delete this site">
-															{neos:backend.translate(id: 'sites.confirmDelete', value: 'Yes, delete this site')}
-														</button>
-													</f:form>
+											<div class="neos-modal-centered">
+												<div class="neos-modal-content">
+													<div class="neos-modal-header">
+														<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+														<div class="neos-header">Do you really want to delete "{site.name}"? This action cannot be undone.</div>
+													</div>
+													<div class="neos-modal-footer">
+														<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</a>
+														<f:form action="deleteSite" arguments="{site: site}" class="neos-inline">
+															<button class="neos-button neos-button-danger" title="Delete this site">
+																{neos:backend.translate(id: 'sites.confirmDelete', value: 'Yes, delete this site')}
+															</button>
+														</f:form>
+													</div>
 												</div>
 											</div>
 											<div class="neos-modal-backdrop neos-in"></div>

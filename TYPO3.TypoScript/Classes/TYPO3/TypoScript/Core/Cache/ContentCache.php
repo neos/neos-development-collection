@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TypoScript\Core\Cache;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.TypoScript".      *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TypoScript package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheAwareInterface;
@@ -44,8 +44,10 @@ class ContentCache
     const CACHE_SEGMENT_END_TOKEN = "\x03";
     const CACHE_SEGMENT_SEPARATOR_TOKEN = "\x1f";
 
-    const CACHE_PLACEHOLDER_REGEX = "/\x02(?P<identifier>[a-f0-9]+)\x03/";
-    const EVAL_PLACEHOLDER_REGEX = "/\x02(?P<command>[^\x02\x1f\x03]+)\x1f(?P<data>[^\x02\x1f\x03]+)\x03/";
+    const CACHE_SEGMENT_MARKER = 'CONTENT_CACHE';
+
+    const CACHE_PLACEHOLDER_REGEX = "/\x02CONTENT_CACHE(?P<identifier>[a-f0-9]+)\x03CONTENT_CACHE/";
+    const EVAL_PLACEHOLDER_REGEX = "/\x02CONTENT_CACHE(?P<command>[^\x02\x1f\x03]+)\x1fCONTENT_CACHE(?P<data>[^\x02\x1f\x03]+)\x03CONTENT_CACHE/";
 
     const MAXIMUM_NESTING_LEVEL = 32;
 
@@ -84,6 +86,16 @@ class ContentCache
     protected $securityContext;
 
     /**
+     * @var string
+     */
+    protected $randomCacheMarker;
+
+    public function __construct()
+    {
+        $this->randomCacheMarker = uniqid();
+    }
+
+    /**
      * Takes the given content and adds markers for later use as a cached content segment.
      *
      * This function will add a start and an end token to the beginning and end of the content and generate a cache
@@ -109,7 +121,7 @@ class ContentCache
         if ($lifetime !== null) {
             $metadata .= ';' . $lifetime;
         }
-        return self::CACHE_SEGMENT_START_TOKEN . $cacheIdentifier . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $metadata . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $content . self::CACHE_SEGMENT_END_TOKEN;
+        return self::CACHE_SEGMENT_START_TOKEN . $this->randomCacheMarker . $cacheIdentifier . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . $metadata . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . $content . self::CACHE_SEGMENT_END_TOKEN . $this->randomCacheMarker;
     }
 
     /**
@@ -126,7 +138,7 @@ class ContentCache
     public function createUncachedSegment($content, $typoScriptPath, array $contextVariables)
     {
         $serializedContext = $this->serializeContext($contextVariables);
-        return self::CACHE_SEGMENT_START_TOKEN . 'eval=' . $typoScriptPath . self::CACHE_SEGMENT_SEPARATOR_TOKEN . json_encode(array('context' => $serializedContext)) . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $content . self::CACHE_SEGMENT_END_TOKEN;
+        return self::CACHE_SEGMENT_START_TOKEN . $this->randomCacheMarker . 'eval=' . $typoScriptPath . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . json_encode(array('context' => $serializedContext)) . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . $content . self::CACHE_SEGMENT_END_TOKEN . $this->randomCacheMarker;
     }
 
     /**
@@ -200,7 +212,7 @@ class ContentCache
      */
     public function processCacheSegments($content, $storeCacheEntries = true)
     {
-        $this->parser->extractRenderedSegments($content);
+        $this->parser->extractRenderedSegments($content, $this->randomCacheMarker);
 
         if ($storeCacheEntries) {
             $segments = $this->parser->getCacheSegments();
@@ -254,7 +266,7 @@ class ContentCache
         $this->replaceUncachedPlaceholders($uncachedCommandCallback, $content);
 
         if ($addCacheSegmentMarkersToPlaceholders) {
-            return self::CACHE_SEGMENT_START_TOKEN . $cacheIdentifier . self::CACHE_SEGMENT_SEPARATOR_TOKEN . '*' . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $content . self::CACHE_SEGMENT_END_TOKEN;
+            return self::CACHE_SEGMENT_START_TOKEN . $this->randomCacheMarker . $cacheIdentifier . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . '*' . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . $content . self::CACHE_SEGMENT_END_TOKEN . $this->randomCacheMarker;
         } else {
             return $content;
         }
@@ -267,7 +279,7 @@ class ContentCache
      * @param boolean $addCacheSegmentMarkersToPlaceholders
      * @return integer|boolean Number of replaced placeholders or FALSE if a placeholder couldn't be found
      */
-    public function replaceCachePlaceholders(&$content, $addCacheSegmentMarkersToPlaceholders)
+    protected function replaceCachePlaceholders(&$content, $addCacheSegmentMarkersToPlaceholders)
     {
         $cache = $this->cache;
         $foundMissingIdentifier = false;
@@ -276,7 +288,7 @@ class ContentCache
             $entry = $cache->get($identifier);
             if ($entry !== false) {
                 if ($addCacheSegmentMarkersToPlaceholders) {
-                    return ContentCache::CACHE_SEGMENT_START_TOKEN . $identifier . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . '*' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . $entry . ContentCache::CACHE_SEGMENT_END_TOKEN;
+                    return ContentCache::CACHE_SEGMENT_START_TOKEN . $this->randomCacheMarker . $identifier . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . '*' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . $entry . ContentCache::CACHE_SEGMENT_END_TOKEN . $this->randomCacheMarker;
                 } else {
                     return $entry;
                 }

@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Service\ImportExport;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.TYPO3CR".         *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Tests\UnitTestCase;
@@ -39,7 +39,7 @@ class NodeExportServiceTest extends UnitTestCase
     public function exportEmptyListOfNodesCreatesEmptyXml()
     {
         /** @var NodeExportService|\PHPUnit_Framework_MockObject_MockObject $nodeExportService */
-        $nodeExportService = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeExportService', array('findNodeDataListToExport'));
+        $nodeExportService = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeExportService')->setMethods(array('findNodeDataListToExport'))->getMock();
         $this->inject($nodeExportService, 'securityContext', $this->mockSecurityContext);
 
         $nodeDataList = array();
@@ -59,9 +59,9 @@ class NodeExportServiceTest extends UnitTestCase
     public function exportRootNodeCreatesSingleNode()
     {
         /** @var NodeExportService|\PHPUnit_Framework_MockObject_MockObject $nodeExportService */
-        $nodeExportService = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeExportService', array('findNodeDataListToExport'));
+        $nodeExportService = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeExportService')->setMethods(array('findNodeDataListToExport'))->getMock();
         $this->inject($nodeExportService, 'securityContext', $this->mockSecurityContext);
-        $nodeTypeManager = $this->getMock('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+        $nodeTypeManager = $this->createMock('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
         $this->inject($nodeExportService, 'nodeTypeManager', $nodeTypeManager);
         $nodeTypeManager->expects($this->once())->method('hasNodeType')->willReturn(false);
 
@@ -98,9 +98,9 @@ class NodeExportServiceTest extends UnitTestCase
     public function exportNodeWithoutParentSkipsBrokenNode()
     {
         /** @var NodeExportService|\PHPUnit_Framework_MockObject_MockObject $nodeExportService */
-        $nodeExportService = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeExportService', array('findNodeDataListToExport'));
+        $nodeExportService = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeExportService')->setMethods(array('findNodeDataListToExport'))->getMock();
         $this->inject($nodeExportService, 'securityContext', $this->mockSecurityContext);
-        $nodeTypeManager = $this->getMock('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+        $nodeTypeManager = $this->createMock('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
         $this->inject($nodeExportService, 'nodeTypeManager', $nodeTypeManager);
         $nodeTypeManager->expects($this->once())->method('hasNodeType')->willReturn(false);
 
@@ -127,7 +127,7 @@ class NodeExportServiceTest extends UnitTestCase
         $nodeDataList = array($nodeData1, $nodeData2);
         $nodeExportService->expects($this->any())->method('findNodeDataListToExport')->will($this->returnValue($nodeDataList));
 
-        $mockPropertyMapper = $this->getMock('TYPO3\Flow\Property\PropertyMapper');
+        $mockPropertyMapper = $this->createMock('TYPO3\Flow\Property\PropertyMapper');
         $mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnCallback(function ($source) {
             return $source;
         }));

@@ -11,6 +11,16 @@
   appendExceedingArguments: TRUE
 
 -
+  name: 'Token login'
+  uriPattern: 'login/token/{token}'
+  defaults:
+    '@package': 'TYPO3.Neos'
+    '@controller': 'Login'
+    '@action': 'tokenLogin'
+    '@format': 'html'
+  httpMethods: ['GET']
+
+-
   name: 'Authenticate'
   uriPattern: 'login(.{@format})'
   defaults:

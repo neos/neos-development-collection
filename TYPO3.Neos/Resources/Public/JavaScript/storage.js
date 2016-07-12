@@ -2,16 +2,16 @@ define(
 [
 	'Library/jquery-with-dependencies',
 	'Content/Model/Node',
+	'Content/Model/NodeSelection',
 	'Library/backbone',
-	'Content/Model/PublishableNodes',
 	'Shared/Endpoint/NodeEndpoint',
 	'Shared/EventDispatcher',
 	'Shared/Notification'
 ], function(
 	$,
 	Entity,
+	NodeSelection,
 	Backbone,
-	PublishableNodes,
 	NodeEndpoint,
 	EventDispatcher,
 	Notification
@@ -26,6 +26,7 @@ define(
 			},
 			'update': function(model, options) {
 				var nodeJson = this._convertModelToJson(model),
+					changedAttributes = Entity.extractAttributesFromVieEntity(model, model.changed),
 					method = options.render === true ? 'updateAndRender' : 'update',
 					typoScriptPath = options.render === true ? model._enclosingCollectionWidget.options.model.get('typo3:__typoscriptPath') : null;
 
@@ -43,16 +44,18 @@ define(
 						//
 						// Furthermore, we do not want event listeners to be fired, as otherwise the content element
 						// would be redrawn leading to a loss of the current editing cursor position.
-						//
-						// The PublishableNodes are explicitly updated, as changes from the backbone models
-						// workspace name attribute are suppressed and our entity wrapper would not notice.
 						NodeEndpoint.set('_saveRunning', false);
 						EventDispatcher.trigger('contentSaved');
 
 						if (result !== undefined && (result.success === true || options.render)) {
 							if (!options.render) {
 								model.set('typo3:__workspaceName', result.data.workspaceNameOfNode, {silent: true});
-								PublishableNodes._updatePublishableEntities();
+								// The PublishableNodes are explicitly updated through the ``nodesUpdated`` event, as changes from
+								// the backbone models workspace name attribute are suppressed and our entity wrapper would not notice.
+								EventDispatcher.trigger('nodeUpdated');
+								NodeSelection.getNode(model.id.slice(1, -1)).setAttribute('__label', result.data.labelOfNode, {silent: true});
+							} else if ('_nodeType' in changedAttributes) {
+								EventDispatcher.trigger('contentChanged');
 							}
 
 							NodeEndpoint.set('_lastSuccessfulTransfer', new Date());
@@ -63,19 +66,21 @@ define(
 					},
 					function() {
 						NodeEndpoint.set('_saveRunning', false);
-						Notification.error('An error occurred while saving.');
 						require({context: 'neos'}, ['InlineEditing/Dialogs/NodeUpdateFailureDialog'], function(NodeUpdateFailureDialog) {
 							NodeUpdateFailureDialog.create();
 						});
 					}
-				);
+				).fail(function(error) {
+					Notification.error('An error occurred.');
+					console.error('An error occurred:', error);
+				});
 			},
 			'delete': function(model, options) {
 				console.log('DELETE', arguments);
 			},
 			_convertModelToJson: function(model) {
 				var contextPath = model.fromReference(model.id);
-				var attributes = Entity.extractAttributesFromVieEntity(model, null, function(k) {
+				var attributes = Entity.extractAttributesFromVieEntity(model, model.changed, function(k) {
 						// skip internal properties starting with __; and skip "content-collection" (which is collection-specific)
 					return !( (k[0] === '_' && k[1] === '_') || k === 'content-collection');
 				});

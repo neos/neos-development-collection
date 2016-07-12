@@ -1,15 +1,15 @@
 <?php
 namespace TYPO3\Media\Domain\Model;
 
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "TYPO3.Media".           *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License, either version 3 of the   *
- * License, or (at your option) any later version.                        *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3.Media package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -18,9 +18,9 @@ use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Resource\Resource as FlowResource;
 use TYPO3\Flow\Resource\ResourceManager;
-use TYPO3\Flow\SignalSlot\Dispatcher;
 use TYPO3\Flow\Utility\MediaTypes;
 use TYPO3\Media\Domain\Repository\AssetRepository;
+use TYPO3\Media\Domain\Service\AssetService;
 use TYPO3\Media\Domain\Service\ThumbnailService;
 
 /**
@@ -33,12 +33,6 @@ use TYPO3\Media\Domain\Service\ThumbnailService;
  */
 class Asset implements AssetInterface
 {
-    /**
-     * @Flow\Inject
-     * @var Dispatcher
-     */
-    protected $signalSlotDispatcher;
-
     /**
      * @Flow\Inject
      * @var PersistenceManagerInterface
@@ -62,6 +56,12 @@ class Asset implements AssetInterface
      * @var ThumbnailService
      */
     protected $thumbnailService;
+
+    /**
+     * @Flow\Inject
+     * @var AssetService
+     */
+    protected $assetService;
 
     /**
      * @Flow\Inject
@@ -138,6 +138,9 @@ class Asset implements AssetInterface
         // FIXME: This is a workaround for after the resource management changes that introduced the property.
         if ($this->thumbnails === null) {
             $this->thumbnails = new ArrayCollection();
+        }
+        if ($initializationCause === \TYPO3\Flow\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
+            $this->emitAssetCreated($this);
         }
     }
 
@@ -405,5 +408,40 @@ class Asset implements AssetInterface
             }
         }
         $this->assetCollections = $assetCollections;
+    }
+
+    /**
+     * Signals that an asset was created.
+     * @deprecated Will be removed with next major version of TYPO3.Media.
+     * Use AssetService::emitAssetCreated signal instead.
+     *
+     * @Flow\Signal
+     * @param AssetInterface $asset
+     * @return void
+     */
+    protected function emitAssetCreated(AssetInterface $asset)
+    {
+    }
+
+    /**
+     * Returns true if the asset is still in use.
+     *
+     * @return boolean
+     * @api
+     */
+    public function isInUse()
+    {
+        return $this->assetService->isInUse($this);
+    }
+
+    /**
+     * Returns the number of times the asset is in use.
+     *
+     * @return integer
+     * @api
+     */
+    public function getUsageCount()
+    {
+        return $this->assetService->getUsageCount($this);
     }
 }
