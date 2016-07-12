@@ -49,7 +49,7 @@ class RuntimeContentCache
      *
      * @var array
      */
-    protected $cacheMetadata = array();
+    protected $cacheMetadata = [];
 
     /**
      * @Flow\Inject
@@ -78,6 +78,8 @@ class RuntimeContentCache
     }
 
     /**
+     * Adds a tag built from the given key and value.
+     *
      * @param string $key
      * @param string $value
      * @return void
@@ -98,6 +100,8 @@ class RuntimeContentCache
     }
 
     /**
+     * Resets the assigned tags, returning the previously set tags.
+     *
      * @return array
      */
     protected function flushTags()
@@ -123,7 +127,7 @@ class RuntimeContentCache
         $cacheForPathEnabled = isset($configuration['mode']) && ($configuration['mode'] === 'cached' || $configuration['mode'] === 'runtimeCache');
         $cacheForPathDisabled = isset($configuration['mode']) && ($configuration['mode'] === 'uncached' || $configuration['mode'] === 'runtimeCache');
 
-        if ($cacheForPathDisabled && (!isset($configuration['context']) || $configuration['context'] === array())) {
+        if ($cacheForPathDisabled && (!isset($configuration['context']) || $configuration['context'] === [])) {
             throw new Exception(sprintf('Missing @cache.context configuration for path "%s". An uncached segment must have one or more context variable names configured.', $typoScriptPath), 1395922119);
         }
 
@@ -135,13 +139,13 @@ class RuntimeContentCache
             }
         }
 
-        return array(
+        return [
             'configuration' => $configuration,
             'typoScriptPath' => $typoScriptPath,
             'cacheForPathEnabled' => $cacheForPathEnabled,
             'cacheForPathDisabled' => $cacheForPathDisabled,
             'currentPathIsEntryPoint' => $currentPathIsEntryPoint
-        );
+        ];
     }
 
     /**
@@ -184,14 +188,12 @@ class RuntimeContentCache
                     }
                 }, $evaluateContext['typoScriptPath'], $evaluateContext['cacheIdentifierValues'], $this->addCacheSegmentMarkersToPlaceholders);
                 if ($segment !== false) {
-                    return array(true, $segment);
+                    return [true, $segment];
                 } else {
                     $this->addCacheSegmentMarkersToPlaceholders = true;
                 }
 
-                $this->cacheMetadata[] = array(
-                    'lifetime' => null
-                );
+                $this->cacheMetadata[] = ['lifetime' => null];
             }
 
             if ($evaluateContext['cacheForPathEnabled'] && $evaluateContext['cacheForPathDisabled']) {
@@ -201,13 +203,13 @@ class RuntimeContentCache
             if (isset($evaluateContext['configuration']['maximumLifetime'])) {
                 $maximumLifetime = $this->runtime->evaluate($evaluateContext['typoScriptPath'] . '/__meta/cache/maximumLifetime', $tsObject);
 
-                if ($maximumLifetime !== null && $this->cacheMetadata !== array()) {
+                if ($maximumLifetime !== null && $this->cacheMetadata !== []) {
                     $cacheMetadata = &$this->cacheMetadata[count($this->cacheMetadata) - 1];
                     $cacheMetadata['lifetime'] = $cacheMetadata['lifetime'] !== null ? min($cacheMetadata['lifetime'], $maximumLifetime) : $maximumLifetime;
                 }
             }
         }
-        return array(false, null);
+        return [false, null];
     }
 
     /**
@@ -227,7 +229,7 @@ class RuntimeContentCache
         if ($this->enableContentCache && $evaluateContext['cacheForPathEnabled'] && $evaluateContext['cacheForPathDisabled']) {
             $contextArray = $this->runtime->getCurrentContext();
             if (isset($evaluateContext['configuration']['context'])) {
-                $contextVariables = array();
+                $contextVariables = [];
                 foreach ($evaluateContext['configuration']['context'] as $contextVariableName) {
                     $contextVariables[$contextVariableName] = $contextArray[$contextVariableName];
                 }
@@ -244,7 +246,7 @@ class RuntimeContentCache
         } elseif ($this->enableContentCache && $evaluateContext['cacheForPathDisabled'] && $this->inCacheEntryPoint) {
             $contextArray = $this->runtime->getCurrentContext();
             if (isset($evaluateContext['configuration']['context'])) {
-                $contextVariables = array();
+                $contextVariables = [];
                 foreach ($evaluateContext['configuration']['context'] as $contextVariableName) {
                     if (isset($contextArray[$contextVariableName])) {
                         $contextVariables[$contextVariableName] = $contextArray[$contextVariableName];
@@ -313,7 +315,7 @@ class RuntimeContentCache
      * @param object $tsObject The actual TypoScript object
      * @return array
      */
-    protected function buildCacheIdentifierValues($configuration, $typoScriptPath, $tsObject)
+    protected function buildCacheIdentifierValues(array $configuration, $typoScriptPath, $tsObject)
     {
         $objectType = '<TYPO3.TypoScript:GlobalCacheIdentifiers>';
         if (isset($configuration['entryIdentifier']['__objectType'])) {
@@ -330,9 +332,9 @@ class RuntimeContentCache
      * @param object $tsObject The actual TypoScript object
      * @return array
      */
-    protected function buildCacheTags($configuration, $typoScriptPath, $tsObject)
+    protected function buildCacheTags(array $configuration, $typoScriptPath, $tsObject)
     {
-        $cacheTags = array();
+        $cacheTags = [];
         if (isset($configuration['entryTags'])) {
             foreach ($configuration['entryTags'] as $tagKey => $tagValue) {
                 $tagValue = $this->runtime->evaluate($typoScriptPath . '/__meta/cache/entryTags/' . $tagKey, $tsObject);
@@ -346,7 +348,7 @@ class RuntimeContentCache
                 $cacheTags[] = $tagValue;
             }
         } else {
-            $cacheTags = array(ContentCache::TAG_EVERYTHING);
+            $cacheTags = [ContentCache::TAG_EVERYTHING];
         }
         return array_unique($cacheTags);
     }
@@ -355,9 +357,9 @@ class RuntimeContentCache
      * @param array $contextArray
      * @return array
      */
-    public function unserializeContext($contextArray)
+    public function unserializeContext(array $contextArray)
     {
-        $unserializedContext = array();
+        $unserializedContext = [];
         foreach ($contextArray as $variableName => $typeAndValue) {
             $value = $this->propertyMapper->convert($typeAndValue['value'], $typeAndValue['type']);
             $unserializedContext[$variableName] = $value;

@@ -42,8 +42,8 @@ class CacheSegmentParser
     public function extractRenderedSegments($content, $randomCacheMarker = '')
     {
         $this->output = '';
-        $this->cacheEntries = array();
-        $parts = array(array('content' => ''));
+        $this->cacheEntries = [];
+        $parts = [['content' => '']];
 
         $currentPosition = 0;
         $level = 0;
@@ -107,7 +107,7 @@ class CacheSegmentParser
 
                 // Found opening marker, increase level
                 $level++;
-                $parts[$level] = array('content' => '');
+                $parts[$level] = ['content' => ''];
 
                 $currentPosition = $nextStartPosition + 1 + strlen($randomCacheMarker);
 

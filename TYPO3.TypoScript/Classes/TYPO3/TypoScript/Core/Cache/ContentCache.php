@@ -90,6 +90,9 @@ class ContentCache
      */
     protected $randomCacheMarker;
 
+    /**
+     * ContentCache constructor
+     */
     public function __construct()
     {
         $this->randomCacheMarker = uniqid();
@@ -114,7 +117,7 @@ class ContentCache
      * @param integer $lifetime Lifetime of the cache segment in seconds. NULL for the default lifetime and 0 for unlimited lifetime.
      * @return string The original content, but with additional markers and a cache identifier added
      */
-    public function createCacheSegment($content, $typoScriptPath, $cacheIdentifierValues, array $tags = array(), $lifetime = null)
+    public function createCacheSegment($content, $typoScriptPath, array $cacheIdentifierValues, array $tags = [], $lifetime = null)
     {
         $cacheIdentifier = $this->renderContentCacheEntryIdentifier($typoScriptPath, $cacheIdentifierValues);
         $metadata = implode(',', $tags);
@@ -138,7 +141,7 @@ class ContentCache
     public function createUncachedSegment($content, $typoScriptPath, array $contextVariables)
     {
         $serializedContext = $this->serializeContext($contextVariables);
-        return self::CACHE_SEGMENT_START_TOKEN . $this->randomCacheMarker . 'eval=' . $typoScriptPath . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . json_encode(array('context' => $serializedContext)) . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . $content . self::CACHE_SEGMENT_END_TOKEN . $this->randomCacheMarker;
+        return self::CACHE_SEGMENT_START_TOKEN . $this->randomCacheMarker . 'eval=' . $typoScriptPath . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . json_encode(['context' => $serializedContext]) . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . $content . self::CACHE_SEGMENT_END_TOKEN . $this->randomCacheMarker;
     }
 
     /**
@@ -156,7 +159,7 @@ class ContentCache
      * @param string $cacheDiscriminator The evaluated cache discriminator value
      * @return string The original content, but with additional markers added
      */
-    public function createSemiCachedSegment($content, $typoScriptPath, array $contextVariables, $cacheIdentifierValues, array $tags = array(), $lifetime = null, $cacheDiscriminator)
+    public function createSemiCachedSegment($content, $typoScriptPath, array $contextVariables, array $cacheIdentifierValues, array $tags = [], $lifetime = null, $cacheDiscriminator)
     {
         $metadata = implode(',', $tags);
         if ($lifetime !== null) {
@@ -164,11 +167,11 @@ class ContentCache
         }
         $cacheDiscriminator = md5($cacheDiscriminator);
         $identifier = $this->renderContentCacheEntryIdentifier($typoScriptPath, $cacheIdentifierValues) . '_' . $cacheDiscriminator;
-        $segmentData = array(
+        $segmentData = [
             'path' => $typoScriptPath,
             'metadata' => $metadata,
             'context' => $this->serializeContext($contextVariables),
-        );
+        ];
 
         return self::CACHE_SEGMENT_START_TOKEN . 'evalCached=' . $identifier . self::CACHE_SEGMENT_SEPARATOR_TOKEN . json_encode($segmentData) . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $content . self::CACHE_SEGMENT_END_TOKEN;
     }
@@ -219,7 +222,7 @@ class ContentCache
 
             foreach ($segments as $segment) {
                 $metadata = explode(';', $segment['metadata']);
-                $tagsValue = $metadata[0] === '' ? array() : ($metadata[0] === '*' ? false : explode(',', $metadata[0]));
+                $tagsValue = $metadata[0] === '' ? [] : ($metadata[0] === '*' ? false : explode(',', $metadata[0]));
                     // FALSE means we do not need to store the cache entry again (because it was previously fetched)
                 if ($tagsValue !== false) {
                     $lifetime = isset($metadata[1]) ? (integer)$metadata[1] : null;
@@ -330,7 +333,7 @@ class ContentCache
      */
     protected function serializeContext(array $contextVariables)
     {
-        $serializedContextArray = array();
+        $serializedContextArray = [];
         foreach ($contextVariables as $variableName => $contextValue) {
             // TODO This relies on a converter being available from the context value type to string
             if ($contextValue !== null) {
