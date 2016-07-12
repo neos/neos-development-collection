@@ -59,7 +59,6 @@ class RuntimeContentCache
 
     /**
      * @var array
-     * @Flow\Inject
      */
     protected $tags = [];
 
