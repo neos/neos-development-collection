@@ -694,11 +694,20 @@ class NodeData extends AbstractNodeData
                 if (!$dimensionExisted) {
                     $dimensionToBeSet->setNodeData($this);
                     $dimensionsToBeSet[] = $dimensionToBeSet;
+                    $this->dimensions->add($dimensionToBeSet);
                 }
             }
+
+            // remove entries not to be set
+            foreach ($this->dimensions as $dimension) {
+                if (array_search($dimension, $dimensionsToBeSet) === false) {
+                    $this->dimensions->removeElement($dimension);
+                }
+            }
+        } else {
+            $this->dimensions = new ArrayCollection($dimensionsToBeSet);
         }
 
-        $this->dimensions = new ArrayCollection($dimensionsToBeSet);
         $this->buildDimensionValues();
     }
 
