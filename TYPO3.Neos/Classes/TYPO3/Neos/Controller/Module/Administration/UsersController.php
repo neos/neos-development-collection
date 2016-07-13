@@ -17,6 +17,7 @@ use TYPO3\Flow\I18n\EelHelper\TranslationHelper;
 use TYPO3\Flow\Property\PropertyMappingConfiguration;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 use TYPO3\Flow\Security\Account;
+use TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface;
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
 use TYPO3\Flow\Security\Policy\PolicyService;
 use TYPO3\Neos\Controller\Module\AbstractModuleController;
@@ -51,6 +52,12 @@ class UsersController extends AbstractModuleController
      * @var User
      */
     protected $currentUser;
+
+    /**
+     * @Flow\Inject()
+     * @var AuthenticationManagerInterface
+     */
+    protected $authenticationManager;
 
     /**
      * @return void
@@ -112,7 +119,8 @@ class UsersController extends AbstractModuleController
         $this->view->assignMultiple(array(
             'currentUser' => $this->currentUser,
             'user' => $user,
-            'roles' => $this->policyService->getRoles()
+            'roles' => $this->policyService->getRoles(),
+            'providers' => array_keys($this->authenticationManager->getProviders())
         ));
     }
 
@@ -123,14 +131,15 @@ class UsersController extends AbstractModuleController
      * @param array $password Expects an array in the format array('<password>', '<password confirmation>')
      * @param User $user The user to create
      * @param array $roleIdentifiers A list of roles (role identifiers) to assign to the new user
+     * @param string $authenticationProviderName Optional name of the authentication provider. If not provided the user server uses the default authentication provider
      * @Flow\Validate(argumentName="username", type="\TYPO3\Flow\Validation\Validator\NotEmptyValidator")
      * @Flow\Validate(argumentName="username", type="\TYPO3\Neos\Validation\Validator\UserDoesNotExistValidator")
      * @Flow\Validate(argumentName="password", type="\TYPO3\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=0, "minimum"=1, "maximum"=255 })
      * @return void
      */
-    public function createAction($username, array $password, User $user, array $roleIdentifiers)
+    public function createAction($username, array $password, User $user, array $roleIdentifiers, $authenticationProviderName = null)
     {
-        $this->userService->addUser($username, $password[0], $user, $roleIdentifiers);
+        $this->userService->addUser($username, $password[0], $user, $roleIdentifiers, $authenticationProviderName);
         $this->addFlashMessage('The user "%s" has been created.', 'User created', Message::SEVERITY_OK, array(htmlspecialchars($username)), 1416225561);
         $this->redirect('index');
     }
