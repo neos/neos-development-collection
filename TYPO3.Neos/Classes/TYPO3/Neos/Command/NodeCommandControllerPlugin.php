@@ -18,14 +18,17 @@ use TYPO3\TYPO3CR\Command\NodeCommandControllerPluginInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContentDimensionCombinator;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Utility;
 
 /**
- * A plugin for the TYPO3CR NodeCommandController which adds a task adding missing URI segments to the node:repair
- * command.
+ * A plugin for the TYPO3CR NodeCommandController which adds some tasks to the node:repair command:
+ *
+ * - adding missing URI segments
+ * - removing dimensions on nodes / and /sites
  *
  * @Flow\Scope("singleton")
  */
@@ -48,6 +51,12 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
      * @var ContentDimensionRepository
      */
     protected $contentDimensionRepository;
+
+    /**
+     * @Flow\Inject
+     * @var NodeDataRepository
+     */
+    protected $nodeDataRepository;
 
     /**
      * @var ContentDimensionCombinator
@@ -88,7 +97,10 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
                     '<u>Generate missing URI path segments</u>' . PHP_EOL .
                     PHP_EOL .
                     'Generates URI path segment properties for all document nodes which don\'t have a path' . PHP_EOL .
-                    'segment set yet.' . PHP_EOL;
+                    'segment set yet.' . PHP_EOL .
+                    '<u>Remove content dimensions from / and /sites</u>' . PHP_EOL .
+                    PHP_EOL .
+                    'Removes content dimensions from the root and sites nodes' . PHP_EOL;
         }
     }
 
@@ -109,6 +121,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
         switch ($controllerCommandName) {
             case 'repair':
                 $this->generateUriPathSegments($workspaceName, $dryRun);
+                $this->removeContentDimensionsFromRootAndSitesNode($workspaceName, $dryRun);
         }
     }
 
@@ -176,6 +189,48 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
         }
         foreach ($node->getChildNodes('TYPO3.Neos:Document') as $childNode) {
             $this->generateUriPathSegmentsForNode($childNode, $dryRun);
+        }
+    }
+
+    /**
+     * Remove dimensions on nodes "/" and "/sites"
+     *
+     * This empties the content dimensions on those nodes, so when traversing via the Node API from the root node,
+     * the nodes below "/sites" are always reachable.
+     *
+     * @param string $workspaceName
+     * @param boolean $dryRun
+     * @return void
+     */
+    public function removeContentDimensionsFromRootAndSitesNode($workspaceName, $dryRun)
+    {
+        $workspace = $this->workspaceRepository->findByIdentifier($workspaceName);
+        $rootNodes = $this->nodeDataRepository->findByPath('/', $workspace);
+        $sitesNodes = $this->nodeDataRepository->findByPath('/sites', $workspace);
+        $this->output->outputLine('Checking for root and site nodes with content dimensions set ...');
+        /** @var \TYPO3\TYPO3CR\Domain\Model\NodeData $rootNode */
+        foreach ($rootNodes as $rootNode) {
+            if ($rootNode->getDimensionValues() !== []) {
+                if ($dryRun === false) {
+                    $rootNode->setDimensions([]);
+                    $this->nodeDataRepository->update($rootNode);
+                    $this->output->outputLine('Removed content dimensions from root node');
+                } else {
+                    $this->output->outputLine('Found root node with content dimensions set.');
+                }
+            }
+        }
+        /** @var \TYPO3\TYPO3CR\Domain\Model\NodeData $sitesNode */
+        foreach ($sitesNodes as $sitesNode) {
+            if ($sitesNode->getDimensionValues() !== []) {
+                if ($dryRun === false) {
+                    $sitesNode->setDimensions([]);
+                    $this->nodeDataRepository->update($sitesNode);
+                    $this->output->outputLine('Removed content dimensions from node "/sites"');
+                } else {
+                    $this->output->outputLine('Found node "/sites"');
+                }
+            }
         }
     }
 
