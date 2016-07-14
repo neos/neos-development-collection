@@ -54,10 +54,10 @@ class UsersController extends AbstractModuleController
     protected $currentUser;
 
     /**
-     * @Flow\Inject()
-     * @var AuthenticationManagerInterface
+     * @Flow\InjectConfiguration(path="security.authentication.providers",package="TYPO3.Flow")
+     * @var array
      */
-    protected $authenticationManager;
+    protected $authenticationProviderConfig;
 
     /**
      * @return void
@@ -120,7 +120,7 @@ class UsersController extends AbstractModuleController
             'currentUser' => $this->currentUser,
             'user' => $user,
             'roles' => $this->policyService->getRoles(),
-            'providers' => array_keys($this->authenticationManager->getProviders())
+            'providers' => $this->getAuthenticationProviders()
         ));
     }
 
@@ -303,5 +303,19 @@ class UsersController extends AbstractModuleController
             'electronicAddressTypes' => $electronicAddressTypes,
             'electronicAddressUsageTypes' => $electronicAddressUsageTypes
         ));
+    }
+
+    /**
+     * TODO: With Flow 4.0 replace getting providers with access over AuthenticationManagerInterface
+     * $this->authenticationManager->getProviders();
+     *
+     * @return array
+     */
+    protected function getAuthenticationProviders()
+    {
+        $providerNames = array_keys($this->authenticationProviderConfig);
+        sort($providerNames);
+
+        return $providerNames;
     }
 }
