@@ -328,6 +328,12 @@
 			<trans-unit id="users.new.userData.roles" xml:space="preserve">
 				<source>Role(s)</source>
 			</trans-unit>
+			<trans-unit id="users.new.userData.authenticationProviderName" xml:space="preserve">
+				<source>Authentication Provider</source>
+			</trans-unit>
+			<trans-unit id="users.new.userData.authenticationProviderName.useDefault" xml:space="preserve">
+				<source>Use system default</source>
+			</trans-unit>
 			<trans-unit id="users.new.personalData" xml:space="preserve">
 				<source>Personal Data</source>
 			</trans-unit>
