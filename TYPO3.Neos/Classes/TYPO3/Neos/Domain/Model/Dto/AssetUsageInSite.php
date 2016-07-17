@@ -16,10 +16,21 @@ use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
- * A DTO for storing information related to a usage of an asset in node properties.
+ * A DTO for storing information related to a usage of an asset in node properties
+ * of site content.
  */
-class AssetUsageInNodeProperties extends UsageReference
+class AssetUsageInSite extends UsageReference
 {
+    /**
+     * @var Site
+     */
+    protected $site;
+
+    /**
+     * @var NodeInterface
+     */
+    protected $documentNode;
+
     /**
      * @var NodeInterface
      */
@@ -32,14 +43,38 @@ class AssetUsageInNodeProperties extends UsageReference
 
     /**
      * @param AssetInterface $asset
+     * @param Site $site
+     * @param NodeInterface $documentNode
      * @param NodeInterface $node
      * @param boolean $accessible
      */
-    public function __construct(AssetInterface $asset, NodeInterface $node, $accessible)
+    public function __construct(AssetInterface $asset, Site $site, NodeInterface $documentNode = null, NodeInterface $node, $accessible)
     {
         parent::__construct($asset);
+        $this->site = $site;
+        $this->documentNode = $documentNode;
         $this->node = $node;
         $this->accessible = $accessible;
+    }
+
+    /**
+     * Returns the Site object of the site where the asset is in use.
+     *
+     * @return Site
+     */
+    public function getSite()
+    {
+        return $this->site;
+    }
+
+    /**
+     * Returns the parent document node of the node where the asset is used.
+     *
+     * @return NodeInterface
+     */
+    public function getDocumentNode()
+    {
+        return $this->documentNode;
     }
 
     /**

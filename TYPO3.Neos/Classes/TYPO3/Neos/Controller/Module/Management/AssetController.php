@@ -28,6 +28,7 @@ use TYPO3\Media\Exception\AssetServiceException;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 use TYPO3\Neos\Controller\CreateContentContextTrait;
 use TYPO3\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
+use TYPO3\Neos\Domain\Model\Dto\AssetUsageInSite;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
@@ -184,16 +185,23 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
 
         /** @var AssetUsageInNodeProperties $usage */
         foreach ($usageReferences as $usage) {
-            $documentNodeIdentifier = $usage->getDocumentNode() instanceof NodeInterface ? $usage->getDocumentNode()->getIdentifier() : null;
+            if ($usage instanceof AssetUsageInSite) {
+                $documentNodeIdentifier = $usage->getDocumentNode() instanceof NodeInterface ? $usage->getDocumentNode()->getIdentifier() : null;
 
-            $relatedNodes[$usage->getSite()->getNodeName()]['site'] = $usage->getSite();
-            $relatedNodes[$usage->getSite()->getNodeName()]['documentNodes'][$documentNodeIdentifier]['node'] = $usage->getDocumentNode();
-            $relatedNodes[$usage->getSite()->getNodeName()]['documentNodes'][$documentNodeIdentifier]['nodes'][] = [
-                'node' => $usage->getNode(),
-                'nodeData' => $usage->getNode()->getNodeData(),
-                'contextDocumentNode' => $usage->getDocumentNode(),
-                'accessible' => $usage->isAccessible()
-            ];
+                $relatedNodes[$usage->getSite()->getNodeName()]['site'] = $usage->getSite();
+                $relatedNodes[$usage->getSite()->getNodeName()]['documentNodes'][$documentNodeIdentifier]['node'] = $usage->getDocumentNode();
+                $relatedNodes[$usage->getSite()->getNodeName()]['documentNodes'][$documentNodeIdentifier]['nodes'][] = [
+                    'node' => $usage->getNode(),
+                    'nodeData' => $usage->getNode()->getNodeData(),
+                    'contextDocumentNode' => $usage->getDocumentNode(),
+                    'accessible' => $usage->isAccessible()
+                ];
+            } elseif ($usage instanceof AssetUsageInNodeProperties) {
+                $relatedNodes['cr']['site'] = ['name' => 'Content Repository'];
+                $relatedNodes['cr']['documentNodes']['cr']['nodes'][] = [
+                    'node' => $usage->getNode()
+                ];
+            }
         }
 
         $this->view->assignMultiple([

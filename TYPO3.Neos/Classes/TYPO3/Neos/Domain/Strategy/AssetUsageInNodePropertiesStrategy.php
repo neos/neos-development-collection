@@ -18,6 +18,7 @@ use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Strategy\AbstractAssetUsageStrategy;
 use TYPO3\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
+use TYPO3\Neos\Domain\Model\Dto\AssetUsageInSite;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\SiteService;
 use TYPO3\Neos\Service\UserService;
@@ -98,11 +99,28 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
             }
 
             $accessible = $this->domainUserService->currentUserCanReadWorkspace($relatedNodeData->getWorkspace());
-            if ($accessible) {
-                $context = $this->createContextMatchingNodeData($relatedNodeData);
+
+            if (substr($relatedNodeData->getPath(), 0, strlen(SiteService::SITES_ROOT_PATH)) === SiteService::SITES_ROOT_PATH) {
+                // Usage below a sites node
+                if ($accessible) {
+                    $context = $this->createContextMatchingNodeData($relatedNodeData);
+                } else {
+                    $context = $this->createContentContext($userWorkspace->getName());
+                }
+                $site = $context->getCurrentSite();
+                $node = $this->nodeFactory->createFromNodeData($relatedNodeData, $context);
+                $flowQuery = new FlowQuery([$node]);
+                /** @var Node $documentNode */
+                $documentNode = $flowQuery->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+
+                $relatedNodes[] = new AssetUsageInSite($asset, $site, $documentNode, $node, $accessible);
             } else {
-                $context = $this->createContentContext($userWorkspace->getName());
+                // Usage outside of a site node
+                $context = $this->createContentContext($relatedNodeData->getWorkspace()->getName());
+                $node = $this->nodeFactory->createFromNodeData($relatedNodeData, $context);
+                $relatedNodes[] = new AssetUsageInNodeProperties($asset, $node, $accessible);
             }
+            
             $site = $context->getCurrentSite();
             $node = $this->nodeFactory->createFromNodeData($relatedNodeData, $context);
             $flowQuery = new FlowQuery([$node]);
