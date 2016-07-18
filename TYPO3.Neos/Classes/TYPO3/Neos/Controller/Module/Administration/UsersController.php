@@ -158,7 +158,6 @@ class UsersController extends AbstractModuleController
             'availableRoles' => $this->policyService->getRoles()
         ));
     }
-
     /**
      * Update a given user
      *
@@ -315,6 +314,6 @@ class UsersController extends AbstractModuleController
         $providerNames = array_keys($this->authenticationProviderConfig);
         sort($providerNames);
 
-        return $providerNames;
+        return array_combine($providerNames, $providerNames);
     }
 }
