@@ -17,7 +17,7 @@ use TYPO3\TypoScript\Exception as TypoScriptException;
 use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
 
 /**
- * Base class for Menu and DimensionMenu
+ * Base class for Menu and DimensionsMenu
  *
  * Main Options:
  *  - renderHiddenInIndex: if TRUE, hidden-in-index nodes will be shown in the menu. FALSE by default.
