@@ -6,7 +6,7 @@ prototype(TYPO3.Neos:Menu) < prototype(TYPO3.TypoScript:Template) {
 	node = ${node}
 	items = ${this.items}
 
-	entryLevel = 1
+	entryLevel = ${this.startingPoint ? 0 : 1}
 	maximumLevels = 2
 
 	filter = 'TYPO3.Neos:Document'
