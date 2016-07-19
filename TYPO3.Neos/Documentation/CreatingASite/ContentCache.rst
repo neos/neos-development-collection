@@ -76,24 +76,28 @@ The given configuration will cache the entire page content with a unique identif
 In the ``@cache`` meta property the following subproperties are allowed:
 
 ``mode``
-  Sets the caching mode of the current path. Possible values are ``'embed'`` (default), ``'cached'`` or ``'uncached'``.
+  Sets the caching mode of the current path. Possible values are ``'embed'`` (default), ``'cached'``,
+  ``'dynamic'`` or ``'uncached'``.
   Only simple string values are supported for this property.
 
   It defaults to mode ``embed`` which will not create a new cache entry but store the content into the next outer cached
   entry. With mode ``cached`` a separate cache entry will be created for the path. Mode ``uncached`` can be used to
-  always evaluate a path even if is contained inside a cached path. The ``context`` property should be set to configure
-  the TypoScript context variables that will be available when evaluating the uncached path.
+  always evaluate a path even if is contained inside a cached path. The ``dynamic`` mode evalutes a so called
+  "discriminator" on every request and caches results differently depending on it's value. Dynamic cache mode is therefore
+  much faster then uncached but slightly slower then cached mode. It is useful in situations where arguments (eg. from the
+  request) lead to different rendering results. The ``context`` property should be set to configure the TypoScript context
+  variables that will be available when evaluating the uncached path.
 
 ``maximumLifetime``
   Set the maximum lifetime for the nearest cached path. Possible values are ``null`` (default), ``0`` (unlimited lifetime)
   or the amount of seconds as an integer.
 
-  If this property is declared on a path with caching mode ``cached`` it will set the lifetime of the cache entry to the
-  minimum of all nested ``maximumLifetime`` configurations (in paths with mode ``embed``) and the ``maximumLifetime``
-  of the current configuration.
+  If this property is declared on a path with caching mode ``cached`` or ``dynamic`` it will set the lifetime of the
+  cache entry to the minimum of all nested ``maximumLifetime`` configurations (in paths with mode ``embed``) and
+  the ``maximumLifetime`` of the current configuration.
 
 ``entryIdentifier``
-  Configure the cache entry identifier for mode ``cached`` based on an array of values.
+  Configure the cache entry identifier for mode ``cached`` or ``dynamic`` based on an array of values.
 
   The prototype ``TYPO3.TypoScript:GlobalCacheIdentifiers`` will be used as the base object, so global values that
   influence *all* cache entries can be added to that prototype, see :ref:`Global cache entry identifiers` for more
@@ -111,7 +115,7 @@ In the ``@cache`` meta property the following subproperties are allowed:
   influence the rendering for every cached path along the hierarchy.
 
 ``entryTags``
-  Configure a set of tags that will be assigned to the cache entry for mode ``cached`` as an array.
+  Configure a set of tags that will be assigned to the cache entry for mode ``cached`` or ``dynamic`` as an array.
 
   The correct entry tags are important to achieve an automatic flushing of affected cache entries if a node or other
   data in Neos was changed during editing, publishing or other actions. A number of tags with a specific pattern
@@ -120,7 +124,7 @@ In the ``@cache`` meta property the following subproperties are allowed:
 
 ``context``
   Configure a list of variable names that will be stored from the TypoScript context for later rendering of a path with
-  mode ``uncached``. Only values that are configured here will be available in TypoScript when the path is evaluated
+  mode ``uncached`` or ``dynamic``. Only values that are configured here will be available in TypoScript when the path is evaluated
   in subsequent request.
 
   Example from ``Plugin.ts2``::
@@ -134,6 +138,11 @@ In the ``@cache`` meta property the following subproperties are allowed:
 			}
 		}
 	}
+
+``entryDiscriminator``
+  Configure an expression that uniquely discriminates different entries of a ``dynamic`` cached area. The expression or TypoScript
+  object must evaluate to a string to be used as discriminator and should be different for every cache entry you want to create for
+  this ``dynamic`` cached area.
 
 .. _Cache Entry Tags:
 
