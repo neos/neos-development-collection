@@ -66,15 +66,15 @@ class SortOperation extends AbstractOperation
         }
 
         // Check sort direction
-        if (isset($arguments[1]) && !empty($arguments[1]) && in_array(strtolower($arguments[1]), array('asc', 'desc'))) {
-            $sortOrder = strtolower($arguments[1]);
+        if (isset($arguments[1]) && !empty($arguments[1]) && in_array(strtoupper($arguments[1]), ['ASC', 'DESC'])) {
+            $sortOrder = strtoupper($arguments[1]);
         } else {
             throw new \TYPO3\Eel\FlowQuery\FlowQueryException('Please provide a valid sort direction (ASC or DESC)', 1467881105);
         }
 
-        $sortedNodes = array();
-        $sortSequence = array();
-        $nodesByIdentifier = array();
+        $sortedNodes = [];
+        $sortSequence = [];
+        $nodesByIdentifier = [];
 
         // Determine the property value to sort by
         /** @var Node $node */

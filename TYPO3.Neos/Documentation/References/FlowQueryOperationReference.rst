@@ -652,6 +652,8 @@ Sort operation, working on TYPO3CR nodes. Takes two arguments:
   underscore, like in ``property()``.
 * The sort direction. Can be ``DESC`` or ``ASC``.
 
+.. warning:: The sort() operation can **dramatically reduce rendering performance** if used on a large set of nodes, so use with care!
+
 :Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\SortOperation
 :Priority: 1
 :Final: No
