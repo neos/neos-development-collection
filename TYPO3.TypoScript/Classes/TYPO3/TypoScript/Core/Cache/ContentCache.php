@@ -59,7 +59,7 @@ class ContentCache
 
     const SEGMENT_TYPE_CACHED = 'cached';
     const SEGMENT_TYPE_UNCACHED = 'uncached';
-    const SEGMENT_TYPE_SEMICACHED = 'semicached';
+    const SEGMENT_TYPE_DYNAMICCACHED = 'dynamiccached';
 
     /**
      * @Flow\Inject
@@ -159,7 +159,7 @@ class ContentCache
      * @param string $cacheDiscriminator The evaluated cache discriminator value
      * @return string The original content, but with additional markers added
      */
-    public function createSemiCachedSegment($content, $typoScriptPath, array $contextVariables, array $cacheIdentifierValues, array $tags = [], $lifetime = null, $cacheDiscriminator)
+    public function createDynamicCachedSegment($content, $typoScriptPath, array $contextVariables, array $cacheIdentifierValues, array $tags = [], $lifetime = null, $cacheDiscriminator)
     {
         $metadata = implode(',', $tags);
         if ($lifetime !== null) {
@@ -173,7 +173,7 @@ class ContentCache
             'context' => $this->serializeContext($contextVariables),
         ];
 
-        return self::CACHE_SEGMENT_START_TOKEN . 'evalCached=' . $identifier . self::CACHE_SEGMENT_SEPARATOR_TOKEN . json_encode($segmentData) . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $content . self::CACHE_SEGMENT_END_TOKEN;
+        return self::CACHE_SEGMENT_START_TOKEN . $this->randomCacheMarker . 'evalCached=' . $identifier . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . json_encode($segmentData) . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . $content . self::CACHE_SEGMENT_END_TOKEN . $this->randomCacheMarker;
     }
 
     /**

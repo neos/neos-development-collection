@@ -123,8 +123,8 @@ class RuntimeContentCache
      */
     public function enter(array $configuration, $typoScriptPath)
     {
-        $cacheForPathEnabled = isset($configuration['mode']) && ($configuration['mode'] === 'cached' || $configuration['mode'] === 'runtimeCache');
-        $cacheForPathDisabled = isset($configuration['mode']) && ($configuration['mode'] === 'uncached' || $configuration['mode'] === 'runtimeCache');
+        $cacheForPathEnabled = isset($configuration['mode']) && ($configuration['mode'] === 'cached' || $configuration['mode'] === 'dynamic');
+        $cacheForPathDisabled = isset($configuration['mode']) && ($configuration['mode'] === 'uncached' || $configuration['mode'] === 'dynamic');
 
         if ($cacheForPathDisabled && (!isset($configuration['context']) || $configuration['context'] === [])) {
             throw new Exception(sprintf('Missing @cache.context configuration for path "%s". An uncached segment must have one or more context variable names configured.', $typoScriptPath), 1395922119);
@@ -164,7 +164,7 @@ class RuntimeContentCache
             if ($evaluateContext['cacheForPathEnabled']) {
                 $evaluateContext['cacheIdentifierValues'] = $this->buildCacheIdentifierValues($evaluateContext['configuration'], $evaluateContext['typoScriptPath'], $tsObject);
                 $self = $this;
-                $segment = $this->contentCache->getCachedSegment(function ($command, $additionalData, $cache) use ($self) {
+                $segment = $this->contentCache->getCachedSegment(function ($command, $additionalData, $cache) use ($self, $evaluateContext, $tsObject) {
                     if (strpos($command, 'eval=') === 0) {
                         $unserializedContext = $self->unserializeContext($additionalData['context']);
                         $path = substr($command, 5);
@@ -177,8 +177,13 @@ class RuntimeContentCache
                         $result = $cache->get($cacheIdentifier);
                         if ($result === false) {
                             $unserializedContext = $self->unserializeContext($additionalData['context']);
+                            $maximumLifetime = null;
+                            if (isset($evaluateContext['configuration']['maximumLifetime'])) {
+                                $maximumLifetime = $this->runtime->evaluate($evaluateContext['typoScriptPath'] . '/__meta/cache/maximumLifetime', $tsObject);
+                            }
+                            $cacheTags = $this->buildCacheTags($evaluateContext['configuration'], $evaluateContext['typoScriptPath'], $tsObject);
                             $result = $self->evaluateUncached($additionalData['path'], $unserializedContext);
-                            $cache->set($cacheIdentifier, $result);
+                            $cache->set($cacheIdentifier, $result, $cacheTags, $maximumLifetime);
                         }
 
                         return $result;
@@ -237,7 +242,7 @@ class RuntimeContentCache
             }
             $cacheTags = $this->buildCacheTags($evaluateContext['configuration'], $evaluateContext['typoScriptPath'], $tsObject);
             $cacheMetadata = array_pop($this->cacheMetadata);
-            $output = $this->contentCache->createSemiCachedSegment($output, $evaluateContext['typoScriptPath'], $contextVariables, $evaluateContext['cacheIdentifierValues'], $cacheTags, $cacheMetadata['lifetime'], $evaluateContext['cacheDiscriminator']);
+            $output = $this->contentCache->createDynamicCachedSegment($output, $evaluateContext['typoScriptPath'], $contextVariables, $evaluateContext['cacheIdentifierValues'], $cacheTags, $cacheMetadata['lifetime'], $evaluateContext['cacheDiscriminator']);
         } elseif ($this->enableContentCache && $evaluateContext['cacheForPathEnabled']) {
             $cacheTags = $this->buildCacheTags($evaluateContext['configuration'], $evaluateContext['typoScriptPath'], $tsObject);
             $cacheMetadata = array_pop($this->cacheMetadata);

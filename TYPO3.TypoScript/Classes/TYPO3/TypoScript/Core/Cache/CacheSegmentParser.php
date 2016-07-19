@@ -79,7 +79,7 @@ class CacheSegmentParser
                 $identifier = $currentLevelPart['identifier'];
                 $this->output .= $part;
 
-                if ($currentLevelPart['type'] === ContentCache::SEGMENT_TYPE_CACHED || $currentLevelPart['type'] === ContentCache::SEGMENT_TYPE_SEMICACHED) {
+                if ($currentLevelPart['type'] === ContentCache::SEGMENT_TYPE_CACHED || $currentLevelPart['type'] === ContentCache::SEGMENT_TYPE_DYNAMICCACHED) {
                     $this->cacheEntries[$identifier] = $parts[$level];
                 }
 
@@ -89,8 +89,8 @@ class CacheSegmentParser
 
                 if ($currentLevelPart['type'] === ContentCache::SEGMENT_TYPE_UNCACHED) {
                     $parts[$level]['content'] .= ContentCache::CACHE_SEGMENT_START_TOKEN . ContentCache::CACHE_SEGMENT_MARKER . $identifier . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . ContentCache::CACHE_SEGMENT_MARKER . $currentLevelPart['context'] . ContentCache::CACHE_SEGMENT_END_TOKEN . ContentCache::CACHE_SEGMENT_MARKER;
-                } elseif ($currentLevelPart['type'] === ContentCache::SEGMENT_TYPE_SEMICACHED) {
-                    $parts[$level]['content'] .= ContentCache::CACHE_SEGMENT_START_TOKEN . 'evalCached=' . $identifier . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . $currentLevelPart['context'] . ContentCache::CACHE_SEGMENT_END_TOKEN;
+                } elseif ($currentLevelPart['type'] === ContentCache::SEGMENT_TYPE_DYNAMICCACHED) {
+                    $parts[$level]['content'] .= ContentCache::CACHE_SEGMENT_START_TOKEN . ContentCache::CACHE_SEGMENT_MARKER . 'evalCached=' . $identifier . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . ContentCache::CACHE_SEGMENT_MARKER . $currentLevelPart['context'] . ContentCache::CACHE_SEGMENT_END_TOKEN . ContentCache::CACHE_SEGMENT_MARKER;
                 } else {
                     $parts[$level]['content'] .= ContentCache::CACHE_SEGMENT_START_TOKEN . ContentCache::CACHE_SEGMENT_MARKER . $identifier . ContentCache::CACHE_SEGMENT_END_TOKEN . ContentCache::CACHE_SEGMENT_MARKER;
                 }
@@ -132,7 +132,7 @@ class CacheSegmentParser
                     $parts[$level]['type'] = ContentCache::SEGMENT_TYPE_UNCACHED;
                     $parts[$level]['context'] = $contextOrMetadata;
                 } elseif (strpos($identifier, 'evalCached=') === 0) {
-                    $parts[$level]['type'] = ContentCache::SEGMENT_TYPE_SEMICACHED;
+                    $parts[$level]['type'] = ContentCache::SEGMENT_TYPE_DYNAMICCACHED;
                     $parts[$level]['identifier'] = substr($identifier, 11);
                     $additionalData = json_decode($contextOrMetadata, true);
                     $parts[$level]['context'] = $contextOrMetadata;
