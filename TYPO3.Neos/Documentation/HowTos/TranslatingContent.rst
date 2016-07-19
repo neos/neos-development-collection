@@ -62,12 +62,12 @@ This migration has to be applied whenever a new dimension is configured to set t
 Integrate Language Menu
 =======================
 
-A simple language menu can be displayed on the site by using the ``TYPO3.Neos:DimensionMenu`` TypoScript object::
+A simple language menu can be displayed on the site by using the ``TYPO3.Neos:DimensionsMenu`` TypoScript object::
 
 	page {
 	    body {
 	        parts {
-	            languageMenu = TYPO3.Neos:DimensionMenu {
+	            languageMenu = TYPO3.Neos:DimensionsMenu {
 	                dimension = 'language'
 	            }
 	        }
