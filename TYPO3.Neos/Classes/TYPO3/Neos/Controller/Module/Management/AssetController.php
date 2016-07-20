@@ -249,24 +249,4 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
         }
         return new Error($errorMessage, null, [get_class($this), $this->actionMethodName]);
     }
-
-    /**
-     * Add a translated flashMessage.
-     *
-     * @param string $messageBody The translation id for the message body.
-     * @param string $messageTitle The translation id for the message title.
-     * @param string $severity
-     * @param array $messageArguments
-     * @param integer $messageCode
-     * @return void
-     */
-    public function addFlashMessage($messageBody, $messageTitle = '', $severity = Message::SEVERITY_OK, array $messageArguments = array(), $messageCode = null)
-    {
-        if (is_string($messageBody)) {
-            $messageBody = $this->translator->translateById($messageBody, $messageArguments, null, null, 'Modules', 'TYPO3.Neos');
-        }
-        $messageTitle = $this->translator->translateById($messageTitle, $messageArguments, null, null, 'Modules', 'TYPO3.Neos');
-
-        parent::addFlashMessage($messageBody, $messageTitle, $severity, $messageArguments, $messageCode);
-    }
 }
