@@ -31,6 +31,7 @@ ordering anything but alphabetic.
 * Frans Saris
 * Garvit Khatri
 * Georg Ringer
+* Hans Höchtl
 * Helmut Hummel
 * Henjo Hoeksma
 * Ingmar Schlecht
