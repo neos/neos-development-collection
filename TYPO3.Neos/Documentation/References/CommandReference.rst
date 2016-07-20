@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2016-06-07
+The following reference was automatically generated from code on 2016-07-20
 
 
 .. _`Command Reference: TYPO3.FLOW`:
@@ -564,6 +564,16 @@ The use of
 
 would only create a migration touching tables starting with "acme_com".
 
+It is also possible to set a default filter expression within the settings.
+
+TYPO3:
+Flow:
+persistence:
+doctrine:
+migrations:
+generate:
+defaultFilterExpression: '/^acme_com/'
+
 
 
 Options
@@ -909,6 +919,12 @@ Lists all locally available packages. Displays the package key, version and
 package title and its state – active or inactive.
 
 
+
+Options
+^^^^^^^
+
+``--loading-order``
+  The returned packages are ordered by their loading order.
 
 
 
