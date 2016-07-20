@@ -3,7 +3,7 @@
 FlowQuery Operation Reference
 =============================
 
-This reference was automatically generated from code on 2016-06-07
+This reference was automatically generated from code on 2016-07-20
 
 
 .. _`FlowQuery Operation Reference: add`:
@@ -445,8 +445,8 @@ parents
 context elements and returns the parent nodes or only those matching
 the filter expression specified as optional argument.
 
-:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\ParentsOperation
-:Priority: 0
+:Implementation: TYPO3\\Neos\\Eel\\FlowQueryOperations\\ParentsOperation
+:Priority: 100
 :Final: No
 :Returns: void
 
@@ -463,8 +463,8 @@ parents
 context elements and returns the parent nodes or only those matching
 the filter expression specified as optional argument.
 
-:Implementation: TYPO3\\Neos\\Eel\\FlowQueryOperations\\ParentsOperation
-:Priority: 100
+:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\ParentsOperation
+:Priority: 0
 :Final: No
 :Returns: void
 
@@ -646,18 +646,18 @@ value contained in the context are sliced with offset and length.
 sort
 ----
 
-Sort operation, working on TYPO3CR nodes. Takes two arguments:
+"sort" operation working on TYPO3CR nodes.
+Sorts nodes by specified node properties.
 
-* The node property to sort by. Internal arguments can be prefixed with an
-  underscore, like in ``property()``.
-* The sort direction. Can be ``DESC`` or ``ASC``.
+{@inheritdoc}
 
-.. warning:: The sort() operation can **dramatically reduce rendering performance** if used on a large set of nodes, so use with care!
+First argument is the node property to sort by. Works with internal arguments (_xyz) as well.
+Second argument is the sort direction (ASC or DESC).
 
-:Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\SortOperation
+:Implementation: TYPO3\\Neos\\Eel\\FlowQueryOperations\\SortOperation
 :Priority: 1
 :Final: No
-:Returns: void
+:Returns: mixed
 
 
 
