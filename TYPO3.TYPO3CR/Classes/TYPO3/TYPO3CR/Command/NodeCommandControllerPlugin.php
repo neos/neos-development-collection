@@ -142,6 +142,10 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
                     '<u>Remove undefined node properties</u>' . PHP_EOL .
                     PHP_EOL .
                     'Will remove all undefined properties according to the node type configuration.' . PHP_EOL .
+                    '<u>Remove nodes with invalid dimensions</u>' . PHP_EOL .
+                    PHP_EOL .
+                    'Will check for and optionally remove nodes which have dimension values not matching' . PHP_EOL .
+                    'the current content dimension configuration.' . PHP_EOL . PHP_EOL .
                     '<u>Missing child nodes</u>' . PHP_EOL .
                     PHP_EOL .
                     'For all nodes (or only those which match the --node-type filter specified with this' . PHP_EOL .
@@ -187,6 +191,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
                     $this->removeDisallowedChildNodes($workspaceName, $dryRun);
                     $this->removeUndefinedProperties($nodeType, $workspaceName, $dryRun);
                     $this->removeBrokenEntityReferences($workspaceName, $dryRun);
+                    $this->removeNodesWithInvalidDimensions($nodeType, $workspaceName, $dryRun);
                 }
                 $this->createMissingChildNodes($nodeType, $workspaceName, $dryRun);
                 $this->reorderChildNodes($nodeType, $workspaceName, $dryRun);
@@ -853,6 +858,95 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
             ->setParameters(array('identifier' => $nodeIdentifier, 'dimensionsHash' => $dimensionsHash))
             ->getQuery()
             ->execute();
+    }
+
+    /**
+     * Remove nodes with invalid dimension values
+     *
+     * This removes nodes which have dimension values not fitting to the current dimension configuration
+     *
+     * @param NodeType $nodeType Only for this node type, if specified
+     * @param string $workspaceName Name of the workspace to consider
+     * @param boolean $dryRun Simulate?
+     * @return void
+     */
+    public function removeNodesWithInvalidDimensions(NodeType $nodeType = null, $workspaceName, $dryRun)
+    {
+        $allowedDimensionCombinations = $this->contentDimensionCombinator->getAllAllowedCombinations();
+
+        if ($nodeType !== null) {
+            $this->output->outputLine('Checking nodes of type "%s" for invalid dimensions ...', array($nodeType->getName()));
+            $nodesArray = $this->collectNodesWithInvalidDimensions($nodeType, $workspaceName, $allowedDimensionCombinations);
+        } else {
+            $this->output->outputLine('Checking for nodes with invalid dimensions ...');
+            $nodesArray = [];
+            foreach ($this->nodeTypeManager->getNodeTypes() as $nodeType) {
+                /** @var NodeType $nodeType */
+                if ($nodeType->isAbstract()) {
+                    continue;
+                }
+                $nodesArray = array_merge($nodesArray, $this->collectNodesWithInvalidDimensions($nodeType, $workspaceName, $allowedDimensionCombinations));
+            }
+        }
+
+        if (count($nodesArray) === 0) {
+            return;
+        }
+
+        if (!$dryRun) {
+            $self = $this;
+            $this->output->outputLine();
+            $this->output->outputLine('Nodes with invalid dimension values found.' . PHP_EOL . 'You might solve this by migrating them to your current dimension configuration or by removing them.');
+            $this->askBeforeExecutingTask(sprintf('Do you want to remove %s node%s with invalid dimensions now?', count($nodesArray), count($nodesArray) > 1 ? 's' : ''), function () use ($self, $nodesArray, $workspaceName) {
+                foreach ($nodesArray as $nodeArray) {
+                    $self->removeNode($nodeArray['identifier'], $nodeArray['dimensionsHash']);
+                }
+                $self->output->outputLine('Removed %s node%s with invalid dimension values.', array(count($nodesArray), count($nodesArray) > 1 ? 's' : ''));
+            });
+        } else {
+            $this->output->outputLine('Found %s node%s with invalid dimension values to be removed.', array(count($nodesArray), count($nodesArray) > 1 ? 's' : ''));
+        }
+        $this->output->outputLine();
+    }
+
+    /**
+     * Collects all nodes of the given node type which have dimension values not fitting to the current dimension
+     * configuration.
+     *
+     * @param NodeType $nodeType
+     * @param string $workspaceName
+     * @param array $allowedDimensionCombinations
+     * @return array
+     */
+    protected function collectNodesWithInvalidDimensions(NodeType $nodeType, $workspaceName, array $allowedDimensionCombinations)
+    {
+        $nodes = [];
+
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+
+        $queryBuilder->select('n')
+            ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+            ->where('n.nodeType = :nodeType')
+            ->andWhere('n.workspace = :workspace')
+            ->andWhere('n.movedTo IS NULL OR n.removed = :removed')
+            ->setParameter('nodeType', $nodeType)
+            ->setParameter('workspace', $workspaceName)
+            ->setParameter('removed', false, \PDO::PARAM_BOOL);
+
+        foreach ($queryBuilder->getQuery()->getArrayResult() as $nodeDataArray) {
+            if ($nodeDataArray['path'] === '/') {
+                continue;
+            }
+            foreach ($allowedDimensionCombinations as $dimensionConfiguration) {
+                if ($dimensionConfiguration == $nodeDataArray['dimensionValues']) {
+                    break 2;
+                }
+            }
+            $this->output->outputLine('Node %s has invalid dimension values: %s', [$nodeDataArray['path'], json_encode($nodeDataArray['dimensionValues'])]);
+            $nodes[] = $nodeDataArray;
+        }
+        return $nodes;
     }
 
     /**
