@@ -17,6 +17,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\ConsoleOutput;
 use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
+use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
@@ -362,11 +363,17 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
         foreach ($nodeTypes as $nodeTypeName => $nodeType) {
             $defaultValues = $nodeType->getDefaultValuesForProperties();
             foreach ($this->getNodeDataByNodeTypeAndWorkspace($nodeTypeName, $workspaceName) as $nodeData) {
+                /** @var NodeData $nodeData */
                 $context = $this->nodeFactory->createContextMatchingNodeData($nodeData);
                 $node = $this->nodeFactory->createFromNodeData($nodeData, $context);
                 if (!$node instanceof NodeInterface) {
                     continue;
                 }
+                if ($node instanceof Node && !$node->dimensionsAreMatchingTargetDimensionValues()) {
+                    $this->output->outputLine('Skipping node %s  because it has invalid dimension values: %s', [$node->getPath(), json_encode($node->getNodeData()->getDimensionValues())]);
+                    continue;
+                }
+
                 foreach ($defaultValues as $propertyName => $defaultValue) {
                     if ($propertyName[0] === '_') {
                         continue;
