@@ -14,6 +14,7 @@ namespace TYPO3\Neos\Command;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\ConsoleOutput;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Neos\Domain\Service\SiteService;
 use TYPO3\Neos\Utility\NodeUriPathSegmentGenerator;
 use TYPO3\TYPO3CR\Command\NodeCommandControllerPluginInterface;
@@ -67,6 +68,12 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
      * @var ConsoleOutput
      */
     protected $output;
+
+    /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
 
     /**
      * Returns a short description
@@ -154,6 +161,8 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
                 }
             }
         }
+
+        $this->persistenceManager->persistAll();
     }
 
     /**
