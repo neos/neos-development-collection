@@ -779,7 +779,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
     }
 
     /**
-     * Removes all nodes with a specific path and its children in the given workspace.
+     * Removes all nodes with a specific path and their children in the given workspace.
      *
      * @param string $nodePath
      * @param string $workspaceName
