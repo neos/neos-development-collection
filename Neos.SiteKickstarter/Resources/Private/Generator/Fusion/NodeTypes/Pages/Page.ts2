@@ -3,8 +3,8 @@ prototype(Neos.Neos:Document.Document) < prototype(Neos:DefaultPage) {
         // These are your content areas, you can define as many as you want, just name them and the nodePath.
         content {
             // The default content section
-            main = Neos.Neos:PrimaryContent {
-            nodePath = 'main'
+            main = TYPO3.Neos:PrimaryContent {
+                nodePath = 'main'
             }
         }
     }
