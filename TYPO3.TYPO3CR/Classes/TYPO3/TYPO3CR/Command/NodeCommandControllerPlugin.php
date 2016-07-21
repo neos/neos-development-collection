@@ -446,7 +446,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
             $self = $this;
             $this->askBeforeExecutingTask('Abstract or undefined node types found, do you want to remove them?', function () use ($self, $nodes, $workspaceName, $removableNodesCount) {
                 foreach ($nodes as $node) {
-                    $self->removeNodeAndChildNodesInWorkspaceByPath($node['path'], $workspaceName);
+                    $self->removeNode($node['identifier'], $node['dimensionsHash']);
                 }
                 $self->output->outputLine('Removed %s node%s with abstract or undefined node types.', array($removableNodesCount, $removableNodesCount > 1 ? 's' : ''));
             });
@@ -779,7 +779,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
     }
 
     /**
-     * Removes a node and it's children in the given workspace.
+     * Removes all nodes with a specific path and its children in the given workspace.
      *
      * @param string $nodePath
      * @param string $workspaceName
@@ -796,6 +796,27 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
             ->orWhere('n.path LIKE :subpath')
             ->andWhere('n.workspace = :workspace')
             ->setParameters(array('path' => $nodePath, 'subpath' => $nodePath . '/%', 'workspace' => $workspaceName))
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     * Removes the specified node (exactly that one)
+     *
+     * @param string $nodeIdentifier
+     * @param string $dimensionsHash
+     */
+    protected function removeNode($nodeIdentifier, $dimensionsHash)
+    {
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+
+        $queryBuilder
+            ->resetDQLParts()
+            ->delete('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+            ->where('n.identifier = :identifier')
+            ->andWhere('n.dimensionsHash = :dimensionsHash')
+            ->setParameters(array('identifier' => $nodeIdentifier, 'dimensionsHash' => $dimensionsHash))
             ->getQuery()
             ->execute();
     }
