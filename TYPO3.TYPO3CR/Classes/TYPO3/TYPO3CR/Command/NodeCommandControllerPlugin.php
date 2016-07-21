@@ -15,6 +15,7 @@ use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\QueryBuilder;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\ConsoleOutput;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
@@ -95,6 +96,12 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
      * @Flow\Inject
      */
     protected $contentDimensionCombinator;
+
+    /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
 
     /**
      * Returns a short description
@@ -233,6 +240,8 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
                 $this->createChildNodesByNodeType($nodeType, $workspaceName, $dryRun);
             }
         }
+
+        $this->persistenceManager->persistAll();
     }
 
     /**
@@ -246,6 +255,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
     protected function createChildNodesByNodeType(NodeType $nodeType, $workspaceName, $dryRun)
     {
         $createdNodesCount = 0;
+        $updatedNodesCount = 0;
         $nodeCreationExceptions = 0;
 
         $nodeTypes = $this->nodeTypeManager->getSubNodeTypes($nodeType->getName(), false);
@@ -282,12 +292,14 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
                             $createdNodesCount++;
                         } elseif ($childNode->getIdentifier() !== $childNodeIdentifier) {
                             if ($dryRun === false) {
-                                $childNode->getNodeData()->setIdentifier($childNodeIdentifier);
-                                $this->nodeDataRepository->update($childNode->getNodeData());
-                                $this->output->outputLine('Updated identifier for child node "%s" in "%s"', array($childNodeName, $node->getPath()));
+                                $nodeData = $childNode->getNodeData();
+                                $nodeData->setIdentifier($childNodeIdentifier);
+                                $this->nodeDataRepository->update($nodeData);
+                                $this->output->outputLine('Updated identifier to %s for child node "%s" in "%s"', array($childNodeIdentifier, $childNodeName, $node->getPath()));
                             } else {
                                 $this->output->outputLine('Child node "%s" in "%s" does not have a stable identifier', array($childNodeName, $node->getPath()));
                             }
+                            $updatedNodesCount++;
                         }
                     } catch (\Exception $exception) {
                         $this->output->outputLine('Could not create node named "%s" in "%s" (%s)', array($childNodeName, $node->getPath(), $exception->getMessage()));
@@ -297,15 +309,25 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
             }
         }
 
-        if ($createdNodesCount !== 0 || $nodeCreationExceptions !== 0) {
+        if ($createdNodesCount !== 0 || $nodeCreationExceptions !== 0 || $updatedNodesCount !== 0) {
             if ($dryRun === false) {
-                $this->output->outputLine('Created %s new child nodes', array($createdNodesCount));
-
+                if ($createdNodesCount > 0) {
+                    $this->output->outputLine('Created %s new child nodes', array($createdNodesCount));
+                }
+                if ($updatedNodesCount > 0) {
+                    $this->output->outputLine('Updated identifier of %s child nodes', array($updatedNodesCount));
+                }
                 if ($nodeCreationExceptions > 0) {
                     $this->output->outputLine('%s Errors occurred during child node creation', array($nodeCreationExceptions));
                 }
+                $this->persistenceManager->persistAll();
             } else {
-                $this->output->outputLine('%s missing child nodes need to be created', array($createdNodesCount));
+                if ($createdNodesCount > 0) {
+                    $this->output->outputLine('%s missing child nodes need to be created', array($createdNodesCount));
+                }
+                if ($updatedNodesCount > 0) {
+                    $this->output->outputLine('%s identifiers of child nodes need to be updated', array($updatedNodesCount));
+                }
             }
         }
     }
@@ -387,6 +409,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 
         if ($addedMissingDefaultValuesCount !== 0) {
             if ($dryRun === false) {
+                $this->persistenceManager->persistAll();
                 $this->output->outputLine('Added %s new default values', array($addedMissingDefaultValuesCount));
             } else {
                 $this->output->outputLine('%s missing default values need to be set', array($addedMissingDefaultValuesCount));
@@ -648,6 +671,8 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
             }
             $this->output->outputLine();
         }
+
+        $this->persistenceManager->persistAll();
     }
 
     /**
@@ -731,6 +756,8 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
                 $this->output->outputLine('Found %s broken entity reference%s to be removed.', array($brokenReferencesCount, $brokenReferencesCount > 1 ? 's' : ''));
             }
             $this->output->outputLine();
+
+            $this->persistenceManager->persistAll();
         }
     }
 
@@ -811,10 +838,10 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
     protected function reorderChildNodes(NodeType $nodeType = null, $workspaceName, $dryRun)
     {
         if ($nodeType !== null) {
-            $this->output->outputLine('Checking nodes of type "%s" for child nodes that needs reordering ...', array($nodeType->getName()));
+            $this->output->outputLine('Checking nodes of type "%s" for child nodes that need reordering ...', array($nodeType->getName()));
             $this->reorderChildNodesByNodeType($nodeType, $workspaceName, $dryRun);
         } else {
-            $this->output->outputLine('Checking for child nodes that needs reordering ...');
+            $this->output->outputLine('Checking for child nodes that need reordering ...');
             foreach ($this->nodeTypeManager->getNodeTypes() as $nodeType) {
                 /** @var NodeType $nodeType */
                 if ($nodeType->isAbstract()) {
@@ -823,6 +850,8 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
                 $this->reorderChildNodesByNodeType($nodeType, $workspaceName, $dryRun);
             }
         }
+
+        $this->persistenceManager->persistAll();
     }
 
     /**
