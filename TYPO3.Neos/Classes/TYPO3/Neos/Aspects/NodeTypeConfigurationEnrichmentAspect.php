@@ -179,6 +179,11 @@ class NodeTypeConfigurationEnrichmentAspect
                     $propertyConfiguration['ui']['inspector']['editorOptions']['buttonLabel'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'codeEditor.buttonLabel');
                 }
                 break;
+            case 'TYPO3.Neos/Inspector/Editors/TextFieldEditor':
+                if (isset($propertyConfiguration['ui']['inspector']['editorOptions']) && $this->shouldGenerateLabel($propertyConfiguration['ui']['inspector']['editorOptions'], 'placeholder')) {
+                    $propertyConfiguration['ui']['inspector']['editorOptions']['placeholder'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'textFieldEditor.placeholder');
+                }
+                break;
         }
     }
 
