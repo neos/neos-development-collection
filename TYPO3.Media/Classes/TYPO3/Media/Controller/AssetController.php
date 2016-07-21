@@ -299,7 +299,7 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
             $this->forwardToReferringRequest();
         }
 
-        $this->addFlashMessage('Asset "%s" has been replaced.', '', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())], 1469083617);
+        $this->addFlashMessage('Asset "%s" has been replaced.', '', Message::SEVERITY_OK, [$asset->getLabel()], 1469083617);
         $this->redirect('index');
     }
 
@@ -337,7 +337,7 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
     public function updateAction(Asset $asset)
     {
         $this->assetRepository->update($asset);
-        $this->addFlashMessage('Asset "%s" has been updated.', '', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())], 1469083898);
+        $this->addFlashMessage('Asset "%s" has been updated.', '', Message::SEVERITY_OK, [$asset->getLabel()], 1469083898);
         $this->redirect('index');
     }
 
@@ -365,7 +365,7 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
         if ($this->persistenceManager->isNewObject($asset)) {
             $this->assetRepository->add($asset);
         }
-        $this->addFlashMessage('Asset "%s" has been added.', '', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())], 1469084015);
+        $this->addFlashMessage('Asset "%s" has been added.', '', Message::SEVERITY_OK, [$asset->getLabel()], 1469084015);
         $this->redirect('index', null, null, array(), 0, 201);
     }
 
@@ -404,7 +404,7 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
             $this->assetCollectionRepository->update($assetCollection);
         }
 
-        $this->addFlashMessage('Asset "%s" has been added.', '', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())], 1469084015);
+        $this->addFlashMessage('Asset "%s" has been added.', '', Message::SEVERITY_OK, [$asset->getLabel()], 1469084015);
         $this->response->setStatus(201);
         return '';
     }
@@ -455,7 +455,7 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
     {
         try {
             $this->assetRepository->remove($asset);
-            $this->addFlashMessage('Asset "%s" has been deleted.', '', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())], 1412375050);
+            $this->addFlashMessage('Asset "%s" has been deleted.', '', Message::SEVERITY_OK, [$asset->getLabel()], 1412375050);
         } catch (AssetServiceException $exception) {
             $this->addFlashMessage('Asset could not be deleted.', '', Message::SEVERITY_WARNING, [], 1462196565);
         }
@@ -475,7 +475,7 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
         if ($existingTag !== null) {
             if (($assetCollection = $this->browserState->get('activeAssetCollection')) !== null && $assetCollection->addTag($existingTag)) {
                 $this->assetCollectionRepository->update($assetCollection);
-                $this->addFlashMessage('Tag "%s" already exists and was added to collection.', '', Message::SEVERITY_OK, [htmlspecialchars($label)], 1469086018);
+                $this->addFlashMessage('Tag "%s" already exists and was added to collection.', '', Message::SEVERITY_OK, [$label], 1469086018);
             }
         } else {
             $tag = new Tag($label);
@@ -483,7 +483,7 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
             if (($assetCollection = $this->browserState->get('activeAssetCollection')) !== null && $assetCollection->addTag($tag)) {
                 $this->assetCollectionRepository->update($assetCollection);
             }
-            $this->addFlashMessage('Tag "%s" has been created.', '', Message::SEVERITY_OK, [htmlspecialchars($label)], 1469086138);
+            $this->addFlashMessage('Tag "%s" has been created.', '', Message::SEVERITY_OK, [$label], 1469086138);
         }
         $this->redirect('index');
     }
@@ -507,7 +507,7 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
     public function updateTagAction(Tag $tag)
     {
         $this->tagRepository->update($tag);
-        $this->addFlashMessage('Tag "%s" has been updated.', '', Message::SEVERITY_OK, [htmlspecialchars($tag->getLabel())], 1469086167);
+        $this->addFlashMessage('Tag "%s" has been updated.', '', Message::SEVERITY_OK, [$tag->getLabel()], 1469086167);
         $this->redirect('index');
     }
 
@@ -523,7 +523,7 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
             $this->assetRepository->update($asset);
         }
         $this->tagRepository->remove($tag);
-        $this->addFlashMessage('Tag "%s" has been deleted.', '', Message::SEVERITY_OK, [htmlspecialchars($tag->getLabel())], 1469086209);
+        $this->addFlashMessage('Tag "%s" has been deleted.', '', Message::SEVERITY_OK, [$tag->getLabel()], 1469086209);
         $this->redirect('index');
     }
 
@@ -536,7 +536,7 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
     public function createAssetCollectionAction($title)
     {
         $this->assetCollectionRepository->add(new AssetCollection($title));
-        $this->addFlashMessage('Collection "%s" has been created.', '', Message::SEVERITY_OK, [htmlspecialchars($title)], 1469086242);
+        $this->addFlashMessage('Collection "%s" has been created.', '', Message::SEVERITY_OK, [$title], 1469086242);
         $this->redirect('index');
     }
 
@@ -559,7 +559,7 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
     public function updateAssetCollectionAction(AssetCollection $assetCollection)
     {
         $this->assetCollectionRepository->update($assetCollection);
-        $this->addFlashMessage('Collection "%s" has been updated.', '', Message::SEVERITY_OK, [htmlspecialchars($assetCollection->getTitle())], 1469086269);
+        $this->addFlashMessage('Collection "%s" has been updated.', '', Message::SEVERITY_OK, [$assetCollection->getTitle()], 1469086269);
         $this->redirect('index');
     }
 
@@ -573,7 +573,7 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
             $this->browserState->set('activeAssetCollection', null);
         }
         $this->assetCollectionRepository->remove($assetCollection);
-        $this->addFlashMessage('Collection "{0}" has been deleted.', '', Message::SEVERITY_OK, [htmlspecialchars($assetCollection->getTitle())], 1469086293);
+        $this->addFlashMessage('Collection "{0}" has been deleted.', '', Message::SEVERITY_OK, [$assetCollection->getTitle()], 1469086293);
         $this->redirect('index');
     }
 
