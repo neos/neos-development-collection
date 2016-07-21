@@ -2,46 +2,46 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
 	<file original="" product-name="TYPO3.Media" source-language="en" datatype="plaintext">
 		<body>
-			<trans-unit id="couldNotReplaceAsset" xml:space="preserve">
-				<source>Could not replace asset</source>
+			<trans-unit id="flashMessage.1463472606" xml:space="preserve">
+				<source>Could not replace asset.</source>
 			</trans-unit>
-			<trans-unit id="assetHasBeenReplaced" xml:space="preserve">
+			<trans-unit id="flashMessage.1469083617" xml:space="preserve">
 				<source>Asset "{0}" has been replaced.</source>
 			</trans-unit>
-			<trans-unit id="assetHasBeenUpdated" xml:space="preserve">
+			<trans-unit id="flashMessage.1469083898" xml:space="preserve">
 				<source>Asset "{0}" has been updated.</source>
 			</trans-unit>
-			<trans-unit id="assetHasBeenAdded" xml:space="preserve">
+			<trans-unit id="flashMessage.1469084015" xml:space="preserve">
 				<source>Asset "{0}" has been added.</source>
 			</trans-unit>
-			<trans-unit id="assetHasBeenDeleted" xml:space="preserve">
+			<trans-unit id="flashMessage.1412375050" xml:space="preserve">
 				<source>Asset "{0}" has been deleted.</source>
 			</trans-unit>
-			<trans-unit id="assetCouldNotBeDeleted" xml:space="preserve">
+			<trans-unit id="flashMessage.1462196565" xml:space="preserve">
 				<source>Asset could not be deleted.</source>
 			</trans-unit>
-			<trans-unit id="assetHasBeenReplaced" xml:space="preserve">
-				<source>Asset "{0}" has been replaced.</source>
+			<trans-unit id="flashMessage.1412422767" xml:space="preserve">
+				<source>Asset could not be deleted, because there are still Nodes using it</source>
 			</trans-unit>
-			<trans-unit id="tagAlreadyExistsAndAddedToCollection" xml:space="preserve">
+			<trans-unit id="flashMessage.1469086018" xml:space="preserve">
 				<source>Tag "{0}" already exists and was added to collection.</source>
 			</trans-unit>
-			<trans-unit id="tagHasBeenCreated" xml:space="preserve">
+			<trans-unit id="flashMessage.1469086138" xml:space="preserve">
 				<source>Tag "{0}" has been created.</source>
 			</trans-unit>
-			<trans-unit id="tagHasBeenUpdated" xml:space="preserve">
+			<trans-unit id="flashMessage.1469086167" xml:space="preserve">
 				<source>Tag "{0}" has been updated.</source>
 			</trans-unit>
-			<trans-unit id="tagHasBeenDeleted" xml:space="preserve">
+			<trans-unit id="flashMessage.1469086209" xml:space="preserve">
 				<source>Tag "{0}" has been deleted.</source>
 			</trans-unit>
-			<trans-unit id="collectionHasBeenCreated" xml:space="preserve">
+			<trans-unit id="flashMessage.1469086242" xml:space="preserve">
 				<source>Collection "{0}" has been created.</source>
 			</trans-unit>
-			<trans-unit id="collectionHasBeenUpdated" xml:space="preserve">
+			<trans-unit id="flashMessage.1469086269" xml:space="preserve">
 				<source>Collection "{0}" has been updated.</source>
 			</trans-unit>
-			<trans-unit id="collectionHasBeenDeleted" xml:space="preserve">
+			<trans-unit id="flashMessage.1469086293" xml:space="preserve">
 				<source>Collection "{0}" has been deleted.</source>
 			</trans-unit>
 			<trans-unit id="media.replace.options.generateRedirects" xml:space="preserve">

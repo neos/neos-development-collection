@@ -132,9 +132,9 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
     {
         try {
             $this->assetService->getRepository($asset)->remove($asset);
-            $this->addFlashMessage('assetHasBeenDeleted', '', Message::SEVERITY_OK, [$asset->getLabel()], 1412375050);
+            $this->addFlashMessage('Asset "%s" has been deleted.', '', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())], 1412375050);
         } catch (AssetServiceException $exception) {
-            $this->addFlashMessage('media.deleteRelatedNodes', '', Message::SEVERITY_WARNING, [], 1412422767);
+            $this->addFlashMessage('Asset could not be deleted, because there are still Nodes using it', '', Message::SEVERITY_WARNING, [], 1412422767);
         }
 
         $this->redirect('index');
