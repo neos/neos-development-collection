@@ -240,7 +240,7 @@ class SitesController extends AbstractModuleController
     /**
      * Delete a site.
      *
-     * @param Site $site Site to create
+     * @param Site $site Site to delete
      * @Flow\IgnoreValidation("$site")
      * @return void
      */
@@ -254,7 +254,7 @@ class SitesController extends AbstractModuleController
     /**
      * Activates a site
      *
-     * @param Site $site Site to update
+     * @param Site $site Site to activate
      * @return void
      */
     public function activateSiteAction(Site $site)
