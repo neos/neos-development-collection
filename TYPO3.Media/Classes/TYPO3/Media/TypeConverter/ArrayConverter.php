@@ -112,6 +112,7 @@ class ArrayConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConv
 
                 return array(
                     '__identity' => $identity,
+                    '__type' => \TYPO3\Media\Domain\Model\ImageVariant::class,
                     'originalAsset' => $convertedChildProperties['originalAsset'],
                     'adjustments' => $convertedChildProperties['adjustments']
                 );
@@ -124,6 +125,7 @@ class ArrayConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConv
 
                 return array(
                     '__identity' => $identity,
+                    '__type' => \TYPO3\Flow\Utility\TypeHandling::getTypeForValue($source),
                     'title' => $source->getTitle(),
                     'resource' => $convertedChildProperties['resource']
                 );
