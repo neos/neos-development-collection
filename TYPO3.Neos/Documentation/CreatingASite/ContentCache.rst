@@ -80,13 +80,13 @@ In the ``@cache`` meta property the following subproperties are allowed:
   ``'dynamic'`` or ``'uncached'``.
   Only simple string values are supported for this property.
 
-  It defaults to mode ``embed`` which will not create a new cache entry but store the content into the next outer cached
+  It defaults to mode ``embed`` which will not create a new cache entry but store the con`tent into the next outer ``cached``
   entry. With mode ``cached`` a separate cache entry will be created for the path. Mode ``uncached`` can be used to
   always evaluate a path even if is contained inside a cached path. The ``dynamic`` mode evalutes a so called
   "discriminator" on every request and caches results differently depending on it's value. Dynamic cache mode is therefore
-  much faster then uncached but slightly slower then cached mode. It is useful in situations where arguments (eg. from the
-  request) lead to different rendering results. The ``context`` property should be set to configure the TypoScript context
-  variables that will be available when evaluating the uncached path.
+  much faster than ``uncached`` but slightly slower compared to ``cached`` mode. It is useful in situations where
+  arguments (eg. from the request) lead to different rendering results. The ``context`` property should be set to configure
+  the TypoScript context variables that will be available when evaluating the uncached path.
 
 ``maximumLifetime``
   Set the maximum lifetime for the nearest cached path. Possible values are ``null`` (default), ``0`` (unlimited lifetime)
@@ -143,6 +143,26 @@ In the ``@cache`` meta property the following subproperties are allowed:
   Configure an expression that uniquely discriminates different entries of a ``dynamic`` cached area. The expression or TypoScript
   object must evaluate to a string to be used as discriminator and should be different for every cache entry you want to create for
   this ``dynamic`` cached area.
+
+  Example for a ``dynamic`` configuration with ``entryDiscriminator``::
+
+	prototype(TYPO3.Neos:Plugin) {
+		@cache {
+			mode = 'dynamic'
+			entryIdentifier {
+			  node = ${node}
+			}
+			entryDiscriminator = ${request.arguments.pagination}
+			context {
+				1 = 'node'
+				2 = 'documentNode'
+			}
+			entryTags {
+				1 = ${'Node_' + node.identifier}
+			}
+		}
+	}
+
 
 .. _Cache Entry Tags:
 
