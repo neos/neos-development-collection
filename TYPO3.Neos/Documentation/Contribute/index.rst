@@ -8,8 +8,8 @@ Contribute
 	:maxdepth: 2
 
 	Code/index
+	Documentation/index
 
 .. still missing here
 	Design
-	Documentation
 	Money

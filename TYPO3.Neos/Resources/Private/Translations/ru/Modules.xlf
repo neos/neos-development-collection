@@ -190,13 +190,13 @@
           <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
           <target xml:lang="ru">Рабочая область "{0}" не была удалена, потому что она содержит {1} элемент.</target>
         </trans-unit>
-        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]" approved="yes">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target xml:lang="ru" state="translated">Рабочая область "{0}" не была удалена, потому что она содержит {1} элемента.</target>
+          <target xml:lang="ru">Рабочая область "{0}" не была удалена, потому что она содержит {1} элемента.</target>
         </trans-unit>
-        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[2]">
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[2]" approved="yes">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target xml:lang="ru" state="translated">Рабочая область "{0}" не была удалена, потому что она содержит {1} элементов.</target>
+          <target xml:lang="ru">Рабочая область "{0}" не была удалена, потому что она содержит {1} элементов.</target>
         </trans-unit>
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved" approved="yes">
@@ -250,7 +250,7 @@
 			<target xml:lang="ru">Вот что недавно произошло в Neos:</target></trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve" approved="yes">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
-			<target xml:lang="ru">Пока не были зарегистрированы события, которые могли бы быть отображены в данном журнале изменений.</target></trans-unit>
+			<target xml:lang="ru">Не было событий, которые могли бы быть отображены в данном журнале изменений.</target><alt-trans><target xml:lang="ru">Пока не были зарегистрированы события, которые могли бы быть отображены в данном журнале изменений.</target></alt-trans></trans-unit>
       <trans-unit id="history.eventDescription.node.added" xml:space="preserve" approved="yes">
 				<source>{0} created the {1} {2}.</source>
 			<target xml:lang="ru">{0} создал {1} {2}.</target></trans-unit>
