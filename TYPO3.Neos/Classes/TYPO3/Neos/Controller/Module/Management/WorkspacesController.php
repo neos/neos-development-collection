@@ -234,6 +234,19 @@ class WorkspacesController extends AbstractModuleController
     }
 
     /**
+     * @return void
+     */
+    protected function initializeUpdateAction()
+    {
+        $converter = new \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter();
+        $this->arguments->getArgument('workspace')->getPropertyMappingConfiguration()
+            ->forProperty('owner')
+            ->setTypeConverter($converter)
+            ->setTypeConverterOption(\TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::class, \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_TARGET_TYPE, User::class);
+        parent::initializeAction();
+    }
+
+    /**
      * Update a workspace
      *
      * @param Workspace $workspace A workspace to update
