@@ -870,7 +870,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
      * @param boolean $dryRun Simulate?
      * @return void
      */
-    public function removeNodesWithInvalidDimensions(NodeType $nodeType = null, $workspaceName, $dryRun)
+    public function removeNodesWithInvalidDimensions(NodeType $nodeType, $workspaceName, $dryRun)
     {
         $allowedDimensionCombinations = $this->contentDimensionCombinator->getAllAllowedCombinations();
 
@@ -889,7 +889,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
             }
         }
 
-        if (count($nodesArray) === 0) {
+        if ($nodesArray === []) {
             return;
         }
 
@@ -935,11 +935,11 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
             ->setParameter('removed', false, \PDO::PARAM_BOOL);
 
         foreach ($queryBuilder->getQuery()->getArrayResult() as $nodeDataArray) {
-            if ($nodeDataArray['path'] === '/') {
+            if ($nodeDataArray['dimensionValues'] === [] || $nodeDataArray['dimensionValues'] === '') {
                 continue;
             }
             foreach ($allowedDimensionCombinations as $dimensionConfiguration) {
-                if ($dimensionConfiguration == $nodeDataArray['dimensionValues']) {
+                if ($dimensionConfiguration === $nodeDataArray['dimensionValues']) {
                     break 2;
                 }
             }
