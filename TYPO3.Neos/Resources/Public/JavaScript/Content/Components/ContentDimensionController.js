@@ -245,7 +245,7 @@ function(
 				if (error.xhr.status === 404 && error.xhr.getResponseHeader('X-Neos-Node-Exists-In-Other-Dimensions')) {
 					that.set('showInitialTranslationDialog', {numberOfNodesMissingInRootline: parseInt(error.xhr.getResponseHeader('X-Neos-Nodes-Missing-On-Rootline'))});
 				} else {
-					Notification.error('Unexpected error while while fetching alternative content variants: ' + JSON.stringify(error));
+					Notification.error('Unexpected error while fetching alternative content variants: ' + JSON.stringify(error));
 				}
 			});
 		},
