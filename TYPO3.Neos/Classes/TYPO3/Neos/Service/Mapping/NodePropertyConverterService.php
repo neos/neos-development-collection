@@ -14,15 +14,14 @@ namespace TYPO3\Neos\Service\Mapping;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Property\Exception as PropertyException;
 use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Property\PropertyMappingConfiguration;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
-use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\TypeHandling;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
-use TYPO3\Flow\Property\Exception as PropertyException;
 
 /**
  * Creates PropertyMappingConfigurations to map NodeType properties for the Neos interface.
@@ -99,8 +98,7 @@ class NodePropertyConverterService
      */
     public function getPropertiesJson(NodeInterface $node)
     {
-        $properties = $this->getPropertiesArray($node);
-        return json_encode($properties);
+        return json_encode($this->getPropertiesArray($node));
     }
 
     /**
