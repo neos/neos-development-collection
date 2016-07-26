@@ -921,8 +921,10 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     protected function buildSiteNode(ContentContext $mockContext, $nodePath)
     {
         $nodeName = substr($nodePath, strrpos($nodePath, '/') + 1);
+        $parentNodePath = substr($nodePath, 0, strrpos($nodePath, '/'));
         $mockSiteNode = $this->buildNode($mockContext, $nodeName);
         $mockSiteNode->expects($this->any())->method('getPath')->will($this->returnValue($nodePath));
+        $mockSiteNode->expects($this->any())->method('getParentPath')->will($this->returnValue($parentNodePath));
         $mockContext->expects($this->any())->method('getCurrentSiteNode')->will($this->returnValue($mockSiteNode));
         return $mockSiteNode;
     }
