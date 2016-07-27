@@ -455,6 +455,28 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     /**
      * @test
      */
+    public function resolveSetsValueToContextPathIfPassedNodeCouldBeResolvedButIsInAnotherSite()
+    {
+        $mockContext = $this->buildMockContext(array('workspaceName' => 'user-robert'));
+        $mockContext->mockSite = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Site')->disableOriginalConstructor()->getMock();
+        $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/currentdotcom');
+
+        $mockSubNode = $this->buildSubNode($this->buildSiteNode($mockContext, '/sites/otherdotcom'), 'home');
+        $mockSubNode->mockProperties['uriPathSegment'] = 'home';
+        $mockSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue('/sites/otherdotcom/home@user-robert'));
+
+        $mockSubSubNode = $this->buildSubNode($mockSubNode, 'ae178bc9184');
+        $mockSubSubNode->mockProperties['uriPathSegment'] = 'coffee-brands';
+        $mockSubSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue('/sites/otherdotcom/home/ae178bc9184@user-robert'));
+
+        $routeValues = array('node' => $mockSubSubNode);
+        $this->assertTrue($this->routePartHandler->resolve($routeValues));
+        $this->assertSame('home/coffee-brands@user-robert', $this->routePartHandler->getValue());
+    }
+
+    /**
+     * @test
+     */
     public function resolveReturnsFalseIfGivenRouteValueIsNeitherStringNorNode()
     {
         $mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
