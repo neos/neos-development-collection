@@ -20,6 +20,10 @@ use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\SiteExportService;
 use TYPO3\Neos\Domain\Service\SiteImportService;
 use TYPO3\Neos\Domain\Service\SiteService;
+use TYPO3\Neos\Domain\Model\Site;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
+use TYPO3\TYPO3CR\Domain\Service\NodeService;
 
 /**
  * The Site Command Controller
@@ -63,6 +67,88 @@ class SiteCommandController extends CommandController
      * @var SystemLoggerInterface
      */
     protected $systemLogger;
+
+    /**
+     * @Flow\Inject
+     * @var ContextFactoryInterface
+     */
+    protected $nodeContextFactory;
+
+    /**
+     * @Flow\Inject
+     * @var NodeTypeManager
+     */
+    protected $nodeTypeManager;
+
+    /**
+     * @Flow\Inject
+     * @var NodeService
+     */
+    protected $nodeService;
+
+    /**
+     * Create a new (blank) site
+     *
+     * This command allows to create a blank site with just a single empty document. The name of the site and the
+     * packageKey to assign to it must be specified.
+     *
+     * If no "--nodeName" is specified the command will create a unique node-name from the name of the site. If a node name is given
+     * it has to be unique.
+     *
+     * The specified "--nodeType" must it exists and have the superType "TYPO3.Neos:Document".
+     *
+     * If the flag "--active" is set the created site will be activated immediately.
+     *
+     * @param string $name The name of the site
+     * @param string $packageKey The site package
+     * @param string $nodeType The nodetype to use for the site node.
+     * @param string $nodeName The name of the site node. If no nodeName is given it will be determined from the siteName.
+     * @param boolean $active Activate the new site immediately.
+     * @return void
+     */
+    public function createCommand($name, $packageKey, $nodeType, $nodeName = null, $active = false)
+    {
+        if ($nodeName === null) {
+            $nodeName = $this->nodeService->generateUniqueNodeName('/sites', $name);
+        }
+
+        if ($this->siteRepository->findOneByNodeName($nodeName)) {
+            $this->outputLine('Error: A site with siteNodeName "%s" already exists', [$nodeName]);
+            $this->quit(1);
+        }
+
+        if ($this->packageManager->isPackageAvailable($packageKey) === false) {
+            $this->ouputLine('Error: Could not find package "%s"', [$packageKey]);
+            $this->quit(1);
+        }
+
+        $rootNode = $this->nodeContextFactory->create()->getRootNode();
+        // We fetch the workspace to be sure it's known to the persistence manager and persist all
+        // so the workspace and site node are persisted before we import any nodes to it.
+        $rootNode->getContext()->getWorkspace();
+        $sitesNode = $rootNode->getNode('/sites');
+        if ($sitesNode === null) {
+            $sitesNode = $rootNode->createNode('sites');
+        }
+
+        $siteNodeType = $this->nodeTypeManager->getNodeType($nodeType);
+        if ($siteNodeType->isOfType('TYPO3.Neos:Document') === false) {
+            $this->outputLine('Error: the given root nodeType "%s" is not based on the superType "%s"', [$nodeType, 'TYPO3.Neos:Document']);
+            $this->quit(1);
+        }
+
+        $siteNode = $sitesNode->createNode($nodeName, $siteNodeType);
+        $siteNode->setProperty('title', $name);
+
+        $site = new Site($nodeName);
+        $site->setSiteResourcesPackageKey($packageKey);
+        $site->setState($active ? Site::STATE_ONLINE : Site::STATE_OFFLINE);
+        $site->setName($name);
+
+        $this->siteRepository->add($site);
+
+        $this->outputLine('Successfully created site "%s" with siteNode "%s" and packageKey "%s"', [$name, $nodeName, $packageKey]);
+    }
 
     /**
      * Import sites content
