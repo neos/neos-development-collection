@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2016-06-14
+The following reference was automatically generated from code on 2016-07-28
 
 
 .. _`Neos Command Reference: TYPO3.FLOW`:
@@ -2328,6 +2328,9 @@ The following checks will be performed:
 
 Generates URI path segment properties for all document nodes which don't have a path
 segment set yet.
+*Remove content dimensions from / and /sites*
+
+Removes content dimensions from the root and sites nodes
 
 *Remove abstract and undefined node types*
 
