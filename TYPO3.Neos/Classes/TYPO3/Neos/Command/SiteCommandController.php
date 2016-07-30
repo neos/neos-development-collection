@@ -87,38 +87,50 @@ class SiteCommandController extends CommandController
     protected $nodeService;
 
     /**
-     * Create a new (blank) site
+     * Create a new (blank) site in the default dimension
      *
-     * This command allows to create a blank site with just a single empty document. The name of the site and the
-     * packageKey to assign to it must be specified.
+     * This command allows to create a blank site with just a single empty document in the default dimension.
+     * The name of the site, the packageKey must be specified.
      *
-     * If no "--nodeName" is specified the command will create a unique node-name from the name of the site. If a node name is given
-     * it has to be unique.
+     * If no ``nodeType`` option is specified the command will use `TYPO3.Neos.NodeTypes:Page` as fallback. The node type
+     * must already exists and have the superType ``TYPO3.Neos:Document``.
      *
-     * The specified "--nodeType" must it exists and have the superType "TYPO3.Neos:Document".
+     * If no ``nodeName` option is specified the command will create a unique node-name from the name of the site.
+     * If a node name is given it has to be unique for the setup.
      *
-     * If the flag "--active" is set the created site will be activated immediately.
+     * If the flag ``active` is set the created site will be activated immediately.
      *
      * @param string $name The name of the site
      * @param string $packageKey The site package
-     * @param string $nodeType The nodetype to use for the site node.
+     * @param string $nodeType The node type to use for the site node. (Default =
      * @param string $nodeName The name of the site node. If no nodeName is given it will be determined from the siteName.
      * @param boolean $active Activate the new site immediately.
      * @return void
      */
-    public function createCommand($name, $packageKey, $nodeType, $nodeName = null, $active = false)
+    public function createCommand($name, $packageKey, $nodeType = 'TYPO3.Neos.NodeTypes:Page', $nodeName = null, $active = false)
     {
         if ($nodeName === null) {
-            $nodeName = $this->nodeService->generateUniqueNodeName('/sites', $name);
+            $nodeName = $this->nodeService->generateUniqueNodeName(SiteService::SITES_ROOT_PATH, $name);
         }
 
         if ($this->siteRepository->findOneByNodeName($nodeName)) {
-            $this->outputLine('Error: A site with siteNodeName "%s" already exists', [$nodeName]);
+            $this->outputLine('<error>A site with siteNodeName "%s" already exists</error>', [$nodeName]);
             $this->quit(1);
         }
 
         if ($this->packageManager->isPackageAvailable($packageKey) === false) {
-            $this->ouputLine('Error: Could not find package "%s"', [$packageKey]);
+            $this->ouputLine('<error>Could not find package "%s"</error>', [$packageKey]);
+            $this->quit(1);
+        }
+
+        $siteNodeType = $this->nodeTypeManager->getNodeType($nodeType);
+
+        if ($siteNodeType === null || $siteNodeType->getName() === 'TYPO3.Neos:FallbackNode') {
+            $this->outputLine('<error>The given node type "%s" was not found</error>', [$nodeType]);
+            $this->quit(1);
+        }
+        if ($siteNodeType->isOfType('TYPO3.Neos:Document') === false) {
+            $this->outputLine('<error>The given node type "%s" is not based on the superType "%s"</error>', [$nodeType, 'TYPO3.Neos:Document']);
             $this->quit(1);
         }
 
@@ -126,15 +138,9 @@ class SiteCommandController extends CommandController
         // We fetch the workspace to be sure it's known to the persistence manager and persist all
         // so the workspace and site node are persisted before we import any nodes to it.
         $rootNode->getContext()->getWorkspace();
-        $sitesNode = $rootNode->getNode('/sites');
+        $sitesNode = $rootNode->getNode(SiteService::SITES_ROOT_PATH);
         if ($sitesNode === null) {
-            $sitesNode = $rootNode->createNode('sites');
-        }
-
-        $siteNodeType = $this->nodeTypeManager->getNodeType($nodeType);
-        if ($siteNodeType->isOfType('TYPO3.Neos:Document') === false) {
-            $this->outputLine('Error: the given root nodeType "%s" is not based on the superType "%s"', [$nodeType, 'TYPO3.Neos:Document']);
-            $this->quit(1);
+            $sitesNode = $rootNode->createNode(trim(SiteService::SITES_ROOT_PATH, '/'));
         }
 
         $siteNode = $sitesNode->createNode($nodeName, $siteNodeType);
@@ -147,7 +153,7 @@ class SiteCommandController extends CommandController
 
         $this->siteRepository->add($site);
 
-        $this->outputLine('Successfully created site "%s" with siteNode "%s" and packageKey "%s"', [$name, $nodeName, $packageKey]);
+        $this->outputLine('Successfully created site "%s" with siteNode "%s", type "%s" and packageKey "%s"', [$name, $nodeName, $nodeType, $packageKey]);
     }
 
     /**
