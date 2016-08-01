@@ -15,7 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
-use TYPO3\Neos\Domain\Model\Site;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\SiteExportService;
 use TYPO3\Neos\Domain\Service\SiteImportService;
@@ -24,6 +24,7 @@ use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Domain\Service\NodeService;
+use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 
 /**
  * The Site Command Controller
@@ -87,6 +88,12 @@ class SiteCommandController extends CommandController
     protected $nodeService;
 
     /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
+
+    /**
      * Create a new (blank) site in the default dimension
      *
      * This command allows to create a blank site with just a single empty document in the default dimension.
@@ -119,7 +126,7 @@ class SiteCommandController extends CommandController
         }
 
         if ($this->packageManager->isPackageAvailable($packageKey) === false) {
-            $this->ouputLine('<error>Could not find package "%s"</error>', [$packageKey]);
+            $this->outputLine('<error>Could not find package "%s"</error>', [$packageKey]);
             $this->quit(1);
         }
 
@@ -138,9 +145,10 @@ class SiteCommandController extends CommandController
         // We fetch the workspace to be sure it's known to the persistence manager and persist all
         // so the workspace and site node are persisted before we import any nodes to it.
         $rootNode->getContext()->getWorkspace();
+        $this->persistenceManager->persistAll();
         $sitesNode = $rootNode->getNode(SiteService::SITES_ROOT_PATH);
         if ($sitesNode === null) {
-            $sitesNode = $rootNode->createNode(trim(SiteService::SITES_ROOT_PATH, '/'));
+            $sitesNode = $rootNode->createNode(NodePaths::getNodeNameFromPath(SiteService::SITES_ROOT_PATH));
         }
 
         $siteNode = $sitesNode->createNode($nodeName, $siteNodeType);
