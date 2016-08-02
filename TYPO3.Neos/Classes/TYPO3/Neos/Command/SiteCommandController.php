@@ -209,7 +209,7 @@ class SiteCommandController extends CommandController
                 $site = $this->siteImportService->importFromPackage($packageKey);
             } catch (\Exception $exception) {
                 $this->systemLogger->logException($exception);
-                $this->outputLine('<error>: During the import of the "Sites.xml" from the package "%s" an exception occurred: %s, see log for further information.</error>', array($packageKey, $exception->getMessage()));
+                $this->outputLine('<error>During the import of the "Sites.xml" from the package "%s" an exception occurred: %s, see log for further information.</error>', array($packageKey, $exception->getMessage()));
                 $this->quit(1);
             }
         }
@@ -315,7 +315,8 @@ class SiteCommandController extends CommandController
             array_push($availableSites, array(
                 'name' => $site->getName(),
                 'nodeName' => $site->getNodeName(),
-                'siteResourcesPackageKey' => $site->getSiteResourcesPackageKey()
+                'siteResourcesPackageKey' => $site->getSiteResourcesPackageKey(),
+                'status' => ($site->getState() === SITE::STATE_ONLINE) ? 'online' : 'offline'
             ));
             if (strlen($site->getName()) > $longestSiteName) {
                 $longestSiteName = strlen($site->getName());
@@ -329,11 +330,48 @@ class SiteCommandController extends CommandController
         }
 
         $this->outputLine();
-        $this->outputLine(' ' . str_pad('Name', $longestSiteName + 15) . str_pad('Node name', $longestNodeName + 15) . 'Resources package');
-        $this->outputLine(str_repeat('-', $longestSiteName + $longestNodeName + $longestSiteResource + 15 + 15 + 2));
+        $this->outputLine(' ' . str_pad('Name', $longestSiteName + 15) . str_pad('Node name', $longestNodeName + 15) . str_pad('Resources package', $longestSiteResource + 15) . 'Status ');
+        $this->outputLine(str_repeat('-', $longestSiteName + $longestNodeName + $longestSiteResource + 7 + 15 + 15 + 15 + 2));
         foreach ($availableSites as $site) {
-            $this->outputLine(' ' . str_pad($site['name'], $longestSiteName + 15) . str_pad($site['nodeName'], $longestNodeName + 15) . $site['siteResourcesPackageKey']);
+            $this->outputLine(' ' . str_pad($site['name'], $longestSiteName + 15) . str_pad($site['nodeName'], $longestNodeName + 15) . str_pad($site['siteResourcesPackageKey'], $longestSiteResource + 15) . $site['status']);
         }
         $this->outputLine();
+    }
+
+    /**
+     * Activate a site
+     *
+     * @param string $siteNodeName The node name of the site to activate
+     * @return void
+     */
+    public function activateCommand($siteNodeName)
+    {
+        $site = $this->siteRepository->findOneByNodeName($siteNodeName);
+        if (!$site instanceof Site) {
+            $this->outputLine('<error>Site not found.</error>');
+            $this->quit(1);
+        }
+
+        $site->setState(Site::STATE_ONLINE);
+        $this->siteRepository->update($site);
+        $this->outputLine('Site activated.');
+    }
+
+    /**
+     * Deactivate a site
+     *
+     * @param string $siteNodeName The node name of the site to deactivate
+     * @return void
+     */
+    public function deactivateCommand($siteNodeName)
+    {
+        $site = $this->siteRepository->findOneByNodeName($siteNodeName);
+        if (!$site instanceof Site) {
+            $this->outputLine('<error>Site not found.</error>');
+            $this->quit(1);
+        }
+        $site->setState(Site::STATE_OFFLINE);
+        $this->siteRepository->update($site);
+        $this->outputLine('Site deactivated.');
     }
 }
