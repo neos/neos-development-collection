@@ -201,7 +201,7 @@ class SiteCommandController extends CommandController
                 $site = $this->siteImportService->importFromFile($filename);
             } catch (\Exception $exception) {
                 $this->systemLogger->logException($exception);
-                $this->outputLine('Error: During the import of the file "%s" an exception occurred: %s, see log for further information.', array($filename, $exception->getMessage()));
+                $this->outputLine('<error>During the import of the file "%s" an exception occurred: %s, see log for further information.</error>', array($filename, $exception->getMessage()));
                 $this->quit(1);
             }
         } else {
@@ -209,7 +209,7 @@ class SiteCommandController extends CommandController
                 $site = $this->siteImportService->importFromPackage($packageKey);
             } catch (\Exception $exception) {
                 $this->systemLogger->logException($exception);
-                $this->outputLine('Error: During the import of the "Sites.xml" from the package "%s" an exception occurred: %s, see log for further information.', array($packageKey, $exception->getMessage()));
+                $this->outputLine('<error>: During the import of the "Sites.xml" from the package "%s" an exception occurred: %s, see log for further information.</error>', array($packageKey, $exception->getMessage()));
                 $this->quit(1);
             }
         }
@@ -246,7 +246,7 @@ class SiteCommandController extends CommandController
         }
 
         if (count($sites) === 0) {
-            $this->outputLine('Error: No site for exporting found');
+            $this->outputLine('<error>No site for exporting found</error>');
             $this->quit(1);
         }
 
