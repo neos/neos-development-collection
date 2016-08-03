@@ -21,6 +21,13 @@ use TYPO3\Flow\Annotations as Flow;
  */
 class SiteRepository extends \TYPO3\Flow\Persistence\Repository
 {
+
+    /**
+     * @Flow\InjectConfiguration(package="TYPO3.Neos", path="defaultSiteNodeName")
+     * @var string
+     */
+    protected $defaultSiteNodeName;
+
     /**
      * Finds the first site
      *
@@ -50,5 +57,23 @@ class SiteRepository extends \TYPO3\Flow\Persistence\Repository
     public function findFirstOnline()
     {
         return $this->findOnline()->getFirst();
+    }
+
+    /**
+     * Find the default site and fallback to first online
+     * if no default is found or the default is not online
+     */
+    public function findDefault()
+    {
+        if ($this->defaultSiteNodeName !== null) {
+            /**
+             * @var Site $defaultSite
+             */
+            $defaultSite = $this->findOneByNodeName($this->defaultSiteNodeName);
+            if ($defaultSite && $defaultSite->getState() === \TYPO3\Neos\Domain\Model\Site::STATE_ONLINE) {
+                return $defaultSite;
+            }
+        }
+        return $this->findFirstOnline();
     }
 }
