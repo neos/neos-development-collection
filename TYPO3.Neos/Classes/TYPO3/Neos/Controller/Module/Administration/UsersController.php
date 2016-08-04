@@ -18,6 +18,7 @@ use TYPO3\Flow\Property\PropertyMappingConfiguration;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 use TYPO3\Flow\Security\Account;
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
+use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Security\Policy\PolicyService;
 use TYPO3\Neos\Controller\Module\AbstractModuleController;
 use TYPO3\Neos\Domain\Model\User;
@@ -46,6 +47,12 @@ class UsersController extends AbstractModuleController
      * @var UserService
      */
     protected $userService;
+
+    /**
+     * @Flow\Inject
+     * @var Context
+     */
+    protected $securityContext;
 
     /**
      * @var User
@@ -176,7 +183,10 @@ class UsersController extends AbstractModuleController
             $this->addFlashMessage('You can not delete the currently logged in user', 'Current user can\'t be deleted', Message::SEVERITY_WARNING, array(), 1412374546);
             $this->redirect('index');
         }
-        $this->userService->deleteUser($user);
+        $this->securityContext->withoutAuthorizationChecks(function () use ($user) {
+            $this->userService->deleteUser($user);
+            $this->persistenceManager->persistAll();
+        });
         $this->addFlashMessage('The user "%s" has been deleted.', 'User deleted', Message::SEVERITY_NOTICE, array(htmlspecialchars($user->getName()->getFullName())), 1412374546);
         $this->redirect('index');
     }
