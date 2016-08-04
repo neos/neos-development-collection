@@ -397,7 +397,11 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
                     continue;
                 }
                 if ($node instanceof Node && !$node->dimensionsAreMatchingTargetDimensionValues()) {
-                    $this->output->outputLine('Skipping node %s  because it has invalid dimension values: %s', [$node->getPath(), json_encode($node->getNodeData()->getDimensionValues())]);
+                    if ($node->getNodeData()->getDimensionValues() === []) {
+                        $this->output->outputLine('Skipping node %s  because it has no dimension values set', [$node->getPath()]);
+                    } else {
+                        $this->output->outputLine('Skipping node %s  because it has invalid dimension values: %s', [$node->getPath(), json_encode($node->getNodeData()->getDimensionValues())]);
+                    }
                     continue;
                 }
 
