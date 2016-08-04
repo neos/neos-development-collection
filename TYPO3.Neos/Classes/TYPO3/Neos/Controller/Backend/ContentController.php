@@ -272,6 +272,8 @@ class ContentController extends ActionController
     {
         $propertyMappingConfiguration = $this->arguments->getArgument('assets')->getPropertyMappingConfiguration();
         $propertyMappingConfiguration->allowAllProperties();
+        $propertyMappingConfiguration->setTypeConverterOption(AssetInterfaceConverter::class, AssetInterfaceConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
+        $propertyMappingConfiguration->forProperty('*')->setTypeConverterOption(AssetInterfaceConverter::class, AssetInterfaceConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
     }
 
     /**
