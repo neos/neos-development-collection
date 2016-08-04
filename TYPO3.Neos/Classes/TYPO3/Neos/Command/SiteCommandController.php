@@ -105,16 +105,16 @@ class SiteCommandController extends CommandController
      * If no ``nodeName` option is specified the command will create a unique node-name from the name of the site.
      * If a node name is given it has to be unique for the setup.
      *
-     * If the flag ``active` is set the created site will be activated immediately.
+     * If the flag ``activate` is set to false new site will not be activated.
      *
      * @param string $name The name of the site
      * @param string $packageKey The site package
-     * @param string $nodeType The node type to use for the site node. (Default =
+     * @param string $nodeType The node type to use for the site node. (Default = TYPO3.Neos.NodeTypes:Page)
      * @param string $nodeName The name of the site node. If no nodeName is given it will be determined from the siteName.
-     * @param boolean $active Activate the new site immediately.
+     * @param boolean $inactive The new site is not activated immediately (default = false).
      * @return void
      */
-    public function createCommand($name, $packageKey, $nodeType = 'TYPO3.Neos.NodeTypes:Page', $nodeName = null, $active = false)
+    public function createCommand($name, $packageKey, $nodeType = 'TYPO3.Neos.NodeTypes:Page', $nodeName = null, $inactive = false)
     {
         if ($nodeName === null) {
             $nodeName = $this->nodeService->generateUniqueNodeName(SiteService::SITES_ROOT_PATH, $name);
@@ -156,12 +156,12 @@ class SiteCommandController extends CommandController
 
         $site = new Site($nodeName);
         $site->setSiteResourcesPackageKey($packageKey);
-        $site->setState($active ? Site::STATE_ONLINE : Site::STATE_OFFLINE);
+        $site->setState($inactive ? Site::STATE_OFFLINE : Site::STATE_ONLINE);
         $site->setName($name);
 
         $this->siteRepository->add($site);
 
-        $this->outputLine('Successfully created site "%s" with siteNode "%s", type "%s" and packageKey "%s"', [$name, $nodeName, $nodeType, $packageKey]);
+        $this->outputLine('Successfully created site "%s" with siteNode "%s", type "%s", packageKey "%s" and state "%s"', [$name, $nodeName, $nodeType, $packageKey, $inactive ? 'offline' : 'online']);
     }
 
     /**
