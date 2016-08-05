@@ -91,6 +91,10 @@ class NodeCommandController extends CommandController implements DescriptionAwar
             $this->outputLine('Dry run, not committing any changes.');
         }
 
+        if (!$cleanup) {
+            $this->outputLine('Omitting cleanup tasks.');
+        }
+
         foreach ($this->pluginConfigurations as $pluginConfiguration) {
             /** @var NodeCommandControllerPluginInterface $plugin */
             $plugin = $pluginConfiguration['object'];
