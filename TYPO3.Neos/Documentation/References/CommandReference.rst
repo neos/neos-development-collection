@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2016-06-14
+The following reference was automatically generated from code on 2016-08-05
 
 
 .. _`Neos Command Reference: TYPO3.FLOW`:
@@ -2530,6 +2530,11 @@ configuration and constraints.
 *Remove undefined node properties*
 
 Will remove all undefined properties according to the node type configuration.
+*Remove nodes with invalid dimensions*
+
+Will check for and optionally remove nodes which have dimension values not matching
+the current content dimension configuration.
+
 *Missing child nodes*
 
 For all nodes (or only those which match the --node-type filter specified with this
