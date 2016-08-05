@@ -159,6 +159,11 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
                     PHP_EOL .
                     'Will check for and optionally remove nodes which have dimension values not matching' . PHP_EOL .
                     'the current content dimension configuration.' . PHP_EOL . PHP_EOL .
+                    '<u>Remove nodes with invalid workspace</u>' . PHP_EOL .
+                    'removeNodesWithInvalidWorkspace' . PHP_EOL .
+                    PHP_EOL .
+                    'Will check for and optionally remove nodes which belong to a workspace which no longer' . PHP_EOL .
+                    'exists..' . PHP_EOL . PHP_EOL .
                     '<u>Missing child nodes</u>' . PHP_EOL .
                     'createMissingChildNodes' . PHP_EOL .
                     PHP_EOL .
@@ -203,6 +208,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
             'removeUndefinedProperties' => [ 'cleanup' => true ],
             'removeBrokenEntityReferences' => [ 'cleanup' => true ],
             'removeNodesWithInvalidDimensions' => [ 'cleanup' => true ],
+            'removeNodesWithInvalidWorkspace' => [ 'cleanup' => true ],
             'createMissingChildNodes' => [ 'cleanup' => false ],
             'reorderChildNodes' => [ 'cleanup' => false ],
             'addMissingDefaultValues' => [ 'cleanup' => false ]
@@ -966,6 +972,77 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
                 $this->output->outputLine('Node %s has invalid dimension values: %s', [$nodeDataArray['path'], json_encode($nodeDataArray['dimensionValues'])]);
                 $nodes[] = $nodeDataArray;
             }
+        }
+        return $nodes;
+    }
+
+    /**
+     * Remove nodes with invalid workspace
+     *
+     * This removes nodes which refer to a workspace which does not exist.
+     *
+     * @param string $workspaceName This argument will be ignored
+     * @param boolean $dryRun Simulate?
+     * @return void
+     */
+    public function removeNodesWithInvalidWorkspace($workspaceName, $dryRun)
+    {
+        $this->output->outputLine('Checking for nodes with invalid workspace ...');
+
+        $nodesArray = $this->collectNodesWithInvalidWorkspace();
+        if ($nodesArray === []) {
+            return;
+        }
+
+        if (!$dryRun) {
+            $self = $this;
+            $this->output->outputLine();
+            $this->output->outputLine('Nodes with invalid workspace found.');
+            $this->askBeforeExecutingTask(sprintf('Do you want to remove %s node%s with invalid workspaces now?', count($nodesArray), count($nodesArray) > 1 ? 's' : ''), function () use ($self, $nodesArray) {
+                foreach ($nodesArray as $nodeArray) {
+                    $self->removeNode($nodeArray['identifier'], $nodeArray['dimensionsHash']);
+                }
+                $self->output->outputLine('Removed %s node%s referring to an invalid workspace.', array(count($nodesArray), count($nodesArray) > 1 ? 's' : ''));
+            });
+        } else {
+            $this->output->outputLine('Found %s node%s referring to an invalid workspace to be removed.', array(count($nodesArray), count($nodesArray) > 1 ? 's' : ''));
+        }
+        $this->output->outputLine();
+    }
+
+    /**
+     * Collects all nodes of the given node type which refer to an invalid workspace
+     * configuration.
+     *
+     * Note: due to the foreign key constraints in the database, there actually never should
+     *       be any node with n.workspace of a non-existing workspace because if that workspace
+     *       does not exist anymore, the value would turn NULL. But the query covers this nevertheless.
+     *       Better safe than sorry.
+     *
+     * @return array
+     */
+    protected function collectNodesWithInvalidWorkspace()
+    {
+        $nodes = [];
+        $workspaceNames = [];
+
+        foreach ($this->workspaceRepository->findAll() as $workspace) {
+            $workspaceNames[] = $workspace->getName();
+        }
+
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+        $queryBuilder->select('n')
+            ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+            ->add('where', $queryBuilder->expr()->orX(
+                    $queryBuilder->expr()->notIn('n.workspace', $workspaceNames),
+                    $queryBuilder->expr()->isNull('n.workspace')
+                )
+            );
+
+        foreach ($queryBuilder->getQuery()->getArrayResult() as $nodeDataArray) {
+            $this->output->outputLine('Node %s (identifier: %s) refers to an invalid workspace: %s', [$nodeDataArray['path'], $nodeDataArray['identifier'], (isset($nodeDataArray['workspace']) ? $nodeDataArray['workspace'] : 'null')]);
+            $nodes[] = $nodeDataArray;
         }
         return $nodes;
     }
