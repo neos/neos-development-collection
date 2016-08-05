@@ -2507,6 +2507,10 @@ Related commands
 This command analyzes and repairs the node tree structure and individual nodes
 based on the current node type configuration.
 
+It is possible to execute only one or more specific checks by providing the **--skip**
+or **--only** option. See the full description of checks further below for possible check
+identifiers.
+
 The following checks will be performed:
 
 *Generate missing URI path segments*
@@ -2515,48 +2519,57 @@ Generates URI path segment properties for all document nodes which don't have a 
 segment set yet.
 
 *Remove abstract and undefined node types*
+removeAbstractAndUndefinedNodes
 
 Will remove all nodes that has an abstract or undefined node type.
 
 *Remove orphan (parentless) nodes*
+removeOrphanNodes
 
 Will remove all child nodes that do not have a connection to the root node.
 
 *Remove disallowed child nodes*
+removeDisallowedChildNodes
 
 Will remove all child nodes that are disallowed according to the node types' auto-create
 configuration and constraints.
 
 *Remove undefined node properties*
+removeUndefinedProperties
+
+*Remove broken object references*
+removeBrokenEntityReferences
+
+Detects and removes references from nodes to entities which don't exist anymore (for
+example Image nodes referencing ImageVariant objects which are gone for some reason).
 
 Will remove all undefined properties according to the node type configuration.
 *Remove nodes with invalid dimensions*
+removeNodesWithInvalidDimensions
 
 Will check for and optionally remove nodes which have dimension values not matching
 the current content dimension configuration.
 
 *Missing child nodes*
+createMissingChildNodes
 
 For all nodes (or only those which match the --node-type filter specified with this
 command) which currently don't have child nodes as configured by the node type's
 configuration new child nodes will be created.
 
 *Reorder child nodes*
+reorderChildNodes
 
 For all nodes (or only those which match the --node-type filter specified with this
 command) which have configured child nodes, those child nodes are reordered according to the
 position from the parents NodeType configuration.
 
 *Missing default properties*
+addMissingDefaultValues
 
 For all nodes (or only those which match the --node-type filter specified with this
 command) which currently don't have a property that have a default value configuration
 the default value for that property will be set.
-
-*Remove broken object references*
-
-Detects and removes references from nodes to entities which don't exist anymore (for
-example Image nodes referencing ImageVariant objects which are gone for some reason).
 
 
 **Examples:**
@@ -2564,6 +2577,10 @@ example Image nodes referencing ImageVariant objects which are gone for some rea
 ./flow node:repair
 
 ./flow node:repair --node-type TYPO3.Neos.NodeTypes:Page
+
+./flow node:repair --workspace user-robert --only removeOrphanNodes,removeNodesWithInvalidDimensions
+
+./flow node:repair --skip removeUndefinedProperties
 
 
 
@@ -2578,6 +2595,10 @@ Options
   Don't do anything, but report actions
 ``--cleanup``
   If FALSE, cleanup tasks are skipped
+``--skip``
+  Skip the given check or checks (comma separated)
+``--only``
+  Only execute the given check or checks (comma separated)
 
 
 
