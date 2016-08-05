@@ -17,6 +17,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\ConsoleOutput;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Property\PropertyMapper;
+use TYPO3\Flow\Utility\Arrays;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
@@ -130,42 +131,52 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
             case 'repair':
                 return
                     '<u>Remove abstract and undefined node types</u>' . PHP_EOL .
+                    'removeAbstractAndUndefinedNodes' . PHP_EOL .
                     PHP_EOL .
-                    'Will remove all nodes that has an abstract or undefined node type.' . PHP_EOL . PHP_EOL .
+                    'Will remove all nodes that has an abstract or undefined node type.' . PHP_EOL .
+                    PHP_EOL .
                     '<u>Remove orphan (parentless) nodes</u>' . PHP_EOL .
+                    'removeOrphanNodes' . PHP_EOL .
                     PHP_EOL .
                     'Will remove all child nodes that do not have a connection to the root node.' . PHP_EOL . PHP_EOL .
                     '<u>Remove disallowed child nodes</u>' . PHP_EOL .
+                    'removeDisallowedChildNodes' . PHP_EOL .
                     PHP_EOL .
                     'Will remove all child nodes that are disallowed according to the node types\' auto-create' . PHP_EOL .
                     'configuration and constraints.' . PHP_EOL . PHP_EOL .
                     '<u>Remove undefined node properties</u>' . PHP_EOL .
+                    'removeUndefinedProperties' . PHP_EOL .
+                    PHP_EOL .
+                    '<u>Remove broken object references</u>' . PHP_EOL .
+                    'removeBrokenEntityReferences' . PHP_EOL .
+                    PHP_EOL .
+                    'Detects and removes references from nodes to entities which don\'t exist anymore (for' . PHP_EOL .
+                    'example Image nodes referencing ImageVariant objects which are gone for some reason).' . PHP_EOL .
                     PHP_EOL .
                     'Will remove all undefined properties according to the node type configuration.' . PHP_EOL .
                     '<u>Remove nodes with invalid dimensions</u>' . PHP_EOL .
+                    'removeNodesWithInvalidDimensions' . PHP_EOL .
                     PHP_EOL .
                     'Will check for and optionally remove nodes which have dimension values not matching' . PHP_EOL .
                     'the current content dimension configuration.' . PHP_EOL . PHP_EOL .
                     '<u>Missing child nodes</u>' . PHP_EOL .
+                    'createMissingChildNodes' . PHP_EOL .
                     PHP_EOL .
                     'For all nodes (or only those which match the --node-type filter specified with this' . PHP_EOL .
                     'command) which currently don\'t have child nodes as configured by the node type\'s' . PHP_EOL .
                     'configuration new child nodes will be created.' . PHP_EOL . PHP_EOL .
                     '<u>Reorder child nodes</u>' . PHP_EOL .
+                    'reorderChildNodes' . PHP_EOL .
                     PHP_EOL .
                     'For all nodes (or only those which match the --node-type filter specified with this' . PHP_EOL .
                     'command) which have configured child nodes, those child nodes are reordered according to the' . PHP_EOL .
                     'position from the parents NodeType configuration.' . PHP_EOL . PHP_EOL .
                     '<u>Missing default properties</u>' . PHP_EOL .
+                    'addMissingDefaultValues' . PHP_EOL .
                     PHP_EOL .
                     'For all nodes (or only those which match the --node-type filter specified with this' . PHP_EOL .
                     'command) which currently don\'t have a property that have a default value configuration' . PHP_EOL .
-                    'the default value for that property will be set.' . PHP_EOL .
-                    PHP_EOL .
-                    '<u>Remove broken object references</u>' . PHP_EOL .
-                    PHP_EOL .
-                    'Detects and removes references from nodes to entities which don\'t exist anymore (for' . PHP_EOL .
-                    'example Image nodes referencing ImageVariant objects which are gone for some reason).' . PHP_EOL;
+                    'the default value for that property will be set.' . PHP_EOL;
         }
     }
 
@@ -178,24 +189,41 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
      * @param string $workspaceName Only handle this workspace (if specified)
      * @param boolean $dryRun If TRUE, don't do any changes, just simulate what you would do
      * @param boolean $cleanup If FALSE, cleanup tasks are skipped
+     * @param string $skip Skip the given check or checks (comma separated)
+     * @param string $only Only execute the given check or checks (comma separated)
      * @return void
      */
-    public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, NodeType $nodeType = null, $workspaceName = 'live', $dryRun = false, $cleanup = true)
+    public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, NodeType $nodeType = null, $workspaceName = 'live', $dryRun = false, $cleanup = true, $skip = null, $only = null)
     {
         $this->output = $output;
+        $commandMethods = [
+            'removeAbstractAndUndefinedNodes' => [ 'cleanup' => true ],
+            'removeOrphanNodes' => [ 'cleanup' => true ],
+            'removeDisallowedChildNodes' => [ 'cleanup' => true ],
+            'removeUndefinedProperties' => [ 'cleanup' => true ],
+            'removeBrokenEntityReferences' => [ 'cleanup' => true ],
+            'removeNodesWithInvalidDimensions' => [ 'cleanup' => true ],
+            'createMissingChildNodes' => [ 'cleanup' => false ],
+            'reorderChildNodes' => [ 'cleanup' => false ],
+            'addMissingDefaultValues' => [ 'cleanup' => false ]
+        ];
+        $skipCommandNames = Arrays::trimExplode(',', ($skip === null ? '' : $skip));
+        $onlyCommandNames = Arrays::trimExplode(',', ($only === null ? '' : $only));
+
         switch ($controllerCommandName) {
             case 'repair':
-                if ($cleanup === true) {
-                    $this->removeAbstractAndUndefinedNodes($workspaceName, $dryRun);
-                    $this->removeOrphanNodes($workspaceName, $dryRun);
-                    $this->removeDisallowedChildNodes($workspaceName, $dryRun);
-                    $this->removeUndefinedProperties($nodeType, $workspaceName, $dryRun);
-                    $this->removeBrokenEntityReferences($workspaceName, $dryRun);
-                    $this->removeNodesWithInvalidDimensions($workspaceName, $dryRun);
+                foreach ($commandMethods as $commandMethodName => $commandMethodConfiguration) {
+                    if (in_array($commandMethodName, $skipCommandNames)) {
+                        continue;
+                    }
+                    if ($onlyCommandNames !== [] && !in_array($commandMethodName, $onlyCommandNames)) {
+                        continue;
+                    }
+                    if (!$cleanup && $commandMethodConfiguration['cleanup']) {
+                        continue;
+                    }
+                    $this->$commandMethodName($workspaceName, $dryRun, $nodeType);
                 }
-                $this->createMissingChildNodes($nodeType, $workspaceName, $dryRun);
-                $this->reorderChildNodes($nodeType, $workspaceName, $dryRun);
-                $this->addMissingDefaultValues($nodeType, $workspaceName, $dryRun);
         }
     }
 
@@ -226,12 +254,12 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
      * Performs checks for missing child nodes according to the node's auto-create configuration and creates
      * them if necessary.
      *
-     * @param NodeType $nodeType Only for this node type, if specified
      * @param string $workspaceName Name of the workspace to consider
      * @param boolean $dryRun Simulate?
+     * @param NodeType $nodeType Only for this node type, if specified
      * @return void
      */
-    protected function createMissingChildNodes(NodeType $nodeType = null, $workspaceName, $dryRun)
+    protected function createMissingChildNodes($workspaceName, $dryRun, NodeType $nodeType = null)
     {
         if ($nodeType !== null) {
             $this->output->outputLine('Checking nodes of type "%s" for missing child nodes ...', array($nodeType->getName()));
@@ -626,12 +654,12 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
     /**
      * Performs checks for orphan nodes removes them if found.
      *
-     * @param NodeType $nodeType Only for this node type, if specified
      * @param string $workspaceName
      * @param boolean $dryRun Simulate?
+     * @param NodeType $nodeType Only for this node type, if specified
      * @return void
      */
-    public function removeUndefinedProperties(NodeType $nodeType = null, $workspaceName, $dryRun)
+    public function removeUndefinedProperties($workspaceName, $dryRun, NodeType $nodeType = null)
     {
         $this->output->outputLine('Checking for undefined properties ...');
 
@@ -945,16 +973,16 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
     /**
      * Reorder child nodes according to the current position configuration of child nodes.
      *
-     * @param NodeType $nodeType Only for this node type, if specified
      * @param string $workspaceName Name of the workspace to consider
      * @param boolean $dryRun Simulate?
+     * @param NodeType $nodeType Only for this node type, if specified
      * @return void
      */
-    protected function reorderChildNodes(NodeType $nodeType = null, $workspaceName, $dryRun)
+    protected function reorderChildNodes($workspaceName, $dryRun, NodeType $nodeType = null)
     {
         if ($nodeType !== null) {
             $this->output->outputLine('Checking nodes of type "%s" for child nodes that need reordering ...', array($nodeType->getName()));
-            $this->reorderChildNodesByNodeType($nodeType, $workspaceName, $dryRun);
+            $this->reorderChildNodesByNodeType($workspaceName, $dryRun, $nodeType);
         } else {
             $this->output->outputLine('Checking for child nodes that need reordering ...');
             foreach ($this->nodeTypeManager->getNodeTypes() as $nodeType) {
@@ -962,7 +990,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
                 if ($nodeType->isAbstract()) {
                     continue;
                 }
-                $this->reorderChildNodesByNodeType($nodeType, $workspaceName, $dryRun);
+                $this->reorderChildNodesByNodeType($dryRun, $workspaceName, $nodeType);
             }
         }
 
@@ -972,12 +1000,12 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
     /**
      * Reorder child nodes for the given node type
      *
-     * @param NodeType $nodeType
      * @param string $workspaceName
      * @param boolean $dryRun
+     * @param NodeType $nodeType
      * @return void
      */
-    protected function reorderChildNodesByNodeType(NodeType $nodeType, $workspaceName, $dryRun)
+    protected function reorderChildNodesByNodeType($workspaceName, $dryRun, NodeType $nodeType)
     {
         $nodeTypes = $this->nodeTypeManager->getSubNodeTypes($nodeType->getName(), false);
         $nodeTypes[$nodeType->getName()] = $nodeType;

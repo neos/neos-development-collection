@@ -15,6 +15,7 @@ use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\ConsoleOutput;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Neos\Domain\Service\SiteService;
 use TYPO3\Neos\Utility\NodeUriPathSegmentGenerator;
 use TYPO3\TYPO3CR\Command\NodeCommandControllerPluginInterface;
@@ -116,14 +117,34 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
      * @param string $workspaceName Only handle this workspace (if specified)
      * @param boolean $dryRun If TRUE, don't do any changes, just simulate what you would do
      * @param boolean $cleanup If FALSE, cleanup tasks are skipped
+     * @param string $skip Skip the given check or checks (comma separated)
+     * @param string $only Only execute the given check or checks (comma separated)
      * @return void
      */
-    public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, NodeType $nodeType = null, $workspaceName = 'live', $dryRun = false, $cleanup = true)
+    public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, NodeType $nodeType = null, $workspaceName = 'live', $dryRun = false, $cleanup = true, $skip = null, $only = null)
     {
         $this->output = $output;
+        $commandMethods = [
+            'generateUriPathSegments' => [ 'cleanup' => false ]
+        ];
+
+        $skipCommandNames = Arrays::trimExplode(',', ($skip === null ? '' : $skip));
+        $onlyCommandNames = Arrays::trimExplode(',', ($only === null ? '' : $only));
+
         switch ($controllerCommandName) {
             case 'repair':
-                $this->generateUriPathSegments($workspaceName, $dryRun);
+                foreach ($commandMethods as $commandMethodName => $commandMethodConfiguration) {
+                    if (in_array($commandMethodName, $skipCommandNames)) {
+                        continue;
+                    }
+                    if ($onlyCommandNames !== [] && !in_array($commandMethodName, $onlyCommandNames)) {
+                        continue;
+                    }
+                    if (!$cleanup && $commandMethodConfiguration['cleanup']) {
+                        continue;
+                    }
+                    $this->$commandMethodName($workspaceName, $dryRun, $nodeType);
+                }
         }
     }
 
