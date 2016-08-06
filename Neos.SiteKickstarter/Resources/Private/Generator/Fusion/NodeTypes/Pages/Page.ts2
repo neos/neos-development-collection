@@ -1,4 +1,4 @@
-prototype(Neos.Neos:Document.Document) < prototype(Neos:DefaultPage) {
+prototype(Neos.Neos:Document.Document) < prototype({packageKey}:DefaultPage) {
     body {
         // These are your content areas, you can define as many as you want, just name them and the nodePath.
         content {
