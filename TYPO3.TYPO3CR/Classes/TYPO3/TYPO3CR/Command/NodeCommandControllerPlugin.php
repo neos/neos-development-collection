@@ -23,6 +23,7 @@ use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContentDimensionCombinator;
@@ -158,7 +159,13 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
                     'removeNodesWithInvalidDimensions' . PHP_EOL .
                     PHP_EOL .
                     'Will check for and optionally remove nodes which have dimension values not matching' . PHP_EOL .
-                    'the current content dimension configuration.' . PHP_EOL . PHP_EOL .
+                    'the current content dimension configuration.' . PHP_EOL .
+                    PHP_EOL .
+                    '<u>Remove nodes with invalid workspace</u>' . PHP_EOL .
+                    'removeNodesWithInvalidWorkspace' . PHP_EOL .
+                    PHP_EOL .
+                    'Will check for and optionally remove nodes which belong to a workspace which no longer' . PHP_EOL .
+                    'exists..' . PHP_EOL . PHP_EOL .
                     '<u>Missing child nodes</u>' . PHP_EOL .
                     'createMissingChildNodes' . PHP_EOL .
                     PHP_EOL .
@@ -176,7 +183,12 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
                     PHP_EOL .
                     'For all nodes (or only those which match the --node-type filter specified with this' . PHP_EOL .
                     'command) which currently don\'t have a property that have a default value configuration' . PHP_EOL .
-                    'the default value for that property will be set.' . PHP_EOL;
+                    'the default value for that property will be set.' . PHP_EOL .
+                    '<u>Repair nodes with missing shadow nodes</u>' . PHP_EOL .
+                    'repairShadowNodes' . PHP_EOL .
+                    PHP_EOL .
+                    'Will check for and optionally remove nodes which belong to a workspace which no longer' . PHP_EOL .
+                    'exists..' . PHP_EOL;
         }
     }
 
@@ -205,7 +217,8 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
             'removeNodesWithInvalidDimensions' => [ 'cleanup' => true ],
             'createMissingChildNodes' => [ 'cleanup' => false ],
             'reorderChildNodes' => [ 'cleanup' => false ],
-            'addMissingDefaultValues' => [ 'cleanup' => false ]
+            'addMissingDefaultValues' => [ 'cleanup' => false ],
+            'repairShadowNodes' => [ 'cleanup' => false ]
         ];
         $skipCommandNames = Arrays::trimExplode(',', ($skip === null ? '' : $skip));
         $onlyCommandNames = Arrays::trimExplode(',', ($only === null ? '' : $only));
@@ -1055,4 +1068,86 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
             }
         }
     }
+
+    /**
+     * Repair nodes whose shadow nodes are missing
+     *
+     * This check searches for nodes which have a corresponding node in one of the base workspaces,
+     * have different node paths, but don't have a corresponding shadow node with a "movedto" value.
+     *
+     * @param string $workspaceName Currently ignored
+     * @param boolean $dryRun Simulate?
+     * @param NodeType $nodeType This argument will be ignored
+     * @return void
+     */
+    protected function repairShadowNodes($workspaceName, $dryRun, NodeType $nodeType = null)
+    {
+        $this->output->outputLine('Checking for nodes with missing shadow nodes ...');
+
+        $nodesArray = $this->collectNodesWithMissingShadowNodes();
+        if ($nodesArray === []) {
+            return;
+        }
+
+        if (!$dryRun) {
+            $self = $this;
+            $this->output->outputLine();
+            $this->output->outputLine('Nodes with missing shadow nodes found.');
+            foreach ($nodesArray as $nodeArray) {
+#                $self->removeNode($nodeArray['identifier'], $nodeArray['dimensionsHash']);
+            }
+            $self->output->outputLine('Repaired %s node%s with missing shadow nodes.', array(count($nodesArray), count($nodesArray) > 1 ? 's' : ''));
+        } else {
+            $this->output->outputLine('Found %s node%s with missing shadow nodes which need to be repaired.', array(count($nodesArray), count($nodesArray) > 1 ? 's' : ''));
+        }
+        $this->output->outputLine();
+    }
+
+    /**
+     * Collects all nodes with missing shadow nodes
+     *
+     * @return array
+     */
+    protected function collectNodesWithMissingShadowNodes()
+    {
+        $workspaces = $this->workspaceRepository->findAll();
+
+        $nodesWithMissingShadowNodes = [];
+        $nodesWithSameIdentifier = [];
+
+        foreach ($workspaces as $workspace) {
+            /** @var Workspace $workspace */
+            if ($workspace->getBaseWorkspace() === null) {
+                continue;
+            }
+
+            /** @var QueryBuilder $queryBuilder */
+            $queryBuilder = $this->entityManager->createQueryBuilder();
+            $queryBuilder->select('n.identifier,n.path,n.dimensionsHash')
+                ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+                ->where('n.workspace = :workspace');
+            $queryBuilder->setParameter('workspace', $workspace->getName());
+
+            foreach ($queryBuilder->getQuery()->getArrayResult() as $nodeDataArray) {
+                $queryBuilder = $this->entityManager->createQueryBuilder();
+                $queryBuilder->select('n.identifier,n.path,n.dimensionsHash')
+                    ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+                    ->where('n.workspace = :workspace');
+                $queryBuilder->setParameter('workspace', $workspace->getName());
+
+                // TODO ... further implementation
+
+
+            }
+        }
+
+        // What needs to be done:
+        //
+        // - for each node in a dependent workspace find all nodes in base workspaces
+        // - if paths are the same, skip
+        // - if paths are different, check if a shadow node exists in the current dependent workspace
+
+        return $nodesWithMissingShadowNodes;
+    }
+
 }
