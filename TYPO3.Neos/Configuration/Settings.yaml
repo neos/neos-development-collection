@@ -164,6 +164,7 @@ TYPO3:
         'TYPO3.Neos/Validation': 'resource://TYPO3.Neos/Public/JavaScript/Shared/Validation/'
         'TYPO3.Neos/Inspector/Editors': 'resource://TYPO3.Neos/Public/JavaScript/Content/Inspector/Editors/'
         'TYPO3.Neos/Inspector/Handlers': 'resource://TYPO3.Neos/Public/JavaScript/Content/Inspector/Handlers/'
+        'TYPO3.Neos/Inspector/Views': 'resource://TYPO3.Neos/Public/JavaScript/Content/Inspector/Views/'
 
       # the default language for the backend interface (can be overridden by user preference through availableLanguages)
       defaultLanguage: 'en'
@@ -206,16 +207,22 @@ TYPO3:
         dataTypes:
           'string':
             editor: 'TYPO3.Neos/Inspector/Editors/TextFieldEditor'
+            defaultValue: ''
           'integer':
             editor: 'TYPO3.Neos/Inspector/Editors/TextFieldEditor'
+            defaultValue: 0
           'boolean':
             editor: 'TYPO3.Neos/Inspector/Editors/BooleanEditor'
+            defaultValue: FALSE
           'array':
+            typeConverter: 'TYPO3\Flow\Property\TypeConverter\TypedArrayConverter'
             editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
             editorOptions:
               multiple: TRUE
               placeholder: 'Choose'
+            defaultValue: []
           'TYPO3\Media\Domain\Model\ImageInterface':
+            typeConverter: 'TYPO3\Media\TypeConverter\ImageInterfaceJsonSerializer'
             editor: 'TYPO3.Neos/Inspector/Editors/ImageEditor'
             editorOptions:
               # With this option you can limit the maximum file size to the specified number of bytes.
@@ -253,18 +260,22 @@ TYPO3:
                     width: 0
                     height: 0
           'TYPO3\Media\Domain\Model\Asset':
+            typeConverter: 'TYPO3\Neos\TypeConverter\EntityToIdentityConverter'
             editor: 'TYPO3.Neos/Inspector/Editors/AssetEditor'
           'array<TYPO3\Media\Domain\Model\Asset>':
             editor: 'TYPO3.Neos/Inspector/Editors/AssetEditor'
             editorOptions:
               multiple: TRUE
           'DateTime':
+            typeConverter: 'TYPO3\Neos\Service\Mapping\DateStringConverter'
             editor: 'TYPO3.Neos/Inspector/Editors/DateTimeEditor'
             editorOptions:
               format: 'd-m-Y'
           'reference':
+            typeConverter: 'TYPO3\Neos\Service\Mapping\NodeReferenceConverter'
             editor: 'TYPO3.Neos/Inspector/Editors/ReferenceEditor'
           'references':
+            typeConverter: 'TYPO3\Neos\Service\Mapping\NodeReferenceConverter'
             editor: 'TYPO3.Neos/Inspector/Editors/ReferencesEditor'
         editors:
           'TYPO3.Neos/Inspector/Editors/CodeEditor':
@@ -527,11 +538,13 @@ TYPO3:
           - 'Neos:FormViewHelpers'
           - 'Neos:NeosViewHelpers'
           - 'Neos:Typo3CrViewHelpers'
+          - 'Neos:TypoScriptViewHelpers'
           - 'Neos:FlowValidators'
           - 'Neos:PartyValidators'
           - 'Neos:MediaValidators'
           - 'Neos:FlowSignals'
           - 'Neos:NeosSignals'
+          - 'Neos:MediaSignals'
           - 'Neos:Typo3CrSignals'
           - 'Neos:FlowQueryOperations'
           - 'Neos:EelHelpers'
@@ -547,6 +560,7 @@ TYPO3:
           - 'TYPO3.Welcome'
           - 'TYPO3.Media'
           - 'TYPO3.TYPO3CR'
+          - 'TYPO3.Neos.Kickstarter'
           - 'TYPO3.Neos'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/CommandReference.rst'
 
@@ -665,6 +679,15 @@ TYPO3:
         affectedClasses:
           classesContainingMethodsAnnotatedWith: 'TYPO3\Flow\Annotations\Signal'
           classNamePattern: '/^TYPO3\\Neos\\.*$/i'
+          includeAbstractClasses: TRUE
+        parser:
+          implementationClassName: 'TYPO3\DocTools\Domain\Service\SignalsParser'
+      'Neos:MediaSignals':
+        title: 'Media Signals Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/Signals/Media.rst'
+        affectedClasses:
+          classesContainingMethodsAnnotatedWith: 'TYPO3\Flow\Annotations\Signal'
+          classNamePattern: '/^TYPO3\\Media\\.*$/i'
           includeAbstractClasses: TRUE
         parser:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\SignalsParser'

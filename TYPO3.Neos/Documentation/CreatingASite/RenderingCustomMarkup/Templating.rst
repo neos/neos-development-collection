@@ -1,7 +1,7 @@
-.. _`Templating`:
-
 .. ATTENTION - this is a copy of the templating section of the flow documentation
-.. all changes should be applied there first an afterwards be copied here.
+.. all changes should be applied there first and afterwards be copied here.
+
+.. _templating:
 
 ==========
 Templating

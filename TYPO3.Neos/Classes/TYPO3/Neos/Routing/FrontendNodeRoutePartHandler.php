@@ -311,15 +311,6 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             $contextProperties['dimensions'] = $dimensions;
         }
 
-        $currentDomain = $this->domainRepository->findOneByActiveRequest();
-
-        if ($currentDomain !== null) {
-            $contextProperties['currentSite'] = $currentDomain->getSite();
-            $contextProperties['currentDomain'] = $currentDomain;
-        } else {
-            $contextProperties['currentSite'] = $this->siteRepository->findFirstOnline();
-        }
-
         return $this->contextFactory->create($contextProperties);
     }
 
@@ -506,7 +497,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             }
         }
         if (!$this->contentDimensionPresetSource->isPresetCombinationAllowedByConstraints($chosenDimensionPresets)) {
-            throw new InvalidDimensionPresetCombinationException(sprintf('The resolved content dimension preset combination (%s) is invalid or restricted by content dimension constraints. Check your content dimension settings if you think that this is an error.', 'x'), 1428657721);
+            throw new InvalidDimensionPresetCombinationException(sprintf('The resolved content dimension preset combination (%s) is invalid or restricted by content dimension constraints. Check your content dimension settings if you think that this is an error.', implode(', ', array_keys($chosenDimensionPresets))), 1428657721);
         }
         return $dimensionsAndDimensionValues;
     }
@@ -563,7 +554,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         }
 
         if (!$this->contentDimensionPresetSource->isPresetCombinationAllowedByConstraints($chosenDimensionPresets)) {
-            throw new InvalidDimensionPresetCombinationException(sprintf('The resolved content dimension preset combination (%s) is invalid or restricted by content dimension constraints. Check your content dimension settings if you think that this is an error.', 'x'), 1428657721);
+            throw new InvalidDimensionPresetCombinationException(sprintf('The resolved content dimension preset combination (%s) is invalid or restricted by content dimension constraints. Check your content dimension settings if you think that this is an error.', implode(', ', array_keys($chosenDimensionPresets))), 1462175794805);
         }
 
         return $dimensionsAndDimensionValues;
@@ -585,15 +576,6 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             'inaccessibleContentShown' => ($workspaceName !== 'live'),
             'dimensions' => $dimensionsAndDimensionValues
         ];
-
-        $currentDomain = $this->domainRepository->findOneByActiveRequest();
-
-        if ($currentDomain !== null) {
-            $contextProperties['currentSite'] = $currentDomain->getSite();
-            $contextProperties['currentDomain'] = $currentDomain;
-        } else {
-            $contextProperties['currentSite'] = $this->siteRepository->findFirstOnline();
-        }
 
         return $this->contextFactory->create($contextProperties);
     }

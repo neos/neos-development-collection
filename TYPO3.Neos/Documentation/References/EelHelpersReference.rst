@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2015-10-10
+This reference was automatically generated from code on 2016-06-07
 
 
 .. _`Eel Helpers Reference: Array`:
@@ -279,7 +279,7 @@ Date.dayOfMonth(dateTime)
 
 Get the day of month of a date
 
-* ``dateTime`` (\DateTime)
+* ``dateTime`` (\DateTimeInterface)
 
 **Return** (integer) The day of month of the given date
 
@@ -310,7 +310,7 @@ Date.hour(dateTime)
 
 Get the hour of a date (24 hour format)
 
-* ``dateTime`` (\DateTime)
+* ``dateTime`` (\DateTimeInterface)
 
 **Return** (integer) The hour of the given date
 
@@ -319,7 +319,7 @@ Date.minute(dateTime)
 
 Get the minute of a date
 
-* ``dateTime`` (\DateTime)
+* ``dateTime`` (\DateTimeInterface)
 
 **Return** (integer) The minute of the given date
 
@@ -328,7 +328,7 @@ Date.month(dateTime)
 
 Get the month of a date
 
-* ``dateTime`` (\DateTime)
+* ``dateTime`` (\DateTimeInterface)
 
 **Return** (integer) The month of the given date
 
@@ -358,7 +358,7 @@ Date.second(dateTime)
 
 Get the second of a date
 
-* ``dateTime`` (\DateTime)
+* ``dateTime`` (\DateTimeInterface)
 
 **Return** (integer) The second of the given date
 
@@ -384,7 +384,7 @@ Date.year(dateTime)
 
 Get the year of a date
 
-* ``dateTime`` (\DateTime)
+* ``dateTime`` (\DateTimeInterface)
 
 **Return** (integer) The year of the given date
 
@@ -1008,6 +1008,16 @@ Security.getAccount()
 Get the account of the first authenticated token.
 
 **Return** (\TYPO3\Flow\Security\Account|NULL)
+
+Security.hasRole(roleIdentifier)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Returns TRUE, if at least one of the currently authenticated accounts holds
+a role with the given identifier, also recursively.
+
+* ``roleIdentifier`` (string) The string representation of the role to search for
+
+**Return** (boolean) TRUE, if a role with the given string representation was found
 
 
 

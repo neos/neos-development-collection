@@ -1,3 +1,5 @@
+.. _user-interface-basics:
+
 =====================
 User Interface Basics
 =====================

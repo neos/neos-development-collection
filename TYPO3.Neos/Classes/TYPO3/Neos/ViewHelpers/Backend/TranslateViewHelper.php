@@ -15,7 +15,6 @@ use TYPO3\Flow\I18n\EelHelper\TranslationHelper;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Fluid\ViewHelpers\TranslateViewHelper as FluidTranslateViewHelper;
 use TYPO3\Fluid\Core\ViewHelper;
-use TYPO3\Neos\Domain\Model\User;
 
 /**
  * Returns translated message using source message or key ID.

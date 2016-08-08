@@ -16,6 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Imagine\Image\Box;
 use Imagine\Image\Point;
 use Imagine\Image\ImageInterface as ImagineImageInterface;
+use TYPO3\Media\Domain\Model\ImageInterface;
 
 /**
  * An adjustment for cropping an image
@@ -176,5 +177,27 @@ class CropImageAdjustment extends AbstractImageAdjustment
         $point = new Point($this->x, $this->y);
         $box = new Box($this->width, $this->height);
         return $image->crop($point, $box);
+    }
+
+    /**
+     * Refits the crop proportions to be the maximum size within the image boundaries.
+     *
+     * @param ImageInterface $image
+     * @return void
+     */
+    public function refit(ImageInterface $image)
+    {
+        $this->x = 0;
+        $this->y = 0;
+
+        $ratio = $this->getWidth() / $image->getWidth();
+        $this->setWidth($image->getWidth());
+        $this->setHeight($this->getHeight() / $ratio);
+
+        if ($this->getHeight() > $image->getHeight()) {
+            $ratio = $this->getHeight() / $image->getHeight();
+            $this->setWidth($this->getWidth() / $ratio);
+            $this->setHeight($image->getHeight());
+        }
     }
 }

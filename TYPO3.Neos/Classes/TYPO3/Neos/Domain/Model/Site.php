@@ -138,6 +138,7 @@ class Site
      * context, do not use the NodeDataRepository!
      *
      * @return string The node name
+     * @api
      */
     public function getNodeName()
     {
@@ -221,7 +222,9 @@ class Site
     }
 
     /**
-     * @param \Doctrine\Common\Collections\Collection<\TYPO3\Neos\Domain\Model\Domain> $domains
+     * @param Collection<Domain> $domains
+     * @return void
+     * @api
      */
     public function setDomains($domains)
     {
@@ -232,7 +235,8 @@ class Site
     }
 
     /**
-     * @return Collection<\TYPO3\Neos\Domain\Model\Domain>
+     * @return Collection<Domain>
+     * @api
      */
     public function getDomains()
     {
@@ -241,6 +245,7 @@ class Site
 
     /**
      * @return boolean TRUE if the site has at least one active domain assigned
+     * @api
      */
     public function hasActiveDomains()
     {
@@ -250,7 +255,8 @@ class Site
     }
 
     /**
-     * @return Collection
+     * @return Collection<Domain>
+     * @api
      */
     public function getActiveDomains()
     {
@@ -261,7 +267,8 @@ class Site
     }
 
     /**
-     * @return \TYPO3\Neos\Domain\Model\Domain|null
+     * @return Domain|null
+     * @api
      */
     public function getFirstActiveDomain()
     {
@@ -272,14 +279,21 @@ class Site
     /**
      * Sets (and adds if necessary) the primary domain of this site.
      *
-     * @param Domain $domain The domain
+     * @param Domain|null $domain The domain
      * @return void
+     * @api
      */
-    public function setPrimaryDomain(Domain $domain)
+    public function setPrimaryDomain(Domain $domain = null)
     {
+        if ($domain === null) {
+            $this->primaryDomain = null;
+            return;
+        }
+
         if (!$domain->getActive()) {
             return;
         }
+
         $this->primaryDomain = $domain;
         if (!$this->domains->contains($domain)) {
             $this->domains->add($domain);
@@ -290,6 +304,7 @@ class Site
      * Returns the primary domain, if one has been defined.
      *
      * @return Domain The primary domain or NULL
+     * @api
      */
     public function getPrimaryDomain()
     {

@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\Thumbnail;
+use TYPO3\Media\Domain\Service\FileTypeIconService;
 use TYPO3\Media\Domain\Service\ImageService;
 use TYPO3\Media\Exception;
 
@@ -50,58 +51,13 @@ class IconThumbnailGenerator extends AbstractThumbnailGenerator
 
             /** @var AssetInterface $asset */
             $asset = $thumbnail->getOriginalAsset();
-            $icon = $this->getAssetIcon($asset, $width, $height);
+            $icon = FileTypeIconService::getIcon($asset, $width, $height);
             $thumbnail->setStaticResource($icon['src']);
             $thumbnail->setWidth($icon['width']);
             $thumbnail->setHeight($icon['height']);
         } catch (\Exception $exception) {
             $message = sprintf('Unable to generate thumbnail for the given image (filename: %s, SHA1: %s)', $thumbnail->getOriginalAsset()->getResource()->getFilename(), $thumbnail->getOriginalAsset()->getResource()->getSha1());
             throw new Exception\NoThumbnailAvailableException($message, 1433109654, $exception);
-        }
-    }
-
-    /**
-     * @param AssetInterface $asset
-     * @param integer $maximumWidth
-     * @param integer $maximumHeight
-     * @return array
-     */
-    protected function getAssetIcon(AssetInterface $asset, $maximumWidth, $maximumHeight)
-    {
-        // TODO: Could be configurable at some point
-        $iconPackage = 'TYPO3.Media';
-
-        $iconSize = $this->getDocumentIconSize($maximumWidth, $maximumHeight);
-
-        if (is_file('resource://' . $iconPackage . '/Public/Icons/16px/' . $asset->getResource()->getFileExtension() . '.png')) {
-            $icon = sprintf('Icons/%spx/' . $asset->getResource()->getFileExtension() . '.png', $iconSize);
-        } else {
-            $icon = sprintf('Icons/%spx/_blank.png', $iconSize);
-        }
-
-        return [
-            'width' => $iconSize,
-            'height' => $iconSize,
-            'src' => 'resource://' . $iconPackage . '/Public/' . $icon
-        ];
-    }
-
-    /**
-     * @param integer $maximumWidth
-     * @param integer $maximumHeight
-     * @return integer
-     */
-    protected function getDocumentIconSize($maximumWidth, $maximumHeight)
-    {
-        $size = max($maximumWidth, $maximumHeight);
-        if ($size <= 16) {
-            return 16;
-        } elseif ($size <= 32) {
-            return 32;
-        } elseif ($size <= 48) {
-            return 48;
-        } else {
-            return 512;
         }
     }
 }

@@ -14,7 +14,6 @@ namespace TYPO3\TypoScript\Tests\Unit\TypoScriptObjects;
 use TYPO3\Flow\I18n\Service;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
-use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Resource\Publishing\ResourcePublisher;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\TypoScript\Core\Runtime;

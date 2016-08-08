@@ -7,7 +7,7 @@
 			<target xml:lang="no" state="translated">Aktiver bildetekst</target></trans-unit>
       <trans-unit id="properties.caption.aloha.placeholder" xml:space="preserve">
 				<source><![CDATA[<p>Enter caption here</p>]]></source>
-			<target xml:lang="no" state="translated"><![CDATA[<p>Skriv inn bildetekst her</p>]]></target><alt-trans><target xml:lang="no"><![CDATA[Skriv inn bildetekst her]]></target></alt-trans></trans-unit>
+			<target xml:lang="no" state="translated"><![CDATA[<p>Skriv inn bildetekst her</p>]]></target></trans-unit>
     </body>
   </file>
 </xliff>

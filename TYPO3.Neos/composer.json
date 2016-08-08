@@ -16,7 +16,8 @@
         "behat/transliterator": "~1.0"
     },
     "suggest": {
-        "typo3/neos-kickstarter": "Helps with creating new site packages for Neos."
+        "typo3/neos-kickstarter": "Helps with creating new site packages for Neos.",
+        "neos/redirecthandler-neosadapter": "Adds automatic redirects for moved/renamed pages"
     },
     "autoload": {
         "psr-0": {

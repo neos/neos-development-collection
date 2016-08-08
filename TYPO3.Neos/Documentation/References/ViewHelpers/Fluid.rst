@@ -3,7 +3,7 @@
 Fluid ViewHelper Reference
 ==========================
 
-This reference was automatically generated from code on 2015-10-09
+This reference was automatically generated from code on 2016-06-07
 
 
 .. _`Fluid ViewHelper Reference: f:alias`:
@@ -917,6 +917,8 @@ Arguments
 * ``additionalAttributes`` (array, *optional*): Additional tag attributes. They will be added directly to the resulting HTML tag.
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
+
+* ``required`` (boolean, *optional*): If the field is required or not
 
 * ``name`` (string, *optional*): Name of input tag
 

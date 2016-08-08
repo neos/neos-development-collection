@@ -49,7 +49,7 @@ Fundamental Installation
    .. code-block:: bash
 
       cd /your/htdocs/
-      php /path/to/composer.phar create-project typo3/neos-base-distribution Neos
+      php /path/to/composer.phar create-project neos/neos-base-distribution Neos
 
    Composer will take care of downloading all dependencies for running your Neos installation to the
    directory ``Neos``.

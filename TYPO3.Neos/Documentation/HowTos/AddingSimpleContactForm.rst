@@ -12,21 +12,7 @@ Yaml (Sites/Vendor.Site/Configuration/Settings.yaml) ::
       yamlPersistenceManager:
         savePath: 'resource://Vendor.Site/Private/Form/'
 
-Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
-
-  'TYPO3.Neos.NodeTypes:Form':
-    properties:
-      formIdentifier:
-        ui:
-          inspector:
-            editorOptions:
-              values:
-                '': ~
-                # Maps to the file Sites/Vendor.Site/Resources/Private/Form/contact-form.yaml
-                'contact-form':
-                  label: 'contact-form'
-
-Now place a valid TYPO3.Form Yaml configuration the Private/Form folder. Then add a Form Element where
+Now place a valid TYPO3.Form Yaml configuration in the Private/Form folder. Then add a Form Element where
 you wish the form to be displayed and select it from the dropdown in the Inspector.
 
 Yaml (Sites/Vendor.Site/Resources/Private/Form/contact-form.yaml) ::

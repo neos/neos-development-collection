@@ -17,7 +17,6 @@ use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Service\ContentElementWrappingService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
-use TYPO3\Neos\Domain\Exception;
 
 /**
  * Adds meta data attributes to the processed Content Element
@@ -50,7 +49,6 @@ class ContentElementWrappingImplementation extends AbstractTypoScriptObject
      * Evaluate this TypoScript object and return the result
      *
      * @return mixed
-     * @throws \TYPO3\Neos\Domain\Exception
      */
     public function evaluate()
     {
@@ -75,7 +73,12 @@ class ContentElementWrappingImplementation extends AbstractTypoScriptObject
         if ($node->isRemoved()) {
             $content = '';
         }
-        return $this->contentElementWrappingService->wrapContentObject($node, $this->getContentElementTypoScriptPath(), $content, $this->tsValue('renderCurrentDocumentMetadata'));
+
+        if ($this->tsValue('renderCurrentDocumentMetadata')) {
+            return $this->contentElementWrappingService->wrapCurrentDocumentMetadata($node, $content, $this->getContentElementTypoScriptPath());
+        }
+
+        return $this->contentElementWrappingService->wrapContentObject($node, $content, $this->getContentElementTypoScriptPath());
     }
 
     /**

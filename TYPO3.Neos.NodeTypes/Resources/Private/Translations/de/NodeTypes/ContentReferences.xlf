@@ -11,6 +11,9 @@
       <trans-unit id="properties.references" xml:space="preserve" approved="yes">
 				<source>Select</source>
 			<target xml:lang="de">Auswählen</target><alt-trans><target xml:lang="de">Bitte wählen</target></alt-trans></trans-unit>
+      <trans-unit id="content.noReferencesSelected" xml:space="preserve" approved="yes">
+				<source>No references selected</source>
+			<target xml:lang="de">Keine ausgewählten Referenzen</target><alt-trans><target xml:lang="de">Keine ausgewählten Verweise</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>
