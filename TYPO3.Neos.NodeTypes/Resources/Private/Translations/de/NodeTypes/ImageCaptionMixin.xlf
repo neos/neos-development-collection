@@ -7,7 +7,7 @@
 			<target xml:lang="de">Beschriftung anzeigen</target></trans-unit>
       <trans-unit id="properties.caption.aloha.placeholder" xml:space="preserve" approved="yes">
 				<source><![CDATA[<p>Enter caption here</p>]]></source>
-			<target xml:lang="de"><![CDATA[<p>Beschriftung hier eingeben</p>]]></target><alt-trans><target xml:lang="de"><![CDATA[Beschriftung hier eingeben]]></target></alt-trans></trans-unit>
+			<target xml:lang="de"><![CDATA[<p>Beschriftung hier eingeben</p>]]></target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -42,9 +42,9 @@ class ParentOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function setUp()
     {
-        $this->siteNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-        $this->firstLevelNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-        $this->secondLevelNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $this->siteNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $this->firstLevelNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $this->secondLevelNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 
         $this->siteNode->expects($this->any())->method('getPath')->will($this->returnValue('/site'));
         $this->siteNode->expects($this->any())->method('getChildNodes')->will($this->returnValue(array($this->firstLevelNode)));

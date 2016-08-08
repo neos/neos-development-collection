@@ -25,8 +25,8 @@ class NodePublishingDependencySolverTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function setUp()
     {
-        $this->mockWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array('live'));
-        $this->mockContext = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', false);
+        $this->mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->setConstructorArgs(array('live'))->getMock();
+        $this->mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
     }
 
     /**
@@ -79,10 +79,10 @@ class NodePublishingDependencySolverTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     protected function buildNodeMock($path, $movedTo = null)
     {
-        $mockNodeData = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array($path, $this->mockWorkspace));
+        $mockNodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->setConstructorArgs(array($path, $this->mockWorkspace))->getMock();
         $mockNodeData->expects($this->any())->method('getMovedTo')->will($this->returnValue($movedTo));
         $mockNodeData->expects($this->any())->method('getPath')->will($this->returnValue($path));
-        $mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array(), array($mockNodeData, $this->mockContext));
+        $mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Node')->setConstructorArgs(array($mockNodeData, $this->mockContext))->getMock();
         $mockNode->expects($this->any())->method('getNodeData')->will($this->returnValue($mockNodeData));
         $mockNode->expects($this->any())->method('getPath')->will($this->returnValue($path));
         $parentPath = substr($path, 0, strrpos($path, '/'));

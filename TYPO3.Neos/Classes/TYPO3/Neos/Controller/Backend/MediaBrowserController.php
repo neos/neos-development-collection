@@ -12,7 +12,6 @@ namespace TYPO3\Neos\Controller\Backend;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Media\Domain\Repository\AssetRepository;
 
 /**

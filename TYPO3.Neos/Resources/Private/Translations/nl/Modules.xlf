@@ -65,7 +65,7 @@
 			<target xml:lang="nl">Omschrijving</target></trans-unit>
       <trans-unit id="workspaces.workspace.baseWorkspace" xml:space="preserve">
 				<source>Base workspace</source>
-			<target xml:lang="nl" state="translated">Hoofd workspace</target></trans-unit>
+			<target xml:lang="nl" state="translated">Basis workspace</target><alt-trans><target xml:lang="nl">Hoofd workspace</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.workspace.owner" xml:space="preserve" approved="yes">
 				<source>Owner</source>
 			<target xml:lang="nl">Eigenaar</target></trans-unit>
@@ -98,7 +98,7 @@
 			<target xml:lang="nl">De workspace bevat wijzigingen. Om deze te verwijderen dient u eerst de wijzigingen ongedaan te maken.</target></trans-unit>
       <trans-unit id="workspaces.help.cantRebaseWorkspaceContainsChanges" xml:space="preserve">
 				<source>Workspace can't be rebased on a different workspace because it still contains changes.</source>
-			<target xml:lang="nl" state="translated">De workspace kan niet worden verplaatst omdat het nog wijzigingen bevat.</target></trans-unit>
+			<target xml:lang="nl" state="translated">De workspace kan niet worden verplaatst omdat deze nog wijzigingen bevat.</target><alt-trans><target xml:lang="nl">De workspace kan niet worden verplaatst omdat het nog wijzigingen bevat.</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.help.cantDeleteWorkspaceHasDependencies" xml:space="preserve">
 				<source>The workspace cannot be deleted because other workspaces depend on it.</source>
 			<target xml:lang="nl" state="translated">De workspace kan niet verwijderd worden omdat andere workspaces van deze workspace afhankelijk zijn.</target></trans-unit>
@@ -116,7 +116,7 @@
 			<target xml:lang="nl">Deze module bevat een overzicht van alle elementen in de huidige workspace en geeft de mogelijkheid de review en publicatie workflow voort te zetten.</target></trans-unit>
       <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve">
 				<source>Unpublished changes in workspace "{0}"</source>
-			<target xml:lang="nl" state="translated">Niet gepubliceerde wijzigingen</target><alt-trans><target xml:lang="nl">Niet-gepubliceerde wijzigingen</target></alt-trans></trans-unit>
+			<target xml:lang="nl" state="translated">Niet gepubliceerde wijzigingen in workspace "{0}"</target><alt-trans><target xml:lang="nl">Niet gepubliceerde wijzigingen</target></alt-trans><alt-trans><target xml:lang="nl">Niet-gepubliceerde wijzigingen</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.changesCounts" xml:space="preserve" approved="yes">
 				<source>additions: {new}, changes: {changed}, removals: {removed}</source>
 			<target xml:lang="nl">toevoegingen: {new}, wijzigingen: {changed}, verwijderd: {removed}</target></trans-unit>
@@ -180,19 +180,19 @@
       </trans-unit>
       <trans-unit id="workspaces.cantEditBecauseWorkspaceContainsChanges">
         <source>Your personal workspace contains changes, please publish or discard them first.</source>
-        <target xml:lang="nl" state="translated">Uw persoonlijke workspace bevat wijzigingen. Publiceert u alstublieft deze wijzigingen of maak ze ongedaan.</target>
+        <target xml:lang="nl" state="translated">Uw persoonlijke workspace bevat wijzigingen. Publiceer deze wijzigingen of maak ze ongedaan.</target>
+        <alt-trans>
+          <target xml:lang="nl">Uw persoonlijke workspace bevat wijzigingen. Publiceert u alstublieft deze wijzigingen of maak ze ongedaan.</target>
+        </alt-trans>
       </trans-unit>
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
           <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
-          <target xml:lang="nl" state="translated">Workspace "{0}" is niet verwijderd omdat het {1} node bevat.</target>
-          <alt-trans>
-            <target xml:lang="nl">Workspace "{0}" is niet verwijderd omdat het {1} nodes bevat.</target>
-          </alt-trans>
+          <target xml:lang="nl" state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} node.</target>
         </trans-unit>
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target xml:lang="nl" state="translated">Workspace "{0}" is niet verwijderd omdat het {1} nodes bevat.</target>
+          <target xml:lang="nl" state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} nodes.</target>
         </trans-unit>
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved">
@@ -223,6 +223,12 @@
         <source>All changes from workspace "{0}" have been discarded.</source>
         <target xml:lang="nl" state="translated">Alle wijzigingen van workspace "{0}" zijn ongedaan gemaakt.</target>
       </trans-unit>
+      <trans-unit id="media.dragHelp" xml:space="preserve">
+				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
+			<target xml:lang="nl" state="needs-translation">Drag and drop an asset on a collection / tag to add them to it.</target></trans-unit>
+      <trans-unit id="media.replace.options.keepOriginalFilename" xml:space="preserve">
+				<source>Keep the filename "{0}"</source>
+			<target xml:lang="nl" state="needs-translation">Keep the filename "{0}"</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve" approved="yes">
 				<source>Media</source>
 			<target xml:lang="nl">Media</target></trans-unit>
@@ -679,6 +685,9 @@
       <trans-unit id="media.tooltip.editAsset" xml:space="preserve" approved="yes">
 				<source>Edit asset</source>
 			<target xml:lang="nl">Bestand bewerken</target><alt-trans><target xml:lang="nl">Asset bewerken</target></alt-trans></trans-unit>
+      <trans-unit id="media.tooltip.replaceAssetResource" xml:space="preserve">
+				<source>Replace</source>
+			<target xml:lang="nl" state="needs-translation">Replace</target></trans-unit>
       <trans-unit id="media.tooltip.deleteAsset" xml:space="preserve" approved="yes">
 				<source>Delete asset</source>
 			<target xml:lang="nl">Bestand verwijderen</target><alt-trans><target xml:lang="nl">Asset verwijderen</target></alt-trans></trans-unit>
@@ -706,6 +715,9 @@
       <trans-unit id="media.cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
 			<target xml:lang="nl">Annuleren</target></trans-unit>
+      <trans-unit id="media.replaceAssetResource" xml:space="preserve">
+				<source>Replace</source>
+			<target xml:lang="nl" state="needs-translation">Replace</target></trans-unit>
       <trans-unit id="media.saveEditing" xml:space="preserve" approved="yes">
 				<source>Save</source>
 			<target xml:lang="nl">Sla op</target></trans-unit>
@@ -907,11 +919,11 @@
       <group id="media.relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="media.relatedNodes[0]">
           <source>{0} usages</source>
-          <target xml:lang="nl" state="translated">{0} toepassingen</target>
+          <target xml:lang="nl" state="needs-translation">{0} usages</target>
         </trans-unit>
         <trans-unit id="media.relatedNodes[1]">
           <source>{0} usages</source>
-          <target xml:lang="nl" state="translated">{0} toepassingen</target>
+          <target xml:lang="nl" state="needs-translation">{0} usages</target>
         </trans-unit>
       </group>
       <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve">

@@ -41,15 +41,15 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     protected function assertThatOriginalOrNewNodeIsCalled($methodName, $argument1 = null)
     {
-        $propertyMapper = $this->getMock('TYPO3\Flow\Property\PropertyMapper', array(), array(), '', false);
+        $propertyMapper = $this->getMockBuilder('TYPO3\Flow\Property\PropertyMapper')->disableOriginalConstructor()->getMock();
         $propertyMapper->expects($this->any())->method('convert')->willReturnArgument(0);
 
-        $userWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', false);
-        $liveWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', false);
-        $nodeType = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeType', array(), array(), '', false);
+        $userWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
+        $liveWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
+        $nodeType = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeType')->disableOriginalConstructor()->getMock();
         $nodeType->expects($this->any())->method('getPropertyType')->will($this->returnValue('string'));
 
-        $originalNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array(), '', false);
+        $originalNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
         $originalNode->expects($this->any())->method('getWorkspace')->will($this->returnValue($liveWorkspace));
         $originalNode->expects($this->any())->method('getNodeType')->will($this->returnValue($nodeType));
         if ($argument1 === null) {
@@ -58,7 +58,7 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase
             $originalNode->expects($this->any())->method($methodName)->with($argument1)->will($this->returnValue('originalNodeResult'));
         }
 
-        $newNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array(), '', false);
+        $newNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
         $newNode->expects($this->any())->method('getWorkspace')->will($this->returnValue($userWorkspace));
         $newNode->expects($this->any())->method('getNodeType')->will($this->returnValue($nodeType));
         if ($argument1 === null) {
@@ -67,7 +67,7 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase
             $newNode->expects($this->any())->method($methodName)->with($argument1)->will($this->returnValue('newNodeResult'));
         }
 
-        $context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', false);
+        $context = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
         $context->expects($this->any())->method('getWorkspace')->will($this->returnValue($userWorkspace));
 
         $contextualizedNode = new \TYPO3\TYPO3CR\Domain\Model\Node($originalNode, $context);
@@ -110,10 +110,10 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getIdentifierReturnsTheIdentifier()
     {
-        $nodeData = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array(), '', false);
+        $nodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
         $nodeData->expects($this->once())->method('getIdentifier')->will($this->returnValue('theidentifier'));
 
-        $context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', false);
+        $context = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
 
         $contextualizedNode = new \TYPO3\TYPO3CR\Domain\Model\Node($nodeData, $context);
 
@@ -224,7 +224,7 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setNodeTypeOnNodeWithNonMatchingContextMaterializesNodeData()
     {
-        $nodeType = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeType', array(), array(), '', false);
+        $nodeType = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeType')->disableOriginalConstructor()->getMock();
 
         $node = $this->setUpNodeWithNonMatchingContext();
 
@@ -256,10 +256,10 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase
         $nodeData = $node->getNodeData();
         $context = $node->getContext();
 
-        $subNode1 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('setRemoved'), array($nodeData, $context));
+        $subNode1 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Node')->setMethods(array('setRemoved'))->setConstructorArgs(array($nodeData, $context))->getMock();
         $subNode1->expects($this->once())->method('setRemoved');
 
-        $subNode2 = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('setRemoved'), array($nodeData, $context));
+        $subNode2 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Node')->setMethods(array('setRemoved'))->setConstructorArgs(array($nodeData, $context))->getMock();
         $subNode2->expects($this->once())->method('setRemoved');
 
         $node->expects($this->once())->method('getChildNodes')->will($this->returnValue(array($subNode1, $subNode2)));
@@ -271,21 +271,21 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getParentReturnsParentNodeInCurrentNodesContext()
     {
-        $currentNodeWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', false);
+        $currentNodeWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
 
         $mockFirstLevelNodeCache = $this->getFirstLevelNodeCache();
 
-        $context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', false);
+        $context = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
         $context->expects($this->any())->method('getWorkspace')->will($this->returnValue($currentNodeWorkspace));
         $context->expects($this->any())->method('getFirstLevelNodeCache')->will($this->returnValue($mockFirstLevelNodeCache));
 
         $expectedParentNodeData = new \TYPO3\TYPO3CR\Domain\Model\NodeData('/foo', $currentNodeWorkspace);
         $expectedContextualizedParentNode = new \TYPO3\TYPO3CR\Domain\Model\Node($expectedParentNodeData, $context);
 
-        $nodeDataRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('findOneByPathInContext'), array(), '', false);
+        $nodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->setMethods(array('findOneByPathInContext'))->getMock();
         $nodeDataRepository->expects($this->once())->method('findOneByPathInContext')->with('/foo', $context)->will($this->returnValue($expectedContextualizedParentNode));
 
-        $currentNodeData = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array('/foo/baz', $currentNodeWorkspace));
+        $currentNodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->setConstructorArgs(array('/foo/baz', $currentNodeWorkspace))->getMock();
         $currentContextualizedNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('getParentPath'), array($currentNodeData, $context));
         $currentContextualizedNode->expects($this->once())->method('getParentPath')->will($this->returnValue('/foo'));
         $currentContextualizedNode->_set('nodeDataRepository', $nodeDataRepository);
@@ -299,22 +299,22 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getNodeReturnsTheSpecifiedNodeInTheCurrentNodesContext()
     {
-        $currentNodeWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', false);
+        $currentNodeWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
 
         $mockFirstLevelNodeCache = $this->getFirstLevelNodeCache();
 
-        $context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', false);
+        $context = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
         $context->expects($this->any())->method('getWorkspace')->will($this->returnValue($currentNodeWorkspace));
         $context->expects($this->any())->method('getFirstLevelNodeCache')->will($this->returnValue($mockFirstLevelNodeCache));
 
-        $expectedNodeData = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array('/foo/bar', $currentNodeWorkspace));
+        $expectedNodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->setConstructorArgs(array('/foo/bar', $currentNodeWorkspace))->getMock();
         $expectedContextualizedNode = new \TYPO3\TYPO3CR\Domain\Model\Node($expectedNodeData, $context);
 
-        $nodeDataRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('findOneByPathInContext'), array(), '', false);
+        $nodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->setMethods(array('findOneByPathInContext'))->getMock();
         $nodeDataRepository->expects($this->once())->method('findOneByPathInContext')->with('/foo/bar', $context)->will($this->returnValue($expectedContextualizedNode));
 
-        $currentNodeData = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array('dummy'), array('/foo/baz', $currentNodeWorkspace));
-        $nodeService = $this->getMock('TYPO3\TYPO3CR\Domain\Service\NodeService', array(), array(), '', false);
+        $currentNodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->setMethods(array('dummy'))->setConstructorArgs(array('/foo/baz', $currentNodeWorkspace))->getMock();
+        $nodeService = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\NodeService')->disableOriginalConstructor()->getMock();
         $nodeService->expects($this->once())->method('normalizePath')->with('../bar', '/foo/baz')->will($this->returnValue('/foo/bar'));
         $currentContextualizedNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('dummy'), array($currentNodeData, $context));
         $currentContextualizedNode->_set('nodeDataRepository', $nodeDataRepository);
@@ -330,23 +330,23 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     protected function setUpNodeWithNonMatchingContext(array $configurableMethods = array())
     {
-        $userWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', false);
+        $userWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
         $userWorkspace->expects($this->any())->method('getName')->will($this->returnValue('user'));
-        $liveWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', false);
+        $liveWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
         $liveWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
         $liveWorkspace->expects($this->any())->method('getBaseWorkspace')->will($this->returnValue(null));
 
-        $nodeData = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array(), '', false);
+        $nodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
         $nodeData->expects($this->any())->method('getWorkspace')->will($this->returnValue($liveWorkspace));
 
-        $mockFirstLevelNodeCache = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Cache\FirstLevelNodeCache');
+        $mockFirstLevelNodeCache = $this->createMock('TYPO3\TYPO3CR\Domain\Service\Cache\FirstLevelNodeCache');
 
         $context = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
         $context->expects($this->any())->method('getWorkspace')->will($this->returnValue($userWorkspace));
         $context->expects($this->any())->method('getTargetDimensions')->will($this->returnValue(array()));
         $context->expects($this->any())->method('getFirstLevelNodeCache')->will($this->returnValue($mockFirstLevelNodeCache));
 
-        $node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array_merge(array('materializeNodeData'), $configurableMethods), array($nodeData, $context));
+        $node = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Node')->setMethods(array_merge(array('materializeNodeData'), $configurableMethods))->setConstructorArgs(array($nodeData, $context))->getMock();
         $node->expects($this->once())->method('materializeNodeData');
         return $node;
     }
@@ -356,7 +356,7 @@ class ContextualizedNodeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     protected function getFirstLevelNodeCache()
     {
-        $mockFirstLevelNodeCache = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Cache\FirstLevelNodeCache');
+        $mockFirstLevelNodeCache = $this->createMock('TYPO3\TYPO3CR\Domain\Service\Cache\FirstLevelNodeCache');
         $mockFirstLevelNodeCache->expects($this->any())->method('getByPath')->will($this->returnValue(false));
         $mockFirstLevelNodeCache->expects($this->any())->method('getByIdentifier')->will($this->returnValue(false));
         $mockFirstLevelNodeCache->expects($this->any())->method('getChildNodesByPathAndNodeTypeFilter')->will($this->returnValue(false));

@@ -19,6 +19,7 @@ use TYPO3\Flow\Mvc\View\JsonView;
 use TYPO3\Flow\Security\Authentication\Controller\AbstractAuthenticationController;
 use TYPO3\Flow\Security\Exception\AuthenticationRequiredException;
 use TYPO3\Flow\Session\SessionInterface;
+use TYPO3\Flow\Session\SessionManagerInterface;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Service\BackendRedirectionService;
@@ -34,6 +35,12 @@ class LoginController extends AbstractAuthenticationController
      * @var SessionInterface
      */
     protected $session;
+
+    /**
+     * @Flow\Inject
+     * @var SessionManagerInterface
+     */
+    protected $sessionManager;
 
     /**
      * @Flow\Inject
@@ -126,17 +133,28 @@ class LoginController extends AbstractAuthenticationController
      */
     public function tokenLoginAction($token)
     {
-        $sessionId = $this->loginTokenCache->get($token);
+        $newSessionId = $this->loginTokenCache->get($token);
         $this->loginTokenCache->remove($token);
 
-        if ($sessionId === false) {
+        if ($newSessionId === false) {
             $this->systemLogger->log(sprintf('Token-based login failed, non-existing or expired token %s', $token), LOG_WARNING);
             $this->redirect('index');
-        } else {
-            $this->systemLogger->log(sprintf('Token-based login succeeded, token %s', $token), LOG_DEBUG);
-            $this->replaceSessionCookie($sessionId);
-            $this->redirect('index', 'Backend\Backend');
         }
+
+        $this->systemLogger->log(sprintf('Token-based login succeeded, token %s', $token), LOG_DEBUG);
+
+        $newSession = $this->sessionManager->getSession($newSessionId);
+        if ($newSession->canBeResumed()) {
+            $newSession->resume();
+        }
+        if ($newSession->isStarted()) {
+            $newSession->putData('lastVisitedNode', null);
+        } else {
+            $this->systemLogger->log(sprintf('Failed resuming or starting session %s which was referred to in the login token %s.', $newSessionId, $token), LOG_ERR);
+        }
+
+        $this->replaceSessionCookie($newSessionId);
+        $this->redirect('index', 'Backend\Backend');
     }
 
     /**
@@ -147,7 +165,11 @@ class LoginController extends AbstractAuthenticationController
      */
     protected function onAuthenticationFailure(AuthenticationRequiredException $exception = null)
     {
-        $this->addFlashMessage('The entered username or password was wrong', 'Wrong credentials', Message::SEVERITY_ERROR, array(), ($exception === null ? 1347016771 : $exception->getCode()));
+        if ($this->view instanceof JsonView) {
+            $this->view->assign('value', array('success' => false));
+        } else {
+            $this->addFlashMessage('The entered username or password was wrong', 'Wrong credentials', Message::SEVERITY_ERROR, array(), ($exception === null ? 1347016771 : $exception->getCode()));
+        }
     }
 
     /**

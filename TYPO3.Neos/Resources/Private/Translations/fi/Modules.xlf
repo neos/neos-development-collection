@@ -183,16 +183,13 @@
         <target xml:lang="fi">Henkilökohtainen työtilasi sisältää muutoksia, julkaise tai hylkää ne ensin.</target>
       </trans-unit>
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
-        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]" approved="yes">
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
           <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
-          <target xml:lang="fi">Työtilaa "{0}" ei poistettu koska se sisältää {1} solmun.</target>
-          <alt-trans>
-            <target xml:lang="fi">Työtilaa "{0}" ei poistettu koska se sisältää solmun {1}.</target>
-          </alt-trans>
+          <target xml:lang="fi" state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} node.</target>
         </trans-unit>
-        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]" approved="yes">
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target xml:lang="fi">Työtilaa "{0}" ei poistettu koska se sisältää {1} solmua.</target>
+          <target xml:lang="fi" state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} nodes.</target>
         </trans-unit>
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved" approved="yes">
@@ -223,6 +220,12 @@
         <source>All changes from workspace "{0}" have been discarded.</source>
         <target xml:lang="fi">Kaikki työtilan "{0}" muutokset on hylätty.</target>
       </trans-unit>
+      <trans-unit id="media.dragHelp" xml:space="preserve">
+				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
+			<target xml:lang="fi" state="needs-translation">Drag and drop an asset on a collection / tag to add them to it.</target></trans-unit>
+      <trans-unit id="media.replace.options.keepOriginalFilename" xml:space="preserve">
+				<source>Keep the filename "{0}"</source>
+			<target xml:lang="fi" state="needs-translation">Keep the filename "{0}"</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve" approved="yes">
 				<source>Media</source>
 			<target xml:lang="fi">Media</target></trans-unit>
@@ -237,7 +240,7 @@
 			<target xml:lang="fi">Tämä moduuli näyttää kaikki tämän Neos-asennuksen tapahtumat.</target></trans-unit>
       <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve" approved="yes">
 				<source>Here's what happened recently in Neos</source>
-			<target xml:lang="fi">Neosin viimeisimmät tapahtumat:</target></trans-unit>
+			<target xml:lang="fi">Neosin viimeisimmät tapahtumat</target><alt-trans><target xml:lang="fi">Neosin viimeisimmät tapahtumat:</target></alt-trans></trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve" approved="yes">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
 			<target xml:lang="fi">Historiassa ei vielä ole tapahtumia.</target></trans-unit>
@@ -679,6 +682,9 @@
       <trans-unit id="media.tooltip.editAsset" xml:space="preserve" approved="yes">
 				<source>Edit asset</source>
 			<target xml:lang="fi">Muokka nimikettä</target></trans-unit>
+      <trans-unit id="media.tooltip.replaceAssetResource" xml:space="preserve">
+				<source>Replace</source>
+			<target xml:lang="fi" state="needs-translation">Replace</target></trans-unit>
       <trans-unit id="media.tooltip.deleteAsset" xml:space="preserve" approved="yes">
 				<source>Delete asset</source>
 			<target xml:lang="fi">Poista nimike</target></trans-unit>
@@ -706,6 +712,9 @@
       <trans-unit id="media.cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
 			<target xml:lang="fi">Peruuta</target></trans-unit>
+      <trans-unit id="media.replaceAssetResource" xml:space="preserve">
+				<source>Replace</source>
+			<target xml:lang="fi" state="needs-translation">Replace</target></trans-unit>
       <trans-unit id="media.saveEditing" xml:space="preserve" approved="yes">
 				<source>Save</source>
 			<target xml:lang="fi">Tallenna</target></trans-unit>
@@ -905,13 +914,13 @@
 				<source>Asset could not be deleted, because there are still Nodes using it</source>
 			<target xml:lang="fi">Nimikettä ei voitu poistaa koska jotkin solmut käyttävät vielä sitä</target></trans-unit>
       <group id="media.relatedNodes" restype="x-gettext-plurals">
-        <trans-unit id="media.relatedNodes[0]" approved="yes">
+        <trans-unit id="media.relatedNodes[0]">
           <source>{0} usages</source>
-          <target xml:lang="fi">{0} käyttökohdetta</target>
+          <target xml:lang="fi" state="needs-translation">{0} usages</target>
         </trans-unit>
-        <trans-unit id="media.relatedNodes[1]" approved="yes">
+        <trans-unit id="media.relatedNodes[1]">
           <source>{0} usages</source>
-          <target xml:lang="fi">{0} käyttökohdetta</target>
+          <target xml:lang="fi" state="needs-translation">{0} usages</target>
         </trans-unit>
       </group>
       <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve" approved="yes">

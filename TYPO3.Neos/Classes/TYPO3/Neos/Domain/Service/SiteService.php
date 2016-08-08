@@ -56,6 +56,12 @@ class SiteService
     protected $workspaceRepository;
 
     /**
+     * @Flow\Inject
+     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     */
+    protected $persistenceManager;
+
+    /**
      * Remove given site all nodes for that site and all domains associated.
      *
      * @param Site $site
@@ -70,10 +76,15 @@ class SiteService
             $this->nodeDataRepository->remove($siteNode);
         }
 
+        $site->setPrimaryDomain(null);
+        $this->siteRepository->update($site);
+
         $domainsForSite = $this->domainRepository->findBySite($site);
         foreach ($domainsForSite as $domain) {
             $this->domainRepository->remove($domain);
         }
+        $this->persistenceManager->persistAll();
+
         $this->siteRepository->remove($site);
 
         $this->emitSitePruned($site);

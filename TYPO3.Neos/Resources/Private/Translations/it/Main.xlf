@@ -546,7 +546,7 @@
 			<target xml:lang="it" state="needs-translation">Width</target></trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve">
 				<source>Missing required property: </source>
-			<target xml:lang="it" state="translated">Proprietà richiesta mancante: </target><alt-trans><target xml:lang="it">Proprietà richiesta mancante:</target></alt-trans></trans-unit>
+			<target xml:lang="it" state="translated">Proprietà richiesta mancante: </target></trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
 			<target xml:lang="it" state="needs-translation">Workspace</target></trans-unit>

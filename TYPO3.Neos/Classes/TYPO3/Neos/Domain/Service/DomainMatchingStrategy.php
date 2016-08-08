@@ -39,7 +39,7 @@ class DomainMatchingStrategy
         $hostPartsReverse = array_reverse(explode('.', $host));
 
         foreach ($domains as $domain) {
-            $hostPattern = $domain->getHostPattern();
+            $hostPattern = is_string($domain) ? $domain : $domain->getHostPattern();
 
             if ($host === $hostPattern) {
                 $matchQuality = self::EXACTMATCH;

@@ -186,7 +186,6 @@
 			width: $unit;
 			background: none;
 			background-image: none !important;
-			border-left: 1px solid $grayDark;
 			color: white;
 			text-decoration: none;
 			border-radius: 0;
@@ -195,10 +194,23 @@
 				background-color: $blue;
 			}
 
-			i {
+			&:before {
+				display: block;
+				content: '';
 				position: absolute;
-				left: 15px;
-				top: 12px;
+				width: 1px;
+				height: $relatedMargin * 3;
+				top: $relatedMargin;
+				right: $unit;
+				background-color: #fff;
+				opacity: .15;
+			}
+
+			i {
+				width: $unit;
+				line-height: $unit;
+				text-align: center;
+				vertical-align: baseline;
 			}
 		}
 
@@ -383,6 +395,7 @@
 			@include font;
 			font-size: 14px;
 			padding: 0 ($defaultMargin - 2px + $unit) 0 ($defaultMargin - 2px);
+			background-image: none !important; // needed to overwrite media queries
 
 			&:focus {
 				outline: none;
