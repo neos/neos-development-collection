@@ -133,7 +133,7 @@ class NodePropertyConverterService
         $rawType = TypeHandling::truncateElementType($dataType);
 
         // This hardcoded handling is to circumvent rewriting PropertyMappers that convert objects. Usually they expect the source to be an object already and break if not.
-        if (!TypeHandling::isSimpleType($rawType) && !is_object($propertyValue)) {
+        if (!TypeHandling::isSimpleType($rawType) && !is_object($propertyValue) && !is_array($propertyValue)) {
             return null;
         }
 
