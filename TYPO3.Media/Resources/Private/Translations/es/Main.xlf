@@ -28,22 +28,22 @@
 			<target xml:lang="es-ES" state="needs-translation">Tag "{0}" already exists and was added to collection.</target></trans-unit>
       <trans-unit id="tagHasBeenCreated" xml:space="preserve">
 				<source>Tag "{0}" has been created.</source>
-			<target xml:lang="es-ES" state="needs-translation">Tag "{0}" has been created.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Etiqueta {0} ha sido creada.</target></trans-unit>
       <trans-unit id="tagHasBeenUpdated" xml:space="preserve">
 				<source>Tag "{0}" has been updated.</source>
-			<target xml:lang="es-ES" state="needs-translation">Tag "{0}" has been updated.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Etiqueta {0} ha sido actualizada.</target></trans-unit>
       <trans-unit id="tagHasBeenDeleted" xml:space="preserve">
 				<source>Tag "{0}" has been deleted.</source>
-			<target xml:lang="es-ES" state="needs-translation">Tag "{0}" has been deleted.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Etiqueta {0} ha sido eliminada.</target></trans-unit>
       <trans-unit id="collectionHasBeenCreated" xml:space="preserve">
 				<source>Collection "{0}" has been created.</source>
-			<target xml:lang="es-ES" state="needs-translation">Collection "{0}" has been created.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Colección {0} ha sido creada.</target></trans-unit>
       <trans-unit id="collectionHasBeenUpdated" xml:space="preserve">
 				<source>Collection "{0}" has been updated.</source>
-			<target xml:lang="es-ES" state="needs-translation">Collection "{0}" has been updated.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Colección {0} ha sido actualizada.</target></trans-unit>
       <trans-unit id="collectionHasBeenDeleted" xml:space="preserve">
 				<source>Collection "{0}" has been deleted.</source>
-			<target xml:lang="es-ES" state="needs-translation">Collection "{0}" has been deleted.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Colección {0} ha sido eliminada.</target></trans-unit>
       <trans-unit id="media.replace.options.generateRedirects" xml:space="preserve">
 				<source>Generate redirects from original file url to the new url</source>
 			<target xml:lang="es-ES" state="needs-translation">Generate redirects from original file url to the new url</target></trans-unit>
