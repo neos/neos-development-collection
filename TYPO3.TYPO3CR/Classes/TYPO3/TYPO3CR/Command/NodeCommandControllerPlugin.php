@@ -1082,39 +1082,39 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
      */
     protected function repairShadowNodes($workspaceName, $dryRun, NodeType $nodeType = null)
     {
-        $this->output->outputLine('Checking for nodes with missing shadow nodes ...');
-
-        $nodesArray = $this->collectNodesWithMissingShadowNodes();
-        if ($nodesArray === []) {
+        /** @var Workspace $workspace */
+        $workspace = $this->workspaceRepository->findByIdentifier($workspaceName);
+        if ($workspace->getBaseWorkspace() === null) {
+            $this->output->outputLine('Repairing base workspace "%s", therefore skipping check for shadow nodes.', [$workspaceName]);
+            $this->output->outputLine();
             return;
         }
 
-        if (!$dryRun) {
-            $self = $this;
-            $this->output->outputLine();
-            $this->output->outputLine('Nodes with missing shadow nodes found.');
-            foreach ($nodesArray as $nodeArray) {
-#                $self->removeNode($nodeArray['identifier'], $nodeArray['dimensionsHash']);
-            }
-            $self->output->outputLine('Repaired %s node%s with missing shadow nodes.', array(count($nodesArray), count($nodesArray) > 1 ? 's' : ''));
-        } else {
-            $this->output->outputLine('Found %s node%s with missing shadow nodes which need to be repaired.', array(count($nodesArray), count($nodesArray) > 1 ? 's' : ''));
-        }
+        $this->output->outputLine('Checking for nodes with missing shadow nodes ...');
+        $fixedShadowNodes = $this->fixShadowNodesInWorkspace($workspace, $nodeType);
+
+        $this->output->outputLine('%s %s node%s with missing shadow nodes.', [
+            $dryRun ? 'Would repair' : 'Repaired',
+            $fixedShadowNodes,
+            $fixedShadowNodes !== 1 ? 's' : ''
+        ]);
+
         $this->output->outputLine();
     }
 
     /**
      * Collects all nodes with missing shadow nodes
      *
+     * @param Workspace $workspace
+     * @param boolean $dryRun
+     * @param NodeType $nodeType
      * @return array
      */
-    protected function collectNodesWithMissingShadowNodes()
+    protected function fixShadowNodesInWorkspace(Workspace $workspace, $dryRun, NodeType $nodeType = null)
     {
-        $workspaces = $this->workspaceRepository->findAll();
+        $workspaces = array_merge([$workspace], $workspace->getBaseWorkspaces());
 
-        $nodesWithMissingShadowNodes = [];
-        $nodesWithSameIdentifier = [];
-
+        $fixedShadowNodes = 0;
         foreach ($workspaces as $workspace) {
             /** @var Workspace $workspace */
             if ($workspace->getBaseWorkspace() === null) {
@@ -1123,31 +1123,40 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 
             /** @var QueryBuilder $queryBuilder */
             $queryBuilder = $this->entityManager->createQueryBuilder();
-            $queryBuilder->select('n.identifier,n.path,n.dimensionsHash')
+            $queryBuilder->select('n')
                 ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
                 ->where('n.workspace = :workspace');
             $queryBuilder->setParameter('workspace', $workspace->getName());
+            if ($nodeType !== null) {
+                $queryBuilder->andWhere('n.nodeType = :nodeType');
+                $queryBuilder->setParameter('nodeType', $nodeType->getName());
+            }
 
-            foreach ($queryBuilder->getQuery()->getArrayResult() as $nodeDataArray) {
-                $queryBuilder = $this->entityManager->createQueryBuilder();
-                $queryBuilder->select('n.identifier,n.path,n.dimensionsHash')
-                    ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
-                    ->where('n.workspace = :workspace');
-                $queryBuilder->setParameter('workspace', $workspace->getName());
+            /** @var NodeData $nodeData */
+            foreach ($queryBuilder->getQuery()->getResult() as $nodeData) {
+                $nodeDataSeenFromParentWorkspace = $this->nodeDataRepository->findOneByIdentifier($nodeData->getIdentifier(), $workspace->getBaseWorkspace(), $nodeData->getDimensionValues());
+                // This is the good case, either the node does not exist or was shadowed
+                if ($nodeDataSeenFromParentWorkspace === null) {
+                    continue;
+                }
+                // Also good, the node was not moved at all.
+                if ($nodeDataSeenFromParentWorkspace->getPath() === $nodeData->getPath()) {
+                    continue;
+                }
 
-                // TODO ... further implementation
+                $nodeDataOnSamePath = $this->nodeDataRepository->findOneByPath($nodeData->getPath(), $workspace->getBaseWorkspace(), $nodeData->getDimensionValues(), null);
+                // We cannot just put a shadow node in the path, something exists, but that should be fine.
+                if ($nodeDataOnSamePath !== null) {
+                    continue;
+                }
 
-
+                if (!$dryRun) {
+                    $nodeData->createShadow($nodeDataSeenFromParentWorkspace->getPath());
+                }
+                $fixedShadowNodes++;
             }
         }
 
-        // What needs to be done:
-        //
-        // - for each node in a dependent workspace find all nodes in base workspaces
-        // - if paths are the same, skip
-        // - if paths are different, check if a shadow node exists in the current dependent workspace
-
-        return $nodesWithMissingShadowNodes;
+        return $fixedShadowNodes;
     }
-
 }
