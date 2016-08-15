@@ -369,12 +369,12 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
     /**
      * Performs checks for unset properties that has default values and sets them if necessary.
      *
-     * @param NodeType $nodeType Only for this node type, if specified
      * @param string $workspaceName Name of the workspace to consider
      * @param boolean $dryRun Simulate?
+     * @param NodeType $nodeType Only for this node type, if specified
      * @return void
      */
-    public function addMissingDefaultValues(NodeType $nodeType = null, $workspaceName, $dryRun)
+    public function addMissingDefaultValues($workspaceName, $dryRun, NodeType $nodeType = null)
     {
         if ($nodeType !== null) {
             $this->output->outputLine('Checking nodes of type "%s" for missing default values ...', array($nodeType->getName()));
@@ -990,7 +990,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
                 if ($nodeType->isAbstract()) {
                     continue;
                 }
-                $this->reorderChildNodesByNodeType($dryRun, $workspaceName, $nodeType);
+                $this->reorderChildNodesByNodeType($workspaceName, $dryRun, $nodeType);
             }
         }
 
