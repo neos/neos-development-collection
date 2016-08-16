@@ -23,6 +23,7 @@ use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContentDimensionCombinator;
@@ -129,54 +130,77 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
     {
         switch ($controllerCommandName) {
             case 'repair':
-                return
-                    '<u>Remove abstract and undefined node types</u>' . PHP_EOL .
-                    'removeAbstractAndUndefinedNodes' . PHP_EOL .
-                    PHP_EOL .
-                    'Will remove all nodes that has an abstract or undefined node type.' . PHP_EOL .
-                    PHP_EOL .
-                    '<u>Remove orphan (parentless) nodes</u>' . PHP_EOL .
-                    'removeOrphanNodes' . PHP_EOL .
-                    PHP_EOL .
-                    'Will remove all child nodes that do not have a connection to the root node.' . PHP_EOL . PHP_EOL .
-                    '<u>Remove disallowed child nodes</u>' . PHP_EOL .
-                    'removeDisallowedChildNodes' . PHP_EOL .
-                    PHP_EOL .
-                    'Will remove all child nodes that are disallowed according to the node types\' auto-create' . PHP_EOL .
-                    'configuration and constraints.' . PHP_EOL . PHP_EOL .
-                    '<u>Remove undefined node properties</u>' . PHP_EOL .
-                    'removeUndefinedProperties' . PHP_EOL .
-                    PHP_EOL .
-                    '<u>Remove broken object references</u>' . PHP_EOL .
-                    'removeBrokenEntityReferences' . PHP_EOL .
-                    PHP_EOL .
-                    'Detects and removes references from nodes to entities which don\'t exist anymore (for' . PHP_EOL .
-                    'example Image nodes referencing ImageVariant objects which are gone for some reason).' . PHP_EOL .
-                    PHP_EOL .
-                    'Will remove all undefined properties according to the node type configuration.' . PHP_EOL .
-                    '<u>Remove nodes with invalid dimensions</u>' . PHP_EOL .
-                    'removeNodesWithInvalidDimensions' . PHP_EOL .
-                    PHP_EOL .
-                    'Will check for and optionally remove nodes which have dimension values not matching' . PHP_EOL .
-                    'the current content dimension configuration.' . PHP_EOL . PHP_EOL .
-                    '<u>Missing child nodes</u>' . PHP_EOL .
-                    'createMissingChildNodes' . PHP_EOL .
-                    PHP_EOL .
-                    'For all nodes (or only those which match the --node-type filter specified with this' . PHP_EOL .
-                    'command) which currently don\'t have child nodes as configured by the node type\'s' . PHP_EOL .
-                    'configuration new child nodes will be created.' . PHP_EOL . PHP_EOL .
-                    '<u>Reorder child nodes</u>' . PHP_EOL .
-                    'reorderChildNodes' . PHP_EOL .
-                    PHP_EOL .
-                    'For all nodes (or only those which match the --node-type filter specified with this' . PHP_EOL .
-                    'command) which have configured child nodes, those child nodes are reordered according to the' . PHP_EOL .
-                    'position from the parents NodeType configuration.' . PHP_EOL . PHP_EOL .
-                    '<u>Missing default properties</u>' . PHP_EOL .
-                    'addMissingDefaultValues' . PHP_EOL .
-                    PHP_EOL .
-                    'For all nodes (or only those which match the --node-type filter specified with this' . PHP_EOL .
-                    'command) which currently don\'t have a property that have a default value configuration' . PHP_EOL .
-                    'the default value for that property will be set.' . PHP_EOL;
+                return <<<'HELPTEXT'
+<u>Remove abstract and undefined node types</u>
+removeAbstractAndUndefinedNodes
+
+Will remove all nodes that has an abstract or undefined node type.
+
+<u>Remove orphan (parentless) nodes</u>
+removeOrphanNodes
+
+Will remove all child nodes that do not have a connection to the root node.
+
+<u>Remove disallowed child nodes</u>
+removeDisallowedChildNodes
+
+Will remove all child nodes that are disallowed according to the node type's auto-create
+configuration and constraints. 
+
+<u>Remove undefined node properties</u>
+removeUndefinedProperties
+
+<u>Remove broken object references</u>
+removeBrokenEntityReferences
+
+Detects and removes references from nodes to entities which don't exist anymore (for
+example Image nodes referencing ImageVariant objects which are gone for some reason).
+
+Will remove all undefined properties according to the node type configuration.
+
+<u>Remove nodes with invalid dimensions</u>
+removeNodesWithInvalidDimensions
+
+Will check for and optionally remove nodes which have dimension values not matching
+the current content dimension configuration.
+
+<u>Remove nodes with invalid workspace</u>
+removeNodesWithInvalidWorkspace
+
+Will check for and optionally remove nodes which belong to a workspace which no longer
+exists.. 
+
+<u>Missing child nodes</u>
+createMissingChildNodes
+
+For all nodes (or only those which match the --node-type filter specified with this
+command) which currently don't have child nodes as configured by the node type's
+configuration new child nodes will be created. 
+
+<u>Reorder child nodes</u>
+reorderChildNodes
+
+For all nodes (or only those which match the --node-type filter specified with this
+command) which have configured child nodes, those child nodes are reordered according to the
+position from the parents NodeType configuration. 
+<u>Missing default properties</u>
+addMissingDefaultValues
+
+For all nodes (or only those which match the --node-type filter specified with this
+command) which currently don\t have a property that have a default value configuration
+the default value for that property will be set. 
+
+<u>Repair nodes with missing shadow nodes</u>
+repairShadowNodes
+
+This will reconstruct missing shadow nodes in case something went wrong in creating
+or publishing them. This must be used on a workspace other than live.
+
+It searches for nodes which have a corresponding node in one of the base workspaces,
+have different node paths, but don't have a corresponding shadow node with a "movedto"
+value.
+
+HELPTEXT;
         }
     }
 
@@ -205,7 +229,8 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
             'removeNodesWithInvalidDimensions' => [ 'cleanup' => true ],
             'createMissingChildNodes' => [ 'cleanup' => false ],
             'reorderChildNodes' => [ 'cleanup' => false ],
-            'addMissingDefaultValues' => [ 'cleanup' => false ]
+            'addMissingDefaultValues' => [ 'cleanup' => false ],
+            'repairShadowNodes' => [ 'cleanup' => false ]
         ];
         $skipCommandNames = Arrays::trimExplode(',', ($skip === null ? '' : $skip));
         $onlyCommandNames = Arrays::trimExplode(',', ($only === null ? '' : $only));
@@ -1054,5 +1079,96 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
                 }
             }
         }
+    }
+
+    /**
+     * Repair nodes whose shadow nodes are missing
+     *
+     * This check searches for nodes which have a corresponding node in one of the base workspaces,
+     * have different node paths, but don't have a corresponding shadow node with a "movedto" value.
+     *
+     * @param string $workspaceName Currently ignored
+     * @param boolean $dryRun Simulate?
+     * @param NodeType $nodeType This argument will be ignored
+     * @return void
+     */
+    protected function repairShadowNodes($workspaceName, $dryRun, NodeType $nodeType = null)
+    {
+        /** @var Workspace $workspace */
+        $workspace = $this->workspaceRepository->findByIdentifier($workspaceName);
+        if ($workspace->getBaseWorkspace() === null) {
+            $this->output->outputLine('Repairing base workspace "%s", therefore skipping check for shadow nodes.', [$workspaceName]);
+            $this->output->outputLine();
+            return;
+        }
+
+        $this->output->outputLine('Checking for nodes with missing shadow nodes ...');
+        $fixedShadowNodes = $this->fixShadowNodesInWorkspace($workspace, $nodeType);
+
+        $this->output->outputLine('%s %s node%s with missing shadow nodes.', [
+            $dryRun ? 'Would repair' : 'Repaired',
+            $fixedShadowNodes,
+            $fixedShadowNodes !== 1 ? 's' : ''
+        ]);
+
+        $this->output->outputLine();
+    }
+
+    /**
+     * Collects all nodes with missing shadow nodes
+     *
+     * @param Workspace $workspace
+     * @param boolean $dryRun
+     * @param NodeType $nodeType
+     * @return array
+     */
+    protected function fixShadowNodesInWorkspace(Workspace $workspace, $dryRun, NodeType $nodeType = null)
+    {
+        $workspaces = array_merge([$workspace], $workspace->getBaseWorkspaces());
+
+        $fixedShadowNodes = 0;
+        foreach ($workspaces as $workspace) {
+            /** @var Workspace $workspace */
+            if ($workspace->getBaseWorkspace() === null) {
+                continue;
+            }
+
+            /** @var QueryBuilder $queryBuilder */
+            $queryBuilder = $this->entityManager->createQueryBuilder();
+            $queryBuilder->select('n')
+                ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+                ->where('n.workspace = :workspace');
+            $queryBuilder->setParameter('workspace', $workspace->getName());
+            if ($nodeType !== null) {
+                $queryBuilder->andWhere('n.nodeType = :nodeType');
+                $queryBuilder->setParameter('nodeType', $nodeType->getName());
+            }
+
+            /** @var NodeData $nodeData */
+            foreach ($queryBuilder->getQuery()->getResult() as $nodeData) {
+                $nodeDataSeenFromParentWorkspace = $this->nodeDataRepository->findOneByIdentifier($nodeData->getIdentifier(), $workspace->getBaseWorkspace(), $nodeData->getDimensionValues());
+                // This is the good case, either the node does not exist or was shadowed
+                if ($nodeDataSeenFromParentWorkspace === null) {
+                    continue;
+                }
+                // Also good, the node was not moved at all.
+                if ($nodeDataSeenFromParentWorkspace->getPath() === $nodeData->getPath()) {
+                    continue;
+                }
+
+                $nodeDataOnSamePath = $this->nodeDataRepository->findOneByPath($nodeData->getPath(), $workspace->getBaseWorkspace(), $nodeData->getDimensionValues(), null);
+                // We cannot just put a shadow node in the path, something exists, but that should be fine.
+                if ($nodeDataOnSamePath !== null) {
+                    continue;
+                }
+
+                if (!$dryRun) {
+                    $nodeData->createShadow($nodeDataSeenFromParentWorkspace->getPath());
+                }
+                $fixedShadowNodes++;
+            }
+        }
+
+        return $fixedShadowNodes;
     }
 }
