@@ -12,13 +12,19 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
  */
 
 use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 
 /**
- * Functional test case which covers all workspace-related behavior of the
- * content repository.
+ * Functional test case which covers all workspace-related behavior
+ * for layered workspaces.
  *
+ * Tests use a structure like:
+ *
+ * - live
+ *   - group workspace
+ *     - user workspace
  */
 class LayeredWorkspacesTest extends FunctionalTestCase
 {
@@ -181,5 +187,55 @@ class LayeredWorkspacesTest extends FunctionalTestCase
         $this->assertInstanceOf(NodeInterface::class, $fooNodeInGroupWorkspace);
         $this->assertSame($this->currentGroupWorkspace, $fooNodeInGroupWorkspace->getNodeData()->getWorkspace()->getName());
         $this->assertTrue($fooNodeInGroupWorkspace->isRemoved());
+    }
+
+    /**
+     * @test
+     */
+    public function nodeFromLiveWorkspaceMovedInUserWorkspaceIsInCorrectPlaceAfterPublish()
+    {
+        $liveContext = $this->contextFactory->create([]);
+        $liveContext->getRootNode()->createNode('foo')->createNode('bar')->createNode('baz');
+        $this->persistenceManager->persistAll();
+
+        $this->rootNode->getNode('foo/bar/baz')->moveInto($this->rootNode->getNode('foo'));
+        $this->persistenceManager->persistAll();
+
+        $this->rootNode->getContext()->getWorkspace()->publish($this->groupWorkspace);
+        $this->persistenceManager->persistAll();
+
+        $groupContext = $this->contextFactory->create(['workspaceName' => $this->currentGroupWorkspace]);
+
+        $movedBazNode = $groupContext->getRootNode()->getNode('foo')->getNode('baz');
+        $this->assertInstanceOf(NodeInterface::class, $movedBazNode);
+
+        $oldBazNode = $groupContext->getRootNode()->getNode('foo/bar/baz');
+        $this->assertNull($oldBazNode);
+    }
+
+    /**
+     * @test
+     */
+    public function nodeFromLiveWorkspaceMovedInUserWorkspaceRetainsShadowNodeInGroupWorkspace()
+    {
+        $liveContext = $this->contextFactory->create([]);
+        $liveContext->getRootNode()->createNode('foo')->createNode('bar')->createNode('baz');
+        $this->persistenceManager->persistAll();
+
+        $this->rootNode->getNode('foo/bar/baz')->moveInto($this->rootNode->getNode('foo'));
+        $this->persistenceManager->persistAll();
+
+        $this->rootNode->getContext()->getWorkspace()->publish($this->groupWorkspace);
+        $this->persistenceManager->persistAll();
+
+        $groupContext = $this->contextFactory->create(['workspaceName' => $this->currentGroupWorkspace]);
+
+        $movedBazNode = $groupContext->getRootNode()->getNode('foo')->getNode('baz');
+        $this->assertInstanceOf(NodeInterface::class, $movedBazNode);
+
+        $shadowNode = $this->nodeDataRepository->findShadowNodeByPath('/foo/bar/baz', $this->groupWorkspace, $groupContext->getDimensions());
+        $this->assertInstanceOf(NodeData::class, $shadowNode);
+        $this->assertNotNull($shadowNode->getMovedTo());
+        $this->assertTrue($shadowNode->isRemoved());
     }
 }
