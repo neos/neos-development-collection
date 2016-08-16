@@ -461,17 +461,17 @@ class Workspace
             }
         }
 
-        if ($node->isRemoved() === true) {
-            $this->nodeDataRepository->remove($targetNodeData);
-        } else {
-            $targetNodeData->similarize($node->getNodeData());
-            if ($nodeWasMoved) {
-                $targetNodeData->setPath($node->getPath(), false);
-            }
-            $targetNodeData->setLastPublicationDateTime($this->now);
-            $node->setNodeData($targetNodeData);
-            $this->nodeService->cleanUpProperties($node);
+        $targetNodeData->setRemoved($node->isRemoved());
+        $targetNodeData->similarize($sourceNodeData);
+        // TODO: This seemswrong and introduces a publish order between nodes. We should always set the path.
+        if ($nodeWasMoved) {
+            $targetNodeData->setPath($node->getPath(), false);
         }
+        $targetNodeData->setLastPublicationDateTime($this->now);
+        $node->setNodeData($targetNodeData);
+        $node->setNodeDataIsMatchingContext(null);
+        $this->nodeService->cleanUpProperties($node);
+
         $this->nodeDataRepository->remove($sourceNodeData);
     }
 
@@ -494,13 +494,9 @@ class Workspace
             $this->nodeDataRepository->remove($movedShadowNodeData);
         }
 
-        if ($targetWorkspace->getBaseWorkspace() === null && $node->isRemoved()) {
-            $this->nodeDataRepository->remove($nodeData);
-        } else {
-            $nodeData->setWorkspace($targetWorkspace);
-            $nodeData->setLastPublicationDateTime($this->now);
-            $this->nodeService->cleanUpProperties($node);
-        }
+        $nodeData->setWorkspace($targetWorkspace);
+        $nodeData->setLastPublicationDateTime($this->now);
+        $this->nodeService->cleanUpProperties($node);
         $node->setNodeDataIsMatchingContext(null);
     }
 
