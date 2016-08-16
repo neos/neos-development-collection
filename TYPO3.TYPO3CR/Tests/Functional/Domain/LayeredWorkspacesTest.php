@@ -1,0 +1,185 @@
+<?php
+namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
+
+/*
+ * This file is part of the TYPO3.TYPO3CR package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
+use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
+
+/**
+ * Functional test case which covers all workspace-related behavior of the
+ * content repository.
+ *
+ */
+class LayeredWorkspacesTest extends FunctionalTestCase
+{
+    /**
+     * @var boolean
+     */
+    protected static $testablePersistenceEnabled = true;
+
+    /**
+     * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+     */
+    protected $nodeDataRepository;
+
+    /**
+     * @var \TYPO3\TYPO3CR\Domain\Model\Node
+     */
+    protected $rootNode;
+
+    /**
+     * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+     */
+    protected $contextFactory;
+
+    /**
+     * @var string
+     */
+    protected $currentUserWorkspace;
+
+    /**
+     * @var string
+     */
+    protected $currentGroupWorkspace;
+
+    /**
+     * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
+     */
+    protected $workspaceRepository;
+
+    /**
+     * @var Workspace
+     */
+    protected $liveWorkspace;
+
+    /**
+     * @var Workspace
+     */
+    protected $groupWorkspace;
+
+    /**
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $this->currentUserWorkspace = uniqid('user-', true);
+        $this->currentGroupWorkspace = uniqid('group-', true);
+
+        $this->setUpRootNodeAndRepository();
+    }
+
+    /**
+     * @return void
+     */
+    public function tearDown()
+    {
+        $this->saveNodesAndTearDownRootNodeAndRepository();
+        parent::tearDown();
+    }
+
+    protected function setUpRootNodeAndRepository()
+    {
+        $this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactory');
+
+        $this->workspaceRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
+        if ($this->liveWorkspace === null) {
+            $this->liveWorkspace = new Workspace('live');
+            $this->workspaceRepository->add($this->liveWorkspace);
+            $this->groupWorkspace = new Workspace($this->currentGroupWorkspace, $this->liveWorkspace);
+            $this->workspaceRepository->add($this->groupWorkspace);
+            $this->workspaceRepository->add(new Workspace($this->currentUserWorkspace, $this->groupWorkspace));
+            $this->persistenceManager->persistAll();
+        }
+
+        $personalContext = $this->contextFactory->create(['workspaceName' => $this->currentUserWorkspace]);
+
+        // Make sure the Workspace was created.
+        $this->liveWorkspace = $personalContext->getWorkspace()->getBaseWorkspace()->getBaseWorkspace();
+        $this->nodeDataRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
+        $this->rootNode = $personalContext->getNode('/');
+
+        $this->persistenceManager->persistAll();
+    }
+
+    protected function saveNodesAndTearDownRootNodeAndRepository()
+    {
+        if ($this->nodeDataRepository !== null) {
+            $this->nodeDataRepository->flushNodeRegistry();
+        }
+        /** @var \TYPO3\TYPO3CR\Domain\Factory\NodeFactory $nodeFactory */
+        $nodeFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Factory\NodeFactory');
+        $nodeFactory->reset();
+        $this->contextFactory->reset();
+
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+        $this->nodeDataRepository = null;
+        $this->rootNode = null;
+    }
+
+    /**
+     * @test
+     */
+    public function nodeFromLiveWorkspaceRemovedInPersonalWorkspaceExistsRemovedInGroupWorkspace()
+    {
+        $liveContext = $this->contextFactory->create([]);
+        $liveContext->getRootNode()->createNode('foo');
+        $this->persistenceManager->persistAll();
+
+        $this->rootNode->getNode('foo')->remove();
+        $this->persistenceManager->persistAll();
+
+        $this->rootNode->getContext()->getWorkspace()->publish($this->groupWorkspace);
+        $this->persistenceManager->persistAll();
+
+        $groupContextWithRemovedContent = $this->contextFactory->create(['workspaceName' => $this->currentGroupWorkspace, 'removedContentShown' => true]);
+
+        $fooNodeInGroupWorkspace = $groupContextWithRemovedContent->getRootNode()->getNode('foo');
+
+        $this->assertInstanceOf(NodeInterface::class, $fooNodeInGroupWorkspace);
+        $this->assertSame($this->currentGroupWorkspace, $fooNodeInGroupWorkspace->getNodeData()->getWorkspace()->getName());
+        $this->assertTrue($fooNodeInGroupWorkspace->isRemoved());
+    }
+
+    /**
+     * @test
+     */
+    public function nodeFromLiveWorkspaceChangedInGroupWorkspaceAndRemovedInPersonalWorkspaceExistsRemovedInGroupWorkspace()
+    {
+        $liveContext = $this->contextFactory->create([]);
+        $liveContext->getRootNode()->createNode('foo');
+        $this->persistenceManager->persistAll();
+
+        $groupContext = $this->contextFactory->create(['workspaceName' => $this->currentGroupWorkspace]);
+        $groupContext->getRootNode()->getNode('foo')->setProperty('someProperty', 'someValue');
+        $this->persistenceManager->persistAll();
+
+        $this->rootNode->getNode('foo')->remove();
+        $this->persistenceManager->persistAll();
+
+        $this->rootNode->getContext()->getWorkspace()->publish($this->groupWorkspace);
+        $this->persistenceManager->persistAll();
+
+        $groupContextWithRemovedContent = $this->contextFactory->create([
+            'workspaceName' => $this->currentGroupWorkspace,
+            'removedContentShown' => true
+        ]);
+
+        $fooNodeInGroupWorkspace = $groupContextWithRemovedContent->getRootNode()->getNode('foo');
+
+        $this->assertInstanceOf(NodeInterface::class, $fooNodeInGroupWorkspace);
+        $this->assertSame($this->currentGroupWorkspace, $fooNodeInGroupWorkspace->getNodeData()->getWorkspace()->getName());
+        $this->assertTrue($fooNodeInGroupWorkspace->isRemoved());
+    }
+}
