@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2016-08-05
+The following reference was automatically generated from code on 2016-08-16
 
 
 .. _`Neos Command Reference: TYPO3.FLOW`:
@@ -2531,8 +2531,8 @@ Will remove all child nodes that do not have a connection to the root node.
 *Remove disallowed child nodes*
 removeDisallowedChildNodes
 
-Will remove all child nodes that are disallowed according to the node types' auto-create
-configuration and constraints.
+Will remove all child nodes that are disallowed according to the node type's auto-create
+configuration and constraints. 
 
 *Remove undefined node properties*
 removeUndefinedProperties
@@ -2544,32 +2544,48 @@ Detects and removes references from nodes to entities which don't exist anymore 
 example Image nodes referencing ImageVariant objects which are gone for some reason).
 
 Will remove all undefined properties according to the node type configuration.
+
 *Remove nodes with invalid dimensions*
 removeNodesWithInvalidDimensions
 
 Will check for and optionally remove nodes which have dimension values not matching
 the current content dimension configuration.
 
+*Remove nodes with invalid workspace*
+removeNodesWithInvalidWorkspace
+
+Will check for and optionally remove nodes which belong to a workspace which no longer
+exists.. 
+
 *Missing child nodes*
 createMissingChildNodes
 
 For all nodes (or only those which match the --node-type filter specified with this
 command) which currently don't have child nodes as configured by the node type's
-configuration new child nodes will be created.
+configuration new child nodes will be created. 
 
 *Reorder child nodes*
 reorderChildNodes
 
 For all nodes (or only those which match the --node-type filter specified with this
 command) which have configured child nodes, those child nodes are reordered according to the
-position from the parents NodeType configuration.
-
+position from the parents NodeType configuration. 
 *Missing default properties*
 addMissingDefaultValues
 
 For all nodes (or only those which match the --node-type filter specified with this
-command) which currently don't have a property that have a default value configuration
-the default value for that property will be set.
+command) which currently don\t have a property that have a default value configuration
+the default value for that property will be set. 
+
+*Repair nodes with missing shadow nodes*
+repairShadowNodes
+
+This will reconstruct missing shadow nodes in case something went wrong in creating
+or publishing them. This must be used on a workspace other than live.
+
+It searches for nodes which have a corresponding node in one of the base workspaces,
+have different node paths, but don't have a corresponding shadow node with a "movedto"
+value.
 
 
 **Examples:**
