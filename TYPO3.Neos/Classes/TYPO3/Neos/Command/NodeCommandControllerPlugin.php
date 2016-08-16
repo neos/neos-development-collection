@@ -100,11 +100,13 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
     {
         switch ($controllerCommandName) {
             case 'repair':
-                return
-                    '<u>Generate missing URI path segments</u>' . PHP_EOL .
-                    PHP_EOL .
-                    'Generates URI path segment properties for all document nodes which don\'t have a path' . PHP_EOL .
-                    'segment set yet.' . PHP_EOL;
+                return <<<'HELPTEXT'
+<u>Generate missing URI path segments</u>
+
+Generates URI path segment properties for all document nodes which don't have a path
+segment set yet.
+
+HELPTEXT;
         }
     }
 
