@@ -501,10 +501,13 @@ class Workspace
     }
 
     /**
+     * Look for a shadow node of $publishedNodeData either adjust or remove it based on $targetWorkspace if the shadow
+     * node is marked as removed.
+     *
      * @param NodeData $publishedNodeData
      * @param Workspace $targetWorkspace
      * @param NodeData $targetNodeData
-     * @return boolean
+     * @return boolean false if no shadow node was found, true otherwise
      */
     protected function handleShadowNodeData(NodeData $publishedNodeData, Workspace $targetWorkspace, NodeData $targetNodeData)
     {
@@ -530,10 +533,13 @@ class Workspace
     }
 
     /**
+     * Adjust the given $shadowNodeData by removing it or moving it to the $targetWorkspace, as needed.
+     *
      * @param NodeData $shadowNodeData
      * @param NodeData $publishedNodeData
      * @param Workspace $targetWorkspace
      * @param NodeData $targetNodeData
+     * @return void
      */
     protected function adjustShadowNodeData(NodeData $shadowNodeData, NodeData $publishedNodeData, Workspace $targetWorkspace, NodeData $targetNodeData)
     {
@@ -554,10 +560,15 @@ class Workspace
     }
 
     /**
+     * Adjusts the path of $shadowNodeData to $path, if needed/possible.
+     *
+     * If the $path is occupied in $targetWorkspace, the shadow is removed.
+     *
      * @param NodeData $shadowNodeData
      * @param $path
      * @param Workspace $targetWorkspace
      * @param array $dimensionValues
+     * @return void
      */
     protected function adjustShadowNodePath(NodeData $shadowNodeData, $path, Workspace $targetWorkspace, array $dimensionValues)
     {
