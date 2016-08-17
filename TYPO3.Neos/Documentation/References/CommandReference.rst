@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2016-08-09
+The following reference was automatically generated from code on 2016-08-17
 
 
 .. _`Command Reference: TYPO3.FLOW`:
@@ -2597,8 +2597,8 @@ The following checks will be performed:
 
 Generates URI path segment properties for all document nodes which don't have a path
 segment set yet.
-*Remove content dimensions from / and /sites*
 
+*Remove content dimensions from / and /sites*
 removeContentDimensionsFromRootAndSitesNode
 
 Removes content dimensions from the root and sites nodes
@@ -2682,6 +2682,8 @@ value.
 ./flow node:repair --workspace user-robert --only removeOrphanNodes,removeNodesWithInvalidDimensions
 
 ./flow node:repair --skip removeUndefinedProperties
+
+
 
 Options
 ^^^^^^^
