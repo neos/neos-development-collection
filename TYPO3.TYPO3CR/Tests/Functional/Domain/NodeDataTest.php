@@ -13,8 +13,11 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
 
 use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\Flow\Utility\Algorithms;
+use TYPO3\Neos\Domain\Service\SiteImportService;
+use TYPO3\TYPO3CR\Domain\Model\NodeDimension;
 use TYPO3\TYPO3CR\Domain\Model\NodeTemplate;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 
 /**
  * Functional test case.
@@ -191,6 +194,116 @@ class NodeDataTest extends FunctionalTestCase
         // The identifier comes from the Fixture.
         $resultingNodeData = $nodeDataRepository->findOneByIdentifier('78f5c720-e8df-2573-1fc1-f7ce5b338485', $context->getWorkspace(true), array());
 
+        $this->assertEmpty($resultingNodeData->getDimensions());
+    }
+
+    /**
+     * @test
+     */
+    public function setDimensionsSetsDimensions()
+    {
+        $siteImportService = $this->objectManager->get(SiteImportService::class);
+        $siteImportService->importFromFile(__DIR__ . '/../Fixtures/NodeStructure.xml', $this->context);
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+        $this->inject($this->contextFactory, 'contextInstances', []);
+
+        $nodeDataRepository = $this->objectManager->get(NodeDataRepository::class);
+
+        // The context is not important here, just a quick way to get a (live) workspace
+        $context = $this->contextFactory->create();
+        // The identifier comes from the Fixture.
+        /** @var \TYPO3\TYPO3CR\Domain\Model\NodeData $resultingNodeData */
+        $resultingNodeData = $nodeDataRepository->findOneByIdentifier('9fa376af-a1b8-83ac-bedc-9ad83c8598bc', $context->getWorkspace(true), []);
+        $this->assertCount(1, $resultingNodeData->getDimensions());
+        $values = $resultingNodeData->getDimensionValues();
+        $this->assertEquals('en_US', $values['language'][0]);
+        $nodeDimension = new NodeDimension($resultingNodeData, 'language', 'lv');
+        $resultingNodeData->setDimensions([$nodeDimension]);
+
+        $nodeDataRepository->update($resultingNodeData);
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+        $this->inject($this->contextFactory, 'contextInstances', []);
+
+        // The context is not important here, just a quick way to get a (live) workspace
+        $context = $this->contextFactory->create();
+        // The identifier comes from the Fixture.
+        /** @var \TYPO3\TYPO3CR\Domain\Model\NodeData $resultingNodeData */
+        $resultingNodeData = $nodeDataRepository->findOneByIdentifier('9fa376af-a1b8-83ac-bedc-9ad83c8598bc', $context->getWorkspace(true), []);
+        $this->assertCount(1, $resultingNodeData->getDimensions());
+        $values = $resultingNodeData->getDimensionValues();
+        $this->assertEquals('lv', $values['language'][0]);
+    }
+
+    /**
+     * @test
+     */
+    public function setDimensionsKeepsExistingDimensions()
+    {
+        $siteImportService = $this->objectManager->get(SiteImportService::class);
+        $siteImportService->importFromFile(__DIR__ . '/../Fixtures/NodeStructure.xml', $this->context);
+        $this->persistenceManager->persistAll();
+        $this->inject($this->contextFactory, 'contextInstances', []);
+
+        $nodeDataRepository = $this->objectManager->get(NodeDataRepository::class);
+
+        // The context is not important here, just a quick way to get a (live) workspace
+        $context = $this->contextFactory->create();
+        // The identifier comes from the Fixture.
+        /** @var \TYPO3\TYPO3CR\Domain\Model\NodeData $resultingNodeData */
+        $resultingNodeData = $nodeDataRepository->findOneByIdentifier('9fa376af-a1b8-83ac-bedc-9ad83c8598bc', $context->getWorkspace(true), []);
+        $resultingNodeData->setDimensions([
+            new NodeDimension($resultingNodeData, 'language', 'lv'),
+            new NodeDimension($resultingNodeData, 'language', 'en_US')
+        ]);
+        $nodeDataRepository->update($resultingNodeData);
+
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+        $this->inject($this->contextFactory, 'contextInstances', []);
+
+        // The context is not important here, just a quick way to get a (live) workspace
+        $context = $this->contextFactory->create();
+        // The identifier comes from the Fixture.
+        /** @var \TYPO3\TYPO3CR\Domain\Model\NodeData $resultingNodeData */
+        $resultingNodeData = $nodeDataRepository->findOneByIdentifier('9fa376af-a1b8-83ac-bedc-9ad83c8598bc', $context->getWorkspace(true), []);
+        $this->assertCount(2, $resultingNodeData->getDimensions());
+        $values = $resultingNodeData->getDimensionValues();
+        $this->assertEquals('en_US', $values['language'][0]);
+        $this->assertEquals('lv', $values['language'][1]);
+    }
+
+    /**
+     * @test
+     */
+    public function setDimensionsToEMptyArrayRemovesDimensions()
+    {
+        $siteImportService = $this->objectManager->get(SiteImportService::class);
+        $siteImportService->importFromFile(__DIR__ . '/../Fixtures/NodeStructure.xml', $this->context);
+        $this->persistenceManager->persistAll();
+        $this->inject($this->contextFactory, 'contextInstances', []);
+
+        $nodeDataRepository = $this->objectManager->get(NodeDataRepository::class);
+
+        // The context is not important here, just a quick way to get a (live) workspace
+        $context = $this->contextFactory->create();
+        // The identifier comes from the Fixture.
+        /** @var \TYPO3\TYPO3CR\Domain\Model\NodeData $resultingNodeData */
+        $resultingNodeData = $nodeDataRepository->findOneByIdentifier('9fa376af-a1b8-83ac-bedc-9ad83c8598bc', $context->getWorkspace(true), []);
+        $this->assertNotEmpty($resultingNodeData->getDimensions());
+        $resultingNodeData->setDimensions([]);
+        $nodeDataRepository->update($resultingNodeData);
+
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+        $this->inject($this->contextFactory, 'contextInstances', []);
+
+        // The context is not important here, just a quick way to get a (live) workspace
+        $context = $this->contextFactory->create();
+        // The identifier comes from the Fixture.
+        /** @var \TYPO3\TYPO3CR\Domain\Model\NodeData $resultingNodeData */
+        $resultingNodeData = $nodeDataRepository->findOneByIdentifier('9fa376af-a1b8-83ac-bedc-9ad83c8598bc', $context->getWorkspace(true), []);
         $this->assertEmpty($resultingNodeData->getDimensions());
     }
 }
