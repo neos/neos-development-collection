@@ -37,7 +37,7 @@ class NodeDataRepositoryTest extends UnitTestCase
     {
         $mockPersistenceManager = $this->createMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
 
-        $this->mockQuery = $this->getMockBuilder('TestQuery')->setMethods(['getResult'])->getMock();
+        $this->mockQuery = $this->getMockBuilder(\TYPO3\Flow\Persistence\Doctrine\Query::class)->disableOriginalConstructor()->getMock();
 
         $this->mockQueryBuilder = $this->getMockBuilder(\Doctrine\ORM\QueryBuilder::class)->disableOriginalConstructor()->getMock();
         $this->mockQueryBuilder->expects($this->any())->method('getQuery')->will($this->returnValue($this->mockQuery));
