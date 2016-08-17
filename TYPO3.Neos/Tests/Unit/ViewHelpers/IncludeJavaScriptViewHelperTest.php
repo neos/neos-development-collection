@@ -45,6 +45,9 @@ class IncludeJavaScriptViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function renderWithoutSubpackageMatchesIncludedFile()
     {
+        if (PHP_VERSION_ID < 50609) {
+            $this->markTestSkipped('Test fails with PHP 5.5 and/or PhpUnit 4.8 while building mocks.');
+        }
         $includedFile = $this->getMockBuilder(\SplFileInfo::class)->disableOriginalConstructor()->setMethods(array('getPathname'))->getMock();
         $includedFile->expects($this->any())->method('getPathname')->will($this->returnValue('resource://MyPackage/Public/JavaScript/Foo.js'));
         $otherFile = $this->getMockBuilder(\SplFileInfo::class)->disableOriginalConstructor()->setMethods(array('getPathname'))->getMock();
@@ -61,6 +64,9 @@ class IncludeJavaScriptViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function renderWithSubpackageIgnoresExcludedFile()
     {
+        if (PHP_VERSION_ID < 50609) {
+            $this->markTestSkipped('Test fails with PHP 5.5 and/or PhpUnit 4.8 while building mocks.');
+        }
         $includedFile = $this->getMockBuilder(\SplFileInfo::class)->disableOriginalConstructor()->setMethods(array('getPathname'))->getMock();
         $includedFile->expects($this->any())->method('getPathname')->will($this->returnValue('resource://MyPackage/Public/MySubpackage/JavaScript/Foo.js'));
         $excludedFile = $this->getMockBuilder(\SplFileInfo::class)->disableOriginalConstructor()->setMethods(array('getPathname'))->getMock();
