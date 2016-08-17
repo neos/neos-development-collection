@@ -204,6 +204,14 @@ class NodeType
             $this->addInheritedSuperTypes($superTypes, $inheritedSuperType);
             $superTypes[$inheritedSuperTypeName] = $inheritedSuperType;
         }
+
+        // the method getSuperTypes() is a magic getter
+        $superTypesInSuperType = $superType->getSuperTypes() ?: [];
+        foreach ($superTypesInSuperType as $inheritedSuperTypeName => $inheritedSuperType) {
+            if (!$inheritedSuperType) {
+                unset($superTypes[$inheritedSuperTypeName]);
+            }
+        }
     }
 
     /**
