@@ -590,6 +590,8 @@ HELPTEXT;
         foreach ($this->contentDimensionCombinator->getAllAllowedCombinations() as $dimensionConfiguration) {
             $context = $this->createContext($workspace->getName(), $dimensionConfiguration);
             $removeDisallowedChildNodes($context->getRootNode());
+            $context->getFirstLevelNodeCache()->flush();
+            $this->nodeFactory->reset();
         }
 
         $disallowedChildNodesCount = count($nodes);
