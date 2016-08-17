@@ -189,6 +189,14 @@ class HtmlAugmenterTest extends UnitTestCase
                 'exclusiveAttributes' => array('some-attribute'),
                 'expectedResult' => '<div some-attribute="value"><div some-attribute>no attribute value is required to make an attribute exclusive</div></div>',
             ),
+            // Escaping possible preg_replace placeholders in attributes
+            array(
+                'html' => '<p>Simple HTML with unique root element</p>',
+                'attributes' => array('data-label' => 'Cost $0.00'),
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'expectedResult' => '<p data-label="Cost $0.00">Simple HTML with unique root element</p>',
+            )
         );
     }
 
