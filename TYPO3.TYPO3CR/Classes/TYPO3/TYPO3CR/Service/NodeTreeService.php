@@ -114,7 +114,6 @@ class NodeTreeService
 
         foreach ($dimensionCombinations as $dimensionCombination) {
             $dimensionCombinationContext = $this->switchToDimensionCombination($context, $dimensionCombination);
-            \TYPO3\Flow\var_dump($dimensionCombinationContext->getProperties(), '2');
             $nodeInDimensionCombination = $dimensionCombinationContext->getNodeByIdentifier($node->getIdentifier());
 
             $this->traverseTree($nodeInDimensionCombination, $action);
