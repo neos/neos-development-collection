@@ -8,9 +8,9 @@
 
 <f:if condition="{neos:backend.shouldLoadMinifiedJavascript()}">
 	<f:then>
-		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Styles/Includes-built.css', package: 'TYPO3.Neos')}?bust={neos:backend.cssBuiltVersion()}" />
+		<link rel="stylesheet" type="text/css" class="neos-ui-asset" href="{f:uri.resource(path: 'Styles/Includes-built.css', package: 'TYPO3.Neos')}?bust={neos:backend.cssBuiltVersion()}" />
 	</f:then>
 	<f:else>
-		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Styles/Includes.css', package: 'TYPO3.Neos')}" />
+		<link rel="stylesheet" type="text/css" class="neos-ui-asset" href="{f:uri.resource(path: 'Styles/Includes.css', package: 'TYPO3.Neos')}" />
 	</f:else>
 </f:if>

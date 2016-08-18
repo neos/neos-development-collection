@@ -209,7 +209,7 @@
 			<target xml:lang="es-ES" state="translated">Ruta relativa</target></trans-unit>
       <trans-unit id="version" xml:space="preserve">
 				<source>Version</source>
-			<target xml:lang="es-ES" state="needs-translation">Version</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Versión</target></trans-unit>
       <trans-unit id="operationCannotBeUndone" xml:space="preserve">
 				<source>This operation cannot be undone.</source>
 			<target xml:lang="es-ES" state="translated">Esta operación no se puede deshacer.</target></trans-unit>
@@ -218,13 +218,13 @@
 			<target xml:lang="es-ES" state="needs-translation">Asset</target></trans-unit>
       <trans-unit id="created" xml:space="preserve">
 				<source>Created</source>
-			<target xml:lang="es-ES" state="needs-translation">Created</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Creado</target></trans-unit>
       <trans-unit id="lastModification" xml:space="preserve">
 				<source>Last modification</source>
-			<target xml:lang="es-ES" state="needs-translation">Last modification</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Última modificación</target></trans-unit>
       <trans-unit id="lastPublication" xml:space="preserve">
 				<source>Last publication</source>
-			<target xml:lang="es-ES" state="needs-translation">Last publication</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Última publicación</target></trans-unit>
       <trans-unit id="identifier" xml:space="preserve">
 				<source>Identifier</source>
 			<target xml:lang="es-ES" state="translated">Identificador</target></trans-unit>
@@ -233,16 +233,16 @@
 			<target xml:lang="es-ES" state="translated">Nombre</target></trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
-			<target xml:lang="es-ES" state="needs-translation">Workspace</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Espacio de Trabajo</target></trans-unit>
       <trans-unit id="structure.label" xml:space="preserve">
 				<source>Structure</source>
 			<target xml:lang="es-ES" state="translated">Estructura</target></trans-unit>
       <trans-unit id="structure.toggle" xml:space="preserve">
 				<source>Toggle context structure</source>
-			<target xml:lang="es-ES" state="needs-translation">Toggle context structure</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Cambiar marco estructural</target></trans-unit>
       <trans-unit id="filter" xml:space="preserve">
 				<source>Filter</source>
-			<target xml:lang="es-ES" state="needs-translation">Filter</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Filtro</target></trans-unit>
       <trans-unit id="toggleMenu" xml:space="preserve">
 				<source>Toggle menu</source>
 			<target xml:lang="es-ES" state="needs-translation">Toggle menu</target></trans-unit>
@@ -483,10 +483,10 @@
 			<target xml:lang="es-ES" state="needs-translation">Toggle content dimensions selector</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.header" xml:space="preserve">
 				<source>Start with an empty or pre-filled document?</source>
-			<target xml:lang="es-ES" state="needs-translation">Start with an empty or pre-filled document?</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">¿Comenzar con un documento vacío o prellenado?</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.nodeTypeDoesNotExistInDimension" xml:space="preserve">
 				<source>This {nodeTypeLabel} does not exist yet in {currentDimensionChoiceText}.</source>
-			<target xml:lang="es-ES" state="needs-translation">This {nodeTypeLabel} does not exist yet in {currentDimensionChoiceText}.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Este {nodeTypeLabel} aún no existe en {currentDimensionChoiceText}.</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createEmptyOrCopy" xml:space="preserve">
 				<source>You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</source>
 			<target xml:lang="es-ES" state="needs-translation">You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</target></trans-unit>
@@ -495,10 +495,10 @@
 			<target xml:lang="es-ES" state="needs-translation">Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createEmpty" xml:space="preserve">
 				<source>Create empty</source>
-			<target xml:lang="es-ES" state="needs-translation">Create empty</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Crear vacío</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createAndCopy" xml:space="preserve">
 				<source>Create and copy</source>
-			<target xml:lang="es-ES" state="needs-translation">Create and copy</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Crear y copiar</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
 			<target xml:lang="es-ES" state="translated">Contenido</target></trans-unit>
@@ -549,7 +549,7 @@
 			<target xml:lang="es-ES" state="translated">Falta la propiedad requerida: </target></trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
-			<target xml:lang="es-ES" state="needs-translation">Workspace</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Espacio de Trabajo</target></trans-unit>
       <trans-unit id="workspaces" xml:space="preserve">
 				<source>Workspaces</source>
 			<target xml:lang="es-ES" state="translated">Espacios de Trabajo</target></trans-unit>
@@ -590,10 +590,10 @@
 			<target xml:lang="es-ES" state="translated">Salir</target></trans-unit>
       <trans-unit id="wrongCredentials" xml:space="preserve">
 				<source>The entered username or password was wrong</source>
-			<target xml:lang="es-ES" state="needs-translation">The entered username or password was wrong</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">El nombre de usuario o la contraseña introducido estaba mal</target></trans-unit>
       <trans-unit id="login.expired" xml:space="preserve">
 				<source>Your login has expired. Please log in again.</source>
-			<target xml:lang="es-ES" state="needs-translation">Your login has expired. Please log in again.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Su sesión ha caducado. Por favor, inicie sesión nuevo.</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
@@ -630,23 +630,23 @@
 			<target xml:lang="es-ES" state="translated">La configuración del tipo de nodo que se supone que se representa aquí no está disponible. Probablemente se cambió el nombre el tipo de nodo y falta una migración o puede que simplemente esté mal escrito.</target></trans-unit>
       <trans-unit id="error.node.create.unexpected" xml:space="preserve">
 				<source>Unexpected error while creating node</source>
-			<target xml:lang="es-ES" state="needs-translation">Unexpected error while creating node</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Error inesperado al crear el nodo</target></trans-unit>
       <trans-unit id="error.node.delete.unexpected" xml:space="preserve">
 				<source>Unexpected error while deleting node</source>
-			<target xml:lang="es-ES" state="needs-translation">Unexpected error while deleting node</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Error inesperado al eliminar nodo</target></trans-unit>
       <trans-unit id="error.node.update.unexpected" xml:space="preserve">
 				<source>Unexpected error while updating node</source>
-			<target xml:lang="es-ES" state="needs-translation">Unexpected error while updating node</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Error inesperado al actualizar el nodo</target></trans-unit>
       <trans-unit id="error.node.move.unexpected" xml:space="preserve">
 				<source>Unexpected error while moving node</source>
-			<target xml:lang="es-ES" state="needs-translation">Unexpected error while moving node</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Error inesperado mientras se muevía de nodo</target></trans-unit>
       <trans-unit id="error.nodeTree.load" xml:space="preserve">
 				<source>Node Tree loading error.</source>
 			<target xml:lang="es-ES" state="needs-translation">Node Tree loading error.</target></trans-unit>
       <!-- FlashMessages -->
       <trans-unit id="flashMessage.1222204027" xml:space="preserve">
 				<source>The entered username or password was wrong</source>
-			<target xml:lang="es-ES" state="needs-translation">The entered username or password was wrong</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">El nombre de usuario o la contraseña introducido estaba mal</target></trans-unit>
       <!-- Miscellaneous -->
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>

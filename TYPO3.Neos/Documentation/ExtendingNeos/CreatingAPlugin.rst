@@ -88,8 +88,8 @@ into the *Configuration/Routes.yaml* of your whole setup (before the Neos routes
     defaults:
       '@format': 'html'
     subRoutes:
-    FlowSubroutes:
-      package: TYPO3.Flow
+      FlowSubroutes:
+        package: TYPO3.Flow
 
 The frontend of your plugin can now be called via ``http://neos.demo/flow/sarkosh.cdcollection``.
 We specifically use the ``flow`` prefix here to ensure that the routes of Flow do not interfere with Neos.

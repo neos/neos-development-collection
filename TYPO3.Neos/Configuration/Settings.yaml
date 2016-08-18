@@ -25,7 +25,18 @@ TYPO3:
             label: 'Neos Backend'
             provider: 'PersistedUsernamePasswordProvider'
             requestPatterns:
-              controllerObjectName: 'TYPO3\Neos\Controller\.*|TYPO3\Neos\Service\.*|TYPO3\Media\Controller\.*'
+              'TYPO3.Neos:backendControllers':
+                pattern: 'ControllerObjectName'
+                patternOptions:
+                  controllerObjectNamePattern: 'TYPO3\Neos\Controller\.*'
+              'TYPO3.Neos:serviceControllers':
+                pattern: 'ControllerObjectName'
+                patternOptions:
+                  controllerObjectNamePattern: 'TYPO3\Neos\Service\.*'
+              'TYPO3.Neos:mediaControllers':
+                pattern: 'ControllerObjectName'
+                patternOptions:
+                  controllerObjectNamePattern: 'TYPO3\Media\Controller\.*'
             entryPoint: 'WebRedirect'
             entryPointOptions:
               routeValues:
