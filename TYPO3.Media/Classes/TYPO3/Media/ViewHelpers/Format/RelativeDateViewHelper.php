@@ -40,13 +40,13 @@ class RelativeDateViewHelper extends AbstractViewHelper
         // More than 11 months ago
         $now = new \TYPO3\Flow\Utility\Now();
         if ($date < $now->modify('-11 months')) {
-            return $date->format('Y M n');
+            return $date->format('Y M j');
         }
         // Same day of same year
         $now = new \TYPO3\Flow\Utility\Now();
         if ($date->format('Y z') === $now->format('Y z')) {
             return $date->format('H:i');
         }
-        return $date->format('M n');
+        return $date->format('M j');
     }
 }

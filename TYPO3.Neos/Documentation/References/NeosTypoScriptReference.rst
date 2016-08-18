@@ -647,33 +647,85 @@ Example::
 	breadcrumb = BreadcrumbMenu
 
 .. _TYPO3_Neos__DimensionMenu:
+.. _TYPO3_Neos__DimensionsMenu:
 
-DimensionMenu
--------------
+DimensionsMenu
+--------------
 
-Create links to other node variants (e.g. variants of the current node in another dimension) by using this TypoScript object.
-All presets of the configured dimension will be included as menu item. If no node variant exists for the preset, a
-``NULL`` node will be included in the item with a state ``'absent'``.
+Create links to other node variants (e.g. variants of the current node in other dimensions) by using this TypoScript object.
 
-:dimension: (required, string): name of the dimension which this menu should be based on. Example: "language".
-:presets: (optional, array): If set, the presets are not loaded from the Settings, but instead taken from this property
-:renderHiddenInIndex: (boolean, default **false**) If TRUE, render nodes which are marked as "hidded-in-index"
+If the ``dimension`` setting is given, the menu will only include items for this dimension, with all other configured
+dimension being set to the value(s) of the current node. Without any ``dimension`` being configured, all possible
+variants will be included.
 
-Minimal Example, outputting a language menu with all configured dimensions::
+If no node variant exists for the preset combination, a ``NULL`` node will be included in the item with a state ``absent``.
 
-	languageMenu = TYPO3.Neos:DimensionMenu {
+:dimension: (optional, string): name of the dimension which this menu should be based on. Example: "language".
+:presets: (optional, array): If set, the presets rendered will be taken from this list of preset identifiers
+:includeAllPresets: (boolean, default **false**) If TRUE, include all presets, not only allowed combinations
+:renderHiddenInIndex: (boolean, default **true**) If TRUE, render nodes which are marked as "hidded-in-index"
+
+In the template for the menu, each ``item`` has the following properties:
+
+:node: (Node) A node instance (with resolved shortcuts) that should be used to link to the item
+:state: (string) Menu state of the item: ``normal``, ``current`` (the current node), ``absent``
+:label: (string) Label of the item (the dimension preset label)
+:menuLevel: (integer) Menu level the item is rendered on
+:dimensions: (array) Dimension values of the node, indexed by dimension name
+:targetDimensions: (array) The target dimensions, indexed by dimension name and values being arrays with ``value``, ``label`` and ``isPinnedDimension``
+
+.. note:: The ``DimensionMenu`` is an alias to ``DimensionsMenu``, available for compatibility reasons only.
+
+Examples
+^^^^^^^^
+
+Minimal Example, outputting a menu with all configured dimension combinations::
+
+	variantMenu = TYPO3.Neos:DimensionsMenu
+
+This example will create two menus, one for the 'language' and one for the 'country' dimension::
+
+	languageMenu = TYPO3.Neos:DimensionsMenu {
 		dimension = 'language'
 	}
+	countryMenu = TYPO3.Neos:DimensionsMenu {
+		dimension = 'country'
+	}
 
-If you only want to render a subset of the available dimensions or manually define a specific order for this language menu,
-you can override the "presets":
+If you only want to render a subset of the available presets or manually define a specific order for a menu,
+you can override the "presets"::
 
-Overridden presets::
-
-	languageMenu = TYPO3.Neos:DimensionMenu {
+	languageMenu = TYPO3.Neos:DimensionsMenu {
 		dimension = 'language'
 		presets = ${['en_US', 'de_DE']} # no matter how many languages are defined, only these two are displayed.
 	}
+
+In some cases, it can be good to ignore the availability of variants when rendering a dimensions menu. Consider a
+situation with two independent menus for country and language, where the following variants of a node exist
+(language / country):
+
+- english / Germany
+- german / Germany
+- english / UK
+
+If the user selects UK, only english will be linked in the language selector. German is only available again, if the
+user switches back to Germany first. This can be changed by setting the ``includeAllPresets`` option::
+
+	languageMenu = TYPO3.Neos:DimensionsMenu {
+		dimension = 'language'
+		includeAllPresets = true
+	}
+
+Now the language menu will try to find nodes for all languages, if needed the menu items will point to a different
+country than currently selected. The menu tries to find a node to link to by using the current preset for the language
+(in this example) and the default presets for any other dimensions. So if fallback rules are in place and a node can be
+found, it is used.
+
+.. note:: The ``item.targetDimensions`` will contain the "intended" dimensions, so that information can be used to
+   inform the user about the potentially unexpected change of dimensions when following  such a link.
+
+Only if the current node is not available at all (even after considering default presets with their fallback rules),
+no node be assigned (so no link will be created and the items will have the ``absent`` state.)
 
 .. _TYPO3_Neos__NodeUri:
 
