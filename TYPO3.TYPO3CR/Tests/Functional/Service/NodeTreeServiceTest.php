@@ -31,6 +31,7 @@ class NodeTreeServiceTest extends FunctionalTestCase
      */
     protected static $testablePersistenceEnabled = true;
 
+
     /**
      * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
      */
@@ -52,6 +53,11 @@ class NodeTreeServiceTest extends FunctionalTestCase
     protected $contentDimensionRepository;
 
     /**
+     * @var \TYPO3\TYPO3CR\Domain\Factory\NodeFactory
+     */
+    protected $nodeFactory;
+
+    /**
      * @var NodeTreeService
      */
     protected $nodeTreeService;
@@ -64,9 +70,10 @@ class NodeTreeServiceTest extends FunctionalTestCase
     {
         parent::setUp();
         $this->nodeDataRepository = new \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository();
-        $this->contextFactory = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Service\ContextFactory::class);
+        $this->contextFactory = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface::class);
         $this->contentDimensionRepository = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository::class);
         $this->workspaceRepository = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository::class);
+        $this->nodeFactory = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Factory\NodeFactory::class);
         $this->nodeTreeService = $this->objectManager->get(NodeTreeService::class);
 
         $liveWorkspace = new \TYPO3\TYPO3CR\Domain\Model\Workspace('live');
@@ -106,14 +113,14 @@ class NodeTreeServiceTest extends FunctionalTestCase
         $grandChildNode = $childNode->createNode('grandchild-node');
         $yetAnotherChildNode = $rootNode->createNode('yet-another-child-node');
 
-        $this->persistenceManager->persistAll();
-
         $expectedIdentifiers = [
             $rootNode->getContextPath(),
             $childNode->getContextPath(),
             $grandChildNode->getContextPath(),
             $yetAnotherChildNode->getContextPath()
         ];
+
+        $this->persistAndFlush();
 
         $actualIdentifiers = [];
         $this->nodeTreeService->traverseTree($rootNode, function (NodeInterface $node) use (&$actualIdentifiers) {
@@ -131,14 +138,16 @@ class NodeTreeServiceTest extends FunctionalTestCase
         $modificationRootNode = $this->getRootNode(self::TRANSLATION_CONTEXT_FALLBACK, 'firstLevelNested');
 
         $addedChildNode = $modificationRootNode->createNode('added-child-node');
-        $this->persistenceManager->persistAll();
+        $addedChildNodeContextPath = $addedChildNode->getContextPath();
+
+        $this->persistAndFlush();
 
         $actualIdentifiers = [];
         $this->nodeTreeService->traverseTree($modificationRootNode, function (NodeInterface $node) use (&$actualIdentifiers) {
             $actualIdentifiers[] = $node->getContextPath();
         });
 
-        $this->assertContains($addedChildNode->getContextPath(), $actualIdentifiers);
+        $this->assertContains($addedChildNodeContextPath, $actualIdentifiers);
     }
 
     /**
@@ -149,18 +158,20 @@ class NodeTreeServiceTest extends FunctionalTestCase
         $rootNode = $this->getRootNode();
         $modificationRootNode = $this->getRootNode(self::TRANSLATION_CONTEXT_FALLBACK, 'firstLevelNested');
 
-        $rootNode->createNode('doomed-child-node');
-        $doomedChildNodeInModificationContext = $modificationRootNode->getNode('doomed-child-node');
-        $doomedChildNodeInModificationContext->remove();
+        $childNode = $rootNode->createNode('doomed-child-node');
+        $doomedChildNode = $modificationRootNode->getContext()->adoptNode($childNode);
+        $doomedChildNodeContextPath = $doomedChildNode->getContextPath();
 
-        $this->persistenceManager->persistAll();
+        $doomedChildNode->remove();
+
+        $this->persistAndFlush();
 
         $actualIdentifiers = [];
         $this->nodeTreeService->traverseTree($modificationRootNode, function (NodeInterface $node) use (&$actualIdentifiers) {
             $actualIdentifiers[] = $node->getContextPath();
         });
 
-        $this->assertNotContains($doomedChildNodeInModificationContext->getContextPath(), $actualIdentifiers);
+        $this->assertNotContains($doomedChildNodeContextPath, $actualIdentifiers);
     }
 
     /**
@@ -171,36 +182,40 @@ class NodeTreeServiceTest extends FunctionalTestCase
         $modificationRootNode = $this->getRootNode(self::TRANSLATION_CONTEXT_TRANSLATED);
 
         $addedChildNode = $modificationRootNode->createNode('added-child-node');
-        $this->persistenceManager->persistAll();
+        $addedChildNodeContextPath = $addedChildNode->getContextPath();
+
+        $this->persistAndFlush();
 
         $actualIdentifiers = [];
         $this->nodeTreeService->traverseTree($modificationRootNode, function (NodeInterface $node) use (&$actualIdentifiers) {
             $actualIdentifiers[] = $node->getContextPath();
         });
 
-        $this->assertContains($addedChildNode->getContextPath(), $actualIdentifiers);
+        $this->assertContains($addedChildNodeContextPath, $actualIdentifiers);
     }
 
     /**
      * @test
      */
-    public function traverseTreeDoesNotVisitNodesRemovedInTranslationDimensionValuesAndLiveWorkspace()
+    public function traverseTreeVisitsFallbackOfNodesRemovedInTranslationDimensionValuesAndLiveWorkspace()
     {
         $rootNode = $this->getRootNode();
         $modificationRootNode = $this->getRootNode(self::TRANSLATION_CONTEXT_TRANSLATED);
 
-        $addedChildNode = $rootNode->createNode('added-child-node');
-        $addedChildNodeInModificationContext = $modificationRootNode->getContext()->getNode($addedChildNode->getPath());
+        $childNode = $rootNode->createNode('added-child-node');
+        $addedChildNodeInModificationContext = $modificationRootNode->getContext()->adoptNode($childNode);
+        $addedChildNodeContextPath = $addedChildNodeInModificationContext->getContextPath();
+
         $addedChildNodeInModificationContext->remove();
 
-        $this->persistenceManager->persistAll();
+        $this->persistAndFlush();
 
         $actualIdentifiers = [];
         $this->nodeTreeService->traverseTree($modificationRootNode, function (NodeInterface $node) use (&$actualIdentifiers) {
             $actualIdentifiers[] = $node->getContextPath();
         });
 
-        $this->assertNotContains($addedChildNodeInModificationContext->getContextPath(), $actualIdentifiers);
+        $this->assertContains($addedChildNodeContextPath, $actualIdentifiers);
     }
 
     /**
@@ -211,14 +226,16 @@ class NodeTreeServiceTest extends FunctionalTestCase
         $modificationRootNode = $this->getRootNode(self::TRANSLATION_CONTEXT_TRANSLATED, 'firstLevelNested');
 
         $addedChildNode = $modificationRootNode->createNode('added-child-node');
-        $this->persistenceManager->persistAll();
+        $addedChildNodeContextPath = $addedChildNode->getContextPath();
+
+        $this->persistAndFlush();
 
         $actualIdentifiers = [];
         $this->nodeTreeService->traverseTree($modificationRootNode, function (NodeInterface $node) use (&$actualIdentifiers) {
             $actualIdentifiers[] = $node->getContextPath();
         });
 
-        $this->assertContains($addedChildNode->getContextPath(), $actualIdentifiers);
+        $this->assertContains($addedChildNodeContextPath, $actualIdentifiers);
     }
 
     /**
@@ -229,18 +246,29 @@ class NodeTreeServiceTest extends FunctionalTestCase
         $rootNode = $this->getRootNode();
         $modificationRootNode = $this->getRootNode(self::TRANSLATION_CONTEXT_TRANSLATED, 'firstLevelNested');
 
-        $rootNode->createNode('doomed-child-node');
-        $doomedChildNodeInModificationContext = $modificationRootNode->getNode('doomed-child-node');
+        $addedChildNode = $rootNode->createNode('added-child-node');
+        $doomedChildNodeInModificationContext = $modificationRootNode->getContext()->adoptNode($addedChildNode);
+        $doomedChildNodeContextPath = $doomedChildNodeInModificationContext->getContextPath();
+
         $doomedChildNodeInModificationContext->remove();
 
-        $this->persistenceManager->persistAll();
+        $this->persistAndFlush();
 
         $actualIdentifiers = [];
         $this->nodeTreeService->traverseTree($modificationRootNode, function (NodeInterface $node) use (&$actualIdentifiers) {
             $actualIdentifiers[] = $node->getContextPath();
         });
 
-        $this->assertNotContains($doomedChildNodeInModificationContext->getContextPath(), $actualIdentifiers);
+        $this->assertNotContains($doomedChildNodeContextPath, $actualIdentifiers);
+    }
+
+    /**
+     * @return void
+     */
+    protected function persistAndFlush()
+    {
+        $this->persistenceManager->persistAll();
+        $this->nodeFactory->reset();
     }
 
     /**
@@ -248,7 +276,8 @@ class NodeTreeServiceTest extends FunctionalTestCase
      * @param $workspaceName
      * @return NodeInterface
      */
-    protected function getRootNode($translationContext = self::TRANSLATION_CONTEXT_FALLBACK, $workspaceName = 'live') {
+    protected function getRootNode($translationContext = self::TRANSLATION_CONTEXT_FALLBACK, $workspaceName = 'live')
+    {
         $context = $this->contextFactory->create([
             'dimensions' => [
                 'language' => $translationContext === self::TRANSLATION_CONTEXT_TRANSLATED ? ['en_UK', 'en_US'] : ['en_US']
@@ -258,6 +287,7 @@ class NodeTreeServiceTest extends FunctionalTestCase
             ],
             'workspaceName' => $workspaceName
         ]);
+
         return $context->getRootNode();
     }
 
