@@ -506,19 +506,13 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
     {
         $this->output->outputLine('Checking for disallowed child nodes ...');
 
-        /** @var \Doctrine\ORM\QueryBuilder $queryBuilder */
-        $queryBuilder = $this->entityManager->createQueryBuilder();
-
-        /** @var \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace */
-        $workspace = $this->workspaceRepository->findByIdentifier($workspaceName);
-
-        $nodes = array();
+        $disallowedChildNodes = [];
         $nodeExceptionCount = 0;
-        $removeDisallowedChildNodes = function (NodeInterface $node) use (&$removeDisallowedChildNodes, &$nodes, &$nodeExceptionCount, $queryBuilder) {
+        $collectDisallowedChildNodes = function (NodeInterface $node) use (&$disallowedChildNodes, &$nodeExceptionCount) {
             try {
                 $parent = $node->getParent();
                 if (!$node->isAutoCreated() && !$parent->isNodeTypeAllowedAsChildNode($node->getNodeType())) {
-                    $nodes[] = $node;
+                    $disallowedChildNodes[] = $node;
                     $ancestor = $parent->isAutoCreated() ? $parent->getParent() : $parent;
                     $this->output->outputLine(
                         'Found disallowed node named "%s" (%s) in "%s", child of node "%s" (%s)',
@@ -537,18 +531,16 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
         };
 
         // TODO: Performance could be improved by a search for all child node data instead of looping over all contexts
-        foreach ($this->contentDimensionCombinator->getAllAllowedCombinations() as $dimensionConfiguration) {
-            $context = $this->createContext($workspace->getName(), $dimensionConfiguration);
-            $this->nodeTreeService->traverseTree($context->getRootNode(), $removeDisallowedChildNodes);
-        }
+        $context = $this->createContext($workspaceName, []);
+        $this->nodeTreeService->traverseTreeInDimensionCombinations($context->getRootNode(), $collectDisallowedChildNodes);
 
-        $disallowedChildNodesCount = count($nodes);
+        $disallowedChildNodesCount = count($disallowedChildNodes);
         if ($disallowedChildNodesCount > 0) {
             $this->output->outputLine();
             if (!$dryRun) {
                 $self = $this;
-                $this->askBeforeExecutingTask('Do you want to remove all disallowed child nodes?', function () use ($self, $nodes, $disallowedChildNodesCount, $workspaceName) {
-                    foreach ($nodes as $node) {
+                $this->askBeforeExecutingTask('Do you want to remove all disallowed child nodes?', function () use ($self, $disallowedChildNodes, $disallowedChildNodesCount, $workspaceName) {
+                    foreach ($disallowedChildNodes as $node) {
                         $self->removeNodeAndChildNodesInWorkspaceByPath($node->getPath(), $workspaceName);
                     }
                     $self->output->outputLine('Removed %s disallowed node%s.', array($disallowedChildNodesCount, $disallowedChildNodesCount > 1 ? 's' : ''));
