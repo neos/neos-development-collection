@@ -894,7 +894,7 @@
 			<target xml:lang="da">Kan ikke uploade filen</target></trans-unit>
       <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve" approved="yes">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
-			<target xml:lang="da">Filstørrelsen for {0} overstiger den tilladte grænse for {1}</target></trans-unit>
+			<target xml:lang="da">Filstørrelsen for {0} overstiger den tilladte grænse {1}</target><alt-trans><target xml:lang="da">Filstørrelsen for {0} overstiger den tilladte grænse for {1}</target></alt-trans></trans-unit>
       <trans-unit id="media.forTheFile" xml:space="preserve" approved="yes">
 				<source>for the file</source>
 			<target xml:lang="da">for filen</target></trans-unit>

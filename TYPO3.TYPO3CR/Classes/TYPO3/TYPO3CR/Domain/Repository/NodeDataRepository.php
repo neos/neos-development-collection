@@ -197,7 +197,7 @@ class NodeDataRepository extends Repository
      * @param string $path
      * @param Workspace $workspace
      * @param array|null $dimensions
-     * @return NodeInterface|null
+     * @return NodeData|null
      */
     public function findShadowNodeByPath($path, Workspace $workspace, array $dimensions = null)
     {
