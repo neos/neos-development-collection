@@ -84,7 +84,7 @@ class NodeTreeService
 
             $this->traverseTree($nodeInWorkspace, $action);
             if (!is_null($workspaceCallback)) {
-                $workspaceCallback($workspaceName);
+                $workspaceCallback($workspaceContext);
             }
         }
     }
@@ -118,7 +118,7 @@ class NodeTreeService
 
             $this->traverseTree($nodeInDimensionCombination, $action);
             if (!is_null($dimensionCombinationCallback)) {
-                $dimensionCombinationCallback($dimensionCombination);
+                $dimensionCombinationCallback($dimensionCombinationContext);
             }
         }
     }
@@ -160,7 +160,7 @@ class NodeTreeService
 
             $this->traverseTreeInDimensionCombinations($nodeInWorkspace, $action, $dimensionCombinationCallback, $context, $dimensionCombinations);
             if (!is_null($workspaceCallback)) {
-                $workspaceCallback($workspaceName);
+                $workspaceCallback($workspaceContext);
             }
         }
     }
