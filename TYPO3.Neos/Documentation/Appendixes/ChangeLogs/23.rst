@@ -177,24 +177,24 @@ letting the factory set it as default.
 `FEATURE: Allow relation between arbitrary entities and nodes <https://github.com/neos/neos-development-collection/pull/102>`_
 ------------------------------------------------------------------------------------------------------------------------------
 
-  This removes all special type handling to format node properties for
-  the Neos user interface and replaces it with using ``PropertyMapper``.
-  The introduced ``NodePropertyConverterService`` is fully responsible to
-  provide a portable representation of the Node properties.
+This removes all special type handling to format node properties for
+the Neos user interface and replaces it with using ``PropertyMapper``.
+The introduced ``NodePropertyConverterService`` is fully responsible to
+provide a portable representation of the Node properties.
 
-  Node property types can be configured to use specific ``TypeConverter``
-  implementations to give all necessary information to the inspector
-  editor. Additionally a fallback ``defaultValue`` for property types
-  can be added in Settings.
+Node property types can be configured to use specific ``TypeConverter``
+implementations to give all necessary information to the inspector
+editor. Additionally a fallback ``defaultValue`` for property types
+can be added in Settings.
 
-  Please note that we introduce some default values in case you didn't set
-  a default value in your ``NodeTypes.yaml``. All of those are common sense
-  but you might want to check if they work for you in all cases.
+Please note that we introduce some default values in case you didn't set
+a default value in your ``NodeTypes.yaml``. All of those are common sense
+but you might want to check if they work for you in all cases.
 
-  This allows to map arbitrary objects to node properties and interact with
-  them in the Neos user interface.
+This allows to map arbitrary objects to node properties and interact with
+them in the Neos user interface.
 
-  NEOS-381 #close
+NEOS-381 #close
 
 * Packages: ``Neos``
 
@@ -292,17 +292,16 @@ For details see https://styleci.io/analyses/8LZLMk.
 This change extracts the functionality of the neos:contentElement.editable viewHelper into a service and adds an equivalent TypoScript-Prototype.
 
 TypoScript Example:
-```
-element = TYPO3.TypoScript:Array {
-	title = TYPO3.TypoScript:Tag {
-		tagName = 'h1'
-		content = ${q(node).property('title')}
-		@process.contentElementEditable = TYPO3.Neos:ContentElementEditable
-		@process.contentElementEditable.property = 'title'
-	}
-	@process.contentElementWrapping = TYPO3.Neos:ContentElementWrapping
-}
-```
+
+    element = TYPO3.TypoScript:Array {
+        title = TYPO3.TypoScript:Tag {
+            tagName = 'h1'
+            content = ${q(node).property('title')}
+            @process.contentElementEditable = TYPO3.Neos:ContentElementEditable
+            @process.contentElementEditable.property = 'title'
+        }
+        @process.contentElementWrapping = TYPO3.Neos:ContentElementWrapping
+    }
 
 * Packages: ``Media`` ``Neos``
 
