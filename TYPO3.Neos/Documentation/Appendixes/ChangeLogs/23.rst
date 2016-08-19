@@ -1,0 +1,438 @@
+`2.3 (2016-08-19) <https://github.com/neos/neos-development-collection/releases/tag/2.3>`_
+==========================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Adjust requestPattern settings to new syntax <https://github.com/neos/neos-development-collection/pull/648>`_
+--------------------------------------------------------------------------------------------------------------------
+
+Adjusts the ``requestPattern`` configuration to the new
+syntax introduced with https://github.com/neos/flow-development-collection/pull/130
+
+* Related: `FLOW-412 <https://jira.neos.io/browse/FLOW-412>`_
+* Packages: ``Neos``
+
+`BUGFIX: Replace document stylesheets after loading a page <https://github.com/neos/neos-development-collection/pull/375>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+This change adds a marker class to the Neos CSS link tag and will remove
+and append all stylesheets into the document after loading a page in
+the content module. This solves issues with document dependent CSS
+includes on a site as well as the initial rendering of shortcut documents.
+
+NEOS-830 #close
+NEOS-99 #close
+
+* Packages: ``Neos``
+
+`TASK: Update CreatingAPlugin.rst <https://github.com/neos/neos-development-collection/pull/655>`_
+--------------------------------------------------------------------------------------------------
+
+correction of indentation in Routes.yaml
+
+* Packages: ``Neos``
+
+`BUGFIX: \`references\` property type not properly converted <https://github.com/neos/neos-development-collection/pull/651>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+This results in `references` properties to not get wrapped with ContentElementWrappingService correctly.
+
+Steps to reproduce: edit some property of a node of type `references`, hit apply, the property will become empty again.
+
+* Packages: ``Neos``
+
+`FEATURE: Dynamic cached segments <https://github.com/neos/neos-development-collection/pull/101>`_
+--------------------------------------------------------------------------------------------------
+
+This change adds a new type of cache mode, the so called ``dynamic``.
+It will always trigger a new evaluation at runtime but the results are
+cached again. The configuration for a ``dynamic`` segment has a
+new property ``entryDiscriminator``. This defines how the cached entries
+for this segment are discerned from one another at runtime.
+Usually you will use an EEL expression, but this can only use global
+context variables like the request.
+
+An example configuration for segment that is separately cached depending
+on a GET argument ``someArgument`` could look like this::
+
+    @cache {
+    	mode = 'dynamic'
+    	entryIdentifier {
+    		node = ${node}
+    	}
+    	entryDiscriminator = ${request.httpRequest.arguments.someArgument}
+    	context {
+    		1 = 'node'
+    	}
+    }
+
+* Packages: ``Neos``
+
+`TASK: Some smaller code and comment tweaks <https://github.com/neos/neos-development-collection/pull/631>`_
+------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Media`` ``Neos``
+
+`FEATURE: \`\`sort()\`\` FlowQuery operation <https://github.com/neos/neos-development-collection/pull/604>`_
+-------------------------------------------------------------------------------------------------------------
+
+Adds a sort FlowQuery operation to sort TYPO3CR nodes by given property and ``ASC`` or ``DESC`` sort order: ``sort(propertyName, order)`` 
+
+* Packages: ``Neos``
+
+`BUGFIX: Add message fallback for \`addFlashmessage\` in AssetController <https://github.com/neos/neos-development-collection/pull/617>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+Adding a flash message in `AssetController` results in an exception if the tranlsator service returns null for a label. If the service returns null the label will be returned as a fallback.
+
+This change also removes an unecessary method `addFlashMessage` as it implements just the same logic as `parent::addFlashMessage`. This method also calls right now the parent method with an already translated id wich can not be translated again.
+
+* Packages: ``Media`` ``Neos``
+
+`FEATURE: DimensionsMenu to handle multiple dimensions switching <https://github.com/neos/neos-development-collection/pull/282>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+This implements a DimensionsMenu that can render all available node variants
+for possible dimension combinations.
+
+It is a drop-in replacement for the existing DimensionMenu but keeps other active
+dimensions in the generated links.
+
+* Packages: ``Neos``
+
+`TASK: \`TYPO3.Neos:Menu\` entryLevel should respect a starting point <https://github.com/neos/neos-development-collection/pull/610>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+If a starting point for a `TYPO3.Neos:Menu` is set the entryLevel won't work out of the box in all cases because it defaults to the first level of the site. If the starting point is below that you won't see any menu items.
+
+This changes the default behaviour of the entryLevel. It will be set to 0 if there is a startingPoint configured otherwise stick to 1.
+
+NEOS-1838 #resolve
+
+* Packages: ``Neos``
+
+`BUGFIX: Skip private node properties in ContentElementWrappingService <https://github.com/neos/neos-development-collection/pull/607>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+If a nodetype has "virtual" properties configured (like when Elasticsearch
+is used with Neos), trying to access those properties resulted in
+
+    The property "…" on the subject was not accessible.
+
+This change introduces a check for property names starting with `__` and
+skips those, like already done in the `NodePropertyConverterService`
+
+NEOS-1860 #close
+
+* Packages: ``Neos``
+
+`TASK: Introduce RequireJS mapping for Views <https://github.com/neos/neos-development-collection/pull/531>`_
+-------------------------------------------------------------------------------------------------------------
+
+This change introduce a mapping configuration for RequireJS for
+```nodeInfo.view```. With this change the configuration is mode consistent
+with Editors, Handlers and Validation.
+
+* Packages: ``Neos``
+
+`FEATURE: Allow setting a new Node name in move operations <https://github.com/neos/neos-development-collection/pull/549>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+It would be convenient to change the name of a node while moving
+it to a new destination. To avoid exceptions due to existing nodes
+you only need to find an available name at the target location then.
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`FEATURE: Make neos login-screen logo configurable <https://github.com/neos/neos-development-collection/pull/545>`_
+-------------------------------------------------------------------------------------------------------------------
+
+With this change it is possible to easily change the logo rendered above the login form. To do so you can adjust the `partialRootPathPattern` for the LoginController in your `Views.yaml` and include your custom logo partial
+
+* Packages: ``Neos``
+
+`FEATURE: Additional configuration for multi column elements <https://github.com/neos/neos-development-collection/pull/554>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+Provides the iteration information for multi column elements per default as
+context variable with the name ``columnIteration``.
+Also provides the selected ``layout`` value of the column container to the
+columns via context variable named ``columnLayout``.
+
+* Packages: ``NodeTypes``
+
+`TASK: De-Duplicate site and domain logic <https://github.com/neos/neos-development-collection/pull/578>`_
+----------------------------------------------------------------------------------------------------------
+
+The logic to fetch site and domain for the ``ContentContext`` was
+duplicated in several parts of Neos. This duplication is rather useless
+as the values derived by it can be seen as default values for the two
+properties. Therefore the logic was refactored to the
+``ContentContextFactory`` and removed from other places in favor of
+letting the factory set it as default.
+
+* Packages: ``Neos``
+
+`FEATURE: Allow relation between arbitrary entities and nodes <https://github.com/neos/neos-development-collection/pull/102>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+  This removes all special type handling to format node properties for
+  the Neos user interface and replaces it with using ``PropertyMapper``.
+  The introduced ``NodePropertyConverterService`` is fully responsible to
+  provide a portable representation of the Node properties.
+
+  Node property types can be configured to use specific ``TypeConverter``
+  implementations to give all necessary information to the inspector
+  editor. Additionally a fallback ``defaultValue`` for property types
+  can be added in Settings.
+
+  Please note that we introduce some default values in case you didn't set
+  a default value in your ``NodeTypes.yaml``. All of those are common sense
+  but you might want to check if they work for you in all cases.
+
+  This allows to map arbitrary objects to node properties and interact with
+  them in the Neos user interface.
+
+  NEOS-381 #close
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix structure in \`\`Sites.xml\`\` for generated site packages <https://github.com/neos/neos-development-collection/pull/593>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+Fixes an error so freshly kickstarted site packages can be imported again
+
+Regression of `1dcf1f2e0db3d0d7bd5f31f033be975227aa9cd0 <https://github.com/neos/neos-development-collection/commit/1dcf1f2e0db3d0d7bd5f31f033be975227aa9cd0>`_
+
+* Packages: ``Kickstarter``
+
+`TASK: change caching behaviour when no \`entryIdentifier\` is set <https://github.com/neos/neos-development-collection/pull/592>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+The old behaviour was to try to construct the entryIdentifier from all
+context vars, which did not make a lot of sense.
+
+With the new behaviour, the entryIdentifier is filled with identifiers from the
+`TYPO3.TypoScript:GlobalCacheIdentifiers` prototype.
+
+So in many cases, it would not be necessary to provide any
+entryIdentifiers at all and just configure GlobalCacheIdentifiers.
+
+* Packages: ``TypoScript``
+
+`TASK: set a default value of \`itemName\` in the \`TYPO3.TypoScript:Collection\` object <https://github.com/neos/neos-development-collection/pull/589>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+This change sets a default value of `itemName` to `item`, so you can use `TYPO3.TypoScript:Collection` object without specifying it each time:
+
+```
+helloLoop = TYPO3.TypoScript:Collection {
+  collection = ${[1, 2, 3]}
+  itemRenderer = ${item + '<br>'}
+}
+```
+
+This change is backwards compatible, as your value for `itemName` would always override the default value.
+
+* Packages: ``Neos`` ``TypoScript``
+
+`TASK: Add signals to notify on asset add / update / remove <https://github.com/neos/neos-development-collection/pull/514>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+In order to implement additional tasks for asset handling,
+like meta data management, these new signals in the
+central point of asset handling - the meta data repository -
+notify on asset created / updated / removed.
+
+Moved assetCreated and thumbnailCreated to the corresponding
+services for consistency.
+
+* Packages: ``Media`` ``Neos``
+
+`TASK: Document multiple EEL filter usage <https://github.com/neos/neos-development-collection/pull/572>`_
+----------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`FEATURE: \`\`TYPO3.TypoScript:Debug\`\` TypoScript-Object <https://github.com/neos/neos-development-collection/pull/517>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+A TypoScript Object "Debug" is added as an equivalent to the ``f:debug`` view helper.
+The Object will display the value of all child-keys in a debug window.
+
+```
+tsPath = TYPO3.TypoScript:Debug {
+    # optional: set title for the debug output
+    # title = 'Debug'
+  
+    # optional: show result as plaintext
+    # plaintext = TRUE
+
+    # If only the value-key is given it is debugged directly,
+    # otherwise all keys except title an plaintext are debugged.
+    value = "hello neos world"
+
+    # Additional values for debugging
+    documentTitle = ${q(documentNode).property('title')}
+    documentPath = ${documentNode.path}
+}
+```
+
+* Packages: ``Neos`` ``TypoScript``
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/577>`_
+------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by StyleCI.
+
+For details see https://styleci.io/analyses/8LZLMk.
+
+* Packages: ``Media`` ``Neos`` ``TYPO3CR`` ``TypoScript``
+
+`FEATURE: Add \`\`TYPO3.Neos:ContentElementEditable\`\` TypoScript-Object <https://github.com/neos/neos-development-collection/pull/529>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+This change extracts the functionality of the neos:contentElement.editable viewHelper into a service and adds an equivalent TypoScript-Prototype.
+
+TypoScript Example:
+```
+element = TYPO3.TypoScript:Array {
+	title = TYPO3.TypoScript:Tag {
+		tagName = 'h1'
+		content = ${q(node).property('title')}
+		@process.contentElementEditable = TYPO3.Neos:ContentElementEditable
+		@process.contentElementEditable.property = 'title'
+	}
+	@process.contentElementWrapping = TYPO3.Neos:ContentElementWrapping
+}
+```
+
+* Packages: ``Media`` ``Neos``
+
+`BUGFIX: Initialize dimension preset config with empty array <https://github.com/neos/neos-development-collection/pull/540>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``TYPO3CR``
+
+`TASK: Streamline generated Site packages <https://github.com/neos/neos-development-collection/pull/555>`_
+----------------------------------------------------------------------------------------------------------
+
+Removes useless text node to prevent complications with dimensions,
+the breadcrumb that these days is seldom used and uses fully qualified
+prototype names for all used TypoScript objects to make understanding
+easier.
+
+* Packages: ``Kickstarter``
+
+`TASK: Small code cleanup <https://github.com/neos/neos-development-collection/pull/553>`_
+------------------------------------------------------------------------------------------
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`TASK: Fix code style to make styleci happy <https://github.com/neos/neos-development-collection/pull/551>`_
+------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`BUGFIX: Add autoload to composer again <https://github.com/neos/neos-development-collection/pull/543>`_
+--------------------------------------------------------------------------------------------------------
+
+In `a86591d459cb9a0f87daae72839019415b6fb1a6 <https://github.com/neos/neos-development-collection/commit/a86591d459cb9a0f87daae72839019415b6fb1a6>`_ the autoload
+section was removed, as there had been no classes at that time.
+
+* Packages: ``NodeTypes``
+
+`FEATURE: Use data source to list forms in inspector <https://github.com/neos/neos-development-collection/pull/506>`_
+---------------------------------------------------------------------------------------------------------------------
+
+Currently form identifiers need to be defined manually extending
+the properties of ``TYPO3.Neos.NodeTypes:Form`` .
+This change adds a data source which uses the
+`TYPO3\\Form\\Persistence\\YamlPersistenceManager::listForms`
+to list all available forms automatically.
+
+* Packages: ``Neos`` ``NodeTypes``
+
+`TASK: Cleanup NodeTypes package and templates <https://github.com/neos/neos-development-collection/pull/516>`_
+---------------------------------------------------------------------------------------------------------------
+
+Removes the unnecessary ``AssetListImplementation`` and
+simplifies NodeType templates.
+Additionally sets a dependency to the ``form`` package.
+
+* Packages: ``NodeTypes``
+
+`TASK: Add documentation for default TypoScript context variables <https://github.com/neos/neos-development-collection/pull/513>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+Add documentation describing how to use node, documentNode, site and request within TS
+
+* Packages: ``Neos``
+
+`TASK: Small improvements for the replace asset feature <https://github.com/neos/neos-development-collection/pull/528>`_
+------------------------------------------------------------------------------------------------------------------------
+
+- Unhides the action buttons in the media browser
+- Use bigger filetype icon
+- Made action names more consistent
+- Made typehinting more consistent
+
+* Packages: ``Media`` ``Neos``
+
+`BUGFIX: Documentation markup fixes <https://github.com/neos/neos-development-collection/pull/526>`_
+----------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Add startingPoint property to menu node type <https://github.com/neos/neos-development-collection/pull/515>`_
+--------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``NodeTypes``
+
+`FEATURE: Extensible asset validation <https://github.com/neos/neos-development-collection/pull/507>`_
+------------------------------------------------------------------------------------------------------
+
+This change allows extending the validation of assets. It is done by
+creating a model validator for asset entity types. The validator
+extends the conjunction validator and loads all validators that implement
+the ``\\TYPO3\\Media\\Domain\\Validator\AssetValidatorInterface``.
+
+* Packages: ``Media``
+
+`MERGE: 2.2 into master <https://github.com/neos/neos-development-collection/pull/509>`_
+----------------------------------------------------------------------------------------
+
+* Packages: ``Media`` ``Neos``
+
+`FEATURE: Asset usage strategies <https://github.com/neos/neos-development-collection/pull/483>`_
+-------------------------------------------------------------------------------------------------
+
+This change allows to register asset usage strategies that
+define if an asset is still in use and how many times.
+
+* Packages: ``Media`` ``Neos``
+
+`TASK: Remove unused class imports <https://github.com/neos/neos-development-collection/pull/503>`_
+---------------------------------------------------------------------------------------------------
+
+This change removes unused class imports throughout the neos code.
+
+* Packages: ``Kickstarter`` ``Media`` ``Neos`` ``TYPO3CR`` ``TypoScript``
+
+`FEATURE: Filetype icon view helper <https://github.com/neos/neos-development-collection/pull/482>`_
+----------------------------------------------------------------------------------------------------
+
+This change introduces a Filetype icon viewhelper
+that renders a simple image tag with an icon for the
+type of a given asset based on it's mediatypes and
+given maximum dimensions.
+
+Besides that it moves the logic for retrieving the icon
+to a service that can be used outside of the thumbnail
+generator service too.
+
+* Packages: ``Media`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.2...2.3>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
