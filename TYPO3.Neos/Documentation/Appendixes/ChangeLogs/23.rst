@@ -224,7 +224,7 @@ entryIdentifiers at all and just configure GlobalCacheIdentifiers.
 `TASK: set a default value of \`itemName\` in the \`TYPO3.TypoScript:Collection\` object <https://github.com/neos/neos-development-collection/pull/589>`_
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-This change sets a default value of `itemName` to `item`, so you can use `TYPO3.TypoScript:Collection` object without specifying it each time:
+This change sets a default value of `itemName` to `item`, so you can use `TYPO3.TypoScript:Collection` object without specifying it each time::
 
     helloLoop = TYPO3.TypoScript:Collection {
         collection = ${[1, 2, 3]}
@@ -257,7 +257,7 @@ services for consistency.
 ---------------------------------------------------------------------------------------------------------------------------
 
 A TypoScript Object "Debug" is added as an equivalent to the ``f:debug`` view helper.
-The Object will display the value of all child-keys in a debug window.
+The Object will display the value of all child-keys in a debug window::
 
     tsPath = TYPO3.TypoScript:Debug {
         # optional: set title for the debug output
@@ -291,7 +291,7 @@ For details see https://styleci.io/analyses/8LZLMk.
 
 This change extracts the functionality of the neos:contentElement.editable viewHelper into a service and adds an equivalent TypoScript-Prototype.
 
-TypoScript Example:
+TypoScript Example::
 
     element = TYPO3.TypoScript:Array {
         title = TYPO3.TypoScript:Tag {
