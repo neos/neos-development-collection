@@ -226,12 +226,10 @@ entryIdentifiers at all and just configure GlobalCacheIdentifiers.
 
 This change sets a default value of `itemName` to `item`, so you can use `TYPO3.TypoScript:Collection` object without specifying it each time:
 
-```
-helloLoop = TYPO3.TypoScript:Collection {
-  collection = ${[1, 2, 3]}
-  itemRenderer = ${item + '<br>'}
-}
-```
+    helloLoop = TYPO3.TypoScript:Collection {
+        collection = ${[1, 2, 3]}
+        itemRenderer = ${item + '<br>'}
+    }
 
 This change is backwards compatible, as your value for `itemName` would always override the default value.
 
@@ -261,23 +259,21 @@ services for consistency.
 A TypoScript Object "Debug" is added as an equivalent to the ``f:debug`` view helper.
 The Object will display the value of all child-keys in a debug window.
 
-```
-tsPath = TYPO3.TypoScript:Debug {
-    # optional: set title for the debug output
-    # title = 'Debug'
+    tsPath = TYPO3.TypoScript:Debug {
+        # optional: set title for the debug output
+        # title = 'Debug'
 
-    # optional: show result as plaintext
-    # plaintext = TRUE
+        # optional: show result as plaintext
+        # plaintext = TRUE
 
-    # If only the value-key is given it is debugged directly,
-    # otherwise all keys except title an plaintext are debugged.
-    value = "hello neos world"
+        # If only the value-key is given it is debugged directly,
+        # otherwise all keys except title an plaintext are debugged.
+        value = "hello neos world"
 
-    # Additional values for debugging
-    documentTitle = ${q(documentNode).property('title')}
-    documentPath = ${documentNode.path}
-}
-```
+        # Additional values for debugging
+        documentTitle = ${q(documentNode).property('title')}
+        documentPath = ${documentNode.path}
+    }
 
 * Packages: ``Neos`` ``TypoScript``
 
