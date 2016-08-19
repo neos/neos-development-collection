@@ -22,7 +22,6 @@ use TYPO3\TYPO3CR\Service\NodeTreeService;
  */
 class NodeTreeServiceTest extends FunctionalTestCase
 {
-
     const TRANSLATION_CONTEXT_FALLBACK = 'fallback';
     const TRANSLATION_CONTEXT_TRANSLATED = 'translated';
 

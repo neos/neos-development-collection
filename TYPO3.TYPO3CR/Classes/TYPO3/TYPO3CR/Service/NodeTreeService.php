@@ -189,7 +189,7 @@ class NodeTreeService
         $contextProperties = $context->getProperties();
         $contextProperties['dimensions'] = $newDimensionConfiguration;
         $contextProperties['targetDimensions'] = $newDimensionConfiguration;
-        array_walk($contextProperties['targetDimensions'], function(&$item) {
+        array_walk($contextProperties['targetDimensions'], function (&$item) {
             $item = reset($item);
         });
 

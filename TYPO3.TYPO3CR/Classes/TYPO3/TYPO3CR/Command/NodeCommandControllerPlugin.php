@@ -599,7 +599,7 @@ HELPTEXT;
 
         // TODO: Performance could be improved by a search for all child node data instead of looping over all contexts
         $context = $this->createContext($workspaceName, []);
-        $this->nodeTreeService->traverseTreeInDimensionCombinations($context->getRootNode(), $collectDisallowedChildNodes, function(Context $dimensionCombinationContext) {
+        $this->nodeTreeService->traverseTreeInDimensionCombinations($context->getRootNode(), $collectDisallowedChildNodes, function (Context $dimensionCombinationContext) {
             $dimensionCombinationContext->getFirstLevelNodeCache()->flush();
             $this->nodeFactory->reset();
         });
