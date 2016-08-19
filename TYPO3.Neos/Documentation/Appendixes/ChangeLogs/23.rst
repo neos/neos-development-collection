@@ -77,7 +77,7 @@ on a GET argument ``someArgument`` could look like this::
 `FEATURE: \`\`sort()\`\` FlowQuery operation <https://github.com/neos/neos-development-collection/pull/604>`_
 -------------------------------------------------------------------------------------------------------------
 
-Adds a sort FlowQuery operation to sort TYPO3CR nodes by given property and ``ASC`` or ``DESC`` sort order: ``sort(propertyName, order)`` 
+Adds a sort FlowQuery operation to sort TYPO3CR nodes by given property and ``ASC`` or ``DESC`` sort order: ``sort(propertyName, order)``
 
 * Packages: ``Neos``
 
@@ -265,7 +265,7 @@ The Object will display the value of all child-keys in a debug window.
 tsPath = TYPO3.TypoScript:Debug {
     # optional: set title for the debug output
     # title = 'Debug'
-  
+
     # optional: show result as plaintext
     # plaintext = TRUE
 
@@ -399,11 +399,6 @@ extends the conjunction validator and loads all validators that implement
 the ``\\TYPO3\\Media\\Domain\\Validator\AssetValidatorInterface``.
 
 * Packages: ``Media``
-
-`MERGE: 2.2 into master <https://github.com/neos/neos-development-collection/pull/509>`_
-----------------------------------------------------------------------------------------
-
-* Packages: ``Media`` ``Neos``
 
 `FEATURE: Asset usage strategies <https://github.com/neos/neos-development-collection/pull/483>`_
 -------------------------------------------------------------------------------------------------
