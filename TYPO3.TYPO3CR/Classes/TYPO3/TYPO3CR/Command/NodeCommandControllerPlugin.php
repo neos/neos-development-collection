@@ -575,6 +575,9 @@ HELPTEXT;
         $collectDisallowedChildNodes = function (NodeInterface $node) use (&$disallowedChildNodes, &$nodeExceptionCount) {
             try {
                 $parent = $node->getParent();
+                if (!$parent) {
+                    return true;
+                }
                 if (!$node->isAutoCreated() && !$parent->isNodeTypeAllowedAsChildNode($node->getNodeType())) {
                     $disallowedChildNodes[] = $node;
                     $ancestor = $parent->isAutoCreated() ? $parent->getParent() : $parent;
