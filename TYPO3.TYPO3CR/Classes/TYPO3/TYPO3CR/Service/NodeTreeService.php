@@ -143,7 +143,6 @@ class NodeTreeService
         array $workspaceNames = null,
         array $dimensionCombinations = null
     ) {
-
         if (is_null($context)) {
             $context = $node->getContext();
         }
