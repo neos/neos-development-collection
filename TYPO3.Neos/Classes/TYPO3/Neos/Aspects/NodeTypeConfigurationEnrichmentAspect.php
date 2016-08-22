@@ -203,7 +203,7 @@ class NodeTypeConfigurationEnrichmentAspect
                 }
                 break;
             case 'TYPO3.Neos/Inspector/Editors/TextFieldEditor':
-                if (isset($propertyConfiguration['ui']['inspector']['editorOptions']) && $this->shouldGenerateLabel($propertyConfiguration['ui']['inspector']['editorOptions'], 'placeholder')) {
+                if (isset($propertyConfiguration['ui']['inspector']['editorOptions']) && $this->shouldFetchTranslation($propertyConfiguration['ui']['inspector']['editorOptions'], 'placeholder')) {
                     $propertyConfiguration['ui']['inspector']['editorOptions']['placeholder'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'textFieldEditor.placeholder');
                 }
                 break;
