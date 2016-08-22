@@ -49,13 +49,13 @@
 			<target xml:lang="vi" state="translated">Sự lựa chọn</target></trans-unit>
       <trans-unit id="properties.startingPoint" xml:space="preserve">
 				<source>Starting Point</source>
-			<target xml:lang="vi" state="needs-translation">Starting Point</target></trans-unit>
+			<target xml:lang="vi" state="translated">Điểm khởi đầu</target></trans-unit>
       <trans-unit id="properties.maximumLevels" xml:space="preserve">
 				<source>Maximum Levels</source>
 			<target xml:lang="vi" state="translated">Cấp độ lớn nhất</target></trans-unit>
       <trans-unit id="content.emptyMenu" xml:space="preserve">
 				<source>Empty Menu</source>
-			<target xml:lang="vi" state="needs-translation">Empty Menu</target></trans-unit>
+			<target xml:lang="vi" state="translated">Menu trống</target></trans-unit>
     </body>
   </file>
 </xliff>
