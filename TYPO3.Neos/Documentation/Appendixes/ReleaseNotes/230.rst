@@ -80,7 +80,7 @@ See also the full `release notes <http://neos.readthedocs.io/en/2.3/Appendixes/C
 Upgrade instructions
 ~~~~~~~~~~~~~~~~~~~~
 
-See https://www.neos.io/download-and-extend/upgrade-instructions-2-1-2-2.html
+See https://www.neos.io/download-and-extend/upgrade-instructions-2-2-2-2-3.html
 
 ~~~~~~~~~~~~~~~~~~~~
 !!! Breaking changes
