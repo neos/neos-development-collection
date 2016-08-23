@@ -9,7 +9,7 @@
         <div class="neos-row-fluid">
             <div class="neos-span8">
                 <fieldset>
-                    <legend>Replace "{asset.resource.filename}"</legend>
+                    <legend>{neos:backend.translate(id: 'media.replaceAsset.replaceFilename', source: 'Modules', arguments: {filename: asset.resource.filename})}</legend>
                     <p class="neos-buffer-below">
                         You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.<br/>
                         <b>Note:</b> This operation will replace the asset in all published or unpublished workspaces, including the live website.
