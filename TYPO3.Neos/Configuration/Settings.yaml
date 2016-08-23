@@ -46,6 +46,9 @@ TYPO3:
                 '@format':     'html'
         authenticationStrategy: oneToken
 
+    session:
+      name: 'Neos_Session'
+
     persistence:
       doctrine:
         eventListeners:
