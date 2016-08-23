@@ -923,6 +923,9 @@
 			<trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve">
 				<source>References to "{asset}"</source>
 			</trans-unit>
+			<trans-unit id="media.replaceAsset.replaceFilename" xml:space="preserve">
+				<source>Replace "{filename}"</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
