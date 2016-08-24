@@ -133,15 +133,6 @@ class FindOperation extends AbstractOperation
                         $filterResults = array($contextNode->getContext()->getNodeByIdentifier($filter['IdentifierFilter']));
                     }
                     $generatedNodes = true;
-                } elseif (isset($filter['IdentifierFilter'])) {
-                    if (!preg_match(\TYPO3\Flow\Validation\Validator\UuidValidator::PATTERN_MATCH_UUID, $filter['IdentifierFilter'])) {
-                        throw new \TYPO3\Eel\FlowQuery\FlowQueryException('find() requires a valid identifier', 1332492263);
-                    }
-                    /** @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface $contextNode */
-                    foreach ($context as $contextNode) {
-                        $filterResults = array($contextNode->getContext()->getNodeByIdentifier($filter['IdentifierFilter']));
-                    }
-                    $generatedNodes = true;
                 } elseif (isset($filter['PropertyNameFilter']) || isset($filter['PathFilter'])) {
                     $nodePath = isset($filter['PropertyNameFilter']) ? $filter['PropertyNameFilter'] : $filter['PathFilter'];
                     foreach ($context as $contextNode) {
