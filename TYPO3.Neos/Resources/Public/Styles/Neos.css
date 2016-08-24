@@ -13635,6 +13635,12 @@
   max-height: 100%;
   max-width: 100%;
 }
+.neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-button-small {
+  height: 32px;
+}
+.neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-button-small .icon-ellipsis-horizontal {
+  line-height: 32px;
+}
 .neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-img-label {
   padding: 0 0 16px 4px;
   position: relative;
@@ -13642,8 +13648,11 @@
 }
 .neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-img-label .neos-caption {
   margin-right: 32px;
+  padding-left: 4px;
+  padding-right: 4px;
+  text-align: center;
   display: block;
-  line-height: 1.2;
+  line-height: 32px;
   color: #adadad;
   overflow: hidden;
   text-overflow: ellipsis;
