@@ -404,8 +404,12 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 
         foreach (explode('/', $relativeRequestPath) as $pathSegment) {
             $nodes = $this->nodeSearchService->findByProperties(['uriPathSegment' => $pathSegment], [$documentNodeType], $context, $node);
-            if ($nodes) {
-                $node = reset($nodes);
+            $filteredNodes = array_filter($nodes, function ($currentNode) use ($node) {
+                // Only consider direct children
+                return $currentNode->getParent()->getIdentifier() === $node->getIdentifier());
+            });
+            if ($filteredNodes) {
+                $node = reset($filteredNodes);
                 $relativeNodePathSegments[] = $node->getName();
             } else {
                 return false;
