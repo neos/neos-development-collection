@@ -967,6 +967,9 @@ class NodeDataRepository extends Repository
         $queryBuilder = $this->createQueryBuilder($workspaces);
         $this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
         $this->addNodeTypeFilterConstraintsToQueryBuilder($queryBuilder, $nodeTypeFilter);
+        // Convert to lowercase, then to json, and then trim quotes from json to have valid JSON escaping.
+        $likeParameter = '%' . trim(json_encode(UnicodeFunctions::strtolower($term), JSON_UNESCAPED_UNICODE), '"') . '%';
+        $queryBuilder->andWhere("LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :term")->setParameter('term', $likeParameter);
 
         if (is_array($term)) {
             if (count($term) !== 1) {
@@ -1427,7 +1430,7 @@ class NodeDataRepository extends Repository
         $parameters = [];
         foreach ($relationMap as $relatedObjectType => $relatedIdentifiers) {
             foreach ($relatedIdentifiers as $relatedIdentifier) {
-                $constraints[] = '(LOWER(CONCAT(\'\', n.properties)) LIKE :entity' . md5($relatedIdentifier) . ' )';
+                $constraints[] = '(LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :entity' . md5($relatedIdentifier) . ' )';
                 $parameters['entity' . md5($relatedIdentifier)] = '%"__identifier": "' . strtolower($relatedIdentifier) . '"%';
             }
         }
