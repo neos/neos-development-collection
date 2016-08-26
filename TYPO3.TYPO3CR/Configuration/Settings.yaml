@@ -43,13 +43,15 @@ TYPO3:
     fallbackNodeType: ~
 
   Flow:
-     # Register soft deletable filter & event listeners
     persistence:
       doctrine:
         eventListeners:
           'Gedmo\Timestampable\TimestampableListener':
             events: ['prePersist', 'onFlush', 'loadClassMetadata']
             listener: 'Gedmo\Timestampable\TimestampableListener'
+        dql:
+          customStringFunctions:
+            'NEOSCR_TOSTRING': 'TYPO3\TYPO3CR\Persistence\Ast\ToStringFunction'
 
     # Improve debug output for node objects by ignoring large classes
     error:

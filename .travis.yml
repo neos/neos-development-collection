@@ -1,8 +1,4 @@
 language: php
-addons:
-  postgresql: "9.4"
-services:
-  - postgresql
 matrix:
   fast_finish: true
   include:
@@ -10,10 +6,26 @@ matrix:
       env: DB=mysql
     - php: 7.0
       env: DB=pgsql
+      addons:
+        postgresql: "9.4"
+    - php: 7.0
+      env: DB=pgsql
+      sudo: true
+      dist: trusty
+      addons:
+        postgresql: "9.5"
     - php: 7.0
       env: DB=mysql BEHAT=true
     - php: 7.0
       env: DB=pgsql BEHAT=true
+      addons:
+        postgresql: "9.4"
+    - php: 7.0
+      env: DB=pgsql BEHAT=true
+      sudo: true
+      dist: trusty
+      addons:
+        postgresql: "9.5"
     - php: 5.6
       env: DB=sqlite
     - php: 5.5
