@@ -4,14 +4,14 @@
     "license": "GPL-3.0+",
     "description": "An open source Content Application Platform based on Flow. A set of core Content Management features is resting within a larger context that allows you to build a perfectly customized experience for your users.",
     "require": {
-        "neos/diff": "~2.3.0",
+        "neos/diff": "*",
         "typo3/flow": "*",
-        "typo3/media": "~2.3.0",
+        "typo3/media": "*",
         "typo3/party": "*",
         "typo3/setup": "*",
         "typo3/twitter-bootstrap": "*",
-        "typo3/typo3cr": "~2.3.0",
-        "typo3/typoscript": "~2.3.0",
+        "typo3/typo3cr": "*",
+        "typo3/typoscript": "*",
         "league/commonmark": "^0.12.0",
         "behat/transliterator": "~1.0"
     },
