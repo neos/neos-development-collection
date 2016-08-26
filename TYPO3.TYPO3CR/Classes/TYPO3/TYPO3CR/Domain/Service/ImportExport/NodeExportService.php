@@ -161,6 +161,7 @@ class NodeExportService
         $queryBuilder = $this->entityManager->createQueryBuilder();
         $queryBuilder->select(
             'n.path AS path,'
+            . ' NEOSCR_REPLACE(n.path, \'/\', \'!\') AS sortingPath,'
             . ' n.identifier AS identifier,'
             . ' n.index AS sortingIndex,'
             . ' n.properties AS properties, '
@@ -190,25 +191,16 @@ class NodeExportService
             ->setParameter('pathPrefix', $pathStartingPoint)
             ->setParameter('pathPrefixMatch', ($pathStartingPoint === '/' ? '%' : $pathStartingPoint . '/%'))
             ->orderBy('n.identifier', 'ASC')
-            ->orderBy('n.path', 'ASC');
+            // Sort nodeDataList by path, replacing "/" with "!" (the first visible ASCII character)
+            // because there may be characters like "-" in the node path that would break the sorting
+            // order. See NEOS-829.
+            ->orderBy('sortingPath', 'ASC');
 
         if ($nodeTypeFilter) {
             $this->nodeDataRepository->addNodeTypeFilterConstraintsToQueryBuilder($queryBuilder, $nodeTypeFilter);
         }
 
-        $nodeDataList = $queryBuilder->getQuery()->getResult();
-        // Sort nodeDataList by path, replacing "/" with "!" (the first visible ASCII character)
-        // because there may be characters like "-" in the node path
-        // that would break the sorting order
-        usort($nodeDataList,
-            function ($node1, $node2) {
-                return strcmp(
-                    str_replace("/", "!", $node1['path']),
-                    str_replace("/", "!", $node2['path'])
-                );
-            }
-        );
-        return $nodeDataList;
+        return $queryBuilder->getQuery()->getResult();
     }
 
     /**

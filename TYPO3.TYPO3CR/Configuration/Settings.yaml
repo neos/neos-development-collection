@@ -52,6 +52,7 @@ TYPO3:
         dql:
           customStringFunctions:
             'NEOSCR_TOSTRING': 'TYPO3\TYPO3CR\Persistence\Ast\ToStringFunction'
+            'NEOSCR_REPLACE': 'TYPO3\TYPO3CR\Persistence\Ast\ReplaceFunction'
 
     # Improve debug output for node objects by ignoring large classes
     error:

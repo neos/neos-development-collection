@@ -27,22 +27,78 @@
        <uriPathSegment __type="string">home</uriPathSegment>
       </properties>
      </variant>
-     <node identifier="94165d9e-1c0d-43ca-b172-7b867524f349" nodeName="protected">
-      <variant sortingIndex="400" workspace="live" nodeType="TYPO3.Neos.NodeTypes:Page" version="3" removed="" hidden="" hiddenInIndex="">
+     <node identifier="6d68ae3e-7713-4755-8161-6f63928dc9c7" nodeName="node">
+      <variant sortingIndex="500" workspace="live" nodeType="TYPO3.Neos.NodeTypes:Page" version="1" removed="" hidden="" hiddenInIndex="">
        <dimensions>
         <language>en_US</language>
        </dimensions>
-       <accessRoles __type="array">
-        <entry0 __type="string">TYPO3.Neos:Editor</entry0>
-        <entry1 __type="string">TYPO3.Neos:Administrator</entry1>
-       </accessRoles>
-       <creationDateTime __type="object" __classname="DateTime">2015-02-23T14:13:11+01:00</creationDateTime>
-       <lastModificationDateTime __type="object" __classname="DateTime">2015-02-23T14:13:11+01:00</lastModificationDateTime>
+       <accessRoles __type="array"/>
+       <creationDateTime __type="object" __classname="DateTime">2016-08-26T17:00:00+02:00</creationDateTime>
+       <lastModificationDateTime __type="object" __classname="DateTime">2016-08-26T17:00:00+02:00</lastModificationDateTime>
        <properties>
-        <title __type="string">&lt;h1&gt;This node is protected&lt;/h1&gt;</title>
-        <uriPathSegment __type="string">protected</uriPathSegment>
+        <title __type="string">Node</title>
+        <uriPathSegment __type="string">node</uriPathSegment>
        </properties>
       </variant>
+      <node identifier="98892e3b-eee2-49fb-821f-aa41ee53eaa3" nodeName="child">
+       <variant sortingIndex="100" workspace="live" nodeType="TYPO3.Neos.NodeTypes:Page" version="1" removed="" hidden="" hiddenInIndex="">
+        <dimensions>
+         <language>en_US</language>
+        </dimensions>
+        <accessRoles __type="array"/>
+        <creationDateTime __type="object" __classname="DateTime">2016-08-26T17:00:00+02:00</creationDateTime>
+        <lastModificationDateTime __type="object" __classname="DateTime">2016-08-26T17:00:00+02:00</lastModificationDateTime>
+        <properties>
+         <title __type="string">Child of Node</title>
+         <uriPathSegment __type="string">child</uriPathSegment>
+        </properties>
+       </variant>
+      </node>
+     </node>
+     <node identifier="ef7af579-4403-4360-b0a1-f44c410ad35a" nodeName="node-1">
+      <variant sortingIndex="600" workspace="live" nodeType="TYPO3.Neos.NodeTypes:Page" version="1" removed="" hidden="" hiddenInIndex="">
+       <dimensions>
+        <language>en_US</language>
+       </dimensions>
+       <accessRoles __type="array"/>
+       <creationDateTime __type="object" __classname="DateTime">2016-08-26T17:00:00+02:00</creationDateTime>
+       <lastModificationDateTime __type="object" __classname="DateTime">2016-08-26T17:00:00+02:00</lastModificationDateTime>
+       <properties>
+        <title __type="string">Node </title>
+        <uriPathSegment __type="string">node-1</uriPathSegment>
+       </properties>
+      </variant>
+      <node identifier="7524a5b5-e70b-481b-a180-8e13dd876eb6" nodeName="child">
+       <variant sortingIndex="100" workspace="live" nodeType="TYPO3.Neos.NodeTypes:Page" version="1" removed="" hidden="" hiddenInIndex="">
+        <dimensions>
+         <language>en_US</language>
+        </dimensions>
+        <accessRoles __type="array"/>
+        <creationDateTime __type="object" __classname="DateTime">2016-08-26T17:00:00+02:00</creationDateTime>
+        <lastModificationDateTime __type="object" __classname="DateTime">2016-08-26T17:00:00+02:00</lastModificationDateTime>
+        <properties>
+         <title __type="string">Child of Node 1</title>
+         <uriPathSegment __type="string">child</uriPathSegment>
+        </properties>
+       </variant>
+      </node>
+      <node identifier="94165d9e-1c0d-43ca-b172-7b867524f349" nodeName="protected">
+       <variant sortingIndex="400" workspace="live" nodeType="TYPO3.Neos.NodeTypes:Page" version="3" removed="" hidden="" hiddenInIndex="">
+        <dimensions>
+         <language>en_US</language>
+        </dimensions>
+        <accessRoles __type="array">
+         <entry0 __type="string">TYPO3.Neos:Editor</entry0>
+         <entry1 __type="string">TYPO3.Neos:Administrator</entry1>
+        </accessRoles>
+        <creationDateTime __type="object" __classname="DateTime">2015-02-23T14:13:11+01:00</creationDateTime>
+        <lastModificationDateTime __type="object" __classname="DateTime">2015-02-23T14:13:11+01:00</lastModificationDateTime>
+        <properties>
+         <title __type="string">&lt;h1&gt;This node is protected&lt;/h1&gt;</title>
+         <uriPathSegment __type="string">protected</uriPathSegment>
+        </properties>
+       </variant>
+      </node>
      </node>
     </node>
    </node>
