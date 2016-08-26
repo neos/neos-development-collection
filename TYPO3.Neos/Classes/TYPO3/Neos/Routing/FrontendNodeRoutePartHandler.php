@@ -20,11 +20,13 @@ use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Domain\Service\ContentContextFactory;
 use TYPO3\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
+use TYPO3\Neos\Domain\Service\NodeSearchServiceInterface;
 use TYPO3\Neos\Domain\Service\SiteService;
 use TYPO3\Neos\Routing\Exception\InvalidDimensionPresetCombinationException;
 use TYPO3\Neos\Routing\Exception\InvalidRequestPathException;
 use TYPO3\Neos\Routing\Exception\NoSuchDimensionValueException;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 
 /**
@@ -62,6 +64,18 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * @var SiteRepository
      */
     protected $siteRepository;
+
+    /**
+     * @Flow\Inject
+     * @var NodeTypeManager
+     */
+    protected $nodeTypeManager;
+
+    /**
+     * @Flow\Inject
+     * @var NodeSearchServiceInterface
+     */
+    protected $nodeSearchService;
 
     /**
      * @Flow\InjectConfiguration("routing.supportEmptySegmentForDimensions")
@@ -384,19 +398,16 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     protected function getRelativeNodePathByUriPathSegmentProperties(NodeInterface $siteNode, $relativeRequestPath)
     {
         $relativeNodePathSegments = [];
+        $documentNodeType = $this->nodeTypeManager->getNodeType('TYPO3.Neos:Document');
+        $context = $siteNode->getContext();
         $node = $siteNode;
 
         foreach (explode('/', $relativeRequestPath) as $pathSegment) {
-            $foundNodeInThisSegment = false;
-            foreach ($node->getChildNodes('TYPO3.Neos:Document') as $node) {
-                /** @var NodeInterface $node */
-                if ($node->getProperty('uriPathSegment') === $pathSegment) {
-                    $relativeNodePathSegments[] = $node->getName();
-                    $foundNodeInThisSegment = true;
-                    break;
-                }
-            }
-            if (!$foundNodeInThisSegment) {
+            $nodes = $this->nodeSearchService->findByProperties(['uriPathSegment' => $pathSegment], [$documentNodeType], $context, $node);
+            if ($nodes) {
+                $node = reset($nodes);
+                $relativeNodePathSegments[] = $node->getName();
+            } else {
                 return false;
             }
         }
