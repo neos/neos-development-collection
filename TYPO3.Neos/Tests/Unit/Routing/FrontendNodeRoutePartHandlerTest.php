@@ -124,7 +124,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
             $result = [];
             // Recursively get all the matching childNodes. We need it to return deeply nested childNodes because that's how `findByProperties` works
             $getChildNodes = function ($node) use (&$getChildNodes, &$result, $uriPathSegment) {
-                foreach($node->getChildNodes() as $childNode) {
+                foreach ($node->getChildNodes() as $childNode) {
                     $getChildNodes($childNode);
                     if ($childNode->getProperty('uriPathSegment') === $uriPathSegment) {
                         $result[] = $childNode;
