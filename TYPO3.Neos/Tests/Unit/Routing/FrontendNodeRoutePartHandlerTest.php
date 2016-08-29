@@ -114,6 +114,27 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $this->contentDimensionPresetSource = new ConfigurationContentDimensionPresetSource();
         $this->contentDimensionPresetSource->setConfiguration(array());
         $this->inject($this->routePartHandler, 'contentDimensionPresetSource', $this->contentDimensionPresetSource);
+
+        $this->mockNodeTypeManager = $this->createMock('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+        $this->inject($this->routePartHandler, 'nodeTypeManager', $this->mockNodeTypeManager);
+
+        $this->mockNodeSearchService = $this->createMock('TYPO3\Neos\Domain\Service\NodeSearchServiceInterface');
+        $this->mockNodeSearchService->expects($this->any())->method('findByProperties')->will($this->returnCallback(function ($filter, $nodeTypes, $context, $baseNode) {
+            $uriPathSegment = $filter['uriPathSegment'];
+            $result = [];
+            // Recursively get all the matching childNodes. We need it to return deeply nested childNodes because that's how `findByProperties` works
+            $getChildNodes = function ($node) use (&$getChildNodes, &$result, $uriPathSegment) {
+                foreach($node->getChildNodes() as $childNode) {
+                    $getChildNodes($childNode);
+                    if ($childNode->getProperty('uriPathSegment') === $uriPathSegment) {
+                        $result[] = $childNode;
+                    }
+                }
+            };
+            $getChildNodes($baseNode);
+            return $result;
+        }));
+        $this->inject($this->routePartHandler, 'nodeSearchService', $this->mockNodeSearchService);
     }
 
     /**
