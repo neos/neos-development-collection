@@ -11,10 +11,10 @@
                 <fieldset>
                     <legend>{neos:backend.translate(id: 'media.replaceAsset.replaceFilename', source: 'Modules', arguments: {filename: asset.resource.filename})}</legend>
                     <p class="neos-buffer-below">
-                        You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.<br/>
-                        <b>Note:</b> This operation will replace the asset in all published or unpublished workspaces, including the live website.
+                        {neos:backend.translate(id: 'media.replaceAsset.description', source: 'Modules', package: 'TYPO3.Neos')}<br/>
+                        <b>{neos:backend.translate(id: 'media.replaceAsset.note', source: 'Modules', package: 'TYPO3.Neos')}: </b> {neos:backend.translate(id: 'media.replaceAsset.noteText', source: 'Modules', package: 'TYPO3.Neos')}
                     </p>
-                    <label class="neos-button neos-button-primary" for="resource" title="Max. upload size {humanReadableMaximumFileUploadSize} per file" data-neos-toggle="tooltip">Choose a new file <i class="icon-file"></i></label>
+                    <label class="neos-button neos-button-primary" for="resource" title="{neos:backend.translate(id: 'media.maxUploadSize', arguments: {0: humanReadableMaximumFileUploadSize}, source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip">{neos:backend.translate(id: 'media.replaceAsset.chooseNewFile', source: 'Modules', package: 'TYPO3.Neos')} <i class="icon-file"></i></label>
                     <f:form.upload id="resource" name="resource" additionalAttributes="{required: 'required'}" />
                 </fieldset>
                 <fieldset>
@@ -35,13 +35,13 @@
                     <legend>Usage</legend>
                     <f:if condition="{asset.inUse}">
                         <f:then>
-                            <p class="neos-buffer-below">Currently the asset is used {asset.usageCount} times.</p>
+                            <p class="neos-buffer-below">{neos:backend.translate(id: 'media.replace.usageCount', arguments: {usageCount: asset.usageCount}, source: 'Modules', package: 'TYPO3.Neos')}</p>
                             <f:link.action action="relatedNodes" arguments="{asset:asset}" class="neos-button">
-                                Show all usages
+                                {neos:backend.translate(id: 'media.replace.allUsages', source: 'Modules', package: 'TYPO3.Neos')}
                             </f:link.action>
                         </f:then>
                         <f:else>
-                            <p>Currently the asset is not in used anywhere on the website</p>
+                            <p>{neos:backend.translate(id: 'media.replace.notUsed', source: 'Modules', package: 'TYPO3.Neos')}</p>
                         </f:else>
                     </f:if>
                 </fieldset>
@@ -52,14 +52,14 @@
             </div>
         </div>
         <div class="neos-footer">
-            <f:link.action action="index" title="Cancel editing" class="neos-button">Cancel</f:link.action>
-            <f:form.submit id="replace" class="neos-button neos-button-primary" value="Replace" />
+            <f:link.action action="index" title="Cancel editing" class="neos-button">{neos:backend.translate(id: 'cancel', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
+            <f:form.submit id="replace" class="neos-button neos-button-primary" value="{neos:backend.translate(id: 'media.replaceAssetResource', source: 'Modules', package: 'TYPO3.Neos')}" />
         </div>
     </f:form>
 </f:section>
 
 <f:section name="ContentImage">
-    <label>Preview current file</label>
+    <label>{neos:backend.translate(id: 'media.replace.previewFile', source: 'Modules', package: 'TYPO3.Neos')}</label>
     <div class="neos-preview-image">
         <a href="{f:uri.resource(resource: asset.resource)}" target="_blank">
             <m:thumbnail asset="{asset}" maximumWidth="1000" maximumHeight="1000" alt="{asset.label}" class="img-polaroid" />
