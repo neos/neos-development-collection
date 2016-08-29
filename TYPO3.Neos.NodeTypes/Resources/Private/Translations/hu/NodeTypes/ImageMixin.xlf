@@ -13,7 +13,7 @@
 			<target xml:lang="hu" state="needs-translation">Alternative text</target></trans-unit>
       <trans-unit id="properties.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="hu" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="hu" state="translated">Cím</target></trans-unit>
     </body>
   </file>
 </xliff>
