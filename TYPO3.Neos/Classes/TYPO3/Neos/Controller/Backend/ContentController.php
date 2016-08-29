@@ -14,6 +14,7 @@ namespace TYPO3\Neos\Controller\Backend;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\I18n\EelHelper\TranslationHelper;
 use TYPO3\Flow\Property\PropertyMappingConfiguration;
+use TYPO3\Flow\Property\TypeConverter\ObjectConverter;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Flow\Mvc\Controller\ActionController;
@@ -279,7 +280,7 @@ class ContentController extends ActionController
     /**
      * Fetch the metadata for multiple assets
      *
-     * @param array<TYPO3\Media\Domain\Model\Asset> $assets
+     * @param array<TYPO3\Media\Domain\Model\AssetInterface> $assets
      * @return string JSON encoded response
      */
     public function assetsWithMetadataAction(array $assets)

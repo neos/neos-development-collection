@@ -16,3 +16,4 @@ This version of the documentation covering Neos Media |release| has been rendere
    AsynchronousThumbnails
    ThumbnailGenerator/index
    ConfigureImageGeneration
+   DeveloperInformation/index

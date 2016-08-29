@@ -16,7 +16,6 @@ use TYPO3\Flow\Property\PropertyMappingConfiguration;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\TypeConverter\NodeConverter;
 
 /**

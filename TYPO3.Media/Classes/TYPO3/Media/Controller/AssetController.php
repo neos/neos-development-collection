@@ -16,8 +16,11 @@ use Doctrine\ORM\EntityNotFoundException;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Message;
 use TYPO3\Flow\I18n\Translator;
+use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
+use TYPO3\Flow\Resource\Resource as FlowResource;
 use TYPO3\Flow\Utility\Files;
+use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Repository\AudioRepository;
 use TYPO3\Media\Domain\Repository\DocumentRepository;
 use TYPO3\Media\Domain\Repository\ImageRepository;
@@ -26,6 +29,8 @@ use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Media\Domain\Model\AssetCollection;
 use TYPO3\Media\Domain\Model\Tag;
 use TYPO3\Media\Domain\Repository\AssetCollectionRepository;
+use TYPO3\Media\Domain\Service\AssetService;
+use TYPO3\Media\Exception\AssetServiceException;
 use TYPO3\Media\TypeConverter\AssetInterfaceConverter;
 
 /**
@@ -61,10 +66,22 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
     protected $assetCollectionRepository;
 
     /**
+     * @Flow\Inject
+     * @var PackageManagerInterface
+     */
+    protected $packageManager;
+
+    /**
      * @Flow\Inject(lazy = false)
      * @var \TYPO3\Media\Domain\Session\BrowserState
      */
     protected $browserState;
+
+    /**
+     * @Flow\Inject
+     * @var AssetService
+     */
+    protected $assetService;
 
     /**
      * @Flow\Inject
@@ -251,6 +268,42 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
     }
 
     /**
+     * @param Asset $asset
+     * @return void
+     */
+    public function replaceAssetResourceAction(Asset $asset)
+    {
+        $maximumFileUploadSize = $this->maximumFileUploadSize();
+        $this->view->assignMultiple(array(
+            'asset' => $asset,
+            'maximumFileUploadSize' => $maximumFileUploadSize,
+            'redirectPackageEnabled' => $this->packageManager->isPackageAvailable('Neos.RedirectHandler'),
+            'humanReadableMaximumFileUploadSize' => Files::bytesToSizeString($maximumFileUploadSize)
+        ));
+    }
+
+    /**
+     * Replace the resource on an asset.
+     *
+     * @param AssetInterface $asset
+     * @param FlowResource $resource
+     * @param array $options
+     * @return void
+     */
+    public function updateAssetResourceAction(AssetInterface $asset, FlowResource $resource, array $options = [])
+    {
+        try {
+            $this->assetService->replaceAssetResource($asset, $resource, $options);
+        } catch (\Exception $exception) {
+            $this->addFlashMessage('couldNotReplaceAsset', '', Message::SEVERITY_OK, [], 1463472606);
+            $this->forwardToReferringRequest();
+        }
+
+        $this->addFlashMessage('assetHasBeenReplaced', '', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())]);
+        $this->redirect('index');
+    }
+
+    /**
      * Edit an asset
      *
      * @param Asset $asset
@@ -400,8 +453,13 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
      */
     public function deleteAction(Asset $asset)
     {
-        $this->assetRepository->remove($asset);
-        $this->addFlashMessage('assetHasBeenDeleted', '', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())]);
+        try {
+            $this->assetRepository->remove($asset);
+            $this->addFlashMessage('assetHasBeenDeleted', '', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())]);
+        } catch (AssetServiceException $exception) {
+            $this->addFlashMessage('assetCouldNotBeDeleted', '', Message::SEVERITY_WARNING, [], 1462196565);
+        }
+
         $this->redirect('index');
     }
 
@@ -542,7 +600,10 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
     public function addFlashMessage($messageBody, $messageTitle = '', $severity = Message::SEVERITY_OK, array $messageArguments = array(), $messageCode = null)
     {
         if (is_string($messageBody)) {
-            $messageBody = $this->translator->translateById($messageBody, $messageArguments, null, null, 'Main', 'TYPO3.Media');
+            $translatedMessageBody = $this->translator->translateById($messageBody, $messageArguments, null, null, 'Main', 'TYPO3.Media');
+            if ($translatedMessageBody !== null) {
+                $messageBody = $translatedMessageBody;
+            }
         }
         $messageTitle = $this->translator->translateById($messageTitle, $messageArguments, null, null, 'Main', 'TYPO3.Media');
 

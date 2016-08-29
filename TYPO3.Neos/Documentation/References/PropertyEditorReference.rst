@@ -398,7 +398,7 @@ Options Reference:
 	Minimum amount of characters which trigger a search
 
 Property Type: DateTime ``DateTimeEditor`` -- Date & Time Selection Editor
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The most important option for ``DateTime`` properties is the ``format``, which is configured like in PHP, as the following
 examples show:

@@ -20,6 +20,9 @@
 			<trans-unit id="assetCouldNotBeDeleted" xml:space="preserve">
 				<source>Asset could not be deleted.</source>
 			</trans-unit>
+			<trans-unit id="assetHasBeenReplaced" xml:space="preserve">
+				<source>Asset "{0}" has been replaced.</source>
+			</trans-unit>
 			<trans-unit id="tagAlreadyExistsAndAddedToCollection" xml:space="preserve">
 				<source>Tag "{0}" already exists and was added to collection.</source>
 			</trans-unit>
@@ -40,6 +43,9 @@
 			</trans-unit>
 			<trans-unit id="collectionHasBeenDeleted" xml:space="preserve">
 				<source>Collection "{0}" has been deleted.</source>
+			</trans-unit>
+			<trans-unit id="media.replace.options.generateRedirects" xml:space="preserve">
+				<source>Generate redirects from original file url to the new url</source>
 			</trans-unit>
 		</body>
 	</file>

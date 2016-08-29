@@ -181,7 +181,7 @@ class AssetInterfaceConverter extends PersistentObjectConverter
      * @param string $targetType must implement 'TYPO3\Media\Domain\Model\AssetInterface'
      * @param array $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
-     * @return \TYPO3\Flow\Validation\Error|\TYPO3\Media\Domain\Model\Image The converted Image, a Validation Error or NULL
+     * @return \TYPO3\Flow\Validation\Error|\TYPO3\Media\Domain\Model\AssetInterface The converted asset, a Validation Error or NULL
      * @throws \TYPO3\Flow\Property\Exception\InvalidTargetException
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = null)

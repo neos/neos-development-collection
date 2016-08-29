@@ -4,7 +4,7 @@
     "description": "TypoScript is a hierarchical, prototype based processing language",
     "license": "GPL-3.0+",
     "require": {
-        "typo3/flow": "~3.2.0"
+        "typo3/flow": "*"
     },
     "autoload": {
         "psr-0": {

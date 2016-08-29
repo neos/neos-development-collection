@@ -14,7 +14,6 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Service\ImportExport;
 use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Tests\UnitTestCase;
-use TYPO3\Flow\Utility\Now;
 
 class NodeImportServiceTest extends UnitTestCase
 {

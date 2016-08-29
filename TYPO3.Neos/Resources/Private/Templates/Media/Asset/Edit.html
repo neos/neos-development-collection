@@ -63,8 +63,8 @@
 							</tr>
 						</tbody>
 					</table>
-					<f:if condition="{relatedNodes}">
-						<f:link.action action="relatedNodes" arguments="{asset:asset}" class="neos-button">{neos:backend.translate(id: 'media.relatedNodes', quantity: '{relatedNodes -> f:count()}', arguments: {0:'{relatedNodes -> f:count()}'}, source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
+					<f:if condition="{asset.inUse}">
+						<f:link.action action="relatedNodes" arguments="{asset:asset}" class="neos-button">{neos:backend.translate(id: 'media.relatedNodes', quantity: '{asset.usageCount}', arguments: {0: asset.usageCount}, source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
 					</f:if>
 				</fieldset>
 			</div>
@@ -74,7 +74,10 @@
 		</div>
 		<div class="neos-footer">
 			<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'media.cancel', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
-			<f:if condition="{relatedNodes}">
+			<f:security.ifAccess privilegeTarget="TYPO3.Neos:Backend.Module.Media.ReplaceAssetResource">
+				<f:link.action action="replaceAssetResource" arguments="{asset: asset}" class="neos-button">{neos:backend.translate(id: 'media.replaceAssetResource', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
+			</f:security.ifAccess>
+			<f:if condition="{asset.inUse}">
 				<f:then>
 					<a title="{neos:backend.translate(id: 'media.deleteRelatedNodes', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip" class="neos-button neos-button-danger neos-disabled">{neos:backend.translate(id: 'media.delete', source: 'Modules', package: 'TYPO3.Neos')}</a>
 				</f:then>

@@ -312,15 +312,6 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             $contextProperties['dimensions'] = $dimensions;
         }
 
-        $currentDomain = $this->domainRepository->findOneByActiveRequest();
-
-        if ($currentDomain !== null) {
-            $contextProperties['currentSite'] = $currentDomain->getSite();
-            $contextProperties['currentDomain'] = $currentDomain;
-        } else {
-            $contextProperties['currentSite'] = $this->siteRepository->findFirstOnline();
-        }
-
         return $this->contextFactory->create($contextProperties);
     }
 
@@ -584,15 +575,6 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             'inaccessibleContentShown' => ($workspaceName !== 'live'),
             'dimensions' => $dimensionsAndDimensionValues
         ];
-
-        $currentDomain = $this->domainRepository->findOneByActiveRequest();
-
-        if ($currentDomain !== null) {
-            $contextProperties['currentSite'] = $currentDomain->getSite();
-            $contextProperties['currentDomain'] = $currentDomain;
-        } else {
-            $contextProperties['currentSite'] = $this->siteRepository->findFirstOnline();
-        }
 
         return $this->contextFactory->create($contextProperties);
     }

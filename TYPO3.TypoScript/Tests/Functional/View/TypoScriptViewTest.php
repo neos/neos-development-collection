@@ -11,7 +11,6 @@ namespace TYPO3\TypoScript\Tests\Functional\View;
  * source code.
  */
 
-use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\TypoScript\View\TypoScriptView;
 

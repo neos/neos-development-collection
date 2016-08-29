@@ -7,11 +7,12 @@
 <f:section name="Content">
 	<legend>{neos:backend.translate(id: 'media.relatedNodes.referencesTo', source: 'Modules', arguments: {asset: asset.label})}</legend>
 
-	<table class="neos-table">
+	<table class="neos-table neos-no-hover">
 		<thead>
 			<tr>
 				<th>{neos:backend.translate(id: 'document')}</th>
 				<th>{neos:backend.translate(id: 'reference')}</th>
+				<th>&nbsp;</th>
 				<f:if condition="{contentDimensions}">
 					<th>{neos:backend.translate(id: 'contentDimensions')}</th>
 				</f:if>
@@ -48,12 +49,10 @@
 									<li>
 										<f:if condition="{relatedNode.accessible}">
 											<f:then>
-												<neos:link.node node="{relatedNode.contextDocumentNode}">
-													<f:if condition="{relatedNode.node.nodeType.ui.icon}">
-														<i class="{relatedNode.node.nodeType.ui.icon}" title="{f:if(condition: relatedNode.node.nodeType.label, then: '{neos:backend.translate(id: relatedNode.node.nodeType.label)}', else: '{relatedNode.node.nodeType.name}')}" data-neos-toggle="tooltip" data-placement="left"></i>
-													</f:if>
-													<span title="{relatedNode.node.path}" data-neos-toggle="tooltip" data-placement="left">{relatedNode.node.label}</span>
-												</neos:link.node>
+												<f:if condition="{relatedNode.node.nodeType.ui.icon}">
+													<i class="{relatedNode.node.nodeType.ui.icon}" title="{f:if(condition: relatedNode.node.nodeType.label, then: '{neos:backend.translate(id: relatedNode.node.nodeType.label)}', else: '{relatedNode.node.nodeType.name}')}" data-neos-toggle="tooltip" data-placement="left"></i>
+												</f:if>
+												<span title="{relatedNode.node.path}" data-neos-toggle="tooltip" data-placement="left">{relatedNode.node.label}</span>
 											</f:then>
 											<f:else>
 												<f:if condition="{relatedNode.node.nodeType.ui.icon}">
@@ -62,6 +61,15 @@
 												<span title="{relatedNode.node.path}" data-neos-toggle="tooltip" data-placement="left">{relatedNode.node.label}</span>
 											</f:else>
 										</f:if>
+									</li>
+								</f:for>
+							</ul>
+						</td>
+						<td>
+							<ul>
+								<f:for each="{documentNode.nodes}" as="relatedNode">
+									<li>
+										<neos:link.node node="{relatedNode.contextDocumentNode}" target="_blank"><i class="icon-external-link"></i></neos:link.node>
 									</li>
 								</f:for>
 							</ul>
@@ -124,7 +132,8 @@
 	</table>
 
 	<div class="neos-footer">
-		<f:link.action action="edit" arguments="{asset:asset}" class="neos-button">{neos:backend.translate(id: 'back', source: 'Modules')}</f:link.action>
+		<!-- TODO: Find a nicer way to send the referer for a get request -->
+		<a href="javascript:window.history.back(1);" class="neos-button">{neos:backend.translate(id: 'back', source: 'Modules')}</a>
 	</div>
 
 	<script>

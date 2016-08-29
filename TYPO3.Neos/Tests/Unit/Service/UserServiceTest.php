@@ -11,7 +11,6 @@ namespace TYPO3\Neos\Tests\Unit\Service;
  * source code.
  */
 
-use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Neos\Domain\Service\UserService as UserDomainService;
 use TYPO3\Neos\Service\UserService;
