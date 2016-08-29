@@ -6,11 +6,11 @@
 	<f:if condition="{item.node}">
 		<f:then>
 			<neos:link.node node="{item.node}">
-				<f:render section="itemLabel" item="{item}"/>
+				<f:render section="itemLabel" arguments="{item:item}"/>
 			</neos:link.node>
 		</f:then>
 		<f:else>
-			<f:render section="itemLabel" item="{item}"/>
+			<f:render section="itemLabel" arguments="{item:item}"/>
 		</f:else>
 	</f:if>
 	</li>
