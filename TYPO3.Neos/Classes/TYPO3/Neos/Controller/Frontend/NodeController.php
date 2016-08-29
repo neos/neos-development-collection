@@ -85,9 +85,6 @@ class NodeController extends ActionController
         if ($node === null) {
             throw new NodeNotFoundException('The requested node does not exist or isn\'t accessible to the current user', 1430218623);
         }
-        if (!$node->getContext()->isLive() && !$this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.GeneralAccess')) {
-            $this->redirect('index', 'Login', null, array('unauthorized' => true));
-        }
 
         $inBackend = $node->getContext()->isInBackend();
 
