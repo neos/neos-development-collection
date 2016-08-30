@@ -427,7 +427,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         }
 
         $requestPathSegments = [];
-        while ($node->getParentPath() !== SiteService::SITES_ROOT_PATH && $node instanceof NodeInterface) {
+        while ($node instanceof NodeInterface && $node->getParentPath() !== SiteService::SITES_ROOT_PATH) {
             if (!$node->hasProperty('uriPathSegment')) {
                 throw new Exception\MissingNodePropertyException(sprintf('Missing "uriPathSegment" property for node "%s". Nodes can be migrated with the "flow node:repair" command.', $node->getPath()), 1415020326);
             }
