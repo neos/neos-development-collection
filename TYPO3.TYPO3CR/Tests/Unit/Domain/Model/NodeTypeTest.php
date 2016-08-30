@@ -91,6 +91,31 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase
                     'type' => 'string'
                 )
             )
+        ),
+        'TYPO3.TYPO3CR.Testing:SubShortcut' => array(
+            'superTypes' => array(
+                'TYPO3.TYPO3CR.Testing:Shortcut' => true
+            ),
+            'ui' => array(
+                'label' => 'Sub-Shortcut'
+            )
+        ),
+        'TYPO3.TYPO3CR.Testing:SubSubShortcut' => array(
+            'superTypes' => array(
+                'TYPO3.TYPO3CR.Testing:SubShortcut' => true,
+                'TYPO3.TYPO3CR.Testing:SomeMixin' => true
+            ),
+            'ui' => array(
+                'label' => 'Sub-Sub-Shortcut'
+            )
+        ),
+        'TYPO3.TYPO3CR.Testing:SubSubSubShortcut' => array(
+            'superTypes' => array(
+                'TYPO3.TYPO3CR.Testing:SubSubShortcut' => true
+            ),
+            'ui' => array(
+                'label' => 'Sub-Sub-Sub-Shortcut'
+            )
         )
     );
 
@@ -109,7 +134,7 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setDeclaredSuperTypesExpectsAnArrayOfNodeTypesAsKeys()
     {
-        $folderType = new NodeType('TYPO3CR:Folder', array('foo' => true), array());
+        new NodeType('TYPO3CR:Folder', array('foo' => true), array());
     }
 
     /**
@@ -118,7 +143,7 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setDeclaredSuperTypesAcceptsAnArrayOfNodeTypes()
     {
-        $folderType = new NodeType('TYPO3CR:Folder', array('foo'), array());
+        new NodeType('TYPO3CR:Folder', array('foo'), array());
     }
 
     /**
@@ -350,6 +375,45 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase
         );
         $this->assertSame($expectedProperties, $nodeType->getProperties());
     }
+
+    /**
+     * This test asserts that a supertype that has been inherited can be removed by a supertype again.
+     * @test
+     */
+    public function inheritedSuperSuperTypesCanBeRemoved()
+    {
+        $nodeType = $this->getNodeType('TYPO3.TYPO3CR.Testing:SubShortcut');
+        $this->assertSame('Sub-Shortcut', $nodeType->getLabel());
+
+        $expectedProperties = array(
+            'target' => array(
+                'type' => 'string'
+            )
+        );
+        $this->assertSame($expectedProperties, $nodeType->getProperties());
+    }
+
+    /**
+     * This test asserts that a supertype that has been inherited can be removed by a supertype again.
+     * @test
+     */
+    public function superTypesRemovedByInheritanceCanBeAddedAgain()
+    {
+        $nodeType = $this->getNodeType('TYPO3.TYPO3CR.Testing:SubSubSubShortcut');
+        $this->assertSame('Sub-Sub-Sub-Shortcut', $nodeType->getLabel());
+
+        $expectedProperties = array(
+            'target' => array(
+                'type' => 'string'
+            ),
+            'someMixinProperty' => array(
+                'type' => 'string',
+                'label' => 'Important hint'
+            )
+        );
+        $this->assertSame($expectedProperties, $nodeType->getProperties());
+    }
+
     /**
      * Return a nodetype built from the nodeTypesFixture
      *

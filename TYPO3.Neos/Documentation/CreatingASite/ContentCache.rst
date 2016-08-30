@@ -256,7 +256,7 @@ You can override default cache configuration in your TypoScript::
 
 You can also override cache configuration for a specific TypoScript Path::
 
-    page.content.main {
+    page.body.content.main {
     	prototype(TYPO3.Neos:Plugin).@cache.mode = 'cached'
     }
 
