@@ -11,11 +11,14 @@ namespace TYPO3\Media\Command;
  * source code.
  */
 
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManager;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Repository\AssetRepository;
-use TYPO3\Media\Domain\Repository\ImageRepository;
 use TYPO3\Media\Domain\Repository\ThumbnailRepository;
 use TYPO3\Media\Domain\Service\ThumbnailService;
 
@@ -26,18 +29,18 @@ class MediaCommandController extends CommandController
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
 
     /**
      * @Flow\Inject
-     * @var \Doctrine\Common\Persistence\ObjectManager
+     * @var ObjectManager
      */
     protected $entityManager;
 
     /**
-     * @var \Doctrine\DBAL\Connection
+     * @var Connection
      */
     protected $dbalConnection;
 
@@ -217,7 +220,7 @@ class MediaCommandController extends CommandController
      */
     protected function initializeConnection()
     {
-        if (!$this->entityManager instanceof \Doctrine\ORM\EntityManager) {
+        if (!$this->entityManager instanceof EntityManager) {
             $this->outputLine('This command only supports database connections provided by the Doctrine ORM Entity Manager.
 				However, the current entity manager is an instance of %s.', array(get_class($this->entityManager)));
             $this->quit(1);

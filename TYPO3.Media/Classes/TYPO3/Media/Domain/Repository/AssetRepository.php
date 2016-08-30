@@ -12,6 +12,7 @@ namespace TYPO3\Media\Domain\Repository;
  */
 
 use Doctrine\ORM\Internal\Hydration\IterableResult;
+use Doctrine\ORM\Query\ResultSetMapping;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\QueryInterface;
 use TYPO3\Flow\Persistence\QueryResultInterface;
@@ -20,6 +21,7 @@ use TYPO3\Flow\Persistence\Doctrine\Query;
 use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Media\Domain\Model\AssetCollection;
 use TYPO3\Media\Domain\Model\AssetInterface;
+use TYPO3\Media\Domain\Model\Tag;
 
 /**
  * A repository for Assets
@@ -48,7 +50,7 @@ class AssetRepository extends Repository
      * @param string $searchTerm
      * @param array $tags
      * @param AssetCollection $assetCollection*
-     * @return \TYPO3\Flow\Persistence\QueryResultInterface
+     * @return QueryResultInterface
      */
     public function findBySearchTermOrTags($searchTerm, array $tags = array(), AssetCollection $assetCollection = null)
     {
@@ -71,11 +73,11 @@ class AssetRepository extends Repository
     /**
      * Find Assets with the given Tag assigned
      *
-     * @param \TYPO3\Media\Domain\Model\Tag $tag
+     * @param Tag $tag
      * @param AssetCollection $assetCollection
      * @return QueryResultInterface
      */
-    public function findByTag(\TYPO3\Media\Domain\Model\Tag $tag, AssetCollection $assetCollection = null)
+    public function findByTag(Tag $tag, AssetCollection $assetCollection = null)
     {
         $query = $this->createQuery();
         $query->matching($query->contains('tags', $tag));
@@ -87,13 +89,13 @@ class AssetRepository extends Repository
     /**
      * Counts Assets with the given Tag assigned
      *
-     * @param \TYPO3\Media\Domain\Model\Tag $tag
+     * @param Tag $tag
      * @param AssetCollection $assetCollection
      * @return integer
      */
-    public function countByTag(\TYPO3\Media\Domain\Model\Tag $tag, AssetCollection $assetCollection = null)
+    public function countByTag(Tag $tag, AssetCollection $assetCollection = null)
     {
-        $rsm = new \Doctrine\ORM\Query\ResultSetMapping();
+        $rsm = new ResultSetMapping();
         $rsm->addScalarResult('c', 'c');
 
         if ($assetCollection === null) {
@@ -126,7 +128,7 @@ class AssetRepository extends Repository
      */
     public function countAll()
     {
-        $rsm = new \Doctrine\ORM\Query\ResultSetMapping();
+        $rsm = new ResultSetMapping();
         $rsm->addScalarResult('c', 'c');
 
         $queryString = "SELECT count(persistence_object_identifier) c FROM typo3_media_domain_model_asset WHERE dtype != 'typo3_media_imagevariant'";
@@ -139,7 +141,7 @@ class AssetRepository extends Repository
      * Find Assets without any tag
      *
      * @param AssetCollection $assetCollection
-     * @return \TYPO3\Flow\Persistence\QueryResultInterface
+     * @return QueryResultInterface
      */
     public function findUntagged(AssetCollection $assetCollection = null)
     {
@@ -158,7 +160,7 @@ class AssetRepository extends Repository
      */
     public function countUntagged(AssetCollection $assetCollection = null)
     {
-        $rsm = new \Doctrine\ORM\Query\ResultSetMapping();
+        $rsm = new ResultSetMapping();
         $rsm->addScalarResult('c', 'c');
 
         if ($assetCollection === null) {
@@ -176,7 +178,7 @@ class AssetRepository extends Repository
 
     /**
      * @param AssetCollection $assetCollection
-     * @return \TYPO3\Flow\Persistence\QueryResultInterface
+     * @return QueryResultInterface
      */
     public function findByAssetCollection(AssetCollection $assetCollection)
     {
@@ -194,7 +196,7 @@ class AssetRepository extends Repository
      */
     public function countByAssetCollection(AssetCollection $assetCollection)
     {
-        $rsm = new \Doctrine\ORM\Query\ResultSetMapping();
+        $rsm = new ResultSetMapping();
         $rsm->addScalarResult('c', 'c');
 
         $queryString = "SELECT count(a.persistence_object_identifier) c FROM typo3_media_domain_model_asset a LEFT JOIN typo3_media_domain_model_assetcollection_assets_join collectionmm ON a.persistence_object_identifier = collectionmm.media_asset WHERE collectionmm.media_assetcollection = ? AND a.dtype != 'typo3_media_imagevariant'";

@@ -12,8 +12,10 @@ namespace TYPO3\Media\Domain\Model;
  */
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Resource\Resource as FlowResource;
 use TYPO3\Media\Domain\Service\ImageService;
 use TYPO3\Media\Exception\ImageFileException;
@@ -28,7 +30,7 @@ class Image extends Asset implements ImageInterface, VariantSupportInterface
     use DimensionsTrait;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection<\TYPO3\Media\Domain\Model\ImageVariant>
+     * @var Collection<\TYPO3\Media\Domain\Model\ImageVariant>
      * @ORM\OneToMany(orphanRemoval=true, cascade={"all"}, mappedBy="originalAsset")
      */
     protected $variants;
@@ -61,7 +63,7 @@ class Image extends Asset implements ImageInterface, VariantSupportInterface
         if ($this->variants === null) {
             $this->variants = new ArrayCollection();
         }
-        if ($initializationCause === \TYPO3\Flow\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
+        if ($initializationCause === ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
             $this->calculateDimensionsFromResource($this->resource);
         }
         parent::initializeObject($initializationCause);
@@ -115,7 +117,7 @@ class Image extends Asset implements ImageInterface, VariantSupportInterface
      *
      * @param FlowResource $resource
      * @return void
-     * @throws \TYPO3\Media\Exception\ImageFileException
+     * @throws ImageFileException
      */
     protected function calculateDimensionsFromResource(FlowResource $resource)
     {
