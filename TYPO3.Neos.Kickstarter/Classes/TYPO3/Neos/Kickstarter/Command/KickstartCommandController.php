@@ -45,7 +45,7 @@ class KickstartCommandController extends CommandController
     public function siteCommand($packageKey, $siteName)
     {
         if (!$this->packageManager->isPackageKeyValid($packageKey)) {
-            $this->outputLine('Package key "%s" is not valid. Only UpperCamelCase with alphanumeric characters and underscore, please!', array($packageKey));
+            $this->outputLine('Package key "%s" is not valid. Only UpperCamelCase in the format "Vendor.PackageKey", please!', array($packageKey));
             $this->quit(1);
         }
 

@@ -8,6 +8,8 @@ prototype(TYPO3.TypoScript:Debug).@class = 'TYPO3\\TypoScript\\TypoScriptObjects
 prototype(TYPO3.TypoScript:Collection) {
 	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\CollectionImplementation'
 	itemName = 'item'
+	itemKey = 'itemKey'
+	iterationName = 'iterator'
 }
 
 # Render an HTTP response header

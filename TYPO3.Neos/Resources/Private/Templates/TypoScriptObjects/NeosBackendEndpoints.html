@@ -13,8 +13,8 @@
 	<link rel="neos-nodetypeschema" href="{f:uri.action(action: 'nodeTypeSchema', controller: 'Backend\Schema', package: 'TYPO3.Neos', absolute: true, arguments: {version: configurationCacheIdentifier})}" />
 	<link rel="neos-menudata" href="{f:uri.action(action: 'index', controller: 'Backend\Menu', package: 'TYPO3.Neos', absolute: true, arguments: {version: configurationCacheIdentifier})}" />
 	<link rel="neos-editpreviewdata" href="{f:uri.action(action: 'editPreview', controller: 'Backend\Settings', package: 'TYPO3.Neos', absolute: true, arguments: {version: configurationCacheIdentifier})}" />
+	<link rel="neos-service-contentdimensions" type="application/vnd.typo3.neos.contentdimensions" href="{f:uri.action(action: 'index', controller: 'Service\ContentDimensions', package: 'TYPO3.Neos', absolute: true, arguments: {version: configurationCacheIdentifier})}" />
 </f:alias>
-<link rel="neos-service-contentdimensions" type="application/vnd.typo3.neos.contentdimensions" href="{f:uri.action(action: 'index', controller: 'Service\ContentDimensions', package: 'TYPO3.Neos', absolute: true)}" />
 <link rel="neos-service-workspaces" type="application/vnd.typo3.neos.workspaces" href="{f:uri.action(action: 'index', controller: 'Service\Workspaces', package: 'TYPO3.Neos', absolute: true)}" />
 <link rel="neos-xliff" href="{f:uri.action(action: 'xliffAsJson', arguments: {locale: '{neos:backend.interfaceLanguage()}', version: '{neos:backend.xliffCacheVersion()}'}, controller: 'Backend\Backend', package: 'TYPO3.Neos', absolute: true) -> f:format.raw()}" />
 

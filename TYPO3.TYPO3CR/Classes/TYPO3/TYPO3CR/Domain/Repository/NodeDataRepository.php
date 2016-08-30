@@ -197,7 +197,7 @@ class NodeDataRepository extends Repository
      * @param string $path
      * @param Workspace $workspace
      * @param array|null $dimensions
-     * @return NodeInterface|null
+     * @return NodeData|null
      */
     public function findShadowNodeByPath($path, Workspace $workspace, array $dimensions = null)
     {
@@ -980,7 +980,7 @@ class NodeDataRepository extends Repository
             $likeParameter = '%' . trim(json_encode(UnicodeFunctions::strtolower($term), JSON_UNESCAPED_UNICODE), '"') . '%';
         }
 
-        $queryBuilder->andWhere("LOWER(CONCAT('', n.properties)) LIKE :term")->setParameter('term', $likeParameter);
+        $queryBuilder->andWhere("LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :term")->setParameter('term', $likeParameter);
 
         if (strlen($pathStartingPoint) > 0) {
             $pathStartingPoint = strtolower($pathStartingPoint);
@@ -1427,7 +1427,7 @@ class NodeDataRepository extends Repository
         $parameters = [];
         foreach ($relationMap as $relatedObjectType => $relatedIdentifiers) {
             foreach ($relatedIdentifiers as $relatedIdentifier) {
-                $constraints[] = '(LOWER(CONCAT(\'\', n.properties)) LIKE :entity' . md5($relatedIdentifier) . ' )';
+                $constraints[] = '(LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :entity' . md5($relatedIdentifier) . ' )';
                 $parameters['entity' . md5($relatedIdentifier)] = '%"__identifier": "' . strtolower($relatedIdentifier) . '"%';
             }
         }

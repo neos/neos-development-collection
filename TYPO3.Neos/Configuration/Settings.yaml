@@ -25,7 +25,18 @@ TYPO3:
             label: 'Neos Backend'
             provider: 'PersistedUsernamePasswordProvider'
             requestPatterns:
-              controllerObjectName: 'TYPO3\Neos\Controller\.*|TYPO3\Neos\Service\.*|TYPO3\Media\Controller\.*'
+              'TYPO3.Neos:backendControllers':
+                pattern: 'ControllerObjectName'
+                patternOptions:
+                  controllerObjectNamePattern: 'TYPO3\Neos\Controller\.*'
+              'TYPO3.Neos:serviceControllers':
+                pattern: 'ControllerObjectName'
+                patternOptions:
+                  controllerObjectNamePattern: 'TYPO3\Neos\Service\.*'
+              'TYPO3.Neos:mediaControllers':
+                pattern: 'ControllerObjectName'
+                patternOptions:
+                  controllerObjectNamePattern: 'TYPO3\Media\Controller\.*'
             entryPoint: 'WebRedirect'
             entryPointOptions:
               routeValues:
@@ -34,6 +45,9 @@ TYPO3:
                 '@action':     'index'
                 '@format':     'html'
         authenticationStrategy: oneToken
+
+    session:
+      name: 'Neos_Session'
 
     persistence:
       doctrine:
@@ -338,7 +352,7 @@ TYPO3:
           position: 100
 
       backendLoginForm:
-        backgroundImage: 'resource://TYPO3.Neos/Public/Images/Login/Wallpaper22.jpg'
+        backgroundImage: 'resource://TYPO3.Neos/Public/Images/Login/Wallpaper23.jpg'
         stylesheets:
           'TYPO3.Neos:DefaultStyles': 'resource://TYPO3.Neos/Public/Styles/Login.css'
 

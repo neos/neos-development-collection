@@ -55,7 +55,7 @@
 			<target xml:lang="km" state="translated">កំរិតអតិបិរមា</target></trans-unit>
       <trans-unit id="content.emptyMenu" xml:space="preserve">
 				<source>Empty Menu</source>
-			<target xml:lang="km" state="needs-translation">Empty Menu</target></trans-unit>
+			<target xml:lang="km" state="translated">មិនមាន​មុឺនុយ</target></trans-unit>
     </body>
   </file>
 </xliff>
