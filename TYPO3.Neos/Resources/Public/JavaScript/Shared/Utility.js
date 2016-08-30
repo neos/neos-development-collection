@@ -13,7 +13,7 @@ define(function() {
 		 * @return {boolean}
 		 */
 		isValidJsonString: function(jsonString) {
-			if(typeof jsonString !== 'string') {
+			if (typeof jsonString !== 'string') {
 				return false;
 			}
 			return !/[^,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]/.test(jsonString.replace(/"(\\.|[^"\\])*"/g, ''));
