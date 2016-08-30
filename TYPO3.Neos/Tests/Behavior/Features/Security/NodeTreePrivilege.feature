@@ -14,9 +14,7 @@ Feature: Privilege to restrict nodes shown in the node tree
           'TYPO3.TYPO3CR:NeosSite':
             matcher: 'isDescendantNodeOf("/sites/neos")'
           'TYPO3.TYPO3CR:NeosTeams':
-            matcher: 'isDescendantNodeOf("/sites/neos/community/teams")'
-          'TYPO3.TYPO3CR:NeosTeamsPath':
-            matcher: 'isAncestorNodeOf("/sites/neos/community/teams")'
+            matcher: 'isAncestorOrDescendantNodeOf("/sites/neos/community/teams")'
 
         'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\EditNodePrivilege':
           'TYPO3.TYPO3CR:EditNeosTeamsPath':
@@ -46,9 +44,6 @@ Feature: Privilege to restrict nodes shown in the node tree
               permission: GRANT
             -
               privilegeTarget: 'TYPO3.TYPO3CR:NeosTeams'
-              permission: GRANT
-            -
-              privilegeTarget: 'TYPO3.TYPO3CR:NeosTeamsPath'
               permission: GRANT
             -
               privilegeTarget: 'TYPO3.TYPO3CR:EditNeosTeamsPath'
