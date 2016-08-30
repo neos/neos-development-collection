@@ -1237,7 +1237,9 @@ HELPTEXT;
                 }
 
                 if (!$dryRun) {
-                    $nodeData->createShadow($nodeDataSeenFromParentWorkspace->getPath());
+                    $shadowNode = new NodeData($nodeDataSeenFromParentWorkspace->getPath(), $nodeData->getWorkspace(), $nodeData->getIdentifier(), $nodeData->getDimensionValues());
+                    $shadowNode->similarize($nodeData);
+                    $shadowNode->setAsShadowOf($this);
                 }
                 $fixedShadowNodes++;
             }
