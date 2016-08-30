@@ -76,7 +76,7 @@ class UserServiceTest extends UnitTestCase
         $mockUserWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
 
         $this->mockUserDomainService->expects($this->atLeastOnce())->method('getCurrentUser')->will($this->returnValue($mockUser));
-        $this->mockUserDomainService->expects($this->atLeastOnce())->method('getUserName')->with($mockUser)->will($this->returnValue('TheUserName'));
+        $this->mockUserDomainService->expects($this->atLeastOnce())->method('getCurrentUsername')->will($this->returnValue('TheUserName'));
         $this->mockWorkspaceRepository->expects($this->atLeastOnce())->method('findOneByName')->with('user-TheUserName')->will($this->returnValue($mockUserWorkspace));
         $this->assertSame($mockUserWorkspace, $this->userService->getPersonalWorkspace());
     }
@@ -98,7 +98,7 @@ class UserServiceTest extends UnitTestCase
         $mockUser = $this->getMockBuilder('TYPO3\Neos\Domain\Model\User')->disableOriginalConstructor()->getMock();
 
         $this->mockUserDomainService->expects($this->atLeastOnce())->method('getCurrentUser')->will($this->returnValue($mockUser));
-        $this->mockUserDomainService->expects($this->atLeastOnce())->method('getUserName')->with($mockUser)->will($this->returnValue('TheUserName'));
+        $this->mockUserDomainService->expects($this->atLeastOnce())->method('getCurrentUsername')->will($this->returnValue('TheUserName'));
         $this->assertSame('user-TheUserName', $this->userService->getPersonalWorkspaceName());
     }
 }

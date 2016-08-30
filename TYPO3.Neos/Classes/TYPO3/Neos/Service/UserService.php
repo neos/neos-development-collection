@@ -89,7 +89,7 @@ class UserService
             return null;
         }
 
-        $username = $this->userDomainService->getUsername($currentUser);
+        $username = $this->userDomainService->getCurrentUsername();
         return ($username === null ? null : UserUtility::getPersonalWorkspaceNameForUsername($username));
     }
 

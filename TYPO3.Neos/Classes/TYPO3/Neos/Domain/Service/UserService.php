@@ -168,7 +168,7 @@ class UserService
         }
         $user = $this->partyService->getAssignedPartyOfAccount($account);
         if (!$user instanceof User) {
-            throw new Exception(sprintf('Unexpected user type "%s". An account with the identifier "%s" exists, but the corresponding party is not a Neos User.', get_class($user), $username), 1422270948);
+            return null;
         }
         if ($authenticationProviderName !== null) {
             if (!isset($this->runtimeUserCache['a_' . $authenticationProviderName])) {
@@ -214,7 +214,25 @@ class UserService
         if ($this->securityContext->canBeInitialized() === true) {
             $account = $this->securityContext->getAccount();
             if ($account !== null) {
-                return $this->getUser($account->getAccountIdentifier());
+                return $this->getUser($account->getAccountIdentifier(), $account->getAuthenticationProviderName());
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns the username of the currently logged in user, if any
+     *
+     * @return string The username or null
+     * @api
+     */
+    public function getCurrentUsername()
+    {
+        if ($this->securityContext->canBeInitialized() === true) {
+            $account = $this->securityContext->getAccount();
+            if ($account !== null) {
+                return $account->getAccountIdentifier();
             }
         }
 
