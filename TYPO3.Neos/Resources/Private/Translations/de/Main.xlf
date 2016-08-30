@@ -540,7 +540,7 @@
 			<target xml:lang="de">Medien</target></trans-unit>
       <trans-unit id="crop" xml:space="preserve" approved="yes">
 				<source>Crop</source>
-			<target xml:lang="de">Beschneiden</target></trans-unit>
+			<target xml:lang="de">Beschneiden</target><alt-trans><target xml:lang="de"><![CDATA[<i class="icon-crop"></i>]]></target></alt-trans></trans-unit>
       <trans-unit id="width" xml:space="preserve" approved="yes">
 				<source>Width</source>
 			<target xml:lang="de">Breite</target></trans-unit>

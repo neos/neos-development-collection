@@ -36,7 +36,7 @@ is either content or non-translated.
 
   The translation labels used in the javascript ui are parsed to a big json file.
   While changing xliff files this cached should be flushed, but still it can turn
-  out useful not to disable this cache. You can do so by using the following snippet
+  out useful to disable this cache. You can do so by using the following snippet
   in your `Caches.yaml`
 
 .. code-block:: yaml

@@ -312,20 +312,22 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 				_assetIdentifier: value && '__identity' in value ? value.__identity : null,
 				_frameLoaded: false,
 				_reloadPreviewImage: function() {
-					var originalPreviewImageResourceUri = that.get('_previewImageUri');
+					if (this._assetIdentifier) {
+						var originalPreviewImageResourceUri = that.get('_previewImageUri');
 
-					that._displayImageLoader();
+						that._displayImageLoader();
 
-					that.set('_loadPreviewImageHandler', HttpClient.getResource(
-						that.get('_imageServiceEndpointUri') + '?image=' + this._assetIdentifier,
-						{dataType: 'json'}
-					));
-					that.get('_loadPreviewImageHandler').then(function (result) {
-						if (originalPreviewImageResourceUri !== result.previewImageResourceUri) {
-							that.fileUploaded(result);
-						}
-						that._hideImageLoader();
-					});
+						that.set('_loadPreviewImageHandler', HttpClient.getResource(
+							that.get('_imageServiceEndpointUri') + '?image=' + this._assetIdentifier,
+							{dataType: 'json'}
+						));
+						that.get('_loadPreviewImageHandler').then(function (result) {
+							if (originalPreviewImageResourceUri !== result.previewImageResourceUri) {
+								that.fileUploaded(result);
+							}
+							that._hideImageLoader();
+						});
+					}
 				},
 				onLoad: function() {
 					this._frameLoaded = true;
