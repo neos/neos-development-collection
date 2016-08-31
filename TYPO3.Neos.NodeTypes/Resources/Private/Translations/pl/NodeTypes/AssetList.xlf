@@ -11,9 +11,9 @@
       <trans-unit id="properties.assets" xml:space="preserve" approved="yes">
 				<source>Assets</source>
 			<target xml:lang="pl">Zasoby</target></trans-unit>
-      <trans-unit id="content.emptyAssetList" xml:space="preserve">
+      <trans-unit id="content.emptyAssetList" xml:space="preserve" approved="yes">
 				<source>Empty asset list</source>
-			<target xml:lang="pl" state="needs-translation">Empty asset list</target></trans-unit>
+			<target xml:lang="pl">Pusta lista zadobów</target></trans-unit>
     </body>
   </file>
 </xliff>

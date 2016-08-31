@@ -934,33 +934,33 @@
       <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve" approved="yes">
 				<source>References to "{asset}"</source>
 			<target xml:lang="pl">Odniesienia do "{asset}"</target></trans-unit>
-      <trans-unit id="media.replaceAsset.replaceFilename" xml:space="preserve">
+      <trans-unit id="media.replaceAsset.replaceFilename" xml:space="preserve" approved="yes">
 				<source>Replace "{filename}"</source>
-			<target xml:lang="pl" state="needs-translation">Replace "{filename}"</target></trans-unit>
-      <trans-unit id="media.replaceAsset.description" xml:space="preserve">
+			<target xml:lang="pl">Zastąp "{filename}"</target></trans-unit>
+      <trans-unit id="media.replaceAsset.description" xml:space="preserve" approved="yes">
         <source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
-      <target xml:lang="pl" state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
-      <trans-unit id="media.replaceAsset.note" xml:space="preserve">
+      <target xml:lang="pl">Możesz zastąpić ten zasób przesyłając nowy plik. Po zastąpieniu, nowy zasób będzie używany we wszystkich miejscach na stronie gdzie zasób jest używany.</target></trans-unit>
+      <trans-unit id="media.replaceAsset.note" xml:space="preserve" approved="yes">
         <source>Note</source>
-      <target xml:lang="pl" state="needs-translation">Note</target></trans-unit>
-      <trans-unit id="media.replaceAsset.noteText" xml:space="preserve">
+      <target xml:lang="pl">Uwaga</target></trans-unit>
+      <trans-unit id="media.replaceAsset.noteText" xml:space="preserve" approved="yes">
         <source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
-      <target xml:lang="pl" state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
-      <trans-unit id="media.replaceAsset.chooseNewFile" xml:space="preserve">
+      <target xml:lang="pl">Ta operacja spowoduje zastąpienie zasobu we wszystkich opublikowanych lub nieopublikowanych obszarach roboczych, włączając w to działającą stronę.</target></trans-unit>
+      <trans-unit id="media.replaceAsset.chooseNewFile" xml:space="preserve" approved="yes">
         <source>Choose a new file</source>
-      <target xml:lang="pl" state="needs-translation">Choose a new file</target></trans-unit>
-      <trans-unit id="media.replace.usageCount" xml:space="preserve">
+      <target xml:lang="pl">Wybierz nowy plik</target></trans-unit>
+      <trans-unit id="media.replace.usageCount" xml:space="preserve" approved="yes">
         <source>Currently the asset is used {usageCount} times.</source>
-      <target xml:lang="pl" state="needs-translation">Currently the asset is used {usageCount} times.</target></trans-unit>
-      <trans-unit id="media.replace.allUsages" xml:space="preserve">
+      <target xml:lang="pl">Obecnie zasób jest używany {usageCount} razy.</target></trans-unit>
+      <trans-unit id="media.replace.allUsages" xml:space="preserve" approved="yes">
         <source>Show all usages</source>
-      <target xml:lang="pl" state="needs-translation">Show all usages</target></trans-unit>
-      <trans-unit id="media.replace.notUsed" xml:space="preserve">
+      <target xml:lang="pl">Pokaż wszystkie użycia</target></trans-unit>
+      <trans-unit id="media.replace.notUsed" xml:space="preserve" approved="yes">
         <source>Currently the asset is not in used anywhere on the website.</source>
-      <target xml:lang="pl" state="needs-translation">Currently the asset is not in used anywhere on the website.</target></trans-unit>
-      <trans-unit id="media.replace.previewFile" xml:space="preserve">
+      <target xml:lang="pl">Obecnie zasób nie jest używany nigdzie na stronie.</target></trans-unit>
+      <trans-unit id="media.replace.previewFile" xml:space="preserve" approved="yes">
         <source>Preview current file</source>
-      <target xml:lang="pl" state="needs-translation">Preview current file</target></trans-unit>
+      <target xml:lang="pl">Podgląd bieżącego pliku</target></trans-unit>
     </body>
   </file>
 </xliff>
