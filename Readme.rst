@@ -9,7 +9,7 @@
 .. |Latest Stable Version| image:: https://poser.pugx.org/neos/neos-development-collection/v/stable
    :target: https://packagist.org/packages/neos/neos-development-collection
 .. |License| image:: https://poser.pugx.org/neos/neos-development-collection/license
-   :target: https://packagist.org/packages/neos/neos-development-collection
+   :target: https://raw.githubusercontent.com/neos/neos/master/LICENSE
 .. |Docs| image:: https://img.shields.io/badge/documentation-master-blue.svg
    :target: https://neos.readthedocs.org/en/latest/
    :alt: Documentation
