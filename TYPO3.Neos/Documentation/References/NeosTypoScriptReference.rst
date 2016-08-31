@@ -169,6 +169,34 @@ overriding the ``@position`` property.
 
 .. note:: The internal ``TYPO3.TypoScript:Matcher`` object type is used to evaluate the matcher definitions.
 
+.. _TYPO3_TypoScript__Debug:
+
+TYPO3.TypoScript:Debug
+-------------------------
+
+Shows the result of TypoScript Expressions directly.
+
+:title: (optional) Title for the debug output
+:plaintext: (boolean) If set true, the result will be shown as plaintext
+:[key]: (mixed) A nested definition (simple value, expression or object), ``[key]`` will be used as key for the resulting output
+
+Example::
+
+  debugObject = Debug {
+        title = 'Debug of hello world'
+
+        # If only the value-key is given it is debugged directly,
+        # otherwise all keys except title an plaintext are debugged.
+        value = "hello neos world"
+
+        # Additional values for debugging
+        documentTitle = ${q(documentNode).property('title')}
+        documentPath = ${documentNode.path}
+  }
+  
+  # the value of this object is the formated debug output of all keys given to the object
+
+
 .. _TYPO3_TypoScript__Template:
 
 TYPO3.TypoScript:Template
