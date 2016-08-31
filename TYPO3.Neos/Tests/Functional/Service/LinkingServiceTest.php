@@ -11,13 +11,26 @@ namespace TYPO3\Neos\Tests\Functional\Service;
  * source code.
  */
 
+use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Controller\Arguments;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Mvc\FlashMessageContainer;
 use TYPO3\Flow\Mvc\Routing\UriBuilder;
+use TYPO3\Flow\Tests\FunctionalTestRequestHandler;
+use TYPO3\Media\TypeConverter\AssetInterfaceConverter;
+use TYPO3\Neos\Domain\Repository\DomainRepository;
+use TYPO3\Neos\Domain\Repository\SiteRepository;
+use TYPO3\Neos\Domain\Service\ContentContext;
+use TYPO3\Neos\Domain\Service\SiteImportService;
 use TYPO3\Neos\Exception as NeosException;
+use TYPO3\Neos\Exception;
+use TYPO3\Neos\Service\LinkingService;
+use TYPO3\TYPO3CR\Domain\Model\Node;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 
 /**
  * Test case for the LinkingService
@@ -35,37 +48,37 @@ class LinkingServiceTest extends FunctionalTestCase
     protected static $testablePersistenceEnabled = true;
 
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+     * @var NodeDataRepository
      */
     protected $nodeDataRepository;
 
     /**
-     * @var \TYPO3\Flow\Property\PropertyMapper
+     * @var PropertyMapper
      */
     protected $propertyMapper;
 
     /**
-     * @var \TYPO3\Flow\Mvc\Controller\ControllerContext
+     * @var ControllerContext
      */
     protected $controllerContext;
 
     /**
-     * @var \TYPO3\Neos\Domain\Service\ContentContext
+     * @var ContentContext
      */
     protected $contentContext;
 
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+     * @var ContextFactoryInterface
      */
     protected $contextFactory;
 
     /**
-     * @var \TYPO3\Neos\Service\LinkingService
+     * @var LinkingService
      */
     protected $linkingService;
 
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+     * @var NodeInterface
      */
     protected $baseNode;
 
@@ -75,15 +88,15 @@ class LinkingServiceTest extends FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->nodeDataRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
-        $domainRepository = $this->objectManager->get('TYPO3\Neos\Domain\Repository\DomainRepository');
-        $siteRepository = $this->objectManager->get('TYPO3\Neos\Domain\Repository\SiteRepository');
-        $this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
+        $this->nodeDataRepository = $this->objectManager->get(NodeDataRepository::class);
+        $domainRepository = $this->objectManager->get(DomainRepository::class);
+        $siteRepository = $this->objectManager->get(SiteRepository::class);
+        $this->contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
         $contextProperties = array(
             'workspaceName' => 'live'
         );
         $contentContext = $this->contextFactory->create($contextProperties);
-        $siteImportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteImportService');
+        $siteImportService = $this->objectManager->get(SiteImportService::class);
         $siteImportService->importFromFile(__DIR__ . '/../Fixtures/NodeStructure.xml', $contentContext);
         $this->persistenceManager->persistAll();
 
@@ -98,12 +111,12 @@ class LinkingServiceTest extends FunctionalTestCase
 
         $this->contentContext = $contentContext;
 
-        $this->propertyMapper = $this->objectManager->get('TYPO3\Flow\Property\PropertyMapper');
+        $this->propertyMapper = $this->objectManager->get(PropertyMapper::class);
 
         $this->baseNode = $this->contentContext->getCurrentSiteNode()->getNode('home');
 
-        $this->linkingService = $this->objectManager->get('TYPO3\Neos\Service\LinkingService');
-        /** @var $requestHandler \TYPO3\Flow\Tests\FunctionalTestRequestHandler */
+        $this->linkingService = $this->objectManager->get(LinkingService::class);
+        /** @var $requestHandler FunctionalTestRequestHandler */
         $requestHandler = self::$bootstrap->getActiveRequestHandler();
         $this->controllerContext = new ControllerContext(new ActionRequest($requestHandler->getHttpRequest()), $requestHandler->getHttpResponse(), new Arguments(array()), new UriBuilder());
     }
@@ -115,7 +128,7 @@ class LinkingServiceTest extends FunctionalTestCase
     {
         parent::tearDown();
         $this->inject($this->contextFactory, 'contextInstances', array());
-        $this->inject($this->objectManager->get('TYPO3\Media\TypeConverter\AssetInterfaceConverter'), 'resourcesAlreadyConvertedToAssets', array());
+        $this->inject($this->objectManager->get(AssetInterfaceConverter::class), 'resourcesAlreadyConvertedToAssets', array());
     }
 
     /**
@@ -123,7 +136,7 @@ class LinkingServiceTest extends FunctionalTestCase
      */
     public function linkingServiceCreatesUriViaGivenNodeObject()
     {
-        $targetNode = $this->propertyMapper->convert('/sites/example/home', 'TYPO3\TYPO3CR\Domain\Model\Node');
+        $targetNode = $this->propertyMapper->convert('/sites/example/home', Node::class);
         $this->assertOutputLinkValid('en/home.html', $this->linkingService->createNodeUri($this->controllerContext, $targetNode));
     }
 
@@ -243,7 +256,7 @@ class LinkingServiceTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Neos\Exception
+     * @expectedException Exception
      */
     public function linkingServiceThrowsAnExceptionWhenTryingToLinkToANonExistingNode()
     {
@@ -252,7 +265,7 @@ class LinkingServiceTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Neos\Exception
+     * @expectedException Exception
      */
     public function linkingServiceThrowsAnExceptionWhenItIsGivenAnEmptyString()
     {

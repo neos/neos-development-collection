@@ -20,6 +20,7 @@ use TYPO3\Neos\Controller\Exception\NodeNotFoundException;
 use TYPO3\Neos\Controller\Exception\UnresolvableShortcutException;
 use TYPO3\Neos\Domain\Model\UserInterfaceMode;
 use TYPO3\Neos\Domain\Service\NodeShortcutResolver;
+use TYPO3\Neos\View\TypoScriptView;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 
@@ -51,10 +52,10 @@ class NodeController extends ActionController
     /**
      * @var string
      */
-    protected $defaultViewObjectName = 'TYPO3\Neos\View\TypoScriptView';
+    protected $defaultViewObjectName = TypoScriptView::class;
 
     /**
-     * @var \TYPO3\Neos\View\TypoScriptView
+     * @var TypoScriptView
      */
     protected $view;
 

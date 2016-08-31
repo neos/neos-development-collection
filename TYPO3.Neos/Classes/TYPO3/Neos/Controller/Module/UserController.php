@@ -18,6 +18,6 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class UserController extends \TYPO3\Neos\Controller\Module\AbstractModuleController
+class UserController extends AbstractModuleController
 {
 }

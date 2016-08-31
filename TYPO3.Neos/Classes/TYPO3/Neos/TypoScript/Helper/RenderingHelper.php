@@ -15,6 +15,7 @@ use TYPO3\Eel\ProtectedContextAwareInterface;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
+use TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException;
 
 /**
  * Render Content Dimension Names, Node Labels
@@ -86,7 +87,7 @@ class RenderingHelper implements ProtectedContextAwareInterface
      * Render the label for the given $nodeTypeName
      *
      * @param string $nodeTypeName
-     * @throws \TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException
+     * @throws NodeTypeNotFoundException
      * @return string
      */
     public function labelForNodeType($nodeTypeName)

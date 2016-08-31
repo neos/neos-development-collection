@@ -13,20 +13,24 @@ namespace TYPO3\Neos\Setup\Step;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Configuration\ConfigurationManager;
+use TYPO3\Flow\Configuration\Source\YamlSource;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Utility\Files;
+use TYPO3\Form\Core\Model\FormDefinition;
+use TYPO3\Imagine\ImagineFactory;
+use TYPO3\Setup\Step\AbstractStep;
 
 /**
  * @Flow\Scope("singleton")
  */
-class NeosSpecificRequirementsStep extends \TYPO3\Setup\Step\AbstractStep
+class NeosSpecificRequirementsStep extends AbstractStep
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Configuration\Source\YamlSource
+     * @var YamlSource
      */
     protected $configurationSource;
 
@@ -38,7 +42,7 @@ class NeosSpecificRequirementsStep extends \TYPO3\Setup\Step\AbstractStep
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Imagine\ImagineFactory
+     * @var ImagineFactory
      */
     protected $imagineFactory;
 
@@ -57,7 +61,7 @@ class NeosSpecificRequirementsStep extends \TYPO3\Setup\Step\AbstractStep
     /**
      * {@inheritdoc}
      */
-    protected function buildForm(\TYPO3\Form\Core\Model\FormDefinition $formDefinition)
+    protected function buildForm(FormDefinition $formDefinition)
     {
         $page1 = $formDefinition->createPage('page1');
         $page1->setRenderingOption('header', 'Neos requirements check');

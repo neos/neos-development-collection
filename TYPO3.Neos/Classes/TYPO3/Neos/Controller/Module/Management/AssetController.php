@@ -21,6 +21,7 @@ use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Utility\TypeHandling;
 use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Media\Domain\Model\AssetCollection;
+use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 use TYPO3\Neos\Controller\CreateContentContextTrait;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
@@ -133,10 +134,10 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
     /**
      * Delete an asset
      *
-     * @param \TYPO3\Media\Domain\Model\Asset $asset
+     * @param Asset $asset
      * @return void
      */
-    public function deleteAction(\TYPO3\Media\Domain\Model\Asset $asset)
+    public function deleteAction(Asset $asset)
     {
         $relatedNodes = $this->getRelatedNodes($asset);
         if (count($relatedNodes) > 0) {
@@ -192,15 +193,15 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
     }
 
     /**
-     * @param \TYPO3\Media\Domain\Model\Asset $asset
+     * @param Asset $asset
      * @return array
      */
-    protected function getRelatedNodes(\TYPO3\Media\Domain\Model\Asset $asset)
+    protected function getRelatedNodes(Asset $asset)
     {
         $relationMap = [];
         $relationMap[TypeHandling::getTypeForValue($asset)] = [$this->persistenceManager->getIdentifierByObject($asset)];
 
-        if ($asset instanceof \TYPO3\Media\Domain\Model\Image) {
+        if ($asset instanceof Image) {
             foreach ($asset->getVariants() as $variant) {
                 $type = TypeHandling::getTypeForValue($variant);
                 if (!isset($relationMap[$type])) {
@@ -245,7 +246,7 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
     /**
      * Individual error FlashMessage that hides which action fails in production.
      *
-     * @return \TYPO3\Flow\Error\Message The flash message or FALSE if no flash message should be set
+     * @return Message The flash message or FALSE if no flash message should be set
      */
     protected function getErrorFlashMessage()
     {
