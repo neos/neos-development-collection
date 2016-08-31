@@ -186,7 +186,7 @@ Example::
         title = 'Debug of hello world'
 
         # If only the "value"-key is given it is debugged directly,
-        # otherwise all keys except "title" an "plaintext" are debugged.
+        # otherwise all keys except "title" and "plaintext" are debugged.
         value = "hello neos world"
 
         # Additional values for debugging
