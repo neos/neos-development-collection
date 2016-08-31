@@ -194,7 +194,7 @@ Example::
         documentPath = ${documentNode.path}
   }
   
-  # the value of this object is the formated debug output of all keys given to the object
+  # the value of this object is the formatted debug output of all keys given to the object
 
 
 .. _TYPO3_TypoScript__Template:
