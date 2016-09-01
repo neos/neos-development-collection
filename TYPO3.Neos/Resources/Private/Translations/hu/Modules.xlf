@@ -131,10 +131,10 @@
 			<target xml:lang="hu" state="needs-translation">Publish selected changes</target></trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve">
 				<source>Discard all changes</source>
-			<target xml:lang="hu" state="needs-translation">Discard all changes</target></trans-unit>
+			<target xml:lang="hu" state="translated">Összes változtatás elvetése</target></trans-unit>
       <trans-unit id="workspaces.publishAllChanges" xml:space="preserve">
 				<source>Publish all changes</source>
-			<target xml:lang="hu" state="needs-translation">Publish all changes</target></trans-unit>
+			<target xml:lang="hu" state="translated">Minden változtatás közzététele</target></trans-unit>
       <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve">
 				<source>Publish all changes to {0}</source>
 			<target xml:lang="hu" state="needs-translation">Publish all changes to {0}</target></trans-unit>
@@ -325,7 +325,7 @@
 			<target xml:lang="hu" state="needs-translation">User Data</target></trans-unit>
       <trans-unit id="users.new.userData.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="hu" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="hu" state="translated">Felhasználó</target></trans-unit>
       <trans-unit id="users.new.userData.password" xml:space="preserve">
 				<source>Password</source>
 			<target xml:lang="hu" state="translated">Jelszó</target></trans-unit>
@@ -379,7 +379,7 @@
 			<target xml:lang="hu" state="needs-translation">Accounts</target></trans-unit>
       <trans-unit id="users.show.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="hu" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="hu" state="translated">Felhasználó</target></trans-unit>
       <trans-unit id="users.show.roles" xml:space="preserve">
 				<source>Roles</source>
 			<target xml:lang="hu" state="needs-translation">Roles</target></trans-unit>
@@ -424,7 +424,7 @@
 			<target xml:lang="hu" state="needs-translation">Account</target></trans-unit>
       <trans-unit id="users.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="hu" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="hu" state="translated">Felhasználó</target></trans-unit>
       <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve">
 				<source>The username can't be changed via the user interface</source>
 			<target xml:lang="hu" state="needs-translation">The username can't be changed via the user interface</target></trans-unit>
@@ -605,7 +605,7 @@
 			<target xml:lang="hu" state="needs-translation">Accounts</target></trans-unit>
       <trans-unit id="userSettings.accounts.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="hu" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="hu" state="translated">Felhasználó</target></trans-unit>
       <trans-unit id="userSettings.accounts.roles" xml:space="preserve">
 				<source>Roles</source>
 			<target xml:lang="hu" state="needs-translation">Roles</target></trans-unit>
@@ -642,7 +642,7 @@
 			<target xml:lang="hu" state="translated">Cím</target></trans-unit>
       <trans-unit id="media.field.label" xml:space="preserve">
 				<source>Label</source>
-			<target xml:lang="hu" state="needs-translation">Label</target></trans-unit>
+			<target xml:lang="hu" state="translated">Címke</target></trans-unit>
       <trans-unit id="media.field.caption" xml:space="preserve">
 				<source>Caption</source>
 			<target xml:lang="hu" state="needs-translation">Caption</target></trans-unit>
@@ -735,7 +735,7 @@
 			<target xml:lang="hu" state="needs-translation">Search in assets</target></trans-unit>
       <trans-unit id="media.search.placeholder" xml:space="preserve">
 				<source>Search</source>
-			<target xml:lang="hu" state="needs-translation">Search</target></trans-unit>
+			<target xml:lang="hu" state="translated">Keresés</target></trans-unit>
       <trans-unit id="media.search.itemCount" xml:space="preserve">
 				<source>{0} items</source>
 			<target xml:lang="hu" state="needs-translation">{0} items</target></trans-unit>
