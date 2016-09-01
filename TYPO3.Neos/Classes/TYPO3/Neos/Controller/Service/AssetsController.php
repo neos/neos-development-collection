@@ -19,6 +19,9 @@ use TYPO3\Media\Domain\Repository\AssetRepository;
 use TYPO3\Media\Domain\Repository\TagRepository;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 use TYPO3\Neos\View\Service\AssetJsonView;
+use TYPO3\Flow\I18n\Service;
+use TYPO3\Flow\I18n\Locale;
+use TYPO3\Neos\Service\UserService;
 
 /**
  * Rudimentary REST service for assets

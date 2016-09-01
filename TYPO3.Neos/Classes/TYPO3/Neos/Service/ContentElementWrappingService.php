@@ -271,7 +271,7 @@ class ContentElementWrappingService
 
         // Serialize an Asset to JSON (the NodeConverter expects JSON for object type properties)
         if ($dataType === ltrim(Asset::class, '\\') && $propertyValue !== null) {
-            if ($propertyValue instanceof Asset::class) {
+            if ($propertyValue instanceof Asset) {
                 return json_encode($this->persistenceManager->getIdentifierByObject($propertyValue));
             }
         }
@@ -282,7 +282,7 @@ class ContentElementWrappingService
             if ($parsedType['elementType'] === ltrim(Asset::class, '\\')) {
                 $convertedValues = array();
                 foreach ($propertyValue as $singlePropertyValue) {
-                    if ($singlePropertyValue instanceof Asset::class) {
+                    if ($singlePropertyValue instanceof Asset) {
                         $convertedValues[] = $this->persistenceManager->getIdentifierByObject($singlePropertyValue);
                     }
                 }
