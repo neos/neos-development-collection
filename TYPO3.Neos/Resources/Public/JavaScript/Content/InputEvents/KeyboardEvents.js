@@ -20,7 +20,7 @@ define(
         });
 
         Mousetrap.bind(['mod+shift+v'], function () {
-          ContentCommands.paste();
+          ContentCommands.paste('after');
           return false;
         });
 
