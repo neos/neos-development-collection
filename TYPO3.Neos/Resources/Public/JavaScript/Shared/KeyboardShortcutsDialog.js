@@ -2,12 +2,13 @@ define(
   [
     'emberjs',
     'Library/jquery-with-dependencies',
-    'text!./KeyboardShortcutsDialog.html'
+    'text!./KeyboardShortcutsDialog.html',
+    'Shared/Navigator'
   ],
-  function (Ember, $, template) {
+  function (Ember, $, template, Navigator) {
     var KeyboardShortcutsDialog = Ember.Object.create({
       _view: null,
-      ctrlCmd: 'ctrl',
+      modKey: Navigator.modKey(),
 
       show: function () {
         var that = this;
@@ -15,9 +16,7 @@ define(
           return;
         }
 
-        if (navigator.appVersion.indexOf("Mac") != -1) {
-          ctrlCmd = 'cmd';
-        }
+        modKey = Navigator.modKey();
 
         Mousetrap.bind('esc', function() {
           that.hide();
