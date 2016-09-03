@@ -14443,6 +14443,71 @@
   text-align: center;
   font-size: 0.8em;
 }
+.neos .neos-show-shortcuts .neos-subheader {
+  padding: 0 16px 15px;
+  margin: 0;
+}
+.neos .neos-show-shortcuts .neos-modal-body .neos-column-body {
+  width: 50%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  float: left;
+}
+.neos .neos-show-shortcuts .neos-modal-body .neos-column-body ul {
+  border: none;
+  margin-bottom: 1em;
+}
+.neos .neos-show-shortcuts .neos-modal-body .neos-column-body ul li {
+  float: left;
+  margin: 0;
+  width: 100%;
+  vertical-align: top;
+  margin-bottom: 1em;
+}
+.neos .neos-show-shortcuts .neos-modal-body .neos-column-body ul li .neos-shortcut-body {
+  width: 100%;
+  line-height: 25px;
+  height: 25px;
+  float: left;
+  text-align: left;
+  background-color: transparent;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  white-space: nowrap;
+  display: inline-block;
+  padding: 0 16px;
+  margin: 0;
+  font-family: 'Noto Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: #fff;
+  font-size: 14px;
+  vertical-align: middle;
+}
+.neos .neos-show-shortcuts .neos-modal-body .neos-column-body ul li .neos-shortcut-body .neos-span {
+  margin-right: 5px;
+  float: left;
+  display: block;
+  margin-left: 0;
+  width: 25px;
+}
+.neos .neos-show-shortcuts .neos-modal-body .neos-column-body ul li .neos-shortcut-body .neos-span i {
+  margin: 7px 0 0 4px;
+  display: block;
+}
+.neos .neos-show-shortcuts .neos-modal-body .neos-column-body ul li .neos-shortcut-body .neos-span strong {
+  font-weight: 700;
+}
+.neos .neos-show-shortcuts .neos-modal-body .neos-column-body ul li .neos-shortcut-body .shortcut-keys {
+  float: right;
+  padding: 0 10px;
+  color: #adadad;
+}
+.neos .neos-show-shortcuts .neos-modal-body .neos-column-body ul li span {
+  float: right;
+  width: 100px;
+}
 
 .neos-contentelement {
   /* Workaround for empty divs collapsing in Firefox / IE needed for Aloha placeholders */
