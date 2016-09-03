@@ -1,8 +1,12 @@
 .neos-show-shortcuts {
+  width: 75% !important;
+  left: 32.25% !important;
+
   .neos-subheader {
     padding: 0 16px 15px;
     margin: 0;
   }
+
   .neos-modal-body {
     .neos-column-body {
       width: 50%;
@@ -10,6 +14,7 @@
       -moz-box-sizing: border-box;
       box-sizing: border-box;
       float: left;
+
       ul {
         border: none;
         margin-bottom: 1em;
@@ -42,18 +47,18 @@
             font-size: 14px;
             vertical-align: middle;
 
-            
-
             .neos-span {
               margin-right: 5px;
               float: left;
               display: block;
               margin-left: 0;
               width: 25px;
+
               i {
                 margin: 7px 0 0 4px;
                 display: block;
               }
+
               strong {
                 font-weight: 700;
               }

@@ -21,7 +21,6 @@ define(
 
         Mousetrap.bind('esc', function() {
           that.hide();
-          return false;
         });
 
         this.set(

@@ -14443,6 +14443,10 @@
   text-align: center;
   font-size: 0.8em;
 }
+.neos .neos-show-shortcuts {
+  width: 75% !important;
+  left: 32.25% !important;
+}
 .neos .neos-show-shortcuts .neos-subheader {
   padding: 0 16px 15px;
   margin: 0;
