@@ -38,6 +38,11 @@
 			{{/each}}
 		</div>
 		<div class="neos-modal-footer">
+			{{#if view._preselectedNodeType}}
+			<button data-original-title="{{unbound view._preselectedNodeType.label}} ({{unbound view._preselectedNodeType.shortcut}})" data-neos-toggle class="neos-button neos-button-primary" {{action "insertSameNode" target="view"}}>
+				<i class="{{unbound view._preselectedNodeType.icon}}"></i> {{translate id="insertNodeOfType" fallback="Insert a new "}} {{unbound view._preselectedNodeType.label}}
+			</button>
+			{{/if}}
 			<button class="neos-button" {{action "cancel" target="view"}}>{{translate id="cancel" fallback="Cancel"}}</button>
 		</div>
 	</div>

@@ -9,7 +9,9 @@ define(
 	'Shared/NodeTypeService',
 	'InlineEditing/ContentCommands',
 	'Shared/I18n',
-	'LibraryExtensions/Mousetrap'
+	'LibraryExtensions/Mousetrap',
+	'Content/InputEvents/KeyboardEvents',
+	'Shared/Navigator'
 ],
 function(
 	Ember,
@@ -20,25 +22,35 @@ function(
 	NodeActions,
 	NodeTypeService,
 	ContentCommands,
-	I18n
+	I18n,
+	Mousetrap,
+	KeyboardEvents,
+	Navigator
 ) {
 	return AbstractInsertNodePanel.extend({
 		_node: null,
 		_position: null,
+		_preselectedNodeType: null,
 
 		init: function() {
 			this._super();
+			var that = this;
 			var groups = {},
 				node = this.get('_node'),
+				currentNodeTypeName = node.$element.data('node-_nodeType'),
 				position = this.get('_position'),
 				types;
+
+			Mousetrap.bind(['mod+shift+a'], function () {
+				that.insertSameNode();
+				return false;
+			});
 
 			if (position === 'into') {
 				types = ContentCommands.getAllowedChildNodeTypesForNode(node);
 			} else {
 				types = ContentCommands.getAllowedSiblingNodeTypesForNode(node);
 			}
-
 			types = types.map(function(nodeType) {
 				return 'typo3:' + nodeType;
 			});
@@ -66,18 +78,31 @@ function(
 				if (groupName) {
 					var group = nodeTypeGroups.findBy('name', groupName);
 					if (group) {
-						group.get('nodeTypes').pushObject({
+						var nodeTypeData = {
 							'nodeType': nodeTypeName,
 							'label': I18n.translate(type.metadata.ui.label),
 							'helpMessage': helpMessage,
 							'icon': 'icon' in type.metadata.ui ? type.metadata.ui.icon : 'icon-file',
 							'position': type.metadata.ui.position
-						});
+						};
+						if (nodeTypeName === currentNodeTypeName) {
+							nodeTypeData.shortcut = Navigator.modKey() + ' + shift + a';
+							that.set('_preselectedNodeType', nodeTypeData);
+						}
+						group.get('nodeTypes').pushObject(nodeTypeData);
 					} else {
 						window.console.warn('Node type group "' + groupName + '" not found for node type "' + nodeTypeName + '", defined in "Settings" configuration "TYPO3.Neos.nodeTypes.groups"');
 					}
 				}
 			});
+		},
+
+		insertSameNode: function() {
+			nodeTypeData = this.get('_preselectedNodeType');
+			if (nodeTypeData === null) {
+				return;
+			}
+			this.insertNode(nodeTypeData.nodeType);
 		},
 
 		/**
@@ -97,6 +122,11 @@ function(
 				break;
 			}
 			this.destroy();
-		}
+		},
+
+		destroy: function() {
+			this._super();
+			KeyboardEvents.initializeContentModuleEvents();
+		},
 	});
 });
