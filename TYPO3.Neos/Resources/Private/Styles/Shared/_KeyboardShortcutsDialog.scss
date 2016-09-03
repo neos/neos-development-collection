@@ -3,8 +3,14 @@
   left: 32.25% !important;
 
   .neos-subheader {
-    padding: 0 16px 15px;
+    height: 40px;
+    line-height: 40px;
+    padding-left: 16px;
     margin: 0;
+    position: relative;
+    border-bottom: 1px solid #3f3f3f;
+    overflow: hidden;
+    margin-bottom: 15px;
   }
 
   .neos-modal-body {
@@ -15,12 +21,11 @@
       box-sizing: border-box;
       float: left;
 
-      ul {
+      .neos-shortcut-list {
         border: none;
         margin-bottom: 1em;
 
-        li {
-          float: left;
+        .neos-shortcut {
           margin: 0;
           width: 100%;
           vertical-align: top;
@@ -28,9 +33,8 @@
 
           .neos-shortcut-body {
             width: 100%;
-            line-height: 25px;
+            float: none;
             height: 25px;
-            float: left;
             text-align: left;
             background-color: transparent;
             -webkit-box-sizing: border-box;
@@ -39,41 +43,33 @@
             white-space: nowrap;
 
             display: inline-block;
-            padding: 0 16px;
+            padding: 0 $defaultMargin;
             margin: 0;
             font-family: 'Noto Sans', sans-serif;
             -webkit-font-smoothing: antialiased;
             color: #fff;
             font-size: 14px;
-            vertical-align: middle;
 
-            .neos-span {
-              margin-right: 5px;
-              float: left;
-              display: block;
-              margin-left: 0;
-              width: 25px;
-
-              i {
-                margin: 7px 0 0 4px;
-                display: block;
-              }
-
-              strong {
-                font-weight: 700;
-              }
+            .neos-shortcut-icon,
+            .neos-shortcut-label,
+            .neos-shortcut-keys {
+              display: inline-block;
+              vertical-align: middle;
+              height: 25px;
             }
 
-            .shortcut-keys {
+            .neos-shortcut-icon {
+              margin: 0;
+              width: 25px;
+            }
+            .neos-shortcut-keys {
               float: right;
-              padding: 0 10px;
               color: #adadad;
             }
-          }
 
-          span {
-            float: right;
-            width: 100px;
+            i {
+              color: #00b5ff;
+            }
           }
         }
       }

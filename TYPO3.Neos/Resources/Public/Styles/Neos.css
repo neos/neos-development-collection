@@ -14448,8 +14448,14 @@
   left: 32.25% !important;
 }
 .neos .neos-show-shortcuts .neos-subheader {
-  padding: 0 16px 15px;
+  height: 40px;
+  line-height: 40px;
+  padding-left: 16px;
   margin: 0;
+  position: relative;
+  border-bottom: 1px solid #3f3f3f;
+  overflow: hidden;
+  margin-bottom: 15px;
 }
 .neos .neos-show-shortcuts .neos-modal-body .neos-column-body {
   width: 50%;
@@ -14458,22 +14464,20 @@
   box-sizing: border-box;
   float: left;
 }
-.neos .neos-show-shortcuts .neos-modal-body .neos-column-body ul {
+.neos .neos-show-shortcuts .neos-modal-body .neos-column-body .neos-shortcut-list {
   border: none;
   margin-bottom: 1em;
 }
-.neos .neos-show-shortcuts .neos-modal-body .neos-column-body ul li {
-  float: left;
+.neos .neos-show-shortcuts .neos-modal-body .neos-column-body .neos-shortcut-list .neos-shortcut {
   margin: 0;
   width: 100%;
   vertical-align: top;
   margin-bottom: 1em;
 }
-.neos .neos-show-shortcuts .neos-modal-body .neos-column-body ul li .neos-shortcut-body {
+.neos .neos-show-shortcuts .neos-modal-body .neos-column-body .neos-shortcut-list .neos-shortcut .neos-shortcut-body {
   width: 100%;
-  line-height: 25px;
+  float: none;
   height: 25px;
-  float: left;
   text-align: left;
   background-color: transparent;
   -webkit-box-sizing: border-box;
@@ -14487,30 +14491,24 @@
   -webkit-font-smoothing: antialiased;
   color: #fff;
   font-size: 14px;
-  vertical-align: middle;
 }
-.neos .neos-show-shortcuts .neos-modal-body .neos-column-body ul li .neos-shortcut-body .neos-span {
-  margin-right: 5px;
-  float: left;
-  display: block;
-  margin-left: 0;
+.neos .neos-show-shortcuts .neos-modal-body .neos-column-body .neos-shortcut-list .neos-shortcut .neos-shortcut-body .neos-shortcut-icon,
+.neos .neos-show-shortcuts .neos-modal-body .neos-column-body .neos-shortcut-list .neos-shortcut .neos-shortcut-body .neos-shortcut-label,
+.neos .neos-show-shortcuts .neos-modal-body .neos-column-body .neos-shortcut-list .neos-shortcut .neos-shortcut-body .neos-shortcut-keys {
+  display: inline-block;
+  vertical-align: middle;
+  height: 25px;
+}
+.neos .neos-show-shortcuts .neos-modal-body .neos-column-body .neos-shortcut-list .neos-shortcut .neos-shortcut-body .neos-shortcut-icon {
+  margin: 0;
   width: 25px;
 }
-.neos .neos-show-shortcuts .neos-modal-body .neos-column-body ul li .neos-shortcut-body .neos-span i {
-  margin: 7px 0 0 4px;
-  display: block;
-}
-.neos .neos-show-shortcuts .neos-modal-body .neos-column-body ul li .neos-shortcut-body .neos-span strong {
-  font-weight: 700;
-}
-.neos .neos-show-shortcuts .neos-modal-body .neos-column-body ul li .neos-shortcut-body .shortcut-keys {
+.neos .neos-show-shortcuts .neos-modal-body .neos-column-body .neos-shortcut-list .neos-shortcut .neos-shortcut-body .neos-shortcut-keys {
   float: right;
-  padding: 0 10px;
   color: #adadad;
 }
-.neos .neos-show-shortcuts .neos-modal-body .neos-column-body ul li span {
-  float: right;
-  width: 100px;
+.neos .neos-show-shortcuts .neos-modal-body .neos-column-body .neos-shortcut-list .neos-shortcut .neos-shortcut-body i {
+  color: #00b5ff;
 }
 
 .neos-contentelement {
