@@ -14,27 +14,27 @@ define(
       initializeContentModuleEvents: function () {
         var that = this;
 
-        Mousetrap.bind(['ctrl+shift+a', 'command+shift+a'], function () {
+        Mousetrap.bind(['mod+shift+a'], function () {
           ContentCommands.create('after');
           return false;
         });
 
-        Mousetrap.bind(['ctrl+shift+v', 'command+shift+v'], function () {
+        Mousetrap.bind(['mod+shift+v'], function () {
           ContentCommands.paste();
           return false;
         });
 
-        Mousetrap.bind(['ctrl+shift+c', 'command+shift+c'], function () {
+        Mousetrap.bind(['mod+shift+c'], function () {
           ContentCommands.copy();
           return false;
         });
 
-        Mousetrap.bind(['ctrl+shift+x', 'command+shift+x'], function () {
+        Mousetrap.bind(['mod+shift+x'], function () {
           ContentCommands.cut();
           return false;
         });
 
-        Mousetrap.bind(['ctrl+shift+d', 'command+shift+d'], function () {
+        Mousetrap.bind(['mod+shift+d'], function () {
           ContentCommands.remove();
           return false;
         });
@@ -50,12 +50,12 @@ define(
           return false;
         });
 
-        Mousetrap.bind(['ctrl+e', 'command+e'], function () {
+        Mousetrap.bind(['mod+e'], function () {
           EditPreviewPanelController.toggleEditPreviewPanelMode();
           return false;
         });
 
-        Mousetrap.bind(['ctrl+h', 'command+h'], function () {
+        Mousetrap.bind(['mod+h'], function () {
           FullScreenController.toggleFullScreen();
           return false;
         });
