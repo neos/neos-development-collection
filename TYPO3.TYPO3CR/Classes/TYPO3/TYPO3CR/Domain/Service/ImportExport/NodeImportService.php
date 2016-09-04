@@ -307,7 +307,9 @@ class NodeImportService
             case 'creationDateTime':
             case 'lastModificationDateTime':
             case 'lastPublicationDateTime':
-                $this->nodeDataStack[count($this->nodeDataStack) - 1][$elementName] = $this->propertyMapper->convert($xmlReader->readString(), 'DateTime', $this->propertyMappingConfiguration);
+                $stringValue = trim($xmlReader->readString());
+                $dateValue = $this->propertyMapper->convert($stringValue, 'DateTime', $this->propertyMappingConfiguration);
+                $this->nodeDataStack[count($this->nodeDataStack) - 1][$elementName] = $dateValue;
                 break;
             default:
                 throw new ImportException(sprintf('Unexpected element <%s> ', $elementName), 1423578065);
@@ -467,7 +469,8 @@ class NodeImportService
         switch ($currentType) {
             case 'object':
                 if ($currentClassName === 'DateTime') {
-                    $value = $this->propertyMapper->convert($reader->value, $currentClassName, $this->propertyMappingConfiguration);
+                    $stringValue = trim($reader->value);
+                    $value = $this->propertyMapper->convert($stringValue, $currentClassName, $this->propertyMappingConfiguration);
                 } elseif ($currentEncoding === 'json') {
                     $value = $this->propertyMapper->convert(json_decode($reader->value, true), $currentClassName, $this->propertyMappingConfiguration);
                 } else {
