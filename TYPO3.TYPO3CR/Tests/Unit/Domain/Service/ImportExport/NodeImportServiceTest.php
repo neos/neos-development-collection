@@ -92,6 +92,7 @@ class NodeImportServiceTest extends UnitTestCase
             }
             throw new \Exception('Target type ' . $targetType . ' not supported in property mapper mock');
         }));
+        $this->mockPropertyMapper->expects($this->any())->method('getMessages')->willReturn(new \TYPO3\Flow\Error\Result());
 
         $nodeImportService->import($xmlReader, '/');
 
@@ -308,6 +309,7 @@ class NodeImportServiceTest extends UnitTestCase
                 'source' => $source
             );
         }));
+        $this->mockPropertyMapper->expects($this->any())->method('getMessages')->willReturn(new \TYPO3\Flow\Error\Result());
 
         $nodeImportService->import($xmlReader, '/');
 
@@ -422,6 +424,7 @@ class NodeImportServiceTest extends UnitTestCase
                 'source' => $source
             );
         }));
+        $this->mockPropertyMapper->expects($this->any())->method('getMessages')->willReturn(new \TYPO3\Flow\Error\Result());
 
         $nodeImportService->import($xmlReader, '/');
 
