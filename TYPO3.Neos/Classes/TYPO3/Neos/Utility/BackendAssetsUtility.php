@@ -39,7 +39,12 @@ class BackendAssetsUtility
      */
     public function shouldLoadMinifiedJavascript()
     {
-        return isset($this->settings['userInterface']['loadMinifiedJavaScript']) ? $this->settings['userInterface']['loadMinifiedJavaScript'] : true;
+        if (isset($this->settings['userInterface']['loadMinifiedJavaScript'])) {
+            return $this->settings['userInterface']['loadMinifiedJavaScript'];
+        } elseif (isset($this->settings['userInterface']['loadMinifiedJavascript'])) {
+            return $this->settings['userInterface']['loadMinifiedJavascript'];
+        }
+        return true;
     }
 
     /**
