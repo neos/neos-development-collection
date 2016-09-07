@@ -18,7 +18,7 @@ privilegeTargets:
       matcher: 'method(TYPO3\Fluid\ViewHelpers\Widget\Controller\AutocompleteController->(index|autocomplete)Action()) || method(TYPO3\Fluid\ViewHelpers\Widget\Controller\PaginateController->indexAction()) || method(TYPO3\TYPO3CR\ViewHelpers\Widget\Controller\PaginateController->indexAction()) || method(TYPO3\Neos\ViewHelpers\Widget\Controller\LinkRepositoryController->(index|search|lookup)Action())'
 
     'TYPO3.Neos:PublicFrontendAccess':
-      matcher: 'method(TYPO3\Neos\Controller\Frontend\NodeController->showAction()) || method(TYPO3\Neos\TypeConverter\NodeConverter->prepareContextProperties(workspaceName == "live"))'
+      matcher: 'method(TYPO3\Neos\Controller\Frontend\NodeController->showAction()) || method(TYPO3\Neos\TypeConverter\NodeConverter->prepareContextProperties(workspaceName === "live"))'
 
     'TYPO3.Neos:BackendLogin':
       matcher: 'method(TYPO3\Neos\Controller\LoginController->(index|authenticate)Action()) || method(TYPO3\Flow\Security\Authentication\Controller\AbstractAuthenticationController->authenticateAction())'
@@ -34,26 +34,26 @@ privilegeTargets:
       matcher: 'method(TYPO3\Neos\Controller\Backend\SchemaController->(nodeTypeSchema|vieSchema)Action()) || method(TYPO3\Neos\Controller\Backend\MenuController->indexAction()) || method(TYPO3\Neos\Controller\Backend\SettingsController->editPreviewAction())'
 
     'TYPO3.Neos:Backend.PersonalWorkspaceReadAccess.NodeConverter':
-      matcher: 'method(TYPO3\Neos\TypeConverter\NodeConverter->prepareContextProperties(workspaceName == current.userInformation.userWorkspaceName))'
+      matcher: 'method(TYPO3\Neos\TypeConverter\NodeConverter->prepareContextProperties(workspaceName === current.userInformation.userWorkspaceName))'
 
     # No role should have this privilege assigned:
     'TYPO3.Neos:Backend.OtherUsersPersonalWorkspaceAccess':
-      matcher: 'method(TYPO3\TYPO3CR\Domain\Service\Context->validateWorkspace()) && evaluate(this.workspace.owner != current.userInformation.backendUser, this.workspace.personalWorkspace == true)'
+      matcher: 'method(TYPO3\TYPO3CR\Domain\Service\Context->validateWorkspace()) && evaluate(this.workspace.owner !== current.userInformation.backendUser, this.workspace.personalWorkspace === true)'
 
     'TYPO3.Neos:Backend.EditContent':
       matcher: 'method(TYPO3\Neos\Service\Controller\NodeController->(show|getPrimaryChildNode|getChildNodesForTree|filterChildNodesForTree|getChildNodes|getChildNodesFromParent|create|createAndRender|createNodeForTheTree|move|moveBefore|moveAfter|moveInto|moveAndRender|copy|copyBefore|copyAfter|copyInto|copyAndRender|update|updateAndRender|delete|searchPage|error)Action()) || method(TYPO3\Neos\Controller\Backend\ContentController->(uploadAsset|assetsWithMetadata|imageWithMetadata|pluginViews|createImageVariant|masterPlugins|error)Action()) || method(TYPO3\Neos\Controller\Service\AssetsController->(index|show|error)Action()) || method(TYPO3\Neos\Controller\Service\NodesController->(index|show|create|error)Action()) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
 
     'TYPO3.Neos:Backend.PublishToLiveWorkspace':
-      matcher: 'method(TYPO3\TYPO3CR\Domain\Model\Workspace->(publish|publishNode|publishNodes)(targetWorkspace.name == "live"))'
+      matcher: 'method(TYPO3\TYPO3CR\Domain\Model\Workspace->(publish|publishNode|publishNodes)(targetWorkspace.name === "live"))'
 
     'TYPO3.Neos:Backend.PublishAllToLiveWorkspace':
-      matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->publishWorkspaceAction(workspace.baseWorkspace.name == "live"))'
+      matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->publishWorkspaceAction(workspace.baseWorkspace.name === "live"))'
 
     'TYPO3.Neos:Backend.PublishOwnWorkspaceContent':
       matcher: 'method(TYPO3\Neos\Service\Controller\WorkspaceController->(publishNode|publishNodes|error)Action()) || method(TYPO3\Neos\Service\Controller\WorkspaceController->publishAllAction(workspaceName = current.userInformation.userWorkspaceName)) || method(TYPO3\Neos\Service\Controller\WorkspaceController->getWorkspaceWideUnpublishedNodesAction(workspace.name = current.userInformation.userWorkspaceName)) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
 
     'TYPO3.Neos:Backend.DiscardOwnWorkspaceContent':
-      matcher: 'method(TYPO3\Neos\Service\Controller\WorkspaceController->(discardNode|discardNodes|error)Action()) || method(TYPO3\Neos\Service\Controller\WorkspaceController->discardAllAction(workspace.name == current.userInformation.userWorkspaceName)) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
+      matcher: 'method(TYPO3\Neos\Service\Controller\WorkspaceController->(discardNode|discardNodes|error)Action()) || method(TYPO3\Neos\Service\Controller\WorkspaceController->discardAllAction(workspace.name === current.userInformation.userWorkspaceName)) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
 
     #
     # Workspace management
@@ -66,19 +66,19 @@ privilegeTargets:
       matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(index|show|publishNode|discardNode|publishOrDiscardNodes|publishWorkspace|discardWorkspace|rebaseAndRedirect)Action()) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
 
     'TYPO3.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces':
-      matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update|delete)Action(workspace.owner == current.userInformation.backendUser))'
+      matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update|delete)Action(workspace.owner === current.userInformation.backendUser))'
 
     'TYPO3.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces':
-      matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update|delete)Action(workspace.owner == null))'
+      matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update|delete)Action(workspace.owner === null))'
 
     'TYPO3.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces':
-      matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update|delete)Action()) && evaluate(this.workspace.owner != current.userInformation.backendUser, this.workspace.personalWorkspace == false)'
+      matcher: 'method(TYPO3\Neos\Controller\Module\Management\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update|delete)Action()) && evaluate(this.workspace.owner !== current.userInformation.backendUser, this.workspace.personalWorkspace === false)'
 
     'TYPO3.Neos:Backend.Service.Workspaces.Index':
       matcher: 'method(TYPO3\Neos\Controller\Service\WorkspacesController->(index|error|show)Action())'
 
     'TYPO3.Neos:Backend.Service.Workspaces.ManageOwnWorkspaces':
-      matcher: 'method(TYPO3\Neos\Controller\Service\WorkspacesController->(update|delete)Action(workspace.owner == current.userInformation.backendUser))'
+      matcher: 'method(TYPO3\Neos\Controller\Service\WorkspacesController->(update|delete)Action(workspace.owner === current.userInformation.backendUser))'
 
     #
     # User management and user settings
@@ -91,7 +91,7 @@ privilegeTargets:
       matcher: 'method(TYPO3\Neos\Controller\Module\User\UserSettingsController->(index|newElectronicAddress|createElectronicAddress|deleteElectronicAddress|edit|editAccount|updateAccount)Action())'
 
     'TYPO3.Neos:Backend.Module.User.UserSettings.UpdateOwnSettings':
-      matcher: 'method(TYPO3\Neos\Controller\Module\User\UserSettingsController->updateAccountAction(user == current.securityContext.account)) || method(TYPO3\Neos\Controller\Module\User\UserSettingsController->updateAction(user == current.securityContext.party))'
+      matcher: 'method(TYPO3\Neos\Controller\Module\User\UserSettingsController->updateAccountAction(user === current.securityContext.account)) || method(TYPO3\Neos\Controller\Module\User\UserSettingsController->updateAction(user === current.securityContext.party))'
 
     'TYPO3.Neos:Backend.EditUserPreferences':
       matcher: 'method(TYPO3\Neos\Service\Controller\UserPreferenceController->(index|update|error)Action()) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())'
