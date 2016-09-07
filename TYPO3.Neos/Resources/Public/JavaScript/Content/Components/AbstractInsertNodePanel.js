@@ -78,13 +78,16 @@ define([
 
 		nodeTypeGroups: function() {
 			var that = this,
-				nodeTypeGroups = Ember.A();
+				nodeTypeGroups = Ember.A(),
+				groupPosition = 0;
 
 			Configuration.get('nodeTypes.groups').forEach(function(group) {
+				groupPosition++;
+				var position = group.position !== undefined ? group.position : groupPosition;
 				nodeTypeGroups.pushObject(Ember.Object.extend({
 					name: group.name,
 					label: I18n.translate(group.label),
-					position: group.position,
+					position: position,
 					collapsed: group.collapsed,
 					nodeTypes: Ember.A(),
 
@@ -102,7 +105,7 @@ define([
 
 					sortedNodeTypes: function() {
 						return this.get('nodeTypes').sort(function(a, b) {
-							return (Ember.get(a, 'position') || 9999) - (Ember.get(b, 'position') || 9999);
+							return (Ember.get(a, 'globalPosition') || 9999) - (Ember.get(b, 'globalPosition') || 9999);
 						});
 					}.property('nodeTypes.@each')
 				}).create());

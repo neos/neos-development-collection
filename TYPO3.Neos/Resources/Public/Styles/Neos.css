@@ -12771,7 +12771,11 @@
   margin-left: 8px;
 }
 .neos .neos-insert-node-panel .neos-header i {
+  color: #00b5ff;
   vertical-align: baseline;
+}
+.neos .neos-insert-node-panel .neos-header strong {
+  font-weight: 700;
 }
 .neos .neos-insert-node-panel .neos-subheader {
   height: 40px;
@@ -12830,9 +12834,17 @@
   max-height: calc(100vh - 284px);
   overflow-y: auto;
 }
+.neos .neos-insert-node-panel .neos-modal-body > ul {
+  margin-top: 12px;
+}
 .neos .neos-insert-node-panel .neos-modal-footer {
   border-top: 1px solid #3f3f3f;
   margin-top: -1px;
+}
+.neos .neos-insert-node-panel .neos-modal-footer-tips {
+  text-align: center;
+  font-style: italic;
+  color: #adadad;
 }
 .neos .neos-insert-node-panel .neos-content-new-selecttype-button {
   position: relative;
@@ -12861,16 +12873,19 @@
   text-align: center;
   vertical-align: baseline;
 }
-.neos .neos-insert-node-panel .neos-content-new-selecttype-button:focus, .neos .neos-insert-node-panel .neos-content-new-selecttype-button:hover {
-  background-color: #00b5ff;
-}
-.neos .neos-insert-node-panel .neos-content-new-selecttype-button:focus button, .neos .neos-insert-node-panel .neos-content-new-selecttype-button:hover button {
+.neos .neos-insert-node-panel .neos-content-new-selecttype-button button:focus {
   outline: none;
 }
-.neos .neos-insert-node-panel .neos-content-new-selecttype-button:focus i, .neos .neos-insert-node-panel .neos-content-new-selecttype-button:hover i {
+.neos .neos-insert-node-panel .neos-content-new-selecttype-button--current {
+  background-color: #00b5ff;
+}
+.neos .neos-insert-node-panel .neos-content-new-selecttype-button--current button {
+  outline: none;
+}
+.neos .neos-insert-node-panel .neos-content-new-selecttype-button--current button i {
   color: #fff;
 }
-.neos .neos-insert-node-panel .neos-content-new-selecttype-button:focus .neos-help-message-button, .neos .neos-insert-node-panel .neos-content-new-selecttype-button:hover .neos-help-message-button {
+.neos .neos-insert-node-panel .neos-content-new-selecttype-button--current .neos-help-message-button {
   display: inline-block;
 }
 .neos .neos-insert-node-panel .neos-content-new-selecttype-button .neos-help-message-button {

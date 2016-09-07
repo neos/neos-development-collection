@@ -88,13 +88,13 @@
 				<source>Unhide</source>
 			</trans-unit>
 			<trans-unit id="into" xml:space="preserve">
-				<source>into</source>
+				<source>into the current element</source>
 			</trans-unit>
 			<trans-unit id="before" xml:space="preserve">
-				<source>before</source>
+				<source>before the current element</source>
 			</trans-unit>
 			<trans-unit id="after" xml:space="preserve">
-				<source>after</source>
+				<source>after the current element</source>
 			</trans-unit>
 			<trans-unit id="loading" xml:space="preserve">
 				<source>Loading</source>
@@ -501,6 +501,9 @@
 			</trans-unit>
 			<trans-unit id="content.dimension.createDialog.createAndCopy" xml:space="preserve">
 				<source>Create and copy</source>
+			</trans-unit>
+			<trans-unit id="insertnodepanel.help.tips" xml:space="preserve">
+				<source>Tips: use left / right arrow keys to navigate and hit return to create the current node type or esc to close</source>
 			</trans-unit>
 
 			<trans-unit id="keyboard.shortcuts.header" xml:space="preserve">
