@@ -1334,7 +1334,7 @@ HELPTEXT;
                 if (!$dryRun) {
                     $shadowNode = new NodeData($nodeDataSeenFromParentWorkspace->getPath(), $nodeData->getWorkspace(), $nodeData->getIdentifier(), $nodeData->getDimensionValues());
                     $shadowNode->similarize($nodeData);
-                    $shadowNode->setAsShadowOf($this);
+                    $shadowNode->setAsShadowOf($nodeData);
                 }
                 $fixedShadowNodes++;
             }
