@@ -115,7 +115,9 @@
 			// we are inside iframe
 			$('.asset-list').on('click', '[data-asset-identifier]', function(e) {
 				if ($(e.target).closest('button').length === 0) {
-					window.parent.Typo3MediaBrowserCallbacks.assetChosen($(this).attr('data-asset-identifier'));
+					if(window.parent.Typo3MediaBrowserCallbacks && typeof window.parent.Typo3MediaBrowserCallbacks.assetChosen === 'function') {
+						window.parent.Typo3MediaBrowserCallbacks.assetChosen($(this).attr('data-asset-identifier'));
+					}
 					e.preventDefault();
 				}
 			});
