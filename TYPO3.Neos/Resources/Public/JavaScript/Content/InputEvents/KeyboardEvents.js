@@ -15,12 +15,12 @@ define(
         var that = this;
 
         Mousetrap.bind(['mod+shift+a'], function () {
-          ContentCommands.create('after');
+          ContentCommands.create();
           return false;
         });
 
         Mousetrap.bind(['mod+shift+v'], function () {
-          ContentCommands.paste('after');
+          ContentCommands.paste();
           return false;
         });
 
