@@ -640,11 +640,11 @@ class UserService
             return $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces');
         }
 
-        if ($workspace->isPrivateWorkspace() && $workspace->getOwner() == $this->getCurrentUser()) {
+        if ($workspace->isPrivateWorkspace() && $workspace->getOwner() === $this->getCurrentUser()) {
             return $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces');
         }
 
-        if ($workspace->isPrivateWorkspace() && $workspace->getOwner() != $this->getCurrentUser()) {
+        if ($workspace->isPrivateWorkspace() && $workspace->getOwner() !== $this->getCurrentUser()) {
             return $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces');
         }
 
