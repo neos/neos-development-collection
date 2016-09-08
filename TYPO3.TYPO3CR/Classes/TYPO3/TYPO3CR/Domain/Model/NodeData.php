@@ -945,11 +945,12 @@ class NodeData extends AbstractNodeData
      * Create a shadow NodeData at the given path with the same workspace and dimensions as this
      *
      * Note: The constructor will already add the new object to the repository
+     * Internal method, do not use outside of the content repository.
      *
      * @param string $path The (original) path for the node data
      * @return NodeData
      */
-    protected function createShadow($path)
+    public function createShadow($path)
     {
         $shadowNode = new NodeData($path, $this->workspace, $this->identifier, $this->dimensionValues);
         $shadowNode->similarize($this);
