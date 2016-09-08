@@ -52,13 +52,9 @@ define([
 			});
 			select.append(options);
 
-			var selectedValue;
 			select.off('change').on('change', function() {
 				var value = $(this).val();
-				if (value !== selectedValue) {
-					selectedValue = value;
-					buttons[value].click();
-				}
+				buttons[value].click();
 			});
 
 			$('body').click(function (event) {
