@@ -13,7 +13,9 @@ namespace TYPO3\Neos\Command;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
+use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
+use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\SiteExportService;
 use TYPO3\Neos\Domain\Service\SiteImportService;
@@ -58,7 +60,7 @@ class SiteCommandController extends CommandController
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Log\SystemLoggerInterface
+     * @var SystemLoggerInterface
      */
     protected $systemLogger;
 
@@ -209,7 +211,7 @@ class SiteCommandController extends CommandController
         $availableSites = array();
 
         foreach ($sites as $site) {
-            /** @var \TYPO3\Neos\Domain\Model\Site $site */
+            /** @var Site $site */
             array_push($availableSites, array(
                 'name' => $site->getName(),
                 'nodeName' => $site->getNodeName(),

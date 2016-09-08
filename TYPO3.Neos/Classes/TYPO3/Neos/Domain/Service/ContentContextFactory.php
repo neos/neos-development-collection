@@ -34,7 +34,7 @@ class ContentContextFactory extends ContextFactory
      *
      * @var string
      */
-    protected $contextImplementation = 'TYPO3\Neos\Domain\Service\ContentContext';
+    protected $contextImplementation = ContentContext::class;
 
     /**
      * Creates the actual Context instance.

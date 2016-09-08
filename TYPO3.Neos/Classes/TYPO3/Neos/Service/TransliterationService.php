@@ -11,6 +11,7 @@ namespace TYPO3\Neos\Service;
  * source code.
  */
 
+use Behat\Transliterator\Transliterator;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\I18n\Service as LocalizationService;
 
@@ -50,8 +51,8 @@ class TransliterationService
         }
 
         // Transliterate (transform 北京 to 'Bei Jing')
-        if (preg_match('/[\x80-\xff]/', $text) && \Behat\Transliterator\Transliterator::validUtf8($text)) {
-            $text = \Behat\Transliterator\Transliterator::utf8ToAscii($text);
+        if (preg_match('/[\x80-\xff]/', $text) && Transliterator::validUtf8($text)) {
+            $text = Transliterator::utf8ToAscii($text);
         }
 
         return $text;

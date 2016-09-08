@@ -11,6 +11,7 @@ namespace TYPO3\Neos\Tests\Functional\Domain\Service;
  * source code.
  */
 
+use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Service\SiteExportService;
@@ -61,12 +62,12 @@ class SiteImportExportServiceTest extends FunctionalTestCase
     {
         parent::setUp();
         $this->markSkippedIfNodeTypesPackageIsNotInstalled();
-        $this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
+        $this->contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
         $contentContext = $this->contextFactory->create(array('workspaceName' => 'live'));
 
-        $this->siteImportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteImportService');
+        $this->siteImportService = $this->objectManager->get(SiteImportService::class);
 
-        $this->siteExportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteExportService');
+        $this->siteExportService = $this->objectManager->get(SiteExportService::class);
 
         $this->importedSite = $this->siteImportService->importFromFile(__DIR__ . '/' . $this->fixtureFileName, $contentContext);
         $this->persistenceManager->persistAll();
@@ -94,7 +95,7 @@ class SiteImportExportServiceTest extends FunctionalTestCase
      */
     protected function markSkippedIfNodeTypesPackageIsNotInstalled()
     {
-        $packageManager = $this->objectManager->get('TYPO3\Flow\Package\PackageManagerInterface');
+        $packageManager = $this->objectManager->get(PackageManagerInterface::class);
         if (!$packageManager->isPackageActive('TYPO3.Neos.NodeTypes')) {
             $this->markTestSkipped('This test needs the TYPO3.Neos.NodeTypes package.');
         }

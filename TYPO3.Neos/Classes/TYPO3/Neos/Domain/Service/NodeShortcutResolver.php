@@ -41,7 +41,7 @@ class NodeShortcutResolver
      * * a string (in case the target is a plain text URI or an asset:// URI)
      * * NULL in case the shortcut cannot be resolved
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+     * @param NodeInterface $node
      * @return NodeInterface|string|NULL
      */
     public function resolveShortcutTarget(NodeInterface $node)

@@ -13,7 +13,15 @@ namespace TYPO3\Neos\Controller\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
+use TYPO3\Flow\Mvc\View\ViewInterface;
+use TYPO3\Fluid\View\TemplateView;
+use TYPO3\Media\Domain\Repository\AssetRepository;
+use TYPO3\Media\Domain\Repository\TagRepository;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;
+use TYPO3\Neos\View\Service\AssetJsonView;
+use TYPO3\Flow\I18n\Service;
+use TYPO3\Flow\I18n\Locale;
+use TYPO3\Neos\Service\UserService;
 
 /**
  * Rudimentary REST service for assets
@@ -26,13 +34,13 @@ class AssetsController extends ActionController
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Media\Domain\Repository\AssetRepository
+     * @var AssetRepository
      */
     protected $assetRepository;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Media\Domain\Repository\TagRepository
+     * @var TagRepository
      */
     protected $tagRepository;
 
@@ -46,8 +54,8 @@ class AssetsController extends ActionController
      * @var array
      */
     protected $viewFormatToObjectNameMap = array(
-        'html' => 'TYPO3\Fluid\View\TemplateView',
-        'json' => 'TYPO3\Neos\View\Service\AssetJsonView'
+        'html' => TemplateView::class,
+        'json' => AssetJsonView::class
     );
 
     /**
@@ -62,10 +70,10 @@ class AssetsController extends ActionController
     );
 
     /**
-     * @param \TYPO3\Flow\Mvc\View\ViewInterface $view
+     * @param ViewInterface $view
      * @return void
      */
-    public function initializeView(\TYPO3\Flow\Mvc\View\ViewInterface $view)
+    public function initializeView(ViewInterface $view)
     {
         $view->assign('asyncThumbnails', $this->asyncThumbnails);
     }

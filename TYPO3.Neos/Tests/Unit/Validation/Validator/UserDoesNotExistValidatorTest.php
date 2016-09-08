@@ -11,7 +11,9 @@ namespace TYPO3\Neos\Tests\Unit\Validation\Validator;
  * source code.
  */
 
+use TYPO3\Flow\Security\Account;
 use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Neos\Domain\Service\UserService;
 use TYPO3\Neos\Validation\Validator\UserDoesNotExistValidator;
 
 /**
@@ -37,7 +39,7 @@ class UserDoesNotExistValidatorTest extends UnitTestCase
     {
         $validator = new UserDoesNotExistValidator();
 
-        $mockUserService = $this->createMock('TYPO3\Neos\Domain\Service\UserService');
+        $mockUserService = $this->createMock(UserService::class);
         $this->inject($validator, 'userService', $mockUserService);
 
         $result = $validator->validate('j.doe');
@@ -52,10 +54,10 @@ class UserDoesNotExistValidatorTest extends UnitTestCase
     {
         $validator = new UserDoesNotExistValidator();
 
-        $mockUserService = $this->createMock('TYPO3\Neos\Domain\Service\UserService');
+        $mockUserService = $this->createMock(UserService::class);
         $this->inject($validator, 'userService', $mockUserService);
 
-        $mockUser = $this->createMock('TYPO3\Flow\Security\Account');
+        $mockUser = $this->createMock(Account::class);
 
         $mockUserService
             ->expects($this->atLeastOnce())

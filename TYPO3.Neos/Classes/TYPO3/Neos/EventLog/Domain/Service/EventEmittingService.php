@@ -75,7 +75,7 @@ class EventEmittingService
      * @throws Exception
      * @return Event
      */
-    public function emit($eventType, array $data, $eventClassName = 'TYPO3\Neos\EventLog\Domain\Model\Event')
+    public function emit($eventType, array $data, $eventClassName = Event::class)
     {
         if (!$this->isEnabled()) {
             throw new Exception('Event log not enabled', 1418464933);
@@ -98,7 +98,7 @@ class EventEmittingService
      * @return Event
      * @see emit()
      */
-    public function generate($eventType, array $data, $eventClassName = 'TYPO3\Neos\EventLog\Domain\Model\Event')
+    public function generate($eventType, array $data, $eventClassName = Event::class)
     {
         $event = new $eventClassName($eventType, $data, $this->currentAccountIdentifier, $this->getCurrentContext());
         $this->lastGeneratedEvent = $event;
