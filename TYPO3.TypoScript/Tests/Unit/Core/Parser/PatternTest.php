@@ -21,7 +21,6 @@ class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase
      * Checks the regular expression SCAN_PATTERN_COMMENT
      *
      * @test
-     * @author Robert Lemke <robert@typo3.org>
      */
     public function testSCAN_PATTERN_COMMENT()
     {
@@ -66,7 +65,6 @@ class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase
      * Checks the regular expression SCAN_PATTERN_DECLARATION
      *
      * @test
-     * @author Robert Lemke <robert@typo3.org>
      */
     public function testSCAN_PATTERN_DECLARATION()
     {
@@ -84,7 +82,6 @@ class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase
      * Checks the regular expression SCAN_PATTERN_OBJECTDEFINITION
      *
      * @test
-     * @author Robert Lemke <robert@typo3.org>
      */
     public function testSCAN_PATTERN_OBJECTDEFINITION()
     {
@@ -224,7 +221,6 @@ class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase
      * Checks the regular expression SPLIT_PATTERN_VALUENUMBER
      *
      * @test
-     * @author Sebastian Kurfürst <sebastian@typo3.org>
      */
     public function testSPLIT_PATTERN_VALUENUMBER()
     {
