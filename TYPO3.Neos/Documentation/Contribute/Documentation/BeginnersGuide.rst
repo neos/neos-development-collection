@@ -1,8 +1,6 @@
 .. meta::
-   :description: The reStructuredText plaintext markup language
-   :keywords: plaintext, markup language
-
-
+   :description: Beginners Guide Sphinx Documentation with reStructuredText for Neos
+   :keywords: rST, Neos, markup language, Documentation,  Linux Console, bash, GitHub
 
 ============================
 Beginners Guide Sphinx-Setup
@@ -12,15 +10,13 @@ Contribute to the Neos-Documentation
 ====================================
 
 This Documentation aims to get you started quite from the ground up.
-Imagine you would like to contribute to the Documentation but you haven't worked much with github yet,
+Imagine you would like to contribute to the Documentation but you haven't worked with github yet,
 you don't know how a proper workflow looks like and you are not sure how to start contributing.
 
-The problem is, that even while explaining some of the basic steps, there might always be the
-need for some kind of basic setup you will have to take care of yourself. If you still have troubles
-don't hesitate to ask eg `here`_ why the steps aren't working for you.
+The problem is, that even while explaining some of the basic steps, there always is the need for
+some kind of basic setup you will have to take care of yourself.
 You need for eg. a Linux Console to get started. [#f1]_
 
-.. _here: https://discuss.neos.io/
 
 What are the goals?
 ===================
@@ -28,11 +24,11 @@ What are the goals?
 Once everything is set up nicely and hopefully without to much trouble, you:
 
 * will be able to easily access the Documentation offline in your browser
-* know howto work with git and hub effectively when editing the Documentation
+* know how to work with git and hub effectively when editing the Documentation
 * see the life updated changes in your browser
 * send pull request for your changes back to the Neos-Team
-* see howto do some basic formating with reStructuredText (rST)
-* know howto use the todo functionallity.
+* see how to do some basic formatting with reStructuredText (rST)
+* know how to use the todo functionality
 
 
 Let's get started:
@@ -44,7 +40,6 @@ Let's get started:
   sudo pacman -Sy git hub #(Arch Linux)
 
 Quote:
-
   "Whether you are beginner or an experienced contributor to open-source,
   hub makes it easier to fetch repositories, navigate project pages,
   fork repos and even submit pull requests, all from the command-line."
@@ -53,7 +48,7 @@ Quote:
 .. _hub.github.com: https://hub.github.com/
 
 The Atom Editor including the extension packages *Git Diff* and *language-restructuredtext*
-would be nice options for editing the files, but any Editor is fine of cause:
+would be nice options for editing the files, etc...:
 
 .. code-block:: bash
 
@@ -72,8 +67,8 @@ also in the document itself you can see which lines you changed or added:
   The Atom Editor
 
 
-To be able to work with github nicely from the console, you could use hub instead
-of git, for that you can edit and add: **alias git=hub** to the .bashrc and refresh it:
+To be able to work with GitHub nicely from the console, you could use hub instead
+of git, for that you can edit and add: *alias git=hub* to the .bashrc and refresh it:
 
 .. code-block:: bash
 
@@ -114,11 +109,11 @@ dding the bin-path to the $PATH – Environment.
   pip install --user sphinx_rtd_theme
 
 Then add the following line to your .bashrc:
-**export PATH=$HOME/.local/bin:$PATH**
+*export PATH=$HOME/.local/bin:$PATH*
 
 .. code-block:: bash
 
-  vim ~/.bashrc #(add the above export-statement)
+  vim ~/.bashrc #(add the above line)
   source ~/.bashrc #(to reload the .bashrc-file)
 
 
@@ -172,7 +167,7 @@ reStructuredText (rST):
 Now you can start improving the documentation. If you haven't worked with reStructuredText (rST)
 it's pretty simple and gives you quite some options. Just have a look at the Documentation files
 available, they give you a good understanding of what is possible. It has a lot of capabilities.
-Checkout their documentation for more infomations `Sphinx docs`_.
+Checkout their documentation for more informations `Sphinx docs`_.
 
 .. _Sphinx docs: http://www.sphinx-doc.org/en/stable/rest.html
 
@@ -187,9 +182,9 @@ what still needs to be done...
   If you would replace it with todo instead of (*.. note::* -> *.. todo::*), it wouldn't be
   visible in the frontend/browser anymore, but just just visible for you and others, when editing these files.
 
-  There is also the possiblity to see all the todos with its possitions by putting *.. todolist::* into the document.
-  Both features (the todo itself and their collection) can be made visible in the Brower
-  while working on the Documentation for eg. by starting Sphinx like this:
+  There is also the possibility to see all the todos with its positions by putting *.. todolist::* into the document.
+  Both features (the todo itself and their collection) can be made visible in the browser
+  while working on the documentation for eg. by starting Sphinx like this:
 
 .. code-block:: bash
 
@@ -221,7 +216,7 @@ If you just want to put a simple comment (also not shown in the frontend) you ca
 
 
 
-Github checkout-process:
+GitHub checkout-process:
 ========================
 
 Now we should have a look at the git-workflow. The first step you should checkout a branch from
@@ -241,11 +236,6 @@ The following would be an example where you stash your changes for now, so you d
 them there and then, switch to your local master, pull the changes to be up to date and then
 apply your changes back to your reactivated feature-branch.
 
-.. note::
-
-  There is a lot to know howto use git in a good way... always make sure to use **git status**
-  to see if git is on the same page as you.
-
 
 .. code-block:: bash
 
@@ -260,7 +250,7 @@ apply your changes back to your reactivated feature-branch.
   Make sure not to rebase branches that you've collaborated with others on. Never
   rebase anything you have pushed somewhere already.
 
-To get more information about howto work with git go to this page there are many good sources online.
+To get more information about how to work with git go to this page there are many good sources online.
 Two good examples are for eg.: `Basic Branching and Merging`_ or also `Rebasing`_.
 
 
@@ -271,7 +261,6 @@ Two good examples are for eg.: `Basic Branching and Merging`_ or also `Rebasing`
 .. code-block:: bash
 
   git add [new files]
-  git status
   git commit -m "done with the feature: [local_branch_name] to make this and that more efficient"
   git fork #(forking repo on GitHub...)
   #→ git remote add YOUR_USER git://github.com/YOUR_USER/neos-development-collection.git
