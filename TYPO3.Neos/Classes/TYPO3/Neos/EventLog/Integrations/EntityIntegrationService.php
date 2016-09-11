@@ -11,8 +11,10 @@ namespace TYPO3\Neos\EventLog\Integrations;
  * source code.
  */
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use TYPO3\Eel\CompilingEvaluator;
+use TYPO3\Eel\Exception;
 use TYPO3\Eel\Utility;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SystemLoggerInterface;
@@ -30,7 +32,7 @@ class EntityIntegrationService extends AbstractIntegrationService
      * interface ...
      *
      * @Flow\Inject
-     * @var \Doctrine\Common\Persistence\ObjectManager
+     * @var ObjectManager
      */
     protected $entityManager;
 
@@ -78,7 +80,7 @@ class EntityIntegrationService extends AbstractIntegrationService
      *
      * @param OnFlushEventArgs $eventArgs
      * @return void
-     * @throws \TYPO3\Eel\Exception
+     * @throws Exception
      */
     public function onFlush(OnFlushEventArgs $eventArgs)
     {
