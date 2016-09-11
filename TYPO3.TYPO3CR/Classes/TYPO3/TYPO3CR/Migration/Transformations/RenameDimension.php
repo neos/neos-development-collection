@@ -76,7 +76,7 @@ class RenameDimension extends AbstractTransformation
     /**
      * Change the property on the given node.
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $nodeData
+     * @param NodeData $nodeData
      * @return void
      */
     public function execute(NodeData $nodeData)

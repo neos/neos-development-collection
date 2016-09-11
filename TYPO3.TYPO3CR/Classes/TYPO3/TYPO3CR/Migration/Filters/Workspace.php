@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Migration\Filters;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 
 /**
  * Filter nodes by workspace name.
@@ -39,10 +40,10 @@ class Workspace implements FilterInterface
     /**
      * Returns TRUE if the given node is in the workspace this filter expects.
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @param NodeData $node
      * @return boolean
      */
-    public function matches(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    public function matches(NodeData $node)
     {
         return $node->getWorkspace() !== null && $node->getWorkspace()->getName() === $this->workspaceName;
     }
