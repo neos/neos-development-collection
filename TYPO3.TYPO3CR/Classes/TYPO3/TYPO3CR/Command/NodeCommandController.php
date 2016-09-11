@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Cli\DescriptionAwareCommandControllerInterface;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 
@@ -136,7 +137,7 @@ class NodeCommandController extends CommandController implements DescriptionAwar
     public function autoCreateChildNodesCommand($nodeType = null, $workspace = 'live', $dryRun = false)
     {
         $this->pluginConfigurations = self::detectPlugins($this->objectManager);
-        $this->pluginConfigurations['TYPO3\TYPO3CR\Command\NodeCommandControllerPlugin']['object']->invokeSubCommand('repair', $this->output, $nodeType, $workspace, $dryRun);
+        $this->pluginConfigurations[NodeCommandControllerPlugin::class]['object']->invokeSubCommand('repair', $this->output, $nodeType, $workspace, $dryRun);
     }
 
     /**
@@ -179,7 +180,7 @@ class NodeCommandController extends CommandController implements DescriptionAwar
     protected static function detectPlugins(ObjectManagerInterface $objectManager)
     {
         $pluginConfigurations = array();
-        $classNames = $objectManager->get('TYPO3\Flow\Reflection\ReflectionService')->getAllImplementationClassNamesForInterface('TYPO3\TYPO3CR\Command\NodeCommandControllerPluginInterface');
+        $classNames = $objectManager->get(ReflectionService::class)->getAllImplementationClassNamesForInterface(NodeCommandControllerPluginInterface::class);
         foreach ($classNames as $className) {
             $pluginConfigurations[$className] = array(
                 'object' => $objectManager->get($objectManager->getObjectNameByClassName($className))

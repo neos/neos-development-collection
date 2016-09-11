@@ -17,7 +17,10 @@ use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Utility\Now;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface;
+use TYPO3\TYPO3CR\Domain\Service\PublishingServiceInterface;
 use TYPO3\TYPO3CR\Exception\WorkspaceException;
 
 /**
@@ -88,7 +91,7 @@ class Workspace
     /**
      * Root node data of this workspace
      *
-     * @var \TYPO3\TYPO3CR\Domain\Model\NodeData
+     * @var NodeData
      * @ORM\ManyToOne
      * @ORM\JoinColumn(referencedColumnName="id")
      */
@@ -96,13 +99,13 @@ class Workspace
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+     * @var NodeDataRepository
      */
     protected $nodeDataRepository;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Service\PublishingServiceInterface
+     * @var PublishingServiceInterface
      */
     protected $publishingService;
 
@@ -356,7 +359,7 @@ class Workspace
     /**
      * Returns the root node data of this workspace
      *
-     * @return \TYPO3\TYPO3CR\Domain\Model\NodeData
+     * @return NodeData
      */
     public function getRootNodeData()
     {
