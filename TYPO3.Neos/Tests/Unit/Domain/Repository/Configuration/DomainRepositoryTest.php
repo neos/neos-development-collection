@@ -10,12 +10,17 @@ namespace TYPO3\Neos\Tests\Unit\Domain\Repository\Configuration;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Persistence\QueryResultInterface;
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Neos\Domain\Model\Domain;
+use TYPO3\Neos\Domain\Repository\DomainRepository;
+use TYPO3\Neos\Domain\Service\DomainMatchingStrategy;
 
 /**
  * Testcase for the Domain Repository
  *
  */
-class DomainRepositoryTest extends \TYPO3\Flow\Tests\UnitTestCase
+class DomainRepositoryTest extends UnitTestCase
 {
     /**
      * @test
@@ -23,18 +28,18 @@ class DomainRepositoryTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function findByHostInvokesTheDomainMatchingStrategyToFindDomainsMatchingTheGivenHost()
     {
         $mockDomains = array();
-        $mockDomains[] = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Domain')->disableOriginalConstructor()->getMock();
-        $mockDomains[] = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Domain')->disableOriginalConstructor()->getMock();
-        $mockDomains[] = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Domain')->disableOriginalConstructor()->getMock();
+        $mockDomains[] = $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->getMock();
+        $mockDomains[] = $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->getMock();
+        $mockDomains[] = $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->getMock();
 
         $expectedDomains = array($mockDomains[0], $mockDomains[2]);
 
-        $mockDomainMatchingStrategy = $this->getMockBuilder('TYPO3\Neos\Domain\Service\DomainMatchingStrategy')->disableOriginalConstructor()->getMock();
+        $mockDomainMatchingStrategy = $this->getMockBuilder(DomainMatchingStrategy::class)->disableOriginalConstructor()->getMock();
         $mockDomainMatchingStrategy->expects($this->any())->method('getSortedMatches')->with('myhost', $mockDomains)->will($this->returnValue($expectedDomains));
 
-        $mockResult = $this->createMock('TYPO3\Flow\Persistence\QueryResultInterface');
+        $mockResult = $this->createMock(QueryResultInterface::class);
         $mockResult->expects($this->once())->method('toArray')->will($this->returnValue($mockDomains));
-        $domainRepository = $this->getAccessibleMock('TYPO3\Neos\Domain\Repository\DomainRepository', array('findAll'), array(), '', false);
+        $domainRepository = $this->getAccessibleMock(DomainRepository::class, array('findAll'), array(), '', false);
         $domainRepository->expects($this->once())->method('findAll')->will($this->returnValue($mockResult));
         $domainRepository->_set('domainMatchingStrategy', $mockDomainMatchingStrategy);
 

@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Tests\Functional\Service;
  */
 
 use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\Neos\Service\NodeTypeSchemaBuilder;
 
 /**
  * Testcase for the NodeTypeSchemaBuilder
@@ -19,7 +20,7 @@ use TYPO3\Flow\Tests\FunctionalTestCase;
 class NodeTypeSchemaBuilderTest extends FunctionalTestCase
 {
     /**
-     * @var \TYPO3\Neos\Service\NodeTypeSchemaBuilder
+     * @var NodeTypeSchemaBuilder
      */
     protected $nodeTypeSchemaBuilder;
 
@@ -33,7 +34,7 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->nodeTypeSchemaBuilder = $this->objectManager->get('TYPO3\Neos\Service\NodeTypeSchemaBuilder');
+        $this->nodeTypeSchemaBuilder = $this->objectManager->get(NodeTypeSchemaBuilder::class);
         $this->schema = $this->nodeTypeSchemaBuilder->generateNodeTypeSchema();
     }
 
