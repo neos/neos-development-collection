@@ -10,6 +10,7 @@ namespace TYPO3\TYPO3CR\Security\Authorization\Privilege\Node;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * A privilege to restrict editing of node properties.
@@ -33,6 +34,6 @@ class EditNodePropertyPrivilege extends AbstractNodePropertyPrivilege
      */
     protected function buildMethodPrivilegeMatcher()
     {
-        return 'within(TYPO3\TYPO3CR\Domain\Model\NodeInterface) && method(.*->(setProperty|setName|setHidden|setHiddenBeforeDateTime|setHiddenAfterDateTime|setHiddenInIndex|setAccessRoles)())';
+        return 'within('.NodeInterface::class.') && method(.*->(setProperty|setName|setHidden|setHiddenBeforeDateTime|setHiddenAfterDateTime|setHiddenInIndex|setAccessRoles)())';
     }
 }
