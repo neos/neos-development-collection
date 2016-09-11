@@ -12,6 +12,8 @@ namespace TYPO3\Media\ViewHelpers\Uri;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
 
@@ -39,7 +41,7 @@ use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
  *
  * @see \TYPO3\Media\ViewHelpers\ImageViewHelper
  */
-class ImageViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper
+class ImageViewHelper extends AbstractViewHelper
 {
     /**
      * @Flow\Inject
@@ -60,7 +62,7 @@ class ImageViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper
     {
         parent::initializeArguments();
         // @deprecated since 2.0 use the "image" argument instead
-        $this->registerArgument('asset', 'TYPO3\Media\Domain\Model\AssetInterface', 'The image to be rendered - DEPRECATED, use the "image" argument instead', false);
+        $this->registerArgument('asset', AssetInterface::class, 'The image to be rendered - DEPRECATED, use the "image" argument instead', false);
     }
 
     /**
