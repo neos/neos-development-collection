@@ -18,6 +18,8 @@ use TYPO3\Flow\Package\Exception\UnknownPackageException;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
+use TYPO3\Media\Domain\Model\AssetInterface;
+use TYPO3\Media\Domain\Model\ImageVariant;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\EventLog\Domain\Service\EventEmittingService;
@@ -127,10 +129,10 @@ class SiteImportService
      */
     public function initializeObject()
     {
-        $this->imageVariantClassNames = $this->reflectionService->getAllSubClassNamesForClass('TYPO3\Media\Domain\Model\ImageVariant');
-        array_unshift($this->imageVariantClassNames, 'TYPO3\Media\Domain\Model\ImageVariant');
+        $this->imageVariantClassNames = $this->reflectionService->getAllSubClassNamesForClass(ImageVariant::class);
+        array_unshift($this->imageVariantClassNames, ImageVariant::class);
 
-        $this->assetClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('TYPO3\Media\Domain\Model\AssetInterface');
+        $this->assetClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface(AssetInterface::class);
 
         $this->dateTimeClassNames = $this->reflectionService->getAllSubClassNamesForClass('DateTime');
         array_unshift($this->dateTimeClassNames, 'DateTime');
