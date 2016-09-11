@@ -11,6 +11,7 @@ namespace TYPO3\TypoScript\Core;
  * source code.
  */
 
+use TYPO3\Eel\Package;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\TypoScript\Exception;
@@ -262,7 +263,7 @@ class Parser implements ParserInterface
      * @param array $objectTreeUntilNow Used internally for keeping track of the built object tree
      * @param boolean $buildPrototypeHierarchy Merge prototype configurations or not. Will be FALSE for includes to only do that once at the end.
      * @return array A TypoScript object tree, generated from the source code
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws Exception
      * @api
      */
     public function parse($sourceCode, $contextPathAndFilename = null, array $objectTreeUntilNow = array(), $buildPrototypeHierarchy = true)
@@ -301,7 +302,7 @@ class Parser implements ParserInterface
      * @param string $alias An alias for the given namespace, for example "neos"
      * @param string $namespace The namespace, for example "TYPO3.Neos"
      * @return void
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws Exception
      * @api
      */
     public function setObjectTypeNamespace($alias, $namespace)
@@ -347,7 +348,7 @@ class Parser implements ParserInterface
      *
      * @param string $typoScriptLine One line of TypoScript code
      * @return void
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws Exception
      */
     protected function parseTypoScriptLine($typoScriptLine)
     {
@@ -379,7 +380,7 @@ class Parser implements ParserInterface
      *
      * @param string $typoScriptLine One line of TypoScript code
      * @return void
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws Exception
      */
     protected function parseComment($typoScriptLine)
     {
@@ -411,7 +412,7 @@ class Parser implements ParserInterface
      * @param string $typoScriptLine One line of TypoScript code
      * @param boolean $isOpeningConfinement Set to TRUE, if an opening confinement is to be parsed and FALSE if it's a closing confinement.
      * @return void
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws Exception
      */
     protected function parseConfinementBlock($typoScriptLine, $isOpeningConfinement)
     {
@@ -431,7 +432,7 @@ class Parser implements ParserInterface
      *
      * @param string $typoScriptLine One line of TypoScript code
      * @return void
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws Exception
      */
     protected function parseDeclaration($typoScriptLine)
     {
@@ -455,7 +456,7 @@ class Parser implements ParserInterface
      *
      * @param string $typoScriptLine One line of TypoScript code
      * @return void
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws Exception
      */
     protected function parseObjectDefinition($typoScriptLine)
     {
@@ -514,7 +515,7 @@ class Parser implements ParserInterface
      * @param string $sourceObjectPath Specifies the location in the object tree from where the object or value will be taken
      * @param string $targetObjectPath Specifies the location in the object tree where the copy will be stored
      * @return void
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws Exception
      */
     protected function parseValueCopy($sourceObjectPath, $targetObjectPath)
     {
@@ -556,7 +557,7 @@ class Parser implements ParserInterface
      *
      * @param string $namespaceDeclaration The namespace declaration, for example "neos = TYPO3.Neos"
      * @return void
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws Exception
      */
     protected function parseNamespaceDeclaration($namespaceDeclaration)
     {
@@ -576,7 +577,7 @@ class Parser implements ParserInterface
      *
      * @param string $include The include value, for example " FooBar" or " resource://....". Can also include wildcard mask for TypoScript globbing.
      * @return void
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws Exception
      */
     protected function parseInclude($include)
     {
@@ -636,7 +637,7 @@ class Parser implements ParserInterface
      *
      * @param string $objectPath The object path to parse
      * @return array An object path array
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws Exception
      */
     protected function getParsedObjectPath($objectPath)
     {
@@ -688,7 +689,7 @@ class Parser implements ParserInterface
      *
      * @param string $unparsedValue The unparsed value
      * @return mixed The processed value
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws Exception
      */
     protected function getProcessedValue($unparsedValue)
     {
@@ -696,7 +697,7 @@ class Parser implements ParserInterface
             $processedValue = intval($unparsedValue);
         } elseif (preg_match(self::SPLIT_PATTERN_VALUEFLOATNUMBER, $unparsedValue, $matches) === 1) {
             $processedValue = floatval($unparsedValue);
-        } elseif (preg_match(\TYPO3\Eel\Package::EelExpressionRecognizer, $unparsedValue, $matches) === 1) {
+        } elseif (preg_match(Package::EelExpressionRecognizer, $unparsedValue, $matches) === 1) {
             // Single-line Eel Expressions
             $processedValue = array(
                 '__eelExpression' => $matches[1],
@@ -742,7 +743,7 @@ class Parser implements ParserInterface
                     if (substr($line, -1) === '}') {
                         // potential end-of-eel-expression marker
                         $matches = array();
-                        if (preg_match(\TYPO3\Eel\Package::EelExpressionRecognizer, $eelExpressionSoFar, $matches) === 1) {
+                        if (preg_match(Package::EelExpressionRecognizer, $eelExpressionSoFar, $matches) === 1) {
                             // Single-line Eel Expressions
                             $processedValue = array('__eelExpression' => str_replace(chr(10), '', $matches[1]), '__value' => null, '__objectType' => null);
                             break;
@@ -786,7 +787,7 @@ class Parser implements ParserInterface
                 unset($objectTree[$currentKey]);
             } elseif (isset($objectTree[$currentKey]) && is_array($objectTree[$currentKey])) {
                 if (is_array($value)) {
-                    $objectTree[$currentKey] = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($objectTree[$currentKey], $value);
+                    $objectTree[$currentKey] = Arrays::arrayMergeRecursiveOverrule($objectTree[$currentKey], $value);
                 } else {
                     $objectTree[$currentKey]['__value'] = $value;
                     $objectTree[$currentKey]['__eelExpression'] = null;

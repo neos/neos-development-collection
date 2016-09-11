@@ -12,6 +12,7 @@ namespace TYPO3\TypoScript\TypoScriptObjects;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TypoScript\Exception\UnsupportedObjectTypeAtPathException;
 
 /**
  * Case TypoScript Object
@@ -60,7 +61,7 @@ class CaseImplementation extends ArrayImplementation
      *
      * @param string $matcherKey
      * @return string
-     * @throws \TYPO3\TypoScript\Exception\UnsupportedObjectTypeAtPathException
+     * @throws UnsupportedObjectTypeAtPathException
      */
     protected function renderMatcher($matcherKey)
     {
@@ -73,9 +74,9 @@ class CaseImplementation extends ArrayImplementation
             );
             return $renderedMatcher;
         } elseif (!is_array($this->properties[$matcherKey])) {
-            throw new \TYPO3\TypoScript\Exception\UnsupportedObjectTypeAtPathException('"Case" TypoScript object only supports nested TypoScript objects; no simple values.', 1372668062);
+            throw new UnsupportedObjectTypeAtPathException('"Case" TypoScript object only supports nested TypoScript objects; no simple values.', 1372668062);
         } elseif (isset($this->properties[$matcherKey]['__eelExpression'])) {
-            throw new \TYPO3\TypoScript\Exception\UnsupportedObjectTypeAtPathException('"Case" TypoScript object only supports nested TypoScript objects; no Eel expressions.', 1372668077);
+            throw new UnsupportedObjectTypeAtPathException('"Case" TypoScript object only supports nested TypoScript objects; no Eel expressions.', 1372668077);
         } else {
             // No object type has been set, so we're using TYPO3.TypoScript:Matcher as fallback
             $renderedMatcher = $this->tsRuntime->render(
