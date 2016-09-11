@@ -12,6 +12,10 @@ namespace TYPO3\Neos\Controller;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Neos\Domain\Repository\DomainRepository;
+use TYPO3\Neos\Domain\Repository\SiteRepository;
+use TYPO3\Neos\Domain\Service\ContentContext;
+use TYPO3\Neos\Domain\Service\ContentContextFactory;
 use TYPO3\Neos\Domain\Service\SiteService;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
@@ -23,19 +27,19 @@ trait CreateContentContextTrait
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Domain\Service\ContentContextFactory
+     * @var ContentContextFactory
      */
     protected $_contextFactory;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Domain\Repository\DomainRepository
+     * @var DomainRepository
      */
     protected $_domainRepository;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Domain\Repository\SiteRepository
+     * @var SiteRepository
      */
     protected $_siteRepository;
 
@@ -44,7 +48,7 @@ trait CreateContentContextTrait
      *
      * @param string $workspaceName Name of the workspace to set for the context
      * @param array $dimensions Optional list of dimensions and their values which should be set
-     * @return \TYPO3\Neos\Domain\Service\ContentContext
+     * @return ContentContext
      */
     protected function createContentContext($workspaceName, array $dimensions = array())
     {
@@ -76,7 +80,7 @@ trait CreateContentContextTrait
      * Generates a Context that exactly fits the given NodeData Workspace, Dimensions & Site.
      *
      * @param NodeData $nodeData
-     * @return \TYPO3\Neos\Domain\Service\ContentContext
+     * @return ContentContext
      */
     protected function createContextMatchingNodeData(NodeData $nodeData)
     {

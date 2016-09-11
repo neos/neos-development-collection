@@ -13,12 +13,15 @@ namespace TYPO3\Neos\Controller\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
+use TYPO3\Flow\Property\Exception;
 use TYPO3\Flow\Property\PropertyMapper;
+use TYPO3\Fluid\View\TemplateView;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 use TYPO3\Neos\Controller\CreateContentContextTrait;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Domain\Service\NodeSearchServiceInterface;
 use TYPO3\Neos\Domain\Service\SiteService;
+use TYPO3\Neos\View\Service\NodeJsonView;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Service\Context;
@@ -57,8 +60,8 @@ class NodesController extends ActionController
      * @var array
      */
     protected $viewFormatToObjectNameMap = array(
-        'html' => 'TYPO3\Fluid\View\TemplateView',
-        'json' => 'TYPO3\Neos\View\Service\NodeJsonView'
+        'html' => TemplateView::class,
+        'json' => NodeJsonView::class
     );
 
     /**
@@ -133,7 +136,7 @@ class NodesController extends ActionController
         foreach ($node->getProperties() as $propertyName => $propertyValue) {
             try {
                 $convertedProperties[$propertyName] = $this->propertyMapper->convert($propertyValue, 'string');
-            } catch (\TYPO3\Flow\Property\Exception $exception) {
+            } catch (Exception $exception) {
                 $convertedProperties[$propertyName] = '';
             }
         }
