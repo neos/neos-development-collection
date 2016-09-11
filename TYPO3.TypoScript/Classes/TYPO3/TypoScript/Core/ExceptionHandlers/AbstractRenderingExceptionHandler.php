@@ -12,6 +12,7 @@ namespace TYPO3\TypoScript\Core\ExceptionHandlers;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Exception;
 use TYPO3\Flow\Mvc\Exception\StopActionException;
 use TYPO3\Flow\Security\Exception as SecurityException;
 use TYPO3\TypoScript\Core\Runtime;
@@ -25,14 +26,14 @@ abstract class AbstractRenderingExceptionHandler
     /**
      * Current TypoScript runtime
      *
-     * @var \TYPO3\TypoScript\Core\Runtime
+     * @var Runtime
      */
     protected $runtime;
 
     /**
      * Sets the current TypoScript runtime
      *
-     * @param \TYPO3\TypoScript\Core\Runtime $runtime
+     * @param Runtime $runtime
      * @return void
      */
     public function setRuntime(Runtime $runtime)
@@ -43,7 +44,7 @@ abstract class AbstractRenderingExceptionHandler
     /**
      * Returns current TypoScript runtime
      *
-     * @return \TYPO3\TypoScript\Core\Runtime
+     * @return Runtime
      */
     protected function getRuntime()
     {
@@ -70,7 +71,7 @@ abstract class AbstractRenderingExceptionHandler
         if ($this->exceptionDisablesCache($typoScriptPath, $exception)) {
             $this->runtime->setEnableContentCache(false);
         }
-        $referenceCode = ($exception instanceof \TYPO3\Flow\Exception) ? $exception->getReferenceCode() : null;
+        $referenceCode = ($exception instanceof Exception) ? $exception->getReferenceCode() : null;
         return $this->handle($typoScriptPath, $exception, $referenceCode);
     }
 
