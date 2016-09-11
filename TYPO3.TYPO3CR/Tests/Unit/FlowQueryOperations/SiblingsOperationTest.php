@@ -12,16 +12,18 @@ namespace TYPO3\TYPO3CR\Tests\Unit\FlowQueryOperations;
  */
 
 use TYPO3\Eel\FlowQuery\FlowQuery;
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\Eel\FlowQueryOperations\SiblingsOperation;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * Testcase for the FlowQuery SiblingsOperation
  */
-class SiblingsOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
+class SiblingsOperationTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Service\Context
+     * @var Context
      */
     protected $mockContext;
 
@@ -47,10 +49,10 @@ class SiblingsOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function setUp()
     {
-        $this->siteNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-        $this->firstNodeInLevel = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-        $this->secondNodeInLevel = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-        $this->thirdNodeInLevel = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $this->siteNode = $this->createMock(NodeInterface::class);
+        $this->firstNodeInLevel = $this->createMock(NodeInterface::class);
+        $this->secondNodeInLevel = $this->createMock(NodeInterface::class);
+        $this->thirdNodeInLevel = $this->createMock(NodeInterface::class);
 
         $this->siteNode->expects($this->any())->method('getPath')->will($this->returnValue('/site'));
         $this->siteNode->expects($this->any())->method('getChildNodes')->will($this->returnValue(array(
@@ -58,7 +60,7 @@ class SiblingsOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
             $this->secondNodeInLevel,
             $this->thirdNodeInLevel
         )));
-        $this->mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
+        $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
         $this->firstNodeInLevel->expects($this->any())->method('getParent')->will($this->returnValue($this->siteNode));
         $this->firstNodeInLevel->expects($this->any())->method('getPath')->will($this->returnValue('/site/first'));
