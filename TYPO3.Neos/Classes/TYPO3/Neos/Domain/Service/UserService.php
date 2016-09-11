@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Domain\Service;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException;
 use TYPO3\Flow\Security\Account;
 use TYPO3\Flow\Security\AccountFactory;
 use TYPO3\Flow\Security\AccountRepository;
@@ -768,7 +769,7 @@ class UserService
      *
      * @param User $user The new user to create a workspace for
      * @param Account $account The user's backend account
-     * @throws \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
+     * @throws IllegalObjectTypeException
      */
     protected function createPersonalWorkspace(User $user, Account $account)
     {
