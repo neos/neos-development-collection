@@ -11,7 +11,10 @@ namespace TYPO3\TYPO3CR\Eel\FlowQueryOperations;
  * source code.
  */
 
+use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
@@ -51,11 +54,11 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\Object\FilterOpera
     /**
      * {@inheritdoc}
      *
-     * @param \TYPO3\Eel\FlowQuery\FlowQuery $flowQuery
+     * @param FlowQuery $flowQuery
      * @param array $arguments
      * @return void
      */
-    public function evaluate(\TYPO3\Eel\FlowQuery\FlowQuery $flowQuery, array $arguments)
+    public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         if (!isset($arguments[0]) || empty($arguments[0])) {
             return;
@@ -110,7 +113,7 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\Object\FilterOpera
     protected function getPropertyPath($element, $propertyPath)
     {
         if ($propertyPath[0] === '_') {
-            return \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($element, substr($propertyPath, 1));
+            return ObjectAccess::getPropertyPath($element, substr($propertyPath, 1));
         } else {
             return $element->getProperty($propertyPath);
         }
@@ -126,16 +129,16 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\Object\FilterOpera
      */
     protected function evaluateOperator($value, $operator, $operand)
     {
-        if ($operator === 'instanceof' && $value instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) {
+        if ($operator === 'instanceof' && $value instanceof NodeInterface) {
             if ($this->operandIsSimpleType($operand)) {
                 return $this->handleSimpleTypeOperand($operand, $value);
-            } elseif ($operand === 'TYPO3\TYPO3CR\Domain\Model\NodeInterface' || $operand === 'TYPO3\TYPO3CR\Domain\Model\Node') {
+            } elseif ($operand === NodeInterface::class || $operand === Node::class) {
                 return true;
             } else {
                 $isOfType = $value->getNodeType()->isOfType($operand[0] === '!' ? substr($operand, 1) : $operand);
                 return $operand[0] === '!' ? $isOfType === false : $isOfType;
             }
-        } elseif ($operator === '!instanceof' && $value instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) {
+        } elseif ($operator === '!instanceof' && $value instanceof NodeInterface::class) {
             return !$this->evaluateOperator($value, 'instanceof', $operand);
         }
         return parent::evaluateOperator($value, $operator, $operand);

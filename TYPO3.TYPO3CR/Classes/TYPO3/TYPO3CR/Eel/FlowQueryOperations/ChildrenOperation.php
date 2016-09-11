@@ -11,6 +11,7 @@ namespace TYPO3\TYPO3CR\Eel\FlowQueryOperations;
  * source code.
  */
 
+use TYPO3\Eel\FlowQuery\FizzleParser;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Eel\FlowQuery\Operations\AbstractOperation;
 use TYPO3\Flow\Annotations as Flow;
@@ -60,7 +61,7 @@ class ChildrenOperation extends AbstractOperation
         $output = array();
         $outputNodePaths = array();
         if (isset($arguments[0]) && !empty($arguments[0])) {
-            $parsedFilter = \TYPO3\Eel\FlowQuery\FizzleParser::parseFilterGroup($arguments[0]);
+            $parsedFilter = FizzleParser::parseFilterGroup($arguments[0]);
             if ($this->earlyOptimizationOfFilters($flowQuery, $parsedFilter)) {
                 return;
             }
