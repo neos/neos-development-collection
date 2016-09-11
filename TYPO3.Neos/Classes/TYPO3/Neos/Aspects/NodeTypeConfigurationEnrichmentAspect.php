@@ -16,6 +16,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\JoinPointInterface;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Flow\Utility\Arrays;
+use TYPO3\Neos\Exception;
 
 /**
  * @Flow\Scope("singleton")
@@ -93,7 +94,7 @@ class NodeTypeConfigurationEnrichmentAspect
     /**
      * @param string $nodeTypeName
      * @param array $configuration
-     * @throws \TYPO3\Neos\Exception
+     * @throws Exception
      * @return void
      */
     protected function addEditorDefaultsToNodeTypeConfiguration($nodeTypeName, array &$configuration)
@@ -123,7 +124,7 @@ class NodeTypeConfigurationEnrichmentAspect
                 } elseif (isset($defaultConfigurationFromDataType['editor'])) {
                     $editor = $defaultConfigurationFromDataType['editor'];
                 } else {
-                    throw new \TYPO3\Neos\Exception('Could not find editor for ' . $propertyName . ' in node type ' . $nodeTypeName, 1436809123);
+                    throw new Exception('Could not find editor for ' . $propertyName . ' in node type ' . $nodeTypeName, 1436809123);
                 }
 
                 // SECOND STEP: Build up the full inspector configuration by merging:
