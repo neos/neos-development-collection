@@ -11,7 +11,12 @@ namespace TYPO3\Neos\Tests\Functional\Service;
  * source code.
  */
 
+use TYPO3\Flow\Cache\Frontend\StringFrontend;
+use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Media\Domain\Model\Image;
+use TYPO3\Neos\Service\VieSchemaBuilder;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 
 /**
  * Testcase for the VieSchemaBuilder
@@ -20,12 +25,12 @@ use TYPO3\Flow\Tests\UnitTestCase;
 class VieSchemaBuilderTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\Neos\Service\VieSchemaBuilder
+     * @var VieSchemaBuilder
      */
     protected $vieSchemaBuilder;
 
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
+     * @var NodeTypeManager
      */
     protected $nodeTypeManager;
 
@@ -90,7 +95,7 @@ class VieSchemaBuilderTest extends UnitTestCase
             ),
             'properties' => array(
                 'image' => array(
-                    'type' => 'TYPO3\Neos\Domain\Model\Media\Image',
+                    'type' => Image::class,
                     'label' => 'Image'
                 )
             )
@@ -99,15 +104,15 @@ class VieSchemaBuilderTest extends UnitTestCase
 
     public function setUp()
     {
-        $this->vieSchemaBuilder = $this->getAccessibleMock('TYPO3\Neos\Service\VieSchemaBuilder', array('dummy'));
+        $this->vieSchemaBuilder = $this->getAccessibleMock(VieSchemaBuilder::class, array('dummy'));
 
-        $mockConfigurationManager = $this->getMockBuilder('TYPO3\Flow\Configuration\ConfigurationManager')->disableOriginalConstructor()->getMock();
+        $mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
         $mockConfigurationManager->expects($this->any())->method('getConfiguration')->with('NodeTypes')->will($this->returnValue($this->nodeTypesFixture));
 
-        $this->nodeTypeManager = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager', array('dummy'));
+        $this->nodeTypeManager = $this->getAccessibleMock(NodeTypeManager::class, array('dummy'));
         $this->nodeTypeManager->_set('configurationManager', $mockConfigurationManager);
 
-        $mockCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\StringFrontend::class)->disableOriginalConstructor()->getMock();
+        $mockCache = $this->getMockBuilder(StringFrontend::class)->disableOriginalConstructor()->getMock();
         $mockCache->expects($this->any())->method('get')->willReturn(null);
         $this->nodeTypeManager->_set('fullConfigurationCache', $mockCache);
 

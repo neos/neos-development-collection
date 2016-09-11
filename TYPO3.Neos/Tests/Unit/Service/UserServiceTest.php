@@ -13,8 +13,10 @@ namespace TYPO3\Neos\Tests\Unit\Service;
 
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Neos\Domain\Model\User;
 use TYPO3\Neos\Domain\Service\UserService as UserDomainService;
 use TYPO3\Neos\Service\UserService;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 
 /**
@@ -41,10 +43,10 @@ class UserServiceTest extends UnitTestCase
     {
         $this->userService = new UserService();
 
-        $this->mockUserDomainService = $this->getMockBuilder(\TYPO3\Neos\Domain\Service\UserService::class)->getMock();
+        $this->mockUserDomainService = $this->getMockBuilder(UserDomainService::class)->getMock();
         $this->inject($this->userService, 'userDomainService', $this->mockUserDomainService);
 
-        $this->mockWorkspaceRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository')->disableOriginalConstructor()->setMethods(array('findOneByName'))->getMock();
+        $this->mockWorkspaceRepository = $this->getMockBuilder(WorkspaceRepository::class)->disableOriginalConstructor()->setMethods(array('findOneByName'))->getMock();
         $this->inject($this->userService, 'workspaceRepository', $this->mockWorkspaceRepository);
     }
 
@@ -53,7 +55,7 @@ class UserServiceTest extends UnitTestCase
      */
     public function getBackendUserReturnsTheCurrentlyLoggedInUser()
     {
-        $mockUser = $this->getMockBuilder('TYPO3\Neos\Domain\Model\User')->disableOriginalConstructor()->getMock();
+        $mockUser = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();
 
         $this->mockUserDomainService->expects($this->atLeastOnce())->method('getCurrentUser')->will($this->returnValue($mockUser));
         $this->assertSame($mockUser, $this->userService->getBackendUser());
@@ -73,8 +75,8 @@ class UserServiceTest extends UnitTestCase
      */
     public function getPersonalWorkspaceReturnsTheUsersWorkspaceIfAUserIsLoggedIn()
     {
-        $mockUser = $this->getMockBuilder('TYPO3\Neos\Domain\Model\User')->disableOriginalConstructor()->getMock();
-        $mockUserWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
+        $mockUser = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();
+        $mockUserWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
 
         $this->mockUserDomainService->expects($this->atLeastOnce())->method('getCurrentUser')->will($this->returnValue($mockUser));
         $this->mockUserDomainService->expects($this->atLeastOnce())->method('getUserName')->with($mockUser)->will($this->returnValue('TheUserName'));
@@ -96,7 +98,7 @@ class UserServiceTest extends UnitTestCase
      */
     public function getPersonalWorkspaceNameReturnsTheUsersWorkspaceNameIfAUserIsLoggedIn()
     {
-        $mockUser = $this->getMockBuilder('TYPO3\Neos\Domain\Model\User')->disableOriginalConstructor()->getMock();
+        $mockUser = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();
 
         $this->mockUserDomainService->expects($this->atLeastOnce())->method('getCurrentUser')->will($this->returnValue($mockUser));
         $this->mockUserDomainService->expects($this->atLeastOnce())->method('getUserName')->with($mockUser)->will($this->returnValue('TheUserName'));
