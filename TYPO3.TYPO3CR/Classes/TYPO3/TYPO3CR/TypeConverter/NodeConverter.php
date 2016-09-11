@@ -20,6 +20,8 @@ use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Security\Context;
+use TYPO3\Flow\Utility\Exception\InvalidTypeException;
+use TYPO3\Flow\Utility\TypeHandling;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Service\Context as TYPO3CRContext;
@@ -94,7 +96,7 @@ class NodeConverter extends AbstractTypeConverter
     /**
      * @var string
      */
-    protected $targetType = 'TYPO3\TYPO3CR\Domain\Model\NodeInterface';
+    protected $targetType = NodeInterface::class;
 
     /**
      * @var integer
@@ -253,9 +255,9 @@ class NodeConverter extends AbstractTypeConverter
             $innerType = $nodePropertyType;
             if ($nodePropertyType !== null) {
                 try {
-                    $parsedType = \TYPO3\Flow\Utility\TypeHandling::parseType($nodePropertyType);
+                    $parsedType = TypeHandling::parseType($nodePropertyType);
                     $innerType = $parsedType['elementType'] ?: $parsedType['type'];
-                } catch (\TYPO3\Flow\Utility\Exception\InvalidTypeException $exception) {
+                } catch (InvalidTypeException $exception) {
                 }
             }
 
