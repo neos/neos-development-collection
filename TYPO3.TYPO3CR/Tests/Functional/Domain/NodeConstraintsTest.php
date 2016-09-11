@@ -13,10 +13,12 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
 
 use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Exception\NodeConstraintException;
 
 /**
  * Functional test case for node constraints
@@ -56,11 +58,11 @@ class NodeConstraintsTest extends FunctionalTestCase
     {
         parent::setUp();
         $this->nodeDataRepository = new NodeDataRepository();
-        $this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
-        $this->nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+        $this->contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
+        $this->nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
 
         $workspace = new Workspace('live');
-        $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository')->add($workspace);
+        $this->objectManager->get(WorkspaceRepository::class)->add($workspace);
         $this->persistenceManager->persistAll();
 
         $context = $this->contextFactory->create(array('workspaceName' => 'live'));
@@ -78,7 +80,7 @@ class NodeConstraintsTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\TYPO3CR\Exception\NodeConstraintException
+     * @expectedException NodeConstraintException
      */
     public function movingNodeToWhereItsTypeIsDisallowedThrowsException()
     {
@@ -91,7 +93,7 @@ class NodeConstraintsTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\TYPO3CR\Exception\NodeConstraintException
+     * @expectedException NodeConstraintException
      */
     public function movingNodeToWhereItsSuperTypeIsDisallowedThrowsException()
     {
@@ -104,7 +106,7 @@ class NodeConstraintsTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\TYPO3CR\Exception\NodeConstraintException
+     * @expectedException NodeConstraintException
      */
     public function creatingNodeInChildNodeWithChildNodeConstraintsThrowsException()
     {
@@ -131,7 +133,7 @@ class NodeConstraintsTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\TYPO3CR\Exception\NodeConstraintException
+     * @expectedException NodeConstraintException
      */
     public function childNodeWithChildNodeConstraintsAndNodeTypeConstraintsThrowsException()
     {
