@@ -16,6 +16,7 @@ use TYPO3\Eel\Context;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface;
 use TYPO3\Flow\Security\Authorization\Privilege\AbstractPrivilege;
+use TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege;
 use TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface;
 use TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeSubject;
 use TYPO3\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
@@ -72,7 +73,7 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
 
         $methodPrivilegeMatcher = $this->buildMethodPrivilegeMatcher();
 
-        $methodPrivilegeTarget = new PrivilegeTarget($this->privilegeTarget->getIdentifier() . '__methodPrivilege', '\TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege', $methodPrivilegeMatcher);
+        $methodPrivilegeTarget = new PrivilegeTarget($this->privilegeTarget->getIdentifier() . '__methodPrivilege', MethodPrivilege::class, $methodPrivilegeMatcher);
         $methodPrivilegeTarget->injectObjectManager($this->objectManager);
         $this->methodPrivilege = $methodPrivilegeTarget->createPrivilege($this->getPermission(), $this->getParameters());
     }
@@ -96,7 +97,7 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
     public function matchesSubject(PrivilegeSubjectInterface $subject)
     {
         if ($subject instanceof NodePrivilegeSubject === false && $subject instanceof MethodPrivilegeSubject === false) {
-            throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\AbstractNodePrivilege" only support subjects of type "TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\NodePrivilegeSubject" or "TYPO3\Flow\Security\Method\MethodPrivilegeSubject", but we got a subject of type: "%s".', get_class($subject)), 1417014368);
+            throw new InvalidPrivilegeTypeException(sprintf('Privileges of type '.AbstractNodePrivilege::class.' only support subjects of type '.NodePrivilegeSubject::class.' or '.MethodPrivilegeSubject::class.', but we got a subject of type: "%s".', get_class($subject)), 1417014368);
         }
 
         $this->initialize();

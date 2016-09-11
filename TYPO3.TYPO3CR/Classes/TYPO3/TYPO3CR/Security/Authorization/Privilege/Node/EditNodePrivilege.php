@@ -55,6 +55,6 @@ class EditNodePrivilege extends AbstractNodePrivilege
      */
     protected function buildMethodPrivilegeMatcher()
     {
-        return 'within(TYPO3\TYPO3CR\Domain\Model\NodeInterface) && method(public .*->(?!setIndex)(set|unset|remove)[A-Z].*())';
+        return 'within('.NodeInterface::class.') && method(public .*->(?!setIndex)(set|unset|remove)[A-Z].*())';
     }
 }
