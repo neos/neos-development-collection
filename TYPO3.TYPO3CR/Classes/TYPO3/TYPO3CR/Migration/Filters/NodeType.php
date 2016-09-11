@@ -12,6 +12,8 @@ namespace TYPO3\TYPO3CR\Migration\Filters;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 
 /**
  * Filter nodes by node type.
@@ -78,16 +80,16 @@ class NodeType implements FilterInterface
     /**
      * Returns TRUE if the given node is of the node type this filter expects.
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @param NodeData $node
      * @return boolean
      */
-    public function matches(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    public function matches(NodeData $node)
     {
         if ($this->withSubTypes === true) {
             $nodeIsMatchingNodeType = $node->getNodeType()->isOfType($this->nodeTypeName);
         } else {
             // This is needed to get the raw string NodeType to prevent errors for NodeTypes that no longer exist.
-            $nodeType = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($node, 'nodeType', true);
+            $nodeType = ObjectAccess::getProperty($node, 'nodeType', true);
             $nodeIsMatchingNodeType = $nodeType === $this->nodeTypeName;
         }
 
