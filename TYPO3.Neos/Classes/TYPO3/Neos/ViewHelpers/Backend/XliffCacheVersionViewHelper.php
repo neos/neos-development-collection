@@ -13,6 +13,7 @@ namespace TYPO3\Neos\ViewHelpers\Backend;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3\Neos\Service\XliffService;
 
 /**
  * ViewHelper for rendering the current version identifier for the
@@ -23,7 +24,7 @@ class XliffCacheVersionViewHelper extends AbstractViewHelper
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Service\XliffService
+     * @var XliffService
      */
     protected $xliffService;
 
