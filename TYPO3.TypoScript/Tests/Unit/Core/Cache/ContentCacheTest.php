@@ -11,6 +11,13 @@ namespace TYPO3\TypoScript\Tests\Unit\Core\Cache;
  * source code.
  */
 
+use TYPO3\Flow\Cache\Backend\TransientMemoryBackend;
+use TYPO3\Flow\Cache\CacheAwareInterface;
+use TYPO3\Flow\Cache\Frontend\FrontendInterface;
+use TYPO3\Flow\Cache\Frontend\StringFrontend;
+use TYPO3\Flow\Core\ApplicationContext;
+use TYPO3\Flow\Property\PropertyMapper;
+use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\TypoScript\Core\Cache\CacheSegmentParser;
 use TYPO3\TypoScript\Core\Cache\ContentCache;
@@ -43,7 +50,7 @@ class ContentCacheTest extends UnitTestCase
      */
     public function flushByTagSanitizesTagsForCacheFrontend($tag, $sanitizedTag)
     {
-        $mockCache = $this->getMockBuilder('TYPO3\Flow\Cache\Frontend\StringFrontend')->disableOriginalConstructor()->getMock();
+        $mockCache = $this->getMockBuilder(StringFrontend::class)->disableOriginalConstructor()->getMock();
         $mockCache->expects($this->once())->method('flushByTag')->with($sanitizedTag);
         $contentCache = new ContentCache();
         $this->inject($contentCache, 'cache', $mockCache);
@@ -69,7 +76,7 @@ class ContentCacheTest extends UnitTestCase
     public function createCacheSegmentWithInvalidEntryIdentifierValueThrowsException($entryIdentifierValues)
     {
         $contentCache = new ContentCache();
-        $mockSecurityContext = $this->createMock('TYPO3\Flow\Security\Context');
+        $mockSecurityContext = $this->createMock(Context::class);
         $this->inject($contentCache, 'securityContext', $mockSecurityContext);
         $contentCache->createCacheSegment('My content', '/foo/bar', $entryIdentifierValues);
     }
@@ -79,7 +86,7 @@ class ContentCacheTest extends UnitTestCase
      */
     public function validEntryIdentifierValues()
     {
-        $mockCacheAware = $this->createMock('TYPO3\Flow\Cache\CacheAwareInterface');
+        $mockCacheAware = $this->createMock(CacheAwareInterface::class);
         return array(
             'string value' => array(array('foo' => 'Bar')),
             'boolean value' => array(array('foo' => true)),
@@ -96,7 +103,7 @@ class ContentCacheTest extends UnitTestCase
     public function createCacheSegmentWithValidEntryIdentifierValueCreatesIdentifier($entryIdentifierValues)
     {
         $contentCache = new ContentCache();
-        $mockSecurityContext = $this->createMock('TYPO3\Flow\Security\Context');
+        $mockSecurityContext = $this->createMock(Context::class);
         $this->inject($contentCache, 'securityContext', $mockSecurityContext);
         $segement = $contentCache->createCacheSegment('My content', '/foo/bar', $entryIdentifierValues);
         $this->assertNotEmpty($segement);
@@ -108,7 +115,7 @@ class ContentCacheTest extends UnitTestCase
     public function createCacheSegmentWithLifetimeStoresLifetimeAfterTagsInMetadata()
     {
         $contentCache = new ContentCache();
-        $mockSecurityContext = $this->createMock('TYPO3\Flow\Security\Context');
+        $mockSecurityContext = $this->createMock(Context::class);
         $this->inject($contentCache, 'securityContext', $mockSecurityContext);
         $segement = $contentCache->createCacheSegment('My content', '/foo/bar', array(42), array('Foo', 'Bar'), 60);
         $this->assertContains('Foo,Bar;60' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN, $segement);
@@ -120,11 +127,11 @@ class ContentCacheTest extends UnitTestCase
     public function processCacheSegmentsSetsLifetimeFromMetadata()
     {
         $contentCache = new ContentCache();
-        $mockSecurityContext = $this->createMock('TYPO3\Flow\Security\Context');
+        $mockSecurityContext = $this->createMock(Context::class);
         $this->inject($contentCache, 'securityContext', $mockSecurityContext);
         $this->inject($contentCache, 'parser', new CacheSegmentParser());
 
-        $mockCache = $this->createMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
+        $mockCache = $this->createMock(FrontendInterface::class);
         $this->inject($contentCache, 'cache', $mockCache);
 
         $segement = $contentCache->createCacheSegment('My content', '/foo/bar', array(42), array('Foo', 'Bar'), 60);
@@ -141,11 +148,11 @@ class ContentCacheTest extends UnitTestCase
     public function createCacheSegmentAndProcessCacheSegmentsDoesWorkWithCacheSegmentTokensInContent()
     {
         $contentCache = new ContentCache();
-        $mockSecurityContext = $this->createMock('TYPO3\Flow\Security\Context');
+        $mockSecurityContext = $this->createMock(Context::class);
         $this->inject($contentCache, 'securityContext', $mockSecurityContext);
         $this->inject($contentCache, 'parser', new CacheSegmentParser());
 
-        $mockCache = $this->createMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
+        $mockCache = $this->createMock(FrontendInterface::class);
         $this->inject($contentCache, 'cache', $mockCache);
 
         $invalidContent = 'You should probably not use ' . ContentCache::CACHE_SEGMENT_START_TOKEN . ', ' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . ' or ' . ContentCache::CACHE_SEGMENT_END_TOKEN . ' inside your content.';
@@ -175,12 +182,12 @@ class ContentCacheTest extends UnitTestCase
     {
         $contentCache = new ContentCache();
 
-        $mockPropertyMapper = $this->createMock('TYPO3\Flow\Property\PropertyMapper');
+        $mockPropertyMapper = $this->createMock(PropertyMapper::class);
         $mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnArgument(0));
         $this->inject($contentCache, 'propertyMapper', $mockPropertyMapper);
         $this->inject($contentCache, 'parser', new CacheSegmentParser());
 
-        $mockCache = $this->createMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
+        $mockCache = $this->createMock(FrontendInterface::class);
         $this->inject($contentCache, 'cache', $mockCache);
 
         $invalidContent = 'You should probably not use ' . ContentCache::CACHE_SEGMENT_START_TOKEN . ', ' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . ' or ' . ContentCache::CACHE_SEGMENT_END_TOKEN . ' inside your uncached content.';
@@ -200,18 +207,18 @@ class ContentCacheTest extends UnitTestCase
     {
         $contentCache = new ContentCache();
 
-        $mockSecurityContext = $this->createMock('TYPO3\Flow\Security\Context');
+        $mockSecurityContext = $this->createMock(Context::class);
         $this->inject($contentCache, 'securityContext', $mockSecurityContext);
 
-        $mockPropertyMapper = $this->createMock('TYPO3\Flow\Property\PropertyMapper');
+        $mockPropertyMapper = $this->createMock(PropertyMapper::class);
         $mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnArgument(0));
         $this->inject($contentCache, 'propertyMapper', $mockPropertyMapper);
 
         $this->inject($contentCache, 'parser', new CacheSegmentParser());
 
-        $mockContext = $this->getMockBuilder('TYPO3\Flow\Core\ApplicationContext')->disableOriginalConstructor()->getMock();
-        $cacheBackend = new \TYPO3\Flow\Cache\Backend\TransientMemoryBackend($mockContext);
-        $cacheFrontend = new \TYPO3\Flow\Cache\Frontend\StringFrontend('foo', $cacheBackend);
+        $mockContext = $this->getMockBuilder(ApplicationContext::class)->disableOriginalConstructor()->getMock();
+        $cacheBackend = new TransientMemoryBackend($mockContext);
+        $cacheFrontend = new StringFrontend('foo', $cacheBackend);
         $cacheBackend->setCache($cacheFrontend);
         $this->inject($contentCache, 'cache', $cacheFrontend);
 

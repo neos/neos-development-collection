@@ -10,12 +10,14 @@ namespace TYPO3\TypoScript\Tests\Unit\Core\Parser;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\TypoScript\Core\Parser;
 
 /**
  * Testcase for the TypoScript Parser - tests the regex patterns
  *
  */
-class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase
+class PatternTest extends UnitTestCase
 {
     /**
      * Checks the regular expression SCAN_PATTERN_COMMENT
@@ -25,7 +27,7 @@ class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function testSCAN_PATTERN_COMMENT()
     {
-        $pattern = \TYPO3\TypoScript\Core\Parser::SCAN_PATTERN_COMMENT;
+        $pattern = Parser::SCAN_PATTERN_COMMENT;
         $this->assertEquals(preg_match($pattern, '/* This is a comment start ...'), 1, 'The SCAN_PATTERN_COMMENT pattern did not match a block comment start.');
         $this->assertEquals(preg_match($pattern, '# This is a comment start ...'), 1, 'The SCAN_PATTERN_COMMENT pattern did not match a hash comment start.');
         $this->assertEquals(preg_match($pattern, '// This is a comment start ...'), 1, 'The SCAN_PATTERN_COMMENT pattern did not match a double slash comment start.');
@@ -39,7 +41,7 @@ class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function testSCAN_PATTERN_OPENINGCONFINEMENT()
     {
-        $pattern = \TYPO3\TypoScript\Core\Parser::SCAN_PATTERN_OPENINGCONFINEMENT;
+        $pattern = Parser::SCAN_PATTERN_OPENINGCONFINEMENT;
         $this->assertEquals(preg_match($pattern, 'foo.bar.baz {'), 1, 'a confinement was not matched');
         $this->assertEquals(preg_match($pattern, 'fo-o.bar-la.baz {'), 1, 'a confinement with dashes was not matched');
         $this->assertEquals(preg_match($pattern, 'fo:o.bar:la.baz {'), 1, 'a confinement with colons was not matched');
@@ -60,7 +62,7 @@ class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function testSCAN_PATTERN_CLOSINGCONFINEMENT()
     {
-        $pattern = \TYPO3\TypoScript\Core\Parser::SCAN_PATTERN_CLOSINGCONFINEMENT;
+        $pattern = Parser::SCAN_PATTERN_CLOSINGCONFINEMENT;
         $this->assertEquals(preg_match($pattern, '}'), 1, 'a closing confinement was not matched');
         $this->assertEquals(preg_match($pattern, '		  }'), 1, 'a closing confinement with leading whitespace was not matched');
         $this->assertEquals(preg_match($pattern, '		  }     '), 1, 'a closing confinement with leading and following whitespace was not matched');
@@ -75,7 +77,7 @@ class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function testSCAN_PATTERN_DECLARATION()
     {
-        $pattern = \TYPO3\TypoScript\Core\Parser::SCAN_PATTERN_DECLARATION;
+        $pattern = Parser::SCAN_PATTERN_DECLARATION;
         $this->assertEquals(preg_match($pattern, 'include : source = "resource"'), 1, 'The SCAN_PATTERN_DECLARATION pattern did not match an include declaration.');
         $this->assertEquals(preg_match($pattern, 'include:source = "resource"'), 1, 'The SCAN_PATTERN_DECLARATION pattern did not match an include declaration without whitespaces.');
         $this->assertEquals(preg_match($pattern, 'namespace: cms = Test'), 1, 'The SCAN_PATTERN_DECLARATION pattern did not match an namespace declaration.');
@@ -93,7 +95,7 @@ class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function testSCAN_PATTERN_OBJECTDEFINITION()
     {
-        $pattern = \TYPO3\TypoScript\Core\Parser::SCAN_PATTERN_OBJECTDEFINITION;
+        $pattern = Parser::SCAN_PATTERN_OBJECTDEFINITION;
         $this->assertEquals(preg_match($pattern, 'myObject = Text'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match an object type assignment.');
         $this->assertEquals(preg_match($pattern, '  myObject = Text'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match an object type assignment with leading whitespace.');
         $this->assertEquals(preg_match($pattern, 'myObject.content = "stuff"'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match a literal assignment of a property.');
@@ -109,7 +111,7 @@ class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function testSCAN_PATTERN_OBJECTPATH()
     {
-        $pattern = \TYPO3\TypoScript\Core\Parser::SCAN_PATTERN_OBJECTPATH;
+        $pattern = Parser::SCAN_PATTERN_OBJECTPATH;
         $this->assertEquals(preg_match($pattern, 'foo.bar'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match a simple object path (1)');
         $this->assertEquals(preg_match($pattern, 'foo.\'b@r\''), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match a object path with a single quoted key');
         $this->assertEquals(preg_match($pattern, 'foo."b@r"'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match a object path with a double quoted key');
@@ -127,7 +129,7 @@ class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function testSPLIT_PATTERN_OBJECTPATH()
     {
-        $pattern = \TYPO3\TypoScript\Core\Parser::SPLIT_PATTERN_OBJECTPATH;
+        $pattern = Parser::SPLIT_PATTERN_OBJECTPATH;
 
         $expected = array(
             0 => 'foo',
@@ -178,7 +180,7 @@ class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function testSPLIT_PATTERN_OBJECTDEFINITION()
     {
-        $pattern = \TYPO3\TypoScript\Core\Parser::SPLIT_PATTERN_OBJECTDEFINITION;
+        $pattern = Parser::SPLIT_PATTERN_OBJECTDEFINITION;
 
         $expected = array(
             0 => 'foo.bar = Test',
@@ -245,7 +247,7 @@ class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function testSCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE()
     {
-        $pattern = \TYPO3\TypoScript\Core\Parser::SCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE;
+        $pattern = Parser::SCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE;
         $this->assertEquals(preg_match($pattern, 'prototype(asf.Ds:1)'), 1, 'The SCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE pattern did not match (1).');
         $this->assertEquals(preg_match($pattern, 'prototype(TYPO3.Flow:Test)'), 1, 'The SCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE pattern did not match (2).');
         $this->assertEquals(preg_match($pattern, 'message'), 0, 'The SCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE pattern matched(3).');
@@ -259,7 +261,7 @@ class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function testSPLIT_PATTERN_VALUENUMBER()
     {
-        $pattern = \TYPO3\TypoScript\Core\Parser::SPLIT_PATTERN_VALUENUMBER;
+        $pattern = Parser::SPLIT_PATTERN_VALUENUMBER;
         $this->assertEquals(preg_match($pattern, ' 1'), 1, 'The SPLIT_PATTERN_VALUENUMBER pattern did not match a number with a space in front.');
         $this->assertEquals(preg_match($pattern, '12221'), 1, 'The SPLIT_PATTERN_VALUENUMBER pattern did not match the number 12221.');
         $this->assertEquals(preg_match($pattern, '-12'), 1, 'The SPLIT_PATTERN_VALUENUMBER pattern did not match a negative number.');
@@ -275,7 +277,7 @@ class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function testSPLIT_PATTERN_VALUEMULTILINELITERAL()
     {
-        $pattern = \TYPO3\TypoScript\Core\Parser::SPLIT_PATTERN_VALUEMULTILINELITERAL;
+        $pattern = Parser::SPLIT_PATTERN_VALUEMULTILINELITERAL;
         $this->assertEquals(preg_match($pattern, "\${'col-sm-'+"), 0, 'This should not match; but it does');
     }
 
@@ -284,7 +286,7 @@ class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function testSCAN_PATTERN_VALUEOBJECTTYPE()
     {
-        $pattern = \TYPO3\TypoScript\Core\Parser::SCAN_PATTERN_VALUEOBJECTTYPE;
+        $pattern = Parser::SCAN_PATTERN_VALUEOBJECTTYPE;
 
         $this->assertEquals(1, preg_match($pattern, 'TYPO3.TypoScript:Foo'), 'It did not match a simple TS Object Type');
         $this->assertEquals(1, preg_match($pattern, 'Foo'), 'It matched an unqualified TS Object Type');
@@ -334,7 +336,7 @@ class PatternTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function testSPLIT_PATTERN_COMMENTTYPE($tsSnippet, $expectedCommentToken)
     {
-        $pattern = \TYPO3\TypoScript\Core\Parser::SPLIT_PATTERN_COMMENTTYPE;
+        $pattern = Parser::SPLIT_PATTERN_COMMENTTYPE;
 
         $this->assertEquals(1, preg_match($pattern, $tsSnippet), 'It did not match a complex TS comment.');
 
