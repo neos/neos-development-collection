@@ -29,7 +29,7 @@ class TagImplementationTest extends UnitTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->mockTsRuntime = $this->getMockBuilder('TYPO3\TypoScript\Core\Runtime')->disableOriginalConstructor()->getMock();
+        $this->mockTsRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
     }
 
     public function tagExamples()

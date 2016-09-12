@@ -10,26 +10,29 @@ namespace TYPO3\TypoScript\Tests\Unit\Core;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\TypoScript\Core\Parser;
+use TYPO3\TypoScript\TypoScriptObjects\ArrayImplementation;
 
 /**
  * Testcase for the TypoScript Parser
  */
-class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ParserTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\TypoScript\Core\Parser
+     * @var Parser
      */
     protected $parser;
 
     /**
-     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     * @var ObjectManagerInterface
      */
     protected $mockObjectManager;
 
     /**
      * Sets up this test case
      *
-     * @author  Robert Lemke <robert@typo3.org>
      */
     protected function setUp()
     {
@@ -43,7 +46,6 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
     /**
      * call back for mocking the object factory
      * @return object fixture objects ...
-     * @author Robert Lemke <robert@typo3.org>
      */
     public function objectManagerCallback()
     {
@@ -57,7 +59,6 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
     /**
      * Call back for mocking the object manager's isRegistered() method
      * @return boolean
-     * @author Robert Lemke <robert@typo3.org>
      */
     public function objectManagerIsRegisteredCallback()
     {
@@ -82,7 +83,6 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      * checks if the object tree returned by the TypoScript parser reflects source code fixture 01
      *
      * @test
-     * @author Robert Lemke <robert@typo3.org>
      */
     public function parserCorrectlyParsesFixture01()
     {
@@ -115,8 +115,6 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      *
      * @test
      * @expectedException \TYPO3\TypoScript\Exception
-     * @author Robert Lemke <robert@typo3.org>
-     * @author Bastian Waidelich <bastian@typo3.org>
      */
     public function parserThrowsTypoScriptExceptionIfNamespaceDeclarationIsInvalid()
     {
@@ -128,7 +126,6 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      * checks if the object tree returned by the TypoScript parser reflects source code fixture 02
      *
      * @test
-     * @author Robert Lemke <robert@typo3.org>
      */
     public function parserCorrectlyParsesFixture02()
     {
@@ -164,7 +161,6 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      * checks if the object tree returned by the TypoScript parser reflects source code fixture 03
      *
      * @test
-     * @author Robert Lemke <robert@typo3.org>
      */
     public function parserCorrectlyParsesFixture03()
     {
@@ -212,7 +208,6 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      * checks if the object tree returned by the TypoScript parser reflects source code fixture 04
      *
      * @test
-     * @author Robert Lemke <robert@typo3.org>
      */
     public function parserCorrectlyParsesFixture04()
     {
@@ -282,7 +277,6 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      * checks if the object tree returned by the TypoScript parser reflects source code fixture 05
      *
      * @test
-     * @author Robert Lemke <robert@typo3.org>
      */
     public function parserCorrectlyParsesFixture05()
     {
@@ -352,7 +346,6 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      * checks if the object tree returned by the TypoScript parser reflects source code fixture 07
      *
      * @test
-     * @author Robert Lemke <robert@typo3.org>
      */
     public function parserCorrectlyParsesFixture07()
     {
@@ -375,7 +368,6 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      *
      * @todo Implement lazy rendering support for variable substitutions
      * @test
-     * @author Robert Lemke <robert@typo3.org>
      */
     public function parserCorrectlyParsesFixture08()
     {
@@ -439,7 +431,6 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      * checks if the object tree returned by the TypoScript parser reflects source code fixture 10
      *
      * @test
-     * @author Robert Lemke <robert@typo3.org>
      */
     public function parserCorrectlyParsesFixture10()
     {
@@ -519,7 +510,6 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      * checks if the object tree returned by the TypoScript parser reflects source code fixture 13
      *
      * @test
-     * @author Robert Lemke <robert@typo3.org>
      */
     public function parserCorrectlyParsesFixture13()
     {
@@ -572,7 +562,6 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      * checks if the object tree returned by the TypoScript parser reflects source code fixture 14
      *
      * @test
-     * @author Robert Lemke <robert@typo3.org>
      */
     public function parserCorrectlyParsesFixture14()
     {
@@ -808,22 +797,22 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
             '__prototypes' => array(
                 'TYPO3.Neos:Foo' => array(
                     '__meta' => array(
-                        'class' => 'TYPO3\TypoScript\TypoScriptObjects\ArrayImplementation'
+                        'class' => ArrayImplementation::class
                     )
                 ),
                 'TYPO3.Neos:Bar' => array(
                     '__meta' => array(
-                        'class' => 'TYPO3\TypoScript\TypoScriptObjects\ArrayImplementation'
+                        'class' => ArrayImplementation::class
                     )
                 ),
                 'TYPO3.Schirmchen:Baz' => array(
                     '__meta' => array(
-                        'class' => 'TYPO3\TypoScript\TypoScriptObjects\ArrayImplementation'
+                        'class' => ArrayImplementation::class
                     )
                 ),
                 'TYPO3.Future:Quux' => array(
                     '__meta' => array(
-                        'class' => 'TYPO3\TypoScript\TypoScriptObjects\ArrayImplementation'
+                        'class' => ArrayImplementation::class
                     )
                 )
             )

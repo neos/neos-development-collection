@@ -11,15 +11,18 @@ namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\Helper;
  * source code.
  */
 
-class UtilityHelper implements \TYPO3\Eel\ProtectedContextAwareInterface
+use TYPO3\Eel\ProtectedContextAwareInterface;
+use TYPO3\TypoScript\Exception;
+
+class UtilityHelper implements ProtectedContextAwareInterface
 {
     /**
      * @return void
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws Exception
      */
     public function throwException()
     {
-        throw new \TYPO3\TypoScript\Exception('Just testing an exception', 1397118532);
+        throw new Exception('Just testing an exception', 1397118532);
     }
 
     /**
