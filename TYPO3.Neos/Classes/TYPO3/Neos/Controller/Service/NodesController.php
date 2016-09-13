@@ -135,9 +135,16 @@ class NodesController extends ActionController
             $this->throwStatus(404);
         }
 
+        $convertedNodeProperties = $this->nodePropertyConverterService->getPropertiesArray($node);
+        array_walk($convertedNodeProperties, function (&$value) {
+            if (is_array($value)) {
+                $value = json_encode($value);
+            }
+        });
+
         $this->view->assignMultiple(array(
             'node' => $node,
-            'convertedNodeProperties' => $this->nodePropertyConverterService->getPropertiesArray($node)
+            'convertedNodeProperties' => $convertedNodeProperties
         ));
     }
 
