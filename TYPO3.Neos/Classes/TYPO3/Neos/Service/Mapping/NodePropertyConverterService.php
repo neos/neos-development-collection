@@ -61,11 +61,11 @@ class NodePropertyConverterService
     protected $systemLogger;
 
     /**
-     * Get a single property reduced to a simple type representation
+     * Get a single property reduced to a simple type (no objects) representation
      *
      * @param NodeInterface $node
      * @param string $propertyName
-     * @return string
+     * @return mixed
      */
     public function getProperty(NodeInterface $node, $propertyName)
     {
@@ -102,7 +102,7 @@ class NodePropertyConverterService
     }
 
     /**
-     * Get all properties reduced to simple type representations in an array
+     * Get all properties reduced to simple type (no objects) representations in an array
      *
      * @param NodeInterface $node
      * @return array
