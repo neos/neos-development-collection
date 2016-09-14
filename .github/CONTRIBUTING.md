@@ -32,12 +32,12 @@ We love Content, so we try to solve today's problem in producing, curating and m
 
 We spend our time on the following tools, you should have a good understanding of this tooling.
 
-- PHP 5.5+
+- PHP 7.0
 - MySQL / PostgreSQL
-- EmberJS
-- GIT 
+- React / EmberJS 
+- GIT
 
-You can find us on [Github](https://github.com/neos) and we use [Jira][8] as our main issue tracker.
+You can find us on [Github](https://github.com/neos) and we use it as our main issue tracker as well.
 
 ### Related resources
 
@@ -51,9 +51,9 @@ We are currently in the process to create the identity for the Neos brand. If yo
 
 ## You have other skills that you think can be useful for the community ?
 
-Who knows, some of your skills are not in this list, but can be really useful for the community. You are a project manager, an event organizer, a brewer, a team builder and joga trainer and you want to support an open source community, keep in touch with us: **hello@neos.io** 
+Who knows, some of your skills are not in this list, but can be really useful for the community. You are a project manager, an event organizer, a brewer, a team builder and joga trainer and you want to support an open source community, connect with us: **hello@neos.io** 
 
-We certainly have a something that match your dream job and where you can help the products.
+We certainly have a something that matches your dream job and where you can help the project.
 
 ## Test
 
@@ -67,7 +67,7 @@ We spend our time on the following tools, you should have a good understanding o
 - Behat (functional testing)
 - GIT 
 
-You can find us on [Github](https://github.com/neos) and we use [Jira][8] as our main issue tracker.
+You can find us on [Github](https://github.com/neos) and we also use it as our main issue tracker.
 
 ### Related resources
 
@@ -92,7 +92,7 @@ Answer questions about the products use and development.
 
 # Support the Neos Project development with bounties
 
-The Neos project has not founded its own association or any other formal legal body. Thus it is not possible to directly donate to the Neos project. Sandstorm want to support the Neos project as best as we can, including financially. Sandstorm have therefore agreed with the Neos team to sell Neos supporter badges and use all revenues to support the Neos project. [Check the official funding website][5]
+The Neos project is in the process of founding a legal body. Until then it is not possible to directly donate to the Neos project. For the time being Sandstorm Media has therefore agreed with the Neos team to sell Neos supporter badges and use all revenues to support the Neos project. [Check our donations page][5]
 
 # Thanks for helping Neos CMS and Flow Framework
 
@@ -101,7 +101,6 @@ If you have any questions, [we are happy to help you][7].
   [1]: http://contributor-covenant.org/version/1/2/0/
   [3]: https://discuss.neos.io
   [4]: http://slack.neos.io
-  [5]: https://neosfunding.sandstorm.de/
+  [5]: https://www.neos.io/contribute/donating-to-neos.html
   [6]: https://www.neos.io/team/design
   [7]: https://www.neos.io/contact
-  [8]: https://jira.neos.io
