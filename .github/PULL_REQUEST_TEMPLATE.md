@@ -1,3 +1,9 @@
+<!--
+  Thanks for your contribution, we appreciate it!
+  Please read through our pull request guidelines, there are some interesting things there:
+  https://discuss.neos.io/t/creating-a-pull-request/506
+  And one more thing... Don't forget about the tests!
+-->
 
 **- What I did**
 
