@@ -30,6 +30,9 @@ use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
+use TYPO3\TYPO3CR\Domain\Service\NodeService;
 
 /**
  * The Neos Sites Management module controller
@@ -53,6 +56,24 @@ class SitesController extends AbstractModuleController
      * @var NodeDataRepository
      */
     protected $nodeDataRepository;
+
+    /**
+     * @Flow\Inject
+     * @var ContextFactoryInterface
+     */
+    protected $nodeContextFactory;
+
+    /**
+     * @Flow\Inject
+     * @var NodeService
+     */
+    protected $nodeService;
+
+    /**
+     * @Flow\Inject
+     * @var NodeTypeManager
+     */
+    protected $nodeTypeManager;
 
     /**
      * @Flow\Inject
@@ -187,8 +208,10 @@ class SitesController extends AbstractModuleController
     public function newSiteAction(Site $site = null)
     {
         $sitePackages = $this->packageManager->getFilteredPackages('available', null, 'typo3-flow-site');
+        $documentNodeTypes = $this->nodeTypeManager->getSubNodeTypes('TYPO3.Neos:Document', false);
         $this->view->assignMultiple(array(
             'sitePackages' => $sitePackages,
+            'documentNodeTypes' => $documentNodeTypes,
             'site' => $site,
             'generatorServiceIsAvailable' => $this->packageManager->isPackageActive('TYPO3.Neos.Kickstarter')
         ));
@@ -200,10 +223,11 @@ class SitesController extends AbstractModuleController
      * @param string $site Site to import
      * @param string $packageKey Package Name to create
      * @param string $siteName Site Name to create
+     * @param string $nodeType NodeType name for the root node to create
      * @Flow\Validate(argumentName="$packageKey", type="\TYPO3\Neos\Validation\Validator\PackageKeyValidator")
      * @return void
      */
-    public function createSiteAction($site, $packageKey = '', $siteName = '')
+    public function createSiteAction($site, $packageKey = '', $siteName = '', $nodeType = '')
     {
         if ($packageKey !== '' && $this->packageManager->isPackageActive('TYPO3.Neos.Kickstarter')) {
             if ($this->packageManager->isPackageAvailable($packageKey)) {
@@ -213,24 +237,65 @@ class SitesController extends AbstractModuleController
 
             $generatorService = $this->objectManager->get(GeneratorService::class);
             $generatorService->generateSitePackage($packageKey, $siteName);
+
+            $deactivatedSitePackages = $this->deactivateAllOtherSitePackages($packageKey);
+            if (count($deactivatedSitePackages) > 0) {
+                $this->flashMessageContainer->addMessage(new Message(sprintf('The existing Site Packages "%s" were deactivated, in order to prevent interactions with the newly created package "%s".', htmlspecialchars(implode(', ', $deactivatedSitePackages)), htmlspecialchars($packageKey))));
+            }
+
+            $this->packageManager->activatePackage($packageKey);
         } else {
             $packageKey = $site;
         }
 
-        $deactivatedSitePackages = $this->deactivateAllOtherSitePackages($packageKey);
-        if (count($deactivatedSitePackages) > 0) {
-            $this->flashMessageContainer->addMessage(new Message(sprintf('The existing Site Packages "%s" were deactivated, in order to prevent interactions with the newly created package "%s".', htmlspecialchars(implode(', ', $deactivatedSitePackages)), htmlspecialchars($packageKey))));
-        }
-
-        $this->packageManager->activatePackage($packageKey);
-
         if ($packageKey !== '') {
-            try {
-                $this->siteImportService->importFromPackage($packageKey);
-                $this->addFlashMessage('The site has been created.', '', null, array(), 1412372266);
-            } catch (\Exception $exception) {
-                $this->systemLogger->logException($exception);
-                $this->addFlashMessage('Error: During the import of the "Sites.xml" from the package "%s" an exception occurred: %s', 'Import error', Message::SEVERITY_ERROR, array(htmlspecialchars($packageKey), htmlspecialchars($exception->getMessage())), 1412372375);
+            if ($nodeType !== '') {
+                $nodeName = $this->nodeService->generateUniqueNodeName(SiteService::SITES_ROOT_PATH, $siteName);
+
+                if ($this->siteRepository->findOneByNodeName($nodeName)) {
+                    $this->addFlashMessage('Error:A site with siteNodeName "%s" already exists', Message::SEVERITY_ERROR, [$nodeName], 1412372375);
+                    $this->redirect('newSite');
+                }
+
+                $siteNodeType = $this->nodeTypeManager->getNodeType($nodeType);
+
+                if ($siteNodeType === null || $siteNodeType->getName() === 'TYPO3.Neos:FallbackNode') {
+                    $this->addFlashMessage('Error: The given node type "%s" was not found', 'Import error', Message::SEVERITY_ERROR, [$nodeType], 1412372375);
+                    $this->redirect('newSite');
+                }
+
+                if ($siteNodeType->isOfType('TYPO3.Neos:Document') === false) {
+                    $this->addFlashMessage('Error: The given node type "%s" is not based on the superType "%s"', Message::SEVERITY_ERROR, [$nodeType, 'TYPO3.Neos:Document'], 1412372375);
+                    $this->redirect('newSite');
+                }
+
+                $rootNode = $this->nodeContextFactory->create()->getRootNode();
+
+                // We fetch the workspace to be sure it's known to the persistence manager and persist all
+                // so the workspace and site node are persisted before we import any nodes to it.
+                $rootNode->getContext()->getWorkspace();
+                $this->persistenceManager->persistAll();
+                $sitesNode = $rootNode->getNode(SiteService::SITES_ROOT_PATH);
+                if ($sitesNode === null) {
+                    $sitesNode = $rootNode->createNode(NodePaths::getNodeNameFromPath(SiteService::SITES_ROOT_PATH));
+                }
+                $siteNode = $sitesNode->createNode($nodeName, $siteNodeType);
+                $siteNode->setProperty('title', $siteName);
+                $site = new Site($nodeName);
+                $site->setSiteResourcesPackageKey($packageKey);
+                $site->setState(Site::STATE_ONLINE);
+                $site->setName($siteName);
+                $this->siteRepository->add($site);
+
+                $this->addFlashMessage('Successfully created site "%s" with siteNode "%s", type "%s" and packageKey "%s"', '', null, [$siteName, $nodeName, $nodeType, $packageKey], 1412372266);
+            } else {
+                try {
+                    $this->siteImportService->importFromPackage($packageKey);
+                    $this->addFlashMessage('The site has been created.', '', null, array(), 1412372266);
+                } catch (\Exception $exception) {
+                    $this->systemLogger->logException($exception);
+                    $this->addFlashMessage('Error: During the import of the "Sites.xml" from the package "%s" an exception occurred: %s', 'Import error', Message::SEVERITY_ERROR, array(htmlspecialchars($packageKey), htmlspecialchars($exception->getMessage())), 1412372375);
+                }
             }
         } else {
             $this->addFlashMessage('No site selected for import and no package name provided.', 'No site selected', Message::SEVERITY_ERROR, array(), 1412372554);
