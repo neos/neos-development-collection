@@ -145,7 +145,7 @@ Will remove all child nodes that do not have a connection to the root node.
 removeDisallowedChildNodes
 
 Will remove all child nodes that are disallowed according to the node type's auto-create
-configuration and constraints. 
+configuration and constraints.
 
 <u>Remove undefined node properties</u>
 removeUndefinedProperties
@@ -168,7 +168,7 @@ the current content dimension configuration.
 removeNodesWithInvalidWorkspace
 
 Will check for and optionally remove nodes which belong to a workspace which no longer
-exists.. 
+exists..
 
 <u>Repair inconsistent node identifiers</u>
 fixNodesWithInconsistentIdentifier
@@ -181,20 +181,20 @@ createMissingChildNodes
 
 For all nodes (or only those which match the --node-type filter specified with this
 command) which currently don't have child nodes as configured by the node type's
-configuration new child nodes will be created. 
+configuration new child nodes will be created.
 
 <u>Reorder child nodes</u>
 reorderChildNodes
 
 For all nodes (or only those which match the --node-type filter specified with this
 command) which have configured child nodes, those child nodes are reordered according to the
-position from the parents NodeType configuration. 
+position from the parents NodeType configuration.
 <u>Missing default properties</u>
 addMissingDefaultValues
 
 For all nodes (or only those which match the --node-type filter specified with this
 command) which currently don\t have a property that have a default value configuration
-the default value for that property will be set. 
+the default value for that property will be set.
 
 <u>Repair nodes with missing shadow nodes</u>
 repairShadowNodes
@@ -1005,9 +1005,11 @@ HELPTEXT;
             foreach ($allowedDimensionCombinations as $dimensionConfiguration) {
                 ksort($dimensionConfiguration);
                 ksort($nodeDataArray['dimensionValues']);
-                if ($dimensionConfiguration === $nodeDataArray['dimensionValues']) {
-                    $foundValidDimensionValues = true;
-                    break;
+                foreach ($dimensionConfiguration as $dimensionKey => $dimensionValuesArray) {
+                    if (in_array($nodeDataArray['dimensionValues'][$dimensionKey][0], $dimensionValuesArray)) {
+                        $foundValidDimensionValues = true;
+                        break;
+                    }
                 }
             }
 
