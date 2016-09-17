@@ -395,7 +395,7 @@ class WorkspacesController extends AbstractModuleController
         if (($targetWorkspace = $workspace->getBaseWorkspace()) === null) {
             $targetWorkspace = $this->workspaceRepository->findOneByName('live');
         }
-        $workspace->publish($targetWorkspace);
+        $this->publishingService->publishNodes($this->publishingService->getUnpublishedNodes($workspace), $targetWorkspace);
         $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenPublished', [htmlspecialchars($workspace->getTitle()), htmlspecialchars($targetWorkspace->getTitle())], null, null, 'Modules', 'TYPO3.Neos'));
         $this->redirect('index');
     }
