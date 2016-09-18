@@ -978,6 +978,8 @@ trait NodeOperationsTrait
                 }
             }
 
+            $contextProperties['invisibleContentShown'] = true;
+
             return $contextFactory->create($contextProperties);
         }
     }
