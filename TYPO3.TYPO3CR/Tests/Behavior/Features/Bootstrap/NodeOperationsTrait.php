@@ -158,7 +158,8 @@ trait NodeOperationsTrait
                     foreach ($presetStrings as $presetString) {
                         list($presetName, $presetValues) = Arrays::trimExplode('=', $presetString);
                         $presets[$presetName] = array(
-                            'values' => Arrays::trimExplode(',', $presetValues)
+                            'values' => Arrays::trimExplode(',', $presetValues),
+                            'uriSegment' => $presetName
                         );
 
                         if ($defaultPreset === '') {
