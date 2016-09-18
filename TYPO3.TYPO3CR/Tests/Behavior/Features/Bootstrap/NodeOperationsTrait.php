@@ -101,6 +101,12 @@ trait NodeOperationsTrait
                     $identifier = null;
                 }
 
+                if (isset($row['Hidden']) && $row['Hidden'] === 'true') {
+                    $hidden = true;
+                } else {
+                    $hidden = false;
+                }
+
                 $parentNode = $context->getNode($parentPath);
                 if ($parentNode === null) {
                     throw new \Exception(sprintf('Could not get parent node with path %s to create node %s', $parentPath, $path));
@@ -117,6 +123,8 @@ trait NodeOperationsTrait
                         $node->setProperty($propertyName, $propertyValue);
                     }
                 }
+
+                $node->setHidden($hidden);
             }
 
             // Make sure we do not use cached instances
@@ -866,6 +874,18 @@ trait NodeOperationsTrait
     }
 
     /**
+     * @When /^I make the node visible$/
+     */
+    public function iMakeTheNodevisible()
+    {
+        $node = $this->iShouldHaveOneNode();
+        $node->setHidden(false);
+
+        $this->objectManager->get('TYPO3\Flow\Persistence\PersistenceManagerInterface')->persistAll();
+        $this->resetNodeInstances();
+    }
+
+    /**
      * Makes sure to reset all node instances which might still be stored in the NodeDataRepository, ContextFactory or
      * NodeFactory.
      *
@@ -916,9 +936,7 @@ trait NodeOperationsTrait
             /** @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface $contextFactory */
             $contextFactory = $this->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
             $contextProperties = array();
-            if (isset($humanReadableContextProperties['Language'])) {
-                $contextProperties['dimensions']['language'] = array($humanReadableContextProperties['Language'], 'mul_ZZ');
-            }
+
             if (isset($humanReadableContextProperties['Language'])) {
                 $contextProperties['dimensions']['language'] = Arrays::trimExplode(',', $humanReadableContextProperties['Language']);
             }
@@ -928,6 +946,10 @@ trait NodeOperationsTrait
                 $this->createWorkspaceIfNeeded($contextProperties['workspaceName']);
             } else {
                 $this->createWorkspaceIfNeeded();
+            }
+
+            if (isset($humanReadableContextProperties['Hidden'])) {
+                $contextProperties['hidden'] = $humanReadableContextProperties['Hidden'];
             }
 
             foreach ($humanReadableContextProperties as $propertyName => $propertyValue) {
