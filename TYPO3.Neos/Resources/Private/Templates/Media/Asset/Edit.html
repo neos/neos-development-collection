@@ -11,7 +11,7 @@
 				<fieldset>
 					<legend>{neos:backend.translate(id: 'media.basics', source: 'Modules', package: 'TYPO3.Neos')}</legend>
 					<label for="title">{neos:backend.translate(id: 'media.field.title', source: 'Modules', package: 'TYPO3.Neos')}</label>
-					<f:form.textfield property="title" placeholder="{neos:backend.translate(id: 'media.field.title', source: 'Modules', package: 'TYPO3.Neos')}"/>
+					<f:form.textfield property="title" id="title" placeholder="{neos:backend.translate(id: 'media.field.title', source: 'Modules', package: 'TYPO3.Neos')}"/>
 					<label for="caption">{neos:backend.translate(id: 'media.field.caption', source: 'Modules', package: 'TYPO3.Neos')}</label>
 					<f:form.textarea property="caption" id="caption" rows="3" placeholder="{neos:backend.translate(id: 'media.field.caption', source: 'Modules', package: 'TYPO3.Neos')}"/>
 					<f:if condition="{tags}">
