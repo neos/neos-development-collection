@@ -93,7 +93,7 @@ class CheckboxViewHelper extends \TYPO3\Fluid\ViewHelpers\Form\AbstractFormField
             }
             if (is_array($propertyValue)) {
                 if ($checked === null) {
-                    $checked = in_array($this->arguments['value'], $propertyValue);
+                    $checked = in_array($this->arguments['value'], $propertyValue, true);
                 }
                 $nameAttribute .= '[]';
             } elseif ($multiple === true) {
