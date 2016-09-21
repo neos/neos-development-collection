@@ -597,12 +597,11 @@
 				}
 
 				.neos-button-small {
-					height: 32px;
-					width: 32px;
-					padding: 0 10px;
+					height: $wideMargin;
+					width: $wideMargin;
 
 					.icon-ellipsis-horizontal {
-						line-height: 32px;
+						line-height: $wideMargin;
 					}
 				}
 
@@ -616,7 +615,7 @@
 						padding-left: 4px;
 						padding-right: 4px;
 						display: block;
-						line-height: 32px;
+						line-height: $wideMargin;
 						color: $textSubtleLight;
 						overflow: hidden;
 						text-overflow: ellipsis;

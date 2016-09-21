@@ -13638,7 +13638,6 @@
 .neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-button-small {
   height: 32px;
   width: 32px;
-  padding: 0 10px;
 }
 .neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-button-small .icon-ellipsis-horizontal {
   line-height: 32px;
