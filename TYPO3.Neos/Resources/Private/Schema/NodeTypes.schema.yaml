@@ -120,6 +120,16 @@ additionalProperties:
                         'handler': { type: ['string'], description: 'The path to a handler JavaScript object, similar to custom editors and validators.' }
                         'handlerOptions':  { type: dictionary, description: 'options for the given handler' }
 
+    'fusion':
+      # here we specify only the neos specific options of the NodeType schema,
+      # other options might be defined by cr or other packages
+      type: dictionary
+      additionalProperties: TRUE
+      properties:
+        prototypeGenerator:
+          - { type: null }
+          - { type: string, format: class-name }
+
     'ui':
       # here, we specify ONLY the "ui" part of the schema, as the remaining parts
       # are already specified in the NodeTypes schema of the TYPO3CR package

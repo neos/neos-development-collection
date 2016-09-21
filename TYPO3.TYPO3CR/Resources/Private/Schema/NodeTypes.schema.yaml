@@ -75,6 +75,10 @@ additionalProperties:
     'options':
       type: dictionary
 
+    'fusion':
+      # we intentionally do not specify which properties are allowed here;
+      type: dictionary
+
     'postprocessors':
       type: dictionary
       additionalProperties:
