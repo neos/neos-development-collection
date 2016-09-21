@@ -19,6 +19,7 @@ use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Strategy\AbstractAssetUsageStrategy;
 use TYPO3\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
+use TYPO3\Neos\Domain\Service\SiteService;
 use TYPO3\Neos\Service\UserService;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Neos\Controller\CreateContentContextTrait;
@@ -137,6 +138,12 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
             }
         }
 
-        return $this->nodeDataRepository->findNodesByRelatedEntities($relationMap);
+        return array_filter(
+            $this->nodeDataRepository->findNodesByRelatedEntities($relationMap),
+            function ($nodeData) {
+                /** @var NodeData $nodeData */
+                return strpos($nodeData->getPath(), SiteService::SITES_ROOT_PATH) === 0;
+            }
+        );
     }
 }
