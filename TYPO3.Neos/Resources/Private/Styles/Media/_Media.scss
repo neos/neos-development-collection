@@ -552,7 +552,6 @@
 					position: relative;
 					padding-bottom: 100%;
 					height: 0;
-					margin-bottom: $relatedMargin * 1.5;
 					background-color: $grayDarker;
 					background-image: url('../Images/ajax-preloader-222222.gif');
 					background-position: center center;
@@ -578,6 +577,7 @@
 					box-shadow: none;
 					position: relative;
 					padding: 0;
+					z-index: 2;
 
 					&:hover {
 						box-shadow: none;
@@ -596,27 +596,26 @@
 					}
 				}
 
-				.neos-button-small {
-					height: $wideMargin;
-					width: $wideMargin;
+				.neos-button.dropdown-toggle {
+					width: $unit;
+					padding: 0;
+					text-align: center;
 
 					.icon-ellipsis-horizontal {
-						line-height: $wideMargin;
+						line-height: $unit;
 					}
 				}
 
 				.neos-img-label {
-					padding: 0 0 $defaultMargin $tightMargin;
 					position: relative;
+					background-color: $grayMedium;
+					height: $unit;
 
 					.neos-caption {
-						margin-right: $wideMargin;
-						padding-left: 4px;
 						padding-right: 4px;
 						display: block;
 						font-size: 12px;
-						line-height: $wideMargin;
-						color: $textSubtleLight;
+						line-height: $unit;
 						overflow: hidden;
 						text-overflow: ellipsis;
 						white-space: nowrap;
@@ -628,6 +627,7 @@
 
 					> img {
 						float: left;
+						padding: 4px;
 					}
 				}
 			}
