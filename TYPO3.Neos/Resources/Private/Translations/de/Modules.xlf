@@ -929,6 +929,10 @@
       <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve" approved="yes">
 				<source>References to "{asset}"</source>
 			<target xml:lang="de">Verweise auf "{asset}"</target><alt-trans><target xml:lang="de">Verweist auf "{asset}"</target></alt-trans></trans-unit>
+		<trans-unit id="media.relatedNodes.nodeNotAccessible" xml:space="preserve" approved="no">
+			<source>Node is not accessible for current user</source>
+			<target xml:lang="de">Der Zugriff auf das Element ist für den aktuellen Nutzer nicht möglich</target>
+		</trans-unit>
       <trans-unit id="media.replaceAsset.replaceFilename" xml:space="preserve">
 				<source>Replace "{filename}"</source>
 			<target xml:lang="de" state="translated">Datei "{filename}" ersetzen</target></trans-unit>

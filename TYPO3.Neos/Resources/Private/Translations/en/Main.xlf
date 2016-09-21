@@ -78,6 +78,9 @@
 			<trans-unit id="edit" xml:space="preserve">
 				<source>Edit</source>
 			</trans-unit>
+			<trans-unit id="edit.argument" xml:space="preserve">
+				<source>Edit {0}</source>
+			</trans-unit>
 			<trans-unit id="hideUnhide" xml:space="preserve">
 				<source>Hide / Unhide</source>
 			</trans-unit>
