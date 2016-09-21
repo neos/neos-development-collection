@@ -13929,10 +13929,17 @@
 .neos.media-browser #uploader .plupload {
   display: none;
 }
-.neos.media-browser #resource {
-  visibility: hidden;
+.neos.media-browser .neos-file-input {
+  position: relative;
+}
+.neos.media-browser .neos-file-input #resource {
+  opacity: 0;
   position: absolute;
-  left: -9999px;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
 }
 .neos.media-browser .fold-toggle {
   cursor: pointer;

@@ -8,8 +8,12 @@
 		<fieldset>
 			<div class="neos-span6 neos-image-inputs">
 				<legend>{neos:backend.translate(id: 'media.basics', source: 'Modules', package: 'TYPO3.Neos')}</legend>
-				<label class="neos-button neos-button-primary" for="resource" title="{neos:backend.translate(id: 'media.maxUploadSize', arguments: {0: humanReadableMaximumFileUploadSize}, source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip">{neos:backend.translate(id: 'media.chooseFile', source: 'Modules', package: 'TYPO3.Neos')} <i class="icon-file"></i></label>
-				<f:form.upload id="resource" property="resource" additionalAttributes="{required: 'required'}" />
+				<span class="neos-file-input">
+					<label class="neos-button neos-button-primary" for="resource" title="{neos:backend.translate(id: 'media.maxUploadSize', arguments: {0: humanReadableMaximumFileUploadSize}, source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip">
+						{neos:backend.translate(id: 'media.chooseFile', source: 'Modules', package: 'TYPO3.Neos')} <i class="icon-file"></i>
+					</label>
+					<f:form.upload id="resource" property="resource" additionalAttributes="{required: 'required'}" />
+				</span>
 				<label for="title">{neos:backend.translate(id: 'media.field.title', source: 'Modules', package: 'TYPO3.Neos')}</label>
 				<f:form.textfield property="title" placeholder="{neos:backend.translate(id: 'media.field.title', source: 'Modules', package: 'TYPO3.Neos')}" />
 				<label for="caption">{neos:backend.translate(id: 'media.field.caption', source: 'Modules', package: 'TYPO3.Neos')}</label>

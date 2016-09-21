@@ -14,8 +14,10 @@
                         {neos:backend.translate(id: 'media.replaceAsset.description', source: 'Modules', package: 'TYPO3.Neos')}<br/>
                         <b>{neos:backend.translate(id: 'media.replaceAsset.note', source: 'Modules', package: 'TYPO3.Neos')}: </b> {neos:backend.translate(id: 'media.replaceAsset.noteText', source: 'Modules', package: 'TYPO3.Neos')}
                     </p>
-                    <label class="neos-button neos-button-primary" for="resource" title="{neos:backend.translate(id: 'media.maxUploadSize', arguments: {0: humanReadableMaximumFileUploadSize}, source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip">{neos:backend.translate(id: 'media.replaceAsset.chooseNewFile', source: 'Modules', package: 'TYPO3.Neos')} <i class="icon-file"></i></label>
-                    <f:form.upload id="resource" name="resource" additionalAttributes="{required: 'required'}" />
+                    <span class="neos-file-input">
+                        <label class="neos-button neos-button-primary" for="resource" title="{neos:backend.translate(id: 'media.maxUploadSize', arguments: {0: humanReadableMaximumFileUploadSize}, source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip">{neos:backend.translate(id: 'media.replaceAsset.chooseNewFile', source: 'Modules', package: 'TYPO3.Neos')} <i class="icon-file"></i></label>
+                        <f:form.upload id="resource" name="resource" additionalAttributes="{required: 'required'}" />
+                    </span>
                 </fieldset>
                 <fieldset>
                     <div>
