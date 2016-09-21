@@ -22,8 +22,8 @@
 .. |Forum| image:: https://img.shields.io/badge/forum-Discourse-39c6ff.svg
    :target: https://discuss.neos.io/
    :alt: Discussion Forum
-.. |Issues| image:: https://img.shields.io/badge/issues-Jira-39c6ff.svg
-   :target: https://jira.neos.io/browse/NEOS
+.. |Issues| image:: https://img.shields.io/github/issues/neos/neos-development-collection.svg
+   :target: https://github.com/neos/neos-development-collection/issues
    :alt: Issues
 .. |Translate| image:: https://img.shields.io/badge/translate-Crowdin-85ae52.svg
    :target: http://translate.neos.io/
