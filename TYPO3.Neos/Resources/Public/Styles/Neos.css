@@ -13591,7 +13591,6 @@
   position: relative;
   padding-bottom: 100%;
   height: 0;
-  margin-bottom: 12px;
   background-color: #141414;
   background-image: url("../Images/ajax-preloader-222222.gif");
   background-position: center center;
@@ -13616,6 +13615,7 @@
   box-shadow: none;
   position: relative;
   padding: 0;
+  z-index: 2;
 }
 .neos.media-browser .neos-media-assets .neos-thumbnails > li > a:hover {
   box-shadow: none;
@@ -13635,25 +13635,24 @@
   max-height: 100%;
   max-width: 100%;
 }
-.neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-button-small {
-  height: 32px;
-  width: 32px;
+.neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-button.dropdown-toggle {
+  width: 40px;
+  padding: 0;
+  text-align: center;
 }
-.neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-button-small .icon-ellipsis-horizontal {
-  line-height: 32px;
+.neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-button.dropdown-toggle .icon-ellipsis-horizontal {
+  line-height: 40px;
 }
 .neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-img-label {
-  padding: 0 0 16px 4px;
   position: relative;
+  background-color: #323232;
+  height: 40px;
 }
 .neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-img-label .neos-caption {
-  margin-right: 32px;
-  padding-left: 4px;
   padding-right: 4px;
   display: block;
   font-size: 12px;
-  line-height: 32px;
-  color: #adadad;
+  line-height: 40px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -13663,6 +13662,7 @@
 }
 .neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-img-label > img {
   float: left;
+  padding: 4px;
 }
 @media (max-width: 540px) {
   .neos.media-browser .neos-media-assets .page-navigation ul li {
