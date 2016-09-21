@@ -13944,6 +13944,12 @@
 .neos.media-browser .fold-toggle {
   cursor: pointer;
 }
+.neos.media-browser .icon-ok-sign {
+  color: #00a338;
+}
+.neos.media-browser .icon-exclamation-sign {
+  color: #ff8700;
+}
 .neos #neos-notification-container.neos-notification-top {
   position: fixed;
   z-index: 999999;
