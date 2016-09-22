@@ -10,11 +10,12 @@ namespace TYPO3\Neos\Controller\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Neos\Controller\Exception;
 
 /**
  * A "No TypoScript" exception
  *
  */
-class NoTypoScriptConfigurationException extends \TYPO3\Neos\Controller\Exception
+class NoTypoScriptConfigurationException extends Exception
 {
 }

@@ -15,16 +15,18 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Error;
 use TYPO3\Flow\Error\Message;
 use TYPO3\Flow\Error\Warning;
+use TYPO3\Flow\Package;
 use TYPO3\Flow\Package\Exception\ProtectedPackageKeyException;
 use TYPO3\Flow\Package\Exception\UnknownPackageException;
 use TYPO3\Flow\Package\Exception;
+use TYPO3\Neos\Controller\Module\AbstractModuleController;
 
 /**
  * The TYPO3 Package Management module controller
  *
  * @Flow\Scope("singleton")
  */
-class PackagesController extends \TYPO3\Neos\Controller\Module\AbstractModuleController
+class PackagesController extends AbstractModuleController
 {
     /**
      * @Flow\Inject
@@ -39,7 +41,7 @@ class PackagesController extends \TYPO3\Neos\Controller\Module\AbstractModuleCon
     {
         $packageGroups = array();
         foreach ($this->packageManager->getAvailablePackages() as $package) {
-            /** @var \TYPO3\Flow\Package $package */
+            /** @var Package $package */
             $packagePath = substr($package->getPackagepath(), strlen(FLOW_PATH_PACKAGES));
             $packageGroup = substr($packagePath, 0, strpos($packagePath, '/'));
             $packageGroups[$packageGroup][$package->getPackageKey()] = array(
