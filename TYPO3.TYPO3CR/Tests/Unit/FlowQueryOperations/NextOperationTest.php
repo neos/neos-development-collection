@@ -11,15 +11,19 @@ namespace TYPO3\TYPO3CR\Tests\Unit\FlowQueryOperations;
  * source code.
  */
 
+use TYPO3\Eel\FlowQuery\FlowQuery;
+use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Service\Context;
+use TYPO3\TYPO3CR\Eel\FlowQueryOperations\NextOperation;
 
 /**
  * Testcase for the FlowQuery NextOperation
  */
-class NextOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
+class NextOperationTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Service\Context
+     * @var Context
      */
     protected $mockContext;
 
@@ -45,10 +49,10 @@ class NextOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function setUp()
     {
-        $this->siteNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-        $this->firstNodeInLevel = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-        $this->secondNodeInLevel = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-        $this->thirdNodeInLevel = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $this->siteNode = $this->createMock(NodeInterface::class);
+        $this->firstNodeInLevel = $this->createMock(NodeInterface::class);
+        $this->secondNodeInLevel = $this->createMock(NodeInterface::class);
+        $this->thirdNodeInLevel = $this->createMock(NodeInterface::class);
 
         $this->siteNode->expects($this->any())->method('getPath')->will($this->returnValue('/site'));
         $this->siteNode->expects($this->any())->method('getChildNodes')->will($this->returnValue(array(
@@ -56,7 +60,7 @@ class NextOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
             $this->secondNodeInLevel,
             $this->thirdNodeInLevel
         )));
-        $this->mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
+        $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
         $this->firstNodeInLevel->expects($this->any())->method('getParent')->will($this->returnValue($this->siteNode));
         $this->firstNodeInLevel->expects($this->any())->method('getPath')->will($this->returnValue('/site/first'));
@@ -72,9 +76,9 @@ class NextOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function nextWillReturnEmptyResultForLastNodeInLevel()
     {
         $context = array($this->thirdNodeInLevel);
-        $q = new \TYPO3\Eel\FlowQuery\FlowQuery($context);
+        $q = new FlowQuery($context);
 
-        $operation = new \TYPO3\TYPO3CR\Eel\FlowQueryOperations\NextOperation();
+        $operation = new NextOperation();
         $operation->evaluate($q, array());
 
         $output = $q->getContext();
@@ -87,9 +91,9 @@ class NextOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function nextWillReturnSecondNodeInLevelForFirstNodeInLevel()
     {
         $context = array($this->firstNodeInLevel);
-        $q = new \TYPO3\Eel\FlowQuery\FlowQuery($context);
+        $q = new FlowQuery($context);
 
-        $operation = new \TYPO3\TYPO3CR\Eel\FlowQueryOperations\NextOperation();
+        $operation = new NextOperation();
         $operation->evaluate($q, array());
 
         $output = $q->getContext();
@@ -102,9 +106,9 @@ class NextOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function nextWillReturnSecondNodeAndThirdNodeInLevelForFirstAndSecondNodeInLevel()
     {
         $context = array($this->firstNodeInLevel, $this->secondNodeInLevel);
-        $q = new \TYPO3\Eel\FlowQuery\FlowQuery($context);
+        $q = new FlowQuery($context);
 
-        $operation = new \TYPO3\TYPO3CR\Eel\FlowQueryOperations\NextOperation();
+        $operation = new NextOperation();
         $operation->evaluate($q, array());
 
         $output = $q->getContext();

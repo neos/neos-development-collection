@@ -11,8 +11,12 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
  * source code.
  */
 
+use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 
 /**
  * Test case for the "Workspace" domain model
@@ -37,16 +41,16 @@ class WorkspaceTest extends UnitTestCase
      */
     public function onInitializationANewlyCreatedWorkspaceCreatesItsOwnRootNode()
     {
-        $workspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array(), '', false);
+        $workspace = $this->getAccessibleMock(Workspace::class, array('dummy'), array(), '', false);
 
-        $mockNodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->setMethods(array('add'))->getMock();
+        $mockNodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->setMethods(array('add'))->getMock();
         $mockNodeDataRepository->expects($this->once())->method('add');
 
         $workspace->_set('nodeDataRepository', $mockNodeDataRepository);
 
-        $workspace->initializeObject(\TYPO3\Flow\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
+        $workspace->initializeObject(ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
 
-        $this->assertInstanceOf('TYPO3\TYPO3CR\Domain\Model\NodeData', $workspace->getRootNodeData());
+        $this->assertInstanceOf(NodeData::class, $workspace->getRootNodeData());
     }
 
     /**
@@ -54,9 +58,9 @@ class WorkspaceTest extends UnitTestCase
      */
     public function getNodeCountCallsRepositoryFunction()
     {
-        $mockNodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->setMethods(array('countByWorkspace'))->getMock();
+        $mockNodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->setMethods(array('countByWorkspace'))->getMock();
 
-        $workspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array(), '', false);
+        $workspace = $this->getAccessibleMock(Workspace::class, array('dummy'), array(), '', false);
         $workspace->_set('nodeDataRepository', $mockNodeDataRepository);
 
         $mockNodeDataRepository->expects($this->once())->method('countByWorkspace')->with($workspace)->will($this->returnValue(42));
@@ -71,10 +75,10 @@ class WorkspaceTest extends UnitTestCase
     {
         $targetWorkspace = new Workspace('live');
 
-        $currentWorkspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('verifyPublishingTargetWorkspace'), array('live'));
+        $currentWorkspace = $this->getAccessibleMock(Workspace::class, array('verifyPublishingTargetWorkspace'), array('live'));
         $currentWorkspace->expects($this->never())->method('verifyPublishingTargetWorkspace');
 
-        $mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->disableOriginalConstructor()->getMock();
+        $mockNode = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
 
         $currentWorkspace->publishNode($mockNode, $targetWorkspace);
     }
@@ -89,10 +93,10 @@ class WorkspaceTest extends UnitTestCase
     public function publishNodeReturnsIfTheTargetWorkspaceIsTheSameAsTheSourceWorkspace()
     {
         $liveWorkspace = new Workspace('live');
-        $workspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->setMethods(array('emitBeforeNodePublishing'))->setConstructorArgs(array('some-campaign'))->getMock();
+        $workspace = $this->getMockBuilder(Workspace::class)->setMethods(array('emitBeforeNodePublishing'))->setConstructorArgs(array('some-campaign'))->getMock();
         $workspace->setBaseWorkspace($liveWorkspace);
 
-        $mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->disableOriginalConstructor()->getMock();
+        $mockNode = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
         $mockNode->expects($this->any())->method('getWorkspace')->will($this->returnValue($workspace));
 
         $workspace->expects($this->never())->method('emitBeforeNodePublishing');
@@ -107,7 +111,7 @@ class WorkspaceTest extends UnitTestCase
     {
         $someBaseWorkspace = new Workspace('live');
         $reviewWorkspace = new Workspace('review', $someBaseWorkspace);
-        $currentWorkspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array('user-foo', $reviewWorkspace));
+        $currentWorkspace = $this->getAccessibleMock(Workspace::class, array('dummy'), array('user-foo', $reviewWorkspace));
 
         $currentWorkspace->_call('verifyPublishingTargetWorkspace', $reviewWorkspace);
         $currentWorkspace->_call('verifyPublishingTargetWorkspace', $someBaseWorkspace);
@@ -121,7 +125,7 @@ class WorkspaceTest extends UnitTestCase
     public function verifyPublishingTargetWorkspaceThrowsAnExceptionIfWorkspaceIsNotBasedOnTheSpecifiedWorkspace()
     {
         $someBaseWorkspace = new Workspace('live');
-        $currentWorkspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array('user-foo', $someBaseWorkspace));
+        $currentWorkspace = $this->getAccessibleMock(Workspace::class, array('dummy'), array('user-foo', $someBaseWorkspace));
         $otherWorkspace = new Workspace('user-bar', $someBaseWorkspace);
 
         $currentWorkspace->_call('verifyPublishingTargetWorkspace', $otherWorkspace);
@@ -146,7 +150,7 @@ class WorkspaceTest extends UnitTestCase
      */
     public function contextNodePathMatchPatternMatchesNodeContextPaths($contextNodePath)
     {
-        preg_match(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::MATCH_PATTERN_CONTEXTPATH, $contextNodePath, $matches);
+        preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $contextNodePath, $matches);
         $this->assertArrayHasKey('WorkspaceName', $matches);
     }
 
@@ -167,7 +171,7 @@ class WorkspaceTest extends UnitTestCase
      */
     public function contextNodePathMatchPatternDoesNotMatchInvalidNodeContextPaths($contextNodePath)
     {
-        preg_match(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::MATCH_PATTERN_CONTEXTPATH, $contextNodePath, $matches);
+        preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $contextNodePath, $matches);
         $this->assertArrayNotHasKey('WorkspaceName', $matches);
     }
 
@@ -179,10 +183,10 @@ class WorkspaceTest extends UnitTestCase
         $liveWorkspace = new Workspace('live');
         $personalWorkspace = new Workspace('user-admin', $liveWorkspace);
 
-        $nodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->getMock();
+        $nodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->getMock();
         $this->inject($liveWorkspace, 'nodeDataRepository', $nodeDataRepository);
 
-        $node = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $node = $this->createMock(NodeInterface::class);
         $node->expects($this->any())->method('getWorkspace')->will($this->returnValue($liveWorkspace));
 
         $nodeDataRepository->expects($this->never())->method('findOneByIdentifier');
