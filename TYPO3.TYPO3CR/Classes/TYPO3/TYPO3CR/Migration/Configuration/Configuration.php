@@ -12,11 +12,13 @@ namespace TYPO3\TYPO3CR\Migration\Configuration;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Migration\Configuration\ConfigurationInterface;
+use TYPO3\TYPO3CR\Migration\Exception\MigrationException;
 
 /**
  * Abstract Migration Configuration as a base for different configuration sources.
  */
-abstract class Configuration implements \TYPO3\TYPO3CR\Migration\Configuration\ConfigurationInterface
+abstract class Configuration implements ConfigurationInterface
 {
     /**
      * @var array
@@ -60,7 +62,7 @@ abstract class Configuration implements \TYPO3\TYPO3CR\Migration\Configuration\C
      *
      * @param string $version
      * @return array
-     * @throws \TYPO3\TYPO3CR\Migration\Exception\MigrationException
+     * @throws MigrationException
      */
     public function getMigrationVersion($version)
     {
@@ -73,7 +75,7 @@ abstract class Configuration implements \TYPO3\TYPO3CR\Migration\Configuration\C
             }
             return $configuration;
         }
-        throw new \TYPO3\TYPO3CR\Migration\Exception\MigrationException('Specified version is not available.', 1345821746);
+        throw new MigrationException('Specified version is not available.', 1345821746);
     }
 
     /**

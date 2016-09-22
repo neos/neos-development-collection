@@ -11,6 +11,12 @@ namespace TYPO3\TYPO3CR\Migration\Command;
  * source code.
  */
 
+use TYPO3\Flow\Cli\CommandController;
+use TYPO3\Flow\Configuration\Source\YamlSource;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
+use TYPO3\TYPO3CR\Migration\Domain\Factory\MigrationFactory;
+use TYPO3\TYPO3CR\Migration\Domain\Repository\MigrationStatusRepository;
 use TYPO3\TYPO3CR\Migration\Exception\MigrationException;
 use TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseException;
 use TYPO3\TYPO3CR\Migration\Service\NodeMigration;
@@ -23,35 +29,35 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class NodeCommandController extends \TYPO3\Flow\Cli\CommandController
+class NodeCommandController extends CommandController
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Configuration\Source\YamlSource
+     * @var YamlSource
      */
     protected $yamlSourceImporter;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+     * @var NodeDataRepository
      */
     protected $nodeDataRepository;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Migration\Domain\Repository\MigrationStatusRepository
+     * @var MigrationStatusRepository
      */
     protected $migrationStatusRepository;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Migration\Domain\Factory\MigrationFactory
+     * @var MigrationFactory
      */
     protected $migrationFactory;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+     * @var ContextFactoryInterface
      */
     protected $contextFactory;
 
@@ -147,7 +153,7 @@ class NodeCommandController extends \TYPO3\Flow\Cli\CommandController
     /**
      * Helper to output comments and warnings for the given configuration.
      *
-     * @param \TYPO3\TYPO3CR\Migration\Domain\Model\MigrationConfiguration $migrationConfiguration
+     * @param MigrationConfiguration $migrationConfiguration
      * @return void
      */
     protected function outputCommentsAndWarnings(MigrationConfiguration $migrationConfiguration)

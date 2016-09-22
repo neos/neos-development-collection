@@ -12,22 +12,26 @@ namespace TYPO3\TYPO3CR\Migration\Configuration;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Configuration\Source\YamlSource;
+use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Utility\Files as Files;
+use TYPO3\TYPO3CR\Migration\Configuration\Configuration;
+use TYPO3\TYPO3CR\Migration\Exception\MigrationException;
 
 /**
  * Migration Configuration using YAML files.
  */
-class YamlConfiguration extends \TYPO3\TYPO3CR\Migration\Configuration\Configuration
+class YamlConfiguration extends Configuration
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Configuration\Source\YamlSource
+     * @var YamlSource
      */
     protected $yamlSourceImporter;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Package\PackageManagerInterface
+     * @var PackageManagerInterface
      */
     protected $packageManager;
 
@@ -35,13 +39,13 @@ class YamlConfiguration extends \TYPO3\TYPO3CR\Migration\Configuration\Configura
      * Loads a list of available versions into an array.
      *
      * @return array
-     * @throws \TYPO3\TYPO3CR\Migration\Exception\MigrationException
+     * @throws MigrationException
      */
     protected function registerAvailableVersions()
     {
         $this->availableVersions = array();
         foreach ($this->packageManager->getActivePackages() as $package) {
-            $possibleMigrationsPath = \TYPO3\Flow\Utility\Files::concatenatePaths(array(
+            $possibleMigrationsPath = Files::concatenatePaths(array(
                 $package->getPackagePath(),
                 'Migrations/TYPO3CR'
             ));
@@ -55,7 +59,7 @@ class YamlConfiguration extends \TYPO3\TYPO3CR\Migration\Configuration\Configura
                     $versionFile = Files::getUnixStylePath($fileInfo->getPathname());
                     $versionNumber = substr(substr($filename, 7), 0, -5);
                     if (array_key_exists($versionNumber, $this->availableVersions)) {
-                        throw new \TYPO3\TYPO3CR\Migration\Exception\MigrationException('The migration version ' . $versionNumber . ' exists twice, that is not supported.', 1345823182);
+                        throw new MigrationException('The migration version ' . $versionNumber . ' exists twice, that is not supported.', 1345823182);
                     }
                     $this->availableVersions[$versionNumber] = array(
                         'filePathAndName' => $versionFile,
@@ -78,12 +82,12 @@ class YamlConfiguration extends \TYPO3\TYPO3CR\Migration\Configuration\Configura
      *
      * @param string $version
      * @return array
-     * @throws \TYPO3\TYPO3CR\Migration\Exception\MigrationException
+     * @throws MigrationException
      */
     protected function loadConfiguration($version)
     {
         if (!$this->isVersionAvailable($version)) {
-            throw new \TYPO3\TYPO3CR\Migration\Exception\MigrationException('The requested YamlConfiguration was not available.', 1345822283);
+            throw new MigrationException('The requested YamlConfiguration was not available.', 1345822283);
         }
 
         $configuration = $this->yamlSourceImporter->load(substr($this->availableVersions[$version]['filePathAndName'], 0, -5));
