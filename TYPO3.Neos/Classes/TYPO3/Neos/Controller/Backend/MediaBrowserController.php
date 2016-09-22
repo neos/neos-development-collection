@@ -14,11 +14,12 @@ namespace TYPO3\Neos\Controller\Backend;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Media\Domain\Repository\AssetRepository;
+use TYPO3\Neos\Controller\Module\Management\AssetController;
 
 /**
  * Controller for asset handling
  */
-class MediaBrowserController extends \TYPO3\Neos\Controller\Module\Management\AssetController
+class MediaBrowserController extends AssetController
 {
     /**
      * @var array
