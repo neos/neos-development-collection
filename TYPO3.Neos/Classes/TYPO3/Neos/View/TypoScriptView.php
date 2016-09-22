@@ -14,7 +14,10 @@ namespace TYPO3\Neos\View;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\I18n\Locale;
+use TYPO3\Flow\I18n\Service;
 use TYPO3\Flow\Mvc\View\AbstractView;
+use TYPO3\Neos\Domain\Service\TypoScriptService;
+use TYPO3\Neos\Exception;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\Core\Runtime;
@@ -28,7 +31,7 @@ class TypoScriptView extends AbstractView
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\I18n\Service
+     * @var Service
      */
     protected $i18nService;
 
@@ -43,7 +46,7 @@ class TypoScriptView extends AbstractView
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Domain\Service\TypoScriptService
+     * @var TypoScriptService
      */
     protected $typoScriptService;
 
@@ -55,7 +58,7 @@ class TypoScriptView extends AbstractView
     protected $typoScriptPath = 'root';
 
     /**
-     * @var \TYPO3\TypoScript\Core\Runtime
+     * @var Runtime
      */
     protected $typoScriptRuntime;
 
@@ -137,7 +140,7 @@ class TypoScriptView extends AbstractView
      *
      * @return boolean TRUE if $node can be rendered at $typoScriptPath
      *
-     * @throws \TYPO3\Neos\Exception
+     * @throws Exception
      */
     public function canRenderWithNodeAndPath()
     {
@@ -181,13 +184,13 @@ class TypoScriptView extends AbstractView
 
     /**
      * @return NodeInterface
-     * @throws \TYPO3\Neos\Exception
+     * @throws Exception
      */
     protected function getCurrentNode()
     {
         $currentNode = isset($this->variables['value']) ? $this->variables['value'] : null;
         if (!$currentNode instanceof Node) {
-            throw new \TYPO3\Neos\Exception('TypoScriptView needs a variable \'value\' set with a Node object.', 1329736456);
+            throw new Exception('TypoScriptView needs a variable \'value\' set with a Node object.', 1329736456);
         }
         return $currentNode;
     }
