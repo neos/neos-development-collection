@@ -10,11 +10,15 @@ namespace TYPO3\Neos\Validation\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Validation\Exception\InvalidSubjectException;
+use TYPO3\Flow\Validation\Validator\AbstractValidator;
+use TYPO3\Flow\Validation\Validator\NotEmptyValidator;
+use TYPO3\Flow\Validation\Validator\StringLengthValidator;
 
 /**
  * Validator for passwords
  */
-class PasswordValidator extends \TYPO3\Flow\Validation\Validator\AbstractValidator
+class PasswordValidator extends AbstractValidator
 {
     /**
      * @var array
@@ -34,20 +38,20 @@ class PasswordValidator extends \TYPO3\Flow\Validation\Validator\AbstractValidat
      *
      * @param mixed $value The value that should be validated
      * @return void
-     * @throws \TYPO3\Flow\Validation\Exception\InvalidSubjectException
+     * @throws InvalidSubjectException
      */
     protected function isValid($value)
     {
         if (!is_array($value)) {
-            throw new \TYPO3\Flow\Validation\Exception\InvalidSubjectException('The given value was not an array.', 1324641197);
+            throw new InvalidSubjectException('The given value was not an array.', 1324641197);
         }
 
         $password = trim(strval(array_shift($value)));
         $repeatPassword = trim(strval(array_shift($value)));
 
-        $passwordNotEmptyValidator = new \TYPO3\Flow\Validation\Validator\NotEmptyValidator;
+        $passwordNotEmptyValidator = new NotEmptyValidator;
         $passwordNotEmptyValidatorResult = $passwordNotEmptyValidator->validate($password);
-        $repeatPasswordNotEmptyValidator = new \TYPO3\Flow\Validation\Validator\NotEmptyValidator;
+        $repeatPasswordNotEmptyValidator = new NotEmptyValidator;
         $repeatPasswordNotEmptyValidatorResult = $repeatPasswordNotEmptyValidator->validate($repeatPassword);
 
         if (($passwordNotEmptyValidatorResult->hasErrors() === true) && ($repeatPasswordNotEmptyValidatorResult->hasErrors() === true)) {
@@ -62,7 +66,7 @@ class PasswordValidator extends \TYPO3\Flow\Validation\Validator\AbstractValidat
             return;
         }
 
-        $stringLengthValidator = new \TYPO3\Flow\Validation\Validator\StringLengthValidator(array(
+        $stringLengthValidator = new StringLengthValidator(array(
             'minimum' => $this->options['minimum'],
             'maximum' => $this->options['maximum'],
         ));
