@@ -12,6 +12,13 @@ namespace TYPO3\TYPO3CR\Migration\Service;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Package\PackageManager;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use TYPO3\TYPO3CR\Migration\Exception\MigrationException;
+use TYPO3\TYPO3CR\Migration\Service\NodeFilter;
+use TYPO3\TYPO3CR\Migration\Service\NodeTransformation;
 
 /**
  * Service that runs over all nodes and applies migrations to them as given by configuration.
@@ -20,25 +27,25 @@ class NodeMigration
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+     * @var NodeDataRepository
      */
     protected $nodeDataRepository;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
+     * @var WorkspaceRepository
      */
     protected $workspaceRepository;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Migration\Service\NodeFilter
+     * @var NodeFilter
      */
     protected $nodeFilterService;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Migration\Service\NodeTransformation
+     * @var NodeTransformation
      */
     protected $nodeTransformationService;
 
@@ -49,20 +56,20 @@ class NodeMigration
     protected $configuration = array();
 
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Model\Workspace
+     * @var Workspace
      */
     protected $workspace;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Package\PackageManager
+     * @var PackageManager
      */
     protected $packageManager;
 
 
     /**
      * @param array $configuration
-     * @throws \TYPO3\TYPO3CR\Migration\Exception\MigrationException
+     * @throws MigrationException
      */
     public function __construct(array $configuration)
     {

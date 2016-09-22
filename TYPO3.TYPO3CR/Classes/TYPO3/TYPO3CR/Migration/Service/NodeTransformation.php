@@ -12,6 +12,11 @@ namespace TYPO3\TYPO3CR\Migration\Service;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
+use TYPO3\TYPO3CR\Migration\Exception\MigrationException;
+use TYPO3\TYPO3CR\Migration\Transformations\TransformationInterface;
 
 /**
  * Service that executes a series of configured transformations on a node.
@@ -22,7 +27,7 @@ class NodeTransformation
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     * @var ObjectManagerInterface
      */
     protected $objectManager;
 
@@ -34,11 +39,11 @@ class NodeTransformation
     /**
      * Executes all configured transformations starting on the given node.
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $nodeData
+     * @param NodeData $nodeData
      * @param array $transformationConfigurations
      * @return void
      */
-    public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeData $nodeData, array $transformationConfigurations)
+    public function execute(NodeData $nodeData, array $transformationConfigurations)
     {
         $transformationConjunction = $this->buildTransformationConjunction($transformationConfigurations);
         foreach ($transformationConjunction as $transformation) {
@@ -72,8 +77,8 @@ class NodeTransformation
      * Builds a transformation object from the given configuration.
      *
      * @param array $transformationConfiguration
-     * @return \TYPO3\TYPO3CR\Migration\Transformations\TransformationInterface
-     * @throws \TYPO3\TYPO3CR\Migration\Exception\MigrationException if a given setting is not supported
+     * @return TransformationInterface
+     * @throws MigrationException if a given setting is not supported
      */
     protected function buildTransformationObject($transformationConfiguration)
     {
@@ -81,8 +86,8 @@ class NodeTransformation
         $transformation = new $transformationClassName();
 
         foreach ($transformationConfiguration['settings'] as $settingName => $settingValue) {
-            if (!\TYPO3\Flow\Reflection\ObjectAccess::setProperty($transformation, $settingName, $settingValue)) {
-                throw new \TYPO3\TYPO3CR\Migration\Exception\MigrationException('Cannot set setting "' . $settingName . '" on transformation "' . $transformationClassName . '" , check your configuration.', 1343293094);
+            if (!ObjectAccess::setProperty($transformation, $settingName, $settingValue)) {
+                throw new MigrationException('Cannot set setting "' . $settingName . '" on transformation "' . $transformationClassName . '" , check your configuration.', 1343293094);
             }
         }
 
@@ -97,7 +102,7 @@ class NodeTransformation
      *
      * @param string $transformationName
      * @return string
-     * @throws \TYPO3\TYPO3CR\Migration\Exception\MigrationException
+     * @throws MigrationException
      */
     protected function resolveTransformationClassName($transformationName)
     {
@@ -111,6 +116,6 @@ class NodeTransformation
             return $resolvedObjectName;
         }
 
-        throw new \TYPO3\TYPO3CR\Migration\Exception\MigrationException('A transformation with the name "' . $transformationName . '" could not be found.', 1343293064);
+        throw new MigrationException('A transformation with the name "' . $transformationName . '" could not be found.', 1343293064);
     }
 }
