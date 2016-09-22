@@ -11,15 +11,21 @@ namespace TYPO3\Neos\Tests\Unit\Service;
  * source code.
  */
 
+use TYPO3\Flow\Persistence\QueryResultInterface;
 use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Service\PublishingService;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContentDimensionPresetSourceInterface;
+use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 
 /**
@@ -73,12 +79,12 @@ class PublishingServiceTest extends UnitTestCase
     protected $mockBaseWorkspace;
 
     /**
-     * @var \TYPO3\Flow\Persistence\QueryResultInterface
+     * @var QueryResultInterface
      */
     protected $mockQueryResult;
 
     /**
-     * @var \TYPO3\Neos\Domain\Model\Site
+     * @var Site
      */
     protected $mockSite;
     /**
@@ -91,27 +97,27 @@ class PublishingServiceTest extends UnitTestCase
     {
         $this->publishingService = new PublishingService();
 
-        $this->mockWorkspaceRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository')->disableOriginalConstructor()->setMethods(array('findOneByName'))->getMock();
+        $this->mockWorkspaceRepository = $this->getMockBuilder(WorkspaceRepository::class)->disableOriginalConstructor()->setMethods(array('findOneByName'))->getMock();
         $this->inject($this->publishingService, 'workspaceRepository', $this->mockWorkspaceRepository);
 
-        $this->mockNodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->setMethods(array('findByWorkspace'))->getMock();
+        $this->mockNodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->setMethods(array('findByWorkspace'))->getMock();
         $this->inject($this->publishingService, 'nodeDataRepository', $this->mockNodeDataRepository);
 
-        $this->mockNodeFactory = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Factory\NodeFactory')->disableOriginalConstructor()->getMock();
+        $this->mockNodeFactory = $this->getMockBuilder(NodeFactory::class)->disableOriginalConstructor()->getMock();
         $this->inject($this->publishingService, 'nodeFactory', $this->mockNodeFactory);
 
-        $this->mockContextFactory = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface')->disableOriginalConstructor()->getMock();
+        $this->mockContextFactory = $this->getMockBuilder(ContextFactoryInterface::class)->disableOriginalConstructor()->getMock();
         $this->inject($this->publishingService, 'contextFactory', $this->mockContextFactory);
 
-        $this->mockDomainRepository = $this->getMockBuilder('TYPO3\Neos\Domain\Repository\DomainRepository')->disableOriginalConstructor()->getMock();
+        $this->mockDomainRepository = $this->getMockBuilder(DomainRepository::class)->disableOriginalConstructor()->getMock();
         $this->inject($this->publishingService, 'domainRepository', $this->mockDomainRepository);
 
-        $this->mockSiteRepository = $this->getMockBuilder('TYPO3\Neos\Domain\Repository\SiteRepository')->disableOriginalConstructor()->getMock();
-        $this->mockSite = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Site')->disableOriginalConstructor()->getMock();
+        $this->mockSiteRepository = $this->getMockBuilder(SiteRepository::class)->disableOriginalConstructor()->getMock();
+        $this->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
         $this->mockSiteRepository->expects($this->any())->method('findFirstOnline')->will($this->returnValue($this->mockSite));
         $this->inject($this->publishingService, 'siteRepository', $this->mockSiteRepository);
 
-        $this->mockBaseWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
+        $this->mockBaseWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
         $this->mockBaseWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
         $this->mockBaseWorkspace->expects($this->any())->method('getBaseWorkspace')->will($this->returnValue(null));
 
@@ -119,7 +125,7 @@ class PublishingServiceTest extends UnitTestCase
         $this->mockContentDimensionPresetSource->expects($this->any())->method('findPresetsByTargetValues')->will($this->returnArgument(0));
         $this->inject($this->publishingService, 'contentDimensionPresetSource', $this->mockContentDimensionPresetSource);
 
-        $this->mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
+        $this->mockWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
         $this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('workspace-name'));
         $this->mockWorkspace->expects($this->any())->method('getBaseWorkspace')->will($this->returnValue($this->mockBaseWorkspace));
     }
@@ -140,7 +146,7 @@ class PublishingServiceTest extends UnitTestCase
      */
     public function getUnpublishedNodesReturnsANodeInstanceForEveryNodeInTheGivenWorkspace()
     {
-        $mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
+        $mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
         $expectedContextProperties = array(
             'workspaceName' => $this->mockWorkspace->getName(),
@@ -152,14 +158,14 @@ class PublishingServiceTest extends UnitTestCase
         );
         $this->mockContextFactory->expects($this->any())->method('create')->with($expectedContextProperties)->will($this->returnValue($mockContext));
 
-        $mockNodeData1 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
-        $mockNodeData2 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
+        $mockNodeData1 = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
+        $mockNodeData2 = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
 
         $mockNodeData1->expects($this->any())->method('getDimensionValues')->will($this->returnValue(array()));
         $mockNodeData2->expects($this->any())->method('getDimensionValues')->will($this->returnValue(array()));
 
-        $mockNode1 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
-        $mockNode2 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
+        $mockNode1 = $this->getMockBuilder(NodeInterface::class)->getMock();
+        $mockNode2 = $this->getMockBuilder(NodeInterface::class)->getMock();
 
         $mockNode1->expects($this->any())->method('getNodeData')->will($this->returnValue($mockNodeData1));
         $mockNode1->expects($this->any())->method('getPath')->will($this->returnValue('/node1'));
@@ -180,7 +186,7 @@ class PublishingServiceTest extends UnitTestCase
      */
     public function getUnpublishedNodesDoesNotReturnInvalidNodes()
     {
-        $mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
+        $mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
         $expectedContextProperties = array(
             'workspaceName' => $this->mockWorkspace->getName(),
@@ -192,13 +198,13 @@ class PublishingServiceTest extends UnitTestCase
         );
         $this->mockContextFactory->expects($this->any())->method('create')->with($expectedContextProperties)->will($this->returnValue($mockContext));
 
-        $mockNodeData1 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
-        $mockNodeData2 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
+        $mockNodeData1 = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
+        $mockNodeData2 = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
 
         $mockNodeData1->expects($this->any())->method('getDimensionValues')->will($this->returnValue(array()));
         $mockNodeData2->expects($this->any())->method('getDimensionValues')->will($this->returnValue(array()));
 
-        $mockNode1 = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
+        $mockNode1 = $this->getMockBuilder(NodeInterface::class)->getMock();
 
         $mockNode1->expects($this->any())->method('getNodeData')->will($this->returnValue($mockNodeData1));
         $mockNode1->expects($this->any())->method('getPath')->will($this->returnValue('/node1'));
@@ -228,14 +234,14 @@ class PublishingServiceTest extends UnitTestCase
      */
     public function publishNodePublishesTheGivenNodeFromItsWorkspaceToTheSpecifiedTargetWorkspace()
     {
-        $mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
+        $mockNode = $this->getMockBuilder(NodeInterface::class)->getMock();
 
-        $mockNodeType = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeType')->disableOriginalConstructor()->getMock();
+        $mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
         $mockNode->expects($this->atLeastOnce())->method('getNodeType')->will($this->returnValue($mockNodeType));
 
         $mockNode->expects($this->atLeastOnce())->method('getWorkspace')->will($this->returnValue($this->mockWorkspace));
 
-        $mockTargetWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
+        $mockTargetWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
 
         $this->mockWorkspace->expects($this->atLeastOnce())->method('publishNodes')->with(array($mockNode), $mockTargetWorkspace);
         $this->publishingService->publishNode($mockNode, $mockTargetWorkspace);
@@ -246,9 +252,9 @@ class PublishingServiceTest extends UnitTestCase
      */
     public function publishNodePublishesTheGivenNodeToItsBaseWorkspaceIfNoTargetWorkspaceIsSpecified()
     {
-        $mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
+        $mockNode = $this->getMockBuilder(NodeInterface::class)->getMock();
 
-        $mockNodeType = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeType')->disableOriginalConstructor()->getMock();
+        $mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
         $mockNode->expects($this->atLeastOnce())->method('getNodeType')->will($this->returnValue($mockNodeType));
 
         $mockNode->expects($this->atLeastOnce())->method('getWorkspace')->will($this->returnValue($this->mockWorkspace));
@@ -262,17 +268,17 @@ class PublishingServiceTest extends UnitTestCase
      */
     public function publishNodePublishesTheNodeAndItsChildNodeCollectionsIfTheNodeIsADocument()
     {
-        $mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
-        $mockChildNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
+        $mockNode = $this->getMockBuilder(NodeInterface::class)->getMock();
+        $mockChildNode = $this->getMockBuilder(NodeInterface::class)->getMock();
 
-        $mockNodeType = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeType')->disableOriginalConstructor()->getMock();
+        $mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
         $mockNodeType->expects($this->atLeastOnce())->method('isOfType')->with('TYPO3.Neos:Document')->will($this->returnValue(true));
         $mockNode->expects($this->atLeastOnce())->method('getNodeType')->will($this->returnValue($mockNodeType));
 
         $mockNode->expects($this->atLeastOnce())->method('getWorkspace')->will($this->returnValue($this->mockWorkspace));
         $mockNode->expects($this->atLeastOnce())->method('getChildNodes')->with('TYPO3.Neos:ContentCollection')->will($this->returnValue(array($mockChildNode)));
 
-        $mockTargetWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
+        $mockTargetWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
 
         $this->mockWorkspace->expects($this->atLeastOnce())->method('publishNodes')->with(array($mockNode, $mockChildNode), $mockTargetWorkspace);
         $this->publishingService->publishNode($mockNode, $mockTargetWorkspace);
@@ -284,17 +290,17 @@ class PublishingServiceTest extends UnitTestCase
      */
     public function publishNodePublishesTheNodeAndItsChildNodeCollectionsIfTheNodeTypeHasChildNodes()
     {
-        $mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
-        $mockChildNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
+        $mockNode = $this->getMockBuilder(NodeInterface::class)->getMock();
+        $mockChildNode = $this->getMockBuilder(NodeInterface::class)->getMock();
 
-        $mockNodeType = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeType')->disableOriginalConstructor()->setMethods(array('hasConfiguration', 'isOfType'))->getMock();
+        $mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->setMethods(array('hasConfiguration', 'isOfType'))->getMock();
         $mockNodeType->expects($this->atLeastOnce())->method('hasConfiguration')->with('childNodes')->will($this->returnValue(true));
         $mockNode->expects($this->atLeastOnce())->method('getNodeType')->will($this->returnValue($mockNodeType));
 
         $mockNode->expects($this->atLeastOnce())->method('getWorkspace')->will($this->returnValue($this->mockWorkspace));
         $mockNode->expects($this->atLeastOnce())->method('getChildNodes')->with('TYPO3.Neos:ContentCollection')->will($this->returnValue(array($mockChildNode)));
 
-        $mockTargetWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
+        $mockTargetWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
 
         $this->mockWorkspace->expects($this->atLeastOnce())->method('publishNodes')->with(array($mockNode, $mockChildNode), $mockTargetWorkspace);
         $this->publishingService->publishNode($mockNode, $mockTargetWorkspace);
