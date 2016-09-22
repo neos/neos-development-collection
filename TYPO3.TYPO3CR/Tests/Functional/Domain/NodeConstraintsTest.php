@@ -18,7 +18,6 @@ use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Exception\NodeConstraintException;
 
 /**
  * Functional test case for node constraints
@@ -80,7 +79,7 @@ class NodeConstraintsTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException NodeConstraintException
+     * @y
      */
     public function movingNodeToWhereItsTypeIsDisallowedThrowsException()
     {
@@ -93,7 +92,7 @@ class NodeConstraintsTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException NodeConstraintException
+     * @expectedException \TYPO3\TYPO3CR\Exception\NodeConstraintException
      */
     public function movingNodeToWhereItsSuperTypeIsDisallowedThrowsException()
     {
@@ -106,7 +105,7 @@ class NodeConstraintsTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException NodeConstraintException
+     * @expectedException \TYPO3\TYPO3CR\Exception\NodeConstraintException
      */
     public function creatingNodeInChildNodeWithChildNodeConstraintsThrowsException()
     {
@@ -133,7 +132,7 @@ class NodeConstraintsTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException NodeConstraintException
+     * @expectedException \TYPO3\TYPO3CR\Exception\NodeConstraintException
      */
     public function childNodeWithChildNodeConstraintsAndNodeTypeConstraintsThrowsException()
     {
