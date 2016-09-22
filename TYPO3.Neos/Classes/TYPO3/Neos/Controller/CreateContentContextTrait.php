@@ -12,10 +12,7 @@ namespace TYPO3\Neos\Controller;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Neos\Domain\Repository\DomainRepository;
-use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentContext;
-use TYPO3\Neos\Domain\Service\ContentContextFactory;
 use TYPO3\Neos\Domain\Service\SiteService;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
@@ -27,19 +24,19 @@ trait CreateContentContextTrait
 {
     /**
      * @Flow\Inject
-     * @var ContentContextFactory
+     * @var \TYPO3\Neos\Domain\Service\ContentContextFactory
      */
     protected $_contextFactory;
 
     /**
      * @Flow\Inject
-     * @var DomainRepository
+     * @var \TYPO3\Neos\Domain\Repository\DomainRepository
      */
     protected $_domainRepository;
 
     /**
      * @Flow\Inject
-     * @var SiteRepository
+     * @var \TYPO3\Neos\Domain\Repository\SiteRepository
      */
     protected $_siteRepository;
 
