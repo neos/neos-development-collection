@@ -57,6 +57,10 @@
       <trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve" approved="yes">
 				<source>Read-only workspace</source>
 			<target xml:lang="de">Nur-Lese Arbeitsbereich</target></trans-unit>
+        <trans-unit id="workspaces.noAccessToWorkspace" xml:space="preserve">
+            <source>No access to workspace</source>
+            <target xml:lang="de">Kein Zugriff auf Arbeitsbereich</target>
+        </trans-unit>
       <trans-unit id="workspaces.workspace.title" xml:space="preserve" approved="yes">
 				<source>Title</source>
 			<target xml:lang="de">Titel</target></trans-unit>
@@ -929,10 +933,10 @@
       <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve" approved="yes">
 				<source>References to "{asset}"</source>
 			<target xml:lang="de">Verweise auf "{asset}"</target><alt-trans><target xml:lang="de">Verweist auf "{asset}"</target></alt-trans></trans-unit>
-		<trans-unit id="media.relatedNodes.nodeNotAccessible" xml:space="preserve" approved="no">
-			<source>Node is not accessible for current user</source>
-			<target xml:lang="de">Der Zugriff auf das Element ist für den aktuellen Nutzer nicht möglich</target>
-		</trans-unit>
+        <trans-unit id="media.relatedNodes.missingDocumentNode" xml:space="preserve">
+            <source>Related document node is missing.</source>
+            <target xml:lang="de">Zugehöriges Dokument kann nicht gefunden werden.</target>
+        </trans-unit>
       <trans-unit id="media.replaceAsset.replaceFilename" xml:space="preserve">
 				<source>Replace "{filename}"</source>
 			<target xml:lang="de" state="translated">Datei "{filename}" ersetzen</target></trans-unit>

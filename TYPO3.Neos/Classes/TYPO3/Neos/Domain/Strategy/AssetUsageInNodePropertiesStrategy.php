@@ -100,9 +100,9 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
             }
             $accessible = $this->domainUserService->currentUserCanReadWorkspace($relatedNodeData->getWorkspace());
             if ($accessible) {
-                $context = $this->createContentContext($userWorkspaceName);
-            } else {
                 $context = $this->createContextMatchingNodeData($relatedNodeData);
+            } else {
+                $context = $this->createContentContext($userWorkspaceName);
             }
             $site = $context->getCurrentSite();
             $node = $this->nodeFactory->createFromNodeData($relatedNodeData, $context);
