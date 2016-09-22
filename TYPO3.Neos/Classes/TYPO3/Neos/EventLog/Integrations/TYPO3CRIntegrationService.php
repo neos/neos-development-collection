@@ -11,6 +11,7 @@ namespace TYPO3\Neos\EventLog\Integrations;
  * source code.
  */
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
@@ -37,7 +38,7 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService
 
     /**
      * @Flow\Inject
-     * @var \Doctrine\Common\Persistence\ObjectManager
+     * @var ObjectManager
      */
     protected $entityManager;
 
@@ -99,7 +100,7 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService
         }
 
         /* @var $nodeEvent NodeEvent */
-        $nodeEvent = $this->eventEmittingService->generate(self::NODE_ADDED, array(), 'TYPO3\Neos\EventLog\Domain\Model\NodeEvent');
+        $nodeEvent = $this->eventEmittingService->generate(self::NODE_ADDED, array(), NodeEvent::class);
         $this->currentNodeAddEvents[] = $nodeEvent;
         $this->eventEmittingService->pushContext($nodeEvent);
     }
@@ -213,7 +214,7 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService
         }
 
         /* @var $nodeEvent NodeEvent */
-        $nodeEvent = $this->eventEmittingService->emit(self::NODE_REMOVED, array(), 'TYPO3\Neos\EventLog\Domain\Model\NodeEvent');
+        $nodeEvent = $this->eventEmittingService->emit(self::NODE_REMOVED, array(), NodeEvent::class);
         $nodeEvent->setNode($node);
     }
 
@@ -251,7 +252,7 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService
         /* @var $nodeEvent NodeEvent */
         $nodeEvent = $this->eventEmittingService->emit(self::NODE_COPY, array(
             'copiedInto' => $targetParentNode->getContextPath()
-        ), 'TYPO3\Neos\EventLog\Domain\Model\NodeEvent');
+        ), NodeEvent::class);
         $nodeEvent->setNode($sourceNode);
         $this->eventEmittingService->pushContext();
     }
@@ -296,7 +297,7 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService
         $nodeEvent = $this->eventEmittingService->emit(self::NODE_MOVE, array(
             'referenceNode' => $referenceNode->getContextPath(),
             'moveOperation' => $moveOperation
-        ), 'TYPO3\Neos\EventLog\Domain\Model\NodeEvent');
+        ), NodeEvent::class);
         $nodeEvent->setNode($movedNode);
         $this->eventEmittingService->pushContext();
     }
@@ -346,7 +347,7 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService
                 'targetWorkspace' => $context->getWorkspaceName(),
                 'targetDimensions' => $context->getTargetDimensions(),
                 'recursive' => $recursive
-            ), 'TYPO3\Neos\EventLog\Domain\Model\NodeEvent');
+            ), NodeEvent::class);
             $nodeEvent->setNode($node);
             $this->eventEmittingService->pushContext();
         }
@@ -396,7 +397,7 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService
 
             if (isset($data['oldLabel']) && isset($data['newLabel'])) {
                 if ($data['oldLabel'] !== $data['newLabel']) {
-                    $nodeEvent = $this->eventEmittingService->emit(self::NODE_LABEL_CHANGED, array('oldLabel' => $data['oldLabel'], 'newLabel' => $data['newLabel']), 'TYPO3\Neos\EventLog\Domain\Model\NodeEvent');
+                    $nodeEvent = $this->eventEmittingService->emit(self::NODE_LABEL_CHANGED, array('oldLabel' => $data['oldLabel'], 'newLabel' => $data['newLabel']), NodeEvent::class);
                     $nodeEvent->setNode($node);
                 }
                 unset($data['oldLabel']);
@@ -404,7 +405,7 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService
             }
 
             if (!empty($data)) {
-                $nodeEvent = $this->eventEmittingService->emit(self::NODE_UPDATED, $data, 'TYPO3\Neos\EventLog\Domain\Model\NodeEvent');
+                $nodeEvent = $this->eventEmittingService->emit(self::NODE_UPDATED, $data, NodeEvent::class);
                 $nodeEvent->setNode($node);
             }
         }
@@ -459,7 +460,7 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService
         foreach ($this->scheduledNodeEventUpdates as $documentPublish) {
 
             /* @var $nodeEvent NodeEvent */
-            $nodeEvent = $this->eventEmittingService->emit(self::DOCUMENT_PUBLISHED, array(), 'TYPO3\Neos\EventLog\Domain\Model\NodeEvent');
+            $nodeEvent = $this->eventEmittingService->emit(self::DOCUMENT_PUBLISHED, array(), NodeEvent::class);
             $nodeEvent->setNode($documentPublish['documentNode']);
             $nodeEvent->setWorkspaceName($documentPublish['targetWorkspace']);
             $this->persistenceManager->whitelistObject($nodeEvent);
@@ -468,7 +469,7 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService
             $parentEventIdentifier = $this->persistenceManager->getIdentifierByObject($nodeEvent);
 
             $qb = $entityManager->createQueryBuilder();
-            $qb->update('TYPO3\Neos\EventLog\Domain\Model\NodeEvent', 'e')
+            $qb->update(NodeEvent::class, 'e')
                 ->set('e.parentEvent', ':parentEventIdentifier')
                 ->setParameter('parentEventIdentifier', $parentEventIdentifier)
                 ->where('e.parentEvent IS NULL')

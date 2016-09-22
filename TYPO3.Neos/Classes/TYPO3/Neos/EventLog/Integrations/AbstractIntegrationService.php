@@ -12,13 +12,14 @@ namespace TYPO3\Neos\EventLog\Integrations;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Context;
 use TYPO3\Neos\EventLog\Domain\Service\EventEmittingService;
 
 abstract class AbstractIntegrationService
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Security\Context
+     * @var Context
      */
     protected $securityContext;
 
