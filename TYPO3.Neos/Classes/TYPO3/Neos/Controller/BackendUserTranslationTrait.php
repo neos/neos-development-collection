@@ -13,8 +13,6 @@ namespace TYPO3\Neos\Controller;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\I18n\Locale;
-use TYPO3\Flow\I18n\Service;
-use TYPO3\Neos\Service\UserService;
 
 /**
  * A trait to add backend translation based on the backend users settings
@@ -23,13 +21,13 @@ trait BackendUserTranslationTrait
 {
     /**
      * @Flow\Inject
-     * @var Service
+     * @var \TYPO3\Flow\I18n\Service
      */
     protected $_localizationService;
 
     /**
      * @Flow\Inject
-     * @var UserService
+     * @var \TYPO3\Neos\Service\UserService
      */
     protected $_userService;
 

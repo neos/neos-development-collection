@@ -13,15 +13,15 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
 
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Persistence\RepositoryInterface;
-use TYPO3\Flow\Security\Context;
+use TYPO3\Flow\Security\Context as SecurityContext;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeDimension;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
-use TYPO3\TYPO3CR\Exception\NodeException;
 
 /**
  * Test case for the "NodeData" domain model
@@ -242,7 +242,7 @@ class NodeDataTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException NodeException
+     * @expectedException \TYPO3\TYPO3CR\Exception\NodeException
      */
     public function removePropertyThrowsExceptionIfPropertyDoesNotExist()
     {
@@ -308,7 +308,7 @@ class NodeDataTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException NodeException
+     * @expectedException \TYPO3\TYPO3CR\Exception\NodeException
      */
     public function getPropertyThrowsAnExceptionIfTheSpecifiedPropertyDoesNotExistInTheContentObject()
     {
@@ -396,7 +396,7 @@ class NodeDataTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException NodeException
+     * @expectedException \TYPO3\TYPO3CR\Exception\NodeException
      */
     public function createNodeThrowsNodeExceptionIfPathAlreadyExists()
     {
@@ -546,8 +546,8 @@ class NodeDataTest extends UnitTestCase
      */
     public function isAccessibleReturnsTrueIfSecurityContextCannotBeInitialized()
     {
-        /** @var Context|\PHPUnit_Framework_MockObject_MockObject $mockSecurityContext */
-        $mockSecurityContext = $this->createMock(Context::class);
+        /** @var SecurityContext|\PHPUnit_Framework_MockObject_MockObject $mockSecurityContext */
+        $mockSecurityContext = $this->createMock(SecurityContext::class);
         $mockSecurityContext->expects($this->once(0))->method('canBeInitialized')->will($this->returnValue(false));
         $mockSecurityContext->expects($this->never())->method('hasRole');
         $this->inject($this->nodeData, 'securityContext', $mockSecurityContext);
@@ -561,8 +561,8 @@ class NodeDataTest extends UnitTestCase
      */
     public function isAccessibleReturnsFalseIfAccessRolesIsSetAndSecurityContextHasNoRoles()
     {
-        /** @var Context|\PHPUnit_Framework_MockObject_MockObject $mockSecurityContext */
-        $mockSecurityContext = $this->createMock('TYPO3\Flow\Security\Context');
+        /** @var SecurityContext|\PHPUnit_Framework_MockObject_MockObject $mockSecurityContext */
+        $mockSecurityContext = $this->createMock(SecurityContext::class);
         $mockSecurityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(true));
         $mockSecurityContext->expects($this->any())->method('hasRole')->will($this->returnValue(false));
         $this->inject($this->nodeData, 'securityContext', $mockSecurityContext);
@@ -576,8 +576,8 @@ class NodeDataTest extends UnitTestCase
      */
     public function isAccessibleReturnsTrueIfAccessRolesIsSetAndSecurityContextHasOneOfTheRequiredRoles()
     {
-        /** @var Context|\PHPUnit_Framework_MockObject_MockObject $mockSecurityContext */
-        $mockSecurityContext = $this->createMock('TYPO3\Flow\Security\Context');
+        /** @var SecurityContext|\PHPUnit_Framework_MockObject_MockObject $mockSecurityContext */
+        $mockSecurityContext = $this->createMock(SecurityContext::class);
         $mockSecurityContext->expects($this->at(0))->method('canBeInitialized')->will($this->returnValue(true));
         $mockSecurityContext->expects($this->at(1))->method('hasRole')->with('SomeRole')->will($this->returnValue(false));
         $mockSecurityContext->expects($this->at(2))->method('hasRole')->with('SomeOtherRole')->will($this->returnValue(true));
@@ -592,8 +592,8 @@ class NodeDataTest extends UnitTestCase
      */
     public function isAccessibleReturnsTrueIfRoleIsEveryone()
     {
-        /** @var Context|\PHPUnit_Framework_MockObject_MockObject $mockSecurityContext */
-        $mockSecurityContext = $this->createMock(Context::class);
+        /** @var SecurityContext|\PHPUnit_Framework_MockObject_MockObject $mockSecurityContext */
+        $mockSecurityContext = $this->createMock(SecurityContext::class);
         $mockSecurityContext->expects($this->at(0))->method('canBeInitialized')->will($this->returnValue(true));
         $mockSecurityContext->expects($this->at(1))->method('hasRole')->with('SomeRole')->will($this->returnValue(false));
         $mockSecurityContext->expects($this->at(2))->method('hasRole')->with('Everyone')->will($this->returnValue(true));
