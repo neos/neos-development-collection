@@ -12,13 +12,21 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Factory;
  */
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
+use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
+use TYPO3\TYPO3CR\Domain\Model\Node;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Service\Context;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 
 /**
  * Testcase for the NodeFactory
  *
  */
-class NodeFactoryTest extends \TYPO3\Flow\Tests\UnitTestCase
+class NodeFactoryTest extends UnitTestCase
 {
     /**
      * @var NodeFactory
@@ -41,16 +49,16 @@ class NodeFactoryTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     protected function setUp()
     {
-        $this->nodeFactory = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Factory\NodeFactory')->setMethods(array('filterNodeByContext'))->getMock();
+        $this->nodeFactory = $this->getMockBuilder(NodeFactory::class)->setMethods(array('filterNodeByContext'))->getMock();
 
         $this->nodeFactory->expects(self::any())->method('filterNodeByContext')->willReturnArgument(0);
 
-        $this->reflectionServiceMock = $this->createMock('TYPO3\Flow\Reflection\ReflectionService');
-        $this->reflectionServiceMock->expects(self::any())->method('getAllImplementationClassNamesForInterface')->with('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->willReturn(array('TYPO3\TYPO3CR\Domain\Model\Node'));
+        $this->reflectionServiceMock = $this->createMock(ReflectionService::class);
+        $this->reflectionServiceMock->expects(self::any())->method('getAllImplementationClassNamesForInterface')->with(NodeInterface::class)->willReturn(array(Node::class));
 
-        $this->objectManagerMock = $this->createMock('TYPO3\Flow\Object\ObjectManagerInterface');
-        $this->objectManagerMock->expects(self::any())->method('get')->with('TYPO3\Flow\Reflection\ReflectionService')->willReturn($this->reflectionServiceMock);
-        $this->objectManagerMock->expects(self::any())->method('getClassNameByObjectName')->with('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->willReturn('TYPO3\TYPO3CR\Domain\Model\Node');
+        $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
+        $this->objectManagerMock->expects(self::any())->method('get')->with(ReflectionService::class)->willReturn($this->reflectionServiceMock);
+        $this->objectManagerMock->expects(self::any())->method('getClassNameByObjectName')->with(NodeInterface::class)->willReturn(Node::class);
 
         $this->inject($this->nodeFactory, 'objectManager', $this->objectManagerMock);
     }
@@ -60,13 +68,13 @@ class NodeFactoryTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function createFromNodeDataCreatesANodeWithTheGivenContextAndNodeData()
     {
-        $mockNodeType = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeType')->disableOriginalConstructor()->getMock();
+        $mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
 
-        $mockNodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
+        $mockNodeData = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
         $mockNodeData->expects(self::any())->method('getIdentifier')->willReturn('0068371a-c108-99cb-3aa5-81b8852a2d12');
         $mockNodeData->expects(self::any())->method('getNodeType')->willReturn($mockNodeType);
 
-        $mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
+        $mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
         $node = $this->nodeFactory->createFromNodeData($mockNodeData, $mockContext);
 
@@ -83,12 +91,12 @@ class NodeFactoryTest extends \TYPO3\Flow\Tests\UnitTestCase
         $dimensionValues = array('language' => array('is'));
         $workspaceName = 'some-workspace';
 
-        $mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
+        $mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
-        $mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->setMockClassName('MockWorkspace')->disableOriginalConstructor()->getMock();
+        $mockWorkspace = $this->getMockBuilder(Workspace::class)->setMockClassName('MockWorkspace')->disableOriginalConstructor()->getMock();
         $mockWorkspace->expects(self::any())->method('getName')->will(self::returnValue($workspaceName));
 
-        $mockContextFactory = $this->createMock('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
+        $mockContextFactory = $this->createMock(ContextFactoryInterface::class);
         $mockContextFactory->expects(self::once())->method('create')->with(array(
             'workspaceName' => $workspaceName,
             'invisibleContentShown' => true,
@@ -99,7 +107,7 @@ class NodeFactoryTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $this->inject($this->nodeFactory, 'contextFactory', $mockContextFactory);
 
-        $mockNodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
+        $mockNodeData = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
         $mockNodeData->expects(self::any())->method('getWorkspace')->will($this->returnValue($mockWorkspace));
         $mockNodeData->expects(self::any())->method('getDimensionValues')->willReturn($dimensionValues);
 

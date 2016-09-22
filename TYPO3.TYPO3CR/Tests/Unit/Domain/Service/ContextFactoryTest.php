@@ -10,25 +10,30 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Security\Context;
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\Utility\Now;
+use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactory;
 
 /**
  * Testcase for the ContextFactory
  *
  */
-class ContextFactoryTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ContextFactoryTest extends UnitTestCase
 {
     /**
      * @test
      */
     public function createMergesDefaultPropertiesBeforeSettingAnInstanceByIdentifier()
     {
-        $contextFactory = new \TYPO3\TYPO3CR\Domain\Service\ContextFactory();
-        $this->inject($contextFactory, 'now', new \TYPO3\Flow\Utility\Now());
+        $contextFactory = new ContextFactory();
+        $this->inject($contextFactory, 'now', new Now());
 
-        $mockContentDimensionRepository = $this->createMock('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository');
+        $mockContentDimensionRepository = $this->createMock(ContentDimensionRepository::class);
         $mockContentDimensionRepository->expects($this->any())->method('findAll')->will($this->returnValue(array()));
         $this->inject($contextFactory, 'contentDimensionRepository', $mockContentDimensionRepository);
-        $this->inject($contextFactory, 'securityContext', $this->createMock('TYPO3\Flow\Security\Context'));
+        $this->inject($contextFactory, 'securityContext', $this->createMock(Context::class));
 
         $context1 = $contextFactory->create(array());
         $context2 = $contextFactory->create(array('workspaceName' => 'live'));
