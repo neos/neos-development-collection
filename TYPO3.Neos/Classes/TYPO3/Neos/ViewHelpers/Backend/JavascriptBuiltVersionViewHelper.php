@@ -12,6 +12,7 @@ namespace TYPO3\Neos\ViewHelpers\Backend;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Neos\Utility\BackendAssetsUtility;
 
 /**
  * Returns a shortened md5 of the built JavaScript file
@@ -20,7 +21,7 @@ class JavascriptBuiltVersionViewHelper extends \TYPO3\Fluid\Core\ViewHelper\Abst
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Utility\BackendAssetsUtility
+     * @var BackendAssetsUtility
      */
     protected $backendAssetsUtility;
 
