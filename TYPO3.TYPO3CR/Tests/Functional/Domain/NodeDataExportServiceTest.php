@@ -12,13 +12,17 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
  */
 
 use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\Context;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactory;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeExportService;
 use TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 
 /**
  * Functional test case for node data export.
@@ -51,12 +55,12 @@ class NodeDataExportServiceTest extends FunctionalTestCase
     protected $context;
 
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
+     * @var WorkspaceRepository
      */
     protected $workspaceRepository;
 
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
+     * @var NodeTypeManager
      */
     protected $nodeTypeManager;
 
@@ -105,12 +109,12 @@ class NodeDataExportServiceTest extends FunctionalTestCase
      */
     protected function setUpRootNodeAndRepository()
     {
-        $this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactory');
+        $this->contextFactory = $this->objectManager->get(ContextFactory::class);
         $this->context = $this->contextFactory->create(array('workspaceName' => 'live'));
-        $this->nodeDataRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
-        $this->workspaceRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
+        $this->nodeDataRepository = $this->objectManager->get(NodeDataRepository::class);
+        $this->workspaceRepository = $this->objectManager->get(WorkspaceRepository::class);
         $this->workspaceRepository->add(new Workspace('live'));
-        $this->nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+        $this->nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
         $this->rootNode = $this->context->getNode('/');
         $this->persistenceManager->persistAll();
     }
@@ -123,8 +127,8 @@ class NodeDataExportServiceTest extends FunctionalTestCase
         if ($this->nodeDataRepository !== null) {
             $this->nodeDataRepository->flushNodeRegistry();
         }
-        /** @var \TYPO3\TYPO3CR\Domain\Factory\NodeFactory $nodeFactory */
-        $nodeFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Factory\NodeFactory');
+        /** @var NodeFactory $nodeFactory */
+        $nodeFactory = $this->objectManager->get(NodeFactory::class);
         $nodeFactory->reset();
         $this->contextFactory->reset();
         $this->persistenceManager->persistAll();
