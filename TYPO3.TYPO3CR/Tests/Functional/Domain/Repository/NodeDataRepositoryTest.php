@@ -17,6 +17,7 @@ use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 
@@ -26,7 +27,7 @@ use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 class NodeDataRepositoryTest extends FunctionalTestCase
 {
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Service\Context
+     * @var Context
      */
     protected $context;
 
@@ -66,14 +67,14 @@ class NodeDataRepositoryTest extends FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->nodeTypeManager = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Service\NodeTypeManager::class);
+        $this->nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
         $this->liveWorkspace = new Workspace('live');
-        $this->workspaceRepository = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository::class);
+        $this->workspaceRepository = $this->objectManager->get(WorkspaceRepository::class);
         $this->workspaceRepository->add($this->liveWorkspace);
         $this->persistenceManager->persistAll();
-        $this->contextFactory = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface::class);
+        $this->contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
         $this->context = $this->contextFactory->create(['workspaceName' => 'live']);
-        $this->nodeDataRepository = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository::class);
+        $this->nodeDataRepository = $this->objectManager->get(NodeDataRepository::class);
     }
 
     /**
