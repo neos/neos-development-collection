@@ -79,7 +79,7 @@ class NodeConstraintsTest extends FunctionalTestCase
 
     /**
      * @test
-     * @y
+     * @expectedException \TYPO3\TYPO3CR\Exception\NodeConstraintException
      */
     public function movingNodeToWhereItsTypeIsDisallowedThrowsException()
     {
