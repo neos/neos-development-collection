@@ -16,7 +16,6 @@ use TYPO3\Flow\Package\MetaData;
 use TYPO3\Flow\Package\MetaData\PackageConstraint;
 use TYPO3\Flow\Package\MetaDataInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
-use TYPO3\Flow\Utility\Exception;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
 
@@ -151,7 +150,6 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService
      * Generate additional folders for site packages.
      *
      * @param string $packageKey
-     * @throws Exception
      */
     protected function generateAdditionalFolders($packageKey)
     {
