@@ -21,7 +21,7 @@ use TYPO3\Flow\Property\Exception\TargetNotFoundException;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Property\TypeConverter\ObjectConverter;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
-use TYPO3\Flow\Resource\Resource;
+use TYPO3\Flow\Resource\Resource as PersistentResource;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Flow\Validation\Error;
 use TYPO3\Flow\Validation\Validator\UuidValidator;
@@ -145,7 +145,7 @@ class AssetInterfaceConverter extends PersistentObjectConverter
     {
         switch ($propertyName) {
             case 'resource':
-                return Resource::class;
+                return PersistentResource::class;
             case 'originalAsset':
                 return Image::class;
             case 'title':
