@@ -25,6 +25,7 @@ use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Service\Context;
+use TYPO3\Flow\Security\Context as SecurityContext;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 use TYPO3\TYPO3CR\Exception;
@@ -94,7 +95,7 @@ class NodeDataRepository extends Repository
 
     /**
      * @Flow\Inject
-     * @var Context
+     * @var SecurityContext
      */
     protected $securityContext;
 
