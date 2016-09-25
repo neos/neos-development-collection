@@ -14,6 +14,7 @@ namespace TYPO3\TypoScript\Tests\Unit\TypoScriptObjects\Http;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\TypoScript\Core\Runtime;
+use TYPO3\TypoScript\TypoScriptObjects\Http\ResponseHeadImplementation;
 use TYPO3\TypoScript\TypoScriptObjects\TagImplementation;
 
 /**
@@ -29,7 +30,7 @@ class ResponseHeadImplementationTest extends UnitTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->mockTsRuntime = $this->getMockBuilder('TYPO3\TypoScript\Core\Runtime')->disableOriginalConstructor()->getMock();
+        $this->mockTsRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
     }
 
     public function responseHeadExamples()
@@ -63,7 +64,7 @@ class ResponseHeadImplementationTest extends UnitTestCase
         }));
 
         $typoScriptObjectName = 'TYPO3.TypoScript:Http.ResponseHead';
-        $renderer = new \TYPO3\TypoScript\TypoScriptObjects\Http\ResponseHeadImplementation($this->mockTsRuntime, $path, $typoScriptObjectName);
+        $renderer = new ResponseHeadImplementation($this->mockTsRuntime, $path, $typoScriptObjectName);
 
         $result = $renderer->evaluate();
         $this->assertEquals($expectedOutput, $result);

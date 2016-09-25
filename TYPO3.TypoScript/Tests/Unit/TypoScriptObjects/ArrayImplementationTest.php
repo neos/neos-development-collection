@@ -12,6 +12,7 @@ namespace TYPO3\TypoScript\Tests\Unit\TypoScriptObjects;
  */
 
 use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\TypoScript\Core\Runtime;
 use TYPO3\TypoScript\TypoScriptObjects\ArrayImplementation;
 
 /**
@@ -24,7 +25,7 @@ class ArrayImplementationTest extends UnitTestCase
      */
     public function evaluateWithEmptyArrayRendersNull()
     {
-        $mockTsRuntime = $this->getMockBuilder('TYPO3\TypoScript\Core\Runtime')->disableOriginalConstructor()->getMock();
+        $mockTsRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
         $path = 'array/test';
         $typoScriptObjectName = 'TYPO3.TypoScript:Array';
         $renderer = new ArrayImplementation($mockTsRuntime, $path, $typoScriptObjectName);
@@ -116,7 +117,7 @@ class ArrayImplementationTest extends UnitTestCase
      */
     public function evaluateRendersKeysSortedByPositionMetaProperty($message, $subElements, $expectedKeyOrder)
     {
-        $mockTsRuntime = $this->getMockBuilder('TYPO3\TypoScript\Core\Runtime')->disableOriginalConstructor()->getMock();
+        $mockTsRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
 
         $mockTsRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($path) use (&$renderedPaths) {
             $renderedPaths[] = $path;

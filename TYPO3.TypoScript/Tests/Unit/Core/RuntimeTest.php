@@ -11,9 +11,17 @@ namespace TYPO3\TypoScript\Tests\Unit\Core;
  * source code.
  */
 
+use TYPO3\Eel\EelEvaluatorInterface;
+use TYPO3\Eel\ProtectedContext;
+use TYPO3\Flow\Exception;
+use TYPO3\Flow\Mvc\Controller\ControllerContext;
+use TYPO3\Flow\Object\ObjectManager;
+use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler;
+use TYPO3\TypoScript\Core\Runtime;
+use TYPO3\TypoScript\Exception\RuntimeException;
 
-class RuntimeTest extends \TYPO3\Flow\Tests\UnitTestCase
+class RuntimeTest extends UnitTestCase
 {
     /**
      * if the rendering leads to an exception
@@ -23,10 +31,10 @@ class RuntimeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function renderHandlesExceptionDuringRendering()
     {
-        $controllerContext = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\ControllerContext')->disableOriginalConstructor()->getMock();
-        $runtimeException = new \TYPO3\TypoScript\Exception\RuntimeException('I am a parent exception', 123, new \TYPO3\Flow\Exception('I am a previous exception'));
+        $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
+        $runtimeException = new RuntimeException('I am a parent exception', 123, new Exception('I am a previous exception'));
         $runtime = $this->getMockBuilder('TYPO3\TypoScript\Core\Runtime')->setMethods(array('evaluateInternal', 'handleRenderingException'))->setConstructorArgs(array(array(), $controllerContext))->getMock();
-        $runtime->injectSettings(array('rendering' => array('exceptionHandler' => 'TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler')));
+        $runtime->injectSettings(array('rendering' => array('exceptionHandler' => ThrowingHandler::class)));
         $runtime->expects($this->any())->method('evaluateInternal')->will($this->throwException($runtimeException));
         $runtime->expects($this->once())->method('handleRenderingException')->with('/foo/bar', $runtimeException)->will($this->returnValue('Exception Message'));
 
@@ -40,15 +48,15 @@ class RuntimeTest extends \TYPO3\Flow\Tests\UnitTestCase
      *
      * if this handler throws exceptions, they are not handled
      *
-     * @expectedException \TYPO3\Flow\Exception
+     * @expectedException Exception
      * @test
      */
     public function handleRenderingExceptionThrowsException()
     {
-        $objectManager = $this->getMockBuilder('TYPO3\Flow\Object\ObjectManager')->disableOriginalConstructor()->setMethods(array('isRegistered', 'get'))->getMock();
-        $controllerContext = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\ControllerContext')->disableOriginalConstructor()->getMock();
-        $runtimeException = new \TYPO3\TypoScript\Exception\RuntimeException('I am a parent exception', 123, new \TYPO3\Flow\Exception('I am a previous exception'));
-        $runtime =  new \TYPO3\TypoScript\Core\Runtime(array(), $controllerContext);
+        $objectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->setMethods(array('isRegistered', 'get'))->getMock();
+        $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
+        $runtimeException = new RuntimeException('I am a parent exception', 123, new Exception('I am a previous exception'));
+        $runtime =  new Runtime(array(), $controllerContext);
         $this->inject($runtime, 'objectManager', $objectManager);
         $exceptionHandlerSetting = 'settings';
         $runtime->injectSettings(array('rendering' => array('exceptionHandler' => $exceptionHandlerSetting)));
@@ -64,15 +72,15 @@ class RuntimeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function evaluateProcessorForEelExpressionUsesProtectedContext()
     {
-        $controllerContext = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\ControllerContext')->disableOriginalConstructor()->getMock();
+        $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
 
-        $eelEvaluator = $this->createMock('TYPO3\Eel\EelEvaluatorInterface');
-        $runtime = $this->getAccessibleMock('TYPO3\TypoScript\Core\Runtime', array('dummy'), array(array(), $controllerContext));
+        $eelEvaluator = $this->createMock(EelEvaluatorInterface::class);
+        $runtime = $this->getAccessibleMock(Runtime::class, array('dummy'), array(array(), $controllerContext));
 
         $this->inject($runtime, 'eelEvaluator', $eelEvaluator);
 
 
-        $eelEvaluator->expects($this->once())->method('evaluate')->with('q(node).property("title")', $this->isInstanceOf('TYPO3\Eel\ProtectedContext'));
+        $eelEvaluator->expects($this->once())->method('evaluate')->with('q(node).property("title")', $this->isInstanceOf(ProtectedContext::class));
 
         $runtime->pushContextArray(array(
             'node' => 'Foo'
@@ -88,8 +96,8 @@ class RuntimeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function evaluateWithCacheModeUncachedAndUnspecifiedContextThrowsException()
     {
-        $mockControllerContext = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\ControllerContext')->disableOriginalConstructor()->getMock();
-        $runtime = new \TYPO3\TypoScript\Core\Runtime(array(
+        $mockControllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
+        $runtime = new Runtime(array(
             'foo' => array(
                 'bar' => array(
                     '__meta' => array(
@@ -110,9 +118,9 @@ class RuntimeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function renderRethrowsSecurityExceptions()
     {
-        $controllerContext = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\ControllerContext')->disableOriginalConstructor()->getMock();
+        $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
         $securityException = new \TYPO3\Flow\Security\Exception();
-        $runtime = $this->getMockBuilder('TYPO3\TypoScript\Core\Runtime')->setMethods(array('evaluateInternal', 'handleRenderingException'))->setConstructorArgs(array(array(), $controllerContext))->getMock();
+        $runtime = $this->getMockBuilder(Runtime::class)->setMethods(array('evaluateInternal', 'handleRenderingException'))->setConstructorArgs(array(array(), $controllerContext))->getMock();
         $runtime->expects($this->any())->method('evaluateInternal')->will($this->throwException($securityException));
 
         $runtime->render('/foo/bar');
