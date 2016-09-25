@@ -894,6 +894,18 @@ trait NodeOperationsTrait
     }
 
     /**
+     * @When /^I hide the node$/
+     */
+    public function iHideTheNode()
+    {
+        $node = $this->iShouldHaveOneNode();
+        $node->setHidden(true);
+
+        $this->objectManager->get('TYPO3\Flow\Persistence\PersistenceManagerInterface')->persistAll();
+        $this->resetNodeInstances();
+    }
+
+    /**
      * Makes sure to reset all node instances which might still be stored in the NodeDataRepository, ContextFactory or
      * NodeFactory.
      *
