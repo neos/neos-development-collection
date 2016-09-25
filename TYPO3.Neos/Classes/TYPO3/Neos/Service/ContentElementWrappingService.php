@@ -14,8 +14,12 @@ namespace TYPO3\Neos\Service;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Property\PropertyMappingConfiguration;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
+use TYPO3\Flow\Utility\TypeHandling;
+use TYPO3\Media\Domain\Model\Asset;
+use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\TypeConverter\EntityToIdentityConverter;
 use TYPO3\TYPO3CR\Domain\Model\Node;
@@ -104,7 +108,6 @@ class ContentElementWrappingService
             if (!$this->nodeAuthorizationService->isGrantedToEditNode($node)) {
                 return $content;
             }
-
 
             if ($node->isRemoved()) {
                 $classNames[] = 'neos-contentelement-removed';
@@ -261,25 +264,25 @@ class ContentElementWrappingService
             }
         }
 
-        if ($propertyValue instanceof \TYPO3\Media\Domain\Model\ImageInterface) {
-            $propertyMappingConfiguration = new \TYPO3\Flow\Property\PropertyMappingConfiguration();
+        if ($propertyValue instanceof ImageInterface) {
+            $propertyMappingConfiguration = new PropertyMappingConfiguration();
             return json_encode($this->entityToIdentityConverter->convertFrom($propertyValue, 'array', array(), $propertyMappingConfiguration));
         }
 
         // Serialize an Asset to JSON (the NodeConverter expects JSON for object type properties)
-        if ($dataType === ltrim('TYPO3\Media\Domain\Model\Asset', '\\') && $propertyValue !== null) {
-            if ($propertyValue instanceof \TYPO3\Media\Domain\Model\Asset) {
+        if ($dataType === ltrim(Asset::class, '\\') && $propertyValue !== null) {
+            if ($propertyValue instanceof Asset) {
                 return json_encode($this->persistenceManager->getIdentifierByObject($propertyValue));
             }
         }
 
         // Serialize an array of Assets to JSON
         if (is_array($propertyValue)) {
-            $parsedType = \TYPO3\Flow\Utility\TypeHandling::parseType($dataType);
-            if ($parsedType['elementType'] === ltrim('TYPO3\Media\Domain\Model\Asset', '\\')) {
+            $parsedType = TypeHandling::parseType($dataType);
+            if ($parsedType['elementType'] === ltrim(Asset::class, '\\')) {
                 $convertedValues = array();
                 foreach ($propertyValue as $singlePropertyValue) {
-                    if ($singlePropertyValue instanceof \TYPO3\Media\Domain\Model\Asset) {
+                    if ($singlePropertyValue instanceof Asset) {
                         $convertedValues[] = $this->persistenceManager->getIdentifierByObject($singlePropertyValue);
                     }
                 }
