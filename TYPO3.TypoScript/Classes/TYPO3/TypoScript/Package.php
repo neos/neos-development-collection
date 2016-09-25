@@ -16,6 +16,7 @@ use TYPO3\Flow\Core\Booting\Sequence;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Monitor\FileMonitor;
 use TYPO3\Flow\Package\Package as BasePackage;
+use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\TypoScript\Core\Cache\FileMonitorListener;
 
 /**
@@ -38,7 +39,7 @@ class Package extends BasePackage
             $dispatcher->connect(Sequence::class, 'afterInvokeStep', function ($step) use ($bootstrap, $dispatcher) {
                 if ($step->getIdentifier() === 'typo3.flow:systemfilemonitor') {
                     $typoScriptFileMonitor = FileMonitor::createFileMonitorAtBoot('TypoScript_Files', $bootstrap);
-                    $packageManager = $bootstrap->getEarlyInstance('TYPO3\Flow\Package\PackageManagerInterface');
+                    $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
                     foreach ($packageManager->getActivePackages() as $packageKey => $package) {
                         if ($packageManager->isPackageFrozen($packageKey)) {
                             continue;
