@@ -19,7 +19,7 @@ use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Reflection\ReflectionService;
-use TYPO3\Flow\Resource\Resource;
+use TYPO3\Flow\Resource\Resource as PersistentResource;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Media\Domain\Model\Asset;
@@ -487,7 +487,7 @@ class LegacySiteImportService
      * @param string|null $hash
      * @param string|null $content
      * @param string $forcedIdentifier
-     * @return Resource
+     * @return PersistentResource
      * @throws NeosException
      */
     protected function importResource($fileName, $hash = null, $content = null, $forcedIdentifier = null)
