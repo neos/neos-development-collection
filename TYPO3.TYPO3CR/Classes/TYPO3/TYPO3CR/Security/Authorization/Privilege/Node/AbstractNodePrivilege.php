@@ -97,7 +97,7 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
     public function matchesSubject(PrivilegeSubjectInterface $subject)
     {
         if ($subject instanceof NodePrivilegeSubject === false && $subject instanceof MethodPrivilegeSubject === false) {
-            throw new InvalidPrivilegeTypeException(sprintf('Privileges of type '.AbstractNodePrivilege::class.' only support subjects of type '.NodePrivilegeSubject::class.' or '.MethodPrivilegeSubject::class.', but we got a subject of type: "%s".', get_class($subject)), 1417014368);
+            throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "%s" only support subjects of type "%s" or "%s", but we got a subject of type: "%s".', AbstractNodePrivilege::class, NodePrivilegeSubject::class, MethodPrivilegeSubject::class, get_class($subject)), 1417014368);
         }
 
         $this->initialize();
