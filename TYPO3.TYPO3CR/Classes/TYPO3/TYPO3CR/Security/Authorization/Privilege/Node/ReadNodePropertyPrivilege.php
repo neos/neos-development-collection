@@ -37,6 +37,6 @@ class ReadNodePropertyPrivilege extends AbstractNodePropertyPrivilege
      */
     protected function buildMethodPrivilegeMatcher()
     {
-        return 'within('.NodeInterface::class.') && method(.*->(getProperty|getName|isHidden|getHiddenBeforeDateTime|getHiddenAfterDateTime|isHiddenInIndex|getAccessRoles)())';
+        return 'within(' . NodeInterface::class . ') && method(.*->(getProperty|getName|isHidden|getHiddenBeforeDateTime|getHiddenAfterDateTime|isHiddenInIndex|getAccessRoles)())';
     }
 }

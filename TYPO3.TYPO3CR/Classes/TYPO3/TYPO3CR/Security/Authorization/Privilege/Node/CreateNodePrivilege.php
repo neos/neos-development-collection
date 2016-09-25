@@ -39,7 +39,7 @@ class CreateNodePrivilege extends AbstractNodePrivilege
     public function matchesSubject(PrivilegeSubjectInterface $subject)
     {
         if ($subject instanceof CreateNodePrivilegeSubject === false && $subject instanceof MethodPrivilegeSubject === false) {
-            throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "'.CreateNodePrivilege::class.'" only support subjects of type "'.CreateNodePrivilegeSubject::class.'" or "'.MethodPrivilegeSubject::class.'", but we got a subject of type: "%s".', get_class($subject)), 1417014353);
+            throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "%s" only support subjects of type "%s" or "%s", but we got a subject of type: "%s".', CreateNodePrivilege::class, CreateNodePrivilegeSubject::class, MethodPrivilegeSubject::class, get_class($subject)), 1417014353);
         }
 
         $this->initialize();
@@ -82,6 +82,6 @@ class CreateNodePrivilege extends AbstractNodePrivilege
      */
     protected function buildMethodPrivilegeMatcher()
     {
-        return 'within('.NodeInterface::class.') && method(.*->(createNode|createNodeFromTemplate)())';
+        return 'within(' . NodeInterface::class . ') && method(.*->(createNode|createNodeFromTemplate)())';
     }
 }
