@@ -11,9 +11,12 @@ namespace TYPO3\TYPO3CR\Eel\FlowQueryOperations;
  * source code.
  */
 
+use TYPO3\Eel\FlowQuery\FizzleParser;
 use TYPO3\Eel\FlowQuery\FlowQuery;
+use TYPO3\Eel\FlowQuery\FlowQueryException;
 use TYPO3\Eel\FlowQuery\Operations\AbstractOperation;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Validation\Validator\UuidValidator;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 
@@ -39,15 +42,15 @@ use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
  *
  * Example (node type):
  *
- * 	q(node).find('[instanceof TYPO3.Neos.NodeTypes:Text]')
+ * 	q(node).find('[instanceof Neos.Neos.NodeTypes:Text]')
  *
  * Example (multiple node types):
  *
- * 	q(node).find('[instanceof TYPO3.Neos.NodeTypes:Text],[instanceof TYPO3.Neos.NodeTypes:Image]')
+ * 	q(node).find('[instanceof Neos.Neos.NodeTypes:Text],[instanceof Neos.Neos.NodeTypes:Image]')
  *
  * Example (node type with filter):
  *
- * 	q(node).find('[instanceof TYPO3.Neos.NodeTypes:Text][text*="Neos"]')
+ * 	q(node).find('[instanceof Neos.Neos.NodeTypes:Text][text*="Neos"]')
  *
  */
 class FindOperation extends AbstractOperation
@@ -110,13 +113,13 @@ class FindOperation extends AbstractOperation
         $selectorAndFilter = $arguments[0];
 
         $parsedFilter = null;
-        $parsedFilter = \TYPO3\Eel\FlowQuery\FizzleParser::parseFilterGroup($selectorAndFilter);
+        $parsedFilter = FizzleParser::parseFilterGroup($selectorAndFilter);
         if (isset($parsedFilter['Filters']) && $this->hasOnlyInstanceOfFilters($parsedFilter['Filters'])) {
             $nodeTypes = array();
             foreach ($parsedFilter['Filters'] as $filter) {
                 $nodeTypes[] = $filter['AttributeFilters'][0]['Operand'];
             }
-            /** @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface $contextNode */
+            /** @var NodeInterface $contextNode */
             foreach ($context as $contextNode) {
                 $result = array_merge($result, $this->nodeDataRepository->findByParentAndNodeTypeInContext($contextNode->getPath(), implode(',', $nodeTypes), $contextNode->getContext(), true));
             }
@@ -125,10 +128,10 @@ class FindOperation extends AbstractOperation
                 $filterResults = array();
                 $generatedNodes = false;
                 if (isset($filter['IdentifierFilter'])) {
-                    if (!preg_match(\TYPO3\Flow\Validation\Validator\UuidValidator::PATTERN_MATCH_UUID, $filter['IdentifierFilter'])) {
-                        throw new \TYPO3\Eel\FlowQuery\FlowQueryException('find() requires a valid identifier', 1332492263);
+                    if (!preg_match(UuidValidator::PATTERN_MATCH_UUID, $filter['IdentifierFilter'])) {
+                        throw new FlowQueryException('find() requires a valid identifier', 1332492263);
                     }
-                    /** @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface $contextNode */
+                    /** @var NodeInterface $contextNode */
                     foreach ($context as $contextNode) {
                         $filterResults = array($contextNode->getContext()->getNodeByIdentifier($filter['IdentifierFilter']));
                     }
@@ -153,7 +156,7 @@ class FindOperation extends AbstractOperation
                 }
                 if (isset($filter['AttributeFilters']) && count($filter['AttributeFilters']) > 0) {
                     if (!$generatedNodes) {
-                        throw new \TYPO3\Eel\FlowQuery\FlowQueryException('find() needs an identifier, path or instanceof filter for the first filter part', 1436884196);
+                        throw new FlowQueryException('find() needs an identifier, path or instanceof filter for the first filter part', 1436884196);
                     }
                     $filterQuery = new FlowQuery($filterResults);
                     foreach ($filter['AttributeFilters'] as $attributeFilter) {
