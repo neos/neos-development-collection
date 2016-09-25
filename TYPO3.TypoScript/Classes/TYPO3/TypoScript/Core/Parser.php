@@ -11,9 +11,10 @@ namespace TYPO3\TypoScript\Core;
  * source code.
  */
 
+use TYPO3\Eel\Package;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\Arrays;
-use TYPO3\TypoScript\Exception;
+use TYPO3\TypoScript;
 
 /**
  * The TypoScript Parser
@@ -262,13 +263,13 @@ class Parser implements ParserInterface
      * @param array $objectTreeUntilNow Used internally for keeping track of the built object tree
      * @param boolean $buildPrototypeHierarchy Merge prototype configurations or not. Will be FALSE for includes to only do that once at the end.
      * @return array A TypoScript object tree, generated from the source code
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws TypoScript\Exception
      * @api
      */
     public function parse($sourceCode, $contextPathAndFilename = null, array $objectTreeUntilNow = array(), $buildPrototypeHierarchy = true)
     {
         if (!is_string($sourceCode)) {
-            throw new Exception('Cannot parse TypoScript - $sourceCode must be of type string!', 1180203775);
+            throw new TypoScript\Exception('Cannot parse TypoScript - $sourceCode must be of type string!', 1180203775);
         }
         $this->initialize();
         $this->objectTree = $objectTreeUntilNow;
@@ -301,16 +302,16 @@ class Parser implements ParserInterface
      * @param string $alias An alias for the given namespace, for example "neos"
      * @param string $namespace The namespace, for example "TYPO3.Neos"
      * @return void
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws TypoScript\Exception
      * @api
      */
     public function setObjectTypeNamespace($alias, $namespace)
     {
         if (!is_string($alias)) {
-            throw new Exception('The alias of a namespace must be valid string!', 1180600696);
+            throw new TypoScript\Exception('The alias of a namespace must be valid string!', 1180600696);
         }
         if (!is_string($namespace)) {
-            throw new Exception('The namespace must be of type string!', 1180600697);
+            throw new TypoScript\Exception('The namespace must be of type string!', 1180600697);
         }
         $this->objectTypeNamespaces[$alias] = $namespace;
     }
@@ -347,7 +348,7 @@ class Parser implements ParserInterface
      *
      * @param string $typoScriptLine One line of TypoScript code
      * @return void
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws TypoScript\Exception
      */
     protected function parseTypoScriptLine($typoScriptLine)
     {
@@ -369,7 +370,7 @@ class Parser implements ParserInterface
             } elseif (preg_match(self::SCAN_PATTERN_OBJECTDEFINITION, $typoScriptLine)) {
                 $this->parseObjectDefinition($typoScriptLine);
             } else {
-                throw new Exception('Syntax error in line ' . $this->currentLineNumber . '. (' . $typoScriptLine . ')', 1180547966);
+                throw new TypoScript\Exception('Syntax error in line ' . $this->currentLineNumber . '. (' . $typoScriptLine . ')', 1180547966);
             }
         }
     }
@@ -379,7 +380,7 @@ class Parser implements ParserInterface
      *
      * @param string $typoScriptLine One line of TypoScript code
      * @return void
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws TypoScript\Exception
      */
     protected function parseComment($typoScriptLine)
     {
@@ -390,7 +391,7 @@ class Parser implements ParserInterface
                     break;
                 case '*/':
                     if ($this->currentBlockCommentState !== true) {
-                        throw new Exception('Unexpected closing block comment without matching opening block comment.', 1180615119);
+                        throw new TypoScript\Exception('Unexpected closing block comment without matching opening block comment.', 1180615119);
                     }
                     $this->currentBlockCommentState = false;
                     $this->parseTypoScriptLine(substr($typoScriptLine, ($matches[1][1] + 2)));
@@ -401,7 +402,7 @@ class Parser implements ParserInterface
                     break;
             }
         } elseif ($this->currentBlockCommentState === false) {
-            throw new Exception('No comment type matched although the comment scan regex matched the TypoScript line (' . $typoScriptLine . ').', 1180614895);
+            throw new TypoScript\Exception('No comment type matched although the comment scan regex matched the TypoScript line (' . $typoScriptLine . ').', 1180614895);
         }
     }
 
@@ -411,7 +412,7 @@ class Parser implements ParserInterface
      * @param string $typoScriptLine One line of TypoScript code
      * @param boolean $isOpeningConfinement Set to TRUE, if an opening confinement is to be parsed and FALSE if it's a closing confinement.
      * @return void
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws TypoScript\Exception
      */
     protected function parseConfinementBlock($typoScriptLine, $isOpeningConfinement)
     {
@@ -420,7 +421,7 @@ class Parser implements ParserInterface
             array_push($this->currentObjectPathStack, $this->getCurrentObjectPathPrefix() . $result);
         } else {
             if (count($this->currentObjectPathStack) < 1) {
-                throw new Exception('Unexpected closing confinement without matching opening confinement. Check the number of your curly braces.', 1181575973);
+                throw new TypoScript\Exception('Unexpected closing confinement without matching opening confinement. Check the number of your curly braces.', 1181575973);
             }
             array_pop($this->currentObjectPathStack);
         }
@@ -431,13 +432,13 @@ class Parser implements ParserInterface
      *
      * @param string $typoScriptLine One line of TypoScript code
      * @return void
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws TypoScript\Exception
      */
     protected function parseDeclaration($typoScriptLine)
     {
         $result = preg_match(self::SPLIT_PATTERN_DECLARATION, $typoScriptLine, $matches);
         if ($result !== 1 || !(isset($matches['declarationType']) && isset($matches['declaration']))) {
-            throw new Exception('Invalid declaration "' . $typoScriptLine . '"', 1180544656);
+            throw new TypoScript\Exception('Invalid declaration "' . $typoScriptLine . '"', 1180544656);
         }
 
         switch ($matches['declarationType']) {
@@ -455,13 +456,13 @@ class Parser implements ParserInterface
      *
      * @param string $typoScriptLine One line of TypoScript code
      * @return void
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws TypoScript\Exception
      */
     protected function parseObjectDefinition($typoScriptLine)
     {
         $result = preg_match(self::SPLIT_PATTERN_OBJECTDEFINITION, $typoScriptLine, $matches);
         if ($result !== 1) {
-            throw new Exception('Invalid object definition "' . $typoScriptLine . '"', 1180548488);
+            throw new TypoScript\Exception('Invalid object definition "' . $typoScriptLine . '"', 1180548488);
         }
 
         $objectPath = $this->getCurrentObjectPathPrefix() . $matches['ObjectPath'];
@@ -514,7 +515,7 @@ class Parser implements ParserInterface
      * @param string $sourceObjectPath Specifies the location in the object tree from where the object or value will be taken
      * @param string $targetObjectPath Specifies the location in the object tree where the copy will be stored
      * @return void
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws TypoScript\Exception
      */
     protected function parseValueCopy($sourceObjectPath, $targetObjectPath)
     {
@@ -537,11 +538,11 @@ class Parser implements ParserInterface
                     // parts of the TS rendering tree.
                     // Although this might work conceptually, it makes reasoning about the prototypical
                     // inheritance tree a lot more complex; that's why we forbid it right away.
-                throw new Exception('Tried to parse "' . $targetObjectPath . '" < "' . $sourceObjectPath . '", however one of the sides is nested (e.g. foo.prototype(Bar)). Setting up prototype inheritance is only supported at the top level: prototype(Foo) < prototype(Bar)', 1358418019);
+                throw new TypoScript\Exception('Tried to parse "' . $targetObjectPath . '" < "' . $sourceObjectPath . '", however one of the sides is nested (e.g. foo.prototype(Bar)). Setting up prototype inheritance is only supported at the top level: prototype(Foo) < prototype(Bar)', 1358418019);
             } else {
                 // Either "source" or "target" are no prototypes. We do not support copying a
                     // non-prototype value to a prototype value or vice-versa.
-                throw new Exception('Tried to parse "' . $targetObjectPath . '" < "' . $sourceObjectPath . '", however one of the sides is no prototype definition of the form prototype(Foo). It is only allowed to build inheritance chains with prototype objects.', 1358418015);
+                throw new TypoScript\Exception('Tried to parse "' . $targetObjectPath . '" < "' . $sourceObjectPath . '", however one of the sides is no prototype definition of the form prototype(Foo). It is only allowed to build inheritance chains with prototype objects.', 1358418015);
             }
         } else {
             $originalValue = $this->getValueFromObjectTree($sourceObjectPathArray);
@@ -556,13 +557,13 @@ class Parser implements ParserInterface
      *
      * @param string $namespaceDeclaration The namespace declaration, for example "neos = TYPO3.Neos"
      * @return void
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws TypoScript\Exception
      */
     protected function parseNamespaceDeclaration($namespaceDeclaration)
     {
         $result = preg_match(self::SPLIT_PATTERN_NAMESPACEDECLARATION, $namespaceDeclaration, $matches);
         if ($result !== 1 || !(isset($matches['alias']) && isset($matches['packageKey']))) {
-            throw new Exception('Invalid namespace declaration "' . $namespaceDeclaration . '"', 1180547190);
+            throw new TypoScript\Exception('Invalid namespace declaration "' . $namespaceDeclaration . '"', 1180547190);
         }
 
         $namespaceAlias = $matches['alias'];
@@ -576,7 +577,7 @@ class Parser implements ParserInterface
      *
      * @param string $include The include value, for example " FooBar" or " resource://....". Can also include wildcard mask for TypoScript globbing.
      * @return void
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws TypoScript\Exception
      */
     protected function parseInclude($include)
     {
@@ -587,7 +588,7 @@ class Parser implements ParserInterface
             if ($this->contextPathAndFilename !== null) {
                 $include = dirname($this->contextPathAndFilename) . '/' . $include;
             } else {
-                throw new Exception('Relative file inclusions are only possible if a context path and filename has been passed as second argument to parse()', 1329806940);
+                throw new TypoScript\Exception('Relative file inclusions are only possible if a context path and filename has been passed as second argument to parse()', 1329806940);
             }
         }
 
@@ -595,7 +596,7 @@ class Parser implements ParserInterface
         if (preg_match('#([^\*]*)\*\*/\*#', $include, $matches) === 1) {
             $basePath = $matches['1'];
             if (!is_dir($basePath)) {
-                throw new Exception(sprintf('The path %s does not point to a directory.', $basePath), 1415033179);
+                throw new TypoScript\Exception(sprintf('The path %s does not point to a directory.', $basePath), 1415033179);
             }
             $recursiveDirectoryIterator = new \RecursiveDirectoryIterator($basePath);
             $iterator = new \RecursiveIteratorIterator($recursiveDirectoryIterator);
@@ -603,7 +604,7 @@ class Parser implements ParserInterface
         } elseif (preg_match('#([^\*]*)\*#', $include, $matches) === 1) {
             $basePath = $matches['1'];
             if (!is_dir($basePath)) {
-                throw new Exception(sprintf('The path %s does not point to a directory.', $basePath), 1415033180);
+                throw new TypoScript\Exception(sprintf('The path %s does not point to a directory.', $basePath), 1415033180);
             }
             $iterator = new \DirectoryIterator($basePath);
         }
@@ -617,7 +618,7 @@ class Parser implements ParserInterface
                     // Check if not trying to recursively include the current file via globbing
                     if (stat($pathAndFilename) !== stat($this->contextPathAndFilename)) {
                         if (!is_readable($pathAndFilename)) {
-                            throw new Exception(sprintf('Could not include TypoScript file "%s"', $pathAndFilename), 1347977018);
+                            throw new TypoScript\Exception(sprintf('Could not include TypoScript file "%s"', $pathAndFilename), 1347977018);
                         }
                         $this->objectTree = $parser->parse(file_get_contents($pathAndFilename), $pathAndFilename, $this->objectTree, false);
                     }
@@ -625,7 +626,7 @@ class Parser implements ParserInterface
             }
         } else {
             if (!is_readable($include)) {
-                throw new Exception(sprintf('Could not include TypoScript file "%s"', $include), 1347977017);
+                throw new TypoScript\Exception(sprintf('Could not include TypoScript file "%s"', $include), 1347977017);
             }
             $this->objectTree = $parser->parse(file_get_contents($include), $include, $this->objectTree, false);
         }
@@ -636,7 +637,7 @@ class Parser implements ParserInterface
      *
      * @param string $objectPath The object path to parse
      * @return array An object path array
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws TypoScript\Exception
      */
     protected function getParsedObjectPath($objectPath)
     {
@@ -670,13 +671,13 @@ class Parser implements ParserInterface
                 } else {
                     $key = $objectPathSegment;
                     if (substr($key, 0, 2) === '__' && in_array($key, self::$reservedParseTreeKeys, true)) {
-                        throw new Exception(sprintf('Reversed key "%s" used in object path "%s".', $key, $objectPath), 1437065270);
+                        throw new TypoScript\Exception(sprintf('Reversed key "%s" used in object path "%s".', $key, $objectPath), 1437065270);
                     }
                     $objectPathArray[] = $this->unquoteString($key);
                 }
             }
         } else {
-            throw new Exception('Syntax error: Invalid object path "' . $objectPath . '".', 1180603499);
+            throw new TypoScript\Exception('Syntax error: Invalid object path "' . $objectPath . '".', 1180603499);
         }
 
         return $objectPathArray;
@@ -688,7 +689,7 @@ class Parser implements ParserInterface
      *
      * @param string $unparsedValue The unparsed value
      * @return mixed The processed value
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws TypoScript\Exception
      */
     protected function getProcessedValue($unparsedValue)
     {
@@ -696,7 +697,7 @@ class Parser implements ParserInterface
             $processedValue = intval($unparsedValue);
         } elseif (preg_match(self::SPLIT_PATTERN_VALUEFLOATNUMBER, $unparsedValue, $matches) === 1) {
             $processedValue = floatval($unparsedValue);
-        } elseif (preg_match(\TYPO3\Eel\Package::EelExpressionRecognizer, $unparsedValue, $matches) === 1) {
+        } elseif (preg_match(Package::EelExpressionRecognizer, $unparsedValue, $matches) === 1) {
             // Single-line Eel Expressions
             $processedValue = array(
                 '__eelExpression' => $matches[1],
@@ -742,7 +743,7 @@ class Parser implements ParserInterface
                     if (substr($line, -1) === '}') {
                         // potential end-of-eel-expression marker
                         $matches = array();
-                        if (preg_match(\TYPO3\Eel\Package::EelExpressionRecognizer, $eelExpressionSoFar, $matches) === 1) {
+                        if (preg_match(Package::EelExpressionRecognizer, $eelExpressionSoFar, $matches) === 1) {
                             // Single-line Eel Expressions
                             $processedValue = array('__eelExpression' => str_replace(chr(10), '', $matches[1]), '__value' => null, '__objectType' => null);
                             break;
@@ -752,10 +753,10 @@ class Parser implements ParserInterface
 
                 if ($line === false) {
                     // if the last line we consumed is FALSE, we have consumed the end of the file.
-                    throw new Exception('Syntax error: A multi-line Eel expression starting with "' . $unparsedValue . '" was not closed.', 1417616064);
+                    throw new TypoScript\Exception('Syntax error: A multi-line Eel expression starting with "' . $unparsedValue . '" was not closed.', 1417616064);
                 }
             } else {
-                throw new Exception('Syntax error: Invalid value "' . $unparsedValue . '" in value assignment.', 1180604192);
+                throw new TypoScript\Exception('Syntax error: Invalid value "' . $unparsedValue . '" in value assignment.', 1180604192);
             }
         }
         return $processedValue;
@@ -786,7 +787,7 @@ class Parser implements ParserInterface
                 unset($objectTree[$currentKey]);
             } elseif (isset($objectTree[$currentKey]) && is_array($objectTree[$currentKey])) {
                 if (is_array($value)) {
-                    $objectTree[$currentKey] = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($objectTree[$currentKey], $value);
+                    $objectTree[$currentKey] = Arrays::arrayMergeRecursiveOverrule($objectTree[$currentKey], $value);
                 } else {
                     $objectTree[$currentKey]['__value'] = $value;
                     $objectTree[$currentKey]['__eelExpression'] = null;
