@@ -11,7 +11,7 @@ namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\TypoScrip
  * source code.
  */
 
-use TYPO3\TypoScript\Exception;
+use TYPO3\TypoScript;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 
 class ThrowingImplementation extends AbstractTypoScriptObject
@@ -30,7 +30,7 @@ class ThrowingImplementation extends AbstractTypoScriptObject
     public function evaluate()
     {
         if ($this->getShouldThrow()) {
-            throw new Exception('Just testing an exception', 1396557841);
+            throw new TypoScript\Exception('Just testing an exception', 1396557841);
         }
         return 'It depends';
     }
