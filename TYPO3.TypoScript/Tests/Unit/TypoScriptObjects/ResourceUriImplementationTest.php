@@ -16,7 +16,7 @@ use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Resource\Publishing\ResourcePublisher;
-use TYPO3\Flow\Resource\Resource;
+use TYPO3\Flow\Resource\Resource as PersistentResource;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\TypoScript\Core\Runtime;
@@ -92,7 +92,7 @@ class ResourceUriImplementationTest extends UnitTestCase
      */
     public function evaluateReturnsResourceUriForAGivenResource()
     {
-        $validResource = $this->getMockBuilder(Resource::class)->disableOriginalConstructor()->getMock();
+        $validResource = $this->getMockBuilder(PersistentResource::class)->disableOriginalConstructor()->getMock();
         $this->mockTsRuntime->expects($this->atLeastOnce())->method('evaluate')->with('resourceUri/test/resource')->will($this->returnCallback(function ($evaluatePath, $that) use ($validResource) {
             return $validResource;
         }));
