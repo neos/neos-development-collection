@@ -19,7 +19,7 @@ use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\TypeConverter\ImageInterfaceConverter;
-use TYPO3\Flow\Resource\Resource;
+use TYPO3\Flow\Resource\Resource as PersistentResource;
 
 /**
  * Testcase for the ImageConverter
@@ -62,7 +62,7 @@ class ImageInterfaceConverterTest extends UnitTestCase
      */
     public function canConvertFromDataProvider()
     {
-        $dummyResource = $this->createMock(Resource::class);
+        $dummyResource = $this->createMock(PersistentResource::class);
         return array(
             array(array('resource' => $dummyResource), Image::class, true),
             array(array('__identity' => 'foo'), Image::class, false),

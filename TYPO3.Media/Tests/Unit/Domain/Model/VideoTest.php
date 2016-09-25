@@ -11,7 +11,7 @@ namespace TYPO3\Media\Tests\Unit\Domain\Model;
  * source code.
  */
 
-use TYPO3\Flow\Resource\Resource;
+use TYPO3\Flow\Resource\Resource as PersistentResource;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Media\Domain\Model\Video;
 
@@ -25,7 +25,7 @@ class VideoTest extends UnitTestCase
      */
     public function dimensionsDefaultToMinusOneOnConstruct()
     {
-        $mockResource = $this->createMock(Resource::class);
+        $mockResource = $this->createMock(PersistentResource::class);
 
         $video = new Video($mockResource);
 
