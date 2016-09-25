@@ -34,6 +34,6 @@ class EditNodePropertyPrivilege extends AbstractNodePropertyPrivilege
      */
     protected function buildMethodPrivilegeMatcher()
     {
-        return 'within('.NodeInterface::class.') && method(.*->(setProperty|setName|setHidden|setHiddenBeforeDateTime|setHiddenAfterDateTime|setHiddenInIndex|setAccessRoles)())';
+        return 'within(' . NodeInterface::class . ') && method(.*->(setProperty|setName|setHidden|setHiddenBeforeDateTime|setHiddenAfterDateTime|setHiddenInIndex|setAccessRoles)())';
     }
 }
