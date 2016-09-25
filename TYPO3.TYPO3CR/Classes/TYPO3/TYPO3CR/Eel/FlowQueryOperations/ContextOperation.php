@@ -12,9 +12,11 @@ namespace TYPO3\TYPO3CR\Eel\FlowQueryOperations;
  */
 
 use TYPO3\Eel\FlowQuery\FlowQuery;
+use TYPO3\Eel\FlowQuery\FlowQueryException;
 use TYPO3\Eel\FlowQuery\Operations\AbstractOperation;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 
 /**
  * "context" operation working on TYPO3CR nodes. Modifies the TYPO3CR Context of each
@@ -45,7 +47,7 @@ class ContextOperation extends AbstractOperation
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+     * @var ContextFactoryInterface
      */
     protected $contextFactory;
 
@@ -70,7 +72,7 @@ class ContextOperation extends AbstractOperation
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         if (!isset($arguments[0]) || !is_array($arguments[0])) {
-            throw new \TYPO3\Eel\FlowQuery\FlowQueryException('context() requires an array argument of context properties', 1398030427);
+            throw new FlowQueryException('context() requires an array argument of context properties', 1398030427);
         }
 
         $output = array();
