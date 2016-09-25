@@ -12,10 +12,14 @@ namespace TYPO3\TYPO3CR\Domain\Service;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContentDimensionPresetSourceInterface;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Exception\WorkspaceException;
 use TYPO3\TYPO3CR\Service\Utility\NodePublishingDependencySolver;
 
@@ -29,25 +33,25 @@ class PublishingService implements PublishingServiceInterface
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
+     * @var WorkspaceRepository
      */
     protected $workspaceRepository;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+     * @var NodeDataRepository
      */
     protected $nodeDataRepository;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Factory\NodeFactory
+     * @var NodeFactory
      */
     protected $nodeFactory;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+     * @var ContextFactoryInterface
      */
     protected $contextFactory;
 
@@ -143,7 +147,7 @@ class PublishingService implements PublishingServiceInterface
      *
      * @param NodeInterface $node
      * @return void
-     * @throws \TYPO3\TYPO3CR\Exception\WorkspaceException
+     * @throws WorkspaceException
      * @api
      */
     public function discardNode(NodeInterface $node)
@@ -194,7 +198,7 @@ class PublishingService implements PublishingServiceInterface
         }
 
         foreach ($this->getUnpublishedNodes($workspace) as $node) {
-            /** @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node */
+            /** @var NodeInterface $node */
             if ($node->getPath() !== '/') {
                 $this->discardNode($node);
             }

@@ -16,6 +16,7 @@ use TYPO3\Flow\Cache\Frontend\StringFrontend;
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Utility\Environment;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use TYPO3\TYPO3CR\Exception;
 use TYPO3\TYPO3CR\Exception\NodeConfigurationException;
 use TYPO3\TYPO3CR\Exception\NodeTypeIsFinalException;
 use TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException;
@@ -169,11 +170,11 @@ class NodeTypeManager
      *
      * @param string $nodeTypeName Unique name of the new node type. Example: "TYPO3.Neos:Page"
      * @return NodeType
-     * @throws \TYPO3\TYPO3CR\Exception
+     * @throws Exception
      */
     public function createNodeType($nodeTypeName)
     {
-        throw new \TYPO3\TYPO3CR\Exception('Creation of node types not supported so far; tried to create "' . $nodeTypeName . '".', 1316449432);
+        throw new Exception('Creation of node types not supported so far; tried to create "' . $nodeTypeName . '".', 1316449432);
     }
 
     /**
@@ -231,7 +232,7 @@ class NodeTypeManager
      * @return NodeType
      * @throws NodeConfigurationException
      * @throws NodeTypeIsFinalException
-     * @throws \TYPO3\TYPO3CR\Exception
+     * @throws Exception
      */
     protected function loadNodeType($nodeTypeName, array &$completeNodeTypeConfiguration, array $fullNodeTypeConfigurationForType = null)
     {
@@ -240,7 +241,7 @@ class NodeTypeManager
         }
 
         if (!isset($completeNodeTypeConfiguration[$nodeTypeName])) {
-            throw new \TYPO3\TYPO3CR\Exception('Node type "' . $nodeTypeName . '" does not exist', 1316451800);
+            throw new Exception('Node type "' . $nodeTypeName . '" does not exist', 1316451800);
         }
 
         $nodeTypeConfiguration = $completeNodeTypeConfiguration[$nodeTypeName];
