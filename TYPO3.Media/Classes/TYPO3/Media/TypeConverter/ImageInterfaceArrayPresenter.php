@@ -12,9 +12,14 @@ namespace TYPO3\Media\TypeConverter;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;
+use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\TypeHandling;
+use TYPO3\Flow\Validation\Error;
 use TYPO3\Media\Domain\Model\ImageInterface;
+use TYPO3\Media\Domain\Model\ImageVariant;
 
 /**
  * This converter transforms \TYPO3\Media\Domain\Model\ImageInterface (Image or ImageVariant) objects to array representations.
@@ -27,7 +32,7 @@ class ImageInterfaceArrayPresenter extends AbstractTypeConverter
     /**
      * @var array
      */
-    protected $sourceTypes = array('TYPO3\Media\Domain\Model\ImageInterface');
+    protected $sourceTypes = array(ImageInterface::class);
 
     /**
      * @var string
@@ -41,7 +46,7 @@ class ImageInterfaceArrayPresenter extends AbstractTypeConverter
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
 
@@ -75,17 +80,17 @@ class ImageInterfaceArrayPresenter extends AbstractTypeConverter
      * @param ImageInterface $source
      * @param string $targetType must be 'string'
      * @param array $convertedChildProperties
-     * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
-     * @return string|\TYPO3\Flow\Validation\Error The converted Image, a Validation Error or NULL
+     * @param PropertyMappingConfigurationInterface $configuration
+     * @return string|Error The converted Image, a Validation Error or NULL
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
     {
         $data = array(
             '__identity' => $this->persistenceManager->getIdentifierByObject($source),
             '__type' => TypeHandling::getTypeForValue($source)
         );
 
-        if ($source instanceof \TYPO3\Media\Domain\Model\ImageVariant) {
+        if ($source instanceof ImageVariant) {
             $data['originalAsset'] = [
                 '__identity' => $this->persistenceManager->getIdentifierByObject($source->getOriginalAsset()),
             ];
@@ -94,7 +99,7 @@ class ImageInterfaceArrayPresenter extends AbstractTypeConverter
             foreach ($source->getAdjustments() as $adjustment) {
                 $index = TypeHandling::getTypeForValue($adjustment);
                 $adjustments[$index] = array();
-                foreach (\TYPO3\Flow\Reflection\ObjectAccess::getGettableProperties($adjustment) as $propertyName => $propertyValue) {
+                foreach (ObjectAccess::getGettableProperties($adjustment) as $propertyName => $propertyValue) {
                     $adjustments[$index][$propertyName] = $propertyValue;
                 }
             }

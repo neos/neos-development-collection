@@ -12,7 +12,15 @@ namespace TYPO3\Media\TypeConverter;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
+use TYPO3\Media\Domain\Model\Asset;
+use TYPO3\Media\Domain\Model\AssetInterface;
+use TYPO3\Media\Domain\Model\AssetVariantInterface;
+use TYPO3\Media\Domain\Model\Image;
+use TYPO3\Media\Domain\Model\ImageInterface;
+use TYPO3\Media\Domain\Model\ImageVariant;
+use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;
 
 /**
  * This converter transforms TYPO3.Media AssetInterface instances to arrays.
@@ -20,18 +28,18 @@ use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
  * @api
  * @Flow\Scope("singleton")
  */
-class ArrayConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter
+class ArrayConverter extends AbstractTypeConverter
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
 
     /**
      * @var array
      */
-    protected $sourceTypes = array('TYPO3\Media\Domain\Model\AssetInterface', 'TYPO3\Media\Domain\Model\ImageInterface', 'TYPO3\Media\Domain\Model\Image', 'TYPO3\Media\Domain\Model\Asset');
+    protected $sourceTypes = array(AssetInterface::class, ImageInterface::class, Image::class, Asset::class);
 
     /**
      * @var string
@@ -50,7 +58,7 @@ class ArrayConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConv
      */
     public function canConvertFrom($source, $targetType)
     {
-        return ($source instanceof \TYPO3\Media\Domain\Model\AssetInterface);
+        return ($source instanceof AssetInterface);
     }
 
 
@@ -67,10 +75,10 @@ class ArrayConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConv
             'resource' => $source->getResource()
         );
 
-        if ($source instanceof \TYPO3\Media\Domain\Model\AssetVariantInterface) {
+        if ($source instanceof AssetVariantInterface) {
             $sourceChildPropertiesToBeConverted['originalAsset'] = $source->getOriginalAsset();
         }
-        if ($source instanceof \TYPO3\Media\Domain\Model\ImageVariant) {
+        if ($source instanceof ImageVariant) {
             $sourceChildPropertiesToBeConverted['adjustments'] = $source->getAdjustments();
         }
 
@@ -82,10 +90,10 @@ class ArrayConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConv
      *
      * @param string $targetType is ignored
      * @param string $propertyName is ignored
-     * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration is ignored
+     * @param PropertyMappingConfigurationInterface $configuration is ignored
      * @return string always "array"
      */
-    public function getTypeOfChildProperty($targetType, $propertyName, \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration)
+    public function getTypeOfChildProperty($targetType, $propertyName, PropertyMappingConfigurationInterface $configuration)
     {
         return 'array';
     }
@@ -103,7 +111,7 @@ class ArrayConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConv
     {
         $identity = $this->persistenceManager->getIdentifierByObject($source);
         switch (true) {
-            case $source instanceof \TYPO3\Media\Domain\Model\ImageVariant:
+            case $source instanceof ImageVariant:
                 if (!isset($convertedChildProperties['originalAsset']) || !is_array($convertedChildProperties['originalAsset'])) {
                     return null;
                 }
@@ -115,7 +123,7 @@ class ArrayConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConv
                     'originalAsset' => $convertedChildProperties['originalAsset'],
                     'adjustments' => $convertedChildProperties['adjustments']
                 );
-            case $source instanceof \TYPO3\Media\Domain\Model\AssetInterface:
+            case $source instanceof AssetInterface:
                 if (!isset($convertedChildProperties['resource']) || !is_array($convertedChildProperties['resource'])) {
                     return null;
                 }

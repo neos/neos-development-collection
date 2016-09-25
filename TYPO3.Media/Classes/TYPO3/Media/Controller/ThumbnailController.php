@@ -12,6 +12,7 @@ namespace TYPO3\Media\Controller;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Media\Domain\Model\Thumbnail;
 use TYPO3\Media\Domain\Service\ThumbnailService;
 
@@ -20,7 +21,7 @@ use TYPO3\Media\Domain\Service\ThumbnailService;
  *
  * @Flow\Scope("singleton")
  */
-class ThumbnailController extends \TYPO3\Flow\Mvc\Controller\ActionController
+class ThumbnailController extends ActionController
 {
     /**
      * @Flow\Inject

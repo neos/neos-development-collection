@@ -12,9 +12,12 @@ namespace TYPO3\Media\ViewHelpers;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
+use TYPO3\Media\Domain\Service\AssetService;
+use TYPO3\Media\Domain\Service\ThumbnailService;
 
 /**
  * Renders an <img> HTML tag from a given TYPO3.Media's asset instance
@@ -68,20 +71,20 @@ use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
 class ThumbnailViewHelper extends AbstractTagBasedViewHelper
 {
     /**
-     * @var \TYPO3\Flow\Resource\ResourceManager
+     * @var ResourceManager
      * @Flow\Inject
      */
     protected $resourceManager;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Media\Domain\Service\ThumbnailService
+     * @var ThumbnailService
      */
     protected $thumbnailService;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Media\Domain\Service\AssetService
+     * @var AssetService
      */
     protected $assetService;
 
