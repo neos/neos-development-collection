@@ -16,8 +16,14 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\Algorithms;
+use TYPO3\TYPO3CR\Domain\Model\AbstractNodeData;
+use TYPO3\TYPO3CR\Domain\Model\ContentObjectProxy;
+use TYPO3\TYPO3CR\Domain\Model\NodeTemplate;
+use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface;
 use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
@@ -94,7 +100,7 @@ class NodeData extends AbstractNodeData
     /**
      * Workspace this node is contained in
      *
-     * @var \TYPO3\TYPO3CR\Domain\Model\Workspace
+     * @var Workspace
      *
      * Note: Since we compare workspace instances for various purposes it's unsafe to have a lazy relation
      * @ORM\ManyToOne
@@ -136,7 +142,7 @@ class NodeData extends AbstractNodeData
     /**
      * Optional proxy for a content object which acts as an alternative property container
      *
-     * @var \TYPO3\TYPO3CR\Domain\Model\ContentObjectProxy
+     * @var ContentObjectProxy
      * @ORM\ManyToOne
      */
     protected $contentObjectProxy;
@@ -225,7 +231,7 @@ class NodeData extends AbstractNodeData
      * in a Node object which will internally create a NodeData object.
      *
      * @param string $path Absolute path of this node
-     * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The workspace this node will be contained in
+     * @param Workspace $workspace The workspace this node will be contained in
      * @param string $identifier The node identifier (not the persistence object identifier!). Specifying this only makes sense while creating corresponding nodes
      * @param array $dimensions An array of dimension name to dimension values
      */
@@ -343,7 +349,7 @@ class NodeData extends AbstractNodeData
      * Sets the workspace of this node.
      *
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
+     * @param Workspace $workspace
      * @return void
      */
     public function setWorkspace(Workspace $workspace = null)
@@ -357,7 +363,7 @@ class NodeData extends AbstractNodeData
     /**
      * Returns the workspace this node is contained in
      *
-     * @return \TYPO3\TYPO3CR\Domain\Model\Workspace
+     * @return Workspace
      */
     public function getWorkspace()
     {
@@ -410,7 +416,7 @@ class NodeData extends AbstractNodeData
     /**
      * Returns the parent node of this node
      *
-     * @return \TYPO3\TYPO3CR\Domain\Model\NodeData The parent node or NULL if this is the root node
+     * @return NodeData The parent node or NULL if this is the root node
      */
     public function getParent()
     {
@@ -436,11 +442,11 @@ class NodeData extends AbstractNodeData
      * properties and creates default subnodes.
      *
      * @param string $name Name of the new node
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType Node type of the new node (optional)
+     * @param NodeType $nodeType Node type of the new node (optional)
      * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
-     * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
+     * @param Workspace $workspace
      * @param array $dimensions
-     * @return \TYPO3\TYPO3CR\Domain\Model\NodeData
+     * @return NodeData
      */
     public function createNodeData($name, NodeType $nodeType = null, $identifier = null, Workspace $workspace = null, array $dimensions = null)
     {
@@ -467,13 +473,13 @@ class NodeData extends AbstractNodeData
      * properties or creating subnodes.
      *
      * @param string $name Name of the new node
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType Node type of the new node (optional)
+     * @param NodeType $nodeType Node type of the new node (optional)
      * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
-     * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
+     * @param Workspace $workspace
      * @param array $dimensions An array of dimension name to dimension values
      * @throws NodeExistsException if a node with this path already exists.
      * @throws \InvalidArgumentException if the node name is not accepted.
-     * @return \TYPO3\TYPO3CR\Domain\Model\NodeData
+     * @return NodeData
      */
     public function createSingleNodeData($name, NodeType $nodeType = null, $identifier = null, Workspace $workspace = null, array $dimensions = null)
     {
@@ -499,11 +505,11 @@ class NodeData extends AbstractNodeData
     /**
      * Creates and persists a node from the given $nodeTemplate as child node
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeTemplate $nodeTemplate
+     * @param NodeTemplate $nodeTemplate
      * @param string $nodeName name of the new node. If not specified the name of the nodeTemplate will be used.
-     * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
+     * @param Workspace $workspace
      * @param array $dimensions
-     * @return \TYPO3\TYPO3CR\Domain\Model\NodeData the freshly generated node
+     * @return NodeData the freshly generated node
      */
     public function createNodeDataFromTemplate(NodeTemplate $nodeTemplate, $nodeName = null, Workspace $workspace = null, array $dimensions = null)
     {
@@ -735,7 +741,7 @@ class NodeData extends AbstractNodeData
      *  - content object
      * will be set to the same values as in the source node.
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\AbstractNodeData $sourceNode
+     * @param AbstractNodeData $sourceNode
      * @param boolean $isCopy
      * @return void
      */
@@ -996,7 +1002,7 @@ class NodeData extends AbstractNodeData
      * Adds this node to the Node Repository or updates it if it has been added earlier
      *
      * @param NodeData $nodeData Other NodeData object to addOrUpdate
-     * @throws \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
+     * @throws IllegalObjectTypeException
      */
     protected function addOrUpdate(NodeData $nodeData = null)
     {
