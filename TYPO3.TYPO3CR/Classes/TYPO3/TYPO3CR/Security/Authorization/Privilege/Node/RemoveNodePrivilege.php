@@ -50,6 +50,6 @@ class RemoveNodePrivilege extends AbstractNodePrivilege
      */
     protected function buildMethodPrivilegeMatcher()
     {
-        return 'within('.NodeInterface::class.') && method(.*->(remove|setRemoved)())';
+        return 'within(' . NodeInterface::class . ') && method(.*->(remove|setRemoved)())';
     }
 }
