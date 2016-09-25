@@ -56,7 +56,7 @@ class RuntimeFactory
         $uriBuilder = new UriBuilder();
         $uriBuilder->setRequest($request);
 
-        return new \TYPO3\Flow\Mvc\Controller\ControllerContext(
+        return new ControllerContext(
             $request,
             new Response(),
             new Arguments(array()),

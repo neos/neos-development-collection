@@ -109,7 +109,7 @@ class RuntimeContentCache
      * @param array $configuration
      * @param string $typoScriptPath
      * @return array An evaluate context array that needs to be passed to subsequent calls to pass the current state
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws Exception
      */
     public function enter(array $configuration, $typoScriptPath)
     {
