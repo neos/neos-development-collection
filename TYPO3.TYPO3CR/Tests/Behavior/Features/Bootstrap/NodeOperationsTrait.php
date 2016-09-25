@@ -359,7 +359,7 @@ trait NodeOperationsTrait
     /**
      * @When /^I publish the node$/
      */
-    public function iPublishNodeToWorkspaceWithTheFollowingContext()
+    public function iPublishTheNode()
     {
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__);
@@ -382,6 +382,13 @@ trait NodeOperationsTrait
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', 'string', escapeshellarg($sourceWorkspaceName)));
         } else {
+
+            /**
+             * FIXME: Workspace properties from the previous workspace
+             * like fallback dimensions are not available from this point forward.
+             * The method ``iPublishTheNode`` keeps all this information intact.
+             **/
+
             $sourceContext = $this->getContextForProperties(array('Workspace' => $sourceWorkspaceName));
             $sourceWorkspace = $sourceContext->getWorkspace();
 
