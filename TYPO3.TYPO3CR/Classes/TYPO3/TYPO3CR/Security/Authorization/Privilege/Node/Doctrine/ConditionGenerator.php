@@ -19,6 +19,7 @@ use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\DisjunctionGener
 use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\PropertyConditionGenerator;
 use TYPO3\Flow\Security\Exception\InvalidPrivilegeException;
 use TYPO3\Flow\Validation\Validator\UuidValidator;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactory;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
@@ -50,7 +51,7 @@ class ConditionGenerator extends EntityConditionGenerator
     /**
      * @var string
      */
-    protected $entityType = 'TYPO3\TYPO3CR\Domain\Model\NodeData';
+    protected $entityType = NodeData::class;
 
     /**
      * @param string $entityType

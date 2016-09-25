@@ -47,7 +47,7 @@ abstract class AbstractNodePropertyPrivilege extends AbstractNodePrivilege
     public function matchesSubject(PrivilegeSubjectInterface $subject)
     {
         if ($subject instanceof PropertyAwareNodePrivilegeSubject === false && $subject instanceof MethodPrivilegeSubject === false) {
-            throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\ReadNodePropertyPrivilege" only support subjects of type "TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\PropertyAwareNodePrivilegeSubject" or "TYPO3\Flow\Security\Method\MethodPrivilegeSubject", but we got a subject of type: "%s".', get_class($subject)), 1417018448);
+            throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "%s" only support subjects of type "%s" or "%s", but we got a subject of type: "%s".', ReadNodePropertyPrivilege::class, PropertyAwareNodePrivilegeSubject::class, MethodPrivilegeSubject::class, get_class($subject)), 1417018448);
         }
 
         $this->initialize();
