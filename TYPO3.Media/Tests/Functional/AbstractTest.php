@@ -11,7 +11,7 @@ namespace TYPO3\Media\Tests\Functional;
  * source code.
  */
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
-use TYPO3\Flow\Resource\Resource;
+use TYPO3\Flow\Resource\Resource as PersistentResource;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\Flow\Utility\Files;
@@ -50,7 +50,7 @@ abstract class AbstractTest extends FunctionalTestCase
     /**
      * Creates an Image object from a file using a mock resource (in order to avoid a database resource pointer entry)
      * @param string $imagePathAndFilename
-     * @return Resource
+     * @return PersistentResource
      */
     protected function getMockResourceByImagePath($imagePathAndFilename)
     {
@@ -66,7 +66,7 @@ abstract class AbstractTest extends FunctionalTestCase
      * file_put_content('resource://' . $hash) before
      *
      * @param string $hash
-     * @return Resource
+     * @return PersistentResource
      */
     protected function createMockResourceAndPointerFromHash($hash)
     {
