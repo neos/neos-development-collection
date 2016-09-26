@@ -70,7 +70,7 @@ abstract class AbstractTest extends FunctionalTestCase
      */
     protected function createMockResourceAndPointerFromHash($hash)
     {
-        $mockResource = $this->getMockBuilder(Resource::class)->setMethods(array('getHash', 'getUri'))->getMock();
+        $mockResource = $this->getMockBuilder(PersistentResource::class)->setMethods(array('getHash', 'getUri'))->getMock();
         $mockResource->expects($this->any())
                 ->method('getHash')
                 ->will($this->returnValue($hash));
