@@ -16,7 +16,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\ObjectManagerInterface;
-use TYPO3\Flow\Resource\Resource as FlowResource;
+use TYPO3\Flow\Resource\Resource as PersistentResource;
 use TYPO3\Media\Domain\Service\ImageService;
 use TYPO3\Media\Exception\ImageFileException;
 
@@ -44,9 +44,9 @@ class Image extends Asset implements ImageInterface, VariantSupportInterface
     /**
      * Constructor
      *
-     * @param FlowResource $resource
+     * @param PersistentResource $resource
      */
-    public function __construct(FlowResource $resource)
+    public function __construct(PersistentResource $resource)
     {
         parent::__construct($resource);
         $this->variants = new ArrayCollection();
@@ -115,11 +115,11 @@ class Image extends Asset implements ImageInterface, VariantSupportInterface
      * Calculates and sets the width and height of this Image asset based
      * on the given Resource.
      *
-     * @param FlowResource $resource
+     * @param PersistentResource $resource
      * @return void
      * @throws ImageFileException
      */
-    protected function calculateDimensionsFromResource(FlowResource $resource)
+    protected function calculateDimensionsFromResource(PersistentResource $resource)
     {
         try {
             $imageSize = $this->imageService->getImageSize($resource);
