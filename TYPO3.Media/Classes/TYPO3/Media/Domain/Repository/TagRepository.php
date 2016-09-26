@@ -12,19 +12,21 @@ namespace TYPO3\Media\Domain\Repository;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\QueryInterface;
 use TYPO3\Flow\Persistence\QueryResultInterface;
+use TYPO3\Flow\Persistence\Repository;
 
 /**
  * A repository for Tags
  *
  * @Flow\Scope("singleton")
  */
-class TagRepository extends \TYPO3\Flow\Persistence\Repository
+class TagRepository extends Repository
 {
     /**
      * @var array
      */
-    protected $defaultOrderings = array('label' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING);
+    protected $defaultOrderings = array('label' => QueryInterface::ORDER_ASCENDING);
 
     /**
      * @param string $searchTerm
