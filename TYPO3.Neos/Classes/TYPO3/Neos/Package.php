@@ -70,6 +70,9 @@ class Package extends BasePackage
                 $bootstrap->getObjectManager()->get('TYPO3\Neos\Routing\Cache\RouteCacheFlusher')->registerNodeChange($node);
             }
         });
+        $dispatcher->connect('TYPO3\TYPO3CR\Domain\Service\PublishingService', 'nodeDiscarded', function (NodeInterface $node) use ($bootstrap) {
+            $bootstrap->getObjectManager()->get('TYPO3\Neos\Routing\Cache\RouteCacheFlusher')->registerNodeChange($node);
+        });
         $dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodePathChanged', function (NodeInterface $node, $oldPath, $newPath, $recursion) {
             if (!$recursion) {
                 NodeUriPathSegmentGenerator::setUniqueUriPathSegment($node);
