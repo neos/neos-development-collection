@@ -13638,7 +13638,6 @@
 .neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-button.dropdown-toggle {
   width: 40px;
   padding: 0;
-  text-align: center;
 }
 .neos.media-browser .neos-media-assets .neos-thumbnails > li .neos-button.dropdown-toggle .icon-ellipsis-horizontal {
   line-height: 40px;
