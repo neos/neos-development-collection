@@ -21,7 +21,7 @@ use TYPO3\Flow\Security\Authentication\Controller\AbstractAuthenticationControll
 use TYPO3\Flow\Security\Exception\AuthenticationRequiredException;
 use TYPO3\Flow\Session\SessionInterface;
 use TYPO3\Flow\Session\SessionManagerInterface;
-use TYPO3\Flow\Tests\Functional\Mvc\ViewsConfiguration\Fixtures\TemplateView;
+use TYPO3\Fluid\View\TemplateView;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Service\BackendRedirectionService;
