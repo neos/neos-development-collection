@@ -12,6 +12,8 @@ namespace TYPO3\TYPO3CR\Migration\Transformations;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 
 /**
  * Change the node type.
@@ -20,7 +22,7 @@ class ChangeNodeType extends AbstractTransformation
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
+     * @var NodeTypeManager
      */
     protected $nodeTypeManager;
 
@@ -44,10 +46,10 @@ class ChangeNodeType extends AbstractTransformation
      * If the given node has the property this transformation should work on, this
      * returns TRUE if the given NodeType is registered with the NodeTypeManager and is not abstract.
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @param NodeData $node
      * @return boolean
      */
-    public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    public function isTransformable(NodeData $node)
     {
         return $this->nodeTypeManager->hasNodeType($this->newType) && !$this->nodeTypeManager->getNodeType($this->newType)->isAbstract();
     }
@@ -55,10 +57,10 @@ class ChangeNodeType extends AbstractTransformation
     /**
      * Change the Node Type on the given node.
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @param NodeData $node
      * @return void
      */
-    public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    public function execute(NodeData $node)
     {
         $nodeType = $this->nodeTypeManager->getNodeType($this->newType);
         $node->setNodeType($nodeType);

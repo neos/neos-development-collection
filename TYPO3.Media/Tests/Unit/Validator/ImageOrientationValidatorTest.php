@@ -11,20 +11,22 @@ namespace TYPO3\Media\Tests\Unit\Validator;
  * source code.
  */
 
+use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Media\Domain\Model\ImageInterface;
+use TYPO3\Media\Validator\ImageOrientationValidator;
 
 /**
  * Testcase for the ImageOrientationValidator
  *
  */
-class ImageOrientationValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ImageOrientationValidatorTest extends UnitTestCase
 {
     /**
      * @test
      */
     public function validatorReturnsErrorsIfGivenValueIsNoImage()
     {
-        $validator = new \TYPO3\Media\Validator\ImageOrientationValidator(array('allowedOrientations' => array(ImageInterface::ORIENTATION_LANDSCAPE)));
+        $validator = new ImageOrientationValidator(array('allowedOrientations' => array(ImageInterface::ORIENTATION_LANDSCAPE)));
 
         $value = new \stdClass();
         $this->assertTrue($validator->validate($value)->hasErrors());
@@ -52,8 +54,8 @@ class ImageOrientationValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function invalidOptionsTests(array $options)
     {
-        $validator = new \TYPO3\Media\Validator\ImageOrientationValidator($options);
-        $image = $this->createMock('TYPO3\Media\Domain\Model\ImageInterface');
+        $validator = new ImageOrientationValidator($options);
+        $image = $this->createMock(ImageInterface::class);
         $validator->validate($image);
     }
 
@@ -80,8 +82,8 @@ class ImageOrientationValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function validatorTests(array $options, $imageOrientation, $isValid)
     {
-        $validator = new \TYPO3\Media\Validator\ImageOrientationValidator($options);
-        $image = $this->createMock('TYPO3\Media\Domain\Model\ImageInterface');
+        $validator = new ImageOrientationValidator($options);
+        $image = $this->createMock(ImageInterface::class);
         $image->expects($this->any())->method('getOrientation')->will($this->returnValue($imageOrientation));
 
         $validationResult = $validator->validate($image);

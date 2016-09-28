@@ -13,6 +13,7 @@ namespace TYPO3\Neos\Domain\EventListener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Security\Account;
 
 /**
@@ -23,7 +24,7 @@ use TYPO3\Flow\Security\Account;
 class AccountPostEventListener
 {
     /**
-     * @var \TYPO3\Flow\Cache\CacheManager
+     * @var CacheManager
      * @Flow\Inject
      */
     protected $cacheManager;

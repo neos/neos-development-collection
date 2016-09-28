@@ -27,7 +27,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
     public function widthAndHeightDeterminedByExplicitlySetWidthAndHeightWithInsetMode()
     {
         /** @var ResizeImageAdjustment $adjustment */
-        $adjustment = $this->getAccessibleMock('TYPO3\Media\Domain\Model\Adjustment\ResizeImageAdjustment', array('dummy'));
+        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, array('dummy'));
 
         $originalDimensions = new Box(400, 300);
         $expectedDimensions = new Box(110, 83);
@@ -46,7 +46,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
     public function widthAndHeightDeterminedByExplicitlySetWidthAndHeightWithOutboundMode()
     {
         /** @var ResizeImageAdjustment $adjustment */
-        $adjustment = $this->getAccessibleMock('TYPO3\Media\Domain\Model\Adjustment\ResizeImageAdjustment', array('dummy'));
+        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, array('dummy'));
 
         $originalDimensions = new Box(400, 300);
         $expectedDimensions = new Box(110, 110);
@@ -64,7 +64,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
     public function ifWidthIsSetHeightIsDeterminedByTheOriginalAspectRatio()
     {
         /** @var ResizeImageAdjustment $adjustment */
-        $adjustment = $this->getAccessibleMock('TYPO3\Media\Domain\Model\Adjustment\ResizeImageAdjustment', array('dummy'));
+        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, array('dummy'));
 
         $originalDimensions = new Box(400, 300);
         $expectedDimensions = new Box(110, 83);
@@ -80,7 +80,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
     public function ifHeightIsSetWidthIsDeterminedByTheOriginalAspectRatio()
     {
         /** @var ResizeImageAdjustment $adjustment */
-        $adjustment = $this->getAccessibleMock('TYPO3\Media\Domain\Model\Adjustment\ResizeImageAdjustment', array('dummy'));
+        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, array('dummy'));
 
         $originalDimensions = new Box(400, 300);
         $expectedDimensions = new Box(127, 95);
@@ -96,7 +96,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
     public function minimumHeightIsGreaterZero()
     {
         /** @var ResizeImageAdjustment $adjustment */
-        $adjustment = $this->getAccessibleMock('TYPO3\Media\Domain\Model\Adjustment\ResizeImageAdjustment', array('dummy'), array(
+        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, array('dummy'), array(
             array(
                 'maximumWidth' => 250,
                 'maximumHeight' => 250,
@@ -116,7 +116,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
     public function minimumWidthIsGreaterZero()
     {
         /** @var ResizeImageAdjustment $adjustment */
-        $adjustment = $this->getAccessibleMock('TYPO3\Media\Domain\Model\Adjustment\ResizeImageAdjustment', array('dummy'), array(
+        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, array('dummy'), array(
             array(
                 'maximumWidth' => 250,
                 'maximumHeight' => 250,
@@ -168,7 +168,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
         );
 
         /** @var ResizeImageAdjustment $adjustment */
-        $adjustment = $this->getAccessibleMock('TYPO3\Media\Domain\Model\Adjustment\ResizeImageAdjustment', array('dummy'), array($options));
+        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, array('dummy'), array($options));
 
         $originalDimensions = new Box(400, 300);
         $expectedDimensions = new Box($expectedWidth, $expectedHeight);

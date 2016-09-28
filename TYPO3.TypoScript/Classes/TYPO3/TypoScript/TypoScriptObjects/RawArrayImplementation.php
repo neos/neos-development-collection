@@ -12,6 +12,7 @@ namespace TYPO3\TypoScript\TypoScriptObjects;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TypoScript\Core\Runtime;
 
 /**
  * Evaluate sub objects to an array (instead of a string as ArrayImplementation does)
@@ -34,7 +35,7 @@ class RawArrayImplementation extends ArrayImplementation
         $output = array();
         foreach ($sortedChildTypoScriptKeys as $key) {
             $value = $this->tsValue($key);
-            if ($value === null && $this->tsRuntime->getLastEvaluationStatus() === \TYPO3\TypoScript\Core\Runtime::EVALUATION_SKIPPED) {
+            if ($value === null && $this->tsRuntime->getLastEvaluationStatus() === Runtime::EVALUATION_SKIPPED) {
                 continue;
             }
             $output[$key] = $value;

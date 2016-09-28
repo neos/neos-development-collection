@@ -35,7 +35,7 @@ class MigrationStatusRepositoryTest extends FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->repository = $this->objectManager->get('TYPO3\TYPO3CR\Migration\Domain\Repository\MigrationStatusRepository');
+        $this->repository = $this->objectManager->get(MigrationStatusRepository::class);
     }
 
     /**

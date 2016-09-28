@@ -10,11 +10,12 @@ namespace TYPO3\Neos\Routing\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Neos\Routing\Exception;
 
 /**
  * A "no such node" exception
  */
-class NoSuchNodeException extends \TYPO3\Neos\Routing\Exception
+class NoSuchNodeException extends Exception
 {
     /**
      * @var integer

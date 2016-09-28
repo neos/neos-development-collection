@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Migration\Transformations;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 
 /**
  * Rename a given node.
@@ -39,10 +40,10 @@ class RenameNode extends AbstractTransformation
     /**
      * Returns TRUE if the given node does not yet have the new name.
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @param NodeData $node
      * @return boolean
      */
-    public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    public function isTransformable(NodeData $node)
     {
         return ($node->getName() !== $this->newName);
     }
@@ -50,10 +51,10 @@ class RenameNode extends AbstractTransformation
     /**
      * Renames the node to the new name.
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @param NodeData $node
      * @return void
      */
-    public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    public function execute(NodeData $node)
     {
         $newNodePath = $node->getParentPath() . '/' . $this->newName;
         $node->setPath($newNodePath);

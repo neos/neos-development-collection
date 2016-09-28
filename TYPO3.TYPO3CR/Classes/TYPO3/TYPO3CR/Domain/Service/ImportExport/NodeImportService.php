@@ -11,10 +11,14 @@ namespace TYPO3\TYPO3CR\Domain\Service\ImportExport;
  * source code.
  */
 
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Type;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Persistence\Doctrine\DataTypes\JsonArrayType;
+use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\Flow\Utility\Now;
@@ -42,7 +46,7 @@ class NodeImportService
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Property\PropertyMapper
+     * @var PropertyMapper
      */
     protected $propertyMapper;
 
@@ -51,7 +55,7 @@ class NodeImportService
      * interface ...
      *
      * @Flow\Inject
-     * @var \Doctrine\Common\Persistence\ObjectManager
+     * @var ObjectManager
      */
     protected $entityManager;
 
@@ -499,7 +503,7 @@ class NodeImportService
             $propertyValue = array($propertyValue);
         }
         foreach ($propertyValue as $possibleEntity) {
-            if (is_object($possibleEntity) && $possibleEntity instanceof \TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface) {
+            if (is_object($possibleEntity) && $possibleEntity instanceof PersistenceMagicInterface) {
                 $this->persistenceManager->isNewObject($possibleEntity) ? $this->persistenceManager->add($possibleEntity) : $this->persistenceManager->update($possibleEntity);
 
                 // TODO: Needed because the originalAsset will not cascade persist. We should find a generic solution to this.
@@ -603,7 +607,7 @@ class NodeImportService
         }
 
         // cleanup old data
-        /** @var \Doctrine\DBAL\Connection $connection */
+        /** @var Connection $connection */
         $connection = $this->entityManager->getConnection();
 
         // prepare node dimensions
@@ -635,7 +639,7 @@ class NodeImportService
         $queryBuilder = $this->entityManager->createQueryBuilder();
         $queryBuilder
             ->delete()
-            ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+            ->from(NodeData::class, 'n')
             ->where('n.identifier = :identifier')
             ->andWhere('n.dimensionsHash = :dimensionsHash')
             ->andWhere('n.workspace = :workspace')

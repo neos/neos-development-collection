@@ -12,6 +12,9 @@ namespace TYPO3\Neos\Domain\Repository;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\QueryResultInterface;
+use TYPO3\Flow\Persistence\Repository;
+use TYPO3\Neos\Domain\Model\Site;
 
 /**
  * The Site Repository
@@ -19,12 +22,12 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Scope("singleton")
  * @api
  */
-class SiteRepository extends \TYPO3\Flow\Persistence\Repository
+class SiteRepository extends Repository
 {
     /**
      * Finds the first site
      *
-     * @return \TYPO3\Neos\Domain\Model\Site The first site or NULL if none exists
+     * @return Site The first site or NULL if none exists
      * @api
      */
     public function findFirst()
@@ -35,17 +38,17 @@ class SiteRepository extends \TYPO3\Flow\Persistence\Repository
     /**
      * Find all sites with status "online"
      *
-     * @return \TYPO3\Flow\Persistence\QueryResultInterface
+     * @return QueryResultInterface
      */
     public function findOnline()
     {
-        return $this->findByState(\TYPO3\Neos\Domain\Model\Site::STATE_ONLINE);
+        return $this->findByState(Site::STATE_ONLINE);
     }
 
     /**
      * Find first site with status "online"
      *
-     * @return \TYPO3\Neos\Domain\Model\Site
+     * @return Site
      */
     public function findFirstOnline()
     {

@@ -13,6 +13,7 @@ namespace TYPO3\Neos\Aspects;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\JoinPointInterface;
+use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 
 /**
  * @Flow\Scope("singleton")
@@ -22,13 +23,13 @@ class TypoScriptCachingAspect
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
+     * @var VariableFrontend
      */
     protected $typoScriptCache;
 
     /**
      * @Flow\Around("setting(TYPO3.Neos.typoScript.enableObjectTreeCache) && method(TYPO3\Neos\Domain\Service\TypoScriptService->getMergedTypoScriptObjectTree())")
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
+     * @param JoinPointInterface $joinPoint The current join point
      * @return mixed
      */
     public function cacheGetMergedTypoScriptObjectTree(JoinPointInterface $joinPoint)

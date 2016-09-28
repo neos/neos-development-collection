@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Eel\FlowQueryOperations;
  */
 
 use TYPO3\Eel\FlowQuery\FlowQuery;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Tests\Functional\AbstractNodeTest;
 
 /**
@@ -91,7 +92,7 @@ class ParentsUntilOperationTest extends AbstractNodeTest
      */
     public function parentsUntilOperationTests(array $currentNodePaths, $subject, array $expectedNodePaths, array $unexpectedNodePaths)
     {
-        $nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+        $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
         $testNodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType');
 
 

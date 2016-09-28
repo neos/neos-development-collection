@@ -12,8 +12,10 @@ namespace TYPO3\TYPO3CR\Eel\FlowQueryOperations;
  */
 
 use TYPO3\Eel\FlowQuery\FlowQuery;
+use TYPO3\Eel\FlowQuery\FlowQueryException;
 use TYPO3\Eel\FlowQuery\Operations\AbstractOperation;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
@@ -67,7 +69,7 @@ class PropertyOperation extends AbstractOperation
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         if (!isset($arguments[0]) || empty($arguments[0])) {
-            throw new \TYPO3\Eel\FlowQuery\FlowQueryException('property() does not support returning all attributes yet', 1332492263);
+            throw new FlowQueryException('property() does not support returning all attributes yet', 1332492263);
         } else {
             $context = $flowQuery->getContext();
             $propertyPath = $arguments[0];
@@ -78,7 +80,7 @@ class PropertyOperation extends AbstractOperation
 
             $element = $context[0];
             if ($propertyPath[0] === '_') {
-                return \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($element, substr($propertyPath, 1));
+                return ObjectAccess::getPropertyPath($element, substr($propertyPath, 1));
             } else {
                 return $element->getProperty($propertyPath);
             }

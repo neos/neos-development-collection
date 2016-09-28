@@ -10,19 +10,22 @@ namespace TYPO3\Media\Tests\Unit\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Media\Domain\Model\ImageInterface;
+use TYPO3\Media\Validator\ImageSizeValidator;
 
 /**
  * Testcase for the ImageSizeValidator
  *
  */
-class ImageSizeValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ImageSizeValidatorTest extends UnitTestCase
 {
     /**
      * @test
      */
     public function validatorReturnsErrorsIfGivenValueIsNoImage()
     {
-        $validator = new \TYPO3\Media\Validator\ImageSizeValidator(array('minimumWidth' => 123));
+        $validator = new ImageSizeValidator(array('minimumWidth' => 123));
 
         $value = new \stdClass();
         $this->assertTrue($validator->validate($value)->hasErrors());
@@ -50,8 +53,8 @@ class ImageSizeValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function invalidOptionsTests(array $options)
     {
-        $validator = new \TYPO3\Media\Validator\ImageSizeValidator($options);
-        $image = $this->createMock('TYPO3\Media\Domain\Model\ImageInterface');
+        $validator = new ImageSizeValidator($options);
+        $image = $this->createMock(ImageInterface::class);
         $validator->validate($image);
     }
 
@@ -98,8 +101,8 @@ class ImageSizeValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function validatorTests(array $options, $imageWidth, $imageHeight, $isValid)
     {
-        $validator = new \TYPO3\Media\Validator\ImageSizeValidator($options);
-        $image = $this->createMock('TYPO3\Media\Domain\Model\ImageInterface');
+        $validator = new ImageSizeValidator($options);
+        $image = $this->createMock(ImageInterface::class);
         $image->expects($this->any())->method('getWidth')->will($this->returnValue($imageWidth));
         $image->expects($this->any())->method('getHeight')->will($this->returnValue($imageHeight));
 

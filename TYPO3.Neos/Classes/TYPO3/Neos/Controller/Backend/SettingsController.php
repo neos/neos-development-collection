@@ -12,13 +12,14 @@ namespace TYPO3\Neos\Controller\Backend;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Utility\PositionalArraySorter;
 
 /**
  * @Flow\Scope("singleton")
  */
-class SettingsController extends \TYPO3\Flow\Mvc\Controller\ActionController
+class SettingsController extends ActionController
 {
     /**
      * @return string

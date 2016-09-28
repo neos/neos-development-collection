@@ -12,45 +12,51 @@ namespace TYPO3\Neos\Controller\Backend;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\Frontend\StringFrontend;
 use TYPO3\Flow\I18n\Locale;
+use TYPO3\Flow\Mvc\Controller\ActionController;
+use TYPO3\Flow\Session\SessionInterface;
 use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\Neos\Domain\Model\Site;
+use TYPO3\Neos\Service\BackendRedirectionService;
+use TYPO3\Neos\Service\LinkingService;
+use TYPO3\Neos\Service\XliffService;
 
 /**
  * The Neos Backend controller
  *
  * @Flow\Scope("singleton")
  */
-class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController
+class BackendController extends ActionController
 {
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Service\BackendRedirectionService
+     * @var BackendRedirectionService
      */
     protected $backendRedirectionService;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Service\XliffService
+     * @var XliffService
      */
     protected $xliffService;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Service\LinkingService
+     * @var LinkingService
      */
     protected $linkingService;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Cache\Frontend\StringFrontend
+     * @var StringFrontend
      */
     protected $loginTokenCache;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Session\SessionInterface
+     * @var SessionInterface
      */
     protected $currentSession;
 

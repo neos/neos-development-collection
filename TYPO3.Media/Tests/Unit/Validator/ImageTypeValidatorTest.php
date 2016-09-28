@@ -12,6 +12,7 @@ namespace TYPO3\Media\Tests\Unit\Validator;
  */
 
 use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Validator\ImageTypeValidator;
 
 /**
@@ -52,7 +53,7 @@ class ImageTypeValidatorTest extends UnitTestCase
      */
     public function validatorTests(array $options, $actualMediaType, $supposedToBeValid)
     {
-        $image = $this->getMockBuilder('TYPO3\Media\Domain\Model\Image')->disableOriginalConstructor()->getMock();
+        $image = $this->getMockBuilder(Image::class)->disableOriginalConstructor()->getMock();
         $image->expects($this->any())->method('getMediaType')->will($this->returnValue($actualMediaType));
 
         $validator = new ImageTypeValidator($options);

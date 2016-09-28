@@ -41,7 +41,7 @@ class RouteCacheAspect
      * Add the current node and all parent identifiers to be used for cache entry tagging
      *
      * @Flow\Before("method(TYPO3\Flow\Mvc\Routing\RouterCachingService->extractUuids())")
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
+     * @param JoinPointInterface $joinPoint The current join point
      * @return void
      */
     public function addCurrentNodeIdentifier(JoinPointInterface $joinPoint)
