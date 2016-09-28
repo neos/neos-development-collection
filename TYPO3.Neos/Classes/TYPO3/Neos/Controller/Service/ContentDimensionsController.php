@@ -14,7 +14,7 @@ namespace TYPO3\Neos\Controller\Service;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Flow\Mvc\View\JsonView;
-use TYPO3\Flow\Tests\Functional\Mvc\ViewsConfiguration\Fixtures\TemplateView;
+use TYPO3\Fluid\View\TemplateView;
 use TYPO3\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 
