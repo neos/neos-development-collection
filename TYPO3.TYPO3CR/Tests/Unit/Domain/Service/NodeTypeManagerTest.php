@@ -11,6 +11,7 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Service;
  * source code.
  */
 
+use TYPO3\Flow\Cache\Frontend\StringFrontend;
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
@@ -46,7 +47,7 @@ class NodeTypeManagerTest extends UnitTestCase
 
         $this->mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
 
-        $mockCache = $this->getMockBuilder(\TYPO3\Flow\Cache\Frontend\StringFrontend::class)->disableOriginalConstructor()->getMock();
+        $mockCache = $this->getMockBuilder(StringFrontend::class)->disableOriginalConstructor()->getMock();
         $mockCache->expects($this->any())->method('get')->willReturn(null);
         $this->inject($this->nodeTypeManager, 'fullConfigurationCache', $mockCache);
 

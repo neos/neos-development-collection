@@ -10,17 +10,23 @@ namespace TYPO3\Neos\Tests\Unit\View;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Http\Response;
+use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Security\Context;
+use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Neos\Domain\Service\ContentContext;
+use TYPO3\Neos\Domain\Service\TypoScriptService;
 use TYPO3\Neos\View\TypoScriptView;
 use TYPO3\TYPO3CR\Domain\Model\Node;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\Core\Runtime;
 
 /**
  * Testcase for the TypoScript View
  *
  */
-class TypoScriptViewTest extends \TYPO3\Flow\Tests\UnitTestCase
+class TypoScriptViewTest extends UnitTestCase
 {
     /**
      * @var ContentContext
@@ -54,27 +60,27 @@ class TypoScriptViewTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setUpMockView()
     {
-        $this->mockContext = $this->getMockBuilder('TYPO3\Neos\Domain\Service\ContentContext')->disableOriginalConstructor()->getMock();
+        $this->mockContext = $this->getMockBuilder(ContentContext::class)->disableOriginalConstructor()->getMock();
 
-        $mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
-        $this->mockContextualizedNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Node')->setMethods(array('getContext'))->setConstructorArgs(array($mockNode, $this->mockContext))->getMock();
-        $mockSiteNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $mockNode = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
+        $this->mockContextualizedNode = $this->getMockBuilder(Node::class)->setMethods(array('getContext'))->setConstructorArgs(array($mockNode, $this->mockContext))->getMock();
+        $mockSiteNode = $this->createMock(NodeInterface::class);
 
         $this->mockContext->expects($this->any())->method('getCurrentSiteNode')->will($this->returnValue($mockSiteNode));
         $this->mockContext->expects($this->any())->method('getDimensions')->will($this->returnValue(array()));
 
         $this->mockContextualizedNode->expects($this->any())->method('getContext')->will($this->returnValue($this->mockContext));
 
-        $this->mockRuntime = $this->getMockBuilder('TYPO3\TypoScript\Core\Runtime')->disableOriginalConstructor()->getMock();
+        $this->mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
 
-        $mockControllerContext = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\ControllerContext')->disableOriginalConstructor()->getMock();
+        $mockControllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockSecurityContext = $this->getMockBuilder('TYPO3\Flow\Security\Context')->disableOriginalConstructor()->getMock();
+        $this->mockSecurityContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
-        $mockTypoScriptService = $this->createMock('TYPO3\Neos\Domain\Service\TypoScriptService');
+        $mockTypoScriptService = $this->createMock(TypoScriptService::class);
         $mockTypoScriptService->expects($this->any())->method('createRuntime')->will($this->returnValue($this->mockRuntime));
 
-        $this->mockView = $this->getAccessibleMock('TYPO3\Neos\View\TypoScriptView', array('getClosestDocumentNode'));
+        $this->mockView = $this->getAccessibleMock(TypoScriptView::class, array('getClosestDocumentNode'));
         $this->mockView->expects($this->any())->method('getClosestDocumentNode')->will($this->returnValue($this->mockContextualizedNode));
 
         $this->inject($this->mockView, 'controllerContext', $mockControllerContext);
@@ -90,7 +96,7 @@ class TypoScriptViewTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function attemptToRenderWithoutNodeInformationAtAllThrowsException()
     {
-        $view = $this->getAccessibleMock('TYPO3\Neos\View\TypoScriptView', array('dummy'));
+        $view = $this->getAccessibleMock(TypoScriptView::class, array('dummy'));
         $view->render();
     }
 
@@ -100,7 +106,7 @@ class TypoScriptViewTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function attemptToRenderWithInvalidNodeInformationThrowsException()
     {
-        $view = $this->getAccessibleMock('TYPO3\Neos\View\TypoScriptView', array('dummy'));
+        $view = $this->getAccessibleMock(TypoScriptView::class, array('dummy'));
         $view->_set('variables', array('value' => 'foo'));
         $view->render();
     }
@@ -120,32 +126,32 @@ class TypoScriptViewTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function renderMergesHttpResponseIfOutputIsHttpMessage()
     {
-        $mockContext = $this->getMockBuilder('TYPO3\Neos\Domain\Service\ContentContext')->disableOriginalConstructor()->getMock();
+        $mockContext = $this->getMockBuilder(ContentContext::class)->disableOriginalConstructor()->getMock();
 
-        $mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
-        $mockContextualizedNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Node')->setMethods(array('getContext'))->setConstructorArgs(array($mockNode, $mockContext))->getMock();
-        $mockSiteNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $mockNode = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
+        $mockContextualizedNode = $this->getMockBuilder(Node::class)->setMethods(array('getContext'))->setConstructorArgs(array($mockNode, $mockContext))->getMock();
+        $mockSiteNode = $this->createMock(NodeInterface::class);
 
         $mockContext->expects($this->any())->method('getCurrentSiteNode')->will($this->returnValue($mockSiteNode));
         $mockContext->expects($this->any())->method('getDimensions')->will($this->returnValue(array()));
 
         $mockContextualizedNode->expects($this->any())->method('getContext')->will($this->returnValue($mockContext));
 
-        $mockResponse = $this->createMock('TYPO3\Flow\Http\Response');
+        $mockResponse = $this->createMock(Response::class);
 
-        $mockControllerContext = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\ControllerContext')->disableOriginalConstructor()->getMock();
+        $mockControllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
         $mockControllerContext->expects($this->any())->method('getResponse')->will($this->returnValue($mockResponse));
 
-        $mockRuntime = $this->getMockBuilder('TYPO3\TypoScript\Core\Runtime')->disableOriginalConstructor()->getMock();
+        $mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
         $mockRuntime->expects($this->any())->method('render')->will($this->returnValue("HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\nMessage body"));
         $mockRuntime->expects($this->any())->method('getControllerContext')->will($this->returnValue($mockControllerContext));
 
-        $mockTypoScriptService = $this->createMock('TYPO3\Neos\Domain\Service\TypoScriptService');
+        $mockTypoScriptService = $this->createMock(TypoScriptService::class);
         $mockTypoScriptService->expects($this->any())->method('createRuntime')->will($this->returnValue($mockRuntime));
 
-        $mockSecurityContext = $this->getMockBuilder('TYPO3\Flow\Security\Context')->disableOriginalConstructor()->getMock();
+        $mockSecurityContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
-        $view = $this->getAccessibleMock('TYPO3\Neos\View\TypoScriptView', array('getClosestDocumentNode'));
+        $view = $this->getAccessibleMock(TypoScriptView::class, array('getClosestDocumentNode'));
         $view->expects($this->any())->method('getClosestDocumentNode')->will($this->returnValue($mockContextualizedNode));
 
         $this->inject($view, 'securityContext', $mockSecurityContext);

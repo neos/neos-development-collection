@@ -10,6 +10,7 @@ namespace TYPO3\TYPO3CR\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\TYPO3CR\Domain\Service\Context;
 
 /**
  * ContextFactory Interface
@@ -22,7 +23,7 @@ interface ContextFactoryInterface
      * created before then the existing one is returned.
      *
      * The context properties to give depend on the implementation of the context object, for the
-     * TYPO3\TYPO3CR\Domain\Service\Context it should look like this:
+     * Context it should look like this:
      *
      * array(
      *        'workspaceName' => 'live',
@@ -34,7 +35,7 @@ interface ContextFactoryInterface
      * )
      *
      * @param array $contextConfiguration
-     * @return \TYPO3\TYPO3CR\Domain\Service\Context
+     * @return Context
      * @api
      */
     public function create(array $contextConfiguration = array());

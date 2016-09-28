@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Tests\Unit\Service;
  */
 
 use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Neos\Exception;
 use TYPO3\Neos\Service\HtmlAugmenter;
 
 /**
@@ -246,7 +247,7 @@ class HtmlAugmenterTest extends UnitTestCase
      * @param array $exclusiveAttributes
      * @test
      * @dataProvider invalidAttributesDataProvider
-     * @expectedException \TYPO3\Neos\Exception
+     * @expectedException Exception
      */
     public function invalidAttributesTests($html, array $attributes, $fallbackTagName, $exclusiveAttributes)
     {

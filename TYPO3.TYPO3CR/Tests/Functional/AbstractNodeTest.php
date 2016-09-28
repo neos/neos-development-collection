@@ -11,14 +11,21 @@ namespace TYPO3\TYPO3CR\Tests\Functional;
  * source code.
  */
 
+use TYPO3\Flow\Package\PackageManager;
+use TYPO3\Flow\Package\PackageManagerInterface;
+use TYPO3\Flow\Property\PropertyMapper;
+use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\Neos\Domain\Service\SiteImportService;
+use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 
 /**
  * Base test case for nodes
  */
-abstract class AbstractNodeTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+abstract class AbstractNodeTest extends FunctionalTestCase
 {
     /**
      * @var boolean
@@ -52,7 +59,7 @@ abstract class AbstractNodeTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     protected $node;
 
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+     * @var ContextFactoryInterface
      */
     protected $contextFactory;
 
@@ -84,15 +91,15 @@ abstract class AbstractNodeTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 
         if ($this->liveWorkspace === null) {
             $this->liveWorkspace = new Workspace('live');
-            $this->workspaceRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
+            $this->workspaceRepository = $this->objectManager->get(WorkspaceRepository::class);
             $this->workspaceRepository->add($this->liveWorkspace);
             $this->workspaceRepository->add(new Workspace('test', $this->liveWorkspace));
             $this->persistenceManager->persistAll();
         }
 
-        $this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
+        $this->contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
         $contentContext = $this->contextFactory->create(array('workspaceName' => 'live'));
-        $siteImportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteImportService');
+        $siteImportService = $this->objectManager->get(SiteImportService::class);
         $siteImportService->importFromFile($this->fixtureFileName, $contentContext);
         $this->persistenceManager->persistAll();
 
@@ -109,9 +116,9 @@ abstract class AbstractNodeTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     protected function getNodeWithContextPath($contextPath)
     {
-        /* @var $propertyMapper \TYPO3\Flow\Property\PropertyMapper */
-        $propertyMapper = $this->objectManager->get('TYPO3\Flow\Property\PropertyMapper');
-        $node = $propertyMapper->convert($contextPath, 'TYPO3\TYPO3CR\Domain\Model\Node');
+        /* @var $propertyMapper PropertyMapper */
+        $propertyMapper = $this->objectManager->get(PropertyMapper::class);
+        $node = $propertyMapper->convert($contextPath, Node::class);
         $this->assertFalse($propertyMapper->getMessages()->hasErrors(), 'There were errors converting ' . $contextPath);
         return $node;
     }
@@ -125,7 +132,7 @@ abstract class AbstractNodeTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 
     protected function markSkippedIfNodeTypesPackageIsNotInstalled()
     {
-        $packageManager = $this->objectManager->get('TYPO3\Flow\Package\PackageManagerInterface');
+        $packageManager = $this->objectManager->get(PackageManagerInterface::class);
         if (!$packageManager->isPackageActive('TYPO3.Neos.NodeTypes')) {
             $this->markTestSkipped('This test needs the TYPO3.Neos.NodeTypes package.');
         }

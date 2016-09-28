@@ -12,6 +12,8 @@ namespace TYPO3\TypoScript\Tests\Unit\TypoScriptObjects;
  */
 
 use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\TypoScript\Core\Runtime;
+use TYPO3\TypoScript\TypoScriptObjects\CaseImplementation;
 
 /**
  * Testcase for the Case object
@@ -26,7 +28,7 @@ class CaseImplementationTest extends \TYPO3\Flow\Tests\UnitTestCase
         $path = 'page/body/content/main';
         $ignoredProperties = array('nodePath');
 
-        $mockTsRuntime = $this->getMockBuilder('TYPO3\TypoScript\Core\Runtime')->disableOriginalConstructor()->getMock();
+        $mockTsRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
         $mockTsRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($evaluatePath, $that) use ($path, $ignoredProperties) {
             $relativePath = str_replace($path . '/', '', $evaluatePath);
             switch ($relativePath) {
@@ -37,7 +39,7 @@ class CaseImplementationTest extends \TYPO3\Flow\Tests\UnitTestCase
         }));
 
         $typoScriptObjectName = 'TYPO3.Neos:PrimaryContent';
-        $renderer = new \TYPO3\TypoScript\TypoScriptObjects\CaseImplementation($mockTsRuntime, $path, $typoScriptObjectName);
+        $renderer = new CaseImplementation($mockTsRuntime, $path, $typoScriptObjectName);
         $renderer->setIgnoreProperties($ignoredProperties);
 
         $renderer['nodePath'] = 'main';

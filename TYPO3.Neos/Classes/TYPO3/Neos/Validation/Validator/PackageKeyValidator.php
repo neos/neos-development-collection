@@ -12,16 +12,18 @@ namespace TYPO3\Neos\Validation\Validator;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Package\PackageInterface;
+use TYPO3\Flow\Validation\Validator\RegularExpressionValidator;
 
 /**
  * Validator for package keys
  */
-class PackageKeyValidator extends \TYPO3\Flow\Validation\Validator\RegularExpressionValidator
+class PackageKeyValidator extends RegularExpressionValidator
 {
     /**
      * @var array
      */
     protected $supportedOptions = array(
-        'regularExpression' => array(\TYPO3\Flow\Package\PackageInterface::PATTERN_MATCH_PACKAGEKEY, 'The regular expression to use for validation, used as given', 'string')
+        'regularExpression' => array(PackageInterface::PATTERN_MATCH_PACKAGEKEY, 'The regular expression to use for validation, used as given', 'string')
     );
 }

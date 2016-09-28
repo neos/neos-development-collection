@@ -12,6 +12,8 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Unicode\Functions;
+use TYPO3\TYPO3CR\Domain\Model\AbstractNodeData;
 
 /**
  * The default node label generator; used if no-other is configured
@@ -23,7 +25,7 @@ class FallbackNodeDataLabelGenerator implements NodeDataLabelGeneratorInterface
     /**
      * Render a node label
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\AbstractNodeData $nodeData
+     * @param AbstractNodeData $nodeData
      * @param boolean $crop This argument is deprecated as of Neos 1.2 and will be removed. Don't rely on this behavior and crop labels in the view.
      * @return string
      */
@@ -41,7 +43,7 @@ class FallbackNodeDataLabelGenerator implements NodeDataLabelGeneratorInterface
             return $label;
         }
 
-        $croppedLabel = trim(\TYPO3\Flow\Utility\Unicode\Functions::substr($label, 0, 30));
+        $croppedLabel = trim(Functions::substr($label, 0, 30));
         return $croppedLabel . (strlen($croppedLabel) < strlen($label) ? ' …' : '');
     }
 }

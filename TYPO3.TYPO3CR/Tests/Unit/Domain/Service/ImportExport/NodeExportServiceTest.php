@@ -13,7 +13,9 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Service\ImportExport;
 
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeExportService;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 
 /**
  * Tests for the NodeExportService class
@@ -39,7 +41,7 @@ class NodeExportServiceTest extends UnitTestCase
     public function exportEmptyListOfNodesCreatesEmptyXml()
     {
         /** @var NodeExportService|\PHPUnit_Framework_MockObject_MockObject $nodeExportService */
-        $nodeExportService = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeExportService')->setMethods(array('findNodeDataListToExport'))->getMock();
+        $nodeExportService = $this->getMockBuilder(NodeExportService::class)->setMethods(array('findNodeDataListToExport'))->getMock();
         $this->inject($nodeExportService, 'securityContext', $this->mockSecurityContext);
 
         $nodeDataList = array();
@@ -59,9 +61,9 @@ class NodeExportServiceTest extends UnitTestCase
     public function exportRootNodeCreatesSingleNode()
     {
         /** @var NodeExportService|\PHPUnit_Framework_MockObject_MockObject $nodeExportService */
-        $nodeExportService = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeExportService')->setMethods(array('findNodeDataListToExport'))->getMock();
+        $nodeExportService = $this->getMockBuilder(NodeExportService::class)->setMethods(array('findNodeDataListToExport'))->getMock();
         $this->inject($nodeExportService, 'securityContext', $this->mockSecurityContext);
-        $nodeTypeManager = $this->createMock('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+        $nodeTypeManager = $this->createMock(NodeTypeManager::class);
         $this->inject($nodeExportService, 'nodeTypeManager', $nodeTypeManager);
         $nodeTypeManager->expects($this->once())->method('hasNodeType')->willReturn(false);
 
@@ -98,9 +100,9 @@ class NodeExportServiceTest extends UnitTestCase
     public function exportNodeWithoutParentSkipsBrokenNode()
     {
         /** @var NodeExportService|\PHPUnit_Framework_MockObject_MockObject $nodeExportService */
-        $nodeExportService = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeExportService')->setMethods(array('findNodeDataListToExport'))->getMock();
+        $nodeExportService = $this->getMockBuilder(NodeExportService::class)->setMethods(array('findNodeDataListToExport'))->getMock();
         $this->inject($nodeExportService, 'securityContext', $this->mockSecurityContext);
-        $nodeTypeManager = $this->createMock('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+        $nodeTypeManager = $this->createMock(NodeTypeManager::class);
         $this->inject($nodeExportService, 'nodeTypeManager', $nodeTypeManager);
         $nodeTypeManager->expects($this->once())->method('hasNodeType')->willReturn(false);
 

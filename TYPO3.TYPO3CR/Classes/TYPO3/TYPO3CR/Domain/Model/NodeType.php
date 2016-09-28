@@ -12,8 +12,11 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\Arrays;
+use TYPO3\Flow\Utility\PositionalArraySorter;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Exception\InvalidNodeTypePostprocessorException;
 use TYPO3\TYPO3CR\NodeTypePostprocessor\NodeTypePostprocessorInterface;
 use TYPO3\TYPO3CR\Utility;
@@ -73,13 +76,13 @@ class NodeType
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     * @var ObjectManagerInterface
      */
     protected $objectManager;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
+     * @var NodeTypeManager
      */
     protected $nodeTypeManager;
 
@@ -157,12 +160,12 @@ class NodeType
         $mergedConfiguration = array();
         $applicableSuperTypes = $this->buildInheritanceChain();
         foreach ($applicableSuperTypes as $key => $superType) {
-            $mergedConfiguration = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $superType->getLocalConfiguration());
+            $mergedConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $superType->getLocalConfiguration());
         }
-        $this->fullConfiguration = \TYPO3\Flow\Utility\Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $this->localConfiguration);
+        $this->fullConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $this->localConfiguration);
 
         if (isset($this->fullConfiguration['childNodes']) && is_array($this->fullConfiguration['childNodes']) && $this->fullConfiguration['childNodes'] !== array()) {
-            $sorter = new \TYPO3\Flow\Utility\PositionalArraySorter($this->fullConfiguration['childNodes']);
+            $sorter = new PositionalArraySorter($this->fullConfiguration['childNodes']);
             $this->fullConfiguration['childNodes'] = $sorter->toArray();
         }
     }
@@ -218,7 +221,7 @@ class NodeType
      * Iterates through configured postprocessors and invokes them
      *
      * @return void
-     * @throws \TYPO3\TYPO3CR\Exception\InvalidNodeTypePostprocessorException
+     * @throws InvalidNodeTypePostprocessorException
      */
     protected function applyPostprocessing()
     {

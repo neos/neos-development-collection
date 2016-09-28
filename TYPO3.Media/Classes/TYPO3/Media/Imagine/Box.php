@@ -16,7 +16,7 @@ use Imagine\Image\Point;
 use Imagine\Image\PointInterface;
 use TYPO3\Flow\Annotations as Flow;
 
-class Box implements \Imagine\Image\BoxInterface
+class Box implements BoxInterface
 {
 
     /**

@@ -16,19 +16,26 @@ use Doctrine\ORM\EntityNotFoundException;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Message;
 use TYPO3\Flow\I18n\Translator;
+use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Flow\Package\PackageManagerInterface;
+use TYPO3\Flow\Mvc\View\JsonView;
+use TYPO3\Flow\Mvc\View\ViewInterface;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 use TYPO3\Flow\Resource\Resource as FlowResource;
 use TYPO3\Flow\Utility\Files;
+use TYPO3\Fluid\View\TemplateView;
+use TYPO3\Media\Domain\Repository\AssetRepository;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Repository\AudioRepository;
 use TYPO3\Media\Domain\Repository\DocumentRepository;
 use TYPO3\Media\Domain\Repository\ImageRepository;
+use TYPO3\Media\Domain\Repository\TagRepository;
 use TYPO3\Media\Domain\Repository\VideoRepository;
 use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Media\Domain\Model\AssetCollection;
 use TYPO3\Media\Domain\Model\Tag;
 use TYPO3\Media\Domain\Repository\AssetCollectionRepository;
+use TYPO3\Media\Domain\Session\BrowserState;
 use TYPO3\Media\Domain\Service\AssetService;
 use TYPO3\Media\Exception\AssetServiceException;
 use TYPO3\Media\TypeConverter\AssetInterfaceConverter;
@@ -38,7 +45,7 @@ use TYPO3\Media\TypeConverter\AssetInterfaceConverter;
  *
  * @Flow\Scope("singleton")
  */
-class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
+class AssetController extends ActionController
 {
     const TAG_GIVEN = 0;
     const TAG_ALL = 1;
@@ -49,13 +56,13 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Media\Domain\Repository\AssetRepository
+     * @var AssetRepository
      */
     protected $assetRepository;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Media\Domain\Repository\TagRepository
+     * @var TagRepository
      */
     protected $tagRepository;
 
@@ -73,7 +80,7 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
 
     /**
      * @Flow\Inject(lazy = false)
-     * @var \TYPO3\Media\Domain\Session\BrowserState
+     * @var BrowserState
      */
     protected $browserState;
 
@@ -93,17 +100,17 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
      * @var array
      */
     protected $viewFormatToObjectNameMap = array(
-        'html' => 'TYPO3\Fluid\View\TemplateView',
-        'json' => 'TYPO3\Flow\Mvc\View\JsonView'
+        'html' => TemplateView::class,
+        'json' => JsonView::class
     );
 
     /**
      * Set common variables on the view
      *
-     * @param \TYPO3\Flow\Mvc\View\ViewInterface $view
+     * @param ViewInterface $view
      * @return void
      */
-    protected function initializeView(\TYPO3\Flow\Mvc\View\ViewInterface $view)
+    protected function initializeView(ViewInterface $view)
     {
         $view->assignMultiple(array(
             'view' => $this->browserState->get('view'),

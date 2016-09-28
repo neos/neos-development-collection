@@ -237,7 +237,7 @@ class LinkingService
             }
             preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $nodeString, $matches);
             if (isset($matches['WorkspaceName']) && $matches['WorkspaceName'] !== '') {
-                $node = $this->propertyMapper->convert($nodeString, 'TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+                $node = $this->propertyMapper->convert($nodeString, NodeInterface::class);
             } else {
                 if ($baseNode === null) {
                     throw new NeosException('The baseNode argument is required for linking to nodes with a relative path.', 1407879905);
