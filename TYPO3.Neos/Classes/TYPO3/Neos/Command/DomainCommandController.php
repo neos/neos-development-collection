@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Command;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Validation\ValidatorResolver;
 use TYPO3\Neos\Domain\Model\Domain;
 use TYPO3\Neos\Domain\Model\Site;
@@ -23,7 +24,7 @@ use TYPO3\Neos\Domain\Repository\SiteRepository;
  *
  * @Flow\Scope("singleton")
  */
-class DomainCommandController extends \TYPO3\Flow\Cli\CommandController
+class DomainCommandController extends CommandController
 {
     /**
      * @var DomainRepository
@@ -115,7 +116,7 @@ class DomainCommandController extends \TYPO3\Flow\Cli\CommandController
         $availableDomains = array();
 
         foreach ($domains as $domain) {
-            /** @var \TYPO3\Neos\Domain\Model\Domain $domain */
+            /** @var Domain $domain */
             array_push($availableDomains, array(
                 'nodeName' => $domain->getSite()->getNodeName(),
                 'hostPattern' => $domain->getHostPattern(),

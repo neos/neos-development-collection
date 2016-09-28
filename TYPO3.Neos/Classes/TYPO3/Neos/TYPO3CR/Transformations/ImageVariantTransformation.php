@@ -13,6 +13,12 @@ namespace TYPO3\Neos\TYPO3CR\Transformations;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Resource\ResourceManager;
+use TYPO3\Media\Domain\Model\ImageInterface;
+use TYPO3\Media\Domain\Model\ImageVariant;
+use TYPO3\Media\Domain\Repository\AssetRepository;
+use TYPO3\Media\TypeConverter\ProcessingInstructionsConverter;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Migration\Transformations\AbstractTransformation;
 
@@ -23,25 +29,25 @@ class ImageVariantTransformation extends AbstractTransformation
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Media\Domain\Repository\AssetRepository
+     * @var AssetRepository
      */
     protected $assetRepository;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Resource\ResourceManager
+     * @var ResourceManager
      */
     protected $resourceManager;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Media\TypeConverter\ProcessingInstructionsConverter
+     * @var ProcessingInstructionsConverter
      */
     protected $processingInstructionsConverter;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
 
@@ -71,7 +77,7 @@ class ImageVariantTransformation extends AbstractTransformation
     public function execute(NodeData $node)
     {
         foreach ($node->getNodeType()->getProperties() as $propertyName => $propertyConfiguration) {
-            if (isset($propertyConfiguration['type']) && ($propertyConfiguration['type'] === 'TYPO3\Media\Domain\Model\ImageInterface' || preg_match('/array\<.*\>/', $propertyConfiguration['type']))) {
+            if (isset($propertyConfiguration['type']) && ($propertyConfiguration['type'] === ImageInterface::class || preg_match('/array\<.*\>/', $propertyConfiguration['type']))) {
                 if (!isset($nodeProperties)) {
                     $nodeRecordQuery = $this->entityManager->getConnection()->prepare('SELECT properties FROM typo3_typo3cr_domain_model_nodedata WHERE persistence_object_identifier=?');
                     $nodeRecordQuery->execute([$this->persistenceManager->getIdentifierByObject($node)]);
@@ -83,7 +89,7 @@ class ImageVariantTransformation extends AbstractTransformation
                     continue;
                 }
 
-                if ($propertyConfiguration['type'] === 'TYPO3\Media\Domain\Model\ImageInterface') {
+                if ($propertyConfiguration['type'] === ImageInterface::class) {
                     $adjustments = array();
                     $oldVariantConfiguration = $nodeProperties[$propertyName];
                     if (is_array($oldVariantConfiguration)) {
@@ -91,7 +97,7 @@ class ImageVariantTransformation extends AbstractTransformation
                             switch (substr($variantPropertyName, 3)) {
                                 case 'originalImage':
                                     /**
-                                     * @var $originalAsset \TYPO3\Media\Domain\Model\Image
+                                     * @var $originalAsset Image
                                      */
                                     $originalAsset = $this->assetRepository->findByIdentifier($this->persistenceManager->getIdentifierByObject($property));
                                     break;
@@ -109,7 +115,7 @@ class ImageVariantTransformation extends AbstractTransformation
                             }
 
                             fclose($stream);
-                            $newImageVariant = new \TYPO3\Media\Domain\Model\ImageVariant($originalAsset);
+                            $newImageVariant = new ImageVariant($originalAsset);
                             foreach ($adjustments as $adjustment) {
                                 $newImageVariant->addAdjustment($adjustment);
                             }

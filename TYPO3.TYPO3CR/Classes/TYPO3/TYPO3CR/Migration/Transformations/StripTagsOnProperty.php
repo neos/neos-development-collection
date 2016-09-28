@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Migration\Transformations;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 
 /**
  * Strip all tags on a given property
@@ -39,10 +40,10 @@ class StripTagsOnProperty extends AbstractTransformation
     /**
      * Returns TRUE if the given node has the property to work on.
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @param NodeData $node
      * @return boolean
      */
-    public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    public function isTransformable(NodeData $node)
     {
         return ($node->hasProperty($this->propertyName));
     }
@@ -50,10 +51,10 @@ class StripTagsOnProperty extends AbstractTransformation
     /**
      * Strips tags on the value of the property to work on.
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @param NodeData $node
      * @return void
      */
-    public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    public function execute(NodeData $node)
     {
         $node->setProperty($this->propertyName, strip_tags($node->getProperty($this->propertyName)));
     }

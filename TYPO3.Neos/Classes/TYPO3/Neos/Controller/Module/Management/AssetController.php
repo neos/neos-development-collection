@@ -11,6 +11,7 @@ namespace TYPO3\Neos\Controller\Module\Management;
  * source code.
  */
 
+use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Error\Error;
@@ -23,6 +24,7 @@ use TYPO3\Flow\Utility\TypeHandling;
 use TYPO3\Flow\Utility\MediaTypes;
 use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Media\Domain\Model\AssetCollection;
+use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Exception\AssetServiceException;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;
@@ -236,7 +238,7 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
     /**
      * Individual error FlashMessage that hides which action fails in production.
      *
-     * @return \TYPO3\Flow\Error\Message The flash message or FALSE if no flash message should be set
+     * @return Message The flash message or FALSE if no flash message should be set
      */
     protected function getErrorFlashMessage()
     {
@@ -248,5 +250,25 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
             $errorMessage .= ' while trying to call %1$s->%2$s()';
         }
         return new Error($errorMessage, null, [get_class($this), $this->actionMethodName]);
+    }
+
+    /**
+     * Add a translated flashMessage.
+     *
+     * @param string $messageBody The translation id for the message body.
+     * @param string $messageTitle The translation id for the message title.
+     * @param string $severity
+     * @param array $messageArguments
+     * @param integer $messageCode
+     * @return void
+     */
+    public function addFlashMessage($messageBody, $messageTitle = '', $severity = Message::SEVERITY_OK, array $messageArguments = array(), $messageCode = null)
+    {
+        if (is_string($messageBody)) {
+            $messageBody = $this->translator->translateById($messageBody, $messageArguments, null, null, 'Modules', 'TYPO3.Neos');
+        }
+        $messageTitle = $this->translator->translateById($messageTitle, $messageArguments, null, null, 'Modules', 'TYPO3.Neos');
+
+        parent::addFlashMessage($messageBody, $messageTitle, $severity, $messageArguments, $messageCode);
     }
 }

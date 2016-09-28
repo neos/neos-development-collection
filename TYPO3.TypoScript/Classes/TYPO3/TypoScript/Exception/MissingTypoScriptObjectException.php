@@ -10,12 +10,13 @@ namespace TYPO3\TypoScript\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\TypoScript\Exception;
 
 /**
  * This exception is thrown if the the object type for a given TypoScript path
  * could not be determined, f.e. if the user forgets to define "page = Page" in his
  * TypoScript.
  */
-class MissingTypoScriptObjectException extends \TYPO3\TypoScript\Exception
+class MissingTypoScriptObjectException extends Exception
 {
 }

@@ -12,13 +12,16 @@ namespace TYPO3\TYPO3CR\Tests\Unit\FlowQueryOperations;
  */
 
 use TYPO3\Eel\FlowQuery\FlowQuery;
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\TYPO3CR\Domain\Service\Context;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Eel\FlowQueryOperations\ContextOperation;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * Testcase for the FlowQuery ContextOperation
  */
-class ContextOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ContextOperationTest extends UnitTestCase
 {
     /**
      * @var ContextOperation
@@ -26,14 +29,14 @@ class ContextOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
     protected $operation;
 
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+     * @var ContextFactoryInterface
      */
     protected $mockContextFactory;
 
     public function setUp()
     {
         $this->operation = new ContextOperation();
-        $this->mockContextFactory = $this->createMock('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
+        $this->mockContextFactory = $this->createMock(ContextFactoryInterface::class);
         $this->inject($this->operation, 'contextFactory', $this->mockContextFactory);
     }
 
@@ -42,7 +45,7 @@ class ContextOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function canEvaluateReturnsTrueIfNodeIsInContext()
     {
-        $mockNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $mockNode = $this->createMock(NodeInterface::class);
 
         $result = $this->operation->canEvaluate(array($mockNode));
         $this->assertTrue($result);
@@ -57,10 +60,10 @@ class ContextOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
         $nodeContextProperties = array('infiniteImprobabilityDrive' => false, 'autoRemoveUnsuitableContent' => true);
         $expectedModifiedContextProperties = array('infiniteImprobabilityDrive' => true, 'autoRemoveUnsuitableContent' => true);
 
-        $mockNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $mockNode = $this->createMock(NodeInterface::class);
         $mockFlowQuery = $this->buildFlowQueryWithNodeInContext($mockNode, $nodeContextProperties);
 
-        $modifiedNodeContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
+        $modifiedNodeContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
         $this->mockContextFactory->expects($this->atLeastOnce())->method('create')->with($expectedModifiedContextProperties)->will($this->returnValue($modifiedNodeContext));
 
@@ -76,12 +79,12 @@ class ContextOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
         $nodeContextProperties = array('infiniteImprobabilityDrive' => false, 'autoRemoveUnsuitableContent' => true);
         $nodeIdentifier = 'c575c430-c971-11e3-a6e7-14109fd7a2dd';
 
-        $mockNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $mockNode = $this->createMock(NodeInterface::class);
         $mockNode->expects($this->any())->method('getIdentifier')->will($this->returnValue($nodeIdentifier));
         $mockFlowQuery = $this->buildFlowQueryWithNodeInContext($mockNode, $nodeContextProperties);
 
-        $modifiedNodeContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
-        $nodeInModifiedContext = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $modifiedNodeContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
+        $nodeInModifiedContext = $this->createMock(NodeInterface::class);
         $nodeInModifiedContext->expects($this->any())->method('getPath')->will($this->returnValue('/foo/bar'));
         $this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($modifiedNodeContext));
 
@@ -100,11 +103,11 @@ class ContextOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
         $nodeContextProperties = array('infiniteImprobabilityDrive' => false, 'autoRemoveUnsuitableContent' => true);
         $nodeIdentifier = 'c575c430-c971-11e3-a6e7-14109fd7a2dd';
 
-        $mockNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $mockNode = $this->createMock(NodeInterface::class);
         $mockNode->expects($this->any())->method('getIdentifier')->will($this->returnValue($nodeIdentifier));
         $mockFlowQuery = $this->buildFlowQueryWithNodeInContext($mockNode, $nodeContextProperties);
 
-        $modifiedNodeContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
+        $modifiedNodeContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
         $this->mockContextFactory->expects($this->any())->method('create')->will($this->returnValue($modifiedNodeContext));
 
         $modifiedNodeContext->expects($this->once())->method('getNodeByIdentifier')->with($nodeIdentifier)->will($this->returnValue(null));
@@ -120,12 +123,12 @@ class ContextOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     protected function buildFlowQueryWithNodeInContext($mockNode, $nodeContextProperties)
     {
-        $mockNodeContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
+        $mockNodeContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
         $mockNodeContext->expects($this->any())->method('getProperties')->will($this->returnValue($nodeContextProperties));
 
         $mockNode->expects($this->any())->method('getContext')->will($this->returnValue($mockNodeContext));
 
-        $mockFlowQuery = $this->getMockBuilder('TYPO3\Eel\FlowQuery\FlowQuery')->disableOriginalConstructor()->getMock();
+        $mockFlowQuery = $this->getMockBuilder(FlowQuery::class)->disableOriginalConstructor()->getMock();
         $mockFlowQuery->expects($this->any())->method('getContext')->will($this->returnValue(array($mockNode)));
         return $mockFlowQuery;
     }

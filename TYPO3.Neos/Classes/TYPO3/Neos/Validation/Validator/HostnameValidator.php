@@ -12,11 +12,12 @@ namespace TYPO3\Neos\Validation\Validator;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Validation\Validator\AbstractValidator;
 
 /**
  * Validator for http://tools.ietf.org/html/rfc1123 compatible host names
  */
-class HostnameValidator extends \TYPO3\Flow\Validation\Validator\AbstractValidator
+class HostnameValidator extends AbstractValidator
 {
     /**
      * @var array

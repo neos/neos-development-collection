@@ -12,6 +12,8 @@ namespace TYPO3\TYPO3CR\Migration\Domain\Factory;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Migration\Configuration\ConfigurationInterface;
+use TYPO3\TYPO3CR\Migration\Domain\Model\Migration;
 
 /**
  * Migration factory.
@@ -21,18 +23,18 @@ class MigrationFactory
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Migration\Configuration\ConfigurationInterface
+     * @var ConfigurationInterface
      */
     protected $migrationConfiguration;
 
     /**
      * @param string $version
-     * @return \TYPO3\TYPO3CR\Migration\Domain\Model\Migration
+     * @return Migration
      */
     public function getMigrationForVersion($version)
     {
         $migrationConfiguration = $this->migrationConfiguration->getMigrationVersion($version);
-        $migration = new \TYPO3\TYPO3CR\Migration\Domain\Model\Migration($version, $migrationConfiguration);
+        $migration = new Migration($version, $migrationConfiguration);
         return $migration;
     }
 

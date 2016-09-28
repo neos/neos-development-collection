@@ -53,7 +53,7 @@ class ArrayImplementation extends AbstractArrayTypoScriptObject
      *
      * This will ignore all properties defined in "@ignoreProperties" in TypoScript
      *
-     * @see \TYPO3\Flow\Utility\PositionalArraySorter
+     * @see PositionalArraySorter
      *
      * @return array an ordered list of keys
      * @throws TypoScript\Exception if the positional string has an unsupported format

@@ -10,25 +10,29 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Security\Context;
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactory;
 
 /**
  * Testcase for the Context
  *
  */
-class ContextTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ContextTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactory
+     * @var ContextFactory
      */
     protected $contextFactory;
 
     public function setUp()
     {
-        $this->contextFactory = new \TYPO3\TYPO3CR\Domain\Service\ContextFactory();
+        $this->contextFactory = new ContextFactory();
         $this->inject($this->contextFactory, 'now', new \TYPO3\Flow\Utility\Now());
-        $this->inject($this->contextFactory, 'securityContext', $this->createMock('TYPO3\Flow\Security\Context'));
+        $this->inject($this->contextFactory, 'securityContext', $this->createMock(Context::class));
 
-        $mockContentDimensionRepository = $this->createMock('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository');
+        $mockContentDimensionRepository = $this->createMock(ContentDimensionRepository::class);
         $mockContentDimensionRepository->expects($this->any())->method('findAll')->will($this->returnValue(array()));
         $this->inject($this->contextFactory, 'contentDimensionRepository', $mockContentDimensionRepository);
     }

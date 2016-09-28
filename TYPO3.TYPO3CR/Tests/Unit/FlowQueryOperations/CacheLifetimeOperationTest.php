@@ -12,12 +12,14 @@ namespace TYPO3\TYPO3CR\Tests\Unit\FlowQueryOperations;
  */
 
 use TYPO3\Eel\FlowQuery\FlowQuery;
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Eel\FlowQueryOperations\CacheLifetimeOperation;
 
 /**
  * Testcase for the TYPO3CR FlowQuery CacheLifetimeOperation
  */
-class CacheLifetimeOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
+class CacheLifetimeOperationTest extends UnitTestCase
 {
     /**
      * @var CacheLifetimeOperation
@@ -60,7 +62,7 @@ class CacheLifetimeOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function canEvaluateReturnsTrueIfNodeIsInContext()
     {
-        $mockNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $mockNode = $this->createMock(NodeInterface::class);
 
         $result = $this->operation->canEvaluate(array($mockNode));
         $this->assertTrue($result);
@@ -147,14 +149,14 @@ class CacheLifetimeOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
     {
         $contextValues = array();
         foreach ($nodes as $nodeProperties) {
-            $mockNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+            $mockNode = $this->createMock(NodeInterface::class);
             $mockNode->expects($this->any())->method('getHiddenBeforeDateTime')->will($this->returnValue($nodeProperties['hiddenBeforeDateTime'] !== null ? $this->dateFixtures[$nodeProperties['hiddenBeforeDateTime']] : null));
             $mockNode->expects($this->any())->method('getHiddenAfterDateTime')->will($this->returnValue($nodeProperties['hiddenAfterDateTime'] !== null ? $this->dateFixtures[$nodeProperties['hiddenAfterDateTime']] : null));
 
             $contextValues[] = $mockNode;
         }
 
-        $mockFlowQuery = $this->getMockBuilder('TYPO3\Eel\FlowQuery\FlowQuery')->disableOriginalConstructor()->getMock();
+        $mockFlowQuery = $this->getMockBuilder(FlowQuery::class)->disableOriginalConstructor()->getMock();
         $mockFlowQuery->expects($this->any())->method('getContext')->will($this->returnValue($contextValues));
         return $mockFlowQuery;
     }

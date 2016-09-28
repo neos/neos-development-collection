@@ -12,6 +12,7 @@ namespace TYPO3\TypoScript\Core\Cache;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\CacheManager;
 
 /**
  * Listener to clear TypoScript caches if important files have changed
@@ -23,14 +24,14 @@ use TYPO3\Flow\Annotations as Flow;
 class FileMonitorListener
 {
     /**
-     * @var \TYPO3\Flow\Cache\CacheManager
+     * @var CacheManager
      */
     protected $flowCacheManager;
 
     /**
-     * @param \TYPO3\Flow\Cache\CacheManager $flowCacheManager
+     * @param CacheManager $flowCacheManager
      */
-    public function __construct(\TYPO3\Flow\Cache\CacheManager $flowCacheManager)
+    public function __construct(CacheManager $flowCacheManager)
     {
         $this->flowCacheManager = $flowCacheManager;
     }

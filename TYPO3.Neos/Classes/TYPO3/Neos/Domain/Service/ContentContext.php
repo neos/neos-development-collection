@@ -13,6 +13,7 @@ namespace TYPO3\Neos\Domain\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
+use TYPO3\Flow\Security\Exception;
 use TYPO3\Neos\Domain\Model\Domain;
 use TYPO3\Neos\Domain\Model\UserInterfaceMode;
 use TYPO3\Neos\Domain\Model\Site;
@@ -174,7 +175,7 @@ class ContentContext extends Context
     {
         try {
             return $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.GeneralAccess');
-        } catch (\TYPO3\Flow\Security\Exception $exception) {
+        } catch (Exception $exception) {
             return false;
         }
     }
