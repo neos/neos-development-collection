@@ -216,7 +216,7 @@ class NodeConverter extends AbstractTypeConverter
                                 $nodePropertyValue[] = $referencedNode;
                             }
                         }
-                    } else {
+                    } elseif ($nodeIdentifiers !== null) {
                         throw new TypeConverterException(sprintf('node type "%s" expects an array of identifiers for its property "%s"', $nodeType->getName(), $nodePropertyName), 1383587419);
                     }
                 break;
