@@ -1002,13 +1002,16 @@ HELPTEXT;
                 continue;
             }
             $foundValidDimensionValues = false;
-            foreach ($allowedDimensionCombinations as $dimensionConfiguration) {
-                ksort($dimensionConfiguration);
+            foreach ($allowedDimensionCombinations as $allowedDimensionConfiguration) {
+                ksort($allowedDimensionConfiguration);
                 ksort($nodeDataArray['dimensionValues']);
-                foreach ($dimensionConfiguration as $dimensionKey => $dimensionValuesArray) {
-                    if (in_array($nodeDataArray['dimensionValues'][$dimensionKey][0], $dimensionValuesArray)) {
-                        $foundValidDimensionValues = true;
-                        break;
+                foreach ($allowedDimensionConfiguration as $allowedDimensionKey => $allowedDimensionValuesArray) {
+                    if (isset($nodeDataArray['dimensionValues'][$allowedDimensionKey]) && isset($nodeDataArray['dimensionValues'][$allowedDimensionKey][0])) {
+                        $actualDimensionValue = $nodeDataArray['dimensionValues'][$allowedDimensionKey][0];
+                        if (in_array($actualDimensionValue, $allowedDimensionValuesArray)) {
+                            $foundValidDimensionValues = true;
+                            break;
+                        }
                     }
                 }
             }
