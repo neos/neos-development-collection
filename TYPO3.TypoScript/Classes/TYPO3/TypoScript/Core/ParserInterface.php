@@ -10,6 +10,7 @@ namespace TYPO3\TypoScript\Core;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\TypoScript\Exception;
 
 /**
  * Contract for a TypoScript parser
@@ -26,7 +27,7 @@ interface ParserInterface
      * @param string $contextPathAndFilename An optional path and filename to use as a prefix for inclusion of further TypoScript files
      * @param array $objectTreeUntilNow Used internally for keeping track of the built object tree
      * @return array A TypoScript object tree, generated from the source code
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws Exception
      * @api
      */
     public function parse($sourceCode, $contextPathAndFilename = null, array $objectTreeUntilNow = array());

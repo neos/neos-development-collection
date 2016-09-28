@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Command;
  */
 
 use Doctrine\ORM\EntityNotFoundException;
+use Doctrine\ORM\Proxy\Proxy;
 use Doctrine\ORM\QueryBuilder;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\ConsoleOutput;
@@ -27,6 +28,7 @@ use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContentDimensionCombinator;
+use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException;
@@ -145,7 +147,7 @@ Will remove all child nodes that do not have a connection to the root node.
 removeDisallowedChildNodes
 
 Will remove all child nodes that are disallowed according to the node type's auto-create
-configuration and constraints. 
+configuration and constraints.
 
 <u>Remove undefined node properties</u>
 removeUndefinedProperties
@@ -168,7 +170,7 @@ the current content dimension configuration.
 removeNodesWithInvalidWorkspace
 
 Will check for and optionally remove nodes which belong to a workspace which no longer
-exists.. 
+exists..
 
 <u>Repair inconsistent node identifiers</u>
 fixNodesWithInconsistentIdentifier
@@ -181,20 +183,20 @@ createMissingChildNodes
 
 For all nodes (or only those which match the --node-type filter specified with this
 command) which currently don't have child nodes as configured by the node type's
-configuration new child nodes will be created. 
+configuration new child nodes will be created.
 
 <u>Reorder child nodes</u>
 reorderChildNodes
 
 For all nodes (or only those which match the --node-type filter specified with this
 command) which have configured child nodes, those child nodes are reordered according to the
-position from the parents NodeType configuration. 
+position from the parents NodeType configuration.
 <u>Missing default properties</u>
 addMissingDefaultValues
 
 For all nodes (or only those which match the --node-type filter specified with this
 command) which currently don\t have a property that have a default value configuration
-the default value for that property will be set. 
+the default value for that property will be set.
 
 <u>Repair nodes with missing shadow nodes</u>
 repairShadowNodes
@@ -374,7 +376,7 @@ HELPTEXT;
             if ($dryRun === false) {
                 foreach ($nodeIdentifiersWhichNeedUpdate as $oldNodeIdentifier => $newNodeIdentifier) {
                     $queryBuilder = $this->entityManager->createQueryBuilder();
-                    $queryBuilder->update('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+                    $queryBuilder->update(NodeData::class, 'n')
                         ->set('n.identifier', $queryBuilder->expr()->literal($newNodeIdentifier))
                         ->where('n.identifier = ?1')
                         ->setParameter(1, $oldNodeIdentifier);
@@ -536,7 +538,7 @@ HELPTEXT;
         $queryBuilder
             ->select('n')
             ->distinct()
-            ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+            ->from(NodeData::class, 'n')
             ->where('n.nodeType NOT IN (:excludeNodeTypes)')
             ->setParameter('excludeNodeTypes', $nonAbstractNodeTypes)
             ->andWhere('n.workspace = :workspace')
@@ -662,9 +664,9 @@ HELPTEXT;
 
         $nodes = $queryBuilder
             ->select('n')
-            ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+            ->from(NodeData::class, 'n')
             ->leftJoin(
-                'TYPO3\TYPO3CR\Domain\Model\NodeData',
+                NodeData::class,
                 'n2',
                 \Doctrine\ORM\Query\Expr\Join::WITH,
                 'n.parentPathHash = n2.pathHash AND n2.workspace IN (:workspaceList)'
@@ -819,7 +821,7 @@ HELPTEXT;
                             $brokenReferencesCount ++;
                         }
                     }
-                    if ($convertedProperty instanceof \Doctrine\ORM\Proxy\Proxy) {
+                    if ($convertedProperty instanceof Proxy) {
                         try {
                             $convertedProperty->__load();
                         } catch (EntityNotFoundException $e) {
@@ -859,7 +861,7 @@ HELPTEXT;
      *
      * @param string $workspaceName
      * @param array $dimensions
-     * @return \TYPO3\TYPO3CR\Domain\Service\Context
+     * @return Context
      */
     protected function createContext($workspaceName, $dimensions)
     {
@@ -888,7 +890,7 @@ HELPTEXT;
 
         $queryBuilder->select('n')
             ->distinct()
-            ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+            ->from(NodeData::class, 'n')
             ->where('n.nodeType = :nodeType')
             ->andWhere('n.workspace = :workspace')
             ->andWhere('n.movedTo IS NULL OR n.removed = :removed')
@@ -911,7 +913,7 @@ HELPTEXT;
 
         $queryBuilder
             ->resetDQLParts()
-            ->delete('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+            ->delete(NodeData::class, 'n')
             ->where('n.path LIKE :path')
             ->orWhere('n.path LIKE :subpath')
             ->andWhere('n.workspace = :workspace')
@@ -933,7 +935,7 @@ HELPTEXT;
 
         $queryBuilder
             ->resetDQLParts()
-            ->delete('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+            ->delete(NodeData::class, 'n')
             ->where('n.identifier = :identifier')
             ->andWhere('n.dimensionsHash = :dimensionsHash')
             ->setParameters(array('identifier' => $nodeIdentifier, 'dimensionsHash' => $dimensionsHash))
@@ -993,7 +995,7 @@ HELPTEXT;
         $queryBuilder = $this->entityManager->createQueryBuilder();
 
         $queryBuilder->select('n')
-            ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+            ->from(NodeData::class, 'n')
             ->where('n.workspace = :workspace')
             ->setParameter('workspace', $workspaceName);
 
@@ -1002,12 +1004,17 @@ HELPTEXT;
                 continue;
             }
             $foundValidDimensionValues = false;
-            foreach ($allowedDimensionCombinations as $dimensionConfiguration) {
-                ksort($dimensionConfiguration);
+            foreach ($allowedDimensionCombinations as $allowedDimensionConfiguration) {
+                ksort($allowedDimensionConfiguration);
                 ksort($nodeDataArray['dimensionValues']);
-                if ($dimensionConfiguration === $nodeDataArray['dimensionValues']) {
-                    $foundValidDimensionValues = true;
-                    break;
+                foreach ($allowedDimensionConfiguration as $allowedDimensionKey => $allowedDimensionValuesArray) {
+                    if (isset($nodeDataArray['dimensionValues'][$allowedDimensionKey]) && isset($nodeDataArray['dimensionValues'][$allowedDimensionKey][0])) {
+                        $actualDimensionValue = $nodeDataArray['dimensionValues'][$allowedDimensionKey][0];
+                        if (in_array($actualDimensionValue, $allowedDimensionValuesArray)) {
+                            $foundValidDimensionValues = true;
+                            break;
+                        }
+                    }
                 }
             }
 
@@ -1076,7 +1083,7 @@ HELPTEXT;
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->createQueryBuilder();
         $queryBuilder->select('n')
-            ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+            ->from(NodeData::class, 'n')
             ->add('where', $queryBuilder->expr()->orX(
                     $queryBuilder->expr()->notIn('n.workspace', $workspaceNames),
                     $queryBuilder->expr()->isNull('n.workspace')
@@ -1118,8 +1125,8 @@ HELPTEXT;
             /** @var QueryBuilder $queryBuilder */
             $queryBuilder = $this->entityManager->createQueryBuilder();
             $queryBuilder->select('nonlive.Persistence_Object_Identifier, nonlive.identifier, nonlive.path, live.identifier AS liveIdentifier')
-                ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'nonlive')
-                ->join('TYPO3\TYPO3CR\Domain\Model\NodeData', 'live', 'WITH', 'live.path = nonlive.path AND live.dimensionsHash = nonlive.dimensionsHash AND live.identifier != nonlive.identifier')
+                ->from(NodeData::class, 'nonlive')
+                ->join(NodeData::class, 'live', 'WITH', 'live.path = nonlive.path AND live.dimensionsHash = nonlive.dimensionsHash AND live.identifier != nonlive.identifier')
                 ->where('nonlive.workspace = ?1')
                 ->andWhere($queryBuilder->expr()->in('live.workspace', $liveWorkspaceNames))
                 ->andWhere('nonlive.path != \'/\'')
@@ -1144,7 +1151,7 @@ HELPTEXT;
                 foreach ($nodesArray as $nodeArray) {
                     /** @var QueryBuilder $queryBuilder */
                     $queryBuilder = $this->entityManager->createQueryBuilder();
-                    $queryBuilder->update('TYPO3\TYPO3CR\Domain\Model\NodeData', 'nonlive')
+                    $queryBuilder->update(NodeData::class, 'nonlive')
                         ->set('nonlive.identifier', $queryBuilder->expr()->literal($nodeArray['liveIdentifier']))
                         ->where('nonlive.Persistence_Object_Identifier = ?1')
                         ->setParameter(1, $nodeArray['Persistence_Object_Identifier']);
@@ -1305,7 +1312,7 @@ HELPTEXT;
             /** @var QueryBuilder $queryBuilder */
             $queryBuilder = $this->entityManager->createQueryBuilder();
             $queryBuilder->select('n')
-                ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+                ->from(NodeData::class, 'n')
                 ->where('n.workspace = :workspace');
             $queryBuilder->setParameter('workspace', $workspace->getName());
             if ($nodeType !== null) {

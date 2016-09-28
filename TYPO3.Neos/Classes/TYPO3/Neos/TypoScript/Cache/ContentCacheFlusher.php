@@ -12,6 +12,7 @@ namespace TYPO3\Neos\TypoScript\Cache;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Service\AssetService;
 use TYPO3\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
@@ -38,7 +39,7 @@ class ContentCacheFlusher
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Log\SystemLoggerInterface
+     * @var SystemLoggerInterface
      */
     protected $systemLogger;
 

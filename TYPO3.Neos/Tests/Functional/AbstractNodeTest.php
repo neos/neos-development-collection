@@ -10,11 +10,19 @@ namespace TYPO3\Neos\Tests\Functional;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Package\PackageManagerInterface;
+use TYPO3\Flow\Property\PropertyMapper;
+use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\Media\TypeConverter\AssetInterfaceConverter;
+use TYPO3\Neos\Domain\Service\SiteImportService;
+use TYPO3\TYPO3CR\Domain\Model\Node;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 
 /**
  * Base test case for nodes
  */
-abstract class AbstractNodeTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+abstract class AbstractNodeTest extends FunctionalTestCase
 {
     /**
      * @var boolean
@@ -37,12 +45,12 @@ abstract class AbstractNodeTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     protected $nodeContextPath = '/sites/example/home';
 
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+     * @var NodeInterface
      */
     protected $node;
 
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+     * @var ContextFactoryInterface
      */
     protected $contextFactory;
 
@@ -50,9 +58,9 @@ abstract class AbstractNodeTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     {
         parent::setUp();
         $this->markSkippedIfNodeTypesPackageIsNotInstalled();
-        $this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
+        $this->contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
         $contentContext = $this->contextFactory->create(array('workspaceName' => 'live'));
-        $siteImportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteImportService');
+        $siteImportService = $this->objectManager->get(SiteImportService::class);
         $siteImportService->importFromFile(__DIR__ . '/' . $this->fixtureFileName, $contentContext);
         $this->persistenceManager->persistAll();
 
@@ -65,13 +73,13 @@ abstract class AbstractNodeTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      * Retrieve a node through the property mapper
      *
      * @param $contextPath
-     * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+     * @return NodeInterface
      */
     protected function getNodeWithContextPath($contextPath)
     {
         /* @var $propertyMapper \TYPO3\Flow\Property\PropertyMapper */
-        $propertyMapper = $this->objectManager->get('TYPO3\Flow\Property\PropertyMapper');
-        $node = $propertyMapper->convert($contextPath, 'TYPO3\TYPO3CR\Domain\Model\Node');
+        $propertyMapper = $this->objectManager->get(PropertyMapper::class);
+        $node = $propertyMapper->convert($contextPath, Node::class);
         $this->assertFalse($propertyMapper->getMessages()->hasErrors(), 'There were errors converting ' . $contextPath);
         return $node;
     }
@@ -81,12 +89,12 @@ abstract class AbstractNodeTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         parent::tearDown();
 
         $this->inject($this->contextFactory, 'contextInstances', array());
-        $this->inject($this->objectManager->get('TYPO3\Media\TypeConverter\AssetInterfaceConverter'), 'resourcesAlreadyConvertedToAssets', array());
+        $this->inject($this->objectManager->get(AssetInterfaceConverter::class), 'resourcesAlreadyConvertedToAssets', array());
     }
 
     protected function markSkippedIfNodeTypesPackageIsNotInstalled()
     {
-        $packageManager = $this->objectManager->get('TYPO3\Flow\Package\PackageManagerInterface');
+        $packageManager = $this->objectManager->get(PackageManagerInterface::class);
         if (!$packageManager->isPackageActive('TYPO3.Neos.NodeTypes')) {
             $this->markTestSkipped('This test needs the TYPO3.Neos.NodeTypes package.');
         }

@@ -12,17 +12,20 @@ namespace TYPO3\Neos\Routing;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\Routing\DynamicRoutePart;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Utility\Arrays;
 
 /**
  * A route part handler for finding nodes specifically in the website's frontend.
  *
  * @Flow\Scope("singleton")
  */
-class BackendModuleArgumentsRoutePartHandler extends \TYPO3\Flow\Mvc\Routing\DynamicRoutePart
+class BackendModuleArgumentsRoutePartHandler extends DynamicRoutePart
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
 
@@ -47,7 +50,7 @@ class BackendModuleArgumentsRoutePartHandler extends \TYPO3\Flow\Mvc\Routing\Dyn
                 }
             }
             if ($exceedingArguments !== array()) {
-                $exceedingArguments = \TYPO3\Flow\Utility\Arrays::removeEmptyElementsRecursively($exceedingArguments);
+                $exceedingArguments = Arrays::removeEmptyElementsRecursively($exceedingArguments);
                 $exceedingArguments = $this->persistenceManager->convertObjectsToIdentityArrays($exceedingArguments);
                 $queryString = http_build_query(array($this->name => $exceedingArguments), null, '&');
                 if ($queryString !== '') {

@@ -13,6 +13,9 @@ namespace TYPO3\Neos\Aspects;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\JoinPointInterface;
+use TYPO3\Flow\Utility\Environment;
+use TYPO3\Neos\Domain\Model\Domain;
+use TYPO3\Neos\Domain\Model\Site;
 
 /**
  * Aspect to memoize values from SiteRepository without the overhead of a query cache
@@ -24,23 +27,23 @@ class SiteRepositoryCachingAspect
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Utility\Environment
+     * @var Environment
      */
     protected $environment;
 
     /**
-     * @var \TYPO3\Neos\Domain\Model\Site|boolean
+     * @var Site|boolean
      */
     protected $firstOnlineSite = false;
 
     /**
-     * @var \TYPO3\Neos\Domain\Model\Domain|boolean
+     * @var Domain|boolean
      */
     protected $domainForActiveRequest = false;
 
     /**
      * @Flow\Around("method(TYPO3\Neos\Domain\Repository\SiteRepository->findFirstOnline())")
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
+     * @param JoinPointInterface $joinPoint The current join point
      * @return mixed
      */
     public function cacheFirstOnlineSite(JoinPointInterface $joinPoint)
@@ -54,7 +57,7 @@ class SiteRepositoryCachingAspect
 
     /**
      * @Flow\Around("method(TYPO3\Neos\Domain\Repository\DomainRepository->findOneByActiveRequest())")
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
+     * @param JoinPointInterface $joinPoint The current join point
      * @return mixed
      */
     public function cacheDomainForActiveRequest(JoinPointInterface $joinPoint)

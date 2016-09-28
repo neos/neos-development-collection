@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Controller;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\I18n\Locale;
 
 /**
  * A trait to add backend translation based on the backend users settings
@@ -37,6 +38,6 @@ trait BackendUserTranslationTrait
      */
     protected function initializeObject()
     {
-        $this->_localizationService->getConfiguration()->setCurrentLocale(new \TYPO3\Flow\I18n\Locale($this->_userService->getInterfaceLanguage()));
+        $this->_localizationService->getConfiguration()->setCurrentLocale(new Locale($this->_userService->getInterfaceLanguage()));
     }
 }

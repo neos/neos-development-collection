@@ -10,11 +10,17 @@ namespace TYPO3\Media\TypeConverter;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Property\Exception\TypeConverterException;
+use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
+use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;
+use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Media\Domain\Model\Adjustment\CropImageAdjustment;
+use TYPO3\Media\Domain\Model\Adjustment\ResizeImageAdjustment;
 
 /**
  * Converts an array of processing instructions to matching adjustments
  */
-class ProcessingInstructionsConverter extends \TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter
+class ProcessingInstructionsConverter extends AbstractTypeConverter
 {
     /**
      * @var array
@@ -45,12 +51,12 @@ class ProcessingInstructionsConverter extends \TYPO3\Flow\Property\TypeConverter
      * @param array $source
      * @param string $targetType
      * @param array $convertedChildProperties
-     * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface $configuration
      * @return array the target type, or an error object if a user-error occurred
-     * @throws \TYPO3\Flow\Property\Exception\TypeConverterException thrown in case a developer error occurred
+     * @throws TypeConverterException thrown in case a developer error occurred
      * @api
      */
-    public function convertFrom($source, $targetType = 'array', array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType = 'array', array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
     {
         $result = array();
         foreach ($source as $processingInstruction) {
@@ -63,13 +69,13 @@ class ProcessingInstructionsConverter extends \TYPO3\Flow\Property\TypeConverter
                         $this->transferOptionFromCommandToAdjustment($processingInstruction['options'], $options, 'start.y', 'y');
                         $this->transferOptionFromCommandToAdjustment($processingInstruction['options'], $options, 'size.width', 'width');
                         $this->transferOptionFromCommandToAdjustment($processingInstruction['options'], $options, 'size.height', 'height');
-                        $adjustment = new \TYPO3\Media\Domain\Model\Adjustment\CropImageAdjustment($options);
+                        $adjustment = new CropImageAdjustment($options);
                         break;
                     case 'resize':
                         $options = array();
                         $this->transferOptionFromCommandToAdjustment($processingInstruction['options'], $options, 'size.width', 'width');
                         $this->transferOptionFromCommandToAdjustment($processingInstruction['options'], $options, 'size.height', 'height');
-                        $adjustment = new \TYPO3\Media\Domain\Model\Adjustment\ResizeImageAdjustment($options);
+                        $adjustment = new ResizeImageAdjustment($options);
                         break;
                 }
 
@@ -91,9 +97,9 @@ class ProcessingInstructionsConverter extends \TYPO3\Flow\Property\TypeConverter
      */
     protected function transferOptionFromCommandToAdjustment(array $commandOptions, array &$adjustmentOptions, $commandOptionPath, $adjustmentOptionName)
     {
-        $commandOptionValue = \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($commandOptions, $commandOptionPath);
+        $commandOptionValue = ObjectAccess::getPropertyPath($commandOptions, $commandOptionPath);
         if ($commandOptionValue !== null) {
-            \TYPO3\Flow\Reflection\ObjectAccess::setProperty($adjustmentOptions, $adjustmentOptionName, $commandOptionValue);
+            ObjectAccess::setProperty($adjustmentOptions, $adjustmentOptionName, $commandOptionValue);
         }
     }
 }

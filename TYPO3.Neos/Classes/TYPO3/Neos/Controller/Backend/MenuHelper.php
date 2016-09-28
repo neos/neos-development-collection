@@ -13,7 +13,10 @@ namespace TYPO3\Neos\Controller\Backend;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
+use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
 use TYPO3\Flow\Utility\Arrays;
+use TYPO3\Neos\Domain\Model\Site;
+use TYPO3\Neos\Domain\Repository\SiteRepository;
 
 /**
  * A helper class for menu generation in backend controllers / view helpers
@@ -23,13 +26,13 @@ use TYPO3\Flow\Utility\Arrays;
 class MenuHelper
 {
     /**
-     * @var \TYPO3\Neos\Domain\Repository\SiteRepository
+     * @var SiteRepository
      * @Flow\Inject
      */
     protected $siteRepository;
 
     /**
-     * @var \TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface
+     * @var PrivilegeManagerInterface
      * @Flow\Inject
      */
     protected $privilegeManager;
@@ -50,7 +53,7 @@ class MenuHelper
     /**
      * Build a list of sites
      *
-     * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
+     * @param ControllerContext $controllerContext
      * @return array
      */
     public function buildSiteList(ControllerContext $controllerContext)
@@ -62,7 +65,7 @@ class MenuHelper
         foreach ($this->siteRepository->findOnline() as $site) {
             $uri = null;
             $active = false;
-            /** @var $site \TYPO3\Neos\Domain\Model\Site */
+            /** @var $site Site */
             if ($site->hasActiveDomains()) {
                 $activeHostPatterns = $site->getActiveDomains()->map(function ($domain) {
                     return $domain->getHostPattern();
@@ -101,7 +104,7 @@ class MenuHelper
     }
 
     /**
-     * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
+     * @param ControllerContext $controllerContext
      * @return array
      */
     public function buildModuleList(ControllerContext $controllerContext)
@@ -155,7 +158,7 @@ class MenuHelper
     }
 
     /**
-     * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
+     * @param ControllerContext $controllerContext
      * @param string $module
      * @param array $moduleConfiguration
      * @param string $modulePath

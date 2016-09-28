@@ -12,6 +12,8 @@ namespace TYPO3\TypoScript\Core\ExceptionHandlers;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Configuration\Exception\InvalidConfigurationException;
+use TYPO3\Flow\Mvc\Exception\StopActionException;
 
 /**
  * Just rethrows the given exception
@@ -24,8 +26,8 @@ class ThrowingHandler extends AbstractRenderingExceptionHandler
      * @param array $typoScriptPath
      * @param \Exception $exception
      * @return string
-     * @throws \TYPO3\Flow\Mvc\Exception\StopActionException
-     * @throws \TYPO3\Flow\Configuration\Exception\InvalidConfigurationException
+     * @throws StopActionException
+     * @throws InvalidConfigurationException
      * @throws \Exception
      */
     public function handleRenderingException($typoScriptPath, \Exception $exception)

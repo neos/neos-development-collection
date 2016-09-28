@@ -11,6 +11,7 @@ namespace TYPO3\Neos\Tests\Functional\Controller\Backend;
  * source code.
  */
 
+use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\Neos\Domain\Model\User;
 
 /**
@@ -18,7 +19,7 @@ use TYPO3\Neos\Domain\Model\User;
  *
  * @group large
  */
-class BackendControllerSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class BackendControllerSecurityTest extends FunctionalTestCase
 {
     /**
      * @var boolean
