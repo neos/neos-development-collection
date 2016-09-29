@@ -152,6 +152,8 @@
 		</table>
 	</div>
 	<div class="neos-footer">
+		<f:security.ifAccess privilegeTarget="TYPO3.Neos:Backend.CreateWorkspaces">
 		<f:link.action action="new" class="neos-button neos-button-primary">{neos:backend.translate(id: 'workspaces.createNewWorkspace', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
+		</f:security.ifAccess>
 	</div>
 </f:section>
