@@ -607,7 +607,7 @@ class AssetController extends ActionController
     public function addFlashMessage($messageBody, $messageTitle = '', $severity = Message::SEVERITY_OK, array $messageArguments = array(), $messageCode = null)
     {
         if (is_string($messageBody)) {
-            $messageBody = $this->translator->translateById($messageBody, $messageArguments, null, null, 'Main', 'TYPO3.Media') ?: $messageBody;
+            $translatedMessageBody = $this->translator->translateById($messageBody, $messageArguments, null, null, 'Main', 'TYPO3.Media') ?: $messageBody;
             if ($translatedMessageBody !== null) {
                 $messageBody = $translatedMessageBody;
             }
