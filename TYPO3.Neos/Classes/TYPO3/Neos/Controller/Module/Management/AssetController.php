@@ -265,10 +265,10 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
     public function addFlashMessage($messageBody, $messageTitle = '', $severity = Message::SEVERITY_OK, array $messageArguments = array(), $messageCode = null)
     {
         if (is_string($messageBody)) {
-            $messageBody = $this->translator->translateById($messageBody, $messageArguments, null, null, 'Modules', 'TYPO3.Neos');
+            $messageBody = $this->translator->translateById($messageBody, $messageArguments, null, null, 'Modules', 'TYPO3.Neos') ?: $messageBody;
         }
-        $messageTitle = $this->translator->translateById($messageTitle, $messageArguments, null, null, 'Modules', 'TYPO3.Neos');
 
+        $messageTitle = $this->translator->translateById($messageTitle, $messageArguments, null, null, 'Modules', 'TYPO3.Neos');
         parent::addFlashMessage($messageBody, $messageTitle, $severity, $messageArguments, $messageCode);
     }
 }
