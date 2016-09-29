@@ -205,7 +205,7 @@ class AssetInterfaceConverter extends PersistentObjectConverter
             $source = array('__identity' => $source);
         }
 
-        if (isset($convertedChildProperties['resource']) && $convertedChildProperties['resource'] instanceof Resource) {
+        if (isset($convertedChildProperties['resource']) && $convertedChildProperties['resource'] instanceof PersistentResource) {
             $resource = $convertedChildProperties['resource'];
             if (isset($this->resourcesAlreadyConvertedToAssets[$resource->getSha1()])) {
                 $object = $this->resourcesAlreadyConvertedToAssets[$resource->getSha1()];
@@ -300,11 +300,11 @@ class AssetInterfaceConverter extends PersistentObjectConverter
      * The strategy is NOT applied if $source['__type'] is set (overriding was allowed then, otherwise an exception would have been thrown earlier).
      *
      * @param string $originalTargetType The original target type determined so far
-     * @param Resource $resource The resource that is to be converted to a media file.
+     * @param PersistentResource $resource The resource that is to be converted to a media file.
      * @param array $source the original source properties for this type converter.
      * @return string Class name of the media model to use for the given resource
      */
-    protected function applyModelMappingStrategy($originalTargetType, Resource $resource, array $source = array())
+    protected function applyModelMappingStrategy($originalTargetType, PersistentResource $resource, array $source = array())
     {
         $finalTargetType = $originalTargetType;
         if (!isset($source['__type'])) {
