@@ -1,0 +1,384 @@
+`2.3.4 (2016-09-29) <https://github.com/neos/neos-development-collection/releases/tag/2.3.4>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Image upload is broken: Asset instead of ImageInterface <https://github.com/neos/neos-development-collection/pull/1150>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+This fixes an issue with the Asset converter which resulted in a broken
+image upload function.
+
+During the refactoring from `Resource` to `PersistentResource`, the
+remaining occurrences of `Resource` haven't been adjusted in
+`AssetInterfaceConverter`. This didn't lead to a direct error, but
+the condition where `Resource` was still used, could never match.
+
+Fixes #1149
+
+* Packages: ``Media`` ``Neos``
+
+`BUGFIX: Personal workspace is always deleted when user is deleted <https://github.com/neos/neos-development-collection/pull/1140>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+The ``TYPO3.Neos:Editor`` role isn't always necessary for a user to have a personal workspace.
+
+If there doesn't exist a workspace for that user, it will be handled in ``deletePersonalWorkspace()`` anyway.
+
+* Packages: ``Neos``
+
+`BUGFIX: Check for null values after translation of FlashMessages <https://github.com/neos/neos-development-collection/pull/1147>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+To make sure that after translation no null value is given as argument
+to ``parent::addFlashMessage`` we should prevent null values.
+
+* Packages: ``Media`` ``Neos`` ``TYPO3CR``
+
+`BUGFIX: Hide "Create new workspace" button when not authorized <https://github.com/neos/neos-development-collection/pull/676>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: node:repair breaks at dimensions with fallbacks <https://github.com/neos/neos-development-collection/pull/755>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `NEOS-1888 <https://jira.neos.io/browse/NEOS-1888>`_
+* Packages: ``Neos`` ``TYPO3CR``
+
+`BUGFIX: Two node publishing issues <https://github.com/neos/neos-development-collection/pull/763>`_
+----------------------------------------------------------------------------------------------------
+
+- Flush routing cache when a node is discarded
+- Use publishing service to publish workspace in workspaces module
+
+* Packages: ``Neos``
+
+`TASK: Refactor absolute namespaces in Media / Domain <https://github.com/neos/neos-development-collection/pull/727>`_
+----------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Media``
+
+`TASK: Refactor absolute namespaces in Media / Tests <https://github.com/neos/neos-development-collection/pull/728>`_
+---------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Media``
+
+`TASK: Refactor absolute namesace in neos cr / security <https://github.com/neos/neos-development-collection/pull/745>`_
+------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``TYPO3CR``
+
+`TASK: Refactor absolute namespaces in Media package <https://github.com/neos/neos-development-collection/pull/726>`_
+---------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Media``
+
+`TASK: Refactor absolute namespaces Neos / Domain <https://github.com/neos/neos-development-collection/pull/734>`_
+------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Refactor absolute namespaces in Neos / Service <https://github.com/neos/neos-development-collection/pull/732>`_
+----------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Refactor absolute namespace in neos cr / domain <https://github.com/neos/neos-development-collection/pull/741>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``TYPO3CR``
+
+`TASK: Refactor absolute namepscae in neos cr / eel <https://github.com/neos/neos-development-collection/pull/742>`_
+--------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``TYPO3CR``
+
+`TASK: Refactor absolute namespace in neos fusion <https://github.com/neos/neos-development-collection/pull/749>`_
+------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``TypoScript``
+
+`TASK: Refactor absolute namespace in neos fusion tests <https://github.com/neos/neos-development-collection/pull/750>`_
+------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``TypoScript``
+
+`TASK: Refactor absolute namespaces in Neos / Kickstarter <https://github.com/neos/neos-development-collection/pull/740>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Kickstarter`` ``TYPO3CR``
+
+`BUGFIX: Ignore null for references property in NodeConverter <https://github.com/neos/neos-development-collection/pull/1143>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+This change makes the NodeConverter accept null for references properties,
+a behavior also present for other property types (e.g. DateTime).
+
+Fixes #1142
+
+* Packages: ``TYPO3CR``
+
+`TASK: Refactor absolute namespace in neos cr / functional tests <https://github.com/neos/neos-development-collection/pull/747>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``TYPO3CR``
+
+`TASK: Refactor absolute namespace in neos cr / unit tests <https://github.com/neos/neos-development-collection/pull/748>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``TYPO3CR``
+
+`TASK: Refactor absolute namepsace in neos cr / exception <https://github.com/neos/neos-development-collection/pull/743>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``TYPO3CR``
+
+`TASK: Refactor to absolute namespace in neos cr <https://github.com/neos/neos-development-collection/pull/746>`_
+-----------------------------------------------------------------------------------------------------------------
+
+* Packages: ``TYPO3CR``
+
+`TASK: Refactor absolute namespace in neos cr / migration <https://github.com/neos/neos-development-collection/pull/744>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``TYPO3CR``
+
+`TASK: Refactor absolute namespaces in Neos <https://github.com/neos/neos-development-collection/pull/739>`_
+------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Refactor absolute namespaces in Neos / Validation <https://github.com/neos/neos-development-collection/pull/738>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: TASK: Refactor absolute namespaces in Neos / Aspects <https://github.com/neos/neos-development-collection/pull/737>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Refactor absolute namespaces in Neos / Controller <https://github.com/neos/neos-development-collection/pull/736>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Refactor absolute namespaces Neos / Command <https://github.com/neos/neos-development-collection/pull/735>`_
+-------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Refactor absolute namespaces in Neos / Routing <https://github.com/neos/neos-development-collection/pull/733>`_
+----------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Refactor absolute namespaces in Neos / Eventlog <https://github.com/neos/neos-development-collection/pull/731>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Refactor absolute namespaces in Neos / Tests <https://github.com/neos/neos-development-collection/pull/730>`_
+--------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Refactor absolute namespaces in Neos / VH <https://github.com/neos/neos-development-collection/pull/729>`_
+-----------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`BUGFIX: Replace stylesheets with less side-effects <https://github.com/neos/neos-development-collection/pull/764>`_
+--------------------------------------------------------------------------------------------------------------------
+
+Improves the replacement of stylesheets by avoiding removing them unless actually changed between page loads. Without it a FOUC (flash of unstyled content) appears under some conditions like slow connection, device, server or similar.
+
+Regression introduced with #375 which takes a very basic approach to solve the issue.
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix styling for asset details in thumbnail view <https://github.com/neos/neos-development-collection/pull/665>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+This fixes the appearance of the asset details within the media browser.
+
+* Packages: ``Neos``
+
+`BUGFIX: Clickable labels in the media views <https://github.com/neos/neos-development-collection/pull/761>`_
+-------------------------------------------------------------------------------------------------------------
+
+Since Fluid generates the ``name`` attribute based on the object relation, some of the fields need to be assigned a id to match their label tag.
+
+* Packages: ``Neos``
+
+`BUGFIX: Prevent nesting level too deep error in checkbox view helper <https://github.com/neos/neos-development-collection/pull/762>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+To prevent a recursive comparison which can lead to this error, strict comparison is used which only compares the reference.
+
+This issue occurs in the edit asset collection view in the media module.
+
+* Packages: ``Media``
+
+`BUGFIX: Only show pointer cursor for label tags with for attribute <https://github.com/neos/neos-development-collection/pull/760>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+Instead of showing a pointer cursor for all labels, only show for those that actually have a ``for`` attribute making them clickable.
+
+* Packages: ``Neos``
+
+`BUGFIX: add missing label for the document group <https://github.com/neos/neos-development-collection/pull/758>`_
+------------------------------------------------------------------------------------------------------------------
+
+Currently the label is missing:
+
+![image](https://cloud.githubusercontent.com/assets/837032/18599421/138ab352-7c61-11e6-9066-877973d872f3.png)
+
+* Packages: ``Neos``
+
+`BUGFIX: Encode array properties passed in NodesController.showAction <https://github.com/neos/neos-development-collection/pull/751>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Require correct version of flow-development-collection <https://github.com/neos/neos-development-collection/pull/705>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix wrong Flow version in \`\`composer.json\`\` <https://github.com/neos/neos-development-collection/pull/719>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+This will fix the dependency for the Flow version to correct one and prevent `composer update` to upgrade to unwanted minor releases.
+
+* Packages: ``Neos``
+
+`BUGFIX: Missing translation of label in media edit view <https://github.com/neos/neos-development-collection/pull/721>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Add missing translation keys for media actions menu <https://github.com/neos/neos-development-collection/pull/714>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Require Flow 3.3 instead of dev-master <https://github.com/neos/neos-development-collection/pull/720>`_
+----------------------------------------------------------------------------------------------------------------
+
+`BUGFIX: Use \`\`NodeData::createShadow\`\` to repair shadow nodes <https://github.com/neos/neos-development-collection/pull/718>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``TYPO3CR``
+
+`BUGFIX: Make \`\`NodeData::createShadow\`\` public again <https://github.com/neos/neos-development-collection/pull/717>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+The ``NodeData::createShadow`` method was changed to protected
+visibility in 2.2, as it is vital to repair certain constellations
+of nodes it is changed back to public.
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`BUGFIX: Use strict comparison in policies and UserService <https://github.com/neos/neos-development-collection/pull/715>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+This fixes potential nesting level too deep errors caused
+by comparing objects recursively.
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`BUGFIX: createShadow cannot be called from outside as it's protected <https://github.com/neos/neos-development-collection/pull/690>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+As this is not possible the call is replaced by code duplicated from
+``NodeData`` for now.
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`TASK: Update contributor list <https://github.com/neos/neos-development-collection/pull/697>`_
+-----------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Non-strings are not valid Json. <https://github.com/neos/neos-development-collection/pull/700>`_
+-------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Aloha format options <https://github.com/neos/neos-development-collection/pull/699>`_
+----------------------------------------------------------------------------------------------
+
+There internal selectedValue of the tag name selection for aloha get's out of sync when changing via cursor/mouse. Since aloha already handles "changes" to same state well, no need to have this logic again.
+
+NEOS-1883 #close
+
+* Packages: ``Neos``
+
+`BUGFIX: Workspace publishing fails after node:repair <https://github.com/neos/neos-development-collection/pull/706>`_
+----------------------------------------------------------------------------------------------------------------------
+
+This change addresses an issue which results in a fatal error caused
+by foreign key constraints when a user tries to publish her changes
+to another workspace. The root cause is that the task in node:repair
+which fixes "unstable" node identifiers of auto-created child nodes
+only changes identifiers of nodes in a specific workspace (by default
+the "live" workspace) and by that irreversibly disconnects corresponding
+nodes in other workspaces.
+
+The fix consists of two parts: First, the "create missing child nodes"
+task of node:repair is modified so that node identifiers are always
+changed accross all workspaces. Second, there is a new node:repair
+task which detects and fixes inconsistencies caused by this bug.
+
+If you experience the symptom described earlier, simply run a
+node:repair to fix the inconsistencies.
+
+The steps to reproduce the bug based on the Neos Demo site (as of
+August 1st, 2016) are:
+
+1. Log in to the backend and modify the title of the page "Forms". Don't
+   publish the change yet.
+2. From the command line call node:repair and see that child node
+   identifiers are changed.
+3. Try to publish the changes to the live workspace.
+
+The UI will report an error which is caused by a failed SQL update.
+With this patch applied, the changes should be able to publish without
+any errors.
+
+* Packages: ``Media`` ``TYPO3CR``
+
+`BUGFIX: Fix condition in \`getRequestPathByNode\` <https://github.com/neos/neos-development-collection/pull/691>`_
+-------------------------------------------------------------------------------------------------------------------
+
+First check that the node is still of type NodeInterface and until then
+get the parentPath.
+
+* Packages: ``Neos`` ``NodeTypes``
+
+`TASK: Fixed typos in documention <https://github.com/neos/neos-development-collection/pull/703>`_
+--------------------------------------------------------------------------------------------------
+
+@aertmann @hlubek To cleanup also the source of the content for the TS Reference.
+
+* Packages: ``Neos``
+
+`TASK: Add TYPO3.TypoScript:Debug to Reference <https://github.com/neos/neos-development-collection/pull/702>`_
+---------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: RelatedNodes template need to be more solid <https://github.com/neos/neos-development-collection/pull/658>`_
+-------------------------------------------------------------------------------------------------------------------
+
+This change check if the relatedNode.contextDocumentNode exist before
+creating the link. Without this change the editor is in front of
+an exception.
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.3.3...2.3.4>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
