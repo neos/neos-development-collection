@@ -329,8 +329,15 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 						});
 					}
 				},
-				onLoad: function() {
+				onLoad: function(event, iframe) {
 					this._frameLoaded = true;
+					var notifications = $(iframe).contents().find('#neos-notifications-inline');
+					if (notifications.length > 0) {
+						$('li', notifications).each(function(index, notification) {
+							var title = $(notification).data('title');
+							Notification[$(notification).data('type')](title ? title : $(notification).text(), title ? $(notification).html() : '');
+						});
+					}
 				},
 				refreshThumbnail: function() {
 					if (this._frameLoaded) {
@@ -358,7 +365,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 				didInsertElement: function() {
 					this.$().find('iframe').on('load', function(event) {
 						if (window.Typo3MediaBrowserCallbacks && window.Typo3MediaBrowserCallbacks.onLoad) {
-							window.Typo3MediaBrowserCallbacks.onLoad(event);
+							window.Typo3MediaBrowserCallbacks.onLoad(event, this);
 						}
 					});
 				}
@@ -1072,7 +1079,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 				didInsertElement: function() {
 					this.$().find('iframe').on('load', function(event) {
 						if (window.Typo3MediaBrowserCallbacks && window.Typo3MediaBrowserCallbacks.onLoad) {
-							window.Typo3MediaBrowserCallbacks.onLoad(event);
+							window.Typo3MediaBrowserCallbacks.onLoad(event, this);
 						}
 					});
 				}
