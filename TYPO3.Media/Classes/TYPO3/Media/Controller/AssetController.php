@@ -608,9 +608,6 @@ class AssetController extends ActionController
     {
         if (is_string($messageBody)) {
             $messageBody = $this->translator->translateById($messageBody, $messageArguments, null, null, 'Main', 'TYPO3.Media') ?: $messageBody;
-            if ($translatedMessageBody !== null) {
-                $messageBody = $translatedMessageBody;
-            }
         }
 
         $messageTitle = $this->translator->translateById($messageTitle, $messageArguments, null, null, 'Main', 'TYPO3.Media');
