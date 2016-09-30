@@ -1,0 +1,17 @@
+`2.3.6 (2016-09-30) <https://github.com/neos/neos-development-collection/releases/tag/2.3.6>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Undefined variable in AssetController <https://github.com/neos/neos-development-collection/pull/1152>`_
+----------------------------------------------------------------------------------------------------------------
+
+The upmerge from 2.2 to 2.3 introduced a regression because of
+an undefined variable. This was probably introduced because of
+a merge conflict with `427d0ed70e5365fa906f4196c936e4c9271d266e <https://github.com/neos/neos-development-collection/commit/427d0ed70e5365fa906f4196c936e4c9271d266e>`_
+
+* Packages: ``Media`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.3.5...2.3.6>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
