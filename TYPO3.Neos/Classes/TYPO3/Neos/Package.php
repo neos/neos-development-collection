@@ -79,6 +79,7 @@ class Package extends BasePackage
 
         $dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodePathChanged', 'TYPO3\Neos\Routing\Cache\RouteCacheFlusher', 'registerNodeChange');
         $dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodeRemoved', 'TYPO3\Neos\Routing\Cache\RouteCacheFlusher', 'registerNodeChange');
+        $dispatcher->connect('TYPO3\Neos\Service\PublishingService', 'nodeDiscarded', 'TYPO3\Neos\Routing\Cache\RouteCacheFlusher', 'registerNodeChange');
         $dispatcher->connect('TYPO3\Neos\Service\PublishingService', 'nodePublished', 'TYPO3\Neos\Routing\Cache\RouteCacheFlusher', 'registerNodeChange');
         $dispatcher->connect('TYPO3\Neos\Service\PublishingService', 'nodePublished', function ($node, $targetWorkspace) use ($bootstrap) {
             $cacheManager = $bootstrap->getObjectManager()->get(CacheManager::class);
