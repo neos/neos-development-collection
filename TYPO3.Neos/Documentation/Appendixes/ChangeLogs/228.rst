@@ -1,0 +1,18 @@
+`2.2.8 (2016-09-30) <https://github.com/neos/neos-development-collection/releases/tag/2.2.8>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Re-add ContentModule-built.js <https://github.com/neos/neos-development-collection/pull/1153>`_
+--------------------------------------------------------------------------------------------------------
+
+The ContentModule-built.js has accidentally be removed during an upmerge
+from 2.1 to 2.2 in commit `4efb95cf46db796d2171d63279f93d970405bef8 <https://github.com/neos/neos-development-collection/commit/4efb95cf46db796d2171d63279f93d970405bef8>`_.
+
+This change adds a recently compiled file again.
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.2.7...2.2.8>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
