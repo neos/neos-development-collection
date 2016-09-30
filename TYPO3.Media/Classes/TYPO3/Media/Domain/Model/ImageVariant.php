@@ -12,6 +12,7 @@ namespace TYPO3\Media\Domain\Model;
  */
 
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use TYPO3\Flow\Annotations as Flow;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -20,6 +21,8 @@ use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Resource\Resource;
 use TYPO3\Flow\Utility\TypeHandling;
 use TYPO3\Media\Domain\Model\Adjustment\ImageAdjustmentInterface;
+use TYPO3\Media\Domain\Model\Image;
+use TYPO3\Media\Domain\Service\ImageService;
 
 /**
  * A user defined variant (working copy) of an original Image asset
@@ -31,13 +34,13 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
     use DimensionsTrait;
 
     /**
-     * @var \TYPO3\Media\Domain\Service\ImageService
+     * @var ImageService
      * @Flow\Inject
      */
     protected $imageService;
 
     /**
-     * @var \TYPO3\Media\Domain\Model\Image
+     * @var Image
      * @ORM\ManyToOne(inversedBy="variants")
      * @ORM\JoinColumn(nullable=false)
      * @Flow\Validate(type="NotEmpty")
@@ -45,7 +48,7 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
     protected $originalAsset;
 
     /**
-     * @var \Doctrine\Common\Collections\ArrayCollection<\TYPO3\Media\Domain\Model\Adjustment\AbstractImageAdjustment>
+     * @var ArrayCollection<\TYPO3\Media\Domain\Model\Adjustment\AbstractImageAdjustment>
      * @ORM\OneToMany(mappedBy="imageVariant", cascade={"all"}, orphanRemoval=TRUE)
      * @ORM\OrderBy({"position" = "ASC"})
      */
@@ -310,7 +313,7 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
         if (!$existingAdjustmentFound) {
             $this->adjustments->add($adjustment);
             $adjustment->setImageVariant($this);
-            $this->adjustments = $this->adjustments->matching(new \Doctrine\Common\Collections\Criteria(null, array('position' => 'ASC')));
+            $this->adjustments = $this->adjustments->matching(new Criteria(null, array('position' => 'ASC')));
         }
 
         $this->lastModified = new \DateTime();

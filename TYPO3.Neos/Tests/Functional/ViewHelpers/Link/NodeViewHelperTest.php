@@ -18,15 +18,24 @@ use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Mvc\Routing\UriBuilder;
 use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\Flow\Tests\FunctionalTestRequestHandler;
 use TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer;
 use TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer;
 use TYPO3\Fluid\View\AbstractTemplateView;
+use TYPO3\Fluid\View\TemplateView;
+use TYPO3\Media\TypeConverter\AssetInterfaceConverter;
 use TYPO3\Neos\Domain\Model\Domain;
+use TYPO3\Neos\Domain\Repository\DomainRepository;
+use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentContext;
-use TYPO3\Neos\ViewHelpers\Uri\NodeViewHelper;
+use TYPO3\Neos\Domain\Service\SiteImportService;
+use TYPO3\Neos\ViewHelpers\Link\NodeViewHelper;
+use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TypoScript\Core\Runtime;
+use TYPO3\TypoScript\TypoScriptObjects\Helpers\FluidView;
+use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
 
 /**
  * Functional test for the NodeViewHelper
@@ -70,15 +79,15 @@ class NodeViewHelperTest extends FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->nodeDataRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
-        $domainRepository = $this->objectManager->get('TYPO3\Neos\Domain\Repository\DomainRepository');
-        $siteRepository = $this->objectManager->get('TYPO3\Neos\Domain\Repository\SiteRepository');
-        $this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
+        $this->nodeDataRepository = $this->objectManager->get(NodeDataRepository::class);
+        $domainRepository = $this->objectManager->get(DomainRepository::class);
+        $siteRepository = $this->objectManager->get(SiteRepository::class);
+        $this->contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
         $contextProperties = array(
             'workspaceName' => 'live'
         );
         $contentContext = $this->contextFactory->create($contextProperties);
-        $siteImportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteImportService');
+        $siteImportService = $this->objectManager->get(SiteImportService::class);
         $siteImportService->importFromFile(__DIR__ . '/../../Fixtures/NodeStructure.xml', $contentContext);
         $this->persistenceManager->persistAll();
 
@@ -94,17 +103,17 @@ class NodeViewHelperTest extends FunctionalTestCase
 
         $this->contentContext = $contentContext;
 
-        $this->propertyMapper = $this->objectManager->get('TYPO3\Flow\Property\PropertyMapper');
+        $this->propertyMapper = $this->objectManager->get(PropertyMapper::class);
 
-        $this->viewHelper = new \TYPO3\Neos\ViewHelpers\Link\NodeViewHelper();
-        /** @var $requestHandler \TYPO3\Flow\Tests\FunctionalTestRequestHandler */
+        $this->viewHelper = new NodeViewHelper();
+        /** @var $requestHandler FunctionalTestRequestHandler */
         $requestHandler = self::$bootstrap->getActiveRequestHandler();
         $httpRequest = $requestHandler->getHttpRequest();
         $httpRequest->setBaseUri(new Uri('http://neos.test/'));
         $controllerContext = new ControllerContext(new ActionRequest($httpRequest), $requestHandler->getHttpResponse(), new Arguments(array()), new UriBuilder());
         $this->inject($this->viewHelper, 'controllerContext', $controllerContext);
 
-        $typoScriptObject = $this->getAccessibleMock('\TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation', array('dummy'), array(), '', false);
+        $typoScriptObject = $this->getAccessibleMock(TemplateImplementation::class, array('dummy'), array(), '', false);
         $this->tsRuntime = new Runtime(array(), $controllerContext);
         $this->tsRuntime->pushContextArray(array(
             'documentNode' => $this->contentContext->getCurrentSiteNode()->getNode('home'),
@@ -112,7 +121,7 @@ class NodeViewHelperTest extends FunctionalTestCase
         ));
         $this->inject($typoScriptObject, 'tsRuntime', $this->tsRuntime);
         /** @var AbstractTemplateView|\PHPUnit_Framework_MockObject_MockObject $mockView */
-        $mockView = $this->getAccessibleMock('TYPO3\TypoScript\TypoScriptObjects\Helpers\FluidView', array(), array(), '', false);
+        $mockView = $this->getAccessibleMock(FluidView::class, array(), array(), '', false);
         $mockView->expects($this->any())->method('getTypoScriptObject')->will($this->returnValue($typoScriptObject));
         $viewHelperVariableContainer = new ViewHelperVariableContainer();
         $viewHelperVariableContainer->setView($mockView);
@@ -131,7 +140,7 @@ class NodeViewHelperTest extends FunctionalTestCase
         parent::tearDown();
 
         $this->inject($this->contextFactory, 'contextInstances', array());
-        $this->inject($this->objectManager->get('TYPO3\Media\TypeConverter\AssetInterfaceConverter'), 'resourcesAlreadyConvertedToAssets', array());
+        $this->inject($this->objectManager->get(AssetInterfaceConverter::class), 'resourcesAlreadyConvertedToAssets', array());
     }
 
     /**
@@ -139,7 +148,7 @@ class NodeViewHelperTest extends FunctionalTestCase
      */
     public function viewHelperRendersUriViaGivenNodeObject()
     {
-        $targetNode = $this->propertyMapper->convert('/sites/example/home', 'TYPO3\TYPO3CR\Domain\Model\Node');
+        $targetNode = $this->propertyMapper->convert('/sites/example/home', Node::class);
 
         $this->assertSame('<a href="/en/home.html">' . $targetNode->getLabel() . '</a>', $this->viewHelper->render($targetNode));
     }
@@ -190,8 +199,8 @@ class NodeViewHelperTest extends FunctionalTestCase
         $this->assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $this->viewHelper->render('/sites/example/home/about-us/mission@live'));
 
         // The tests should also work in a regular fluid view, so we set that and repeat the tests
-        $mockView = $this->getAccessibleMock('TYPO3\Fluid\View\TemplateView', array(), array(), '', false);
-        $viewHelperVariableContainer = new \TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer();
+        $mockView = $this->getAccessibleMock(TemplateView::class, array(), array(), '', false);
+        $viewHelperVariableContainer = new ViewHelperVariableContainer();
         $viewHelperVariableContainer->setView($mockView);
         $this->inject($this->viewHelper, 'viewHelperVariableContainer', $viewHelperVariableContainer);
         $this->assertSame('<a href="/en/home.html">Home</a>', $this->viewHelper->render('/sites/example/home@live'));

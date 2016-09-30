@@ -10,14 +10,24 @@ namespace TYPO3\Media\Tests\Unit\TypeConverter;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Property\PropertyMappingConfiguration;
+use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
+use TYPO3\Flow\Reflection\ReflectionService;
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Media\Domain\Model\Image;
+use TYPO3\Media\Domain\Model\ImageInterface;
+use TYPO3\Media\TypeConverter\ImageInterfaceConverter;
+use TYPO3\Flow\Resource\Resource as PersistentResource;
 
 /**
  * Testcase for the ImageConverter
  */
-class ImageInterfaceConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ImageInterfaceConverterTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\Media\TypeConverter\ImageInterfaceConverter
+     * @var ImageInterfaceConverter
      */
     protected $converter;
 
@@ -26,14 +36,14 @@ class ImageInterfaceConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setUp()
     {
-        $this->converter = new \TYPO3\Media\TypeConverter\ImageInterfaceConverter();
-        $this->mockReflectionService = $this->createMock('TYPO3\Flow\Reflection\ReflectionService');
+        $this->converter = new ImageInterfaceConverter();
+        $this->mockReflectionService = $this->createMock(ReflectionService::class);
         $this->inject($this->converter, 'reflectionService', $this->mockReflectionService);
 
-        $this->mockPersistenceManager = $this->createMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+        $this->mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
         $this->inject($this->converter, 'persistenceManager', $this->mockPersistenceManager);
 
-        $this->mockObjectManager = $this->createMock('TYPO3\Flow\Object\ObjectManagerInterface');
+        $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $this->inject($this->converter, 'objectManager', $this->mockObjectManager);
     }
 
@@ -43,7 +53,7 @@ class ImageInterfaceConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
     public function checkMetadata()
     {
         $this->assertEquals(array('string', 'array'), $this->converter->getSupportedSourceTypes());
-        $this->assertEquals('TYPO3\Media\Domain\Model\ImageInterface', $this->converter->getSupportedTargetType());
+        $this->assertEquals(ImageInterface::class, $this->converter->getSupportedTargetType());
         $this->assertEquals(2, $this->converter->getPriority());
     }
 
@@ -52,11 +62,11 @@ class ImageInterfaceConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function canConvertFromDataProvider()
     {
-        $dummyResource = $this->createMock('TYPO3\Flow\Resource\Resource');
+        $dummyResource = $this->createMock(PersistentResource::class);
         return array(
-            array(array('resource' => $dummyResource), 'TYPO3\Media\Domain\Model\Image', true),
-            array(array('__identity' => 'foo'), 'TYPO3\Media\Domain\Model\Image', false),
-            array(array('resource' => $dummyResource), 'TYPO3\Media\Domain\Model\ImageInterface', true),
+            array(array('resource' => $dummyResource), Image::class, true),
+            array(array('__identity' => 'foo'), Image::class, false),
+            array(array('resource' => $dummyResource), ImageInterface::class, true),
         );
     }
 
@@ -81,9 +91,9 @@ class ImageInterfaceConverterTest extends \TYPO3\Flow\Tests\UnitTestCase
         $this->mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->will($this->returnCallback(function ($objectType) {
             return $objectType;
         }));
-        $configuration = new \TYPO3\Flow\Property\PropertyMappingConfiguration();
-        $configuration->setTypeConverterOption('TYPO3\Media\TypeConverter\ImageInterfaceConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
+        $configuration = new PropertyMappingConfiguration();
+        $configuration->setTypeConverterOption(ImageInterfaceConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
 
-        $this->assertNull($this->converter->convertFrom(array(), 'TYPO3\Media\Domain\Model\Image', array(), $configuration));
+        $this->assertNull($this->converter->convertFrom(array(), Image::class, array(), $configuration));
     }
 }

@@ -12,17 +12,19 @@ namespace TYPO3\Neos\Controller\Backend;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\Controller\ActionController;
+use TYPO3\Neos\Controller\Backend\MenuHelper;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 
 /**
  * @Flow\Scope("singleton")
  */
-class MenuController extends \TYPO3\Flow\Mvc\Controller\ActionController
+class MenuController extends ActionController
 {
     use BackendUserTranslationTrait;
 
     /**
-     * @var \TYPO3\Neos\Controller\Backend\MenuHelper
+     * @var MenuHelper
      * @Flow\Inject
      */
     protected $menuHelper;

@@ -15,6 +15,8 @@ use TYPO3\Flow\I18n\Service;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Resource\Publishing\ResourcePublisher;
+use TYPO3\Flow\Resource\Resource as PersistentResource;
+use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\TypoScript\Core\Runtime;
 use TYPO3\TypoScript\TypoScriptObjects\ResourceUriImplementation;
@@ -56,21 +58,21 @@ class ResourceUriImplementationTest extends UnitTestCase
 
     public function setUp()
     {
-        $this->mockTsRuntime = $this->getMockBuilder('TYPO3\TypoScript\Core\Runtime')->disableOriginalConstructor()->getMock();
+        $this->mockTsRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockControllerContext = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\ControllerContext')->disableOriginalConstructor()->getMock();
+        $this->mockControllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+        $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $this->mockControllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($this->mockActionRequest));
 
         $this->mockTsRuntime->expects($this->any())->method('getControllerContext')->will($this->returnValue($this->mockControllerContext));
 
         $this->resourceUriImplementation = new ResourceUriImplementation($this->mockTsRuntime, 'resourceUri/test', 'TYPO3.TypoScript:ResourceUri');
 
-        $this->mockResourceManager = $this->getMockBuilder('TYPO3\Flow\Resource\ResourceManager')->disableOriginalConstructor()->getMock();
+        $this->mockResourceManager = $this->getMockBuilder(ResourceManager::class)->disableOriginalConstructor()->getMock();
         $this->inject($this->resourceUriImplementation, 'resourceManager', $this->mockResourceManager);
 
-        $this->mockI18nService = $this->getMockBuilder('TYPO3\Flow\I18n\Service')->disableOriginalConstructor()->getMock();
+        $this->mockI18nService = $this->getMockBuilder(Service::class)->disableOriginalConstructor()->getMock();
         $this->inject($this->resourceUriImplementation, 'i18nService', $this->mockI18nService);
     }
 
@@ -89,7 +91,7 @@ class ResourceUriImplementationTest extends UnitTestCase
      */
     public function evaluateReturnsResourceUriForAGivenResource()
     {
-        $validResource = $this->getMockBuilder('TYPO3\Flow\Resource\Resource')->disableOriginalConstructor()->getMock();
+        $validResource = $this->getMockBuilder(PersistentResource::class)->disableOriginalConstructor()->getMock();
         $this->mockTsRuntime->expects($this->atLeastOnce())->method('evaluate')->with('resourceUri/test/resource')->will($this->returnCallback(function ($evaluatePath, $that) use ($validResource) {
             return $validResource;
         }));

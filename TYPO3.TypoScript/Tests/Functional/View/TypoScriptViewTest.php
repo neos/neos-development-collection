@@ -11,6 +11,10 @@ namespace TYPO3\TypoScript\Tests\Functional\View;
  * source code.
  */
 
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Mvc\Controller\ControllerContext;
+use TYPO3\Flow\Mvc\View\ViewInterface;
+use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\TypoScript\View\TypoScriptView;
 
@@ -21,12 +25,12 @@ use TYPO3\TypoScript\View\TypoScriptView;
 class TypoScriptViewTest extends FunctionalTestCase
 {
     /**
-     * @var TYPO3\Flow\Mvc\View\ViewInterface
+     * @var ViewInterface
      */
     protected $mockFallbackView;
 
     /**
-     * @var \TYPO3\Flow\Mvc\Controller\ControllerContext
+     * @var ControllerContext
      */
     protected $mockControllerContext;
 
@@ -35,8 +39,8 @@ class TypoScriptViewTest extends FunctionalTestCase
      */
     public function setUp()
     {
-        $this->mockFallbackView = $this->createMock('TYPO3\Flow\Mvc\View\ViewInterface');
-        $this->mockControllerContext = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\ControllerContext')->disableOriginalConstructor()->getMock();
+        $this->mockFallbackView = $this->createMock(ViewInterface::class);
+        $this->mockControllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
     }
 
     /**
@@ -89,7 +93,7 @@ class TypoScriptViewTest extends FunctionalTestCase
      */
     protected function buildView($controllerObjectName, $controllerActionName)
     {
-        $request = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+        $request = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $request->expects($this->any())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
         $request->expects($this->any())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
         $this->mockControllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($request));

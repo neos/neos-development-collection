@@ -14,6 +14,7 @@ namespace TYPO3\TYPO3CR\ViewHelpers\Widget;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Fluid\Core\Widget\AbstractWidgetViewHelper;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\ViewHelpers\Widget\Controller\PaginateController;
 
 /**
  * This ViewHelper renders a Pagination of nodes.
@@ -44,7 +45,7 @@ class PaginateViewHelper extends AbstractWidgetViewHelper
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\ViewHelpers\Widget\Controller\PaginateController
+     * @var PaginateController
      */
     protected $controller;
 

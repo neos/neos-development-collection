@@ -16,8 +16,10 @@ use TYPO3\Flow\Cache\CacheAwareInterface;
 use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Service\Context;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface;
 use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 use TYPO3\TYPO3CR\Exception\NodeConstraintException;
@@ -73,7 +75,7 @@ class Node implements NodeInterface, CacheAwareInterface
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+     * @var ContextFactoryInterface
      */
     protected $contextFactory;
 
@@ -460,7 +462,7 @@ class Node implements NodeInterface, CacheAwareInterface
     /**
      * Returns the workspace this node is contained in
      *
-     * @return \TYPO3\TYPO3CR\Domain\Model\Workspace
+     * @return Workspace
      * @api
      */
     public function getWorkspace()

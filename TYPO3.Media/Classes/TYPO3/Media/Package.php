@@ -13,7 +13,7 @@ namespace TYPO3\Media;
 
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Package\Package as BasePackage;
-use TYPO3\Media\Domain\Service\AssetService;
+use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Media\Domain\Service\ThumbnailGenerator;
 
 /**

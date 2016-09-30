@@ -5,7 +5,12 @@ use Behat\Gherkin\Node\TableNode;
 use PHPUnit_Framework_Assert as Assert;
 use Symfony\Component\Yaml\Yaml;
 use TYPO3\Flow\Utility\Arrays;
+use TYPO3\Neos\Domain\Service\UserService;
 use TYPO3\Neos\EventLog\Domain\Model\Event;
+use TYPO3\Neos\EventLog\Domain\Model\NodeEvent;
+use TYPO3\Neos\EventLog\Domain\Repository\EventRepository;
+use TYPO3\Neos\EventLog\Integrations\EntityIntegrationService;
+use TYPO3\Neos\EventLog\Integrations\TYPO3CRIntegrationService;
 
 /**
  * A trait with shared step definitions for common use by other contexts
@@ -80,7 +85,7 @@ trait HistoryDefinitionsTrait
 
     protected function checkSingleEvent($expected, Event $event, &$eventsByInternalId, &$unmatchedParentEvents)
     {
-        /* @var $event \TYPO3\Neos\EventLog\Domain\Model\NodeEvent */
+        /* @var $event NodeEvent */
         $rowId = null;
         foreach ($expected as $rowName => $rowValue) {
             switch ($rowName) {
@@ -134,19 +139,19 @@ trait HistoryDefinitionsTrait
     }
 
     /**
-     * @return \TYPO3\Neos\EventLog\Domain\Repository\EventRepository
+     * @return EventRepository
      */
     protected function getEventRepository()
     {
-        return $this->getObjectManager()->get(\TYPO3\Neos\EventLog\Domain\Repository\EventRepository::class);
+        return $this->getObjectManager()->get(EventRepository::class);
     }
 
     /**
-     * @return \TYPO3\Neos\EventLog\Integrations\TYPO3CRIntegrationService
+     * @return TYPO3CRIntegrationService
      */
     protected function getTYPO3CRIntegrationService()
     {
-        return $this->getObjectManager()->get(\TYPO3\Neos\EventLog\Integrations\TYPO3CRIntegrationService::class);
+        return $this->getObjectManager()->get(TYPO3CRIntegrationService::class);
     }
 
     /**
@@ -155,8 +160,8 @@ trait HistoryDefinitionsTrait
     public function iHaveTheFollowingMonitorEntitiesConfiguration(PyStringNode $string)
     {
         $configuration = Yaml::parse($string->getRaw());
-        /* @var $entityIntegrationService \TYPO3\Neos\EventLog\Integrations\EntityIntegrationService */
-        $entityIntegrationService = $this->getObjectManager()->get(\TYPO3\Neos\EventLog\Integrations\EntityIntegrationService::class);
+        /* @var $entityIntegrationService EntityIntegrationService */
+        $entityIntegrationService = $this->getObjectManager()->get(EntityIntegrationService::class);
         $entityIntegrationService->setMonitorEntitiesSetting($configuration);
     }
 
@@ -166,7 +171,7 @@ trait HistoryDefinitionsTrait
     public function iCreateTheFollowingAccounts(TableNode $table)
     {
         foreach ($table->getHash() as $row) {
-            $user = $this->getObjectManager()->get(\TYPO3\Neos\Domain\Service\UserService::class)->createUser(
+            $user = $this->getObjectManager()->get(UserService::class)->createUser(
                 $row['User'],
                 $row['Password'],
                 $row['First Name'],

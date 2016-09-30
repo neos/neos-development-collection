@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Domain\Service;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException;
 use TYPO3\Flow\Security\Account;
 use TYPO3\Flow\Security\AccountFactory;
 use TYPO3\Flow\Security\AccountRepository;
@@ -302,8 +303,7 @@ class UserService
      */
     public function deleteUser(User $user)
     {
-        $backendUserRole = $this->policyService->getRole('TYPO3.Neos:Editor');
-
+        $backendUserRole = $this->policyService->getRole('TYPO3.Neos:AbstractEditor');
         foreach ($user->getAccounts() as $account) {
             /** @var Account $account */
             if ($account->hasRole($backendUserRole)) {
@@ -640,11 +640,11 @@ class UserService
             return $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces');
         }
 
-        if ($workspace->isPrivateWorkspace() && $workspace->getOwner() == $this->getCurrentUser()) {
+        if ($workspace->isPrivateWorkspace() && $workspace->getOwner() === $this->getCurrentUser()) {
             return $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces');
         }
 
-        if ($workspace->isPrivateWorkspace() && $workspace->getOwner() != $this->getCurrentUser()) {
+        if ($workspace->isPrivateWorkspace() && $workspace->getOwner() !== $this->getCurrentUser()) {
             return $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces');
         }
 
@@ -768,7 +768,7 @@ class UserService
      *
      * @param User $user The new user to create a workspace for
      * @param Account $account The user's backend account
-     * @throws \TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException
+     * @throws IllegalObjectTypeException
      */
     protected function createPersonalWorkspace(User $user, Account $account)
     {

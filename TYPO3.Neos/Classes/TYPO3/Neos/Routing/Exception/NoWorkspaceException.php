@@ -10,11 +10,12 @@ namespace TYPO3\Neos\Routing\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Neos\Routing\Exception;
 
 /**
  * A "no workspace" exception
  */
-class NoWorkspaceException extends \TYPO3\Neos\Routing\Exception
+class NoWorkspaceException extends Exception
 {
     /**
      * @var integer

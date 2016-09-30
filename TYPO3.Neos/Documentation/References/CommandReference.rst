@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2016-08-17
+The following reference was automatically generated from code on 2016-09-02
 
 
 .. _`Command Reference: TYPO3.FLOW`:
@@ -1903,7 +1903,7 @@ Options
 ``--site-node``
   the node name of the site to be exported; if none given will export all sites
 ``--tidy``
-  Whether to export formatted XML
+  Whether to export formatted XML. This is defaults to true
 ``--filename``
   relative path and filename to the XML file to create. Any resource will be stored in a sub folder "Resources".
 ``--package-key``
@@ -2641,6 +2641,12 @@ removeNodesWithInvalidWorkspace
 
 Will check for and optionally remove nodes which belong to a workspace which no longer
 exists.. 
+
+*Repair inconsistent node identifiers*
+fixNodesWithInconsistentIdentifier
+
+Will check for and optionally repair node identifiers which are out of sync with their
+corresponding nodes in a live workspace.
 
 *Missing child nodes*
 createMissingChildNodes

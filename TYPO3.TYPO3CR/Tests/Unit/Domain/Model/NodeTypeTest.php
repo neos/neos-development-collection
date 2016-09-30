@@ -11,13 +11,16 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
  * source code.
  */
 
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 
 /**
  * Testcase for the "NodeType" domain model
  *
  */
-class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase
+class NodeTypeTest extends UnitTestCase
 {
     /**
      * example node types
@@ -191,7 +194,7 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function hasConfigurationInitializesTheNodeType()
     {
-        $nodeType = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeType')->disableOriginalConstructor()->setMethods(array('initialize'))->getMock();
+        $nodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->setMethods(array('initialize'))->getMock();
         $nodeType->expects($this->once())->method('initialize');
         $nodeType->hasConfiguration('foo');
     }
@@ -223,7 +226,7 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function getConfigurationInitializesTheNodeType()
     {
-        $nodeType = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeType')->disableOriginalConstructor()->setMethods(array('initialize'))->getMock();
+        $nodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->setMethods(array('initialize'))->getMock();
         $nodeType->expects($this->once())->method('initialize');
         $nodeType->getConfiguration('foo');
     }
@@ -272,8 +275,8 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function accessingConfigurationOptionsInitializesTheNodeType($getter)
     {
-        $mockObjectManager = $this->createMock('TYPO3\Flow\Object\ObjectManagerInterface');
-        $nodeType = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeType', array('initialize'), array(), '', false);
+        $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
+        $nodeType = $this->getAccessibleMock(NodeType::class, array('initialize'), array(), '', false);
         $nodeType->_set('objectManager', $mockObjectManager);
         $nodeType->expects($this->atLeastOnce())->method('initialize');
         $nodeType->$getter();
@@ -309,7 +312,7 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function magicGettersInitializesTheNodeType()
     {
-        $nodeType = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\NodeType', array('initialize'), array(), '', false);
+        $nodeType = $this->getAccessibleMock(NodeType::class, array('initialize'), array(), '', false);
         $nodeType->_set('configuration', array('someProperty' => 'someValue'));
         $nodeType->expects($this->once())->method('initialize');
         $nodeType->getSomeProperty();
@@ -446,7 +449,7 @@ class NodeTypeTest extends \TYPO3\Flow\Tests\UnitTestCase
         $baseType = new NodeType('TYPO3.TYPO3CR:Base', array(), array(
             'childNodes' => array('nodeName' => $childNodeConfiguration)
         ));
-        $mockNodeTypeManager = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager')->disableOriginalConstructor()->getMock();
+        $mockNodeTypeManager = $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock();
         $mockNodeTypeManager->expects($this->any())->method('getNodeType')->will($this->returnValue($baseType));
         $this->inject($baseType, 'nodeTypeManager', $mockNodeTypeManager);
 
