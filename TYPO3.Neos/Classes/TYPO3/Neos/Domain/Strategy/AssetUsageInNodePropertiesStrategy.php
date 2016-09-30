@@ -95,9 +95,6 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
         $relatedNodes = [];
         foreach ($this->getRelatedNodes($asset) as $relatedNodeData) {
             /** @var NodeData $relatedNodeData */
-            if ($relatedNodeData->isRemoved()) {
-                continue;
-            }
             $accessible = $this->domainUserService->currentUserCanReadWorkspace($relatedNodeData->getWorkspace());
             if ($accessible) {
                 $context = $this->createContextMatchingNodeData($relatedNodeData);
@@ -142,7 +139,7 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
             $this->nodeDataRepository->findNodesByRelatedEntities($relationMap),
             function ($nodeData) {
                 /** @var NodeData $nodeData */
-                return strpos($nodeData->getPath(), SiteService::SITES_ROOT_PATH) === 0;
+                return $nodeData->isRemoved() === false && strpos($nodeData->getPath(), SiteService::SITES_ROOT_PATH) === 0;
             }
         );
     }
