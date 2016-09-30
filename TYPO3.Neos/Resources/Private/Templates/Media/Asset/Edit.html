@@ -73,7 +73,7 @@
 			</div>
 		</div>
 		<div class="neos-footer">
-			<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'media.cancel', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
+			<f:link.action action="index" class="neos-button neos-action-cancel">{neos:backend.translate(id: 'media.cancel', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
 			<f:security.ifAccess privilegeTarget="TYPO3.Neos:Backend.Module.Media.ReplaceAssetResource">
 				<f:link.action action="replaceAssetResource" arguments="{asset: asset}" class="neos-button">{neos:backend.translate(id: 'media.replaceAssetResource', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
 			</f:security.ifAccess>
