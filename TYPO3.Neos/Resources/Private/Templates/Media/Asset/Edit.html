@@ -73,31 +73,31 @@
 			<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'media.cancel', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
 			<a title="{neos:backend.translate(id: 'media.clickToDelete', source: 'Modules', package: 'TYPO3.Neos')}" data-toggle="modal" href="#asset-{asset -> f:format.identifier()}" class="neos-button neos-button-danger">{neos:backend.translate(id: 'media.delete', source: 'Modules', package: 'TYPO3.Neos')}</a>
 			<f:form.submit id="save" class="neos-button neos-button-primary" value="{neos:backend.translate(id: 'media.saveEditing', source: 'Modules', package: 'TYPO3.Neos')}" />
-			<div class="neos-hide" id="asset-{asset -> f:format.identifier()}">
-				<div class="neos-modal">
-					<div class="neos-modal-header">
-						<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-						<div class="neos-header">
-							{neos:backend.translate(id: 'media.message.reallyDeleteAsset', arguments: {0: asset.label}, source: 'Modules', package: 'TYPO3.Neos')}
-						</div>
-						<div>
-							<div class="neos-subheader">
-								<p>
-									{neos:backend.translate(id: 'media.message.willBeDeleted', source: 'Modules', package: 'TYPO3.Neos')}<br />
-									{neos:backend.translate(id: 'media.message.operationCannotBeUndone', source: 'Modules', package: 'TYPO3.Neos')}
-								</p>
-							</div>
-						</div>
+		</div>
+		<div class="neos-hide" id="asset-{asset -> f:format.identifier()}">
+			<div class="neos-modal">
+				<div class="neos-modal-header">
+					<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+					<div class="neos-header">
+						{neos:backend.translate(id: 'media.message.reallyDeleteAsset', arguments: {0: asset.label}, source: 'Modules', package: 'TYPO3.Neos')}
 					</div>
-					<div class="neos-modal-footer">
-						<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'media.cancel', source: 'Modules', package: 'TYPO3.Neos')}</a>
-						<button type="submit" form="postHelper" formaction="{f:uri.action(action: 'delete', arguments: {asset: asset})}" title="{neos:backend.translate(id: 'media.tooltip.deleteAsset', source: 'Modules', package: 'TYPO3.Neos')}" class="neos-button neos-button-mini neos-button-danger">
-							{neos:backend.translate(id: 'media.message.confirmDelete', source: 'Modules', package: 'TYPO3.Neos')}
-						</button>
+					<div>
+						<div class="neos-subheader">
+							<p>
+								{neos:backend.translate(id: 'media.message.willBeDeleted', source: 'Modules', package: 'TYPO3.Neos')}<br />
+								{neos:backend.translate(id: 'media.message.operationCannotBeUndone', source: 'Modules', package: 'TYPO3.Neos')}
+							</p>
+						</div>
 					</div>
 				</div>
-				<div class="neos-modal-backdrop neos-in"></div>
+				<div class="neos-modal-footer">
+					<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'media.cancel', source: 'Modules', package: 'TYPO3.Neos')}</a>
+					<button type="submit" form="postHelper" formaction="{f:uri.action(action: 'delete', arguments: {asset: asset})}" title="{neos:backend.translate(id: 'media.tooltip.deleteAsset', source: 'Modules', package: 'TYPO3.Neos')}" class="neos-button neos-button-mini neos-button-danger">
+						{neos:backend.translate(id: 'media.message.confirmDelete', source: 'Modules', package: 'TYPO3.Neos')}
+					</button>
+				</div>
 			</div>
+			<div class="neos-modal-backdrop neos-in"></div>
 		</div>
 	</f:form>
 	<f:form action="index" id="postHelper" method="post"></f:form>
