@@ -32,7 +32,7 @@
                     </f:if>
                 </fieldset>
                 <fieldset>
-                    <legend>Usage</legend>
+                    <legend>{neos:backend.translate(id: 'media.relatedNodes.referencesTo', source: 'Modules', arguments: {asset: asset.label})}</legend>
                     <f:if condition="{asset.inUse}">
                         <f:then>
                             <p class="neos-buffer-below">{neos:backend.translate(id: 'media.replace.usageCount', arguments: {usageCount: asset.usageCount}, source: 'Modules', package: 'TYPO3.Neos')}</p>

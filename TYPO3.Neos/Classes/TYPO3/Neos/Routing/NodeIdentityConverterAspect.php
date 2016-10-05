@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Routing;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Aop\JoinPointInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
@@ -30,10 +31,10 @@ class NodeIdentityConverterAspect
      * Convert the object to its context path, if we deal with TYPO3CR nodes.
      *
      * @Flow\Around("method(TYPO3\Flow\Persistence\AbstractPersistenceManager->convertObjectToIdentityArray())")
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint the joinpoint
+     * @param JoinPointInterface $joinPoint the joinpoint
      * @return string|array the context path to be used for routing
      */
-    public function convertNodeToContextPathForRouting(\TYPO3\Flow\Aop\JoinPointInterface $joinPoint)
+    public function convertNodeToContextPathForRouting(JoinPointInterface $joinPoint)
     {
         $objectArgument = $joinPoint->getMethodArgument('object');
         if ($objectArgument instanceof NodeInterface) {

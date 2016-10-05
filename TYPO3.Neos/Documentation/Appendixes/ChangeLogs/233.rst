@@ -1,0 +1,81 @@
+`2.3.3 (2016-08-29) <https://github.com/neos/neos-development-collection/releases/tag/2.3.3>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Add translation keys to replace asset view <https://github.com/neos/neos-development-collection/pull/678>`_
+--------------------------------------------------------------------------------------------------------------------
+
+Replaced remaining texts with translation keys to allow translating the replace asset view.
+
+Neos-1878 #close
+
+* Packages: ``Neos``
+
+`BUGFIX: Render item label section correctly <https://github.com/neos/neos-development-collection/pull/679>`_
+-------------------------------------------------------------------------------------------------------------
+
+This change fixes a wrong usage if the render- viewhelper for the dimensions menu `itemLabel` section
+
+* Packages: ``Neos``
+
+`BUGFIX: Remove duplicate \`\`elseif\`\` statement <https://github.com/neos/neos-development-collection/pull/664>`_
+-------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`BUGFIX: Fix merge accident breaking findByProperties() <https://github.com/neos/neos-development-collection/pull/675>`_
+------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`BUGFIX: fix sorting in Media module <https://github.com/neos/neos-development-collection/pull/668>`_
+-----------------------------------------------------------------------------------------------------
+
+Check that asset is selected before reloading the preview image.
+
+NEOS-1882 #close
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix strtolower bug introduced by latest upmerge <https://github.com/neos/neos-development-collection/pull/671>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``TYPO3CR``
+
+`fix wrong hint meaning <https://github.com/neos/neos-development-collection/pull/667>`_
+----------------------------------------------------------------------------------------
+
+replaces https://github.com/neos/neos-development-collection/pull/663. Now for 2.0 instead of master.
+
+* Packages: ``Neos``
+
+`BUGFIX: Node property search with PostgreSQL 9.5 <https://github.com/neos/neos-development-collection/pull/652>`_
+------------------------------------------------------------------------------------------------------------------
+
+Adds an explicit string conversion which is needed for PostgreSQL > 9.4
+to convert a JSON type to string. This is needed when matching a string
+pattern in the NodeSearchService against the node properties.
+
+NEOS-1873 #resolve
+
+* Packages: ``TYPO3CR``
+
+`FEATURE: Support search by property & exact value in NodeDataRepository <https://github.com/neos/neos-development-collection/pull/1>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Currently it is only possible to search through the properties by
+giving a string that matches for any key or value found in the
+jsonified properties field.
+
+With this change, the term can also be an array to match exactly on a
+given key / value combination.
+The search term could be given as `['key' => 'value']`.
+
+NEOS-1460 #close
+
+* Packages: ``TYPO3CR``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.3.2...2.3.3>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -12,6 +12,10 @@ namespace TYPO3\TYPO3CR\Migration\Service;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
+use TYPO3\TYPO3CR\Migration\Exception\MigrationException;
+use TYPO3\TYPO3CR\Migration\Filters\FilterInterface;
 
 /**
  * Service to determine if a given node matches a series of filters given by configuration.
@@ -22,7 +26,7 @@ class NodeFilter
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     * @var ObjectManagerInterface
      */
     protected $objectManager;
 
@@ -32,11 +36,11 @@ class NodeFilter
     protected $filterConjunctions = array();
 
     /**
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $nodeData
+     * @param NodeData $nodeData
      * @param array $filterConfiguration
      * @return boolean
      */
-    public function matchFilters(\TYPO3\TYPO3CR\Domain\Model\NodeData $nodeData, array $filterConfiguration)
+    public function matchFilters(NodeData $nodeData, array $filterConfiguration)
     {
         $filterConjunction = $this->buildFilterConjunction($filterConfiguration);
         foreach ($filterConjunction as $filter) {
@@ -69,8 +73,8 @@ class NodeFilter
 
     /**
      * @param array $filterConfiguration
-     * @return \TYPO3\TYPO3CR\Migration\Filters\FilterInterface
-     * @throws \TYPO3\TYPO3CR\Migration\Exception\MigrationException
+     * @return FilterInterface
+     * @throws MigrationException
      */
     protected function constructFilterObject($filterConfiguration)
     {
@@ -81,7 +85,7 @@ class NodeFilter
             if (method_exists($filter, $setterName)) {
                 $filter->$setterName($propertyValue);
             } else {
-                throw new \TYPO3\TYPO3CR\Migration\Exception\MigrationException('Filter "' . $filterClassName . '" does not have a setter for "' . $propertyName . '", so maybe it is not supported.', 1343199531);
+                throw new MigrationException('Filter "' . $filterClassName . '" does not have a setter for "' . $propertyName . '", so maybe it is not supported.', 1343199531);
             }
         }
 
@@ -94,7 +98,7 @@ class NodeFilter
      *
      * @param string $name
      * @return string
-     * @throws \TYPO3\TYPO3CR\Migration\Exception\MigrationException
+     * @throws MigrationException
      */
     protected function resolveFilterClass($name)
     {
@@ -108,6 +112,6 @@ class NodeFilter
             return $resolvedObjectName;
         }
 
-        throw new \TYPO3\TYPO3CR\Migration\Exception\MigrationException('A filter with the name "' . $name . '" could not be found.', 1343199467);
+        throw new MigrationException('A filter with the name "' . $name . '" could not be found.', 1343199467);
     }
 }

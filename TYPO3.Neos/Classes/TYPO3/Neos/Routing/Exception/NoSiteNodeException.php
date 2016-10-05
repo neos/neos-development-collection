@@ -10,10 +10,11 @@ namespace TYPO3\Neos\Routing\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Neos\Routing\Exception;
 
 /**
  * A "no site node" exception
  */
-class NoSiteNodeException extends \TYPO3\Neos\Routing\Exception
+class NoSiteNodeException extends Exception
 {
 }

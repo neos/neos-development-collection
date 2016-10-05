@@ -10,10 +10,11 @@ namespace TYPO3\Neos\Routing\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Neos\Routing\Exception;
 
 /**
  * An exception for nodes missing a required property
  */
-class MissingNodePropertyException extends \TYPO3\Neos\Routing\Exception
+class MissingNodePropertyException extends Exception
 {
 }

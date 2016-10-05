@@ -13,6 +13,7 @@ namespace TYPO3\Neos\Tests\Unit\Domain\Model;
 
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Neos\Domain\Model\User;
+use TYPO3\Neos\Domain\Model\UserPreferences;
 
 /**
  * Test case for the "User" domain model
@@ -26,6 +27,6 @@ class UserTest extends UnitTestCase
     public function constructorInitializesPreferences()
     {
         $user = new User();
-        $this->assertInstanceOf('TYPO3\Neos\Domain\Model\UserPreferences', $user->getPreferences());
+        $this->assertInstanceOf(UserPreferences::class, $user->getPreferences());
     }
 }

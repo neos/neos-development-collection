@@ -253,6 +253,7 @@ function(
 
 		cancelCreateAction: function() {
 			this.set('showInitialTranslationDialog', false);
+			this.cancelSelection();
 		},
 
 		createEmptyDocumentAction: function() {

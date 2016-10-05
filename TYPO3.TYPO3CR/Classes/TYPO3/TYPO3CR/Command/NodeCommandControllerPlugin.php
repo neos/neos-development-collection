@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Command;
  */
 
 use Doctrine\ORM\EntityNotFoundException;
+use Doctrine\ORM\Proxy\Proxy;
 use Doctrine\ORM\QueryBuilder;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\ConsoleOutput;
@@ -27,6 +28,7 @@ use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContentDimensionCombinator;
+use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException;
@@ -145,7 +147,7 @@ Will remove all child nodes that do not have a connection to the root node.
 removeDisallowedChildNodes
 
 Will remove all child nodes that are disallowed according to the node type's auto-create
-configuration and constraints. 
+configuration and constraints.
 
 <u>Remove undefined node properties</u>
 removeUndefinedProperties
@@ -168,27 +170,33 @@ the current content dimension configuration.
 removeNodesWithInvalidWorkspace
 
 Will check for and optionally remove nodes which belong to a workspace which no longer
-exists.. 
+exists..
+
+<u>Repair inconsistent node identifiers</u>
+fixNodesWithInconsistentIdentifier
+
+Will check for and optionally repair node identifiers which are out of sync with their
+corresponding nodes in a live workspace.
 
 <u>Missing child nodes</u>
 createMissingChildNodes
 
 For all nodes (or only those which match the --node-type filter specified with this
 command) which currently don't have child nodes as configured by the node type's
-configuration new child nodes will be created. 
+configuration new child nodes will be created.
 
 <u>Reorder child nodes</u>
 reorderChildNodes
 
 For all nodes (or only those which match the --node-type filter specified with this
 command) which have configured child nodes, those child nodes are reordered according to the
-position from the parents NodeType configuration. 
+position from the parents NodeType configuration.
 <u>Missing default properties</u>
 addMissingDefaultValues
 
 For all nodes (or only those which match the --node-type filter specified with this
 command) which currently don\t have a property that have a default value configuration
-the default value for that property will be set. 
+the default value for that property will be set.
 
 <u>Repair nodes with missing shadow nodes</u>
 repairShadowNodes
@@ -228,6 +236,7 @@ HELPTEXT;
             'removeBrokenEntityReferences' => [ 'cleanup' => true ],
             'removeNodesWithInvalidDimensions' => [ 'cleanup' => true ],
             'removeNodesWithInvalidWorkspace' => [ 'cleanup' => true ],
+            'fixNodesWithInconsistentIdentifier' => [ 'cleanup' => false ],
             'createMissingChildNodes' => [ 'cleanup' => false ],
             'reorderChildNodes' => [ 'cleanup' => false ],
             'addMissingDefaultValues' => [ 'cleanup' => false ],
@@ -318,6 +327,8 @@ HELPTEXT;
         $updatedNodesCount = 0;
         $nodeCreationExceptions = 0;
 
+        $nodeIdentifiersWhichNeedUpdate = [];
+
         $nodeTypes = $this->nodeTypeManager->getSubNodeTypes($nodeType->getName(), false);
         $nodeTypes[$nodeType->getName()] = $nodeType;
 
@@ -351,20 +362,32 @@ HELPTEXT;
                             }
                             $createdNodesCount++;
                         } elseif ($childNode->getIdentifier() !== $childNodeIdentifier) {
-                            if ($dryRun === false) {
-                                $nodeData = $childNode->getNodeData();
-                                $nodeData->setIdentifier($childNodeIdentifier);
-                                $this->nodeDataRepository->update($nodeData);
-                                $this->output->outputLine('Updated identifier to %s for child node "%s" in "%s"', array($childNodeIdentifier, $childNodeName, $node->getPath()));
-                            } else {
-                                $this->output->outputLine('Child node "%s" in "%s" does not have a stable identifier', array($childNodeName, $node->getPath()));
-                            }
-                            $updatedNodesCount++;
+                            $nodeIdentifiersWhichNeedUpdate[$childNode->getIdentifier()] = $childNodeIdentifier;
                         }
                     } catch (\Exception $exception) {
                         $this->output->outputLine('Could not create node named "%s" in "%s" (%s)', array($childNodeName, $node->getPath(), $exception->getMessage()));
                         $nodeCreationExceptions++;
                     }
+                }
+            }
+        }
+
+        if (count($nodeIdentifiersWhichNeedUpdate) > 0) {
+            if ($dryRun === false) {
+                foreach ($nodeIdentifiersWhichNeedUpdate as $oldNodeIdentifier => $newNodeIdentifier) {
+                    $queryBuilder = $this->entityManager->createQueryBuilder();
+                    $queryBuilder->update(NodeData::class, 'n')
+                        ->set('n.identifier', $queryBuilder->expr()->literal($newNodeIdentifier))
+                        ->where('n.identifier = ?1')
+                        ->setParameter(1, $oldNodeIdentifier);
+                    $result = $queryBuilder->getQuery()->getResult();
+                    $updatedNodesCount++;
+                    $this->output->outputLine('Updated node identifier from %s to %s because it was not a "stable" identifier', [ $oldNodeIdentifier, $newNodeIdentifier ]);
+                }
+            } else {
+                foreach ($nodeIdentifiersWhichNeedUpdate as $oldNodeIdentifier => $newNodeIdentifier) {
+                    $this->output->outputLine('Child nodes with identifier "%s" need to change their identifier to "%s"', [ $oldNodeIdentifier, $newNodeIdentifier ]);
+                    $updatedNodesCount++;
                 }
             }
         }
@@ -515,7 +538,7 @@ HELPTEXT;
         $queryBuilder
             ->select('n')
             ->distinct()
-            ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+            ->from(NodeData::class, 'n')
             ->where('n.nodeType NOT IN (:excludeNodeTypes)')
             ->setParameter('excludeNodeTypes', $nonAbstractNodeTypes)
             ->andWhere('n.workspace = :workspace')
@@ -641,9 +664,9 @@ HELPTEXT;
 
         $nodes = $queryBuilder
             ->select('n')
-            ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+            ->from(NodeData::class, 'n')
             ->leftJoin(
-                'TYPO3\TYPO3CR\Domain\Model\NodeData',
+                NodeData::class,
                 'n2',
                 \Doctrine\ORM\Query\Expr\Join::WITH,
                 'n.parentPathHash = n2.pathHash AND n2.workspace IN (:workspaceList)'
@@ -798,7 +821,7 @@ HELPTEXT;
                             $brokenReferencesCount ++;
                         }
                     }
-                    if ($convertedProperty instanceof \Doctrine\ORM\Proxy\Proxy) {
+                    if ($convertedProperty instanceof Proxy) {
                         try {
                             $convertedProperty->__load();
                         } catch (EntityNotFoundException $e) {
@@ -838,7 +861,7 @@ HELPTEXT;
      *
      * @param string $workspaceName
      * @param array $dimensions
-     * @return \TYPO3\TYPO3CR\Domain\Service\Context
+     * @return Context
      */
     protected function createContext($workspaceName, $dimensions)
     {
@@ -867,7 +890,7 @@ HELPTEXT;
 
         $queryBuilder->select('n')
             ->distinct()
-            ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+            ->from(NodeData::class, 'n')
             ->where('n.nodeType = :nodeType')
             ->andWhere('n.workspace = :workspace')
             ->andWhere('n.movedTo IS NULL OR n.removed = :removed')
@@ -890,7 +913,7 @@ HELPTEXT;
 
         $queryBuilder
             ->resetDQLParts()
-            ->delete('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+            ->delete(NodeData::class, 'n')
             ->where('n.path LIKE :path')
             ->orWhere('n.path LIKE :subpath')
             ->andWhere('n.workspace = :workspace')
@@ -912,7 +935,7 @@ HELPTEXT;
 
         $queryBuilder
             ->resetDQLParts()
-            ->delete('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+            ->delete(NodeData::class, 'n')
             ->where('n.identifier = :identifier')
             ->andWhere('n.dimensionsHash = :dimensionsHash')
             ->setParameters(array('identifier' => $nodeIdentifier, 'dimensionsHash' => $dimensionsHash))
@@ -972,7 +995,7 @@ HELPTEXT;
         $queryBuilder = $this->entityManager->createQueryBuilder();
 
         $queryBuilder->select('n')
-            ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+            ->from(NodeData::class, 'n')
             ->where('n.workspace = :workspace')
             ->setParameter('workspace', $workspaceName);
 
@@ -981,12 +1004,17 @@ HELPTEXT;
                 continue;
             }
             $foundValidDimensionValues = false;
-            foreach ($allowedDimensionCombinations as $dimensionConfiguration) {
-                ksort($dimensionConfiguration);
+            foreach ($allowedDimensionCombinations as $allowedDimensionConfiguration) {
+                ksort($allowedDimensionConfiguration);
                 ksort($nodeDataArray['dimensionValues']);
-                if ($dimensionConfiguration === $nodeDataArray['dimensionValues']) {
-                    $foundValidDimensionValues = true;
-                    break;
+                foreach ($allowedDimensionConfiguration as $allowedDimensionKey => $allowedDimensionValuesArray) {
+                    if (isset($nodeDataArray['dimensionValues'][$allowedDimensionKey]) && isset($nodeDataArray['dimensionValues'][$allowedDimensionKey][0])) {
+                        $actualDimensionValue = $nodeDataArray['dimensionValues'][$allowedDimensionKey][0];
+                        if (in_array($actualDimensionValue, $allowedDimensionValuesArray)) {
+                            $foundValidDimensionValues = true;
+                            break;
+                        }
+                    }
                 }
             }
 
@@ -1055,7 +1083,7 @@ HELPTEXT;
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->createQueryBuilder();
         $queryBuilder->select('n')
-            ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+            ->from(NodeData::class, 'n')
             ->add('where', $queryBuilder->expr()->orX(
                     $queryBuilder->expr()->notIn('n.workspace', $workspaceNames),
                     $queryBuilder->expr()->isNull('n.workspace')
@@ -1067,6 +1095,80 @@ HELPTEXT;
             $nodes[] = $nodeDataArray;
         }
         return $nodes;
+    }
+
+    /**
+     * Detect and fix nodes in non-live workspaces whose identifier does not match their corresponding node in the
+     * live workspace.
+     *
+     * @param string $workspaceName This argument will be ignored
+     * @param boolean $dryRun Simulate?
+     * @return void
+     */
+    public function fixNodesWithInconsistentIdentifier($workspaceName, $dryRun)
+    {
+        $this->output->outputLine('Checking for nodes with inconsistent identifier ...');
+
+        $nodesArray = [];
+        $liveWorkspaceNames = [];
+        $nonLiveWorkspaceNames = [];
+        foreach ($this->workspaceRepository->findAll() as $workspace) {
+            /** @var Workspace $workspace */
+            if ($workspace->getBaseWorkspace() !== null) {
+                $nonLiveWorkspaceNames[] = $workspace->getName();
+            } else {
+                $liveWorkspaceNames[] = $workspace->getName();
+            }
+        }
+
+        foreach ($nonLiveWorkspaceNames as $workspaceName) {
+            /** @var QueryBuilder $queryBuilder */
+            $queryBuilder = $this->entityManager->createQueryBuilder();
+            $queryBuilder->select('nonlive.Persistence_Object_Identifier, nonlive.identifier, nonlive.path, live.identifier AS liveIdentifier')
+                ->from(NodeData::class, 'nonlive')
+                ->join(NodeData::class, 'live', 'WITH', 'live.path = nonlive.path AND live.dimensionsHash = nonlive.dimensionsHash AND live.identifier != nonlive.identifier')
+                ->where('nonlive.workspace = ?1')
+                ->andWhere($queryBuilder->expr()->in('live.workspace', $liveWorkspaceNames))
+                ->andWhere('nonlive.path != \'/\'')
+                ->setParameter(1, $workspaceName)
+            ;
+
+            foreach ($queryBuilder->getQuery()->getArrayResult() as $nodeDataArray) {
+                $this->output->outputLine('Node %s in workspace %s has identifier %s but live node has identifier %s.', [$nodeDataArray['path'], $workspaceName, $nodeDataArray['identifier'], $nodeDataArray['liveIdentifier']]);
+                $nodesArray[] = $nodeDataArray;
+            }
+        }
+
+        if ($nodesArray === []) {
+            return;
+        }
+
+        if (!$dryRun) {
+            $self = $this;
+            $this->output->outputLine();
+            $this->output->outputLine('Nodes with inconsistent identifiers found.');
+            $this->askBeforeExecutingTask(sprintf('Do you want to fix the identifiers of %s node%s now?', count($nodesArray), count($nodesArray) > 1 ? 's' : ''), function () use ($self, $nodesArray) {
+                foreach ($nodesArray as $nodeArray) {
+                    /** @var QueryBuilder $queryBuilder */
+                    $queryBuilder = $this->entityManager->createQueryBuilder();
+                    $queryBuilder->update(NodeData::class, 'nonlive')
+                        ->set('nonlive.identifier', $queryBuilder->expr()->literal($nodeArray['liveIdentifier']))
+                        ->where('nonlive.Persistence_Object_Identifier = ?1')
+                        ->setParameter(1, $nodeArray['Persistence_Object_Identifier']);
+                    $result = $queryBuilder->getQuery()->getResult();
+                    if ($result !== 1) {
+                        $self->output->outputLine('<error>Error:</error> The update query returned an unexpected result!');
+                        $self->output->outputLine('<b>Query:</b> ' . $queryBuilder->getQuery()->getSQL());
+                        $self->output->outputLine('<b>Result:</b> %s', [ var_export($result, true)]);
+                        exit(1);
+                    }
+                }
+                $self->output->outputLine('Fixed inconsistent identifiers.');
+            });
+        } else {
+            $this->output->outputLine('Found %s node%s with inconsistent identifiers which need to be fixed.', array(count($nodesArray), count($nodesArray) > 1 ? 's' : ''));
+        }
+        $this->output->outputLine();
     }
 
     /**
@@ -1210,7 +1312,7 @@ HELPTEXT;
             /** @var QueryBuilder $queryBuilder */
             $queryBuilder = $this->entityManager->createQueryBuilder();
             $queryBuilder->select('n')
-                ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+                ->from(NodeData::class, 'n')
                 ->where('n.workspace = :workspace');
             $queryBuilder->setParameter('workspace', $workspace->getName());
             if ($nodeType !== null) {
