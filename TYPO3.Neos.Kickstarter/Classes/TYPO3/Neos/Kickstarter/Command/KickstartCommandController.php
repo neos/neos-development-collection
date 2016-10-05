@@ -2,7 +2,7 @@
 namespace TYPO3\Neos\Kickstarter\Command;
 
 /*
- * This file is part of the Neos.Kickstarter package.
+ * This file is part of the Neos.SiteKickstarter package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
