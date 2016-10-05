@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Migration\Transformations;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 
 /**
  * Abstract transformation class, transformations should inherit from this.
@@ -21,10 +22,10 @@ abstract class AbstractTransformation implements TransformationInterface
     /**
      * Returns TRUE, indicating that the given node can be transformed by this transformation.
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @param NodeData $node
      * @return boolean
      */
-    public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    public function isTransformable(NodeData $node)
     {
         return true;
     }
@@ -34,10 +35,10 @@ abstract class AbstractTransformation implements TransformationInterface
      *
      * This implementation returns the given node unchanged.
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
-     * @return \TYPO3\TYPO3CR\Domain\Model\NodeData
+     * @param NodeData $node
+     * @return NodeData
      */
-    public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    public function execute(NodeData $node)
     {
         return $node;
     }

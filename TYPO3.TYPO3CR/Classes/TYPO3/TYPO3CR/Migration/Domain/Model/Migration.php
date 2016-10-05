@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Migration\Domain\Model;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Migration\Domain\Model\MigrationConfiguration;
 
 /**
  * Migration.
@@ -56,7 +57,7 @@ class Migration
     }
 
     /**
-     * @return \TYPO3\TYPO3CR\Migration\Domain\Model\MigrationConfiguration
+     * @return MigrationConfiguration
      */
     public function getDownConfiguration()
     {
@@ -64,7 +65,7 @@ class Migration
     }
 
     /**
-     * @return \TYPO3\TYPO3CR\Migration\Domain\Model\MigrationConfiguration
+     * @return MigrationConfiguration
      */
     public function getUpConfiguration()
     {

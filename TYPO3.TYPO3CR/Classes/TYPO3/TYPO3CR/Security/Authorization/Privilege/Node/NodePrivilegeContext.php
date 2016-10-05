@@ -64,32 +64,60 @@ class NodePrivilegeContext
     }
 
     /**
-     * @param string $nodePathOrIdentifier
-     * @return boolean
+     * Matches if the selected node is an *ancestor* of the given node specified by $nodePathOrIdentifier
+     *
+     * Example: isAncestorNodeOf('/sites/some/path') matches for the nodes "/sites", "/sites/some" and "/sites/some/path" but not for "/sites/some/other"
+     *
+     * @param string $nodePathOrIdentifier The identifier or absolute path of the node to match
+     * @return boolean TRUE if the given node matches otherwise false
+     */
+    public function isAncestorNodeOf($nodePathOrIdentifier)
+    {
+        $nodePath = $this->resolveNodePath($nodePathOrIdentifier);
+        if (is_bool($nodePath)) {
+            return $nodePath;
+        }
+
+        return substr($nodePath, 0, strlen($this->node->getPath())) === $this->node->getPath();
+    }
+
+    /**
+     * Matches if the selected node is a *descendant* of the given node specified by $nodePathOrIdentifier
+     *
+     * Example: isDescendantNodeOf('/sites/some/path') matches for the nodes "/sites/some/path", "/sites/some/path/subnode" but not for "/sites/some/other"
+     *
+     * @param string $nodePathOrIdentifier The identifier or absolute path of the node to match
+     * @return boolean TRUE if the given node matches otherwise false
      */
     public function isDescendantNodeOf($nodePathOrIdentifier)
     {
-        if ($this->node === null) {
-            return true;
-        }
-        if (preg_match(UuidValidator::PATTERN_MATCH_UUID, $nodePathOrIdentifier) === 1) {
-            if ($this->node->getIdentifier() === $nodePathOrIdentifier) {
-                return true;
-            }
-            $node = $this->getNodeByIdentifier($nodePathOrIdentifier);
-            if ($node === null) {
-                return false;
-            }
-            $nodePath = $node->getPath() . '/';
-        } else {
-            $nodePath = rtrim($nodePathOrIdentifier, '/') . '/';
+        $nodePath = $this->resolveNodePath($nodePathOrIdentifier);
+        if (is_bool($nodePath)) {
+            return $nodePath;
         }
         return substr($this->node->getPath() . '/', 0, strlen($nodePath)) === $nodePath;
     }
 
     /**
-     * @param string|array $nodeTypes
-     * @return boolean
+     * Matches if the selected node is a *descendant* or *ancestor* of the given node specified by $nodePathOrIdentifier
+     *
+     * Example: isAncestorOrDescendantNodeOf('/sites/some') matches for the nodes "/sites", "/sites/some", "/sites/some/sub" but not "/sites/other"
+     *
+     * @param string $nodePathOrIdentifier The identifier or absolute path of the node to match
+     * @return boolean TRUE if the given node matches otherwise false
+     */
+    public function isAncestorOrDescendantNodeOf($nodePathOrIdentifier)
+    {
+        return $this->isAncestorNodeOf($nodePathOrIdentifier) || $this->isDescendantNodeOf($nodePathOrIdentifier);
+    }
+
+    /**
+     * Matches if the selected node is of the given NodeType(s). If multiple types are specified, only one entry has to match
+     *
+     * Example: nodeIsOfType(['TYPO3.TYPO3CR:NodeType1', 'TYPO3.TYPO3CR:NodeType2']) matches if the selected node is of (sub) type *TYPO3.TYPO3CR:NodeType1* or *TYPO3.TYPO3CR:NodeType1*
+     *
+     * @param string|array $nodeTypes A single or an array of fully qualified NodeType name(s), e.g. "TYPO3.Neos:Document"
+     * @return boolean TRUE if the selected node matches the $nodeTypes, otherwise FALSE
      */
     public function nodeIsOfType($nodeTypes)
     {
@@ -109,8 +137,12 @@ class NodePrivilegeContext
     }
 
     /**
-     * @param string|array $workspaceNames
-     * @return boolean
+     * Matches if the selected node belongs to one of the given $workspaceNames
+     *
+     * Example: isInWorkspace(['live', 'user-admin']) matches if the selected node is in one of the workspaces "user-admin" or "live"
+     *
+     * @param array $workspaceNames An array of workspace names, e.g. ["live", "user-admin"]
+     * @return boolean TRUE if the selected node matches the $workspaceNames, otherwise FALSE
      */
     public function isInWorkspace($workspaceNames)
     {
@@ -161,6 +193,32 @@ class NodePrivilegeContext
     }
 
     /**
+     * Resolves the given $nodePathOrIdentifier and returns its absolute path and or a boolean if the result directly matches the currently selected node
+     *
+     * @param string $nodePathOrIdentifier identifier or absolute path for the node to resolve
+     * @return bool|string TRUE if the node matches the selected node, FALSE if the corresponding node does not exist. Otherwise the resolved absolute path with trailing slash
+     */
+    protected function resolveNodePath($nodePathOrIdentifier)
+    {
+        if ($this->node === null) {
+            return true;
+        }
+        if (preg_match(UuidValidator::PATTERN_MATCH_UUID, $nodePathOrIdentifier) !== 1) {
+            return rtrim($nodePathOrIdentifier, '/') . '/';
+        }
+        if ($this->node->getIdentifier() === $nodePathOrIdentifier) {
+            return true;
+        }
+        $node = $this->getNodeByIdentifier($nodePathOrIdentifier);
+        if ($node === null) {
+            return false;
+        }
+        return $node->getPath() . '/';
+    }
+
+    /**
+     * Returns a node from the given $nodeIdentifier (disabling authorization checks)
+     *
      * @param string $nodeIdentifier
      * @return NodeInterface
      */

@@ -10,20 +10,26 @@ namespace TYPO3\Neos\Tests\Unit\FlowQueryOperations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Eel\FlowQuery\FlowQuery;
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Neos\Domain\Service\ContentContext;
+use TYPO3\Neos\Eel\FlowQueryOperations\ParentsOperation;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Service\Context;
 
 /**
  * Testcase for the FlowQuery ParentsOperation
  */
-class ParentsOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ParentsOperationTest extends UnitTestCase
 {
     /**
      * @test
      */
     public function parentsWillReturnTheSiteNodeAsRootLevelParent()
     {
-        $siteNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-        $firstLevelNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-        $secondLevelNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $siteNode = $this->createMock(NodeInterface::class);
+        $firstLevelNode = $this->createMock(NodeInterface::class);
+        $secondLevelNode = $this->createMock(NodeInterface::class);
 
         $siteNode->expects($this->any())->method('getPath')->will($this->returnValue('/site'));
         $mockContext = $this->getMockBuilder('TYPO3\Neos\Domain\Service\ContentContext')->disableOriginalConstructor()->getMock();
@@ -35,9 +41,9 @@ class ParentsOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
         $secondLevelNode->expects($this->any())->method('getPath')->will($this->returnValue('/site/first/second'));
 
         $context = array($secondLevelNode);
-        $q = new \TYPO3\Eel\FlowQuery\FlowQuery($context);
+        $q = new FlowQuery($context);
 
-        $operation = new \TYPO3\Neos\Eel\FlowQueryOperations\ParentsOperation();
+        $operation = new ParentsOperation();
         $operation->evaluate($q, array());
 
         $output = $q->getContext();
@@ -49,17 +55,17 @@ class ParentsOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function canEvaluateChecksForContentContext()
     {
-        $operation = new \TYPO3\Neos\Eel\FlowQueryOperations\ParentsOperation();
+        $operation = new ParentsOperation();
 
-        $mockNode = $this->createMock(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::class);
-        $mockContext = $this->getMockBuilder(\TYPO3\Neos\Domain\Service\ContentContext::class)->disableOriginalConstructor()->getMock();
+        $mockNode = $this->createMock(NodeInterface::class);
+        $mockContext = $this->getMockBuilder(ContentContext::class)->disableOriginalConstructor()->getMock();
         $mockNode->expects($this->any())->method('getContext')->will($this->returnValue($mockContext));
         $context = array($mockNode);
 
         $this->assertTrue($operation->canEvaluate($context), 'Must accept ContentContext');
 
-        $mockNode = $this->createMock(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::class);
-        $mockContext = $this->getMockBuilder(\TYPO3\TYPO3CR\Domain\Service\Context::class)->disableOriginalConstructor()->getMock();
+        $mockNode = $this->createMock(NodeInterface::class);
+        $mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
         $mockNode->expects($this->any())->method('getContext')->will($this->returnValue($mockContext));
         $context = array($mockNode);
         $this->assertFalse($operation->canEvaluate($context), 'Must not accept Context');

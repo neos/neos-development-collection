@@ -12,6 +12,7 @@ namespace TYPO3\TypoScript\Core\ExceptionHandlers;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Environment;
 
 /**
  * A special exception handler that is used on the outer path to catch all unhandled exceptions and uses other exception
@@ -21,7 +22,7 @@ class ContextDependentHandler extends AbstractRenderingExceptionHandler
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Utility\Environment
+     * @var Environment
      */
     protected $environment;
 

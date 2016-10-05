@@ -131,10 +131,10 @@
 			<target xml:lang="hu" state="needs-translation">Publish selected changes</target></trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve">
 				<source>Discard all changes</source>
-			<target xml:lang="hu" state="needs-translation">Discard all changes</target></trans-unit>
+			<target xml:lang="hu" state="translated">Összes változtatás elvetése</target></trans-unit>
       <trans-unit id="workspaces.publishAllChanges" xml:space="preserve">
 				<source>Publish all changes</source>
-			<target xml:lang="hu" state="needs-translation">Publish all changes</target></trans-unit>
+			<target xml:lang="hu" state="translated">Minden változtatás közzététele</target></trans-unit>
       <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve">
 				<source>Publish all changes to {0}</source>
 			<target xml:lang="hu" state="needs-translation">Publish all changes to {0}</target></trans-unit>
@@ -325,7 +325,7 @@
 			<target xml:lang="hu" state="needs-translation">User Data</target></trans-unit>
       <trans-unit id="users.new.userData.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="hu" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="hu" state="translated">Felhasználó</target></trans-unit>
       <trans-unit id="users.new.userData.password" xml:space="preserve">
 				<source>Password</source>
 			<target xml:lang="hu" state="translated">Jelszó</target></trans-unit>
@@ -379,7 +379,7 @@
 			<target xml:lang="hu" state="needs-translation">Accounts</target></trans-unit>
       <trans-unit id="users.show.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="hu" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="hu" state="translated">Felhasználó</target></trans-unit>
       <trans-unit id="users.show.roles" xml:space="preserve">
 				<source>Roles</source>
 			<target xml:lang="hu" state="needs-translation">Roles</target></trans-unit>
@@ -424,7 +424,7 @@
 			<target xml:lang="hu" state="needs-translation">Account</target></trans-unit>
       <trans-unit id="users.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="hu" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="hu" state="translated">Felhasználó</target></trans-unit>
       <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve">
 				<source>The username can't be changed via the user interface</source>
 			<target xml:lang="hu" state="needs-translation">The username can't be changed via the user interface</target></trans-unit>
@@ -605,7 +605,7 @@
 			<target xml:lang="hu" state="needs-translation">Accounts</target></trans-unit>
       <trans-unit id="userSettings.accounts.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="hu" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="hu" state="translated">Felhasználó</target></trans-unit>
       <trans-unit id="userSettings.accounts.roles" xml:space="preserve">
 				<source>Roles</source>
 			<target xml:lang="hu" state="needs-translation">Roles</target></trans-unit>
@@ -642,7 +642,7 @@
 			<target xml:lang="hu" state="translated">Cím</target></trans-unit>
       <trans-unit id="media.field.label" xml:space="preserve">
 				<source>Label</source>
-			<target xml:lang="hu" state="needs-translation">Label</target></trans-unit>
+			<target xml:lang="hu" state="translated">Címke</target></trans-unit>
       <trans-unit id="media.field.caption" xml:space="preserve">
 				<source>Caption</source>
 			<target xml:lang="hu" state="needs-translation">Caption</target></trans-unit>
@@ -735,7 +735,7 @@
 			<target xml:lang="hu" state="needs-translation">Search in assets</target></trans-unit>
       <trans-unit id="media.search.placeholder" xml:space="preserve">
 				<source>Search</source>
-			<target xml:lang="hu" state="needs-translation">Search</target></trans-unit>
+			<target xml:lang="hu" state="translated">Keresés</target></trans-unit>
       <trans-unit id="media.search.itemCount" xml:space="preserve">
 				<source>{0} items</source>
 			<target xml:lang="hu" state="needs-translation">{0} items</target></trans-unit>
@@ -926,6 +926,33 @@
       <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve">
 				<source>References to "{asset}"</source>
 			<target xml:lang="hu" state="needs-translation">References to "{asset}"</target></trans-unit>
+      <trans-unit id="media.replaceAsset.replaceFilename" xml:space="preserve">
+				<source>Replace "{filename}"</source>
+			<target xml:lang="hu" state="needs-translation">Replace "{filename}"</target></trans-unit>
+      <trans-unit id="media.replaceAsset.description" xml:space="preserve">
+        <source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
+      <target xml:lang="hu" state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
+      <trans-unit id="media.replaceAsset.note" xml:space="preserve">
+        <source>Note</source>
+      <target xml:lang="hu" state="needs-translation">Note</target></trans-unit>
+      <trans-unit id="media.replaceAsset.noteText" xml:space="preserve">
+        <source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
+      <target xml:lang="hu" state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
+      <trans-unit id="media.replaceAsset.chooseNewFile" xml:space="preserve">
+        <source>Choose a new file</source>
+      <target xml:lang="hu" state="needs-translation">Choose a new file</target></trans-unit>
+      <trans-unit id="media.replace.usageCount" xml:space="preserve">
+        <source>Currently the asset is used {usageCount} times.</source>
+      <target xml:lang="hu" state="needs-translation">Currently the asset is used {usageCount} times.</target></trans-unit>
+      <trans-unit id="media.replace.allUsages" xml:space="preserve">
+        <source>Show all usages</source>
+      <target xml:lang="hu" state="needs-translation">Show all usages</target></trans-unit>
+      <trans-unit id="media.replace.notUsed" xml:space="preserve">
+        <source>Currently the asset is not in used anywhere on the website.</source>
+      <target xml:lang="hu" state="needs-translation">Currently the asset is not in used anywhere on the website.</target></trans-unit>
+      <trans-unit id="media.replace.previewFile" xml:space="preserve">
+        <source>Preview current file</source>
+      <target xml:lang="hu" state="needs-translation">Preview current file</target></trans-unit>
     </body>
   </file>
 </xliff>

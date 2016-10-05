@@ -14,7 +14,6 @@ namespace TYPO3\Media\Domain\Model\ThumbnailGenerator;
 use TYPO3\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Media\Domain\Model\Thumbnail;
-use TYPO3\Media\Exception;
 
 /**
  * Thumbnail Generate Interface

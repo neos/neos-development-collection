@@ -24,7 +24,7 @@ class NodeSerializer extends AbstractTypeConverter
     /**
      * @var array
      */
-    protected $sourceTypes = array('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+    protected $sourceTypes = array(NodeInterface::class);
 
     /**
      * @var string

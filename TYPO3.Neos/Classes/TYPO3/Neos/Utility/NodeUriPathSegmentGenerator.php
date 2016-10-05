@@ -11,9 +11,11 @@ namespace TYPO3\Neos\Utility;
  * source code.
  */
 
+use Behat\Transliterator\Transliterator;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\I18n\Locale;
+use TYPO3\Neos\Exception;
 use TYPO3\Neos\Service\TransliterationService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
@@ -70,9 +72,9 @@ class NodeUriPathSegmentGenerator
                 $language = $locale->getLanguage();
             }
         } elseif (strlen($text) === 0) {
-            throw new \TYPO3\Neos\Exception('Given text was empty.', 1457591815);
+            throw new Exception('Given text was empty.', 1457591815);
         }
         $text = $this->transliterationService->transliterate($text, isset($language) ? $language : null);
-        return \Behat\Transliterator\Transliterator::urlize($text);
+        return Transliterator::urlize($text);
     }
 }

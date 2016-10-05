@@ -10,18 +10,20 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\TYPO3CR\Domain\Model\NodeTemplate;
 
 /**
  * Test case for NodeTemplate
  */
-class NodeTemplateTest extends \TYPO3\Flow\Tests\UnitTestCase
+class NodeTemplateTest extends UnitTestCase
 {
     /**
      * @test
      */
     public function setNameWithValidNameUpdatesName()
     {
-        $nodeTemplate = new \TYPO3\TYPO3CR\Domain\Model\NodeTemplate();
+        $nodeTemplate = new NodeTemplate();
         $nodeTemplate->setName('valid-node-name');
 
         $this->assertEquals('valid-node-name', $nodeTemplate->getName());
@@ -33,7 +35,7 @@ class NodeTemplateTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setNameWithInvalidNameThrowsException()
     {
-        $nodeTemplate = new \TYPO3\TYPO3CR\Domain\Model\NodeTemplate();
+        $nodeTemplate = new NodeTemplate();
         $nodeTemplate->setName(',?/invalid-node-name');
     }
 }

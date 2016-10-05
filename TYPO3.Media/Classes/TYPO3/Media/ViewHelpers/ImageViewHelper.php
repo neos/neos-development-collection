@@ -13,6 +13,7 @@ namespace TYPO3\Media\ViewHelpers;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
+use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
 
@@ -97,7 +98,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         $this->registerTagAttribute('ismap', 'string', 'Specifies an image as a server-side image-map. Rarely used. Look at usemap instead', false);
         $this->registerTagAttribute('usemap', 'string', 'Specifies an image as a client-side image-map', false);
         // @deprecated since 2.0 use the "image" argument instead
-        $this->registerArgument('asset', 'TYPO3\Media\Domain\Model\AssetInterface', 'The asset to be rendered - DEPRECATED, use the "image" argument instead', false);
+        $this->registerArgument('asset', AssetInterface::class, 'The asset to be rendered - DEPRECATED, use the "image" argument instead', false);
     }
 
     /**

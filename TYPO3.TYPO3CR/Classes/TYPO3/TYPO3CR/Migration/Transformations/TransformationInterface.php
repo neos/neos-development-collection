@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Migration\Transformations;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 
 /**
  * Transformation are used to change nodes as needed. They may do anything to a node
@@ -25,16 +26,16 @@ interface TransformationInterface
     /**
      * Returns TRUE if the given node can be transformed by this transformation.
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @param NodeData $node
      * @return boolean
      */
-    public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeData $node);
+    public function isTransformable(NodeData $node);
 
     /**
      * Execute the transformation on the given node.
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
-     * @return \TYPO3\TYPO3CR\Domain\Model\NodeData
+     * @param NodeData $node
+     * @return NodeData
      */
-    public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeData $node);
+    public function execute(NodeData $node);
 }

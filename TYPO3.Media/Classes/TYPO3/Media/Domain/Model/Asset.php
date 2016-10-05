@@ -12,9 +12,11 @@ namespace TYPO3\Media\Domain\Model;
  */
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Resource\Resource as FlowResource;
 use TYPO3\Flow\Resource\ResourceManager;
@@ -93,13 +95,13 @@ class Asset implements AssetInterface
     protected $resource;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection<\TYPO3\Media\Domain\Model\Thumbnail>
+     * @var Collection<\TYPO3\Media\Domain\Model\Thumbnail>
      * @ORM\OneToMany(orphanRemoval=true, cascade={"all"}, mappedBy="originalAsset")
      */
     protected $thumbnails;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection<\TYPO3\Media\Domain\Model\Tag>
+     * @var Collection<\TYPO3\Media\Domain\Model\Tag>
      * @ORM\ManyToMany
      * @ORM\OrderBy({"label"="ASC"})
      * @Flow\Lazy
@@ -107,7 +109,7 @@ class Asset implements AssetInterface
     protected $tags;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection<\TYPO3\Media\Domain\Model\AssetCollection>
+     * @var Collection<\TYPO3\Media\Domain\Model\AssetCollection>
      * @ORM\ManyToMany(mappedBy="assets", cascade={"persist"})
      * @ORM\OrderBy({"title"="ASC"})
      * @Flow\Lazy
@@ -139,7 +141,7 @@ class Asset implements AssetInterface
         if ($this->thumbnails === null) {
             $this->thumbnails = new ArrayCollection();
         }
-        if ($initializationCause === \TYPO3\Flow\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
+        if ($initializationCause === ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
             $this->emitAssetCreated($this);
         }
     }
@@ -273,7 +275,7 @@ class Asset implements AssetInterface
     /**
      * Return the tags assigned to this asset
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getTags()
     {
@@ -350,10 +352,10 @@ class Asset implements AssetInterface
     /**
      * Set the tags assigned to this asset
      *
-     * @param \Doctrine\Common\Collections\Collection $tags
+     * @param Collection $tags
      * @return void
      */
-    public function setTags(\Doctrine\Common\Collections\Collection $tags)
+    public function setTags(Collection $tags)
     {
         $this->lastModified = new \DateTime();
         $this->tags = $tags;
@@ -380,7 +382,7 @@ class Asset implements AssetInterface
     /**
      * Return the asset collections this asset is included in
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getAssetCollections()
     {
@@ -390,10 +392,10 @@ class Asset implements AssetInterface
     /**
      * Set the asset collections that include this asset
      *
-     * @param \Doctrine\Common\Collections\Collection $assetCollections
+     * @param Collection $assetCollections
      * @return void
      */
-    public function setAssetCollections(\Doctrine\Common\Collections\Collection $assetCollections)
+    public function setAssetCollections(Collection $assetCollections)
     {
         $this->lastModified = new \DateTime();
         foreach ($this->assetCollections as $existingAssetCollection) {

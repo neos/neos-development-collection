@@ -596,6 +596,15 @@
 					}
 				}
 
+				.neos-button-small {
+					height: $wideMargin;
+					width: $wideMargin;
+
+					.icon-ellipsis-horizontal {
+						line-height: $wideMargin;
+					}
+				}
+
 				.neos-img-label {
 					padding: 0 0 $defaultMargin $tightMargin;
 					position: relative;
@@ -603,8 +612,10 @@
 
 					.neos-caption {
 						margin-right: $wideMargin;
+						padding-left: 4px;
+						padding-right: 4px;
 						display: block;
-						line-height: 1.2;
+						line-height: $wideMargin;
 						color: $textSubtleLight;
 						overflow: hidden;
 						text-overflow: ellipsis;

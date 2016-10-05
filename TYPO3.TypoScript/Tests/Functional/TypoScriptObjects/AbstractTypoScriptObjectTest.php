@@ -16,12 +16,14 @@ use TYPO3\Flow\Http\Response;
 use TYPO3\Flow\Mvc\Controller\Arguments;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Mvc\Routing\UriBuilder;
+use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\TypoScript\View\TypoScriptView;
 
 /**
  * Testcase for the TypoScript View
  *
  */
-abstract class AbstractTypoScriptObjectTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+abstract class AbstractTypoScriptObjectTest extends FunctionalTestCase
 {
     /**
      * @var ControllerContext
@@ -31,11 +33,11 @@ abstract class AbstractTypoScriptObjectTest extends \TYPO3\Flow\Tests\Functional
     /**
      * Helper to build a TypoScript view object
      *
-     * @return \TYPO3\TypoScript\View\TypoScriptView
+     * @return TypoScriptView
      */
     protected function buildView()
     {
-        $view = new \TYPO3\TypoScript\View\TypoScriptView();
+        $view = new TypoScriptView();
 
         $httpRequest = Request::createFromEnvironment();
         $request = $httpRequest->createActionRequest();

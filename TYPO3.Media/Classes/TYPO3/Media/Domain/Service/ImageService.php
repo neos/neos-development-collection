@@ -11,6 +11,16 @@ namespace TYPO3\Media\Domain\Service;
  * source code.
  */
 
+use Imagine\Image\ImageInterface;
+use Imagine\Image\ImagineInterface;
+use Imagine\Image\Palette\CMYK;
+use Imagine\Image\Palette\RGB;
+use Imagine\Imagick\Imagine;
+use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use TYPO3\Flow\Resource\Exception;
+use TYPO3\Flow\Resource\ResourceManager;
+use TYPO3\Flow\Utility\Environment;
+use TYPO3\Media\Domain\Repository\AssetRepository;
 use TYPO3\Media\Imagine\Box;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Configuration\Exception\InvalidConfigurationException;
@@ -29,31 +39,31 @@ use TYPO3\Media\Exception\ImageServiceException;
 class ImageService
 {
     /**
-     * @var \Imagine\Image\ImagineInterface
+     * @var ImagineInterface
      * @Flow\Inject(lazy = false)
      */
     protected $imagineService;
 
     /**
-     * @var \TYPO3\Flow\Resource\ResourceManager
+     * @var ResourceManager
      * @Flow\Inject
      */
     protected $resourceManager;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Utility\Environment
+     * @var Environment
      */
     protected $environment;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Media\Domain\Repository\AssetRepository
+     * @var AssetRepository
      */
     protected $assetRepository;
 
     /**
-     * @var \TYPO3\Flow\Cache\Frontend\VariableFrontend
+     * @var VariableFrontend
      * @Flow\Inject
      */
     protected $imageSizeCache;
@@ -78,7 +88,7 @@ class ImageService
      * @return array resource, width, height as keys
      * @throws ImageFileException
      * @throws InvalidConfigurationException
-     * @throws \TYPO3\Flow\Resource\Exception
+     * @throws Exception
      */
     public function processImage(FlowResource $originalResource, array $adjustments)
     {
@@ -110,11 +120,11 @@ class ImageService
         $imagineImage = $this->imagineService->open($resourceUri);
 
         $convertCMYKToRGB = $this->getOptionsMergedWithDefaults()['convertCMYKToRGB'];
-        if ($convertCMYKToRGB && $imagineImage->palette() instanceof \Imagine\Image\Palette\CMYK) {
-            $imagineImage->usePalette(new \Imagine\Image\Palette\RGB());
+        if ($convertCMYKToRGB && $imagineImage->palette() instanceof CMYK) {
+            $imagineImage->usePalette(new RGB());
         }
 
-        if ($this->imagineService instanceof \Imagine\Imagick\Imagine && $originalResource->getFileExtension() === 'gif' && $this->isAnimatedGif(file_get_contents($resourceUri)) === true) {
+        if ($this->imagineService instanceof Imagine && $originalResource->getFileExtension() === 'gif' && $this->isAnimatedGif(file_get_contents($resourceUri)) === true) {
             $imagineImage->layers()->coalesce();
             $layers = $imagineImage->layers();
             $newLayers = array();
@@ -227,13 +237,13 @@ class ImageService
     }
 
     /**
-     * @param \Imagine\Image\ImageInterface $image
+     * @param ImageInterface $image
      * @param array $adjustments Ordered list of adjustments to apply.
      * @param boolean $adjustmentsApplied Reference to a variable that will hold information if an adjustment was actually applied.
-     * @return \Imagine\Image\ImageInterface
+     * @return ImageInterface
      * @throws ImageServiceException
      */
-    protected function applyAdjustments(\Imagine\Image\ImageInterface $image, array $adjustments, &$adjustmentsApplied)
+    protected function applyAdjustments(ImageInterface $image, array $adjustments, &$adjustmentsApplied)
     {
         foreach ($adjustments as $adjustment) {
             if (!$adjustment instanceof ImageAdjustmentInterface) {

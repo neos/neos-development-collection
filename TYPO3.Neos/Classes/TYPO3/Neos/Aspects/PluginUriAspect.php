@@ -14,6 +14,8 @@ namespace TYPO3\Neos\Aspects;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\JoinPointInterface;
 use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Neos\Service\PluginService;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\Eel\FlowQuery\FlowQuery;
@@ -26,14 +28,14 @@ class PluginUriAspect
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     * @var ObjectManagerInterface
      */
     protected $objectManager;
 
     /**
      * The pluginService
      *
-     * @var \TYPO3\Neos\Service\PluginService
+     * @var PluginService
      * @Flow\Inject
      */
     protected $pluginService;
@@ -45,7 +47,7 @@ class PluginUriAspect
      */
     public function rewritePluginViewUris(JoinPointInterface $joinPoint)
     {
-        /** @var \TYPO3\Flow\Mvc\ActionRequest $request */
+        /** @var ActionRequest $request */
         $request = $joinPoint->getProxy()->getRequest();
         $arguments = $joinPoint->getMethodArguments();
 

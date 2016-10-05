@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Eel\FlowQueryOperations;
  */
 
 use TYPO3\Eel\FlowQuery\FlowQuery;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Tests\Functional\AbstractNodeTest;
 
 /**
@@ -77,7 +78,7 @@ class ClosestOperationTest extends AbstractNodeTest
      */
     public function closestOperationTests($currentNodePath, $nodeTypeFilter, $expectedNodePath)
     {
-        $nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+        $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
         $testNodeType1 = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType');
         $testNodeType2 = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithSubnodes');
 

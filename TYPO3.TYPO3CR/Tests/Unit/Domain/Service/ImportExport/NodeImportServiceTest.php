@@ -14,6 +14,8 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Service\ImportExport;
 use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Flow\Utility\Now;
+use TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService;
 
 class NodeImportServiceTest extends UnitTestCase
 {
@@ -47,8 +49,8 @@ class NodeImportServiceTest extends UnitTestCase
 
         $this->assertTrue($result);
 
-        /** @var \TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService $nodeImportService */
-        $nodeImportService = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService')->setMethods(array('persistNodeData'))->getMock();
+        /** @var NodeImportService $nodeImportService */
+        $nodeImportService = $this->getMockBuilder(NodeImportService::class)->setMethods(array('persistNodeData'))->getMock();
         $this->inject($nodeImportService, 'propertyMapper', $this->mockPropertyMapper);
         $this->inject($nodeImportService, 'securityContext', $this->mockSecurityContext);
 
@@ -113,8 +115,8 @@ class NodeImportServiceTest extends UnitTestCase
 
         $this->assertTrue($result);
 
-        /** @var \TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService $nodeImportService */
-        $nodeImportService = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService')->setMethods(array('persistNodeData'))->getMock();
+        /** @var NodeImportService $nodeImportService */
+        $nodeImportService = $this->getMockBuilder(NodeImportService::class)->setMethods(array('persistNodeData'))->getMock();
         $this->inject($nodeImportService, 'propertyMapper', $this->mockPropertyMapper);
         $this->inject($nodeImportService, 'securityContext', $this->mockSecurityContext);
 
@@ -166,8 +168,8 @@ class NodeImportServiceTest extends UnitTestCase
 
         $this->assertTrue($result);
 
-        /** @var \TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService $nodeImportService */
-        $nodeImportService = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService')->setMethods(array('persistNodeData'))->getMock();
+        /** @var NodeImportService $nodeImportService */
+        $nodeImportService = $this->getMockBuilder(NodeImportService::class)->setMethods(array('persistNodeData'))->getMock();
         $this->inject($nodeImportService, 'propertyMapper', $this->mockPropertyMapper);
         $this->inject($nodeImportService, 'securityContext', $this->mockSecurityContext);
 
@@ -333,8 +335,8 @@ class NodeImportServiceTest extends UnitTestCase
 
         $this->assertTrue($result);
 
-        /** @var \TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService $nodeImportService */
-        $nodeImportService = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService')->setMethods(array('persistNodeData'))->getMock();
+        /** @var NodeImportService $nodeImportService */
+        $nodeImportService = $this->getMockBuilder(NodeImportService::class)->setMethods(array('persistNodeData'))->getMock();
         $this->inject($nodeImportService, 'propertyMapper', $this->mockPropertyMapper);
         $this->inject($nodeImportService, 'securityContext', $this->mockSecurityContext);
 
@@ -387,5 +389,46 @@ class NodeImportServiceTest extends UnitTestCase
         unset($actualNodeDatas[0]['lastModificationDateTime']);
 
         $this->assertEquals($expectedNodeDatas, $actualNodeDatas);
+    }
+
+    /**
+     * @test
+     */
+    public function importWithLinebreakInDateTimeImportsCorrectly()
+    {
+        $xmlReader = new \XMLReader();
+        $result = $xmlReader->open(__DIR__ . '/Fixtures/SingleNodeWithLinebreaks.xml', null, LIBXML_PARSEHUGE);
+
+        $this->assertTrue($result);
+
+        /** @var \TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService $nodeImportService */
+        $nodeImportService = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService')->setMethods(array('persistNodeData'))->getMock();
+        $this->inject($nodeImportService, 'propertyMapper', $this->mockPropertyMapper);
+        $this->inject($nodeImportService, 'securityContext', $this->mockSecurityContext);
+
+        $expectedNodeDatas = array(
+            array(
+                'creationDateTime' => array(
+                    'source' => '2015-12-21T21:56:53+00:00'
+                )
+            )
+        );
+        $nodeImportService->expects($this->atLeastOnce())->method('persistNodeData')->will($this->returnCallback(function ($nodeData) use (&$actualNodeDatas) {
+            unset($nodeData['Persistence_Object_Identifier']);
+            $actualNodeDatas[] = $nodeData;
+            return true;
+        }));
+        $this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnCallback(function ($source, $targetType) {
+            return array(
+                'targetType' => $targetType,
+                'source' => $source
+            );
+        }));
+
+        $nodeImportService->import($xmlReader, '/');
+
+        $this->assertCount(1, $actualNodeDatas);
+
+        $this->assertArraySubset($expectedNodeDatas[0]['creationDateTime'], $actualNodeDatas[0]['creationDateTime'], true);
     }
 }

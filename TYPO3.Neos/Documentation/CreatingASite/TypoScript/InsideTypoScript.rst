@@ -512,15 +512,15 @@ To show the result of TypoScript Expressions directly you can use the TYPO3.Typo
 		# optional: show result as plaintext
 		# plaintext = TRUE
 
-		# If only the value-key is given it is debugged directly,
-		# otherwise all keys except title an plaintext are debugged.
+		# If only the "value"-key is given it is debugged directly,
+		# otherwise all keys except "title" and "plaintext" are debugged.
 		value = "hello neos world"
 
 		# Additional values for debugging
 		documentTitle = ${q(documentNode).property('title')}
 		documentPath = ${documentNode.path}
 	}
-	# the value of this object is the formated debug output of all keys given to the object
+	# the value of this object is the formatted debug output of all keys given to the object
 
 .. Important TypoScript objects and patterns
 .. =========================================

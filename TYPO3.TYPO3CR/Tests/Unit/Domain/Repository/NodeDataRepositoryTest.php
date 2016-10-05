@@ -11,8 +11,13 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Repository;
  * source code.
  */
 
+use Doctrine\ORM\QueryBuilder;
+use TYPO3\Flow\Persistence\Doctrine\Query;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 
 class NodeDataRepositoryTest extends UnitTestCase
 {
@@ -29,20 +34,20 @@ class NodeDataRepositoryTest extends UnitTestCase
     protected $mockQuery;
 
     /**
-     * @var \Doctrine\ORM\QueryBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockQueryBuilder;
 
     protected function setUp()
     {
-        $mockPersistenceManager = $this->createMock('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+        $mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
 
-        $this->mockQuery = $this->getMockBuilder(\TYPO3\Flow\Persistence\Doctrine\Query::class)->disableOriginalConstructor()->getMock();
+        $this->mockQuery = $this->getMockBuilder(Query::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockQueryBuilder = $this->getMockBuilder(\Doctrine\ORM\QueryBuilder::class)->disableOriginalConstructor()->getMock();
+        $this->mockQueryBuilder = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
         $this->mockQueryBuilder->expects($this->any())->method('getQuery')->will($this->returnValue($this->mockQuery));
 
-        $this->nodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->setMethods(array('getNodeDataForParentAndNodeType', 'filterNodesOverlaidInBaseWorkspace', 'getNodeTypeFilterConstraintsForDql', 'createQueryBuilder', 'addPathConstraintToQueryBuilder', 'filterNodeDataByBestMatchInContext'))->getMock();
+        $this->nodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->setMethods(array('getNodeDataForParentAndNodeType', 'filterNodesOverlaidInBaseWorkspace', 'getNodeTypeFilterConstraintsForDql', 'createQueryBuilder', 'addPathConstraintToQueryBuilder', 'filterNodeDataByBestMatchInContext'))->getMock();
         $this->nodeDataRepository->expects($this->any())->method('filterNodesOverlaidInBaseWorkspace')->will($this->returnCallback(function (array $foundNodes, Workspace $baseWorkspace, $dimensions) {
             return $foundNodes;
         }));
@@ -50,7 +55,7 @@ class NodeDataRepositoryTest extends UnitTestCase
         $this->nodeDataRepository->expects($this->any())->method('filterNodeDataByBestMatchInContext')->will($this->returnArgument(0));
 
             // The repository needs an explicit entity class name because of the generated mock class name
-        $this->inject($this->nodeDataRepository, 'entityClassName', 'TYPO3\TYPO3CR\Domain\Model\NodeData');
+        $this->inject($this->nodeDataRepository, 'entityClassName', NodeData::class);
         $this->inject($this->nodeDataRepository, 'persistenceManager', $mockPersistenceManager);
     }
 
@@ -62,7 +67,7 @@ class NodeDataRepositoryTest extends UnitTestCase
         $liveWorkspace = new Workspace('live');
         $dimensions = ['persona' => ['everybody'], 'language' => ['de_DE', 'mul_ZZ']];
 
-        $nodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
+        $nodeData = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
         $nodeData->expects($this->any())->method('getPath')->will($this->returnValue('/foo'));
         $nodeData->expects($this->any())->method('getWorkspace')->will($this->returnValue($liveWorkspace));
         $nodeData->expects($this->any())->method('getDimensionValues')->will($this->returnValue($dimensions));
@@ -84,7 +89,7 @@ class NodeDataRepositoryTest extends UnitTestCase
     {
         $liveWorkspace = new Workspace('live');
 
-        $nodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
+        $nodeData = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
         $nodeData->expects($this->any())->method('getIdentifier')->will($this->returnValue('abcd-efgh-ijkl-mnop'));
 
         $this->nodeDataRepository->add($nodeData);
@@ -105,7 +110,7 @@ class NodeDataRepositoryTest extends UnitTestCase
     {
         $liveWorkspace = new Workspace('live');
 
-        $nodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
+        $nodeData = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
         $nodeData->expects($this->any())->method('getIdentifier')->will($this->returnValue('abcd-efgh-ijkl-mnop'));
 
         $this->nodeDataRepository->remove($nodeData);
@@ -126,7 +131,7 @@ class NodeDataRepositoryTest extends UnitTestCase
     {
         $parentPath = 'some/parent/path';
         $nodeTypeFilter = 'Some.Package:SomeNodeType';
-        $mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
+        $mockWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
         $dimensions = array('persona' => array('everybody'), 'language' => array('de_DE', 'mul_ZZ'));
         $removedNodesFlag = true;
         $recursiveFlag = true;
@@ -144,7 +149,7 @@ class NodeDataRepositoryTest extends UnitTestCase
     {
         $liveWorkspace = new Workspace('live');
 
-        $nodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
+        $nodeData = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
         $nodeData->expects($this->any())->method('getIdentifier')->will($this->returnValue('abcd-efgh-ijkl-mnop'));
         $nodeData->expects($this->any())->method('getPath')->will($this->returnValue('/foo/bar'));
         $nodeData->expects($this->any())->method('getDepth')->will($this->returnValue(2));
@@ -174,7 +179,7 @@ class NodeDataRepositoryTest extends UnitTestCase
     {
         $liveWorkspace = new Workspace('live');
 
-        $nodeData = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
+        $nodeData = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
         $nodeData->expects($this->any())->method('getIdentifier')->will($this->returnValue('abcd-efgh-ijkl-mnop'));
         $nodeData->expects($this->any())->method('getPath')->will($this->returnValue('/foo/bar'));
         $nodeData->expects($this->any())->method('getDepth')->will($this->returnValue(2));

@@ -929,6 +929,33 @@
       <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve" approved="yes">
 				<source>References to "{asset}"</source>
 			<target xml:lang="de">Verweise auf "{asset}"</target><alt-trans><target xml:lang="de">Verweist auf "{asset}"</target></alt-trans></trans-unit>
+      <trans-unit id="media.replaceAsset.replaceFilename" xml:space="preserve">
+				<source>Replace "{filename}"</source>
+			<target xml:lang="de" state="translated">Datei "{filename}" ersetzen</target></trans-unit>
+      <trans-unit id="media.replaceAsset.description" xml:space="preserve">
+        <source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
+      <target xml:lang="de" state="translated">Sie können durch hochladen einer neuen Datei die vorhandene ersetzen. Danach wird die neue Datei an allen Stellen verwendet, wo die Vorgängerversion verwendet wurde.</target></trans-unit>
+      <trans-unit id="media.replaceAsset.note" xml:space="preserve">
+        <source>Note</source>
+      <target xml:lang="de" state="translated">Hinweis</target></trans-unit>
+      <trans-unit id="media.replaceAsset.noteText" xml:space="preserve">
+        <source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
+      <target xml:lang="de" state="translated">Diese Aktion wird die Datei in allen veröffentlichten und unveröffentlichten Arbeitsbereichen ersetzen, genauso wie in der Live-Website.</target></trans-unit>
+      <trans-unit id="media.replaceAsset.chooseNewFile" xml:space="preserve">
+        <source>Choose a new file</source>
+      <target xml:lang="de" state="translated">Neue Datei wählen</target></trans-unit>
+      <trans-unit id="media.replace.usageCount" xml:space="preserve">
+        <source>Currently the asset is used {usageCount} times.</source>
+      <target xml:lang="de" state="translated">Derzeit wird die Datei {usageCount} Mal verwendet.</target></trans-unit>
+      <trans-unit id="media.replace.allUsages" xml:space="preserve">
+        <source>Show all usages</source>
+      <target xml:lang="de" state="translated">Zeige alle Verwendungen</target></trans-unit>
+      <trans-unit id="media.replace.notUsed" xml:space="preserve">
+        <source>Currently the asset is not in used anywhere on the website.</source>
+      <target xml:lang="de" state="translated">Derzeit wird die Datei auf der Website nicht verwendet.</target></trans-unit>
+      <trans-unit id="media.replace.previewFile" xml:space="preserve">
+        <source>Preview current file</source>
+      <target xml:lang="de" state="translated">Vorschau der aktuellen Datei</target></trans-unit>
     </body>
   </file>
 </xliff>

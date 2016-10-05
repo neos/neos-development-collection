@@ -10,11 +10,16 @@ namespace TYPO3\Media\Tests\Functional;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Resource\Resource as PersistentResource;
+use TYPO3\Flow\Resource\ResourceManager;
+use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\Flow\Utility\Files;
 
 /**
  * Abstract Functional Test template
  */
-abstract class AbstractTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+abstract class AbstractTest extends FunctionalTestCase
 {
     /**
      * @var string
@@ -28,28 +33,28 @@ abstract class AbstractTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     protected $oldPersistentResourcesStorageBaseUri;
 
     /**
-     * @var \TYPO3\Flow\Resource\ResourceManager
+     * @var ResourceManager
      */
     protected $resourceManager;
 
     public function tearDown()
     {
-        $persistenceManager = self::$bootstrap->getObjectManager()->get('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+        $persistenceManager = self::$bootstrap->getObjectManager()->get(PersistenceManagerInterface::class);
         if (is_callable(array($persistenceManager, 'tearDown'))) {
             $persistenceManager->tearDown();
         }
-        self::$bootstrap->getObjectManager()->forgetInstance('TYPO3\Flow\Persistence\PersistenceManagerInterface');
+        self::$bootstrap->getObjectManager()->forgetInstance(PersistenceManagerInterface::class);
         parent::tearDown();
     }
 
     /**
      * Creates an Image object from a file using a mock resource (in order to avoid a database resource pointer entry)
      * @param string $imagePathAndFilename
-     * @return \TYPO3\Flow\Resource\Resource
+     * @return PersistentResource
      */
     protected function getMockResourceByImagePath($imagePathAndFilename)
     {
-        $imagePathAndFilename = \TYPO3\Flow\Utility\Files::getUnixStylePath($imagePathAndFilename);
+        $imagePathAndFilename = Files::getUnixStylePath($imagePathAndFilename);
         $hash = sha1_file($imagePathAndFilename);
         copy($imagePathAndFilename, 'resource://' . $hash);
         return $mockResource = $this->createMockResourceAndPointerFromHash($hash);
@@ -61,11 +66,11 @@ abstract class AbstractTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      * file_put_content('resource://' . $hash) before
      *
      * @param string $hash
-     * @return \TYPO3\Flow\Resource\Resource
+     * @return PersistentResource
      */
     protected function createMockResourceAndPointerFromHash($hash)
     {
-        $mockResource = $this->getMockBuilder('TYPO3\Flow\Resource\Resource')->setMethods(array('getHash', 'getUri'))->getMock();
+        $mockResource = $this->getMockBuilder(PersistentResource::class)->setMethods(array('getHash', 'getUri'))->getMock();
         $mockResource->expects($this->any())
                 ->method('getHash')
                 ->will($this->returnValue($hash));
@@ -81,9 +86,9 @@ abstract class AbstractTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     protected function prepareTemporaryDirectory()
     {
-        $this->temporaryDirectory = \TYPO3\Flow\Utility\Files::concatenatePaths(array(FLOW_PATH_DATA, 'Temporary', 'Testing', str_replace('\\', '_', __CLASS__)));
+        $this->temporaryDirectory = Files::concatenatePaths(array(FLOW_PATH_DATA, 'Temporary', 'Testing', str_replace('\\', '_', __CLASS__)));
         if (!file_exists($this->temporaryDirectory)) {
-            \TYPO3\Flow\Utility\Files::createDirectoryRecursively($this->temporaryDirectory);
+            Files::createDirectoryRecursively($this->temporaryDirectory);
         }
     }
 
@@ -93,6 +98,6 @@ abstract class AbstractTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     protected function prepareResourceManager()
     {
-        $this->resourceManager = $this->objectManager->get('TYPO3\Flow\Resource\ResourceManager');
+        $this->resourceManager = $this->objectManager->get(ResourceManager::class);
     }
 }

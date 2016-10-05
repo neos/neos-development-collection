@@ -10,11 +10,12 @@ namespace TYPO3\TYPO3CR\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\TYPO3CR\Exception;
 
 /**
  * A "node type not found" exception
  *
  */
-class NodeTypeNotFoundException extends \TYPO3\TYPO3CR\Exception
+class NodeTypeNotFoundException extends Exception
 {
 }
