@@ -28,7 +28,7 @@
 						<tbody>
 						<f:for each="{siteChanges}" as="site">
 							<f:for each="{site.documents}" key="documentPath" as="document">
-								<tr>
+								<tr class="neos-document" data-nodepath="{document.documentNode.path}" data-ismoved="{f:if(condition: document.isMoved, then: 'true', else: 'false')}">
 									<td colspan="2" class="neos-priority1 path-caption">
 										<div class="neos-row-fluid">
 											<div class="neos-span2">
@@ -108,11 +108,18 @@
 						$('tbody input[type="checkbox"]').prop('checked', value);
 					});
 					$('tbody input[type="checkbox"]').change(function() {
-						if ($(this).closest('tr').attr('data-ismoved') == 'true') {
+						if ($(this).closest('tr').data('ismoved') === true) {
 							var currentNodePath = $(this).closest('tr').attr('data-nodepath') + '/';
 							var checked = $(this).prop('checked');
-							$('tr[data-nodepath^="' + currentNodePath + '"] td.check input').each(function(index, element) {
-								$(element).prop('checked', checked);
+
+							function nodePathStartsWith(nodePath) {
+								return function(index, element) {
+									return nodePath.indexOf($(element).data('nodepath')) === 0;
+								}
+							}
+							var movedParentDocuments = $(this).closest('table').find('.neos-document[data-ismoved="true"]').filter(nodePathStartsWith(currentNodePath));
+							$(movedParentDocuments).each(function(index, movedParentDocument) {
+								$('tr[data-nodepath^="' + $(movedParentDocument).data('nodepath') + '"] td.check input').prop('checked', checked);
 							});
 						}
 
