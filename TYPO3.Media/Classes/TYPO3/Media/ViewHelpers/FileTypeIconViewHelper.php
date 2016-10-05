@@ -2,7 +2,7 @@
 namespace TYPO3\Media\ViewHelpers;
 
 /*
- * This file is part of the TYPO3.Media package.
+ * This file is part of the Neos.Media package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -18,16 +18,16 @@ use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Service\FileTypeIconService;
 
 /**
- * Renders an <img> HTML tag for a filetype icon for a given TYPO3.Media's asset instance
+ * Renders an <img> HTML tag for a filetype icon for a given Neos.Media's asset instance
  *
  * = Examples =
  *
  * <code title="Rendering an asset filetype icon">
- * <typo3.media:fileTypeIcon asset="{assetObject}" alt="a filetype icon" height="16" />
+ * <neos.media:fileTypeIcon asset="{assetObject}" alt="a filetype icon" height="16" />
  * </code>
  * <output>
  * (depending on the asset, no scaling applied)
- * <img src="_Resources/Static/Packages/TYPO3/Media/Icons/16px/jpg.png" height="16" alt="a filetype icon" />
+ * <img src="_Resources/Static/Packages/Neos/Media/Icons/16px/jpg.png" height="16" alt="a filetype icon" />
  * </output>
  *
  */
@@ -56,7 +56,7 @@ class FileTypeIconViewHelper extends AbstractTagBasedViewHelper
     }
 
     /**
-     * Renders an <img> HTML tag for a filetype icon for a given TYPO3.Media's asset instance
+     * Renders an <img> HTML tag for a filetype icon for a given Neos.Media's asset instance
      *
      * @param AssetInterface $file
      * @param integer|null $width

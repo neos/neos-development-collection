@@ -2,7 +2,7 @@
 namespace TYPO3\Media\Command;
 
 /*
- * This file is part of the TYPO3.Media package.
+ * This file is part of the Neos.Media package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -135,7 +135,7 @@ class MediaCommandController extends CommandController
      * Additionally accepts a ``async`` parameter determining if the created thumbnails are generated when created.
      *
      * @param string $preset Preset name, if not provided thumbnails are created for all presets
-     * @param boolean $async Asynchronous generation, if not provided the setting ``TYPO3.Media.asyncThumbnails`` is used
+     * @param boolean $async Asynchronous generation, if not provided the setting ``Neos.Media.asyncThumbnails`` is used
      * @return void
      */
     public function createThumbnailsCommand($preset = null, $async = null)

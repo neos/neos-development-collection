@@ -2,7 +2,7 @@
 namespace TYPO3\Media\Domain\Model;
 
 /*
- * This file is part of the TYPO3.Media package.
+ * This file is part of the Neos.Media package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -198,7 +198,7 @@ class Thumbnail implements ImageInterface
 
     /**
      * Signals that a thumbnail was created.
-     * @deprecated Will be removed with next major version of TYPO3.Media.
+     * @deprecated Will be removed with next major version of Neos.Media.
      * Use ThumbnailService::emitThumbnailCreated signal instead.
      *
      * @Flow\Signal

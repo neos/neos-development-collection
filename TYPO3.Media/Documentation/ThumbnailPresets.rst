@@ -10,12 +10,12 @@ Thumbnail presets allows thumbnails to be easily reused to reduce the amount of 
 Configuration
 -------------
 
-Thumbnails presets are configured using configuration settings in ``TYPO3.Media.thumbnailPresets``. It accepts the
+Thumbnails presets are configured using configuration settings in ``Neos.Media.thumbnailPresets``. It accepts the
 parameters used in ``ThumbnailConfiguration``, except for the ``async`` parameter.
 
 .. code-block:: yaml
 
-  TYPO3:
+  Neos:
     Media:
       thumbnailPresets:
         'Acme.Demo:Thumbnail':
@@ -26,7 +26,7 @@ Optimization
 ------------
 
 When new assets are uploaded, thumbnails for the configured presets are automatically created, unless disabled using the
-configuration setting ``TYPO3.Media.autoCreateThumbnailPresets``.
+configuration setting ``Neos.Media.autoCreateThumbnailPresets``.
 
 If :ref:`Asynchronous Thumbnail Generation` is disabled, the thumbnails will be rendered immediately making
 uploading slower.

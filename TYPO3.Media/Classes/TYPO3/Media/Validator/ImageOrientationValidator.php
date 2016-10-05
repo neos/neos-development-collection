@@ -2,7 +2,7 @@
 namespace TYPO3\Media\Validator;
 
 /*
- * This file is part of the TYPO3.Media package.
+ * This file is part of the Neos.Media package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -22,7 +22,7 @@ use TYPO3\Media\Domain\Model\ImageInterface;
  *
  * *Example*::
  *
- *   [at]Flow\Validate("$image", type="\TYPO3\Media\Validator\ImageOrientationValidator",
+ *   [at]Flow\Validate("$image", type="\Neos\Media\Validator\ImageOrientationValidator",
  *         options={ "allowedOrientations"={"square", "landscape"} })
  *
  * this would refuse an image that is in portrait orientation, but allow landscape and square ones.
@@ -37,7 +37,7 @@ class ImageOrientationValidator extends \TYPO3\Flow\Validation\Validator\Abstrac
     );
 
     /**
-     * The given $value is valid if it is an \TYPO3\Media\Domain\Model\ImageInterface of the
+     * The given $value is valid if it is an \Neos\Media\Domain\Model\ImageInterface of the
      * configured orientation (square, portrait and/or landscape)
      * Note: a value of NULL or empty string ('') is considered valid
      *

@@ -2,7 +2,7 @@
 namespace TYPO3\Media\Validator;
 
 /*
- * This file is part of the TYPO3.Media package.
+ * This file is part of the Neos.Media package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -21,7 +21,7 @@ use TYPO3\Media\Domain\Model\ImageInterface;
  * Validator that checks the type of a given image
  *
  * Example:
- * [at]Flow\Validate("$image", type="\TYPO3\Media\Validator\ImageTypeValidator", options={ "allowedTypes"={"jpeg", "png"} })
+ * [at]Flow\Validate("$image", type="\Neos\Media\Validator\ImageTypeValidator", options={ "allowedTypes"={"jpeg", "png"} })
  */
 class ImageTypeValidator extends AbstractValidator
 {
@@ -33,7 +33,7 @@ class ImageTypeValidator extends AbstractValidator
     );
 
     /**
-     * The given $value is valid if it is an \TYPO3\Media\Domain\Model\ImageInterface of the
+     * The given $value is valid if it is an \Neos\Media\Domain\Model\ImageInterface of the
      * configured type (one of the image/* IANA media subtypes)
      *
      * Note: a value of NULL or empty string ('') is considered valid

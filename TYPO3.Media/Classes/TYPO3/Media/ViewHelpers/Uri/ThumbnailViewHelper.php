@@ -2,7 +2,7 @@
 namespace TYPO3\Media\ViewHelpers\Uri;
 
 /*
- * This file is part of the TYPO3.Media package.
+ * This file is part of the Neos.Media package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -20,7 +20,7 @@ use TYPO3\Media\Domain\Service\AssetService;
 use TYPO3\Media\Domain\Service\ThumbnailService;
 
 /**
- * Renders the src path of a thumbnail image of a given TYPO3.Media asset instance
+ * Renders the src path of a thumbnail image of a given Neos.Media asset instance
  *
  * = Examples =
  *

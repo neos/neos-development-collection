@@ -22,13 +22,13 @@ commands that may be available, use::
 The following reference was automatically generated from code on 2016-06-07
 
 
-.. _`Media Command Reference: TYPO3.MEDIA`:
+.. _`Media Command Reference: Neos.MEDIA`:
 
-Package *TYPO3.MEDIA*
+Package *Neos.MEDIA*
 ---------------------
 
 
-.. _`Media Command Reference: TYPO3.MEDIA typo3.media:media:clearthumbnails`:
+.. _`Media Command Reference: Neos.MEDIA typo3.media:media:clearthumbnails`:
 
 ``typo3.media:media:clearthumbnails``
 *************************************
@@ -50,7 +50,7 @@ Options
 
 
 
-.. _`Media Command Reference: TYPO3.MEDIA typo3.media:media:createthumbnails`:
+.. _`Media Command Reference: Neos.MEDIA typo3.media:media:createthumbnails`:
 
 ``typo3.media:media:createthumbnails``
 **************************************
@@ -70,13 +70,13 @@ Options
 ``--preset``
   Preset name, if not provided thumbnails are created for all presets
 ``--async``
-  Asynchronous generation, if not provided the setting ``TYPO3.Media.asyncThumbnails`` is used
+  Asynchronous generation, if not provided the setting ``Neos.Media.asyncThumbnails`` is used
 
 
 
 
 
-.. _`Media Command Reference: TYPO3.MEDIA typo3.media:media:importresources`:
+.. _`Media Command Reference: Neos.MEDIA Neos.media:media:importresources`:
 
 ``typo3.media:media:importresources``
 *************************************
@@ -99,7 +99,7 @@ Options
 
 
 
-.. _`Media Command Reference: TYPO3.MEDIA typo3.media:media:renderthumbnails`:
+.. _`Media Command Reference: Neos.MEDIA Neos.media:media:renderthumbnails`:
 
 ``typo3.media:media:renderthumbnails``
 **************************************

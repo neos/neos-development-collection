@@ -2,7 +2,7 @@
 namespace TYPO3\Media\Domain\Validator;
 
 /*
- * This file is part of the TYPO3.Media package.
+ * This file is part of the Neos.Media package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -18,7 +18,7 @@ use TYPO3\Flow\Validation\Validator\ConjunctionValidator;
 
 /**
  * Conjunction validator that loads all implementations of the
- * \TYPO3\Media\Domain\Validator\AssetValidatorInterface and merges
+ * \Neos\Media\Domain\Validator\AssetValidatorInterface and merges
  * all their results
  */
 class AssetValidator extends ConjunctionValidator

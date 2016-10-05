@@ -5,7 +5,7 @@ use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
 /**
- * Adjust TYPO3.Media tables to new Asset base class and add new models.
+ * Adjust Neos.Media tables to new Asset base class and add new models.
  */
 class Version20130522131642 extends AbstractMigration
 {

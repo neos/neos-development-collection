@@ -10,7 +10,7 @@ Set the `quality` to your preferred value (between 0 - very poor and 100 - very 
 
 .. code-block:: yaml
 
-    TYPO3:
+    Neos:
       Media:
         image:
           defaultOptions:
@@ -24,7 +24,7 @@ If you are working with CMYK images and don't like to convert them automatically
 
 .. code-block:: yaml
 
-    TYPO3:
+    Neos:
       Media:
         image:
           defaultOptions:

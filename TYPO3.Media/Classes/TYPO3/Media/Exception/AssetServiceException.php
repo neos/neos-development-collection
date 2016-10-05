@@ -2,7 +2,7 @@
 namespace TYPO3\Media\Exception;
 
 /*
- * This file is part of the TYPO3.Media package.
+ * This file is part of the Neos.Media package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,7 +14,7 @@ namespace TYPO3\Media\Exception;
 use TYPO3\Media\Exception;
 
 /**
- * A TYPO3.Media exception for the Asset Service
+ * A Neos.Media exception for the Asset Service
  *
  * @api
  */
