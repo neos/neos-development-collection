@@ -115,16 +115,10 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
                 ];
             }, $allDimensionPresets);
 
-            if ($pinnedDimensionName === null) {
-                $itemLabel = $nodeInDimensions->getLabel();
-            } else {
-                $itemLabel = $targetDimensions[$pinnedDimensionName]['label'];
-            }
-
             $menuItems[] = [
                 'node' => $nodeInDimensions,
                 'state' => $this->calculateItemState($nodeInDimensions),
-                'label' => $itemLabel,
+                'label' => $this->itemLabel($pinnedDimensionName, $nodeInDimensions, $targetDimensions),
                 'dimensions' => $allowedCombination,
                 'targetDimensions' => $targetDimensions
             ];
@@ -145,6 +139,19 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
         }
 
         return $menuItems;
+    }
+
+    /**
+     * @param string $pinnedDimensionName
+     * @param NodeInterface $nodeInDimensions
+     * @param array $targetDimensions
+     * @return string
+     */
+    protected function itemLabel(string $pinnedDimensionName, NodeInterface $nodeInDimensions, array $targetDimensions): string {
+        if ($pinnedDimensionName === null) {
+            return $nodeInDimensions->getLabel();
+        }
+        return $targetDimensions[$pinnedDimensionName]['label'];
     }
 
     /**
