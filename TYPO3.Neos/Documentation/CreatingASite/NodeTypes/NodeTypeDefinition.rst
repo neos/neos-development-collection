@@ -287,7 +287,7 @@ The following options are allowed:
           'formatlesspaste':
             # Show toggle button for formatless pasting.
             'button': true
-            # Whether the format less pasting should be enable by default.
+            # Whether the formatless pasting should be enable by default.
             'formatlessPasteOption': false
             # If not set the default setting is used: 'a', 'abbr', 'b', 'bdi', 'bdo', 'cite', 'code', 'del', 'dfn',
             # 'em', 'i', 'ins', 'kbd', 'mark', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'small', 'strong', 'sub', 'sup',
