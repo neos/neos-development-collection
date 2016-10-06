@@ -5,7 +5,7 @@
 	<h2>{neos:backend.translate(id: 'sites.new', value: 'New site')}</h2>
 
   <div class="neos-row-fluid">
-    <f:form action="createSite">
+    <f:form action="importSite">
       <fieldset class="neos-span3">
         <legend>{neos:backend.translate(id: 'sites.import', value: 'Import a site')}</legend>
         <f:if condition="{sitePackages -> f:count()} > 0">
@@ -13,10 +13,10 @@
             <div class="neos-control-group">
               <label class="neos-control-label" for="site">{neos:backend.translate(id: 'sites.select', value: 'Select a site package')}</label>
               <div class="neos-controls neos-select">
-                <f:form.select name="site" options="{sitePackages}" optionLabelField="packageKey" optionValueField="packageKey" id="site" class="neos-span12" />
+                <f:form.select name="packageKey" options="{sitePackages}" optionLabelField="packageKey" optionValueField="packageKey" id="site" class="neos-span12" />
               </div>
             </div>
-            <f:form.submit value="{neos:backend.translate(id: 'sites.create', value: 'Create Site')}" class="neos-button neos-button-primary" />
+            <f:form.submit value="{neos:backend.translate(id: 'sites.import', value: 'Import Site')}" class="neos-button neos-button-primary" />
           </f:then>
           <f:else>
             <p>{neos:backend.translate(id: 'sites.noPackackeInfo', value: 'No site packages are available. Make sure you have an active site package.')}
@@ -26,7 +26,7 @@
       </fieldset>
     </f:form>
 
-    <f:form action="createSite">
+    <f:form action="createSiteNode">
       <fieldset class="neos-span3 neos-offset1">
         <legend>{neos:backend.translate(id: 'sites.createBlank', value: 'Create a blank site')}</legend>
         <f:if condition="{sitePackages -> f:count()} > 0">
@@ -34,7 +34,7 @@
             <div class="neos-control-group">
               <label class="neos-control-label" for="site">{neos:backend.translate(id: 'sites.select', value: 'Select a site package')}</label>
               <div class="neos-controls neos-select">
-                <f:form.select name="site" options="{sitePackages}" optionLabelField="packageKey" optionValueField="packageKey" id="site" class="neos-span12" />
+                <f:form.select name="packageKey" options="{sitePackages}" optionLabelField="packageKey" optionValueField="packageKey" id="site" class="neos-span12" />
               </div>
             </div>
             <div class="neos-control-group{f:validation.ifHasErrors(for: 'nodeType', then: ' neos-error')}">
@@ -50,7 +50,7 @@
                 <f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'siteName'}"/>
               </div>
             </div>
-            <f:form.submit value="{neos:backend.translate(id: 'sites.create', value: 'Create Site')}" class="neos-button neos-button-primary" />
+            <f:form.submit value="{neos:backend.translate(id: 'sites.createNode', value: 'Create empty Site')}" class="neos-button neos-button-primary" />
           </f:then>
           <f:else>
             <p>{neos:backend.translate(id: 'sites.noPackackeInfo', value: 'No site packages are available. Make sure you have an active site package.')}
@@ -60,7 +60,7 @@
       </fieldset>
     </f:form>
 
-    <f:form action="createSite">
+    <f:form action="createSitePackage">
       <fieldset class="neos-span3 neos-offset1">
         <legend>{neos:backend.translate(id: 'sites.createPackage', value: 'Create a new site-package')}</legend>
         <f:if condition="{generatorServiceIsAvailable}">
@@ -79,7 +79,7 @@
                 <f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'siteName'}"/>
               </div>
             </div>
-            <f:form.submit value="{neos:backend.translate(id: 'sites.create', value: 'Create Site')}" class="neos-button neos-button-primary" />
+            <f:form.submit value="{neos:backend.translate(id: 'sites.createPackage', value: 'Create Site-Package')}" class="neos-button neos-button-primary" />
           </f:then>
           <f:else>
             <p>{neos:backend.translate(id: 'sites.noNeosKickstarterInfo', value: 'The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.') -> f:format.raw()}</p>
