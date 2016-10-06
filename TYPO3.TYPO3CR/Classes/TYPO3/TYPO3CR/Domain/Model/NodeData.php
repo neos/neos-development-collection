@@ -995,12 +995,21 @@ class NodeData extends AbstractNodeData
             if ($this->persistenceManager->isNewObject($nodeData) === false) {
                 $this->nodeDataRepository->remove($nodeData);
             }
-        } else {
-            if ($this->persistenceManager->isNewObject($nodeData)) {
-                $this->nodeDataRepository->add($nodeData);
-            } else {
-                $this->nodeDataRepository->update($nodeData);
+            return;
+        }
+
+        // If the node is marked to be removed but didn't exist in a base workspace yet, we can delete it for real, without creating a shadow node:
+        if ($nodeData->isRemoved() && $this->nodeDataRepository->findOneByIdentifier($nodeData->getIdentifier(), $this->workspace->getBaseWorkspace()) === null) {
+            if ($this->persistenceManager->isNewObject($nodeData) === false) {
+                $this->nodeDataRepository->remove($nodeData);
             }
+            return;
+        }
+
+        if ($this->persistenceManager->isNewObject($nodeData)) {
+            $this->nodeDataRepository->add($nodeData);
+        } else {
+            $this->nodeDataRepository->update($nodeData);
         }
     }
 
