@@ -6,6 +6,7 @@ to the existing issue instead.
 -->
 
 ### Description
+
 [Description of the bug or feature]
 
 ### Steps to Reproduce
@@ -14,16 +15,23 @@ to the existing issue instead.
 2. [Second Step]
 3. [and so on...]
 
-**Expected behavior:** 
+#### Expected behavior
+
 [What you expected to happen]
 
-**Actual behavior:** 
+#### Actual behavior
+
 [What actually happened]
 
+### Affected Versions
 
-### Versions
+<!--
+If you want to be a super-hero, try to find out the olded supported version
+affected by the bug you describe. Thanks!
+-->
+
 Neos: 
 
 Flow: 
 
-You can get this information by running `composer show -i` or using the Package management module within neos.
+You can get this information by running `composer show` or using the package management module within Neos.
