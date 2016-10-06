@@ -503,6 +503,7 @@ class WorkspacesController extends AbstractModuleController
             foreach ($site['documents'] as $documentKey => $document) {
                 $liveDocumentNode = $liveContext->getNodeByIdentifier($document['documentNode']->getIdentifier());
                 $siteChanges[$siteKey]['documents'][$documentKey]['isMoved'] = $liveDocumentNode && $document['documentNode']->getPath() !== $liveDocumentNode->getPath();
+                $siteChanges[$siteKey]['documents'][$documentKey]['isNew'] = $liveDocumentNode === null;
                 foreach ($document['changes'] as $changeKey => $change) {
                     $liveNode = $liveContext->getNodeByIdentifier($change['node']->getIdentifier());
                     $siteChanges[$siteKey]['documents'][$documentKey]['changes'][$changeKey]['isNew'] = is_null($liveNode);
