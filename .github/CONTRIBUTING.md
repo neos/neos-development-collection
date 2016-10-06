@@ -30,8 +30,9 @@ We spend our time on the following tools, you should have a good understanding o
 
 - PHP 7.0
 - MySQL / PostgreSQL
-- React / EmberJS 
-- GIT
+- EmberJS (used for the current UI)
+- React (used for the UI rewrite currently being done)
+- Git
 
 You can find us on [Github](https://github.com/neos) and we use it as our main issue tracker as well.
 
@@ -53,7 +54,7 @@ We certainly have a something that matches your dream job and where you can help
 
 ## Test
 
-Your are an end user, enthusiast developer and you have some hours to help the community, let's see how you can setup Neos, test the product and report issue to the community.
+Your are an end user, enthusiast developer and you have some hours to help the community? Let's see how you can setup Neos, test the product and report issue to the community.
 
 ### Our stack
 
