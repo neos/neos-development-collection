@@ -285,10 +285,15 @@ The following options are allowed:
             'right': true
             'justify': true
           'formatlesspaste':
-            'button': true # Show toggle button for formatless pasting.
-            'formatlessPasteOption': false # Whether the format less pasting should be enable by default.
-            'strippedElements': ['a'] # If not set the default setting is used.
-            'autoparagraph': true # Automatically wrap non-wrapped text blocks in paragraph blocks.
+            # Show toggle button for formatless pasting.
+            'button': true
+            # Whether the format less pasting should be enable by default.
+            'formatlessPasteOption': false
+            # If not set the default setting is used: 'a', 'abbr', 'b', 'bdi', 'bdo', 'cite', 'code', 'del', 'dfn',
+            # 'em', 'i', 'ins', 'kbd', 'mark', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'small', 'strong', 'sub', 'sup',
+            # 'time', 'u', 'var'
+            'strippedElements': ['a']
+          'autoparagraph': true # Automatically wrap non-wrapped text blocks in paragraph blocks.
 
       Example of disabling all formatting options::
 
