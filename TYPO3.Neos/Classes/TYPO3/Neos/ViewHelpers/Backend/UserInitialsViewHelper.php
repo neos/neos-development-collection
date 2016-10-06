@@ -70,7 +70,7 @@ class UserInitialsViewHelper extends AbstractViewHelper
         if ($currentUser) {
             if ($currentUser === $requestedUser) {
                 $translationHelper = new TranslationHelper();
-                $you = $translationHelper->translateById('you', 'TYPO3.Neos');
+                $you = $translationHelper->translate('you', null, [], 'Main', 'TYPO3.Neos');
             }
         }
 
