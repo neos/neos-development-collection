@@ -20,7 +20,7 @@ The Neos project is focused on providing first class UX for our products. Help o
 
 ## You are a Content Strategist?
 
-We love Content, so we try to solve today's problem in producing, curating and managing content. Input from you as a Content Strategist help us to reach our goal. Contact us hello@neos.io to see how we can collaborate.
+We love content, so we try to solve today's (and tomorrows's!) problems in producing, curating and managing content. Input from you as a content strategist help us to reach our goal. Contact us hello@neos.io to see how we can collaborate.
 
 ## You are a coder? Backend, frontend or both?
 
@@ -48,7 +48,7 @@ We are currently in the process to create the identity for the Neos brand. If yo
 
 ## You have other skills that you think can be useful for the community?
 
-Who knows, some of your skills are not in this list, but can be really useful for the community. You are a project manager, an event organizer, a brewer, a team builder and joga trainer and you want to support an open source community, connect with us: **hello@neos.io** 
+Who knows, some of your skills are not in this list, but can be really useful for the community. You are a project manager, an event organizer, a brewer, a team builder and yoga trainer and you want to support an open source community, connect with us: **hello@neos.io** 
 
 We certainly have a something that matches your dream job and where you can help the project.
 
@@ -72,9 +72,9 @@ You can find us on [Github](https://github.com/neos) and we also use it as our m
 
 ## Translate and document
 
-We use XLIFF to store the translated string for all our products. You can contribute to the translation process, by creating an account at [crowdin](https://crowdin.com/project/neos).
+You can contribute to the translation process, by creating an account at [Crowdin](https://crowdin.com/project/neos).
 
-On a regularly basis we synchronize the translation from crowdin to our git repositories. See the [description of the translation process](https://www.neos.io/contribute/translating-neos.html) on our website for details.
+On a regularly basis we synchronize the translation from Crowdin to our Git repositories (internally XLIFF is used for storing translations). See the [description of the translation process](https://www.neos.io/contribute/translating-neos.html) on our website for details.
 
 ## You have some knowledge, try to help other
 
