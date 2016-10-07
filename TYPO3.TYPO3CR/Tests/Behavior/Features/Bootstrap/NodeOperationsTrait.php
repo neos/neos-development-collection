@@ -628,7 +628,7 @@ trait NodeOperationsTrait
     /**
      * @Then /^The node language dimension should be "([^"]*)"$/
      */
-    public function theNodeLanguagehouldBe($language)
+    public function theNodeLanguageShouldBe($language)
     {
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', 'string', escapeshellarg($language)));
