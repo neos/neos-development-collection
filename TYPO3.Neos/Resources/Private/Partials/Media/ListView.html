@@ -70,7 +70,7 @@
 							<m:thumbnail asset="{asset}" preset="TYPO3.Neos:Thumbnail" alt="{asset.label}" async="{settings.asyncThumbnails}" />
 						</div>
 					</td>
-					<td class="asset-label"><f:format.crop maxCharacters="50">{asset.label}</f:format.crop></td>
+					<td class="asset-label"><span data-neos-toggle="tooltip" title="{asset.label}"><f:format.crop maxCharacters="50">{asset.label}</f:format.crop></span></td>
 					<td><span title="{asset.lastModified -> f:format.date(format: 'd-m-Y H:i')}" data-neos-toggle="tooltip">{asset.lastModified -> m:format.relativeDate()}</span></td>
 					<td>{asset.resource.fileSize -> f:format.bytes()}</td>
 					<td><span class="neos-label">{asset.resource.mediatype}</span></td>
@@ -84,7 +84,7 @@
 							<a class="dropdown-toggle neos-button neos-button-mini" href="#" data-neos-toggle="dropdown" data-target="#neos-asset-actionmenu-{asset -> f:format.identifier()}">
 								<i class="icon-ellipsis-horizontal"></i>
 							</a>
-							<div class="neos-dropdown-menu-list" role="menu">
+							<div class="neos-dropdown-menu-list neos-pull-right" role="menu">
 								<ul>
 									<li>
 										<f:link.action action="edit" arguments="{asset: asset}" title="{neos:backend.translate(id: 'media.tooltip.editAsset', source: 'Modules', package: 'TYPO3.Neos')}">

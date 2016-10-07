@@ -247,7 +247,7 @@ class HtmlAugmenterTest extends UnitTestCase
      * @param array $exclusiveAttributes
      * @test
      * @dataProvider invalidAttributesDataProvider
-     * @expectedException Exception
+     * @expectedException \TYPO3\Neos\Exception
      */
     public function invalidAttributesTests($html, array $attributes, $fallbackTagName, $exclusiveAttributes)
     {
