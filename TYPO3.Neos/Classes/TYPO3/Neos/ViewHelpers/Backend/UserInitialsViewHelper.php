@@ -16,6 +16,7 @@ use TYPO3\Flow\I18n\EelHelper\TranslationHelper;
 use TYPO3\Flow\Security\AccountRepository;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\Neos\Service\UserService;
+use TYPO3\Neos\Domain\Service\UserService as DomainUserService;
 use TYPO3\Party\Domain\Model\Person;
 
 /**
@@ -38,6 +39,12 @@ class UserInitialsViewHelper extends AbstractViewHelper
     protected $userService;
 
     /**
+     * @Flow\Inject
+     * @var DomainUserService
+     */
+    protected $domainUserService;
+
+    /**
      * Render user initials or an abbreviated name for a given username. If the account was deleted, use the username as fallback.
      *
      * @param string $format Supported are "fullFirstName" and "initials"
@@ -49,28 +56,19 @@ class UserInitialsViewHelper extends AbstractViewHelper
             throw new \InvalidArgumentException(sprintf('Format "%s" given to history:userInitials(), only supporting "fullFirstName", "initials" and "fullName".', $format), 1415705861);
         }
 
-        $accountIdentifier = $this->renderChildren();
-
-        // TODO: search by credential source is still needed
-        /* @var $account \TYPO3\Flow\Security\Account */
-        $account = $this->accountRepository->findOneByAccountIdentifier($accountIdentifier);
-
-        if ($account === null) {
-            return $accountIdentifier;
-        }
+        $username = $this->renderChildren();
 
         /* @var $requestedUser Person */
-        $requestedUser = $account->getParty();
-
+        $requestedUser = $this->domainUserService->getUser($username);
         if ($requestedUser === null || $requestedUser->getName() === null) {
-            return $accountIdentifier;
+            return $username;
         }
 
         $currentUser = $this->userService->getBackendUser();
         if ($currentUser) {
             if ($currentUser === $requestedUser) {
                 $translationHelper = new TranslationHelper();
-                $you = $translationHelper->translateById('you', 'TYPO3.Neos');
+                $you = $translationHelper->translate('you', null, [], 'Main', 'TYPO3.Neos');
             }
         }
 
