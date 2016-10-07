@@ -511,6 +511,9 @@ class WorkspacesController extends AbstractModuleController
         ksort($siteChanges);
         foreach ($siteChanges as $siteKey => $site) {
             foreach ($site['documents'] as $documentKey => $document) {
+                $liveDocumentNode = $liveContext->getNodeByIdentifier($document['documentNode']->getIdentifier());
+                $siteChanges[$siteKey]['documents'][$documentKey]['isMoved'] = $liveDocumentNode && $document['documentNode']->getPath() !== $liveDocumentNode->getPath();
+                $siteChanges[$siteKey]['documents'][$documentKey]['isNew'] = $liveDocumentNode === null;
                 foreach ($document['changes'] as $changeKey => $change) {
                     $liveNode = $liveContext->getNodeByIdentifier($change['node']->getIdentifier());
                     $siteChanges[$siteKey]['documents'][$documentKey]['changes'][$changeKey]['isNew'] = is_null($liveNode);
@@ -519,7 +522,6 @@ class WorkspacesController extends AbstractModuleController
             }
             ksort($siteChanges[$siteKey]['documents']);
         }
-
         return $siteChanges;
     }
 
