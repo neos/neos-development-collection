@@ -14,7 +14,7 @@ And one more thing... Don't forget about the tests!
 
 **How to verify it**
 
-** Checklist**
+**Checklist**
 
 - [ ] Code follows the PSR-2 coding style
 - [ ] Tests have been created, run and adjusted as needed
