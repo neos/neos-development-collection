@@ -882,7 +882,7 @@ trait NodeOperationsTrait
     }
 
     /**
-     * @When /^I make the node visible$/
+     * @When /^I unhide the node$/
      */
     public function iMakeTheNodevisible()
     {
