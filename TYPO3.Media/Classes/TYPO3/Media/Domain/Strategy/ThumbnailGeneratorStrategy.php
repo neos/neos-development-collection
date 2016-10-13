@@ -58,7 +58,7 @@ class ThumbnailGeneratorStrategy
      * @param ObjectManagerInterface $objectManager
      * @return ThumbnailGeneratorInterface[]
      */
-    static public function getThumbnailGeneratorClassNames($objectManager)
+    public static function getThumbnailGeneratorClassNames($objectManager)
     {
         /** @var ReflectionService $reflectionService */
         $reflectionService = $objectManager->get(ReflectionService::class);
