@@ -481,7 +481,6 @@ class NodeImportService
                 } elseif ($currentEncoding === 'json') {
                     $decodedJson = json_decode($reader->value, true);
                     if (json_last_error() !== JSON_ERROR_NONE) {
-                        var_dump($reader->value);
                         throw new ImportException(sprintf('Could not parse encoded JSON in element <%s> for node %s: %s', $currentProperty, $currentNodeIdentifier, json_last_error_msg()), 1472992033);
                     }
                     $value = $this->propertyMapper->convert($decodedJson, $currentClassName, $this->propertyMappingConfiguration);
