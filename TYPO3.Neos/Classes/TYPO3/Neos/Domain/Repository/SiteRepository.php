@@ -72,17 +72,16 @@ class SiteRepository extends Repository
      */
     public function findDefault()
     {
-        if ($this->defaultSiteNodeName !== null) {
-            /**
-             * @var Site $defaultSite
-             */
-            $defaultSite = $this->findOneByNodeName($this->defaultSiteNodeName);
-            if (!$defaultSite instanceof Site || $defaultSite->getState() !== Site::STATE_ONLINE) {
-                throw new NeosException(sprintf('DefaultSiteNode %s not found or not active', $this->defaultSiteNodeName), 1476374818);
-            }
-            return $defaultSite;
-        } else {
+        if ($this->defaultSiteNodeName === null) {
             return $this->findOnline()->getFirst();
         }
+        /**
+         * @var Site $defaultSite
+         */
+        $defaultSite = $this->findOneByNodeName($this->defaultSiteNodeName);
+        if (!$defaultSite instanceof Site || $defaultSite->getState() !== Site::STATE_ONLINE) {
+            throw new NeosException(sprintf('DefaultSiteNode %s not found or not active', $this->defaultSiteNodeName), 1476374818);
+        }
+        return $defaultSite;
     }
 }
