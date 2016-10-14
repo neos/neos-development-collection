@@ -66,6 +66,9 @@ class SiteRepository extends Repository
     /**
      * Find the default site and fallback to first online
      * if no default is found or the default is not online
+     *
+     * @return Site
+     * @throws NeosException
      */
     public function findDefault()
     {
@@ -74,11 +77,10 @@ class SiteRepository extends Repository
              * @var Site $defaultSite
              */
             $defaultSite = $this->findOneByNodeName($this->defaultSiteNodeName);
-            if ($defaultSite && $defaultSite->getState() === Site::STATE_ONLINE) {
-                return $defaultSite;
-            } else {
+            if (!$defaultSite instanceof Site || $defaultSite->getState() !== Site::STATE_ONLINE) {
                 throw new NeosException(sprintf('DefaultSiteNode %s not found or not active', $this->defaultSiteNodeName), 1476374818);
             }
+            return $defaultSite;
         } else {
             return $this->findOnline()->getFirst();
         }

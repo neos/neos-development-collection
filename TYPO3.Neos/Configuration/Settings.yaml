@@ -130,7 +130,7 @@ TYPO3:
         'TYPO3.Neos': TRUE
 
     # If a node name is specified here it will be used as default siteNode
-    # wich is displayed if no domain pattern matches the current request
+    # which is displayed if no domain pattern matches the current request
     defaultSiteNodeName: null
 
     routing:
