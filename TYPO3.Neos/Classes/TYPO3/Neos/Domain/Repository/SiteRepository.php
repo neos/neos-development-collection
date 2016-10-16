@@ -64,8 +64,10 @@ class SiteRepository extends Repository
     }
 
     /**
-     * Find the default site and fallback to first online
-     * if no default is found or the default is not online
+     * Find the site that was specified in the configuration ``defaultSiteNodeName``
+     *
+     * If the defaultSiteNodeName-setting is null the first active site is returned
+     * If the site is not found or not active an exception is thrown
      *
      * @return Site
      * @throws NeosException
