@@ -569,7 +569,7 @@ TYPO3:
         packageKeys:
           - 'TYPO3.Flow'
           - 'TYPO3.Party'
-          - 'TYPO3.Fluid'
+          - 'Neos.FluidAdaptor'
           - 'TYPO3.Kickstart'
           - 'TYPO3.Welcome'
           - 'TYPO3.Media'

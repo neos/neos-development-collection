@@ -10,11 +10,11 @@ namespace TYPO3\Neos\Tests\Unit\ViewHelpers;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\FluidAdaptor\View\StandaloneView;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Resource\Publishing\ResourcePublisher;
 use TYPO3\Flow\Tests\UnitTestCase;
-use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
 use TYPO3\Neos\ViewHelpers\IncludeJavaScriptViewHelper;
 
 /**
@@ -35,14 +35,14 @@ class IncludeJavaScriptViewHelperTest extends UnitTestCase
     {
         $this->request = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $this->request->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue('MyPackage'));
+        $view = new StandaloneView($this->request);
         $this->controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
         $this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($this->request));
         $this->resourcePublisher = $this->getMockBuilder(ResourcePublisher::class)->disableOriginalConstructor()->getMock();
         $this->resourcePublisher->expects($this->any())->method('getStaticResourcesWebBaseUri')->will($this->returnValue('StaticResourceUri/'));
         $this->viewHelper = $this->getAccessibleMock(IncludeJavaScriptViewHelper::class, array('iterateDirectoryRecursively'));
-        $renderingContext = new RenderingContext();
-        $renderingContext->setControllerContext($this->controllerContext);
-        $this->viewHelper->setRenderingContext($renderingContext);
+        $view->getRenderingContext()->setControllerContext($this->controllerContext);
+        $this->viewHelper->setRenderingContext($view->getRenderingContext());
         $this->viewHelper->_set('resourcePublisher', $this->resourcePublisher);
     }
 
