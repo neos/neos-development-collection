@@ -20,7 +20,7 @@ use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\Flow\Tests\FunctionalTestRequestHandler;
 use Neos\FluidAdaptor\Core\ViewHelper\TemplateVariableContainer;
-use Neos\FluidAdaptor\Core\ViewHelper\ViewHelperVariableContainer;
+use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer;
 use Neos\FluidAdaptor\View\AbstractTemplateView;
 use Neos\FluidAdaptor\View\TemplateView;
 use TYPO3\Media\TypeConverter\AssetInterfaceConverter;
@@ -79,6 +79,7 @@ class NodeViewHelperTest extends FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
+        $this->router->setRoutesConfiguration(null);
         $this->nodeDataRepository = $this->objectManager->get(NodeDataRepository::class);
         $domainRepository = $this->objectManager->get(DomainRepository::class);
         $siteRepository = $this->objectManager->get(SiteRepository::class);

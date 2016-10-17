@@ -17,7 +17,7 @@ use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Mvc\Routing\UriBuilder;
 use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Tests\FunctionalTestCase;
-use Neos\FluidAdaptor\Core\ViewHelper\ViewHelperVariableContainer;
+use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer;
 use Neos\FluidAdaptor\View\TemplateView;
 use TYPO3\Media\TypeConverter\AssetInterfaceConverter;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
