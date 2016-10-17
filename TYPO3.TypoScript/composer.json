@@ -7,7 +7,7 @@
         "typo3/flow": "*"
     },
     "autoload": {
-        "psr-0": {
+        "psr-4": {
             "TYPO3\\TypoScript": "Classes"
         }
     }
