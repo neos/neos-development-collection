@@ -9,7 +9,7 @@
         "behat/transliterator": "~1.0"
     },
     "autoload": {
-        "psr-0": {
+        "psr-4": {
             "TYPO3\\TYPO3CR": "Classes"
         }
     }
