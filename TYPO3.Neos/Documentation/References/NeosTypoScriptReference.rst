@@ -470,7 +470,7 @@ Render nested content from a ``ContentCollection`` node. Individual nodes are re
 :ref:`TYPO3_Neos__ContentCase` object.
 
 :nodePath: (string, **required**) The relative node path of the ``ContentCollection`` (e.g. ``'main'``)
-:@context.contentCollectionNode: (Node) The content collection node, resolved from ``nodePath`` by default
+:@context.node: (Node) The content collection node, resolved from ``nodePath`` by default
 :tagName: (string) Tag name for the wrapper element
 :attributes: (:ref:`TYPO3_TypoScript__Attributes`) Tag attributes for the wrapper element
 
