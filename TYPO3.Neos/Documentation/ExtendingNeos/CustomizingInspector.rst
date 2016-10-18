@@ -103,7 +103,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
 
 TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/Root.ts2) ::
 
-  prototype(Vendor.Site:YourContentElementName) < prototype(TYPO3.Neos:Template) {
+  prototype(Vendor.Site:YourContentElementName) < prototype(TYPO3.TypoScript:Template) {
     templatePath = 'resource://Vendor.Site/Private/Templates/TypoScriptObjects/YourContentElementName.html'
     headline = ${q(node).property('headline')}
     subheadline = ${q(node).property('subheadline')}
