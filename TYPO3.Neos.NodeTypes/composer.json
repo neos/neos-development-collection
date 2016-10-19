@@ -9,7 +9,7 @@
     },
     "autoload": {
         "psr-4": {
-            "TYPO3\\Neos\\NodeTypes": "Classes"
+            "TYPO3\\Neos\\NodeTypes\\": "Classes"
         }
     }
 }
