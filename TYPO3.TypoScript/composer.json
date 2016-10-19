@@ -8,7 +8,7 @@
     },
     "autoload": {
         "psr-4": {
-            "TYPO3\\TypoScript": "Classes"
+            "TYPO3\\TypoScript\\": "Classes"
         }
     }
 }
