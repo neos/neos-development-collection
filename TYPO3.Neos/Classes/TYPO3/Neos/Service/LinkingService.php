@@ -148,7 +148,7 @@ class LinkingService
             $this->systemLogger->log(sprintf('Could not resolve "%s" to an existing node; The node was probably deleted.', $uri));
             return null;
         }
-        return $this->createNodeUri($controllerContext, $targetObject, null, null, $absolute);
+        return $this->createNodeUri($controllerContext, $targetObject, null, 'html', $absolute);
     }
 
     /**
