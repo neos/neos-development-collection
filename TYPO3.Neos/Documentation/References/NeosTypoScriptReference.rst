@@ -17,6 +17,7 @@ TYPO3.TypoScript:Array
 Render multiple nested definitions and concatenate the results.
 
 :[key]: (string) A nested definition (simple value, expression or object) that evaluates to a string
+:[key].@ignoreProperties: (array) A list of properties to ignore
 :[key].@position: (string/integer) Define the ordering of the nested definition
 
 The order in which nested definitions are evaluated are specified using their
