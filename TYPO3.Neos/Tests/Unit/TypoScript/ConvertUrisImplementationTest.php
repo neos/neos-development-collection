@@ -314,7 +314,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $this->addValueExpectation($value);
 
         $this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
-        $this->mockHttpRequest->expects($this->any())->method('getFormat')->will($this->returnValue('json.something'));
+        $this->mockActionRequest->expects($this->any())->method('getFormat')->will($this->returnValue('json.something'));
 
         $self = $this;
         $this->mockLinkingService->expects($this->atLeastOnce())->method('resolveNodeUri')->will($this->returnCallback(function ($nodeUri) use ($self, $nodeIdentifier) {
