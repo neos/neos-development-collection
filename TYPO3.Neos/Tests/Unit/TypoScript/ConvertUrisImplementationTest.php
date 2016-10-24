@@ -301,4 +301,31 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $actualResult = $this->convertUrisImplementation->evaluate();
         $this->assertSame($expectedResult, $actualResult);
     }
+
+    /**
+     * This test checks that targets for node links are correctly replaced to their html links when evaluated from foreign format like json or xml.sitemap
+     *
+     * @test
+     */
+    public function evaluateReplaceNodeUrisFromForeignFormat()
+    {
+        $nodeIdentifier = 'aeabe76a-551a-495f-a324-ad9a86b2aff7';
+        $value = 'This string contains a node link and an external link: The node link <a href="node://' . $nodeIdentifier . '">example</a> and an external link <a href="http://www.example.org">example3</a>';
+        $this->addValueExpectation($value);
+
+        $this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
+        $this->mockHttpRequest->expects($this->any())->method('getFormat')->will($this->returnValue('json.something'));
+
+        $self = $this;
+        $this->mockLinkingService->expects($this->atLeastOnce())->method('resolveNodeUri')->will($this->returnCallback(function ($nodeUri) use ($self, $nodeIdentifier) {
+            if ($nodeUri !== 'node://' . $nodeIdentifier) {
+                $self->fail('Unexpected node URI "' . $nodeUri . '"');
+            }
+            return 'http://www.example.org/some-node-link';
+        }));
+
+        $expectedResult = 'This string contains a node link and an external link: The node link <a href="http://www.example.org/some-node-link">example</a> and an external link <a href="http://www.example.org">example3</a>';
+        $actualResult = $this->convertUrisImplementation->evaluate();
+        $this->assertSame($expectedResult, $actualResult);
+    }
 }
