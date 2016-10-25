@@ -7978,6 +7978,14 @@
   height: 30px;
   line-height: 28px;
 }
+.neos #neos-inspector .neos-inspector-image .neos-button-icon {
+  width: 32px;
+}
+.neos #neos-inspector .neos-inspector-image .neos-button-icon:focus {
+  height: 32px;
+  line-height: 32px;
+  outline: 0;
+}
 .neos #neos-inspector .neos-inspector-image .typo3-fileupload-dropzone.typo3-fileupload-dropzone-active, .neos #neos-inspector .neos-inspector-image .typo3-fileupload-dropzone.typo3-fileupload-dropzone-hover {
   width: 290px;
   height: 218px;

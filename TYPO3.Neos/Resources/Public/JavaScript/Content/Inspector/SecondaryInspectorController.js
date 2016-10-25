@@ -78,6 +78,7 @@ function(Ember, Button) {
 		viewClass: null,
 
 		classNameBindings: ['_currentViewIsActive:neos-pressed'],
+		attributeBindings: ['data-neos-tooltip'],
 		_secondaryInspectorController: SecondaryInspectorController,
 
 		_currentViewIsActive: function() {
