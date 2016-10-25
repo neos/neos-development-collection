@@ -14,15 +14,15 @@
 	</div>
 
 	<div class="neos-inspector-image-upload" id="{{unbound view._containerId}}">
-		{{view view.SecondaryInspectorButton viewClassBinding="view._mediaBrowserView" title="Media" icon="image" action="_beforeMediaBrowserIsShown" target="view"}}
-		<button id="{{unbound view._browseButtonId}}" class="neos-button neos-inspector-image-upload-files" {{bindAttr disabled="view._uploadInProgress:neos-disabled" title="view._fileChooserLabel"}}>
+		{{view view.SecondaryInspectorButton viewClassBinding="view._mediaBrowserView" class="neos-button-icon" titleBinding="view.mediaLabel" icon="image" action="_beforeMediaBrowserIsShown" target="view"}}
+		<button id="{{unbound view._browseButtonId}}" class="neos-button neos-button-icon neos-inspector-image-upload-files" {{bindAttr disabled="view._uploadInProgress:neos-disabled" title="view._fileUploadLabel"}}>
 			<i class="icon-upload"></i>
 		</button>
-		<button class="neos-button neos-inspector-image-remove-button" {{bindAttr disabled="view._uploadInProgress" title="view.removeButtonLabel"}} {{action "remove" target="view"}}>
-			<i class="icon-trash"></i>
+		<button class="neos-button neos-button-icon neos-inspector-image-remove-button" {{bindAttr disabled="view._uploadInProgress" title="view.removeButtonLabel"}} {{action "remove" target="view"}}>
+			<i class="icon-remove"></i>
 		</button>
 		{{#if view.shouldRenderCrop}}
-			{{view view.SecondaryInspectorButton viewClassBinding="view._cropView" isVisibleBinding="view._uploadPreviewNotShown" class="neos-inspector-image-crop-button" titleBinding="view.cropLabel" icon="crop"}}
+			{{view view.SecondaryInspectorButton viewClassBinding="view._cropView" isVisibleBinding="view._uploadPreviewNotShown" class="neos-button-icon neos-inspector-image-crop-button" titleBinding="view.cropLabel" icon="crop"}}
 		{{/if}}
 	</div>
 	{{#if view.shouldRenderResize}}

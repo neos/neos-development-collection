@@ -15,10 +15,10 @@ function(Ember, $, template, plupload, Notification, Configuration, I18n) {
 		/**
 		 * Label of the file chooser button
 		 */
-		fileChooserLabel: null,
-		_fileChooserLabel: function() {
-			return I18n.translate(this.get('fileChooserLabel'), 'Choose file');
-		}.property('fileChooserLabel'),
+		fileUploadLabel: null,
+		_fileUploadLabel: function() {
+			return I18n.translate(this.get('fileUploadLabel'), 'Upload file');
+		}.property('fileUploadLabel'),
 
 		// File filters
 		allowedFileTypes: null,
