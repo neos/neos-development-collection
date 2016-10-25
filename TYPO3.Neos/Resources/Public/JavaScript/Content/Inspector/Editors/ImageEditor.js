@@ -32,6 +32,9 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 		cropLabel: function () {
 			return I18n.translate('TYPO3.Neos:Main:crop', 'Crop');
 		}.property(),
+		mediaLabel: function () {
+			return I18n.translate('TYPO3.Neos:Main:media', 'Media');
+		}.property(),
 
 		/**
 		 * Size of the image preview. Public configuration.
