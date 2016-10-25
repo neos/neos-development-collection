@@ -114,6 +114,16 @@ define(
 
 		didInsertElement: function() {
 			this.get('inspector.validationErrors').addObserver(this.get('propertyDefinition.key'), this, '_validationErrorsDidChange');
+		},
+
+		scheduleTooltips: function() {
+			Ember.run.schedule('afterRender', this, this.activateTooltips);
+		}.observes('childViews'),
+
+		activateTooltips: function() {
+			if (this.$()) {
+				this.$('[data-neos-tooltip]').tooltip({container: '#neos-application'});
+			}
 		}
 	});
 });
