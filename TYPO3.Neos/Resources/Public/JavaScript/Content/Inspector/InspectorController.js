@@ -218,8 +218,11 @@ define(
 						if (!groupsObject[groupIdentifier].properties) {
 							groupsObject[groupIdentifier].properties = [];
 						}
-
 						property.ui.label = I18n.translate(property.ui.label);
+
+						if (property.ui.help && property.ui.help.message) {
+							property.ui.help.message = I18n.translate(property.ui.help.message);
+						}
 
 						groupsObject[groupIdentifier].properties.push(property);
 					}

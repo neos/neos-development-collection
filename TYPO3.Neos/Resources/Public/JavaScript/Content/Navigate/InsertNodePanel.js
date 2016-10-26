@@ -27,7 +27,7 @@ define(
 
 					var helpMessage = '';
 					if (nodeType.ui.help && nodeType.ui.help.message) {
-						helpMessage = nodeType.ui.help.message;
+						helpMessage = I18n.translate(nodeType.ui.help.message);
 					}
 
 					var groupName = 'group' in nodeType.ui ? nodeType.ui.group : 'general';
