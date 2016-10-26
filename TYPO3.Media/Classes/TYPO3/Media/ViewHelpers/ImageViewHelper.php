@@ -141,6 +141,12 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
             ));
         }
 
+        // alt argument must be set because it is required (see $this->initializeArguments())
+        if ($this->arguments['alt'] === '') {
+            // has to be added explicitly because empty strings won't be added as attributes in general (see parent::initialize())
+            $this->tag->addAttribute('alt', '');
+        }
+
         return $this->tag->render();
     }
 }
