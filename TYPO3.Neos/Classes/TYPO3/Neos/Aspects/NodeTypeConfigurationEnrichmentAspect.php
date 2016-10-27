@@ -177,7 +177,7 @@ class NodeTypeConfigurationEnrichmentAspect
      * @param string $configurationThumbnail
      * @return string $thumbnailUrl
      */
-    protected function resolveHelpMessageThumbnail ($nodeTypeName, $configurationThumbnail)
+    protected function resolveHelpMessageThumbnail($nodeTypeName, $configurationThumbnail)
     {
         if ($nodeTypeName !== null) {
             $thumbnailUrl = '';
