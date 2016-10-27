@@ -8,6 +8,7 @@ define(
 	'./SecondaryInspectorController',
 	'Library/underscore',
 	'Library/backbone',
+	'Library/marked',
 	'Shared/LocalStorage',
 	'Content/Model/NodeSelection',
 	'Content/Application',
@@ -23,6 +24,7 @@ define(
 	SecondaryInspectorController,
 	_,
 	Backbone,
+	Marked,
 	LocalStorage,
 	NodeSelection,
 	ContentModule,
@@ -221,7 +223,7 @@ define(
 						property.ui.label = I18n.translate(property.ui.label);
 
 						if (property.ui.help && property.ui.help.message) {
-							property.ui.help.message = I18n.translate(property.ui.help.message);
+							property.ui.help.message = Marked(I18n.translate(property.ui.help.message));
 						}
 
 						groupsObject[groupIdentifier].properties.push(property);
