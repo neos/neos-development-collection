@@ -256,10 +256,12 @@ class NodeTypeConfigurationEnrichmentAspect
         if (isset($configuration['ui']['help']['message']) && $this->shouldFetchTranslation($configuration['ui']['help'], 'message')) {
             $configuration['ui']['help']['message'] = $this->getInspectorElementTranslationId($nodeTypeLabelIdPrefix, 'ui', 'help.message');
         }
-        $configurationThumbnail = isset($configuration['ui']['help']['thumbnail']) ? $configuration['ui']['help']['thumbnail'] : null;
-        $thumbnailUrl = $this->resolveHelpMessageThumbnail($nodeTypeName, $configurationThumbnail);
-        if ($thumbnailUrl !== '') {
-            $configuration['ui']['help']['thumbnail'] = $thumbnailUrl;
+        if (isset($configuration['ui']['help'])) {
+            $configurationThumbnail = isset($configuration['ui']['help']['thumbnail']) ? $configuration['ui']['help']['thumbnail'] : null;
+            $thumbnailUrl = $this->resolveHelpMessageThumbnail($nodeTypeName, $configurationThumbnail);
+            if ($thumbnailUrl !== '') {
+                $configuration['ui']['help']['thumbnail'] = $thumbnailUrl;
+            }
         }
 
         $inspectorConfiguration = Arrays::getValueByPath($configuration, 'ui.inspector');
