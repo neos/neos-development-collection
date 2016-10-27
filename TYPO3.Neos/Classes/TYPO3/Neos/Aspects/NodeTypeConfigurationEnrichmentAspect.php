@@ -11,7 +11,6 @@ namespace TYPO3\Neos\Aspects;
  * source code.
  */
 
-use League\CommonMark\CommonMarkConverter;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\JoinPointInterface;
 use TYPO3\Flow\Resource\ResourceManager;
@@ -45,12 +44,6 @@ class NodeTypeConfigurationEnrichmentAspect
 
     /**
      * @Flow\Inject
-     * @var CommonMarkConverter
-     */
-    protected $markdownConverter;
-
-    /**
-     * @Flow\Inject
      * @var ResourceManager
      */
     protected $resourceManager;
@@ -78,14 +71,12 @@ class NodeTypeConfigurationEnrichmentAspect
      */
     protected function addLabelsToNodeTypeConfiguration($nodeTypeName, array &$configuration)
     {
-        $nodeTypeLabelIdPrefix = $this->generateNodeTypeLabelIdPrefix($nodeTypeName);
-
         if (isset($configuration['ui'])) {
-            $this->setGlobalUiElementLabels($nodeTypeLabelIdPrefix, $configuration);
+            $this->setGlobalUiElementLabels($nodeTypeName, $configuration);
         }
 
         if (isset($configuration['properties'])) {
-            $this->setPropertyLabels($nodeTypeLabelIdPrefix, $configuration);
+            $this->setPropertyLabels($nodeTypeName, $configuration);
         }
     }
 
@@ -147,8 +138,9 @@ class NodeTypeConfigurationEnrichmentAspect
      * @param array $configuration
      * @return void
      */
-    protected function setPropertyLabels($nodeTypeLabelIdPrefix, array &$configuration)
+    protected function setPropertyLabels($nodeTypeName, array &$configuration)
     {
+        $nodeTypeLabelIdPrefix = $this->generateNodeTypeLabelIdPrefix($nodeTypeName);
         foreach ($configuration['properties'] as $propertyName => &$propertyConfiguration) {
             if (!isset($propertyConfiguration['ui'])) {
                 continue;
@@ -169,6 +161,41 @@ class NodeTypeConfigurationEnrichmentAspect
             if (isset($propertyConfiguration['ui']['help']['message']) && $this->shouldFetchTranslation($propertyConfiguration['ui']['help'], 'message')) {
                 $propertyConfiguration['ui']['help']['message'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'ui.help.message');
             }
+
+            $configurationThumbnail = isset($propertyConfiguration['ui']['help']['thumbnail']) ? $propertyConfiguration['ui']['help']['thumbnail'] : null;
+            $thumbnailUrl = $this->resolveHelpMessageThumbnail($nodeTypeName, $configurationThumbnail);
+            if ($thumbnailUrl !== '') {
+                $propertyConfiguration['ui']['help']['thumbnail'] = $thumbnailUrl;
+            }
+        }
+    }
+
+    /**
+     * Resolve help message thumbnail url
+     *
+     * @param string $nodeTypeName
+     * @param string $configurationThumbnail
+     * @return string $thumbnailUrl
+     */
+    protected function resolveHelpMessageThumbnail ($nodeTypeName, $configurationThumbnail)
+    {
+        if ($nodeTypeName !== null) {
+            $thumbnailUrl = '';
+            if (isset($configurationThumbnail)) {
+                $thumbnailUrl = $configurationThumbnail;
+                if (strpos($thumbnailUrl, 'resource://') === 0) {
+                    $thumbnailUrl = $this->resourceManager->getPublicPackageResourceUriByPath($thumbnailUrl);
+                }
+            } else {
+                # look in well know location
+                $splitPrefix = $this->splitIdentifier($nodeTypeName);
+                $relativePathAndFilename = 'NodeTypes/Thumbnails/' . $splitPrefix['id'] . '.png';
+                $resourcePath = 'resource://' . $splitPrefix['packageKey'] . '/Public/' . $relativePathAndFilename;
+                if (file_exists($resourcePath)) {
+                    $thumbnailUrl = $this->resourceManager->getPublicPackageResourceUriByPath($resourcePath);
+                }
+            }
+            return $thumbnailUrl;
         }
     }
 
@@ -220,13 +247,19 @@ class NodeTypeConfigurationEnrichmentAspect
      * @param array $configuration
      * @return void
      */
-    protected function setGlobalUiElementLabels($nodeTypeLabelIdPrefix, array &$configuration)
+    protected function setGlobalUiElementLabels($nodeTypeName, array &$configuration)
     {
+        $nodeTypeLabelIdPrefix = $this->generateNodeTypeLabelIdPrefix($nodeTypeName);
         if ($this->shouldFetchTranslation($configuration['ui'])) {
             $configuration['ui']['label'] = $this->getInspectorElementTranslationId($nodeTypeLabelIdPrefix, 'ui', 'label');
         }
         if (isset($configuration['ui']['help']['message']) && $this->shouldFetchTranslation($configuration['ui']['help'], 'message')) {
             $configuration['ui']['help']['message'] = $this->getInspectorElementTranslationId($nodeTypeLabelIdPrefix, 'ui', 'help.message');
+        }
+        $configurationThumbnail = isset($configuration['ui']['help']['thumbnail']) ? $configuration['ui']['help']['thumbnail'] : null;
+        $thumbnailUrl = $this->resolveHelpMessageThumbnail($nodeTypeName, $configurationThumbnail);
+        if ($thumbnailUrl !== '') {
+            $configuration['ui']['help']['thumbnail'] = $thumbnailUrl;
         }
 
         $inspectorConfiguration = Arrays::getValueByPath($configuration, 'ui.inspector');
@@ -310,5 +343,35 @@ class NodeTypeConfigurationEnrichmentAspect
         $nodeTypeName = isset($nodeTypeNameParts[1]) ? $nodeTypeNameParts[1] : $nodeTypeNameParts[0];
 
         return sprintf('%s:%s:', $packageKey, 'NodeTypes.' . $nodeTypeName);
+    }
+
+    /**
+     * Splits an identifier string of the form PackageKey:id or PackageKey:Source:id into an array with the keys
+     * id, source and packageKey.
+     *
+     * @param string $id translation id with possible package and source parts
+     * @return array
+     */
+    protected function splitIdentifier($id)
+    {
+        $packageKey = 'TYPO3.Neos';
+        $source = 'Main';
+        $idParts = explode(':', $id, 3);
+        switch (count($idParts)) {
+            case 2:
+                $packageKey = $idParts[0];
+                $id = $idParts[1];
+                break;
+            case 3:
+                $packageKey = $idParts[0];
+                $source = str_replace('.', '/', $idParts[1]);
+                $id = $idParts[2];
+                break;
+        }
+        return [
+            'id' => $id,
+            'source' => $source,
+            'packageKey' => $packageKey
+        ];
     }
 }
