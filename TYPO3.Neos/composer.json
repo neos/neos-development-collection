@@ -20,8 +20,8 @@
         "neos/redirecthandler-neosadapter": "Adds automatic redirects for moved/renamed pages"
     },
     "autoload": {
-        "psr-0": {
-            "TYPO3\\Neos": "Classes"
+        "psr-4": {
+            "TYPO3\\Neos\\": "Classes"
         }
     },
     "extra": {
