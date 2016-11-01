@@ -10,6 +10,7 @@ namespace TYPO3\Media\ViewHelpers\Form;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use TYPO3\Fluid\ViewHelpers\Form\AbstractFormFieldViewHelper;
 
 /**
