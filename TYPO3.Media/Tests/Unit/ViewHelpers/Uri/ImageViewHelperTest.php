@@ -11,9 +11,12 @@ namespace TYPO3\Media\Tests\Unit\ViewHelpers\Uri;
  * source code.
  */
 
+use TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase;
+use TYPO3\Media\ViewHelpers\ImageViewHelper;
+
 require_once(__DIR__ . '/../../../../../../Framework/TYPO3.Fluid/Tests/Unit/ViewHelpers/ViewHelperBaseTestcase.php');
 
-class ImageViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase
+class ImageViewHelperTest extends ViewHelperBaseTestcase
 {
     /**
      * var \TYPO3\Media\ViewHelpers\ImageViewHelper
@@ -23,7 +26,7 @@ class ImageViewHelperTest extends \TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcas
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = new \TYPO3\Media\ViewHelpers\ImageViewHelper();
+        $this->viewHelper = new ImageViewHelper();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
         $this->viewHelper->initializeArguments();
     }
