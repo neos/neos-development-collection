@@ -12,13 +12,18 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
  */
 
 use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
+use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
+use TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\HappyNode;
 
 /**
  * Functional test case which covers all Node-related behavior of the
@@ -27,7 +32,7 @@ use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 class NodesTest extends FunctionalTestCase
 {
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Service\Context
+     * @var Context
      */
     protected $context;
 
@@ -76,8 +81,8 @@ class NodesTest extends FunctionalTestCase
 
         if ($this->liveWorkspace === null) {
             $this->liveWorkspace = new Workspace('live');
-            $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
-            $this->workspaceRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
+            $this->objectManager->get(WorkspaceRepository::class);
+            $this->workspaceRepository = $this->objectManager->get(WorkspaceRepository::class);
             $this->workspaceRepository->add($this->liveWorkspace);
             $this->workspaceRepository->add(new Workspace('user-admin', $this->liveWorkspace));
             $this->workspaceRepository->add(new Workspace('live2', $this->liveWorkspace));
@@ -85,10 +90,10 @@ class NodesTest extends FunctionalTestCase
             $this->persistenceManager->persistAll();
         }
 
-        $this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
+        $this->contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
         $this->context = $this->contextFactory->create(['workspaceName' => 'live']);
-        $this->nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
-        $this->contentDimensionRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository');
+        $this->nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
+        $this->contentDimensionRepository = $this->objectManager->get(ContentDimensionRepository::class);
     }
 
     /**
@@ -165,7 +170,7 @@ class NodesTest extends FunctionalTestCase
     {
         $rootNode = $this->context->getRootNode();
 
-        $nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+        $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
         $testNodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType');
         $fooNode = $rootNode->createNode('foo', $testNodeType);
 
@@ -179,7 +184,7 @@ class NodesTest extends FunctionalTestCase
     {
         $rootNode = $this->context->getRootNode();
 
-        $nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+        $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
         $testNodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithProcessor');
         $fooNode = $rootNode->createNode('foo', $testNodeType);
 
@@ -193,11 +198,11 @@ class NodesTest extends FunctionalTestCase
     {
         $rootNode = $this->context->getRootNode();
 
-        $nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+        $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
         $testNodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithSubnodes');
         $fooNode = $rootNode->createNode('foo', $testNodeType);
         $firstSubnode = $fooNode->getNode('subnode1');
-        $this->assertInstanceOf('TYPO3\TYPO3CR\Domain\Model\Node', $firstSubnode);
+        $this->assertInstanceOf(Node::class, $firstSubnode);
         $this->assertSame('default value 1', $firstSubnode->getProperty('test1'));
     }
 
@@ -266,7 +271,7 @@ class NodesTest extends FunctionalTestCase
 
         $retrievedNode = $rootNode->getNode('/firstlevel/secondlevel/thirdlevel');
 
-        $this->assertInstanceOf('TYPO3\TYPO3CR\Domain\Model\NodeInterface', $retrievedNode);
+        $this->assertInstanceOf(NodeInterface::class, $retrievedNode);
 
         $this->assertEquals('/firstlevel/secondlevel/thirdlevel', $retrievedNode->getPath());
         $this->assertEquals('thirdlevel', $retrievedNode->getName());
@@ -865,6 +870,24 @@ class NodesTest extends FunctionalTestCase
     }
 
     /**
+     * @test
+     */
+    public function moveAndRenameAtTheSameTime()
+    {
+        $rootNode = $this->context->getRootNode();
+        $parentNode = $rootNode->createNode('parent-node');
+        $childNodeA = $parentNode->createNode('child-node-a');
+        $childNodeB = $parentNode->createNode('child-node-b');
+        $childNodeB1 = $childNodeB->createNode('child-node-b1');
+        $this->persistenceManager->persistAll();
+        $childNodeB->moveInto($childNodeA, 'renamed-child-node-b');
+        $this->persistenceManager->persistAll();
+        $this->assertNull($parentNode->getNode('child-node-b'));
+        $this->assertSame($childNodeB, $childNodeA->getNode('renamed-child-node-b'));
+        $this->assertSame($childNodeB1, $childNodeA->getNode('renamed-child-node-b')->getNode('child-node-b1'));
+    }
+
+    /**
      * Testcase for bug #34291 (TYPO3CR reordering does not take unpersisted
      * node order changes into account)
      *
@@ -1068,7 +1091,9 @@ class NodesTest extends FunctionalTestCase
         $childNodes = $rootNode->getChildNodes();
         $names = new \stdClass();
         $names->names = [];
-        array_walk($childNodes, function ($value, $key, &$names) { $names->names[] = $value->getName(); }, $names);
+        array_walk($childNodes, function ($value, $key, &$names) {
+            $names->names[] = $value->getName();
+        }, $names);
         $this->assertSame(['fluss', 'baz', 'flux'], $names->names);
     }
 
@@ -1087,7 +1112,9 @@ class NodesTest extends FunctionalTestCase
         $childNodes = $rootNode->getChildNodes();
         $names = new \stdClass();
         $names->names = [];
-        array_walk($childNodes, function ($value, $key, &$names) { $names->names[] = $value->getName(); }, $names);
+        array_walk($childNodes, function ($value, $key, &$names) {
+            $names->names[] = $value->getName();
+        }, $names);
         $this->assertSame(['baz', 'fluss', 'flux'], $names->names);
     }
 
@@ -1140,7 +1167,9 @@ class NodesTest extends FunctionalTestCase
 
         $names = new \stdClass();
         $names->names = [];
-        array_walk($copiedChildNodes, function ($value, $key, &$names) { $names->names[] = $value->getName(); }, $names);
+        array_walk($copiedChildNodes, function ($value, $key, &$names) {
+            $names->names[] = $value->getName();
+        }, $names);
         $this->assertSame(['capacitor', 'second', 'third'], $names->names);
     }
 
@@ -1161,7 +1190,9 @@ class NodesTest extends FunctionalTestCase
 
         $names = new \stdClass();
         $names->names = [];
-        array_walk($copiedChildNodes, function ($value, $key, &$names) { $names->names[] = $value->getName(); }, $names);
+        array_walk($copiedChildNodes, function ($value, $key, &$names) {
+            $names->names[] = $value->getName();
+        }, $names);
         $this->assertSame(['capacitor', 'second', 'third'], $names->names);
     }
 
@@ -1251,7 +1282,7 @@ class NodesTest extends FunctionalTestCase
      */
     public function setPropertyAcceptsAndConvertsIdentifierIfTargetTypeIsReference()
     {
-        $nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+        $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
         $nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithReferences');
 
         $rootNode = $this->context->getNode('/');
@@ -1270,7 +1301,7 @@ class NodesTest extends FunctionalTestCase
      */
     public function setPropertyAcceptsAndConvertsIdentifiersIfTargetTypeIsReferences()
     {
-        $nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+        $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
         $nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithReferences');
 
         $rootNode = $this->context->getNode('/');
@@ -1295,7 +1326,7 @@ class NodesTest extends FunctionalTestCase
      */
     public function getPropertiesReturnsReferencePropertiesAsNodeObjects()
     {
-        $nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+        $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
         $nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithReferences');
 
         $rootNode = $this->context->getNode('/');
@@ -1321,7 +1352,7 @@ class NodesTest extends FunctionalTestCase
      */
     public function getPropertyDoesNotReturnNodeReferencesIfTheyAreNotVisibleAccordingToTheContentContext()
     {
-        $nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+        $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
         $nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithReferences');
 
         $this->context = $this->contextFactory->create(['workspaceName' => 'live', 'invisibleContentShown' => false]);
@@ -1350,7 +1381,7 @@ class NodesTest extends FunctionalTestCase
      */
     public function getPropertyReturnsReferencedNodesInCorrectWorkspace()
     {
-        $nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+        $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
         $nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithReferences');
 
         $identifier = '81c848ed-abb5-7608-a5db-7eea0331ccfa';
@@ -1379,8 +1410,8 @@ class NodesTest extends FunctionalTestCase
      */
     public function nodeFactoryCachesCreatedNodesBasedOnIdentifierAndDimensions()
     {
-        /** @var \TYPO3\TYPO3CR\Domain\Factory\NodeFactory $nodeFactory */
-        $nodeFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Factory\NodeFactory');
+        /** @var NodeFactory $nodeFactory */
+        $nodeFactory = $this->objectManager->get(NodeFactory::class);
 
         $nodeDataA = new NodeData('/', $this->context->getWorkspace(), '30e893c1-caef-0ca5-b53d-e5699bb8e506', ['test' => [1]]);
         $variantNodeA1 = $nodeFactory->createFromNodeData($nodeDataA, $this->context);
@@ -1416,7 +1447,9 @@ class NodesTest extends FunctionalTestCase
         $variantNodeA = $variantContextA->getRootNode()->createNode('test');
         $variantNodeB = $variantNodeA->createVariantForContext($variantContextB);
 
-        $this->assertSame($variantNodeB->getDimensions(), array_map(function ($value) { return [$value]; }, $variantContextB->getTargetDimensions()));
+        $this->assertSame($variantNodeB->getDimensions(), array_map(function ($value) {
+            return [$value];
+        }, $variantContextB->getTargetDimensions()));
     }
 
     /**
@@ -1444,7 +1477,9 @@ class NodesTest extends FunctionalTestCase
         $variantNodeA = $variantContextA->getRootNode()->createNode('test');
         $variantNodeB = $variantNodeA->createVariantForContext($variantContextB);
 
-        $this->assertSame($variantNodeB->getDimensions(), array_map(function ($value) { return [$value]; }, $variantContextB->getTargetDimensions()));
+        $this->assertSame($variantNodeB->getDimensions(), array_map(function ($value) {
+            return [$value];
+        }, $variantContextB->getTargetDimensions()));
     }
 
     /**
@@ -1551,9 +1586,9 @@ class NodesTest extends FunctionalTestCase
         $happyNode = $fooNode->createNode('bar', $happyNodeType);
         $bazNode = $happyNode->createNode('baz', $headlineNodeType);
 
-        $this->assertNotInstanceOf('\TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\HappyNode', $fooNode);
-        $this->assertInstanceOf('\TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\HappyNode', $happyNode);
-        $this->assertNotInstanceOf('\TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\HappyNode', $bazNode);
+        $this->assertNotInstanceOf(HappyNode::class, $fooNode);
+        $this->assertInstanceOf(HappyNode::class, $happyNode);
+        $this->assertNotInstanceOf(HappyNode::class, $bazNode);
 
         $this->assertEquals('bar claps hands!', $happyNode->clapsHands());
     }
@@ -1572,5 +1607,52 @@ class NodesTest extends FunctionalTestCase
         $node->createNode('headline', $headlineNodeType);
         $node->createNode('text', $imageNodeType);
         $this->assertCount(1, $node->getChildNodes('TYPO3.TYPO3CR.Testing:Headline'));
+    }
+
+    /**
+     * @test
+     */
+    public function nodesInPathAreHiddenIfBetterVariantInOtherPathExists()
+    {
+        $this->contentDimensionRepository->setDimensionsConfiguration([
+            'test' => [
+                'default' => 'a'
+            ]
+        ]);
+
+        $variantContextA = $this->contextFactory->create([
+            'dimensions' => ['test' => ['a']],
+            'targetDimensions' => ['test' => 'a']
+        ]);
+
+        $container1 = $variantContextA->getRootNode()->createNode('container1');
+        $variantContextA->getRootNode()->createNode('container2');
+
+        $container1->createNode('node-with-variant');
+
+        $variantContextB = $this->contextFactory->create([
+            'dimensions' => ['test' => ['b', 'a']],
+            'targetDimensions' => ['test' => 'b']
+        ]);
+
+        $nodeWithVariantOriginal = $variantContextB->getNode('/container1/node-with-variant');
+        $variantContextB->getNode('/container2')->createNode('node-with-variant', null, $nodeWithVariantOriginal->getIdentifier());
+
+        $this->persistenceManager->persistAll();
+        $this->contextFactory->reset();
+
+        $variantContextB = $this->contextFactory->create([
+            'dimensions' => ['test' => ['b', 'a']],
+            'targetDimensions' => ['test' => 'b']
+        ]);
+
+        // Both containers should be available due to fallbacks
+        $this->assertCount(2, $variantContextB->getRootNode()->getChildNodes());
+
+        // This should NOT find the node created in variantContextA as
+        // a better matching (with "b" dimension value) variant (same identifier) exists in container two
+        $this->assertCount(0, $variantContextB->getNode('/container1')->getChildNodes());
+        // This is the better matching variant and should be found.
+        $this->assertCount(1, $variantContextB->getNode('/container2')->getChildNodes());
     }
 }

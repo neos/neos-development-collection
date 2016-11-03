@@ -12,8 +12,10 @@ namespace TYPO3\Neos\Service\Controller;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\View\JsonView;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Neos\Exception as NeosException;
 use TYPO3\Neos\Service\DataSource\DataSourceInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
@@ -30,7 +32,7 @@ class DataSourceController extends AbstractServiceController
      * @var array
      */
     protected $viewFormatToObjectNameMap = array(
-        'json' => 'TYPO3\Flow\Mvc\View\JsonView'
+        'json' => JsonView::class
     );
 
     /**
@@ -72,10 +74,10 @@ class DataSourceController extends AbstractServiceController
      */
     public static function getDataSources($objectManager)
     {
-        $reflectionService = $objectManager->get('TYPO3\Flow\Reflection\ReflectionService');
+        $reflectionService = $objectManager->get(ReflectionService::class);
 
         $dataSources = array();
-        $dataSourceClassNames = $reflectionService->getAllImplementationClassNamesForInterface('TYPO3\Neos\Service\DataSource\DataSourceInterface');
+        $dataSourceClassNames = $reflectionService->getAllImplementationClassNamesForInterface(DataSourceInterface::class);
         /** @var $dataSourceClassName DataSourceInterface */
         foreach ($dataSourceClassNames as $dataSourceClassName) {
             $identifier = $dataSourceClassName::getIdentifier();

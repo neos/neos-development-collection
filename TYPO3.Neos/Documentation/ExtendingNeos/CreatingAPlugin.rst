@@ -88,8 +88,8 @@ into the *Configuration/Routes.yaml* of your whole setup (before the Neos routes
     defaults:
       '@format': 'html'
     subRoutes:
-    FlowSubroutes:
-      package: TYPO3.Flow
+      FlowSubroutes:
+        package: TYPO3.Flow
 
 The frontend of your plugin can now be called via ``http://neos.demo/flow/sarkosh.cdcollection``.
 We specifically use the ``flow`` prefix here to ensure that the routes of Flow do not interfere with Neos.
@@ -287,12 +287,12 @@ Optimizing the URLs
 By default Neos will create pretty verbose urls for your plugin. To avoid that you have to configure a proper routing for your Package.
 
 Plugin Request and Response
----------------
+---------------------------
 
 The plugin controller action is called as a child request within the parent request. Alike that, the response is also a
 child response of the parent and will be handed up to the parent.
 
-.. warning:: The documentation is not covering all aspects yet. Please have a Look at the :ref:`How To` Section as well.
+.. warning:: The documentation is not covering all aspects yet. Please have a Look at the :ref:`how-to` Section as well.
 
 .. Neos-Aware Plugin Development
 .. =============================

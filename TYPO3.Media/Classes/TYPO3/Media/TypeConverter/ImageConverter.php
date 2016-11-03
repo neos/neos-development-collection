@@ -12,6 +12,7 @@ namespace TYPO3\Media\TypeConverter;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Media\Domain\Model\Image;
 
 /**
  * This converter transforms to \TYPO3\Media\Domain\Model\Image objects.
@@ -24,7 +25,7 @@ class ImageConverter extends ImageInterfaceConverter
     /**
      * @var string
      */
-    protected $targetType = 'TYPO3\Media\Domain\Model\Image';
+    protected $targetType = Image::class;
 
     /**
      * @var integer

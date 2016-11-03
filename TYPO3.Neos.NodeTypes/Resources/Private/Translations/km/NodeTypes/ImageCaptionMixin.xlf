@@ -7,7 +7,7 @@
 			<target xml:lang="km" state="translated">អនុញ្ញាតឱ្យមានចំណងជើង</target></trans-unit>
       <trans-unit id="properties.caption.aloha.placeholder" xml:space="preserve">
 				<source><![CDATA[<p>Enter caption here</p>]]></source>
-			<target xml:lang="km" state="translated"><![CDATA[<p>សូមបញ្ចូលចំណងជើងនៅទីនេះ</p>]]></target><alt-trans><target xml:lang="km"><![CDATA[សូមបញ្ចូលចំណងជើងនៅទីនេះ]]></target></alt-trans></trans-unit>
+			<target xml:lang="km" state="translated"><![CDATA[<p>សូមបញ្ចូលចំណងជើងនៅទីនេះ</p>]]></target></trans-unit>
     </body>
   </file>
 </xliff>

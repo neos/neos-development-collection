@@ -11,6 +11,7 @@ namespace TYPO3\TYPO3CR\Eel\FlowQueryOperations;
  * source code.
  */
 
+use TYPO3\Eel\FlowQuery\FizzleException;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Eel\FlowQuery\Operations\AbstractOperation;
@@ -76,7 +77,7 @@ class HasOperation extends AbstractOperation
                 }
             }
         } else {
-            if ($subject instanceof \TYPO3\Eel\FlowQuery\FlowQuery) {
+            if ($subject instanceof FlowQuery) {
                 $elements = $subject->get();
             } elseif ($subject instanceof \Traversable) {
                 $elements = iterator_to_array($subject);
@@ -85,7 +86,7 @@ class HasOperation extends AbstractOperation
             } elseif (is_array($subject)) {
                 $elements = $subject;
             } else {
-                throw new \TYPO3\Eel\FlowQuery\FizzleException('supplied argument for has operation not supported', 1332489625);
+                throw new FizzleException('supplied argument for has operation not supported', 1332489625);
             }
             foreach ($elements as $element) {
                 if ($element instanceof NodeInterface) {

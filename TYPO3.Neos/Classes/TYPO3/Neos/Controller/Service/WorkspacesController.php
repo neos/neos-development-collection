@@ -14,6 +14,8 @@ namespace TYPO3\Neos\Controller\Service;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
+use TYPO3\Fluid\View\TemplateView;
+use TYPO3\Neos\View\Service\WorkspaceJsonView;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 
@@ -41,8 +43,8 @@ class WorkspacesController extends ActionController
      * @var array
      */
     protected $viewFormatToObjectNameMap = [
-        'html' => 'TYPO3\Fluid\View\TemplateView',
-        'json' => 'TYPO3\Neos\View\Service\WorkspaceJsonView'
+        'html' => TemplateView::class,
+        'json' => WorkspaceJsonView::class
     ];
 
     /**
@@ -137,7 +139,7 @@ class WorkspacesController extends ActionController
     {
         $propertyMappingConfiguration = $this->arguments->getArgument('workspace')->getPropertyMappingConfiguration();
         $propertyMappingConfiguration->allowProperties('name', 'baseWorkspace');
-        $propertyMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
+        $propertyMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
     }
 
     /**

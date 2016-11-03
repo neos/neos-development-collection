@@ -16,16 +16,26 @@ use Doctrine\ORM\EntityNotFoundException;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Message;
 use TYPO3\Flow\I18n\Translator;
+use TYPO3\Flow\Mvc\Controller\ActionController;
+use TYPO3\Flow\Package\PackageManagerInterface;
+use TYPO3\Flow\Mvc\View\JsonView;
+use TYPO3\Flow\Mvc\View\ViewInterface;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
+use TYPO3\Flow\Resource\Resource as FlowResource;
 use TYPO3\Flow\Utility\Files;
+use TYPO3\Fluid\View\TemplateView;
+use TYPO3\Media\Domain\Repository\AssetRepository;
+use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Repository\AudioRepository;
 use TYPO3\Media\Domain\Repository\DocumentRepository;
 use TYPO3\Media\Domain\Repository\ImageRepository;
+use TYPO3\Media\Domain\Repository\TagRepository;
 use TYPO3\Media\Domain\Repository\VideoRepository;
 use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Media\Domain\Model\AssetCollection;
 use TYPO3\Media\Domain\Model\Tag;
 use TYPO3\Media\Domain\Repository\AssetCollectionRepository;
+use TYPO3\Media\Domain\Session\BrowserState;
 use TYPO3\Media\Domain\Service\AssetService;
 use TYPO3\Media\Exception\AssetServiceException;
 use TYPO3\Media\TypeConverter\AssetInterfaceConverter;
@@ -35,7 +45,7 @@ use TYPO3\Media\TypeConverter\AssetInterfaceConverter;
  *
  * @Flow\Scope("singleton")
  */
-class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
+class AssetController extends ActionController
 {
     const TAG_GIVEN = 0;
     const TAG_ALL = 1;
@@ -46,13 +56,13 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Media\Domain\Repository\AssetRepository
+     * @var AssetRepository
      */
     protected $assetRepository;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Media\Domain\Repository\TagRepository
+     * @var TagRepository
      */
     protected $tagRepository;
 
@@ -63,8 +73,14 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
     protected $assetCollectionRepository;
 
     /**
+     * @Flow\Inject
+     * @var PackageManagerInterface
+     */
+    protected $packageManager;
+
+    /**
      * @Flow\Inject(lazy = false)
-     * @var \TYPO3\Media\Domain\Session\BrowserState
+     * @var BrowserState
      */
     protected $browserState;
 
@@ -84,17 +100,17 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
      * @var array
      */
     protected $viewFormatToObjectNameMap = array(
-        'html' => 'TYPO3\Fluid\View\TemplateView',
-        'json' => 'TYPO3\Flow\Mvc\View\JsonView'
+        'html' => TemplateView::class,
+        'json' => JsonView::class
     );
 
     /**
      * Set common variables on the view
      *
-     * @param \TYPO3\Flow\Mvc\View\ViewInterface $view
+     * @param ViewInterface $view
      * @return void
      */
-    protected function initializeView(\TYPO3\Flow\Mvc\View\ViewInterface $view)
+    protected function initializeView(ViewInterface $view)
     {
         $view->assignMultiple(array(
             'view' => $this->browserState->get('view'),
@@ -256,6 +272,42 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
             'maximumFileUploadSize' => $maximumFileUploadSize,
             'humanReadableMaximumFileUploadSize' => Files::bytesToSizeString($maximumFileUploadSize)
         ));
+    }
+
+    /**
+     * @param Asset $asset
+     * @return void
+     */
+    public function replaceAssetResourceAction(Asset $asset)
+    {
+        $maximumFileUploadSize = $this->maximumFileUploadSize();
+        $this->view->assignMultiple(array(
+            'asset' => $asset,
+            'maximumFileUploadSize' => $maximumFileUploadSize,
+            'redirectPackageEnabled' => $this->packageManager->isPackageAvailable('Neos.RedirectHandler'),
+            'humanReadableMaximumFileUploadSize' => Files::bytesToSizeString($maximumFileUploadSize)
+        ));
+    }
+
+    /**
+     * Replace the resource on an asset.
+     *
+     * @param AssetInterface $asset
+     * @param FlowResource $resource
+     * @param array $options
+     * @return void
+     */
+    public function updateAssetResourceAction(AssetInterface $asset, FlowResource $resource, array $options = [])
+    {
+        try {
+            $this->assetService->replaceAssetResource($asset, $resource, $options);
+        } catch (\Exception $exception) {
+            $this->addFlashMessage('couldNotReplaceAsset', '', Message::SEVERITY_OK, [], 1463472606);
+            $this->forwardToReferringRequest();
+        }
+
+        $this->addFlashMessage('assetHasBeenReplaced', '', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())]);
+        $this->redirect('index');
     }
 
     /**
@@ -555,10 +607,10 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
     public function addFlashMessage($messageBody, $messageTitle = '', $severity = Message::SEVERITY_OK, array $messageArguments = array(), $messageCode = null)
     {
         if (is_string($messageBody)) {
-            $messageBody = $this->translator->translateById($messageBody, $messageArguments, null, null, 'Main', 'TYPO3.Media');
+            $messageBody = $this->translator->translateById($messageBody, $messageArguments, null, null, 'Main', 'TYPO3.Media') ?: $messageBody;
         }
-        $messageTitle = $this->translator->translateById($messageTitle, $messageArguments, null, null, 'Main', 'TYPO3.Media');
 
+        $messageTitle = $this->translator->translateById($messageTitle, $messageArguments, null, null, 'Main', 'TYPO3.Media');
         parent::addFlashMessage($messageBody, $messageTitle, $severity, $messageArguments, $messageCode);
     }
 }

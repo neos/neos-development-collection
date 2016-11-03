@@ -10,6 +10,13 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\TYPO3CR\Domain\Model\Node;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
+use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Service\Context;
+use TYPO3\TYPO3CR\Exception\NodeException;
+use TYPO3\TYPO3CR\Exception\NodeExistsException;
 
 /**
  * Interface for a Node
@@ -128,7 +135,7 @@ interface NodeInterface
      *
      * @param string $propertyName Name of the property
      * @return mixed value of the property
-     * @throws \TYPO3\TYPO3CR\Exception\NodeException if the node does not contain the specified property
+     * @throws NodeException if the node does not contain the specified property
      * @api
      */
     public function getProperty($propertyName);
@@ -141,7 +148,7 @@ interface NodeInterface
      *
      * @param string $propertyName Name of the property
      * @return void
-     * @throws \TYPO3\TYPO3CR\Exception\NodeException if the node does not contain the specified property
+     * @throws NodeException if the node does not contain the specified property
      * @api
      */
     public function removeProperty($propertyName);
@@ -194,7 +201,7 @@ interface NodeInterface
     /**
      * Sets the node type of this node.
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType
+     * @param NodeType $nodeType
      * @return void
      * @api
      */
@@ -203,7 +210,7 @@ interface NodeInterface
     /**
      * Returns the node type of this node.
      *
-     * @return \TYPO3\TYPO3CR\Domain\Model\NodeType
+     * @return NodeType
      * @api
      */
     public function getNodeType();
@@ -328,7 +335,7 @@ interface NodeInterface
      * This method is only for internal use by the content repository. Changing
      * the workspace of a node manually may lead to unexpected behavior.
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
+     * @param Workspace $workspace
      * @return void
      */
     public function setWorkspace(Workspace $workspace);
@@ -336,7 +343,7 @@ interface NodeInterface
     /**
      * Returns the workspace this node is contained in
      *
-     * @return \TYPO3\TYPO3CR\Domain\Model\Workspace
+     * @return Workspace
      * @api
      */
     public function getWorkspace();
@@ -396,11 +403,11 @@ interface NodeInterface
      * properties and creates default subnodes.
      *
      * @param string $name Name of the new node
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType Node type of the new node (optional)
+     * @param NodeType $nodeType Node type of the new node (optional)
      * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
-     * @return \TYPO3\TYPO3CR\Domain\Model\Node
+     * @return Node
      * @throws \InvalidArgumentException if the node name is not accepted.
-     * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException if a node with this path already exists.
+     * @throws NodeExistsException if a node with this path already exists.
      * @api
      */
     public function createNode($name, NodeType $nodeType = null, $identifier = null);
@@ -412,11 +419,11 @@ interface NodeInterface
      * For internal use only!
      *
      * @param string $name Name of the new node
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType Node type of the new node (optional)
+     * @param NodeType $nodeType Node type of the new node (optional)
      * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
-     * @return \TYPO3\TYPO3CR\Domain\Model\Node
+     * @return Node
      * @throws \InvalidArgumentException if the node name is not accepted.
-     * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException if a node with this path already exists.
+     * @throws NodeExistsException if a node with this path already exists.
      */
     public function createSingleNode($name, NodeType $nodeType = null, $identifier = null);
 
@@ -564,7 +571,7 @@ interface NodeInterface
      * @param NodeInterface $referenceNode
      * @param string $nodeName
      * @return NodeInterface
-     * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
+     * @throws NodeExistsException
      * @api
      */
     public function copyBefore(NodeInterface $referenceNode, $nodeName);
@@ -575,7 +582,7 @@ interface NodeInterface
      * @param NodeInterface $referenceNode
      * @param string $nodeName
      * @return NodeInterface
-     * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
+     * @throws NodeExistsException
      * @api
      */
     public function copyAfter(NodeInterface $referenceNode, $nodeName);
@@ -587,7 +594,7 @@ interface NodeInterface
      * @param NodeInterface $referenceNode
      * @param string $nodeName
      * @return NodeInterface
-     * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
+     * @throws NodeExistsException
      * @api
      */
     public function copyInto(NodeInterface $referenceNode, $nodeName);
@@ -595,14 +602,14 @@ interface NodeInterface
     /**
      * Return the NodeData representation of the node.
      *
-     * @return \TYPO3\TYPO3CR\Domain\Model\NodeData
+     * @return NodeData
      */
     public function getNodeData();
 
     /**
      * Return the context of the node
      *
-     * @return \TYPO3\TYPO3CR\Domain\Service\Context
+     * @return Context
      */
     public function getContext();
 
@@ -617,7 +624,7 @@ interface NodeInterface
      * Given a context a new node is returned that is like this node, but
      * lives in the new context.
      *
-     * @param \TYPO3\TYPO3CR\Domain\Service\Context $context
+     * @param Context $context
      * @return NodeInterface
      */
     public function createVariantForContext($context);

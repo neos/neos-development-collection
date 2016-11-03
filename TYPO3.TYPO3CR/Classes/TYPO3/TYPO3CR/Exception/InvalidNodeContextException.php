@@ -10,12 +10,13 @@ namespace TYPO3\TYPO3CR\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\TYPO3CR\Exception;
 
 /**
  * An exception thrown when a ContextFactory received wrong properties for
  * a context.
  *
  */
-class InvalidNodeContextException extends \TYPO3\TYPO3CR\Exception
+class InvalidNodeContextException extends Exception
 {
 }

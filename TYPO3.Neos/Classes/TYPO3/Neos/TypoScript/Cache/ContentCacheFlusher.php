@@ -12,6 +12,10 @@ namespace TYPO3\Neos\TypoScript\Cache;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Media\Domain\Model\AssetInterface;
+use TYPO3\Media\Domain\Service\AssetService;
+use TYPO3\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TypoScript\Core\Cache\ContentCache;
@@ -35,7 +39,7 @@ class ContentCacheFlusher
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Log\SystemLoggerInterface
+     * @var SystemLoggerInterface
      */
     protected $systemLogger;
 
@@ -43,6 +47,12 @@ class ContentCacheFlusher
      * @var array
      */
     protected $tagsToFlush = array();
+
+    /**
+     * @Flow\Inject
+     * @var AssetService
+     */
+    protected $assetService;
 
     /**
      * Register a node change for a later cache flush. This method is triggered by a signal sent via TYPO3CR's Node
@@ -72,6 +82,27 @@ class ContentCacheFlusher
             }
             $tagName = 'DescendantOf_' . $node->getIdentifier();
             $this->tagsToFlush[$tagName] = sprintf('which were tagged with "%s" because node "%s" has changed.', $tagName, $originalNode->getPath());
+        }
+    }
+
+    /**
+     * Fetches possible usages of the asset and registers nodes that use the asset as changed.
+     *
+     * @param AssetInterface $asset
+     * @return void
+     */
+    public function registerAssetResourceChange(AssetInterface $asset)
+    {
+        if (!$asset->isInUse()) {
+            return;
+        }
+
+        foreach ($this->assetService->getUsageReferences($asset) as $reference) {
+            if (!$reference instanceof AssetUsageInNodeProperties) {
+                continue;
+            }
+
+            $this->registerNodeChange($reference->getNode());
         }
     }
 

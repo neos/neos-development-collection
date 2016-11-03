@@ -13,17 +13,18 @@ namespace TYPO3\Neos\Domain\EventListener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\CacheManager;
 use TYPO3\Flow\Security\Account;
 
 /**
- * Doctrine event listener for clearing configuration cache on account changes.
+ * Doctrine event listener for clearing the Neos configuration version cache on account changes.
  *
  * @Flow\Scope("singleton")
  */
 class AccountPostEventListener
 {
     /**
-     * @var \TYPO3\Flow\Cache\CacheManager
+     * @var CacheManager
      * @Flow\Inject
      */
     protected $cacheManager;
@@ -35,7 +36,7 @@ class AccountPostEventListener
     public function postPersist(LifecycleEventArgs $eventArgs)
     {
         if ($eventArgs->getEntity() instanceof Account) {
-            $this->flushConfigurationCache($eventArgs->getEntity());
+            $this->flushConfigurationCache();
         }
     }
 
@@ -46,7 +47,7 @@ class AccountPostEventListener
     public function postUpdate(LifecycleEventArgs $eventArgs)
     {
         if ($eventArgs->getEntity() instanceof Account) {
-            $this->flushConfigurationCache($eventArgs->getEntity());
+            $this->flushConfigurationCache();
         }
     }
 
@@ -57,7 +58,7 @@ class AccountPostEventListener
     public function postRemove(LifecycleEventArgs $eventArgs)
     {
         if ($eventArgs->getEntity() instanceof Account) {
-            $this->flushConfigurationCache($eventArgs->getEntity());
+            $this->flushConfigurationCache();
         }
     }
 

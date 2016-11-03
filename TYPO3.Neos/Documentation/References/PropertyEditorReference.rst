@@ -344,7 +344,7 @@ Furthermore, the placeholder text can be customized by setting the ``placeholder
             editorOptions:
               assets: FALSE
               nodeTypes: ['TYPO3.Neos:Shortcut']
-              placeholder: 'Paste a link, or type to search for nodes',
+              placeholder: 'Paste a link, or type to search for nodes'
 
 Property Type: integer ``TextFieldEditor``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -398,7 +398,7 @@ Options Reference:
 	Minimum amount of characters which trigger a search
 
 Property Type: DateTime ``DateTimeEditor`` -- Date & Time Selection Editor
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The most important option for ``DateTime`` properties is the ``format``, which is configured like in PHP, as the following
 examples show:

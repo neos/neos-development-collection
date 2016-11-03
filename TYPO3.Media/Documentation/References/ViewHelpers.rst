@@ -3,7 +3,69 @@
 Media ViewHelper Reference
 ==========================
 
-This reference was automatically generated from code on 2015-12-15
+This reference was automatically generated from code on 2016-06-07
+
+
+.. _`Media ViewHelper Reference: typo3.media:fileTypeIcon`:
+
+typo3.media:fileTypeIcon
+------------------------
+
+Renders an <img> HTML tag for a filetype icon for a given TYPO3.Media's asset instance
+
+:Implementation: TYPO3\\Media\\ViewHelpers\\FileTypeIconViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``additionalAttributes`` (array, *optional*): Additional tag attributes. They will be added directly to the resulting HTML tag.
+
+* ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
+
+* ``file`` (TYPO3\Media\Domain\Model\AssetInterface)
+
+* ``width`` (integer|null, *optional*)
+
+* ``height`` (integer|null, *optional*)
+
+* ``class`` (string, *optional*): CSS class(es) for this element
+
+* ``dir`` (string, *optional*): Text direction for this HTML element. Allowed strings: "ltr" (left to right), "rtl" (right to left)
+
+* ``id`` (string, *optional*): Unique (in this file) identifier for this HTML element.
+
+* ``lang`` (string, *optional*): Language for this element. Use short names specified in RFC 1766
+
+* ``style`` (string, *optional*): Individual CSS styles for this element
+
+* ``title`` (string, *optional*): Tooltip text of element
+
+* ``accesskey`` (string, *optional*): Keyboard shortcut to access this element
+
+* ``tabindex`` (integer, *optional*): Specifies the tab order of this element
+
+* ``onclick`` (string, *optional*): JavaScript evaluated for the onclick event
+
+
+
+
+Examples
+********
+
+**Rendering an asset filetype icon**::
+
+	<typo3.media:fileTypeIcon asset="{assetObject}" alt="a filetype icon" height="16" />
+
+
+Expected result::
+
+	(depending on the asset, no scaling applied)
+	<img src="_Resources/Static/Packages/TYPO3/Media/Icons/16px/jpg.png" height="16" alt="a filetype icon" />
+
+
 
 
 .. _`Media ViewHelper Reference: typo3.media:form.checkbox`:

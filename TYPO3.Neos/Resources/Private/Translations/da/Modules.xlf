@@ -220,6 +220,12 @@
         <source>All changes from workspace "{0}" have been discarded.</source>
         <target xml:lang="da">Alle ændringer fra arbejdsrummet "{0}" er blevet kasseret.</target>
       </trans-unit>
+      <trans-unit id="media.dragHelp" xml:space="preserve" approved="yes">
+				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
+			<target xml:lang="da">Træk og slip en fil til en samling / tag for at føje dem til den.</target></trans-unit>
+      <trans-unit id="media.replace.options.keepOriginalFilename" xml:space="preserve" approved="yes">
+				<source>Keep the filename "{0}"</source>
+			<target xml:lang="da">Behold filnavnet "{0}"</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve" approved="yes">
 				<source>Media</source>
 			<target xml:lang="da">Medie</target></trans-unit>
@@ -676,6 +682,9 @@
       <trans-unit id="media.tooltip.editAsset" xml:space="preserve" approved="yes">
 				<source>Edit asset</source>
 			<target xml:lang="da">Rediger fil</target><alt-trans><target xml:lang="da">Rediger</target></alt-trans></trans-unit>
+      <trans-unit id="media.tooltip.replaceAssetResource" xml:space="preserve" approved="yes">
+				<source>Replace</source>
+			<target xml:lang="da">Erstat</target></trans-unit>
       <trans-unit id="media.tooltip.deleteAsset" xml:space="preserve" approved="yes">
 				<source>Delete asset</source>
 			<target xml:lang="da">Slet fil</target><alt-trans><target xml:lang="da">Slet</target></alt-trans></trans-unit>
@@ -703,6 +712,9 @@
       <trans-unit id="media.cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
 			<target xml:lang="da">Annullér</target><alt-trans><target xml:lang="da">Anuller</target></alt-trans></trans-unit>
+      <trans-unit id="media.replaceAssetResource" xml:space="preserve" approved="yes">
+				<source>Replace</source>
+			<target xml:lang="da">Erstat</target></trans-unit>
       <trans-unit id="media.saveEditing" xml:space="preserve" approved="yes">
 				<source>Save</source>
 			<target xml:lang="da">Gem</target></trans-unit>
@@ -882,7 +894,7 @@
 			<target xml:lang="da">Kan ikke uploade filen</target></trans-unit>
       <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve" approved="yes">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
-			<target xml:lang="da">Filstørrelsen for {0} overstiger den tilladte grænse for {1}</target></trans-unit>
+			<target xml:lang="da">Filstørrelsen for {0} overstiger den tilladte grænse {1}</target><alt-trans><target xml:lang="da">Filstørrelsen for {0} overstiger den tilladte grænse for {1}</target></alt-trans></trans-unit>
       <trans-unit id="media.forTheFile" xml:space="preserve" approved="yes">
 				<source>for the file</source>
 			<target xml:lang="da">for filen</target></trans-unit>
@@ -906,14 +918,41 @@
           <source>{0} usages</source>
           <target xml:lang="da">{0} anvendelser</target>
         </trans-unit>
-        <trans-unit id="media.relatedNodes[1]" approved="yes">
+        <trans-unit id="media.relatedNodes[1]">
           <source>{0} usages</source>
-          <target xml:lang="da">{0} anvendelser</target>
+          <target xml:lang="da" state="translated">{0} anvendelser</target>
         </trans-unit>
       </group>
       <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve" approved="yes">
 				<source>References to "{asset}"</source>
 			<target xml:lang="da">Henvisninger til "{asset}"</target><alt-trans><target xml:lang="da">Referencer til "{asset}"</target></alt-trans></trans-unit>
+      <trans-unit id="media.replaceAsset.replaceFilename" xml:space="preserve">
+				<source>Replace "{filename}"</source>
+			<target xml:lang="da" state="needs-translation">Replace "{filename}"</target></trans-unit>
+      <trans-unit id="media.replaceAsset.description" xml:space="preserve">
+        <source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
+      <target xml:lang="da" state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
+      <trans-unit id="media.replaceAsset.note" xml:space="preserve">
+        <source>Note</source>
+      <target xml:lang="da" state="needs-translation">Note</target></trans-unit>
+      <trans-unit id="media.replaceAsset.noteText" xml:space="preserve">
+        <source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
+      <target xml:lang="da" state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
+      <trans-unit id="media.replaceAsset.chooseNewFile" xml:space="preserve">
+        <source>Choose a new file</source>
+      <target xml:lang="da" state="needs-translation">Choose a new file</target></trans-unit>
+      <trans-unit id="media.replace.usageCount" xml:space="preserve">
+        <source>Currently the asset is used {usageCount} times.</source>
+      <target xml:lang="da" state="needs-translation">Currently the asset is used {usageCount} times.</target></trans-unit>
+      <trans-unit id="media.replace.allUsages" xml:space="preserve">
+        <source>Show all usages</source>
+      <target xml:lang="da" state="needs-translation">Show all usages</target></trans-unit>
+      <trans-unit id="media.replace.notUsed" xml:space="preserve">
+        <source>Currently the asset is not in used anywhere on the website.</source>
+      <target xml:lang="da" state="needs-translation">Currently the asset is not in used anywhere on the website.</target></trans-unit>
+      <trans-unit id="media.replace.previewFile" xml:space="preserve">
+        <source>Preview current file</source>
+      <target xml:lang="da" state="needs-translation">Preview current file</target></trans-unit>
     </body>
   </file>
 </xliff>

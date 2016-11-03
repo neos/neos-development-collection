@@ -546,7 +546,7 @@
 			<target xml:lang="zh-CN" state="translated">宽度</target></trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve">
 				<source>Missing required property: </source>
-			<target xml:lang="zh-CN" state="translated">没有填写必填属性: </target><alt-trans><target xml:lang="zh-CN">没有填写必填属性:</target></alt-trans></trans-unit>
+			<target xml:lang="zh-CN" state="translated">没有填写必填属性: </target></trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
 			<target xml:lang="zh-CN" state="needs-translation">Workspace</target></trans-unit>

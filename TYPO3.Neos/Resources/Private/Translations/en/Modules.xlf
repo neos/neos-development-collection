@@ -209,6 +209,13 @@
 				<source>All changes from workspace "{0}" have been discarded.</source>
 			</trans-unit>
 
+			<trans-unit id="media.dragHelp" xml:space="preserve">
+				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
+			</trans-unit>
+			<trans-unit id="media.replace.options.keepOriginalFilename" xml:space="preserve">
+				<source>Keep the filename "{0}"</source>
+			</trans-unit>
+
 			<trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
 			</trans-unit>
@@ -674,6 +681,9 @@
 			<trans-unit id="media.tooltip.editAsset" xml:space="preserve">
 				<source>Edit asset</source>
 			</trans-unit>
+			<trans-unit id="media.tooltip.replaceAssetResource" xml:space="preserve">
+				<source>Replace</source>
+			</trans-unit>
 			<trans-unit id="media.tooltip.deleteAsset" xml:space="preserve">
 				<source>Delete asset</source>
 			</trans-unit>
@@ -700,6 +710,9 @@
 			</trans-unit>
 			<trans-unit id="media.cancel" xml:space="preserve">
 				<source>Cancel</source>
+			</trans-unit>
+			<trans-unit id="media.replaceAssetResource" xml:space="preserve">
+				<source>Replace</source>
 			</trans-unit>
 			<trans-unit id="media.saveEditing" xml:space="preserve">
 				<source>Save</source>
@@ -878,6 +891,9 @@
 			<trans-unit id="media.cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>
 			</trans-unit>
+			<trans-unit id="media.noFileSelected" xml:space="preserve">
+				<source>No file selected</source>
+			</trans-unit>
 			<trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			</trans-unit>
@@ -910,6 +926,33 @@
 			<trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve">
 				<source>References to "{asset}"</source>
 			</trans-unit>
+			<trans-unit id="media.replaceAsset.replaceFilename" xml:space="preserve">
+				<source>Replace "{filename}"</source>
+			</trans-unit>
+			<trans-unit id="media.replaceAsset.description" xml:space="preserve">
+        <source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
+      </trans-unit>
+      <trans-unit id="media.replaceAsset.note" xml:space="preserve">
+        <source>Note</source>
+      </trans-unit>
+      <trans-unit id="media.replaceAsset.noteText" xml:space="preserve">
+        <source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
+      </trans-unit>
+      <trans-unit id="media.replaceAsset.chooseNewFile" xml:space="preserve">
+        <source>Choose a new file</source>
+      </trans-unit>
+      <trans-unit id="media.replace.usageCount" xml:space="preserve">
+        <source>Currently the asset is used {usageCount} times.</source>
+      </trans-unit>
+      <trans-unit id="media.replace.allUsages" xml:space="preserve">
+        <source>Show all usages</source>
+      </trans-unit>
+      <trans-unit id="media.replace.notUsed" xml:space="preserve">
+        <source>Currently the asset is not in used anywhere on the website.</source>
+      </trans-unit>
+      <trans-unit id="media.replace.previewFile" xml:space="preserve">
+        <source>Preview current file</source>
+      </trans-unit>
 		</body>
 	</file>
 </xliff>

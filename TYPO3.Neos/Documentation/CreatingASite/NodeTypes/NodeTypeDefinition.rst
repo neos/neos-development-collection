@@ -31,6 +31,23 @@ A node type definition can look as follows::
 
 The following options are allowed:
 
+``abstract``
+  A boolean flag, marking a node type as *abstract*. Abstract node types can never be used standalone,
+  they will never be offered for insertion to the user in the UI, for example.
+
+  Abstract node types are useful when using inheritance and composition, so mark base node types and
+  mixins as abstract.
+
+``aggregate``
+  A boolean flag, marking a node type as *aggregate*. If a node type is marked as aggregate, it means that:
+
+  - the node type can "live on its own", i.e. can be part of an external URL
+  - when moving this node, all node variants are also moved (across all dimensions)
+  - Recursive copying only happens *inside* this aggregate, and stops at nested aggregates.
+
+  The most prominent *aggregate* is `TYPO3.Neos:Document` and everything which inherits from it, like
+  `TYPO3.Neos.NodeTypes:Page`.
+
 ``superTypes``
   An array of parent node types inherited from as keys with a boolean values.::
 
@@ -268,10 +285,15 @@ The following options are allowed:
             'right': true
             'justify': true
           'formatlesspaste':
-            'button': true # Show toggle button for formatless pasting.
-            'formatlessPasteOption': false # Whether the format less pasting should be enable by default.
-            'strippedElements': ['a'] # If not set the default setting is used.
-            'autoparagraph': true # Automatically wrap non-wrapped text blocks in paragraph blocks.
+            # Show toggle button for formatless pasting.
+            'button': true
+            # Whether the formatless pasting should be enable by default.
+            'formatlessPasteOption': false
+            # If not set the default setting is used: 'a', 'abbr', 'b', 'bdi', 'bdo', 'cite', 'code', 'del', 'dfn',
+            # 'em', 'i', 'ins', 'kbd', 'mark', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'small', 'strong', 'sub', 'sup',
+            # 'time', 'u', 'var'
+            'strippedElements': ['a']
+          'autoparagraph': true # Automatically wrap non-wrapped text blocks in paragraph blocks.
 
       Example of disabling all formatting options::
 

@@ -12,6 +12,10 @@ namespace TYPO3\TYPO3CR\TypeConverter;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
+use TYPO3\TYPO3CR\Domain\Model\NodeTemplate;
+use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 
 /**
  * An Object Converter for NodeTemplates.
@@ -33,7 +37,7 @@ class NodeTemplateConverter extends NodeConverter
     /**
      * @var string
      */
-    protected $targetType = 'TYPO3\TYPO3CR\Domain\Model\NodeTemplate';
+    protected $targetType = NodeTemplate::class;
 
     /**
      * @var integer
@@ -42,7 +46,7 @@ class NodeTemplateConverter extends NodeConverter
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
+     * @var NodeTypeManager
      */
     protected $nodeTypeManager;
 
@@ -69,13 +73,13 @@ class NodeTemplateConverter extends NodeConverter
      * @param string|array $source Either a string or array containing the absolute context node path which identifies the node. For example "/sites/mysitecom/homepage/about@user-admin"
      * @param string $targetType not used
      * @param array $subProperties not used
-     * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration not used
+     * @param PropertyMappingConfigurationInterface $configuration not used
      * @return mixed An object or \TYPO3\Flow\Error\Error if the input format is not supported or could not be converted for other reasons
      * @throws \Exception
      */
-    public function convertFrom($source, $targetType, array $subProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $subProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
     {
-        $nodeTemplate = new \TYPO3\TYPO3CR\Domain\Model\NodeTemplate();
+        $nodeTemplate = new NodeTemplate();
         $nodeType = $this->extractNodeType($targetType, $source);
         $nodeTemplate->setNodeType($nodeType);
 
@@ -92,7 +96,7 @@ class NodeTemplateConverter extends NodeConverter
      *
      * @param string $targetType
      * @param array $source
-     * @return \TYPO3\TYPO3CR\Domain\Model\NodeType
+     * @return NodeType
      */
     protected function extractNodeType($targetType, array $source)
     {

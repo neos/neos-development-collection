@@ -13,7 +13,9 @@ namespace TYPO3\Neos\Command;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
+use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
+use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\SiteExportService;
 use TYPO3\Neos\Domain\Service\SiteImportService;
@@ -58,7 +60,7 @@ class SiteCommandController extends CommandController
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Log\SystemLoggerInterface
+     * @var SystemLoggerInterface
      */
     protected $systemLogger;
 
@@ -129,13 +131,13 @@ class SiteCommandController extends CommandController
      * assets will be embedded into the XML in base64 encoded form.
      *
      * @param string $siteNode the node name of the site to be exported; if none given will export all sites
-     * @param boolean $tidy Whether to export formatted XML
+     * @param boolean $tidy Whether to export formatted XML. This is defaults to true
      * @param string $filename relative path and filename to the XML file to create. Any resource will be stored in a sub folder "Resources".
      * @param string $packageKey Package to store the XML file in. Any resource will be stored in a sub folder "Resources".
      * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text")
      * @return void
      */
-    public function exportCommand($siteNode = null, $tidy = false, $filename = null, $packageKey = null, $nodeTypeFilter = null)
+    public function exportCommand($siteNode = null, $tidy = true, $filename = null, $packageKey = null, $nodeTypeFilter = null)
     {
         if ($siteNode === null) {
             $sites = $this->siteRepository->findAll()->toArray();
@@ -209,7 +211,7 @@ class SiteCommandController extends CommandController
         $availableSites = array();
 
         foreach ($sites as $site) {
-            /** @var \TYPO3\Neos\Domain\Model\Site $site */
+            /** @var Site $site */
             array_push($availableSites, array(
                 'name' => $site->getName(),
                 'nodeName' => $site->getNodeName(),

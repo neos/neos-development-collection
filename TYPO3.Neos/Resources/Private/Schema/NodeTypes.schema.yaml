@@ -4,7 +4,7 @@ additionalProperties:
   type: dictionary
   properties:
     'properties':
-      type: ['dictionary', 'null']
+      type: dictionary
       additionalProperties:
         # for each property...
         type: dictionary
@@ -196,6 +196,8 @@ additionalProperties:
                   'group': { type: string, description: "Name of the group this view is grouped into" }
 
                   'view': { type: string, description: "The view implementation" }
+
+                  'viewOptions': { type: dictionary, description: "Options for the view" }
 
                   'position': { type: integer, description: 'Position of the view, small numbers are sorted on top' }
 

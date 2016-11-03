@@ -11,8 +11,16 @@ namespace TYPO3\TYPO3CR\Domain\Service\ImportExport;
  * source code.
  */
 
+use Doctrine\Common\Persistence\ObjectManager;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Security\Context;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Exception\ExportException;
 
 /**
@@ -32,25 +40,25 @@ class NodeExportService
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Log\SystemLoggerInterface
+     * @var SystemLoggerInterface
      */
     protected $systemLogger;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     * @var ObjectManagerInterface
      */
     protected $objectManager;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Property\PropertyMapper
+     * @var PropertyMapper
      */
     protected $propertyMapper;
 
@@ -59,19 +67,19 @@ class NodeExportService
      * interface ...
      *
      * @Flow\Inject
-     * @var \Doctrine\Common\Persistence\ObjectManager
+     * @var ObjectManager
      */
     protected $entityManager;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
+     * @var NodeTypeManager
      */
     protected $nodeTypeManager;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+     * @var NodeDataRepository
      */
     protected $nodeDataRepository;
 
@@ -182,7 +190,7 @@ class NodeExportService
             . ' n.dimensionValues AS dimensionValues,'
             . ' w.name AS workspace'
         )->distinct()
-            ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+            ->from(NodeData::class, 'n')
             ->innerJoin('n.workspace', 'w', 'WITH', 'n.workspace=w.name')
             ->where('n.workspace = :workspace')
             ->setParameter('workspace', $workspace)

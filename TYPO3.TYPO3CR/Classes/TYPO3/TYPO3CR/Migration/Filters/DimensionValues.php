@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Migration\Filters;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
 
 /**
@@ -58,10 +59,10 @@ class DimensionValues implements FilterInterface
     /**
      * Returns TRUE if the given node has the default dimension values.
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @param NodeData $node
      * @return boolean
      */
-    public function matches(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    public function matches(NodeData $node)
     {
         if ($this->filterForDefaultDimensionValues === true) {
             $configuredDimensions = $this->contentDimensionRepository->findAll();

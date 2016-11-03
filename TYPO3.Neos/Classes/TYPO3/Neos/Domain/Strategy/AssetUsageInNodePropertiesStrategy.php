@@ -101,7 +101,7 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
             $site = $context->getCurrentSite();
             $node = $this->nodeFactory->createFromNodeData($relatedNodeData, $context);
             $flowQuery = new FlowQuery([$node]);
-            /** @var Node $documentNode */
+            /** @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface $documentNode */
             $documentNode = $flowQuery->closest('[instanceof TYPO3.Neos:Document]')->get(0);
 
             $relatedNodes[] = new AssetUsageInNodeProperties($asset, $site, $documentNode, $node, $accessible);

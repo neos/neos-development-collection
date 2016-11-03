@@ -12,11 +12,25 @@ namespace TYPO3\Media\TypeConverter;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Property\Exception\InvalidDataTypeException;
+use TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
+use TYPO3\Flow\Property\Exception\InvalidSourceException;
+use TYPO3\Flow\Property\Exception\InvalidTargetException;
+use TYPO3\Flow\Property\Exception\TargetNotFoundException;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
+use TYPO3\Flow\Property\TypeConverter\ObjectConverter;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
-use TYPO3\Flow\Resource\Resource;
+use TYPO3\Flow\Resource\Resource as PersistentResource;
+use TYPO3\Flow\Resource\ResourceManager;
+use TYPO3\Flow\Validation\Error;
 use TYPO3\Flow\Validation\Validator\UuidValidator;
 use TYPO3\Media\Domain\Model\AssetInterface;
+use TYPO3\Media\Domain\Model\Document;
+use TYPO3\Media\Domain\Model\Image;
+use TYPO3\Media\Domain\Model\Thumbnail;
+use TYPO3\Media\Domain\Repository\AssetRepository;
+use TYPO3\Media\Domain\Strategy\AssetModelMappingStrategyInterface;
 
 /**
  * This converter transforms to \TYPO3\Media\Domain\Model\ImageInterface (Image or ImageVariant) objects.
@@ -39,7 +53,7 @@ class AssetInterfaceConverter extends PersistentObjectConverter
     /**
      * @var string
      */
-    protected $targetType = 'TYPO3\Media\Domain\Model\AssetInterface';
+    protected $targetType = AssetInterface::class;
 
     /**
      * @var integer
@@ -48,25 +62,25 @@ class AssetInterfaceConverter extends PersistentObjectConverter
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Media\Domain\Repository\AssetRepository
+     * @var AssetRepository
      */
     protected $assetRepository;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Media\Domain\Strategy\AssetModelMappingStrategyInterface
+     * @var AssetModelMappingStrategyInterface
      */
     protected $assetModelMappingStrategy;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Resource\ResourceManager
+     * @var ResourceManager
      */
     protected $resourceManager;
 
@@ -75,7 +89,7 @@ class AssetInterfaceConverter extends PersistentObjectConverter
      *
      * @var string
      */
-    protected static $defaultNewAssetType = 'TYPO3\Media\Domain\Model\Document';
+    protected static $defaultNewAssetType = Document::class;
 
     /**
      * Maps resource identifiers to assets that already got created during the current request.
@@ -131,9 +145,9 @@ class AssetInterfaceConverter extends PersistentObjectConverter
     {
         switch ($propertyName) {
             case 'resource':
-                return 'TYPO3\Flow\Resource\Resource';
+                return PersistentResource::class;
             case 'originalAsset':
-                return 'TYPO3\Media\Domain\Model\Image';
+                return Image::class;
             case 'title':
                 return 'string';
         }
@@ -148,8 +162,8 @@ class AssetInterfaceConverter extends PersistentObjectConverter
      * @param string $originalTargetType
      * @param PropertyMappingConfigurationInterface $configuration
      * @return string
-     * @throws \TYPO3\Flow\Property\Exception\InvalidDataTypeException
-     * @throws \TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException
+     * @throws InvalidDataTypeException
+     * @throws InvalidPropertyMappingConfigurationException
      * @throws \InvalidArgumentException
      */
     public function getTargetTypeForSource($source, $originalTargetType, PropertyMappingConfigurationInterface $configuration = null)
@@ -162,12 +176,12 @@ class AssetInterfaceConverter extends PersistentObjectConverter
             if ($configuration === null) {
                 throw new \InvalidArgumentException('A property mapping configuration must be given, not NULL.', 1421443628);
             }
-            if ($configuration->getConfigurationValue('TYPO3\Flow\Property\TypeConverter\ObjectConverter', self::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED) !== true) {
-                throw new \TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException('Override of target type not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED" to TRUE.', 1421443641);
+            if ($configuration->getConfigurationValue(ObjectConverter::class, self::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED) !== true) {
+                throw new InvalidPropertyMappingConfigurationException('Override of target type not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED" to TRUE.', 1421443641);
             }
 
             if ($targetType !== $originalTargetType && is_a($targetType, $originalTargetType, true) === false) {
-                throw new \TYPO3\Flow\Property\Exception\InvalidDataTypeException('The given type "' . $targetType . '" is not a subtype of "' . $originalTargetType . '".', 1421443648);
+                throw new InvalidDataTypeException('The given type "' . $targetType . '" is not a subtype of "' . $originalTargetType . '".', 1421443648);
             }
         }
 
@@ -181,8 +195,8 @@ class AssetInterfaceConverter extends PersistentObjectConverter
      * @param string $targetType must implement 'TYPO3\Media\Domain\Model\AssetInterface'
      * @param array $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
-     * @return \TYPO3\Flow\Validation\Error|\TYPO3\Media\Domain\Model\Image The converted Image, a Validation Error or NULL
-     * @throws \TYPO3\Flow\Property\Exception\InvalidTargetException
+     * @return Error|AssetInterface The converted Asset, a Validation Error or NULL
+     * @throws InvalidTargetException
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
     {
@@ -191,7 +205,7 @@ class AssetInterfaceConverter extends PersistentObjectConverter
             $source = array('__identity' => $source);
         }
 
-        if (isset($convertedChildProperties['resource']) && $convertedChildProperties['resource'] instanceof Resource) {
+        if (isset($convertedChildProperties['resource']) && $convertedChildProperties['resource'] instanceof PersistentResource) {
             $resource = $convertedChildProperties['resource'];
             if (isset($this->resourcesAlreadyConvertedToAssets[$resource->getSha1()])) {
                 $object = $this->resourcesAlreadyConvertedToAssets[$resource->getSha1()];
@@ -235,7 +249,7 @@ class AssetInterfaceConverter extends PersistentObjectConverter
      * @param array &$possibleConstructorArgumentValues
      * @param string $objectType
      * @return object The created instance
-     * @throws \TYPO3\Flow\Property\Exception\InvalidTargetException if a required constructor argument is missing
+     * @throws InvalidTargetException if a required constructor argument is missing
      */
     protected function buildObject(array &$possibleConstructorArgumentValues, $objectType)
     {
@@ -253,17 +267,17 @@ class AssetInterfaceConverter extends PersistentObjectConverter
      * @param mixed $identity
      * @param string $targetType
      * @return object
-     * @throws \TYPO3\Flow\Property\Exception\TargetNotFoundException
-     * @throws \TYPO3\Flow\Property\Exception\InvalidSourceException
+     * @throws TargetNotFoundException
+     * @throws InvalidSourceException
      */
     protected function fetchObjectFromPersistence($identity, $targetType)
     {
-        if ($targetType === 'TYPO3\Media\Domain\Model\Thumbnail') {
+        if ($targetType === Thumbnail::class) {
             $object = $this->persistenceManager->getObjectByIdentifier($identity, $targetType);
         } elseif (is_string($identity)) {
             $object = $this->assetRepository->findByIdentifier($identity);
         } else {
-            throw new \TYPO3\Flow\Property\Exception\InvalidSourceException('The identity property "' . $identity . '" is not a string.', 1415817618);
+            throw new InvalidSourceException('The identity property "' . $identity . '" is not a string.', 1415817618);
         }
 
         return $object;
@@ -286,11 +300,11 @@ class AssetInterfaceConverter extends PersistentObjectConverter
      * The strategy is NOT applied if $source['__type'] is set (overriding was allowed then, otherwise an exception would have been thrown earlier).
      *
      * @param string $originalTargetType The original target type determined so far
-     * @param Resource $resource The resource that is to be converted to a media file.
+     * @param PersistentResource $resource The resource that is to be converted to a media file.
      * @param array $source the original source properties for this type converter.
      * @return string Class name of the media model to use for the given resource
      */
-    protected function applyModelMappingStrategy($originalTargetType, Resource $resource, array $source = array())
+    protected function applyModelMappingStrategy($originalTargetType, PersistentResource $resource, array $source = array())
     {
         $finalTargetType = $originalTargetType;
         if (!isset($source['__type'])) {

@@ -220,6 +220,12 @@
         <source>All changes from workspace "{0}" have been discarded.</source>
         <target xml:lang="el" state="needs-translation">All changes from workspace "{0}" have been discarded.</target>
       </trans-unit>
+      <trans-unit id="media.dragHelp" xml:space="preserve">
+				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
+			<target xml:lang="el" state="needs-translation">Drag and drop an asset on a collection / tag to add them to it.</target></trans-unit>
+      <trans-unit id="media.replace.options.keepOriginalFilename" xml:space="preserve">
+				<source>Keep the filename "{0}"</source>
+			<target xml:lang="el" state="needs-translation">Keep the filename "{0}"</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
 			<target xml:lang="el" state="needs-translation">Media</target></trans-unit>
@@ -676,6 +682,9 @@
       <trans-unit id="media.tooltip.editAsset" xml:space="preserve">
 				<source>Edit asset</source>
 			<target xml:lang="el" state="needs-translation">Edit asset</target></trans-unit>
+      <trans-unit id="media.tooltip.replaceAssetResource" xml:space="preserve">
+				<source>Replace</source>
+			<target xml:lang="el" state="needs-translation">Replace</target></trans-unit>
       <trans-unit id="media.tooltip.deleteAsset" xml:space="preserve">
 				<source>Delete asset</source>
 			<target xml:lang="el" state="needs-translation">Delete asset</target></trans-unit>
@@ -703,6 +712,9 @@
       <trans-unit id="media.cancel" xml:space="preserve">
 				<source>Cancel</source>
 			<target xml:lang="el" state="needs-translation">Cancel</target></trans-unit>
+      <trans-unit id="media.replaceAssetResource" xml:space="preserve">
+				<source>Replace</source>
+			<target xml:lang="el" state="needs-translation">Replace</target></trans-unit>
       <trans-unit id="media.saveEditing" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="el" state="needs-translation">Save</target></trans-unit>
@@ -914,6 +926,33 @@
       <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve">
 				<source>References to "{asset}"</source>
 			<target xml:lang="el" state="needs-translation">References to "{asset}"</target></trans-unit>
+      <trans-unit id="media.replaceAsset.replaceFilename" xml:space="preserve">
+				<source>Replace "{filename}"</source>
+			<target xml:lang="el" state="needs-translation">Replace "{filename}"</target></trans-unit>
+      <trans-unit id="media.replaceAsset.description" xml:space="preserve">
+        <source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
+      <target xml:lang="el" state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
+      <trans-unit id="media.replaceAsset.note" xml:space="preserve">
+        <source>Note</source>
+      <target xml:lang="el" state="needs-translation">Note</target></trans-unit>
+      <trans-unit id="media.replaceAsset.noteText" xml:space="preserve">
+        <source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
+      <target xml:lang="el" state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
+      <trans-unit id="media.replaceAsset.chooseNewFile" xml:space="preserve">
+        <source>Choose a new file</source>
+      <target xml:lang="el" state="needs-translation">Choose a new file</target></trans-unit>
+      <trans-unit id="media.replace.usageCount" xml:space="preserve">
+        <source>Currently the asset is used {usageCount} times.</source>
+      <target xml:lang="el" state="needs-translation">Currently the asset is used {usageCount} times.</target></trans-unit>
+      <trans-unit id="media.replace.allUsages" xml:space="preserve">
+        <source>Show all usages</source>
+      <target xml:lang="el" state="needs-translation">Show all usages</target></trans-unit>
+      <trans-unit id="media.replace.notUsed" xml:space="preserve">
+        <source>Currently the asset is not in used anywhere on the website.</source>
+      <target xml:lang="el" state="needs-translation">Currently the asset is not in used anywhere on the website.</target></trans-unit>
+      <trans-unit id="media.replace.previewFile" xml:space="preserve">
+        <source>Preview current file</source>
+      <target xml:lang="el" state="needs-translation">Preview current file</target></trans-unit>
     </body>
   </file>
 </xliff>

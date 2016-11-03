@@ -116,6 +116,13 @@
         label: i18n
         inspector:
           group: 'options'
+    startingPoint:
+      type: 'reference'
+      ui:
+        reloadIfChanged: TRUE
+        label: i18n
+        inspector:
+          group: 'options'
     maximumLevels:
       type: string
       defaultValue: '1'
@@ -283,9 +290,7 @@
           editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
           editorOptions:
             placeholder: i18n
-            values:
-              '':
-                label: ''
+            dataSourceIdentifier: 'neos-nodetypes-form-definitions'
 
 'TYPO3.Neos.NodeTypes:AssetList':
   superTypes:

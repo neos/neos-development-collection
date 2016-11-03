@@ -150,7 +150,6 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService
      * Generate additional folders for site packages.
      *
      * @param string $packageKey
-     * @throws \TYPO3\Flow\Utility\Exception
      */
     protected function generateAdditionalFolders($packageKey)
     {

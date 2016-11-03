@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Domain\Service;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
@@ -57,7 +58,7 @@ class SiteService
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
 
@@ -75,6 +76,9 @@ class SiteService
         foreach ($siteNodes as $siteNode) {
             $this->nodeDataRepository->remove($siteNode);
         }
+
+        $site->setPrimaryDomain(null);
+        $this->siteRepository->update($site);
 
         $domainsForSite = $this->domainRepository->findBySite($site);
         foreach ($domainsForSite as $domain) {

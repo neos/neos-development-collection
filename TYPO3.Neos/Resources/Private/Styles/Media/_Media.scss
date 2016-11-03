@@ -486,7 +486,7 @@
 			font-size: 0;
 			margin-left: 0;
 
-			li {
+			> li {
 				margin-left: 0;
 				margin-right: $defaultMargin;
 				@include box-sizing(border-box);
@@ -552,20 +552,12 @@
 					position: relative;
 					padding-bottom: 100%;
 					height: 0;
-					margin-bottom: $relatedMargin * 1.5;
 					background-color: $grayDarker;
 					background-image: url('../Images/ajax-preloader-222222.gif');
 					background-position: center center;
 					background-repeat: no-repeat;
 					overflow: hidden;
 					@include box-sizing(border-box);
-
-					&:hover {
-						.neos-media-delete,
-						&::after {
-							opacity: .9;
-						}
-					}
 
 					&.ui-draggable-dragging {
 						width: 250px;
@@ -576,47 +568,6 @@
 						background-color: $grayDarker;
 						outline: 3px solid $grayDarker;
 					}
-
-					.neos-media-delete {
-						position: absolute;
-						bottom: 0;
-						right: 0;
-						background-color: $grayDark;
-						opacity: .5;
-
-						&:hover {
-							background-color: $warning;
-						}
-					}
-
-					&::after {
-						@include fa-icon();
-						content: $fa-var-arrows;
-						display: block;
-						position: absolute;
-						left: 0;
-						bottom: 0;
-						width: $unit;
-						height: $unit;
-						background-color: $grayDark;
-						opacity: .5;
-						color: #fff;
-						font-size: 16px;
-						text-align: center;
-						line-height: $unit;
-						cursor: move;
-					}
-				}
-
-				.neos-caption {
-					padding: 0;
-					display: block;
-					font-size: 12px;
-					line-height: 1.2;
-					color: $textSubtleLight;
-					overflow: hidden;
-					text-overflow: ellipsis;
-					white-space: nowrap;
 				}
 
 				> a {
@@ -626,13 +577,14 @@
 					box-shadow: none;
 					position: relative;
 					padding: 0;
+					z-index: 2;
 
 					&:hover {
 						box-shadow: none;
 						text-decoration: none;
 					}
 
-					img {
+					.neos-img-container > img {
 						position: absolute;
 						top: 50%;
 						left: 50%;
@@ -641,6 +593,40 @@
 						width: auto;
 						max-height: 100%;
 						max-width: 100%;
+					}
+				}
+
+				.neos-button.dropdown-toggle {
+					width: $unit;
+					padding: 0;
+
+					.icon-ellipsis-horizontal {
+						line-height: $unit;
+					}
+				}
+
+				.neos-img-label {
+					position: relative;
+					background-color: $grayMedium;
+					height: $unit;
+
+					.neos-caption {
+						padding-right: 4px;
+						display: block;
+						font-size: 12px;
+						line-height: $unit;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						white-space: nowrap;
+					}
+
+					.neos-dropdown {
+						font-size: 14px;
+					}
+
+					> img {
+						float: left;
+						padding: 4px;
 					}
 				}
 			}
@@ -706,6 +692,11 @@
 			margin-right: $relatedMargin;
 			margin-bottom: $wideMargin;
 		}
+	}
+
+	.neos-media-content-help {
+		font-style: italic;
+		padding-bottom: 1em;
 	}
 
 	//Styles for image preview in edit mode
@@ -841,16 +832,15 @@
 			}
 		}
 
-		.icon-move {
-			float: left;
-			line-height: $unit;
-			padding-left: $relatedMargin + $tightMargin;
-		}
-
 		.neos-action {
 			width: 10%;
 			font-size: 0;
 			text-align: right;
+
+			.neos-dropdown {
+				display: inline-block;
+				font-size: 14px;
+			}
 
 			.neos-modal {
 				text-align: left;
@@ -862,12 +852,8 @@
 		vertical-align: baseline;
 	}
 
-	.draggable-asset {
-		cursor: move;
-	}
-
 	&:not(.media-module) {
-		table.neos-table {
+		table.neos-table:not(.neos-no-hover) {
 			tbody tr:hover td {
 				background-color: $blue;
 				cursor: pointer;
@@ -881,10 +867,6 @@
 
 			.icon-move {
 				cursor: move;
-			}
-
-			.neos-action {
-				display: none;
 			}
 		}
 	}
@@ -959,13 +941,29 @@
 		display: none;
 	}
 
-	#resource {
-		visibility: hidden;
-		position: absolute;
-		left: -9999px;
+	.neos-file-input {
+		position: relative;
+
+		#resource {
+			opacity: 0;
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			cursor: pointer;
+		}
 	}
 
 	.fold-toggle {
 		cursor: pointer;
+	}
+
+	.icon-ok-sign {
+		color: $green;
+	}
+
+	.icon-exclamation-sign {
+		color: $orange;
 	}
 }

@@ -12,7 +12,6 @@ namespace TYPO3\Media\Domain\Strategy;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Utility\TypeHandling;
 use TYPO3\Media\Domain\Model\AssetInterface;
 
 /**
@@ -42,7 +41,6 @@ abstract class AbstractAssetUsageStrategy implements AssetUsageStrategyInterface
      */
     public function getUsageCount(AssetInterface $asset)
     {
-        $usages = $this->getUsageReferences($asset);
-        return count($usages);
+        return count($this->getUsageReferences($asset));
     }
 }

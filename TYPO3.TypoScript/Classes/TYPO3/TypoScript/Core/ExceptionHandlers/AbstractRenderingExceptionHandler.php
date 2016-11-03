@@ -25,14 +25,14 @@ abstract class AbstractRenderingExceptionHandler
     /**
      * Current TypoScript runtime
      *
-     * @var \TYPO3\TypoScript\Core\Runtime
+     * @var Runtime
      */
     protected $runtime;
 
     /**
      * Sets the current TypoScript runtime
      *
-     * @param \TYPO3\TypoScript\Core\Runtime $runtime
+     * @param Runtime $runtime
      * @return void
      */
     public function setRuntime(Runtime $runtime)
@@ -43,7 +43,7 @@ abstract class AbstractRenderingExceptionHandler
     /**
      * Returns current TypoScript runtime
      *
-     * @return \TYPO3\TypoScript\Core\Runtime
+     * @return Runtime
      */
     protected function getRuntime()
     {

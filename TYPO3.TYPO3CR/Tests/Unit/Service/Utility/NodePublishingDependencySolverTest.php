@@ -11,22 +11,29 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Service\Utility;
  * source code.
  */
 
-class NodePublishingDependencySolverTest extends \TYPO3\Flow\Tests\UnitTestCase
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\TYPO3CR\Domain\Model\Node;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Service\Context;
+use TYPO3\TYPO3CR\Service\Utility\NodePublishingDependencySolver;
+
+class NodePublishingDependencySolverTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Model\Workspace
+     * @var Workspace
      */
     protected $mockWorkspace;
 
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Service\Context
+     * @var Context
      */
     protected $mockContext;
 
     public function setUp()
     {
-        $this->mockWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array('live'));
-        $this->mockContext = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', false);
+        $this->mockWorkspace = $this->getMockBuilder(Workspace::class)->setConstructorArgs(array('live'))->getMock();
+        $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
     }
 
     /**
@@ -40,7 +47,7 @@ class NodePublishingDependencySolverTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $unpublishedNodes = array($nodeAboutUs, $nodeService, $nodeCompany);
 
-        $solver = new \TYPO3\TYPO3CR\Service\Utility\NodePublishingDependencySolver();
+        $solver = new NodePublishingDependencySolver();
         $sortedNodes = $solver->sort($unpublishedNodes);
 
         $this->assertBeforeInArray($nodeCompany, $nodeAboutUs, $sortedNodes);
@@ -62,7 +69,7 @@ class NodePublishingDependencySolverTest extends \TYPO3\Flow\Tests\UnitTestCase
 
         $unpublishedNodes = array($nodeAboutUs, $nodeService, $nodeCompany, $nodeEnterprise);
 
-        $solver = new \TYPO3\TYPO3CR\Service\Utility\NodePublishingDependencySolver();
+        $solver = new NodePublishingDependencySolver();
         $sortedNodes = $solver->sort($unpublishedNodes);
 
         $this->assertBeforeInArray($nodeEnterprise, $nodeCompany, $sortedNodes);
@@ -74,15 +81,15 @@ class NodePublishingDependencySolverTest extends \TYPO3\Flow\Tests\UnitTestCase
      * Build a mock Node for testing
      *
      * @param string $path
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $movedTo
-     * @return \TYPO3\TYPO3CR\Domain\Model\Node
+     * @param NodeData $movedTo
+     * @return Node
      */
     protected function buildNodeMock($path, $movedTo = null)
     {
-        $mockNodeData = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeData', array(), array($path, $this->mockWorkspace));
+        $mockNodeData = $this->getMockBuilder(NodeData::class)->setConstructorArgs(array($path, $this->mockWorkspace))->getMock();
         $mockNodeData->expects($this->any())->method('getMovedTo')->will($this->returnValue($movedTo));
         $mockNodeData->expects($this->any())->method('getPath')->will($this->returnValue($path));
-        $mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array(), array($mockNodeData, $this->mockContext));
+        $mockNode = $this->getMockBuilder(Node::class)->setConstructorArgs(array($mockNodeData, $this->mockContext))->getMock();
         $mockNode->expects($this->any())->method('getNodeData')->will($this->returnValue($mockNodeData));
         $mockNode->expects($this->any())->method('getPath')->will($this->returnValue($path));
         $parentPath = substr($path, 0, strrpos($path, '/'));

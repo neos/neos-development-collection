@@ -13,19 +13,22 @@ namespace TYPO3\Neos\Setup\Step;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\ApplicationContext;
+use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Form\Core\Model\FormDefinition;
+use TYPO3\Setup\Step\AbstractStep;
 
 /**
  * @Flow\Scope("singleton")
  */
-class FinalStep extends \TYPO3\Setup\Step\AbstractStep
+class FinalStep extends AbstractStep
 {
     /**
      * Returns the form definitions for the step
      *
-     * @param \TYPO3\Form\Core\Model\FormDefinition $formDefinition
+     * @param FormDefinition $formDefinition
      * @return void
      */
-    protected function buildForm(\TYPO3\Form\Core\Model\FormDefinition $formDefinition)
+    protected function buildForm(FormDefinition $formDefinition)
     {
         $page1 = $formDefinition->createPage('page1');
         $page1->setRenderingOption('header', 'Setup complete');
@@ -42,7 +45,7 @@ class FinalStep extends \TYPO3\Setup\Step\AbstractStep
         $docs->setProperty('href', 'https://neos.readthedocs.org/');
         $docs->setProperty('target', '_blank');
 
-        $contextEnv = \TYPO3\Flow\Core\Bootstrap::getEnvironmentConfigurationSetting('FLOW_CONTEXT') ?: 'Development';
+        $contextEnv = Bootstrap::getEnvironmentConfigurationSetting('FLOW_CONTEXT') ?: 'Development';
         $applicationContext = new ApplicationContext($contextEnv);
         if (!$applicationContext->isProduction()) {
             $context = $page1->createElement('contextSection', 'TYPO3.Form:Section');

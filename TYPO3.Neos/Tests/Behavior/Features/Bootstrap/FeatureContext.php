@@ -10,15 +10,36 @@
  * source code.
  */
 
+use Behat\Behat\Context\Step\Then;
 use Behat\Behat\Exception\PendingException;
 use Behat\Gherkin\Node\TableNode;
+use Behat\Mink\Element\ElementInterface;
+use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\MinkContext;
+use Flowpack\Behat\Tests\Behat\FlowContext;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Reflection\ObjectAccess;
+use TYPO3\Flow\Security\AccountRepository;
 use TYPO3\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use TYPO3\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
 use TYPO3\Flow\Utility\Arrays;
 use PHPUnit_Framework_Assert as Assert;
+use TYPO3\Flow\Utility\Environment;
+use TYPO3\Flow\Utility\Files;
+use TYPO3\Neos\Domain\Model\Site;
+use TYPO3\Neos\Domain\Repository\SiteRepository;
+use TYPO3\Neos\Domain\Service\SiteExportService;
+use TYPO3\Neos\Domain\Service\SiteImportService;
+use TYPO3\Neos\Domain\Service\SiteService;
+use TYPO3\Neos\Domain\Service\UserService;
+use TYPO3\Neos\Service\PublishingService;
+use TYPO3\Party\Domain\Repository\PartyRepository;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
+use TYPO3\TYPO3CR\Service\AuthorizationService;
 use TYPO3\TYPO3CR\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
 use TYPO3\TYPO3CR\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
+use TYPO3\Neos\Tests\Functional\Command\BehatTestHelper;
 
 require_once(__DIR__ . '/../../../../../../Application/Flowpack.Behat/Tests/Behat/FlowContext.php');
 require_once(__DIR__ . '/../../../../../../Framework/TYPO3.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
@@ -41,15 +62,15 @@ class FeatureContext extends MinkContext
     /**
      * @var string
      */
-    protected $behatTestHelperObjectName = \TYPO3\Neos\Tests\Functional\Command\BehatTestHelper::class;
+    protected $behatTestHelperObjectName = BehatTestHelper::class;
 
     /**
-     * @var \TYPO3\Flow\Object\ObjectManagerInterface
+     * @var ObjectManagerInterface
      */
     protected $objectManager;
 
     /**
-     * @var \Behat\Mink\Element\ElementInterface
+     * @var ElementInterface
      */
     protected $selectedContentElement;
 
@@ -65,15 +86,15 @@ class FeatureContext extends MinkContext
      */
     public function __construct(array $parameters)
     {
-        $this->useContext('flow', new \Flowpack\Behat\Tests\Behat\FlowContext($parameters));
+        $this->useContext('flow', new FlowContext($parameters));
         $this->objectManager = $this->getSubcontext('flow')->getObjectManager();
-        $this->environment = $this->objectManager->get(\TYPO3\Flow\Utility\Environment::class);
-        $this->nodeAuthorizationService = $this->objectManager->get(\TYPO3\TYPO3CR\Service\AuthorizationService::class);
+        $this->environment = $this->objectManager->get(Environment::class);
+        $this->nodeAuthorizationService = $this->objectManager->get(AuthorizationService::class);
         $this->setupSecurity();
     }
 
     /**
-     * @return \TYPO3\Flow\Object\ObjectManagerInterface
+     * @return ObjectManagerInterface
      */
     protected function getObjectManager()
     {
@@ -81,11 +102,11 @@ class FeatureContext extends MinkContext
     }
 
     /**
-     * @return \TYPO3\Neos\Service\PublishingService $publishingService
+     * @return PublishingService $publishingService
      */
     private function getPublishingService()
     {
-        return $this->getObjectManager()->get(\TYPO3\Neos\Service\PublishingService::class);
+        return $this->getObjectManager()->get(PublishingService::class);
     }
 
     /**
@@ -111,12 +132,12 @@ class FeatureContext extends MinkContext
     public function theFollowingUsersExist(TableNode $table)
     {
         $rows = $table->getHash();
-        /** @var \TYPO3\Neos\Domain\Service\UserService $userService */
-        $userService = $this->objectManager->get(\TYPO3\Neos\Domain\Service\UserService::class);
-        /** @var \TYPO3\Party\Domain\Repository\PartyRepository $partyRepository */
-        $partyRepository = $this->objectManager->get(\TYPO3\Party\Domain\Repository\PartyRepository::class);
-        /** @var \TYPO3\Flow\Security\AccountRepository $accountRepository */
-        $accountRepository = $this->objectManager->get(\TYPO3\Flow\Security\AccountRepository::class);
+        /** @var UserService $userService */
+        $userService = $this->objectManager->get(UserService::class);
+        /** @var PartyRepository $partyRepository */
+        $partyRepository = $this->objectManager->get(PartyRepository::class);
+        /** @var AccountRepository $accountRepository */
+        $accountRepository = $this->objectManager->get(AccountRepository::class);
         foreach ($rows as $row) {
             $roleIdentifiers = array_map(function ($role) {
                 return 'TYPO3.Neos:' . $role;
@@ -206,8 +227,8 @@ class FeatureContext extends MinkContext
     public function iShouldNotSeeTheTopBar()
     {
         return array(
-            new \Behat\Behat\Context\Step\Then('I should not see "Navigate"'),
-            new \Behat\Behat\Context\Step\Then('I should not see "Edit / Preview"'),
+            new Then('I should not see "Navigate"'),
+            new Then('I should not see "Edit / Preview"'),
         );
         //c1$this->assertElementOnPage('.neos-previewmode #neos-top-bar');
     }
@@ -219,7 +240,7 @@ class FeatureContext extends MinkContext
     {
         $button = $this->getSession()->getPage()->find('css', '.neos-full-screen-close > .neos-pressed');
         if ($button === null) {
-            throw new \Behat\Mink\Exception\ElementNotFoundException($this->getSession(), 'button', 'id|name|label|value');
+            throw new ElementNotFoundException($this->getSession(), 'button', 'id|name|label|value');
         }
 
         Assert::assertTrue($button->hasClass('neos-pressed'), 'Button should be pressed');
@@ -230,15 +251,15 @@ class FeatureContext extends MinkContext
      */
     public function iImportedTheSite($packageKey)
     {
-        /** @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository $nodeDataRepository */
-        $nodeDataRepository = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository::class);
-        /** @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface $contextFactory */
-        $contextFactory = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface::class);
+        /** @var NodeDataRepository $nodeDataRepository */
+        $nodeDataRepository = $this->objectManager->get(NodeDataRepository::class);
+        /** @var ContextFactoryInterface $contextFactory */
+        $contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
         $contentContext = $contextFactory->create(array('workspace' => 'live'));
-        \TYPO3\Flow\Reflection\ObjectAccess::setProperty($nodeDataRepository, 'context', $contentContext, true);
+        ObjectAccess::setProperty($nodeDataRepository, 'context', $contentContext, true);
 
-        /** @var \TYPO3\Neos\Domain\Service\SiteImportService $siteImportService */
-        $siteImportService = $this->objectManager->get(\TYPO3\Neos\Domain\Service\SiteImportService::class);
+        /** @var SiteImportService $siteImportService */
+        $siteImportService = $this->objectManager->get(SiteImportService::class);
         $siteImportService->importFromPackage($packageKey, $contentContext);
 
         $this->getSubcontext('flow')->persistAll();
@@ -275,7 +296,7 @@ class FeatureContext extends MinkContext
         );
         if (is_array($directories)) {
             foreach ($directories as $directory) {
-                \TYPO3\Flow\Utility\Files::removeDirectoryRecursively($directory);
+                Files::removeDirectoryRecursively($directory);
             }
         }
     }
@@ -288,7 +309,7 @@ class FeatureContext extends MinkContext
         $directories = glob(FLOW_PATH_PACKAGES . 'Sites/Test.*');
         if (is_array($directories)) {
             foreach ($directories as $directory) {
-                \TYPO3\Flow\Utility\Files::removeDirectoryRecursively($directory);
+                Files::removeDirectoryRecursively($directory);
             }
         }
     }
@@ -298,9 +319,9 @@ class FeatureContext extends MinkContext
      */
     public function resetContextFactory()
     {
-        /** @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface $contextFactory */
-        $contextFactory = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface::class);
-        \TYPO3\Flow\Reflection\ObjectAccess::setProperty($contextFactory, 'contextInstances', array(), true);
+        /** @var ContextFactoryInterface $contextFactory */
+        $contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
+        ObjectAccess::setProperty($contextFactory, 'contextInstances', array(), true);
     }
 
     /**
@@ -454,10 +475,10 @@ class FeatureContext extends MinkContext
      */
     public function iHaveTheSite($siteName)
     {
-        $site = new \TYPO3\Neos\Domain\Model\Site($siteName);
+        $site = new Site($siteName);
         $site->setSiteResourcesPackageKey('Neos.Demo');
-        /** @var \TYPO3\Neos\Domain\Repository\SiteRepository $siteRepository */
-        $siteRepository = $this->objectManager->get(\TYPO3\Neos\Domain\Repository\SiteRepository::class);
+        /** @var SiteRepository $siteRepository */
+        $siteRepository = $this->objectManager->get(SiteRepository::class);
         $siteRepository->add($site);
 
         $this->getSubContext('flow')->persistAll();
@@ -468,11 +489,11 @@ class FeatureContext extends MinkContext
      */
     public function iExportTheSite($siteNodeName)
     {
-        /** @var \TYPO3\Neos\Domain\Service\SiteExportService $siteExportService */
-        $siteExportService = $this->objectManager->get(\TYPO3\Neos\Domain\Service\SiteExportService::class);
+        /** @var SiteExportService $siteExportService */
+        $siteExportService = $this->objectManager->get(SiteExportService::class);
 
-        /** @var \TYPO3\Neos\Domain\Repository\SiteRepository $siteRepository */
-        $siteRepository = $this->objectManager->get(\TYPO3\Neos\Domain\Repository\SiteRepository::class);
+        /** @var SiteRepository $siteRepository */
+        $siteRepository = $this->objectManager->get(SiteRepository::class);
         $site = $siteRepository->findOneByNodeName($siteNodeName);
 
         $this->lastExportedSiteXmlPathAndFilename = tempnam(sys_get_temp_dir(), 'Neos_LastExportedSite');
@@ -485,8 +506,8 @@ class FeatureContext extends MinkContext
      */
     public function iPruneAllSites()
     {
-        /** @var \TYPO3\Neos\Domain\Service\SiteService $siteService */
-        $siteService = $this->objectManager->get(\TYPO3\Neos\Domain\Service\SiteService::class);
+        /** @var SiteService $siteService */
+        $siteService = $this->objectManager->get(SiteService::class);
         $siteService->pruneAll();
 
         $this->getSubContext('flow')->persistAll();
@@ -502,8 +523,8 @@ class FeatureContext extends MinkContext
         $this->getSubContext('flow')->persistAll();
         $this->resetNodeInstances();
 
-        /** @var \TYPO3\Neos\Domain\Service\SiteImportService $siteImportService */
-        $siteImportService = $this->objectManager->get(\TYPO3\Neos\Domain\Service\SiteImportService::class);
+        /** @var SiteImportService $siteImportService */
+        $siteImportService = $this->objectManager->get(SiteImportService::class);
         $siteImportService->importFromFile($this->lastExportedSiteXmlPathAndFilename);
     }
 }

@@ -16,6 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Resource\Resource;
 use TYPO3\Flow\Utility\Arrays;
+use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Strategy\ThumbnailGeneratorStrategy;
 use TYPO3\Media\Exception;
 
@@ -105,7 +106,7 @@ class Thumbnail implements ImageInterface
     /**
      * Returns the Asset this thumbnail is derived from
      *
-     * @return \TYPO3\Media\Domain\Model\ImageInterface
+     * @return ImageInterface
      */
     public function getOriginalAsset()
     {
@@ -197,6 +198,8 @@ class Thumbnail implements ImageInterface
 
     /**
      * Signals that a thumbnail was created.
+     * @deprecated Will be removed with next major version of TYPO3.Media.
+     * Use ThumbnailService::emitThumbnailCreated signal instead.
      *
      * @Flow\Signal
      * @param Thumbnail $thumbnail

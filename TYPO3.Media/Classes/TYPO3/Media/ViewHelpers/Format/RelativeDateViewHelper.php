@@ -12,6 +12,7 @@ namespace TYPO3\Media\ViewHelpers\Format;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Now;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
@@ -38,15 +39,15 @@ class RelativeDateViewHelper extends AbstractViewHelper
             throw new \InvalidArgumentException('No valid date given,', 1424647058);
         }
         // More than 11 months ago
-        $now = new \TYPO3\Flow\Utility\Now();
+        $now = new Now();
         if ($date < $now->modify('-11 months')) {
-            return $date->format('Y M n');
+            return $date->format('Y M j');
         }
         // Same day of same year
-        $now = new \TYPO3\Flow\Utility\Now();
+        $now = new Now();
         if ($date->format('Y z') === $now->format('Y z')) {
             return $date->format('H:i');
         }
-        return $date->format('M n');
+        return $date->format('M j');
     }
 }

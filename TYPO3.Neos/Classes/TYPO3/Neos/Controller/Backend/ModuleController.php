@@ -14,8 +14,12 @@ namespace TYPO3\Neos\Controller\Backend;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Http\Response;
+use TYPO3\Flow\Mvc\Controller\ActionController;
+use TYPO3\Flow\Mvc\Dispatcher;
+use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Utility\MediaTypes;
+use TYPO3\Neos\Controller\Backend\MenuHelper;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 use TYPO3\Neos\Controller\Exception\DisabledModuleException;
 
@@ -24,24 +28,24 @@ use TYPO3\Neos\Controller\Exception\DisabledModuleException;
  *
  * @Flow\Scope("singleton")
  */
-class ModuleController extends \TYPO3\Flow\Mvc\Controller\ActionController
+class ModuleController extends ActionController
 {
     use BackendUserTranslationTrait;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Mvc\Dispatcher
+     * @var Dispatcher
      */
     protected $dispatcher;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Security\Context
+     * @var Context
      */
     protected $securityContext;
 
     /**
-     * @var \TYPO3\Neos\Controller\Backend\MenuHelper
+     * @var MenuHelper
      * @Flow\Inject
      */
     protected $menuHelper;

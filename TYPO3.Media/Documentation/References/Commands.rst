@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2015-12-15
+The following reference was automatically generated from code on 2016-06-07
 
 
 .. _`Media Command Reference: TYPO3.MEDIA`:

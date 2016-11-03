@@ -11,6 +11,9 @@
       <trans-unit id="properties.references" xml:space="preserve" approved="yes">
 				<source>Select</source>
 			<target xml:lang="da">Vælg</target></trans-unit>
+      <trans-unit id="content.noReferencesSelected" xml:space="preserve" approved="yes">
+				<source>No references selected</source>
+			<target xml:lang="da">Ingen referencer valgt</target></trans-unit>
     </body>
   </file>
 </xliff>

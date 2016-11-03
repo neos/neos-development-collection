@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Routing;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\Routing\DynamicRoutePart;
 use TYPO3\Flow\Utility\Arrays;
 
 /**
@@ -19,7 +20,7 @@ use TYPO3\Flow\Utility\Arrays;
  *
  * @Flow\Scope("singleton")
  */
-class BackendModuleRoutePartHandler extends \TYPO3\Flow\Mvc\Routing\DynamicRoutePart
+class BackendModuleRoutePartHandler extends DynamicRoutePart
 {
     const MATCHRESULT_FOUND = true;
     const MATCHRESULT_NOSUCHMODULE = -1;

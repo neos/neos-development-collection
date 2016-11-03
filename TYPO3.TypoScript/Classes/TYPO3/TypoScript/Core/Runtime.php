@@ -24,6 +24,7 @@ use TYPO3\TypoScript\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
 use TYPO3\TypoScript\Exception as Exceptions;
 use TYPO3\TypoScript\Exception;
 use TYPO3\Flow\Security\Exception as SecurityException;
+use TYPO3\TypoScript\Exception\RuntimeException;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractArrayTypoScriptObject;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 use TYPO3\Eel\Utility as EelUtility;
@@ -377,8 +378,8 @@ class Runtime
      *
      * @throws StopActionException
      * @throws SecurityException
-     * @throws \TYPO3\TypoScript\Exception
-     * @throws Exception\RuntimeException
+     * @throws Exception
+     * @throws RuntimeException
      */
     protected function evaluateInternal($typoScriptPath, $behaviorIfPathNotFound, $contextObject = null)
     {
@@ -408,7 +409,7 @@ class Runtime
         } catch (SecurityException $securityException) {
             $this->finalizePathEvaluation($cacheContext, $needToPopContext);
             throw $securityException;
-        } catch (Exception\RuntimeException $runtimeException) {
+        } catch (RuntimeException $runtimeException) {
             $this->finalizePathEvaluation($cacheContext, $needToPopContext);
             throw $runtimeException;
         } catch (\Exception $exception) {
@@ -539,7 +540,7 @@ class Runtime
      *
      * @param string $typoScriptPath
      * @return array
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws Exception
      */
     protected function getConfigurationForPath($typoScriptPath)
     {
@@ -670,7 +671,7 @@ class Runtime
      * @param string $typoScriptPath Path to the configuration for this object instance
      * @param array $typoScriptConfiguration Configuration at the given path
      * @return AbstractTypoScriptObject
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws Exception
      */
     protected function instantiateTypoScriptObject($typoScriptPath, $typoScriptConfiguration)
     {
@@ -771,7 +772,7 @@ class Runtime
      * @param string $expression The Eel expression to evaluate
      * @param \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject $contextObject An optional object for the "this" value inside the context
      * @return mixed The result of the evaluated Eel expression
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws Exception
      */
     protected function evaluateEelExpression($expression, AbstractTypoScriptObject $contextObject = null)
     {

@@ -1,3 +1,4 @@
+{namespace neos=TYPO3\Neos\ViewHelpers}
 <f:if condition="{referenceNodes}">
 	<f:then>
 		<div{attributes -> f:format.raw()}>
@@ -5,12 +6,10 @@
 		</div>
 	</f:then>
 	<f:else>
-		<f:if condition="{node.context.workspace.name} != 'live'">
-			<f:security.ifAccess privilegeTarget="TYPO3.Neos:Backend.GeneralAccess">
-				<div{attributes -> f:format.raw()}>
-					<p>No references selected</p>
-				</div>
-			</f:security.ifAccess>
+		<f:if condition="{neos:rendering.inEditMode()}">
+			<div{attributes -> f:format.raw()}>
+				<p>{f:translate(id: 'content.noReferencesSelected', package: 'TYPO3.Neos.NodeTypes', source: 'NodeTypes/ContentReferences')}</p>
+			</div>
 		</f:if>
 	</f:else>
 </f:if>

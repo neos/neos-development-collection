@@ -12,8 +12,12 @@ namespace TYPO3\Media\ViewHelpers\Uri;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Resource\ResourceManager;
+use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
+use TYPO3\Media\Domain\Service\AssetService;
+use TYPO3\Media\Domain\Service\ThumbnailService;
 
 /**
  * Renders the src path of a thumbnail image of a given TYPO3.Media asset instance
@@ -39,23 +43,23 @@ use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
  *
  * @see \TYPO3\Media\ViewHelpers\ThumbnailViewHelper
  */
-class ThumbnailViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper
+class ThumbnailViewHelper extends AbstractViewHelper
 {
     /**
-     * @var \TYPO3\Flow\Resource\ResourceManager
+     * @var ResourceManager
      * @Flow\Inject
      */
     protected $resourceManager;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Media\Domain\Service\ThumbnailService
+     * @var ThumbnailService
      */
     protected $thumbnailService;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Media\Domain\Service\AssetService
+     * @var AssetService
      */
     protected $assetService;
 

@@ -10,15 +10,21 @@ namespace TYPO3\Neos\Tests\Unit\ViewHelpers;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Mvc\Controller\ControllerContext;
+use TYPO3\Flow\Resource\Publishing\ResourcePublisher;
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Fluid\Core\Rendering\RenderingContext;
+use TYPO3\Neos\ViewHelpers\IncludeJavaScriptViewHelper;
 
 /**
  * Testcase for the IncludeJavaScript view helper
  * @deprecated Same as the ViewHelper this test is for
  */
-class IncludeJavaScriptViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
+class IncludeJavaScriptViewHelperTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\Neos\ViewHelpers\IncludeJavaScriptViewHelper
+     * @var IncludeJavaScriptViewHelper
      */
     protected $viewHelper;
 
@@ -27,14 +33,14 @@ class IncludeJavaScriptViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function setUp()
     {
-        $this->request = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+        $this->request = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $this->request->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue('MyPackage'));
-        $this->controllerContext = $this->getMock('TYPO3\Flow\Mvc\Controller\ControllerContext', array(), array(), '', false);
+        $this->controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
         $this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($this->request));
-        $this->resourcePublisher = $this->getMock('TYPO3\Flow\Resource\Publishing\ResourcePublisher', array(), array(), '', false);
+        $this->resourcePublisher = $this->getMockBuilder(ResourcePublisher::class)->disableOriginalConstructor()->getMock();
         $this->resourcePublisher->expects($this->any())->method('getStaticResourcesWebBaseUri')->will($this->returnValue('StaticResourceUri/'));
-        $this->viewHelper = $this->getAccessibleMock('TYPO3\Neos\ViewHelpers\IncludeJavaScriptViewHelper', array('iterateDirectoryRecursively'));
-        $renderingContext = new \TYPO3\Fluid\Core\Rendering\RenderingContext();
+        $this->viewHelper = $this->getAccessibleMock(IncludeJavaScriptViewHelper::class, array('iterateDirectoryRecursively'));
+        $renderingContext = new RenderingContext();
         $renderingContext->setControllerContext($this->controllerContext);
         $this->viewHelper->setRenderingContext($renderingContext);
         $this->viewHelper->_set('resourcePublisher', $this->resourcePublisher);
@@ -45,9 +51,12 @@ class IncludeJavaScriptViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function renderWithoutSubpackageMatchesIncludedFile()
     {
-        $includedFile = $this->getMock('File', array('getPathname'));
+        if (PHP_VERSION_ID < 50609) {
+            $this->markTestSkipped('Test fails with PHP 5.5 and/or PhpUnit 4.8 while building mocks.');
+        }
+        $includedFile = $this->getMockBuilder(\SplFileInfo::class)->disableOriginalConstructor()->setMethods(array('getPathname'))->getMock();
         $includedFile->expects($this->any())->method('getPathname')->will($this->returnValue('resource://MyPackage/Public/JavaScript/Foo.js'));
-        $otherFile = $this->getMock('File', array('getPathname'));
+        $otherFile = $this->getMockBuilder(\SplFileInfo::class)->disableOriginalConstructor()->setMethods(array('getPathname'))->getMock();
         $otherFile->expects($this->any())->method('getPathname')->will($this->returnValue('resource://MyPackage/Public/JavaScript/Bar.js'));
         $files = array($includedFile, $otherFile);
 
@@ -61,9 +70,12 @@ class IncludeJavaScriptViewHelperTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function renderWithSubpackageIgnoresExcludedFile()
     {
-        $includedFile = $this->getMock('File', array('getPathname'));
+        if (PHP_VERSION_ID < 50609) {
+            $this->markTestSkipped('Test fails with PHP 5.5 and/or PhpUnit 4.8 while building mocks.');
+        }
+        $includedFile = $this->getMockBuilder(\SplFileInfo::class)->disableOriginalConstructor()->setMethods(array('getPathname'))->getMock();
         $includedFile->expects($this->any())->method('getPathname')->will($this->returnValue('resource://MyPackage/Public/MySubpackage/JavaScript/Foo.js'));
-        $excludedFile = $this->getMock('File', array('getPathname'));
+        $excludedFile = $this->getMockBuilder(\SplFileInfo::class)->disableOriginalConstructor()->setMethods(array('getPathname'))->getMock();
         $excludedFile->expects($this->any())->method('getPathname')->will($this->returnValue('resource://MyPackage/Public/MySubpackage/JavaScript/Bar.js'));
         $files = array($includedFile, $excludedFile);
 

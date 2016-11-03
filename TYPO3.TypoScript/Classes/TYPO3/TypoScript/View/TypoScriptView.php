@@ -12,9 +12,12 @@ namespace TYPO3\TypoScript\View;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\View\AbstractView;
+use TYPO3\Flow\Mvc\View\ViewInterface;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Utility\Files;
+use TYPO3\TypoScript\Core\Parser;
 use TYPO3\TypoScript\Core\Runtime;
 use TYPO3\TypoScript\Exception\RuntimeException;
 
@@ -45,13 +48,13 @@ class TypoScriptView extends AbstractView
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TypoScript\Core\Parser
+     * @var Parser
      */
     protected $typoScriptParser;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Mvc\View\ViewInterface
+     * @var ViewInterface
      */
     protected $fallbackView;
 
@@ -232,7 +235,7 @@ class TypoScriptView extends AbstractView
         if ($packageKey !== null) {
             return $packageKey;
         } else {
-            /** @var $request \TYPO3\Flow\Mvc\ActionRequest */
+            /** @var $request ActionRequest */
             $request = $this->controllerContext->getRequest();
             return $request->getControllerPackageKey();
         }
@@ -250,7 +253,7 @@ class TypoScriptView extends AbstractView
             if ($typoScriptPath !== null) {
                 $this->typoScriptPath = $typoScriptPath;
             } else {
-                /** @var $request \TYPO3\Flow\Mvc\ActionRequest */
+                /** @var $request ActionRequest */
                 $request = $this->controllerContext->getRequest();
                 $typoScriptPathForCurrentRequest = $request->getControllerObjectName();
                 $typoScriptPathForCurrentRequest = str_replace('\\Controller\\', '\\', $typoScriptPathForCurrentRequest);
