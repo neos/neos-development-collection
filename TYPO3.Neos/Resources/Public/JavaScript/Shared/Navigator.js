@@ -8,7 +8,7 @@ define(
         return navigator.appVersion.indexOf('Mac') !== -1;
       },
       modKey: function() {
-        return this.isMac() ? 'cmd' : 'ctrl';
+        return this.isMac() ? '⌘' : 'ctrl';
       }
     });
   }
