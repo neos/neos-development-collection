@@ -13,6 +13,7 @@ namespace TYPO3\Neos\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 
 /**
  * Generate a schema in JSON format for the VIE dataTypes validation, necessary
@@ -25,7 +26,7 @@ use TYPO3\TYPO3CR\Domain\Model\NodeType;
 class VieSchemaBuilder
 {
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
+     * @var NodeTypeManager
      * @Flow\Inject
      */
     protected $nodeTypeManager;
@@ -106,7 +107,7 @@ class VieSchemaBuilder
 
     /**
      * @param string $nodeTypeName
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeType $nodeType
+     * @param NodeType $nodeType
      * @return void
      */
     protected function readNodeTypeConfiguration($nodeTypeName, NodeType $nodeType)

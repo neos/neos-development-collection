@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Migration\Filters;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 
 /**
  * Filter instances are used to filter nodes to be worked on during a migration.
@@ -24,8 +25,8 @@ interface FilterInterface
     /**
      * If the given node satisfies the filter constraints, TRUE is returned.
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @param NodeData $node
      * @return boolean
      */
-    public function matches(\TYPO3\TYPO3CR\Domain\Model\NodeData $node);
+    public function matches(NodeData $node);
 }

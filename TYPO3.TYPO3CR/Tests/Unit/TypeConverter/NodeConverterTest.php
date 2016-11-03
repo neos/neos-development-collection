@@ -15,10 +15,14 @@ use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\TypeConverter\NodeConverter;
 
@@ -71,16 +75,16 @@ class NodeConverterTest extends UnitTestCase
     {
         $this->nodeConverter = new NodeConverter();
 
-        $this->mockContextFactory = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface')->disableOriginalConstructor()->getMock();
+        $this->mockContextFactory = $this->getMockBuilder(ContextFactoryInterface::class)->disableOriginalConstructor()->getMock();
         $this->inject($this->nodeConverter, 'contextFactory', $this->mockContextFactory);
 
-        $this->mockPropertyMapper = $this->createMock('TYPO3\Flow\Property\PropertyMapper');
+        $this->mockPropertyMapper = $this->createMock(PropertyMapper::class);
         $this->inject($this->nodeConverter, 'propertyMapper', $this->mockPropertyMapper);
 
-        $this->mockObjectManager = $this->createMock('TYPO3\Flow\Object\ObjectManagerInterface');
+        $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $this->inject($this->nodeConverter, 'objectManager', $this->mockObjectManager);
 
-        $this->mockConverterConfiguration = $this->getMockBuilder('TYPO3\Flow\Property\PropertyMappingConfigurationInterface')->disableOriginalConstructor()->getMock();
+        $this->mockConverterConfiguration = $this->getMockBuilder(PropertyMappingConfigurationInterface::class)->disableOriginalConstructor()->getMock();
     }
 
     /**
@@ -93,7 +97,7 @@ class NodeConverterTest extends UnitTestCase
 
         $mockNode = $this->setUpNodeWithNodeType($nodePath);
 
-        $this->mockConverterConfiguration->expects($this->any())->method('getConfigurationValue')->with('TYPO3\TYPO3CR\TypeConverter\NodeConverter', NodeConverter::REMOVED_CONTENT_SHOWN)->will($this->returnValue(true));
+        $this->mockConverterConfiguration->expects($this->any())->method('getConfigurationValue')->with(NodeConverter::class, NodeConverter::REMOVED_CONTENT_SHOWN)->will($this->returnValue(true));
 
         $result = $this->nodeConverter->convertFrom($contextPath, null, array(), $this->mockConverterConfiguration);
         $this->assertSame($mockNode, $result);
@@ -185,7 +189,7 @@ class NodeConverterTest extends UnitTestCase
 
         $mockNode = $this->setUpNodeWithNodeType($nodePath, $nodeTypeProperties);
 
-        $this->mockObjectManager->expects($this->any())->method('isRegistered')->with('TYPO3\Media\Domain\Model\Asset')->will($this->returnValue(true));
+        $this->mockObjectManager->expects($this->any())->method('isRegistered')->with(Asset::class)->will($this->returnValue(true));
 
         $this->mockPropertyMapper->expects($this->once())->method('convert')->with($decodedPropertyValue, $nodeTypeProperties['assets']['type'])->will($this->returnValue($convertedPropertyValue));
         $mockNode->expects($this->once())->method('setProperty')->with('assets', $convertedPropertyValue);
@@ -225,14 +229,14 @@ class NodeConverterTest extends UnitTestCase
      */
     protected function setUpNodeWithNodeType($nodePath, $nodeTypeProperties = array())
     {
-        $mockLiveWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
+        $mockLiveWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
 
-        $mockNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-        $mockNodeType = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeType')->disableOriginalConstructor()->getMock();
+        $mockNode = $this->createMock(NodeInterface::class);
+        $mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
         $mockNodeType->expects($this->any())->method('getProperties')->will($this->returnValue($nodeTypeProperties));
         $mockNode->expects($this->any())->method('getNodeType')->will($this->returnValue($mockNodeType));
 
-        $mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
+        $mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
         $mockContext->expects($this->any())->method('getWorkspace')->will($this->returnValue($mockLiveWorkspace));
         $mockContext->expects($this->any())->method('getNode')->with($nodePath)->will($this->returnValue($mockNode));
 

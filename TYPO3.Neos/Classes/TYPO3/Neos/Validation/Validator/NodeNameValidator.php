@@ -12,16 +12,18 @@ namespace TYPO3\Neos\Validation\Validator;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Validation\Validator\RegularExpressionValidator;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * Validator for node names
  */
-class NodeNameValidator extends \TYPO3\Flow\Validation\Validator\RegularExpressionValidator
+class NodeNameValidator extends RegularExpressionValidator
 {
     /**
      * @var array
      */
     protected $supportedOptions = array(
-        'regularExpression' => array(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::MATCH_PATTERN_NAME, 'The regular expression to use for validation, used as given', 'string')
+        'regularExpression' => array(NodeInterface::MATCH_PATTERN_NAME, 'The regular expression to use for validation, used as given', 'string')
     );
 }

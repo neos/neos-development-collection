@@ -12,6 +12,7 @@ namespace TYPO3\Media\TypeConverter;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Media\Domain\Model\ImageInterface;
 
 /**
@@ -38,10 +39,10 @@ class ImageInterfaceJsonSerializer extends ImageInterfaceArrayPresenter
      * @param ImageInterface $source
      * @param string $targetType must be 'string'
      * @param array $convertedChildProperties
-     * @param \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface $configuration
      * @return string The converted ImageInterface
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\Flow\Property\PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
     {
         $data = parent::convertFrom($source, 'array', $convertedChildProperties, $configuration);
         return json_encode($data);

@@ -11,9 +11,13 @@ namespace TYPO3\Neos\Tests\Unit\TypoScript;
  * source code.
  */
 
+use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Mvc\Routing\UriBuilder;
 use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Neos\Domain\Exception;
 use TYPO3\Neos\Service\LinkingService;
 use TYPO3\Neos\TypoScript\ConvertUrisImplementation;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
@@ -74,32 +78,32 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
     public function setUp()
     {
-        $this->convertUrisImplementation = $this->getAccessibleMock('TYPO3\Neos\TypoScript\ConvertUrisImplementation', array('tsValue'), array(), '', false);
+        $this->convertUrisImplementation = $this->getAccessibleMock(ConvertUrisImplementation::class, array('tsValue'), array(), '', false);
 
-        $this->mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
+        $this->mockWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
+        $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
         $this->mockContext->expects($this->any())->method('getWorkspace')->will($this->returnValue($this->mockWorkspace));
 
-        $this->mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
+        $this->mockNode = $this->getMockBuilder(NodeInterface::class)->getMock();
         $this->mockNode->expects($this->any())->method('getContext')->will($this->returnValue($this->mockContext));
 
-        $this->mockHttpUri = $this->getMockBuilder('TYPO3\Flow\Http\Uri')->disableOriginalConstructor()->getMock();
+        $this->mockHttpUri = $this->getMockBuilder(Uri::class)->disableOriginalConstructor()->getMock();
         $this->mockHttpUri->expects($this->any())->method('getHost')->will($this->returnValue('localhost'));
 
-        $this->mockHttpRequest = $this->getMockBuilder('TYPO3\Flow\Http\Request')->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
         $this->mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($this->mockHttpUri));
 
-        $this->mockActionRequest = $this->getMockBuilder('TYPO3\Flow\Mvc\ActionRequest')->disableOriginalConstructor()->getMock();
+        $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $this->mockActionRequest->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
 
-        $this->mockControllerContext = $this->getMockBuilder('TYPO3\Flow\Mvc\Controller\ControllerContext')->disableOriginalConstructor()->getMock();
+        $this->mockControllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
         $this->mockControllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($this->mockActionRequest));
 
-        $this->mockLinkingService = $this->createMock('TYPO3\Neos\Service\LinkingService');
+        $this->mockLinkingService = $this->createMock(LinkingService::class);
         $this->convertUrisImplementation->_set('linkingService', $this->mockLinkingService);
 
-        $this->mockTsRuntime = $this->getMockBuilder('TYPO3\TypoScript\Core\Runtime')->disableOriginalConstructor()->getMock();
+        $this->mockTsRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
         $this->mockTsRuntime->expects($this->any())->method('getControllerContext')->will($this->returnValue($this->mockControllerContext));
         $this->convertUrisImplementation->_set('tsRuntime', $this->mockTsRuntime);
     }

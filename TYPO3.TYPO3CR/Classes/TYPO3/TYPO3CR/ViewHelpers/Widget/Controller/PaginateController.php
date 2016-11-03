@@ -13,6 +13,7 @@ namespace TYPO3\TYPO3CR\ViewHelpers\Widget\Controller;
 
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Fluid\Core\Widget\AbstractWidgetController;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Exception\PageNotFoundException;
 
 /**
@@ -21,7 +22,7 @@ use TYPO3\TYPO3CR\Exception\PageNotFoundException;
 class PaginateController extends AbstractWidgetController
 {
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+     * @var NodeInterface
      */
     protected $parentNode;
 
@@ -103,7 +104,7 @@ class PaginateController extends AbstractWidgetController
     /**
      * @param integer $currentPage
      * @return void
-     * @throws \TYPO3\TYPO3CR\Exception\PageNotFoundException
+     * @throws PageNotFoundException
      */
     public function indexAction($currentPage = 1)
     {

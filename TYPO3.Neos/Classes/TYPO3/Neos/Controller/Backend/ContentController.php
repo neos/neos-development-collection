@@ -13,21 +13,28 @@ namespace TYPO3\Neos\Controller\Backend;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\I18n\EelHelper\TranslationHelper;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Property\PropertyMappingConfiguration;
 use TYPO3\Flow\Property\TypeConverter\ObjectConverter;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
+use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Model\ImageVariant;
+use TYPO3\Media\Domain\Repository\AssetRepository;
+use TYPO3\Media\Domain\Repository\ImageRepository;
 use TYPO3\Media\Domain\Service\ThumbnailService;
 use TYPO3\Media\TypeConverter\AssetInterfaceConverter;
 use TYPO3\Media\Domain\Repository\AssetCollectionRepository;
+use TYPO3\Media\TypeConverter\ImageInterfaceArrayPresenter;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;
+use TYPO3\Neos\Domain\Model\PluginViewDefinition;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Controller\CreateContentContextTrait;
+use TYPO3\Neos\Service\PluginService;
 use TYPO3\Neos\TypeConverter\EntityToIdentityConverter;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\Eel\FlowQuery\FlowQuery;
@@ -44,13 +51,13 @@ class ContentController extends ActionController
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Media\Domain\Repository\AssetRepository
+     * @var AssetRepository
      */
     protected $assetRepository;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Media\Domain\Repository\ImageRepository
+     * @var ImageRepository
      */
     protected $imageRepository;
 
@@ -68,27 +75,27 @@ class ContentController extends ActionController
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Resource\ResourceManager
+     * @var ResourceManager
      */
     protected $resourceManager;
 
     /**
      * The pluginService
      *
-     * @var \TYPO3\Neos\Service\PluginService
+     * @var PluginService
      * @Flow\Inject
      */
     protected $pluginService;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Media\TypeConverter\ImageInterfaceArrayPresenter
+     * @var ImageInterfaceArrayPresenter
      */
     protected $imageInterfaceArrayPresenter;
 
@@ -331,7 +338,7 @@ class ContentController extends ActionController
 
         $views = array();
         if ($node !== null) {
-            /** @var $pluginViewDefinition \TYPO3\Neos\Domain\Model\PluginViewDefinition */
+            /** @var $pluginViewDefinition PluginViewDefinition */
             $pluginViewDefinitions = $this->pluginService->getPluginViewDefinitionsByPluginNodeType($node->getNodeType());
             foreach ($pluginViewDefinitions as $pluginViewDefinition) {
                 $label = $pluginViewDefinition->getLabel();

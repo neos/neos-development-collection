@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Migration\Transformations;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 
 /**
  * Rename a given property.
@@ -58,10 +59,10 @@ class RenameProperty extends AbstractTransformation
      * Returns TRUE if the given node has a property with the name to work on
      * and does not yet have a property with the name to rename that property to.
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @param NodeData $node
      * @return boolean
      */
-    public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    public function isTransformable(NodeData $node)
     {
         return ($node->hasProperty($this->oldPropertyName) && !$node->hasProperty($this->newPropertyName));
     }
@@ -69,10 +70,10 @@ class RenameProperty extends AbstractTransformation
     /**
      * Renames the configured property to the new name.
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @param NodeData $node
      * @return void
      */
-    public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    public function execute(NodeData $node)
     {
         $node->setProperty($this->newPropertyName, $node->getProperty($this->oldPropertyName));
         $node->removeProperty($this->oldPropertyName);

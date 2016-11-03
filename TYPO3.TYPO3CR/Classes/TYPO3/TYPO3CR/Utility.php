@@ -11,6 +11,7 @@ namespace TYPO3\TYPO3CR;
  * source code.
  */
 
+use Behat\Transliterator\Transliterator;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
@@ -35,10 +36,10 @@ class Utility
         }
 
         // Transliterate (transform 北京 to 'Bei Jing')
-        $name = \Behat\Transliterator\Transliterator::transliterate($name);
+        $name = Transliterator::transliterate($name);
 
         // Urlization (replace spaces with dash, special special characters)
-        $name = \Behat\Transliterator\Transliterator::urlize($name);
+        $name = Transliterator::urlize($name);
 
         // Ensure only allowed characters are left
         $name = preg_replace('/[^a-z0-9\-]/', '', $name);

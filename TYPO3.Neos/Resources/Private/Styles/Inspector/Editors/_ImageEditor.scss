@@ -14,6 +14,16 @@ $maxImageHeight: $maxImageWidth / 4 * 3;
 			height: $wideMargin - 2;
 			line-height: $wideMargin - 4;
 		}
+
+		&-icon {
+			width: $wideMargin;
+
+			&:focus {
+				height: $wideMargin;
+				line-height: $wideMargin;
+				outline: 0;
+			}
+		}
 	}
 
 	.typo3-fileupload-dropzone {

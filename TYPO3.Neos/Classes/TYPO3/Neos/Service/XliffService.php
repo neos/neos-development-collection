@@ -13,6 +13,8 @@ namespace TYPO3\Neos\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
+use TYPO3\Flow\Error\Result;
+use TYPO3\Flow\I18n\Exception;
 use TYPO3\Flow\I18n\Xliff\XliffParser;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Utility\Arrays;
@@ -76,8 +78,8 @@ class XliffService
      * The json will be cached.
      *
      * @param Locale $locale The locale
-     * @return \TYPO3\Flow\Error\Result
-     * @throws \TYPO3\Flow\I18n\Exception
+     * @return Result
+     * @throws Exception
      */
     public function getCachedJson(Locale $locale)
     {

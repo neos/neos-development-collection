@@ -11,13 +11,14 @@ namespace TYPO3\Neos\Tests\Unit\Validation\Validator;
  * source code.
  */
 
+use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Neos\Validation\Validator\HostnameValidator;
 
 /**
  * Testcase for the HostNameValidator
  *
  */
-class HostNameValidatorTest extends \TYPO3\Flow\Tests\UnitTestCase
+class HostNameValidatorTest extends UnitTestCase
 {
     public function hostNameDataProvider()
     {

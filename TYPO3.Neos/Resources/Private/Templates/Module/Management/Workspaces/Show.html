@@ -28,7 +28,7 @@
 						<tbody>
 						<f:for each="{siteChanges}" as="site">
 							<f:for each="{site.documents}" key="documentPath" as="document">
-								<tr>
+								<tr class="neos-document" data-nodepath="{document.documentNode.path}" data-ismoved="{f:if(condition: document.isMoved, then: 'true', else: 'false')}" data-isnew="{f:if(condition: document.isNew, then: 'true', else: 'false')}">
 									<td colspan="2" class="neos-priority1 path-caption">
 										<div class="neos-row-fluid">
 											<div class="neos-span2">
@@ -50,7 +50,7 @@
 									</td>
 								</tr>
 								<f:for each="{document.changes}" key="relativePath" as="change">
-									<tr class="neos-change fold-{document.documentNode.identifier}">
+									<tr class="neos-change fold-{document.documentNode.identifier}" data-nodepath="{change.node.path}" data-ismoved="{f:if(condition: change.isMoved, then: 'true', else: 'false')}" data-isnew="{f:if(condition: change.isNew, then: 'true', else: 'false')}">
 										<td class="check neos-priority1">
 											<label for="{change.node.identifier}" class="neos-checkbox"><f:form.checkbox name="nodes[]" value="{change.node.contextPath}" id="{change.node.identifier}" /><span></span></label>
 										</td>
@@ -111,6 +111,21 @@
 						$('tbody input[type="checkbox"]').prop('checked', value);
 					});
 					$('tbody input[type="checkbox"]').change(function() {
+						if ($(this).closest('tr').data('ismoved') === true || $(this).closest('tr').data('isnew') === true) {
+							var currentNodePath = $(this).closest('tr').attr('data-nodepath') + '/';
+							var checked = $(this).prop('checked');
+
+							function nodePathStartsWith(nodePath) {
+								return function(index, element) {
+									return nodePath.indexOf($(element).data('nodepath')) === 0;
+								}
+							}
+							var movedOrNewParentDocuments = $(this).closest('table').find('.neos-document[data-ismoved="true"], .neos-document[data-isnew="true"]').filter(nodePathStartsWith(currentNodePath));
+							$(movedOrNewParentDocuments).each(function(index, movedParentDocument) {
+								$('tr[data-nodepath^="' + $(movedParentDocument).data('nodepath') + '"] td.check input').prop('checked', checked);
+							});
+						}
+
 						if ($('tbody input[type="checkbox"]:checked').length > 0) {
 							$('.batch-action').removeClass('neos-hidden').removeClass('neos-disabled').removeAttr('disabled')
 						} else {

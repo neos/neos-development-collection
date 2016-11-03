@@ -14,8 +14,16 @@ namespace TYPO3\TYPO3CR\Tests\Functional\TypeConverter;
 use TYPO3\Flow\Error\Error;
 use TYPO3\Flow\Property\PropertyMappingConfiguration;
 use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use TYPO3\TYPO3CR\Domain\Service\Context;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactory;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\TypeConverter\NodeConverter;
 
 /**
@@ -44,17 +52,17 @@ class NodeConverterTest extends FunctionalTestCase
     protected static $testablePersistenceEnabled = true;
 
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+     * @var NodeDataRepository
      */
     protected $nodeDataRepository;
 
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Model\Node
+     * @var Node
      */
     protected $rootNode;
 
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+     * @var ContextFactoryInterface
      */
     protected $contextFactory;
 
@@ -64,7 +72,7 @@ class NodeConverterTest extends FunctionalTestCase
     protected $currentTestWorkspaceName;
 
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
+     * @var WorkspaceRepository
      */
     protected $workspaceRepository;
 
@@ -79,18 +87,18 @@ class NodeConverterTest extends FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $contentDimensionRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository');
+        $contentDimensionRepository = $this->objectManager->get(ContentDimensionRepository::class);
         $contentDimensionRepository->setDimensionsConfiguration(array(
             'language' => array(
                 'default' => 'mul_ZZ'
             )
         ));
         $this->currentTestWorkspaceName = uniqid('user-');
-        $this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactory');
+        $this->contextFactory = $this->objectManager->get(ContextFactory::class);
 
         if ($this->liveWorkspace === null) {
             $this->liveWorkspace = new Workspace('live');
-            $this->workspaceRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
+            $this->workspaceRepository = $this->objectManager->get(WorkspaceRepository::class);
             $this->workspaceRepository->add($this->liveWorkspace);
         }
 
@@ -105,7 +113,7 @@ class NodeConverterTest extends FunctionalTestCase
 
     public function tearDown()
     {
-        $contentDimensionRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository');
+        $contentDimensionRepository = $this->objectManager->get(ContentDimensionRepository::class);
         $contentDimensionRepository->setDimensionsConfiguration(array());
         parent::tearDown();
     }
@@ -126,7 +134,7 @@ class NodeConverterTest extends FunctionalTestCase
      */
     protected function setupNodeWithShadowNodeInPersonalWorkspace()
     {
-        $nodeTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+        $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
         $headlineNode = $this->rootNodeInLiveWorkspace->createNode('headline', $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Headline'));
         $headlineNode->setProperty('title', 'Hello World');
         $headlineNodeInPersonalWorkspace = $this->rootNodeInPersonalWorkspace->getNode('headline');
@@ -247,7 +255,7 @@ class NodeConverterTest extends FunctionalTestCase
      */
     public function flushNodeChanges()
     {
-        $nodeDataRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
+        $nodeDataRepository = $this->objectManager->get(NodeDataRepository::class);
         $nodeDataRepository->flushNodeRegistry();
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();

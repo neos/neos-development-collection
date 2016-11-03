@@ -10,11 +10,12 @@ namespace TYPO3\TypoScript\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\TypoScript\Exception;
 
 /**
  * This exception wraps an inner exception during rendering.
  */
-class RuntimeException extends \TYPO3\TypoScript\Exception
+class RuntimeException extends Exception
 {
     /**
      * @var string

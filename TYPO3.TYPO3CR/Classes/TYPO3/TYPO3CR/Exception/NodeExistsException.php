@@ -10,11 +10,12 @@ namespace TYPO3\TYPO3CR\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\TYPO3CR\Exception\NodeException;
 
 /**
  * A node exists exception
  *
  */
-class NodeExistsException extends \TYPO3\TYPO3CR\Exception\NodeException
+class NodeExistsException extends NodeException
 {
 }

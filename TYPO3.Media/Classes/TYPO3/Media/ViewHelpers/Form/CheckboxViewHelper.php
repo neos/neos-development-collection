@@ -10,6 +10,7 @@ namespace TYPO3\Media\ViewHelpers\Form;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Fluid\ViewHelpers\Form\AbstractFormFieldViewHelper;
 
 /**
  * View Helper which creates a simple checkbox (<input type="checkbox">).
@@ -41,7 +42,7 @@ namespace TYPO3\Media\ViewHelpers\Form;
  *
  * @api
  */
-class CheckboxViewHelper extends \TYPO3\Fluid\ViewHelpers\Form\AbstractFormFieldViewHelper
+class CheckboxViewHelper extends AbstractFormFieldViewHelper
 {
     /**
      * @var string
@@ -93,7 +94,7 @@ class CheckboxViewHelper extends \TYPO3\Fluid\ViewHelpers\Form\AbstractFormField
             }
             if (is_array($propertyValue)) {
                 if ($checked === null) {
-                    $checked = in_array($this->arguments['value'], $propertyValue);
+                    $checked = in_array($this->arguments['value'], $propertyValue, true);
                 }
                 $nameAttribute .= '[]';
             } elseif ($multiple === true) {

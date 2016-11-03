@@ -18,6 +18,7 @@ use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 use TYPO3\TYPO3CR\Exception\NodeExistsException;
+use TYPO3\TYPO3CR\Utility;
 
 /**
  * Provide method to manage node
@@ -218,7 +219,7 @@ class NodeService implements NodeServiceInterface
     protected function generatePossibleNodeName($idealNodeName = null)
     {
         if ($idealNodeName !== null) {
-            $possibleNodeName = \TYPO3\TYPO3CR\Utility::renderValidNodeName($idealNodeName);
+            $possibleNodeName = Utility::renderValidNodeName($idealNodeName);
         } else {
             $possibleNodeName = NodePaths::generateRandomNodeName();
         }

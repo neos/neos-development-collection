@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Migration\Transformations;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 
 /**
  * Remove the property
@@ -38,10 +39,10 @@ class RemoveProperty extends AbstractTransformation
      * If the given node has property this transformation should work on, this
      * returns TRUE.
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @param NodeData $node
      * @return boolean
      */
-    public function isTransformable(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    public function isTransformable(NodeData $node)
     {
         return $node->hasProperty($this->propertyName);
     }
@@ -49,10 +50,10 @@ class RemoveProperty extends AbstractTransformation
     /**
      * Remove the property from the given node.
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @param NodeData $node
      * @return void
      */
-    public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    public function execute(NodeData $node)
     {
         $node->removeProperty($this->propertyName);
     }

@@ -12,7 +12,12 @@ namespace TYPO3\Neos\Domain\Repository;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Http\HttpRequestHandlerInterface;
 use TYPO3\Flow\Persistence\QueryInterface;
+use TYPO3\Flow\Persistence\Repository;
+use TYPO3\Neos\Domain\Model\Domain;
+use TYPO3\Neos\Domain\Service\DomainMatchingStrategy;
 
 /**
  * The Site Repository
@@ -20,17 +25,17 @@ use TYPO3\Flow\Persistence\QueryInterface;
  * @Flow\Scope("singleton")
  * @api
  */
-class DomainRepository extends \TYPO3\Flow\Persistence\Repository
+class DomainRepository extends Repository
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Domain\Service\DomainMatchingStrategy
+     * @var DomainMatchingStrategy
      */
     protected $domainMatchingStrategy;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Core\Bootstrap
+     * @var Bootstrap
      */
     protected $bootstrap;
 
@@ -63,7 +68,7 @@ class DomainRepository extends \TYPO3\Flow\Persistence\Repository
      *
      * @param string $host Host the domain should match with (eg. "localhost" or "www.neos.io")
      * @param boolean $onlyActive Only include active domains
-     * @return \TYPO3\Neos\Domain\Model\Domain
+     * @return Domain
      * @api
      */
     public function findOneByHost($host, $onlyActive = false)
@@ -73,13 +78,13 @@ class DomainRepository extends \TYPO3\Flow\Persistence\Repository
     }
 
     /**
-     * @return \TYPO3\Neos\Domain\Model\Domain
+     * @return Domain
      */
     public function findOneByActiveRequest()
     {
         $matchingDomain = null;
         $activeRequestHandler = $this->bootstrap->getActiveRequestHandler();
-        if ($activeRequestHandler instanceof \TYPO3\Flow\Http\HttpRequestHandlerInterface) {
+        if ($activeRequestHandler instanceof HttpRequestHandlerInterface) {
             $matchingDomain = $this->findOneByHost($activeRequestHandler->getHttpRequest()->getUri()->getHost(), true);
         }
 

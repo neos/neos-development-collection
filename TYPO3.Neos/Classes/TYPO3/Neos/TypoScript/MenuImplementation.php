@@ -14,6 +14,7 @@ namespace TYPO3\Neos\TypoScript;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\Exception as TypoScriptException;
+use TYPO3\TypoScript\Exception;
 
 /**
  * A TypoScript Menu object
@@ -214,7 +215,7 @@ class MenuImplementation extends AbstractMenuImplementation
      * If entryLevel is configured this will be taken into account as well.
      *
      * @return NodeInterface
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws Exception
      */
     protected function findMenuStartingPoint()
     {
@@ -233,7 +234,7 @@ class MenuImplementation extends AbstractMenuImplementation
     /**
      * Checks if the given menuItem is on the last level for this menu, either defined by maximumLevels or lastLevels.
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $menuItemNode
+     * @param NodeInterface $menuItemNode
      * @return boolean
      */
     protected function isOnLastLevelOfMenu(NodeInterface $menuItemNode)
