@@ -632,6 +632,14 @@
 				<source>Edit User</source>
 			</trans-unit>
 
+			<!-- Shortcuts -->
+			<trans-unit id="shortcuts" xml:space="preserve">
+				<source>Keyboard Shortcuts</source>
+			</trans-unit>
+			<trans-unit id="shortcuts.open" xml:space="preserve">
+				<source></source>
+			</trans-unit>
+
 			<!-- Media -->
 			<trans-unit id="media.field.name" xml:space="preserve">
 				<source>Name</source>
