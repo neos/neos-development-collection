@@ -4,7 +4,7 @@
 	<div class="neos-inspector-file-upload" id="{{unbound view._containerId}}">
 		{{view view.SecondaryInspectorButton viewClassBinding="view._mediaBrowserView" label="Media" action="_beforeMediaBrowserIsShown" target="view"}}
 		<button id="{{unbound view._browseButtonId}}" class="neos-button neos-inspector-file-upload-files" {{bindAttr disabled="view._uploadInProgress:neos-disabled"}}>
-			{{view._fileChooserLabel}}
+			{{view._fileUploadLabel}}
 		</button>
 		{{#if view._uploadButtonShown}}
 			<button class="neos-button neos-inspector-file-upload-button" allowed-file-types="{{unbound view.allowedFileTypes}}" {{bindAttr disabled="view._uploadInProgress"}} {{action "upload" target="view"}}>

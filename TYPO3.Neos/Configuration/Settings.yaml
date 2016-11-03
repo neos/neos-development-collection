@@ -302,11 +302,11 @@ TYPO3:
 
           'TYPO3.Neos/Inspector/Editors/AssetEditor':
             editorOptions:
-              fileChooserLabel: 'TYPO3.Neos:Main:choose'
+              fileUploadLabel: 'TYPO3.Neos:Main:upload'
 
           'TYPO3.Neos/Inspector/Editors/ImageEditor':
             editorOptions:
-              fileChooserLabel: 'TYPO3.Neos:Main:choose'
+              fileUploadLabel: 'TYPO3.Neos:Main:upload'
 
           'TYPO3.Neos/Inspector/Editors/LinkEditor':
             editorOptions:
