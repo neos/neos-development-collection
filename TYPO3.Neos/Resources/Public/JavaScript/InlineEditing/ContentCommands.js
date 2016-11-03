@@ -60,7 +60,7 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 			return parentElement.length > 0 ? NodeTypeService.isOfType(parentElement.attr('typeof').substr(6), 'TYPO3.Neos:ContentCollection') : false;
 		},
 
-		_definePositon: function(node) {
+		_definePosition: function(node) {
 			var position = 'into';
 			var types = this.getAllowedChildNodeTypesForNode(node);
 			if (types.length === 0) {
@@ -80,7 +80,7 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 			var selectedNode = this.get('_selectedNode');
 
 			if (typeof position === 'undefined') {
-				position = this._definePositon(selectedNode);
+				position = this._definePosition(selectedNode);
 			}
 
 			require({context: 'neos'}, ['InlineEditing/InsertNodePanel'], function(InsertNodePanel) {
@@ -132,7 +132,7 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 		paste: function(position) {
 			var referenceNode = this.get('_selectedNode');
 			if (typeof position === 'undefined') {
-				position = this._definePositon(referenceNode);
+				position = this._definePosition(referenceNode);
 			}
 			switch (position) {
 				case 'before':
