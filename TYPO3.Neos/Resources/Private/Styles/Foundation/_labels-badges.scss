@@ -7,7 +7,7 @@
 .neos-label,
 .neos-badge {
   display: inline-block;
-  padding: 4px 6px;
+  padding: 2px 4px;
   font-size: $baseFontSize * .846;
   font-weight: bold;
   line-height: 14px; // ensure proper line-height if floated
@@ -66,4 +66,9 @@ a {
     position: relative;
     top: -1px;
   }
+}
+
+.neos-label,
+.neos-badge {
+  padding: 4px 6px;
 }
