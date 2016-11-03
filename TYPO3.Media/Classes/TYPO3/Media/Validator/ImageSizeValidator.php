@@ -12,6 +12,9 @@ namespace TYPO3\Media\Validator;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException;
+use TYPO3\Flow\Validation\Validator\AbstractValidator;
+use TYPO3\Media\Domain\Model\ImageInterface;
 
 /**
  * Validator that checks size (resolution) of a given image
@@ -19,7 +22,7 @@ use TYPO3\Flow\Annotations as Flow;
  * Example:
  * [at]Flow\Validate("$image", type="\TYPO3\Media\Validator\ImageSizeValidator", options={ "minimumWidth"=150, "maximumResolution"=60000 })
  */
-class ImageSizeValidator extends \TYPO3\Flow\Validation\Validator\AbstractValidator
+class ImageSizeValidator extends AbstractValidator
 {
     /**
      * @var array
@@ -37,7 +40,7 @@ class ImageSizeValidator extends \TYPO3\Flow\Validation\Validator\AbstractValida
      * The given $value is valid if it is an \TYPO3\Media\Domain\Model\ImageInterface of the configured resolution
      * Note: a value of NULL or empty string ('') is considered valid
      *
-     * @param \TYPO3\Media\Domain\Model\ImageInterface $image The image that should be validated
+     * @param ImageInterface $image The image that should be validated
      * @return void
      * @api
      */
@@ -45,7 +48,7 @@ class ImageSizeValidator extends \TYPO3\Flow\Validation\Validator\AbstractValida
     {
         $this->validateOptions();
 
-        if (!$image instanceof \TYPO3\Media\Domain\Model\ImageInterface) {
+        if (!$image instanceof ImageInterface) {
             $this->addError('The given value was not an Image instance.', 1327943859);
             return;
         }
@@ -72,7 +75,7 @@ class ImageSizeValidator extends \TYPO3\Flow\Validation\Validator\AbstractValida
 
     /**
      * @return void
-     * @throws \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException if the configured validation options are incorrect
+     * @throws InvalidValidationOptionsException if the configured validation options are incorrect
      */
     protected function validateOptions()
     {
@@ -82,17 +85,17 @@ class ImageSizeValidator extends \TYPO3\Flow\Validation\Validator\AbstractValida
             && !isset($this->options['maximumHeight'])
             && !isset($this->options['minimumResolution'])
             && !isset($this->options['maximumResolution'])) {
-            throw new \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException('At least one of the options "minimumWidth", "maximumWidth", "minimumHeight", "maximumHeight", "minimumResolution" or "maximumResolution" must be specified.', 1328026094);
+            throw new InvalidValidationOptionsException('At least one of the options "minimumWidth", "maximumWidth", "minimumHeight", "maximumHeight", "minimumResolution" or "maximumResolution" must be specified.', 1328026094);
         }
         if (isset($this->options['minimumWidth']) && isset($this->options['maximumWidth'])
             && $this->options['minimumWidth'] > $this->options['maximumWidth']) {
-            throw new \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException('The option "minimumWidth" must not be greater than "maximumWidth".', 1327946137);
+            throw new InvalidValidationOptionsException('The option "minimumWidth" must not be greater than "maximumWidth".', 1327946137);
         } elseif (isset($this->options['minimumHeight']) && isset($this->options['maximumHeight'])
             && $this->options['minimumHeight'] > $this->options['maximumHeight']) {
-            throw new \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException('The option "minimumHeight" must not be greater than "maximumHeight".', 1327946156);
+            throw new InvalidValidationOptionsException('The option "minimumHeight" must not be greater than "maximumHeight".', 1327946156);
         } elseif (isset($this->options['minimumResolution']) && isset($this->options['maximumResolution'])
             && $this->options['minimumResolution'] > $this->options['maximumResolution']) {
-            throw new \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException('The option "minimumResolution" must not be greater than "maximumResolution".', 1327946274);
+            throw new InvalidValidationOptionsException('The option "minimumResolution" must not be greater than "maximumResolution".', 1327946274);
         }
     }
 }

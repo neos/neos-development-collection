@@ -10,11 +10,12 @@ namespace TYPO3\TYPO3CR\Migration\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\TYPO3CR\Exception;
 
 /**
  * An exception thrown when something goes wrong during content
  * migration.
  */
-class MigrationException extends \TYPO3\TYPO3CR\Exception
+class MigrationException extends Exception
 {
 }

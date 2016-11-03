@@ -17,6 +17,9 @@ use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\TypeHandling;
 use TYPO3\Media\Domain\Model\Asset;
+use TYPO3\Media\Domain\Model\Audio;
+use TYPO3\Media\Domain\Model\Document;
+use TYPO3\Media\Domain\Model\Video;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Migration\Transformations\AbstractTransformation;
 
@@ -102,10 +105,10 @@ class AssetTransformation extends AbstractTransformation
     protected function getHandledObjectTypes()
     {
         return array(
-            'TYPO3\Media\Domain\Model\Asset',
-            'TYPO3\Media\Domain\Model\Audio',
-            'TYPO3\Media\Domain\Model\Document',
-            'TYPO3\Media\Domain\Model\Video'
+            Asset::class,
+            Audio::class,
+            Document::class,
+            Video::class
         );
     }
 }

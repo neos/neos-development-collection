@@ -102,7 +102,7 @@ class BehatTestHelper
      */
     public function initializeObject()
     {
-        self::$bootstrap = Bootstrap::$staticObjectManager->get('TYPO3\Flow\Core\Bootstrap');
+        self::$bootstrap = Bootstrap::$staticObjectManager->get(Bootstrap::class);
         $this->isolated = false;
     }
 

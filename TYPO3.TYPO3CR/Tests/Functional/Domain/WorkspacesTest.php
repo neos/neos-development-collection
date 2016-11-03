@@ -12,7 +12,14 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
  */
 
 use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
+use TYPO3\TYPO3CR\Domain\Model\Node;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactory;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 
 /**
  * Functional test case which covers all workspace-related behavior of the
@@ -27,17 +34,17 @@ class WorkspacesTest extends FunctionalTestCase
     protected static $testablePersistenceEnabled = true;
 
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+     * @var NodeDataRepository
      */
     protected $nodeDataRepository;
 
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Model\Node
+     * @var Node
      */
     protected $rootNode;
 
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+     * @var ContextFactoryInterface
      */
     protected $contextFactory;
 
@@ -47,7 +54,7 @@ class WorkspacesTest extends FunctionalTestCase
     protected $currentTestWorkspaceName;
 
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
+     * @var WorkspaceRepository
      */
     protected $workspaceRepository;
 
@@ -78,10 +85,10 @@ class WorkspacesTest extends FunctionalTestCase
 
     protected function setUpRootNodeAndRepository()
     {
-        $this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactory');
+        $this->contextFactory = $this->objectManager->get(ContextFactory::class);
         $personalContext = $this->contextFactory->create(array('workspaceName' => $this->currentTestWorkspaceName));
 
-        $this->workspaceRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
+        $this->workspaceRepository = $this->objectManager->get(WorkspaceRepository::class);
         if ($this->liveWorkspace === null) {
             $this->liveWorkspace = new Workspace('live');
             $this->workspaceRepository->add($this->liveWorkspace);
@@ -89,7 +96,7 @@ class WorkspacesTest extends FunctionalTestCase
             $this->persistenceManager->persistAll();
         }
 
-        $this->nodeDataRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
+        $this->nodeDataRepository = $this->objectManager->get(NodeDataRepository::class);
         $this->rootNode = $personalContext->getNode('/');
 
         $this->persistenceManager->persistAll();
@@ -100,8 +107,8 @@ class WorkspacesTest extends FunctionalTestCase
         if ($this->nodeDataRepository !== null) {
             $this->nodeDataRepository->flushNodeRegistry();
         }
-        /** @var \TYPO3\TYPO3CR\Domain\Factory\NodeFactory $nodeFactory */
-        $nodeFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Factory\NodeFactory');
+        /** @var NodeFactory $nodeFactory */
+        $nodeFactory = $this->objectManager->get(NodeFactory::class);
         $nodeFactory->reset();
         $this->contextFactory->reset();
 
@@ -296,7 +303,7 @@ class WorkspacesTest extends FunctionalTestCase
 
         $teaserNode = $liveRootNode->getNode('/homepage/teaser/node52697bdfee199');
 
-        $this->assertInstanceOf('TYPO3\TYPO3CR\Domain\Model\NodeInterface', $teaserNode);
+        $this->assertInstanceOf(NodeInterface::class, $teaserNode);
     }
 
     /**

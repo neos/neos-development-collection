@@ -12,6 +12,7 @@ namespace TYPO3\Media\Domain\Model;
  */
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use TYPO3\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -29,14 +30,14 @@ class AssetCollection
     protected $title;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection<\TYPO3\Media\Domain\Model\Asset>
+     * @var Collection<\TYPO3\Media\Domain\Model\Asset>
      * @ORM\ManyToMany(inversedBy="assetCollections", cascade={"persist"})
      * @Flow\Lazy
      */
     protected $assets;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection<\TYPO3\Media\Domain\Model\Tag>
+     * @var Collection<\TYPO3\Media\Domain\Model\Tag>
      * @ORM\ManyToMany(inversedBy="assetCollections")
      * @ORM\OrderBy({"label"="ASC"})
      * @Flow\Lazy
@@ -128,7 +129,7 @@ class AssetCollection
     /**
      * Return the tags assigned to this asset
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getTags()
     {
@@ -154,10 +155,10 @@ class AssetCollection
     /**
      * Set the tags assigned to this asset
      *
-     * @param \Doctrine\Common\Collections\Collection $tags
+     * @param Collection $tags
      * @return void
      */
-    public function setTags(\Doctrine\Common\Collections\Collection $tags)
+    public function setTags(Collection $tags)
     {
         $this->lastModified = new \DateTime();
         $this->tags = $tags;

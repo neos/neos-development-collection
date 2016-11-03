@@ -10,13 +10,16 @@ namespace TYPO3\Media\Tests\Functional\Domain\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Persistence\Doctrine\PersistenceManager;
 use TYPO3\Media\Domain\Model\Tag;
+use TYPO3\Media\Domain\Repository\TagRepository;
+use TYPO3\Media\Tests\Functional\AbstractTest;
 
 /**
  * Testcase for an tag repository
  *
  */
-class TagRepositoryTest extends \TYPO3\Media\Tests\Functional\AbstractTest
+class TagRepositoryTest extends AbstractTest
 {
     /**
      * @var boolean
@@ -24,7 +27,7 @@ class TagRepositoryTest extends \TYPO3\Media\Tests\Functional\AbstractTest
     protected static $testablePersistenceEnabled = true;
 
     /**
-     * @var \TYPO3\Media\Domain\Repository\TagRepository
+     * @var TagRepository
      */
     protected $tagRepository;
 
@@ -34,11 +37,11 @@ class TagRepositoryTest extends \TYPO3\Media\Tests\Functional\AbstractTest
     public function setUp()
     {
         parent::setUp();
-        if (!$this->persistenceManager instanceof \TYPO3\Flow\Persistence\Doctrine\PersistenceManager) {
+        if (!$this->persistenceManager instanceof PersistenceManager) {
             $this->markTestSkipped('Doctrine persistence is not enabled');
         }
 
-        $this->tagRepository = $this->objectManager->get('TYPO3\Media\Domain\Repository\TagRepository');
+        $this->tagRepository = $this->objectManager->get(TagRepository::class);
     }
 
     /**
@@ -52,7 +55,7 @@ class TagRepositoryTest extends \TYPO3\Media\Tests\Functional\AbstractTest
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
         $this->assertCount(1, $this->tagRepository->findAll());
-        $this->assertInstanceOf('TYPO3\Media\Domain\Model\Tag', $this->tagRepository->findAll()->getFirst());
+        $this->assertInstanceOf(Tag::class, $this->tagRepository->findAll()->getFirst());
     }
 
     /**

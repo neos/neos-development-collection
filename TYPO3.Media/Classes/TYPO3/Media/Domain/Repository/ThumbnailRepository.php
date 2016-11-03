@@ -11,6 +11,7 @@ namespace TYPO3\Media\Domain\Repository;
  * source code.
  */
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Internal\Hydration\IterableResult;
 use Doctrine\ORM\QueryBuilder;
 use TYPO3\Flow\Annotations as Flow;
@@ -29,7 +30,7 @@ class ThumbnailRepository extends Repository
 {
     /**
      * @Flow\Inject
-     * @var \Doctrine\Common\Persistence\ObjectManager
+     * @var ObjectManager
      */
     protected $entityManager;
 

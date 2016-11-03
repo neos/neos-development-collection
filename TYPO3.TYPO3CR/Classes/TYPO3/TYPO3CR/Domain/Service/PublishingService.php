@@ -12,10 +12,14 @@ namespace TYPO3\TYPO3CR\Domain\Service;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContentDimensionPresetSourceInterface;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Exception\WorkspaceException;
 use TYPO3\TYPO3CR\Service\Utility\NodePublishingDependencySolver;
 
@@ -29,25 +33,25 @@ class PublishingService implements PublishingServiceInterface
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
+     * @var WorkspaceRepository
      */
     protected $workspaceRepository;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+     * @var NodeDataRepository
      */
     protected $nodeDataRepository;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Factory\NodeFactory
+     * @var NodeFactory
      */
     protected $nodeFactory;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+     * @var ContextFactoryInterface
      */
     protected $contextFactory;
 
@@ -141,26 +145,58 @@ class PublishingService implements PublishingServiceInterface
     /**
      * Discards the given node.
      *
-     * @param NodeInterface $node
+     * If the node has been moved, this method will also discard all changes of child nodes of the given node.
+     *
+     * @param NodeInterface $node The node to discard
      * @return void
-     * @throws \TYPO3\TYPO3CR\Exception\WorkspaceException
+     * @throws WorkspaceException
      * @api
      */
     public function discardNode(NodeInterface $node)
     {
+        $this->doDiscardNode($node);
+    }
+
+    /**
+     * Method which does the actual work of discarding, includes a protection against endless recursions and
+     * multiple discarding of the same node.
+     *
+     * @param NodeInterface $node The node to discard
+     * @param array &$alreadyDiscardedNodeIdentifiers List of node identifiers which already have been discarded during one discardNode() run
+     * @return void
+     * @throws \TYPO3\TYPO3CR\Exception\WorkspaceException
+     */
+    protected function doDiscardNode(NodeInterface $node, array &$alreadyDiscardedNodeIdentifiers = [])
+    {
         if ($node->getWorkspace()->getBaseWorkspace() === null) {
             throw new WorkspaceException('Nodes in a in a workspace without a base workspace cannot be discarded.', 1395841899);
         }
+        if ($node->getPath() === '/') {
+            return;
+        }
+        if (array_search($node->getIdentifier(), $alreadyDiscardedNodeIdentifiers) !== false) {
+            return;
+        }
+
+        $alreadyDiscardedNodeIdentifiers[] = $node->getIdentifier();
 
         $possibleShadowNodeData = $this->nodeDataRepository->findOneByMovedTo($node->getNodeData());
-        if ($possibleShadowNodeData !== null) {
+        if ($possibleShadowNodeData instanceof NodeData) {
+            if ($possibleShadowNodeData->getMovedTo() !== null) {
+                $parentBasePath = $node->getPath();
+                $affectedChildNodeDataInSameWorkspace = $this->nodeDataRepository->findByParentAndNodeType($parentBasePath, null, $node->getWorkspace(), null, false, true);
+                foreach ($affectedChildNodeDataInSameWorkspace as $affectedChildNodeData) {
+                    /** @var NodeData $affectedChildNodeData */
+                    $affectedChildNode = $this->nodeFactory->createFromNodeData($affectedChildNodeData, $node->getContext());
+                    $this->doDiscardNode($affectedChildNode, $alreadyDiscardedNodeIdentifiers);
+                }
+            }
+
             $this->nodeDataRepository->remove($possibleShadowNodeData);
         }
 
-        if ($node->getPath() !== '/') {
-            $this->nodeDataRepository->remove($node);
-            $this->emitNodeDiscarded($node);
-        }
+        $this->nodeDataRepository->remove($node);
+        $this->emitNodeDiscarded($node);
     }
 
     /**
@@ -172,8 +208,9 @@ class PublishingService implements PublishingServiceInterface
      */
     public function discardNodes(array $nodes)
     {
+        $discardedNodeIdentifiers = [];
         foreach ($nodes as $node) {
-            $this->discardNode($node);
+            $this->doDiscardNode($node, $discardedNodeIdentifiers);
         }
     }
 
@@ -194,7 +231,7 @@ class PublishingService implements PublishingServiceInterface
         }
 
         foreach ($this->getUnpublishedNodes($workspace) as $node) {
-            /** @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node */
+            /** @var NodeInterface $node */
             if ($node->getPath() !== '/') {
                 $this->discardNode($node);
             }

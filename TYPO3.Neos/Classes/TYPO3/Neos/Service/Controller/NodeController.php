@@ -13,7 +13,10 @@ namespace TYPO3\Neos\Service\Controller;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Eel\FlowQuery\FlowQuery;
+use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
+use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Service\NodeSearchService;
+use TYPO3\Neos\Service\NodeOperations;
 use TYPO3\Neos\Service\View\NodeView;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
@@ -42,8 +45,8 @@ class NodeController extends AbstractServiceController
      * @var array
      */
     protected $viewFormatToObjectNameMap = array(
-        'html' => 'TYPO3\Neos\Service\View\NodeView',
-        'json' => 'TYPO3\Neos\Service\View\NodeView'
+        'html' => NodeView::class,
+        'json' => NodeView::class
     );
 
     /**
@@ -86,13 +89,13 @@ class NodeController extends AbstractServiceController
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Service\NodeOperations
+     * @var NodeOperations
      */
     protected $nodeOperations;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Domain\Repository\DomainRepository
+     * @var DomainRepository
      */
     protected $domainRepository;
 
@@ -104,7 +107,7 @@ class NodeController extends AbstractServiceController
     protected function initializeAction()
     {
         if ($this->arguments->hasArgument('referenceNode')) {
-            $this->arguments->getArgument('referenceNode')->getPropertyMappingConfiguration()->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', NodeConverter::REMOVED_CONTENT_SHOWN, true);
+            $this->arguments->getArgument('referenceNode')->getPropertyMappingConfiguration()->setTypeConverterOption(NodeConverter::class, NodeConverter::REMOVED_CONTENT_SHOWN, true);
         }
         $this->uriBuilder->setRequest($this->request->getMainRequest());
         if (in_array($this->request->getControllerActionName(), array('update', 'updateAndRender'), true)) {
@@ -113,8 +116,8 @@ class NodeController extends AbstractServiceController
             $propertyMappingConfiguration->allowOverrideTargetType();
             $propertyMappingConfiguration->allowAllProperties();
             $propertyMappingConfiguration->skipUnknownProperties();
-            $propertyMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
-            $propertyMappingConfiguration->setTypeConverterOption('TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter', \TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
+            $propertyMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
+            $propertyMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
         }
     }
 

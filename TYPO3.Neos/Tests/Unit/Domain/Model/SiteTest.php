@@ -10,19 +10,21 @@ namespace TYPO3\Neos\Tests\Unit\Domain\Model;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Neos\Domain\Model\Site;
 
 /**
  * Testcase for the "Site" domain model
  *
  */
-class SiteTest extends \TYPO3\Flow\Tests\UnitTestCase
+class SiteTest extends UnitTestCase
 {
     /**
      * @test
      */
     public function aNameCanBeSetAndRetrievedFromTheSite()
     {
-        $site = new \TYPO3\Neos\Domain\Model\Site('');
+        $site = new Site('');
         $site->setName('My cool website');
         $this->assertSame('My cool website', $site->getName());
     }
@@ -32,8 +34,8 @@ class SiteTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function theDefaultStateOfASiteIsOffline()
     {
-        $site = new \TYPO3\Neos\Domain\Model\Site('');
-        $this->assertSame(\TYPO3\Neos\Domain\Model\Site::STATE_OFFLINE, $site->getState());
+        $site = new Site('');
+        $this->assertSame(Site::STATE_OFFLINE, $site->getState());
     }
 
     /**
@@ -41,9 +43,9 @@ class SiteTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function theStateCanBeSetAndRetrieved()
     {
-        $site = new \TYPO3\Neos\Domain\Model\Site('');
-        $site->setState(\TYPO3\Neos\Domain\Model\Site::STATE_ONLINE);
-        $this->assertSame(\TYPO3\Neos\Domain\Model\Site::STATE_ONLINE, $site->getState());
+        $site = new Site('');
+        $site->setState(Site::STATE_ONLINE);
+        $this->assertSame(Site::STATE_ONLINE, $site->getState());
     }
 
     /**
@@ -51,7 +53,7 @@ class SiteTest extends \TYPO3\Flow\Tests\UnitTestCase
      */
     public function theSiteResourcesPackageKeyCanBeSetAndRetrieved()
     {
-        $site = new \TYPO3\Neos\Domain\Model\Site('');
+        $site = new Site('');
         $site->setSiteResourcesPackageKey('Foo');
         $this->assertSame('Foo', $site->getSiteResourcesPackageKey());
     }

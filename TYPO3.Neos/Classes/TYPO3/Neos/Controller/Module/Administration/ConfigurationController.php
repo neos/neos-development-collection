@@ -12,6 +12,10 @@ namespace TYPO3\Neos\Controller\Module\Administration;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Configuration\ConfigurationManager;
+use TYPO3\Flow\Configuration\ConfigurationSchemaValidator;
+use TYPO3\Flow\Configuration\Exception\SchemaValidationException;
+use TYPO3\Flow\Utility\SchemaGenerator;
 use TYPO3\Neos\Controller\Module\AbstractModuleController;
 use TYPO3\Flow\Error\Message;
 
@@ -22,19 +26,19 @@ class ConfigurationController extends AbstractModuleController
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Configuration\ConfigurationManager
+     * @var ConfigurationManager
      */
     protected $configurationManager;
 
     /**
      * @Flow\Inject(lazy = FALSE)
-     * @var \TYPO3\Flow\Configuration\ConfigurationSchemaValidator
+     * @var ConfigurationSchemaValidator
      */
     protected $configurationSchemaValidator;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Utility\SchemaGenerator
+     * @var SchemaGenerator
      */
     protected $schemaGenerator;
 
@@ -55,7 +59,7 @@ class ConfigurationController extends AbstractModuleController
 
             try {
                 $this->view->assign('validationResult', $this->configurationSchemaValidator->validate($type));
-            } catch (\TYPO3\Flow\Configuration\Exception\SchemaValidationException $exception) {
+            } catch (SchemaValidationException $exception) {
                 $this->addFlashMessage(htmlspecialchars($exception->getMessage()), 'An error occurred during validation of the configuration.', Message::SEVERITY_ERROR, array(), 1412373972);
             }
         } else {

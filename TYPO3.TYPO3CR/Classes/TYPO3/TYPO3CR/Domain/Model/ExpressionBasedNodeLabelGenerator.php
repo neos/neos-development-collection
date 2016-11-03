@@ -11,7 +11,11 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  * source code.
  */
 
+use TYPO3\Eel\EelEvaluatorInterface;
+use TYPO3\Eel\Utility;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Object\DependencyInjection\DependencyProxy;
+use TYPO3\Flow\Utility\Unicode\Functions;
 
 /**
  * The expression based node label generator that is used as default if a label expression is configured.
@@ -21,7 +25,7 @@ class ExpressionBasedNodeLabelGenerator implements NodeLabelGeneratorInterface
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Eel\EelEvaluatorInterface
+     * @var EelEvaluatorInterface
      */
     protected $eelEvaluator;
 
@@ -57,7 +61,7 @@ class ExpressionBasedNodeLabelGenerator implements NodeLabelGeneratorInterface
      */
     public function initializeObject()
     {
-        if ($this->eelEvaluator instanceof \TYPO3\Flow\Object\DependencyInjection\DependencyProxy) {
+        if ($this->eelEvaluator instanceof DependencyProxy) {
             $this->eelEvaluator->_activateDependency();
         }
     }
@@ -71,13 +75,13 @@ class ExpressionBasedNodeLabelGenerator implements NodeLabelGeneratorInterface
      */
     public function getLabel(NodeInterface $node, $crop = true)
     {
-        $label = \TYPO3\Eel\Utility::evaluateEelExpression($this->getExpression(), $this->eelEvaluator, array('node' => $node), $this->defaultContextConfiguration);
+        $label = Utility::evaluateEelExpression($this->getExpression(), $this->eelEvaluator, array('node' => $node), $this->defaultContextConfiguration);
 
         if ($crop === false) {
             return $label;
         }
 
-        $croppedLabel = \TYPO3\Flow\Utility\Unicode\Functions::substr($label, 0, 30);
+        $croppedLabel = Functions::substr($label, 0, 30);
         return $croppedLabel . (strlen($croppedLabel) < strlen($label) ? ' …' : '');
     }
 }

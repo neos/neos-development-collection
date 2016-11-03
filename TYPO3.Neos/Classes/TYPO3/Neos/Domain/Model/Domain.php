@@ -13,6 +13,8 @@ namespace TYPO3\Neos\Domain\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\CacheAwareInterface;
+use TYPO3\Neos\Domain\Model\Site;
 
 /**
  * Domain Model of a Domain
@@ -20,7 +22,7 @@ use TYPO3\Flow\Annotations as Flow;
  * @Flow\Entity
  * @Flow\Scope("prototype")
  */
-class Domain implements \TYPO3\Flow\Cache\CacheAwareInterface
+class Domain implements CacheAwareInterface
 {
     /**
      * @var string
@@ -46,7 +48,7 @@ class Domain implements \TYPO3\Flow\Cache\CacheAwareInterface
     protected $port;
 
     /**
-     * @var \TYPO3\Neos\Domain\Model\Site
+     * @var Site
      * @ORM\ManyToOne(inversedBy="domains")
      * @Flow\Validate(type="NotEmpty")
      */
@@ -143,7 +145,7 @@ class Domain implements \TYPO3\Flow\Cache\CacheAwareInterface
     /**
      * Returns the site this domain is pointing to
      *
-     * @return \TYPO3\Neos\Domain\Model\Site
+     * @return Site
      * @api
      */
     public function getSite()

@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Controller;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\Frontend\StringFrontend;
 use TYPO3\Flow\Error\Message;
 use TYPO3\Flow\Http\Cookie;
 use TYPO3\Flow\Mvc\ActionRequest;
@@ -20,6 +21,7 @@ use TYPO3\Flow\Security\Authentication\Controller\AbstractAuthenticationControll
 use TYPO3\Flow\Security\Exception\AuthenticationRequiredException;
 use TYPO3\Flow\Session\SessionInterface;
 use TYPO3\Flow\Session\SessionManagerInterface;
+use TYPO3\Fluid\View\TemplateView;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Service\BackendRedirectionService;
@@ -62,7 +64,7 @@ class LoginController extends AbstractAuthenticationController
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Cache\Frontend\StringFrontend
+     * @var StringFrontend
      */
     protected $loginTokenCache;
 
@@ -76,8 +78,8 @@ class LoginController extends AbstractAuthenticationController
      * @var array
      */
     protected $viewFormatToObjectNameMap = array(
-        'html' => 'TYPO3\Fluid\View\TemplateView',
-        'json' => 'TYPO3\Flow\Mvc\View\JsonView'
+        'html' => TemplateView::class,
+        'json' => JsonView::class
     );
 
     /**

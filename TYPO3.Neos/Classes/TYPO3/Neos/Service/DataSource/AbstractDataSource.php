@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Service\DataSource;
  */
 
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
+use TYPO3\Neos\Exception;
 
 /**
  * Data source interface for getting data.
@@ -37,12 +38,12 @@ abstract class AbstractDataSource implements DataSourceInterface
     /**
      * @return string the short name of the operation
      * @api
-     * @throws \TYPO3\Neos\Exception
+     * @throws Exception
      */
     public static function getIdentifier()
     {
         if (!is_string(static::$identifier)) {
-            throw new \TYPO3\Neos\Exception('Identifier in class ' . __CLASS__ . ' is empty.', 1414090236);
+            throw new Exception('Identifier in class ' . __CLASS__ . ' is empty.', 1414090236);
         }
 
         return static::$identifier;

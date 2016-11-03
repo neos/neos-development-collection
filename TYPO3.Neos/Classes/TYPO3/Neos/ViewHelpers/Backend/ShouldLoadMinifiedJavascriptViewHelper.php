@@ -12,11 +12,13 @@ namespace TYPO3\Neos\ViewHelpers\Backend;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3\Neos\Utility\BackendAssetsUtility;
 
 /**
  * Returns TRUE if the minified Neos JavaScript sources should be loaded, FALSE otherwise.
  */
-class ShouldLoadMinifiedJavascriptViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper
+class ShouldLoadMinifiedJavascriptViewHelper extends AbstractViewHelper
 {
     /**
      * @see AbstractViewHelper::isOutputEscapingEnabled()
@@ -26,7 +28,7 @@ class ShouldLoadMinifiedJavascriptViewHelper extends \TYPO3\Fluid\Core\ViewHelpe
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Utility\BackendAssetsUtility
+     * @var BackendAssetsUtility
      */
     protected $backendAssetsUtility;
 

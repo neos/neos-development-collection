@@ -14,6 +14,8 @@ namespace TYPO3\Neos\EventLog\Domain\Repository;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\Doctrine\Repository;
 use TYPO3\Flow\Persistence\QueryInterface;
+use TYPO3\Flow\Persistence\QueryResultInterface;
+use TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException;
 use TYPO3\Neos\EventLog\Domain\Model\NodeEvent;
 
 /**
@@ -36,8 +38,8 @@ class EventRepository extends Repository
      * @param integer $offset
      * @param integer $limit
      * @param string $workspaceName
-     * @return \TYPO3\Flow\Persistence\QueryResultInterface
-     * @throws \TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException
+     * @return QueryResultInterface
+     * @throws PropertyNotAccessibleException
      */
     public function findRelevantEventsByWorkspace($offset, $limit, $workspaceName)
     {
@@ -57,8 +59,8 @@ class EventRepository extends Repository
      *
      * @param integer $offset
      * @param integer $limit
-     * @return \TYPO3\Flow\Persistence\QueryResultInterface
-     * @throws \TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException
+     * @return QueryResultInterface
+     * @throws PropertyNotAccessibleException
      */
     public function findRelevantEvents($offset, $limit)
     {

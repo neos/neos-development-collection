@@ -14,6 +14,7 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Transformations;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\TYPO3CR\Domain\Model\ContentDimension;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
+use TYPO3\TYPO3CR\Domain\Model\NodeDimension;
 use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
 use TYPO3\TYPO3CR\Migration\Transformations\SetDimensions;
 
@@ -108,7 +109,7 @@ class SetDimensionsTest extends UnitTestCase
             if (count($dimensions) === $expected['count']) {
                 $simplifiedDimensions = array();
                 foreach ($dimensions as $dimension) {
-                    if (!($dimension instanceof \TYPO3\TYPO3CR\Domain\Model\NodeDimension)) {
+                    if (!($dimension instanceof NodeDimension)) {
                         return false;
                     }
                     $simplifiedDimensions[] = array($dimension->getName() => $dimension->getValue());

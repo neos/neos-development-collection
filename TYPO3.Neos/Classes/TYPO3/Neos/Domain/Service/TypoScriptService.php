@@ -12,9 +12,12 @@ namespace TYPO3\Neos\Domain\Service;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use TYPO3\TypoScript\Core\Parser;
+use TYPO3\TypoScript\Core\Runtime;
 
 /**
  * The TypoScript Service
@@ -26,7 +29,7 @@ class TypoScriptService
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\TypoScript\Core\Parser
+     * @var Parser
      */
     protected $typoScriptParser;
 
@@ -118,13 +121,13 @@ class TypoScriptService
      * Create a runtime for the given site node
      *
      * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $currentSiteNode
-     * @param \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext
-     * @return \TYPO3\TypoScript\Core\Runtime
+     * @param ControllerContext $controllerContext
+     * @return Runtime
      */
-    public function createRuntime(NodeInterface $currentSiteNode, \TYPO3\Flow\Mvc\Controller\ControllerContext $controllerContext)
+    public function createRuntime(NodeInterface $currentSiteNode, ControllerContext $controllerContext)
     {
         $typoScriptObjectTree = $this->getMergedTypoScriptObjectTree($currentSiteNode);
-        $typoScriptRuntime = new \TYPO3\TypoScript\Core\Runtime($typoScriptObjectTree, $controllerContext);
+        $typoScriptRuntime = new Runtime($typoScriptObjectTree, $controllerContext);
         return $typoScriptRuntime;
     }
 

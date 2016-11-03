@@ -12,6 +12,8 @@ namespace TYPO3\Neos\TypeConverter;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Neos\Domain\Repository\DomainRepository;
+use TYPO3\Neos\Domain\Repository\SiteRepository;
 
 /**
  * An Object Converter for nodes which can be used for routing (but also for other
@@ -23,13 +25,13 @@ class NodeConverter extends \TYPO3\TYPO3CR\TypeConverter\NodeConverter
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Domain\Repository\DomainRepository
+     * @var DomainRepository
      */
     protected $domainRepository;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Domain\Repository\SiteRepository
+     * @var SiteRepository
      */
     protected $siteRepository;
 

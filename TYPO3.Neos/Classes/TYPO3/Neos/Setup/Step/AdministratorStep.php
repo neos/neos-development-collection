@@ -12,15 +12,19 @@ namespace TYPO3\Neos\Setup\Step;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\AccountRepository;
 use TYPO3\Flow\Validation\Validator\NotEmptyValidator;
 use TYPO3\Flow\Validation\Validator\StringLengthValidator;
+use TYPO3\Form\Core\Model\FormDefinition;
 use TYPO3\Neos\Domain\Service\UserService;
 use TYPO3\Neos\Validation\Validator\UserDoesNotExistValidator;
+use TYPO3\Party\Domain\Repository\PartyRepository;
+use TYPO3\Setup\Step\AbstractStep;
 
 /**
  * @Flow\Scope("singleton")
  */
-class AdministratorStep extends \TYPO3\Setup\Step\AbstractStep
+class AdministratorStep extends AbstractStep
 {
     /**
      * @var boolean
@@ -29,13 +33,13 @@ class AdministratorStep extends \TYPO3\Setup\Step\AbstractStep
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Security\AccountRepository
+     * @var AccountRepository
      */
     protected $accountRepository;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Party\Domain\Repository\PartyRepository
+     * @var PartyRepository
      */
     protected $partyRepository;
 
@@ -48,10 +52,10 @@ class AdministratorStep extends \TYPO3\Setup\Step\AbstractStep
     /**
      * Returns the form definitions for the step
      *
-     * @param \TYPO3\Form\Core\Model\FormDefinition $formDefinition
+     * @param FormDefinition $formDefinition
      * @return void
      */
-    protected function buildForm(\TYPO3\Form\Core\Model\FormDefinition $formDefinition)
+    protected function buildForm(FormDefinition $formDefinition)
     {
         $page1 = $formDefinition->createPage('page1');
         $page1->setRenderingOption('header', 'Create administrator account');

@@ -210,7 +210,7 @@ class PluginService
         /** @var $context ContentContext */
         $context = $node->getContext();
         foreach ($this->getNodes(['TYPO3.Neos:PluginView'], $context) as $pluginViewNode) {
-            /** @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface $pluginViewNode */
+            /** @var NodeInterface $pluginViewNode */
             if ($pluginViewNode->isRemoved()) {
                 continue;
             }

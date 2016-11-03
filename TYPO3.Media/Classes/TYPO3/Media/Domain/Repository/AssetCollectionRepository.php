@@ -12,6 +12,7 @@ namespace TYPO3\Media\Domain\Repository;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\QueryInterface;
 use TYPO3\Flow\Persistence\Repository;
 
 /**
@@ -24,5 +25,5 @@ class AssetCollectionRepository extends Repository
     /**
      * @var array
      */
-    protected $defaultOrderings = array('title' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING);
+    protected $defaultOrderings = array('title' => QueryInterface::ORDER_ASCENDING);
 }

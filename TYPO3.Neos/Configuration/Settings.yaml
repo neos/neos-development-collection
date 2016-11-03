@@ -46,6 +46,9 @@ TYPO3:
                 '@format':     'html'
         authenticationStrategy: oneToken
 
+    session:
+      name: 'Neos_Session'
+
     persistence:
       doctrine:
         eventListeners:
@@ -299,11 +302,11 @@ TYPO3:
 
           'TYPO3.Neos/Inspector/Editors/AssetEditor':
             editorOptions:
-              fileChooserLabel: 'TYPO3.Neos:Main:choose'
+              fileUploadLabel: 'TYPO3.Neos:Main:upload'
 
           'TYPO3.Neos/Inspector/Editors/ImageEditor':
             editorOptions:
-              fileChooserLabel: 'TYPO3.Neos:Main:choose'
+              fileUploadLabel: 'TYPO3.Neos:Main:upload'
 
           'TYPO3.Neos/Inspector/Editors/LinkEditor':
             editorOptions:
@@ -349,7 +352,7 @@ TYPO3:
           position: 100
 
       backendLoginForm:
-        backgroundImage: 'resource://TYPO3.Neos/Public/Images/Login/Wallpaper22.jpg'
+        backgroundImage: 'resource://TYPO3.Neos/Public/Images/Login/Wallpaper23.jpg'
         stylesheets:
           'TYPO3.Neos:DefaultStyles': 'resource://TYPO3.Neos/Public/Styles/Login.css'
 

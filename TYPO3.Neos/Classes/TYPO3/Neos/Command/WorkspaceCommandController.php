@@ -14,7 +14,9 @@ namespace TYPO3\Neos\Command;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Neos\Domain\Model\User;
+use TYPO3\Neos\Domain\Service\UserService;
 use TYPO3\Neos\Service\PublishingService;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 
@@ -40,7 +42,7 @@ class WorkspaceCommandController extends CommandController
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Domain\Service\UserService
+     * @var UserService
      */
     protected $userService;
 
@@ -103,7 +105,7 @@ class WorkspaceCommandController extends CommandController
         $this->outputLine('The workspace %s contains %u unpublished nodes.', [$workspaceName, count($nodes)]);
 
         foreach ($nodes as $node) {
-            /** @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node */
+            /** @var NodeInterface $node */
             if ($verbose) {
                 $this->outputLine('    ' . $node->getPath());
             }
@@ -146,7 +148,7 @@ class WorkspaceCommandController extends CommandController
         $this->outputLine('The workspace %s contains %u unpublished nodes.', [$workspaceName, count($nodes)]);
 
         foreach ($nodes as $node) {
-            /** @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node */
+            /** @var NodeInterface $node */
             if ($node->getPath() !== '/') {
                 if ($verbose) {
                     $this->outputLine('    ' . $node->getPath());

@@ -12,6 +12,7 @@ namespace TYPO3\Media\Domain\Model;
  */
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 
@@ -30,7 +31,7 @@ class Tag
     protected $label;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection<\TYPO3\Media\Domain\Model\AssetCollection>
+     * @var Collection<\TYPO3\Media\Domain\Model\AssetCollection>
      * @ORM\ManyToMany(mappedBy="tags", cascade={"persist"})
      * @ORM\OrderBy({"title"="ASC"})
      * @Flow\Lazy
@@ -70,7 +71,7 @@ class Tag
     /**
      * Return the asset collections this tag is included in
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getAssetCollections()
     {
@@ -80,10 +81,10 @@ class Tag
     /**
      * Set the asset collections that include this tag
      *
-     * @param \Doctrine\Common\Collections\Collection $assetCollections
+     * @param Collection $assetCollections
      * @return void
      */
-    public function setAssetCollections(\Doctrine\Common\Collections\Collection $assetCollections)
+    public function setAssetCollections(Collection $assetCollections)
     {
         foreach ($this->assetCollections as $existingAssetCollection) {
             $existingAssetCollection->removeTag($this);

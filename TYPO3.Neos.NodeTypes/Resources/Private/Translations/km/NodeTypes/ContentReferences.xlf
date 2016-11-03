@@ -7,13 +7,13 @@
 			<target xml:lang="km" state="translated">បញ្ចូល​មាតិកា​យោង​</target></trans-unit>
       <trans-unit id="groups.references" xml:space="preserve">
 				<source>References</source>
-			<target xml:lang="km" state="translated">យោងទៅតាម</target></trans-unit>
+			<target xml:lang="km" state="translated">ទិន្នន័យយោង</target><alt-trans><target xml:lang="km">យោងទៅតាម</target></alt-trans></trans-unit>
       <trans-unit id="properties.references" xml:space="preserve">
 				<source>Select</source>
 			<target xml:lang="km" state="translated">ជ្រើសរើស</target></trans-unit>
       <trans-unit id="content.noReferencesSelected" xml:space="preserve">
 				<source>No references selected</source>
-			<target xml:lang="km" state="needs-translation">No references selected</target></trans-unit>
+			<target xml:lang="km" state="translated">មិនមាន​ទិន្នន័យយោង​ត្រូវបានជ្រើសរើស</target></trans-unit>
     </body>
   </file>
 </xliff>
