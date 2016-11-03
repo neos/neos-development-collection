@@ -48,7 +48,7 @@ class RuntimeTest extends UnitTestCase
      *
      * if this handler throws exceptions, they are not handled
      *
-     * @expectedException Exception
+     * @expectedException \TYPO3\Flow\Exception
      * @test
      */
     public function handleRenderingExceptionThrowsException()

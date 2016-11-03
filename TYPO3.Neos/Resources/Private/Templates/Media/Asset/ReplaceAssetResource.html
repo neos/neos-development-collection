@@ -14,8 +14,10 @@
                         {neos:backend.translate(id: 'media.replaceAsset.description', source: 'Modules', package: 'TYPO3.Neos')}<br/>
                         <b>{neos:backend.translate(id: 'media.replaceAsset.note', source: 'Modules', package: 'TYPO3.Neos')}: </b> {neos:backend.translate(id: 'media.replaceAsset.noteText', source: 'Modules', package: 'TYPO3.Neos')}
                     </p>
-                    <label class="neos-button neos-button-primary" for="resource" title="{neos:backend.translate(id: 'media.maxUploadSize', arguments: {0: humanReadableMaximumFileUploadSize}, source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip">{neos:backend.translate(id: 'media.replaceAsset.chooseNewFile', source: 'Modules', package: 'TYPO3.Neos')} <i class="icon-file"></i></label>
-                    <f:form.upload id="resource" name="resource" additionalAttributes="{required: 'required'}" />
+                    <span class="neos-file-input">
+                        <label class="neos-button neos-button-primary" for="resource" title="{neos:backend.translate(id: 'media.maxUploadSize', arguments: {0: humanReadableMaximumFileUploadSize}, source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip">{neos:backend.translate(id: 'media.replaceAsset.chooseNewFile', source: 'Modules', package: 'TYPO3.Neos')} <i class="icon-file"></i></label>
+                        <f:form.upload id="resource" name="resource" additionalAttributes="{required: 'required'}" />
+                    </span>
                 </fieldset>
                 <fieldset>
                     <div>
@@ -35,13 +37,13 @@
                     <legend>{neos:backend.translate(id: 'media.relatedNodes.referencesTo', source: 'Modules', arguments: {asset: asset.label})}</legend>
                     <f:if condition="{asset.inUse}">
                         <f:then>
-                            <p class="neos-buffer-below">{neos:backend.translate(id: 'media.replace.usageCount', arguments: {usageCount: asset.usageCount}, source: 'Modules', package: 'TYPO3.Neos')}</p>
+                            <p class="neos-buffer-below"><i class="icon-exclamation-sign"></i> {neos:backend.translate(id: 'media.replace.usageCount', arguments: {usageCount: asset.usageCount}, source: 'Modules', package: 'TYPO3.Neos')}</p>
                             <f:link.action action="relatedNodes" arguments="{asset:asset}" class="neos-button">
                                 {neos:backend.translate(id: 'media.replace.allUsages', source: 'Modules', package: 'TYPO3.Neos')}
                             </f:link.action>
                         </f:then>
                         <f:else>
-                            <p>{neos:backend.translate(id: 'media.replace.notUsed', source: 'Modules', package: 'TYPO3.Neos')}</p>
+                            <p><i class="icon-ok-sign"></i> {neos:backend.translate(id: 'media.replace.notUsed', source: 'Modules', package: 'TYPO3.Neos')}</p>
                         </f:else>
                     </f:if>
                 </fieldset>
@@ -52,7 +54,8 @@
             </div>
         </div>
         <div class="neos-footer">
-            <f:link.action action="index" title="Cancel editing" class="neos-button">{neos:backend.translate(id: 'cancel', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
+            <!-- TODO: Find a nicer way to send the referer for a get request -->
+            <a href="javascript:window.history.back(1);" class="neos-button">{neos:backend.translate(id: 'cancel', source: 'Modules')}</a>
             <f:form.submit id="replace" class="neos-button neos-button-primary" value="{neos:backend.translate(id: 'media.replaceAssetResource', source: 'Modules', package: 'TYPO3.Neos')}" />
         </div>
     </f:form>
