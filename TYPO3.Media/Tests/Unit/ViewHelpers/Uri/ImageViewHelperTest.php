@@ -34,7 +34,7 @@ class ImageViewHelperTest extends ViewHelperBaseTestcase
     /**
      * @test
      */
-    public function doNotThrowExceptionIfImageIsEmptyString()
+    public function doNotThrowExceptionIfImageIsNull()
     {
         $this->viewHelper->initialize();
         $actualResult = $this->viewHelper->render(null);
