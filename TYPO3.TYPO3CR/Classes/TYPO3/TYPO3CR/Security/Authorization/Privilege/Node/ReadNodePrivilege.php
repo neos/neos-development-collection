@@ -11,7 +11,11 @@ namespace TYPO3\TYPO3CR\Security\Authorization\Privilege\Node;
  * source code.
  */
 
+use TYPO3\Eel\CompilingEvaluator;
+use TYPO3\Eel\Context;
 use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilege;
+use TYPO3\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
+use TYPO3\Flow\Security\Exception\InvalidPrivilegeTypeException;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\Doctrine\ConditionGenerator;
 
@@ -39,5 +43,22 @@ class ReadNodePrivilege extends EntityPrivilege
     protected function getConditionGenerator()
     {
         return new ConditionGenerator();
+    }
+
+    /**
+     * @param PrivilegeSubjectInterface $subject
+     * @return boolean
+     * @throws InvalidPrivilegeTypeException
+     */
+    public function matchesSubject(PrivilegeSubjectInterface $subject)
+    {
+        if (!$subject instanceof NodePrivilegeSubject) {
+            throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "%s" only support subjects of type "%s", but we got a subject of type: "%s".', static::class, NodePrivilegeSubject::class, get_class($subject)), 1465979693);
+        }
+        $nodeContext = new NodePrivilegeContext($subject->getNode());
+        $eelContext = new Context($nodeContext);
+        $eelCompilingEvaluator = new CompilingEvaluator();
+        $eelCompilingEvaluator->evaluate($this->getParsedMatcher(), $eelContext);
+        return $eelCompilingEvaluator->evaluate($this->getParsedMatcher(), $eelContext);
     }
 }
