@@ -2,8 +2,9 @@
 'TYPO3.Neos:Node':
   label: "${String.cropAtWord(String.trim(String.stripTags(String.pregReplace(q(node).property('title') || q(node).property('text') || ((I18n.translate(node.nodeType.label) || node.nodeType.name) + (node.autoCreated ? ' (' + node.name + ')' : '')), '/<br\\W*?\\/?>|\\x{00a0}|[[^:print:]]|\\s+/u', ' '))), 100, '...')}"
   abstract: TRUE
-  fusion:
-    prototypeGenerator: TYPO3\Neos\Domain\Service\DefaultPrototypeGenerator
+  options:
+    fusion:
+      prototypeGenerator: TYPO3\Neos\Domain\Service\DefaultPrototypeGenerator
   ui:
     inspector:
       tabs:
@@ -128,8 +129,9 @@
     nodeTypes:
       '*': FALSE
       'TYPO3.Neos:Document': TRUE
-  fusion:
-    prototypeGenerator: TYPO3\Neos\Domain\Service\DefaultDocumentPrototypeGenerator
+  options:
+    fusion:
+      prototypeGenerator: TYPO3\Neos\Domain\Service\DefaultDocumentPrototypeGenerator
   ui:
     label: 'Document'
     search:
@@ -237,8 +239,9 @@
   superTypes:
     'TYPO3.Neos:Content': TRUE
   abstract: TRUE
-  fusion:
-    prototypeGenerator: TYPO3\Neos\Domain\Service\DefaultPluginPrototypeGenerator
+  options:
+    fusion:
+      prototypeGenerator: TYPO3\Neos\Domain\Service\DefaultPluginPrototypeGenerator
   ui:
     label: i18n
     group: 'plugins'
@@ -295,8 +298,9 @@
   constraints:
     nodeTypes:
       '*': FALSE
-  fusion:
-    prototypeGenerator: TYPO3\Neos\Domain\Service\DefaultContentPrototypeGenerator
+  options:
+    fusion:
+      prototypeGenerator: TYPO3\Neos\Domain\Service\DefaultContentPrototypeGenerator
   ui:
     label: i18n
     icon: 'icon-square-o'

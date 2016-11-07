@@ -203,8 +203,8 @@ class TypoScriptService
      */
     protected function generateTypoScriptForNodeType(NodeType $nodeType)
     {
-        if ($nodeType->hasConfiguration('fusion.prototypeGenerator') && $nodeType->getConfiguration('fusion.prototypeGenerator') !== null) {
-            $generatorClassName = $nodeType->getConfiguration('fusion.prototypeGenerator');
+        if ($nodeType->hasConfiguration('options.fusion.prototypeGenerator') && $nodeType->getConfiguration('options.fusion.prototypeGenerator') !== null) {
+            $generatorClassName = $nodeType->getConfiguration('options.fusion.prototypeGenerator');
             if (!class_exists($generatorClassName)) {
                 throw new \TYPO3\Neos\Domain\Exception('Fusion prototype-generator Class ' . $generatorClassName . ' does not exist');
             }
