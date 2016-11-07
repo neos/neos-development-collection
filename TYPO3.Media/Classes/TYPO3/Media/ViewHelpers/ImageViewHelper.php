@@ -121,7 +121,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
             $image = $this->arguments['asset'];
         }
 
-        if ($image === null || empty($image)) {
+        if ($image === null) {
             return '';
         }
 
