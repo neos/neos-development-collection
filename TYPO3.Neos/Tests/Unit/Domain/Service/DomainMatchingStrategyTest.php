@@ -43,10 +43,10 @@ class DomainMatchingStrategyTest extends \TYPO3\Flow\Tests\UnitTestCase
             $this->getMockBuilder('TYPO3\Neos\Domain\Model\Domain')->disableOriginalConstructor()->setMethods(array('dummy'))->getMock(),
         );
 
-        $mockDomains[0]->setHostPattern('*.typo3.org');
-        $mockDomains[1]->setHostPattern('flow.typo3.org');
+        $mockDomains[0]->setHostPattern('*.neos.io');
+        $mockDomains[1]->setHostPattern('flow.neos.io');
         $mockDomains[2]->setHostPattern('*');
-        $mockDomains[3]->setHostPattern('yacumboolu.typo3.org');
+        $mockDomains[3]->setHostPattern('yacumboolu.neos.io');
 
         $expectedDomains = array(
             $mockDomains[1],
@@ -55,7 +55,7 @@ class DomainMatchingStrategyTest extends \TYPO3\Flow\Tests\UnitTestCase
         );
 
         $strategy = new \TYPO3\Neos\Domain\Service\DomainMatchingStrategy();
-        $actualDomains = $strategy->getSortedMatches('flow.typo3.org', $mockDomains);
+        $actualDomains = $strategy->getSortedMatches('flow.neos.io', $mockDomains);
         $this->assertSame($expectedDomains, $actualDomains);
     }
 
@@ -68,12 +68,12 @@ class DomainMatchingStrategyTest extends \TYPO3\Flow\Tests\UnitTestCase
             $this->getMockBuilder('TYPO3\Neos\Domain\Model\Domain')->disableOriginalConstructor()->setMethods(array('dummy'))->getMock(),
         );
 
-        $mockDomains[0]->setHostPattern('flow.typo3.org');
+        $mockDomains[0]->setHostPattern('flow.neos.io');
 
         $expectedDomains = array();
 
         $strategy = new \TYPO3\Neos\Domain\Service\DomainMatchingStrategy();
-        $actualDomains = $strategy->getSortedMatches('typo3.org', $mockDomains);
+        $actualDomains = $strategy->getSortedMatches('neos.io', $mockDomains);
         $this->assertSame($expectedDomains, $actualDomains);
     }
 }

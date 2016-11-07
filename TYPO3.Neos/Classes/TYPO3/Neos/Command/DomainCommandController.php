@@ -40,7 +40,7 @@ class DomainCommandController extends \TYPO3\Flow\Cli\CommandController
      * Add a domain record
      *
      * @param string $siteNodeName The nodeName of the site rootNode, e.g. "neostypo3org"
-     * @param string $hostPattern The host pattern to match on, e.g. "neos.typo3.org"
+     * @param string $hostPattern The host pattern to match on, e.g. "flow.neos.io"
      * @return void
      */
     public function addCommand($siteNodeName, $hostPattern)
