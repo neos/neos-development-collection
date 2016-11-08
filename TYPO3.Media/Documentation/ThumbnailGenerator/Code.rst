@@ -40,7 +40,7 @@ Configuration
 
 In your generator class use the ``AbstractThumbnailGenerator::getOption()`` to access your settings::
 
-    TYPO3:
+    Neos:
       Media:
         thumbnailGenerators:
           'Your\Package\Domain\Model\ThumbnailGenerator\YourOwnThumbnailGenerator':

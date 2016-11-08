@@ -9,17 +9,17 @@ strategies can tell the media package if an asset is in used, how many times it 
 used and how it is used.
 
 To define your own custom usage strategy you have to implement the
-``TYPO3\Media\Domain\Strategy\AssetUsageStrategyInterface``. For convenience you can
-extend the ``TYPO3\Media\Domain\Strategy\AbstractAssetUsageStrategy``.
+``Neos\Media\Domain\Strategy\AssetUsageStrategyInterface``. For convenience you can
+extend the ``Neos\Media\Domain\Strategy\AbstractAssetUsageStrategy``.
 
 Example Strategy
 ****************
 
 .. code-block:: php
 
-	use TYPO3\Flow\Annotations as Flow;
-	use TYPO3\Media\Domain\Strategy\AbstractAssetUsageStrategy;
-	use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+	use Neos\Flow\Annotations as Flow;
+	use Neos\Media\Domain\Strategy\AbstractAssetUsageStrategy;
+	use Neos\Flow\Persistence\PersistenceManagerInterface;
 
 	/**
 	 * @Flow\Scope("singleton")
@@ -41,7 +41,7 @@ Example Strategy
 	     * Returns an array of usage reference objects.
 	     *
 	     * @param AssetInterface $asset
-	     * @return array<\TYPO3\Media\Domain\Model\Dto\UsageReference>
+	     * @return array<\Neos\Media\Domain\Model\Dto\UsageReference>
 	     */
 	    public function getUsageReferences(AssetInterface $asset)
 	    {
@@ -52,7 +52,7 @@ Example Strategy
 
 	        // Your code to find asset usage
 	        foreach ($usages as $usage) {
-	            $this->firstlevelCache[$assetIdentifier] = new \TYPO3\Media\Domain\Model\Dto\UsageReference($asset);
+	            $this->firstlevelCache[$assetIdentifier] = new \Neos\Media\Domain\Model\Dto\UsageReference($asset);
 	        }
 
 	        return $this->firstlevelCache[$assetIdentifier];
@@ -65,7 +65,7 @@ Extend Asset Validation
 Imagine you need to extend the validation of assets. For example to prevent
 duplicate file names or to run copyright checks on images. You can do so
 by creating your own custom validator. If you make sure that your validator
-implements the ``\TYPO3\Media\Domain\Validator\AssetValidatorInterface`` it
+implements the ``\Neos\Media\Domain\Validator\AssetValidatorInterface`` it
 will be loaded on object validation. The added errors in your validator will
 be merged into the model validator of assets.
 
@@ -77,9 +77,9 @@ Example validator
 	<?php
 	namespace My\Package;
 
-	use TYPO3\Flow\Validation\Valwidator\AbstractValidator;
-	use TYPO3\Media\Domain\Model\AssetInterface;
-	use TYPO3\Media\Domain\Validator\AssetValidatorInterface;
+	use Neos\Flow\Validation\Valwidator\AbstractValidator;
+	use Neos\Media\Domain\Model\AssetInterface;
+	use Neos\Media\Domain\Validator\AssetValidatorInterface;
 
 	class CustomValidator extends AbstractValidator implements AssetValidatorInterface
 	{

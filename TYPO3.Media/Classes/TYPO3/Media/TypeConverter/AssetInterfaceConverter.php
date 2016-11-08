@@ -2,7 +2,7 @@
 namespace TYPO3\Media\TypeConverter;
 
 /*
- * This file is part of the TYPO3.Media package.
+ * This file is part of the Neos.Media package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -33,7 +33,7 @@ use TYPO3\Media\Domain\Repository\AssetRepository;
 use TYPO3\Media\Domain\Strategy\AssetModelMappingStrategyInterface;
 
 /**
- * This converter transforms to \TYPO3\Media\Domain\Model\ImageInterface (Image or ImageVariant) objects.
+ * This converter transforms to \Neos\Media\Domain\Model\ImageInterface (Image or ImageVariant) objects.
  *
  * @api
  * @Flow\Scope("singleton")
@@ -103,7 +103,7 @@ class AssetInterfaceConverter extends PersistentObjectConverter
      * this type converter should withdraw and let the PersistedObjectConverter kick in.
      *
      * @param mixed $source The source for the to-build Image
-     * @param string $targetType Should always be 'TYPO3\Media\Domain\Model\ImageInterface'
+     * @param string $targetType Should always be 'Neos\Media\Domain\Model\ImageInterface'
      * @return boolean
      */
     public function canConvertFrom($source, $targetType)
@@ -189,10 +189,10 @@ class AssetInterfaceConverter extends PersistentObjectConverter
     }
 
     /**
-     * Convert an object from $source to an \TYPO3\Media\Domain\Model\AssetInterface implementation
+     * Convert an object from $source to an \Neos\Media\Domain\Model\AssetInterface implementation
      *
      * @param mixed $source
-     * @param string $targetType must implement 'TYPO3\Media\Domain\Model\AssetInterface'
+     * @param string $targetType must implement 'Neos\Media\Domain\Model\AssetInterface'
      * @param array $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
      * @return Error|AssetInterface The converted Asset, a Validation Error or NULL

@@ -20,7 +20,7 @@ see :ref:`Media ViewHelper Reference`.
 Configuration
 -------------
 
-The configuration setting ``TYPO3.Media.asyncThumbnails`` is used to determine if asynchronous thumbnails are rendered
+The configuration setting ``Neos.Media.asyncThumbnails`` is used to determine if asynchronous thumbnails are rendered
 when creating thumbnails for configured :ref:`Thumbnails Presets`.
 
 The setting is additionally used as the default value for the ``media:createthumbnails`` command,

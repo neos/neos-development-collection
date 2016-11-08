@@ -2,7 +2,7 @@
 namespace TYPO3\Media\TypeConverter;
 
 /*
- * This file is part of the TYPO3.Media package.
+ * This file is part of the Neos.Media package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -20,7 +20,7 @@ use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Model\ImageVariant;
 
 /**
- * This converter transforms to \TYPO3\Media\Domain\Model\ImageInterface (Image or ImageVariant) objects.
+ * This converter transforms to \Neos\Media\Domain\Model\ImageInterface (Image or ImageVariant) objects.
  *
  * @api
  * @Flow\Scope("singleton")

@@ -2,7 +2,7 @@
 namespace TYPO3\Media\Domain\Service;
 
 /*
- * This file is part of the TYPO3.Media package.
+ * This file is part of the Neos.Media package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -192,7 +192,7 @@ class ImageService
         $quality = isset($defaultOptions['quality']) ? (integer)$defaultOptions['quality'] : 90;
         if ($quality < 0 || $quality > 100) {
             throw new InvalidConfigurationException(
-                sprintf('Setting "TYPO3.Media.image.defaultOptions.quality" allow only value between 0 and 100, current value: %s', $quality),
+                sprintf('Setting "Neos.Media.image.defaultOptions.quality" allow only value between 0 and 100, current value: %s', $quality),
                 1404982574
             );
         }

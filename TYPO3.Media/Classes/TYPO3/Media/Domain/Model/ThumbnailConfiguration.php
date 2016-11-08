@@ -2,7 +2,7 @@
 namespace TYPO3\Media\Domain\Model;
 
 /*
- * This file is part of the TYPO3.Media package.
+ * This file is part of the Neos.Media package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -212,7 +212,7 @@ class ThumbnailConfiguration
     {
         if (!static::$loggedDeprecation) {
             static::$loggedDeprecation = true;
-            $this->logger->log('TYPO3.Media is configured to simulate the deprecated Neos 1.2 behaviour. Please check the setting "TYPO3.Media.behaviourFlag".',
+            $this->logger->log('Neos.Media is configured to simulate the deprecated Neos 1.2 behaviour. Please check the setting "Neos.Media.behaviourFlag".',
                 LOG_DEBUG);
         }
     }

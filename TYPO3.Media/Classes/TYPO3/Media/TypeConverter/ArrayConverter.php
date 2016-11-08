@@ -2,7 +2,7 @@
 namespace TYPO3\Media\TypeConverter;
 
 /*
- * This file is part of the TYPO3.Media package.
+ * This file is part of the Neos.Media package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -23,7 +23,7 @@ use TYPO3\Media\Domain\Model\ImageVariant;
 use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;
 
 /**
- * This converter transforms TYPO3.Media AssetInterface instances to arrays.
+ * This converter transforms Neos.Media AssetInterface instances to arrays.
  *
  * @api
  * @Flow\Scope("singleton")

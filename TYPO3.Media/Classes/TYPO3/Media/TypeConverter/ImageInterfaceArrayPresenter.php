@@ -2,7 +2,7 @@
 namespace TYPO3\Media\TypeConverter;
 
 /*
- * This file is part of the TYPO3.Media package.
+ * This file is part of the Neos.Media package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -22,7 +22,7 @@ use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Model\ImageVariant;
 
 /**
- * This converter transforms \TYPO3\Media\Domain\Model\ImageInterface (Image or ImageVariant) objects to array representations.
+ * This converter transforms \Neos\Media\Domain\Model\ImageInterface (Image or ImageVariant) objects to array representations.
  *
  * @api
  * @Flow\Scope("singleton")
@@ -75,7 +75,7 @@ class ImageInterfaceArrayPresenter extends AbstractTypeConverter
     }
 
     /**
-     * Convert an object from \TYPO3\Media\Domain\Model\ImageInterface to a json representation
+     * Convert an object from \Neos\Media\Domain\Model\ImageInterface to a json representation
      *
      * @param ImageInterface $source
      * @param string $targetType must be 'string'

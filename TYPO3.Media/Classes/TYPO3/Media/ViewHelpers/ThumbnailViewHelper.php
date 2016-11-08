@@ -2,7 +2,7 @@
 namespace TYPO3\Media\ViewHelpers;
 
 /*
- * This file is part of the TYPO3.Media package.
+ * This file is part of the Neos.Media package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -20,12 +20,12 @@ use TYPO3\Media\Domain\Service\AssetService;
 use TYPO3\Media\Domain\Service\ThumbnailService;
 
 /**
- * Renders an <img> HTML tag from a given TYPO3.Media's asset instance
+ * Renders an <img> HTML tag from a given Neos.Media's asset instance
  *
  * = Examples =
  *
  * <code title="Rendering an asset thumbnail">
- * <typo3.media:thumbnail asset="{assetObject}" alt="a sample asset without scaling" />
+ * <neos.media:thumbnail asset="{assetObject}" alt="a sample asset without scaling" />
  * </code>
  * <output>
  * (depending on the asset, no scaling applied)
@@ -34,7 +34,7 @@ use TYPO3\Media\Domain\Service\ThumbnailService;
  *
  *
  * <code title="Rendering an asset thumbnail with scaling at a given width only">
- * <typo3.media:thumbnail asset="{assetObject}" maximumWidth="80" alt="sample" />
+ * <neos.media:thumbnail asset="{assetObject}" maximumWidth="80" alt="sample" />
  * </code>
  * <output>
  * (depending on the asset; scaled down to a maximum width of 80 pixels, keeping the aspect ratio)
@@ -43,7 +43,7 @@ use TYPO3\Media\Domain\Service\ThumbnailService;
  *
  *
  * <code title="Rendering an asset thumbnail with scaling at given width and height, keeping aspect ratio">
- * <typo3.media:thumbnail asset="{assetObject}" maximumWidth="80" maximumHeight="80" alt="sample" />
+ * <neos.media:thumbnail asset="{assetObject}" maximumWidth="80" maximumHeight="80" alt="sample" />
  * </code>
  * <output>
  * (depending on the asset; scaled down to a maximum width and height of 80 pixels, keeping the aspect ratio)
@@ -52,7 +52,7 @@ use TYPO3\Media\Domain\Service\ThumbnailService;
  *
  *
  * <code title="Rendering an asset thumbnail with crop-scaling at given width and height">
- * <typo3.media:thumbnail asset="{assetObject}" maximumWidth="80" maximumHeight="80" allowCropping="true" alt="sample" />
+ * <neos.media:thumbnail asset="{assetObject}" maximumWidth="80" maximumHeight="80" allowCropping="true" alt="sample" />
  * </code>
  * <output>
  * (depending on the asset; scaled down to a width and height of 80 pixels, possibly changing aspect ratio)
@@ -60,7 +60,7 @@ use TYPO3\Media\Domain\Service\ThumbnailService;
  * </output>
  *
  * <code title="Rendering an asset thumbnail with allowed up-scaling at given width and height">
- * <typo3.media:thumbnail asset="{assetObject}" maximumWidth="5000" allowUpScaling="true" alt="sample" />
+ * <neos.media:thumbnail asset="{assetObject}" maximumWidth="5000" allowUpScaling="true" alt="sample" />
  * </code>
  * <output>
  * (depending on the asset; scaled up or down to a width 5000 pixels, keeping aspect ratio)

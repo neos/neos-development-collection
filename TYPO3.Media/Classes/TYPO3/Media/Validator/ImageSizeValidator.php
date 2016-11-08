@@ -2,7 +2,7 @@
 namespace TYPO3\Media\Validator;
 
 /*
- * This file is part of the TYPO3.Media package.
+ * This file is part of the Neos.Media package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -20,7 +20,7 @@ use TYPO3\Media\Domain\Model\ImageInterface;
  * Validator that checks size (resolution) of a given image
  *
  * Example:
- * [at]Flow\Validate("$image", type="\TYPO3\Media\Validator\ImageSizeValidator", options={ "minimumWidth"=150, "maximumResolution"=60000 })
+ * [at]Flow\Validate("$image", type="\Neos\Media\Validator\ImageSizeValidator", options={ "minimumWidth"=150, "maximumResolution"=60000 })
  */
 class ImageSizeValidator extends AbstractValidator
 {
@@ -37,7 +37,7 @@ class ImageSizeValidator extends AbstractValidator
     );
 
     /**
-     * The given $value is valid if it is an \TYPO3\Media\Domain\Model\ImageInterface of the configured resolution
+     * The given $value is valid if it is an \Neos\Media\Domain\Model\ImageInterface of the configured resolution
      * Note: a value of NULL or empty string ('') is considered valid
      *
      * @param ImageInterface $image The image that should be validated

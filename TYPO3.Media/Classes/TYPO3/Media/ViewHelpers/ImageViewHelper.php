@@ -2,7 +2,7 @@
 namespace TYPO3\Media\ViewHelpers;
 
 /*
- * This file is part of the TYPO3.Media package.
+ * This file is part of the Neos.Media package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -18,12 +18,12 @@ use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
 
 /**
- * Renders an <img> HTML tag from a given TYPO3.Media's image instance
+ * Renders an <img> HTML tag from a given Neos.Media's image instance
  *
  * = Examples =
  *
  * <code title="Rendering an image as-is">
- * <typo3.media:image image="{imageObject}" alt="a sample image without scaling" />
+ * <neos.media:image image="{imageObject}" alt="a sample image without scaling" />
  * </code>
  * <output>
  * (depending on the image, no scaling applied)
@@ -32,7 +32,7 @@ use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
  *
  *
  * <code title="Rendering an image with scaling at a given width only">
- * <typo3.media:image image="{imageObject}" maximumWidth="80" alt="sample" />
+ * <neos.media:image image="{imageObject}" maximumWidth="80" alt="sample" />
  * </code>
  * <output>
  * (depending on the image; scaled down to a maximum width of 80 pixels, keeping the aspect ratio)
@@ -41,7 +41,7 @@ use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
  *
  *
  * <code title="Rendering an image with scaling at given width and height, keeping aspect ratio">
- * <typo3.media:image image="{imageObject}" maximumWidth="80" maximumHeight="80" alt="sample" />
+ * <neos.media:image image="{imageObject}" maximumWidth="80" maximumHeight="80" alt="sample" />
  * </code>
  * <output>
  * (depending on the image; scaled down to a maximum width and height of 80 pixels, keeping the aspect ratio)
@@ -50,7 +50,7 @@ use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
  *
  *
  * <code title="Rendering an image with crop-scaling at given width and height">
- * <typo3.media:image image="{imageObject}" maximumWidth="80" maximumHeight="80" allowCropping="true" alt="sample" />
+ * <neos.media:image image="{imageObject}" maximumWidth="80" maximumHeight="80" allowCropping="true" alt="sample" />
  * </code>
  * <output>
  * (depending on the image; scaled down to a width and height of 80 pixels, possibly changing aspect ratio)
@@ -58,7 +58,7 @@ use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
  * </output>
  *
  * <code title="Rendering an image with allowed up-scaling at given width and height">
- * <typo3.media:image image="{imageObject}" maximumWidth="5000" allowUpScaling="true" alt="sample" />
+ * <neos.media:image image="{imageObject}" maximumWidth="5000" allowUpScaling="true" alt="sample" />
  * </code>
  * <output>
  * (depending on the image; scaled up or down to a width 5000 pixels, keeping aspect ratio)

@@ -2,7 +2,7 @@
 namespace TYPO3\Media\ViewHelpers\Uri;
 
 /*
- * This file is part of the TYPO3.Media package.
+ * This file is part of the Neos.Media package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -18,7 +18,7 @@ use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
 
 /**
- * Renders the src path of a thumbnail image of a given TYPO3.Media image instance
+ * Renders the src path of a thumbnail image of a given Neos.Media image instance
  *
  * = Examples =
  *
@@ -39,7 +39,7 @@ use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
  * _Resources/Persistent/b29[...]95d.jpeg
  * </output>
  *
- * @see \TYPO3\Media\ViewHelpers\ImageViewHelper
+ * @see \Neos\Media\ViewHelpers\ImageViewHelper
  */
 class ImageViewHelper extends AbstractViewHelper
 {
