@@ -90,6 +90,10 @@ See https://www.neos.io/download-and-extend/upgrade-instructions-2-2-2-2-3.html
 
    This bugfix correctly keeps supertypes unset that are unset in a parent node type when inheriting, which was not always the case. As a result some previously (wrongly) existing configuration might now disappear.
 
+- `Http RequestHandler returns correct instance of Request and Response <https://github.com/neos/flow-development-collection/pull/499>`_
+
+   If you used ``Request::createFromEnvironment()`` to create URLs in your custom code you must retrieve the ``Request`` object from the ``RequestHandler`` from now on. Otherwise you might run into malformed URLs like `https://acme.com:80` (depending on your environment).
+
 .. note::
 
    Additionally all changes in Flow 3.3 apply, see the release notes to further information.
