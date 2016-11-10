@@ -16,15 +16,8 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * Matcher object for use inside a "Case" statement
  */
-class MatcherImplementation extends RendererImplementation
+class RendererImplementation extends AbstractTypoScriptObject
 {
-    /**
-     * @return boolean
-     */
-    public function getCondition()
-    {
-        return (boolean)$this->tsValue('condition');
-    }
 
     /**
      * The type to render if condition is TRUE
@@ -47,16 +40,29 @@ class MatcherImplementation extends RendererImplementation
     }
 
     /**
-     * If $condition matches, render $type and return it. Else, return MATCH_NORESULT.
+     * Render $type and return it.
      *
      * @return mixed
      */
     public function evaluate()
     {
-        if ($this->getCondition()) {
-            return parent::evaluate();
+        $rendererPath = sprintf('%s/renderer', $this->path);
+        $canRenderWithRenderer = $this->tsRuntime->canRender($rendererPath);
+        $renderPath = $this->getRenderPath();
+
+        if ($canRenderWithRenderer) {
+            $renderedElement = $this->tsRuntime->evaluate($rendererPath, $this);
+        } elseif ($renderPath !== null) {
+            if (substr($renderPath, 0, 1) === '/') {
+                $renderedElement = $this->tsRuntime->render(substr($renderPath, 1));
+            } else {
+                $renderedElement = $this->tsRuntime->render($this->path . '/' . str_replace('.', '/', $renderPath));
+            }
         } else {
-            return CaseImplementation::MATCH_NORESULT;
+            $renderedElement = $this->tsRuntime->render(
+                sprintf('%s/element<%s>', $this->path, $this->getType())
+            );
         }
+        return $renderedElement;
     }
 }
