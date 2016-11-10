@@ -14,10 +14,10 @@
 						<m:fileTypeIcon file="{asset}" height="32" />
 
 						<div class="neos-dropdown neos-pull-right" id="neos-asset-actionmenu-{asset -> f:format.identifier()}">
-							<a class="dropdown-toggle neos-button neos-button-small" href="#" data-neos-toggle="dropdown" data-target="#neos-asset-actionmenu-{asset -> f:format.identifier()}">
+							<a class="dropdown-toggle neos-button" href="#" data-neos-toggle="dropdown" data-target="#neos-asset-actionmenu-{asset -> f:format.identifier()}">
 								<i class="icon-ellipsis-horizontal"></i>
 							</a>
-							<div class="neos-dropdown-menu-list" role="menu">
+							<div class="neos-dropdown-menu-list neos-pull-right" role="menu">
 								<ul>
 									<li>
 										<f:link.action action="edit" arguments="{asset: asset}" title="{neos:backend.translate(id: 'media.tooltip.editAsset', source: 'Modules', package: 'TYPO3.Neos')}">
@@ -40,7 +40,7 @@
 							</div>
 						</div>
 
-						<span class="neos-caption asset-label" title="{asset.label}"><f:format.crop maxCharacters="100">{asset.label}</f:format.crop></span>
+						<span class="neos-caption asset-label" title="{asset.label}" data-neos-toggle="tooltip"><f:format.crop maxCharacters="100">{asset.label}</f:format.crop></span>
 					</div>
 				</li>
 			</f:for>

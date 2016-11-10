@@ -9,6 +9,7 @@
         "typo3/flow": "*",
         "typo3/imagine": "*",
         "typo3/kickstart": "*",
+        "typo3/form": "*",
         "typo3/party": "*",
         "typo3/setup": "*",
         "typo3/twitter-bootstrap": "*",

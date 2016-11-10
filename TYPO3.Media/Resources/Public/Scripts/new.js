@@ -1,6 +1,7 @@
 (function($) {
 	$(function() {
-		$('#resource').change(function(e) {
+		var $resource = $('#resource');
+		$resource.change(function(e) {
 			var filename = $(this).val().split('\\').pop();
 			$('label[for="resource"]').text(filename);
 			var filesize = $(this).get(0).files[0].size;
@@ -19,7 +20,7 @@
 				} else {
 					alert(message);
 				}
-				$(this.form).submit(function(e) {
+				$(this.form).on('submit.invalidfile', function(e) {
 					e.preventDefault();
 					var message = 'Cannot upload the file';
 					if (window.Typo3Neos) {
@@ -30,8 +31,24 @@
 					}
 				});
 			} else {
-				$(this.form).unbind('submit');
+				$(this.form).off('submit.invalidfile');
 			}
 		});
+		// Fallback validation for Safaris missing required attribute validation
+		var isSafari = navigator.userAgent.indexOf('Safari') !== -1 && navigator.userAgent.indexOf('Chrome') === -1;
+		if (isSafari) {
+			$resource.closest('form').on('submit.safari', function(e) {
+				if (!$resource.val()) {
+					e.preventDefault();
+					var message = 'No file selected';
+					if (window.Typo3Neos) {
+						message = window.Typo3Neos.I18n.translate('media.noFileSelected', message, 'TYPO3.Neos', 'Modules');
+						window.Typo3Neos.Notification.warning(message);
+					} else {
+						alert(message);
+					}
+				}
+			});
+		}
 	});
 })(jQuery);

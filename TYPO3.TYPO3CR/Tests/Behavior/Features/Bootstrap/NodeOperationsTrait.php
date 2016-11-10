@@ -101,6 +101,12 @@ trait NodeOperationsTrait
                     $identifier = null;
                 }
 
+                if (isset($row['Hidden']) && $row['Hidden'] === 'true') {
+                    $hidden = true;
+                } else {
+                    $hidden = false;
+                }
+
                 $parentNode = $context->getNode($parentPath);
                 if ($parentNode === null) {
                     throw new \Exception(sprintf('Could not get parent node with path %s to create node %s', $parentPath, $path));
@@ -117,6 +123,8 @@ trait NodeOperationsTrait
                         $node->setProperty($propertyName, $propertyValue);
                     }
                 }
+
+                $node->setHidden($hidden);
             }
 
             // Make sure we do not use cached instances
@@ -150,7 +158,8 @@ trait NodeOperationsTrait
                     foreach ($presetStrings as $presetString) {
                         list($presetName, $presetValues) = Arrays::trimExplode('=', $presetString);
                         $presets[$presetName] = array(
-                            'values' => Arrays::trimExplode(',', $presetValues)
+                            'values' => Arrays::trimExplode(',', $presetValues),
+                            'uriSegment' => $presetName
                         );
 
                         if ($defaultPreset === '') {
@@ -350,7 +359,7 @@ trait NodeOperationsTrait
     /**
      * @When /^I publish the node$/
      */
-    public function iPublishNodeToWorkspaceWithTheFollowingContext()
+    public function iPublishTheNode()
     {
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__);
@@ -373,6 +382,13 @@ trait NodeOperationsTrait
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', 'string', escapeshellarg($sourceWorkspaceName)));
         } else {
+
+            /**
+             * FIXME: Workspace properties from the previous workspace
+             * like fallback dimensions are not available from this point forward.
+             * The method ``iPublishTheNode`` keeps all this information intact.
+             **/
+
             $sourceContext = $this->getContextForProperties(array('Workspace' => $sourceWorkspaceName));
             $sourceWorkspace = $sourceContext->getWorkspace();
 
@@ -628,7 +644,7 @@ trait NodeOperationsTrait
     /**
      * @Then /^The node language dimension should be "([^"]*)"$/
      */
-    public function theNodeLanguagehouldBe($language)
+    public function theNodeLanguageShouldBe($language)
     {
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', 'string', escapeshellarg($language)));
@@ -866,6 +882,30 @@ trait NodeOperationsTrait
     }
 
     /**
+     * @When /^I unhide the node$/
+     */
+    public function iMakeTheNodevisible()
+    {
+        $node = $this->iShouldHaveOneNode();
+        $node->setHidden(false);
+
+        $this->objectManager->get('TYPO3\Flow\Persistence\PersistenceManagerInterface')->persistAll();
+        $this->resetNodeInstances();
+    }
+
+    /**
+     * @When /^I hide the node$/
+     */
+    public function iHideTheNode()
+    {
+        $node = $this->iShouldHaveOneNode();
+        $node->setHidden(true);
+
+        $this->objectManager->get('TYPO3\Flow\Persistence\PersistenceManagerInterface')->persistAll();
+        $this->resetNodeInstances();
+    }
+
+    /**
      * Makes sure to reset all node instances which might still be stored in the NodeDataRepository, ContextFactory or
      * NodeFactory.
      *
@@ -916,9 +956,7 @@ trait NodeOperationsTrait
             /** @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface $contextFactory */
             $contextFactory = $this->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
             $contextProperties = array();
-            if (isset($humanReadableContextProperties['Language'])) {
-                $contextProperties['dimensions']['language'] = array($humanReadableContextProperties['Language'], 'mul_ZZ');
-            }
+
             if (isset($humanReadableContextProperties['Language'])) {
                 $contextProperties['dimensions']['language'] = Arrays::trimExplode(',', $humanReadableContextProperties['Language']);
             }
@@ -928,6 +966,10 @@ trait NodeOperationsTrait
                 $this->createWorkspaceIfNeeded($contextProperties['workspaceName']);
             } else {
                 $this->createWorkspaceIfNeeded();
+            }
+
+            if (isset($humanReadableContextProperties['Hidden'])) {
+                $contextProperties['hidden'] = $humanReadableContextProperties['Hidden'];
             }
 
             foreach ($humanReadableContextProperties as $propertyName => $propertyValue) {
@@ -954,6 +996,8 @@ trait NodeOperationsTrait
                     }
                 }
             }
+
+            $contextProperties['invisibleContentShown'] = true;
 
             return $contextFactory->create($contextProperties);
         }
