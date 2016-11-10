@@ -1,0 +1,23 @@
+prototype(TYPO3.TypoScript:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
+prototype(TYPO3.TypoScript:Renderer).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RendererImplementation'
+prototype(TYPO3.TypoScript:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+
+prototype(TYPO3.TypoScript:Renderer.Test) < prototype(TYPO3.TypoScript:Value) {
+  value = 'result_of_renderer_prototyope'
+}
+
+renderer.renderPathRenderer = TYPO3.TypoScript:Renderer.Test
+renderer.renderPathRenderer.value = 'result_of_path_with_override'
+
+renderer.default = TYPO3.TypoScript:Renderer {
+	renderer = TYPO3.TypoScript:Renderer.Test
+}
+
+renderer.withType = TYPO3.TypoScript:Renderer {
+  type = 'TYPO3.TypoScript:Renderer.Test'
+  element.value = 'result_of_type_with_override'
+}
+
+renderer.withRenderPath = TYPO3.TypoScript:Renderer {
+  renderPath = '/renderer/renderPathRenderer'
+}
