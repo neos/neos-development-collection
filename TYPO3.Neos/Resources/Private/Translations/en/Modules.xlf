@@ -891,6 +891,9 @@
 			<trans-unit id="media.cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>
 			</trans-unit>
+			<trans-unit id="media.noFileSelected" xml:space="preserve">
+				<source>No file selected</source>
+			</trans-unit>
 			<trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			</trans-unit>

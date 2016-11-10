@@ -47,7 +47,7 @@ class BasicRenderingTest extends AbstractTypoScriptObjectTest
      * TODO: test different exception handlers
      *
      * @test
-     * @expectedException \Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException
+     * @expectedException InvalidTemplateResourceException
      */
     public function basicRenderingCrashing()
     {
