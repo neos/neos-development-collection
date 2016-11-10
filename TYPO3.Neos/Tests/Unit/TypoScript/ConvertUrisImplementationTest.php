@@ -125,7 +125,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException Exception
+     * @expectedException \TYPO3\Neos\Domain\Exception
      */
     public function evaluateThrowsExceptionIfValueIsNoString()
     {
@@ -137,7 +137,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException Exception
+     * @expectedException \TYPO3\Neos\Domain\Exception
      */
     public function evaluateThrowsExceptionIfTheCurrentContextArrayDoesNotContainANode()
     {
