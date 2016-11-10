@@ -12,9 +12,9 @@ namespace TYPO3\Neos\Tests\Unit\ViewHelpers\Link;
  */
 
 use TYPO3\Flow\Tests\UnitTestCase;
-use Neos\FluidAdaptor\Core\Rendering\RenderingContextInterface;
 use TYPO3\Neos\ViewHelpers\Link\ModuleViewHelper;
 use TYPO3\Neos\ViewHelpers\Uri\ModuleViewHelper as UriModuleViewHelper;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 
 /**
