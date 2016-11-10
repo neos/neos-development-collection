@@ -126,6 +126,19 @@ Example using an expression ``itemRenderer``::
 		itemRenderer = ${element * 2}
 	}
 
+.. _TYPO3_TypoScript__RawCollection:
+
+TYPO3.TypoScript:RawCollection
+------------------------------
+
+Render each item in ``collection`` using ``itemRenderer`` and return the result as an array (opposed to *string* for :ref:`TYPO3_TypoScript__Collection`)
+
+:collection: (array/Iterable, **required**) The array or iterable to iterate over
+:itemName: (string, defaults to ``item``) Context variable name for each item
+:itemKey: (string, defaults to ``itemKey``) Context variable name for each item key, when working with array
+:iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``
+:itemRenderer: (string) The renderer definition (simple value, expression or object) will be called once for every collection element
+
 .. _TYPO3_TypoScript__Case:
 
 TYPO3.TypoScript:Case
