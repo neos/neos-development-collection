@@ -176,7 +176,7 @@ overriding the ``@position`` property.
 TYPO3.TypoScript:Renderer
 -------------------------
 
-The Renderer object will evaluate to a result using either ``renderer``, ``renderPath`` or ``type`` on the configuration.
+The Renderer object will evaluate to a result using either ``renderer``, ``renderPath`` or ``type`` from the configuration.
 
 :type: (string) Object type to render (as string)
 :element.*: (mixed) Properties for the rendered object (when using ``type``)

@@ -12,7 +12,7 @@ namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects;
  */
 
 /**
- * Testcase for the Case TS object
+ * Testcase for the Renderer TS object
  *
  */
 class RendererTest extends AbstractTypoScriptObjectTest
