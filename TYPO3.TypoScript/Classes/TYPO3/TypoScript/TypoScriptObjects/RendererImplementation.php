@@ -14,7 +14,10 @@ namespace TYPO3\TypoScript\TypoScriptObjects;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * Matcher object for use inside a "Case" statement
+ * Renderer TypoScript Object
+ *
+ * The Renderer object will evaluate to a result using either ``renderer``,
+ * ``renderPath`` or ``type`` from the configuration.
  */
 class RendererImplementation extends AbstractTypoScriptObject
 {
