@@ -107,12 +107,7 @@ class ResourceUriImplementation extends AbstractTypoScriptObject
             throw new TypoScriptException('Neither "resource" nor "path" were specified', 1386458763);
         }
         if (strpos($path, 'resource://') === 0) {
-            $matches = array();
-            if (preg_match('#^resource://([^/]+)/Public/(.*)#', $path, $matches) !== 1) {
-                throw new TypoScriptException(sprintf('The specified path "%s" does not point to a public resource.', $path), 1386458851);
-            }
-            $package = $matches[1];
-            $path = $matches[2];
+            list($package, $path) = $this->resourceManager->getPackageAndPathByPublicPath($path);
         } else {
             $package = $this->getPackage();
             if ($package === null) {
