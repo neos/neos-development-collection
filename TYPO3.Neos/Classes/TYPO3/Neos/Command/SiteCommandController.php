@@ -94,7 +94,7 @@ class SiteCommandController extends CommandController
     protected $persistenceManager;
 
     /**
-     * Create a new (blank) site in the default dimension
+     * Create a new site
      *
      * This command allows to create a blank site with just a single empty document in the default dimension.
      * The name of the site, the packageKey must be specified.
@@ -272,11 +272,15 @@ class SiteCommandController extends CommandController
     /**
      * Remove all content and related data - for now. In the future we need some more sophisticated cleanup.
      *
-     * @param string $siteNodeName Name of a site root node to clear only content of this site.
+     * @param string $siteNode Name of a site root node to clear only content of this site.
+     * @param string $siteNodeName This option is deprecated, use --site-node instead
      * @return void
      */
-    public function pruneCommand($siteNodeName = null)
+    public function pruneCommand($siteNode = null, $siteNodeName = null)
     {
+        if ($siteNode !== null) {
+            $siteNodeName = $siteNode;
+        }
         if ($siteNodeName !== null) {
             $possibleSite = $this->siteRepository->findOneByNodeName($siteNodeName);
             if ($possibleSite === null) {
@@ -292,7 +296,7 @@ class SiteCommandController extends CommandController
     }
 
     /**
-     * Display a list of available sites
+     * List available sites
      *
      * @return void
      */
@@ -341,12 +345,14 @@ class SiteCommandController extends CommandController
     /**
      * Activate a site
      *
-     * @param string $siteNodeName The node name of the site to activate
+     * This command activates the specified site.
+     *
+     * @param string $siteNode The node name of the site to activate
      * @return void
      */
-    public function activateCommand($siteNodeName)
+    public function activateCommand($siteNode)
     {
-        $site = $this->siteRepository->findOneByNodeName($siteNodeName);
+        $site = $this->siteRepository->findOneByNodeName($siteNode);
         if (!$site instanceof Site) {
             $this->outputLine('<error>Site not found.</error>');
             $this->quit(1);
@@ -360,12 +366,14 @@ class SiteCommandController extends CommandController
     /**
      * Deactivate a site
      *
-     * @param string $siteNodeName The node name of the site to deactivate
+     * This command deactivates the specified site.
+     *
+     * @param string $siteNode The node name of the site to deactivate
      * @return void
      */
-    public function deactivateCommand($siteNodeName)
+    public function deactivateCommand($siteNode)
     {
-        $site = $this->siteRepository->findOneByNodeName($siteNodeName);
+        $site = $this->siteRepository->findOneByNodeName($siteNode);
         if (!$site instanceof Site) {
             $this->outputLine('<error>Site not found.</error>');
             $this->quit(1);
