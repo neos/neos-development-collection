@@ -473,6 +473,10 @@ class WorkspacesController extends AbstractModuleController
 
                 // $document will be null if we have a broken root line for this node. This actually should never happen, but currently can in some scenarios.
                 if ($document !== null) {
+                    $contentChanges = $this->renderContentChanges($node);
+                    if (empty($contentChanges) == 0 && $node->getNodeType()->isOfType('TYPO3.Neos:ContentCollection')) {
+                        continue;
+                    }
                     $documentPath = implode('/', array_slice(explode('/', $document->getPath()), 3));
                     $relativePath = str_replace(sprintf(SiteService::SITES_ROOT_PATH . '/%s/%s', $siteNodeName, $documentPath), '', $node->getPath());
                     if (!isset($siteChanges[$siteNodeName]['siteNode'])) {
@@ -482,7 +486,7 @@ class WorkspacesController extends AbstractModuleController
 
                     $change = [
                         'node' => $node,
-                        'contentChanges' => $this->renderContentChanges($node),
+                        'contentChanges' => $contentChanges,
                     ];
                     if ($node->getNodeType()->isOfType('TYPO3.Neos:Node')) {
                         $change['configuration'] = $node->getNodeType()->getFullConfiguration();
