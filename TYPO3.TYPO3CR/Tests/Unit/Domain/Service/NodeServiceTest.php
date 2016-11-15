@@ -230,7 +230,7 @@ class NodeServiceTest extends UnitTestCase
         $nodeService = $this->createNodeService();
 
         $mockNode = $this->getMockBuilder(Node::class)->disableOriginalConstructor()->getMock();
-        $mockNodeData = $this->getMockBuilder('\TYPO3\TYPO3CR\Domain\Model\NodeData')->disableOriginalConstructor()->getMock();
+        $mockNodeData = $this->getMockBuilder(\TYPO3\TYPO3CR\Domain\Model\NodeData::class)->disableOriginalConstructor()->getMock();
         $mockNodeType = $this->mockNodeType('TYPO3.TYPO3CR.Testing:Content');
 
         $mockNodeData->expects($this->once())

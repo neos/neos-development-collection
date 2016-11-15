@@ -36,10 +36,10 @@ class ParserTest extends UnitTestCase
      */
     protected function setUp()
     {
-        $this->mockObjectManager = $this->createMock('TYPO3\Flow\Object\ObjectManagerInterface');
+        $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $this->mockObjectManager->expects($this->any())->method('isRegistered')->will($this->returnCallback(array($this, 'objectManagerIsRegisteredCallback')));
 
-        $this->parser = $this->getAccessibleMock('TYPO3\TypoScript\Core\Parser', array('dummy'));
+        $this->parser = $this->getAccessibleMock(Parser::class, array('dummy'));
         $this->parser->_set('objectManager', $this->mockObjectManager);
     }
 

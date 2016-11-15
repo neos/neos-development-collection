@@ -46,14 +46,14 @@ class SortOperationTest extends FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $workspaceRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
+        $workspaceRepository = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository::class);
         $workspaceRepository->add(new Workspace('live'));
         $this->persistenceManager->persistAll();
-        $this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
+        $this->contextFactory = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface::class);
         $this->context = $this->contextFactory->create(array('workspaceName' => 'live'));
 
 
-        $siteImportService = $this->objectManager->get('TYPO3\Neos\Domain\Service\SiteImportService');
+        $siteImportService = $this->objectManager->get(\TYPO3\Neos\Domain\Service\SiteImportService::class);
         $siteImportService->importFromFile(__DIR__ . '/Fixtures/SortableNodes.xml', $this->context);
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
@@ -61,7 +61,7 @@ class SortOperationTest extends FunctionalTestCase
 
         // The context is not important here, just a quick way to get a (live) workspace
         //        $context = $this->contextFactory->create();
-        $this->nodeDataRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository');
+        $this->nodeDataRepository = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository::class);
     }
 
     /**

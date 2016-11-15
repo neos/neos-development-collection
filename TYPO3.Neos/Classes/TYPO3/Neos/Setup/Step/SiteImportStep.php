@@ -210,7 +210,7 @@ class SiteImportStep extends AbstractStep
             $packageKey = $formValues['packageKey'];
             $siteName = $formValues['siteName'];
 
-            $generatorService = $this->objectManager->get('TYPO3\Neos\Kickstarter\Service\GeneratorService');
+            $generatorService = $this->objectManager->get(\TYPO3\Neos\Kickstarter\Service\GeneratorService::class);
             $generatorService->generateSitePackage($packageKey, $siteName);
         } elseif (!empty($formValues['site'])) {
             $packageKey = $formValues['site'];

@@ -594,7 +594,7 @@ class LegacySiteImportService
         $resourceData = trim((string)$objectXml->originalImage->resource->content);
 
         if ((string)$objectXml->originalImage->resource['__identifier'] !== '') {
-            $resource = $this->persistenceManager->getObjectByIdentifier((string)$objectXml->originalImage->resource['__identifier'], 'TYPO3\Flow\Resource\Resource');
+            $resource = $this->persistenceManager->getObjectByIdentifier((string)$objectXml->originalImage->resource['__identifier'], \TYPO3\Flow\Resource\Resource::class);
         }
 
         if (!isset($resource) || $resource === null) {
@@ -636,7 +636,7 @@ class LegacySiteImportService
         $resourceData = trim((string)$objectXml->resource->content);
 
         if ((string)$objectXml->resource['__identifier'] !== '') {
-            $resource = $this->persistenceManager->getObjectByIdentifier((string)$objectXml->resource['__identifier'], 'TYPO3\Flow\Resource\Resource');
+            $resource = $this->persistenceManager->getObjectByIdentifier((string)$objectXml->resource['__identifier'], \TYPO3\Flow\Resource\Resource::class);
         }
 
         if (!isset($resource) || $resource === null) {

@@ -401,7 +401,7 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest
         $view->setOption('enableContentCache', true);
         $view->setTypoScriptPath('contentCache/maximumLifetimeInNestedEmbedAndCachedSegments');
 
-        $mockCache = $this->createMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
+        $mockCache = $this->createMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class);
         $this->inject($this->contentCache, 'cache', $mockCache);
 
         $mockCache->expects($this->any())->method('get')->will($this->returnValue(false));
@@ -441,7 +441,7 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest
     public function cacheUsesGlobalCacheIdentifiersAsDefaultPrototypeForEntryIdentifier()
     {
         $entriesWritten = array();
-        $mockCache = $this->createMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
+        $mockCache = $this->createMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class);
         $mockCache->expects($this->any())->method('get')->will($this->returnValue(false));
         $mockCache->expects($this->any())->method('has')->will($this->returnValue(false));
         $mockCache->expects($this->atLeastOnce())->method('set')->will($this->returnCallback(function ($entryIdentifier, $data, $tags, $lifetime) use (&$entriesWritten) {
@@ -485,7 +485,7 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest
     public function globalIdentifiersAreUsedWithBlankEntryIdentifiers()
     {
         $entriesWritten = array();
-        $mockCache = $this->createMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
+        $mockCache = $this->createMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class);
         $mockCache->expects($this->any())->method('get')->will($this->returnValue(false));
         $mockCache->expects($this->any())->method('has')->will($this->returnValue(false));
         $mockCache->expects($this->atLeastOnce())->method('set')->will($this->returnCallback(function ($entryIdentifier, $data, $tags, $lifetime) use (&$entriesWritten) {
