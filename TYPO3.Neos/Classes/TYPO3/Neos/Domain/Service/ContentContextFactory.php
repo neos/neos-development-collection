@@ -120,7 +120,7 @@ class ContentContextFactory extends ContextFactory
             $defaultContextProperties['currentSite'] = $currentDomain->getSite();
             $defaultContextProperties['currentDomain'] = $currentDomain;
         } else {
-            $defaultContextProperties['currentSite'] = $this->siteRepository->findFirstOnline();
+            $defaultContextProperties['currentSite'] = $this->siteRepository->findDefault();
         }
 
         return $defaultContextProperties;
