@@ -12,7 +12,7 @@ namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects;
  */
 
 /**
- * Testcase for the CollectionTest Array
+ * Testcase for the RawCollection TS object
  *
  */
 class RawCollectionTest extends AbstractTypoScriptObjectTest
