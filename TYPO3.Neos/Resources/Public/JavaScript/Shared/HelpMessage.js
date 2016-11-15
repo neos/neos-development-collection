@@ -14,7 +14,7 @@ define([
 	return function(helpConfiguration, altText) {
 		helpMessage = '';
 		if (helpConfiguration.message) {
-			helpMessage = Marked(I18n.translate(helpConfiguration.message));
+			helpMessage = Marked(I18n.translate(helpConfiguration.message)).replace(/<a\s(.*?)>/g, "<a $1 target='_blank'>");
 		}
 		if (helpConfiguration.thumbnail) {
 			helpMessage = '<img alt=' + altText + ' src="' + helpConfiguration.thumbnail + '" />' + helpMessage;
