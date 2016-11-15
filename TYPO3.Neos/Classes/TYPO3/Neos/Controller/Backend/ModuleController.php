@@ -102,7 +102,7 @@ class ModuleController extends ActionController
             }
             return $moduleResponse->getContent();
         } else {
-            $user = $this->securityContext->getPartyByType('TYPO3\Neos\Domain\Model\User');
+            $user = $this->securityContext->getPartyByType(\TYPO3\Neos\Domain\Model\User::class);
 
             $sites = $this->menuHelper->buildSiteList($this->controllerContext);
 

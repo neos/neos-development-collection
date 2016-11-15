@@ -415,10 +415,10 @@ class NodeType
             if ($this->hasConfiguration('label.generatorClass')) {
                 $nodeLabelGenerator = $this->objectManager->get($this->getConfiguration('label.generatorClass'));
             } elseif ($this->hasConfiguration('label') && is_string($this->getConfiguration('label'))) {
-                $nodeLabelGenerator = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Model\ExpressionBasedNodeLabelGenerator');
+                $nodeLabelGenerator = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Model\ExpressionBasedNodeLabelGenerator::class);
                 $nodeLabelGenerator->setExpression($this->getConfiguration('label'));
             } else {
-                $nodeLabelGenerator = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Model\NodeLabelGeneratorInterface');
+                $nodeLabelGenerator = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Model\NodeLabelGeneratorInterface::class);
             }
 
             // TODO: Remove after deprecation phase of NodeDataLabelGeneratorInterface
