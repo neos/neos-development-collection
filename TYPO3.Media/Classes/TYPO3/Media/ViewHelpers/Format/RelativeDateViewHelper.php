@@ -13,7 +13,7 @@ namespace TYPO3\Media\ViewHelpers\Format;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Utility\Now;
-use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * Renders a DateTime formatted relative to the current date

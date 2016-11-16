@@ -19,7 +19,7 @@ use TYPO3\Flow\ResourceManagement\ResourceManager;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\PositionalArraySorter;
-use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Utility\BackendAssetsUtility;
