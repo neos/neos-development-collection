@@ -16,7 +16,7 @@ use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Configuration\Source\YamlSource;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
-use TYPO3\Flow\Resource\ResourceManager;
+use TYPO3\Flow\ResourceManagement\ResourceManager;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Form\Core\Model\FormDefinition;
