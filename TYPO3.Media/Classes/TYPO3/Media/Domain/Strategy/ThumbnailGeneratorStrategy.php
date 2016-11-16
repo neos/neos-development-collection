@@ -13,7 +13,7 @@ namespace TYPO3\Media\Domain\Strategy;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Configuration\ConfigurationManager;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Utility\PositionalArraySorter;
 use TYPO3\Media\Domain\Model\Thumbnail;

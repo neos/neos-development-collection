@@ -13,7 +13,7 @@ namespace TYPO3\Media\Domain\Model;
 
 use TYPO3\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\ResourceManagement\PersistentResource;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Media\Domain\Strategy\ThumbnailGeneratorStrategy;
