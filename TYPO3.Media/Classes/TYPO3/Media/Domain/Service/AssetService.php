@@ -22,6 +22,7 @@ use TYPO3\Flow\ResourceManagement\PersistentResource;
 use TYPO3\Flow\ResourceManagement\ResourceManager;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Media\Domain\Model\AssetInterface;
+use TYPO3\Media\Domain\Model\AssetVariantInterface;
 use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Model\ImageVariant;
 use TYPO3\Media\Domain\Model\Thumbnail;
@@ -254,13 +255,16 @@ class AssetService
 
         if (method_exists($asset, 'getVariants')) {
             $variants = $asset->getVariants();
+            /** @var AssetVariantInterface $variant */
             foreach ($variants as $variant) {
                 $originalVariantResource = $variant->getResource();
                 $variant->refresh();
 
-                foreach ($variant->getAdjustments() as $adjustment) {
-                    if (method_exists($adjustment, 'refit')) {
-                        $adjustment->refit($asset);
+                if (method_exists($variant, 'getAdjustments')) {
+                    foreach ($variant->getAdjustments() as $adjustment) {
+                        if (method_exists($adjustment, 'refit')) {
+                            $adjustment->refit($asset);
+                        }
                     }
                 }
 
