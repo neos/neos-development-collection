@@ -26,10 +26,6 @@ matrix:
       dist: trusty
       addons:
         postgresql: "9.5"
-    - php: 5.6
-      env: DB=sqlite
-    - php: 5.5
-      env: DB=sqlite
 cache:
   directories:
     - $HOME/.composer/cache

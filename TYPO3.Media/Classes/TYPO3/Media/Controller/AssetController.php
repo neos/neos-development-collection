@@ -23,7 +23,7 @@ use TYPO3\Flow\Mvc\View\ViewInterface;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 use TYPO3\Flow\ResourceManagement\PersistentResource;
 use TYPO3\Flow\Utility\Files;
-use TYPO3\Fluid\View\TemplateView;
+use Neos\FluidAdaptor\View\TemplateView;
 use TYPO3\Media\Domain\Repository\AssetRepository;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Repository\AudioRepository;

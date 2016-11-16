@@ -573,7 +573,7 @@ TYPO3:
         packageKeys:
           - 'TYPO3.Flow'
           - 'TYPO3.Party'
-          - 'TYPO3.Fluid'
+          - 'Neos.FluidAdaptor'
           - 'TYPO3.Kickstart'
           - 'TYPO3.Welcome'
           - 'TYPO3.Media'
@@ -589,18 +589,18 @@ TYPO3:
         title: 'Fluid ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/ViewHelpers/Fluid.rst'
         affectedClasses:
-          parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
+          parentClassName: 'Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^TYPO3\\Fluid\\ViewHelpers\\.*$/i'
         parser:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser'
           options:
             namespaces:
-              f: 'TYPO3\Fluid\ViewHelpers'
+              f: 'Neos\FluidAdaptor\ViewHelpers'
       'Neos:MediaViewHelpers':
         title: 'Media ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/ViewHelpers/Media.rst'
         affectedClasses:
-          parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
+          parentClassName: 'Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^TYPO3\\Media\\ViewHelpers\\.*$/i'
         parser:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser'
@@ -611,7 +611,7 @@ TYPO3:
         title: 'Form ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/ViewHelpers/Form.rst'
         affectedClasses:
-          parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
+          parentClassName: 'Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^TYPO3\\Form\\ViewHelpers\\.*$/i'
         parser:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser'
@@ -622,37 +622,37 @@ TYPO3:
         title: 'Neos ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/ViewHelpers/Neos.rst'
         affectedClasses:
-          parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
+          parentClassName: 'Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^TYPO3\\Neos\\ViewHelpers\\.*$/i'
         parser:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser'
           options:
             namespaces:
-              f: 'TYPO3\Fluid\ViewHelpers'
+              f: 'Neos\FluidAdaptor\ViewHelpers'
               neos: 'TYPO3\Neos\ViewHelpers'
       'Neos:Typo3CrViewHelpers':
         title: 'Content Repository ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/ViewHelpers/TYPO3CR.rst'
         affectedClasses:
-          parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
+          parentClassName: 'Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^TYPO3\\TYPO3CR\\ViewHelpers\\.*$/i'
         parser:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser'
           options:
             namespaces:
-              f: 'TYPO3\Fluid\ViewHelpers'
+              f: 'Neos\FluidAdaptor\ViewHelpers'
               neos: 'TYPO3\Neos\ViewHelpers'
       'Neos:TypoScriptViewHelpers':
         title: 'TypoScript ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/ViewHelpers/TypoScript.rst'
         affectedClasses:
-          parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
+          parentClassName: 'Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^TYPO3\\TypoScript\\ViewHelpers\\.*$/i'
         parser:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser'
           options:
             namespaces:
-              f: 'TYPO3\Fluid\ViewHelpers'
+              f: 'Neos\FluidAdaptor\ViewHelpers'
               ts: 'TYPO3\TypoScript\ViewHelpers'
 
       # Validators
