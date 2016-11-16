@@ -72,9 +72,9 @@ class MediaCommandController extends CommandController
     /**
      * Import resources to asset management
      *
-     * This command detects Flow "Resource" objects which are not yet available as "Asset" objects and thus don't appear
+     * This command detects Flow "PersistentResource"s which are not yet available as "Asset" objects and thus don't appear
      * in the asset management. The type of the imported asset is determined by the file extension provided by the
-     * Resource object.
+     * PersistentResource.
      *
      * @param boolean $simulate If set, this command will only tell what it would do instead of doing it right away
      * @return void
@@ -106,13 +106,13 @@ class MediaCommandController extends CommandController
             $mediaType = $resourceInfo['mediatype'];
 
             if (substr($mediaType, 0, 6) === 'image/') {
-                $resource = $this->persistenceManager->getObjectByIdentifier($resourceInfo['persistence_object_identifier'], \TYPO3\Flow\Resource\Resource::class);
+                $resource = $this->persistenceManager->getObjectByIdentifier($resourceInfo['persistence_object_identifier'], \TYPO3\Flow\ResourceManagement\PersistentResource::class);
                 if ($resource === null) {
-                    $this->outputLine('Warning: Resource for file "%s" seems to be corrupt. No resource object with identifier %s could be retrieved from the Persistence Manager.', array($resourceInfo['filename'], $resourceInfo['persistence_object_identifier']));
+                    $this->outputLine('Warning: PersistentResource for file "%s" seems to be corrupt. No resource object with identifier %s could be retrieved from the Persistence Manager.', array($resourceInfo['filename'], $resourceInfo['persistence_object_identifier']));
                     continue;
                 }
                 if (!$resource->getStream()) {
-                    $this->outputLine('Warning: Resource for file "%s" seems to be corrupt. The actual data of resource %s could not be found in the resource storage.', array($resourceInfo['filename'], $resourceInfo['persistence_object_identifier']));
+                    $this->outputLine('Warning: PersistentResource for file "%s" seems to be corrupt. The actual data of resource %s could not be found in the resource storage.', array($resourceInfo['filename'], $resourceInfo['persistence_object_identifier']));
                     continue;
                 }
                 $image = new Image($resource);

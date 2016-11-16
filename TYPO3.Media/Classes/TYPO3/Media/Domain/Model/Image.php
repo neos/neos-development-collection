@@ -16,7 +16,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Object\ObjectManagerInterface;
-use TYPO3\Flow\Resource\Resource as PersistentResource;
+use TYPO3\Flow\ResourceManagement\PersistentResource;
 use TYPO3\Media\Domain\Service\ImageService;
 use TYPO3\Media\Exception\ImageFileException;
 
@@ -113,7 +113,7 @@ class Image extends Asset implements ImageInterface, VariantSupportInterface
 
     /**
      * Calculates and sets the width and height of this Image asset based
-     * on the given Resource.
+     * on the given PersistentResource.
      *
      * @param PersistentResource $resource
      * @return void

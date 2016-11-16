@@ -19,7 +19,7 @@ use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\TypeConverter\ImageInterfaceConverter;
-use TYPO3\Flow\Resource\Resource as PersistentResource;
+use TYPO3\Flow\ResourceManagement\PersistentResource;
 
 /**
  * Testcase for the ImageConverter
@@ -30,6 +30,21 @@ class ImageInterfaceConverterTest extends UnitTestCase
      * @var ImageInterfaceConverter
      */
     protected $converter;
+
+    /**
+     * @var ReflectionService|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $mockReflectionService;
+
+    /**
+     * @var PersistenceManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $mockPersistenceManager;
+
+    /**
+     * @var ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $mockObjectManager;
 
     /**
      * @return void

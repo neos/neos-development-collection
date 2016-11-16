@@ -14,11 +14,9 @@ namespace TYPO3\Media\Domain\Model;
 use TYPO3\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Object\ObjectManagerInterface;
-use TYPO3\Flow\Resource\Resource;
+use TYPO3\Flow\ResourceManagement\PersistentResource;
 use TYPO3\Flow\Utility\Arrays;
-use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Strategy\ThumbnailGeneratorStrategy;
-use TYPO3\Media\Exception;
 
 /**
  * A system-generated preview version of an Asset
@@ -48,7 +46,7 @@ class Thumbnail implements ImageInterface
     protected $originalAsset;
 
     /**
-     * @var Resource
+     * @var PersistentResource
      * @ORM\OneToOne(orphanRemoval = true, cascade={"all"})
      * @ORM\JoinColumn(nullable=true)
      */
@@ -133,9 +131,9 @@ class Thumbnail implements ImageInterface
     }
 
     /**
-     * Resource of this thumbnail
+     * PersistentResource of this thumbnail
      *
-     * @return Resource
+     * @return PersistentResource
      */
     public function getResource()
     {
@@ -143,10 +141,10 @@ class Thumbnail implements ImageInterface
     }
 
     /**
-     * @param Resource $resource
+     * @param PersistentResource $resource
      * @return void
      */
-    public function setResource(Resource $resource)
+    public function setResource(PersistentResource $resource)
     {
         $this->resource = $resource;
     }
@@ -187,7 +185,7 @@ class Thumbnail implements ImageInterface
     }
 
     /**
-     * Refreshes this asset after the Resource has been modified
+     * Refreshes this asset after the PersistentResource has been modified
      *
      * @return void
      */
