@@ -32,6 +32,9 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 		cropLabel: function () {
 			return I18n.translate('TYPO3.Neos:Main:crop', 'Crop');
 		}.property(),
+		mediaLabel: function () {
+			return I18n.translate('TYPO3.Neos:Main:media', 'Media');
+		}.property(),
 
 		/**
 		 * Size of the image preview. Public configuration.
@@ -277,7 +280,6 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 				width: this.get('imagePreviewMaximumDimensions.width') + 'px',
 				height: this.get('imagePreviewMaximumDimensions.height') + 'px'
 			});
-
 			this._readAndDeserializeValue();
 		},
 
@@ -329,8 +331,15 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 						});
 					}
 				},
-				onLoad: function() {
+				onLoad: function(event, iframe) {
 					this._frameLoaded = true;
+					var notifications = $(iframe).contents().find('#neos-notifications-inline');
+					if (notifications.length > 0) {
+						$('li', notifications).each(function(index, notification) {
+							var title = $(notification).data('title');
+							Notification[$(notification).data('type')](title ? title : $(notification).text(), title ? $(notification).html() : '');
+						});
+					}
 				},
 				refreshThumbnail: function() {
 					if (this._frameLoaded) {
@@ -358,7 +367,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 				didInsertElement: function() {
 					this.$().find('iframe').on('load', function(event) {
 						if (window.Typo3MediaBrowserCallbacks && window.Typo3MediaBrowserCallbacks.onLoad) {
-							window.Typo3MediaBrowserCallbacks.onLoad(event);
+							window.Typo3MediaBrowserCallbacks.onLoad(event, this);
 						}
 					});
 				}
@@ -1072,7 +1081,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 				didInsertElement: function() {
 					this.$().find('iframe').on('load', function(event) {
 						if (window.Typo3MediaBrowserCallbacks && window.Typo3MediaBrowserCallbacks.onLoad) {
-							window.Typo3MediaBrowserCallbacks.onLoad(event);
+							window.Typo3MediaBrowserCallbacks.onLoad(event, this);
 						}
 					});
 				}
@@ -1135,6 +1144,13 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 
 		_hideImageLoader: function () {
 			this.loadingIndicator.stop();
-		}
+		},
+
+		initializeCropButtonTooltip: function() {
+			// Re-initialize crop button tooltip after re-render
+			Ember.run.next(this, function() {
+				this.$('[data-neos-tooltip]:not([data-original-title])').tooltip({container: '#neos-application'});
+			});
+		}.observes('shouldRenderCrop')
 	});
 });
