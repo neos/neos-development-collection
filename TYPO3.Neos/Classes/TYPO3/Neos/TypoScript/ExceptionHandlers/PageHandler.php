@@ -13,7 +13,7 @@ namespace TYPO3\Neos\TypoScript\ExceptionHandlers;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
-use TYPO3\Fluid\View\StandaloneView;
+use Neos\FluidAdaptor\View\StandaloneView;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
 use TYPO3\Neos\Service\ContentElementWrappingService;
@@ -89,12 +89,12 @@ class PageHandler extends AbstractRenderingExceptionHandler
     protected function prepareFluidView()
     {
         $fluidView = new StandaloneView();
-        $fluidView->setTemplatePathAndFilename('resource://TYPO3.Neos/Private/Templates/Error/NeosBackendMessage.html');
-        $fluidView->setLayoutRootPath('resource://TYPO3.Neos/Private/Layouts');
-        // FIXME find a better way than using templates as partials
-        $fluidView->setPartialRootPath('resource://TYPO3.Neos/Private/Templates/TypoScriptObjects');
         $fluidView->setControllerContext($this->runtime->getControllerContext());
         $fluidView->setFormat('html');
+        $fluidView->setTemplatePathAndFilename('resource://TYPO3.Neos/Private/Templates/Error/NeosBackendMessage.html');
+        $fluidView->setLayoutRootPath('resource://TYPO3.Neos/Private/Layouts/');
+        // FIXME find a better way than using templates as partials
+        $fluidView->setPartialRootPath('resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/');
         return $fluidView;
     }
 }
