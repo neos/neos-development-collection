@@ -15,7 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Configuration\Exception\InvalidConfigurationException;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Flow\Mvc\Exception\StopActionException;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\PositionalArraySorter;
@@ -788,7 +788,7 @@ class Runtime
         }
         $contextVariables['this'] = $contextObject;
 
-        if ($this->eelEvaluator instanceof \TYPO3\Flow\Object\DependencyInjection\DependencyProxy) {
+        if ($this->eelEvaluator instanceof \TYPO3\Flow\ObjectManagement\DependencyInjection\DependencyProxy) {
             $this->eelEvaluator->_activateDependency();
         }
 
