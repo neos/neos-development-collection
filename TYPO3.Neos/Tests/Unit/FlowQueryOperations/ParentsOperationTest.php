@@ -32,7 +32,7 @@ class ParentsOperationTest extends UnitTestCase
         $secondLevelNode = $this->createMock(NodeInterface::class);
 
         $siteNode->expects($this->any())->method('getPath')->will($this->returnValue('/site'));
-        $mockContext = $this->getMockBuilder('TYPO3\Neos\Domain\Service\ContentContext')->disableOriginalConstructor()->getMock();
+        $mockContext = $this->getMockBuilder(\TYPO3\Neos\Domain\Service\ContentContext::class)->disableOriginalConstructor()->getMock();
         $mockContext->expects($this->any())->method('getCurrentSiteNode')->will($this->returnValue($siteNode));
         $firstLevelNode->expects($this->any())->method('getParent')->will($this->returnValue($siteNode));
         $firstLevelNode->expects($this->any())->method('getPath')->will($this->returnValue('/site/first'));

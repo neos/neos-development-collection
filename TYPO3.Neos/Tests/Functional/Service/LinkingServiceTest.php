@@ -246,7 +246,7 @@ class LinkingServiceTest extends FunctionalTestCase
      */
     public function linkingServiceCanConvertUriToObject()
     {
-        $assetRepository = $this->objectManager->get('TYPO3\Media\Domain\Repository\AssetRepository');
+        $assetRepository = $this->objectManager->get(\TYPO3\Media\Domain\Repository\AssetRepository::class);
         $asset = $assetRepository->findByIdentifier('89cd85cc-270e-0902-7113-d14ac7539c75');
 
         $this->assertSame($this->baseNode, $this->linkingService->convertUriToObject('node://3239baee-3e7f-785c-0853-f4302ef32570', $this->baseNode));

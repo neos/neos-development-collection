@@ -42,7 +42,7 @@ class AssetValidator extends ConjunctionValidator
      */
     protected function initializeObject()
     {
-        $assetValidatorImplementationClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('TYPO3\\Media\\Domain\\Validator\\AssetValidatorInterface');
+        $assetValidatorImplementationClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface(AssetValidatorInterface::class);
         foreach ($assetValidatorImplementationClassNames as $assetValidatorImplementationClassName) {
             $this->addValidator($this->objectManager->get($assetValidatorImplementationClassName));
         }

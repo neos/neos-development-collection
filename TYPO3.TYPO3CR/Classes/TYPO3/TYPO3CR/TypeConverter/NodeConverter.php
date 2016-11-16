@@ -284,7 +284,7 @@ class NodeConverter extends AbstractTypeConverter
         );
         if ($workspaceName !== 'live') {
             $contextProperties['invisibleContentShown'] = true;
-            if ($configuration !== null && $configuration->getConfigurationValue('TYPO3\TYPO3CR\TypeConverter\NodeConverter', self::REMOVED_CONTENT_SHOWN) === true) {
+            if ($configuration !== null && $configuration->getConfigurationValue(\TYPO3\TYPO3CR\TypeConverter\NodeConverter::class, self::REMOVED_CONTENT_SHOWN) === true) {
                 $contextProperties['removedContentShown'] = true;
             }
         }
