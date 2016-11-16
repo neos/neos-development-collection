@@ -15,7 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\I18n\Service;
 use TYPO3\Flow\Reflection\ObjectAccess;
-use TYPO3\Flow\Resource\ResourceManager;
+use TYPO3\Flow\ResourceManagement\ResourceManager;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\PositionalArraySorter;
