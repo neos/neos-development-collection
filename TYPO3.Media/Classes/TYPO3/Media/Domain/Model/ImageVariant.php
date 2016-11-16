@@ -21,7 +21,6 @@ use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\ResourceManagement\PersistentResource;
 use TYPO3\Flow\Utility\TypeHandling;
 use TYPO3\Media\Domain\Model\Adjustment\ImageAdjustmentInterface;
-use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Service\ImageService;
 
 /**
@@ -73,7 +72,6 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
         $this->adjustments = new ArrayCollection();
         $this->tags = new ArrayCollection();
         $this->lastModified = new \DateTime();
-        $this->variants = new ArrayCollection();
     }
 
     /**
