@@ -18,8 +18,8 @@ use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Persistence\RepositoryInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
-use TYPO3\Flow\Resource\Resource as FlowResource;
-use TYPO3\Flow\Resource\ResourceManager;
+use TYPO3\Flow\ResourceManagement\PersistentResource;
+use TYPO3\Flow\ResourceManagement\ResourceManager;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\ImageInterface;
@@ -231,11 +231,11 @@ class AssetService
      * Replace resource on an asset. Takes variants and redirect handling into account.
      *
      * @param AssetInterface $asset
-     * @param FlowResource $resource
+     * @param PersistentResource $resource
      * @param array $options
      * @return void
      */
-    public function replaceAssetResource(AssetInterface $asset, FlowResource $resource, array $options = [])
+    public function replaceAssetResource(AssetInterface $asset, PersistentResource $resource, array $options = [])
     {
         $originalAssetResource = $asset->getResource();
         $asset->setResource($resource);
