@@ -71,11 +71,15 @@ class Thumbnail implements ImageInterface
     protected $configurationHash;
 
     /**
+     * @var bool
+     */
+    protected $async;
+
+    /**
      * Constructs a new Thumbnail
      *
      * @param AssetInterface $originalAsset The original asset this variant is derived from
      * @param ThumbnailConfiguration $configuration
-     * @param boolean $async
      * @throws \TYPO3\Media\Exception
      */
     public function __construct(AssetInterface $originalAsset, ThumbnailConfiguration $configuration)
