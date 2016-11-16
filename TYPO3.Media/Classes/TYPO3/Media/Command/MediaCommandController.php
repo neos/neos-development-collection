@@ -106,7 +106,7 @@ class MediaCommandController extends CommandController
             $mediaType = $resourceInfo['mediatype'];
 
             if (substr($mediaType, 0, 6) === 'image/') {
-                $resource = $this->persistenceManager->getObjectByIdentifier($resourceInfo['persistence_object_identifier'], 'TYPO3\Flow\Resource\Resource');
+                $resource = $this->persistenceManager->getObjectByIdentifier($resourceInfo['persistence_object_identifier'], \TYPO3\Flow\Resource\Resource::class);
                 if ($resource === null) {
                     $this->outputLine('Warning: Resource for file "%s" seems to be corrupt. No resource object with identifier %s could be retrieved from the Persistence Manager.', array($resourceInfo['filename'], $resourceInfo['persistence_object_identifier']));
                     continue;
