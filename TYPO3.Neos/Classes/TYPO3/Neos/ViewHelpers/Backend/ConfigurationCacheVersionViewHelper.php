@@ -13,7 +13,7 @@ namespace TYPO3\Neos\ViewHelpers\Backend;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\Frontend\StringFrontend;
-use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * ViewHelper for rendering the current version identifier for the

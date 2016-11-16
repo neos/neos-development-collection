@@ -12,7 +12,7 @@ namespace TYPO3\TYPO3CR\ViewHelpers\Widget;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Fluid\Core\Widget\AbstractWidgetViewHelper;
+use Neos\FluidAdaptor\Core\Widget\AbstractWidgetViewHelper;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\ViewHelpers\Widget\Controller\PaginateController;
 
