@@ -14,7 +14,7 @@ namespace TYPO3\Media\Domain\Service;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Routing\UriBuilder;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Persistence\RepositoryInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
@@ -142,7 +142,7 @@ class AssetService
      * Returns all registered asset usage strategies
      *
      * @return array<\TYPO3\Media\Domain\Strategy\AssetUsageStrategyInterface>
-     * @throws \TYPO3\Flow\Object\Exception\UnknownObjectException
+     * @throws \TYPO3\Flow\ObjectManagement\Exception\UnknownObjectException
      */
     protected function getUsageStrategies()
     {
