@@ -28,7 +28,7 @@ use TYPO3\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Core\Bootstrap;
 use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface;
 use TYPO3\Flow\Security\Authentication\Provider\TestingProvider;
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
