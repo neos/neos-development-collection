@@ -29,22 +29,19 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
     /**
      * Sets up this test case
      *
-     * @author  Robert Lemke <robert@typo3.org>
      */
     protected function setUp()
     {
-        $this->mockObjectManager = $this->getMock('TYPO3\Flow\Object\ObjectManagerInterface', array(), array(), '', false);
+        $this->mockObjectManager = $this->createMock('TYPO3\Flow\Object\ObjectManagerInterface');
         $this->mockObjectManager->expects($this->any())->method('isRegistered')->will($this->returnCallback(array($this, 'objectManagerIsRegisteredCallback')));
 
-        $parserClassName = $this->buildAccessibleProxy('TYPO3\TypoScript\Core\Parser');
-        $this->parser = new $parserClassName();
+        $this->parser = $this->getAccessibleMock('TYPO3\TypoScript\Core\Parser', array('dummy'));
         $this->parser->_set('objectManager', $this->mockObjectManager);
     }
 
     /**
      * call back for mocking the object factory
      * @return object fixture objects ...
-     * @author Robert Lemke <robert@typo3.org>
      */
     public function objectManagerCallback()
     {
@@ -58,7 +55,6 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
     /**
      * Call back for mocking the object manager's isRegistered() method
      * @return boolean
-     * @author Robert Lemke <robert@typo3.org>
      */
     public function objectManagerIsRegisteredCallback()
     {
@@ -83,7 +79,6 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      * checks if the object tree returned by the TypoScript parser reflects source code fixture 01
      *
      * @test
-     * @author Robert Lemke <robert@typo3.org>
      */
     public function parserCorrectlyParsesFixture01()
     {
@@ -116,8 +111,6 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      *
      * @test
      * @expectedException \TYPO3\TypoScript\Exception
-     * @author Robert Lemke <robert@typo3.org>
-     * @author Bastian Waidelich <bastian@typo3.org>
      */
     public function parserThrowsTypoScriptExceptionIfNamespaceDeclarationIsInvalid()
     {
@@ -129,7 +122,6 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      * checks if the object tree returned by the TypoScript parser reflects source code fixture 02
      *
      * @test
-     * @author Robert Lemke <robert@typo3.org>
      */
     public function parserCorrectlyParsesFixture02()
     {
@@ -165,7 +157,6 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      * checks if the object tree returned by the TypoScript parser reflects source code fixture 03
      *
      * @test
-     * @author Robert Lemke <robert@typo3.org>
      */
     public function parserCorrectlyParsesFixture03()
     {
@@ -213,7 +204,6 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      * checks if the object tree returned by the TypoScript parser reflects source code fixture 04
      *
      * @test
-     * @author Robert Lemke <robert@typo3.org>
      */
     public function parserCorrectlyParsesFixture04()
     {
@@ -283,7 +273,6 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      * checks if the object tree returned by the TypoScript parser reflects source code fixture 05
      *
      * @test
-     * @author Robert Lemke <robert@typo3.org>
      */
     public function parserCorrectlyParsesFixture05()
     {
@@ -347,7 +336,6 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      * checks if the object tree returned by the TypoScript parser reflects source code fixture 07
      *
      * @test
-     * @author Robert Lemke <robert@typo3.org>
      */
     public function parserCorrectlyParsesFixture07()
     {
@@ -370,7 +358,6 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      *
      * @todo Implement lazy rendering support for variable substitutions
      * @test
-     * @author Robert Lemke <robert@typo3.org>
      */
     public function parserCorrectlyParsesFixture08()
     {
@@ -434,7 +421,6 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      * checks if the object tree returned by the TypoScript parser reflects source code fixture 10
      *
      * @test
-     * @author Robert Lemke <robert@typo3.org>
      */
     public function parserCorrectlyParsesFixture10()
     {
@@ -514,7 +500,6 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      * checks if the object tree returned by the TypoScript parser reflects source code fixture 13
      *
      * @test
-     * @author Robert Lemke <robert@typo3.org>
      */
     public function parserCorrectlyParsesFixture13()
     {
@@ -567,7 +552,6 @@ class ParserTest extends \TYPO3\Flow\Tests\UnitTestCase
      * checks if the object tree returned by the TypoScript parser reflects source code fixture 14
      *
      * @test
-     * @author Robert Lemke <robert@typo3.org>
      */
     public function parserCorrectlyParsesFixture14()
     {

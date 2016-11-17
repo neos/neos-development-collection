@@ -19,6 +19,7 @@ use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use TYPO3\TYPO3CR\Domain\Service\ContentDimensionPresetSourceInterface;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 
 /**
@@ -77,6 +78,11 @@ class PublishingServiceTest extends UnitTestCase
      */
     protected $mockSite;
 
+    /**
+     * @var ContentDimensionPresetSourceInterface
+     */
+    protected $mockContentDimensionPresetSource;
+
     public function setUp()
     {
         $this->publishingService = new PublishingService();
@@ -100,6 +106,10 @@ class PublishingServiceTest extends UnitTestCase
         $this->mockSite = $this->getMockBuilder('TYPO3\Neos\Domain\Model\Site')->disableOriginalConstructor()->getMock();
         $this->mockSiteRepository->expects($this->any())->method('findFirstOnline')->will($this->returnValue($this->mockSite));
         $this->inject($this->publishingService, 'siteRepository', $this->mockSiteRepository);
+
+        $this->mockContentDimensionPresetSource = $this->getMockBuilder(ContentDimensionPresetSourceInterface::class)->disableOriginalConstructor()->getMock();
+        $this->mockContentDimensionPresetSource->expects($this->any())->method('findPresetsByTargetValues')->will($this->returnArgument(0));
+        $this->inject($this->publishingService, 'contentDimensionPresetSource', $this->mockContentDimensionPresetSource);
 
         $this->mockWorkspace = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Workspace')->disableOriginalConstructor()->getMock();
         $this->mockWorkspace->expects($this->any())->method('getName')->with()->will($this->returnValue('workspace-name'));

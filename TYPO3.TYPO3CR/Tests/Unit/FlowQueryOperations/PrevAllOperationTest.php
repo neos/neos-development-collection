@@ -45,10 +45,10 @@ class PrevAllOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function setUp()
     {
-        $this->siteNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-        $this->firstNodeInLevel = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-        $this->secondNodeInLevel = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-        $this->thirdNodeInLevel = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $this->siteNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $this->firstNodeInLevel = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $this->secondNodeInLevel = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $this->thirdNodeInLevel = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 
         $this->siteNode->expects($this->any())->method('getPath')->will($this->returnValue('/site'));
         $this->siteNode->expects($this->any())->method('getChildNodes')->will($this->returnValue(array(
@@ -57,7 +57,6 @@ class PrevAllOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
             $this->thirdNodeInLevel
         )));
         $this->mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
-        $this->mockContext->expects($this->any())->method('getCurrentSiteNode')->will($this->returnValue($this->siteNode));
 
         $this->firstNodeInLevel->expects($this->any())->method('getParent')->will($this->returnValue($this->siteNode));
         $this->firstNodeInLevel->expects($this->any())->method('getPath')->will($this->returnValue('/site/first'));

@@ -40,7 +40,7 @@ class WorkspaceTest extends UnitTestCase
     {
         $workspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array(), '', false);
 
-        $mockNodeDataRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('add'), array(), '', false);
+        $mockNodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->setMethods(array('add'))->getMock();
         $mockNodeDataRepository->expects($this->once())->method('add');
 
         $workspace->_set('nodeDataRepository', $mockNodeDataRepository);
@@ -137,7 +137,7 @@ class WorkspaceTest extends UnitTestCase
      */
     public function getNodeCountCallsRepositoryFunction()
     {
-        $mockNodeDataRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository', array('countByWorkspace'), array(), '', false);
+        $mockNodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->setMethods(array('countByWorkspace'))->getMock();
 
         $workspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array(), '', false);
         $workspace->_set('nodeDataRepository', $mockNodeDataRepository);
@@ -244,7 +244,7 @@ class WorkspaceTest extends UnitTestCase
         $nodeDataRepository = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository')->disableOriginalConstructor()->getMock();
         $this->inject($liveWorkspace, 'nodeDataRepository', $nodeDataRepository);
 
-        $node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $node = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
         $node->expects($this->any())->method('getWorkspace')->will($this->returnValue($liveWorkspace));
 
         $nodeDataRepository->expects($this->never())->method('findOneByIdentifier');

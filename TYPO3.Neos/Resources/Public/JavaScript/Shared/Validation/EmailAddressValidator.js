@@ -3,9 +3,10 @@
  */
 define(
 	[
-		'./RegularExpressionValidator'
+		'./RegularExpressionValidator',
+		'Shared/I18n'
 	],
-	function(RegularExpressionValidator) {
+	function(RegularExpressionValidator, I18n) {
 		return RegularExpressionValidator.extend({
 			/**
 			 * Checks if the given value is a valid email address.
