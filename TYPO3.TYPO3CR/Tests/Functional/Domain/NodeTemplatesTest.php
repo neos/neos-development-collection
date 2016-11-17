@@ -12,6 +12,8 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
  */
 
 use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Model\NodeTemplate;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\Context;
@@ -57,11 +59,11 @@ class NodeTemplatesTest extends FunctionalTestCase
         parent::setUp();
 
         $this->liveWorkspace = new Workspace('live');
-        $this->workspaceRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository');
+        $this->workspaceRepository = $this->objectManager->get(WorkspaceRepository::class);
         $this->workspaceRepository->add($this->liveWorkspace);
         $this->persistenceManager->persistAll();
 
-        $this->contextFactory = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface');
+        $this->contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
         $this->context = $this->contextFactory->create(array('workspaceName' => 'live'));
     }
 
@@ -80,7 +82,7 @@ class NodeTemplatesTest extends FunctionalTestCase
     public function nodeTemplateConverterCanConvertArray()
     {
         $nodeTemplate = $this->generateBasicNodeTemplate();
-        $this->assertInstanceOf('TYPO3\TYPO3CR\Domain\Model\NodeTemplate', $nodeTemplate);
+        $this->assertInstanceOf(NodeTemplate::class, $nodeTemplate);
         $this->assertEquals('Neos rules!', $nodeTemplate->getProperty('test1'));
     }
 
@@ -93,7 +95,7 @@ class NodeTemplatesTest extends FunctionalTestCase
 
         $rootNode = $this->context->getNode('/');
         $node = $rootNode->createNodeFromTemplate($nodeTemplate, 'just-a-node');
-        $this->assertInstanceOf('TYPO3\TYPO3CR\Domain\Model\NodeInterface', $node);
+        $this->assertInstanceOf(NodeInterface::class, $node);
     }
 
     /**
@@ -116,7 +118,7 @@ class NodeTemplatesTest extends FunctionalTestCase
     }
 
     /**
-     * @return \TYPO3\TYPO3CR\Domain\Model\NodeTemplate
+     * @return NodeTemplate
      */
     protected function generateBasicNodeTemplate()
     {
@@ -126,6 +128,6 @@ class NodeTemplatesTest extends FunctionalTestCase
         );
 
         $typeConverter = new NodeTemplateConverter();
-        return $typeConverter->convertFrom($source, 'TYPO3\TYPO3CR\Domain\Model\NodeTemplate');
+        return $typeConverter->convertFrom($source, NodeTemplate::class);
     }
 }

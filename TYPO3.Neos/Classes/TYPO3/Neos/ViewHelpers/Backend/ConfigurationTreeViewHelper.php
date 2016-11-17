@@ -12,7 +12,7 @@ namespace TYPO3\Neos\ViewHelpers\Backend;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * Render HTML markup for the full configuration tree in the Neos Administration -> Configuration Module.

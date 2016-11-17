@@ -190,13 +190,13 @@
           <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
           <target xml:lang="ru">Рабочая область "{0}" не была удалена, потому что она содержит {1} элемент.</target>
         </trans-unit>
-        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]" approved="yes">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target xml:lang="ru" state="translated">Рабочая область "{0}" не была удалена, потому что она содержит {1} элемента.</target>
+          <target xml:lang="ru">Рабочая область "{0}" не была удалена, потому что она содержит {1} элемента.</target>
         </trans-unit>
-        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[2]">
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[2]" approved="yes">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target xml:lang="ru" state="translated">Рабочая область "{0}" не была удалена, потому что она содержит {1} элементов.</target>
+          <target xml:lang="ru">Рабочая область "{0}" не была удалена, потому что она содержит {1} элементов.</target>
         </trans-unit>
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved" approved="yes">
@@ -250,7 +250,7 @@
 			<target xml:lang="ru">Вот что недавно произошло в Neos:</target></trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve" approved="yes">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
-			<target xml:lang="ru">Пока не были зарегистрированы события, которые могли бы быть отображены в данном журнале изменений.</target></trans-unit>
+			<target xml:lang="ru">Не было событий, которые могли бы быть отображены в данном журнале изменений.</target><alt-trans><target xml:lang="ru">Пока не были зарегистрированы события, которые могли бы быть отображены в данном журнале изменений.</target></alt-trans></trans-unit>
       <trans-unit id="history.eventDescription.node.added" xml:space="preserve" approved="yes">
 				<source>{0} created the {1} {2}.</source>
 			<target xml:lang="ru">{0} создал {1} {2}.</target></trans-unit>
@@ -937,6 +937,33 @@
       <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve" approved="yes">
 				<source>References to "{asset}"</source>
 			<target xml:lang="ru">Ссылки на "{asset}"</target></trans-unit>
+      <trans-unit id="media.replaceAsset.replaceFilename" xml:space="preserve">
+				<source>Replace "{filename}"</source>
+			<target xml:lang="ru" state="needs-translation">Replace "{filename}"</target></trans-unit>
+      <trans-unit id="media.replaceAsset.description" xml:space="preserve">
+        <source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
+      <target xml:lang="ru" state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
+      <trans-unit id="media.replaceAsset.note" xml:space="preserve">
+        <source>Note</source>
+      <target xml:lang="ru" state="needs-translation">Note</target></trans-unit>
+      <trans-unit id="media.replaceAsset.noteText" xml:space="preserve">
+        <source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
+      <target xml:lang="ru" state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
+      <trans-unit id="media.replaceAsset.chooseNewFile" xml:space="preserve">
+        <source>Choose a new file</source>
+      <target xml:lang="ru" state="needs-translation">Choose a new file</target></trans-unit>
+      <trans-unit id="media.replace.usageCount" xml:space="preserve">
+        <source>Currently the asset is used {usageCount} times.</source>
+      <target xml:lang="ru" state="needs-translation">Currently the asset is used {usageCount} times.</target></trans-unit>
+      <trans-unit id="media.replace.allUsages" xml:space="preserve">
+        <source>Show all usages</source>
+      <target xml:lang="ru" state="needs-translation">Show all usages</target></trans-unit>
+      <trans-unit id="media.replace.notUsed" xml:space="preserve">
+        <source>Currently the asset is not in used anywhere on the website.</source>
+      <target xml:lang="ru" state="needs-translation">Currently the asset is not in used anywhere on the website.</target></trans-unit>
+      <trans-unit id="media.replace.previewFile" xml:space="preserve">
+        <source>Preview current file</source>
+      <target xml:lang="ru" state="needs-translation">Preview current file</target></trans-unit>
     </body>
   </file>
 </xliff>

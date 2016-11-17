@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Migration\Filters;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 
 /**
  * Filter nodes having the given property and its value not empty.
@@ -39,10 +40,10 @@ class PropertyNotEmpty implements FilterInterface
     /**
      * Returns TRUE if the given node has the property and the value is not empty.
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @param NodeData $node
      * @return boolean
      */
-    public function matches(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    public function matches(NodeData $node)
     {
         if ($node->hasProperty($this->propertyName)) {
             $propertyValue = $node->getProperty($this->propertyName);

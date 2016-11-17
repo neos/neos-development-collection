@@ -17,6 +17,7 @@ use TYPO3\Neos\Controller\Module\AbstractModuleController;
 use TYPO3\Neos\EventLog\Domain\Model\Event;
 use TYPO3\Neos\EventLog\Domain\Model\EventsOnDate;
 use TYPO3\Neos\EventLog\Domain\Repository\EventRepository;
+use TYPO3\TypoScript\View\TypoScriptView;
 
 /**
  * Controller for the history module of Neos, displaying the timeline of changes.
@@ -32,7 +33,7 @@ class HistoryController extends AbstractModuleController
     /**
      * @var string
      */
-    protected $defaultViewObjectName = 'TYPO3\TypoScript\View\TypoScriptView';
+    protected $defaultViewObjectName = TypoScriptView::class;
 
     /**
      * Show event overview.

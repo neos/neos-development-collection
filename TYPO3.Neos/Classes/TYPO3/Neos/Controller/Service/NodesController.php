@@ -13,12 +13,15 @@ namespace TYPO3\Neos\Controller\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
+use TYPO3\Flow\Property\Exception;
 use TYPO3\Flow\Property\PropertyMapper;
+use Neos\FluidAdaptor\View\TemplateView;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 use TYPO3\Neos\Controller\CreateContentContextTrait;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Domain\Service\NodeSearchServiceInterface;
 use TYPO3\Neos\Domain\Service\SiteService;
+use TYPO3\Neos\View\Service\NodeJsonView;
 use TYPO3\Neos\Service\Mapping\NodePropertyConverterService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
@@ -63,8 +66,8 @@ class NodesController extends ActionController
      * @var array
      */
     protected $viewFormatToObjectNameMap = array(
-        'html' => 'TYPO3\Fluid\View\TemplateView',
-        'json' => 'TYPO3\Neos\View\Service\NodeJsonView'
+        'html' => TemplateView::class,
+        'json' => NodeJsonView::class
     );
 
     /**
@@ -135,9 +138,16 @@ class NodesController extends ActionController
             $this->throwStatus(404);
         }
 
+        $convertedNodeProperties = $this->nodePropertyConverterService->getPropertiesArray($node);
+        array_walk($convertedNodeProperties, function (&$value) {
+            if (is_array($value)) {
+                $value = json_encode($value);
+            }
+        });
+
         $this->view->assignMultiple(array(
             'node' => $node,
-            'convertedNodeProperties' => $this->nodePropertyConverterService->getPropertiesArray($node)
+            'convertedNodeProperties' => $convertedNodeProperties
         ));
     }
 

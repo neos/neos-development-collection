@@ -46,7 +46,7 @@
 			<target xml:lang="nl">Collectie "{0}" is verwijderd.</target></trans-unit>
       <trans-unit id="media.replace.options.generateRedirects" xml:space="preserve">
 				<source>Generate redirects from original file url to the new url</source>
-			<target xml:lang="nl" state="needs-translation">Generate redirects from original file url to the new url</target></trans-unit>
+			<target xml:lang="nl" state="translated">Genereer een redirect van de originele locatie van het bestand naar de nieuwe locatie</target></trans-unit>
     </body>
   </file>
 </xliff>

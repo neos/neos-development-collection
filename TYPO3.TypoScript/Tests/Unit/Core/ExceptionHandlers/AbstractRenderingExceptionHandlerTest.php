@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Exception;
 use TYPO3\Flow\Mvc\Exception\StopActionException;
 use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\TypoScript\Core\Runtime;
 use TYPO3\TypoScript\Exception\RuntimeException;
 use TYPO3\TypoScript\Fixtures\AbstractRenderingExceptionHandler;
 
@@ -38,7 +39,7 @@ class AbstractRenderingExceptionHandlerTest extends UnitTestCase
     protected function setUp()
     {
         $this->handler = new AbstractRenderingExceptionHandler();
-        $runtimeMock = $this->getMockBuilder('\TYPO3\TypoScript\Core\Runtime')->disableOriginalConstructor()->getMock();
+        $runtimeMock = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
         $this->handler->setRuntime($runtimeMock);
     }
 

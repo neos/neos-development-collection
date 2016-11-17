@@ -12,7 +12,14 @@ namespace TYPO3\Neos\Service;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Property\PropertyMappingConfiguration;
+use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
+use TYPO3\Flow\Utility\TypeHandling;
+use TYPO3\Media\Domain\Model\Asset;
+use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Service\Mapping\NodePropertyConverterService;
 use TYPO3\TYPO3CR\Domain\Model\Node;
@@ -108,6 +115,10 @@ class ContentElementWrappingService
     protected function addNodePropertyAttributes(array $attributes, NodeInterface $node)
     {
         foreach (array_keys($node->getNodeType()->getProperties()) as $propertyName) {
+            if ($propertyName[0] === '_' && $propertyName[1] === '_') {
+                // skip fully-private properties
+                continue;
+            }
             $attributes = array_merge($attributes, $this->renderNodePropertyAttribute($node, $propertyName));
         }
 
@@ -269,6 +280,7 @@ class ContentElementWrappingService
 
     /**
      * Determine if the Node or one of it's properties is inline editable.
+            $parsedType = TypeHandling::parseType($dataType);
      *
      * @param NodeInterface $node
      * @return boolean

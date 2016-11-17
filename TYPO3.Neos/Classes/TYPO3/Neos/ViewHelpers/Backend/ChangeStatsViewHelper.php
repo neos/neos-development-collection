@@ -12,7 +12,7 @@ namespace TYPO3\Neos\ViewHelpers\Backend;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * Displays a text-based "bar graph" giving an indication of the amount and type of

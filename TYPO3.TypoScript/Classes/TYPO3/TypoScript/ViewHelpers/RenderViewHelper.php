@@ -11,7 +11,7 @@ namespace TYPO3\TypoScript\ViewHelpers;
  * source code.
  */
 
-use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 use TYPO3\TypoScript\View\TypoScriptView;
 

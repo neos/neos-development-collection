@@ -20,6 +20,7 @@ use TYPO3\Flow\I18n\Translator;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Property\PropertyMappingConfigurationBuilder;
+use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Neos\Controller\Module\AbstractModuleController;
@@ -33,6 +34,7 @@ use TYPO3\Neos\Service\PublishingService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use TYPO3\TYPO3CR\Exception\WorkspaceException;
 use TYPO3\TYPO3CR\TypeConverter\NodeConverter;
 use TYPO3\TYPO3CR\Utility;
 use TYPO3\Neos\Utility\User as UserUtility;
@@ -111,10 +113,10 @@ class WorkspacesController extends AbstractModuleController
     protected function initializeAction()
     {
         if ($this->arguments->hasArgument('node')) {
-            $this->arguments->getArgument('node')->getPropertyMappingConfiguration()->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', NodeConverter::REMOVED_CONTENT_SHOWN, true);
+            $this->arguments->getArgument('node')->getPropertyMappingConfiguration()->setTypeConverterOption(NodeConverter::class, NodeConverter::REMOVED_CONTENT_SHOWN, true);
         }
         if ($this->arguments->hasArgument('nodes')) {
-            $this->arguments->getArgument('nodes')->getPropertyMappingConfiguration()->forProperty('*')->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', NodeConverter::REMOVED_CONTENT_SHOWN, true);
+            $this->arguments->getArgument('nodes')->getPropertyMappingConfiguration()->forProperty('*')->setTypeConverterOption(NodeConverter::class, NodeConverter::REMOVED_CONTENT_SHOWN, true);
         }
         parent::initializeAction();
     }
@@ -234,6 +236,19 @@ class WorkspacesController extends AbstractModuleController
     }
 
     /**
+     * @return void
+     */
+    protected function initializeUpdateAction()
+    {
+        $converter = new PersistentObjectConverter();
+        $this->arguments->getArgument('workspace')->getPropertyMappingConfiguration()
+            ->forProperty('owner')
+            ->setTypeConverter($converter)
+            ->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_TARGET_TYPE, User::class);
+        parent::initializeAction();
+    }
+
+    /**
      * Update a workspace
      *
      * @param Workspace $workspace A workspace to update
@@ -347,7 +362,7 @@ class WorkspacesController extends AbstractModuleController
      *
      * @param NodeInterface $node
      * @param Workspace $selectedWorkspace
-     * @throws \TYPO3\TYPO3CR\Exception\WorkspaceException
+     * @throws WorkspaceException
      */
     public function discardNodeAction(NodeInterface $node, Workspace $selectedWorkspace)
     {
@@ -370,9 +385,9 @@ class WorkspacesController extends AbstractModuleController
     public function publishOrDiscardNodesAction(array $nodes, $action, Workspace $selectedWorkspace = null)
     {
         $propertyMappingConfiguration = $this->propertyMappingConfigurationBuilder->build();
-        $propertyMappingConfiguration->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', NodeConverter::REMOVED_CONTENT_SHOWN, true);
+        $propertyMappingConfiguration->setTypeConverterOption(NodeConverter::class, NodeConverter::REMOVED_CONTENT_SHOWN, true);
         foreach ($nodes as $key => $node) {
-            $nodes[$key] = $this->propertyMapper->convert($node, 'TYPO3\TYPO3CR\Domain\Model\NodeInterface', $propertyMappingConfiguration);
+            $nodes[$key] = $this->propertyMapper->convert($node, NodeInterface::class, $propertyMappingConfiguration);
         }
         switch ($action) {
             case 'publish':
@@ -403,7 +418,7 @@ class WorkspacesController extends AbstractModuleController
         if (($targetWorkspace = $workspace->getBaseWorkspace()) === null) {
             $targetWorkspace = $this->workspaceRepository->findOneByName('live');
         }
-        $workspace->publish($targetWorkspace);
+        $this->publishingService->publishNodes($this->publishingService->getUnpublishedNodes($workspace), $targetWorkspace);
         $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenPublished', [htmlspecialchars($workspace->getTitle()), htmlspecialchars($targetWorkspace->getTitle())], null, null, 'Modules', 'TYPO3.Neos'));
         $this->redirect('index');
     }
@@ -496,6 +511,9 @@ class WorkspacesController extends AbstractModuleController
         ksort($siteChanges);
         foreach ($siteChanges as $siteKey => $site) {
             foreach ($site['documents'] as $documentKey => $document) {
+                $liveDocumentNode = $liveContext->getNodeByIdentifier($document['documentNode']->getIdentifier());
+                $siteChanges[$siteKey]['documents'][$documentKey]['isMoved'] = $liveDocumentNode && $document['documentNode']->getPath() !== $liveDocumentNode->getPath();
+                $siteChanges[$siteKey]['documents'][$documentKey]['isNew'] = $liveDocumentNode === null;
                 foreach ($document['changes'] as $changeKey => $change) {
                     $liveNode = $liveContext->getNodeByIdentifier($change['node']->getIdentifier());
                     $siteChanges[$siteKey]['documents'][$documentKey]['changes'][$changeKey]['isNew'] = is_null($liveNode);
@@ -504,7 +522,6 @@ class WorkspacesController extends AbstractModuleController
             }
             ksort($siteChanges[$siteKey]['documents']);
         }
-
         return $siteChanges;
     }
 

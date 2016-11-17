@@ -11,15 +11,23 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
  * source code.
  */
 
+use TYPO3\Flow\Tests\FunctionalTestCase;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use TYPO3\TYPO3CR\Domain\Service\Context;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeService;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 
 /**
  * Functional test case which should cover all NodeService behavior.
  */
-class NodeServiceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
+class NodeServiceTest extends FunctionalTestCase
 {
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Service\Context
+     * @var Context
      */
     protected $context;
 
@@ -29,27 +37,27 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     protected static $testablePersistenceEnabled = true;
 
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+     * @var NodeDataRepository
      */
     protected $nodeDataRepository;
 
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+     * @var ContextFactoryInterface
      */
     protected $contextFactory;
 
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
+     * @var NodeTypeManager
      */
     protected $nodeTypeManager;
 
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository
+     * @var ContentDimensionRepository
      */
     protected $contentDimensionRepository;
 
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
+     * @var WorkspaceRepository
      */
     protected $workspaceRepository;
 
@@ -64,12 +72,12 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->nodeDataRepository = new \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository();
-        $this->contextFactory = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface::class);
+        $this->nodeDataRepository = new NodeDataRepository();
+        $this->contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
         $this->context = $this->contextFactory->create(array('workspaceName' => 'live'));
-        $this->nodeTypeManager = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Service\NodeTypeManager::class);
-        $this->contentDimensionRepository = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository::class);
-        $this->workspaceRepository = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository::class);
+        $this->nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
+        $this->contentDimensionRepository = $this->objectManager->get(ContentDimensionRepository::class);
+        $this->workspaceRepository = $this->objectManager->get(WorkspaceRepository::class);
         $this->nodeService = $this->objectManager->get(NodeService::class);
     }
 
@@ -88,7 +96,7 @@ class NodeServiceTest extends \TYPO3\Flow\Tests\FunctionalTestCase
      */
     public function nodePathAvailableForNodeWillReturnFalseIfNodeWithGivenPathExistsAlready()
     {
-        $this->workspaceRepository->add(new \TYPO3\TYPO3CR\Domain\Model\Workspace('live'));
+        $this->workspaceRepository->add(new Workspace('live'));
         $rootNode = $this->context->getRootNode();
 
         $fooNode = $rootNode->createNode('foo');

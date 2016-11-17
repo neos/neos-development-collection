@@ -552,7 +552,6 @@
 					position: relative;
 					padding-bottom: 100%;
 					height: 0;
-					margin-bottom: $relatedMargin * 1.5;
 					background-color: $grayDarker;
 					background-image: url('../Images/ajax-preloader-222222.gif');
 					background-position: center center;
@@ -578,6 +577,7 @@
 					box-shadow: none;
 					position: relative;
 					padding: 0;
+					z-index: 2;
 
 					&:hover {
 						box-shadow: none;
@@ -596,23 +596,37 @@
 					}
 				}
 
+				.neos-button.dropdown-toggle {
+					width: $unit;
+					padding: 0;
+
+					.icon-ellipsis-horizontal {
+						line-height: $unit;
+					}
+				}
+
 				.neos-img-label {
-					padding: 0 0 $defaultMargin $tightMargin;
 					position: relative;
-					font-size: 12px;
+					background-color: $grayMedium;
+					height: $unit;
 
 					.neos-caption {
-						margin-right: $wideMargin;
+						padding-right: 4px;
 						display: block;
-						line-height: 1.2;
-						color: $textSubtleLight;
+						font-size: 12px;
+						line-height: $unit;
 						overflow: hidden;
 						text-overflow: ellipsis;
 						white-space: nowrap;
 					}
 
+					.neos-dropdown {
+						font-size: 14px;
+					}
+
 					> img {
 						float: left;
+						padding: 4px;
 					}
 				}
 			}
@@ -825,7 +839,7 @@
 
 			.neos-dropdown {
 				display: inline-block;
-				font-size: 12px;
+				font-size: 14px;
 			}
 
 			.neos-modal {
@@ -927,13 +941,29 @@
 		display: none;
 	}
 
-	#resource {
-		visibility: hidden;
-		position: absolute;
-		left: -9999px;
+	.neos-file-input {
+		position: relative;
+
+		#resource {
+			opacity: 0;
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			cursor: pointer;
+		}
 	}
 
 	.fold-toggle {
 		cursor: pointer;
+	}
+
+	.icon-ok-sign {
+		color: $green;
+	}
+
+	.icon-exclamation-sign {
+		color: $orange;
 	}
 }

@@ -279,6 +279,27 @@ Parameters:
 Applicable to:
   matchers of all node privileges
 
+
+This allows to match on the position in the node tree. A node matches if it is above the given node.
+
+Signature:
+  ``isAncestorNodeOf(node-path-or-identifier)``
+Parameters:
+  * ``node-path-or-identifier`` (string) The nodes' path or identifier
+Applicable to:
+  matchers of all node privileges
+
+
+This allows to match on the position in the node tree. A node matches if it is above the given node or anywhere below
+the node itself.
+
+Signature:
+  ``isAncestorOrDescendantNodeOf(node-path-or-identifier)``
+Parameters:
+  * ``node-path-or-identifier`` (string) The nodes' path or identifier
+Applicable to:
+  matchers of all node privileges
+
 .. note::
  The node path is not reliable because it changes if a node is moved. And the path is not "human-readable" in Neos
  because new nodes get a unique random name. Therefore it is best practice not to rely on the path but on the identifier

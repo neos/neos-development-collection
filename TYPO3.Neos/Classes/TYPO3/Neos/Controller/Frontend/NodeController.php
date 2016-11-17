@@ -20,6 +20,7 @@ use TYPO3\Neos\Controller\Exception\NodeNotFoundException;
 use TYPO3\Neos\Controller\Exception\UnresolvableShortcutException;
 use TYPO3\Neos\Domain\Model\UserInterfaceMode;
 use TYPO3\Neos\Domain\Service\NodeShortcutResolver;
+use TYPO3\Neos\View\TypoScriptView;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 
@@ -51,10 +52,10 @@ class NodeController extends ActionController
     /**
      * @var string
      */
-    protected $defaultViewObjectName = 'TYPO3\Neos\View\TypoScriptView';
+    protected $defaultViewObjectName = TypoScriptView::class;
 
     /**
-     * @var \TYPO3\Neos\View\TypoScriptView
+     * @var TypoScriptView
      */
     protected $view;
 
@@ -84,9 +85,6 @@ class NodeController extends ActionController
     {
         if ($node === null) {
             throw new NodeNotFoundException('The requested node does not exist or isn\'t accessible to the current user', 1430218623);
-        }
-        if (!$node->getContext()->isLive() && !$this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.GeneralAccess')) {
-            $this->redirect('index', 'Login', null, array('unauthorized' => true));
         }
 
         $inBackend = $node->getContext()->isInBackend();

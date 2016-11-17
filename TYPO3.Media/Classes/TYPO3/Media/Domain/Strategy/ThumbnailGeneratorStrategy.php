@@ -27,8 +27,8 @@ use TYPO3\Media\Domain\Model\ThumbnailGenerator\ThumbnailGeneratorInterface;
 class ThumbnailGeneratorStrategy
 {
     /**
-     * @var ObjectManagerInterface
      * @Flow\Inject
+     * @var ObjectManagerInterface
      */
     protected $objectManager;
 
@@ -54,11 +54,11 @@ class ThumbnailGeneratorStrategy
     /**
      * Returns all class names implementing the ThumbnailGeneratorInterface.
      *
+     * @Flow\CompileStatic
      * @param ObjectManagerInterface $objectManager
      * @return ThumbnailGeneratorInterface[]
-     * @Flow\CompileStatic
      */
-    protected static function getThumbnailGeneratorClassNames($objectManager)
+    public static function getThumbnailGeneratorClassNames($objectManager)
     {
         /** @var ReflectionService $reflectionService */
         $reflectionService = $objectManager->get(ReflectionService::class);

@@ -119,7 +119,7 @@
 			<target xml:lang="es-ES" state="translated">Cambios no publicados</target></trans-unit>
       <trans-unit id="workspaces.changesCounts" xml:space="preserve">
 				<source>additions: {new}, changes: {changed}, removals: {removed}</source>
-			<target xml:lang="es-ES" state="needs-translation">additions: {new}, changes: {changed}, removals: {removed}</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">añadidos: {new}, cambios: {changed}, removidos: {removed}</target></trans-unit>
       <trans-unit id="workspaces.review" xml:space="preserve">
 				<source>Review</source>
 			<target xml:lang="es-ES" state="translated">Revisar 	</target></trans-unit>
@@ -198,19 +198,19 @@
       </trans-unit>
       <trans-unit id="workspaces.selectedChangeHasBeenPublished">
         <source>The selected change has been published.</source>
-        <target xml:lang="es-ES" state="needs-translation">The selected change has been published.</target>
+        <target xml:lang="es-ES" state="translated">El cambio seleccionado ha sido publicado.</target>
       </trans-unit>
       <trans-unit id="workspaces.selectedChangeHasBeenDiscarded">
         <source>The selected change has been discarded.</source>
-        <target xml:lang="es-ES" state="needs-translation">The selected change has been discarded.</target>
+        <target xml:lang="es-ES" state="translated">El cambio seleccionado ha sido descartado.</target>
       </trans-unit>
       <trans-unit id="workspaces.selectedChangesHaveBeenPublished">
         <source>The selected changes have been published.</source>
-        <target xml:lang="es-ES" state="needs-translation">The selected changes have been published.</target>
+        <target xml:lang="es-ES" state="translated">Los cambios seleccionados ha sido publicados.</target>
       </trans-unit>
       <trans-unit id="workspaces.selectedChangesHaveBeenDiscarded">
         <source>The selected changes have been discarded.</source>
-        <target xml:lang="es-ES" state="needs-translation">The selected changes have been discarded.</target>
+        <target xml:lang="es-ES" state="translated">Los cambios seleccionados ha sido descartados.</target>
       </trans-unit>
       <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenPublished">
         <source>All changes from workspace "{0}" have been published to {1}.</source>
@@ -225,7 +225,7 @@
 			<target xml:lang="es-ES" state="needs-translation">Drag and drop an asset on a collection / tag to add them to it.</target></trans-unit>
       <trans-unit id="media.replace.options.keepOriginalFilename" xml:space="preserve">
 				<source>Keep the filename "{0}"</source>
-			<target xml:lang="es-ES" state="needs-translation">Keep the filename "{0}"</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Conservar el archivo "{0}"</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
 			<target xml:lang="es-ES" state="translated">Media</target></trans-unit>
@@ -451,7 +451,7 @@
 			<target xml:lang="es-ES" state="needs-translation">Edit user</target></trans-unit>
       <trans-unit id="users.tooltip.delete" xml:space="preserve">
 				<source>Delete user</source>
-			<target xml:lang="es-ES" state="needs-translation">Delete user</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Eliminar usuario</target></trans-unit>
       <trans-unit id="users.tooltip.cannotDeleteYourself" xml:space="preserve">
 				<source>You are logged in as this user and you cannot delete yourself.</source>
 			<target xml:lang="es-ES" state="translated">Estas conectado como este usuario y no se puede eliminar usted mismo.</target></trans-unit>
@@ -466,10 +466,10 @@
 			<target xml:lang="es-ES" state="translated">Sí, eliminar el usuario</target></trans-unit>
       <trans-unit id="users.editUser" xml:space="preserve">
 				<source>Edit user "{0}"</source>
-			<target xml:lang="es-ES" state="needs-translation">Edit user "{0}"</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Editar usuario "{0}"</target></trans-unit>
       <trans-unit id="users.electronicAddress.usage.type.Home" xml:space="preserve">
 				<source>Home</source>
-			<target xml:lang="es-ES" state="needs-translation">Home</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Inicio</target></trans-unit>
       <trans-unit id="users.electronicAddress.usage.type.Work" xml:space="preserve">
 				<source>Work</source>
 			<target xml:lang="es-ES" state="needs-translation">Work</target></trans-unit>
@@ -481,67 +481,67 @@
 			<target xml:lang="es-ES" state="translated">El módulo de gestión de paquetes proporciona una visión general de todos los paquetes. Puede activar y desactivar los paquetes individuales, importar paquetes nuevos y eliminar paquetes existentes. También le proporciona la capacidad para congelar y descongelar los paquetes en el contexto de desarrollo.</target></trans-unit>
       <trans-unit id="packages.index.legend" xml:space="preserve">
 				<source>Available packages</source>
-			<target xml:lang="es-ES" state="needs-translation">Available packages</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Paquetes disponibles</target></trans-unit>
       <trans-unit id="packages.name" xml:space="preserve">
 				<source>Package Name</source>
-			<target xml:lang="es-ES" state="needs-translation">Package Name</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Nombre del paquete</target></trans-unit>
       <trans-unit id="packages.key" xml:space="preserve">
 				<source>Package Key</source>
-			<target xml:lang="es-ES" state="needs-translation">Package Key</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Clave de paquete</target></trans-unit>
       <trans-unit id="packages.type" xml:space="preserve">
 				<source>Package Type</source>
-			<target xml:lang="es-ES" state="needs-translation">Package Type</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Tipos de paquete</target></trans-unit>
       <trans-unit id="packages.deactivated" xml:space="preserve">
 				<source>Deactivated</source>
-			<target xml:lang="es-ES" state="needs-translation">Deactivated</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Desactivado</target></trans-unit>
       <trans-unit id="packages.tooltip.unfreeze" xml:space="preserve">
 				<source>This package is currently frozen. Click to unfreeze it.</source>
-			<target xml:lang="es-ES" state="needs-translation">This package is currently frozen. Click to unfreeze it.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Este paquete está actualmente congelado. Haga clic para liberarlo.</target></trans-unit>
       <trans-unit id="packages.tooltip.freeze" xml:space="preserve">
 				<source>Freeze the package in order to speed up your website.</source>
-			<target xml:lang="es-ES" state="needs-translation">Freeze the package in order to speed up your website.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Congelar el paquete con el fin de acelerar su sitio de Internet.</target></trans-unit>
       <trans-unit id="packages.tooltip.noDeactivate" xml:space="preserve">
 				<source>This package is protected and cannot be deactivated.</source>
-			<target xml:lang="es-ES" state="needs-translation">This package is protected and cannot be deactivated.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Este paquete está protegido y no se puede desactivar.</target></trans-unit>
       <trans-unit id="packages.tooltip.deactivate" xml:space="preserve">
 				<source>Deactivate Package</source>
-			<target xml:lang="es-ES" state="needs-translation">Deactivate Package</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Desactivar el paquete</target></trans-unit>
       <trans-unit id="packages.tooltip.activate" xml:space="preserve">
 				<source>Activate Package</source>
-			<target xml:lang="es-ES" state="needs-translation">Activate Package</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Activar paquete</target></trans-unit>
       <trans-unit id="packages.tooltip.noDelete" xml:space="preserve">
 				<source>This package is protected and cannot be deleted.</source>
-			<target xml:lang="es-ES" state="needs-translation">This package is protected and cannot be deleted.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Este paquete está protegido y no se puede eliminar.</target></trans-unit>
       <trans-unit id="packages.tooltip.delete" xml:space="preserve">
 				<source>Delete Package</source>
-			<target xml:lang="es-ES" state="needs-translation">Delete Package</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Eliminar paquete</target></trans-unit>
       <trans-unit id="packages.message.reallyDelete" xml:space="preserve">
 				<source>Do you really want to delete "{0}"?</source>
-			<target xml:lang="es-ES" state="needs-translation">Do you really want to delete "{0}"?</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">¿Realmente deseas eliminar "{0}"?</target><alt-trans><target xml:lang="es-ES">¿Realmente desas eliminar "{0}"?</target></alt-trans></trans-unit>
       <trans-unit id="packages.message.confirmDelete" xml:space="preserve">
 				<source>Yes, delete the package</source>
-			<target xml:lang="es-ES" state="needs-translation">Yes, delete the package</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Sí, eliminar el paquete</target></trans-unit>
       <trans-unit id="packages.message.confirmDeletes" xml:space="preserve">
 				<source>Yes, delete the packages</source>
-			<target xml:lang="es-ES" state="needs-translation">Yes, delete the packages</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Sí, eliminar los paquetes</target></trans-unit>
       <trans-unit id="packages.message.selected.reallyDelete" xml:space="preserve">
 				<source>Do you really want to delete the selected packages?</source>
-			<target xml:lang="es-ES" state="needs-translation">Do you really want to delete the selected packages?</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">¿Está seguro de querer borrar este paquete?</target></trans-unit>
       <trans-unit id="packages.selected.freeze" xml:space="preserve">
 				<source>Freeze selected packages</source>
-			<target xml:lang="es-ES" state="needs-translation">Freeze selected packages</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Congelar paquetes seleccionados</target></trans-unit>
       <trans-unit id="packages.selected.unfreeze" xml:space="preserve">
 				<source>Unfreeze selected packages</source>
-			<target xml:lang="es-ES" state="needs-translation">Unfreeze selected packages</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Liberar paquetes seleccionados</target></trans-unit>
       <trans-unit id="packages.selected.delete" xml:space="preserve">
 				<source>Delete selected packages</source>
-			<target xml:lang="es-ES" state="needs-translation">Delete selected packages</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Eliminar paquetes seleccionados</target></trans-unit>
       <trans-unit id="packages.selected.deactivate" xml:space="preserve">
 				<source>Deactivate selected packages</source>
-			<target xml:lang="es-ES" state="needs-translation">Deactivate selected packages</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Desactivar los paquetes seleccionados</target></trans-unit>
       <trans-unit id="packages.selected.activate" xml:space="preserve">
 				<source>Activate selected packages</source>
-			<target xml:lang="es-ES" state="needs-translation">Activate selected packages</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Activar los paquetes seleccionados</target></trans-unit>
       <trans-unit id="sites.label" xml:space="preserve">
 				<source>Sites Management</source>
 			<target xml:lang="es-ES" state="translated">Gestión de sitios</target></trans-unit>
@@ -666,16 +666,16 @@
 			<target xml:lang="es-ES" state="translated">Ordenar por última modificación</target></trans-unit>
       <trans-unit id="media.sortby" xml:space="preserve">
 				<source>Sort by</source>
-			<target xml:lang="es-ES" state="needs-translation">Sort by</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Clasificar por</target></trans-unit>
       <trans-unit id="media.sortdirection" xml:space="preserve">
 				<source>Sort direction</source>
-			<target xml:lang="es-ES" state="needs-translation">Sort direction</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Ordenar por dirección</target></trans-unit>
       <trans-unit id="media.sortdirection.asc" xml:space="preserve">
 				<source>Ascending</source>
-			<target xml:lang="es-ES" state="needs-translation">Ascending</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Ascendente</target></trans-unit>
       <trans-unit id="media.sortdirection.desc" xml:space="preserve">
 				<source>Descending</source>
-			<target xml:lang="es-ES" state="needs-translation">Descending</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Descendete</target></trans-unit>
       <trans-unit id="media.tooltip.dragAndDropOnTagOrCollection" xml:space="preserve">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="es-ES" state="translated">Arrastrar y soltar en la etiqueta o colección</target></trans-unit>
@@ -684,7 +684,7 @@
 			<target xml:lang="es-ES" state="translated">Editar activos</target></trans-unit>
       <trans-unit id="media.tooltip.replaceAssetResource" xml:space="preserve">
 				<source>Replace</source>
-			<target xml:lang="es-ES" state="needs-translation">Replace</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Reemplazar</target></trans-unit>
       <trans-unit id="media.tooltip.deleteAsset" xml:space="preserve">
 				<source>Delete asset</source>
 			<target xml:lang="es-ES" state="translated">Eliminar activos</target></trans-unit>
@@ -714,7 +714,7 @@
 			<target xml:lang="es-ES" state="translated">Cancelar</target></trans-unit>
       <trans-unit id="media.replaceAssetResource" xml:space="preserve">
 				<source>Replace</source>
-			<target xml:lang="es-ES" state="needs-translation">Replace</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Reemplazar</target></trans-unit>
       <trans-unit id="media.saveEditing" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="es-ES" state="translated">Guardar</target></trans-unit>
@@ -916,16 +916,43 @@
       <group id="media.relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="media.relatedNodes[0]">
           <source>{0} usages</source>
-          <target xml:lang="es-ES" state="needs-translation">{0} usages</target>
+          <target xml:lang="es-ES" state="translated">{0} uso</target>
         </trans-unit>
         <trans-unit id="media.relatedNodes[1]">
           <source>{0} usages</source>
-          <target xml:lang="es-ES" state="needs-translation">{0} usages</target>
+          <target xml:lang="es-ES" state="translated">{0} usos</target>
         </trans-unit>
       </group>
       <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve">
 				<source>References to "{asset}"</source>
 			<target xml:lang="es-ES" state="needs-translation">References to "{asset}"</target></trans-unit>
+      <trans-unit id="media.replaceAsset.replaceFilename" xml:space="preserve">
+				<source>Replace "{filename}"</source>
+			<target xml:lang="es-ES" state="needs-translation">Replace "{filename}"</target></trans-unit>
+      <trans-unit id="media.replaceAsset.description" xml:space="preserve">
+        <source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
+      <target xml:lang="es-ES" state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
+      <trans-unit id="media.replaceAsset.note" xml:space="preserve">
+        <source>Note</source>
+      <target xml:lang="es-ES" state="needs-translation">Note</target></trans-unit>
+      <trans-unit id="media.replaceAsset.noteText" xml:space="preserve">
+        <source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
+      <target xml:lang="es-ES" state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
+      <trans-unit id="media.replaceAsset.chooseNewFile" xml:space="preserve">
+        <source>Choose a new file</source>
+      <target xml:lang="es-ES" state="needs-translation">Choose a new file</target></trans-unit>
+      <trans-unit id="media.replace.usageCount" xml:space="preserve">
+        <source>Currently the asset is used {usageCount} times.</source>
+      <target xml:lang="es-ES" state="needs-translation">Currently the asset is used {usageCount} times.</target></trans-unit>
+      <trans-unit id="media.replace.allUsages" xml:space="preserve">
+        <source>Show all usages</source>
+      <target xml:lang="es-ES" state="needs-translation">Show all usages</target></trans-unit>
+      <trans-unit id="media.replace.notUsed" xml:space="preserve">
+        <source>Currently the asset is not in used anywhere on the website.</source>
+      <target xml:lang="es-ES" state="needs-translation">Currently the asset is not in used anywhere on the website.</target></trans-unit>
+      <trans-unit id="media.replace.previewFile" xml:space="preserve">
+        <source>Preview current file</source>
+      <target xml:lang="es-ES" state="needs-translation">Preview current file</target></trans-unit>
     </body>
   </file>
 </xliff>

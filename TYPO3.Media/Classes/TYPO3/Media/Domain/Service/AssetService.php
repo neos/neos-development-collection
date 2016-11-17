@@ -150,7 +150,7 @@ class AssetService
             return $this->usageStrategies;
         }
 
-        $assetUsageStrategieImplementations = $this->reflectionService->getAllImplementationClassNamesForInterface('TYPO3\Media\Domain\Strategy\AssetUsageStrategyInterface');
+        $assetUsageStrategieImplementations = $this->reflectionService->getAllImplementationClassNamesForInterface(AssetUsageStrategyInterface::class);
         foreach ($assetUsageStrategieImplementations as $assetUsageStrategieImplementationClassName) {
             $this->usageStrategies[] = $this->objectManager->get($assetUsageStrategieImplementationClassName);
         }
@@ -276,7 +276,7 @@ class AssetService
 
         if ($redirectHandlerEnabled) {
             /** @var \Neos\RedirectHandler\Storage\RedirectStorageInterface $redirectStorage */
-            $redirectStorage = $this->objectManager->get('Neos\\RedirectHandler\\Storage\\RedirectStorageInterface');
+            $redirectStorage = $this->objectManager->get(\Neos\RedirectHandler\Storage\RedirectStorageInterface::class);
             foreach ($uriMapping as $originalUri => $newUri) {
                 $existingRedirect = $redirectStorage->getOneBySourceUriPathAndHost($originalUri);
                 if ($existingRedirect === null) {

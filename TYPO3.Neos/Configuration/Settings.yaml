@@ -25,7 +25,18 @@ TYPO3:
             label: 'Neos Backend'
             provider: 'PersistedUsernamePasswordProvider'
             requestPatterns:
-              controllerObjectName: 'TYPO3\Neos\Controller\.*|TYPO3\Neos\Service\.*|TYPO3\Media\Controller\.*'
+              'TYPO3.Neos:backendControllers':
+                pattern: 'ControllerObjectName'
+                patternOptions:
+                  controllerObjectNamePattern: 'TYPO3\Neos\Controller\.*'
+              'TYPO3.Neos:serviceControllers':
+                pattern: 'ControllerObjectName'
+                patternOptions:
+                  controllerObjectNamePattern: 'TYPO3\Neos\Service\.*'
+              'TYPO3.Neos:mediaControllers':
+                pattern: 'ControllerObjectName'
+                patternOptions:
+                  controllerObjectNamePattern: 'TYPO3\Media\Controller\.*'
             entryPoint: 'WebRedirect'
             entryPointOptions:
               routeValues:
@@ -34,6 +45,9 @@ TYPO3:
                 '@action':     'index'
                 '@format':     'html'
         authenticationStrategy: oneToken
+
+    session:
+      name: 'Neos_Session'
 
     persistence:
       doctrine:
@@ -115,6 +129,10 @@ TYPO3:
         'TYPO3.TypoScript': TRUE
         'TYPO3.Neos': TRUE
 
+    # If a node name is specified here it will be used as default siteNode
+    # which is displayed if no domain pattern matches the current request
+    defaultSiteNodeName: null
+
     routing:
       # Setting this to TRUE allows to use an empty uriSegment for default dimensions.
       # The only limitation is that all segments must be unique across all dimenions.
@@ -164,6 +182,7 @@ TYPO3:
         'TYPO3.Neos/Validation': 'resource://TYPO3.Neos/Public/JavaScript/Shared/Validation/'
         'TYPO3.Neos/Inspector/Editors': 'resource://TYPO3.Neos/Public/JavaScript/Content/Inspector/Editors/'
         'TYPO3.Neos/Inspector/Handlers': 'resource://TYPO3.Neos/Public/JavaScript/Content/Inspector/Handlers/'
+        'TYPO3.Neos/Inspector/Views': 'resource://TYPO3.Neos/Public/JavaScript/Content/Inspector/Views/'
 
       # the default language for the backend interface (can be overridden by user preference through availableLanguages)
       defaultLanguage: 'en'
@@ -287,11 +306,11 @@ TYPO3:
 
           'TYPO3.Neos/Inspector/Editors/AssetEditor':
             editorOptions:
-              fileChooserLabel: 'TYPO3.Neos:Main:choose'
+              fileUploadLabel: 'TYPO3.Neos:Main:upload'
 
           'TYPO3.Neos/Inspector/Editors/ImageEditor':
             editorOptions:
-              fileChooserLabel: 'TYPO3.Neos:Main:choose'
+              fileUploadLabel: 'TYPO3.Neos:Main:upload'
 
           'TYPO3.Neos/Inspector/Editors/LinkEditor':
             editorOptions:
@@ -337,7 +356,7 @@ TYPO3:
           position: 100
 
       backendLoginForm:
-        backgroundImage: 'resource://TYPO3.Neos/Public/Images/Login/Wallpaper22.jpg'
+        backgroundImage: 'resource://TYPO3.Neos/Public/Images/Login/Wallpaper23.jpg'
         stylesheets:
           'TYPO3.Neos:DefaultStyles': 'resource://TYPO3.Neos/Public/Styles/Login.css'
 
@@ -554,7 +573,7 @@ TYPO3:
         packageKeys:
           - 'TYPO3.Flow'
           - 'TYPO3.Party'
-          - 'TYPO3.Fluid'
+          - 'Neos.FluidAdaptor'
           - 'TYPO3.Kickstart'
           - 'TYPO3.Welcome'
           - 'TYPO3.Media'
@@ -570,18 +589,18 @@ TYPO3:
         title: 'Fluid ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/ViewHelpers/Fluid.rst'
         affectedClasses:
-          parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
+          parentClassName: 'Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^TYPO3\\Fluid\\ViewHelpers\\.*$/i'
         parser:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser'
           options:
             namespaces:
-              f: 'TYPO3\Fluid\ViewHelpers'
+              f: 'Neos\FluidAdaptor\ViewHelpers'
       'Neos:MediaViewHelpers':
         title: 'Media ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/ViewHelpers/Media.rst'
         affectedClasses:
-          parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
+          parentClassName: 'Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^TYPO3\\Media\\ViewHelpers\\.*$/i'
         parser:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser'
@@ -592,7 +611,7 @@ TYPO3:
         title: 'Form ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/ViewHelpers/Form.rst'
         affectedClasses:
-          parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
+          parentClassName: 'Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^TYPO3\\Form\\ViewHelpers\\.*$/i'
         parser:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser'
@@ -603,37 +622,37 @@ TYPO3:
         title: 'Neos ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/ViewHelpers/Neos.rst'
         affectedClasses:
-          parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
+          parentClassName: 'Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^TYPO3\\Neos\\ViewHelpers\\.*$/i'
         parser:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser'
           options:
             namespaces:
-              f: 'TYPO3\Fluid\ViewHelpers'
+              f: 'Neos\FluidAdaptor\ViewHelpers'
               neos: 'TYPO3\Neos\ViewHelpers'
       'Neos:Typo3CrViewHelpers':
         title: 'Content Repository ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/ViewHelpers/TYPO3CR.rst'
         affectedClasses:
-          parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
+          parentClassName: 'Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^TYPO3\\TYPO3CR\\ViewHelpers\\.*$/i'
         parser:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser'
           options:
             namespaces:
-              f: 'TYPO3\Fluid\ViewHelpers'
+              f: 'Neos\FluidAdaptor\ViewHelpers'
               neos: 'TYPO3\Neos\ViewHelpers'
       'Neos:TypoScriptViewHelpers':
         title: 'TypoScript ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/ViewHelpers/TypoScript.rst'
         affectedClasses:
-          parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
+          parentClassName: 'Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^TYPO3\\TypoScript\\ViewHelpers\\.*$/i'
         parser:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser'
           options:
             namespaces:
-              f: 'TYPO3\Fluid\ViewHelpers'
+              f: 'Neos\FluidAdaptor\ViewHelpers'
               ts: 'TYPO3\TypoScript\ViewHelpers'
 
       # Validators

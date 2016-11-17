@@ -16,10 +16,13 @@ use TYPO3\Flow\Object\ObjectManagerInterface;
 use TYPO3\Flow\Package\Exception\InvalidPackageStateException;
 use TYPO3\Flow\Package\Exception\UnknownPackageException;
 use TYPO3\Flow\Package\PackageManagerInterface;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Reflection\ReflectionService;
+use TYPO3\Flow\Resource\Resource as PersistentResource;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Flow\Utility\Files;
+use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Model\ImageVariant;
@@ -27,6 +30,7 @@ use TYPO3\Media\Domain\Repository\ImageRepository;
 use TYPO3\Media\Domain\Repository\AssetRepository;
 use TYPO3\Media\Domain\Service\AssetService;
 use TYPO3\Neos\Domain\Exception as DomainException;
+use TYPO3\Neos\Domain\Exception;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Exception as NeosException;
@@ -34,6 +38,8 @@ use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use TYPO3\TYPO3CR\Domain\Service\Context;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 
@@ -134,13 +140,13 @@ class LegacySiteImportService
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
+     * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+     * @var ContextFactoryInterface
      */
     protected $contextFactory;
 
@@ -149,10 +155,10 @@ class LegacySiteImportService
      */
     public function initializeObject()
     {
-        $this->imageVariantClassNames = $this->reflectionService->getAllSubClassNamesForClass('TYPO3\Media\Domain\Model\ImageVariant');
-        array_unshift($this->imageVariantClassNames, 'TYPO3\Media\Domain\Model\ImageVariant');
+        $this->imageVariantClassNames = $this->reflectionService->getAllSubClassNamesForClass(ImageVariant::class);
+        array_unshift($this->imageVariantClassNames, ImageVariant::class);
 
-        $this->assetClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('TYPO3\Media\Domain\Model\AssetInterface');
+        $this->assetClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface(AssetInterface::class);
 
         $this->dateTimeClassNames = $this->reflectionService->getAllSubClassNamesForClass('DateTime');
         array_unshift($this->dateTimeClassNames, 'DateTime');
@@ -215,7 +221,7 @@ class LegacySiteImportService
     }
 
     /**
-     * @return \TYPO3\TYPO3CR\Domain\Service\Context
+     * @return Context
      */
     protected function createContext()
     {
@@ -316,7 +322,7 @@ class LegacySiteImportService
      *
      * @param \SimpleXMLElement $nodeXml
      * @return NodeType
-     * @throws \TYPO3\Neos\Domain\Exception
+     * @throws Exception
      */
     protected function parseNodeType(\SimpleXMLElement $nodeXml)
     {
@@ -404,14 +410,14 @@ class LegacySiteImportService
                 foreach ($nodePropertyXml->children() as $childNodeXml) {
                     $entry = null;
 
-                    if (!isset($childNodeXml['__classname']) || !in_array($childNodeXml['__classname'], array('TYPO3\Media\Domain\Model\Image', 'TYPO3\Media\Domain\Model\Asset'))) {
+                    if (!isset($childNodeXml['__classname']) || !in_array($childNodeXml['__classname'], array(Image::class, Asset::class))) {
                         // Only arrays of asset objects are supported now
                         continue;
                     }
 
                     $entryClassName = (string)$childNodeXml['__classname'];
                     if (isset($childNodeXml['__identifier'])) {
-                        if ($entryClassName === 'TYPO3\Media\Domain\Model\Image') {
+                        if ($entryClassName === Image::class) {
                             $entry = $this->imageRepository->findByIdentifier((string)$childNodeXml['__identifier']);
                         } else {
                             $entry = $this->assetRepository->findByIdentifier((string)$childNodeXml['__identifier']);
@@ -487,7 +493,7 @@ class LegacySiteImportService
      * @param string|null $hash
      * @param string|null $content
      * @param string $forcedIdentifier
-     * @return \TYPO3\Flow\Resource\Resource
+     * @return PersistentResource
      * @throws NeosException
      */
     protected function importResource($fileName, $hash = null, $content = null, $forcedIdentifier = null)
@@ -588,7 +594,7 @@ class LegacySiteImportService
         $resourceData = trim((string)$objectXml->originalImage->resource->content);
 
         if ((string)$objectXml->originalImage->resource['__identifier'] !== '') {
-            $resource = $this->persistenceManager->getObjectByIdentifier((string)$objectXml->originalImage->resource['__identifier'], 'TYPO3\Flow\Resource\Resource');
+            $resource = $this->persistenceManager->getObjectByIdentifier((string)$objectXml->originalImage->resource['__identifier'], \TYPO3\Flow\Resource\Resource::class);
         }
 
         if (!isset($resource) || $resource === null) {
@@ -630,7 +636,7 @@ class LegacySiteImportService
         $resourceData = trim((string)$objectXml->resource->content);
 
         if ((string)$objectXml->resource['__identifier'] !== '') {
-            $resource = $this->persistenceManager->getObjectByIdentifier((string)$objectXml->resource['__identifier'], 'TYPO3\Flow\Resource\Resource');
+            $resource = $this->persistenceManager->getObjectByIdentifier((string)$objectXml->resource['__identifier'], \TYPO3\Flow\Resource\Resource::class);
         }
 
         if (!isset($resource) || $resource === null) {
@@ -655,7 +661,7 @@ class LegacySiteImportService
      * get a `title` property being the site's name, and being set to hidden in index.
      *
      * @param \SimpleXMLElement $siteXml
-     * @param \TYPO3\Neos\Domain\Model\Site $site
+     * @param Site $site
      * @return void
      */
     protected function upgradeLegacySiteXml(\SimpleXMLElement $siteXml, Site $site)

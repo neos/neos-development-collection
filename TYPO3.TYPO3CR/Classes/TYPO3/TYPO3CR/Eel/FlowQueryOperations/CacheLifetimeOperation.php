@@ -14,6 +14,7 @@ namespace TYPO3\TYPO3CR\Eel\FlowQueryOperations;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Eel\FlowQuery\Operations\AbstractOperation;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Now;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
@@ -55,7 +56,7 @@ class CacheLifetimeOperation extends AbstractOperation
 
     /**
      * @Flow\Inject(lazy=false)
-     * @var \TYPO3\Flow\Utility\Now
+     * @var Now
      */
     protected $now;
 

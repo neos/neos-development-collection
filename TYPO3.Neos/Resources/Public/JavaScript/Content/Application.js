@@ -324,6 +324,49 @@ function(
 			}
 		},
 
+		/**
+		 * Triggers reload of stylesheets if the given htmlDom (that is loaded via AJAX) contains different stylesheets links than the currently loaded page
+		 */
+		_loadNewStylesheets: function($htmlDom) {
+			// We cannot do this stylesheet change on IE < 11 (the user agent string changed with 11, so everything with MSIE in is below 11)
+			if (window.navigator.userAgent.indexOf('MSIE ') > -1) {
+				return;
+			}
+			var $existingStylesheets = $('link[rel="stylesheet"]:not(.neos-ui-asset)');
+			var $loadedStylesheets = $htmlDom.filter('link[rel="stylesheet"]:not(.neos-ui-asset)');
+
+			var existingStylesheets = $existingStylesheets.map(function(i, s) {
+				return s.outerHTML;
+			}).get();
+			var loadedStylesheets = $loadedStylesheets.map(function(i, s) {
+				return s.outerHTML;
+			}).get();
+
+			var addedStylesheets = $(loadedStylesheets).not(existingStylesheets);
+			var removedStylesheets = $(existingStylesheets).not(loadedStylesheets);
+
+			$(removedStylesheets).each(function(i, removedStylesheet) {
+				$($existingStylesheets.get(existingStylesheets.indexOf(removedStylesheet))).remove();
+			});
+			$(addedStylesheets).each(function(i, addedStylesheets) {
+				var addedStylesheetIndex = loadedStylesheets.indexOf(addedStylesheets);
+				var $addedStylesheet = $loadedStylesheets.get(addedStylesheetIndex);
+				var $existingStylesheets = $('link[rel="stylesheet"]:not(.neos-ui-asset)');
+				if ($existingStylesheets.length === 0) {
+					$('head').append($addedStylesheet);
+				} else if (addedStylesheetIndex === 0) {
+					$('head').prepend($addedStylesheet);
+				} else {
+					var previousExistingStylesheet = $existingStylesheets.get(addedStylesheetIndex - 1);
+					if (previousExistingStylesheet) {
+						$(previousExistingStylesheet).after($addedStylesheet);
+					} else {
+						$('head').append($addedStylesheet);
+					}
+				}
+			});
+		},
+
 		reloadPage: function() {
 			this.loadPage(this.getCurrentUri());
 		},
@@ -448,6 +491,8 @@ function(
 
 					$('title').html($htmlDom.filter('title').html());
 					$('link[rel="neos-site"]').attr('href', $htmlDom.filter('link[rel="neos-site"]').attr('href'));
+
+					that._loadNewStylesheets($htmlDom);	
 
 					// TODO: transfer body classes and other possibly important tags from the head section
 

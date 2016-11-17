@@ -11,6 +11,7 @@ namespace TYPO3\Neos\Tests\Unit\Domain\Model;
  * source code.
  */
 
+use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Neos\Domain\Model\Domain;
 use TYPO3\Neos\Domain\Model\Site;
 
@@ -18,7 +19,7 @@ use TYPO3\Neos\Domain\Model\Site;
  * Testcase for the "Domain" domain model
  *
  */
-class DomainTest extends \TYPO3\Flow\Tests\UnitTestCase
+class DomainTest extends UnitTestCase
 {
     /**
      * @test

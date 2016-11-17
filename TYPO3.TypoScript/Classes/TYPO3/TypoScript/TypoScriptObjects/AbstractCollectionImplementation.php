@@ -13,6 +13,7 @@ namespace TYPO3\TypoScript\TypoScriptObjects;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TypoScript\Exception as TypoScriptException;
+use TYPO3\TypoScript\Exception;
 
 /**
  * Abstract implementation of a collection renderer for TypoScript.
@@ -79,7 +80,7 @@ abstract class AbstractCollectionImplementation extends AbstractTypoScriptObject
         $this->numberOfRenderedNodes = 0;
         $itemName = $this->getItemName();
         if ($itemName === null) {
-            throw new \TYPO3\TypoScript\Exception('The Collection needs an itemName to be set.', 1344325771);
+            throw new Exception('The Collection needs an itemName to be set.', 1344325771);
         }
         $itemKey = $this->getItemKey();
         $iterationName = $this->getIterationName();

@@ -40,7 +40,7 @@ class ContextFactory implements ContextFactoryInterface
      *
      * @var string
      */
-    protected $contextImplementation = 'TYPO3\TYPO3CR\Domain\Service\Context';
+    protected $contextImplementation = Context::class;
 
     /**
      * @Flow\Inject

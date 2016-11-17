@@ -11,17 +11,22 @@ namespace TYPO3\TYPO3CR\Domain\Repository;
  * source code.
  */
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Persistence\QueryInterface;
 use TYPO3\Flow\Persistence\Repository;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
+use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Service\Context;
+use TYPO3\Flow\Security\Context as SecurityContext;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 use TYPO3\TYPO3CR\Exception;
 
@@ -66,31 +71,31 @@ class NodeDataRepository extends Repository
      * interface ...
      *
      * @Flow\Inject
-     * @var \Doctrine\Common\Persistence\ObjectManager
+     * @var ObjectManager
      */
     protected $entityManager;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
+     * @var NodeTypeManager
      */
     protected $nodeTypeManager;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Log\SystemLoggerInterface
+     * @var SystemLoggerInterface
      */
     protected $systemLogger;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Factory\NodeFactory
+     * @var NodeFactory
      */
     protected $nodeFactory;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Security\Context
+     * @var SecurityContext
      */
     protected $securityContext;
 
@@ -197,7 +202,7 @@ class NodeDataRepository extends Repository
      * @param string $path
      * @param Workspace $workspace
      * @param array|null $dimensions
-     * @return NodeInterface|null
+     * @return NodeData|null
      */
     public function findShadowNodeByPath($path, Workspace $workspace, array $dimensions = null)
     {
@@ -701,7 +706,7 @@ class NodeDataRepository extends Repository
             if (isset($node['addedNode'])) {
                 $node['addedNode']->setIndex($newIndex);
             } else {
-                if ($entity = $this->entityManager->getUnitOfWork()->tryGetById($node['identifier'], 'TYPO3\TYPO3CR\Domain\Model\NodeData')) {
+                if ($entity = $this->entityManager->getUnitOfWork()->tryGetById($node['identifier'], NodeData::class)) {
                     $entity->setIndex($newIndex);
                 }
                 $query->setParameter('index', $newIndex);
@@ -980,7 +985,7 @@ class NodeDataRepository extends Repository
             $likeParameter = '%' . trim(json_encode(UnicodeFunctions::strtolower($term), JSON_UNESCAPED_UNICODE), '"') . '%';
         }
 
-        $queryBuilder->andWhere("LOWER(CONCAT('', n.properties)) LIKE :term")->setParameter('term', $likeParameter);
+        $queryBuilder->andWhere("LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :term")->setParameter('term', $likeParameter);
 
         if (strlen($pathStartingPoint) > 0) {
             $pathStartingPoint = strtolower($pathStartingPoint);
@@ -1329,7 +1334,7 @@ class NodeDataRepository extends Repository
         $queryBuilder = $this->entityManager->createQueryBuilder();
 
         $queryBuilder->select('n')
-            ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+            ->from(NodeData::class, 'n')
             ->where('n.workspace = :workspace')
             ->andWhere('n.movedTo IS NULL OR n.removed = :removed')
             ->orderBy('n.path', 'ASC')
@@ -1356,7 +1361,7 @@ class NodeDataRepository extends Repository
 
         $this->securityContext->withoutAuthorizationChecks(function () use ($nodePath, $queryBuilder, &$result) {
             $queryBuilder->select('n.identifier')
-                ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+                ->from(NodeData::class, 'n')
                 ->where('n.pathHash = :pathHash')
                 ->setParameter('pathHash', md5($nodePath));
             $result = (count($queryBuilder->getQuery()->getResult()) > 0 ? true : false);
@@ -1421,13 +1426,13 @@ class NodeDataRepository extends Repository
         $queryBuilder = $this->entityManager->createQueryBuilder();
 
         $queryBuilder->select('n')
-            ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n');
+            ->from(NodeData::class, 'n');
 
         $constraints = [];
         $parameters = [];
         foreach ($relationMap as $relatedObjectType => $relatedIdentifiers) {
             foreach ($relatedIdentifiers as $relatedIdentifier) {
-                $constraints[] = '(LOWER(CONCAT(\'\', n.properties)) LIKE :entity' . md5($relatedIdentifier) . ' )';
+                $constraints[] = '(LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :entity' . md5($relatedIdentifier) . ' )';
                 $parameters['entity' . md5($relatedIdentifier)] = '%"__identifier": "' . strtolower($relatedIdentifier) . '"%';
             }
         }
@@ -1474,7 +1479,7 @@ class NodeDataRepository extends Repository
         $queryBuilder = $this->entityManager->createQueryBuilder();
 
         $queryBuilder->select('n')
-            ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+            ->from(NodeData::class, 'n')
             ->where('n.workspace IN (:workspaces)')
             ->setParameter('workspaces', $workspaces);
 

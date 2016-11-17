@@ -3,7 +3,7 @@
 Custom Editors
 ==============
 
-Like with validators, using custom editors is possible as well. Every dataType has it's default editor set, which
+Like with validators, using custom editors is possible as well. Every dataType has its default editor set, which
 can have options applied like::
 
 	TYPO3:
@@ -12,7 +12,7 @@ can have options applied like::
 	      inspector:
 	        dataTypes:
 	          'string':
-	            editor: 'TYPO3.Neos/Editors/TextFieldEditor'
+	            editor: 'TYPO3.Neos/Inspector/Editors/TextFieldEditor'
 	            editorOptions:
 	              placeholder: 'This is a placeholder'
 
@@ -24,7 +24,7 @@ On a property level this can be overridden like::
 	      inspector:
 	        properties:
 	          'string':
-	            editor: 'My.Package/Editors/TextFieldEditor'
+	            editor: 'My.Package/Inspector/Editors/TextFieldEditor'
 	            editorOptions:
 	              placeholder: 'This is my custom placeholder'
 

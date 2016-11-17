@@ -12,17 +12,23 @@ namespace TYPO3\TYPO3CR\Command;
  */
 
 use Doctrine\ORM\EntityNotFoundException;
+use Doctrine\ORM\Proxy\Proxy;
 use Doctrine\ORM\QueryBuilder;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\ConsoleOutput;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Property\PropertyMapper;
+use TYPO3\Flow\Utility\Arrays;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
+use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContentDimensionCombinator;
+use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException;
@@ -97,6 +103,12 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
     protected $contentDimensionCombinator;
 
     /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
+
+    /**
      * Returns a short description
      *
      * @param string $controllerCommandName Name of the command in question, for example "repair"
@@ -120,40 +132,83 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
     {
         switch ($controllerCommandName) {
             case 'repair':
-                return
-                    '<u>Remove abstract and undefined node types</u>' . PHP_EOL .
-                    PHP_EOL .
-                    'Will remove all nodes that has an abstract or undefined node type.' . PHP_EOL . PHP_EOL .
-                    '<u>Remove orphan (parentless) nodes</u>' . PHP_EOL .
-                    PHP_EOL .
-                    'Will remove all child nodes that do not have a connection to the root node.' . PHP_EOL . PHP_EOL .
-                    '<u>Remove disallowed child nodes</u>' . PHP_EOL .
-                    PHP_EOL .
-                    'Will remove all child nodes that are disallowed according to the node types\' auto-create' . PHP_EOL .
-                    'configuration and constraints.' . PHP_EOL . PHP_EOL .
-                    '<u>Remove undefined node properties</u>' . PHP_EOL .
-                    PHP_EOL .
-                    'Will remove all undefined properties according to the node type configuration.' . PHP_EOL .
-                    '<u>Missing child nodes</u>' . PHP_EOL .
-                    PHP_EOL .
-                    'For all nodes (or only those which match the --node-type filter specified with this' . PHP_EOL .
-                    'command) which currently don\'t have child nodes as configured by the node type\'s' . PHP_EOL .
-                    'configuration new child nodes will be created.' . PHP_EOL . PHP_EOL .
-                    '<u>Reorder child nodes</u>' . PHP_EOL .
-                    PHP_EOL .
-                    'For all nodes (or only those which match the --node-type filter specified with this' . PHP_EOL .
-                    'command) which have configured child nodes, those child nodes are reordered according to the' . PHP_EOL .
-                    'position from the parents NodeType configuration.' . PHP_EOL . PHP_EOL .
-                    '<u>Missing default properties</u>' . PHP_EOL .
-                    PHP_EOL .
-                    'For all nodes (or only those which match the --node-type filter specified with this' . PHP_EOL .
-                    'command) which currently don\'t have a property that have a default value configuration' . PHP_EOL .
-                    'the default value for that property will be set.' . PHP_EOL .
-                    PHP_EOL .
-                    '<u>Remove broken object references</u>' . PHP_EOL .
-                    PHP_EOL .
-                    'Detects and removes references from nodes to entities which don\'t exist anymore (for' . PHP_EOL .
-                    'example Image nodes referencing ImageVariant objects which are gone for some reason).' . PHP_EOL;
+                return <<<'HELPTEXT'
+<u>Remove abstract and undefined node types</u>
+removeAbstractAndUndefinedNodes
+
+Will remove all nodes that has an abstract or undefined node type.
+
+<u>Remove orphan (parentless) nodes</u>
+removeOrphanNodes
+
+Will remove all child nodes that do not have a connection to the root node.
+
+<u>Remove disallowed child nodes</u>
+removeDisallowedChildNodes
+
+Will remove all child nodes that are disallowed according to the node type's auto-create
+configuration and constraints.
+
+<u>Remove undefined node properties</u>
+removeUndefinedProperties
+
+<u>Remove broken object references</u>
+removeBrokenEntityReferences
+
+Detects and removes references from nodes to entities which don't exist anymore (for
+example Image nodes referencing ImageVariant objects which are gone for some reason).
+
+Will remove all undefined properties according to the node type configuration.
+
+<u>Remove nodes with invalid dimensions</u>
+removeNodesWithInvalidDimensions
+
+Will check for and optionally remove nodes which have dimension values not matching
+the current content dimension configuration.
+
+<u>Remove nodes with invalid workspace</u>
+removeNodesWithInvalidWorkspace
+
+Will check for and optionally remove nodes which belong to a workspace which no longer
+exists..
+
+<u>Repair inconsistent node identifiers</u>
+fixNodesWithInconsistentIdentifier
+
+Will check for and optionally repair node identifiers which are out of sync with their
+corresponding nodes in a live workspace.
+
+<u>Missing child nodes</u>
+createMissingChildNodes
+
+For all nodes (or only those which match the --node-type filter specified with this
+command) which currently don't have child nodes as configured by the node type's
+configuration new child nodes will be created.
+
+<u>Reorder child nodes</u>
+reorderChildNodes
+
+For all nodes (or only those which match the --node-type filter specified with this
+command) which have configured child nodes, those child nodes are reordered according to the
+position from the parents NodeType configuration.
+<u>Missing default properties</u>
+addMissingDefaultValues
+
+For all nodes (or only those which match the --node-type filter specified with this
+command) which currently don\t have a property that have a default value configuration
+the default value for that property will be set.
+
+<u>Repair nodes with missing shadow nodes</u>
+repairShadowNodes
+
+This will reconstruct missing shadow nodes in case something went wrong in creating
+or publishing them. This must be used on a workspace other than live.
+
+It searches for nodes which have a corresponding node in one of the base workspaces,
+have different node paths, but don't have a corresponding shadow node with a "movedto"
+value.
+
+HELPTEXT;
         }
     }
 
@@ -166,23 +221,44 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
      * @param string $workspaceName Only handle this workspace (if specified)
      * @param boolean $dryRun If TRUE, don't do any changes, just simulate what you would do
      * @param boolean $cleanup If FALSE, cleanup tasks are skipped
+     * @param string $skip Skip the given check or checks (comma separated)
+     * @param string $only Only execute the given check or checks (comma separated)
      * @return void
      */
-    public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, NodeType $nodeType = null, $workspaceName = 'live', $dryRun = false, $cleanup = true)
+    public function invokeSubCommand($controllerCommandName, ConsoleOutput $output, NodeType $nodeType = null, $workspaceName = 'live', $dryRun = false, $cleanup = true, $skip = null, $only = null)
     {
         $this->output = $output;
+        $commandMethods = [
+            'removeAbstractAndUndefinedNodes' => [ 'cleanup' => true ],
+            'removeOrphanNodes' => [ 'cleanup' => true ],
+            'removeDisallowedChildNodes' => [ 'cleanup' => true ],
+            'removeUndefinedProperties' => [ 'cleanup' => true ],
+            'removeBrokenEntityReferences' => [ 'cleanup' => true ],
+            'removeNodesWithInvalidDimensions' => [ 'cleanup' => true ],
+            'removeNodesWithInvalidWorkspace' => [ 'cleanup' => true ],
+            'fixNodesWithInconsistentIdentifier' => [ 'cleanup' => false ],
+            'createMissingChildNodes' => [ 'cleanup' => false ],
+            'reorderChildNodes' => [ 'cleanup' => false ],
+            'addMissingDefaultValues' => [ 'cleanup' => false ],
+            'repairShadowNodes' => [ 'cleanup' => false ]
+        ];
+        $skipCommandNames = Arrays::trimExplode(',', ($skip === null ? '' : $skip));
+        $onlyCommandNames = Arrays::trimExplode(',', ($only === null ? '' : $only));
+
         switch ($controllerCommandName) {
             case 'repair':
-                if ($cleanup === true) {
-                    $this->removeAbstractAndUndefinedNodes($workspaceName, $dryRun);
-                    $this->removeOrphanNodes($workspaceName, $dryRun);
-                    $this->removeDisallowedChildNodes($workspaceName, $dryRun);
-                    $this->removeUndefinedProperties($nodeType, $workspaceName, $dryRun);
-                    $this->removeBrokenEntityReferences($workspaceName, $dryRun);
+                foreach ($commandMethods as $commandMethodName => $commandMethodConfiguration) {
+                    if (in_array($commandMethodName, $skipCommandNames)) {
+                        continue;
+                    }
+                    if ($onlyCommandNames !== [] && !in_array($commandMethodName, $onlyCommandNames)) {
+                        continue;
+                    }
+                    if (!$cleanup && $commandMethodConfiguration['cleanup']) {
+                        continue;
+                    }
+                    $this->$commandMethodName($workspaceName, $dryRun, $nodeType);
                 }
-                $this->createMissingChildNodes($nodeType, $workspaceName, $dryRun);
-                $this->reorderChildNodes($nodeType, $workspaceName, $dryRun);
-                $this->addMissingDefaultValues($nodeType, $workspaceName, $dryRun);
         }
     }
 
@@ -213,12 +289,12 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
      * Performs checks for missing child nodes according to the node's auto-create configuration and creates
      * them if necessary.
      *
-     * @param NodeType $nodeType Only for this node type, if specified
      * @param string $workspaceName Name of the workspace to consider
      * @param boolean $dryRun Simulate?
+     * @param NodeType $nodeType Only for this node type, if specified
      * @return void
      */
-    protected function createMissingChildNodes(NodeType $nodeType = null, $workspaceName, $dryRun)
+    protected function createMissingChildNodes($workspaceName, $dryRun, NodeType $nodeType = null)
     {
         if ($nodeType !== null) {
             $this->output->outputLine('Checking nodes of type "%s" for missing child nodes ...', array($nodeType->getName()));
@@ -233,6 +309,8 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
                 $this->createChildNodesByNodeType($nodeType, $workspaceName, $dryRun);
             }
         }
+
+        $this->persistenceManager->persistAll();
     }
 
     /**
@@ -246,7 +324,10 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
     protected function createChildNodesByNodeType(NodeType $nodeType, $workspaceName, $dryRun)
     {
         $createdNodesCount = 0;
+        $updatedNodesCount = 0;
         $nodeCreationExceptions = 0;
+
+        $nodeIdentifiersWhichNeedUpdate = [];
 
         $nodeTypes = $this->nodeTypeManager->getSubNodeTypes($nodeType->getName(), false);
         $nodeTypes[$nodeType->getName()] = $nodeType;
@@ -281,13 +362,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
                             }
                             $createdNodesCount++;
                         } elseif ($childNode->getIdentifier() !== $childNodeIdentifier) {
-                            if ($dryRun === false) {
-                                $childNode->getNodeData()->setIdentifier($childNodeIdentifier);
-                                $this->nodeDataRepository->update($childNode->getNodeData());
-                                $this->output->outputLine('Updated identifier for child node "%s" in "%s"', array($childNodeName, $node->getPath()));
-                            } else {
-                                $this->output->outputLine('Child node "%s" in "%s" does not have a stable identifier', array($childNodeName, $node->getPath()));
-                            }
+                            $nodeIdentifiersWhichNeedUpdate[$childNode->getIdentifier()] = $childNodeIdentifier;
                         }
                     } catch (\Exception $exception) {
                         $this->output->outputLine('Could not create node named "%s" in "%s" (%s)', array($childNodeName, $node->getPath(), $exception->getMessage()));
@@ -297,15 +372,45 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
             }
         }
 
-        if ($createdNodesCount !== 0 || $nodeCreationExceptions !== 0) {
+        if (count($nodeIdentifiersWhichNeedUpdate) > 0) {
             if ($dryRun === false) {
-                $this->output->outputLine('Created %s new child nodes', array($createdNodesCount));
+                foreach ($nodeIdentifiersWhichNeedUpdate as $oldNodeIdentifier => $newNodeIdentifier) {
+                    $queryBuilder = $this->entityManager->createQueryBuilder();
+                    $queryBuilder->update(NodeData::class, 'n')
+                        ->set('n.identifier', $queryBuilder->expr()->literal($newNodeIdentifier))
+                        ->where('n.identifier = ?1')
+                        ->setParameter(1, $oldNodeIdentifier);
+                    $result = $queryBuilder->getQuery()->getResult();
+                    $updatedNodesCount++;
+                    $this->output->outputLine('Updated node identifier from %s to %s because it was not a "stable" identifier', [ $oldNodeIdentifier, $newNodeIdentifier ]);
+                }
+            } else {
+                foreach ($nodeIdentifiersWhichNeedUpdate as $oldNodeIdentifier => $newNodeIdentifier) {
+                    $this->output->outputLine('Child nodes with identifier "%s" need to change their identifier to "%s"', [ $oldNodeIdentifier, $newNodeIdentifier ]);
+                    $updatedNodesCount++;
+                }
+            }
+        }
 
+        if ($createdNodesCount !== 0 || $nodeCreationExceptions !== 0 || $updatedNodesCount !== 0) {
+            if ($dryRun === false) {
+                if ($createdNodesCount > 0) {
+                    $this->output->outputLine('Created %s new child nodes', array($createdNodesCount));
+                }
+                if ($updatedNodesCount > 0) {
+                    $this->output->outputLine('Updated identifier of %s child nodes', array($updatedNodesCount));
+                }
                 if ($nodeCreationExceptions > 0) {
                     $this->output->outputLine('%s Errors occurred during child node creation', array($nodeCreationExceptions));
                 }
+                $this->persistenceManager->persistAll();
             } else {
-                $this->output->outputLine('%s missing child nodes need to be created', array($createdNodesCount));
+                if ($createdNodesCount > 0) {
+                    $this->output->outputLine('%s missing child nodes need to be created', array($createdNodesCount));
+                }
+                if ($updatedNodesCount > 0) {
+                    $this->output->outputLine('%s identifiers of child nodes need to be updated', array($updatedNodesCount));
+                }
             }
         }
     }
@@ -313,12 +418,12 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
     /**
      * Performs checks for unset properties that has default values and sets them if necessary.
      *
-     * @param NodeType $nodeType Only for this node type, if specified
      * @param string $workspaceName Name of the workspace to consider
      * @param boolean $dryRun Simulate?
+     * @param NodeType $nodeType Only for this node type, if specified
      * @return void
      */
-    public function addMissingDefaultValues(NodeType $nodeType = null, $workspaceName, $dryRun)
+    public function addMissingDefaultValues($workspaceName, $dryRun, NodeType $nodeType = null)
     {
         if ($nodeType !== null) {
             $this->output->outputLine('Checking nodes of type "%s" for missing default values ...', array($nodeType->getName()));
@@ -362,11 +467,21 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
         foreach ($nodeTypes as $nodeTypeName => $nodeType) {
             $defaultValues = $nodeType->getDefaultValuesForProperties();
             foreach ($this->getNodeDataByNodeTypeAndWorkspace($nodeTypeName, $workspaceName) as $nodeData) {
+                /** @var NodeData $nodeData */
                 $context = $this->nodeFactory->createContextMatchingNodeData($nodeData);
                 $node = $this->nodeFactory->createFromNodeData($nodeData, $context);
                 if (!$node instanceof NodeInterface) {
                     continue;
                 }
+                if ($node instanceof Node && !$node->dimensionsAreMatchingTargetDimensionValues()) {
+                    if ($node->getNodeData()->getDimensionValues() === []) {
+                        $this->output->outputLine('Skipping node %s because it has no dimension values set', [$node->getPath()]);
+                    } else {
+                        $this->output->outputLine('Skipping node %s because it has invalid dimension values: %s', [$node->getPath(), json_encode($node->getNodeData()->getDimensionValues())]);
+                    }
+                    continue;
+                }
+
                 foreach ($defaultValues as $propertyName => $defaultValue) {
                     if ($propertyName[0] === '_') {
                         continue;
@@ -387,6 +502,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 
         if ($addedMissingDefaultValuesCount !== 0) {
             if ($dryRun === false) {
+                $this->persistenceManager->persistAll();
                 $this->output->outputLine('Added %s new default values', array($addedMissingDefaultValuesCount));
             } else {
                 $this->output->outputLine('%s missing default values need to be set', array($addedMissingDefaultValuesCount));
@@ -422,7 +538,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
         $queryBuilder
             ->select('n')
             ->distinct()
-            ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+            ->from(NodeData::class, 'n')
             ->where('n.nodeType NOT IN (:excludeNodeTypes)')
             ->setParameter('excludeNodeTypes', $nonAbstractNodeTypes)
             ->andWhere('n.workspace = :workspace')
@@ -446,7 +562,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
             $self = $this;
             $this->askBeforeExecutingTask('Abstract or undefined node types found, do you want to remove them?', function () use ($self, $nodes, $workspaceName, $removableNodesCount) {
                 foreach ($nodes as $node) {
-                    $self->removeNodeAndChildNodesInWorkspaceByPath($node['path'], $workspaceName);
+                    $self->removeNode($node['identifier'], $node['dimensionsHash']);
                 }
                 $self->output->outputLine('Removed %s node%s with abstract or undefined node types.', array($removableNodesCount, $removableNodesCount > 1 ? 's' : ''));
             });
@@ -497,6 +613,8 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
         foreach ($this->contentDimensionCombinator->getAllAllowedCombinations() as $dimensionConfiguration) {
             $context = $this->createContext($workspace->getName(), $dimensionConfiguration);
             $removeDisallowedChildNodes($context->getRootNode());
+            $context->getFirstLevelNodeCache()->flush();
+            $this->nodeFactory->reset();
         }
 
         $disallowedChildNodesCount = count($nodes);
@@ -546,9 +664,9 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 
         $nodes = $queryBuilder
             ->select('n')
-            ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+            ->from(NodeData::class, 'n')
             ->leftJoin(
-                'TYPO3\TYPO3CR\Domain\Model\NodeData',
+                NodeData::class,
                 'n2',
                 \Doctrine\ORM\Query\Expr\Join::WITH,
                 'n.parentPathHash = n2.pathHash AND n2.workspace IN (:workspaceList)'
@@ -587,12 +705,12 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
     /**
      * Performs checks for orphan nodes removes them if found.
      *
-     * @param NodeType $nodeType Only for this node type, if specified
      * @param string $workspaceName
      * @param boolean $dryRun Simulate?
+     * @param NodeType $nodeType Only for this node type, if specified
      * @return void
      */
-    public function removeUndefinedProperties(NodeType $nodeType = null, $workspaceName, $dryRun)
+    public function removeUndefinedProperties($workspaceName, $dryRun, NodeType $nodeType = null)
     {
         $this->output->outputLine('Checking for undefined properties ...');
 
@@ -648,6 +766,8 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
             }
             $this->output->outputLine();
         }
+
+        $this->persistenceManager->persistAll();
     }
 
     /**
@@ -701,7 +821,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
                             $brokenReferencesCount ++;
                         }
                     }
-                    if ($convertedProperty instanceof \Doctrine\ORM\Proxy\Proxy) {
+                    if ($convertedProperty instanceof Proxy) {
                         try {
                             $convertedProperty->__load();
                         } catch (EntityNotFoundException $e) {
@@ -731,6 +851,8 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
                 $this->output->outputLine('Found %s broken entity reference%s to be removed.', array($brokenReferencesCount, $brokenReferencesCount > 1 ? 's' : ''));
             }
             $this->output->outputLine();
+
+            $this->persistenceManager->persistAll();
         }
     }
 
@@ -739,7 +861,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
      *
      * @param string $workspaceName
      * @param array $dimensions
-     * @return \TYPO3\TYPO3CR\Domain\Service\Context
+     * @return Context
      */
     protected function createContext($workspaceName, $dimensions)
     {
@@ -768,7 +890,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 
         $queryBuilder->select('n')
             ->distinct()
-            ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+            ->from(NodeData::class, 'n')
             ->where('n.nodeType = :nodeType')
             ->andWhere('n.workspace = :workspace')
             ->andWhere('n.movedTo IS NULL OR n.removed = :removed')
@@ -779,7 +901,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
     }
 
     /**
-     * Removes a node and it's children in the given workspace.
+     * Removes all nodes with a specific path and their children in the given workspace.
      *
      * @param string $nodePath
      * @param string $workspaceName
@@ -791,7 +913,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
 
         $queryBuilder
             ->resetDQLParts()
-            ->delete('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+            ->delete(NodeData::class, 'n')
             ->where('n.path LIKE :path')
             ->orWhere('n.path LIKE :subpath')
             ->andWhere('n.workspace = :workspace')
@@ -801,39 +923,290 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
     }
 
     /**
-     * Reorder child nodes according to the current position configuration of child nodes.
+     * Removes the specified node (exactly that one)
      *
-     * @param NodeType $nodeType Only for this node type, if specified
+     * @param string $nodeIdentifier
+     * @param string $dimensionsHash
+     */
+    protected function removeNode($nodeIdentifier, $dimensionsHash)
+    {
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+
+        $queryBuilder
+            ->resetDQLParts()
+            ->delete(NodeData::class, 'n')
+            ->where('n.identifier = :identifier')
+            ->andWhere('n.dimensionsHash = :dimensionsHash')
+            ->setParameters(array('identifier' => $nodeIdentifier, 'dimensionsHash' => $dimensionsHash))
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     * Remove nodes with invalid dimension values
+     *
+     * This removes nodes which have dimension values not fitting to the current dimension configuration
+     *
      * @param string $workspaceName Name of the workspace to consider
      * @param boolean $dryRun Simulate?
      * @return void
      */
-    protected function reorderChildNodes(NodeType $nodeType = null, $workspaceName, $dryRun)
+    public function removeNodesWithInvalidDimensions($workspaceName, $dryRun)
+    {
+        $this->output->outputLine('Checking for nodes with invalid dimensions ...');
+
+        $allowedDimensionCombinations = $this->contentDimensionCombinator->getAllAllowedCombinations();
+        $nodesArray = $this->collectNodesWithInvalidDimensions($workspaceName, $allowedDimensionCombinations);
+        if ($nodesArray === []) {
+            return;
+        }
+
+        if (!$dryRun) {
+            $self = $this;
+            $this->output->outputLine();
+            $this->output->outputLine('Nodes with invalid dimension values found.' . PHP_EOL . 'You might solve this by migrating them to your current dimension configuration or by removing them.');
+            $this->askBeforeExecutingTask(sprintf('Do you want to remove %s node%s with invalid dimensions now?', count($nodesArray), count($nodesArray) > 1 ? 's' : ''), function () use ($self, $nodesArray, $workspaceName) {
+                foreach ($nodesArray as $nodeArray) {
+                    $self->removeNode($nodeArray['identifier'], $nodeArray['dimensionsHash']);
+                }
+                $self->output->outputLine('Removed %s node%s with invalid dimension values.', array(count($nodesArray), count($nodesArray) > 1 ? 's' : ''));
+            });
+        } else {
+            $this->output->outputLine('Found %s node%s with invalid dimension values to be removed.', array(count($nodesArray), count($nodesArray) > 1 ? 's' : ''));
+        }
+        $this->output->outputLine();
+    }
+
+    /**
+     * Collects all nodes of the given node type which have dimension values not fitting to the current dimension
+     * configuration.
+     *
+     * @param string $workspaceName
+     * @param array $allowedDimensionCombinations
+     * @return array
+     */
+    protected function collectNodesWithInvalidDimensions($workspaceName, array $allowedDimensionCombinations)
+    {
+        $nodes = [];
+        ksort($allowedDimensionCombinations);
+
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+
+        $queryBuilder->select('n')
+            ->from(NodeData::class, 'n')
+            ->where('n.workspace = :workspace')
+            ->setParameter('workspace', $workspaceName);
+
+        foreach ($queryBuilder->getQuery()->getArrayResult() as $nodeDataArray) {
+            if ($nodeDataArray['dimensionValues'] === [] || $nodeDataArray['dimensionValues'] === '') {
+                continue;
+            }
+            $foundValidDimensionValues = false;
+            foreach ($allowedDimensionCombinations as $allowedDimensionConfiguration) {
+                ksort($allowedDimensionConfiguration);
+                ksort($nodeDataArray['dimensionValues']);
+                foreach ($allowedDimensionConfiguration as $allowedDimensionKey => $allowedDimensionValuesArray) {
+                    if (isset($nodeDataArray['dimensionValues'][$allowedDimensionKey]) && isset($nodeDataArray['dimensionValues'][$allowedDimensionKey][0])) {
+                        $actualDimensionValue = $nodeDataArray['dimensionValues'][$allowedDimensionKey][0];
+                        if (in_array($actualDimensionValue, $allowedDimensionValuesArray)) {
+                            $foundValidDimensionValues = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!$foundValidDimensionValues) {
+                $this->output->outputLine('Node %s has invalid dimension values: %s', [$nodeDataArray['path'], json_encode($nodeDataArray['dimensionValues'])]);
+                $nodes[] = $nodeDataArray;
+            }
+        }
+        return $nodes;
+    }
+
+    /**
+     * Remove nodes with invalid workspace
+     *
+     * This removes nodes which refer to a workspace which does not exist.
+     *
+     * @param string $workspaceName This argument will be ignored
+     * @param boolean $dryRun Simulate?
+     * @return void
+     */
+    public function removeNodesWithInvalidWorkspace($workspaceName, $dryRun)
+    {
+        $this->output->outputLine('Checking for nodes with invalid workspace ...');
+
+        $nodesArray = $this->collectNodesWithInvalidWorkspace();
+        if ($nodesArray === []) {
+            return;
+        }
+
+        if (!$dryRun) {
+            $self = $this;
+            $this->output->outputLine();
+            $this->output->outputLine('Nodes with invalid workspace found.');
+            $this->askBeforeExecutingTask(sprintf('Do you want to remove %s node%s with invalid workspaces now?', count($nodesArray), count($nodesArray) > 1 ? 's' : ''), function () use ($self, $nodesArray) {
+                foreach ($nodesArray as $nodeArray) {
+                    $self->removeNode($nodeArray['identifier'], $nodeArray['dimensionsHash']);
+                }
+                $self->output->outputLine('Removed %s node%s referring to an invalid workspace.', array(count($nodesArray), count($nodesArray) > 1 ? 's' : ''));
+            });
+        } else {
+            $this->output->outputLine('Found %s node%s referring to an invalid workspace to be removed.', array(count($nodesArray), count($nodesArray) > 1 ? 's' : ''));
+        }
+        $this->output->outputLine();
+    }
+
+    /**
+     * Collects all nodes of the given node type which refer to an invalid workspace
+     * configuration.
+     *
+     * Note: due to the foreign key constraints in the database, there actually never should
+     *       be any node with n.workspace of a non-existing workspace because if that workspace
+     *       does not exist anymore, the value would turn NULL. But the query covers this nevertheless.
+     *       Better safe than sorry.
+     *
+     * @return array
+     */
+    protected function collectNodesWithInvalidWorkspace()
+    {
+        $nodes = [];
+        $workspaceNames = [];
+
+        foreach ($this->workspaceRepository->findAll() as $workspace) {
+            $workspaceNames[] = $workspace->getName();
+        }
+
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+        $queryBuilder->select('n')
+            ->from(NodeData::class, 'n')
+            ->add('where', $queryBuilder->expr()->orX(
+                    $queryBuilder->expr()->notIn('n.workspace', $workspaceNames),
+                    $queryBuilder->expr()->isNull('n.workspace')
+                )
+            );
+
+        foreach ($queryBuilder->getQuery()->getArrayResult() as $nodeDataArray) {
+            $this->output->outputLine('Node %s (identifier: %s) refers to an invalid workspace: %s', [$nodeDataArray['path'], $nodeDataArray['identifier'], (isset($nodeDataArray['workspace']) ? $nodeDataArray['workspace'] : 'null')]);
+            $nodes[] = $nodeDataArray;
+        }
+        return $nodes;
+    }
+
+    /**
+     * Detect and fix nodes in non-live workspaces whose identifier does not match their corresponding node in the
+     * live workspace.
+     *
+     * @param string $workspaceName This argument will be ignored
+     * @param boolean $dryRun Simulate?
+     * @return void
+     */
+    public function fixNodesWithInconsistentIdentifier($workspaceName, $dryRun)
+    {
+        $this->output->outputLine('Checking for nodes with inconsistent identifier ...');
+
+        $nodesArray = [];
+        $liveWorkspaceNames = [];
+        $nonLiveWorkspaceNames = [];
+        foreach ($this->workspaceRepository->findAll() as $workspace) {
+            /** @var Workspace $workspace */
+            if ($workspace->getBaseWorkspace() !== null) {
+                $nonLiveWorkspaceNames[] = $workspace->getName();
+            } else {
+                $liveWorkspaceNames[] = $workspace->getName();
+            }
+        }
+
+        foreach ($nonLiveWorkspaceNames as $workspaceName) {
+            /** @var QueryBuilder $queryBuilder */
+            $queryBuilder = $this->entityManager->createQueryBuilder();
+            $queryBuilder->select('nonlive.Persistence_Object_Identifier, nonlive.identifier, nonlive.path, live.identifier AS liveIdentifier')
+                ->from(NodeData::class, 'nonlive')
+                ->join(NodeData::class, 'live', 'WITH', 'live.path = nonlive.path AND live.dimensionsHash = nonlive.dimensionsHash AND live.identifier != nonlive.identifier')
+                ->where('nonlive.workspace = ?1')
+                ->andWhere($queryBuilder->expr()->in('live.workspace', $liveWorkspaceNames))
+                ->andWhere('nonlive.path != \'/\'')
+                ->setParameter(1, $workspaceName)
+            ;
+
+            foreach ($queryBuilder->getQuery()->getArrayResult() as $nodeDataArray) {
+                $this->output->outputLine('Node %s in workspace %s has identifier %s but live node has identifier %s.', [$nodeDataArray['path'], $workspaceName, $nodeDataArray['identifier'], $nodeDataArray['liveIdentifier']]);
+                $nodesArray[] = $nodeDataArray;
+            }
+        }
+
+        if ($nodesArray === []) {
+            return;
+        }
+
+        if (!$dryRun) {
+            $self = $this;
+            $this->output->outputLine();
+            $this->output->outputLine('Nodes with inconsistent identifiers found.');
+            $this->askBeforeExecutingTask(sprintf('Do you want to fix the identifiers of %s node%s now?', count($nodesArray), count($nodesArray) > 1 ? 's' : ''), function () use ($self, $nodesArray) {
+                foreach ($nodesArray as $nodeArray) {
+                    /** @var QueryBuilder $queryBuilder */
+                    $queryBuilder = $this->entityManager->createQueryBuilder();
+                    $queryBuilder->update(NodeData::class, 'nonlive')
+                        ->set('nonlive.identifier', $queryBuilder->expr()->literal($nodeArray['liveIdentifier']))
+                        ->where('nonlive.Persistence_Object_Identifier = ?1')
+                        ->setParameter(1, $nodeArray['Persistence_Object_Identifier']);
+                    $result = $queryBuilder->getQuery()->getResult();
+                    if ($result !== 1) {
+                        $self->output->outputLine('<error>Error:</error> The update query returned an unexpected result!');
+                        $self->output->outputLine('<b>Query:</b> ' . $queryBuilder->getQuery()->getSQL());
+                        $self->output->outputLine('<b>Result:</b> %s', [ var_export($result, true)]);
+                        exit(1);
+                    }
+                }
+                $self->output->outputLine('Fixed inconsistent identifiers.');
+            });
+        } else {
+            $this->output->outputLine('Found %s node%s with inconsistent identifiers which need to be fixed.', array(count($nodesArray), count($nodesArray) > 1 ? 's' : ''));
+        }
+        $this->output->outputLine();
+    }
+
+    /**
+     * Reorder child nodes according to the current position configuration of child nodes.
+     *
+     * @param string $workspaceName Name of the workspace to consider
+     * @param boolean $dryRun Simulate?
+     * @param NodeType $nodeType Only for this node type, if specified
+     * @return void
+     */
+    protected function reorderChildNodes($workspaceName, $dryRun, NodeType $nodeType = null)
     {
         if ($nodeType !== null) {
-            $this->output->outputLine('Checking nodes of type "%s" for child nodes that needs reordering ...', array($nodeType->getName()));
-            $this->reorderChildNodesByNodeType($nodeType, $workspaceName, $dryRun);
+            $this->output->outputLine('Checking nodes of type "%s" for child nodes that need reordering ...', array($nodeType->getName()));
+            $this->reorderChildNodesByNodeType($workspaceName, $dryRun, $nodeType);
         } else {
-            $this->output->outputLine('Checking for child nodes that needs reordering ...');
+            $this->output->outputLine('Checking for child nodes that need reordering ...');
             foreach ($this->nodeTypeManager->getNodeTypes() as $nodeType) {
                 /** @var NodeType $nodeType */
                 if ($nodeType->isAbstract()) {
                     continue;
                 }
-                $this->reorderChildNodesByNodeType($nodeType, $workspaceName, $dryRun);
+                $this->reorderChildNodesByNodeType($workspaceName, $dryRun, $nodeType);
             }
         }
+
+        $this->persistenceManager->persistAll();
     }
 
     /**
      * Reorder child nodes for the given node type
      *
-     * @param NodeType $nodeType
      * @param string $workspaceName
      * @param boolean $dryRun
+     * @param NodeType $nodeType
      * @return void
      */
-    protected function reorderChildNodesByNodeType(NodeType $nodeType, $workspaceName, $dryRun)
+    protected function reorderChildNodesByNodeType($workspaceName, $dryRun, NodeType $nodeType)
     {
         $nodeTypes = $this->nodeTypeManager->getSubNodeTypes($nodeType->getName(), false);
         $nodeTypes[$nodeType->getName()] = $nodeType;
@@ -882,5 +1255,96 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
                 }
             }
         }
+    }
+
+    /**
+     * Repair nodes whose shadow nodes are missing
+     *
+     * This check searches for nodes which have a corresponding node in one of the base workspaces,
+     * have different node paths, but don't have a corresponding shadow node with a "movedto" value.
+     *
+     * @param string $workspaceName Currently ignored
+     * @param boolean $dryRun Simulate?
+     * @param NodeType $nodeType This argument will be ignored
+     * @return void
+     */
+    protected function repairShadowNodes($workspaceName, $dryRun, NodeType $nodeType = null)
+    {
+        /** @var Workspace $workspace */
+        $workspace = $this->workspaceRepository->findByIdentifier($workspaceName);
+        if ($workspace->getBaseWorkspace() === null) {
+            $this->output->outputLine('Repairing base workspace "%s", therefore skipping check for shadow nodes.', [$workspaceName]);
+            $this->output->outputLine();
+            return;
+        }
+
+        $this->output->outputLine('Checking for nodes with missing shadow nodes ...');
+        $fixedShadowNodes = $this->fixShadowNodesInWorkspace($workspace, $nodeType);
+
+        $this->output->outputLine('%s %s node%s with missing shadow nodes.', [
+            $dryRun ? 'Would repair' : 'Repaired',
+            $fixedShadowNodes,
+            $fixedShadowNodes !== 1 ? 's' : ''
+        ]);
+
+        $this->output->outputLine();
+    }
+
+    /**
+     * Collects all nodes with missing shadow nodes
+     *
+     * @param Workspace $workspace
+     * @param boolean $dryRun
+     * @param NodeType $nodeType
+     * @return array
+     */
+    protected function fixShadowNodesInWorkspace(Workspace $workspace, $dryRun, NodeType $nodeType = null)
+    {
+        $workspaces = array_merge([$workspace], $workspace->getBaseWorkspaces());
+
+        $fixedShadowNodes = 0;
+        foreach ($workspaces as $workspace) {
+            /** @var Workspace $workspace */
+            if ($workspace->getBaseWorkspace() === null) {
+                continue;
+            }
+
+            /** @var QueryBuilder $queryBuilder */
+            $queryBuilder = $this->entityManager->createQueryBuilder();
+            $queryBuilder->select('n')
+                ->from(NodeData::class, 'n')
+                ->where('n.workspace = :workspace');
+            $queryBuilder->setParameter('workspace', $workspace->getName());
+            if ($nodeType !== null) {
+                $queryBuilder->andWhere('n.nodeType = :nodeType');
+                $queryBuilder->setParameter('nodeType', $nodeType->getName());
+            }
+
+            /** @var NodeData $nodeData */
+            foreach ($queryBuilder->getQuery()->getResult() as $nodeData) {
+                $nodeDataSeenFromParentWorkspace = $this->nodeDataRepository->findOneByIdentifier($nodeData->getIdentifier(), $workspace->getBaseWorkspace(), $nodeData->getDimensionValues());
+                // This is the good case, either the node does not exist or was shadowed
+                if ($nodeDataSeenFromParentWorkspace === null) {
+                    continue;
+                }
+                // Also good, the node was not moved at all.
+                if ($nodeDataSeenFromParentWorkspace->getPath() === $nodeData->getPath()) {
+                    continue;
+                }
+
+                $nodeDataOnSamePath = $this->nodeDataRepository->findOneByPath($nodeData->getPath(), $workspace->getBaseWorkspace(), $nodeData->getDimensionValues(), null);
+                // We cannot just put a shadow node in the path, something exists, but that should be fine.
+                if ($nodeDataOnSamePath !== null) {
+                    continue;
+                }
+
+                if (!$dryRun) {
+                    $nodeData->createShadow($nodeDataSeenFromParentWorkspace->getPath());
+                }
+                $fixedShadowNodes++;
+            }
+        }
+
+        return $fixedShadowNodes;
     }
 }

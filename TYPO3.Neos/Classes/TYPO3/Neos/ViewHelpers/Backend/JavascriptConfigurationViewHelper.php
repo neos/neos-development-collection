@@ -19,9 +19,10 @@ use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Flow\Utility\PositionalArraySorter;
-use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
+use TYPO3\Neos\Utility\BackendAssetsUtility;
 
 /**
  * ViewHelper for the backend JavaScript configuration. Renders the required JS snippet to configure
@@ -71,7 +72,7 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Utility\BackendAssetsUtility
+     * @var BackendAssetsUtility
      */
     protected $backendAssetsUtility;
 

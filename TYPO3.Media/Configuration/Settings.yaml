@@ -90,7 +90,7 @@ TYPO3:
         title: 'Media ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Media/Documentation/References/ViewHelpers.rst'
         affectedClasses:
-          parentClassName: 'TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper'
+          parentClassName: 'Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^TYPO3\\Media\\ViewHelpers\\.*$/i'
         parser:
           implementationClassName: 'TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser'

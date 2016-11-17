@@ -12,6 +12,11 @@ namespace TYPO3\TypoScript\TypoScriptObjects\Helpers;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Exception;
+use Neos\FluidAdaptor\Core\Parser\SyntaxTree\TemplateObjectAccessInterface;
+use TYPO3\TypoScript\Core\ExceptionHandlers\ContextDependentHandler;
+use TYPO3\TypoScript\Exception\UnsupportedProxyMethodException;
+use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
 
 /**
  * A proxy object representing a TypoScript path inside a Fluid Template. It allows
@@ -22,7 +27,7 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * This class is instantiated inside TemplateImplementation and is never used outside.
  */
-class TypoScriptPathProxy implements \TYPO3\Fluid\Core\Parser\SyntaxTree\TemplateObjectAccessInterface, \ArrayAccess, \IteratorAggregate, \Countable
+class TypoScriptPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \IteratorAggregate, \Countable
 {
     /**
      * Reference to the TypoScript Runtime which controls the whole rendering
@@ -34,7 +39,7 @@ class TypoScriptPathProxy implements \TYPO3\Fluid\Core\Parser\SyntaxTree\Templat
     /**
      * Reference to the "parent" TypoScript object
      *
-     * @var \TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation
+     * @var TemplateImplementation
      */
     protected $templateImplementation;
 
@@ -61,11 +66,11 @@ class TypoScriptPathProxy implements \TYPO3\Fluid\Core\Parser\SyntaxTree\Templat
     /**
      * Constructor.
      *
-     * @param \TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation $templateImplementation
+     * @param TemplateImplementation $templateImplementation
      * @param string $path
      * @param array $partialTypoScriptTree
      */
-    public function __construct(\TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation $templateImplementation, $path, array $partialTypoScriptTree)
+    public function __construct(TemplateImplementation $templateImplementation, $path, array $partialTypoScriptTree)
     {
         $this->templateImplementation = $templateImplementation;
         $this->tsRuntime = $templateImplementation->getTsRuntime();
@@ -89,7 +94,7 @@ class TypoScriptPathProxy implements \TYPO3\Fluid\Core\Parser\SyntaxTree\Templat
      * wrapping arrays into ourselves again.
      *
      * @param string $offset
-     * @return mixed|\TYPO3\TypoScript\TypoScriptObjects\Helpers\TypoScriptPathProxy
+     * @return mixed|TypoScriptPathProxy
      */
     public function offsetGet($offset)
     {
@@ -110,22 +115,22 @@ class TypoScriptPathProxy implements \TYPO3\Fluid\Core\Parser\SyntaxTree\Templat
      *
      * @param string $offset
      * @param mixed $value
-     * @throws \TYPO3\TypoScript\Exception\UnsupportedProxyMethodException
+     * @throws UnsupportedProxyMethodException
      */
     public function offsetSet($offset, $value)
     {
-        throw new \TYPO3\TypoScript\Exception\UnsupportedProxyMethodException('Setting a property of a path proxy not supported. (tried to set: ' . $this->path . ' -- ' . $offset . ')', 1372667221);
+        throw new UnsupportedProxyMethodException('Setting a property of a path proxy not supported. (tried to set: ' . $this->path . ' -- ' . $offset . ')', 1372667221);
     }
 
     /**
      * Stub to implement the ArrayAccess interface cleanly
      *
      * @param string $offset
-     * @throws \TYPO3\TypoScript\Exception\UnsupportedProxyMethodException
+     * @throws UnsupportedProxyMethodException
      */
     public function offsetUnset($offset)
     {
-        throw new \TYPO3\TypoScript\Exception\UnsupportedProxyMethodException('Unsetting a property of a path proxy not supported. (tried to unset: ' . $this->path . ' -- ' . $offset . ')', 1372667331);
+        throw new UnsupportedProxyMethodException('Unsetting a property of a path proxy not supported. (tried to unset: ' . $this->path . ' -- ' . $offset . ')', 1372667331);
     }
 
     /**
@@ -134,23 +139,19 @@ class TypoScriptPathProxy implements \TYPO3\Fluid\Core\Parser\SyntaxTree\Templat
      *
      * Evaluates TypoScript objects and eel expressions.
      *
-     * @return \TYPO3\TypoScript\TypoScriptObjects\Helpers\TypoScriptPathProxy|mixed
+     * @return TypoScriptPathProxy|mixed
      */
     public function objectAccess()
     {
-        if (isset($this->partialTypoScriptTree['__objectType'])) {
-            try {
-                return $this->tsRuntime->evaluate($this->path);
-            } catch (\Exception $exception) {
-                return $this->tsRuntime->handleRenderingException($this->path, $exception);
-            }
-        } elseif (isset($this->partialTypoScriptTree['__eelExpression'])) {
-            return $this->tsRuntime->evaluate($this->path, $this->templateImplementation);
-        } elseif (isset($this->partialTypoScriptTree['__value'])) {
-            return $this->partialTypoScriptTree['__value'];
+        if (!$this->tsRuntime->canRender($this->path)) {
+            return $this;
         }
 
-        return $this;
+        try {
+            return $this->tsRuntime->evaluate($this->path, $this->templateImplementation);
+        } catch (\Exception $exception) {
+            return $this->tsRuntime->handleRenderingException($this->path, $exception);
+        }
     }
 
     /**
@@ -194,25 +195,21 @@ class TypoScriptPathProxy implements \TYPO3\Fluid\Core\Parser\SyntaxTree\Templat
     public function __toString()
     {
         try {
-            return (string)$this->tsRuntime->evaluate($this->path);
-        } catch (\Exception $exception) {
+            return (string)$this->objectAccess();
+        } catch (\Exception $exceptionHandlerException) {
             try {
-                return $this->tsRuntime->handleRenderingException($this->path, $exception);
-            } catch (\Exception $exceptionHandlerException) {
-                try {
-                    // Throwing an exception in __toString causes a fatal error, so if that happens we catch them and use the context dependent exception handler instead.
-                    $contextDependentExceptionHandler = new \TYPO3\TypoScript\Core\ExceptionHandlers\ContextDependentHandler();
-                    $contextDependentExceptionHandler->setRuntime($this->tsRuntime);
-                    return $contextDependentExceptionHandler->handleRenderingException($this->path, $exception);
-                } catch (\Exception $contextDepndentExceptionHandlerException) {
-                    $this->systemLogger->logException($contextDepndentExceptionHandlerException, array('path' => $this->path));
-                    return sprintf(
-                        '<!-- Exception while rendering exception in %s: %s (%s) -->',
-                        $this->path,
-                        $contextDepndentExceptionHandlerException->getMessage(),
-                        $contextDepndentExceptionHandlerException instanceof \TYPO3\Flow\Exception ? 'see reference code ' . $contextDepndentExceptionHandlerException->getReferenceCode() . ' in log' : $contextDepndentExceptionHandlerException->getCode()
-                    );
-                }
+                // Throwing an exception in __toString causes a fatal error, so if that happens we catch them and use the context dependent exception handler instead.
+                $contextDependentExceptionHandler = new ContextDependentHandler();
+                $contextDependentExceptionHandler->setRuntime($this->tsRuntime);
+                return $contextDependentExceptionHandler->handleRenderingException($this->path, $exception);
+            } catch (\Exception $contextDepndentExceptionHandlerException) {
+                $this->systemLogger->logException($contextDepndentExceptionHandlerException, array('path' => $this->path));
+                return sprintf(
+                    '<!-- Exception while rendering exception in %s: %s (%s) -->',
+                    $this->path,
+                    $contextDepndentExceptionHandlerException->getMessage(),
+                    $contextDepndentExceptionHandlerException instanceof Exception ? 'see reference code ' . $contextDepndentExceptionHandlerException->getReferenceCode() . ' in log' : $contextDepndentExceptionHandlerException->getCode()
+                );
             }
         }
     }
