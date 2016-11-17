@@ -39,7 +39,7 @@ class FeatureContext extends \Behat\Behat\Context\BehatContext
     /**
      * @var string
      */
-    protected $behatTestHelperObjectName = 'TYPO3\TYPO3CR\Tests\Functional\Command\BehatTestHelper';
+    protected $behatTestHelperObjectName = \TYPO3\TYPO3CR\Tests\Functional\Command\BehatTestHelper::class;
 
     /**
      * Initializes the context

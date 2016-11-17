@@ -11,11 +11,9 @@ namespace TYPO3\Neos\Tests\Unit\ViewHelpers;
  * source code.
  */
 
-require_once(FLOW_PATH_PACKAGES . 'Framework/TYPO3.Fluid/Tests/Unit/ViewHelpers/ViewHelperBaseTestcase.php');
-
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
-use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
+use Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseTestcase;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\ViewHelpers\ContentElement\EditableViewHelper;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
@@ -89,31 +87,31 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
     public function setUp()
     {
         parent::setUp();
-        $this->editableViewHelper = $this->getAccessibleMock('TYPO3\Neos\ViewHelpers\ContentElement\EditableViewHelper', array('renderChildren'));
+        $this->editableViewHelper = $this->getAccessibleMock(EditableViewHelper::class, array('renderChildren'));
 
-        $this->mockPrivilegeManager = $this->getMockBuilder('TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface')->getMock();
+        $this->mockPrivilegeManager = $this->getMockBuilder(PrivilegeManagerInterface::class)->getMock();
         $this->inject($this->editableViewHelper, 'privilegeManager', $this->mockPrivilegeManager);
 
         $this->mockNodeAuthorizationService = $this->getMockBuilder(AuthorizationService::class)->getMock();
         $this->inject($this->editableViewHelper, 'nodeAuthorizationService', $this->mockNodeAuthorizationService);
 
-        $this->mockContentElementEditableService = $this->getMockBuilder('TYPO3\Neos\Service\ContentElementEditableService')->getMock();
+        $this->mockContentElementEditableService = $this->getMockBuilder(ContentElementEditableService::class)->getMock();
         $this->inject($this->editableViewHelper, 'contentElementEditableService', $this->mockContentElementEditableService);
 
-        $this->mockTemplateImplementation = $this->getMockBuilder('TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation')->disableOriginalConstructor()->getMock();
+        $this->mockTemplateImplementation = $this->getMockBuilder(TemplateImplementation::class)->disableOriginalConstructor()->getMock();
+        
+        $this->mockTsRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockTsRuntime = $this->getMockBuilder('TYPO3\TypoScript\Core\Runtime')->disableOriginalConstructor()->getMock();
+        $this->mockContentContext = $this->getMockBuilder(ContentContext::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockContentContext = $this->getMockBuilder('TYPO3\Neos\Domain\Service\ContentContext')->disableOriginalConstructor()->getMock();
-
-        $this->mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
+        $this->mockNode = $this->getMockBuilder(NodeInterface::class)->getMock();
         $this->mockNode->expects($this->any())->method('getContext')->will($this->returnValue($this->mockContentContext));
         $this->mockNode->expects($this->any())->method('getNodeType')->will($this->returnValue(new NodeType('Acme.Test:Headline', [], [])));
 
         $this->mockTsContext = array('node' => $this->mockNode);
         $this->mockTsRuntime->expects($this->any())->method('getCurrentContext')->will($this->returnValue($this->mockTsContext));
         $this->mockTemplateImplementation->expects($this->any())->method('getTsRuntime')->will($this->returnValue($this->mockTsRuntime));
-        $this->mockView = $this->getAccessibleMock('TYPO3\TypoScript\TypoScriptObjects\Helpers\FluidView', array(), array(), '', false);
+        $this->mockView = $this->getAccessibleMock(FluidView::class, array(), array(), '', false);
         $this->mockView->expects($this->any())->method('getTypoScriptObject')->will($this->returnValue($this->mockTemplateImplementation));
 
         $this->editableViewHelper->initializeArguments();
@@ -145,7 +143,7 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
 
     /**
      * @test
-     * @expectedException \TYPO3\Fluid\Core\ViewHelper\Exception
+     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function renderThrowsExceptionIfTheGivenPropertyIsNotAccessible()
     {
@@ -156,7 +154,7 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
 
     /**
      * @test
-     * @expectedException \TYPO3\Fluid\Core\ViewHelper\Exception
+     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function renderThrowsExceptionIfTheTsTemplateObjectIsNotSet()
     {

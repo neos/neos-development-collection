@@ -12,7 +12,14 @@ namespace TYPO3\Neos\Service\Controller;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Property\PropertyMapper;
+use TYPO3\Flow\Property\PropertyMappingConfigurationBuilder;
+use TYPO3\Neos\Service\PublishingService;
+use TYPO3\Neos\Service\View\NodeView;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\TypeConverter\NodeConverter;
 
 /**
@@ -23,40 +30,40 @@ class WorkspaceController extends AbstractServiceController
     /**
      * @var string
      */
-    protected $defaultViewObjectName = 'TYPO3\Neos\Service\View\NodeView';
+    protected $defaultViewObjectName = NodeView::class;
 
     /**
-     * @var \TYPO3\Neos\Service\View\NodeView
+     * @var NodeView
      */
     protected $view;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+     * @var NodeDataRepository
      */
     protected $nodeDataRepository;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Service\PublishingService
+     * @var PublishingService
      */
     protected $publishingService;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
+     * @var WorkspaceRepository
      */
     protected $workspaceRepository;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Property\PropertyMapper
+     * @var PropertyMapper
      */
     protected $propertyMapper;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Property\PropertyMappingConfigurationBuilder
+     * @var PropertyMappingConfigurationBuilder
      */
     protected $propertyMappingConfigurationBuilder;
 
@@ -70,7 +77,7 @@ class WorkspaceController extends AbstractServiceController
                 ->arguments
                 ->getArgument('node')
                 ->getPropertyMappingConfiguration()
-                ->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', NodeConverter::REMOVED_CONTENT_SHOWN, true);
+                ->setTypeConverterOption(NodeConverter::class, NodeConverter::REMOVED_CONTENT_SHOWN, true);
         }
 
         if ($this->arguments->hasArgument('nodes')) {
@@ -79,7 +86,7 @@ class WorkspaceController extends AbstractServiceController
                 ->getArgument('nodes')
                 ->getPropertyMappingConfiguration()
                 ->forProperty('*')
-                ->setTypeConverterOption('TYPO3\TYPO3CR\TypeConverter\NodeConverter', NodeConverter::REMOVED_CONTENT_SHOWN, true);
+                ->setTypeConverterOption(NodeConverter::class, NodeConverter::REMOVED_CONTENT_SHOWN, true);
         }
     }
 
@@ -164,7 +171,7 @@ class WorkspaceController extends AbstractServiceController
     /**
      * Get every unpublished node in the workspace with the given workspace name
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
+     * @param Workspace $workspace
      * @return void
      */
     public function getWorkspaceWideUnpublishedNodesAction($workspace)
@@ -175,7 +182,7 @@ class WorkspaceController extends AbstractServiceController
     /**
      * Discard everything in the workspace with the given workspace name
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
+     * @param Workspace $workspace
      * @return void
      */
     public function discardAllAction($workspace)

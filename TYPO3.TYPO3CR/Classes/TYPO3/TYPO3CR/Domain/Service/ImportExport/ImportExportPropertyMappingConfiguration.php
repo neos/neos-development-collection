@@ -17,6 +17,7 @@ use TYPO3\Flow\Property\TypeConverter\ArrayConverter;
 use TYPO3\Flow\Property\TypeConverter\ObjectConverter;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 use TYPO3\Flow\Property\TypeConverter\StringConverter;
+use TYPO3\Flow\Property\TypeConverterInterface;
 use TYPO3\Flow\Resource\ResourceTypeConverter;
 
 /**
@@ -61,44 +62,44 @@ class ImportExportPropertyMappingConfiguration implements PropertyMappingConfigu
     public function getConfigurationValue($typeConverterClassName, $key)
     {
         // needed in EXPORT
-        if ($typeConverterClassName === 'TYPO3\Flow\Property\TypeConverter\StringConverter' && $key === StringConverter::CONFIGURATION_ARRAY_FORMAT) {
+        if ($typeConverterClassName === StringConverter::class && $key === StringConverter::CONFIGURATION_ARRAY_FORMAT) {
             return StringConverter::ARRAY_FORMAT_JSON;
         }
 
-        if ($this->resourceLoadSavePath !== null && $typeConverterClassName === 'TYPO3\Flow\Property\TypeConverter\ArrayConverter' && $key === ArrayConverter::CONFIGURATION_RESOURCE_EXPORT_TYPE) {
+        if ($this->resourceLoadSavePath !== null && $typeConverterClassName === ArrayConverter::class && $key === ArrayConverter::CONFIGURATION_RESOURCE_EXPORT_TYPE) {
             return ArrayConverter::RESOURCE_EXPORT_TYPE_FILE;
         }
 
-        if ($typeConverterClassName === 'TYPO3\Flow\Property\TypeConverter\ArrayConverter' && $key === ArrayConverter::CONFIGURATION_RESOURCE_SAVE_PATH) {
+        if ($typeConverterClassName === ArrayConverter::class && $key === ArrayConverter::CONFIGURATION_RESOURCE_SAVE_PATH) {
             return $this->resourceLoadSavePath;
         }
 
-        if ($typeConverterClassName === 'TYPO3\Flow\Persistence\Doctrine\ArrayTypeConverter' && $key === ArrayTypeConverter::CONFIGURATION_CONVERT_ELEMENTS) {
+        if ($typeConverterClassName === ArrayTypeConverter::class && $key === ArrayTypeConverter::CONFIGURATION_CONVERT_ELEMENTS) {
             return true;
         }
 
         // needed in IMPORT
-        if ($typeConverterClassName === 'TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter' && $key === PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED) {
+        if ($typeConverterClassName === PersistentObjectConverter::class && $key === PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED) {
             return true;
         }
 
-        if ($typeConverterClassName === 'TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter' && $key === PersistentObjectConverter::CONFIGURATION_IDENTITY_CREATION_ALLOWED) {
+        if ($typeConverterClassName === PersistentObjectConverter::class && $key === PersistentObjectConverter::CONFIGURATION_IDENTITY_CREATION_ALLOWED) {
             return true;
         }
 
-        if ($typeConverterClassName === 'TYPO3\Flow\Property\TypeConverter\ObjectConverter' && $key === ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED) {
+        if ($typeConverterClassName === ObjectConverter::class && $key === ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED) {
             return true;
         }
 
-        if ($typeConverterClassName === 'TYPO3\Flow\Property\TypeConverter\ArrayConverter' && $key === ArrayConverter::CONFIGURATION_STRING_FORMAT) {
+        if ($typeConverterClassName === ArrayConverter::class && $key === ArrayConverter::CONFIGURATION_STRING_FORMAT) {
             return ArrayConverter::STRING_FORMAT_JSON;
         }
 
-        if ($typeConverterClassName === 'TYPO3\Flow\Resource\ResourceTypeConverter' && $key === ResourceTypeConverter::CONFIGURATION_IDENTITY_CREATION_ALLOWED) {
+        if ($typeConverterClassName === ResourceTypeConverter::class && $key === ResourceTypeConverter::CONFIGURATION_IDENTITY_CREATION_ALLOWED) {
             return true;
         }
 
-        if ($typeConverterClassName === 'TYPO3\Flow\Resource\ResourceTypeConverter' && $key === ResourceTypeConverter::CONFIGURATION_RESOURCE_LOAD_PATH) {
+        if ($typeConverterClassName === ResourceTypeConverter::class && $key === ResourceTypeConverter::CONFIGURATION_RESOURCE_LOAD_PATH) {
             return $this->resourceLoadSavePath;
         }
 
@@ -162,7 +163,7 @@ class ImportExportPropertyMappingConfiguration implements PropertyMappingConfigu
     /**
      * This method can be used to explicitely force a TypeConverter to be used for this Configuration.
      *
-     * @return \TYPO3\Flow\Property\TypeConverterInterface The type converter to be used for this particular PropertyMappingConfiguration, or NULL if the system-wide configured type converter should be used.
+     * @return TypeConverterInterface The type converter to be used for this particular PropertyMappingConfiguration, or NULL if the system-wide configured type converter should be used.
      * @api
      */
     public function getTypeConverter()

@@ -34,3 +34,22 @@ Feature: Remove node
       | Workspace |
       | live      |
     Then I should have 0 nodes
+
+  @fixtures
+  Scenario: Remove a node in user workspace and don't publish the changes
+    When I get a node by path "/sites/typo3cr/company" with the following context:
+      | Workspace  |
+      | user-admin |
+    And I remove the node
+    Then the unpublished node count in workspace "user-admin" should be 4
+
+  @fixtures
+  Scenario: Create and remove a node in a personal workspace without publishing it should leave no traces
+    Given I have the following nodes:
+      | Path                | Node Type                  | Properties        | Workspace  |
+      | /sites/typo3cr/test | TYPO3.TYPO3CR.Testing:Page | {"title": "Test"} | user-admin |
+    When I get a node by path "/sites/typo3cr/test" with the following context:
+      | Workspace  |
+      | user-admin |
+    And I remove the node
+    Then the unpublished node count in workspace "user-admin" should be 0

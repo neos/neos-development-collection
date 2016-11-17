@@ -47,20 +47,10 @@
 							<ul>
 								<f:for each="{documentNode.nodes}" as="relatedNode">
 									<li>
-										<f:if condition="{relatedNode.accessible}">
-											<f:then>
-												<f:if condition="{relatedNode.node.nodeType.ui.icon}">
-													<i class="{relatedNode.node.nodeType.ui.icon}" title="{f:if(condition: relatedNode.node.nodeType.label, then: '{neos:backend.translate(id: relatedNode.node.nodeType.label)}', else: '{relatedNode.node.nodeType.name}')}" data-neos-toggle="tooltip" data-placement="left"></i>
-												</f:if>
-												<span title="{relatedNode.node.path}" data-neos-toggle="tooltip" data-placement="left">{relatedNode.node.label}</span>
-											</f:then>
-											<f:else>
-												<f:if condition="{relatedNode.node.nodeType.ui.icon}">
-													<i class="{relatedNode.node.nodeType.ui.icon}" title="{f:if(condition: relatedNode.node.nodeType.label, then: '{neos:backend.translate(id: relatedNode.node.nodeType.label)}', else: '{relatedNode.node.nodeType.name}')}" data-neos-toggle="tooltip" data-placement="left"></i>
-												</f:if>
-												<span title="{relatedNode.node.path}" data-neos-toggle="tooltip" data-placement="left">{relatedNode.node.label}</span>
-											</f:else>
+										<f:if condition="{relatedNode.node.nodeType.ui.icon}">
+											<i class="{relatedNode.node.nodeType.ui.icon}" title="{f:if(condition: relatedNode.node.nodeType.label, then: '{neos:backend.translate(id: relatedNode.node.nodeType.label)}', else: '{relatedNode.node.nodeType.name}')}" data-neos-toggle="tooltip" data-placement="left"></i>
 										</f:if>
+										<span title="{relatedNode.node.path}" data-neos-toggle="tooltip" data-placement="left">{relatedNode.node.label}</span>
 									</li>
 								</f:for>
 							</ul>
@@ -69,7 +59,14 @@
 							<ul>
 								<f:for each="{documentNode.nodes}" as="relatedNode">
 									<li>
-										<neos:link.node node="{relatedNode.contextDocumentNode}" target="_blank"><i class="icon-external-link"></i></neos:link.node>
+										<f:if condition="{relatedNode.contextDocumentNode}">
+											<f:then>
+												<neos:link.node node="{relatedNode.contextDocumentNode}" target="_blank" title="{neos:backend.translate(id: 'edit')} \"{neos:backend.translate(id: documentNode.node.label)}\""><i class="icon-external-link"></i></neos:link.node>
+											</f:then>
+											<f:else>
+												<span><i class="icon-warning" data-neos-toggle="tooltip" data-placement="left" title="Broken node, missing document node"></i></span>
+											</f:else>
+										</f:if>
 									</li>
 								</f:for>
 							</ul>
@@ -136,6 +133,9 @@
 		<a href="javascript:window.history.back(1);" class="neos-button">{neos:backend.translate(id: 'back', source: 'Modules')}</a>
 	</div>
 
+</f:section>
+
+<f:section name="Scripts">
 	<script>
 		(function($) {
 			$('.fold-toggle').click(function() {

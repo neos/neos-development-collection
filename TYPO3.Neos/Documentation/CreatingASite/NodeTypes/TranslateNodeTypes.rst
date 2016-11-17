@@ -54,7 +54,7 @@ as follows:
 			<body>
 				<trans-unit id="ui.help.message" xml:space="preserve">
 					<source>Your help message here</source>
-				</trans-uni>
+				</trans-unit>
 				<trans-unit id="tabs.myTab" xml:space="preserve">
 					<source>Your Tab Title</source>
 				</trans-unit>
@@ -66,7 +66,7 @@ as follows:
 				</trans-unit>
 				<trans-unit id="properties.myProperty.ui.help.message" xml:space="preserve">
 					<source>Your help message here</source>
-				</trans-uni>
+				</trans-unit>
 			</body>
 		</file>
 	</xliff>

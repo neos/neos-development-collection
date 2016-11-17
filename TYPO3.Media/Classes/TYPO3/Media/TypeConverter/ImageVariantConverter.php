@@ -24,7 +24,7 @@ class ImageVariantConverter extends ImageInterfaceConverter
     /**
      * @var string
      */
-    protected $targetType = 'TYPO3\Media\Domain\Model\ImageVariant';
+    protected $targetType = ImageVariant::class;
 
     /**
      * @var integer
@@ -42,5 +42,5 @@ class ImageVariantConverter extends ImageInterfaceConverter
      *
      * @var string
      */
-    protected static $defaultNewAssetType = 'TYPO3\Media\Domain\Model\ImageVariant';
+    protected static $defaultNewAssetType = ImageVariant::class;
 }

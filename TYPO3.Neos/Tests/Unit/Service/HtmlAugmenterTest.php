@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Tests\Unit\Service;
  */
 
 use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\Neos\Exception;
 use TYPO3\Neos\Service\HtmlAugmenter;
 
 /**

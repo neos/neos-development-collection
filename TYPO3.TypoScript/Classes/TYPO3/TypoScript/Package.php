@@ -11,8 +11,13 @@ namespace TYPO3\TypoScript;
  * source code.
  */
 
+use TYPO3\Flow\Cache\CacheManager;
+use TYPO3\Flow\Core\Booting\Sequence;
 use TYPO3\Flow\Core\Bootstrap;
+use TYPO3\Flow\Monitor\FileMonitor;
 use TYPO3\Flow\Package\Package as BasePackage;
+use TYPO3\Flow\Package\PackageManagerInterface;
+use TYPO3\TypoScript\Core\Cache\FileMonitorListener;
 
 /**
  * The TYPO3 TypoScript Package
@@ -31,10 +36,10 @@ class Package extends BasePackage
 
         $context = $bootstrap->getContext();
         if (!$context->isProduction()) {
-            $dispatcher->connect('TYPO3\Flow\Core\Booting\Sequence', 'afterInvokeStep', function ($step) use ($bootstrap, $dispatcher) {
+            $dispatcher->connect(Sequence::class, 'afterInvokeStep', function ($step) use ($bootstrap, $dispatcher) {
                 if ($step->getIdentifier() === 'typo3.flow:systemfilemonitor') {
-                    $typoScriptFileMonitor = \TYPO3\Flow\Monitor\FileMonitor::createFileMonitorAtBoot('TypoScript_Files', $bootstrap);
-                    $packageManager = $bootstrap->getEarlyInstance('TYPO3\Flow\Package\PackageManagerInterface');
+                    $typoScriptFileMonitor = FileMonitor::createFileMonitorAtBoot('TypoScript_Files', $bootstrap);
+                    $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
                     foreach ($packageManager->getActivePackages() as $packageKey => $package) {
                         if ($packageManager->isPackageFrozen($packageKey)) {
                             continue;
@@ -55,9 +60,9 @@ class Package extends BasePackage
                 }
 
                 if ($step->getIdentifier() === 'typo3.flow:cachemanagement') {
-                    $cacheManager = $bootstrap->getEarlyInstance('TYPO3\Flow\Cache\CacheManager');
-                    $listener = new \TYPO3\TypoScript\Core\Cache\FileMonitorListener($cacheManager);
-                    $dispatcher->connect('TYPO3\Flow\Monitor\FileMonitor', 'filesHaveChanged', $listener, 'flushContentCacheOnFileChanges');
+                    $cacheManager = $bootstrap->getEarlyInstance(CacheManager::class);
+                    $listener = new FileMonitorListener($cacheManager);
+                    $dispatcher->connect(FileMonitor::class, 'filesHaveChanged', $listener, 'flushContentCacheOnFileChanges');
                 }
             });
         }

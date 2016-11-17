@@ -11,6 +11,16 @@ namespace TYPO3\Neos\Tests\Functional\TypoScript;
  * source code.
  */
 
+use TYPO3\Flow\Http\Request;
+use TYPO3\Flow\Http\Response;
+use TYPO3\Flow\Http\Uri;
+use TYPO3\Flow\Mvc\ActionRequest;
+use TYPO3\Flow\Mvc\Controller\Arguments;
+use TYPO3\Flow\Mvc\Controller\ControllerContext;
+use TYPO3\Flow\Mvc\FlashMessageContainer;
+use TYPO3\Flow\Mvc\Routing\UriBuilder;
+use TYPO3\Neos\Domain\Service\ContentContext;
+use TYPO3\Neos\Domain\Service\TypoScriptService;
 use TYPO3\Neos\Tests\Functional\AbstractNodeTest;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -314,10 +324,10 @@ class RenderingTest extends AbstractNodeTest
         $typoScriptRuntime = $this->createRuntimeWithFixtures($additionalTypoScriptFile);
         $typoScriptRuntime->setEnableContentCache(false);
         if ($debugMode) {
-            $typoScriptRuntime->injectSettings(array('debugMode' => true, 'rendering' => array('exceptionHandler' => 'TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler')));
+            $typoScriptRuntime->injectSettings(array('debugMode' => true, 'rendering' => array('exceptionHandler' => \TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler::class)));
         }
         $contentContext = $this->node->getContext();
-        if (!$contentContext instanceof \TYPO3\Neos\Domain\Service\ContentContext) {
+        if (!$contentContext instanceof ContentContext) {
             $this->fail('Node context must be of type ContentContext');
         }
         $typoScriptRuntime->pushContextArray(array(
@@ -340,7 +350,7 @@ class RenderingTest extends AbstractNodeTest
      */
     protected function createRuntimeWithFixtures($additionalTypoScriptFile = null)
     {
-        $typoScriptService = new \TYPO3\Neos\Domain\Service\TypoScriptService();
+        $typoScriptService = new TypoScriptService();
         $typoScriptService->setSiteRootTypoScriptPattern(__DIR__ . '/Fixtures/BaseTypoScript.ts2');
 
         if ($additionalTypoScriptFile !== null) {
@@ -355,23 +365,23 @@ class RenderingTest extends AbstractNodeTest
     }
 
     /**
-     * @return \TYPO3\Flow\Mvc\Controller\ControllerContext
+     * @return ControllerContext
      */
     protected function buildMockControllerContext()
     {
-        $httpRequest = \TYPO3\Flow\Http\Request::create(new \TYPO3\Flow\Http\Uri('http://foo.bar/bazfoo'));
-        $request = new \TYPO3\Flow\Mvc\ActionRequest($httpRequest);
-        $response = new \TYPO3\Flow\Http\Response();
-        /** @var \TYPO3\Flow\Mvc\Controller\Arguments $mockArguments */
-        $mockArguments = $this->getMockBuilder(\TYPO3\Flow\Mvc\Controller\Arguments::class)->disableOriginalConstructor()->getMock();
-        $uriBuilder = new \TYPO3\Flow\Mvc\Routing\UriBuilder();
+        $httpRequest = Request::create(new Uri('http://foo.bar/bazfoo'));
+        $request = new ActionRequest($httpRequest);
+        $response = new Response();
+        /** @var Arguments $mockArguments */
+        $mockArguments = $this->getMockBuilder(Arguments::class)->disableOriginalConstructor()->getMock();
+        $uriBuilder = new UriBuilder();
 
-        $controllerContext = new \TYPO3\Flow\Mvc\Controller\ControllerContext(
+        $controllerContext = new ControllerContext(
             $request,
             $response,
             $mockArguments,
             $uriBuilder,
-            $this->createMock('TYPO3\Flow\Mvc\FlashMessageContainer')
+            $this->createMock(FlashMessageContainer::class)
         );
         return $controllerContext;
     }

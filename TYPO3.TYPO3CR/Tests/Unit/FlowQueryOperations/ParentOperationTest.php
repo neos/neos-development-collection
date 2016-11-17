@@ -12,16 +12,18 @@ namespace TYPO3\TYPO3CR\Tests\Unit\FlowQueryOperations;
  */
 
 use TYPO3\Eel\FlowQuery\FlowQuery;
+use TYPO3\Flow\Tests\UnitTestCase;
+use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\Eel\FlowQueryOperations\ParentOperation;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * Testcase for the FlowQuery ParentsOperation
  */
-class ParentOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ParentOperationTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Service\Context
+     * @var Context
      */
     protected $mockContext;
 
@@ -42,13 +44,13 @@ class ParentOperationTest extends \TYPO3\Flow\Tests\UnitTestCase
 
     public function setUp()
     {
-        $this->siteNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-        $this->firstLevelNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
-        $this->secondLevelNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $this->siteNode = $this->createMock(NodeInterface::class);
+        $this->firstLevelNode = $this->createMock(NodeInterface::class);
+        $this->secondLevelNode = $this->createMock(NodeInterface::class);
 
         $this->siteNode->expects($this->any())->method('getPath')->will($this->returnValue('/site'));
         $this->siteNode->expects($this->any())->method('getChildNodes')->will($this->returnValue(array($this->firstLevelNode)));
-        $this->mockContext = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\Context')->disableOriginalConstructor()->getMock();
+        $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
         $this->firstLevelNode->expects($this->any())->method('getParent')->will($this->returnValue($this->siteNode));
         $this->firstLevelNode->expects($this->any())->method('getPath')->will($this->returnValue('/site/first'));

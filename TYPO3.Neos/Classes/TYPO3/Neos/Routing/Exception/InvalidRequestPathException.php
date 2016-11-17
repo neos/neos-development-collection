@@ -10,11 +10,12 @@ namespace TYPO3\Neos\Routing\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Neos\Routing\Exception;
 
 /**
  * An "invalid request path" exception
  */
-class InvalidRequestPathException extends \TYPO3\Neos\Routing\Exception
+class InvalidRequestPathException extends Exception
 {
     /**
      * @var integer

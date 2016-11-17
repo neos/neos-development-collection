@@ -26,10 +26,6 @@ matrix:
       dist: trusty
       addons:
         postgresql: "9.5"
-    - php: 5.6
-      env: DB=sqlite
-    - php: 5.5
-      env: DB=sqlite
 cache:
   directories:
     - $HOME/.composer/cache
@@ -46,7 +42,7 @@ install:
   - mv ../neos-development-collection Packages/Neos
 before_script:
   - phpenv config-rm xdebug.ini
-  - echo 'date.timezone = "Antarctica/Troll"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  - echo 'date.timezone = "Africa/Tunis"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - echo 'opcache.fast_shutdown = 0' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - echo 'opcache.enable_cli = 0' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - echo 'zend.enable_gc = 0' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini

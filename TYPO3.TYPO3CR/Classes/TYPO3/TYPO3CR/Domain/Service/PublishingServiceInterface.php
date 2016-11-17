@@ -64,7 +64,7 @@ interface PublishingServiceInterface
      *
      * @param NodeInterface $node
      * @return void
-     * @throws \TYPO3\TYPO3CR\Exception\WorkspaceException
+     * @throws WorkspaceException
      * @api
      */
     public function discardNode(NodeInterface $node);

@@ -13,7 +13,7 @@ namespace TYPO3\Neos\ViewHelpers\Uri;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Routing\UriBuilder;
-use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * A view helper for creating links to modules.
@@ -50,7 +50,7 @@ class ModuleViewHelper extends AbstractViewHelper
      * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
      * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
      * @return string The rendered link
-     * @throws \TYPO3\Fluid\Core\ViewHelper\Exception
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function render($path, $action = null, $arguments = array(), $section = '', $format = '', array $additionalParams = array(), $addQueryString = false, array $argumentsToBeExcludedFromQueryString = array())
     {
@@ -74,7 +74,7 @@ class ModuleViewHelper extends AbstractViewHelper
                 ->setFormat($format)
                 ->uriFor('index', $modifiedArguments, 'Backend\Module', 'TYPO3.Neos');
         } catch (\TYPO3\Flow\Exception $exception) {
-            throw new \TYPO3\Fluid\Core\ViewHelper\Exception($exception->getMessage(), $exception->getCode(), $exception);
+            throw new \Neos\FluidAdaptor\Core\ViewHelper\Exception($exception->getMessage(), $exception->getCode(), $exception);
         }
     }
 

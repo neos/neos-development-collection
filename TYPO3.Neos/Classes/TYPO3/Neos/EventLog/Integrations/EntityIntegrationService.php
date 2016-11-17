@@ -11,11 +11,14 @@ namespace TYPO3\Neos\EventLog\Integrations;
  * source code.
  */
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use TYPO3\Eel\CompilingEvaluator;
+use TYPO3\Eel\Exception;
 use TYPO3\Eel\Utility;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Neos\EventLog\Domain\Model\Event;
 use TYPO3\Neos\EventLog\Domain\Service\EventEmittingService;
 
 /**
@@ -30,7 +33,7 @@ class EntityIntegrationService extends AbstractIntegrationService
      * interface ...
      *
      * @Flow\Inject
-     * @var \Doctrine\Common\Persistence\ObjectManager
+     * @var ObjectManager
      */
     protected $entityManager;
 
@@ -78,7 +81,7 @@ class EntityIntegrationService extends AbstractIntegrationService
      *
      * @param OnFlushEventArgs $eventArgs
      * @return void
-     * @throws \TYPO3\Eel\Exception
+     * @throws Exception
      */
     public function onFlush(OnFlushEventArgs $eventArgs)
     {
@@ -102,7 +105,7 @@ class EntityIntegrationService extends AbstractIntegrationService
                     }
 
                     $event = $this->eventEmittingService->emit($entityMonitoringConfiguration['events']['created'], $data);
-                    $unitOfWork->computeChangeSet($entityManager->getClassMetadata('TYPO3\Neos\EventLog\Domain\Model\Event'), $event);
+                    $unitOfWork->computeChangeSet($entityManager->getClassMetadata(Event::class), $event);
                 }
             }
         }
@@ -120,7 +123,7 @@ class EntityIntegrationService extends AbstractIntegrationService
                     }
 
                     $event = $this->eventEmittingService->emit($entityMonitoringConfiguration['events']['deleted'], $data);
-                    $unitOfWork->computeChangeSet($entityManager->getClassMetadata('TYPO3\Neos\EventLog\Domain\Model\Event'), $event);
+                    $unitOfWork->computeChangeSet($entityManager->getClassMetadata(Event::class), $event);
                 }
             }
         }

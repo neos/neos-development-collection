@@ -10,12 +10,13 @@ namespace TYPO3\Media\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Media\Exception;
 
 /**
  * A TYPO3.Media exception for image file errors
  *
  * @api
  */
-class ImageFileException extends \TYPO3\Media\Exception
+class ImageFileException extends Exception
 {
 }

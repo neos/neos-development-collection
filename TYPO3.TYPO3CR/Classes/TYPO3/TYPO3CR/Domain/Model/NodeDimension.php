@@ -13,6 +13,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 
 /**
  * NOTE: This is internal only and should not be used or extended by userland code.
@@ -27,7 +28,7 @@ class NodeDimension
     /**
      * @ORM\ManyToOne(inversedBy="dimensions")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var \TYPO3\TYPO3CR\Domain\Model\NodeData
+     * @var NodeData
      */
     protected $nodeData;
 
@@ -86,7 +87,7 @@ class NodeDimension
     }
 
     /**
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $nodeData
+     * @param NodeData $nodeData
      */
     public function setNodeData($nodeData)
     {
@@ -94,7 +95,7 @@ class NodeDimension
     }
 
     /**
-     * @return \TYPO3\TYPO3CR\Domain\Model\NodeData
+     * @return NodeData
      */
     public function getNodeData()
     {

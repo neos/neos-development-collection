@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Migration\Transformations;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeDimension;
 use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
 
@@ -60,10 +61,10 @@ class AddDimensions extends AbstractTransformation
     /**
      * Add dimensions to the node.
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeData $node
+     * @param NodeData $node
      * @return void
      */
-    public function execute(\TYPO3\TYPO3CR\Domain\Model\NodeData $node)
+    public function execute(NodeData $node)
     {
         $dimensionValuesToBeAdded = $node->getDimensionValues();
 

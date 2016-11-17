@@ -13,9 +13,12 @@ namespace TYPO3\TypoScript\Core\Cache;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheAwareInterface;
+use TYPO3\Flow\Cache\Frontend\StringFrontend;
+use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Security\Context;
 use TYPO3\TypoScript\Exception;
 use Doctrine\ORM\Proxy\Proxy;
+use TYPO3\TypoScript\Exception\CacheException;
 
 /**
  * A wrapper around a TYPO3 Flow cache which provides additional functionality for caching partial content (segments)
@@ -68,13 +71,13 @@ class ContentCache
     protected $parser;
 
     /**
-     * @var \TYPO3\Flow\Cache\Frontend\StringFrontend
+     * @var StringFrontend
      * @Flow\Inject
      */
     protected $cache;
 
     /**
-     * @var \TYPO3\Flow\Property\PropertyMapper
+     * @var PropertyMapper
      * @Flow\Inject
      */
     protected $propertyMapper;
@@ -182,7 +185,7 @@ class ContentCache
      * @param string $typoScriptPath
      * @param array $cacheIdentifierValues
      * @return string An MD5 hash built from the typoScriptPath and certain elements of the given identifier values
-     * @throws \TYPO3\TypoScript\Exception\CacheException If an invalid entry identifier value is given
+     * @throws CacheException If an invalid entry identifier value is given
      */
     protected function renderContentCacheEntryIdentifier($typoScriptPath, array $cacheIdentifierValues)
     {
@@ -195,7 +198,7 @@ class ContentCache
             } elseif (is_string($value) || is_bool($value) || is_integer($value)) {
                 $identifierSource .= $key . '=' . $value . '&';
             } elseif ($value !== null) {
-                throw new Exception\CacheException(sprintf('Invalid cache entry identifier @cache.entryIdentifier.%s for path "%s". A entry identifier value must be a string or implement CacheAwareInterface.', $key, $typoScriptPath), 1395846615);
+                throw new CacheException(sprintf('Invalid cache entry identifier @cache.entryIdentifier.%s for path "%s". A entry identifier value must be a string or implement CacheAwareInterface.', $key, $typoScriptPath), 1395846615);
             }
         }
         $identifierSource .= 'securityContextHash=' . $this->securityContext->getContextHash();
@@ -243,7 +246,7 @@ class ContentCache
      * @param array $cacheIdentifierValues Further values which play into the cache identifier hash, must be the same as the ones specified while the cache entry was written
      * @param boolean $addCacheSegmentMarkersToPlaceholders If cache segment markers should be added – this makes sense if the cached segment is about to be included in a not-yet-cached segment
      * @return string|boolean The segment with replaced cache placeholders, or FALSE if a segment was missing in the cache
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws Exception
      */
     public function getCachedSegment($uncachedCommandCallback, $typoScriptPath, $cacheIdentifierValues, $addCacheSegmentMarkersToPlaceholders = false)
     {

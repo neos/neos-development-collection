@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2016-08-23
+The following reference was automatically generated from code on 2016-09-02
 
 
 .. _`Command Reference: TYPO3.FLOW`:
@@ -1417,7 +1417,7 @@ Arguments
 ^^^^^^^^^
 
 ``--php-namespace``
-  Namespace of the Fluid ViewHelpers without leading backslash (for example 'TYPO3\Fluid\ViewHelpers'). NOTE: Quote and/or escape this argument as needed to avoid backslashes from being interpreted!
+  Namespace of the Fluid ViewHelpers without leading backslash (for example 'Neos\FluidAdaptor\ViewHelpers'). NOTE: Quote and/or escape this argument as needed to avoid backslashes from being interpreted!
 
 
 
@@ -2641,6 +2641,12 @@ removeNodesWithInvalidWorkspace
 
 Will check for and optionally remove nodes which belong to a workspace which no longer
 exists.. 
+
+*Repair inconsistent node identifiers*
+fixNodesWithInconsistentIdentifier
+
+Will check for and optionally repair node identifiers which are out of sync with their
+corresponding nodes in a live workspace.
 
 *Missing child nodes*
 createMissingChildNodes
