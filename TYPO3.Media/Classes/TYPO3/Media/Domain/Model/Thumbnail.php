@@ -72,6 +72,7 @@ class Thumbnail implements ImageInterface
 
     /**
      * @var bool
+     * @Flow\Transient
      */
     protected $async;
 
