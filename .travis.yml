@@ -39,6 +39,7 @@ before_install:
   - cd neos-development-distribution
   - export NEOS_TARGET_REPOSITORY=neos/neos-development-collection
   - export NEOS_TARGET_VERSION=2.3
+  - env
 install:
   - composer self-update -q
   - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
