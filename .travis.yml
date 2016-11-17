@@ -38,8 +38,8 @@ install:
   - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
   - composer install --no-progress --no-interaction
   - composer update --no-progress --no-interaction
-  - rm -rf Packages/Neos
-  - mv ../neos-development-collection Packages/Neos
+  - php Build/BuildEssentials/TravisCi/ComposerManifestUpdater.php .
+  - composer update --no-progress --no-interaction
 before_script:
   - phpenv config-rm xdebug.ini
   - echo 'date.timezone = "Africa/Tunis"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
