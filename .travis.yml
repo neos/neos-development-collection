@@ -34,6 +34,9 @@ cache:
   directories:
     - $HOME/.composer/cache
 before_install:
+  - sudo add-apt-repository ppa:git-core/ppa -y
+  - sudo apt-get update
+  - sudo apt-get install git -y
   - git checkout -b travis
   - cd ..
   - git clone https://github.com/neos/neos-development-distribution.git -b 2.3
