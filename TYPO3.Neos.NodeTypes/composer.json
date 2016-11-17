@@ -4,7 +4,7 @@
     "description": "Node type configuration for Neos",
     "license": "GPL-3.0+",
     "require": {
-        "typo3/form": "*",
+        "typo3/form": "~2.0",
         "typo3/neos": "*"
     },
     "autoload": {
