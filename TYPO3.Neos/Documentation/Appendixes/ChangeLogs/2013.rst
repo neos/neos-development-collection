@@ -1,0 +1,91 @@
+`2.0.13 (2016-05-29) <https://github.com/neos/neos-development-collection/releases/tag/2.0.13>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Restrict global 404 handling in UI to page loads only <https://github.com/neos/neos-development-collection/pull/544>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+This fixes an issue that causes the backend UI to recursively find a valid URI
+in the document tree and load it, whenever a 404 response occurs to the
+HTTPClient or HTTPRestClient.
+
+That behavior is now only applied, when an actual page load is requested
+and remains silent for all other requests.
+
+NEOS-1533 #close
+NEOS-1831 #close
+
+* Packages: ``Neos``
+
+`BUGFIX: Allow installation of typo3/media into Flow 2.x project <https://github.com/neos/neos-development-collection/pull/535>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+When installing ``typo3/media`` into an existing Flow 2.x project, a schema
+migration relies on an old table name, which does not exist anymore.
+
+This change fixes that by checking for the table name and target the
+FK to create on the correct table.
+
+NEOS-1341 #close
+
+* Packages: ``Media``
+
+`TASK: Respect caption field for asset search <https://github.com/neos/neos-development-collection/pull/539>`_
+--------------------------------------------------------------------------------------------------------------
+
+The caption field is not respected, when you are searching for assets.
+
+NEOS-1837 #close
+
+* Packages: ``Media`` ``Neos``
+
+`BUGFIX: Allow \`\`tel:\`\` and \`\`callto:\`\` link protocols in inline editing <https://github.com/neos/neos-development-collection/pull/533>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+Allows the user to link telephone numbers and Skype usernames with Aloha.
+
+NEOS-512 #close
+
+* Packages: ``Neos``
+
+`BUGFIX: Multi-line links in inline editing <https://github.com/neos/neos-development-collection/pull/536>`_
+------------------------------------------------------------------------------------------------------------
+
+When creating a multi-line link to using inline editing, only the
+first link is created correctly unless a whole URL is specified.
+
+The issue lies in Aloha and an issue with a fix has been pushed to
+their backlog. Until that is merged it is hotfixed in Neos.
+
+https://github.com/alohaeditor/Aloha-Editor/issues/1525
+
+* Packages: ``Neos``
+
+`BUGFIX: Avoid fetching meta data when \`\`AssetEditor\`\` is empty <https://github.com/neos/neos-development-collection/pull/538>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+If the ``AssetInspector`` is used for a single asset used and the asset is removed the inspector will call the ``assetMetadataEndpoint`` without any asset identifier. This changes it to only call the fetch the meta data if there is an asset.
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix schema error that prevented the validation of aloha configurations <https://github.com/neos/neos-development-collection/pull/521>`_
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+The schema was altered before to allow setting the properties to NULL in a derived nodeType. This was done incompletely and lead the situation where the schema validation only validates that the
+value of properties was a dictionary or null.
+
+The ``additionalProperties`` were ignored because that property is only evaluated inside
+a dictionary schema.
+
+The underlying intent to allow resetting the properties in derived node types by setting ``NodeType.properties: null`` is not supported any more. The correct syntax to achieve this
+is instead ``NodeType.properties: []``.
+
+This is not marked as breaking since it will not break functionality. Nevertheless it alters
+what is marked as a defect configuration.
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.0.12...2.0.13>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

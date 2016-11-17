@@ -26,6 +26,7 @@ define(
 			},
 			'update': function(model, options) {
 				var nodeJson = this._convertModelToJson(model),
+					changedAttributes = Entity.extractAttributesFromVieEntity(model, model.changed),
 					method = options.render === true ? 'updateAndRender' : 'update',
 					typoScriptPath = options.render === true ? model._enclosingCollectionWidget.options.model.get('typo3:__typoscriptPath') : null;
 
@@ -53,6 +54,8 @@ define(
 							if (!options.render) {
 								model.set('typo3:__workspaceName', result.data.workspaceNameOfNode, {silent: true});
 								PublishableNodes._updatePublishableEntities();
+							} else if ('_nodeType' in changedAttributes) {
+								EventDispatcher.trigger('contentChanged');
 							}
 
 							NodeEndpoint.set('_lastSuccessfulTransfer', new Date());

@@ -35,10 +35,11 @@ class CacheSegmentParser
      * This method also prepares a cleaned up output which can be retrieved later. See getOutput() for more information.
      *
      * @param string $content The content to process, ie. the rendered content with some segment markers already in place
+     * @param string $randomCacheMarker A random cache marker that should be used to "protect" against content containing special characters used to mark cache segments
      * @return string The outer content with placeholders instead of the actual content segments
-     * @throws \TYPO3\TypoScript\Exception
+     * @throws Exception
      */
-    public function extractRenderedSegments($content)
+    public function extractRenderedSegments($content, $randomCacheMarker = '')
     {
         $this->output = '';
         $this->cacheEntries = array();
@@ -46,8 +47,8 @@ class CacheSegmentParser
 
         $currentPosition = 0;
         $level = 0;
-        $nextStartPosition = strpos($content, ContentCache::CACHE_SEGMENT_START_TOKEN, $currentPosition);
-        $nextEndPosition = strpos($content, ContentCache::CACHE_SEGMENT_END_TOKEN, $currentPosition);
+        $nextStartPosition = strpos($content, ContentCache::CACHE_SEGMENT_START_TOKEN . $randomCacheMarker, $currentPosition);
+        $nextEndPosition = strpos($content, ContentCache::CACHE_SEGMENT_END_TOKEN . $randomCacheMarker, $currentPosition);
 
         while (true) {
 
@@ -87,14 +88,14 @@ class CacheSegmentParser
                 $level--;
 
                 if ($currentLevelPart['type'] === ContentCache::SEGMENT_TYPE_UNCACHED) {
-                    $parts[$level]['content'] .= ContentCache::CACHE_SEGMENT_START_TOKEN . $identifier . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . $currentLevelPart['context'] . ContentCache::CACHE_SEGMENT_END_TOKEN;
+                    $parts[$level]['content'] .= ContentCache::CACHE_SEGMENT_START_TOKEN . ContentCache::CACHE_SEGMENT_MARKER . $identifier . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . ContentCache::CACHE_SEGMENT_MARKER . $currentLevelPart['context'] . ContentCache::CACHE_SEGMENT_END_TOKEN . ContentCache::CACHE_SEGMENT_MARKER;
                 } else {
-                    $parts[$level]['content'] .= ContentCache::CACHE_SEGMENT_START_TOKEN . $identifier . ContentCache::CACHE_SEGMENT_END_TOKEN;
+                    $parts[$level]['content'] .= ContentCache::CACHE_SEGMENT_START_TOKEN . ContentCache::CACHE_SEGMENT_MARKER . $identifier . ContentCache::CACHE_SEGMENT_END_TOKEN . ContentCache::CACHE_SEGMENT_MARKER;
                 }
 
-                $currentPosition = $nextEndPosition + 1;
+                $currentPosition = $nextEndPosition + 1 + strlen($randomCacheMarker);
 
-                $nextEndPosition = strpos($content, ContentCache::CACHE_SEGMENT_END_TOKEN, $currentPosition);
+                $nextEndPosition = strpos($content, ContentCache::CACHE_SEGMENT_END_TOKEN . $randomCacheMarker, $currentPosition);
             } else {
 
                 // Push everything until now to the current stack value
@@ -106,12 +107,12 @@ class CacheSegmentParser
                 $level++;
                 $parts[$level] = array('content' => '');
 
-                $currentPosition = $nextStartPosition + 1;
+                $currentPosition = $nextStartPosition + 1 + strlen($randomCacheMarker);
 
-                $nextStartPosition = strpos($content, ContentCache::CACHE_SEGMENT_START_TOKEN, $currentPosition);
+                $nextStartPosition = strpos($content, ContentCache::CACHE_SEGMENT_START_TOKEN . $randomCacheMarker, $currentPosition);
 
-                $nextIdentifierSeparatorPosition = strpos($content, ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN, $currentPosition);
-                $nextSecondIdentifierSeparatorPosition = strpos($content, ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN, $nextIdentifierSeparatorPosition + 1);
+                $nextIdentifierSeparatorPosition = strpos($content, ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . $randomCacheMarker, $currentPosition);
+                $nextSecondIdentifierSeparatorPosition = strpos($content, ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . $randomCacheMarker, $nextIdentifierSeparatorPosition + 1);
 
                 if ($nextIdentifierSeparatorPosition === false || $nextSecondIdentifierSeparatorPosition === false
                     || $nextStartPosition !== false && $nextStartPosition < $nextIdentifierSeparatorPosition
@@ -122,7 +123,7 @@ class CacheSegmentParser
                 }
 
                 $identifier = substr($content, $currentPosition, $nextIdentifierSeparatorPosition - $currentPosition);
-                $contextOrMetadata = substr($content, $nextIdentifierSeparatorPosition + 1, $nextSecondIdentifierSeparatorPosition - $nextIdentifierSeparatorPosition - 1);
+                $contextOrMetadata = substr($content, $nextIdentifierSeparatorPosition + 1 + strlen($randomCacheMarker), $nextSecondIdentifierSeparatorPosition - $nextIdentifierSeparatorPosition - 1 - strlen($randomCacheMarker));
 
                 $parts[$level]['identifier'] = $identifier;
                 if (strpos($identifier, 'eval=') === 0) {
@@ -133,9 +134,9 @@ class CacheSegmentParser
                     $parts[$level]['metadata'] = $contextOrMetadata;
                 }
 
-                $currentPosition = $nextSecondIdentifierSeparatorPosition + 1;
+                $currentPosition = $nextSecondIdentifierSeparatorPosition + 1 + strlen($randomCacheMarker);
 
-                $nextStartPosition = strpos($content, ContentCache::CACHE_SEGMENT_START_TOKEN, $currentPosition);
+                $nextStartPosition = strpos($content, ContentCache::CACHE_SEGMENT_START_TOKEN . $randomCacheMarker, $currentPosition);
             }
         };
 

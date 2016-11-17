@@ -57,7 +57,7 @@ use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
  * </output>
  *
  * <code title="Generating a link with an absolute URI">
- * <neos:link.node absolute="{true"}>bookmark this page</neos:link.node>
+ * <neos:link.node absolute="{true}">bookmark this page</neos:link.node>
  * </code>
  * <output>
  * <a href="http://www.example.org/homepage/about.html">bookmark this page</a>

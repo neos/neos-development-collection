@@ -838,6 +838,61 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase
     }
 
     /**
+     * @test
+     */
+    public function nodeDataRepositoryRenumbersNodesIfNoFreeSortingIndexesAreAvailableAcrossDimensions()
+    {
+        $this->contentDimensionRepository->setDimensionsConfiguration(array(
+            'test' => array(
+                'default' => 'a'
+            )
+        ));
+
+        $variantContextA = $this->contextFactory->create(array(
+            'dimensions' => array('test' => array('a')),
+            'targetDimensions' => array('test' => 'a')
+        ));
+        $variantContextB = $this->contextFactory->create(array(
+            'dimensions' => array('test' => array('b', 'a')),
+            'targetDimensions' => array('test' => 'b')
+        ));
+
+        $rootNodeA = $variantContextA->getRootNode();
+        $rootNodeB = $rootNodeA->createVariantForContext($variantContextB);
+
+        $liveParentNodeA = $rootNodeA->createNode('parent-node');
+        $liveParentNodeB = $liveParentNodeA->createVariantForContext($variantContextB);
+
+        $nodesA = array();
+        $nodesA[0] = $liveParentNodeA->createNode('node000');
+        $nodesA[150] = $liveParentNodeA->createNode('node150');
+
+        $nodesB[0] = $nodesA[0]->createVariantForContext($variantContextB);
+        $nodesB[150] = $nodesA[150]->createVariantForContext($variantContextB);
+
+        $this->persistenceManager->persistAll();
+
+        for ($i = 1; $i < 150; $i++) {
+            $newNodeA = $liveParentNodeA->createNode('node' . sprintf('%1$03d', $i));
+            $newNodeA->moveAfter($nodesA[$i - 1]);
+            $newNodeB = $newNodeA->createVariantForContext($variantContextB);
+
+            $nodesA[$i] = $newNodeA;
+            $nodesB[$i] = $newNodeB;
+        }
+        $this->persistenceManager->persistAll();
+
+        ksort($nodesA);
+        ksort($nodesB);
+
+        $actualChildNodesA = $liveParentNodeA->getChildNodes();
+        $actualChildNodesB = $liveParentNodeB->getChildNodes();
+
+        $this->assertSameOrder($nodesA, $actualChildNodesA);
+        $this->assertSameOrder($nodesB, $actualChildNodesB);
+    }
+
+    /**
      * Asserts that the order of the given nodes is the same.
      * This doesn't check if the node objects are the same or equal but rather tests
      * if their path is identical. Therefore nodes can be in different workspaces
@@ -912,7 +967,9 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $childNodes = $rootNode->getChildNodes();
         $names = new \stdClass();
         $names->names = array();
-        array_walk($childNodes, function ($value, $key, &$names) {$names->names[] = $value->getName();}, $names);
+        array_walk($childNodes, function ($value, $key, &$names) {
+            $names->names[] = $value->getName();
+        }, $names);
         $this->assertSame(array('fluss', 'baz', 'flux'), $names->names);
     }
 
@@ -931,7 +988,9 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $childNodes = $rootNode->getChildNodes();
         $names = new \stdClass();
         $names->names = array();
-        array_walk($childNodes, function ($value, $key, &$names) {$names->names[] = $value->getName();}, $names);
+        array_walk($childNodes, function ($value, $key, &$names) {
+            $names->names[] = $value->getName();
+        }, $names);
         $this->assertSame(array('baz', 'fluss', 'flux'), $names->names);
     }
 
@@ -984,7 +1043,9 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 
         $names = new \stdClass();
         $names->names = array();
-        array_walk($copiedChildNodes, function ($value, $key, &$names) {$names->names[] = $value->getName();}, $names);
+        array_walk($copiedChildNodes, function ($value, $key, &$names) {
+            $names->names[] = $value->getName();
+        }, $names);
         $this->assertSame(array('capacitor', 'second', 'third'), $names->names);
     }
 
@@ -1005,7 +1066,9 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 
         $names = new \stdClass();
         $names->names = array();
-        array_walk($copiedChildNodes, function ($value, $key, &$names) {$names->names[] = $value->getName();}, $names);
+        array_walk($copiedChildNodes, function ($value, $key, &$names) {
+            $names->names[] = $value->getName();
+        }, $names);
         $this->assertSame(array('capacitor', 'second', 'third'), $names->names);
     }
 
@@ -1249,7 +1312,9 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $variantNodeA = $variantContextA->getRootNode()->createNode('test');
         $variantNodeB = $variantNodeA->createVariantForContext($variantContextB);
 
-        $this->assertSame($variantNodeB->getDimensions(), array_map(function ($value) { return array($value); }, $variantContextB->getTargetDimensions()));
+        $this->assertSame($variantNodeB->getDimensions(), array_map(function ($value) {
+            return array($value);
+        }, $variantContextB->getTargetDimensions()));
     }
 
     /**
@@ -1277,7 +1342,9 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $variantNodeA = $variantContextA->getRootNode()->createNode('test');
         $variantNodeB = $variantNodeA->createVariantForContext($variantContextB);
 
-        $this->assertSame($variantNodeB->getDimensions(), array_map(function ($value) { return array($value); }, $variantContextB->getTargetDimensions()));
+        $this->assertSame($variantNodeB->getDimensions(), array_map(function ($value) {
+            return array($value);
+        }, $variantContextB->getTargetDimensions()));
     }
 
     /**
@@ -1400,5 +1467,52 @@ class NodesTest extends \TYPO3\Flow\Tests\FunctionalTestCase
         $node->createNode('headline', $headlineNodeType);
         $node->createNode('text', $imageNodeType);
         $this->assertCount(1, $node->getChildNodes('TYPO3.TYPO3CR.Testing:Headline'));
+    }
+
+    /**
+     * @test
+     */
+    public function nodesInPathAreHiddenIfBetterVariantInOtherPathExists()
+    {
+        $this->contentDimensionRepository->setDimensionsConfiguration([
+            'test' => [
+                'default' => 'a'
+            ]
+        ]);
+
+        $variantContextA = $this->contextFactory->create([
+            'dimensions' => ['test' => ['a']],
+            'targetDimensions' => ['test' => 'a']
+        ]);
+
+        $container1 = $variantContextA->getRootNode()->createNode('container1');
+        $variantContextA->getRootNode()->createNode('container2');
+
+        $container1->createNode('node-with-variant');
+
+        $variantContextB = $this->contextFactory->create([
+            'dimensions' => ['test' => ['b', 'a']],
+            'targetDimensions' => ['test' => 'b']
+        ]);
+
+        $nodeWithVariantOriginal = $variantContextB->getNode('/container1/node-with-variant');
+        $variantContextB->getNode('/container2')->createNode('node-with-variant', null, $nodeWithVariantOriginal->getIdentifier());
+
+        $this->persistenceManager->persistAll();
+        $this->contextFactory->reset();
+
+        $variantContextB = $this->contextFactory->create([
+            'dimensions' => ['test' => ['b', 'a']],
+            'targetDimensions' => ['test' => 'b']
+        ]);
+
+        // Both containers should be available due to fallbacks
+        $this->assertCount(2, $variantContextB->getRootNode()->getChildNodes());
+
+        // This should NOT find the node created in variantContextA as
+        // a better matching (with "b" dimension value) variant (same identifier) exists in container two
+        $this->assertCount(0, $variantContextB->getNode('/container1')->getChildNodes());
+        // This is the better matching variant and should be found.
+        $this->assertCount(1, $variantContextB->getNode('/container2')->getChildNodes());
     }
 }

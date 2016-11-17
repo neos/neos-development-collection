@@ -78,7 +78,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $this->routePartHandler->setName('node');
 
         // The mockContextFactory is configured to return the last mock context which has been built with buildMockContext():
-        $mockContextFactory = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContextFactory', array('create'));
+        $mockContextFactory = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ContextFactory')->setMethods(array('create'))->getMock();
         $mockContextFactory->mockContext = null;
         $mockContextFactory->expects($this->any())->method('create')->will($this->returnCallback(function ($contextProperties) use ($mockContextFactory) {
             if (isset($contextProperties['currentSite'])) {
@@ -98,7 +98,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $this->mockContextFactory = $mockContextFactory;
         $this->inject($this->routePartHandler, 'contextFactory', $this->mockContextFactory);
 
-        $this->mockSystemLogger = $this->getMock('TYPO3\Flow\Log\SystemLoggerInterface');
+        $this->mockSystemLogger = $this->createMock('TYPO3\Flow\Log\SystemLoggerInterface');
         $this->inject($this->routePartHandler, 'systemLogger', $this->mockSystemLogger);
 
         $this->mockDomainRepository = $this->getMockBuilder('TYPO3\Neos\Domain\Repository\DomainRepository')->disableOriginalConstructor()->getMock();
@@ -139,7 +139,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     public function matchReturnsTrueIfTheNodeExists()
     {
         $mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
-        $mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', false);
+        $mockContext->mockSite = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Site')->disableOriginalConstructor()->getMock();
         $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
         $expectedContextPath = '/sites/examplecom/home';
@@ -171,7 +171,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     public function matchReturnsFalseIfASiteExistsButNoSiteNodeExists()
     {
         $mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
-        $mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', false);
+        $mockContext->mockSite = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Site')->disableOriginalConstructor()->getMock();
 
         $routePath = 'home';
         $this->assertFalse($this->routePartHandler->match($routePath));
@@ -183,7 +183,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     public function matchReturnsFalseIfTheNodeCouldNotBeFound()
     {
         $mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
-        $mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', false);
+        $mockContext->mockSite = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Site')->disableOriginalConstructor()->getMock();
         $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
         $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
@@ -201,7 +201,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     public function matchReturnsFalseIfTheWorkspaceCouldNotBeFound()
     {
         $mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
-        $mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', false);
+        $mockContext->mockSite = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Site')->disableOriginalConstructor()->getMock();
         $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
         $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
@@ -222,7 +222,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     public function valueContainsContextPathOfFoundNode()
     {
         $mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
-        $mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', false);
+        $mockContext->mockSite = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Site')->disableOriginalConstructor()->getMock();
         $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
         $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'features');
@@ -246,7 +246,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     public function matchReturnsFalseOnNotMatchingSiteNodes()
     {
         $mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
-        $mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', false);
+        $mockContext->mockSite = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Site')->disableOriginalConstructor()->getMock();
         $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
         $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'features');
@@ -272,7 +272,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     public function matchCreatesContextForLiveWorkspaceByDefault()
     {
         $mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
-        $mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', false);
+        $mockContext->mockSite = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Site')->disableOriginalConstructor()->getMock();
         $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
         $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
@@ -294,7 +294,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     public function matchCreatesContextForCustomWorkspaceIfSpecifiedInNodeContextPath()
     {
         $mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
-        $mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', false);
+        $mockContext->mockSite = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Site')->disableOriginalConstructor()->getMock();
         $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
         $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
@@ -381,7 +381,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         ));
 
         $mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
-        $mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', false);
+        $mockContext->mockSite = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Site')->disableOriginalConstructor()->getMock();
         $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
         $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'features');
@@ -399,7 +399,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     public function matchReturnsFalseIfContextPathIsInvalid()
     {
         $mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
-        $mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', false);
+        $mockContext->mockSite = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Site')->disableOriginalConstructor()->getMock();
         $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
         $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
@@ -415,7 +415,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     public function matchStripsOffSuffixIfSplitStringIsSpecified()
     {
         $mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
-        $mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', false);
+        $mockContext->mockSite = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Site')->disableOriginalConstructor()->getMock();
         $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
         $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
@@ -433,7 +433,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     public function resolveSetsValueToContextPathIfPassedNodeCouldBeResolved()
     {
         $mockContext = $this->buildMockContext(array('workspaceName' => 'user-robert'));
-        $mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', false);
+        $mockContext->mockSite = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Site')->disableOriginalConstructor()->getMock();
         $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
         $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
@@ -455,7 +455,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     public function resolveReturnsFalseIfGivenRouteValueIsNeitherStringNorNode()
     {
         $mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
-        $mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', false);
+        $mockContext->mockSite = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Site')->disableOriginalConstructor()->getMock();
         $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
         $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
@@ -474,7 +474,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     public function resolveCreatesContextForLiveWorkspaceByDefault()
     {
         $mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
-        $mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', false);
+        $mockContext->mockSite = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Site')->disableOriginalConstructor()->getMock();
         $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
         $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
@@ -502,7 +502,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     public function resolveCreatesContextForTheWorkspaceMentionedInTheContextString()
     {
         $mockContext = $this->buildMockContext(array('workspaceName' => 'user-johndoe'));
-        $mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', false);
+        $mockContext->mockSite = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Site')->disableOriginalConstructor()->getMock();
         $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
         $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
@@ -530,7 +530,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     public function resolveCreatesContextForCurrentDomainIfGivenValueIsAStringAndADomainIsFound()
     {
         $mockContext = $this->buildMockContext(array('workspaceName' => 'user-johndoe'));
-        $mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', false);
+        $mockContext->mockSite = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Site')->disableOriginalConstructor()->getMock();
         $mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
         $mockContext->mockSiteNode = $mockSiteNode;
 
@@ -558,7 +558,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     public function resolveReturnsFalseIfWorkspaceMentionedInTheContextDoesNotExist()
     {
         $mockContext = $this->buildMockContext(array('workspaceName' => 'user-johndoe'));
-        $mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', false);
+        $mockContext->mockSite = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Site')->disableOriginalConstructor()->getMock();
         $mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
         $mockContext->mockSiteNode = $mockSiteNode;
 
@@ -579,7 +579,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     public function resolveReturnsFalseIfNodeMentionedInTheContextPathDoesNotExist()
     {
         $mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
-        $mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', false);
+        $mockContext->mockSite = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Site')->disableOriginalConstructor()->getMock();
         $mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
         $mockContext->mockSiteNode = $mockSiteNode;
 
@@ -593,7 +593,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     public function resolveReturnsFalseIfNodeIsNoDocument()
     {
         $mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
-        $mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', false);
+        $mockContext->mockSite = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Site')->disableOriginalConstructor()->getMock();
         $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
         // The important bit: sub node is not a document but TYPO3.Neos:Content
@@ -616,7 +616,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $this->routePartHandler->setOptions(array('onlyMatchSiteNodes' => true));
 
         $mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
-        $mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', false);
+        $mockContext->mockSite = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Site')->disableOriginalConstructor()->getMock();
         $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
         $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'features');
@@ -677,7 +677,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         ));
 
         $mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
-        $mockContext->mockSite = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Site', array(), array(), '', false);
+        $mockContext->mockSite = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\Site')->disableOriginalConstructor()->getMock();
 
         $mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
         $mockSiteNode->expects($this->any())->method('getContextPath')->will($this->returnValue('/sites/examplecom'));
@@ -865,7 +865,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
             return $expectedNodeTypeName === $nodeTypeName;
         }));
 
-        $mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+        $mockNode = $this->createMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
         $mockNode->expects($this->any())->method('getContext')->will($this->returnValue($mockContext));
         $mockNode->expects($this->any())->method('getIdentifier')->will($this->returnValue('site-node-uuid'));
         $mockNode->expects($this->any())->method('getName')->will($this->returnValue($nodeName));

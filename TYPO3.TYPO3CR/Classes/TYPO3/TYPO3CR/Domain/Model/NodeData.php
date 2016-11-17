@@ -677,29 +677,51 @@ class NodeData extends AbstractNodeData
      */
     public function setDimensions(array $dimensionsToBeSet)
     {
-        if ($this->dimensions->count() > 0) {
-            $givenDimensions = $dimensionsToBeSet;
-            $dimensionsToBeSet = array();
-            /** @var NodeDimension $dimensionToBeSet */
-            foreach ($givenDimensions as $dimensionToBeSet) {
-                $dimensionExisted = false;
-                /** @var NodeDimension $dimension */
-                foreach ($this->dimensions as $dimension) {
-                    if ($dimension->getName() === $dimensionToBeSet->getName() && $dimensionToBeSet->getValue() === $dimension->getValue()) {
-                        $dimensionsToBeSet[] = $dimension;
-                        $dimensionExisted = true;
-                    }
-                }
+        if ($this->dimensions->count() === 0) {
+            $this->dimensions = new ArrayCollection($dimensionsToBeSet);
+            $this->buildDimensionValues();
+            return;
+        }
 
-                if (!$dimensionExisted) {
-                    $dimensionToBeSet->setNodeData($this);
-                    $dimensionsToBeSet[] = $dimensionToBeSet;
-                }
+        $expectedDimensions = [];
+        /** @var NodeDimension $dimensionToBeSet */
+        foreach ($dimensionsToBeSet as $dimensionToBeSet) {
+            $dimensionToBeSet->setNodeData($this);
+            $existingDimension = $this->findExistingDimensionMatching($dimensionToBeSet);
+            $expectedDimensions[] = $existingDimension !== null ? $existingDimension : $dimensionToBeSet;
+            if ($existingDimension === null) {
+                $this->dimensions->add($dimensionToBeSet);
             }
         }
 
-        $this->dimensions = new ArrayCollection($dimensionsToBeSet);
+        // remove entries not to be set
+        $dimensionsToRemove = $this->dimensions->filter(function (NodeDimension $dimension) use ($expectedDimensions) {
+            return (array_search($dimension, $expectedDimensions) === false);
+        });
+
+        foreach ($dimensionsToRemove as $dimension) {
+            $this->dimensions->removeElement($dimension);
+        }
+
         $this->buildDimensionValues();
+    }
+
+    /**
+     * Internal method used in setDimensions to reuse dimension objects with the same name/value pair.
+     *
+     * @param NodeDimension $dimensionToBeSet
+     * @return NodeDimension|null
+     * @see setDimensions
+     */
+    protected function findExistingDimensionMatching(NodeDimension $dimensionToBeSet)
+    {
+        return array_reduce($this->dimensions->toArray(), function ($found, NodeDimension $dimension) use ($dimensionToBeSet) {
+            if ($found === null && $dimension->getName() === $dimensionToBeSet->getName() && $dimensionToBeSet->getValue() === $dimension->getValue()) {
+                $found = $dimension;
+            }
+
+            return $found;
+        }, null);
     }
 
     /**
@@ -982,15 +1004,11 @@ class NodeData extends AbstractNodeData
      * @param string $path The (new) path of the node data
      * @param Workspace $workspace
      * @param array $dimensionValues
-     * @return NodeData
+     * @return NodeData|null
      */
     protected function getExistingShadowNodeData($path, $workspace, $dimensionValues)
     {
-        $existingShadowNode = $this->nodeDataRepository->findOneByPath($path, $workspace, $dimensionValues, true);
-        if ($existingShadowNode !== null && $existingShadowNode->getMovedTo() !== null) {
-            return $existingShadowNode;
-        }
-        return null;
+        return $this->nodeDataRepository->findShadowNodeByPath($path, $workspace, $dimensionValues);
     }
 
     /**

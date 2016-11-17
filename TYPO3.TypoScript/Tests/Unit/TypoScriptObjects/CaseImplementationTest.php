@@ -26,7 +26,7 @@ class CaseImplementationTest extends \TYPO3\Flow\Tests\UnitTestCase
         $path = 'page/body/content/main';
         $ignoredProperties = array('nodePath');
 
-        $mockTsRuntime = $this->getMock('TYPO3\TypoScript\Core\Runtime', array(), array(), '', false);
+        $mockTsRuntime = $this->getMockBuilder('TYPO3\TypoScript\Core\Runtime')->disableOriginalConstructor()->getMock();
         $mockTsRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($evaluatePath, $that) use ($path, $ignoredProperties) {
             $relativePath = str_replace($path . '/', '', $evaluatePath);
             switch ($relativePath) {

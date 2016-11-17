@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2015-10-10
+The following reference was automatically generated from code on 2016-07-28
 
 
 .. _`Neos Command Reference: TYPO3.FLOW`:
@@ -1125,6 +1125,20 @@ Read a PEM formatted private key from stdin and import it into the
 RSAWalletService. The public key will be automatically extracted and stored
 together with the private key as a key pair.
 
+You can generate the same fingerprint returned from this using these commands:
+
+ssh-keygen -yf my-key.pem > my-key.pub
+ssh-keygen -lf my-key.pub
+
+To create a private key to import using this method, you can use:
+
+ssh-keygen -t rsa -f my-key
+./flow security:importprivatekey < my-key
+
+Again, the fingerprint can also be generated using:
+
+ssh-keygen -lf my-key.pub
+
 
 
 Options
@@ -2228,6 +2242,35 @@ Related commands
 
 
 
+.. _`Neos Command Reference: TYPO3.NEOS.KICKSTARTER`:
+
+Package *TYPO3.NEOS.KICKSTARTER*
+--------------------------------
+
+
+.. _`Neos Command Reference: TYPO3.NEOS.KICKSTARTER typo3.neos.kickstarter:kickstart:site`:
+
+``typo3.neos.kickstarter:kickstart:site``
+*****************************************
+
+**Kickstart a new site package**
+
+This command generates a new site package with basic TypoScript and Sites.xml
+
+Arguments
+^^^^^^^^^
+
+``--package-key``
+  The packageKey for your site
+``--site-name``
+  The siteName of your site
+
+
+
+
+
+
+
 .. _`Neos Command Reference: TYPO3.TYPO3CR`:
 
 Package *TYPO3.TYPO3CR*
@@ -2285,6 +2328,9 @@ The following checks will be performed:
 
 Generates URI path segment properties for all document nodes which don't have a path
 segment set yet.
+*Remove content dimensions from / and /sites*
+
+Removes content dimensions from the root and sites nodes
 
 *Remove abstract and undefined node types*
 

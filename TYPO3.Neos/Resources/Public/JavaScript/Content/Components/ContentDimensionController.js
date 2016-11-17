@@ -8,7 +8,8 @@ define(
 	'Shared/EventDispatcher',
 	'Shared/HttpRestClient',
 	'vie',
-	'Content/Application'
+	'Content/Application',
+	'Shared/I18n'
 ],
 function(
 	Ember,
@@ -19,7 +20,8 @@ function(
 	EventDispatcher,
 	HttpRestClient,
 	vie,
-	ContentModule
+	ContentModule,
+	I18n
 ) {
 	var Dimension, Preset;
 
@@ -190,7 +192,8 @@ function(
 		currentDimensionChoiceText: function() {
 			var dimensionText = [];
 			$.each(this.get('dimensions'), function(index, dimension) {
-				dimensionText.push(dimension.get('label') + ' ' + dimension.get('selected.label'));
+				var translatedLabel = I18n.translate(dimension.get('label'));
+				dimensionText.push(translatedLabel + ' ' + dimension.get('selected.label'));
 			});
 			return dimensionText.join(', ');
 		}.property('dimensions.@each.selected'),
@@ -242,7 +245,7 @@ function(
 				if (error.xhr.status === 404 && error.xhr.getResponseHeader('X-Neos-Node-Exists-In-Other-Dimensions')) {
 					that.set('showInitialTranslationDialog', {numberOfNodesMissingInRootline: parseInt(error.xhr.getResponseHeader('X-Neos-Nodes-Missing-On-Rootline'))});
 				} else {
-					Notification.error('Unexpected error while while fetching alternative content variants: ' + JSON.stringify(error));
+					Notification.error('Unexpected error while fetching alternative content variants: ' + JSON.stringify(error));
 				}
 			});
 		},

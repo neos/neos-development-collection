@@ -5,4 +5,4 @@
 privilegeTargets:
   'TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
     'TYPO3.Neos:AllControllerActions':
-      matcher: 'within(TYPO3\Flow\Mvc\Controller\AbstractController) && method(public .*->.*Action()) &&! method(public .*\Tests\.*\Fixtures\.*->.*Action())'
+      matcher: 'within(TYPO3\Flow\Mvc\Controller\AbstractController) && method(public .*->.(?!initialize).*Action()) &&! method(public .*\Tests\.*\Fixtures\.*->.(?!initialize).*Action())'

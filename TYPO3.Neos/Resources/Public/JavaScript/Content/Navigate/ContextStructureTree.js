@@ -85,8 +85,13 @@ define(
 			var page = InstanceWrapper.entities.get(InstanceWrapper.service('rdfa').getElementSubject($('#neos-document-metadata'))),
 				namespace = Configuration.get('TYPO3_NAMESPACE'),
 				pageTitle = typeof page !== 'undefined' && typeof page.get(namespace + 'title') !== 'undefined' ? page.get(namespace + 'title') : this.get('pageNodePath'),
+				documentNodeType = page.get('typo3:_nodeType');
 				siteNode = this.$nodeTree.dynatree('getRoot').getChildren()[0];
-			siteNode.fromDict({key: this.get('pageNodePath'), title: pageTitle});
+			siteNode.fromDict({
+				key: this.get('pageNodePath'),
+				title: pageTitle,
+				nodeType: documentNodeType
+			});
 			this.refresh();
 		}.observes('pageNodePath'),
 

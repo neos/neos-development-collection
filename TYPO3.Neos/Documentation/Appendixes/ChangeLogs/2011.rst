@@ -1,0 +1,59 @@
+`2.0.11 (2016-05-09) <https://github.com/neos/neos-development-collection/releases/tag/2.0.11>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Incompatible constructor in Video model <https://github.com/neos/neos-development-collection/pull/499>`_
+-----------------------------------------------------------------------------------------------------------------
+
+The Video model has an incompatible constructor as the Asset
+model require a $resource argument. This change adds the argument
+to the constructor and adds a test to prevent regressions.
+
+* Packages: ``Media``
+
+`BUGFIX: Exclude initialize*Actions from Testing Policy <https://github.com/neos/neos-development-collection/pull/492>`_
+------------------------------------------------------------------------------------------------------------------------
+
+We should always exclude initialize*Actions from method policy
+matchers and this didn't happen in the Testing ``Policy.yaml``.
+For unit and functional tests this does not pose a big problem
+but behat tests fail when trying to call the backend login for
+example.
+
+* Packages: ``Neos``
+
+`BUGFIX: Editing asset collection <https://github.com/neos/neos-development-collection/pull/476>`_
+--------------------------------------------------------------------------------------------------
+
+Prevents an exception thrown while property mapping for the title constructor parameter.
+
+* Packages: ``Media`` ``TYPO3CR``
+
+`BUGFIX: Free index space at target position if no free index space is available <https://github.com/neos/neos-development-collection/pull/462>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+If a node is inserted at a given position between nodes and no free sorting index is available, the sortindices on
+that level are renumbered. The previous code for that could lead to unexpected node reordering and sortingindex
+value escalation if workspaces or dimensions were used.
+
+The following steps reproduce the error:
+* In dimension A create nodes between other nodes until there are no free sortindices available
+* Create a variant of those nodes in dimension B
+* In dimension B add a new node in a place where no free sort index is available
+
+Since the previous code is only repositioning one item of a given index and does not take workspaces and dimensions
+into account this results in the following unwanted effects:
+* Unwanted reordering of the nodes in dimension A
+* In dimension B two nodes with identical sortingindex occur which makes the order of the nodes random
+* If this is repeated multiple times the sorting indices in dimension A escalate quickly to very high values
+
+This patch resolves this behavior by freeing index space at the target position instead of renumbering the
+whole level by modifying all nodes on the given path and incrementing all sort indices above the reference position
+a consistent behavior across workspaces and dimensions is ensured.
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.0.10...2.0.11>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

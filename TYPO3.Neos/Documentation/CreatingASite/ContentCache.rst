@@ -173,7 +173,8 @@ Example::
 			#...
 
 			entryTags {
-				1 = ${'DescendantOf_' + contentCollectionNode.identifier}
+				1 = ${'Node_' + node.identifier}
+				2 = ${'DescendantOf_' + contentCollectionNode.identifier}
 			}
 		}
 	}
@@ -181,6 +182,19 @@ Example::
 The ``ContentCollection`` cache configuration declares a tag that will flush the cache entry for the collection if
 any of it's descendants (direct or indirect child) changes. So editing a node inside the collection will flush the
 whole collection cache entry and cause it to re-render.
+
+.. note::
+  When using ``cached`` as the cache mode, your ``entryTags`` should always contain the node identifier. Otherwise, the
+  cache will not be flushed when you make changes to the node itself, which will lead to unexpected behavior in the Neos
+  backend::
+
+  	@cache {
+  		mode = 'cached'
+  		entryTags {
+  			1 = ${'Node_' + node.identifier}
+  			2 = ... additional entry tags ...
+  		}
+  	}
 
 Default cache configuration
 ===========================
@@ -213,7 +227,7 @@ You can override default cache configuration in your TypoScript::
 
 You can also override cache configuration for a specific TypoScript Path::
 
-    page.content.main {
+    page.body.content.main {
     	prototype(TYPO3.Neos:Plugin).@cache.mode = 'cached'
     }
 

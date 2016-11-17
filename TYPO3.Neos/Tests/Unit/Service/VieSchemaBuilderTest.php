@@ -101,7 +101,7 @@ class VieSchemaBuilderTest extends UnitTestCase
     {
         $this->vieSchemaBuilder = $this->getAccessibleMock('TYPO3\Neos\Service\VieSchemaBuilder', array('dummy'));
 
-        $mockConfigurationManager = $this->getMock('TYPO3\Flow\Configuration\ConfigurationManager', array(), array(), '', false);
+        $mockConfigurationManager = $this->getMockBuilder('TYPO3\Flow\Configuration\ConfigurationManager')->disableOriginalConstructor()->getMock();
         $mockConfigurationManager->expects($this->any())->method('getConfiguration')->with('NodeTypes')->will($this->returnValue($this->nodeTypesFixture));
 
         $this->nodeTypeManager = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager', array('dummy'));

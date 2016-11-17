@@ -1,0 +1,196 @@
+`2.0.8 (2016-03-16) <https://github.com/neos/neos-development-collection/releases/tag/2.0.8>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Document baseNodeType setting for node tree <https://github.com/neos/neos-development-collection/pull/398>`_
+-------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Reset \`\`backendOptions\`\` for TypoScript content cache in testing context <https://github.com/neos/neos-development-collection/pull/383>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Fixes a bug that occurs if there is a custom configuration for ``TYPO3_TypoScript_Content`` cache with ``backendOptions`` set. This fix will unset the ``backendOptions`` in testing context which are not allowed for the ``TYPO3\\Flow\\Cache\\Backend\TransientMemoryBackend`` backend.
+
+NEOS-1781 #close
+
+* Packages: ``TypoScript``
+
+`TASK: Incorrect label id for users module widget action button title <https://github.com/neos/neos-development-collection/pull/390>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+NEOS-1536
+
+* Packages: ``Neos``
+
+`BUGFIX: Additional styles for modules loaded after Neos <https://github.com/neos/neos-development-collection/pull/384>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+Via `additionalResources.styleSheets` a map of additional
+stylesheet files can be defined that are loaded in the module
+the configuration was made for. Unfortunately they were loaded
+before the Neos default styles which makes overwriting of some of
+those styles cumbersome and more difficult than necessary.
+
+This change switches the loading order so that the Neos styles
+are loaded before any additional resources.
+
+* Packages: ``Neos``
+
+`BUGFIX: Translate title attribute on module widget action buttons <https://github.com/neos/neos-development-collection/pull/386>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Enables translation of the title attribute used for action buttons in module widgets.
+
+NEOS-1536 #close
+
+* Packages: ``Neos``
+
+`TASK: Migration adjustments <https://github.com/neos/neos-development-collection/pull/382>`_
+---------------------------------------------------------------------------------------------
+
+This merges changes from 1.2 into 2.0 and follows up with some needed
+adjustments.
+
+* Packages: ``Media`` ``Neos`` ``TYPO3CR``
+
+`TASK: Adjust some leftovers related to TYPO3CR PostgreSQL schema <https://github.com/neos/neos-development-collection/pull/380>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+Drops the default value for pathhash and renames one index.
+
+* Packages: ``TYPO3CR``
+
+`BUGFIX: Adjust index names to match Doctrine DBAL 2.5 <https://github.com/neos/neos-development-collection/pull/369>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+The use of Doctrine 2.5 (instead of 2.4) exposes the fact that some
+(old) index names in the Neos database schema do not match the names
+that are generated currently.
+
+This adjusts those index names, something that is a one-time adjustment.
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`BUGFIX: Translate dimension label in dimension choice dialog <https://github.com/neos/neos-development-collection/pull/373>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+The demo site specifies an i18n label but the implementation didn't use
+any client-side translation for the dimension label yet.
+
+* Packages: ``Neos``
+
+`TASK: Document \`\`label\`\` option for NodeTypes.yaml <https://github.com/neos/neos-development-collection/pull/366>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Adds documentation on how to customize the generated label for nodes.
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix ObjectAccess to overriden expression value in Fluid proxy <https://github.com/neos/neos-development-collection/pull/365>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+This will check for an overriden value when using object access in a
+Fluid template on a TypoScript path proxy.
+
+NEOS-1776 #close Fixes the issue
+
+* Packages: ``TypoScript``
+
+`BUGFIX: Node property can be null in removeProperty <https://github.com/neos/neos-development-collection/pull/357>`_
+---------------------------------------------------------------------------------------------------------------------
+
+The ``AbstractNodeData::removeProperty()`` method checked
+the existence of the given property with ``isset`` but that
+leads to an exception if the property has a ``null`` value.
+The check has been changed to ``array_key_exists``.
+
+NEOS-1719 #close
+
+* Packages: ``TYPO3CR``
+
+`TASK: Add hint about enabling the event logging <https://github.com/neos/neos-development-collection/pull/360>`_
+-----------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Replace "TYPO3 Neos" by "Neos" in documentation <https://github.com/neos/neos-development-collection/pull/361>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix link to Flow documentation <https://github.com/neos/neos-development-collection/pull/359>`_
+--------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix broken link tag in link node view helper docblock <https://github.com/neos/neos-development-collection/pull/358>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Fixed a typo in \`\`_InlineEditing.scss\`\` <https://github.com/neos/neos-development-collection/pull/353>`_
+---------------------------------------------------------------------------------------------------------------------
+
+The css property ``inline-offset`` doesn't exist, it should be
+``outline-offset``.
+
+* Packages: ``Neos``
+
+`TASK: Tweak PolicyConfigurationEnrichmentAspect <https://github.com/neos/neos-development-collection/pull/352>`_
+-----------------------------------------------------------------------------------------------------------------
+
+This adds a safeguard and some type hints to the aspect.
+
+* Packages: ``Neos``
+
+`BUGFIX: Corrected \\\ to \\ in Security Document <https://github.com/neos/neos-development-collection/pull/347>`_
+----------------------------------------------------------------------------------------------------------------
+
+Otherwise following error appears:
+
+    #1355480641: PHP Fatal error: Class  
+    'TYPO3\\\TYPO3CR\\\Security\\\Authorization\\\Privilege\\\Node\\\ReadNodePrivilege' not found 
+    in /var/www/Neos/Packages/Framework/TYPO3.Flow/Classes/TYPO3/Flow/Security/Authorization/Privilege/PrivilegeTarget.php on line 136
+
+* Packages: ``Neos``
+
+`BUGFIX: Fixed typos and headline in documentation <https://github.com/neos/neos-development-collection/pull/344>`_
+-------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: date renamed in DateTime <https://github.com/neos/neos-development-collection/pull/345>`_
+--------------------------------------------------------------------------------------------------
+
+"date" isn't working anymore, but "DateTime" does.
+
+* Packages: ``Neos``
+
+`BUGFIX: Use correct apostrophe in example <https://github.com/neos/neos-development-collection/pull/346>`_
+-----------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Remove site logic from parentsUntil operation <https://github.com/neos/neos-development-collection/pull/319>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+There is site logic within the parentsUntil operation inside the TYPO3.CR package. There is a seperate operation especially for Neos now.
+
+NEOS-1628 #close
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`BUGFIX: Remove site logic from parents operation <https://github.com/neos/neos-development-collection/pull/318>`_
+------------------------------------------------------------------------------------------------------------------
+
+There is site logic within the parents operation inside the TYPO3.CR package. There is a seperate operation especially for Neos now.
+
+NEOS-1628 #resolve
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.0.7...2.0.8>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

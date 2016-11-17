@@ -12,7 +12,7 @@
 		<f:render partial="Module/Shared/EditUser" arguments="{_all}"/>
 
 		<div class="neos-footer">
-			<neos:link.module path="management" class="neos-button">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</neos:link.module>
+			<neos:link.module path="user" class="neos-button">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</neos:link.module>
 			<f:form.submit value="{neos:backend.translate(id: 'userSettings.saveUser', source: 'Modules', value: 'Save user')}" class="neos-button neos-button-primary" />
 		</div>
 	</f:form>

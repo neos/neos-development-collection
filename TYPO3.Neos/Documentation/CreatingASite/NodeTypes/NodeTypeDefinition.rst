@@ -31,6 +31,23 @@ A node type definition can look as follows::
 
 The following options are allowed:
 
+``abstract``
+  A boolean flag, marking a node type as *abstract*. Abstract node types can never be used standalone,
+  they will never be offered for insertion to the user in the UI, for example.
+
+  Abstract node types are useful when using inheritance and composition, so mark base node types and
+  mixins as abstract.
+
+``aggregate``
+  A boolean flag, marking a node type as *aggregate*. If a node type is marked as aggregate, it means that:
+
+  - the node type can "live on its own", i.e. can be part of an external URL
+  - when moving this node, all node variants are also moved (across all dimensions)
+  - Recursive copying only happens *inside* this aggregate, and stops at nested aggregates.
+
+  The most prominent *aggregate* is `TYPO3.Neos:Document` and everything which inherits from it, like
+  `TYPO3.Neos.NodeTypes:Page`.
+
 ``superTypes``
   An array of parent node types inherited from as keys with a boolean values.::
 
@@ -84,6 +101,24 @@ The following options are allowed:
   The position setting follows the same sorting logic used in TypoScript
   (see the :ref:`neos-typoscript-reference`).
 
+``label``
+  When displaying a node inside the Neos UI (e.g. tree view, link editor, workspace module) the ``label`` option will
+  be used to generate a human readable text for a specific node instance (in contrast to the ``ui.label``
+  which is used for all nodes of that type).
+
+  The label option accepts an Eel expression that has access to the current node using the ``node`` context variable.
+  It is recommended to customize the `label` option for node types that do not yield a sufficient description
+  using the default configuration.
+
+  Example::
+
+    'TYPO3.NeosDemoTypo3Org:Flickr':
+      label: ${'Flickr plugin (' + q(node).property('tags') + ')'}
+
+  ``generatorClass``
+    Alternatively the class of a node label generator implementing
+    ``TYPO3\TYPO3CR\Domain\Model\NodeLabelGeneratorInterface`` can be specified as a nested option.
+
 ``ui``
   Configuration options related to the user interface representation of the node type
 
@@ -95,6 +130,10 @@ The following options are allowed:
     It can only be created through the user interface if ``group`` is defined and it is valid.
 
     All valid groups are given in the ``TYPO3.Neos.nodeTypes.groups`` setting
+
+  ``position``
+    Position inside the group this content element is grouped into for the 'New Content Element' dialog.
+    Small numbers are sorted on top.
 
   ``icon``
     This setting define the icon to use in the Neos UI for the node type
@@ -247,7 +286,7 @@ The following options are allowed:
     A list of validators to use on the property. Below each validator type any options for the validator
     can be given. See below for more information.
 
-.. tip:: Unset a property by setting the property configuration to null (~).
+.. tip:: Unset a property by setting the property configuration to null (``~``).
 
 Here is one of the standard Neos node types (slightly shortened)::
 
