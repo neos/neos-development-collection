@@ -14,6 +14,7 @@ namespace TYPO3\Neos\Controller\Service;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Flow\Mvc\View\JsonView;
+use Neos\FluidAdaptor\View\TemplateView;
 use TYPO3\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 
@@ -28,8 +29,8 @@ class ContentDimensionsController extends ActionController
      * @var array
      */
     protected $viewFormatToObjectNameMap = array(
-        'html' => 'TYPO3\Fluid\View\TemplateView',
-        'json' => 'TYPO3\Flow\Mvc\View\JsonView'
+        'html' => TemplateView::class,
+        'json' => JsonView::class
     );
 
     /**

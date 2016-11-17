@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Cli\DescriptionAwareCommandControllerInterface;
 use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 
@@ -54,6 +55,10 @@ class NodeCommandController extends CommandController implements DescriptionAwar
      * This command analyzes and repairs the node tree structure and individual nodes
      * based on the current node type configuration.
      *
+     * It is possible to execute only one or more specific checks by providing the <b>--skip</b>
+     * or <b>--only</b> option. See the full description of checks further below for possible check
+     * identifiers.
+     *
      * The following checks will be performed:
      *
      * {pluginDescriptions}
@@ -63,13 +68,19 @@ class NodeCommandController extends CommandController implements DescriptionAwar
      *
      * ./flow node:repair --node-type TYPO3.Neos.NodeTypes:Page
      *
+     * ./flow node:repair --workspace user-robert --only removeOrphanNodes,removeNodesWithInvalidDimensions
+     *
+     * ./flow node:repair --skip removeUndefinedProperties
+     *
      * @param string $nodeType Node type name, if empty update all declared node types
      * @param string $workspace Workspace name, default is 'live'
      * @param boolean $dryRun Don't do anything, but report actions
      * @param boolean $cleanup If FALSE, cleanup tasks are skipped
+     * @param string $skip Skip the given check or checks (comma separated)
+     * @param string $only Only execute the given check or checks (comma separated)
      * @return void
      */
-    public function repairCommand($nodeType = null, $workspace = 'live', $dryRun = false, $cleanup = true)
+    public function repairCommand($nodeType = null, $workspace = 'live', $dryRun = false, $cleanup = true, $skip = null, $only = null)
     {
         $this->pluginConfigurations = self::detectPlugins($this->objectManager);
 
@@ -91,12 +102,16 @@ class NodeCommandController extends CommandController implements DescriptionAwar
             $this->outputLine('Dry run, not committing any changes.');
         }
 
+        if (!$cleanup) {
+            $this->outputLine('Omitting cleanup tasks.');
+        }
+
         foreach ($this->pluginConfigurations as $pluginConfiguration) {
             /** @var NodeCommandControllerPluginInterface $plugin */
             $plugin = $pluginConfiguration['object'];
             $this->outputLine('<b>' . $plugin->getSubCommandShortDescription('repair') . '</b>');
             $this->outputLine();
-            $plugin->invokeSubCommand('repair', $this->output, $nodeType, $workspace, $dryRun, $cleanup);
+            $plugin->invokeSubCommand('repair', $this->output, $nodeType, $workspace, $dryRun, $cleanup, $skip, $only);
             $this->outputLine();
         }
 
@@ -122,7 +137,7 @@ class NodeCommandController extends CommandController implements DescriptionAwar
     public function autoCreateChildNodesCommand($nodeType = null, $workspace = 'live', $dryRun = false)
     {
         $this->pluginConfigurations = self::detectPlugins($this->objectManager);
-        $this->pluginConfigurations['TYPO3\TYPO3CR\Command\NodeCommandControllerPlugin']['object']->invokeSubCommand('repair', $this->output, $nodeType, $workspace, $dryRun);
+        $this->pluginConfigurations[NodeCommandControllerPlugin::class]['object']->invokeSubCommand('repair', $this->output, $nodeType, $workspace, $dryRun);
     }
 
     /**
@@ -165,7 +180,7 @@ class NodeCommandController extends CommandController implements DescriptionAwar
     protected static function detectPlugins(ObjectManagerInterface $objectManager)
     {
         $pluginConfigurations = array();
-        $classNames = $objectManager->get('TYPO3\Flow\Reflection\ReflectionService')->getAllImplementationClassNamesForInterface('TYPO3\TYPO3CR\Command\NodeCommandControllerPluginInterface');
+        $classNames = $objectManager->get(ReflectionService::class)->getAllImplementationClassNamesForInterface(NodeCommandControllerPluginInterface::class);
         foreach ($classNames as $className) {
             $pluginConfigurations[$className] = array(
                 'object' => $objectManager->get($objectManager->getObjectNameByClassName($className))

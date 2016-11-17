@@ -197,6 +197,8 @@ additionalProperties:
 
                   'view': { type: string, description: "The view implementation" }
 
+                  'viewOptions': { type: dictionary, description: "Options for the view" }
+
                   'position': { type: integer, description: 'Position of the view, small numbers are sorted on top' }
 
         'search':

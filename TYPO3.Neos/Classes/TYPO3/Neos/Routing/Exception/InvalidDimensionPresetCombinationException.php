@@ -10,11 +10,12 @@ namespace TYPO3\Neos\Routing\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Neos\Routing\Exception;
 
 /**
  * An "invalid dimension preset combination" exception
  */
-class InvalidDimensionPresetCombinationException extends \TYPO3\Neos\Routing\Exception
+class InvalidDimensionPresetCombinationException extends Exception
 {
     /**
      * @var integer

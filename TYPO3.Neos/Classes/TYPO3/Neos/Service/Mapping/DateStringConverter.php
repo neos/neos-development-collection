@@ -28,7 +28,7 @@ class DateStringConverter extends AbstractTypeConverter
      * @var array<string>
      * @api
      */
-    protected $sourceTypes = array(\DateTime::class);
+    protected $sourceTypes = array(\DateTimeInterface::class);
 
     /**
      * The target type this converter can convert to.

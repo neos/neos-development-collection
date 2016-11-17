@@ -10,6 +10,9 @@ namespace TYPO3\Neos\Tests\Functional;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Security\Authorization\TestingPrivilegeManager;
+use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 
 /**
  * Functional test case which tests the renaming of nodes from within a workspace.
@@ -32,12 +35,12 @@ class NodeRenamingTest extends AbstractNodeTest
     public function setUp()
     {
         parent::setUp();
-        $privilegeManager = $this->objectManager->get('TYPO3\Flow\Security\Authorization\TestingPrivilegeManager');
+        $privilegeManager = $this->objectManager->get(TestingPrivilegeManager::class);
         $privilegeManager->setOverrideDecision(true);
 
         $liveWorkspace = $this->node->getWorkspace();
-        $personalWorkspace = new \TYPO3\TYPO3CR\Domain\Model\Workspace('user-test', $liveWorkspace);
-        $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository')->add($personalWorkspace);
+        $personalWorkspace = new Workspace('user-test', $liveWorkspace);
+        $this->objectManager->get(WorkspaceRepository::class)->add($personalWorkspace);
         $this->persistenceManager->persistAll();
 
         $this->nodeInTestWorkspace = $this->getNodeWithContextPath('/sites/example/home@user-test');

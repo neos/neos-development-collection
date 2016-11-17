@@ -34,7 +34,7 @@ class AbsorbingHandler extends AbstractRenderingExceptionHandler
      */
     protected function handle($typoScriptPath, \Exception $exception, $referenceCode)
     {
-        $this->systemLogger->log('Absorbed Exception: ' . $exception->getMessage(), LOG_DEBUG, array('typoScriptPath' => $typoScriptPath, 'referenceCode' => $referenceCode), 'TYPO3.TypoScript', 'TYPO3\TypoScript\Core\ExceptionHandlers\AbsorbingHandler');
+        $this->systemLogger->log('Absorbed Exception: ' . $exception->getMessage(), LOG_DEBUG, array('typoScriptPath' => $typoScriptPath, 'referenceCode' => $referenceCode), 'TYPO3.TypoScript', \TYPO3\TypoScript\Core\ExceptionHandlers\AbsorbingHandler::class);
         return '';
     }
 

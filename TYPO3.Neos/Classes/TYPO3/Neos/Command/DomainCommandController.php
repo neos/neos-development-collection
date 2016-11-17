@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Command;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Validation\ValidatorResolver;
 use TYPO3\Neos\Domain\Model\Domain;
 use TYPO3\Neos\Domain\Model\Site;
@@ -23,7 +24,7 @@ use TYPO3\Neos\Domain\Repository\SiteRepository;
  *
  * @Flow\Scope("singleton")
  */
-class DomainCommandController extends \TYPO3\Flow\Cli\CommandController
+class DomainCommandController extends CommandController
 {
     /**
      * @var DomainRepository
@@ -47,7 +48,7 @@ class DomainCommandController extends \TYPO3\Flow\Cli\CommandController
      * Add a domain record
      *
      * @param string $siteNodeName The nodeName of the site rootNode, e.g. "neostypo3org"
-     * @param string $hostname The hostname to match on, e.g. "neos.typo3.org"
+     * @param string $hostname The hostname to match on, e.g. "flow.neos.io"
      * @param string $scheme The scheme for linking (http/https)
      * @param integer $port The port for linking (0-49151)
      * @return void

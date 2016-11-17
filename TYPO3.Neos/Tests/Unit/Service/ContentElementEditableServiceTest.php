@@ -85,10 +85,10 @@ class ContentElementEditableServiceTest extends UnitTestCase
         $this->mockHtmlAugmenter = $this->getMockBuilder(HtmlAugmenter::class)->getMock();
         $this->inject($this->contentElementEditableService, 'htmlAugmenter', $this->mockHtmlAugmenter);
 
-        $this->mockTsRuntime = $this->getMockBuilder('TYPO3\TypoScript\Core\Runtime')->disableOriginalConstructor()->getMock();
-        $this->mockContentContext = $this->getMockBuilder('TYPO3\Neos\Domain\Service\ContentContext')->disableOriginalConstructor()->getMock();
+        $this->mockTsRuntime = $this->getMockBuilder(\TYPO3\TypoScript\Core\Runtime::class)->disableOriginalConstructor()->getMock();
+        $this->mockContentContext = $this->getMockBuilder(\TYPO3\Neos\Domain\Service\ContentContext::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockNode = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Model\NodeInterface')->getMock();
+        $this->mockNode = $this->getMockBuilder(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::class)->getMock();
         $this->mockNode->expects($this->any())->method('getContext')->will($this->returnValue($this->mockContentContext));
         $this->mockNode->expects($this->any())->method('getNodeType')->will($this->returnValue(new NodeType('Acme.Test:Headline', [], [])));
 

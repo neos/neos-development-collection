@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Controller;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Cache\Frontend\StringFrontend;
 use TYPO3\Flow\Error\Message;
 use TYPO3\Flow\Http\Cookie;
 use TYPO3\Flow\Mvc\ActionRequest;
@@ -19,6 +20,8 @@ use TYPO3\Flow\Mvc\View\JsonView;
 use TYPO3\Flow\Security\Authentication\Controller\AbstractAuthenticationController;
 use TYPO3\Flow\Security\Exception\AuthenticationRequiredException;
 use TYPO3\Flow\Session\SessionInterface;
+use TYPO3\Flow\Session\SessionManagerInterface;
+use Neos\FluidAdaptor\View\TemplateView;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Service\BackendRedirectionService;
@@ -34,6 +37,12 @@ class LoginController extends AbstractAuthenticationController
      * @var SessionInterface
      */
     protected $session;
+
+    /**
+     * @Flow\Inject
+     * @var SessionManagerInterface
+     */
+    protected $sessionManager;
 
     /**
      * @Flow\Inject
@@ -55,7 +64,7 @@ class LoginController extends AbstractAuthenticationController
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Cache\Frontend\StringFrontend
+     * @var StringFrontend
      */
     protected $loginTokenCache;
 
@@ -69,8 +78,8 @@ class LoginController extends AbstractAuthenticationController
      * @var array
      */
     protected $viewFormatToObjectNameMap = array(
-        'html' => 'TYPO3\Fluid\View\TemplateView',
-        'json' => 'TYPO3\Flow\Mvc\View\JsonView'
+        'html' => TemplateView::class,
+        'json' => JsonView::class
     );
 
     /**
@@ -110,7 +119,7 @@ class LoginController extends AbstractAuthenticationController
             $this->redirect('index', 'Backend\Backend');
         }
         $currentDomain = $this->domainRepository->findOneByActiveRequest();
-        $currentSite = $currentDomain !== null ? $currentDomain->getSite() : $this->siteRepository->findFirstOnline();
+        $currentSite = $currentDomain !== null ? $currentDomain->getSite() : $this->siteRepository->findDefault();
         $this->view->assignMultiple([
             'styles' => array_filter($this->settings['userInterface']['backendLoginForm']['stylesheets']),
             'username' => $username,
@@ -126,18 +135,28 @@ class LoginController extends AbstractAuthenticationController
      */
     public function tokenLoginAction($token)
     {
-        $sessionId = $this->loginTokenCache->get($token);
+        $newSessionId = $this->loginTokenCache->get($token);
         $this->loginTokenCache->remove($token);
 
-        if ($sessionId === false) {
+        if ($newSessionId === false) {
             $this->systemLogger->log(sprintf('Token-based login failed, non-existing or expired token %s', $token), LOG_WARNING);
             $this->redirect('index');
-        } else {
-            $this->systemLogger->log(sprintf('Token-based login succeeded, token %s', $token), LOG_DEBUG);
-            $this->session->putData('lastVisitedNode', null);
-            $this->replaceSessionCookie($sessionId);
-            $this->redirect('index', 'Backend\Backend');
         }
+
+        $this->systemLogger->log(sprintf('Token-based login succeeded, token %s', $token), LOG_DEBUG);
+
+        $newSession = $this->sessionManager->getSession($newSessionId);
+        if ($newSession->canBeResumed()) {
+            $newSession->resume();
+        }
+        if ($newSession->isStarted()) {
+            $newSession->putData('lastVisitedNode', null);
+        } else {
+            $this->systemLogger->log(sprintf('Failed resuming or starting session %s which was referred to in the login token %s.', $newSessionId, $token), LOG_ERR);
+        }
+
+        $this->replaceSessionCookie($newSessionId);
+        $this->redirect('index', 'Backend\Backend');
     }
 
     /**

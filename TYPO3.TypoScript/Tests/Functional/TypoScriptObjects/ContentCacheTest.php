@@ -11,6 +11,8 @@ namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects;
  * source code.
  */
 
+use TYPO3\Flow\Cache\CacheManager;
+use TYPO3\Flow\Cache\Frontend\FrontendInterface;
 use TYPO3\TypoScript\Core\Cache\ContentCache;
 use TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\Model\TestModel;
 
@@ -27,14 +29,14 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest
     public function setUp()
     {
         parent::setUp();
-        $this->contentCache = $this->objectManager->get('TYPO3\TypoScript\Core\Cache\ContentCache');
+        $this->contentCache = $this->objectManager->get(ContentCache::class);
         $this->contentCache->flush();
     }
 
     public function tearDown()
     {
         // Re-inject the original cache since some tests might replace it with a mock object
-        $cacheManager = $this->objectManager->get('TYPO3\Flow\Cache\CacheManager');
+        $cacheManager = $this->objectManager->get(CacheManager::class);
         $cacheFrontend = $cacheManager->getCache('TYPO3_TypoScript_Content');
         $this->inject($this->contentCache, 'cache', $cacheFrontend);
     }
@@ -399,7 +401,7 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest
         $view->setOption('enableContentCache', true);
         $view->setTypoScriptPath('contentCache/maximumLifetimeInNestedEmbedAndCachedSegments');
 
-        $mockCache = $this->createMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
+        $mockCache = $this->createMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class);
         $this->inject($this->contentCache, 'cache', $mockCache);
 
         $mockCache->expects($this->any())->method('get')->will($this->returnValue(false));
@@ -439,7 +441,7 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest
     public function cacheUsesGlobalCacheIdentifiersAsDefaultPrototypeForEntryIdentifier()
     {
         $entriesWritten = array();
-        $mockCache = $this->createMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
+        $mockCache = $this->createMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class);
         $mockCache->expects($this->any())->method('get')->will($this->returnValue(false));
         $mockCache->expects($this->any())->method('has')->will($this->returnValue(false));
         $mockCache->expects($this->atLeastOnce())->method('set')->will($this->returnCallback(function ($entryIdentifier, $data, $tags, $lifetime) use (&$entriesWritten) {
@@ -483,7 +485,7 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest
     public function globalIdentifiersAreUsedWithBlankEntryIdentifiers()
     {
         $entriesWritten = array();
-        $mockCache = $this->createMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
+        $mockCache = $this->createMock(\TYPO3\Flow\Cache\Frontend\FrontendInterface::class);
         $mockCache->expects($this->any())->method('get')->will($this->returnValue(false));
         $mockCache->expects($this->any())->method('has')->will($this->returnValue(false));
         $mockCache->expects($this->atLeastOnce())->method('set')->will($this->returnCallback(function ($entryIdentifier, $data, $tags, $lifetime) use (&$entriesWritten) {
@@ -521,7 +523,7 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest
     public function cacheIdentifierPrototypeCanBeOverwritten()
     {
         $entriesWritten = array();
-        $mockCache = $this->createMock('TYPO3\Flow\Cache\Frontend\FrontendInterface');
+        $mockCache = $this->createMock(FrontendInterface::class);
         $mockCache->expects($this->any())->method('get')->will($this->returnCallback(function ($entryIdentifier) use ($entriesWritten) {
             if (isset($entriesWritten[$entryIdentifier])) {
                 return $entriesWritten[$entryIdentifier]['data'];

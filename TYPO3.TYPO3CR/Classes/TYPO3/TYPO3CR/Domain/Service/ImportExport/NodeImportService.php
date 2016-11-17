@@ -11,14 +11,19 @@ namespace TYPO3\TYPO3CR\Domain\Service\ImportExport;
  * source code.
  */
 
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Type;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Persistence\Doctrine\DataTypes\JsonArrayType;
+use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\Flow\Utility\Now;
 use TYPO3\Media\Domain\Model\ImageVariant;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Exception\ImportException;
 use TYPO3\TYPO3CR\Utility;
 
@@ -42,7 +47,7 @@ class NodeImportService
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Property\PropertyMapper
+     * @var PropertyMapper
      */
     protected $propertyMapper;
 
@@ -51,7 +56,7 @@ class NodeImportService
      * interface ...
      *
      * @Flow\Inject
-     * @var \Doctrine\Common\Persistence\ObjectManager
+     * @var ObjectManager
      */
     protected $entityManager;
 
@@ -297,17 +302,21 @@ class NodeImportService
                 $this->nodeDataStack[count($this->nodeDataStack) - 1]['dimensionValues'] = $this->parseDimensionsElement($xmlReader);
                 break;
             case 'properties':
-                $this->nodeDataStack[count($this->nodeDataStack) - 1][$elementName] = $this->parsePropertiesElement($xmlReader);
+                $currentNodeIdentifier = $this->nodeDataStack[count($this->nodeDataStack) - 1]['identifier'];
+                $this->nodeDataStack[count($this->nodeDataStack) - 1][$elementName] = $this->parsePropertiesElement($xmlReader, $currentNodeIdentifier);
                 break;
             case 'accessRoles':
-                $this->nodeDataStack[count($this->nodeDataStack) - 1][$elementName] = $this->parseArrayElements($xmlReader, 'accessRoles');
+                $currentNodeIdentifier = $this->nodeDataStack[count($this->nodeDataStack) - 1]['identifier'];
+                $this->nodeDataStack[count($this->nodeDataStack) - 1][$elementName] = $this->parseArrayElements($xmlReader, 'accessRoles', $currentNodeIdentifier);
                 break;
             case 'hiddenBeforeDateTime':
             case 'hiddenAfterDateTime':
             case 'creationDateTime':
             case 'lastModificationDateTime':
             case 'lastPublicationDateTime':
-                $this->nodeDataStack[count($this->nodeDataStack) - 1][$elementName] = $this->propertyMapper->convert($xmlReader->readString(), 'DateTime', $this->propertyMappingConfiguration);
+                $stringValue = trim($xmlReader->readString());
+                $dateValue = $this->propertyMapper->convert($stringValue, 'DateTime', $this->propertyMappingConfiguration);
+                $this->nodeDataStack[count($this->nodeDataStack) - 1][$elementName] = $dateValue;
                 break;
             default:
                 throw new ImportException(sprintf('Unexpected element <%s> ', $elementName), 1423578065);
@@ -352,9 +361,10 @@ class NodeImportService
      *
      * @param \XMLReader $reader reader positioned just after an opening array-tag
      * @param string $elementName
+     * @param string $currentNodeIdentifier
      * @return array the array values
      */
-    protected function parseArrayElements(\XMLReader $reader, $elementName)
+    protected function parseArrayElements(\XMLReader $reader, $elementName, $currentNodeIdentifier)
     {
         $values = array();
         $depth = 0;
@@ -372,9 +382,8 @@ class NodeImportService
             switch ($reader->nodeType) {
                 case \XMLReader::ELEMENT:
                     $depth++;
-                    // __type="object" __identifier="uuid goes here" __classname="TYPO3\Media\Domain\Model\ImageVariant" __encoding="json"
+                    // __type="object" __classname="TYPO3\Media\Domain\Model\ImageVariant" __encoding="json"
                     $currentType = $reader->getAttribute('__type');
-                    $currentIdentifier = $reader->getAttribute('__identifier');
                     $currentClassName = $reader->getAttribute('__classname');
                     $currentEncoding = $reader->getAttribute('__encoding');
                     break;
@@ -385,7 +394,7 @@ class NodeImportService
                     break;
                 case \XMLReader::CDATA:
                 case \XMLReader::TEXT:
-                    $values[] = $this->convertElementToValue($reader, $currentType, $currentEncoding, $currentClassName, $currentIdentifier);
+                    $values[] = $this->convertElementToValue($reader, $currentType, $currentEncoding, $currentClassName, $currentNodeIdentifier, $elementName);
                     break;
             }
         } while ($reader->read());
@@ -396,9 +405,10 @@ class NodeImportService
      * 'property name' => property value
      *
      * @param \XMLReader $reader reader positioned just after an opening properties-tag
+     * @param string $currentNodeIdentifier
      * @return array the properties
      */
-    protected function parsePropertiesElement(\XMLReader $reader)
+    protected function parsePropertiesElement(\XMLReader $reader, $currentNodeIdentifier)
     {
         $properties = array();
         $currentProperty = null;
@@ -432,7 +442,7 @@ class NodeImportService
 
                     // __type="object" __identifier="uuid goes here" __classname="TYPO3\Media\Domain\Model\ImageVariant" __encoding="json"
                     if ($currentType === 'array') {
-                        $value = $this->parseArrayElements($reader, $currentProperty);
+                        $value = $this->parseArrayElements($reader, $currentProperty, $currentNodeIdentifier);
                         $properties[$currentProperty] = $value;
                     }
                     break;
@@ -443,7 +453,7 @@ class NodeImportService
                     break;
                 case \XMLReader::CDATA:
                 case \XMLReader::TEXT:
-                    $properties[$currentProperty] = $this->convertElementToValue($reader, $currentType, $currentEncoding, $currentClassName, $currentIdentifier);
+                    $properties[$currentProperty] = $this->convertElementToValue($reader, $currentType, $currentEncoding, $currentClassName, $currentNodeIdentifier, $currentProperty);
                     break;
             }
         }
@@ -458,18 +468,30 @@ class NodeImportService
      * @param string $currentType current element (userland) type
      * @param string $currentEncoding date encoding of element
      * @param string $currentClassName class name of element
-     * @param string $currentIdentifier identifier of element
+     * @param string $currentNodeIdentifier identifier of the node
+     * @param string $currentProperty current property name
      * @return mixed
      * @throws ImportException
      */
-    protected function convertElementToValue(\XMLReader $reader, $currentType, $currentEncoding, $currentClassName, $currentIdentifier = '')
+    protected function convertElementToValue(\XMLReader $reader, $currentType, $currentEncoding, $currentClassName, $currentNodeIdentifier, $currentProperty)
     {
         switch ($currentType) {
             case 'object':
                 if ($currentClassName === 'DateTime') {
-                    $value = $this->propertyMapper->convert($reader->value, $currentClassName, $this->propertyMappingConfiguration);
+                    $stringValue = trim($reader->value);
+                    $value = $this->propertyMapper->convert($stringValue, $currentClassName, $this->propertyMappingConfiguration);
+                    if ($this->propertyMapper->getMessages()->hasErrors()) {
+                        throw new ImportException(sprintf('Could not convert element <%s> to DateTime for node %s', $currentProperty, $currentNodeIdentifier), 1472992032);
+                    }
                 } elseif ($currentEncoding === 'json') {
-                    $value = $this->propertyMapper->convert(json_decode($reader->value, true), $currentClassName, $this->propertyMappingConfiguration);
+                    $decodedJson = json_decode($reader->value, true);
+                    if (json_last_error() !== JSON_ERROR_NONE) {
+                        throw new ImportException(sprintf('Could not parse encoded JSON in element <%s> for node %s: %s', $currentProperty, $currentNodeIdentifier, json_last_error_msg()), 1472992033);
+                    }
+                    $value = $this->propertyMapper->convert($decodedJson, $currentClassName, $this->propertyMappingConfiguration);
+                    if ($this->propertyMapper->getMessages()->hasErrors()) {
+                        throw new ImportException(sprintf('Could not convert element <%s> to %s for node %s', $currentProperty, $currentClassName, $currentNodeIdentifier), 1472992034);
+                    }
                 } else {
                     throw new ImportException(sprintf('Unsupported encoding "%s"', $currentEncoding), 1404397061);
                 }
@@ -479,7 +501,9 @@ class NodeImportService
                 break;
             default:
                 $value = $this->propertyMapper->convert($reader->value, $currentType, $this->propertyMappingConfiguration);
-
+                if ($this->propertyMapper->getMessages()->hasErrors()) {
+                    throw new ImportException(sprintf('Could not convert element <%s> to %s for node %s', $currentProperty, $currentType, $currentNodeIdentifier), 1472992035);
+                }
                 return $value;
         }
 
@@ -499,7 +523,7 @@ class NodeImportService
             $propertyValue = array($propertyValue);
         }
         foreach ($propertyValue as $possibleEntity) {
-            if (is_object($possibleEntity) && $possibleEntity instanceof \TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface) {
+            if (is_object($possibleEntity) && $possibleEntity instanceof PersistenceMagicInterface) {
                 $this->persistenceManager->isNewObject($possibleEntity) ? $this->persistenceManager->add($possibleEntity) : $this->persistenceManager->update($possibleEntity);
 
                 // TODO: Needed because the originalAsset will not cascade persist. We should find a generic solution to this.
@@ -603,7 +627,7 @@ class NodeImportService
         }
 
         // cleanup old data
-        /** @var \Doctrine\DBAL\Connection $connection */
+        /** @var Connection $connection */
         $connection = $this->entityManager->getConnection();
 
         // prepare node dimensions
@@ -635,7 +659,7 @@ class NodeImportService
         $queryBuilder = $this->entityManager->createQueryBuilder();
         $queryBuilder
             ->delete()
-            ->from('TYPO3\TYPO3CR\Domain\Model\NodeData', 'n')
+            ->from(NodeData::class, 'n')
             ->where('n.identifier = :identifier')
             ->andWhere('n.dimensionsHash = :dimensionsHash')
             ->andWhere('n.workspace = :workspace')

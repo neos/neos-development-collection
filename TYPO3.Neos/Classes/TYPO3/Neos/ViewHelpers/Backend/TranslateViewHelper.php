@@ -13,8 +13,9 @@ namespace TYPO3\Neos\ViewHelpers\Backend;
 
 use TYPO3\Flow\I18n\EelHelper\TranslationHelper;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Fluid\ViewHelpers\TranslateViewHelper as FluidTranslateViewHelper;
-use TYPO3\Fluid\Core\ViewHelper;
+use TYPO3\Flow\I18n\Exception;
+use Neos\FluidAdaptor\ViewHelpers\TranslateViewHelper as FluidTranslateViewHelper;
+use Neos\FluidAdaptor\Core\ViewHelper;
 
 /**
  * Returns translated message using source message or key ID.
@@ -110,7 +111,7 @@ class TranslateViewHelper extends FluidTranslateViewHelper
                 $translation = parent::render($id, $value, $arguments, $source, $package, $quantity, 'en');
             }
             return $translation;
-        } catch (\TYPO3\Flow\I18n\Exception $exception) {
+        } catch (Exception $exception) {
             return $value ?: $id;
         }
     }

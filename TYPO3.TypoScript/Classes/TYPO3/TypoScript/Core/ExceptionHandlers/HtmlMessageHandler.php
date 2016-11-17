@@ -12,6 +12,7 @@ namespace TYPO3\TypoScript\Core\ExceptionHandlers;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Log\SystemLoggerInterface;
 
 /**
  * Renders the exception as HTML.
@@ -20,7 +21,7 @@ class HtmlMessageHandler extends AbstractRenderingExceptionHandler
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Log\SystemLoggerInterface
+     * @var SystemLoggerInterface
      */
     protected $systemLogger;
 

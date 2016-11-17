@@ -12,7 +12,7 @@ namespace TYPO3\Neos\ViewHelpers\Link;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 
 /**
  * A view helper for creating links to modules.
@@ -65,7 +65,7 @@ class ModuleViewHelper extends AbstractTagBasedViewHelper
      * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
      * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
      * @return string The rendered link
-     * @throws \TYPO3\Fluid\Core\ViewHelper\Exception
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
     public function render($path, $action = null, $arguments = array(), $section = '', $format = '', array $additionalParams = array(), $addQueryString = false, array $argumentsToBeExcludedFromQueryString = array())
     {

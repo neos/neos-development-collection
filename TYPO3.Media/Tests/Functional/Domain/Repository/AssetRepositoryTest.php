@@ -10,13 +10,19 @@ namespace TYPO3\Media\Tests\Functional\Domain\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use TYPO3\Flow\Persistence\Doctrine\PersistenceManager;
+use TYPO3\Flow\Utility\Files;
+use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Media\Domain\Model\Tag;
+use TYPO3\Media\Domain\Repository\AssetRepository;
+use TYPO3\Media\Domain\Repository\TagRepository;
+use TYPO3\Media\Tests\Functional\AbstractTest;
 
 /**
  * Testcase for an asset repository
  *
  */
-class AssetRepositoryTest extends \TYPO3\Media\Tests\Functional\AbstractTest
+class AssetRepositoryTest extends AbstractTest
 {
     /**
      * @var boolean
@@ -24,12 +30,12 @@ class AssetRepositoryTest extends \TYPO3\Media\Tests\Functional\AbstractTest
     protected static $testablePersistenceEnabled = true;
 
     /**
-     * @var \TYPO3\Media\Domain\Repository\AssetRepository
+     * @var AssetRepository
      */
     protected $assetRepository;
 
     /**
-     * @var \TYPO3\Media\Domain\Repository\TagRepository
+     * @var TagRepository
      */
     protected $tagRepository;
 
@@ -39,14 +45,14 @@ class AssetRepositoryTest extends \TYPO3\Media\Tests\Functional\AbstractTest
     public function setUp()
     {
         parent::setUp();
-        if (!$this->persistenceManager instanceof \TYPO3\Flow\Persistence\Doctrine\PersistenceManager) {
+        if (!$this->persistenceManager instanceof PersistenceManager) {
             $this->markTestSkipped('Doctrine persistence is not enabled');
         }
         $this->prepareTemporaryDirectory();
         $this->prepareResourceManager();
 
-        $this->assetRepository = $this->objectManager->get('TYPO3\Media\Domain\Repository\AssetRepository');
-        $this->tagRepository = $this->objectManager->get('TYPO3\Media\Domain\Repository\TagRepository');
+        $this->assetRepository = $this->objectManager->get(AssetRepository::class);
+        $this->tagRepository = $this->objectManager->get(TagRepository::class);
     }
 
     /**
@@ -56,7 +62,7 @@ class AssetRepositoryTest extends \TYPO3\Media\Tests\Functional\AbstractTest
     {
         parent::tearDown();
 
-        \TYPO3\Flow\Utility\Files::removeDirectoryRecursively($this->temporaryDirectory);
+        Files::removeDirectoryRecursively($this->temporaryDirectory);
     }
 
     /**
@@ -65,14 +71,14 @@ class AssetRepositoryTest extends \TYPO3\Media\Tests\Functional\AbstractTest
     public function assetsCanBePersisted()
     {
         $resource = $this->resourceManager->importResource(__DIR__ . '/../../Fixtures/Resources/license.txt');
-        $asset = new \TYPO3\Media\Domain\Model\Asset($resource);
+        $asset = new Asset($resource);
 
         $this->assetRepository->add($asset);
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
 
         $this->assertCount(1, $this->assetRepository->findAll());
-        $this->assertInstanceOf('TYPO3\Media\Domain\Model\Asset', $this->assetRepository->findAll()->getFirst());
+        $this->assertInstanceOf(Asset::class, $this->assetRepository->findAll()->getFirst());
 
         // This is necessary to initialize all resource instances before the tables are deleted
         foreach ($this->assetRepository->findAll() as $asset) {
@@ -88,9 +94,9 @@ class AssetRepositoryTest extends \TYPO3\Media\Tests\Functional\AbstractTest
         $resource1 = $this->resourceManager->importResource(__DIR__ . '/../../Fixtures/Resources/license.txt');
         $resource2 = $this->resourceManager->importResource(__DIR__ . '/../../Fixtures/Resources/417px-Mihaly_Csikszentmihalyi.jpg');
 
-        $asset1 = new \TYPO3\Media\Domain\Model\Asset($resource1);
+        $asset1 = new Asset($resource1);
         $asset1->setTitle('foo bar');
-        $asset2 = new \TYPO3\Media\Domain\Model\Asset($resource2);
+        $asset2 = new Asset($resource2);
         $asset2->setTitle('foobar');
 
         $this->assetRepository->add($asset1);
@@ -120,9 +126,9 @@ class AssetRepositoryTest extends \TYPO3\Media\Tests\Functional\AbstractTest
 
         $resource1 = $this->resourceManager->importResource(__DIR__ . '/../../Fixtures/Resources/license.txt');
         $resource2 = $this->resourceManager->importResource(__DIR__ . '/../../Fixtures/Resources/417px-Mihaly_Csikszentmihalyi.jpg');
-        $asset1 = new \TYPO3\Media\Domain\Model\Asset($resource1);
+        $asset1 = new Asset($resource1);
         $asset1->setTitle('asset for homepage');
-        $asset2 = new \TYPO3\Media\Domain\Model\Asset($resource2);
+        $asset2 = new Asset($resource2);
         $asset2->setTitle('just another asset');
         $asset2->addTag($tag);
 

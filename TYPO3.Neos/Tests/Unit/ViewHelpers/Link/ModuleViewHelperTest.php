@@ -12,10 +12,10 @@ namespace TYPO3\Neos\Tests\Unit\ViewHelpers\Link;
  */
 
 use TYPO3\Flow\Tests\UnitTestCase;
-use TYPO3\Fluid\Core\Rendering\RenderingContextInterface;
-use TYPO3\Fluid\Core\ViewHelper\TagBuilder;
 use TYPO3\Neos\ViewHelpers\Link\ModuleViewHelper;
 use TYPO3\Neos\ViewHelpers\Uri\ModuleViewHelper as UriModuleViewHelper;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 
 /**
  */
@@ -46,11 +46,11 @@ class ModuleViewHelperTest extends UnitTestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getAccessibleMock('TYPO3\Neos\ViewHelpers\Link\ModuleViewHelper', array('renderChildren'));
-        $this->tagBuilder = $this->createMock('TYPO3\Fluid\Core\ViewHelper\TagBuilder');
-        $this->uriModuleViewHelper = $this->getMockBuilder('TYPO3\Neos\ViewHelpers\Uri\ModuleViewHelper')->setMethods(array('setRenderingContext', 'render'))->getMock();
+        $this->viewHelper = $this->getAccessibleMock(ModuleViewHelper::class, array('renderChildren'));
+        $this->tagBuilder = $this->createMock(TagBuilder::class);
+        $this->uriModuleViewHelper = $this->getMockBuilder(\TYPO3\Neos\ViewHelpers\Uri\ModuleViewHelper::class)->setMethods(array('setRenderingContext', 'render'))->getMock();
 
-        $this->dummyRenderingContext = $this->createMock('TYPO3\Fluid\Core\Rendering\RenderingContextInterface');
+        $this->dummyRenderingContext = $this->createMock(RenderingContextInterface::class);
         $this->inject($this->viewHelper, 'renderingContext', $this->dummyRenderingContext);
 
         $this->inject($this->viewHelper, 'tag', $this->tagBuilder);

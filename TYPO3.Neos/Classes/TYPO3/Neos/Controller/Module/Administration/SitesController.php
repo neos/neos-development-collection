@@ -14,7 +14,9 @@ namespace TYPO3\Neos\Controller\Module\Administration;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Error\Message;
 use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Flow\Package\PackageInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
+use TYPO3\Flow\Session\SessionInterface;
 use TYPO3\Media\Domain\Repository\AssetCollectionRepository;
 use TYPO3\Neos\Controller\Module\AbstractModuleController;
 use TYPO3\Neos\Domain\Model\Domain;
@@ -23,6 +25,7 @@ use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\SiteImportService;
 use TYPO3\Neos\Domain\Service\SiteService;
+use TYPO3\Neos\Kickstarter\Service\GeneratorService;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
@@ -89,7 +92,7 @@ class SitesController extends AbstractModuleController
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Session\SessionInterface
+     * @var SessionInterface
      */
     protected $session;
 
@@ -100,7 +103,7 @@ class SitesController extends AbstractModuleController
     {
         $sitePackagesAndSites = array();
         foreach ($this->packageManager->getFilteredPackages('available', null, 'typo3-flow-site') as $sitePackageKey => $sitePackage) {
-            /** \TYPO3\Flow\Package\PackageInterface $sitePackage */
+            /** @var PackageInterface $sitePackage */
             $sitePackagesAndSites[strtolower(str_replace('.', '_', $sitePackageKey))] = array('package' => $sitePackage, 'packageKey' => $sitePackage->getPackageKey(), 'packageIsActive' => $this->packageManager->isPackageActive($sitePackage->getPackageKey()));
         }
         $sites = $this->siteRepository->findAll();
@@ -208,7 +211,7 @@ class SitesController extends AbstractModuleController
                 $this->redirect('index');
             }
 
-            $generatorService = $this->objectManager->get('TYPO3\Neos\Kickstarter\Service\GeneratorService');
+            $generatorService = $this->objectManager->get(GeneratorService::class);
             $generatorService->generateSitePackage($packageKey, $siteName);
         } else {
             $packageKey = $site;
@@ -240,7 +243,7 @@ class SitesController extends AbstractModuleController
     /**
      * Delete a site.
      *
-     * @param Site $site Site to create
+     * @param Site $site Site to delete
      * @Flow\IgnoreValidation("$site")
      * @return void
      */
@@ -254,7 +257,7 @@ class SitesController extends AbstractModuleController
     /**
      * Activates a site
      *
-     * @param Site $site Site to update
+     * @param Site $site Site to activate
      * @return void
      */
     public function activateSiteAction(Site $site)

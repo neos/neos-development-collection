@@ -20,6 +20,7 @@ use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Domain\Service\ContentContextFactory;
 use TYPO3\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
+use TYPO3\Neos\Domain\Service\SiteService;
 use TYPO3\Neos\Routing\Exception\InvalidDimensionPresetCombinationException;
 use TYPO3\Neos\Routing\Exception\InvalidRequestPathException;
 use TYPO3\Neos\Routing\Exception\NoSuchDimensionValueException;
@@ -238,7 +239,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             return false;
         }
 
-        $routePath = $this->resolveRoutePathForNode($siteNode, $node);
+        $routePath = $this->resolveRoutePathForNode($node);
         $this->value = $routePath;
 
         return true;
@@ -351,20 +352,19 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * If content dimensions are configured, the first path segment will the identifiers of the dimension
      * values according to the current context.
      *
-     * @param NodeInterface $siteNode The site node, used as a starting point while traversing the tree
      * @param NodeInterface $node The node where the generated path should lead to
      * @return string The relative route path, possibly prefixed with a segment for identifying the current content dimension values
      */
-    protected function resolveRoutePathForNode(NodeInterface $siteNode, NodeInterface $node)
+    protected function resolveRoutePathForNode(NodeInterface $node)
     {
         $workspaceName = $node->getContext()->getWorkspaceName();
 
         $nodeContextPath = $node->getContextPath();
         $nodeContextPathSuffix = ($workspaceName !== 'live') ? substr($nodeContextPath, strpos($nodeContextPath, '@')) : '';
 
-        $currentNodeIsSiteNode = ($siteNode === $node);
+        $currentNodeIsSiteNode = ($node->getParentPath() === SiteService::SITES_ROOT_PATH);
         $dimensionsUriSegment = $this->getUriSegmentForDimensions($node->getContext()->getDimensions(), $currentNodeIsSiteNode);
-        $requestPath = $this->getRequestPathByNode($siteNode, $node);
+        $requestPath = $this->getRequestPathByNode($node);
 
         return trim($dimensionsUriSegment . $requestPath, '/') . $nodeContextPathSuffix;
     }
@@ -407,19 +407,18 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     /**
      * Renders a request path based on the "uriPathSegment" properties of the nodes leading to the given node.
      *
-     * @param NodeInterface $siteNode Top level node, corresponds to the top level of the request path
      * @param NodeInterface $node The node where the generated path should lead to
      * @return string A relative request path
      * @throws Exception\MissingNodePropertyException if the given node doesn't have a "uriPathSegment" property set
      */
-    protected function getRequestPathByNode(NodeInterface $siteNode, NodeInterface $node)
+    protected function getRequestPathByNode(NodeInterface $node)
     {
-        if ($siteNode === $node) {
+        if ($node->getParentPath() === SiteService::SITES_ROOT_PATH) {
             return '';
         }
 
         $requestPathSegments = [];
-        while ($siteNode !== $node && $node instanceof NodeInterface) {
+        while ($node instanceof NodeInterface && $node->getParentPath() !== SiteService::SITES_ROOT_PATH) {
             if (!$node->hasProperty('uriPathSegment')) {
                 throw new Exception\MissingNodePropertyException(sprintf('Missing "uriPathSegment" property for node "%s". Nodes can be migrated with the "flow node:repair" command.', $node->getPath()), 1415020326);
             }

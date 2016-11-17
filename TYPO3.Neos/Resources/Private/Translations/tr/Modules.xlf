@@ -62,7 +62,7 @@
 			<target xml:lang="tr" state="needs-translation">Title</target></trans-unit>
       <trans-unit id="workspaces.workspace.description" xml:space="preserve">
 				<source>Description</source>
-			<target xml:lang="tr" state="needs-translation">Description</target></trans-unit>
+			<target xml:lang="tr" state="translated">Açıklama</target></trans-unit>
       <trans-unit id="workspaces.workspace.baseWorkspace" xml:space="preserve">
 				<source>Base workspace</source>
 			<target xml:lang="tr" state="needs-translation">Base workspace</target></trans-unit>
@@ -340,10 +340,10 @@
 			<target xml:lang="tr" state="needs-translation">Personal Data</target></trans-unit>
       <trans-unit id="users.new.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
-			<target xml:lang="tr" state="needs-translation">First Name</target></trans-unit>
+			<target xml:lang="tr" state="translated">İsim</target></trans-unit>
       <trans-unit id="users.new.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
-			<target xml:lang="tr" state="needs-translation">Last Name</target></trans-unit>
+			<target xml:lang="tr" state="translated">Soyisim</target></trans-unit>
       <trans-unit id="users.new.userPreferences" xml:space="preserve">
 				<source>User Preferences</source>
 			<target xml:lang="tr" state="needs-translation">User Preferences</target></trans-unit>
@@ -364,16 +364,16 @@
 			<target xml:lang="tr" state="needs-translation">Title</target></trans-unit>
       <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
-			<target xml:lang="tr" state="needs-translation">First Name</target></trans-unit>
+			<target xml:lang="tr" state="translated">İsim</target></trans-unit>
       <trans-unit id="users.show.personalData.middleName" xml:space="preserve">
 				<source>Middle Name</source>
-			<target xml:lang="tr" state="needs-translation">Middle Name</target></trans-unit>
+			<target xml:lang="tr" state="translated">İkinci İsminiz</target></trans-unit>
       <trans-unit id="users.show.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
-			<target xml:lang="tr" state="needs-translation">Last Name</target></trans-unit>
+			<target xml:lang="tr" state="translated">Soyisim</target></trans-unit>
       <trans-unit id="users.show.personalData.otherName" xml:space="preserve">
 				<source>Other Name</source>
-			<target xml:lang="tr" state="needs-translation">Other Name</target></trans-unit>
+			<target xml:lang="tr" state="translated">Diğer İsminiz</target></trans-unit>
       <trans-unit id="users.show.accounts" xml:space="preserve">
 				<source>Accounts</source>
 			<target xml:lang="tr" state="needs-translation">Accounts</target></trans-unit>
@@ -388,7 +388,7 @@
 			<target xml:lang="tr" state="needs-translation">Electronic Addresses</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.primary" xml:space="preserve">
 				<source>Primary</source>
-			<target xml:lang="tr" state="needs-translation">Primary</target></trans-unit>
+			<target xml:lang="tr" state="translated">Birincil</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.notAvailable" xml:space="preserve">
 				<source>N/A</source>
 			<target xml:lang="tr" state="needs-translation">N/A</target></trans-unit>
@@ -926,6 +926,33 @@
       <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve">
 				<source>References to "{asset}"</source>
 			<target xml:lang="tr" state="needs-translation">References to "{asset}"</target></trans-unit>
+      <trans-unit id="media.replaceAsset.replaceFilename" xml:space="preserve">
+				<source>Replace "{filename}"</source>
+			<target xml:lang="tr" state="needs-translation">Replace "{filename}"</target></trans-unit>
+      <trans-unit id="media.replaceAsset.description" xml:space="preserve">
+        <source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
+      <target xml:lang="tr" state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
+      <trans-unit id="media.replaceAsset.note" xml:space="preserve">
+        <source>Note</source>
+      <target xml:lang="tr" state="needs-translation">Note</target></trans-unit>
+      <trans-unit id="media.replaceAsset.noteText" xml:space="preserve">
+        <source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
+      <target xml:lang="tr" state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
+      <trans-unit id="media.replaceAsset.chooseNewFile" xml:space="preserve">
+        <source>Choose a new file</source>
+      <target xml:lang="tr" state="needs-translation">Choose a new file</target></trans-unit>
+      <trans-unit id="media.replace.usageCount" xml:space="preserve">
+        <source>Currently the asset is used {usageCount} times.</source>
+      <target xml:lang="tr" state="needs-translation">Currently the asset is used {usageCount} times.</target></trans-unit>
+      <trans-unit id="media.replace.allUsages" xml:space="preserve">
+        <source>Show all usages</source>
+      <target xml:lang="tr" state="needs-translation">Show all usages</target></trans-unit>
+      <trans-unit id="media.replace.notUsed" xml:space="preserve">
+        <source>Currently the asset is not in used anywhere on the website.</source>
+      <target xml:lang="tr" state="needs-translation">Currently the asset is not in used anywhere on the website.</target></trans-unit>
+      <trans-unit id="media.replace.previewFile" xml:space="preserve">
+        <source>Preview current file</source>
+      <target xml:lang="tr" state="needs-translation">Preview current file</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -12,15 +12,16 @@ namespace TYPO3\Neos\ViewHelpers\Backend;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Neos\Utility\BackendAssetsUtility;
 
 /**
  * Returns a shortened md5 of the built CSS file
  */
-class CssBuiltVersionViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper
+class CssBuiltVersionViewHelper extends \Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Utility\BackendAssetsUtility
+     * @var BackendAssetsUtility
      */
     protected $backendAssetsUtility;
 

@@ -46,7 +46,7 @@ class ContentContextFactory extends ContextFactory
      *
      * @var string
      */
-    protected $contextImplementation = 'TYPO3\Neos\Domain\Service\ContentContext';
+    protected $contextImplementation = ContentContext::class;
 
     /**
      * Creates the actual Context instance.
@@ -120,7 +120,7 @@ class ContentContextFactory extends ContextFactory
             $defaultContextProperties['currentSite'] = $currentDomain->getSite();
             $defaultContextProperties['currentDomain'] = $currentDomain;
         } else {
-            $defaultContextProperties['currentSite'] = $this->siteRepository->findFirstOnline();
+            $defaultContextProperties['currentSite'] = $this->siteRepository->findDefault();
         }
 
         return $defaultContextProperties;

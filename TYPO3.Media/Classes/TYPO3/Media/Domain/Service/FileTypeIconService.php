@@ -52,7 +52,7 @@ class FileTypeIconService
      * @param integer $maximumHeight
      * @return integer
      */
-    protected function getDocumentIconSize($maximumWidth, $maximumHeight)
+    protected static function getDocumentIconSize($maximumWidth, $maximumHeight)
     {
         $size = max($maximumWidth, $maximumHeight);
         if ($size <= 16) {

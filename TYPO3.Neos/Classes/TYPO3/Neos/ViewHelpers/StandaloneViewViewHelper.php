@@ -32,7 +32,7 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("prototype")
  */
-class StandaloneViewViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper
+class StandaloneViewViewHelper extends \Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
 {
     /**
      * @var boolean
@@ -46,7 +46,7 @@ class StandaloneViewViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractView
      */
     public function render($templatePathAndFilename, $arguments = array())
     {
-        $standaloneView = new \TYPO3\Fluid\View\StandaloneView($this->controllerContext->getRequest());
+        $standaloneView = new \Neos\FluidAdaptor\View\StandaloneView($this->controllerContext->getRequest());
         $standaloneView->setTemplatePathAndFilename($templatePathAndFilename);
         return $standaloneView->assignMultiple($arguments)->render();
     }
