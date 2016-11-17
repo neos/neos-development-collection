@@ -34,7 +34,7 @@ before_install:
   - git clone https://github.com/neos/neos-development-distribution.git -b master
   - cd neos-development-distribution
   - export NEOS_TARGET_REPOSITORY=neos/neos-development-collection
-  - export NEOS_TARGET_VERSION=2.3
+  - export NEOS_TARGET_VERSION=master
   - env
 install:
   - composer self-update -q
