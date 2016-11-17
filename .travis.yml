@@ -30,7 +30,7 @@ cache:
   directories:
     - $HOME/.composer/cache
 before_install:
-  - rm -rf .git
+  - git checkout -b travis
   - cd ..
   - git clone https://github.com/neos/neos-development-distribution.git -b master
   - cd neos-development-distribution
