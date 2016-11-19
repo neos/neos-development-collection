@@ -11,10 +11,10 @@ namespace TYPO3\Media\Tests\Unit\ViewHelpers;
  * source code.
  */
 
-use TYPO3\Fluid\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseTestcase;
 use TYPO3\Media\ViewHelpers\ImageViewHelper;
 
-require_once(__DIR__ . '/../../../../../Framework/TYPO3.Fluid/Tests/Unit/ViewHelpers/ViewHelperBaseTestcase.php');
+require_once(__DIR__ . '/../../../../../Framework/Neos.FluidAdaptor/Tests/Unit/ViewHelpers/ViewHelperBaseTestcase.php');
 
 class ImageViewHelperTest extends ViewHelperBaseTestcase
 {
