@@ -56,7 +56,7 @@
 						<f:for each="{domains}" as="domain" key="number">
 							<tr>
 								<td>
-									{f:if(condition: domain.scheme, then: '{domain.scheme}://')}<b>{domain.hostPattern}</b>{f:if(condition: domain.port, then: ':{domain.port}')}
+									{f:if(condition: domain.scheme, then: '{domain.scheme}://')}<b>{domain.hostname}</b>{f:if(condition: domain.port, then: ':{domain.port}')}
 									<f:if condition="{domain.active} == 0">
 										<span class="neos-badge neos-badge-warning">{neos:backend.translate(id: 'inactive', value: 'Inactive')}</span>
 									</f:if>

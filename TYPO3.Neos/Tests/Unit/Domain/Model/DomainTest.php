@@ -10,6 +10,7 @@ namespace TYPO3\Neos\Tests\Unit\Domain\Model;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Neos\Domain\Model\Domain;
 use TYPO3\Neos\Domain\Model\Site;
@@ -26,8 +27,8 @@ class DomainTest extends UnitTestCase
     public function setHostPatternAllowsForSettingTheHostPatternOfTheDomain()
     {
         $domain = new Domain();
-        $domain->setHostPattern('typo3.com');
-        $this->assertSame('typo3.com', $domain->getHostPattern());
+        $domain->setHostname('typo3.com');
+        $this->assertSame('typo3.com', $domain->getHostname());
     }
 
     /**
@@ -35,6 +36,7 @@ class DomainTest extends UnitTestCase
      */
     public function setSiteSetsTheSiteTheDomainIsPointingTo()
     {
+        /** @var Site $mockSite */
         $mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
 
         $domain = new Domain;
