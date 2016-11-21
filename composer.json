@@ -35,7 +35,7 @@
             "Neos\\Diff\\": [
                 "Neos.Diff/Classes"
             ],
-            "TYPO3\\Neos\\Kickstarter": [
+            "TYPO3\\Neos\\Kickstarter\\": [
                 "TYPO3.Neos.Kickstarter/Classes"
             ]
         },
