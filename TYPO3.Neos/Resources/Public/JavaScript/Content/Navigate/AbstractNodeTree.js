@@ -701,7 +701,8 @@ define(
 			showCreateNodeDialog: function(activeNode) {
 				var that = this,
 					parentNode = activeNode.parent,
-					allowedNodeTypes;
+					allowedNodeTypes,
+					baseNodeType = this.get('baseNodeType');
 
 				this.set('insertNodePanelShown', true);
 
@@ -713,19 +714,31 @@ define(
 
 				// Only show node types which inherit from the base node type(s).
 				// If the base node type is prefixed with "!", it is seen as negated.
-				this.get('baseNodeType').split(',').forEach(function(nodeTypeFilter) {
-					nodeTypeFilter = nodeTypeFilter.trim();
+				allowedNodeTypes = allowedNodeTypes.filter(function (nodeTypeName) {
+					var allowed = false,
+						splittedBaseNodeType = baseNodeType.split(',');
 
-					allowedNodeTypes = allowedNodeTypes.filter(function (nodeTypeName) {
-						if (NodeTypeService.isOfType(nodeTypeName, 'TYPO3.Neos:ContentCollection')) {
-							return false;
-						}
-						if (nodeTypeFilter[0] === '!') {
-							return !NodeTypeService.isOfType(nodeTypeName, nodeTypeFilter.substring(1));
-						} else {
-							return NodeTypeService.isOfType(nodeTypeName, nodeTypeFilter);
+					// First find if the nodetype is allowed
+					splittedBaseNodeType.forEach(function(nodeTypeFilter) {
+						nodeTypeFilter = nodeTypeFilter.trim();
+
+						if (nodeTypeFilter[0] !== '!' && allowed === false) {
+							allowed = NodeTypeService.isOfType(nodeTypeName, nodeTypeFilter);
 						}
 					});
+
+					if (allowed === true) {
+						// Find if a negative filter is applied, and if so make sure it overrules the permission
+						splittedBaseNodeType.forEach(function (nodeTypeFilter) {
+							nodeTypeFilter = nodeTypeFilter.trim();
+
+							if (allowed === true && nodeTypeFilter[0] === '!' && NodeTypeService.isOfType(nodeTypeName, nodeTypeFilter.substring(1))) {
+								allowed = false;
+							}
+						});
+					}
+
+					return allowed;
 				});
 
 				InsertNodePanel.create({
