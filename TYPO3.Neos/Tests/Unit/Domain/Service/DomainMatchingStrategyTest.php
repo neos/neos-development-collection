@@ -10,6 +10,7 @@ namespace TYPO3\Neos\Tests\Unit\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Neos\Domain\Model\Domain;
 use TYPO3\Neos\Domain\Service\DomainMatchingStrategy;
@@ -26,7 +27,7 @@ class DomainMatchingStrategyTest extends UnitTestCase
     public function getSortedMatchesReturnsOneGivenDomainIfItMatchesExactly()
     {
         $mockDomains = array($this->getMockBuilder(Domain::class)->disableOriginalConstructor()->getMock());
-        $mockDomains[0]->expects($this->any())->method('getHostPattern')->will($this->returnValue('www.neos.io'));
+        $mockDomains[0]->expects($this->any())->method('getHostname')->will($this->returnValue('www.neos.io'));
         $expectedDomains = array($mockDomains[0]);
 
         $strategy = new DomainMatchingStrategy();
@@ -46,15 +47,13 @@ class DomainMatchingStrategyTest extends UnitTestCase
             $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->setMethods(array('dummy'))->getMock(),
         );
 
-        $mockDomains[0]->setHostPattern('*.neos.io');
-        $mockDomains[1]->setHostPattern('flow.neos.io');
-        $mockDomains[2]->setHostPattern('*');
-        $mockDomains[3]->setHostPattern('yacumboolu.neos.io');
+        $mockDomains[0]->setHostname('neos.io');
+        $mockDomains[1]->setHostname('flow.neos.io');
+        $mockDomains[3]->setHostname('yacumboolu.neos.io');
 
         $expectedDomains = array(
             $mockDomains[1],
-            $mockDomains[0],
-            $mockDomains[2]
+            $mockDomains[0]
         );
 
         $strategy = new DomainMatchingStrategy();
@@ -71,7 +70,7 @@ class DomainMatchingStrategyTest extends UnitTestCase
             $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->setMethods(array('dummy'))->getMock(),
         );
 
-        $mockDomains[0]->setHostPattern('flow.neos.io');
+        $mockDomains[0]->setHostname('flow.neos.io');
 
         $expectedDomains = array();
 
