@@ -140,7 +140,7 @@ class SitesController extends AbstractModuleController
 
         $this->view->assignMultiple(array(
             'site' => $site,
-            'sitePackageMetaData' => isset($sitePackage) ? $sitePackage->getPackageMetaData() : array(),
+            'sitePackage' => isset($sitePackage) ? $sitePackage : array(),
             'domains' => $this->domainRepository->findBySite($site),
             'assetCollections' => $this->assetCollectionRepository->findAll()
         ));
