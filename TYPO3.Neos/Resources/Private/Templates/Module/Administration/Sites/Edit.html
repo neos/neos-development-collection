@@ -126,22 +126,16 @@
 								<th>{neos:backend.translate(id: 'packageKey', value: 'Package Key')}</th>
 								<td><span class="neos-label">{site.siteResourcesPackageKey}</span></td>
 							</tr>
-							<f:if condition="{sitePackageMetaData.title}">
-								<tr>
-									<th>{neos:backend.translate(id: 'title', value: 'Title')}</th>
-									<td>{sitePackageMetaData.title}</td>
-								</tr>
-							</f:if>
-							<f:if condition="{sitePackageMetaData.version}">
+							<f:if condition="{sitePackage.installedVersion}">
 								<tr>
 									<th>{neos:backend.translate(id: 'version', value: 'Version')}</th>
-									<td>{sitePackageMetaData.version}</td>
+									<td>{sitePackage.installedVersion}</td>
 								</tr>
 							</f:if>
-							<f:if condition="{sitePackageMetaData.description}">
+							<f:if condition="{sitePackage.composerManifest.description}">
 								<tr>
 									<th>{neos:backend.translate(id: 'description', value: 'Description')}</th>
-									<td>{sitePackageMetaData.description}</td>
+									<td>{sitePackage.composerManifest.description}</td>
 								</tr>
 							</f:if>
 						</tbody>
