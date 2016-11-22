@@ -93,7 +93,7 @@ class NodeViewHelper extends AbstractViewHelper
     /**
      * Renders the URI.
      *
-     * @param mixed $node A node object or a string node path (absolute or relative) or NULL to resolve the current document node
+     * @param mixed $node A node object or a string node path (absolute or relative) a string node://-uri or NULL to resolve the current document node
      * @param string $format Format to use for the URL, for example "html" or "json"
      * @param boolean $absolute If set, an absolute URI is rendered
      * @param array $arguments Additional arguments to be passed to the UriBuilder (for example pagination parameters)
@@ -110,6 +110,9 @@ class NodeViewHelper extends AbstractViewHelper
         $baseNode = null;
         if (!$node instanceof NodeInterface) {
             $baseNode = $this->getContextVariable($baseNodeName);
+            if (is_string($node) && substr($node, 0, 7) === 'node://') {
+                $node = $this->linkingService->convertUriToObject($node, $baseNode);
+            }
         }
 
         try {
