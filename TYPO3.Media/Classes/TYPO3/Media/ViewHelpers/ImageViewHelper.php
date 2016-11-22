@@ -104,7 +104,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
     /**
      * Renders an HTML img tag with a thumbnail image, created from a given image.
      *
-     * @param ImageInterface|null $image The image to be rendered as an image
+     * @param ImageInterface $image The image to be rendered as an image
      * @param integer $width Desired width of the image
      * @param integer $maximumWidth Desired maximum width of the image
      * @param integer $height Desired height of the image

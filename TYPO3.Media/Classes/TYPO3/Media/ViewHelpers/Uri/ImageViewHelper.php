@@ -68,7 +68,7 @@ class ImageViewHelper extends AbstractViewHelper
     /**
      * Renders the path to a thumbnail image, created from a given image.
      *
-     * @param ImageInterface|null $image
+     * @param ImageInterface $image The image to retrieve the path from
      * @param integer $width Desired width of the image
      * @param integer $maximumWidth Desired maximum width of the image
      * @param integer $height Desired height of the image
@@ -85,7 +85,7 @@ class ImageViewHelper extends AbstractViewHelper
             $image = $this->arguments['asset'];
         }
 
-        if ($image === null || empty($image)) {
+        if ($image === null) {
             return '';
         }
 
