@@ -11,7 +11,7 @@ namespace TYPO3\Media\Tests\Unit\Domain\Model;
  * source code.
  */
 
-use TYPO3\Flow\Resource\Resource as PersistentResource;
+use TYPO3\Flow\ResourceManagement\PersistentResource;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\Media\Domain\Model\Video;
 

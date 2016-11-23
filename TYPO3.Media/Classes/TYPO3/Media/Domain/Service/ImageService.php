@@ -17,14 +17,14 @@ use Imagine\Image\Palette\CMYK;
 use Imagine\Image\Palette\RGB;
 use Imagine\Imagick\Imagine;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
-use TYPO3\Flow\Resource\Exception;
-use TYPO3\Flow\Resource\ResourceManager;
+use TYPO3\Flow\ResourceManagement\Exception;
+use TYPO3\Flow\ResourceManagement\ResourceManager;
 use TYPO3\Flow\Utility\Environment;
 use TYPO3\Media\Domain\Repository\AssetRepository;
 use TYPO3\Media\Imagine\Box;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Configuration\Exception\InvalidConfigurationException;
-use TYPO3\Flow\Resource\Resource as FlowResource;
+use TYPO3\Flow\ResourceManagement\PersistentResource;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 use TYPO3\Media\Domain\Model\Adjustment\ImageAdjustmentInterface;
@@ -83,14 +83,14 @@ class ImageService
     }
 
     /**
-     * @param FlowResource $originalResource
+     * @param PersistentResource $originalResource
      * @param array $adjustments
      * @return array resource, width, height as keys
      * @throws ImageFileException
      * @throws InvalidConfigurationException
      * @throws Exception
      */
-    public function processImage(FlowResource $originalResource, array $adjustments)
+    public function processImage(PersistentResource $originalResource, array $adjustments)
     {
         $additionalOptions = array();
         $adjustmentsApplied = false;
@@ -204,13 +204,13 @@ class ImageService
     }
 
     /**
-     * Get the size of a Flow Resource object that contains an image file.
+     * Get the size of a Flow PersistentResource that contains an image file.
      *
-     * @param FlowResource $resource
+     * @param PersistentResource $resource
      * @return array width and height as keys
      * @throws ImageFileException
      */
-    public function getImageSize(FlowResource $resource)
+    public function getImageSize(PersistentResource $resource)
     {
         $cacheIdentifier = $resource->getCacheEntryIdentifier();
 
