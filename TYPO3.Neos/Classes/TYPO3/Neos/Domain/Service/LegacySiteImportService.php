@@ -12,15 +12,15 @@ namespace TYPO3\Neos\Domain\Service;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Package\Exception\InvalidPackageStateException;
 use TYPO3\Flow\Package\Exception\UnknownPackageException;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Reflection\ReflectionService;
-use TYPO3\Flow\Resource\Resource as PersistentResource;
-use TYPO3\Flow\Resource\ResourceManager;
+use TYPO3\Flow\ResourceManagement\PersistentResource;
+use TYPO3\Flow\ResourceManagement\ResourceManager;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Media\Domain\Model\AssetInterface;
@@ -594,7 +594,7 @@ class LegacySiteImportService
         $resourceData = trim((string)$objectXml->originalImage->resource->content);
 
         if ((string)$objectXml->originalImage->resource['__identifier'] !== '') {
-            $resource = $this->persistenceManager->getObjectByIdentifier((string)$objectXml->originalImage->resource['__identifier'], \TYPO3\Flow\Resource\Resource::class);
+            $resource = $this->persistenceManager->getObjectByIdentifier((string)$objectXml->originalImage->resource['__identifier'], PersistentResource::class);
         }
 
         if (!isset($resource) || $resource === null) {
@@ -636,7 +636,7 @@ class LegacySiteImportService
         $resourceData = trim((string)$objectXml->resource->content);
 
         if ((string)$objectXml->resource['__identifier'] !== '') {
-            $resource = $this->persistenceManager->getObjectByIdentifier((string)$objectXml->resource['__identifier'], \TYPO3\Flow\Resource\Resource::class);
+            $resource = $this->persistenceManager->getObjectByIdentifier((string)$objectXml->resource['__identifier'], PersistentResource::class);
         }
 
         if (!isset($resource) || $resource === null) {

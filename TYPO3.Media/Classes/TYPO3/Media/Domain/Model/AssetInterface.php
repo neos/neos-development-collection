@@ -11,7 +11,7 @@ namespace TYPO3\Media\Domain\Model;
  * source code.
  */
 
-use TYPO3\Flow\Resource\Resource;
+use TYPO3\Flow\ResourceManagement\PersistentResource;
 
 /**
  * A user-managed Asset which is stored in the Asset Repository
@@ -40,16 +40,16 @@ interface AssetInterface extends ResourceBasedInterface, ThumbnailSupportInterfa
     /**
      * Sets the resource and possibly triggers a refresh of dependent behavior
      *
-     * @param Resource $resource
+     * @param PersistentResource $resource
      * @return void
      * @api
      */
-    public function setResource(Resource $resource);
+    public function setResource(PersistentResource $resource);
 
     /**
      * Returns the resource of this asset
      *
-     * @return \TYPO3\Flow\Resource\Resource
+     * @return PersistentResource
      * @api
      */
     public function getResource();

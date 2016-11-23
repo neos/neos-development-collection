@@ -18,7 +18,7 @@ use TYPO3\Flow\Property\TypeConverter\ObjectConverter;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 use TYPO3\Flow\Property\TypeConverter\StringConverter;
 use TYPO3\Flow\Property\TypeConverterInterface;
-use TYPO3\Flow\Resource\ResourceTypeConverter;
+use TYPO3\Flow\ResourceManagement\ResourceTypeConverter;
 
 /**
  * Property mapping configuration which is used for import / export:

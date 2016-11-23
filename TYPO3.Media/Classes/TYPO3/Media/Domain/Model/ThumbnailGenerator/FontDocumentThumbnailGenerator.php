@@ -13,7 +13,7 @@ namespace TYPO3\Media\Domain\Model\ThumbnailGenerator;
 
 use TYPO3\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\Flow\Resource\Resource;
+use TYPO3\Flow\ResourceManagement\PersistentResource;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Media\Domain\Model\Adjustment\ResizeImageAdjustment;
 use TYPO3\Media\Domain\Model\Thumbnail;
@@ -103,11 +103,11 @@ class FontDocumentThumbnailGenerator extends AbstractThumbnailGenerator
 
     /**
      * @param Thumbnail $thumbnail
-     * @param Resource $resource
+     * @param PersistentResource $resource
      * @return array
      * @throws Exception\ImageFileException
      */
-    protected function resize(Thumbnail $thumbnail, Resource $resource)
+    protected function resize(Thumbnail $thumbnail, PersistentResource $resource)
     {
         $adjustments = array(
             new ResizeImageAdjustment(
