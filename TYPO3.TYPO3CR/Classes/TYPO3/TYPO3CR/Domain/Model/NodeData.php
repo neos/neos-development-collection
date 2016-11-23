@@ -596,7 +596,7 @@ class NodeData extends AbstractNodeData
      *
      * For this the "hidden" flag and the "hiddenBeforeDateTime" and "hiddenAfterDateTime" dates are taken into account.
      * The fact that a node is "visible" does not imply that it can / may be shown to the user. Further modifiers
-     * such as isAccessible() need to be evaluated.
+     * such as throwExceptionIfNotAccessible() need to be evaluated.
      *
      * @return boolean
      */
