@@ -5,6 +5,7 @@
     "license": "GPL-3.0+",
     "require": {
         "typo3/flow": "*",
+        "neos/fluid-adaptor": "*",
         "gedmo/doctrine-extensions": "~2.3.0",
         "behat/transliterator": "~1.0"
     },

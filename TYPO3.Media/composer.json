@@ -5,7 +5,8 @@
     "license": "GPL-3.0+",
     "require": {
         "typo3/flow": "*",
-        "typo3/imagine": "*"
+        "typo3/imagine": "*",
+        "neos/fluid-adaptor": "*"
     },
     "autoload": {
         "psr-0": {
