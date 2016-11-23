@@ -76,5 +76,21 @@
         "typo3/flow": {
             "manage-resources": true
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TYPO3\\Media\\Tests\\": [
+                "TYPO3.Media/Tests"
+            ],
+            "TYPO3\\Neos\\Tests\\": [
+                "TYPO3.Neos/Tests"
+            ],
+            "TYPO3\\TYPO3CR\\Tests\\": [
+                "TYPO3.TYPO3CR/Tests"
+            ],
+            "TYPO3\\TypoScript\\Tests\\": [
+                "TYPO3.TypoScript/Tests"
+            ]
+        }
     }
 }
