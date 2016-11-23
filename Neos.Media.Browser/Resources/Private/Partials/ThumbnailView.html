@@ -7,7 +7,7 @@
 				<li class="asset">
 					<f:link.action action="edit" title="{neos:backend.translate(id: 'media.tooltip.editAsset', source: 'Modules', package: 'TYPO3.Neos')}" class="neos-thumbnail" arguments="{asset: asset}">
 						<div class="neos-img-container draggable-asset {f:if(condition: '{asset.tags -> f:count()} == 0', then: ' neos-media-untagged')}" data-asset-identifier="{asset -> f:format.identifier()}">
-							<m:thumbnail asset="{asset}" preset="TYPO3.Neos:Thumbnail" alt="{asset.label}" async="{settings.asyncThumbnails}" />
+							<m:thumbnail asset="{asset}" preset="Neos.Media.Browser:Thumbnail" alt="{asset.label}" async="{settings.asyncThumbnails}" />
 						</div>
 					</f:link.action>
 					<div class="neos-img-label">
@@ -24,7 +24,7 @@
 											<i class="icon-edit icon-white"></i> {neos:backend.translate(id: 'edit', package: 'TYPO3.Neos')}
 										</f:link.action>
 									</li>
-									<f:security.ifAccess privilegeTarget="TYPO3.Neos:Backend.Module.Media.ReplaceAssetResource">
+									<f:security.ifAccess privilegeTarget="Neos.Media.Browser:Backend.Module.Media.ReplaceAssetResource">
 										<li>
 											<f:link.action action="replaceAssetResource" arguments="{asset: asset}" title="{replaceAssetResourceLabel}">
 												<i class="icon-random icon-white"></i> {neos:backend.translate(id: 'media.replaceAssetResource', source: 'Modules', package: 'TYPO3.Neos')}

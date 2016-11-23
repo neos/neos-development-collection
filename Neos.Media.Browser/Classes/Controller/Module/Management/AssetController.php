@@ -19,6 +19,7 @@ use TYPO3\Flow\Mvc\Exception\InvalidArgumentValueException;
 use TYPO3\Flow\ResourceManagement\PersistentResource;
 use TYPO3\Flow\Security\Context;
 use TYPO3\Flow\Utility\MediaTypes;
+use TYPO3\Flow\Utility\TypeHandling;
 use TYPO3\Media\Domain\Model\AssetCollection;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Exception\AssetServiceException;

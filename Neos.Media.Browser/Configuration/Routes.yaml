@@ -9,6 +9,7 @@
     '@package':    'Neos.Media.Browser'
     '@controller': 'Backend\MediaBrowser'
     '@format': 'html'
+    '@action': 'index'
   appendExceedingArguments: TRUE
 
 -
@@ -18,4 +19,5 @@
     '@package':    'Neos.Media.Browser'
     '@controller': 'Backend\ImageBrowser'
     '@format': 'html'
+    '@action': 'index'
   appendExceedingArguments: TRUE

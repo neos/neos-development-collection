@@ -6,7 +6,7 @@
     "require": {
         "neos/diff": "*",
         "typo3/flow": "*",
-        "neos/mediabrowser": "*",
+        "neos/media-browser": "*",
         "typo3/party": "*",
         "typo3/setup": "*",
         "typo3/twitter-bootstrap": "*",
