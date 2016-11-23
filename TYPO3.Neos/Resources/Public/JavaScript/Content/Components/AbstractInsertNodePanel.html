@@ -3,7 +3,7 @@
 		<div class="neos-modal-header">
 			<button class="neos-close neos-button" title="{{translate id='close' fallback='Close'}}" {{action "cancel" target="view"}} data-neos-toggle></button>
 			<div class="neos-header">
-				{{translate id="createNew" fallback="Create new"}}
+				{{translate id="createNew" fallback="Create new"}} "<strong>{{view._preselectedNodeType.label}}</strong>"
 				{{#if view._position}}
 					{{boundTranslate idBinding="view._position" fallbackBinding="view._position"}}
 					<i {{bindAttr class="view._positionIconClass"}}></i>
@@ -19,10 +19,10 @@
 					</div>
 					<ul {{bindAttr class=":neos-clearfix"}}>
 						{{#each nodeTypeGroup.sortedNodeTypes}}
-							<li class="neos-content-new-selecttype-button">
+							<li {{bindAttr class="className"}} {{action "selectNodeType" nodeType on="mouseEnter" target="view"}}>
 								<button class="neos-content-new" {{bindAttr title="nodeType"}} {{action "insertNode" nodeType icon target="view"}} data-neos-tooltip>
 									{{#if icon}}
-										<i class="{{unbound icon}}"></i>
+										<i {{bindAttr class="icon"}}></i>
 									{{else}}
 										<i class="icon-sign-blank"></i>
 									{{/if}}
@@ -38,7 +38,7 @@
 			{{/each}}
 		</div>
 		<div class="neos-modal-footer">
-			<button class="neos-button" {{action "cancel" target="view"}}>{{translate id="cancel" fallback="Cancel"}}</button>
+			<div class="neos-modal-footer-tips"> <i class="icon-info-circle"></i> {{translate id='insertnodepanel.help.tips' fallback='Tips: use left / right arrow keys to navigate and hit return to create the current node type'}}</div>
 		</div>
 	</div>
 </div>

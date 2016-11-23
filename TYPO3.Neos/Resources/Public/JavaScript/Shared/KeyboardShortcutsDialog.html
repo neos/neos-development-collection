@@ -1,0 +1,110 @@
+<div class="neos-modal neos-modal-wide neos-show-shortcuts">
+    <div class="neos-modal-header">
+        <button class="neos-close neos-button" title="Close" {{action "hide" target="view"}}></button>
+        <div class="neos-header">{{translate id="keyboard.shortcuts.header" fallback="Keyboard shortcuts"}}</div>
+    </div>
+    <div class="neos-modal-body">
+        <div class="neos-column-body">
+            <div class="neos-subheader">
+                {{translate id="keyboard.shortcuts.general" fallback="General"}}
+            </div>
+            <ul class="neos-shortcut-list neos-clearfix">
+                <li class="neos-shortcut">
+                    <div class="neos-shortcut-body">
+                        <div class="neos-shortcut-icon">
+                            <i class="icon-resize-full"></i>
+                        </div>
+                        <div class="neos-shortcut-label">{{translate id="keyboard.shortcuts.toggleFullScreen" fallback="Toggle fullscreen mode"}}</div>
+                        <div class="neos-shortcut-keys">{{modKey}} + h</div>
+                    </div>
+                </li>
+                <li class="neos-shortcut">
+                    <div class="neos-shortcut-body">
+                        <div class="neos-shortcut-icon">
+                            <i class="icon-remove"></i>
+                        </div>
+                        <div class="neos-shortcut-label">{{translate id="keyboard.shortcuts.closeDialog" fallback="Close any dialog box"}}</div>
+                        <div class="neos-shortcut-keys">esc</div>
+                    </div>
+                </li>
+                <li class="neos-shortcut">
+                    <div class="neos-shortcut-body">
+                        <div class="neos-shortcut-icon"></div>
+                        <div class="neos-shortcut-label">{{translate id="keyboard.shortcuts.toggleEditPreview" fallback="Toggle Edit/Preview panel"}}</div>
+                        <div class="neos-shortcut-keys">{{modKey}} + e</div>
+                    </div>
+                </li>
+                <li class="neos-shortcut">
+                    <div class="neos-shortcut-body">
+                        <div class="neos-shortcut-icon">
+							<i class="icon-info"></i>
+						</div>
+                        <div class="neos-shortcut-label">{{translate id="keyboard.shortcuts.openShortcutInfo" fallback="Open the shortcut info"}}</div>
+                        <div class="neos-shortcut-keys">?</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="neos-column-body">
+            <div class="neos-subheader">{{translate id="keyboard.shortcuts.contentEditing" fallback="Content Editing"}}</div>
+            <ul class="neos-shortcut-list neos-clearfix">
+                <li class="neos-shortcut">
+                    <div class="neos-shortcut-body">
+                        <div class="neos-shortcut-icon">
+							<i class="icon-plus"></i>
+						</div>
+                        <div class="neos-shortcut-label">{{translate id="keyboard.shortcuts.createNew" fallback="Create new"}}</div>
+                        <div class="neos-shortcut-keys">{{modKey}} + shift + a</div>
+                    </div>
+                </li>
+                <li class="neos-shortcut">
+                    <div class="neos-shortcut-body">
+                        <div class="neos-shortcut-icon">
+							<i class="icon-copy"></i>
+						</div>
+                        <div class="neos-shortcut-label">{{translate id="keyboard.shortcuts.copySelected" fallback="Copy selected"}}</div>
+                        <div class="neos-shortcut-keys">{{modKey}} + shift + c</div>
+                    </div>
+                </li>
+                <li class="neos-shortcut">
+                    <div class="neos-shortcut-body">
+                        <div class="neos-shortcut-icon">
+							<i class="icon-cut"></i>
+						</div>
+                        <div class="neos-shortcut-label">{{translate id="keyboard.shortcuts.cutSelected" fallback="Cut selected"}}</div>
+                        <div class="neos-shortcut-keys">{{modKey}} + shift + x</div>
+                    </div>
+                </li>
+                <li class="neos-shortcut">
+                    <div class="neos-shortcut-body">
+                        <div class="neos-shortcut-icon">
+							<i class="icon-paste"></i>
+						</div>
+                        <div class="neos-shortcut-label">{{translate id="keyboard.shortcuts.pasteCopied" fallback="Paste copied"}}</div>
+                        <div class="neos-shortcut-keys">{{modKey}} + shift + v</div>
+                    </div>
+                </li>
+                <li class="neos-shortcut">
+                    <div class="neos-shortcut-body">
+                        <div class="neos-shortcut-icon">
+							<i class="icon-trash"></i>
+						</div>
+                        <div class="neos-shortcut-label">{{translate id="keyboard.shortcuts.removeSelected" fallback="Remove selected"}}</div>
+                        <div class="neos-shortcut-keys">{{modKey}} + shift + d</div>
+                    </div>
+                </li>
+                <li class="neos-shortcut">
+                    <div class="neos-shortcut-body">
+                        <div class="neos-shortcut-icon">
+							<i class="icon-long-arrow-right"></i>
+						</div>
+                        <div class="neos-shortcut-label">{{translate id="keyboard.shortcuts.selectNextElement" fallback="Select next element"}}</div>
+                        <div class="neos-shortcut-keys">tab</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="neos-modal-backdrop neos-in"></div>

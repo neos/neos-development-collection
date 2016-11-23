@@ -1,7 +1,11 @@
 .neos-insert-node-panel {
 	.neos-header {
 		i {
+			color: $blue;
 			vertical-align: baseline;
+		}
+		strong {
+			font-weight: 700;
 		}
 	}
 
@@ -61,11 +65,21 @@
 	.neos-modal-body {
 		max-height: calc(100vh - #{$unit * 2 + 52 + 72 + 80});
 		overflow-y: auto;
+
+		> ul {
+			margin-top: 12px;
+		}
 	}
 
 	.neos-modal-footer {
 		border-top: 1px solid $grayLight;
 		margin-top: -1px;
+	}
+
+	.neos-modal-footer-tips {
+		text-align: center;
+		font-style: italic;
+		color: $textSubtleLight;
 	}
 
 	.neos-content-new-selecttype-button {
@@ -93,17 +107,21 @@
 				text-align: center;
 				vertical-align: baseline;
 			}
+
+			&:focus {
+				outline: none;
+			}
 		}
 
-		&:focus, &:hover {
+		&--current {
 			background-color: $blue;
 
 			button {
 				outline: none;
-			}
 
-			i {
-				color: #fff;
+				i {
+					color: #fff;
+				}
 			}
 
 			.neos-help-message-button {
