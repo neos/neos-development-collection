@@ -13,7 +13,6 @@
         "typo3/typo3cr": "*",
         "typo3/typoscript": "*",
         "neos/fluid-adaptor": "*",
-        "league/commonmark": "^0.12.0",
         "behat/transliterator": "~1.0"
     },
     "suggest": {
