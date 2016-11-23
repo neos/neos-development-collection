@@ -13,7 +13,7 @@ namespace TYPO3\TypoScript\TypoScriptObjects\Helpers;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Exception;
-use TYPO3\Fluid\Core\Parser\SyntaxTree\TemplateObjectAccessInterface;
+use Neos\FluidAdaptor\Core\Parser\SyntaxTree\TemplateObjectAccessInterface;
 use TYPO3\TypoScript\Core\ExceptionHandlers\ContextDependentHandler;
 use TYPO3\TypoScript\Exception\UnsupportedProxyMethodException;
 use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
@@ -143,19 +143,15 @@ class TypoScriptPathProxy implements TemplateObjectAccessInterface, \ArrayAccess
      */
     public function objectAccess()
     {
-        if (isset($this->partialTypoScriptTree['__objectType'])) {
-            try {
-                return $this->tsRuntime->evaluate($this->path);
-            } catch (\Exception $exception) {
-                return $this->tsRuntime->handleRenderingException($this->path, $exception);
-            }
-        } elseif (isset($this->partialTypoScriptTree['__eelExpression'])) {
-            return $this->tsRuntime->evaluate($this->path, $this->templateImplementation);
-        } elseif (isset($this->partialTypoScriptTree['__value'])) {
-            return $this->partialTypoScriptTree['__value'];
+        if (!$this->tsRuntime->canRender($this->path)) {
+            return $this;
         }
 
-        return $this;
+        try {
+            return $this->tsRuntime->evaluate($this->path, $this->templateImplementation);
+        } catch (\Exception $exception) {
+            return $this->tsRuntime->handleRenderingException($this->path, $exception);
+        }
     }
 
     /**
@@ -199,25 +195,21 @@ class TypoScriptPathProxy implements TemplateObjectAccessInterface, \ArrayAccess
     public function __toString()
     {
         try {
-            return (string)$this->tsRuntime->evaluate($this->path);
-        } catch (\Exception $exception) {
+            return (string)$this->objectAccess();
+        } catch (\Exception $exceptionHandlerException) {
             try {
-                return $this->tsRuntime->handleRenderingException($this->path, $exception);
-            } catch (\Exception $exceptionHandlerException) {
-                try {
-                    // Throwing an exception in __toString causes a fatal error, so if that happens we catch them and use the context dependent exception handler instead.
-                    $contextDependentExceptionHandler = new ContextDependentHandler();
-                    $contextDependentExceptionHandler->setRuntime($this->tsRuntime);
-                    return $contextDependentExceptionHandler->handleRenderingException($this->path, $exception);
-                } catch (\Exception $contextDepndentExceptionHandlerException) {
-                    $this->systemLogger->logException($contextDepndentExceptionHandlerException, array('path' => $this->path));
-                    return sprintf(
-                        '<!-- Exception while rendering exception in %s: %s (%s) -->',
-                        $this->path,
-                        $contextDepndentExceptionHandlerException->getMessage(),
-                        $contextDepndentExceptionHandlerException instanceof Exception ? 'see reference code ' . $contextDepndentExceptionHandlerException->getReferenceCode() . ' in log' : $contextDepndentExceptionHandlerException->getCode()
-                    );
-                }
+                // Throwing an exception in __toString causes a fatal error, so if that happens we catch them and use the context dependent exception handler instead.
+                $contextDependentExceptionHandler = new ContextDependentHandler();
+                $contextDependentExceptionHandler->setRuntime($this->tsRuntime);
+                return $contextDependentExceptionHandler->handleRenderingException($this->path, $exception);
+            } catch (\Exception $contextDepndentExceptionHandlerException) {
+                $this->systemLogger->logException($contextDepndentExceptionHandlerException, array('path' => $this->path));
+                return sprintf(
+                    '<!-- Exception while rendering exception in %s: %s (%s) -->',
+                    $this->path,
+                    $contextDepndentExceptionHandlerException->getMessage(),
+                    $contextDepndentExceptionHandlerException instanceof Exception ? 'see reference code ' . $contextDepndentExceptionHandlerException->getReferenceCode() . ' in log' : $contextDepndentExceptionHandlerException->getCode()
+                );
             }
         }
     }

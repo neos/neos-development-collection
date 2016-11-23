@@ -13,7 +13,7 @@ namespace TYPO3\Neos\Aspects;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\JoinPointInterface;
-use TYPO3\Flow\Resource\ResourceManager;
+use TYPO3\Flow\ResourceManagement\ResourceManager;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Neos\Exception;
 

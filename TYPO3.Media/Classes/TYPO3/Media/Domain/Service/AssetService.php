@@ -14,14 +14,15 @@ namespace TYPO3\Media\Domain\Service;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Mvc\Routing\UriBuilder;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Persistence\RepositoryInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
-use TYPO3\Flow\Resource\Resource as FlowResource;
-use TYPO3\Flow\Resource\ResourceManager;
+use TYPO3\Flow\ResourceManagement\PersistentResource;
+use TYPO3\Flow\ResourceManagement\ResourceManager;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Media\Domain\Model\AssetInterface;
+use TYPO3\Media\Domain\Model\AssetVariantInterface;
 use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Model\ImageVariant;
 use TYPO3\Media\Domain\Model\Thumbnail;
@@ -142,7 +143,7 @@ class AssetService
      * Returns all registered asset usage strategies
      *
      * @return array<\TYPO3\Media\Domain\Strategy\AssetUsageStrategyInterface>
-     * @throws \TYPO3\Flow\Object\Exception\UnknownObjectException
+     * @throws \TYPO3\Flow\ObjectManagement\Exception\UnknownObjectException
      */
     protected function getUsageStrategies()
     {
@@ -150,7 +151,7 @@ class AssetService
             return $this->usageStrategies;
         }
 
-        $assetUsageStrategieImplementations = $this->reflectionService->getAllImplementationClassNamesForInterface('TYPO3\Media\Domain\Strategy\AssetUsageStrategyInterface');
+        $assetUsageStrategieImplementations = $this->reflectionService->getAllImplementationClassNamesForInterface(AssetUsageStrategyInterface::class);
         foreach ($assetUsageStrategieImplementations as $assetUsageStrategieImplementationClassName) {
             $this->usageStrategies[] = $this->objectManager->get($assetUsageStrategieImplementationClassName);
         }
@@ -231,11 +232,11 @@ class AssetService
      * Replace resource on an asset. Takes variants and redirect handling into account.
      *
      * @param AssetInterface $asset
-     * @param FlowResource $resource
+     * @param PersistentResource $resource
      * @param array $options
      * @return void
      */
-    public function replaceAssetResource(AssetInterface $asset, FlowResource $resource, array $options = [])
+    public function replaceAssetResource(AssetInterface $asset, PersistentResource $resource, array $options = [])
     {
         $originalAssetResource = $asset->getResource();
         $asset->setResource($resource);
@@ -254,13 +255,16 @@ class AssetService
 
         if (method_exists($asset, 'getVariants')) {
             $variants = $asset->getVariants();
+            /** @var AssetVariantInterface $variant */
             foreach ($variants as $variant) {
                 $originalVariantResource = $variant->getResource();
                 $variant->refresh();
 
-                foreach ($variant->getAdjustments() as $adjustment) {
-                    if (method_exists($adjustment, 'refit')) {
-                        $adjustment->refit($asset);
+                if (method_exists($variant, 'getAdjustments')) {
+                    foreach ($variant->getAdjustments() as $adjustment) {
+                        if (method_exists($adjustment, 'refit')) {
+                            $adjustment->refit($asset);
+                        }
                     }
                 }
 
@@ -276,7 +280,7 @@ class AssetService
 
         if ($redirectHandlerEnabled) {
             /** @var \Neos\RedirectHandler\Storage\RedirectStorageInterface $redirectStorage */
-            $redirectStorage = $this->objectManager->get('Neos\\RedirectHandler\\Storage\\RedirectStorageInterface');
+            $redirectStorage = $this->objectManager->get(\Neos\RedirectHandler\Storage\RedirectStorageInterface::class);
             foreach ($uriMapping as $originalUri => $newUri) {
                 $existingRedirect = $redirectStorage->getOneBySourceUriPathAndHost($originalUri);
                 if ($existingRedirect === null) {

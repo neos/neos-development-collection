@@ -88,7 +88,7 @@ trait NodeAuthorizationTrait
     public function iShouldGetTheFollowingListOfDeniedNodePropertiesFromTheNodeAuthorizationService($table)
     {
         if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg(\TYPO3\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))));
         } else {
             $rows = $table->getHash();
             $deniedPropertyNames = $this->nodeAuthorizationService->getDeniedNodePropertiesForEditing($this->currentNodes[0]);
@@ -160,7 +160,7 @@ trait NodeAuthorizationTrait
             }
 
             try {
-                $nodeTypeManager = $this->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+                $nodeTypeManager = $this->getObjectManager()->get(\TYPO3\TYPO3CR\Domain\Service\NodeTypeManager::class);
                 $this->currentNodes[0]->setNodeType($nodeTypeManager->getNodeType('TYPO3.Neos:Node'));
                 if ($not === 'not') {
                     Assert::fail('NodeType should not be settable on the current node!');
@@ -241,7 +241,7 @@ trait NodeAuthorizationTrait
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg(trim($not)), 'string', escapeshellarg($nodeName), 'string', escapeshellarg($nodeType)));
         } else {
             /** @var NodeTypeManager $nodeTypeManager */
-            $nodeTypeManager = $this->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+            $nodeTypeManager = $this->getObjectManager()->get(\TYPO3\TYPO3CR\Domain\Service\NodeTypeManager::class);
 
             try {
                 $this->currentNodes[0]->createNode($nodeName, $nodeTypeManager->getNodeType($nodeType));
@@ -269,7 +269,7 @@ trait NodeAuthorizationTrait
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg(trim($expectedResult)), 'string', escapeshellarg($nodeName), 'string', escapeshellarg($nodeTypeName)));
         } else {
             /** @var NodeTypeManager $nodeTypeManager */
-            $nodeTypeManager = $this->getObjectManager()->get('TYPO3\TYPO3CR\Domain\Service\NodeTypeManager');
+            $nodeTypeManager = $this->getObjectManager()->get(\TYPO3\TYPO3CR\Domain\Service\NodeTypeManager::class);
             $nodeType = $nodeTypeManager->getNodeType($nodeTypeName);
 
             if ($expectedResult === 'TRUE') {
@@ -290,7 +290,7 @@ trait NodeAuthorizationTrait
     public function iShouldGetTheFollowingListOfDeniedNodeTypesForThisNodeFromTheNodeAuthorizationService($table)
     {
         if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg('TYPO3\Flow\Tests\Functional\Command\TableNode'), escapeshellarg(json_encode($table->getHash()))));
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg(\TYPO3\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))));
         } else {
             $rows = $table->getHash();
             $deniedNodeTypeNames = $this->nodeAuthorizationService->getNodeTypeNamesDeniedForCreation($this->currentNodes[0]);

@@ -12,7 +12,7 @@ namespace TYPO3\Neos\ViewHelpers;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * View helper to check if a given value is an array.

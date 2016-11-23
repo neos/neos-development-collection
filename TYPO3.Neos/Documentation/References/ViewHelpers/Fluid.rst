@@ -2459,7 +2459,7 @@ f:if
 ----
 
 This view helper implements an if/else condition.
-Check \TYPO3\Fluid\Core\Parser\SyntaxTree\ViewHelperNode::convertArgumentValue() to see how boolean arguments are evaluated
+Check \Neos\FluidAdaptor\Core\Parser\SyntaxTree\ViewHelperNode::convertArgumentValue() to see how boolean arguments are evaluated
 
 **Conditions:**
 
@@ -2953,9 +2953,9 @@ Examples
 	Header
 	<f:renderChildren arguments="{foo: 'bar'}" />
 	Footer
-	
+
 	<-- in the outer template, using the widget -->
-	
+
 	<x:widget.someWidget>
 	  Foo: {foo}
 	</x:widget.someWidget>

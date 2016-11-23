@@ -175,7 +175,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 
         $siteNode = $contentContext->getCurrentSiteNode();
         if ($siteNode === null) {
-            $currentDomain = $contentContext->getCurrentDomain() ? 'Domain with host pattern "' . $contentContext->getCurrentDomain()->getHostPattern() . '" matched.' : 'No specific domain matched.';
+            $currentDomain = $contentContext->getCurrentDomain() ? 'Domain with hostname "' . $contentContext->getCurrentDomain()->getHostname() . '" matched.' : 'No specific domain matched.';
             throw new Exception\NoSiteNodeException(sprintf('No site node found for request path "%s". %s', $requestPath, $currentDomain), 1346949728);
         }
 

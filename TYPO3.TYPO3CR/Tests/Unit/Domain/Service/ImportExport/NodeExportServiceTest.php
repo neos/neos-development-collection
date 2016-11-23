@@ -129,7 +129,7 @@ class NodeExportServiceTest extends UnitTestCase
         $nodeDataList = array($nodeData1, $nodeData2);
         $nodeExportService->expects($this->any())->method('findNodeDataListToExport')->will($this->returnValue($nodeDataList));
 
-        $mockPropertyMapper = $this->createMock('TYPO3\Flow\Property\PropertyMapper');
+        $mockPropertyMapper = $this->createMock(\TYPO3\Flow\Property\PropertyMapper::class);
         $mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnCallback(function ($source) {
             return $source;
         }));

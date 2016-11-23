@@ -12,7 +12,7 @@ namespace TYPO3\Media\Domain\Validator;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Reflection\ReflectionService;
 use TYPO3\Flow\Validation\Validator\ConjunctionValidator;
 
@@ -42,7 +42,7 @@ class AssetValidator extends ConjunctionValidator
      */
     protected function initializeObject()
     {
-        $assetValidatorImplementationClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('TYPO3\\Media\\Domain\\Validator\\AssetValidatorInterface');
+        $assetValidatorImplementationClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface(AssetValidatorInterface::class);
         foreach ($assetValidatorImplementationClassNames as $assetValidatorImplementationClassName) {
             $this->addValidator($this->objectManager->get($assetValidatorImplementationClassName));
         }
