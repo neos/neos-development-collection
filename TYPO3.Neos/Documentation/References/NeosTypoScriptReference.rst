@@ -104,7 +104,7 @@ Render each item in ``collection`` using ``itemRenderer``.
 :itemName: (string, defaults to ``item``) Context variable name for each item
 :itemKey: (string, defaults to ``itemKey``) Context variable name for each item key, when working with array
 :iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``
-:itemRenderer: (string) The renderer definition (simple value, expression or object) will be called once for every collection element, and its results will be concatenated
+:itemRenderer: (string, **required**) The renderer definition (simple value, expression or object) will be called once for every collection element, and its results will be concatenated
 
 Example using an object ``itemRenderer``::
 
@@ -137,7 +137,7 @@ Render each item in ``collection`` using ``itemRenderer`` and return the result 
 :itemName: (string, defaults to ``item``) Context variable name for each item
 :itemKey: (string, defaults to ``itemKey``) Context variable name for each item key, when working with array
 :iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``
-:itemRenderer: (string) The renderer definition (simple value, expression or object) will be called once for every collection element
+:itemRenderer: (string, **required**) The renderer definition (simple value, expression or object) will be called once for every collection element
 
 .. _TYPO3_TypoScript__Case:
 
