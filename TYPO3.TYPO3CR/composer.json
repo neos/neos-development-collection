@@ -1,6 +1,6 @@
 {
     "name": "typo3/typo3cr",
-    "type": "typo3-flow-package",
+    "type": "neos-package",
     "description": "Content repository based on Flow, specifically made for Neos.",
     "license": "GPL-3.0+",
     "require": {
