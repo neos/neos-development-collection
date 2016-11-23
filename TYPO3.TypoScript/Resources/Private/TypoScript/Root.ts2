@@ -11,6 +11,12 @@ prototype(TYPO3.TypoScript:Collection) {
 	itemKey = 'itemKey'
 	iterationName = 'iterator'
 }
+prototype(TYPO3.TypoScript:RawCollection) {
+  @class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RawCollectionImplementation'
+  itemName = 'item'
+  itemKey = 'itemKey'
+  iterationName = 'iterator'
+}
 
 # Render an HTTP response header
 #
