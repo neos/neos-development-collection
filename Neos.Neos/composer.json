@@ -27,6 +27,11 @@
             "Neos\\Neos\\": "Classes"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "TYPO3\\Neos\\Tests\\": "Tests"
+        }
+    },
     "extra": {
         "typo3/flow": {
             "manage-resources": true
