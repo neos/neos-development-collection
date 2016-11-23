@@ -2,7 +2,7 @@
 namespace TYPO3\Neos\Kickstarter\Service;
 
 /*
- * This file is part of the TYPO3.Kickstarter package.
+ * This file is part of the Neos.SiteKickstarter package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
