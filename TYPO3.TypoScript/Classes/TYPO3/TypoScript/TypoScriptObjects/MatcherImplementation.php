@@ -16,7 +16,7 @@ use TYPO3\Flow\Annotations as Flow;
 /**
  * Matcher object for use inside a "Case" statement
  */
-class MatcherImplementation extends AbstractTypoScriptObject
+class MatcherImplementation extends RendererImplementation
 {
     /**
      * @return boolean
@@ -54,24 +54,7 @@ class MatcherImplementation extends AbstractTypoScriptObject
     public function evaluate()
     {
         if ($this->getCondition()) {
-            $rendererPath = sprintf('%s/renderer', $this->path);
-            $canRenderWithRenderer = $this->tsRuntime->canRender($rendererPath);
-            $renderPath = $this->getRenderPath();
-
-            if ($canRenderWithRenderer) {
-                $renderedElement = $this->tsRuntime->evaluate($rendererPath, $this);
-            } elseif ($renderPath !== null) {
-                if (substr($renderPath, 0, 1) === '/') {
-                    $renderedElement = $this->tsRuntime->render(substr($renderPath, 1));
-                } else {
-                    $renderedElement = $this->tsRuntime->render($this->path . '/' . str_replace('.', '/', $renderPath));
-                }
-            } else {
-                $renderedElement = $this->tsRuntime->render(
-                    sprintf('%s/element<%s>', $this->path, $this->getType())
-                );
-            }
-            return $renderedElement;
+            return parent::evaluate();
         } else {
             return CaseImplementation::MATCH_NORESULT;
         }
