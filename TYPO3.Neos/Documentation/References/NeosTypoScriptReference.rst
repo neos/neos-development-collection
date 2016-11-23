@@ -168,7 +168,7 @@ The ordering of matcher definitions can be specified with the ``@position`` prop
 Thus, the priority of existing matchers (e.g. the default Neos document rendering) can be changed by setting or
 overriding the ``@position`` property.
 
-.. note:: The internal ``TYPO3.TypoScript:Matcher`` object type is used to evaluate the matcher definitions wich
+.. note:: The internal ``TYPO3.TypoScript:Matcher`` object type is used to evaluate the matcher definitions which
    is based on the ``TYPO3.TypoScript:Renderer``.
 
 .. _TYPO3_TypoScript__Renderer:
