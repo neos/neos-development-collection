@@ -123,7 +123,11 @@ class SitesController extends AbstractModuleController
     public function indexAction()
     {
         $sitePackagesAndSites = array();
-        foreach ($this->packageManager->getFilteredPackages('available', null, 'typo3-flow-site') as $sitePackageKey => $sitePackage) {
+        $sitePackages = array_merge(
+            $this->packageManager->getFilteredPackages('available', null, 'typo3-flow-site'),
+            $this->packageManager->getFilteredPackages('available', null, 'neos-site')
+        );
+        foreach ($sitePackages as $sitePackageKey => $sitePackage) {
             /** @var PackageInterface $sitePackage */
             $sitePackagesAndSites[strtolower(str_replace('.', '_', $sitePackageKey))] = array('package' => $sitePackage, 'packageKey' => $sitePackage->getPackageKey(), 'packageIsActive' => $this->packageManager->isPackageActive($sitePackage->getPackageKey()));
         }
@@ -207,7 +211,10 @@ class SitesController extends AbstractModuleController
      */
     public function newSiteAction(Site $site = null)
     {
-        $sitePackages = $this->packageManager->getFilteredPackages('active', null, 'typo3-flow-site');
+        $sitePackages = array_merge(
+            $this->packageManager->getFilteredPackages('active', null, 'typo3-flow-site'),
+            $this->packageManager->getFilteredPackages('active', null, 'neos-site')
+        );
         $documentNodeTypes = $this->nodeTypeManager->getSubNodeTypes('TYPO3.Neos:Document', false);
         $this->view->assignMultiple(array(
             'sitePackages' => $sitePackages,
@@ -496,7 +503,10 @@ class SitesController extends AbstractModuleController
      */
     protected function deactivateAllOtherSitePackages($activePackageKey)
     {
-        $sitePackagesToDeactivate = $this->packageManager->getFilteredPackages('active', null, 'typo3-flow-site');
+        $sitePackagesToDeactivate = array_merge(
+            $this->packageManager->getFilteredPackages('active', null, 'typo3-flow-site'),
+            $this->packageManager->getFilteredPackages('active', null, 'neos-site')
+        );
         $deactivatedSitePackages = array();
 
         foreach (array_keys($sitePackagesToDeactivate) as $packageKey) {

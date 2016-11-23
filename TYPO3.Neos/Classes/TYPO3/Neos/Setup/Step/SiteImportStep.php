@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Setup\Step;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Error\Message;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Mvc\FlashMessageContainer;
 use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
@@ -25,9 +26,8 @@ use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\SiteImportService;
 use TYPO3\Neos\Validation\Validator\PackageKeyValidator;
-use TYPO3\Setup\Exception as SetupException;
-use TYPO3\Flow\Error\Message;
 use TYPO3\Setup\Exception;
+use TYPO3\Setup\Exception as SetupException;
 use TYPO3\Setup\Step\AbstractStep;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
@@ -132,7 +132,10 @@ class SiteImportStep extends AbstractStep
         $importSection->setLabel('Import a site from an existing site package');
 
         $sitePackages = array();
-        foreach ($this->packageManager->getFilteredPackages('available', null, 'typo3-flow-site') as $package) {
+        foreach (array_merge(
+            $this->packageManager->getFilteredPackages('available', null, 'typo3-flow-site'),
+            $this->packageManager->getFilteredPackages('available', null, 'neos-site')
+        ) as $package) {
             $sitePackages[$package->getPackageKey()] = $package->getPackageKey();
         }
 
@@ -240,7 +243,10 @@ class SiteImportStep extends AbstractStep
      */
     protected function deactivateOtherSitePackages($packageKey)
     {
-        $sitePackagesToDeactivate = $this->packageManager->getFilteredPackages('active', null, 'typo3-flow-site');
+        $sitePackagesToDeactivate = array_merge(
+            $this->packageManager->getFilteredPackages('active', null, 'typo3-flow-site'),
+            $this->packageManager->getFilteredPackages('active', null, 'neos-site')
+        );
         $deactivatedSitePackages = array();
         foreach ($sitePackagesToDeactivate as $sitePackageToDeactivate) {
             if ($sitePackageToDeactivate->getPackageKey() !== $packageKey) {
