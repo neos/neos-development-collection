@@ -1,6 +1,6 @@
 {
     "name": "typo3/typoscript",
-    "type": "typo3-flow-package",
+    "type": "neos-package",
     "description": "TypoScript is a hierarchical, prototype based processing language",
     "license": "GPL-3.0+",
     "require": {
