@@ -23,6 +23,7 @@ additionalProperties:
                 additionalProperties: FALSE
                 properties:
                   'message': { type: string, description: "Help text for this property. Supports markdown." }
+                  'thumbnail': { type: string, description: "Url of a thumbnail-image to display alongside the help-message. (resource://-uris are resolved)"}
 
               'reloadIfChanged': { type: boolean, description: "If this property changes, should a element refresh occur?" }
 

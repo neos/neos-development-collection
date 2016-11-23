@@ -161,14 +161,6 @@ class NodeTypeConfigurationEnrichmentAspect
             if (isset($propertyConfiguration['ui']['help']['message']) && $this->shouldFetchTranslation($propertyConfiguration['ui']['help'], 'message')) {
                 $propertyConfiguration['ui']['help']['message'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'ui.help.message');
             }
-
-            if (isset($configuration['ui']['help'])) {
-                $configurationThumbnail = isset($propertyConfiguration['ui']['help']['thumbnail']) ? $propertyConfiguration['ui']['help']['thumbnail'] : null;
-                $thumbnailUrl = $this->resolveHelpMessageThumbnail($nodeTypeName, $configurationThumbnail);
-                if ($thumbnailUrl !== '') {
-                    $propertyConfiguration['ui']['help']['thumbnail'] = $thumbnailUrl;
-                }
-            }
         }
     }
 
