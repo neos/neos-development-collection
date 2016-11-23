@@ -15,7 +15,7 @@ use TYPO3\Eel\EelEvaluatorInterface;
 use TYPO3\Eel\ProtectedContext;
 use TYPO3\Flow\Exception;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
-use TYPO3\Flow\Object\ObjectManager;
+use TYPO3\Flow\ObjectManagement\ObjectManager;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler;
 use TYPO3\TypoScript\Core\Runtime;
@@ -33,7 +33,7 @@ class RuntimeTest extends UnitTestCase
     {
         $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
         $runtimeException = new RuntimeException('I am a parent exception', 123, new Exception('I am a previous exception'));
-        $runtime = $this->getMockBuilder('TYPO3\TypoScript\Core\Runtime')->setMethods(array('evaluateInternal', 'handleRenderingException'))->setConstructorArgs(array(array(), $controllerContext))->getMock();
+        $runtime = $this->getMockBuilder(Runtime::class)->setMethods(array('evaluateInternal', 'handleRenderingException'))->setConstructorArgs(array(array(), $controllerContext))->getMock();
         $runtime->injectSettings(array('rendering' => array('exceptionHandler' => ThrowingHandler::class)));
         $runtime->expects($this->any())->method('evaluateInternal')->will($this->throwException($runtimeException));
         $runtime->expects($this->once())->method('handleRenderingException')->with('/foo/bar', $runtimeException)->will($this->returnValue('Exception Message'));

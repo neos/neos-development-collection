@@ -12,7 +12,7 @@ namespace TYPO3\Media\ViewHelpers;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Model\ThumbnailConfiguration;

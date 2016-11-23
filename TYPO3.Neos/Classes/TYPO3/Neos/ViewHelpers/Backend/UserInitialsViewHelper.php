@@ -14,7 +14,7 @@ namespace TYPO3\Neos\ViewHelpers\Backend;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\I18n\EelHelper\TranslationHelper;
 use TYPO3\Flow\Security\AccountRepository;
-use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\Neos\Service\UserService;
 use TYPO3\Neos\Domain\Service\UserService as DomainUserService;
 use TYPO3\Party\Domain\Model\Person;

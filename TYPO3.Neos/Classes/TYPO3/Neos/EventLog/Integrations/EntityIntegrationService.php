@@ -18,6 +18,7 @@ use TYPO3\Eel\Exception;
 use TYPO3\Eel\Utility;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SystemLoggerInterface;
+use TYPO3\Neos\EventLog\Domain\Model\Event;
 use TYPO3\Neos\EventLog\Domain\Service\EventEmittingService;
 
 /**
@@ -104,7 +105,7 @@ class EntityIntegrationService extends AbstractIntegrationService
                     }
 
                     $event = $this->eventEmittingService->emit($entityMonitoringConfiguration['events']['created'], $data);
-                    $unitOfWork->computeChangeSet($entityManager->getClassMetadata('TYPO3\Neos\EventLog\Domain\Model\Event'), $event);
+                    $unitOfWork->computeChangeSet($entityManager->getClassMetadata(Event::class), $event);
                 }
             }
         }
@@ -122,7 +123,7 @@ class EntityIntegrationService extends AbstractIntegrationService
                     }
 
                     $event = $this->eventEmittingService->emit($entityMonitoringConfiguration['events']['deleted'], $data);
-                    $unitOfWork->computeChangeSet($entityManager->getClassMetadata('TYPO3\Neos\EventLog\Domain\Model\Event'), $event);
+                    $unitOfWork->computeChangeSet($entityManager->getClassMetadata(Event::class), $event);
                 }
             }
         }

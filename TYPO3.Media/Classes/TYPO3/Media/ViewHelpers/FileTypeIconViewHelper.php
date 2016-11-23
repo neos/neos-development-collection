@@ -12,8 +12,8 @@ namespace TYPO3\Media\ViewHelpers;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Resource\ResourceManager;
-use TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
+use TYPO3\Flow\ResourceManagement\ResourceManager;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Service\FileTypeIconService;
 
@@ -23,11 +23,11 @@ use TYPO3\Media\Domain\Service\FileTypeIconService;
  * = Examples =
  *
  * <code title="Rendering an asset filetype icon">
- * <typo3.media:fileTypeIcon asset="{assetObject}" alt="a filetype icon" height="16" />
+ * <typo3.media:fileTypeIcon file="{assetObject}" height="16" />
  * </code>
  * <output>
  * (depending on the asset, no scaling applied)
- * <img src="_Resources/Static/Packages/TYPO3/Media/Icons/16px/jpg.png" height="16" alt="a filetype icon" />
+ * <img src="_Resources/Static/Packages/TYPO3/Media/Icons/16px/jpg.png" height="16" alt="filetype alt text" />
  * </output>
  *
  */

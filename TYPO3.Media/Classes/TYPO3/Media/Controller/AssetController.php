@@ -21,9 +21,9 @@ use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Mvc\View\JsonView;
 use TYPO3\Flow\Mvc\View\ViewInterface;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
-use TYPO3\Flow\Resource\Resource as FlowResource;
+use TYPO3\Flow\ResourceManagement\PersistentResource;
 use TYPO3\Flow\Utility\Files;
-use TYPO3\Fluid\View\TemplateView;
+use Neos\FluidAdaptor\View\TemplateView;
 use TYPO3\Media\Domain\Repository\AssetRepository;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Repository\AudioRepository;
@@ -293,11 +293,11 @@ class AssetController extends ActionController
      * Replace the resource on an asset.
      *
      * @param AssetInterface $asset
-     * @param FlowResource $resource
+     * @param PersistentResource $resource
      * @param array $options
      * @return void
      */
-    public function updateAssetResourceAction(AssetInterface $asset, FlowResource $resource, array $options = [])
+    public function updateAssetResourceAction(AssetInterface $asset, PersistentResource $resource, array $options = [])
     {
         try {
             $this->assetService->replaceAssetResource($asset, $resource, $options);
