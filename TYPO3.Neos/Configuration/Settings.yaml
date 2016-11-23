@@ -101,6 +101,8 @@ TYPO3:
       packagesPathByType:
         'typo3-flow-site': 'Sites'
         'typo3-flow-plugin': 'Plugins'
+        'neos-site': 'Sites'
+        'neos-plugin': 'Plugins'
 
   TYPO3CR:
     # This instructs neos to fallback to the given type if a node type can't be found (because it was removed or has
