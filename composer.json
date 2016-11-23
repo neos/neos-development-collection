@@ -8,6 +8,7 @@
         "php": ">=5.5.0",
         "typo3/flow": "*",
         "typo3/imagine": "*",
+        "neos/fluid-adaptor": "*",
         "typo3/kickstart": "*",
         "typo3/form": "*",
         "typo3/party": "*",
