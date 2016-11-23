@@ -6,10 +6,11 @@
     "require": {
         "typo3/neos": "*",
         "typo3/kickstart": "*",
-        "typo3/neos-nodetypes": "*"
+        "typo3/neos-nodetypes": "*",
+        "neos/fluid-adaptor": "*"
     },
     "autoload": {
-        "psr-4": { 
+        "psr-4": {
             "TYPO3\\Neos\\Kickstarter\\": "Classes"
         }
     }
