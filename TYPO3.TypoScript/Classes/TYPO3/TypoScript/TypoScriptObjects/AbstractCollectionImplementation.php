@@ -64,18 +64,29 @@ abstract class AbstractCollectionImplementation extends AbstractTypoScriptObject
     }
 
     /**
-     * Evaluate the collection nodes
+     * Evaluate the collection nodes as concatenated string
      *
      * @return string
      * @throws TypoScriptException
      */
     public function evaluate()
     {
+        return implode('', $this->evaluateAsArray());
+    }
+
+    /**
+     * Evaluate the collection nodes as array
+     *
+     * @return array
+     * @throws TypoScriptException
+     */
+    public function evaluateAsArray()
+    {
         $collection = $this->getCollection();
 
-        $output = '';
+        $result = [];
         if ($collection === null) {
-            return '';
+            return $result;
         }
         $this->numberOfRenderedNodes = 0;
         $itemName = $this->getItemName();
@@ -96,12 +107,12 @@ abstract class AbstractCollectionImplementation extends AbstractTypoScriptObject
             }
 
             $this->tsRuntime->pushContextArray($context);
-            $output .= $this->tsRuntime->render($this->path . '/itemRenderer');
+            $result[] =  $this->tsRuntime->render($this->path . '/itemRenderer');
             $this->tsRuntime->popContext();
             $this->numberOfRenderedNodes++;
         }
 
-        return $output;
+        return $result;
     }
 
     /**
