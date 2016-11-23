@@ -8,8 +8,8 @@
         "typo3/neos": "*"
     },
     "autoload": {
-        "psr-0": {
-            "TYPO3\\Neos\\NodeTypes": "Classes"
+        "psr-4": {
+            "TYPO3\\Neos\\NodeTypes\\": "Classes"
         }
     }
 }
