@@ -54,8 +54,8 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 		}
 
 		neosBackendHeader = TYPO3.TypoScript:Value {
+			@position = 'end 10000'
 			value = TYPO3.TypoScript:Template {
-				@position = 'end 10000'
 				templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendHeaderData.html'
 				node = ${documentNode}
 
@@ -72,8 +72,8 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 
 
 		neosBackendEndpoints = TYPO3.TypoScript:Value {
+			@position = 'end 10001'
 			value = TYPO3.TypoScript:Template {
-				@position = 'end 10001'
 				templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendEndpoints.html'
 				node = ${documentNode}
 				account = ${Security.getAccount()}
@@ -141,8 +141,8 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 
 	# Required for the backend to work.
 	neosBackendContainer = TYPO3.TypoScript:Value {
+		@position = 'before closingBodyTag'
 		value = TYPO3.TypoScript:Template {
-			@position = 'before closingBodyTag'
 			templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendContainer.html'
 			node = ${documentNode}
 
