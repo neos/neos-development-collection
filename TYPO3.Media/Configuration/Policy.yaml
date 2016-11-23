@@ -14,5 +14,5 @@ roles:
   'TYPO3.Flow:Everybody':
     privileges:
       -
-        privilegeTarget: 'TYPO3.Media:Thumbnail'
+        privilegeTarget: 'Neos.Media:Thumbnail'
         permission: GRANT

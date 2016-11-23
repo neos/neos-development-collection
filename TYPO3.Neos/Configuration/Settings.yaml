@@ -471,15 +471,6 @@ TYPO3:
     view:
       title: 'Neos Setup'
 
-  Media:
-    thumbnailPresets:
-      'TYPO3.Neos:Thumbnail':
-        maximumWidth: 250
-        maximumHeight: 250
-      'TYPO3.Neos:Preview':
-        maximumWidth: 1000
-        maximumHeight: 1000
-
   TypoScript:
     rendering:
       exceptionHandler: 'TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler'

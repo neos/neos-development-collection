@@ -74,7 +74,7 @@
 		</div>
 		<div class="neos-footer">
 			<f:link.action action="index" class="neos-button neos-action-cancel">{neos:backend.translate(id: 'media.cancel', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
-			<f:security.ifAccess privilegeTarget="TYPO3.Neos:Backend.Module.Media.ReplaceAssetResource">
+			<f:security.ifAccess privilegeTarget="Neos.Media.Browser:Backend.Module.Media.ReplaceAssetResource">
 				<f:link.action action="replaceAssetResource" arguments="{asset: asset}" class="neos-button">{neos:backend.translate(id: 'media.replaceAssetResource', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
 			</f:security.ifAccess>
 			<f:if condition="{asset.inUse}">
@@ -122,7 +122,7 @@
 	<label>{neos:backend.translate(id: 'media.preview', source: 'Modules', package: 'TYPO3.Neos')}</label>
 	<div class="neos-preview-image">
 		<a href="{f:uri.resource(resource: asset.resource)}" target="_blank">
-			<m:thumbnail asset="{asset}" preset="TYPO3.Neos:Preview" alt="{asset.label}" async="{settings.asyncThumbnails}" class="img-polaroid" />
+			<m:thumbnail asset="{asset}" preset="Neos.Media.Browser:Preview" alt="{asset.label}" async="{settings.asyncThumbnails}" class="img-polaroid" />
 		</a>
 	</div>
 </f:section>

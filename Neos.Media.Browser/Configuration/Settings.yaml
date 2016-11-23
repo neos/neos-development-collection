@@ -9,10 +9,9 @@
 #                                                                        #
 
 Neos:
-
   Media:
     Browser:
-      bodyClasses: 'neos neos-module media-browser media-module'
+      bodyClasses: 'neos neos-module media-browser'
       scripts:
         - 'resource://TYPO3.Neos/Public/Library/jquery/jquery-2.0.3.js'
         - 'resource://TYPO3.Twitter.Bootstrap/Public/2/js/bootstrap.min.js'
@@ -47,3 +46,12 @@ TYPO3:
       translation:
         autoInclude:
           'Neos.Media.Browser': ['Modules']
+
+  Media:
+    thumbnailPresets:
+      'Neos.Media.Browser:Thumbnail':
+        maximumWidth: 250
+        maximumHeight: 250
+      'Neos.Media.Browser:Preview':
+        maximumWidth: 1000
+        maximumHeight: 1000

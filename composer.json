@@ -19,6 +19,7 @@
     },
     "replace": {
         "neos/diff": "self.version",
+        "neos/media-browser": "self.version",
         "typo3/media": "self.version",
         "typo3/neos-kickstarter": "self.version",
         "typo3/neos-nodetypes": "self.version",
@@ -34,6 +35,9 @@
         "psr-4": {
             "Neos\\Diff\\": [
                 "Neos.Diff/Classes"
+            ],
+            "Neos\\Media\\Browser\\": [
+                "Neos.Media.Browser/Classes"
             ],
             "TYPO3\\Neos\\Kickstarter\\": [
                 "TYPO3.Neos.Kickstarter/Classes"
