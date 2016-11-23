@@ -9,8 +9,8 @@
         "typo3/neos-nodetypes": "*"
     },
     "autoload": {
-        "psr-0": {
-            "TYPO3\\Neos\\Kickstarter": "Classes"
+        "psr-4": { 
+            "TYPO3\\Neos\\Kickstarter\\": "Classes"
         }
     }
 }
