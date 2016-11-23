@@ -1,0 +1,15 @@
+'TYPO3.Neos:NodeTypeWithInvalidFusionPrototypeGenerator':
+  options:
+    fusion:
+      prototypeGenerator: TYPO3\Neos\Domain\Service\InexsitentPrototypeGenerator
+
+'TYPO3.Neos:NodeTypeWithoutFusionPrototypeGenerator': []
+
+'TYPO3.Neos:NodeTypeWithPrototypeGenerator':
+  options:
+    fusion:
+      prototypeGenerator: TYPO3\Neos\Tests\Functional\Domain\Service\Fixtures\TestablePrototypeGenerator
+
+'TYPO3.Neos:NodeTypeWithInheritedPrototypeGenerator':
+  superTypes:
+    'TYPO3.Neos:NodeTypeWithPrototypeGenerator': true
