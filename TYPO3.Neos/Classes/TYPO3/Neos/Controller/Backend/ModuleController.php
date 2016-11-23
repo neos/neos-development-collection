@@ -46,20 +46,21 @@ class ModuleController extends ActionController
     protected $securityContext;
 
     /**
-     * @var MenuHelper
      * @Flow\Inject
+     * @var MenuHelper
      */
     protected $menuHelper;
 
     /**
-     * @var PartyService
      * @Flow\Inject
+     * @var PartyService
      */
     protected $partyService;
 
     /**
      * @param array $module
      * @return mixed
+     * @throws DisabledModuleException
      */
     public function indexAction(array $module)
     {
