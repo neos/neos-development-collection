@@ -116,7 +116,7 @@ class NodeTypeManagerTest extends UnitTestCase
             ),
             'properties' => array(
                 'image' => array(
-                    'type' => 'TYPO3\Neos\Domain\Model\Media\Image',
+                    'type' => \TYPO3\Neos\Domain\Model\Media\Image::class,
                     'label' => 'Image'
                 )
             )

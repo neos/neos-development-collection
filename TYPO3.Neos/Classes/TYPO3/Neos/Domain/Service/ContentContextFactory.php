@@ -120,7 +120,7 @@ class ContentContextFactory extends ContextFactory
             $defaultContextProperties['currentSite'] = $currentDomain->getSite();
             $defaultContextProperties['currentDomain'] = $currentDomain;
         } else {
-            $defaultContextProperties['currentSite'] = $this->siteRepository->findFirstOnline();
+            $defaultContextProperties['currentSite'] = $this->siteRepository->findDefault();
         }
 
         return $defaultContextProperties;
@@ -155,7 +155,7 @@ class ContentContextFactory extends ContextFactory
             } elseif ($propertyValue instanceof Site) {
                 $stringValue = $propertyValue->getNodeName();
             } elseif ($propertyValue instanceof Domain) {
-                $stringValue = $propertyValue->getHostPattern();
+                $stringValue = $propertyValue->getHostname();
             } else {
                 $stringValue = (string)$propertyValue;
             }

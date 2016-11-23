@@ -94,6 +94,7 @@ class NodeImportServiceTest extends UnitTestCase
             }
             throw new \Exception('Target type ' . $targetType . ' not supported in property mapper mock');
         }));
+        $this->mockPropertyMapper->expects($this->any())->method('getMessages')->willReturn(new \TYPO3\Flow\Error\Result());
 
         $nodeImportService->import($xmlReader, '/');
 
@@ -193,7 +194,7 @@ class NodeImportServiceTest extends UnitTestCase
                     'uriPathSegment' => 'home',
                     'image' =>
                         array(
-                            'targetType' => 'TYPO3\Media\Domain\Model\ImageVariant',
+                            'targetType' => \TYPO3\Media\Domain\Model\ImageVariant::class,
                             'source' =>
                                 array(
                                     'originalImage' =>
@@ -265,7 +266,7 @@ class NodeImportServiceTest extends UnitTestCase
                 'properties' => array(
                     'assets' => array(
                         0 => array(
-                            'targetType' => 'TYPO3\Media\Domain\Model\Image',
+                            'targetType' => \TYPO3\Media\Domain\Model\Image::class,
                             'source' =>
                                 array(
                                     'title' => '',
@@ -278,7 +279,7 @@ class NodeImportServiceTest extends UnitTestCase
                                 ),
                         ),
                         1 => array(
-                            'targetType' => 'TYPO3\\Media\\Domain\\Model\\Asset',
+                            'targetType' => \TYPO3\Media\Domain\Model\Asset::class,
                             'source' =>
                                 array(
                                     'title' => '',
@@ -310,6 +311,7 @@ class NodeImportServiceTest extends UnitTestCase
                 'source' => $source
             );
         }));
+        $this->mockPropertyMapper->expects($this->any())->method('getMessages')->willReturn(new \TYPO3\Flow\Error\Result());
 
         $nodeImportService->import($xmlReader, '/');
 
@@ -402,7 +404,7 @@ class NodeImportServiceTest extends UnitTestCase
         $this->assertTrue($result);
 
         /** @var \TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService $nodeImportService */
-        $nodeImportService = $this->getMockBuilder('TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService')->setMethods(array('persistNodeData'))->getMock();
+        $nodeImportService = $this->getMockBuilder(\TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService::class)->setMethods(array('persistNodeData'))->getMock();
         $this->inject($nodeImportService, 'propertyMapper', $this->mockPropertyMapper);
         $this->inject($nodeImportService, 'securityContext', $this->mockSecurityContext);
 
@@ -424,6 +426,7 @@ class NodeImportServiceTest extends UnitTestCase
                 'source' => $source
             );
         }));
+        $this->mockPropertyMapper->expects($this->any())->method('getMessages')->willReturn(new \TYPO3\Flow\Error\Result());
 
         $nodeImportService->import($xmlReader, '/');
 

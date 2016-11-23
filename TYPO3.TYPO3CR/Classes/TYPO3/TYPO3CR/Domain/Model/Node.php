@@ -891,7 +891,7 @@ class Node implements NodeInterface, CacheAwareInterface
     {
         $value = $this->nodeData->getProperty($propertyName);
         if (empty($value)) {
-            return $value;
+            return null;
         }
 
         $nodeType = $this->getNodeType();

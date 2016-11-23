@@ -53,33 +53,39 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 			content = ${q(node).property('title')}
 		}
 
-		neosBackendHeader = TYPO3.TypoScript:Template {
-			@position = 'end 10000'
-			templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendHeaderData.html'
-			node = ${documentNode}
+		neosBackendHeader = TYPO3.TypoScript:Value {
+			value = TYPO3.TypoScript:Template {
+				@position = 'end 10000'
+				templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendHeaderData.html'
+				node = ${documentNode}
 
-			@cache {
-				mode = 'uncached'
-				context {
-					1 = 'documentNode'
+				@cache {
+					mode = 'uncached'
+					context {
+						1 = 'documentNode'
+					}
 				}
 			}
 
 			@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 		}
 
-		neosBackendEndpoints = TYPO3.TypoScript:Template {
-			@position = 'end 10001'
-			templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendEndpoints.html'
-			node = ${documentNode}
-			account = ${Security.getAccount()}
 
-			@cache {
-				mode = 'uncached'
-				context {
-					1 = 'documentNode'
+		neosBackendEndpoints = TYPO3.TypoScript:Value {
+			value = TYPO3.TypoScript:Template {
+				@position = 'end 10001'
+				templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendEndpoints.html'
+				node = ${documentNode}
+				account = ${Security.getAccount()}
+
+				@cache {
+					mode = 'uncached'
+					context {
+						1 = 'documentNode'
+					}
 				}
 			}
+
 			@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 		}
 
@@ -134,19 +140,23 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 	}
 
 	# Required for the backend to work.
-	neosBackendContainer = TYPO3.TypoScript:Template {
-		@position = 'before closingBodyTag'
-		templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendContainer.html'
-		node = ${documentNode}
+	neosBackendContainer = TYPO3.TypoScript:Value {
+		value = TYPO3.TypoScript:Template {
+			@position = 'before closingBodyTag'
+			templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendContainer.html'
+			node = ${documentNode}
 
-		@cache {
-			mode = 'uncached'
-			context {
-				1 = 'documentNode'
+			@cache {
+				mode = 'uncached'
+				context {
+					1 = 'documentNode'
+				}
 			}
 		}
+
 		@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 	}
+
 
 	# This enables redirecting to the last visited page after login
 	lastVisitedNodeScript = TYPO3.TypoScript:Tag {

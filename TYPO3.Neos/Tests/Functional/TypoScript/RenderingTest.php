@@ -324,7 +324,7 @@ class RenderingTest extends AbstractNodeTest
         $typoScriptRuntime = $this->createRuntimeWithFixtures($additionalTypoScriptFile);
         $typoScriptRuntime->setEnableContentCache(false);
         if ($debugMode) {
-            $typoScriptRuntime->injectSettings(array('debugMode' => true, 'rendering' => array('exceptionHandler' => 'TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler')));
+            $typoScriptRuntime->injectSettings(array('debugMode' => true, 'rendering' => array('exceptionHandler' => \TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler::class)));
         }
         $contentContext = $this->node->getContext();
         if (!$contentContext instanceof ContentContext) {

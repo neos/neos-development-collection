@@ -14,7 +14,7 @@ namespace TYPO3\Neos\Controller\Service;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Flow\Mvc\View\ViewInterface;
-use TYPO3\Fluid\View\TemplateView;
+use Neos\FluidAdaptor\View\TemplateView;
 use TYPO3\Media\Domain\Repository\AssetRepository;
 use TYPO3\Media\Domain\Repository\TagRepository;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;

@@ -12,7 +12,7 @@ namespace TYPO3\Media\Domain\Strategy;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Resource\Resource;
+use TYPO3\Flow\ResourceManagement\PersistentResource;
 use TYPO3\Flow\Utility\MediaTypes;
 use TYPO3\Flow\Utility\PositionalArraySorter;
 
@@ -41,11 +41,11 @@ class ConfigurationAssetModelMappingStrategy implements AssetModelMappingStrateg
     /**
      * Map the given resource to a media model class.
      *
-     * @param Resource $resource
+     * @param PersistentResource $resource
      * @param array $additionalProperties Optional properties that can be taken into account for deciding the model class. what you get here can depend on the caller, so you should always fallback to something based on the resource.
      * @return string
      */
-    public function map(Resource $resource, array $additionalProperties = array())
+    public function map(PersistentResource $resource, array $additionalProperties = array())
     {
         $mediaType = MediaTypes::getMediaTypeFromFilename($resource->getFilename());
         foreach ($this->settings['patterns'] as $pattern => $mappingInformation) {

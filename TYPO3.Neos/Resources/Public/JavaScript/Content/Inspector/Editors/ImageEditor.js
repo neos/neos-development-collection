@@ -32,6 +32,9 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 		cropLabel: function () {
 			return I18n.translate('TYPO3.Neos:Main:crop', 'Crop');
 		}.property(),
+		mediaLabel: function () {
+			return I18n.translate('TYPO3.Neos:Main:media', 'Media');
+		}.property(),
 
 		/**
 		 * Size of the image preview. Public configuration.
@@ -277,7 +280,6 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 				width: this.get('imagePreviewMaximumDimensions.width') + 'px',
 				height: this.get('imagePreviewMaximumDimensions.height') + 'px'
 			});
-
 			this._readAndDeserializeValue();
 		},
 
@@ -1142,6 +1144,13 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 
 		_hideImageLoader: function () {
 			this.loadingIndicator.stop();
-		}
+		},
+
+		initializeCropButtonTooltip: function() {
+			// Re-initialize crop button tooltip after re-render
+			Ember.run.next(this, function() {
+				this.$('[data-neos-tooltip]:not([data-original-title])').tooltip({container: '#neos-application'});
+			});
+		}.observes('shouldRenderCrop')
 	});
 });

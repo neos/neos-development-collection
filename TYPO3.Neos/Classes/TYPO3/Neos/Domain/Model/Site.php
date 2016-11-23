@@ -249,7 +249,7 @@ class Site
      */
     public function hasActiveDomains()
     {
-        return $this->domains->exists(function ($index, $domain) {
+        return $this->domains->exists(function ($index, Domain $domain) {
             return $domain->getActive();
         });
     }
@@ -260,7 +260,7 @@ class Site
      */
     public function getActiveDomains()
     {
-        $activeDomains = $this->domains->filter(function ($domain) {
+        $activeDomains = $this->domains->filter(function (Domain $domain) {
             return $domain->getActive();
         });
         return $activeDomains;

@@ -132,7 +132,6 @@ class TemplateImplementation extends AbstractArrayTypoScriptObject
         $this->initializeView($fluidTemplate);
 
         $sectionName = $this->getSectionName();
-
         if ($sectionName !== null) {
             return $fluidTemplate->renderSection($sectionName);
         } else {

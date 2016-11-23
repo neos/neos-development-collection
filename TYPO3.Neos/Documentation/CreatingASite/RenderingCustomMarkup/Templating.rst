@@ -40,7 +40,7 @@ resolves the template HTML file, and renders the template afterwards.
 Below, you'll find a snippet of a real-world template displaying a list of blog
 postings. Use it to check whether you find the template language intuitive::
 
-	{namespace f=TYPO3\Fluid\ViewHelpers}
+	{namespace f=Neos\FluidAdaptor\ViewHelpers}
 	<html>
 	<head><title>Blog</title></head>
 	<body>
@@ -57,7 +57,7 @@ postings. Use it to check whether you find the template language intuitive::
 	</body>
 	</html>
 
-* The *Namespace Import* makes the ``\TYPO3\Fluid\ViewHelper`` namespace available
+* The *Namespace Import* makes the ``\Neos\FluidAdaptor\ViewHelper`` namespace available
   under the shorthand f.
 * The ``<f:for>`` essentially corresponds to ``foreach ($postings as $posting)`` in PHP.
 * With the dot-notation (``{posting.title}`` or ``{posting.author.name}``), you
@@ -92,9 +92,9 @@ XML behavior.
 
 Namespaces can be defined in a template in two ways:
 
-{namespace f=TYPO3\Fluid\ViewHelpers}
+{namespace f=Neos\FluidAdaptor\ViewHelpers}
   This is a non-standard way only understood by Fluid. It links the ``f``
-  prefix to the PHP namespace ``\TYPO3\Fluid\ViewHelpers``.
+  prefix to the PHP namespace ``\Neos\FluidAdaptor\ViewHelpers``.
 <html xmlns:foo=”http://some/unique/namespace”>
   The standard for declaring a namespace in XML. This will link the ``foo``
   prefix to the URI ``http://some/unique/namespace`` and Fluid can look up
@@ -102,7 +102,7 @@ Namespaces can be defined in a template in two ways:
   configuration). This makes it possible for your XML editor to validate the
   template files and even use an XSD schema for auto completion.
 
-A namespace linking ``f`` to ``\TYPO3\Fluid\ViewHelpers`` is imported by
+A namespace linking ``f`` to ``\Neos\FluidAdaptor\ViewHelpers`` is imported by
 default. All other namespaces need to be imported explicitly.
 
 If using the XML namespace syntax the default pattern
@@ -181,7 +181,7 @@ as PHP classes (more on that later).
 
 This concept is best understood with an example::
 
-	{namespace f=TYPO3\Fluid\ViewHelpers}
+	{namespace f=Neos\FluidAdaptor\ViewHelpers}
 	<f:link.action controller="Administration">Administration</f:link.action>
 
 The example consists of two parts:
@@ -194,14 +194,14 @@ Now, the main difference between Fluid and other templating engines is how the
 view helpers are implemented: For each view helper, there exists a corresponding
 PHP class. Let's see how this works for the example above:
 
-The ``<f:link.action />`` tag is implemented in the class ``\TYPO3\Fluid\ViewHelpers\Link\ActionViewHelper``.
+The ``<f:link.action />`` tag is implemented in the class ``\Neos\FluidAdaptor\ViewHelpers\Link\ActionViewHelper``.
 
 .. note::
 
 	The class name of such a view helper is constructed for a given tag as follows:
 
 	#. The first part of the class name is the namespace which was imported (the namespace
-	   prefix ``f`` was expanded to its full namespace ``TYPO3\Fluid\ViewHelpers``)
+	   prefix ``f`` was expanded to its full namespace ``Neos\FluidAdaptor\ViewHelpers``)
 	#. The unqualified name of the tag, without the prefix, is capitalized (``Link``),
 	   and the postfix ViewHelper is appended.
 
@@ -454,7 +454,7 @@ This is the concept which makes Fluid extremely versatile and extensible.
 
 If you want to create a view helper which you can call from your template (as a
 tag), you just write a plain PHP class which needs to inherit from
-``TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper`` (or its subclasses). You need to implement
+``Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper`` (or its subclasses). You need to implement
 only one method to write a view helper:
 
 .. code-block:: php
@@ -477,7 +477,7 @@ You have the following possibilities to access the environment when rendering yo
   all arguments you registered previously.
 * ``$this->renderChildren()`` renders everything between the opening and closing
   tag of the view helper and returns the rendered result (as string).
-* ``$this->templateVariableContainer`` is an instance of ``TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer``,
+* ``$this->templateVariableContainer`` is an instance of ``Neos\FluidAdaptor\Core\ViewHelper\TemplateVariableContainer``,
   with which you have access to all variables currently available in the template,
   and can modify the variables currently available in the template.
 
@@ -521,7 +521,7 @@ Implementing this is fairly straightforward, as you will see right now:
 
 .. code-block:: php
 
-	class ForViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
+	class ForViewHelper extends \Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper {
 
 	  /**
 	   * Renders a loop
@@ -573,7 +573,7 @@ have without the ``AbstractTagBasedViewHelper``):
 
 .. code-block:: php
 
-	class ActionViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
+	class ActionViewHelper extends \Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper {
 
 	  public function initializeArguments() {
 		$this->registerArgument('class', 'string', 'CSS class to add to the link');
@@ -673,7 +673,7 @@ is not part of HTML, you could do that as follows:
 		Link with fadeDuration set
 	</f:link.action>
 
-This attribute is available in all tags that inherit from ``TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper``.
+This attribute is available in all tags that inherit from ``Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper``.
 
 AbstractConditionViewHelper
 ---------------------------
@@ -685,7 +685,7 @@ for a usage example, which should be quite self-explanatory:
 
 .. code-block:: php
 
-	class IfViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractConditionViewHelper {
+	class IfViewHelper extends \Neos\FluidAdaptor\Core\ViewHelper\AbstractConditionViewHelper {
 
 		/**
 		 * renders <f:then> child if $condition is true, otherwise renders <f:else> child.
@@ -754,7 +754,7 @@ explaining the API you have available for creating your own widgets.
 ViewHelper
 ~~~~~~~~~~
 
-All widgets inherit from ``TYPO3\Fluid\Core\Widget\AbstractWidgetViewHelper``.
+All widgets inherit from ``Neos\FluidAdaptor\Core\Widget\AbstractWidgetViewHelper``.
 The ViewHelper of the widget is the main entry point; it controls the widget and
 sets necessary configuration for the widget.
 
@@ -774,7 +774,7 @@ There is also a property ``$ajaxWidget``, which we will explain later in :ref:`a
 Controller
 ----------
 
-A widget contains one controller, which must inherit from ``TYPO3\Fluid\Core\Widget\AbstractWidgetController``,
+A widget contains one controller, which must inherit from ``Neos\FluidAdaptor\Core\Widget\AbstractWidgetController``,
 which is an ``ActionController``. There is only one difference between the normal
 ``ActionController`` and the ``AbstractWidgetController``: There is a property
 ``$widgetConfiguration``, containing the widget's configuration which was set in the ViewHelper.

@@ -10,7 +10,7 @@ namespace TYPO3\TypoScript\Tests\Unit\Core;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\TypoScript\Core\Parser;
 use TYPO3\TypoScript\TypoScriptObjects\ArrayImplementation;
@@ -36,10 +36,10 @@ class ParserTest extends UnitTestCase
      */
     protected function setUp()
     {
-        $this->mockObjectManager = $this->createMock('TYPO3\Flow\Object\ObjectManagerInterface');
+        $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $this->mockObjectManager->expects($this->any())->method('isRegistered')->will($this->returnCallback(array($this, 'objectManagerIsRegisteredCallback')));
 
-        $this->parser = $this->getAccessibleMock('TYPO3\TypoScript\Core\Parser', array('dummy'));
+        $this->parser = $this->getAccessibleMock(Parser::class, array('dummy'));
         $this->parser->_set('objectManager', $this->mockObjectManager);
     }
 

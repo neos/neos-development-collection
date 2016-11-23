@@ -15,11 +15,16 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cli\CommandController;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
-use TYPO3\Neos\Domain\Model\Site;
+use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\SiteExportService;
 use TYPO3\Neos\Domain\Service\SiteImportService;
 use TYPO3\Neos\Domain\Service\SiteService;
+use TYPO3\Neos\Domain\Model\Site;
+use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
+use TYPO3\TYPO3CR\Domain\Service\NodeService;
+use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 
 /**
  * The Site Command Controller
@@ -65,6 +70,101 @@ class SiteCommandController extends CommandController
     protected $systemLogger;
 
     /**
+     * @Flow\Inject
+     * @var ContextFactoryInterface
+     */
+    protected $nodeContextFactory;
+
+    /**
+     * @Flow\Inject
+     * @var NodeTypeManager
+     */
+    protected $nodeTypeManager;
+
+    /**
+     * @Flow\Inject
+     * @var NodeService
+     */
+    protected $nodeService;
+
+    /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
+
+    /**
+     * Create a new site
+     *
+     * This command allows to create a blank site with just a single empty document in the default dimension.
+     * The name of the site, the packageKey must be specified.
+     *
+     * If no ``nodeType`` option is specified the command will use `TYPO3.Neos.NodeTypes:Page` as fallback. The node type
+     * must already exists and have the superType ``TYPO3.Neos:Document``.
+     *
+     * If no ``nodeName` option is specified the command will create a unique node-name from the name of the site.
+     * If a node name is given it has to be unique for the setup.
+     *
+     * If the flag ``activate` is set to false new site will not be activated.
+     *
+     * @param string $name The name of the site
+     * @param string $packageKey The site package
+     * @param string $nodeType The node type to use for the site node. (Default = TYPO3.Neos.NodeTypes:Page)
+     * @param string $nodeName The name of the site node. If no nodeName is given it will be determined from the siteName.
+     * @param boolean $inactive The new site is not activated immediately (default = false).
+     * @return void
+     */
+    public function createCommand($name, $packageKey, $nodeType = 'TYPO3.Neos.NodeTypes:Page', $nodeName = null, $inactive = false)
+    {
+        if ($nodeName === null) {
+            $nodeName = $this->nodeService->generateUniqueNodeName(SiteService::SITES_ROOT_PATH, $name);
+        }
+
+        if ($this->siteRepository->findOneByNodeName($nodeName)) {
+            $this->outputLine('<error>A site with siteNodeName "%s" already exists</error>', [$nodeName]);
+            $this->quit(1);
+        }
+
+        if ($this->packageManager->isPackageAvailable($packageKey) === false) {
+            $this->outputLine('<error>Could not find package "%s"</error>', [$packageKey]);
+            $this->quit(1);
+        }
+
+        $siteNodeType = $this->nodeTypeManager->getNodeType($nodeType);
+
+        if ($siteNodeType === null || $siteNodeType->getName() === 'TYPO3.Neos:FallbackNode') {
+            $this->outputLine('<error>The given node type "%s" was not found</error>', [$nodeType]);
+            $this->quit(1);
+        }
+        if ($siteNodeType->isOfType('TYPO3.Neos:Document') === false) {
+            $this->outputLine('<error>The given node type "%s" is not based on the superType "%s"</error>', [$nodeType, 'TYPO3.Neos:Document']);
+            $this->quit(1);
+        }
+
+        $rootNode = $this->nodeContextFactory->create()->getRootNode();
+        // We fetch the workspace to be sure it's known to the persistence manager and persist all
+        // so the workspace and site node are persisted before we import any nodes to it.
+        $rootNode->getContext()->getWorkspace();
+        $this->persistenceManager->persistAll();
+        $sitesNode = $rootNode->getNode(SiteService::SITES_ROOT_PATH);
+        if ($sitesNode === null) {
+            $sitesNode = $rootNode->createNode(NodePaths::getNodeNameFromPath(SiteService::SITES_ROOT_PATH));
+        }
+
+        $siteNode = $sitesNode->createNode($nodeName, $siteNodeType);
+        $siteNode->setProperty('title', $name);
+
+        $site = new Site($nodeName);
+        $site->setSiteResourcesPackageKey($packageKey);
+        $site->setState($inactive ? Site::STATE_OFFLINE : Site::STATE_ONLINE);
+        $site->setName($name);
+
+        $this->siteRepository->add($site);
+
+        $this->outputLine('Successfully created site "%s" with siteNode "%s", type "%s", packageKey "%s" and state "%s"', [$name, $nodeName, $nodeType, $packageKey, $inactive ? 'offline' : 'online']);
+    }
+
+    /**
      * Import sites content
      *
      * This command allows for importing one or more sites or partial content from an XML source. The format must
@@ -101,7 +201,7 @@ class SiteCommandController extends CommandController
                 $site = $this->siteImportService->importFromFile($filename);
             } catch (\Exception $exception) {
                 $this->systemLogger->logException($exception);
-                $this->outputLine('Error: During the import of the file "%s" an exception occurred: %s, see log for further information.', array($filename, $exception->getMessage()));
+                $this->outputLine('<error>During the import of the file "%s" an exception occurred: %s, see log for further information.</error>', array($filename, $exception->getMessage()));
                 $this->quit(1);
             }
         } else {
@@ -109,7 +209,7 @@ class SiteCommandController extends CommandController
                 $site = $this->siteImportService->importFromPackage($packageKey);
             } catch (\Exception $exception) {
                 $this->systemLogger->logException($exception);
-                $this->outputLine('Error: During the import of the "Sites.xml" from the package "%s" an exception occurred: %s, see log for further information.', array($packageKey, $exception->getMessage()));
+                $this->outputLine('<error>During the import of the "Sites.xml" from the package "%s" an exception occurred: %s, see log for further information.</error>', array($packageKey, $exception->getMessage()));
                 $this->quit(1);
             }
         }
@@ -146,7 +246,7 @@ class SiteCommandController extends CommandController
         }
 
         if (count($sites) === 0) {
-            $this->outputLine('Error: No site for exporting found');
+            $this->outputLine('<error>No site for exporting found</error>');
             $this->quit(1);
         }
 
@@ -172,11 +272,15 @@ class SiteCommandController extends CommandController
     /**
      * Remove all content and related data - for now. In the future we need some more sophisticated cleanup.
      *
-     * @param string $siteNodeName Name of a site root node to clear only content of this site.
+     * @param string $siteNode Name of a site root node to clear only content of this site.
+     * @param string $siteNodeName This option is deprecated, use --site-node instead
      * @return void
      */
-    public function pruneCommand($siteNodeName = null)
+    public function pruneCommand($siteNode = null, $siteNodeName = null)
     {
+        if ($siteNode !== null) {
+            $siteNodeName = $siteNode;
+        }
         if ($siteNodeName !== null) {
             $possibleSite = $this->siteRepository->findOneByNodeName($siteNodeName);
             if ($possibleSite === null) {
@@ -192,7 +296,7 @@ class SiteCommandController extends CommandController
     }
 
     /**
-     * Display a list of available sites
+     * List available sites
      *
      * @return void
      */
@@ -215,7 +319,8 @@ class SiteCommandController extends CommandController
             array_push($availableSites, array(
                 'name' => $site->getName(),
                 'nodeName' => $site->getNodeName(),
-                'siteResourcesPackageKey' => $site->getSiteResourcesPackageKey()
+                'siteResourcesPackageKey' => $site->getSiteResourcesPackageKey(),
+                'status' => ($site->getState() === SITE::STATE_ONLINE) ? 'online' : 'offline'
             ));
             if (strlen($site->getName()) > $longestSiteName) {
                 $longestSiteName = strlen($site->getName());
@@ -229,11 +334,52 @@ class SiteCommandController extends CommandController
         }
 
         $this->outputLine();
-        $this->outputLine(' ' . str_pad('Name', $longestSiteName + 15) . str_pad('Node name', $longestNodeName + 15) . 'Resources package');
-        $this->outputLine(str_repeat('-', $longestSiteName + $longestNodeName + $longestSiteResource + 15 + 15 + 2));
+        $this->outputLine(' ' . str_pad('Name', $longestSiteName + 15) . str_pad('Node name', $longestNodeName + 15) . str_pad('Resources package', $longestSiteResource + 15) . 'Status ');
+        $this->outputLine(str_repeat('-', $longestSiteName + $longestNodeName + $longestSiteResource + 7 + 15 + 15 + 15 + 2));
         foreach ($availableSites as $site) {
-            $this->outputLine(' ' . str_pad($site['name'], $longestSiteName + 15) . str_pad($site['nodeName'], $longestNodeName + 15) . $site['siteResourcesPackageKey']);
+            $this->outputLine(' ' . str_pad($site['name'], $longestSiteName + 15) . str_pad($site['nodeName'], $longestNodeName + 15) . str_pad($site['siteResourcesPackageKey'], $longestSiteResource + 15) . $site['status']);
         }
         $this->outputLine();
+    }
+
+    /**
+     * Activate a site
+     *
+     * This command activates the specified site.
+     *
+     * @param string $siteNode The node name of the site to activate
+     * @return void
+     */
+    public function activateCommand($siteNode)
+    {
+        $site = $this->siteRepository->findOneByNodeName($siteNode);
+        if (!$site instanceof Site) {
+            $this->outputLine('<error>Site not found.</error>');
+            $this->quit(1);
+        }
+
+        $site->setState(Site::STATE_ONLINE);
+        $this->siteRepository->update($site);
+        $this->outputLine('Site activated.');
+    }
+
+    /**
+     * Deactivate a site
+     *
+     * This command deactivates the specified site.
+     *
+     * @param string $siteNode The node name of the site to deactivate
+     * @return void
+     */
+    public function deactivateCommand($siteNode)
+    {
+        $site = $this->siteRepository->findOneByNodeName($siteNode);
+        if (!$site instanceof Site) {
+            $this->outputLine('<error>Site not found.</error>');
+            $this->quit(1);
+        }
+        $site->setState(Site::STATE_OFFLINE);
+        $this->siteRepository->update($site);
+        $this->outputLine('Site deactivated.');
     }
 }
