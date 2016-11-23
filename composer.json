@@ -36,14 +36,14 @@
             "Neos\\Diff\\": [
                 "Neos.Diff/Classes"
             ],
+            "TYPO3\\Media": [
+                "TYPO3.Media/Classes"
+            ],
             "TYPO3\\Neos\\Kickstarter\\": [
                 "TYPO3.Neos.Kickstarter/Classes"
             ]
         },
         "psr-0": {
-            "TYPO3\\Media": [
-                "TYPO3.Media/Classes"
-            ],
             "TYPO3\\Neos\\NodeTypes": [
                 "TYPO3.Neos.NodeTypes/Classes"
             ],

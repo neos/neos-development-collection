@@ -9,8 +9,8 @@
         "neos/fluid-adaptor": "*"
     },
     "autoload": {
-        "psr-0": {
-            "TYPO3\\Media": "Classes"
+        "psr-4": {
+            "TYPO3\\Media\\": "Classes"
         }
     },
     "extra": {
