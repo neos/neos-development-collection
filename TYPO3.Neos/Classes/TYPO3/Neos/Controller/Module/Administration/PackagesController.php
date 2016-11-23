@@ -49,8 +49,7 @@ class PackagesController extends AbstractModuleController
                 'version' => $package->getInstalledVersion(),
                 'name' => $package->getComposerManifest('name'),
                 'type' => $package->getComposerManifest('type'),
-                'description' => $package->getPackageMetaData()->getDescription(),
-                'metaData' => $package->getPackageMetaData(),
+                'description' => $package->getComposerManifest('description'),
                 'isActive' => $this->packageManager->isPackageActive($package->getPackageKey()),
                 'isFrozen' => $this->packageManager->isPackageFrozen($package->getPackageKey()),
                 'isProtected' => $package->isProtected()
