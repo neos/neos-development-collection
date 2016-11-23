@@ -58,11 +58,6 @@ function(
 					return;
 				}
 
-				// var helpMessage = '';
-				// if (type.metadata.ui.help && type.metadata.ui.help.message) {
-				// 	helpMessage = type.metadata.ui.help.message;
-				// }
-
 				var label = I18n.translate(type.metadata.ui.label);
 
 				var helpMessage = '';
