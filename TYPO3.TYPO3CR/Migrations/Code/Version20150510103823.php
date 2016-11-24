@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Core\Migrations;
+namespace Neos\Flow\Core\Migrations;
 
 /**
  * Migrates to new super type syntax in node type configuration
