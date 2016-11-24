@@ -11,7 +11,7 @@ namespace TYPO3\TypoScript\Tests\Unit\TypoScriptObjects;
  * source code.
  */
 
-use Neos\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use TYPO3\TypoScript\Core\Runtime;
 use TYPO3\TypoScript\TypoScriptObjects\CaseImplementation;
 

@@ -14,7 +14,7 @@ namespace TYPO3\TypoScript\Tests\Functional\View;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\View\ViewInterface;
-use Neos\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use Neos\Flow\Tests\FunctionalTestCase;
 use TYPO3\TypoScript\View\TypoScriptView;
 

@@ -14,7 +14,7 @@ namespace TYPO3\TypoScript\Core;
 use TYPO3\Eel\Package;
 use Neos\Flow\Annotations as Flow;
 use TYPO3\TypoScript\Exception;
-use Neos\Flow\Utility\Arrays;
+use Neos\Utility\Arrays;
 use TYPO3\TypoScript;
 
 /**
