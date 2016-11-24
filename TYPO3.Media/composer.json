@@ -51,7 +51,8 @@
             "TYPO3.Flow-20161115140400",
             "TYPO3.Flow-20161115140430",
             "Neos.Flow-20161124204700",
-            "Neos.Flow-20161124204701"
+            "Neos.Flow-20161124204701",
+            "Neos.Twitter.Bootstrap-20161124204912"
         ]
     }
 }
