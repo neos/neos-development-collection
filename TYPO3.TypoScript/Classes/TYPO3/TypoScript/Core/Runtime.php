@@ -27,7 +27,7 @@ use Neos\Flow\Security\Exception as SecurityException;
 use TYPO3\TypoScript\Exception\RuntimeException;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractArrayTypoScriptObject;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
-use TYPO3\Eel\Utility as EelUtility;
+use Neos\Eel\Utility as EelUtility;
 
 /**
  * TypoScript Runtime
@@ -61,7 +61,7 @@ class Runtime
     const EVALUATION_SKIPPED = 'Skipped';
 
     /**
-     * @var \TYPO3\Eel\CompilingEvaluator
+     * @var \Neos\Eel\CompilingEvaluator
      * @Flow\Inject
      */
     protected $eelEvaluator;

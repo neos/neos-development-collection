@@ -11,7 +11,7 @@ namespace TYPO3\TypoScript\Core;
  * source code.
  */
 
-use TYPO3\Eel\Package;
+use Neos\Eel\Package;
 use Neos\Flow\Annotations as Flow;
 use TYPO3\TypoScript\Exception;
 use Neos\Utility\Arrays;
