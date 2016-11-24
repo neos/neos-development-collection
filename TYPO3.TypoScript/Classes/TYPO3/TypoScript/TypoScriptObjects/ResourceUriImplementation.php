@@ -14,8 +14,8 @@ namespace TYPO3\TypoScript\TypoScriptObjects;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\I18n\Service;
 use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Resource\Resource;
-use TYPO3\Flow\Resource\ResourceManager;
+use TYPO3\Flow\ResourceManagement\PersistentResource;
+use TYPO3\Flow\ResourceManagement\ResourceManager;
 use TYPO3\TypoScript\Exception as TypoScriptException;
 
 /**
@@ -66,7 +66,7 @@ class ResourceUriImplementation extends AbstractTypoScriptObject
     /**
      * If specified, this resource object is used instead of the path and package information
      *
-     * @return Resource
+     * @return PersistentResource
      */
     public function getResource()
     {
@@ -94,7 +94,7 @@ class ResourceUriImplementation extends AbstractTypoScriptObject
         $resource = $this->getResource();
         if ($resource !== null) {
             $uri = false;
-            if ($resource instanceof Resource) {
+            if ($resource instanceof PersistentResource) {
                 $uri = $this->resourceManager->getPublicPersistentResourceUri($resource);
             }
             if ($uri === false) {

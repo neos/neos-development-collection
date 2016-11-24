@@ -47,7 +47,7 @@ class AssetServiceTest extends UnitTestCase
     {
         $mockAsset = $this->getMockBuilder($modelClassName)->disableOriginalConstructor()->getMock();
 
-        $mockObjectManager = $this->createMock(\TYPO3\Flow\Object\ObjectManagerInterface::class);
+        $mockObjectManager = $this->createMock(\TYPO3\Flow\ObjectManagement\ObjectManagerInterface::class);
         $mockObjectManager->expects($this->once())
             ->method('get')
             ->will($this->returnValue($this->createMock($expectedRepositoryClassName)));

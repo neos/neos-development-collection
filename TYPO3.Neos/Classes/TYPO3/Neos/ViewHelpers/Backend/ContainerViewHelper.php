@@ -21,6 +21,7 @@ use TYPO3\Neos\Controller\Backend\MenuHelper;
 use TYPO3\Neos\Domain\Model\User;
 use TYPO3\Neos\Exception as NeosException;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\Party\Domain\Service\PartyService;
 
 /**
  * ViewHelper for the backend 'container'. Renders the required HTML to integrate
@@ -43,6 +44,12 @@ class ContainerViewHelper extends AbstractViewHelper
      * @var Context
      */
     protected $securityContext;
+
+    /**
+     * @Flow\Inject
+     * @var PartyService
+     */
+    protected $partyService;
 
     /**
      * @var MenuHelper
@@ -83,7 +90,7 @@ class ContainerViewHelper extends AbstractViewHelper
         $innerView->setFormat('html');
         $innerView->setPartialRootPath('resource://TYPO3.Neos/Private/Partials');
 
-        $user = $this->securityContext->getPartyByType(User::class);
+        $user = $this->partyService->getAssignedPartyOfAccount($this->securityContext->getAccount());
 
         $innerView->assignMultiple(array(
             'node' => $node,

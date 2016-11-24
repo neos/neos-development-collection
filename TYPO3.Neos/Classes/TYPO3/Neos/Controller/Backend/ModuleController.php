@@ -22,6 +22,7 @@ use TYPO3\Flow\Utility\MediaTypes;
 use TYPO3\Neos\Controller\Backend\MenuHelper;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 use TYPO3\Neos\Controller\Exception\DisabledModuleException;
+use TYPO3\Party\Domain\Service\PartyService;
 
 /**
  * The TYPO3 Module
@@ -45,14 +46,21 @@ class ModuleController extends ActionController
     protected $securityContext;
 
     /**
-     * @var MenuHelper
      * @Flow\Inject
+     * @var MenuHelper
      */
     protected $menuHelper;
 
     /**
+     * @Flow\Inject
+     * @var PartyService
+     */
+    protected $partyService;
+
+    /**
      * @param array $module
      * @return mixed
+     * @throws DisabledModuleException
      */
     public function indexAction(array $module)
     {
@@ -102,7 +110,7 @@ class ModuleController extends ActionController
             }
             return $moduleResponse->getContent();
         } else {
-            $user = $this->securityContext->getPartyByType(\TYPO3\Neos\Domain\Model\User::class);
+            $user = $this->partyService->getAssignedPartyOfAccount($this->securityContext->getAccount());
 
             $sites = $this->menuHelper->buildSiteList($this->controllerContext);
 

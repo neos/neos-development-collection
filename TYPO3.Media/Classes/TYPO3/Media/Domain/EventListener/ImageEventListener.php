@@ -14,7 +14,7 @@ namespace TYPO3\Media\Domain\EventListener;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheManager;
-use TYPO3\Flow\Resource\Resource as PersistentResource;
+use TYPO3\Flow\ResourceManagement\PersistentResource;
 use TYPO3\Media\Domain\Model\ImageInterface;
 
 /**

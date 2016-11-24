@@ -14,7 +14,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 use TYPO3\Eel\EelEvaluatorInterface;
 use TYPO3\Eel\Utility;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Object\DependencyInjection\DependencyProxy;
+use TYPO3\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use TYPO3\Flow\Utility\Unicode\Functions;
 
 /**

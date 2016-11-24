@@ -9,7 +9,7 @@ define(
 	'Shared/NodeTypeService',
 	'InlineEditing/ContentCommands',
 	'Shared/I18n',
-	'LibraryExtensions/Mousetrap'
+	'Shared/HelpMessage'
 ],
 function(
 	Ember,
@@ -20,7 +20,8 @@ function(
 	NodeActions,
 	NodeTypeService,
 	ContentCommands,
-	I18n
+	I18n,
+	HelpMessage
 ) {
 	return AbstractInsertNodePanel.extend({
 		_node: null,
@@ -57,9 +58,11 @@ function(
 					return;
 				}
 
+				var label = I18n.translate(type.metadata.ui.label);
+
 				var helpMessage = '';
-				if (type.metadata.ui.help && type.metadata.ui.help.message) {
-					helpMessage = type.metadata.ui.help.message;
+				if (type.metadata.ui.help) {
+					helpMessage = HelpMessage(type.metadata.ui.help, label);
 				}
 
 				var groupName = 'group' in type.metadata.ui ? type.metadata.ui.group : 'general';
@@ -68,7 +71,7 @@ function(
 					if (group) {
 						group.get('nodeTypes').pushObject({
 							'nodeType': nodeTypeName,
-							'label': I18n.translate(type.metadata.ui.label),
+							'label': label,
 							'helpMessage': helpMessage,
 							'icon': 'icon' in type.metadata.ui ? type.metadata.ui.icon : 'icon-file',
 							'position': type.metadata.ui.position

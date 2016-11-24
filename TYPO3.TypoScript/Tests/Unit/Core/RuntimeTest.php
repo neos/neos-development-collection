@@ -15,7 +15,7 @@ use TYPO3\Eel\EelEvaluatorInterface;
 use TYPO3\Eel\ProtectedContext;
 use TYPO3\Flow\Exception;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
-use TYPO3\Flow\Object\ObjectManager;
+use TYPO3\Flow\ObjectManagement\ObjectManager;
 use TYPO3\Flow\Tests\UnitTestCase;
 use TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler;
 use TYPO3\TypoScript\Core\Runtime;
