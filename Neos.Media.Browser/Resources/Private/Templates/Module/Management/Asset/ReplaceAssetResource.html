@@ -1,4 +1,4 @@
-{namespace m=TYPO3\Media\ViewHelpers}
+{namespace m=Neos\Media\ViewHelpers}
 {namespace neos=TYPO3\Neos\ViewHelpers}
 <f:layout name="UploadImage" />
 
@@ -28,7 +28,7 @@
                     <f:if condition="{redirectPackageEnabled}">
                         <div>
                             <label class="neos-checkbox neos-inline">
-                                <f:form.checkbox name="options[generateRedirects]" value="1" checked="true" /><span></span> {neos:backend.translate(id: 'media.replace.options.generateRedirects', source: 'Main', package: 'TYPO3.Media')}
+                                <f:form.checkbox name="options[generateRedirects]" value="1" checked="true" /><span></span> {neos:backend.translate(id: 'media.replace.options.generateRedirects', source: 'Main', package: 'Neos.Media')}
                             </label>
                         </div>
                     </f:if>
@@ -74,7 +74,7 @@
     <script type="text/javascript">
         var maximumFileUploadSize = {maximumFileUploadSize};
     </script>
-    <script type="text/javascript" src="{f:uri.resource(package: 'TYPO3.Media', path: 'Scripts/new.js')}"></script>
+    <script type="text/javascript" src="{f:uri.resource(package: 'Neos.Media', path: 'Scripts/new.js')}"></script>
 </f:section>
 
 
