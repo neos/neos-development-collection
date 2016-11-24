@@ -15,13 +15,19 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 
 /**
- * Generate a TypoScript prototype definition for a given node type
+ * Generate a TypoScript prototype definition based on TYPO3.TypoScript:Template and pass all node properties to it
  *
  * @Flow\Scope("singleton")
- * @api
  */
 class DefaultPrototypeGenerator implements DefaultPrototypeGeneratorInterface
 {
+    /**
+     * The Name of the prototype that is extended
+     *
+     * @var string
+     */
+    protected $basePrototypeName = 'TYPO3.TypoScript:Template';
+
     /**
      * Generate a TypoScript prototype definition for a given node type
      *
@@ -38,15 +44,7 @@ class DefaultPrototypeGenerator implements DefaultPrototypeGeneratorInterface
             return '';
         }
 
-        if ($nodeType->isOfType('TYPO3.Neos:Content')) {
-            $basePrototypeName = 'TYPO3.Neos:Content';
-        } elseif ($nodeType->isOfType('TYPO3.Neos:Document')) {
-            $basePrototypeName = 'TYPO3.Neos:Document';
-        } else {
-            $basePrototypeName = 'TYPO3.TypoScript:Template';
-        }
-
-        $output = 'prototype(' . $nodeType->getName() . ') < prototype(' . $basePrototypeName . ') {' . chr(10);
+        $output = 'prototype(' . $nodeType->getName() . ') < prototype(' . $this->basePrototypeName . ') {' . chr(10);
 
         list($packageKey, $relativeName) = explode(':', $nodeType->getName(), 2);
         $templatePath = 'resource://' . $packageKey . '/Private/Templates/NodeTypes/' . $relativeName . '.html';

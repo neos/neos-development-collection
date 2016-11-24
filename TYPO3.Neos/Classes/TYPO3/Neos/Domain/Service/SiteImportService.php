@@ -12,7 +12,7 @@ namespace TYPO3\Neos\Domain\Service;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Package\Exception\InvalidPackageStateException;
 use TYPO3\Flow\Package\Exception\UnknownPackageException;
 use TYPO3\Flow\Package\PackageManagerInterface;

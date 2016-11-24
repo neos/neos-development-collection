@@ -104,7 +104,7 @@ Render each item in ``collection`` using ``itemRenderer``.
 :itemName: (string, defaults to ``item``) Context variable name for each item
 :itemKey: (string, defaults to ``itemKey``) Context variable name for each item key, when working with array
 :iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``
-:itemRenderer: (string) The renderer definition (simple value, expression or object) will be called once for every collection element, and its results will be concatenated
+:itemRenderer: (string, **required**) The renderer definition (simple value, expression or object) will be called once for every collection element, and its results will be concatenated
 
 Example using an object ``itemRenderer``::
 
@@ -125,6 +125,19 @@ Example using an expression ``itemRenderer``::
 		itemName = 'element'
 		itemRenderer = ${element * 2}
 	}
+
+.. _TYPO3_TypoScript__RawCollection:
+
+TYPO3.TypoScript:RawCollection
+------------------------------
+
+Render each item in ``collection`` using ``itemRenderer`` and return the result as an array (opposed to *string* for :ref:`TYPO3_TypoScript__Collection`)
+
+:collection: (array/Iterable, **required**) The array or iterable to iterate over
+:itemName: (string, defaults to ``item``) Context variable name for each item
+:itemKey: (string, defaults to ``itemKey``) Context variable name for each item key, when working with array
+:iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``
+:itemRenderer: (string, **required**) The renderer definition (simple value, expression or object) will be called once for every collection element
 
 .. _TYPO3_TypoScript__Case:
 
@@ -168,7 +181,29 @@ The ordering of matcher definitions can be specified with the ``@position`` prop
 Thus, the priority of existing matchers (e.g. the default Neos document rendering) can be changed by setting or
 overriding the ``@position`` property.
 
-.. note:: The internal ``TYPO3.TypoScript:Matcher`` object type is used to evaluate the matcher definitions.
+.. note:: The internal ``TYPO3.TypoScript:Matcher`` object type is used to evaluate the matcher definitions which
+   is based on the ``TYPO3.TypoScript:Renderer``.
+
+.. _TYPO3_TypoScript__Renderer:
+
+TYPO3.TypoScript:Renderer
+-------------------------
+
+The Renderer object will evaluate to a result using either ``renderer``, ``renderPath`` or ``type`` from the configuration.
+
+:type: (string) Object type to render (as string)
+:element.*: (mixed) Properties for the rendered object (when using ``type``)
+:renderPath: (string) Relative or absolute path to render, overrules ``type``
+:renderer: (mixed) Rendering definition (simple value, expression or object), overrules ``renderPath`` and ``type``
+
+Simple Example::
+
+	myCase = TYPO3.TypoScript:Renderer {
+		type = 'TYPO3.TypoScript:Value'
+		element.value = 'hello World'
+	}
+
+.. note:: This is especially handy if the prototype that should be rendered is determined via eel or passed via @context.
 
 .. _TYPO3_TypoScript__Debug:
 

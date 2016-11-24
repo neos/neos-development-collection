@@ -13,6 +13,7 @@ namespace TYPO3\Neos\Domain\Service;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ControllerContext;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
@@ -35,9 +36,9 @@ class TypoScriptService
 
     /**
      * @Flow\Inject
-     * @var DefaultPrototypeGeneratorInterface
+     * @var ObjectManagerInterface
      */
-    protected $defaultPrototypeGenerator;
+    protected $objectManager = null;
 
     /**
      * Pattern used for determining the TypoScript root file for a site
@@ -193,16 +194,27 @@ class TypoScriptService
     /**
      * Generate a TypoScript prototype definition for a given node type
      *
-     * A node will be rendered by TYPO3.Neos:Content by default with a template in
-     * resource://PACKAGE_KEY/Private/Templates/NodeTypes/NAME.html and forwards all public
-     * node properties to the template TypoScript object.
+     * A prototype will be rendererd with the generator-class defined in the
+     * nodeType-configuration 'fusion.prototypeGenerator'
      *
      * @param NodeType $nodeType
      * @return string
+     * @throws \TYPO3\Neos\Domain\Exception
      */
     protected function generateTypoScriptForNodeType(NodeType $nodeType)
     {
-        return $this->defaultPrototypeGenerator->generate($nodeType);
+        if ($nodeType->hasConfiguration('options.fusion.prototypeGenerator') && $nodeType->getConfiguration('options.fusion.prototypeGenerator') !== null) {
+            $generatorClassName = $nodeType->getConfiguration('options.fusion.prototypeGenerator');
+            if (!class_exists($generatorClassName)) {
+                throw new \TYPO3\Neos\Domain\Exception('Fusion prototype-generator Class ' . $generatorClassName . ' does not exist');
+            }
+            $generator = $this->objectManager->get($generatorClassName);
+            if (!$generator instanceof DefaultPrototypeGeneratorInterface) {
+                throw new \TYPO3\Neos\Domain\Exception('Fusion prototype-generator Class ' . $generatorClassName . ' does not implement interface ' . DefaultPrototypeGeneratorInterface::class);
+            }
+            return $generator->generate($nodeType);
+        }
+        return '';
     }
 
     /**

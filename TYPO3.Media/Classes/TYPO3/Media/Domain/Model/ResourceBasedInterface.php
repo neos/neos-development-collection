@@ -12,19 +12,19 @@ namespace TYPO3\Media\Domain\Model;
  */
 
 /**
- * Base interface for any class which is based on a Resource object.
+ * Base interface for any class which is based on a PersistentResource.
  */
 interface ResourceBasedInterface
 {
     /**
-     * Returns the Resource object
+     * Returns the PersistentResource
      *
-     * @return \TYPO3\Flow\Resource\Resource
+     * @return \TYPO3\Flow\ResourceManagement\PersistentResource
      */
     public function getResource();
 
     /**
-     * Refreshes this asset after the Resource has been modified
+     * Refreshes this asset after the PersistentResource has been modified
      *
      * @return void
      */

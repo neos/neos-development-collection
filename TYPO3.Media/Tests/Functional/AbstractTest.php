@@ -10,9 +10,10 @@ namespace TYPO3\Media\Tests\Functional;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
-use TYPO3\Flow\Resource\Resource as PersistentResource;
-use TYPO3\Flow\Resource\ResourceManager;
+use TYPO3\Flow\ResourceManagement\PersistentResource;
+use TYPO3\Flow\ResourceManagement\ResourceManager;
 use TYPO3\Flow\Tests\FunctionalTestCase;
 use TYPO3\Flow\Utility\Files;
 
@@ -25,12 +26,6 @@ abstract class AbstractTest extends FunctionalTestCase
      * @var string
      */
     protected $temporaryDirectory;
-
-    /**
-     * @var string
-     * @see prepareResourceManager()
-     */
-    protected $oldPersistentResourcesStorageBaseUri;
 
     /**
      * @var ResourceManager
@@ -61,7 +56,7 @@ abstract class AbstractTest extends FunctionalTestCase
     }
 
     /**
-     * Creates a mock ResourcePointer and Resource from a given hash.
+     * Creates a mock ResourcePointer and PersistentResource from a given hash.
      * Make sure that a file representation already exists, e.g. with
      * file_put_content('resource://' . $hash) before
      *

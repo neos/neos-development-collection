@@ -31,11 +31,8 @@ class BackendControllerSecurityTest extends FunctionalTestCase
      */
     public function indexActionIsGrantedForAdministrator()
     {
-        $user = new User();
-
         $account = $this->authenticateRoles(array('TYPO3.Neos:Administrator'));
         $account->setAccountIdentifier('admin');
-        $account->setParty($user);
         $this->browser->request('http://localhost/neos/login');
 
             // dummy assertion to avoid PHPUnit warning

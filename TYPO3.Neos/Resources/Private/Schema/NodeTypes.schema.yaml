@@ -23,6 +23,7 @@ additionalProperties:
                 additionalProperties: FALSE
                 properties:
                   'message': { type: string, description: "Help text for this property. Supports markdown." }
+                  'thumbnail': { type: string, description: "Url of a thumbnail-image to display alongside the help-message. (resource://-uris are resolved)"}
 
               'reloadIfChanged': { type: boolean, description: "If this property changes, should a element refresh occur?" }
 
@@ -119,6 +120,16 @@ additionalProperties:
                         'property': { type: ['string'], description: 'The name of an observed property in the same NodeType.' }
                         'handler': { type: ['string'], description: 'The path to a handler JavaScript object, similar to custom editors and validators.' }
                         'handlerOptions':  { type: dictionary, description: 'options for the given handler' }
+
+    'fusion':
+      # here we specify only the neos specific options of the NodeType schema,
+      # other options might be defined by cr or other packages
+      type: dictionary
+      additionalProperties: TRUE
+      properties:
+        prototypeGenerator:
+          - { type: null }
+          - { type: string, format: class-name }
 
     'ui':
       # here, we specify ONLY the "ui" part of the schema, as the remaining parts
