@@ -11,8 +11,8 @@ namespace TYPO3\TypoScript\TypoScriptObjects\Helpers;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Exception;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Exception;
 use Neos\FluidAdaptor\Core\Parser\SyntaxTree\TemplateObjectAccessInterface;
 use TYPO3\TypoScript\Core\ExceptionHandlers\ContextDependentHandler;
 use TYPO3\TypoScript\Exception\UnsupportedProxyMethodException;
@@ -59,7 +59,7 @@ class TypoScriptPathProxy implements TemplateObjectAccessInterface, \ArrayAccess
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Log\SystemLoggerInterface
+     * @var \Neos\Flow\Log\SystemLoggerInterface
      */
     protected $systemLogger;
 

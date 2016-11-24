@@ -11,7 +11,7 @@ namespace TYPO3\TypoScript\TypoScriptObjects;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Renders a string of xml attributes from the properties of this TypoScript object.

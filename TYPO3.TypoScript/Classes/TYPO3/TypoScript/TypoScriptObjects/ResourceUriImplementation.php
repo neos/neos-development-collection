@@ -11,11 +11,11 @@ namespace TYPO3\TypoScript\TypoScriptObjects;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\I18n\Service;
-use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\ResourceManagement\PersistentResource;
-use TYPO3\Flow\ResourceManagement\ResourceManager;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\I18n\Service;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\ResourceManagement\PersistentResource;
+use Neos\Flow\ResourceManagement\ResourceManager;
 use TYPO3\TypoScript\Exception as TypoScriptException;
 
 /**

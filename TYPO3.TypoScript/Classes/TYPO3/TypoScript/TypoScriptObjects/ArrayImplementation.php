@@ -11,9 +11,9 @@ namespace TYPO3\TypoScript\TypoScriptObjects;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Utility\Exception\InvalidPositionException;
-use TYPO3\Flow\Utility\PositionalArraySorter;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Utility\Exception\InvalidPositionException;
+use Neos\Flow\Utility\PositionalArraySorter;
 use TYPO3\TypoScript;
 
 /**

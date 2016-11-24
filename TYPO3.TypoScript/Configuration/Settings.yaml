@@ -35,6 +35,6 @@ TYPO3:
       Math: 'TYPO3\Eel\Helper\MathHelper'
       Json: 'TYPO3\Eel\Helper\JsonHelper'
       Security: 'TYPO3\Eel\Helper\SecurityHelper'
-      Translation: 'TYPO3\Flow\I18n\EelHelper\TranslationHelper'
+      Translation: 'Neos\Flow\I18n\EelHelper\TranslationHelper'
       Type: 'TYPO3\Eel\Helper\TypeHelper'
-      I18n: 'TYPO3\Flow\I18n\EelHelper\TranslationHelper'
+      I18n: 'Neos\Flow\I18n\EelHelper\TranslationHelper'

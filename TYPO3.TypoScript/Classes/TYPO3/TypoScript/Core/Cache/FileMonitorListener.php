@@ -11,8 +11,8 @@ namespace TYPO3\TypoScript\Core\Cache;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cache\CacheManager;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Cache\CacheManager;
 
 /**
  * Listener to clear TypoScript caches if important files have changed

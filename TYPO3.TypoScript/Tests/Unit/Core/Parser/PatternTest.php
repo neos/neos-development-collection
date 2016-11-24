@@ -10,7 +10,7 @@ namespace TYPO3\TypoScript\Tests\Unit\Core\Parser;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\TypoScript\Core\Parser;
 
 /**
@@ -246,7 +246,7 @@ class PatternTest extends UnitTestCase
     {
         $pattern = Parser::SCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE;
         $this->assertEquals(preg_match($pattern, 'prototype(asf.Ds:1)'), 1, 'The SCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE pattern did not match (1).');
-        $this->assertEquals(preg_match($pattern, 'prototype(TYPO3.Flow:Test)'), 1, 'The SCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE pattern did not match (2).');
+        $this->assertEquals(preg_match($pattern, 'prototype(Neos.Flow:Test)'), 1, 'The SCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE pattern did not match (2).');
         $this->assertEquals(preg_match($pattern, 'message'), 0, 'The SCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE pattern matched(3).');
     }
 

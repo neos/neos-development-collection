@@ -11,7 +11,7 @@ namespace TYPO3\TypoScript\TypoScriptObjects;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Base class for TypoScript objects that need access to arbitrary properties, like ArrayImplementation.

@@ -11,12 +11,12 @@ namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects;
  * source code.
  */
 
-use TYPO3\Flow\Http\Request;
-use TYPO3\Flow\Http\Response;
-use TYPO3\Flow\Mvc\Controller\Arguments;
-use TYPO3\Flow\Mvc\Controller\ControllerContext;
-use TYPO3\Flow\Mvc\Routing\UriBuilder;
-use TYPO3\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Http\Request;
+use Neos\Flow\Http\Response;
+use Neos\Flow\Mvc\Controller\Arguments;
+use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\Mvc\Routing\UriBuilder;
+use Neos\Flow\Tests\FunctionalTestCase;
 use TYPO3\TypoScript\View\TypoScriptView;
 
 /**

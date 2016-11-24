@@ -11,8 +11,8 @@ namespace TYPO3\TypoScript\Core\ExceptionHandlers;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Utility\Environment;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Utility\Environment;
 
 /**
  * A special exception handler that is used on the outer path to catch all unhandled exceptions and uses other exception

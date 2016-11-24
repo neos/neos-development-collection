@@ -11,11 +11,11 @@ namespace TYPO3\TypoScript\Tests\Functional\View;
  * source code.
  */
 
-use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Mvc\Controller\ControllerContext;
-use TYPO3\Flow\Mvc\View\ViewInterface;
-use TYPO3\Flow\Reflection\ObjectAccess;
-use TYPO3\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\Mvc\View\ViewInterface;
+use Neos\Flow\Reflection\ObjectAccess;
+use Neos\Flow\Tests\FunctionalTestCase;
 use TYPO3\TypoScript\View\TypoScriptView;
 
 /**

@@ -11,12 +11,12 @@ namespace TYPO3\TypoScript\View;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Mvc\View\AbstractView;
-use TYPO3\Flow\Mvc\View\ViewInterface;
-use TYPO3\Flow\Utility\Arrays;
-use TYPO3\Flow\Utility\Files;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\View\AbstractView;
+use Neos\Flow\Mvc\View\ViewInterface;
+use Neos\Flow\Utility\Arrays;
+use Neos\Flow\Utility\Files;
 use TYPO3\TypoScript\Core\Parser;
 use TYPO3\TypoScript\Core\Runtime;
 use TYPO3\TypoScript\Exception\RuntimeException;

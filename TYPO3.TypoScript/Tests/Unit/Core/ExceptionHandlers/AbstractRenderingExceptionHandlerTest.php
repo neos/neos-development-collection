@@ -11,10 +11,10 @@ namespace TYPO3\TypoScript\Tests\Unit\Core\ExceptionHandlers;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Exception;
-use TYPO3\Flow\Mvc\Exception\StopActionException;
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Exception;
+use Neos\Flow\Mvc\Exception\StopActionException;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\TypoScript\Core\Runtime;
 use TYPO3\TypoScript\Exception\RuntimeException;
 use TYPO3\TypoScript\Fixtures\AbstractRenderingExceptionHandler;
@@ -95,7 +95,7 @@ class AbstractRenderingExceptionHandlerTest extends UnitTestCase
     /**
      * StopActionException are rethrown
      *
-     * @expectedException \TYPO3\Flow\Mvc\Exception\StopActionException
+     * @expectedException \Neos\Flow\Mvc\Exception\StopActionException
      * @test
      */
     public function neverHandleStopActionException()
@@ -107,11 +107,11 @@ class AbstractRenderingExceptionHandlerTest extends UnitTestCase
     /**
      * SecurityException are rethrown
      *
-     * @expectedException \TYPO3\Flow\Security\Exception
+     * @expectedException \Neos\Flow\Security\Exception
      * @test
      */
     public function neverHandleSecurityException()
     {
-        $this->handler->handleRenderingException('path', new \TYPO3\Flow\Security\Exception());
+        $this->handler->handleRenderingException('path', new \Neos\Flow\Security\Exception());
     }
 }

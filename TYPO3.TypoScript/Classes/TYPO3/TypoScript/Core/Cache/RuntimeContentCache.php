@@ -11,9 +11,9 @@ namespace TYPO3\TypoScript\Core\Cache;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cache\CacheAwareInterface;
-use TYPO3\Flow\Utility\Unicode\Functions;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Cache\CacheAwareInterface;
+use Neos\Flow\Utility\Unicode\Functions;
 use TYPO3\TypoScript\Core\Runtime;
 use TYPO3\TypoScript\Exception;
 
@@ -63,7 +63,7 @@ class RuntimeContentCache
     protected $tags = [];
 
     /**
-     * @var \TYPO3\Flow\Property\PropertyMapper
+     * @var \Neos\Flow\Property\PropertyMapper
      * @Flow\Inject
      */
     protected $propertyMapper;

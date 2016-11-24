@@ -12,9 +12,9 @@ namespace TYPO3\TypoScript\Core;
  */
 
 use TYPO3\Eel\Package;
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 use TYPO3\TypoScript\Exception;
-use TYPO3\Flow\Utility\Arrays;
+use Neos\Flow\Utility\Arrays;
 use TYPO3\TypoScript;
 
 /**
@@ -200,7 +200,7 @@ class Parser implements ParserInterface
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\ObjectManagement\ObjectManagerInterface
+     * @var \Neos\Flow\ObjectManagement\ObjectManagerInterface
      */
     protected $objectManager;
 
