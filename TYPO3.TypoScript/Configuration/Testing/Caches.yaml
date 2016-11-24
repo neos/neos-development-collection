@@ -1,3 +1,3 @@
 TYPO3_TypoScript_Content:
-  backend: Neos\Flow\Cache\Backend\TransientMemoryBackend
+  backend: Neos\Cache\Backend\TransientMemoryBackend
   backendOptions: ~

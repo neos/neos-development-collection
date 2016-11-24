@@ -12,8 +12,8 @@ namespace TYPO3\TypoScript\Core\Cache;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Cache\CacheAwareInterface;
-use Neos\Flow\Cache\Frontend\StringFrontend;
+use Neos\Cache\CacheAwareInterface;
+use Neos\Cache\Frontend\StringFrontend;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Context;
 use TYPO3\TypoScript\Exception;

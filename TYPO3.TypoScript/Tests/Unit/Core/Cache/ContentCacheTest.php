@@ -12,9 +12,9 @@ namespace TYPO3\TypoScript\Tests\Unit\Core\Cache;
  */
 
 use Neos\Flow\Cache\Backend\TransientMemoryBackend;
-use Neos\Flow\Cache\CacheAwareInterface;
-use Neos\Flow\Cache\Frontend\FrontendInterface;
-use Neos\Flow\Cache\Frontend\StringFrontend;
+use Neos\Cache\CacheAwareInterface;
+use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\StringFrontend;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Context;
