@@ -11,13 +11,13 @@ namespace TYPO3\Neos\Controller\Module\User;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Error\Message;
-use TYPO3\Flow\I18n\EelHelper\TranslationHelper;
-use TYPO3\Flow\Property\PropertyMappingConfiguration;
-use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
-use TYPO3\Flow\Security\Account;
-use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Error\Message;
+use Neos\Flow\I18n\EelHelper\TranslationHelper;
+use Neos\Flow\Property\PropertyMappingConfiguration;
+use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
+use Neos\Flow\Security\Account;
+use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use TYPO3\Neos\Controller\Module\AbstractModuleController;
 use TYPO3\Neos\Domain\Model\User;
 use TYPO3\Neos\Domain\Service\UserService;

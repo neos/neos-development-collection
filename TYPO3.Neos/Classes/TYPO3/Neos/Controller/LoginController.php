@@ -11,16 +11,16 @@ namespace TYPO3\Neos\Controller;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cache\Frontend\StringFrontend;
-use TYPO3\Flow\Error\Message;
-use TYPO3\Flow\Http\Cookie;
-use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Mvc\View\JsonView;
-use TYPO3\Flow\Security\Authentication\Controller\AbstractAuthenticationController;
-use TYPO3\Flow\Security\Exception\AuthenticationRequiredException;
-use TYPO3\Flow\Session\SessionInterface;
-use TYPO3\Flow\Session\SessionManagerInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Cache\Frontend\StringFrontend;
+use Neos\Flow\Error\Message;
+use Neos\Flow\Http\Cookie;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\View\JsonView;
+use Neos\Flow\Security\Authentication\Controller\AbstractAuthenticationController;
+use Neos\Flow\Security\Exception\AuthenticationRequiredException;
+use Neos\Flow\Session\SessionInterface;
+use Neos\Flow\Session\SessionManagerInterface;
 use Neos\FluidAdaptor\View\TemplateView;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
@@ -69,7 +69,7 @@ class LoginController extends AbstractAuthenticationController
     protected $loginTokenCache;
 
     /**
-     * @Flow\InjectConfiguration(package="TYPO3.Flow", path="session.name")
+     * @Flow\InjectConfiguration(package="Neos.Flow", path="session.name")
      * @var string
      */
     protected $sessionName;

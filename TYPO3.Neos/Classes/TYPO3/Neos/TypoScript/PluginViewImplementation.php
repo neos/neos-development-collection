@@ -11,10 +11,10 @@ namespace TYPO3\Neos\TypoScript;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Http\Response;
-use TYPO3\Flow\Mvc\Exception\StopActionException;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Http\Response;
+use Neos\Flow\Mvc\Exception\StopActionException;
 use TYPO3\Neos\Domain\Model\PluginViewDefinition;
 use TYPO3\Neos\Service\PluginService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;

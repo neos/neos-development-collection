@@ -1,17 +1,17 @@
 TYPO3_Neos_Configuration_Version:
-  frontend: TYPO3\Flow\Cache\Frontend\StringFrontend
-  backend: TYPO3\Flow\Cache\Backend\FileBackend
+  frontend: Neos\Flow\Cache\Frontend\StringFrontend
+  backend: Neos\Flow\Cache\Backend\FileBackend
 
 TYPO3_Neos_TypoScript:
-  frontend: TYPO3\Flow\Cache\Frontend\VariableFrontend
-  backend: TYPO3\Flow\Cache\Backend\FileBackend
+  frontend: Neos\Flow\Cache\Frontend\VariableFrontend
+  backend: Neos\Flow\Cache\Backend\FileBackend
 
 TYPO3_Neos_XliffToJsonTranslations:
-  frontend: TYPO3\Flow\Cache\Frontend\VariableFrontend
-  backend: TYPO3\Flow\Cache\Backend\FileBackend
+  frontend: Neos\Flow\Cache\Frontend\VariableFrontend
+  backend: Neos\Flow\Cache\Backend\FileBackend
 
 TYPO3_Neos_LoginTokenCache:
-  frontend: TYPO3\Flow\Cache\Frontend\StringFrontend
-  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
+  frontend: Neos\Flow\Cache\Frontend\StringFrontend
+  backend: Neos\Flow\Cache\Backend\SimpleFileBackend
   backendOptions:
     defaultLifetime: 30

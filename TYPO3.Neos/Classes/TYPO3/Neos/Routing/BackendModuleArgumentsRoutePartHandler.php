@@ -11,10 +11,10 @@ namespace TYPO3\Neos\Routing;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Mvc\Routing\DynamicRoutePart;
-use TYPO3\Flow\Persistence\PersistenceManagerInterface;
-use TYPO3\Flow\Utility\Arrays;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\Routing\DynamicRoutePart;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Utility\Arrays;
 
 /**
  * A route part handler for finding nodes specifically in the website's frontend.

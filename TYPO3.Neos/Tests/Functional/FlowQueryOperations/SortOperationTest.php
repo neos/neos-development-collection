@@ -11,7 +11,7 @@ namespace TYPO3\Neos\Tests\Functional\FlowQueryOperations;
  * source code.
  */
 
-use TYPO3\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Tests\FunctionalTestCase;
 use TYPO3\Neos\Eel\FlowQueryOperations\SortOperation;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 

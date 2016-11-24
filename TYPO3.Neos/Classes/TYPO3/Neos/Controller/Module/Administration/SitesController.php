@@ -11,12 +11,12 @@ namespace TYPO3\Neos\Controller\Module\Administration;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Error\Message;
-use TYPO3\Flow\Log\SystemLoggerInterface;
-use TYPO3\Flow\Package\PackageInterface;
-use TYPO3\Flow\Package\PackageManagerInterface;
-use TYPO3\Flow\Session\SessionInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Error\Message;
+use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Package\PackageInterface;
+use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Session\SessionInterface;
 use TYPO3\Media\Domain\Repository\AssetCollectionRepository;
 use TYPO3\Neos\Controller\Module\AbstractModuleController;
 use TYPO3\Neos\Domain\Model\Domain;
@@ -123,7 +123,7 @@ class SitesController extends AbstractModuleController
     public function indexAction()
     {
         $sitePackagesAndSites = array();
-        foreach ($this->packageManager->getFilteredPackages('available', null, 'typo3-flow-site') as $sitePackageKey => $sitePackage) {
+        foreach ($this->packageManager->getFilteredPackages('available', null, 'neos-site') as $sitePackageKey => $sitePackage) {
             /** @var PackageInterface $sitePackage */
             $sitePackagesAndSites[strtolower(str_replace('.', '_', $sitePackageKey))] = array('package' => $sitePackage, 'packageKey' => $sitePackage->getPackageKey(), 'packageIsActive' => $this->packageManager->isPackageActive($sitePackage->getPackageKey()));
         }
@@ -207,7 +207,7 @@ class SitesController extends AbstractModuleController
      */
     public function newSiteAction(Site $site = null)
     {
-        $sitePackages = $this->packageManager->getFilteredPackages('active', null, 'typo3-flow-site');
+        $sitePackages = $this->packageManager->getFilteredPackages('active', null, 'neos-site');
         $documentNodeTypes = $this->nodeTypeManager->getSubNodeTypes('TYPO3.Neos:Document', false);
         $this->view->assignMultiple(array(
             'sitePackages' => $sitePackages,
@@ -496,7 +496,7 @@ class SitesController extends AbstractModuleController
      */
     protected function deactivateAllOtherSitePackages($activePackageKey)
     {
-        $sitePackagesToDeactivate = $this->packageManager->getFilteredPackages('active', null, 'typo3-flow-site');
+        $sitePackagesToDeactivate = $this->packageManager->getFilteredPackages('active', null, 'neos-site');
         $deactivatedSitePackages = array();
 
         foreach (array_keys($sitePackagesToDeactivate) as $packageKey) {

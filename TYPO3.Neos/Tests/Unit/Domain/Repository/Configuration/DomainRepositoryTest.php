@@ -10,8 +10,8 @@ namespace TYPO3\Neos\Tests\Unit\Domain\Repository\Configuration;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Flow\Persistence\QueryResultInterface;
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Persistence\QueryResultInterface;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\Neos\Domain\Model\Domain;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Service\DomainMatchingStrategy;

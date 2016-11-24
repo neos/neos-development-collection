@@ -11,7 +11,7 @@ namespace TYPO3\Neos\TYPO3CR;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Service\NodeService;
 use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 

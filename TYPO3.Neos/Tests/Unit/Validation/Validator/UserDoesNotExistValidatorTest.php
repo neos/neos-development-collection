@@ -11,8 +11,8 @@ namespace TYPO3\Neos\Tests\Unit\Validation\Validator;
  * source code.
  */
 
-use TYPO3\Flow\Security\Account;
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Security\Account;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\Neos\Domain\Service\UserService;
 use TYPO3\Neos\Validation\Validator\UserDoesNotExistValidator;
 
@@ -24,7 +24,7 @@ class UserDoesNotExistValidatorTest extends UnitTestCase
 {
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Validation\Exception\InvalidSubjectException
+     * @expectedException \Neos\Flow\Validation\Exception\InvalidSubjectException
      */
     public function validateThrowsExceptionForNonStringValue()
     {

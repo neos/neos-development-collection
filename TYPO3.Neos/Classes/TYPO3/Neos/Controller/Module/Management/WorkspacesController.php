@@ -14,14 +14,14 @@ namespace TYPO3\Neos\Controller\Module\Management;
 use Neos\Diff\Diff;
 use Neos\Diff\Renderer\Html\HtmlArrayRenderer;
 use TYPO3\Eel\FlowQuery\FlowQuery;
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Error\Message;
-use TYPO3\Flow\I18n\Translator;
-use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Property\PropertyMapper;
-use TYPO3\Flow\Property\PropertyMappingConfigurationBuilder;
-use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
-use TYPO3\Flow\Security\Context;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Error\Message;
+use Neos\Flow\I18n\Translator;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Property\PropertyMappingConfigurationBuilder;
+use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
+use Neos\Flow\Security\Context;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Neos\Controller\Module\AbstractModuleController;
 use TYPO3\Neos\Domain\Model\User;
@@ -186,7 +186,7 @@ class WorkspacesController extends AbstractModuleController
     /**
      * Create a workspace
      *
-     * @Flow\Validate(argumentName="title", type="\TYPO3\Flow\Validation\Validator\NotEmptyValidator")
+     * @Flow\Validate(argumentName="title", type="\Neos\Flow\Validation\Validator\NotEmptyValidator")
      * @param string $title Human friendly title of the workspace, for example "Christmas Campaign"
      * @param Workspace $baseWorkspace Workspace the new workspace should be based on
      * @param string $visibility Visibility of the new workspace, must be either "internal" or "shared"
@@ -379,8 +379,8 @@ class WorkspacesController extends AbstractModuleController
      * @param string $action
      * @param Workspace $selectedWorkspace
      * @throws \Exception
-     * @throws \TYPO3\Flow\Property\Exception
-     * @throws \TYPO3\Flow\Security\Exception
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
      */
     public function publishOrDiscardNodesAction(array $nodes, $action, Workspace $selectedWorkspace = null)
     {

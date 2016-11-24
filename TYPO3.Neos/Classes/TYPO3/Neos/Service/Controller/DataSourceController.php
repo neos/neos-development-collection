@@ -11,11 +11,11 @@ namespace TYPO3\Neos\Service\Controller;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Mvc\View\JsonView;
-use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
-use TYPO3\Flow\Reflection\ObjectAccess;
-use TYPO3\Flow\Reflection\ReflectionService;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\View\JsonView;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Reflection\ObjectAccess;
+use Neos\Flow\Reflection\ReflectionService;
 use TYPO3\Neos\Exception as NeosException;
 use TYPO3\Neos\Service\DataSource\DataSourceInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;

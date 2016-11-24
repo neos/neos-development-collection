@@ -11,8 +11,8 @@ namespace TYPO3\Neos\Tests\Functional\Domain\Service;
  * source code.
  */
 
-use TYPO3\Flow\Package\PackageManagerInterface;
-use TYPO3\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Tests\FunctionalTestCase;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Service\SiteExportService;
 use TYPO3\Neos\Domain\Service\SiteImportService;

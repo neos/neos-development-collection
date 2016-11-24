@@ -10,9 +10,9 @@ namespace TYPO3\Neos\Tests\Functional;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Flow\Package\PackageManagerInterface;
-use TYPO3\Flow\Property\PropertyMapper;
-use TYPO3\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Tests\FunctionalTestCase;
 use TYPO3\Media\TypeConverter\AssetInterfaceConverter;
 use TYPO3\Neos\Domain\Service\SiteImportService;
 use TYPO3\TYPO3CR\Domain\Model\Node;
@@ -77,7 +77,7 @@ abstract class AbstractNodeTest extends FunctionalTestCase
      */
     protected function getNodeWithContextPath($contextPath)
     {
-        /* @var $propertyMapper \TYPO3\Flow\Property\PropertyMapper */
+        /* @var $propertyMapper \Neos\Flow\Property\PropertyMapper */
         $propertyMapper = $this->objectManager->get(PropertyMapper::class);
         $node = $propertyMapper->convert($contextPath, Node::class);
         $this->assertFalse($propertyMapper->getMessages()->hasErrors(), 'There were errors converting ' . $contextPath);

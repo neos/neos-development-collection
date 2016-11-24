@@ -11,8 +11,8 @@ namespace TYPO3\Neos\EventLog\Integrations;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Security\Context;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Security\Context;
 use TYPO3\Neos\EventLog\Domain\Service\EventEmittingService;
 
 abstract class AbstractIntegrationService

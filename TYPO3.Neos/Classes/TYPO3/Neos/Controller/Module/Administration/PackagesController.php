@@ -11,14 +11,14 @@ namespace TYPO3\Neos\Controller\Module\Administration;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Error\Error;
-use TYPO3\Flow\Error\Message;
-use TYPO3\Flow\Error\Warning;
-use TYPO3\Flow\Package;
-use TYPO3\Flow\Package\Exception\ProtectedPackageKeyException;
-use TYPO3\Flow\Package\Exception\UnknownPackageException;
-use TYPO3\Flow\Package\Exception;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Error\Error;
+use Neos\Flow\Error\Message;
+use Neos\Flow\Error\Warning;
+use Neos\Flow\Package;
+use Neos\Flow\Package\Exception\ProtectedPackageKeyException;
+use Neos\Flow\Package\Exception\UnknownPackageException;
+use Neos\Flow\Package\Exception;
 use TYPO3\Neos\Controller\Module\AbstractModuleController;
 
 /**
@@ -30,7 +30,7 @@ class PackagesController extends AbstractModuleController
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Package\PackageManagerInterface
+     * @var \Neos\Flow\Package\PackageManagerInterface
      */
     protected $packageManager;
 

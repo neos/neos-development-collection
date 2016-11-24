@@ -12,11 +12,11 @@ namespace TYPO3\Neos\TypoScript\Helper;
  */
 
 use TYPO3\Eel\ProtectedContextAwareInterface;
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Neos\Service\LinkingService;
-use TYPO3\Flow\Http\Uri;
-use TYPO3\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\Http\Uri;
+use Neos\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**

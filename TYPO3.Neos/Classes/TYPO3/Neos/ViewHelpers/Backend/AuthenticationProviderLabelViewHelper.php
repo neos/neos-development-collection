@@ -11,7 +11,7 @@ namespace TYPO3\Neos\ViewHelpers\Backend;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
 /**
@@ -20,7 +20,7 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 class AuthenticationProviderLabelViewHelper extends AbstractViewHelper
 {
     /**
-     * @Flow\InjectConfiguration(package="TYPO3.Flow", path="security.authentication.providers")
+     * @Flow\InjectConfiguration(package="Neos.Flow", path="security.authentication.providers")
      * @var array
      */
     protected $authenticationProviderSettings;

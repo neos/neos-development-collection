@@ -16,8 +16,8 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 use TYPO3\Eel\CompilingEvaluator;
 use TYPO3\Eel\Exception;
 use TYPO3\Eel\Utility;
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\SystemLoggerInterface;
 use TYPO3\Neos\EventLog\Domain\Model\Event;
 use TYPO3\Neos\EventLog\Domain\Service\EventEmittingService;
 

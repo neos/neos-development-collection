@@ -11,16 +11,16 @@ namespace TYPO3\Neos\ViewHelpers\Backend;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Core\Bootstrap;
-use TYPO3\Flow\I18n\Service;
-use TYPO3\Flow\Reflection\ObjectAccess;
-use TYPO3\Flow\ResourceManagement\ResourceManager;
-use TYPO3\Flow\Security\Context;
-use TYPO3\Flow\Utility\Files;
-use TYPO3\Flow\Utility\PositionalArraySorter;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\I18n\Service;
+use Neos\Flow\Reflection\ObjectAccess;
+use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Flow\Security\Context;
+use Neos\Flow\Utility\Files;
+use Neos\Flow\Utility\PositionalArraySorter;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use TYPO3\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\SystemLoggerInterface;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Utility\BackendAssetsUtility;
 

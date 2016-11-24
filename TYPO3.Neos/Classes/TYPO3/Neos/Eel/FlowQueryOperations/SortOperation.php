@@ -13,7 +13,7 @@ namespace TYPO3\Neos\Eel\FlowQueryOperations;
 
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Eel\FlowQuery\Operations\AbstractOperation;
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
@@ -80,7 +80,7 @@ class SortOperation extends AbstractOperation
         /** @var Node $node */
         foreach ($nodes as $node) {
             if ($sortProperty[0] === '_') {
-                $propertyValue = \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($node, substr($sortProperty, 1));
+                $propertyValue = \Neos\Flow\Reflection\ObjectAccess::getPropertyPath($node, substr($sortProperty, 1));
             } else {
                 $propertyValue = $node->getProperty($sortProperty);
             }

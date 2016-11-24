@@ -11,8 +11,8 @@ namespace TYPO3\Neos\Validation\Validator;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Validation\Validator\AbstractValidator;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Validation\Validator\AbstractValidator;
 
 /**
  * Validator for http://tools.ietf.org/html/rfc1123 compatible host names

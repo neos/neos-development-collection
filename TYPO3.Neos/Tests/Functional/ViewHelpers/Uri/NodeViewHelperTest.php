@@ -11,12 +11,12 @@ namespace TYPO3\Neos\Tests\Functional\ViewHelpers\Uri;
  * source code.
  */
 
-use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Mvc\Controller\Arguments;
-use TYPO3\Flow\Mvc\Controller\ControllerContext;
-use TYPO3\Flow\Mvc\Routing\UriBuilder;
-use TYPO3\Flow\Property\PropertyMapper;
-use TYPO3\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Controller\Arguments;
+use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\Mvc\Routing\UriBuilder;
+use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Tests\FunctionalTestCase;
 use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer;
 use Neos\FluidAdaptor\View\TemplateView;
 use TYPO3\Media\TypeConverter\AssetInterfaceConverter;
@@ -100,7 +100,7 @@ class NodeViewHelperTest extends FunctionalTestCase
         $this->propertyMapper = $this->objectManager->get(PropertyMapper::class);
 
         $this->viewHelper = new NodeViewHelper();
-        /** @var $requestHandler \TYPO3\Flow\Tests\FunctionalTestRequestHandler */
+        /** @var $requestHandler \Neos\Flow\Tests\FunctionalTestRequestHandler */
         $requestHandler = self::$bootstrap->getActiveRequestHandler();
         $httpRequest = $requestHandler->getHttpRequest();
         $httpRequest->setBaseUri('http://neos.test/');

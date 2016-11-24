@@ -11,9 +11,9 @@ namespace TYPO3\Neos\Aspects;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Aop\JoinPointInterface;
-use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Aop\JoinPointInterface;
+use Neos\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 
 /**
  * @Flow\Scope("singleton")
@@ -22,8 +22,8 @@ use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 class ScrambleTranslationAspect
 {
     /**
-     * @Flow\Around("setting(TYPO3.Neos.userInterface.scrambleTranslatedLabels) && method(TYPO3\Flow\I18n\Translator->translate.*())")
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
+     * @Flow\Around("setting(TYPO3.Neos.userInterface.scrambleTranslatedLabels) && method(Neos\Flow\I18n\Translator->translate.*())")
+     * @param \Neos\Flow\Aop\JoinPointInterface $joinPoint The current join point
      * @return string A scrambled translation string
      */
     public function scrambleTranslatedStrings(JoinPointInterface $joinPoint)

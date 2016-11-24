@@ -10,7 +10,7 @@ namespace TYPO3\Neos\Tests\Unit\Routing;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\Neos\Controller\Module\Administration\UsersController;
 use TYPO3\Neos\Controller\Module\AdministrationController;
 use TYPO3\Neos\Routing\BackendModuleRoutePartHandler;

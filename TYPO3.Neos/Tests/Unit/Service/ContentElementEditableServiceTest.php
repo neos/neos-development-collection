@@ -11,8 +11,8 @@ namespace TYPO3\Neos\Tests\Unit\Service;
  * source code.
  */
 
-use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\Neos\Service\HtmlAugmenter;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;

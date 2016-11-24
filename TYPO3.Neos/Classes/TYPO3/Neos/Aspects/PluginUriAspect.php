@@ -11,10 +11,10 @@ namespace TYPO3\Neos\Aspects;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Aop\JoinPointInterface;
-use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Aop\JoinPointInterface;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Neos\Service\PluginService;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
@@ -41,8 +41,8 @@ class PluginUriAspect
     protected $pluginService;
 
     /**
-     * @Flow\Around("method(TYPO3\Flow\Mvc\Routing\UriBuilder->uriFor())")
-     * @param \TYPO3\Flow\Aop\JoinPointInterface $joinPoint The current join point
+     * @Flow\Around("method(Neos\Flow\Mvc\Routing\UriBuilder->uriFor())")
+     * @param \Neos\Flow\Aop\JoinPointInterface $joinPoint The current join point
      * @return string The result of the target method if it has not been intercepted
      */
     public function rewritePluginViewUris(JoinPointInterface $joinPoint)

@@ -11,7 +11,7 @@ namespace TYPO3\Neos\Domain\Service;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Generate a TypoScript prototype definition based on TYPO3.Neos:Document

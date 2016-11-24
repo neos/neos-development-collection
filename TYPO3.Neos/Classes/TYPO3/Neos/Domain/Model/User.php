@@ -11,10 +11,10 @@ namespace TYPO3\Neos\Domain\Model;
  * source code.
  */
 
-use TYPO3\Flow\Security\Account;
+use Neos\Flow\Security\Account;
 use TYPO3\Party\Domain\Model\Person;
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\UserInterface;
 
 /**

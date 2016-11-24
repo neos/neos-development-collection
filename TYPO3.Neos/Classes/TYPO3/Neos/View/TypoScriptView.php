@@ -11,18 +11,18 @@ namespace TYPO3\Neos\View;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Http\Response;
-use TYPO3\Flow\I18n\Locale;
-use TYPO3\Flow\I18n\Service;
-use TYPO3\Flow\Mvc\View\AbstractView;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Response;
+use Neos\Flow\I18n\Locale;
+use Neos\Flow\I18n\Service;
+use Neos\Flow\Mvc\View\AbstractView;
 use TYPO3\Neos\Domain\Service\TypoScriptService;
 use TYPO3\Neos\Exception;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\Core\Runtime;
 use TYPO3\TypoScript\Exception\RuntimeException;
-use TYPO3\Flow\Security\Context;
+use Neos\Flow\Security\Context;
 
 /**
  * A TypoScript view for Neos

@@ -11,12 +11,12 @@ namespace TYPO3\Neos\Command;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cli\CommandController;
-use TYPO3\Flow\Security\Account;
-use TYPO3\Flow\Security\Exception\NoSuchRoleException;
-use TYPO3\Flow\Security\Policy\Role;
-use TYPO3\Flow\Utility\Arrays;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Cli\CommandController;
+use Neos\Flow\Security\Account;
+use Neos\Flow\Security\Exception\NoSuchRoleException;
+use Neos\Flow\Security\Policy\Role;
+use Neos\Flow\Utility\Arrays;
 use TYPO3\Neos\Domain\Exception;
 use TYPO3\Neos\Domain\Model\User;
 use TYPO3\Neos\Domain\Service\UserService;
@@ -35,7 +35,7 @@ class UserCommandController extends CommandController
     protected $userService;
 
     /**
-     * @Flow\InjectConfiguration(package="TYPO3.Flow", path="security.authentication.providers")
+     * @Flow\InjectConfiguration(package="Neos.Flow", path="security.authentication.providers")
      * @var array
      */
     protected $authenticationProviderSettings;

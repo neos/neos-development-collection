@@ -11,10 +11,10 @@ namespace TYPO3\Neos\Domain\Service;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 use TYPO3\Neos\Domain\Exception;
 use TYPO3\Neos\Domain\Model\UserInterfaceMode;
-use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
+use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 
 /**
  * Service to build and find UserInterfaceMode objects

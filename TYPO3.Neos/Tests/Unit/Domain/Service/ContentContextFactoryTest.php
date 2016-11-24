@@ -22,7 +22,7 @@ use TYPO3\Neos\Domain\Service\ContentContextFactory;
  * Testcase for the ContentContextFactory
  *
  */
-class ContentContextFactoryTest extends \TYPO3\Flow\Tests\UnitTestCase
+class ContentContextFactoryTest extends \Neos\Flow\Tests\UnitTestCase
 {
     /**
      * @test

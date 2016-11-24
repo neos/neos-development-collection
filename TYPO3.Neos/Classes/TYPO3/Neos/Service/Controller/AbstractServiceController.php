@@ -11,13 +11,13 @@ namespace TYPO3\Neos\Service\Controller;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Exception as FlowException;
-use TYPO3\Flow\Http\Response as HttpResponse;
-use TYPO3\Flow\Mvc\Controller\ActionController;
-use TYPO3\Flow\Mvc\Exception\StopActionException;
-use TYPO3\Flow\Mvc\RequestInterface;
-use TYPO3\Flow\Mvc\ResponseInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Exception as FlowException;
+use Neos\Flow\Http\Response as HttpResponse;
+use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Mvc\Exception\StopActionException;
+use Neos\Flow\Mvc\RequestInterface;
+use Neos\Flow\Mvc\ResponseInterface;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 
 /**
@@ -43,7 +43,7 @@ abstract class AbstractServiceController extends ActionController
             $errors = [];
             foreach ($this->arguments->getValidationResults()->getFlattenedErrors() as $propertyName => $propertyErrors) {
                 foreach ($propertyErrors as $propertyError) {
-                    /** @var \TYPO3\Flow\Error\Error $propertyError */
+                    /** @var \Neos\Flow\Error\Error $propertyError */
                     $error = array(
                         'severity' => $propertyError->getSeverity(),
                         'message' => $propertyError->render()

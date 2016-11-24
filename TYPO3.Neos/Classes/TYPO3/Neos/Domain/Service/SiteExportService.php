@@ -11,9 +11,9 @@ namespace TYPO3\Neos\Domain\Service;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Package\PackageManagerInterface;
-use TYPO3\Flow\Utility\Files;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Utility\Files;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Exception as NeosException;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;

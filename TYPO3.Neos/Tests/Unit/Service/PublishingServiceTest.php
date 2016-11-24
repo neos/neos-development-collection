@@ -11,8 +11,8 @@ namespace TYPO3\Neos\Tests\Unit\Service;
  * source code.
  */
 
-use TYPO3\Flow\Persistence\QueryResultInterface;
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Persistence\QueryResultInterface;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;

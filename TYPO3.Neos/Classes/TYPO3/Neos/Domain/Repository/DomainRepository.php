@@ -11,11 +11,11 @@ namespace TYPO3\Neos\Domain\Repository;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Core\Bootstrap;
-use TYPO3\Flow\Http\HttpRequestHandlerInterface;
-use TYPO3\Flow\Persistence\QueryInterface;
-use TYPO3\Flow\Persistence\Repository;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Http\HttpRequestHandlerInterface;
+use Neos\Flow\Persistence\QueryInterface;
+use Neos\Flow\Persistence\Repository;
 use TYPO3\Neos\Domain\Model\Domain;
 use TYPO3\Neos\Domain\Service\DomainMatchingStrategy;
 

@@ -11,21 +11,21 @@ namespace TYPO3\Neos\Domain\Service;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException;
-use TYPO3\Flow\Security\Account;
-use TYPO3\Flow\Security\AccountFactory;
-use TYPO3\Flow\Security\AccountRepository;
-use TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface;
-use TYPO3\Flow\Security\Authentication\Token\UsernamePassword;
-use TYPO3\Flow\Security\Authentication\TokenInterface;
-use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
-use TYPO3\Flow\Security\Context;
-use TYPO3\Flow\Security\Cryptography\HashService;
-use TYPO3\Flow\Security\Exception\NoSuchRoleException;
-use TYPO3\Flow\Security\Policy\PolicyService;
-use TYPO3\Flow\Security\Policy\Role;
-use TYPO3\Flow\Utility\Now;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
+use Neos\Flow\Security\Account;
+use Neos\Flow\Security\AccountFactory;
+use Neos\Flow\Security\AccountRepository;
+use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
+use Neos\Flow\Security\Authentication\Token\UsernamePassword;
+use Neos\Flow\Security\Authentication\TokenInterface;
+use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
+use Neos\Flow\Security\Context;
+use Neos\Flow\Security\Cryptography\HashService;
+use Neos\Flow\Security\Exception\NoSuchRoleException;
+use Neos\Flow\Security\Policy\PolicyService;
+use Neos\Flow\Security\Policy\Role;
+use Neos\Flow\Utility\Now;
 use TYPO3\Neos\Domain\Exception;
 use TYPO3\Neos\Domain\Model\User;
 use TYPO3\Neos\Domain\Repository\UserRepository;
@@ -739,8 +739,8 @@ class UserService
     protected function getAllRoles(User $user)
     {
         $roles = array(
-            'TYPO3.Flow:Everybody' => $this->policyService->getRole('TYPO3.Flow:Everybody'),
-            'TYPO3.Flow:AuthenticatedUser' => $this->policyService->getRole('TYPO3.Flow:AuthenticatedUser')
+            'Neos.Flow:Everybody' => $this->policyService->getRole('Neos.Flow:Everybody'),
+            'Neos.Flow:AuthenticatedUser' => $this->policyService->getRole('Neos.Flow:AuthenticatedUser')
         );
 
         /** @var Account $account */

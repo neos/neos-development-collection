@@ -11,15 +11,15 @@ namespace TYPO3\Neos\Service\Mapping;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Log\SystemLoggerInterface;
-use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
-use TYPO3\Flow\Property\Exception as PropertyException;
-use TYPO3\Flow\Property\PropertyMapper;
-use TYPO3\Flow\Property\PropertyMappingConfiguration;
-use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
-use TYPO3\Flow\Reflection\ObjectAccess;
-use TYPO3\Flow\Utility\TypeHandling;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Property\Exception as PropertyException;
+use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Property\PropertyMappingConfiguration;
+use Neos\Flow\Property\PropertyMappingConfigurationInterface;
+use Neos\Flow\Reflection\ObjectAccess;
+use Neos\Flow\Utility\TypeHandling;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 
@@ -148,7 +148,7 @@ class NodePropertyConverterService
         $propertyMappingConfiguration = $this->createConfiguration($dataType);
         $convertedValue = $this->propertyMapper->convert($propertyValue, $conversionTargetType, $propertyMappingConfiguration);
 
-        if ($convertedValue instanceof \TYPO3\Flow\Error\Error) {
+        if ($convertedValue instanceof \Neos\Flow\Error\Error) {
             throw new PropertyException($convertedValue->getMessage(), $convertedValue->getCode());
         }
 

@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Persistence\Doctrine\Migrations;
+namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
 use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
@@ -49,7 +49,7 @@ class Version20150224171108 extends AbstractMigration
         } else {
             $result = $this->connection->executeQuery("SELECT uid FROM typo3_neos_eventlog_domain_model_event");
             while ($uid = $result->fetchColumn()) {
-                $this->addSql("UPDATE typo3_neos_eventlog_domain_model_event SET persistence_object_identifier = '" . \TYPO3\Flow\Utility\Algorithms::generateUUID() . "' WHERE uid = " . $uid);
+                $this->addSql("UPDATE typo3_neos_eventlog_domain_model_event SET persistence_object_identifier = '" . \Neos\Flow\Utility\Algorithms::generateUUID() . "' WHERE uid = " . $uid);
             }
         }
         $this->addSql("ALTER TABLE typo3_neos_eventlog_domain_model_event ALTER COLUMN persistence_object_identifier SET NOT NULL");

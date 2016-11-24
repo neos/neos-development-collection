@@ -11,9 +11,9 @@ namespace TYPO3\Neos\Validation\Validator;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Validation\Exception\InvalidSubjectException;
-use TYPO3\Flow\Validation\Validator\AbstractValidator;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Validation\Exception\InvalidSubjectException;
+use Neos\Flow\Validation\Validator\AbstractValidator;
 use TYPO3\Neos\Domain\Service\UserService;
 
 /**

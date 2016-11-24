@@ -11,9 +11,9 @@ namespace TYPO3\Neos\Controller\Module;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Mvc\Controller\ActionController;
-use TYPO3\Flow\Mvc\View\ViewInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Mvc\View\ViewInterface;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 
 /**
@@ -68,7 +68,7 @@ abstract class AbstractModuleController extends ActionController
     /**
      * Display no flash message at all on errors.
      *
-     * @return \TYPO3\Flow\Error\Message returns FALSE
+     * @return \Neos\Flow\Error\Message returns FALSE
      */
     protected function getErrorFlashMessage()
     {

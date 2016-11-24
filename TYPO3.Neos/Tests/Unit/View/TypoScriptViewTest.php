@@ -10,10 +10,10 @@ namespace TYPO3\Neos\Tests\Unit\View;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Flow\Http\Response;
-use TYPO3\Flow\Mvc\Controller\ControllerContext;
-use TYPO3\Flow\Security\Context;
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Http\Response;
+use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\Security\Context;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Domain\Service\TypoScriptService;
 use TYPO3\Neos\View\TypoScriptView;

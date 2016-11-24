@@ -11,14 +11,14 @@ namespace TYPO3\Neos\Tests\Unit\TypoScript;
  * source code.
  */
 
-use TYPO3\Flow\Http\Request;
-use TYPO3\Flow\Http\Response;
-use TYPO3\Flow\Http\Uri;
-use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Mvc\Controller\ControllerContext;
-use TYPO3\Flow\Mvc\Dispatcher;
-use TYPO3\Flow\Mvc\Routing\UriBuilder;
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Http\Request;
+use Neos\Flow\Http\Response;
+use Neos\Flow\Http\Uri;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\Mvc\Dispatcher;
+use Neos\Flow\Mvc\Routing\UriBuilder;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\Neos\TypoScript\PluginImplementation;
 use TYPO3\TypoScript\Core\Runtime;
 
