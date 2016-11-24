@@ -11,8 +11,8 @@ namespace TYPO3\TypoScript\Tests\Unit\Core;
  * source code.
  */
 
-use TYPO3\Eel\EelEvaluatorInterface;
-use TYPO3\Eel\ProtectedContext;
+use Neos\Eel\EelEvaluatorInterface;
+use Neos\Eel\ProtectedContext;
 use Neos\Flow\Exception;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\ObjectManagement\ObjectManager;
