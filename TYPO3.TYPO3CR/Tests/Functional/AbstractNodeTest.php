@@ -11,10 +11,10 @@ namespace TYPO3\TYPO3CR\Tests\Functional;
  * source code.
  */
 
-use TYPO3\Flow\Package\PackageManager;
-use TYPO3\Flow\Package\PackageManagerInterface;
-use TYPO3\Flow\Property\PropertyMapper;
-use TYPO3\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Package\PackageManager;
+use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Tests\FunctionalTestCase;
 use TYPO3\Neos\Domain\Service\SiteImportService;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;

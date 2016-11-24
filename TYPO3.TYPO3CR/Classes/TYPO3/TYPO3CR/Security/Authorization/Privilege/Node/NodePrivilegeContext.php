@@ -11,9 +11,9 @@ namespace TYPO3\TYPO3CR\Security\Authorization\Privilege\Node;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Security\Context as SecurityContext;
-use TYPO3\Flow\Validation\Validator\UuidValidator;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Security\Context as SecurityContext;
+use Neos\Flow\Validation\Validator\UuidValidator;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Service\ContentDimensionPresetSourceInterface;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactory;

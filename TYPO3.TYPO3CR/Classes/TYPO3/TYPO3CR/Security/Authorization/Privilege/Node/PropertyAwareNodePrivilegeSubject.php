@@ -11,7 +11,7 @@ namespace TYPO3\TYPO3CR\Security\Authorization\Privilege\Node;
  * source code.
  */
 
-use TYPO3\Flow\Aop\JoinPointInterface;
+use Neos\Flow\Aop\JoinPointInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**

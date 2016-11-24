@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Persistence\Doctrine\Migrations;
+namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
 use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
@@ -47,7 +47,7 @@ class Version20131203110242 extends AbstractMigration
             $this->connection->executeUpdate("ALTER TABLE typo3_typo3cr_domain_model_workspace ADD persistence_object_identifier VARCHAR(40)");
             $result = $this->connection->executeQuery('SELECT name FROM typo3_typo3cr_domain_model_workspace');
             foreach ($result->fetchAll() as $workspace) {
-                $this->connection->update('typo3_typo3cr_domain_model_workspace', array('persistence_object_identifier' => \TYPO3\Flow\Utility\Algorithms::generateUUID()), array('name' => $workspace['name']));
+                $this->connection->update('typo3_typo3cr_domain_model_workspace', array('persistence_object_identifier' => \Neos\Flow\Utility\Algorithms::generateUUID()), array('name' => $workspace['name']));
             }
         }
     }

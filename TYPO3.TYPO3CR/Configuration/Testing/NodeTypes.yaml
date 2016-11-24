@@ -54,11 +54,11 @@
 'TYPO3.TYPO3CR.Testing:NodeTypeWithEntities':
   properties:
     image:
-      type: 'TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image'
+      type: 'Neos\Flow\Tests\Functional\Persistence\Fixtures\Image'
     wrappedImage:
       type: 'TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\TestObjectForSerialization'
     images:
-      type: 'array<TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image>'
+      type: 'array<Neos\Flow\Tests\Functional\Persistence\Fixtures\Image>'
 
 'TYPO3.TYPO3CR.Testing:HappyTestingNode':
   supertypes:

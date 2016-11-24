@@ -11,9 +11,9 @@ namespace TYPO3\TYPO3CR\Service;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
-use TYPO3\Flow\Security\Context;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
+use Neos\Flow\Security\Context;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;

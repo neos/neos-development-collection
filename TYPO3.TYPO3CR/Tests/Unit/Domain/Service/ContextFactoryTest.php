@@ -10,9 +10,9 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Flow\Security\Context;
-use TYPO3\Flow\Tests\UnitTestCase;
-use TYPO3\Flow\Utility\Now;
+use Neos\Flow\Security\Context;
+use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Utility\Now;
 use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactory;
 

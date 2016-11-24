@@ -11,8 +11,8 @@ namespace TYPO3\TYPO3CR\Migration\Service;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Package\PackageManager;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Package\PackageManager;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;

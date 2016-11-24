@@ -11,8 +11,8 @@ namespace TYPO3\TYPO3CR\Command;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cli\ConsoleOutput;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Cli\ConsoleOutput;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 
 /**

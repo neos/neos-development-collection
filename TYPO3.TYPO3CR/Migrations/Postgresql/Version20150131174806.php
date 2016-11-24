@@ -1,9 +1,9 @@
 <?php
-namespace TYPO3\Flow\Persistence\Doctrine\Migrations;
+namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
 use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
-use TYPO3\Flow\Utility\Now;
+use Neos\Flow\Utility\Now;
 
 /**
  * Add creation date, last modification date and last publication date to node data table

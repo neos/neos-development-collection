@@ -11,9 +11,9 @@ namespace TYPO3\TYPO3CR\Migration\Domain\Repository;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Persistence\QueryInterface;
-use TYPO3\Flow\Persistence\Repository;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\QueryInterface;
+use Neos\Flow\Persistence\Repository;
 
 /**
  * Repository for MigrationStatus instances.

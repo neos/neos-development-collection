@@ -11,14 +11,14 @@ namespace TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\Doctrine;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\FalseConditionGenerator;
-use TYPO3\Flow\Security\Context;
-use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\ConditionGenerator as EntityConditionGenerator;
-use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\DisjunctionGenerator;
-use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\PropertyConditionGenerator;
-use TYPO3\Flow\Security\Exception\InvalidPrivilegeException;
-use TYPO3\Flow\Validation\Validator\UuidValidator;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\FalseConditionGenerator;
+use Neos\Flow\Security\Context;
+use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\ConditionGenerator as EntityConditionGenerator;
+use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\DisjunctionGenerator;
+use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\PropertyConditionGenerator;
+use Neos\Flow\Security\Exception\InvalidPrivilegeException;
+use Neos\Flow\Validation\Validator\UuidValidator;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactory;

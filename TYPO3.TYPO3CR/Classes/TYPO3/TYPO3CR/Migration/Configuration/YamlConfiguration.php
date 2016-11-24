@@ -11,10 +11,10 @@ namespace TYPO3\TYPO3CR\Migration\Configuration;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Configuration\Source\YamlSource;
-use TYPO3\Flow\Package\PackageManagerInterface;
-use TYPO3\Flow\Utility\Files as Files;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Configuration\Source\YamlSource;
+use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Utility\Files as Files;
 use TYPO3\TYPO3CR\Migration\Configuration\Configuration;
 use TYPO3\TYPO3CR\Migration\Exception\MigrationException;
 

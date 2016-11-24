@@ -11,7 +11,7 @@ namespace TYPO3\TYPO3CR\Security\Authorization\Privilege\Node;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * An Eel context matching expression for the CreateNodePrivilege

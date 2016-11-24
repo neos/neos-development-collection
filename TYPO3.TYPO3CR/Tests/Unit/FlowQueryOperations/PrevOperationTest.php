@@ -12,7 +12,7 @@ namespace TYPO3\TYPO3CR\Tests\Unit\FlowQueryOperations;
  */
 
 use TYPO3\Eel\FlowQuery\FlowQuery;
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\Eel\FlowQueryOperations\PrevOperation;

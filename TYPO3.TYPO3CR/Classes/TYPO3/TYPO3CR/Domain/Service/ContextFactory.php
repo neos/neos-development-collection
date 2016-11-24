@@ -11,10 +11,10 @@ namespace TYPO3\TYPO3CR\Domain\Service;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Security\Context as SecurityContext;
-use TYPO3\Flow\Utility\Arrays;
-use TYPO3\Flow\Utility\Now;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Security\Context as SecurityContext;
+use Neos\Flow\Utility\Arrays;
+use Neos\Flow\Utility\Now;
 use TYPO3\TYPO3CR\Domain\Model\ContentDimension;
 use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
 use TYPO3\TYPO3CR\Exception\InvalidNodeContextException;
@@ -69,7 +69,7 @@ class ContextFactory implements ContextFactoryInterface
      *
      * array(
      *        'workspaceName' => 'live',
-     *        'currentDateTime' => new \TYPO3\Flow\Utility\Now(),
+     *        'currentDateTime' => new \Neos\Flow\Utility\Now(),
      *        'dimensions' => array(...),
      *        'targetDimensions' => array('language' => 'de', 'persona' => 'Lisa'),
      *        'invisibleContentShown' => FALSE,

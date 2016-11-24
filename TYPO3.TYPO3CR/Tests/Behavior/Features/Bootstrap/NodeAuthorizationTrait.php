@@ -12,9 +12,9 @@ namespace TYPO3\TYPO3CR\Tests\Behavior\Features\Bootstrap;
  */
 
 use Behat\Gherkin\Node\TableNode;
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 use PHPUnit_Framework_Assert as Assert;
-use TYPO3\Flow\Security\Exception\AccessDeniedException;
+use Neos\Flow\Security\Exception\AccessDeniedException;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
@@ -88,7 +88,7 @@ trait NodeAuthorizationTrait
     public function iShouldGetTheFollowingListOfDeniedNodePropertiesFromTheNodeAuthorizationService($table)
     {
         if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg(\TYPO3\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))));
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg(\Neos\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))));
         } else {
             $rows = $table->getHash();
             $deniedPropertyNames = $this->nodeAuthorizationService->getDeniedNodePropertiesForEditing($this->currentNodes[0]);
@@ -290,7 +290,7 @@ trait NodeAuthorizationTrait
     public function iShouldGetTheFollowingListOfDeniedNodeTypesForThisNodeFromTheNodeAuthorizationService($table)
     {
         if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg(\TYPO3\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))));
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg(\Neos\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))));
         } else {
             $rows = $table->getHash();
             $deniedNodeTypeNames = $this->nodeAuthorizationService->getNodeTypeNamesDeniedForCreation($this->currentNodes[0]);
@@ -345,7 +345,7 @@ trait NodeAuthorizationTrait
                 if ($not === 'not') {
                     Assert::fail('Name should not be settable on the current node!');
                 }
-            } catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $exception) {
+            } catch (\Neos\Flow\Security\Exception\AccessDeniedException $exception) {
                 if ($not !== 'not') {
                     throw $exception;
                 }
@@ -411,7 +411,7 @@ trait NodeAuthorizationTrait
                 if ($not === 'not') {
                     Assert::fail('Property should not be gettable on the current node! But we could read the value: "' . $propertyValue . '"');
                 }
-            } catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $exception) {
+            } catch (\Neos\Flow\Security\Exception\AccessDeniedException $exception) {
                 if ($not !== 'not') {
                     throw $exception;
                 }
@@ -476,7 +476,7 @@ trait NodeAuthorizationTrait
                 if ($not === 'not') {
                     Assert::fail('Property should not be settable on the current node! But we could set the value of "' . $propertyName . '" to "' . $value . '"');
                 }
-            } catch (\TYPO3\Flow\Security\Exception\AccessDeniedException $exception) {
+            } catch (\Neos\Flow\Security\Exception\AccessDeniedException $exception) {
                 if ($not !== 'not') {
                     throw $exception;
                 }

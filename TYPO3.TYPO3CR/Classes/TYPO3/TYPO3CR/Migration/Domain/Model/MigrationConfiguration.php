@@ -12,7 +12,7 @@ namespace TYPO3\TYPO3CR\Migration\Domain\Model;
  */
 
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Migration configuration for a specific direction.

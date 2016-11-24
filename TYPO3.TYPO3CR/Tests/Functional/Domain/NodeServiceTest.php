@@ -11,7 +11,7 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
  * source code.
  */
 
-use TYPO3\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Tests\FunctionalTestCase;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;

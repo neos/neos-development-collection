@@ -11,10 +11,10 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
  * source code.
  */
 
-use TYPO3\Flow\Persistence\PersistenceManagerInterface;
-use TYPO3\Flow\Persistence\RepositoryInterface;
-use TYPO3\Flow\Security\Context as SecurityContext;
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Persistence\RepositoryInterface;
+use Neos\Flow\Security\Context as SecurityContext;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeDimension;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
@@ -510,10 +510,10 @@ class NodeDataTest extends UnitTestCase
         return array(
             array('accessRoles' => null, 'expectedResult' => false),
             array('accessRoles' => array(), 'expectedResult' => false),
-            array('accessRoles' => array('TYPO3.Flow:Everybody'), 'expectedResult' => false),
+            array('accessRoles' => array('Neos.Flow:Everybody'), 'expectedResult' => false),
 
             array('accessRoles' => array('Some.Other:Role'), 'expectedResult' => true),
-            array('accessRoles' => array('TYPO3.Flow:Everybody', 'Some.Other:Role'), 'expectedResult' => true),
+            array('accessRoles' => array('Neos.Flow:Everybody', 'Some.Other:Role'), 'expectedResult' => true),
         );
     }
 

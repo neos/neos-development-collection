@@ -11,12 +11,12 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  * source code.
  */
 
-use TYPO3\Flow\Persistence\Aspect\PersistenceMagicInterface;
-use TYPO3\Flow\Persistence\PersistenceManagerInterface;
-use TYPO3\Flow\Reflection\ObjectAccess;
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\Aspect\PersistenceMagicInterface;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Reflection\ObjectAccess;
+use Neos\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\Flow\Validation\Validator\UuidValidator;
+use Neos\Flow\Validation\Validator\UuidValidator;
 use TYPO3\TYPO3CR\Domain\Model\ContentObjectProxy;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;

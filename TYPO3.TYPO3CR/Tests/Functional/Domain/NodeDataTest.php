@@ -11,8 +11,8 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
  * source code.
  */
 
-use TYPO3\Flow\Tests\FunctionalTestCase;
-use TYPO3\Flow\Utility\Algorithms;
+use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Utility\Algorithms;
 use TYPO3\Neos\Domain\Service\SiteImportService;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeDimension;

@@ -27,7 +27,7 @@ interface ContextFactoryInterface
      *
      * array(
      *        'workspaceName' => 'live',
-     *        'currentDateTime' => new \TYPO3\Flow\Utility\Now(),
+     *        'currentDateTime' => new \Neos\Flow\Utility\Now(),
      *        'dimensions' => array(),
      *        'invisibleContentShown' => FALSE,
      *        'removedContentShown' => FALSE,

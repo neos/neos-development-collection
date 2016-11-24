@@ -11,8 +11,8 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Command;
  * source code.
  */
 
-require_once(FLOW_PATH_PACKAGES . '/Framework/TYPO3.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
-require_once(FLOW_PATH_PACKAGES . '/Framework/TYPO3.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
+require_once(FLOW_PATH_PACKAGES . '/Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
+require_once(FLOW_PATH_PACKAGES . '/Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 if (file_exists(FLOW_PATH_PACKAGES . '/Neos')) {
     require_once(FLOW_PATH_PACKAGES . '/Neos/TYPO3.TYPO3CR/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
     require_once(FLOW_PATH_PACKAGES . '/Neos/TYPO3.TYPO3CR/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
@@ -23,18 +23,18 @@ if (file_exists(FLOW_PATH_PACKAGES . '/Neos')) {
 
 use TYPO3\TYPO3CR\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
 use TYPO3\TYPO3CR\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
-use TYPO3\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
-use TYPO3\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Core\Bootstrap;
-use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
-use TYPO3\Flow\Security\Authentication\AuthenticationManagerInterface;
-use TYPO3\Flow\Security\Authentication\Provider\TestingProvider;
-use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
-use TYPO3\Flow\Security\Context;
-use TYPO3\Flow\Security\Policy\PolicyService;
-use TYPO3\Flow\Utility\Environment;
+use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
+use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
+use Neos\Flow\Security\Authentication\Provider\TestingProvider;
+use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
+use Neos\Flow\Security\Context;
+use Neos\Flow\Security\Policy\PolicyService;
+use Neos\Flow\Utility\Environment;
 
 /**
  * A test helper, to include behat step traits, beeing executed by

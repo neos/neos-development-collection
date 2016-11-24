@@ -11,9 +11,9 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException;
-use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 
 /**
  * A Content Object Proxy object to connect domain models to nodes

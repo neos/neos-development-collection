@@ -11,7 +11,7 @@ namespace TYPO3\TYPO3CR\ViewHelpers\Widget\Controller;
  * source code.
  */
 
-use TYPO3\Flow\Utility\Arrays;
+use Neos\Flow\Utility\Arrays;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetController;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Exception\PageNotFoundException;

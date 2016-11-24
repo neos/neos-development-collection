@@ -11,9 +11,9 @@ namespace TYPO3\TYPO3CR\Tests\Functional\TypeConverter;
  * source code.
  */
 
-use TYPO3\Flow\Error\Error;
-use TYPO3\Flow\Property\PropertyMappingConfiguration;
-use TYPO3\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Error\Error;
+use Neos\Flow\Property\PropertyMappingConfiguration;
+use Neos\Flow\Tests\FunctionalTestCase;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
@@ -200,7 +200,7 @@ class NodeConverterTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Flow\Property\Exception\TypeConverterException
+     * @expectedException \Neos\Flow\Property\Exception\TypeConverterException
      */
     public function settingUnknownNodePropertiesThrowsException()
     {
