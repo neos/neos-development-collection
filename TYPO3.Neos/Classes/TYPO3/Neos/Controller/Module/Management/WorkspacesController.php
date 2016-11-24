@@ -465,33 +465,32 @@ class WorkspacesController extends AbstractModuleController
         $siteChanges = [];
         foreach ($this->publishingService->getUnpublishedNodes($selectedWorkspace) as $node) {
             /** @var NodeInterface $node */
-            $pathParts = explode('/', $node->getPath());
-            if (count($pathParts) > 2) {
-                $siteNodeName = $pathParts[2];
-                $q = new FlowQuery([$node]);
-                $document = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+            $skipCollectionChanges = $node->getNodeType()->isOfType('TYPO3.Neos:ContentCollection') && !$node->getNodeType()->isOfType('TYPO3.Neos:Content');
+            if (!$skipCollectionChanges) {
+                $pathParts = explode('/', $node->getPath());
+                if (count($pathParts) > 2) {
+                    $siteNodeName = $pathParts[2];
+                    $q = new FlowQuery([$node]);
+                    $document = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
 
-                // $document will be null if we have a broken root line for this node. This actually should never happen, but currently can in some scenarios.
-                if ($document !== null) {
-                    $contentChanges = $this->renderContentChanges($node);
-                    if (empty($contentChanges) == 0 && $node->getNodeType()->isOfType('TYPO3.Neos:ContentCollection')) {
-                        continue;
-                    }
-                    $documentPath = implode('/', array_slice(explode('/', $document->getPath()), 3));
-                    $relativePath = str_replace(sprintf(SiteService::SITES_ROOT_PATH . '/%s/%s', $siteNodeName, $documentPath), '', $node->getPath());
-                    if (!isset($siteChanges[$siteNodeName]['siteNode'])) {
-                        $siteChanges[$siteNodeName]['siteNode'] = $this->siteRepository->findOneByNodeName($siteNodeName);
-                    }
-                    $siteChanges[$siteNodeName]['documents'][$documentPath]['documentNode'] = $document;
+                    // $document will be null if we have a broken root line for this node. This actually should never happen, but currently can in some scenarios.
+                    if ($document !== null) {
+                        $documentPath = implode('/', array_slice(explode('/', $document->getPath()), 3));
+                        $relativePath = str_replace(sprintf(SiteService::SITES_ROOT_PATH . '/%s/%s', $siteNodeName, $documentPath), '', $node->getPath());
+                        if (!isset($siteChanges[$siteNodeName]['siteNode'])) {
+                            $siteChanges[$siteNodeName]['siteNode'] = $this->siteRepository->findOneByNodeName($siteNodeName);
+                        }
+                        $siteChanges[$siteNodeName]['documents'][$documentPath]['documentNode'] = $document;
 
-                    $change = [
-                        'node' => $node,
-                        'contentChanges' => $contentChanges,
-                    ];
-                    if ($node->getNodeType()->isOfType('TYPO3.Neos:Node')) {
-                        $change['configuration'] = $node->getNodeType()->getFullConfiguration();
+                        $change = [
+                            'node' => $node,
+                            'contentChanges' => $this->renderContentChanges($node)
+                        ];
+                        if ($node->getNodeType()->isOfType('TYPO3.Neos:Node')) {
+                            $change['configuration'] = $node->getNodeType()->getFullConfiguration();
+                        }
+                        $siteChanges[$siteNodeName]['documents'][$documentPath]['changes'][$relativePath] = $change;
                     }
-                    $siteChanges[$siteNodeName]['documents'][$documentPath]['changes'][$relativePath] = $change;
                 }
             }
         }
