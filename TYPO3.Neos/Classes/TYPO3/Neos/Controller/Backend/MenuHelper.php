@@ -14,7 +14,7 @@ namespace TYPO3\Neos\Controller\Backend;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
-use Neos\Flow\Utility\Arrays;
+use Neos\Utility\Arrays;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 

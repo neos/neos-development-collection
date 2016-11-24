@@ -13,7 +13,7 @@ namespace TYPO3\Neos\Domain\Strategy;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Flow\Utility\TypeHandling;
+use Neos\Utility\TypeHandling;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Strategy\AbstractAssetUsageStrategy;

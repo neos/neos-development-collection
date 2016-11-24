@@ -15,7 +15,7 @@ use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Flow\Utility\Arrays;
+use Neos\Utility\Arrays;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Service\UserService;

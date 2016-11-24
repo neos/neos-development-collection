@@ -16,7 +16,7 @@ use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Exception\NoSuchRoleException;
 use Neos\Flow\Security\Policy\Role;
-use Neos\Flow\Utility\Arrays;
+use Neos\Utility\Arrays;
 use TYPO3\Neos\Domain\Exception;
 use TYPO3\Neos\Domain\Model\User;
 use TYPO3\Neos\Domain\Service\UserService;

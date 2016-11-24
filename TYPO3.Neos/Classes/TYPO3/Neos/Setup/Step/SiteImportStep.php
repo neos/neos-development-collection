@@ -26,7 +26,7 @@ use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\SiteImportService;
 use TYPO3\Neos\Validation\Validator\PackageKeyValidator;
 use TYPO3\Setup\Exception as SetupException;
-use Neos\Flow\Error\Message;
+use Neos\Error\Messages\Message;
 use TYPO3\Setup\Exception;
 use TYPO3\Setup\Step\AbstractStep;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;

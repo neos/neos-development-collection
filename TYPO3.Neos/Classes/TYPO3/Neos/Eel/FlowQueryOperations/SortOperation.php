@@ -80,7 +80,7 @@ class SortOperation extends AbstractOperation
         /** @var Node $node */
         foreach ($nodes as $node) {
             if ($sortProperty[0] === '_') {
-                $propertyValue = \Neos\Flow\Reflection\ObjectAccess::getPropertyPath($node, substr($sortProperty, 1));
+                $propertyValue = \Neos\Utility\ObjectAccess::getPropertyPath($node, substr($sortProperty, 1));
             } else {
                 $propertyValue = $node->getProperty($sortProperty);
             }

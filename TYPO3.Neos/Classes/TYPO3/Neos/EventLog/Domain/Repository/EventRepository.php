@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Doctrine\Repository;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
-use Neos\Flow\Reflection\Exception\PropertyNotAccessibleException;
+use Neos\Utility\Exception\PropertyNotAccessibleException;
 use TYPO3\Neos\EventLog\Domain\Model\NodeEvent;
 
 /**

@@ -43,7 +43,7 @@ abstract class AbstractServiceController extends ActionController
             $errors = [];
             foreach ($this->arguments->getValidationResults()->getFlattenedErrors() as $propertyName => $propertyErrors) {
                 foreach ($propertyErrors as $propertyError) {
-                    /** @var \Neos\Flow\Error\Error $propertyError */
+                    /** @var \Neos\Error\Messages\Error $propertyError */
                     $error = array(
                         'severity' => $propertyError->getSeverity(),
                         'message' => $propertyError->render()

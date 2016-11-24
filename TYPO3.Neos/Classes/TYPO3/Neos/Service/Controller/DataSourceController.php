@@ -14,7 +14,7 @@ namespace TYPO3\Neos\Service\Controller;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use Neos\Flow\Reflection\ReflectionService;
 use TYPO3\Neos\Exception as NeosException;
 use TYPO3\Neos\Service\DataSource\DataSourceInterface;
