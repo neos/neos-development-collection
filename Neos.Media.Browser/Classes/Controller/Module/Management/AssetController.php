@@ -13,13 +13,13 @@ namespace Neos\Media\Browser\Controller\Module\Management;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Error\Error;
-use Neos\Flow\Error\Message;
+use Neos\Error\Messages\Error;
+use Neos\Error\Messages\Message;
 use Neos\Flow\Mvc\Exception\InvalidArgumentValueException;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\Security\Context;
-use Neos\Flow\Utility\MediaTypes;
-use Neos\Flow\Utility\TypeHandling;
+use Neos\Utility\MediaTypes;
+use Neos\Utility\TypeHandling;
 use TYPO3\Media\Domain\Model\AssetCollection;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Exception\AssetServiceException;
