@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Neos\Kickstarter\Service;
+namespace Neos\SiteKickstarter\Service;
 
 /*
  * This file is part of the Neos.Kickstarter package.
@@ -70,7 +70,7 @@ class GeneratorService extends \Neos\Kickstart\Service\GeneratorService
      */
     protected function generateSitesXml($packageKey, $siteName)
     {
-        $templatePathAndFilename = 'resource://TYPO3.Neos.Kickstarter/Private/Generator/Content/Sites.xml';
+        $templatePathAndFilename = 'resource://Neos.SiteKickstarter/Private/Generator/Content/Sites.xml';
 
         $contextVariables = array();
         $contextVariables['packageKey'] = $packageKey;
@@ -94,7 +94,7 @@ class GeneratorService extends \Neos\Kickstart\Service\GeneratorService
      */
     protected function generateSitesTypoScript($packageKey, $siteName)
     {
-        $templatePathAndFilename = 'resource://TYPO3.Neos.Kickstarter/Private/Generator/TypoScript/Root.ts2';
+        $templatePathAndFilename = 'resource://Neos.SiteKickstarter/Private/Generator/TypoScript/Root.ts2';
 
         $contextVariables = array();
         $contextVariables['packageKey'] = $packageKey;
@@ -117,7 +117,7 @@ class GeneratorService extends \Neos\Kickstart\Service\GeneratorService
      */
     protected function generateSitesTemplate($packageKey, $siteName)
     {
-        $templatePathAndFilename = 'resource://TYPO3.Neos.Kickstarter/Private/Generator/Template/SiteTemplate.html';
+        $templatePathAndFilename = 'resource://Neos.SiteKickstarter/Private/Generator/Template/SiteTemplate.html';
 
         $contextVariables = array();
         $contextVariables['siteName'] = $siteName;
@@ -140,7 +140,7 @@ class GeneratorService extends \Neos\Kickstart\Service\GeneratorService
      */
     protected function generateNodeTypesConfiguration($packageKey)
     {
-        $templatePathAndFilename = 'resource://TYPO3.Neos.Kickstarter/Private/Generator/Configuration/NodeTypes.yaml';
+        $templatePathAndFilename = 'resource://Neos.SiteKickstarter/Private/Generator/Configuration/NodeTypes.yaml';
 
         $fileContent = file_get_contents($templatePathAndFilename);
 
