@@ -503,6 +503,47 @@
 				<source>Create and copy</source>
 			</trans-unit>
 
+			<trans-unit id="keyboard.shortcuts.header" xml:space="preserve">
+				<source>Keyboard shortcuts</source>
+			</trans-unit>
+
+			<trans-unit id="keyboard.shortcuts.general" xml:space="preserve">
+				<source>General</source>
+			</trans-unit>
+			<trans-unit id="keyboard.shortcuts.contentEditing" xml:space="preserve">
+				<source>Content Editing</source>
+			</trans-unit>
+			<trans-unit id="keyboard.shortcuts.toggleFullScreen" xml:space="preserve">
+				<source>Toggle fullscreen mode</source>
+			</trans-unit>
+			<trans-unit id="keyboard.shortcuts.closeDialog" xml:space="preserve">
+				<source>Close any dialog box</source>
+			</trans-unit>
+			<trans-unit id="keyboard.shortcuts.toggleEditPreview" xml:space="preserve">
+				<source>Toggle Edit/Preview panel</source>
+			</trans-unit>
+			<trans-unit id="keyboard.shortcuts.openShortcutInfo" xml:space="preserve">
+				<source>Open the shortcut info</source>
+			</trans-unit>
+			<trans-unit id="keyboard.shortcuts.createNew" xml:space="preserve">
+				<source>Create new</source>
+			</trans-unit>
+			<trans-unit id="keyboard.shortcuts.copySelected" xml:space="preserve">
+				<source>Copy selected</source>
+			</trans-unit>
+			<trans-unit id="keyboard.shortcuts.cutSelected" xml:space="preserve">
+				<source>Cut selected</source>
+			</trans-unit>
+			<trans-unit id="keyboard.shortcuts.pasteCopied" xml:space="preserve">
+				<source>Paste copied</source>
+			</trans-unit>
+			<trans-unit id="keyboard.shortcuts.removeSelected" xml:space="preserve">
+				<source>Remove selected</source>
+			</trans-unit>
+			<trans-unit id="keyboard.shortcuts.selectNextElement" xml:space="preserve">
+				<source>Select next element</source>
+			</trans-unit>
+
 			<trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
 			</trans-unit>

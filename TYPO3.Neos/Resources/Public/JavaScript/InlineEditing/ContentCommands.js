@@ -60,6 +60,15 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 			return parentElement.length > 0 ? NodeTypeService.isOfType(parentElement.attr('typeof').substr(6), 'TYPO3.Neos:ContentCollection') : false;
 		},
 
+		_definePosition: function(node) {
+			var position = 'into';
+			var types = this.getAllowedChildNodeTypesForNode(node);
+			if (types.length === 0) {
+				position = 'after';
+			}
+			return position;
+		},
+
 		/**
 		 * Opens the create new node dialog. Given position, referenceNode
 		 * and index are optional.
@@ -68,11 +77,12 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 		 * @return {void}
 		 */
 		create: function(position) {
+			var selectedNode = this.get('_selectedNode');
+
 			if (typeof position === 'undefined') {
-				position = 'into';
+				position = this._definePosition(selectedNode);
 			}
 
-			var selectedNode = this.get('_selectedNode');
 			require({context: 'neos'}, ['InlineEditing/InsertNodePanel'], function(InsertNodePanel) {
 				if($('.neos-modal:visible').length > 0) {
 					$('.neos-modal .neos-close').trigger('click');
@@ -121,6 +131,9 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 		 */
 		paste: function(position) {
 			var referenceNode = this.get('_selectedNode');
+			if (typeof position === 'undefined') {
+				position = this._definePosition(referenceNode);
+			}
 			switch (position) {
 				case 'before':
 					return NodeActions.pasteBefore(referenceNode);
