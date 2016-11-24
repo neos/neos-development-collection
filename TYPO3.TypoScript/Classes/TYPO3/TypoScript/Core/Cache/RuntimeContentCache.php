@@ -12,7 +12,7 @@ namespace TYPO3\TypoScript\Core\Cache;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Cache\CacheAwareInterface;
+use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Utility\Unicode\Functions;
 use TYPO3\TypoScript\Core\Runtime;
 use TYPO3\TypoScript\Exception;
