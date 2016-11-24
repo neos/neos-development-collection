@@ -16,10 +16,10 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\TypeHandling;
-use TYPO3\Media\Domain\Model\Asset;
-use TYPO3\Media\Domain\Model\Audio;
-use TYPO3\Media\Domain\Model\Document;
-use TYPO3\Media\Domain\Model\Video;
+use Neos\Media\Domain\Model\Asset;
+use Neos\Media\Domain\Model\Audio;
+use Neos\Media\Domain\Model\Document;
+use Neos\Media\Domain\Model\Video;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Migration\Transformations\AbstractTransformation;
 

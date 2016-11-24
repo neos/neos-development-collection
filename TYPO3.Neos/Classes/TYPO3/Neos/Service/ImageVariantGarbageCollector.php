@@ -13,8 +13,8 @@ namespace TYPO3\Neos\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use TYPO3\Media\Domain\Model\ImageVariant;
-use TYPO3\Media\Domain\Repository\AssetRepository;
+use Neos\Media\Domain\Model\ImageVariant;
+use Neos\Media\Domain\Repository\AssetRepository;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 

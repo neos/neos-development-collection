@@ -13,7 +13,7 @@ namespace TYPO3\Neos\Tests\Functional;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Tests\FunctionalTestCase;
-use TYPO3\Media\TypeConverter\AssetInterfaceConverter;
+use Neos\Media\TypeConverter\AssetInterfaceConverter;
 use TYPO3\Neos\Domain\Service\SiteImportService;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;

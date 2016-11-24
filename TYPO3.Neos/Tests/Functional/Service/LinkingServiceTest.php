@@ -18,7 +18,7 @@ use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Tests\FunctionalTestRequestHandler;
-use TYPO3\Media\TypeConverter\AssetInterfaceConverter;
+use Neos\Media\TypeConverter\AssetInterfaceConverter;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentContext;
@@ -246,7 +246,7 @@ class LinkingServiceTest extends FunctionalTestCase
      */
     public function linkingServiceCanConvertUriToObject()
     {
-        $assetRepository = $this->objectManager->get(\TYPO3\Media\Domain\Repository\AssetRepository::class);
+        $assetRepository = $this->objectManager->get(\Neos\Media\Domain\Repository\AssetRepository::class);
         $asset = $assetRepository->findByIdentifier('89cd85cc-270e-0902-7113-d14ac7539c75');
 
         $this->assertSame($this->baseNode, $this->linkingService->convertUriToObject('node://3239baee-3e7f-785c-0853-f4302ef32570', $this->baseNode));

@@ -15,8 +15,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\FluidAdaptor\View\TemplateView;
-use TYPO3\Media\Domain\Repository\AssetRepository;
-use TYPO3\Media\Domain\Repository\TagRepository;
+use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Media\Domain\Repository\TagRepository;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 use TYPO3\Neos\View\Service\AssetJsonView;
 
@@ -42,7 +42,7 @@ class AssetsController extends ActionController
     protected $tagRepository;
 
     /**
-     * @Flow\InjectConfiguration(package="TYPO3.Media", path="asyncThumbnails")
+     * @Flow\InjectConfiguration(package="Neos.Media", path="asyncThumbnails")
      * @var boolean
      */
     protected $asyncThumbnails;

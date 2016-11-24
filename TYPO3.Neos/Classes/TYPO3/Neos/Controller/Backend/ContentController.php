@@ -18,17 +18,17 @@ use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\ObjectConverter;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\ResourceManagement\ResourceManager;
-use TYPO3\Media\Domain\Model\Asset;
+use Neos\Media\Domain\Model\Asset;
 use Neos\Flow\Mvc\Controller\ActionController;
-use TYPO3\Media\Domain\Model\Image;
-use TYPO3\Media\Domain\Model\ImageInterface;
-use TYPO3\Media\Domain\Model\ImageVariant;
-use TYPO3\Media\Domain\Repository\AssetRepository;
-use TYPO3\Media\Domain\Repository\ImageRepository;
-use TYPO3\Media\Domain\Service\ThumbnailService;
-use TYPO3\Media\TypeConverter\AssetInterfaceConverter;
-use TYPO3\Media\Domain\Repository\AssetCollectionRepository;
-use TYPO3\Media\TypeConverter\ImageInterfaceArrayPresenter;
+use Neos\Media\Domain\Model\Image;
+use Neos\Media\Domain\Model\ImageInterface;
+use Neos\Media\Domain\Model\ImageVariant;
+use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Media\Domain\Repository\ImageRepository;
+use Neos\Media\Domain\Service\ThumbnailService;
+use Neos\Media\TypeConverter\AssetInterfaceConverter;
+use Neos\Media\Domain\Repository\AssetCollectionRepository;
+use Neos\Media\TypeConverter\ImageInterfaceArrayPresenter;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 use TYPO3\Neos\Domain\Model\PluginViewDefinition;
 use TYPO3\Neos\Domain\Model\Site;
@@ -287,7 +287,7 @@ class ContentController extends ActionController
     /**
      * Fetch the metadata for multiple assets
      *
-     * @param array<TYPO3\Media\Domain\Model\AssetInterface> $assets
+     * @param array<Neos\Media\Domain\Model\AssetInterface> $assets
      * @return string JSON encoded response
      */
     public function assetsWithMetadataAction(array $assets)

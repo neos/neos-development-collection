@@ -15,7 +15,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
-use TYPO3\Media\Domain\Model\AssetCollection;
+use Neos\Media\Domain\Model\AssetCollection;
 
 /**
  * Domain model of a site

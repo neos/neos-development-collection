@@ -12,13 +12,13 @@ namespace TYPO3\Neos\TypoScript;
  */
 
 use Neos\Flow\Annotations as Flow;
-use TYPO3\Media\Domain\Model\AssetInterface;
-use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
-use TYPO3\Media\Domain\Service\AssetService;
+use Neos\Media\Domain\Model\AssetInterface;
+use Neos\Media\Domain\Model\ThumbnailConfiguration;
+use Neos\Media\Domain\Service\AssetService;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 
 /**
- * Render an AssetInterface: object. Accepts the same parameters as the uri.image ViewHelper of the TYPO3.Media package:
+ * Render an AssetInterface: object. Accepts the same parameters as the uri.image ViewHelper of the Neos.Media package:
  * asset, width, maximumWidth, height, maximumHeight, allowCropping, allowUpScaling.
  *
  */
