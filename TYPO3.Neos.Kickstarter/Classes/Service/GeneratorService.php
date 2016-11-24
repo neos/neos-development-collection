@@ -2,7 +2,7 @@
 namespace TYPO3\Neos\Kickstarter\Service;
 
 /*
- * This file is part of the TYPO3.Kickstarter package.
+ * This file is part of the Neos.Kickstarter package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -19,7 +19,7 @@ use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
 /**
  * Service to generate site packages
  */
-class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService
+class GeneratorService extends \Neos\Kickstart\Service\GeneratorService
 {
     /**
      * @Flow\Inject
