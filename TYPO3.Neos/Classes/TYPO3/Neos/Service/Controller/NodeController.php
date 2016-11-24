@@ -12,7 +12,7 @@ namespace TYPO3\Neos\Service\Controller;
  */
 
 use Neos\Flow\Annotations as Flow;
-use TYPO3\Eel\FlowQuery\FlowQuery;
+use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Service\NodeSearchService;

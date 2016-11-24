@@ -11,7 +11,7 @@ namespace TYPO3\Neos\TypoScript\Helper;
  * source code.
  */
 
-use TYPO3\Eel\ProtectedContextAwareInterface;
+use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;

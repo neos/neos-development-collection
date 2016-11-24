@@ -75,22 +75,22 @@ class SortOperationTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Eel\FlowQuery\FlowQueryException
+     * @expectedException \Neos\Eel\FlowQuery\FlowQueryException
      */
     public function callWithoutArgumentsCausesException()
     {
-        $flowQuery = new \TYPO3\Eel\FlowQuery\FlowQuery([]);
+        $flowQuery = new \Neos\Eel\FlowQuery\FlowQuery([]);
         $operation = new SortOperation();
         $operation->evaluate($flowQuery, []);
     }
 
     /**
      * @test
-     * @expectedException \TYPO3\Eel\FlowQuery\FlowQueryException
+     * @expectedException \Neos\Eel\FlowQuery\FlowQueryException
      */
     public function invalidSortDirectionCausesException()
     {
-        $flowQuery = new \TYPO3\Eel\FlowQuery\FlowQuery([]);
+        $flowQuery = new \Neos\Eel\FlowQuery\FlowQuery([]);
         $operation = new SortOperation();
         $operation->evaluate($flowQuery, ['title', 'FOO']);
     }
@@ -110,7 +110,7 @@ class SortOperationTest extends FunctionalTestCase
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addd', $this->context->getWorkspace(true), array()),
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115adde', $this->context->getWorkspace(true), array())
         ];
-        $flowQuery = new \TYPO3\Eel\FlowQuery\FlowQuery($nodesToSort);
+        $flowQuery = new \Neos\Eel\FlowQuery\FlowQuery($nodesToSort);
         $operation = new SortOperation();
         $operation->evaluate($flowQuery, ['title', 'ASC']);
 
@@ -132,7 +132,7 @@ class SortOperationTest extends FunctionalTestCase
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addd', $this->context->getWorkspace(true), array()),
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addf', $this->context->getWorkspace(true), array())
         ];
-        $flowQuery = new \TYPO3\Eel\FlowQuery\FlowQuery($nodesToSort);
+        $flowQuery = new \Neos\Eel\FlowQuery\FlowQuery($nodesToSort);
         $operation = new SortOperation();
         $operation->evaluate($flowQuery, ['title', 'DESC']);
 
@@ -154,7 +154,7 @@ class SortOperationTest extends FunctionalTestCase
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addf', $this->context->getWorkspace(true), array()),
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addd', $this->context->getWorkspace(true), array())
         ];
-        $flowQuery = new \TYPO3\Eel\FlowQuery\FlowQuery($nodesToSort);
+        $flowQuery = new \Neos\Eel\FlowQuery\FlowQuery($nodesToSort);
         $operation = new SortOperation();
         $operation->evaluate($flowQuery, ['_lastPublicationDateTime', 'ASC']);
 
@@ -176,7 +176,7 @@ class SortOperationTest extends FunctionalTestCase
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addf', $this->context->getWorkspace(true), array()),
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115adde', $this->context->getWorkspace(true), array())
         ];
-        $flowQuery = new \TYPO3\Eel\FlowQuery\FlowQuery($nodesToSort);
+        $flowQuery = new \Neos\Eel\FlowQuery\FlowQuery($nodesToSort);
         $operation = new SortOperation();
         $operation->evaluate($flowQuery, ['_lastPublicationDateTime', 'DESC']);
 

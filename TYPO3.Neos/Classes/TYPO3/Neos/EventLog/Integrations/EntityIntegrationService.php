@@ -13,9 +13,9 @@ namespace TYPO3\Neos\EventLog\Integrations;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Event\OnFlushEventArgs;
-use TYPO3\Eel\CompilingEvaluator;
-use TYPO3\Eel\Exception;
-use TYPO3\Eel\Utility;
+use Neos\Eel\CompilingEvaluator;
+use Neos\Eel\Exception;
+use Neos\Eel\Utility;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SystemLoggerInterface;
 use TYPO3\Neos\EventLog\Domain\Model\Event;

@@ -12,7 +12,7 @@ namespace TYPO3\Neos\Utility;
  */
 
 use Behat\Transliterator\Transliterator;
-use TYPO3\Eel\FlowQuery\FlowQuery;
+use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Locale;
 use TYPO3\Neos\Exception;

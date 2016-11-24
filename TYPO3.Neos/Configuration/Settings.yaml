@@ -498,14 +498,14 @@ TYPO3:
         title: 'FlowQuery Operation Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/FlowQueryOperationReference.rst'
         affectedClasses:
-          interface: TYPO3\Eel\FlowQuery\OperationInterface
+          interface: Neos\Eel\FlowQuery\OperationInterface
         parser:
           implementationClassName: TYPO3\DocTools\Domain\Service\FlowQueryOperationClassParser
       'Neos:EelHelpers':
         title: 'Eel Helpers Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/EelHelpersReference.rst'
         affectedClasses:
-          interface: TYPO3\Eel\ProtectedContextAwareInterface
+          interface: Neos\Eel\ProtectedContextAwareInterface
           classNamePattern: '/^.*Helper$/i'
         parser:
           implementationClassName: TYPO3\DocTools\Domain\Service\EelHelperClassParser
