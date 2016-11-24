@@ -17,19 +17,19 @@ namespace Neos\Flow\Core\Migrations;
 class Version20161124233100 extends AbstractMigration
 {
 
-	public function getIdentifier()
-	{
-		return 'Neos.Media-20161124233100';
-	}
+    public function getIdentifier()
+    {
+        return 'Neos.Media-20161124233100';
+    }
 
-	/**
-	 * @return void
-	 */
-	public function up()
-	{
-		$this->searchAndReplace('TYPO3\Form', 'Neos\Form');
-		$this->searchAndReplace('TYPO3.Form', 'Neos.Form');
+    /**
+     * @return void
+     */
+    public function up()
+    {
+        $this->searchAndReplace('TYPO3\Media', 'Neos\Media');
+        $this->searchAndReplace('TYPO3.Media', 'Neos.Media');
 
-		$this->moveSettingsPaths('TYPO3.Form', 'Neos.Form');
-	}
+        $this->moveSettingsPaths('TYPO3.Media', 'Neos.Media');
+    }
 }
