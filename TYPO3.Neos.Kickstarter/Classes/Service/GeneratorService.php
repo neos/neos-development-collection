@@ -43,7 +43,7 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService
     public function generateSitePackage($packageKey, $siteName)
     {
         $this->packageManager->createPackage($packageKey, [
-            'type' => 'typo3-flow-site',
+            'type' => 'neos-site',
             "require" => [
                 "typo3/neos" => "*",
                 "typo3/neos-nodetypes" => "*"
