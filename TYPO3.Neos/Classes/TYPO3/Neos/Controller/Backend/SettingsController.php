@@ -13,8 +13,8 @@ namespace TYPO3\Neos\Controller\Backend;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
-use Neos\Flow\Utility\Arrays;
-use Neos\Flow\Utility\PositionalArraySorter;
+use Neos\Utility\Arrays;
+use Neos\Utility\PositionalArraySorter;
 
 /**
  * @Flow\Scope("singleton")

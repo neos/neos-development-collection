@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
-use Neos\Flow\Utility\TypeHandling;
+use Neos\Utility\TypeHandling;
 
 /**
  * Converts the given entity to a JSON representation containing the identity and object type

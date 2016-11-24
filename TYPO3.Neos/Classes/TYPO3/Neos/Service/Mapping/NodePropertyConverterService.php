@@ -18,8 +18,8 @@ use Neos\Flow\Property\Exception as PropertyException;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
-use Neos\Flow\Reflection\ObjectAccess;
-use Neos\Flow\Utility\TypeHandling;
+use Neos\Utility\ObjectAccess;
+use Neos\Utility\TypeHandling;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 
@@ -148,7 +148,7 @@ class NodePropertyConverterService
         $propertyMappingConfiguration = $this->createConfiguration($dataType);
         $convertedValue = $this->propertyMapper->convert($propertyValue, $conversionTargetType, $propertyMappingConfiguration);
 
-        if ($convertedValue instanceof \Neos\Flow\Error\Error) {
+        if ($convertedValue instanceof \Neos\Error\Messages\Error) {
             throw new PropertyException($convertedValue->getMessage(), $convertedValue->getCode());
         }
 

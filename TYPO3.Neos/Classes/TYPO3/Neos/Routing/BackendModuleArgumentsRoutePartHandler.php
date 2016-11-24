@@ -14,7 +14,7 @@ namespace TYPO3\Neos\Routing;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\DynamicRoutePart;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Flow\Utility\Arrays;
+use Neos\Utility\Arrays;
 
 /**
  * A route part handler for finding nodes specifically in the website's frontend.

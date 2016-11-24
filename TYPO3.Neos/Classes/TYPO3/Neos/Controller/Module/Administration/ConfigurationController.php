@@ -15,9 +15,9 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\ConfigurationSchemaValidator;
 use Neos\Flow\Configuration\Exception\SchemaValidationException;
-use Neos\Flow\Utility\SchemaGenerator;
+use Neos\Utility\SchemaGenerator;
 use TYPO3\Neos\Controller\Module\AbstractModuleController;
-use Neos\Flow\Error\Message;
+use Neos\Error\Messages\Message;
 
 /**
  * The Neos Configuration module controller

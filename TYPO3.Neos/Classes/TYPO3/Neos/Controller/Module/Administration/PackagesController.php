@@ -12,9 +12,9 @@ namespace TYPO3\Neos\Controller\Module\Administration;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Error\Error;
-use Neos\Flow\Error\Message;
-use Neos\Flow\Error\Warning;
+use Neos\Error\Messages\Error;
+use Neos\Error\Messages\Message;
+use Neos\Error\Messages\Warning;
 use Neos\Flow\Package;
 use Neos\Flow\Package\Exception\ProtectedPackageKeyException;
 use Neos\Flow\Package\Exception\UnknownPackageException;

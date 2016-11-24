@@ -18,7 +18,7 @@ use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use TYPO3\Neos\Security\Authorization\Privilege\NodeTreePrivilege;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use Neos\Flow\Utility\Arrays;
+use Neos\Utility\Arrays;
 use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\NodePrivilegeSubject;
 
 /**

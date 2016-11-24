@@ -12,7 +12,7 @@ namespace TYPO3\Neos\Controller\Module\Administration;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Error\Message;
+use Neos\Error\Messages\Message;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Package\PackageManagerInterface;

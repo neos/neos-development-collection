@@ -14,7 +14,7 @@ namespace TYPO3\Neos\TypoScript\Helper;
 use Doctrine\Common\Collections\Collection;
 use TYPO3\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 
 /**
  * Some Functional Programming Array helpers for Eel contexts

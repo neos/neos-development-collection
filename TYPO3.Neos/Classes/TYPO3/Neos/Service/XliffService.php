@@ -13,12 +13,12 @@ namespace TYPO3\Neos\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cache\Frontend\VariableFrontend;
-use Neos\Flow\Error\Result;
+use Neos\Error\Messages\Result;
 use Neos\Flow\I18n\Exception;
 use Neos\Flow\I18n\Xliff\XliffParser;
 use Neos\Flow\Package\PackageManagerInterface;
-use Neos\Flow\Utility\Arrays;
-use Neos\Flow\Utility\Files;
+use Neos\Utility\Arrays;
+use Neos\Utility\Files;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Service as LocalizationService;
 use Neos\Flow\Utility\Unicode\Functions as UnicodeFunctions;

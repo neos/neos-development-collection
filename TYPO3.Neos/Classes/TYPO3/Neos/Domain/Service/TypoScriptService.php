@@ -14,7 +14,7 @@ namespace TYPO3\Neos\Domain\Service;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Utility\Files;
+use Neos\Utility\Files;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TypoScript\Core\Parser;

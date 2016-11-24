@@ -14,7 +14,7 @@ namespace TYPO3\Neos\Aspects;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
-use Neos\Flow\Utility\Arrays;
+use Neos\Utility\Arrays;
 use TYPO3\Neos\Exception;
 
 /**
