@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\TypoScript\Helper;
+namespace Neos\Neos\TypoScript\Helper;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *

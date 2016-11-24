@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Tests\Functional\FlowQueryOperations;
+namespace Neos\Neos\Tests\Functional\FlowQueryOperations;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,7 @@ namespace TYPO3\Neos\Tests\Functional\FlowQueryOperations;
  */
 
 use Neos\Flow\Tests\FunctionalTestCase;
-use TYPO3\Neos\Eel\FlowQueryOperations\SortOperation;
+use Neos\Neos\Eel\FlowQueryOperations\SortOperation;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 
 /**
@@ -53,7 +53,7 @@ class SortOperationTest extends FunctionalTestCase
         $this->context = $this->contextFactory->create(array('workspaceName' => 'live'));
 
 
-        $siteImportService = $this->objectManager->get(\TYPO3\Neos\Domain\Service\SiteImportService::class);
+        $siteImportService = $this->objectManager->get(\Neos\Neos\Domain\Service\SiteImportService::class);
         $siteImportService->importFromFile(__DIR__ . '/Fixtures/SortableNodes.xml', $this->context);
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();

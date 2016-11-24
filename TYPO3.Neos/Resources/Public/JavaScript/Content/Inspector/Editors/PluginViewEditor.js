@@ -19,7 +19,7 @@ function(
 		allowEmpty: true,
 
 		init: function() {
-			this.set('placeholder', I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...');
+			this.set('placeholder', I18n.translate('Neos.Neos:Main:loading', 'Loading') + ' ...');
 			this._loadOptionsOnChange();
 			InspectorController.get('nodeProperties').addObserver('plugin', this, '_loadOptionsOnChange');
 
@@ -57,9 +57,9 @@ function(
 						i++;
 					}
 					if (i > 0) {
-						placeholder = I18n.translate('TYPO3.Neos:Main:content.inspector.editors.masterPluginEditor.selectPluginView', 'Select a plugin view');
+						placeholder = I18n.translate('Neos.Neos:Main:content.inspector.editors.masterPluginEditor.selectPluginView', 'Select a plugin view');
 					} else {
-						placeholder = I18n.translate('TYPO3.Neos:Main:content.inspector.editors.masterPluginEditor.noPluginViewsConfigured', 'No plugin views configured');
+						placeholder = I18n.translate('Neos.Neos:Main:content.inspector.editors.masterPluginEditor.noPluginViewsConfigured', 'No plugin views configured');
 						values = [];
 					}
 					that.setProperties({

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Tests\Unit\ViewHelpers;
+namespace Neos\Neos\Tests\Unit\ViewHelpers;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,15 +14,15 @@ namespace TYPO3\Neos\Tests\Unit\ViewHelpers;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use TYPO3\Neos\Domain\Service\ContentContext;
-use TYPO3\Neos\ViewHelpers\ContentElement\EditableViewHelper;
+use Neos\Neos\Domain\Service\ContentContext;
+use Neos\Neos\ViewHelpers\ContentElement\EditableViewHelper;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Service\AuthorizationService;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TypoScript\Core\Runtime;
 use TYPO3\TypoScript\TypoScriptObjects\Helpers\FluidView;
 use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
-use TYPO3\Neos\Service\ContentElementEditableService;
+use Neos\Neos\Service\ContentElementEditableService;
 
 /**
  * Test for the contentElement.editable ViewHelper

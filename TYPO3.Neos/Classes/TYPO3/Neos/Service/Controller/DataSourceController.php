@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Service\Controller;
+namespace Neos\Neos\Service\Controller;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -16,8 +16,8 @@ use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Reflection\ReflectionService;
-use TYPO3\Neos\Exception as NeosException;
-use TYPO3\Neos\Service\DataSource\DataSourceInterface;
+use Neos\Neos\Exception as NeosException;
+use Neos\Neos\Service\DataSource\DataSourceInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**

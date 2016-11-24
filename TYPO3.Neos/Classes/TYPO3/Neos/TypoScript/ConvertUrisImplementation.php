@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\TypoScript;
+namespace Neos\Neos\TypoScript;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,8 +12,8 @@ namespace TYPO3\Neos\TypoScript;
  */
 
 use Neos\Flow\Annotations as Flow;
-use TYPO3\Neos\Domain\Exception;
-use TYPO3\Neos\Service\LinkingService;
+use Neos\Neos\Domain\Exception;
+use Neos\Neos\Service\LinkingService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 
@@ -24,27 +24,27 @@ use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
  *
  * Usage::
  *
- *   someTextProperty.@process.1 = TYPO3.Neos:ConvertUris
+ *   someTextProperty.@process.1 = Neos.Neos:ConvertUris
  *
  * The optional property ``forceConversion`` can be used to have the links converted even when not
  * rendering the live workspace. This is used for links that are not inline editable (for
  * example links on images)::
  *
- *   someTextProperty.@process.1 = TYPO3.Neos:ConvertUris {
+ *   someTextProperty.@process.1 = Neos.Neos:ConvertUris {
  *     forceConversion = true
  *   }
  *
  * The optional property ``externalLinkTarget`` can be modified to disable or change the target attribute of the
  * link tag for links to external targets::
  *
- *   prototype(TYPO3.Neos:ConvertUris) {
+ *   prototype(Neos.Neos:ConvertUris) {
  *     externalLinkTarget = '_blank'
  *     resourceLinkTarget = '_blank'
  *   }
  *
  * The optional property ``absolute`` can be used to convert node uris to absolute links::
  *
- *   someTextProperty.@process.1 = TYPO3.Neos:ConvertUris {
+ *   someTextProperty.@process.1 = Neos.Neos:ConvertUris {
  *     absolute = true
  *   }
  */

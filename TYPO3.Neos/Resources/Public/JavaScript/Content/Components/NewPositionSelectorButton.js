@@ -15,7 +15,7 @@ function (
 		type: 'new',
 		init: function() {
 			this._super();
-			this.set('title', I18n.translate('TYPO3.Neos:Main:createNew', 'Create new'));
+			this.set('title', I18n.translate('Neos.Neos:Main:createNew', 'Create new'));
 		}
 	});
 });

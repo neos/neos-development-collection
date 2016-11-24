@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\ViewHelpers\Backend;
+namespace Neos\Neos\ViewHelpers\Backend;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -35,12 +35,12 @@ class DocumentBreadcrumbPathViewHelper extends AbstractViewHelper
     {
         $documentNodes = [];
         $flowQuery = new FlowQuery(array($node));
-        $nodes = array_reverse($flowQuery->parents('[instanceof TYPO3.Neos:Document]')->get());
+        $nodes = array_reverse($flowQuery->parents('[instanceof Neos.Neos:Document]')->get());
         /** @var NodeInterface $node */
         foreach ($nodes as $documentNode) {
             $documentNodes[] = $documentNode;
         }
-        if ($node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
+        if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
             $documentNodes[] = $node;
         }
         $this->templateVariableContainer->add('documentNodes', $documentNodes);

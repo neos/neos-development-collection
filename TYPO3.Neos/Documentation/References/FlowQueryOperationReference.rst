@@ -156,7 +156,7 @@ nodes. It will not evaluate any elements that are not instances of the
 The implementation changes the behavior of the `instanceof` operator to
 work on node types instead of PHP object types, so that::
 
-	[instanceof TYPO3.Neos.NodeTypes:Page]
+	[instanceof Neos.Neos.NodeTypes:Page]
 
 will in fact use `isOfType()` on the `NodeType` of context elements to
 filter. This filter allow also to filter the current context by a given
@@ -248,15 +248,15 @@ Example (identifier):
 
 Example (node type):
 
-	q(node).find('[instanceof TYPO3.Neos.NodeTypes:Text]')
+	q(node).find('[instanceof Neos.Neos.NodeTypes:Text]')
 
 Example (multiple node types):
 
-	q(node).find('[instanceof TYPO3.Neos.NodeTypes:Text],[instanceof TYPO3.Neos.NodeTypes:Image]')
+	q(node).find('[instanceof Neos.Neos.NodeTypes:Text],[instanceof Neos.Neos.NodeTypes:Image]')
 
 Example (node type with filter):
 
-	q(node).find('[instanceof TYPO3.Neos.NodeTypes:Text][text*="Neos"]')
+	q(node).find('[instanceof Neos.Neos.NodeTypes:Text][text*="Neos"]')
 
 :Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\FindOperation
 :Priority: 100

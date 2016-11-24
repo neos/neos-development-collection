@@ -14,7 +14,7 @@ Feature: Accounts / User Entity Monitoring
         authenticationProviderName: '${entity.authenticationProviderName}'
         expirationDate: '${entity.expirationDate}'
         party: '${entity.party.name.fullName}'
-    'TYPO3\Neos\Domain\Model\User':
+    'Neos\Neos\Domain\Model\User':
       events:
         created: PERSON_CREATED
       data:
@@ -27,7 +27,7 @@ Feature: Accounts / User Entity Monitoring
   Scenario: Creating an account is monitored
     When I create the following accounts:
       | User  | Password | First Name | Last Name | Roles                    |
-      | admin | password | Sebastian  | Kurfuerst | TYPO3.Neos:Administrator |
+      | admin | password | Sebastian  | Kurfuerst | Neos.Neos:Administrator |
     Then I should have the following history entries:
       | Event Type      |
       | PERSON_CREATED  |

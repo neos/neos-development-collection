@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Domain\Service;
+namespace Neos\Neos\Domain\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,7 @@ namespace TYPO3\Neos\Domain\Service;
  */
 
 use Neos\Media\Domain\Model\AssetInterface;
-use TYPO3\Neos\Service\LinkingService;
+use Neos\Neos\Service\LinkingService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -47,7 +47,7 @@ class NodeShortcutResolver
     public function resolveShortcutTarget(NodeInterface $node)
     {
         $infiniteLoopPrevention = 0;
-        while ($node->getNodeType()->isOfType('TYPO3.Neos:Shortcut') && $infiniteLoopPrevention < 50) {
+        while ($node->getNodeType()->isOfType('Neos.Neos:Shortcut') && $infiniteLoopPrevention < 50) {
             $infiniteLoopPrevention++;
             switch ($node->getProperty('targetMode')) {
                 case 'selectedTarget':
@@ -68,7 +68,7 @@ class NodeShortcutResolver
                     break;
                 case 'firstChildNode':
                 default:
-                    $childNodes = $node->getChildNodes('TYPO3.Neos:Document');
+                    $childNodes = $node->getChildNodes('Neos.Neos:Document');
                     if ($childNodes !== array()) {
                         $node = reset($childNodes);
                     } else {

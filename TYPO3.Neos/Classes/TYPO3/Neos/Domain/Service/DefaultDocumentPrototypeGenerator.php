@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Domain\Service;
+namespace Neos\Neos\Domain\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,7 +14,7 @@ namespace TYPO3\Neos\Domain\Service;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Generate a TypoScript prototype definition based on TYPO3.Neos:Document
+ * Generate a TypoScript prototype definition based on Neos.Neos:Document
  *
  * @Flow\Scope("singleton")
  * @api
@@ -26,5 +26,5 @@ class DefaultDocumentPrototypeGenerator extends DefaultPrototypeGenerator
      *
      * @var string
      */
-    protected $basePrototypeName = 'TYPO3.Neos:Document';
+    protected $basePrototypeName = 'Neos.Neos:Document';
 }

@@ -1909,7 +1909,7 @@ Options
 ``--package-key``
   Package to store the XML file in. Any resource will be stored in a sub folder "Resources".
 ``--node-type-filter``
-  Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text")
+  Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text")
 
 
 
@@ -2022,7 +2022,7 @@ Options
 This command allows for adding a specific role to an existing user.
 
 Roles can optionally be specified as a comma separated list. For all roles provided by Neos, the role
-namespace "TYPO3.Neos:" can be omitted.
+namespace "Neos.Neos:" can be omitted.
 
 If an authentication provider was specified, the user will be determined by an account identified by "username"
 related to the given provider. However, once a user has been found, the new role will be added to **all**
@@ -2034,7 +2034,7 @@ Arguments
 ``--username``
   The username of the user
 ``--role``
-  Role to be added to the user, for example "TYPO3.Neos:Administrator" or just "Administrator
+  Role to be added to the user, for example "Neos.Neos:Administrator" or just "Administrator
 
 
 
@@ -2064,7 +2064,7 @@ will be used as an account identifier for that new account.
 If an authentication provider name is specified, the new account will be created for that provider instead.
 
 Roles for the new user can optionally be specified as a comma separated list. For all roles provided by
-Neos, the role namespace "TYPO3.Neos:" can be omitted.
+Neos, the role namespace "Neos.Neos:" can be omitted.
 
 Arguments
 ^^^^^^^^^
@@ -2194,7 +2194,7 @@ Arguments
 ``--username``
   The username of the user
 ``--role``
-  Role to be removed from the user, for example "TYPO3.Neos:Administrator" or just "Administrator
+  Role to be removed from the user, for example "Neos.Neos:Administrator" or just "Administrator
 
 
 
@@ -2617,7 +2617,7 @@ Will remove all child nodes that do not have a connection to the root node.
 removeDisallowedChildNodes
 
 Will remove all child nodes that are disallowed according to the node type's auto-create
-configuration and constraints. 
+configuration and constraints.
 
 *Remove undefined node properties*
 removeUndefinedProperties
@@ -2640,7 +2640,7 @@ the current content dimension configuration.
 removeNodesWithInvalidWorkspace
 
 Will check for and optionally remove nodes which belong to a workspace which no longer
-exists.. 
+exists..
 
 *Repair inconsistent node identifiers*
 fixNodesWithInconsistentIdentifier
@@ -2653,20 +2653,20 @@ createMissingChildNodes
 
 For all nodes (or only those which match the --node-type filter specified with this
 command) which currently don't have child nodes as configured by the node type's
-configuration new child nodes will be created. 
+configuration new child nodes will be created.
 
 *Reorder child nodes*
 reorderChildNodes
 
 For all nodes (or only those which match the --node-type filter specified with this
 command) which have configured child nodes, those child nodes are reordered according to the
-position from the parents NodeType configuration. 
+position from the parents NodeType configuration.
 *Missing default properties*
 addMissingDefaultValues
 
 For all nodes (or only those which match the --node-type filter specified with this
 command) which currently don\t have a property that have a default value configuration
-the default value for that property will be set. 
+the default value for that property will be set.
 
 *Repair nodes with missing shadow nodes*
 repairShadowNodes
@@ -2683,7 +2683,7 @@ value.
 
 ./flow node:repair
 
-./flow node:repair --node-type TYPO3.Neos.NodeTypes:Page
+./flow node:repair --node-type Neos.Neos.NodeTypes:Page
 
 ./flow node:repair --workspace user-robert --only removeOrphanNodes,removeNodesWithInvalidDimensions
 

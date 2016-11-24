@@ -1,92 +1,92 @@
 'Acme.Demo:ThreeColumn':
   superTypes:
-    'TYPO3.Neos.NodeTypes:Column': TRUE
+    'Neos.Neos.NodeTypes:Column': TRUE
   ui:
     label: 'Three column content'
     group: 'structure'
   childNodes:
     column0:
-      type: 'TYPO3.Neos:ContentCollection'
+      type: 'Neos.Neos:ContentCollection'
     column1:
-      type: 'TYPO3.Neos:ContentCollection'
+      type: 'Neos.Neos:ContentCollection'
     column2:
-      type: 'TYPO3.Neos:ContentCollection'
+      type: 'Neos.Neos:ContentCollection'
 
 'Acme.Demo:List':
   superTypes:
-    'TYPO3.Neos:Content': TRUE
+    'Neos.Neos:Content': TRUE
   ui:
     label: 'List content'
     group: 'structure'
   childNodes:
     items:
-      type: 'TYPO3.Neos:ContentCollection'
+      type: 'Neos.Neos:ContentCollection'
 
 'Acme.Demo:ListItem':
   superTypes:
-    'TYPO3.Neos:Content': TRUE
+    'Neos.Neos:Content': TRUE
   properties:
     text:
       type: 'string'
 
-'TYPO3.Neos.BackendSchemaControllerTest:Node':
+'Neos.Neos.BackendSchemaControllerTest:Node':
   abstract: TRUE
 
-'TYPO3.Neos.BackendSchemaControllerTest:Document':
+'Neos.Neos.BackendSchemaControllerTest:Document':
   superTypes:
-    'TYPO3.Neos.BackendSchemaControllerTest:Node': TRUE
+    'Neos.Neos.BackendSchemaControllerTest:Node': TRUE
 
-'TYPO3.Neos.BackendSchemaControllerTest:Page':
+'Neos.Neos.BackendSchemaControllerTest:Page':
   superTypes:
-    'TYPO3.Neos.BackendSchemaControllerTest:Document': TRUE
+    'Neos.Neos.BackendSchemaControllerTest:Document': TRUE
   constraints:
     nodeTypes:
-      'TYPO3.Neos.BackendSchemaControllerTest:SubPage': TRUE
+      'Neos.Neos.BackendSchemaControllerTest:SubPage': TRUE
 
-'TYPO3.Neos.BackendSchemaControllerTest:SubPage':
+'Neos.Neos.BackendSchemaControllerTest:SubPage':
   superTypes:
-    'TYPO3.Neos.BackendSchemaControllerTest:Page': TRUE
+    'Neos.Neos.BackendSchemaControllerTest:Page': TRUE
 
-'TYPO3.Neos.BackendSchemaControllerTest:Folder':
+'Neos.Neos.BackendSchemaControllerTest:Folder':
   superTypes:
-    'TYPO3.Neos.BackendSchemaControllerTest:Document': TRUE
+    'Neos.Neos.BackendSchemaControllerTest:Document': TRUE
 
-'TYPO3.Neos.BackendSchemaControllerTest:Content':
+'Neos.Neos.BackendSchemaControllerTest:Content':
   superTypes:
-    'TYPO3.Neos.BackendSchemaControllerTest:Node': TRUE
+    'Neos.Neos.BackendSchemaControllerTest:Node': TRUE
 
-'TYPO3.Neos.BackendSchemaControllerTest:Text':
+'Neos.Neos.BackendSchemaControllerTest:Text':
   superTypes:
-    'TYPO3.Neos.BackendSchemaControllerTest:Content': TRUE
+    'Neos.Neos.BackendSchemaControllerTest:Content': TRUE
 
-'TYPO3.Neos.BackendSchemaControllerTest:TwoColumn':
+'Neos.Neos.BackendSchemaControllerTest:TwoColumn':
   superTypes:
-    'TYPO3.Neos.BackendSchemaControllerTest:Content': TRUE
+    'Neos.Neos.BackendSchemaControllerTest:Content': TRUE
   childNodes:
     column0:
-      type: 'TYPO3.Neos:ContentCollection'
+      type: 'Neos.Neos:ContentCollection'
       constraints:
         nodeTypes:
-          'TYPO3.Neos.BackendSchemaControllerTest:AlohaNodeType': TRUE
+          'Neos.Neos.BackendSchemaControllerTest:AlohaNodeType': TRUE
     column1:
-      type: 'TYPO3.Neos:ContentCollection'
+      type: 'Neos.Neos:ContentCollection'
       constraints:
         nodeTypes:
-          'TYPO3.Neos.BackendSchemaControllerTest:Document': FALSE
-          'TYPO3.Neos.BackendSchemaControllerTest:SubPage': FALSE
+          'Neos.Neos.BackendSchemaControllerTest:Document': FALSE
+          'Neos.Neos.BackendSchemaControllerTest:SubPage': FALSE
           '*': TRUE
 
 
-'TYPO3.Neos.BackendSchemaControllerTest:ParentAlohaNodeType':
+'Neos.Neos.BackendSchemaControllerTest:ParentAlohaNodeType':
   properties:
     text:
       ui:
         aloha:
           fallbackCase: ['defined', 'as', 'plain', 'array']
 
-'TYPO3.Neos.BackendSchemaControllerTest:AlohaNodeType':
+'Neos.Neos.BackendSchemaControllerTest:AlohaNodeType':
   superTypes:
-    'TYPO3.Neos.BackendSchemaControllerTest:ParentAlohaNodeType': TRUE
+    'Neos.Neos.BackendSchemaControllerTest:ParentAlohaNodeType': TRUE
   properties:
     text:
       ui:

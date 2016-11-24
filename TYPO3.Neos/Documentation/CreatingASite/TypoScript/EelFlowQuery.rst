@@ -90,10 +90,10 @@ By default the following Eel helpers are available in the default context for Ee
 
 * ``Translation``, exposing ``TYPO3\Flow\I18n\EelHelper\TranslationHelper``
 
-* ``Neos.Node``, exposing ``TYPO3\Neos\TypoScript\Helper\NodeHelper``
-* ``Neos.Link``, exposing ``TYPO3\Neos\TypoScript\Helper\LinkHelper``
-* ``Neos.Array``, exposing ``TYPO3\Neos\TypoScript\Helper\ArrayHelper``
-* ``Neos.Rendering``, exposing ``TYPO3\Neos\TypoScript\Helper\RenderingHelper``
+* ``Neos.Node``, exposing ``Neos\Neos\TypoScript\Helper\NodeHelper``
+* ``Neos.Link``, exposing ``Neos\Neos\TypoScript\Helper\LinkHelper``
+* ``Neos.Array``, exposing ``Neos\Neos\TypoScript\Helper\ArrayHelper``
+* ``Neos.Rendering``, exposing ``Neos\Neos\TypoScript\Helper\RenderingHelper``
 
 See: :ref:`Eel Helpers Reference`
 
@@ -115,7 +115,7 @@ to be available, the package containing the operation must be installed. Any pac
 add their own FlowQuery operations. A set of basic operations is always available as part
 of the TYPO3.Eel package itself.
 
-In TYPO3.Neos, the following FlowQuery operations are defined:
+In Neos.Neos, the following FlowQuery operations are defined:
 
 ``property``
   Adjusted to access properties of a TYPO3CR node. If property names are prefixed with an
@@ -134,7 +134,7 @@ In TYPO3.Neos, the following FlowQuery operations are defined:
   Returns the parents of a TYPO3CR node. They are optionally filtered with a
   ``filter`` operation to limit the returned result set.
 
-A reference of all FlowQuery operations defined in TYPO3.Eel and TYPO3.Neos can be
+A reference of all FlowQuery operations defined in TYPO3.Eel and Neos.Neos can be
 found in the :ref:`FlowQuery Operation Reference`.
 
 Operation Resolving
@@ -215,14 +215,14 @@ the nodes are again filtered by a check for their property ``spam`` being false.
 
 .. code-block:: text
 
-	comments.collection = ${q(node).is('[instanceof TYPO3.Neos:ContentCollection]') ?
+	comments.collection = ${q(node).is('[instanceof Neos.Neos:ContentCollection]') ?
 		q(node).children("[spam = false]") : q(node).children(this.getNodePath()).children("[spam = false]")}
 
 Querying for nodes of two or more different node types
 
 .. code-block:: text
 
-	elements = ${q(node).filter('[instanceof TYPO3.Neos.NodeTypes:Text],[instanceof TYPO3.Neos.NodeTypes:TextWithImage]').get()}
+	elements = ${q(node).filter('[instanceof Neos.Neos.NodeTypes:Text],[instanceof Neos.Neos.NodeTypes:TextWithImage]').get()}
 
 
 Fizzle

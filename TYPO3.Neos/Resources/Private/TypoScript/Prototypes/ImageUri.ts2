@@ -1,5 +1,5 @@
 # ImageUri object works exactly the same way as the uri.image ViewHelper in the TYPO3.Media package
-prototype(TYPO3.Neos:ImageUri) {
+prototype(Neos.Neos:ImageUri) {
 	@class = 'TYPO3\\Neos\\TypoScript\\ImageUriImplementation'
 	maximumWidth = 2560
 	width = NULL
@@ -11,7 +11,7 @@ prototype(TYPO3.Neos:ImageUri) {
 }
 
 # ImageTag object works exactly the same way as image ViewHelper in the TYPO3.Media package
-prototype(TYPO3.Neos:ImageTag) < prototype(TYPO3.TypoScript:Tag) {
+prototype(Neos.Neos:ImageTag) < prototype(TYPO3.TypoScript:Tag) {
 	asset = 'pass-the-media-asset'
 	maximumWidth = 2560
 	width = NULL
@@ -29,7 +29,7 @@ prototype(TYPO3.Neos:ImageTag) < prototype(TYPO3.TypoScript:Tag) {
 
 	tagName = 'img'
 	attributes {
-		src = TYPO3.Neos:ImageUri {
+		src = Neos.Neos:ImageUri {
 			asset = ${asset}
 			width = ${width}
 			maximumWidth = ${maximumWidth}

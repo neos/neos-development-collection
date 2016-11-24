@@ -106,9 +106,9 @@ Example of a prototype class definition::
 
 	Ext.ns("TYPO3.TYPO3.Content");
 
-	
+
 	/*
-	 * This file is part of the TYPO3.Neos package.
+	 * This file is part of the Neos.Neos package.
 	 *
 	 * (c) Contributors of the Neos Project - www.neos.io
 	 *
@@ -116,7 +116,7 @@ Example of a prototype class definition::
 	 * information, please view the LICENSE file which was distributed with this
 	 * source code.
 	 */
-	 
+
 	/**
 	 * @class TYPO3.TYPO3.Content.FrontendEditor
 	 *
@@ -167,9 +167,9 @@ prototype class definition, we will only highlight the differences.
 
 	Ext.ns("TYPO3.TYPO3.Core");
 
-	
+
 	/*
-	 * This file is part of the TYPO3.Neos package.
+	 * This file is part of the Neos.Neos package.
 	 *
 	 * (c) Contributors of the Neos Project - www.neos.io
 	 *

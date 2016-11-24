@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Tests\Functional\Controller\Backend;
+namespace Neos\Neos\Tests\Functional\Controller\Backend;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,7 @@ namespace TYPO3\Neos\Tests\Functional\Controller\Backend;
  */
 
 use Neos\Flow\Tests\FunctionalTestCase;
-use TYPO3\Neos\Domain\Model\User;
+use Neos\Neos\Domain\Model\User;
 
 /**
  * Testcase for method security of the backend controller
@@ -31,7 +31,7 @@ class BackendControllerSecurityTest extends FunctionalTestCase
      */
     public function indexActionIsGrantedForAdministrator()
     {
-        $account = $this->authenticateRoles(array('TYPO3.Neos:Administrator'));
+        $account = $this->authenticateRoles(array('Neos.Neos:Administrator'));
         $account->setAccountIdentifier('admin');
         $this->browser->request('http://localhost/neos/login');
 

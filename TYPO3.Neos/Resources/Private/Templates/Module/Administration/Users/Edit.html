@@ -1,9 +1,9 @@
-{namespace neos=TYPO3\Neos\ViewHelpers}
+{namespace neos=Neos\Neos\ViewHelpers}
 <f:layout name="BackendSubModule" />
 
 <f:section name="subtitle">
 	<div class="neos-module-container">
-		<h2><neos:backend.translate id="users.editUser" arguments="{0:'{f:if(condition: user.name.firstName, then: user.name, else: user.accounts.0.accountIdentifier)}'}" source="Modules" package="TYPO3.Neos"/></h2>
+		<h2><neos:backend.translate id="users.editUser" arguments="{0:'{f:if(condition: user.name.firstName, then: user.name, else: user.accounts.0.accountIdentifier)}'}" source="Modules" package="Neos.Neos"/></h2>
 	</div>
 </f:section>
 

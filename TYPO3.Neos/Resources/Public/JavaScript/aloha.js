@@ -171,7 +171,7 @@ function(
 			},
 			bundles: {
 				// Path for custom bundle relative from require.js path
-				//neosAloha: '/_Resources/Static/Packages/TYPO3.Neos/JavaScript/alohaplugins/'
+				//neosAloha: '/_Resources/Static/Packages/Neos.Neos/JavaScript/alohaplugins/'
 			},
 
 			baseUrl: alohaBaseUrl,

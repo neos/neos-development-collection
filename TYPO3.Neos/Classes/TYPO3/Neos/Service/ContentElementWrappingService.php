@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Service;
+namespace Neos\Neos\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -20,8 +20,8 @@ use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Utility\TypeHandling;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\ImageInterface;
-use TYPO3\Neos\Domain\Service\ContentContext;
-use TYPO3\Neos\Service\Mapping\NodePropertyConverterService;
+use Neos\Neos\Domain\Service\ContentContext;
+use Neos\Neos\Service\Mapping\NodePropertyConverterService;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Service\AuthorizationService;
@@ -221,7 +221,7 @@ class ContentElementWrappingService
         $attributes['data-node-__workspace-name'] = $node->getWorkspace()->getName();
         $attributes['data-node-__label'] = $node->getLabel();
 
-        if ($node->getNodeType()->isOfType('TYPO3.Neos:ContentCollection')) {
+        if ($node->getNodeType()->isOfType('Neos.Neos:ContentCollection')) {
             $attributes['rel'] = 'typo3:content-collection';
         }
 
@@ -256,7 +256,7 @@ class ContentElementWrappingService
     {
         $classNames = [];
 
-        if ($node->getNodeType()->isOfType('TYPO3.Neos:ContentCollection')) {
+        if ($node->getNodeType()->isOfType('Neos.Neos:ContentCollection')) {
             // This is needed since the backend relies on this class (should not be necessary)
             $classNames[] = 'neos-contentcollection';
         } else {

@@ -18,10 +18,10 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml)::
 
 	'Vendor.Site:Carousel':
 	  superTypes:
-	    'TYPO3.Neos:Content': TRUE
+	    'Neos.Neos:Content': TRUE
 	  childNodes:
 	    carouselItems:
-	      type: 'TYPO3.Neos:ContentCollection'
+	      type: 'Neos.Neos:ContentCollection'
 	  ui:
 	    label: 'Carousel'
 	    group: 'plugins'
@@ -33,17 +33,17 @@ Next you need to define the prototype for the slider in typoscript.
 TypoScript (Sites/Vendor.Site/Resources/Private/TypoScript/NodeTypes/Carousel.ts2)::
 
 	prototype(Vendor.Site:Carousel) {
-		carouselItems = TYPO3.Neos:ContentCollection {
+		carouselItems = Neos.Neos:ContentCollection {
 			nodePath = 'carouselItems'
 			content.iterationName = 'carouselItemsIteration'
 			attributes.class = 'carousel-inner'
 		}
 
 		// Collect the carousels children but only images
-		carouselItemArray = ${q(node).children('carouselItems').children('[instanceof TYPO3.Neos.NodeTypes:Image]')}
+		carouselItemArray = ${q(node).children('carouselItems').children('[instanceof Neos.Neos.NodeTypes:Image]')}
 
 		// Enhance image prototype when inside the carousel
-		prototype(TYPO3.Neos.NodeTypes:Image) {
+		prototype(Neos.Neos.NodeTypes:Image) {
 			// Render images in the carousel with a special template.
 			templatePath = 'resource://Vendor.Site/Private/Templates/TypoScriptObjects/CarouselItem.html'
 
@@ -64,7 +64,7 @@ For rendering you need the fluid templates for the slider.
 
 Html (Sites/Vendor.Site/Private/Templates/NodeTypes/Carousel.html) ::
 
-	{namespace neos=TYPO3\Neos\ViewHelpers}
+	{namespace neos=Neos\Neos\ViewHelpers}
 	{namespace ts=TYPO3\TypoScript\ViewHelpers}
 	<div{attributes -> f:format.raw()}>
 		<div class="carousel slide" id="{node.identifier}">
@@ -92,7 +92,7 @@ And now the fluid template for the slider items.
 
 Html (Sites/Vendor.Site/Private/Templates/TypoScriptObjects/CarouselItem.html) ::
 
-	{namespace neos=TYPO3\Neos\ViewHelpers}
+	{namespace neos=Neos\Neos\ViewHelpers}
 	{namespace media=TYPO3\Media\ViewHelpers}
 	<div{attributes -> f:format.raw()}>
 		<f:if condition="{image}">
@@ -100,7 +100,7 @@ Html (Sites/Vendor.Site/Private/Templates/TypoScriptObjects/CarouselItem.html) :
 				<media:image image="{image}" alt="{alternativeText}" title="{title}" maximumWidth="{maximumWidth}" maximumHeight="{maximumHeight}" />
 			</f:then>
 			<f:else>
-				<img src="{f:uri.resource(package: 'TYPO3.Neos', path: 'Images/dummy-image.svg')}" title="Dummy image" alt="Dummy image" />
+				<img src="{f:uri.resource(package: 'Neos.Neos', path: 'Images/dummy-image.svg')}" title="Dummy image" alt="Dummy image" />
 			</f:else>
 		</f:if>
 		<div class="carousel-caption">

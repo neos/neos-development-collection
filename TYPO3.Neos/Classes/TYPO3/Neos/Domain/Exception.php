@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Domain;
+namespace Neos\Neos\Domain;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -16,6 +16,6 @@ namespace TYPO3\Neos\Domain;
  *
  * @api
  */
-class Exception extends \TYPO3\Neos\Exception
+class Exception extends \Neos\Neos\Exception
 {
 }

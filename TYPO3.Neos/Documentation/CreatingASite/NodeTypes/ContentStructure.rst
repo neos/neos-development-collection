@@ -63,20 +63,20 @@ Neos is shipped with a number of node types. It is helpful to know some of
 them, as they can be useful elements to extend, and Neos depends on some of them
 for proper behavior.
 
-There are a few core node types which are needed by Neos; these are shipped in ``TYPO3.Neos``
-directly. All other node types such as Text, Image, ... are shipped inside the ``TYPO3.Neos.NodeTypes``
+There are a few core node types which are needed by Neos; these are shipped in ``Neos.Neos``
+directly. All other node types such as Text, Image, ... are shipped inside the ``Neos.Neos.NodeTypes``
 package.
 
-TYPO3.Neos:Node
+Neos.Neos:Node
 ~~~~~~~~~~~~~~~
 
-``TYPO3.Neos:Node`` is a (more or less internal) base type which should be extended by
+``Neos.Neos:Node`` is a (more or less internal) base type which should be extended by
 all content types which are used in the context of Neos.
 
 It does not define any properties.
 
 
-TYPO3.Neos:Document
+Neos.Neos:Document
 ~~~~~~~~~~~~~~~~~~~
 
 An important distinction is between nodes which look and behave like pages
@@ -84,23 +84,23 @@ and "normal content" such as text, which is rendered inside a page. Nodes which
 behave like pages are called *Document Nodes* in Neos. This means they have a unique,
 externally visible URL by which they can be rendered.
 
-The standard *page* in Neos is implemented by ``TYPO3.Neos.NodeTypes:Page`` which directly extends from
-``TYPO3.Neos:Document``.
+The standard *page* in Neos is implemented by ``Neos.Neos.NodeTypes:Page`` which directly extends from
+``Neos.Neos:Document``.
 
 
-TYPO3.Neos:ContentCollection and TYPO3.Neos:Content
+Neos.Neos:ContentCollection and Neos.Neos:Content
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All content which does not behave like pages, but which lives inside them, is
 implemented by two different node types:
 
-First, there is the ``TYPO3.Neos:ContentCollection`` type: A ``TYPO3.Neos:ContentCollection`` has a structural purpose.
+First, there is the ``Neos.Neos:ContentCollection`` type: A ``Neos.Neos:ContentCollection`` has a structural purpose.
 It usually contains an ordered list of child nodes which are rendered inside.
 
-``TYPO3.Neos:ContentCollection`` may be extended by custom types.
+``Neos.Neos:ContentCollection`` may be extended by custom types.
 
 Second, the node type for all standard elements (such as text, image, youtube,
-...) is ``TYPO3.Neos:Content``. This is–by far–the most often extended node type.
+...) is ``Neos.Neos:Content``. This is–by far–the most often extended node type.
 
 
 Extending the NodeTypes

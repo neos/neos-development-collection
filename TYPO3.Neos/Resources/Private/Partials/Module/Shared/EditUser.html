@@ -1,7 +1,7 @@
-{namespace neos=TYPO3\Neos\ViewHelpers}
+{namespace neos=Neos\Neos\ViewHelpers}
 <div class="neos-row-fluid neos-module-container">
 	<fieldset class="neos-span5">
-		<legend>{neos:backend.translate(id: 'userSettings.personalData', source: 'Modules', package: 'TYPO3.Neos')}</legend>
+		<legend>{neos:backend.translate(id: 'userSettings.personalData', source: 'Modules', package: 'Neos.Neos')}</legend>
 
 		<div class="neos-control-group">
 			<label class="neos-control-label" for="title">{neos:backend.translate(id: 'personName.title', source: 'Main', package: 'Neos.Party')}</label>
@@ -42,26 +42,26 @@
 		</div>
 	</fieldset>
 	<fieldset class="neos-span5 neos-offset1">
-		<legend>{neos:backend.translate(id: 'userSettings.preferences', source: 'Modules', package: 'TYPO3.Neos')}</legend>
+		<legend>{neos:backend.translate(id: 'userSettings.preferences', source: 'Modules', package: 'Neos.Neos')}</legend>
 
 		<div class="neos-control-group">
-			<label class="neos-control-label" for="interfaceLanguage">{neos:backend.translate(id: 'userSettings.preferences.interfaceLanguage', source: 'Modules', package: 'TYPO3.Neos')}</label>
+			<label class="neos-control-label" for="interfaceLanguage">{neos:backend.translate(id: 'userSettings.preferences.interfaceLanguage', source: 'Modules', package: 'Neos.Neos')}</label>
 			<div class="neos-controls">
-				<f:form.select property="preferences.interfaceLanguage" id="interfaceLanguage" options="{settings.userInterface.availableLanguages}" prependOptionLabel="{neos:backend.translate(id: 'userSettings.preferences.useDefaultInterfaceLanguage', source: 'Modules', package: 'TYPO3.Neos')}" />
+				<f:form.select property="preferences.interfaceLanguage" id="interfaceLanguage" options="{settings.userInterface.availableLanguages}" prependOptionLabel="{neos:backend.translate(id: 'userSettings.preferences.useDefaultInterfaceLanguage', source: 'Modules', package: 'Neos.Neos')}" />
 			</div>
 		</div>
 	</fieldset>
 </div>
 <div class="neos-row-fluid">
 	<fieldset class="neos-span11">
-		<legend>{neos:backend.translate(id: 'userSettings.accounts', source: 'Modules', package: 'TYPO3.Neos')}</legend>
+		<legend>{neos:backend.translate(id: 'userSettings.accounts', source: 'Modules', package: 'Neos.Neos')}</legend>
 		<div class="neos-control-group">
 			<table class="neos-table">
 				<thead>
 				<tr>
-					<th>{neos:backend.translate(id: 'userSettings.accounts.username', source: 'Modules', package: 'TYPO3.Neos')}</th>
-					<th>{neos:backend.translate(id: 'userSettings.accounts.roles', source: 'Modules', package: 'TYPO3.Neos')}</th>
-					<th>{neos:backend.translate(id: 'userSettings.accounts.authenticationProvider', source: 'Modules', package: 'TYPO3.Neos')}</th>
+					<th>{neos:backend.translate(id: 'userSettings.accounts.username', source: 'Modules', package: 'Neos.Neos')}</th>
+					<th>{neos:backend.translate(id: 'userSettings.accounts.roles', source: 'Modules', package: 'Neos.Neos')}</th>
+					<th>{neos:backend.translate(id: 'userSettings.accounts.authenticationProvider', source: 'Modules', package: 'Neos.Neos')}</th>
 					<th></th>
 				</tr>
 				</thead>
@@ -73,7 +73,7 @@
 						<td><span title="{account.authenticationProviderName}"><neos:backend.authenticationProviderLabel identifier="{account.authenticationProviderName}"/></span></td>
 						<td class="neos-action">
 							<div class="neos-pull-right">
-								<f:link.action action="editAccount" arguments="{account: account}" class="neos-button" title="{neos:backend.translate(id: 'clickToEdit', source: 'Modules', package: 'TYPO3.Neos')}" additionalAttributes="{data-neos-toggle: 'tooltip'}"><i class="icon-pencil icon-white"></i></f:link.action>
+								<f:link.action action="editAccount" arguments="{account: account}" class="neos-button" title="{neos:backend.translate(id: 'clickToEdit', source: 'Modules', package: 'Neos.Neos')}" additionalAttributes="{data-neos-toggle: 'tooltip'}"><i class="icon-pencil icon-white"></i></f:link.action>
 							</div>
 						</td>
 					</tr>
@@ -85,7 +85,7 @@
 </div>
 <div class="neos-row-fluid">
 	<fieldset class="neos-span11">
-		<legend>{neos:backend.translate(id: 'userSettings.electronicAddresses', source: 'Modules',  package: 'TYPO3.Neos')}</legend>
+		<legend>{neos:backend.translate(id: 'userSettings.electronicAddresses', source: 'Modules',  package: 'Neos.Neos')}</legend>
 		<div class="neos-control-group">
 			<table class="neos-table" id="electronicAddresses">
 				<thead>
@@ -121,7 +121,7 @@
 						</td>
 						<td class="neos-action">
 							<div class="neos-pull-right">
-								<button type="button" class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'clickToDelete', source: 'Modules', package: 'TYPO3.Neos')}" data-toggle="modal" href="#electronicAddress-{index}">
+								<button type="button" class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'clickToDelete', source: 'Modules', package: 'Neos.Neos')}" data-toggle="modal" href="#electronicAddress-{index}">
 									<i class="icon-trash icon-white"></i>
 								</button>
 								<div class="neos-hide" id="electronicAddress-{index}">
@@ -129,11 +129,11 @@
 										<div class="neos-modal-content">
 											<div class="neos-modal-header">
 												<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-												<div class="neos-header">{neos:backend.translate(id: 'userSettings.electronicAddresses.buttonDelete', source: 'Modules', package: TYPO3.Neos)} "{electronicAddress.type} ({electronicAddress.identifier})"?</div>
+												<div class="neos-header">{neos:backend.translate(id: 'userSettings.electronicAddresses.buttonDelete', source: 'Modules', package: Neos.Neos)} "{electronicAddress.type} ({electronicAddress.identifier})"?</div>
 											</div>
 											<div class="neos-modal-footer">
-												<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel',source: 'Modules', package: 'TYPO3.Neos')}</a>
-												<button form="postHelper" formaction="{f:uri.action(action: 'deleteElectronicAddress', arguments: {user: user, electronicAddress: electronicAddress})}" type="submit" class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'delete', value: 'delete')}">{neos:backend.translate(id: 'userSettings.electronicAddresses.buttonDelete.confirmation', source: 'Modules', package: 'TYPO3.Neos')}</button>
+												<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel',source: 'Modules', package: 'Neos.Neos')}</a>
+												<button form="postHelper" formaction="{f:uri.action(action: 'deleteElectronicAddress', arguments: {user: user, electronicAddress: electronicAddress})}" type="submit" class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'delete', value: 'delete')}">{neos:backend.translate(id: 'userSettings.electronicAddresses.buttonDelete.confirmation', source: 'Modules', package: 'Neos.Neos')}</button>
 											</div>
 										</div>
 									</div>
@@ -146,7 +146,7 @@
 				</tbody>
 			</table>
 			<div class="neos-pull-right">
-				<f:link.action action="newElectronicAddress" arguments="{user: user}" class="neos-button" title="{neos:backend.translate(id: 'userSettings.electronicAddresses.clickAddElectronicAddress', source: 'Modules', package: 'TYPO3.Neos')}">{neos:backend.translate(id: 'userSettings.electronicAddresses.addElectronicAddress', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
+				<f:link.action action="newElectronicAddress" arguments="{user: user}" class="neos-button" title="{neos:backend.translate(id: 'userSettings.electronicAddresses.clickAddElectronicAddress', source: 'Modules', package: 'Neos.Neos')}">{neos:backend.translate(id: 'userSettings.electronicAddresses.addElectronicAddress', source: 'Modules', package: 'Neos.Neos')}</f:link.action>
 			</div>
 		</div>
 

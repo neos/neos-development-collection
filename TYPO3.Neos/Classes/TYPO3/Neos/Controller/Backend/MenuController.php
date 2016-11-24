@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Controller\Backend;
+namespace Neos\Neos\Controller\Backend;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,8 +13,8 @@ namespace TYPO3\Neos\Controller\Backend;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
-use TYPO3\Neos\Controller\Backend\MenuHelper;
-use TYPO3\Neos\Controller\BackendUserTranslationTrait;
+use Neos\Neos\Controller\Backend\MenuHelper;
+use Neos\Neos\Controller\BackendUserTranslationTrait;
 
 /**
  * @Flow\Scope("singleton")
@@ -39,7 +39,7 @@ class MenuController extends ActionController
         $contentModuleUri = $this->getControllerContext()->getUriBuilder()
             ->reset()
             ->setCreateAbsoluteUri(true)
-            ->uriFor('index', array(), 'Backend\Backend', 'TYPO3.Neos');
+            ->uriFor('index', array(), 'Backend\Backend', 'Neos.Neos');
         return json_encode(array(
             'contentModuleUri' => $contentModuleUri,
             'sites' => $this->menuHelper->buildSiteList($this->controllerContext),

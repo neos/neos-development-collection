@@ -2,14 +2,14 @@
 #
 # Renders a meta tag with attributes about the current document node
 #
-prototype(TYPO3.Neos:DocumentMetadata) < prototype(TYPO3.TypoScript:Tag) {
+prototype(Neos.Neos:DocumentMetadata) < prototype(TYPO3.TypoScript:Tag) {
 	tagName = 'div'
 	forceClosingTag = TRUE
 	attributes {
 		id = 'neos-document-metadata'
 	}
 
-	@process.contentElementWrapping = TYPO3.Neos:ContentElementWrapping {
+	@process.contentElementWrapping = Neos.Neos:ContentElementWrapping {
 		renderCurrentDocumentMetadata = TRUE
 	}
 

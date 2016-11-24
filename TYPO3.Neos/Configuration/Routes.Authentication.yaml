@@ -1,5 +1,5 @@
 #                                                                        #
-# "Authentication" subroutes configuration for the TYPO3.Neos package    #
+# "Authentication" subroutes configuration for the Neos.Neos package    #
 #                                                                        #
 
 -
@@ -14,7 +14,7 @@
   name: 'Token login'
   uriPattern: 'login/token/{token}'
   defaults:
-    '@package': 'TYPO3.Neos'
+    '@package': 'Neos.Neos'
     '@controller': 'Login'
     '@action': 'tokenLogin'
     '@format': 'html'

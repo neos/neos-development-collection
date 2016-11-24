@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Aspects;
+namespace Neos\Neos\Aspects;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -22,7 +22,7 @@ use Neos\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 class ScrambleTranslationAspect
 {
     /**
-     * @Flow\Around("setting(TYPO3.Neos.userInterface.scrambleTranslatedLabels) && method(Neos\Flow\I18n\Translator->translate.*())")
+     * @Flow\Around("setting(Neos.Neos.userInterface.scrambleTranslatedLabels) && method(Neos\Flow\I18n\Translator->translate.*())")
      * @param \Neos\Flow\Aop\JoinPointInterface $joinPoint The current join point
      * @return string A scrambled translation string
      */

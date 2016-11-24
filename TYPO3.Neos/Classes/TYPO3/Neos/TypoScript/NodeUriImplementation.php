@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\TypoScript;
+namespace Neos\Neos\TypoScript;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,9 +13,9 @@ namespace TYPO3\Neos\TypoScript;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SystemLoggerInterface;
-use TYPO3\Neos\Service\LinkingService;
+use Neos\Neos\Service\LinkingService;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
-use TYPO3\Neos\Exception as NeosException;
+use Neos\Neos\Exception as NeosException;
 
 /**
  * Create a link to a node

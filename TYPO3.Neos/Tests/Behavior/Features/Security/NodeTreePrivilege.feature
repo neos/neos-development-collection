@@ -5,7 +5,7 @@ Feature: Privilege to restrict nodes shown in the node tree
       """
       privilegeTargets:
 
-        'TYPO3\Neos\Security\Authorization\Privilege\NodeTreePrivilege':
+        'Neos\Neos\Security\Authorization\Privilege\NodeTreePrivilege':
           'TYPO3.TYPO3CR:CompanySubtree':
             matcher: 'isDescendantNodeOf("/sites/typo3cr/company")'
           'TYPO3.TYPO3CR:ServiceSubtree':
@@ -30,14 +30,14 @@ Feature: Privilege to restrict nodes shown in the node tree
         'TYPO3.Flow:AuthenticatedUser':
           privileges: []
 
-        'TYPO3.Neos:Editor':
+        'Neos.Neos:Editor':
           privileges:
             -
               privilegeTarget: 'TYPO3.TYPO3CR:CompanySubtree'
               permission: GRANT
 
-        'TYPO3.Neos:Administrator':
-          parentRoles: ['TYPO3.Neos:Editor']
+        'Neos.Neos:Administrator':
+          parentRoles: ['Neos.Neos:Editor']
           privileges:
             -
               privilegeTarget: 'TYPO3.TYPO3CR:ServiceSubtree'
@@ -66,7 +66,7 @@ Feature: Privilege to restrict nodes shown in the node tree
 
   @Isolated @fixtures
   Scenario: Editors are granted to set properties on company node
-    Given I am authenticated with role "TYPO3.Neos:Editor"
+    Given I am authenticated with role "Neos.Neos:Editor"
     And I get a node by path "/sites/typo3cr/company" with the following context:
       | Workspace  |
       | user-admin |
@@ -75,7 +75,7 @@ Feature: Privilege to restrict nodes shown in the node tree
 
   @Isolated @fixtures
   Scenario: Editors are not granted to set properties on service node
-    Given I am authenticated with role "TYPO3.Neos:Editor"
+    Given I am authenticated with role "Neos.Neos:Editor"
     And I get a node by path "/sites/typo3cr/service" with the following context:
       | Workspace  |
       | user-admin |
@@ -84,7 +84,7 @@ Feature: Privilege to restrict nodes shown in the node tree
 
   @Isolated @fixtures
   Scenario: Editors are not granted to set properties on service sub node
-    Given I am authenticated with role "TYPO3.Neos:Editor"
+    Given I am authenticated with role "Neos.Neos:Editor"
     And I get a node by path "/sites/typo3cr/service/newsletter" with the following context:
       | Workspace  |
       | user-admin |
@@ -93,7 +93,7 @@ Feature: Privilege to restrict nodes shown in the node tree
 
   @Isolated @fixtures
   Scenario: Administrators are granted to set properties on company node
-    Given I am authenticated with role "TYPO3.Neos:Administrator"
+    Given I am authenticated with role "Neos.Neos:Administrator"
     And I get a node by path "/sites/typo3cr/company" with the following context:
       | Workspace  |
       | user-admin |
@@ -102,7 +102,7 @@ Feature: Privilege to restrict nodes shown in the node tree
 
   @Isolated @fixtures
   Scenario: Administrators are granted to set properties on service node
-    Given I am authenticated with role "TYPO3.Neos:Administrator"
+    Given I am authenticated with role "Neos.Neos:Administrator"
     And I get a node by path "/sites/typo3cr/service" with the following context:
       | Workspace  |
       | user-admin |
@@ -111,7 +111,7 @@ Feature: Privilege to restrict nodes shown in the node tree
 
   @Isolated @fixtures
   Scenario: Administrators are granted to set properties on service sub node
-    Given I am authenticated with role "TYPO3.Neos:Administrator"
+    Given I am authenticated with role "Neos.Neos:Administrator"
     And I get a node by path "/sites/typo3cr/service/newsletter" with the following context:
       | Workspace  |
       | user-admin |
@@ -120,7 +120,7 @@ Feature: Privilege to restrict nodes shown in the node tree
 
   @Isolated @fixtures
   Scenario: Editors are not granted to set properties on a neos sub node
-    Given I am authenticated with role "TYPO3.Neos:Editor"
+    Given I am authenticated with role "Neos.Neos:Editor"
     And I get a node by path "/sites/neos/community/teams" with the following context:
       | Workspace  |
       | user-admin |
@@ -129,7 +129,7 @@ Feature: Privilege to restrict nodes shown in the node tree
 
   @Isolated @fixtures
   Scenario: Administrators are granted to set properties on a neos sub node
-    Given I am authenticated with role "TYPO3.Neos:Administrator"
+    Given I am authenticated with role "Neos.Neos:Administrator"
     And I get a node by path "/sites/neos/community/teams/member" with the following context:
       | Workspace  |
       | user-admin |
@@ -138,7 +138,7 @@ Feature: Privilege to restrict nodes shown in the node tree
 
   @Isolated @fixtures
   Scenario: Administrators are not granted to set properties on a ancestor node of teams
-    Given I am authenticated with role "TYPO3.Neos:Administrator"
+    Given I am authenticated with role "Neos.Neos:Administrator"
     And I get a node by path "/sites/neos/community" with the following context:
       | Workspace  |
       | user-admin |

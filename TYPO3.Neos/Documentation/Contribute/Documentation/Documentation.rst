@@ -48,7 +48,7 @@ In order to use the commands you must already have Sphinx installed.
 
 You can get an overview of the provided commands by
 
-``cd TYPO3.Neos/Documentation``
+``cd Neos.Neos/Documentation``
 
 ``make help``
 

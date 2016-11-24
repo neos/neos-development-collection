@@ -2,10 +2,10 @@
 # completely replace the rendering for TextWithHeadline inside the right column
 #
 
-page1.body.content.sidebar.prototype(TYPO3.Neos:ContentCase).smallHeadline {
-	condition = ${q(node).is('[instanceof TYPO3.Neos.NodeTypes:Headline]')}
-	type = 'TYPO3.Neos.NodeTypes:SmallHeadline'
+page1.body.content.sidebar.prototype(Neos.Neos:ContentCase).smallHeadline {
+	condition = ${q(node).is('[instanceof Neos.Neos.NodeTypes:Headline]')}
+	type = 'Neos.Neos.NodeTypes:SmallHeadline'
 	@position = 'start'
 }
-prototype(TYPO3.Neos.NodeTypes:SmallHeadline) < prototype(TYPO3.Neos.NodeTypes:Headline)
-prototype(TYPO3.Neos.NodeTypes:SmallHeadline).templatePath = ${fixturesDirectory + '/SmallHeadlineTemplate.html'}
+prototype(Neos.Neos.NodeTypes:SmallHeadline) < prototype(Neos.Neos.NodeTypes:Headline)
+prototype(Neos.Neos.NodeTypes:SmallHeadline).templatePath = ${fixturesDirectory + '/SmallHeadlineTemplate.html'}

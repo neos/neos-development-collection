@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Routing\Exception;
+namespace Neos\Neos\Routing\Exception;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -10,7 +10,7 @@ namespace TYPO3\Neos\Routing\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Neos\Routing\Exception;
+use Neos\Neos\Routing\Exception;
 
 /**
  * An "invalid request path" exception

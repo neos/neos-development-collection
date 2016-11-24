@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Controller\Backend;
+namespace Neos\Neos\Controller\Backend;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -29,13 +29,13 @@ use Neos\Media\Domain\Service\ThumbnailService;
 use Neos\Media\TypeConverter\AssetInterfaceConverter;
 use Neos\Media\Domain\Repository\AssetCollectionRepository;
 use Neos\Media\TypeConverter\ImageInterfaceArrayPresenter;
-use TYPO3\Neos\Controller\BackendUserTranslationTrait;
-use TYPO3\Neos\Domain\Model\PluginViewDefinition;
-use TYPO3\Neos\Domain\Model\Site;
-use TYPO3\Neos\Domain\Repository\SiteRepository;
-use TYPO3\Neos\Controller\CreateContentContextTrait;
-use TYPO3\Neos\Service\PluginService;
-use TYPO3\Neos\TypeConverter\EntityToIdentityConverter;
+use Neos\Neos\Controller\BackendUserTranslationTrait;
+use Neos\Neos\Domain\Model\PluginViewDefinition;
+use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Controller\CreateContentContextTrait;
+use Neos\Neos\Service\PluginService;
+use Neos\Neos\TypeConverter\EntityToIdentityConverter;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 
@@ -350,10 +350,10 @@ class ContentController extends ActionController
                     continue;
                 }
                 $q = new FlowQuery(array($pluginViewNode));
-                $page = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+                $page = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
                 $uri = $this->uriBuilder
                     ->reset()
-                    ->uriFor('show', array('node' => $page), 'Frontend\Node', 'TYPO3.Neos');
+                    ->uriFor('show', array('node' => $page), 'Frontend\Node', 'Neos.Neos');
                 $views[$pluginViewDefinition->getName()] = array(
                     'label' => $label,
                     'pageNode' => array(
@@ -389,7 +389,7 @@ class ContentController extends ActionController
                     continue;
                 }
                 $q = new FlowQuery(array($pluginNode));
-                $page = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+                $page = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
                 if ($page === null) {
                     continue;
                 }
@@ -399,7 +399,7 @@ class ContentController extends ActionController
                     null,
                     ['nodeTypeName' => $translationHelper->translate($pluginNode->getNodeType()->getLabel()), 'pageLabel' => $page->getLabel()],
                     'Main',
-                    'TYPO3.Neos'
+                    'Neos.Neos'
                );
             }
         }

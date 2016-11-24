@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Tests\Unit\TypoScript;
+namespace Neos\Neos\Tests\Unit\TypoScript;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -19,7 +19,7 @@ use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\Neos\TypoScript\PluginImplementation;
+use Neos\Neos\TypoScript\PluginImplementation;
 use TYPO3\TypoScript\Core\Runtime;
 
 /**

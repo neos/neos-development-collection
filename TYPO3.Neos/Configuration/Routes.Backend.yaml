@@ -1,5 +1,5 @@
 #                                                                        #
-# "Backend" subroutes configuration for the TYPO3.Neos package           #
+# "Backend" subroutes configuration for the Neos.Neos package           #
 #                                                                        #
 
 -
@@ -92,7 +92,7 @@
     '@controller': 'Backend\Module'
   routeParts:
     module:
-      handler: 'TYPO3\Neos\Routing\BackendModuleRoutePartHandler'
+      handler: 'Neos\Neos\Routing\BackendModuleRoutePartHandler'
 
 -
   name: 'Modules & arguments'
@@ -101,9 +101,9 @@
     '@controller': 'Backend\Module'
   routeParts:
     module:
-      handler: 'TYPO3\Neos\Routing\BackendModuleRoutePartHandler'
+      handler: 'Neos\Neos\Routing\BackendModuleRoutePartHandler'
     moduleArguments:
-      handler: 'TYPO3\Neos\Routing\BackendModuleArgumentsRoutePartHandler'
+      handler: 'Neos\Neos\Routing\BackendModuleArgumentsRoutePartHandler'
   toLowerCase: false
   appendExceedingArguments: TRUE
 
@@ -111,19 +111,19 @@
   name: 'Backend switch site'
   uriPattern: 'switch/to/{site}'
   defaults:
-    '@package': 'TYPO3.Neos'
+    '@package': 'Neos.Neos'
     '@controller': 'Backend\Backend'
     '@action': 'switchSite'
   routeParts:
     site:
-      objectType: 'TYPO3\Neos\Domain\Model\Site'
+      objectType: 'Neos\Neos\Domain\Model\Site'
       uriPattern: '{name}'
 
 -
   name: 'Backend UI XLIFF labels'
   uriPattern: 'xliff.json'
   defaults:
-    '@package': 'TYPO3.Neos'
+    '@package': 'Neos.Neos'
     '@controller': 'Backend\Backend'
     '@action': 'xliffAsJson'
   appendExceedingArguments: TRUE

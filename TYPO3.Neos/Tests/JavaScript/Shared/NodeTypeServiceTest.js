@@ -14,20 +14,20 @@
 						result.resolve({
 							inheritanceMap: {
 								subTypes: {
-									'TYPO3.Neos:Document': [
-										'TYPO3.Neos:Shortcut',
-										'TYPO3.Neos.NodeTypes:Page',
-										'TYPO3.Neos:Page',
+									'Neos.Neos:Document': [
+										'Neos.Neos:Shortcut',
+										'Neos.Neos.NodeTypes:Page',
+										'Neos.Neos:Page',
 										'Neos.Demo:Chapter',
 										'TYPO3.NonExisting:NodeType'
 									]
 								}
 							},
 							nodeTypes: {
-								'TYPO3.Neos:Document': {},
-								'TYPO3.Neos:Shortcut': {},
-								'TYPO3.Neos.NodeTypes:Page': {},
-								'TYPO3.Neos:Page': {},
+								'Neos.Neos:Document': {},
+								'Neos.Neos:Shortcut': {},
+								'Neos.Neos.NodeTypes:Page': {},
+								'Neos.Neos:Page': {},
 								'Neos.Demo:Chapter': {}
 							}
 						});
@@ -44,11 +44,11 @@
 			function(NodeTypeService) {
 
 				QUnit.test('getSubNodeTypes ', function(assert) {
-					var documentSubNodeTypes = NodeTypeService.getSubNodeTypes('TYPO3.Neos:Document');
+					var documentSubNodeTypes = NodeTypeService.getSubNodeTypes('Neos.Neos:Document');
 
-					assert.ok(documentSubNodeTypes['TYPO3.Neos:Shortcut'], 'TYPO3.Neos:Shortcut');
-					assert.ok(documentSubNodeTypes['TYPO3.Neos.NodeTypes:Page'], 'TYPO3.Neos.NodeTypes:Page');
-					assert.ok(documentSubNodeTypes['TYPO3.Neos:Page'], 'TYPO3.Neos:Page');
+					assert.ok(documentSubNodeTypes['Neos.Neos:Shortcut'], 'Neos.Neos:Shortcut');
+					assert.ok(documentSubNodeTypes['Neos.Neos.NodeTypes:Page'], 'Neos.Neos.NodeTypes:Page');
+					assert.ok(documentSubNodeTypes['Neos.Neos:Page'], 'Neos.Neos:Page');
 					assert.ok(documentSubNodeTypes['Neos.Demo:Chapter'], 'Neos.Demo:Chapter');
 
 					assert.ok(!documentSubNodeTypes['TYPO3.NonExisting:NodeType'], 'TYPO3.NonExisting:NodeType');

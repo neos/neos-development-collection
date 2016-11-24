@@ -88,7 +88,7 @@ For adding properties to existing NodeTypes the use of mixins is encouraged.
           ui:
             label: 'i18n'
 
-  TYPO3.Neos:Page:
+  Neos.Neos:Page:
     superTypes:
       'Vendor.Site:YourNodetypeMixin': true
 
@@ -116,7 +116,7 @@ For the example above that would be ``Vendor.Site:NodeTypes.YourContentElementNa
           ui:
             label: 'Vendor.Site:NodeTypes.YourContentElementName:properties.title'
 
-If you e.g. want to *relabel* an existing node property of a different package (like the ``TYPO3.Neos.NodeTypes:Page``),
+If you e.g. want to *relabel* an existing node property of a different package (like the ``Neos.Neos.NodeTypes:Page``),
 you always have to specify the full translation key (pointing to your package's XLIFF files then).
 
 Validate Translations

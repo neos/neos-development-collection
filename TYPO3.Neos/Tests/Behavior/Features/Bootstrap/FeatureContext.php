@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -26,20 +26,20 @@ use Neos\Utility\Arrays;
 use PHPUnit_Framework_Assert as Assert;
 use Neos\Flow\Utility\Environment;
 use Neos\Utility\Files;
-use TYPO3\Neos\Domain\Model\Site;
-use TYPO3\Neos\Domain\Repository\SiteRepository;
-use TYPO3\Neos\Domain\Service\SiteExportService;
-use TYPO3\Neos\Domain\Service\SiteImportService;
-use TYPO3\Neos\Domain\Service\SiteService;
-use TYPO3\Neos\Domain\Service\UserService;
-use TYPO3\Neos\Service\PublishingService;
+use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\Service\SiteExportService;
+use Neos\Neos\Domain\Service\SiteImportService;
+use Neos\Neos\Domain\Service\SiteService;
+use Neos\Neos\Domain\Service\UserService;
+use Neos\Neos\Service\PublishingService;
 use Neos\Party\Domain\Repository\PartyRepository;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Service\AuthorizationService;
 use TYPO3\TYPO3CR\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
 use TYPO3\TYPO3CR\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
-use TYPO3\Neos\Tests\Functional\Command\BehatTestHelper;
+use Neos\Neos\Tests\Functional\Command\BehatTestHelper;
 
 require_once(__DIR__ . '/../../../../../../Application/Flowpack.Behat/Tests/Behat/FlowContext.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
@@ -140,7 +140,7 @@ class FeatureContext extends MinkContext
         $accountRepository = $this->objectManager->get(AccountRepository::class);
         foreach ($rows as $row) {
             $roleIdentifiers = array_map(function ($role) {
-                return 'TYPO3.Neos:' . $role;
+                return 'Neos.Neos:' . $role;
             }, Arrays::trimExplode(',', $row['roles']));
             $userService->createUser($row['username'], $row['password'], $row['firstname'], $row['lastname'], $roleIdentifiers);
         }

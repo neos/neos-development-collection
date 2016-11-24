@@ -119,35 +119,35 @@ define(
 
         label: function () {
           if (this.get('_savePending')) {
-            return (I18n.translate('TYPO3.Neos:Main:saving') + '<span class="neos-ellipsis"></span>').htmlSafe();
+            return (I18n.translate('Neos.Neos:Main:saving') + '<span class="neos-ellipsis"></span>').htmlSafe();
           } else if (this.get('_publishRunning')) {
-            return (I18n.translate('TYPO3.Neos:Main:publishing') + '<span class="neos-ellipsis"></span>').htmlSafe();
+            return (I18n.translate('Neos.Neos:Main:publishing') + '<span class="neos-ellipsis"></span>').htmlSafe();
           } else if (this.get('autoPublish')) {
             if (this.get('_label')) {
-              return I18n.translate('autoPublishTo', '', 'TYPO3.Neos', 'Main', [this.get('_label')]).htmlSafe();
+              return I18n.translate('autoPublishTo', '', 'Neos.Neos', 'Main', [this.get('_label')]).htmlSafe();
             } else {
-              return I18n.translate('autoPublish', '', 'TYPO3.Neos', 'Main').htmlSafe();
+              return I18n.translate('autoPublish', '', 'Neos.Neos', 'Main').htmlSafe();
             }
           }
 
           if (this.get('_noChanges')) {
-            return new Ember.Handlebars.SafeString(I18n.translate('TYPO3.Neos:Main:published') + (this.get('_label') ? ' - ' + this.get('_label') : ''));
+            return new Ember.Handlebars.SafeString(I18n.translate('Neos.Neos:Main:published') + (this.get('_label') ? ' - ' + this.get('_label') : ''));
           }
 
           if (this.get('_label')) {
-            return new Ember.Handlebars.SafeString(I18n.translate('TYPO3.Neos:Main:publishTo', '', 'TYPO3.Neos', 'Main', [this.get('_label')]) + ' <span class="neos-badge">' + this.get('_numberOfChanges') + '</span>');
+            return new Ember.Handlebars.SafeString(I18n.translate('Neos.Neos:Main:publishTo', '', 'Neos.Neos', 'Main', [this.get('_label')]) + ' <span class="neos-badge">' + this.get('_numberOfChanges') + '</span>');
           } else {
-            return I18n.translate('TYPO3.Neos:Main:publish') + ' (' + this.get('_numberOfChanges') + ')';
+            return I18n.translate('Neos.Neos:Main:publish') + ' (' + this.get('_numberOfChanges') + ')';
           }
 
         }.property('_noChanges', 'autoPublish', '_numberOfChanges', '_savePending', '_publishRunning', '_label'),
 
         'data-original-title': function () {
           if (this.get('_targetWorkspaceReadOnly')) {
-            return I18n.translate('TYPO3.Neos:Main:cantPublishBecauseTargetWorkspaceIsReadOnly');
+            return I18n.translate('Neos.Neos:Main:cantPublishBecauseTargetWorkspaceIsReadOnly');
           }
           if (this.get('autoPublish') || !this.get('_noChanges')) {
-            return I18n.translate('TYPO3.Neos:Main:publishAllChangesForCurrentPage');
+            return I18n.translate('Neos.Neos:Main:publishAllChangesForCurrentPage');
           }
           return '';
         }.property('_noChanges', 'autoPublish', '_numberOfChanges', '_targetWorkspaceReadOnly'),
@@ -210,7 +210,7 @@ define(
         _numberOfChangesBinding: 'controller.numberOfPublishableNodes',
 
         label: function () {
-          return ('<i class="icon-ban-circle"></i> ' + I18n.translate('TYPO3.Neos:Main:discard') + (this.get('_noChanges') ? '' : ' (' + this.get('_numberOfChanges') + ')')).htmlSafe();
+          return ('<i class="icon-ban-circle"></i> ' + I18n.translate('Neos.Neos:Main:discard') + (this.get('_noChanges') ? '' : ' (' + this.get('_numberOfChanges') + ')')).htmlSafe();
         }.property('_noChanges', '_numberOfChanges'),
 
         disabled: function () {
@@ -225,7 +225,7 @@ define(
         labelIcon: '<i class="icon-upload"></i> ',
 
         label: function () {
-          return (this.get('labelIcon') + ' ' + I18n.translate('TYPO3.Neos:Main:publishAll') + (this.get('_noWorkspaceWideChanges') ? '' : ' (' + this.get('_numberOfWorkspaceWideChanges') + ')')).htmlSafe();
+          return (this.get('labelIcon') + ' ' + I18n.translate('Neos.Neos:Main:publishAll') + (this.get('_noWorkspaceWideChanges') ? '' : ' (' + this.get('_numberOfWorkspaceWideChanges') + ')')).htmlSafe();
         }.property('_numberOfWorkspaceWideChanges'),
 
         _noWorkspaceWideChangesBinding: 'controller.noWorkspaceWideChanges',
@@ -258,7 +258,7 @@ define(
         labelIcon: '<i class="icon-ban-circle"></i> ',
 
         label: function () {
-          var label = I18n.translate('TYPO3.Neos:Main:discardAll') + (this.get('_noWorkspaceWideChanges') ? ' (' + this.get('_numberOfWorkspaceWideChanges') + ')' : '');
+          var label = I18n.translate('Neos.Neos:Main:discardAll') + (this.get('_noWorkspaceWideChanges') ? ' (' + this.get('_numberOfWorkspaceWideChanges') + ')' : '');
           return (this.get('labelIcon') + ' ' + label).htmlSafe();
         }.property('_numberOfWorkspaceWideChanges'),
 

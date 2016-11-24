@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\ViewHelpers\Backend;
+namespace Neos\Neos\ViewHelpers\Backend;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -15,8 +15,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
 use Neos\Flow\Security\AccountRepository;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use TYPO3\Neos\Service\UserService;
-use TYPO3\Neos\Domain\Service\UserService as DomainUserService;
+use Neos\Neos\Service\UserService;
+use Neos\Neos\Domain\Service\UserService as DomainUserService;
 use Neos\Party\Domain\Model\Person;
 
 /**
@@ -68,7 +68,7 @@ class UserInitialsViewHelper extends AbstractViewHelper
         if ($currentUser) {
             if ($currentUser === $requestedUser) {
                 $translationHelper = new TranslationHelper();
-                $you = $translationHelper->translate('you', null, [], 'Main', 'TYPO3.Neos');
+                $you = $translationHelper->translate('you', null, [], 'Main', 'Neos.Neos');
             }
         }
 

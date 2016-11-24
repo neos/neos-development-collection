@@ -1,8 +1,8 @@
 # Abstract Plugin Implementation
 # This should be extended by all plugin Content Elements
 #
-prototype(TYPO3.Neos:Plugin) >
-prototype(TYPO3.Neos:Plugin) < prototype(TYPO3.Neos:Content) {
+prototype(Neos.Neos:Plugin) >
+prototype(Neos.Neos:Plugin) < prototype(Neos.Neos:Content) {
 	@class = 'TYPO3\\Neos\\TypoScript\\PluginImplementation'
 
 	@cache {

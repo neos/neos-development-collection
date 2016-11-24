@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Aspects;
+namespace Neos\Neos\Aspects;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -28,7 +28,7 @@ class TypoScriptCachingAspect
     protected $typoScriptCache;
 
     /**
-     * @Flow\Around("setting(TYPO3.Neos.typoScript.enableObjectTreeCache) && method(TYPO3\Neos\Domain\Service\TypoScriptService->getMergedTypoScriptObjectTree())")
+     * @Flow\Around("setting(Neos.Neos.typoScript.enableObjectTreeCache) && method(Neos\Neos\Domain\Service\TypoScriptService->getMergedTypoScriptObjectTree())")
      * @param JoinPointInterface $joinPoint The current join point
      * @return mixed
      */

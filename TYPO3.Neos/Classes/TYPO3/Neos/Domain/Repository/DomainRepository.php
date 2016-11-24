@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Domain\Repository;
+namespace Neos\Neos\Domain\Repository;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -16,8 +16,8 @@ use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\Repository;
-use TYPO3\Neos\Domain\Model\Domain;
-use TYPO3\Neos\Domain\Service\DomainMatchingStrategy;
+use Neos\Neos\Domain\Model\Domain;
+use Neos\Neos\Domain\Service\DomainMatchingStrategy;
 
 /**
  * The Site Repository

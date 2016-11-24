@@ -37,7 +37,7 @@ define(
 	 * @singleton
 	 */
 	return Ember.Object.extend({
-		defaultPackage: 'TYPO3.Neos',
+		defaultPackage: 'Neos.Neos',
 		defaultSource: 'Main',
 		initialized: false,
 

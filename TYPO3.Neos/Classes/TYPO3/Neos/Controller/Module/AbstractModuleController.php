@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Controller\Module;
+namespace Neos\Neos\Controller\Module;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,7 +14,7 @@ namespace TYPO3\Neos\Controller\Module;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\View\ViewInterface;
-use TYPO3\Neos\Controller\BackendUserTranslationTrait;
+use Neos\Neos\Controller\BackendUserTranslationTrait;
 
 /**
  * The TYPO3 Abstract module controller

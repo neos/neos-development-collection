@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Domain\Service;
+namespace Neos\Neos\Domain\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,9 +14,9 @@ namespace TYPO3\Neos\Domain\Service;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Exception;
-use TYPO3\Neos\Domain\Model\Domain;
-use TYPO3\Neos\Domain\Model\UserInterfaceMode;
-use TYPO3\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Model\Domain;
+use Neos\Neos\Domain\Model\UserInterfaceMode;
+use Neos\Neos\Domain\Model\Site;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Service\Context;
 use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
@@ -174,7 +174,7 @@ class ContentContext extends Context
     protected function hasAccessToBackend()
     {
         try {
-            return $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.GeneralAccess');
+            return $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess');
         } catch (Exception $exception) {
             return false;
         }

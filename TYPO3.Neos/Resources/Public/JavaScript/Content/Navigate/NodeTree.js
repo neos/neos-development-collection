@@ -85,7 +85,7 @@ define(
 				_timeout: null,
 				attributeBindings: ['placeholder'],
 				placeholder: function() {
-					return I18n.translate('TYPO3.Neos:Main:search', 'Search');
+					return I18n.translate('Neos.Neos:Main:search', 'Search');
 				}.property(),
 				keyUp: function() {
 					var that = this,

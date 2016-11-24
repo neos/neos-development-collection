@@ -12,7 +12,7 @@ can have options applied like::
 	      inspector:
 	        dataTypes:
 	          'string':
-	            editor: 'TYPO3.Neos/Inspector/Editors/TextFieldEditor'
+	            editor: 'Neos.Neos/Inspector/Editors/TextFieldEditor'
 	            editorOptions:
 	              placeholder: 'This is a placeholder'
 
@@ -46,5 +46,5 @@ Registering specific editors is also possible like this::
 	    userInterface:
 	      inspector:
 	        editors:
-	          'TYPO3.Neos/BooleanEditor':
-	            path: 'resource://TYPO3.Neos/Public/JavaScript/Content/Inspector/Editors/BooleanEditor'
+	          'Neos.Neos/BooleanEditor':
+	            path: 'resource://Neos.Neos/Public/JavaScript/Content/Inspector/Editors/BooleanEditor'

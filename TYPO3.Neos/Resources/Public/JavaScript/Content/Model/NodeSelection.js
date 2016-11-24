@@ -72,7 +72,7 @@ define(
 							ui: {
 								inspector: {
 									group: tabIdentifier,
-									editor: 'TYPO3.Neos/Inspector/Editors/Aloha/' + editorClass,
+									editor: 'Neos.Neos/Inspector/Editors/Aloha/' + editorClass,
 									editorOptions: {
 										alohaComponent: componentObject
 									}
@@ -245,7 +245,7 @@ define(
 							_.each(propertyConfiguration.validation, function(validatorOptions, validator) {
 								var validatorClassName = validator;
 								if (validatorClassName.indexOf('/') === -1) {
-									validatorClassName = 'TYPO3.Neos/Validation/' + validator.charAt(0).toUpperCase() + validator.slice(1) + 'Validator';
+									validatorClassName = 'Neos.Neos/Validation/' + validator.charAt(0).toUpperCase() + validator.slice(1) + 'Validator';
 								}
 
 								require({context: 'neos'}, [validatorClassName], function(validatorClass) {

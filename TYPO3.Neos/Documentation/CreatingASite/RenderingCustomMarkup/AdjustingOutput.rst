@@ -169,21 +169,21 @@ Out of the box the `Menu` is rendered using a simple unsorted list::
 
 Wrapping this into some container (if needed) in a lot of cases provides for enough possibilities
 to style the menu using CSS. In case it still is needed, it is possible to change the rendered markup
-of `Menu` using TypoScript. `Menu` is defined inside the core of Neos together with TYPO3.Neos.NodeTypes:
+of `Menu` using TypoScript. `Menu` is defined inside the core of Neos together with Neos.Neos.NodeTypes:
 
-*TYPO3.Neos/Resources/Private/DefaultTypoScript/ImplementationClasses.ts2*
-
-::
-
-	prototype(TYPO3.Neos:Menu).@class = 'TYPO3\\Neos\\TypoScript\\MenuImplementation'
-
-*TYPO3.Neos.NodeTypes/Resources/Private/TypoScript/Root.ts2*
+*Neos.Neos/Resources/Private/DefaultTypoScript/ImplementationClasses.ts2*
 
 ::
 
-	prototype(TYPO3.Neos.NodeTypes:Menu) < prototype(TYPO3.Neos:Menu)
-	prototype(TYPO3.Neos.NodeTypes:Menu) {
-		templatePath = 'resource://TYPO3.Neos.NodeTypes/Private/Templates/TypoScriptObjects/Menu.html'
+	prototype(Neos.Neos:Menu).@class = 'TYPO3\\Neos\\TypoScript\\MenuImplementation'
+
+*Neos.Neos.NodeTypes/Resources/Private/TypoScript/Root.ts2*
+
+::
+
+	prototype(Neos.Neos.NodeTypes:Menu) < prototype(Neos.Neos:Menu)
+	prototype(Neos.Neos.NodeTypes:Menu) {
+		templatePath = 'resource://Neos.Neos.NodeTypes/Private/Templates/TypoScriptObjects/Menu.html'
 		entryLevel = ${String.toInteger(q(node).property('startLevel'))}
 		maximumLevels = ${String.toInteger(q(node).property('maximumLevels'))}
 		node = ${node}

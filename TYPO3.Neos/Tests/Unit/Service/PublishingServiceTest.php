@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Tests\Unit\Service;
+namespace Neos\Neos\Tests\Unit\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,10 +13,10 @@ namespace TYPO3\Neos\Tests\Unit\Service;
 
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\Neos\Domain\Model\Site;
-use TYPO3\Neos\Domain\Repository\DomainRepository;
-use TYPO3\Neos\Domain\Repository\SiteRepository;
-use TYPO3\Neos\Service\PublishingService;
+use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Repository\DomainRepository;
+use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Service\PublishingService;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
@@ -252,11 +252,11 @@ class PublishingServiceTest extends UnitTestCase
         $mockChildNode = $this->getMockBuilder(NodeInterface::class)->getMock();
 
         $mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
-        $mockNodeType->expects($this->atLeastOnce())->method('isOfType')->with('TYPO3.Neos:Document')->will($this->returnValue(true));
+        $mockNodeType->expects($this->atLeastOnce())->method('isOfType')->with('Neos.Neos:Document')->will($this->returnValue(true));
         $mockNode->expects($this->atLeastOnce())->method('getNodeType')->will($this->returnValue($mockNodeType));
 
         $mockNode->expects($this->atLeastOnce())->method('getWorkspace')->will($this->returnValue($this->mockWorkspace));
-        $mockNode->expects($this->atLeastOnce())->method('getChildNodes')->with('TYPO3.Neos:ContentCollection')->will($this->returnValue(array($mockChildNode)));
+        $mockNode->expects($this->atLeastOnce())->method('getChildNodes')->with('Neos.Neos:ContentCollection')->will($this->returnValue(array($mockChildNode)));
 
         $mockTargetWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
 
@@ -278,7 +278,7 @@ class PublishingServiceTest extends UnitTestCase
         $mockNode->expects($this->atLeastOnce())->method('getNodeType')->will($this->returnValue($mockNodeType));
 
         $mockNode->expects($this->atLeastOnce())->method('getWorkspace')->will($this->returnValue($this->mockWorkspace));
-        $mockNode->expects($this->atLeastOnce())->method('getChildNodes')->with('TYPO3.Neos:ContentCollection')->will($this->returnValue(array($mockChildNode)));
+        $mockNode->expects($this->atLeastOnce())->method('getChildNodes')->with('Neos.Neos:ContentCollection')->will($this->returnValue(array($mockChildNode)));
 
         $mockTargetWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
 

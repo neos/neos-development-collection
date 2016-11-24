@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\TypoScript\ExceptionHandlers;
+namespace Neos\Neos\TypoScript\ExceptionHandlers;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Utility\Environment;
-use TYPO3\Neos\Service\ContentElementWrappingService;
+use Neos\Neos\Service\ContentElementWrappingService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
 use TYPO3\TypoScript\Core\ExceptionHandlers\ContextDependentHandler;
@@ -70,7 +70,7 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler
             /** @var NodeInterface $node */
             $node = $currentContext['node'];
             $applicationContext = $this->environment->getContext();
-            if ($applicationContext->isProduction() && $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.GeneralAccess') && $node->getContext()->getWorkspaceName() !== 'live') {
+            if ($applicationContext->isProduction() && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess') && $node->getContext()->getWorkspaceName() !== 'live') {
                 $output = '<div class="neos-rendering-exception"><div class="neos-rendering-exception-title">Failed to render element' . $output . '</div></div>';
             }
 

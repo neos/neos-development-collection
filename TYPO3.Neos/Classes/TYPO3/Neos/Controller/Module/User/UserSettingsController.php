@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Controller\Module\User;
+namespace Neos\Neos\Controller\Module\User;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -18,9 +18,9 @@ use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
-use TYPO3\Neos\Controller\Module\AbstractModuleController;
-use TYPO3\Neos\Domain\Model\User;
-use TYPO3\Neos\Domain\Service\UserService;
+use Neos\Neos\Controller\Module\AbstractModuleController;
+use Neos\Neos\Domain\Model\User;
+use Neos\Neos\Domain\Service\UserService;
 use Neos\Party\Domain\Model\ElectronicAddress;
 
 /**
@@ -123,7 +123,7 @@ class UserSettingsController extends AbstractModuleController
      * Update a given account, ie. the password
      *
      * @param array $password Expects an array in the format array('<password>', '<password confirmation>')
-     * @Flow\Validate(argumentName="password", type="\TYPO3\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=1, "minimum"=1, "maximum"=255 })
+     * @Flow\Validate(argumentName="password", type="\Neos\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=1, "minimum"=1, "maximum"=255 })
      * @return void
      */
     public function updateAccountAction(array $password = array())

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Tests\Functional\Service;
+namespace Neos\Neos\Tests\Functional\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -15,7 +15,7 @@ use Neos\Cache\Frontend\StringFrontend;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\Image;
-use TYPO3\Neos\Service\VieSchemaBuilder;
+use Neos\Neos\Service\VieSchemaBuilder;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 
 /**
@@ -40,7 +40,7 @@ class VieSchemaBuilderTest extends UnitTestCase
      * @var array
      */
     protected $nodeTypesFixture = array(
-        'TYPO3.Neos:ContentObject' => array(
+        'Neos.Neos:ContentObject' => array(
             'ui' => array(
                 'label' => 'Abstract content object',
             ),
@@ -60,19 +60,19 @@ class VieSchemaBuilderTest extends UnitTestCase
                 )
             )
         ),
-        'TYPO3.Neos:MyFinalType' => array(
-            'superTypes' => array('TYPO3.Neos:ContentObject' => true),
+        'Neos.Neos:MyFinalType' => array(
+            'superTypes' => array('Neos.Neos:ContentObject' => true),
             'final' => true
         ),
-        'TYPO3.Neos:AbstractType' => array(
-            'superTypes' => array('TYPO3.Neos:ContentObject' => true),
+        'Neos.Neos:AbstractType' => array(
+            'superTypes' => array('Neos.Neos:ContentObject' => true),
             'ui' => array(
                 'label' => 'Abstract type',
             ),
             'abstract' => true
         ),
-        'TYPO3.Neos:Text' => array(
-            'superTypes' => array('TYPO3.Neos:ContentObject' => true),
+        'Neos.Neos:Text' => array(
+            'superTypes' => array('Neos.Neos:ContentObject' => true),
             'ui' => array(
                 'label' => 'Text',
             ),
@@ -88,8 +88,8 @@ class VieSchemaBuilderTest extends UnitTestCase
             ),
             'inlineEditableProperties' => array('headline', 'text')
         ),
-        'TYPO3.Neos:TextWithImage' => array(
-            'superTypes' => array('TYPO3.Neos:Text' => true),
+        'Neos.Neos:TextWithImage' => array(
+            'superTypes' => array('Neos.Neos:Text' => true),
             'ui' => array(
                 'label' => 'Text with image',
             ),
@@ -138,15 +138,15 @@ class VieSchemaBuilderTest extends UnitTestCase
         $this->assertEquals($this->vieSchemaBuilder->_get('types'), array());
         $this->assertEquals($this->vieSchemaBuilder->_get('properties'), array());
 
-        $this->vieSchemaBuilder->_call('readNodeTypeConfiguration', 'TYPO3.Neos:TextWithImage', $this->nodeTypeManager->getNodeType('TYPO3.Neos:TextWithImage'));
+        $this->vieSchemaBuilder->_call('readNodeTypeConfiguration', 'Neos.Neos:TextWithImage', $this->nodeTypeManager->getNodeType('Neos.Neos:TextWithImage'));
 
         $this->assertEquals(
             array(
-                'typo3:TYPO3.Neos:TextWithImage' => array('typo3:TYPO3.Neos:Text')
+                'typo3:Neos.Neos:TextWithImage' => array('typo3:Neos.Neos:Text')
             ),
             $this->vieSchemaBuilder->_get('superTypeConfiguration')
         );
-        $this->arrayHasKey('typo3:TYPO3.Neos:TextWithImage', $this->vieSchemaBuilder->_get('types'));
+        $this->arrayHasKey('typo3:Neos.Neos:TextWithImage', $this->vieSchemaBuilder->_get('types'));
         $this->assertEquals(4, count($this->vieSchemaBuilder->_get('properties')));
     }
 

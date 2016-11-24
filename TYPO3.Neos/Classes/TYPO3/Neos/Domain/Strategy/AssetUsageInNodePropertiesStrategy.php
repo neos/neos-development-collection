@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Domain\Strategy;
+namespace Neos\Neos\Domain\Strategy;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -17,14 +17,14 @@ use Neos\Utility\TypeHandling;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\Image;
 use Neos\Media\Domain\Strategy\AbstractAssetUsageStrategy;
-use TYPO3\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
-use TYPO3\Neos\Domain\Repository\SiteRepository;
-use TYPO3\Neos\Service\UserService;
+use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
+use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Service\UserService;
 use Neos\Eel\FlowQuery\FlowQuery;
-use TYPO3\Neos\Controller\CreateContentContextTrait;
+use Neos\Neos\Controller\CreateContentContextTrait;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\Neos\Domain\Service\UserService as DomainUserService;
+use Neos\Neos\Domain\Service\UserService as DomainUserService;
 
 /**
  * @Flow\Scope("singleton")
@@ -78,7 +78,7 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
      * Returns an array of usage reference objects.
      *
      * @param AssetInterface $asset
-     * @return array<\TYPO3\Neos\Domain\Model\Dto\AssetUsageInNodeProperties>
+     * @return array<\Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties>
      * @throws \TYPO3\TYPO3CR\Exception\NodeConfigurationException
      */
     public function getUsageReferences(AssetInterface $asset)
@@ -102,7 +102,7 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
             $node = $this->nodeFactory->createFromNodeData($relatedNodeData, $context);
             $flowQuery = new FlowQuery([$node]);
             /** @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface $documentNode */
-            $documentNode = $flowQuery->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+            $documentNode = $flowQuery->closest('[instanceof Neos.Neos:Document]')->get(0);
 
             $relatedNodes[] = new AssetUsageInNodeProperties($asset, $site, $documentNode, $node, $accessible);
         }

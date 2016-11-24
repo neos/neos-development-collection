@@ -38,7 +38,7 @@ You can add this property to your TypoScript:
 
 TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/Root.ts2) ::
 
-  prototype(Vendor.Site:YourContentElementName) < prototype(TYPO3.Neos:Content) {
+  prototype(Vendor.Site:YourContentElementName) < prototype(Neos.Neos:Content) {
     templatePath = 'resource://Vendor.Site/Private/Templates/TypoScriptObjects/YourContentElementName.html'
     headline = ${q(node).property('headline')}
     subheadline = ${q(node).property('subheadline')}
@@ -51,7 +51,7 @@ And you can use it in your Fluid template:
 
 HTML (Vendor.Site/Private/Templates/TypoScriptObjects/YourContentElementName.html) ::
 
-  {namespace neos=TYPO3\Neos\ViewHelpers}
+  {namespace neos=Neos\Neos\ViewHelpers}
   <neos:contentElement node="{node}">
     <article>
       <header>
@@ -116,7 +116,7 @@ TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/Root.ts2) ::
 
 HTML (Vendor.Site/Private/Templates/TypoScriptObjects/YourContentElementName.html) ::
 
-  {namespace neos=TYPO3\Neos\ViewHelpers}
+  {namespace neos=Neos\Neos\ViewHelpers}
   <neos:contentElement node="{node}">
     <article{f:if(condition:articleType,then:' class="{articleType}"')}>
       ...
@@ -174,7 +174,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml):
 
 .. code-block:: yaml
 
-  'TYPO3.Neos:Plugin':
+  'Neos.Neos:Plugin':
     properties:
       package:    [ ]
       subpackage: [ ]
@@ -190,7 +190,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml):
 
 .. code-block:: yaml
 
-  'TYPO3.Neos:Shortcut':
+  'Neos.Neos:Shortcut':
     properties:
       targetMode:
         ui:

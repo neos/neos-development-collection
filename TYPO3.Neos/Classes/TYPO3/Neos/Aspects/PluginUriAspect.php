@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Aspects;
+namespace Neos\Neos\Aspects;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use TYPO3\Neos\Service\PluginService;
+use Neos\Neos\Service\PluginService;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -65,7 +65,7 @@ class PluginUriAspect
         // TODO override namespace
 
         $q = new FlowQuery(array($targetNode));
-        $pageNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+        $pageNode = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
         $result = $this->generateUriForNode($request, $joinPoint, $pageNode);
 
         return $result;

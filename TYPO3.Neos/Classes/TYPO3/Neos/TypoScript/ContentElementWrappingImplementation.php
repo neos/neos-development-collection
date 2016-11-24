@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\TypoScript;
+namespace Neos\Neos\TypoScript;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,8 +13,8 @@ namespace TYPO3\Neos\TypoScript;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
-use TYPO3\Neos\Domain\Service\ContentContext;
-use TYPO3\Neos\Service\ContentElementWrappingService;
+use Neos\Neos\Domain\Service\ContentContext;
+use Neos\Neos\Service\ContentElementWrappingService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 
@@ -66,7 +66,7 @@ class ContentElementWrappingImplementation extends AbstractTypoScriptObject
             return $content;
         }
 
-        if (!$this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.GeneralAccess')) {
+        if (!$this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
             return $content;
         }
 
@@ -95,7 +95,7 @@ class ContentElementWrappingImplementation extends AbstractTypoScriptObject
             && isset($typoScriptPathSegments[$numberOfTypoScriptPathSegments - 2])
             && $typoScriptPathSegments[$numberOfTypoScriptPathSegments - 2] === 'process') {
 
-            // cut of the processing segments "__meta/process/contentElementWrapping<TYPO3.Neos:ContentElementWrapping>"
+            // cut of the processing segments "__meta/process/contentElementWrapping<Neos.Neos:ContentElementWrapping>"
             return implode('/', array_slice($typoScriptPathSegments, 0, -3));
         }
         return $this->path;

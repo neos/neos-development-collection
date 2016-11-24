@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Controller\Backend;
+namespace Neos\Neos\Controller\Backend;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -15,8 +15,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Utility\Arrays;
-use TYPO3\Neos\Domain\Model\Site;
-use TYPO3\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Repository\SiteRepository;
 
 /**
  * A helper class for menu generation in backend controllers / view helpers
@@ -75,11 +75,11 @@ class MenuHelper
                     $uri = $controllerContext->getUriBuilder()
                         ->reset()
                         ->setCreateAbsoluteUri(true)
-                        ->uriFor('index', array(), 'Backend\Backend', 'TYPO3.Neos');
+                        ->uriFor('index', array(), 'Backend\Backend', 'Neos.Neos');
                 } else {
                     $uri = $controllerContext->getUriBuilder()
                         ->reset()
-                        ->uriFor('switchSite', array('site' => $site), 'Backend\Backend', 'TYPO3.Neos');
+                        ->uriFor('switchSite', array('site' => $site), 'Backend\Backend', 'Neos.Neos');
                 }
                 $domainsFound = true;
             }
@@ -96,7 +96,7 @@ class MenuHelper
             $uri = $controllerContext->getUriBuilder()
                 ->reset()
                 ->setCreateAbsoluteUri(true)
-                ->uriFor('index', array(), 'Backend\Backend', 'TYPO3.Neos');
+                ->uriFor('index', array(), 'Backend\Backend', 'Neos.Neos');
             $sites[0]['uri'] = $uri;
         }
 
@@ -169,7 +169,7 @@ class MenuHelper
         $moduleUri = $controllerContext->getUriBuilder()
             ->reset()
             ->setCreateAbsoluteUri(true)
-            ->uriFor('index', array('module' => $modulePath), 'Backend\Module', 'TYPO3.Neos');
+            ->uriFor('index', array('module' => $modulePath), 'Backend\Module', 'Neos.Neos');
         return array(
             'module' => $module,
             'modulePath' => $modulePath,

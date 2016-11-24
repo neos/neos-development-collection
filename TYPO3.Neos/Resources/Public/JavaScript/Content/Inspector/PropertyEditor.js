@@ -88,7 +88,7 @@ define(
 
 			if (editor.indexOf('Content/Inspector/Editors/') === 0) {
 				// Rename old editor names for backwards compatibility
-				editor = editor.replace('Content/Inspector/Editors/', 'TYPO3.Neos/Inspector/Editors/');
+				editor = editor.replace('Content/Inspector/Editors/', 'Neos.Neos/Inspector/Editors/');
 			}
 
 			// Convert last part of editor path into dashed class name

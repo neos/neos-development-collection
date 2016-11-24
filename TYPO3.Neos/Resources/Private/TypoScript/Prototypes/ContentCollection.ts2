@@ -1,12 +1,12 @@
 # This is a helper TypoScript object which is used to render all of the child elements
 # of a current node.
-prototype(TYPO3.Neos:ContentCollectionRenderer) < prototype(TYPO3.TypoScript:Collection) {
+prototype(Neos.Neos:ContentCollectionRenderer) < prototype(TYPO3.TypoScript:Collection) {
 	@context.nodeAvailable = ${node && String.length(node.context.workspace.name)}
 	# Set context removedContentShown to get removed nodes too.
 	# Needed for publish function to be able to publish removed nodes.
 	collection = ${nodeAvailable ? q(node).children() : []}
 	# Render every item by its own TS object
-	itemRenderer = TYPO3.Neos:ContentCase
+	itemRenderer = Neos.Neos:ContentCase
 	itemName = 'node'
 	iterationName = 'iterator'
 
@@ -17,7 +17,7 @@ prototype(TYPO3.Neos:ContentCollectionRenderer) < prototype(TYPO3.TypoScript:Col
 		removedContent = TYPO3.TypoScript:Collection {
 			collection = ${nodeAvailable ? q(node).context({'removedContentShown': true}).children('[_removed = true]') : []}
 			# Render every item by its own TS object
-			itemRenderer = TYPO3.Neos:ContentElementWrapping
+			itemRenderer = Neos.Neos:ContentElementWrapping
 			itemName = 'node'
 			iterationName = 'iterator'
 		}
@@ -28,14 +28,14 @@ prototype(TYPO3.Neos:ContentCollectionRenderer) < prototype(TYPO3.TypoScript:Col
 	@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\BubblingHandler'
 }
 
-prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.TypoScript:Tag) {
+prototype(Neos.Neos:ContentCollection) < prototype(TYPO3.TypoScript:Tag) {
 	tagName = 'div'
 
 	attributes = TYPO3.TypoScript:Attributes
 
 	# The following is used to automatically append class attribute with "neos-contentcollection" needed for editing.
 	# You can disable the following line with:
-	# prototype(TYPO3.Neos:ContentCollection) {
+	# prototype(Neos.Neos:ContentCollection) {
 	#   attributes.class.@process.collectionClass >
 	# }
 	# in your site's TypoScript if you don't need that behavior.
@@ -59,10 +59,10 @@ prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.TypoScript:Tag) {
 	# The Eel helper is used to provide a better error message if no content collection could be found.
 	@context.node = ${Neos.Node.nearestContentCollection(node, this.nodePath)}
 
-	content = TYPO3.Neos:ContentCollectionRenderer
+	content = Neos.Neos:ContentCollectionRenderer
 
-	# We have to define contentElementWrapping, because we do not inherit from TYPO3.Neos:Content
-	@process.contentElementWrapping = TYPO3.Neos:ContentElementWrapping
+	# We have to define contentElementWrapping, because we do not inherit from Neos.Neos:Content
+	@process.contentElementWrapping = Neos.Neos:ContentElementWrapping
 
 	@cache {
 		mode = 'cached'
@@ -82,8 +82,8 @@ prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.TypoScript:Tag) {
 	@exceptionHandler = 'TYPO3\\Neos\\TypoScript\\ExceptionHandlers\\NodeWrappingHandler'
 }
 
-prototype(TYPO3.Neos:ContentCollection) {
-	prototype(TYPO3.Neos:ContentCollection) {
+prototype(Neos.Neos:ContentCollection) {
+	prototype(Neos.Neos:ContentCollection) {
 		# Make nested ContentCollections be embedded by default.
 		# Usually there's no need for a separate cache entry for nested ContentCollections, but depending on the use-case
 		# the mode can safely be switched to 'cached'.

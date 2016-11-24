@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Controller\Exception;
+namespace Neos\Neos\Controller\Exception;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,7 +11,7 @@ namespace TYPO3\Neos\Controller\Exception;
  * source code.
  */
 
-use TYPO3\Neos\Controller\Exception;
+use Neos\Neos\Controller\Exception;
 
 /**
  * A "Disabled Module" exception

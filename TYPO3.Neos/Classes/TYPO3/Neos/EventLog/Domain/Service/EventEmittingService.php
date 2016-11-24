@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\EventLog\Domain\Service;
+namespace Neos\Neos\EventLog\Domain\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,9 +12,9 @@ namespace TYPO3\Neos\EventLog\Domain\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use TYPO3\Neos\EventLog\Domain\Model\Event;
-use TYPO3\Neos\EventLog\Domain\Repository\EventRepository;
-use TYPO3\Neos\Exception;
+use Neos\Neos\EventLog\Domain\Model\Event;
+use Neos\Neos\EventLog\Domain\Repository\EventRepository;
+use Neos\Neos\Exception;
 
 /**
  * Main entry point for generating events

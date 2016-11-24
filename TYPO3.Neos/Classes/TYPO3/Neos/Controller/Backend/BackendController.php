@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Controller\Backend;
+namespace Neos\Neos\Controller\Backend;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -17,10 +17,10 @@ use Neos\Flow\I18n\Locale;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Utility\Algorithms;
-use TYPO3\Neos\Domain\Model\Site;
-use TYPO3\Neos\Service\BackendRedirectionService;
-use TYPO3\Neos\Service\LinkingService;
-use TYPO3\Neos\Service\XliffService;
+use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Service\BackendRedirectionService;
+use Neos\Neos\Service\LinkingService;
+use Neos\Neos\Service\XliffService;
 
 /**
  * The Neos Backend controller
@@ -69,7 +69,7 @@ class BackendController extends ActionController
     {
         $redirectionUri = $this->backendRedirectionService->getAfterLoginRedirectionUri($this->request);
         if ($redirectionUri === null) {
-            $redirectionUri = $this->uriBuilder->uriFor('index', array(), 'Login', 'TYPO3.Neos');
+            $redirectionUri = $this->uriBuilder->uriFor('index', array(), 'Login', 'Neos.Neos');
         }
         $this->redirectToUri($redirectionUri);
     }
@@ -88,7 +88,7 @@ class BackendController extends ActionController
 
         $loginUri = $this->controllerContext->getUriBuilder()
             ->reset()
-            ->uriFor('tokenLogin', ['token' => $token], 'Login', 'TYPO3.Neos');
+            ->uriFor('tokenLogin', ['token' => $token], 'Login', 'Neos.Neos');
         $this->redirectToUri($siteUri . $loginUri);
     }
 

@@ -56,29 +56,29 @@ Example Ordering::
 	# individual statements are defined.
 
 	myArray = TYPO3.TypoScript:Array {
-		o1 = TYPO3.Neos.NodeTypes:Text
+		o1 = Neos.Neos.NodeTypes:Text
 		o1.@position = 'start 12'
-		o2 = TYPO3.Neos.NodeTypes:Text
+		o2 = Neos.Neos.NodeTypes:Text
 		o2.@position = 'start 5'
-		o2 = TYPO3.Neos.NodeTypes:Text
+		o2 = Neos.Neos.NodeTypes:Text
 		o2.@position = 'start'
 
-		o3 = TYPO3.Neos.NodeTypes:Text
+		o3 = Neos.Neos.NodeTypes:Text
 		o3.@position = '10'
-		o4 = TYPO3.Neos.NodeTypes:Text
+		o4 = Neos.Neos.NodeTypes:Text
 		o4.@position = '20'
 
-		o5 = TYPO3.Neos.NodeTypes:Text
+		o5 = Neos.Neos.NodeTypes:Text
 		o5.@position = 'before o6'
 
-		o6 = TYPO3.Neos.NodeTypes:Text
+		o6 = Neos.Neos.NodeTypes:Text
 		o6.@position = 'end'
-		o7 = TYPO3.Neos.NodeTypes:Text
+		o7 = Neos.Neos.NodeTypes:Text
 		o7.@position = 'end 20'
-		o8 = TYPO3.Neos.NodeTypes:Text
+		o8 = Neos.Neos.NodeTypes:Text
 		o8.@position = 'end 30'
 
-		o9 = TYPO3.Neos.NodeTypes:Text
+		o9 = Neos.Neos.NodeTypes:Text
 		o9.@position = 'after o8'
 	}
 
@@ -88,8 +88,8 @@ to use ``@position`` and meaningful keys in your application, and not numeric on
 Example of numeric keys (discouraged)::
 
 	myArray = TYPO3.TypoScript:Array {
-		10 = TYPO3.Neos.NodeTypes:Text
-		20 = TYPO3.Neos.NodeTypes:Text
+		10 = Neos.Neos.NodeTypes:Text
+		20 = Neos.Neos.NodeTypes:Text
 	}
 
 
@@ -229,7 +229,7 @@ Example::
         documentTitle = ${q(documentNode).property('title')}
         documentPath = ${documentNode.path}
   }
-  
+
   # the value of this object is the formatted debug output of all keys given to the object
 
 
@@ -371,9 +371,9 @@ Example:
 
 	// Page extends from Http.Message
 	//
-	// prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message)
+	// prototype(Neos.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message)
 	//
-	page = TYPO3.Neos:Page {
+	page = Neos.Neos:Page {
 		httpResponseHead.headers.Content-Type = 'application/json'
 	}
 
@@ -438,15 +438,15 @@ Example::
 	}
 
 
-TYPO3.Neos TypoScript Objects
+Neos.Neos TypoScript Objects
 =============================
 
 The TypoScript objects defined in the Neos package contain all TypoScript objects which
 are needed to integrate a site. Often, it contains generic TypoScript objects
 which do not need a particular node type to work on.
 
-As TYPO3.Neos is the default namespace, the TypoScript objects do not need to be
-prefixed with TYPO3.Neos.
+As Neos.Neos is the default namespace, the TypoScript objects do not need to be
+prefixed with Neos.Neos.
 
 .. _TYPO3_Neos__Page:
 
@@ -576,7 +576,7 @@ Example for basic usage::
 
 Example for custom matcher::
 
-	prototype(TYPO3.Neos:PrimaryContent) {
+	prototype(Neos.Neos:PrimaryContent) {
 		myArticle {
 			condition = ${q(node).is('[instanceof My.Site:Article]')}
 			renderer = My.Site:ArticleRenderer
@@ -600,7 +600,7 @@ Content
 -------
 
 Base type to render content nodes, extends :ref:`TYPO3_TypoScript__Template`. This prototype is extended by the
-auto-generated TypoScript to define prototypes for each node type extending ``TYPO3.Neos:Content``.
+auto-generated TypoScript to define prototypes for each node type extending ``Neos.Neos:Content``.
 
 :templatePath: (string) The template path and filename, defaults to ``'resource://[packageKey]/Private/Templates/NodeTypes/[nodeType].html'`` (for auto-generated prototypes)
 :[key]: (mixed) Template variables, all node type properties are available by default (for auto-generated prototypes)
@@ -608,7 +608,7 @@ auto-generated TypoScript to define prototypes for each node type extending ``TY
 
 Example::
 
-	prototype(My.Package:MyContent) < prototype(TYPO3.Neos:Content) {
+	prototype(My.Package:MyContent) < prototype(Neos.Neos:Content) {
 		templatePath = 'resource://My.Package/Private/Templates/NodeTypes/MyContent.html'
 		# Auto-generated for all node type properties
 		# title = ${q(node).property('title')}
@@ -631,7 +631,7 @@ arbitrary logic.
 
 Example::
 
-	prototype(My.Site:Registration) < prototype(TYPO3.Neos:Plugin) {
+	prototype(My.Site:Registration) < prototype(Neos.Neos:Plugin) {
 		package = 'My.Site'
 		controller = 'Registration'
 	}
@@ -648,7 +648,7 @@ Render a menu with items for nodes. Extends :ref:`TYPO3_TypoScript__Template`.
 :maximumLevels: (integer) Restrict the maximum depth of items in the menu (relative to ``entryLevel``)
 :startingPoint: (Node) The parent node of the first menu level (defaults to ``node`` context variable)
 :lastLevel: (integer) Restrict the menu depth by node depth (relative to site node)
-:filter: (string) Filter items by node type (e.g. ``'!My.Site:News,TYPO3.Neos:Document'``), defaults to ``'TYPO3.Neos:Document'``
+:filter: (string) Filter items by node type (e.g. ``'!My.Site:News,Neos.Neos:Document'``), defaults to ``'Neos.Neos:Document'``
 :renderHiddenInIndex: (boolean) Whether nodes with ``hiddenInIndex`` should be rendered, defaults to ``false``
 :itemCollection: (array) Explicitly set the Node items for the menu (alternative to ``startingPoints`` and levels)
 :attributes: (:ref:`TYPO3_TypoScript__Attributes`) Extensible attributes for the whole menu
@@ -685,7 +685,7 @@ Menu including site node:
 ::
 
 	menu = Menu {
-		itemCollection = ${q(site).add(q(site).children('[instanceof TYPO3.Neos:Document]')).get()}
+		itemCollection = ${q(site).add(q(site).children('[instanceof Neos.Neos:Document]')).get()}
 	}
 
 Menu with custom starting point:
@@ -745,21 +745,21 @@ Examples
 
 Minimal Example, outputting a menu with all configured dimension combinations::
 
-	variantMenu = TYPO3.Neos:DimensionsMenu
+	variantMenu = Neos.Neos:DimensionsMenu
 
 This example will create two menus, one for the 'language' and one for the 'country' dimension::
 
-	languageMenu = TYPO3.Neos:DimensionsMenu {
+	languageMenu = Neos.Neos:DimensionsMenu {
 		dimension = 'language'
 	}
-	countryMenu = TYPO3.Neos:DimensionsMenu {
+	countryMenu = Neos.Neos:DimensionsMenu {
 		dimension = 'country'
 	}
 
 If you only want to render a subset of the available presets or manually define a specific order for a menu,
 you can override the "presets"::
 
-	languageMenu = TYPO3.Neos:DimensionsMenu {
+	languageMenu = Neos.Neos:DimensionsMenu {
 		dimension = 'language'
 		presets = ${['en_US', 'de_DE']} # no matter how many languages are defined, only these two are displayed.
 	}
@@ -775,7 +775,7 @@ situation with two independent menus for country and language, where the followi
 If the user selects UK, only english will be linked in the language selector. German is only available again, if the
 user switches back to Germany first. This can be changed by setting the ``includeAllPresets`` option::
 
-	languageMenu = TYPO3.Neos:DimensionsMenu {
+	languageMenu = Neos.Neos:DimensionsMenu {
 		dimension = 'language'
 		includeAllPresets = true
 	}
@@ -810,7 +810,7 @@ Build a URI to a node. Accepts the same arguments as the node link/uri view help
 
 Example::
 
-	nodeLink = TYPO3.Neos:NodeUri {
+	nodeLink = Neos.Neos:NodeUri {
 		node = ${q(node).parent().get(0)}
 	}
 
@@ -829,7 +829,7 @@ Get a URI to a (thumbnail) image for an asset.
 
 Example::
 
-	logoUri = TYPO3.Neos:ImageUri {
+	logoUri = Neos.Neos:ImageUri {
 		asset = ${q(node).property('image')}
 		maximumWidth = 100
 		maximumHeight = 100
@@ -849,7 +849,7 @@ Render an image tag for an asset.
 
 Example::
 
-	logoImage = TYPO3.Neos:ImageTag {
+	logoImage = Neos.Neos:ImageTag {
 		asset = ${q(node).property('image')}
 		maximumWidth = 400
 		attributes.alt = 'A company logo'
@@ -873,5 +873,5 @@ overriding the target attribute for external links and resource links.
 Example::
 
 	prototype(My.Site:Special.Type) {
-		title.@process.convertUris = TYPO3.Neos:ConvertUris
+		title.@process.convertUris = Neos.Neos:ConvertUris
 	}

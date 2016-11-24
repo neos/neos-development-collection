@@ -6,10 +6,10 @@ Rendering A Page
 
 This section shows how content is rendered on a page as a rough overview.
 
-More precisely we show how to render a ``TYPO3.Neos:Document`` node, as everything which happens
+More precisely we show how to render a ``Neos.Neos:Document`` node, as everything which happens
 here works for all ``Document`` nodes, and not just for ``Page`` nodes.
 
-First, the requested URL is resolved to a Node of type ``TYPO3.Neos:Document``.
+First, the requested URL is resolved to a Node of type ``Neos.Neos:Document``.
 This happens by translating the URL path to a node path, and finding the node
 with this path then.
 
@@ -59,7 +59,7 @@ markup::
 	    <meta charset="UTF-8" />
 	  </head>
 	  <body>
-	    <script src="/_Resources/Static/Packages/TYPO3.Neos/JavaScript/LastVisitedNode.js" data-neos-node="a319a653-ef38-448d-9d19-0894299068aa"></script>
+	    <script src="/_Resources/Static/Packages/Neos.Neos/JavaScript/LastVisitedNode.js" data-neos-node="a319a653-ef38-448d-9d19-0894299068aa"></script>
 	  </body>
 	</html>
 

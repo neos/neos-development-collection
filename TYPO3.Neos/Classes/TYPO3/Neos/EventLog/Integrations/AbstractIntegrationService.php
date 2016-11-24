@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\EventLog\Integrations;
+namespace Neos\Neos\EventLog\Integrations;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,7 +13,7 @@ namespace TYPO3\Neos\EventLog\Integrations;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context;
-use TYPO3\Neos\EventLog\Domain\Service\EventEmittingService;
+use Neos\Neos\EventLog\Domain\Service\EventEmittingService;
 
 abstract class AbstractIntegrationService
 {

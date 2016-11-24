@@ -14,7 +14,7 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 
 	return FileUpload.extend({
 		removeButtonLabel: function() {
-			return I18n.translate('TYPO3.Neos:Main:remove', 'Remove')
+			return I18n.translate('Neos.Neos:Main:remove', 'Remove')
 		}.property(),
 		template: Ember.Handlebars.compile(template),
 		SecondaryInspectorButton: SecondaryInspectorController.SecondaryInspectorButton,
@@ -52,7 +52,7 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 			this._super();
 
 			if (!this.get('loadingLabel')) {
-				this.set('loadingLabel', I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...');
+				this.set('loadingLabel', I18n.translate('Neos.Neos:Main:loading', 'Loading') + ' ...');
 			}
 
 			if (this.get('multiple') === true) {

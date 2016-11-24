@@ -9,7 +9,7 @@ For user interface development of Neos we utilize `grunt` and some other
 tools.
 
 Setting up your machine could be done by using the installation script that can
-be found in ``TYPO3.Neos/Scripts/install-dev-tools.sh``. If you want to do a manual
+be found in ``Neos.Neos/Scripts/install-dev-tools.sh``. If you want to do a manual
 installation you will need to install the following software:
 
 * nodejs
@@ -51,7 +51,7 @@ We have different types of grunt tasks. All tasks have different purposes:
 
 	Used for running automated tests. Those tests use phantomjs which is automatically
 	installed by calling ``npm install``. Phantomjs needs some other dependencies though,
-	check ``TYPO3.Neos/Scripts/install-phantomjs-dependencies.sh`` for ubuntu based systems.
+	check ``Neos.Neos/Scripts/install-phantomjs-dependencies.sh`` for ubuntu based systems.
 
 Available grunt tasks
 =====================

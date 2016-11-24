@@ -9,7 +9,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml)::
 
 	'Vendor:YourContentElementName':
 	  superTypes:
-	    'TYPO3.Neos:Content': TRUE
+	    'Neos.Neos:Content': TRUE
 	  ui:
 	    label: 'My first custom content element'
 	    group: 'general'
@@ -50,7 +50,7 @@ object needs to have the same name as the Node Type:
 
 TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/Root.ts2)::
 
-	prototype(Vendor:YourContentElementName) < prototype(TYPO3.Neos:Content) {
+	prototype(Vendor:YourContentElementName) < prototype(Neos.Neos:Content) {
 		templatePath = 'resource://Vendor.Site/Private/Templates/TypoScriptObjects/YourContentElementName.html'
 
 		headline = ${q(node).property('headline')}
@@ -63,7 +63,7 @@ Last thing, add the required Fluid template:
 
 HTML (Vendor.Site/Private/Templates/TypoScriptObjects/YourContentElementName.html)::
 
-	{namespace neos=TYPO3\Neos\ViewHelpers}
+	{namespace neos=Neos\Neos\ViewHelpers}
 	{namespace media=TYPO3\Media\ViewHelpers}
 	<article>
 		<header>

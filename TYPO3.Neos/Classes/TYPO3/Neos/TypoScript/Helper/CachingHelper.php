@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\TypoScript\Helper;
+namespace Neos\Neos\TypoScript\Helper;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,7 +13,7 @@ namespace TYPO3\Neos\TypoScript\Helper;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Eel\ProtectedContextAwareInterface;
-use TYPO3\Neos\Exception;
+use Neos\Neos\Exception;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 

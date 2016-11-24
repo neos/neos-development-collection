@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\ViewHelpers\Link;
+namespace Neos\Neos\ViewHelpers\Link;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,8 +14,8 @@ namespace TYPO3\Neos\ViewHelpers\Link;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
-use TYPO3\Neos\Exception as NeosException;
-use TYPO3\Neos\Service\LinkingService;
+use Neos\Neos\Exception as NeosException;
+use Neos\Neos\Service\LinkingService;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\ViewHelpers\TypoScriptContextTrait;

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\View;
+namespace Neos\Neos\View;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -16,8 +16,8 @@ use Neos\Flow\Http\Response;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Service;
 use Neos\Flow\Mvc\View\AbstractView;
-use TYPO3\Neos\Domain\Service\TypoScriptService;
-use TYPO3\Neos\Exception;
+use Neos\Neos\Domain\Service\TypoScriptService;
+use Neos\Neos\Exception;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\Core\Runtime;
@@ -176,7 +176,7 @@ class TypoScriptView extends AbstractView
      */
     protected function getClosestDocumentNode(NodeInterface $node)
     {
-        while ($node !== null && !$node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
+        while ($node !== null && !$node->getNodeType()->isOfType('Neos.Neos:Document')) {
             $node = $node->getParent();
         }
         return $node;

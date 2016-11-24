@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Service\Controller;
+namespace Neos\Neos\Service\Controller;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,10 +14,10 @@ namespace TYPO3\Neos\Service\Controller;
 use Neos\Flow\Annotations as Flow;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
-use TYPO3\Neos\Domain\Repository\DomainRepository;
-use TYPO3\Neos\Domain\Service\NodeSearchService;
-use TYPO3\Neos\Service\NodeOperations;
-use TYPO3\Neos\Service\View\NodeView;
+use Neos\Neos\Domain\Repository\DomainRepository;
+use Neos\Neos\Domain\Service\NodeSearchService;
+use Neos\Neos\Service\NodeOperations;
+use Neos\Neos\Service\View\NodeView;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Node;
@@ -32,7 +32,7 @@ use TYPO3\TYPO3CR\TypeConverter\NodeConverter;
  *
  * Note: This controller should be, step-by-step, transformed into a clean REST controller (see NEOS-190 and NEOS-199).
  *       Since this is a rather big endeavor, we slice the elephant and move methods in a clean way from here to the
- *       new NodesController (\TYPO3\Neos\Controller\Service\NodesController)
+ *       new NodesController (\Neos\Neos\Controller\Service\NodesController)
  */
 class NodeController extends AbstractServiceController
 {
@@ -149,7 +149,7 @@ class NodeController extends AbstractServiceController
      */
     public function filterChildNodesForTreeAction(Node $node, $term, $nodeType)
     {
-        $nodeTypes = strlen($nodeType) > 0 ? array($nodeType) : array_keys($this->nodeTypeManager->getSubNodeTypes('TYPO3.Neos:Document', false));
+        $nodeTypes = strlen($nodeType) > 0 ? array($nodeType) : array_keys($this->nodeTypeManager->getSubNodeTypes('Neos.Neos:Document', false));
         $context = $node->getContext();
         if ($term !== '') {
             $nodes = $this->nodeSearchService->findByProperties($term, $nodeTypes, $context, $node);
@@ -188,7 +188,7 @@ class NodeController extends AbstractServiceController
             $this->persistenceManager->persistAll();
         }
 
-        $nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $newNode), 'Frontend\Node', 'TYPO3.Neos');
+        $nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $newNode), 'Frontend\Node', 'Neos.Neos');
         $this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => true));
     }
 
@@ -242,8 +242,8 @@ class NodeController extends AbstractServiceController
         }
 
         $data = array('newNodePath' => $node->getContextPath());
-        if ($node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
-            $data['nextUri'] = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos');
+        if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
+            $data['nextUri'] = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $node), 'Frontend\Node', 'Neos.Neos');
         }
         $this->view->assign('value', array('data' => $data, 'success' => true));
     }
@@ -285,15 +285,15 @@ class NodeController extends AbstractServiceController
         }
 
         $q = new FlowQuery(array($copiedNode));
-        $closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+        $closestDocumentNode = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
 
         $requestData = array(
-            'nextUri' => $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $closestDocumentNode), 'Frontend\Node', 'TYPO3.Neos'),
+            'nextUri' => $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $closestDocumentNode), 'Frontend\Node', 'Neos.Neos'),
             'newNodePath' => $copiedNode->getContextPath()
         );
 
-        if ($node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
-            $requestData['nodeUri'] = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $copiedNode), 'Frontend\Node', 'TYPO3.Neos');
+        if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
+            $requestData['nodeUri'] = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $copiedNode), 'Frontend\Node', 'Neos.Neos');
         }
 
         $this->view->assign('value', array('data' => $requestData, 'success' => true));
@@ -338,8 +338,8 @@ class NodeController extends AbstractServiceController
         }
 
         $q = new FlowQuery(array($node));
-        $closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
-        $nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $closestDocumentNode), 'Frontend\Node', 'TYPO3.Neos');
+        $closestDocumentNode = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
+        $nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $closestDocumentNode), 'Frontend\Node', 'Neos.Neos');
         $this->view->assign('value', array(
             'data' => array(
                 'workspaceNameOfNode' => $node->getWorkspace()->getName(),
@@ -379,8 +379,8 @@ class NodeController extends AbstractServiceController
 
         $q = new FlowQuery(array($node));
         $node->remove();
-        $closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
-        $nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $closestDocumentNode), 'Frontend\Node', 'TYPO3.Neos');
+        $closestDocumentNode = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
+        $nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $closestDocumentNode), 'Frontend\Node', 'Neos.Neos');
 
         $this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => true));
     }
@@ -396,7 +396,7 @@ class NodeController extends AbstractServiceController
     {
         $searchResult = array();
 
-        $documentNodeTypes = $this->nodeTypeManager->getSubNodeTypes('TYPO3.Neos:Document');
+        $documentNodeTypes = $this->nodeTypeManager->getSubNodeTypes('Neos.Neos:Document');
         /** @var NodeInterface $node */
         foreach ($this->nodeSearchService->findByProperties($query, $documentNodeTypes, $this->createContext('live')) as $node) {
             $searchResult[$node->getPath()] = $this->processNodeForEditorPlugins($node);
@@ -415,10 +415,10 @@ class NodeController extends AbstractServiceController
     protected function redirectToRenderNode(NodeInterface $node, $typoScriptPath)
     {
         $q = new FlowQuery(array($node));
-        $closestContentCollection = $q->closest('[instanceof TYPO3.Neos:ContentCollection]')->get(0);
-        $closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+        $closestContentCollection = $q->closest('[instanceof Neos.Neos:ContentCollection]')->get(0);
+        $closestDocumentNode = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
 
-        $this->redirect('show', 'Frontend\\Node', 'TYPO3.Neos', [
+        $this->redirect('show', 'Frontend\\Node', 'Neos.Neos', [
             'node' => $closestDocumentNode,
             '__nodeContextPath' => $closestContentCollection->getContextPath(),
             '__affectedNodeContextPath' => $node->getContextPath(),
@@ -438,7 +438,7 @@ class NodeController extends AbstractServiceController
         return array(
             'id' => $node->getPath(),
             'name' => $node->getLabel(),
-            'url' => $this->uriBuilder->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos'),
+            'url' => $this->uriBuilder->uriFor('show', array('node' => $node), 'Frontend\Node', 'Neos.Neos'),
             'type' => 'neos/internal-link'
         );
     }

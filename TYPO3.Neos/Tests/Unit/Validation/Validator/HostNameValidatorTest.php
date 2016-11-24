@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Tests\Unit\Validation\Validator;
+namespace Neos\Neos\Tests\Unit\Validation\Validator;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,7 @@ namespace TYPO3\Neos\Tests\Unit\Validation\Validator;
  */
 
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\Neos\Validation\Validator\HostnameValidator;
+use Neos\Neos\Validation\Validator\HostnameValidator;
 
 /**
  * Testcase for the HostNameValidator

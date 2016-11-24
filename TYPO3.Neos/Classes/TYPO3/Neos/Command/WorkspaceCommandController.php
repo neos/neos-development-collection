@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Command;
+namespace Neos\Neos\Command;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,9 +13,9 @@ namespace TYPO3\Neos\Command;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
-use TYPO3\Neos\Domain\Model\User;
-use TYPO3\Neos\Domain\Service\UserService;
-use TYPO3\Neos\Service\PublishingService;
+use Neos\Neos\Domain\Model\User;
+use Neos\Neos\Domain\Service\UserService;
+use Neos\Neos\Service\PublishingService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;

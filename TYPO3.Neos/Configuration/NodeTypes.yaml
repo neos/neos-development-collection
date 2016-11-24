@@ -1,10 +1,10 @@
 # Base node, which just configures the "removed" property of the node.
-'TYPO3.Neos:Node':
+'Neos.Neos:Node':
   label: "${String.cropAtWord(String.trim(String.stripTags(String.pregReplace(q(node).property('title') || q(node).property('text') || ((I18n.translate(node.nodeType.label) || node.nodeType.name) + (node.autoCreated ? ' (' + node.name + ')' : '')), '/<br\\W*?\\/?>|\\x{00a0}|[[^:print:]]|\\s+/u', ' '))), 100, '...')}"
   abstract: TRUE
   options:
     fusion:
-      prototypeGenerator: TYPO3\Neos\Domain\Service\DefaultPrototypeGenerator
+      prototypeGenerator: Neos\Neos\Domain\Service\DefaultPrototypeGenerator
   ui:
     inspector:
       tabs:
@@ -32,7 +32,7 @@
         nodeInfo:
           label: i18n
           group: 'nodeInfo'
-          view: 'TYPO3.Neos/Inspector/Views/NodeInfoView'
+          view: 'Neos.Neos/Inspector/Views/NodeInfoView'
   properties:
     _removed:
       type: boolean
@@ -54,19 +54,19 @@
         inspector:
           group: 'type'
           position: 100
-          editor: 'TYPO3.Neos/Inspector/Editors/NodeTypeEditor'
+          editor: 'Neos.Neos/Inspector/Editors/NodeTypeEditor'
           editorOptions:
             placeholder: 'Loading ...'
             baseNodeType: ''
 
 # Hidable Mixin
-'TYPO3.Neos:Hidable':
+'Neos.Neos:Hidable':
   abstract: TRUE
   ui:
     inspector:
       groups:
         visibility:
-          label: 'TYPO3.Neos:Inspector:groups.visibility'
+          label: 'Neos.Neos:Inspector:groups.visibility'
           icon: 'icon-eye'
           position: 100
           tab: meta
@@ -80,13 +80,13 @@
           position: 30
 
 # Timable Mixin
-'TYPO3.Neos:Timable':
+'Neos.Neos:Timable':
   abstract: TRUE
   ui:
     inspector:
       groups:
         visibility:
-          label: 'TYPO3.Neos:Inspector:groups.visibility'
+          label: 'Neos.Neos:Inspector:groups.visibility'
           icon: 'icon-eye'
           position: 100
           tab: meta
@@ -101,7 +101,7 @@
           editorOptions:
             format: 'd-m-Y H:i'
       validation:
-        'TYPO3.Neos/Validation/DateTimeValidator': []
+        'Neos.Neos/Validation/DateTimeValidator': []
     _hiddenAfterDateTime:
       type: DateTime
       ui:
@@ -112,26 +112,26 @@
           editorOptions:
             format: 'd-m-Y H:i'
       validation:
-        'TYPO3.Neos/Validation/DateTimeValidator': []
+        'Neos.Neos/Validation/DateTimeValidator': []
 
 # Abstract Document type.
 # "Documents" always have a publicly-visible URL.
-# The most prominent subclass of Document is "TYPO3.Neos.NodeTypes:Page", but
-# anything page-like (like a blog post) should subclass "TYPO3.Neos:Document".
-'TYPO3.Neos:Document':
+# The most prominent subclass of Document is "Neos.Neos.NodeTypes:Page", but
+# anything page-like (like a blog post) should subclass "Neos.Neos:Document".
+'Neos.Neos:Document':
   superTypes:
-    'TYPO3.Neos:Node': TRUE
-    'TYPO3.Neos:Hidable': TRUE
-    'TYPO3.Neos:Timable': TRUE
+    'Neos.Neos:Node': TRUE
+    'Neos.Neos:Hidable': TRUE
+    'Neos.Neos:Timable': TRUE
   abstract: TRUE
   aggregate: TRUE
   constraints:
     nodeTypes:
       '*': FALSE
-      'TYPO3.Neos:Document': TRUE
+      'Neos.Neos:Document': TRUE
   options:
     fusion:
-      prototypeGenerator: TYPO3\Neos\Domain\Service\DefaultDocumentPrototypeGenerator
+      prototypeGenerator: Neos\Neos\Domain\Service\DefaultDocumentPrototypeGenerator
   ui:
     label: 'Document'
     search:
@@ -147,7 +147,7 @@
       ui:
         inspector:
           editorOptions:
-            baseNodeType: 'TYPO3.Neos:Document'
+            baseNodeType: 'Neos.Neos:Document'
     title:
       type: string
       ui:
@@ -156,8 +156,8 @@
         inspector:
           group: 'document'
       validation:
-        'TYPO3.Neos/Validation/NotEmptyValidator': []
-        'TYPO3.Neos/Validation/StringLengthValidator':
+        'Neos.Neos/Validation/NotEmptyValidator': []
+        'Neos.Neos/Validation/StringLengthValidator':
           minimum: 1
           maximum: 255
     uriPathSegment:
@@ -168,8 +168,8 @@
         inspector:
           group: 'document'
       validation:
-        'TYPO3.Neos/Validation/NotEmptyValidator': []
-        'TYPO3.Neos/Validation/StringLengthValidator':
+        'Neos.Neos/Validation/NotEmptyValidator': []
+        'Neos.Neos/Validation/StringLengthValidator':
           minimum: 1
           maximum: 255
         regularExpression:
@@ -188,9 +188,9 @@
 
 # A shortcut.
 # "Shortcuts" can be linked to but instead of displaying content themselves they redirect to another "Document" node
-'TYPO3.Neos:Shortcut':
+'Neos.Neos:Shortcut':
   superTypes:
-    'TYPO3.Neos:Document': TRUE
+    'Neos.Neos:Document': TRUE
   ui:
     label: i18n
     icon: 'icon-share'
@@ -208,7 +208,7 @@
         reloadPageIfChanged: TRUE
         inspector:
           group: 'document'
-          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
+          editor: 'Neos.Neos/Inspector/Editors/SelectBoxEditor'
           editorOptions:
             values:
               firstChildNode:
@@ -220,7 +220,7 @@
           editorListeners:
             removeTargetIfNotUsed:
               property: 'target'
-              handler: 'TYPO3.Neos/Inspector/Handlers/ShortcutHandler'
+              handler: 'Neos.Neos/Inspector/Handlers/ShortcutHandler'
     target:
       type: string
       ui:
@@ -228,20 +228,20 @@
         reloadPageIfChanged: TRUE
         inspector:
           group: 'document'
-          editor: 'TYPO3.Neos/Inspector/Editors/LinkEditor'
+          editor: 'Neos.Neos/Inspector/Editors/LinkEditor'
           editorListeners:
             setTargetModeIfNotEmpty:
               property: 'targetMode'
-              handler: 'TYPO3.Neos/Inspector/Handlers/ShortcutHandler'
+              handler: 'Neos.Neos/Inspector/Handlers/ShortcutHandler'
 
 # Base class for all "Plugins"; that are PHP controllers being called during the rendering.
-'TYPO3.Neos:Plugin':
+'Neos.Neos:Plugin':
   superTypes:
-    'TYPO3.Neos:Content': TRUE
+    'Neos.Neos:Content': TRUE
   abstract: TRUE
   options:
     fusion:
-      prototypeGenerator: TYPO3\Neos\Domain\Service\DefaultPluginPrototypeGenerator
+      prototypeGenerator: Neos\Neos\Domain\Service\DefaultPluginPrototypeGenerator
   ui:
     label: i18n
     group: 'plugins'
@@ -253,11 +253,11 @@
           icon: 'icon-sliders'
   postprocessors:
     'PluginPostprocessor':
-      postprocessor: 'TYPO3\Neos\NodeTypePostprocessor\PluginNodeTypePostprocessor'
+      postprocessor: 'Neos\Neos\NodeTypePostprocessor\PluginNodeTypePostprocessor'
 
-'TYPO3.Neos:PluginView':
+'Neos.Neos:PluginView':
   superTypes:
-    'TYPO3.Neos:Content': TRUE
+    'Neos.Neos:Content': TRUE
   ui:
     label: i18n
     group: 'plugins'
@@ -278,7 +278,7 @@
         inspector:
           group: 'pluginViews'
           position: 10
-          editor: 'TYPO3.Neos/Inspector/Editors/MasterPluginEditor'
+          editor: 'Neos.Neos/Inspector/Editors/MasterPluginEditor'
     view:
       type: string
       ui:
@@ -287,20 +287,20 @@
         inspector:
           group: 'pluginViews'
           position: 20
-          editor: 'TYPO3.Neos/Inspector/Editors/PluginViewEditor'
+          editor: 'Neos.Neos/Inspector/Editors/PluginViewEditor'
 
-'TYPO3.Neos:Content':
+'Neos.Neos:Content':
   superTypes:
-    'TYPO3.Neos:Node': TRUE
-    'TYPO3.Neos:Hidable': TRUE
-    'TYPO3.Neos:Timable': TRUE
+    'Neos.Neos:Node': TRUE
+    'Neos.Neos:Hidable': TRUE
+    'Neos.Neos:Timable': TRUE
   abstract: TRUE
   constraints:
     nodeTypes:
       '*': FALSE
   options:
     fusion:
-      prototypeGenerator: TYPO3\Neos\Domain\Service\DefaultContentPrototypeGenerator
+      prototypeGenerator: Neos\Neos\Domain\Service\DefaultContentPrototypeGenerator
   ui:
     label: i18n
     icon: 'icon-square-o'
@@ -318,25 +318,25 @@
       ui:
         inspector:
           editorOptions:
-            baseNodeType: 'TYPO3.Neos:Content'
+            baseNodeType: 'Neos.Neos:Content'
 
-# A content collection is a collection of "TYPO3.Neos:Content" (and its subclasses),
+# A content collection is a collection of "Neos.Neos:Content" (and its subclasses),
 # i.e. contains variable number of children.
-'TYPO3.Neos:ContentCollection':
+'Neos.Neos:ContentCollection':
   superTypes:
-    'TYPO3.Neos:Node': TRUE
+    'Neos.Neos:Node': TRUE
   ui:
     label: i18n
     icon: 'icon-folder-open-alt'
   constraints:
     nodeTypes:
-      'TYPO3.Neos:Document': FALSE
+      'Neos.Neos:Document': FALSE
       '*': TRUE
 
 # The fallback node is used if you have remainings of a nodeType that doesn't exist anymore so you can at least delete it
-'TYPO3.Neos:FallbackNode':
+'Neos.Neos:FallbackNode':
   superTypes:
-    'TYPO3.Neos:Node': TRUE
+    'Neos.Neos:Node': TRUE
   ui:
     label: i18n
     icon: 'icon-remove-sign'
@@ -345,4 +345,4 @@
       ui:
         inspector:
           editorOptions:
-            baseNodeType: 'TYPO3.Neos:Content'
+            baseNodeType: 'Neos.Neos:Content'

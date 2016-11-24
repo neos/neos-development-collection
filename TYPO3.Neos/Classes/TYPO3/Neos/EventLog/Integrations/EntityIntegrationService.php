@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\EventLog\Integrations;
+namespace Neos\Neos\EventLog\Integrations;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -18,8 +18,8 @@ use Neos\Eel\Exception;
 use Neos\Eel\Utility;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SystemLoggerInterface;
-use TYPO3\Neos\EventLog\Domain\Model\Event;
-use TYPO3\Neos\EventLog\Domain\Service\EventEmittingService;
+use Neos\Neos\EventLog\Domain\Model\Event;
+use Neos\Neos\EventLog\Domain\Service\EventEmittingService;
 
 /**
  * Monitors entity changes

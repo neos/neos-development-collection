@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Service;
+namespace Neos\Neos\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -90,11 +90,11 @@ class VieSchemaBuilder
             }
         }
 
-            // Convert the TYPO3.Neos:ContentCollection element to support content-collection
+            // Convert the Neos.Neos:ContentCollection element to support content-collection
             // TODO Move to node type definition
-        if (isset($this->types['typo3:TYPO3.Neos:ContentCollection'])) {
-            $this->addProperty('typo3:TYPO3.Neos:ContentCollection', 'typo3:content-collection', array());
-            $this->types['typo3:TYPO3.Neos:ContentCollection']->specific_properties[] = 'typo3:content-collection';
+        if (isset($this->types['typo3:Neos.Neos:ContentCollection'])) {
+            $this->addProperty('typo3:Neos.Neos:ContentCollection', 'typo3:content-collection', array());
+            $this->types['typo3:Neos.Neos:ContentCollection']->specific_properties[] = 'typo3:content-collection';
             $this->properties['typo3:content-collection']->ranges = array_keys($this->types);
         }
 

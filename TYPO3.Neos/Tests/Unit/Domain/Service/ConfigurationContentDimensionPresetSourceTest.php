@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Tests\Unit\Domain\Service;
+namespace Neos\Neos\Tests\Unit\Domain\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,7 @@ namespace TYPO3\Neos\Tests\Unit\Domain\Service;
  */
 
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\Neos\Domain\Service\ConfigurationContentDimensionPresetSource;
+use Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource;
 
 class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
 {

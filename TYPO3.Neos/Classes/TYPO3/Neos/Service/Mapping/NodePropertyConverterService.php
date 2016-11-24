@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Service\Mapping;
+namespace Neos\Neos\Service\Mapping;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -31,7 +31,7 @@ use TYPO3\TYPO3CR\Domain\Model\NodeType;
 class NodePropertyConverterService
 {
     /**
-     * @Flow\InjectConfiguration(package="TYPO3.Neos", path="userInterface.inspector.dataTypes")
+     * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.inspector.dataTypes")
      * @var array
      */
     protected $typesConfiguration;

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\EventLog\Domain\Repository;
+namespace Neos\Neos\EventLog\Domain\Repository;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -16,7 +16,7 @@ use Neos\Flow\Persistence\Doctrine\Repository;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Utility\Exception\PropertyNotAccessibleException;
-use TYPO3\Neos\EventLog\Domain\Model\NodeEvent;
+use Neos\Neos\EventLog\Domain\Model\NodeEvent;
 
 /**
  * The repository for events

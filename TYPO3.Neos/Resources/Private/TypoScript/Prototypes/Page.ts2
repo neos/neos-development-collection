@@ -1,7 +1,7 @@
-# TYPO3.Neos:Page is the default object used for rendering in most sites
+# Neos.Neos:Page is the default object used for rendering in most sites
 #
-prototype(TYPO3.Neos:Page) >
-prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
+prototype(Neos.Neos:Page) >
+prototype(Neos.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 
 	doctype = '<!DOCTYPE html>'
 	doctype.@position = 'start 100'
@@ -26,7 +26,7 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 
 	headerComment = TYPO3.TypoScript:Template {
 		@position = 'before headTag'
-		templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosLicenseHeader.html'
+		templatePath = 'resource://Neos.Neos/Private/Templates/TypoScriptObjects/NeosLicenseHeader.html'
 	}
 
 	# The opening head tag for the page. This is done to avoid deep nesting of TypoScript paths for integrators.
@@ -56,7 +56,7 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 		neosBackendHeader = TYPO3.TypoScript:Value {
 			@position = 'end 10000'
 			value = TYPO3.TypoScript:Template {
-				templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendHeaderData.html'
+				templatePath = 'resource://Neos.Neos/Private/Templates/TypoScriptObjects/NeosBackendHeaderData.html'
 				node = ${documentNode}
 
 				@cache {
@@ -74,7 +74,7 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 		neosBackendEndpoints = TYPO3.TypoScript:Value {
 			@position = 'end 10001'
 			value = TYPO3.TypoScript:Template {
-				templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendEndpoints.html'
+				templatePath = 'resource://Neos.Neos/Private/Templates/TypoScriptObjects/NeosBackendEndpoints.html'
 				node = ${documentNode}
 				account = ${Security.getAccount()}
 
@@ -122,7 +122,7 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 	}
 
 	# Required for the backend to work.
-	neosBackendDocumentNodeData = TYPO3.Neos:DocumentMetadata {
+	neosBackendDocumentNodeData = Neos.Neos:DocumentMetadata {
 		@position = 'before body'
 		@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 	}
@@ -143,7 +143,7 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 	neosBackendContainer = TYPO3.TypoScript:Value {
 		@position = 'before closingBodyTag'
 		value = TYPO3.TypoScript:Template {
-			templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendContainer.html'
+			templatePath = 'resource://Neos.Neos/Private/Templates/TypoScriptObjects/NeosBackendContainer.html'
 			node = ${documentNode}
 
 			@cache {
@@ -166,7 +166,7 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 		attributes {
 			data-neos-node = ${node.contextPath}
 			src = TYPO3.TypoScript:ResourceUri {
-				path = 'resource://TYPO3.Neos/Public/JavaScript/LastVisitedNode.js'
+				path = 'resource://Neos.Neos/Public/JavaScript/LastVisitedNode.js'
 			}
 			async = true
 		}
@@ -174,7 +174,7 @@ prototype(TYPO3.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 
 	neosBackendFooter = TYPO3.TypoScript:Template {
 		@position = 'after lastVisitedNodeScript 10000'
-		templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/NeosBackendFooterData.html'
+		templatePath = 'resource://Neos.Neos/Private/Templates/TypoScriptObjects/NeosBackendFooterData.html'
 		node = ${node}
 		@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 	}

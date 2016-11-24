@@ -370,8 +370,8 @@ define(
 				}
 				var treeConfiguration = this.get('treeConfiguration');
 				treeConfiguration['strings'] = {
-					loading: I18n.translate('TYPO3.Neos:Main:loading', 'Loading'),
-					loadError: I18n.translate('TYPO3.Neos:Main:loadError', 'Load error!')
+					loading: I18n.translate('Neos.Neos:Main:loading', 'Loading'),
+					loadError: I18n.translate('Neos.Neos:Main:loadError', 'Load error!')
 				};
 				this.$nodeTree = this.$(this.treeSelector).dynatree(treeConfiguration);
 
@@ -411,7 +411,7 @@ define(
 						return;
 					}
 
-					if (NodeTypeService.isOfType(entityWrapper, 'TYPO3.Neos:Document')) {
+					if (NodeTypeService.isOfType(entityWrapper, 'Neos.Neos:Document')) {
 						entityWrapper.addObserver('typo3:title', function() {
 							that.synchronizeNodeTitle(this);
 						});
@@ -543,7 +543,7 @@ define(
 			create: function(position) {
 				var activeNode = this.get('activeNode');
 				if (activeNode === null) {
-					Notification.info(I18n.translate('TYPO3.Neos:Main:aNodeMustBeSelected', 'You have to select a node'));
+					Notification.info(I18n.translate('Neos.Neos:Main:aNodeMustBeSelected', 'You have to select a node'));
 					return;
 				}
 
@@ -605,11 +605,11 @@ define(
 			showDeleteNodeDialog: function() {
 				var activeNode = this.get('activeNode');
 				if (activeNode === null) {
-					Notification.info(I18n.translate('TYPO3.Neos:Main:aNodeMustBeSelected', 'You have to select a node'));
+					Notification.info(I18n.translate('Neos.Neos:Main:aNodeMustBeSelected', 'You have to select a node'));
 					return;
 				}
 				if (activeNode.getLevel() === 1) {
-					Notification.info(I18n.translate('TYPO3.Neos:Main:rootNodeCannotBeDeleted', 'The Root node cannot be deleted.'));
+					Notification.info(I18n.translate('Neos.Neos:Main:rootNodeCannotBeDeleted', 'The Root node cannot be deleted.'));
 					return;
 				}
 
@@ -627,7 +627,7 @@ define(
 			createNode: function(activeNode, title, nodeType, iconClass, position) {
 				var nodeTypeConfiguration = NodeTypeService.getNodeTypeDefinition(nodeType),
 					data = {
-						title: title ? title : I18n.translate('TYPO3.Neos:Main:loading', 'Loading'),
+						title: title ? title : I18n.translate('Neos.Neos:Main:loading', 'Loading'),
 						nodeType: nodeType,
 						nodeTypeLabel: nodeTypeConfiguration ? nodeTypeConfiguration.label : '',
 						addClass: 'neos-matched',
@@ -716,7 +716,7 @@ define(
 			toggleHidden: function() {
 				var node = this.get('activeNode');
 				if (!node) {
-					Notification.info(I18n.translate('TYPO3.Neos:Main:aNodeMustBeSelected', 'You have to select a node'));
+					Notification.info(I18n.translate('Neos.Neos:Main:aNodeMustBeSelected', 'You have to select a node'));
 				}
 				var value = !node.data.isHidden;
 				node.data.isHidden = value;
@@ -763,11 +763,11 @@ define(
 			copy: function() {
 				var node = this.get('activeNode');
 				if (!node) {
-					Notification.info(I18n.translate('TYPO3.Neos:Main:aNodeMustBeSelected', 'You have to select a node'));
+					Notification.info(I18n.translate('Neos.Neos:Main:aNodeMustBeSelected', 'You have to select a node'));
 					return;
 				}
 				if (node.data.unselectable) {
-					Notification.info(I18n.translate('TYPO3.Neos:Main:cannotCopyNode', 'You cannot copy this node'));
+					Notification.info(I18n.translate('Neos.Neos:Main:cannotCopyNode', 'You cannot copy this node'));
 					return;
 				}
 				if (this.get('copiedNode') === node) {
@@ -781,11 +781,11 @@ define(
 			cut: function() {
 				var node = this.get('activeNode');
 				if (!node) {
-					Notification.info(I18n.translate('TYPO3.Neos:Main:aNodeMustBeSelected', 'You have to select a node'));
+					Notification.info(I18n.translate('Neos.Neos:Main:aNodeMustBeSelected', 'You have to select a node'));
 					return;
 				}
 				if (node.data.unselectable) {
-					Notification.info(I18n.translate('TYPO3.Neos:Main:cannotCutNode', 'You cannot cut this node'));
+					Notification.info(I18n.translate('Neos.Neos:Main:cannotCutNode', 'You cannot cut this node'));
 					return;
 				}
 				if (this.get('cutNode') === node) {
@@ -801,7 +801,7 @@ define(
 					cutNode = this.get('cutNode'),
 					copiedNode = this.get('copiedNode');
 				if (!targetNode) {
-					Notification.info(I18n.translate('TYPO3.Neos:Main:aNodeMustBeSelected', 'You have to select a node'));
+					Notification.info(I18n.translate('Neos.Neos:Main:aNodeMustBeSelected', 'You have to select a node'));
 				}
 				if (cutNode) {
 					this.set('cutNode', null);
@@ -895,7 +895,7 @@ define(
 						}
 					);
 				} catch(e) {
-					Notification.error(I18n.translate('TYPO3.Neos:Main:error.node.move.unexpected', 'Unexpected error while moving node'), e.toString());
+					Notification.error(I18n.translate('Neos.Neos:Main:error.node.move.unexpected', 'Unexpected error while moving node'), e.toString());
 					console.error(e);
 				}
 			},

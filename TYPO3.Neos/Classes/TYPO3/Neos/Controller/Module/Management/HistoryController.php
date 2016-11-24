@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Controller\Module\Management;
+namespace Neos\Neos\Controller\Module\Management;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,10 +13,10 @@ namespace TYPO3\Neos\Controller\Module\Management;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\View\ViewInterface;
-use TYPO3\Neos\Controller\Module\AbstractModuleController;
-use TYPO3\Neos\EventLog\Domain\Model\Event;
-use TYPO3\Neos\EventLog\Domain\Model\EventsOnDate;
-use TYPO3\Neos\EventLog\Domain\Repository\EventRepository;
+use Neos\Neos\Controller\Module\AbstractModuleController;
+use Neos\Neos\EventLog\Domain\Model\Event;
+use Neos\Neos\EventLog\Domain\Model\EventsOnDate;
+use Neos\Neos\EventLog\Domain\Repository\EventRepository;
 use TYPO3\TypoScript\View\TypoScriptView;
 
 /**
@@ -53,7 +53,7 @@ class HistoryController extends AbstractModuleController
                 ->controllerContext
                 ->getUriBuilder()
                 ->setCreateAbsoluteUri(true)
-                ->uriFor('Index', array('offset' => $offset + $limit), 'History', 'TYPO3.Neos');
+                ->uriFor('Index', array('offset' => $offset + $limit), 'History', 'Neos.Neos');
         }
 
         $eventsByDate = array();
@@ -84,6 +84,6 @@ class HistoryController extends AbstractModuleController
     protected function initializeView(ViewInterface $view)
     {
         parent::initializeView($view);
-        $view->setTypoScriptPathPattern('resource://TYPO3.Neos/Private/TypoScript/Backend');
+        $view->setTypoScriptPathPattern('resource://Neos.Neos/Private/TypoScript/Backend');
     }
 }

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\TypoScript;
+namespace Neos\Neos\TypoScript;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -74,7 +74,7 @@ class MenuImplementation extends AbstractMenuImplementation
     {
         $filter = $this->tsValue('filter');
         if ($filter === null) {
-            $filter = 'TYPO3.Neos:Document';
+            $filter = 'Neos.Neos:Document';
         }
         return $filter;
     }

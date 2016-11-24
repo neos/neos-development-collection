@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Domain\Service;
+namespace Neos\Neos\Domain\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -31,7 +31,7 @@ class DefaultPrototypeGenerator implements DefaultPrototypeGeneratorInterface
     /**
      * Generate a TypoScript prototype definition for a given node type
      *
-     * A node will be rendered by TYPO3.Neos:Content by default with a template in
+     * A node will be rendered by Neos.Neos:Content by default with a template in
      * resource://PACKAGE_KEY/Private/Templates/NodeTypes/NAME.html and forwards all public
      * node properties to the template TypoScript object.
      *
@@ -54,7 +54,7 @@ class DefaultPrototypeGenerator implements DefaultPrototypeGeneratorInterface
             if (isset($propertyName[0]) && $propertyName[0] !== '_') {
                 $output .= "\t" . $propertyName . ' = ${q(node).property("' . $propertyName . '")}' . chr(10);
                 if (isset($propertyConfiguration['type']) && isset($propertyConfiguration['ui']['inlineEditable']) && $propertyConfiguration['type'] === 'string' && $propertyConfiguration['ui']['inlineEditable'] === true) {
-                    $output .= "\t" . $propertyName . '.@process.convertUris = TYPO3.Neos:ConvertUris' . chr(10);
+                    $output .= "\t" . $propertyName . '.@process.convertUris = Neos.Neos:ConvertUris' . chr(10);
                 }
             }
         }

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Controller\Service;
+namespace Neos\Neos\Controller\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\FluidAdaptor\View\TemplateView;
-use TYPO3\Neos\View\Service\WorkspaceJsonView;
+use Neos\Neos\View\Service\WorkspaceJsonView;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 
@@ -35,7 +35,7 @@ class WorkspacesController extends ActionController
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Domain\Service\UserService
+     * @var \Neos\Neos\Domain\Service\UserService
      */
     protected $userService;
 

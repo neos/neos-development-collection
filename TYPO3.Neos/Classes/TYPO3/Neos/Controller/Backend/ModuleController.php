@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Controller\Backend;
+namespace Neos\Neos\Controller\Backend;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -19,9 +19,9 @@ use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Security\Context;
 use Neos\Utility\Arrays;
 use Neos\Utility\MediaTypes;
-use TYPO3\Neos\Controller\Backend\MenuHelper;
-use TYPO3\Neos\Controller\BackendUserTranslationTrait;
-use TYPO3\Neos\Controller\Exception\DisabledModuleException;
+use Neos\Neos\Controller\Backend\MenuHelper;
+use Neos\Neos\Controller\BackendUserTranslationTrait;
+use Neos\Neos\Controller\Exception\DisabledModuleException;
 use Neos\Party\Domain\Service\PartyService;
 
 /**

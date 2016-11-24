@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\TypoScript\ExceptionHandlers;
+namespace Neos\Neos\TypoScript\ExceptionHandlers;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -16,7 +16,7 @@ use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\FluidAdaptor\View\StandaloneView;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
-use TYPO3\Neos\Service\ContentElementWrappingService;
+use Neos\Neos\Service\ContentElementWrappingService;
 use TYPO3\TypoScript\Core\ExceptionHandlers\ContextDependentHandler;
 
 /**
@@ -67,7 +67,7 @@ class PageHandler extends AbstractRenderingExceptionHandler
             $documentNode = $siteNode ? $siteNode : $node;
         }
 
-        if ($documentNode !== null && $documentNode->getContext()->getWorkspace()->getName() !== 'live' && $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.GeneralAccess')) {
+        if ($documentNode !== null && $documentNode->getContext()->getWorkspace()->getName() !== 'live' && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
             $isBackend = true;
             $fluidView->assign('metaData', $this->contentElementWrappingService->wrapCurrentDocumentMetadata($documentNode, '<div id="neos-document-metadata"></div>', $typoScriptPath));
         }
@@ -91,10 +91,10 @@ class PageHandler extends AbstractRenderingExceptionHandler
         $fluidView = new StandaloneView();
         $fluidView->setControllerContext($this->runtime->getControllerContext());
         $fluidView->setFormat('html');
-        $fluidView->setTemplatePathAndFilename('resource://TYPO3.Neos/Private/Templates/Error/NeosBackendMessage.html');
-        $fluidView->setLayoutRootPath('resource://TYPO3.Neos/Private/Layouts/');
+        $fluidView->setTemplatePathAndFilename('resource://Neos.Neos/Private/Templates/Error/NeosBackendMessage.html');
+        $fluidView->setLayoutRootPath('resource://Neos.Neos/Private/Layouts/');
         // FIXME find a better way than using templates as partials
-        $fluidView->setPartialRootPath('resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/');
+        $fluidView->setPartialRootPath('resource://Neos.Neos/Private/Templates/TypoScriptObjects/');
         return $fluidView;
     }
 }

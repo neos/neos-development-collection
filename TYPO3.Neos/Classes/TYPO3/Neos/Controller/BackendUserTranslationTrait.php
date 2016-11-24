@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Controller;
+namespace Neos\Neos\Controller;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -27,7 +27,7 @@ trait BackendUserTranslationTrait
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Service\UserService
+     * @var \Neos\Neos\Service\UserService
      */
     protected $_userService;
 

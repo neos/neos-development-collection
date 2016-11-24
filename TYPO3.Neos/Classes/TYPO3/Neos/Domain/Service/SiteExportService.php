@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Domain\Service;
+namespace Neos\Neos\Domain\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,8 +14,8 @@ namespace TYPO3\Neos\Domain\Service;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Utility\Files;
-use TYPO3\Neos\Domain\Model\Site;
-use TYPO3\Neos\Domain\Exception as NeosException;
+use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Exception as NeosException;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeExportService;
 
@@ -64,7 +64,7 @@ class SiteExportService
      *
      * @param array<Site> $sites
      * @param boolean $tidy Whether to export formatted XML
-     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text")
+     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text")
      * @return string
      */
     public function export(array $sites, $tidy = false, $nodeTypeFilter = null)
@@ -84,7 +84,7 @@ class SiteExportService
      * @param array<Site> $sites
      * @param boolean $tidy Whether to export formatted XML
      * @param string $packageKey Package key where the export output should be saved to
-     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text")
+     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text")
      * @return void
      * @throws NeosException
      */
@@ -113,7 +113,7 @@ class SiteExportService
      * @param array<Site> $sites
      * @param boolean $tidy Whether to export formatted XML
      * @param string $pathAndFilename Path to where the export output should be saved to
-     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text")
+     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text")
      * @return void
      */
     public function exportToFile(array $sites, $tidy = false, $pathAndFilename, $nodeTypeFilter = null)

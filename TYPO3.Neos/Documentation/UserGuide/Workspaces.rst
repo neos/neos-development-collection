@@ -57,10 +57,10 @@ Out-of-the-box
 
 - all users can create new private workspaces.
 - all users can edit/delete their own private workspaces.
-- users with the `TYPO3.Neos:RestrictedEditor` role can only publish to internal or private workspaces.
-- other users (having the `TYPO3.Neos:Editor` role) can also publish to the public workspace *live* and
+- users with the `Neos.Neos:RestrictedEditor` role can only publish to internal or private workspaces.
+- other users (having the `Neos.Neos:Editor` role) can also publish to the public workspace *live* and
   create new internal workspaces.
-- Administrators (having the `TYPO3.Neos:Administrator` role) can create internal workspaces and manage
+- Administrators (having the `Neos.Neos:Administrator` role) can create internal workspaces and manage
   (edit and delete) internal as well as private workspaces.
 
 Workflow Examples

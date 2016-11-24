@@ -36,7 +36,7 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 		 * @return {boolean}
 		 */
 		isDocument: function(node) {
-			return NodeTypeService.isOfType(node, 'TYPO3.Neos:Document');
+			return NodeTypeService.isOfType(node, 'Neos.Neos:Document');
 		},
 
 		/**
@@ -46,7 +46,7 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 		 * @return {boolean}
 		 */
 		isCollection: function(node) {
-			return NodeTypeService.isOfType(node, 'TYPO3.Neos:ContentCollection');
+			return NodeTypeService.isOfType(node, 'Neos.Neos:ContentCollection');
 		},
 
 		/**
@@ -57,7 +57,7 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 		 */
 		closestParentIsCollection: function(node) {
 			var parentElement = node.$element.parents('[typeof^="typo3:"]').first();
-			return parentElement.length > 0 ? NodeTypeService.isOfType(parentElement.attr('typeof').substr(6), 'TYPO3.Neos:ContentCollection') : false;
+			return parentElement.length > 0 ? NodeTypeService.isOfType(parentElement.attr('typeof').substr(6), 'Neos.Neos:ContentCollection') : false;
 		},
 
 		/**
@@ -165,7 +165,7 @@ function (Ember, $, vieInstance, NodeActions, NodeSelection, Notification, NodeT
 			}
 
 			if (types) {
-				var contentTypes = NodeTypeService.getSubNodeTypes('TYPO3.Neos:Content'),
+				var contentTypes = NodeTypeService.getSubNodeTypes('Neos.Neos:Content'),
 					contentTypesArray = Object.keys(contentTypes);
 				return types.filter(function(n) {
 					return contentTypesArray.indexOf(n) !== -1;

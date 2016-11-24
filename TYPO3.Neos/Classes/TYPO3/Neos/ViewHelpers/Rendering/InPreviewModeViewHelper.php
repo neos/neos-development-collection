@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\ViewHelpers\Rendering;
+namespace Neos\Neos\ViewHelpers\Rendering;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -59,7 +59,7 @@ class InPreviewModeViewHelper extends AbstractRenderingStateViewHelper
      * @param NodeInterface $node Optional Node to use context from
      * @param string $mode Optional rendering mode name to check if this specific mode is active
      * @return boolean
-     * @throws \TYPO3\Neos\Exception
+     * @throws \Neos\Neos\Exception
      */
     public function render(NodeInterface $node = null, $mode = null)
     {

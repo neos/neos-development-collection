@@ -37,7 +37,7 @@ The basics
 ==========
 
 The main TypoScript path is ``root``, you can find it in the file ``TypoScript/DefaultTypoScript.ts2`` in the
-``TYPO3.Neos`` package. Here is a small part of this file that shows the outermost cache configuration of the ``root``
+``Neos.Neos`` package. Here is a small part of this file that shows the outermost cache configuration of the ``root``
 path::
 
 	root = TYPO3.TypoScript:Case {
@@ -129,7 +129,7 @@ In the ``@cache`` meta property the following subproperties are allowed:
 
   Example from ``Plugin.ts2``::
 
-	prototype(TYPO3.Neos:Plugin) {
+	prototype(Neos.Neos:Plugin) {
 		@cache {
 			mode = 'uncached'
 			context {
@@ -146,7 +146,7 @@ In the ``@cache`` meta property the following subproperties are allowed:
 
   Example for a ``dynamic`` configuration with ``entryDiscriminator``::
 
-	prototype(TYPO3.Neos:Plugin) {
+	prototype(Neos.Neos:Plugin) {
 		@cache {
 			mode = 'dynamic'
 			entryIdentifier {
@@ -182,7 +182,7 @@ The following patterns of tags will be flushed by Neos:
 ``NodeType_[My.Package:NodeTypeName]``
   Flushes cache entries if any node with the given node type changes. ``[My.Package:NodeTypeName]`` needs to be
   replaced by any node type name. Inheritance will be taken into account, so for a changed node of type
-  ``TYPO3.Neos.NodeTypes:Page`` the tags ``NodeType_TYPO3.Neos.NodeTypes:Page`` and ``NodeType_TYPO3.Neos:Document``
+  ``Neos.Neos.NodeTypes:Page`` the tags ``NodeType_Neos.Neos.NodeTypes:Page`` and ``NodeType_Neos.Neos:Document``
   (and some more) will be flushed.
 
 ``Node_[Identifier]``
@@ -195,7 +195,7 @@ The following patterns of tags will be flushed by Neos:
 
 Example::
 
-	prototype(TYPO3.Neos:ContentCollection) {
+	prototype(Neos.Neos:ContentCollection) {
 		#...
 
 		@cache {
@@ -230,19 +230,19 @@ Default cache configuration
 
 The following list of TypoScript prototypes is cached by default:
 
-* TYPO3.Neos:Breadcrumb
-* TYPO3.Neos:Menu
-* TYPO3.Neos:Page
-* TYPO3.Neos:ContentCollection (see note)
+* Neos.Neos:Breadcrumb
+* Neos.Neos:Menu
+* Neos.Neos:Page
+* Neos.Neos:ContentCollection (see note)
 
 The following list of TypoScript prototypes is uncached by default:
 
-* TYPO3.Neos.NodeTypes:Form
-* TYPO3.Neos:Plugin
+* Neos.Neos.NodeTypes:Form
+* Neos.Neos:Plugin
 
 .. note::
 
-	The ``TYPO3.Neos:ContentCollection`` prototype is cached by default and has a cache configuration with proper
+	The ``Neos.Neos:ContentCollection`` prototype is cached by default and has a cache configuration with proper
 	identifier, tags and maximumLifetime defined. For all ``ContentCollection`` objects inside a ``Content`` object the
 	mode is set to ``embed``. This means that node types that have a ``ContentCollection`` do not generate a separate
 	cache entry but are embedded in the outer *static* ``ContentCollection``.
@@ -252,12 +252,12 @@ Overriding default cache configuration
 
 You can override default cache configuration in your TypoScript::
 
-	prototype(TYPO3.Neos:PrimaryContent).@cache.mode = 'uncached'
+	prototype(Neos.Neos:PrimaryContent).@cache.mode = 'uncached'
 
 You can also override cache configuration for a specific TypoScript Path::
 
     page.body.content.main {
-    	prototype(TYPO3.Neos:Plugin).@cache.mode = 'cached'
+    	prototype(Neos.Neos:Plugin).@cache.mode = 'cached'
     }
 
 .. _Global cache entry identifiers:

@@ -18,7 +18,7 @@ function(
 			this._super();
 			var that = this;
 
-			this.set('placeholder', I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...');
+			this.set('placeholder', I18n.translate('Neos.Neos:Main:loading', 'Loading') + ' ...');
 			HttpClient.getResource(
 				$('link[rel="neos-masterplugins"]').attr('href'),
 				{
@@ -44,9 +44,9 @@ function(
 					i++;
 				}
 				if (i > 0) {
-					placeholder = I18n.translate('TYPO3.Neos:Main:content.inspector.editors.masterPluginEditor.selectPlugin', 'Select a Plugin');
+					placeholder = I18n.translate('Neos.Neos:Main:content.inspector.editors.masterPluginEditor.selectPlugin', 'Select a Plugin');
 				} else {
-					placeholder = I18n.translate('TYPO3.Neos:Main:content.inspector.editors.masterPluginEditor.noPluginConfigured', 'No plugin configured');
+					placeholder = I18n.translate('Neos.Neos:Main:content.inspector.editors.masterPluginEditor.noPluginConfigured', 'No plugin configured');
 					values = [];
 				}
 

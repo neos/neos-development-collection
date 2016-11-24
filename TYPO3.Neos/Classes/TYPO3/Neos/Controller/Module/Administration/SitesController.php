@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Controller\Module\Administration;
+namespace Neos\Neos\Controller\Module\Administration;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -18,14 +18,14 @@ use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Media\Domain\Repository\AssetCollectionRepository;
-use TYPO3\Neos\Controller\Module\AbstractModuleController;
-use TYPO3\Neos\Domain\Model\Domain;
-use TYPO3\Neos\Domain\Model\Site;
-use TYPO3\Neos\Domain\Repository\DomainRepository;
-use TYPO3\Neos\Domain\Repository\SiteRepository;
-use TYPO3\Neos\Domain\Service\SiteImportService;
-use TYPO3\Neos\Domain\Service\SiteService;
-use TYPO3\Neos\Kickstarter\Service\GeneratorService;
+use Neos\Neos\Controller\Module\AbstractModuleController;
+use Neos\Neos\Domain\Model\Domain;
+use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Repository\DomainRepository;
+use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\Service\SiteImportService;
+use Neos\Neos\Domain\Service\SiteService;
+use Neos\Neos\Kickstarter\Service\GeneratorService;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
@@ -176,7 +176,7 @@ class SitesController extends AbstractModuleController
      * @Flow\Validate(argumentName="$site", type="UniqueEntity")
      * @Flow\Validate(argumentName="$newSiteNodeName", type="NotEmpty")
      * @Flow\Validate(argumentName="$newSiteNodeName", type="StringLength", options={ "minimum"=1, "maximum"=250 })
-     * @Flow\Validate(argumentName="$newSiteNodeName", type="TYPO3.Neos:NodeName")
+     * @Flow\Validate(argumentName="$newSiteNodeName", type="Neos.Neos:NodeName")
      */
     public function updateSiteAction(Site $site, $newSiteNodeName)
     {
@@ -208,12 +208,12 @@ class SitesController extends AbstractModuleController
     public function newSiteAction(Site $site = null)
     {
         $sitePackages = $this->packageManager->getFilteredPackages('active', null, 'neos-site');
-        $documentNodeTypes = $this->nodeTypeManager->getSubNodeTypes('TYPO3.Neos:Document', false);
+        $documentNodeTypes = $this->nodeTypeManager->getSubNodeTypes('Neos.Neos:Document', false);
         $this->view->assignMultiple(array(
             'sitePackages' => $sitePackages,
             'documentNodeTypes' => $documentNodeTypes,
             'site' => $site,
-            'generatorServiceIsAvailable' => $this->packageManager->isPackageActive('TYPO3.Neos.Kickstarter')
+            'generatorServiceIsAvailable' => $this->packageManager->isPackageActive('Neos.Neos.Kickstarter')
         ));
     }
 
@@ -222,13 +222,13 @@ class SitesController extends AbstractModuleController
      *
      * @param string $packageKey Package Name to create
      * @param string $siteName Site Name to create
-     * @Flow\Validate(argumentName="$packageKey", type="\TYPO3\Neos\Validation\Validator\PackageKeyValidator")
+     * @Flow\Validate(argumentName="$packageKey", type="\Neos\Neos\Validation\Validator\PackageKeyValidator")
      * @return void
      */
     public function createSitePackageAction($packageKey, $siteName)
     {
-        if ($this->packageManager->isPackageActive('TYPO3.Neos.Kickstarter') === false) {
-            $this->addFlashMessage('The package "%s" is required to create new site packages.', 'Missing Package', Message::SEVERITY_ERROR, array('TYPO3.Neos.Kickstarter'), 1475736232);
+        if ($this->packageManager->isPackageActive('Neos.Neos.Kickstarter') === false) {
+            $this->addFlashMessage('The package "%s" is required to create new site packages.', 'Missing Package', Message::SEVERITY_ERROR, array('Neos.Neos.Kickstarter'), 1475736232);
             $this->redirect('index');
         }
 
@@ -256,7 +256,7 @@ class SitesController extends AbstractModuleController
      * Import a site from site package.
      *
      * @param string $packageKey Package from where the import will come
-     * @Flow\Validate(argumentName="$packageKey", type="\TYPO3\Neos\Validation\Validator\PackageKeyValidator")
+     * @Flow\Validate(argumentName="$packageKey", type="\Neos\Neos\Validation\Validator\PackageKeyValidator")
      * @return void
      */
     public function importSiteAction($packageKey)
@@ -277,7 +277,7 @@ class SitesController extends AbstractModuleController
      * @param string $packageKey Package Name to create
      * @param string $siteName Site Name to create
      * @param string $nodeType NodeType name for the root node to create
-     * @Flow\Validate(argumentName="$packageKey", type="\TYPO3\Neos\Validation\Validator\PackageKeyValidator")
+     * @Flow\Validate(argumentName="$packageKey", type="\Neos\Neos\Validation\Validator\PackageKeyValidator")
      * @return void
      */
     public function createSiteNodeAction($packageKey, $siteName, $nodeType)
@@ -291,13 +291,13 @@ class SitesController extends AbstractModuleController
 
         $siteNodeType = $this->nodeTypeManager->getNodeType($nodeType);
 
-        if ($siteNodeType === null || $siteNodeType->getName() === 'TYPO3.Neos:FallbackNode') {
+        if ($siteNodeType === null || $siteNodeType->getName() === 'Neos.Neos:FallbackNode') {
             $this->addFlashMessage('Error: The given node type "%s" was not found', 'Import error', Message::SEVERITY_ERROR, [$nodeType], 1412372375);
             $this->redirect('createSiteNode');
         }
 
-        if ($siteNodeType->isOfType('TYPO3.Neos:Document') === false) {
-            $this->addFlashMessage('Error: The given node type "%s" is not based on the superType "%s"', Message::SEVERITY_ERROR, [$nodeType, 'TYPO3.Neos:Document'], 1412372375);
+        if ($siteNodeType->isOfType('Neos.Neos:Document') === false) {
+            $this->addFlashMessage('Error: The given node type "%s" is not based on the superType "%s"', Message::SEVERITY_ERROR, [$nodeType, 'Neos.Neos:Document'], 1412372375);
             $this->redirect('createSiteNode');
         }
 

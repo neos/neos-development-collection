@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Routing\Cache;
+namespace Neos\Neos\Routing\Cache;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -45,7 +45,7 @@ class RouteCacheFlusher
         if (in_array($node->getIdentifier(), $this->tagsToFlush)) {
             return;
         }
-        if (!$node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
+        if (!$node->getNodeType()->isOfType('Neos.Neos:Document')) {
             return;
         }
         $this->tagsToFlush[] = $node->getIdentifier();

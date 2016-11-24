@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Domain\Model;
+namespace Neos\Neos\Domain\Model;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -51,7 +51,7 @@ class Site
      * @Flow\Identity
      * @Flow\Validate(type="NotEmpty")
      * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=250 })
-     * @Flow\Validate(type="\TYPO3\Neos\Validation\Validator\NodeNameValidator")
+     * @Flow\Validate(type="\Neos\Neos\Validation\Validator\NodeNameValidator")
      */
     protected $nodeName;
 

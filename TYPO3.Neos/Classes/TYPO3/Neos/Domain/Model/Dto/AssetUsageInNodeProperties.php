@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Domain\Model\Dto;
+namespace Neos\Neos\Domain\Model\Dto;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,7 @@ namespace TYPO3\Neos\Domain\Model\Dto;
  */
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\Dto\UsageReference;
-use TYPO3\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Model\Site;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**

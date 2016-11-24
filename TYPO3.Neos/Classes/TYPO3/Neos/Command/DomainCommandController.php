@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Command;
+namespace Neos\Neos\Command;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,13 +14,13 @@ namespace TYPO3\Neos\Command;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Validation\ValidatorResolver;
-use TYPO3\Neos\Domain\Model\Domain;
-use TYPO3\Neos\Domain\Model\Site;
-use TYPO3\Neos\Domain\Repository\DomainRepository;
-use TYPO3\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\Model\Domain;
+use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Repository\DomainRepository;
+use Neos\Neos\Domain\Repository\SiteRepository;
 
 /**
- * Domain command controller for the TYPO3.Neos package
+ * Domain command controller for the Neos.Neos package
  *
  * @Flow\Scope("singleton")
  */
@@ -113,7 +113,7 @@ class DomainCommandController extends CommandController
 
         $availableDomains = [];
         foreach ($domains as $domain) {
-            /** @var \TYPO3\Neos\Domain\Model\Domain $domain */
+            /** @var \Neos\Neos\Domain\Model\Domain $domain */
             $availableDomains[] = [
                 'nodeName' => $domain->getSite()->getNodeName(),
                 'hostname' => (string)$domain,

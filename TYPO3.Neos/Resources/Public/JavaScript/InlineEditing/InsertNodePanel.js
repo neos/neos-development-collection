@@ -44,7 +44,7 @@ function(
 				return 'typo3:' + nodeType;
 			});
 
-			var contentTypes = NodeTypeService.getSubNodeTypes('TYPO3.Neos:Content'),
+			var contentTypes = NodeTypeService.getSubNodeTypes('Neos.Neos:Content'),
 				nodeTypeGroups = this.get('nodeTypeGroups'),
 				vieTypes = this.get('_node._vieEntity._enclosingCollectionWidget').options.vie.types;
 			types.forEach(function(nodeType) {
@@ -77,7 +77,7 @@ function(
 							'position': type.metadata.ui.position
 						});
 					} else {
-						window.console.warn('Node type group "' + groupName + '" not found for node type "' + nodeTypeName + '", defined in "Settings" configuration "TYPO3.Neos.nodeTypes.groups"');
+						window.console.warn('Node type group "' + groupName + '" not found for node type "' + nodeTypeName + '", defined in "Settings" configuration "Neos.Neos.nodeTypes.groups"');
 					}
 				}
 			});

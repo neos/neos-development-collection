@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Service;
+namespace Neos\Neos\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -56,13 +56,13 @@ class XliffService
     protected $xliffToJsonTranslationsCache;
 
     /**
-     * @Flow\InjectConfiguration(path="userInterface.scrambleTranslatedLabels", package="TYPO3.Neos")
+     * @Flow\InjectConfiguration(path="userInterface.scrambleTranslatedLabels", package="Neos.Neos")
      * @var boolean
      */
     protected $scrambleTranslatedLabels = false;
 
     /**
-     * @Flow\InjectConfiguration(path="userInterface.translation.autoInclude", package="TYPO3.Neos")
+     * @Flow\InjectConfiguration(path="userInterface.translation.autoInclude", package="Neos.Neos")
      * @var array
      */
     protected $packagesRegisteredForAutoInclusion = [];

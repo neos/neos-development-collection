@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\TypoScript\Helper;
+namespace Neos\Neos\TypoScript\Helper;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,7 +14,7 @@ namespace TYPO3\Neos\TypoScript\Helper;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\Neos\Domain\Exception;
+use Neos\Neos\Domain\Exception;
 
 /**
  * Eel helper for TYPO3CR Nodes
@@ -32,7 +32,7 @@ class NodeHelper implements ProtectedContextAwareInterface
      */
     public function nearestContentCollection(NodeInterface $node, $nodePath)
     {
-        $contentCollectionType = 'TYPO3.Neos:ContentCollection';
+        $contentCollectionType = 'Neos.Neos:ContentCollection';
         if ($node->getNodeType()->isOfType($contentCollectionType)) {
             return $node;
         } else {

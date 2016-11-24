@@ -13,8 +13,8 @@ for details).
 
 A data source is defined by an identifier and this identifier has to be unique.
 
-To implement a data source, create a class that implements ``TYPO3\Neos\Service\DataSource\DataSourceInterface``,
-preferably by extending ``TYPO3\Neos\Service\DataSource\AbstractDataSource``. Then set the static protected
+To implement a data source, create a class that implements ``Neos\Neos\Service\DataSource\DataSourceInterface``,
+preferably by extending ``Neos\Neos\Service\DataSource\AbstractDataSource``. Then set the static protected
 property ``identifier`` to a string. Make sure you use a unique identifier, e.g. ``acme-demo-available-dates``.
 
 Then implement the ``getData`` method, with the following signature:
@@ -38,7 +38,7 @@ The return value of the method will be JSON encoded.
 Data sources are available with the following URI pattern ``/neos/service/data-source/<identifier>``, which can be linked to
 using the follow parameters:
 
-- ``@package``:    'TYPO3.Neos'
+- ``@package``:    'Neos.Neos'
 - ``@subpackage``: 'Service'
 - ``@controller``: 'DataSource'
 - ``@action``:     'index
@@ -56,8 +56,8 @@ to make working with nodes easy.
 The ``dataSourceIdentifier`` will automatically be removed from the ``arguments`` parameter.
 
 .. note::
-  Data sources are restricted to only be accessible for users with the ``TYPO3.Neos:Backend.DataSource`` privilege,
-  which is included in the ``TYPO3.Neos:Editor`` role. This means that a user has to have access to the backend to
+  Data sources are restricted to only be accessible for users with the ``Neos.Neos:Backend.DataSource`` privilege,
+  which is included in the ``Neos.Neos:Editor`` role. This means that a user has to have access to the backend to
   be able to access a data point.
 
 Example ``TestDataSource.php``:
@@ -67,7 +67,7 @@ Example ``TestDataSource.php``:
   <?php
   namespace Acme\YourPackage\DataSource;
 
-  use TYPO3\Neos\Service\DataSource\AbstractDataSource;
+  use Neos\Neos\Service\DataSource\AbstractDataSource;
   use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
   class TestDataSource extends AbstractDataSource {

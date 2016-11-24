@@ -15,7 +15,7 @@ function (
 		type: 'paste',
 		init: function() {
 			this._super();
-			this.set('title', I18n.translate('TYPO3.Neos:Main:paste', 'Paste'));
+			this.set('title', I18n.translate('Neos.Neos:Main:paste', 'Paste'));
 		}
 	});
 });

@@ -24,16 +24,16 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 		 * GENERAL SETUP
 		 ***************************************/
 		removeButtonLabel: function () {
-			return I18n.translate('TYPO3.Neos:Main:remove', 'Remove');
+			return I18n.translate('Neos.Neos:Main:remove', 'Remove');
 		}.property(),
 		uploadCancelLabel: function () {
-			return I18n.translate('TYPO3.Neos:Main:cancel', 'Cancel');
+			return I18n.translate('Neos.Neos:Main:cancel', 'Cancel');
 		}.property(),
 		cropLabel: function () {
-			return I18n.translate('TYPO3.Neos:Main:crop', 'Crop');
+			return I18n.translate('Neos.Neos:Main:crop', 'Crop');
 		}.property(),
 		mediaLabel: function () {
-			return I18n.translate('TYPO3.Neos:Main:media', 'Media');
+			return I18n.translate('Neos.Neos:Main:media', 'Media');
 		}.property(),
 
 		/**

@@ -22,7 +22,7 @@ define(
 			content: [],
 
 			// array of allowed node type names, configurable via editorOptions
-			nodeTypes: ['TYPO3.Neos:Document'],
+			nodeTypes: ['Neos.Neos:Document'],
 
 			// Minimum amount of characters to trigger search
 			threshold: 2,
@@ -60,7 +60,7 @@ define(
 						return $itemContent.get(0).outerHTML;
 					},
 					formatSelection: function(item) {
-						var $itemContent = $('<span><em>' + I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...' + '</em></span>');
+						var $itemContent = $('<span><em>' + I18n.translate('Neos.Neos:Main:loading', 'Loading') + ' ...' + '</em></span>');
 
 						if (item.data) {
 							$itemContent = $('<span data-neos-identifier="' + item.data.identifier + '">' + item.text + '</span>');

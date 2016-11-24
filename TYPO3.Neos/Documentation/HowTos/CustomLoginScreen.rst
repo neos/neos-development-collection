@@ -35,6 +35,6 @@ the stylesheet provided by Neos, so your are free to implement your own::
       userInterface:
         backendLoginForm:
           stylesheets:
-            'TYPO3.Neos:DefaultStyles': FALSE
+            'Neos.Neos:DefaultStyles': FALSE
             'Your.Package:CustomStyles': 'resource://Your.Package/Public/Styles/Login.css'
 

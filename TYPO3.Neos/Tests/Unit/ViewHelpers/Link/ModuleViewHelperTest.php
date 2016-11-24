@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Tests\Unit\ViewHelpers\Link;
+namespace Neos\Neos\Tests\Unit\ViewHelpers\Link;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,8 +12,8 @@ namespace TYPO3\Neos\Tests\Unit\ViewHelpers\Link;
  */
 
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\Neos\ViewHelpers\Link\ModuleViewHelper;
-use TYPO3\Neos\ViewHelpers\Uri\ModuleViewHelper as UriModuleViewHelper;
+use Neos\Neos\ViewHelpers\Link\ModuleViewHelper;
+use Neos\Neos\ViewHelpers\Uri\ModuleViewHelper as UriModuleViewHelper;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 
@@ -48,7 +48,7 @@ class ModuleViewHelperTest extends UnitTestCase
         parent::setUp();
         $this->viewHelper = $this->getAccessibleMock(ModuleViewHelper::class, array('renderChildren'));
         $this->tagBuilder = $this->createMock(TagBuilder::class);
-        $this->uriModuleViewHelper = $this->getMockBuilder(\TYPO3\Neos\ViewHelpers\Uri\ModuleViewHelper::class)->setMethods(array('setRenderingContext', 'render'))->getMock();
+        $this->uriModuleViewHelper = $this->getMockBuilder(\Neos\Neos\ViewHelpers\Uri\ModuleViewHelper::class)->setMethods(array('setRenderingContext', 'render'))->getMock();
 
         $this->dummyRenderingContext = $this->createMock(RenderingContextInterface::class);
         $this->inject($this->viewHelper, 'renderingContext', $this->dummyRenderingContext);

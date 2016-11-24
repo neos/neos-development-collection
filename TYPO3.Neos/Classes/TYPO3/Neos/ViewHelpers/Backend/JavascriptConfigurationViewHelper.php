@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\ViewHelpers\Backend;
+namespace Neos\Neos\ViewHelpers\Backend;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -21,8 +21,8 @@ use Neos\Utility\Files;
 use Neos\Utility\PositionalArraySorter;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\Flow\Log\SystemLoggerInterface;
-use TYPO3\Neos\Domain\Repository\DomainRepository;
-use TYPO3\Neos\Utility\BackendAssetsUtility;
+use Neos\Neos\Domain\Repository\DomainRepository;
+use Neos\Neos\Utility\BackendAssetsUtility;
 
 /**
  * ViewHelper for the backend JavaScript configuration. Renders the required JS snippet to configure
@@ -102,12 +102,12 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
             'window.T3Configuration.nodeTypes = {};',
             'window.T3Configuration.nodeTypes.groups = ' . json_encode($this->getNodeTypeGroupsSettings()) . ';',
             'window.T3Configuration.requirejs = {};',
-            'window.T3Configuration.neosStaticResourcesBaseUri = ' . json_encode($this->resourceManager->getPublicPackageResourceUri('TYPO3.Neos', '')) . ';',
+            'window.T3Configuration.neosStaticResourcesBaseUri = ' . json_encode($this->resourceManager->getPublicPackageResourceUri('Neos.Neos', '')) . ';',
             'window.T3Configuration.requirejs.paths = ' . json_encode($this->getRequireJsPathMapping()) . ';',
             'window.T3Configuration.maximumFileUploadSize = ' . $this->renderMaximumFileUploadSize()
         );
 
-        $neosJavaScriptBasePath = $this->getStaticResourceWebBaseUri('resource://TYPO3.Neos/Public/JavaScript');
+        $neosJavaScriptBasePath = $this->getStaticResourceWebBaseUri('resource://Neos.Neos/Public/JavaScript');
 
         $configuration[] = 'window.T3Configuration.neosJavascriptBasePath = ' . json_encode($neosJavaScriptBasePath) . ';';
         if ($this->backendAssetsUtility->shouldLoadMinifiedJavascript()) {

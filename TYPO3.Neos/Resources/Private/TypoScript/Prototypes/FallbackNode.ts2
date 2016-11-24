@@ -1,4 +1,4 @@
-prototype(TYPO3.Neos:FallbackNode) < prototype(TYPO3.Neos:Content) {
-	templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/FallbackNode.html'
+prototype(Neos.Neos:FallbackNode) < prototype(Neos.Neos:Content) {
+	templatePath = 'resource://Neos.Neos/Private/Templates/TypoScriptObjects/FallbackNode.html'
 	@if.onlyRenderInBackend = ${node.context.inBackend}
 }

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Domain\Service;
+namespace Neos\Neos\Domain\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -29,11 +29,11 @@ use Neos\Media\Domain\Model\ImageVariant;
 use Neos\Media\Domain\Repository\ImageRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Service\AssetService;
-use TYPO3\Neos\Domain\Exception as DomainException;
-use TYPO3\Neos\Domain\Exception;
-use TYPO3\Neos\Domain\Model\Site;
-use TYPO3\Neos\Domain\Repository\SiteRepository;
-use TYPO3\Neos\Exception as NeosException;
+use Neos\Neos\Domain\Exception as DomainException;
+use Neos\Neos\Domain\Exception;
+use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Exception as NeosException;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
@@ -666,7 +666,7 @@ class LegacySiteImportService
      */
     protected function upgradeLegacySiteXml(\SimpleXMLElement $siteXml, Site $site)
     {
-        $siteXml->addAttribute('type', 'TYPO3.Neos:Shortcut');
+        $siteXml->addAttribute('type', 'Neos.Neos:Shortcut');
         $siteXml->addAttribute('hiddenInIndex', 'true');
 
         if (property_exists($siteXml->properties, 'title') === false) {

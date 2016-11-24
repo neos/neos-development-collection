@@ -40,7 +40,7 @@ that is called metaMenu. The options available in this example is:
 
 HTML template code::
 
-    {namespace neos=TYPO3\Neos\ViewHelpers}
+    {namespace neos=Neos\Neos\ViewHelpers}
     <nav class="nav">
         <ul class="nav nav-pills">
             <f:for each="{items}" as="item" iteration="menuItemIterator">
@@ -57,7 +57,7 @@ clarify from where the viewhelper is taken.
 
 Viewhelper include::
 
-    {namespace neos=TYPO3\Neos\ViewHelpers}
+    {namespace neos=Neos\Neos\ViewHelpers}
 
 The next thing is to iterate through the nodes found by TypoScript.
 

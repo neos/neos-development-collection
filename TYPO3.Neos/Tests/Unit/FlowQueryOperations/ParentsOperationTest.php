@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Tests\Unit\FlowQueryOperations;
+namespace Neos\Neos\Tests\Unit\FlowQueryOperations;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,8 +12,8 @@ namespace TYPO3\Neos\Tests\Unit\FlowQueryOperations;
  */
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\Neos\Domain\Service\ContentContext;
-use TYPO3\Neos\Eel\FlowQueryOperations\ParentsOperation;
+use Neos\Neos\Domain\Service\ContentContext;
+use Neos\Neos\Eel\FlowQueryOperations\ParentsOperation;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Service\Context;
 
@@ -32,7 +32,7 @@ class ParentsOperationTest extends UnitTestCase
         $secondLevelNode = $this->createMock(NodeInterface::class);
 
         $siteNode->expects($this->any())->method('getPath')->will($this->returnValue('/site'));
-        $mockContext = $this->getMockBuilder(\TYPO3\Neos\Domain\Service\ContentContext::class)->disableOriginalConstructor()->getMock();
+        $mockContext = $this->getMockBuilder(\Neos\Neos\Domain\Service\ContentContext::class)->disableOriginalConstructor()->getMock();
         $mockContext->expects($this->any())->method('getCurrentSiteNode')->will($this->returnValue($siteNode));
         $firstLevelNode->expects($this->any())->method('getParent')->will($this->returnValue($siteNode));
         $firstLevelNode->expects($this->any())->method('getPath')->will($this->returnValue('/site/first'));
