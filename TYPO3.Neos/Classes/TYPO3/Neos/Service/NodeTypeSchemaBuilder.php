@@ -28,6 +28,12 @@ class NodeTypeSchemaBuilder
     protected $nodeTypeManager;
 
     /**
+    * @Flow\InjectConfiguration(path="userInterface.aloha.presets", package="TYPO3.Neos")
+    * @var array
+    */
+    protected $alohaPresets;
+
+    /**
      * The preprocessed node type schema contains everything we need for the UI:
      *
      * - "nodeTypes" contains the original (merged) node type schema
@@ -59,6 +65,7 @@ class NodeTypeSchemaBuilder
         foreach ($nodeTypes as $nodeTypeName => $nodeType) {
             if ($nodeType->isAbstract() === false) {
                 $configuration = $nodeType->getFullConfiguration();
+                $this->loadAlohaPreset($configuration);
                 $this->flattenAlohaFormatOptions($configuration);
                 $schema['nodeTypes'][$nodeTypeName] = $configuration;
                 $schema['nodeTypes'][$nodeTypeName]['label'] = $nodeType->getLabel();
@@ -72,6 +79,33 @@ class NodeTypeSchemaBuilder
         }
 
         return $schema;
+    }
+
+    /**
+     * @param array $options
+     * @return array
+     * @throws \Exception
+     */
+    protected function loadAlohaPreset(array &$options)
+    {
+        if (array_key_exists('properties', $options)) {
+            foreach ($options['properties'] as &$property) {
+                if (array_key_exists('ui', $property)) {
+                    if (array_key_exists('aloha', $property['ui'])) {
+                        if (array_key_exists('preset', $property['ui']['aloha'])) {
+                            try {
+                                $preset = $this->alohaPresets[$property['ui']['aloha']['preset']];
+                                $originalAlohaConfiguration = $property['ui']['aloha'];
+                                // Merge preset first so a single preset setting can always be overwritten by custom config
+                                $property['ui']['aloha'] = array_merge($preset, $originalAlohaConfiguration);
+                            } catch (\Exception $exception) {
+                                throw new \Exception('Preset' . $property['ui']['aloha']['preset'] . '  does not exist', 123917897712);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**

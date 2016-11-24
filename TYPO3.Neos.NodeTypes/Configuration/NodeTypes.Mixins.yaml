@@ -27,28 +27,7 @@
       ui:
         inlineEditable: TRUE
         aloha:
-          placeholder: i18n
-          autoparagraph: TRUE
-          'format':
-            'strong': TRUE
-            'em': TRUE
-            'u': FALSE
-            'sub': FALSE
-            'sup': FALSE
-            'del': FALSE
-            'p': TRUE
-            'h1': TRUE
-            'h2': TRUE
-            'h3': TRUE
-            'pre': TRUE
-            'removeFormat': TRUE
-          'table':
-            'table': TRUE
-          'list':
-            'ol': TRUE
-            'ul': TRUE
-          'link':
-            'a': TRUE
+          preset: 'Standard'
 
 # Image mixin
 'TYPO3.Neos.NodeTypes:ImageMixin':
