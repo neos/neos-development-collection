@@ -11,7 +11,7 @@ namespace TYPO3\Neos\Tests\Unit\ViewHelpers\Link;
  * source code.
  */
 
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\Neos\ViewHelpers\Link\ModuleViewHelper;
 use TYPO3\Neos\ViewHelpers\Uri\ModuleViewHelper as UriModuleViewHelper;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;

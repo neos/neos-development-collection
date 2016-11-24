@@ -12,10 +12,10 @@ namespace TYPO3\Neos\TYPO3CR\Transformations;
  */
 
 use Doctrine\Common\Persistence\ObjectManager;
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Persistence\PersistenceManagerInterface;
-use TYPO3\Flow\Reflection\ObjectAccess;
-use TYPO3\Flow\Utility\TypeHandling;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Reflection\ObjectAccess;
+use Neos\Flow\Utility\TypeHandling;
 use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Media\Domain\Model\Audio;
 use TYPO3\Media\Domain\Model\Document;

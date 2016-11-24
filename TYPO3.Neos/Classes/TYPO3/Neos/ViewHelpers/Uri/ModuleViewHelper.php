@@ -11,8 +11,8 @@ namespace TYPO3\Neos\ViewHelpers\Uri;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Mvc\Routing\UriBuilder;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
 /**
@@ -73,7 +73,7 @@ class ModuleViewHelper extends AbstractViewHelper
                 ->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
                 ->setFormat($format)
                 ->uriFor('index', $modifiedArguments, 'Backend\Module', 'TYPO3.Neos');
-        } catch (\TYPO3\Flow\Exception $exception) {
+        } catch (\Neos\Flow\Exception $exception) {
             throw new \Neos\FluidAdaptor\Core\ViewHelper\Exception($exception->getMessage(), $exception->getCode(), $exception);
         }
     }

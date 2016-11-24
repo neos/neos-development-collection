@@ -4,7 +4,7 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use PHPUnit_Framework_Assert as Assert;
 use Symfony\Component\Yaml\Yaml;
-use TYPO3\Flow\Utility\Arrays;
+use Neos\Flow\Utility\Arrays;
 use TYPO3\Neos\Domain\Service\UserService;
 use TYPO3\Neos\EventLog\Domain\Model\Event;
 use TYPO3\Neos\EventLog\Domain\Model\NodeEvent;

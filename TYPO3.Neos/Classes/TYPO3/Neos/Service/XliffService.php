@@ -11,17 +11,17 @@ namespace TYPO3\Neos\Service;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cache\Frontend\VariableFrontend;
-use TYPO3\Flow\Error\Result;
-use TYPO3\Flow\I18n\Exception;
-use TYPO3\Flow\I18n\Xliff\XliffParser;
-use TYPO3\Flow\Package\PackageManagerInterface;
-use TYPO3\Flow\Utility\Arrays;
-use TYPO3\Flow\Utility\Files;
-use TYPO3\Flow\I18n\Locale;
-use TYPO3\Flow\I18n\Service as LocalizationService;
-use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Cache\Frontend\VariableFrontend;
+use Neos\Flow\Error\Result;
+use Neos\Flow\I18n\Exception;
+use Neos\Flow\I18n\Xliff\XliffParser;
+use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Utility\Arrays;
+use Neos\Flow\Utility\Files;
+use Neos\Flow\I18n\Locale;
+use Neos\Flow\I18n\Service as LocalizationService;
+use Neos\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 
 /**
  * The XLIFF service provides methods to find XLIFF files and parse them to json

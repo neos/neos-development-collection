@@ -11,10 +11,10 @@ namespace TYPO3\Neos\Setup\Step;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Security\AccountRepository;
-use TYPO3\Flow\Validation\Validator\NotEmptyValidator;
-use TYPO3\Flow\Validation\Validator\StringLengthValidator;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Security\AccountRepository;
+use Neos\Flow\Validation\Validator\NotEmptyValidator;
+use Neos\Flow\Validation\Validator\StringLengthValidator;
 use TYPO3\Form\Core\Model\FormDefinition;
 use TYPO3\Neos\Domain\Service\UserService;
 use TYPO3\Neos\Validation\Validator\UserDoesNotExistValidator;

@@ -10,7 +10,7 @@
 			<li data-type="warning" data-title="{neos:backend.translate(id: 'numberValidationErrors', source: 'ValidationErrors', arguments: {0: '{validationResult.flattenedErrors-> f:count()}'}, value: '{validationResult.flattenedErrors -> f:count()} errors were found')}">
 				<f:for each="{validationResult.flattenedErrors}" key="path" as="errors">
 					<f:for each="{errors}" as="error">
-						<pre>{path} -> {neos:backend.translate(id: error.code, source: 'ValidationErrors', package: 'TYPO3.Flow', arguments: error.arguments, value: error)}</pre>
+						<pre>{path} -> {neos:backend.translate(id: error.code, source: 'ValidationErrors', package: 'Neos.Flow', arguments: error.arguments, value: error)}</pre>
 					</f:for>
 				</f:for>
 			</li>

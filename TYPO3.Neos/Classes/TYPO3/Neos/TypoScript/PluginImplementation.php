@@ -11,12 +11,12 @@ namespace TYPO3\Neos\TypoScript;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Log\SystemLoggerInterface;
-use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Http\Response;
-use TYPO3\Flow\Mvc\Dispatcher;
-use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Http\Response;
+use Neos\Flow\Mvc\Dispatcher;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractArrayTypoScriptObject;
 

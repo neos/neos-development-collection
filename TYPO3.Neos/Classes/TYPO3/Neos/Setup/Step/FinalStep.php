@@ -11,9 +11,9 @@ namespace TYPO3\Neos\Setup\Step;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Core\ApplicationContext;
-use TYPO3\Flow\Core\Bootstrap;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Core\ApplicationContext;
+use Neos\Flow\Core\Bootstrap;
 use TYPO3\Form\Core\Model\FormDefinition;
 use TYPO3\Setup\Step\AbstractStep;
 

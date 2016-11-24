@@ -11,7 +11,7 @@ namespace TYPO3\Neos\Tests\Functional\Controller\Backend;
  * source code.
  */
 
-use TYPO3\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Tests\FunctionalTestCase;
 use TYPO3\Neos\Domain\Model\User;
 
 /**

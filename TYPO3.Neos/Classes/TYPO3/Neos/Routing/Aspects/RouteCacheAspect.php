@@ -11,9 +11,9 @@ namespace TYPO3\Neos\Routing\Aspects;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Aop\JoinPointInterface;
-use TYPO3\Flow\Security\Context;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Aop\JoinPointInterface;
+use Neos\Flow\Security\Context;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
@@ -40,7 +40,7 @@ class RouteCacheAspect
     /**
      * Add the current node and all parent identifiers to be used for cache entry tagging
      *
-     * @Flow\Before("method(TYPO3\Flow\Mvc\Routing\RouterCachingService->extractUuids())")
+     * @Flow\Before("method(Neos\Flow\Mvc\Routing\RouterCachingService->extractUuids())")
      * @param JoinPointInterface $joinPoint The current join point
      * @return void
      */

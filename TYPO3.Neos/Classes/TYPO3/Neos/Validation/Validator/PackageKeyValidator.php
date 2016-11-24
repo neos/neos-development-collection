@@ -11,9 +11,9 @@ namespace TYPO3\Neos\Validation\Validator;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Package\PackageInterface;
-use TYPO3\Flow\Validation\Validator\RegularExpressionValidator;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Package\PackageInterface;
+use Neos\Flow\Validation\Validator\RegularExpressionValidator;
 
 /**
  * Validator for package keys

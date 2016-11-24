@@ -11,8 +11,8 @@ namespace TYPO3\Neos\Tests\Unit\ViewHelpers\Uri;
  * source code.
  */
 
-use TYPO3\Flow\Mvc\Routing\UriBuilder;
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Mvc\Routing\UriBuilder;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\Neos\ViewHelpers\Uri\ModuleViewHelper;
 
 /**

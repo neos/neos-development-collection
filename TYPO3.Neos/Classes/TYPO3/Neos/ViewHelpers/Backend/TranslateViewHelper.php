@@ -11,9 +11,9 @@ namespace TYPO3\Neos\ViewHelpers\Backend;
  * source code.
  */
 
-use TYPO3\Flow\I18n\EelHelper\TranslationHelper;
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\I18n\Exception;
+use Neos\Flow\I18n\EelHelper\TranslationHelper;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\I18n\Exception;
 use Neos\FluidAdaptor\ViewHelpers\TranslateViewHelper as FluidTranslateViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper;
 

@@ -11,7 +11,7 @@ namespace TYPO3\Neos\Tests\Functional\Service;
  * source code.
  */
 
-use TYPO3\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Tests\FunctionalTestCase;
 use TYPO3\Neos\Service\NodeTypeSchemaBuilder;
 
 /**

@@ -12,8 +12,8 @@ namespace TYPO3\Neos\Domain\Model;
  */
 
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cache\CacheAwareInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Cache\CacheAwareInterface;
 use TYPO3\Neos\Domain\Model\Site;
 
 /**

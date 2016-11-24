@@ -10,10 +10,10 @@ namespace TYPO3\Neos\Validation\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Flow\Validation\Exception\InvalidSubjectException;
-use TYPO3\Flow\Validation\Validator\AbstractValidator;
-use TYPO3\Flow\Validation\Validator\NotEmptyValidator;
-use TYPO3\Flow\Validation\Validator\StringLengthValidator;
+use Neos\Flow\Validation\Exception\InvalidSubjectException;
+use Neos\Flow\Validation\Validator\AbstractValidator;
+use Neos\Flow\Validation\Validator\NotEmptyValidator;
+use Neos\Flow\Validation\Validator\StringLengthValidator;
 
 /**
  * Validator for passwords

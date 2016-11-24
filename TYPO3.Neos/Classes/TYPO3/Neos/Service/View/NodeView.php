@@ -11,14 +11,14 @@ namespace TYPO3\Neos\Service\View;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 use TYPO3\Eel\FlowQuery\FlowQuery;
-use TYPO3\Flow\Log\SystemLoggerInterface;
-use TYPO3\Flow\Mvc\View\JsonView;
-use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
+use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Mvc\View\JsonView;
+use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use TYPO3\Neos\Security\Authorization\Privilege\NodeTreePrivilege;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\Flow\Utility\Arrays;
+use Neos\Flow\Utility\Arrays;
 use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\NodePrivilegeSubject;
 
 /**

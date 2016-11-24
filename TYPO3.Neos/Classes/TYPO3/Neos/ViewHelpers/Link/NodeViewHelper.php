@@ -11,8 +11,8 @@ namespace TYPO3\Neos\ViewHelpers\Link;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Mvc\Exception\NoMatchingRouteException;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use TYPO3\Neos\Exception as NeosException;
 use TYPO3\Neos\Service\LinkingService;

@@ -11,9 +11,9 @@ namespace TYPO3\Neos\Tests\Unit\Routing;
  * source code.
  */
 
-use TYPO3\Flow\Log\SystemLoggerInterface;
-use TYPO3\Flow\Security\Context as SecurityContext;
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Security\Context as SecurityContext;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\Neos\Domain\Model\Domain;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Repository\DomainRepository;

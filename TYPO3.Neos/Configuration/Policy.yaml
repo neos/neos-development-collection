@@ -4,7 +4,7 @@
 ---
 privilegeTargets:
 
-  'TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
+  'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
 
 
     #
@@ -12,7 +12,7 @@ privilegeTargets:
     #
 
     'TYPO3.Neos:AllControllerActions':
-      matcher: 'within(TYPO3\Flow\Mvc\Controller\AbstractController) && method(public .*->(?!initialize).*Action())'
+      matcher: 'within(Neos\Flow\Mvc\Controller\AbstractController) && method(public .*->(?!initialize).*Action())'
 
     'TYPO3.Neos:WidgetControllers':
       matcher: 'method(Neos\FluidAdaptor\ViewHelpers\Widget\Controller\AutocompleteController->(index|autocomplete)Action()) || method(Neos\FluidAdaptor\ViewHelpers\Widget\Controller\PaginateController->indexAction()) || method(TYPO3\TYPO3CR\ViewHelpers\Widget\Controller\PaginateController->indexAction()) || method(TYPO3\Neos\ViewHelpers\Widget\Controller\LinkRepositoryController->(index|search|lookup)Action())'
@@ -21,10 +21,10 @@ privilegeTargets:
       matcher: 'method(TYPO3\Neos\Controller\Frontend\NodeController->showAction()) || method(TYPO3\Neos\TypeConverter\NodeConverter->prepareContextProperties(workspaceName === "live"))'
 
     'TYPO3.Neos:BackendLogin':
-      matcher: 'method(TYPO3\Neos\Controller\LoginController->(index|tokenLogin|authenticate)Action()) || method(TYPO3\Flow\Security\Authentication\Controller\AbstractAuthenticationController->authenticateAction())'
+      matcher: 'method(TYPO3\Neos\Controller\LoginController->(index|tokenLogin|authenticate)Action()) || method(Neos\Flow\Security\Authentication\Controller\AbstractAuthenticationController->authenticateAction())'
 
     'TYPO3.Neos:Backend.GeneralAccess':
-      matcher: 'method(TYPO3\Neos\Controller\Backend\BackendController->(index|switchSite|xliffAsJson)Action()) || method(TYPO3\Neos\Controller\Backend\ModuleController->indexAction()) || method(TYPO3\Neos\Controller\LoginController->logoutAction()) || method(TYPO3\Flow\Security\Authentication\Controller\AbstractAuthenticationController->logoutAction()) || method(TYPO3\Neos\Controller\Module\AbstractModuleController->indexAction())'
+      matcher: 'method(TYPO3\Neos\Controller\Backend\BackendController->(index|switchSite|xliffAsJson)Action()) || method(TYPO3\Neos\Controller\Backend\ModuleController->indexAction()) || method(TYPO3\Neos\Controller\LoginController->logoutAction()) || method(Neos\Flow\Security\Authentication\Controller\AbstractAuthenticationController->logoutAction()) || method(TYPO3\Neos\Controller\Module\AbstractModuleController->indexAction())'
 
     #
     # Content access and publishing
@@ -133,7 +133,7 @@ privilegeTargets:
 
 roles:
 
-  'TYPO3.Flow:Everybody':
+  'Neos.Flow:Everybody':
     privileges:
       -
         privilegeTarget: 'TYPO3.Neos:PublicFrontendAccess'

@@ -11,12 +11,12 @@ namespace TYPO3\Neos;
  * source code.
  */
 
-use TYPO3\Flow\Cache\CacheManager;
-use TYPO3\Flow\Core\Bootstrap;
-use TYPO3\Flow\Monitor\FileMonitor;
-use TYPO3\Flow\Mvc\Routing\RouterCachingService;
-use TYPO3\Flow\Package\Package as BasePackage;
-use TYPO3\Flow\Persistence\Doctrine\PersistenceManager;
+use Neos\Flow\Cache\CacheManager;
+use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Monitor\FileMonitor;
+use Neos\Flow\Mvc\Routing\RouterCachingService;
+use Neos\Flow\Package\Package as BasePackage;
+use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use TYPO3\Media\Domain\Service\AssetService;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Service\SiteImportService;

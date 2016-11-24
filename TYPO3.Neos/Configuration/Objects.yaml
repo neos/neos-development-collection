@@ -2,7 +2,7 @@ TYPO3\Neos\ViewHelpers\Backend\ConfigurationCacheVersionViewHelper:
   properties:
     configurationCache:
       object:
-        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryObjectName: Neos\Flow\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
@@ -18,7 +18,7 @@ TYPO3\Neos\Aspects\TypoScriptCachingAspect:
   properties:
     typoScriptCache:
       object:
-        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryObjectName: Neos\Flow\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
@@ -52,7 +52,7 @@ TYPO3\Neos\Service\XliffService:
   properties:
     xliffToJsonTranslationsCache:
       object:
-        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryObjectName: Neos\Flow\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
@@ -62,7 +62,7 @@ TYPO3\Neos\Controller\Backend\BackendController:
   properties:
     loginTokenCache:
       object:
-        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryObjectName: Neos\Flow\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
@@ -72,7 +72,7 @@ TYPO3\Neos\Controller\LoginController:
   properties:
     loginTokenCache:
       object:
-        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryObjectName: Neos\Flow\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:

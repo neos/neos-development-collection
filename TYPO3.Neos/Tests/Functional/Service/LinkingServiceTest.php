@@ -11,13 +11,13 @@ namespace TYPO3\Neos\Tests\Functional\Service;
  * source code.
  */
 
-use TYPO3\Flow\Property\PropertyMapper;
-use TYPO3\Flow\Tests\FunctionalTestCase;
-use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Mvc\Controller\Arguments;
-use TYPO3\Flow\Mvc\Controller\ControllerContext;
-use TYPO3\Flow\Mvc\Routing\UriBuilder;
-use TYPO3\Flow\Tests\FunctionalTestRequestHandler;
+use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Controller\Arguments;
+use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\Mvc\Routing\UriBuilder;
+use Neos\Flow\Tests\FunctionalTestRequestHandler;
 use TYPO3\Media\TypeConverter\AssetInterfaceConverter;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;

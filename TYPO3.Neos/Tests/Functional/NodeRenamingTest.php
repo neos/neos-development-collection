@@ -10,7 +10,7 @@ namespace TYPO3\Neos\Tests\Functional;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Flow\Security\Authorization\TestingPrivilegeManager;
+use Neos\Flow\Security\Authorization\TestingPrivilegeManager;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 

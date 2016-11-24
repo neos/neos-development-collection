@@ -11,7 +11,7 @@ namespace TYPO3\Neos\Tests\Unit\FlowQueryOperations;
  * source code.
  */
 use TYPO3\Eel\FlowQuery\FlowQuery;
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Eel\FlowQueryOperations\ParentsOperation;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;

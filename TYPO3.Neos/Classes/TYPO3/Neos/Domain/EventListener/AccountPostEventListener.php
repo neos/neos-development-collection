@@ -12,9 +12,9 @@ namespace TYPO3\Neos\Domain\EventListener;
  */
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cache\CacheManager;
-use TYPO3\Flow\Security\Account;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Cache\CacheManager;
+use Neos\Flow\Security\Account;
 
 /**
  * Doctrine event listener for clearing the Neos configuration version cache on account changes.

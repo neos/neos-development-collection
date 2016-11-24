@@ -11,7 +11,7 @@ namespace TYPO3\Neos\Controller\Module;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * The TYPO3 Management module controller

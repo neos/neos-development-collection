@@ -11,7 +11,7 @@ namespace TYPO3\Neos\TypoScript;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * A TypoScript Object that converts Node references in the format "node://<UUID>" to proper URIs

@@ -11,13 +11,13 @@ namespace TYPO3\Neos\Controller\Module\Administration;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Configuration\ConfigurationManager;
-use TYPO3\Flow\Configuration\ConfigurationSchemaValidator;
-use TYPO3\Flow\Configuration\Exception\SchemaValidationException;
-use TYPO3\Flow\Utility\SchemaGenerator;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Configuration\ConfigurationSchemaValidator;
+use Neos\Flow\Configuration\Exception\SchemaValidationException;
+use Neos\Flow\Utility\SchemaGenerator;
 use TYPO3\Neos\Controller\Module\AbstractModuleController;
-use TYPO3\Flow\Error\Message;
+use Neos\Flow\Error\Message;
 
 /**
  * The Neos Configuration module controller

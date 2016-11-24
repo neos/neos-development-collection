@@ -11,9 +11,9 @@ namespace TYPO3\Neos\Service\Mapping;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
-use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Property\PropertyMappingConfigurationInterface;
+use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 
 /**
  * Converts a Date to a JavaScript compatible representation, meaning also to convert it to UTC timezone.

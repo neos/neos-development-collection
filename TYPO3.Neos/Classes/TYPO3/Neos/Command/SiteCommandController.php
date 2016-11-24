@@ -11,11 +11,11 @@ namespace TYPO3\Neos\Command;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cli\CommandController;
-use TYPO3\Flow\Log\SystemLoggerInterface;
-use TYPO3\Flow\Package\PackageManagerInterface;
-use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Cli\CommandController;
+use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\SiteExportService;
 use TYPO3\Neos\Domain\Service\SiteImportService;

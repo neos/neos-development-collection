@@ -11,10 +11,10 @@ namespace TYPO3\Neos\Aspects;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Aop\JoinPointInterface;
-use TYPO3\Flow\ResourceManagement\ResourceManager;
-use TYPO3\Flow\Utility\Arrays;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Aop\JoinPointInterface;
+use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Flow\Utility\Arrays;
 use TYPO3\Neos\Exception;
 
 /**
@@ -38,7 +38,7 @@ class NodeTypeConfigurationEnrichmentAspect
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\I18n\Translator
+     * @var \Neos\Flow\I18n\Translator
      */
     protected $translator;
 

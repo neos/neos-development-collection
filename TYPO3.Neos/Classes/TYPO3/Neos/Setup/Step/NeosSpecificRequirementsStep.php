@@ -11,14 +11,14 @@ namespace TYPO3\Neos\Setup\Step;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Configuration\ConfigurationManager;
-use TYPO3\Flow\Configuration\Source\YamlSource;
-use TYPO3\Flow\Package\PackageManagerInterface;
-use TYPO3\Flow\Persistence\PersistenceManagerInterface;
-use TYPO3\Flow\ResourceManagement\ResourceManager;
-use TYPO3\Flow\Utility\Arrays;
-use TYPO3\Flow\Utility\Files;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Configuration\Source\YamlSource;
+use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Flow\Utility\Arrays;
+use Neos\Flow\Utility\Files;
 use TYPO3\Form\Core\Model\FormDefinition;
 use TYPO3\Imagine\ImagineFactory;
 use TYPO3\Setup\Step\AbstractStep;

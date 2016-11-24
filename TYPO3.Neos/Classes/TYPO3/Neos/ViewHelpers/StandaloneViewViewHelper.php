@@ -11,7 +11,7 @@ namespace TYPO3\Neos\ViewHelpers;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * A View Helper to render a fluid template based on the given template path and filename.

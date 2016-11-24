@@ -11,8 +11,8 @@ namespace TYPO3\Neos\Routing;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Mvc\Routing\DynamicRoutePartInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\Routing\DynamicRoutePartInterface;
 
 /**
  * Marker interface which can be used to replace the currently used FrontendNodeRoutePartHandler,

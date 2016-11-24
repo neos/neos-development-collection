@@ -11,7 +11,7 @@ namespace TYPO3\Neos\Utility;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * A collection of helper methods for the Neos backend assets

@@ -11,7 +11,7 @@ namespace TYPO3\Neos\EventLog\Domain\Service;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 use TYPO3\Neos\EventLog\Domain\Model\Event;
 use TYPO3\Neos\EventLog\Domain\Repository\EventRepository;
 use TYPO3\Neos\Exception;

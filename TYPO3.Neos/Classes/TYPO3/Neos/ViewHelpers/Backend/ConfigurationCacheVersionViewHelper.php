@@ -11,8 +11,8 @@ namespace TYPO3\Neos\ViewHelpers\Backend;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cache\Frontend\StringFrontend;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Cache\Frontend\StringFrontend;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
 /**

@@ -11,7 +11,7 @@ namespace TYPO3\Neos\Service\DataSource;
  * source code.
  */
 
-use TYPO3\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\Neos\Exception;
 
 /**

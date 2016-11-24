@@ -13,8 +13,8 @@ namespace TYPO3\Neos\Utility;
 
 use Behat\Transliterator\Transliterator;
 use TYPO3\Eel\FlowQuery\FlowQuery;
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\I18n\Locale;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\I18n\Locale;
 use TYPO3\Neos\Exception;
 use TYPO3\Neos\Service\TransliterationService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;

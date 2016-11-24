@@ -14,7 +14,7 @@ namespace TYPO3\Neos\Domain\Service;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Neos\Service\LinkingService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Can resolve the target for a given node.

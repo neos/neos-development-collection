@@ -11,11 +11,11 @@ namespace TYPO3\Neos\Controller\Frontend;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Mvc\Controller\ActionController;
-use TYPO3\Flow\Property\PropertyMapper;
-use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
-use TYPO3\Flow\Session\SessionInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
+use Neos\Flow\Session\SessionInterface;
 use TYPO3\Neos\Controller\Exception\NodeNotFoundException;
 use TYPO3\Neos\Controller\Exception\UnresolvableShortcutException;
 use TYPO3\Neos\Domain\Model\UserInterfaceMode;

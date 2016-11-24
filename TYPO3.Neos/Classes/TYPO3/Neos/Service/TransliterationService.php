@@ -12,8 +12,8 @@ namespace TYPO3\Neos\Service;
  */
 
 use Behat\Transliterator\Transliterator;
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\I18n\Service as LocalizationService;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\I18n\Service as LocalizationService;
 
 /**
  * @Flow\Scope("singleton")

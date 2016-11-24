@@ -11,8 +11,8 @@ namespace TYPO3\Neos\ViewHelpers\Uri;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Mvc\Exception\NoMatchingRouteException;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use TYPO3\Neos\Exception as NeosException;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\Neos\Service\LinkingService;

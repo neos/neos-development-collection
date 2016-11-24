@@ -11,11 +11,11 @@ namespace TYPO3\Neos\EventLog\Domain\Repository;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Persistence\Doctrine\Repository;
-use TYPO3\Flow\Persistence\QueryInterface;
-use TYPO3\Flow\Persistence\QueryResultInterface;
-use TYPO3\Flow\Reflection\Exception\PropertyNotAccessibleException;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\Doctrine\Repository;
+use Neos\Flow\Persistence\QueryInterface;
+use Neos\Flow\Persistence\QueryResultInterface;
+use Neos\Flow\Reflection\Exception\PropertyNotAccessibleException;
 use TYPO3\Neos\EventLog\Domain\Model\NodeEvent;
 
 /**
@@ -73,7 +73,7 @@ class EventRepository extends Repository
     }
 
     /**
-     * @return \TYPO3\Flow\Persistence\Doctrine\Query
+     * @return \Neos\Flow\Persistence\Doctrine\Query
      */
     protected function prepareRelevantEventsQuery()
     {

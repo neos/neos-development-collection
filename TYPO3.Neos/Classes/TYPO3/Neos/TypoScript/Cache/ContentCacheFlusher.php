@@ -11,8 +11,8 @@ namespace TYPO3\Neos\TypoScript\Cache;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\SystemLoggerInterface;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Service\AssetService;
 use TYPO3\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;

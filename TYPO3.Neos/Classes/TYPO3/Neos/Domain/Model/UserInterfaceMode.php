@@ -11,8 +11,8 @@ namespace TYPO3\Neos\Domain\Model;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Reflection\ObjectAccess;
 
 /**
  * Describes the mode in which the Neos interface is rendering currently, mainly distinguishing between edit and preview modes currently.

@@ -11,8 +11,8 @@ namespace TYPO3\Neos\Service;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Security\Context;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Security\Context;
 use TYPO3\Neos;
 use TYPO3\Neos\Domain\Model\PluginViewDefinition;
 use TYPO3\Neos\Domain\Service\ContentContext;
