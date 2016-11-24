@@ -22,7 +22,7 @@ use Neos\Utility\MediaTypes;
 use TYPO3\Neos\Controller\Backend\MenuHelper;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 use TYPO3\Neos\Controller\Exception\DisabledModuleException;
-use TYPO3\Party\Domain\Service\PartyService;
+use Neos\Party\Domain\Service\PartyService;
 
 /**
  * The TYPO3 Module

@@ -355,7 +355,7 @@ TYPO3:
         title: 'Neos Command Reference'
         packageKeys:
           - Neos.Flow
-          - TYPO3.Party
+          - Neos.Party
           - Neos.FluidAdaptor
           - TYPO3.Kickstart
           - TYPO3.Welcome

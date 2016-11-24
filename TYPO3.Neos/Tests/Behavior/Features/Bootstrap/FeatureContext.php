@@ -33,7 +33,7 @@ use TYPO3\Neos\Domain\Service\SiteImportService;
 use TYPO3\Neos\Domain\Service\SiteService;
 use TYPO3\Neos\Domain\Service\UserService;
 use TYPO3\Neos\Service\PublishingService;
-use TYPO3\Party\Domain\Repository\PartyRepository;
+use Neos\Party\Domain\Repository\PartyRepository;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Service\AuthorizationService;

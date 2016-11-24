@@ -12,7 +12,7 @@ namespace TYPO3\Neos\Domain\Model;
  */
 
 use Neos\Flow\Security\Account;
-use TYPO3\Party\Domain\Model\Person;
+use Neos\Party\Domain\Model\Person;
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\UserInterface;
