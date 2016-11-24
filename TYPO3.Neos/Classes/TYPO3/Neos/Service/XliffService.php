@@ -12,7 +12,7 @@ namespace TYPO3\Neos\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Cache\Frontend\VariableFrontend;
+use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Error\Messages\Result;
 use Neos\Flow\I18n\Exception;
 use Neos\Flow\I18n\Xliff\XliffParser;

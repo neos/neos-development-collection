@@ -11,7 +11,7 @@ namespace TYPO3\Neos\Tests\Functional\Service;
  * source code.
  */
 
-use Neos\Flow\Cache\Frontend\StringFrontend;
+use Neos\Cache\Frontend\StringFrontend;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\Media\Domain\Model\Image;

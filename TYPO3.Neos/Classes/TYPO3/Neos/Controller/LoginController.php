@@ -12,7 +12,7 @@ namespace TYPO3\Neos\Controller;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Cache\Frontend\StringFrontend;
+use Neos\Cache\Frontend\StringFrontend;
 use Neos\Error\Messages\Message;
 use Neos\Flow\Http\Cookie;
 use Neos\Flow\Mvc\ActionRequest;

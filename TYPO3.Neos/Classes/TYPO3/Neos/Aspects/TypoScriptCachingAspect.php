@@ -13,7 +13,7 @@ namespace TYPO3\Neos\Aspects;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
-use Neos\Flow\Cache\Frontend\VariableFrontend;
+use Neos\Cache\Frontend\VariableFrontend;
 
 /**
  * @Flow\Scope("singleton")
