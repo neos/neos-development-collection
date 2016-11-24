@@ -11,8 +11,8 @@ namespace TYPO3\TYPO3CR\Security\Authorization\Privilege\Node;
  * source code.
  */
 
-use TYPO3\Eel\CompilingEvaluator;
-use TYPO3\Eel\Context;
+use Neos\Eel\CompilingEvaluator;
+use Neos\Eel\Context;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\Pointcut\PointcutFilterInterface;
 use Neos\Flow\Security\Authorization\Privilege\AbstractPrivilege;

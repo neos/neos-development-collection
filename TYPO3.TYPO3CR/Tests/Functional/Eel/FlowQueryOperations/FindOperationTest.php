@@ -11,7 +11,7 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Eel\FlowQueryOperations;
  * source code.
  */
 
-use TYPO3\Eel\FlowQuery\FlowQuery;
+use Neos\Eel\FlowQuery\FlowQuery;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Tests\Functional\AbstractNodeTest;
 
@@ -22,7 +22,7 @@ class FindOperationTest extends AbstractNodeTest
 {
     /**
      * @test
-     * @expectedException \TYPO3\Eel\FlowQuery\FlowQueryException
+     * @expectedException \Neos\Eel\FlowQuery\FlowQueryException
      */
     public function findByNodeIdentifierThrowsExceptionOnInvalidIdentifier()
     {
@@ -126,7 +126,7 @@ class FindOperationTest extends AbstractNodeTest
 
     /**
      * @test
-     * @expectedException \TYPO3\Eel\FlowQuery\FlowQueryException
+     * @expectedException \Neos\Eel\FlowQuery\FlowQueryException
      */
     public function findWithNonInstanceofAttributeFilterAsFirstPartThrowsException()
     {
@@ -236,7 +236,7 @@ class FindOperationTest extends AbstractNodeTest
 
     /**
      * @test
-     * @expectedException \TYPO3\Eel\FlowQuery\FlowQueryException
+     * @expectedException \Neos\Eel\FlowQuery\FlowQueryException
      */
     public function findOperationThrowsExceptionOnAtLeastOneInvalidContext()
     {

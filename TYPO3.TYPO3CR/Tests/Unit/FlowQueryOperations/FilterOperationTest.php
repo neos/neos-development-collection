@@ -10,7 +10,7 @@ namespace TYPO3\TYPO3CR\Tests\Unit\FlowQueryOperations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Eel\FlowQuery\FlowQuery;
+use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Eel\FlowQueryOperations\FilterOperation;

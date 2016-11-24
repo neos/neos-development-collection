@@ -5,12 +5,12 @@ TYPO3:
     labelGenerator:
       eel:
         defaultContext:
-          String: TYPO3\Eel\Helper\StringHelper
-          Array: TYPO3\Eel\Helper\ArrayHelper
-          Date: TYPO3\Eel\Helper\DateHelper
-          Configuration: TYPO3\Eel\Helper\ConfigurationHelper
-          Math: TYPO3\Eel\Helper\MathHelper
-          Json: TYPO3\Eel\Helper\JsonHelper
+          String: Neos\Eel\Helper\StringHelper
+          Array: Neos\Eel\Helper\ArrayHelper
+          Date: Neos\Eel\Helper\DateHelper
+          Configuration: Neos\Eel\Helper\ConfigurationHelper
+          Math: Neos\Eel\Helper\MathHelper
+          Json: Neos\Eel\Helper\JsonHelper
           I18n: Neos\Flow\I18n\EelHelper\TranslationHelper
     fallbackNodeType: null
 Neos:
