@@ -14,12 +14,12 @@
         "typo3/party": "*",
         "typo3/setup": "*",
         "typo3/twitter-bootstrap": "*",
-        "league/commonmark": "^0.12.0",
         "behat/transliterator": "~1.0",
         "gedmo/doctrine-extensions": "~2.3.0"
     },
     "replace": {
         "neos/diff": "self.version",
+        "neos/media-browser": "self.version",
         "typo3/media": "self.version",
         "typo3/neos-kickstarter": "self.version",
         "typo3/neos-nodetypes": "self.version",
@@ -35,6 +35,9 @@
         "psr-4": {
             "Neos\\Diff\\": [
                 "Neos.Diff/Classes"
+            ],
+            "Neos\\Media\\Browser\\": [
+                "Neos.Media.Browser/Classes"
             ],
             "TYPO3\\Neos\\Kickstarter\\": [
                 "TYPO3.Neos.Kickstarter/Classes"

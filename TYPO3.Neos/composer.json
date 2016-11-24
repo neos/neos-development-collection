@@ -6,14 +6,13 @@
     "require": {
         "neos/diff": "*",
         "typo3/flow": "*",
-        "typo3/media": "*",
+        "neos/media-browser": "*",
         "typo3/party": "*",
         "typo3/setup": "*",
         "typo3/twitter-bootstrap": "*",
         "typo3/typo3cr": "*",
         "typo3/typoscript": "*",
         "neos/fluid-adaptor": "*",
-        "league/commonmark": "^0.12.0",
         "behat/transliterator": "~1.0"
     },
     "suggest": {
