@@ -23,10 +23,7 @@ use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
  */
 class TypoScriptServiceTest extends FunctionalTestCase
 {
-    /**
-     * @var string the Nodes fixture
-     */
-    protected $fixtureFileName = 'Fixtures/NodeTypes.yaml';
+    const FIXTURE_FILE_NAME = 'Fixtures/NodeTypes.yaml';
 
     /**
      * @var TypoScriptService
@@ -62,16 +59,11 @@ class TypoScriptServiceTest extends FunctionalTestCase
         parent::setUp();
 
         $this->typoScriptService = $this->objectManager->get(TypoScriptService::class);
-
         $this->expectedPrototypeGenerator = $this->objectManager->get(TestablePrototypeGenerator::class);
-
         $this->yamlParser = $this->objectManager->get(YamlParser::class);
-
         $this->originalNodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
-
         $this->mockNodeTypeManager = clone ($this->originalNodeTypeManager);
-        $this->mockNodeTypeManager->overrideNodeTypes($this->yamlParser->parse(file_get_contents(__DIR__ . '/Fixtures/NodeTypes.yaml')));
-
+        $this->mockNodeTypeManager->overrideNodeTypes($this->yamlParser->parse(file_get_contents(__DIR__ . '/' . self::FIXTURE_FILE_NAME)));
         $this->objectManager->setInstance(NodeTypeManager::class, $this->mockNodeTypeManager);
     }
 

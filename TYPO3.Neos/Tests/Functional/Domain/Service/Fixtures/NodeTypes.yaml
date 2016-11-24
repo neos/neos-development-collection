@@ -1,7 +1,7 @@
 'TYPO3.Neos:NodeTypeWithInvalidFusionPrototypeGenerator':
   options:
     fusion:
-      prototypeGenerator: TYPO3\Neos\Domain\Service\InexsitentPrototypeGenerator
+      prototypeGenerator: TYPO3\Neos\Domain\Service\InexistentPrototypeGenerator
 
 'TYPO3.Neos:NodeTypeWithoutFusionPrototypeGenerator': []
 
