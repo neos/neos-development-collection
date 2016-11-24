@@ -17,9 +17,9 @@ use Neos\Flow\Annotations as Flow;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use Neos\Flow\ResourceManagement\PersistentResource;
-use Neos\Flow\Utility\TypeHandling;
+use Neos\Utility\TypeHandling;
 use TYPO3\Media\Domain\Model\Adjustment\ImageAdjustmentInterface;
 use TYPO3\Media\Domain\Service\ImageService;
 

@@ -13,8 +13,8 @@ namespace TYPO3\Media\Domain\Strategy;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ResourceManagement\PersistentResource;
-use Neos\Flow\Utility\MediaTypes;
-use Neos\Flow\Utility\PositionalArraySorter;
+use Neos\Utility\MediaTypes;
+use Neos\Utility\PositionalArraySorter;
 
 /**
  * A mapping strategy based on configured expressions.

@@ -14,7 +14,7 @@ namespace TYPO3\Media\Domain\Model\ThumbnailGenerator;
 use Neos\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\ResourceManagement\PersistentResource;
-use Neos\Flow\Utility\Files;
+use Neos\Utility\Files;
 use TYPO3\Media\Domain\Model\Adjustment\ResizeImageAdjustment;
 use TYPO3\Media\Domain\Model\Thumbnail;
 use TYPO3\Media\Domain\Service\ImageService;
