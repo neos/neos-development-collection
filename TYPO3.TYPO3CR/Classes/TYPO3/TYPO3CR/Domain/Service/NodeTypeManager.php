@@ -11,9 +11,9 @@ namespace TYPO3\TYPO3CR\Domain\Service;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cache\Frontend\StringFrontend;
-use TYPO3\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Cache\Frontend\StringFrontend;
+use Neos\Flow\Configuration\ConfigurationManager;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Exception;
 use TYPO3\TYPO3CR\Exception\NodeConfigurationException;

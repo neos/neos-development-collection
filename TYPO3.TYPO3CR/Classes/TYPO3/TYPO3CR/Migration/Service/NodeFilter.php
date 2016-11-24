@@ -11,8 +11,8 @@ namespace TYPO3\TYPO3CR\Migration\Service;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Migration\Exception\MigrationException;
 use TYPO3\TYPO3CR\Migration\Filters\FilterInterface;

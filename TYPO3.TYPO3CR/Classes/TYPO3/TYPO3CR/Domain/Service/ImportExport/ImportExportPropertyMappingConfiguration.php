@@ -11,14 +11,14 @@ namespace TYPO3\TYPO3CR\Domain\Service\ImportExport;
  * source code.
  */
 
-use TYPO3\Flow\Persistence\Doctrine\ArrayTypeConverter;
-use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
-use TYPO3\Flow\Property\TypeConverter\ArrayConverter;
-use TYPO3\Flow\Property\TypeConverter\ObjectConverter;
-use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
-use TYPO3\Flow\Property\TypeConverter\StringConverter;
-use TYPO3\Flow\Property\TypeConverterInterface;
-use TYPO3\Flow\ResourceManagement\ResourceTypeConverter;
+use Neos\Flow\Persistence\Doctrine\ArrayTypeConverter;
+use Neos\Flow\Property\PropertyMappingConfigurationInterface;
+use Neos\Flow\Property\TypeConverter\ArrayConverter;
+use Neos\Flow\Property\TypeConverter\ObjectConverter;
+use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
+use Neos\Flow\Property\TypeConverter\StringConverter;
+use Neos\Flow\Property\TypeConverterInterface;
+use Neos\Flow\ResourceManagement\ResourceTypeConverter;
 
 /**
  * Property mapping configuration which is used for import / export:

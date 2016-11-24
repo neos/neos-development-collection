@@ -11,8 +11,8 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Service\ImportExport;
  * source code.
  */
 
-use TYPO3\Flow\Security\Context;
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Security\Context;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeExportService;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
@@ -129,7 +129,7 @@ class NodeExportServiceTest extends UnitTestCase
         $nodeDataList = array($nodeData1, $nodeData2);
         $nodeExportService->expects($this->any())->method('findNodeDataListToExport')->will($this->returnValue($nodeDataList));
 
-        $mockPropertyMapper = $this->createMock(\TYPO3\Flow\Property\PropertyMapper::class);
+        $mockPropertyMapper = $this->createMock(\Neos\Flow\Property\PropertyMapper::class);
         $mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnCallback(function ($source) {
             return $source;
         }));

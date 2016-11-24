@@ -11,18 +11,18 @@ namespace TYPO3\TYPO3CR\Migration\Command;
  * source code.
  */
 
-use TYPO3\Flow\Cli\CommandController;
-use TYPO3\Flow\Configuration\Source\YamlSource;
+use Neos\Flow\Cli\CommandController;
+use Neos\Flow\Configuration\Source\YamlSource;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Migration\Domain\Factory\MigrationFactory;
 use TYPO3\TYPO3CR\Migration\Domain\Repository\MigrationStatusRepository;
 use TYPO3\TYPO3CR\Migration\Exception\MigrationException;
-use TYPO3\Flow\Persistence\Doctrine\Exception\DatabaseException;
+use Neos\Flow\Persistence\Doctrine\Exception\DatabaseException;
 use TYPO3\TYPO3CR\Migration\Service\NodeMigration;
 use TYPO3\TYPO3CR\Migration\Domain\Model\MigrationStatus;
 use TYPO3\TYPO3CR\Migration\Domain\Model\MigrationConfiguration;
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Command controller for tasks related to node handling.

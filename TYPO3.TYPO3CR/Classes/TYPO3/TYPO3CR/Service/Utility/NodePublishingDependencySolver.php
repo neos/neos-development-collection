@@ -11,7 +11,7 @@ namespace TYPO3\TYPO3CR\Service\Utility;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Exception\WorkspaceException;
 

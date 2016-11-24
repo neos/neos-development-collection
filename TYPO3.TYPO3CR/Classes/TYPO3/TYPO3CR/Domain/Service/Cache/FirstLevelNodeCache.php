@@ -12,7 +12,7 @@ namespace TYPO3\TYPO3CR\Domain\Service\Cache;
  */
 
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * A first level cache for the NodeDataRepository. It is used to keep

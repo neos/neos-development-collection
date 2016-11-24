@@ -11,10 +11,10 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Service\ImportExport;
  * source code.
  */
 
-use TYPO3\Flow\Property\PropertyMapper;
-use TYPO3\Flow\Security\Context;
-use TYPO3\Flow\Tests\UnitTestCase;
-use TYPO3\Flow\Utility\Now;
+use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Security\Context;
+use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Utility\Now;
 use TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService;
 
 class NodeImportServiceTest extends UnitTestCase
@@ -94,7 +94,7 @@ class NodeImportServiceTest extends UnitTestCase
             }
             throw new \Exception('Target type ' . $targetType . ' not supported in property mapper mock');
         }));
-        $this->mockPropertyMapper->expects($this->any())->method('getMessages')->willReturn(new \TYPO3\Flow\Error\Result());
+        $this->mockPropertyMapper->expects($this->any())->method('getMessages')->willReturn(new \Neos\Flow\Error\Result());
 
         $nodeImportService->import($xmlReader, '/');
 
@@ -311,7 +311,7 @@ class NodeImportServiceTest extends UnitTestCase
                 'source' => $source
             );
         }));
-        $this->mockPropertyMapper->expects($this->any())->method('getMessages')->willReturn(new \TYPO3\Flow\Error\Result());
+        $this->mockPropertyMapper->expects($this->any())->method('getMessages')->willReturn(new \Neos\Flow\Error\Result());
 
         $nodeImportService->import($xmlReader, '/');
 
@@ -426,7 +426,7 @@ class NodeImportServiceTest extends UnitTestCase
                 'source' => $source
             );
         }));
-        $this->mockPropertyMapper->expects($this->any())->method('getMessages')->willReturn(new \TYPO3\Flow\Error\Result());
+        $this->mockPropertyMapper->expects($this->any())->method('getMessages')->willReturn(new \Neos\Flow\Error\Result());
 
         $nodeImportService->import($xmlReader, '/');
 

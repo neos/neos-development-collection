@@ -12,12 +12,12 @@ namespace TYPO3\TYPO3CR\Domain\Service\ImportExport;
  */
 
 use Doctrine\Common\Persistence\ObjectManager;
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Log\SystemLoggerInterface;
-use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
-use TYPO3\Flow\Persistence\PersistenceManagerInterface;
-use TYPO3\Flow\Property\PropertyMapper;
-use TYPO3\Flow\Security\Context;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Security\Context;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;

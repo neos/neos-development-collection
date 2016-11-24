@@ -11,7 +11,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Interface for a user of the content repository. Users can be owners of workspaces.

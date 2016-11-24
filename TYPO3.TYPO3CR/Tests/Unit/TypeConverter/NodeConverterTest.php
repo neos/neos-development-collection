@@ -11,10 +11,10 @@ namespace TYPO3\TYPO3CR\Tests\Unit\TypeConverter;
  * source code.
  */
 
-use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
-use TYPO3\Flow\Property\PropertyMapper;
-use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Property\PropertyMappingConfigurationInterface;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;

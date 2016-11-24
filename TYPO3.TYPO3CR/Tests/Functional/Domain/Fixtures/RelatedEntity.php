@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures;
 
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Simple entity related to a node for testing.

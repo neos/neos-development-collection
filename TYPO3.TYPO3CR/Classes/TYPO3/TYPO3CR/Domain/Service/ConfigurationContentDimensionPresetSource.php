@@ -11,8 +11,8 @@ namespace TYPO3\TYPO3CR\Domain\Service;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Utility\PositionalArraySorter;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Utility\PositionalArraySorter;
 use TYPO3\TYPO3CR\Exception;
 
 /**

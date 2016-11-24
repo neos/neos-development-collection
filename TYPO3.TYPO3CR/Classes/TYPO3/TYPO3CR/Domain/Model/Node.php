@@ -11,10 +11,10 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cache\CacheAwareInterface;
-use TYPO3\Flow\Property\PropertyMapper;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Cache\CacheAwareInterface;
+use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Reflection\ObjectAccess;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;

@@ -12,9 +12,9 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Repository;
  */
 
 use Doctrine\ORM\QueryBuilder;
-use TYPO3\Flow\Persistence\Doctrine\Query;
-use TYPO3\Flow\Persistence\PersistenceManagerInterface;
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Persistence\Doctrine\Query;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;

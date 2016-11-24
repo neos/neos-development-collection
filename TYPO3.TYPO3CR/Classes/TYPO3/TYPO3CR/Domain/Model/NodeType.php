@@ -11,11 +11,11 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
-use TYPO3\Flow\Reflection\ObjectAccess;
-use TYPO3\Flow\Utility\Arrays;
-use TYPO3\Flow\Utility\PositionalArraySorter;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Reflection\ObjectAccess;
+use Neos\Flow\Utility\Arrays;
+use Neos\Flow\Utility\PositionalArraySorter;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Exception\InvalidNodeTypePostprocessorException;
 use TYPO3\TYPO3CR\NodeTypePostprocessor\NodeTypePostprocessorInterface;

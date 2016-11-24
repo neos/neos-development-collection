@@ -11,7 +11,7 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Migration\Domain\Repository;
  * source code.
  */
 
-use TYPO3\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Tests\FunctionalTestCase;
 use TYPO3\TYPO3CR\Migration\Domain\Model\MigrationStatus;
 use TYPO3\TYPO3CR\Migration\Domain\Repository\MigrationStatusRepository;
 

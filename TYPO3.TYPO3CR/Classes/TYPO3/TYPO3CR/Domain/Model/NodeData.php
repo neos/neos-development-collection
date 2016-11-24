@@ -15,10 +15,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Persistence\Exception\IllegalObjectTypeException;
-use TYPO3\Flow\Reflection\ObjectAccess;
-use TYPO3\Flow\Utility\Algorithms;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
+use Neos\Flow\Reflection\ObjectAccess;
+use Neos\Flow\Utility\Algorithms;
 use TYPO3\TYPO3CR\Domain\Model\AbstractNodeData;
 use TYPO3\TYPO3CR\Domain\Model\ContentObjectProxy;
 use TYPO3\TYPO3CR\Domain\Model\NodeTemplate;
@@ -212,7 +212,7 @@ class NodeData extends AbstractNodeData
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Flow\Security\Context
+     * @var \Neos\Flow\Security\Context
      */
     protected $securityContext;
 
@@ -644,7 +644,7 @@ class NodeData extends AbstractNodeData
         if (!is_array($this->accessRoles) || empty($this->accessRoles)) {
             return false;
         }
-        if (count($this->accessRoles) === 1 && in_array('TYPO3.Flow:Everybody', $this->accessRoles)) {
+        if (count($this->accessRoles) === 1 && in_array('Neos.Flow:Everybody', $this->accessRoles)) {
             return false;
         }
 

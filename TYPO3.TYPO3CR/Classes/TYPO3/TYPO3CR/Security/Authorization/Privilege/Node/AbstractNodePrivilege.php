@@ -13,15 +13,15 @@ namespace TYPO3\TYPO3CR\Security\Authorization\Privilege\Node;
 
 use TYPO3\Eel\CompilingEvaluator;
 use TYPO3\Eel\Context;
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Aop\Pointcut\PointcutFilterInterface;
-use TYPO3\Flow\Security\Authorization\Privilege\AbstractPrivilege;
-use TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege;
-use TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface;
-use TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeSubject;
-use TYPO3\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
-use TYPO3\Flow\Security\Authorization\Privilege\PrivilegeTarget;
-use TYPO3\Flow\Security\Exception\InvalidPrivilegeTypeException;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Aop\Pointcut\PointcutFilterInterface;
+use Neos\Flow\Security\Authorization\Privilege\AbstractPrivilege;
+use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege;
+use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface;
+use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeSubject;
+use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
+use Neos\Flow\Security\Authorization\Privilege\PrivilegeTarget;
+use Neos\Flow\Security\Exception\InvalidPrivilegeTypeException;
 
 /**
  * An abstract node privilege acting as a base class for other

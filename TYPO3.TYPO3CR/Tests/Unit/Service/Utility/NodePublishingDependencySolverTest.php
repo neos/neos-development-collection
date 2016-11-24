@@ -11,7 +11,7 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Service\Utility;
  * source code.
  */
 
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;

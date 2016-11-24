@@ -10,7 +10,7 @@ namespace TYPO3\TYPO3CR\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Flow\Exception;
+use Neos\Flow\Exception;
 
 /**
  * An paginator exception saying "Page not Found"

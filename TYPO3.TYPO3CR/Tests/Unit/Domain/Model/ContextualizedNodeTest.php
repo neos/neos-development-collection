@@ -10,8 +10,8 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Flow\Property\PropertyMapper;
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;

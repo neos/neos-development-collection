@@ -11,17 +11,17 @@ namespace TYPO3\TYPO3CR\TypeConverter;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Error\Error;
-use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
-use TYPO3\Flow\Property\Exception\TypeConverterException;
-use TYPO3\Flow\Property\PropertyMapper;
-use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
-use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;
-use TYPO3\Flow\Reflection\ObjectAccess;
-use TYPO3\Flow\Security\Context;
-use TYPO3\Flow\Utility\Exception\InvalidTypeException;
-use TYPO3\Flow\Utility\TypeHandling;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Error\Error;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Property\Exception\TypeConverterException;
+use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Property\PropertyMappingConfigurationInterface;
+use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
+use Neos\Flow\Reflection\ObjectAccess;
+use Neos\Flow\Security\Context;
+use Neos\Flow\Utility\Exception\InvalidTypeException;
+use Neos\Flow\Utility\TypeHandling;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
@@ -130,7 +130,7 @@ class NodeConverter extends AbstractTypeConverter
      * @param string $targetType not used
      * @param array $subProperties not used
      * @param PropertyMappingConfigurationInterface $configuration
-     * @return mixed An object or \TYPO3\Flow\Error\Error if the input format is not supported or could not be converted for other reasons
+     * @return mixed An object or \Neos\Flow\Error\Error if the input format is not supported or could not be converted for other reasons
      * @throws NodeException
      */
     public function convertFrom($source, $targetType = null, array $subProperties = array(), PropertyMappingConfigurationInterface $configuration = null)

@@ -11,9 +11,9 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain\Repository;
  * source code.
  */
 
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures;
-use TYPO3\Flow\Tests\Functional\Persistence\Fixtures\Image;
-use TYPO3\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\Image;
+use Neos\Flow\Tests\FunctionalTestCase;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;

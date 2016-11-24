@@ -13,9 +13,9 @@ namespace TYPO3\TYPO3CR\Security\Authorization\Privilege\Node;
 
 use TYPO3\Eel\CompilingEvaluator;
 use TYPO3\Eel\Context;
-use TYPO3\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilege;
-use TYPO3\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
-use TYPO3\Flow\Security\Exception\InvalidPrivilegeTypeException;
+use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilege;
+use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
+use Neos\Flow\Security\Exception\InvalidPrivilegeTypeException;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\Doctrine\ConditionGenerator;
 
