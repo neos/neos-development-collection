@@ -25,7 +25,7 @@ class FormDefinitionDataSource extends AbstractDataSource
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Form\Persistence\YamlPersistenceManager
+     * @var \Neos\Form\Persistence\YamlPersistenceManager
      */
     protected $yamlPersistenceManager;
 
