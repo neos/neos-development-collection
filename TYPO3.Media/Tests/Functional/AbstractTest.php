@@ -15,7 +15,7 @@ use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Flow\Utility\Files;
+use Neos\Utility\Files;
 
 /**
  * Abstract Functional Test template

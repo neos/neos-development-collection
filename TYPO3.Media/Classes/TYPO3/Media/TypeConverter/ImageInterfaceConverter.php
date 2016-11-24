@@ -14,7 +14,7 @@ namespace TYPO3\Media\TypeConverter;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
-use Neos\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Model\ImageVariant;

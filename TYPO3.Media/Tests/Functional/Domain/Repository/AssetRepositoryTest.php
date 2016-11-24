@@ -11,7 +11,7 @@ namespace TYPO3\Media\Tests\Functional\Domain\Repository;
  * source code.
  */
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
-use Neos\Flow\Utility\Files;
+use Neos\Utility\Files;
 use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Media\Domain\Model\Tag;
 use TYPO3\Media\Domain\Repository\AssetRepository;

@@ -20,7 +20,7 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
-use Neos\Flow\Utility\MediaTypes;
+use Neos\Utility\MediaTypes;
 use TYPO3\Media\Domain\Repository\AssetRepository;
 use TYPO3\Media\Domain\Service\AssetService;
 use TYPO3\Media\Domain\Service\ThumbnailService;

@@ -133,7 +133,7 @@ class ArrayConverter extends AbstractTypeConverter
 
                 return array(
                     '__identity' => $identity,
-                    '__type' => \Neos\Flow\Utility\TypeHandling::getTypeForValue($source),
+                    '__type' => \Neos\Utility\TypeHandling::getTypeForValue($source),
                     'title' => $source->getTitle(),
                     'resource' => $convertedChildProperties['resource']
                 );

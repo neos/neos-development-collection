@@ -25,7 +25,7 @@ use TYPO3\Media\Imagine\Box;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\ResourceManagement\PersistentResource;
-use Neos\Flow\Utility\Arrays;
+use Neos\Utility\Arrays;
 use Neos\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 use TYPO3\Media\Domain\Model\Adjustment\ImageAdjustmentInterface;
 use TYPO3\Media\Exception\ImageFileException;
