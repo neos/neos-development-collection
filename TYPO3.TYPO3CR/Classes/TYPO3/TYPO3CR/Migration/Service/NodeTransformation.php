@@ -13,7 +13,7 @@ namespace TYPO3\TYPO3CR\Migration\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Migration\Exception\MigrationException;
 use TYPO3\TYPO3CR\Migration\Transformations\TransformationInterface;

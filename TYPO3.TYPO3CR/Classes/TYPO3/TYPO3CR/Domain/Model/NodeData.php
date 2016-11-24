@@ -17,7 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
-use Neos\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use Neos\Flow\Utility\Algorithms;
 use TYPO3\TYPO3CR\Domain\Model\AbstractNodeData;
 use TYPO3\TYPO3CR\Domain\Model\ContentObjectProxy;

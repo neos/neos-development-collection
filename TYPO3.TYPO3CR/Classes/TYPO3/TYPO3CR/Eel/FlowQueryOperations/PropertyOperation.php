@@ -15,7 +15,7 @@ use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Eel\FlowQuery\FlowQueryException;
 use TYPO3\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**

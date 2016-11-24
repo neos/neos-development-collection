@@ -11,7 +11,7 @@ namespace TYPO3\TYPO3CR\Tests\Functional\TypeConverter;
  * source code.
  */
 
-use Neos\Flow\Error\Error;
+use Neos\Error\Messages\Error;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Tests\FunctionalTestCase;
 use TYPO3\TYPO3CR\Domain\Model\Node;

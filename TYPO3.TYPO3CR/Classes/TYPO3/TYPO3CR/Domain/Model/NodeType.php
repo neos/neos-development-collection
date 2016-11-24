@@ -13,9 +13,9 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Reflection\ObjectAccess;
-use Neos\Flow\Utility\Arrays;
-use Neos\Flow\Utility\PositionalArraySorter;
+use Neos\Utility\ObjectAccess;
+use Neos\Utility\Arrays;
+use Neos\Utility\PositionalArraySorter;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Exception\InvalidNodeTypePostprocessorException;
 use TYPO3\TYPO3CR\NodeTypePostprocessor\NodeTypePostprocessorInterface;
