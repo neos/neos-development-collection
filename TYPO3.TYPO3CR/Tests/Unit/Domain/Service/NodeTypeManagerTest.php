@@ -11,7 +11,7 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Service;
  * source code.
  */
 
-use Neos\Flow\Cache\Frontend\StringFrontend;
+use Neos\Cache\Frontend\StringFrontend;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;

@@ -12,7 +12,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Cache\CacheAwareInterface;
+use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Utility\ObjectAccess;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
