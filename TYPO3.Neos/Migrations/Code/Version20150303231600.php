@@ -16,6 +16,12 @@ namespace Neos\Flow\Core\Migrations;
  */
 class Version20150303231600 extends AbstractMigration
 {
+
+    public function getIdentifier()
+    {
+        return 'TYPO3.Neos-20150303231600';
+    }
+
     /**
      * Renames all ImageVariant property types to ImageInterface
      *
