@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Flow\Core\Migrations;
+namespace Neos\Flow\Core\Migrations;
 
 /*
  * This file is part of the TYPO3.Neos package.
@@ -10,6 +10,7 @@ namespace TYPO3\Flow\Core\Migrations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Flow\Configuration\ConfigurationManager;
 
 /**
  * Adjust to updated date format for inspector date editor
@@ -35,7 +36,7 @@ class Version20140706103800 extends AbstractMigration
     {
         $dateDataTypes = array();
         $this->processConfiguration(
-            \TYPO3\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
+            ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
             function (&$configuration) use (&$dateDataTypes) {
                 if (isset($configuration['TYPO3']['Neos']['userInterface']['inspector']['dataTypes'])) {
                     foreach ($configuration['TYPO3']['Neos']['userInterface']['inspector']['dataTypes'] as $dataType => &$dataTypeConfiguration) {
