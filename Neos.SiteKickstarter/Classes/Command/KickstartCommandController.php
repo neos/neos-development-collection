@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Kickstarter\Command;
+namespace Neos\SiteKickstarter\Command;
 
 /*
- * This file is part of the TYPO3.Neos.Kickstarter package.
+ * This file is part of the Neos.SiteKickstarter package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,7 +14,7 @@ namespace TYPO3\Neos\Kickstarter\Command;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Package\PackageManagerInterface;
-use TYPO3\Neos\Kickstarter\Service\GeneratorService;
+use Neos\SiteKickstarter\Service\GeneratorService;
 
 /**
  * Command controller for the Kickstart generator
