@@ -12,7 +12,7 @@ namespace TYPO3\TYPO3CR\Domain\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Cache\Frontend\StringFrontend;
+use Neos\Cache\Frontend\StringFrontend;
 use Neos\Flow\Configuration\ConfigurationManager;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Exception;
