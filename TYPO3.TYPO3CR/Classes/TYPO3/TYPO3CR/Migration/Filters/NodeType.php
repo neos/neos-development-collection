@@ -12,7 +12,7 @@ namespace TYPO3\TYPO3CR\Migration\Filters;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 
 /**

@@ -94,7 +94,7 @@ class NodeImportServiceTest extends UnitTestCase
             }
             throw new \Exception('Target type ' . $targetType . ' not supported in property mapper mock');
         }));
-        $this->mockPropertyMapper->expects($this->any())->method('getMessages')->willReturn(new \Neos\Flow\Error\Result());
+        $this->mockPropertyMapper->expects($this->any())->method('getMessages')->willReturn(new \Neos\Error\Messages\Result());
 
         $nodeImportService->import($xmlReader, '/');
 
@@ -311,7 +311,7 @@ class NodeImportServiceTest extends UnitTestCase
                 'source' => $source
             );
         }));
-        $this->mockPropertyMapper->expects($this->any())->method('getMessages')->willReturn(new \Neos\Flow\Error\Result());
+        $this->mockPropertyMapper->expects($this->any())->method('getMessages')->willReturn(new \Neos\Error\Messages\Result());
 
         $nodeImportService->import($xmlReader, '/');
 
@@ -426,7 +426,7 @@ class NodeImportServiceTest extends UnitTestCase
                 'source' => $source
             );
         }));
-        $this->mockPropertyMapper->expects($this->any())->method('getMessages')->willReturn(new \Neos\Flow\Error\Result());
+        $this->mockPropertyMapper->expects($this->any())->method('getMessages')->willReturn(new \Neos\Error\Messages\Result());
 
         $nodeImportService->import($xmlReader, '/');
 

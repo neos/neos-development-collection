@@ -13,7 +13,7 @@ namespace TYPO3\TYPO3CR\Domain\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context as SecurityContext;
-use Neos\Flow\Utility\Arrays;
+use Neos\Utility\Arrays;
 use Neos\Flow\Utility\Now;
 use TYPO3\TYPO3CR\Domain\Model\ContentDimension;
 use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;

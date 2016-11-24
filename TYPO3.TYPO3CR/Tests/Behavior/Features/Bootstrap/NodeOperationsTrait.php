@@ -12,7 +12,7 @@ namespace TYPO3\TYPO3CR\Tests\Behavior\Features\Bootstrap;
  */
 
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Flow\Utility\Arrays;
+use Neos\Utility\Arrays;
 use PHPUnit_Framework_Assert as Assert;
 use Symfony\Component\Yaml\Yaml;
 use TYPO3\TYPO3CR\Domain\Service\PublishingServiceInterface;

@@ -14,7 +14,7 @@ namespace TYPO3\TYPO3CR\Migration\Configuration;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Package\PackageManagerInterface;
-use Neos\Flow\Utility\Files as Files;
+use Neos\Utility\Files as Files;
 use TYPO3\TYPO3CR\Migration\Configuration\Configuration;
 use TYPO3\TYPO3CR\Migration\Exception\MigrationException;
 

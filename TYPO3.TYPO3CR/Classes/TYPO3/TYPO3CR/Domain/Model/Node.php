@@ -14,7 +14,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cache\CacheAwareInterface;
 use Neos\Flow\Property\PropertyMapper;
-use Neos\Flow\Reflection\ObjectAccess;
+use Neos\Utility\ObjectAccess;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
