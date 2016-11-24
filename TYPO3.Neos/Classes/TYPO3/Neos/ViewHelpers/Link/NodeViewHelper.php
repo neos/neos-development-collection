@@ -71,6 +71,14 @@ use TYPO3\TypoScript\ViewHelpers\TypoScriptContextTrait;
  * (depending on current workspace, current node, format etc.)
  * </output>
  *
+ * <code title="Target node given as node://-uri">
+ * <neos:link.node node="node://30e893c1-caef-0ca5-b53d-e5699bb8e506">Corporate imprint</neos:link.node>
+ * </code>
+ * <output>
+ * <a href="contact/imprint.html">Corporate imprint</a>
+ * (depending on current workspace, current node, format etc.)
+ * </output>
+ *
  * <code title="Target node given as relative node path">
  * <neos:link.node node="~/about/us">About us</neos:link.node>
  * </code>
@@ -129,7 +137,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
     /**
      * Renders the link. Renders the linked node's label if there's no child content.
      *
-     * @param mixed $node A node object or a string node path or NULL to resolve the current document node
+     * @param mixed $node A node object, a string node path (absolute or relative), a string node://-uri or NULL
      * @param string $format Format to use for the URL, for example "html" or "json"
      * @param boolean $absolute If set, an absolute URI is rendered
      * @param array $arguments Additional arguments to be passed to the UriBuilder (for example pagination parameters)
@@ -147,6 +155,9 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         $baseNode = null;
         if (!$node instanceof NodeInterface) {
             $baseNode = $this->getContextVariable($baseNodeName);
+            if (is_string($node) && substr($node, 0, 7) === 'node://') {
+                $node = $this->linkingService->convertUriToObject($node, $baseNode);
+            }
         }
 
         try {

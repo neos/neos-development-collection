@@ -51,15 +51,6 @@ TYPO3:
       'TYPO3\Media\Domain\Model\ThumbnailGenerator\FontDocumentThumbnailGenerator':
         supportedExtensions: [ 'ttf', 'otf' ]
 
-    bodyClasses: 'media-browser'
-    scripts:
-      - resource://TYPO3.Twitter.Bootstrap/Public/Libraries/jQuery/jquery-1.10.1.min.js
-      - resource://TYPO3.Twitter.Bootstrap/Public/2/js/bootstrap.min.js
-    styles:
-      - resource://TYPO3.Twitter.Bootstrap/Public/2/css/bootstrap.min.css
-      - resource://TYPO3.Media/Public/Libraries/plupload/jquery.plupload.queue/css/jquery.plupload.queue.css
-      - resource://TYPO3.Media/Public/Libraries/jquery-ui/css/no-theme/jquery-ui-1.10.3.custom.css
-
   DocTools:
     collections:
       'Media':

@@ -100,19 +100,6 @@ privilegeTargets:
       matcher: 'method(TYPO3\Neos\Controller\Module\Administration\UsersController->(index|show|new|create|edit|update|delete|newElectronicAddress|createElectronicAddress|deleteElectronicAddress|editAccount|updateAccount)Action())'
 
     #
-    # Asset management
-    #
-
-    'TYPO3.Neos:Backend.Module.Media.ManageAssets':
-      matcher: 'method(TYPO3\Neos\Controller\(Module\Management\Asset|Backend\MediaBrowser|Backend\ImageBrowser)Controller->(index|new|edit|update|initializeCreate|create|initializeUpload|upload|tagAsset|delete|createTag|editTag|updateTag|deleteTag|addAssetToCollection|relatedNodes)Action())'
-
-    'TYPO3.Neos:Backend.Module.Media.ReplaceAssetResource':
-      matcher: 'method(TYPO3\Neos\Controller\(Module\Management\Asset|Backend\MediaBrowser|Backend\ImageBrowser)Controller->(replaceAssetResource|updateAssetResource)Action())'
-
-    'TYPO3.Neos:Backend.Module.Media.ManageAssetCollections':
-      matcher: 'method(TYPO3\Neos\Controller\(Module\Management\Asset|Backend\MediaBrowser|Backend\ImageBrowser)Controller->(createAssetCollection|editAssetCollection|updateAssetCollection|deleteAssetCollection)Action())'
-
-    #
     # Miscellaneous services
     #
 
@@ -171,10 +158,6 @@ roles:
         privilegeTarget: 'TYPO3.Neos:Backend.PublishAllToLiveWorkspace'
         permission: GRANT
 
-      -
-        privilegeTarget: 'TYPO3.Neos:Backend.Module.Media.ReplaceAssetResource'
-        permission: GRANT
-
   'TYPO3.Neos:AbstractEditor':
     abstract: true
     parentRoles: ['TYPO3.TYPO3CR:Administrator']
@@ -225,14 +208,6 @@ roles:
 
       -
         privilegeTarget: 'TYPO3.Neos:Backend.DataSource'
-        permission: GRANT
-
-      -
-        privilegeTarget: 'TYPO3.Media:ManageAssets'
-        permission: GRANT
-
-      -
-        privilegeTarget: 'TYPO3.Neos:Backend.Module.Media.ManageAssets'
         permission: GRANT
 
       -
@@ -298,12 +273,4 @@ roles:
 
       -
         privilegeTarget: 'TYPO3.Neos:Backend.Module.Administration.Configuration'
-        permission: GRANT
-
-      -
-        privilegeTarget: 'TYPO3.Media:ManageAssetCollections'
-        permission: GRANT
-
-      -
-        privilegeTarget: 'TYPO3.Neos:Backend.Module.Media.ManageAssetCollections'
         permission: GRANT

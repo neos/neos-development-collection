@@ -197,6 +197,16 @@ class NodeViewHelperTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function viewHelperRendersUriViaNodeUriPathString()
+    {
+        $this->assertOutputLinkValid('en/home.html', $this->viewHelper->render('node://3239baee-3e7f-785c-0853-f4302ef32570'));
+        $this->assertOutputLinkValid('en/home/about-us.html', $this->viewHelper->render('node://30e893c1-caef-0ca5-b53d-e5699bb8e506'));
+        $this->assertOutputLinkValid('en/home/about-us/our-mission.html', $this->viewHelper->render('node://63b28f4d-8831-ecb0-f9a6-466d97ffe2c2'));
+    }
+
+    /**
+     * @test
+     */
     public function viewHelperRespectsAbsoluteParameter()
     {
         $this->assertOutputLinkValid('http://neos.test/en/home.html', $this->viewHelper->render(null, null, true));

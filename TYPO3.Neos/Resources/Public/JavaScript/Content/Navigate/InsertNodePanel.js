@@ -3,13 +3,15 @@ define(
 		'emberjs',
 		'Content/Components/AbstractInsertNodePanel',
 		'Shared/NodeTypeService',
-		'Shared/I18n'
+		'Shared/I18n',
+		'Shared/HelpMessage'
 	],
 	function(
 		Ember,
 		AbstractInsertNodePanel,
 		NodeTypeService,
-		I18n
+		I18n,
+		HelpMessage
 	) {
 		return AbstractInsertNodePanel.extend({
 			// List of allowed node types (strings); with constraints already evaluated.
@@ -25,9 +27,11 @@ define(
 						return;
 					}
 
+					var label = I18n.translate(nodeType.ui.label);
+
 					var helpMessage = '';
-					if (nodeType.ui.help && nodeType.ui.help.message) {
-						helpMessage = nodeType.ui.help.message;
+					if (nodeType.ui.help) {
+						helpMessage = HelpMessage(nodeType.ui.help, label);
 					}
 
 					var groupName = 'group' in nodeType.ui ? nodeType.ui.group : 'general';
@@ -36,7 +40,7 @@ define(
 						if (group) {
 							group.get('nodeTypes').pushObject({
 								'nodeType': nodeTypeName,
-								'label': I18n.translate(nodeType.ui.label),
+								'label': label,
 								'helpMessage': helpMessage,
 								'icon': nodeType.ui.icon || 'icon-file',
 								'position': nodeType.ui.position

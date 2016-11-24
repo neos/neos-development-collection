@@ -8,6 +8,7 @@ define(
 	'./SecondaryInspectorController',
 	'Library/underscore',
 	'Library/backbone',
+	'Shared/HelpMessage',
 	'Shared/LocalStorage',
 	'Content/Model/NodeSelection',
 	'Content/Application',
@@ -23,6 +24,7 @@ define(
 	SecondaryInspectorController,
 	_,
 	Backbone,
+	HelpMessage,
 	LocalStorage,
 	NodeSelection,
 	ContentModule,
@@ -218,8 +220,14 @@ define(
 						if (!groupsObject[groupIdentifier].properties) {
 							groupsObject[groupIdentifier].properties = [];
 						}
-
 						property.ui.label = I18n.translate(property.ui.label);
+
+						if (property.ui.help) {
+							helpMessage = HelpMessage(property.ui.help, property.ui.label);
+							if (helpMessage !== '') {
+								property.ui.help.message = helpMessage;
+							}
+						}
 
 						groupsObject[groupIdentifier].properties.push(property);
 					}

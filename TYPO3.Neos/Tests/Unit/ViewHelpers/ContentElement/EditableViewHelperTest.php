@@ -11,9 +11,9 @@ namespace TYPO3\Neos\Tests\Unit\ViewHelpers;
  * source code.
  */
 
+use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 use TYPO3\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseTestcase;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\ViewHelpers\ContentElement\EditableViewHelper;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
