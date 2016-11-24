@@ -18,9 +18,9 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Validation\Validator\NotEmptyValidator;
-use TYPO3\Form\Core\Model\FinisherContext;
-use TYPO3\Form\Core\Model\FormDefinition;
-use TYPO3\Form\Finishers\ClosureFinisher;
+use Neos\Form\Core\Model\FinisherContext;
+use Neos\Form\Core\Model\FormDefinition;
+use Neos\Form\Finishers\ClosureFinisher;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\SiteImportService;
@@ -125,10 +125,10 @@ class SiteImportStep extends AbstractStep
         $page1 = $formDefinition->createPage('page1');
         $page1->setRenderingOption('header', 'Create a new site');
 
-        $introduction = $page1->createElement('introduction', 'TYPO3.Form:StaticText');
+        $introduction = $page1->createElement('introduction', 'Neos.Form:StaticText');
         $introduction->setProperty('text', 'There are two ways of creating a site. Choose between the following:');
 
-        $importSection = $page1->createElement('import', 'TYPO3.Form:Section');
+        $importSection = $page1->createElement('import', 'Neos.Form:Section');
         $importSection->setLabel('Import a site from an existing site package');
 
         $sitePackages = array();
@@ -137,41 +137,41 @@ class SiteImportStep extends AbstractStep
         }
 
         if (count($sitePackages) > 0) {
-            $site = $importSection->createElement('site', 'TYPO3.Form:SingleSelectDropdown');
+            $site = $importSection->createElement('site', 'Neos.Form:SingleSelectDropdown');
             $site->setLabel('Select a site package');
             $site->setProperty('options', $sitePackages);
             $site->addValidator(new NotEmptyValidator());
 
             $sites = $this->siteRepository->findAll();
             if ($sites->count() > 0) {
-                $prune = $importSection->createElement('prune', 'TYPO3.Form:Checkbox');
+                $prune = $importSection->createElement('prune', 'Neos.Form:Checkbox');
                 $prune->setLabel('Delete existing sites');
             }
         } else {
-            $error = $importSection->createElement('noSitePackagesError', 'TYPO3.Form:StaticText');
+            $error = $importSection->createElement('noSitePackagesError', 'Neos.Form:StaticText');
             $error->setProperty('text', 'No site packages were available, make sure you have an active site package');
             $error->setProperty('elementClassAttribute', 'alert alert-warning');
         }
 
         if ($this->packageManager->isPackageActive('TYPO3.Neos.Kickstarter')) {
-            $separator = $page1->createElement('separator', 'TYPO3.Form:StaticText');
+            $separator = $page1->createElement('separator', 'Neos.Form:StaticText');
             $separator->setProperty('elementClassAttribute', 'section-separator');
 
-            $newPackageSection = $page1->createElement('newPackageSection', 'TYPO3.Form:Section');
+            $newPackageSection = $page1->createElement('newPackageSection', 'Neos.Form:Section');
             $newPackageSection->setLabel('Create a new site package with a dummy site');
-            $packageName = $newPackageSection->createElement('packageKey', 'TYPO3.Form:SingleLineText');
+            $packageName = $newPackageSection->createElement('packageKey', 'Neos.Form:SingleLineText');
             $packageName->setLabel('Package Name (in form "Vendor.DomainCom")');
             $packageName->addValidator(new PackageKeyValidator());
 
-            $siteName = $newPackageSection->createElement('siteName', 'TYPO3.Form:SingleLineText');
+            $siteName = $newPackageSection->createElement('siteName', 'Neos.Form:SingleLineText');
             $siteName->setLabel('Site Name (e.g. "domain.com")');
         } else {
-            $error = $importSection->createElement('neosKickstarterUnavailableError', 'TYPO3.Form:StaticText');
+            $error = $importSection->createElement('neosKickstarterUnavailableError', 'Neos.Form:StaticText');
             $error->setProperty('text', 'The Neos Kickstarter package (TYPO3.Neos.Kickstarter) is not installed, install it for kickstarting new sites (using "composer require typo3/neos-kickstarter")');
             $error->setProperty('elementClassAttribute', 'alert alert-warning');
         }
 
-        $explanation = $page1->createElement('explanation', 'TYPO3.Form:StaticText');
+        $explanation = $page1->createElement('explanation', 'Neos.Form:StaticText');
         $explanation->setProperty('text', 'Notice the difference between a site package and a site. A site package is a Flow package that can be used for creating multiple site instances.');
         $explanation->setProperty('elementClassAttribute', 'alert alert-info');
 
