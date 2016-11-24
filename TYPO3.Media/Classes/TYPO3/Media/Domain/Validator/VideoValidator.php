@@ -11,7 +11,7 @@ namespace TYPO3\Media\Domain\Validator;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Validator for Video objects

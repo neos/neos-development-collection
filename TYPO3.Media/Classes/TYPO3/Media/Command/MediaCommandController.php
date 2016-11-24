@@ -14,9 +14,9 @@ namespace TYPO3\Media\Command;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cli\CommandController;
-use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Cli\CommandController;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Repository\AssetRepository;
 use TYPO3\Media\Domain\Repository\ThumbnailRepository;
@@ -106,7 +106,7 @@ class MediaCommandController extends CommandController
             $mediaType = $resourceInfo['mediatype'];
 
             if (substr($mediaType, 0, 6) === 'image/') {
-                $resource = $this->persistenceManager->getObjectByIdentifier($resourceInfo['persistence_object_identifier'], \TYPO3\Flow\ResourceManagement\PersistentResource::class);
+                $resource = $this->persistenceManager->getObjectByIdentifier($resourceInfo['persistence_object_identifier'], \Neos\Flow\ResourceManagement\PersistentResource::class);
                 if ($resource === null) {
                     $this->outputLine('Warning: PersistentResource for file "%s" seems to be corrupt. No resource object with identifier %s could be retrieved from the Persistence Manager.', array($resourceInfo['filename'], $resourceInfo['persistence_object_identifier']));
                     continue;

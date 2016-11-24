@@ -11,16 +11,16 @@ namespace TYPO3\Media\TypeConverter;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Persistence\PersistenceManagerInterface;
-use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\AssetVariantInterface;
 use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Model\ImageVariant;
-use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;
+use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 
 /**
  * This converter transforms TYPO3.Media AssetInterface instances to arrays.
@@ -133,7 +133,7 @@ class ArrayConverter extends AbstractTypeConverter
 
                 return array(
                     '__identity' => $identity,
-                    '__type' => \TYPO3\Flow\Utility\TypeHandling::getTypeForValue($source),
+                    '__type' => \Neos\Flow\Utility\TypeHandling::getTypeForValue($source),
                     'title' => $source->getTitle(),
                     'resource' => $convertedChildProperties['resource']
                 );

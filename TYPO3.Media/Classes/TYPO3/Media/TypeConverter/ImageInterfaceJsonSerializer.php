@@ -11,8 +11,8 @@ namespace TYPO3\Media\TypeConverter;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use TYPO3\Media\Domain\Model\ImageInterface;
 
 /**

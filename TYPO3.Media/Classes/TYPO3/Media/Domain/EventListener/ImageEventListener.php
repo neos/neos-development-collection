@@ -12,9 +12,9 @@ namespace TYPO3\Media\Domain\EventListener;
  */
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cache\CacheManager;
-use TYPO3\Flow\ResourceManagement\PersistentResource;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Cache\CacheManager;
+use Neos\Flow\ResourceManagement\PersistentResource;
 use TYPO3\Media\Domain\Model\ImageInterface;
 
 /**

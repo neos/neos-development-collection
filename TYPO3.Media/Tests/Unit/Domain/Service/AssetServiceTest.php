@@ -11,7 +11,7 @@ namespace TYPO3\Media\Tests\Unit\Domain\Service;
  * source code.
  */
 
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Media\Domain\Repository\AssetRepository;
 use TYPO3\Media\Domain\Repository\AudioRepository;
@@ -47,7 +47,7 @@ class AssetServiceTest extends UnitTestCase
     {
         $mockAsset = $this->getMockBuilder($modelClassName)->disableOriginalConstructor()->getMock();
 
-        $mockObjectManager = $this->createMock(\TYPO3\Flow\ObjectManagement\ObjectManagerInterface::class);
+        $mockObjectManager = $this->createMock(\Neos\Flow\ObjectManagement\ObjectManagerInterface::class);
         $mockObjectManager->expects($this->once())
             ->method('get')
             ->will($this->returnValue($this->createMock($expectedRepositoryClassName)));

@@ -14,7 +14,7 @@ namespace TYPO3\Media\Imagine;
 use Imagine\Image\BoxInterface;
 use Imagine\Image\Point;
 use Imagine\Image\PointInterface;
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 
 class Box implements BoxInterface
 {

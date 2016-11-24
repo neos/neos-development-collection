@@ -12,7 +12,7 @@ namespace TYPO3\Media\Tests\Unit\Domain\Model\Adjustment;
  */
 
 use TYPO3\Media\Imagine\Box;
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\Media\Domain\Model\Adjustment\ResizeImageAdjustment;
 use TYPO3\Media\Domain\Model\ImageInterface;
 

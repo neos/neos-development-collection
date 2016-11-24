@@ -14,9 +14,9 @@ namespace TYPO3\Media\Domain\Model;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
-use TYPO3\Flow\ResourceManagement\PersistentResource;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\ResourceManagement\PersistentResource;
 use TYPO3\Media\Domain\Service\ImageService;
 use TYPO3\Media\Exception\ImageFileException;
 

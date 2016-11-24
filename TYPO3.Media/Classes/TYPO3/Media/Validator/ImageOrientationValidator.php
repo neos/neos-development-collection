@@ -11,8 +11,8 @@ namespace TYPO3\Media\Validator;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Validation\Exception\InvalidValidationOptionsException;
 use TYPO3\Media\Domain\Model\ImageInterface;
 
 /**
@@ -27,7 +27,7 @@ use TYPO3\Media\Domain\Model\ImageInterface;
  *
  * this would refuse an image that is in portrait orientation, but allow landscape and square ones.
  */
-class ImageOrientationValidator extends \TYPO3\Flow\Validation\Validator\AbstractValidator
+class ImageOrientationValidator extends \Neos\Flow\Validation\Validator\AbstractValidator
 {
     /**
      * @var array

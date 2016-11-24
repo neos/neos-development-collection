@@ -11,8 +11,8 @@ namespace TYPO3\Media\Tests\Functional\Domain\Model;
  * source code.
  */
 use Doctrine\Common\Collections\ArrayCollection;
-use TYPO3\Flow\Persistence\Doctrine\PersistenceManager;
-use TYPO3\Flow\ResourceManagement\ResourceManager;
+use Neos\Flow\Persistence\Doctrine\PersistenceManager;
+use Neos\Flow\ResourceManagement\ResourceManager;
 use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Media\Domain\Model\Tag;
 use TYPO3\Media\Domain\Repository\AssetRepository;
@@ -122,7 +122,7 @@ class AssetTest extends AbstractTest
 
     /**
      * @return Asset
-     * @throws \TYPO3\Flow\ResourceManagement\Exception
+     * @throws \Neos\Flow\ResourceManagement\Exception
      */
     protected function buildAssetObject()
     {

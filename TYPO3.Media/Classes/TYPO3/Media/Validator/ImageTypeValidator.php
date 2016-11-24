@@ -11,9 +11,9 @@ namespace TYPO3\Media\Validator;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException;
-use TYPO3\Flow\Validation\Validator\AbstractValidator;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Validation\Exception\InvalidValidationOptionsException;
+use Neos\Flow\Validation\Validator\AbstractValidator;
 use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Model\ImageInterface;
 

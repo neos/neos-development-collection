@@ -12,7 +12,7 @@ namespace TYPO3\Media\Domain\Model\Adjustment;
  */
 
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Interface for an Asset Adjustment

@@ -11,10 +11,10 @@ namespace TYPO3\Media\Domain\Strategy;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\ResourceManagement\PersistentResource;
-use TYPO3\Flow\Utility\MediaTypes;
-use TYPO3\Flow\Utility\PositionalArraySorter;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\ResourceManagement\PersistentResource;
+use Neos\Flow\Utility\MediaTypes;
+use Neos\Flow\Utility\PositionalArraySorter;
 
 /**
  * A mapping strategy based on configured expressions.

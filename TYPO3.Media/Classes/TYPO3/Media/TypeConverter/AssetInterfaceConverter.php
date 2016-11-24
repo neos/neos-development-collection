@@ -11,20 +11,20 @@ namespace TYPO3\Media\TypeConverter;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Persistence\PersistenceManagerInterface;
-use TYPO3\Flow\Property\Exception\InvalidDataTypeException;
-use TYPO3\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
-use TYPO3\Flow\Property\Exception\InvalidSourceException;
-use TYPO3\Flow\Property\Exception\InvalidTargetException;
-use TYPO3\Flow\Property\Exception\TargetNotFoundException;
-use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
-use TYPO3\Flow\Property\TypeConverter\ObjectConverter;
-use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
-use TYPO3\Flow\ResourceManagement\PersistentResource;
-use TYPO3\Flow\ResourceManagement\ResourceManager;
-use TYPO3\Flow\Validation\Error;
-use TYPO3\Flow\Validation\Validator\UuidValidator;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Property\Exception\InvalidDataTypeException;
+use Neos\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
+use Neos\Flow\Property\Exception\InvalidSourceException;
+use Neos\Flow\Property\Exception\InvalidTargetException;
+use Neos\Flow\Property\Exception\TargetNotFoundException;
+use Neos\Flow\Property\PropertyMappingConfigurationInterface;
+use Neos\Flow\Property\TypeConverter\ObjectConverter;
+use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
+use Neos\Flow\ResourceManagement\PersistentResource;
+use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Flow\Validation\Error;
+use Neos\Flow\Validation\Validator\UuidValidator;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\Document;
 use TYPO3\Media\Domain\Model\Image;
