@@ -1,4 +1,4 @@
-{namespace neos=TYPO3\Neos\ViewHelpers}
+{namespace neos=Neos\Neos\ViewHelpers}
 <f:layout name="BackendSubModule" />
 
 <f:section name="content">
@@ -30,7 +30,7 @@
 			var cookieId = "typo3-neos-module-configuration-{f:format.case(value: type, mode: 'lower')}";
 			require(
 				{
-					baseUrl: 'resource://TYPO3.Neos/Public/JavaScript',
+					baseUrl: 'resource://Neos.Neos/Public/JavaScript',
 					paths: requirePaths,
 					context: 'neos',
 					locale: 'en'

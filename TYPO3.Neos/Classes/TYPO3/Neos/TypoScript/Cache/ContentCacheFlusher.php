@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\TypoScript\Cache;
+namespace Neos\Neos\TypoScript\Cache;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Service\AssetService;
-use TYPO3\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
+use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TypoScript\Core\Cache\ContentCache;
@@ -23,7 +23,7 @@ use TYPO3\TypoScript\Core\Cache\ContentCache;
 /**
  * This service flushes TypoScript content caches triggered by node changes.
  *
- * The method registerNodeChange() is triggered by a signal which is configured in the Package class of the TYPO3.Neos
+ * The method registerNodeChange() is triggered by a signal which is configured in the Package class of the Neos.Neos
  * package (this package). Information on changed nodes is collected by this method and the respective TypoScript content
  * cache entries are flushed in one operation during Flow's shutdown procedure.
  *

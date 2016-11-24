@@ -84,7 +84,7 @@ In case the text input should span multiple lines, a ``TextAreaEditor`` should b
           label: 'Description'
           inspector:
             group: 'document'
-            editor: 'TYPO3.Neos/Inspector/Editors/TextAreaEditor'
+            editor: 'Neos.Neos/Inspector/Editors/TextAreaEditor'
             editorOptions:
               rows: 7
 
@@ -107,7 +107,7 @@ In case a lot of space is needed for the text (f.e. for HTML source code), a ``C
           label: 'Source'
           inspector:
             group: 'document'
-            editor: 'TYPO3.Neos/Inspector/Editors/CodeEditor'
+            editor: 'Neos.Neos/Inspector/Editors/CodeEditor'
 
 Furthermore, the button label can be adjusted by specifying ``buttonLabel``. Furthermore, the highlighting mode
 can be customized, which is helpful for editing markdown and similar contents::
@@ -118,7 +118,7 @@ can be customized, which is helpful for editing markdown and similar contents::
           label: 'Markdown'
           inspector:
             group: 'document'
-            editor: 'TYPO3.Neos/Inspector/Editors/CodeEditor'
+            editor: 'Neos.Neos/Inspector/Editors/CodeEditor'
             editorOptions:
               buttonLabel: 'Edit Markdown'
               highlightingMode: 'text/plain'
@@ -151,7 +151,7 @@ Basic Example -- simple select box::
         label: 'Target mode'
         inspector:
           group: 'document'
-          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
+          editor: 'Neos.Neos/Inspector/Editors/SelectBoxEditor'
           editorOptions:
             values:
               firstChildNode:
@@ -171,7 +171,7 @@ If the selection list should be grouped, this can be done by setting the ``group
         label: 'Country'
         inspector:
           group: 'document'
-          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
+          editor: 'Neos.Neos/Inspector/Editors/SelectBoxEditor'
           editorOptions:
             values:
               italy:
@@ -194,7 +194,7 @@ for properties of type ``array``. If an empty value is allowed as well, ``allowE
         label: 'Styling Options'
         inspector:
           group: 'document'
-          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
+          editor: 'Neos.Neos/Inspector/Editors/SelectBoxEditor'
           editorOptions:
 
             # The next line is set automatically for type array
@@ -319,7 +319,7 @@ If internal links to other nodes, external links or asset links shall be editabl
       type: string
         ui:
           inspector:
-            editor: 'TYPO3.Neos/Inspector/Editors/LinkEditor'
+            editor: 'Neos.Neos/Inspector/Editors/LinkEditor'
 
 The searchbox will accept:
 
@@ -328,7 +328,7 @@ The searchbox will accept:
 * valid URLs
 * valid email addresses
 
-By default, links to generic ``TYPO3.Neos:Document`` nodes are allowed; but by setting the ``nodeTypes`` option,
+By default, links to generic ``Neos.Neos:Document`` nodes are allowed; but by setting the ``nodeTypes`` option,
 this can be further restricted (like with the ``reference`` editor). Additionally, links to assets can be disabled
 by setting ``assets`` to ``FALSE``. Links to external URLs are always possible. If you need a reference towards
 only an asset, use the ``asset`` property type; for a reference to another node, use the ``reference`` node type.
@@ -340,10 +340,10 @@ Furthermore, the placeholder text can be customized by setting the ``placeholder
         ui:
           inspector:
             group: 'document'
-            editor: 'TYPO3.Neos/Inspector/Editors/LinkEditor'
+            editor: 'Neos.Neos/Inspector/Editors/LinkEditor'
             editorOptions:
               assets: FALSE
-              nodeTypes: ['TYPO3.Neos:Shortcut']
+              nodeTypes: ['Neos.Neos:Shortcut']
               placeholder: 'Paste a link, or type to search for nodes'
 
 Property Type: integer ``TextFieldEditor``
@@ -383,7 +383,7 @@ Options Reference:
 
 ``nodeTypes`` (array of strings)
 	List of node types which are allowed to be selected. By default, is set
-	to ``TYPO3.Neos:Document``, allowing only to choose other document nodes.
+	to ``Neos.Neos:Document``, allowing only to choose other document nodes.
 
 ``placeholder`` (string)
 	Placeholder text to be shown if nothing is selected
@@ -645,7 +645,7 @@ To apply options, just specify them like this::
 
 	someProperty:
 	  validation:
-	    'TYPO3.Neos/Validation/StringLengthValidator':
+	    'Neos.Neos/Validation/StringLengthValidator':
 	      minimum: 1
 	      maximum: 255
 

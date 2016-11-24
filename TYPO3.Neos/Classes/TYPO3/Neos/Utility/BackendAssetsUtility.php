@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Utility;
+namespace Neos\Neos\Utility;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -54,7 +54,7 @@ class BackendAssetsUtility
      */
     public function getJavascriptBuiltVersion()
     {
-        return substr(md5_file('resource://TYPO3.Neos/Public/JavaScript/ContentModule-built.js'), 0, 12);
+        return substr(md5_file('resource://Neos.Neos/Public/JavaScript/ContentModule-built.js'), 0, 12);
     }
 
     /**
@@ -64,6 +64,6 @@ class BackendAssetsUtility
      */
     public function getCssBuiltVersion()
     {
-        return substr(md5_file('resource://TYPO3.Neos/Public/Styles/Includes-built.css'), 0, 12);
+        return substr(md5_file('resource://Neos.Neos/Public/Styles/Includes-built.css'), 0, 12);
     }
 }

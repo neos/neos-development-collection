@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Tests\Unit\Service;
+namespace Neos\Neos\Tests\Unit\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,9 +12,9 @@ namespace TYPO3\Neos\Tests\Unit\Service;
  */
 
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\Neos\Domain\Model\User;
-use TYPO3\Neos\Domain\Service\UserService as UserDomainService;
-use TYPO3\Neos\Service\UserService;
+use Neos\Neos\Domain\Model\User;
+use Neos\Neos\Domain\Service\UserService as UserDomainService;
+use Neos\Neos\Service\UserService;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 

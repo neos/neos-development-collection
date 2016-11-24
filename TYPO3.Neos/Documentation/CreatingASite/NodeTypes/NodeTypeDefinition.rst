@@ -14,7 +14,7 @@ A node type definition can look as follows::
 
 	'My.Package:SpecialHeadline':
 	  superTypes:
-	    'TYPO3.Neos:Content': true
+	    'Neos.Neos:Content': true
 	  ui:
 	    label: 'Special Headline'
 	    group: 'general'
@@ -25,7 +25,7 @@ A node type definition can look as follows::
 	      ui:
 	        inlineEditable: true
 	      validation:
-	        'TYPO3.Neos/Validation/StringLengthValidator':
+	        'Neos.Neos/Validation/StringLengthValidator':
 	          minimum: 1
 	          maximum: 255
 
@@ -45,17 +45,17 @@ The following options are allowed:
   - when moving this node, all node variants are also moved (across all dimensions)
   - Recursive copying only happens *inside* this aggregate, and stops at nested aggregates.
 
-  The most prominent *aggregate* is `TYPO3.Neos:Document` and everything which inherits from it, like
-  `TYPO3.Neos.NodeTypes:Page`.
+  The most prominent *aggregate* is `Neos.Neos:Document` and everything which inherits from it, like
+  `Neos.Neos.NodeTypes:Page`.
 
 ``superTypes``
   An array of parent node types inherited from as keys with a boolean values.::
 
-    'TYPO3.Neos:Document':
+    'Neos.Neos:Document':
       superTypes:
         'Acme.Demo.ExtraMixin': true
 
-    'TYPO3.Neos:Shortcut':
+    'Neos.Neos:Shortcut':
       superTypes:
         'Acme.Demo.ExtraMixin': false
 
@@ -67,8 +67,8 @@ The following options are allowed:
     constraints:
       nodeTypes:
         # ALLOW text, DISALLOW Image
-        'TYPO3.Neos.NodeTypes:Text': true
-        'TYPO3.Neos.NodeTypes:Image': false
+        'Neos.Neos.NodeTypes:Text': true
+        'Neos.Neos.NodeTypes:Image': false
         # DISALLOW as Fallback (for not-explicitely-listed node types)
         '*': false
 
@@ -80,20 +80,20 @@ The following options are allowed:
 
     childNodes:
       someChild:
-        type: 'TYPO3.Neos:ContentCollection'
+        type: 'Neos.Neos:ContentCollection'
         constraints:
           nodeTypes:
             # only allow images in this ContentCollection
-            'TYPO3.Neos.NodeTypes:Image': true
+            'Neos.Neos.NodeTypes:Image': true
             '*': false
 
   By using ``position``, it is possible to define the order in which child nodes appear in the structure tree.
   An example may look like::
 
-    'TYPO3.Neos.NodeTypes:Page':
+    'Neos.Neos.NodeTypes:Page':
       childNodes:
         'someChild':
-          type: 'TYPO3.Neos:ContentCollection'
+          type: 'Neos.Neos:ContentCollection'
           position: 'before main'
 
   This adds a new ContentCollection called someChild to the default page.
@@ -130,14 +130,14 @@ The following options are allowed:
       The class that is used to generate the default fusion-prototype for this nodeType.
 
       If this option is set to a className the class has to implement the interface
-      ``\TYPO3\Neos\Domain\Service\DefaultPrototypeGeneratorInterface`` and is used to generate the prototype-code for this node.
+      ``\Neos\Neos\Domain\Service\DefaultPrototypeGeneratorInterface`` and is used to generate the prototype-code for this node.
 
       If ``options.fusion.prototypeGenerator`` is set to ``null`` no prototype is created for this type.
 
-      By default Neos has generators for all nodes of type ``TYPO3.Neos:Node`` and creates protoypes based on
+      By default Neos has generators for all nodes of type ``Neos.Neos:Node`` and creates protoypes based on
       ``TYPO3.TypoScript:Template``. A template path is assumed based on the package-prefix and the nodetype-name. All properties
-      of the node are passed to the template. For the nodeTypes of type ``TYPO3.Neos:Document``, ``TYPO3.Neos:Content`` and
-      ``TYPO3.Neos:Plugin`` the corresponding prototype is used as base-prototype.
+      of the node are passed to the template. For the nodeTypes of type ``Neos.Neos:Document``, ``Neos.Neos:Content`` and
+      ``Neos.Neos:Plugin`` the corresponding prototype is used as base-prototype.
 
       Example::
 
@@ -147,7 +147,7 @@ The following options are allowed:
         date = ${q(node).property('date')}
         # inline-editable strings additionally get the convertUris processor
         title = ${q(node).property('title')}
-        title.@process.convertUris = TYPO3.Neos:ConvertUris
+        title.@process.convertUris = Neos.Neos:ConvertUris
       }
 
 ``ui``
@@ -160,7 +160,7 @@ The following options are allowed:
     Name of the group this content element is grouped into for the 'New Content Element' dialog.
     It can only be created through the user interface if ``group`` is defined and it is valid.
 
-    All valid groups are given in the ``TYPO3.Neos.nodeTypes.groups`` setting
+    All valid groups are given in the ``Neos.Neos.nodeTypes.groups`` setting
 
   ``position``
     Position inside the group this content element is grouped into for the 'New Content Element' dialog.
@@ -369,9 +369,9 @@ The following options are allowed:
 
 Here is one of the standard Neos node types (slightly shortened)::
 
-	'TYPO3.Neos.NodeTypes:Image':
+	'Neos.Neos.NodeTypes:Image':
 	  superTypes:
-	    'TYPO3.Neos:Content': true
+	    'Neos.Neos:Content': true
 	  ui:
 	    label: 'Image'
 	    icon: 'icon-picture'
@@ -397,7 +397,7 @@ Here is one of the standard Neos node types (slightly shortened)::
 	        reloadIfChanged: true
 	        inspector:
 	          group: 'image'
-	          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
+	          editor: 'Neos.Neos/Inspector/Editors/SelectBoxEditor'
 	          editorOptions:
 	            placeholder: 'Default'
 	            values:
@@ -417,7 +417,7 @@ Here is one of the standard Neos node types (slightly shortened)::
 	        inspector:
 	          group: 'image'
 	      validation:
-	        'TYPO3.Neos/Validation/StringLengthValidator':
+	        'Neos.Neos/Validation/StringLengthValidator':
 	          minimum: 1
 	          maximum: 255
 	    hasCaption:

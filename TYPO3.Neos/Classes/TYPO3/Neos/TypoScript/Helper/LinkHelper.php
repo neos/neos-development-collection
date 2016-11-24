@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\TypoScript\Helper;
+namespace Neos\Neos\TypoScript\Helper;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,7 +14,7 @@ namespace TYPO3\Neos\TypoScript\Helper;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Media\Domain\Model\AssetInterface;
-use TYPO3\Neos\Service\LinkingService;
+use Neos\Neos\Service\LinkingService;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;

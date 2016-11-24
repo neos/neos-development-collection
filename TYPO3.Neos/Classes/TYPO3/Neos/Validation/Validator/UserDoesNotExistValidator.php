@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Validation\Validator;
+namespace Neos\Neos\Validation\Validator;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,7 +14,7 @@ namespace TYPO3\Neos\Validation\Validator;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Validation\Exception\InvalidSubjectException;
 use Neos\Flow\Validation\Validator\AbstractValidator;
-use TYPO3\Neos\Domain\Service\UserService;
+use Neos\Neos\Domain\Service\UserService;
 
 /**
  * Validator for Neos users

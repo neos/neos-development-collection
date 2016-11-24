@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\ViewHelpers\ContentElement;
+namespace Neos\Neos\ViewHelpers\ContentElement;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -15,11 +15,11 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
-use TYPO3\Neos\Domain\Service\ContentContext;
+use Neos\Neos\Domain\Service\ContentContext;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Service\AuthorizationService;
 use TYPO3\TypoScript\ViewHelpers\TypoScriptContextTrait;
-use TYPO3\Neos\Service\ContentElementEditableService;
+use Neos\Neos\Service\ContentElementEditableService;
 
 /**
  * Renders a wrapper around the inner contents of the tag to enable frontend editing.

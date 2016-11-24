@@ -16,13 +16,13 @@ Routing
 		name: 'Neos :: Frontend :: Document node with vCard format'
 		uriPattern: '{node}.vcf'
 		defaults:
-			'@package': TYPO3.Neos
+			'@package': Neos.Neos
 			'@controller': Frontend\Node
 			'@action': show
 			'@format': vcard
 		routeParts:
 			node:
-				handler: TYPO3\Neos\Routing\FrontendNodeRoutePartHandlerInterface
+				handler: Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface
 		appendExceedingArguments: true
 
 This will register a new route to nodes with the ``vcard`` format. URIs with that format will get an ``.vcf`` extension.

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\TypeConverter;
+namespace Neos\Neos\TypeConverter;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,8 +12,8 @@ namespace TYPO3\Neos\TypeConverter;
  */
 
 use Neos\Flow\Annotations as Flow;
-use TYPO3\Neos\Domain\Repository\DomainRepository;
-use TYPO3\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\Repository\DomainRepository;
+use Neos\Neos\Domain\Repository\SiteRepository;
 
 /**
  * An Object Converter for nodes which can be used for routing (but also for other

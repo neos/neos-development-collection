@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Domain\Service;
+namespace Neos\Neos\Domain\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -30,7 +30,7 @@ class DomainMatchingStrategy
      * If none really matches an empty array is returned.
      *
      * @param string $hostnameToMatch The hostname to match against (eg. "localhost" or "www.neos.io")
-     * @param array<\TYPO3\Neos\Domain\Model\Domain> $domains The domains to check
+     * @param array<\Neos\Neos\Domain\Model\Domain> $domains The domains to check
      * @return array The matching domains
      */
     public function getSortedMatches($hostnameToMatch, array $domains)

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Tests\Functional\Domain\Service;
+namespace Neos\Neos\Tests\Functional\Domain\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,7 +11,7 @@ namespace TYPO3\Neos\Tests\Functional\Domain\Service;
  * source code.
  */
 
-use TYPO3\Neos\Tests\Functional\AbstractNodeTest;
+use Neos\Neos\Tests\Functional\AbstractNodeTest;
 
 /**
  * Make sure legacy sites.xml structures (1.0 or 1.1) can be imported

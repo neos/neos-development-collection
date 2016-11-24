@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Tests\Functional\Domain;
+namespace Neos\Neos\Tests\Functional\Domain;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,7 +11,7 @@ namespace TYPO3\Neos\Tests\Functional\Domain;
  * source code.
  */
 
-use TYPO3\Neos\Tests\Functional\AbstractNodeTest;
+use Neos\Neos\Tests\Functional\AbstractNodeTest;
 
 /**
  * Tests checking correct Uri behavior for Neos nodes.

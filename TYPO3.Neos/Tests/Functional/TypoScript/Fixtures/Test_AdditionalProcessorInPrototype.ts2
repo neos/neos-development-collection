@@ -1,5 +1,5 @@
 #
 # This example modifies the rendering inside the sidebar section, wrapping the title of the text
 #
-page1.body.content.sidebar.prototype(TYPO3.Neos.NodeTypes:Headline).title = 'Static Headline'
-page1.body.content.sidebar.prototype(TYPO3.Neos.NodeTypes:Headline).title.@process.1 = ${'<div class="processor-wrap">BEFORE' + value + 'AFTER</div>'}
+page1.body.content.sidebar.prototype(Neos.Neos.NodeTypes:Headline).title = 'Static Headline'
+page1.body.content.sidebar.prototype(Neos.Neos.NodeTypes:Headline).title.@process.1 = ${'<div class="processor-wrap">BEFORE' + value + 'AFTER</div>'}

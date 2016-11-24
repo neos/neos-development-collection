@@ -57,7 +57,7 @@ Automatic TypoScript file inclusion
 All TypoScript files are expected to be in the folder *Resources/Private/TypoScript* when it comes to
 automatic inclusion.
 
-Neos will include the *Root.ts2* file of all packages listed in the Setting ``TYPO3.Neos.typoScript.autoInclude``
+Neos will include the *Root.ts2* file of all packages listed in the Setting ``Neos.Neos.typoScript.autoInclude``
 in the order of packages as returned by the package management.
 
 Neos will then always include the *Root.ts2* file of the current site package.
@@ -114,12 +114,12 @@ A TypoScript object can be instantiated by assigning it to a TypoScript path, su
 	# or:
 	my.object = Text
 	# or:
-	my.image = TYPO3.Neos.ContentTypes:Image
+	my.image = Neos.Neos.ContentTypes:Image
 
 The name of the to-be-instantiated TypoScript prototype is listed without quotes.
 
 By convention, TypoScript paths (such as ``my.object``) are written in ``lowerCamelCase``, while
-TypoScript prototypes (such as ``TYPO3.Neos.ContentTypes:Image``) are written in ``UpperCamelCase``.
+TypoScript prototypes (such as ``Neos.Neos.ContentTypes:Image``) are written in ``UpperCamelCase``.
 
 It is possible to set *properties* on the newly created TypoScript objects::
 
@@ -238,7 +238,7 @@ instantiate them. You can also use an *existing TypoScript prototype* as basis
 for a new one when needed. This can be done by *inheriting* from a TypoScript prototype
 using the ``<`` operator::
 
-	prototype(MyImage) < prototype(TYPO3.Neos:Content)
+	prototype(MyImage) < prototype(Neos.Neos:Content)
 
 	# now, the MyImage prototype contains all properties of the Template
 	# prototype, and can be further customized.
@@ -247,13 +247,13 @@ This implements *prototype inheritance*, meaning that the "subclass" (``MyImage`
 above) and the "parent class (``Content``) are still attached to each other: If a property
 is added to the parent class, this also applies to the subclass, as in the following example::
 
-	prototype(TYPO3.Neos:Content).fruit = 'apple'
-	prototype(TYPO3.Neos:Content).meal = 'dinner'
+	prototype(Neos.Neos:Content).fruit = 'apple'
+	prototype(Neos.Neos:Content).meal = 'dinner'
 
-	prototype(MyImage) < prototype(TYPO3.Neos:Content)
+	prototype(MyImage) < prototype(Neos.Neos:Content)
 	# now, MyImage also has the properties "fruit = apple" and "meal = dinner"
 
-	prototype(TYPO3.Neos:Content).fruit = 'Banana'
+	prototype(Neos.Neos:Content).fruit = 'Banana'
 	# because MyImage *extends* Content, MyImage.fruit equals 'Banana' as well.
 
 	prototype(MyImage).meal = 'breakfast'
@@ -346,10 +346,10 @@ resides.
 
 Fully qualified identifiers can be used everywhere an identifier is used::
 
-	prototype(TYPO3.Neos:ContentCollection) < prototype(TYPO3.Neos:Collection)
+	prototype(Neos.Neos:ContentCollection) < prototype(Neos.Neos:Collection)
 
-In Neos TypoScript a ``default`` namespace of ``TYPO3.Neos`` is set. So whenever ``Page`` is used in
-TypoScript within Neos, it is a shortcut for ``TYPO3.Neos:Page``.
+In Neos TypoScript a ``default`` namespace of ``Neos.Neos`` is set. So whenever ``Page`` is used in
+TypoScript within Neos, it is a shortcut for ``Neos.Neos:Page``.
 
 Custom namespace aliases can be defined using the following syntax::
 
@@ -422,7 +422,7 @@ in a more granular way.
   ``documentNode`` is in the end just a shorthand to get the current document node faster. It could be replaced with::
 
     # Expose the document node to the template using FlowQuery and a Fizzle operator
-    documentNode = ${q(node).closest('[instanceof TYPO3.Neos:Document]').get(0)}
+    documentNode = ${q(node).closest('[instanceof Neos.Neos:Document]').get(0)}
 
 * ``request`` is an instance of ``TYPO3\Flow\Mvc\ActionRequest`` and allows you to access the current request from within TypoScript.
   Use it to provide request variables to the template::

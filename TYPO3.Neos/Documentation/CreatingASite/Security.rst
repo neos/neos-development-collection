@@ -53,23 +53,23 @@ Neos comes with a number of predefined roles that can be assigned to users:
 +=============================+=============================+========================================================+
 | TYPO3.TYPO3CR:Administrator |                             | A no-op role for future use                            |
 +-----------------------------+-----------------------------+--------------------------------------------------------+
-| TYPO3.Neos:AbstractEditor   | TYPO3.TYPO3CR:Administrator | Grants the very basic things needed to use Neos at all |
+| Neos.Neos:AbstractEditor   | TYPO3.TYPO3CR:Administrator | Grants the very basic things needed to use Neos at all |
 +-----------------------------+-----------------------------+--------------------------------------------------------+
-| TYPO3.Neos:LivePublisher    |                             | A "helper role" to allow publishing to the live        |
+| Neos.Neos:LivePublisher    |                             | A "helper role" to allow publishing to the live        |
 |                             |                             | workspace                                              |
 +-----------------------------+-----------------------------+--------------------------------------------------------+
-| TYPO3.Neos:RestrictedEditor | TYPO3.Neos:AbstractEditor   | Allows to edit content but not publish to the live     |
+| Neos.Neos:RestrictedEditor | Neos.Neos:AbstractEditor   | Allows to edit content but not publish to the live     |
 |                             |                             | workspace                                              |
 +-----------------------------+-----------------------------+--------------------------------------------------------+
-| TYPO3.Neos:Editor           | TYPO3.Neos:AbstractEditor   | Allows to edit and publish content                     |
+| Neos.Neos:Editor           | Neos.Neos:AbstractEditor   | Allows to edit and publish content                     |
 |                             |                             |                                                        |
-|                             | TYPO3.Neos:LivePublisher    |                                                        |
+|                             | Neos.Neos:LivePublisher    |                                                        |
 +-----------------------------+-----------------------------+--------------------------------------------------------+
-| TYPO3.Neos:Administrator    | TYPO3.Neos:Editor           | Everything the Editor can do, plus admin things        |
+| Neos.Neos:Administrator    | Neos.Neos:Editor           | Everything the Editor can do, plus admin things        |
 +-----------------------------+-----------------------------+--------------------------------------------------------+
 
-To adjust permissions for your editors, you can of course just adjust the existing roles (`TYPO3.Neos:RestrictedEditor`
-and `TYPO3.Neos:Editor` in most cases). If you need different sets of permissions, you will need to define your own
+To adjust permissions for your editors, you can of course just adjust the existing roles (`Neos.Neos:RestrictedEditor`
+and `Neos.Neos:Editor` in most cases). If you need different sets of permissions, you will need to define your own
 custom roles, though.
 
 Those custom roles should inherit from RestrictedEditor or Editor and then grant access to the additional privilege
@@ -89,14 +89,14 @@ Here is an example for a role (limiting editing to a specific language) that sho
         matcher: 'isInDimensionPreset("language", "fi")'
 
   roles:
-    'TYPO3.Neos:Editor':
+    'Neos.Neos:Editor':
       privileges:
         -
           privilegeTarget: 'Acme.Com:EditAllNodes'
           permission: GRANT
 
     'Acme.Com:FinnishEditor':
-      parentRoles: ['TYPO3.Neos:RestrictedEditor']
+      parentRoles: ['Neos.Neos:RestrictedEditor']
       privileges:
         -
           privilegeTarget: 'Acme.Com:EditFinnish'
@@ -118,7 +118,7 @@ Node privileges define what can be restricted in relation to accessing and editi
         'Some.Package:SomeIdentifier':
           matcher: >-
             isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")
-            && createdNodeIsOfType("TYPO3.Neos.NodeTypes:Text")
+            && createdNodeIsOfType("Neos.Neos.NodeTypes:Text")
 
   will actually only affect nodes of that type (and subtypes). All users will still be able to create other node types,
   unless you also add a more generic privilege target:
@@ -145,7 +145,7 @@ Usage example:
 .. code-block:: yaml
 
   privilegeTargets:
-    'TYPO3\Neos\Security\Authorization\Privilege\NodeTreePrivilege':
+    'Neos\Neos\Security\Authorization\Privilege\NodeTreePrivilege':
       'Some.Package:SomeIdentifier':
         matcher: 'isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")'
 
@@ -215,7 +215,7 @@ Usage example:
       'Some.Package:SomeIdentifier':
         matcher: >-
           isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")
-          && createdNodeIsOfType("TYPO3.Neos.NodeTypes:Text")
+          && createdNodeIsOfType("Neos.Neos.NodeTypes:Text")
 
 This defines a privilege target that intercepts creation of Text nodes in the specified node (and all of its child
 nodes).
@@ -234,7 +234,7 @@ Usage example:
       'Some.Package:SomeIdentifier':
         matcher: >-
           isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")
-          && nodeIsOfType("TYPO3.Neos.NodeTypes:Text")
+          && nodeIsOfType("Neos.Neos.NodeTypes:Text")
 
 This defines a privilege target that intercepts editing of Text nodes on the specified node (and all of its child
 nodes).
@@ -387,7 +387,7 @@ target is then granted for the "Editor" role.
         matcher: 'isInDimensionPreset("language", "de")'
 
   roles:
-    'TYPO3.Neos:Editor':
+    'Neos.Neos:Editor':
       privileges:
         -
           privilegeTarget: 'Neos.Demo:EditGerman'
@@ -409,24 +409,24 @@ only the relevant parts:
    Neos:
      modules:
       management:
-        privilegeTarget: 'TYPO3.Neos:Backend.Module.Management'
+        privilegeTarget: 'Neos.Neos:Backend.Module.Management'
         submodules:
           workspaces:
-            privilegeTarget: 'TYPO3.Neos:Backend.Module.Management.Workspaces'
+            privilegeTarget: 'Neos.Neos:Backend.Module.Management.Workspaces'
 
 The targets are defined as usual in the security policy, here is a shortened example:
 
 .. code-block:: yaml
 
-    'TYPO3.Neos:Backend.Module.Management':
-      matcher: 'method(TYPO3\Neos\Controller\Module\ManagementController->indexAction())'
+    'Neos.Neos:Backend.Module.Management':
+      matcher: 'method(Neos\Neos\Controller\Module\ManagementController->indexAction())'
 
-    'TYPO3.Neos:Backend.Module.Management.Workspaces':
+    'Neos.Neos:Backend.Module.Management.Workspaces':
       matcher: >-
         method(
-          TYPO3\Neos\Controller\Module\Management\WorkspacesController
+          Neos\Neos\Controller\Module\Management\WorkspacesController
           ->(publishNode|discardNode|publishOrDiscardNodes)Action()
-        ) || method(TYPO3\Neos\Service\Controller\AbstractServiceController->(error)Action())
+        ) || method(Neos\Neos\Service\Controller\AbstractServiceController->(error)Action())
 
 Now those privilege targets can be used to grant/deny access for specific roles.
 

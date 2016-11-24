@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\TYPO3CR;
+namespace Neos\Neos\TYPO3CR;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *

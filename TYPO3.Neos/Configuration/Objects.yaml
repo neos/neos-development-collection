@@ -1,4 +1,4 @@
-TYPO3\Neos\ViewHelpers\Backend\ConfigurationCacheVersionViewHelper:
+Neos\Neos\ViewHelpers\Backend\ConfigurationCacheVersionViewHelper:
   properties:
     configurationCache:
       object:
@@ -9,12 +9,12 @@ TYPO3\Neos\ViewHelpers\Backend\ConfigurationCacheVersionViewHelper:
             value: TYPO3_Neos_Configuration_Version
 
 TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface:
-  className: TYPO3\Neos\Domain\Service\ContentContextFactory
+  className: Neos\Neos\Domain\Service\ContentContextFactory
 
 TYPO3\TYPO3CR\Domain\Service\PublishingServiceInterface:
-  className: TYPO3\Neos\Service\PublishingService
+  className: Neos\Neos\Service\PublishingService
 
-TYPO3\Neos\Aspects\TypoScriptCachingAspect:
+Neos\Neos\Aspects\TypoScriptCachingAspect:
   properties:
     typoScriptCache:
       object:
@@ -25,30 +25,30 @@ TYPO3\Neos\Aspects\TypoScriptCachingAspect:
             value: TYPO3_Neos_TypoScript
 
 'TYPO3\TYPO3CR\Domain\Service\ContentDimensionPresetSourceInterface':
-  className: TYPO3\Neos\Domain\Service\ConfigurationContentDimensionPresetSource
+  className: Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource
 
 'TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface':
-  className: TYPO3\Neos\TYPO3CR\NeosNodeService
+  className: Neos\Neos\TYPO3CR\NeosNodeService
 
 # This interface extends the TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface
-'TYPO3\Neos\TYPO3CR\NeosNodeServiceInterface':
-  className: TYPO3\Neos\TYPO3CR\NeosNodeService
+'Neos\Neos\TYPO3CR\NeosNodeServiceInterface':
+  className: Neos\Neos\TYPO3CR\NeosNodeService
 
-'TYPO3\Neos\Domain\Service\ContentDimensionPresetSourceInterface':
-  className: TYPO3\Neos\Domain\Service\ConfigurationContentDimensionPresetSource
+'Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface':
+  className: Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource
 
-TYPO3\Neos\Domain\Service\ConfigurationContentDimensionPresetSource:
+Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource:
   properties:
     configuration:
       setting: TYPO3.TYPO3CR.contentDimensions
 
-TYPO3\Neos\Routing\FrontendNodeRoutePartHandlerInterface:
-  className: TYPO3\Neos\Routing\FrontendNodeRoutePartHandler
+Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface:
+  className: Neos\Neos\Routing\FrontendNodeRoutePartHandler
 
-TYPO3\Neos\Domain\Service\NodeSearchServiceInterface:
-  className: TYPO3\Neos\Domain\Service\NodeSearchService
+Neos\Neos\Domain\Service\NodeSearchServiceInterface:
+  className: Neos\Neos\Domain\Service\NodeSearchService
 
-TYPO3\Neos\Service\XliffService:
+Neos\Neos\Service\XliffService:
   properties:
     xliffToJsonTranslationsCache:
       object:
@@ -58,7 +58,7 @@ TYPO3\Neos\Service\XliffService:
           1:
             value: TYPO3_Neos_XliffToJsonTranslations
 
-TYPO3\Neos\Controller\Backend\BackendController:
+Neos\Neos\Controller\Backend\BackendController:
   properties:
     loginTokenCache:
       object:
@@ -68,7 +68,7 @@ TYPO3\Neos\Controller\Backend\BackendController:
           1:
             value: TYPO3_Neos_LoginTokenCache
 
-TYPO3\Neos\Controller\LoginController:
+Neos\Neos\Controller\LoginController:
   properties:
     loginTokenCache:
       object:

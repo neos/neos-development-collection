@@ -1,8 +1,8 @@
-{namespace neos=TYPO3\Neos\ViewHelpers}
+{namespace neos=Neos\Neos\ViewHelpers}
 <noscript>
 	<div id="neos-menu-panel" class="neos-noscript">
 		<div class="neos-menu-section">
-			<f:link.action package="TYPO3.Neos" controller="Backend\Backend" action="index" title="{neos:backend.translate(id: 'contentView', value: 'Content View')}" class="neos-menu-headline">
+			<f:link.action package="Neos.Neos" controller="Backend\Backend" action="index" title="{neos:backend.translate(id: 'contentView', value: 'Content View')}" class="neos-menu-headline">
 				<i class="icon-file"></i> {neos:backend.translate(id: 'content', value: 'Content')}
 			</f:link.action>
 			<f:if condition="{sites}">

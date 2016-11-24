@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Tests\Unit\Service;
+namespace Neos\Neos\Tests\Unit\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,13 +13,13 @@ namespace TYPO3\Neos\Tests\Unit\Service;
 
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\Neos\Service\HtmlAugmenter;
-use TYPO3\Neos\Domain\Service\ContentContext;
+use Neos\Neos\Service\HtmlAugmenter;
+use Neos\Neos\Domain\Service\ContentContext;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Service\AuthorizationService;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TypoScript\Core\Runtime;
-use TYPO3\Neos\Service\ContentElementEditableService;
+use Neos\Neos\Service\ContentElementEditableService;
 
 /**
  * Test for the ContentElementEditableService
@@ -86,7 +86,7 @@ class ContentElementEditableServiceTest extends UnitTestCase
         $this->inject($this->contentElementEditableService, 'htmlAugmenter', $this->mockHtmlAugmenter);
 
         $this->mockTsRuntime = $this->getMockBuilder(\TYPO3\TypoScript\Core\Runtime::class)->disableOriginalConstructor()->getMock();
-        $this->mockContentContext = $this->getMockBuilder(\TYPO3\Neos\Domain\Service\ContentContext::class)->disableOriginalConstructor()->getMock();
+        $this->mockContentContext = $this->getMockBuilder(\Neos\Neos\Domain\Service\ContentContext::class)->disableOriginalConstructor()->getMock();
 
         $this->mockNode = $this->getMockBuilder(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::class)->getMock();
         $this->mockNode->expects($this->any())->method('getContext')->will($this->returnValue($this->mockContentContext));
@@ -112,7 +112,7 @@ class ContentElementEditableServiceTest extends UnitTestCase
     public function wrapContentPropertyDoesNotAddEditingMetaDataAttributesIfUserHasNoAccessToBackend()
     {
         $this->mockContentContext->expects($this->atLeastOnce())->method('getWorkspaceName')->will($this->returnValue('not-live'));
-        $this->mockPrivilegeManager->expects($this->atLeastOnce())->method('isPrivilegeTargetGranted')->with('TYPO3.Neos:Backend.GeneralAccess')->will($this->returnValue(false));
+        $this->mockPrivilegeManager->expects($this->atLeastOnce())->method('isPrivilegeTargetGranted')->with('Neos.Neos:Backend.GeneralAccess')->will($this->returnValue(false));
         $this->mockHtmlAugmenter->expects($this->never())->method('addAttributes');
         $this->contentElementEditableService->wrapContentProperty($this->mockNode, 'someProperty', '<div>someRenderedPropertyValue</div>');
     }
@@ -123,7 +123,7 @@ class ContentElementEditableServiceTest extends UnitTestCase
     public function wrapContentPropertyAddsEditingMetaDataAttributesIfInUserWorkspaceAndUserHasAccessToBackendAndEditNodePrivilegeIsGranted()
     {
         $this->mockContentContext->expects($this->atLeastOnce())->method('getWorkspaceName')->will($this->returnValue('not-live'));
-        $this->mockPrivilegeManager->expects($this->atLeastOnce())->method('isPrivilegeTargetGranted')->with('TYPO3.Neos:Backend.GeneralAccess')->will($this->returnValue(true));
+        $this->mockPrivilegeManager->expects($this->atLeastOnce())->method('isPrivilegeTargetGranted')->with('Neos.Neos:Backend.GeneralAccess')->will($this->returnValue(true));
         $this->mockNodeAuthorizationService->expects($this->atLeastOnce())->method('isGrantedToEditNode')->will($this->returnValue(true));
         $this->mockHtmlAugmenter->expects($this->atLeastOnce())->method('addAttributes');
         $this->contentElementEditableService->wrapContentProperty($this->mockNode, 'someProperty', '<div>someRenderedPropertyValue</div>');
@@ -135,7 +135,7 @@ class ContentElementEditableServiceTest extends UnitTestCase
     public function wrapContentPropertyDoesNotAddEditingMetaDataIfEditNodePrivilegeIsNotGranted()
     {
         $this->mockContentContext->expects($this->atLeastOnce())->method('getWorkspaceName')->will($this->returnValue('not-live'));
-        $this->mockPrivilegeManager->expects($this->atLeastOnce())->method('isPrivilegeTargetGranted')->with('TYPO3.Neos:Backend.GeneralAccess')->will($this->returnValue(true));
+        $this->mockPrivilegeManager->expects($this->atLeastOnce())->method('isPrivilegeTargetGranted')->with('Neos.Neos:Backend.GeneralAccess')->will($this->returnValue(true));
         $this->mockNodeAuthorizationService->expects($this->atLeastOnce())->method('isGrantedToEditNode')->will($this->returnValue(false));
         $this->mockHtmlAugmenter->expects($this->never())->method('addAttributes');
         $this->contentElementEditableService->wrapContentProperty($this->mockNode, 'someProperty', '<div>someRenderedPropertyValue</div>');

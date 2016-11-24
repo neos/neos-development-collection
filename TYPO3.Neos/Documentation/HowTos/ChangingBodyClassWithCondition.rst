@@ -27,6 +27,6 @@ TypoScript code::
 
     page {
         bodyTag {
-            attributes.class = ${q(node).filter('[instanceof TYPO3.Neos:Page]') != '' ? 'is-page' : ''}
+            attributes.class = ${q(node).filter('[instanceof Neos.Neos:Page]') != '' ? 'is-page' : ''}
         }
     }

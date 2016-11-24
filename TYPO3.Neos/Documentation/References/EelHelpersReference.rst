@@ -789,7 +789,7 @@ Some Functional Programming Array helpers for Eel contexts
 
 These helpers are *WORK IN PROGRESS* and *NOT STABLE YET*
 
-Implemented in: ``TYPO3\Neos\TypoScript\Helper\ArrayHelper``
+Implemented in: ``Neos\Neos\TypoScript\Helper\ArrayHelper``
 
 Neos.Array.filter(set, filterProperty)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -833,7 +833,7 @@ Neos.Caching
 
 Caching helper to make cache tag generation easier.
 
-Implemented in: ``TYPO3\Neos\TypoScript\Helper\CachingHelper``
+Implemented in: ``Neos\Neos\TypoScript\Helper\CachingHelper``
 
 Neos.Caching.descendantOfTag(nodes)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -882,7 +882,7 @@ Neos.Link
 
 Eel helper for the linking service
 
-Implemented in: ``TYPO3\Neos\TypoScript\Helper\LinkHelper``
+Implemented in: ``Neos\Neos\TypoScript\Helper\LinkHelper``
 
 Neos.Link.convertUriToObject(uri, contextNode)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -934,7 +934,7 @@ Neos.Node
 
 Eel helper for TYPO3CR Nodes
 
-Implemented in: ``TYPO3\Neos\TypoScript\Helper\NodeHelper``
+Implemented in: ``Neos\Neos\TypoScript\Helper\NodeHelper``
 
 Neos.Node.nearestContentCollection(node, nodePath)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -961,7 +961,7 @@ Render Content Dimension Names, Node Labels
 
 These helpers are *WORK IN PROGRESS* and *NOT STABLE YET*
 
-Implemented in: ``TYPO3\Neos\TypoScript\Helper\RenderingHelper``
+Implemented in: ``Neos\Neos\TypoScript\Helper\RenderingHelper``
 
 Neos.Rendering.injectConfigurationManager(configurationManager)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos;
+namespace Neos\Neos;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -18,14 +18,14 @@ use Neos\Flow\Mvc\Routing\RouterCachingService;
 use Neos\Flow\Package\Package as BasePackage;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Media\Domain\Service\AssetService;
-use TYPO3\Neos\Domain\Model\Site;
-use TYPO3\Neos\Domain\Service\SiteImportService;
-use TYPO3\Neos\Domain\Service\SiteService;
-use TYPO3\Neos\EventLog\Integrations\TYPO3CRIntegrationService;
-use TYPO3\Neos\Routing\Cache\RouteCacheFlusher;
-use TYPO3\Neos\Service\PublishingService;
-use TYPO3\Neos\TypoScript\Cache\ContentCacheFlusher;
-use TYPO3\Neos\Utility\NodeUriPathSegmentGenerator;
+use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Service\SiteImportService;
+use Neos\Neos\Domain\Service\SiteService;
+use Neos\Neos\EventLog\Integrations\TYPO3CRIntegrationService;
+use Neos\Neos\Routing\Cache\RouteCacheFlusher;
+use Neos\Neos\Service\PublishingService;
+use Neos\Neos\TypoScript\Cache\ContentCacheFlusher;
+use Neos\Neos\Utility\NodeUriPathSegmentGenerator;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;

@@ -2,8 +2,8 @@
 # This represents a View that is always bound to a master Plugin
 # Usually you won't need to extend this
 #
-prototype(TYPO3.Neos:PluginView) >
-prototype(TYPO3.Neos:PluginView) < prototype(TYPO3.Neos:Content) {
+prototype(Neos.Neos:PluginView) >
+prototype(Neos.Neos:PluginView) < prototype(Neos.Neos:Content) {
 	@class = 'TYPO3\\Neos\\TypoScript\\PluginViewImplementation'
 	@cache {
 		mode = 'uncached'

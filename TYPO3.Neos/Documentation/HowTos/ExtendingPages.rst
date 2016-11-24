@@ -2,12 +2,12 @@
 Extending the Page
 ==================
 
-In Neos the page is a simple Node Type named TYPO3.Neos:Page, you can directly extend this Node Type to add specific
+In Neos the page is a simple Node Type named Neos.Neos:Page, you can directly extend this Node Type to add specific
 properties. Below you will find a simple example for adding a page background image:
 
 Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
 
-	'TYPO3.Neos.NodeTypes:Page':
+	'Neos.Neos.NodeTypes:Page':
 	  ui:
 	    inspector:
 	      groups:
@@ -26,12 +26,12 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
 
 With this configuration, when you click on the page, you will see the Image editor in the Inspector.
 
-To access the backgroundImage in your page template you can also modify the TYPO3.Neos:Page TypoScript object, like
+To access the backgroundImage in your page template you can also modify the Neos.Neos:Page TypoScript object, like
 in the below example:
 
 TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/Root.ts2) ::
 
-	prototype(TYPO3.Neos:Page) {
+	prototype(Neos.Neos:Page) {
 		backgroundImage = ${q(node).property('backgroundImage')}
 	}
 

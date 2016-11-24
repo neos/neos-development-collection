@@ -38,7 +38,7 @@ define(
 		template: Ember.Handlebars.compile(template),
 		controller: NavigatePanelController,
 		nodeSelection: NodeSelection,
-		baseNodeType: '!TYPO3.Neos:Document',
+		baseNodeType: '!Neos.Neos:Document',
 		treeSelector: '#neos-context-structure-tree',
 		desiredNewPosition: 'inside',
 		desiredPastePosition: 'inside',
@@ -53,7 +53,7 @@ define(
 			}
 
 			if (types) {
-				var contentTypes = NodeTypeService.getSubNodeTypes('TYPO3.Neos:Content'),
+				var contentTypes = NodeTypeService.getSubNodeTypes('Neos.Neos:Content'),
 					contentTypesArray = Object.keys(contentTypes),
 					filteredTypes = types.filter(function(n) {
 						return contentTypesArray.indexOf(n) != -1;

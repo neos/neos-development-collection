@@ -269,7 +269,7 @@ Let the fun begin
 Now you should already be able to make the documentation available in the browser.
 Go into the following folder from where you cloned the Neos-Collection:
 
-*cd /neos-development-collection/TYPO3.Neos/Documentation/*
+*cd /neos-development-collection/Neos.Neos/Documentation/*
 
 
 And then run the following command:
@@ -291,7 +291,7 @@ If everything works as planed, you should now see a line like this in the consol
 The Url served here is, as long as you keep the process running, live reloaded when the files are changed.
 Just open the Url in your Browser, you should see the whole Documentation served by your local machine.
 Now try to open a file in the Neos-Collection eg. the file you are reading right now is located here:
-*/neos-development-collection/TYPO3.Neos/Documentation/Contribute/Documentation/BeginnersGuide.rst*
+*/neos-development-collection/Neos.Neos/Documentation/Contribute/Documentation/BeginnersGuide.rst*
 
 .. figure:: Images/Sphinx_Browser_view.png
   :alt: Sphinx browser view

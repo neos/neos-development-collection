@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Tests\Unit\Service;
+namespace Neos\Neos\Tests\Unit\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,8 +12,8 @@ namespace TYPO3\Neos\Tests\Unit\Service;
  */
 
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\Neos\Exception;
-use TYPO3\Neos\Service\HtmlAugmenter;
+use Neos\Neos\Exception;
+use Neos\Neos\Service\HtmlAugmenter;
 
 /**
  * Testcase for the HTML Augmenter
@@ -247,7 +247,7 @@ class HtmlAugmenterTest extends UnitTestCase
      * @param array $exclusiveAttributes
      * @test
      * @dataProvider invalidAttributesDataProvider
-     * @expectedException \TYPO3\Neos\Exception
+     * @expectedException \Neos\Neos\Exception
      */
     public function invalidAttributesTests($html, array $attributes, $fallbackTagName, $exclusiveAttributes)
     {

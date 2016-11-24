@@ -3,7 +3,7 @@
 # Used as processor this adds metadata attributes to the corresponding TypoScript object
 # This is used to render required data-node-* attributes to content elements in the backend
 #
-prototype(TYPO3.Neos:ContentElementWrapping) {
+prototype(Neos.Neos:ContentElementWrapping) {
 	@class = 'TYPO3\\Neos\\TypoScript\\ContentElementWrappingImplementation'
 	node = ${node}
 	value = ${value}

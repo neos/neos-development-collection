@@ -1,5 +1,5 @@
 #                                                                        #
-# Default subroutes configuration for the TYPO3.Neos package             #
+# Default subroutes configuration for the Neos.Neos package             #
 #                                                                        #
 
 ##
@@ -20,13 +20,13 @@
   name:  'Authentication'
   uriPattern: 'neos/<AuthenticationSubRoutes>'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@controller': 'Login'
     '@action':     'index'
     '@format':     'html'
   subRoutes:
     'AuthenticationSubRoutes':
-      package: 'TYPO3.Neos'
+      package: 'Neos.Neos'
       suffix:  'Authentication'
 
 ##
@@ -36,12 +36,12 @@
   name:  'Backend'
   uriPattern: 'neos/<BackendSubRoutes>'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@action':     'index'
     '@format':     'html'
   subRoutes:
     'BackendSubRoutes':
-      package: 'TYPO3.Neos'
+      package: 'Neos.Neos'
       suffix:  'Backend'
 
 ##
@@ -51,11 +51,11 @@
   name:  'Service'
   uriPattern: 'neos/service/<ServiceSubRoutes>'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@action':     'index'
   subRoutes:
     'ServiceSubRoutes':
-      package: 'TYPO3.Neos'
+      package: 'Neos.Neos'
       suffix:  'Service'
 
 ##
@@ -65,16 +65,16 @@
   name:  'Frontend'
   uriPattern: '<FrontendSubRoutes>'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@controller': 'Frontend\Node'
     '@action':     'show'
     '@format':     'html'
   routeParts:
     'node':
-      handler:     'TYPO3\Neos\Routing\FrontendNodeRoutePartHandlerInterface'
+      handler:     'Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface'
   subRoutes:
     'FrontendSubRoutes':
-      package: 'TYPO3.Neos'
+      package: 'Neos.Neos'
       suffix:  'Frontend'
       variables:
         'defaultUriSuffix': '<defaultUriSuffix>'

@@ -64,12 +64,12 @@ Example virtual host configuration for Apache::
 Configure Behat
 ---------------
 
-The Behat tests for Neos are shipped inside the TYPO3.Neos package in the folder `Tests/Behavior`. Behat uses a
+The Behat tests for Neos are shipped inside the Neos.Neos package in the folder `Tests/Behavior`. Behat uses a
 configuration file distributed with Neos, `behat.yml.dist`, or a local version, `behat.yml`. To run the tests, Behat
 needs a base URI pointing to the special virtual host running with the `Development/Behat` context. To set a custom
 base URI the default file should be copied and customized::
 
-	cd Packages/Application/TYPO3.Neos/Tests/Behavior
+	cd Packages/Application/Neos.Neos/Tests/Behavior
 	cp behat.yml.dist behat.yml
 	# Edit file behat.yml
 
@@ -104,7 +104,7 @@ Running Behat tests
 Behat tests can be run from the Flow root folder with the `bin/behat` command by specifying the Behat configuration
 file::
 
-	bin/behat -c Packages/Application/TYPO3.Neos/Tests/Behavior/behat.yml
+	bin/behat -c Packages/Application/Neos.Neos/Tests/Behavior/behat.yml
 
 In case the executable file `bin/behat` is missing, create a symlink by running the following command in `FLOW_ROOT/bin`::
 
@@ -172,12 +172,12 @@ Run Behat tests
 
 A test with Internet Explorer 10 on Windows8 would look like this then::
 
-	bin/behat -c Packages/Application/TYPO3.Neos/Tests/Behavior/behat.yml --profile windows8-ie-10
+	bin/behat -c Packages/Application/Neos.Neos/Tests/Behavior/behat.yml --profile windows8-ie-10
 
 You might just want to run the tests that need javascript on different browsers (all other tests won't use a browser
 anyways). Limit the tests to the @javascript tagged to do so::
 
-	bin/behat -c Packages/Application/TYPO3.Neos/Tests/Behavior/behat.yml --tags javascript --profile windows8-ie-10
+	bin/behat -c Packages/Application/Neos.Neos/Tests/Behavior/behat.yml --tags javascript --profile windows8-ie-10
 
 .. note::
 

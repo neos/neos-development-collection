@@ -1,11 +1,11 @@
 # This is the base Document TypoScript object
 # It should be extended by all TypoScript objects which render documents or are based on node types extending
-# TYPO3.Neos:Document.
+# Neos.Neos:Document.
 #
 # Note: This object inherits from TYPO3.TypoScript:Template because most Document types are expected to contain a
 # Fluid template. If a Document-based TypoScript object should not render a template you should still extend this
 # prototype and override the @class property.
 #
-prototype(TYPO3.Neos:Document) < prototype(TYPO3.TypoScript:Template) {
+prototype(Neos.Neos:Document) < prototype(TYPO3.TypoScript:Template) {
 	node = ${node}
 }

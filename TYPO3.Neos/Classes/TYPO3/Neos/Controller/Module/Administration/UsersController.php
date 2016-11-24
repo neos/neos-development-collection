@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Controller\Module\Administration;
+namespace Neos\Neos\Controller\Module\Administration;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -19,9 +19,9 @@ use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Policy\PolicyService;
-use TYPO3\Neos\Controller\Module\AbstractModuleController;
-use TYPO3\Neos\Domain\Model\User;
-use TYPO3\Neos\Domain\Service\UserService;
+use Neos\Neos\Controller\Module\AbstractModuleController;
+use Neos\Neos\Domain\Model\User;
+use Neos\Neos\Domain\Service\UserService;
 use Neos\Party\Domain\Model\ElectronicAddress;
 
 /**
@@ -124,8 +124,8 @@ class UsersController extends AbstractModuleController
      * @param User $user The user to create
      * @param array $roleIdentifiers A list of roles (role identifiers) to assign to the new user
      * @Flow\Validate(argumentName="username", type="\Neos\Flow\Validation\Validator\NotEmptyValidator")
-     * @Flow\Validate(argumentName="username", type="\TYPO3\Neos\Validation\Validator\UserDoesNotExistValidator")
-     * @Flow\Validate(argumentName="password", type="\TYPO3\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=0, "minimum"=1, "maximum"=255 })
+     * @Flow\Validate(argumentName="username", type="\Neos\Neos\Validation\Validator\UserDoesNotExistValidator")
+     * @Flow\Validate(argumentName="password", type="\Neos\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=0, "minimum"=1, "maximum"=255 })
      * @return void
      */
     public function createAction($username, array $password, User $user, array $roleIdentifiers)
@@ -202,7 +202,7 @@ class UsersController extends AbstractModuleController
      * @param Account $account The account to update
      * @param array $roleIdentifiers A possibly updated list of roles for the user's primary account
      * @param array $password Expects an array in the format array('<password>', '<password confirmation>')
-     * @Flow\Validate(argumentName="password", type="\TYPO3\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=1, "minimum"=1, "maximum"=255 })
+     * @Flow\Validate(argumentName="password", type="\Neos\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=1, "minimum"=1, "maximum"=255 })
      * @return void
      */
     public function updateAccountAction(Account $account, array $roleIdentifiers, array $password = array())
@@ -213,7 +213,7 @@ class UsersController extends AbstractModuleController
             foreach ($roleIdentifiers as $roleIdentifier) {
                 $roles[$roleIdentifier] = $this->policyService->getRole($roleIdentifier);
             }
-            if (!$this->privilegeManager->isPrivilegeTargetGrantedForRoles($roles, 'TYPO3.Neos:Backend.Module.Administration.Users')) {
+            if (!$this->privilegeManager->isPrivilegeTargetGrantedForRoles($roles, 'Neos.Neos:Backend.Module.Administration.Users')) {
                 $this->addFlashMessage('With the selected roles the currently logged in user wouldn\'t have access to this module any longer. Please adjust the assigned roles!', 'Don\'t lock yourself out', Message::SEVERITY_WARNING, array(), 1416501197);
                 $this->forward('edit', null, null, array('user' => $this->currentUser));
             }
@@ -287,7 +287,7 @@ class UsersController extends AbstractModuleController
         $electronicAddressUsageTypes = array();
         $translationHelper = new TranslationHelper();
         foreach ($electronicAddress->getAvailableUsageTypes() as $type) {
-            $electronicAddressUsageTypes[$type] = $translationHelper->translate('users.electronicAddress.usage.type.' . $type, $type, [], 'Modules', 'TYPO3.Neos');
+            $electronicAddressUsageTypes[$type] = $translationHelper->translate('users.electronicAddress.usage.type.' . $type, $type, [], 'Modules', 'Neos.Neos');
         }
         array_unshift($electronicAddressUsageTypes, '');
         $this->view->assignMultiple(array(

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Setup\Step;
+namespace Neos\Neos\Setup\Step;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -119,7 +119,7 @@ class NeosSpecificRequirementsStep extends AbstractStep
         $unsupportedFormats = array();
 
         foreach (array('jpg', 'gif', 'png') as $imageFormat) {
-            $imagePath = Files::concatenatePaths(array($this->packageManager->getPackage('TYPO3.Neos')->getResourcesPath(), 'Private/Installer/TestImages/Test.' . $imageFormat));
+            $imagePath = Files::concatenatePaths(array($this->packageManager->getPackage('Neos.Neos')->getResourcesPath(), 'Private/Installer/TestImages/Test.' . $imageFormat));
 
             try {
                 $imagine->open($imagePath);

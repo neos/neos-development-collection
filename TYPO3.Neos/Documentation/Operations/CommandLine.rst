@@ -33,7 +33,7 @@ Here is an example:
   ARGUMENTS:
     --username           The username of the user
     --role               Role to be added to the user, for example
-                         "TYPO3.Neos:Administrator" or just "Administrator
+                         "Neos.Neos:Administrator" or just "Administrator
 
   OPTIONS:
     --authentication-provider Name of the authentication provider to use. Example:
@@ -43,7 +43,7 @@ Here is an example:
     This command allows for adding a specific role to an existing user.
 
     Roles can optionally be specified as a comma separated list. For all roles provided by Neos, the role
-    namespace "TYPO3.Neos:" can be omitted.
+    namespace "Neos.Neos:" can be omitted.
 
     If an authentication provider was specified, the user will be determined by an account identified by "username"
     related to the given provider. However, once a user has been found, the new role will be added to all
@@ -56,7 +56,7 @@ These commands allow to manage users. To create an user with administrative priv
 
 .. code-block:: shell
 
-  ./flow user:create john@doe.com pazzw0rd John Doe --roles TYPO3.Neos:Administrator
+  ./flow user:create john@doe.com pazzw0rd John Doe --roles Neos.Neos:Administrator
 
 =======================================  ========================================
 Command                                  Description

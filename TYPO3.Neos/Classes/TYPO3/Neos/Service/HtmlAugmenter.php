@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Service;
+namespace Neos\Neos\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,7 @@ namespace TYPO3\Neos\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use TYPO3\Neos\Exception;
+use Neos\Neos\Exception;
 
 /**
  * A tool that can augment HTML for example by adding arbitrary attributes.

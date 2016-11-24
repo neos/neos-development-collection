@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Tests\Functional\Domain\Service;
+namespace Neos\Neos\Tests\Functional\Domain\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,9 +13,9 @@ namespace TYPO3\Neos\Tests\Functional\Domain\Service;
 
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Tests\FunctionalTestCase;
-use TYPO3\Neos\Domain\Model\Site;
-use TYPO3\Neos\Domain\Service\SiteExportService;
-use TYPO3\Neos\Domain\Service\SiteImportService;
+use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Service\SiteExportService;
+use Neos\Neos\Domain\Service\SiteImportService;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 
 /**
@@ -96,8 +96,8 @@ class SiteImportExportServiceTest extends FunctionalTestCase
     protected function markSkippedIfNodeTypesPackageIsNotInstalled()
     {
         $packageManager = $this->objectManager->get(PackageManagerInterface::class);
-        if (!$packageManager->isPackageActive('TYPO3.Neos.NodeTypes')) {
-            $this->markTestSkipped('This test needs the TYPO3.Neos.NodeTypes package.');
+        if (!$packageManager->isPackageActive('Neos.Neos.NodeTypes')) {
+            $this->markTestSkipped('This test needs the Neos.Neos.NodeTypes package.');
         }
     }
 }

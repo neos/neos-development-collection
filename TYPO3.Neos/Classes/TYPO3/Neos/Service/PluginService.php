@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Service;
+namespace Neos\Neos\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,10 +13,10 @@ namespace TYPO3\Neos\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context;
-use TYPO3\Neos;
-use TYPO3\Neos\Domain\Model\PluginViewDefinition;
-use TYPO3\Neos\Domain\Service\ContentContext;
-use TYPO3\Neos\Domain\Service\ContentContextFactory;
+use Neos\Neos;
+use Neos\Neos\Domain\Model\PluginViewDefinition;
+use Neos\Neos\Domain\Service\ContentContext;
+use Neos\Neos\Domain\Service\ContentContextFactory;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
@@ -74,7 +74,7 @@ class PluginService
      */
     public function getPluginNodes(ContentContext $context)
     {
-        $pluginNodeTypes = $this->nodeTypeManager->getSubNodeTypes('TYPO3.Neos:Plugin', false);
+        $pluginNodeTypes = $this->nodeTypeManager->getSubNodeTypes('Neos.Neos:Plugin', false);
         return $this->getNodes(array_keys($pluginNodeTypes), $context);
     }
 
@@ -152,7 +152,7 @@ class PluginService
     {
         $viewDefinition = $this->getPluginViewDefinitionByAction($controllerObjectName, $actionName);
 
-        if ($currentNode->getNodeType()->isOfType('TYPO3.Neos:PluginView')) {
+        if ($currentNode->getNodeType()->isOfType('Neos.Neos:PluginView')) {
             $masterPluginNode = $this->getPluginViewNodeByMasterPlugin($currentNode, $viewDefinition->getName());
         } else {
             $masterPluginNode = $currentNode;
@@ -178,7 +178,7 @@ class PluginService
      */
     public function getPluginViewDefinitionByAction($controllerObjectName, $actionName)
     {
-        $pluginNodeTypes = $this->nodeTypeManager->getSubNodeTypes('TYPO3.Neos:Plugin', false);
+        $pluginNodeTypes = $this->nodeTypeManager->getSubNodeTypes('Neos.Neos:Plugin', false);
 
         $matchingPluginViewDefinitions = [];
         foreach ($pluginNodeTypes as $pluginNodeType) {
@@ -209,7 +209,7 @@ class PluginService
     {
         /** @var $context ContentContext */
         $context = $node->getContext();
-        foreach ($this->getNodes(['TYPO3.Neos:PluginView'], $context) as $pluginViewNode) {
+        foreach ($this->getNodes(['Neos.Neos:PluginView'], $context) as $pluginViewNode) {
             /** @var NodeInterface $pluginViewNode */
             if ($pluginViewNode->isRemoved()) {
                 continue;

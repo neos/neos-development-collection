@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Tests\Unit\Routing;
+namespace Neos\Neos\Tests\Unit\Routing;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,14 +14,14 @@ namespace TYPO3\Neos\Tests\Unit\Routing;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\Neos\Domain\Model\Domain;
-use TYPO3\Neos\Domain\Model\Site;
-use TYPO3\Neos\Domain\Repository\DomainRepository;
-use TYPO3\Neos\Domain\Repository\SiteRepository;
-use TYPO3\Neos\Domain\Service\ConfigurationContentDimensionPresetSource;
-use TYPO3\Neos\Domain\Service\ContentContext;
-use TYPO3\Neos\Routing\Exception\NoHomepageException;
-use TYPO3\Neos\Routing\FrontendNodeRoutePartHandler;
+use Neos\Neos\Domain\Model\Domain;
+use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Repository\DomainRepository;
+use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource;
+use Neos\Neos\Domain\Service\ContentContext;
+use Neos\Neos\Routing\Exception\NoHomepageException;
+use Neos\Neos\Routing\FrontendNodeRoutePartHandler;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
@@ -166,7 +166,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
      * If convertRequestPathToNode() throws any exception and the request path is '' a "missing homepage" message should appear.
      *
      * @test
-     * @expectedException \TYPO3\Neos\Routing\Exception\NoHomepageException
+     * @expectedException \Neos\Neos\Routing\Exception\NoHomepageException
      */
     public function matchThrowsAnExceptionIfNoHomepageExists()
     {
@@ -575,8 +575,8 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockContext->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
         $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
 
-        // The important bit: sub node is not a document but TYPO3.Neos:Content
-        $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'some-content', 'TYPO3.Neos:Content');
+        // The important bit: sub node is not a document but Neos.Neos:Content
+        $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'some-content', 'Neos.Neos:Content');
         $mockSubNode->mockProperties['uriPathSegment'] = 'some-content';
 
         $mockContext->expects($this->any())->method('getNode')->will($this->returnCallback(function ($nodePath) use ($mockSubNode) {
@@ -837,7 +837,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
      * @param string $nodeTypeName
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    protected function buildNode(ContentContext $mockContext, $nodeName, $nodeTypeName = 'TYPO3.Neos:Document')
+    protected function buildNode(ContentContext $mockContext, $nodeName, $nodeTypeName = 'Neos.Neos:Document')
     {
         $mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
         $mockNodeType->expects($this->any())->method('isOfType')->will($this->returnCallback(function ($expectedNodeTypeName) use ($nodeTypeName) {
@@ -912,7 +912,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
      * @param string $nodeName
      * @return NodeInterface
      */
-    protected function buildSubNode($mockParentNode, $nodeName, $nodeTypeName = 'TYPO3.Neos:Document')
+    protected function buildSubNode($mockParentNode, $nodeName, $nodeTypeName = 'Neos.Neos:Document')
     {
         $mockNode = $this->buildNode($mockParentNode->getContext(), $nodeName, $nodeTypeName);
         $mockNode->mockParentNode = $mockParentNode;

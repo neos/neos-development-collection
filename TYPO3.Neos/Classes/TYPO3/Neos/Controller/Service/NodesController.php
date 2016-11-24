@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Controller\Service;
+namespace Neos\Neos\Controller\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -16,13 +16,13 @@ use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Property\Exception;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\FluidAdaptor\View\TemplateView;
-use TYPO3\Neos\Controller\BackendUserTranslationTrait;
-use TYPO3\Neos\Controller\CreateContentContextTrait;
-use TYPO3\Neos\Domain\Service\ContentContext;
-use TYPO3\Neos\Domain\Service\NodeSearchServiceInterface;
-use TYPO3\Neos\Domain\Service\SiteService;
-use TYPO3\Neos\View\Service\NodeJsonView;
-use TYPO3\Neos\Service\Mapping\NodePropertyConverterService;
+use Neos\Neos\Controller\BackendUserTranslationTrait;
+use Neos\Neos\Controller\CreateContentContextTrait;
+use Neos\Neos\Domain\Service\ContentContext;
+use Neos\Neos\Domain\Service\NodeSearchServiceInterface;
+use Neos\Neos\Domain\Service\SiteService;
+use Neos\Neos\View\Service\NodeJsonView;
+use Neos\Neos\Service\Mapping\NodePropertyConverterService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
@@ -92,7 +92,7 @@ class NodesController extends ActionController
      * @param NodeInterface $contextNode a node to use as context for the search
      * @return string
      */
-    public function indexAction($searchTerm = '', array $nodeIdentifiers = array(), $workspaceName = 'live', array $dimensions = array(), array $nodeTypes = array('TYPO3.Neos:Document'), NodeInterface $contextNode = null)
+    public function indexAction($searchTerm = '', array $nodeIdentifiers = array(), $workspaceName = 'live', array $dimensions = array(), array $nodeTypes = array('Neos.Neos:Document'), NodeInterface $contextNode = null)
     {
         $searchableNodeTypeNames = array();
         foreach ($nodeTypes as $nodeTypeName) {

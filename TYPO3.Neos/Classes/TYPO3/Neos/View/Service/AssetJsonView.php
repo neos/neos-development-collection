@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\View\Service;
+namespace Neos\Neos\View\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -17,7 +17,7 @@ use Neos\Flow\Mvc\View\JsonView;
 /**
  * A view specialised on a JSON representation of Assets.
  *
- * This view is used by the service controllers in TYPO3\Neos\Controller\Service\
+ * This view is used by the service controllers in Neos\Neos\Controller\Service\
  *
  * @Flow\Scope("prototype")
  */

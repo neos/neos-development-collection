@@ -2,7 +2,7 @@
 #
 # replaces all occurrences of "node://<UUID>" by proper URIs.
 #
-prototype(TYPO3.Neos:ConvertUris) {
+prototype(Neos.Neos:ConvertUris) {
 	@class = 'TYPO3\\Neos\\TypoScript\\ConvertUrisImplementation'
 	value = ${value}
 	node = ${node}

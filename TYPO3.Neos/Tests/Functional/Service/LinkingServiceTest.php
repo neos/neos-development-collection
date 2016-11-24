@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Tests\Functional\Service;
+namespace Neos\Neos\Tests\Functional\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -19,13 +19,13 @@ use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Tests\FunctionalTestRequestHandler;
 use Neos\Media\TypeConverter\AssetInterfaceConverter;
-use TYPO3\Neos\Domain\Repository\DomainRepository;
-use TYPO3\Neos\Domain\Repository\SiteRepository;
-use TYPO3\Neos\Domain\Service\ContentContext;
-use TYPO3\Neos\Domain\Service\SiteImportService;
-use TYPO3\Neos\Exception as NeosException;
-use TYPO3\Neos\Exception;
-use TYPO3\Neos\Service\LinkingService;
+use Neos\Neos\Domain\Repository\DomainRepository;
+use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\Service\ContentContext;
+use Neos\Neos\Domain\Service\SiteImportService;
+use Neos\Neos\Exception as NeosException;
+use Neos\Neos\Exception;
+use Neos\Neos\Service\LinkingService;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;

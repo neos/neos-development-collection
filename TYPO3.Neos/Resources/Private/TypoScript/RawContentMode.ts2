@@ -1,16 +1,16 @@
-prototype(TYPO3.Neos:RawContent) >
-prototype(TYPO3.Neos:RawContent) < prototype(TYPO3.TypoScript:Template) {
-	templatePath = 'resource://TYPO3.Neos/Private/Templates/RawContentMode/TypoScriptObjects/GeneralContentCollectionRendering.html'
+prototype(Neos.Neos:RawContent) >
+prototype(Neos.Neos:RawContent) < prototype(TYPO3.TypoScript:Template) {
+	templatePath = 'resource://Neos.Neos/Private/Templates/RawContentMode/TypoScriptObjects/GeneralContentCollectionRendering.html'
 	columns = TYPO3.TypoScript:Collection {
-		collection = ${q(node).children('[instanceof TYPO3.Neos:ContentCollection]')}
+		collection = ${q(node).children('[instanceof Neos.Neos:ContentCollection]')}
 		itemName = 'node'
 		itemRenderer = TYPO3.TypoScript:Template {
-			templatePath = 'resource://TYPO3.Neos/Private/Templates/RawContentMode/TypoScriptObjects/ContentCollectionTemplate.html'
+			templatePath = 'resource://Neos.Neos/Private/Templates/RawContentMode/TypoScriptObjects/ContentCollectionTemplate.html'
 			node = ${node}
 			attributes = TYPO3.TypoScript:Attributes {
 				class = 'column'
 			}
-			columnContent = TYPO3.Neos:ContentCollection {
+			columnContent = Neos.Neos:ContentCollection {
 				nodePath = '.'
 			}
 
@@ -18,10 +18,10 @@ prototype(TYPO3.Neos:RawContent) < prototype(TYPO3.TypoScript:Template) {
 	}
 }
 
-rawContent = TYPO3.Neos:Page {
+rawContent = Neos.Neos:Page {
 	head {
 		stylesheets = TYPO3.TypoScript:Template {
-			templatePath = 'resource://TYPO3.Neos/Private/Templates/RawContentMode/Page/Default.html'
+			templatePath = 'resource://Neos.Neos/Private/Templates/RawContentMode/Page/Default.html'
 			sectionName = 'headerIncludes'
 		}
 	}
@@ -29,12 +29,12 @@ rawContent = TYPO3.Neos:Page {
 	bodyTag.attributes.class = 'neos-raw-content-mode'
 
 	body {
-		templatePath = 'resource://TYPO3.Neos/Private/Templates/RawContentMode/Page/Default.html'
+		templatePath = 'resource://Neos.Neos/Private/Templates/RawContentMode/Page/Default.html'
 		sectionName = 'body'
 
-		allContentCollections = TYPO3.Neos:PrimaryContent {
+		allContentCollections = Neos.Neos:PrimaryContent {
 			nodePath = '.'
-			default.renderer = TYPO3.Neos:RawContent
+			default.renderer = Neos.Neos:RawContent
 		}
 	}
 }

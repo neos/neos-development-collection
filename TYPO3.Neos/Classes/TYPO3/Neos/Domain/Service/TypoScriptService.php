@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Domain\Service;
+namespace Neos\Neos\Domain\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -115,7 +115,7 @@ class TypoScriptService
      */
     public function initializeObject()
     {
-        $this->typoScriptParser->setObjectTypeNamespace('default', 'TYPO3.Neos');
+        $this->typoScriptParser->setObjectTypeNamespace('default', 'Neos.Neos');
     }
 
     /**
@@ -137,7 +137,7 @@ class TypoScriptService
      *
      * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $startNode Node marking the starting point
      * @return array The merged object tree as of the given node
-     * @throws \TYPO3\Neos\Domain\Exception
+     * @throws \Neos\Neos\Domain\Exception
      */
     public function getMergedTypoScriptObjectTree(NodeInterface $startNode)
     {
@@ -199,18 +199,18 @@ class TypoScriptService
      *
      * @param NodeType $nodeType
      * @return string
-     * @throws \TYPO3\Neos\Domain\Exception
+     * @throws \Neos\Neos\Domain\Exception
      */
     protected function generateTypoScriptForNodeType(NodeType $nodeType)
     {
         if ($nodeType->hasConfiguration('options.fusion.prototypeGenerator') && $nodeType->getConfiguration('options.fusion.prototypeGenerator') !== null) {
             $generatorClassName = $nodeType->getConfiguration('options.fusion.prototypeGenerator');
             if (!class_exists($generatorClassName)) {
-                throw new \TYPO3\Neos\Domain\Exception('Fusion prototype-generator Class ' . $generatorClassName . ' does not exist');
+                throw new \Neos\Neos\Domain\Exception('Fusion prototype-generator Class ' . $generatorClassName . ' does not exist');
             }
             $generator = $this->objectManager->get($generatorClassName);
             if (!$generator instanceof DefaultPrototypeGeneratorInterface) {
-                throw new \TYPO3\Neos\Domain\Exception('Fusion prototype-generator Class ' . $generatorClassName . ' does not implement interface ' . DefaultPrototypeGeneratorInterface::class);
+                throw new \Neos\Neos\Domain\Exception('Fusion prototype-generator Class ' . $generatorClassName . ' does not implement interface ' . DefaultPrototypeGeneratorInterface::class);
             }
             return $generator->generate($nodeType);
         }

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Routing;
+namespace Neos\Neos\Routing;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -15,15 +15,15 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Mvc\Routing\DynamicRoutePart;
 use Neos\Flow\Security\Context;
-use TYPO3\Neos\Domain\Repository\DomainRepository;
-use TYPO3\Neos\Domain\Repository\SiteRepository;
-use TYPO3\Neos\Domain\Service\ContentContext;
-use TYPO3\Neos\Domain\Service\ContentContextFactory;
-use TYPO3\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
-use TYPO3\Neos\Domain\Service\SiteService;
-use TYPO3\Neos\Routing\Exception\InvalidDimensionPresetCombinationException;
-use TYPO3\Neos\Routing\Exception\InvalidRequestPathException;
-use TYPO3\Neos\Routing\Exception\NoSuchDimensionValueException;
+use Neos\Neos\Domain\Repository\DomainRepository;
+use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\Service\ContentContext;
+use Neos\Neos\Domain\Service\ContentContextFactory;
+use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
+use Neos\Neos\Domain\Service\SiteService;
+use Neos\Neos\Routing\Exception\InvalidDimensionPresetCombinationException;
+use Neos\Neos\Routing\Exception\InvalidRequestPathException;
+use Neos\Neos\Routing\Exception\NoSuchDimensionValueException;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 
@@ -152,11 +152,11 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      *
      * @param string $requestPath The request path, for example /the/node/path@some-workspace
      * @return NodeInterface
-     * @throws \TYPO3\Neos\Routing\Exception\NoWorkspaceException
-     * @throws \TYPO3\Neos\Routing\Exception\NoSiteException
-     * @throws \TYPO3\Neos\Routing\Exception\NoSuchNodeException
-     * @throws \TYPO3\Neos\Routing\Exception\NoSiteNodeException
-     * @throws \TYPO3\Neos\Routing\Exception\InvalidRequestPathException
+     * @throws \Neos\Neos\Routing\Exception\NoWorkspaceException
+     * @throws \Neos\Neos\Routing\Exception\NoSiteException
+     * @throws \Neos\Neos\Routing\Exception\NoSuchNodeException
+     * @throws \Neos\Neos\Routing\Exception\NoSiteNodeException
+     * @throws \Neos\Neos\Routing\Exception\InvalidRequestPathException
      */
     protected function convertRequestPathToNode($requestPath)
     {
@@ -230,7 +230,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             $contentContext = $node->getContext();
         }
 
-        if (!$node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
+        if (!$node->getNodeType()->isOfType('Neos.Neos:Document')) {
             return false;
         }
 
@@ -378,7 +378,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      *
      * @param NodeInterface $siteNode The site node, used as a starting point while traversing the tree
      * @param string $relativeRequestPath The request path, relative to the site's root path
-     * @throws \TYPO3\Neos\Routing\Exception\NoSuchNodeException
+     * @throws \Neos\Neos\Routing\Exception\NoSuchNodeException
      * @return string
      */
     protected function getRelativeNodePathByUriPathSegmentProperties(NodeInterface $siteNode, $relativeRequestPath)
@@ -388,7 +388,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 
         foreach (explode('/', $relativeRequestPath) as $pathSegment) {
             $foundNodeInThisSegment = false;
-            foreach ($node->getChildNodes('TYPO3.Neos:Document') as $node) {
+            foreach ($node->getChildNodes('Neos.Neos:Document') as $node) {
                 /** @var NodeInterface $node */
                 if ($node->getProperty('uriPathSegment') === $pathSegment) {
                     $relativeNodePathSegments[] = $node->getName();

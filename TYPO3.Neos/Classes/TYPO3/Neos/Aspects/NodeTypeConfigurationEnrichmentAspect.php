@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Aspects;
+namespace Neos\Neos\Aspects;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Utility\Arrays;
-use TYPO3\Neos\Exception;
+use Neos\Neos\Exception;
 
 /**
  * @Flow\Scope("singleton")
@@ -26,13 +26,13 @@ class NodeTypeConfigurationEnrichmentAspect
 
     /**
      * @var array
-     * @Flow\InjectConfiguration(package="TYPO3.Neos", path="userInterface.inspector.dataTypes")
+     * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.inspector.dataTypes")
      */
     protected $dataTypesDefaultConfiguration;
 
     /**
      * @var array
-     * @Flow\InjectConfiguration(package="TYPO3.Neos", path="userInterface.inspector.editors")
+     * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.inspector.editors")
      */
     protected $editorDefaultConfiguration;
 
@@ -204,7 +204,7 @@ class NodeTypeConfigurationEnrichmentAspect
         $editorName = $propertyConfiguration['ui']['inspector']['editor'];
 
         switch ($editorName) {
-            case 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor':
+            case 'Neos.Neos/Inspector/Editors/SelectBoxEditor':
                 if (isset($propertyConfiguration['ui']['inspector']['editorOptions']) && $this->shouldFetchTranslation($propertyConfiguration['ui']['inspector']['editorOptions'], 'placeholder')) {
                     $propertyConfiguration['ui']['inspector']['editorOptions']['placeholder'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'selectBoxEditor.placeholder');
                 }
@@ -221,12 +221,12 @@ class NodeTypeConfigurationEnrichmentAspect
                     }
                 }
                 break;
-            case 'TYPO3.Neos/Inspector/Editors/CodeEditor':
+            case 'Neos.Neos/Inspector/Editors/CodeEditor':
                 if ($this->shouldFetchTranslation($propertyConfiguration['ui']['inspector']['editorOptions'], 'buttonLabel')) {
                     $propertyConfiguration['ui']['inspector']['editorOptions']['buttonLabel'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'codeEditor.buttonLabel');
                 }
                 break;
-            case 'TYPO3.Neos/Inspector/Editors/TextFieldEditor':
+            case 'Neos.Neos/Inspector/Editors/TextFieldEditor':
                 if (isset($propertyConfiguration['ui']['inspector']['editorOptions']) && $this->shouldFetchTranslation($propertyConfiguration['ui']['inspector']['editorOptions'], 'placeholder')) {
                     $propertyConfiguration['ui']['inspector']['editorOptions']['placeholder'] = $this->getPropertyConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, 'textFieldEditor.placeholder');
                 }
@@ -334,8 +334,8 @@ class NodeTypeConfigurationEnrichmentAspect
     protected function generateNodeTypeLabelIdPrefix($nodeTypeName)
     {
         $nodeTypeNameParts = explode(':', $nodeTypeName, 2);
-        // in case the NodeType has just one section we default to 'TYPO3.Neos' as package as we don't have any further information.
-        $packageKey = isset($nodeTypeNameParts[1]) ? $nodeTypeNameParts[0] : 'TYPO3.Neos';
+        // in case the NodeType has just one section we default to 'Neos.Neos' as package as we don't have any further information.
+        $packageKey = isset($nodeTypeNameParts[1]) ? $nodeTypeNameParts[0] : 'Neos.Neos';
         $nodeTypeName = isset($nodeTypeNameParts[1]) ? $nodeTypeNameParts[1] : $nodeTypeNameParts[0];
 
         return sprintf('%s:%s:', $packageKey, 'NodeTypes.' . $nodeTypeName);
@@ -350,7 +350,7 @@ class NodeTypeConfigurationEnrichmentAspect
      */
     protected function splitIdentifier($id)
     {
-        $packageKey = 'TYPO3.Neos';
+        $packageKey = 'Neos.Neos';
         $source = 'Main';
         $idParts = explode(':', $id, 3);
         switch (count($idParts)) {

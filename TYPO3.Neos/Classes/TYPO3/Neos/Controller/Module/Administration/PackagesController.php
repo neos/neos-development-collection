@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Controller\Module\Administration;
+namespace Neos\Neos\Controller\Module\Administration;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -19,7 +19,7 @@ use Neos\Flow\Package;
 use Neos\Flow\Package\Exception\ProtectedPackageKeyException;
 use Neos\Flow\Package\Exception\UnknownPackageException;
 use Neos\Flow\Package\Exception;
-use TYPO3\Neos\Controller\Module\AbstractModuleController;
+use Neos\Neos\Controller\Module\AbstractModuleController;
 
 /**
  * The TYPO3 Package Management module controller

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Tests\Unit\Routing;
+namespace Neos\Neos\Tests\Unit\Routing;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,9 +11,9 @@ namespace TYPO3\Neos\Tests\Unit\Routing;
  * source code.
  */
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\Neos\Controller\Module\Administration\UsersController;
-use TYPO3\Neos\Controller\Module\AdministrationController;
-use TYPO3\Neos\Routing\BackendModuleRoutePartHandler;
+use Neos\Neos\Controller\Module\Administration\UsersController;
+use Neos\Neos\Controller\Module\AdministrationController;
+use Neos\Neos\Routing\BackendModuleRoutePartHandler;
 
 /**
  * Testcase for the Backend Module Route Part Handler

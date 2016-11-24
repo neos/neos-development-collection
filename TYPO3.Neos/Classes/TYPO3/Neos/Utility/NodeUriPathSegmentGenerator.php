@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Utility;
+namespace Neos\Neos\Utility;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -15,8 +15,8 @@ use Behat\Transliterator\Transliterator;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Locale;
-use TYPO3\Neos\Exception;
-use TYPO3\Neos\Service\TransliterationService;
+use Neos\Neos\Exception;
+use Neos\Neos\Service\TransliterationService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
@@ -42,13 +42,13 @@ class NodeUriPathSegmentGenerator
      */
     public static function setUniqueUriPathSegment(NodeInterface $node)
     {
-        if ($node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
+        if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
             $q = new FlowQuery(array($node));
             $q = $q->context(array('invisibleContentShown' => true, 'removedContentShown' => true, 'inaccessibleContentShown' => true));
 
             $possibleUriPathSegment = $initialUriPathSegment = !$node->hasProperty('uriPathSegment') ? $node->getName() : $node->getProperty('uriPathSegment');
             $i = 1;
-            while ($q->siblings('[instanceof TYPO3.Neos:Document][uriPathSegment="' . $possibleUriPathSegment . '"]')->count() > 0) {
+            while ($q->siblings('[instanceof Neos.Neos:Document][uriPathSegment="' . $possibleUriPathSegment . '"]')->count() > 0) {
                 $possibleUriPathSegment = $initialUriPathSegment . '-' . $i++;
             }
             $node->setProperty('uriPathSegment', $possibleUriPathSegment);

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Tests\Unit\TypoScript;
+namespace Neos\Neos\Tests\Unit\TypoScript;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -17,9 +17,9 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\Neos\Domain\Exception;
-use TYPO3\Neos\Service\LinkingService;
-use TYPO3\Neos\TypoScript\ConvertUrisImplementation;
+use Neos\Neos\Domain\Exception;
+use Neos\Neos\Service\LinkingService;
+use Neos\Neos\TypoScript\ConvertUrisImplementation;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
@@ -125,7 +125,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Neos\Domain\Exception
+     * @expectedException \Neos\Neos\Domain\Exception
      */
     public function evaluateThrowsExceptionIfValueIsNoString()
     {
@@ -137,7 +137,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Neos\Domain\Exception
+     * @expectedException \Neos\Neos\Domain\Exception
      */
     public function evaluateThrowsExceptionIfTheCurrentContextArrayDoesNotContainANode()
     {

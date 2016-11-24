@@ -3,50 +3,50 @@
 ####################################
 
 # Definition of custom TypoScript types
-prototype(Acme.Demo:ThreeColumn) < prototype(TYPO3.Neos:Content) {
+prototype(Acme.Demo:ThreeColumn) < prototype(Neos.Neos:Content) {
 	templatePath = ${fixturesDirectory + '/ThreeColumnTemplate.html'}
-	left = TYPO3.Neos:ContentCollection
+	left = Neos.Neos:ContentCollection
 	left.nodePath = 'column0'
-	center = TYPO3.Neos:ContentCollection
+	center = Neos.Neos:ContentCollection
 	center.nodePath = 'column1'
-	right = TYPO3.Neos:ContentCollection
+	right = Neos.Neos:ContentCollection
 	right.nodePath = 'column2'
 }
 
-prototype(Acme.Demo:List) < prototype(TYPO3.Neos:Content) {
+prototype(Acme.Demo:List) < prototype(Neos.Neos:Content) {
 	templatePath = ${fixturesDirectory + '/ListTemplate.html'}
 
-	items = TYPO3.Neos:ContentCollection {
+	items = Neos.Neos:ContentCollection {
 		nodePath = 'items'
 		tagName = 'ul'
 		attributes.class = 'my-list'
 	}
 }
 
-prototype(Acme.Demo:ListItem) < prototype(TYPO3.Neos:Content) {
+prototype(Acme.Demo:ListItem) < prototype(Neos.Neos:Content) {
 	templatePath = ${fixturesDirectory + '/ListItemTemplate.html'}
 	text = ${node.properties.text}
 }
 
 # MAIN PAGE TEMPLATE
 
-page1 = TYPO3.Neos:Page
+page1 = Neos.Neos:Page
 page1.body {
 	templatePath = ${fixturesDirectory + '/WebsiteTemplate.html'}
 
-	parts.productCategoryMenu = TYPO3.Neos:Menu {
+	parts.productCategoryMenu = Neos.Neos:Menu {
 		startingPoint = ${q(node).find('products').get(0)}
 		entryLevel = 0
 	}
 
 	content {
-		teaser = TYPO3.Neos:ContentCollection
+		teaser = Neos.Neos:ContentCollection
 		teaser.nodePath = 'teaser'
 
-		main = TYPO3.Neos:PrimaryContent
+		main = Neos.Neos:PrimaryContent
 		main.nodePath = 'main'
 
-		sidebar = TYPO3.Neos:ContentCollection
+		sidebar = Neos.Neos:ContentCollection
 		sidebar.nodePath = 'sidebar'
 	}
 	title = ${q(node).property('title')}

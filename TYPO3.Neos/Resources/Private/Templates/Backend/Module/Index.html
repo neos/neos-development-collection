@@ -1,4 +1,4 @@
-{namespace neos=TYPO3\Neos\ViewHelpers}
+{namespace neos=Neos\Neos\ViewHelpers}
 <f:layout name="Default" />
 
 <f:section name="head">
@@ -7,11 +7,11 @@
 	<f:if condition="{neos:backend.shouldLoadMinifiedJavascript()}">
 		<f:then>
 			<link rel="stylesheet" type="text/css"
-				  href="{f:uri.resource(path: 'Styles/Includes-built.css', package: 'TYPO3.Neos')}?bust={neos:backend.cssBuiltVersion()}"/>
+				  href="{f:uri.resource(path: 'Styles/Includes-built.css', package: 'Neos.Neos')}?bust={neos:backend.cssBuiltVersion()}"/>
 		</f:then>
 		<f:else>
 			<link rel="stylesheet" type="text/css"
-				  href="{f:uri.resource(path: 'Styles/Includes.css', package: 'TYPO3.Neos')}"/>
+				  href="{f:uri.resource(path: 'Styles/Includes.css', package: 'Neos.Neos')}"/>
 		</f:else>
 	</f:if>
 
@@ -33,12 +33,12 @@
 		{neos:backend.javascriptConfiguration()}
 	</script>
 
-	<link rel="neos-menudata" href="{f:uri.action(action: 'index', controller: 'Backend\Menu', package: 'TYPO3.Neos', absolute: true, arguments: {version: '{neos:backend.configurationCacheVersion()}'})}" />
+	<link rel="neos-menudata" href="{f:uri.action(action: 'index', controller: 'Backend\Menu', package: 'Neos.Neos', absolute: true, arguments: {version: '{neos:backend.configurationCacheVersion()}'})}" />
 	<!-- TODO: Make sure the schema information and edit / preview panel data isn't necessary in backend modules -->
-	<link rel="neos-vieschema" href="{f:uri.action(action: 'vieSchema', controller: 'Backend\Schema', package: 'TYPO3.Neos', absolute: true, arguments: {version: '{neos:backend.configurationCacheVersion()}'})}" />
-	<link rel="neos-nodetypeschema" href="{f:uri.action(action: 'nodeTypeSchema', controller: 'Backend\Schema', package: 'TYPO3.Neos', absolute: true, arguments: {version: '{neos:backend.configurationCacheVersion()}'})}" />
-	<link rel="neos-editpreviewdata" href="{f:uri.action(action: 'editPreview', controller: 'Backend\Settings', package: 'TYPO3.Neos', absolute: true, arguments: {version: '{neos:backend.configurationCacheVersion()}'})}" />
-	<link rel="neos-xliff" href="{f:uri.action(action: 'xliffAsJson', arguments: {locale: '{neos:backend.interfaceLanguage()}', version: '{neos:backend.xliffCacheVersion()}'}, controller: 'Backend\Backend', package: 'TYPO3.Neos', absolute: true) -> f:format.raw()}" />
+	<link rel="neos-vieschema" href="{f:uri.action(action: 'vieSchema', controller: 'Backend\Schema', package: 'Neos.Neos', absolute: true, arguments: {version: '{neos:backend.configurationCacheVersion()}'})}" />
+	<link rel="neos-nodetypeschema" href="{f:uri.action(action: 'nodeTypeSchema', controller: 'Backend\Schema', package: 'Neos.Neos', absolute: true, arguments: {version: '{neos:backend.configurationCacheVersion()}'})}" />
+	<link rel="neos-editpreviewdata" href="{f:uri.action(action: 'editPreview', controller: 'Backend\Settings', package: 'Neos.Neos', absolute: true, arguments: {version: '{neos:backend.configurationCacheVersion()}'})}" />
+	<link rel="neos-xliff" href="{f:uri.action(action: 'xliffAsJson', arguments: {locale: '{neos:backend.interfaceLanguage()}', version: '{neos:backend.xliffCacheVersion()}'}, controller: 'Backend\Backend', package: 'Neos.Neos', absolute: true) -> f:format.raw()}" />
 </f:section>
 
 <f:section name="body">
@@ -71,7 +71,7 @@
 			</div>
 		</div>
 		<script src="{f:uri.resource(path: '2/js/bootstrap.min.js', package: 'Neos.Twitter.Bootstrap')}"></script>
-		<script src="{f:uri.resource(path: 'Library/fixedsticky/fixedsticky.js', package: 'TYPO3.Neos')}"></script>
+		<script src="{f:uri.resource(path: 'Library/fixedsticky/fixedsticky.js', package: 'Neos.Neos')}"></script>
 
 		<script type="text/javascript">
 			(function($) {
@@ -81,13 +81,13 @@
 			})(jQuery);
 		</script>
 
-		<script src="{f:uri.resource(path: 'Library/requirejs/require.js', package: 'TYPO3.Neos')}"></script>
+		<script src="{f:uri.resource(path: 'Library/requirejs/require.js', package: 'Neos.Neos')}"></script>
 		<f:if condition="{neos:backend.shouldLoadMinifiedJavascript()}">
 			<f:then>
-				<script src="{f:uri.resource(path: 'JavaScript/ContentModule-built.js', package: 'TYPO3.Neos')}?bust={neos:backend.javascriptBuiltVersion()}"></script>
+				<script src="{f:uri.resource(path: 'JavaScript/ContentModule-built.js', package: 'Neos.Neos')}?bust={neos:backend.javascriptBuiltVersion()}"></script>
 			</f:then>
 			<f:else>
-				<script src="{f:uri.resource(path: 'JavaScript/ContentModuleBootstrap.js', package: 'TYPO3.Neos')}"></script>
+				<script src="{f:uri.resource(path: 'JavaScript/ContentModuleBootstrap.js', package: 'Neos.Neos')}"></script>
 			</f:else>
 		</f:if>
 
@@ -95,7 +95,7 @@
 			$(function() {
 				require(
 					{
-						baseUrl: 'resource://TYPO3.Neos/Public/JavaScript',
+						baseUrl: 'resource://Neos.Neos/Public/JavaScript',
 						paths: requirePaths,
 						context: 'neos',
 						locale: 'en'

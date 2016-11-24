@@ -30,7 +30,7 @@ in your site package or in a package dedicated to content elements, if reuse is 
 
 	   'Acme.Demo:YouTube':
 	     superTypes:
-	      'TYPO3.Neos:Content': TRUE
+	      'Neos.Neos:Content': TRUE
 	     ui:
 	       group: 'general'
 	       label: 'YouTube Video'
@@ -55,7 +55,7 @@ Next the TypoScript rendering for the content element has to be defined. By conv
 a TypoScript object with the same name as the content element is used for rendering; thus
 in this case a TypoScript object `My.Package:YouTube`::
 
-	prototype(Acme.Demo:YouTube) < prototype(TYPO3.Neos:Content) {
+	prototype(Acme.Demo:YouTube) < prototype(Neos.Neos:Content) {
 		templatePath = 'resource://Acme.Demo/Private/Templates/TypoScriptObjects/YouTube.html'
 		videoUrl = ${q(node).property('videoUrl')}
 		width = '640'
@@ -129,7 +129,7 @@ The node type definition must define which properties are inline editable throug
 
 	'Acme.Demo:Quote':
 	  superTypes:
-	    'TYPO3.Neos:Content': TRUE
+	    'Neos.Neos:Content': TRUE
 	  ui:
 	    group: 'general'
 	    label: 'Quote'
@@ -144,7 +144,7 @@ The node type definition must define which properties are inline editable throug
 The TypoScript for the content element is the same as for a non-inline-editable content
 element::
 
-	prototype(Acme.Demo:Quote) < prototype(TYPO3.Neos:Content) {
+	prototype(Acme.Demo:Quote) < prototype(Neos.Neos:Content) {
 		templatePath = 'resource://Acme.Demo/Private/Templates/TypoScriptObjects/Quote.html'
 		quote = ${q(node).property('quote')}
 	}
@@ -156,7 +156,7 @@ properties might be used, this still is needed.
 
 ::
 
-	{namespace neos=TYPO3\Neos\ViewHelpers}
+	{namespace neos=Neos\Neos\ViewHelpers}
 	<blockquote>
 		{neos:contentElement.editable(property: 'quote')}
 	</blockquote>
@@ -167,7 +167,7 @@ mean the blockquote becomes a part of the editable content, which is not desired
 Using the `tag` attribute to make the ViewHelper use the ``blockquote`` tag needed for the element
 avoids the nesting in an additional container `div` and thus cleans up the generated markup::
 
-	{namespace neos=TYPO3\Neos\ViewHelpers}
+	{namespace neos=Neos\Neos\ViewHelpers}
 	{neos:contentElement.editable(property: 'quote', tag: 'blockquote')}
 
 A property can be inline editable *and* appear in the property inspector if configured accordingly. In
@@ -187,7 +187,7 @@ can contain two texts and two videos.
 
 	'Acme.Demo:VideoGrid':
 	  superTypes:
-	    'TYPO3.Neos:Content': TRUE
+	    'Neos.Neos:Content': TRUE
 	  ui:
 	    group: 'structure'
 	    label: 'Video Grid'
@@ -197,15 +197,15 @@ can contain two texts and two videos.
 	    video1:
 	      type: 'Acme.Demo:YouTube'
 	    text0:
-	      type: 'TYPO3.Neos.NodeTypes:Text'
+	      type: 'Neos.Neos.NodeTypes:Text'
 	    text1:
-	      type: 'TYPO3.Neos.NodeTypes:Text'
+	      type: 'Neos.Neos.NodeTypes:Text'
 
 #. The needed TypoScript is created::
 
 	prototype(Acme.Demo:VideoGrid) {
 		videoRenderer = Acme.Demo:YouTube
-		textRenderer = TYPO3.Neos.NodeTypes:Text
+		textRenderer = Neos.Neos.NodeTypes:Text
 
 		video0 = ${q(node).children('video0').get(0)}
 		video1 = ${q(node).children('video1').get(0)}
@@ -231,7 +231,7 @@ can contain two texts and two videos.
 
 Instead of referencing specific content types directly the use of the generic `ContentCollection` content
 element allows to insert *arbitrary content* inside other elements. An example can be found in the
-`TYPO3.Neos.NodeTypes:MultiColumn` and `TYPO3.Neos.NodeTypes:MultiColumnItem` content elements.
+`Neos.Neos.NodeTypes:MultiColumn` and `Neos.Neos.NodeTypes:MultiColumnItem` content elements.
 
 As explained earlier (in `What are the benefits of indirection through TypoScript?`_) the major benefit
 if using TypoScript to decouple the rendering of items this way is flexibility. In the video grid
@@ -252,7 +252,7 @@ In Neos content elements are grouped by type. By default the following groups ar
 `plugins`
 	Available plugins in the site installation.
 
-It is possible to create new groups by using the `TYPO3.Neos.nodeTypes.groups` settings.
+It is possible to create new groups by using the `Neos.Neos.nodeTypes.groups` settings.
 Registering 2 new groups could look like::
 
 	TYPO3:
@@ -282,16 +282,16 @@ Editors
 
 By default the following list of editors is available in Neos:
 
-* `TYPO3.Neos/Inspector/Editors/BooleanEditor`
+* `Neos.Neos/Inspector/Editors/BooleanEditor`
 
   A checkbox, by default configured for properties of type `boolean`.
 
-* `TYPO3.Neos/Inspector/Editors/DateTimeEditor`
+* `Neos.Neos/Inspector/Editors/DateTimeEditor`
 
   A datepicker with support for time selection too. By default configured for properties
   of type `date`.
 
-* `TYPO3.Neos/Inspector/Editors/CodeEditor`
+* `Neos.Neos/Inspector/Editors/CodeEditor`
 
   An code editor with syntax highlighting. You can use this editor for editing
   other types of *textual* content, by configuring a different `highlightingMode` and
@@ -304,39 +304,39 @@ By default the following list of editors is available in Neos:
         reloadIfChanged: TRUE
         inspector:
           group: 'code'
-          editor: 'TYPO3.Neos/Inspector/Editors/CodeEditor'
+          editor: 'Neos.Neos/Inspector/Editors/CodeEditor'
           editorOptions:
             buttonLabel: 'Edit CSS source'
             highlightingMode: 'text/css'
 
-* `TYPO3.Neos/Inspector/Editors/ImageEditor`
+* `Neos.Neos/Inspector/Editors/ImageEditor`
 
   An image editor with cropping and size support. By default configured for properties
   of type `TYPO3\Media\Domain\Model\ImageInterface`.
 
-* `TYPO3.Neos/Inspector/Editors/ReferenceEditor`
+* `Neos.Neos/Inspector/Editors/ReferenceEditor`
 
   A selector with autocomplete to reference to another node. By default configured for
   properties of type `reference`.
 
-* `TYPO3.Neos/Inspector/Editors/ReferencesEditor`
+* `Neos.Neos/Inspector/Editors/ReferencesEditor`
 
   A selector with autocomplete to reference to multiple nodes. By default configured for
   properties of type `references`.
 
-* `TYPO3.Neos/Inspector/Editors/SelectBoxEditor`
+* `Neos.Neos/Inspector/Editors/SelectBoxEditor`
 
   A selectbox.
 
-* `TYPO3.Neos/Inspector/Editors/TextFieldEditor`
+* `Neos.Neos/Inspector/Editors/TextFieldEditor`
 
   A simple textfield. By default configured for properties of type `string` and `integer`
 
 The following editors are also available, but will most likely only be used internally in Neos:
 
-* `TYPO3.Neos/Inspector/Editors/MasterPluginEditor`
-* `TYPO3.Neos/Inspector/Editors/PluginViewEditor`
-* `TYPO3.Neos/Inspector/Editors/PluginViewsEditor`
+* `Neos.Neos/Inspector/Editors/MasterPluginEditor`
+* `Neos.Neos/Inspector/Editors/PluginViewEditor`
+* `Neos.Neos/Inspector/Editors/PluginViewsEditor`
 
 Register Custom Editors
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -405,68 +405,68 @@ Validators
 
 By default the following validators are available in Neos:
 
-* `TYPO3.Neos/Validation/AbstractValidator`
+* `Neos.Neos/Validation/AbstractValidator`
 
   This *abstract* validator should be used to base custom validators on.
 
-* `TYPO3.Neos/Validation/AlphanumericValidator`
+* `Neos.Neos/Validation/AlphanumericValidator`
 
   Supported options:
 
   * regularExpression
 
-* `TYPO3.Neos/Validation/CountValidator`
+* `Neos.Neos/Validation/CountValidator`
 
   Supported options:
 
   * minimum
   * maximum
 
-* `TYPO3.Neos/Validation/DateTimeRangeValidator`
+* `Neos.Neos/Validation/DateTimeRangeValidator`
 
   Supported options:
 
   * latestDate
   * earliestDate
 
-* `TYPO3.Neos/Validation/DateTimeValidator`
-* `TYPO3.Neos/Validation/EmailAddressValidator`
+* `Neos.Neos/Validation/DateTimeValidator`
+* `Neos.Neos/Validation/EmailAddressValidator`
 
   Supported options:
 
   * regularExpression
 
-* `TYPO3.Neos/Validation/FloatValidator`
-* `TYPO3.Neos/Validation/IntegerValidator`
-* `TYPO3.Neos/Validation/LabelValidator`
+* `Neos.Neos/Validation/FloatValidator`
+* `Neos.Neos/Validation/IntegerValidator`
+* `Neos.Neos/Validation/LabelValidator`
 
   Supported options:
 
   * regularExpression
 
-* `TYPO3.Neos/Validation/NumberRangeValidator`
+* `Neos.Neos/Validation/NumberRangeValidator`
 
   Supported options:
 
   * minimum
   * maximum
 
-* `TYPO3.Neos/Validation/RegularExpressionValidator`
+* `Neos.Neos/Validation/RegularExpressionValidator`
 
   Supported options:
 
   * regularExpression
 
-* `TYPO3.Neos/Validation/StringLengthValidator`
+* `Neos.Neos/Validation/StringLengthValidator`
 
   Supported options:
 
   * minimum
   * maximum
 
-* `TYPO3.Neos/Validation/StringValidator`
-* `TYPO3.Neos/Validation/TextValidator`
-* `TYPO3.Neos/Validation/UuidValidator`
+* `Neos.Neos/Validation/StringValidator`
+* `Neos.Neos/Validation/TextValidator`
+* `Neos.Neos/Validation/UuidValidator`
 
   Supported options:
 

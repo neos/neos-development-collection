@@ -26,10 +26,10 @@ to add content inside. In the following example, we see the NodeType definition 
 
   'Neos.Demo:Chapter':
     superTypes:
-      'TYPO3.Neos:Document': true
+      'Neos.Neos:Document': true
     childNodes:
       'main':
-        type: 'TYPO3.Neos:ContentCollection'
+        type: 'Neos.Neos:ContentCollection'
 
 Now, it might additionally be useful to only allow text and images inside the chapter contents. This is possible using
 additional constraints for each *auto-created child node*::
@@ -39,7 +39,7 @@ additional constraints for each *auto-created child node*::
       'main':
         constraints:
           nodeTypes:
-            'TYPO3.Neos.NodeTypes:Text': true
+            'Neos.Neos.NodeTypes:Text': true
             '*': false
 
 
@@ -48,14 +48,14 @@ Examples
 
 Disallow nested Two/Three/FourColumn inside a multi column element::
 
-  'TYPO3.Neos.NodeTypes:Column':
+  'Neos.Neos.NodeTypes:Column':
     childNodes:
       column0:
         constraints: &columnConstraints
           nodeTypes:
-            'TYPO3.Neos.NodeTypes:TwoColumn': false
-            'TYPO3.Neos.NodeTypes:ThreeColumn': false
-            'TYPO3.Neos.NodeTypes:FourColumn': false
+            'Neos.Neos.NodeTypes:TwoColumn': false
+            'Neos.Neos.NodeTypes:ThreeColumn': false
+            'Neos.Neos.NodeTypes:FourColumn': false
       column1:
         constraints: *columnConstraints
       column2:

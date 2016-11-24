@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Controller\Module\Management;
+namespace Neos\Neos\Controller\Module\Management;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -23,21 +23,21 @@ use Neos\Flow\Property\PropertyMappingConfigurationBuilder;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Context;
 use Neos\Media\Domain\Model\AssetInterface;
-use TYPO3\Neos\Controller\Module\AbstractModuleController;
-use TYPO3\Neos\Domain\Model\User;
-use TYPO3\Neos\Domain\Repository\SiteRepository;
-use TYPO3\Neos\Domain\Service\ContentContextFactory;
-use TYPO3\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
-use TYPO3\Neos\Domain\Service\UserService;
-use TYPO3\Neos\Domain\Service\SiteService;
-use TYPO3\Neos\Service\PublishingService;
+use Neos\Neos\Controller\Module\AbstractModuleController;
+use Neos\Neos\Domain\Model\User;
+use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\Service\ContentContextFactory;
+use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
+use Neos\Neos\Domain\Service\UserService;
+use Neos\Neos\Domain\Service\SiteService;
+use Neos\Neos\Service\PublishingService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Exception\WorkspaceException;
 use TYPO3\TYPO3CR\TypeConverter\NodeConverter;
 use TYPO3\TYPO3CR\Utility;
-use TYPO3\Neos\Utility\User as UserUtility;
+use Neos\Neos\Utility\User as UserUtility;
 
 /**
  * The Neos Workspaces module controller
@@ -197,7 +197,7 @@ class WorkspacesController extends AbstractModuleController
     {
         $workspace = $this->workspaceRepository->findOneByTitle($title);
         if ($workspace instanceof Workspace) {
-            $this->addFlashMessage($this->translator->translateById('workspaces.workspaceWithThisTitleAlreadyExists', [], null, null, 'Modules', 'TYPO3.Neos'), '', Message::SEVERITY_WARNING);
+            $this->addFlashMessage($this->translator->translateById('workspaces.workspaceWithThisTitleAlreadyExists', [], null, null, 'Modules', 'Neos.Neos'), '', Message::SEVERITY_WARNING);
             $this->redirect('new');
         }
 
@@ -261,7 +261,7 @@ class WorkspacesController extends AbstractModuleController
         }
 
         $this->workspaceRepository->update($workspace);
-        $this->addFlashMessage($this->translator->translateById('workspaces.workspaceHasBeenUpdated', [$workspace->getTitle()], null, null, 'Modules', 'TYPO3.Neos'));
+        $this->addFlashMessage($this->translator->translateById('workspaces.workspaceHasBeenUpdated', [$workspace->getTitle()], null, null, 'Modules', 'Neos.Neos'));
         $this->redirect('index');
     }
 
@@ -285,7 +285,7 @@ class WorkspacesController extends AbstractModuleController
                 $dependentWorkspaceTitles[] = $dependentWorkspace->getTitle();
             }
 
-            $message = $this->translator->translateById('workspaces.workspaceCannotBeDeletedBecauseOfDependencies', [$workspace->getTitle(), implode(', ', $dependentWorkspaceTitles)], null, null, 'Modules', 'TYPO3.Neos');
+            $message = $this->translator->translateById('workspaces.workspaceCannotBeDeletedBecauseOfDependencies', [$workspace->getTitle(), implode(', ', $dependentWorkspaceTitles)], null, null, 'Modules', 'Neos.Neos');
             $this->addFlashMessage($message, '', Message::SEVERITY_WARNING);
             $this->redirect('index');
         }
@@ -294,18 +294,18 @@ class WorkspacesController extends AbstractModuleController
         try {
             $nodesCount = $this->publishingService->getUnpublishedNodesCount($workspace);
         } catch (\Exception $exception) {
-            $message = $this->translator->translateById('workspaces.notDeletedErrorWhileFetchingUnpublishedNodes', [$workspace->getTitle()], null, null, 'Modules', 'TYPO3.Neos');
+            $message = $this->translator->translateById('workspaces.notDeletedErrorWhileFetchingUnpublishedNodes', [$workspace->getTitle()], null, null, 'Modules', 'Neos.Neos');
             $this->addFlashMessage($message, '', Message::SEVERITY_WARNING);
             $this->redirect('index');
         }
         if ($nodesCount > 0) {
-            $message = $this->translator->translateById('workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes', [$workspace->getTitle(), $nodesCount], $nodesCount, null, 'Modules', 'TYPO3.Neos');
+            $message = $this->translator->translateById('workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes', [$workspace->getTitle(), $nodesCount], $nodesCount, null, 'Modules', 'Neos.Neos');
             $this->addFlashMessage($message, '', Message::SEVERITY_WARNING);
             $this->redirect('index');
         }
 
         $this->workspaceRepository->remove($workspace);
-        $this->addFlashMessage($message = $this->translator->translateById('workspaces.workspaceHasBeenRemoved', [$workspace->getTitle()], null, null, 'Modules', 'TYPO3.Neos'));
+        $this->addFlashMessage($message = $this->translator->translateById('workspaces.workspaceHasBeenRemoved', [$workspace->getTitle()], null, null, 'Modules', 'Neos.Neos'));
         $this->redirect('index');
     }
 
@@ -325,7 +325,7 @@ class WorkspacesController extends AbstractModuleController
 
         if ($personalWorkspace !== $targetWorkspace) {
             if ($this->publishingService->getUnpublishedNodesCount($personalWorkspace) > 0) {
-                $message = $this->translator->translateById('workspaces.cantEditBecauseWorkspaceContainsChanges', [], null, null, 'Modules', 'TYPO3.Neos');
+                $message = $this->translator->translateById('workspaces.cantEditBecauseWorkspaceContainsChanges', [], null, null, 'Modules', 'Neos.Neos');
                 $this->addFlashMessage($message, '', Message::SEVERITY_WARNING, [], 1437833387);
                 $this->redirect('show', null, null, ['workspace' => $targetWorkspace]);
             }
@@ -341,7 +341,7 @@ class WorkspacesController extends AbstractModuleController
         $mainRequest = $this->controllerContext->getRequest()->getMainRequest();
         /** @var ActionRequest $mainRequest */
         $this->uriBuilder->setRequest($mainRequest);
-        $this->redirect('show', 'Frontend\\Node', 'TYPO3.Neos', ['node' => $context->getNode($targetNode->getPath())]);
+        $this->redirect('show', 'Frontend\\Node', 'Neos.Neos', ['node' => $context->getNode($targetNode->getPath())]);
     }
 
     /**
@@ -353,7 +353,7 @@ class WorkspacesController extends AbstractModuleController
     public function publishNodeAction(NodeInterface $node, Workspace $selectedWorkspace)
     {
         $this->publishingService->publishNode($node);
-        $this->addFlashMessage($this->translator->translateById('workspaces.selectedChangeHasBeenPublished', [], null, null, 'Modules', 'TYPO3.Neos'));
+        $this->addFlashMessage($this->translator->translateById('workspaces.selectedChangeHasBeenPublished', [], null, null, 'Modules', 'Neos.Neos'));
         $this->redirect('show', null, null, ['workspace' => $selectedWorkspace]);
     }
 
@@ -368,7 +368,7 @@ class WorkspacesController extends AbstractModuleController
     {
         // Hint: we cannot use $node->remove() here, as this removes the node recursively (but we just want to *discard changes*)
         $this->publishingService->discardNode($node);
-        $this->addFlashMessage($this->translator->translateById('workspaces.selectedChangeHasBeenDiscarded', [], null, null, 'Modules', 'TYPO3.Neos'));
+        $this->addFlashMessage($this->translator->translateById('workspaces.selectedChangeHasBeenDiscarded', [], null, null, 'Modules', 'Neos.Neos'));
         $this->redirect('show', null, null, ['workspace' => $selectedWorkspace]);
     }
 
@@ -394,11 +394,11 @@ class WorkspacesController extends AbstractModuleController
                 foreach ($nodes as $node) {
                     $this->publishingService->publishNode($node);
                 }
-                $this->addFlashMessage($this->translator->translateById('workspaces.selectedChangesHaveBeenPublished', [], null, null, 'Modules', 'TYPO3.Neos'));
+                $this->addFlashMessage($this->translator->translateById('workspaces.selectedChangesHaveBeenPublished', [], null, null, 'Modules', 'Neos.Neos'));
             break;
             case 'discard':
                 $this->publishingService->discardNodes($nodes);
-                $this->addFlashMessage($this->translator->translateById('workspaces.selectedChangesHaveBeenDiscarded', [], null, null, 'Modules', 'TYPO3.Neos'));
+                $this->addFlashMessage($this->translator->translateById('workspaces.selectedChangesHaveBeenDiscarded', [], null, null, 'Modules', 'Neos.Neos'));
             break;
             default:
                 throw new \RuntimeException('Invalid action "' . htmlspecialchars($action) . '" given.', 1346167441);
@@ -419,7 +419,7 @@ class WorkspacesController extends AbstractModuleController
             $targetWorkspace = $this->workspaceRepository->findOneByName('live');
         }
         $this->publishingService->publishNodes($this->publishingService->getUnpublishedNodes($workspace), $targetWorkspace);
-        $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenPublished', [htmlspecialchars($workspace->getTitle()), htmlspecialchars($targetWorkspace->getTitle())], null, null, 'Modules', 'TYPO3.Neos'));
+        $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenPublished', [htmlspecialchars($workspace->getTitle()), htmlspecialchars($targetWorkspace->getTitle())], null, null, 'Modules', 'Neos.Neos'));
         $this->redirect('index');
     }
 
@@ -433,7 +433,7 @@ class WorkspacesController extends AbstractModuleController
     {
         $unpublishedNodes = $this->publishingService->getUnpublishedNodes($workspace);
         $this->publishingService->discardNodes($unpublishedNodes);
-        $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenDiscarded', [htmlspecialchars($workspace->getTitle())], null, null, 'Modules', 'TYPO3.Neos'));
+        $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenDiscarded', [htmlspecialchars($workspace->getTitle())], null, null, 'Modules', 'Neos.Neos'));
         $this->redirect('index');
     }
 
@@ -475,12 +475,12 @@ class WorkspacesController extends AbstractModuleController
         $siteChanges = [];
         foreach ($this->publishingService->getUnpublishedNodes($selectedWorkspace) as $node) {
             /** @var NodeInterface $node */
-            if (!$node->getNodeType()->isOfType('TYPO3.Neos:ContentCollection')) {
+            if (!$node->getNodeType()->isOfType('Neos.Neos:ContentCollection')) {
                 $pathParts = explode('/', $node->getPath());
                 if (count($pathParts) > 2) {
                     $siteNodeName = $pathParts[2];
                     $q = new FlowQuery([$node]);
-                    $document = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+                    $document = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
 
                     // $document will be null if we have a broken root line for this node. This actually should never happen, but currently can in some scenarios.
                     if ($document !== null) {
@@ -495,7 +495,7 @@ class WorkspacesController extends AbstractModuleController
                             'node' => $node,
                             'contentChanges' => $this->renderContentChanges($node),
                         ];
-                        if ($node->getNodeType()->isOfType('TYPO3.Neos:Node')) {
+                        if ($node->getNodeType()->isOfType('Neos.Neos:Node')) {
                             $change['configuration'] = $node->getNodeType()->getFullConfiguration();
                         }
                         $siteChanges[$siteNodeName]['documents'][$documentPath]['changes'][$relativePath] = $change;

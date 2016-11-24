@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\ViewHelpers\Backend;
+namespace Neos\Neos\ViewHelpers\Backend;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,7 +13,7 @@ namespace TYPO3\Neos\ViewHelpers\Backend;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use TYPO3\Neos\Service\UserService;
+use Neos\Neos\Service\UserService;
 
 /**
  * ViewHelper for rendering the current backend users interface language.

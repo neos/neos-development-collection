@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Controller\Backend;
+namespace Neos\Neos\Controller\Backend;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,8 +13,8 @@ namespace TYPO3\Neos\Controller\Backend;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
-use TYPO3\Neos\Service\NodeTypeSchemaBuilder;
-use TYPO3\Neos\Service\VieSchemaBuilder;
+use Neos\Neos\Service\NodeTypeSchemaBuilder;
+use Neos\Neos\Service\VieSchemaBuilder;
 
 /**
  * The TYPO3 Module

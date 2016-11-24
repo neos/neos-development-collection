@@ -5,12 +5,12 @@ use Behat\Gherkin\Node\TableNode;
 use PHPUnit_Framework_Assert as Assert;
 use Symfony\Component\Yaml\Yaml;
 use Neos\Utility\Arrays;
-use TYPO3\Neos\Domain\Service\UserService;
-use TYPO3\Neos\EventLog\Domain\Model\Event;
-use TYPO3\Neos\EventLog\Domain\Model\NodeEvent;
-use TYPO3\Neos\EventLog\Domain\Repository\EventRepository;
-use TYPO3\Neos\EventLog\Integrations\EntityIntegrationService;
-use TYPO3\Neos\EventLog\Integrations\TYPO3CRIntegrationService;
+use Neos\Neos\Domain\Service\UserService;
+use Neos\Neos\EventLog\Domain\Model\Event;
+use Neos\Neos\EventLog\Domain\Model\NodeEvent;
+use Neos\Neos\EventLog\Domain\Repository\EventRepository;
+use Neos\Neos\EventLog\Integrations\EntityIntegrationService;
+use Neos\Neos\EventLog\Integrations\TYPO3CRIntegrationService;
 
 /**
  * A trait with shared step definitions for common use by other contexts

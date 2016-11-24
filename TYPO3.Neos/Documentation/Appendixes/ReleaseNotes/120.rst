@@ -196,7 +196,7 @@ Additional features
 - Configuration module
    A new backend module to display configuration (Settings, NodeTypes, Policies, Routes, Caches, Objects, Views)
 - Introduce mixins to avoid illogical inheritance
-   Multiple mixins has been added which can be reused in custom elements (TYPO3.Neos.NodeTypes:TextMixin, TYPO3.Neos.NodeTypes:ImageMixin, etc.)
+   Multiple mixins has been added which can be reused in custom elements (Neos.Neos.NodeTypes:TextMixin, Neos.Neos.NodeTypes:ImageMixin, etc.)
 - REST services
    New REST controllers were introduced to handle various backend requests (outputs both html/json)
 - Data sources
@@ -212,8 +212,8 @@ Additional features
 !!! Breaking changes
 ~~~~~~~~~~~~~~~~~~~~
 
-- Move ImageTag and ImageUri TypoScript objects to TYPO3.Neos
-   Replace all occurrences of ``TYPO3.Media:Image*`` with ``TYPO3.Neos:Image*`` to adjust your code.
+- Move ImageTag and ImageUri TypoScript objects to Neos.Neos
+   Replace all occurrences of ``TYPO3.Media:Image*`` with ``Neos.Neos:Image*`` to adjust your code.
 - Serialized image objects cause Doctrine errors
    Images inserted in existing sites cause fatal errors. Running ``./doctrine migrate`` solves the issue.
 - Rename "Insert records" content element

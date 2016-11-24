@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Domain\Service;
+namespace Neos\Neos\Domain\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,8 +13,8 @@ namespace TYPO3\Neos\Domain\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Arrays;
-use TYPO3\Neos\Domain\Model\Domain;
-use TYPO3\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Model\Domain;
+use Neos\Neos\Domain\Model\Site;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactory;
 use TYPO3\TYPO3CR\Exception\InvalidNodeContextException;
 
@@ -31,13 +31,13 @@ class ContentContextFactory extends ContextFactory
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Domain\Repository\DomainRepository
+     * @var \Neos\Neos\Domain\Repository\DomainRepository
      */
     protected $domainRepository;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Domain\Repository\SiteRepository
+     * @var \Neos\Neos\Domain\Repository\SiteRepository
      */
     protected $siteRepository;
 
@@ -176,12 +176,12 @@ class ContentContextFactory extends ContextFactory
 
         if (isset($contextProperties['currentSite'])) {
             if (!$contextProperties['currentSite'] instanceof Site) {
-                throw new InvalidNodeContextException('You tried to set currentSite in the context and did not provide a \\TYPO3\Neos\\Domain\\Model\\Site object as value.', 1373145297);
+                throw new InvalidNodeContextException('You tried to set currentSite in the context and did not provide a \\Neos\Neos\\Domain\\Model\\Site object as value.', 1373145297);
             }
         }
         if (isset($contextProperties['currentDomain'])) {
             if (!$contextProperties['currentDomain'] instanceof Domain) {
-                throw new InvalidNodeContextException('You tried to set currentDomain in the context and did not provide a \\TYPO3\Neos\\Domain\\Model\\Domain object as value.', 1373145384);
+                throw new InvalidNodeContextException('You tried to set currentDomain in the context and did not provide a \\Neos\Neos\\Domain\\Model\\Domain object as value.', 1373145384);
             }
         }
     }

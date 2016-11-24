@@ -1,8 +1,8 @@
-# TYPO3.Neos:DimensionsMenu provides dimension (e.g. language) menu rendering
-prototype(TYPO3.Neos:DimensionsMenu) < prototype(TYPO3.Neos:Menu) {
+# Neos.Neos:DimensionsMenu provides dimension (e.g. language) menu rendering
+prototype(Neos.Neos:DimensionsMenu) < prototype(Neos.Neos:Menu) {
 	@class = 'TYPO3\\Neos\\TypoScript\\DimensionsMenuImplementation'
 
-	templatePath = 'resource://TYPO3.Neos/Private/Templates/TypoScriptObjects/DimensionsMenu.html'
+	templatePath = 'resource://Neos.Neos/Private/Templates/TypoScriptObjects/DimensionsMenu.html'
 
 	# the "absent" state is assigned to items for dimension (combinations) for which no node variant exists
 	absent.attributes = TYPO3.TypoScript:Attributes {
@@ -23,4 +23,4 @@ prototype(TYPO3.Neos:DimensionsMenu) < prototype(TYPO3.Neos:Menu) {
 }
 
 # included for backwards-compatibility only
-prototype(TYPO3.Neos:DimensionMenu) < prototype(TYPO3.Neos:DimensionsMenu)
+prototype(Neos.Neos:DimensionMenu) < prototype(Neos.Neos:DimensionsMenu)

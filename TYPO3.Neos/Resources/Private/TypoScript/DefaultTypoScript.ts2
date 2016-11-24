@@ -5,7 +5,7 @@ include: Prototypes/PrimaryContent.ts2
 include: Prototypes/ContentCollection.ts2
 include: Prototypes/Page.ts2
 include: Prototypes/Shortcut.ts2
-# Note: The TYPO3.Neos:Breadcrumb prototype only exists for backwards compatibility and will be removed in a future version.
+# Note: The Neos.Neos:Breadcrumb prototype only exists for backwards compatibility and will be removed in a future version.
 include: Prototypes/Breadcrumb.ts2
 include: Prototypes/BreadcrumbMenu.ts2
 include: Prototypes/DimensionsMenu.ts2
@@ -29,13 +29,13 @@ include: Prototypes/FallbackNode.ts2
 root = TYPO3.TypoScript:Case
 root {
 	shortcut {
-		prototype(TYPO3.Neos:Page) {
-			body = TYPO3.Neos:Shortcut
+		prototype(Neos.Neos:Page) {
+			body = Neos.Neos:Shortcut
 		}
 
 		@position = 'start'
-		condition = ${q(node).is('[instanceof TYPO3.Neos:Shortcut]')}
-		type = 'TYPO3.Neos:Page'
+		condition = ${q(node).is('[instanceof Neos.Neos:Shortcut]')}
+		type = 'Neos.Neos:Page'
 	}
 
 	editPreviewMode {

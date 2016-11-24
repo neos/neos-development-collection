@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Service;
+namespace Neos\Neos\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,10 +12,10 @@ namespace TYPO3\Neos\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use TYPO3\Neos\Domain\Model\User;
+use Neos\Neos\Domain\Model\User;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
-use TYPO3\Neos\Utility\User as UserUtility;
+use Neos\Neos\Utility\User as UserUtility;
 
 /**
  * The user service provides general context information about the currently
@@ -23,7 +23,7 @@ use TYPO3\Neos\Utility\User as UserUtility;
  *
  * The methods getters of this class are accessible via the "context.userInformation" variable in security policies
  * and thus are implicitly considered to be part of the public API. This UserService should be replaced by
- * \TYPO3\Neos\Domain\Service\UserService in the long run.
+ * \Neos\Neos\Domain\Service\UserService in the long run.
  *
  * @Flow\Scope("singleton")
  * @api
@@ -33,7 +33,7 @@ class UserService
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Domain\Service\UserService
+     * @var \Neos\Neos\Domain\Service\UserService
      */
     protected $userDomainService;
 

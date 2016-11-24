@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\EventLog\Domain\Model;
+namespace Neos\Neos\EventLog\Domain\Model;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -79,8 +79,8 @@ class Event
     /**
      * Child events, of this event
      *
-     * @var ArrayCollection<TYPO3\Neos\EventLog\Domain\Model\Event>
-     * @ORM\OneToMany(targetEntity="TYPO3\Neos\EventLog\Domain\Model\Event", mappedBy="parentEvent", cascade="persist")
+     * @var ArrayCollection<Neos\Neos\EventLog\Domain\Model\Event>
+     * @ORM\OneToMany(targetEntity="Neos\Neos\EventLog\Domain\Model\Event", mappedBy="parentEvent", cascade="persist")
      */
     protected $childEvents;
 

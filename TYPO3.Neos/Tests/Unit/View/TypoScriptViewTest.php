@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Tests\Unit\View;
+namespace Neos\Neos\Tests\Unit\View;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,9 +14,9 @@ use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\Neos\Domain\Service\ContentContext;
-use TYPO3\Neos\Domain\Service\TypoScriptService;
-use TYPO3\Neos\View\TypoScriptView;
+use Neos\Neos\Domain\Service\ContentContext;
+use Neos\Neos\Domain\Service\TypoScriptService;
+use Neos\Neos\View\TypoScriptView;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
@@ -91,7 +91,7 @@ class TypoScriptViewTest extends UnitTestCase
     }
 
     /**
-     * @expectedException \TYPO3\Neos\Exception
+     * @expectedException \Neos\Neos\Exception
      * @test
      */
     public function attemptToRenderWithoutNodeInformationAtAllThrowsException()
@@ -101,7 +101,7 @@ class TypoScriptViewTest extends UnitTestCase
     }
 
     /**
-     * @expectedException \TYPO3\Neos\Exception
+     * @expectedException \Neos\Neos\Exception
      * @test
      */
     public function attemptToRenderWithInvalidNodeInformationThrowsException()

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Tests\Unit\Domain\Repository\Configuration;
+namespace Neos\Neos\Tests\Unit\Domain\Repository\Configuration;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,9 +12,9 @@ namespace TYPO3\Neos\Tests\Unit\Domain\Repository\Configuration;
  */
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\Neos\Domain\Model\Domain;
-use TYPO3\Neos\Domain\Repository\DomainRepository;
-use TYPO3\Neos\Domain\Service\DomainMatchingStrategy;
+use Neos\Neos\Domain\Model\Domain;
+use Neos\Neos\Domain\Repository\DomainRepository;
+use Neos\Neos\Domain\Service\DomainMatchingStrategy;
 
 /**
  * Testcase for the Domain Repository

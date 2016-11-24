@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Controller\Frontend;
+namespace Neos\Neos\Controller\Frontend;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -16,11 +16,11 @@ use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Session\SessionInterface;
-use TYPO3\Neos\Controller\Exception\NodeNotFoundException;
-use TYPO3\Neos\Controller\Exception\UnresolvableShortcutException;
-use TYPO3\Neos\Domain\Model\UserInterfaceMode;
-use TYPO3\Neos\Domain\Service\NodeShortcutResolver;
-use TYPO3\Neos\View\TypoScriptView;
+use Neos\Neos\Controller\Exception\NodeNotFoundException;
+use Neos\Neos\Controller\Exception\UnresolvableShortcutException;
+use Neos\Neos\Domain\Model\UserInterfaceMode;
+use Neos\Neos\Domain\Service\NodeShortcutResolver;
+use Neos\Neos\View\TypoScriptView;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 
@@ -89,7 +89,7 @@ class NodeController extends ActionController
 
         $inBackend = $node->getContext()->isInBackend();
 
-        if ($node->getNodeType()->isOfType('TYPO3.Neos:Shortcut') && !$inBackend) {
+        if ($node->getNodeType()->isOfType('Neos.Neos:Shortcut') && !$inBackend) {
             $this->handleShortcutNode($node);
         }
 

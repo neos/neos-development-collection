@@ -140,7 +140,7 @@ Add the following to *Configuration/NodeTypes.yaml* of your package:
 
   'Sarkosh.CdCollection:Plugin':
     superTypes:
-      'TYPO3.Neos:Plugin': TRUE
+      'Neos.Neos:Plugin': TRUE
     ui:
       label: 'CD Collection'
       group: 'plugins'
@@ -156,7 +156,7 @@ TypoScript needs to be added to your package.
 
 *Resources/Private/TypoScript/Plugin.ts2*::
 
-  prototype(Sarkosh.CdCollection:Plugin) < prototype(TYPO3.Neos:Plugin)
+  prototype(Sarkosh.CdCollection:Plugin) < prototype(Neos.Neos:Plugin)
   prototype(Sarkosh.CdCollection:Plugin) {
   	package = 'Sarkosh.CdCollection'
   	controller = 'Standard'
@@ -208,16 +208,16 @@ If you want to create links to your plugin from outside the plugin context you h
 
 To create a link to a ControllerAction of your Plugin in TypoScript you can use the following code::
 
-  link = TYPO3.Neos:NodeUri {
+  link = Neos.Neos:NodeUri {
   	# you have to identify the document that contains your plugin somehow
-  	node = ${q(site).find('[instanceof Sarkosh.CdCollection:Plugin]').first().closest('[instanceof TYPO3.Neos:Document]').get(0)}
+  	node = ${q(site).find('[instanceof Sarkosh.CdCollection:Plugin]').first().closest('[instanceof Neos.Neos:Document]').get(0)}
   	absolute = true
   	additionalParams = ${{'--sarkosh_cdcollection-plugin': {'@package': 'sarkosh.cdcollection', '@controller':'standard', '@action': 'show', 'collection': collection}}}
   }
 
 The same code in a fluid template looks like this::
 
-  {namespace neos=TYPO3\Neos\ViewHelpers}
+  {namespace neos=Neos\Neos\ViewHelpers}
   <neos:uri.node node="{targetNode}" arguments="{'--sarkosh_cdcollection-plugin': {'@package': 'sarkosh.cdcollection', '@controller':'standard', '@action': 'show', 'collection': collection}}" />
 
 
@@ -251,7 +251,7 @@ will be available for the ``Plugin View``:
 
   'Sarkosh.CdCollection:Plugin':
     superTypes:
-      'TYPO3.Neos:Plugin': TRUE
+      'Neos.Neos:Plugin': TRUE
     ui:
       label: 'CD Collection'
       group: 'plugins'

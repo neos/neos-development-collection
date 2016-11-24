@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Service;
+namespace Neos\Neos\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -45,8 +45,8 @@ class PublishingService extends \TYPO3\TYPO3CR\Domain\Service\PublishingService
         }
         $nodes = array($node);
         $nodeType = $node->getNodeType();
-        if ($nodeType->isOfType('TYPO3.Neos:Document') || $nodeType->hasConfiguration('childNodes')) {
-            foreach ($node->getChildNodes('TYPO3.Neos:ContentCollection') as $contentCollectionNode) {
+        if ($nodeType->isOfType('Neos.Neos:Document') || $nodeType->hasConfiguration('childNodes')) {
+            foreach ($node->getChildNodes('Neos.Neos:ContentCollection') as $contentCollectionNode) {
                 array_push($nodes, $contentCollectionNode);
             }
         }

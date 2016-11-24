@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\NodeTypePostprocessor;
+namespace Neos\Neos\NodeTypePostprocessor;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,7 +13,7 @@ namespace TYPO3\Neos\NodeTypePostprocessor;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
-use TYPO3\Neos\Service\PluginService;
+use Neos\Neos\Service\PluginService;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
 use TYPO3\TYPO3CR\NodeTypePostprocessor\NodeTypePostprocessorInterface;
 
@@ -59,7 +59,7 @@ class PluginNodeTypePostprocessor implements NodeTypePostprocessorInterface
                 'inspector' => array(
                     'group' => 'pluginViews',
                     'position' => '20',
-                    'editor' => 'TYPO3.Neos/Inspector/Editors/PluginViewsEditor'
+                    'editor' => 'Neos.Neos/Inspector/Editors/PluginViewsEditor'
                 )
             )
         );

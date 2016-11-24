@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Service\View;
+namespace Neos\Neos\Service\View;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -16,7 +16,7 @@ use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
-use TYPO3\Neos\Security\Authorization\Privilege\NodeTreePrivilege;
+use Neos\Neos\Security\Authorization\Privilege\NodeTreePrivilege;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use Neos\Utility\Arrays;
 use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\NodePrivilegeSubject;
@@ -85,7 +85,7 @@ class NodeView extends JsonView
         foreach ($nodes as $node) {
             if ($node->getPath() !== '/') {
                 $q = new FlowQuery(array($node));
-                $closestDocumentNode = $q->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+                $closestDocumentNode = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
                 if ($closestDocumentNode !== null) {
                     $data[] = array(
                         'nodeContextPath' => $node->getContextPath(),
@@ -195,7 +195,7 @@ class NodeView extends JsonView
                     $properties['__workspaceName'] = $childNode->getWorkspace()->getName();
                     $properties['__nodeName'] = $childNode->getName();
                     $properties['__nodeType'] = $nodeType;
-                    $properties['__title'] = $nodeType === 'TYPO3.Neos:Document' ? $childNode->getProperty('title') : $childNode->getLabel();
+                    $properties['__title'] = $nodeType === 'Neos.Neos:Document' ? $childNode->getProperty('title') : $childNode->getLabel();
                     array_push($nodes, $properties);
                     if ($expand) {
                         $this->collectChildNodeData($nodes, $childNode, $nodeTypeFilter, $depth, $untilNode, ($recursionPointer + 1));
@@ -305,8 +305,8 @@ class NodeView extends JsonView
         $uriBuilder = $this->controllerContext->getUriBuilder();
         $nodeType = $node->getNodeType();
         $nodeTypeConfiguration = $nodeType->getFullConfiguration();
-        if ($node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
-            $uriForNode = $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos');
+        if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
+            $uriForNode = $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(true)->uriFor('show', array('node' => $node), 'Frontend\Node', 'Neos.Neos');
         } else {
             $uriForNode = '#';
         }

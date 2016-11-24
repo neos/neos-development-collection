@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Setup\Step;
+namespace Neos\Neos\Setup\Step;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -16,8 +16,8 @@ use Neos\Flow\Security\AccountRepository;
 use Neos\Flow\Validation\Validator\NotEmptyValidator;
 use Neos\Flow\Validation\Validator\StringLengthValidator;
 use Neos\Form\Core\Model\FormDefinition;
-use TYPO3\Neos\Domain\Service\UserService;
-use TYPO3\Neos\Validation\Validator\UserDoesNotExistValidator;
+use Neos\Neos\Domain\Service\UserService;
+use Neos\Neos\Validation\Validator\UserDoesNotExistValidator;
 use Neos\Party\Domain\Repository\PartyRepository;
 use Neos\Setup\Step\AbstractStep;
 
@@ -101,6 +101,6 @@ class AdministratorStep extends AbstractStep
      */
     public function postProcessFormValues(array $formValues)
     {
-        $this->userService->createUser($formValues['username'], $formValues['password'], $formValues['firstName'], $formValues['lastName'], array('TYPO3.Neos:Administrator'));
+        $this->userService->createUser($formValues['username'], $formValues['password'], $formValues['firstName'], $formValues['lastName'], array('Neos.Neos:Administrator'));
     }
 }

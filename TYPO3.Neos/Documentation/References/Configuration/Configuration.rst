@@ -39,7 +39,7 @@ This example shows how to exclude one specific node type (and it's children) fro
           nodeTree:
             presets:
               default:
-                baseNodeType: 'TYPO3.Neos:Document,!Acme.Com:SomeNodeTypeToIgnore'
+                baseNodeType: 'Neos.Neos:Document,!Acme.Com:SomeNodeTypeToIgnore'
 
 .. note::
   The naming of the configuration (``presets``) keeps into account that the node tree should support multiple presets

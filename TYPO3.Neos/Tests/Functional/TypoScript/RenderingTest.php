@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Tests\Functional\TypoScript;
+namespace Neos\Neos\Tests\Functional\TypoScript;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -19,9 +19,9 @@ use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\FlashMessageContainer;
 use Neos\Flow\Mvc\Routing\UriBuilder;
-use TYPO3\Neos\Domain\Service\ContentContext;
-use TYPO3\Neos\Domain\Service\TypoScriptService;
-use TYPO3\Neos\Tests\Functional\AbstractNodeTest;
+use Neos\Neos\Domain\Service\ContentContext;
+use Neos\Neos\Domain\Service\TypoScriptService;
+use Neos\Neos\Tests\Functional\AbstractNodeTest;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**

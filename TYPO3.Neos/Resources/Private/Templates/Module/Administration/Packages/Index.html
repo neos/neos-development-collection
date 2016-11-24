@@ -1,10 +1,10 @@
-{namespace neos=TYPO3\Neos\ViewHelpers}
+{namespace neos=Neos\Neos\ViewHelpers}
 <f:layout name="BackendSubModule" />
 
 <f:section name="content">
 	<f:form action="batch">
 		<div class="neos-row-fluid">
-			<legend><neos:backend.translate id="packages.index.legend" source="Modules" package="TYPO3.Neos" /></legend>
+			<legend><neos:backend.translate id="packages.index.legend" source="Modules" package="Neos.Neos" /></legend>
 			<br />
 			<table class="neos-table">
 				<thead>
@@ -13,10 +13,10 @@
 							<input type="checkbox" id="check-all" /><span></span>
 						</label>
 					</th>
-					<th>{neos:backend.translate(id: 'packages.name', source: 'Modules', package: 'TYPO3.Neos')}</th>
-					<th>{neos:backend.translate(id: 'version', package: 'TYPO3.Neos')}</th>
-					<th>{neos:backend.translate(id: 'packages.key', source: 'Modules', package: 'TYPO3.Neos')}</th>
-					<th>{neos:backend.translate(id: 'packages.type', source: 'Modules', package: 'TYPO3.Neos')}</th>
+					<th>{neos:backend.translate(id: 'packages.name', source: 'Modules', package: 'Neos.Neos')}</th>
+					<th>{neos:backend.translate(id: 'version', package: 'Neos.Neos')}</th>
+					<th>{neos:backend.translate(id: 'packages.key', source: 'Modules', package: 'Neos.Neos')}</th>
+					<th>{neos:backend.translate(id: 'packages.type', source: 'Modules', package: 'Neos.Neos')}</th>
 					<th>&nbsp;</th>
 				</thead>
 				<tbody>
@@ -44,7 +44,7 @@
 										<span class="neos-label">{package.name}</span>
 										<f:if condition="{package.isActive}">
 											<f:else>
-												<span class="neos-badge neos-badge-warning">{neos:backend.translate(id: 'packages.deactivated', source: 'Modules', package: 'TYPO3.Neos')}</span>
+												<span class="neos-badge neos-badge-warning">{neos:backend.translate(id: 'packages.deactivated', source: 'Modules', package: 'Neos.Neos')}</span>
 											</f:else>
 										</f:if>
 									</label>
@@ -70,12 +70,12 @@
 											<f:if condition="{isDevelopmentContext}">
 												<f:if condition="{package.isFrozen}">
 													<f:then>
-														<f:link.action action="unfreeze" class="neos-button neos-button-freeze neos-active" arguments="{packageKey: packageKey}" title="{neos:backend.translate(id: 'packages.tooltip.unfreeze', source: 'Modules', package: 'TYPO3.Neos')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
+														<f:link.action action="unfreeze" class="neos-button neos-button-freeze neos-active" arguments="{packageKey: packageKey}" title="{neos:backend.translate(id: 'packages.tooltip.unfreeze', source: 'Modules', package: 'Neos.Neos')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
 															<i class="icon-asterisk icon-white"></i>
 														</f:link.action>
 													</f:then>
 													<f:else>
-														<f:link.action action="freeze" class="neos-button neos-button-freeze" arguments="{packageKey: packageKey}" title="{neos:backend.translate(id: 'packages.tooltip.freeze', source: 'Modules', package: 'TYPO3.Neos')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
+														<f:link.action action="freeze" class="neos-button neos-button-freeze" arguments="{packageKey: packageKey}" title="{neos:backend.translate(id: 'packages.tooltip.freeze', source: 'Modules', package: 'Neos.Neos')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
 															<i class="icon-asterisk icon-white"></i>
 														</f:link.action>
 													</f:else>
@@ -83,44 +83,44 @@
 											</f:if>
 											<f:if condition="{package.isProtected}">
 												<f:then>
-													<button class="neos-button neos-button-warning neos-disabled" title="{neos:backend.translate(id: 'packages.tooltip.noDeactivate', source: 'Modules', package: 'TYPO3.Neos')}" disabled="disabled" data-neos-toggle="tooltip">
+													<button class="neos-button neos-button-warning neos-disabled" title="{neos:backend.translate(id: 'packages.tooltip.noDeactivate', source: 'Modules', package: 'Neos.Neos')}" disabled="disabled" data-neos-toggle="tooltip">
 														<i class="icon-pause icon-white"></i>
 													</button>
 												</f:then>
 												<f:else>
-													<f:link.action action="deactivate" class="neos-button neos-button-warning" arguments="{packageKey: packageKey}" title="{neos:backend.translate(id: 'packages.tooltip.deactivate', source: 'Modules', package: 'TYPO3.Neos')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
+													<f:link.action action="deactivate" class="neos-button neos-button-warning" arguments="{packageKey: packageKey}" title="{neos:backend.translate(id: 'packages.tooltip.deactivate', source: 'Modules', package: 'Neos.Neos')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
 														<i class="icon-pause icon-white"></i>
 													</f:link.action>
 												</f:else>
 											</f:if>
 										</f:then>
 										<f:else>
-											<f:link.action action="activate" class="neos-button neos-button-success" arguments="{packageKey: packageKey}" title="{neos:backend.translate(id: 'packages.tooltip.activate', source: 'Modules', package: 'TYPO3.Neos')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
+											<f:link.action action="activate" class="neos-button neos-button-success" arguments="{packageKey: packageKey}" title="{neos:backend.translate(id: 'packages.tooltip.activate', source: 'Modules', package: 'Neos.Neos')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
 												<i class="icon-play icon-white"></i>
 											</f:link.action>
 										</f:else>
 									</f:if>
 									<f:if condition="{package.isProtected}">
 										<f:then>
-											<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'packages.tooltip.noDelete', source: 'Modules', package: 'TYPO3.Neos')}" disabled="disabled" data-neos-toggle="tooltip"><i class="icon-trash icon-white"></i></button>
+											<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'packages.tooltip.noDelete', source: 'Modules', package: 'Neos.Neos')}" disabled="disabled" data-neos-toggle="tooltip"><i class="icon-trash icon-white"></i></button>
 										</f:then>
 										<f:else>
-											<button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'packages.tooltip.delete', source: 'Modules', package: 'TYPO3.Neos')}" data-toggle="modal" href="#{package.sanitizedPackageKey}" data-neos-toggle="tooltip"><i class="icon-trash icon-white"></i></button>
+											<button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'packages.tooltip.delete', source: 'Modules', package: 'Neos.Neos')}" data-toggle="modal" href="#{package.sanitizedPackageKey}" data-neos-toggle="tooltip"><i class="icon-trash icon-white"></i></button>
 											<div class="neos-hide" id="{package.sanitizedPackageKey}">
 												<div class="neos-modal-centered">
 													<div class="neos-modal-content">
 														<div class="neos-modal-header">
 															<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
 															<div class="neos-header">
-																<neos:backend.translate id="packages.message.reallyDelete" arguments="{0: packageKey}" source="Modules" package="TYPO3.Neos" />
+																<neos:backend.translate id="packages.message.reallyDelete" arguments="{0: packageKey}" source="Modules" package="Neos.Neos" />
 															</div>
 															<div class="neos-subheader">
-																<neos:backend.translate id="operationCannotBeUndone" package="TYPO3.Neos" />
+																<neos:backend.translate id="operationCannotBeUndone" package="Neos.Neos" />
 															</div>
 														</div>
 														<div class="neos-modal-footer">
-															<a href="#" class="neos-button" data-dismiss="modal"><neos:backend.translate id="cancel" package="TYPO3.Neos" /></a>
-															<f:link.action action="delete" class="neos-button neos-button-danger" arguments="{packageKey: packageKey}" title="Delete" additionalAttributes="{data-neos-toggle: 'tooltip'}"><neos:backend.translate id="packages.message.confirmDelete" source="Modules" package="TYPO3.Neos" /></f:link.action>
+															<a href="#" class="neos-button" data-dismiss="modal"><neos:backend.translate id="cancel" package="Neos.Neos" /></a>
+															<f:link.action action="delete" class="neos-button neos-button-danger" arguments="{packageKey: packageKey}" title="Delete" additionalAttributes="{data-neos-toggle: 'tooltip'}"><neos:backend.translate id="packages.message.confirmDelete" source="Modules" package="Neos.Neos" /></f:link.action>
 														</div>
 													</div>
 												</div>
@@ -138,20 +138,20 @@
 		<div class="neos-footer">
 			<f:if condition="{isDevelopmentContext}">
 				<button type="submit" name="moduleArguments[action]" value="freeze" class="neos-button batch-action neos-disabled" disabled="disabled">
-					<neos:backend.translate id="packages.selected.freeze" source="Modules" package="TYPO3.Neos" />
+					<neos:backend.translate id="packages.selected.freeze" source="Modules" package="Neos.Neos" />
 				</button>
 				<button type="submit" name="moduleArguments[action]" value="unfreeze" class="neos-button batch-action neos-disabled" disabled="disabled">
-					<neos:backend.translate id="packages.selected.unfreeze" source="Modules" package="TYPO3.Neos" />
+					<neos:backend.translate id="packages.selected.unfreeze" source="Modules" package="Neos.Neos" />
 				</button>
 			</f:if>
 			<button class="neos-button neos-button-danger batch-action neos-disabled" data-toggle="modal" href="#delete" disabled="disabled">
-				<neos:backend.translate id="packages.selected.delete" source="Modules" package="TYPO3.Neos" />
+				<neos:backend.translate id="packages.selected.delete" source="Modules" package="Neos.Neos" />
 			</button>
 			<button type="submit" name="moduleArguments[action]" value="deactivate" class="neos-button neos-button-warning batch-action neos-disabled" disabled="disabled">
-				<neos:backend.translate id="packages.selected.deactivate" source="Modules" package="TYPO3.Neos" />
+				<neos:backend.translate id="packages.selected.deactivate" source="Modules" package="Neos.Neos" />
 			</button>
 			<button type="submit" name="moduleArguments[action]" value="activate" class="neos-button neos-button-success batch-action neos-disabled" disabled="disabled">
-				<neos:backend.translate id="packages.selected.activate" source="Modules" package="TYPO3.Neos" />
+				<neos:backend.translate id="packages.selected.activate" source="Modules" package="Neos.Neos" />
 			</button>
 		</div>
 		<div class="neos-hide" id="delete">
@@ -160,16 +160,16 @@
 					<div class="neos-modal-header">
 						<button type="button" class="neos-close" data-dismiss="modal"></button>
 						<div class="neos-header">
-							<neos:backend.translate id="packages.message.selected.reallyDelete" source="Modules" package="TYPO3.Neos" />
+							<neos:backend.translate id="packages.message.selected.reallyDelete" source="Modules" package="Neos.Neos" />
 						</div>
 						<div class="neos-subheader">
-							<neos:backend.translate id="operationCannotBeUndone" package="TYPO3.Neos" />
+							<neos:backend.translate id="operationCannotBeUndone" package="Neos.Neos" />
 						</div>
 					</div>
 					<div class="neos-modal-footer">
-						<a href="#" class="neos-button" data-dismiss="modal"><neos:backend.translate id="cancel" package="TYPO3.Neos" /></a>
+						<a href="#" class="neos-button" data-dismiss="modal"><neos:backend.translate id="cancel" package="Neos.Neos" /></a>
 						<button type="submit" name="moduleArguments[action]" value="delete" class="neos-button neos-button-danger">
-							<neos:backend.translate id="packages.message.confirmDeletes" source="Modules" package="TYPO3.Neos" />
+							<neos:backend.translate id="packages.message.confirmDeletes" source="Modules" package="Neos.Neos" />
 						</button>
 					</div>
 				</div>

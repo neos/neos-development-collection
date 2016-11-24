@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Command;
+namespace Neos\Neos\Command;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -17,9 +17,9 @@ use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Exception\NoSuchRoleException;
 use Neos\Flow\Security\Policy\Role;
 use Neos\Utility\Arrays;
-use TYPO3\Neos\Domain\Exception;
-use TYPO3\Neos\Domain\Model\User;
-use TYPO3\Neos\Domain\Service\UserService;
+use Neos\Neos\Domain\Exception;
+use Neos\Neos\Domain\Model\User;
+use Neos\Neos\Domain\Service\UserService;
 
 /**
  * The User Command Controller
@@ -101,7 +101,7 @@ class UserCommandController extends CommandController
      * If an authentication provider name is specified, the new account will be created for that provider instead.
      *
      * Roles for the new user can optionally be specified as a comma separated list. For all roles provided by
-     * Neos, the role namespace "TYPO3.Neos:" can be omitted.
+     * Neos, the role namespace "Neos.Neos:" can be omitted.
      *
      * @param string $username The username of the user to be created, used as an account identifier for the newly created account
      * @param string $password Password of the user to be created
@@ -252,14 +252,14 @@ class UserCommandController extends CommandController
      * This command allows for adding a specific role to an existing user.
      *
      * Roles can optionally be specified as a comma separated list. For all roles provided by Neos, the role
-     * namespace "TYPO3.Neos:" can be omitted.
+     * namespace "Neos.Neos:" can be omitted.
      *
      * If an authentication provider was specified, the user will be determined by an account identified by "username"
      * related to the given provider. However, once a user has been found, the new role will be added to <b>all</b>
      * existing accounts related to that user, regardless of its authentication provider.
      *
      * @param string $username The username of the user
-     * @param string $role Role to be added to the user, for example "TYPO3.Neos:Administrator" or just "Administrator"
+     * @param string $role Role to be added to the user, for example "Neos.Neos:Administrator" or just "Administrator"
      * @param string $authenticationProvider Name of the authentication provider to use. Example: "Typo3BackendProvider"
      * @return void
      */
@@ -289,7 +289,7 @@ class UserCommandController extends CommandController
      * existing accounts related to that user, regardless of its authentication provider.
      *
      * @param string $username The username of the user
-     * @param string $role Role to be removed from the user, for example "TYPO3.Neos:Administrator" or just "Administrator"
+     * @param string $role Role to be removed from the user, for example "Neos.Neos:Administrator" or just "Administrator"
      * @param string $authenticationProvider Name of the authentication provider to use. Example: "Typo3BackendProvider"
      * @return void
      */

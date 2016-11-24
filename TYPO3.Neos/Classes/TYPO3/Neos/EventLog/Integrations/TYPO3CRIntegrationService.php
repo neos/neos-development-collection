@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\EventLog\Integrations;
+namespace Neos\Neos\EventLog\Integrations;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -15,7 +15,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use TYPO3\Neos\EventLog\Domain\Model\NodeEvent;
+use Neos\Neos\EventLog\Domain\Model\NodeEvent;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Service\Context;

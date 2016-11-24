@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Service;
+namespace Neos\Neos\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -18,9 +18,9 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Session\SessionInterface;
-use TYPO3\Neos\Domain\Repository\DomainRepository;
-use TYPO3\Neos\Domain\Repository\SiteRepository;
-use TYPO3\Neos\Domain\Service\ContentContext;
+use Neos\Neos\Domain\Repository\DomainRepository;
+use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\Service\ContentContext;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
@@ -110,10 +110,10 @@ class BackendRedirectionService
         $contentContext = $this->createContext($workspaceName);
         $lastVisitedNode = $this->getLastVisitedNode($workspaceName);
         if ($lastVisitedNode !== null) {
-            return $uriBuilder->uriFor('show', array('node' => $lastVisitedNode), 'Frontend\\Node', 'TYPO3.Neos');
+            return $uriBuilder->uriFor('show', array('node' => $lastVisitedNode), 'Frontend\\Node', 'Neos.Neos');
         }
 
-        return $uriBuilder->uriFor('show', array('node' => $contentContext->getCurrentSiteNode()), 'Frontend\\Node', 'TYPO3.Neos');
+        return $uriBuilder->uriFor('show', array('node' => $contentContext->getCurrentSiteNode()), 'Frontend\\Node', 'Neos.Neos');
     }
 
     /**
@@ -134,7 +134,7 @@ class BackendRedirectionService
         $uriBuilder->setRequest($actionRequest);
         $uriBuilder->setFormat('html');
         $uriBuilder->setCreateAbsoluteUri(true);
-        return $uriBuilder->uriFor('show', array('node' => $lastVisitedNode), 'Frontend\\Node', 'TYPO3.Neos');
+        return $uriBuilder->uriFor('show', array('node' => $lastVisitedNode), 'Frontend\\Node', 'Neos.Neos');
     }
 
     /**

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Domain\Service;
+namespace Neos\Neos\Domain\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -23,7 +23,7 @@ interface DefaultPrototypeGeneratorInterface
     /**
      * Generate a TypoScript prototype definition for a given node type
      *
-     * A node will be rendered by TYPO3.Neos:Content by default with a template in
+     * A node will be rendered by Neos.Neos:Content by default with a template in
      * resource://PACKAGE_KEY/Private/Templates/NodeTypes/NAME.html and forwards all public
      * node properties to the template TypoScript object.
      *

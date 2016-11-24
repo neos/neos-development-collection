@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Controller\Service;
+namespace Neos\Neos\Controller\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -17,8 +17,8 @@ use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\FluidAdaptor\View\TemplateView;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Repository\TagRepository;
-use TYPO3\Neos\Controller\BackendUserTranslationTrait;
-use TYPO3\Neos\View\Service\AssetJsonView;
+use Neos\Neos\Controller\BackendUserTranslationTrait;
+use Neos\Neos\View\Service\AssetJsonView;
 
 /**
  * Rudimentary REST service for assets

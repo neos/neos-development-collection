@@ -15,6 +15,6 @@
   uriPattern: '<TYPO3NeosSubroutes>'
   subRoutes:
     'TYPO3NeosSubroutes':
-      package: 'TYPO3.Neos'
+      package: 'Neos.Neos'
       variables:
         'defaultUriSuffix': '.html'

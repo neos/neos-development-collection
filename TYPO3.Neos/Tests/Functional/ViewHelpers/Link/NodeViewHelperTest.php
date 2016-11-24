@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Tests\Functional\ViewHelpers\Link;
+namespace Neos\Neos\Tests\Functional\ViewHelpers\Link;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -24,12 +24,12 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer;
 use Neos\FluidAdaptor\View\AbstractTemplateView;
 use Neos\FluidAdaptor\View\TemplateView;
 use Neos\Media\TypeConverter\AssetInterfaceConverter;
-use TYPO3\Neos\Domain\Model\Domain;
-use TYPO3\Neos\Domain\Repository\DomainRepository;
-use TYPO3\Neos\Domain\Repository\SiteRepository;
-use TYPO3\Neos\Domain\Service\ContentContext;
-use TYPO3\Neos\Domain\Service\SiteImportService;
-use TYPO3\Neos\ViewHelpers\Link\NodeViewHelper;
+use Neos\Neos\Domain\Model\Domain;
+use Neos\Neos\Domain\Repository\DomainRepository;
+use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\Service\ContentContext;
+use Neos\Neos\Domain\Service\SiteImportService;
+use Neos\Neos\ViewHelpers\Link\NodeViewHelper;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;

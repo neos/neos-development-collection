@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Domain\Model;
+namespace Neos\Neos\Domain\Model;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,7 +14,7 @@ namespace TYPO3\Neos\Domain\Model;
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
-use TYPO3\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Model\Site;
 
 /**
  * Domain Model of a Domain.
@@ -31,7 +31,7 @@ class Domain implements CacheAwareInterface
      * @Flow\Identity
      * @Flow\Validate(type="NotEmpty")
      * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=255 })
-     * @Flow\Validate(type="\TYPO3\Neos\Validation\Validator\HostnameValidator", options={"ignoredHostnames"="localhost"})
+     * @Flow\Validate(type="\Neos\Neos\Validation\Validator\HostnameValidator", options={"ignoredHostnames"="localhost"})
      */
     protected $hostname;
 

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Service;
+namespace Neos\Neos\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,7 @@ namespace TYPO3\Neos\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use TYPO3\Neos\Utility\NodeUriPathSegmentGenerator;
+use Neos\Neos\Utility\NodeUriPathSegmentGenerator;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
@@ -60,7 +60,7 @@ class NodeOperations
         }
         $nodeType = $this->nodeTypeManager->getNodeType($nodeData['nodeType']);
 
-        if ($nodeType->isOfType('TYPO3.Neos:Document') && !isset($nodeData['properties']['uriPathSegment']) && isset($nodeData['properties']['title'])) {
+        if ($nodeType->isOfType('Neos.Neos:Document') && !isset($nodeData['properties']['uriPathSegment']) && isset($nodeData['properties']['title'])) {
             $nodeData['properties']['uriPathSegment'] = $this->nodeUriPathSegmentGenerator->generateUriPathSegment($referenceNode, $nodeData['properties']['title']);
         }
 

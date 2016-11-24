@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Command;
+namespace Neos\Neos\Command;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -16,11 +16,11 @@ use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use TYPO3\Neos\Domain\Repository\SiteRepository;
-use TYPO3\Neos\Domain\Service\SiteExportService;
-use TYPO3\Neos\Domain\Service\SiteImportService;
-use TYPO3\Neos\Domain\Service\SiteService;
-use TYPO3\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\Service\SiteExportService;
+use Neos\Neos\Domain\Service\SiteImportService;
+use Neos\Neos\Domain\Service\SiteService;
+use Neos\Neos\Domain\Model\Site;
 use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Domain\Service\NodeService;
@@ -99,8 +99,8 @@ class SiteCommandController extends CommandController
      * This command allows to create a blank site with just a single empty document in the default dimension.
      * The name of the site, the packageKey must be specified.
      *
-     * If no ``nodeType`` option is specified the command will use `TYPO3.Neos.NodeTypes:Page` as fallback. The node type
-     * must already exists and have the superType ``TYPO3.Neos:Document``.
+     * If no ``nodeType`` option is specified the command will use `Neos.Neos.NodeTypes:Page` as fallback. The node type
+     * must already exists and have the superType ``Neos.Neos:Document``.
      *
      * If no ``nodeName` option is specified the command will create a unique node-name from the name of the site.
      * If a node name is given it has to be unique for the setup.
@@ -109,12 +109,12 @@ class SiteCommandController extends CommandController
      *
      * @param string $name The name of the site
      * @param string $packageKey The site package
-     * @param string $nodeType The node type to use for the site node. (Default = TYPO3.Neos.NodeTypes:Page)
+     * @param string $nodeType The node type to use for the site node. (Default = Neos.Neos.NodeTypes:Page)
      * @param string $nodeName The name of the site node. If no nodeName is given it will be determined from the siteName.
      * @param boolean $inactive The new site is not activated immediately (default = false).
      * @return void
      */
-    public function createCommand($name, $packageKey, $nodeType = 'TYPO3.Neos.NodeTypes:Page', $nodeName = null, $inactive = false)
+    public function createCommand($name, $packageKey, $nodeType = 'Neos.Neos.NodeTypes:Page', $nodeName = null, $inactive = false)
     {
         if ($nodeName === null) {
             $nodeName = $this->nodeService->generateUniqueNodeName(SiteService::SITES_ROOT_PATH, $name);
@@ -132,12 +132,12 @@ class SiteCommandController extends CommandController
 
         $siteNodeType = $this->nodeTypeManager->getNodeType($nodeType);
 
-        if ($siteNodeType === null || $siteNodeType->getName() === 'TYPO3.Neos:FallbackNode') {
+        if ($siteNodeType === null || $siteNodeType->getName() === 'Neos.Neos:FallbackNode') {
             $this->outputLine('<error>The given node type "%s" was not found</error>', [$nodeType]);
             $this->quit(1);
         }
-        if ($siteNodeType->isOfType('TYPO3.Neos:Document') === false) {
-            $this->outputLine('<error>The given node type "%s" is not based on the superType "%s"</error>', [$nodeType, 'TYPO3.Neos:Document']);
+        if ($siteNodeType->isOfType('Neos.Neos:Document') === false) {
+            $this->outputLine('<error>The given node type "%s" is not based on the superType "%s"</error>', [$nodeType, 'Neos.Neos:Document']);
             $this->quit(1);
         }
 
@@ -234,7 +234,7 @@ class SiteCommandController extends CommandController
      * @param boolean $tidy Whether to export formatted XML. This is defaults to true
      * @param string $filename relative path and filename to the XML file to create. Any resource will be stored in a sub folder "Resources".
      * @param string $packageKey Package to store the XML file in. Any resource will be stored in a sub folder "Resources".
-     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text")
+     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text")
      * @return void
      */
     public function exportCommand($siteNode = null, $tidy = true, $filename = null, $packageKey = null, $nodeTypeFilter = null)

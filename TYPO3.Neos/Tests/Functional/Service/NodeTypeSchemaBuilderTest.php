@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Tests\Functional\Service;
+namespace Neos\Neos\Tests\Functional\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,7 @@ namespace TYPO3\Neos\Tests\Functional\Service;
  */
 
 use Neos\Flow\Tests\FunctionalTestCase;
-use TYPO3\Neos\Service\NodeTypeSchemaBuilder;
+use Neos\Neos\Service\NodeTypeSchemaBuilder;
 
 /**
  * Testcase for the NodeTypeSchemaBuilder
@@ -43,14 +43,14 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
      */
     public function inheritanceMapContainsTransitiveSubTypes()
     {
-        $this->assertTrue(array_key_exists('TYPO3.Neos.BackendSchemaControllerTest:Document', $this->schema['inheritanceMap']['subTypes']), 'Document must be found in InheritanceMap');
+        $this->assertTrue(array_key_exists('Neos.Neos.BackendSchemaControllerTest:Document', $this->schema['inheritanceMap']['subTypes']), 'Document must be found in InheritanceMap');
         $expectedSubTypesOfDocument = array(
-            'TYPO3.Neos.BackendSchemaControllerTest:Page',
-            'TYPO3.Neos.BackendSchemaControllerTest:SubPage',
-            'TYPO3.Neos.BackendSchemaControllerTest:Folder'
+            'Neos.Neos.BackendSchemaControllerTest:Page',
+            'Neos.Neos.BackendSchemaControllerTest:SubPage',
+            'Neos.Neos.BackendSchemaControllerTest:Folder'
         );
 
-        $this->assertEquals($expectedSubTypesOfDocument, $this->schema['inheritanceMap']['subTypes']['TYPO3.Neos.BackendSchemaControllerTest:Document']);
+        $this->assertEquals($expectedSubTypesOfDocument, $this->schema['inheritanceMap']['subTypes']['Neos.Neos.BackendSchemaControllerTest:Document']);
     }
 
     /**
@@ -58,16 +58,16 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
      */
     public function nodeTypesContainCorrectSuperTypes()
     {
-        $this->assertTrue(array_key_exists('TYPO3.Neos.BackendSchemaControllerTest:AlohaNodeType', $this->schema['nodeTypes']), 'AlohaNodeType');
+        $this->assertTrue(array_key_exists('Neos.Neos.BackendSchemaControllerTest:AlohaNodeType', $this->schema['nodeTypes']), 'AlohaNodeType');
 
-        $expectedSuperTypes = array('TYPO3.Neos.BackendSchemaControllerTest:ParentAlohaNodeType' => true);
+        $expectedSuperTypes = array('Neos.Neos.BackendSchemaControllerTest:ParentAlohaNodeType' => true);
         $expectedPropertyConfiguration = array(
             'fallbackCase' => array('defined', 'as', 'plain', 'array'),
             'sampleCase' => array('h3', 'sup')
         );
 
-        $this->assertEquals($expectedSuperTypes, $this->schema['nodeTypes']['TYPO3.Neos.BackendSchemaControllerTest:AlohaNodeType']['superTypes']);
-        $this->assertEquals($expectedPropertyConfiguration, $this->schema['nodeTypes']['TYPO3.Neos.BackendSchemaControllerTest:AlohaNodeType']['properties']['text']['ui']['aloha']);
+        $this->assertEquals($expectedSuperTypes, $this->schema['nodeTypes']['Neos.Neos.BackendSchemaControllerTest:AlohaNodeType']['superTypes']);
+        $this->assertEquals($expectedPropertyConfiguration, $this->schema['nodeTypes']['Neos.Neos.BackendSchemaControllerTest:AlohaNodeType']['properties']['text']['ui']['aloha']);
     }
 
     /**
@@ -77,11 +77,11 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
     {
         $subTypesDefinition = $this->schema['inheritanceMap']['subTypes'];
 
-        $this->assertContains('TYPO3.Neos.BackendSchemaControllerTest:Document', $subTypesDefinition['TYPO3.Neos.BackendSchemaControllerTest:Node']);
-        $this->assertContains('TYPO3.Neos.BackendSchemaControllerTest:Content', $subTypesDefinition['TYPO3.Neos.BackendSchemaControllerTest:Node']);
-        $this->assertContains('TYPO3.Neos.BackendSchemaControllerTest:Page', $subTypesDefinition['TYPO3.Neos.BackendSchemaControllerTest:Node']);
-        $this->assertContains('TYPO3.Neos.BackendSchemaControllerTest:SubPage', $subTypesDefinition['TYPO3.Neos.BackendSchemaControllerTest:Node']);
-        $this->assertContains('TYPO3.Neos.BackendSchemaControllerTest:Text', $subTypesDefinition['TYPO3.Neos.BackendSchemaControllerTest:Node']);
+        $this->assertContains('Neos.Neos.BackendSchemaControllerTest:Document', $subTypesDefinition['Neos.Neos.BackendSchemaControllerTest:Node']);
+        $this->assertContains('Neos.Neos.BackendSchemaControllerTest:Content', $subTypesDefinition['Neos.Neos.BackendSchemaControllerTest:Node']);
+        $this->assertContains('Neos.Neos.BackendSchemaControllerTest:Page', $subTypesDefinition['Neos.Neos.BackendSchemaControllerTest:Node']);
+        $this->assertContains('Neos.Neos.BackendSchemaControllerTest:SubPage', $subTypesDefinition['Neos.Neos.BackendSchemaControllerTest:Node']);
+        $this->assertContains('Neos.Neos.BackendSchemaControllerTest:Text', $subTypesDefinition['Neos.Neos.BackendSchemaControllerTest:Node']);
     }
 
     /**
@@ -89,7 +89,7 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
      */
     public function alohaUiConfigurationPartsAreActualArrayAndDontContainExcludedElements()
     {
-        $alohaConfiguration = $this->schema['nodeTypes']['TYPO3.Neos.BackendSchemaControllerTest:AlohaNodeType']['properties']['text']['ui']['aloha'];
+        $alohaConfiguration = $this->schema['nodeTypes']['Neos.Neos.BackendSchemaControllerTest:AlohaNodeType']['properties']['text']['ui']['aloha'];
         $this->assertInternalType('array', $alohaConfiguration['fallbackCase']);
         $this->assertInternalType('array', $alohaConfiguration['sampleCase']);
 
@@ -108,11 +108,11 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
     {
         $expectedConstraints = array(
             'nodeTypes' => array(
-                'TYPO3.Neos.BackendSchemaControllerTest:SubPage' => true
+                'Neos.Neos.BackendSchemaControllerTest:SubPage' => true
             ),
             'childNodes' => array()
         );
-        $this->assertEquals($expectedConstraints, $this->schema['constraints']['TYPO3.Neos.BackendSchemaControllerTest:Page']);
+        $this->assertEquals($expectedConstraints, $this->schema['constraints']['Neos.Neos.BackendSchemaControllerTest:Page']);
     }
 
     /**
@@ -120,7 +120,7 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
      */
     public function constraintsForNamedChildNodeTypesAreEvaluatedForANodeType()
     {
-        $this->assertFalse(array_key_exists('TYPO3.Neos.BackendSchemaControllerTest:SubPage', $this->schema['constraints']['TYPO3.Neos.BackendSchemaControllerTest:TwoColumn']['childNodes']['column1']['nodeTypes']));
-        $this->assertContains('TYPO3.Neos.BackendSchemaControllerTest:AlohaNodeType', $this->schema['constraints']['TYPO3.Neos.BackendSchemaControllerTest:TwoColumn']['childNodes']['column1']['nodeTypes']);
+        $this->assertFalse(array_key_exists('Neos.Neos.BackendSchemaControllerTest:SubPage', $this->schema['constraints']['Neos.Neos.BackendSchemaControllerTest:TwoColumn']['childNodes']['column1']['nodeTypes']));
+        $this->assertContains('Neos.Neos.BackendSchemaControllerTest:AlohaNodeType', $this->schema['constraints']['Neos.Neos.BackendSchemaControllerTest:TwoColumn']['childNodes']['column1']['nodeTypes']);
     }
 }

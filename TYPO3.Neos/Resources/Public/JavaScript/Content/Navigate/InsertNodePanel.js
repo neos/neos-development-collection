@@ -46,7 +46,7 @@ define(
 								'position': nodeType.ui.position
 							});
 						} else {
-							window.console.warn('Node type group "' + groupName + '" not found for node type "' + nodeTypeName + '", defined in "Settings" configuration "TYPO3.Neos.nodeTypes.groups"');
+							window.console.warn('Node type group "' + groupName + '" not found for node type "' + nodeTypeName + '", defined in "Settings" configuration "Neos.Neos.nodeTypes.groups"');
 						}
 					}
 				});

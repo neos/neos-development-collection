@@ -28,7 +28,7 @@ define(
 			searchRequest: null,
 
 			// array of allowed node type names, configurable via editorOptions
-			nodeTypes: ['TYPO3.Neos:Document'],
+			nodeTypes: ['Neos.Neos:Document'],
 			assets: true,
 
 			didInsertElement: function() {
@@ -190,7 +190,7 @@ define(
 					item = Ember.Object.extend({
 						id: value,
 						text: function() {
-							return I18n.translate('TYPO3.Neos:Main:loading', 'Loading') + ' ...';
+							return I18n.translate('Neos.Neos:Main:loading', 'Loading') + ' ...';
 						}.property(),
 						data: {}
 					}).create();

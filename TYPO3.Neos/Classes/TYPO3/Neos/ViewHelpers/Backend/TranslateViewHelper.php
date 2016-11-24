@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\ViewHelpers\Backend;
+namespace Neos\Neos\ViewHelpers\Backend;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -24,7 +24,7 @@ use Neos\FluidAdaptor\Core\ViewHelper;
  *
  * = Examples =
  *
- * {namespace neos=TYPO3\Neos\ViewHelpers}
+ * {namespace neos=Neos\Neos\ViewHelpers}
  * <code title="Translation by id">
  * <neos:backend.translate id="user.unregistered">Unregistered User</neos:backend.translate>
  * </code>
@@ -71,7 +71,7 @@ class TranslateViewHelper extends FluidTranslateViewHelper
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Service\UserService
+     * @var \Neos\Neos\Service\UserService
      */
     protected $userService;
 

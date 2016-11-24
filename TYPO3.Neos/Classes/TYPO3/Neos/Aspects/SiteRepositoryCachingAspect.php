@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Aspects;
+namespace Neos\Neos\Aspects;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,8 +14,8 @@ namespace TYPO3\Neos\Aspects;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Utility\Environment;
-use TYPO3\Neos\Domain\Model\Domain;
-use TYPO3\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Model\Domain;
+use Neos\Neos\Domain\Model\Site;
 
 /**
  * Aspect to memoize values from SiteRepository without the overhead of a query cache
@@ -42,7 +42,7 @@ class SiteRepositoryCachingAspect
     protected $domainForActiveRequest = false;
 
     /**
-     * @Flow\Around("method(TYPO3\Neos\Domain\Repository\SiteRepository->findFirstOnline())")
+     * @Flow\Around("method(Neos\Neos\Domain\Repository\SiteRepository->findFirstOnline())")
      * @param JoinPointInterface $joinPoint The current join point
      * @return mixed
      */
@@ -56,7 +56,7 @@ class SiteRepositoryCachingAspect
     }
 
     /**
-     * @Flow\Around("method(TYPO3\Neos\Domain\Repository\DomainRepository->findOneByActiveRequest())")
+     * @Flow\Around("method(Neos\Neos\Domain\Repository\DomainRepository->findOneByActiveRequest())")
      * @param JoinPointInterface $joinPoint The current join point
      * @return mixed
      */

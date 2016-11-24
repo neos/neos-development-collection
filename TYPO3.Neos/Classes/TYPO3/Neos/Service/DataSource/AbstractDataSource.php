@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Service\DataSource;
+namespace Neos\Neos\Service\DataSource;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,7 @@ namespace TYPO3\Neos\Service\DataSource;
  */
 
 use Neos\Flow\Mvc\Controller\ControllerContext;
-use TYPO3\Neos\Exception;
+use Neos\Neos\Exception;
 
 /**
  * Data source interface for getting data.

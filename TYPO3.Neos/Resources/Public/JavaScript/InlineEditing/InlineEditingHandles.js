@@ -93,7 +93,7 @@ function (
 		allowedNewPositions: function() {
 			var positions = [],
 				selectedNode = this.get('_node');
-			if (!selectedNode || NodeTypeService.isOfType(selectedNode, 'TYPO3.Neos:Document')) {
+			if (!selectedNode || NodeTypeService.isOfType(selectedNode, 'Neos.Neos:Document')) {
 				return positions;
 			}
 
@@ -114,7 +114,7 @@ function (
 			var positions = [],
 				selectedNode = this.get('_node'),
 				sourceNode = this.get('nodeActions.clipboard');
-			if (!selectedNode || !sourceNode || NodeTypeService.isOfType(selectedNode, 'TYPO3.Neos:Document')) {
+			if (!selectedNode || !sourceNode || NodeTypeService.isOfType(selectedNode, 'Neos.Neos:Document')) {
 				return positions;
 			}
 
@@ -138,7 +138,7 @@ function (
 		},
 
 		_hideToggleTitle: function() {
-			return this.get('_hidden') === true ? I18n.translate('TYPO3.Neos:Main:unhide', 'Unhide') : I18n.translate('TYPO3.Neos:Main:hide', 'Hide');
+			return this.get('_hidden') === true ? I18n.translate('Neos.Neos:Main:unhide', 'Unhide') : I18n.translate('Neos.Neos:Main:hide', 'Hide');
 		}.property('_hidden'),
 
 		_thisElementStartedCut: function() {

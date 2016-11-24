@@ -17,12 +17,12 @@ the following configuration in NodeTypes.yaml::
 
 	'My.Package:HomePage':
 	  superTypes:
-	    'TYPO3.Neos.NodeTypes:Page': TRUE
+	    'Neos.Neos.NodeTypes:Page': TRUE
 	  ui:
 	    label: 'Homepage'
 	  childNodes:
 	    footer:
-	      type: 'TYPO3.Neos:ContentCollection'
+	      type: 'Neos.Neos:ContentCollection'
 
 .. note::
 
@@ -30,11 +30,11 @@ the following configuration in NodeTypes.yaml::
 	(for example if you manually updated the node type in the database) you might
 	have to create the missing child nodes using::
 
-		./flow node:repair --node-type TYPO3.Neos.NodeTypes:Page
+		./flow node:repair --node-type Neos.Neos.NodeTypes:Page
 
 TypoScript code::
 
-	footer = TYPO3.Neos:ContentCollection {
+	footer = Neos.Neos:ContentCollection {
 		nodePath = ${q(site).find('footer').property('_path')}
 		collection = ${q(site).children('footer').children()}
 	}

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\ViewHelpers\Backend;
+namespace Neos\Neos\ViewHelpers\Backend;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -17,9 +17,9 @@ use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Context;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\View\StandaloneView;
-use TYPO3\Neos\Controller\Backend\MenuHelper;
-use TYPO3\Neos\Domain\Model\User;
-use TYPO3\Neos\Exception as NeosException;
+use Neos\Neos\Controller\Backend\MenuHelper;
+use Neos\Neos\Domain\Model\User;
+use Neos\Neos\Exception as NeosException;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use Neos\Party\Domain\Service\PartyService;
 
@@ -79,16 +79,16 @@ class ContainerViewHelper extends AbstractViewHelper
      */
     public function render(NodeInterface $node)
     {
-        if ($this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.GeneralAccess') === false) {
+        if ($this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess') === false) {
             return '';
         }
 
         /** @var $actionRequest ActionRequest */
         $actionRequest = $this->controllerContext->getRequest();
         $innerView = new StandaloneView($actionRequest);
-        $innerView->setTemplatePathAndFilename('resource://TYPO3.Neos/Private/Templates/Backend/Content/Container.html');
+        $innerView->setTemplatePathAndFilename('resource://Neos.Neos/Private/Templates/Backend/Content/Container.html');
         $innerView->setFormat('html');
-        $innerView->setPartialRootPath('resource://TYPO3.Neos/Private/Partials');
+        $innerView->setPartialRootPath('resource://Neos.Neos/Private/Partials');
 
         $user = $this->partyService->getAssignedPartyOfAccount($this->securityContext->getAccount());
 

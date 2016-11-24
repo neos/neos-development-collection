@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Domain\Service;
+namespace Neos\Neos\Domain\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -26,16 +26,16 @@ use Neos\Flow\Security\Exception\NoSuchRoleException;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Security\Policy\Role;
 use Neos\Flow\Utility\Now;
-use TYPO3\Neos\Domain\Exception;
-use TYPO3\Neos\Domain\Model\User;
-use TYPO3\Neos\Domain\Repository\UserRepository;
-use TYPO3\Neos\Service\PublishingService;
+use Neos\Neos\Domain\Exception;
+use Neos\Neos\Domain\Model\User;
+use Neos\Neos\Domain\Repository\UserRepository;
+use Neos\Neos\Service\PublishingService;
 use Neos\Party\Domain\Model\PersonName;
 use Neos\Party\Domain\Repository\PartyRepository;
 use Neos\Party\Domain\Service\PartyService;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
-use TYPO3\Neos\Utility\User as UserUtility;
+use Neos\Neos\Utility\User as UserUtility;
 
 /**
  * A service for managing users
@@ -265,7 +265,7 @@ class UserService
     public function addUser($username, $password, User $user, array $roleIdentifiers = null, $authenticationProviderName = null)
     {
         if ($roleIdentifiers === null) {
-            $roleIdentifiers = array('TYPO3.Neos:Editor');
+            $roleIdentifiers = array('Neos.Neos:Editor');
         }
         $roleIdentifiers = $this->normalizeRoleIdentifiers($roleIdentifiers);
         $account = $this->accountFactory->createAccountWithPassword($username, $password, $roleIdentifiers, $authenticationProviderName ?: $this->defaultAuthenticationProviderName);
@@ -303,7 +303,7 @@ class UserService
      */
     public function deleteUser(User $user)
     {
-        $backendUserRole = $this->policyService->getRole('TYPO3.Neos:AbstractEditor');
+        $backendUserRole = $this->policyService->getRole('Neos.Neos:AbstractEditor');
         foreach ($user->getAccounts() as $account) {
             /** @var Account $account */
             if ($account->hasRole($backendUserRole)) {
@@ -382,7 +382,7 @@ class UserService
      * properly reflect these changes.
      *
      * @param User $user The user to add roles to
-     * @param string $roleIdentifier A fully qualified role identifier, or a role identifier relative to the TYPO3.Neos namespace
+     * @param string $roleIdentifier A fully qualified role identifier, or a role identifier relative to the Neos.Neos namespace
      * @return integer How often this role has been added to accounts owned by the user
      * @api
      */
@@ -401,7 +401,7 @@ class UserService
      * properly reflect these changes.
      *
      * @param User $user The user to remove roles from
-     * @param string $roleIdentifier A fully qualified role identifier, or a role identifier relative to the TYPO3.Neos namespace
+     * @param string $roleIdentifier A fully qualified role identifier, or a role identifier relative to the Neos.Neos namespace
      * @return integer How often this role has been removed from accounts owned by the user
      * @api
      */
@@ -432,7 +432,7 @@ class UserService
      * to properly reflect these changes.
      *
      * @param Account $account The account to assign the roles to
-     * @param array $newRoleIdentifiers A list of fully qualified role identifiers, or role identifiers relative to the TYPO3.Neos namespace
+     * @param array $newRoleIdentifiers A list of fully qualified role identifiers, or role identifiers relative to the Neos.Neos namespace
      * @return void
      * @api
      */
@@ -459,7 +459,7 @@ class UserService
      * properly reflect these changes.
      *
      * @param Account $account The account to add roles to
-     * @param string $roleIdentifier A fully qualified role identifier, or a role identifier relative to the TYPO3.Neos namespace
+     * @param string $roleIdentifier A fully qualified role identifier, or a role identifier relative to the Neos.Neos namespace
      * @return integer How often this role has been added to the given account (effectively can be 1 or 0)
      * @api
      */
@@ -497,7 +497,7 @@ class UserService
      * properly reflect these changes.
      *
      * @param Account $account The account to remove roles from
-     * @param string $roleIdentifier A fully qualified role identifier, or a role identifier relative to the TYPO3.Neos namespace
+     * @param string $roleIdentifier A fully qualified role identifier, or a role identifier relative to the Neos.Neos namespace
      * @return integer How often this role has been removed from the given account (effectively can be 1 or 0)
      * @api
      */
@@ -589,7 +589,7 @@ class UserService
     public function currentUserCanPublishToWorkspace(Workspace $workspace)
     {
         if ($workspace->getName() === 'live') {
-            return $this->securityContext->hasRole('TYPO3.Neos:LivePublisher');
+            return $this->securityContext->hasRole('Neos.Neos:LivePublisher');
         }
 
         if ($workspace->getOwner() === $this->getCurrentUser() || $workspace->getOwner() === null) {
@@ -637,15 +637,15 @@ class UserService
         }
 
         if ($workspace->isInternalWorkspace()) {
-            return $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces');
+            return $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces');
         }
 
         if ($workspace->isPrivateWorkspace() && $workspace->getOwner() === $this->getCurrentUser()) {
-            return $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces');
+            return $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces');
         }
 
         if ($workspace->isPrivateWorkspace() && $workspace->getOwner() !== $this->getCurrentUser()) {
-            return $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces');
+            return $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces');
         }
 
         return false;
@@ -669,7 +669,7 @@ class UserService
         // The privilege to manage shared workspaces is needed, because regular editors should not change ownerships
         // of their internal workspaces, even if it was technically possible, because they wouldn't be able to change
         // ownership back to themselves.
-        return $this->privilegeManager->isPrivilegeTargetGranted('TYPO3.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces');
+        return $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces');
     }
 
     /**
@@ -696,7 +696,7 @@ class UserService
     }
 
     /**
-     * Replaces role identifiers not containing a "." into fully qualified role identifiers from the TYPO3.Neos namespace.
+     * Replaces role identifiers not containing a "." into fully qualified role identifiers from the Neos.Neos namespace.
      *
      * @param array $roleIdentifiers
      * @return array
@@ -711,7 +711,7 @@ class UserService
     }
 
     /**
-     * Replaces a role identifier not containing a "." into fully qualified role identifier from the TYPO3.Neos namespace.
+     * Replaces a role identifier not containing a "." into fully qualified role identifier from the Neos.Neos namespace.
      *
      * @param string $roleIdentifier
      * @return string
@@ -720,7 +720,7 @@ class UserService
     protected function normalizeRoleIdentifier($roleIdentifier)
     {
         if (strpos($roleIdentifier, ':') === false) {
-            $roleIdentifier = 'TYPO3.Neos:' . $roleIdentifier;
+            $roleIdentifier = 'Neos.Neos:' . $roleIdentifier;
         }
         if (!$this->policyService->hasRole($roleIdentifier)) {
             throw new NoSuchRoleException(sprintf('The role %s does not exist.', $roleIdentifier), 1422540184);

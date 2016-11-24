@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Domain\Repository;
+namespace Neos\Neos\Domain\Repository;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,8 +14,8 @@ namespace TYPO3\Neos\Domain\Repository;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Persistence\Repository;
-use TYPO3\Neos\Domain\Model\Site;
-use TYPO3\Neos\Domain\Exception as NeosException;
+use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Exception as NeosException;
 
 /**
  * The Site Repository
@@ -27,7 +27,7 @@ class SiteRepository extends Repository
 {
 
     /**
-     * @Flow\InjectConfiguration(package="TYPO3.Neos", path="defaultSiteNodeName")
+     * @Flow\InjectConfiguration(package="Neos.Neos", path="defaultSiteNodeName")
      * @var string
      */
     protected $defaultSiteNodeName;

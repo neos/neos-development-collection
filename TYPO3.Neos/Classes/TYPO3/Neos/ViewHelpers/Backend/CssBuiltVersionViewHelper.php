@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\ViewHelpers\Backend;
+namespace Neos\Neos\ViewHelpers\Backend;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,7 @@ namespace TYPO3\Neos\ViewHelpers\Backend;
  */
 
 use Neos\Flow\Annotations as Flow;
-use TYPO3\Neos\Utility\BackendAssetsUtility;
+use Neos\Neos\Utility\BackendAssetsUtility;
 
 /**
  * Returns a shortened md5 of the built CSS file

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Service\Controller;
+namespace Neos\Neos\Service\Controller;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,8 +14,8 @@ namespace TYPO3\Neos\Service\Controller;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfigurationBuilder;
-use TYPO3\Neos\Service\PublishingService;
-use TYPO3\Neos\Service\View\NodeView;
+use Neos\Neos\Service\PublishingService;
+use Neos\Neos\Service\View\NodeView;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;

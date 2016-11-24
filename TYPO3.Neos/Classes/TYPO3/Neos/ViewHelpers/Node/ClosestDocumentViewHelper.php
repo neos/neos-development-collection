@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\ViewHelpers\Node;
+namespace Neos\Neos\ViewHelpers\Node;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -28,6 +28,6 @@ class ClosestDocumentViewHelper extends AbstractViewHelper
     public function render(NodeInterface $node)
     {
         $flowQuery = new FlowQuery(array($node));
-        return $flowQuery->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+        return $flowQuery->closest('[instanceof Neos.Neos:Document]')->get(0);
     }
 }

@@ -1,5 +1,5 @@
 #                                                                        #
-# "Service" subroutes configuration for the TYPO3.Neos package           #
+# "Service" subroutes configuration for the Neos.Neos package           #
 #                                                                        #
 
 # RESTful routes for Nodes service
@@ -35,7 +35,7 @@
   name: 'Services - UserPreferencesController->index'
   uriPattern: 'user-preferences'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@subpackage': 'Service'
     '@controller': 'UserPreference'
     '@action':     'index'
@@ -46,7 +46,7 @@
   name: 'Services - UserPreferencesController->update'
   uriPattern: 'user-preferences'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@subpackage': 'Service'
     '@controller': 'UserPreference'
     '@action':     'update'
@@ -78,7 +78,7 @@
   name: 'Services - WorkspacesController->indexAction()'
   uriPattern: 'workspaces'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@controller': 'Service\Workspaces'
     '@action':     'index'
   appendExceedingArguments: TRUE
@@ -88,7 +88,7 @@
   name: 'Services - WorkspacesController->showAction()'
   uriPattern: 'workspaces/{workspace}'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@controller': 'Service\Workspaces'
     '@action':     'show'
   httpMethods: ['GET']
@@ -97,7 +97,7 @@
   name: 'Services - WorkspacesController->createAction()'
   uriPattern: 'workspaces/{baseWorkspace}/{workspaceName}'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@controller': 'Service\Workspaces'
     '@action':     'create'
     '@format':     'json'
@@ -110,7 +110,7 @@
   name: 'Services - WorkspacesController->updateAction()'
   uriPattern: 'workspaces/{workspace.__identity}'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@controller': 'Service\Workspaces'
     '@action':     'update'
     '@format':     'json'
@@ -122,7 +122,7 @@
   name: 'Services - WorkspaceController->getWorkspaceWideUnpublishedNodes'
   uriPattern: 'workspaces-rpc/get-workspace-wide-unpublished-nodes'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@subpackage': 'Service'
     '@action':     'getWorkspaceWideUnpublishedNodes'
     '@controller': 'Workspace'
@@ -134,7 +134,7 @@
   name: 'Services - WorkspaceController->publishNode'
   uriPattern: 'workspaces-rpc/publish-node'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@subpackage': 'Service'
     '@action':     'publishNode'
     '@controller': 'Workspace'
@@ -145,7 +145,7 @@
   name: 'Services - WorkspaceController->publishNodes'
   uriPattern: 'workspaces-rpc/publish-nodes'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@subpackage': 'Service'
     '@action':     'publishNodes'
     '@controller': 'Workspace'
@@ -156,7 +156,7 @@
   name: 'Services - WorkspaceController->discardNode'
   uriPattern: 'workspaces-rpc/discard-node'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@subpackage': 'Service'
     '@action':     'discardNode'
     '@controller': 'Workspace'
@@ -167,7 +167,7 @@
   name: 'Services - WorkspaceController->discardNodes'
   uriPattern: 'workspaces-rpc/discard-nodes'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@subpackage': 'Service'
     '@action':     'discardNodes'
     '@controller': 'Workspace'
@@ -178,7 +178,7 @@
   name: 'Services - WorkspaceController->publishAll'
   uriPattern: 'workspaces-rpc/publish-all'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@subpackage': 'Service'
     '@action':     'publishAll'
     '@controller': 'Workspace'
@@ -189,7 +189,7 @@
   name: 'Services - WorkspaceController->discardAll'
   uriPattern: 'workspaces-rpc/discard-all'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@subpackage': 'Service'
     '@action':     'discardAll'
     '@controller': 'Workspace'
@@ -201,7 +201,7 @@
   name: 'Services - NodeController->getChildNodesForTree'
   uriPattern: 'node/get-child-nodes-for-tree'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'getChildNodesForTree'
@@ -212,7 +212,7 @@
   name: 'Services - NodeController->filterChildNodesForTree'
   uriPattern: 'node/filter-child-nodes-for-tree'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'filterChildNodesForTree'
@@ -223,7 +223,7 @@
   name: 'Services - NodeController->searchPage'
   uriPattern: 'node/search-page'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'searchPage'
@@ -234,7 +234,7 @@
   name: 'Services - NodeController->create'
   uriPattern: 'node/create'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'create'
@@ -245,7 +245,7 @@
   name: 'Services - NodeController->createAndRender'
   uriPattern: 'node/create-and-render'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'createAndRender'
@@ -256,7 +256,7 @@
   name: 'Services - NodeController->createNodeForTheTree'
   uriPattern: 'node/create-node-for-the-tree'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'createNodeForTheTree'
@@ -267,7 +267,7 @@
   name: 'Services - NodeController->discardNode'
   uriPattern: 'node/discard-node'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'discardNode'
@@ -278,7 +278,7 @@
   name: 'Services - NodeController->move'
   uriPattern: 'node/move'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'move'
@@ -289,7 +289,7 @@
   name: 'Services - NodeController->moveAndRender'
   uriPattern: 'node/move-and-render'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'moveAndRender'
@@ -300,7 +300,7 @@
   name: 'Services - NodeController->copy'
   uriPattern: 'node/copy'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'copy'
@@ -311,7 +311,7 @@
   name: 'Services - NodeController->copyAndRender'
   uriPattern: 'node/copy-and-render'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'copyAndRender'
@@ -322,7 +322,7 @@
   name: 'Services - NodeController->update'
   uriPattern: 'node/update'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'update'
@@ -333,7 +333,7 @@
   name: 'Services - NodeController->updateAndRender'
   uriPattern: 'node/update-and-render'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'updateAndRender'
@@ -344,7 +344,7 @@
   name: 'Services - NodeController->delete'
   uriPattern: 'node/delete'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@subpackage': 'Service'
     '@controller': 'Node'
     '@action':     'delete'
@@ -359,7 +359,7 @@
   name: 'Services - DataSourceController->index'
   uriPattern: 'data-source(/{dataSourceIdentifier)'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@subpackage': 'Service'
     '@controller': 'DataSource'
     '@action':     'index'
@@ -373,7 +373,7 @@
   name: 'Services - ContentDimensionController->index()'
   uriPattern: 'content-dimensions'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@controller': 'Service\ContentDimensions'
     '@action':     'index'
   appendExceedingArguments: TRUE
@@ -383,7 +383,7 @@
   name: 'Services - ContentDimensionController->show()'
   uriPattern: 'content-dimensions/{dimensionName}'
   defaults:
-    '@package':    'TYPO3.Neos'
+    '@package':    'Neos.Neos'
     '@controller': 'Service\ContentDimensions'
     '@action':     'show'
   appendExceedingArguments: TRUE

@@ -618,7 +618,7 @@ module.exports = function (grunt) {
 	/**
 	 * Watch commands
 	 */
-	grunt.registerTask('watch-js', function() { console.log('JavaScript sources are loaded by requirejs. Use the setting "TYPO3.Neos.userInterface.loadMinifiedJavascript: FALSE" instead')});
+	grunt.registerTask('watch-js', function() { console.log('JavaScript sources are loaded by requirejs. Use the setting "Neos.Neos.userInterface.loadMinifiedJavascript: FALSE" instead')});
 	grunt.registerTask('watch-css', ['watch:css']);
 	grunt.registerTask('watch-docs', ['watch:documentation']);
 

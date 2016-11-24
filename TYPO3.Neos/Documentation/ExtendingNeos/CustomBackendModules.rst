@@ -41,7 +41,7 @@ The user interface of the module is defined in a fluid template in the same way 
 
 .. code-block:: html
 
-	{namespace neos=TYPO3\Neos\ViewHelpers}
+	{namespace neos=Neos\Neos\ViewHelpers}
 	<div class="neos-content neos-container-fluid">
 		<h1></h1>
 		<p>{exampleValue}</p>
@@ -67,7 +67,7 @@ To use the module the editors have to be granted access to the controller action
 
 	roles:
 
-	  'TYPO3.Neos:Editor':
+	  'Neos.Neos:Editor':
 		privileges:
 		  -
 			privilegeTarget: 'Vendor.Site:BackendModule'

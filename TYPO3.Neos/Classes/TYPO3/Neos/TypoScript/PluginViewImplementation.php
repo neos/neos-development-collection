@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\TypoScript;
+namespace Neos\Neos\TypoScript;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -15,8 +15,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\Exception\StopActionException;
-use TYPO3\Neos\Domain\Model\PluginViewDefinition;
-use TYPO3\Neos\Service\PluginService;
+use Neos\Neos\Domain\Model\PluginViewDefinition;
+use Neos\Neos\Service\PluginService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**

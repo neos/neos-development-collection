@@ -8,7 +8,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
 
   'Vendor:Box':
     superTypes:
-      'TYPO3.Neos:Content': TRUE
+      'Neos.Neos:Content': TRUE
     ui:
       group: structure
       label: Box
@@ -16,13 +16,13 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
       inlineEditable: true
     childNodes:
       column0:
-        type: 'TYPO3.Neos:ContentCollection'
+        type: 'Neos.Neos:ContentCollection'
 
 TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/NodeTypes.ts2) ::
 
-	prototype(Vendor:Box) < prototype(TYPO3.Neos:Content) {
+	prototype(Vendor:Box) < prototype(Neos.Neos:Content) {
 		templatePath = 'resource://Vendor.Site/Private/Templates/TypoScriptObjects/Box.html'
-		columnContent = TYPO3.Neos:ContentCollection
+		columnContent = Neos.Neos:ContentCollection
 		columnContent {
 			nodePath = 'column0'
 		}
@@ -48,7 +48,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
 
   'Vendor:Box':
     superTypes:
-      'TYPO3.Neos:Content': TRUE
+      'Neos.Neos:Content': TRUE
     ui:
       group: structure
       label: Box
@@ -69,13 +69,13 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
             group: display
     childNodes:
       column0:
-        type: 'TYPO3.Neos:ContentCollection'
+        type: 'Neos.Neos:ContentCollection'
 
 TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/NodeTypes.ts2) ::
 
-	prototype(Vendor:Box) < prototype(TYPO3.Neos:Content) {
+	prototype(Vendor:Box) < prototype(Neos.Neos:Content) {
 		templatePath = 'resource://Vendor.Site/Private/Templates/TypoScriptObjects/Box.html'
-		columnContent = TYPO3.Neos:ContentCollection
+		columnContent = Neos.Neos:ContentCollection
 		columnContent {
 			nodePath = 'column0'
 		}

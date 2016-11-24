@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\ViewHelpers\Uri;
+namespace Neos\Neos\ViewHelpers\Uri;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -72,7 +72,7 @@ class ModuleViewHelper extends AbstractViewHelper
                 ->setAddQueryString($addQueryString)
                 ->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
                 ->setFormat($format)
-                ->uriFor('index', $modifiedArguments, 'Backend\Module', 'TYPO3.Neos');
+                ->uriFor('index', $modifiedArguments, 'Backend\Module', 'Neos.Neos');
         } catch (\Neos\Flow\Exception $exception) {
             throw new \Neos\FluidAdaptor\Core\ViewHelper\Exception($exception->getMessage(), $exception->getCode(), $exception);
         }

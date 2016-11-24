@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Command;
+namespace Neos\Neos\Command;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -16,8 +16,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\ConsoleOutput;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\Arrays;
-use TYPO3\Neos\Domain\Service\SiteService;
-use TYPO3\Neos\Utility\NodeUriPathSegmentGenerator;
+use Neos\Neos\Domain\Service\SiteService;
+use Neos\Neos\Utility\NodeUriPathSegmentGenerator;
 use TYPO3\TYPO3CR\Command\NodeCommandControllerPluginInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
@@ -223,7 +223,7 @@ HELPTEXT;
                 $this->output->outputLine('Found missing URI path segment for "%s" (%s) => %s', array($node->getPath(), $name, $uriPathSegment));
             }
         }
-        foreach ($node->getChildNodes('TYPO3.Neos:Document') as $childNode) {
+        foreach ($node->getChildNodes('Neos.Neos:Document') as $childNode) {
             $this->generateUriPathSegmentsForNode($childNode, $dryRun);
         }
     }

@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Neos\Utility;
+namespace Neos\Neos\Utility;
 
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 

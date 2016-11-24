@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Service\Controller;
+namespace Neos\Neos\Service\Controller;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,7 @@ namespace TYPO3\Neos\Service\Controller;
  */
 
 use Neos\Flow\Annotations as Flow;
-use TYPO3\Neos\Domain\Service\UserService;
+use Neos\Neos\Domain\Service\UserService;
 
 /**
  * Service Controller for user preferences

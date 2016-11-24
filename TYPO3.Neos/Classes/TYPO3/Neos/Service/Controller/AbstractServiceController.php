@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Service\Controller;
+namespace Neos\Neos\Service\Controller;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -18,7 +18,7 @@ use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Mvc\RequestInterface;
 use Neos\Flow\Mvc\ResponseInterface;
-use TYPO3\Neos\Controller\BackendUserTranslationTrait;
+use Neos\Neos\Controller\BackendUserTranslationTrait;
 
 /**
  * Abstract Service Controller

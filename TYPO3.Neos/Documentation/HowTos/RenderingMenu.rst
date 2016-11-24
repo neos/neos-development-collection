@@ -27,7 +27,7 @@ This template renders a ul list that has a link to a node.
 
 Full HTML code::
 
-    {namespace neos=TYPO3\Neos\ViewHelpers}
+    {namespace neos=Neos\Neos\ViewHelpers}
     <ul class="nav">
         <f:for each="{items}" as="item">
             <li class="menu-item">
@@ -42,7 +42,7 @@ clarify from where the viewhelper is taken.
 
 Viewhelper include::
 
-    {namespace neos=TYPO3\Neos\ViewHelpers}
+    {namespace neos=Neos\Neos\ViewHelpers}
 
 The next thing is to iterate through the nodes found by TypoScript.
 

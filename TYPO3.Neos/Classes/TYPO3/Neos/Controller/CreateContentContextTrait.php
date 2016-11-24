@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Controller;
+namespace Neos\Neos\Controller;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,8 +12,8 @@ namespace TYPO3\Neos\Controller;
  */
 
 use Neos\Flow\Annotations as Flow;
-use TYPO3\Neos\Domain\Service\ContentContext;
-use TYPO3\Neos\Domain\Service\SiteService;
+use Neos\Neos\Domain\Service\ContentContext;
+use Neos\Neos\Domain\Service\SiteService;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 
@@ -24,19 +24,19 @@ trait CreateContentContextTrait
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Domain\Service\ContentContextFactory
+     * @var \Neos\Neos\Domain\Service\ContentContextFactory
      */
     protected $_contextFactory;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Domain\Repository\DomainRepository
+     * @var \Neos\Neos\Domain\Repository\DomainRepository
      */
     protected $_domainRepository;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Domain\Repository\SiteRepository
+     * @var \Neos\Neos\Domain\Repository\SiteRepository
      */
     protected $_siteRepository;
 

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\TypoScript;
+namespace Neos\Neos\TypoScript;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -18,7 +18,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * Usage::
  *
- *   someTextProperty.@process.1 = TYPO3.Neos:ConvertNodeUris
+ *   someTextProperty.@process.1 = Neos.Neos:ConvertNodeUris
  * @deprecated use ConvertUrisImplementation instead
  */
 class ConvertNodeUrisImplementation extends ConvertUrisImplementation
