@@ -12,7 +12,7 @@ namespace TYPO3\Neos\Controller\Backend;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Cache\Frontend\StringFrontend;
+use Neos\Cache\Frontend\StringFrontend;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Session\SessionInterface;

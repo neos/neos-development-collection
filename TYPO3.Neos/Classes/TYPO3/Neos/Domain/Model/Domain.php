@@ -13,7 +13,7 @@ namespace TYPO3\Neos\Domain\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Cache\CacheAwareInterface;
+use Neos\Cache\CacheAwareInterface;
 use TYPO3\Neos\Domain\Model\Site;
 
 /**

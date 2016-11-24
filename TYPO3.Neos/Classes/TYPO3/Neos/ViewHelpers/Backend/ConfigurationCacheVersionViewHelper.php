@@ -12,7 +12,7 @@ namespace TYPO3\Neos\ViewHelpers\Backend;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Cache\Frontend\StringFrontend;
+use Neos\Cache\Frontend\StringFrontend;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
 /**
