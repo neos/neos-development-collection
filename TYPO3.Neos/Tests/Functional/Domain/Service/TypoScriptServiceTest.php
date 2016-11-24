@@ -36,7 +36,12 @@ class TypoScriptServiceTest extends FunctionalTestCase
     /**
      * @var NodeTypeManager
      */
-    protected $nodeTypeManager;
+    protected $originalNodeTypeManager;
+
+    /**
+     * @var NodeTypeManager
+     */
+    protected $mockNodeTypeManager;
 
     /**
      * @var YamlParser
@@ -62,10 +67,23 @@ class TypoScriptServiceTest extends FunctionalTestCase
 
         $this->yamlParser = $this->objectManager->get(YamlParser::class);
 
-        $this->nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
-        $this->nodeTypeManager->overrideNodeTypes($this->yamlParser->parse(file_get_contents(__DIR__ . '/Fixtures/NodeTypes.yaml')));
+        $this->originalNodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
+
+        $this->mockNodeTypeManager = clone ($this->originalNodeTypeManager);
+        $this->mockNodeTypeManager->overrideNodeTypes($this->yamlParser->parse(file_get_contents(__DIR__ . '/Fixtures/NodeTypes.yaml')));
+
+        $this->objectManager->setInstance(NodeTypeManager::class, $this->mockNodeTypeManager);
     }
 
+    /**
+     * @return void
+     */
+    public function tearDown()
+    {
+        $this->objectManager->setInstance(NodeTypeManager::class, $this->originalNodeTypeManager);
+        $this->expectedPrototypeGenerator->reset();
+        parent::tearDown();
+    }
 
     /**
      * @test
@@ -115,15 +133,6 @@ class TypoScriptServiceTest extends FunctionalTestCase
 
         $method->setAccessible(true);
 
-        $method->invoke($this->typoScriptService, $this->nodeTypeManager->getNodeType($nodeTypeName));
-    }
-
-    /**
-     * @return void
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-        $this->expectedPrototypeGenerator->reset();
+        $method->invoke($this->typoScriptService, $this->mockNodeTypeManager->getNodeType($nodeTypeName));
     }
 }
