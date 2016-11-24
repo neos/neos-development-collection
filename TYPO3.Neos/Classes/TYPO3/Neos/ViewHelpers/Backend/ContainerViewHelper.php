@@ -21,7 +21,7 @@ use TYPO3\Neos\Controller\Backend\MenuHelper;
 use TYPO3\Neos\Domain\Model\User;
 use TYPO3\Neos\Exception as NeosException;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\Party\Domain\Service\PartyService;
+use Neos\Party\Domain\Service\PartyService;
 
 /**
  * ViewHelper for the backend 'container'. Renders the required HTML to integrate

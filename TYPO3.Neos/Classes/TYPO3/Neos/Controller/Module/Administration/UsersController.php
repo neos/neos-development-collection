@@ -22,7 +22,7 @@ use Neos\Flow\Security\Policy\PolicyService;
 use TYPO3\Neos\Controller\Module\AbstractModuleController;
 use TYPO3\Neos\Domain\Model\User;
 use TYPO3\Neos\Domain\Service\UserService;
-use TYPO3\Party\Domain\Model\ElectronicAddress;
+use Neos\Party\Domain\Model\ElectronicAddress;
 
 /**
  * The Neos User Admin module controller that allows for managing Neos users

@@ -18,7 +18,7 @@ use Neos\Flow\Validation\Validator\StringLengthValidator;
 use Neos\Form\Core\Model\FormDefinition;
 use TYPO3\Neos\Domain\Service\UserService;
 use TYPO3\Neos\Validation\Validator\UserDoesNotExistValidator;
-use TYPO3\Party\Domain\Repository\PartyRepository;
+use Neos\Party\Domain\Repository\PartyRepository;
 use TYPO3\Setup\Step\AbstractStep;
 
 /**

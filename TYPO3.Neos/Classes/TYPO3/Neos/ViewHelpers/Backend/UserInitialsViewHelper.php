@@ -17,7 +17,7 @@ use Neos\Flow\Security\AccountRepository;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\Neos\Service\UserService;
 use TYPO3\Neos\Domain\Service\UserService as DomainUserService;
-use TYPO3\Party\Domain\Model\Person;
+use Neos\Party\Domain\Model\Person;
 
 /**
  * Render user initials for a given username

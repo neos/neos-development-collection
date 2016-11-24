@@ -4,16 +4,16 @@
 		<legend>{neos:backend.translate(id: 'userSettings.personalData', source: 'Modules', package: 'TYPO3.Neos')}</legend>
 
 		<div class="neos-control-group">
-			<label class="neos-control-label" for="title">{neos:backend.translate(id: 'personName.title', source: 'Main', package: 'TYPO3.Party')}</label>
+			<label class="neos-control-label" for="title">{neos:backend.translate(id: 'personName.title', source: 'Main', package: 'Neos.Party')}</label>
 			<div class="neos-controls neos-controls-row">
 				<f:form.textfield property="name.title" id="title" class="neos-span12" />
 			</div>
 		</div>
 		<div class="row">
 			<div class="neos-control-group neos-span7{f:validation.ifHasErrors(for: 'user.name', then: ' neos-error')}">
-				<label class="neos-control-label" for="firstName">{neos:backend.translate(id: 'personName.firstName', source: 'Main', package: 'TYPO3.Party')}</label>
+				<label class="neos-control-label" for="firstName">{neos:backend.translate(id: 'personName.firstName', source: 'Main', package: 'Neos.Party')}</label>
 				<div class="neos-controls">
-					<f:form.textfield property="name.firstName" id="firstName" placeholder="{neos:backend.translate(id: 'personName.firstName', source: 'Main', package: 'TYPO3.Party')}" class="neos-span12" />
+					<f:form.textfield property="name.firstName" id="firstName" placeholder="{neos:backend.translate(id: 'personName.firstName', source: 'Main', package: 'Neos.Party')}" class="neos-span12" />
 					<f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'user.name'}"/>
 				</div>
 			</div>
@@ -21,22 +21,22 @@
 			<div class="neos-control-group neos-span5">
 				<label class="neos-control-label" for="middleName">&nbsp;</label>
 				<div class="neos-controls">
-					<f:form.textfield property="name.middleName" id="middleName" placeholder="{neos:backend.translate(id: 'personName.middleName', source: 'Main', package: 'TYPO3.Party')}" class="neos-span12" />
+					<f:form.textfield property="name.middleName" id="middleName" placeholder="{neos:backend.translate(id: 'personName.middleName', source: 'Main', package: 'Neos.Party')}" class="neos-span12" />
 				</div>
 			</div>
 		</div>
 		<div class="row">
 			<div class="neos-control-group neos-span7">
-				<label class="neos-control-label" for="lastName">{neos:backend.translate(id: 'personName.lastName', source: 'Main', package: 'TYPO3.Party')}</label>
+				<label class="neos-control-label" for="lastName">{neos:backend.translate(id: 'personName.lastName', source: 'Main', package: 'Neos.Party')}</label>
 				<div class="neos-controls">
-					<f:form.textfield property="name.lastName" id="lastName" placeholder="{neos:backend.translate(id: 'personName.lastName', source: 'Main', package: 'TYPO3.Party')}" class="neos-span12" />
+					<f:form.textfield property="name.lastName" id="lastName" placeholder="{neos:backend.translate(id: 'personName.lastName', source: 'Main', package: 'Neos.Party')}" class="neos-span12" />
 				</div>
 			</div>
 
 			<div class="neos-control-group neos-span5">
 				<label class="neos-control-label" for="otherName">&nbsp;</label>
 				<div class="neos-controls">
-					<f:form.textfield property="name.otherName" id="otherName" placeholder="{neos:backend.translate(id: 'personName.otherName', source: 'Main', package: 'TYPO3.Party')}" class="neos-span12" />
+					<f:form.textfield property="name.otherName" id="otherName" placeholder="{neos:backend.translate(id: 'personName.otherName', source: 'Main', package: 'Neos.Party')}" class="neos-span12" />
 				</div>
 			</div>
 		</div>
@@ -90,10 +90,10 @@
 			<table class="neos-table" id="electronicAddresses">
 				<thead>
 				<tr>
-					<th>{neos:backend.translate(id: 'electronicAddress.type', source: 'Main', package: 'TYPO3.Party' )}</th>
-					<th>{neos:backend.translate(id: 'electronicAddress.usage', source: 'Main', package: 'TYPO3.Party' )}</th>
-					<th>{neos:backend.translate(id: 'electronicAddress.identifier', source: 'Main', package: 'TYPO3.Party' )}</th>
-					<th class="neos-aCenter">{neos:backend.translate(id: 'electronicAddress.primary', source: 'Main', package: 'TYPO3.Party')}</th>
+					<th>{neos:backend.translate(id: 'electronicAddress.type', source: 'Main', package: 'Neos.Party' )}</th>
+					<th>{neos:backend.translate(id: 'electronicAddress.usage', source: 'Main', package: 'Neos.Party' )}</th>
+					<th>{neos:backend.translate(id: 'electronicAddress.identifier', source: 'Main', package: 'Neos.Party' )}</th>
+					<th class="neos-aCenter">{neos:backend.translate(id: 'electronicAddress.primary', source: 'Main', package: 'Neos.Party')}</th>
 					<th></th>
 				</tr>
 				</thead>
