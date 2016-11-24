@@ -11,8 +11,8 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  * source code.
  */
 
-use TYPO3\Eel\EelEvaluatorInterface;
-use TYPO3\Eel\Utility;
+use Neos\Eel\EelEvaluatorInterface;
+use Neos\Eel\Utility;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\Flow\Utility\Unicode\Functions;

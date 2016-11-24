@@ -11,8 +11,8 @@ namespace TYPO3\TYPO3CR\Security\Authorization\Privilege\Node;
  * source code.
  */
 
-use TYPO3\Eel\CompilingEvaluator;
-use TYPO3\Eel\Context;
+use Neos\Eel\CompilingEvaluator;
+use Neos\Eel\Context;
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilege;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
 use Neos\Flow\Security\Exception\InvalidPrivilegeTypeException;

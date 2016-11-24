@@ -11,10 +11,10 @@ namespace TYPO3\TYPO3CR\Eel\FlowQueryOperations;
  * source code.
  */
 
-use TYPO3\Eel\FlowQuery\FizzleParser;
-use TYPO3\Eel\FlowQuery\FlowQuery;
-use TYPO3\Eel\FlowQuery\FlowQueryException;
-use TYPO3\Eel\FlowQuery\Operations\AbstractOperation;
+use Neos\Eel\FlowQuery\FizzleParser;
+use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\Eel\FlowQuery\FlowQueryException;
+use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Validation\Validator\UuidValidator;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;

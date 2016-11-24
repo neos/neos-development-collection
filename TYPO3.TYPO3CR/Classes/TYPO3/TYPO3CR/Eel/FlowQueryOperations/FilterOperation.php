@@ -11,7 +11,7 @@ namespace TYPO3\TYPO3CR\Eel\FlowQueryOperations;
  * source code.
  */
 
-use TYPO3\Eel\FlowQuery\FlowQuery;
+use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\ObjectAccess;
 use TYPO3\TYPO3CR\Domain\Model\Node;
@@ -31,7 +31,7 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  * filter. This filter allow also to filter the current context by a given
  * node. Anything else remains unchanged.
  */
-class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\Object\FilterOperation
+class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperation
 {
     /**
      * {@inheritdoc}
