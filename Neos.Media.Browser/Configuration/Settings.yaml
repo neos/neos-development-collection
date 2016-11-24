@@ -19,8 +19,6 @@ Neos:
         - 'resource://Neos.Media.Browser/Public/JavaScript/Modules/media-browser.js'
       styles:
         - 'resource://TYPO3.Neos/Public/Styles/Neos.css'
-
-TYPO3:
   Flow:
     security:
       authentication:
@@ -31,6 +29,7 @@ TYPO3:
                 pattern: ControllerObjectName
                 patternOptions:
                   controllerObjectNamePattern: 'Neos\Media\Browser\Controller\Backend\.*'
+TYPO3:
   Neos:
     modules:
       management:
@@ -41,12 +40,11 @@ TYPO3:
             description: 'Neos.Media.Browser:Modules:media.description'
             icon: icon-camera
             privilegeTarget: 'Neos.Media.Browser:ManageAssets'
-
     userInterface:
       translation:
         autoInclude:
-          'Neos.Media.Browser': ['Modules']
-
+          Neos.Media.Browser:
+            - Modules
   Media:
     thumbnailPresets:
       'Neos.Media.Browser:Thumbnail':

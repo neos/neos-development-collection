@@ -4,7 +4,7 @@
 
 privilegeTargets:
 
-  'TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
+  'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
 
     'Neos.Media.Browser:ManageAssets':
       matcher: 'method(Neos\Media\Browser\Controller\AssetController->(index|new|edit|update|initializeCreate|create|replaceAssetResource|updateAssetResource|initializeUpload|upload|tagAsset|delete|createTag|editTag|updateTag|deleteTag|addAssetToCollection)Action())'

@@ -11,7 +11,7 @@ namespace Neos\Media\Browser\Controller\Backend;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Media\Domain\Model\ImageVariant;
 use TYPO3\Media\Domain\Repository\ImageRepository;
