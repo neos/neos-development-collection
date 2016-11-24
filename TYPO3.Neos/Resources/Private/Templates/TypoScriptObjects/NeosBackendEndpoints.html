@@ -13,9 +13,9 @@
 	<link rel="neos-nodetypeschema" href="{f:uri.action(action: 'nodeTypeSchema', controller: 'Backend\Schema', package: 'TYPO3.Neos', absolute: true, arguments: {version: configurationCacheIdentifier})}" />
 	<link rel="neos-menudata" href="{f:uri.action(action: 'index', controller: 'Backend\Menu', package: 'TYPO3.Neos', absolute: true, arguments: {version: configurationCacheIdentifier})}" />
 	<link rel="neos-editpreviewdata" href="{f:uri.action(action: 'editPreview', controller: 'Backend\Settings', package: 'TYPO3.Neos', absolute: true, arguments: {version: configurationCacheIdentifier})}" />
-	<link rel="neos-service-contentdimensions" type="application/vnd.typo3.neos.contentdimensions" href="{f:uri.action(action: 'index', controller: 'Service\ContentDimensions', package: 'TYPO3.Neos', absolute: true, arguments: {version: configurationCacheIdentifier})}" />
+	<link rel="neos-service-contentdimensions" type="application/vnd.typo3.neos.contentdimensions" href="{f:uri.action(action: 'index', controller: 'Service\ContentDimensions', package: 'TYPO3.Neos', absolute: true)}" />
+	<link rel="neos-service-workspaces" type="application/vnd.typo3.neos.workspaces" href="{f:uri.action(action: 'index', controller: 'Service\Workspaces', package: 'TYPO3.Neos', absolute: true)}" />
 </f:alias>
-<link rel="neos-service-workspaces" type="application/vnd.typo3.neos.workspaces" href="{f:uri.action(action: 'index', controller: 'Service\Workspaces', package: 'TYPO3.Neos', absolute: true)}" />
 <link rel="neos-xliff" href="{f:uri.action(action: 'xliffAsJson', arguments: {locale: '{neos:backend.interfaceLanguage()}', version: '{neos:backend.xliffCacheVersion()}'}, controller: 'Backend\Backend', package: 'TYPO3.Neos', absolute: true) -> f:format.raw()}" />
 
 <!-- Temporary URL endpoints, will be removed / grouped when a REST interface is fully implemented -->
@@ -53,6 +53,6 @@
 <link rel="neos-public-resources" href="{f:uri.resource(path: '', package: 'TYPO3.Neos')}" />
 <link rel="neos-module-workspacesmanagement" href="{neos:uri.module(path: 'management/workspaces')}" />
 <link rel="neos-module-workspacesmanagement-show" href="{neos:uri.module(path: 'management/workspaces', action: 'show')}" />
-<link rel="neos-media-browser" href="{f:uri.action(action: 'index', controller: 'Backend\MediaBrowser', package: 'TYPO3.Neos', absolute: true, arguments: {assetCollection: node.context.currentSite.assetCollection})}" />
-<link rel="neos-image-browser" href="{f:uri.action(action: 'index', controller: 'Backend\ImageBrowser', package: 'TYPO3.Neos', absolute: true, arguments: {assetCollection: node.context.currentSite.assetCollection})}" />
-<link rel="neos-image-browser-edit" href="{f:uri.action(action: 'edit', controller: 'Backend\ImageBrowser', package: 'TYPO3.Neos', absolute: true)}" />
+<link rel="neos-media-browser" href="{f:uri.action(action: 'index', controller: 'Backend\MediaBrowser', package: 'Neos.Media.Browser', absolute: true, arguments: {assetCollection: node.context.currentSite.assetCollection})}" />
+<link rel="neos-image-browser" href="{f:uri.action(action: 'index', controller: 'Backend\ImageBrowser', package: 'Neos.Media.Browser', absolute: true, arguments: {assetCollection: node.context.currentSite.assetCollection})}" />
+<link rel="neos-image-browser-edit" href="{f:uri.action(action: 'edit', controller: 'Backend\ImageBrowser', package: 'Neos.Media.Browser', absolute: true)}" />
