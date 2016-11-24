@@ -12,9 +12,6 @@ namespace TYPO3\Neos\Kickstarter\Service;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Package\MetaData;
-use TYPO3\Flow\Package\MetaData\PackageConstraint;
-use TYPO3\Flow\Package\MetaDataInterface;
 use TYPO3\Flow\Package\PackageManagerInterface;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
@@ -45,11 +42,16 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService
      */
     public function generateSitePackage($packageKey, $siteName)
     {
-        $packageMetaData = new MetaData($packageKey);
-        $packageMetaData->addConstraint(new PackageConstraint(MetaDataInterface::CONSTRAINT_TYPE_DEPENDS, 'TYPO3.Neos'));
-        $packageMetaData->addConstraint(new PackageConstraint(MetaDataInterface::CONSTRAINT_TYPE_DEPENDS, 'TYPO3.Neos.NodeTypes'));
-        $packageMetaData->addConstraint(new PackageConstraint(MetaDataInterface::CONSTRAINT_TYPE_SUGGESTS, 'TYPO3.Neos.Seo'));
-        $this->packageManager->createPackage($packageKey, $packageMetaData, null, 'typo3-flow-site');
+        $this->packageManager->createPackage($packageKey, [
+            'type' => 'neos-site',
+            "require" => [
+                "typo3/neos" => "*",
+                "typo3/neos-nodetypes" => "*"
+            ],
+            "suggest" => [
+                "typo3/neos-seo" => "*"
+            ]
+        ]);
         $this->generateSitesXml($packageKey, $siteName);
         $this->generateSitesTypoScript($packageKey, $siteName);
         $this->generateSitesTemplate($packageKey, $siteName);
