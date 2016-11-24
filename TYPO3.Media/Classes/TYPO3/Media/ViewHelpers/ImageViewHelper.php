@@ -121,6 +121,10 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
             $image = $this->arguments['asset'];
         }
 
+        if ($image === null) {
+            return '';
+        }
+
         if ($preset) {
             $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset, $async);
         } else {
