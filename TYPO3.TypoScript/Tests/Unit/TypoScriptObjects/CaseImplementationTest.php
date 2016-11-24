@@ -11,14 +11,14 @@ namespace TYPO3\TypoScript\Tests\Unit\TypoScriptObjects;
  * source code.
  */
 
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Flow\Reflection\ObjectAccess;
 use TYPO3\TypoScript\Core\Runtime;
 use TYPO3\TypoScript\TypoScriptObjects\CaseImplementation;
 
 /**
  * Testcase for the Case object
  */
-class CaseImplementationTest extends \TYPO3\Flow\Tests\UnitTestCase
+class CaseImplementationTest extends \Neos\Flow\Tests\UnitTestCase
 {
     /**
      * @test

@@ -10,7 +10,7 @@ namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\Model;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Flow\Cache\CacheAwareInterface;
+use Neos\Flow\Cache\CacheAwareInterface;
 
 /**
  * A simple cache aware model

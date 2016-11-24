@@ -11,9 +11,9 @@ namespace TYPO3\TypoScript\Core\ExceptionHandlers;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Configuration\Exception\InvalidConfigurationException;
-use TYPO3\Flow\Mvc\Exception\StopActionException;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
+use Neos\Flow\Mvc\Exception\StopActionException;
 use TYPO3\TypoScript\Exception\RuntimeException;
 
 /**

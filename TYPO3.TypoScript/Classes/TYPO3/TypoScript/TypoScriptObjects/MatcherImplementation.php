@@ -11,7 +11,7 @@ namespace TYPO3\TypoScript\TypoScriptObjects;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Matcher object for use inside a "Case" statement

@@ -11,7 +11,7 @@ namespace TYPO3\TypoScript\TypoScriptObjects\Helpers;
  * source code.
  */
 
-use TYPO3\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\FluidAdaptor\View\StandaloneView;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 

@@ -10,8 +10,8 @@ namespace TYPO3\TypoScript\Tests\Unit\Core;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\TypoScript\Core\Parser;
 use TYPO3\TypoScript\TypoScriptObjects\ArrayImplementation;
 

@@ -11,7 +11,7 @@ namespace TYPO3\TypoScript\TypoScriptObjects;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * A TypoScript object for debugging ts-values
@@ -73,6 +73,6 @@ class DebugImplementation extends ArrayImplementation
             $debugData = $debugData['value'];
         }
 
-        return \TYPO3\Flow\var_dump($debugData, $title, true, $plaintext);
+        return \Neos\Flow\var_dump($debugData, $title, true, $plaintext);
     }
 }

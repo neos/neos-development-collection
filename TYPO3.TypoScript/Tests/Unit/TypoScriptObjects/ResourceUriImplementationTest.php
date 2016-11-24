@@ -11,13 +11,13 @@ namespace TYPO3\TypoScript\Tests\Unit\TypoScriptObjects;
  * source code.
  */
 
-use TYPO3\Flow\I18n\Service;
-use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Mvc\Controller\ControllerContext;
-use TYPO3\Flow\ResourceManagement\Publishing\ResourcePublisher;
-use TYPO3\Flow\ResourceManagement\PersistentResource;
-use TYPO3\Flow\ResourceManagement\ResourceManager;
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\I18n\Service;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\ResourceManagement\Publishing\ResourcePublisher;
+use Neos\Flow\ResourceManagement\PersistentResource;
+use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\TypoScript\Core\Runtime;
 use TYPO3\TypoScript\TypoScriptObjects\ResourceUriImplementation;
 

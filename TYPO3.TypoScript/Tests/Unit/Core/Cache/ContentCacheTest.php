@@ -11,14 +11,14 @@ namespace TYPO3\TypoScript\Tests\Unit\Core\Cache;
  * source code.
  */
 
-use TYPO3\Flow\Cache\Backend\TransientMemoryBackend;
-use TYPO3\Flow\Cache\CacheAwareInterface;
-use TYPO3\Flow\Cache\Frontend\FrontendInterface;
-use TYPO3\Flow\Cache\Frontend\StringFrontend;
-use TYPO3\Flow\Core\ApplicationContext;
-use TYPO3\Flow\Property\PropertyMapper;
-use TYPO3\Flow\Security\Context;
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Cache\Backend\TransientMemoryBackend;
+use Neos\Flow\Cache\CacheAwareInterface;
+use Neos\Flow\Cache\Frontend\FrontendInterface;
+use Neos\Flow\Cache\Frontend\StringFrontend;
+use Neos\Flow\Core\ApplicationContext;
+use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Security\Context;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\TypoScript\Core\Cache\CacheSegmentParser;
 use TYPO3\TypoScript\Core\Cache\ContentCache;
 

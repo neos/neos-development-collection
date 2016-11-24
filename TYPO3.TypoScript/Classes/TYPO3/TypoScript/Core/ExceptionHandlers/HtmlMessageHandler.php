@@ -11,8 +11,8 @@ namespace TYPO3\TypoScript\Core\ExceptionHandlers;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\SystemLoggerInterface;
 
 /**
  * Renders the exception as HTML.

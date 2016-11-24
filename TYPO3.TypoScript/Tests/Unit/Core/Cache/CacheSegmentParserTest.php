@@ -11,7 +11,7 @@ namespace TYPO3\TypoScript\Tests\Unit\Core\Cache;
  * source code.
  */
 
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\TypoScript\Core\Cache\CacheSegmentParser;
 
 /**

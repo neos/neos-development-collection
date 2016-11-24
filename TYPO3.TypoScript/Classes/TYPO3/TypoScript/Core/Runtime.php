@@ -11,19 +11,19 @@ namespace TYPO3\TypoScript\Core;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Configuration\Exception\InvalidConfigurationException;
-use TYPO3\Flow\Mvc\Controller\ControllerContext;
-use TYPO3\Flow\Mvc\Exception\StopActionException;
-use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
-use TYPO3\Flow\Utility\Arrays;
-use TYPO3\Flow\Reflection\ObjectAccess;
-use TYPO3\Flow\Utility\PositionalArraySorter;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
+use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\Mvc\Exception\StopActionException;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Utility\Arrays;
+use Neos\Flow\Reflection\ObjectAccess;
+use Neos\Flow\Utility\PositionalArraySorter;
 use TYPO3\TypoScript\Core\Cache\RuntimeContentCache;
 use TYPO3\TypoScript\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
 use TYPO3\TypoScript\Exception as Exceptions;
 use TYPO3\TypoScript\Exception;
-use TYPO3\Flow\Security\Exception as SecurityException;
+use Neos\Flow\Security\Exception as SecurityException;
 use TYPO3\TypoScript\Exception\RuntimeException;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractArrayTypoScriptObject;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
@@ -788,7 +788,7 @@ class Runtime
         }
         $contextVariables['this'] = $contextObject;
 
-        if ($this->eelEvaluator instanceof \TYPO3\Flow\ObjectManagement\DependencyInjection\DependencyProxy) {
+        if ($this->eelEvaluator instanceof \Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy) {
             $this->eelEvaluator->_activateDependency();
         }
 

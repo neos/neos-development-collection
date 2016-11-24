@@ -11,11 +11,11 @@ namespace TYPO3\TypoScript\Core\Cache;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cache\CacheAwareInterface;
-use TYPO3\Flow\Cache\Frontend\StringFrontend;
-use TYPO3\Flow\Property\PropertyMapper;
-use TYPO3\Flow\Security\Context;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Cache\CacheAwareInterface;
+use Neos\Flow\Cache\Frontend\StringFrontend;
+use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Security\Context;
 use TYPO3\TypoScript\Exception;
 use Doctrine\ORM\Proxy\Proxy;
 use TYPO3\TypoScript\Exception\CacheException;

@@ -11,9 +11,9 @@ namespace TYPO3\TypoScript\TypoScriptObjects\Http;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Http\Headers;
-use TYPO3\Flow\Http\Response;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Headers;
+use Neos\Flow\Http\Response;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 
 /**

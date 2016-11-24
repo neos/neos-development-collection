@@ -11,12 +11,12 @@ namespace TYPO3\TypoScript;
  * source code.
  */
 
-use TYPO3\Flow\Cache\CacheManager;
-use TYPO3\Flow\Core\Booting\Sequence;
-use TYPO3\Flow\Core\Bootstrap;
-use TYPO3\Flow\Monitor\FileMonitor;
-use TYPO3\Flow\Package\Package as BasePackage;
-use TYPO3\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Cache\CacheManager;
+use Neos\Flow\Core\Booting\Sequence;
+use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Monitor\FileMonitor;
+use Neos\Flow\Package\Package as BasePackage;
+use Neos\Flow\Package\PackageManagerInterface;
 use TYPO3\TypoScript\Core\Cache\FileMonitorListener;
 
 /**

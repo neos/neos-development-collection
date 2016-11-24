@@ -11,8 +11,8 @@ namespace TYPO3\TypoScript\Tests\Unit\TypoScriptObjects\Http;
  * source code.
  */
 
-use TYPO3\Flow\Reflection\ObjectAccess;
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Reflection\ObjectAccess;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\TypoScript\Core\Runtime;
 use TYPO3\TypoScript\TypoScriptObjects\Http\ResponseHeadImplementation;
 use TYPO3\TypoScript\TypoScriptObjects\TagImplementation;
