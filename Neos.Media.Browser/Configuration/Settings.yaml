@@ -10,6 +10,13 @@
 
 Neos:
   Media:
+    thumbnailPresets:
+      'Neos.Media.Browser:Thumbnail':
+        maximumWidth: 250
+        maximumHeight: 250
+      'Neos.Media.Browser:Preview':
+        maximumWidth: 1000
+        maximumHeight: 1000
     Browser:
       bodyClasses: 'neos neos-module media-browser'
       scripts:
@@ -45,11 +52,3 @@ TYPO3:
         autoInclude:
           Neos.Media.Browser:
             - Modules
-  Media:
-    thumbnailPresets:
-      'Neos.Media.Browser:Thumbnail':
-        maximumWidth: 250
-        maximumHeight: 250
-      'Neos.Media.Browser:Preview':
-        maximumWidth: 1000
-        maximumHeight: 1000

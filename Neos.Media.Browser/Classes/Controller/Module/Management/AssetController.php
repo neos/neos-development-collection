@@ -20,9 +20,9 @@ use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\Security\Context;
 use Neos\Utility\MediaTypes;
 use Neos\Utility\TypeHandling;
-use TYPO3\Media\Domain\Model\AssetCollection;
-use TYPO3\Media\Domain\Model\AssetInterface;
-use TYPO3\Media\Exception\AssetServiceException;
+use Neos\Media\Domain\Model\AssetCollection;
+use Neos\Media\Domain\Model\AssetInterface;
+use Neos\Media\Exception\AssetServiceException;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 use TYPO3\Neos\Controller\CreateContentContextTrait;
 use TYPO3\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
@@ -128,15 +128,15 @@ class AssetController extends \Neos\Media\Browser\Controller\AssetController
     /**
      * Delete an asset
      *
-     * @param \TYPO3\Media\Domain\Model\Asset $asset
+     * @param \Neos\Media\Domain\Model\Asset $asset
      * @return void
      */
-    public function deleteAction(\TYPO3\Media\Domain\Model\Asset $asset)
+    public function deleteAction(\Neos\Media\Domain\Model\Asset $asset)
     {
         $relationMap = [];
         $relationMap[TypeHandling::getTypeForValue($asset)] = array($this->persistenceManager->getIdentifierByObject($asset));
 
-        if ($asset instanceof \TYPO3\Media\Domain\Model\Image) {
+        if ($asset instanceof \Neos\Media\Domain\Model\Image) {
             foreach ($asset->getVariants() as $variant) {
                 $type = TypeHandling::getTypeForValue($variant);
                 if (!isset($relationMap[$type])) {

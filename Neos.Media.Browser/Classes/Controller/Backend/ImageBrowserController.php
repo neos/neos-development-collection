@@ -12,9 +12,9 @@ namespace Neos\Media\Browser\Controller\Backend;
  */
 
 use Neos\Flow\Annotations as Flow;
-use TYPO3\Media\Domain\Model\Asset;
-use TYPO3\Media\Domain\Model\ImageVariant;
-use TYPO3\Media\Domain\Repository\ImageRepository;
+use Neos\Media\Domain\Model\Asset;
+use Neos\Media\Domain\Model\ImageVariant;
+use Neos\Media\Domain\Repository\ImageRepository;
 
 /**
  * Controller for browsing images in the ImageEditor
