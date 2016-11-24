@@ -11,9 +11,9 @@ namespace TYPO3\Neos\Kickstarter\Command;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Cli\CommandController;
-use TYPO3\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Cli\CommandController;
+use Neos\Flow\Package\PackageManagerInterface;
 use TYPO3\Neos\Kickstarter\Service\GeneratorService;
 
 /**
