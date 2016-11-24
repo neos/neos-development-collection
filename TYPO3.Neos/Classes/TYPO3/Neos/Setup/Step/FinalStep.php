@@ -14,7 +14,7 @@ namespace TYPO3\Neos\Setup\Step;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Core\Bootstrap;
-use TYPO3\Form\Core\Model\FormDefinition;
+use Neos\Form\Core\Model\FormDefinition;
 use TYPO3\Setup\Step\AbstractStep;
 
 /**
@@ -33,10 +33,10 @@ class FinalStep extends AbstractStep
         $page1 = $formDefinition->createPage('page1');
         $page1->setRenderingOption('header', 'Setup complete');
 
-        $congratulations = $page1->createElement('congratulationsSection', 'TYPO3.Form:Section');
+        $congratulations = $page1->createElement('congratulationsSection', 'Neos.Form:Section');
         $congratulations->setLabel('Congratulations');
 
-        $success = $congratulations->createElement('success', 'TYPO3.Form:StaticText');
+        $success = $congratulations->createElement('success', 'Neos.Form:StaticText');
         $success->setProperty('text', 'You have successfully installed Neos! If you need help getting started, please refer to the Neos documentation.');
         $success->setProperty('elementClassAttribute', 'alert alert-success');
 
@@ -48,9 +48,9 @@ class FinalStep extends AbstractStep
         $contextEnv = Bootstrap::getEnvironmentConfigurationSetting('FLOW_CONTEXT') ?: 'Development';
         $applicationContext = new ApplicationContext($contextEnv);
         if (!$applicationContext->isProduction()) {
-            $context = $page1->createElement('contextSection', 'TYPO3.Form:Section');
+            $context = $page1->createElement('contextSection', 'Neos.Form:Section');
             $context->setLabel('Define application context');
-            $contextInfo = $context->createElement('contextInfo', 'TYPO3.Form:StaticText');
+            $contextInfo = $context->createElement('contextInfo', 'Neos.Form:StaticText');
             $contextInfo->setProperty('text', 'Your Neos installation is currently not running in "Production" context. If you want to experience Neos with its full speed, you should now change your FLOW_CONTEXT environment variable to "Production".');
             $contextDocs = $context->createElement('contextDocsLink', 'TYPO3.Setup:LinkElement');
             $contextDocs->setLabel('Read about application contexts');
@@ -58,7 +58,7 @@ class FinalStep extends AbstractStep
             $contextDocs->setProperty('target', '_blank');
         }
 
-        $frontend = $page1->createElement('frontendSection', 'TYPO3.Form:Section');
+        $frontend = $page1->createElement('frontendSection', 'Neos.Form:Section');
         $frontend->setLabel('View the site');
 
         $link = $frontend->createElement('link', 'TYPO3.Setup:LinkElement');
@@ -66,7 +66,7 @@ class FinalStep extends AbstractStep
         $link->setProperty('href', '/');
         $link->setProperty('elementClassAttribute', 'btn btn-large btn-primary');
 
-        $backend = $page1->createElement('backendSection', 'TYPO3.Form:Section');
+        $backend = $page1->createElement('backendSection', 'Neos.Form:Section');
         $backend->setLabel('Start editing');
 
         $backendLink = $backend->createElement('backendLink', 'TYPO3.Setup:LinkElement');
@@ -74,7 +74,7 @@ class FinalStep extends AbstractStep
         $backendLink->setProperty('href', '/neos');
         $backendLink->setProperty('elementClassAttribute', 'btn btn-large btn-primary');
 
-        $loggedOut = $page1->createElement('loggedOut', 'TYPO3.Form:StaticText');
+        $loggedOut = $page1->createElement('loggedOut', 'Neos.Form:StaticText');
         $loggedOut->setProperty('text', 'You have automatically been logged out for security reasons since this is the final step. Refresh the page to log in again if you missed something.');
         $loggedOut->setProperty('elementClassAttribute', 'alert alert-info');
     }

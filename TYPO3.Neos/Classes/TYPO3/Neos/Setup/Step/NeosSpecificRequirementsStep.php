@@ -19,7 +19,7 @@ use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Utility\Arrays;
 use Neos\Utility\Files;
-use TYPO3\Form\Core\Model\FormDefinition;
+use Neos\Form\Core\Model\FormDefinition;
 use TYPO3\Imagine\ImagineFactory;
 use TYPO3\Setup\Step\AbstractStep;
 
@@ -66,10 +66,10 @@ class NeosSpecificRequirementsStep extends AbstractStep
         $page1 = $formDefinition->createPage('page1');
         $page1->setRenderingOption('header', 'Neos requirements check');
 
-        $imageSection = $page1->createElement('connectionSection', 'TYPO3.Form:Section');
+        $imageSection = $page1->createElement('connectionSection', 'Neos.Form:Section');
         $imageSection->setLabel('Image Manipulation');
 
-        $formElement = $imageSection->createElement('imageLibrariesInfo', 'TYPO3.Form:StaticText');
+        $formElement = $imageSection->createElement('imageLibrariesInfo', 'Neos.Form:StaticText');
         $formElement->setProperty('text', 'We checked for supported image manipulation libraries on your server.
 		Only one is needed and we select the best one available for you.
 		Using GD in production environment is not recommended as it has some issues and can easily lead to blank pages due to memory exhaustion.');
@@ -77,7 +77,7 @@ class NeosSpecificRequirementsStep extends AbstractStep
 
         $foundImageHandler = false;
         foreach (array('gd', 'gmagick', 'imagick') as $extensionName) {
-            $formElement = $imageSection->createElement($extensionName, 'TYPO3.Form:StaticText');
+            $formElement = $imageSection->createElement($extensionName, 'Neos.Form:StaticText');
 
             if (extension_loaded($extensionName)) {
                 $unsupportedFormats = $this->findUnsupportedImageFormats($extensionName);
@@ -96,14 +96,14 @@ class NeosSpecificRequirementsStep extends AbstractStep
         }
 
         if ($foundImageHandler === false) {
-            $formElement = $imageSection->createElement('noImageLibrary', 'TYPO3.Form:StaticText');
+            $formElement = $imageSection->createElement('noImageLibrary', 'Neos.Form:StaticText');
             $formElement->setProperty('text', 'No suitable PHP extension for image manipulation was found. You can continue the setup but be aware that Neos might not work correctly without one of these extensions.');
             $formElement->setProperty('elementClassAttribute', 'alert alert-error');
         } else {
-            $formElement = $imageSection->createElement('configuredImageLibrary', 'TYPO3.Form:StaticText');
+            $formElement = $imageSection->createElement('configuredImageLibrary', 'Neos.Form:StaticText');
             $formElement->setProperty('text', 'Neos will be configured to use extension "' . $foundImageHandler . '"');
             $formElement->setProperty('elementClassAttribute', 'alert alert-success');
-            $hiddenField = $imageSection->createElement('imagineDriver', 'TYPO3.Form:HiddenField');
+            $hiddenField = $imageSection->createElement('imagineDriver', 'Neos.Form:HiddenField');
             $hiddenField->setDefaultValue(ucfirst($foundImageHandler));
         }
     }

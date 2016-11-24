@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\AccountRepository;
 use Neos\Flow\Validation\Validator\NotEmptyValidator;
 use Neos\Flow\Validation\Validator\StringLengthValidator;
-use TYPO3\Form\Core\Model\FormDefinition;
+use Neos\Form\Core\Model\FormDefinition;
 use TYPO3\Neos\Domain\Service\UserService;
 use TYPO3\Neos\Validation\Validator\UserDoesNotExistValidator;
 use TYPO3\Party\Domain\Repository\PartyRepository;
@@ -60,31 +60,31 @@ class AdministratorStep extends AbstractStep
         $page1 = $formDefinition->createPage('page1');
         $page1->setRenderingOption('header', 'Create administrator account');
 
-        $introduction = $page1->createElement('introduction', 'TYPO3.Form:StaticText');
+        $introduction = $page1->createElement('introduction', 'Neos.Form:StaticText');
         $introduction->setProperty('text', 'Enter the personal data and credentials for your backend account:');
 
-        $personalSection = $page1->createElement('personalSection', 'TYPO3.Form:Section');
+        $personalSection = $page1->createElement('personalSection', 'Neos.Form:Section');
         $personalSection->setLabel('Personal Data');
 
-        $firstName = $personalSection->createElement('firstName', 'TYPO3.Form:SingleLineText');
+        $firstName = $personalSection->createElement('firstName', 'Neos.Form:SingleLineText');
         $firstName->setLabel('First name');
         $firstName->addValidator(new NotEmptyValidator());
         $firstName->addValidator(new StringLengthValidator(array('minimum' => 1, 'maximum' => 255)));
 
-        $lastName = $personalSection->createElement('lastName', 'TYPO3.Form:SingleLineText');
+        $lastName = $personalSection->createElement('lastName', 'Neos.Form:SingleLineText');
         $lastName->setLabel('Last name');
         $lastName->addValidator(new NotEmptyValidator());
         $lastName->addValidator(new StringLengthValidator(array('minimum' => 1, 'maximum' => 255)));
 
-        $credentialsSection = $page1->createElement('credentialsSection', 'TYPO3.Form:Section');
+        $credentialsSection = $page1->createElement('credentialsSection', 'Neos.Form:Section');
         $credentialsSection->setLabel('Credentials');
 
-        $username = $credentialsSection->createElement('username', 'TYPO3.Form:SingleLineText');
+        $username = $credentialsSection->createElement('username', 'Neos.Form:SingleLineText');
         $username->setLabel('Username');
         $username->addValidator(new NotEmptyValidator());
         $username->addValidator(new UserDoesNotExistValidator());
 
-        $password = $credentialsSection->createElement('password', 'TYPO3.Form:PasswordWithConfirmation');
+        $password = $credentialsSection->createElement('password', 'Neos.Form:PasswordWithConfirmation');
         $password->addValidator(new NotEmptyValidator());
         $password->addValidator(new StringLengthValidator(array('minimum' => 6, 'maximum' => 255)));
         $password->setLabel('Password');
