@@ -1,5 +1,5 @@
 # Title mixin
-'TYPO3.Neos.NodeTypes:TitleMixin':
+'Neos.NodeTypes:TitleMixin':
   abstract: TRUE
   properties:
     title:
@@ -18,7 +18,7 @@
             'a': TRUE
 
 # Text mixin
-'TYPO3.Neos.NodeTypes:TextMixin':
+'Neos.NodeTypes:TextMixin':
   abstract: TRUE
   properties:
     text:
@@ -51,7 +51,7 @@
             'a': TRUE
 
 # Image mixin
-'TYPO3.Neos.NodeTypes:ImageMixin':
+'Neos.NodeTypes:ImageMixin':
   abstract: TRUE
   ui:
     inspector:
@@ -87,7 +87,7 @@
           position: 150
 
 # Image caption mixin
-'TYPO3.Neos.NodeTypes:ImageCaptionMixin':
+'Neos.NodeTypes:ImageCaptionMixin':
   abstract: TRUE
   properties:
     hasCaption:
@@ -108,7 +108,7 @@
           autoparagraph: TRUE
 
 # Image alignment mixin
-'TYPO3.Neos.NodeTypes:ImageAlignmentMixin':
+'Neos.NodeTypes:ImageAlignmentMixin':
   abstract: TRUE
   properties:
     alignment:
@@ -134,7 +134,7 @@
                 label: i18n
 
 # Link mixin
-'TYPO3.Neos.NodeTypes:LinkMixin':
+'Neos.NodeTypes:LinkMixin':
   abstract: TRUE
   properties:
     link:
@@ -147,13 +147,13 @@
           editor: 'TYPO3.Neos/Inspector/Editors/LinkEditor'
 
 # Content image mixin
-'TYPO3.Neos.NodeTypes:ContentImageMixin':
+'Neos.NodeTypes:ContentImageMixin':
   abstract: TRUE
   superTypes:
-    'TYPO3.Neos.NodeTypes:ImageMixin': TRUE
-    'TYPO3.Neos.NodeTypes:LinkMixin': TRUE
-    'TYPO3.Neos.NodeTypes:ImageCaptionMixin': TRUE
-    'TYPO3.Neos.NodeTypes:ImageAlignmentMixin': TRUE
+    'Neos.NodeTypes:ImageMixin': TRUE
+    'Neos.NodeTypes:LinkMixin': TRUE
+    'Neos.NodeTypes:ImageCaptionMixin': TRUE
+    'Neos.NodeTypes:ImageAlignmentMixin': TRUE
   properties:
     link:
       ui:

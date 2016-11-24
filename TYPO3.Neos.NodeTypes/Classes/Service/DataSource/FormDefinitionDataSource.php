@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\NodeTypes\Service\DataSource;
+namespace Neos\NodeTypes\Service\DataSource;
 
 /*
- * This file is part of the TYPO3.Neos.NodeTypes package.
+ * This file is part of the Neos.NodeTypes package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *

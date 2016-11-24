@@ -1,41 +1,41 @@
-'TYPO3.Neos.NodeTypes:Headline':
+'Neos.NodeTypes:Headline':
   superTypes:
     'TYPO3.Neos:Content': TRUE
-    'TYPO3.Neos.NodeTypes:TitleMixin': TRUE
+    'Neos.NodeTypes:TitleMixin': TRUE
   ui:
     label: i18n
     icon: 'icon-header'
     position: 100
 
-'TYPO3.Neos.NodeTypes:Text':
+'Neos.NodeTypes:Text':
   superTypes:
     'TYPO3.Neos:Content': TRUE
-    'TYPO3.Neos.NodeTypes:TextMixin': TRUE
+    'Neos.NodeTypes:TextMixin': TRUE
   ui:
     label: i18n
     icon: 'icon-file-text'
     position: 200
 
-'TYPO3.Neos.NodeTypes:Image':
+'Neos.NodeTypes:Image':
   superTypes:
     'TYPO3.Neos:Content': TRUE
-    'TYPO3.Neos.NodeTypes:ContentImageMixin': TRUE
+    'Neos.NodeTypes:ContentImageMixin': TRUE
   ui:
     label: i18n
     icon: 'icon-picture'
     position: 300
 
-'TYPO3.Neos.NodeTypes:TextWithImage':
+'Neos.NodeTypes:TextWithImage':
   superTypes:
     'TYPO3.Neos:Content': TRUE
-    'TYPO3.Neos.NodeTypes:TextMixin': TRUE
-    'TYPO3.Neos.NodeTypes:ContentImageMixin': TRUE
+    'Neos.NodeTypes:TextMixin': TRUE
+    'Neos.NodeTypes:ContentImageMixin': TRUE
   ui:
     label: i18n
     icon: 'icon-picture'
     position: 400
 
-'TYPO3.Neos.NodeTypes:Html':
+'Neos.NodeTypes:Html':
   superTypes:
     'TYPO3.Neos:Content': TRUE
   ui:
@@ -61,7 +61,7 @@
           editorOptions:
             buttonLabel: i18n
 
-'TYPO3.Neos.NodeTypes:Menu':
+'Neos.NodeTypes:Menu':
   superTypes:
     'TYPO3.Neos:Content': TRUE
   ui:
@@ -156,7 +156,7 @@
                 label: '10'
 
 
-'TYPO3.Neos.NodeTypes:Column':
+'Neos.NodeTypes:Column':
   superTypes:
     'TYPO3.Neos:Content': TRUE
   abstract: TRUE
@@ -180,9 +180,9 @@
           group: 'column'
           editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
 
-'TYPO3.Neos.NodeTypes:TwoColumn':
+'Neos.NodeTypes:TwoColumn':
   superTypes:
-    'TYPO3.Neos.NodeTypes:Column': TRUE
+    'Neos.NodeTypes:Column': TRUE
   ui:
     label: i18n
     position: 200
@@ -210,9 +210,9 @@
               '33-66':
                 label: '33% / 66%'
 
-'TYPO3.Neos.NodeTypes:ThreeColumn':
+'Neos.NodeTypes:ThreeColumn':
   superTypes:
-    'TYPO3.Neos.NodeTypes:Column': TRUE
+    'Neos.NodeTypes:Column': TRUE
   ui:
     label: i18n
     position: 300
@@ -240,9 +240,9 @@
               '25-25-50':
                 label: '25% / 25% / 50%'
 
-'TYPO3.Neos.NodeTypes:FourColumn':
+'Neos.NodeTypes:FourColumn':
   superTypes:
-    'TYPO3.Neos.NodeTypes:Column': TRUE
+    'Neos.NodeTypes:Column': TRUE
   ui:
     label: i18n
     position: 400
@@ -266,7 +266,7 @@
               '25-25-25-25':
                 label: '25% / 25% / 25% / 25%'
 
-'TYPO3.Neos.NodeTypes:Form':
+'Neos.NodeTypes:Form':
   superTypes:
     'TYPO3.Neos:Content': TRUE
   ui:
@@ -292,7 +292,7 @@
             placeholder: i18n
             dataSourceIdentifier: 'neos-nodetypes-form-definitions'
 
-'TYPO3.Neos.NodeTypes:AssetList':
+'Neos.NodeTypes:AssetList':
   superTypes:
     'TYPO3.Neos:Content': TRUE
   ui:
@@ -314,7 +314,7 @@
         label: i18n
         reloadIfChanged: TRUE
 
-'TYPO3.Neos.NodeTypes:ContentReferences':
+'Neos.NodeTypes:ContentReferences':
   superTypes:
     'TYPO3.Neos:Content': TRUE
   ui:
@@ -338,8 +338,8 @@
         label: i18n
         reloadIfChanged: TRUE
 
-# DEPRECATED with Neos 1.2: This node type was renamed to "TYPO3.Neos.NodeTypes:ContentReferences"
-'TYPO3.Neos.NodeTypes:Records':
+# DEPRECATED with Neos 1.2: This node type was renamed to "Neos.NodeTypes:ContentReferences"
+'Neos.NodeTypes:Records':
   superTypes:
-    'TYPO3.Neos.NodeTypes:ContentReferences': TRUE
+    'Neos.NodeTypes:ContentReferences': TRUE
   abstract: TRUE

@@ -1,15 +1,18 @@
 {
-    "name": "typo3/neos-nodetypes",
-    "type": "typo3-flow-package",
+    "name": "neos/nodetypes",
+    "type": "neos-package",
     "description": "Node type configuration for Neos",
     "license": "GPL-3.0+",
     "require": {
-        "typo3/form": "*",
-        "typo3/neos": "*"
+        "neos/form": "*",
+        "neos/neos": "*"
+    },
+    "replace": {
+        "typo3/neos-nodetypes": "self.version"
     },
     "autoload": {
-        "psr-0": {
-            "TYPO3\\Neos\\NodeTypes": "Classes"
+        "psr-4": {
+            "Neos\\NodeTypes\\": "Classes"
         }
     },
     "extra": {
