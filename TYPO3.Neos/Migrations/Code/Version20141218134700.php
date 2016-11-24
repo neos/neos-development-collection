@@ -16,6 +16,12 @@ namespace Neos\Flow\Core\Migrations;
  */
 class Version20141218134700 extends AbstractMigration
 {
+
+    public function getIdentifier()
+    {
+        return 'TYPO3.Neos-20141218134700';
+    }
+
     /**
      * @return void
      */
