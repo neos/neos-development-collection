@@ -310,12 +310,12 @@ TYPO3:
         className: TYPO3\Neos\Setup\Step\AdministratorStep
         requiredConditions:
           -
-            className: TYPO3\Setup\Condition\DatabaseConnectionCondition
+            className: Neos\Setup\Condition\DatabaseConnectionCondition
       siteimport:
         className: TYPO3\Neos\Setup\Step\SiteImportStep
         requiredConditions:
           -
-            className: TYPO3\Setup\Condition\DatabaseConnectionCondition
+            className: Neos\Setup\Condition\DatabaseConnectionCondition
       final:
         className: TYPO3\Neos\Setup\Step\FinalStep
     view:

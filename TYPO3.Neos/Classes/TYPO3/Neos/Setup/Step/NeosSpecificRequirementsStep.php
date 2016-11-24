@@ -21,7 +21,7 @@ use Neos\Utility\Arrays;
 use Neos\Utility\Files;
 use Neos\Form\Core\Model\FormDefinition;
 use TYPO3\Imagine\ImagineFactory;
-use TYPO3\Setup\Step\AbstractStep;
+use Neos\Setup\Step\AbstractStep;
 
 /**
  * @Flow\Scope("singleton")
