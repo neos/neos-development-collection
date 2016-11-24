@@ -19,7 +19,7 @@ use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Tests\FunctionalTestCase;
 use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer;
 use Neos\FluidAdaptor\View\TemplateView;
-use TYPO3\Media\TypeConverter\AssetInterfaceConverter;
+use Neos\Media\TypeConverter\AssetInterfaceConverter;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentContext;

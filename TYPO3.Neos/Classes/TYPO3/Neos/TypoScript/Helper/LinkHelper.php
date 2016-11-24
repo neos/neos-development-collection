@@ -13,7 +13,7 @@ namespace TYPO3\Neos\TypoScript\Helper;
 
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
-use TYPO3\Media\Domain\Model\AssetInterface;
+use Neos\Media\Domain\Model\AssetInterface;
 use TYPO3\Neos\Service\LinkingService;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\Controller\ControllerContext;

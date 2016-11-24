@@ -23,7 +23,7 @@ use Neos\FluidAdaptor\Core\ViewHelper\TemplateVariableContainer;
 use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer;
 use Neos\FluidAdaptor\View\AbstractTemplateView;
 use Neos\FluidAdaptor\View\TemplateView;
-use TYPO3\Media\TypeConverter\AssetInterfaceConverter;
+use Neos\Media\TypeConverter\AssetInterfaceConverter;
 use TYPO3\Neos\Domain\Model\Domain;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;

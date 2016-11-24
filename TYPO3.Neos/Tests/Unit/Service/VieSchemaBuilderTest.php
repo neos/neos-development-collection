@@ -14,7 +14,7 @@ namespace TYPO3\Neos\Tests\Functional\Service;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\Media\Domain\Model\Image;
+use Neos\Media\Domain\Model\Image;
 use TYPO3\Neos\Service\VieSchemaBuilder;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 

@@ -10,8 +10,8 @@ namespace TYPO3\Neos\Domain\Model\Dto;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Media\Domain\Model\AssetInterface;
-use TYPO3\Media\Domain\Model\Dto\UsageReference;
+use Neos\Media\Domain\Model\AssetInterface;
+use Neos\Media\Domain\Model\Dto\UsageReference;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 

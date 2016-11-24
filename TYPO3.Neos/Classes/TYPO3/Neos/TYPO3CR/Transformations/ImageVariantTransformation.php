@@ -15,10 +15,10 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
-use TYPO3\Media\Domain\Model\ImageInterface;
-use TYPO3\Media\Domain\Model\ImageVariant;
-use TYPO3\Media\Domain\Repository\AssetRepository;
-use TYPO3\Media\TypeConverter\ProcessingInstructionsConverter;
+use Neos\Media\Domain\Model\ImageInterface;
+use Neos\Media\Domain\Model\ImageVariant;
+use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Media\TypeConverter\ProcessingInstructionsConverter;
 use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Migration\Transformations\AbstractTransformation;
 

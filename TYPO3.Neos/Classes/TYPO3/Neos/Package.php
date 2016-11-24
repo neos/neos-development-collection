@@ -17,7 +17,7 @@ use Neos\Flow\Monitor\FileMonitor;
 use Neos\Flow\Mvc\Routing\RouterCachingService;
 use Neos\Flow\Package\Package as BasePackage;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
-use TYPO3\Media\Domain\Service\AssetService;
+use Neos\Media\Domain\Service\AssetService;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Service\SiteImportService;
 use TYPO3\Neos\Domain\Service\SiteService;

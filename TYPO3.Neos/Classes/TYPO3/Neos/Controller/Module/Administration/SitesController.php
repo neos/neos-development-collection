@@ -17,7 +17,7 @@ use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Session\SessionInterface;
-use TYPO3\Media\Domain\Repository\AssetCollectionRepository;
+use Neos\Media\Domain\Repository\AssetCollectionRepository;
 use TYPO3\Neos\Controller\Module\AbstractModuleController;
 use TYPO3\Neos\Domain\Model\Domain;
 use TYPO3\Neos\Domain\Model\Site;

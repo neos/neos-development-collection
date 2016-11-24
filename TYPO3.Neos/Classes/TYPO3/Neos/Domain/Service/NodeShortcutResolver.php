@@ -11,7 +11,7 @@ namespace TYPO3\Neos\Domain\Service;
  * source code.
  */
 
-use TYPO3\Media\Domain\Model\AssetInterface;
+use Neos\Media\Domain\Model\AssetInterface;
 use TYPO3\Neos\Service\LinkingService;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;

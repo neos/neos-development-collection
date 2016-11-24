@@ -92,8 +92,8 @@ TYPO3:
               multiple: true
               placeholder: Choose
             defaultValue: {  }
-          TYPO3\Media\Domain\Model\ImageInterface:
-            typeConverter: TYPO3\Media\TypeConverter\ImageInterfaceJsonSerializer
+          Neos\Media\Domain\Model\ImageInterface:
+            typeConverter: Neos\Media\TypeConverter\ImageInterfaceJsonSerializer
             editor: TYPO3.Neos/Inspector/Editors/ImageEditor
             editorOptions:
               maximumFileSize: null
@@ -127,10 +127,10 @@ TYPO3:
                   locked:
                     width: 0
                     height: 0
-          TYPO3\Media\Domain\Model\Asset:
+          Neos\Media\Domain\Model\Asset:
             typeConverter: TYPO3\Neos\TypeConverter\EntityToIdentityConverter
             editor: TYPO3.Neos/Inspector/Editors/AssetEditor
-          array<TYPO3\Media\Domain\Model\Asset>:
+          array<Neos\Media\Domain\Model\Asset>:
             editor: TYPO3.Neos/Inspector/Editors/AssetEditor
             editorOptions:
               multiple: true
@@ -359,7 +359,7 @@ TYPO3:
           - Neos.FluidAdaptor
           - Neos.Kickstart
           - TYPO3.Welcome
-          - TYPO3.Media
+          - Neos.Media
           - TYPO3.TYPO3CR
           - TYPO3.Neos.Kickstarter
           - TYPO3.Neos
@@ -386,7 +386,7 @@ TYPO3:
           implementationClassName: TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser
           options:
             namespaces:
-              typo3.media: TYPO3\Media\ViewHelpers
+              typo3.media: Neos\Media\ViewHelpers
       'Neos:FormViewHelpers':
         title: 'Form ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Neos/Documentation/References/ViewHelpers/Form.rst'
@@ -527,7 +527,7 @@ Neos:
               'TYPO3.Neos:BackendControllers':
                 pattern: ControllerObjectName
                 patternOptions:
-                  controllerObjectNamePattern: 'TYPO3\Neos\Controller\.*|TYPO3\Neos\Service\.*|TYPO3\Media\Controller\.*'
+                  controllerObjectNamePattern: 'TYPO3\Neos\Controller\.*|TYPO3\Neos\Service\.*|Neos\Media\Controller\.*'
             entryPoint: WebRedirect
             entryPointOptions:
               routeValues:

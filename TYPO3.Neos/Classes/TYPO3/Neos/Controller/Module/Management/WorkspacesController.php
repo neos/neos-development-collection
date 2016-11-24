@@ -22,7 +22,7 @@ use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfigurationBuilder;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Context;
-use TYPO3\Media\Domain\Model\AssetInterface;
+use Neos\Media\Domain\Model\AssetInterface;
 use TYPO3\Neos\Controller\Module\AbstractModuleController;
 use TYPO3\Neos\Domain\Model\User;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
