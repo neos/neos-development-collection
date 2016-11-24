@@ -20,7 +20,7 @@ use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Utility\Arrays;
 use Neos\Utility\Files;
 use Neos\Form\Core\Model\FormDefinition;
-use TYPO3\Imagine\ImagineFactory;
+use Neos\Imagine\ImagineFactory;
 use Neos\Setup\Step\AbstractStep;
 
 /**
@@ -136,7 +136,7 @@ class NeosSpecificRequirementsStep extends AbstractStep
      */
     public function postProcessFormValues(array $formValues)
     {
-        $this->distributionSettings = Arrays::setValueByPath($this->distributionSettings, 'TYPO3.Imagine.driver', $formValues['imagineDriver']);
+        $this->distributionSettings = Arrays::setValueByPath($this->distributionSettings, 'Neos.Imagine.driver', $formValues['imagineDriver']);
         $this->configurationSource->save(FLOW_PATH_CONFIGURATION . ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $this->distributionSettings);
 
         $this->configurationManager->flushConfigurationCache();
