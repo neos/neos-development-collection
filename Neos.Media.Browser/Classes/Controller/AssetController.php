@@ -300,13 +300,14 @@ class AssetController extends ActionController
     public function updateAssetResourceAction(AssetInterface $asset, PersistentResource $resource, array $options = [])
     {
         try {
+            $originalFilename = $asset->getLabel();
             $this->assetService->replaceAssetResource($asset, $resource, $options);
         } catch (\Exception $exception) {
             $this->addFlashMessage('couldNotReplaceAsset', '', Message::SEVERITY_OK, [], 1463472606);
             $this->forwardToReferringRequest();
         }
 
-        $this->addFlashMessage('assetHasBeenReplaced', '', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())]);
+        $this->addFlashMessage('assetHasBeenReplaced', '', Message::SEVERITY_OK, [htmlspecialchars($originalFilename)]);
         $this->redirect('index');
     }
 
