@@ -17,7 +17,9 @@ use TYPO3\Flow\Cache\CacheAwareInterface;
 use TYPO3\Neos\Domain\Model\Site;
 
 /**
- * Domain Model of a Domain
+ * Domain Model of a Domain.
+ *
+ * It is used to connect a site root node to a specific hostname.
  *
  * @Flow\Entity
  * @Flow\Scope("prototype")
@@ -31,7 +33,7 @@ class Domain implements CacheAwareInterface
      * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=255 })
      * @Flow\Validate(type="\TYPO3\Neos\Validation\Validator\HostnameValidator", options={"ignoredHostnames"="localhost"})
      */
-    protected $hostPattern = '*';
+    protected $hostname;
 
     /**
      * @var string
@@ -62,26 +64,51 @@ class Domain implements CacheAwareInterface
     protected $active = true;
 
     /**
-     * Sets the pattern for the host of the domain
+     * Sets the hostname
      *
-     * @param string $hostPattern Pattern for the host
+     * @param string $hostname
      * @return void
      * @api
      */
-    public function setHostPattern($hostPattern)
+    public function setHostname($hostname)
     {
-        $this->hostPattern = $hostPattern;
+        $this->hostname = $hostname;
     }
 
     /**
-     * Returns the host pattern for this domain
+     * Sets the hostname
      *
-     * @return string The host pattern
+     * @param string $hostPattern
+     * @return void
      * @api
+     * @deprecated after 3.0, use setHostname() instead
+     */
+    public function setHostPattern($hostPattern)
+    {
+        $this->hostname = $hostPattern;
+    }
+
+    /**
+     * Returns the hostname
+     *
+     * @return string
+     * @api
+     */
+    public function getHostname()
+    {
+        return $this->hostname;
+    }
+
+    /**
+     * Returns the hostname
+     *
+     * @return string The name
+     * @api
+     * @deprecated after 3.0, use getHostname() instead
      */
     public function getHostPattern()
     {
-        return $this->hostPattern;
+        return $this->hostname;
     }
 
     /**
@@ -194,7 +221,7 @@ class Domain implements CacheAwareInterface
      */
     public function getCacheEntryIdentifier()
     {
-        return $this->hostPattern;
+        return $this->hostname;
     }
 
     /**
@@ -206,7 +233,7 @@ class Domain implements CacheAwareInterface
     {
         $domain = '';
         $domain .= $this->scheme ? $this->scheme . '://' : '';
-        $domain .= $this->hostPattern;
+        $domain .= $this->hostname;
         if ($this->port !== null) {
             switch ($this->scheme) {
                 case 'http':

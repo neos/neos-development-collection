@@ -14,7 +14,7 @@ namespace TYPO3\TYPO3CR\Domain\Service\ImportExport;
 use Doctrine\Common\Persistence\ObjectManager;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SystemLoggerInterface;
-use TYPO3\Flow\Object\ObjectManagerInterface;
+use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
 use TYPO3\Flow\Property\PropertyMapper;
 use TYPO3\Flow\Security\Context;

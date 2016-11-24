@@ -119,6 +119,37 @@ The following options are allowed:
     Alternatively the class of a node label generator implementing
     ``TYPO3\TYPO3CR\Domain\Model\NodeLabelGeneratorInterface`` can be specified as a nested option.
 
+``options``
+  Options for third party-code, the Content-Repository ignores those options but Neos or Packages may use this to adjust
+  their behavior.
+
+  ``fusion``
+    Options to control the behavior of fusion-for a specific nodeType.
+
+    ``prototypeGenerator``
+      The class that is used to generate the default fusion-prototype for this nodeType.
+
+      If this option is set to a className the class has to implement the interface
+      ``\TYPO3\Neos\Domain\Service\DefaultPrototypeGeneratorInterface`` and is used to generate the prototype-code for this node.
+
+      If ``options.fusion.prototypeGenerator`` is set to ``null`` no prototype is created for this type.
+
+      By default Neos has generators for all nodes of type ``TYPO3.Neos:Node`` and creates protoypes based on
+      ``TYPO3.TypoScript:Template``. A template path is assumed based on the package-prefix and the nodetype-name. All properties
+      of the node are passed to the template. For the nodeTypes of type ``TYPO3.Neos:Document``, ``TYPO3.Neos:Content`` and
+      ``TYPO3.Neos:Plugin`` the corresponding prototype is used as base-prototype.
+
+      Example::
+
+      prototype(Vendor.Site:Content.SpecialNodeType) < prototype(TYPO3.TypoScript:Content) {
+        templatePath = 'resource://Vendor.Site/Private/Templates/NodeTypes/Content.SpecialNodeType.html'
+        # all properties of the nodeType are passed to the template
+        date = ${q(node).property('date')}
+        # inline-editable strings additionally get the convertUris processor
+        title = ${q(node).property('title')}
+        title.@process.convertUris = TYPO3.Neos:ConvertUris
+      }
+
 ``ui``
   Configuration options related to the user interface representation of the node type
 

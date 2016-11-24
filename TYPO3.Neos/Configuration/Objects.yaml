@@ -58,9 +58,6 @@ TYPO3\Neos\Service\XliffService:
           1:
             value: TYPO3_Neos_XliffToJsonTranslations
 
-League\CommonMark\CommonMarkConverter:
-  className: League\CommonMark\CommonMarkConverter
-
 TYPO3\Neos\Controller\Backend\BackendController:
   properties:
     loginTokenCache:

@@ -48,22 +48,22 @@ class DomainCommandController extends CommandController
      * Add a domain record
      *
      * @param string $siteNodeName The nodeName of the site rootNode, e.g. "neostypo3org"
-     * @param string $hostPattern The host pattern to match on, e.g. "flow.neos.io"
+     * @param string $hostname The hostname to match on, e.g. "flow.neos.io"
      * @param string $scheme The scheme for linking (http/https)
      * @param integer $port The port for linking (0-49151)
      * @return void
      */
-    public function addCommand($siteNodeName, $hostPattern, $scheme = null, $port = null)
+    public function addCommand($siteNodeName, $hostname, $scheme = null, $port = null)
     {
         $site = $this->siteRepository->findOneByNodeName($siteNodeName);
         if (!$site instanceof Site) {
-            $this->outputLine('<error>No site found with nodeName "%s".</error>', array($siteNodeName));
+            $this->outputLine('<error>No site found with nodeName "%s".</error>', [$siteNodeName]);
             $this->quit(1);
         }
 
-        $domains = $this->domainRepository->findByHostPattern($hostPattern);
+        $domains = $this->domainRepository->findByHostname($hostname);
         if ($domains->count() > 0) {
-            $this->outputLine('<error>The host pattern "%s" is not unique.</error>', array($hostPattern));
+            $this->outputLine('<error>The host name "%s" is not unique.</error>', [$hostname]);
             $this->quit(1);
         }
 
@@ -75,7 +75,7 @@ class DomainCommandController extends CommandController
             $domain->setPort($port);
         }
         $domain->setSite($site);
-        $domain->setHostPattern($hostPattern);
+        $domain->setHostname($hostname);
 
         $domainValidator = $this->validatorResolver->getBaseValidatorConjunction(Domain::class);
         $result = $domainValidator->validate($domain);
@@ -89,95 +89,68 @@ class DomainCommandController extends CommandController
 
         $this->domainRepository->add($domain);
 
-        $this->outputLine('Domain created.');
+        $this->outputLine('Domain entry created.');
     }
 
     /**
      * Display a list of available domain records
      *
-     * @param string $hostPattern An optional host pattern to search for
+     * @param string $hostname An optional hostname to search for
      * @return void
      */
-    public function listCommand($hostPattern = null)
+    public function listCommand($hostname = null)
     {
-        if ($hostPattern === null) {
+        if ($hostname === null) {
             $domains = $this->domainRepository->findAll();
         } else {
-            $domains = $this->domainRepository->findByHost($hostPattern);
+            $domains = $this->domainRepository->findByHostname($hostname);
         }
 
         if (count($domains) === 0) {
-            $this->outputLine('No domains available.');
+            $this->outputLine('No domain entries available.');
             $this->quit(0);
         }
 
-        $longestNodeName = 9;
-        $longestHostPattern = 12;
-        $availableDomains = array();
-
+        $availableDomains = [];
         foreach ($domains as $domain) {
-            /** @var Domain $domain */
-            array_push($availableDomains, array(
+            /** @var \TYPO3\Neos\Domain\Model\Domain $domain */
+            $availableDomains[] = [
                 'nodeName' => $domain->getSite()->getNodeName(),
-                'hostPattern' => $domain->getHostPattern(),
-                'scheme' => $domain->getScheme(),
-                'port' => $domain->getPort(),
-                'active' => $domain->getActive()
-            ));
-            if (strlen($domain->getSite()->getNodeName()) > $longestNodeName) {
-                $longestNodeName = strlen($domain->getSite()->getNodeName());
-            }
-            if (strlen($domain) > $longestHostPattern) {
-                $longestHostPattern = strlen($domain);
-            }
+                'hostname' => (string)$domain,
+                'active' => $domain->getActive() ? 'active' : 'inactive'
+            ];
         }
 
-        $this->outputLine();
-        $this->outputLine(' ' . str_pad('Node name', $longestNodeName + 10) . str_pad('Domain (Scheme/<b>Host</b>/Port)', $longestHostPattern + 12) . 'State');
-        $this->outputLine(str_repeat('-', $longestNodeName + $longestHostPattern + 10 + 2 + 12));
-        foreach ($availableDomains as $domain) {
-            $this->outputLine(sprintf(
-                ' %s%s%s',
-                str_pad($domain['nodeName'], $longestNodeName + 10),
-                str_pad(
-                    ($domain['scheme'] ? $domain['scheme'] . '://' : '') .
-                    '<b>' . $domain['hostPattern'] . '</b>' .
-                    ($domain['port'] ? ':' . $domain['port'] : ''),
-                    $longestHostPattern + 12
-                ),
-                ($domain['active'] ? 'Active' : 'Inactive')
-            ));
-        }
-        $this->outputLine();
+        $this->output->outputTable($availableDomains, ['Node name', 'Domain (Scheme/Host/Port)', 'State']);
     }
 
     /**
-     * Delete a domain record
+     * Delete a domain record by hostname
      *
-     * @param string $hostPattern The host pattern of the domain to remove
+     * @param string $hostname The hostname to remove
      * @return void
      */
-    public function deleteCommand($hostPattern)
+    public function deleteCommand($hostname)
     {
-        $domain = $this->domainRepository->findOneByHostPattern($hostPattern);
+        $domain = $this->domainRepository->findOneByHostname($hostname);
         if (!$domain instanceof Domain) {
             $this->outputLine('<error>Domain not found.</error>');
             $this->quit(1);
         }
 
         $this->domainRepository->remove($domain);
-        $this->outputLine('Domain deleted.');
+        $this->outputLine('Domain entry deleted.');
     }
 
     /**
-     * Activate a domain record
+     * Activate a domain record by hostname
      *
-     * @param string $hostPattern The host pattern of the domain to activate
+     * @param string $hostname The hostname to activate
      * @return void
      */
-    public function activateCommand($hostPattern)
+    public function activateCommand($hostname)
     {
-        $domain = $this->domainRepository->findOneByHostPattern($hostPattern);
+        $domain = $this->domainRepository->findOneByHostname($hostname);
         if (!$domain instanceof Domain) {
             $this->outputLine('<error>Domain not found.</error>');
             $this->quit(1);
@@ -185,18 +158,18 @@ class DomainCommandController extends CommandController
 
         $domain->setActive(true);
         $this->domainRepository->update($domain);
-        $this->outputLine('Domain activated.');
+        $this->outputLine('Domain entry activated.');
     }
 
     /**
-     * Deactivate a domain record
+     * Deactivate a domain record by hostname
      *
-     * @param string $hostPattern The host pattern of the domain to deactivate
+     * @param string $hostname The hostname to deactivate
      * @return void
      */
-    public function deactivateCommand($hostPattern)
+    public function deactivateCommand($hostname)
     {
-        $domain = $this->domainRepository->findOneByHostPattern($hostPattern);
+        $domain = $this->domainRepository->findOneByHostname($hostname);
         if (!$domain instanceof Domain) {
             $this->outputLine('<error>Domain not found.</error>');
             $this->quit(1);
@@ -204,6 +177,6 @@ class DomainCommandController extends CommandController
 
         $domain->setActive(false);
         $this->domainRepository->update($domain);
-        $this->outputLine('Domain deactivated.');
+        $this->outputLine('Domain entry deactivated.');
     }
 }

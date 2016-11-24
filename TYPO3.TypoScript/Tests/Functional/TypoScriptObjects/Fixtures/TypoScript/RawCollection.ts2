@@ -1,0 +1,27 @@
+prototype(TYPO3.TypoScript:RawCollection).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RawCollectionImplementation'
+prototype(TYPO3.TypoScript:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+
+rawCollection.basicLoop = TYPO3.TypoScript:RawCollection {
+	collection = ${collection}
+	itemName = 'element'
+	itemRenderer = TYPO3.TypoScript:TestRenderer {
+		test = ${element}
+	}
+}
+
+rawCollection.basicLoopOtherContextVariables = TYPO3.TypoScript:RawCollection {
+	collection = ${collection}
+	itemName = 'element'
+	itemRenderer = TYPO3.TypoScript:TestRenderer {
+		test = ${element + other}
+	}
+}
+
+rawCollection.iteration = TYPO3.TypoScript:RawCollection {
+	collection = ${collection}
+	itemName = 'element'
+	iterationName = 'iteration'
+	itemRenderer = TYPO3.TypoScript:TestRenderer {
+		test = ${element + '-' + iteration.index + '-' + iteration.cycle + '-' + iteration.isFirst + '-' + iteration.isLast + '-' + iteration.isOdd + '-' + iteration.isEven}
+	}
+}

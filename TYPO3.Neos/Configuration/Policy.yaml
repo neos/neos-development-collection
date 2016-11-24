@@ -139,7 +139,7 @@ privilegeTargets:
       matcher: 'method(TYPO3\Neos\Controller\Module\Administration\PackagesController->(index|activate|deactivate|delete|freeze|unfreeze|batch)Action())'
 
     'TYPO3.Neos:Backend.Module.Administration.Sites':
-      matcher: 'method(TYPO3\Neos\Controller\Module\Administration\SitesController->(index|edit|updateSite|newSite|createSite|deleteSite|activateSite|deactivateSite|editDomain|updateDomain|newDomain|createDomain|deleteDomain|activateDomain|deactivateDomain)Action())'
+      matcher: 'method(TYPO3\Neos\Controller\Module\Administration\SitesController->(index|edit|updateSite|newSite|createSite|importSite|createSiteNode|createSitePackage|deleteSite|activateSite|deactivateSite|editDomain|updateDomain|newDomain|createDomain|deleteDomain|activateDomain|deactivateDomain)Action())'
 
     'TYPO3.Neos:Backend.Module.Administration.Configuration':
       matcher: 'method(TYPO3\Neos\Controller\Module\Administration\ConfigurationController->indexAction())'

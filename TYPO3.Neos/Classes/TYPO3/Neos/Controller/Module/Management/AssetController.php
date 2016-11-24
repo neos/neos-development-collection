@@ -11,20 +11,15 @@ namespace TYPO3\Neos\Controller\Module\Management;
  * source code.
  */
 
-use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Configuration\ConfigurationManager;
 use TYPO3\Flow\Error\Error;
 use TYPO3\Flow\Error\Message;
-use TYPO3\Flow\I18n\Locale;
 use TYPO3\Flow\Mvc\Exception\InvalidArgumentValueException;
-use TYPO3\Flow\Resource\Resource as FlowResource;
+use TYPO3\Flow\ResourceManagement\PersistentResource;
 use TYPO3\Flow\Security\Context;
-use TYPO3\Flow\Utility\TypeHandling;
 use TYPO3\Flow\Utility\MediaTypes;
-use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Media\Domain\Model\AssetCollection;
-use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Exception\AssetServiceException;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;
@@ -148,12 +143,12 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
      * Update the resource on an asset.
      *
      * @param AssetInterface $asset
-     * @param FlowResource $resource
+     * @param PersistentResource $resource
      * @param array $options
      * @throws InvalidArgumentValueException
      * @return void
      */
-    public function updateAssetResourceAction(AssetInterface $asset, FlowResource $resource, array $options = [])
+    public function updateAssetResourceAction(AssetInterface $asset, PersistentResource $resource, array $options = [])
     {
         $sourceMediaType = MediaTypes::parseMediaType($asset->getMediaType());
         $replacementMediaType = MediaTypes::parseMediaType($resource->getMediaType());
@@ -251,6 +246,7 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
         if ($this->objectManager->getContext()->isDevelopment()) {
             $errorMessage .= ' while trying to call %1$s->%2$s()';
         }
+
         return new Error($errorMessage, null, [get_class($this), $this->actionMethodName]);
     }
 
@@ -264,7 +260,7 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
      * @param integer $messageCode
      * @return void
      */
-    public function addFlashMessage($messageBody, $messageTitle = '', $severity = Message::SEVERITY_OK, array $messageArguments = array(), $messageCode = null)
+    public function addFlashMessage($messageBody, $messageTitle = '', $severity = Message::SEVERITY_OK, array $messageArguments = [], $messageCode = null)
     {
         if (is_string($messageBody)) {
             $messageBody = $this->translator->translateById($messageBody, $messageArguments, null, null, 'Modules', 'TYPO3.Neos') ?: $messageBody;
