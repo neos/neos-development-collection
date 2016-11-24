@@ -325,24 +325,24 @@ TYPO3:
       defaultEditPreviewMode: 'inPlace'
       editPreviewModes:
         # Live mode is only configured here for consistency. You shouldn't change it.
-        live:
+        'TYPO3.Neos:live':
           isEditingMode: FALSE
           isPreviewMode: FALSE
           typoScriptRenderingPath: ''
           title: 'Live'
-        inPlace:
+        'TYPO3.Neos:inPlace':
           isEditingMode: TRUE
           isPreviewMode: FALSE
           typoScriptRenderingPath: ''
           title: 'TYPO3.Neos:Main:editPreviewModes.inPlace'
           position: 100
-        rawContent:
+        'TYPO3.Neos:rawContent':
           isEditingMode: TRUE
           isPreviewMode: FALSE
           typoScriptRenderingPath: 'rawContent'
           title: 'TYPO3.Neos:Main:editPreviewModes.rawContent'
           position: 200
-        desktop:
+        'TYPO3.Neos:desktop':
           isEditingMode: FALSE
           isPreviewMode: TRUE
           typoScriptRenderingPath: ''

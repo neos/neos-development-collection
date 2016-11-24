@@ -142,6 +142,13 @@
           label: i18n
           position: 10
           icon: 'icon-file'
+    editPreviewModes:
+      'TYPO3.Neos:inPlace':
+        enabled: TRUE
+      'TYPO3.Neos:rawContent':
+        enabled: TRUE
+      'TYPO3.Neos:desktop':
+        enabled: TRUE
   properties:
     _nodeType:
       ui:
@@ -199,6 +206,13 @@
       groups:
         document:
           label: i18n
+    editPreviewModes:
+      'TYPO3.Neos:inPlace':
+        enabled: TRUE
+      'TYPO3.Neos:rawContent':
+        enabled: FALSE
+      'TYPO3.Neos:desktop':
+        enabled: FALSE
   properties:
     targetMode:
       type: string

@@ -13,8 +13,8 @@ namespace TYPO3\Neos\Controller\Backend;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
-use TYPO3\Flow\Utility\Arrays;
-use TYPO3\Flow\Utility\PositionalArraySorter;
+use TYPO3\Neos\Service\PreviewCentralService;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 
 /**
  * @Flow\Scope("singleton")
@@ -22,12 +22,24 @@ use TYPO3\Flow\Utility\PositionalArraySorter;
 class SettingsController extends ActionController
 {
     /**
+     * @var NodeTypeManager
+     * @Flow\Inject
+     */
+    protected $nodeTypeManager;
+
+    /**
+     * @var PreviewCentralService
+     * @Flow\Inject
+     */
+    protected $previewCentralService;
+
+    /**
+     * @param string $nodeType
      * @return string
      */
-    public function editPreviewAction()
+    public function editPreviewAction($nodeType)
     {
         $this->response->setHeader('Content-Type', 'application/json');
-        $configuration = new PositionalArraySorter(Arrays::getValueByPath($this->settings, 'userInterface.editPreviewModes'));
-        return json_encode($configuration->toArray());
+        return json_encode($this->previewCentralService->findEditPreviewModesByNodeType($nodeType));
     }
 }
