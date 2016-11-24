@@ -10,7 +10,7 @@ namespace TYPO3\Neos\Tests\Unit\FlowQueryOperations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Eel\FlowQuery\FlowQuery;
+use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\Neos\Domain\Service\ContentContext;
 use TYPO3\Neos\Eel\FlowQueryOperations\ParentsOperation;

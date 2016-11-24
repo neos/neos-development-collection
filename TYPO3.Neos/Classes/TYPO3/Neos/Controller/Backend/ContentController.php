@@ -37,7 +37,7 @@ use TYPO3\Neos\Controller\CreateContentContextTrait;
 use TYPO3\Neos\Service\PluginService;
 use TYPO3\Neos\TypeConverter\EntityToIdentityConverter;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\Eel\FlowQuery\FlowQuery;
+use Neos\Eel\FlowQuery\FlowQuery;
 
 /**
  * The TYPO3 ContentModule controller; providing backend functionality for the Content Module.

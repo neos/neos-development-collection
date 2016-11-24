@@ -18,7 +18,7 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use TYPO3\Neos\Service\PluginService;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\Eel\FlowQuery\FlowQuery;
+use Neos\Eel\FlowQuery\FlowQuery;
 
 /**
  * @Flow\Scope("singleton")

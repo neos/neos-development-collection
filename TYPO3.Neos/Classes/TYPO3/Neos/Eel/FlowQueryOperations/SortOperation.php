@@ -11,8 +11,8 @@ namespace TYPO3\Neos\Eel\FlowQueryOperations;
  * source code.
  */
 
-use TYPO3\Eel\FlowQuery\FlowQuery;
-use TYPO3\Eel\FlowQuery\Operations\AbstractOperation;
+use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\Node;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
@@ -62,14 +62,14 @@ class SortOperation extends AbstractOperation
         if (isset($arguments[0]) && !empty($arguments[0])) {
             $sortProperty = $arguments[0];
         } else {
-            throw new \TYPO3\Eel\FlowQuery\FlowQueryException('Please provide a node property to sort by.', 1467881104);
+            throw new \Neos\Eel\FlowQuery\FlowQueryException('Please provide a node property to sort by.', 1467881104);
         }
 
         // Check sort direction
         if (isset($arguments[1]) && !empty($arguments[1]) && in_array(strtoupper($arguments[1]), ['ASC', 'DESC'])) {
             $sortOrder = strtoupper($arguments[1]);
         } else {
-            throw new \TYPO3\Eel\FlowQuery\FlowQueryException('Please provide a valid sort direction (ASC or DESC)', 1467881105);
+            throw new \Neos\Eel\FlowQuery\FlowQueryException('Please provide a valid sort direction (ASC or DESC)', 1467881105);
         }
 
         $sortedNodes = [];
