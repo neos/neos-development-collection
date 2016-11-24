@@ -13,6 +13,7 @@
         "typo3/form": "*",
         "typo3/party": "*",
         "typo3/setup": "*",
+        "yeebase/graylog": "*",
         "typo3/twitter-bootstrap": "*",
         "behat/transliterator": "~1.0",
         "gedmo/doctrine-extensions": "~2.3.0"
