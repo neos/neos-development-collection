@@ -11,7 +11,7 @@ namespace TYPO3\Media\Tests\Unit\Validator;
  * source code.
  */
 
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Validator\ImageTypeValidator;
 

@@ -13,11 +13,11 @@ namespace TYPO3\Media\Domain\Repository;
 
 use Doctrine\ORM\Internal\Hydration\IterableResult;
 use Doctrine\ORM\Query\ResultSetMapping;
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Persistence\QueryInterface;
-use TYPO3\Flow\Persistence\QueryResultInterface;
-use TYPO3\Flow\Persistence\Repository;
-use TYPO3\Flow\Persistence\Doctrine\Query;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\QueryInterface;
+use Neos\Flow\Persistence\QueryResultInterface;
+use Neos\Flow\Persistence\Repository;
+use Neos\Flow\Persistence\Doctrine\Query;
 use TYPO3\Media\Domain\Model\Asset;
 use TYPO3\Media\Domain\Model\AssetCollection;
 use TYPO3\Media\Domain\Model\AssetInterface;

@@ -5,7 +5,7 @@ TYPO3\Media\Domain\Service\ImageService:
         factoryObjectName: TYPO3\Imagine\ImagineFactory
     imageSizeCache:
       object:
-        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryObjectName: Neos\Flow\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:

@@ -10,10 +10,10 @@ namespace TYPO3\Media\TypeConverter;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Flow\Property\Exception\TypeConverterException;
-use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
-use TYPO3\Flow\Property\TypeConverter\AbstractTypeConverter;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Flow\Property\Exception\TypeConverterException;
+use Neos\Flow\Property\PropertyMappingConfigurationInterface;
+use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
+use Neos\Flow\Reflection\ObjectAccess;
 use TYPO3\Media\Domain\Model\Adjustment\CropImageAdjustment;
 use TYPO3\Media\Domain\Model\Adjustment\ResizeImageAdjustment;
 
@@ -45,7 +45,7 @@ class ProcessingInstructionsConverter extends AbstractTypeConverter
      * - an arbitrary object, or a simple type (which has been created while mapping).
      *   This is the normal case.
      * - NULL, indicating that this object should *not* be mapped (i.e. a "File Upload" Converter could return NULL if no file has been uploaded, and a silent failure should occur.
-     * - An instance of \TYPO3\Flow\Error\Error -- This will be a user-visible error message later on.
+     * - An instance of \Neos\Flow\Error\Error -- This will be a user-visible error message later on.
      * Furthermore, it should throw an Exception if an unexpected failure (like a security error) occurred or a configuration issue happened.
      *
      * @param array $source

@@ -14,8 +14,8 @@ namespace TYPO3\Media\Domain\Repository;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Internal\Hydration\IterableResult;
 use Doctrine\ORM\QueryBuilder;
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Persistence\Repository;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\Repository;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
 

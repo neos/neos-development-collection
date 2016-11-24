@@ -11,7 +11,7 @@ namespace TYPO3\Media\Domain\Session;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * A container for the state the media browser is in.

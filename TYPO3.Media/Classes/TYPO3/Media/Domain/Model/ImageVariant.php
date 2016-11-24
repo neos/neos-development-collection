@@ -13,13 +13,13 @@ namespace TYPO3\Media\Domain\Model;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
-use TYPO3\Flow\Reflection\ObjectAccess;
-use TYPO3\Flow\ResourceManagement\PersistentResource;
-use TYPO3\Flow\Utility\TypeHandling;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Reflection\ObjectAccess;
+use Neos\Flow\ResourceManagement\PersistentResource;
+use Neos\Flow\Utility\TypeHandling;
 use TYPO3\Media\Domain\Model\Adjustment\ImageAdjustmentInterface;
 use TYPO3\Media\Domain\Service\ImageService;
 

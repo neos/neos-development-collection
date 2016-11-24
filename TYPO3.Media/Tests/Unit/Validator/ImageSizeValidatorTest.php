@@ -10,7 +10,7 @@ namespace TYPO3\Media\Tests\Unit\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Flow\Tests\UnitTestCase;
+use Neos\Flow\Tests\UnitTestCase;
 use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Validator\ImageSizeValidator;
 
@@ -48,7 +48,7 @@ class ImageSizeValidatorTest extends UnitTestCase
     /**
      * @test
      * @dataProvider invalidOptionsTestsDataProvider
-     * @expectedException \TYPO3\Flow\Validation\Exception\InvalidValidationOptionsException
+     * @expectedException \Neos\Flow\Validation\Exception\InvalidValidationOptionsException
      * @param array $options
      */
     public function invalidOptionsTests(array $options)

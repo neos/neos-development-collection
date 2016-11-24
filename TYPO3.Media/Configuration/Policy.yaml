@@ -4,14 +4,14 @@
 
 privilegeTargets:
 
-  'TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
+  'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
 
     'Neos.Media:Thumbnail':
       matcher: 'method(Neos\Media\Controller\ThumbnailController->thumbnailAction())'
 
 roles:
 
-  'TYPO3.Flow:Everybody':
+  'Neos.Flow:Everybody':
     privileges:
       -
         privilegeTarget: 'Neos.Media:Thumbnail'

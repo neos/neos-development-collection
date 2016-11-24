@@ -11,10 +11,10 @@ namespace TYPO3\Media\TypeConverter;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Property\PropertyMapper;
-use TYPO3\Flow\Property\PropertyMappingConfigurationInterface;
-use TYPO3\Flow\Reflection\ObjectAccess;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Property\PropertyMappingConfigurationInterface;
+use Neos\Flow\Reflection\ObjectAccess;
 use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Model\ImageVariant;

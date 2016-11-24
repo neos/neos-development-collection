@@ -16,7 +16,7 @@ use TYPO3\Media\Imagine\Box;
 use Imagine\Image\BoxInterface;
 use Imagine\Image\ImageInterface as ImagineImageInterface;
 use Imagine\Image\Point;
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 use TYPO3\Media\Domain\Model\ImageInterface;
 
 /**

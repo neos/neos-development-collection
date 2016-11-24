@@ -11,7 +11,7 @@ namespace TYPO3\Media\Domain\Model;
  * source code.
  */
 
-use TYPO3\Flow\ResourceManagement\PersistentResource;
+use Neos\Flow\ResourceManagement\PersistentResource;
 
 /**
  * A user-managed Asset which is stored in the Asset Repository

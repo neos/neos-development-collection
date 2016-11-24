@@ -11,8 +11,8 @@ namespace TYPO3\Media\ViewHelpers\Uri;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\ResourceManagement\ResourceManager;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\ThumbnailConfiguration;

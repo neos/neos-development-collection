@@ -19,7 +19,7 @@ interface ResourceBasedInterface
     /**
      * Returns the PersistentResource
      *
-     * @return \TYPO3\Flow\ResourceManagement\PersistentResource
+     * @return \Neos\Flow\ResourceManagement\PersistentResource
      */
     public function getResource();
 

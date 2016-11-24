@@ -10,7 +10,7 @@ namespace TYPO3\Media\Tests\Functional\Domain\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\Flow\Persistence\Doctrine\PersistenceManager;
+use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use TYPO3\Media\Domain\Model\Tag;
 use TYPO3\Media\Domain\Repository\TagRepository;
 use TYPO3\Media\Tests\Functional\AbstractTest;

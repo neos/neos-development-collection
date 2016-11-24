@@ -11,16 +11,16 @@ namespace TYPO3\Media\Domain\Service;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Mvc\ActionRequest;
-use TYPO3\Flow\Mvc\Routing\UriBuilder;
-use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
-use TYPO3\Flow\Package\PackageManagerInterface;
-use TYPO3\Flow\Persistence\RepositoryInterface;
-use TYPO3\Flow\Reflection\ReflectionService;
-use TYPO3\Flow\ResourceManagement\PersistentResource;
-use TYPO3\Flow\ResourceManagement\ResourceManager;
-use TYPO3\Flow\Utility\Arrays;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Routing\UriBuilder;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Persistence\RepositoryInterface;
+use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\ResourceManagement\PersistentResource;
+use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Flow\Utility\Arrays;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\AssetVariantInterface;
 use TYPO3\Media\Domain\Model\ImageInterface;
@@ -143,7 +143,7 @@ class AssetService
      * Returns all registered asset usage strategies
      *
      * @return array<\TYPO3\Media\Domain\Strategy\AssetUsageStrategyInterface>
-     * @throws \TYPO3\Flow\ObjectManagement\Exception\UnknownObjectException
+     * @throws \Neos\Flow\ObjectManagement\Exception\UnknownObjectException
      */
     protected function getUsageStrategies()
     {

@@ -11,10 +11,10 @@ namespace TYPO3\Media\Domain\Repository;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Persistence\QueryInterface;
-use TYPO3\Flow\Persistence\QueryResultInterface;
-use TYPO3\Flow\Persistence\Repository;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\QueryInterface;
+use Neos\Flow\Persistence\QueryResultInterface;
+use Neos\Flow\Persistence\Repository;
 
 /**
  * A repository for Tags

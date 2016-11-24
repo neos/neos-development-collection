@@ -13,7 +13,7 @@ namespace TYPO3\Media\Domain\Model\Adjustment;
 
 use Doctrine\ORM\Mapping as ORM;
 use Imagine\Image\ImageInterface;
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 use TYPO3\Media\Domain\Model\ImageVariant;
 
 /**

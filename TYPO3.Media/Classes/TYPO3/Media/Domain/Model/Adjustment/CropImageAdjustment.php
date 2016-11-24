@@ -11,7 +11,7 @@ namespace TYPO3\Media\Domain\Model\Adjustment;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
+use Neos\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
 use Imagine\Image\Box;
 use Imagine\Image\Point;

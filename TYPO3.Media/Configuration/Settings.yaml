@@ -1,29 +1,10 @@
+
 TYPO3:
-  Flow:
-    persistence:
-      doctrine:
-        eventListeners:
-          'TYPO3\Media\Domain\EventListener\ImageEventListener':
-            events: ['postRemove']
-            listener: 'TYPO3\Media\Domain\EventListener\ImageEventListener'
-
-    mvc:
-      routes:
-        'TYPO3.Media':
-          position: 'before TYPO3.Neos'
-
   Media:
-    # This setting simulates how Neos 1.2 handled image cropping with "maximumWidth" and "maximumHeight".
-    # This behaviour is deprecated and will be removed in Neos 3.0, "maximumWidth" and "maximumHeight"
-    # need to be replaced by "width" and "height" if you need fixed dimensions.
     behaviourFlag: '1.2'
-    # Enable asynchronous thumbnails
     asyncThumbnails: true
-    # Thumbnail presets
-    thumbnailPresets: []
-    # Automatically create thumbnails for configured presets when assets are added
+    thumbnailPresets: {  }
     autoCreateThumbnailPresets: true
-
     asset:
       modelMappingStrategy:
         default: TYPO3\Media\Domain\Model\Document
@@ -34,57 +15,67 @@ TYPO3:
             className: TYPO3\Media\Domain\Model\Audio
           '[video/.*]':
             className: TYPO3\Media\Domain\Model\Video
-
     image:
       defaultOptions:
-        # Image quality, from 0 to 100
-        'quality': 90
+        quality: 90
         convertCMYKToRGB: true
-
     thumbnailGenerators:
-
-      'TYPO3\Media\Domain\Model\ThumbnailGenerator\DocumentThumbnailGenerator':
+      TYPO3\Media\Domain\Model\ThumbnailGenerator\DocumentThumbnailGenerator:
         resolution: 120
-        supportedExtensions: [ 'pdf', 'eps', 'ai' ]
-        paginableDocuments: [ 'pdf' ]
-
-      'TYPO3\Media\Domain\Model\ThumbnailGenerator\FontDocumentThumbnailGenerator':
-        supportedExtensions: [ 'ttf', 'otf' ]
-
+        supportedExtensions:
+          - pdf
+          - eps
+          - ai
+        paginableDocuments:
+          - pdf
+      TYPO3\Media\Domain\Model\ThumbnailGenerator\FontDocumentThumbnailGenerator:
+        supportedExtensions:
+          - ttf
+          - otf
   DocTools:
     collections:
-      'Media':
+      Media:
         commandReferences:
           - 'Media:Commands'
         references:
           - 'Media:ViewHelpers'
           - 'Media:Validators'
-
     commandReferences:
       'Media:Commands':
         title: 'Media Command Reference'
         packageKeys:
-          - 'TYPO3.Media'
+          - TYPO3.Media
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Media/Documentation/References/Commands.rst'
-
     references:
       'Media:Validators':
         title: 'Media Validator Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Media/Documentation/References/Validators.rst'
         affectedClasses:
-          parentClassName: 'TYPO3\Flow\Validation\Validator\AbstractValidator'
+          parentClassName: Neos\Flow\Validation\Validator\AbstractValidator
           classNamePattern: '/^TYPO3\\Media\\Validator\\.*$/i'
         parser:
-          implementationClassName: 'TYPO3\DocTools\Domain\Service\FlowValidatorClassParser'
-
+          implementationClassName: TYPO3\DocTools\Domain\Service\FlowValidatorClassParser
       'Media:ViewHelpers':
         title: 'Media ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/TYPO3.Media/Documentation/References/ViewHelpers.rst'
         affectedClasses:
-          parentClassName: 'Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper'
+          parentClassName: Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
           classNamePattern: '/^TYPO3\\Media\\ViewHelpers\\.*$/i'
         parser:
-          implementationClassName: 'TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser'
+          implementationClassName: TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser
           options:
             namespaces:
-              'typo3.media': 'TYPO3\Media\ViewHelpers'
+              typo3.media: TYPO3\Media\ViewHelpers
+Neos:
+  Flow:
+    persistence:
+      doctrine:
+        eventListeners:
+          TYPO3\Media\Domain\EventListener\ImageEventListener:
+            events:
+              - postRemove
+            listener: TYPO3\Media\Domain\EventListener\ImageEventListener
+    mvc:
+      routes:
+        TYPO3.Media:
+          position: 'before TYPO3.Neos'

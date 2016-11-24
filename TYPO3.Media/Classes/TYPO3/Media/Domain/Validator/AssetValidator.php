@@ -11,10 +11,10 @@ namespace TYPO3\Media\Domain\Validator;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\ObjectManagement\ObjectManagerInterface;
-use TYPO3\Flow\Reflection\ReflectionService;
-use TYPO3\Flow\Validation\Validator\ConjunctionValidator;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Validation\Validator\ConjunctionValidator;
 
 /**
  * Conjunction validator that loads all implementations of the

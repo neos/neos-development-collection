@@ -11,7 +11,7 @@ namespace TYPO3\Media\Domain\Strategy;
  * source code.
  */
 
-use TYPO3\Flow\ResourceManagement\PersistentResource;
+use Neos\Flow\ResourceManagement\PersistentResource;
 
 /**
  * Describes a strategy to find an asset model class based on the resource and optional source properties.
