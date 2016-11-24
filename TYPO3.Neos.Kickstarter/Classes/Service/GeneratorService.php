@@ -13,7 +13,7 @@ namespace TYPO3\Neos\Kickstarter\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package\PackageManagerInterface;
-use Neos\Flow\Utility\Files;
+use Neos\Utility\Files;
 use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
 
 /**
