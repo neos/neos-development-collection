@@ -3,12 +3,12 @@
  */
 page = TYPO3.Neos:Page {
 	head {
-		stylesheets.site = TYPO3.TypoScript:Template {
+		stylesheets.site = Neos.Fusion:Template {
 			templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
 			sectionName = 'stylesheets'
 		}
 
-		javascripts.site = TYPO3.TypoScript:Template {
+		javascripts.site = Neos.Fusion:Template {
 			templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
 			sectionName = 'headScripts'
 		}
@@ -29,7 +29,7 @@ page = TYPO3.Neos:Page {
 			}
 		}
 
-		javascripts.site = TYPO3.TypoScript:Template {
+		javascripts.site = Neos.Fusion:Template {
 			templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
 			sectionName = 'bodyScripts'
 		}
