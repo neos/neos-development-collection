@@ -1,9 +1,10 @@
 {
     "name": "neos/media-browser",
-    "type": "typo3-flow-package",
-    "description": "Add description here",
+    "type": "neos-package",
+    "description": "A media browser for the Neos content application platform",
+    "license": "GPL-3.0+",
     "require": {
-        "typo3/media": "*"
+        "neos/media": "*"
     },
     "autoload": {
         "psr-4": {
@@ -42,7 +43,27 @@
             "TYPO3.TYPO3CR-20140911160326",
             "TYPO3.Flow-201209251426",
             "TYPO3.FLOW3-201209201112",
-            "TYPO3.Flow-20151113161300"
+            "TYPO3.Flow-20151113161300",
+            "TYPO3.Neos-20150303231600",
+            "TYPO3.Form-20160601101500",
+            "TYPO3.Flow-20161115140400",
+            "TYPO3.Flow-20161115140430",
+            "Neos.Flow-20161124204700",
+            "Neos.Flow-20161124204701",
+            "Neos.Twitter.Bootstrap-20161124204912",
+            "Neos.Form-20161124205254",
+            "Neos.Flow-20161124224015",
+            "Neos.Party-20161124225257",
+            "Neos.Eel-20161124230101",
+            "Neos.Kickstart-20161124230102",
+            "Neos.Setup-20161124230842",
+            "Neos.Imagine-20161124231742",
+            "Neos.Media-20161124233100",
+            "Neos.NodeTypes-20161125002300",
+            "Neos.SiteKickstarter-20161125002311",
+            "Neos.Neos-20161125002322",
+            "Neos.ContentRepository-20161125012000",
+            "Neos.Fusion-20161125013710"
         ]
     }
 }

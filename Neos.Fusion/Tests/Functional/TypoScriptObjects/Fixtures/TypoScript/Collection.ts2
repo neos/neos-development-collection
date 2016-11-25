@@ -1,0 +1,27 @@
+prototype(Neos.Fusion:Collection).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\CollectionImplementation'
+prototype(Neos.Fusion:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+
+collection.basicLoop = Neos.Fusion:Collection {
+	collection = ${collection}
+	itemName = 'element'
+	itemRenderer = Neos.Fusion:TestRenderer {
+		test = ${element}
+	}
+}
+
+collection.basicLoopOtherContextVariables = Neos.Fusion:Collection {
+	collection = ${collection}
+	itemName = 'element'
+	itemRenderer = Neos.Fusion:TestRenderer {
+		test = ${element + other}
+	}
+}
+
+collection.iteration = Neos.Fusion:Collection {
+	collection = ${collection}
+	itemName = 'element'
+	iterationName = 'iteration'
+	itemRenderer = Neos.Fusion:TestRenderer {
+		test = ${element + '-' + iteration.index + '-' + iteration.cycle + '-' + iteration.isFirst + '-' + iteration.isLast + '-' + iteration.isOdd + '-' + iteration.isEven}
+	}
+}

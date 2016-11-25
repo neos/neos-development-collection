@@ -1,0 +1,79 @@
+{namespace neos=Neos\Neos\ViewHelpers}
+<f:layout name="BackendSubModule" />
+
+<f:section name="content">
+	<div class="neos-row-fluid">
+		<table class="neos-table">
+			<thead>
+				<tr>
+					<th><neos:backend.translate id="users.name" source="Modules" package="Neos.Neos"/></th>
+					<th><neos:backend.translate id="users.accountsAndRoles" source="Modules" package="Neos.Neos"/></th>
+					<th>&nbsp;</th>
+				</tr>
+			</thead>
+			<f:for each="{users}" key="index" as="user">
+				<tr>
+					<td>{user.name.fullName}</td>
+					<td>
+						<f:for each="{user.accounts}" as="account">
+							<i class="icon-user icon-white"></i>{account.accountIdentifier} <f:render partial="Module/Shared/Roles" arguments="{roles: account.roles}" />
+						</f:for>
+					</td>
+					<td class="neos-action">
+						<div class="neos-pull-right">
+							<f:link.action action="show" arguments="{user: user}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'users.tooltip.view', source: 'Modules', package: 'Neos.Neos')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
+								<i class="icon-info-sign icon-white"></i>
+							</f:link.action>
+							<f:link.action action="edit" arguments="{user: user}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'users.tooltip.edit', source: 'Modules', package: 'Neos.Neos')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
+								<i class="icon-pencil icon-white"></i>
+							</f:link.action>
+
+							<f:if condition="{currentUser} == {user}">
+								<f:then>
+									<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'users.tooltip.cannotDeleteYourself', source: 'Modules', package: 'Neos.Neos')}" data-neos-toggle="tooltip"><i class="icon-trash icon-white"></i></button>
+								</f:then>
+								<f:else>
+									<button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'users.tooltip.delete', source: 'Modules', package: 'Neos.Neos')}" data-toggle="modal" href="#user-{index}" data-neos-toggle="tooltip">
+										<i class="icon-trash icon-white"></i>
+									</button>
+									<div class="neos-hide" id="user-{index}">
+										<div class="neos-modal-centered">
+											<div class="neos-modal-content">
+												<div class="neos-modal-header">
+													<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+													<div class="neos-header">
+														<neos:backend.translate id="users.message.reallyDelete" arguments="{0:user.name}" source="Modules" package="Neos.Neos"/>
+													</div>
+													<div>
+														<div class="neos-subheader">
+															<p>
+																<neos:backend.translate id="users.message.willBeDeleted" source="Modules" package="Neos.Neos"/><br/>
+																<neos:backend.translate id="operationCannotBeUndone" package="Neos.Neos"/>
+															</p>
+														</div>
+													</div>
+												</div>
+												<div class="neos-modal-footer">
+													<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</a>
+													<f:form action="delete" arguments="{user: user}" class="neos-inline">
+														<button type="submit" class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'users.tooltip.delete', source: 'Modules', package: 'Neos.Neos')}">
+															<neos:backend.translate id="users.message.confirmDelete" source="Modules" package="Neos.Neos"/>
+														</button>
+													</f:form>
+												</div>
+											</div>
+										</div>
+										<div class="neos-modal-backdrop neos-in"></div>
+									</div>
+								</f:else>
+							</f:if>
+						</div>
+					</td>
+				</tr>
+			</f:for>
+		</table>
+	</div>
+	<div class="neos-footer">
+		<f:link.action action="new" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'users.actions.new.label', source: 'Modules', package: 'Neos.Neos')}"><neos:backend.translate id="users.actions.new.label" source="Modules" package="Neos.Neos"/></f:link.action>
+	</div>
+</f:section>

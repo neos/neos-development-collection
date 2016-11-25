@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="fi">
+    <body>
+      <trans-unit id="ui.label" xml:space="preserve" approved="yes">
+				<source>Plugin View</source>
+			<target xml:lang="fi">Laajennusnkäymä</target></trans-unit>
+      <trans-unit id="groups.pluginViews" xml:space="preserve" approved="yes">
+				<source>Plugin Views</source>
+			<target xml:lang="fi">Liitäinnäisnäkymät</target></trans-unit>
+      <trans-unit id="properties.plugin" xml:space="preserve" approved="yes">
+				<source>Master View</source>
+			<target xml:lang="fi">Päänäkymä</target></trans-unit>
+      <trans-unit id="properties.view" xml:space="preserve" approved="yes">
+				<source>Plugin View</source>
+			<target xml:lang="fi">Laajennusnkäymä</target></trans-unit>
+    </body>
+  </file>
+</xliff>

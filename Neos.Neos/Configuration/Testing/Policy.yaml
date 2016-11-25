@@ -1,0 +1,8 @@
+#                                                                        #
+# Security policy for the Neos package in testing context          #
+#                                                                        #
+
+privilegeTargets:
+  'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
+    'Neos.Neos:AllControllerActions':
+      matcher: 'within(Neos\Flow\Mvc\Controller\AbstractController) && method(public .*->.(?!initialize).*Action()) &&! method(public .*\Tests\.*\Fixtures\.*->.(?!initialize).*Action())'

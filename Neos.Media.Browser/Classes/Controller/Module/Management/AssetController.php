@@ -11,30 +11,30 @@ namespace Neos\Media\Browser\Controller\Module\Management;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Configuration\ConfigurationManager;
-use TYPO3\Flow\Error\Error;
-use TYPO3\Flow\Error\Message;
-use TYPO3\Flow\Mvc\Exception\InvalidArgumentValueException;
-use TYPO3\Flow\ResourceManagement\PersistentResource;
-use TYPO3\Flow\Security\Context;
-use TYPO3\Flow\Utility\MediaTypes;
-use TYPO3\Flow\Utility\TypeHandling;
-use TYPO3\Media\Domain\Model\AssetCollection;
-use TYPO3\Media\Domain\Model\AssetInterface;
-use TYPO3\Media\Exception\AssetServiceException;
-use TYPO3\Neos\Controller\BackendUserTranslationTrait;
-use TYPO3\Neos\Controller\CreateContentContextTrait;
-use TYPO3\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
-use TYPO3\Neos\Domain\Repository\DomainRepository;
-use TYPO3\Neos\Domain\Repository\SiteRepository;
-use TYPO3\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
-use TYPO3\Neos\Domain\Service\UserService as DomainUserService;
-use TYPO3\Neos\Service\UserService;
-use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Error\Messages\Error;
+use Neos\Error\Messages\Message;
+use Neos\Flow\Mvc\Exception\InvalidArgumentValueException;
+use Neos\Flow\ResourceManagement\PersistentResource;
+use Neos\Flow\Security\Context;
+use Neos\Utility\MediaTypes;
+use Neos\Utility\TypeHandling;
+use Neos\Media\Domain\Model\AssetCollection;
+use Neos\Media\Domain\Model\AssetInterface;
+use Neos\Media\Exception\AssetServiceException;
+use Neos\Neos\Controller\BackendUserTranslationTrait;
+use Neos\Neos\Controller\CreateContentContextTrait;
+use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
+use Neos\Neos\Domain\Repository\DomainRepository;
+use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
+use Neos\Neos\Domain\Service\UserService as DomainUserService;
+use Neos\Neos\Service\UserService;
+use Neos\ContentRepository\Domain\Factory\NodeFactory;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 
 /**
  * Controller for asset handling
@@ -128,15 +128,15 @@ class AssetController extends \Neos\Media\Browser\Controller\AssetController
     /**
      * Delete an asset
      *
-     * @param \TYPO3\Media\Domain\Model\Asset $asset
+     * @param \Neos\Media\Domain\Model\Asset $asset
      * @return void
      */
-    public function deleteAction(\TYPO3\Media\Domain\Model\Asset $asset)
+    public function deleteAction(\Neos\Media\Domain\Model\Asset $asset)
     {
         $relationMap = [];
         $relationMap[TypeHandling::getTypeForValue($asset)] = array($this->persistenceManager->getIdentifierByObject($asset));
 
-        if ($asset instanceof \TYPO3\Media\Domain\Model\Image) {
+        if ($asset instanceof \Neos\Media\Domain\Model\Image) {
             foreach ($asset->getVariants() as $variant) {
                 $type = TypeHandling::getTypeForValue($variant);
                 if (!isset($relationMap[$type])) {
@@ -282,10 +282,10 @@ class AssetController extends \Neos\Media\Browser\Controller\AssetController
     public function addFlashMessage($messageBody, $messageTitle = '', $severity = Message::SEVERITY_OK, array $messageArguments = [], $messageCode = null)
     {
         if (is_string($messageBody)) {
-            $messageBody = $this->translator->translateById($messageBody, $messageArguments, null, null, 'Modules', 'TYPO3.Neos') ?: $messageBody;
+            $messageBody = $this->translator->translateById($messageBody, $messageArguments, null, null, 'Modules', 'Neos.Neos') ?: $messageBody;
         }
 
-        $messageTitle = $this->translator->translateById($messageTitle, $messageArguments, null, null, 'Modules', 'TYPO3.Neos');
+        $messageTitle = $this->translator->translateById($messageTitle, $messageArguments, null, null, 'Modules', 'Neos.Neos');
         parent::addFlashMessage($messageBody, $messageTitle, $severity, $messageArguments, $messageCode);
     }
 }

@@ -1,0 +1,594 @@
+#                                                                        #
+# Settings                                                               #
+#                                                                        #
+# This file contains settings for various parts of the application.      #
+# Just add your own modifications as necessary.                          #
+#                                                                        #
+# Please refer to the default settings file(s) or the manuals for        #
+# possible configuration options.                                        #
+#                                                                        #
+
+TYPO3:
+  DocTools:
+    collections:
+      Neos:
+        commandReferences:
+          - 'Neos:NeosCommands'
+        references:
+          - 'Neos:FluidViewHelpers'
+          - 'Neos:MediaViewHelpers'
+          - 'Neos:FormViewHelpers'
+          - 'Neos:NeosViewHelpers'
+          - 'Neos:Typo3CrViewHelpers'
+          - 'Neos:TypoScriptViewHelpers'
+          - 'Neos:FlowValidators'
+          - 'Neos:PartyValidators'
+          - 'Neos:MediaValidators'
+          - 'Neos:FlowSignals'
+          - 'Neos:NeosSignals'
+          - 'Neos:MediaSignals'
+          - 'Neos:Typo3CrSignals'
+          - 'Neos:FlowQueryOperations'
+          - 'Neos:EelHelpers'
+    commandReferences:
+      'Neos:NeosCommands':
+        title: 'Neos Command Reference'
+        packageKeys:
+          - Neos.Flow
+          - Neos.Party
+          - Neos.FluidAdaptor
+          - Neos.Kickstart
+          - TYPO3.Welcome
+          - Neos.Media
+          - Neos.ContentRepository
+          - Neos.Neos.Kickstarter
+          - Neos.Neos
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/CommandReference.rst'
+    references:
+      'Neos:FluidViewHelpers':
+        title: 'Fluid ViewHelper Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/ViewHelpers/Fluid.rst'
+        affectedClasses:
+          parentClassName: Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
+          classNamePattern: '/^TYPO3\\Fluid\\ViewHelpers\\.*$/i'
+        parser:
+          implementationClassName: TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser
+          options:
+            namespaces:
+              f: Neos\FluidAdaptor\ViewHelpers
+      'Neos:MediaViewHelpers':
+        title: 'Media ViewHelper Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/ViewHelpers/Media.rst'
+        affectedClasses:
+          parentClassName: Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
+          classNamePattern: '/^TYPO3\\Media\\ViewHelpers\\.*$/i'
+        parser:
+          implementationClassName: TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser
+          options:
+            namespaces:
+              typo3.media: Neos\Media\ViewHelpers
+      'Neos:FormViewHelpers':
+        title: 'Form ViewHelper Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/ViewHelpers/Form.rst'
+        affectedClasses:
+          parentClassName: Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
+          classNamePattern: '/^TYPO3\\Form\\ViewHelpers\\.*$/i'
+        parser:
+          implementationClassName: TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser
+          options:
+            namespaces:
+              typo3.form: Neos\Form\ViewHelpers
+      'Neos:NeosViewHelpers':
+        title: 'Neos ViewHelper Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/ViewHelpers/Neos.rst'
+        affectedClasses:
+          parentClassName: Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
+          classNamePattern: '/^TYPO3\\Neos\\ViewHelpers\\.*$/i'
+        parser:
+          implementationClassName: TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser
+          options:
+            namespaces:
+              f: Neos\FluidAdaptor\ViewHelpers
+              neos: Neos\Neos\ViewHelpers
+      'Neos:Typo3CrViewHelpers':
+        title: 'Content Repository ViewHelper Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/ViewHelpers/TYPO3CR.rst'
+        affectedClasses:
+          parentClassName: Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
+          classNamePattern: '/^TYPO3\\TYPO3CR\\ViewHelpers\\.*$/i'
+        parser:
+          implementationClassName: TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser
+          options:
+            namespaces:
+              f: Neos\FluidAdaptor\ViewHelpers
+              neos: Neos\Neos\ViewHelpers
+      'Neos:TypoScriptViewHelpers':
+        title: 'TypoScript ViewHelper Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/ViewHelpers/TypoScript.rst'
+        affectedClasses:
+          parentClassName: Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
+          classNamePattern: '/^TYPO3\\TypoScript\\ViewHelpers\\.*$/i'
+        parser:
+          implementationClassName: TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser
+          options:
+            namespaces:
+              f: Neos\FluidAdaptor\ViewHelpers
+              ts: Neos\Fusion\ViewHelpers
+      'Neos:FlowValidators':
+        title: 'Flow Validator Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/Validators/Flow.rst'
+        affectedClasses:
+          parentClassName: Neos\Flow\Validation\Validator\AbstractValidator
+          classNamePattern: '/^TYPO3\\Flow\\Validation\\Validator\\.*$/i'
+        parser:
+          implementationClassName: TYPO3\DocTools\Domain\Service\FlowValidatorClassParser
+      'Neos:PartyValidators':
+        title: 'Party Validator Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/Validators/Party.rst'
+        affectedClasses:
+          parentClassName: Neos\Flow\Validation\Validator\AbstractValidator
+          classNamePattern: '/^TYPO3\\Party\\Validation\\Validator\\.*$/i'
+        parser:
+          implementationClassName: TYPO3\DocTools\Domain\Service\FlowValidatorClassParser
+      'Neos:MediaValidators':
+        title: 'Media Validator Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/Validators/Media.rst'
+        affectedClasses:
+          parentClassName: Neos\Flow\Validation\Validator\AbstractValidator
+          classNamePattern: '/^TYPO3\\Media\\Validator\\.*$/i'
+        parser:
+          implementationClassName: TYPO3\DocTools\Domain\Service\FlowValidatorClassParser
+      'Neos:FlowSignals':
+        title: 'Flow Signals Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/Signals/Flow.rst'
+        affectedClasses:
+          classesContainingMethodsAnnotatedWith: Neos\Flow\Annotations\Signal
+          classNamePattern: '/^TYPO3\\Flow\\.*$/i'
+          includeAbstractClasses: true
+        parser:
+          implementationClassName: TYPO3\DocTools\Domain\Service\SignalsParser
+      'Neos:NeosSignals':
+        title: 'Neos Signals Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/Signals/Neos.rst'
+        affectedClasses:
+          classesContainingMethodsAnnotatedWith: Neos\Flow\Annotations\Signal
+          classNamePattern: '/^TYPO3\\Neos\\.*$/i'
+          includeAbstractClasses: true
+        parser:
+          implementationClassName: TYPO3\DocTools\Domain\Service\SignalsParser
+      'Neos:MediaSignals':
+        title: 'Media Signals Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/Signals/Media.rst'
+        affectedClasses:
+          classesContainingMethodsAnnotatedWith: Neos\Flow\Annotations\Signal
+          classNamePattern: '/^TYPO3\\Media\\.*$/i'
+          includeAbstractClasses: true
+        parser:
+          implementationClassName: TYPO3\DocTools\Domain\Service\SignalsParser
+      'Neos:Typo3CrSignals':
+        title: 'Content Repository Signals Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/Signals/TYPO3CR.rst'
+        affectedClasses:
+          classesContainingMethodsAnnotatedWith: Neos\Flow\Annotations\Signal
+          classNamePattern: '/^TYPO3\\TYPO3CR\\.*$/i'
+          includeAbstractClasses: true
+        parser:
+          implementationClassName: TYPO3\DocTools\Domain\Service\SignalsParser
+      'Neos:FlowQueryOperations':
+        title: 'FlowQuery Operation Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/FlowQueryOperationReference.rst'
+        affectedClasses:
+          interface: Neos\Eel\FlowQuery\OperationInterface
+        parser:
+          implementationClassName: TYPO3\DocTools\Domain\Service\FlowQueryOperationClassParser
+      'Neos:EelHelpers':
+        title: 'Eel Helpers Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/EelHelpersReference.rst'
+        affectedClasses:
+          interface: Neos\Eel\ProtectedContextAwareInterface
+          classNamePattern: '/^.*Helper$/i'
+        parser:
+          implementationClassName: TYPO3\DocTools\Domain\Service\EelHelperClassParser
+Neos:
+  Neos:
+    typoScript:
+      enableObjectTreeCache: false
+      autoInclude:
+        Neos.Fusion: true
+        Neos.Neos: true
+    defaultSiteNodeName: null
+    routing:
+      supportEmptySegmentForDimensions: true
+    nodeTypes:
+      groups:
+        general:
+          position: start
+          label: 'Neos.Neos:Main:nodeTypes.groups.general'
+          collapsed: false
+        structure:
+          position: 100
+          label: 'Neos.Neos:Main:nodeTypes.groups.structure'
+          collapsed: false
+        plugins:
+          position: 200
+          label: 'Neos.Neos:Main:nodeTypes.groups.plugins'
+          collapsed: true
+    userInterface:
+      loadMinifiedJavascript: true
+      requireJsWaitSeconds: 30
+      scrambleTranslatedLabels: false
+      translation:
+        autoInclude:
+          Neos.Neos:
+            - Main
+            - Inspector
+            - Modules
+            - 'NodeTypes/*'
+      requireJsPathMapping:
+        Neos.Neos/Validation: 'resource://Neos.Neos/Public/JavaScript/Shared/Validation/'
+        Neos.Neos/Inspector/Editors: 'resource://Neos.Neos/Public/JavaScript/Content/Inspector/Editors/'
+        Neos.Neos/Inspector/Handlers: 'resource://Neos.Neos/Public/JavaScript/Content/Inspector/Handlers/'
+        Neos.Neos/Inspector/Views: 'resource://Neos.Neos/Public/JavaScript/Content/Inspector/Views/'
+      defaultLanguage: en
+      availableLanguages:
+        da: 'Dansk – Danish'
+        de: 'Deutsch – German'
+        en: 'English – English'
+        es: 'Español – Spanish'
+        fi: 'Suomi – Finnish'
+        fr: 'Français – French'
+        km: 'ភាសាខ្មែរ – Khmer'
+        lv: 'Latviešu – Latvian'
+        nl: 'Nederlands – Dutch'
+        'no': 'Norsk bokmål – Norwegian Bokmål'
+        pl: 'Polski – Polish'
+        pt-BR: 'Português (Brasil) – Portuguese (Brazil)'
+        ru: 'Pусский – Russian'
+        zh-CN: '简体中文 – Chinese, Simplified'
+      navigateComponent:
+        nodeTree:
+          loadingDepth: 4
+          presets:
+            default:
+              baseNodeType: 'Neos.Neos:Document'
+        structureTree:
+          loadingDepth: 4
+      inspector:
+        dataTypes:
+          string:
+            editor: Neos.Neos/Inspector/Editors/TextFieldEditor
+            defaultValue: ''
+          integer:
+            editor: Neos.Neos/Inspector/Editors/TextFieldEditor
+            defaultValue: 0
+          boolean:
+            editor: Neos.Neos/Inspector/Editors/BooleanEditor
+            defaultValue: false
+          array:
+            typeConverter: Neos\Flow\Property\TypeConverter\TypedArrayConverter
+            editor: Neos.Neos/Inspector/Editors/SelectBoxEditor
+            editorOptions:
+              multiple: true
+              placeholder: Choose
+            defaultValue: {  }
+          Neos\Media\Domain\Model\ImageInterface:
+            typeConverter: Neos\Media\TypeConverter\ImageInterfaceJsonSerializer
+            editor: Neos.Neos/Inspector/Editors/ImageEditor
+            editorOptions:
+              maximumFileSize: null
+              features:
+                crop: true
+                resize: false
+              crop:
+                aspectRatio:
+                  options:
+                    square:
+                      width: 1
+                      height: 1
+                      label: Square
+                    fourFive:
+                      width: 4
+                      height: 5
+                    fiveSeven:
+                      width: 5
+                      height: 7
+                    twoThree:
+                      width: 2
+                      height: 3
+                    fourThree:
+                      width: 4
+                      height: 3
+                    sixteenNine:
+                      width: 16
+                      height: 9
+                  enableOriginal: true
+                  allowCustom: true
+                  locked:
+                    width: 0
+                    height: 0
+          Neos\Media\Domain\Model\Asset:
+            typeConverter: Neos\Neos\TypeConverter\EntityToIdentityConverter
+            editor: Neos.Neos/Inspector/Editors/AssetEditor
+          array<Neos\Media\Domain\Model\Asset>:
+            editor: Neos.Neos/Inspector/Editors/AssetEditor
+            editorOptions:
+              multiple: true
+          DateTime:
+            typeConverter: Neos\Neos\Service\Mapping\DateStringConverter
+            editor: Neos.Neos/Inspector/Editors/DateTimeEditor
+            editorOptions:
+              format: d-m-Y
+          reference:
+            typeConverter: Neos\Neos\Service\Mapping\NodeReferenceConverter
+            editor: Neos.Neos/Inspector/Editors/ReferenceEditor
+          references:
+            typeConverter: Neos\Neos\Service\Mapping\NodeReferenceConverter
+            editor: Neos.Neos/Inspector/Editors/ReferencesEditor
+        editors:
+          Neos.Neos/Inspector/Editors/CodeEditor:
+            editorOptions:
+              buttonLabel: 'Neos.Neos:Main:content.inspector.editors.codeEditor.editCode'
+          Neos.Neos/Inspector/Editors/DateTimeEditor:
+            editorOptions:
+              placeholder: 'Neos.Neos:Main:content.inspector.editors.dateTimeEditor.noDateSet'
+          Neos.Neos/Inspector/Editors/AssetEditor:
+            editorOptions:
+              fileUploadLabel: 'Neos.Neos:Main:upload'
+          Neos.Neos/Inspector/Editors/ImageEditor:
+            editorOptions:
+              fileUploadLabel: 'Neos.Neos:Main:upload'
+          Neos.Neos/Inspector/Editors/LinkEditor:
+            editorOptions:
+              placeholder: 'Neos.Neos:Main:content.inspector.editors.linkEditor.search'
+          Neos.Neos/Inspector/Editors/ReferencesEditor:
+            editorOptions:
+              placeholder: 'Neos.Neos:Main:typeToSearch'
+          Neos.Neos/Inspector/Editors/ReferenceEditor:
+            editorOptions:
+              placeholder: 'Neos.Neos:Main:typeToSearch'
+          Neos.Neos/Inspector/Editors/SelectBoxEditor:
+            editorOptions:
+              placeholder: 'Neos.Neos:Main:choose'
+      defaultEditPreviewMode: inPlace
+      editPreviewModes:
+        live:
+          isEditingMode: false
+          isPreviewMode: false
+          typoScriptRenderingPath: ''
+          title: Live
+        inPlace:
+          isEditingMode: true
+          isPreviewMode: false
+          typoScriptRenderingPath: ''
+          title: 'Neos.Neos:Main:editPreviewModes.inPlace'
+          position: 100
+        rawContent:
+          isEditingMode: true
+          isPreviewMode: false
+          typoScriptRenderingPath: rawContent
+          title: 'Neos.Neos:Main:editPreviewModes.rawContent'
+          position: 200
+        desktop:
+          isEditingMode: false
+          isPreviewMode: true
+          typoScriptRenderingPath: ''
+          title: 'Neos.Neos:Main:editPreviewModes.desktop'
+          position: 100
+      backendLoginForm:
+        backgroundImage: 'resource://Neos.Neos/Public/Images/Login/Wallpaper23.jpg'
+        stylesheets:
+          'Neos.Neos:DefaultStyles': 'resource://Neos.Neos/Public/Styles/Login.css'
+    moduleConfiguration:
+      widgetTemplatePathAndFileName: 'resource://Neos.Neos/Private/Templates/Module/Widget.html'
+    modules:
+      management:
+        label: 'Neos.Neos:Modules:management.label'
+        controller: \Neos\Neos\Controller\Module\ManagementController
+        description: 'Neos.Neos:Modules:management.description'
+        icon: icon-briefcase
+        privilegeTarget: 'Neos.Neos:Backend.Module.Management'
+        submodules:
+          workspaces:
+            label: 'Neos.Neos:Modules:workspaces.label'
+            controller: \Neos\Neos\Controller\Module\Management\WorkspacesController
+            description: 'Neos.Neos:Modules:workspaces.description'
+            icon: icon-th-large
+            privilegeTarget: 'Neos.Neos:Backend.Module.Management.Workspaces'
+          history:
+            label: 'Neos.Neos:Modules:history.label'
+            controller: \Neos\Neos\Controller\Module\Management\HistoryController
+            description: 'Neos.Neos:Modules:history.description'
+            icon: icon-calendar
+            privilegeTarget: 'Neos.Neos:Backend.Module.Management.History'
+      administration:
+        label: 'Neos.Neos:Modules:administration.label'
+        controller: \Neos\Neos\Controller\Module\AdministrationController
+        description: 'Neos.Neos:Modules:administration.description'
+        icon: icon-gears
+        privilegeTarget: 'Neos.Neos:Backend.Module.Administration'
+        submodules:
+          users:
+            label: 'Neos.Neos:Modules:users.label'
+            controller: \Neos\Neos\Controller\Module\Administration\UsersController
+            description: 'Neos.Neos:Modules:users.description'
+            icon: icon-group
+            actions:
+              new:
+                label: 'Neos.Neos:Modules:users.actions.new.label'
+                title: 'Neos.Neos:Modules:users.actions.new.title'
+            privilegeTarget: 'Neos.Neos:Backend.Module.Administration.Users'
+          packages:
+            label: 'Neos.Neos:Modules:packages.label'
+            controller: \Neos\Neos\Controller\Module\Administration\PackagesController
+            description: 'Neos.Neos:Modules:packages.description'
+            icon: icon-archive
+            privilegeTarget: 'Neos.Neos:Backend.Module.Administration.Packages'
+          sites:
+            label: 'Neos.Neos:Modules:sites.label'
+            controller: \Neos\Neos\Controller\Module\Administration\SitesController
+            description: 'Neos.Neos:Modules:sites.description'
+            icon: icon-globe
+            actions:
+              newSite:
+                label: 'Neos.Neos:Modules:sites.actions.newSite.label'
+                title: 'Neos.Neos:Modules:sites.actions.newSite.title'
+            privilegeTarget: 'Neos.Neos:Backend.Module.Administration.Sites'
+          configuration:
+            label: 'Neos.Neos:Modules:configuration.label'
+            controller: \Neos\Neos\Controller\Module\Administration\ConfigurationController
+            description: 'Neos.Neos:Modules:configuration.description'
+            icon: icon-list-alt
+            privilegeTarget: 'Neos.Neos:Backend.Module.Administration.Configuration'
+      user:
+        label: 'Neos.Neos:Modules:user.label'
+        controller: \Neos\Neos\Controller\Module\UserController
+        hideInMenu: true
+        privilegeTarget: 'Neos.Neos:Backend.Module.User'
+        submodules:
+          usersettings:
+            label: 'Neos.Neos:Modules:userSettings.label'
+            controller: \Neos\Neos\Controller\Module\User\UserSettingsController
+            description: 'Neos.Neos:Modules:userSettings.description'
+            icon: icon-user
+            privilegeTarget: 'Neos.Neos:Backend.Module.User.UserSettings'
+    eventLog:
+      enabled: false
+      monitorEntities:
+        Neos\Flow\Security\Account:
+          events:
+            created: Account.Created
+            deleted: Account.Deleted
+          data:
+            accountIdentifier: '${entity.accountIdentifier}'
+            authenticationProviderName: '${entity.authenticationProviderName}'
+            name: '${entity.party.name.fullName}'
+    transliterationRules:
+      da:
+        Å: Aa
+        Ø: Oe
+        å: aa
+        ø: oe
+      de:
+        Ä: Ae
+        Ö: Oe
+        Ü: Ue
+        ä: ae
+        ö: oe
+        ü: ue
+  Flow:
+    aop:
+      globalObjects:
+        userInformation: Neos\Neos\Service\UserService
+    core:
+      applicationPackageKey: Neos.Neos
+      applicationName: Neos
+    security:
+      authentication:
+        providers:
+          Typo3BackendProvider:
+            label: 'Neos Backend'
+            provider: PersistedUsernamePasswordProvider
+            requestPatterns:
+              'Neos.Neos:BackendControllers':
+                pattern: ControllerObjectName
+                patternOptions:
+                  controllerObjectNamePattern: 'Neos\Neos\Controller\.*|Neos\Neos\Service\.*|Neos\Media\Controller\.*'
+            entryPoint: WebRedirect
+            entryPointOptions:
+              routeValues:
+                '@package': Neos.Neos
+                '@controller': Login
+                '@action': index
+                '@format': html
+        authenticationStrategy: oneToken
+    session:
+      name: Neos_Session
+    persistence:
+      doctrine:
+        eventListeners:
+          Neos\Neos\Domain\EventListener\AccountPostEventListener:
+            events:
+              - postPersist
+              - postUpdate
+              - postRemove
+            listener: Neos\Neos\Domain\EventListener\AccountPostEventListener
+          Neos\Neos\EventLog\Integrations\EntityIntegrationService:
+            events:
+              - onFlush
+            listener: Neos\Neos\EventLog\Integrations\EntityIntegrationService
+          Neos\Neos\EventLog\Integrations\TYPO3CRIntegrationService:
+            events:
+              - preFlush
+            listener: Neos\Neos\EventLog\Integrations\TYPO3CRIntegrationService
+    error:
+      exceptionHandler:
+        renderingGroups:
+          notFoundExceptions:
+            matchingStatusCodes:
+              - 404
+            options:
+              templatePathAndFilename: 'resource://Neos.Neos/Private/Templates/Error/Index.html'
+              layoutRootPath: 'resource://Neos.Neos/Private/Layouts/'
+              format: html
+          databaseConnectionExceptions:
+            matchingExceptionClassNames:
+              - Neos\Flow\Persistence\Doctrine\Exception\DatabaseException
+              - Neos\Flow\Persistence\Doctrine\Exception\DatabaseConnectionException
+              - Neos\Flow\Persistence\Doctrine\Exception\DatabaseStructureException
+            options:
+              templatePathAndFilename: 'resource://Neos.Neos/Private/Templates/Error/Index.html'
+              layoutRootPath: 'resource://Neos.Neos/Private/Layouts/'
+              format: html
+              variables:
+                showSetupLink: true
+          noHomepageException:
+            matchingExceptionClassNames:
+              - Neos\Neos\Routing\Exception\NoHomepageException
+            options:
+              templatePathAndFilename: 'resource://Neos.Neos/Private/Templates/Error/Index.html'
+              layoutRootPath: 'resource://Neos.Neos/Private/Layouts/'
+              format: html
+              variables:
+                showSetupLink: true
+      debugger:
+        ignoredClasses:
+          TYPO3\\Neos\\Domain\\Service\\ContentContextFactory: true
+    package:
+      packagesPathByType:
+        neos-site: Sites
+        neos-plugin: Plugins
+  ContentRepository:
+    fallbackNodeType: 'Neos.Neos:FallbackNode'
+  Fusion:
+    rendering:
+      exceptionHandler: Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler
+    defaultContext:
+      Neos.Node: Neos\Neos\TypoScript\Helper\NodeHelper
+      Neos.Link: Neos\Neos\TypoScript\Helper\LinkHelper
+      Neos.Array: Neos\Neos\TypoScript\Helper\ArrayHelper
+      Neos.Rendering: Neos\Neos\TypoScript\Helper\RenderingHelper
+      Neos.Caching: Neos\Neos\TypoScript\Helper\CachingHelper
+  Setup:
+    stepOrder:
+      - neosRequirements
+      - database
+      - administrator
+      - siteimport
+      - final
+    steps:
+      neosRequirements:
+        className: Neos\Neos\Setup\Step\NeosSpecificRequirementsStep
+      administrator:
+        className: Neos\Neos\Setup\Step\AdministratorStep
+        requiredConditions:
+          -
+            className: Neos\Setup\Condition\DatabaseConnectionCondition
+      siteimport:
+        className: Neos\Neos\Setup\Step\SiteImportStep
+        requiredConditions:
+          -
+            className: Neos\Setup\Condition\DatabaseConnectionCondition
+      final:
+        className: Neos\Neos\Setup\Step\FinalStep
+    view:
+      title: 'Neos Setup'

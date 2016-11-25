@@ -1,0 +1,40 @@
+prototype(Neos.Neos:RawContent) >
+prototype(Neos.Neos:RawContent) < prototype(TYPO3.TypoScript:Template) {
+	templatePath = 'resource://Neos.Neos/Private/Templates/RawContentMode/TypoScriptObjects/GeneralContentCollectionRendering.html'
+	columns = TYPO3.TypoScript:Collection {
+		collection = ${q(node).children('[instanceof Neos.Neos:ContentCollection]')}
+		itemName = 'node'
+		itemRenderer = TYPO3.TypoScript:Template {
+			templatePath = 'resource://Neos.Neos/Private/Templates/RawContentMode/TypoScriptObjects/ContentCollectionTemplate.html'
+			node = ${node}
+			attributes = TYPO3.TypoScript:Attributes {
+				class = 'column'
+			}
+			columnContent = Neos.Neos:ContentCollection {
+				nodePath = '.'
+			}
+
+		}
+	}
+}
+
+rawContent = Neos.Neos:Page {
+	head {
+		stylesheets = TYPO3.TypoScript:Template {
+			templatePath = 'resource://Neos.Neos/Private/Templates/RawContentMode/Page/Default.html'
+			sectionName = 'headerIncludes'
+		}
+	}
+
+	bodyTag.attributes.class = 'neos-raw-content-mode'
+
+	body {
+		templatePath = 'resource://Neos.Neos/Private/Templates/RawContentMode/Page/Default.html'
+		sectionName = 'body'
+
+		allContentCollections = Neos.Neos:PrimaryContent {
+			nodePath = '.'
+			default.renderer = Neos.Neos:RawContent
+		}
+	}
+}

@@ -1,0 +1,16 @@
+#
+# completely replace the rendering for TextWithHeadline inside the right column
+#
+
+page1.body.sections.sidebar.prototype(TYPO3.TypoScript:Case).smallHeadline {
+	condition = ${q(node).is('[instanceof Neos.Neos.NodeTypes:Headline]')}
+	type = 'Neos.Neos.NodeTypes:SmallHeadline'
+	@position = 'start'
+}
+
+# this line should make sure that SmallHeadline's Prototype points to "Headline".
+prototype(Neos.Neos.NodeTypes:SmallHeadline) < prototype(Neos.Neos.NodeTypes:Headline)
+prototype(Neos.Neos.NodeTypes:SmallHeadline).templatePath = ${fixturesDirectory + '/SmallHeadlineTemplate.html'}
+
+# thus, any changes in "headline" must be reflected in "SmallHeadline" as well
+prototype(Neos.Neos.NodeTypes:Headline).title = '<h1>Static Headline</h1>'

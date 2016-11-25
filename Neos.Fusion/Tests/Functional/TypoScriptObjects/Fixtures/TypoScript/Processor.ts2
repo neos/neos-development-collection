@@ -1,0 +1,116 @@
+prototype(Neos.Fusion:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
+prototype(Neos.Fusion:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+
+processors.newSyntax.basicProcessor {
+	valueWithNestedPlainValue = Value {
+		value = 'Hello'
+		value.@process.2 = ${value + ' foo'}
+		value.@process.1 = ${value + ' World'}
+	}
+
+	valueWithNestedEel = Value {
+		value = ${'Hello'}
+		value.@process.2 = ${value + ' foo'}
+		value.@process.1 = ${value + ' World'}
+	}
+
+	valueWithNestedTypoScript = Value {
+		value = Value {
+			value = 'Hello'
+		}
+		value.@process.2 = ${value + ' foo'}
+		value.@process.1 = ${value + ' World'}
+	}
+}
+
+processors.newSyntax.processorBeforeValue {
+	valueWithNestedPlainValue = Value {
+		value.@process.2 = ${value + ' foo'}
+		value.@process.1 = ${value + ' World'}
+		value = 'Hello'
+	}
+
+	valueWithNestedEel = Value {
+		value.@process.2 = ${value + ' foo'}
+		value.@process.1 = ${value + ' World'}
+		value = ${'Hello'}
+	}
+
+	valueWithNestedTypoScript = Value {
+		value.@process.2 = ${value + ' foo'}
+		value.@process.1 = ${value + ' World'}
+		value = Value {
+			value = 'Hello'
+		}
+	}
+}
+
+
+
+processors.newSyntax.extendedSyntaxProcessor {
+	valueWithNestedPlainValue = Value {
+		value = 'Hello'
+		value.@process.1 = ${value + ' foo'}
+		value.@process.default {
+			expression = ${value + ' World'}
+			@position = 'start'
+		}
+	}
+
+	valueWithNestedEel = Value {
+		value = ${'Hello'}
+		value.@process.1 = ${value + ' foo'}
+		value.@process.default {
+			expression = ${value + ' World'}
+			@position = 'start'
+		}
+	}
+
+	valueWithNestedTypoScript = Value {
+		value = Value {
+			value = 'Hello'
+		}
+		value.@process.1 = ${value + ' foo'}
+		value.@process.default {
+			expression = ${value + ' World'}
+			@position = 'start'
+		}
+	}
+}
+
+prototype(Neos.Fusion:ProcessorUnset1) < prototype(Neos.Fusion:Value) {
+	value = "Foo"
+	value.@process.1 = ${value + 'bar'}
+	value.@process.2 = ${value + 'baz'}
+}
+
+prototype(Neos.Fusion:ProcessorUnset2) < prototype(Neos.Fusion:ProcessorUnset1) {
+	value.@process.1 >
+}
+
+processors.newSyntax.unset {
+	simple = 'Foo'
+	simple.@process.1 = ${value + 'bar'}
+	simple.@process.2 = ${value + 'baz'}
+
+	simple.@process.1 >
+
+	prototypes1 = Neos.Fusion:ProcessorUnset1
+	prototypes1.value.@process.1 >
+
+	prototypes2 = Neos.Fusion:ProcessorUnset2
+
+	nestedScope {
+		prototypes3 = Neos.Fusion:ProcessorUnset1
+		prototype(Neos.Fusion:ProcessorUnset1).value.@process.1 >
+	}
+
+
+
+}
+
+processors.newSyntax.usingThisInProcessor = Value {
+	value = "my value"
+	@process.1 = ${value + this.append}
+	append = " append"
+}

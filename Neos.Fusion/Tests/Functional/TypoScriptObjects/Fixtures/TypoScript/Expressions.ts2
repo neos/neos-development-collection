@@ -1,0 +1,26 @@
+// Examples of Eel expressions
+prototype(Neos.Fusion:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
+
+expressions.calculus = Value {
+	value = ${21 * 2}
+}
+
+expressions.stringHelper = Value {
+	value = ${String.toUpperCase(foo)}
+}
+
+expressions.dateHelper = Value {
+	value = ${Date.format(Date.parse('2013-07-14 12:14:00', 'Y-m-d H:i:s'), 'd.m.Y H:i')}
+}
+
+expressions.arrayHelper = Value {
+	value = ${Array.reverse([1, 2, 3])[0]}
+}
+
+expressions.customHelper = Value {
+	value = ${Testing.String.substr('TYPO3 Flow', 6)}
+}
+
+expressions.flowQuery = Value {
+	value = ${q(q(['a', 'b', 'c'])).count()}
+}

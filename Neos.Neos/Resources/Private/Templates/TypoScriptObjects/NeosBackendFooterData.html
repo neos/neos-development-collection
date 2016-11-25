@@ -1,0 +1,11 @@
+{namespace neos=Neos\Neos\ViewHelpers}
+
+<script src="{f:uri.resource(path: 'Library/requirejs/require.js', package: 'Neos.Neos')}"></script>
+<f:if condition="{neos:backend.shouldLoadMinifiedJavascript()}">
+	<f:then>
+		<script src="{f:uri.resource(path: 'JavaScript/ContentModule-built.js', package: 'Neos.Neos')}?bust={neos:backend.javascriptBuiltVersion()}"></script>
+	</f:then>
+	<f:else>
+		<script src="{f:uri.resource(path: 'JavaScript/ContentModuleBootstrap.js', package: 'Neos.Neos')}"></script>
+	</f:else>
+</f:if>

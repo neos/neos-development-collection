@@ -1,0 +1,600 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+ <site name="example.org" state="1" siteResourcesPackageKey="TYPO3.TypoScript" siteNodeName="example">
+  <nodes formatVersion="2.0">
+   <node identifier="c7694f44-9e02-967a-2dfa-9160a73c9be4" nodeName="example">
+    <variant sortingIndex="100" workspace="live" nodeType="Neos.Neos:Shortcut" version="2" removed="" hidden="" hiddenInIndex="1">
+     <dimensions>
+      <language>en_US</language>
+     </dimensions>
+     <accessRoles __type="array"/>
+     <properties>
+      <name __type="string">example.org</name>
+      <state __type="string">1</state>
+      <siteResourcesPackageKey __type="string">TYPO3.TypoScript</siteResourcesPackageKey>
+      <title __type="string">example.org</title>
+     </properties>
+    </variant>
+    <node identifier="3239baee-3e7f-785c-0853-f4302ef32570" nodeName="home">
+     <variant sortingIndex="100" workspace="live" nodeType="Neos.Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
+      <dimensions>
+       <language>en_US</language>
+      </dimensions>
+      <accessRoles __type="array"/>
+      <properties>
+       <title __type="string">&lt;h1&gt;Home&lt;/h1&gt;</title>
+       <someSpecialProperty __type="string">&lt;h1&gt;SomeValue&lt;/h1&gt;</someSpecialProperty>
+       <uriPathSegment __type="string">home</uriPathSegment>
+      </properties>
+     </variant>
+     <node identifier="30e893c1-caef-0ca5-b53d-e5699bb8e506" nodeName="about-us">
+      <variant sortingIndex="400" workspace="live" nodeType="Neos.Neos.NodeTypes:Page" version="3" removed="" hidden="" hiddenInIndex="">
+       <dimensions>
+        <language>en_US</language>
+       </dimensions>
+       <accessRoles __type="array"/>
+       <properties>
+        <title __type="string">&lt;h1&gt;About Us Test&lt;/h1&gt;</title>
+        <uriPathSegment __type="string">about-us</uriPathSegment>
+       </properties>
+      </variant>
+      <node identifier="9abf48a7-b8a2-0896-7b42-754c23074a7b" nodeName="history">
+       <variant sortingIndex="100" workspace="live" nodeType="Neos.Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
+        <dimensions>
+         <language>en_US</language>
+        </dimensions>
+        <accessRoles __type="array"/>
+        <properties>
+         <title __type="string">&lt;h1&gt;History&lt;/h1&gt;</title>
+         <uriPathSegment __type="string">history</uriPathSegment>
+        </properties>
+       </variant>
+      </node>
+      <node identifier="63b28f4d-8831-ecb0-f9a6-466d97ffe2c2" nodeName="mission">
+       <variant sortingIndex="200" workspace="live" nodeType="Neos.Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
+        <dimensions>
+         <language>en_US</language>
+        </dimensions>
+        <accessRoles __type="array"/>
+        <properties>
+         <title __type="string">&lt;h1&gt;Our mission&lt;/h1&gt;</title>
+         <uriPathSegment __type="string">our-mission</uriPathSegment>
+        </properties>
+       </variant>
+      </node>
+     </node>
+     <node identifier="f66b3871-515f-7f54-fb1d-1c108040b2c0" nodeName="main">
+      <variant sortingIndex="200" workspace="live" nodeType="Neos.Neos:ContentCollection" version="2" removed="" hidden="" hiddenInIndex="">
+       <dimensions>
+        <language>en_US</language>
+       </dimensions>
+       <accessRoles __type="array"/>
+       <properties/>
+      </variant>
+      <node identifier="1477a6e2-fc22-2caa-442c-328a86939559" nodeName="dummy42">
+       <variant sortingIndex="200" workspace="live" nodeType="Neos.Neos.NodeTypes:Text" version="2" removed="" hidden="" hiddenInIndex="">
+        <dimensions>
+         <language>en_US</language>
+        </dimensions>
+        <accessRoles __type="array"/>
+        <properties>
+         <text __type="string">If you do, make sure to post your opinion about it on Twitter!</text>
+        </properties>
+       </variant>
+      </node>
+      <node identifier="b1e0e78d-04f3-8fc3-e3d1-e2399f831312" nodeName="dummy42a">
+       <variant sortingIndex="100" workspace="live" nodeType="Neos.Neos.NodeTypes:Headline" version="2" removed="" hidden="" hiddenInIndex="">
+        <dimensions>
+         <language>en_US</language>
+        </dimensions>
+        <accessRoles __type="array"/>
+        <properties>
+         <title __type="string">&lt;h1&gt;Do you love TYPO3 Flow?&lt;/h1&gt;</title>
+        </properties>
+       </variant>
+      </node>
+      <node identifier="b24222b5-9098-a800-043b-06cb42190300" nodeName="dummy43">
+       <variant sortingIndex="300" workspace="live" nodeType="Neos.Neos.NodeTypes:Html" version="2" removed="" hidden="" hiddenInIndex="">
+        <dimensions>
+         <language>en_US</language>
+        </dimensions>
+        <accessRoles __type="array"/>
+        <properties>
+         <source __type="string">[TWITTER WIDGET]</source>
+        </properties>
+       </variant>
+      </node>
+      <node identifier="6150868d-31e3-eb9b-6747-921468848bca" nodeName="dummy44">
+       <variant sortingIndex="400" workspace="live" nodeType="Acme.Demo:ThreeColumn" version="2" removed="" hidden="" hiddenInIndex="">
+        <dimensions>
+         <language>en_US</language>
+        </dimensions>
+        <accessRoles __type="array"/>
+        <properties/>
+       </variant>
+       <node identifier="440b10f7-e4d4-b98b-7ed3-a31bc9a39cfe" nodeName="column0">
+        <variant sortingIndex="100" workspace="live" nodeType="Neos.Neos:ContentCollection" version="2" removed="" hidden="" hiddenInIndex="">
+         <dimensions>
+          <language>en_US</language>
+         </dimensions>
+         <accessRoles __type="array"/>
+         <properties/>
+        </variant>
+        <node identifier="049b2a7c-2c5c-0765-3573-caa64bfb2cfc" nodeName="dummy42">
+         <variant sortingIndex="200" workspace="live" nodeType="Neos.Neos.NodeTypes:Text" version="2" removed="" hidden="" hiddenInIndex="">
+          <dimensions>
+           <language>en_US</language>
+          </dimensions>
+          <accessRoles __type="array"/>
+          <properties>
+           <text __type="string">We're still improving our docs, but check them out nevertheless! Our presentations are also worth a visit</text>
+          </properties>
+         </variant>
+        </node>
+        <node identifier="d1d78bfa-4440-761f-2e2c-88f7075a79b4" nodeName="dummy42a">
+         <variant sortingIndex="100" workspace="live" nodeType="Neos.Neos.NodeTypes:Headline" version="2" removed="" hidden="" hiddenInIndex="">
+          <dimensions>
+           <language>en_US</language>
+          </dimensions>
+          <accessRoles __type="array"/>
+          <properties>
+           <title __type="string">&lt;h1&gt;Documentation&lt;/h1&gt;</title>
+          </properties>
+         </variant>
+        </node>
+        <node identifier="73595b61-edc3-1eef-9de6-3df5ff9c30d1" nodeName="dummy43">
+         <variant sortingIndex="300" workspace="live" nodeType="Neos.Neos.NodeTypes:Html" version="2" removed="" hidden="" hiddenInIndex="">
+          <dimensions>
+           <language>en_US</language>
+          </dimensions>
+          <accessRoles __type="array"/>
+          <properties>
+           <source __type="string">[SLIDESHARE]</source>
+          </properties>
+         </variant>
+        </node>
+       </node>
+       <node identifier="9564eb6e-f9d9-2de7-c9b9-b6c5cae1a73e" nodeName="column1">
+        <variant sortingIndex="200" workspace="live" nodeType="Neos.Neos:ContentCollection" version="2" removed="" hidden="" hiddenInIndex="">
+         <dimensions>
+          <language>en_US</language>
+         </dimensions>
+         <accessRoles __type="array"/>
+         <properties/>
+        </variant>
+        <node identifier="59c0e9ff-99ae-17fe-8f5f-ec4697bc20cd" nodeName="dummy42">
+         <variant sortingIndex="200" workspace="live" nodeType="Neos.Neos.NodeTypes:Text" version="2" removed="" hidden="" hiddenInIndex="">
+          <dimensions>
+           <language>en_US</language>
+          </dimensions>
+          <accessRoles __type="array"/>
+          <properties>
+           <text __type="string">We're spending lots of thought into our infrastructure, you can profit from that, too!</text>
+          </properties>
+         </variant>
+        </node>
+        <node identifier="1694f221-dd36-03bd-843b-2b928a5eb079" nodeName="dummy42a">
+         <variant sortingIndex="100" workspace="live" nodeType="Neos.Neos.NodeTypes:Headline" version="2" removed="" hidden="" hiddenInIndex="">
+          <dimensions>
+           <language>en_US</language>
+          </dimensions>
+          <accessRoles __type="array"/>
+          <properties>
+           <title __type="string">&lt;h1&gt;Development Process&lt;/h1&gt;</title>
+          </properties>
+         </variant>
+        </node>
+       </node>
+       <node identifier="68d069ce-5c6b-5ca1-cb51-e52a5e530952" nodeName="column2">
+        <variant sortingIndex="300" workspace="live" nodeType="Neos.Neos:ContentCollection" version="2" removed="" hidden="" hiddenInIndex="">
+         <dimensions>
+          <language>en_US</language>
+         </dimensions>
+         <accessRoles __type="array"/>
+         <properties/>
+        </variant>
+       </node>
+      </node>
+      <node identifier="538273cd-f227-48ba-dd5c-0a33ed5bb612" nodeName="dummy45">
+       <variant sortingIndex="500" workspace="live" nodeType="Acme.Demo:List" version="2" removed="" hidden="" hiddenInIndex="">
+        <dimensions>
+         <language>en_US</language>
+        </dimensions>
+        <accessRoles __type="array"/>
+        <properties/>
+       </variant>
+       <node identifier="401d94fd-ebbf-97c1-7ed4-0c5eaa4914eb" nodeName="items">
+        <variant sortingIndex="100" workspace="live" nodeType="Neos.Neos:ContentCollection" version="2" removed="" hidden="" hiddenInIndex="">
+         <dimensions>
+          <language>en_US</language>
+         </dimensions>
+         <accessRoles __type="array"/>
+         <properties/>
+        </variant>
+        <node identifier="be234e3e-090c-98b8-b34f-c9011dfb90ae" nodeName="dummy45a">
+         <variant sortingIndex="100" workspace="live" nodeType="Acme.Demo:ListItem" version="2" removed="" hidden="" hiddenInIndex="">
+          <dimensions>
+           <language>en_US</language>
+          </dimensions>
+          <accessRoles __type="array"/>
+          <properties>
+           <text __type="string">First</text>
+          </properties>
+         </variant>
+        </node>
+        <node identifier="28176618-516a-657f-633b-7a8b0ff8dc31" nodeName="dummy45b">
+         <variant sortingIndex="200" workspace="live" nodeType="Acme.Demo:ListItem" version="2" removed="" hidden="" hiddenInIndex="">
+          <dimensions>
+           <language>en_US</language>
+          </dimensions>
+          <accessRoles __type="array"/>
+          <properties>
+           <text __type="string">Second</text>
+          </properties>
+         </variant>
+        </node>
+        <node identifier="e862af21-4bda-3b49-856a-98ef968a4e94" nodeName="dummy45c">
+         <variant sortingIndex="300" workspace="live" nodeType="Acme.Demo:ListItem" version="2" removed="" hidden="" hiddenInIndex="">
+          <dimensions>
+           <language>en_US</language>
+          </dimensions>
+          <accessRoles __type="array"/>
+          <properties>
+           <text __type="string">Last</text>
+          </properties>
+         </variant>
+        </node>
+       </node>
+      </node>
+     </node>
+     <node identifier="25eaba22-b8ed-11e3-a8b5-c82a1441d728" nodeName="products">
+      <variant sortingIndex="500" workspace="live" nodeType="Neos.Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
+       <dimensions>
+        <language>en_US</language>
+       </dimensions>
+       <accessRoles __type="array"/>
+       <properties>
+        <title __type="string">&lt;h1&gt;Products&lt;/h1&gt;</title>
+        <uriPathSegment __type="string">products</uriPathSegment>
+       </properties>
+      </variant>
+      <node identifier="68c57ffd-955e-7a67-d28c-7b3bf32805be" nodeName="assetlist">
+       <variant sortingIndex="300" workspace="live" nodeType="Neos.Neos.NodeTypes:AssetList" version="2" removed="" hidden="" hiddenInIndex="">
+        <dimensions>
+         <language>en_US</language>
+        </dimensions>
+        <accessRoles __type="array"/>
+        <properties>
+         <assets __type="array">
+          <entry0 __type="object" __identifier="1af89e5c-9e23-9a9d-ae15-1d77160cfb57" __classname="TYPO3\Media\Domain\Model\Asset" __encoding="json">{&quot;__identity&quot;:&quot;1af89e5c-9e23-9a9d-ae15-1d77160cfb57&quot;,&quot;title&quot;:&quot;&quot;,&quot;resource&quot;:{&quot;filename&quot;:&quot;TYPO3_Neos-logo_sRGB_color.pdf&quot;,&quot;hash&quot;:&quot;bed9a3e45070e97b921877e2bd9c35ba368beca0&quot;,&quot;__identity&quot;:&quot;8a4496e4-fa0d-8550-0995-01fd869728bf&quot;}}</entry0>
+         </assets>
+        </properties>
+       </variant>
+      </node>
+      <node identifier="bc488ff2-92ba-f2c5-f063-9a0fcbb90510" nodeName="cms">
+       <variant sortingIndex="200" workspace="live" nodeType="Neos.Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
+        <dimensions>
+         <language>en_US</language>
+        </dimensions>
+        <accessRoles __type="array"/>
+        <properties>
+         <title __type="string">&lt;h1&gt;CMS&lt;/h1&gt;</title>
+         <uriPathSegment __type="string">content-management</uriPathSegment>
+        </properties>
+       </variant>
+       <node identifier="1bc783f6-81e9-b9af-6835-d14ed91324f5" nodeName="typo3-neos">
+        <variant sortingIndex="100" workspace="live" nodeType="Neos.Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
+         <dimensions>
+          <language>en_US</language>
+         </dimensions>
+         <accessRoles __type="array"/>
+         <properties>
+          <title __type="string">&lt;h1&gt;TYPO3 Neos&lt;/h1&gt;</title>
+          <uriPathSegment __type="string">typo3-neos</uriPathSegment>
+         </properties>
+        </variant>
+       </node>
+      </node>
+      <node identifier="1b2060e3-2e30-1ad0-83fd-7dcdd1e2d5fc" nodeName="frameworks">
+       <variant sortingIndex="100" workspace="live" nodeType="Neos.Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
+        <dimensions>
+         <language>en_US</language>
+        </dimensions>
+        <accessRoles __type="array"/>
+        <properties>
+         <title __type="string">&lt;h1&gt;Frameworks&lt;/h1&gt;</title>
+         <uriPathSegment __type="string">frameworks</uriPathSegment>
+        </properties>
+       </variant>
+       <node identifier="51a2fe86-32d2-02fb-4020-38cfb1c5ac73" nodeName="who-cares-about-nodenames">
+        <variant sortingIndex="100" workspace="live" nodeType="Neos.Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
+         <dimensions>
+          <language>en_US</language>
+         </dimensions>
+         <accessRoles __type="array"/>
+         <properties>
+          <title __type="string">&lt;h1&gt;TYPO3 Flow&lt;/h1&gt;</title>
+          <uriPathSegment __type="string">typo3-flow</uriPathSegment>
+         </properties>
+        </variant>
+       </node>
+      </node>
+     </node>
+     <node identifier="bbf90c0a-a9f8-1bf3-1d6b-2eac028bd104" nodeName="shortcuts">
+      <variant sortingIndex="600" workspace="live" nodeType="Neos.Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
+       <dimensions>
+        <language>en_US</language>
+       </dimensions>
+       <accessRoles __type="array"/>
+       <properties>
+        <title __type="string">&lt;h1&gt;Shurcut tests&lt;/h1&gt;</title>
+        <uriPathSegment __type="string">shortcuts</uriPathSegment>
+       </properties>
+      </variant>
+      <node identifier="2e991434-efd7-209b-48ff-b7370a500518" nodeName="main">
+       <variant sortingIndex="100" workspace="live" nodeType="Neos.Neos:ContentCollection" version="2" removed="" hidden="" hiddenInIndex="">
+        <dimensions>
+         <language>en_US</language>
+        </dimensions>
+        <accessRoles __type="array"/>
+        <properties/>
+       </variant>
+       <node identifier="cd373cee-7e67-816d-ff81-01b20ab10888" nodeName="asset-link">
+        <variant sortingIndex="100" workspace="live" nodeType="Neos.Neos.NodeTypes:Text" version="2" removed="" hidden="" hiddenInIndex="">
+         <dimensions>
+          <language>en_US</language>
+         </dimensions>
+         <accessRoles __type="array"/>
+         <properties>
+          <text __type="string">&lt;p&gt;&lt;a href=&quot;asset://71a21bed-bbc2-7baf-0974-dd5b1e14d833&quot;&gt;Asset link&lt;/a&gt;&lt;/p&gt;</text>
+         </properties>
+        </variant>
+       </node>
+       <node identifier="a8240758-ed13-a38c-ade0-77ac0d557cfc" nodeName="broken-asset-link">
+        <variant sortingIndex="200" workspace="live" nodeType="Neos.Neos.NodeTypes:Text" version="2" removed="" hidden="" hiddenInIndex="">
+         <dimensions>
+          <language>en_US</language>
+         </dimensions>
+         <accessRoles __type="array"/>
+         <properties>
+          <text __type="string">&lt;p&gt;&lt;a href=&quot;asset://00021bed-bbc2-7baf-0974-dd5b1e14d833&quot;&gt;Broken asset link&lt;/a&gt;&lt;/p&gt;</text>
+         </properties>
+        </variant>
+       </node>
+       <node identifier="774fe387-a772-ac5a-222e-15663ddac0c6" nodeName="broken-node-link">
+        <variant sortingIndex="300" workspace="live" nodeType="Neos.Neos.NodeTypes:Text" version="2" removed="" hidden="" hiddenInIndex="">
+         <dimensions>
+          <language>en_US</language>
+         </dimensions>
+         <accessRoles __type="array"/>
+         <properties>
+          <text __type="string">&lt;p&gt;&lt;a href=&quot;node://00090c0a-a9f8-1bf3-1d6b-2eac028bd104&quot;&gt;Broken node link&lt;/a&gt;&lt;/p&gt;</text>
+         </properties>
+        </variant>
+       </node>
+       <node identifier="2a1bf251-7a57-ceda-2f56-90cc32d1c158" nodeName="empty-asset-link">
+        <variant sortingIndex="400" workspace="live" nodeType="Neos.Neos.NodeTypes:Text" version="2" removed="" hidden="" hiddenInIndex="">
+         <dimensions>
+          <language>en_US</language>
+         </dimensions>
+         <accessRoles __type="array"/>
+         <properties>
+          <text __type="string">&lt;p&gt;&lt;a href=&quot;asset://&quot;&gt;Empty asset link&lt;/a&gt;&lt;/p&gt;</text>
+         </properties>
+        </variant>
+       </node>
+       <node identifier="7ca679e4-593d-29d1-00d2-8c124b38c2a3" nodeName="empty-node-link">
+        <variant sortingIndex="500" workspace="live" nodeType="Neos.Neos.NodeTypes:Text" version="2" removed="" hidden="" hiddenInIndex="">
+         <dimensions>
+          <language>en_US</language>
+         </dimensions>
+         <accessRoles __type="array"/>
+         <properties>
+          <text __type="string">&lt;p&gt;&lt;a href=&quot;node://&quot;&gt;Empty node link&lt;/a&gt;&lt;/p&gt;</text>
+         </properties>
+        </variant>
+       </node>
+       <node identifier="ad58c465-2790-a675-dbbe-80c8ec3a80bf" nodeName="shortcut-to-child-node-link">
+        <variant sortingIndex="600" workspace="live" nodeType="Neos.Neos.NodeTypes:Text" version="2" removed="" hidden="" hiddenInIndex="">
+         <dimensions>
+          <language>en_US</language>
+         </dimensions>
+         <accessRoles __type="array"/>
+         <properties>
+          <text __type="string">&lt;p&gt;&lt;a href=&quot;node://b05acbc1-b445-b12e-4410-dca62e6fcf4a&quot;&gt;Shortcut to child node link&lt;/a&gt;&lt;br/&gt;&lt;/p&gt;</text>
+         </properties>
+        </variant>
+       </node>
+       <node identifier="f19e5c84-26da-3239-34df-19e3328eb784" nodeName="shortcut-to-parent-node-link">
+        <variant sortingIndex="700" workspace="live" nodeType="Neos.Neos.NodeTypes:Text" version="2" removed="" hidden="" hiddenInIndex="">
+         <dimensions>
+          <language>en_US</language>
+         </dimensions>
+         <accessRoles __type="array"/>
+         <properties>
+          <text __type="string">&lt;p&gt;&lt;a href=&quot;node://5ebb87d5-aa6d-ec9d-4867-e6164878e33c&quot;&gt;Shortcut to parent node link&lt;/a&gt;&lt;/p&gt;</text>
+         </properties>
+        </variant>
+       </node>
+       <node identifier="7a982455-768c-d750-5d2b-7f7b7390baa6" nodeName="shortcut-to-target-node-link">
+        <variant sortingIndex="800" workspace="live" nodeType="Neos.Neos.NodeTypes:Text" version="2" removed="" hidden="" hiddenInIndex="">
+         <dimensions>
+          <language>en_US</language>
+         </dimensions>
+         <accessRoles __type="array"/>
+         <properties>
+          <text __type="string">&lt;p&gt;&lt;a href=&quot;node://b1111f14-dcaa-13ed-5bf4-d186113ce455&quot;&gt;Shortcut to target node link&lt;/a&gt;&lt;/p&gt;</text>
+         </properties>
+        </variant>
+       </node>
+       <node identifier="ba178461-f13a-2355-3902-f2f7c7266dd5" nodeName="shortcut-to-target-uri-link">
+        <variant sortingIndex="900" workspace="live" nodeType="Neos.Neos.NodeTypes:Text" version="2" removed="" hidden="" hiddenInIndex="">
+         <dimensions>
+          <language>en_US</language>
+         </dimensions>
+         <accessRoles __type="array"/>
+         <properties>
+          <text __type="string">&lt;p&gt;&lt;a href=&quot;node://60cba99a-6fea-30c9-b395-a7eec69d04b4&quot;&gt;Shortcut to target URI link&lt;/a&gt;&lt;/p&gt;</text>
+         </properties>
+        </variant>
+       </node>
+      </node>
+      <node identifier="b05acbc1-b445-b12e-4410-dca62e6fcf4a" nodeName="shortcut-to-child-node">
+       <variant sortingIndex="200" workspace="live" nodeType="Neos.Neos:Shortcut" version="2" removed="" hidden="" hiddenInIndex="">
+        <dimensions>
+         <language>en_US</language>
+        </dimensions>
+        <accessRoles __type="array"/>
+        <properties>
+         <title __type="string">Shortcut to child node</title>
+         <uriPathSegment __type="string">shortcut-to-child-node</uriPathSegment>
+         <targetMode __type="string">firstChildNode</targetMode>
+        </properties>
+       </variant>
+       <node identifier="fce12ede-b404-abc7-9820-ff6b45858713" nodeName="child-node">
+        <variant sortingIndex="100" workspace="live" nodeType="Neos.Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
+         <dimensions>
+          <language>en_US</language>
+         </dimensions>
+         <accessRoles __type="array"/>
+         <properties>
+          <title __type="string">Child node</title>
+          <uriPathSegment __type="string">child-node</uriPathSegment>
+         </properties>
+        </variant>
+       </node>
+       <node identifier="f1d0332e-8032-7e41-704e-860c65849fca" nodeName="target-node">
+        <variant sortingIndex="200" workspace="live" nodeType="Neos.Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
+         <dimensions>
+          <language>en_US</language>
+         </dimensions>
+         <accessRoles __type="array"/>
+         <properties>
+          <title __type="string">Target node</title>
+          <uriPathSegment __type="string">target-node</uriPathSegment>
+         </properties>
+        </variant>
+       </node>
+      </node>
+      <node identifier="5ebb87d5-aa6d-ec9d-4867-e6164878e33c" nodeName="shortcut-to-parent-node">
+       <variant sortingIndex="300" workspace="live" nodeType="Neos.Neos:Shortcut" version="2" removed="" hidden="" hiddenInIndex="">
+        <dimensions>
+         <language>en_US</language>
+        </dimensions>
+        <accessRoles __type="array"/>
+        <properties>
+         <title __type="string">Shortcut to parent node</title>
+         <uriPathSegment __type="string">shortcut-to-parent-node</uriPathSegment>
+         <targetMode __type="string">parentNode</targetMode>
+        </properties>
+       </variant>
+      </node>
+      <node identifier="b1111f14-dcaa-13ed-5bf4-d186113ce455" nodeName="shortcut-to-target-node">
+       <variant sortingIndex="400" workspace="live" nodeType="Neos.Neos:Shortcut" version="2" removed="" hidden="" hiddenInIndex="">
+        <dimensions>
+         <language>en_US</language>
+        </dimensions>
+        <accessRoles __type="array"/>
+        <properties>
+         <title __type="string">Shortcut to target node</title>
+         <uriPathSegment __type="string">shortcut-to-target-node</uriPathSegment>
+         <targetMode __type="string">selectedTarget</targetMode>
+         <target __type="string">node://f1d0332e-8032-7e41-704e-860c65849fca</target>
+        </properties>
+       </variant>
+      </node>
+      <node identifier="60cba99a-6fea-30c9-b395-a7eec69d04b4" nodeName="shortcut-to-target-uri">
+       <variant sortingIndex="500" workspace="live" nodeType="Neos.Neos:Shortcut" version="2" removed="" hidden="" hiddenInIndex="">
+        <dimensions>
+         <language>en_US</language>
+        </dimensions>
+        <accessRoles __type="array"/>
+        <properties>
+         <title __type="string">Shortcut to target URI</title>
+         <uriPathSegment __type="string">shortcut-to-target-uri</uriPathSegment>
+         <targetMode __type="string">selectedTarget</targetMode>
+         <target __type="string">http://www.google.com</target>
+        </properties>
+       </variant>
+      </node>
+     </node>
+     <node identifier="a0a8804f-dde5-ac14-df6e-d092ca1296a7" nodeName="sidebar">
+      <variant sortingIndex="300" workspace="live" nodeType="Neos.Neos:ContentCollection" version="2" removed="" hidden="" hiddenInIndex="">
+       <dimensions>
+        <language>en_US</language>
+       </dimensions>
+       <accessRoles __type="array"/>
+       <properties/>
+      </variant>
+      <node identifier="4acf5fba-33f0-9185-6f71-0c58ed5e7b87" nodeName="dummy42">
+       <variant sortingIndex="200" workspace="live" nodeType="Neos.Neos.NodeTypes:Text" version="2" removed="" hidden="" hiddenInIndex="">
+        <dimensions>
+         <language>en_US</language>
+        </dimensions>
+        <accessRoles __type="array"/>
+        <properties>
+         <text __type="string">Below, you'll see the most recent activity</text>
+        </properties>
+       </variant>
+      </node>
+      <node identifier="a8b05e98-2842-5a95-7a86-f61dfb729c29" nodeName="dummy42a">
+       <variant sortingIndex="100" workspace="live" nodeType="Neos.Neos.NodeTypes:Headline" version="2" removed="" hidden="" hiddenInIndex="">
+        <dimensions>
+         <language>en_US</language>
+        </dimensions>
+        <accessRoles __type="array"/>
+        <properties>
+         <title __type="string">&lt;h1&gt;Last Commits&lt;/h1&gt;</title>
+        </properties>
+       </variant>
+      </node>
+      <node identifier="85341be3-1cb0-650b-6cb6-20872142c138" nodeName="dummy43">
+       <variant sortingIndex="300" workspace="live" nodeType="Neos.Neos.NodeTypes:Html" version="2" removed="" hidden="" hiddenInIndex="">
+        <dimensions>
+         <language>en_US</language>
+        </dimensions>
+        <accessRoles __type="array"/>
+        <properties>
+         <source __type="string">[COMMIT WIDGET]</source>
+        </properties>
+       </variant>
+      </node>
+     </node>
+     <node identifier="eab73e26-0dbf-8a2f-fcd7-a3cab1821e49" nodeName="teaser">
+      <variant sortingIndex="100" workspace="live" nodeType="Neos.Neos:ContentCollection" version="2" removed="" hidden="" hiddenInIndex="">
+       <dimensions>
+        <language>en_US</language>
+       </dimensions>
+       <accessRoles __type="array"/>
+       <properties>
+        <someSpecialProperty __type="string">xx</someSpecialProperty>
+       </properties>
+      </variant>
+      <node identifier="7b443d48-56f1-85a4-8f82-8d4f7342331f" nodeName="dummy42">
+       <variant sortingIndex="200" workspace="live" nodeType="Neos.Neos.NodeTypes:Text" version="2" removed="" hidden="" hiddenInIndex="">
+        <dimensions>
+         <language>en_US</language>
+        </dimensions>
+        <accessRoles __type="array"/>
+        <properties>
+         <text __type="string">This is our exemplary rendering test. Check it out and play around!</text>
+        </properties>
+       </variant>
+      </node>
+      <node identifier="9fa376af-a1b8-83ac-bedc-9ad83c8598bc" nodeName="dummy42a">
+       <variant sortingIndex="100" workspace="live" nodeType="Neos.Neos.NodeTypes:Headline" version="2" removed="" hidden="" hiddenInIndex="">
+        <dimensions>
+         <language>en_US</language>
+        </dimensions>
+        <accessRoles __type="array"/>
+        <properties>
+         <title __type="string">&lt;h1&gt;Welcome to this example&lt;/h1&gt;</title>
+        </properties>
+       </variant>
+      </node>
+     </node>
+    </node>
+   </node>
+  </nodes>
+ </site>
+</root>

@@ -1,0 +1,100 @@
+=====
+2.3.0
+=====
+
+
+User experience improvements
+============================
+
+- Stylesheets are now replaced on load of pages in backend allowing different stylesheets per page to be applied correctly. This might introduce a slight flash of unstyled content on changing pages.
+- Text editor placeholders are now translatable
+- The Neos logo in the login screen is now replaceable by configuring a different partial path for the login and overwriting the partial containing the logo.
+- The login screen has an overhauled CSS for better usability on mobile devices.
+- The content cache filters special characters used inside the cache to avoid broken cache entries. The special characters are all ascii control characters that should not appear in regular content but are sometimes introduced by copy/paste from other applications.
+- The alignment of expand icons in the node tree was corrected.
+- Select options in an inspector select editor can now
+- Switching sites is no longer error prone to session values like ``lastVisitedNode`` not lining up with the new site.
+- Cross-domain linking behavior was improved by changing internal behavior of the linking service.
+- RequireJS mapping for views is now the same as for editors, handlers and validators, allowing you to includde custom views to the inspector.
+- Node repair repairs shadow nodes, removes nodes with invalid dimensions, uses less memory and has an overall improved stability. The command also got ``--skip`` and ``--only`` options now to process the repairs in small chunks for bigger sites.
+
+
+Asset and Media improvements
+============================
+
+You can now add your own strategies to track usage of assets in your project. This is used in Neos to track usage of Assets inside content. Any ``AssetUsageStrategyInterface`` implementation that you provide will also be taken in to consideration in the Media module.
+Extensible Asset validation allows you to add validation to any asset class from your package, restricting the possible uploaded assets.
+Assets can now be replaced in the Media module, which will automatically put the new asset in place in all places the old one was used before. This works in conjunction with the asset usage strategies.
+The image handling supports ImageMagick 7 now, but that breaks support for some older versions.
+
+Menu content element allows setting of startingPoint
+====================================================
+
+The menu content element (``Neos.Neos.NodeTypes:Menu``) now allows configuring a starting point for the rendered menu in the inspector, making this element more flexible to use.
+
+Kickstarted sites improved
+==========================
+
+The kickstarted site now contains only the homepage, no content element anymore. Additionally the TypoScript was streamlined and improved towards extensibility.
+
+TypoScript and EEL
+==================
+
+The new ``Neos.Neos:ContentElementWrapping`` prototype can be used as a processor to the same as the ``contentElement.editable`` ViewHelper of Neos. You don't need to do this for regular content elmeents, but for example to make properties of pages inline editable.
+
+A ``TYPO3.TypoScript:Debug`` prototype allows to debug values inside TypoScript. You can set arbitrary key/value combinations which are output formatted.
+
+The ``TYPO3.TypoScript:Collection`` object now has ``itemName`` set to ``item`` as default. That means you can access the current element of the collection inside the renderer via ``item``, previously there was no default set.
+
+The ``Neos.Neos:DimensionsMenu`` replaces the ``Neos.Neos:DimensionMenu`` (note the "s"). For backwards compatibility reasons ``Neos.Neos:DimensionMenu`` still works but is deprecated. The new DimensionsMenu has much more features than the old one and can be used to render dimensions in various ways.
+
+All multi column elements now automatically provide the ``columnIteration`` variable containing iteration information and the ``columnLayout`` variable containing the selected laoyut via TypoScript context to the children (the columns).
+
+The new ``sort`` operation (example usage: ``${q(node).children().sort('title', 'DESC')}``) is now available. Note that the sort is done in PHP for now, so performance for bigger datasets might decrease.
+
+
+Caching changes
+===============
+
+Objects with ``@cache.mode = 'cached'`` and no ``entryIdentifier`` set previously would use all currently assigned context variables (+ the ``TYPO3.TypoScript:GlobalCacheIdentifiers`` prototype) to build an ``entryIdentifier``. This behavior is rather pointless as it would also use the request and possibly set backend configuration variables for example. The new behavior is to only use the GlobalIdentifiers prototype, so make sure you configure the necessary ``entryIdentifier`` variables.
+
+Dynamic cache is a new mode for the TypoScript cache configuration. This mode will cache results but create separate cache entries based on a configured discriminator. This cache discriminator does not need to be part of the parent objects cache identifier to work (which is the case for fully cached segments). The drawback is that evaluation of this will execute a bit of PHP logic instead of pulling the cached value straight from cache. A typical example for a descriminator and dynamic cached segment is if your result is based on a request argument. See documentation for configuration examples.
+
+Nodes can be related to arbitrary objects
+=========================================
+
+Node properties are now property mapped to strings for usage in the user interface. The converter to use can be configured per property type via settings, allowing you to have arbitrary data types as node properties as long as you can provide a type converter and an inspector editor for them.
+
+Further additions
+=================
+
+In addition to the larger features, lots of small improvements and bugfixes have been included in Neos 2.2, among them:
+
+- `Filetype icon view helper to output icons for specific filetypes.`
+- `Various documentation fixes`
+- `General Cleanup of NodeTypes package.`
+
+See also the full `release notes <http://neos.readthedocs.io/en/2.3/Appendixes/ChangeLogs/230.html>`_
+
+~~~~~~~~~~~~~~~~~~~~
+Upgrade instructions
+~~~~~~~~~~~~~~~~~~~~
+
+See https://www.neos.io/download-and-extend/upgrade-instructions-2-2-2-2-3.html
+
+~~~~~~~~~~~~~~~~~~~~
+!!! Breaking changes
+~~~~~~~~~~~~~~~~~~~~
+
+- `Keep supertypes unset in supertypes unset <https://github.com/neos/neos-development-collection/pull/599>`_
+
+   This bugfix correctly keeps supertypes unset that are unset in a parent node type when inheriting, which was not always the case. As a result some previously (wrongly) existing configuration might now disappear.
+
+- `Http RequestHandler returns correct instance of Request and Response <https://github.com/neos/flow-development-collection/pull/499>`_
+
+   If you used ``Request::createFromEnvironment()`` to create URLs in your custom code you must retrieve the ``Request`` object from the ``RequestHandler`` from now on. Otherwise you might run into malformed URLs like `https://acme.com:80` (depending on your environment).
+
+.. note::
+
+   Additionally all changes in Flow 3.3 apply, see the release notes to further information.
+   See http://flowframework.readthedocs.org/en/3.3/TheDefinitiveGuide/PartV/ReleaseNotes/330.html

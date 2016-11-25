@@ -1,0 +1,11 @@
+# Neos.Neos:ContentCase inherits TYPO3.TypoScript:Case and overrides the default case
+# with a catch-all condition for the default case, setting the type variable to
+# the name of the current nodes' node type
+#
+prototype(Neos.Neos:ContentCase) < prototype(TYPO3.TypoScript:Case) {
+	default {
+		@position = 'end'
+		condition = TRUE
+		type = ${q(node).property('_nodeType.name')}
+	}
+}

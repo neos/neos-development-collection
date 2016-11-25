@@ -1,0 +1,53 @@
+####################################
+# BASIC TYPOSCRIPT FOR THE TEST CASE
+####################################
+
+# Definition of custom TypoScript types
+prototype(Acme.Demo:ThreeColumn) < prototype(Neos.Neos:Content) {
+	templatePath = ${fixturesDirectory + '/ThreeColumnTemplate.html'}
+	left = Neos.Neos:ContentCollection
+	left.nodePath = 'column0'
+	center = Neos.Neos:ContentCollection
+	center.nodePath = 'column1'
+	right = Neos.Neos:ContentCollection
+	right.nodePath = 'column2'
+}
+
+prototype(Acme.Demo:List) < prototype(Neos.Neos:Content) {
+	templatePath = ${fixturesDirectory + '/ListTemplate.html'}
+
+	items = Neos.Neos:ContentCollection {
+		nodePath = 'items'
+		tagName = 'ul'
+		attributes.class = 'my-list'
+	}
+}
+
+prototype(Acme.Demo:ListItem) < prototype(Neos.Neos:Content) {
+	templatePath = ${fixturesDirectory + '/ListItemTemplate.html'}
+	text = ${node.properties.text}
+}
+
+# MAIN PAGE TEMPLATE
+
+page1 = Neos.Neos:Page
+page1.body {
+	templatePath = ${fixturesDirectory + '/WebsiteTemplate.html'}
+
+	parts.productCategoryMenu = Neos.Neos:Menu {
+		startingPoint = ${q(node).find('products').get(0)}
+		entryLevel = 0
+	}
+
+	content {
+		teaser = Neos.Neos:ContentCollection
+		teaser.nodePath = 'teaser'
+
+		main = Neos.Neos:PrimaryContent
+		main.nodePath = 'main'
+
+		sidebar = Neos.Neos:ContentCollection
+		sidebar.nodePath = 'sidebar'
+	}
+	title = ${q(node).property('title')}
+}

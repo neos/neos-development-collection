@@ -1,0 +1,34 @@
+
+Neos:
+  Flow:
+    persistence:
+      doctrine:
+        eventListeners:
+          Gedmo\Timestampable\TimestampableListener:
+            events:
+              - prePersist
+              - onFlush
+              - loadClassMetadata
+            listener: Gedmo\Timestampable\TimestampableListener
+        dql:
+          customStringFunctions:
+            NEOSCR_TOSTRING: Neos\ContentRepository\Persistence\Ast\ToStringFunction
+    error:
+      debugger:
+        ignoredClasses:
+          TYPO3\\TYPO3CR\\Domain\\Service\\NodeTypeManager: true
+          TYPO3\\TYPO3CR\\Domain\\Factory\\NodeFactory: true
+          TYPO3\\TYPO3CR\\Domain\\Service\\Cache\\FirstLevelNodeCache: true
+  ContentRepository:
+    contentDimensions: {  }
+    labelGenerator:
+      eel:
+        defaultContext:
+          String: Neos\Eel\Helper\StringHelper
+          Array: Neos\Eel\Helper\ArrayHelper
+          Date: Neos\Eel\Helper\DateHelper
+          Configuration: Neos\Eel\Helper\ConfigurationHelper
+          Math: Neos\Eel\Helper\MathHelper
+          Json: Neos\Eel\Helper\JsonHelper
+          I18n: Neos\Flow\I18n\EelHelper\TranslationHelper
+    fallbackNodeType: null

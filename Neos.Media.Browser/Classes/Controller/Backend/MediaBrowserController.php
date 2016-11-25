@@ -12,8 +12,8 @@ namespace Neos\Media\Browser\Controller\Backend;
  */
 
 use Neos\Media\Browser\Controller\Module\Management\AssetController;
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Media\Domain\Repository\AssetRepository;
+use Neos\Flow\Annotations as Flow;
+use Neos\Media\Domain\Repository\AssetRepository;
 
 /**
  * Controller for asset handling

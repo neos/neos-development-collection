@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.NodeTypes" source-language="en" datatype="plaintext" target-language="km">
+    <body>
+      <trans-unit id="ui.label" xml:space="preserve">
+				<source>Insert content references</source>
+			<target xml:lang="km" state="translated">បញ្ចូល​មាតិកា​យោង​</target></trans-unit>
+      <trans-unit id="groups.references" xml:space="preserve">
+				<source>References</source>
+			<target xml:lang="km" state="translated">ទិន្នន័យយោង</target><alt-trans><target xml:lang="km">យោងទៅតាម</target></alt-trans></trans-unit>
+      <trans-unit id="properties.references" xml:space="preserve">
+				<source>Select</source>
+			<target xml:lang="km" state="translated">ជ្រើសរើស</target></trans-unit>
+      <trans-unit id="content.noReferencesSelected" xml:space="preserve">
+				<source>No references selected</source>
+			<target xml:lang="km" state="translated">មិនមាន​ទិន្នន័យយោង​ត្រូវបានជ្រើសរើស</target></trans-unit>
+    </body>
+  </file>
+</xliff>

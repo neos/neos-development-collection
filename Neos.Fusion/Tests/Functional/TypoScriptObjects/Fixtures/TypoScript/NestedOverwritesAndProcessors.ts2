@@ -1,0 +1,30 @@
+prototype(Neos.Fusion:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+prototype(Neos.Fusion:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
+prototype(Neos.Fusion:RawArray).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RawArrayImplementation'
+prototype(Neos.Fusion:Attributes).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\AttributesImplementation'
+prototype(Neos.Fusion:Tag) {
+	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TagImplementation'
+	attributes = Attributes
+	omitClosingTag = FALSE
+	selfClosingTag = FALSE
+}
+
+
+prototype(Neos.Fusion:SpecialTag) < prototype(Neos.Fusion:Tag) {
+	attributes.class = Neos.Fusion:TestRenderer {
+		test = 'class'
+	}
+	attributes.tea = ${'green'}
+}
+
+nestedOverwritesAndProcessors.deepProcessorAppliesToSimpleValue = Neos.Fusion:SpecialTag {
+	attributes.class.test.@process.addProcessed = ${value + ' processed'}
+}
+
+nestedOverwritesAndProcessors.deepProcessorAppliesToEel = Neos.Fusion:SpecialTag {
+	attributes.tea.@process.addProcessed = ${value + ' infused'}
+}
+
+nestedOverwritesAndProcessors.deepProcessorAppliesWithNoBaseValue = Neos.Fusion:SpecialTag {
+	attributes.coffee.@process.addProcessed = ${String.trim(value + ' harvey')}
+}
