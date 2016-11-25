@@ -9,6 +9,8 @@
 #                                                                        #
 
 TYPO3:
+  # DocTools is a tool used by Neos Developers to help with a variety of documentation tasks.
+  # These settings are only used in generating Documentation.  DocTools:
   DocTools:
     collections:
       Neos:
@@ -189,16 +191,40 @@ TYPO3:
           classNamePattern: '/^.*Helper$/i'
         parser:
           implementationClassName: TYPO3\DocTools\Domain\Service\EelHelperClassParser
+
 Neos:
+
   Neos:
     typoScript:
+      # if set to TRUE, TypoScript is cached on a per-site basis.
+      # Depending on the size of your TypoScript, will improve rendering times 20-100+ ms.
+      # HOWEVER, the cache is NOT FLUSHED automatically (yet), so that's why we suggest that
+      # you enable this setting only:
+      #
+      # - if you do not change TypoScript in production context, but instead use e.g. TYPO3.Surf for automatic deployment
+      # - in Production context
       enableObjectTreeCache: false
+
+      # Packages can now register with this setting to get their TypoScript in the path:
+      # resources://MyVendor.MyPackageKey/Private/TypoScript/Root.ts2
+      # included automatically.
+      # The order of inclusions is set by the package loading order
+      # (and thus the composer dependencies of your packages).
+      # This also allows disabling of autoIncludes if needed.
+      autoInclude:
       autoInclude:
         Neos.Fusion: true
         Neos.Neos: true
+
+    # If a node name is specified here it will be used as default siteNode
+    # which is displayed if no domain pattern matches the current request
     defaultSiteNodeName: null
+
     routing:
+      # Setting this to TRUE allows to use an empty uriSegment for default dimensions.
+      # The only limitation is that all segments must be unique across all dimenions.
       supportEmptySegmentForDimensions: true
+
     nodeTypes:
       groups:
         general:
@@ -213,23 +239,46 @@ Neos:
           position: 200
           label: 'Neos.Neos:Main:nodeTypes.groups.plugins'
           collapsed: true
+
     userInterface:
+      # should minified JavaScript be loaded? For developing the Neos
+      # Content Module, this should be set to FALSE.
       loadMinifiedJavascript: true
+
+      # The number of seconds to wait before giving up on loading a script.
+      # The default in requireJs is 7 seconds but on slow clients with slow internetconnections
+      # in combination with big Document Nodes it can happen that the Inspector Editors and Aloha
+      # can not be loaded. http://requirejs.org/docs/api.html#config-waitSeconds
       requireJsWaitSeconds: 30
+
+      # Switch on to see all translated labels getting scrambled. You now can localize
+      # everything that is still readable.
       scrambleTranslatedLabels: false
+
       translation:
+        # Configure which localization sources should be automatically included.
+        # The included sources are parsed into the xliff.json which is loaded by Neos
+        # for handling translations in the javascript code.
+        #
+        # Format:
+        #   'Package.Key': ['Main', 'Errors', 'NodeTypes']
         autoInclude:
           Neos.Neos:
             - Main
             - Inspector
             - Modules
             - 'NodeTypes/*'
+
       requireJsPathMapping:
         Neos.Neos/Validation: 'resource://Neos.Neos/Public/JavaScript/Shared/Validation/'
         Neos.Neos/Inspector/Editors: 'resource://Neos.Neos/Public/JavaScript/Content/Inspector/Editors/'
         Neos.Neos/Inspector/Handlers: 'resource://Neos.Neos/Public/JavaScript/Content/Inspector/Handlers/'
         Neos.Neos/Inspector/Views: 'resource://Neos.Neos/Public/JavaScript/Content/Inspector/Views/'
+
+      # the default language for the backend interface (can be overridden by user preference through availableLanguages)
       defaultLanguage: en
+
+      # the languages the backend user can choose from (the xliff file for this language should be present!)
       availableLanguages:
         da: 'Dansk – Danish'
         de: 'Deutsch – German'
@@ -244,15 +293,25 @@ Neos:
         pl: 'Polski – Polish'
         pt-BR: 'Português (Brasil) – Portuguese (Brazil)'
         ru: 'Pусский – Russian'
+#        'sv': 'Svenska – Swedish'
         zh-CN: '简体中文 – Chinese, Simplified'
+
       navigateComponent:
         nodeTree:
+          # number of levels inside the node tree which shall be loaded eagerly, at start.
+          # if you have lots of nodes you should maybe reduce this number of elements.
           loadingDepth: 4
+
           presets:
             default:
+              # Allows configuring the baseNodeType used in the node tree. It is a filter, so this also
+              # works: 'TYPO3.Neos:Document,!Acme.Com:SomeNodeTypeToIgnore'
               baseNodeType: 'Neos.Neos:Document'
         structureTree:
+          # number of levels inside the structure tree which shall be loaded eagerly, at start.
+          # 0 means unlimited
           loadingDepth: 4
+
       inspector:
         dataTypes:
           string:
@@ -275,6 +334,9 @@ Neos:
             typeConverter: Neos\Media\TypeConverter\ImageInterfaceJsonSerializer
             editor: Neos.Neos/Inspector/Editors/ImageEditor
             editorOptions:
+              # With this option you can limit the maximum file size to the specified number of bytes.
+              # Accepts numeric or formatted string values, e.g. "204800" or "204800b" or "2kb"
+              # If not set, the maximum upload size is used as configured in php.ini
               maximumFileSize: null
               features:
                 crop: true
@@ -328,29 +390,38 @@ Neos:
           Neos.Neos/Inspector/Editors/CodeEditor:
             editorOptions:
               buttonLabel: 'Neos.Neos:Main:content.inspector.editors.codeEditor.editCode'
+
           Neos.Neos/Inspector/Editors/DateTimeEditor:
             editorOptions:
               placeholder: 'Neos.Neos:Main:content.inspector.editors.dateTimeEditor.noDateSet'
+
           Neos.Neos/Inspector/Editors/AssetEditor:
             editorOptions:
               fileUploadLabel: 'Neos.Neos:Main:upload'
+
           Neos.Neos/Inspector/Editors/ImageEditor:
             editorOptions:
               fileUploadLabel: 'Neos.Neos:Main:upload'
+
           Neos.Neos/Inspector/Editors/LinkEditor:
             editorOptions:
               placeholder: 'Neos.Neos:Main:content.inspector.editors.linkEditor.search'
+
           Neos.Neos/Inspector/Editors/ReferencesEditor:
             editorOptions:
               placeholder: 'Neos.Neos:Main:typeToSearch'
+
           Neos.Neos/Inspector/Editors/ReferenceEditor:
             editorOptions:
               placeholder: 'Neos.Neos:Main:typeToSearch'
+
           Neos.Neos/Inspector/Editors/SelectBoxEditor:
             editorOptions:
               placeholder: 'Neos.Neos:Main:choose'
+
       defaultEditPreviewMode: inPlace
       editPreviewModes:
+        # Live mode is only configured here for consistency. You shouldn't change it.
         live:
           isEditingMode: false
           isPreviewMode: false
@@ -374,10 +445,12 @@ Neos:
           typoScriptRenderingPath: ''
           title: 'Neos.Neos:Main:editPreviewModes.desktop'
           position: 100
+
       backendLoginForm:
         backgroundImage: 'resource://Neos.Neos/Public/Images/Login/Wallpaper23.jpg'
         stylesheets:
           'Neos.Neos:DefaultStyles': 'resource://Neos.Neos/Public/Styles/Login.css'
+
     moduleConfiguration:
       widgetTemplatePathAndFileName: 'resource://Neos.Neos/Private/Templates/Module/Widget.html'
     modules:
@@ -451,6 +524,8 @@ Neos:
             description: 'Neos.Neos:Modules:userSettings.description'
             icon: icon-user
             privilegeTarget: 'Neos.Neos:Backend.Module.User.UserSettings'
+
+     # Settings for the TYPO3 Neos Event Log (** DO NOT USE, NO PUBLIC API YET **)
     eventLog:
       enabled: false
       monitorEntities:
@@ -475,13 +550,16 @@ Neos:
         ä: ae
         ö: oe
         ü: ue
+
   Flow:
     aop:
       globalObjects:
         userInformation: Neos\Neos\Service\UserService
+
     core:
       applicationPackageKey: Neos.Neos
       applicationName: Neos
+
     security:
       authentication:
         providers:
@@ -501,8 +579,10 @@ Neos:
                 '@action': index
                 '@format': html
         authenticationStrategy: oneToken
+
     session:
       name: Neos_Session
+
     persistence:
       doctrine:
         eventListeners:
@@ -520,6 +600,7 @@ Neos:
             events:
               - preFlush
             listener: Neos\Neos\EventLog\Integrations\TYPO3CRIntegrationService
+
     error:
       exceptionHandler:
         renderingGroups:
@@ -553,12 +634,48 @@ Neos:
       debugger:
         ignoredClasses:
           Neos\\Neos\\Domain\\Service\\ContentContextFactory: true
+
     package:
       packagesPathByType:
         neos-site: Sites
         neos-plugin: Plugins
+
   ContentRepository:
+    # This instructs neos to fallback to the given type if a node type can't be found (because it was removed or has
+    # been renamed for example). The default "Neos.Neos:FallbackNode" renders a warning in backend and is ignored
+    # in frontend rendering
     fallbackNodeType: 'Neos.Neos:FallbackNode'
+
+    # Definition of available content dimensions. Additional content dimensions may be defined in third-party packages
+    # or via global settings.
+    #
+    #contentDimensions:
+    #
+    #  # Content dimension "language" serves for translation of content into different languages. Its value specifies
+    #  # the language or language variant by means of a locale.
+    #  'language':
+    #    # The default dimension that is applied when creating nodes without specifying a dimension
+    #    default: 'mul_ZZ'
+    #    # The default preset to use if no URI segment was given when resolving languages in the router
+    #    defaultPreset: 'all'
+    #    label: 'Language'
+    #    icon: 'icon-language'
+    #    presets:
+    #      'all':
+    #        label: 'All languages'
+    #        values: ['mul_ZZ']
+    #        uriSegment: 'all'
+    #      # Example for additional languages:
+    #
+    #      'en_GB':
+    #        label: 'English (Great Britain)'
+    #        values: ['en_GB', 'en_ZZ', 'mul_ZZ']
+    #        uriSegment: 'gb'
+    #      'de':
+    #        label: 'German (Germany)'
+    #        values: ['de_DE', 'de_ZZ', 'mul_ZZ']
+    #        uriSegment: 'de'
+
   Fusion:
     rendering:
       exceptionHandler: Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler
@@ -568,6 +685,7 @@ Neos:
       Neos.Array: Neos\Neos\TypoScript\Helper\ArrayHelper
       Neos.Rendering: Neos\Neos\TypoScript\Helper\RenderingHelper
       Neos.Caching: Neos\Neos\TypoScript\Helper\CachingHelper
+
   Setup:
     stepOrder:
       - neosRequirements
