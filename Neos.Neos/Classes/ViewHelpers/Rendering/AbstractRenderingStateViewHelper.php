@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\Neos\Domain\Service\ContentContext;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\TypoScriptObjects\Helpers\TypoScriptAwareViewInterface;
 
 /**

@@ -29,9 +29,9 @@ use Neos\Setup\Exception as SetupException;
 use Neos\Error\Messages\Message;
 use Neos\Setup\Exception;
 use Neos\Setup\Step\AbstractStep;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 
 /**
  * @Flow\Scope("singleton")

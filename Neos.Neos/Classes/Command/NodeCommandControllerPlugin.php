@@ -18,15 +18,15 @@ use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\Arrays;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\Utility\NodeUriPathSegmentGenerator;
-use TYPO3\TYPO3CR\Command\NodeCommandControllerPluginInterface;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
-use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
-use TYPO3\TYPO3CR\Domain\Service\ContentDimensionCombinator;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
-use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
+use Neos\ContentRepository\Command\NodeCommandControllerPluginInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
+use Neos\ContentRepository\Domain\Service\ContentDimensionCombinator;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\ContentRepository\Domain\Utility\NodePaths;
 
 /**
  * A plugin for the TYPO3CR NodeCommandController which adds some tasks to the node:repair command:
@@ -244,7 +244,7 @@ HELPTEXT;
         $rootNodes = $this->nodeDataRepository->findByPath('/', $workspace);
         $sitesNodes = $this->nodeDataRepository->findByPath('/sites', $workspace);
         $this->output->outputLine('Checking for root and site nodes with content dimensions set ...');
-        /** @var \TYPO3\TYPO3CR\Domain\Model\NodeData $rootNode */
+        /** @var \Neos\ContentRepository\Domain\Model\NodeData $rootNode */
         foreach ($rootNodes as $rootNode) {
             if ($rootNode->getDimensionValues() !== []) {
                 if ($dryRun === false) {
@@ -256,7 +256,7 @@ HELPTEXT;
                 }
             }
         }
-        /** @var \TYPO3\TYPO3CR\Domain\Model\NodeData $sitesNode */
+        /** @var \Neos\ContentRepository\Domain\Model\NodeData $sitesNode */
         foreach ($sitesNodes as $sitesNode) {
             if ($sitesNode->getDimensionValues() !== []) {
                 if ($dryRun === false) {
@@ -275,7 +275,7 @@ HELPTEXT;
      *
      * @param string $workspaceName
      * @param array $dimensions
-     * @return \TYPO3\TYPO3CR\Domain\Service\Context
+     * @return \Neos\ContentRepository\Domain\Service\Context
      */
     protected function createContext($workspaceName, array $dimensions)
     {

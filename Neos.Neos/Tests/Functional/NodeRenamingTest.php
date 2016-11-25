@@ -11,8 +11,8 @@ namespace Neos\Neos\Tests\Functional;
  * source code.
  */
 use Neos\Flow\Security\Authorization\TestingPrivilegeManager;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 
 /**
  * Functional test case which tests the renaming of nodes from within a workspace.
@@ -25,7 +25,7 @@ use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 class NodeRenamingTest extends AbstractNodeTest
 {
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+     * @var \Neos\ContentRepository\Domain\Model\NodeInterface
      */
     protected $nodeInTestWorkspace;
 

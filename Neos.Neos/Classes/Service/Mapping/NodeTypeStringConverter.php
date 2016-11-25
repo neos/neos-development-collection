@@ -14,7 +14,7 @@ namespace Neos\Neos\Service\Mapping;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\Model\NodeType;
 
 /**
  * Convert a boolean to a JavaScript compatible string representation.

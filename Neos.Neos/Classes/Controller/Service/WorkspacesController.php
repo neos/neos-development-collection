@@ -16,8 +16,8 @@ use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\FluidAdaptor\View\TemplateView;
 use Neos\Neos\View\Service\WorkspaceJsonView;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 
 /**
  * REST service for workspaces

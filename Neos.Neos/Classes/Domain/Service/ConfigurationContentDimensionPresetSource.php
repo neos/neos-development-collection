@@ -16,10 +16,10 @@ use Neos\Flow\Annotations as Flow;
 /**
  * A Dimension Preset Source that gets presets from settings
  *
- * Everything is configured in Settings.yaml in path "TYPO3.TYPO3CR.contentDimensions".
+ * Everything is configured in Settings.yaml in path "Neos.ContentRepository.contentDimensions".
  * @Flow\Scope("singleton")
  */
-class ConfigurationContentDimensionPresetSource extends \TYPO3\TYPO3CR\Domain\Service\ConfigurationContentDimensionPresetSource implements ContentDimensionPresetSourceInterface
+class ConfigurationContentDimensionPresetSource extends \Neos\ContentRepository\Domain\Service\ConfigurationContentDimensionPresetSource implements ContentDimensionPresetSourceInterface
 {
     /**
      * {@inheritdoc}

@@ -16,11 +16,11 @@ use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfigurationBuilder;
 use Neos\Neos\Service\PublishingService;
 use Neos\Neos\Service\View\NodeView;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
-use TYPO3\TYPO3CR\TypeConverter\NodeConverter;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
+use Neos\ContentRepository\TypeConverter\NodeConverter;
 
 /**
  * Service Controller for managing Workspaces
@@ -108,7 +108,7 @@ class WorkspaceController extends AbstractServiceController
     /**
      * Publishes the given nodes to the specified targetWorkspace
      *
-     * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes
+     * @param array<\Neos\ContentRepository\Domain\Model\NodeInterface> $nodes
      * @param string $targetWorkspaceName
      * @return void
      */
@@ -136,7 +136,7 @@ class WorkspaceController extends AbstractServiceController
     /**
      * Discards the given nodes
      *
-     * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes
+     * @param array<\Neos\ContentRepository\Domain\Model\NodeInterface> $nodes
      * @return void
      */
     public function discardNodesAction(array $nodes)

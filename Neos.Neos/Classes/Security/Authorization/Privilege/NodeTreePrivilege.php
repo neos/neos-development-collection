@@ -11,7 +11,7 @@ namespace Neos\Neos\Security\Authorization\Privilege;
  * source code.
  */
 
-use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\EditNodePrivilege;
+use Neos\ContentRepository\Security\Authorization\Privilege\Node\EditNodePrivilege;
 
 /**
  * A privilege to show (document) nodes in the navigate component of the Neos backend. This also includes any manipulation of the affected nodes

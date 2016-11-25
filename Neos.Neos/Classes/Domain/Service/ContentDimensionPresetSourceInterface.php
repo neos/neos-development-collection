@@ -27,7 +27,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * The default implementation ConfigurationContentDimensionPresetSource will read the available presets from settings.
  */
-interface ContentDimensionPresetSourceInterface extends \TYPO3\TYPO3CR\Domain\Service\ContentDimensionPresetSourceInterface
+interface ContentDimensionPresetSourceInterface extends \Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface
 {
     /**
      * Find a dimension preset by URI identifier

@@ -4,8 +4,8 @@ namespace Neos\Neos\TypoScript;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Service\ContentDimensionCombinator;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Service\ContentDimensionCombinator;
 use TYPO3\TypoScript\Exception as TypoScriptException;
 
 /**

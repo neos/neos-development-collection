@@ -12,8 +12,8 @@ namespace Neos\Neos\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
-use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 
 /**
  * Generate a schema in JSON format for the VIE dataTypes validation, necessary

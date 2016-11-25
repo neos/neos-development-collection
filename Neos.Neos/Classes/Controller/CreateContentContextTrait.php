@@ -14,8 +14,8 @@ namespace Neos\Neos\Controller;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\SiteService;
-use TYPO3\TYPO3CR\Domain\Model\NodeData;
-use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
+use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Domain\Utility\NodePaths;
 
 /**
  * A trait to add create a content context

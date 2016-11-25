@@ -12,8 +12,8 @@ namespace Neos\Neos\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\Workspace;
 
 /**
  * The workspaces service adds some basic helper methods for getting workspaces,
@@ -22,7 +22,7 @@ use TYPO3\TYPO3CR\Domain\Model\Workspace;
  * @api
  * @Flow\Scope("singleton")
  */
-class PublishingService extends \TYPO3\TYPO3CR\Domain\Service\PublishingService
+class PublishingService extends \Neos\ContentRepository\Domain\Service\PublishingService
 {
     /**
      * Publishes the given node to the specified target workspace. If no workspace is specified, the base workspace

@@ -18,7 +18,7 @@ use Neos\Utility\ObjectAccess;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Neos\Exception as NeosException;
 use Neos\Neos\Service\DataSource\DataSourceInterface;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * Data Source Controller

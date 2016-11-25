@@ -11,7 +11,7 @@ namespace Neos\Neos\TYPO3CR;
  * source code.
  */
 
-use TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface;
+use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
 
 /**
  * Provides generic methods to manage and work with Nodes

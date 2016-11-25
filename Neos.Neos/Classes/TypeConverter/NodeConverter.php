@@ -21,7 +21,7 @@ use Neos\Neos\Domain\Repository\SiteRepository;
  *
  * @Flow\Scope("singleton")
  */
-class NodeConverter extends \TYPO3\TYPO3CR\TypeConverter\NodeConverter
+class NodeConverter extends \Neos\ContentRepository\TypeConverter\NodeConverter
 {
     /**
      * @Flow\Inject

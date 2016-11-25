@@ -22,8 +22,8 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Service\UserService;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Neos\Controller\CreateContentContextTrait;
-use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Domain\Factory\NodeFactory;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\Neos\Domain\Service\UserService as DomainUserService;
 
 /**
@@ -79,7 +79,7 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
      *
      * @param AssetInterface $asset
      * @return array<\Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties>
-     * @throws \TYPO3\TYPO3CR\Exception\NodeConfigurationException
+     * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
      */
     public function getUsageReferences(AssetInterface $asset)
     {
@@ -101,7 +101,7 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
             $site = $context->getCurrentSite();
             $node = $this->nodeFactory->createFromNodeData($relatedNodeData, $context);
             $flowQuery = new FlowQuery([$node]);
-            /** @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface $documentNode */
+            /** @var \Neos\ContentRepository\Domain\Model\NodeInterface $documentNode */
             $documentNode = $flowQuery->closest('[instanceof Neos.Neos:Document]')->get(0);
 
             $relatedNodes[] = new AssetUsageInNodeProperties($asset, $site, $documentNode, $node, $accessible);

@@ -13,7 +13,7 @@ namespace Neos\Neos\Domain\Model;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\Model\NodeType;
 
 /**
  * A plugin view definition

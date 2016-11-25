@@ -14,8 +14,8 @@ namespace Neos\Neos\Service;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Neos\Domain\Service\ContentContext;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Service\AuthorizationService;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Service\AuthorizationService;
 
 /**
  * The content element editable service adds the necessary markup around

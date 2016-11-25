@@ -15,8 +15,8 @@ use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\UserService as UserDomainService;
 use Neos\Neos\Service\UserService;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 
 /**
  * Test case for the UserService

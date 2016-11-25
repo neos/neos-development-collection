@@ -16,7 +16,7 @@ use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Service\SiteExportService;
 use Neos\Neos\Domain\Service\SiteImportService;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 
 /**
  * Tests for the SiteImportService & SiteExportService

@@ -11,7 +11,7 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\Model\NodeType;
 
 /**
  * Generate a TypoScript prototype definition for a given node type

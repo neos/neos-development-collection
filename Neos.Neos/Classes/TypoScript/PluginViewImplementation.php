@@ -17,7 +17,7 @@ use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Neos\Domain\Model\PluginViewDefinition;
 use Neos\Neos\Service\PluginService;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * A TypoScript PluginView.

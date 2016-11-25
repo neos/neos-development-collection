@@ -16,8 +16,8 @@ use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeType;
 use TYPO3\TypoScript\Core\Cache\ContentCache;
 
 /**
@@ -76,7 +76,7 @@ class ContentCacheFlusher
         $originalNode = $node;
         while ($node->getDepth() > 1) {
             $node = $node->getParent();
-            // Workaround for issue #56566 in TYPO3.TYPO3CR
+            // Workaround for issue #56566 in Neos.ContentRepository
             if ($node === null) {
                 break;
             }

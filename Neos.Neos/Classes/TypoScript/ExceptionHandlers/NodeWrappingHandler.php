@@ -16,7 +16,7 @@ use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Utility\Environment;
 use Neos\Neos\Service\ContentElementWrappingService;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
 use TYPO3\TypoScript\Core\ExceptionHandlers\ContextDependentHandler;
 

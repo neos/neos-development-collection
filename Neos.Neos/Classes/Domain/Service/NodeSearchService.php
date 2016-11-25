@@ -13,10 +13,10 @@ namespace Neos\Neos\Domain\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Service\Context;
+use Neos\ContentRepository\Domain\Factory\NodeFactory;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Domain\Service\Context;
 
 /**
  * Find nodes based on a fulltext search
@@ -52,7 +52,7 @@ class NodeSearchService implements NodeSearchServiceInterface
      * @param array $searchNodeTypes
      * @param Context $context
      * @param NodeInterface $startingPoint
-     * @return array <\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
+     * @return array <\Neos\ContentRepository\Domain\Model\NodeInterface>
      */
     public function findByProperties($term, array $searchNodeTypes, Context $context, NodeInterface $startingPoint = null)
     {

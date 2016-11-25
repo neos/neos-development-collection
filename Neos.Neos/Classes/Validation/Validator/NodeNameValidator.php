@@ -13,7 +13,7 @@ namespace Neos\Neos\Validation\Validator;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Validation\Validator\RegularExpressionValidator;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * Validator for node names

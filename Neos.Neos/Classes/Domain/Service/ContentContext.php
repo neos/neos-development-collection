@@ -17,9 +17,9 @@ use Neos\Flow\Security\Exception;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\UserInterfaceMode;
 use Neos\Neos\Domain\Model\Site;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Service\Context;
-use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Service\Context;
+use Neos\ContentRepository\Domain\Utility\NodePaths;
 
 /**
  * The Content Context

@@ -21,8 +21,8 @@ use Neos\Neos\Controller\Exception\UnresolvableShortcutException;
 use Neos\Neos\Domain\Model\UserInterfaceMode;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\View\TypoScriptView;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 
 /**
  * Controller for displaying nodes in the frontend

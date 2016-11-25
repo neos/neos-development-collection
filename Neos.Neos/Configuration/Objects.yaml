@@ -8,10 +8,10 @@ Neos\Neos\ViewHelpers\Backend\ConfigurationCacheVersionViewHelper:
           1:
             value: TYPO3_Neos_Configuration_Version
 
-TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface:
+Neos\ContentRepository\Domain\Service\ContextFactoryInterface:
   className: Neos\Neos\Domain\Service\ContentContextFactory
 
-TYPO3\TYPO3CR\Domain\Service\PublishingServiceInterface:
+Neos\ContentRepository\Domain\Service\PublishingServiceInterface:
   className: Neos\Neos\Service\PublishingService
 
 Neos\Neos\Aspects\TypoScriptCachingAspect:
@@ -24,13 +24,13 @@ Neos\Neos\Aspects\TypoScriptCachingAspect:
           1:
             value: TYPO3_Neos_TypoScript
 
-'TYPO3\TYPO3CR\Domain\Service\ContentDimensionPresetSourceInterface':
+'Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface':
   className: Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource
 
-'TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface':
+'Neos\ContentRepository\Domain\Service\NodeServiceInterface':
   className: Neos\Neos\TYPO3CR\NeosNodeService
 
-# This interface extends the TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface
+# This interface extends the Neos\ContentRepository\Domain\Service\NodeServiceInterface
 'Neos\Neos\TYPO3CR\NeosNodeServiceInterface':
   className: Neos\Neos\TYPO3CR\NeosNodeService
 
@@ -40,7 +40,7 @@ Neos\Neos\Aspects\TypoScriptCachingAspect:
 Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource:
   properties:
     configuration:
-      setting: TYPO3.TYPO3CR.contentDimensions
+      setting: Neos.ContentRepository.contentDimensions
 
 Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface:
   className: Neos\Neos\Routing\FrontendNodeRoutePartHandler

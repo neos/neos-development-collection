@@ -13,7 +13,7 @@ namespace Neos\Neos\Routing\Cache;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\RouterCachingService;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * This service flushes Route caches triggered by node changes.

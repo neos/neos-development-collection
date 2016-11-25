@@ -12,8 +12,8 @@ namespace Neos\Neos\TYPO3CR;
  */
 
 use Neos\Flow\Annotations as Flow;
-use TYPO3\TYPO3CR\Domain\Service\NodeService;
-use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
+use Neos\ContentRepository\Domain\Service\NodeService;
+use Neos\ContentRepository\Domain\Utility\NodePaths;
 
 /**
  * @Flow\Scope("singleton")

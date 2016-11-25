@@ -49,7 +49,7 @@ class NodeTypeConfigurationEnrichmentAspect
     protected $resourceManager;
 
     /**
-     * @Flow\Around("method(TYPO3\TYPO3CR\Domain\Model\NodeType->__construct())")
+     * @Flow\Around("method(Neos\ContentRepository\Domain\Model\NodeType->__construct())")
      * @return void
      */
     public function enrichNodeTypeConfiguration(JoinPointInterface $joinPoint)

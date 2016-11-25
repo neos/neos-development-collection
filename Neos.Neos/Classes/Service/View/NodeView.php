@@ -17,9 +17,9 @@ use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Neos\Security\Authorization\Privilege\NodeTreePrivilege;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Utility\Arrays;
-use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\NodePrivilegeSubject;
+use Neos\ContentRepository\Security\Authorization\Privilege\Node\NodePrivilegeSubject;
 
 /**
  * An View specialized on single or multiple Nodes in a tree structure
@@ -149,7 +149,7 @@ class NodeView extends JsonView
      * Prepares this view to render a list or tree of filtered nodes.
      *
      * @param NodeInterface $node
-     * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeData> $matchedNodes
+     * @param array<\Neos\ContentRepository\Domain\Model\NodeData> $matchedNodes
      * @param integer $outputStyle Either STYLE_TREE or STYLE_list
      * @return void
      */
@@ -169,7 +169,7 @@ class NodeView extends JsonView
      * @param NodeInterface $node
      * @param string $nodeTypeFilter
      * @param integer $depth levels of child nodes to fetch. 0 = unlimited
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $untilNode if given, expand all nodes on the rootline towards $untilNode, no matter what is defined with $depth.
+     * @param \Neos\ContentRepository\Domain\Model\NodeInterface $untilNode if given, expand all nodes on the rootline towards $untilNode, no matter what is defined with $depth.
      * @param integer $recursionPointer current recursion level
      * @return void
      */
@@ -214,7 +214,7 @@ class NodeView extends JsonView
 
     /**
      * @param NodeInterface $rootNode
-     * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeData> $nodes
+     * @param array<\Neos\ContentRepository\Domain\Model\NodeData> $nodes
      * @return array
      */
     public function collectParentNodeData(NodeInterface $rootNode, array $nodes)
