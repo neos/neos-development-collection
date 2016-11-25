@@ -11,7 +11,7 @@ namespace Neos\Media\Tests\Unit\ViewHelpers\Uri;
  * source code.
  */
 
-use Neos\FluidAdaptor\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 use Neos\Media\ViewHelpers\ImageViewHelper;
 
 require_once(__DIR__ . '/../../../../../../Framework/Neos.FluidAdaptor/Tests/Unit/ViewHelpers/ViewHelperBaseTestcase.php');
