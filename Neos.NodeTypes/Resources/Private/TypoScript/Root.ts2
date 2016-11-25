@@ -12,13 +12,13 @@ prototype(Neos.NodeTypes:Menu) {
 	maximumLevels = ${q(node).property('maximumLevels')}
 	maximumLevels.@process.1 = ${String.toInteger(value)}
 
-	active.attributes = TYPO3.TypoScript:Attributes {
+	active.attributes = Neos.Fusion:Attributes {
 		class = 'active'
 	}
-	current.attributes = TYPO3.TypoScript:Attributes {
+	current.attributes = Neos.Fusion:Attributes {
 		class = 'current'
 	}
-	normal.attributes = TYPO3.TypoScript:Attributes {
+	normal.attributes = Neos.Fusion:Attributes {
 		class = 'normal'
 	}
 
@@ -62,7 +62,7 @@ prototype(Neos.NodeTypes:MultiColumn) < prototype(TYPO3.Neos:Content) {
 	templatePath = 'resource://Neos.NodeTypes/Private/Templates/NodeTypes/MultiColumn.html'
 	layout = ${q(node).property('layout')}
 	attributes.class = ${'container columns-' + q(node).property('layout')}
-	columns = TYPO3.TypoScript:Collection {
+	columns = Neos.Fusion:Collection {
 		@context.columnLayout = ${q(node).property('layout')}
 		collection = ${q(node).children('[instanceof TYPO3.Neos:ContentCollection]')}
 		itemRenderer = Neos.NodeTypes:MultiColumnItem
@@ -74,7 +74,7 @@ prototype(Neos.NodeTypes:MultiColumn) < prototype(TYPO3.Neos:Content) {
 # Abstract render definition for a single content column in a multi column element
 prototype(Neos.NodeTypes:MultiColumnItem) < prototype(TYPO3.Neos:ContentCollection) {
 	nodePath = '.'
-	attributes = TYPO3.TypoScript:Attributes {
+	attributes = Neos.Fusion:Attributes {
 		class = 'column'
 	}
 }
@@ -106,7 +106,7 @@ prototype(Neos.NodeTypes:Form) {
 # "Insert content references" TS Object
 prototype(Neos.NodeTypes:ContentReferences) {
 	@context.referenceNodesArray = ${q(node).property('references')}
-	referenceNodes = TYPO3.TypoScript:Collection {
+	referenceNodes = Neos.Fusion:Collection {
 		collection = ${referenceNodesArray}
 		itemRenderer = TYPO3.Neos:ContentCase
 		itemName = 'node'
