@@ -3,7 +3,7 @@
 //
 // This fixture is used to check that namespace declarations are expanded correctly
 
-namespace: default = TYPO3.Neos
+namespace: default = Neos.Neos
 namespace: alternative = TYPO3.Schirmchen
 
 object1 = Text
