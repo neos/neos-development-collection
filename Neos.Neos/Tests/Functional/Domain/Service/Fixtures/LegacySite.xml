@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-	<site identifier="995c9174-ddd6-4d5c-cfc0-1ffc82184677" type="Neos.Neos.NodeTypes:Page" nodeName="neosdemotypo3org">
+	<site identifier="995c9174-ddd6-4d5c-cfc0-1ffc82184677" type="Neos.NodeTypes:Page" nodeName="neosdemoio">
 		<properties>
-			<name>TYPO3 Neos Demo Site</name>
+			<name>Neos Demo Site</name>
 			<title>Home</title>
 			<layout>landingPage</layout>
 			<subpageLayout></subpageLayout>
@@ -10,7 +10,7 @@
 			<siteResourcesPackageKey>TYPO3.TypoScript</siteResourcesPackageKey>
 		</properties>
 		<node identifier="f380fbcd-2c5a-4c9b-b1c3-da9e1dc803cc" type="Neos.Neos:ContentCollection" nodeName="teaser">
-			<node identifier="d17caff2-f50c-d30b-b735-9b9216de02e9" type="Neos.Neos.NodeTypes:Headline" nodeName="node52697bdfee199">
+			<node identifier="d17caff2-f50c-d30b-b735-9b9216de02e9" type="Neos.NodeTypes:Headline" nodeName="node52697bdfee199">
 				<properties>
 					<title><![CDATA[<h1>Planned for change.</h1>]]></title>
 				</properties>

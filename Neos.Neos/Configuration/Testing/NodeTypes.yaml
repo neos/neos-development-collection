@@ -1,6 +1,6 @@
 'Acme.Demo:ThreeColumn':
   superTypes:
-    'Neos.Neos.NodeTypes:Column': TRUE
+    'Neos.NodeTypes:Column': TRUE
   ui:
     label: 'Three column content'
     group: 'structure'

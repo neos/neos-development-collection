@@ -56,7 +56,7 @@ class ArrayImplementation extends AbstractArrayTypoScriptObject
      * @see PositionalArraySorter
      *
      * @return array an ordered list of keys
-     * @throws TypoScript\Exception if the positional string has an unsupported format
+     * @throws Fusion\Exception if the positional string has an unsupported format
      */
     protected function sortNestedTypoScriptKeys()
     {
@@ -64,7 +64,7 @@ class ArrayImplementation extends AbstractArrayTypoScriptObject
         try {
             $sortedTypoScriptKeys = $arraySorter->getSortedKeys();
         } catch (InvalidPositionException $exception) {
-            throw new TypoScript\Exception('Invalid position string', 1345126502, $exception);
+            throw new Fusion\Exception('Invalid position string', 1345126502, $exception);
         }
 
         foreach ($this->ignoreProperties as $ignoredPropertyName) {

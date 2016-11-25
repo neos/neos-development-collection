@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
- <site name="example.org" state="1" siteResourcesPackageKey="TYPO3.TypoScript" siteNodeName="example">
+ <site name="example.org" state="1" siteResourcesPackageKey="Neos.Fusion" siteNodeName="example">
   <nodes formatVersion="2.0">
    <node identifier="78f5c720-e8df-2573-1fc1-f7ce5b338485" nodeName="example">
-    <variant sortingIndex="100" workspace="live" nodeType="TYPO3.Neos:Shortcut" version="1" removed="" hidden="" hiddenInIndex="1">
+    <variant sortingIndex="100" workspace="live" nodeType="Neos.Neos:Shortcut" version="1" removed="" hidden="" hiddenInIndex="1">
      <dimensions>
       <language>en_US</language>
      </dimensions>
@@ -75,7 +75,7 @@
          <language>en_US</language>
         </dimensions>
         <properties>
-         <title __type="string">&lt;h1&gt;Do you love TYPO3 Flow?&lt;/h1&gt;</title>
+         <title __type="string">&lt;h1&gt;Do you love Neos Flow?&lt;/h1&gt;</title>
         </properties>
        </variant>
       </node>
@@ -236,13 +236,13 @@
          <title __type="string">&lt;h1&gt;CMS&lt;/h1&gt;</title>
         </properties>
        </variant>
-       <node identifier="75a39aaa-0373-b42b-060f-e227367bf0a1" nodeName="typo3-neos">
+       <node identifier="75a39aaa-0373-b42b-060f-e227367bf0a1" nodeName="neos-neos">
         <variant sortingIndex="100" workspace="live" nodeType="Neos.ContentRepository.Testing:Page" version="1" removed="" hidden="" hiddenInIndex="">
          <dimensions>
           <language>en_US</language>
          </dimensions>
          <properties>
-          <title __type="string">&lt;h1&gt;TYPO3 Neos&lt;/h1&gt;</title>
+          <title __type="string">&lt;h1&gt;Neos&lt;/h1&gt;</title>
          </properties>
         </variant>
        </node>
@@ -256,13 +256,13 @@
          <title __type="string">&lt;h1&gt;Frameworks&lt;/h1&gt;</title>
         </properties>
        </variant>
-       <node identifier="574d22f7-96b0-3040-8a27-05de3185f1ed" nodeName="typo3-flow">
+       <node identifier="574d22f7-96b0-3040-8a27-05de3185f1ed" nodeName="neos-flow">
         <variant sortingIndex="100" workspace="live" nodeType="Neos.ContentRepository.Testing:Page" version="1" removed="" hidden="" hiddenInIndex="">
          <dimensions>
           <language>en_US</language>
          </dimensions>
          <properties>
-          <title __type="string">&lt;h1&gt;TYPO3 Flow&lt;/h1&gt;</title>
+          <title __type="string">&lt;h1&gt;Neos Flow&lt;/h1&gt;</title>
          </properties>
         </variant>
        </node>
