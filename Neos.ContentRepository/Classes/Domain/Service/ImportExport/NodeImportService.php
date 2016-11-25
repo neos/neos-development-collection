@@ -642,9 +642,9 @@ class NodeImportService
         $nodeData['properties'] = $jsonPropertiesDataTypeHandler->convertToDatabaseValue($nodeData['properties'], $connection->getDatabasePlatform());
         $nodeData['accessRoles'] = $jsonPropertiesDataTypeHandler->convertToDatabaseValue($nodeData['accessRoles'], $connection->getDatabasePlatform());
 
-        $connection->executeQuery('DELETE FROM typo3_typo3cr_domain_model_nodedimension'
+        $connection->executeQuery('DELETE FROM neos_contentrepository_domain_model_nodedimension'
             . ' WHERE nodedata IN ('
-            . '   SELECT persistence_object_identifier FROM typo3_typo3cr_domain_model_nodedata'
+            . '   SELECT persistence_object_identifier FROM neos_contentrepository_domain_model_nodedata'
             . '   WHERE identifier = :identifier'
             . '   AND workspace = :workspace'
             . '   AND dimensionshash = :dimensionsHash'
@@ -683,7 +683,7 @@ class NodeImportService
                 }
             }
         }
-        $connection->executeUpdate('INSERT INTO typo3_typo3cr_domain_model_nodedata (' . implode(', ', array_keys($queryParts)) . ') VALUES (' . implode(', ', $queryParts) . ')', $queryArguments, $queryTypes);
+        $connection->executeUpdate('INSERT INTO neos_contentrepository_domain_model_nodedata (' . implode(', ', array_keys($queryParts)) . ') VALUES (' . implode(', ', $queryParts) . ')', $queryArguments, $queryTypes);
 
         foreach ($dimensionValues as $dimension => $values) {
             foreach ($values as $value) {
@@ -693,7 +693,7 @@ class NodeImportService
                     'name' => $dimension,
                     'value' => $value
                 );
-                $connection->insert('typo3_typo3cr_domain_model_nodedimension', $nodeDimension);
+                $connection->insert('neos_contentrepository_domain_model_nodedimension', $nodeDimension);
             }
         }
     }
