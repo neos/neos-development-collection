@@ -59,7 +59,8 @@
             "Neos.Imagine-20161124231742",
             "Neos.Media-20161124233100",
             "Neos.NodeTypes-20161125002300",
-            "Neos.SiteKickstarter-20161125002311"
+            "Neos.SiteKickstarter-20161125002311",
+            "Neos.Neos-20161125002322"
         ]
     }
 }
