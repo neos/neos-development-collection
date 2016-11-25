@@ -1,17 +1,20 @@
 {
-    "name": "typo3/typo3cr",
-    "type": "typo3-flow-package",
+    "name": "neos/content-repository",
+    "type": "neos-package",
     "description": "Content repository based on Flow, specifically made for Neos.",
     "license": "GPL-3.0+",
     "require": {
-        "typo3/flow": "*",
+        "neos/flow": "*",
         "neos/fluid-adaptor": "*",
         "gedmo/doctrine-extensions": "~2.3.0",
         "behat/transliterator": "~1.0"
     },
+    "replace": {
+        "typo3/typo3cr": "self.version"
+    },
     "autoload": {
-        "psr-0": {
-            "TYPO3\\TYPO3CR": "Classes"
+        "psr-4": {
+            "Neos\\ContentRepository\\": "Classes"
         }
     },
     "extra": {
