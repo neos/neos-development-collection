@@ -31,7 +31,7 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\Context;
-use TYPO3\TypoScript\Core\Cache\ContentCache;
+use Neos\Fusion\Core\Cache\ContentCache;
 
 /**
  * The Neos Package

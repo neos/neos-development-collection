@@ -16,7 +16,7 @@ use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Service\ContentElementEditableService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
+use Neos\Fusion\TypoScriptObjects\AbstractTypoScriptObject;
 
 /**
  * Adds meta data attributes to the processed Property to enable in place editing

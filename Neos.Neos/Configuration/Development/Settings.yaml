@@ -1,4 +1,5 @@
-TYPO3:
-  TypoScript:
+
+Neos:
+  Fusion:
     rendering:
-      exceptionHandler: 'TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler'
+      exceptionHandler: Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler

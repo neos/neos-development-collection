@@ -18,7 +18,7 @@ use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use TYPO3\TypoScript\TypoScriptObjects\AbstractArrayTypoScriptObject;
+use Neos\Fusion\TypoScriptObjects\AbstractArrayTypoScriptObject;
 
 /**
  * A TypoScript Plugin object.

@@ -17,7 +17,7 @@ use Neos\Neos\Controller\Module\AbstractModuleController;
 use Neos\Neos\EventLog\Domain\Model\Event;
 use Neos\Neos\EventLog\Domain\Model\EventsOnDate;
 use Neos\Neos\EventLog\Domain\Repository\EventRepository;
-use TYPO3\TypoScript\View\TypoScriptView;
+use Neos\Fusion\View\TypoScriptView;
 
 /**
  * Controller for the history module of Neos, displaying the timeline of changes.

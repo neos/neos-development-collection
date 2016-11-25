@@ -18,7 +18,7 @@ use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Service\AuthorizationService;
-use TYPO3\TypoScript\ViewHelpers\TypoScriptContextTrait;
+use Neos\Fusion\ViewHelpers\TypoScriptContextTrait;
 use Neos\Neos\Service\ContentElementEditableService;
 
 /**

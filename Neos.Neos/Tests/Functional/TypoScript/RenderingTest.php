@@ -324,7 +324,7 @@ class RenderingTest extends AbstractNodeTest
         $typoScriptRuntime = $this->createRuntimeWithFixtures($additionalTypoScriptFile);
         $typoScriptRuntime->setEnableContentCache(false);
         if ($debugMode) {
-            $typoScriptRuntime->injectSettings(array('debugMode' => true, 'rendering' => array('exceptionHandler' => \TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler::class)));
+            $typoScriptRuntime->injectSettings(array('debugMode' => true, 'rendering' => array('exceptionHandler' => \Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler::class)));
         }
         $contentContext = $this->node->getContext();
         if (!$contentContext instanceof ContentContext) {
@@ -346,7 +346,7 @@ class RenderingTest extends AbstractNodeTest
      * Create a TypoScript runtime with the test base TypoScript and an optional additional fixture
      *
      * @param string $additionalTypoScriptFile
-     * @return \TYPO3\TypoScript\Core\Runtime
+     * @return \Neos\Fusion\Core\Runtime
      */
     protected function createRuntimeWithFixtures($additionalTypoScriptFile = null)
     {

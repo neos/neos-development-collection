@@ -17,8 +17,8 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\Files;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
-use TYPO3\TypoScript\Core\Parser;
-use TYPO3\TypoScript\Core\Runtime;
+use Neos\Fusion\Core\Parser;
+use Neos\Fusion\Core\Runtime;
 
 /**
  * The TypoScript Service

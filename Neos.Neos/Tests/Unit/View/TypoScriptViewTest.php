@@ -20,7 +20,7 @@ use Neos\Neos\View\TypoScriptView;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use TYPO3\TypoScript\Core\Runtime;
+use Neos\Fusion\Core\Runtime;
 
 /**
  * Testcase for the TypoScript View

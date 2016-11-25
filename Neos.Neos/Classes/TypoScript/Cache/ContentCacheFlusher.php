@@ -18,7 +18,7 @@ use Neos\Media\Domain\Service\AssetService;
 use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
-use TYPO3\TypoScript\Core\Cache\ContentCache;
+use Neos\Fusion\Core\Cache\ContentCache;
 
 /**
  * This service flushes TypoScript content caches triggered by node changes.

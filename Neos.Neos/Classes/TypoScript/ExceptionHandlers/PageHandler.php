@@ -15,9 +15,9 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\FluidAdaptor\View\StandaloneView;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use TYPO3\TypoScript\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
+use Neos\Fusion\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
 use Neos\Neos\Service\ContentElementWrappingService;
-use TYPO3\TypoScript\Core\ExceptionHandlers\ContextDependentHandler;
+use Neos\Fusion\Core\ExceptionHandlers\ContextDependentHandler;
 
 /**
  * A special exception handler that is used on the outer path to catch all unhandled exceptions and uses other exception
