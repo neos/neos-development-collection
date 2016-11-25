@@ -10,7 +10,7 @@ use Neos\Neos\EventLog\Domain\Model\Event;
 use Neos\Neos\EventLog\Domain\Model\NodeEvent;
 use Neos\Neos\EventLog\Domain\Repository\EventRepository;
 use Neos\Neos\EventLog\Integrations\EntityIntegrationService;
-use Neos\Neos\EventLog\Integrations\TYPO3CRIntegrationService;
+use Neos\Neos\EventLog\Integrations\ContentRepositoryIntegrationService;
 
 /**
  * A trait with shared step definitions for common use by other contexts
@@ -147,11 +147,11 @@ trait HistoryDefinitionsTrait
     }
 
     /**
-     * @return TYPO3CRIntegrationService
+     * @return ContentRepositoryIntegrationService
      */
     protected function getTYPO3CRIntegrationService()
     {
-        return $this->getObjectManager()->get(TYPO3CRIntegrationService::class);
+        return $this->getObjectManager()->get(ContentRepositoryIntegrationService::class);
     }
 
     /**

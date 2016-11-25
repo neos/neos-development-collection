@@ -21,7 +21,7 @@ use Neos\Media\Domain\Service\AssetService;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\Neos\Domain\Service\SiteService;
-use Neos\Neos\EventLog\Integrations\TYPO3CRIntegrationService;
+use Neos\Neos\EventLog\Integrations\ContentRepositoryIntegrationService;
 use Neos\Neos\Routing\Cache\RouteCacheFlusher;
 use Neos\Neos\Service\PublishingService;
 use Neos\Neos\TypoScript\Cache\ContentCacheFlusher;
@@ -114,28 +114,28 @@ class Package extends BasePackage
         $dispatcher->connect(SiteImportService::class, 'siteImported', RouterCachingService::class, 'flushCaches');
 
         // Eventlog
-        $dispatcher->connect(Node::class, 'beforeNodeCreate', TYPO3CRIntegrationService::class, 'beforeNodeCreate');
-        $dispatcher->connect(Node::class, 'afterNodeCreate', TYPO3CRIntegrationService::class, 'afterNodeCreate');
+        $dispatcher->connect(Node::class, 'beforeNodeCreate', ContentRepositoryIntegrationService::class, 'beforeNodeCreate');
+        $dispatcher->connect(Node::class, 'afterNodeCreate', ContentRepositoryIntegrationService::class, 'afterNodeCreate');
 
-        $dispatcher->connect(Node::class, 'nodeUpdated', TYPO3CRIntegrationService::class, 'nodeUpdated');
-        $dispatcher->connect(Node::class, 'nodeRemoved', TYPO3CRIntegrationService::class, 'nodeRemoved');
+        $dispatcher->connect(Node::class, 'nodeUpdated', ContentRepositoryIntegrationService::class, 'nodeUpdated');
+        $dispatcher->connect(Node::class, 'nodeRemoved', ContentRepositoryIntegrationService::class, 'nodeRemoved');
 
-        $dispatcher->connect(Node::class, 'beforeNodePropertyChange', TYPO3CRIntegrationService::class, 'beforeNodePropertyChange');
-        $dispatcher->connect(Node::class, 'nodePropertyChanged', TYPO3CRIntegrationService::class, 'nodePropertyChanged');
+        $dispatcher->connect(Node::class, 'beforeNodePropertyChange', ContentRepositoryIntegrationService::class, 'beforeNodePropertyChange');
+        $dispatcher->connect(Node::class, 'nodePropertyChanged', ContentRepositoryIntegrationService::class, 'nodePropertyChanged');
 
-        $dispatcher->connect(Node::class, 'beforeNodeCopy', TYPO3CRIntegrationService::class, 'beforeNodeCopy');
-        $dispatcher->connect(Node::class, 'afterNodeCopy', TYPO3CRIntegrationService::class, 'afterNodeCopy');
+        $dispatcher->connect(Node::class, 'beforeNodeCopy', ContentRepositoryIntegrationService::class, 'beforeNodeCopy');
+        $dispatcher->connect(Node::class, 'afterNodeCopy', ContentRepositoryIntegrationService::class, 'afterNodeCopy');
 
-        $dispatcher->connect(Node::class, 'beforeNodeMove', TYPO3CRIntegrationService::class, 'beforeNodeMove');
-        $dispatcher->connect(Node::class, 'afterNodeMove', TYPO3CRIntegrationService::class, 'afterNodeMove');
+        $dispatcher->connect(Node::class, 'beforeNodeMove', ContentRepositoryIntegrationService::class, 'beforeNodeMove');
+        $dispatcher->connect(Node::class, 'afterNodeMove', ContentRepositoryIntegrationService::class, 'afterNodeMove');
 
-        $dispatcher->connect(Context::class, 'beforeAdoptNode', TYPO3CRIntegrationService::class, 'beforeAdoptNode');
-        $dispatcher->connect(Context::class, 'afterAdoptNode', TYPO3CRIntegrationService::class, 'afterAdoptNode');
+        $dispatcher->connect(Context::class, 'beforeAdoptNode', ContentRepositoryIntegrationService::class, 'beforeAdoptNode');
+        $dispatcher->connect(Context::class, 'afterAdoptNode', ContentRepositoryIntegrationService::class, 'afterAdoptNode');
 
-        $dispatcher->connect(Workspace::class, 'beforeNodePublishing', TYPO3CRIntegrationService::class, 'beforeNodePublishing');
-        $dispatcher->connect(Workspace::class, 'afterNodePublishing', TYPO3CRIntegrationService::class, 'afterNodePublishing');
+        $dispatcher->connect(Workspace::class, 'beforeNodePublishing', ContentRepositoryIntegrationService::class, 'beforeNodePublishing');
+        $dispatcher->connect(Workspace::class, 'afterNodePublishing', ContentRepositoryIntegrationService::class, 'afterNodePublishing');
 
-        $dispatcher->connect(PersistenceManager::class, 'allObjectsPersisted', TYPO3CRIntegrationService::class, 'updateEventsAfterPublish');
-        $dispatcher->connect(NodeDataRepository::class, 'repositoryObjectsPersisted', TYPO3CRIntegrationService::class, 'updateEventsAfterPublish');
+        $dispatcher->connect(PersistenceManager::class, 'allObjectsPersisted', ContentRepositoryIntegrationService::class, 'updateEventsAfterPublish');
+        $dispatcher->connect(NodeDataRepository::class, 'repositoryObjectsPersisted', ContentRepositoryIntegrationService::class, 'updateEventsAfterPublish');
     }
 }
