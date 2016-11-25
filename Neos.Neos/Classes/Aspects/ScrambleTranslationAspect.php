@@ -13,7 +13,7 @@ namespace Neos\Neos\Aspects;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
-use Neos\Flow\Utility\Unicode\Functions as UnicodeFunctions;
+use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 
 /**
  * @Flow\Scope("singleton")
