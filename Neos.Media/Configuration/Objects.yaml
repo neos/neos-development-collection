@@ -2,7 +2,7 @@ Neos\Media\Domain\Service\ImageService:
   properties:
     imagineService:
       object:
-        factoryObjectName: TYPO3\Imagine\ImagineFactory
+        factoryObjectName: Neos\Imagine\ImagineFactory
     imageSizeCache:
       object:
         factoryObjectName: Neos\Flow\Cache\CacheManager
