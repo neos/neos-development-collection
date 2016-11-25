@@ -18,11 +18,11 @@ class UtilityHelper implements ProtectedContextAwareInterface
 {
     /**
      * @return void
-     * @throws TypoScript\Exception
+     * @throws Fusion\Exception
      */
     public function throwException()
     {
-        throw new TypoScript\Exception('Just testing an exception', 1397118532);
+        throw new Fusion\Exception('Just testing an exception', 1397118532);
     }
 
     /**
