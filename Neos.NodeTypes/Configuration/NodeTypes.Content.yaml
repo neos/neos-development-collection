@@ -1,6 +1,6 @@
 'Neos.NodeTypes:Headline':
   superTypes:
-    'TYPO3.Neos:Content': TRUE
+    'Neos.Neos:Content': TRUE
     'Neos.NodeTypes:TitleMixin': TRUE
   ui:
     label: i18n
@@ -9,7 +9,7 @@
 
 'Neos.NodeTypes:Text':
   superTypes:
-    'TYPO3.Neos:Content': TRUE
+    'Neos.Neos:Content': TRUE
     'Neos.NodeTypes:TextMixin': TRUE
   ui:
     label: i18n
@@ -18,7 +18,7 @@
 
 'Neos.NodeTypes:Image':
   superTypes:
-    'TYPO3.Neos:Content': TRUE
+    'Neos.Neos:Content': TRUE
     'Neos.NodeTypes:ContentImageMixin': TRUE
   ui:
     label: i18n
@@ -27,7 +27,7 @@
 
 'Neos.NodeTypes:TextWithImage':
   superTypes:
-    'TYPO3.Neos:Content': TRUE
+    'Neos.Neos:Content': TRUE
     'Neos.NodeTypes:TextMixin': TRUE
     'Neos.NodeTypes:ContentImageMixin': TRUE
   ui:
@@ -37,7 +37,7 @@
 
 'Neos.NodeTypes:Html':
   superTypes:
-    'TYPO3.Neos:Content': TRUE
+    'Neos.Neos:Content': TRUE
   ui:
     label: i18n
     icon: 'icon-code'
@@ -57,13 +57,13 @@
         reloadIfChanged: TRUE
         inspector:
           group: 'html'
-          editor: 'TYPO3.Neos/Inspector/Editors/CodeEditor'
+          editor: 'Neos.Neos/Inspector/Editors/CodeEditor'
           editorOptions:
             buttonLabel: i18n
 
 'Neos.NodeTypes:Menu':
   superTypes:
-    'TYPO3.Neos:Content': TRUE
+    'Neos.Neos:Content': TRUE
   ui:
     label: i18n
     group: 'structure'
@@ -84,7 +84,7 @@
         label: i18n
         inspector:
           group: 'options'
-          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
+          editor: 'Neos.Neos/Inspector/Editors/SelectBoxEditor'
           editorOptions:
             values:
               '-4':
@@ -131,7 +131,7 @@
         label: i18n
         inspector:
           group: 'options'
-          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
+          editor: 'Neos.Neos/Inspector/Editors/SelectBoxEditor'
           editorOptions:
             values:
               '1':
@@ -158,7 +158,7 @@
 
 'Neos.NodeTypes:Column':
   superTypes:
-    'TYPO3.Neos:Content': TRUE
+    'Neos.Neos:Content': TRUE
   abstract: TRUE
   ui:
     group: 'structure'
@@ -178,7 +178,7 @@
         label: i18n
         inspector:
           group: 'column'
-          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
+          editor: 'Neos.Neos/Inspector/Editors/SelectBoxEditor'
 
 'Neos.NodeTypes:TwoColumn':
   superTypes:
@@ -188,9 +188,9 @@
     position: 200
   childNodes:
     column0:
-      type: 'TYPO3.Neos:ContentCollection'
+      type: 'Neos.Neos:ContentCollection'
     column1:
-      type: 'TYPO3.Neos:ContentCollection'
+      type: 'Neos.Neos:ContentCollection'
   properties:
     layout:
       defaultValue: '50-50'
@@ -218,11 +218,11 @@
     position: 300
   childNodes:
     column0:
-      type: 'TYPO3.Neos:ContentCollection'
+      type: 'Neos.Neos:ContentCollection'
     column1:
-      type: 'TYPO3.Neos:ContentCollection'
+      type: 'Neos.Neos:ContentCollection'
     column2:
-      type: 'TYPO3.Neos:ContentCollection'
+      type: 'Neos.Neos:ContentCollection'
   properties:
     layout:
       defaultValue: '33-33-33'
@@ -248,13 +248,13 @@
     position: 400
   childNodes:
     column0:
-      type: 'TYPO3.Neos:ContentCollection'
+      type: 'Neos.Neos:ContentCollection'
     column1:
-      type: 'TYPO3.Neos:ContentCollection'
+      type: 'Neos.Neos:ContentCollection'
     column2:
-      type: 'TYPO3.Neos:ContentCollection'
+      type: 'Neos.Neos:ContentCollection'
     column3:
-      type: 'TYPO3.Neos:ContentCollection'
+      type: 'Neos.Neos:ContentCollection'
   properties:
     layout:
       defaultValue: '25-25-25-25'
@@ -268,7 +268,7 @@
 
 'Neos.NodeTypes:Form':
   superTypes:
-    'TYPO3.Neos:Content': TRUE
+    'Neos.Neos:Content': TRUE
   ui:
     label: i18n
     icon: 'icon-envelope-alt'
@@ -287,14 +287,14 @@
         reloadIfChanged: TRUE
         inspector:
           group: form
-          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
+          editor: 'Neos.Neos/Inspector/Editors/SelectBoxEditor'
           editorOptions:
             placeholder: i18n
             dataSourceIdentifier: 'neos-nodetypes-form-definitions'
 
 'Neos.NodeTypes:AssetList':
   superTypes:
-    'TYPO3.Neos:Content': TRUE
+    'Neos.Neos:Content': TRUE
   ui:
     label: i18n
     icon: 'icon-files-o'
@@ -316,7 +316,7 @@
 
 'Neos.NodeTypes:ContentReferences':
   superTypes:
-    'TYPO3.Neos:Content': TRUE
+    'Neos.Neos:Content': TRUE
   ui:
     label: i18n
     icon: 'icon-copy'
@@ -334,7 +334,7 @@
         inspector:
           group: 'references'
           editorOptions:
-            nodeTypes: ['TYPO3.Neos:Content']
+            nodeTypes: ['Neos.Neos:Content']
         label: i18n
         reloadIfChanged: TRUE
 
