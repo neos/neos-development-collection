@@ -13,7 +13,7 @@ namespace Neos\ContentRepository\Tests\Functional\Domain;
 
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Flow\Utility\Algorithms;
-use TYPO3\Neos\Domain\Service\SiteImportService;
+use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Model\NodeDimension;
 use Neos\ContentRepository\Domain\Model\NodeTemplate;

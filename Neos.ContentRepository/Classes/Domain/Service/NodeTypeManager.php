@@ -167,7 +167,7 @@ class NodeTypeManager
     /**
      * Creates a new node type
      *
-     * @param string $nodeTypeName Unique name of the new node type. Example: "TYPO3.Neos:Page"
+     * @param string $nodeTypeName Unique name of the new node type. Example: "Neos.Neos:Page"
      * @return NodeType
      * @throws Exception
      */

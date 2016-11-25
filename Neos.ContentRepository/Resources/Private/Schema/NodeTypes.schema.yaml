@@ -63,12 +63,12 @@ additionalProperties:
           'ui':
             type: dictionary
             # we intentionally do not specify which properties are allowed here;
-            # as other packages (such as TYPO3.Neos) might do that instead.
+            # as other packages (such as Neos.Neos) might do that instead.
 
     'ui':
       type: dictionary
       # we intentionally do not specify which properties are allowed here (except the one expected in TYPO3CR);
-      # as other packages (such as TYPO3.Neos) might do that instead.
+      # as other packages (such as Neos.Neos) might do that instead.
       properties:
         'label': { type: string, description: "Human-readable label for this Node Type." }
 

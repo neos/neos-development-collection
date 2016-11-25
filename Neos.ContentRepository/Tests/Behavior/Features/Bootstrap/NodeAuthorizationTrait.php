@@ -161,7 +161,7 @@ trait NodeAuthorizationTrait
 
             try {
                 $nodeTypeManager = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class);
-                $this->currentNodes[0]->setNodeType($nodeTypeManager->getNodeType('TYPO3.Neos:Node'));
+                $this->currentNodes[0]->setNodeType($nodeTypeManager->getNodeType('Neos.Neos:Node'));
                 if ($not === 'not') {
                     Assert::fail('NodeType should not be settable on the current node!');
                 }

@@ -34,7 +34,7 @@ use Neos\ContentRepository\ViewHelpers\Widget\Controller\PaginateController;
  * </code>
  *
  * <code title="full configuration">
- * <typo3cr:widget.paginate parentNode="{parentNode}" as="paginatedNodes" nodeTypeFilter="TYPO3.Neos:Page" configuration="{itemsPerPage: 5, insertAbove: 1, insertBelow: 0, maximumNumberOfLinks: 10, maximumNumberOfNodes: 350}">
+ * <typo3cr:widget.paginate parentNode="{parentNode}" as="paginatedNodes" nodeTypeFilter="Neos.Neos:Page" configuration="{itemsPerPage: 5, insertAbove: 1, insertBelow: 0, maximumNumberOfLinks: 10, maximumNumberOfNodes: 350}">
  *   // use {paginatedNodes} inside a <f:for> loop.
  * </typo3cr:widget.paginate>
  * </code>
