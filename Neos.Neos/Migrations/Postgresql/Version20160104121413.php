@@ -3,7 +3,7 @@ namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
 use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
-use TYPO3\Neos\Utility\User as UserUtility;
+use Neos\Neos\Utility\User as UserUtility;
 
 /**
  * Set the Workspace "owner" field for all personal workspaces with special characters in the username

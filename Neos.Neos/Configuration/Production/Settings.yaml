@@ -2,7 +2,7 @@
 # Settings for the Production context                                    #
 #                                                                        #
 
-TYPO3:
+Neos:
   Neos:
     typoScript:
-      enableObjectTreeCache: TRUE
+      enableObjectTreeCache: true
