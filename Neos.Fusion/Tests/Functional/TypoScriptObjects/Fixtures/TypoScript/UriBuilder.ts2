@@ -1,4 +1,4 @@
-prototype(Neos.Fusion:UriBuilder).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\UriBuilderImplementation'
+prototype(Neos.Fusion:UriBuilder).@class = 'Neos\\Fusion\\TypoScriptObjects\\UriBuilderImplementation'
 
 uriBuilder.foo = Neos.Fusion:UriBuilder {
 	package = 'TYPO3.Flow'

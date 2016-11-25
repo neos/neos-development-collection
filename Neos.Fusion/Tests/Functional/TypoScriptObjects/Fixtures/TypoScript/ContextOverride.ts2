@@ -1,5 +1,5 @@
-prototype(Neos.Fusion:Array).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ArrayImplementation'
-prototype(Neos.Fusion:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+prototype(Neos.Fusion:Array).@class = 'Neos\\Fusion\\TypoScriptObjects\\ArrayImplementation'
+prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
 
 contextOverride.test = Neos.Fusion:Array {
 

@@ -1,6 +1,6 @@
-prototype(Neos.Fusion:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
-prototype(Neos.Fusion:Renderer).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RendererImplementation'
-prototype(Neos.Fusion:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\TypoScriptObjects\\ValueImplementation'
+prototype(Neos.Fusion:Renderer).@class = 'Neos\\Fusion\\TypoScriptObjects\\RendererImplementation'
+prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
 
 prototype(Neos.Fusion:Renderer.Test) < prototype(Neos.Fusion:Value) {
   value = 'result_of_renderer_prototyope'

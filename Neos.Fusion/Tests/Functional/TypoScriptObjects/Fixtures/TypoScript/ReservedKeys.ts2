@@ -1,4 +1,4 @@
-prototype(Neos.Fusion:RawArray).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RawArrayImplementation'
+prototype(Neos.Fusion:RawArray).@class = 'Neos\\Fusion\\TypoScriptObjects\\RawArrayImplementation'
 
 reservedKeys = Neos.Fusion:RawArray {
 	__custom = 1

@@ -1,7 +1,7 @@
-prototype(Neos.Fusion:RawArray).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RawArrayImplementation'
-prototype(Neos.Fusion:Attributes).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\AttributesImplementation'
+prototype(Neos.Fusion:RawArray).@class = 'Neos\\Fusion\\TypoScriptObjects\\RawArrayImplementation'
+prototype(Neos.Fusion:Attributes).@class = 'Neos\\Fusion\\TypoScriptObjects\\AttributesImplementation'
 prototype(Neos.Fusion:Tag) {
-	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TagImplementation'
+	@class = 'Neos\\Fusion\\TypoScriptObjects\\TagImplementation'
 	attributes = Attributes
 	omitClosingTag = FALSE
 	selfClosingTag = FALSE

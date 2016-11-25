@@ -1,9 +1,9 @@
-prototype(Neos.Fusion:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
-prototype(Neos.Fusion:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
-prototype(Neos.Fusion:RawArray).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RawArrayImplementation'
-prototype(Neos.Fusion:Attributes).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\AttributesImplementation'
+prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\TypoScriptObjects\\ValueImplementation'
+prototype(Neos.Fusion:RawArray).@class = 'Neos\\Fusion\\TypoScriptObjects\\RawArrayImplementation'
+prototype(Neos.Fusion:Attributes).@class = 'Neos\\Fusion\\TypoScriptObjects\\AttributesImplementation'
 prototype(Neos.Fusion:Tag) {
-	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TagImplementation'
+	@class = 'Neos\\Fusion\\TypoScriptObjects\\TagImplementation'
 	attributes = Attributes
 	omitClosingTag = FALSE
 	selfClosingTag = FALSE

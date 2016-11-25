@@ -25,7 +25,7 @@ prototype(Neos.Neos:ContentCollectionRenderer) < prototype(TYPO3.TypoScript:Coll
 		@if.onlyInBackend = ${nodeAvailable && node.context.inBackend}
 	}
 
-	@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\BubblingHandler'
+	@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\BubblingHandler'
 }
 
 prototype(Neos.Neos:ContentCollection) < prototype(TYPO3.TypoScript:Tag) {

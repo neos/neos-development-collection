@@ -1,5 +1,5 @@
-prototype(Neos.Fusion:RawCollection).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RawCollectionImplementation'
-prototype(Neos.Fusion:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+prototype(Neos.Fusion:RawCollection).@class = 'Neos\\Fusion\\TypoScriptObjects\\RawCollectionImplementation'
+prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
 
 rawCollection.basicLoop = Neos.Fusion:RawCollection {
 	collection = ${collection}

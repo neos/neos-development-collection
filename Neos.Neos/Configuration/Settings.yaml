@@ -107,7 +107,7 @@ TYPO3:
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/ViewHelpers/TypoScript.rst'
         affectedClasses:
           parentClassName: Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
-          classNamePattern: '/^TYPO3\\TypoScript\\ViewHelpers\\.*$/i'
+          classNamePattern: '/^Neos\\Fusion\\ViewHelpers\\.*$/i'
         parser:
           implementationClassName: TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser
           options:

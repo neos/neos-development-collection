@@ -1,6 +1,6 @@
-prototype(Neos.Fusion:Case).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\CaseImplementation'
-prototype(Neos.Fusion:Matcher).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\MatcherImplementation'
-prototype(Neos.Fusion:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+prototype(Neos.Fusion:Case).@class = 'Neos\\Fusion\\TypoScriptObjects\\CaseImplementation'
+prototype(Neos.Fusion:Matcher).@class = 'Neos\\Fusion\\TypoScriptObjects\\MatcherImplementation'
+prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
 
 case.numericMatching = Neos.Fusion:Case {
 	100.condition = ${true}
