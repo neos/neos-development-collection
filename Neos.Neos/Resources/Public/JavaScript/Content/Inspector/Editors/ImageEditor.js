@@ -842,13 +842,13 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 
 				newImageVariantData = {
 					adjustments: this.get('_adjustments'),
-					__type: 'TYPO3\\Media\\Domain\\Model\\ImageVariant',
+					__type: 'Neos\\Media\\Domain\\Model\\ImageVariant',
 					// we need to transform Image into an ImageVariant if we added adjustments.
 					originalAsset: currentObject.originalAsset ? currentObject.originalAsset.__identity : currentObject.__identity
 				};
 			}
 
-			if (newImageVariantData.__type === 'TYPO3\\Media\\Domain\\Model\\ImageVariant') {
+			if (newImageVariantData.__type === 'Neos\\Media\\Domain\\Model\\ImageVariant') {
 				delete newImageVariantData.__type;
 				this.set('value', {
 					_propertyChangePromiseClosure: function () {
@@ -919,18 +919,18 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 				originalHeight = this.get('_originalImageDimensions.height'),
 				cropProperties = this._convertCropOptionsFromPreviewImageCoordinates(this.get('_cropProperties.full'));
 
-			if ((finalWidth > 0 && finalHeight > 0) && (this._adjustments['TYPO3\\Media\\Domain\\Model\\Adjustment\\ResizeImageAdjustment'] || (finalWidth !== originalWidth || finalHeight !== originalHeight))) {
+			if ((finalWidth > 0 && finalHeight > 0) && (this._adjustments['Neos\\Media\\Domain\\Model\\Adjustment\\ResizeImageAdjustment'] || (finalWidth !== originalWidth || finalHeight !== originalHeight))) {
 				this._applyResizeAdjustment(finalWidth, finalHeight);
 			}
 
-			if (this._adjustments['TYPO3\\Media\\Domain\\Model\\Adjustment\\CropImageAdjustment'] || this._shouldApplyCrop(cropProperties, originalWidth, originalHeight)) {
+			if (this._adjustments['Neos\\Media\\Domain\\Model\\Adjustment\\CropImageAdjustment'] || this._shouldApplyCrop(cropProperties, originalWidth, originalHeight)) {
 				this._applyCropAdjustment(cropProperties);
 			}
 		},
 
 		_applyResizeAdjustment: function (finalWidth, finalHeight) {
 			// in order for change detection to work the order of these properties needs to be exactly like received from the server side (which is alphabetically ordered)
-			this._adjustments['TYPO3\\Media\\Domain\\Model\\Adjustment\\ResizeImageAdjustment'] = {
+			this._adjustments['Neos\\Media\\Domain\\Model\\Adjustment\\ResizeImageAdjustment'] = {
 				allowUpScaling: null,
 				height: finalHeight,
 				maximumHeight: null,
@@ -958,7 +958,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 
 		_applyCropAdjustment: function (cropProperties) {
 			// in order for change detection to work the order of these properties needs to be exactly like received from the server side (which is alphabetically ordered)
-			this._adjustments['TYPO3\\Media\\Domain\\Model\\Adjustment\\CropImageAdjustment'] = {
+			this._adjustments['Neos\\Media\\Domain\\Model\\Adjustment\\CropImageAdjustment'] = {
 				height: cropProperties.height,
 				position: 10,
 				width: cropProperties.width,
@@ -997,7 +997,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 			if (this.get('_object.adjustments')) {
 				adjustments = this.get('_object.adjustments');
 				$.each(adjustments, function (index, adjustment) {
-					if (index === 'TYPO3\\Media\\Domain\\Model\\Adjustment\\CropImageAdjustment') {
+					if (index === 'Neos\\Media\\Domain\\Model\\Adjustment\\CropImageAdjustment') {
 						var finalSizeCropProperties = {
 							height: Ember.get(adjustment, 'height'),
 							width: Ember.get(adjustment, 'width'),
@@ -1012,7 +1012,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 						that.set('_cropProperties.x', previewImageCropProperties.x);
 						that.set('_cropProperties.y', previewImageCropProperties.y);
 					}
-					if (index === 'TYPO3\\Media\\Domain\\Model\\Adjustment\\ResizeImageAdjustment') {
+					if (index === 'Neos\\Media\\Domain\\Model\\Adjustment\\ResizeImageAdjustment') {
 						that.set('_finalImageDimensions.width', Ember.get(adjustment, 'width'));
 						that.set('_finalImageDimensions.height', Ember.get(adjustment, 'height'));
 					}
@@ -1027,7 +1027,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 		 */
 		_updateFinalImageDimensions: function() {
 			var adjustments = this.get('_adjustments'),
-				resizeAdjustment = adjustments['TYPO3\\Media\\Domain\\Model\\Adjustment\\ResizeImageAdjustment'];
+				resizeAdjustment = adjustments['Neos\\Media\\Domain\\Model\\Adjustment\\ResizeImageAdjustment'];
 			if (resizeAdjustment) {
 				this.set('_finalImageDimensions.width', resizeAdjustment.width);
 				this.set('_finalImageDimensions.height', resizeAdjustment.height);
