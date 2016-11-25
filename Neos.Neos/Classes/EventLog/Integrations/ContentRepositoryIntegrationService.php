@@ -21,11 +21,11 @@ use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Service\Context;
 
 /**
- * Monitors TYPO3CR changes
+ * Monitors Neos.ContentRepository changes
  *
  * @Flow\Scope("singleton")
  */
-class TYPO3CRIntegrationService extends AbstractIntegrationService
+class ContentRepositoryIntegrationService extends AbstractIntegrationService
 {
     const NODE_ADDED = 'Node.Added';
     const NODE_UPDATED = 'Node.Updated';
