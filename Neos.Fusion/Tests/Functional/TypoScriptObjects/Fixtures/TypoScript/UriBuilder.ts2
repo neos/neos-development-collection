@@ -1,7 +1,7 @@
 prototype(Neos.Fusion:UriBuilder).@class = 'Neos\\Fusion\\TypoScriptObjects\\UriBuilderImplementation'
 
 uriBuilder.foo = Neos.Fusion:UriBuilder {
-	package = 'TYPO3.Flow'
+	package = 'Neos.Flow'
 	subpackage = 'Tests\\Functional\\Http\\Fixtures'
 	controller = 'Foo'
 	action = 'index'

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <nodes formatVersion="2.0">
 	<node identifier="e45e3b2c-3f14-2c14-6230-687fa4696504" nodeName="node53a18fb53bdf2">
-		<variant sortingIndex="300" workspace="live" nodeType="TYPO3.Neos.NodeTypes:Page" version="3" removed="" hidden="" hiddenInIndex="">
+		<variant sortingIndex="300" workspace="live" nodeType="Neos.NodeTypes:Page" version="3" removed="" hidden="" hiddenInIndex="">
 			<dimensions>
 				<language>en_US</language>
 			</dimensions>

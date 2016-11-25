@@ -22,7 +22,7 @@ class UriBuilderTest extends AbstractTypoScriptObjectTest
     public function buildRelativeUriToAction()
     {
         $this->registerRoute(
-            'TypoScript functional test',
+            'Fusion functional test',
             'neos/flow/test/http/foo',
             array(
                 '@package' => 'Neos.Flow',
