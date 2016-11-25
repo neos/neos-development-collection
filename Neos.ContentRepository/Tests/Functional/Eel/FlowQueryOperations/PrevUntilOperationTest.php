@@ -82,7 +82,6 @@ class PrevUntilOperationTest extends AbstractNodeTest
         $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
         $testNodeType = $nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeType');
 
-
         $rootNode = $this->node->getNode('/');
         $nodeA = $rootNode->createNode('a');
         $nodeA->createNode('a1', $testNodeType);
