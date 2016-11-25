@@ -1,5 +1,5 @@
-TYPO3:
 
+Neos:
   Neos:
     eventLog:
-      enabled: TRUE
+      enabled: true
