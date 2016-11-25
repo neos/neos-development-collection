@@ -1,15 +1,18 @@
 {
-    "name": "typo3/typoscript",
-    "type": "typo3-flow-package",
-    "description": "TypoScript is a hierarchical, prototype based processing language",
+    "name": "neos/fusion",
+    "type": "neos-package",
+    "description": "Fusion is a hierarchical, prototype based processing language",
     "license": "GPL-3.0+",
     "require": {
-        "typo3/flow": "*",
+        "neos/flow": "*",
         "neos/fluid-adaptor": "*"
     },
+    "replace": {
+        "typo3/typoscript": "self.version"
+    },
     "autoload": {
-        "psr-0": {
-            "TYPO3\\TypoScript": "Classes"
+        "psr-4": {
+            "Neos\\Fusion\\": "Classes"
         }
     },
     "extra": {
