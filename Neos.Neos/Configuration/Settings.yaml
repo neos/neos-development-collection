@@ -83,7 +83,7 @@ TYPO3:
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/ViewHelpers/Neos.rst'
         affectedClasses:
           parentClassName: Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
-          classNamePattern: '/^TYPO3\\Neos\\ViewHelpers\\.*$/i'
+          classNamePattern: '/^Neos\\Neos\\ViewHelpers\\.*$/i'
         parser:
           implementationClassName: TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser
           options:
@@ -152,7 +152,7 @@ TYPO3:
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/Signals/Neos.rst'
         affectedClasses:
           classesContainingMethodsAnnotatedWith: Neos\Flow\Annotations\Signal
-          classNamePattern: '/^TYPO3\\Neos\\.*$/i'
+          classNamePattern: '/^Neos\\Neos\\.*$/i'
           includeAbstractClasses: true
         parser:
           implementationClassName: TYPO3\DocTools\Domain\Service\SignalsParser
@@ -552,7 +552,7 @@ Neos:
                 showSetupLink: true
       debugger:
         ignoredClasses:
-          TYPO3\\Neos\\Domain\\Service\\ContentContextFactory: true
+          Neos\\Neos\\Domain\\Service\\ContentContextFactory: true
     package:
       packagesPathByType:
         neos-site: Sites

@@ -1,6 +1,6 @@
 # Menu TS Object - extends TYPO3.Neos:Menu and is rendering menus inserted as content elements
 prototype(Neos.NodeTypes:Menu) {
-	@class = 'TYPO3\\Neos\\TypoScript\\MenuImplementation'
+	@class = 'Neos\\Neos\\TypoScript\\MenuImplementation'
 
 	startingPoint = ${q(node).property('startingPoint') ? q(node).property('startingPoint') : documentNode}
 

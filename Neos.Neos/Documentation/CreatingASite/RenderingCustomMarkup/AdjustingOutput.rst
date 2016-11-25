@@ -175,7 +175,7 @@ of `Menu` using TypoScript. `Menu` is defined inside the core of Neos together w
 
 ::
 
-	prototype(Neos.Neos:Menu).@class = 'TYPO3\\Neos\\TypoScript\\MenuImplementation'
+	prototype(Neos.Neos:Menu).@class = 'Neos\\Neos\\TypoScript\\MenuImplementation'
 
 *Neos.Neos.NodeTypes/Resources/Private/TypoScript/Root.ts2*
 

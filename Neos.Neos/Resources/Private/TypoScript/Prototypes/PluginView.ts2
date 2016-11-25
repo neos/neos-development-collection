@@ -4,7 +4,7 @@
 #
 prototype(Neos.Neos:PluginView) >
 prototype(Neos.Neos:PluginView) < prototype(Neos.Neos:Content) {
-	@class = 'TYPO3\\Neos\\TypoScript\\PluginViewImplementation'
+	@class = 'Neos\\Neos\\TypoScript\\PluginViewImplementation'
 	@cache {
 		mode = 'uncached'
 		context {

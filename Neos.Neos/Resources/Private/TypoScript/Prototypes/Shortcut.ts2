@@ -11,5 +11,5 @@ prototype(Neos.Neos:Shortcut) < prototype(TYPO3.TypoScript:Template) {
 
 	node = ${node}
 
-	@exceptionHandler = 'TYPO3\\Neos\\TypoScript\\ExceptionHandlers\\NodeWrappingHandler'
+	@exceptionHandler = 'Neos\\Neos\\TypoScript\\ExceptionHandlers\\NodeWrappingHandler'
 }

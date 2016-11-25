@@ -13,7 +13,7 @@ neos:backend.authenticationProviderLabel
 
 Renders a label for the given authentication provider identifier
 
-:Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\AuthenticationProviderLabelViewHelper
+:Implementation: Neos\\Neos\\ViewHelpers\\Backend\\AuthenticationProviderLabelViewHelper
 
 
 
@@ -34,7 +34,7 @@ neos:backend.changeStats
 Displays a text-based "bar graph" giving an indication of the amount and type of
 changes done to something. Created for use in workspace management.
 
-:Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\ChangeStatsViewHelper
+:Implementation: Neos\\Neos\\ViewHelpers\\Backend\\ChangeStatsViewHelper
 
 
 
@@ -54,7 +54,7 @@ neos:backend.colorOfString
 
 Generates a color code for a given string
 
-:Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\ColorOfStringViewHelper
+:Implementation: Neos\\Neos\\ViewHelpers\\Backend\\ColorOfStringViewHelper
 
 
 
@@ -77,7 +77,7 @@ neos:backend.configurationCacheVersion
 ViewHelper for rendering the current version identifier for the
 configuration cache.
 
-:Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\ConfigurationCacheVersionViewHelper
+:Implementation: Neos\\Neos\\ViewHelpers\\Backend\\ConfigurationCacheVersionViewHelper
 
 
 
@@ -92,7 +92,7 @@ Render HTML markup for the full configuration tree in the Neos Administration ->
 
 For performance reasons, this is done inside a ViewHelper instead of Fluid itself.
 
-:Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\ConfigurationTreeViewHelper
+:Implementation: Neos\\Neos\\ViewHelpers\\Backend\\ConfigurationTreeViewHelper
 
 
 
@@ -113,7 +113,7 @@ neos:backend.container
 ViewHelper for the backend 'container'. Renders the required HTML to integrate
 the Neos backend into a website.
 
-:Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\ContainerViewHelper
+:Implementation: Neos\\Neos\\ViewHelpers\\Backend\\ContainerViewHelper
 
 
 
@@ -133,7 +133,7 @@ neos:backend.cssBuiltVersion
 
 Returns a shortened md5 of the built CSS file
 
-:Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\CssBuiltVersionViewHelper
+:Implementation: Neos\\Neos\\ViewHelpers\\Backend\\CssBuiltVersionViewHelper
 
 
 
@@ -146,7 +146,7 @@ neos:backend.documentBreadcrumbPath
 
 Render a bread crumb path by using the labels of documents leading to the given node path
 
-:Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\DocumentBreadcrumbPathViewHelper
+:Implementation: Neos\\Neos\\ViewHelpers\\Backend\\DocumentBreadcrumbPathViewHelper
 
 
 
@@ -166,7 +166,7 @@ neos:backend.interfaceLanguage
 
 ViewHelper for rendering the current backend users interface language.
 
-:Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\InterfaceLanguageViewHelper
+:Implementation: Neos\\Neos\\ViewHelpers\\Backend\\InterfaceLanguageViewHelper
 
 
 
@@ -179,7 +179,7 @@ neos:backend.javascriptBuiltVersion
 
 Returns a shortened md5 of the built JavaScript file
 
-:Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\JavascriptBuiltVersionViewHelper
+:Implementation: Neos\\Neos\\ViewHelpers\\Backend\\JavascriptBuiltVersionViewHelper
 
 
 
@@ -193,7 +193,7 @@ neos:backend.javascriptConfiguration
 ViewHelper for the backend JavaScript configuration. Renders the required JS snippet to configure
 the Neos backend.
 
-:Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\JavascriptConfigurationViewHelper
+:Implementation: Neos\\Neos\\ViewHelpers\\Backend\\JavascriptConfigurationViewHelper
 
 
 
@@ -206,7 +206,7 @@ neos:backend.shouldLoadMinifiedJavascript
 
 Returns TRUE if the minified Neos JavaScript sources should be loaded, FALSE otherwise.
 
-:Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\ShouldLoadMinifiedJavascriptViewHelper
+:Implementation: Neos\\Neos\\ViewHelpers\\Backend\\ShouldLoadMinifiedJavascriptViewHelper
 
 
 
@@ -221,7 +221,7 @@ Returns translated message using source message or key ID.
 uses the selected backend language
 * Also replaces all placeholders with formatted versions of provided values.
 
-:Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\TranslateViewHelper
+:Implementation: Neos\\Neos\\ViewHelpers\\Backend\\TranslateViewHelper
 
 
 
@@ -320,7 +320,7 @@ Render user initials for a given username
 
 This ViewHelper is *WORK IN PROGRESS* and *NOT STABLE YET*
 
-:Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\UserInitialsViewHelper
+:Implementation: Neos\\Neos\\ViewHelpers\\Backend\\UserInitialsViewHelper
 
 
 
@@ -341,7 +341,7 @@ neos:backend.xliffCacheVersion
 ViewHelper for rendering the current version identifier for the
 xliff cache.
 
-:Implementation: TYPO3\\Neos\\ViewHelpers\\Backend\\XliffCacheVersionViewHelper
+:Implementation: Neos\\Neos\\ViewHelpers\\Backend\\XliffCacheVersionViewHelper
 
 
 
@@ -363,7 +363,7 @@ For logged in users with access to the Backend this also adds required attribute
 Note: when passing a node you have to make sure a metadata wrapper is used around this that matches the given node
 (see contentElement.wrap - i.e. the WrapViewHelper).
 
-:Implementation: TYPO3\\Neos\\ViewHelpers\\ContentElement\\EditableViewHelper
+:Implementation: Neos\\Neos\\ViewHelpers\\ContentElement\\EditableViewHelper
 
 
 
@@ -416,7 +416,7 @@ By explicitly wrapping template parts with node meta data that is required for t
 inspector, this ViewHelper enables usage of the ``contentElement.editable`` ViewHelper outside of content element
 templates. This is useful if you want to make properties of a custom document node inline-editable.
 
-:Implementation: TYPO3\\Neos\\ViewHelpers\\ContentElement\\WrapViewHelper
+:Implementation: Neos\\Neos\\ViewHelpers\\ContentElement\\WrapViewHelper
 
 
 
@@ -436,7 +436,7 @@ neos:getType
 
 View helper to check if a given value is an array.
 
-:Implementation: TYPO3\\Neos\\ViewHelpers\\GetTypeViewHelper
+:Implementation: Neos\\Neos\\ViewHelpers\\GetTypeViewHelper
 
 
 
@@ -482,7 +482,7 @@ neos:includeJavaScript
 
 A View Helper to include JavaScript files inside Resources/Public/JavaScript of the package.
 
-:Implementation: TYPO3\\Neos\\ViewHelpers\\IncludeJavaScriptViewHelper
+:Implementation: Neos\\Neos\\ViewHelpers\\IncludeJavaScriptViewHelper
 
 
 
@@ -510,7 +510,7 @@ neos:link.module
 
 A view helper for creating links to modules.
 
-:Implementation: TYPO3\\Neos\\ViewHelpers\\Link\\ModuleViewHelper
+:Implementation: Neos\\Neos\\ViewHelpers\\Link\\ModuleViewHelper
 
 
 
@@ -611,7 +611,7 @@ Example: given that the current node is ``/sites/acmecom/products/``,
 ``~/about/us`` results in ``/sites/acmecom/about/us``,
 ``~`` results in ``/sites/acmecom``.
 
-:Implementation: TYPO3\\Neos\\ViewHelpers\\Link\\NodeViewHelper
+:Implementation: Neos\\Neos\\ViewHelpers\\Link\\NodeViewHelper
 
 
 
@@ -750,7 +750,7 @@ neos:node.closestDocument
 
 ViewHelper to find the closest document node to a given node
 
-:Implementation: TYPO3\\Neos\\ViewHelpers\\Node\\ClosestDocumentViewHelper
+:Implementation: Neos\\Neos\\ViewHelpers\\Node\\ClosestDocumentViewHelper
 
 
 
@@ -770,7 +770,7 @@ neos:rendering.inBackend
 
 ViewHelper to find out if Neos is rendering the backend.
 
-:Implementation: TYPO3\\Neos\\ViewHelpers\\Rendering\\InBackendViewHelper
+:Implementation: Neos\\Neos\\ViewHelpers\\Rendering\\InBackendViewHelper
 
 
 
@@ -812,7 +812,7 @@ neos:rendering.inEditMode
 
 ViewHelper to find out if Neos is rendering an edit mode.
 
-:Implementation: TYPO3\\Neos\\ViewHelpers\\Rendering\\InEditModeViewHelper
+:Implementation: Neos\\Neos\\ViewHelpers\\Rendering\\InEditModeViewHelper
 
 
 
@@ -873,7 +873,7 @@ neos:rendering.inPreviewMode
 
 ViewHelper to find out if Neos is rendering a preview mode.
 
-:Implementation: TYPO3\\Neos\\ViewHelpers\\Rendering\\InPreviewModeViewHelper
+:Implementation: Neos\\Neos\\ViewHelpers\\Rendering\\InPreviewModeViewHelper
 
 
 
@@ -934,7 +934,7 @@ neos:rendering.live
 
 ViewHelper to find out if Neos is rendering the live website.
 
-:Implementation: TYPO3\\Neos\\ViewHelpers\\Rendering\\LiveViewHelper
+:Implementation: Neos\\Neos\\ViewHelpers\\Rendering\\LiveViewHelper
 
 
 
@@ -980,7 +980,7 @@ This will just set up a standalone Fluid view and render the template found at t
 given path and filename. Any arguments passed will be assigned to that template,
 the rendering result is returned.
 
-:Implementation: TYPO3\\Neos\\ViewHelpers\\StandaloneViewViewHelper
+:Implementation: Neos\\Neos\\ViewHelpers\\StandaloneViewViewHelper
 
 
 
@@ -1018,7 +1018,7 @@ neos:uri.module
 
 A view helper for creating links to modules.
 
-:Implementation: TYPO3\\Neos\\ViewHelpers\\Uri\\ModuleViewHelper
+:Implementation: Neos\\Neos\\ViewHelpers\\Uri\\ModuleViewHelper
 
 
 
@@ -1089,7 +1089,7 @@ Example: given that the current node is ``/sites/acmecom/products/``,
 ``~/about/us`` results in ``/sites/acmecom/about/us``,
 ``~`` results in ``/sites/acmecom``.
 
-:Implementation: TYPO3\\Neos\\ViewHelpers\\Uri\\NodeViewHelper
+:Implementation: Neos\\Neos\\ViewHelpers\\Uri\\NodeViewHelper
 
 
 
