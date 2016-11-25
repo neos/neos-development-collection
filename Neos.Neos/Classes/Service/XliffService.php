@@ -21,7 +21,7 @@ use Neos\Utility\Arrays;
 use Neos\Utility\Files;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Service as LocalizationService;
-use Neos\Flow\Utility\Unicode\Functions as UnicodeFunctions;
+use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 
 /**
  * The XLIFF service provides methods to find XLIFF files and parse them to json
