@@ -445,7 +445,7 @@ parents
 context elements and returns the parent nodes or only those matching
 the filter expression specified as optional argument.
 
-:Implementation: TYPO3\\Neos\\Eel\\FlowQueryOperations\\ParentsOperation
+:Implementation: Neos\\Neos\\Eel\\FlowQueryOperations\\ParentsOperation
 :Priority: 100
 :Final: No
 :Returns: void
@@ -482,7 +482,7 @@ context elements and returns the parent nodes until the matching parent is found
 If an optional filter expression is provided as a second argument,
 it only returns the nodes matching the given expression.
 
-:Implementation: TYPO3\\Neos\\Eel\\FlowQueryOperations\\ParentsUntilOperation
+:Implementation: Neos\\Neos\\Eel\\FlowQueryOperations\\ParentsUntilOperation
 :Priority: 100
 :Final: No
 :Returns: void
@@ -654,7 +654,7 @@ Sorts nodes by specified node properties.
 First argument is the node property to sort by. Works with internal arguments (_xyz) as well.
 Second argument is the sort direction (ASC or DESC).
 
-:Implementation: TYPO3\\Neos\\Eel\\FlowQueryOperations\\SortOperation
+:Implementation: Neos\\Neos\\Eel\\FlowQueryOperations\\SortOperation
 :Priority: 1
 :Final: No
 :Returns: mixed

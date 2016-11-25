@@ -79,7 +79,7 @@ prototype(Neos.Neos:ContentCollection) < prototype(TYPO3.TypoScript:Tag) {
 		maximumLifetime = ${q(node).context({'invisibleContentShown': true}).children().cacheLifetime()}
 	}
 
-	@exceptionHandler = 'TYPO3\\Neos\\TypoScript\\ExceptionHandlers\\NodeWrappingHandler'
+	@exceptionHandler = 'Neos\\Neos\\TypoScript\\ExceptionHandlers\\NodeWrappingHandler'
 }
 
 prototype(Neos.Neos:ContentCollection) {

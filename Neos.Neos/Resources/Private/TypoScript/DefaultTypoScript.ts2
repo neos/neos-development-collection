@@ -80,7 +80,7 @@ root {
 	}
 
 	# Catch all unhandled exceptions at the root
-	@exceptionHandler = 'TYPO3\\Neos\\TypoScript\\ExceptionHandlers\\PageHandler'
+	@exceptionHandler = 'Neos\\Neos\\TypoScript\\ExceptionHandlers\\PageHandler'
 }
 
 # Extension of the GlobalCacheIdentifiers prototype
