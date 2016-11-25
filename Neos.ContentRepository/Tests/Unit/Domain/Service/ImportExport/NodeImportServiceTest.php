@@ -56,7 +56,7 @@ class NodeImportServiceTest extends UnitTestCase
 
         $expectedNodeData = array(
             'identifier' => '995c9174-ddd6-4d5c-cfc0-1ffc82184677',
-            'nodeType' => 'TYPO3.Neos.NodeTypes:Page',
+            'nodeType' => 'Neos.NodeTypes:Page',
             'workspace' => 'live',
             'sortingIndex' => 100,
             'version' => 14,
@@ -122,7 +122,7 @@ class NodeImportServiceTest extends UnitTestCase
         $this->inject($nodeImportService, 'securityContext', $this->mockSecurityContext);
 
         $expectedNodeData = array(
-            'nodeType' => 'TYPO3.Neos.NodeTypes:Page',
+            'nodeType' => 'Neos.NodeTypes:Page',
             'workspace' => 'live',
             'sortingIndex' => 100,
             'version' => 14,
@@ -177,7 +177,7 @@ class NodeImportServiceTest extends UnitTestCase
         $expectedNodeDatas = array(
             array(
                 'identifier' => '995c9174-ddd6-4d5c-cfc0-1ffc82184677',
-                'nodeType' => 'TYPO3.Neos.NodeTypes:Page',
+                'nodeType' => 'Neos.NodeTypes:Page',
                 'workspace' => 'live',
                 'sortingIndex' => '100',
                 'version' => '14',
@@ -252,7 +252,7 @@ class NodeImportServiceTest extends UnitTestCase
             ),
             array(
                 'identifier' => 'e45e3b2c-3f14-2c14-6230-687fa4696504',
-                'nodeType' => 'TYPO3.Neos.NodeTypes:AssetList',
+                'nodeType' => 'Neos.NodeTypes:AssetList',
                 'workspace' => 'live',
                 'sortingIndex' => '300',
                 'version' => '3',
@@ -345,7 +345,7 @@ class NodeImportServiceTest extends UnitTestCase
         $expectedNodeDatas = array(
             array(
                 'identifier' => 'e45e3b2c-3f14-2c14-6230-687fa4696504',
-                'nodeType' => 'TYPO3.Neos.NodeTypes:Page',
+                'nodeType' => 'Neos.NodeTypes:Page',
                 'workspace' => 'live',
                 'sortingIndex' => '300',
                 'version' => '3',

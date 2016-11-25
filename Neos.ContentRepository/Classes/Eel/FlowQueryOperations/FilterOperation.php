@@ -25,7 +25,7 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
  * The implementation changes the behavior of the `instanceof` operator to
  * work on node types instead of PHP object types, so that::
  *
- * 	[instanceof TYPO3.Neos.NodeTypes:Page]
+ * 	[instanceof Neos.NodeTypes:Page]
  *
  * will in fact use `isOfType()` on the `NodeType` of context elements to
  * filter. This filter allow also to filter the current context by a given
