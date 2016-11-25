@@ -1,0 +1,36 @@
+# Neos.Neos:Menu provides basic menu rendering
+#
+prototype(Neos.Neos:Menu) < prototype(TYPO3.TypoScript:Template) {
+	@class = 'TYPO3\\Neos\\TypoScript\\MenuImplementation'
+	templatePath = 'resource://Neos.Neos/Private/Templates/TypoScriptObjects/Menu.html'
+	node = ${node}
+	items = ${this.items}
+
+	entryLevel = ${this.startingPoint ? 0 : 1}
+	maximumLevels = 2
+
+	filter = 'Neos.Neos:Document'
+	attributes = TYPO3.TypoScript:Attributes
+
+	active.attributes = TYPO3.TypoScript:Attributes {
+		class = 'active'
+	}
+	current.attributes = TYPO3.TypoScript:Attributes {
+		class = 'current'
+	}
+	normal.attributes = TYPO3.TypoScript:Attributes {
+		class = 'normal'
+	}
+
+	@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\ContextDependentHandler'
+
+	@cache {
+		mode = 'cached'
+		entryIdentifier {
+			documentNode = ${documentNode}
+		}
+		entryTags {
+			1 = 'NodeType_Neos.Neos:Document'
+		}
+	}
+}

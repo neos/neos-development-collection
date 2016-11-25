@@ -1,6 +1,0 @@
-# ConvertNodeUris implementation
-#
-# replaces all occurrences of "node://<UUID>" by proper URIs.
-#
-# Deprecated since 1.1, use TYPO3.Neos:ConvertUris instead
-prototype(TYPO3.Neos:ConvertNodeUris) < prototype(TYPO3.Neos:ConvertUris)

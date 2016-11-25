@@ -1,0 +1,28 @@
+{namespace neos=Neos\Neos\ViewHelpers}
+<f:layout name="Default" />
+
+<f:section name="head">
+	<title>TYPO3 Neos Error</title>
+	<link rel="stylesheet" href="{f:uri.resource(path: 'Styles/Error.css', package: 'Neos.Neos')}" />
+</f:section>
+
+<f:section name="body">
+	<body class="neos">
+		<div class="neos-error-screen">
+			<div class="neos-message-header">
+				<div class="neos-message-icon">
+					<i class="icon-warning-sign"></i>
+				</div>
+				<h1>{neos:backend.translate(id: 'error.exception.{renderingOptions.renderingGroup}.title', package: 'Neos.Neos')}</h1>
+			</div>
+			<p>{neos:backend.translate(id: 'error.exception.{renderingOptions.renderingGroup}.description', package: 'Neos.Neos') -> f:format.nl2br()}</p>
+			<f:if condition="{renderingOptions.renderTechnicalDetails}">
+				<p class="technical-details">#{exception.code}: {exception.message}</p>
+			</f:if>
+			<f:if condition="{showSetupLink}">
+				<p><strong>{neos:backend.translate(id: 'error.exception.{renderingOptions.renderingGroup}.setupMessage', package: 'Neos.Neos')}</strong></p>
+				<p><a href="/setup" class="neos-button neos-button-primary">{neos:backend.translate(id: 'error.exception.goToSetup', package: 'Neos.Neos')}</a></p>
+			</f:if>
+		</div>
+	</body>
+</f:section>

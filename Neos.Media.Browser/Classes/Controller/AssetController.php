@@ -13,32 +13,32 @@ namespace Neos\Media\Browser\Controller;
 
 use Doctrine\Common\Persistence\Proxy as DoctrineProxy;
 use Doctrine\ORM\EntityNotFoundException;
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Error\Message;
-use TYPO3\Flow\I18n\Translator;
-use TYPO3\Flow\Mvc\Controller\ActionController;
-use TYPO3\Flow\Package\PackageManagerInterface;
-use TYPO3\Flow\Mvc\View\JsonView;
-use TYPO3\Flow\Mvc\View\ViewInterface;
-use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
-use TYPO3\Flow\ResourceManagement\PersistentResource;
-use TYPO3\Flow\Utility\Files;
+use Neos\Flow\Annotations as Flow;
+use Neos\Error\Messages\Message;
+use Neos\Flow\I18n\Translator;
+use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Mvc\View\JsonView;
+use Neos\Flow\Mvc\View\ViewInterface;
+use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
+use Neos\Flow\ResourceManagement\PersistentResource;
+use Neos\Utility\Files;
 use Neos\FluidAdaptor\View\TemplateView;
-use TYPO3\Media\Domain\Repository\AssetRepository;
-use TYPO3\Media\Domain\Model\AssetInterface;
-use TYPO3\Media\Domain\Repository\AudioRepository;
-use TYPO3\Media\Domain\Repository\DocumentRepository;
-use TYPO3\Media\Domain\Repository\ImageRepository;
-use TYPO3\Media\Domain\Repository\TagRepository;
-use TYPO3\Media\Domain\Repository\VideoRepository;
-use TYPO3\Media\Domain\Model\Asset;
-use TYPO3\Media\Domain\Model\AssetCollection;
-use TYPO3\Media\Domain\Model\Tag;
-use TYPO3\Media\Domain\Repository\AssetCollectionRepository;
-use TYPO3\Media\Domain\Session\BrowserState;
-use TYPO3\Media\Domain\Service\AssetService;
-use TYPO3\Media\Exception\AssetServiceException;
-use TYPO3\Media\TypeConverter\AssetInterfaceConverter;
+use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Media\Domain\Model\AssetInterface;
+use Neos\Media\Domain\Repository\AudioRepository;
+use Neos\Media\Domain\Repository\DocumentRepository;
+use Neos\Media\Domain\Repository\ImageRepository;
+use Neos\Media\Domain\Repository\TagRepository;
+use Neos\Media\Domain\Repository\VideoRepository;
+use Neos\Media\Domain\Model\Asset;
+use Neos\Media\Domain\Model\AssetCollection;
+use Neos\Media\Domain\Model\Tag;
+use Neos\Media\Domain\Repository\AssetCollectionRepository;
+use Neos\Media\Domain\Session\BrowserState;
+use Neos\Media\Domain\Service\AssetService;
+use Neos\Media\Exception\AssetServiceException;
+use Neos\Media\TypeConverter\AssetInterfaceConverter;
 
 /**
  * Controller for asset handling
@@ -608,10 +608,10 @@ class AssetController extends ActionController
     public function addFlashMessage($messageBody, $messageTitle = '', $severity = Message::SEVERITY_OK, array $messageArguments = array(), $messageCode = null)
     {
         if (is_string($messageBody)) {
-            $messageBody = $this->translator->translateById($messageBody, $messageArguments, null, null, 'Main', 'TYPO3.Media') ?: $messageBody;
+            $messageBody = $this->translator->translateById($messageBody, $messageArguments, null, null, 'Main', 'Neos.Media') ?: $messageBody;
         }
 
-        $messageTitle = $this->translator->translateById($messageTitle, $messageArguments, null, null, 'Main', 'TYPO3.Media');
+        $messageTitle = $this->translator->translateById($messageTitle, $messageArguments, null, null, 'Main', 'Neos.Media');
         parent::addFlashMessage($messageBody, $messageTitle, $severity, $messageArguments, $messageCode);
     }
 }

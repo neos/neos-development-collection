@@ -1,0 +1,42 @@
+# ImageUri object works exactly the same way as the uri.image ViewHelper in the TYPO3.Media package
+prototype(Neos.Neos:ImageUri) {
+	@class = 'TYPO3\\Neos\\TypoScript\\ImageUriImplementation'
+	maximumWidth = 2560
+	width = NULL
+	maximumHeight = 2560
+	height = NULL
+	allowCropping = FALSE
+	allowUpScaling = FALSE
+	@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\AbsorbingHandler'
+}
+
+# ImageTag object works exactly the same way as image ViewHelper in the TYPO3.Media package
+prototype(Neos.Neos:ImageTag) < prototype(TYPO3.TypoScript:Tag) {
+	asset = 'pass-the-media-asset'
+	maximumWidth = 2560
+	width = NULL
+	maximumHeight = 2560
+	height = NULL
+	allowCropping = FALSE
+	allowUpScaling = FALSE
+	@context.asset = ${this.asset}
+	@context.width = ${this.width}
+	@context.maximumWidth = ${this.maximumWidth}
+	@context.height = ${this.height}
+	@context.maximumHeight = ${this.maximumHeight}
+	@context.allowCropping = ${this.allowCropping}
+	@context.allowUpScaling = ${this.allowUpScaling}
+
+	tagName = 'img'
+	attributes {
+		src = Neos.Neos:ImageUri {
+			asset = ${asset}
+			width = ${width}
+			maximumWidth = ${maximumWidth}
+			height = ${height}
+			maximumHeight = ${maximumHeight}
+			allowCropping = ${allowCropping}
+			allowUpScaling = ${allowUpScaling}
+		}
+	}
+}

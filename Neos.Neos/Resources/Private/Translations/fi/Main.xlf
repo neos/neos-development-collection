@@ -1,0 +1,669 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="fi">
+    <body>
+      <!-- general translations like button -->
+      <trans-unit id="autoPublish" xml:space="preserve" approved="yes">
+				<source>Auto-Publish</source>
+			<target xml:lang="fi">Julkaise automaattisesti</target></trans-unit>
+      <trans-unit id="autoPublishTo" xml:space="preserve" approved="yes">
+				<source>Auto-Publish to {0}</source>
+			<target xml:lang="fi">Julkaise automaattisesti kohteeseen {0}</target><alt-trans><target xml:lang="fi">Julkaise automaatisesti kohteeseen {0}</target></alt-trans></trans-unit>
+      <trans-unit id="reviewChanges" xml:space="preserve" approved="yes">
+				<source>Review changes</source>
+			<target xml:lang="fi">Tarkista muutokset</target></trans-unit>
+      <trans-unit id="apply" xml:space="preserve" approved="yes">
+				<source>Apply</source>
+			<target xml:lang="fi">Käytä</target></trans-unit>
+      <trans-unit id="applyChanges" xml:space="preserve" approved="yes">
+				<source>Apply changes</source>
+			<target xml:lang="fi">Tallenna muutokset</target></trans-unit>
+      <trans-unit id="cancel" xml:space="preserve" approved="yes">
+				<source>Cancel</source>
+			<target xml:lang="fi">Peruuta</target></trans-unit>
+      <trans-unit id="back" xml:space="preserve" approved="yes">
+				<source>Back</source>
+			<target xml:lang="fi">Takaisin</target></trans-unit>
+      <trans-unit id="choose" xml:space="preserve" approved="yes">
+				<source>Choose</source>
+			<target xml:lang="fi">Valitse</target></trans-unit>
+      <trans-unit id="typeToSearch" xml:space="preserve" approved="yes">
+				<source>Type to search</source>
+			<target xml:lang="fi">Kirjoita hakeaksesi</target></trans-unit>
+      <trans-unit id="content" xml:space="preserve" approved="yes">
+				<source>Content</source>
+			<target xml:lang="fi">Sisältö</target></trans-unit>
+      <trans-unit id="node" xml:space="preserve" approved="yes">
+				<source>Node</source>
+			<target xml:lang="fi">Solmu</target></trans-unit>
+      <trans-unit id="contentView" xml:space="preserve" approved="yes">
+				<source>Content View</source>
+			<target xml:lang="fi">Sisältönäkymä</target></trans-unit>
+      <trans-unit id="createAfter" xml:space="preserve" approved="yes">
+				<source>Create after</source>
+			<target xml:lang="fi">Luo jälkeen</target></trans-unit>
+      <trans-unit id="createNew" xml:space="preserve" approved="yes">
+				<source>Create new</source>
+			<target xml:lang="fi">Luo uusi</target></trans-unit>
+      <trans-unit id="close" xml:space="preserve" approved="yes">
+				<source>Close</source>
+			<target xml:lang="fi">Sulje</target></trans-unit>
+      <trans-unit id="copy" xml:space="preserve" approved="yes">
+				<source>Copy</source>
+			<target xml:lang="fi">Kopioi</target></trans-unit>
+      <trans-unit id="cut" xml:space="preserve" approved="yes">
+				<source>Cut</source>
+			<target xml:lang="fi">Leikkaa</target></trans-unit>
+      <trans-unit id="delete" xml:space="preserve" approved="yes">
+				<source>Delete</source>
+			<target xml:lang="fi">Poista</target></trans-unit>
+      <trans-unit id="deleteElement" xml:space="preserve" approved="yes">
+				<source>Yes, delete the element</source>
+			<target xml:lang="fi">Kyllä, poista elementti</target></trans-unit>
+      <trans-unit id="deleteElementTitle" xml:space="preserve" approved="yes">
+				<source>Delete the element</source>
+			<target xml:lang="fi">Poista elementti</target></trans-unit>
+      <trans-unit id="discard" xml:space="preserve" approved="yes">
+				<source>Discard</source>
+			<target xml:lang="fi">Hylkää</target></trans-unit>
+      <trans-unit id="discardChanges" xml:space="preserve" approved="yes">
+				<source>Discard changes</source>
+			<target xml:lang="fi">Hylkää muutokset</target></trans-unit>
+      <trans-unit id="editTitle" xml:space="preserve" approved="yes">
+				<source>Edit title</source>
+			<target xml:lang="fi">Muokaa otsikkoa</target></trans-unit>
+      <trans-unit id="editPreview" xml:space="preserve" approved="yes">
+				<source>Edit / Preview</source>
+			<target xml:lang="fi">Muokkaa / Esikatsele</target></trans-unit>
+      <trans-unit id="edit" xml:space="preserve" approved="yes">
+				<source>Edit</source>
+			<target xml:lang="fi">Muokkaa</target></trans-unit>
+      <trans-unit id="hideUnhide" xml:space="preserve" approved="yes">
+				<source>Hide / Unhide</source>
+			<target xml:lang="fi">Piilota / Näytä</target></trans-unit>
+      <trans-unit id="hide" xml:space="preserve" approved="yes">
+				<source>Hide</source>
+			<target xml:lang="fi">Piilota</target></trans-unit>
+      <trans-unit id="unhide" xml:space="preserve" approved="yes">
+				<source>Unhide</source>
+			<target xml:lang="fi">Näytä</target></trans-unit>
+      <trans-unit id="into" xml:space="preserve" approved="yes">
+				<source>into</source>
+			<target xml:lang="fi">osaksi</target></trans-unit>
+      <trans-unit id="before" xml:space="preserve" approved="yes">
+				<source>before</source>
+			<target xml:lang="fi">ennen</target></trans-unit>
+      <trans-unit id="after" xml:space="preserve" approved="yes">
+				<source>after</source>
+			<target xml:lang="fi">jälkeen</target></trans-unit>
+      <trans-unit id="loading" xml:space="preserve" approved="yes">
+				<source>Loading</source>
+			<target xml:lang="fi">Ladataan</target></trans-unit>
+      <trans-unit id="newAfter" xml:space="preserve" approved="yes">
+				<source>New After</source>
+			<target xml:lang="fi">Uusi jälkeen</target></trans-unit>
+      <trans-unit id="newBefore" xml:space="preserve" approved="yes">
+				<source>New Before</source>
+			<target xml:lang="fi">Uusi ennen</target></trans-unit>
+      <trans-unit id="newInto" xml:space="preserve" approved="yes">
+				<source>New Into</source>
+			<target xml:lang="fi">Uusi</target></trans-unit>
+      <trans-unit id="navigate" xml:space="preserve" approved="yes">
+				<source>Navigate</source>
+			<target xml:lang="fi">Siirry</target></trans-unit>
+      <trans-unit id="okay" xml:space="preserve" approved="yes">
+				<source>OK</source>
+			<target xml:lang="fi">OK</target></trans-unit>
+      <trans-unit id="page" xml:space="preserve" approved="yes">
+				<source>Page</source>
+			<target xml:lang="fi">Sivu</target></trans-unit>
+      <trans-unit id="paste" xml:space="preserve" approved="yes">
+				<source>Paste</source>
+			<target xml:lang="fi">Liitä</target></trans-unit>
+      <trans-unit id="pasteAfter" xml:space="preserve" approved="yes">
+				<source>Paste After</source>
+			<target xml:lang="fi">Liitä jälkeen</target></trans-unit>
+      <trans-unit id="pasteBefore" xml:space="preserve" approved="yes">
+				<source>Paste Before</source>
+			<target xml:lang="fi">Liitä ennen</target></trans-unit>
+      <trans-unit id="pasteInto" xml:space="preserve" approved="yes">
+				<source>Paste Into</source>
+			<target xml:lang="fi">Liitä</target></trans-unit>
+      <trans-unit id="password" xml:space="preserve" approved="yes">
+				<source>Password</source>
+			<target xml:lang="fi">Salasana</target></trans-unit>
+      <trans-unit id="preview" xml:space="preserve" approved="yes">
+				<source>Preview</source>
+			<target xml:lang="fi">Esikatsele</target></trans-unit>
+      <trans-unit id="publish" xml:space="preserve" approved="yes">
+				<source>Publish</source>
+			<target xml:lang="fi">Julkaise</target></trans-unit>
+      <trans-unit id="publishTo" xml:space="preserve" approved="yes">
+				<source>Publish to {0}</source>
+			<target xml:lang="fi">Julkaise kohteeseen {0}</target></trans-unit>
+      <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve" approved="yes">
+				<source>Publish all changes for current page</source>
+			<target xml:lang="fi">Julkaise nykyisen sivun kaikki muutokset</target><alt-trans><target xml:lang="fi">Julkaista nykyisen sivun kaikki muutokset</target></alt-trans></trans-unit>
+      <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve" approved="yes">
+				<source>Can't publish because the target workspace is read-only</source>
+			<target xml:lang="fi">Julkaisu ei onnistut koska kohdetyötila on vain luku-tilassa</target><alt-trans><target xml:lang="fi">Julkaisu ei onnistu koska kohdetyötila on "vain luku"-tilassa</target></alt-trans></trans-unit>
+      <trans-unit id="selectTargetWorkspace" xml:space="preserve" approved="yes">
+				<source>Select target workspace</source>
+			<target xml:lang="fi">Valitse kohdetyötila</target></trans-unit>
+      <trans-unit id="publishing" xml:space="preserve" approved="yes">
+				<source>Publishing</source>
+			<target xml:lang="fi">Julkaisu</target></trans-unit>
+      <trans-unit id="published" xml:space="preserve" approved="yes">
+				<source>Published</source>
+			<target xml:lang="fi">Julkaistu</target></trans-unit>
+      <trans-unit id="togglePublishMenu" xml:space="preserve" approved="yes">
+				<source>Toggle publish menu</source>
+			<target xml:lang="fi">Julkaisuvalikko</target></trans-unit>
+      <trans-unit id="targetWorkspace" xml:space="preserve" approved="yes">
+				<source>Target workspace</source>
+			<target xml:lang="fi">Kohdetyötila</target></trans-unit>
+      <trans-unit id="currentWorkspace" xml:space="preserve" approved="yes">
+				<source>Current workspace</source>
+			<target xml:lang="fi">Nykyinen työtila</target></trans-unit>
+      <trans-unit id="remove" xml:space="preserve" approved="yes">
+				<source>Remove</source>
+			<target xml:lang="fi">Poista</target></trans-unit>
+      <trans-unit id="refresh" xml:space="preserve" approved="yes">
+				<source>Refresh</source>
+			<target xml:lang="fi">Päivitä</target></trans-unit>
+      <trans-unit id="save" xml:space="preserve" approved="yes">
+				<source>Save</source>
+			<target xml:lang="fi">Tallenna</target></trans-unit>
+      <trans-unit id="saving" xml:space="preserve" approved="yes">
+				<source>Saving</source>
+			<target xml:lang="fi">Tallentaa...</target></trans-unit>
+      <trans-unit id="saved" xml:space="preserve" approved="yes">
+				<source>Saved</source>
+			<target xml:lang="fi">Tallennettu</target></trans-unit>
+      <trans-unit id="search" xml:space="preserve" approved="yes">
+				<source>Search</source>
+			<target xml:lang="fi">Etsi</target></trans-unit>
+      <trans-unit id="toggleInspector" xml:space="preserve" approved="yes">
+				<source>Toggle inspector</source>
+			<target xml:lang="fi">Näytä/piilota tarkastelu</target></trans-unit>
+      <trans-unit id="username" xml:space="preserve" approved="yes">
+				<source>Username</source>
+			<target xml:lang="fi">Käyttäjätunnus</target></trans-unit>
+      <trans-unit id="you" xml:space="preserve" approved="yes">
+				<source>You</source>
+			<target xml:lang="fi">Sinä</target></trans-unit>
+      <trans-unit id="noTitle" xml:space="preserve" approved="yes">
+				<source>[no title]</source>
+			<target xml:lang="fi">[ei otsikkoa]</target></trans-unit>
+      <trans-unit id="labelCaption" xml:space="preserve" approved="yes">
+				<source>Label</source>
+			<target xml:lang="fi">Nimike</target></trans-unit>
+      <trans-unit id="nodeTypeCaption" xml:space="preserve" approved="yes">
+				<source>Content Type</source>
+			<target xml:lang="fi">Sisältötyyppi</target><alt-trans><target xml:lang="fi">Solmutyyppi</target></alt-trans></trans-unit>
+      <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
+				<source>Path</source>
+			<target xml:lang="fi">Polku</target></trans-unit>
+      <trans-unit id="relativePathCaption" xml:space="preserve" approved="yes">
+				<source>Relative Path</source>
+			<target xml:lang="fi">Suhteellinen polku</target></trans-unit>
+      <trans-unit id="version" xml:space="preserve" approved="yes">
+				<source>Version</source>
+			<target xml:lang="fi">Versio</target></trans-unit>
+      <trans-unit id="operationCannotBeUndone" xml:space="preserve" approved="yes">
+				<source>This operation cannot be undone.</source>
+			<target xml:lang="fi">Tätä toimintoa ei voi kumota.</target></trans-unit>
+      <trans-unit id="asset" xml:space="preserve" approved="yes">
+				<source>Asset</source>
+			<target xml:lang="fi">Nimike</target></trans-unit>
+      <trans-unit id="created" xml:space="preserve" approved="yes">
+				<source>Created</source>
+			<target xml:lang="fi">Luotu</target></trans-unit>
+      <trans-unit id="lastModification" xml:space="preserve" approved="yes">
+				<source>Last modification</source>
+			<target xml:lang="fi">Muokattu viimeksi</target></trans-unit>
+      <trans-unit id="lastPublication" xml:space="preserve" approved="yes">
+				<source>Last publication</source>
+			<target xml:lang="fi">Julkaistu</target></trans-unit>
+      <trans-unit id="identifier" xml:space="preserve" approved="yes">
+				<source>Identifier</source>
+			<target xml:lang="fi">Tunniste</target></trans-unit>
+      <trans-unit id="name" xml:space="preserve" approved="yes">
+				<source>Name</source>
+			<target xml:lang="fi">Nimi</target></trans-unit>
+      <trans-unit id="workspace" xml:space="preserve" approved="yes">
+				<source>Workspace</source>
+			<target xml:lang="fi">Työtila</target></trans-unit>
+      <trans-unit id="structure.label" xml:space="preserve" approved="yes">
+				<source>Structure</source>
+			<target xml:lang="fi">Rakenne</target></trans-unit>
+      <trans-unit id="structure.toggle" xml:space="preserve" approved="yes">
+				<source>Toggle context structure</source>
+			<target xml:lang="fi">Vaihda kontekstirakennetta</target></trans-unit>
+      <trans-unit id="filter" xml:space="preserve" approved="yes">
+				<source>Filter</source>
+			<target xml:lang="fi">Suodata</target></trans-unit>
+      <trans-unit id="toggleMenu" xml:space="preserve" approved="yes">
+				<source>Toggle menu</source>
+			<target xml:lang="fi">Avaa valikko</target></trans-unit>
+      <trans-unit id="loadError" xml:space="preserve" approved="yes">
+				<source>Load error!</source>
+			<target xml:lang="fi">Latausvirhe!</target></trans-unit>
+      <trans-unit id="aNodeMustBeSelected" xml:space="preserve" approved="yes">
+				<source>You have to select a node</source>
+			<target xml:lang="fi">Valitse solmu</target></trans-unit>
+      <trans-unit id="rootNodeCannotBeDeleted" xml:space="preserve" approved="yes">
+				<source>The Root node cannot be deleted.</source>
+			<target xml:lang="fi">Pääsolmua ei voi poistaa.</target></trans-unit>
+      <trans-unit id="cannotCopyNode" xml:space="preserve" approved="yes">
+				<source>You cannot copy this node</source>
+			<target xml:lang="fi">Tätä solmua ei voi kopioida</target></trans-unit>
+      <trans-unit id="cannotCutNode" xml:space="preserve" approved="yes">
+				<source>You cannot cut this node</source>
+			<target xml:lang="fi">Tätä solmua ei voi leikata</target></trans-unit>
+      <trans-unit id="contentDimensions" xml:space="preserve" approved="yes">
+				<source>Content Dimensions</source>
+			<target xml:lang="fi">Sisältöulottuvuudet</target></trans-unit>
+      <trans-unit id="site" xml:space="preserve" approved="yes">
+				<source>Site</source>
+			<target xml:lang="fi">Sivusto</target></trans-unit>
+      <trans-unit id="document" xml:space="preserve" approved="yes">
+				<source>Document</source>
+			<target xml:lang="fi">Dokumentti</target></trans-unit>
+      <trans-unit id="reference" xml:space="preserve" approved="yes">
+				<source>Reference</source>
+			<target xml:lang="fi">Viite</target></trans-unit>
+      <trans-unit id="host" xml:space="preserve" approved="yes">
+				<source>Host</source>
+			<target xml:lang="fi">Verkko-osoite</target></trans-unit>
+      <trans-unit id="scheme" xml:space="preserve" approved="yes">
+				<source>Scheme</source>
+			<target xml:lang="fi">Protokolla</target></trans-unit>
+      <trans-unit id="port" xml:space="preserve" approved="yes">
+				<source>Port</source>
+			<target xml:lang="fi">Portti</target></trans-unit>
+      <trans-unit id="primary" xml:space="preserve" approved="yes">
+				<source>Primary</source>
+			<target xml:lang="fi">Ensisijainen</target></trans-unit>
+      <!-- node types -->
+      <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
+				<source>General</source>
+			<target xml:lang="fi">Yleiset</target></trans-unit>
+      <trans-unit id="nodeTypes.groups.structure" xml:space="preserve" approved="yes">
+				<source>Structure</source>
+			<target xml:lang="fi">Rakenne</target></trans-unit>
+      <trans-unit id="nodeTypes.groups.plugins" xml:space="preserve" approved="yes">
+				<source>Plugins</source>
+			<target xml:lang="fi">Liitännäiset</target></trans-unit>
+      <!-- shortcuts -->
+      <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve" approved="yes">
+				<source>Click {0} to continue to the page.</source>
+			<target xml:lang="fi">Valitse {0} jatkaaksesi sivulle.</target></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve" approved="yes">
+				<source>Click {0} to see the file.</source>
+			<target xml:lang="fi">Valitse {0} nähdäksesi tiedosto.</target></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve" approved="yes">
+				<source>Click {0} to open the link.</source>
+			<target xml:lang="fi">Valitse {0} avataksesi linkki.</target></trans-unit>
+      <trans-unit id="shortcut.noTargetSelected" xml:space="preserve" approved="yes">
+				<source>(no target has been selected)</source>
+			<target xml:lang="fi">(ei valittua kohdetta)</target></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve" approved="yes">
+				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
+			<target xml:lang="fi">Tämä on linkki ensimmäiselle alasivulle.&lt;br /&gt;Valitse {0} jatkaaksesi sivulle.</target></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve" approved="yes">
+				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
+			<target xml:lang="fi">Tämä on linkki ylemmän tason sivulle.&lt;br /&gt;Valitse {0} jatkaaksesi sivulle.</target></trans-unit>
+      <!-- javascript -->
+      <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve" approved="yes">
+				<source>Full Screen</source>
+			<target xml:lang="fi">Koko näyttö</target></trans-unit>
+      <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve" approved="yes">
+				<source>Open page in live workspace</source>
+        <note>Deprecated, replaced by previewShortcutButton.title</note>
+			<target xml:lang="fi">Avaa sivu työtilassa</target></trans-unit>
+      <trans-unit id="content.components.contentContextBar.previewShortcutButton.title" xml:space="preserve" approved="yes">
+				<source>Open page in target workspace</source>
+			<target xml:lang="fi">Avaa sivu kohdetyötilassa</target></trans-unit>
+      <trans-unit id="discardAll" xml:space="preserve" approved="yes">
+				<source>Discard all</source>
+			<target xml:lang="fi">Hylkää kaikki</target></trans-unit>
+      <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve" approved="yes">
+				<source>Discard all changes</source>
+			<target xml:lang="fi">Hylkää kaikki muutokset</target></trans-unit>
+      <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve" approved="yes">
+				<source>Are you sure that you want to discard all changes in this workspace?</source>
+			<target xml:lang="fi">Oletko varma että haluat hylätä kaikki työtilan muutokset?</target></trans-unit>
+      <trans-unit id="publishAll" xml:space="preserve" approved="yes">
+				<source>Publish all</source>
+			<target xml:lang="fi">Julkaise kaikki</target></trans-unit>
+      <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve" approved="yes">
+				<source>Publish all changes</source>
+			<target xml:lang="fi">Julkaise kaikki muutokset</target></trans-unit>
+      <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve" approved="yes">
+				<source>Are you sure that you want to publish all changes?</source>
+			<target xml:lang="fi">Oletko varma että haluat julkaista kaikki muutokset?</target></trans-unit>
+      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve" approved="yes">
+				<source>Pending changes</source>
+			<target xml:lang="fi">Odottavat muutokset</target></trans-unit>
+      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve" approved="yes">
+				<source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
+			<target xml:lang="fi">Henkilökohtainen työtilasi sisältää julkaisemattomia muutoksia. Vaihtaaksesi toiseen työtilaan sinun täytyy joko julkaista tai hylätä muutokset.</target></trans-unit>
+      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve" approved="yes">
+				<source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
+			<target xml:lang="fi">Julkaise tai hylkää tekemäsi muutokset ja valitse sitten uusi työtila uudelleen.</target></trans-unit>
+      <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve" approved="yes">
+				<source>Editing Modes</source>
+			<target xml:lang="fi">Muokkaustilat</target></trans-unit>
+      <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve" approved="yes">
+				<source>Preview Central</source>
+			<target xml:lang="fi">Esikatselukeskus</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve" approved="yes">
+				<source>You still have changes. What do you want to do with them?</source>
+			<target xml:lang="fi">Olet tehnyt muutoksia. Mitä haluat tehdä niille?</target></trans-unit>
+      <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve" approved="yes">
+				<source>Selected element</source>
+			<target xml:lang="fi">Valittu elementti</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve" approved="yes">
+				<source>There are fields that are not correctly filled in.</source>
+			<target xml:lang="fi">Kaikkia kenttiä ei ole täytetty oikein.</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve" approved="yes">
+				<source>The fields marked with an error are not yet correctly filled in. Please complete them properly.</source>
+			<target xml:lang="fi">Korostettuja kenttiä ei ole täytetty oikein. Ole hyvä ja täytä ne oikein.</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve" approved="yes">
+				<source>Continue editing</source>
+			<target xml:lang="fi">Jatka muokkausta</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.button.danger" xml:space="preserve" approved="yes">
+				<source>Throw away</source>
+			<target xml:lang="fi">Heitä pois</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve" approved="yes">
+				<source>Apply</source>
+			<target xml:lang="fi">Käytä</target></trans-unit>
+      <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve" approved="yes">
+				<source>Select a Plugin</source>
+			<target xml:lang="fi">Valitse laajennus</target></trans-unit>
+      <trans-unit id="content.inspector.editors.masterPluginEditor.noPluginConfigured" xml:space="preserve" approved="yes">
+				<source>No plugin configured</source>
+			<target xml:lang="fi">Ei määritettyä laajennusta</target></trans-unit>
+      <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve" approved="yes">
+				<source>view is displayed on page</source>
+			<target xml:lang="fi">näkymä näytetään sivulla</target></trans-unit>
+      <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage" xml:space="preserve" approved="yes">
+				<source>view is displayed on current page</source>
+			<target xml:lang="fi">näkymä näytetään nykyisellä sivulla</target></trans-unit>
+      <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve" approved="yes">
+				<source>No date set</source>
+			<target xml:lang="fi">Ei asetettua päivämäärää</target></trans-unit>
+      <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve" approved="yes">
+				<source>Edit code</source>
+			<target xml:lang="fi">Muokkaa koodia</target></trans-unit>
+      <trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve" approved="yes">
+				<source>Paste a link, or type to search</source>
+			<target xml:lang="fi">Liitä linkki tai kirjoita hakeaksesi</target></trans-unit>
+      <trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve" approved="yes">
+				<source>Unable to load sub node types of:</source>
+			<target xml:lang="fi">Ei voitu ladata alasolmuja joiden tyyppi on:</target></trans-unit>
+      <trans-unit id="content.inspector.groups.type" xml:space="preserve" approved="yes">
+				<source>Change type</source>
+			<target xml:lang="fi">Vaihda tyyppiä</target></trans-unit>
+      <trans-unit id="content.inspector.groups.nodeInfo" xml:space="preserve" approved="yes">
+				<source>Additional info</source>
+			<target xml:lang="fi">Lisätiedot</target></trans-unit>
+      <trans-unit id="content.inspector.groups.visibility" xml:space="preserve" approved="yes">
+				<source>Visibility</source>
+			<target xml:lang="fi">Näkyvyys</target></trans-unit>
+      <trans-unit id="content.inspector.groups.document" xml:space="preserve" approved="yes">
+				<source>Document options</source>
+			<target xml:lang="fi">Dokumentin valinnat</target><alt-trans><target xml:lang="fi">Asiakirjan valinnat</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve" approved="yes">
+				<source>The length of this text must be between {minimum} and {maximum} characters.</source>
+			<target xml:lang="fi">Tekstin pituuden on oltava {{minimum}}-{{maximum}} merkkiä.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.stringLength.smallerThanMinimum" xml:space="preserve" approved="yes">
+				<source>This field must contain at least {minimum} characters.</source>
+			<target xml:lang="fi">Kentän vähimmäispituus on {{minimum}} merkkiä.</target><alt-trans><target xml:lang="fi">Kentässä on oltava vähintään {{minimum}} merkkiä.</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.validators.stringLength.greaterThanMaximum" xml:space="preserve" approved="yes">
+				<source>This text may not exceed {maximum} characters.</source>
+			<target xml:lang="fi">Tekstin enimmäispituus on {{maximum}} merkkiä.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve" approved="yes">
+				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
+			<target xml:lang="fi">Ainoastaan kirjaimet ja numerot ovat sallittuja</target></trans-unit>
+      <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve" approved="yes">
+				<source>The given subject was not countable.</source>
+			<target xml:lang="fi">Kohde ei ole laskettavissa.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.countValidator.countBetween" xml:space="preserve" approved="yes">
+				<source>The count must be between {minimum} and {maximum}.</source>
+			<target xml:lang="fi">Määrän on oltava väliltä {{minimum}}-{{maximum}}.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.invalidDate" xml:space="preserve" approved="yes">
+				<source>The given value was not a valid date.</source>
+			<target xml:lang="fi">Arvo ei ole kelvollinen päivämäärä.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBetween" xml:space="preserve" approved="yes">
+				<source>The given date must be between {formatEarliestDate} and {formatLatestDate}</source>
+			<target xml:lang="fi">Päivämäärän on oltava väliltä {{formatEarliestDate}}-{{formatLatestDate}}</target></trans-unit>
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeAfter" xml:space="preserve" approved="yes">
+				<source>The given date must be after {formatEarliestDate}</source>
+			<target xml:lang="fi">Päivämäärän on oltava {{formatEarliestDate}} jälkeen</target></trans-unit>
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBefore" xml:space="preserve" approved="yes">
+				<source>The given date must be before {formatLatestDate}</source>
+			<target xml:lang="fi">Päivämäärän on oltava ennen {{formatLatestDate}}</target></trans-unit>
+      <trans-unit id="content.inspector.validators.emailAddressValidator.invalidEmail" xml:space="preserve" approved="yes">
+				<source>Please specify a valid email address.</source>
+			<target xml:lang="fi">Anna kelvollinen sähköpostiosoite.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.floatValidator.validFloatExpected" xml:space="preserve" approved="yes">
+				<source>A valid float number is expected.</source>
+			<target xml:lang="fi">Anna kelvollinen liukuluku.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.integerValidator.aValidIntegerNumberIsExpected" xml:space="preserve" approved="yes">
+				<source>A valid integer number is expected.</source>
+			<target xml:lang="fi">Anna kelvollinen kokonaisluku.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.labelValidator.invalidLabel" xml:space="preserve" approved="yes">
+				<source>Only letters, numbers, spaces and certain punctuation marks are expected.</source>
+			<target xml:lang="fi">Ainoastaan kirjaimet, numerot, välilyönnit ja tietyt välimerkit ovat sallittuja.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.notEmptyValidator.isEmpty" xml:space="preserve" approved="yes">
+				<source>This property is required.</source>
+			<target xml:lang="fi">Pakollinen ominaisuus.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.numberRangeValidator.validNumberExpected" xml:space="preserve" approved="yes">
+				<source>A valid number is expected.</source>
+			<target xml:lang="fi">Kelvollinen numero vaaditaan.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.numberRangeValidator.numberShouldBeInRange" xml:space="preserve" approved="yes">
+				<source>Please enter a valid number between {minimum} and {maximum}</source>
+			<target xml:lang="fi">Anna kelvollinen numero väliltä {{minimum}}-{{maximum}}</target></trans-unit>
+      <trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve" approved="yes">
+				<source>The given subject did not match the pattern ({pattern})</source>
+			<target xml:lang="fi">Syöte ei vastaa mallia ({pattern})</target><alt-trans><target xml:lang="fi">Syöte ei vastaa mallia ({{pattern}})</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.validators.stringValidator.stringIsExpected" xml:space="preserve" approved="yes">
+				<source>A valid string is expected.</source>
+			<target xml:lang="fi">Kelvollinen merkkijono vaaditaan.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.textValidator.validTextWithoutAnyXMLtagsIsExpected" xml:space="preserve" approved="yes">
+				<source>Valid text without any XML tags is expected.</source>
+			<target xml:lang="fi">Kelvollinen teksti ilman XML-tageja vaaditaan.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.uuidValidator.invalidUuid" xml:space="preserve" approved="yes">
+				<source>The given subject is not a valid UUID.</source>
+			<target xml:lang="fi">Syöte ei ole kelvollinen UUID.</target></trans-unit>
+      <trans-unit id="content.dimension.panel.toggle" xml:space="preserve" approved="yes">
+				<source>Toggle content dimensions selector</source>
+			<target xml:lang="fi">Sisältöulottuvuusvalitsin</target><alt-trans><target xml:lang="fi">Vaihda sisältöulottuvuusvalitsimen tila</target></alt-trans></trans-unit>
+      <trans-unit id="content.dimension.createDialog.header" xml:space="preserve" approved="yes">
+				<source>Start with an empty or pre-filled document?</source>
+			<target xml:lang="fi">Käytetäänkö esitäytettyä dokumenttia vai luodaanko tyhjä?</target></trans-unit>
+      <trans-unit id="content.dimension.createDialog.nodeTypeDoesNotExistInDimension" xml:space="preserve" approved="yes">
+				<source>This {nodeTypeLabel} does not exist yet in {currentDimensionChoiceText}.</source>
+			<target xml:lang="fi">Tätä {nodeTypeLabel} ei ole vielä luotu {currentDimensionChoiceText} alle.</target></trans-unit>
+      <trans-unit id="content.dimension.createDialog.createEmptyOrCopy" xml:space="preserve" approved="yes">
+				<source>You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</source>
+			<target xml:lang="fi">Voit luoda sen nyt, käyttäen joko tyhjää {nodeTypeLabel} tai kopioimalla kaiken sisällön näkyvillä olevasta {nodeTypeLabel} {currentDocumentDimensionChoiceText}.</target></trans-unit>
+      <trans-unit id="content.dimension.createDialog.existingAncestorDocuments" xml:space="preserve" approved="yes">
+				<source>Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</source>
+			<target xml:lang="fi">Lisäksi luodaan {numberOfNodesMissingInRootline} tämän valintayhdistelmän tarvitsemaa ylemmän tason dokumenttia.</target></trans-unit>
+      <trans-unit id="content.dimension.createDialog.createEmpty" xml:space="preserve" approved="yes">
+				<source>Create empty</source>
+			<target xml:lang="fi">Luo tyhjä</target></trans-unit>
+      <trans-unit id="content.dimension.createDialog.createAndCopy" xml:space="preserve" approved="yes">
+				<source>Create and copy</source>
+			<target xml:lang="fi">Luo ja kopioi</target></trans-unit>
+      <trans-unit id="content.menu.menuPanel.content" xml:space="preserve" approved="yes">
+				<source>Content</source>
+			<target xml:lang="fi">Sisältö</target></trans-unit>
+      <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve" approved="yes">
+				<source>Toggle menu group</source>
+			<target xml:lang="fi">Valikkoryhmä</target><alt-trans><target xml:lang="fi">Vaihda valikkoryhmän tila</target></alt-trans></trans-unit>
+      <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve" approved="yes">
+				<source>Toggle sticky menu mode</source>
+			<target xml:lang="fi">Kiinnitetty valikko</target><alt-trans><target xml:lang="fi">Vaihda kiinnitettyyn valikkotilaan</target></alt-trans></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve" approved="yes">
+				<source>Do you really want to delete</source>
+			<target xml:lang="fi">Haluatko varmasti poistaa</target></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve" approved="yes">
+				<source>This will delete the element</source>
+			<target xml:lang="fi">Tämä poistaa elementin</target></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve" approved="yes">
+				<source>and it's children</source>
+			<target xml:lang="fi">ja sen alasivut</target></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve" approved="yes">
+				<source>This action can be undone in the workspace management.</source>
+			<target xml:lang="fi">Tämä toiminto voidaan peruttaa työtilahallinnassa.</target></trans-unit>
+      <trans-unit id="height" xml:space="preserve" approved="yes">
+				<source>Height</source>
+			<target xml:lang="fi">Korkeus</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve" approved="yes">
+				<source>Do you really want to delete</source>
+			<target xml:lang="fi">Haluatko varmasti poistaa</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve" approved="yes">
+				<source>this element</source>
+			<target xml:lang="fi">tämä elementti</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve" approved="yes">
+				<source>This will delete the element.</source>
+			<target xml:lang="fi">Tämä poistaa elementin.</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve" approved="yes">
+				<source>This action can be undone in the workspace management.</source>
+			<target xml:lang="fi">Tämä toiminto voidaan peruttaa työtilahallinnassa.</target></trans-unit>
+      <trans-unit id="media" xml:space="preserve" approved="yes">
+				<source>Media</source>
+			<target xml:lang="fi">Media</target></trans-unit>
+      <trans-unit id="crop" xml:space="preserve" approved="yes">
+				<source>Crop</source>
+			<target xml:lang="fi">Rajaa</target></trans-unit>
+      <trans-unit id="width" xml:space="preserve" approved="yes">
+				<source>Width</source>
+			<target xml:lang="fi">Leveys</target></trans-unit>
+      <trans-unit id="translate.requiredProperty" xml:space="preserve" approved="yes">
+				<source>Missing required property: </source>
+			<target xml:lang="fi">Vaadittu ominaisuus puuttuu: </target></trans-unit>
+      <trans-unit id="workspace" xml:space="preserve" approved="yes">
+				<source>Workspace</source>
+			<target xml:lang="fi">Työtila</target></trans-unit>
+      <trans-unit id="workspaces" xml:space="preserve" approved="yes">
+				<source>Workspaces</source>
+			<target xml:lang="fi">Työtilat</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve" approved="yes">
+				<source>An error occurred during saving</source>
+			<target xml:lang="fi">Virhe tallennuksessa</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve" approved="yes">
+				<source>Reload the page to attempt to fix the problem.</source>
+			<target xml:lang="fi">Lataa sivu uudelleen yrittääksesi ongelman korjausta.</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve" approved="yes">
+				<source>Reload the backend</source>
+			<target xml:lang="fi">Lataa hallinta uudelleen</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve" approved="yes">
+				<source>Reload</source>
+			<target xml:lang="fi">Lataa uudelleen</target></trans-unit>
+      <!-- Edit / preview modes -->
+      <trans-unit id="editPreviewModes.inPlace" xml:space="preserve" approved="yes">
+				<source>In-Place</source>
+			<target xml:lang="fi">Upotettu</target></trans-unit>
+      <trans-unit id="editPreviewModes.rawContent" xml:space="preserve" approved="yes">
+				<source>Raw Content</source>
+			<target xml:lang="fi">Pelkkä sisältö</target></trans-unit>
+      <trans-unit id="rawContentMode" xml:space="preserve" approved="yes">
+				<source>Raw Content Mode</source>
+			<target xml:lang="fi">Raakasisältötila</target></trans-unit>
+      <trans-unit id="editPreviewModes.desktop" xml:space="preserve" approved="yes">
+				<source>Desktop</source>
+			<target xml:lang="fi">Tietokone</target></trans-unit>
+      <!-- Login -->
+      <trans-unit id="login.index.title" xml:space="preserve" approved="yes">
+				<source>Login to</source>
+			<target xml:lang="fi">TYPO3 Neos Sisäänkirjautuminen</target></trans-unit>
+      <trans-unit id="authenticating" xml:space="preserve" approved="yes">
+				<source>Authenticating</source>
+			<target xml:lang="fi">Varmennetaan</target></trans-unit>
+      <trans-unit id="logout" xml:space="preserve" approved="yes">
+				<source>Logout</source>
+			<target xml:lang="fi">Kirjaudu ulos</target></trans-unit>
+      <trans-unit id="wrongCredentials" xml:space="preserve" approved="yes">
+				<source>The entered username or password was wrong</source>
+			<target xml:lang="fi">Syötetty käyttäjätunnus tai salasana oli väärä</target></trans-unit>
+      <trans-unit id="login.expired" xml:space="preserve" approved="yes">
+				<source>Your login has expired. Please log in again.</source>
+			<target xml:lang="fi">Kirjautuminen on vanhentunut. Kirjaudu sisään uudelleen.</target></trans-unit>
+      <!-- Error handlers -->
+      <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
+				<source>Go to setup</source>
+			<target xml:lang="fi">Mene asennukseen</target></trans-unit>
+      <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve" approved="yes">
+				<source>Missing Homepage</source>
+			<target xml:lang="fi">Puuttuva Kotisivu</target></trans-unit>
+      <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve" approved="yes">
+				<source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
+			<target xml:lang="fi">Joko yhtään sivustoa ei ole määritetty, sivustolla ei ole kotisivua tai aktiivista sivustoa ei voitu selvittää.</target></trans-unit>
+      <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve" approved="yes">
+				<source>You might want to set the site's domain or import a new site in the setup.</source>
+			<target xml:lang="fi">Aseta sivuston verkkotunnus tai tuo uusi sivusto.</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve" approved="yes">
+				<source>Database Error</source>
+			<target xml:lang="fi">Tietokantavirhe</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve" approved="yes">
+				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
+			<target xml:lang="fi">Virhe tietokannassa. Tarkista lokitiedostot sijainnissa Data/Logs/* saadaksesi lisätietoja.</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve" approved="yes">
+				<source>You might want to configure or check your database configuration in the setup.</source>
+			<target xml:lang="fi">Määritä tai tarkista asennuksen tietokanta-asetukset.</target></trans-unit>
+      <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve" approved="yes">
+				<source>Page Not Found</source>
+			<target xml:lang="fi">Sivua ei löydy</target></trans-unit>
+      <trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve" approved="yes">
+				<source>Sorry, the page you requested was not found.</source>
+			<target xml:lang="fi">Valitettavasti hakemaasi sivua ei löydy.</target></trans-unit>
+      <trans-unit id="error.invalidNodeType.title" xml:space="preserve" approved="yes">
+				<source>Invalid NodeType</source>
+			<target xml:lang="fi">Virheellinen solmutyyppi</target></trans-unit>
+      <trans-unit id="error.invalidNodeType.description" xml:space="preserve" approved="yes">
+				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
+			<target xml:lang="fi">Tähän tulostettavan solmutyypin määrittely ei ole saatavailla. Olet ehkä nimennyt solmutyypin uudelleen tai kirjoittanut sen nimen väärin.</target></trans-unit>
+      <trans-unit id="error.node.create.unexpected" xml:space="preserve" approved="yes">
+				<source>Unexpected error while creating node</source>
+			<target xml:lang="fi">Odottamaton virhe luotaessa solmua</target></trans-unit>
+      <trans-unit id="error.node.delete.unexpected" xml:space="preserve" approved="yes">
+				<source>Unexpected error while deleting node</source>
+			<target xml:lang="fi">Odottamaton virhe poistettaessa solmua</target></trans-unit>
+      <trans-unit id="error.node.update.unexpected" xml:space="preserve" approved="yes">
+				<source>Unexpected error while updating node</source>
+			<target xml:lang="fi">Odottamaton virhe päivitettäessä solmua</target></trans-unit>
+      <trans-unit id="error.node.move.unexpected" xml:space="preserve" approved="yes">
+				<source>Unexpected error while moving node</source>
+			<target xml:lang="fi">Odottamaton virhe siirrettäessä solmua</target></trans-unit>
+      <trans-unit id="error.nodeTree.load" xml:space="preserve" approved="yes">
+				<source>Node Tree loading error.</source>
+			<target xml:lang="fi">Solmupuun latausvirhe.</target></trans-unit>
+      <!-- FlashMessages -->
+      <trans-unit id="flashMessage.1222204027" xml:space="preserve" approved="yes">
+				<source>The entered username or password was wrong</source>
+			<target xml:lang="fi">Syötetty käyttäjätunnus tai salasana oli väärä</target></trans-unit>
+      <!-- Miscellaneous -->
+      <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve" approved="yes">
+				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
+			<target xml:lang="fi">"{nodeTypeName}" sivulla "{pageLabel}"</target></trans-unit>
+      <!-- Service output -->
+      <trans-unit id="service.nodes.title" xml:space="preserve" approved="yes">
+				<source>Nodes</source>
+			<target xml:lang="fi">Solmut</target></trans-unit>
+      <trans-unit id="service.nodes.show" xml:space="preserve" approved="yes">
+				<source>Show</source>
+			<target xml:lang="fi">Näytä</target></trans-unit>
+      <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve" approved="yes">
+				<source>This node cannot be accessed through a public URL</source>
+			<target xml:lang="fi">Tähän solmuun ei ole pääsyä julkisella URL-osoitteella</target></trans-unit>
+      <trans-unit id="service.nodes.nodeProperties" xml:space="preserve" approved="yes">
+				<source>Node Properties</source>
+			<target xml:lang="fi">Solmun ominaisuudet</target></trans-unit>
+    </body>
+  </file>
+</xliff>

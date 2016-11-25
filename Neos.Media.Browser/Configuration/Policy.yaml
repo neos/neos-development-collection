@@ -4,7 +4,7 @@
 
 privilegeTargets:
 
-  'TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
+  'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
 
     'Neos.Media.Browser:ManageAssets':
       matcher: 'method(Neos\Media\Browser\Controller\AssetController->(index|new|edit|update|initializeCreate|create|replaceAssetResource|updateAssetResource|initializeUpload|upload|tagAsset|delete|createTag|editTag|updateTag|deleteTag|addAssetToCollection)Action())'
@@ -24,7 +24,7 @@ privilegeTargets:
 
 roles:
 
-  'TYPO3.Neos:AbstractEditor':
+  'Neos.Neos:AbstractEditor':
     privileges:
       -
         privilegeTarget: 'Neos.Media.Browser:ManageAssets'
@@ -34,13 +34,13 @@ roles:
         privilegeTarget: 'Neos.Media.Browser:Backend.Module.Media.ManageAssets'
         permission: GRANT
 
-  'TYPO3.Neos:LivePublisher':
+  'Neos.Neos:LivePublisher':
     privileges:
       -
         privilegeTarget: 'Neos.Media.Browser:Backend.Module.Media.ReplaceAssetResource'
         permission: GRANT
 
-  'TYPO3.Neos:Administrator':
+  'Neos.Neos:Administrator':
     privileges:
       -
         privilegeTarget: 'Neos.Media.Browser:ManageAssetCollections'

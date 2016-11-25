@@ -1,0 +1,29 @@
+{namespace neos=Neos\Neos\ViewHelpers}
+{namespace ts=Neos\Fusion\ViewHelpers}
+<nav{attributes -> f:format.raw()}>
+<f:if condition="{items -> f:count()}">
+	<f:then>
+		<ul>
+			<f:render section="itemsList" arguments="{items: items}" />
+		</ul>
+	</f:then>
+	<f:else>
+		<f:if condition="{neos:rendering.inEditMode()}">
+			<p>{f:translate(id: 'content.emptyMenu', package: 'Neos.NodeTypes', source: 'NodeTypes/Menu')}</p>
+		</f:if>
+	</f:else>
+</f:if>
+</nav>
+
+<f:section name="itemsList">
+	<f:for each="{items}" as="item">
+		<li{ts:render(path: '{item.state}.attributes', context: {item: item}) -> f:format.raw()}>
+		<neos:link.node node="{item.node}">{item.label}</neos:link.node>
+		<f:if condition="{item.subItems}">
+			<ul>
+				<f:render section="itemsList" arguments="{items: item.subItems}" />
+			</ul>
+		</f:if>
+		</li>
+	</f:for>
+</f:section>

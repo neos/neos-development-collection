@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="ro">
+    <body>
+      <trans-unit id="groups.visibility" xml:space="preserve">
+				<source>Visibility</source>
+			<target xml:lang="ro" state="needs-translation">Visibility</target></trans-unit>
+      <trans-unit id="groups.document" xml:space="preserve">
+				<source>Document</source>
+			<target xml:lang="ro" state="needs-translation">Document</target></trans-unit>
+    </body>
+  </file>
+</xliff>

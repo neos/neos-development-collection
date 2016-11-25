@@ -1,0 +1,42 @@
+// Examples of a simple Value object
+prototype(Neos.Fusion:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
+
+simpleTypes.booleanTrue = Value {
+	value = TRUE
+}
+simpleTypes.booleanFalse = Value {
+	value = FALSE
+}
+simpleTypes.null = Value {
+	value = NULL
+}
+simpleTypes.wrappedString = Value {
+	value = 'Hello, '
+	value.@process.1 = ${value + 'Foo'}
+}
+
+
+// with the following lines, we test that TsRuntime::evaluate works on all three data types:
+// 1. Eel, 2. Plain Values, 3. TypoScript Objects
+// (without processors. Processors are tested in Processor.ts2)
+simpleTypes.stringAsEel = ${'A simple string value is not a TypoScript object'}
+simpleTypes.stringAsPlainValue = 'A simple string value is not a TypoScript object'
+simpleTypes.stringAsTypoScript = Value {
+	value = 'A simple string value is not a TypoScript object'
+}
+
+// with the following lines, we test that AbstractTypoScriptObject::tsObject works on all three
+// data types (without processors. Processors are tested in Processor.ts2)
+simpleTypes.valueWithNestedPlainValue = Value {
+	value = 'A simple value'
+}
+simpleTypes.valueWithNestedEel = Value {
+	value = ${'A simple value'}
+}
+simpleTypes.valueWithNestedTypoScript = Value {
+	value = Value {
+		value = 'A simple value'
+	}
+}
+
+simpleTypes.missingImplementation = Acme:Test

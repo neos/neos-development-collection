@@ -1,0 +1,129 @@
+#                                                                        #
+# "Backend" subroutes configuration for the Neos.Neos package           #
+#                                                                        #
+
+-
+  name: 'Overview'
+  uriPattern: ''
+  defaults:
+    '@controller': 'Backend\Backend'
+
+-
+  name: 'Content Module - Asset upload'
+  uriPattern: 'content/upload-asset'
+  defaults:
+    '@controller': 'Backend\Content'
+    '@action':     'uploadAsset'
+  appendExceedingArguments: TRUE
+  httpMethods: ['POST']
+
+-
+  name: 'Content Module - Image metadata'
+  uriPattern: 'content/image-with-metadata'
+  defaults:
+    '@controller': 'Backend\Content'
+    '@action':     'imageWithMetadata'
+  appendExceedingArguments: TRUE
+
+-
+  name: 'Content Module - Asset metadata'
+  uriPattern: 'content/asset-with-metadata'
+  defaults:
+    '@controller': 'Backend\Content'
+    '@action':     'assetsWithMetadata'
+
+
+-
+  name: 'Content Module - Create ImageVariant'
+  uriPattern: 'content/create-image-variant'
+  defaults:
+    '@controller': 'Backend\Content'
+    '@action':     'createImageVariant'
+  httpMethods: ['POST']
+
+-
+  name: 'Content Module - Plugin Views'
+  uriPattern: 'content/plugin-views'
+  defaults:
+    '@controller': 'Backend\Content'
+    '@action':     'pluginViews'
+
+-
+  name: 'Content Module - Master Plugins'
+  uriPattern: 'content/master-plugins'
+  defaults:
+    '@controller': 'Backend\Content'
+    '@action':     'masterPlugins'
+
+-
+  name: 'Schema - VIE'
+  uriPattern: 'schema/vie'
+  defaults:
+    '@controller': 'Backend\Schema'
+    '@action':     'vieSchema'
+  appendExceedingArguments: TRUE
+
+-
+  name: 'Schema - NodeType'
+  uriPattern: 'schema/node-type'
+  defaults:
+    '@controller': 'Backend\Schema'
+    '@action':     'nodeTypeSchema'
+  appendExceedingArguments: TRUE
+
+-
+  name: 'Menu'
+  uriPattern: 'menu'
+  defaults:
+    '@controller': 'Backend\Menu'
+  appendExceedingArguments: TRUE
+
+-
+  name: 'Settings'
+  uriPattern: 'settings/{@action}'
+  defaults:
+    '@controller': 'Backend\Settings'
+  appendExceedingArguments: TRUE
+
+-
+  name: 'Modules'
+  uriPattern: '{module}'
+  defaults:
+    '@controller': 'Backend\Module'
+  routeParts:
+    module:
+      handler: 'Neos\Neos\Routing\BackendModuleRoutePartHandler'
+
+-
+  name: 'Modules & arguments'
+  uriPattern: '{module}/{moduleArguments}'
+  defaults:
+    '@controller': 'Backend\Module'
+  routeParts:
+    module:
+      handler: 'Neos\Neos\Routing\BackendModuleRoutePartHandler'
+    moduleArguments:
+      handler: 'Neos\Neos\Routing\BackendModuleArgumentsRoutePartHandler'
+  toLowerCase: false
+  appendExceedingArguments: TRUE
+
+-
+  name: 'Backend switch site'
+  uriPattern: 'switch/to/{site}'
+  defaults:
+    '@package': 'Neos.Neos'
+    '@controller': 'Backend\Backend'
+    '@action': 'switchSite'
+  routeParts:
+    site:
+      objectType: 'Neos\Neos\Domain\Model\Site'
+      uriPattern: '{name}'
+
+-
+  name: 'Backend UI XLIFF labels'
+  uriPattern: 'xliff.json'
+  defaults:
+    '@package': 'Neos.Neos'
+    '@controller': 'Backend\Backend'
+    '@action': 'xliffAsJson'
+  appendExceedingArguments: TRUE

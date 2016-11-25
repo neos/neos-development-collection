@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <!--
+	NOTE: This fixture is for the test Neos\Neos\Tests\Functional\FlowQueryOperations\SortOperationTest
+	 -->
+  <site name="example" state="1" siteResourcesPackageKey="TYPO3.TypoScript" siteNodeName="example">
+    <nodes formatVersion="2.0">
+
+      <node identifier="c381f64d-4269-429a-9c21-6d846115addf" nodeName="text-1">
+        <variant sortingIndex="400" workspace="live" nodeType="Neos.Neos.NodeTypes:Text" version="1" removed="" hidden="" hiddenInIndex="">
+          <dimensions/>
+          <accessRoles __type="array"/>
+          <creationDateTime __type="object" __classname="DateTime">2016-07-06T13:04:23+02:00</creationDateTime>
+          <lastModificationDateTime __type="object" __classname="DateTime">2016-07-06T13:26:57+02:00</lastModificationDateTime>
+          <lastPublicationDateTime __type="object" __classname="DateTime">2016-07-06T13:26:56+02:00</lastPublicationDateTime>
+          <properties>
+            <uriPathSegment __type="string">example1</uriPathSegment>
+            <title __type="string">AAAAAAA</title>
+            <text __type="string">AAAATEXT</text>
+          </properties>
+        </variant>
+      </node>
+
+      <node identifier="c381f64d-4269-429a-9c21-6d846115adde" nodeName="text-2">
+        <variant sortingIndex="400" workspace="live" nodeType="Neos.Neos.NodeTypes:Text" version="1" removed="" hidden="" hiddenInIndex="">
+          <dimensions/>
+          <accessRoles __type="array"/>
+          <creationDateTime __type="object" __classname="DateTime">2016-01-06T13:04:23+02:00</creationDateTime>
+          <lastModificationDateTime __type="object" __classname="DateTime">2016-01-06T13:26:57+02:00</lastModificationDateTime>
+          <lastPublicationDateTime __type="object" __classname="DateTime">2016-01-06T13:26:56+02:00</lastPublicationDateTime>
+          <properties>
+            <uriPathSegment __type="string">example2</uriPathSegment>
+            <title __type="string">ZZZZZZZZ</title>
+            <text __type="string">ZZZZZZTEXT</text>
+          </properties>
+        </variant>
+      </node>
+
+      <node identifier="c381f64d-4269-429a-9c21-6d846115addd" nodeName="text-3">
+        <variant sortingIndex="400" workspace="live" nodeType="Neos.Neos.NodeTypes:Text" version="1" removed="" hidden="" hiddenInIndex="">
+          <dimensions/>
+          <accessRoles __type="array"/>
+          <creationDateTime __type="object" __classname="DateTime">2016-08-06T13:04:23+02:00</creationDateTime>
+          <lastModificationDateTime __type="object" __classname="DateTime">2016-08-06T13:26:57+02:00</lastModificationDateTime>
+          <lastPublicationDateTime __type="object" __classname="DateTime">2016-08-06T13:26:56+02:00</lastPublicationDateTime>
+          <properties>
+            <uriPathSegment __type="string">example3</uriPathSegment>
+            <title __type="string">MMMMMM</title>
+            <text __type="string">Füchse sind gar keine Rudeltiere!</text>
+          </properties>
+        </variant>
+      </node>
+
+    </nodes>
+  </site>
+</root>

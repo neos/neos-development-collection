@@ -1,0 +1,527 @@
+prototype(Neos.Fusion:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
+prototype(Neos.Fusion:Array).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ArrayImplementation'
+prototype(Neos.Fusion:Testing.Throwing).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\TypoScriptObjects\\Fixtures\\TypoScriptObjects\\ThrowingImplementation'
+
+prototype(Neos.Fusion:RawArray).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RawArrayImplementation'
+prototype(Neos.Fusion:GlobalCacheIdentifiers) >
+prototype(Neos.Fusion:GlobalCacheIdentifiers) < prototype(Neos.Fusion:RawArray)
+
+contentCache.cachedSegment = Neos.Fusion:Array {
+	5 = 'Cached segment|'
+
+	10 = ${object.value}
+
+	@cache {
+		mode = 'cached'
+	}
+}
+
+contentCache.nestedCacheSegments = Neos.Fusion:Array {
+	5 = 'Outer segment|'
+
+	10 = ${'site=' + site}
+
+	15 = '|'
+
+	20 = Neos.Fusion:Array {
+
+		5 = 'Inner segment|'
+
+		10 = ${'object=' + object.value}
+
+		15 = '|End inner'
+
+		@cache {
+			mode = 'cached'
+
+			entryIdentifier {
+				object = ${object}
+			}
+		}
+	}
+
+	25 = '|End outer'
+
+	@cache {
+		mode = 'cached'
+
+		entryIdentifier {
+			site = ${site}
+		}
+	}
+}
+
+contentCache.uncachedSegmentOnTopLevel = Neos.Fusion:Array {
+	5 = 'Uncached segment|'
+
+	10 = ${'counter=' + object.counter}
+
+	15 = '|End uncached'
+
+	@cache {
+		mode = 'uncached'
+
+		context {
+			1 = 'object'
+		}
+	}
+}
+
+contentCache.uncachedSegmentWithWronglyConfiguredContext = Neos.Fusion:Array {
+	5 = 'Uncached segment|'
+
+	10 = ${'counter=' + object.counter}
+
+	15 = '|End uncached'
+
+	@cache {
+		mode = 'uncached'
+
+		context {
+			1 = 'otherContextVariable'
+		}
+	}
+}
+
+contentCache.uncachedSegmentInCachedSegment = Neos.Fusion:Array {
+	5 = 'Outer segment|'
+
+	10 = ${'object=' + object.value}
+
+	15 = '|'
+
+	20 =  Neos.Fusion:Array {
+		5 = 'Uncached segment|'
+
+		10 = ${'counter=' + object.counter}
+
+		15 = '|End uncached'
+
+		@cache {
+			mode = 'uncached'
+
+			context {
+				1 = 'object'
+			}
+		}
+	}
+
+	25 = '|End outer'
+
+	@cache {
+		mode = 'cached'
+
+		entryIdentifier {
+			object = ${object}
+		}
+	}
+}
+
+contentCache.cacheSegmentsWithTags = Neos.Fusion:Array {
+	5 = 'Outer segment|'
+
+	10 = ${'counter=' + object.counter}
+
+	15 = '|'
+
+	20 = Neos.Fusion:Array {
+
+		5 = 'Inner segment 1|'
+
+		10 = ${'object=' + object.value}
+
+		15 = '|End inner'
+
+		@cache {
+			mode = 'cached'
+
+			entryIdentifier {
+				object = ${object}
+			}
+
+			entryTags {
+				1 = ${'Object_' + object.id}
+				2 = 'NodeType_Acme.Demo:SampleNodeType'
+			}
+		}
+	}
+
+	25 = Neos.Fusion:Array {
+
+		5 = 'Inner segment 2|'
+
+		10 = ${'object=' + object.value}
+
+		15 = '|End inner'
+
+		@cache {
+			mode = 'cached'
+
+			entryIdentifier {
+				object = ${object}
+			}
+
+			entryTags {
+				2 = ${['Node_cba42fd2-495f-409d-af2a-b71768a33a6f', 'Node_47a6ee72-936a-4489-abc1-3666a63cdc4a']}
+			}
+		}
+	}
+
+	30 = '|End outer'
+
+	@cache {
+		mode = 'cached'
+
+		entryIdentifier {
+			object = ${object}
+		}
+
+		entryTags {
+			1 = 'Outer'
+			# Empty tags should be ignored
+			2 = ${null}
+		}
+	}
+}
+
+contentCache.cachedSegmentWithProcessor = Neos.Fusion:Array {
+
+	5 = 'Cached segment|'
+
+	10 = ${'object=' + object.value}
+
+	15 = '|End cached'
+
+	@process.wrap = ${'Processor start|counter=' + object.counter + '|' + value + '|Processor end'}
+
+	@cache {
+		mode = 'cached'
+
+		entryIdentifier {
+			object = ${object}
+		}
+	}
+
+}
+
+contentCache.uncachedSegmentWithProcessor = Neos.Fusion:Array {
+
+	5 = 'Cached segment|'
+
+	10 = Neos.Fusion:Array {
+		5 = 'Uncached segment|'
+
+		10 = ${'object=' + object.value}
+
+		15 = '|End cached'
+
+		@process.wrap = ${'Processor start|counter=' + object.counter + '|' + value + '|Processor end'}
+
+		@cache {
+			mode = 'uncached'
+
+			context {
+				1 = 'object'
+			}
+		}
+	}
+
+	15 = '|End segment'
+
+	@cache {
+		mode = 'cached'
+
+		entryIdentifier {
+			object = ${object}
+		}
+	}
+
+}
+
+contentCache.cachedSegmentWithCondition = Neos.Fusion:Array {
+
+	@if.isFirst = ${condition && object.counter == 1}
+
+	5 = 'Cached segment|'
+
+	10 = ${'object=' + object.value}
+
+	15 = '|End cached'
+
+	@cache {
+		mode = 'cached'
+
+		entryIdentifier {
+			object = ${object}
+			condition = ${condition}
+		}
+	}
+
+}
+
+contentCache.uncachedSegmentWithCondition = Neos.Fusion:Array {
+
+	5 = 'Cached segment|'
+
+	10 = Neos.Fusion:Array {
+		@if.isFirst = ${request.arguments.currentPage < 3}
+
+		5 = 'Uncached segment|'
+
+		10 = ${'request.currentPage=' + request.arguments.currentPage}
+
+		15 = '|End cached'
+
+		@cache {
+			mode = 'uncached'
+
+			context {
+				1 = 'object'
+			}
+		}
+	}
+
+	15 = '|End segment'
+
+	@cache {
+		mode = 'cached'
+
+		entryIdentifier {
+			object = ${object}
+		}
+	}
+
+}
+
+contentCache.nestedCacheSegmentsWithInnerException = Neos.Fusion:Array {
+
+	5 = 'Cached segment|'
+
+	10 = ${'counter=' + object.counter + '|'}
+
+	15 = Neos.Fusion:Collection {
+		collection = ${['Foo', 'Bar']}
+		itemName = 'item'
+		itemRenderer = Neos.Fusion:Template {
+			templatePath = 'no.such.file.here.so.crash.please'
+
+			@cache {
+				mode = 'cached'
+
+				entryIdentifier {
+					item = ${item}
+				}
+			}
+
+			@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\PlainTextHandler'
+		}
+	}
+
+	20 = '|End segment'
+
+	@cache {
+		mode = 'cached'
+
+		entryIdentifier {
+			object = ${object}
+		}
+	}
+
+}
+
+contentCache.nestedCacheSegmentsWithConditionalException = Neos.Fusion:Array {
+
+	5 = 'Cached segment|'
+
+	// This is just a cached path
+	15 = Neos.Fusion:Array {
+		5 = ${'counter=' + object.counter + '|'}
+
+		@cache {
+			mode = 'cached'
+
+			entryIdentifier {
+				object = ${object}
+			}
+		}
+	}
+
+	// Use an exception to have the exception handler working
+	20 = Neos.Fusion:Collection {
+		collection = ${['Foo']}
+
+		itemName = 'item'
+		itemRenderer = Neos.Fusion:Testing.Throwing {
+			shouldThrow = ${throwException}
+
+			@cache {
+				mode = 'cached'
+
+				entryTags {
+					inner = 'Inner'
+				}
+			}
+
+			@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\PlainTextHandler'
+		}
+	}
+
+	25 = '|End segment'
+
+	@cache {
+		mode = 'cached'
+
+		entryIdentifier {
+			object = ${object}
+		}
+	}
+
+}
+
+contentCache.maximumLifetimeInNestedEmbedAndCachedSegments = Neos.Fusion:Array {
+
+	5 = Neos.Fusion:Value {
+		value = 'Foo'
+
+		@cache {
+			mode = 'cached'
+
+			entryIdentifier {
+				static = 42
+			}
+
+			maximumLifetime = 60
+		}
+	}
+
+	10 = '|'
+
+	15 = Neos.Fusion:Array {
+		1 = Neos.Fusion:Value {
+			value = 'Bar'
+
+			@cache {
+				# This should influence the upper lifetime, since this segment is embedded and the lifetime is lower than 'Foo'
+				maximumLifetime = 5
+			}
+		}
+
+		2 = Neos.Fusion:Value {
+			value = ''
+
+			@cache {
+				# Assigning NULL should not override other maximumLifetime values
+				maximumLifetime = ${null}
+			}
+		}
+	}
+
+	20 = '|'
+
+	25 = Neos.Fusion:Value {
+		value = 'Baz'
+
+		@cache {
+			mode = 'cached'
+
+			entryIdentifier {
+				static = 42
+			}
+
+			# No maximumLifetime set, so the default lifetime (NULL) should be used, but it won't affect the outer maximumLifetime
+		}
+	}
+
+	@cache {
+		mode = 'cached'
+
+		entryIdentifier {
+			static = 42
+		}
+
+		maximumLifetime = 30
+	}
+
+}
+
+
+
+contentCache.entryIdentifiersAreMergedWithGlobalIdentifiers < contentCache.cachedSegment {
+	prototype(Neos.Fusion:GlobalCacheIdentifiers) {
+		site = ${site}
+	}
+
+	@cache {
+		entryIdentifier {
+			object = ${object}
+		}
+
+		entryTags {
+			1 = ${site}
+		}
+	}
+}
+
+contentCache.globalIdentifiersAreUsedWithBlankEntryIdentifiers < contentCache.cachedSegment {
+	prototype(Neos.Fusion:GlobalCacheIdentifiers) {
+		site = ${site}
+	}
+
+	@cache {
+		entryTags {
+			1 = ${site}
+		}
+	}
+}
+
+contentCache.entryIdentifierPrototypeCanBeOverwritten < contentCache.cachedSegment {
+	prototype(Neos.Fusion:GlobalCacheIdentifiers) {
+		site = ${site}
+	}
+
+	@cache {
+		entryIdentifier = Neos.Fusion:RawArray {
+			object = ${object}
+		}
+
+		entryTags {
+			1 = ${site}
+		}
+	}
+}
+
+contentCache.uncachedSegmentInCachedSegmentCanOverrideContextVariables = Neos.Fusion:Array {
+	5 = 'Outer segment|'
+
+	10 = ${'object=' + object.value}
+
+	15 = '|'
+
+	20 =  Neos.Fusion:Array {
+		@context.currentCounter = ${object.counter}
+
+		5 = 'Uncached segment|'
+
+		10 = ${'counter=' + currentCounter}
+
+		15 = '|End uncached'
+
+		@cache {
+			mode = 'uncached'
+
+			context {
+				1 = 'object'
+			}
+		}
+	}
+
+	25 = '|End outer'
+
+	@cache {
+		mode = 'cached'
+
+		entryIdentifier {
+			object = ${object}
+		}
+	}
+}

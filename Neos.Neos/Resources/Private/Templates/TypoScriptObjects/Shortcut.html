@@ -1,0 +1,44 @@
+{namespace neos=Neos\Neos\ViewHelpers}
+<div id="neos-shortcut">
+	<p>
+		<f:switch expression="{targetMode}">
+			<f:case value="selectedTarget">
+				{neos:backend.translate(id: 'shortcut.toSpecificTarget', value: 'This is a shortcut to a specific target:')}<br />
+				<f:if condition="{target}">
+					<f:then>
+						<f:switch expression="{targetSchema}">
+							<f:case value="node">
+								<f:format.raw><neos:backend.translate id="shortcut.clickToContinueToPage" arguments="{0: '{neos:link.node(node: targetConverted)}'}">
+									Click <neos:link.node node="{targetConverted}" /> to continue to the page.
+								</neos:backend.translate></f:format.raw>
+							</f:case>
+							<f:case value="asset">
+								<f:format.raw><neos:backend.translate id="shortcut.clickToContinueToAsset" arguments="{0: '<a href=\"{f:uri.resource(resource: targetConverted.resource)}\" target=\"_blank\">{targetConverted.label}</a>'}">
+									Click <a href="{f:uri.resource(resource: targetConverted.resource)}" target="_blank">{targetConverted.label}</a> to see the file.
+								</neos:backend.translate></f:format.raw>
+							</f:case>
+							<f:defaultCase>
+								<f:format.raw><neos:backend.translate id="shortcut.clickToContinueToExternalUrl" arguments="{0: '<a href=\"{target}\" target=\"_blank\">{target}</a>'}">
+									Click <a href="{target}" target="_blank">{target}</a> to open the link.
+								</neos:backend.translate></f:format.raw>
+							</f:defaultCase>
+						</f:switch>
+					</f:then>
+					<f:else>{neos:backend.translate(id: 'shortcut.noTargetSelected', value: '(no target has been selected)')}</f:else>
+				</f:if>
+			</f:case>
+			<f:case value="firstChildNode">
+				<f:format.raw><neos:backend.translate id="shortcut.clickToContinueToFirstChildNode" arguments="{0: '{neos:link.node(node: firstChildNode)}'}">
+					This is a shortcut to the first child page.<br />
+					Click <neos:link.node node="{firstChildNode}" /> to continue to the page.
+				</neos:backend.translate></f:format.raw>
+			</f:case>
+			<f:case value="parentNode">
+				<f:format.raw><neos:backend.translate id="shortcut.clickToContinueToParentNode" arguments="{0: '{neos:link.node(node: node.parent)}'}">
+					This is a shortcut to the parent page.<br />
+					Click <neos:link.node node="{node.parent}" /> to continue to the page.
+				</neos:backend.translate></f:format.raw>
+			</f:case>
+		</f:switch>
+	</p>
+</div>

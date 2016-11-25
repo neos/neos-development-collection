@@ -1,0 +1,20 @@
+{namespace neos=Neos\Neos\ViewHelpers}
+<f:layout name="BackendSubModule" />
+
+<f:section name="subtitle">
+	<div class="neos-module-container">
+		<h2>{neos:backend.translate(source: 'Modules', id: 'users.editAccount.title', arguments: {accountIdentifier: account.accountIdentifier})}</h2>
+	</div>
+</f:section>
+
+<f:section name="content">
+	<f:form action="updateAccount" object="{account}" objectName="account" class="user user-edit">
+		<f:render partial="Module/Shared/EditAccount" arguments="{_all}" />
+
+		<div class="neos-footer">
+			<f:link.action action="edit" arguments="{user: user}" class="neos-button">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</f:link.action>
+			<f:form.submit value="{neos:backend.translate(source: 'Modules', id: 'users.saveAccount')}" class="neos-button neos-button-primary" />
+		</div>
+	</f:form>
+	<f:form action="index" id="postHelper" method="post"></f:form>
+</f:section>

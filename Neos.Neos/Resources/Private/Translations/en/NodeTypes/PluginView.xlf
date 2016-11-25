@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+	<file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext">
+		<body>
+			<trans-unit id="ui.label" xml:space="preserve">
+				<source>Plugin View</source>
+			</trans-unit>
+
+			<trans-unit id="groups.pluginViews" xml:space="preserve">
+				<source>Plugin Views</source>
+			</trans-unit>
+			<trans-unit id="properties.plugin" xml:space="preserve">
+				<source>Master View</source>
+			</trans-unit>
+
+			<trans-unit id="properties.view" xml:space="preserve">
+				<source>Plugin View</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

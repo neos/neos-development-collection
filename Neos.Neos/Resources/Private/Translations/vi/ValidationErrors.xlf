@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="vi">
+    <body>
+      <!-- UserDoesNotExistValidator -->
+      <trans-unit id="1325156008" xml:space="preserve">
+				<source>The username is already in use.</source>
+			<target xml:lang="vi" state="translated">Tên truy cập hiện đang sử dụng.</target></trans-unit>
+      <!-- HostnameValidator -->
+      <trans-unit id="1415392993" xml:space="preserve">
+				<source>The hostname "{0}" was not valid.</source>
+			<target xml:lang="vi" state="translated">Tên máy chủ "{0}" không hợp lệ.</target></trans-unit>
+      <!-- PasswordValidator -->
+      <trans-unit id="1324641097" xml:space="preserve">
+				<source>The given password was empty.</source>
+			<target xml:lang="vi" state="translated">Mật khẩu bị bỏ trống.</target></trans-unit>
+      <trans-unit id="1324640997" xml:space="preserve">
+				<source>The passwords did not match.</source>
+			<target xml:lang="vi" state="translated">Mật khẩu không phù hợp.</target></trans-unit>
+    </body>
+  </file>
+</xliff>

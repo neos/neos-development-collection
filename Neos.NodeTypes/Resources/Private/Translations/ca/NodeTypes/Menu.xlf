@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.NodeTypes" source-language="en" datatype="plaintext" target-language="ca">
+    <body>
+      <trans-unit id="ui.label" xml:space="preserve">
+				<source>Menu</source>
+			<target xml:lang="ca" state="needs-translation">Menu</target></trans-unit>
+      <trans-unit id="groups.options" xml:space="preserve">
+				<source>Options</source>
+			<target xml:lang="ca" state="needs-translation">Options</target></trans-unit>
+      <trans-unit id="properties.startLevel" xml:space="preserve">
+				<source>Starting Level</source>
+			<target xml:lang="ca" state="needs-translation">Starting Level</target></trans-unit>
+      <trans-unit id="properties.startLevel.selectBoxEditor.values.-4" xml:space="preserve">
+				<source>Four Levels Above Current Page</source>
+			<target xml:lang="ca" state="needs-translation">Four Levels Above Current Page</target></trans-unit>
+      <trans-unit id="properties.startLevel.selectBoxEditor.values.-3" xml:space="preserve">
+				<source>Three Levels Above Current Page</source>
+			<target xml:lang="ca" state="needs-translation">Three Levels Above Current Page</target></trans-unit>
+      <trans-unit id="properties.startLevel.selectBoxEditor.values.-2" xml:space="preserve">
+				<source>Two Levels Above Current Page</source>
+			<target xml:lang="ca" state="needs-translation">Two Levels Above Current Page</target></trans-unit>
+      <trans-unit id="properties.startLevel.selectBoxEditor.values.-1" xml:space="preserve">
+				<source>One Level Above Current Page</source>
+			<target xml:lang="ca" state="needs-translation">One Level Above Current Page</target></trans-unit>
+      <trans-unit id="properties.startLevel.selectBoxEditor.values.0" xml:space="preserve">
+				<source>Same Level As Current Page</source>
+			<target xml:lang="ca" state="needs-translation">Same Level As Current Page</target></trans-unit>
+      <trans-unit id="properties.startLevel.selectBoxEditor.values.1" xml:space="preserve">
+				<source>First Level Of Website</source>
+			<target xml:lang="ca" state="needs-translation">First Level Of Website</target></trans-unit>
+      <trans-unit id="properties.startLevel.selectBoxEditor.values.2" xml:space="preserve">
+				<source>Second Level Of Website</source>
+			<target xml:lang="ca" state="needs-translation">Second Level Of Website</target></trans-unit>
+      <trans-unit id="properties.startLevel.selectBoxEditor.values.3" xml:space="preserve">
+				<source>Third Level Of Website</source>
+			<target xml:lang="ca" state="needs-translation">Third Level Of Website</target></trans-unit>
+      <trans-unit id="properties.startLevel.selectBoxEditor.values.4" xml:space="preserve">
+				<source>Fourth Level Of Website</source>
+			<target xml:lang="ca" state="needs-translation">Fourth Level Of Website</target></trans-unit>
+      <trans-unit id="properties.startLevel.selectBoxEditor.values.5" xml:space="preserve">
+				<source>Fifth Level Of Website</source>
+			<target xml:lang="ca" state="needs-translation">Fifth Level Of Website</target></trans-unit>
+      <trans-unit id="properties.startLevel.selectBoxEditor.values.6" xml:space="preserve">
+				<source>Sixth Level Of Website</source>
+			<target xml:lang="ca" state="needs-translation">Sixth Level Of Website</target></trans-unit>
+      <trans-unit id="properties.selection" xml:space="preserve">
+				<source>Selection</source>
+			<target xml:lang="ca" state="needs-translation">Selection</target></trans-unit>
+      <trans-unit id="properties.startingPoint" xml:space="preserve">
+				<source>Starting Point</source>
+			<target xml:lang="ca" state="needs-translation">Starting Point</target></trans-unit>
+      <trans-unit id="properties.maximumLevels" xml:space="preserve">
+				<source>Maximum Levels</source>
+			<target xml:lang="ca" state="needs-translation">Maximum Levels</target></trans-unit>
+      <trans-unit id="content.emptyMenu" xml:space="preserve">
+				<source>Empty Menu</source>
+			<target xml:lang="ca" state="needs-translation">Empty Menu</target></trans-unit>
+    </body>
+  </file>
+</xliff>
