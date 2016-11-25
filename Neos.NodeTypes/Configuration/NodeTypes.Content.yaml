@@ -307,7 +307,7 @@
           icon: 'icon-files-o'
   properties:
     assets:
-      type: array<TYPO3\Media\Domain\Model\Asset>
+      type: array<Neos\Media\Domain\Model\Asset>
       ui:
         inspector:
           group: 'resources'
