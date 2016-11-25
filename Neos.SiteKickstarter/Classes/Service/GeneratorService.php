@@ -45,11 +45,11 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
         $this->packageManager->createPackage($packageKey, [
             'type' => 'neos-site',
             "require" => [
-                "typo3/neos" => "*",
-                "typo3/neos-nodetypes" => "*"
+                "neos/neos" => "*",
+                "neos/nodetypes" => "*"
             ],
             "suggest" => [
-                "typo3/neos-seo" => "*"
+                "neos/seo" => "*"
             ]
         ]);
         $this->generateSitesXml($packageKey, $siteName);
