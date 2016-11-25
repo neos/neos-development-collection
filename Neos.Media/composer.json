@@ -18,7 +18,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "TYPO3\\Media\\Tests\\": "Tests"
+            "Neos\\Media\\Tests\\": "Tests"
         }
     },
     "extra": {
