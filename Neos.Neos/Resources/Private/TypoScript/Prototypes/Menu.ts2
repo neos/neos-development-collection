@@ -22,7 +22,7 @@ prototype(Neos.Neos:Menu) < prototype(TYPO3.TypoScript:Template) {
 		class = 'normal'
 	}
 
-	@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\ContextDependentHandler'
+	@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\ContextDependentHandler'
 
 	@cache {
 		mode = 'cached'

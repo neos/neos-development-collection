@@ -6,5 +6,5 @@ prototype(Neos.Neos:NodeUri) {
 	arguments = TYPO3.TypoScript:RawArray
 	additionalParams = TYPO3.TypoScript:RawArray
 	argumentsToBeExcludedFromQueryString = TYPO3.TypoScript:RawArray
-	@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\AbsorbingHandler'
+	@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
 }

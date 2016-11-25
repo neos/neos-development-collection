@@ -1,5 +1,5 @@
 prototype(Neos.Fusion:TestRenderer) {
-	@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+	@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
 	test = ${test}
 }
 

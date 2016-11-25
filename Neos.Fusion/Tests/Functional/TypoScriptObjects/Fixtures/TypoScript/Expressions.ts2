@@ -1,5 +1,5 @@
 // Examples of Eel expressions
-prototype(Neos.Fusion:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
+prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\TypoScriptObjects\\ValueImplementation'
 
 expressions.calculus = Value {
 	value = ${21 * 2}

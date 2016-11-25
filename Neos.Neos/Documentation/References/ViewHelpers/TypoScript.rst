@@ -14,7 +14,7 @@ ts:render
 Render a TypoScript object with a relative TypoScript path, optionally
 pushing new variables onto the TypoScript context.
 
-:Implementation: TYPO3\\TypoScript\\ViewHelpers\\RenderViewHelper
+:Implementation: Neos\\Fusion\\ViewHelpers\\RenderViewHelper
 
 
 

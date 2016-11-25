@@ -7,7 +7,7 @@ prototype(Neos.Neos:ImageUri) {
 	height = NULL
 	allowCropping = FALSE
 	allowUpScaling = FALSE
-	@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\AbsorbingHandler'
+	@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
 }
 
 # ImageTag object works exactly the same way as image ViewHelper in the TYPO3.Media package

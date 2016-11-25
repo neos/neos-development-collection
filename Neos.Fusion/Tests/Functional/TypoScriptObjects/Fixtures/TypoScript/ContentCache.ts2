@@ -1,8 +1,8 @@
-prototype(Neos.Fusion:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
-prototype(Neos.Fusion:Array).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ArrayImplementation'
-prototype(Neos.Fusion:Testing.Throwing).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\TypoScriptObjects\\Fixtures\\TypoScriptObjects\\ThrowingImplementation'
+prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\TypoScriptObjects\\ValueImplementation'
+prototype(Neos.Fusion:Array).@class = 'Neos\\Fusion\\TypoScriptObjects\\ArrayImplementation'
+prototype(Neos.Fusion:Testing.Throwing).@class = 'Neos\\Fusion\\Tests\\Functional\\TypoScriptObjects\\Fixtures\\TypoScriptObjects\\ThrowingImplementation'
 
-prototype(Neos.Fusion:RawArray).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RawArrayImplementation'
+prototype(Neos.Fusion:RawArray).@class = 'Neos\\Fusion\\TypoScriptObjects\\RawArrayImplementation'
 prototype(Neos.Fusion:GlobalCacheIdentifiers) >
 prototype(Neos.Fusion:GlobalCacheIdentifiers) < prototype(Neos.Fusion:RawArray)
 
@@ -313,7 +313,7 @@ contentCache.nestedCacheSegmentsWithInnerException = Neos.Fusion:Array {
 				}
 			}
 
-			@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\PlainTextHandler'
+			@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\PlainTextHandler'
 		}
 	}
 
@@ -362,7 +362,7 @@ contentCache.nestedCacheSegmentsWithConditionalException = Neos.Fusion:Array {
 				}
 			}
 
-			@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\PlainTextHandler'
+			@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\PlainTextHandler'
 		}
 	}
 

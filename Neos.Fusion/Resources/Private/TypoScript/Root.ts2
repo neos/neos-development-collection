@@ -1,19 +1,19 @@
-prototype(Neos.Fusion:Array).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ArrayImplementation'
-prototype(Neos.Fusion:RawArray).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RawArrayImplementation'
-prototype(Neos.Fusion:Template).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TemplateImplementation'
-prototype(Neos.Fusion:Case).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\CaseImplementation'
-prototype(Neos.Fusion:Matcher).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\MatcherImplementation'
-prototype(Neos.Fusion:Renderer).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RendererImplementation'
-prototype(Neos.Fusion:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
-prototype(Neos.Fusion:Debug).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\DebugImplementation'
+prototype(Neos.Fusion:Array).@class = 'Neos\\Fusion\\TypoScriptObjects\\ArrayImplementation'
+prototype(Neos.Fusion:RawArray).@class = 'Neos\\Fusion\\TypoScriptObjects\\RawArrayImplementation'
+prototype(Neos.Fusion:Template).@class = 'Neos\\Fusion\\TypoScriptObjects\\TemplateImplementation'
+prototype(Neos.Fusion:Case).@class = 'Neos\\Fusion\\TypoScriptObjects\\CaseImplementation'
+prototype(Neos.Fusion:Matcher).@class = 'Neos\\Fusion\\TypoScriptObjects\\MatcherImplementation'
+prototype(Neos.Fusion:Renderer).@class = 'Neos\\Fusion\\TypoScriptObjects\\RendererImplementation'
+prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\TypoScriptObjects\\ValueImplementation'
+prototype(Neos.Fusion:Debug).@class = 'Neos\\Fusion\\TypoScriptObjects\\DebugImplementation'
 prototype(Neos.Fusion:Collection) {
-	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\CollectionImplementation'
+	@class = 'Neos\\Fusion\\TypoScriptObjects\\CollectionImplementation'
 	itemName = 'item'
 	itemKey = 'itemKey'
 	iterationName = 'iterator'
 }
 prototype(Neos.Fusion:RawCollection) {
-  @class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RawCollectionImplementation'
+  @class = 'Neos\\Fusion\\TypoScriptObjects\\RawCollectionImplementation'
   itemName = 'item'
   itemKey = 'itemKey'
   iterationName = 'iterator'
@@ -22,7 +22,7 @@ prototype(Neos.Fusion:RawCollection) {
 # Render an HTTP response header
 #
 prototype(Neos.Fusion:Http.ResponseHead) {
-	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\Http\\ResponseHeadImplementation'
+	@class = 'Neos\\Fusion\\TypoScriptObjects\\Http\\ResponseHeadImplementation'
 	headers = Neos.Fusion:RawArray
 }
 
@@ -56,7 +56,7 @@ prototype(Neos.Fusion:Http.Message) < prototype(Neos.Fusion:Array) {
 # }
 #
 prototype(Neos.Fusion:Attributes) {
-	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\AttributesImplementation'
+	@class = 'Neos\\Fusion\\TypoScriptObjects\\AttributesImplementation'
 }
 
 # Renders an HTML tag
@@ -70,7 +70,7 @@ prototype(Neos.Fusion:Attributes) {
 # }
 #
 prototype(Neos.Fusion:Tag) {
-	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TagImplementation'
+	@class = 'Neos\\Fusion\\TypoScriptObjects\\TagImplementation'
 	attributes = Neos.Fusion:Attributes
 	omitClosingTag = FALSE
 	selfClosingTag = FALSE
@@ -86,12 +86,12 @@ prototype(Neos.Fusion:Tag) {
 # }
 #
 prototype(Neos.Fusion:UriBuilder) {
-	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\UriBuilderImplementation'
+	@class = 'Neos\\Fusion\\TypoScriptObjects\\UriBuilderImplementation'
 	additionalParams = Neos.Fusion:RawArray
 	arguments = Neos.Fusion:RawArray
 	argumentsToBeExcludedFromQueryString = Neos.Fusion:RawArray
 
-	@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\AbsorbingHandler'
+	@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
 }
 
 # Renders an URI pointing to a resource
@@ -102,10 +102,10 @@ prototype(Neos.Fusion:UriBuilder) {
 # }
 #
 prototype(Neos.Fusion:ResourceUri) {
-	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ResourceUriImplementation'
+	@class = 'Neos\\Fusion\\TypoScriptObjects\\ResourceUriImplementation'
 	localize = TRUE
 
-	@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\AbsorbingHandler'
+	@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
 }
 
 # These are globally applied cache identifiers.

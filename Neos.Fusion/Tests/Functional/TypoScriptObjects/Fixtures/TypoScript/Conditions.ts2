@@ -1,4 +1,4 @@
-prototype(Neos.Fusion:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
+prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\TypoScriptObjects\\ValueImplementation'
 
 conditions.simpleValueTrue = 'Foo'
 conditions.simpleValueTrue.@if.cond1 = true

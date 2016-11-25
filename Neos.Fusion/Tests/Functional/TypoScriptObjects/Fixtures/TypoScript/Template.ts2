@@ -1,4 +1,4 @@
-prototype(Neos.Fusion:Template).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TemplateImplementation'
+prototype(Neos.Fusion:Template).@class = 'Neos\\Fusion\\TypoScriptObjects\\TemplateImplementation'
 
 template.basicTemplate = Neos.Fusion:Template {
 	templatePath = ${fixtureDirectory + 'Templates/BasicTemplate.html'}
@@ -28,7 +28,7 @@ template.offsetAccessException = Neos.Fusion:Template {
 
 	myVariable = Neos.Fusion:Collection {
 		collection = ${['foo', 'bar']}
-		@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\PlainTextHandler'
+		@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\PlainTextHandler'
 	}
 }
 

@@ -2,7 +2,7 @@
 
 // First, set up a base object...
 prototype(Neos.Fusion:PrototypeInheritance.Base) {
-	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
+	@class = 'Neos\\Fusion\\TypoScriptObjects\\ValueImplementation'
 
 	value = 'BaseNotModified'
 }
@@ -29,8 +29,8 @@ prototypeInheritance {
 // Here, we test context-dependent prototypes such as prototype(Foo).prototype(Bar).
 // This should now also take the inheritance into account, if Foo e.g. has a parent type.
 
-prototype(Neos.Fusion:PrototypeInheritance.Advanced.Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
-prototype(Neos.Fusion:PrototypeInheritance.Advanced.WrappedNested.Base).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\TypoScriptObjects\\Fixtures\\WrappedNestedObjectRenderer'
+prototype(Neos.Fusion:PrototypeInheritance.Advanced.Value).@class = 'Neos\\Fusion\\TypoScriptObjects\\ValueImplementation'
+prototype(Neos.Fusion:PrototypeInheritance.Advanced.WrappedNested.Base).@class = 'Neos\\Fusion\\Tests\\Functional\\TypoScriptObjects\\Fixtures\\WrappedNestedObjectRenderer'
 prototype(Neos.Fusion:PrototypeInheritance.Advanced.WrappedNested.Base) {
 	prototype(PrototypeInheritance.Advanced.Value).value = '|value_from_base_NEVER_TO_BE_SHOWN|'
 	prepend = 'prepend_beforeOverride'
@@ -74,7 +74,7 @@ prototypeInheritanceAdvanced {
 // - render the "SubclassedValue"; expect that the *overridden* value from the base class applies
 prototype(Neos.Fusion:PrototypeInheritance.ContextDependent.Value) {
 	value = "should never be shown"
-	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
+	@class = 'Neos\\Fusion\\TypoScriptObjects\\ValueImplementation'
 }
 
 prototype(Neos.Fusion:PrototypeInheritance.ContextDependent.SubclassedValue) < prototype(Neos.Fusion:PrototypeInheritance.ContextDependent.Value)
