@@ -421,11 +421,11 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest
         $this->assertCount(3, $entriesWritten);
         $this->assertEquals(array(
             // contentCache.maximumLifetimeInNestedEmbedAndCachedSegments.5
-            'bd35f9d36e0e24992cb4810f759bced4' => array(
+            '7075cb501854d7d8b25926b8c7f79c3e' => array(
                 'lifetime' => 60
             ),
             // contentCache.maximumLifetimeInNestedEmbedAndCachedSegments.25
-            'd5bfcc617aa269282dbfa0887b7e1c65' => array(
+            '007836f2658952a45cfd706c300e208f' => array(
                 'lifetime' => null
             ),
             // contentCache.maximumLifetimeInNestedEmbedAndCachedSegments

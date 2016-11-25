@@ -30,7 +30,7 @@ class ThrowingImplementation extends AbstractTypoScriptObject
     public function evaluate()
     {
         if ($this->getShouldThrow()) {
-            throw new TypoScript\Exception('Just testing an exception', 1396557841);
+            throw new Fusion\Exception('Just testing an exception', 1396557841);
         }
         return 'It depends';
     }
