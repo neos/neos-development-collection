@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Tests\Functional\View\Fixtures;
+namespace Neos\Fusion\Tests\Functional\View\Fixtures;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,7 @@ namespace TYPO3\TypoScript\Tests\Functional\View\Fixtures;
  */
 
 use Neos\Flow\Annotations as Flow;
-use TYPO3\TypoScript\TypoScriptObjects\AbstractArrayTypoScriptObject;
+use Neos\Fusion\TypoScriptObjects\AbstractArrayTypoScriptObject;
 
 /**
  * Test renderer

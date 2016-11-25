@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Tests\Unit\TypoScriptObjects;
+namespace Neos\Fusion\Tests\Unit\TypoScriptObjects;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,8 +12,8 @@ namespace TYPO3\TypoScript\Tests\Unit\TypoScriptObjects;
  */
 
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\TypoScript\Core\Runtime;
-use TYPO3\TypoScript\TypoScriptObjects\TagImplementation;
+use Neos\Fusion\Core\Runtime;
+use Neos\Fusion\TypoScriptObjects\TagImplementation;
 
 /**
  * Testcase for the TypoScript Tag object
@@ -62,7 +62,7 @@ class TagImplementationTest extends UnitTestCase
             return isset($properties[$relativePath]) ? $properties[$relativePath] : null;
         }));
 
-        $typoScriptObjectName = 'TYPO3.TypoScript:Tag';
+        $typoScriptObjectName = 'Neos.Fusion:Tag';
         $renderer = new TagImplementation($this->mockTsRuntime, $path, $typoScriptObjectName);
 
         $result = $renderer->evaluate();

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Core;
+namespace Neos\Fusion\Core;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *

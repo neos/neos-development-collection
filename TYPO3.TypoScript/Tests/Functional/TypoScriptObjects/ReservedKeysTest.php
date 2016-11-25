@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects;
+namespace Neos\Fusion\Tests\Functional\TypoScriptObjects;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -19,7 +19,7 @@ class ReservedKeysTest extends AbstractTypoScriptObjectTest
 {
     /**
      * @test
-     * @expectedException \TYPO3\TypoScript\Exception
+     * @expectedException \Neos\Fusion\Exception
      */
     public function usingReservedKeysThrowsException()
     {

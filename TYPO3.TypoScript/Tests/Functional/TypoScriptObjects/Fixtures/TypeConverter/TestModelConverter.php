@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\TypeConverter;
+namespace Neos\Fusion\Tests\Functional\TypoScriptObjects\Fixtures\TypeConverter;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,7 +14,7 @@ namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\TypeConve
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
-use TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\Model\TestModel;
+use Neos\Fusion\Tests\Functional\TypoScriptObjects\Fixtures\Model\TestModel;
 
 class TestModelConverter extends AbstractTypeConverter
 {

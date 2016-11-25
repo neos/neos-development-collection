@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\TypoScriptObjects;
+namespace Neos\Fusion\TypoScriptObjects;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -90,7 +90,7 @@ class TemplateImplementation extends AbstractArrayTypoScriptObject
 				No template path set.
 				Most likely you didn't configure `templatePath` in your TypoScript object correctly.
 				For example you could add and adapt the following line to your TypoScript:
-				`prototype(%s) < prototype(TYPO3.TypoScript:Template) {
+				`prototype(%s) < prototype(Neos.Fusion:Template) {
 					templatePath = 'resource://Vendor.Package/Private/Templates/MyObject.html'
 				}`
 			", $templatePath, $this->typoScriptObjectName));

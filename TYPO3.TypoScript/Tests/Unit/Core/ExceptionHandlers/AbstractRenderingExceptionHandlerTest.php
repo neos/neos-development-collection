@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Tests\Unit\Core\ExceptionHandlers;
+namespace Neos\Fusion\Tests\Unit\Core\ExceptionHandlers;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -15,9 +15,9 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\TypoScript\Core\Runtime;
-use TYPO3\TypoScript\Exception\RuntimeException;
-use TYPO3\TypoScript\Fixtures\AbstractRenderingExceptionHandler;
+use Neos\Fusion\Core\Runtime;
+use Neos\Fusion\Exception\RuntimeException;
+use Neos\Fusion\Fixtures\AbstractRenderingExceptionHandler;
 
 require_once(__DIR__ . '/../../Fixtures/AbstractRenderingExceptionHandler.php');
 

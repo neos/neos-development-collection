@@ -1,9 +1,9 @@
-TYPO3\TypoScript\View\TypoScriptView:
+Neos\Fusion\View\TypoScriptView:
   properties:
     fallbackView:
       object: Neos\FluidAdaptor\View\TemplateView
 
-TYPO3\TypoScript\Core\Cache\ContentCache:
+Neos\Fusion\Core\Cache\ContentCache:
   properties:
     cache:
       object:

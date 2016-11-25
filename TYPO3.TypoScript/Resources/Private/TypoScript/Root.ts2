@@ -1,18 +1,18 @@
-prototype(TYPO3.TypoScript:Array).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ArrayImplementation'
-prototype(TYPO3.TypoScript:RawArray).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RawArrayImplementation'
-prototype(TYPO3.TypoScript:Template).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TemplateImplementation'
-prototype(TYPO3.TypoScript:Case).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\CaseImplementation'
-prototype(TYPO3.TypoScript:Matcher).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\MatcherImplementation'
-prototype(TYPO3.TypoScript:Renderer).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RendererImplementation'
-prototype(TYPO3.TypoScript:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
-prototype(TYPO3.TypoScript:Debug).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\DebugImplementation'
-prototype(TYPO3.TypoScript:Collection) {
+prototype(Neos.Fusion:Array).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ArrayImplementation'
+prototype(Neos.Fusion:RawArray).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RawArrayImplementation'
+prototype(Neos.Fusion:Template).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TemplateImplementation'
+prototype(Neos.Fusion:Case).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\CaseImplementation'
+prototype(Neos.Fusion:Matcher).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\MatcherImplementation'
+prototype(Neos.Fusion:Renderer).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RendererImplementation'
+prototype(Neos.Fusion:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
+prototype(Neos.Fusion:Debug).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\DebugImplementation'
+prototype(Neos.Fusion:Collection) {
 	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\CollectionImplementation'
 	itemName = 'item'
 	itemKey = 'itemKey'
 	iterationName = 'iterator'
 }
-prototype(TYPO3.TypoScript:RawCollection) {
+prototype(Neos.Fusion:RawCollection) {
   @class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RawCollectionImplementation'
   itemName = 'item'
   itemKey = 'itemKey'
@@ -21,9 +21,9 @@ prototype(TYPO3.TypoScript:RawCollection) {
 
 # Render an HTTP response header
 #
-prototype(TYPO3.TypoScript:Http.ResponseHead) {
+prototype(Neos.Fusion:Http.ResponseHead) {
 	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\Http\\ResponseHeadImplementation'
-	headers = TYPO3.TypoScript:RawArray
+	headers = Neos.Fusion:RawArray
 }
 
 # Render an HTTP message (response)
@@ -31,7 +31,7 @@ prototype(TYPO3.TypoScript:Http.ResponseHead) {
 # This is a convenient base prototype for rendering documents.
 #
 # Usage:
-# page = TYPO3.TypoScript:Http.Message {
+# page = Neos.Fusion:Http.Message {
 #   httpResponseHead {
 #     statusCode = 404
 #     headers.Content-Type = 'application/json'
@@ -39,39 +39,39 @@ prototype(TYPO3.TypoScript:Http.ResponseHead) {
 # }
 #
 #
-prototype(TYPO3.TypoScript:Http.Message) < prototype(TYPO3.TypoScript:Array) {
-	httpResponseHead = TYPO3.TypoScript:Http.ResponseHead
+prototype(Neos.Fusion:Http.Message) < prototype(Neos.Fusion:Array) {
+	httpResponseHead = Neos.Fusion:Http.ResponseHead
 	httpResponseHead.@position = 'start 1000'
 }
 
 # Renders attributes of a HTML tag
 #
 # Usage:
-# attributes = TYPO3.TypoScript:Attributes {
+# attributes = Neos.Fusion:Attributes {
 #   foo = 'bar'
-#   class = TYPO3.TypoScript:RawArray {
+#   class = Neos.Fusion:RawArray {
 #     class1 = 'class1'
 #     class2 = 'class2'
 #   }
 # }
 #
-prototype(TYPO3.TypoScript:Attributes) {
+prototype(Neos.Fusion:Attributes) {
 	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\AttributesImplementation'
 }
 
 # Renders an HTML tag
 #
 # Usage:
-# tag = TYPO3.TypoScript:Attributes {
+# tag = Neos.Fusion:Attributes {
 #   tagName = 'h1'
 #   attributes = {
 #     class = 'some-class'
 #   }
 # }
 #
-prototype(TYPO3.TypoScript:Tag) {
+prototype(Neos.Fusion:Tag) {
 	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TagImplementation'
-	attributes = TYPO3.TypoScript:Attributes
+	attributes = Neos.Fusion:Attributes
 	omitClosingTag = FALSE
 	selfClosingTag = FALSE
 }
@@ -79,17 +79,17 @@ prototype(TYPO3.TypoScript:Tag) {
 # Renders an URI pointing to a controller/action
 #
 # Usage:
-# uri = TYPO3.TypoScript:UriBuilder {
+# uri = Neos.Fusion:UriBuilder {
 #   package = 'Some.Package'
 #   controller = 'Standard'
 #   action = 'index'
 # }
 #
-prototype(TYPO3.TypoScript:UriBuilder) {
+prototype(Neos.Fusion:UriBuilder) {
 	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\UriBuilderImplementation'
-	additionalParams = TYPO3.TypoScript:RawArray
-	arguments = TYPO3.TypoScript:RawArray
-	argumentsToBeExcludedFromQueryString = TYPO3.TypoScript:RawArray
+	additionalParams = Neos.Fusion:RawArray
+	arguments = Neos.Fusion:RawArray
+	argumentsToBeExcludedFromQueryString = Neos.Fusion:RawArray
 
 	@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\AbsorbingHandler'
 }
@@ -97,11 +97,11 @@ prototype(TYPO3.TypoScript:UriBuilder) {
 # Renders an URI pointing to a resource
 #
 # Usage:
-# fileUri = TYPO3.TypoScript:ResourceUri {
+# fileUri = Neos.Fusion:ResourceUri {
 #   path = 'resource://Some.Package/Public/Images/SomeImage.png'
 # }
 #
-prototype(TYPO3.TypoScript:ResourceUri) {
+prototype(Neos.Fusion:ResourceUri) {
 	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ResourceUriImplementation'
 	localize = TRUE
 
@@ -109,14 +109,14 @@ prototype(TYPO3.TypoScript:ResourceUri) {
 }
 
 # These are globally applied cache identifiers.
-# If you don't make @cache.entryIdentifiers another prototype (like a TYPO3.TypoScript:RawArray)
+# If you don't make @cache.entryIdentifiers another prototype (like a Neos.Fusion:RawArray)
 # they will be rendered as this prototype, which means everything in here is added to ALL cached
 # TypoScript parts.
 # The baseUri contains the protocol (http/https), domain and port.
 #
-# WARNING: Do not delete this prototype, it is used inside of \TYPO3\TypoScript\Core\Cache\RuntimeContentCache::buildCacheIdentifierValues() as a fallback.
+# WARNING: Do not delete this prototype, it is used inside of \Neos\Fusion\Core\Cache\RuntimeContentCache::buildCacheIdentifierValues() as a fallback.
 #
-prototype(TYPO3.TypoScript:GlobalCacheIdentifiers) < prototype(TYPO3.TypoScript:RawArray) {
+prototype(Neos.Fusion:GlobalCacheIdentifiers) < prototype(Neos.Fusion:RawArray) {
 	format = ${request.format}
 	baseUri = ${String.toString(request.httpRequest.baseUri)}
 }

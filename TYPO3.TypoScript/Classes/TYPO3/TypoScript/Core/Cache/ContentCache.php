@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Core\Cache;
+namespace Neos\Fusion\Core\Cache;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -16,9 +16,9 @@ use Neos\Cache\CacheAwareInterface;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Context;
-use TYPO3\TypoScript\Exception;
+use Neos\Fusion\Exception;
 use Doctrine\ORM\Proxy\Proxy;
-use TYPO3\TypoScript\Exception\CacheException;
+use Neos\Fusion\Exception\CacheException;
 
 /**
  * A wrapper around a TYPO3 Flow cache which provides additional functionality for caching partial content (segments)

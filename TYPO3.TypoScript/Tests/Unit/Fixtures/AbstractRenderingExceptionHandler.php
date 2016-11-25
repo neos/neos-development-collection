@@ -1,12 +1,12 @@
 <?php
-namespace TYPO3\TypoScript\Fixtures;
+namespace Neos\Fusion\Fixtures;
 
 /**
  * subclass to test implementation of abstract class
  *
  * TestAbsorbingHandler
  */
-class AbstractRenderingExceptionHandler extends \TYPO3\TypoScript\Core\ExceptionHandlers\AbstractRenderingExceptionHandler
+class AbstractRenderingExceptionHandler extends \Neos\Fusion\Core\ExceptionHandlers\AbstractRenderingExceptionHandler
 {
     /**
      * @var string

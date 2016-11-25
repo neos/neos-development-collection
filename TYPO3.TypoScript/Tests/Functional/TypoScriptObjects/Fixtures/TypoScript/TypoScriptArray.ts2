@@ -1,38 +1,38 @@
-prototype(TYPO3.TypoScript:Array).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ArrayImplementation'
-prototype(TYPO3.TypoScript:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+prototype(Neos.Fusion:Array).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ArrayImplementation'
+prototype(Neos.Fusion:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
 
-array.basicOrdering = TYPO3.TypoScript:Array {
-	100 = TYPO3.TypoScript:TestRenderer
+array.basicOrdering = Neos.Fusion:Array {
+	100 = Neos.Fusion:TestRenderer
 	100.test = 'test100'
 
-	10 = TYPO3.TypoScript:TestRenderer
+	10 = Neos.Fusion:TestRenderer
 	10.test = 'test10'
 }
 
-array.positionalOrdering = TYPO3.TypoScript:Array {
-	c = TYPO3.TypoScript:TestRenderer
+array.positionalOrdering = Neos.Fusion:Array {
+	c = Neos.Fusion:TestRenderer
 	c.test = 'before'
 	c.@position = '10'
 
-	a = TYPO3.TypoScript:TestRenderer
+	a = Neos.Fusion:TestRenderer
 	a.test = 'after'
 	a.@position = '100'
 
-	f = TYPO3.TypoScript:TestRenderer
+	f = Neos.Fusion:TestRenderer
 	f.test = 'middle'
 	f.@position = '50'
 }
 
-array.startEndOrdering = TYPO3.TypoScript:Array {
-	a = TYPO3.TypoScript:TestRenderer
+array.startEndOrdering = Neos.Fusion:Array {
+	a = Neos.Fusion:TestRenderer
 	a.test = 'after'
 	a.@position = 'end'
 
-	c = TYPO3.TypoScript:TestRenderer
+	c = Neos.Fusion:TestRenderer
 	c.test = 'before'
 	c.@position = 'start'
 
-	f = TYPO3.TypoScript:TestRenderer
+	f = Neos.Fusion:TestRenderer
 	f.test = 'middle'
 	f.@position = '50'
 }
@@ -47,38 +47,38 @@ array.startEndOrdering = TYPO3.TypoScript:Array {
 # - b
 # - a
 # - c
-array.advancedStartEndOrdering = TYPO3.TypoScript:Array {
-	a = TYPO3.TypoScript:TestRenderer
+array.advancedStartEndOrdering = Neos.Fusion:Array {
+	a = Neos.Fusion:TestRenderer
 	a.test = 'a'
 	a.@position = 'end 10'
 
-	b = TYPO3.TypoScript:TestRenderer
+	b = Neos.Fusion:TestRenderer
 	b.test = 'b'
 	b.@position = 'end'
 
-	c = TYPO3.TypoScript:TestRenderer
+	c = Neos.Fusion:TestRenderer
 	c.test = 'c'
 	c.@position = 'end 20'
 
-	d = TYPO3.TypoScript:TestRenderer
+	d = Neos.Fusion:TestRenderer
 	d.test = 'd'
 	d.@position = 'start'
 
-	e = TYPO3.TypoScript:TestRenderer
+	e = Neos.Fusion:TestRenderer
 	e.test = 'e'
 	e.@position = 'start 10'
 
-	f = TYPO3.TypoScript:TestRenderer
+	f = Neos.Fusion:TestRenderer
 	f.test = 'f'
 	f.@position = '50'
 
-	100 = TYPO3.TypoScript:TestRenderer
+	100 = Neos.Fusion:TestRenderer
 	100.test = '100'
 
-	foobar = TYPO3.TypoScript:TestRenderer
+	foobar = Neos.Fusion:TestRenderer
 	foobar.test = 'foobar'
 
-	g = TYPO3.TypoScript:TestRenderer
+	g = Neos.Fusion:TestRenderer
 	g.test = 'g'
 	g.@position = '90'
 }

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\TypoScriptObjects\Helpers;
+namespace Neos\Fusion\TypoScriptObjects\Helpers;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,7 +13,7 @@ namespace TYPO3\TypoScript\TypoScriptObjects\Helpers;
 
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\FluidAdaptor\View\StandaloneView;
-use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
+use Neos\Fusion\TypoScriptObjects\AbstractTypoScriptObject;
 
 /**
  * Extended Fluid Template View for use in TypoScript.

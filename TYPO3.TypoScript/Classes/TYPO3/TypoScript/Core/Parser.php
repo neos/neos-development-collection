@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Core;
+namespace Neos\Fusion\Core;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,9 +13,9 @@ namespace TYPO3\TypoScript\Core;
 
 use Neos\Eel\Package;
 use Neos\Flow\Annotations as Flow;
-use TYPO3\TypoScript\Exception;
+use Neos\Fusion\Exception;
 use Neos\Utility\Arrays;
-use TYPO3\TypoScript;
+use Neos\Fusion;
 
 /**
  * The TypoScript Parser
@@ -96,7 +96,7 @@ class Parser implements ParserInterface
 	/x';
 
     /**
-     * Split an object path like "foo.bar.baz.quux" or "foo.prototype(TYPO3.TypoScript:Something).bar.baz"
+     * Split an object path like "foo.bar.baz.quux" or "foo.prototype(Neos.Fusion:Something).bar.baz"
      * at the dots (but not the dots inside the prototype definition prototype(...))
      */
     const SPLIT_PATTERN_OBJECTPATH = '/
@@ -108,7 +108,7 @@ class Parser implements ParserInterface
 	/x';
 
     /**
-     * Analyze an object path segment like "foo" or "prototype(TYPO3.TypoScript:Something)"
+     * Analyze an object path segment like "foo" or "prototype(Neos.Fusion:Something)"
      * and detect the latter
      */
     const SCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE = '/
@@ -252,7 +252,7 @@ class Parser implements ParserInterface
      * @var array
      */
     protected $objectTypeNamespaces = array(
-        'default' => 'TYPO3.TypoScript'
+        'default' => 'Neos.Fusion'
     );
 
     /**

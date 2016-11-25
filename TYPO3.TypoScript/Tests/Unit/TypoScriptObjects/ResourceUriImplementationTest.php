@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Tests\Unit\TypoScriptObjects;
+namespace Neos\Fusion\Tests\Unit\TypoScriptObjects;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -18,8 +18,8 @@ use Neos\Flow\ResourceManagement\Publishing\ResourcePublisher;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\TypoScript\Core\Runtime;
-use TYPO3\TypoScript\TypoScriptObjects\ResourceUriImplementation;
+use Neos\Fusion\Core\Runtime;
+use Neos\Fusion\TypoScriptObjects\ResourceUriImplementation;
 
 /**
  * Testcase for the TypoScript ResourceUri object
@@ -67,7 +67,7 @@ class ResourceUriImplementationTest extends UnitTestCase
 
         $this->mockTsRuntime->expects($this->any())->method('getControllerContext')->will($this->returnValue($this->mockControllerContext));
 
-        $this->resourceUriImplementation = new ResourceUriImplementation($this->mockTsRuntime, 'resourceUri/test', 'TYPO3.TypoScript:ResourceUri');
+        $this->resourceUriImplementation = new ResourceUriImplementation($this->mockTsRuntime, 'resourceUri/test', 'Neos.Fusion:ResourceUri');
 
         $this->mockResourceManager = $this->getMockBuilder(ResourceManager::class)->disableOriginalConstructor()->getMock();
         $this->inject($this->resourceUriImplementation, 'resourceManager', $this->mockResourceManager);
@@ -78,7 +78,7 @@ class ResourceUriImplementationTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\TypoScript\Exception
+     * @expectedException \Neos\Fusion\Exception
      */
     public function evaluateThrowsExceptionIfSpecifiedResourceIsInvalid()
     {
@@ -102,7 +102,7 @@ class ResourceUriImplementationTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\TypoScript\Exception
+     * @expectedException \Neos\Fusion\Exception
      */
     public function evaluateThrowsExceptionIfNeitherResourceNorPathAreSpecified()
     {
@@ -115,7 +115,7 @@ class ResourceUriImplementationTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\TypoScript\Exception
+     * @expectedException \Neos\Fusion\Exception
      */
     public function evaluateThrowsExceptionIfSpecifiedPathPointsToAPrivateResource()
     {

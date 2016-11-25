@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\View;
+namespace Neos\Fusion\View;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -17,9 +17,9 @@ use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Utility\Arrays;
 use Neos\Utility\Files;
-use TYPO3\TypoScript\Core\Parser;
-use TYPO3\TypoScript\Core\Runtime;
-use TYPO3\TypoScript\Exception\RuntimeException;
+use Neos\Fusion\Core\Parser;
+use Neos\Fusion\Core\Runtime;
+use Neos\Fusion\Exception\RuntimeException;
 
 /**
  * View for using TypoScript for standard MVC controllers.

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Core;
+namespace Neos\Fusion\Core;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -19,14 +19,14 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\Arrays;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\PositionalArraySorter;
-use TYPO3\TypoScript\Core\Cache\RuntimeContentCache;
-use TYPO3\TypoScript\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
-use TYPO3\TypoScript\Exception as Exceptions;
-use TYPO3\TypoScript\Exception;
+use Neos\Fusion\Core\Cache\RuntimeContentCache;
+use Neos\Fusion\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
+use Neos\Fusion\Exception as Exceptions;
+use Neos\Fusion\Exception;
 use Neos\Flow\Security\Exception as SecurityException;
-use TYPO3\TypoScript\Exception\RuntimeException;
-use TYPO3\TypoScript\TypoScriptObjects\AbstractArrayTypoScriptObject;
-use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
+use Neos\Fusion\Exception\RuntimeException;
+use Neos\Fusion\TypoScriptObjects\AbstractArrayTypoScriptObject;
+use Neos\Fusion\TypoScriptObjects\AbstractTypoScriptObject;
 use Neos\Eel\Utility as EelUtility;
 
 /**
@@ -185,7 +185,7 @@ class Runtime
     /**
      * Completely replace the context array with the new $contextArray.
      *
-     * Purely internal method, should not be called outside of TYPO3.TypoScript.
+     * Purely internal method, should not be called outside of Neos.Fusion.
      *
      * @param array $contextArray
      * @return void
@@ -282,7 +282,7 @@ class Runtime
 
     /**
      * Handle an Exception thrown while rendering TypoScript according to
-     * settings specified in TYPO3.TypoScript.rendering.exceptionHandler
+     * settings specified in Neos.Fusion.rendering.exceptionHandler
      *
      * @param array $typoScriptPath
      * @param \Exception $exception
@@ -303,7 +303,7 @@ class Runtime
             } else {
                 $exceptionHandlerClass = $this->settings['rendering']['exceptionHandler'];
             }
-            $invalidExceptionHandlerMessage = 'The class "%s" is not valid for setting "TYPO3.TypoScript.rendering.exceptionHandler".';
+            $invalidExceptionHandlerMessage = 'The class "%s" is not valid for setting "Neos.Fusion.rendering.exceptionHandler".';
         }
         $exceptionHandler = null;
         if ($this->objectManager->isRegistered($exceptionHandlerClass)) {
@@ -321,7 +321,7 @@ class Runtime
                 '%2$s\ThrowingHandler' . "\n" .
                 '%2$s\XmlCommentHandler',
                 $exceptionHandlerClass,
-                'TYPO3\TypoScript\Core\ExceptionHandlers'
+                'Neos\Fusion\Core\ExceptionHandlers'
             );
             throw new InvalidConfigurationException($message, 1368788926);
         }
@@ -749,7 +749,7 @@ class Runtime
      *
      * @param string $typoScriptPath the TypoScript path up to now
      * @param array $valueConfiguration TypoScript configuration for the value
-     * @param \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject $contextObject An optional object for the "this" value inside the context
+     * @param \Neos\Fusion\TypoScriptObjects\AbstractTypoScriptObject $contextObject An optional object for the "this" value inside the context
      * @return mixed The result of the evaluation
      */
     protected function evaluateEelExpressionOrSimpleValueWithProcessor($typoScriptPath, array $valueConfiguration, AbstractTypoScriptObject $contextObject = null)
@@ -770,7 +770,7 @@ class Runtime
      * Evaluate an Eel expression
      *
      * @param string $expression The Eel expression to evaluate
-     * @param \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject $contextObject An optional object for the "this" value inside the context
+     * @param \Neos\Fusion\TypoScriptObjects\AbstractTypoScriptObject $contextObject An optional object for the "this" value inside the context
      * @return mixed The result of the evaluated Eel expression
      * @throws Exception
      */
@@ -898,7 +898,7 @@ class Runtime
 					The TypoScript object `%s` is not completely defined (missing property `@class`).
 					Most likely you didn't inherit from a basic object.
 					For example you could add the following line to your TypoScript:
-					`prototype(%s) < prototype(TYPO3.TypoScript:Template)`",
+					`prototype(%s) < prototype(Neos.Fusion:Template)`",
                 $typoScriptPath, $objectType, $objectType), 1332493995);
         }
 

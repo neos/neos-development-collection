@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures;
+namespace Neos\Fusion\Tests\Functional\TypoScriptObjects\Fixtures;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,7 @@ namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures;
  */
 
 use Neos\Flow\Annotations as Flow;
-use TYPO3\TypoScript\TypoScriptObjects\AbstractArrayTypoScriptObject;
+use Neos\Fusion\TypoScriptObjects\AbstractArrayTypoScriptObject;
 
 /**
  * Renderer which wraps the nested TS object found at "value" with "prepend" and "append".

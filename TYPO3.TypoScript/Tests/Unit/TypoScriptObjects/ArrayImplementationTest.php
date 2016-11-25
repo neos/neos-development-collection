@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Tests\Unit\TypoScriptObjects;
+namespace Neos\Fusion\Tests\Unit\TypoScriptObjects;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,8 +12,8 @@ namespace TYPO3\TypoScript\Tests\Unit\TypoScriptObjects;
  */
 
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\TypoScript\Core\Runtime;
-use TYPO3\TypoScript\TypoScriptObjects\ArrayImplementation;
+use Neos\Fusion\Core\Runtime;
+use Neos\Fusion\TypoScriptObjects\ArrayImplementation;
 
 /**
  * Testcase for the TypoScript Array object
@@ -27,7 +27,7 @@ class ArrayImplementationTest extends UnitTestCase
     {
         $mockTsRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
         $path = 'array/test';
-        $typoScriptObjectName = 'TYPO3.TypoScript:Array';
+        $typoScriptObjectName = 'Neos.Fusion:Array';
         $renderer = new ArrayImplementation($mockTsRuntime, $path, $typoScriptObjectName);
         $result = $renderer->evaluate();
         $this->assertNull($result);
@@ -124,7 +124,7 @@ class ArrayImplementationTest extends UnitTestCase
         }));
 
         $path = '';
-        $typoScriptObjectName = 'TYPO3.TypoScript:Array';
+        $typoScriptObjectName = 'Neos.Fusion:Array';
         $renderer = new ArrayImplementation($mockTsRuntime, $path, $typoScriptObjectName);
         foreach ($subElements as $key => $value) {
             $renderer[$key] = $value;

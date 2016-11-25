@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects;
+namespace Neos\Fusion\Tests\Functional\TypoScriptObjects;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -67,7 +67,7 @@ class SimpleTypesTest extends AbstractTypoScriptObjectTest
 
     /**
      * @test
-     * @expectedException \TYPO3\TypoScript\Exception\MissingTypoScriptImplementationException
+     * @expectedException \Neos\Fusion\Exception\MissingTypoScriptImplementationException
      */
     public function renderingObjectWithMissingImplementationThrowsException()
     {
@@ -78,7 +78,7 @@ class SimpleTypesTest extends AbstractTypoScriptObjectTest
 
     /**
      * @test
-     * @expectedException \TYPO3\TypoScript\Exception\MissingTypoScriptObjectException
+     * @expectedException \Neos\Fusion\Exception\MissingTypoScriptObjectException
      */
     public function renderingNonExistingPathThrowsException()
     {

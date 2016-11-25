@@ -1,27 +1,27 @@
-prototype(TYPO3.TypoScript:RawCollection).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RawCollectionImplementation'
-prototype(TYPO3.TypoScript:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+prototype(Neos.Fusion:RawCollection).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RawCollectionImplementation'
+prototype(Neos.Fusion:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
 
-rawCollection.basicLoop = TYPO3.TypoScript:RawCollection {
+rawCollection.basicLoop = Neos.Fusion:RawCollection {
 	collection = ${collection}
 	itemName = 'element'
-	itemRenderer = TYPO3.TypoScript:TestRenderer {
+	itemRenderer = Neos.Fusion:TestRenderer {
 		test = ${element}
 	}
 }
 
-rawCollection.basicLoopOtherContextVariables = TYPO3.TypoScript:RawCollection {
+rawCollection.basicLoopOtherContextVariables = Neos.Fusion:RawCollection {
 	collection = ${collection}
 	itemName = 'element'
-	itemRenderer = TYPO3.TypoScript:TestRenderer {
+	itemRenderer = Neos.Fusion:TestRenderer {
 		test = ${element + other}
 	}
 }
 
-rawCollection.iteration = TYPO3.TypoScript:RawCollection {
+rawCollection.iteration = Neos.Fusion:RawCollection {
 	collection = ${collection}
 	itemName = 'element'
 	iterationName = 'iteration'
-	itemRenderer = TYPO3.TypoScript:TestRenderer {
+	itemRenderer = Neos.Fusion:TestRenderer {
 		test = ${element + '-' + iteration.index + '-' + iteration.cycle + '-' + iteration.isFirst + '-' + iteration.isLast + '-' + iteration.isOdd + '-' + iteration.isEven}
 	}
 }

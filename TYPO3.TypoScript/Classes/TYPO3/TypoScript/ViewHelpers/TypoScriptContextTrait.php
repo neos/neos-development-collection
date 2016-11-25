@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\ViewHelpers;
+namespace Neos\Fusion\ViewHelpers;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,7 +11,7 @@ namespace TYPO3\TypoScript\ViewHelpers;
  * source code.
  */
 
-use TYPO3\TypoScript\TypoScriptObjects\Helpers\TypoScriptAwareViewInterface;
+use Neos\Fusion\TypoScriptObjects\Helpers\TypoScriptAwareViewInterface;
 
 /**
  * This trait is to be used in ViewHelpers that need to get information from the TypoScript runtime context.

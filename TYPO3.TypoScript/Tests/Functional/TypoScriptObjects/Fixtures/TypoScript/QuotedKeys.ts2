@@ -1,7 +1,7 @@
-prototype(TYPO3.TypoScript:RawArray).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RawArrayImplementation'
-prototype(TYPO3.TypoScript:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+prototype(Neos.Fusion:RawArray).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RawArrayImplementation'
+prototype(Neos.Fusion:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
 
-quotedKeys.multipleKeys = TYPO3.TypoScript:RawArray {
+quotedKeys.multipleKeys = Neos.Fusion:RawArray {
 	a = 1
 	1 = 1
 	'x-y' = 1
@@ -21,6 +21,6 @@ quotedKeys."@special" {
 	'_!' = 1
 }
 
-prototype(Foo.Bar) < prototype(TYPO3.TypoScript:TestRenderer)
+prototype(Foo.Bar) < prototype(Neos.Fusion:TestRenderer)
 quotedKeys.prototype(Foo.Bar)."test" = 1
 quotedKeys.prototype.test = Foo.Bar

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects;
+namespace Neos\Fusion\Tests\Functional\TypoScriptObjects;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,8 +13,8 @@ namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects;
 
 use Neos\Flow\Cache\CacheManager;
 use Neos\Cache\Frontend\FrontendInterface;
-use TYPO3\TypoScript\Core\Cache\ContentCache;
-use TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\Model\TestModel;
+use Neos\Fusion\Core\Cache\ContentCache;
+use Neos\Fusion\Tests\Functional\TypoScriptObjects\Fixtures\Model\TestModel;
 
 /**
  * Test case for the TypoScript ContentCache
@@ -464,7 +464,7 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest
 
         $this->assertSame('Cached segment|Object value 1', $firstRenderResult);
 
-        // As the site should be added to the entry identifier because it is in the TYPO3.TypoScript:GlobalCacheIdentifiers prototype, changing the value should give us a different identifier
+        // As the site should be added to the entry identifier because it is in the Neos.Fusion:GlobalCacheIdentifiers prototype, changing the value should give us a different identifier
         $view->assign('site', 'site2');
         $secondRenderResult = $view->render();
         $this->assertSame($firstRenderResult, $secondRenderResult);

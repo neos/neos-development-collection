@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\TypoScriptObjects\Helpers;
+namespace Neos\Fusion\TypoScriptObjects\Helpers;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,14 +11,14 @@ namespace TYPO3\TypoScript\TypoScriptObjects\Helpers;
  * source code.
  */
 
-use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
+use Neos\Fusion\TypoScriptObjects\AbstractTypoScriptObject;
 
 /**
  * You should implement this interface with a View that should allow access
  * to the TypoScript object it is rendered from (and so the TypoScript runtime).
  *
  * The TypoScript FluidView is the reference implementation for this.
- * @see \TYPO3\TypoScript\TypoScriptObjects\Helpers\FluidView
+ * @see \Neos\Fusion\TypoScriptObjects\Helpers\FluidView
  *
  * @api
  */

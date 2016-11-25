@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Tests\Unit\Core\Cache;
+namespace Neos\Fusion\Tests\Unit\Core\Cache;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -19,8 +19,8 @@ use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\TypoScript\Core\Cache\CacheSegmentParser;
-use TYPO3\TypoScript\Core\Cache\ContentCache;
+use Neos\Fusion\Core\Cache\CacheSegmentParser;
+use Neos\Fusion\Core\Cache\ContentCache;
 
 /**
  * Test case for the ContentCache
@@ -70,7 +70,7 @@ class ContentCacheTest extends UnitTestCase
     /**
      * @test
      * @dataProvider invalidEntryIdentifierValues
-     * @expectedException \TYPO3\TypoScript\Exception\CacheException
+     * @expectedException \Neos\Fusion\Exception\CacheException
      * @expectedExceptionCode 1395846615
      */
     public function createCacheSegmentWithInvalidEntryIdentifierValueThrowsException($entryIdentifierValues)

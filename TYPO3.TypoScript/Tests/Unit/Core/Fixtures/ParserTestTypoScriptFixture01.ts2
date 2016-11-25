@@ -4,7 +4,7 @@
 #  - empty lines
 #  - value assignments: object type and literal
 
-test = TYPO3.TypoScript:Text
+test = Neos.Fusion:Text
  	test.value= "Hello world!"
 
 secondTest = Text

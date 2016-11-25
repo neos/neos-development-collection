@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Core\ExceptionHandlers;
+namespace Neos\Fusion\Core\ExceptionHandlers;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -79,12 +79,12 @@ class HtmlMessageHandler extends AbstractRenderingExceptionHandler
      *
      * example:
      *
-     *     default<TYPO3.Neos:Page>/body<TYPO3.TypoScript:Template>/content/
+     *     default<TYPO3.Neos:Page>/body<Neos.Fusion:Template>/content/
      *
      *   is rendered as
      *
      *     default<TYPO3.Neos:Page>/
-     *      body<TYPO3.TypoScript:Template>/
+     *      body<Neos.Fusion:Template>/
      *       content/
      *
      * @param string $typoScriptPath

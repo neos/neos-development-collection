@@ -1,5 +1,5 @@
-prototype(TYPO3.TypoScript:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
-prototype(TYPO3.TypoScript:Debug) {
+prototype(Neos.Fusion:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
+prototype(Neos.Fusion:Debug) {
 	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\DebugImplementation'
 	plaintext = TRUE
 }

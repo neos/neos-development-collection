@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Tests\Unit\TypoScriptObjects\Http;
+namespace Neos\Fusion\Tests\Unit\TypoScriptObjects\Http;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,9 +13,9 @@ namespace TYPO3\TypoScript\Tests\Unit\TypoScriptObjects\Http;
 
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\TypoScript\Core\Runtime;
-use TYPO3\TypoScript\TypoScriptObjects\Http\ResponseHeadImplementation;
-use TYPO3\TypoScript\TypoScriptObjects\TagImplementation;
+use Neos\Fusion\Core\Runtime;
+use Neos\Fusion\TypoScriptObjects\Http\ResponseHeadImplementation;
+use Neos\Fusion\TypoScriptObjects\TagImplementation;
 
 /**
  * Testcase for the TypoScript ResponseHead object
@@ -63,7 +63,7 @@ class ResponseHeadImplementationTest extends UnitTestCase
             return isset($properties[$relativePath]) ? $properties[$relativePath] : null;
         }));
 
-        $typoScriptObjectName = 'TYPO3.TypoScript:Http.ResponseHead';
+        $typoScriptObjectName = 'Neos.Fusion:Http.ResponseHead';
         $renderer = new ResponseHeadImplementation($this->mockTsRuntime, $path, $typoScriptObjectName);
 
         $result = $renderer->evaluate();

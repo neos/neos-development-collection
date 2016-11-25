@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Core\Cache;
+namespace Neos\Fusion\Core\Cache;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,7 +11,7 @@ namespace TYPO3\TypoScript\Core\Cache;
  * source code.
  */
 
-use TYPO3\TypoScript\Exception;
+use Neos\Fusion\Exception;
 
 /**
  * A parser which extracts cache segments by searching for start and end markers in the given content.

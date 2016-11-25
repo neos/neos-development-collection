@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Tests\Unit\Core;
+namespace Neos\Fusion\Tests\Unit\Core;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -17,9 +17,9 @@ use Neos\Flow\Exception;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler;
-use TYPO3\TypoScript\Core\Runtime;
-use TYPO3\TypoScript\Exception\RuntimeException;
+use Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler;
+use Neos\Fusion\Core\Runtime;
+use Neos\Fusion\Exception\RuntimeException;
 
 class RuntimeTest extends UnitTestCase
 {
@@ -91,7 +91,7 @@ class RuntimeTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\TypoScript\Exception
+     * @expectedException \Neos\Fusion\Exception
      * @expectedExceptionCode 1395922119
      */
     public function evaluateWithCacheModeUncachedAndUnspecifiedContextThrowsException()

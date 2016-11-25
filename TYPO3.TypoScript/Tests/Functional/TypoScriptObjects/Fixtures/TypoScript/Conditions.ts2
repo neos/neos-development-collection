@@ -1,4 +1,4 @@
-prototype(TYPO3.TypoScript:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
+prototype(Neos.Fusion:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
 
 conditions.simpleValueTrue = 'Foo'
 conditions.simpleValueTrue.@if.cond1 = true
@@ -16,11 +16,11 @@ conditions.expressionFalse < conditions.expressionTrue
 conditions.expressionFalse.@if.cond1 = false
 
 conditions.expressionAtLeastOneFalse < conditions.expressionTrue
-conditions.expressionAtLeastOneFalse.@if.cond2 = TYPO3.TypoScript:Value {
+conditions.expressionAtLeastOneFalse.@if.cond2 = Neos.Fusion:Value {
 	value = false
 }
 
-conditions.objectTrue = TYPO3.TypoScript:Value {
+conditions.objectTrue = Neos.Fusion:Value {
 	@if.cond1 = true
 
 	value = 'Foo'
@@ -31,7 +31,7 @@ conditions.objectFalse.@if.cond1 = false
 conditions.objectAtLeastOneFalse < conditions.objectTrue
 conditions.objectAtLeastOneFalse.@if.cond2 = ${2 < 1}
 
-conditions.objectThis = TYPO3.TypoScript:Value {
+conditions.objectThis = Neos.Fusion:Value {
 	@if.cond1 = ${this.someValue}
 
 	someValue = false
@@ -42,20 +42,20 @@ conditions.objectThis = TYPO3.TypoScript:Value {
 conditions.variableCondition = 'Rendered'
 conditions.variableCondition.@if.cond1 = ${condition}
 
-conditions.rawArray = TYPO3.TypoScript:RawArray {
+conditions.rawArray = Neos.Fusion:RawArray {
 	key = 'foo'
 	nullValue = ${null}
 	keyNotSet = 'bar'
 	keyNotSet.@if.cond = FALSE
 }
 
-conditions.attributes = TYPO3.TypoScript:Attributes {
+conditions.attributes = Neos.Fusion:Attributes {
 	key = 'foo'
 	keyNotSet = 'bar'
 	keyNotSet.@if.cond = FALSE
 }
 
-conditions.supportForConditionInProcess = TYPO3.TypoScript:Value {
+conditions.supportForConditionInProcess = Neos.Fusion:Value {
 	value = 'originalValue'
 	@process.wrap {
 		expression = 'wrappedValue'
@@ -63,7 +63,7 @@ conditions.supportForConditionInProcess = TYPO3.TypoScript:Value {
 	}
 }
 
-conditions.supportForConditionInProcessFalse = TYPO3.TypoScript:Value {
+conditions.supportForConditionInProcessFalse = Neos.Fusion:Value {
 	value = 'originalValue'
 	@process.wrap {
 		expression = 'wrappedValue'
@@ -73,17 +73,17 @@ conditions.supportForConditionInProcessFalse = TYPO3.TypoScript:Value {
 	@process.wrap2.@if.skipIfFalse = FALSE
 }
 
-conditions.supportForConditionInProcessWithAdvancedProcess = TYPO3.TypoScript:Value {
+conditions.supportForConditionInProcessWithAdvancedProcess = Neos.Fusion:Value {
 	value = 'originalValue'
-	@process.wrap = TYPO3.TypoScript:Value {
+	@process.wrap = Neos.Fusion:Value {
 		value = 'wrappedValue'
 		@if.doIfTrue = TRUE
 	}
 }
 
-conditions.supportForConditionInProcessWithAdvancedProcessFalse = TYPO3.TypoScript:Value {
+conditions.supportForConditionInProcessWithAdvancedProcessFalse = Neos.Fusion:Value {
 	value = 'originalValue'
-	@process.wrap = TYPO3.TypoScript:Value {
+	@process.wrap = Neos.Fusion:Value {
 		value = 'wrappedValue'
 		@if.skipIfFalse = FALSE
 	}
@@ -113,7 +113,7 @@ conditions.processorOnExpressionWithCondition = ${'expressionValue'} {
 	@process.wrap = ${'<wrap>' + value + '</wrap>'}
 }
 
-conditions.processorOnObjectWithCondition = TYPO3.TypoScript:Value {
+conditions.processorOnObjectWithCondition = Neos.Fusion:Value {
 	value = 'originalValue'
 	@if.cond1 = FALSE
 

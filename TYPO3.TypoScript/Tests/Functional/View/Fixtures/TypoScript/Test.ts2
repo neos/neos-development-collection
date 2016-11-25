@@ -1,9 +1,9 @@
-prototype(TYPO3.TypoScript:TestRenderer) {
+prototype(Neos.Fusion:TestRenderer) {
 	@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
 	test = ${test}
 }
 
-Foo.Bar.TestController.index = TYPO3.TypoScript:TestRenderer
+Foo.Bar.TestController.index = Neos.Fusion:TestRenderer
 
-foo.bar = TYPO3.TypoScript:TestRenderer
+foo.bar = Neos.Fusion:TestRenderer
 foo.bar.test = 'foobar'

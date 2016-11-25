@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Core\ExceptionHandlers;
+namespace Neos\Fusion\Core\ExceptionHandlers;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -34,7 +34,7 @@ class AbsorbingHandler extends AbstractRenderingExceptionHandler
      */
     protected function handle($typoScriptPath, \Exception $exception, $referenceCode)
     {
-        $this->systemLogger->log('Absorbed Exception: ' . $exception->getMessage(), LOG_DEBUG, array('typoScriptPath' => $typoScriptPath, 'referenceCode' => $referenceCode), 'TYPO3.TypoScript', \TYPO3\TypoScript\Core\ExceptionHandlers\AbsorbingHandler::class);
+        $this->systemLogger->log('Absorbed Exception: ' . $exception->getMessage(), LOG_DEBUG, array('typoScriptPath' => $typoScriptPath, 'referenceCode' => $referenceCode), 'Neos.Fusion', \Neos\Fusion\Core\ExceptionHandlers\AbsorbingHandler::class);
         return '';
     }
 

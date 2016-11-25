@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\Helper;
+namespace Neos\Fusion\Tests\Functional\TypoScriptObjects\Fixtures\Helper;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,7 @@ namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\Helper;
  */
 
 use Neos\Eel\ProtectedContextAwareInterface;
-use TYPO3\TypoScript;
+use Neos\Fusion;
 
 class UtilityHelper implements ProtectedContextAwareInterface
 {
