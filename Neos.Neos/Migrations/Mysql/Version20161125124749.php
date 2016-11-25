@@ -19,11 +19,11 @@ class Version20161125124749 extends AbstractMigration
 
         $this->addSql("UPDATE neos_contentrepository_domain_model_nodedata SET nodetype=REPLACE(nodetype, 'TYPO3.Neos:', 'Neos.Neos:')");
 
-        $this->addSql("UPDATE neos_contentrepository_domain_model_nodedata SET properties=REPLACE(nodetype, 'TYPO3\\\\Media\\\\', 'Neos\\\\Media\\\\')");
-        $this->addSql("UPDATE neos_contentrepository_domain_model_nodedata SET properties=REPLACE(nodetype, 'TYPO3\\\\Flow\\\\', 'Neos\\\\Flow\\\\')");
-        $this->addSql("UPDATE neos_contentrepository_domain_model_nodedata SET properties=REPLACE(nodetype, 'TYPO3\\\\Neos\\\\', 'Neos\\\\Neos\\\\')");
-        $this->addSql("UPDATE neos_contentrepository_domain_model_nodedata SET properties=REPLACE(nodetype, 'TYPO3\\\\Party\\\\', 'Neos\\\\Party\\\\')");
-        $this->addSql("UPDATE neos_contentrepository_domain_model_nodedata SET properties=REPLACE(nodetype, 'TYPO3\\\\TYPO3CR\\\\', 'Neos\\\\ContentRepository\\\\')");
+        $this->addSql("UPDATE neos_contentrepository_domain_model_nodedata SET properties=REPLACE(properties, 'TYPO3\\\\Media\\\\', 'Neos\\\\Media\\\\')");
+        $this->addSql("UPDATE neos_contentrepository_domain_model_nodedata SET properties=REPLACE(properties, 'TYPO3\\\\Flow\\\\', 'Neos\\\\Flow\\\\')");
+        $this->addSql("UPDATE neos_contentrepository_domain_model_nodedata SET properties=REPLACE(properties, 'TYPO3\\\\Neos\\\\', 'Neos\\\\Neos\\\\')");
+        $this->addSql("UPDATE neos_contentrepository_domain_model_nodedata SET properties=REPLACE(properties, 'TYPO3\\\\Party\\\\', 'Neos\\\\Party\\\\')");
+        $this->addSql("UPDATE neos_contentrepository_domain_model_nodedata SET properties=REPLACE(properties, 'TYPO3\\\\TYPO3CR\\\\', 'Neos\\\\ContentRepository\\\\')");
     }
 
     /**
@@ -36,10 +36,10 @@ class Version20161125124749 extends AbstractMigration
 
         $this->addSql("UPDATE neos_contentrepository_domain_model_nodedata SET nodetype=REPLACE(nodetype, 'Neos.Neos:', 'TYPO3.Neos:')");
 
-        $this->addSql("UPDATE neos_contentrepository_domain_model_nodedata SET properties=REPLACE(nodetype, 'Neos\\\\Media\\\\', 'TYPO3\\\\Media\\\\')");
-        $this->addSql("UPDATE neos_contentrepository_domain_model_nodedata SET properties=REPLACE(nodetype, 'Neos\\\\Flow\\\\', 'TYPO3\\\\Flow\\\\')");
-        $this->addSql("UPDATE neos_contentrepository_domain_model_nodedata SET properties=REPLACE(nodetype, 'Neos\\\\Neos\\\\', 'TYPO3\\\\Neos\\\\')");
-        $this->addSql("UPDATE neos_contentrepository_domain_model_nodedata SET properties=REPLACE(nodetype, 'Neos\\\\Party\\\\', 'TYPO3\\\\Party\\\\')");
-        $this->addSql("UPDATE neos_contentrepository_domain_model_nodedata SET properties=REPLACE(nodetype, 'Neos\\\\ContentRepository\\\\', 'TYPO3\\\\TYPO3CR\\\\')");
+        $this->addSql("UPDATE neos_contentrepository_domain_model_nodedata SET properties=REPLACE(properties, 'Neos\\\\Media\\\\', 'TYPO3\\\\Media\\\\')");
+        $this->addSql("UPDATE neos_contentrepository_domain_model_nodedata SET properties=REPLACE(properties, 'Neos\\\\Flow\\\\', 'TYPO3\\\\Flow\\\\')");
+        $this->addSql("UPDATE neos_contentrepository_domain_model_nodedata SET properties=REPLACE(properties, 'Neos\\\\Neos\\\\', 'TYPO3\\\\Neos\\\\')");
+        $this->addSql("UPDATE neos_contentrepository_domain_model_nodedata SET properties=REPLACE(properties, 'Neos\\\\Party\\\\', 'TYPO3\\\\Party\\\\')");
+        $this->addSql("UPDATE neos_contentrepository_domain_model_nodedata SET properties=REPLACE(properties, 'Neos\\\\ContentRepository\\\\', 'TYPO3\\\\TYPO3CR\\\\')");
     }
 }
