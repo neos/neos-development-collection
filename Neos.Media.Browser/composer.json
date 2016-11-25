@@ -10,12 +10,7 @@
         "psr-4": {
             "Neos\\Media\\Browser\\": "Classes"
         }
-    },
-    "autoload-dev": {
-        "psr-4": {
-           "TYPO3\\TYPO3CR\\Tests\\": "Tests"
-        }
-    },
+    }
     "extra": {
         "applied-flow-migrations": [
             "TYPO3.TYPO3CR-20150510103823",
