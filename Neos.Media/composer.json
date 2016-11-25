@@ -9,7 +9,7 @@
         "neos/fluid-adaptor": "*"
     },
     "replace": {
-      "typo3/media": "self.version"
+        "typo3/media": "self.version"
     },
     "autoload": {
         "psr-4": {
@@ -56,7 +56,8 @@
             "Neos.Flow-20161124204700",
             "Neos.Flow-20161124204701",
             "Neos.Twitter.Bootstrap-20161124204912",
-            "Neos.Form-20161124205254"
+            "Neos.Form-20161124205254",
+            "Neos.Flow-20161124224015"
         ]
     }
 }
