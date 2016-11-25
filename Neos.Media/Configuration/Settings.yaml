@@ -1,37 +1,5 @@
 
 TYPO3:
-  Media:
-    behaviourFlag: '1.2'
-    asyncThumbnails: true
-    thumbnailPresets: {  }
-    autoCreateThumbnailPresets: true
-    asset:
-      modelMappingStrategy:
-        default: Neos\Media\Domain\Model\Document
-        patterns:
-          '[image/.*]':
-            className: Neos\Media\Domain\Model\Image
-          '[audio/.*]':
-            className: Neos\Media\Domain\Model\Audio
-          '[video/.*]':
-            className: Neos\Media\Domain\Model\Video
-    image:
-      defaultOptions:
-        quality: 90
-        convertCMYKToRGB: true
-    thumbnailGenerators:
-      Neos\Media\Domain\Model\ThumbnailGenerator\DocumentThumbnailGenerator:
-        resolution: 120
-        supportedExtensions:
-          - pdf
-          - eps
-          - ai
-        paginableDocuments:
-          - pdf
-      Neos\Media\Domain\Model\ThumbnailGenerator\FontDocumentThumbnailGenerator:
-        supportedExtensions:
-          - ttf
-          - otf
   DocTools:
     collections:
       Media:
@@ -79,3 +47,35 @@ Neos:
       routes:
         Neos.Media:
           position: 'before TYPO3.Neos'
+  Media:
+    behaviourFlag: '1.2'
+    asyncThumbnails: true
+    thumbnailPresets: {  }
+    autoCreateThumbnailPresets: true
+    asset:
+      modelMappingStrategy:
+        default: Neos\Media\Domain\Model\Document
+        patterns:
+          '[image/.*]':
+            className: Neos\Media\Domain\Model\Image
+          '[audio/.*]':
+            className: Neos\Media\Domain\Model\Audio
+          '[video/.*]':
+            className: Neos\Media\Domain\Model\Video
+    image:
+      defaultOptions:
+        quality: 90
+        convertCMYKToRGB: true
+    thumbnailGenerators:
+      Neos\Media\Domain\Model\ThumbnailGenerator\DocumentThumbnailGenerator:
+        resolution: 120
+        supportedExtensions:
+          - pdf
+          - eps
+          - ai
+        paginableDocuments:
+          - pdf
+      Neos\Media\Domain\Model\ThumbnailGenerator\FontDocumentThumbnailGenerator:
+        supportedExtensions:
+          - ttf
+          - otf
