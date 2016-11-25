@@ -26,7 +26,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Utility\Arrays;
-use Neos\Flow\Utility\Unicode\Functions as UnicodeFunctions;
+use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 use Neos\Media\Domain\Model\Adjustment\ImageAdjustmentInterface;
 use Neos\Media\Exception\ImageFileException;
 use Neos\Media\Exception\ImageServiceException;
