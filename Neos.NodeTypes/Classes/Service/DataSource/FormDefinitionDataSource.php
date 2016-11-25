@@ -11,7 +11,7 @@ namespace Neos\NodeTypes\Service\DataSource;
  * source code.
  */
 
-use TYPO3\Neos\Service\DataSource\AbstractDataSource;
+use Neos\Neos\Service\DataSource\AbstractDataSource;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 

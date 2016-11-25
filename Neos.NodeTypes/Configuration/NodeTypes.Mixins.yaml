@@ -120,7 +120,7 @@
         inspector:
           group: 'image'
           position: 400
-          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
+          editor: 'Neos.Neos/Inspector/Editors/SelectBoxEditor'
           editorOptions:
             placeholder: i18n
             values:
@@ -144,7 +144,7 @@
         reloadIfChanged: TRUE
         inspector:
           position: 300
-          editor: 'TYPO3.Neos/Inspector/Editors/LinkEditor'
+          editor: 'Neos.Neos/Inspector/Editors/LinkEditor'
 
 # Content image mixin
 'Neos.NodeTypes:ContentImageMixin':

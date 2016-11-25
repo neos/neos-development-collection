@@ -1,9 +1,9 @@
 'Neos.NodeTypes:Page':
   superTypes:
-    'TYPO3.Neos:Document': TRUE
+    'Neos.Neos:Document': TRUE
   childNodes:
     main:
-      type: 'TYPO3.Neos:ContentCollection'
+      type: 'Neos.Neos:ContentCollection'
   properties:
     layout:
       type: string
@@ -13,7 +13,7 @@
         inspector:
           group: ~
           position: 100
-          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
+          editor: 'Neos.Neos/Inspector/Editors/SelectBoxEditor'
           editorOptions:
             placeholder: i18n
             values:
@@ -26,7 +26,7 @@
         inspector:
           group: ~
           position: 110
-          editor: 'TYPO3.Neos/Inspector/Editors/SelectBoxEditor'
+          editor: 'Neos.Neos/Inspector/Editors/SelectBoxEditor'
           editorOptions:
             placeholder: i18n
             values:
