@@ -22,7 +22,7 @@ use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Flow\Utility\Now;
-use TYPO3\Media\Domain\Model\ImageVariant;
+use Neos\Media\Domain\Model\ImageVariant;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Exception\ImportException;
 use Neos\ContentRepository\Utility;
@@ -382,7 +382,7 @@ class NodeImportService
             switch ($reader->nodeType) {
                 case \XMLReader::ELEMENT:
                     $depth++;
-                    // __type="object" __classname="TYPO3\Media\Domain\Model\ImageVariant" __encoding="json"
+                    // __type="object" __classname="Neos\Media\Domain\Model\ImageVariant" __encoding="json"
                     $currentType = $reader->getAttribute('__type');
                     $currentClassName = $reader->getAttribute('__classname');
                     $currentEncoding = $reader->getAttribute('__encoding');
@@ -440,7 +440,7 @@ class NodeImportService
                         $currentType = null;
                     }
 
-                    // __type="object" __identifier="uuid goes here" __classname="TYPO3\Media\Domain\Model\ImageVariant" __encoding="json"
+                    // __type="object" __identifier="uuid goes here" __classname="Neos\Media\Domain\Model\ImageVariant" __encoding="json"
                     if ($currentType === 'array') {
                         $value = $this->parseArrayElements($reader, $currentProperty, $currentNodeIdentifier);
                         $properties[$currentProperty] = $value;

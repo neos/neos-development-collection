@@ -15,7 +15,7 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\Media\Domain\Model\Asset;
+use Neos\Media\Domain\Model\Asset;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
@@ -176,7 +176,7 @@ class NodeConverterTest extends UnitTestCase
         $nodePath = '/foo/bar';
         $nodeTypeProperties = array(
             'assets' => array(
-                'type' => 'array<TYPO3\Media\Domain\Model\Asset>'
+                'type' => 'array<Neos\Media\Domain\Model\Asset>'
             )
         );
         $decodedPropertyValue = array('8aaf4dd2-bd85-11e3-ae3d-14109fd7a2dd', '8febe94a-bd85-11e3-8401-14109fd7a2dd');
