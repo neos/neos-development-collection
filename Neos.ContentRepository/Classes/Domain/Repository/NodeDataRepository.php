@@ -19,7 +19,7 @@ use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\Repository;
 use Neos\Utility\Arrays;
-use Neos\Flow\Utility\Unicode\Functions as UnicodeFunctions;
+use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Model\NodeInterface;

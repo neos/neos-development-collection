@@ -15,7 +15,7 @@ use Neos\Eel\EelEvaluatorInterface;
 use Neos\Eel\Utility;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
-use Neos\Flow\Utility\Unicode\Functions;
+use Neos\Utility\Unicode\Functions;
 
 /**
  * The expression based node label generator that is used as default if a label expression is configured.

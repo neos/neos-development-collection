@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Domain\Model;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Utility\Unicode\Functions;
+use Neos\Utility\Unicode\Functions;
 use Neos\ContentRepository\Domain\Model\AbstractNodeData;
 
 /**
