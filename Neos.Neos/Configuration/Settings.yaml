@@ -37,7 +37,7 @@ TYPO3:
           - Neos.Flow
           - Neos.Party
           - Neos.FluidAdaptor
-          - Neos.Kickstart
+          - Neos.Kickstarter
           - TYPO3.Welcome
           - Neos.Media
           - Neos.ContentRepository
