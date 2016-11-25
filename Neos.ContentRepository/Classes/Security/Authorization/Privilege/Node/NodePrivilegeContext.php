@@ -116,7 +116,7 @@ class NodePrivilegeContext
      *
      * Example: nodeIsOfType(['Neos.ContentRepository:NodeType1', 'Neos.ContentRepository:NodeType2']) matches if the selected node is of (sub) type *Neos.ContentRepository:NodeType1* or *Neos.ContentRepository:NodeType1*
      *
-     * @param string|array $nodeTypes A single or an array of fully qualified NodeType name(s), e.g. "TYPO3.Neos:Document"
+     * @param string|array $nodeTypes A single or an array of fully qualified NodeType name(s), e.g. "Neos.Neos:Document"
      * @return boolean TRUE if the selected node matches the $nodeTypes, otherwise FALSE
      */
     public function nodeIsOfType($nodeTypes)

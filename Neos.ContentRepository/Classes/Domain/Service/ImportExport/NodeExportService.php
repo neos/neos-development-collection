@@ -119,7 +119,7 @@ class NodeExportService
      * @param boolean $tidy
      * @param boolean $endDocument
      * @param string $resourceSavePath
-     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text")
+     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text")
      * @return \XMLWriter
      */
     public function export($startingPointNodePath = '/', $workspaceName = 'live', \XMLWriter $xmlWriter = null, $tidy = true, $endDocument = true, $resourceSavePath = null, $nodeTypeFilter = null)

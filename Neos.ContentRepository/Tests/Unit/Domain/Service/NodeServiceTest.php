@@ -131,7 +131,7 @@ class NodeServiceTest extends UnitTestCase
 
         $mockNode = $this->getMockBuilder(Node::class)->disableOriginalConstructor()->getMock();
 
-        $mockNodeType = $this->mockNodeType('TYPO3.Neos:Content');
+        $mockNodeType = $this->mockNodeType('Neos.Neos:Content');
 
         $mockNode->expects($this->once())
             ->method('getNodeType')

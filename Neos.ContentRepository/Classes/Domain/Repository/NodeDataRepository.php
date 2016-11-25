@@ -441,7 +441,7 @@ class NodeDataRepository extends Repository
      * @see findByParentAndNodeType()
      *
      * @param string $parentPath Absolute path of the parent node
-     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
+     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text" or NULL)
      * @param Workspace $workspace The containing workspace
      * @param array $dimensions An array of dimensions to dimension values
      * @param boolean $removedNodes If TRUE the result has ONLY removed nodes. If FALSE removed nodes are NOT inside the result. If NULL the result contains BOTH removed and non-removed nodes. (defaults to FALSE)
@@ -462,7 +462,7 @@ class NodeDataRepository extends Repository
      * only occurs in very rare cases) is the *identifier*.
      *
      * @param string $parentPath Absolute path of the parent node
-     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
+     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text" or NULL)
      * @param Workspace $workspace The containing workspace
      * @param array $dimensions An array of dimensions to dimension values
      * @param boolean $removedNodes If TRUE the result has ONLY removed nodes. If FALSE removed nodes are NOT inside the result. If NULL the result contains BOTH removed and non-removed nodes. (defaults to FALSE)
@@ -621,7 +621,7 @@ class NodeDataRepository extends Repository
      * TODO Move to a new Node operation getDescendantNodes(...)
      *
      * @param string $parentPath Absolute path of the parent node
-     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
+     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text" or NULL)
      * @param Context $context The containing workspace
      * @param boolean $recursive If TRUE *all* matching nodes underneath the specified parent path are returned
      * @return array<\Neos\ContentRepository\Domain\Model\NodeInterface> The nodes found on the given path
@@ -646,7 +646,7 @@ class NodeDataRepository extends Repository
      * NOTE: Only considers persisted nodes!
      *
      * @param string $parentPath Absolute path of the parent node
-     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
+     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text" or NULL)
      * @param Workspace $workspace The containing workspace
      * @param array $dimensions
      * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to FALSE)
@@ -843,7 +843,7 @@ class NodeDataRepository extends Repository
      * Finds a single node by its parent and (optionally) by its node type
      *
      * @param string $parentPath Absolute path of the parent node
-     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
+     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text" or NULL)
      * @param array $dimensions
      * @param Workspace $workspace The containing workspace
      * @param boolean $removedNodes If TRUE the result has ONLY removed nodes. If FALSE removed nodes are NOT inside the result. If NULL the result contains BOTH removed and non-removed nodes. (defaults to FALSE)
@@ -864,7 +864,7 @@ class NodeDataRepository extends Repository
      * Finds a single node by its parent and (optionally) by its node type
      *
      * @param string $parentPath Absolute path of the parent node
-     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
+     * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text" or NULL)
      * @param Context $context The containing context
      * @return NodeData The node found or NULL
      */
@@ -891,7 +891,7 @@ class NodeDataRepository extends Repository
      * @param Workspace $workspace The containing workspace
      * @param array $dimensions Array of dimensions to array of dimension values
      * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to FALSE)
-     * @param string $nodeTypeFilter Optional filter for the node type of the nodes, supports complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
+     * @param string $nodeTypeFilter Optional filter for the node type of the nodes, supports complex expressions (e.g. "Neos.Neos:Page", "!Neos.Neos:Page,Neos.Neos:Text" or NULL)
      * @throws \InvalidArgumentException
      * @return array<\Neos\ContentRepository\Domain\Model\NodeData> The nodes found on the given path
      * @todo findOnPath should probably not return child nodes of removed nodes unless removed nodes are included.

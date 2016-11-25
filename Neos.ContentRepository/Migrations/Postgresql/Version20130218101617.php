@@ -5,7 +5,7 @@ use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
 /**
- * Corrects occurrences of "TYPO3\Neos\Domain\Model\Site" in TYPO3\TYPO3CR\Domain\Model\ContentObjectProxy's targettype property
+ * Corrects occurrences of "Neos\Neos\Domain\Model\Site" in TYPO3\TYPO3CR\Domain\Model\ContentObjectProxy's targettype property
  */
 class Version20130218101617 extends AbstractMigration
 {
