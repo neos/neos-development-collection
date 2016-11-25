@@ -14,7 +14,7 @@ namespace Neos\SiteKickstarter\Service;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Utility\Files;
-use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
+use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
 
 /**
  * Service to generate site packages
