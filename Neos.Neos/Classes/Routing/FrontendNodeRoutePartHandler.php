@@ -24,8 +24,8 @@ use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\Routing\Exception\InvalidDimensionPresetCombinationException;
 use Neos\Neos\Routing\Exception\InvalidRequestPathException;
 use Neos\Neos\Routing\Exception\NoSuchDimensionValueException;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Utility\NodePaths;
 
 /**
  * A route part handler for finding nodes specifically in the website's frontend.

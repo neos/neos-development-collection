@@ -13,7 +13,7 @@ namespace Neos\Neos\Domain\Service;
 
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Neos\Service\LinkingService;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**

@@ -13,11 +13,11 @@ namespace Neos\Neos\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Utility\NodeUriPathSegmentGenerator;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface;
-use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
-use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
-use TYPO3\TYPO3CR\Exception\NodeException;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Domain\Utility\NodePaths;
+use Neos\ContentRepository\Exception\NodeException;
 
 /**
  * Centralizes common operations like moving and copying of Nodes with Neos specific additional handling.

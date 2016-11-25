@@ -34,18 +34,18 @@ use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\Service\PublishingService;
 use Neos\Party\Domain\Repository\PartyRepository;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
-use TYPO3\TYPO3CR\Service\AuthorizationService;
-use TYPO3\TYPO3CR\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
-use TYPO3\TYPO3CR\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\ContentRepository\Service\AuthorizationService;
+use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
+use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
 use Neos\Neos\Tests\Functional\Command\BehatTestHelper;
 
 require_once(__DIR__ . '/../../../../../../Application/Flowpack.Behat/Tests/Behat/FlowContext.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
-require_once(__DIR__ . '/../../../../../TYPO3.TYPO3CR/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
-require_once(__DIR__ . '/../../../../../TYPO3.TYPO3CR/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
 require_once(__DIR__ . '/HistoryDefinitionsTrait.php');
 
 /**

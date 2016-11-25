@@ -14,7 +14,7 @@ namespace Neos\Neos\Eel\FlowQueryOperations;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * "parentsUntil" operation working on TYPO3CR nodes. It iterates over all

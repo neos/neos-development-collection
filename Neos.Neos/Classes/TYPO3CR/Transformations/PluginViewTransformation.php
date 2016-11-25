@@ -12,10 +12,10 @@ namespace Neos\Neos\TYPO3CR\Transformations;
  */
 
 use Neos\Flow\Annotations as Flow;
-use TYPO3\TYPO3CR\Domain\Model\NodeData;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Migration\Transformations\AbstractTransformation;
+use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Migration\Transformations\AbstractTransformation;
 
 /**
  * Convert PluginViews references from node paths to identifiers

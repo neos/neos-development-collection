@@ -15,9 +15,9 @@ use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Service\HtmlAugmenter;
 use Neos\Neos\Domain\Service\ContentContext;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Service\AuthorizationService;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Service\AuthorizationService;
+use Neos\ContentRepository\Domain\Model\NodeType;
 use TYPO3\TypoScript\Core\Runtime;
 use Neos\Neos\Service\ContentElementEditableService;
 
@@ -88,7 +88,7 @@ class ContentElementEditableServiceTest extends UnitTestCase
         $this->mockTsRuntime = $this->getMockBuilder(\TYPO3\TypoScript\Core\Runtime::class)->disableOriginalConstructor()->getMock();
         $this->mockContentContext = $this->getMockBuilder(\Neos\Neos\Domain\Service\ContentContext::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockNode = $this->getMockBuilder(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::class)->getMock();
+        $this->mockNode = $this->getMockBuilder(\Neos\ContentRepository\Domain\Model\NodeInterface::class)->getMock();
         $this->mockNode->expects($this->any())->method('getContext')->will($this->returnValue($this->mockContentContext));
         $this->mockNode->expects($this->any())->method('getNodeType')->will($this->returnValue(new NodeType('Acme.Test:Headline', [], [])));
 

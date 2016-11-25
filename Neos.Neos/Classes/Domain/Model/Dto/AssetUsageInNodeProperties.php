@@ -13,7 +13,7 @@ namespace Neos\Neos\Domain\Model\Dto;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\Dto\UsageReference;
 use Neos\Neos\Domain\Model\Site;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * A DTO for storing information related to a usage of an asset in node properties.

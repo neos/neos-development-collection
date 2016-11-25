@@ -17,16 +17,16 @@ use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Service\PublishingService;
-use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
-use TYPO3\TYPO3CR\Domain\Model\NodeData;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
-use TYPO3\TYPO3CR\Domain\Service\ContentDimensionPresetSourceInterface;
-use TYPO3\TYPO3CR\Domain\Service\Context;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
+use Neos\ContentRepository\Domain\Factory\NodeFactory;
+use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
+use Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface;
+use Neos\ContentRepository\Domain\Service\Context;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 
 /**
  * Test case for the Workspace PublishingService

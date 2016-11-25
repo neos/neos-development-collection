@@ -24,11 +24,11 @@ use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\EventLog\Domain\Service\EventEmittingService;
 use Neos\Neos\Exception as NeosException;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
-use TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService;
-use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\ContentRepository\Domain\Service\ImportExport\NodeImportService;
+use Neos\ContentRepository\Domain\Utility\NodePaths;
 
 /**
  * The Site Import Service

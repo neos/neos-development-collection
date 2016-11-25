@@ -20,8 +20,8 @@ use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\Audio;
 use Neos\Media\Domain\Model\Document;
 use Neos\Media\Domain\Model\Video;
-use TYPO3\TYPO3CR\Domain\Model\NodeData;
-use TYPO3\TYPO3CR\Migration\Transformations\AbstractTransformation;
+use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Migration\Transformations\AbstractTransformation;
 
 /**
  * Convert serialized Assets to references.

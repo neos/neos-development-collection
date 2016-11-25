@@ -3,7 +3,11 @@ TYPO3:
   TypoScript:
     rendering:
       exceptionHandler: TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler
-  TYPO3CR:
+Neos:
+  Neos:
+    eventLog:
+      enabled: false
+  ContentRepository:
     contentDimensions:
       language:
         default: en_US
@@ -53,7 +57,3 @@ TYPO3:
               - lv
               - en_US
             uriSegment: lv
-Neos:
-  Neos:
-    eventLog:
-      enabled: false

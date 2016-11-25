@@ -26,11 +26,11 @@ use Neos\Neos\Routing\Cache\RouteCacheFlusher;
 use Neos\Neos\Service\PublishingService;
 use Neos\Neos\TypoScript\Cache\ContentCacheFlusher;
 use Neos\Neos\Utility\NodeUriPathSegmentGenerator;
-use TYPO3\TYPO3CR\Domain\Model\Node;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Service\Context;
+use Neos\ContentRepository\Domain\Model\Node;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Domain\Service\Context;
 use TYPO3\TypoScript\Core\Cache\ContentCache;
 
 /**

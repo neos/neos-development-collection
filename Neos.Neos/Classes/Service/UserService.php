@@ -13,8 +13,8 @@ namespace Neos\Neos\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\User;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\Neos\Utility\User as UserUtility;
 
 /**

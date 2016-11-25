@@ -22,11 +22,11 @@ use Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Routing\Exception\NoHomepageException;
 use Neos\Neos\Routing\FrontendNodeRoutePartHandler;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactory;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Service\ContextFactory;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 
 /**
  * Test case for the frontend node route part handler

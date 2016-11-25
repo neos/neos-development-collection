@@ -12,7 +12,7 @@ namespace Neos\Neos\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\Model\NodeType;
 
 /**
  * Renders the Node Type Schema in a format the User Interface understands; additionally pre-calculating node constraints
@@ -23,7 +23,7 @@ class NodeTypeSchemaBuilder
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
+     * @var \Neos\ContentRepository\Domain\Service\NodeTypeManager
      */
     protected $nodeTypeManager;
 

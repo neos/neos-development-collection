@@ -12,7 +12,7 @@ namespace Neos\Neos\ViewHelpers\Rendering;
  */
 
 use Neos\Flow\Annotations as Flow;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * ViewHelper to find out if Neos is rendering the live website.

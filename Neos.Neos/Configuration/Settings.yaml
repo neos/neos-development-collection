@@ -9,9 +9,6 @@
 #                                                                        #
 
 TYPO3:
-  TYPO3CR:
-    fallbackNodeType: 'Neos.Neos:FallbackNode'
-
   Setup:
     stepOrder:
       - neosRequirements
@@ -76,7 +73,7 @@ TYPO3:
           - Neos.Kickstart
           - TYPO3.Welcome
           - Neos.Media
-          - TYPO3.TYPO3CR
+          - Neos.ContentRepository
           - Neos.Neos.Kickstarter
           - Neos.Neos
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/CommandReference.rst'
@@ -592,6 +589,6 @@ Neos:
     package:
       packagesPathByType:
         neos-site: Sites
-        neos-site: Sites
         neos-plugin: Plugins
-        neos-plugin: Plugins
+  ContentRepository:
+    fallbackNodeType: 'Neos.Neos:FallbackNode'

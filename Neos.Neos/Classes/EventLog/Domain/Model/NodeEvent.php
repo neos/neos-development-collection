@@ -19,8 +19,8 @@ use Neos\Utility\Arrays;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Service\UserService;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 
 /**
  * A specific event which is used for TYPO3CR Nodes (i.e. content).

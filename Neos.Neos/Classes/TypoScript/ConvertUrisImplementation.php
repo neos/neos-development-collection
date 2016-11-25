@@ -14,7 +14,7 @@ namespace Neos\Neos\TypoScript;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Exception;
 use Neos\Neos\Service\LinkingService;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 
 /**

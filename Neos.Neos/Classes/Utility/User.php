@@ -1,7 +1,7 @@
 <?php
 namespace Neos\Neos\Utility;
 
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Model\Workspace;
 
 /**
  * Utility functions for dealing with users in the Content Repository.

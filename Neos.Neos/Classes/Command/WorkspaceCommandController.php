@@ -16,9 +16,9 @@ use Neos\Flow\Cli\CommandController;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\Service\PublishingService;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 
 /**
  * The Workspace Command Controller

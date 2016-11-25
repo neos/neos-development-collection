@@ -17,7 +17,7 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\Neos\Exception as NeosException;
 use Neos\Neos\Service\LinkingService;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\ViewHelpers\TypoScriptContextTrait;
 
 /**

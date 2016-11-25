@@ -14,8 +14,8 @@ namespace Neos\Neos\TypoScript\Helper;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
-use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
-use TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 
 /**
  * Render Content Dimension Names, Node Labels
@@ -41,7 +41,7 @@ class RenderingHelper implements ProtectedContextAwareInterface
      */
     public function injectConfigurationManager(ConfigurationManager $configurationManager)
     {
-        $this->contentDimensionsConfiguration = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.TYPO3CR.contentDimensions');
+        $this->contentDimensionsConfiguration = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.ContentRepository.contentDimensions');
     }
 
     /**

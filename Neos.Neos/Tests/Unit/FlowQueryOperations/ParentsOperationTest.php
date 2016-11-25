@@ -14,8 +14,8 @@ use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Eel\FlowQueryOperations\ParentsOperation;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Service\Context;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Service\Context;
 
 /**
  * Testcase for the FlowQuery ParentsOperation

@@ -17,7 +17,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Locale;
 use Neos\Neos\Exception;
 use Neos\Neos\Service\TransliterationService;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * Utility to generate a valid, non-conflicting uriPathSegment for nodes.

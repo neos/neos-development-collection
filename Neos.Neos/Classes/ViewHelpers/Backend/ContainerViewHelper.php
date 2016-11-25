@@ -20,7 +20,7 @@ use Neos\FluidAdaptor\View\StandaloneView;
 use Neos\Neos\Controller\Backend\MenuHelper;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Exception as NeosException;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Party\Domain\Service\PartyService;
 
 /**

@@ -15,8 +15,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\Files;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeType;
 use TYPO3\TypoScript\Core\Parser;
 use TYPO3\TypoScript\Core\Runtime;
 
@@ -98,7 +98,7 @@ class TypoScriptService
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
+     * @var \Neos\ContentRepository\Domain\Service\NodeTypeManager
      */
     protected $nodeTypeManager;
 
@@ -121,7 +121,7 @@ class TypoScriptService
     /**
      * Create a runtime for the given site node
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $currentSiteNode
+     * @param \Neos\ContentRepository\Domain\Model\NodeInterface $currentSiteNode
      * @param ControllerContext $controllerContext
      * @return Runtime
      */
@@ -135,7 +135,7 @@ class TypoScriptService
     /**
      * Returns a merged TypoScript object tree in the context of the given nodes
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $startNode Node marking the starting point
+     * @param \Neos\ContentRepository\Domain\Model\NodeInterface $startNode Node marking the starting point
      * @return array The merged object tree as of the given node
      * @throws \Neos\Neos\Domain\Exception
      */

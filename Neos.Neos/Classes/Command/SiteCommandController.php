@@ -21,10 +21,10 @@ use Neos\Neos\Domain\Service\SiteExportService;
 use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\Domain\Model\Site;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
-use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
-use TYPO3\TYPO3CR\Domain\Service\NodeService;
-use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Domain\Service\NodeService;
+use Neos\ContentRepository\Domain\Utility\NodePaths;
 
 /**
  * The Site Command Controller

@@ -36,7 +36,7 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Controller\CreateContentContextTrait;
 use Neos\Neos\Service\PluginService;
 use Neos\Neos\TypeConverter\EntityToIdentityConverter;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 
 /**

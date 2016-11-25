@@ -27,8 +27,8 @@ use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\Exception as NeosException;
 use Neos\Neos\TYPO3CR\NeosNodeServiceInterface;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Utility\NodePaths;
 
 /**
  * A service for creating URIs pointing to nodes and assets.

@@ -19,8 +19,8 @@ use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Domain\Model\ImageVariant;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\TypeConverter\ProcessingInstructionsConverter;
-use TYPO3\TYPO3CR\Domain\Model\NodeData;
-use TYPO3\TYPO3CR\Migration\Transformations\AbstractTransformation;
+use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Migration\Transformations\AbstractTransformation;
 
 /**
  * Convert serialized (old resource management) ImageVariants to new ImageVariants.

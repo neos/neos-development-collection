@@ -17,12 +17,12 @@ use Neos\Neos;
 use Neos\Neos\Domain\Model\PluginViewDefinition;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\ContentContextFactory;
-use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
-use TYPO3\TYPO3CR\Domain\Model\Node;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Domain\Factory\NodeFactory;
+use Neos\ContentRepository\Domain\Model\Node;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 
 /**
  * Central authority for interactions with plugins.

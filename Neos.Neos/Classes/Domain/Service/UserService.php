@@ -33,8 +33,8 @@ use Neos\Neos\Service\PublishingService;
 use Neos\Party\Domain\Model\PersonName;
 use Neos\Party\Domain\Repository\PartyRepository;
 use Neos\Party\Domain\Service\PartyService;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\Neos\Utility\User as UserUtility;
 
 /**

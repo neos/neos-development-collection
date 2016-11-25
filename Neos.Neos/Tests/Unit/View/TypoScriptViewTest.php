@@ -17,9 +17,9 @@ use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\TypoScriptService;
 use Neos\Neos\View\TypoScriptView;
-use TYPO3\TYPO3CR\Domain\Model\Node;
-use TYPO3\TYPO3CR\Domain\Model\NodeData;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\Node;
+use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\Core\Runtime;
 
 /**

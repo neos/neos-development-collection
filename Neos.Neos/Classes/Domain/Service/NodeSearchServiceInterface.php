@@ -12,7 +12,7 @@ namespace Neos\Neos\Domain\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use TYPO3\TYPO3CR\Domain\Service\Context;
+use Neos\ContentRepository\Domain\Service\Context;
 
 /**
  * Interface for the node search service for finding nodes based on a fulltext search
@@ -23,7 +23,7 @@ interface NodeSearchServiceInterface
      * @param string $term
      * @param array $searchNodeTypes
      * @param Context $context
-     * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
+     * @return array<\Neos\ContentRepository\Domain\Model\NodeInterface>
      */
     public function findByProperties($term, array $searchNodeTypes, Context $context);
 }

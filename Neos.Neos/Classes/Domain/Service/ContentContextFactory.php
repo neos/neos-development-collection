@@ -15,14 +15,14 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Arrays;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactory;
-use TYPO3\TYPO3CR\Exception\InvalidNodeContextException;
+use Neos\ContentRepository\Domain\Service\ContextFactory;
+use Neos\ContentRepository\Exception\InvalidNodeContextException;
 
 /**
  * ContentContextFactory which ensures contexts stay unique. Make sure to
  * get ContextFactoryInterface injected instead of this class.
  *
- * See \TYPO3\TYPO3CR\Domain\Service\ContextFactory->build for detailed
+ * See \Neos\ContentRepository\Domain\Service\ContextFactory->build for detailed
  * explanations about the usage.
  *
  * @Flow\Scope("singleton")

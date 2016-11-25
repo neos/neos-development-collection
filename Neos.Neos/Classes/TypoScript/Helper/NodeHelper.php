@@ -13,7 +13,7 @@ namespace Neos\Neos\TypoScript\Helper;
 
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Neos\Domain\Exception;
 
 /**

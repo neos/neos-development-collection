@@ -13,7 +13,7 @@ namespace Neos\Neos\Routing;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * Aspect to convert a node object to its context node path. This is used in URI

@@ -20,10 +20,10 @@ use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Exception;
 use Neos\Neos\Service\LinkingService;
 use Neos\Neos\TypoScript\ConvertUrisImplementation;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Service\Context;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Domain\Service\Context;
 use TYPO3\TypoScript\Core\Runtime;
 
 /**

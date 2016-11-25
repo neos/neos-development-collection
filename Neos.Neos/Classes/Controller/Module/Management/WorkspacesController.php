@@ -31,12 +31,12 @@ use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\Service\PublishingService;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
-use TYPO3\TYPO3CR\Exception\WorkspaceException;
-use TYPO3\TYPO3CR\TypeConverter\NodeConverter;
-use TYPO3\TYPO3CR\Utility;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
+use Neos\ContentRepository\Exception\WorkspaceException;
+use Neos\ContentRepository\TypeConverter\NodeConverter;
+use Neos\ContentRepository\Utility;
 use Neos\Neos\Utility\User as UserUtility;
 
 /**
@@ -375,7 +375,7 @@ class WorkspacesController extends AbstractModuleController
     /**
      * Publishes or discards the given nodes
      *
-     * @param array $nodes <\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes
+     * @param array $nodes <\Neos\ContentRepository\Domain\Model\NodeInterface> $nodes
      * @param string $action
      * @param Workspace $selectedWorkspace
      * @throws \Exception

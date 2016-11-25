@@ -11,7 +11,7 @@ namespace Neos\Neos\Service\DataSource;
  * source code.
  */
 
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * Data source interface for providing generic data

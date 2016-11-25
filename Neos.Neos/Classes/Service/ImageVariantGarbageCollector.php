@@ -15,8 +15,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Model\ImageVariant;
 use Neos\Media\Domain\Repository\AssetRepository;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 
 /**
  * Takes care of cleaning up ImageVariants.
@@ -47,7 +47,7 @@ class ImageVariantGarbageCollector
      * Removes unused ImageVariants after a Node property changes to a different ImageVariant.
      * This is triggered via the nodePropertyChanged event.
      *
-     * Note: This method it triggered by the "nodePropertyChanged" signal, @see \TYPO3\TYPO3CR\Domain\Model\Node::emitNodePropertyChanged()
+     * Note: This method it triggered by the "nodePropertyChanged" signal, @see \Neos\ContentRepository\Domain\Model\Node::emitNodePropertyChanged()
      *
      * @param NodeInterface $node the affected node
      * @param string $propertyName name of the property that has been changed/added

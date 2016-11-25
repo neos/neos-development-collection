@@ -26,10 +26,10 @@ use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\Neos\Exception as NeosException;
 use Neos\Neos\Exception;
 use Neos\Neos\Service\LinkingService;
-use TYPO3\TYPO3CR\Domain\Model\Node;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
+use Neos\ContentRepository\Domain\Model\Node;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 
 /**
  * Test case for the LinkingService

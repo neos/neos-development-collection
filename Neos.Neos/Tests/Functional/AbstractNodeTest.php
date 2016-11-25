@@ -15,9 +15,9 @@ use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Media\TypeConverter\AssetInterfaceConverter;
 use Neos\Neos\Domain\Service\SiteImportService;
-use TYPO3\TYPO3CR\Domain\Model\Node;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
+use Neos\ContentRepository\Domain\Model\Node;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 
 /**
  * Base test case for nodes

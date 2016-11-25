@@ -17,7 +17,7 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractArrayTypoScriptObject;
 
 /**

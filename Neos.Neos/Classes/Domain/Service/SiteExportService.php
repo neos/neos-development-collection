@@ -16,8 +16,8 @@ use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Utility\Files;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Exception as NeosException;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
-use TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeExportService;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\ContentRepository\Domain\Service\ImportExport\NodeExportService;
 
 /**
  * The Site Export Service

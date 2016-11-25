@@ -13,7 +13,7 @@ namespace Neos\Neos\Tests\Functional\FlowQueryOperations;
 
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Neos\Eel\FlowQueryOperations\SortOperation;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Model\Workspace;
 
 /**
  * SortOperation test
@@ -21,7 +21,7 @@ use TYPO3\TYPO3CR\Domain\Model\Workspace;
 class SortOperationTest extends FunctionalTestCase
 {
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Service\Context
+     * @var \Neos\ContentRepository\Domain\Service\Context
      */
     protected $context;
 
@@ -31,12 +31,12 @@ class SortOperationTest extends FunctionalTestCase
     protected static $testablePersistenceEnabled = true;
 
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface
+     * @var \Neos\ContentRepository\Domain\Service\ContextFactoryInterface
      */
     protected $contextFactory;
 
     /**
-     * @var \TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository
+     * @var \Neos\ContentRepository\Domain\Repository\NodeDataRepository
      */
     protected $nodeDataRepository;
 
@@ -46,10 +46,10 @@ class SortOperationTest extends FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $workspaceRepository = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository::class);
+        $workspaceRepository = $this->objectManager->get(\Neos\ContentRepository\Domain\Repository\WorkspaceRepository::class);
         $workspaceRepository->add(new Workspace('live'));
         $this->persistenceManager->persistAll();
-        $this->contextFactory = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface::class);
+        $this->contextFactory = $this->objectManager->get(\Neos\ContentRepository\Domain\Service\ContextFactoryInterface::class);
         $this->context = $this->contextFactory->create(array('workspaceName' => 'live'));
 
 
@@ -61,7 +61,7 @@ class SortOperationTest extends FunctionalTestCase
 
         // The context is not important here, just a quick way to get a (live) workspace
         //        $context = $this->contextFactory->create();
-        $this->nodeDataRepository = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository::class);
+        $this->nodeDataRepository = $this->objectManager->get(\Neos\ContentRepository\Domain\Repository\NodeDataRepository::class);
     }
 
     /**

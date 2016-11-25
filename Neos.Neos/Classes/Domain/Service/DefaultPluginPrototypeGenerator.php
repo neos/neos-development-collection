@@ -12,7 +12,7 @@ namespace Neos\Neos\Domain\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\Model\NodeType;
 
 /**
  * Generate a TypoScript prototype definition based on TYPO3.TypoScript:Template and pass all node properties to it

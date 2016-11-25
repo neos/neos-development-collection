@@ -17,7 +17,7 @@ use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Neos\Service\LinkingService;
 use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\Controller\ControllerContext;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * Eel helper for the linking service

@@ -16,7 +16,7 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\Image;
 use Neos\Neos\Service\VieSchemaBuilder;
-use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 
 /**
  * Testcase for the VieSchemaBuilder

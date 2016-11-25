@@ -20,8 +20,8 @@ use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\TypeHandling;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeType;
 
 /**
  * Creates PropertyMappingConfigurations to map NodeType properties for the Neos interface.

@@ -15,7 +15,7 @@ privilegeTargets:
       matcher: 'within(Neos\Flow\Mvc\Controller\AbstractController) && method(public .*->(?!initialize).*Action())'
 
     'Neos.Neos:WidgetControllers':
-      matcher: 'method(Neos\FluidAdaptor\ViewHelpers\Widget\Controller\AutocompleteController->(index|autocomplete)Action()) || method(Neos\FluidAdaptor\ViewHelpers\Widget\Controller\PaginateController->indexAction()) || method(TYPO3\TYPO3CR\ViewHelpers\Widget\Controller\PaginateController->indexAction()) || method(Neos\Neos\ViewHelpers\Widget\Controller\LinkRepositoryController->(index|search|lookup)Action())'
+      matcher: 'method(Neos\FluidAdaptor\ViewHelpers\Widget\Controller\AutocompleteController->(index|autocomplete)Action()) || method(Neos\FluidAdaptor\ViewHelpers\Widget\Controller\PaginateController->indexAction()) || method(Neos\ContentRepository\ViewHelpers\Widget\Controller\PaginateController->indexAction()) || method(Neos\Neos\ViewHelpers\Widget\Controller\LinkRepositoryController->(index|search|lookup)Action())'
 
     'Neos.Neos:PublicFrontendAccess':
       matcher: 'method(Neos\Neos\Controller\Frontend\NodeController->showAction()) || method(Neos\Neos\TypeConverter\NodeConverter->prepareContextProperties(workspaceName === "live"))'
@@ -38,13 +38,13 @@ privilegeTargets:
 
     # No role should have this privilege assigned:
     'Neos.Neos:Backend.OtherUsersPersonalWorkspaceAccess':
-      matcher: 'method(TYPO3\TYPO3CR\Domain\Service\Context->validateWorkspace()) && evaluate(this.workspace.owner !== current.userInformation.backendUser, this.workspace.personalWorkspace === true)'
+      matcher: 'method(Neos\ContentRepository\Domain\Service\Context->validateWorkspace()) && evaluate(this.workspace.owner !== current.userInformation.backendUser, this.workspace.personalWorkspace === true)'
 
     'Neos.Neos:Backend.EditContent':
       matcher: 'method(Neos\Neos\Service\Controller\NodeController->(show|getPrimaryChildNode|getChildNodesForTree|filterChildNodesForTree|getChildNodes|getChildNodesFromParent|create|createAndRender|createNodeForTheTree|move|moveBefore|moveAfter|moveInto|moveAndRender|copy|copyBefore|copyAfter|copyInto|copyAndRender|update|updateAndRender|delete|searchPage|error)Action()) || method(Neos\Neos\Controller\Backend\ContentController->(uploadAsset|assetsWithMetadata|imageWithMetadata|pluginViews|createImageVariant|masterPlugins|error)Action()) || method(Neos\Neos\Controller\Service\AssetsController->(index|show|error)Action()) || method(Neos\Neos\Controller\Service\NodesController->(index|show|create|error)Action()) || method(Neos\Neos\Service\Controller\AbstractServiceController->(error)Action())'
 
     'Neos.Neos:Backend.PublishToLiveWorkspace':
-      matcher: 'method(TYPO3\TYPO3CR\Domain\Model\Workspace->(publish|publishNode|publishNodes)(targetWorkspace.name === "live"))'
+      matcher: 'method(Neos\ContentRepository\Domain\Model\Workspace->(publish|publishNode|publishNodes)(targetWorkspace.name === "live"))'
 
     'Neos.Neos:Backend.PublishAllToLiveWorkspace':
       matcher: 'method(Neos\Neos\Controller\Module\Management\WorkspacesController->publishWorkspaceAction(workspace.baseWorkspace.name === "live"))'
@@ -160,7 +160,7 @@ roles:
 
   'Neos.Neos:AbstractEditor':
     abstract: true
-    parentRoles: ['TYPO3.TYPO3CR:Administrator']
+    parentRoles: ['Neos.ContentRepository:Administrator']
     privileges:
       -
         privilegeTarget: 'Neos.Neos:Backend.GeneralAccess'

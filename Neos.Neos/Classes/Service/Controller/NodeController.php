@@ -18,14 +18,14 @@ use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Service\NodeSearchService;
 use Neos\Neos\Service\NodeOperations;
 use Neos\Neos\Service\View\NodeView;
-use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Model\Node;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
-use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
-use TYPO3\TYPO3CR\Exception\NodeException;
-use TYPO3\TYPO3CR\TypeConverter\NodeConverter;
+use Neos\ContentRepository\Domain\Factory\NodeFactory;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\Node;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Exception\NodeException;
+use Neos\ContentRepository\TypeConverter\NodeConverter;
 
 /**
  * Service Controller for managing Nodes
@@ -447,7 +447,7 @@ class NodeController extends AbstractServiceController
      * Create a Context for a workspace given by name to be used in this controller.
      *
      * @param string $workspaceName Name of the current workspace
-     * @return \TYPO3\TYPO3CR\Domain\Service\Context
+     * @return \Neos\ContentRepository\Domain\Service\Context
      */
     protected function createContext($workspaceName)
     {
