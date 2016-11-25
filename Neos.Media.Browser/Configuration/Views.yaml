@@ -1,11 +1,11 @@
 -
-  requestFilter: 'parentRequest.isPackage("TYPO3.Neos") && isFormat("html") && isPackage("Neos.Media.Browser")'
+  requestFilter: 'parentRequest.isPackage("Neos.Neos") && isFormat("html") && isPackage("Neos.Media.Browser")'
   options:
     layoutRootPaths:
       'Neos.Media.Browser': 'resource://Neos.Media.Browser/Private/Layouts/Module'
-      'TYPO3.Neos': 'resource://TYPO3.Neos/Private/Layouts'
+      'Neos.Neos': 'resource://Neos.Neos/Private/Layouts'
     partialRootPaths:
-      'TYPO3.Neos': 'resource://TYPO3.Neos/Private/Partials'
+      'Neos.Neos': 'resource://Neos.Neos/Private/Partials'
       'Neos.Media.Browser': 'resource://Neos.Media.Browser/Private/Partials'
 
     templateRootPathPattern: 'resource://Neos.Media.Browser/Private/Templates'
@@ -16,9 +16,9 @@
   options:
     layoutRootPaths:
       'Neos.Media.Browser': 'resource://Neos.Media.Browser/Private/Layouts/Inspector'
-      'TYPO3.Neos': 'resource://TYPO3.Neos/Private/Layouts'
+      'Neos.Neos': 'resource://Neos.Neos/Private/Layouts'
     partialRootPaths:
-      'TYPO3.Neos': 'resource://TYPO3.Neos/Private/Partials'
+      'Neos.Neos': 'resource://Neos.Neos/Private/Partials'
       'Neos.Media.Browser': 'resource://Neos.Media.Browser/Private/Partials'
 
     templateRootPathPattern: 'resource://Neos.Media.Browser/Private/Templates'

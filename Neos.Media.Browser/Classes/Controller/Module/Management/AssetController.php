@@ -23,14 +23,14 @@ use Neos\Utility\TypeHandling;
 use Neos\Media\Domain\Model\AssetCollection;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Exception\AssetServiceException;
-use TYPO3\Neos\Controller\BackendUserTranslationTrait;
-use TYPO3\Neos\Controller\CreateContentContextTrait;
-use TYPO3\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
-use TYPO3\Neos\Domain\Repository\DomainRepository;
-use TYPO3\Neos\Domain\Repository\SiteRepository;
-use TYPO3\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
-use TYPO3\Neos\Domain\Service\UserService as DomainUserService;
-use TYPO3\Neos\Service\UserService;
+use Neos\Neos\Controller\BackendUserTranslationTrait;
+use Neos\Neos\Controller\CreateContentContextTrait;
+use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
+use Neos\Neos\Domain\Repository\DomainRepository;
+use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
+use Neos\Neos\Domain\Service\UserService as DomainUserService;
+use Neos\Neos\Service\UserService;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
@@ -282,10 +282,10 @@ class AssetController extends \Neos\Media\Browser\Controller\AssetController
     public function addFlashMessage($messageBody, $messageTitle = '', $severity = Message::SEVERITY_OK, array $messageArguments = [], $messageCode = null)
     {
         if (is_string($messageBody)) {
-            $messageBody = $this->translator->translateById($messageBody, $messageArguments, null, null, 'Modules', 'TYPO3.Neos') ?: $messageBody;
+            $messageBody = $this->translator->translateById($messageBody, $messageArguments, null, null, 'Modules', 'Neos.Neos') ?: $messageBody;
         }
 
-        $messageTitle = $this->translator->translateById($messageTitle, $messageArguments, null, null, 'Modules', 'TYPO3.Neos');
+        $messageTitle = $this->translator->translateById($messageTitle, $messageArguments, null, null, 'Modules', 'Neos.Neos');
         parent::addFlashMessage($messageBody, $messageTitle, $severity, $messageArguments, $messageCode);
     }
 }
