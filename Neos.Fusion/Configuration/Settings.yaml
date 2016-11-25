@@ -1,5 +1,5 @@
-TYPO3:
-  TypoScript:
+Neos:
+  Fusion:
     rendering:
 
       # Default Exception Handler class which should be used when a TypoScript object is rendered
