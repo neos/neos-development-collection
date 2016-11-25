@@ -79,11 +79,11 @@ class HtmlMessageHandler extends AbstractRenderingExceptionHandler
      *
      * example:
      *
-     *     default<TYPO3.Neos:Page>/body<Neos.Fusion:Template>/content/
+     *     default<Neos.Neos:Page>/body<Neos.Fusion:Template>/content/
      *
      *   is rendered as
      *
-     *     default<TYPO3.Neos:Page>/
+     *     default<Neos.Neos:Page>/
      *      body<Neos.Fusion:Template>/
      *       content/
      *

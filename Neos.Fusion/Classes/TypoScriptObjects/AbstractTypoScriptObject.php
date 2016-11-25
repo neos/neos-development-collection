@@ -32,7 +32,7 @@ abstract class AbstractTypoScriptObject implements \ArrayAccess
     protected $path;
 
     /**
-     * Name of this TypoScript object, like TYPO3.Neos:Text
+     * Name of this TypoScript object, like Neos.Neos:Text
      *
      * @var string
      */

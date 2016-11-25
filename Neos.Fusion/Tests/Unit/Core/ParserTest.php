@@ -739,11 +739,11 @@ class ParserTest extends UnitTestCase
         // Check that values were overridden by fixture #17:
         $expectedParseTree['__prototypes']['TYPO3.Foo:Bar2']['baz'] = 'New Value';
 
-        // Set the default namespace to TYPO3.Neos - that's what Neos does as well in Domain\Service\TypoScriptService:
-        $this->parser->setObjectTypeNamespace('default', 'TYPO3.Neos');
+        // Set the default namespace to Neos.Neos - that's what Neos does as well in Domain\Service\TypoScriptService:
+        $this->parser->setObjectTypeNamespace('default', 'Neos.Neos');
 
         $text = array(
-            '__objectType' => 'TYPO3.Neos:Text',
+            '__objectType' => 'Neos.Neos:Text',
             '__value' => null,
             '__eelExpression' => null
         );
@@ -775,12 +775,12 @@ class ParserTest extends UnitTestCase
 
         $expectedParseTree = array(
             'object1' => array(
-                '__objectType' => 'TYPO3.Neos:Text',
+                '__objectType' => 'Neos.Neos:Text',
                 '__value' => null,
                 '__eelExpression' => null
             ),
             'object2' => array(
-                '__objectType' => 'TYPO3.Neos:Text',
+                '__objectType' => 'Neos.Neos:Text',
                 '__value' => null,
                 '__eelExpression' => null
             ),
@@ -795,12 +795,12 @@ class ParserTest extends UnitTestCase
                 '__eelExpression' => null
             ),
             '__prototypes' => array(
-                'TYPO3.Neos:Foo' => array(
+                'Neos.Neos:Foo' => array(
                     '__meta' => array(
                         'class' => ArrayImplementation::class
                     )
                 ),
-                'TYPO3.Neos:Bar' => array(
+                'Neos.Neos:Bar' => array(
                     '__meta' => array(
                         'class' => ArrayImplementation::class
                     )
