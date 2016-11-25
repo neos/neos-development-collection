@@ -20,7 +20,7 @@ use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\TypoScript\PluginImplementation;
-use TYPO3\TypoScript\Core\Runtime;
+use Neos\Fusion\Core\Runtime;
 
 /**
  * Testcase for the ConvertNodeUris TypoScript implementation

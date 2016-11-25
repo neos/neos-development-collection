@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Exception;
 use Neos\Neos\Service\LinkingService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
+use Neos\Fusion\TypoScriptObjects\AbstractTypoScriptObject;
 
 /**
  * A TypoScript Object that converts link references in the format "<type>://<UUID>" to proper URIs

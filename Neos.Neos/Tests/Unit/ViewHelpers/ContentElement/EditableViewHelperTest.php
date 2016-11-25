@@ -19,9 +19,9 @@ use Neos\Neos\ViewHelpers\ContentElement\EditableViewHelper;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Service\AuthorizationService;
 use Neos\ContentRepository\Domain\Model\NodeType;
-use TYPO3\TypoScript\Core\Runtime;
-use TYPO3\TypoScript\TypoScriptObjects\Helpers\FluidView;
-use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
+use Neos\Fusion\Core\Runtime;
+use Neos\Fusion\TypoScriptObjects\Helpers\FluidView;
+use Neos\Fusion\TypoScriptObjects\TemplateImplementation;
 use Neos\Neos\Service\ContentElementEditableService;
 
 /**

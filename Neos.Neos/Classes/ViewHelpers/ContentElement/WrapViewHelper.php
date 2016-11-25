@@ -16,7 +16,7 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\Neos\Service\ContentElementWrappingService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use TYPO3\TypoScript\TypoScriptObjects\Helpers\TypoScriptAwareViewInterface;
+use Neos\Fusion\TypoScriptObjects\Helpers\TypoScriptAwareViewInterface;
 
 /**
  * A view helper for manually wrapping content editables.

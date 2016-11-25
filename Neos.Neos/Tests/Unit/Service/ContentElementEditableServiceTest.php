@@ -18,7 +18,7 @@ use Neos\Neos\Domain\Service\ContentContext;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Service\AuthorizationService;
 use Neos\ContentRepository\Domain\Model\NodeType;
-use TYPO3\TypoScript\Core\Runtime;
+use Neos\Fusion\Core\Runtime;
 use Neos\Neos\Service\ContentElementEditableService;
 
 /**
@@ -85,7 +85,7 @@ class ContentElementEditableServiceTest extends UnitTestCase
         $this->mockHtmlAugmenter = $this->getMockBuilder(HtmlAugmenter::class)->getMock();
         $this->inject($this->contentElementEditableService, 'htmlAugmenter', $this->mockHtmlAugmenter);
 
-        $this->mockTsRuntime = $this->getMockBuilder(\TYPO3\TypoScript\Core\Runtime::class)->disableOriginalConstructor()->getMock();
+        $this->mockTsRuntime = $this->getMockBuilder(\Neos\Fusion\Core\Runtime::class)->disableOriginalConstructor()->getMock();
         $this->mockContentContext = $this->getMockBuilder(\Neos\Neos\Domain\Service\ContentContext::class)->disableOriginalConstructor()->getMock();
 
         $this->mockNode = $this->getMockBuilder(\Neos\ContentRepository\Domain\Model\NodeInterface::class)->getMock();

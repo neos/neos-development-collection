@@ -17,8 +17,8 @@ use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Utility\Environment;
 use Neos\Neos\Service\ContentElementWrappingService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use TYPO3\TypoScript\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
-use TYPO3\TypoScript\Core\ExceptionHandlers\ContextDependentHandler;
+use Neos\Fusion\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
+use Neos\Fusion\Core\ExceptionHandlers\ContextDependentHandler;
 
 /**
  * Provides a nicely formatted html error message

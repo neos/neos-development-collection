@@ -33,15 +33,6 @@ TYPO3:
         className: Neos\Neos\Setup\Step\FinalStep
     view:
       title: 'Neos Setup'
-  TypoScript:
-    rendering:
-      exceptionHandler: TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler
-    defaultContext:
-      Neos.Node: Neos\Neos\TypoScript\Helper\NodeHelper
-      Neos.Link: Neos\Neos\TypoScript\Helper\LinkHelper
-      Neos.Array: Neos\Neos\TypoScript\Helper\ArrayHelper
-      Neos.Rendering: Neos\Neos\TypoScript\Helper\RenderingHelper
-      Neos.Caching: Neos\Neos\TypoScript\Helper\CachingHelper
   DocTools:
     collections:
       Neos:
@@ -146,7 +137,7 @@ TYPO3:
           options:
             namespaces:
               f: Neos\FluidAdaptor\ViewHelpers
-              ts: TYPO3\TypoScript\ViewHelpers
+              ts: Neos\Fusion\ViewHelpers
       'Neos:FlowValidators':
         title: 'Flow Validator Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/Validators/Flow.rst'
@@ -227,7 +218,7 @@ Neos:
     typoScript:
       enableObjectTreeCache: false
       autoInclude:
-        TYPO3.TypoScript: true
+        Neos.Fusion: true
         Neos.Neos: true
     defaultSiteNodeName: null
     routing:
@@ -592,3 +583,12 @@ Neos:
         neos-plugin: Plugins
   ContentRepository:
     fallbackNodeType: 'Neos.Neos:FallbackNode'
+  Fusion:
+    rendering:
+      exceptionHandler: Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler
+    defaultContext:
+      Neos.Node: Neos\Neos\TypoScript\Helper\NodeHelper
+      Neos.Link: Neos\Neos\TypoScript\Helper\LinkHelper
+      Neos.Array: Neos\Neos\TypoScript\Helper\ArrayHelper
+      Neos.Rendering: Neos\Neos\TypoScript\Helper\RenderingHelper
+      Neos.Caching: Neos\Neos\TypoScript\Helper\CachingHelper

@@ -1,8 +1,4 @@
 
-TYPO3:
-  TypoScript:
-    rendering:
-      exceptionHandler: TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler
 Neos:
   Neos:
     eventLog:
@@ -57,3 +53,6 @@ Neos:
               - lv
               - en_US
             uriSegment: lv
+  Fusion:
+    rendering:
+      exceptionHandler: Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler

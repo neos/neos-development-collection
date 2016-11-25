@@ -33,9 +33,9 @@ use Neos\Neos\ViewHelpers\Link\NodeViewHelper;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
-use TYPO3\TypoScript\Core\Runtime;
-use TYPO3\TypoScript\TypoScriptObjects\Helpers\FluidView;
-use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
+use Neos\Fusion\Core\Runtime;
+use Neos\Fusion\TypoScriptObjects\Helpers\FluidView;
+use Neos\Fusion\TypoScriptObjects\TemplateImplementation;
 
 /**
  * Functional test for the NodeViewHelper

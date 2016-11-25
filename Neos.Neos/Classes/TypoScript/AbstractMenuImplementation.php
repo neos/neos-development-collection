@@ -13,8 +13,8 @@ namespace Neos\Neos\TypoScript;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use TYPO3\TypoScript\Exception as TypoScriptException;
-use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
+use Neos\Fusion\Exception as TypoScriptException;
+use Neos\Fusion\TypoScriptObjects\TemplateImplementation;
 
 /**
  * Base class for Menu and DimensionsMenu
