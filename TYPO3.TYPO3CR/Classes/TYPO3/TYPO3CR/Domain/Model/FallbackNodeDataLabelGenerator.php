@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Domain\Model;
+namespace Neos\ContentRepository\Domain\Model;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,7 +13,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Utility\Unicode\Functions;
-use TYPO3\TYPO3CR\Domain\Model\AbstractNodeData;
+use Neos\ContentRepository\Domain\Model\AbstractNodeData;
 
 /**
  * The default node label generator; used if no-other is configured

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
 	<!--
-	NOTE: This fixture is for the test \TYPO3\TYPO3CR\Tests\Functional\Domain\NodeDataTest::inContextWithEmptyDimensionsNodeVariantsWithoutDimensionsArePrioritized()
+	NOTE: This fixture is for the test \Neos\ContentRepository\Tests\Functional\Domain\NodeDataTest::inContextWithEmptyDimensionsNodeVariantsWithoutDimensionsArePrioritized()
 	Please don't change the node identifier as it is used in the test.
 	Also the two node variants are important (one with dimensions one without).
 	 -->

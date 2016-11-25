@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Migration\Configuration;
+namespace Neos\ContentRepository\Migration\Configuration;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,8 +12,8 @@ namespace TYPO3\TYPO3CR\Migration\Configuration;
  */
 
 use Neos\Flow\Annotations as Flow;
-use TYPO3\TYPO3CR\Migration\Configuration\ConfigurationInterface;
-use TYPO3\TYPO3CR\Migration\Exception\MigrationException;
+use Neos\ContentRepository\Migration\Configuration\ConfigurationInterface;
+use Neos\ContentRepository\Migration\Exception\MigrationException;
 
 /**
  * Abstract Migration Configuration as a base for different configuration sources.

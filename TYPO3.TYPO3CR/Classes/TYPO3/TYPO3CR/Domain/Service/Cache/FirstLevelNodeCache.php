@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Domain\Service\Cache;
+namespace Neos\ContentRepository\Domain\Service\Cache;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,7 +11,7 @@ namespace TYPO3\TYPO3CR\Domain\Service\Cache;
  * source code.
  */
 
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -25,17 +25,17 @@ use Neos\Flow\Annotations as Flow;
 class FirstLevelNodeCache
 {
     /**
-     * @var array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
+     * @var array<\Neos\ContentRepository\Domain\Model\NodeInterface>
      */
     protected $nodesByPath = array();
 
     /**
-     * @var array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
+     * @var array<\Neos\ContentRepository\Domain\Model\NodeInterface>
      */
     protected $nodesByIdentifier = array();
 
     /**
-     * @var array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
+     * @var array<\Neos\ContentRepository\Domain\Model\NodeInterface>
      */
     protected $childNodesByPathAndNodeTypeFilter = array();
 

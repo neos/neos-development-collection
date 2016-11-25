@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Exception;
+namespace Neos\ContentRepository\Exception;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -10,7 +10,7 @@ namespace TYPO3\TYPO3CR\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\TYPO3CR\Exception;
+use Neos\ContentRepository\Exception;
 
 /**
  * A "node type not found" exception

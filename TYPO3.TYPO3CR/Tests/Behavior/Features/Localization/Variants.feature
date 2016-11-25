@@ -7,11 +7,11 @@ Feature: Node variants
     Given I have the following nodes:
       | Identifier                           | Path                   | Node Type                  | Properties               | Workspace | Language |
       | 85f17826-64d1-11e4-a6e3-14109fd7a2dd | /sites                 | unstructured               |                          | live      | mul_ZZ   |
-      | 8952d7b2-64d1-11e4-9fe2-14109fd7a2dd | /sites/typo3cr         | TYPO3.TYPO3CR.Testing:Page | {"title": "Startseite"}  | live      | mul_ZZ   |
-      | 8ed74376-64d1-11e4-b98b-14109fd7a2dd | /sites/typo3cr/company | TYPO3.TYPO3CR.Testing:Page | {"title": "Company"}     | live      | en       |
-      | 8ed74376-64d1-11e4-b98b-14109fd7a2dd | /sites/typo3cr/company | TYPO3.TYPO3CR.Testing:Page | {"title": "Unternehmen"} | live      | de       |
-      | 8ed74376-64d1-11e4-b98b-14109fd7a2dd | /sites/typo3cr/company | TYPO3.TYPO3CR.Testing:Page | {"title": "Firma"}       | live      | de_CH    |
-      | 8ed74376-64d1-11e4-b98b-14109fd7a2dd | /sites/typo3cr/company | TYPO3.TYPO3CR.Testing:Page | {"title": "Entreprise"}  | live      | fr       |
+      | 8952d7b2-64d1-11e4-9fe2-14109fd7a2dd | /sites/typo3cr         | Neos.ContentRepository.Testing:Page | {"title": "Startseite"}  | live      | mul_ZZ   |
+      | 8ed74376-64d1-11e4-b98b-14109fd7a2dd | /sites/typo3cr/company | Neos.ContentRepository.Testing:Page | {"title": "Company"}     | live      | en       |
+      | 8ed74376-64d1-11e4-b98b-14109fd7a2dd | /sites/typo3cr/company | Neos.ContentRepository.Testing:Page | {"title": "Unternehmen"} | live      | de       |
+      | 8ed74376-64d1-11e4-b98b-14109fd7a2dd | /sites/typo3cr/company | Neos.ContentRepository.Testing:Page | {"title": "Firma"}       | live      | de_CH    |
+      | 8ed74376-64d1-11e4-b98b-14109fd7a2dd | /sites/typo3cr/company | Neos.ContentRepository.Testing:Page | {"title": "Entreprise"}  | live      | fr       |
 
   @fixtures
   Scenario: Get other node variants of an aggregate node

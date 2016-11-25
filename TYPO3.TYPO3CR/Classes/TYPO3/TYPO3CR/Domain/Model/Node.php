@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Domain\Model;
+namespace Neos\ContentRepository\Domain\Model;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -15,17 +15,17 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Utility\ObjectAccess;
-use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Service\Context;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
-use TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface;
-use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
-use TYPO3\TYPO3CR\Exception\NodeConstraintException;
-use TYPO3\TYPO3CR\Exception\NodeException;
-use TYPO3\TYPO3CR\Exception\NodeExistsException;
-use TYPO3\TYPO3CR\Utility;
+use Neos\ContentRepository\Domain\Factory\NodeFactory;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Domain\Service\Context;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
+use Neos\ContentRepository\Domain\Utility\NodePaths;
+use Neos\ContentRepository\Exception\NodeConstraintException;
+use Neos\ContentRepository\Exception\NodeException;
+use Neos\ContentRepository\Exception\NodeExistsException;
+use Neos\ContentRepository\Utility;
 
 /**
  * This is the main API for storing and retrieving content in the system.
@@ -1204,7 +1204,7 @@ class Node implements NodeInterface, CacheAwareInterface
      * @param string $nodeTypeFilter If specified, only nodes with that node type are considered
      * @param integer $limit An optional limit for the number of nodes to find. Added or removed nodes can still change the number nodes!
      * @param integer $offset An optional offset for the query
-     * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> An array of nodes or an empty array if no child nodes matched
+     * @return array<\Neos\ContentRepository\Domain\Model\NodeInterface> An array of nodes or an empty array if no child nodes matched
      * @api
      */
     public function getChildNodes($nodeTypeFilter = null, $limit = null, $offset = null)

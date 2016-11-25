@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Domain\Model;
+namespace Neos\ContentRepository\Domain\Model;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -16,10 +16,10 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\Arrays;
 use Neos\Utility\PositionalArraySorter;
-use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
-use TYPO3\TYPO3CR\Exception\InvalidNodeTypePostprocessorException;
-use TYPO3\TYPO3CR\NodeTypePostprocessor\NodeTypePostprocessorInterface;
-use TYPO3\TYPO3CR\Utility;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Exception\InvalidNodeTypePostprocessorException;
+use Neos\ContentRepository\NodeTypePostprocessor\NodeTypePostprocessorInterface;
+use Neos\ContentRepository\Utility;
 
 /**
  * A Node Type
@@ -70,7 +70,7 @@ class NodeType
     /**
      * node types this node type directly inherits from
      *
-     * @var array<\TYPO3\TYPO3CR\Domain\Model\NodeType>
+     * @var array<\Neos\ContentRepository\Domain\Model\NodeType>
      */
     protected $declaredSuperTypes;
 
@@ -415,10 +415,10 @@ class NodeType
             if ($this->hasConfiguration('label.generatorClass')) {
                 $nodeLabelGenerator = $this->objectManager->get($this->getConfiguration('label.generatorClass'));
             } elseif ($this->hasConfiguration('label') && is_string($this->getConfiguration('label'))) {
-                $nodeLabelGenerator = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Model\ExpressionBasedNodeLabelGenerator::class);
+                $nodeLabelGenerator = $this->objectManager->get(\Neos\ContentRepository\Domain\Model\ExpressionBasedNodeLabelGenerator::class);
                 $nodeLabelGenerator->setExpression($this->getConfiguration('label'));
             } else {
-                $nodeLabelGenerator = $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Model\NodeLabelGeneratorInterface::class);
+                $nodeLabelGenerator = $this->objectManager->get(\Neos\ContentRepository\Domain\Model\NodeLabelGeneratorInterface::class);
             }
 
             // TODO: Remove after deprecation phase of NodeDataLabelGeneratorInterface

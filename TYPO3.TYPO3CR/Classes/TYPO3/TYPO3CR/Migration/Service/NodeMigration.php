@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Migration\Service;
+namespace Neos\ContentRepository\Migration\Service;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,12 +13,12 @@ namespace TYPO3\TYPO3CR\Migration\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package\PackageManager;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
-use TYPO3\TYPO3CR\Migration\Exception\MigrationException;
-use TYPO3\TYPO3CR\Migration\Service\NodeFilter;
-use TYPO3\TYPO3CR\Migration\Service\NodeTransformation;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
+use Neos\ContentRepository\Migration\Exception\MigrationException;
+use Neos\ContentRepository\Migration\Service\NodeFilter;
+use Neos\ContentRepository\Migration\Service\NodeTransformation;
 
 /**
  * Service that runs over all nodes and applies migrations to them as given by configuration.

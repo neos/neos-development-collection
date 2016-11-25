@@ -6,7 +6,7 @@
   name: 'REST service with controller and id'
   uriPattern: '{@controller}/{id}(.{@format})'
   defaults:
-    '@package':    'TYPO3.TYPO3CR'
+    '@package':    'Neos.ContentRepository'
     '@subpackage': 'Service'
     '@format':     'json'
     '@action': 'andi'
@@ -15,6 +15,6 @@
   name: 'REST service with controller'
   uriPattern: '{@controller}(.{@format})'
   defaults:
-    '@package':    'TYPO3.TYPO3CR'
+    '@package':    'Neos.ContentRepository'
     '@subpackage': 'Service'
     '@format':     'json'

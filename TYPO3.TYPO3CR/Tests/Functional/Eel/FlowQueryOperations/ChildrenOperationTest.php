@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Tests\Functional\Eel\FlowQueryOperations;
+namespace Neos\ContentRepository\Tests\Functional\Eel\FlowQueryOperations;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,7 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Eel\FlowQueryOperations;
  */
 
 use Neos\Eel\FlowQuery\FlowQuery;
-use TYPO3\TYPO3CR\Tests\Functional\AbstractNodeTest;
+use Neos\ContentRepository\Tests\Functional\AbstractNodeTest;
 
 /**
  * Functional test case which tests FlowQuery ChildrenOperation
@@ -97,9 +97,9 @@ class ChildrenOperationTest extends AbstractNodeTest
     public function instanceofFilterIsSupported()
     {
         $q = new FlowQuery(array($this->node));
-        $foundNodes = $q->children('[instanceof TYPO3.TYPO3CR.Testing:Page]')->get();
+        $foundNodes = $q->children('[instanceof Neos.ContentRepository.Testing:Page]')->get();
         $this->assertEquals(2, count($foundNodes));
-        $foundNodes = $q->children('[instanceof TYPO3.TYPO3CR.Testing:ContentCollection]')->get();
+        $foundNodes = $q->children('[instanceof Neos.ContentRepository.Testing:ContentCollection]')->get();
         $this->assertEquals(3, count($foundNodes));
     }
 
@@ -109,7 +109,7 @@ class ChildrenOperationTest extends AbstractNodeTest
     public function twoInstanceofFiltersIsSupported()
     {
         $q = new FlowQuery(array($this->node));
-        $foundNodes = $q->children('[instanceof TYPO3.TYPO3CR.Testing:Document][instanceof TYPO3.TYPO3CR.Testing:Page]')->get();
+        $foundNodes = $q->children('[instanceof Neos.ContentRepository.Testing:Document][instanceof Neos.ContentRepository.Testing:Page]')->get();
         $this->assertEquals(2, count($foundNodes));
     }
 
@@ -119,7 +119,7 @@ class ChildrenOperationTest extends AbstractNodeTest
     public function multipleInstanceofFiltersIsSupported()
     {
         $q = new FlowQuery(array($this->node));
-        $foundNodes = $q->children('[instanceof TYPO3.TYPO3CR.Testing:Page], [instanceof TYPO3.TYPO3CR.Testing:ContentCollection]')->get();
+        $foundNodes = $q->children('[instanceof Neos.ContentRepository.Testing:Page], [instanceof Neos.ContentRepository.Testing:ContentCollection]')->get();
         $this->assertEquals(5, count($foundNodes));
     }
 
@@ -129,9 +129,9 @@ class ChildrenOperationTest extends AbstractNodeTest
     public function negatedInstanceofFilterIsSupported()
     {
         $q = new FlowQuery(array($this->node));
-        $foundNodes = $q->children('[instanceof !TYPO3.TYPO3CR.Testing:ContentCollection]')->get();
+        $foundNodes = $q->children('[instanceof !Neos.ContentRepository.Testing:ContentCollection]')->get();
         $this->assertEquals(2, count($foundNodes));
-        $foundNodes = $q->children('[instanceof !TYPO3.TYPO3CR.Testing:Page]')->get();
+        $foundNodes = $q->children('[instanceof !Neos.ContentRepository.Testing:Page]')->get();
         $this->assertEquals(3, count($foundNodes));
     }
 
@@ -141,7 +141,7 @@ class ChildrenOperationTest extends AbstractNodeTest
     public function twoNegatedInstanceofFiltersIsSupported()
     {
         $q = new FlowQuery(array($this->node));
-        $foundNodes = $q->children('[instanceof !TYPO3.TYPO3CR.Testing:Page][instanceof !TYPO3.TYPO3CR.Testing:ContentCollection]')->get();
+        $foundNodes = $q->children('[instanceof !Neos.ContentRepository.Testing:Page][instanceof !Neos.ContentRepository.Testing:ContentCollection]')->get();
         $this->assertEquals(0, count($foundNodes));
     }
 
@@ -151,13 +151,13 @@ class ChildrenOperationTest extends AbstractNodeTest
     public function combinedFilterIsSupported()
     {
         $q = new FlowQuery(array($this->node));
-        $foundNodes = $q->children('products[instanceof TYPO3.TYPO3CR.Testing:Page][title *= "Products"]')->get();
+        $foundNodes = $q->children('products[instanceof Neos.ContentRepository.Testing:Page][title *= "Products"]')->get();
         $this->assertEquals(1, count($foundNodes));
-        $foundNodes = $q->children('x[instanceof TYPO3.TYPO3CR.Testing:Page][title *= "Products"]')->get();
+        $foundNodes = $q->children('x[instanceof Neos.ContentRepository.Testing:Page][title *= "Products"]')->get();
         $this->assertEquals(0, count($foundNodes));
-        $foundNodes = $q->children('products[instanceof TYPO3.TYPO3CR.Testing:X][title *= "Products"]')->get();
+        $foundNodes = $q->children('products[instanceof Neos.ContentRepository.Testing:X][title *= "Products"]')->get();
         $this->assertEquals(0, count($foundNodes));
-        $foundNodes = $q->children('x[instanceof TYPO3.TYPO3CR.Testing:Page][title *= "X"]')->get();
+        $foundNodes = $q->children('x[instanceof Neos.ContentRepository.Testing:Page][title *= "X"]')->get();
         $this->assertEquals(0, count($foundNodes));
     }
 
@@ -167,19 +167,19 @@ class ChildrenOperationTest extends AbstractNodeTest
     public function multipleCombinedFiltersIsSupported()
     {
         $q = new FlowQuery(array($this->node));
-        $foundNodes = $q->children('products[instanceof TYPO3.TYPO3CR.Testing:Page][title *= "Products"], about-us[instanceof TYPO3.TYPO3CR.Testing:Page][title *= "About Us"]')->get();
+        $foundNodes = $q->children('products[instanceof Neos.ContentRepository.Testing:Page][title *= "Products"], about-us[instanceof Neos.ContentRepository.Testing:Page][title *= "About Us"]')->get();
         $this->assertEquals(2, count($foundNodes));
-        $foundNodes = $q->children('x[instanceof TYPO3.TYPO3CR.Testing:Page][title *= "Products"], about-us[instanceof TYPO3.TYPO3CR.Testing:Page][title *= "About Us"]')->get();
+        $foundNodes = $q->children('x[instanceof Neos.ContentRepository.Testing:Page][title *= "Products"], about-us[instanceof Neos.ContentRepository.Testing:Page][title *= "About Us"]')->get();
         $this->assertEquals(1, count($foundNodes));
-        $foundNodes = $q->children('products[instanceof TYPO3.TYPO3CR.Testing:X][title *= "Products"], about-us[instanceof TYPO3.TYPO3CR.Testing:Page][title *= "About Us"]')->get();
+        $foundNodes = $q->children('products[instanceof Neos.ContentRepository.Testing:X][title *= "Products"], about-us[instanceof Neos.ContentRepository.Testing:Page][title *= "About Us"]')->get();
         $this->assertEquals(1, count($foundNodes));
-        $foundNodes = $q->children('x[instanceof TYPO3.TYPO3CR.Testing:Page][title *= "X"], about-us[instanceof TYPO3.TYPO3CR.Testing:Page][title *= "About Us"]')->get();
+        $foundNodes = $q->children('x[instanceof Neos.ContentRepository.Testing:Page][title *= "X"], about-us[instanceof Neos.ContentRepository.Testing:Page][title *= "About Us"]')->get();
         $this->assertEquals(1, count($foundNodes));
-        $foundNodes = $q->children('products[instanceof TYPO3.TYPO3CR.Testing:Page][title *= "Products"], x[instanceof TYPO3.TYPO3CR.Testing:Page][title *= "About Us"]')->get();
+        $foundNodes = $q->children('products[instanceof Neos.ContentRepository.Testing:Page][title *= "Products"], x[instanceof Neos.ContentRepository.Testing:Page][title *= "About Us"]')->get();
         $this->assertEquals(1, count($foundNodes));
-        $foundNodes = $q->children('products[instanceof TYPO3.TYPO3CR.Testing:Page][title *= "Products"], about-us[instanceof TYPO3.TYPO3CR.Testing:X][title *= "About Us"]')->get();
+        $foundNodes = $q->children('products[instanceof Neos.ContentRepository.Testing:Page][title *= "Products"], about-us[instanceof Neos.ContentRepository.Testing:X][title *= "About Us"]')->get();
         $this->assertEquals(1, count($foundNodes));
-        $foundNodes = $q->children('products[instanceof TYPO3.TYPO3CR.Testing:Page][title *= "Products"], about-us[instanceof TYPO3.TYPO3CR.Testing:Page][title *= "X"]')->get();
+        $foundNodes = $q->children('products[instanceof Neos.ContentRepository.Testing:Page][title *= "Products"], about-us[instanceof Neos.ContentRepository.Testing:Page][title *= "X"]')->get();
         $this->assertEquals(1, count($foundNodes));
     }
 }

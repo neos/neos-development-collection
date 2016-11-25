@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Domain\Model;
+namespace Neos\ContentRepository\Domain\Model;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -19,16 +19,16 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Utility\Algorithms;
-use TYPO3\TYPO3CR\Domain\Model\AbstractNodeData;
-use TYPO3\TYPO3CR\Domain\Model\ContentObjectProxy;
-use TYPO3\TYPO3CR\Domain\Model\NodeTemplate;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface;
-use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
-use TYPO3\TYPO3CR\Exception\NodeExistsException;
-use TYPO3\TYPO3CR\Utility;
+use Neos\ContentRepository\Domain\Model\AbstractNodeData;
+use Neos\ContentRepository\Domain\Model\ContentObjectProxy;
+use Neos\ContentRepository\Domain\Model\NodeTemplate;
+use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
+use Neos\ContentRepository\Domain\Utility\NodePaths;
+use Neos\ContentRepository\Exception\NodeExistsException;
+use Neos\ContentRepository\Utility;
 
 /**
  * The node data inside the content repository. This is only a data
@@ -158,7 +158,7 @@ class NodeData extends AbstractNodeData
 
     /**
      * @ORM\OneToMany(mappedBy="nodeData", orphanRemoval=true)
-     * @var \Doctrine\Common\Collections\Collection<\TYPO3\TYPO3CR\Domain\Model\NodeDimension>
+     * @var \Doctrine\Common\Collections\Collection<\Neos\ContentRepository\Domain\Model\NodeDimension>
      */
     protected $dimensions;
 
@@ -538,7 +538,7 @@ class NodeData extends AbstractNodeData
     /**
      * Returns all direct child node data of this node data without reducing the result (multiple variants can be returned)
      *
-     * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData>
+     * @return array<\Neos\ContentRepository\Domain\Model\NodeData>
      */
     protected function getChildNodeData()
     {

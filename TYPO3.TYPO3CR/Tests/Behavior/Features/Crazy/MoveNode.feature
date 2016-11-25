@@ -7,10 +7,10 @@ Feature: Move node
     Given I have the following nodes:
       | Identifier                           | Path                   | Node Type                  | Properties           | Workspace |
       | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /sites                 | unstructured               |                      | live      |
-      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr         | TYPO3.TYPO3CR.Testing:Page | {"title": "Home"}    | live      |
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/company | TYPO3.TYPO3CR.Testing:Page | {"title": "Company"} | live      |
-      | 52540602-b417-11e3-9358-14109fd7a2dd | /sites/typo3cr/service | TYPO3.TYPO3CR.Testing:Page | {"title": "Service"} | live      |
-      | dc48851c-f653-ebd5-4d35-3feac69a3e09 | /sites/typo3cr/about   | TYPO3.TYPO3CR.Testing:Page | {"title": "About"}   | live      |
+      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr         | Neos.ContentRepository.Testing:Page | {"title": "Home"}    | live      |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/company | Neos.ContentRepository.Testing:Page | {"title": "Company"} | live      |
+      | 52540602-b417-11e3-9358-14109fd7a2dd | /sites/typo3cr/service | Neos.ContentRepository.Testing:Page | {"title": "Service"} | live      |
+      | dc48851c-f653-ebd5-4d35-3feac69a3e09 | /sites/typo3cr/about   | Neos.ContentRepository.Testing:Page | {"title": "About"}   | live      |
 
   @fixtures
   Scenario: Move a node (into) in user workspace and get by path
@@ -48,14 +48,14 @@ Feature: Move node
       | Workspace  |
       | user-admin |
     And I move the node into the node with path "/sites/typo3cr/company"
-    And I get the child nodes of "/sites/typo3cr" with filter "TYPO3.TYPO3CR.Testing:Document" and the following context:
+    And I get the child nodes of "/sites/typo3cr" with filter "Neos.ContentRepository.Testing:Document" and the following context:
       | Workspace  |
       | user-admin |
     Then I should have the following nodes:
       | Path                   |
       | /sites/typo3cr/company |
       | /sites/typo3cr/about   |
-    And I get the child nodes of "/sites/typo3cr/company" with filter "TYPO3.TYPO3CR.Testing:Document" and the following context:
+    And I get the child nodes of "/sites/typo3cr/company" with filter "Neos.ContentRepository.Testing:Document" and the following context:
       | Workspace  |
       | user-admin |
     Then I should have the following nodes:
@@ -83,8 +83,8 @@ Feature: Move node
   Scenario: Move a node (into) in user workspace node with content collection and publish all
     Given I have the following nodes:
       | Identifier                           | Path                               | Node Type                       | Workspace  |
-      | 829d0d76-47fc-11e4-886a-14109fd7a2dd | /sites/typo3cr/company/main/text1  | TYPO3.TYPO3CR.Testing:Text      | live       |
-      | 07fcc3b2-47fd-11e4-bf41-14109fd7a2dd | /sites/typo3cr/company/main/twocol | TYPO3.TYPO3CR.Testing:TwoColumn | user-admin |
+      | 829d0d76-47fc-11e4-886a-14109fd7a2dd | /sites/typo3cr/company/main/text1  | Neos.ContentRepository.Testing:Text      | live       |
+      | 07fcc3b2-47fd-11e4-bf41-14109fd7a2dd | /sites/typo3cr/company/main/twocol | Neos.ContentRepository.Testing:TwoColumn | user-admin |
     When I get a node by path "/sites/typo3cr/company/main/text1" with the following context:
       | Workspace  |
       | user-admin |
@@ -123,12 +123,12 @@ Feature: Move node
   Scenario: Move a node (before) in user workspace and get by path
     Given I have the following nodes:
       | Identifier                           | Path                         | Node Type                  | Properties         | Workspace |
-      | a282e974-2dd2-11e4-ae5a-14109fd7a2dd | /sites/typo3cr/company/about | TYPO3.TYPO3CR.Testing:Page | {"title": "About"} | live      |
+      | a282e974-2dd2-11e4-ae5a-14109fd7a2dd | /sites/typo3cr/company/about | Neos.ContentRepository.Testing:Page | {"title": "About"} | live      |
     When I get a node by path "/sites/typo3cr/service" with the following context:
       | Workspace  |
       | user-admin |
     And I move the node before the node with path "/sites/typo3cr/company/about"
-    And I get the child nodes of "/sites/typo3cr/company" with filter "TYPO3.TYPO3CR.Testing:Document" and the following context:
+    And I get the child nodes of "/sites/typo3cr/company" with filter "Neos.ContentRepository.Testing:Document" and the following context:
       | Workspace  |
       | user-admin |
     Then I should have the following nodes:
@@ -148,12 +148,12 @@ Feature: Move node
   Scenario: Move a node (after) in user workspace and get by path
     Given I have the following nodes:
       | Identifier                           | Path                         | Node Type                  | Properties         | Workspace |
-      | a282e974-2dd2-11e4-ae5a-14109fd7a2dd | /sites/typo3cr/company/about | TYPO3.TYPO3CR.Testing:Page | {"title": "About"} | live      |
+      | a282e974-2dd2-11e4-ae5a-14109fd7a2dd | /sites/typo3cr/company/about | Neos.ContentRepository.Testing:Page | {"title": "About"} | live      |
     When I get a node by path "/sites/typo3cr/service" with the following context:
       | Workspace  |
       | user-admin |
     And I move the node after the node with path "/sites/typo3cr/company/about"
-    And I get the child nodes of "/sites/typo3cr/company" with filter "TYPO3.TYPO3CR.Testing:Document" and the following context:
+    And I get the child nodes of "/sites/typo3cr/company" with filter "Neos.ContentRepository.Testing:Document" and the following context:
       | Workspace  |
       | user-admin |
     Then I should have the following nodes:
@@ -197,7 +197,7 @@ Feature: Move node
       | Workspace  |
       | user-admin |
     And I move the node before the node with path "/sites/typo3cr/company"
-    When I get the child nodes of "/sites/typo3cr" with filter "TYPO3.TYPO3CR.Testing:Document" and the following context:
+    When I get the child nodes of "/sites/typo3cr" with filter "Neos.ContentRepository.Testing:Document" and the following context:
       | Workspace  |
       | user-admin |
     Then I should have the following nodes:
@@ -205,7 +205,7 @@ Feature: Move node
       | /sites/typo3cr/service | {"title": "Service"} |
       | /sites/typo3cr/company | {"title": "Company"} |
       | /sites/typo3cr/about   | {"title": "About"}   |
-    When I get the child nodes of "/sites/typo3cr" with filter "TYPO3.TYPO3CR.Testing:Document" and the following context:
+    When I get the child nodes of "/sites/typo3cr" with filter "Neos.ContentRepository.Testing:Document" and the following context:
       | Workspace |
       | live      |
     Then I should have the following nodes:
@@ -221,7 +221,7 @@ Feature: Move node
       | user-admin |
     And I move the node before the node with path "/sites/typo3cr/company"
     And I publish the workspace "user-admin"
-    And I get the child nodes of "/sites/typo3cr" with filter "TYPO3.TYPO3CR.Testing:Document" and the following context:
+    And I get the child nodes of "/sites/typo3cr" with filter "Neos.ContentRepository.Testing:Document" and the following context:
       | Workspace |
       | live      |
     Then I should have the following nodes:
@@ -254,7 +254,7 @@ Feature: Move node
   Scenario: Move a new node in user workspace
     Given I have the following nodes:
       | Identifier                           | Path                               | Node Type                       | Workspace  |
-      | 829d0d76-47fc-11e4-886a-14109fd7a2dd | /sites/typo3cr/company/main/text1  | TYPO3.TYPO3CR.Testing:Text      | user-admin |
+      | 829d0d76-47fc-11e4-886a-14109fd7a2dd | /sites/typo3cr/company/main/text1  | Neos.ContentRepository.Testing:Text      | user-admin |
     When I get a node by path "/sites/typo3cr/company/main/text1" with the following context:
       | Workspace  |
       | user-admin |
@@ -276,7 +276,7 @@ Feature: Move node
       | Workspace  |
       | user-admin |
     And I move the node after the node with path "/sites/typo3cr/about"
-    And I get the child nodes of "/sites/typo3cr" with filter "TYPO3.TYPO3CR.Testing:Document" and the following context:
+    And I get the child nodes of "/sites/typo3cr" with filter "Neos.ContentRepository.Testing:Document" and the following context:
       | Workspace  |
       | user-admin |
     Then I should have 3 nodes
@@ -291,7 +291,7 @@ Feature: Move node
       | user-admin |
     Then I should have one node
     And I move the node before the node with path "/sites/typo3cr/service"
-    And I get the child nodes of "/sites/typo3cr" with filter "TYPO3.TYPO3CR.Testing:Document" and the following context:
+    And I get the child nodes of "/sites/typo3cr" with filter "Neos.ContentRepository.Testing:Document" and the following context:
       | Workspace  |
       | user-admin |
     Then I should have 3 nodes
@@ -305,7 +305,7 @@ Feature: Move node
   Scenario: Move a new document node in user workspace and publish
     Given I have the following nodes:
       | Identifier                           | Path                                 | Node Type                     | Workspace  |
-      | 646ea354-c421-11e4-9f08-14109fd7a2dd | /sites/typo3cr/service/breaking-news | TYPO3.TYPO3CR.Testing:Chapter | user-admin |
+      | 646ea354-c421-11e4-9f08-14109fd7a2dd | /sites/typo3cr/service/breaking-news | Neos.ContentRepository.Testing:Chapter | user-admin |
     When I get a node by path "/sites/typo3cr/service/breaking-news" with the following context:
       | Workspace  |
       | user-admin |
@@ -332,7 +332,7 @@ Feature: Move node
   Scenario: Move a published node twice and publish
     Given I have the following nodes:
       | Identifier                           | Path                      | Node Type                  | Workspace |
-      | cf96e226-6fdb-11e4-aa3f-14109fd7a2dd | /sites/typo3cr/main/text1 | TYPO3.TYPO3CR.Testing:Text | live      |
+      | cf96e226-6fdb-11e4-aa3f-14109fd7a2dd | /sites/typo3cr/main/text1 | Neos.ContentRepository.Testing:Text | live      |
     When I get a node by path "/sites/typo3cr/main/text1" with the following context:
       | Workspace  |
       | user-admin |
@@ -348,8 +348,8 @@ Feature: Move node
   Scenario: Move a published node twice in columns and publish
     Given I have the following nodes:
       | Identifier                           | Path                        | Node Type                       | Workspace |
-      | cf96e226-6fdb-11e4-aa3f-14109fd7a2dd | /sites/typo3cr/main/text1   | TYPO3.TYPO3CR.Testing:Text      | live      |
-      | be085b0e-73da-11e4-994f-14109fd7a2dd | /sites/typo3cr/main/two-col | TYPO3.TYPO3CR.Testing:TwoColumn | live      |
+      | cf96e226-6fdb-11e4-aa3f-14109fd7a2dd | /sites/typo3cr/main/text1   | Neos.ContentRepository.Testing:Text      | live      |
+      | be085b0e-73da-11e4-994f-14109fd7a2dd | /sites/typo3cr/main/two-col | Neos.ContentRepository.Testing:TwoColumn | live      |
     When I get a node by path "/sites/typo3cr/main/text1" with the following context:
       | Workspace  |
       | user-admin |
@@ -382,7 +382,7 @@ Feature: Move node
   Scenario: Move a node one level up and discard workspace
     Given I have the following nodes:
       | Identifier                           | Path                            | Node Type                  | Workspace |
-      | d2294ce8-73de-11e4-a420-14109fd7a2dd | /sites/typo3cr/company/about-us | TYPO3.TYPO3CR.Testing:Page | live      |
+      | d2294ce8-73de-11e4-a420-14109fd7a2dd | /sites/typo3cr/company/about-us | Neos.ContentRepository.Testing:Page | live      |
     When I get a node by path "/sites/typo3cr/company/about-us" with the following context:
       | Workspace  |
       | user-admin |
@@ -402,8 +402,8 @@ Feature: Move node
   Scenario: Move a node to another parent and back again
     Given I have the following nodes:
       | Identifier                           | Path                               | Node Type                  | Workspace |
-      | d2294ce8-73de-11e4-a420-14109fd7a2dd | /sites/typo3cr/company/about-us    | TYPO3.TYPO3CR.Testing:Page | live      |
-      | c41d35bf-27e5-5645-a290-6a8b35c5935a | /sites/typo3cr/company/departments | TYPO3.TYPO3CR.Testing:Page | live      |
+      | d2294ce8-73de-11e4-a420-14109fd7a2dd | /sites/typo3cr/company/about-us    | Neos.ContentRepository.Testing:Page | live      |
+      | c41d35bf-27e5-5645-a290-6a8b35c5935a | /sites/typo3cr/company/departments | Neos.ContentRepository.Testing:Page | live      |
 
     When I get a node by path "/sites/typo3cr/company/about-us" with the following context:
       | Workspace  |
@@ -436,7 +436,7 @@ Feature: Move node
       | user-admin |
     Then I should have 0 nodes
 
-    When I get the child nodes of "/sites/typo3cr/company" with filter "TYPO3.TYPO3CR.Testing:Document" and the following context:
+    When I get the child nodes of "/sites/typo3cr/company" with filter "Neos.ContentRepository.Testing:Document" and the following context:
       | Workspace  |
       | user-admin |
     Then I should have the following nodes:

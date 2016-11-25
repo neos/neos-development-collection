@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Domain\Utility;
+namespace Neos\ContentRepository\Domain\Utility;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,7 +11,7 @@ namespace TYPO3\TYPO3CR\Domain\Utility;
  * source code.
  */
 
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * Provides basic logic concerning node paths.
@@ -221,11 +221,11 @@ abstract class NodePaths
     /**
      * Normalizes the given node path to a reference path and returns an absolute path.
      *
-     * You should usually use \TYPO3\TYPO3CR\Domain\Service\NodeService::normalizePath()  because functionality could be overloaded,
+     * You should usually use \Neos\ContentRepository\Domain\Service\NodeService::normalizePath()  because functionality could be overloaded,
      * this is here only for low level operations.
      *
      *
-     * @see \TYPO3\TYPO3CR\Domain\Service\NodeService::normalizePath()
+     * @see \Neos\ContentRepository\Domain\Service\NodeService::normalizePath()
      * @param $path
      * @param string $referencePath
      * @return string

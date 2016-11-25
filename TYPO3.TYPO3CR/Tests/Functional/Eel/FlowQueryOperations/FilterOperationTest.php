@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Tests\Functional\Eel\FlowQueryOperations;
+namespace Neos\ContentRepository\Tests\Functional\Eel\FlowQueryOperations;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,7 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Eel\FlowQueryOperations;
  */
 
 use Neos\Eel\FlowQuery\FlowQuery;
-use TYPO3\TYPO3CR\Tests\Functional\AbstractNodeTest;
+use Neos\ContentRepository\Tests\Functional\AbstractNodeTest;
 
 /**
  * Functional test case which tests FlowQuery FilterOperation
@@ -146,11 +146,11 @@ class FilterOperationTest extends AbstractNodeTest
         $teaserNode = $this->node->getNode('teaser');
         $sidebarNode = $this->node->getNode('sidebar');
         $q = new FlowQuery(array($this->node, $productsNode, $teaserNode, $sidebarNode));
-        $foundNodes = $q->filter('[instanceof TYPO3.TYPO3CR.Testing:Page]')->get();
+        $foundNodes = $q->filter('[instanceof Neos.ContentRepository.Testing:Page]')->get();
         $this->assertSame($this->node, $foundNodes[0]);
         $this->assertSame($productsNode, $foundNodes[1]);
         $this->assertEquals(2, count($foundNodes));
-        $foundNodes = $q->filter('[instanceof TYPO3.TYPO3CR.Testing:ContentCollection]')->get();
+        $foundNodes = $q->filter('[instanceof Neos.ContentRepository.Testing:ContentCollection]')->get();
         $this->assertSame($teaserNode, $foundNodes[0]);
         $this->assertSame($sidebarNode, $foundNodes[1]);
         $this->assertEquals(2, count($foundNodes));
@@ -168,13 +168,13 @@ class FilterOperationTest extends AbstractNodeTest
         $sidebarNode = $this->node->getNode('sidebar');
         $dummy = $sidebarNode->getNode('dummy43');
         $q = new FlowQuery(array($this->node, $dummy, $productsNode, $teaserNode, $sidebarNode));
-        $foundNodes = $q->filter('[!instanceof TYPO3.TYPO3CR.Testing:Html]')->get();
+        $foundNodes = $q->filter('[!instanceof Neos.ContentRepository.Testing:Html]')->get();
         $this->assertSame($this->node, $foundNodes[0]);
         $this->assertSame($productsNode, $foundNodes[1]);
         $this->assertSame($teaserNode, $foundNodes[2]);
         $this->assertSame($sidebarNode, $foundNodes[3]);
         $this->assertEquals(4, count($foundNodes));
-        $foundNodes = $q->filter('[!instanceof TYPO3.TYPO3CR.Testing:ContentCollection]')->get();
+        $foundNodes = $q->filter('[!instanceof Neos.ContentRepository.Testing:ContentCollection]')->get();
         $this->assertSame($this->node, $foundNodes[0]);
         $this->assertSame($dummy, $foundNodes[1]);
         $this->assertSame($productsNode, $foundNodes[2]);
@@ -192,11 +192,11 @@ class FilterOperationTest extends AbstractNodeTest
         $teaserNode = $this->node->getNode('teaser');
         $sidebarNode = $this->node->getNode('sidebar');
         $q = new FlowQuery(array($this->node, $productsNode, $teaserNode, $sidebarNode));
-        $foundNodes = $q->filter('[instanceof TYPO3.TYPO3CR.Testing:Document][instanceof TYPO3.TYPO3CR.Testing:Page]')->get();
+        $foundNodes = $q->filter('[instanceof Neos.ContentRepository.Testing:Document][instanceof Neos.ContentRepository.Testing:Page]')->get();
         $this->assertSame($this->node, $foundNodes[0]);
         $this->assertSame($productsNode, $foundNodes[1]);
         $this->assertEquals(2, count($foundNodes));
-        $foundNodes = $q->filter('[instanceof X][instanceof TYPO3.TYPO3CR.Testing:Page]')->get();
+        $foundNodes = $q->filter('[instanceof X][instanceof Neos.ContentRepository.Testing:Page]')->get();
         $this->assertEquals(0, count($foundNodes));
     }
 
@@ -209,7 +209,7 @@ class FilterOperationTest extends AbstractNodeTest
         $teaserNode = $this->node->getNode('teaser');
         $sidebarNode = $this->node->getNode('sidebar');
         $q = new FlowQuery(array($this->node, $productsNode, $teaserNode, $sidebarNode));
-        $foundNodes = $q->filter('[instanceof TYPO3.TYPO3CR.Testing:Page], [instanceof TYPO3.TYPO3CR.Testing:ContentCollection]')->get();
+        $foundNodes = $q->filter('[instanceof Neos.ContentRepository.Testing:Page], [instanceof Neos.ContentRepository.Testing:ContentCollection]')->get();
         $this->assertSame($this->node, $foundNodes[0]);
         $this->assertSame($productsNode, $foundNodes[1]);
         $this->assertSame($teaserNode, $foundNodes[2]);
@@ -226,11 +226,11 @@ class FilterOperationTest extends AbstractNodeTest
         $teaserNode = $this->node->getNode('teaser');
         $sidebarNode = $this->node->getNode('sidebar');
         $q = new FlowQuery(array($this->node, $productsNode, $teaserNode, $sidebarNode));
-        $foundNodes = $q->filter('[instanceof !TYPO3.TYPO3CR.Testing:ContentCollection]')->get();
+        $foundNodes = $q->filter('[instanceof !Neos.ContentRepository.Testing:ContentCollection]')->get();
         $this->assertSame($this->node, $foundNodes[0]);
         $this->assertSame($productsNode, $foundNodes[1]);
         $this->assertEquals(2, count($foundNodes));
-        $foundNodes = $q->filter('[instanceof !TYPO3.TYPO3CR.Testing:Page]')->get();
+        $foundNodes = $q->filter('[instanceof !Neos.ContentRepository.Testing:Page]')->get();
         $this->assertSame($teaserNode, $foundNodes[0]);
         $this->assertSame($sidebarNode, $foundNodes[1]);
         $this->assertEquals(2, count($foundNodes));
@@ -247,11 +247,11 @@ class FilterOperationTest extends AbstractNodeTest
         $teaserNode = $this->node->getNode('teaser');
         $sidebarNode = $this->node->getNode('sidebar');
         $q = new FlowQuery(array($this->node, $productsNode, $teaserNode, $sidebarNode));
-        $foundNodes = $q->filter('[!instanceof !TYPO3.TYPO3CR.Testing:Page]')->get();
+        $foundNodes = $q->filter('[!instanceof !Neos.ContentRepository.Testing:Page]')->get();
         $this->assertSame($this->node, $foundNodes[0]);
         $this->assertSame($productsNode, $foundNodes[1]);
         $this->assertEquals(2, count($foundNodes));
-        $foundNodes = $q->filter('[!instanceof !TYPO3.TYPO3CR.Testing:ContentCollection]')->get();
+        $foundNodes = $q->filter('[!instanceof !Neos.ContentRepository.Testing:ContentCollection]')->get();
         $this->assertSame($teaserNode, $foundNodes[0]);
         $this->assertSame($sidebarNode, $foundNodes[1]);
         $this->assertEquals(2, count($foundNodes));

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Domain\Service;
+namespace Neos\ContentRepository\Domain\Service;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,9 +11,9 @@ namespace TYPO3\TYPO3CR\Domain\Service;
  * source code.
  */
 
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Exception\WorkspaceException;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Exception\WorkspaceException;
 
 /**
  * TYPO3CR Publishing Service Interface
@@ -26,7 +26,7 @@ interface PublishingServiceInterface
      * Returns a list of nodes contained in the given workspace which are not yet published
      *
      * @param Workspace $workspace
-     * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
+     * @return array<\Neos\ContentRepository\Domain\Model\NodeInterface>
      */
     public function getUnpublishedNodes(Workspace $workspace);
 
@@ -52,7 +52,7 @@ interface PublishingServiceInterface
     /**
      * Publishes the given nodes to the specified target workspace. If no workspace is specified, "live" is assumed.
      *
-     * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes The nodes to publish
+     * @param array<\Neos\ContentRepository\Domain\Model\NodeInterface> $nodes The nodes to publish
      * @param Workspace $targetWorkspace If not set the "live" workspace is assumed to be the publishing target
      * @return void
      * @api
@@ -72,7 +72,7 @@ interface PublishingServiceInterface
     /**
      * Discards the given nodes.
      *
-     * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes The nodes to discard
+     * @param array<\Neos\ContentRepository\Domain\Model\NodeInterface> $nodes The nodes to discard
      * @return void
      * @api
      */

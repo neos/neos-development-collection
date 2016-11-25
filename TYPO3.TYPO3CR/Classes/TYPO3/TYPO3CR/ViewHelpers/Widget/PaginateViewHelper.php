@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\ViewHelpers\Widget;
+namespace Neos\ContentRepository\ViewHelpers\Widget;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,8 +13,8 @@ namespace TYPO3\TYPO3CR\ViewHelpers\Widget;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetViewHelper;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\ViewHelpers\Widget\Controller\PaginateController;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\ViewHelpers\Widget\Controller\PaginateController;
 
 /**
  * This ViewHelper renders a Pagination of nodes.
@@ -53,7 +53,7 @@ class PaginateViewHelper extends AbstractWidgetViewHelper
      * Render this view helper
      *
      * @param string $as Variable name for the result set
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $parentNode The parent node of the child nodes to show (instead of specifying the specific node set)
+     * @param \Neos\ContentRepository\Domain\Model\NodeInterface $parentNode The parent node of the child nodes to show (instead of specifying the specific node set)
      * @param array $nodes The specific collection of nodes to use for this paginator (instead of specifying the parentNode)
      * @param string $nodeTypeFilter A node type (or more complex filter) to filter for in the results
      * @param array $configuration Additional configuration

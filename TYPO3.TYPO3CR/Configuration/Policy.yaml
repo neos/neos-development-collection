@@ -4,5 +4,5 @@
 
 roles:
 
-  'TYPO3.TYPO3CR:Administrator':
+  'Neos.ContentRepository:Administrator':
     abstract: TRUE

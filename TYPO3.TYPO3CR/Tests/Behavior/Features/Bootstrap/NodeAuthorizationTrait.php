@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Tests\Behavior\Features\Bootstrap;
+namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -15,7 +15,7 @@ use Behat\Gherkin\Node\TableNode;
 use Neos\Flow\Annotations as Flow;
 use PHPUnit_Framework_Assert as Assert;
 use Neos\Flow\Security\Exception\AccessDeniedException;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * A trait with shared step definitions for common use by other contexts
@@ -30,13 +30,13 @@ trait NodeAuthorizationTrait
 {
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Service\AuthorizationService
+     * @var \Neos\ContentRepository\Service\AuthorizationService
      */
     protected $nodeAuthorizationService;
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager
+     * @var \Neos\ContentRepository\Domain\Service\NodeTypeManager
      */
     protected $nodeTypeManager;
 
@@ -160,7 +160,7 @@ trait NodeAuthorizationTrait
             }
 
             try {
-                $nodeTypeManager = $this->getObjectManager()->get(\TYPO3\TYPO3CR\Domain\Service\NodeTypeManager::class);
+                $nodeTypeManager = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class);
                 $this->currentNodes[0]->setNodeType($nodeTypeManager->getNodeType('TYPO3.Neos:Node'));
                 if ($not === 'not') {
                     Assert::fail('NodeType should not be settable on the current node!');
@@ -241,7 +241,7 @@ trait NodeAuthorizationTrait
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg(trim($not)), 'string', escapeshellarg($nodeName), 'string', escapeshellarg($nodeType)));
         } else {
             /** @var NodeTypeManager $nodeTypeManager */
-            $nodeTypeManager = $this->getObjectManager()->get(\TYPO3\TYPO3CR\Domain\Service\NodeTypeManager::class);
+            $nodeTypeManager = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class);
 
             try {
                 $this->currentNodes[0]->createNode($nodeName, $nodeTypeManager->getNodeType($nodeType));
@@ -269,7 +269,7 @@ trait NodeAuthorizationTrait
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg(trim($expectedResult)), 'string', escapeshellarg($nodeName), 'string', escapeshellarg($nodeTypeName)));
         } else {
             /** @var NodeTypeManager $nodeTypeManager */
-            $nodeTypeManager = $this->getObjectManager()->get(\TYPO3\TYPO3CR\Domain\Service\NodeTypeManager::class);
+            $nodeTypeManager = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class);
             $nodeType = $nodeTypeManager->getNodeType($nodeTypeName);
 
             if ($expectedResult === 'TRUE') {

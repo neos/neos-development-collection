@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Migration\Service;
+namespace Neos\ContentRepository\Migration\Service;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,9 +14,9 @@ namespace TYPO3\TYPO3CR\Migration\Service;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\ObjectAccess;
-use TYPO3\TYPO3CR\Domain\Model\NodeData;
-use TYPO3\TYPO3CR\Migration\Exception\MigrationException;
-use TYPO3\TYPO3CR\Migration\Transformations\TransformationInterface;
+use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Migration\Exception\MigrationException;
+use Neos\ContentRepository\Migration\Transformations\TransformationInterface;
 
 /**
  * Service that executes a series of configured transformations on a node.
@@ -32,7 +32,7 @@ class NodeTransformation
     protected $objectManager;
 
     /**
-     * @var array<\TYPO3\TYPO3CR\Migration\Transformations\TransformationInterface>
+     * @var array<\Neos\ContentRepository\Migration\Transformations\TransformationInterface>
      */
     protected $transformationConjunctions = array();
 
@@ -55,7 +55,7 @@ class NodeTransformation
 
     /**
      * @param array $transformationConfigurations
-     * @return array<\TYPO3\TYPO3CR\Migration\Transformations\TransformationInterface>
+     * @return array<\Neos\ContentRepository\Migration\Transformations\TransformationInterface>
      */
     protected function buildTransformationConjunction(array $transformationConfigurations)
     {
@@ -98,7 +98,7 @@ class NodeTransformation
      * Tries to resolve the given transformation name into a class name.
      *
      * The name can be a fully qualified class name or a name relative to the
-     * TYPO3\TYPO3CR\Migration\Transformations namespace.
+     * Neos\ContentRepository\Migration\Transformations namespace.
      *
      * @param string $transformationName
      * @return string
@@ -111,7 +111,7 @@ class NodeTransformation
             return $resolvedObjectName;
         }
 
-        $resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName('TYPO3\TYPO3CR\Migration\Transformations\\' . $transformationName);
+        $resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName('Neos\ContentRepository\Migration\Transformations\\' . $transformationName);
         if ($resolvedObjectName !== false) {
             return $resolvedObjectName;
         }

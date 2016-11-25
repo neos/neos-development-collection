@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Domain\Service;
+namespace Neos\ContentRepository\Domain\Service;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,16 +12,16 @@ namespace TYPO3\TYPO3CR\Domain\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
-use TYPO3\TYPO3CR\Domain\Model\NodeData;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
-use TYPO3\TYPO3CR\Domain\Service\ContentDimensionPresetSourceInterface;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
-use TYPO3\TYPO3CR\Exception\WorkspaceException;
-use TYPO3\TYPO3CR\Service\Utility\NodePublishingDependencySolver;
+use Neos\ContentRepository\Domain\Factory\NodeFactory;
+use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
+use Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\ContentRepository\Exception\WorkspaceException;
+use Neos\ContentRepository\Service\Utility\NodePublishingDependencySolver;
 
 /**
  * A generic TYPO3CR Publishing Service
@@ -65,7 +65,7 @@ class PublishingService implements PublishingServiceInterface
      * Returns a list of nodes contained in the given workspace which are not yet published
      *
      * @param Workspace $workspace
-     * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
+     * @return array<\Neos\ContentRepository\Domain\Model\NodeInterface>
      * @api
      */
     public function getUnpublishedNodes(Workspace $workspace)
@@ -129,7 +129,7 @@ class PublishingService implements PublishingServiceInterface
      * Publishes the given nodes to the specified target workspace. If no workspace is specified, the source workspace's
      * base workspace is assumed.
      *
-     * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes The nodes to publish
+     * @param array<\Neos\ContentRepository\Domain\Model\NodeInterface> $nodes The nodes to publish
      * @param Workspace $targetWorkspace If not set the base workspace is assumed to be the publishing target
      * @return void
      * @api
@@ -164,7 +164,7 @@ class PublishingService implements PublishingServiceInterface
      * @param NodeInterface $node The node to discard
      * @param array &$alreadyDiscardedNodeIdentifiers List of node identifiers which already have been discarded during one discardNode() run
      * @return void
-     * @throws \TYPO3\TYPO3CR\Exception\WorkspaceException
+     * @throws \Neos\ContentRepository\Exception\WorkspaceException
      */
     protected function doDiscardNode(NodeInterface $node, array &$alreadyDiscardedNodeIdentifiers = [])
     {
@@ -202,7 +202,7 @@ class PublishingService implements PublishingServiceInterface
     /**
      * Discards the given nodes.
      *
-     * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes The nodes to discard
+     * @param array<\Neos\ContentRepository\Domain\Model\NodeInterface> $nodes The nodes to discard
      * @return void
      * @api
      */

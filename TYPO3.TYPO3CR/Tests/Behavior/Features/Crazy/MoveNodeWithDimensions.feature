@@ -7,12 +7,12 @@ Feature: Move node with dimension support
     Given I have the following nodes:
       | Identifier                           | Path                   | Node Type                  | Properties                    | Workspace | Language |
       | 85f17826-64d1-11e4-a6e3-14109fd7a2dd | /sites                 | unstructured               |                               | live      | mul_ZZ   |
-      | 8952d7b2-64d1-11e4-9fe2-14109fd7a2dd | /sites/typo3cr         | TYPO3.TYPO3CR.Testing:Page | {"title": "Home"}             | live      | en       |
-      | 8ed74376-64d1-11e4-b98b-14109fd7a2dd | /sites/typo3cr/company | TYPO3.TYPO3CR.Testing:Page | {"title": "Company"}          | live      | en       |
-      | 9315622e-64d1-11e4-a28c-14109fd7a2dd | /sites/typo3cr/service | TYPO3.TYPO3CR.Testing:Page | {"title": "Service"}          | live      | en       |
-      | 8952d7b2-64d1-11e4-9fe2-14109fd7a2dd | /sites/typo3cr         | TYPO3.TYPO3CR.Testing:Page | {"title": "Startseite"}       | live      | de       |
-      | 8ed74376-64d1-11e4-b98b-14109fd7a2dd | /sites/typo3cr/company | TYPO3.TYPO3CR.Testing:Page | {"title": "Die Firma"}        | live      | de       |
-      | 9315622e-64d1-11e4-a28c-14109fd7a2dd | /sites/typo3cr/service | TYPO3.TYPO3CR.Testing:Page | {"title": "Dienstleistungen"} | live      | de       |
+      | 8952d7b2-64d1-11e4-9fe2-14109fd7a2dd | /sites/typo3cr         | Neos.ContentRepository.Testing:Page | {"title": "Home"}             | live      | en       |
+      | 8ed74376-64d1-11e4-b98b-14109fd7a2dd | /sites/typo3cr/company | Neos.ContentRepository.Testing:Page | {"title": "Company"}          | live      | en       |
+      | 9315622e-64d1-11e4-a28c-14109fd7a2dd | /sites/typo3cr/service | Neos.ContentRepository.Testing:Page | {"title": "Service"}          | live      | en       |
+      | 8952d7b2-64d1-11e4-9fe2-14109fd7a2dd | /sites/typo3cr         | Neos.ContentRepository.Testing:Page | {"title": "Startseite"}       | live      | de       |
+      | 8ed74376-64d1-11e4-b98b-14109fd7a2dd | /sites/typo3cr/company | Neos.ContentRepository.Testing:Page | {"title": "Die Firma"}        | live      | de       |
+      | 9315622e-64d1-11e4-a28c-14109fd7a2dd | /sites/typo3cr/service | Neos.ContentRepository.Testing:Page | {"title": "Dienstleistungen"} | live      | de       |
 
   @fixtures
   Scenario: Moving an aggregate node (Document) in user workspace should move across all dimensions; making sure the live workspace is unaffected
@@ -61,7 +61,7 @@ Feature: Move node with dimension support
   Scenario: Moving an aggregate node (Document) with a partially translated subtree should move across all dimensions
     Given I have the following nodes:
       | Identifier                           | Path                             | Node Type                  | Properties             | Workspace | Language |
-      | 9de83f6c-6596-11e4-b3aa-14109fd7a2dd | /sites/typo3cr/service/downloads | TYPO3.TYPO3CR.Testing:Page | {"title": "Downloads"} | live      | en       |
+      | 9de83f6c-6596-11e4-b3aa-14109fd7a2dd | /sites/typo3cr/service/downloads | Neos.ContentRepository.Testing:Page | {"title": "Downloads"} | live      | en       |
     When I get a node by path "/sites/typo3cr/service" with the following context:
       | Workspace  | Language |
       | user-admin | de       |
@@ -79,10 +79,10 @@ Feature: Move node with dimension support
   Scenario: Moving an aggregate node (Document) with a partially translated subtree with fallbacks should move across all dimensions
     Given I have the following nodes:
       | Identifier                           | Path                                     | Node Type                  | Properties             | Workspace | Language |
-      | 8952d7b2-64d1-11e4-9fe2-14109fd7a2dd | /sites/typo3cr                           | TYPO3.TYPO3CR.Testing:Page | {"title": "Home"}      | live      | mul_ZZ   |
-      | 9315622e-64d1-11e4-a28c-14109fd7a2dd | /sites/typo3cr/service                   | TYPO3.TYPO3CR.Testing:Page | {"title": "Service"}   | live      | mul_ZZ   |
-      | 9de83f6c-6596-11e4-b3aa-14109fd7a2dd | /sites/typo3cr/service/downloads         | TYPO3.TYPO3CR.Testing:Page | {"title": "Downloads"} | live      | mul_ZZ   |
-      | 4e80336e-65c1-11e4-8f8f-14109fd7a2dd | /sites/typo3cr/service/downloads/drivers | TYPO3.TYPO3CR.Testing:Page | {"title": "Drivers"}   | live      | en       |
+      | 8952d7b2-64d1-11e4-9fe2-14109fd7a2dd | /sites/typo3cr                           | Neos.ContentRepository.Testing:Page | {"title": "Home"}      | live      | mul_ZZ   |
+      | 9315622e-64d1-11e4-a28c-14109fd7a2dd | /sites/typo3cr/service                   | Neos.ContentRepository.Testing:Page | {"title": "Service"}   | live      | mul_ZZ   |
+      | 9de83f6c-6596-11e4-b3aa-14109fd7a2dd | /sites/typo3cr/service/downloads         | Neos.ContentRepository.Testing:Page | {"title": "Downloads"} | live      | mul_ZZ   |
+      | 4e80336e-65c1-11e4-8f8f-14109fd7a2dd | /sites/typo3cr/service/downloads/drivers | Neos.ContentRepository.Testing:Page | {"title": "Drivers"}   | live      | en       |
     When I get a node by path "/sites/typo3cr/service" with the following context:
       | Workspace  | Language   |
       | user-admin | de, mul_ZZ |
@@ -117,12 +117,12 @@ Feature: Move node with dimension support
   Scenario: Moving a non-aggregate node (Content) in a workspace should be independent from other dimensions
     Given I have the following nodes:
       | Identifier                           | Path                                              | Properties | Node Type                       | Language |
-      | ebfa51b2-64f2-11e4-be8f-14109fd7a2dd | /sites/typo3cr/company/main/text0                 |            | TYPO3.TYPO3CR.Testing:Text      | en       |
-      | ebfa51b2-64f2-11e4-be8f-14109fd7a2dd | /sites/typo3cr/company/main/text0                 |            | TYPO3.TYPO3CR.Testing:Text      | de       |
-      | 74fe032a-6442-11e4-8135-14109fd7a2dd | /sites/typo3cr/company/main/two-col               |            | TYPO3.TYPO3CR.Testing:TwoColumn | en       |
-      | 74fe032a-6442-11e4-8135-14109fd7a2dd | /sites/typo3cr/company/main/two-col               |            | TYPO3.TYPO3CR.Testing:TwoColumn | de       |
-      | 864b6a8c-6442-11e4-8791-14109fd7a2dd | /sites/typo3cr/company/main/two-col/column0/text1 |            | TYPO3.TYPO3CR.Testing:Text      | en       |
-      | 864b6a8c-6442-11e4-8791-14109fd7a2dd | /sites/typo3cr/company/main/two-col/column0/text1 |            | TYPO3.TYPO3CR.Testing:Text      | de       |
+      | ebfa51b2-64f2-11e4-be8f-14109fd7a2dd | /sites/typo3cr/company/main/text0                 |            | Neos.ContentRepository.Testing:Text      | en       |
+      | ebfa51b2-64f2-11e4-be8f-14109fd7a2dd | /sites/typo3cr/company/main/text0                 |            | Neos.ContentRepository.Testing:Text      | de       |
+      | 74fe032a-6442-11e4-8135-14109fd7a2dd | /sites/typo3cr/company/main/two-col               |            | Neos.ContentRepository.Testing:TwoColumn | en       |
+      | 74fe032a-6442-11e4-8135-14109fd7a2dd | /sites/typo3cr/company/main/two-col               |            | Neos.ContentRepository.Testing:TwoColumn | de       |
+      | 864b6a8c-6442-11e4-8791-14109fd7a2dd | /sites/typo3cr/company/main/two-col/column0/text1 |            | Neos.ContentRepository.Testing:Text      | en       |
+      | 864b6a8c-6442-11e4-8791-14109fd7a2dd | /sites/typo3cr/company/main/two-col/column0/text1 |            | Neos.ContentRepository.Testing:Text      | de       |
     When I get a node by path "/sites/typo3cr/company/main/text0" with the following context:
       | Workspace  | Language   |
       | user-admin | de, mul_ZZ |
@@ -148,10 +148,10 @@ Feature: Move node with dimension support
   Scenario: Re-odering a non-aggregate node (Content) in a workspace should be independent from other dimensions
     Given I have the following nodes:
       | Identifier                           | Path                              | Properties | Node Type                  | Language |
-      | ebfa51b2-64f2-11e4-be8f-14109fd7a2dd | /sites/typo3cr/company/main/text0 |            | TYPO3.TYPO3CR.Testing:Text | en       |
-      | ebfa51b2-64f2-11e4-be8f-14109fd7a2dd | /sites/typo3cr/company/main/text0 |            | TYPO3.TYPO3CR.Testing:Text | de       |
-      | 3d9d597c-6509-11e4-9b97-14109fd7a2dd | /sites/typo3cr/company/main/text1 |            | TYPO3.TYPO3CR.Testing:Text | en       |
-      | 3d9d597c-6509-11e4-9b97-14109fd7a2dd | /sites/typo3cr/company/main/text1 |            | TYPO3.TYPO3CR.Testing:Text | de       |
+      | ebfa51b2-64f2-11e4-be8f-14109fd7a2dd | /sites/typo3cr/company/main/text0 |            | Neos.ContentRepository.Testing:Text | en       |
+      | ebfa51b2-64f2-11e4-be8f-14109fd7a2dd | /sites/typo3cr/company/main/text0 |            | Neos.ContentRepository.Testing:Text | de       |
+      | 3d9d597c-6509-11e4-9b97-14109fd7a2dd | /sites/typo3cr/company/main/text1 |            | Neos.ContentRepository.Testing:Text | en       |
+      | 3d9d597c-6509-11e4-9b97-14109fd7a2dd | /sites/typo3cr/company/main/text1 |            | Neos.ContentRepository.Testing:Text | de       |
     When I get a node by path "/sites/typo3cr/company/main/text0" with the following context:
       | Workspace  | Language   |
       | user-admin | de, mul_ZZ |

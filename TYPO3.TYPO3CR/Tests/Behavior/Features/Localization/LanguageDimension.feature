@@ -7,16 +7,16 @@ Feature: Multiple languages as content dimension
     Given I have the following nodes:
       | Path           | Node Type                  | Properties        |
       | /sites         | unstructured               |                   |
-      | /sites/typo3cr | TYPO3.TYPO3CR.Testing:Page | {"title": "Home"} |
+      | /sites/typo3cr | Neos.ContentRepository.Testing:Page | {"title": "Home"} |
 
   @fixtures
   Scenario: Assign multiple values to language content dimension for a node variant
     Given I have the following nodes:
       | Identifier                           | Path                   | Node Type                      | Properties                  | Language     |
-#      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/main/c2 | TYPO3.TYPO3CR.Testing:Headline | {"title": "Swiss content"}  | fr_CH, de_CH |
+#      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/main/c2 | Neos.ContentRepository.Testing:Headline | {"title": "Swiss content"}  | fr_CH, de_CH |
 # Next line can be removed again and the line above uncommented as soon as multiple dimension values work correctly.
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/main/c2 | TYPO3.TYPO3CR.Testing:Headline | {"title": "Swiss content"}  | de_CH        |
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/main/c2 | TYPO3.TYPO3CR.Testing:Headline | {"title": "German content"} | de_ZZ        |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/main/c2 | Neos.ContentRepository.Testing:Headline | {"title": "Swiss content"}  | de_CH        |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/main/c2 | Neos.ContentRepository.Testing:Headline | {"title": "German content"} | de_ZZ        |
     When I get a node by path "/sites/typo3cr/main/c2" with the following context:
       | Language      |
       | de_CH, mul_ZZ |

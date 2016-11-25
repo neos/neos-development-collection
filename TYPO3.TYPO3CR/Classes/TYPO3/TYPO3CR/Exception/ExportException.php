@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Exception;
+namespace Neos\ContentRepository\Exception;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,7 +11,7 @@ namespace TYPO3\TYPO3CR\Exception;
  * source code.
  */
 
-use TYPO3\TYPO3CR\Exception;
+use Neos\ContentRepository\Exception;
 
 /**
  * This exception is thrown as composite exception if something goes wrong during the node export.

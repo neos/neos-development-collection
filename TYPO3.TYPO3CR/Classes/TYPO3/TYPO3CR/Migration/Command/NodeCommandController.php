@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Migration\Command;
+namespace Neos\ContentRepository\Migration\Command;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,15 +13,15 @@ namespace TYPO3\TYPO3CR\Migration\Command;
 
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Configuration\Source\YamlSource;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
-use TYPO3\TYPO3CR\Migration\Domain\Factory\MigrationFactory;
-use TYPO3\TYPO3CR\Migration\Domain\Repository\MigrationStatusRepository;
-use TYPO3\TYPO3CR\Migration\Exception\MigrationException;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\ContentRepository\Migration\Domain\Factory\MigrationFactory;
+use Neos\ContentRepository\Migration\Domain\Repository\MigrationStatusRepository;
+use Neos\ContentRepository\Migration\Exception\MigrationException;
 use Neos\Flow\Persistence\Doctrine\Exception\DatabaseException;
-use TYPO3\TYPO3CR\Migration\Service\NodeMigration;
-use TYPO3\TYPO3CR\Migration\Domain\Model\MigrationStatus;
-use TYPO3\TYPO3CR\Migration\Domain\Model\MigrationConfiguration;
+use Neos\ContentRepository\Migration\Service\NodeMigration;
+use Neos\ContentRepository\Migration\Domain\Model\MigrationStatus;
+use Neos\ContentRepository\Migration\Domain\Model\MigrationConfiguration;
 use Neos\Flow\Annotations as Flow;
 
 /**

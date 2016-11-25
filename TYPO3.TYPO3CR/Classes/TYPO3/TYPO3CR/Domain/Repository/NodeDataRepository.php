@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Domain\Repository;
+namespace Neos\ContentRepository\Domain\Repository;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -20,15 +20,15 @@ use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\Repository;
 use Neos\Utility\Arrays;
 use Neos\Flow\Utility\Unicode\Functions as UnicodeFunctions;
-use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
-use TYPO3\TYPO3CR\Domain\Model\NodeData;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Service\Context;
+use Neos\ContentRepository\Domain\Factory\NodeFactory;
+use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Service\Context;
 use Neos\Flow\Security\Context as SecurityContext;
-use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
-use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
-use TYPO3\TYPO3CR\Exception;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Domain\Utility\NodePaths;
+use Neos\ContentRepository\Exception;
 
 /**
  * A purely internal repository for NodeData storage
@@ -445,7 +445,7 @@ class NodeDataRepository extends Repository
      * @param Workspace $workspace The containing workspace
      * @param array $dimensions An array of dimensions to dimension values
      * @param boolean $removedNodes If TRUE the result has ONLY removed nodes. If FALSE removed nodes are NOT inside the result. If NULL the result contains BOTH removed and non-removed nodes. (defaults to FALSE)
-     * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData> The nodes found on the given path
+     * @return array<\Neos\ContentRepository\Domain\Model\NodeData> The nodes found on the given path
      */
     public function findByParentAndNodeTypeRecursively($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions = null, $removedNodes = false)
     {
@@ -467,7 +467,7 @@ class NodeDataRepository extends Repository
      * @param array $dimensions An array of dimensions to dimension values
      * @param boolean $removedNodes If TRUE the result has ONLY removed nodes. If FALSE removed nodes are NOT inside the result. If NULL the result contains BOTH removed and non-removed nodes. (defaults to FALSE)
      * @param boolean $recursive If TRUE *all* matching nodes underneath the specified parent path are returned
-     * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData> The nodes found on the given path
+     * @return array<\Neos\ContentRepository\Domain\Model\NodeData> The nodes found on the given path
      * @todo Improve implementation by using DQL
      */
     public function findByParentAndNodeType($parentPath, $nodeTypeFilter, Workspace $workspace, array $dimensions = null, $removedNodes = false, $recursive = false)
@@ -561,7 +561,7 @@ class NodeDataRepository extends Repository
      *
      * @param string $parentPath
      * @param Workspace $workspace
-     * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData> A unreduced array of NodeData
+     * @return array<\Neos\ContentRepository\Domain\Model\NodeData> A unreduced array of NodeData
      */
     public function findByParentWithoutReduce($parentPath, Workspace $workspace)
     {
@@ -600,7 +600,7 @@ class NodeDataRepository extends Repository
      *
      * @param string $identifier
      * @param Workspace $workspace
-     * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData> A unreduced array of NodeData
+     * @return array<\Neos\ContentRepository\Domain\Model\NodeData> A unreduced array of NodeData
      */
     public function findByIdentifierWithoutReduce($identifier, Workspace $workspace)
     {
@@ -624,7 +624,7 @@ class NodeDataRepository extends Repository
      * @param string $nodeTypeFilter Filter the node type of the nodes, allows complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
      * @param Context $context The containing workspace
      * @param boolean $recursive If TRUE *all* matching nodes underneath the specified parent path are returned
-     * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> The nodes found on the given path
+     * @return array<\Neos\ContentRepository\Domain\Model\NodeInterface> The nodes found on the given path
      */
     public function findByParentAndNodeTypeInContext($parentPath, $nodeTypeFilter, Context $context, $recursive = false)
     {
@@ -670,7 +670,7 @@ class NodeDataRepository extends Repository
         $this->systemLogger->log(sprintf('Opening sortindex space after index %s at path %s.', $referenceIndex, $parentPath), LOG_INFO);
 
         /** @var Query $query */
-        $query = $this->entityManager->createQuery('SELECT n.Persistence_Object_Identifier identifier, n.index, n.path FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash ORDER BY n.index ASC');
+        $query = $this->entityManager->createQuery('SELECT n.Persistence_Object_Identifier identifier, n.index, n.path FROM Neos\ContentRepository\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash ORDER BY n.index ASC');
         $query->setParameter('parentPathHash', md5($parentPath));
 
         $nodesOnLevel = [];
@@ -694,7 +694,7 @@ class NodeDataRepository extends Repository
             }
         }
 
-        $query = $this->entityManager->createQuery('UPDATE TYPO3\TYPO3CR\Domain\Model\NodeData n SET n.index = :index WHERE n.Persistence_Object_Identifier = :identifier');
+        $query = $this->entityManager->createQuery('UPDATE Neos\ContentRepository\Domain\Model\NodeData n SET n.index = :index WHERE n.Persistence_Object_Identifier = :identifier');
         foreach ($nodesOnLevel as $node) {
             if ($node['index'] < $referenceIndex) {
                 continue;
@@ -727,7 +727,7 @@ class NodeDataRepository extends Repository
     {
         if (!isset($this->highestIndexCache[$parentPath])) {
             /** @var \Doctrine\ORM\Query $query */
-            $query = $this->entityManager->createQuery('SELECT MAX(n.index) FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash');
+            $query = $this->entityManager->createQuery('SELECT MAX(n.index) FROM Neos\ContentRepository\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash');
             $query->setParameter('parentPathHash', md5($parentPath));
             $this->highestIndexCache[$parentPath] = $query->getSingleScalarResult() ?: 0;
         }
@@ -762,7 +762,7 @@ class NodeDataRepository extends Repository
     {
         $this->persistEntities();
         /** @var \Doctrine\ORM\Query $query */
-        $query = $this->entityManager->createQuery('SELECT MAX(n.index) FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash AND n.index < :referenceIndex');
+        $query = $this->entityManager->createQuery('SELECT MAX(n.index) FROM Neos\ContentRepository\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash AND n.index < :referenceIndex');
         $query->setParameter('parentPathHash', md5($parentPath));
         $query->setParameter('referenceIndex', $referenceIndex);
 
@@ -787,7 +787,7 @@ class NodeDataRepository extends Repository
         }
         $this->persistEntities();
         /** @var \Doctrine\ORM\Query $query */
-        $query = $this->entityManager->createQuery('SELECT MIN(n.index) FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash AND n.index > :referenceIndex');
+        $query = $this->entityManager->createQuery('SELECT MIN(n.index) FROM Neos\ContentRepository\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash AND n.index > :referenceIndex');
         $query->setParameter('parentPathHash', md5($parentPath));
         $query->setParameter('referenceIndex', $referenceIndex);
 
@@ -893,7 +893,7 @@ class NodeDataRepository extends Repository
      * @param boolean $includeRemovedNodes Should removed nodes be included in the result (defaults to FALSE)
      * @param string $nodeTypeFilter Optional filter for the node type of the nodes, supports complex expressions (e.g. "TYPO3.Neos:Page", "!TYPO3.Neos:Page,TYPO3.Neos:Text" or NULL)
      * @throws \InvalidArgumentException
-     * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData> The nodes found on the given path
+     * @return array<\Neos\ContentRepository\Domain\Model\NodeData> The nodes found on the given path
      * @todo findOnPath should probably not return child nodes of removed nodes unless removed nodes are included.
      */
     public function findOnPath($pathStartingPoint, $pathEndPoint, Workspace $workspace, array $dimensions = null, $includeRemovedNodes = false, $nodeTypeFilter = null)
@@ -960,7 +960,7 @@ class NodeDataRepository extends Repository
      * @param Workspace $workspace
      * @param array $dimensions
      * @param string $pathStartingPoint
-     * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData>
+     * @return array<\Neos\ContentRepository\Domain\Model\NodeData>
      */
     public function findByProperties($term, $nodeTypeFilter, $workspace, $dimensions, $pathStartingPoint = null)
     {
@@ -1213,8 +1213,8 @@ class NodeDataRepository extends Repository
         foreach ($dimensions as $dimensionName => $dimensionValues) {
             $dimensionAlias = 'd' . $count;
             $queryBuilder->andWhere(
-                'EXISTS (SELECT ' . $dimensionAlias . ' FROM TYPO3\TYPO3CR\Domain\Model\NodeDimension ' . $dimensionAlias . ' WHERE ' . $dimensionAlias . '.nodeData = n AND ' . $dimensionAlias . '.name = \'' . $dimensionName . '\' AND ' . $dimensionAlias . '.value IN (:' . $dimensionAlias . ')) ' .
-                'OR NOT EXISTS (SELECT ' . $dimensionAlias . '_c FROM TYPO3\TYPO3CR\Domain\Model\NodeDimension ' . $dimensionAlias . '_c WHERE ' . $dimensionAlias . '_c.nodeData = n AND ' . $dimensionAlias . '_c.name = \'' . $dimensionName . '\')'
+                'EXISTS (SELECT ' . $dimensionAlias . ' FROM Neos\ContentRepository\Domain\Model\NodeDimension ' . $dimensionAlias . ' WHERE ' . $dimensionAlias . '.nodeData = n AND ' . $dimensionAlias . '.name = \'' . $dimensionName . '\' AND ' . $dimensionAlias . '.value IN (:' . $dimensionAlias . ')) ' .
+                'OR NOT EXISTS (SELECT ' . $dimensionAlias . '_c FROM Neos\ContentRepository\Domain\Model\NodeDimension ' . $dimensionAlias . '_c WHERE ' . $dimensionAlias . '_c.nodeData = n AND ' . $dimensionAlias . '_c.name = \'' . $dimensionName . '\')'
             );
             $queryBuilder->setParameter($dimensionAlias, $dimensionValues);
             $count++;
@@ -1346,7 +1346,7 @@ class NodeDataRepository extends Repository
 
     /**
      * Find out if the given path exists anywhere in the CR. (internal)
-     * If you need this functionality use \TYPO3\TYPO3CR\Domain\Service\NodeService::nodePathExistsInAnyContext()
+     * If you need this functionality use \Neos\ContentRepository\Domain\Service\NodeService::nodePathExistsInAnyContext()
      *
      * @param string $nodePath
      * @return boolean
@@ -1452,7 +1452,7 @@ class NodeDataRepository extends Repository
     public function removeAllInPath($path)
     {
         $path = strtolower($path);
-        $query = $this->entityManager->createQuery('DELETE FROM TYPO3\TYPO3CR\Domain\Model\NodeData n WHERE n.path LIKE :path');
+        $query = $this->entityManager->createQuery('DELETE FROM Neos\ContentRepository\Domain\Model\NodeData n WHERE n.path LIKE :path');
         $query->setParameter('path', $path . '/%');
         $query->execute();
     }

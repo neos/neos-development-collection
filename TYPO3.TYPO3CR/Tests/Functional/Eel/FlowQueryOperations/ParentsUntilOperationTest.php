@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Tests\Functional\Eel\FlowQueryOperations;
+namespace Neos\ContentRepository\Tests\Functional\Eel\FlowQueryOperations;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,8 +12,8 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Eel\FlowQueryOperations;
  */
 
 use Neos\Eel\FlowQuery\FlowQuery;
-use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
-use TYPO3\TYPO3CR\Tests\Functional\AbstractNodeTest;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Tests\Functional\AbstractNodeTest;
 
 /**
  * Functional test case which tests FlowQuery ParentsUntilOperation
@@ -46,7 +46,7 @@ class ParentsUntilOperationTest extends AbstractNodeTest
             ),
             array(
                 'currentNodePaths' => array('/b/b3/b3b'),
-                'subject' => '[instanceof TYPO3.TYPO3CR.Testing:NodeType]',
+                'subject' => '[instanceof Neos.ContentRepository.Testing:NodeType]',
                 'expectedNodePaths' => array('/b/b3'),
                 'unexpectedNodePaths' => array('/a/a5','/a/a3','/a/a2,','/b')
             ),
@@ -58,7 +58,7 @@ class ParentsUntilOperationTest extends AbstractNodeTest
             ),
             array(
                 'currentNodePaths' => array('/b/b4/b4b/b4bb/b4bba'),
-                'subject' => '[instanceof TYPO3.TYPO3CR.Testing:NodeType]',
+                'subject' => '[instanceof Neos.ContentRepository.Testing:NodeType]',
                 'expectedNodePaths' => array('/b/b4/b4b/b4bb'),
                 'unexpectedNodePaths' => array('b/b4','b/b4/b4b','/b/b3','/b')
             ),
@@ -93,7 +93,7 @@ class ParentsUntilOperationTest extends AbstractNodeTest
     public function parentsUntilOperationTests(array $currentNodePaths, $subject, array $expectedNodePaths, array $unexpectedNodePaths)
     {
         $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
-        $testNodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType');
+        $testNodeType = $nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeType');
 
 
         $rootNode = $this->node->getNode('/');

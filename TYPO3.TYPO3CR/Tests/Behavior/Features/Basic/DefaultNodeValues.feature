@@ -8,7 +8,7 @@ Feature: Set Default Node Values on node creation
     Given I have the following NodeTypes configuration:
     """
     unstructured: []
-    'TYPO3.TYPO3CR.Testing:DefaultProperties':
+    'Neos.ContentRepository.Testing:DefaultProperties':
       properties:
         'text':
           type: string
@@ -16,7 +16,7 @@ Feature: Set Default Node Values on node creation
     """
     And I have the following nodes:
       | Identifier                           | Path   | Node Type                               |
-      | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /node-a | TYPO3.TYPO3CR.Testing:DefaultProperties |
+      | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /node-a | Neos.ContentRepository.Testing:DefaultProperties |
     When I get a node by path "/node-a" with the following context:
       | Workspace |
       | live      |
@@ -28,7 +28,7 @@ Feature: Set Default Node Values on node creation
     Given I have the following NodeTypes configuration:
     """
     unstructured: []
-    'TYPO3.TYPO3CR.Testing:DefaultProperties':
+    'Neos.ContentRepository.Testing:DefaultProperties':
       properties:
         '_hiddenInIndex':
           type: boolean
@@ -36,7 +36,7 @@ Feature: Set Default Node Values on node creation
     """
     And I have the following nodes:
       | Identifier                           | Path   | Node Type                               |
-      | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /node-a | TYPO3.TYPO3CR.Testing:DefaultProperties |
+      | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /node-a | Neos.ContentRepository.Testing:DefaultProperties |
     When I get a node by path "/node-a" with the following context:
       | Workspace |
       | live      |

@@ -7,14 +7,14 @@ Feature: Publish user workspace
     Given I have the following nodes:
       | Identifier                           | Path                 | Node Type                  | Properties        | Workspace |
       | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /sites               | unstructured               |                   | live      |
-      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr       | TYPO3.TYPO3CR.Testing:Page | {"title": "Home"} | live      |
+      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr       | Neos.ContentRepository.Testing:Page | {"title": "Home"} | live      |
 
   @fixtures
   Scenario: Publish a new ContentCollection with Content
     When I create the following nodes:
       | Path                                          | Node Type                               | Properties              | Workspace |
-      | /sites/typo3cr/main/twocol                    | TYPO3.TYPO3CR.Testing:TwoColumn         | {}                      | user-demo |
-      | /sites/typo3cr/main/twocol/column0/text       | TYPO3.TYPO3CR.Testing:Text              | {"text": "Hello world"} | user-demo |
+      | /sites/typo3cr/main/twocol                    | Neos.ContentRepository.Testing:TwoColumn         | {}                      | user-demo |
+      | /sites/typo3cr/main/twocol/column0/text       | Neos.ContentRepository.Testing:Text              | {"text": "Hello world"} | user-demo |
     And I publish the workspace "user-demo"
     And I get a node by path "/sites/typo3cr/main/twocol/column0/text" with the following context:
       | Workspace |
@@ -25,8 +25,8 @@ Feature: Publish user workspace
   Scenario: Unpublished nodes returns the correct count before publish
     And I create the following nodes:
       | Path                               | Node Type                       | Properties              | Workspace |
-      | /sites/typo3cr/twocol              | TYPO3.TYPO3CR.Testing:TwoColumn | {}                      | user-demo |
-      | /sites/typo3cr/twocol/column0/text | TYPO3.TYPO3CR.Testing:Text      | {"text": "Hello world"} | user-demo |
+      | /sites/typo3cr/twocol              | Neos.ContentRepository.Testing:TwoColumn | {}                      | user-demo |
+      | /sites/typo3cr/twocol/column0/text | Neos.ContentRepository.Testing:Text      | {"text": "Hello world"} | user-demo |
     # We expect 4, the 2 column element with 2 columns (3) and the text element (1)
     Then I expect to have 4 unpublished nodes for the following context:
       | Workspace |
@@ -36,8 +36,8 @@ Feature: Publish user workspace
   Scenario: Unpublished nodes returns the correct count after publish
     And I create the following nodes:
       | Path                               | Node Type                       | Properties              | Workspace |
-      | /sites/typo3cr/twocol              | TYPO3.TYPO3CR.Testing:TwoColumn | {}                      | user-demo |
-      | /sites/typo3cr/twocol/column0/text | TYPO3.TYPO3CR.Testing:Text      | {"text": "Hello world"} | user-demo |
+      | /sites/typo3cr/twocol              | Neos.ContentRepository.Testing:TwoColumn | {}                      | user-demo |
+      | /sites/typo3cr/twocol/column0/text | Neos.ContentRepository.Testing:Text      | {"text": "Hello world"} | user-demo |
     And I publish the workspace "user-demo"
     Then I expect to have 0 unpublished nodes for the following context:
       | Workspace |
@@ -58,7 +58,7 @@ Feature: Publish user workspace
         nodeTypes:
           '*': TRUE
 
-    'TYPO3.TYPO3CR.Testing:Page':
+    'Neos.ContentRepository.Testing:Page':
       properties:
         pageTitle:
           type: 'string'
@@ -67,7 +67,7 @@ Feature: Publish user workspace
     """
     And I create the following nodes:
       | Path        | Node Type                  | Properties                                                   | Workspace |
-      | /sites/home | TYPO3.TYPO3CR.Testing:Page | {"pageTitle": "neos", "additionalTitle": "The neos project"} | live      |
+      | /sites/home | Neos.ContentRepository.Testing:Page | {"pageTitle": "neos", "additionalTitle": "The neos project"} | live      |
     When I get a node by path "/sites/home" with the following context:
       | Workspace |
       | user-demo |
@@ -79,7 +79,7 @@ Feature: Publish user workspace
         nodeTypes:
           '*': TRUE
 
-    'TYPO3.TYPO3CR.Testing:Page':
+    'Neos.ContentRepository.Testing:Page':
       properties:
         pageTitle:
           type: 'string'

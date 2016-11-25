@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Tests\Functional\Eel\FlowQueryOperations;
+namespace Neos\ContentRepository\Tests\Functional\Eel\FlowQueryOperations;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,8 +12,8 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Eel\FlowQueryOperations;
  */
 
 use Neos\Eel\FlowQuery\FlowQuery;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Tests\Functional\AbstractNodeTest;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Tests\Functional\AbstractNodeTest;
 
 /**
  * Functional test case which tests FlowQuery FindOperation
@@ -97,7 +97,7 @@ class FindOperationTest extends AbstractNodeTest
     {
         return [
             'Single instanceof' => [
-                '[instanceof TYPO3.TYPO3CR.Testing:Headline]',
+                '[instanceof Neos.ContentRepository.Testing:Headline]',
                 [
                     '/sites/example/home/main/dummy44/column1/dummy42a',
                     '/sites/example/home/teaser/dummy42a',
@@ -107,7 +107,7 @@ class FindOperationTest extends AbstractNodeTest
                 ]
             ],
             'Multiple instanceof' => [
-                '[instanceof TYPO3.TYPO3CR.Testing:ThreeColumn], [instanceof TYPO3.TYPO3CR.Testing:Html]',
+                '[instanceof Neos.ContentRepository.Testing:ThreeColumn], [instanceof Neos.ContentRepository.Testing:Html]',
                 [
                     '/sites/example/home/main/dummy44/column0/dummy43',
                     '/sites/example/home/sidebar/dummy43',
@@ -116,7 +116,7 @@ class FindOperationTest extends AbstractNodeTest
                 ]
             ],
             'Instanceof with attribute filter' => [
-                '[instanceof TYPO3.TYPO3CR.Testing:Headline][title *= "Welcome"]',
+                '[instanceof Neos.ContentRepository.Testing:Headline][title *= "Welcome"]',
                 [
                     '/sites/example/home/teaser/dummy42a'
                 ]
@@ -131,7 +131,7 @@ class FindOperationTest extends AbstractNodeTest
     public function findWithNonInstanceofAttributeFilterAsFirstPartThrowsException()
     {
         $q = new FlowQuery(array($this->node));
-        $q->find('[title *= "Welcome"][instanceof TYPO3.TYPO3CR.Testing:Headline]')->get(0);
+        $q->find('[title *= "Welcome"][instanceof Neos.ContentRepository.Testing:Headline]')->get(0);
     }
 
     /**
@@ -176,10 +176,10 @@ class FindOperationTest extends AbstractNodeTest
     public function findByNodeWithInstanceofFilterReturnsMatchingNodesRecursively()
     {
         $q = new FlowQuery(array($this->node));
-        $foundNodes = $q->find('[instanceof TYPO3.TYPO3CR.Testing:Text]')->get();
+        $foundNodes = $q->find('[instanceof Neos.ContentRepository.Testing:Text]')->get();
         $this->assertGreaterThan(0, count($foundNodes));
         foreach ($foundNodes as $foundNode) {
-            $this->assertSame($foundNode->getNodeType()->getName(), 'TYPO3.TYPO3CR.Testing:Text');
+            $this->assertSame($foundNode->getNodeType()->getName(), 'Neos.ContentRepository.Testing:Text');
         }
     }
 
@@ -189,7 +189,7 @@ class FindOperationTest extends AbstractNodeTest
     public function findByNodeWithMultipleInstanceofFilterReturnsMatchingNodesRecursively()
     {
         $q = new FlowQuery(array($this->node));
-        $foundNodes = $q->find('[instanceof TYPO3.TYPO3CR.Testing:Text],[instanceof TYPO3.TYPO3CR.Testing:Page]')->get();
+        $foundNodes = $q->find('[instanceof Neos.ContentRepository.Testing:Text],[instanceof Neos.ContentRepository.Testing:Page]')->get();
         $this->assertGreaterThan(0, count($foundNodes));
         $foundNodeTypes = array();
         foreach ($foundNodes as $foundNode) {
@@ -199,7 +199,7 @@ class FindOperationTest extends AbstractNodeTest
             }
         }
         sort($foundNodeTypes);
-        $this->assertSame($foundNodeTypes, array('TYPO3.TYPO3CR.Testing:Page', 'TYPO3.TYPO3CR.Testing:Text'));
+        $this->assertSame($foundNodeTypes, array('Neos.ContentRepository.Testing:Page', 'Neos.ContentRepository.Testing:Text'));
     }
 
     /**
@@ -278,15 +278,15 @@ class FindOperationTest extends AbstractNodeTest
         $testNodeB = $testContext->getNode('/sites/example/home/main/dummy45');
         $q = new FlowQuery(array($testNodeA, $testNodeB));
 
-        $foundNodes = $q->find('[instanceof TYPO3.TYPO3CR.Testing:Headline],[instanceof TYPO3.TYPO3CR.Testing:ListItem]')->get();
+        $foundNodes = $q->find('[instanceof Neos.ContentRepository.Testing:Headline],[instanceof Neos.ContentRepository.Testing:ListItem]')->get();
         $this->assertGreaterThan(0, count($foundNodes));
         $foundChildrenOfA = false;
         $foundChildrenOfB = false;
 
         foreach ($foundNodes as $foundNode) {
-            if (strpos($foundNode->getPath(), $testNodeA->getPath()) === 0 && $foundNode->getNodeType()->getName() === 'TYPO3.TYPO3CR.Testing:Headline') {
+            if (strpos($foundNode->getPath(), $testNodeA->getPath()) === 0 && $foundNode->getNodeType()->getName() === 'Neos.ContentRepository.Testing:Headline') {
                 $foundChildrenOfA = true;
-            } elseif (strpos($foundNode->getPath(), $testNodeB->getPath()) === 0 && $foundNode->getNodeType()->getName() === 'TYPO3.TYPO3CR.Testing:ListItem') {
+            } elseif (strpos($foundNode->getPath(), $testNodeB->getPath()) === 0 && $foundNode->getNodeType()->getName() === 'Neos.ContentRepository.Testing:ListItem') {
                 $foundChildrenOfB = true;
             }
         }
@@ -301,7 +301,7 @@ class FindOperationTest extends AbstractNodeTest
     public function findByNodeWithInstanceofFilterAppliesAdditionalAttributeFilter()
     {
         $q = new FlowQuery(array($this->node));
-        $foundNodes = $q->find('[instanceof TYPO3.TYPO3CR.Testing:Text][text*="Twitter"]')->get();
+        $foundNodes = $q->find('[instanceof Neos.ContentRepository.Testing:Text][text*="Twitter"]')->get();
         $this->assertCount(1, $foundNodes);
     }
 }

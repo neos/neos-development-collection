@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Migration\Domain\Model;
+namespace Neos\ContentRepository\Migration\Domain\Model;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,7 @@ namespace TYPO3\TYPO3CR\Migration\Domain\Model;
  */
 
 use Neos\Flow\Annotations as Flow;
-use TYPO3\TYPO3CR\Migration\Domain\Model\MigrationConfiguration;
+use Neos\ContentRepository\Migration\Domain\Model\MigrationConfiguration;
 
 /**
  * Migration.

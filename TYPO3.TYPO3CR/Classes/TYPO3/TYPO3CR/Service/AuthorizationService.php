@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Service;
+namespace Neos\ContentRepository\Service;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,17 +14,17 @@ namespace TYPO3\TYPO3CR\Service;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Context;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
-use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
-use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\CreateNodePrivilege;
-use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\CreateNodePrivilegeSubject;
-use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\EditNodePrivilege;
-use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\EditNodePropertyPrivilege;
-use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\NodePrivilegeSubject;
-use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\PropertyAwareNodePrivilegeSubject;
-use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\ReadNodePropertyPrivilege;
-use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\RemoveNodePrivilege;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Security\Authorization\Privilege\Node\CreateNodePrivilege;
+use Neos\ContentRepository\Security\Authorization\Privilege\Node\CreateNodePrivilegeSubject;
+use Neos\ContentRepository\Security\Authorization\Privilege\Node\EditNodePrivilege;
+use Neos\ContentRepository\Security\Authorization\Privilege\Node\EditNodePropertyPrivilege;
+use Neos\ContentRepository\Security\Authorization\Privilege\Node\NodePrivilegeSubject;
+use Neos\ContentRepository\Security\Authorization\Privilege\Node\PropertyAwareNodePrivilegeSubject;
+use Neos\ContentRepository\Security\Authorization\Privilege\Node\ReadNodePropertyPrivilege;
+use Neos\ContentRepository\Security\Authorization\Privilege\Node\RemoveNodePrivilege;
 
 /**
  * This service provides API methods to check for privileges

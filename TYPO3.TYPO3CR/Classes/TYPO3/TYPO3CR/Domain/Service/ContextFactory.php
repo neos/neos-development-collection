@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Domain\Service;
+namespace Neos\ContentRepository\Domain\Service;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -15,9 +15,9 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Utility\Arrays;
 use Neos\Flow\Utility\Now;
-use TYPO3\TYPO3CR\Domain\Model\ContentDimension;
-use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
-use TYPO3\TYPO3CR\Exception\InvalidNodeContextException;
+use Neos\ContentRepository\Domain\Model\ContentDimension;
+use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
+use Neos\ContentRepository\Exception\InvalidNodeContextException;
 
 /**
  * The ContextFactory makes sure you don't create context instances with
@@ -65,7 +65,7 @@ class ContextFactory implements ContextFactoryInterface
      * created before then the existing one is returned.
      *
      * The context properties to give depend on the implementation of the context object, for the
-     * TYPO3\TYPO3CR\Domain\Service\Context it should look like this:
+     * Neos\ContentRepository\Domain\Service\Context it should look like this:
      *
      * array(
      *        'workspaceName' => 'live',
@@ -250,7 +250,7 @@ class ContextFactory implements ContextFactoryInterface
     }
 
     /**
-     * @return array<\TYPO3\TYPO3CR\Domain\Model\ContentDimension>
+     * @return array<\Neos\ContentRepository\Domain\Model\ContentDimension>
      */
     protected function getAvailableDimensions()
     {

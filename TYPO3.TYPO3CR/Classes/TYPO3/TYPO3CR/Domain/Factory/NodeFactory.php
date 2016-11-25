@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Domain\Factory;
+namespace Neos\ContentRepository\Domain\Factory;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -15,11 +15,11 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Security\Context as SecurityContext;
-use TYPO3\TYPO3CR\Domain\Model\NodeData;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Service\Context;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
-use TYPO3\TYPO3CR\Exception\NodeConfigurationException;
+use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Service\Context;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\ContentRepository\Exception\NodeConfigurationException;
 
 /**
  * This factory creates nodes based on node data. Its main purpose is to
@@ -31,7 +31,7 @@ use TYPO3\TYPO3CR\Exception\NodeConfigurationException;
 class NodeFactory
 {
     /**
-     * @var array<\TYPO3\TYPO3CR\Domain\Model\Node>
+     * @var array<\Neos\ContentRepository\Domain\Model\Node>
      */
     protected $nodes = array();
 

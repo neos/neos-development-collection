@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Tests\Functional\Eel\FlowQueryOperations;
+namespace Neos\ContentRepository\Tests\Functional\Eel\FlowQueryOperations;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,8 +12,8 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Eel\FlowQueryOperations;
  */
 
 use Neos\Eel\FlowQuery\FlowQuery;
-use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
-use TYPO3\TYPO3CR\Tests\Functional\AbstractNodeTest;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Tests\Functional\AbstractNodeTest;
 
 /**
  * Functional test case which tests FlowQuery PrevUntilOperation
@@ -28,25 +28,25 @@ class PrevUntilOperationTest extends AbstractNodeTest
         return array(
             array(
                 'currentNodePaths' => array('/a/a5'),
-                'subject' => '[instanceof TYPO3.TYPO3CR.Testing:NodeType]',
+                'subject' => '[instanceof Neos.ContentRepository.Testing:NodeType]',
                 'expectedNodePaths' => array('/a/a4'),
                 'unexpectedNodePaths' => array('/a/a5','/a/a3','/a/a2')
             ),
             array(
                 'currentNodePaths' => array('/a/a3'),
-                'subject' => '[instanceof TYPO3.TYPO3CR.Testing:NodeType]',
+                'subject' => '[instanceof Neos.ContentRepository.Testing:NodeType]',
                 'expectedNodePaths' => array('/a/a2'),
                 'unexpectedNodePaths' => array('a/a1')
             ),
             array(
                 'currentNodePaths' => array('/a/a4'),
-                'subject' => '[instanceof TYPO3.TYPO3CR.Testing:NodeType]',
+                'subject' => '[instanceof Neos.ContentRepository.Testing:NodeType]',
                 'expectedNodePaths' => array(),
                 'unexpectedNodePaths' => array('/a/a2','/a/a3','/a/a5')
             ),
             array(
                 'currentNodePaths' => array('/b/b4'),
-                'subject' => 'b2[instanceof TYPO3.TYPO3CR.Testing:NodeType]',
+                'subject' => 'b2[instanceof Neos.ContentRepository.Testing:NodeType]',
                 'expectedNodePaths' => array('/b/b3'),
                 'unexpectedNodePaths' => array('/b/b4','/a','/a/a1')
             ),
@@ -80,7 +80,7 @@ class PrevUntilOperationTest extends AbstractNodeTest
     public function prevUntilOperationTests(array $currentNodePaths, $subject, array $expectedNodePaths, array $unexpectedNodePaths)
     {
         $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
-        $testNodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType');
+        $testNodeType = $nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeType');
 
 
         $rootNode = $this->node->getNode('/');

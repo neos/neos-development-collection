@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Domain\Repository;
+namespace Neos\ContentRepository\Domain\Repository;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,7 @@ namespace TYPO3\TYPO3CR\Domain\Repository;
  */
 
 use Neos\Flow\Annotations as Flow;
-use TYPO3\TYPO3CR\Domain\Model\ContentDimension;
+use Neos\ContentRepository\Domain\Model\ContentDimension;
 
 /**
  * A repository for access to available content dimensions (from configuration)
@@ -29,7 +29,7 @@ class ContentDimensionRepository
     /**
      * Returns an array of content dimensions that are available in the system.
      *
-     * @return array<\TYPO3\TYPO3CR\Domain\Model\ContentDimension>
+     * @return array<\Neos\ContentRepository\Domain\Model\ContentDimension>
      */
     public function findAll()
     {
