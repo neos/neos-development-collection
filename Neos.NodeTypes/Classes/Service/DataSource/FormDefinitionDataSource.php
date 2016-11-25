@@ -12,7 +12,7 @@ namespace Neos\NodeTypes\Service\DataSource;
  */
 
 use Neos\Neos\Service\DataSource\AbstractDataSource;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
 class FormDefinitionDataSource extends AbstractDataSource
