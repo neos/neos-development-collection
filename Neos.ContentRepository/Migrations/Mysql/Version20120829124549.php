@@ -5,7 +5,7 @@ use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
 /**
- * Add migration status table for TYPO3.TYPO3CR
+ * Add migration status table for Neos.ContentRepository
  */
 class Version20120829124549 extends AbstractMigration
 {
