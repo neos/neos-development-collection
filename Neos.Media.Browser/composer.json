@@ -1,7 +1,8 @@
 {
     "name": "neos/media-browser",
-    "type": "typo3-flow-package",
-    "description": "Add description here",
+    "type": "neos-package",
+    "description": "A media browser for the Neos content application platform",
+    "license": "GPL-3.0+",
     "require": {
         "neos/media": "*"
     },
