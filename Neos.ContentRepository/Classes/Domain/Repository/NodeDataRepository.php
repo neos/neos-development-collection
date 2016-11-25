@@ -1413,8 +1413,8 @@ class NodeDataRepository extends Repository
      * Note: This is an internal method that is likely to be replaced in the future.
      *
      * $objectTypeMap = array(
-     *    'TYPO3\Media\Domain\Model\Asset' => array('some-uuid-here'),
-     *    'TYPO3\Media\Domain\Model\ImageVariant' => array('some-uuid-here', 'another-uuid-here')
+     *    'Neos\Media\Domain\Model\Asset' => array('some-uuid-here'),
+     *    'Neos\Media\Domain\Model\ImageVariant' => array('some-uuid-here', 'another-uuid-here')
      * )
      *
      * @param array $relationMap

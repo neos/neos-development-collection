@@ -194,7 +194,7 @@ class NodeImportServiceTest extends UnitTestCase
                     'uriPathSegment' => 'home',
                     'image' =>
                         array(
-                            'targetType' => \TYPO3\Media\Domain\Model\ImageVariant::class,
+                            'targetType' => \Neos\Media\Domain\Model\ImageVariant::class,
                             'source' =>
                                 array(
                                     'originalImage' =>
@@ -266,7 +266,7 @@ class NodeImportServiceTest extends UnitTestCase
                 'properties' => array(
                     'assets' => array(
                         0 => array(
-                            'targetType' => \TYPO3\Media\Domain\Model\Image::class,
+                            'targetType' => \Neos\Media\Domain\Model\Image::class,
                             'source' =>
                                 array(
                                     'title' => '',
@@ -279,7 +279,7 @@ class NodeImportServiceTest extends UnitTestCase
                                 ),
                         ),
                         1 => array(
-                            'targetType' => \TYPO3\Media\Domain\Model\Asset::class,
+                            'targetType' => \Neos\Media\Domain\Model\Asset::class,
                             'source' =>
                                 array(
                                     'title' => '',
