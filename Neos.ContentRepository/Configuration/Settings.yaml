@@ -1,4 +1,3 @@
-
 Neos:
   Flow:
     persistence:
@@ -13,14 +12,40 @@ Neos:
         dql:
           customStringFunctions:
             NEOSCR_TOSTRING: Neos\ContentRepository\Persistence\Ast\ToStringFunction
+
+    # Improve debug output for node objects by ignoring large classes
     error:
       debugger:
         ignoredClasses:
           TYPO3\\TYPO3CR\\Domain\\Service\\NodeTypeManager: true
           TYPO3\\TYPO3CR\\Domain\\Factory\\NodeFactory: true
           TYPO3\\TYPO3CR\\Domain\\Service\\Cache\\FirstLevelNodeCache: true
+
   ContentRepository:
+
+    # Configure available content dimensions for nodes, after adding a dimension the database has to be filled with
+    # the dimension default values.
+    # Also add named presets with fallback chains that can happen in your dimensions.
+    #
+    # Example
+    #
+    #   contentDimensions:
+    #     language:
+    #       default: mul_ZZ
+    #       defaultPreset: 'all'
+    #       presets:
+    #         'all':
+    #           values: ['mul_ZZ']
+    #
+    #     persona:
+    #       default: everybody
+    #       defaultPreset: 'all'
+    #       presets:
+    #         'all':
+    #           values: ['everybody']
     contentDimensions: {  }
+
+    # Configures defaults for node label generation
     labelGenerator:
       eel:
         defaultContext:
@@ -31,4 +56,10 @@ Neos:
           Math: Neos\Eel\Helper\MathHelper
           Json: Neos\Eel\Helper\JsonHelper
           I18n: Neos\Flow\I18n\EelHelper\TranslationHelper
+
+    # the fallback NodeType can be used as a replacement for unknown NodeTypes
+    #
+    # Example
+    #
+    #  fallbackNodeType: 'Some.Package:SomeNodeType'
     fallbackNodeType: null
