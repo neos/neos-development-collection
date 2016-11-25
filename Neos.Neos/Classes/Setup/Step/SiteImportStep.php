@@ -153,7 +153,7 @@ class SiteImportStep extends AbstractStep
             $error->setProperty('elementClassAttribute', 'alert alert-warning');
         }
 
-        if ($this->packageManager->isPackageActive('Neos.Neos.Kickstarter')) {
+        if ($this->packageManager->isPackageActive('Neos.SiteKickstarter')) {
             $separator = $page1->createElement('separator', 'Neos.Form:StaticText');
             $separator->setProperty('elementClassAttribute', 'section-separator');
 
@@ -167,7 +167,7 @@ class SiteImportStep extends AbstractStep
             $siteName->setLabel('Site Name (e.g. "domain.com")');
         } else {
             $error = $importSection->createElement('neosKickstarterUnavailableError', 'Neos.Form:StaticText');
-            $error->setProperty('text', 'The Neos Kickstarter package (Neos.Neos.Kickstarter) is not installed, install it for kickstarting new sites (using "composer require typo3/neos-kickstarter")');
+            $error->setProperty('text', 'The Neos Kickstarter package (Neos.SiteKickstarter) is not installed, install it for kickstarting new sites (using "composer require typo3/neos-kickstarter")');
             $error->setProperty('elementClassAttribute', 'alert alert-warning');
         }
 
@@ -210,7 +210,7 @@ class SiteImportStep extends AbstractStep
             $packageKey = $formValues['packageKey'];
             $siteName = $formValues['siteName'];
 
-            $generatorService = $this->objectManager->get(\Neos\Neos\Kickstarter\Service\GeneratorService::class);
+            $generatorService = $this->objectManager->get(\Neos\SiteKickstarter\Service\GeneratorService::class);
             $generatorService->generateSitePackage($packageKey, $siteName);
         } elseif (!empty($formValues['site'])) {
             $packageKey = $formValues['site'];

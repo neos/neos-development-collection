@@ -25,7 +25,7 @@ use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\Neos\Domain\Service\SiteService;
-use Neos\Neos\Kickstarter\Service\GeneratorService;
+use Neos\SiteKickstarter\Service\GeneratorService;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
@@ -213,7 +213,7 @@ class SitesController extends AbstractModuleController
             'sitePackages' => $sitePackages,
             'documentNodeTypes' => $documentNodeTypes,
             'site' => $site,
-            'generatorServiceIsAvailable' => $this->packageManager->isPackageActive('Neos.Neos.Kickstarter')
+            'generatorServiceIsAvailable' => $this->packageManager->isPackageActive('Neos.SiteKickstarter')
         ));
     }
 
@@ -227,8 +227,8 @@ class SitesController extends AbstractModuleController
      */
     public function createSitePackageAction($packageKey, $siteName)
     {
-        if ($this->packageManager->isPackageActive('Neos.Neos.Kickstarter') === false) {
-            $this->addFlashMessage('The package "%s" is required to create new site packages.', 'Missing Package', Message::SEVERITY_ERROR, array('Neos.Neos.Kickstarter'), 1475736232);
+        if ($this->packageManager->isPackageActive('Neos.SiteKickstarter') === false) {
+            $this->addFlashMessage('The package "%s" is required to create new site packages.', 'Missing Package', Message::SEVERITY_ERROR, array('Neos.SiteKickstarter'), 1475736232);
             $this->redirect('index');
         }
 

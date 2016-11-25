@@ -41,7 +41,7 @@ TYPO3:
           - TYPO3.Welcome
           - Neos.Media
           - Neos.ContentRepository
-          - Neos.Neos.Kickstarter
+          - Neos.SiteKickstarter
           - Neos.Neos
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/CommandReference.rst'
     references:
