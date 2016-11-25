@@ -46,7 +46,7 @@ Neos:
     mvc:
       routes:
         Neos.Media:
-          position: 'before TYPO3.Neos'
+          position: 'before Neos.Neos'
   Media:
     behaviourFlag: '1.2'
     asyncThumbnails: true
