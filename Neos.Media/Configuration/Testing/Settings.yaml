@@ -1,4 +1,4 @@
-TYPO3:
+
+Neos:
   Media:
-    # Intereres with the functional tests since it causes new assets to be persisted immediately
     autoCreateThumbnailPresets: false
