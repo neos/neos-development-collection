@@ -2,7 +2,7 @@
 # This example modifies the rendering inside the teaser and sidebar section, adding a class to headline elements
 #
 page1.body.content.teaser.prototype(Neos.Neos.NodeTypes:Headline) {
-	attributes.class = TYPO3.TypoScript:RawArray
+	attributes.class = Neos.Fusion:RawArray
 	attributes.class.test = 'test'
 }
 

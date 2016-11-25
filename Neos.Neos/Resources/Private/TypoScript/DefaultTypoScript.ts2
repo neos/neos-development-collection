@@ -26,7 +26,7 @@ include: Prototypes/FallbackNode.ts2
 # The default is to use a render path of "page", unless the requested format is not "html"
 # in which case the format string will be used as the render path (with dots replaced by slashes)
 #
-root = TYPO3.TypoScript:Case
+root = Neos.Fusion:Case
 root {
 	shortcut {
 		prototype(Neos.Neos:Page) {
@@ -88,6 +88,6 @@ root {
 # We add the names of workspaces of the current workspace chain (for example, "user-john,some-workspace,live") to the list
 # of entry identifier pieces in order to make sure that a specific combination of workspaces has its own content cache entry.
 #
-prototype(TYPO3.TypoScript:GlobalCacheIdentifiers) {
+prototype(Neos.Fusion:GlobalCacheIdentifiers) {
 	workspaceChain = ${documentNode.context.workspace.name + ',' + Array.join(Array.keys(documentNode.context.workspace.baseWorkspaces), ',')}
 }

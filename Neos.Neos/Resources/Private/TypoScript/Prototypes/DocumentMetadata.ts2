@@ -2,7 +2,7 @@
 #
 # Renders a meta tag with attributes about the current document node
 #
-prototype(Neos.Neos:DocumentMetadata) < prototype(TYPO3.TypoScript:Tag) {
+prototype(Neos.Neos:DocumentMetadata) < prototype(Neos.Fusion:Tag) {
 	tagName = 'div'
 	forceClosingTag = TRUE
 	attributes {

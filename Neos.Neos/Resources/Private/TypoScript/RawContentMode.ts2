@@ -1,13 +1,13 @@
 prototype(Neos.Neos:RawContent) >
-prototype(Neos.Neos:RawContent) < prototype(TYPO3.TypoScript:Template) {
+prototype(Neos.Neos:RawContent) < prototype(Neos.Fusion:Template) {
 	templatePath = 'resource://Neos.Neos/Private/Templates/RawContentMode/TypoScriptObjects/GeneralContentCollectionRendering.html'
-	columns = TYPO3.TypoScript:Collection {
+	columns = Neos.Fusion:Collection {
 		collection = ${q(node).children('[instanceof Neos.Neos:ContentCollection]')}
 		itemName = 'node'
-		itemRenderer = TYPO3.TypoScript:Template {
+		itemRenderer = Neos.Fusion:Template {
 			templatePath = 'resource://Neos.Neos/Private/Templates/RawContentMode/TypoScriptObjects/ContentCollectionTemplate.html'
 			node = ${node}
-			attributes = TYPO3.TypoScript:Attributes {
+			attributes = Neos.Fusion:Attributes {
 				class = 'column'
 			}
 			columnContent = Neos.Neos:ContentCollection {
@@ -20,7 +20,7 @@ prototype(Neos.Neos:RawContent) < prototype(TYPO3.TypoScript:Template) {
 
 rawContent = Neos.Neos:Page {
 	head {
-		stylesheets = TYPO3.TypoScript:Template {
+		stylesheets = Neos.Fusion:Template {
 			templatePath = 'resource://Neos.Neos/Private/Templates/RawContentMode/Page/Default.html'
 			sectionName = 'headerIncludes'
 		}

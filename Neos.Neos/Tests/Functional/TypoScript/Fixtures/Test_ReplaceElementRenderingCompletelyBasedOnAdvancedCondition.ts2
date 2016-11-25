@@ -4,10 +4,10 @@
 
 prototype(Neos.Neos:ContentCase).override {
 	condition = ${q(node).is('[title *= Docume]')}
-	type = 'TYPO3.TypoScript:DocumentationText'
+	type = 'Neos.Fusion:DocumentationText'
 	@position = 'start'
 }
 
-prototype(TYPO3.TypoScript:DocumentationText) < prototype(Neos.Neos.NodeTypes:Headline)
-prototype(TYPO3.TypoScript:DocumentationText).title = 'Documentation'
-prototype(TYPO3.TypoScript:DocumentationText).title.@process.1 = ${'<header>DOCS: ' + value + '</header>'}
+prototype(Neos.Fusion:DocumentationText) < prototype(Neos.Neos.NodeTypes:Headline)
+prototype(Neos.Fusion:DocumentationText).title = 'Documentation'
+prototype(Neos.Fusion:DocumentationText).title.@process.1 = ${'<header>DOCS: ' + value + '</header>'}

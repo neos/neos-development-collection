@@ -5,7 +5,7 @@ prototype(Neos.Neos:DimensionsMenu) < prototype(Neos.Neos:Menu) {
 	templatePath = 'resource://Neos.Neos/Private/Templates/TypoScriptObjects/DimensionsMenu.html'
 
 	# the "absent" state is assigned to items for dimension (combinations) for which no node variant exists
-	absent.attributes = TYPO3.TypoScript:Attributes {
+	absent.attributes = Neos.Fusion:Attributes {
 		class = 'normal'
 	}
 

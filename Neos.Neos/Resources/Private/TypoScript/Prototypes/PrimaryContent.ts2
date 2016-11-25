@@ -1,7 +1,7 @@
 # Primary content should be used to render the main content of a site and
 # provides an extension point for other packages
 #
-prototype(Neos.Neos:PrimaryContent) < prototype(TYPO3.TypoScript:Case) {
+prototype(Neos.Neos:PrimaryContent) < prototype(Neos.Fusion:Case) {
 	nodePath = 'to-be-defined-by-user'
 
 	@context.nodePath = ${this.nodePath}

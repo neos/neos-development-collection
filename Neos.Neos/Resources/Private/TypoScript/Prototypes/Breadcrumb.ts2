@@ -4,7 +4,7 @@
 # This TypoScript object is deprecated starting from version 1.1 in favor of Neos.Neos:BreadcrumbMenu,
 # which works like any other Menu object and therefor offers item states.
 #
-prototype(Neos.Neos:Breadcrumb) < prototype(TYPO3.TypoScript:Template) {
+prototype(Neos.Neos:Breadcrumb) < prototype(Neos.Fusion:Template) {
 	templatePath = 'resource://Neos.Neos/Private/Templates/TypoScriptObjects/Breadcrumb.html'
 	node = ${node}
 	items = ${q(node).add(q(node).parents('[instanceof Neos.Neos:Document]')).get()}
