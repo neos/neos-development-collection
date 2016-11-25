@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Tests\Unit\Core\Parser;
+namespace Neos\Fusion\Tests\Unit\Core\Parser;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,7 +11,7 @@ namespace TYPO3\TypoScript\Tests\Unit\Core\Parser;
  * source code.
  */
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\TypoScript\Core\Parser;
+use Neos\Fusion\Core\Parser;
 
 /**
  * Testcase for the TypoScript Parser - tests the regex patterns
@@ -284,7 +284,7 @@ class PatternTest extends UnitTestCase
     {
         $pattern = Parser::SCAN_PATTERN_VALUEOBJECTTYPE;
 
-        $this->assertEquals(1, preg_match($pattern, 'TYPO3.TypoScript:Foo'), 'It did not match a simple TS Object Type');
+        $this->assertEquals(1, preg_match($pattern, 'Neos.Fusion:Foo'), 'It did not match a simple TS Object Type');
         $this->assertEquals(1, preg_match($pattern, 'Foo'), 'It matched an unqualified TS Object Type');
 
         $expected = array(
@@ -297,13 +297,13 @@ class PatternTest extends UnitTestCase
         $this->assertRegexMatches('Foo', $pattern, $expected, 'Detailed result');
 
         $expected = array(
-            0 => 'TYPO3.TypoScript:Foo',
-            'namespace' => 'TYPO3.TypoScript',
-            1 => 'TYPO3.TypoScript',
+            0 => 'Neos.Fusion:Foo',
+            'namespace' => 'Neos.Fusion',
+            1 => 'Neos.Fusion',
             'unqualifiedType' => 'Foo',
             2 => 'Foo'
         );
-        $this->assertRegexMatches('TYPO3.TypoScript:Foo', $pattern, $expected, 'Detailed result');
+        $this->assertRegexMatches('Neos.Fusion:Foo', $pattern, $expected, 'Detailed result');
     }
 
     public function SPLIT_PATTERN_COMMENTTYPEdataProvider()

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\TypoScriptObjects;
+namespace Neos\Fusion\TypoScriptObjects;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,8 +12,8 @@ namespace TYPO3\TypoScript\TypoScriptObjects;
  */
 
 use Neos\Flow\Annotations as Flow;
-use TYPO3\TypoScript\Exception as TypoScriptException;
-use TYPO3\TypoScript\Exception;
+use Neos\Fusion\Exception as TypoScriptException;
+use Neos\Fusion\Exception;
 
 /**
  * Abstract implementation of a collection renderer for TypoScript.

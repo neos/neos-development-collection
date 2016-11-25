@@ -1,10 +1,10 @@
 TYPO3:
   TypoScript:
     rendering:
-      exceptionHandler: 'TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler'
+      exceptionHandler: 'Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler'
     enableContentCache: FALSE
 
     # Register an additional prefixed helper for functional tests
     defaultContext:
       'Testing.String': 'Neos\Eel\Helper\StringHelper'
-      'Testing.Utility': 'TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures\Helper\UtilityHelper'
+      'Testing.Utility': 'Neos\Fusion\Tests\Functional\TypoScriptObjects\Fixtures\Helper\UtilityHelper'

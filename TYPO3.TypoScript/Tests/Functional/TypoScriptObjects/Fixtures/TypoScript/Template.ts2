@@ -1,38 +1,38 @@
-prototype(TYPO3.TypoScript:Template).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TemplateImplementation'
+prototype(Neos.Fusion:Template).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TemplateImplementation'
 
-template.basicTemplate = TYPO3.TypoScript:Template {
+template.basicTemplate = Neos.Fusion:Template {
 	templatePath = ${fixtureDirectory + 'Templates/BasicTemplate.html'}
 	myVariable = 'foo'
 }
 
-template.basicTemplateWithEelVariable = TYPO3.TypoScript:Template {
+template.basicTemplateWithEelVariable = Neos.Fusion:Template {
 	templatePath = ${fixtureDirectory + 'Templates/BasicTemplate.html'}
 	bar = ${'b' + 'a' + 'r'}
 	myVariable = ${'foo' + this.bar}
 }
 
-template.partial = TYPO3.TypoScript:Template {
+template.partial = Neos.Fusion:Template {
 	templatePath = ${fixtureDirectory + 'Templates/PartialTemplate.html'}
 	partialRootPath = ${fixtureDirectory + 'Partials/'}
 }
 
-template.layout = TYPO3.TypoScript:Template {
+template.layout = Neos.Fusion:Template {
 	templatePath = ${fixtureDirectory + 'Templates/LayoutTemplate.html'}
 	layoutRootPath = ${fixtureDirectory + 'Layouts'}
 }
 
 # This fixture sets up a TypoScript object that will throw an exception during rendering
 # (a Collection needs an itemName property to be set)
-template.offsetAccessException = TYPO3.TypoScript:Template {
+template.offsetAccessException = Neos.Fusion:Template {
 	templatePath = ${fixtureDirectory + 'Templates/BasicTemplate.html'}
 
-	myVariable = TYPO3.TypoScript:Collection {
+	myVariable = Neos.Fusion:Collection {
 		collection = ${['foo', 'bar']}
 		@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\PlainTextHandler'
 	}
 }
 
-template.overrideWithSimpleValueInTemplate = TYPO3.TypoScript:Template {
+template.overrideWithSimpleValueInTemplate = Neos.Fusion:Template {
 	templatePath = ${fixtureDirectory + 'Templates/JsonEncodedValueTemplate.html'}
 	value = ${1 + 1}
 }

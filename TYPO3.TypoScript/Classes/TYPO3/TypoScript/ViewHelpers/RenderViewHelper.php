@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\ViewHelpers;
+namespace Neos\Fusion\ViewHelpers;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,8 +12,8 @@ namespace TYPO3\TypoScript\ViewHelpers;
  */
 
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
-use TYPO3\TypoScript\View\TypoScriptView;
+use Neos\Fusion\TypoScriptObjects\AbstractTypoScriptObject;
+use Neos\Fusion\View\TypoScriptView;
 
 /**
  * Render a TypoScript object with a relative TypoScript path, optionally
@@ -24,7 +24,7 @@ use TYPO3\TypoScript\View\TypoScriptView;
  * <code title="Simple">
  * TypoScript:
  * some.given {
- * 	path = TYPO3.TypoScript:Template
+ * 	path = Neos.Fusion:Template
  * 	…
  * }
  * ViewHelper:

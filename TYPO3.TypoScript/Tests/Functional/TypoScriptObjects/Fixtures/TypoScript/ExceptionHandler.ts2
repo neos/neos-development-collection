@@ -1,8 +1,8 @@
-prototype(TYPO3.TypoScript:Testing.Throwing).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\TypoScriptObjects\\Fixtures\\TypoScriptObjects\\ThrowingImplementation'
+prototype(Neos.Fusion:Testing.Throwing).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\TypoScriptObjects\\Fixtures\\TypoScriptObjects\\ThrowingImplementation'
 
-exceptionHandler.eelExpressionInProperty = TYPO3.TypoScript:Array {
+exceptionHandler.eelExpressionInProperty = Neos.Fusion:Array {
 	start = 'Start'
-	error = TYPO3.TypoScript:Collection {
+	error = Neos.Fusion:Collection {
 		collection = ${Testing.Utility.throwException()}
 
 		@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\PlainTextHandler'
@@ -10,9 +10,9 @@ exceptionHandler.eelExpressionInProperty = TYPO3.TypoScript:Array {
 	end = 'End'
 }
 
-exceptionHandler.eelExpressionInOverride = TYPO3.TypoScript:Array {
+exceptionHandler.eelExpressionInOverride = Neos.Fusion:Array {
 	start = 'Start'
-	error = TYPO3.TypoScript:Collection {
+	error = Neos.Fusion:Collection {
 		@context.myCollection = ${Testing.Utility.throwException()}
 		collection = ${myCollection}
 		itemName = 'item'
@@ -23,8 +23,8 @@ exceptionHandler.eelExpressionInOverride = TYPO3.TypoScript:Array {
 }
 
 
-exceptionHandler.nestedHandlerIsEvaluated = TYPO3.TypoScript:Value {
-	value = TYPO3.TypoScript:Testing.Throwing {
+exceptionHandler.nestedHandlerIsEvaluated = Neos.Fusion:Value {
+	value = Neos.Fusion:Testing.Throwing {
 		shouldThrow = TRUE
 		@exceptionHandler = 'TYPO3\\TypoScript\\Core\\ExceptionHandlers\\PlainTextHandler'
 	}

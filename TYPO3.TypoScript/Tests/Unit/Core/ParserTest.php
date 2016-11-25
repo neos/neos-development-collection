@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Tests\Unit\Core;
+namespace Neos\Fusion\Tests\Unit\Core;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,8 +12,8 @@ namespace TYPO3\TypoScript\Tests\Unit\Core;
  */
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\TypoScript\Core\Parser;
-use TYPO3\TypoScript\TypoScriptObjects\ArrayImplementation;
+use Neos\Fusion\Core\Parser;
+use Neos\Fusion\TypoScriptObjects\ArrayImplementation;
 
 /**
  * Testcase for the TypoScript Parser
@@ -65,13 +65,13 @@ class ParserTest extends UnitTestCase
         $arguments = array_merge(func_get_args(), array($this->mockObjectManager));
         $objectName = array_shift($arguments);
         switch ($objectName) {
-            case 'TYPO3\TypoScript\Fixtures\Text':
-            case 'TYPO3\TypoScript\Fixtures\Page':
-            case 'TYPO3\TypoScript\Fixtures\ContentArray':
-            case 'TYPO3\TypoScript\Fixtures\ObjectWithArrayProperty':
-            case 'TYPO3\TypoScript\Processors\WrapProcessor':
-            case 'TYPO3\TypoScript\Processors\SubstringProcessor':
-            case 'TYPO3\TypoScript\Processors\MultiplyProcessor':
+            case 'Neos\Fusion\Fixtures\Text':
+            case 'Neos\Fusion\Fixtures\Page':
+            case 'Neos\Fusion\Fixtures\ContentArray':
+            case 'Neos\Fusion\Fixtures\ObjectWithArrayProperty':
+            case 'Neos\Fusion\Processors\WrapProcessor':
+            case 'Neos\Fusion\Processors\SubstringProcessor':
+            case 'Neos\Fusion\Processors\MultiplyProcessor':
             case 'TYPO3\SomeOther\Namespace\MyWrapProcessor':
                 return true;
             default:
@@ -90,13 +90,13 @@ class ParserTest extends UnitTestCase
 
         $expectedParseTree = array(
             'test' => array(
-                '__objectType' => 'TYPO3.TypoScript:Text',
+                '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'Hello world!'
             ),
             'secondTest' => array(
-                '__objectType' => 'TYPO3.TypoScript:Text',
+                '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 23,
@@ -114,7 +114,7 @@ class ParserTest extends UnitTestCase
      * Checks if a leading slash in the namespace declaration throws an exception
      *
      * @test
-     * @expectedException \TYPO3\TypoScript\Exception
+     * @expectedException \Neos\Fusion\Exception
      */
     public function parserThrowsTypoScriptExceptionIfNamespaceDeclarationIsInvalid()
     {
@@ -133,19 +133,19 @@ class ParserTest extends UnitTestCase
 
         $expectedParseTree = array(
             'myObject' => array(
-                '__objectType' => 'TYPO3.TypoScript:Text',
+                '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => "Sorry, we're closed -- double quotes like \" do not need to be escaped."
             ),
             'anotherObject' => array(
-                '__objectType' => 'TYPO3.TypoScript:Text',
+                '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'And I said: "Hooray" -- single quotes like \' do not need to be escaped'
             ),
             'kaspersObject' => array(
-                '__objectType' => 'TYPO3.TypoScript:Text',
+                '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'The end of this line is a backslash\\',
@@ -170,7 +170,7 @@ class ParserTest extends UnitTestCase
             'object1' => array(
                 'mySubObject' => array(
                     'mySubSubObject' => array(
-                        '__objectType' => 'TYPO3.TypoScript:Text',
+                        '__objectType' => 'Neos.Fusion:Text',
                         '__value' => null,
                         '__eelExpression' => null,
                         'value' => 'Espresso is a fine beverage.'
@@ -178,7 +178,7 @@ class ParserTest extends UnitTestCase
                 )
             ),
             'object2' => array(
-                '__objectType' => 'TYPO3.TypoScript:ObjectWithArrayProperty',
+                '__objectType' => 'Neos.Fusion:ObjectWithArrayProperty',
                 '__value' => null,
                 '__eelExpression' => null,
                 'theArray' => array(
@@ -186,12 +186,12 @@ class ParserTest extends UnitTestCase
                 )
             ),
             'object3' => array(
-                '__objectType' => 'TYPO3.TypoScript:ObjectWithArrayProperty',
+                '__objectType' => 'Neos.Fusion:ObjectWithArrayProperty',
                 '__value' => null,
                 '__eelExpression' => null,
                 'theArray' => array(
                     'theKey' => array(
-                        '__objectType' => 'TYPO3.TypoScript:Text',
+                        '__objectType' => 'Neos.Fusion:Text',
                         '__value' => null,
                         '__eelExpression' => null,
                         'value' => 'theValue'
@@ -215,11 +215,11 @@ class ParserTest extends UnitTestCase
 
         $expectedParseTree = array(
             'myArrayObject' => array(
-                '__objectType' => 'TYPO3.TypoScript:ContentArray',
+                '__objectType' => 'Neos.Fusion:ContentArray',
                 '__value' => null,
                 '__eelExpression' => null,
                 10 => array(
-                    '__objectType' => 'TYPO3.TypoScript:Text',
+                    '__objectType' => 'Neos.Fusion:Text',
                     '__value' => null,
                     '__eelExpression' => null,
                     'value' => 'Hello ',
@@ -228,21 +228,21 @@ class ParserTest extends UnitTestCase
                     )
                 ),
                 20 => array(
-                    '__objectType' => 'TYPO3.TypoScript:Text',
+                    '__objectType' => 'Neos.Fusion:Text',
                     '__value' => null,
                     '__eelExpression' => null,
                     'value' => 'world!'
                 ),
                 30 => array(
-                    '__objectType' => 'TYPO3.TypoScript:ContentArray',
+                    '__objectType' => 'Neos.Fusion:ContentArray',
                     '__value' => null,
                     '__eelExpression' => null,
                     20 => array(
-                        '__objectType' => 'TYPO3.TypoScript:ContentArray',
+                        '__objectType' => 'Neos.Fusion:ContentArray',
                         '__value' => null,
                         '__eelExpression' => null,
                         10 => array(
-                            '__objectType' => 'TYPO3.TypoScript:Text',
+                            '__objectType' => 'Neos.Fusion:Text',
                             '__value' => null,
                             '__eelExpression' => null,
                             'value' => 'Huh?'
@@ -254,11 +254,11 @@ class ParserTest extends UnitTestCase
                 'sub1' => array(
                     'sub2' => array(
                         'sub3' => array(
-                            '__objectType' => 'TYPO3.TypoScript:ContentArray',
+                            '__objectType' => 'Neos.Fusion:ContentArray',
                             '__value' => null,
                             '__eelExpression' => null,
                             1 => array(
-                                '__objectType' => 'TYPO3.TypoScript:Text',
+                                '__objectType' => 'Neos.Fusion:Text',
                                 '__value' => null,
                                 '__eelExpression' => null,
                                 'value' => 'Yawn'
@@ -284,32 +284,32 @@ class ParserTest extends UnitTestCase
 
         $expectedParseTree = array(
             'firstObject' => array(
-                '__objectType' => 'TYPO3.TypoScript:Text',
+                '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'Go outside. The graphics are AMAZING!'
             ),
             'firstObject2' => array(
-                '__objectType' => 'TYPO3.TypoScript:Text',
+                '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'Go outside. The graphics are AMAZING!'
             ),
             'firstObject3' => array(
-                '__objectType' => 'TYPO3.TypoScript:Text',
+                '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'Overridden value'
             ),
             'firstObject4' => array(
-                '__objectType' => 'TYPO3.TypoScript:Text',
+                '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'Ugly syntax with no space works!'
             ),
             'secondObject' => array(
                 'subObject' => array(
-                    '__objectType' => 'TYPO3.TypoScript:Text',
+                    '__objectType' => 'Neos.Fusion:Text',
                     '__value' => null,
                     '__eelExpression' => null,
                     'value' => '27°C and a blue sky.'
@@ -319,7 +319,7 @@ class ParserTest extends UnitTestCase
                 'subObject' => array(
                     'subSubObject' => array(
                         'someMessage' => array(
-                            '__objectType' => 'TYPO3.TypoScript:Text',
+                            '__objectType' => 'Neos.Fusion:Text',
                             '__value' => null,
                             '__eelExpression' => null,
                             'value' => 'Fully or hard tail?',
@@ -328,7 +328,7 @@ class ParserTest extends UnitTestCase
                     ),
                     'anotherSubSubObject' => array(
                         'someMessage' => array(
-                            '__objectType' => 'TYPO3.TypoScript:Text',
+                            '__objectType' => 'Neos.Fusion:Text',
                             '__value' => null,
                             '__eelExpression' => null,
                             'value' => 'Hard',
@@ -353,7 +353,7 @@ class ParserTest extends UnitTestCase
 
         $expectedParseTree = array(
             'object3' => array(
-                '__objectType' => 'TYPO3.TypoScript:Text',
+                '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null
             )
@@ -375,14 +375,14 @@ class ParserTest extends UnitTestCase
 
         $expectedParseTree = array(
             'object1' => array(
-                '__objectType' => 'TYPO3.TypoScript:Text',
+                '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'Hello world!',
                 'foo' => 42
             ),
             'object2' => array(
-                '__objectType' => 'TYPO3.TypoScript:Text',
+                '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'Hello world!',
@@ -390,25 +390,25 @@ class ParserTest extends UnitTestCase
             ),
             'lib' => array(
                 'object3' => array(
-                    '__objectType' => 'TYPO3.TypoScript:Text',
+                    '__objectType' => 'Neos.Fusion:Text',
                     '__value' => null,
                     '__eelExpression' => null,
                     'value' => 'Another message'
                 ),
                 'object4' => array(
-                    '__objectType' => 'TYPO3.TypoScript:Text',
+                    '__objectType' => 'Neos.Fusion:Text',
                     '__value' => null,
                     '__eelExpression' => null,
                     'value' => 'Another message'
                 ),
                 'object5' => array(
-                    '__objectType' => 'TYPO3.TypoScript:Text',
+                    '__objectType' => 'Neos.Fusion:Text',
                     '__value' => null,
                     '__eelExpression' => null,
                     'value' => 'Another message'
                 ),
                 'object6' => array(
-                    '__objectType' => 'TYPO3.TypoScript:Text',
+                    '__objectType' => 'Neos.Fusion:Text',
                     '__value' => null,
                     '__eelExpression' => null,
                     'value' => 'Hello world!',
@@ -416,7 +416,7 @@ class ParserTest extends UnitTestCase
                 ),
             ),
             'object7' => array(
-                '__objectType' => 'TYPO3.TypoScript:Text',
+                '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'Hello world!'
@@ -439,7 +439,7 @@ class ParserTest extends UnitTestCase
         $expectedParseTree = array(
 
             'newObject1' => array(
-                '__objectType' =>'TYPO3.TypoScript:Text',
+                '__objectType' =>'Neos.Fusion:Text',
                 'value' => array(
                     '__value' => 'Hello',
                     '__objectType' => null,
@@ -473,7 +473,7 @@ class ParserTest extends UnitTestCase
                 '__eelExpression' => null,
             ),
             'newObject2' => array(
-                '__objectType' =>'TYPO3.TypoScript:Text',
+                '__objectType' =>'Neos.Fusion:Text',
                 'value' => 'Hello',
                 '__meta' => array(
                     'process' => array(
@@ -488,7 +488,7 @@ class ParserTest extends UnitTestCase
                 '__eelExpression' => null,
             ),
             '__prototypes' => array(
-                'TYPO3.TypoScript:Foo' => array(
+                'Neos.Fusion:Foo' => array(
                     '__meta' => array(
                         'process' => array(
                             1 => array(
@@ -517,37 +517,37 @@ class ParserTest extends UnitTestCase
 
         $expectedParseTree = array(
             'object1' => array(
-                '__objectType' => 'TYPO3.TypoScript:Text',
+                '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => chr(10) . '	Some text.' . chr(10)
             ),
             'object2' => array(
-                '__objectType' => 'TYPO3.TypoScript:Text',
+                '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => chr(10) . '	Some text.' . chr(10)
             ),
             'object3' => array(
-                '__objectType' => 'TYPO3.TypoScript:Text',
+                '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'The text might start' . chr(10) . '	at some line\' and' . chr(10) . '	end at some other line'
             ),
             'object4' => array(
-                '__objectType' => 'TYPO3.TypoScript:Text',
+                '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'The text might start' . chr(10) . '	at some line "and' . chr(10) . '	end at some other line'
             ),
             'object5' => array(
-                '__objectType' => 'TYPO3.TypoScript:Text',
+                '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'The text might start' . chr(10) . '	at "some" line and' . chr(10) . '	end at some other line'
             ),
             'object6' => array(
-                '__objectType' => 'TYPO3.TypoScript:Text',
+                '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'The text might start' . chr(10) . '	at \'some\' line and' . chr(10) . '	end at some other line'
@@ -569,25 +569,25 @@ class ParserTest extends UnitTestCase
 
         $expectedParseTree = array(
             'object1' => array(
-                '__objectType' => 'TYPO3.TypoScript:Text',
+                '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'Curly braces like this {} or {that} are ignored.'
             ),
             'object2' => array(
-                '__objectType' => 'TYPO3.TypoScript:Text',
+                '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'Curly braces like this {} or {that} are ignored.'
             ),
             'object3' => array(
-                '__objectType' => 'TYPO3.TypoScript:Text',
+                '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'Slashes // or hashes # or /* signs are not interpreted as comments.'
             ),
             'object4' => array(
-                '__objectType' => 'TYPO3.TypoScript:Text',
+                '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
                 'value' => 'Slashes // or hashes # or /* signs are not interpreted as comments.'
@@ -607,7 +607,7 @@ class ParserTest extends UnitTestCase
 
         $expectedParseTree = array(
             'foo' => array(
-                '__objectType' => 'TYPO3.TypoScript:Bar',
+                '__objectType' => 'Neos.Fusion:Bar',
                 '__value' => null,
                 '__eelExpression' => null,
                 'prop' => 'myValue'
@@ -716,7 +716,7 @@ class ParserTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\TypoScript\Exception
+     * @expectedException \Neos\Fusion\Exception
      */
     public function parserThrowsExceptionOnFixture16b()
     {

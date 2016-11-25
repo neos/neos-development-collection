@@ -3,7 +3,7 @@
 //
 // This fixture is used to check the following features:
 //
-//  - using the default namespace TYPO3.TypoScript
+//  - using the default namespace Neos.Fusion
 //  - block comments
 //  - quote escaping in literals
 

@@ -1,5 +1,5 @@
 // Examples of a simple Value object
-prototype(TYPO3.TypoScript:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
+prototype(Neos.Fusion:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
 
 simpleTypes.booleanTrue = Value {
 	value = TRUE

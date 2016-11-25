@@ -1,6 +1,6 @@
-prototype(TYPO3.TypoScript:UriBuilder).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\UriBuilderImplementation'
+prototype(Neos.Fusion:UriBuilder).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\UriBuilderImplementation'
 
-uriBuilder.foo = TYPO3.TypoScript:UriBuilder {
+uriBuilder.foo = Neos.Fusion:UriBuilder {
 	package = 'TYPO3.Flow'
 	subpackage = 'Tests\\Functional\\Http\\Fixtures'
 	controller = 'Foo'

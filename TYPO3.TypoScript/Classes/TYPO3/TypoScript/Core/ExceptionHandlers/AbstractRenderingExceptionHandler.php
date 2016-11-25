@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Core\ExceptionHandlers;
+namespace Neos\Fusion\Core\ExceptionHandlers;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,8 +14,8 @@ namespace TYPO3\TypoScript\Core\ExceptionHandlers;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Security\Exception as SecurityException;
-use TYPO3\TypoScript\Core\Runtime;
-use TYPO3\TypoScript\Exception as Exceptions;
+use Neos\Fusion\Core\Runtime;
+use Neos\Fusion\Exception as Exceptions;
 
 /**
  * Handles exceptions

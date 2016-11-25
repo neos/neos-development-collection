@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\TypoScriptObjects;
+namespace Neos\Fusion\TypoScriptObjects;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -17,8 +17,8 @@ use Neos\Flow\Annotations as Flow;
  * Renders a string of xml attributes from the properties of this TypoScript object.
  * So a configuration like:
  *
- * attributes = TYPO3.TypoScript:Attributes
- * attributes.class = TYPO3.TypoScript:RawArray {
+ * attributes = Neos.Fusion:Attributes
+ * attributes.class = Neos.Fusion:RawArray {
  *  class1: 'class1'
  *  class2: 'class2'
  * }

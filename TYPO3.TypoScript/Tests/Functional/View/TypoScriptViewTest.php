@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Tests\Functional\View;
+namespace Neos\Fusion\Tests\Functional\View;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -16,7 +16,7 @@ use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Tests\FunctionalTestCase;
-use TYPO3\TypoScript\View\TypoScriptView;
+use Neos\Fusion\View\TypoScriptView;
 
 /**
  * Testcase for the TypoScript View

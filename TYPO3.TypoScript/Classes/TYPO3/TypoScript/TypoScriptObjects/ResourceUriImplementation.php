@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\TypoScriptObjects;
+namespace Neos\Fusion\TypoScriptObjects;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -16,7 +16,7 @@ use Neos\Flow\I18n\Service;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
-use TYPO3\TypoScript\Exception as TypoScriptException;
+use Neos\Fusion\Exception as TypoScriptException;
 
 /**
  * A TypoScript object to create resource URIs

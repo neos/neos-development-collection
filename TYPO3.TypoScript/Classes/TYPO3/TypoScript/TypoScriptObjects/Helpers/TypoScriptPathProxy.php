@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\TypoScriptObjects\Helpers;
+namespace Neos\Fusion\TypoScriptObjects\Helpers;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,9 +14,9 @@ namespace TYPO3\TypoScript\TypoScriptObjects\Helpers;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception;
 use Neos\FluidAdaptor\Core\Parser\SyntaxTree\TemplateObjectAccessInterface;
-use TYPO3\TypoScript\Core\ExceptionHandlers\ContextDependentHandler;
-use TYPO3\TypoScript\Exception\UnsupportedProxyMethodException;
-use TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation;
+use Neos\Fusion\Core\ExceptionHandlers\ContextDependentHandler;
+use Neos\Fusion\Exception\UnsupportedProxyMethodException;
+use Neos\Fusion\TypoScriptObjects\TemplateImplementation;
 
 /**
  * A proxy object representing a TypoScript path inside a Fluid Template. It allows
@@ -32,7 +32,7 @@ class TypoScriptPathProxy implements TemplateObjectAccessInterface, \ArrayAccess
     /**
      * Reference to the TypoScript Runtime which controls the whole rendering
      *
-     * @var \TYPO3\TypoScript\Core\Runtime
+     * @var \Neos\Fusion\Core\Runtime
      */
     protected $tsRuntime;
 

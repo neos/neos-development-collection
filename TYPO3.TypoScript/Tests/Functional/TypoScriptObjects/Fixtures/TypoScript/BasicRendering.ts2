@@ -1,53 +1,53 @@
-prototype(TYPO3.TypoScript:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
-prototype(TYPO3.TypoScript:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
+prototype(Neos.Fusion:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+prototype(Neos.Fusion:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
 
-basicRendering.test = TYPO3.TypoScript:TestRenderer {
+basicRendering.test = Neos.Fusion:TestRenderer {
 	test = 'Hello World'
 }
 
-basicRendering.reuseTypoScriptVariables = TYPO3.TypoScript:TestRenderer {
+basicRendering.reuseTypoScriptVariables = Neos.Fusion:TestRenderer {
 	test2 = 'orld'
 	test = ${'Hello W' + this.test2}
 }
 
-basicRendering.crashing = TYPO3.TypoScript:Template {
+basicRendering.crashing = Neos.Fusion:Template {
 	templatePath = 'no.such.file.here.so.crash.please'
 }
 
-basicRendering.reuseTypoScriptVariablesWithEel = TYPO3.TypoScript:TestRenderer {
+basicRendering.reuseTypoScriptVariablesWithEel = Neos.Fusion:TestRenderer {
 	test2 = ${'or' + 'ld'}
 	test = ${'Hello W' + this.test2}
 }
 
-prototype(TYPO3.TypoScript:FooValue) < prototype(TYPO3.TypoScript:Value) {
+prototype(Neos.Fusion:FooValue) < prototype(Neos.Fusion:Value) {
 	value = ${'my eel expression'}
 }
 basicRendering.complexExample {
-	toRender = TYPO3.TypoScript:FooValue
+	toRender = Neos.Fusion:FooValue
 
-	prototype(TYPO3.TypoScript:FooValue) {
+	prototype(Neos.Fusion:FooValue) {
 		value = 'Static string'
 		value.@process.1 = ${value + ' post'}
 	}
 }
 
 
-prototype(TYPO3.TypoScript:FooValue2) < prototype(TYPO3.TypoScript:Value) {
-	value = TYPO3.TypoScript:Value {
+prototype(Neos.Fusion:FooValue2) < prototype(Neos.Fusion:Value) {
+	value = Neos.Fusion:Value {
 		value = 'my nested value'
 	}
 }
 
 basicRendering.complexExample2 {
-	toRender = TYPO3.TypoScript:FooValue2
+	toRender = Neos.Fusion:FooValue2
 
-	prototype(TYPO3.TypoScript:FooValue2) {
+	prototype(Neos.Fusion:FooValue2) {
 		value = 'Static string'
 		value.@process.1 = ${value + ' post'}
 	}
 }
 
-basicRendering.contentIsNotTrimmed = TYPO3.TypoScript:TestRenderer {
+basicRendering.contentIsNotTrimmed = Neos.Fusion:TestRenderer {
 	test = ' I want to have some space after me '
 }
 
@@ -55,7 +55,7 @@ basicRendering.overridePlainValueWithEel = 'Test'
 basicRendering.overridePlainValueWithEel = ${'overridden'}
 
 basicRendering.overridePlainValueWithTypoScript = 'Test'
-basicRendering.overridePlainValueWithTypoScript = TYPO3.TypoScript:Value {
+basicRendering.overridePlainValueWithTypoScript = Neos.Fusion:Value {
 	value = 'overridden'
 }
 
@@ -70,7 +70,7 @@ basicRendering.overrideEelWithPlainValue = ${'Test'}
 basicRendering.overrideEelWithPlainValue = 'overridden'
 
 basicRendering.overrideEelWithTypoScript = ${'Test'}
-basicRendering.overrideEelWithTypoScript = TYPO3.TypoScript:Value {
+basicRendering.overrideEelWithTypoScript = Neos.Fusion:Value {
 	value = 'overridden'
 }
 basicRendering.overrideEelWithEel = ${'Test'}
@@ -80,18 +80,18 @@ basicRendering.overrideEelWithEel = ${'overridden'}
 
 
 
-basicRendering.overrideTypoScriptWithPlainValue = TYPO3.TypoScript:Value {
+basicRendering.overrideTypoScriptWithPlainValue = Neos.Fusion:Value {
 	value = 'Test'
 }
 basicRendering.overrideTypoScriptWithPlainValue = 'overridden'
 
-basicRendering.overrideTypoScriptWithTypoScript = TYPO3.TypoScript:Value {
+basicRendering.overrideTypoScriptWithTypoScript = Neos.Fusion:Value {
 	value = 'Test'
 }
-basicRendering.overrideTypoScriptWithTypoScript = TYPO3.TypoScript:Value {
+basicRendering.overrideTypoScriptWithTypoScript = Neos.Fusion:Value {
 	value = 'overridden'
 }
-basicRendering.overrideTypoScriptWithEel = TYPO3.TypoScript:Value {
+basicRendering.overrideTypoScriptWithEel = Neos.Fusion:Value {
 	value = 'Test'
 }
 basicRendering.overrideTypoScriptWithEel = ${'overridden'}

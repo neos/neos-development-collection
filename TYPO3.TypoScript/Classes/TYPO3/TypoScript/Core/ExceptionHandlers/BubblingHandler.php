@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Core\ExceptionHandlers;
+namespace Neos\Fusion\Core\ExceptionHandlers;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,7 +14,7 @@ namespace TYPO3\TypoScript\Core\ExceptionHandlers;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\Mvc\Exception\StopActionException;
-use TYPO3\TypoScript\Exception\RuntimeException;
+use Neos\Fusion\Exception\RuntimeException;
 
 /**
  * Wrap the exception to retain the typoScript path at which it was originally thrown

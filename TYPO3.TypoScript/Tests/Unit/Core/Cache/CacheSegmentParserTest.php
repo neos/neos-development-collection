@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Tests\Unit\Core\Cache;
+namespace Neos\Fusion\Tests\Unit\Core\Cache;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,7 @@ namespace TYPO3\TypoScript\Tests\Unit\Core\Cache;
  */
 
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\TypoScript\Core\Cache\CacheSegmentParser;
+use Neos\Fusion\Core\Cache\CacheSegmentParser;
 
 /**
  * Test case for the CacheSegmentParser
@@ -212,7 +212,7 @@ class CacheSegmentParserTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\TypoScript\Exception
+     * @expectedException \Neos\Fusion\Exception
      * @expectedExceptionCode 1391853500
      */
     public function invalidContentWithMissingEndThrowsException()
@@ -223,7 +223,7 @@ class CacheSegmentParserTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\TypoScript\Exception
+     * @expectedException \Neos\Fusion\Exception
      * @expectedExceptionCode 1391853689
      */
     public function invalidContentWithExceedingEndThrowsException()
@@ -234,7 +234,7 @@ class CacheSegmentParserTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\TypoScript\Exception
+     * @expectedException \Neos\Fusion\Exception
      * @expectedExceptionCode 1391855139
      */
     public function invalidContentWithMissingSeparatorThrowsException()

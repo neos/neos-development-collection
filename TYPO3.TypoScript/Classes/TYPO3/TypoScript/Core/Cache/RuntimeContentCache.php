@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Core\Cache;
+namespace Neos\Fusion\Core\Cache;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,8 +14,8 @@ namespace TYPO3\TypoScript\Core\Cache;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Utility\Unicode\Functions;
-use TYPO3\TypoScript\Core\Runtime;
-use TYPO3\TypoScript\Exception;
+use Neos\Fusion\Core\Runtime;
+use Neos\Fusion\Exception;
 
 /**
  * Integrate the ContentCache into the TypoScript Runtime
@@ -321,7 +321,7 @@ class RuntimeContentCache
      */
     protected function buildCacheIdentifierValues(array $configuration, $typoScriptPath, $tsObject)
     {
-        $objectType = '<TYPO3.TypoScript:GlobalCacheIdentifiers>';
+        $objectType = '<Neos.Fusion:GlobalCacheIdentifiers>';
         if (isset($configuration['entryIdentifier']['__objectType'])) {
             $objectType = '<' . $configuration['entryIdentifier']['__objectType'] . '>';
         }

@@ -1,35 +1,35 @@
-prototype(TYPO3.TypoScript:Case).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\CaseImplementation'
-prototype(TYPO3.TypoScript:Matcher).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\MatcherImplementation'
-prototype(TYPO3.TypoScript:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+prototype(Neos.Fusion:Case).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\CaseImplementation'
+prototype(Neos.Fusion:Matcher).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\MatcherImplementation'
+prototype(Neos.Fusion:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
 
-case.numericMatching = TYPO3.TypoScript:Case {
+case.numericMatching = Neos.Fusion:Case {
 	100.condition = ${true}
-	100.type = 'TYPO3.TypoScript:Case.Test1'
+	100.type = 'Neos.Fusion:Case.Test1'
 
 	20.condition = ${cond}
-	20.type = 'TYPO3.TypoScript:Case.Test2'
+	20.type = 'Neos.Fusion:Case.Test2'
 }
 
-case.positionalMatching = TYPO3.TypoScript:Case {
+case.positionalMatching = Neos.Fusion:Case {
 	foo.condition = ${true}
-	foo.type = 'TYPO3.TypoScript:Case.Test1'
+	foo.type = 'Neos.Fusion:Case.Test1'
 	foo.@position = 'end'
 
 	z.condition = ${cond}
-	z.type = 'TYPO3.TypoScript:Case.Test2'
+	z.type = 'Neos.Fusion:Case.Test2'
 }
 
 
 
-prototype(TYPO3.TypoScript:Case.Test1) < prototype(TYPO3.TypoScript:TestRenderer) {
+prototype(Neos.Fusion:Case.Test1) < prototype(Neos.Fusion:TestRenderer) {
 	test = 'testconditionfalse'
 }
 
-prototype(TYPO3.TypoScript:Case.Test2) < prototype(TYPO3.TypoScript:TestRenderer) {
+prototype(Neos.Fusion:Case.Test2) < prototype(Neos.Fusion:TestRenderer) {
 	test = 'testconditiontrue'
 }
 
-case.renderPath = TYPO3.TypoScript:Case {
+case.renderPath = Neos.Fusion:Case {
 	foo.condition = ${cond}
 	foo.renderPath = '/renderPathRenderer/true'
 
@@ -40,35 +40,35 @@ case.renderPath = TYPO3.TypoScript:Case {
 
 case.renderPathWillWin < case.renderPath
 case.renderPathWillWin {
-	foo.type = 'TYPO3.TypoScript:Case.Test1'
+	foo.type = 'Neos.Fusion:Case.Test1'
 }
 
-renderPathRenderer.false = TYPO3.TypoScript:Case.Test1
-renderPathRenderer.true = TYPO3.TypoScript:Case.Test2
+renderPathRenderer.false = Neos.Fusion:Case.Test1
+renderPathRenderer.true = Neos.Fusion:Case.Test2
 
 case.ignoredPropertiesAreIgnored < case.numericMatching {
 	@ignoreProperties = ${[1]}
-	1 = TYPO3.TypoScript:TestRenderer {
+	1 = Neos.Fusion:TestRenderer {
 		test = 'somethingwhichshallnotbeshown'
 	}
 }
 
-case.renderer = TYPO3.TypoScript:Case {
+case.renderer = Neos.Fusion:Case {
 	foo.condition = ${cond}
-	foo.renderer = TYPO3.TypoScript:TestRenderer {
+	foo.renderer = Neos.Fusion:TestRenderer {
 		test = 'testconditiontrue'
 	}
 
 	default.condition = ${true}
-	default.renderer = TYPO3.TypoScript:TestRenderer {
+	default.renderer = Neos.Fusion:TestRenderer {
 		test = 'testconditionfalse'
 	}
 	default.@position = 'end'
 }
 
 case.rendererWithType < case.renderer {
-	foo.type = 'TYPO3.TypoScript:Case.Test1'
-	default.type = 'TYPO3.TypoScript:Case.Test1'
+	foo.type = 'Neos.Fusion:Case.Test1'
+	default.type = 'Neos.Fusion:Case.Test1'
 }
 
 case.rendererWithRenderPath < case.renderer {
@@ -77,7 +77,7 @@ case.rendererWithRenderPath < case.renderer {
 	default.renderPath = '/renderPathRenderer/false'
 }
 
-case.rendererWorksWithEelAndSimpleTypes = TYPO3.TypoScript:Case {
+case.rendererWorksWithEelAndSimpleTypes = Neos.Fusion:Case {
 	foo.condition = ${cond}
 	foo.renderer = 'Xtestconditiontrue'
 
@@ -86,7 +86,7 @@ case.rendererWorksWithEelAndSimpleTypes = TYPO3.TypoScript:Case {
 	default.@position = 'end'
 }
 
-case.rendererHasAccessToThis = TYPO3.TypoScript:Case {
+case.rendererHasAccessToThis = Neos.Fusion:Case {
 	test1 {
 		layout = "foo"
 		condition = ${this.layout ? true : false}

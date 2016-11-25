@@ -7,16 +7,16 @@ TYPO3:
       #
       # Can be overridden on a TypoScript-Object-level by setting the "@exceptionHandler" meta-property
       # in TypoScript.
-      exceptionHandler: 'TYPO3\TypoScript\Core\ExceptionHandlers\XmlCommentHandler'
+      exceptionHandler: 'Neos\Fusion\Core\ExceptionHandlers\XmlCommentHandler'
 
       # Inner Exception Handler class which should be used when a TypoScript object is evaluated,
       # e.g. can return arbitrary types and not just strings. By default, the exception handler just
       # continues throwing the exception upwards.
       #
       # However, this can be overridden on a TypoScript-Object-level by setting the "@exceptionHandler"
-      # meta-property in TypoScript, and it is especially useful for e.g. the "TYPO3.TypoScript:ResourceUri"
+      # meta-property in TypoScript, and it is especially useful for e.g. the "Neos.Fusion:ResourceUri"
       # TypoScript Object, which should just return NULL silently if an exception occurs.
-      innerExceptionHandler: 'TYPO3\TypoScript\Core\ExceptionHandlers\BubblingHandler'
+      innerExceptionHandler: 'Neos\Fusion\Core\ExceptionHandlers\BubblingHandler'
     debugMode: FALSE
     enableContentCache: TRUE
 

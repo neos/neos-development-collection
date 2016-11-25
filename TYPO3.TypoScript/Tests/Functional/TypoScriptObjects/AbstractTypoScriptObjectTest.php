@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects;
+namespace Neos\Fusion\Tests\Functional\TypoScriptObjects;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -17,7 +17,7 @@ use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Tests\FunctionalTestCase;
-use TYPO3\TypoScript\View\TypoScriptView;
+use Neos\Fusion\View\TypoScriptView;
 
 /**
  * Testcase for the TypoScript View
@@ -54,7 +54,7 @@ abstract class AbstractTypoScriptObjectTest extends FunctionalTestCase
 
         $view->setControllerContext($this->controllerContext);
         $view->disableFallbackView();
-        $view->setPackageKey('TYPO3.TypoScript');
+        $view->setPackageKey('Neos.Fusion');
         $view->setTypoScriptPathPattern(__DIR__ . '/Fixtures/TypoScript');
         $view->assign('fixtureDirectory', __DIR__ . '/Fixtures/');
 

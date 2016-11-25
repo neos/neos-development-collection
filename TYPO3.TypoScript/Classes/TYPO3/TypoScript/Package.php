@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript;
+namespace Neos\Fusion;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -17,7 +17,7 @@ use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Monitor\FileMonitor;
 use Neos\Flow\Package\Package as BasePackage;
 use Neos\Flow\Package\PackageManagerInterface;
-use TYPO3\TypoScript\Core\Cache\FileMonitorListener;
+use Neos\Fusion\Core\Cache\FileMonitorListener;
 
 /**
  * The TYPO3 TypoScript Package

@@ -1,8 +1,8 @@
-prototype(TYPO3.TypoScript:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
-prototype(TYPO3.TypoScript:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
-prototype(TYPO3.TypoScript:RawArray).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RawArrayImplementation'
-prototype(TYPO3.TypoScript:Attributes).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\AttributesImplementation'
-prototype(TYPO3.TypoScript:Tag) {
+prototype(Neos.Fusion:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+prototype(Neos.Fusion:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
+prototype(Neos.Fusion:RawArray).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\RawArrayImplementation'
+prototype(Neos.Fusion:Attributes).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\AttributesImplementation'
+prototype(Neos.Fusion:Tag) {
 	@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TagImplementation'
 	attributes = Attributes
 	omitClosingTag = FALSE
@@ -10,21 +10,21 @@ prototype(TYPO3.TypoScript:Tag) {
 }
 
 
-prototype(TYPO3.TypoScript:SpecialTag) < prototype(TYPO3.TypoScript:Tag) {
-	attributes.class = TYPO3.TypoScript:TestRenderer {
+prototype(Neos.Fusion:SpecialTag) < prototype(Neos.Fusion:Tag) {
+	attributes.class = Neos.Fusion:TestRenderer {
 		test = 'class'
 	}
 	attributes.tea = ${'green'}
 }
 
-nestedOverwritesAndProcessors.deepProcessorAppliesToSimpleValue = TYPO3.TypoScript:SpecialTag {
+nestedOverwritesAndProcessors.deepProcessorAppliesToSimpleValue = Neos.Fusion:SpecialTag {
 	attributes.class.test.@process.addProcessed = ${value + ' processed'}
 }
 
-nestedOverwritesAndProcessors.deepProcessorAppliesToEel = TYPO3.TypoScript:SpecialTag {
+nestedOverwritesAndProcessors.deepProcessorAppliesToEel = Neos.Fusion:SpecialTag {
 	attributes.tea.@process.addProcessed = ${value + ' infused'}
 }
 
-nestedOverwritesAndProcessors.deepProcessorAppliesWithNoBaseValue = TYPO3.TypoScript:SpecialTag {
+nestedOverwritesAndProcessors.deepProcessorAppliesWithNoBaseValue = Neos.Fusion:SpecialTag {
 	attributes.coffee.@process.addProcessed = ${String.trim(value + ' harvey')}
 }

@@ -1,5 +1,5 @@
-prototype(TYPO3.TypoScript:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
-prototype(TYPO3.TypoScript:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+prototype(Neos.Fusion:Value).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ValueImplementation'
+prototype(Neos.Fusion:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
 
 processors.newSyntax.basicProcessor {
 	valueWithNestedPlainValue = Value {
@@ -78,13 +78,13 @@ processors.newSyntax.extendedSyntaxProcessor {
 	}
 }
 
-prototype(TYPO3.TypoScript:ProcessorUnset1) < prototype(TYPO3.TypoScript:Value) {
+prototype(Neos.Fusion:ProcessorUnset1) < prototype(Neos.Fusion:Value) {
 	value = "Foo"
 	value.@process.1 = ${value + 'bar'}
 	value.@process.2 = ${value + 'baz'}
 }
 
-prototype(TYPO3.TypoScript:ProcessorUnset2) < prototype(TYPO3.TypoScript:ProcessorUnset1) {
+prototype(Neos.Fusion:ProcessorUnset2) < prototype(Neos.Fusion:ProcessorUnset1) {
 	value.@process.1 >
 }
 
@@ -95,14 +95,14 @@ processors.newSyntax.unset {
 
 	simple.@process.1 >
 
-	prototypes1 = TYPO3.TypoScript:ProcessorUnset1
+	prototypes1 = Neos.Fusion:ProcessorUnset1
 	prototypes1.value.@process.1 >
 
-	prototypes2 = TYPO3.TypoScript:ProcessorUnset2
+	prototypes2 = Neos.Fusion:ProcessorUnset2
 
 	nestedScope {
-		prototypes3 = TYPO3.TypoScript:ProcessorUnset1
-		prototype(TYPO3.TypoScript:ProcessorUnset1).value.@process.1 >
+		prototypes3 = Neos.Fusion:ProcessorUnset1
+		prototype(Neos.Fusion:ProcessorUnset1).value.@process.1 >
 	}
 
 

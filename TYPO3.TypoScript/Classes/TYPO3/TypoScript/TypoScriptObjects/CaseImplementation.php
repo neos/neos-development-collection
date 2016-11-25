@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\TypoScriptObjects;
+namespace Neos\Fusion\TypoScriptObjects;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,7 @@ namespace TYPO3\TypoScript\TypoScriptObjects;
  */
 
 use Neos\Flow\Annotations as Flow;
-use TYPO3\TypoScript\Exception\UnsupportedObjectTypeAtPathException;
+use Neos\Fusion\Exception\UnsupportedObjectTypeAtPathException;
 
 /**
  * Case TypoScript Object
@@ -78,9 +78,9 @@ class CaseImplementation extends ArrayImplementation
         } elseif (isset($this->properties[$matcherKey]['__eelExpression'])) {
             throw new UnsupportedObjectTypeAtPathException('"Case" TypoScript object only supports nested TypoScript objects; no Eel expressions.', 1372668077);
         } else {
-            // No object type has been set, so we're using TYPO3.TypoScript:Matcher as fallback
+            // No object type has been set, so we're using Neos.Fusion:Matcher as fallback
             $renderedMatcher = $this->tsRuntime->render(
-                sprintf('%s/%s<TYPO3.TypoScript:Matcher>', $this->path, $matcherKey)
+                sprintf('%s/%s<Neos.Fusion:Matcher>', $this->path, $matcherKey)
             );
             return $renderedMatcher;
         }

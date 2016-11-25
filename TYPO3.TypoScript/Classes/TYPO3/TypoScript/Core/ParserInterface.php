@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TypoScript\Core;
+namespace Neos\Fusion\Core;
 
 /*
- * This file is part of the TYPO3.TypoScript package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -10,7 +10,7 @@ namespace TYPO3\TypoScript\Core;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\TypoScript\Exception;
+use Neos\Fusion\Exception;
 
 /**
  * Contract for a TypoScript parser
