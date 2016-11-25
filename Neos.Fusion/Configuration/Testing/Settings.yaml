@@ -1,10 +1,9 @@
-TYPO3:
-  TypoScript:
-    rendering:
-      exceptionHandler: 'Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler'
-    enableContentCache: FALSE
 
-    # Register an additional prefixed helper for functional tests
+Neos:
+  Fusion:
+    rendering:
+      exceptionHandler: Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler
+    enableContentCache: false
     defaultContext:
-      'Testing.String': 'Neos\Eel\Helper\StringHelper'
-      'Testing.Utility': 'Neos\Fusion\Tests\Functional\TypoScriptObjects\Fixtures\Helper\UtilityHelper'
+      Testing.String: Neos\Eel\Helper\StringHelper
+      Testing.Utility: Neos\Fusion\Tests\Functional\TypoScriptObjects\Fixtures\Helper\UtilityHelper
