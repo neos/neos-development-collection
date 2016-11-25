@@ -85,9 +85,6 @@
             "Neos\\Fusion\\Tests\\": [
                 "Neos.Fusion/Tests"
             ],
-            "TYPO3\\TYPO3CR\\Tests\\": [
-                "Neos.Media.Browser/Tests"
-            ],
             "Neos\\Media\\Tests\\": [
                 "Neos.Media/Tests"
             ],
