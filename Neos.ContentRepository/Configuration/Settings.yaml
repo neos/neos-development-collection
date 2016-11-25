@@ -1,18 +1,4 @@
 
-TYPO3:
-  TYPO3CR:
-    contentDimensions: {  }
-    labelGenerator:
-      eel:
-        defaultContext:
-          String: Neos\Eel\Helper\StringHelper
-          Array: Neos\Eel\Helper\ArrayHelper
-          Date: Neos\Eel\Helper\DateHelper
-          Configuration: Neos\Eel\Helper\ConfigurationHelper
-          Math: Neos\Eel\Helper\MathHelper
-          Json: Neos\Eel\Helper\JsonHelper
-          I18n: Neos\Flow\I18n\EelHelper\TranslationHelper
-    fallbackNodeType: null
 Neos:
   Flow:
     persistence:
@@ -33,3 +19,16 @@ Neos:
           TYPO3\\TYPO3CR\\Domain\\Service\\NodeTypeManager: true
           TYPO3\\TYPO3CR\\Domain\\Factory\\NodeFactory: true
           TYPO3\\TYPO3CR\\Domain\\Service\\Cache\\FirstLevelNodeCache: true
+  ContentRepository:
+    contentDimensions: {  }
+    labelGenerator:
+      eel:
+        defaultContext:
+          String: Neos\Eel\Helper\StringHelper
+          Array: Neos\Eel\Helper\ArrayHelper
+          Date: Neos\Eel\Helper\DateHelper
+          Configuration: Neos\Eel\Helper\ConfigurationHelper
+          Math: Neos\Eel\Helper\MathHelper
+          Json: Neos\Eel\Helper\JsonHelper
+          I18n: Neos\Flow\I18n\EelHelper\TranslationHelper
+    fallbackNodeType: null
