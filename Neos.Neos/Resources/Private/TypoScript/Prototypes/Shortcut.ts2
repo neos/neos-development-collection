@@ -1,6 +1,6 @@
 # Neos.Neos.Shortcut is given a representation for editing purposes
 #
-prototype(Neos.Neos:Shortcut) < prototype(TYPO3.TypoScript:Template) {
+prototype(Neos.Neos:Shortcut) < prototype(Neos.Fusion:Template) {
 	templatePath = 'resource://Neos.Neos/Private/Templates/TypoScriptObjects/Shortcut.html'
 
 	targetMode = ${q(node).property('targetMode')}

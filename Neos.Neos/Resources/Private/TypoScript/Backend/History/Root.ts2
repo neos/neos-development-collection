@@ -1,4 +1,4 @@
-include: resource://TYPO3.TypoScript/Private/TypoScript/Root.ts2
+include: resource://Neos.Fusion/Private/TypoScript/Root.ts2
 
 Neos.Neos.Module.Management.HistoryController.index = Template {
 	templatePath = 'resource://Neos.Neos/Private/Templates/Module/Management/History/Index.html'

@@ -1,13 +1,13 @@
 # Neos.Neos:Page is the default object used for rendering in most sites
 #
 prototype(Neos.Neos:Page) >
-prototype(Neos.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
+prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 
 	doctype = '<!DOCTYPE html>'
 	doctype.@position = 'start 100'
 
 	# Only the opening html tag for the page. This is done to avoid deep nesting of TypoScript paths for integrators.
-	htmlTag = TYPO3.TypoScript:Tag {
+	htmlTag = Neos.Fusion:Tag {
 		@position = 'start'
 		tagName = 'html'
 		omitClosingTag = TRUE
@@ -24,23 +24,23 @@ prototype(Neos.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 		}
 	}
 
-	headerComment = TYPO3.TypoScript:Template {
+	headerComment = Neos.Fusion:Template {
 		@position = 'before headTag'
 		templatePath = 'resource://Neos.Neos/Private/Templates/TypoScriptObjects/NeosLicenseHeader.html'
 	}
 
 	# The opening head tag for the page. This is done to avoid deep nesting of TypoScript paths for integrators.
-	headTag = TYPO3.TypoScript:Tag {
+	headTag = Neos.Fusion:Tag {
 		@position = 'after htmlTag'
 		tagName = 'head'
 		omitClosingTag = TRUE
 	}
 
 	# The content of the head tag, integrators can add their own head content in this array.
-	head = TYPO3.TypoScript:Array {
+	head = Neos.Fusion:Array {
 		@position = 'after headTag'
 
-		characterSetMetaTag = TYPO3.TypoScript:Tag {
+		characterSetMetaTag = Neos.Fusion:Tag {
 			@position = 'start 10'
 			tagName = 'meta'
 			attributes {
@@ -48,14 +48,14 @@ prototype(Neos.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 			}
 		}
 
-		titleTag = TYPO3.TypoScript:Tag {
+		titleTag = Neos.Fusion:Tag {
 			tagName = 'title'
 			content = ${q(node).property('title')}
 		}
 
-		neosBackendHeader = TYPO3.TypoScript:Value {
+		neosBackendHeader = Neos.Fusion:Value {
 			@position = 'end 10000'
-			value = TYPO3.TypoScript:Template {
+			value = Neos.Fusion:Template {
 				templatePath = 'resource://Neos.Neos/Private/Templates/TypoScriptObjects/NeosBackendHeaderData.html'
 				node = ${documentNode}
 
@@ -71,9 +71,9 @@ prototype(Neos.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 		}
 
 
-		neosBackendEndpoints = TYPO3.TypoScript:Value {
+		neosBackendEndpoints = Neos.Fusion:Value {
 			@position = 'end 10001'
-			value = TYPO3.TypoScript:Template {
+			value = Neos.Fusion:Template {
 				templatePath = 'resource://Neos.Neos/Private/Templates/TypoScriptObjects/NeosBackendEndpoints.html'
 				node = ${documentNode}
 				account = ${Security.getAccount()}
@@ -90,10 +90,10 @@ prototype(Neos.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 		}
 
 		# Link tags for stylesheets in the head should go here
-		stylesheets = TYPO3.TypoScript:Array
+		stylesheets = Neos.Fusion:Array
 
 		# Script includes in the head should go here
-		javascripts = TYPO3.TypoScript:Array {
+		javascripts = Neos.Fusion:Array {
 			@position = 'after stylesheets'
 		}
 	}
@@ -102,11 +102,11 @@ prototype(Neos.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 	closingHeadTag.@position = 'after head'
 
 	# The opening body tag for the page. This is done to avoid deep nesting of TypoScript paths for integrators.
-	bodyTag = TYPO3.TypoScript:Tag {
+	bodyTag = Neos.Fusion:Tag {
 		@position = '20'
 		tagName = 'body'
 		omitClosingTag = TRUE
-		attributes.class.@process.addNeosBackendClass = TYPO3.TypoScript:Case {
+		attributes.class.@process.addNeosBackendClass = Neos.Fusion:Case {
 			@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 
 			classIsString {
@@ -128,21 +128,21 @@ prototype(Neos.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 	}
 
 	# Content of the body tag. To be defined by the integrator.
-	body = TYPO3.TypoScript:Template {
+	body = Neos.Fusion:Template {
 		@position = 'after bodyTag'
 		node = ${node}
 		site = ${site}
 
 		# Script includes before the closing body tag should go here
-		javascripts = TYPO3.TypoScript:Array
+		javascripts = Neos.Fusion:Array
 		# This processor appends the rendered javascripts Array to the rendered template
 		@process.appendJavaScripts = ${value + this.javascripts}
 	}
 
 	# Required for the backend to work.
-	neosBackendContainer = TYPO3.TypoScript:Value {
+	neosBackendContainer = Neos.Fusion:Value {
 		@position = 'before closingBodyTag'
-		value = TYPO3.TypoScript:Template {
+		value = Neos.Fusion:Template {
 			templatePath = 'resource://Neos.Neos/Private/Templates/TypoScriptObjects/NeosBackendContainer.html'
 			node = ${documentNode}
 
@@ -159,20 +159,20 @@ prototype(Neos.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message) {
 
 
 	# This enables redirecting to the last visited page after login
-	lastVisitedNodeScript = TYPO3.TypoScript:Tag {
+	lastVisitedNodeScript = Neos.Fusion:Tag {
 		@position = 'before closingBodyTag'
 
 		tagName = 'script'
 		attributes {
 			data-neos-node = ${node.contextPath}
-			src = TYPO3.TypoScript:ResourceUri {
+			src = Neos.Fusion:ResourceUri {
 				path = 'resource://Neos.Neos/Public/JavaScript/LastVisitedNode.js'
 			}
 			async = true
 		}
 	}
 
-	neosBackendFooter = TYPO3.TypoScript:Template {
+	neosBackendFooter = Neos.Fusion:Template {
 		@position = 'after lastVisitedNodeScript 10000'
 		templatePath = 'resource://Neos.Neos/Private/Templates/TypoScriptObjects/NeosBackendFooterData.html'
 		node = ${node}

@@ -1,6 +1,6 @@
 # This is a helper TypoScript object which is used to render all of the child elements
 # of a current node.
-prototype(Neos.Neos:ContentCollectionRenderer) < prototype(TYPO3.TypoScript:Collection) {
+prototype(Neos.Neos:ContentCollectionRenderer) < prototype(Neos.Fusion:Collection) {
 	@context.nodeAvailable = ${node && String.length(node.context.workspace.name)}
 	# Set context removedContentShown to get removed nodes too.
 	# Needed for publish function to be able to publish removed nodes.
@@ -11,10 +11,10 @@ prototype(Neos.Neos:ContentCollectionRenderer) < prototype(TYPO3.TypoScript:Coll
 	iterationName = 'iterator'
 
 	# Using a processor here and not an Array as ContentCollectionRenderer to not push important userland properties further down.
-	@process.appendRemovedContentForBackend = TYPO3.TypoScript:Array {
+	@process.appendRemovedContentForBackend = Neos.Fusion:Array {
 		visibleContent = ${value}
 
-		removedContent = TYPO3.TypoScript:Collection {
+		removedContent = Neos.Fusion:Collection {
 			collection = ${nodeAvailable ? q(node).context({'removedContentShown': true}).children('[_removed = true]') : []}
 			# Render every item by its own TS object
 			itemRenderer = Neos.Neos:ContentElementWrapping
@@ -28,10 +28,10 @@ prototype(Neos.Neos:ContentCollectionRenderer) < prototype(TYPO3.TypoScript:Coll
 	@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\BubblingHandler'
 }
 
-prototype(Neos.Neos:ContentCollection) < prototype(TYPO3.TypoScript:Tag) {
+prototype(Neos.Neos:ContentCollection) < prototype(Neos.Fusion:Tag) {
 	tagName = 'div'
 
-	attributes = TYPO3.TypoScript:Attributes
+	attributes = Neos.Fusion:Attributes
 
 	# The following is used to automatically append class attribute with "neos-contentcollection" needed for editing.
 	# You can disable the following line with:
@@ -39,7 +39,7 @@ prototype(Neos.Neos:ContentCollection) < prototype(TYPO3.TypoScript:Tag) {
 	#   attributes.class.@process.collectionClass >
 	# }
 	# in your site's TypoScript if you don't need that behavior.
-	attributes.class.@process.collectionClass = TYPO3.TypoScript:Case {
+	attributes.class.@process.collectionClass = Neos.Fusion:Case {
 		@context.collectionClass = 'neos-contentcollection'
 
 		classIsString {
