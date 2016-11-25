@@ -10,8 +10,8 @@
         "neos/party": "*",
         "neos/setup": "*",
         "neos/twitter-bootstrap": "*",
-        "neos/typo3cr": "*",
-        "neos/typoscript": "*",
+        "neos/content-repository": "*",
+        "neos/fusion": "*",
         "neos/fluid-adaptor": "*",
         "behat/transliterator": "~1.0"
     },
