@@ -76,5 +76,21 @@
         "typo3/flow": {
             "manage-resources": true
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Neos\\ContentRepository\\Tests\\": [
+                "Neos.ContentRepository/Tests"
+            ],
+            "Neos\\Fusion\\Tests\\": [
+                "Neos.Fusion/Tests"
+            ],
+            "Neos\\Media\\Tests\\": [
+                "Neos.Media/Tests"
+            ],
+            "Neos\\Neos\\Tests\\": [
+                "Neos.Neos/Tests"
+            ]
+        }
     }
 }
