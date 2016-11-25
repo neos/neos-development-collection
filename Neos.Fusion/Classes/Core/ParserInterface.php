@@ -47,7 +47,7 @@ interface ParserInterface
      * TypoScript object types.
      *
      * @param string $alias An alias for the given namespace, for example "neos"
-     * @param string $namespace The namespace, for example "TYPO3.Neos"
+     * @param string $namespace The namespace, for example "Neos.Neos"
      * @return void
      * @api
      */

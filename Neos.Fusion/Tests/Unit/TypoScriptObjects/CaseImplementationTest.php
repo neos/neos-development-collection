@@ -38,7 +38,7 @@ class CaseImplementationTest extends \Neos\Flow\Tests\UnitTestCase
             return ObjectAccess::getProperty($that, $relativePath, true);
         }));
 
-        $typoScriptObjectName = 'TYPO3.Neos:PrimaryContent';
+        $typoScriptObjectName = 'Neos.Neos:PrimaryContent';
         $renderer = new CaseImplementation($mockTsRuntime, $path, $typoScriptObjectName);
         $renderer->setIgnoreProperties($ignoredProperties);
 

@@ -181,7 +181,7 @@ class Parser implements ParserInterface
 		^\s*                      # beginning of line; with numerous whitespace
 		(?:                       # non-capturing submatch containing the namespace followed by ":" (optional)
 			(?P<namespace>
-				[a-zA-Z0-9.]+     # namespace alias (cms, …) or fully qualified namespace (TYPO3.Neos, …)
+				[a-zA-Z0-9.]+     # namespace alias (cms, …) or fully qualified namespace (Neos.Neos, …)
 			)
 			:                     # : as delimiter
 		)?
@@ -301,7 +301,7 @@ class Parser implements ParserInterface
      * TypoScript object types.
      *
      * @param string $alias An alias for the given namespace, for example "neos"
-     * @param string $namespace The namespace, for example "TYPO3.Neos"
+     * @param string $namespace The namespace, for example "Neos.Neos"
      * @return void
      * @throws TypoScript\Exception
      * @api
@@ -556,7 +556,7 @@ class Parser implements ParserInterface
     /**
      * Parses a namespace declaration and stores the result in the namespace registry.
      *
-     * @param string $namespaceDeclaration The namespace declaration, for example "neos = TYPO3.Neos"
+     * @param string $namespaceDeclaration The namespace declaration, for example "neos = Neos.Neos"
      * @return void
      * @throws TypoScript\Exception
      */

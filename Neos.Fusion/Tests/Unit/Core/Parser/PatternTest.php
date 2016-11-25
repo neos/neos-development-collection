@@ -81,7 +81,7 @@ class PatternTest extends UnitTestCase
         $this->assertEquals(preg_match($pattern, 'namespace: cms = Test'), 1, 'The SCAN_PATTERN_DECLARATION pattern did not match an namespace declaration.');
         $this->assertEquals(preg_match($pattern, '  namespace: cms = Test'), 1, 'The SCAN_PATTERN_DECLARATION pattern did not match an namespace declaration whith leading whitespace.');
         $this->assertEquals(preg_match($pattern, 'ASDF  namespace: cms = Test'), 0, 'The SCAN_PATTERN_DECLARATION pattern did match an namespace declaration whith leading text.');
-        $this->assertEquals(preg_match($pattern, 'ASDF  namespace: TYPO3.Neos = Foo'), 0, 'The SCAN_PATTERN_DECLARATION pattern did match an namespace declaration whith leading text.');
+        $this->assertEquals(preg_match($pattern, 'ASDF  namespace: Neos.Neos = Foo'), 0, 'The SCAN_PATTERN_DECLARATION pattern did match an namespace declaration whith leading text.');
         $this->assertEquals(preg_match($pattern, '// This is a comment ...'), 0, 'The SCAN_PATTERN_DECLARATION pattern matched a comment.');
     }
 
