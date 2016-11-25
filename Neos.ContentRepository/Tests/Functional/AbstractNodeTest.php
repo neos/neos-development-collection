@@ -133,8 +133,8 @@ abstract class AbstractNodeTest extends FunctionalTestCase
     protected function markSkippedIfNodeTypesPackageIsNotInstalled()
     {
         $packageManager = $this->objectManager->get(PackageManagerInterface::class);
-        if (!$packageManager->isPackageActive('TYPO3.Neos.NodeTypes')) {
-            $this->markTestSkipped('This test needs the TYPO3.Neos.NodeTypes package.');
+        if (!$packageManager->isPackageActive('Neos.NodeTypes')) {
+            $this->markTestSkipped('This test needs the Neos.NodeTypes package.');
         }
     }
 }

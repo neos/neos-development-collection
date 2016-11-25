@@ -66,7 +66,7 @@ class NodeCommandController extends CommandController implements DescriptionAwar
      *
      * ./flow node:repair
      *
-     * ./flow node:repair --node-type TYPO3.Neos.NodeTypes:Page
+     * ./flow node:repair --node-type Neos.NodeTypes:Page
      *
      * ./flow node:repair --workspace user-robert --only removeOrphanNodes,removeNodesWithInvalidDimensions
      *
