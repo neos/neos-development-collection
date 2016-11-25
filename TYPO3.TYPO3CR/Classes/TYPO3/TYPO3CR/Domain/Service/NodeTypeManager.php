@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Domain\Service;
+namespace Neos\ContentRepository\Domain\Service;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,11 +14,11 @@ namespace TYPO3\TYPO3CR\Domain\Service;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Flow\Configuration\ConfigurationManager;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
-use TYPO3\TYPO3CR\Exception;
-use TYPO3\TYPO3CR\Exception\NodeConfigurationException;
-use TYPO3\TYPO3CR\Exception\NodeTypeIsFinalException;
-use TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Exception;
+use Neos\ContentRepository\Exception\NodeConfigurationException;
+use Neos\ContentRepository\Exception\NodeTypeIsFinalException;
+use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 
 /**
  * Manager for node types

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Tests\Unit\FlowQueryOperations;
+namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,10 +13,10 @@ namespace TYPO3\TYPO3CR\Tests\Unit\FlowQueryOperations;
 
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\TYPO3CR\Domain\Service\Context;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
-use TYPO3\TYPO3CR\Eel\FlowQueryOperations\ContextOperation;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Service\Context;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\ContentRepository\Eel\FlowQueryOperations\ContextOperation;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * Testcase for the FlowQuery ContextOperation

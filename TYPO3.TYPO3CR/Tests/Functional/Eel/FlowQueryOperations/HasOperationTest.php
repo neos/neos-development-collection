@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Tests\Functional\Eel\FlowQueryOperations;
+namespace Neos\ContentRepository\Tests\Functional\Eel\FlowQueryOperations;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,8 +12,8 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Eel\FlowQueryOperations;
  */
 
 use Neos\Eel\FlowQuery\FlowQuery;
-use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
-use TYPO3\TYPO3CR\Tests\Functional\AbstractNodeTest;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Tests\Functional\AbstractNodeTest;
 
 /**
  * Functional test case which tests FlowQuery HasOperation
@@ -38,12 +38,12 @@ class HasOperationTest extends AbstractNodeTest
             ),
             array(
                 'currentNodePaths' => array('/b'),
-                'subject' => '[instanceof TYPO3.TYPO3CR.Testing:NodeType]',
+                'subject' => '[instanceof Neos.ContentRepository.Testing:NodeType]',
                 'expectedNodePaths' => array('/b')
             ),
             array(
                 'currentNodePaths' => array('/b'),
-                'subject' => 'b1[instanceof TYPO3.TYPO3CR.Testing:NodeType]',
+                'subject' => 'b1[instanceof Neos.ContentRepository.Testing:NodeType]',
                 'expectedNodePaths' => array('/b')
             ),
             array(
@@ -90,7 +90,7 @@ class HasOperationTest extends AbstractNodeTest
     public function hasOperationTests(array $currentNodePaths, $subject, array $expectedNodePaths)
     {
         $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
-        $testNodeType1 = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType');
+        $testNodeType1 = $nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeType');
 
         $rootNode = $this->node->getNode('/');
         $nodeA = $rootNode->createNode('a');

@@ -11,17 +11,17 @@ Feature: Multiple languages as content dimension
     And I have the following nodes:
       | Path           | Node Type                  | Properties        |
       | /sites         | unstructured               |                   |
-      | /sites/typo3cr | TYPO3.TYPO3CR.Testing:Page | {"title": "Home"} |
+      | /sites/typo3cr | Neos.ContentRepository.Testing:Page | {"title": "Home"} |
 
   @fixtures
   Scenario: Get a node from multiple mixed content dimensions
     Given I have the following nodes:
       | Identifier                           | Path                   | Node Type                      | Properties                                   | Language  | Dimension: personas |
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/main/c2 | TYPO3.TYPO3CR.Testing:Headline | {"title": "Welcome!"}                        | en_ZZ     | everybody           |
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/main/c2 | TYPO3.TYPO3CR.Testing:Headline | {"title": "Welcome, nice to see you again!"} | en_ZZ     | customer            |
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/main/c2 | TYPO3.TYPO3CR.Testing:Headline | {"title": "Welcome, fellow customer!"}       | en_ZZ     | frequent_buyer      |
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/main/c2 | TYPO3.TYPO3CR.Testing:Headline | {"title": "Willkommen!"}                     | de_ZZ     | everybody           |
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/main/c2 | TYPO3.TYPO3CR.Testing:Headline | {"title": "Willkommen, lieber Kunde!"}       | de_ZZ     | frequent_buyer      |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/main/c2 | Neos.ContentRepository.Testing:Headline | {"title": "Welcome!"}                        | en_ZZ     | everybody           |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/main/c2 | Neos.ContentRepository.Testing:Headline | {"title": "Welcome, nice to see you again!"} | en_ZZ     | customer            |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/main/c2 | Neos.ContentRepository.Testing:Headline | {"title": "Welcome, fellow customer!"}       | en_ZZ     | frequent_buyer      |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/main/c2 | Neos.ContentRepository.Testing:Headline | {"title": "Willkommen!"}                     | de_ZZ     | everybody           |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/main/c2 | Neos.ContentRepository.Testing:Headline | {"title": "Willkommen, lieber Kunde!"}       | de_ZZ     | frequent_buyer      |
 
     When I get a node by path "/sites/typo3cr/main/c2" with the following context:
       | Language               | Dimension: personas |

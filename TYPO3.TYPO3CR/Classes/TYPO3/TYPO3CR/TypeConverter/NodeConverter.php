@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\TypeConverter;
+namespace Neos\ContentRepository\TypeConverter;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -22,15 +22,15 @@ use Neos\Utility\ObjectAccess;
 use Neos\Flow\Security\Context;
 use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;
-use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
-use TYPO3\TYPO3CR\Domain\Service\Context as TYPO3CRContext;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
-use TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface;
-use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
-use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
-use TYPO3\TYPO3CR\Exception\NodeException;
+use Neos\ContentRepository\Domain\Factory\NodeFactory;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\Service\Context as TYPO3CRContext;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Domain\Utility\NodePaths;
+use Neos\ContentRepository\Exception\NodeException;
 
 /**
  * An Object Converter for Nodes which can be used for routing (but also for other
@@ -284,7 +284,7 @@ class NodeConverter extends AbstractTypeConverter
         );
         if ($workspaceName !== 'live') {
             $contextProperties['invisibleContentShown'] = true;
-            if ($configuration !== null && $configuration->getConfigurationValue(\TYPO3\TYPO3CR\TypeConverter\NodeConverter::class, self::REMOVED_CONTENT_SHOWN) === true) {
+            if ($configuration !== null && $configuration->getConfigurationValue(\Neos\ContentRepository\TypeConverter\NodeConverter::class, self::REMOVED_CONTENT_SHOWN) === true) {
                 $contextProperties['removedContentShown'] = true;
             }
         }

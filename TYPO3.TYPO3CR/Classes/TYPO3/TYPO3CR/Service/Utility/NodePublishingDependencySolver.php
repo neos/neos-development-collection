@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Service\Utility;
+namespace Neos\ContentRepository\Service\Utility;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,8 +12,8 @@ namespace TYPO3\TYPO3CR\Service\Utility;
  */
 
 use Neos\Flow\Annotations as Flow;
-use TYPO3\TYPO3CR\Domain\Model\Node;
-use TYPO3\TYPO3CR\Exception\WorkspaceException;
+use Neos\ContentRepository\Domain\Model\Node;
+use Neos\ContentRepository\Exception\WorkspaceException;
 
 /**
  * Solve / sort nodes by dependencies for publishing

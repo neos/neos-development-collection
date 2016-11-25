@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
+namespace Neos\ContentRepository\Tests\Functional\Domain;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,17 +12,17 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
  */
 
 use Neos\Flow\Tests\FunctionalTestCase;
-use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
-use TYPO3\TYPO3CR\Domain\Model\Node;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
-use TYPO3\TYPO3CR\Domain\Service\Context;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactory;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
-use TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeExportService;
-use TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService;
-use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Domain\Factory\NodeFactory;
+use Neos\ContentRepository\Domain\Model\Node;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
+use Neos\ContentRepository\Domain\Service\Context;
+use Neos\ContentRepository\Domain\Service\ContextFactory;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\ContentRepository\Domain\Service\ImportExport\NodeExportService;
+use Neos\ContentRepository\Domain\Service\ImportExport\NodeImportService;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 
 /**
  * Functional test case for node data export.
@@ -78,7 +78,7 @@ class NodeDataExportServiceTest extends FunctionalTestCase
      */
     public function aSingleNodeExportedWithNodeDataExportCanBeImportedWithNodeDataImport()
     {
-        $originalNode = $this->rootNode->createNode('foo', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:ImportExport'));
+        $originalNode = $this->rootNode->createNode('foo', $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:ImportExport'));
         $originalNode->setProperty('description', 'Some node with a property');
         $originalNode->setProperty('someDate', new \DateTime());
         $this->persistenceManager->persistAll();

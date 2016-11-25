@@ -6,16 +6,16 @@ Feature: Privilege to restrict editing of nodes for a single dimension only
       """
       privilegeTargets:
 
-        'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\EditNodePrivilege':
+        'Neos\ContentRepository\Security\Authorization\Privilege\Node\EditNodePrivilege':
 
-          'TYPO3.TYPO3CR:EditServiceNodes':
+          'Neos.ContentRepository:EditServiceNodes':
             matcher: 'isDescendantNodeOf("/sites/typo3cr/service")'
 
           # EditEverything is needed, to switch to a "WHITELIST MODE" - i.e. where everything must be allowed explicitely.
-          'TYPO3.TYPO3CR:EditEverything':
+          'Neos.ContentRepository:EditEverything':
             matcher: 'TRUE'
 
-          'TYPO3.TYPO3CR:EditGerman':
+          'Neos.ContentRepository:EditGerman':
             matcher: 'isInDimensionPreset("language", "de")'
 
       roles:
@@ -28,18 +28,18 @@ Feature: Privilege to restrict editing of nodes for a single dimension only
         'TYPO3.Flow:AuthenticatedUser':
           privileges: []
 
-        'TYPO3.TYPO3CR:ServiceManager':
+        'Neos.ContentRepository:ServiceManager':
           # can only edit service nodes, but in all languages.
           privileges:
             -
-              privilegeTarget: 'TYPO3.TYPO3CR:EditServiceNodes'
+              privilegeTarget: 'Neos.ContentRepository:EditServiceNodes'
               permission: GRANT
 
-        'TYPO3.TYPO3CR:GermanManager':
+        'Neos.ContentRepository:GermanManager':
           # can only edit german nodes
           privileges:
             -
-              privilegeTarget: 'TYPO3.TYPO3CR:EditGerman'
+              privilegeTarget: 'Neos.ContentRepository:EditGerman'
               permission: GRANT
       """
     And I have the following content dimensions:
@@ -49,11 +49,11 @@ Feature: Privilege to restrict editing of nodes for a single dimension only
     And I have the following nodes:
       | Identifier                           | Path                   | Node Type                      | Properties                    | Workspace | Language |
       | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /sites                 | unstructured                   |                               | live      | mul_ZZ   |
-      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr         | TYPO3.TYPO3CR.Testing:Document | {"title": "Home"}             | live      | mul_ZZ   |
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/company | TYPO3.TYPO3CR.Testing:Document | {"title": "Company"}          | live      | en_ZZ    |
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/company | TYPO3.TYPO3CR.Testing:Document | {"title": "Firma"}            | live      | de_ZZ    |
-      | 52540602-b417-11e3-9358-14109fd7a2dd | /sites/typo3cr/service | TYPO3.TYPO3CR.Testing:Document | {"title": "Service"}          | live      | en_ZZ    |
-      | 52540602-b417-11e3-9358-14109fd7a2dd | /sites/typo3cr/service | TYPO3.TYPO3CR.Testing:Document | {"title": "Dienstleistungen"} | live      | de_ZZ    |
+      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr         | Neos.ContentRepository.Testing:Document | {"title": "Home"}             | live      | mul_ZZ   |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/company | Neos.ContentRepository.Testing:Document | {"title": "Company"}          | live      | en_ZZ    |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/company | Neos.ContentRepository.Testing:Document | {"title": "Firma"}            | live      | de_ZZ    |
+      | 52540602-b417-11e3-9358-14109fd7a2dd | /sites/typo3cr/service | Neos.ContentRepository.Testing:Document | {"title": "Service"}          | live      | en_ZZ    |
+      | 52540602-b417-11e3-9358-14109fd7a2dd | /sites/typo3cr/service | Neos.ContentRepository.Testing:Document | {"title": "Dienstleistungen"} | live      | de_ZZ    |
 
   @Isolated @fixtures
   Scenario: "Everybody"-Authenticated users are not granted to set any property
@@ -66,7 +66,7 @@ Feature: Privilege to restrict editing of nodes for a single dimension only
 
   @Isolated @fixtures
   Scenario: Language-Restricted (German) Managers should be able to edit german nodes
-    Given I am authenticated with role "TYPO3.TYPO3CR:GermanManager"
+    Given I am authenticated with role "Neos.ContentRepository:GermanManager"
     And I get a node by path "/sites/typo3cr/service" with the following context:
       | Workspace  | Language      |
       | user-admin | de_ZZ, mul_ZZ |
@@ -80,7 +80,7 @@ Feature: Privilege to restrict editing of nodes for a single dimension only
 
   @Isolated @fixtures
   Scenario: Language-Restricted (German) Managers should not be able to edit english nodes
-    Given I am authenticated with role "TYPO3.TYPO3CR:GermanManager"
+    Given I am authenticated with role "Neos.ContentRepository:GermanManager"
     And I get a node by path "/sites/typo3cr/service" with the following context:
       | Workspace  | Language      |
       | user-admin | en_ZZ, mul_ZZ |
@@ -94,7 +94,7 @@ Feature: Privilege to restrict editing of nodes for a single dimension only
 
   @Isolated @fixtures
   Scenario: Service Managers should be able to edit both german and non-german nodes
-    Given I am authenticated with role "TYPO3.TYPO3CR:ServiceManager"
+    Given I am authenticated with role "Neos.ContentRepository:ServiceManager"
     When I get a node by path "/sites/typo3cr/service" with the following context:
       | Workspace  | Language      |
       | user-admin | de_ZZ, mul_ZZ |

@@ -7,14 +7,14 @@ Feature: Copy node with dimension support
     Given I have the following nodes:
       | Identifier                           | Path                                              | Node Type                       | Properties                 | Workspace | Language |
       | 85f17826-64d1-11e4-a6e3-14109fd7a2dd | /sites                                            | unstructured                    |                            | live      | mul_ZZ   |
-      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr                                    | TYPO3.TYPO3CR.Testing:Page      | {"title": "Home"}          | live      | mul_ZZ   |
-      | 8ed74376-64d1-11e4-b98b-14109fd7a2dd | /sites/typo3cr/company                            | TYPO3.TYPO3CR.Testing:Page      | {"title": "Company"}       | live      | en       |
-      | 8ed74376-64d1-11e4-b98b-14109fd7a2dd | /sites/typo3cr/company                            | TYPO3.TYPO3CR.Testing:Page      | {"title": "Firma"}         | live      | de       |
-      | 74fe032a-6442-11e4-8135-14109fd7a2dd | /sites/typo3cr/company/main/two-col               | TYPO3.TYPO3CR.Testing:TwoColumn |                            | live      | en       |
-      | 74fe032a-6442-11e4-8135-14109fd7a2dd | /sites/typo3cr/company/main/two-col               | TYPO3.TYPO3CR.Testing:TwoColumn |                            | live      | de       |
-      | 864b6a8c-6442-11e4-8791-14109fd7a2dd | /sites/typo3cr/company/main/two-col/column0/text0 | TYPO3.TYPO3CR.Testing:Text      | {"text": "The Company"}    | live      | en       |
-      | 0c1a50e9-3db5-4c57-a5c7-6cc0b7649ee7 | /sites/typo3cr/about-us                           | TYPO3.TYPO3CR.Testing:Page      | {"title": "About Us"}      | live      | en       |
-      | 1c063cf4-65ca-11e4-b79a-14109fd7a2dd | /sites/typo3cr/about-us/main/text0                | TYPO3.TYPO3CR.Testing:Text      | {"text": "Infos about us"} | live      | en       |
+      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr                                    | Neos.ContentRepository.Testing:Page      | {"title": "Home"}          | live      | mul_ZZ   |
+      | 8ed74376-64d1-11e4-b98b-14109fd7a2dd | /sites/typo3cr/company                            | Neos.ContentRepository.Testing:Page      | {"title": "Company"}       | live      | en       |
+      | 8ed74376-64d1-11e4-b98b-14109fd7a2dd | /sites/typo3cr/company                            | Neos.ContentRepository.Testing:Page      | {"title": "Firma"}         | live      | de       |
+      | 74fe032a-6442-11e4-8135-14109fd7a2dd | /sites/typo3cr/company/main/two-col               | Neos.ContentRepository.Testing:TwoColumn |                            | live      | en       |
+      | 74fe032a-6442-11e4-8135-14109fd7a2dd | /sites/typo3cr/company/main/two-col               | Neos.ContentRepository.Testing:TwoColumn |                            | live      | de       |
+      | 864b6a8c-6442-11e4-8791-14109fd7a2dd | /sites/typo3cr/company/main/two-col/column0/text0 | Neos.ContentRepository.Testing:Text      | {"text": "The Company"}    | live      | en       |
+      | 0c1a50e9-3db5-4c57-a5c7-6cc0b7649ee7 | /sites/typo3cr/about-us                           | Neos.ContentRepository.Testing:Page      | {"title": "About Us"}      | live      | en       |
+      | 1c063cf4-65ca-11e4-b79a-14109fd7a2dd | /sites/typo3cr/about-us/main/text0                | Neos.ContentRepository.Testing:Text      | {"text": "Infos about us"} | live      | en       |
 
 
   @fixtures
@@ -39,7 +39,7 @@ Feature: Copy node with dimension support
   Scenario: Copying a non-aggregate node does a detached copy if the node exists already in the target dimension
     Given I have the following nodes:
       | Identifier                           | Path                                              | Node Type                       | Properties              | Workspace  | Language |
-      | 864b6a8c-6442-11e4-8791-14109fd7a2dd | /sites/typo3cr/company/main/two-col/column1/text0 | TYPO3.TYPO3CR.Testing:Text      | {"text": "Die Firma"}   | user-admin | de       |
+      | 864b6a8c-6442-11e4-8791-14109fd7a2dd | /sites/typo3cr/company/main/two-col/column1/text0 | Neos.ContentRepository.Testing:Text      | {"text": "Die Firma"}   | user-admin | de       |
     When I get a node by identifier "864b6a8c-6442-11e4-8791-14109fd7a2dd" with the following context:
       | Language   | Workspace  |
       | de, mul_ZZ | user-admin |

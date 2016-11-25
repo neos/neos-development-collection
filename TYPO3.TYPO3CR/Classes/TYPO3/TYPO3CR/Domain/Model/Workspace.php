@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Domain\Model;
+namespace Neos\ContentRepository\Domain\Model;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -17,11 +17,11 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Utility\Now;
-use TYPO3\TYPO3CR\Domain\Model\NodeData;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface;
-use TYPO3\TYPO3CR\Domain\Service\PublishingServiceInterface;
-use TYPO3\TYPO3CR\Exception\WorkspaceException;
+use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
+use Neos\ContentRepository\Domain\Service\PublishingServiceInterface;
+use Neos\ContentRepository\Exception\WorkspaceException;
 
 /**
  * A Workspace
@@ -386,7 +386,7 @@ class Workspace
      *
      * The specified workspace must be a base workspace of this workspace.
      *
-     * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes
+     * @param array<\Neos\ContentRepository\Domain\Model\NodeInterface> $nodes
      * @param Workspace $targetWorkspace The workspace to publish to
      * @return void
      * @api

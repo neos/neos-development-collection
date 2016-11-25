@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Domain\Model;
+namespace Neos\ContentRepository\Domain\Model;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -10,13 +10,13 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use TYPO3\TYPO3CR\Domain\Model\Node;
-use TYPO3\TYPO3CR\Domain\Model\NodeData;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Service\Context;
-use TYPO3\TYPO3CR\Exception\NodeException;
-use TYPO3\TYPO3CR\Exception\NodeExistsException;
+use Neos\ContentRepository\Domain\Model\Node;
+use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Service\Context;
+use Neos\ContentRepository\Exception\NodeException;
+use Neos\ContentRepository\Exception\NodeExistsException;
 
 /**
  * Interface for a Node
@@ -430,7 +430,7 @@ interface NodeInterface
     /**
      * Creates and persists a node from the given $nodeTemplate as child node
      *
-     * @param \TYPO3\TYPO3CR\Domain\Model\NodeTemplate $nodeTemplate
+     * @param \Neos\ContentRepository\Domain\Model\NodeTemplate $nodeTemplate
      * @param string $nodeName name of the new node. If not specified the name of the nodeTemplate will be used.
      * @return NodeInterface the freshly generated node
      * @api
@@ -464,7 +464,7 @@ interface NodeInterface
      * @param string $nodeTypeFilter If specified, only nodes with that node type are considered
      * @param integer $limit An optional limit for the number of nodes to find. Added or removed nodes can still change the number nodes!
      * @param integer $offset An optional offset for the query
-     * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> An array of nodes or an empty array if no child nodes matched
+     * @return array<\Neos\ContentRepository\Domain\Model\NodeInterface> An array of nodes or an empty array if no child nodes matched
      * @api
      */
     public function getChildNodes($nodeTypeFilter = null, $limit = null, $offset = null);

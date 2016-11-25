@@ -9,16 +9,16 @@ Feature: Localized structure
     Given I have the following nodes:
       | Path                   | Node Type                  | Properties           | Language |
       | /sites                 | unstructured               |                      | mul_ZZ   |
-      | /sites/typo3cr         | TYPO3.TYPO3CR.Testing:Page | {"title": "Home"}    | mul_ZZ   |
-      | /sites/typo3cr/company | TYPO3.TYPO3CR.Testing:Page | {"title": "Company"} | mul_ZZ   |
-      | /sites/typo3cr/service | TYPO3.TYPO3CR.Testing:Page | {"title": "Company"} | mul_ZZ   |
+      | /sites/typo3cr         | Neos.ContentRepository.Testing:Page | {"title": "Home"}    | mul_ZZ   |
+      | /sites/typo3cr/company | Neos.ContentRepository.Testing:Page | {"title": "Company"} | mul_ZZ   |
+      | /sites/typo3cr/service | Neos.ContentRepository.Testing:Page | {"title": "Company"} | mul_ZZ   |
 
   @fixtures
   Scenario: The same node can be fetched using different node paths in different languages
     Given I have the following nodes:
       | Identifier                           | Path                         | Node Type                  | Properties            | Language |
-      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr/company/about | TYPO3.TYPO3CR.Testing:Page | {"title": "About"}    | en_US    |
-      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr/service/about | TYPO3.TYPO3CR.Testing:Page | {"title": "Über uns"} | de_DE    |
+      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr/company/about | Neos.ContentRepository.Testing:Page | {"title": "About"}    | en_US    |
+      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr/service/about | Neos.ContentRepository.Testing:Page | {"title": "Über uns"} | de_DE    |
     When I get a node by path "/sites/typo3cr/company/about" with the following context:
       | Language      |
       | en_US, mul_ZZ |
@@ -34,18 +34,18 @@ Feature: Localized structure
   Scenario: Child nodes can be fetched using different node paths in different languages
     Given I have the following nodes:
       | Identifier                           | Path                           | Node Type                  | Properties              | Language |
-      | c0a3d935-4903-c668-787c-66de575c72c7 | /sites/typo3cr/company/history | TYPO3.TYPO3CR.Testing:Page | {"title": "History"}    | en_US    |
-      | c0a3d935-4903-c668-787c-66de575c72c7 | /sites/typo3cr/company/history | TYPO3.TYPO3CR.Testing:Page | {"title": "Geschichte"} | de_DE    |
-      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr/company/about   | TYPO3.TYPO3CR.Testing:Page | {"title": "About"}      | en_US    |
-      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr/service/about   | TYPO3.TYPO3CR.Testing:Page | {"title": "Über uns"}   | de_DE    |
-    When I get the child nodes of "/sites/typo3cr/company" with filter "TYPO3.TYPO3CR.Testing:Document" and the following context:
+      | c0a3d935-4903-c668-787c-66de575c72c7 | /sites/typo3cr/company/history | Neos.ContentRepository.Testing:Page | {"title": "History"}    | en_US    |
+      | c0a3d935-4903-c668-787c-66de575c72c7 | /sites/typo3cr/company/history | Neos.ContentRepository.Testing:Page | {"title": "Geschichte"} | de_DE    |
+      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr/company/about   | Neos.ContentRepository.Testing:Page | {"title": "About"}      | en_US    |
+      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr/service/about   | Neos.ContentRepository.Testing:Page | {"title": "Über uns"}   | de_DE    |
+    When I get the child nodes of "/sites/typo3cr/company" with filter "Neos.ContentRepository.Testing:Document" and the following context:
       | Language      |
       | en_US, mul_ZZ |
     And I should have the following nodes:
       | Path                           | Properties           | Language |
       | /sites/typo3cr/company/history | {"title": "History"} | en_US    |
       | /sites/typo3cr/company/about   | {"title": "About"}   | en_US    |
-    When I get the child nodes of "/sites/typo3cr/company" with filter "TYPO3.TYPO3CR.Testing:Document" and the following context:
+    When I get the child nodes of "/sites/typo3cr/company" with filter "Neos.ContentRepository.Testing:Document" and the following context:
       | Language      |
       | de_DE, mul_ZZ |
     And I should have the following nodes:

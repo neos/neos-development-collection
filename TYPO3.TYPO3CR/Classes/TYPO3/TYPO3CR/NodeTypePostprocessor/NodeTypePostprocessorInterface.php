@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\NodeTypePostprocessor;
+namespace Neos\ContentRepository\NodeTypePostprocessor;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,7 +11,7 @@ namespace TYPO3\TYPO3CR\NodeTypePostprocessor;
  * source code.
  */
 
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\Model\NodeType;
 
 /**
  * A NodeType postprocessor can be used in order to programmatically change the configuration of a node type

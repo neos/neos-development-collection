@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Domain\Service\ImportExport;
+namespace Neos\ContentRepository\Domain\Service\ImportExport;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -23,9 +23,9 @@ use Neos\Flow\Security\Context;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Flow\Utility\Now;
 use TYPO3\Media\Domain\Model\ImageVariant;
-use TYPO3\TYPO3CR\Domain\Model\NodeData;
-use TYPO3\TYPO3CR\Exception\ImportException;
-use TYPO3\TYPO3CR\Utility;
+use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Exception\ImportException;
+use Neos\ContentRepository\Utility;
 
 /**
  * Service for importing nodes from an XML structure into the content repository

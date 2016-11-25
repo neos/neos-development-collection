@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
+namespace Neos\ContentRepository\Tests\Unit\Domain\Model;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,7 +11,7 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
  * source code.
  */
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\TYPO3CR\Domain\Model\NodeTemplate;
+use Neos\ContentRepository\Domain\Model\NodeTemplate;
 
 /**
  * Test case for NodeTemplate

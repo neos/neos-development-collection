@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Service\ImportExport;
+namespace Neos\ContentRepository\Tests\Unit\Domain\Service\ImportExport;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -15,7 +15,7 @@ use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Utility\Now;
-use TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService;
+use Neos\ContentRepository\Domain\Service\ImportExport\NodeImportService;
 
 class NodeImportServiceTest extends UnitTestCase
 {
@@ -403,8 +403,8 @@ class NodeImportServiceTest extends UnitTestCase
 
         $this->assertTrue($result);
 
-        /** @var \TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService $nodeImportService */
-        $nodeImportService = $this->getMockBuilder(\TYPO3\TYPO3CR\Domain\Service\ImportExport\NodeImportService::class)->setMethods(array('persistNodeData'))->getMock();
+        /** @var \Neos\ContentRepository\Domain\Service\ImportExport\NodeImportService $nodeImportService */
+        $nodeImportService = $this->getMockBuilder(\Neos\ContentRepository\Domain\Service\ImportExport\NodeImportService::class)->setMethods(array('persistNodeData'))->getMock();
         $this->inject($nodeImportService, 'propertyMapper', $this->mockPropertyMapper);
         $this->inject($nodeImportService, 'securityContext', $this->mockSecurityContext);
 

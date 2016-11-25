@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Security\Authorization\Privilege\Node;
+namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,7 +13,7 @@ namespace TYPO3\TYPO3CR\Security\Authorization\Privilege\Node;
 
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * A node privilege subject

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Service;
+namespace Neos\ContentRepository\Service;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -16,8 +16,8 @@ use Neos\Flow\Annotations as Flow;
 /**
  *
  * @Flow\Scope("singleton")
- * @deprecated since 2.1, use \TYPO3\TYPO3CR\Domain\Service\PublishingService instead
+ * @deprecated since 2.1, use \Neos\ContentRepository\Domain\Service\PublishingService instead
  */
-class PublishingService extends \TYPO3\TYPO3CR\Domain\Service\PublishingService
+class PublishingService extends \Neos\ContentRepository\Domain\Service\PublishingService
 {
 }

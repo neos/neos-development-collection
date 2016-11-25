@@ -26,7 +26,7 @@ Neos:
             listener: Gedmo\Timestampable\TimestampableListener
         dql:
           customStringFunctions:
-            NEOSCR_TOSTRING: TYPO3\TYPO3CR\Persistence\Ast\ToStringFunction
+            NEOSCR_TOSTRING: Neos\ContentRepository\Persistence\Ast\ToStringFunction
     error:
       debugger:
         ignoredClasses:

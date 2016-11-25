@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\Doctrine;
+namespace Neos\ContentRepository\Security\Authorization\Privilege\Node\Doctrine;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -19,10 +19,10 @@ use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\DisjunctionGenera
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\PropertyConditionGenerator;
 use Neos\Flow\Security\Exception\InvalidPrivilegeException;
 use Neos\Flow\Validation\Validator\UuidValidator;
-use TYPO3\TYPO3CR\Domain\Model\NodeData;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactory;
-use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Service\ContextFactory;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 
 /**
  * A SQL condition generator, supporting special SQL constraints

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Migration\Service;
+namespace Neos\ContentRepository\Migration\Service;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,9 +13,9 @@ namespace TYPO3\TYPO3CR\Migration\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use TYPO3\TYPO3CR\Domain\Model\NodeData;
-use TYPO3\TYPO3CR\Migration\Exception\MigrationException;
-use TYPO3\TYPO3CR\Migration\Filters\FilterInterface;
+use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Migration\Exception\MigrationException;
+use Neos\ContentRepository\Migration\Filters\FilterInterface;
 
 /**
  * Service to determine if a given node matches a series of filters given by configuration.
@@ -53,7 +53,7 @@ class NodeFilter
 
     /**
      * @param array $filterConfigurations
-     * @return array<\TYPO3\TYPO3CR\Migration\FilterInterface>
+     * @return array<\Neos\ContentRepository\Migration\FilterInterface>
      */
     protected function buildFilterConjunction(array $filterConfigurations)
     {
@@ -94,7 +94,7 @@ class NodeFilter
 
     /**
      * Resolves the class name for the filter by first assuming it is a full qualified class name and otherwise searching
-     * in this package (so filters delivered in TYPO3.TYPO3CR can be used by simply giving the class name without namespace).
+     * in this package (so filters delivered in Neos.ContentRepository can be used by simply giving the class name without namespace).
      *
      * @param string $name
      * @return string
@@ -107,7 +107,7 @@ class NodeFilter
             return $resolvedObjectName;
         }
 
-        $resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName('TYPO3\TYPO3CR\Migration\Filters\\' . $name);
+        $resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName('Neos\ContentRepository\Migration\Filters\\' . $name);
         if ($resolvedObjectName !== false) {
             return $resolvedObjectName;
         }

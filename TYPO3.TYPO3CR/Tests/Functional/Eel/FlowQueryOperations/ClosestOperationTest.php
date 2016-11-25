@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Tests\Functional\Eel\FlowQueryOperations;
+namespace Neos\ContentRepository\Tests\Functional\Eel\FlowQueryOperations;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,8 +12,8 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Eel\FlowQueryOperations;
  */
 
 use Neos\Eel\FlowQuery\FlowQuery;
-use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
-use TYPO3\TYPO3CR\Tests\Functional\AbstractNodeTest;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Tests\Functional\AbstractNodeTest;
 
 /**
  * Functional test case which tests FlowQuery ClosestOperation
@@ -28,7 +28,7 @@ class ClosestOperationTest extends AbstractNodeTest
         return array(
             array(
                 'currentNodePath' => '/b/b1/b1a',
-                'nodeTypeFilter' => '[instanceof TYPO3.TYPO3CR.Testing:NodeType]',
+                'nodeTypeFilter' => '[instanceof Neos.ContentRepository.Testing:NodeType]',
                 'expectedNodePath' => '/b/b1'
             ),
             array(
@@ -38,22 +38,22 @@ class ClosestOperationTest extends AbstractNodeTest
             ),
             array(
                 'currentNodePath' => '/b/b3/b3b',
-                'nodeTypeFilter' => '[instanceof TYPO3.TYPO3CR.Testing:NodeTypeWithSubnodes]',
+                'nodeTypeFilter' => '[instanceof Neos.ContentRepository.Testing:NodeTypeWithSubnodes]',
                 'expectedNodePath' => '/b/b3'
             ),
             array(
                 'currentNodePath' => '/b/b1/b1a',
-                'nodeTypeFilter' => '[instanceof TYPO3.TYPO3CR.Testing:NodeTypeWithSubnodes]',
+                'nodeTypeFilter' => '[instanceof Neos.ContentRepository.Testing:NodeTypeWithSubnodes]',
                 'expectedNodePath' => null
             ),
             array(
                 'currentNodePath' => '/b/b1',
-                'nodeTypeFilter' => '[instanceof TYPO3.TYPO3CR.Testing:NodeTypeWithSubnodes]',
+                'nodeTypeFilter' => '[instanceof Neos.ContentRepository.Testing:NodeTypeWithSubnodes]',
                 'expectedNodePath' => null
             ),
             array(
                 'currentNodePath' => '/b/b3/b3a',
-                'nodeTypeFilter' => '[instanceof TYPO3.TYPO3CR.Testing:NodeType]',
+                'nodeTypeFilter' => '[instanceof Neos.ContentRepository.Testing:NodeType]',
                 'expectedNodePath' => '/b/b3/b3a'
             )
         );
@@ -79,8 +79,8 @@ class ClosestOperationTest extends AbstractNodeTest
     public function closestOperationTests($currentNodePath, $nodeTypeFilter, $expectedNodePath)
     {
         $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
-        $testNodeType1 = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType');
-        $testNodeType2 = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithSubnodes');
+        $testNodeType1 = $nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeType');
+        $testNodeType2 = $nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeTypeWithSubnodes');
 
         $rootNode = $this->node->getNode('/');
         $nodeA = $rootNode->createNode('a');

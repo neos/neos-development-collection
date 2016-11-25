@@ -7,8 +7,8 @@ Feature: Translate existing node
     Given I have the following nodes:
       | Identifier                           | Path                   | Node Type                  | Properties           | Language | Workspace |
       | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /sites                 | unstructured               |                      | mul_ZZ   | live      |
-      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr         | TYPO3.TYPO3CR.Testing:Page | {"title": "Home"}    | mul_ZZ   | live      |
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/company | TYPO3.TYPO3CR.Testing:Page | {"title": "Company"} | en_ZZ    | live      |
+      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr         | Neos.ContentRepository.Testing:Page | {"title": "Home"}    | mul_ZZ   | live      |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/company | Neos.ContentRepository.Testing:Page | {"title": "Company"} | en_ZZ    | live      |
 
   @fixtures
   Scenario: An existing node can be translated to a new language by adopting it from a different context
@@ -58,7 +58,7 @@ Feature: Translate existing node
   Scenario: An existing node variant will be re-used when adopting a node
     Given I have the following nodes:
       | Identifier                           | Path                   | Node Type                  | Properties               | Language | Workspace |
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/company | TYPO3.TYPO3CR.Testing:Page | {"title": "Unternehmen"} | de_ZZ    | live      |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/company | Neos.ContentRepository.Testing:Page | {"title": "Unternehmen"} | de_ZZ    | live      |
     When I get a node by path "/sites/typo3cr/company" with the following context:
       | Language      |
       | en_ZZ, mul_ZZ |
@@ -164,9 +164,9 @@ Feature: Translate existing node
   Scenario: Recursive adopt creates node variants for all non-aggregate descendants
     Given I have the following nodes:
       | Identifier                           | Path                                              | Node Type                       | Language |
-      | cc302952-6442-11e4-9935-14109fd7a2dd | /sites/typo3cr/company/contact                    | TYPO3.TYPO3CR.Testing:Page      | en_ZZ    |
-      | 74fe032a-6442-11e4-8135-14109fd7a2dd | /sites/typo3cr/company/main/two-col               | TYPO3.TYPO3CR.Testing:TwoColumn | en_ZZ    |
-      | 864b6a8c-6442-11e4-8791-14109fd7a2dd | /sites/typo3cr/company/main/two-col/column0/text0 | TYPO3.TYPO3CR.Testing:Text      | en_ZZ    |
+      | cc302952-6442-11e4-9935-14109fd7a2dd | /sites/typo3cr/company/contact                    | Neos.ContentRepository.Testing:Page      | en_ZZ    |
+      | 74fe032a-6442-11e4-8135-14109fd7a2dd | /sites/typo3cr/company/main/two-col               | Neos.ContentRepository.Testing:TwoColumn | en_ZZ    |
+      | 864b6a8c-6442-11e4-8791-14109fd7a2dd | /sites/typo3cr/company/main/two-col/column0/text0 | Neos.ContentRepository.Testing:Text      | en_ZZ    |
     When I get a node by path "/sites/typo3cr/company" with the following context:
       | Language      |
       | en_ZZ, mul_ZZ |

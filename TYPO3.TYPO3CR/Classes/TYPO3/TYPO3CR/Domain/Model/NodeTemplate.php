@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Domain\Model;
+namespace Neos\ContentRepository\Domain\Model;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,7 +13,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Validation\Validator\UuidValidator;
-use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
+use Neos\ContentRepository\Domain\Utility\NodePaths;
 
 /**
  * A container of properties which can be used as a template for generating new nodes.

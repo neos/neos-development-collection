@@ -7,11 +7,11 @@ Feature: Rename node
     Given I have the following nodes:
       | Identifier                           | Path                            | Node Type                  | Properties                   | Workspace |
       | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /sites                          | unstructured               |                              | live      |
-      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr                  | TYPO3.TYPO3CR.Testing:Page | {"title": "Home"}            | live      |
-      | 52540602-b417-11e3-9358-14109fd7a2dd | /sites/typo3cr/service          | TYPO3.TYPO3CR.Testing:Page | {"title": "Service"}         | live      |
-      | bdbc9add-800b-6613-8a86-263858cc7964 | /sites/typo3cr/service/request  | TYPO3.TYPO3CR.Testing:Page | {"title": "Service Request"} | live      |
-      | c41d35bf-27e5-5645-a290-6a8b35c5935a | /sites/typo3cr/company          | TYPO3.TYPO3CR.Testing:Page | {"title": "Company"}         | live      |
-      | 23ebd69e-4e0e-27e6-a41a-42dd14df615f | /sites/typo3cr/company/about-us | TYPO3.TYPO3CR.Testing:Page | {"title": "About us"}        | live      |
+      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr                  | Neos.ContentRepository.Testing:Page | {"title": "Home"}            | live      |
+      | 52540602-b417-11e3-9358-14109fd7a2dd | /sites/typo3cr/service          | Neos.ContentRepository.Testing:Page | {"title": "Service"}         | live      |
+      | bdbc9add-800b-6613-8a86-263858cc7964 | /sites/typo3cr/service/request  | Neos.ContentRepository.Testing:Page | {"title": "Service Request"} | live      |
+      | c41d35bf-27e5-5645-a290-6a8b35c5935a | /sites/typo3cr/company          | Neos.ContentRepository.Testing:Page | {"title": "Company"}         | live      |
+      | 23ebd69e-4e0e-27e6-a41a-42dd14df615f | /sites/typo3cr/company/about-us | Neos.ContentRepository.Testing:Page | {"title": "About us"}        | live      |
 
   @fixtures
   Scenario: Rename a non-materialized node

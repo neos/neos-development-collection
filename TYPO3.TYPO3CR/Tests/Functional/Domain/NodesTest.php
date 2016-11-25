@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
+namespace Neos\ContentRepository\Tests\Functional\Domain;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,18 +12,18 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
  */
 
 use Neos\Flow\Tests\FunctionalTestCase;
-use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
-use TYPO3\TYPO3CR\Domain\Model\Node;
-use TYPO3\TYPO3CR\Domain\Model\NodeData;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
-use TYPO3\TYPO3CR\Domain\Service\Context;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
-use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
-use TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\HappyNode;
+use Neos\ContentRepository\Domain\Factory\NodeFactory;
+use Neos\ContentRepository\Domain\Model\Node;
+use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
+use Neos\ContentRepository\Domain\Service\Context;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Tests\Functional\Domain\Fixtures\HappyNode;
 
 /**
  * Functional test case which covers all Node-related behavior of the
@@ -171,7 +171,7 @@ class NodesTest extends FunctionalTestCase
         $rootNode = $this->context->getRootNode();
 
         $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
-        $testNodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType');
+        $testNodeType = $nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeType');
         $fooNode = $rootNode->createNode('foo', $testNodeType);
 
         $this->assertSame('default value 1', $fooNode->getProperty('test1'));
@@ -185,7 +185,7 @@ class NodesTest extends FunctionalTestCase
         $rootNode = $this->context->getRootNode();
 
         $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
-        $testNodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithProcessor');
+        $testNodeType = $nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeTypeWithProcessor');
         $fooNode = $rootNode->createNode('foo', $testNodeType);
 
         $this->assertSame('The value of "someOption" is "someOverriddenValue", the value of "someOtherOption" is "someOtherValue"', $fooNode->getProperty('test1'));
@@ -199,7 +199,7 @@ class NodesTest extends FunctionalTestCase
         $rootNode = $this->context->getRootNode();
 
         $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
-        $testNodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithSubnodes');
+        $testNodeType = $nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeTypeWithSubnodes');
         $fooNode = $rootNode->createNode('foo', $testNodeType);
         $firstSubnode = $fooNode->getNode('subnode1');
         $this->assertInstanceOf(Node::class, $firstSubnode);
@@ -829,7 +829,7 @@ class NodesTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\TYPO3CR\Exception\NodeExistsException
+     * @expectedException \Neos\ContentRepository\Exception\NodeExistsException
      */
     public function moveBeforeThrowsExceptionIfTargetExists()
     {
@@ -843,7 +843,7 @@ class NodesTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\TYPO3CR\Exception\NodeExistsException
+     * @expectedException \Neos\ContentRepository\Exception\NodeExistsException
      */
     public function moveAfterThrowsExceptionIfTargetExists()
     {
@@ -857,7 +857,7 @@ class NodesTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\TYPO3CR\Exception\NodeExistsException
+     * @expectedException \Neos\ContentRepository\Exception\NodeExistsException
      */
     public function moveIntoThrowsExceptionIfTargetExists()
     {
@@ -1235,7 +1235,7 @@ class NodesTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\TYPO3CR\Exception\NodeExistsException
+     * @expectedException \Neos\ContentRepository\Exception\NodeExistsException
      */
     public function copyBeforeThrowsExceptionIfTargetExists()
     {
@@ -1250,7 +1250,7 @@ class NodesTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\TYPO3CR\Exception\NodeExistsException
+     * @expectedException \Neos\ContentRepository\Exception\NodeExistsException
      */
     public function copyAfterThrowsExceptionIfTargetExists()
     {
@@ -1265,7 +1265,7 @@ class NodesTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\TYPO3CR\Exception\NodeExistsException
+     * @expectedException \Neos\ContentRepository\Exception\NodeExistsException
      */
     public function copyIntoThrowsExceptionIfTargetExists()
     {
@@ -1283,7 +1283,7 @@ class NodesTest extends FunctionalTestCase
     public function setPropertyAcceptsAndConvertsIdentifierIfTargetTypeIsReference()
     {
         $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
-        $nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithReferences');
+        $nodeType = $nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeTypeWithReferences');
 
         $rootNode = $this->context->getNode('/');
         $nodeA = $rootNode->createNode('node-a', $nodeType, '30e893c1-caef-0ca5-b53d-e5699bb8e506');
@@ -1302,7 +1302,7 @@ class NodesTest extends FunctionalTestCase
     public function setPropertyAcceptsAndConvertsIdentifiersIfTargetTypeIsReferences()
     {
         $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
-        $nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithReferences');
+        $nodeType = $nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeTypeWithReferences');
 
         $rootNode = $this->context->getNode('/');
         $nodeA = $rootNode->createNode('node-a', $nodeType, '30e893c1-caef-0ca5-b53d-e5699bb8e506');
@@ -1327,7 +1327,7 @@ class NodesTest extends FunctionalTestCase
     public function getPropertiesReturnsReferencePropertiesAsNodeObjects()
     {
         $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
-        $nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithReferences');
+        $nodeType = $nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeTypeWithReferences');
 
         $rootNode = $this->context->getNode('/');
         $nodeA = $rootNode->createNode('node-a', $nodeType, '30e893c1-caef-0ca5-b53d-e5699bb8e506');
@@ -1353,7 +1353,7 @@ class NodesTest extends FunctionalTestCase
     public function getPropertyDoesNotReturnNodeReferencesIfTheyAreNotVisibleAccordingToTheContentContext()
     {
         $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
-        $nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithReferences');
+        $nodeType = $nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeTypeWithReferences');
 
         $this->context = $this->contextFactory->create(['workspaceName' => 'live', 'invisibleContentShown' => false]);
 
@@ -1382,7 +1382,7 @@ class NodesTest extends FunctionalTestCase
     public function getPropertyReturnsReferencedNodesInCorrectWorkspace()
     {
         $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
-        $nodeType = $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithReferences');
+        $nodeType = $nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeTypeWithReferences');
 
         $identifier = '81c848ed-abb5-7608-a5db-7eea0331ccfa';
         $rootNode = $this->context->getNode('/');
@@ -1578,9 +1578,9 @@ class NodesTest extends FunctionalTestCase
     public function nodesCanHaveCustomImplementationClass()
     {
         $rootNode = $this->context->getRootNode();
-        $testingNodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithReferences');
-        $happyNodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:HappyTestingNode');
-        $headlineNodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Headline');
+        $testingNodeType = $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeTypeWithReferences');
+        $happyNodeType = $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:HappyTestingNode');
+        $headlineNodeType = $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Headline');
 
         $fooNode = $rootNode->createNode('foo', $testingNodeType);
         $happyNode = $fooNode->createNode('bar', $happyNodeType);
@@ -1599,14 +1599,14 @@ class NodesTest extends FunctionalTestCase
      */
     public function getChildNodesWithNodeTypeFilterWorks()
     {
-        $documentNodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Document');
-        $headlineNodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Headline');
-        $imageNodeType = $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Image');
+        $documentNodeType = $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Document');
+        $headlineNodeType = $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Headline');
+        $imageNodeType = $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Image');
 
         $node = $this->context->getRootNode()->createNode('node-with-child-node', $documentNodeType);
         $node->createNode('headline', $headlineNodeType);
         $node->createNode('text', $imageNodeType);
-        $this->assertCount(1, $node->getChildNodes('TYPO3.TYPO3CR.Testing:Headline'));
+        $this->assertCount(1, $node->getChildNodes('Neos.ContentRepository.Testing:Headline'));
     }
 
     /**

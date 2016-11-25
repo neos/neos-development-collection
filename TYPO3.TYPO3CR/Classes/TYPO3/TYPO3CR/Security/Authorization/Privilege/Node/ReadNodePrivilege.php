@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Security\Authorization\Privilege\Node;
+namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -16,8 +16,8 @@ use Neos\Eel\Context;
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilege;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
 use Neos\Flow\Security\Exception\InvalidPrivilegeTypeException;
-use TYPO3\TYPO3CR\Domain\Model\NodeData;
-use TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\Doctrine\ConditionGenerator;
+use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Security\Authorization\Privilege\Node\Doctrine\ConditionGenerator;
 
 /**
  * A node privilege to restricting reading of nodes.

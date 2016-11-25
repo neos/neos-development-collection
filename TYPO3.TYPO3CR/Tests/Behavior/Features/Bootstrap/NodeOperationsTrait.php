@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Tests\Behavior\Features\Bootstrap;
+namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -15,9 +15,9 @@ use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\Arrays;
 use PHPUnit_Framework_Assert as Assert;
 use Symfony\Component\Yaml\Yaml;
-use TYPO3\TYPO3CR\Domain\Service\PublishingServiceInterface;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use Neos\ContentRepository\Domain\Service\PublishingServiceInterface;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 
 /**
  * A trait with shared step definitions for common use by other contexts
@@ -29,7 +29,7 @@ use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 trait NodeOperationsTrait
 {
     /**
-     * @var array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
+     * @var array<\Neos\ContentRepository\Domain\Model\NodeInterface>
      */
     private $currentNodes = array();
 
@@ -78,8 +78,8 @@ trait NodeOperationsTrait
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg(\Neos\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))), true);
         } else {
-            /** @var \TYPO3\TYPO3CR\Domain\Service\NodeTypeManager $nodeTypeManager */
-            $nodeTypeManager = $this->getObjectManager()->get(\TYPO3\TYPO3CR\Domain\Service\NodeTypeManager::class);
+            /** @var \Neos\ContentRepository\Domain\Service\NodeTypeManager $nodeTypeManager */
+            $nodeTypeManager = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class);
 
             $rows = $table->getHash();
             foreach ($rows as $row) {
@@ -171,11 +171,11 @@ trait NodeOperationsTrait
                     $dimensions[$row['Identifier']]['defaultPreset'] = $defaultPreset;
                 }
             }
-            $contentDimensionRepository = $this->getObjectManager()->get(\TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository::class);
+            $contentDimensionRepository = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Repository\ContentDimensionRepository::class);
             $contentDimensionRepository->setDimensionsConfiguration($dimensions);
 
             if ($presetsFound === true) {
-                $contentDimensionPresetSource = $this->getObjectManager()->get(\TYPO3\TYPO3CR\Domain\Service\ContentDimensionPresetSourceInterface::class);
+                $contentDimensionPresetSource = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface::class);
                 $contentDimensionPresetSource->setConfiguration($dimensions);
             }
         }
@@ -414,7 +414,7 @@ trait NodeOperationsTrait
             $workspace = $context->getWorkspace();
 
             /** @var PublishingServiceInterface $publishingService */
-            $publishingService = $this->getObjectManager()->get(\TYPO3\TYPO3CR\Domain\Service\PublishingServiceInterface::class);
+            $publishingService = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\PublishingServiceInterface::class);
             $publishingService->discardNodes($publishingService->getUnpublishedNodes($workspace));
 
             $this->getSubcontext('flow')->persistAll();
@@ -431,7 +431,7 @@ trait NodeOperationsTrait
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($sourceWorkspaceName), escapeshellarg(\Neos\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))));
         } else {
             /** @var PublishingServiceInterface $publishingService */
-            $publishingService = $this->getObjectManager()->get(\TYPO3\TYPO3CR\Domain\Service\PublishingServiceInterface::class);
+            $publishingService = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\PublishingServiceInterface::class);
 
             $rows = $table->getHash();
             $rows[0]['Workspace'] = $sourceWorkspaceName;
@@ -542,7 +542,7 @@ trait NodeOperationsTrait
     /**
      * @Then /^I should have one node$/
      *
-     * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+     * @return \Neos\ContentRepository\Domain\Model\NodeInterface
      */
     public function iShouldHaveOneNode()
     {
@@ -754,9 +754,9 @@ trait NodeOperationsTrait
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($workspaceName), 'integer', escapeshellarg($count)));
         } else {
-            $workspaceRepository = $this->getObjectManager()->get(\TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository::class);
+            $workspaceRepository = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Repository\WorkspaceRepository::class);
             $workspace = $workspaceRepository->findOneByName($workspaceName);
-            $publishingService = $this->getObjectManager()->get(\TYPO3\TYPO3CR\Domain\Service\PublishingServiceInterface::class);
+            $publishingService = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\PublishingServiceInterface::class);
             $unpublishedNodesCount = $publishingService->getUnpublishedNodesCount($workspace);
             Assert::assertEquals($count, $unpublishedNodesCount);
         }
@@ -784,7 +784,7 @@ trait NodeOperationsTrait
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__);
         } else {
-            $this->getObjectManager()->get(\TYPO3\TYPO3CR\Domain\Service\NodeTypeManager::class)->overrideNodeTypes(array());
+            $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class)->overrideNodeTypes(array());
         }
     }
 
@@ -802,7 +802,7 @@ trait NodeOperationsTrait
                 $this->nodeTypesConfiguration = Yaml::parse($nodeTypesConfiguration->getRaw());
                 $configuration = $this->nodeTypesConfiguration;
             }
-            $this->getObjectManager()->get(\TYPO3\TYPO3CR\Domain\Service\NodeTypeManager::class)->overrideNodeTypes($configuration);
+            $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class)->overrideNodeTypes($configuration);
         }
     }
 
@@ -815,7 +815,7 @@ trait NodeOperationsTrait
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg(trim($not)), 'integer', escapeshellarg($nodeTypeName)));
         } else {
             $currentNode = $this->iShouldHaveOneNode();
-            $nodeType = $this->getObjectManager()->get(\TYPO3\TYPO3CR\Domain\Service\NodeTypeManager::class)->getNodeType($nodeTypeName);
+            $nodeType = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class)->getNodeType($nodeTypeName);
             if (empty($not)) {
                 // ALLOWED to create node
                 Assert::assertTrue($currentNode->isNodeTypeAllowedAsChildNode($nodeType), 'isNodeTypeAllowed returned the wrong value');
@@ -830,7 +830,7 @@ trait NodeOperationsTrait
                 try {
                     $currentNode->createNode(uniqid('custom-node'), $nodeType);
                     Assert::fail('It was possible to create a custom node, although it should have been prevented');
-                } catch (\TYPO3\TYPO3CR\Exception\NodeConstraintException $nodeConstraintExceptio) {
+                } catch (\Neos\ContentRepository\Exception\NodeConstraintException $nodeConstraintExceptio) {
                     // Expected exception
                 }
             }
@@ -917,9 +917,9 @@ trait NodeOperationsTrait
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__);
         } else {
-            $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository::class)->reset();
-            $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface::class)->reset();
-            $this->objectManager->get(\TYPO3\TYPO3CR\Domain\Factory\NodeFactory::class)->reset();
+            $this->objectManager->get(\Neos\ContentRepository\Domain\Repository\NodeDataRepository::class)->reset();
+            $this->objectManager->get(\Neos\ContentRepository\Domain\Service\ContextFactoryInterface::class)->reset();
+            $this->objectManager->get(\Neos\ContentRepository\Domain\Factory\NodeFactory::class)->reset();
         }
     }
 
@@ -932,8 +932,8 @@ trait NodeOperationsTrait
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__);
         } else {
-            $contentDimensionRepository = $this->getObjectManager()->get(\TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository::class);
-            /** @var \TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository $contentDimensionRepository */
+            $contentDimensionRepository = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Repository\ContentDimensionRepository::class);
+            /** @var \Neos\ContentRepository\Domain\Repository\ContentDimensionRepository $contentDimensionRepository */
 
             // Set the content dimensions to a fixed value for Behat scenarios
             $contentDimensionRepository->setDimensionsConfiguration(array('language' => array('default' => 'mul_ZZ')));
@@ -945,7 +945,7 @@ trait NodeOperationsTrait
      *
      * @param array $humanReadableContextProperties
      * @param boolean $addDimensionDefaults
-     * @return \TYPO3\TYPO3CR\Domain\Service\Context
+     * @return \Neos\ContentRepository\Domain\Service\Context
      * @throws Exception
      */
     protected function getContextForProperties(array $humanReadableContextProperties, $addDimensionDefaults = false)
@@ -953,8 +953,8 @@ trait NodeOperationsTrait
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg($humanReadableContextProperties), 'integer', escapeshellarg($addDimensionDefaults)));
         } else {
-            /** @var \TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface $contextFactory */
-            $contextFactory = $this->getObjectManager()->get(\TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface::class);
+            /** @var \Neos\ContentRepository\Domain\Service\ContextFactoryInterface $contextFactory */
+            $contextFactory = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\ContextFactoryInterface::class);
             $contextProperties = array();
 
             if (isset($humanReadableContextProperties['Language'])) {
@@ -988,7 +988,7 @@ trait NodeOperationsTrait
             }
 
             if ($addDimensionDefaults) {
-                $contentDimensionRepository = $this->getObjectManager()->get(\TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository::class);
+                $contentDimensionRepository = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Repository\ContentDimensionRepository::class);
                 $availableDimensions = $contentDimensionRepository->findAll();
                 foreach ($availableDimensions as $dimension) {
                     if (isset($contextProperties['dimensions'][$dimension->getIdentifier()]) && !in_array($dimension->getDefault(), $contextProperties['dimensions'][$dimension->getIdentifier()])) {

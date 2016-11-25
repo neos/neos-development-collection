@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Command;
+namespace Neos\ContentRepository\Command;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -16,11 +16,11 @@ use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\DescriptionAwareCommandControllerInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
-use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
-use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 
 /**
- * Node command controller for the TYPO3.TYPO3CR package
+ * Node command controller for the Neos.ContentRepository package
  *
  * @Flow\Scope("singleton")
  */

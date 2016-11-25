@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Command;
+namespace Neos\ContentRepository\Command;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -19,20 +19,20 @@ use Neos\Flow\Cli\ConsoleOutput;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Utility\Arrays;
-use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
-use TYPO3\TYPO3CR\Domain\Model\Node;
-use TYPO3\TYPO3CR\Domain\Model\NodeData;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
-use TYPO3\TYPO3CR\Domain\Service\ContentDimensionCombinator;
-use TYPO3\TYPO3CR\Domain\Service\Context;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
-use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
-use TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException;
-use TYPO3\TYPO3CR\Utility;
+use Neos\ContentRepository\Domain\Factory\NodeFactory;
+use Neos\ContentRepository\Domain\Model\Node;
+use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
+use Neos\ContentRepository\Domain\Service\ContentDimensionCombinator;
+use Neos\ContentRepository\Domain\Service\Context;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Utility;
 
 /**
  * Plugin for the TYPO3CR NodeCommandController which provides functionality for creating missing child nodes.
@@ -587,7 +587,7 @@ HELPTEXT;
         /** @var \Doctrine\ORM\QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->createQueryBuilder();
 
-        /** @var \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace */
+        /** @var \Neos\ContentRepository\Domain\Model\Workspace $workspace */
         $workspace = $this->workspaceRepository->findByIdentifier($workspaceName);
 
         $nodes = array();
@@ -655,7 +655,7 @@ HELPTEXT;
         $queryBuilder = $this->entityManager->createQueryBuilder();
 
         $workspaceList = array();
-        /** @var \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace */
+        /** @var \Neos\ContentRepository\Domain\Model\Workspace $workspace */
         $workspace = $this->workspaceRepository->findByIdentifier($workspaceName);
         while ($workspace !== null) {
             $workspaceList[] = $workspace->getName();
@@ -714,7 +714,7 @@ HELPTEXT;
     {
         $this->output->outputLine('Checking for undefined properties ...');
 
-        /** @var \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace */
+        /** @var \Neos\ContentRepository\Domain\Model\Workspace $workspace */
         $workspace = $this->workspaceRepository->findByIdentifier($workspaceName);
 
         $nodesWithUndefinedPropertiesNodes = array();
@@ -783,7 +783,7 @@ HELPTEXT;
     {
         $this->output->outputLine('Checking for broken entity references ...');
 
-        /** @var \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace */
+        /** @var \Neos\ContentRepository\Domain\Model\Workspace $workspace */
         $workspace = $this->workspaceRepository->findByIdentifier($workspaceName);
 
         $nodeTypesWithEntityReferences = array();

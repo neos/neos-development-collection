@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures;
+namespace Neos\ContentRepository\Tests\Functional\Domain\Fixtures;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,8 +11,8 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures;
  * source code.
  */
 
-use TYPO3\TYPO3CR\NodeTypePostprocessor\NodeTypePostprocessorInterface;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use Neos\ContentRepository\NodeTypePostprocessor\NodeTypePostprocessorInterface;
+use Neos\ContentRepository\Domain\Model\NodeType;
 
 /**
  * An example NodePostprocessor used by the NodesTests
@@ -27,7 +27,7 @@ class TestNodePostprocessor implements NodeTypePostprocessorInterface
      */
     public function process(NodeType $nodeType, array &$configuration, array $options)
     {
-        if ($nodeType->isOfType('TYPO3.TYPO3CR.Testing:NodeTypeWithProcessor')) {
+        if ($nodeType->isOfType('Neos.ContentRepository.Testing:NodeTypeWithProcessor')) {
             $someOption = isset($options['someOption']) ? $options['someOption'] : '';
             $someOtherOption = isset($options['someOtherOption']) ? $options['someOtherOption'] : '';
             $configuration['properties']['test1']['defaultValue'] = sprintf('The value of "someOption" is "%s", the value of "someOtherOption" is "%s"', $someOption, $someOtherOption);

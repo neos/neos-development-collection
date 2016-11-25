@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Tests\Functional\Domain\Repository;
+namespace Neos\ContentRepository\Tests\Functional\Domain\Repository;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,12 +14,12 @@ namespace TYPO3\TYPO3CR\Tests\Functional\Domain\Repository;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\Image;
 use Neos\Flow\Tests\FunctionalTestCase;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Service\Context;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
-use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Domain\Service\Context;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 
 /**
  * Functional test case.
@@ -92,7 +92,7 @@ class NodeDataRepositoryTest extends FunctionalTestCase
     public function findNodesByRelatedEntitiesFindsExistingNodeWithMatchingEntityProperty()
     {
         $rootNode = $this->context->getRootNode();
-        $newNode = $rootNode->createNode('test', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeTypeWithEntities'));
+        $newNode = $rootNode->createNode('test', $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeTypeWithEntities'));
 
         $testImage = new Image();
         $this->persistenceManager->add($testImage);
@@ -217,7 +217,7 @@ class NodeDataRepositoryTest extends FunctionalTestCase
     {
         $this->createNodesForNodeSearchTest();
 
-        $result = $this->nodeDataRepository->findByProperties('simpleTestValue', 'TYPO3.TYPO3CR.Testing:NodeType', $this->liveWorkspace, $this->context->getDimensions());
+        $result = $this->nodeDataRepository->findByProperties('simpleTestValue', 'Neos.ContentRepository.Testing:NodeType', $this->liveWorkspace, $this->context->getDimensions());
         $this->assertCount(2, $result);
         $this->assertResultConsistsOfNodes($result, ['test-node-1', 'test-node-2']);
     }
@@ -229,25 +229,25 @@ class NodeDataRepositoryTest extends FunctionalTestCase
     {
         $this->createNodesForNodeSearchTest();
 
-        $result = $this->nodeDataRepository->findByProperties(array('test2' => 'simpleTestValue'), 'TYPO3.TYPO3CR.Testing:NodeType', $this->liveWorkspace, $this->context->getDimensions());
+        $result = $this->nodeDataRepository->findByProperties(array('test2' => 'simpleTestValue'), 'Neos.ContentRepository.Testing:NodeType', $this->liveWorkspace, $this->context->getDimensions());
         $this->assertCount(1, $result);
         $this->assertEquals('test-node-2', array_shift($result)->getName());
     }
 
     /**
-     * @throws \TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException
+     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
     protected function createNodesForNodeSearchTest()
     {
         $rootNode = $this->context->getRootNode();
 
-        $newNode1 = $rootNode->createNode('test-node-1', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType'));
+        $newNode1 = $rootNode->createNode('test-node-1', $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeType'));
         $newNode1->setProperty('test1', 'simpleTestValue');
 
-        $newNode2 = $rootNode->createNode('test-node-2', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType'));
+        $newNode2 = $rootNode->createNode('test-node-2', $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeType'));
         $newNode2->setProperty('test2', 'simpleTestValue');
 
-        $newNode2 = $rootNode->createNode('test-node-3', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:NodeType'));
+        $newNode2 = $rootNode->createNode('test-node-3', $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeType'));
         $newNode2->setProperty('test1', 'otherValue');
 
         $this->persistenceManager->persistAll();
@@ -255,7 +255,7 @@ class NodeDataRepositoryTest extends FunctionalTestCase
 
 
     /**
-     * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeData> $result
+     * @param array<\Neos\ContentRepository\Domain\Model\NodeData> $result
      * @param array $nodeNames
      */
     protected function assertResultConsistsOfNodes($result, $nodeNames)

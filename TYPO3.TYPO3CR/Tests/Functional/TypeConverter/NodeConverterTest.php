@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Tests\Functional\TypeConverter;
+namespace Neos\ContentRepository\Tests\Functional\TypeConverter;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,17 +14,17 @@ namespace TYPO3\TYPO3CR\Tests\Functional\TypeConverter;
 use Neos\Error\Messages\Error;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Tests\FunctionalTestCase;
-use TYPO3\TYPO3CR\Domain\Model\Node;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
-use TYPO3\TYPO3CR\Domain\Service\Context;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactory;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactoryInterface;
-use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
-use TYPO3\TYPO3CR\TypeConverter\NodeConverter;
+use Neos\ContentRepository\Domain\Model\Node;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
+use Neos\ContentRepository\Domain\Service\Context;
+use Neos\ContentRepository\Domain\Service\ContextFactory;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\TypeConverter\NodeConverter;
 
 /**
  * Functional test case which tests the node converter
@@ -121,7 +121,7 @@ class NodeConverterTest extends FunctionalTestCase
     /**
      * Set up the following node structure:
      *
-     * /headline (TYPO3.TYPO3CR.Testing:Headline)
+     * /headline (Neos.ContentRepository.Testing:Headline)
      *   - live workspace
      *     - title: Hello World
      *   - personal workspace
@@ -135,7 +135,7 @@ class NodeConverterTest extends FunctionalTestCase
     protected function setupNodeWithShadowNodeInPersonalWorkspace()
     {
         $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
-        $headlineNode = $this->rootNodeInLiveWorkspace->createNode('headline', $nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Headline'));
+        $headlineNode = $this->rootNodeInLiveWorkspace->createNode('headline', $nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:Headline'));
         $headlineNode->setProperty('title', 'Hello World');
         $headlineNodeInPersonalWorkspace = $this->rootNodeInPersonalWorkspace->getNode('headline');
         $headlineNodeInPersonalWorkspace->setProperty('subtitle', 'Brave new world');

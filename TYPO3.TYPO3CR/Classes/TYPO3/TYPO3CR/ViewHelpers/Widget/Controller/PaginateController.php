@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\ViewHelpers\Widget\Controller;
+namespace Neos\ContentRepository\ViewHelpers\Widget\Controller;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,8 +13,8 @@ namespace TYPO3\TYPO3CR\ViewHelpers\Widget\Controller;
 
 use Neos\Utility\Arrays;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetController;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Exception\PageNotFoundException;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Exception\PageNotFoundException;
 
 /**
  * The widget controller for the Node Paginate Widget
@@ -27,7 +27,7 @@ class PaginateController extends AbstractWidgetController
     protected $parentNode;
 
     /**
-     * @var array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface>
+     * @var array<\Neos\ContentRepository\Domain\Model\NodeInterface>
      */
     protected $nodes;
 

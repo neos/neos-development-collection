@@ -1,25 +1,25 @@
-'TYPO3\TYPO3CR\Domain\Repository\ContentDimensionRepository':
+'Neos\ContentRepository\Domain\Repository\ContentDimensionRepository':
   properties:
     dimensionsConfiguration:
-      setting: 'TYPO3.TYPO3CR.contentDimensions'
-'TYPO3\TYPO3CR\Domain\Service\PublishingServiceInterface':
-  className: TYPO3\TYPO3CR\Domain\Service\PublishingService
-'TYPO3\TYPO3CR\Domain\Model\NodeInterface':
-  className: TYPO3\TYPO3CR\Domain\Model\Node
-'TYPO3\TYPO3CR\Domain\Service\ConfigurationContentDimensionPresetSource':
+      setting: 'Neos.ContentRepository.contentDimensions'
+'Neos\ContentRepository\Domain\Service\PublishingServiceInterface':
+  className: Neos\ContentRepository\Domain\Service\PublishingService
+'Neos\ContentRepository\Domain\Model\NodeInterface':
+  className: Neos\ContentRepository\Domain\Model\Node
+'Neos\ContentRepository\Domain\Service\ConfigurationContentDimensionPresetSource':
   properties:
     configuration:
-      setting: 'TYPO3.TYPO3CR.contentDimensions'
-'TYPO3\TYPO3CR\Domain\Service\ContentDimensionPresetSourceInterface':
-  className: TYPO3\TYPO3CR\Domain\Service\ConfigurationContentDimensionPresetSource
-'TYPO3\TYPO3CR\Domain\Model\NodeLabelGeneratorInterface':
-  className: TYPO3\TYPO3CR\Domain\Model\ExpressionBasedNodeLabelGenerator
-'TYPO3\TYPO3CR\Domain\Model\NodeDataLabelGeneratorInterface':
-  className: TYPO3\TYPO3CR\Domain\Model\FallbackNodeDataLabelGenerator
-'TYPO3\TYPO3CR\Domain\Service\NodeServiceInterface':
-  className: TYPO3\TYPO3CR\Domain\Service\NodeService
+      setting: 'Neos.ContentRepository.contentDimensions'
+'Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface':
+  className: Neos\ContentRepository\Domain\Service\ConfigurationContentDimensionPresetSource
+'Neos\ContentRepository\Domain\Model\NodeLabelGeneratorInterface':
+  className: Neos\ContentRepository\Domain\Model\ExpressionBasedNodeLabelGenerator
+'Neos\ContentRepository\Domain\Model\NodeDataLabelGeneratorInterface':
+  className: Neos\ContentRepository\Domain\Model\FallbackNodeDataLabelGenerator
+'Neos\ContentRepository\Domain\Service\NodeServiceInterface':
+  className: Neos\ContentRepository\Domain\Service\NodeService
 
-'TYPO3\TYPO3CR\Domain\Service\NodeTypeManager':
+'Neos\ContentRepository\Domain\Service\NodeTypeManager':
   properties:
     fullConfigurationCache:
       object:

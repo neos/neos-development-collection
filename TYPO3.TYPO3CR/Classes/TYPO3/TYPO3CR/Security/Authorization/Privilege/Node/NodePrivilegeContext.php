@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Security\Authorization\Privilege\Node;
+namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,9 +14,9 @@ namespace TYPO3\TYPO3CR\Security\Authorization\Privilege\Node;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Validation\Validator\UuidValidator;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
-use TYPO3\TYPO3CR\Domain\Service\ContentDimensionPresetSourceInterface;
-use TYPO3\TYPO3CR\Domain\Service\ContextFactory;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface;
+use Neos\ContentRepository\Domain\Service\ContextFactory;
 
 /**
  * An Eel context matching expression for the node privileges
@@ -114,7 +114,7 @@ class NodePrivilegeContext
     /**
      * Matches if the selected node is of the given NodeType(s). If multiple types are specified, only one entry has to match
      *
-     * Example: nodeIsOfType(['TYPO3.TYPO3CR:NodeType1', 'TYPO3.TYPO3CR:NodeType2']) matches if the selected node is of (sub) type *TYPO3.TYPO3CR:NodeType1* or *TYPO3.TYPO3CR:NodeType1*
+     * Example: nodeIsOfType(['Neos.ContentRepository:NodeType1', 'Neos.ContentRepository:NodeType2']) matches if the selected node is of (sub) type *Neos.ContentRepository:NodeType1* or *Neos.ContentRepository:NodeType1*
      *
      * @param string|array $nodeTypes A single or an array of fully qualified NodeType name(s), e.g. "TYPO3.Neos:Document"
      * @return boolean TRUE if the selected node matches the $nodeTypes, otherwise FALSE

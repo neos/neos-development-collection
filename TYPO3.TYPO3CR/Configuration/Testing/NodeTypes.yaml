@@ -1,6 +1,6 @@
 # Node Types for Functional Tests
 
-'TYPO3.TYPO3CR.Testing:NodeType':
+'Neos.ContentRepository.Testing:NodeType':
   properties:
     test1:
       defaultValue: 'default value 1'
@@ -8,34 +8,34 @@
       defaultValue: 'default value 2'
   constraints:
     nodeTypes:
-      'TYPO3.TYPO3CR.Testing:NodeType': TRUE
-      'TYPO3.TYPO3CR.Testing:NodeTypeWithSubnodes': TRUE
+      'Neos.ContentRepository.Testing:NodeType': TRUE
+      'Neos.ContentRepository.Testing:NodeTypeWithSubnodes': TRUE
 
-'TYPO3.TYPO3CR.Testing:NodeTypeWithSubnodes':
+'Neos.ContentRepository.Testing:NodeTypeWithSubnodes':
   childNodes:
     subnode1:
-      type: 'TYPO3.TYPO3CR.Testing:NodeType'
+      type: 'Neos.ContentRepository.Testing:NodeType'
   constraints:
     nodeTypes:
-      'TYPO3.TYPO3CR.Testing:NodeType': TRUE
-      'TYPO3.TYPO3CR.Testing:Document': TRUE
+      'Neos.ContentRepository.Testing:NodeType': TRUE
+      'Neos.ContentRepository.Testing:Document': TRUE
 
-'TYPO3.TYPO3CR.Testing:NodeTypeWithProcessor':
+'Neos.ContentRepository.Testing:NodeTypeWithProcessor':
   properties:
     test1:
       defaultValue: 'default value 1'
   postprocessors:
     'processor1':
-      postprocessor: 'TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\TestNodePostprocessor'
+      postprocessor: 'Neos\ContentRepository\Tests\Functional\Domain\Fixtures\TestNodePostprocessor'
       postprocessorOptions:
         someOption: 'someValue'
     'processor2':
-      postprocessor: 'TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\TestNodePostprocessor'
+      postprocessor: 'Neos\ContentRepository\Tests\Functional\Domain\Fixtures\TestNodePostprocessor'
       postprocessorOptions:
         someOption: 'someOverriddenValue'
         someOtherOption: 'someOtherValue'
 
-'TYPO3.TYPO3CR.Testing:NodeTypeWithReferences':
+'Neos.ContentRepository.Testing:NodeTypeWithReferences':
   properties:
     property1:
       type: string
@@ -44,151 +44,151 @@
     property3:
       type: references
 
-'TYPO3.TYPO3CR.Testing:Headline':
+'Neos.ContentRepository.Testing:Headline':
   superTypes:
-    'TYPO3.TYPO3CR.Testing:Content': TRUE
+    'Neos.ContentRepository.Testing:Content': TRUE
   properties:
     title:
       type: string
 
-'TYPO3.TYPO3CR.Testing:NodeTypeWithEntities':
+'Neos.ContentRepository.Testing:NodeTypeWithEntities':
   properties:
     image:
       type: 'Neos\Flow\Tests\Functional\Persistence\Fixtures\Image'
     wrappedImage:
-      type: 'TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\TestObjectForSerialization'
+      type: 'Neos\ContentRepository\Tests\Functional\Domain\Fixtures\TestObjectForSerialization'
     images:
       type: 'array<Neos\Flow\Tests\Functional\Persistence\Fixtures\Image>'
 
-'TYPO3.TYPO3CR.Testing:HappyTestingNode':
+'Neos.ContentRepository.Testing:HappyTestingNode':
   supertypes:
-    'TYPO3.TYPO3CR:TestingNodeType': TRUE
-  class: 'TYPO3\TYPO3CR\Tests\Functional\Domain\Fixtures\HappyNode'
+    'Neos.ContentRepository:TestingNodeType': TRUE
+  class: 'Neos\ContentRepository\Tests\Functional\Domain\Fixtures\HappyNode'
 
 # Constraint behat test nodetypes
-'TYPO3.TYPO3CR.Testing:Node':
+'Neos.ContentRepository.Testing:Node':
   abstract: TRUE
 
-'TYPO3.TYPO3CR.Testing:ContentCollection':
+'Neos.ContentRepository.Testing:ContentCollection':
   superTypes:
-    'TYPO3.TYPO3CR.Testing:Node': TRUE
+    'Neos.ContentRepository.Testing:Node': TRUE
   constraints:
     nodeTypes:
-      'TYPO3.TYPO3CR.Testing:Headline': TRUE
-      'TYPO3.TYPO3CR.Testing:TwoColumn': TRUE
-      'TYPO3.TYPO3CR.Testing:ThreeColumn': TRUE
-      'TYPO3.TYPO3CR.Testing:Text': TRUE
-      'TYPO3.TYPO3CR.Testing:Html': TRUE
-      'TYPO3.TYPO3CR.Testing:List': TRUE
+      'Neos.ContentRepository.Testing:Headline': TRUE
+      'Neos.ContentRepository.Testing:TwoColumn': TRUE
+      'Neos.ContentRepository.Testing:ThreeColumn': TRUE
+      'Neos.ContentRepository.Testing:Text': TRUE
+      'Neos.ContentRepository.Testing:Html': TRUE
+      'Neos.ContentRepository.Testing:List': TRUE
 
-'TYPO3.TYPO3CR.Testing:Document':
+'Neos.ContentRepository.Testing:Document':
   aggregate: TRUE
 
-'TYPO3.TYPO3CR.Testing:Page':
+'Neos.ContentRepository.Testing:Page':
   superTypes:
-    'TYPO3.TYPO3CR.Testing:Document': TRUE
+    'Neos.ContentRepository.Testing:Document': TRUE
   properties:
     title:
       type: string
   childNodes:
     'main':
-      type: 'TYPO3.TYPO3CR.Testing:ContentCollection'
+      type: 'Neos.ContentRepository.Testing:ContentCollection'
   constraints:
     nodeTypes:
       '*': TRUE
 
-'TYPO3.TYPO3CR.Testing:Chapter':
+'Neos.ContentRepository.Testing:Chapter':
   superTypes:
-    'TYPO3.TYPO3CR.Testing:Page': TRUE
+    'Neos.ContentRepository.Testing:Page': TRUE
 
-'TYPO3.TYPO3CR.Testing:PageWithConfiguredLabel':
+'Neos.ContentRepository.Testing:PageWithConfiguredLabel':
   superTypes:
-    'TYPO3.TYPO3CR.Testing:Page': TRUE
+    'Neos.ContentRepository.Testing:Page': TRUE
   label: "${q(node).property('title') || q(node).property('text') || ((node.nodeType.label || node.nodeType.name) + ' (' + node.name + ')')}"
   ui:
     label: 'Labeled Page'
 
-'TYPO3.TYPO3CR.Testing:Column':
+'Neos.ContentRepository.Testing:Column':
   superTypes:
-    'TYPO3.TYPO3CR.Testing:Content': TRUE
+    'Neos.ContentRepository.Testing:Content': TRUE
   abstract: TRUE
 
-'TYPO3.TYPO3CR.Testing:TwoColumn':
+'Neos.ContentRepository.Testing:TwoColumn':
   superTypes:
-    'TYPO3.TYPO3CR.Testing:Column': TRUE
+    'Neos.ContentRepository.Testing:Column': TRUE
   childNodes:
     column0:
-      type: 'TYPO3.TYPO3CR.Testing:ContentCollection'
+      type: 'Neos.ContentRepository.Testing:ContentCollection'
     column1:
-      type: 'TYPO3.TYPO3CR.Testing:ContentCollection'
+      type: 'Neos.ContentRepository.Testing:ContentCollection'
 
-'TYPO3.TYPO3CR.Testing:ThreeColumn':
+'Neos.ContentRepository.Testing:ThreeColumn':
   superTypes:
-    'TYPO3.TYPO3CR.Testing:Column': TRUE
+    'Neos.ContentRepository.Testing:Column': TRUE
   childNodes:
     column0:
-      type: 'TYPO3.TYPO3CR.Testing:ContentCollection'
+      type: 'Neos.ContentRepository.Testing:ContentCollection'
     column1:
-      type: 'TYPO3.TYPO3CR.Testing:ContentCollection'
+      type: 'Neos.ContentRepository.Testing:ContentCollection'
     column2:
-      type: 'TYPO3.TYPO3CR.Testing:ContentCollection'
+      type: 'Neos.ContentRepository.Testing:ContentCollection'
 
-'TYPO3.TYPO3CR.Testing:Content':
+'Neos.ContentRepository.Testing:Content':
   constraints:
     nodeTypes:
       '*': FALSE
 
-'TYPO3.TYPO3CR.Testing:Text':
+'Neos.ContentRepository.Testing:Text':
   superTypes:
-    'TYPO3.TYPO3CR.Testing:Content': TRUE
+    'Neos.ContentRepository.Testing:Content': TRUE
   properties:
     text:
       type: string
 
-'TYPO3.TYPO3CR.Testing:NodeTypeWithSubnodesAndConstraints':
+'Neos.ContentRepository.Testing:NodeTypeWithSubnodesAndConstraints':
   childNodes:
     subnode1:
-      type: 'TYPO3.TYPO3CR.Testing:NodeType'
+      type: 'Neos.ContentRepository.Testing:NodeType'
       constraints:
         nodeTypes:
-          'TYPO3.TYPO3CR.Testing:Headline': TRUE # allowed
+          'Neos.ContentRepository.Testing:Headline': TRUE # allowed
 
-'TYPO3.TYPO3CR.Testing:Image':
+'Neos.ContentRepository.Testing:Image':
   superTypes:
-    'TYPO3.TYPO3CR.Testing:Content': TRUE
+    'Neos.ContentRepository.Testing:Content': TRUE
 
-'TYPO3.TYPO3CR.Testing:TextWithImage':
+'Neos.ContentRepository.Testing:TextWithImage':
   superTypes:
-    'TYPO3.TYPO3CR.Testing:Text': TRUE
-    'TYPO3.TYPO3CR.Testing:Image': TRUE
+    'Neos.ContentRepository.Testing:Text': TRUE
+    'Neos.ContentRepository.Testing:Image': TRUE
 
-'TYPO3.TYPO3CR.Testing:Html':
+'Neos.ContentRepository.Testing:Html':
   superTypes:
-    'TYPO3.TYPO3CR.Testing:Content': TRUE
+    'Neos.ContentRepository.Testing:Content': TRUE
   properties:
     source:
       type: string
       defaultValue: '<p>Enter HTML here</p>'
 
-'TYPO3.TYPO3CR.Testing:List':
+'Neos.ContentRepository.Testing:List':
   superTypes:
-    'TYPO3.TYPO3CR.Testing:Content': TRUE
+    'Neos.ContentRepository.Testing:Content': TRUE
   childNodes:
     items:
-      type: 'TYPO3.TYPO3CR.Testing:ContentCollection'
+      type: 'Neos.ContentRepository.Testing:ContentCollection'
       constraints:
         nodeTypes:
-          'TYPO3.TYPO3CR.Testing:ListItem': TRUE
+          'Neos.ContentRepository.Testing:ListItem': TRUE
           '*': FALSE
 
-'TYPO3.TYPO3CR.Testing:ListItem':
+'Neos.ContentRepository.Testing:ListItem':
   superTypes:
-    'TYPO3.TYPO3CR.Testing:Content': TRUE
+    'Neos.ContentRepository.Testing:Content': TRUE
   properties:
     text:
       type: 'string'
 
-'TYPO3.TYPO3CR.Testing:ImportExport':
+'Neos.ContentRepository.Testing:ImportExport':
   properties:
     description:
       type: string

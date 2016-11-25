@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Domain\Service;
+namespace Neos\ContentRepository\Domain\Service;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,12 +13,12 @@ namespace TYPO3\TYPO3CR\Domain\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\PositionalArraySorter;
-use TYPO3\TYPO3CR\Exception;
+use Neos\ContentRepository\Exception;
 
 /**
  * A Dimension Preset Source that gets presets from settings
  *
- * Everything is configured in Settings.yaml in path "TYPO3.TYPO3CR.contentDimensions".
+ * Everything is configured in Settings.yaml in path "Neos.ContentRepository.contentDimensions".
  * @Flow\Scope("singleton")
  */
 class ConfigurationContentDimensionPresetSource implements ContentDimensionPresetSourceInterface

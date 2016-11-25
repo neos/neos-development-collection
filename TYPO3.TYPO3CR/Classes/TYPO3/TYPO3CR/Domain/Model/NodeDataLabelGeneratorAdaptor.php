@@ -1,7 +1,7 @@
 <?php
 
 
-namespace TYPO3\TYPO3CR\Domain\Model;
+namespace Neos\ContentRepository\Domain\Model;
 
 /**
  *

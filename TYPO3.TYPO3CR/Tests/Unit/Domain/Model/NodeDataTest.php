@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
+namespace Neos\ContentRepository\Tests\Unit\Domain\Model;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -15,13 +15,13 @@ use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Persistence\RepositoryInterface;
 use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Tests\UnitTestCase;
-use TYPO3\TYPO3CR\Domain\Model\NodeData;
-use TYPO3\TYPO3CR\Domain\Model\NodeDimension;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
-use TYPO3\TYPO3CR\Domain\Model\Workspace;
-use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\TYPO3CR\Domain\Service\Context;
-use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Domain\Model\NodeDimension;
+use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\ContentRepository\Domain\Service\Context;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 
 /**
  * Test case for the "NodeData" domain model
@@ -242,7 +242,7 @@ class NodeDataTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\TYPO3CR\Exception\NodeException
+     * @expectedException \Neos\ContentRepository\Exception\NodeException
      */
     public function removePropertyThrowsExceptionIfPropertyDoesNotExist()
     {
@@ -308,7 +308,7 @@ class NodeDataTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\TYPO3CR\Exception\NodeException
+     * @expectedException \Neos\ContentRepository\Exception\NodeException
      */
     public function getPropertyThrowsAnExceptionIfTheSpecifiedPropertyDoesNotExistInTheContentObject()
     {
@@ -396,7 +396,7 @@ class NodeDataTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\TYPO3CR\Exception\NodeException
+     * @expectedException \Neos\ContentRepository\Exception\NodeException
      */
     public function createNodeThrowsNodeExceptionIfPathAlreadyExists()
     {
