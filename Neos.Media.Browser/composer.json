@@ -57,7 +57,8 @@
             "Neos.Kickstart-20161124230102",
             "Neos.Setup-20161124230842",
             "Neos.Imagine-20161124231742",
-            "Neos.Media-20161124233100"
+            "Neos.Media-20161124233100",
+            "Neos.NodeTypes-20161125002300"
         ]
     }
 }
