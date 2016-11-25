@@ -9,30 +9,6 @@
 #                                                                        #
 
 TYPO3:
-  Setup:
-    stepOrder:
-      - neosRequirements
-      - database
-      - administrator
-      - siteimport
-      - final
-    steps:
-      neosRequirements:
-        className: Neos\Neos\Setup\Step\NeosSpecificRequirementsStep
-      administrator:
-        className: Neos\Neos\Setup\Step\AdministratorStep
-        requiredConditions:
-          -
-            className: Neos\Setup\Condition\DatabaseConnectionCondition
-      siteimport:
-        className: Neos\Neos\Setup\Step\SiteImportStep
-        requiredConditions:
-          -
-            className: Neos\Setup\Condition\DatabaseConnectionCondition
-      final:
-        className: Neos\Neos\Setup\Step\FinalStep
-    view:
-      title: 'Neos Setup'
   DocTools:
     collections:
       Neos:
@@ -592,3 +568,27 @@ Neos:
       Neos.Array: Neos\Neos\TypoScript\Helper\ArrayHelper
       Neos.Rendering: Neos\Neos\TypoScript\Helper\RenderingHelper
       Neos.Caching: Neos\Neos\TypoScript\Helper\CachingHelper
+  Setup:
+    stepOrder:
+      - neosRequirements
+      - database
+      - administrator
+      - siteimport
+      - final
+    steps:
+      neosRequirements:
+        className: Neos\Neos\Setup\Step\NeosSpecificRequirementsStep
+      administrator:
+        className: Neos\Neos\Setup\Step\AdministratorStep
+        requiredConditions:
+          -
+            className: Neos\Setup\Condition\DatabaseConnectionCondition
+      siteimport:
+        className: Neos\Neos\Setup\Step\SiteImportStep
+        requiredConditions:
+          -
+            className: Neos\Setup\Condition\DatabaseConnectionCondition
+      final:
+        className: Neos\Neos\Setup\Step\FinalStep
+    view:
+      title: 'Neos Setup'
