@@ -94,7 +94,6 @@ TYPO3:
         'typo3-flow-site': 'Sites'
         'neos-site': 'Sites'
         'typo3-flow-plugin': 'Plugins'
-        'neos-site': 'Sites'
         'neos-plugin': 'Plugins'
 
   TYPO3CR:
