@@ -6,7 +6,7 @@ Feature: Adding Nodes
     Given I have the following nodes:
       | Identifier                           | Path           | Node Type                  | Properties        | Workspace |
       | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /sites         | unstructured               |                   | live      |
-      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr | TYPO3.TYPO3CR.Testing:Page | {"title": "Home"} | live      |
+      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/content-repository | Neos.ContentRepository.Testing:Page | {"title": "Home"} | live      |
     And I have an empty history
 
   @fixtures
@@ -14,7 +14,7 @@ Feature: Adding Nodes
     Given I am authenticated with role "Neos.Neos:Editor"
     And I create the following nodes:
       | Identifier                           | Path                    | Node Type                  | Properties            | Workspace |
-      | 75a28524-6a48-11e4-bd7d-7831c1d118bc | /sites/typo3cr/features | TYPO3.TYPO3CR.Testing:Page | {"title": "Features"} | live      |
+      | 75a28524-6a48-11e4-bd7d-7831c1d118bc | /sites/content-repository/features | Neos.ContentRepository.Testing:Page | {"title": "Features"} | live      |
     Then I should have the following history entries:
       | ID | Event Type   | Node Identifier                      | Document Node Identifier             | Workspace | Parent Event | Explanation                             |
       | n  | Node.Added   | 75a28524-6a48-11e4-bd7d-7831c1d118bc | 75a28524-6a48-11e4-bd7d-7831c1d118bc | live      |              | "features" node                         |
@@ -27,7 +27,7 @@ Feature: Adding Nodes
     Given I am authenticated with role "Neos.Neos:Editor"
     And I create the following nodes:
       | Identifier                           | Path                    | Node Type                  | Properties            | Workspace  |
-      | 75a28524-6a48-11e4-bd7d-7831c1d118bc | /sites/typo3cr/features | TYPO3.TYPO3CR.Testing:Page | {"title": "Features"} | user-admin |
+      | 75a28524-6a48-11e4-bd7d-7831c1d118bc | /sites/content-repository/features | Neos.ContentRepository.Testing:Page | {"title": "Features"} | user-admin |
     And I publish the workspace "user-admin"
     Then I should have the following history entries:
       | ID | Event Type     | Node Identifier                      | Document Node Identifier             | Workspace  | Parent Event | Explanation                             |
@@ -41,8 +41,8 @@ Feature: Adding Nodes
     Given I am authenticated with role "Neos.Neos:Editor"
     And I create the following nodes:
       | Identifier                           | Path                    | Node Type                  | Properties            | Workspace  |
-      | 75a28524-6a48-11e4-bd7d-7831c1d118bc | /sites/typo3cr/features | TYPO3.TYPO3CR.Testing:Page | {"title": "Features"} | user-admin |
-      | 9c881754-6a51-11e4-9026-7831c1d118bc | /sites/typo3cr/about-us | TYPO3.TYPO3CR.Testing:Page | {"title": "About Us"} | user-admin |
+      | 75a28524-6a48-11e4-bd7d-7831c1d118bc | /sites/content-repository/features | Neos.ContentRepository.Testing:Page | {"title": "Features"} | user-admin |
+      | 9c881754-6a51-11e4-9026-7831c1d118bc | /sites/content-repository/about-us | Neos.ContentRepository.Testing:Page | {"title": "About Us"} | user-admin |
     And I publish the workspace "user-admin"
     Then I should have the following history entries (ignoring order):
       | ID | Event Type     | Node Identifier                      | Document Node Identifier             | Workspace  | Parent Event | Explanation                             |

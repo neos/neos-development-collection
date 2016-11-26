@@ -8,7 +8,7 @@ windows8-chrome:
         browser: chrome
         capabilities:
           platform: 'Windows 8'
-          name: TYPO3 Neos on Windows8 Chrome
+          name: Neos on Windows8 Chrome
           version: ''
 
 windows8-firefox-22:
@@ -19,7 +19,7 @@ windows8-firefox-22:
         browser: firefox
         capabilities:
           platform: 'Windows 8'
-          name: TYPO3 Neos on Windows8 Firefox 22
+          name: Neos on Windows8 Firefox 22
           version: '22'
 
 
@@ -31,5 +31,5 @@ windows8-ie-10:
         browser: internet explorer
         capabilities:
           platform: 'Windows 8'
-          name: TYPO3 Neos on Windows8 IE 10
+          name: Neos on Windows8 IE 10
           version: '10'
