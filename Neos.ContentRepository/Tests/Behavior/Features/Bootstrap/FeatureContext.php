@@ -16,7 +16,7 @@ require_once(__DIR__ . '/NodeAuthorizationTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 
-use Flowpack\Behat\Tests\Behat\FlowContext;
+use Neos\Behat\Tests\Behat\FlowContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
