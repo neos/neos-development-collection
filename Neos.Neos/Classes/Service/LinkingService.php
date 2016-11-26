@@ -26,7 +26,7 @@ use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\Exception as NeosException;
-use Neos\Neos\TYPO3CR\NeosNodeServiceInterface;
+use Neos\ContentRepository\NeosNodeServiceInterface;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
 
