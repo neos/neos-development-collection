@@ -16,7 +16,7 @@ use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Exception\WorkspaceException;
 
 /**
- * TYPO3CR Publishing Service Interface
+ * ContentRepository Publishing Service Interface
  *
  * @api
  */

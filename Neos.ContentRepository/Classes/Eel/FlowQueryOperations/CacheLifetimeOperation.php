@@ -18,7 +18,7 @@ use Neos\Flow\Utility\Now;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
- * "cacheLifetime" operation working on TYPO3CR nodes. Will get the minimum of all allowed cache lifetimes for the
+ * "cacheLifetime" operation working on ContentRepository nodes. Will get the minimum of all allowed cache lifetimes for the
  * nodes in the current FlowQuery context. This means it will evaluate to the nearest future value of the
  * hiddenBeforeDateTime or hiddenAfterDateTime properties of all nodes in the context. If none are set or all values
  * are in the past it will evaluate to NULL.

@@ -299,7 +299,7 @@ child response of the parent and will be handed up to the parent.
 
 .. TBD
 
-.. Using TYPO3CR Nodes in a Plugin
-.. ===============================
+.. Using ContentRepository Nodes in a Plugin
+.. =========================================
 
 .. TBD

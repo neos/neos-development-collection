@@ -39,7 +39,7 @@ class NodeTemplate extends AbstractNodeData
     /**
      * Allows to set a UUID to use for the node that will be created from this
      * NodeTemplate. Use with care, usually identifier generation should be left
-     * to the TYPO3CR.
+     * to the ContentRepository.
      *
      * @param string $identifier
      * @return void

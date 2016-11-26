@@ -18,7 +18,7 @@ use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
- * This filter implementation contains specific behavior for use on TYPO3CR
+ * This filter implementation contains specific behavior for use on ContentRepository
  * nodes. It will not evaluate any elements that are not instances of the
  * `NodeInterface`.
  *

@@ -33,10 +33,10 @@ use Neos\ContentRepository\Exception;
 /**
  * A purely internal repository for NodeData storage
  *
- * DO NOT USE outside the TYPO3CR package!
+ * DO NOT USE outside the ContentRepository package!
  *
  * The ContextFactory can be used to create a Context that allows to find Node instances that act as the
- * public API to the TYPO3CR.
+ * public API to the ContentRepository.
  *
  * @Flow\Scope("singleton")
  */

@@ -29,7 +29,7 @@ use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
 
 /**
- * A plugin for the TYPO3CR NodeCommandController which adds some tasks to the node:repair command:
+ * A plugin for the ContentRepository NodeCommandController which adds some tasks to the node:repair command:
  *
  * - adding missing URI segments
  * - removing dimensions on nodes / and /sites

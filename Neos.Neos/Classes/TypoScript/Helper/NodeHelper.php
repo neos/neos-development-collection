@@ -17,7 +17,7 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Neos\Domain\Exception;
 
 /**
- * Eel helper for TYPO3CR Nodes
+ * Eel helper for ContentRepository Nodes
  */
 class NodeHelper implements ProtectedContextAwareInterface
 {

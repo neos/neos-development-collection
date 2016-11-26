@@ -41,7 +41,7 @@ class MigrationStatus
 
     /**
      * Direction of this migration status, one of the DIRECTION_* constants.
-     * As TYPO3CR migrations might not be reversible a down migration is just added as new status on top unlike
+     * As ContentRepository migrations might not be reversible a down migration is just added as new status on top unlike
      * persistence migrations.
      *
      * @var string

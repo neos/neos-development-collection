@@ -24,7 +24,7 @@ use Neos\ContentRepository\Exception\WorkspaceException;
 use Neos\ContentRepository\Service\Utility\NodePublishingDependencySolver;
 
 /**
- * A generic TYPO3CR Publishing Service
+ * A generic ContentRepository Publishing Service
  *
  * @api
  * @Flow\Scope("singleton")

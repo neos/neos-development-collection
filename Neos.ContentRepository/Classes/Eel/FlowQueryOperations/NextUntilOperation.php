@@ -17,7 +17,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
- * "nextUntil" operation working on TYPO3CR nodes. It iterates over all context elements
+ * "nextUntil" operation working on ContentRepository nodes. It iterates over all context elements
  * and returns each following sibling until the matching sibling is found.
  * If an optional filter expression is provided as a second argument,
  * it only returns the nodes matching the given expression.

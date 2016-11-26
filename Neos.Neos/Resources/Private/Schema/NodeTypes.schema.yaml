@@ -11,7 +11,7 @@ additionalProperties:
         properties:
           'ui':
             # here, we specify ONLY the "ui" part of the schema, as the remaining parts
-            # are already specified in the NodeTypes schema of the TYPO3CR package
+            # are already specified in the NodeTypes schema of the ContentRepository package
             type: dictionary
             additionalProperties: FALSE
             properties:
@@ -133,7 +133,7 @@ additionalProperties:
 
     'ui':
       # here, we specify ONLY the "ui" part of the schema, as the remaining parts
-      # are already specified in the NodeTypes schema of the TYPO3CR package
+      # are already specified in the NodeTypes schema of the ContentRepository package
       type: dictionary
       additionalProperties: FALSE
       properties:

@@ -23,7 +23,7 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 
 /**
- * A specific event which is used for TYPO3CR Nodes (i.e. content).
+ * A specific event which is used for ContentRepository Nodes (i.e. content).
  *
  * @Flow\Entity
  * @ORM\InheritanceType("SINGLE_TABLE")

@@ -19,7 +19,7 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 
 /**
- * "context" operation working on TYPO3CR nodes. Modifies the TYPO3CR Context of each
+ * "context" operation working on ContentRepository nodes. Modifies the ContentRepository Context of each
  * node in the current FlowQuery context by the given properties and returns the same
  * nodes by identifier if they can be accessed in the new Context (otherwise they
  * will be skipped).

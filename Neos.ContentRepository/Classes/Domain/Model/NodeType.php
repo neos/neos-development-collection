@@ -33,7 +33,7 @@ use Neos\ContentRepository\Utility;
 class NodeType
 {
     /**
-     * Name of this node type. Example: "TYPO3CR:Folder"
+     * Name of this node type. Example: "ContentRepository:Folder"
      *
      * @var string
      */

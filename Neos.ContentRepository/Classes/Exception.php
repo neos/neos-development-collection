@@ -12,7 +12,7 @@ namespace Neos\ContentRepository;
  */
 
 /**
- * A generic TYPO3CR exception
+ * A generic ContentRepository exception
  *
  * @api
  */

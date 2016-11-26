@@ -18,7 +18,7 @@ use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
- * "sort" operation working on TYPO3CR nodes.
+ * "sort" operation working on ContentRepository nodes.
  * Sorts nodes by specified node properties.
  */
 class SortOperation extends AbstractOperation
@@ -34,7 +34,7 @@ class SortOperation extends AbstractOperation
     /**
      * {@inheritdoc}
      *
-     * We can only handle TYPO3CR Nodes.
+     * We can only handle ContentRepository Nodes.
      *
      * @param mixed $context
      * @return boolean

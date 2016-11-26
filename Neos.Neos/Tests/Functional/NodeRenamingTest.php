@@ -17,7 +17,7 @@ use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 /**
  * Functional test case which tests the renaming of nodes from within a workspace.
  *
- * Is placed here instead of the TYPO3CR package because that's where we have the correct
+ * Is placed here instead of the ContentRepository package because that's where we have the correct
  * test fixtures in place.
  *
  * @group large

@@ -1740,7 +1740,7 @@ class Node implements NodeInterface, CacheAwareInterface
     /**
      * Set the associated NodeData in regards to the Context.
      *
-     * NOTE: This is internal only and should not be used outside of the TYPO3CR.
+     * NOTE: This is internal only and should not be used outside of the ContentRepository.
      *
      * TODO: As it is used in the Workspace this should become part of the interface in the next major release.
      *
@@ -1791,7 +1791,7 @@ class Node implements NodeInterface, CacheAwareInterface
     /**
      * Set the status of the associated NodeData in regards to the Context.
      *
-     * NOTE: This is internal only and should not be used outside of the TYPO3CR.
+     * NOTE: This is internal only and should not be used outside of the ContentRepository.
      *
      * @param boolean $status
      * @return void

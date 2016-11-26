@@ -21,7 +21,7 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 
 /**
- * "find" operation working on TYPO3CR nodes. This operation allows for retrieval
+ * "find" operation working on ContentRepository nodes. This operation allows for retrieval
  * of nodes specified by a path, identifier or node type (recursive).
  *
  * Example (node name):

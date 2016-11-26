@@ -199,7 +199,7 @@ class NodeImportService
     }
 
     /**
-     * Determines the TYPO3CR format version of the given xml
+     * Determines the ContentRepository format version of the given xml
      *
      * @param \XMLReader $xmlReader
      * @return null|string the version as a string or null if the version could not be determined
