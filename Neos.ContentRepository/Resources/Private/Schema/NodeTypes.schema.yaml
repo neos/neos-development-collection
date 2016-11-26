@@ -11,7 +11,7 @@ additionalProperties:
 
     'superTypes':
       type: dictionary
-      description: "List of TYPO3CR Node Types which are supertypes of this type"
+      description: "List of Content Repository Node Types which are supertypes of this type"
       # the "key" is the node type
       additionalProperties:
         type: boolean
@@ -67,7 +67,7 @@ additionalProperties:
 
     'ui':
       type: dictionary
-      # we intentionally do not specify which properties are allowed here (except the one expected in TYPO3CR);
+      # we intentionally do not specify which properties are allowed here (except the one expected in ContentRepository);
       # as other packages (such as Neos.Neos) might do that instead.
       properties:
         'label': { type: string, description: "Human-readable label for this Node Type." }

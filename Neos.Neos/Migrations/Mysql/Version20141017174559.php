@@ -5,7 +5,7 @@ use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
 /**
- * Change all existing serialized ImageVariants to arrays to be picked up and converted by the matching TYPO3CR migration.
+ * Change all existing serialized ImageVariants to arrays to be picked up and converted by the matching ContentRepository migration.
  */
 class Version20141017174559 extends AbstractMigration
 {

@@ -35,7 +35,7 @@ use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Utility;
 
 /**
- * Plugin for the TYPO3CR NodeCommandController which provides functionality for creating missing child nodes.
+ * Plugin for the ContentRepository NodeCommandController which provides functionality for creating missing child nodes.
  *
  * @Flow\Scope("singleton")
  */

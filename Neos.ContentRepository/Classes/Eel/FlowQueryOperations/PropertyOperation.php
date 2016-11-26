@@ -19,7 +19,7 @@ use Neos\Utility\ObjectAccess;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
- * Used to access properties of a TYPO3CR Node. If the property mame is
+ * Used to access properties of a ContentRepository Node. If the property mame is
  * prefixed with _, internal node properties like start time, end time,
  * hidden are accessed.
  */
@@ -49,7 +49,7 @@ class PropertyOperation extends AbstractOperation
     /**
      * {@inheritdoc}
      *
-     * We can only handle TYPO3CR Nodes.
+     * We can only handle ContentRepository Nodes.
      *
      * @param mixed $context
      * @return boolean

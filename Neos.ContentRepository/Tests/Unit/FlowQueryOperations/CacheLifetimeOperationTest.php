@@ -17,7 +17,7 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Eel\FlowQueryOperations\CacheLifetimeOperation;
 
 /**
- * Testcase for the TYPO3CR FlowQuery CacheLifetimeOperation
+ * Testcase for the ContentRepository FlowQuery CacheLifetimeOperation
  */
 class CacheLifetimeOperationTest extends UnitTestCase
 {

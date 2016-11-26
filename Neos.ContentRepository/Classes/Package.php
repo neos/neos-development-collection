@@ -25,7 +25,7 @@ use Neos\ContentRepository\Domain\Service\Context;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 
 /**
- * The TYPO3CR Package
+ * The ContentRepository Package
  */
 class Package extends BasePackage
 {

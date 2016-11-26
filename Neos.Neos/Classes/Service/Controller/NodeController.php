@@ -324,7 +324,7 @@ class NodeController extends AbstractServiceController
      * - the URI of the closest document node. If $node is a document node (f.e. a Page), the own URI is returned.
      *   This is important to handle renames of nodes correctly.
      *
-     * Note: We do not call $nodeDataRepository->update() here, as TYPO3CR has a stateful API for now.
+     * Note: We do not call $nodeDataRepository->update() here, as ContentRepository has a stateful API for now.
      *       We need to call persistAll() in order to return the nextUri. We can't persist only the nodes in NodeDataRepository
      *       because they might be connected to images / resources which need to be updated at the same time.
      *

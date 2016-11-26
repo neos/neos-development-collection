@@ -18,7 +18,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
- * "closest" operation working on TYPO3CR nodes. For each node in the context,
+ * "closest" operation working on ContentRepository nodes. For each node in the context,
  * get the first node that matches the selector by testing the node itself and
  * traversing up through its ancestors.
  */

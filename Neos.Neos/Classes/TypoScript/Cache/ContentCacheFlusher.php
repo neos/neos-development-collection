@@ -55,7 +55,7 @@ class ContentCacheFlusher
     protected $assetService;
 
     /**
-     * Register a node change for a later cache flush. This method is triggered by a signal sent via TYPO3CR's Node
+     * Register a node change for a later cache flush. This method is triggered by a signal sent via ContentRepository's Node
      * model or the Neos Publishing Service.
      *
      * @param NodeInterface $node The node which has changed in some way

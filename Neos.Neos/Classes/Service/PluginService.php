@@ -28,7 +28,7 @@ use Neos\ContentRepository\Domain\Service\NodeTypeManager;
  * Central authority for interactions with plugins.
  * Whenever details about Plugins or PluginViews are needed this service should be used.
  *
- * For some methods the ContentContext has to be specified. This is required in order for the TYPO3CR to fetch nodes
+ * For some methods the ContentContext has to be specified. This is required in order for the ContentRepository to fetch nodes
  * of the current workspace. The context can be retrieved from any node of the correct workspace & tree. If no node
  * is available (e.g. for CLI requests) the ContentContextFactory can be used to create a context instance.
  *

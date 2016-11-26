@@ -2,7 +2,7 @@
 namespace Neos\Flow\Core\Migrations;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the TYPO3.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,7 @@ namespace Neos\Flow\Core\Migrations;
  */
 
 /**
- * Adjust namespaces for TYPO3CR related FlowQuery operations that were moved from TYPO3.Neos to TYPO3.TYPO3CR
+ * Adjust namespaces for ContentRepository related FlowQuery operations that were moved from TYPO3.Neos to TYPO3.TYPO3CR
  */
 class Version20141101082142 extends AbstractMigration
 {

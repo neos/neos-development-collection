@@ -2,7 +2,7 @@
 namespace Neos\Flow\Core\Migrations;
 
 /*
- * This file is part of the TYPO3.TYPO3CR package.
+ * This file is part of the TYPO3.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,7 @@ namespace Neos\Flow\Core\Migrations;
  */
 
 /**
- * Adjust to removed TYPO3.TYPO3CR:Folder node type by replacing it
+ * Adjust to removed TYPO3.ContentRepository:Folder node type by replacing it
  * with unstructured. In a Neos context, you probably want to replace
  * it with TYPO3.Neos:Document instead!
  */

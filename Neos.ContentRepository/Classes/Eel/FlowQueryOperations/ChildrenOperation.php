@@ -18,7 +18,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
- * "children" operation working on TYPO3CR nodes. It iterates over all
+ * "children" operation working on ContentRepository nodes. It iterates over all
  * context elements and returns all child nodes or only those matching
  * the filter expression specified as optional argument.
  */

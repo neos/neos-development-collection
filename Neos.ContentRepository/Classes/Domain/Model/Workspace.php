@@ -64,7 +64,7 @@ class Workspace
     /**
      * This property contains a UUID of the User object which is the owner of this workspace.
      * We can't use a real many-to-many relation here, because the User implementation will come from a different
-     * package (e.g. Neos) which TYPO3CR does not depend on.
+     * package (e.g. Neos) which ContentRepository does not depend on.
      *
      * This relation may be implemented with a target entity listener at a later stage, when we implemented support
      * for it in Flow core.

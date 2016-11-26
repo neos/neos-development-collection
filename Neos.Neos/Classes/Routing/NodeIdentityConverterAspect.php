@@ -28,7 +28,7 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 class NodeIdentityConverterAspect
 {
     /**
-     * Convert the object to its context path, if we deal with TYPO3CR nodes.
+     * Convert the object to its context path, if we deal with ContentRepository nodes.
      *
      * @Flow\Around("method(Neos\Flow\Persistence\AbstractPersistenceManager->convertObjectToIdentityArray())")
      * @param JoinPointInterface $joinPoint the joinpoint

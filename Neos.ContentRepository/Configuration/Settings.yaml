@@ -17,9 +17,9 @@ Neos:
     error:
       debugger:
         ignoredClasses:
-          TYPO3\\TYPO3CR\\Domain\\Service\\NodeTypeManager: true
-          TYPO3\\TYPO3CR\\Domain\\Factory\\NodeFactory: true
-          TYPO3\\TYPO3CR\\Domain\\Service\\Cache\\FirstLevelNodeCache: true
+          Neos\\ContentRepository\\Domain\\Service\\NodeTypeManager: true
+          Neos\\ContentRepository\\Domain\\Factory\\NodeFactory: true
+          Neos\\ContentRepository\\Domain\\Service\\Cache\\FirstLevelNodeCache: true
 
   ContentRepository:
 

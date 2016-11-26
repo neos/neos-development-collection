@@ -888,7 +888,7 @@ class NodesTest extends FunctionalTestCase
     }
 
     /**
-     * Testcase for bug #34291 (TYPO3CR reordering does not take unpersisted
+     * Testcase for bug #34291 (ContentRepository reordering does not take unpersisted
      * node order changes into account)
      *
      * The error can be reproduced in the following way:
