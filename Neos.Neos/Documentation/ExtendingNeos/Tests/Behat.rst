@@ -18,7 +18,7 @@ command in `FLOW_ROOT/Build/Behat`::
 	cd Build/Behat
 	composer install
 
-A special package `Flowpack.Behat` is used to integrate Flow with Behat and is installed if the base distribution was
+A special package `Neos.Behat` is used to integrate Flow with Behat and is installed if the base distribution was
 installed with `composer install --dev`.
 
 Create configuration for subcontexts

@@ -10,7 +10,7 @@
  * source code.
  */
 
-require_once(__DIR__ . '/../../../../../../Application/Flowpack.Behat/Tests/Behat/FlowContext.php');
+require_once(__DIR__ . '/../../../../../../Application/Neos.Behat/Tests/Behat/FlowContext.php');
 require_once(__DIR__ . '/NodeOperationsTrait.php');
 require_once(__DIR__ . '/NodeAuthorizationTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');

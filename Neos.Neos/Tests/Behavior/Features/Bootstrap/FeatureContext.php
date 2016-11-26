@@ -41,7 +41,7 @@ use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTr
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
 use Neos\Neos\Tests\Functional\Command\BehatTestHelper;
 
-require_once(__DIR__ . '/../../../../../../Application/Flowpack.Behat/Tests/Behat/FlowContext.php');
+require_once(__DIR__ . '/../../../../../../Application/Neos.Behat/Tests/Behat/FlowContext.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
