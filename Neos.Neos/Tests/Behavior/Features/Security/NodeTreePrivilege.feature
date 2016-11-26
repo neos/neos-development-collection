@@ -27,7 +27,7 @@ Feature: Privilege to restrict nodes shown in the node tree
         'TYPO3.Flow:Anonymous':
           privileges: []
 
-        'TYPO3.Flow:AuthenticatedUser':
+        'Neos.Flow:AuthenticatedUser':
           privileges: []
 
         'Neos.Neos:Editor':

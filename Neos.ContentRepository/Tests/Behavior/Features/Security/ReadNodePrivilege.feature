@@ -8,7 +8,7 @@ Feature: Privilege to restrict reading of nodes
       'Neos\ContentRepository\Security\Authorization\Privilege\Node\ReadNodePrivilege':
 
         'Neos.ContentRepository:Service':
-          matcher: 'isDescendantNodeOf("/sites/typo3cr/service/") && nodeIsOfType("Neos.ContentRepository.Testing:Document")'
+          matcher: 'isDescendantNodeOf("/sites/content-repository/service/") && nodeIsOfType("Neos.ContentRepository.Testing:Document")'
 
         'Neos.ContentRepository:Company':
           matcher: 'isDescendantNodeOf("68ca0dcd-2afb-ef0e-1106-a5301e65b8a0")'
@@ -18,13 +18,13 @@ Feature: Privilege to restrict reading of nodes
           matcher: 'isDescendantNodeOf("fee74676-c42f-89da-208e-1741a66520000")'
 
     roles:
-      'TYPO3.Flow:Everybody':
+      'Neos.Flow:Everybody':
         privileges: []
 
-      'TYPO3.Flow:Anonymous':
+      'Neos.Flow:Anonymous':
         privileges: []
 
-      'TYPO3.Flow:AuthenticatedUser':
+      'Neos.Flow:AuthenticatedUser':
         privileges: []
 
       'Neos.ContentRepository:Administrator':
@@ -40,14 +40,14 @@ Feature: Privilege to restrict reading of nodes
     And I have the following nodes:
       | Identifier                           | Path                   | Node Type                      | Properties           | Workspace |
       | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /sites                 | unstructured                   |                      | live      |
-      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr         | Neos.ContentRepository.Testing:Document | {"title": "Home"}    | live      |
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/company | Neos.ContentRepository.Testing:Document | {"title": "Company"} | live      |
-      | 52540602-b417-11e3-9358-14109fd7a2dd | /sites/typo3cr/service | Neos.ContentRepository.Testing:Document | {"title": "Service"} | live      |
+      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/content-repository         | Neos.ContentRepository.Testing:Document | {"title": "Home"}    | live      |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/content-repository/company | Neos.ContentRepository.Testing:Document | {"title": "Company"} | live      |
+      | 52540602-b417-11e3-9358-14109fd7a2dd | /sites/content-repository/service | Neos.ContentRepository.Testing:Document | {"title": "Service"} | live      |
 
   @Isolated @fixtures
   Scenario: Restrict node visibility by node path
     Given I am not authenticated
-    And I get a node by path "/sites/typo3cr/service" with the following context:
+    And I get a node by path "/sites/content-repository/service" with the following context:
       | Workspace  |
       | user-admin |
     Then I should have 0 nodes
@@ -55,7 +55,7 @@ Feature: Privilege to restrict reading of nodes
   @Isolated @fixtures
   Scenario: Do not restrict node visibility by node path for administrator role
     Given I am authenticated with role "Neos.ContentRepository:Administrator"
-    And I get a node by path "/sites/typo3cr/service" with the following context:
+    And I get a node by path "/sites/content-repository/service" with the following context:
       | Workspace  |
       | user-admin |
     Then I should have 1 nodes
@@ -63,7 +63,7 @@ Feature: Privilege to restrict reading of nodes
   @Isolated @fixtures
   Scenario: Restrict node visibility by node identifier
     Given I am not authenticated
-    And I get a node by path "/sites/typo3cr/company" with the following context:
+    And I get a node by path "/sites/content-repository/company" with the following context:
       | Workspace  |
       | user-admin |
     Then I should have 0 nodes
@@ -71,7 +71,7 @@ Feature: Privilege to restrict reading of nodes
   @Isolated @fixtures
   Scenario: Do not restrict node visibility by node identifier for administrator role
     Given I am authenticated with role "Neos.ContentRepository:Administrator"
-    And I get a node by path "/sites/typo3cr/company" with the following context:
+    And I get a node by path "/sites/content-repository/company" with the following context:
       | Workspace  |
       | user-admin |
     Then I should have 1 nodes

@@ -6,7 +6,7 @@ Feature: Accounts / User Entity Monitoring
     Given I have an empty history
     Given I have the following "monitorEntities" configuration:
     """
-    'TYPO3\Flow\Security\Account':
+    'Neos\Flow\Security\Account':
       events:
         created: ACCOUNT_CREATED
       data:

@@ -8,20 +8,20 @@ Feature: Privilege to restrict reading of node properties
       'Neos\ContentRepository\Security\Authorization\Privilege\Node\ReadNodePropertyPrivilege':
 
         'Neos.ContentRepository:Service:ReadServiceTextTitles':
-          matcher: 'isDescendantNodeOf("/sites/typo3cr/service/") && nodeIsOfType("TYPO3.Neos.NodeTypes:Text") && nodePropertyIsIn(["title"])'
+          matcher: 'isDescendantNodeOf("/sites/content-repository/service/") && nodeIsOfType("Neos.NodeTypes:Text") && nodePropertyIsIn(["title"])'
 
         'Neos.ContentRepository:Service:ReadDocumentVisibilityAttributes':
           matcher: 'nodeIsOfType("Neos.ContentRepository.Testing:Document") && nodePropertyIsIn(["hidden", "hiddenBeforeDateTime", "hiddenAfterDateTime", "hiddenInIndex"])'
 
 
     roles:
-      'TYPO3.Flow:Everybody':
+      'Neos.Flow:Everybody':
         privileges: []
 
-      'TYPO3.Flow:Anonymous':
+      'Neos.Flow:Anonymous':
         privileges: []
 
-      'TYPO3.Flow:AuthenticatedUser':
+      'Neos.Flow:AuthenticatedUser':
         privileges: []
 
       'Neos.ContentRepository:Administrator':
@@ -36,18 +36,18 @@ Feature: Privilege to restrict reading of node properties
     """
 
     And I have the following nodes:
-      | Identifier                           | Path                   | Node Type                      | Properties           | Workspace |
-      | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /sites                 | unstructured                   |                      | live      |
-      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr         | Neos.ContentRepository.Testing:Document | {"title": "Home"}    | live      |
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/company | Neos.ContentRepository.Testing:Document | {"title": "Company"} | live      |
-      | 52540602-b417-11e3-9358-14109fd7a2dd | /sites/typo3cr/service | Neos.ContentRepository.Testing:Document | {"title": "Service"} | live      |
-      | 82246a9e-be03-3c06-018d-e4c68103ecd3 | /sites/typo3cr/service/teaser | TYPO3.Neos.NodeTypes:Text | {"title": "Some Teaser Text"} | live      |
+      | Identifier                           | Path                                     | Node Type                               | Properties                    | Workspace |
+      | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /sites                                   | unstructured                            |                               | live      |
+      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/content-repository                | Neos.ContentRepository.Testing:Document | {"title": "Home"}             | live      |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/content-repository/company        | Neos.ContentRepository.Testing:Document | {"title": "Company"}          | live      |
+      | 52540602-b417-11e3-9358-14109fd7a2dd | /sites/content-repository/service        | Neos.ContentRepository.Testing:Document | {"title": "Service"}          | live      |
+      | 82246a9e-be03-3c06-018d-e4c68103ecd3 | /sites/content-repository/service/teaser | Neos.NodeTypes:Text                     | {"title": "Some Teaser Text"} | live      |
 
 
   @Isolated @fixtures
   Scenario: Anonymous users are not granted to get title of service text nodes
     Given I am not authenticated
-    And I get a node by path "/sites/typo3cr/service/teaser" with the following context:
+    And I get a node by path "/sites/content-repository/service/teaser" with the following context:
       | Workspace  |
       | user-admin |
     Then I should not be granted to get the "title" property
@@ -56,7 +56,7 @@ Feature: Privilege to restrict reading of node properties
   @Isolated @fixtures
   Scenario: Anonymous users are granted to get title of service node
     Given I am not authenticated
-    And I get a node by path "/sites/typo3cr/service" with the following context:
+    And I get a node by path "/sites/content-repository/service" with the following context:
       | Workspace  |
       | user-admin |
     Then I should be granted to get the "title" property
@@ -65,7 +65,7 @@ Feature: Privilege to restrict reading of node properties
   @Isolated @fixtures
   Scenario: Administrators are granted to get title of service text nodes
     Given I am authenticated with role "Neos.ContentRepository:Administrator"
-    And I get a node by path "/sites/typo3cr/service/teaser" with the following context:
+    And I get a node by path "/sites/content-repository/service/teaser" with the following context:
       | Workspace  |
       | user-admin |
     Then I should be granted to get the "title" property
@@ -74,7 +74,7 @@ Feature: Privilege to restrict reading of node properties
   @Isolated @fixtures
   Scenario: Anonymous users are not granted to get visibility options of document nodes
     Given I am not authenticated
-    And I get a node by path "/sites/typo3cr" with the following context:
+    And I get a node by path "/sites/content-repository" with the following context:
       | Workspace  |
       | user-admin |
     Then I should not be granted to get the "hidden" property

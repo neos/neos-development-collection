@@ -67,12 +67,12 @@ Feature: ChildNode Constraints
     And I have the following nodes:
       | Identifier                           | Path                | Node Type                               |
       | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /sites              | unstructured                            |
-      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr      | Neos.ContentRepository.Testing:Page              |
-      | 52540602-b417-11e3-9358-14109fd7a2dd | /sites/typo3cr/main | Neos.ContentRepository.Testing:ContentCollection |
+      | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/content-repository      | Neos.ContentRepository.Testing:Page              |
+      | 52540602-b417-11e3-9358-14109fd7a2dd | /sites/content-repository/main | Neos.ContentRepository.Testing:ContentCollection |
 
   @fixtures
   Scenario: Allow node types for direct child nodes
-    When I get a node by path "/sites/typo3cr" with the following context:
+    When I get a node by path "/sites/content-repository" with the following context:
       | Workspace |
       | live      |
     Then I should be able to create a child node of type "Neos.ContentRepository.Testing:Page"
@@ -86,7 +86,7 @@ Feature: ChildNode Constraints
         nodeTypes:
           'Neos.ContentRepository.Testing:Page': FALSE
     """
-    When I get a node by path "/sites/typo3cr" with the following context:
+    When I get a node by path "/sites/content-repository" with the following context:
       | Workspace |
       | live      |
     Then I should not be able to create a child node of type "Neos.ContentRepository.Testing:Page"
@@ -105,7 +105,7 @@ Feature: ChildNode Constraints
               'Neos.ContentRepository.Testing:Text': TRUE
               '*': FALSE
     """
-    When I get a node by path "/sites/typo3cr/main" with the following context:
+    When I get a node by path "/sites/content-repository/main" with the following context:
       | Workspace |
       | live      |
     Then I should be able to create a child node of type "Neos.ContentRepository.Testing:Text"
@@ -124,7 +124,7 @@ Feature: ChildNode Constraints
             nodeTypes:
               'Neos.ContentRepository.Testing:Text': FALSE
     """
-    When I get a node by path "/sites/typo3cr/main" with the following context:
+    When I get a node by path "/sites/content-repository/main" with the following context:
       | Workspace |
       | live      |
     Then I should not be able to create a child node of type "Neos.ContentRepository.Testing:Text"
@@ -143,7 +143,7 @@ Feature: ChildNode Constraints
             nodeTypes:
               'Neos.ContentRepository.Testing:Text': FALSE
     """
-    When I get a node by path "/sites/typo3cr/main" with the following context:
+    When I get a node by path "/sites/content-repository/main" with the following context:
       | Workspace |
       | live      |
     Then I should not be able to create a child node of type "Neos.ContentRepository.Testing:Text"
@@ -164,7 +164,7 @@ Feature: ChildNode Constraints
         childNodes:
           'Neos.ContentRepository.Testing:Chapter': ~
     """
-    When I get a node by path "/sites/typo3cr" with the following context:
+    When I get a node by path "/sites/content-repository" with the following context:
       | Workspace |
       | live      |
     And I should be able to create a child node of type "Neos.ContentRepository.Testing:Chapter"
@@ -183,8 +183,8 @@ Feature: ChildNode Constraints
     """
     And I have the following nodes:
       | Identifier                           | Path                          | Node Type                      | Properties
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/create-page    | Neos.ContentRepository.Testing:Page     | {"title": "page"}
-    And I get a node by path "/sites/typo3cr/create-page/main" with the following context:
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/content-repository/create-page    | Neos.ContentRepository.Testing:Page     | {"title": "page"}
+    And I get a node by path "/sites/content-repository/create-page/main" with the following context:
       | Workspace |
       | live      |
     Then I should have one node
@@ -203,14 +203,14 @@ Feature: ChildNode Constraints
     """
     And I have the following nodes:
       | Identifier                           | Path                        | Node Type                      | Properties
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/copy-page    | Neos.ContentRepository.Testing:Page     | {"title": "page"}
-    And I get a node by path "/sites/typo3cr/copy-page" with the following context:
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/content-repository/copy-page    | Neos.ContentRepository.Testing:Page     | {"title": "page"}
+    And I get a node by path "/sites/content-repository/copy-page" with the following context:
       | Workspace |
       | live      |
-    When I copy the node into path "/sites/typo3cr" with the following context:
+    When I copy the node into path "/sites/content-repository" with the following context:
       | Workspace |
       | live      |
-    And I get a node by path "/sites/typo3cr/copy-page-1" with the following context:
+    And I get a node by path "/sites/content-repository/copy-page-1" with the following context:
       | Workspace |
       | live      |
     Then I should have one node
@@ -229,15 +229,15 @@ Feature: ChildNode Constraints
     """
     And I have the following nodes:
       | Identifier                           | Path                         | Node Type                      | Properties
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/move-page1    | Neos.ContentRepository.Testing:Page     | {"title": "page"}
-      | ad5ba6e1-4313-b145-1004-dad2f1173a36 | /sites/typo3cr/move-page2    | Neos.ContentRepository.Testing:Page     | {"title": "page 2"}
-    And I get a node by path "/sites/typo3cr/move-page1" with the following context:
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/content-repository/move-page1    | Neos.ContentRepository.Testing:Page     | {"title": "page"}
+      | ad5ba6e1-4313-b145-1004-dad2f1173a36 | /sites/content-repository/move-page2    | Neos.ContentRepository.Testing:Page     | {"title": "page 2"}
+    And I get a node by path "/sites/content-repository/move-page1" with the following context:
       | Workspace |
       | live      |
-    When I move the node into path "/sites/typo3cr/move-page2" with the following context:
+    When I move the node into path "/sites/content-repository/move-page2" with the following context:
       | Workspace |
       | live      |
-    And I get a node by path "/sites/typo3cr/move-page2/move-page1" with the following context:
+    And I get a node by path "/sites/content-repository/move-page2/move-page1" with the following context:
       | Workspace |
       | live      |
     Then I should have one node
@@ -256,7 +256,7 @@ Feature: ChildNode Constraints
               'Neos.ContentRepository.Testing:TextWithImage': FALSE
               '*': FALSE
     """
-    When I get a node by path "/sites/typo3cr/main" with the following context:
+    When I get a node by path "/sites/content-repository/main" with the following context:
       | Workspace |
       | live      |
     Then I should be able to create a child node of type "Neos.ContentRepository.Testing:Text"

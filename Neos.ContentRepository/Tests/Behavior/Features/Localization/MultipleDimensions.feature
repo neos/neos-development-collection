@@ -11,49 +11,49 @@ Feature: Multiple languages as content dimension
     And I have the following nodes:
       | Path           | Node Type                  | Properties        |
       | /sites         | unstructured               |                   |
-      | /sites/typo3cr | Neos.ContentRepository.Testing:Page | {"title": "Home"} |
+      | /sites/content-repository | Neos.ContentRepository.Testing:Page | {"title": "Home"} |
 
   @fixtures
   Scenario: Get a node from multiple mixed content dimensions
     Given I have the following nodes:
       | Identifier                           | Path                   | Node Type                      | Properties                                   | Language  | Dimension: personas |
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/main/c2 | Neos.ContentRepository.Testing:Headline | {"title": "Welcome!"}                        | en_ZZ     | everybody           |
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/main/c2 | Neos.ContentRepository.Testing:Headline | {"title": "Welcome, nice to see you again!"} | en_ZZ     | customer            |
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/main/c2 | Neos.ContentRepository.Testing:Headline | {"title": "Welcome, fellow customer!"}       | en_ZZ     | frequent_buyer      |
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/main/c2 | Neos.ContentRepository.Testing:Headline | {"title": "Willkommen!"}                     | de_ZZ     | everybody           |
-      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/main/c2 | Neos.ContentRepository.Testing:Headline | {"title": "Willkommen, lieber Kunde!"}       | de_ZZ     | frequent_buyer      |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/content-repository/main/c2 | Neos.ContentRepository.Testing:Headline | {"title": "Welcome!"}                        | en_ZZ     | everybody           |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/content-repository/main/c2 | Neos.ContentRepository.Testing:Headline | {"title": "Welcome, nice to see you again!"} | en_ZZ     | customer            |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/content-repository/main/c2 | Neos.ContentRepository.Testing:Headline | {"title": "Welcome, fellow customer!"}       | en_ZZ     | frequent_buyer      |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/content-repository/main/c2 | Neos.ContentRepository.Testing:Headline | {"title": "Willkommen!"}                     | de_ZZ     | everybody           |
+      | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/content-repository/main/c2 | Neos.ContentRepository.Testing:Headline | {"title": "Willkommen, lieber Kunde!"}       | de_ZZ     | frequent_buyer      |
 
-    When I get a node by path "/sites/typo3cr/main/c2" with the following context:
+    When I get a node by path "/sites/content-repository/main/c2" with the following context:
       | Language               | Dimension: personas |
       | de_DE, de_ZZ, mul_ZZ   | everybody           |
     Then I should have one node
     And the node property "title" should be "Willkommen!"
 
-    When I get a node by path "/sites/typo3cr/main/c2" with the following context:
+    When I get a node by path "/sites/content-repository/main/c2" with the following context:
       | Language               | Dimension: personas       |
       | de_DE, de_ZZ, mul_ZZ   | frequent_buyer, everybody |
     Then I should have one node
     And the node property "title" should be "Willkommen, lieber Kunde!"
 
-    When I get a node by path "/sites/typo3cr/main/c2" with the following context:
+    When I get a node by path "/sites/content-repository/main/c2" with the following context:
       | Language               | Dimension: personas |
       | en_US, en_ZZ, mul_ZZ   | everybody           |
     Then I should have one node
     And the node property "title" should be "Welcome!"
 
-    When I get a node by path "/sites/typo3cr/main/c2" with the following context:
+    When I get a node by path "/sites/content-repository/main/c2" with the following context:
       | Language               | Dimension: personas       |
       | en_US, en_ZZ, mul_ZZ   | frequent_buyer, everybody |
     Then I should have one node
     And the node property "title" should be "Welcome, fellow customer!"
 
-    When I get a node by path "/sites/typo3cr/main/c2" with the following context:
+    When I get a node by path "/sites/content-repository/main/c2" with the following context:
       | Language               | Dimension: personas |
       | de_DE, de_ZZ, mul_ZZ   | customer, everybody |
     Then I should have one node
     And the node property "title" should be "Willkommen!"
 
-    When I get a node by path "/sites/typo3cr/main/c2" with the following context:
+    When I get a node by path "/sites/content-repository/main/c2" with the following context:
       | Language               | Dimension: personas |
       | en_US, en_ZZ, mul_ZZ   | customer, everybody |
     Then I should have one node
