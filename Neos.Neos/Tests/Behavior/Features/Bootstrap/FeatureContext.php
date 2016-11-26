@@ -16,7 +16,7 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Element\ElementInterface;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\MinkContext;
-use Flowpack\Behat\Tests\Behat\FlowContext;
+use Neos\Behat\Tests\Behat\FlowContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Security\AccountRepository;
