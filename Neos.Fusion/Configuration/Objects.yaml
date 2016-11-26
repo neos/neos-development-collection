@@ -1,4 +1,4 @@
-Neos\Fusion\View\TypoScriptView:
+Neos\Fusion\View\FusionView:
   properties:
     fallbackView:
       object: Neos\FluidAdaptor\View\TemplateView
