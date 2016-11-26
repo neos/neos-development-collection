@@ -12,7 +12,7 @@ Feature: Empty dimension values act as a fallback
       | Identifier                           | Path           | Node Type                  | Properties        | Dimension: language | Target dimension: language | Dimension: personas | Target dimension: personas |
       # Intentionally the /sites node should not have any dimension value assigned!
       | 0befa678-79ad-11e5-b465-14109fd7a2dd | /sites         | unstructured               |                   |                     |                            |                     |                            |
-      | 17046dc8-79ad-11e5-9fef-14109fd7a2dd | /sites/typo3cr | Neos.ContentRepository.Testing:Page | {"title": "Home"} | en_US               | en_US                      | specialist          | specialist                 |
+      | 17046dc8-79ad-11e5-9fef-14109fd7a2dd | /sites/content-repository | Neos.ContentRepository.Testing:Page | {"title": "Home"} | en_US               | en_US                      | specialist          | specialist                 |
 
   @fixtures
   Scenario: Node variant with empty dimension values is found
@@ -21,7 +21,7 @@ Feature: Empty dimension values act as a fallback
       | de_DE               | everybody           |
     Then I should have one node
 
-    When I get a node by path "/sites/typo3cr" with the following context:
+    When I get a node by path "/sites/content-repository" with the following context:
       | Dimension: language | Dimension: personas |
       | de_DE               | everybody           |
     Then I should have 0 nodes
@@ -30,15 +30,15 @@ Feature: Empty dimension values act as a fallback
   Scenario: Node variant with empty dimension values has least priority
     Given I have the following nodes:
       | Identifier                           | Path           | Node Type                  | Properties                | Target dimension: language | Target dimension: personas |
-      | 17046dc8-79ad-11e5-9fef-14109fd7a2dd | /sites/typo3cr | Neos.ContentRepository.Testing:Page | {"title": "Default Home"} |                            |                            |
+      | 17046dc8-79ad-11e5-9fef-14109fd7a2dd | /sites/content-repository | Neos.ContentRepository.Testing:Page | {"title": "Default Home"} |                            |                            |
 
-    When I get a node by path "/sites/typo3cr" with the following context:
+    When I get a node by path "/sites/content-repository" with the following context:
       | Dimension: language | Dimension: personas |
       | de_DE               | everybody           |
     Then I should have one node
     And the node property "title" should be "Default Home"
 
-    When I get a node by path "/sites/typo3cr" with the following context:
+    When I get a node by path "/sites/content-repository" with the following context:
       | Dimension: language | Dimension: personas   |
       | de_DE, en_US        | specialist, everybody |
     Then I should have one node
