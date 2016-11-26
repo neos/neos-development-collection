@@ -16,13 +16,13 @@ use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Fusion\View\TypoScriptView;
+use Neos\Fusion\View\FusionView;
 
 /**
  * Testcase for the TypoScript View
  *
  */
-class TypoScriptViewTest extends FunctionalTestCase
+class FusionViewTest extends FunctionalTestCase
 {
     /**
      * @var ViewInterface
@@ -89,7 +89,7 @@ class TypoScriptViewTest extends FunctionalTestCase
      *
      * @param string $controllerObjectName
      * @param string $controllerActionName
-     * @return TypoScriptView
+     * @return FusionView
      */
     protected function buildView($controllerObjectName, $controllerActionName)
     {
@@ -98,7 +98,7 @@ class TypoScriptViewTest extends FunctionalTestCase
         $request->expects($this->any())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
         $this->mockControllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($request));
 
-        $view = new TypoScriptView();
+        $view = new FusionView();
         $view->setControllerContext($this->mockControllerContext);
         $this->inject($view, 'fallbackView', $this->mockFallbackView);
         $view->setTypoScriptPathPattern(__DIR__ . '/Fixtures/TypoScript');
