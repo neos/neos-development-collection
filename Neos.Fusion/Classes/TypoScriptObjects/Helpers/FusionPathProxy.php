@@ -19,22 +19,22 @@ use Neos\Fusion\Exception\UnsupportedProxyMethodException;
 use Neos\Fusion\TypoScriptObjects\TemplateImplementation;
 
 /**
- * A proxy object representing a TypoScript path inside a Fluid Template. It allows
- * to render arbitrary TypoScript objects or Eel expressions using the already-known
+ * A proxy object representing a Fusion path inside a Fluid Template. It allows
+ * to render arbitrary Fusion objects or Eel expressions using the already-known
  * property path syntax.
  *
- * It wraps a part of the TypoScript tree which does not contain TypoScript objects or Eel expressions.
+ * It wraps a part of the Fusion tree which does not contain Fusion objects or Eel expressions.
  *
  * This class is instantiated inside TemplateImplementation and is never used outside.
  */
-class TypoScriptPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \IteratorAggregate, \Countable
+class FusionPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \IteratorAggregate, \Countable
 {
     /**
      * Reference to the TypoScript Runtime which controls the whole rendering
      *
      * @var \Neos\Fusion\Core\Runtime
      */
-    protected $tsRuntime;
+    protected $fusionRuntime;
 
     /**
      * Reference to the "parent" TypoScript object
@@ -73,7 +73,7 @@ class TypoScriptPathProxy implements TemplateObjectAccessInterface, \ArrayAccess
     public function __construct(TemplateImplementation $templateImplementation, $path, array $partialTypoScriptTree)
     {
         $this->templateImplementation = $templateImplementation;
-        $this->tsRuntime = $templateImplementation->getTsRuntime();
+        $this->fusionRuntime = $templateImplementation->getTsRuntime();
         $this->path = $path;
         $this->partialTypoScriptTree = $partialTypoScriptTree;
     }
@@ -94,7 +94,7 @@ class TypoScriptPathProxy implements TemplateObjectAccessInterface, \ArrayAccess
      * wrapping arrays into ourselves again.
      *
      * @param string $offset
-     * @return mixed|TypoScriptPathProxy
+     * @return mixed|FusionPathProxy
      */
     public function offsetGet($offset)
     {
@@ -103,10 +103,10 @@ class TypoScriptPathProxy implements TemplateObjectAccessInterface, \ArrayAccess
         }
         if (!is_array($this->partialTypoScriptTree[$offset])) {
             // Simple type; we call "evaluate" nevertheless to make sure processors are applied.
-            return $this->tsRuntime->evaluate($this->path . '/' . $offset);
+            return $this->fusionRuntime->evaluate($this->path . '/' . $offset);
         } else {
             // arbitrary array (could be Eel expression, TypoScript object, nested sub-array) again, so we wrap it with ourselves.
-            return new TypoScriptPathProxy($this->templateImplementation, $this->path . '/' . $offset, $this->partialTypoScriptTree[$offset]);
+            return new FusionPathProxy($this->templateImplementation, $this->path . '/' . $offset, $this->partialTypoScriptTree[$offset]);
         }
     }
 
@@ -139,18 +139,18 @@ class TypoScriptPathProxy implements TemplateObjectAccessInterface, \ArrayAccess
      *
      * Evaluates TypoScript objects and eel expressions.
      *
-     * @return TypoScriptPathProxy|mixed
+     * @return FusionPathProxy|mixed
      */
     public function objectAccess()
     {
-        if (!$this->tsRuntime->canRender($this->path)) {
+        if (!$this->fusionRuntime->canRender($this->path)) {
             return $this;
         }
 
         try {
-            return $this->tsRuntime->evaluate($this->path, $this->templateImplementation);
+            return $this->fusionRuntime->evaluate($this->path, $this->templateImplementation);
         } catch (\Exception $exception) {
-            return $this->tsRuntime->handleRenderingException($this->path, $exception);
+            return $this->fusionRuntime->handleRenderingException($this->path, $exception);
         }
     }
 
@@ -166,11 +166,11 @@ class TypoScriptPathProxy implements TemplateObjectAccessInterface, \ArrayAccess
             if (!is_array($value)) {
                 $evaluatedArray[$key] = $value;
             } elseif (isset($value['__objectType'])) {
-                $evaluatedArray[$key] = $this->tsRuntime->evaluate($this->path . '/' . $key);
+                $evaluatedArray[$key] = $this->fusionRuntime->evaluate($this->path . '/' . $key);
             } elseif (isset($value['__eelExpression'])) {
-                $evaluatedArray[$key] = $this->tsRuntime->evaluate($this->path . '/' . $key, $this->templateImplementation);
+                $evaluatedArray[$key] = $this->fusionRuntime->evaluate($this->path . '/' . $key, $this->templateImplementation);
             } else {
-                $evaluatedArray[$key] = new TypoScriptPathProxy($this->templateImplementation, $this->path . '/' . $key, $this->partialTypoScriptTree[$key]);
+                $evaluatedArray[$key] = new FusionPathProxy($this->templateImplementation, $this->path . '/' . $key, $this->partialTypoScriptTree[$key]);
             }
         }
         return new \ArrayIterator($evaluatedArray);
@@ -200,7 +200,7 @@ class TypoScriptPathProxy implements TemplateObjectAccessInterface, \ArrayAccess
             try {
                 // Throwing an exception in __toString causes a fatal error, so if that happens we catch them and use the context dependent exception handler instead.
                 $contextDependentExceptionHandler = new ContextDependentHandler();
-                $contextDependentExceptionHandler->setRuntime($this->tsRuntime);
+                $contextDependentExceptionHandler->setRuntime($this->fusionRuntime);
                 return $contextDependentExceptionHandler->handleRenderingException($this->path, $exception);
             } catch (\Exception $contextDepndentExceptionHandlerException) {
                 $this->systemLogger->logException($contextDepndentExceptionHandlerException, array('path' => $this->path));

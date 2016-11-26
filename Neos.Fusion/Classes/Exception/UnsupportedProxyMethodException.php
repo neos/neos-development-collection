@@ -14,7 +14,7 @@ use Neos\Fusion\Exception;
 
 /**
  * This exception is thrown if a non-supported array access method was called
- * on TypoScriptPathProxy.
+ * on FusionPathProxy.
  */
 class UnsupportedProxyMethodException extends Exception
 {
