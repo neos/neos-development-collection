@@ -15,8 +15,8 @@ Feature: Site management / List sites
   Scenario: List sites
     When I go to the "Administration / Site Management" module
     Then I should see the following sites in a table:
-      | name                 |
-      | TYPO3 Neos Demo Site |
+      | name           |
+      | Neos Demo Site |
 
   # Scenario: Add site from existing package
 
@@ -30,12 +30,12 @@ Feature: Site management / List sites
     Then I should see the following sites in a table:
       | name                 |
       | Test Demo Site       |
-      | TYPO3 Neos Demo Site |
+      | Neos Demo Site       |
 
   @fixtures @javascript @remote
   Scenario: Update site name
     When I go to the "Administration / Site Management" module
-    And I follow "Click to edit" for site "TYPO3 Neos Demo Site"
+    And I follow "Click to edit" for site "Neos Demo Site"
     And I fill in "name" with "Updated Neos Demo Site"
     And I press "Save"
     Then I should see the following sites in a table:
