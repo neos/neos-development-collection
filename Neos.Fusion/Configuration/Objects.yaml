@@ -3,6 +3,11 @@ Neos\Fusion\View\FusionView:
     fallbackView:
       object: Neos\FluidAdaptor\View\TemplateView
 
+Neos\Fusion\View\TypoScriptView:
+  properties:
+    fallbackView:
+      object: Neos\FluidAdaptor\View\TemplateView
+
 Neos\Fusion\Core\Cache\ContentCache:
   properties:
     cache:
