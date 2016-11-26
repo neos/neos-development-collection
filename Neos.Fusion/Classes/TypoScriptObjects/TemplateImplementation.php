@@ -125,7 +125,7 @@ class TemplateImplementation extends AbstractArrayTypoScriptObject
             } else {
                 // It is an array; so we need to create a "proxy" for lazy evaluation, as it could be a
                     // nested TypoScript object, Eel expression or simple value.
-                $fluidTemplate->assign($key, new Helpers\TypoScriptPathProxy($this, $this->path . '/' . $key, $value));
+                $fluidTemplate->assign($key, new Helpers\FusionPathProxy($this, $this->path . '/' . $key, $value));
             }
         }
 
