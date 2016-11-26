@@ -70,12 +70,6 @@ class SiteImportService
 
     /**
      * @Flow\Inject
-     * @var LegacySiteImportService
-     */
-    protected $legacySiteImportService;
-
-    /**
-     * @Flow\Inject
      * @var ReflectionService
      */
     protected $reflectionService;
@@ -183,12 +177,6 @@ class SiteImportService
         while ($xmlReader->read()) {
             if ($xmlReader->nodeType != \XMLReader::ELEMENT || $xmlReader->name !== 'site') {
                 continue;
-            }
-            $isLegacyFormat = $xmlReader->getAttribute('nodeName') !== null && $xmlReader->getAttribute('state') === null && $xmlReader->getAttribute('siteResourcesPackageKey') === null;
-            if ($isLegacyFormat) {
-                $site = $this->legacySiteImportService->importSitesFromFile($pathAndFilename);
-                $this->emitSiteImported($site);
-                return $site;
             }
 
             $site = $this->getSiteByNodeName($xmlReader->getAttribute('siteNodeName'));
