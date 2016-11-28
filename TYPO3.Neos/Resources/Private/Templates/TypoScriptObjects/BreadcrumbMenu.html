@@ -6,7 +6,7 @@
 		<li{ts:render(path: '{item.state}.attributes', context: {item: item}) -> f:format.raw()}>
 			<f:if condition="{item.state} == 'current'">
 				<f:then>
-					{item.label}
+					{item.label -> f:format.raw()}
 				</f:then>
 				<f:else>
 					<neos:link.node node="{item.node}" />
