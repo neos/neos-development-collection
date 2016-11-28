@@ -4,7 +4,7 @@
     "description": "Content repository based on Flow, specifically made for Neos.",
     "license": "GPL-3.0+",
     "require": {
-        "typo3/flow": "*",
+        "typo3/flow": "~3.3.0",
         "gedmo/doctrine-extensions": "~2.3.0",
         "behat/transliterator": "~1.0"
     },
