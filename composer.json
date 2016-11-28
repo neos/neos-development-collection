@@ -6,13 +6,13 @@
     "require": {
         "neos/flow-development-collection": "3.3.x-dev",
         "php": ">=5.5.0",
-        "typo3/flow": "*",
-        "typo3/imagine": "*",
-        "typo3/kickstart": "*",
+        "typo3/flow": "~3.3.0",
+        "typo3/imagine": "~2.0",
+        "typo3/kickstart": "~3.3.0",
         "typo3/form": "~2.0",
-        "typo3/party": "*",
+        "typo3/party": "~3.1",
         "typo3/setup": "~2.0",
-        "typo3/twitter-bootstrap": "*",
+        "typo3/twitter-bootstrap": "~2.2",
         "league/commonmark": "^0.12.0",
         "behat/transliterator": "~1.0",
         "gedmo/doctrine-extensions": "~2.3.0"
