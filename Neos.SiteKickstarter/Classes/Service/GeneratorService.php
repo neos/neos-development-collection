@@ -94,7 +94,7 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
      */
     protected function generateSitesTypoScript($packageKey, $siteName)
     {
-        $templatePathAndFilename = 'resource://Neos.SiteKickstarter/Private/Generator/TypoScript/Root.ts2';
+        $templatePathAndFilename = 'resource://Neos.SiteKickstarter/Private/Generator/TypoScript/Root.fusion';
 
         $contextVariables = array();
         $contextVariables['packageKey'] = $packageKey;
@@ -104,7 +104,7 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
 
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
-        $sitesTypoScriptPathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/TypoScript/Root.ts2';
+        $sitesTypoScriptPathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/TypoScript/Root.fusion';
         $this->generateFile($sitesTypoScriptPathAndFilename, $fileContent);
     }
 
