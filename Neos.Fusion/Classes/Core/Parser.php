@@ -609,13 +609,12 @@ class Parser implements ParserInterface
             }
             $iterator = new \DirectoryIterator($basePath);
         }
-
         // If iterator is set it means we're doing globbing
         if (isset($iterator)) {
             foreach ($iterator as $fileInfo) {
                 $pathAndFilename = $fileInfo->getPathname();
-                // Only work on .ts2 files
-                if ($fileInfo->getExtension() === 'ts2') {
+                // Only work on .fusion files and .ts2 files. The support for .ts2 is a fallback and will be dropped with 4.0
+                if ($fileInfo->getExtension() === 'fusion' || $fileInfo->getExtension() === 'ts2') {
                     // Check if not trying to recursively include the current file via globbing
                     if (stat($pathAndFilename) !== stat($this->contextPathAndFilename)) {
                         if (!is_readable($pathAndFilename)) {
