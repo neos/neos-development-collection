@@ -13,10 +13,10 @@ namespace Neos\Fusion\ViewHelpers;
 
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\Fusion\TypoScriptObjects\AbstractTypoScriptObject;
-use Neos\Fusion\View\TypoScriptView;
+use Neos\Fusion\View\FusionView;
 
 /**
- * Render a TypoScript object with a relative TypoScript path, optionally
+ * Render a Fusion object with a relative Fusion path, optionally
  * pushing new variables onto the TypoScript context.
  *
  * = Examples =
@@ -31,14 +31,14 @@ use Neos\Fusion\View\TypoScriptView;
  * <ts:render path="some.given.path" />
  * </code>
  * <output>
- * (the evaluated TypoScript, depending on the given path)
+ * (the evaluated Fusion, depending on the given path)
  * </output>
  *
- * <code title="TypoScript from a foreign package">
+ * <code title="Fusion from a foreign package">
  * <ts:render path="some.given.path" typoScriptPackageKey="Acme.Bookstore" />
  * </code>
  * <output>
- * (the evaluated TypoScript, depending on the given path)
+ * (the evaluated Fusion, depending on the given path)
  * </output>
  */
 class RenderViewHelper extends AbstractViewHelper
@@ -49,7 +49,7 @@ class RenderViewHelper extends AbstractViewHelper
     protected $escapeOutput = false;
 
     /**
-     * @var TypoScriptView
+     * @var FusionView
      */
     protected $typoScriptView;
 
@@ -60,25 +60,25 @@ class RenderViewHelper extends AbstractViewHelper
      */
     public function initializeArguments()
     {
-        $this->registerArgument('typoScriptFilePathPattern', 'string', 'Resource pattern to load TypoScript from. Defaults to: resource://@package/Private/TypoScript/', false);
+        $this->registerArgument('typoScriptFilePathPattern', 'string', 'Resource pattern to load Fusion from. Defaults to: resource://@package/Private/TypoScript/', false);
     }
 
     /**
-     * Evaluate the TypoScript object at $path and return the rendered result.
+     * Evaluate the Fusion object at $path and return the rendered result.
      *
-     * @param string $path Relative TypoScript path to be rendered
+     * @param string $path Relative Fusion path to be rendered
      * @param array $context Additional context variables to be set.
-     * @param string $typoScriptPackageKey The key of the package to load TypoScript from, if not from the current context.
+     * @param string $typoScriptPackageKey The key of the package to load Fusion from, if not from the current context.
      * @return string
      * @throws \InvalidArgumentException
      */
     public function render($path, array $context = null, $typoScriptPackageKey = null)
     {
         if (strpos($path, '/') === 0 || strpos($path, '.') === 0) {
-            throw new \InvalidArgumentException('When calling the TypoScript render view helper only relative paths are allowed.', 1368740480);
+            throw new \InvalidArgumentException('When calling the Fusion render view helper only relative paths are allowed.', 1368740480);
         }
         if (preg_match('/^[a-z0-9.]+$/i', $path) !== 1) {
-            throw new \InvalidArgumentException('Invalid path given to the TypoScript render view helper ', 1368740484);
+            throw new \InvalidArgumentException('Invalid path given to the Fusion render view helper ', 1368740484);
         }
 
         $slashSeparatedPath = str_replace('.', '/', $path);
@@ -101,7 +101,7 @@ class RenderViewHelper extends AbstractViewHelper
                 $typoScriptObject->getTsRuntime()->popContext();
             }
         } else {
-            $this->initializeTypoScriptView();
+            $this->initializeFusionView();
             $this->typoScriptView->setPackageKey($typoScriptPackageKey);
             $this->typoScriptView->setTypoScriptPath($slashSeparatedPath);
             if ($context !== null) {
@@ -115,13 +115,13 @@ class RenderViewHelper extends AbstractViewHelper
     }
 
     /**
-     * Initialize the TypoScript View
+     * Initialize the Fusion View
      *
      * @return void
      */
-    protected function initializeTypoScriptView()
+    protected function initializeFusionView()
     {
-        $this->typoScriptView = new TypoScriptView();
+        $this->typoScriptView = new FusionView();
         $this->typoScriptView->setControllerContext($this->controllerContext);
         $this->typoScriptView->disableFallbackView();
         if ($this->hasArgument('typoScriptFilePathPattern')) {
