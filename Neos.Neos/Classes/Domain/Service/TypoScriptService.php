@@ -45,22 +45,30 @@ class TypoScriptService
      *
      * @var string
      */
-    protected $siteRootTypoScriptPattern = 'resource://%s/Private/TypoScript/Root.ts2';
+    protected $siteRootTypoScriptPattern = 'resource://%s/Private/TypoScript/Root.fusion';
 
     /**
-     * Pattern used for determining the TypoScript root file for a site
+     * Legacy pattern used for determining the TypoScript root file for a site
      *
      * @var string
-     * @deprecated since 1.2 will be removed in 2.0
+     * @deprecated since 3.0 will be removed in 4.0
      */
-    protected $legacySiteRootTypoScriptPattern = 'resource://%s/Private/TypoScripts/Library/Root.ts2';
+    protected $legacySiteRootTypoScriptPattern = 'resource://%s/Private/TypoScript/Root.ts2';
 
     /**
      * Pattern used for determining the TypoScript root file for autoIncludes
      *
      * @var string
      */
-    protected $autoIncludeTypoScriptPattern = 'resource://%s/Private/TypoScript/Root.ts2';
+    protected $autoIncludeTypoScriptPattern = 'resource://%s/Private/TypoScript/Root.fusion';
+
+    /**
+     * Legacy pattern used for determining the TypoScript root file for autoIncludes
+     *
+     * @var string
+     * @deprecated since 3.0 will be removed in 4.0
+     */
+    protected $legacyAutoIncludeTypoScriptPattern = 'resource://%s/Private/TypoScript/Root.ts2';
 
     /**
      * Array of TypoScript files to include before the site TypoScript
@@ -68,8 +76,8 @@ class TypoScriptService
      * Example:
      *
      *     array(
-     *         'resources://MyVendor.MyPackageKey/Private/TypoScript/Root.ts2',
-     *         'resources://SomeVendor.OtherPackage/Private/TypoScript/Root.ts2'
+     *         'resources://MyVendor.MyPackageKey/Private/TypoScript/Root.fusion',
+     *         'resources://SomeVendor.OtherPackage/Private/TypoScript/Root.fusion'
      *     )
      *
      * @var array
@@ -82,8 +90,8 @@ class TypoScriptService
      * Example:
      *
      *     array(
-     *         'resources://MyVendor.MyPackageKey/Private/TypoScript/Root.ts2',
-     *         'resources://SomeVendor.OtherPackage/Private/TypoScript/Root.ts2'
+     *         'resources://MyVendor.MyPackageKey/Private/TypoScript/Root.fusion',
+     *         'resources://SomeVendor.OtherPackage/Private/TypoScript/Root.fusion'
      *     )
      *
      * @var array
@@ -167,7 +175,7 @@ class TypoScriptService
      * If it doesn't exist, this function will just return an empty string.
      *
      * @param string $pathAndFilename Path and filename of the TypoScript file
-     * @return string The content of the .ts2 file, plus one chr(10) at the end
+     * @return string The content of the .fusion file, plus one chr(10) at the end
      */
     protected function readExternalTypoScriptFile($pathAndFilename)
     {
@@ -243,7 +251,12 @@ class TypoScriptService
         $autoIncludeTypoScript = array();
         foreach (array_keys($this->packageManager->getActivePackages()) as $packageKey) {
             if (isset($this->autoIncludeConfiguration[$packageKey]) && $this->autoIncludeConfiguration[$packageKey] === true) {
-                $autoIncludeTypoScript[] = sprintf($this->autoIncludeTypoScriptPattern, $packageKey);
+                $autoIncludeTypoScriptFile = sprintf($this->autoIncludeTypoScriptPattern, $packageKey);
+                if (is_file($autoIncludeTypoScriptFile)) {
+                    $autoIncludeTypoScript[] = $autoIncludeTypoScriptFile;
+                } else {
+                    $autoIncludeTypoScript[] = sprintf($this->legacyAutoIncludeTypoScriptPattern, $packageKey);
+                }
             }
         }
 
@@ -273,7 +286,7 @@ class TypoScriptService
 
     /**
      * Set TypoScript resources that should be prepended before the site TypoScript,
-     * it defaults to the Neos Root.ts2 TypoScript.
+     * it defaults to the Neos Root.fusion TypoScript.
      *
      * @param array $prependTypoScriptIncludes
      * @return void
