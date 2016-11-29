@@ -112,7 +112,7 @@ into the generated page. Here is an example:
 		</f:section>
 	</head>
 
-*Library/Root.ts2*
+*Library/Root.fusion*
 
 ::
 
@@ -171,13 +171,13 @@ Wrapping this into some container (if needed) in a lot of cases provides for eno
 to style the menu using CSS. In case it still is needed, it is possible to change the rendered markup
 of `Menu` using TypoScript. `Menu` is defined inside the core of Neos together with Neos.Neos.NodeTypes:
 
-*Neos.Neos/Resources/Private/DefaultTypoScript/ImplementationClasses.ts2*
+*Neos.Neos/Resources/Private/DefaultTypoScript/ImplementationClasses.fusion*
 
 ::
 
 	prototype(Neos.Neos:Menu).@class = 'Neos\\Neos\\TypoScript\\MenuImplementation'
 
-*Neos.Neos.NodeTypes/Resources/Private/TypoScript/Root.ts2*
+*Neos.Neos.NodeTypes/Resources/Private/TypoScript/Root.fusion*
 
 ::
 

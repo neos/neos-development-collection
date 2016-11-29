@@ -36,7 +36,7 @@ Let's see how the content cache can help you to deliver a faster user experience
 The basics
 ==========
 
-The main TypoScript path is ``root``, you can find it in the file ``TypoScript/DefaultTypoScript.ts2`` in the
+The main TypoScript path is ``root``, you can find it in the file ``TypoScript/DefaultTypoScript.fusion`` in the
 ``Neos.Neos`` package. Here is a small part of this file that shows the outermost cache configuration of the ``root``
 path::
 
@@ -127,7 +127,7 @@ In the ``@cache`` meta property the following subproperties are allowed:
   mode ``uncached`` or ``dynamic``. Only values that are configured here will be available in TypoScript when the path is evaluated
   in subsequent request.
 
-  Example from ``Plugin.ts2``::
+  Example from ``Plugin.fusion``::
 
 	prototype(Neos.Neos:Plugin) {
 		@cache {
