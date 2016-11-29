@@ -17,10 +17,10 @@ use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Fusion\View\TypoScriptView;
+use Neos\Fusion\View\FusionView;
 
 /**
- * Testcase for the TypoScript View
+ * Testcase for the Fusion View
  *
  */
 abstract class AbstractTypoScriptObjectTest extends FunctionalTestCase
@@ -31,13 +31,13 @@ abstract class AbstractTypoScriptObjectTest extends FunctionalTestCase
     protected $controllerContext;
 
     /**
-     * Helper to build a TypoScript view object
+     * Helper to build a Fusion view object
      *
-     * @return TypoScriptView
+     * @return FusionView
      */
     protected function buildView()
     {
-        $view = new TypoScriptView();
+        $view = new FusionView();
 
         $httpRequest = Request::createFromEnvironment();
         $request = $httpRequest->createActionRequest();
