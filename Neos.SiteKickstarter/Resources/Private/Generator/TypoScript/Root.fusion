@@ -1,5 +1,5 @@
 /**
- * Root TypoScript template for the {siteName} site
+ * Root Fusion template for the {siteName} site
  */
 page = Neos.Neos:Page {
 	head {
