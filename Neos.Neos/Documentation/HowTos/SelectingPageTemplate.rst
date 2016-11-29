@@ -58,7 +58,7 @@ For example, if the `landingPage` was chosen, a different template can be used.
 
 The implementation internal of the layout rendering can be found in the file:
 
-Neos.Neos/Resources/Private/TypoScript/DefaultTypoScript.ts2
+Neos.Neos/Resources/Private/TypoScript/DefaultTypoScript.fusion
 
 The element `root.layout` is the one responsible for handling the layout. So when trying to
 change the layout handling this is the TypoScript object to manipulate.
@@ -113,7 +113,7 @@ First we adjust the `default` `root` matcher not to render the `/page` path, but
         }
     }
 
-Instead of simply defining our `page` object inside `root.ts2`, we create a new prototype based on a `page` prototype.
+Instead of simply defining our `page` object inside `root.fusion`, we create a new prototype based on a `page` prototype.
 The content will basically remain the same, make sure only to define bare essentials that all your future custom page types can profit from.
 
 Your basic `DefaultPage` prototype could look something like this::

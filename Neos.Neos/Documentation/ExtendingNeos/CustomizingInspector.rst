@@ -36,7 +36,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
 
 You can add this property to your TypoScript:
 
-TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/Root.ts2) ::
+TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/Root.fusion) ::
 
   prototype(Vendor.Site:YourContentElementName) < prototype(Neos.Neos:Content) {
     templatePath = 'resource://Vendor.Site/Private/Templates/TypoScriptObjects/YourContentElementName.html'
@@ -103,7 +103,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
                 event:
                   label: 'Event'
 
-TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/Root.ts2) ::
+TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/Root.fusion) ::
 
   prototype(Vendor.Site:YourContentElementName) < prototype(TYPO3.TypoScript:Template) {
     templatePath = 'resource://Vendor.Site/Private/Templates/TypoScriptObjects/YourContentElementName.html'
