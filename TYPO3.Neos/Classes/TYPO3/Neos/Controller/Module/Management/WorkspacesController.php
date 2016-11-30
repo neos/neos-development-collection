@@ -465,7 +465,8 @@ class WorkspacesController extends AbstractModuleController
         $siteChanges = [];
         foreach ($this->publishingService->getUnpublishedNodes($selectedWorkspace) as $node) {
             /** @var NodeInterface $node */
-            if (!$node->getNodeType()->isOfType('TYPO3.Neos:ContentCollection')) {
+            $skipCollectionChanges = $node->getNodeType()->isOfType('TYPO3.Neos:ContentCollection') && !$node->getNodeType()->isOfType('TYPO3.Neos:Content');
+            if (!$skipCollectionChanges) {
                 $pathParts = explode('/', $node->getPath());
                 if (count($pathParts) > 2) {
                     $siteNodeName = $pathParts[2];
@@ -483,7 +484,7 @@ class WorkspacesController extends AbstractModuleController
 
                         $change = [
                             'node' => $node,
-                            'contentChanges' => $this->renderContentChanges($node),
+                            'contentChanges' => $this->renderContentChanges($node)
                         ];
                         if ($node->getNodeType()->isOfType('TYPO3.Neos:Node')) {
                             $change['configuration'] = $node->getNodeType()->getFullConfiguration();
