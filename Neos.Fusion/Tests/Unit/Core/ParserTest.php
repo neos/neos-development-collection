@@ -881,11 +881,11 @@ class ParserTest extends UnitTestCase
         $sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptComments01');
         $expected = array(); // Fixture contains only comments, so expect empty parse tree
         $actualParseTree = $this->parser->parse($sourceCode);
-        $this->assertEquals($expected, $actualParseTree, 'The parse tree was not as expected after parsing fixture `ParserTestTypoScriptComments01..fusion`');
+        $this->assertEquals($expected, $actualParseTree, 'The parse tree was not as expected after parsing fixture `ParserTestTypoScriptComments01.fusion`');
     }
 
     /**
-     * @param string $fixtureName File name of the TypoScript fixture to be read (without ..fusion)
+     * @param string $fixtureName File name of the TypoScript fixture to be read (without .fusion)
      * @return string The content of the fixture
      */
     protected function readTypoScriptFixture($fixtureName)
