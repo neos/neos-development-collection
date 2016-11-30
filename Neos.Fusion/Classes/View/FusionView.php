@@ -213,7 +213,7 @@ class FusionView extends AbstractView
         ksort($typoScriptPathPatterns);
         foreach ($typoScriptPathPatterns as $typoScriptPathPattern) {
             $typoScriptPathPattern = str_replace('@package', $this->getPackageKey(), $typoScriptPathPattern);
-            $filePaths = Files::readDirectoryRecursively($typoScriptPathPattern, '.ts2');
+            $filePaths = array_merge(Files::readDirectoryRecursively($typoScriptPathPattern, '.fusion'), Files::readDirectoryRecursively($typoScriptPathPattern, '.ts2'));
             sort($filePaths);
             foreach ($filePaths as $filePath) {
                 $mergedTypoScriptCode .= PHP_EOL . file_get_contents($filePath) . PHP_EOL;
