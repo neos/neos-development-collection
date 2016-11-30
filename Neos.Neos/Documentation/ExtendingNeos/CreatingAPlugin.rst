@@ -154,7 +154,7 @@ Configure TypoScript
 Second, the rendering of the plugin needs to be specified using TypoScript, so the following
 TypoScript needs to be added to your package.
 
-*Resources/Private/TypoScript/Plugin.ts2*::
+*Resources/Private/TypoScript/Plugin.fusion*::
 
   prototype(Sarkosh.CdCollection:Plugin) < prototype(Neos.Neos:Plugin)
   prototype(Sarkosh.CdCollection:Plugin) {
@@ -163,14 +163,14 @@ TypoScript needs to be added to your package.
   	action = 'index'
   }
 
-Finally tweak your site package's *Root.ts2* and include the newly created TypoScript file::
+Finally tweak your site package's *Root.fusion* and include the newly created TypoScript file::
 
-  include: Plugin.ts2
+  include: Plugin.fusion
 
 Now log in to your Neos backend (you must remove the Flow routes again), and you
 will be able to add your plugin just like any other content element.
 
-To automatically include the Root.ts2 in Neos you have to add the following lines to the *Configuration/Settings.yaml* of your Package:
+To automatically include the Root.fusion in Neos you have to add the following lines to the *Configuration/Settings.yaml* of your Package:
 
 .. code-block:: yaml
 
@@ -183,7 +183,7 @@ To automatically include the Root.ts2 in Neos you have to add the following line
 Use TypoScript to configure the Plugin
 --------------------------------------
 
-To hand over configuration to your plugin you can add arbitrary TypoScript values to *Resources/Private/TypoScript/Plugin.ts2*::
+To hand over configuration to your plugin you can add arbitrary TypoScript values to *Resources/Private/TypoScript/Plugin.fusion*::
 
   prototype(Sarkosh.CdCollection:Plugin) {
   	...

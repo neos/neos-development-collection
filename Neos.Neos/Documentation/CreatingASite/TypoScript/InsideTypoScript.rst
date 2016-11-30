@@ -57,10 +57,10 @@ Automatic TypoScript file inclusion
 All TypoScript files are expected to be in the folder *Resources/Private/TypoScript* when it comes to
 automatic inclusion.
 
-Neos will include the *Root.ts2* file of all packages listed in the Setting ``Neos.Neos.typoScript.autoInclude``
+Neos will include the *Root.fusion* file of all packages listed in the Setting ``Neos.Neos.typoScript.autoInclude``
 in the order of packages as returned by the package management.
 
-Neos will then always include the *Root.ts2* file of the current site package.
+Neos will then always include the *Root.fusion* file of the current site package.
 
 Manual TypoScript file inclusion
 --------------------------------
@@ -68,15 +68,15 @@ Manual TypoScript file inclusion
 In any TypoScript file further files can be included using the ``include`` statement. The path is either
 relative to the current file or can be given with the ``resource`` wrapper::
 
-	include: NodeTypes/CustomElements.ts2
-	include: resource://Acme.Demo/Private/TypoScript/Quux.ts2
+	include: NodeTypes/CustomElements.fusion
+	include: resource://Acme.Demo/Private/TypoScript/Quux.fusion
 
 In addition to giving exact filenames, globbing is possible in two variants::
 
-	# Include all .ts2 files in NodeTypes
+	# Include all .fusion files in NodeTypes
 	include: NodeTypes/*
 
-	# Include all .ts2 files in NodeTypes and it's subfolders recursively
+	# Include all .fusion files in NodeTypes and it's subfolders recursively
 	include: NodeTypes/**/*
 
 The first includes all TypoScript files in the *NodeTypes* folder, the latter will recursively include all

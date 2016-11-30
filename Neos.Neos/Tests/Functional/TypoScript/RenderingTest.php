@@ -60,7 +60,7 @@ class RenderingTest extends AbstractNodeTest
      */
     public function overriddenValueInPrototype()
     {
-        $output = $this->simulateRendering('Test_OverriddenValueInPrototype.ts2');
+        $output = $this->simulateRendering('Test_OverriddenValueInPrototype.fusion');
 
         $this->assertTeaserConformsToBasicRendering($output);
         $this->assertMainContentConformsToBasicRendering($output);
@@ -75,7 +75,7 @@ class RenderingTest extends AbstractNodeTest
      */
     public function additionalProcessorInPrototype()
     {
-        $output = $this->simulateRendering('Test_AdditionalProcessorInPrototype.ts2');
+        $output = $this->simulateRendering('Test_AdditionalProcessorInPrototype.fusion');
 
         $this->assertTeaserConformsToBasicRendering($output);
         $this->assertMainContentConformsToBasicRendering($output);
@@ -88,7 +88,7 @@ class RenderingTest extends AbstractNodeTest
      */
     public function additionalProcessorInPrototype2()
     {
-        $output = $this->simulateRendering('Test_AdditionalProcessorInPrototype2.ts2');
+        $output = $this->simulateRendering('Test_AdditionalProcessorInPrototype2.fusion');
 
         $this->assertSelectEquals('.teaser > .neos-contentcollection > .typo3-neos-nodetypes-headline > div > header > h1', 'Welcome to this example', true, $output);
         $this->assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .left > .neos-contentcollection > .typo3-neos-nodetypes-headline > div > header > h1', 'Documentation', true, $output);
@@ -102,7 +102,7 @@ class RenderingTest extends AbstractNodeTest
      */
     public function replaceElementRenderingCompletelyInSidebar()
     {
-        $output = $this->simulateRendering('Test_ReplaceElementRenderingCompletelyInSidebar.ts2');
+        $output = $this->simulateRendering('Test_ReplaceElementRenderingCompletelyInSidebar.fusion');
         $this->assertTeaserConformsToBasicRendering($output);
         $this->assertMainContentConformsToBasicRendering($output);
 
@@ -116,7 +116,7 @@ class RenderingTest extends AbstractNodeTest
      */
     public function prototypeInheritance()
     {
-        $output = $this->simulateRendering('Test_PrototypeInheritance.ts2');
+        $output = $this->simulateRendering('Test_PrototypeInheritance.fusion');
         $this->assertSelectEquals('.teaser > .neos-contentcollection > .typo3-neos-nodetypes-headline > div > h1', 'Static Headline', true, $output);
         $this->assertSelectEquals('.main > .neos-contentcollection > .typo3-neos-nodetypes-headline > div > h1', 'Static Headline', true, $output);
 
@@ -130,7 +130,7 @@ class RenderingTest extends AbstractNodeTest
      */
     public function replaceElementRenderingCompletelyBasedOnAdvancedCondition()
     {
-        $output = $this->simulateRendering('Test_ReplaceElementRenderingCompletelyBasedOnAdvancedCondition.ts2');
+        $output = $this->simulateRendering('Test_ReplaceElementRenderingCompletelyBasedOnAdvancedCondition.fusion');
         $this->assertTeaserConformsToBasicRendering($output);
         $this->assertSidebarConformsToBasicRendering($output);
 
@@ -142,7 +142,7 @@ class RenderingTest extends AbstractNodeTest
      */
     public function overriddenValueInNestedPrototype()
     {
-        $output = $this->simulateRendering('Test_OverriddenValueInNestedPrototype.ts2');
+        $output = $this->simulateRendering('Test_OverriddenValueInNestedPrototype.fusion');
         $this->assertTeaserConformsToBasicRendering($output);
 
         $this->assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .left > .neos-contentcollection > .typo3-neos-nodetypes-headline > div > header', 'Static Headline', true, $output);
@@ -156,7 +156,7 @@ class RenderingTest extends AbstractNodeTest
      */
     public function overriddenValueInNestedPrototype2()
     {
-        $output = $this->simulateRendering('Test_OverriddenValueInNestedPrototype2.ts2');
+        $output = $this->simulateRendering('Test_OverriddenValueInNestedPrototype2.fusion');
         $this->assertTeaserConformsToBasicRendering($output);
 
         $this->assertSelectEquals('.main > .neos-contentcollection > .acme-demo-threecolumn > .left > .neos-contentcollection > .typo3-neos-nodetypes-headline > div > header', 'Static Headline', true, $output);
@@ -189,7 +189,7 @@ class RenderingTest extends AbstractNodeTest
      */
     public function classesAreAppendedAsExpected()
     {
-        $output = $this->simulateRendering('Test_AppendingClassesToContent.ts2');
+        $output = $this->simulateRendering('Test_AppendingClassesToContent.fusion');
         $this->assertSelectEquals('.teaser > .neos-contentcollection > .typo3-neos-nodetypes-headline.test h1', 'Welcome to this example', true, $output);
         $this->assertSelectEquals('.sidebar > .neos-contentcollection > .typo3-neos-nodetypes-headline.test h1', 'Last Commits', true, $output);
     }
@@ -199,7 +199,7 @@ class RenderingTest extends AbstractNodeTest
      */
     public function menuWithNegativeEntryLevelIsRenderedAsExpected()
     {
-        $output = $this->simulateRendering('Test_MenuNegativeEntryLevel.ts2');
+        $output = $this->simulateRendering('Test_MenuNegativeEntryLevel.fusion');
         $this->assertSelectEquals('.navigation > ul > li.normal > a', 'About Us', true, $output);
         $this->assertSelectEquals('.navigation > ul > li.active > a', 'Products', true, $output);
     }
@@ -351,7 +351,7 @@ class RenderingTest extends AbstractNodeTest
     protected function createRuntimeWithFixtures($additionalTypoScriptFile = null)
     {
         $typoScriptService = new TypoScriptService();
-        $typoScriptService->setSiteRootTypoScriptPattern(__DIR__ . '/Fixtures/BaseTypoScript.ts2');
+        $typoScriptService->setSiteRootTypoScriptPattern(__DIR__ . '/Fixtures/BaseTypoScript.fusion');
 
         if ($additionalTypoScriptFile !== null) {
             $typoScriptService->setAppendTypoScriptIncludes(array($additionalTypoScriptFile));

@@ -48,7 +48,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml)::
 Based on your Node Type configuration, now you need a TypoScript object to be able to use your new Node Type. This TypoScript
 object needs to have the same name as the Node Type:
 
-TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/Root.ts2)::
+TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/Root.fusion)::
 
 	prototype(Vendor:YourContentElementName) < prototype(Neos.Neos:Content) {
 		templatePath = 'resource://Vendor.Site/Private/Templates/TypoScriptObjects/YourContentElementName.html'

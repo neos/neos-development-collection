@@ -11,7 +11,7 @@ pages are using the same content or information. So a
 common issue is how to solve this in the best possible
 way.
 
-VendorName.VendorSite/Resources/Private/TypoScripts/Library/Root.ts2
+VendorName.VendorSite/Resources/Private/TypoScripts/Library/Root.fusion
 
 TypoScript code::
 

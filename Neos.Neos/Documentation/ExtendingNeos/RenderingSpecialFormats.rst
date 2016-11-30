@@ -51,7 +51,7 @@ TypoScript
 The ``root`` case in the default TypoScript will render every format that is different from ``html`` by rendering a path
 with the format value.
 
-Root.ts2::
+Root.fusion::
 
 	# Define a path for rendering the vcard format
 	vcard = TYPO3.TypoScript:Case {

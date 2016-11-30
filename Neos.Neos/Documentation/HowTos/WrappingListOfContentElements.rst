@@ -18,7 +18,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
       column0:
         type: 'Neos.Neos:ContentCollection'
 
-TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/NodeTypes.ts2) ::
+TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/NodeTypes.fusion) ::
 
 	prototype(Vendor:Box) < prototype(Neos.Neos:Content) {
 		templatePath = 'resource://Vendor.Site/Private/Templates/TypoScriptObjects/Box.html'
@@ -71,7 +71,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
       column0:
         type: 'Neos.Neos:ContentCollection'
 
-TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/NodeTypes.ts2) ::
+TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/NodeTypes.fusion) ::
 
 	prototype(Vendor:Box) < prototype(Neos.Neos:Content) {
 		templatePath = 'resource://Vendor.Site/Private/Templates/TypoScriptObjects/Box.html'

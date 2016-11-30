@@ -3,12 +3,12 @@
 //
 // - Inclusion globing
 
-include: ParserTestTypoScriptFixture16.ts2
+include: ParserTestTypoScriptFixture16.fusion
 
 # Also include fixture #17b to check if the default namespace which has been defined for the Parser
 # via the PHP API, also is available in the included file:
 
-include: ParserTestTypoScriptFixture17b.ts2
+include: ParserTestTypoScriptFixture17b.fusion
 
 prototype(TYPO3.Foo:Bar2).baz = "New Value"
 

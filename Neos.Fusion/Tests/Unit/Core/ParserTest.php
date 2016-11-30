@@ -705,7 +705,7 @@ class ParserTest extends UnitTestCase
      */
     public function parserCorrectlyParsesFixture16()
     {
-        $fixture = __DIR__ . '/Fixtures/ParserTestTypoScriptFixture16.ts2';
+        $fixture = __DIR__ . '/Fixtures/ParserTestTypoScriptFixture16.fusion';
         $sourceCode = file_get_contents($fixture, FILE_TEXT);
 
         $expectedParseTree = $this->getExpectedParseTreeForFixture16();
@@ -720,7 +720,7 @@ class ParserTest extends UnitTestCase
      */
     public function parserThrowsExceptionOnFixture16b()
     {
-        $fixture = __DIR__ . '/Fixtures/ParserTestTypoScriptFixture16b.ts2';
+        $fixture = __DIR__ . '/Fixtures/ParserTestTypoScriptFixture16b.fusion';
         $sourceCode = file_get_contents($fixture, FILE_TEXT);
 
         $this->parser->parse($sourceCode, $fixture);
@@ -731,7 +731,7 @@ class ParserTest extends UnitTestCase
      */
     public function parserCorrectlyParsesFixture17()
     {
-        $fixture = __DIR__ . '/Fixtures/ParserTestTypoScriptFixture17.ts2';
+        $fixture = __DIR__ . '/Fixtures/ParserTestTypoScriptFixture17.fusion';
         $sourceCode = file_get_contents($fixture, FILE_TEXT);
 
         $expectedParseTree = $this->getExpectedParseTreeForFixture16();
@@ -881,15 +881,15 @@ class ParserTest extends UnitTestCase
         $sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptComments01');
         $expected = array(); // Fixture contains only comments, so expect empty parse tree
         $actualParseTree = $this->parser->parse($sourceCode);
-        $this->assertEquals($expected, $actualParseTree, 'The parse tree was not as expected after parsing fixture `ParserTestTypoScriptComments01.ts2`');
+        $this->assertEquals($expected, $actualParseTree, 'The parse tree was not as expected after parsing fixture `ParserTestTypoScriptComments01.fusion`');
     }
 
     /**
-     * @param string $fixtureName File name of the TypoScript fixture to be read (without .ts2)
+     * @param string $fixtureName File name of the TypoScript fixture to be read (without .fusion)
      * @return string The content of the fixture
      */
     protected function readTypoScriptFixture($fixtureName)
     {
-        return file_get_contents(__DIR__ . '/Fixtures/' . $fixtureName . '.ts2', FILE_TEXT);
+        return file_get_contents(__DIR__ . '/Fixtures/' . $fixtureName . '.fusion', FILE_TEXT);
     }
 }
