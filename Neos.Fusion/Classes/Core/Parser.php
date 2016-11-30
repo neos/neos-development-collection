@@ -613,7 +613,7 @@ class Parser implements ParserInterface
         if (isset($iterator)) {
             foreach ($iterator as $fileInfo) {
                 $pathAndFilename = $fileInfo->getPathname();
-                // Only work on .fusion files and .ts2 files. The support for .ts2 is a fallback and will be dropped with 4.0
+                // Only work on .fusion files and .ts2 files. The support for .ts2 is deprecated a fallback and will be dropped with 4.0
                 if ($fileInfo->getExtension() === 'fusion' || $fileInfo->getExtension() === 'ts2') {
                     // Check if not trying to recursively include the current file via globbing
                     if (stat($pathAndFilename) !== stat($this->contextPathAndFilename)) {
