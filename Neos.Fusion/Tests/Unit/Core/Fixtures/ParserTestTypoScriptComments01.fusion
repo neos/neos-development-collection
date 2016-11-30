@@ -60,4 +60,4 @@ comment with // ane more comment
 
 
 // another edge-case mentioned in NEOS-864
-#include: Pages/**/*..fusion
+#include: Pages/**/*.fusion
