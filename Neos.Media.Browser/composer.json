@@ -70,7 +70,8 @@
             "Neos.NodeTypes-20161125104800",
             "Neos.Neos-20161125104802",
             "Neos.Kickstarter-20161125110814",
-            "Neos.Neos-20161125122412"
+            "Neos.Neos-20161125122412",
+            "Neos.Flow-20161125124112"
         ]
     }
 }
