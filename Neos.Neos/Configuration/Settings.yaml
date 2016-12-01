@@ -680,11 +680,11 @@ Neos:
     rendering:
       exceptionHandler: Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler
     defaultContext:
-      Neos.Node: Neos\Neos\TypoScript\Helper\NodeHelper
-      Neos.Link: Neos\Neos\TypoScript\Helper\LinkHelper
-      Neos.Array: Neos\Neos\TypoScript\Helper\ArrayHelper
-      Neos.Rendering: Neos\Neos\TypoScript\Helper\RenderingHelper
-      Neos.Caching: Neos\Neos\TypoScript\Helper\CachingHelper
+      Neos.Node: Neos\Neos\Fusion\Helper\NodeHelper
+      Neos.Link: Neos\Neos\Fusion\Helper\LinkHelper
+      Neos.Array: Neos\Neos\Fusion\Helper\ArrayHelper
+      Neos.Rendering: Neos\Neos\Fusion\Helper\RenderingHelper
+      Neos.Caching: Neos\Neos\Fusion\Helper\CachingHelper
 
   Setup:
     stepOrder:

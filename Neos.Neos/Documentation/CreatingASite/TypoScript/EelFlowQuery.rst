@@ -90,10 +90,10 @@ By default the following Eel helpers are available in the default context for Ee
 
 * ``Translation``, exposing ``TYPO3\Flow\I18n\EelHelper\TranslationHelper``
 
-* ``Neos.Node``, exposing ``Neos\Neos\TypoScript\Helper\NodeHelper``
-* ``Neos.Link``, exposing ``Neos\Neos\TypoScript\Helper\LinkHelper``
-* ``Neos.Array``, exposing ``Neos\Neos\TypoScript\Helper\ArrayHelper``
-* ``Neos.Rendering``, exposing ``Neos\Neos\TypoScript\Helper\RenderingHelper``
+* ``Neos.Node``, exposing ``Neos\Neos\Fusion\Helper\NodeHelper``
+* ``Neos.Link``, exposing ``Neos\Neos\Fusion\Helper\LinkHelper``
+* ``Neos.Array``, exposing ``Neos\Neos\Fusion\Helper\ArrayHelper``
+* ``Neos.Rendering``, exposing ``Neos\Neos\Fusion\Helper\RenderingHelper``
 
 See: :ref:`Eel Helpers Reference`
 

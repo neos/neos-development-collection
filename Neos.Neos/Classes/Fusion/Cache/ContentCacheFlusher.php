@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Neos\TypoScript\Cache;
+namespace Neos\Neos\Fusion\Cache;
 
 /*
  * This file is part of the Neos.Neos package.

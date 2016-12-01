@@ -4,7 +4,7 @@
 # This is used to render required attributes to enable inline editing in the backend
 #
 prototype(Neos.Neos:ContentElementEditable) {
-	@class = 'Neos\\Neos\\TypoScript\\ContentElementEditableImplementation'
+	@class = 'Neos\\Neos\\Fusion\\ContentElementEditableImplementation'
 	node = ${node}
 	property = ${property}
 	value = ${value}
