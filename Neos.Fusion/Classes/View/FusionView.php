@@ -24,7 +24,7 @@ use Neos\Fusion\Exception\RuntimeException;
 /**
  * View for using Fusion for standard MVC controllers.
  *
- * Recursively loads all Fusion files from the configured path (By default that's Resources/Private/TypoScripts
+ * Recursively loads all Fusion files from the configured path (By default that's Resources/Private/Fusion
  * of the current package) and then checks whether a Fusion object for current controller and action can be found.
  *
  * If the controller class name is Foo\Bar\Baz\Controller\BlahController and the action is "index",
@@ -39,11 +39,11 @@ class FusionView extends AbstractView
      * @var array
      */
     protected $supportedOptions = array(
-        'typoScriptPathPatterns' => array(array('resource://@package/Private/TypoScript'), 'TypoScript files will be recursively loaded from this paths.', 'array'),
-        'typoScriptPath' => array(null, 'The TypoScript path which should be rendered; derived from the controller and action names or set by the user.', 'string'),
-        'packageKey' => array(null, 'The package key where the TypoScript should be loaded from. If not given, is automatically derived from the current request.', 'string'),
-        'debugMode' => array(false, 'Flag to enable debug mode of the TypoScript runtime explicitly (overriding the global setting).', 'boolean'),
-        'enableContentCache' => array(false, 'Flag to enable content caching inside TypoScript (overriding the global setting).', 'boolean')
+        'typoScriptPathPatter  ns' => array(array('resource://@package/Private/Fusion'), 'Fusion files will be recursively loaded from this paths.', 'array'),
+        'typoScriptPath' => array(null, 'The Fusion path which should be rendered; derived from the controller and action names or set by the user.', 'string'),
+        'packageKey' => array(null, 'The package key where the Fusion should be loaded from. If not given, is automatically derived from the current request.', 'string'),
+        'debugMode' => array(false, 'Flag to enable debug mode of the Fusion runtime explicitly (overriding the global setting).', 'boolean'),
+        'enableContentCache' => array(false, 'Flag to enable content caching inside Fusion (overriding the global setting).', 'boolean')
     );
 
     /**

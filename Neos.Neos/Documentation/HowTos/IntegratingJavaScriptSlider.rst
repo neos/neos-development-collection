@@ -30,7 +30,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml)::
 
 Next you need to define the prototype for the slider in typoscript.
 
-TypoScript (Sites/Vendor.Site/Resources/Private/TypoScript/NodeTypes/Carousel.fusion)::
+TypoScript (Sites/Vendor.Site/Resources/Private/Fusion/NodeTypes/Carousel.fusion)::
 
 	prototype(Vendor.Site:Carousel) {
 		carouselItems = Neos.Neos:ContentCollection {
@@ -55,7 +55,7 @@ TypoScript (Sites/Vendor.Site/Resources/Private/TypoScript/NodeTypes/Carousel.fu
 		}
 	}
 
-Now you need to include this at the top of your (Sites/Vendor.Site/Resources/Private/TypoScript/Root.fusion)::
+Now you need to include this at the top of your (Sites/Vendor.Site/Resources/Private/Fusion/Root.fusion)::
 
 	// Includes all additional ts2 files inside the NodeTypes folder
 	include: NodeTypes/*.fusion

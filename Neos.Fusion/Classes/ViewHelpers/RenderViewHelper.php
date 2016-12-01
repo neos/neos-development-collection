@@ -60,7 +60,7 @@ class RenderViewHelper extends AbstractViewHelper
      */
     public function initializeArguments()
     {
-        $this->registerArgument('typoScriptFilePathPattern', 'string', 'Resource pattern to load Fusion from. Defaults to: resource://@package/Private/TypoScript/', false);
+        $this->registerArgument('typoScriptFilePathPattern', 'string', 'Resource pattern to load Fusion from. Defaults to: resource://@package/Private/Fusion/', false);
     }
 
     /**

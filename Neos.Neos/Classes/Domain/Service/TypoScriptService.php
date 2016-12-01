@@ -45,7 +45,7 @@ class TypoScriptService
      *
      * @var string
      */
-    protected $siteRootTypoScriptPattern = 'resource://%s/Private/TypoScript/Root.fusion';
+    protected $siteRootTypoScriptPattern = 'resource://%s/Private/Fusion/Root.fusion';
 
     /**
      * Legacy pattern used for determining the TypoScript root file for a site
@@ -60,7 +60,7 @@ class TypoScriptService
      *
      * @var string
      */
-    protected $autoIncludeTypoScriptPattern = 'resource://%s/Private/TypoScript/Root.fusion';
+    protected $autoIncludeTypoScriptPattern = 'resource://%s/Private/Fusion/Root.fusion';
 
     /**
      * Legacy pattern used for determining the TypoScript root file for autoIncludes
@@ -77,7 +77,7 @@ class TypoScriptService
      *
      *     array(
      *         'resources://MyVendor.MyPackageKey/Private/TypoScript/Root.fusion',
-     *         'resources://SomeVendor.OtherPackage/Private/TypoScript/Root.fusion'
+     *         'resources://SomeVendor.OtherPackage/Private/Fusion/Root.fusion'
      *     )
      *
      * @var array
@@ -90,8 +90,8 @@ class TypoScriptService
      * Example:
      *
      *     array(
-     *         'resources://MyVendor.MyPackageKey/Private/TypoScript/Root.fusion',
-     *         'resources://SomeVendor.OtherPackage/Private/TypoScript/Root.fusion'
+     *         'resources://MyVendor.MyPackageKey/Private/Fusion/Root.fusion',
+     *         'resources://SomeVendor.OtherPackage/Private/Fusion/Root.fusion'
      *     )
      *
      * @var array
@@ -255,7 +255,15 @@ class TypoScriptService
                 if (is_file($autoIncludeTypoScriptFile)) {
                     $autoIncludeTypoScript[] = $autoIncludeTypoScriptFile;
                 } else {
-                    $autoIncludeTypoScript[] = sprintf($this->legacyAutoIncludeTypoScriptPattern, $packageKey);
+                    // If there is no Root.fusion found in the default path pattern or the legacy path pattern
+                    // use the default path pattern so an exception will show the correct path pattern and not a
+                    // legacy path pattern
+                    $legacyAutoIncludeTypoScriptFile = sprintf($this->legacyAutoIncludeTypoScriptPattern, $packageKey);
+                    if (is_file($legacyAutoIncludeTypoScriptFile)) {
+                        $autoIncludeTypoScript[] = $legacyAutoIncludeTypoScriptFile;
+                    } else {
+                        $autoIncludeTypoScript[] = $autoIncludeTypoScriptFile;
+                    }
                 }
             }
         }
