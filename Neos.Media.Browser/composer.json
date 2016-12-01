@@ -68,7 +68,8 @@
             "Neos.SiteKickstarter-20161125095901",
             "Neos.Fusion-20161125104701",
             "Neos.NodeTypes-20161125104800",
-            "Neos.Neos-20161125104802"
+            "Neos.Neos-20161125104802",
+            "Neos.Kickstarter-20161125110814"
         ]
     }
 }
