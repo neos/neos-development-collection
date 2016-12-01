@@ -38,24 +38,24 @@ class Package extends BasePackage
         if (!$context->isProduction()) {
             $dispatcher->connect(Sequence::class, 'afterInvokeStep', function ($step) use ($bootstrap, $dispatcher) {
                 if ($step->getIdentifier() === 'typo3.flow:systemfilemonitor') {
-                    $typoScriptFileMonitor = FileMonitor::createFileMonitorAtBoot('Fusion_Files', $bootstrap);
+                    $fusionFileMonitor = FileMonitor::createFileMonitorAtBoot('Fusion_Files', $bootstrap);
                     $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
                     foreach ($packageManager->getActivePackages() as $packageKey => $package) {
                         if ($packageManager->isPackageFrozen($packageKey)) {
                             continue;
                         }
-                        $typoScriptPaths = array(
+                        $fusionPaths = array(
                             $package->getResourcesPath() . 'Private/Fusion'
                         );
-                        foreach ($typoScriptPaths as $typoScriptPath) {
-                            if (is_dir($typoScriptPath)) {
-                                $typoScriptFileMonitor->monitorDirectory($typoScriptPath);
+                        foreach ($fusionPaths as $fusionPath) {
+                            if (is_dir($fusionPath)) {
+                                $fusionFileMonitor->monitorDirectory($fusionPath);
                             }
                         }
                     }
 
-                    $typoScriptFileMonitor->detectChanges();
-                    $typoScriptFileMonitor->shutdownObject();
+                    $fusionFileMonitor->detectChanges();
+                    $fusionFileMonitor->shutdownObject();
                 }
 
                 if ($step->getIdentifier() === 'typo3.flow:cachemanagement') {
