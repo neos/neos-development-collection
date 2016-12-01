@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Neos\Tests\Functional\TypoScript;
+namespace Neos\Neos\Tests\Functional\Fusion;
 
 /*
  * This file is part of the Neos.Neos package.
