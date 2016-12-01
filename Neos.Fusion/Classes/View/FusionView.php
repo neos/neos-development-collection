@@ -39,7 +39,7 @@ class FusionView extends AbstractView
      * @var array
      */
     protected $supportedOptions = array(
-        'typoScriptPathPatter  ns' => array(array('resource://@package/Private/Fusion'), 'Fusion files will be recursively loaded from this paths.', 'array'),
+        'typoScriptPathPatterns' => array(array('resource://@package/Private/Fusion'), 'Fusion files will be recursively loaded from this paths.', 'array'),
         'typoScriptPath' => array(null, 'The Fusion path which should be rendered; derived from the controller and action names or set by the user.', 'string'),
         'packageKey' => array(null, 'The package key where the Fusion should be loaded from. If not given, is automatically derived from the current request.', 'string'),
         'debugMode' => array(false, 'Flag to enable debug mode of the Fusion runtime explicitly (overriding the global setting).', 'boolean'),
