@@ -32,7 +32,7 @@ class Version20161201202543 extends AbstractMigration
         $this->searchAndReplace('/Private/TypoScript/', '/Private/Fusion/', ['ts2', 'fusion']);
 
         // Adjust root fusion file to our autoIncludePattern. This is necessary as we can only search for a
-        // singe legacy auto include pattern file wich is Private/TypoScript/Root.ts2 - Private/Fusion/Root.ts2
+        // singe legacy auto include pattern file which is Private/TypoScript/Root.ts2 - Private/Fusion/Root.ts2
         // would not be respected
         $this->moveFile('Resources/Private/Fusion/Root.ts2', 'Resources/Private/Fusion/Root.fusion');
     }
