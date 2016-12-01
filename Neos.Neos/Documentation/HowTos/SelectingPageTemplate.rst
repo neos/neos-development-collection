@@ -58,7 +58,7 @@ For example, if the `landingPage` was chosen, a different template can be used.
 
 The implementation internal of the layout rendering can be found in the file:
 
-Neos.Neos/Resources/Private/TypoScript/DefaultTypoScript.fusion
+Neos.Neos/Resources/Private/Fusion/DefaultTypoScript.fusion
 
 The element `root.layout` is the one responsible for handling the layout. So when trying to
 change the layout handling this is the TypoScript object to manipulate.

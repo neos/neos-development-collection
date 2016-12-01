@@ -20,7 +20,7 @@ use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Fusion\Core\Cache\FileMonitorListener;
 
 /**
- * The TYPO3 TypoScript Package
+ * The Neos Fusion Package
  */
 class Package extends BasePackage
 {
@@ -38,15 +38,14 @@ class Package extends BasePackage
         if (!$context->isProduction()) {
             $dispatcher->connect(Sequence::class, 'afterInvokeStep', function ($step) use ($bootstrap, $dispatcher) {
                 if ($step->getIdentifier() === 'typo3.flow:systemfilemonitor') {
-                    $typoScriptFileMonitor = FileMonitor::createFileMonitorAtBoot('TypoScript_Files', $bootstrap);
+                    $typoScriptFileMonitor = FileMonitor::createFileMonitorAtBoot('Fusion_Files', $bootstrap);
                     $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
                     foreach ($packageManager->getActivePackages() as $packageKey => $package) {
                         if ($packageManager->isPackageFrozen($packageKey)) {
                             continue;
                         }
                         $typoScriptPaths = array(
-                            $package->getResourcesPath() . 'Private/TypoScript',
-                            $package->getResourcesPath() . 'Private/TypoScripts',
+                            $package->getResourcesPath() . 'Private/Fusion'
                         );
                         foreach ($typoScriptPaths as $typoScriptPath) {
                             if (is_dir($typoScriptPath)) {

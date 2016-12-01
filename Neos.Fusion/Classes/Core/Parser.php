@@ -618,7 +618,7 @@ class Parser implements ParserInterface
                     // Check if not trying to recursively include the current file via globbing
                     if (stat($pathAndFilename) !== stat($this->contextPathAndFilename)) {
                         if (!is_readable($pathAndFilename)) {
-                            throw new Fusion\Exception(sprintf('Could not include TypoScript file "%s"', $pathAndFilename), 1347977018);
+                            throw new Fusion\Exception(sprintf('Could not include Fusion file "%s"', $pathAndFilename), 1347977018);
                         }
                         $this->objectTree = $parser->parse(file_get_contents($pathAndFilename), $pathAndFilename, $this->objectTree, false);
                     }
@@ -626,7 +626,7 @@ class Parser implements ParserInterface
             }
         } else {
             if (!is_readable($include)) {
-                throw new Fusion\Exception(sprintf('Could not include TypoScript file "%s"', $include), 1347977017);
+                throw new Fusion\Exception(sprintf('Could not include Fusion file "%s"', $include), 1347977017);
             }
             $this->objectTree = $parser->parse(file_get_contents($include), $include, $this->objectTree, false);
         }

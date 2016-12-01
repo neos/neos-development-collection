@@ -28,7 +28,7 @@ Arguments
 
 * ``typoScriptPackageKey`` (string, *optional*): The key of the package to load TypoScript from, if not from the current context.
 
-* ``typoScriptFilePathPattern`` (string, *optional*): Resource pattern to load TypoScript from. Defaults to: resource://@package/Private/TypoScript/
+* ``typoScriptFilePathPattern`` (string, *optional*): Resource pattern to load TypoScript from. Defaults to: resource://@package/Private/Fusion/
 
 
 

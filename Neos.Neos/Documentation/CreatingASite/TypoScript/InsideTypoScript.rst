@@ -69,7 +69,7 @@ In any TypoScript file further files can be included using the ``include`` state
 relative to the current file or can be given with the ``resource`` wrapper::
 
 	include: NodeTypes/CustomElements.fusion
-	include: resource://Acme.Demo/Private/TypoScript/Quux.fusion
+	include: resource://Acme.Demo/Private/Fusion/Quux.fusion
 
 In addition to giving exact filenames, globbing is possible in two variants::
 
@@ -84,8 +84,8 @@ TypoScript files in NodeTypes and any folders below.
 
 The globbing can be combined with the ``resource`` wrapper::
 
-	include: resource://Acme.Demo/Private/TypoScript/NodeTypes/*
-	include: resource://Acme.Demo/Private/TypoScript/**/*
+	include: resource://Acme.Demo/Private/Fusion/NodeTypes/*
+	include: resource://Acme.Demo/Private/Fusion/**/*
 
 TypoScript Objects
 ==================

@@ -206,7 +206,7 @@ Neos:
       enableObjectTreeCache: false
 
       # Packages can now register with this setting to get their Fusion in the path:
-      # resources://MyVendor.MyPackageKey/Private/TypoScript/Root.fusion
+      # resources://MyVendor.MyPackageKey/Private/Fusion/Root.fusion
       # included automatically.
       # The order of inclusions is set by the package loading order
       # (and thus the composer dependencies of your packages).
