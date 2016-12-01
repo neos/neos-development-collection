@@ -4,7 +4,7 @@
 # This is used to render required data-node-* attributes to content elements in the backend
 #
 prototype(Neos.Neos:ContentElementWrapping) {
-	@class = 'Neos\\Neos\\TypoScript\\ContentElementWrappingImplementation'
+	@class = 'Neos\\Neos\\Fusion\\ContentElementWrappingImplementation'
 	node = ${node}
 	value = ${value}
 	# This should only be set to TRUE to render the metadata for the currently rendered document node as that is treated differently.

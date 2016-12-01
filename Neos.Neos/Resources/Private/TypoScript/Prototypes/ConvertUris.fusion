@@ -3,7 +3,7 @@
 # replaces all occurrences of "node://<UUID>" by proper URIs.
 #
 prototype(Neos.Neos:ConvertUris) {
-	@class = 'Neos\\Neos\\TypoScript\\ConvertUrisImplementation'
+	@class = 'Neos\\Neos\\Fusion\\ConvertUrisImplementation'
 	value = ${value}
 	node = ${node}
 	externalLinkTarget = '_blank'

@@ -3,7 +3,7 @@
 #
 prototype(Neos.Neos:Plugin) >
 prototype(Neos.Neos:Plugin) < prototype(Neos.Neos:Content) {
-	@class = 'Neos\\Neos\\TypoScript\\PluginImplementation'
+	@class = 'Neos\\Neos\\Fusion\\PluginImplementation'
 
 	@cache {
 		mode = 'uncached'

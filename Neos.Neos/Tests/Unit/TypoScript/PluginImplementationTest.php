@@ -19,7 +19,7 @@ use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Neos\TypoScript\PluginImplementation;
+use Neos\Neos\Fusion\PluginImplementation;
 use Neos\Fusion\Core\Runtime;
 
 /**

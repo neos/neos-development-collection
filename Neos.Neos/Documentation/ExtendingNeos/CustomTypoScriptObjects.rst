@@ -39,7 +39,7 @@ extended. The only method that needs to be implemented is ``evaluate()``. To acc
 To use this implementation in TypoScript, you have to define a TS2-prototype first::
 
 	prototype(Vendor.Site:Gravatar) {
-		@class = 'Vendor\\Site\\TypoScript\\GravatarImplementation'
+		@class = 'Vendor\\Site\\Fusion\\GravatarImplementation'
 		emailAddress = ''
 		size = 80
 	}
