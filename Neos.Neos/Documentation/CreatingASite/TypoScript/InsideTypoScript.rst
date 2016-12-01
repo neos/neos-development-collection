@@ -54,7 +54,7 @@ and TypoScript files can be split into parts to organize things as needed.
 Automatic TypoScript file inclusion
 -----------------------------------
 
-All TypoScript files are expected to be in the folder *Resources/Private/TypoScript* when it comes to
+All TypoScript files are expected to be in the folder *Resources/Private/Fusion* when it comes to
 automatic inclusion.
 
 Neos will include the *Root.fusion* file of all packages listed in the Setting ``Neos.Neos.typoScript.autoInclude``

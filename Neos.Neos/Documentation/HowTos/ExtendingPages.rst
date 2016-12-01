@@ -29,7 +29,7 @@ With this configuration, when you click on the page, you will see the Image edit
 To access the backgroundImage in your page template you can also modify the Neos.Neos:Page TypoScript object, like
 in the below example:
 
-TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/Root.fusion) ::
+TypoScript (Sites/Vendor.Site/Resources/Private/Fusion/Root.fusion) ::
 
 	prototype(Neos.Neos:Page) {
 		backgroundImage = ${q(node).property('backgroundImage')}
