@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Neos\Tests\Unit\TypoScript;
+namespace Neos\Neos\Tests\Unit\Fusion;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -19,7 +19,7 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Exception;
 use Neos\Neos\Service\LinkingService;
-use Neos\Neos\TypoScript\ConvertUrisImplementation;
+use Neos\Neos\Fusion\ConvertUrisImplementation;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;

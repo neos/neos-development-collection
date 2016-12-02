@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Neos\TypoScript\Helper;
+namespace Neos\Neos\Fusion\Helper;
 
 /*
  * This file is part of the Neos.Neos package.

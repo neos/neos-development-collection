@@ -24,7 +24,7 @@ use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\EventLog\Integrations\ContentRepositoryIntegrationService;
 use Neos\Neos\Routing\Cache\RouteCacheFlusher;
 use Neos\Neos\Service\PublishingService;
-use Neos\Neos\TypoScript\Cache\ContentCacheFlusher;
+use Neos\Neos\Fusion\Cache\ContentCacheFlusher;
 use Neos\Neos\Utility\NodeUriPathSegmentGenerator;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
