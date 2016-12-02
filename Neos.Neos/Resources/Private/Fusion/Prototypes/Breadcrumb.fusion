@@ -5,7 +5,7 @@
 # which works like any other Menu object and therefor offers item states.
 #
 prototype(Neos.Neos:Breadcrumb) < prototype(Neos.Fusion:Template) {
-	templatePath = 'resource://Neos.Neos/Private/Templates/TypoScriptObjects/Breadcrumb.html'
+	templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/Breadcrumb.html'
 	node = ${node}
 	items = ${q(node).add(q(node).parents('[instanceof Neos.Neos:Document]')).get()}
 

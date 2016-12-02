@@ -1,19 +1,19 @@
-prototype(Neos.Fusion:Array).@class = 'Neos\\Fusion\\TypoScriptObjects\\ArrayImplementation'
-prototype(Neos.Fusion:RawArray).@class = 'Neos\\Fusion\\TypoScriptObjects\\RawArrayImplementation'
-prototype(Neos.Fusion:Template).@class = 'Neos\\Fusion\\TypoScriptObjects\\TemplateImplementation'
-prototype(Neos.Fusion:Case).@class = 'Neos\\Fusion\\TypoScriptObjects\\CaseImplementation'
-prototype(Neos.Fusion:Matcher).@class = 'Neos\\Fusion\\TypoScriptObjects\\MatcherImplementation'
-prototype(Neos.Fusion:Renderer).@class = 'Neos\\Fusion\\TypoScriptObjects\\RendererImplementation'
-prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\TypoScriptObjects\\ValueImplementation'
-prototype(Neos.Fusion:Debug).@class = 'Neos\\Fusion\\TypoScriptObjects\\DebugImplementation'
+prototype(Neos.Fusion:Array).@class = 'Neos\\Fusion\\FusionObjects\\ArrayImplementation'
+prototype(Neos.Fusion:RawArray).@class = 'Neos\\Fusion\\FusionObjects\\RawArrayImplementation'
+prototype(Neos.Fusion:Template).@class = 'Neos\\Fusion\\FusionObjects\\TemplateImplementation'
+prototype(Neos.Fusion:Case).@class = 'Neos\\Fusion\\FusionObjects\\CaseImplementation'
+prototype(Neos.Fusion:Matcher).@class = 'Neos\\Fusion\\FusionObjects\\MatcherImplementation'
+prototype(Neos.Fusion:Renderer).@class = 'Neos\\Fusion\\FusionObjects\\RendererImplementation'
+prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
+prototype(Neos.Fusion:Debug).@class = 'Neos\\Fusion\\FusionObjects\\DebugImplementation'
 prototype(Neos.Fusion:Collection) {
-	@class = 'Neos\\Fusion\\TypoScriptObjects\\CollectionImplementation'
+	@class = 'Neos\\Fusion\\FusionObjects\\CollectionImplementation'
 	itemName = 'item'
 	itemKey = 'itemKey'
 	iterationName = 'iterator'
 }
 prototype(Neos.Fusion:RawCollection) {
-  @class = 'Neos\\Fusion\\TypoScriptObjects\\RawCollectionImplementation'
+  @class = 'Neos\\Fusion\\FusionObjects\\RawCollectionImplementation'
   itemName = 'item'
   itemKey = 'itemKey'
   iterationName = 'iterator'
@@ -22,7 +22,7 @@ prototype(Neos.Fusion:RawCollection) {
 # Render an HTTP response header
 #
 prototype(Neos.Fusion:Http.ResponseHead) {
-	@class = 'Neos\\Fusion\\TypoScriptObjects\\Http\\ResponseHeadImplementation'
+	@class = 'Neos\\Fusion\\FusionObjects\\Http\\ResponseHeadImplementation'
 	headers = Neos.Fusion:RawArray
 }
 
@@ -56,7 +56,7 @@ prototype(Neos.Fusion:Http.Message) < prototype(Neos.Fusion:Array) {
 # }
 #
 prototype(Neos.Fusion:Attributes) {
-	@class = 'Neos\\Fusion\\TypoScriptObjects\\AttributesImplementation'
+	@class = 'Neos\\Fusion\\FusionObjects\\AttributesImplementation'
 }
 
 # Renders an HTML tag
@@ -70,7 +70,7 @@ prototype(Neos.Fusion:Attributes) {
 # }
 #
 prototype(Neos.Fusion:Tag) {
-	@class = 'Neos\\Fusion\\TypoScriptObjects\\TagImplementation'
+	@class = 'Neos\\Fusion\\FusionObjects\\TagImplementation'
 	attributes = Neos.Fusion:Attributes
 	omitClosingTag = FALSE
 	selfClosingTag = FALSE
@@ -86,7 +86,7 @@ prototype(Neos.Fusion:Tag) {
 # }
 #
 prototype(Neos.Fusion:UriBuilder) {
-	@class = 'Neos\\Fusion\\TypoScriptObjects\\UriBuilderImplementation'
+	@class = 'Neos\\Fusion\\FusionObjects\\UriBuilderImplementation'
 	additionalParams = Neos.Fusion:RawArray
 	arguments = Neos.Fusion:RawArray
 	argumentsToBeExcludedFromQueryString = Neos.Fusion:RawArray
@@ -102,7 +102,7 @@ prototype(Neos.Fusion:UriBuilder) {
 # }
 #
 prototype(Neos.Fusion:ResourceUri) {
-	@class = 'Neos\\Fusion\\TypoScriptObjects\\ResourceUriImplementation'
+	@class = 'Neos\\Fusion\\FusionObjects\\ResourceUriImplementation'
 	localize = TRUE
 
 	@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'

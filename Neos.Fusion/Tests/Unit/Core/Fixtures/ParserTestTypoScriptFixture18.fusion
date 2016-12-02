@@ -11,7 +11,7 @@ object2 = default:Text
 object3 = alternative:Text
 object4 = TYPO3.Future:Text
 
-prototype(Foo).@class = 'Neos\\Fusion\\TypoScriptObjects\\ArrayImplementation'
-prototype(default:Bar).@class = 'Neos\\Fusion\\TypoScriptObjects\\ArrayImplementation'
-prototype(alternative:Baz).@class = 'Neos\\Fusion\\TypoScriptObjects\\ArrayImplementation'
-prototype(TYPO3.Future:Quux).@class = 'Neos\\Fusion\\TypoScriptObjects\\ArrayImplementation'
+prototype(Foo).@class = 'Neos\\Fusion\\FusionObjects\\ArrayImplementation'
+prototype(default:Bar).@class = 'Neos\\Fusion\\FusionObjects\\ArrayImplementation'
+prototype(alternative:Baz).@class = 'Neos\\Fusion\\FusionObjects\\ArrayImplementation'
+prototype(TYPO3.Future:Quux).@class = 'Neos\\Fusion\\FusionObjects\\ArrayImplementation'

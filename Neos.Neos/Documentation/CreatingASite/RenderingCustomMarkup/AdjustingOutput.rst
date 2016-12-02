@@ -183,7 +183,7 @@ of `Menu` using TypoScript. `Menu` is defined inside the core of Neos together w
 
 	prototype(Neos.Neos.NodeTypes:Menu) < prototype(Neos.Neos:Menu)
 	prototype(Neos.Neos.NodeTypes:Menu) {
-		templatePath = 'resource://Neos.Neos.NodeTypes/Private/Templates/TypoScriptObjects/Menu.html'
+		templatePath = 'resource://Neos.Neos.NodeTypes/Private/Templates/FusionObjects/Menu.html'
 		entryLevel = ${String.toInteger(q(node).property('startLevel'))}
 		maximumLevels = ${String.toInteger(q(node).property('maximumLevels'))}
 		node = ${node}

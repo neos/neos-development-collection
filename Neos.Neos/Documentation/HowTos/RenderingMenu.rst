@@ -13,7 +13,7 @@ TypoScript code::
 
     mainMenu = Menu
     mainMenu {
-        templatePath = 'resource://VendorName.VendorSite/Private/Templates/TypoScriptObjects/MainMenu.html'
+        templatePath = 'resource://VendorName.VendorSite/Private/Templates/FusionObjects/MainMenu.html'
         entryLevel = 1
         maximumLevels = 0
     }

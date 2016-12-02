@@ -16,12 +16,12 @@ use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Service\ContentElementWrappingService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\Fusion\TypoScriptObjects\AbstractTypoScriptObject;
+use Neos\Fusion\FusionObjects\AbstractFusionObject;
 
 /**
  * Adds meta data attributes to the processed Content Element
  */
-class ContentElementWrappingImplementation extends AbstractTypoScriptObject
+class ContentElementWrappingImplementation extends AbstractFusionObject
 {
     /**
      * @Flow\Inject

@@ -1,7 +1,7 @@
 # Neos.Neos:BreadcrumbMenu provides a breadcrumb navigation based on menu items.
 #
 prototype(Neos.Neos:BreadcrumbMenu) < prototype(Neos.Neos:Menu) {
-	templatePath = 'resource://Neos.Neos/Private/Templates/TypoScriptObjects/BreadcrumbMenu.html'
+	templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/BreadcrumbMenu.html'
 	itemCollection = ${q(node).add(q(node).parents('[instanceof Neos.Neos:Document]')).get()}
 
 	attributes.class = 'breadcrumb'
