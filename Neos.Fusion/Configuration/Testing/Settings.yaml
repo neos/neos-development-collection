@@ -6,4 +6,4 @@ Neos:
     enableContentCache: false
     defaultContext:
       Testing.String: Neos\Eel\Helper\StringHelper
-      Testing.Utility: Neos\Fusion\Tests\Functional\TypoScriptObjects\Fixtures\Helper\UtilityHelper
+      Testing.Utility: Neos\Fusion\Tests\Functional\FusionObjects\Fixtures\Helper\UtilityHelper

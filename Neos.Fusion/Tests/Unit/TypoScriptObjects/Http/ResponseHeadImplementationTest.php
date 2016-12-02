@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Fusion\Tests\Unit\TypoScriptObjects\Http;
+namespace Neos\Fusion\Tests\Unit\FusionObjects\Http;
 
 /*
  * This file is part of the Neos.Fusion package.
@@ -14,8 +14,8 @@ namespace Neos\Fusion\Tests\Unit\TypoScriptObjects\Http;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Runtime;
-use Neos\Fusion\TypoScriptObjects\Http\ResponseHeadImplementation;
-use Neos\Fusion\TypoScriptObjects\TagImplementation;
+use Neos\Fusion\FusionObjects\Http\ResponseHeadImplementation;
+use Neos\Fusion\FusionObjects\TagImplementation;
 
 /**
  * Testcase for the TypoScript ResponseHead object

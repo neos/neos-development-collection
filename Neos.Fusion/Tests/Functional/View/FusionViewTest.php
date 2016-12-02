@@ -19,7 +19,7 @@ use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Fusion\View\FusionView;
 
 /**
- * Testcase for the TypoScript View
+ * Testcase for the Fusion View
  *
  */
 class FusionViewTest extends FunctionalTestCase
@@ -101,7 +101,7 @@ class FusionViewTest extends FunctionalTestCase
         $view = new FusionView();
         $view->setControllerContext($this->mockControllerContext);
         $this->inject($view, 'fallbackView', $this->mockFallbackView);
-        $view->setTypoScriptPathPattern(__DIR__ . '/Fixtures/TypoScript');
+        $view->setTypoScriptPathPattern(__DIR__ . '/Fixtures/Fusion');
 
         return $view;
     }

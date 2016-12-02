@@ -13,7 +13,7 @@ namespace Neos\Fusion\Tests\Unit\Core;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Parser;
-use Neos\Fusion\TypoScriptObjects\ArrayImplementation;
+use Neos\Fusion\FusionObjects\ArrayImplementation;
 
 /**
  * Testcase for the TypoScript Parser
