@@ -235,7 +235,7 @@ Additional features
 
    Target _blank is now added automatically to external links.
 - Harmonize TypoScript paths
-   The old path ``Private/TypoScripts(/Library)/Root.ts2`` is deprecated in favor of ``/Private/Fusion/Root.ts2``
+   The old path ``Private/TypoScripts(/Library)/Root.ts2`` is deprecated in favor of ``/Private/TypoScript/Root.ts2``
 - Add ability to Shortcut to an external target
    To adjust your existing Shortcut nodes, run the following node migration: ``./flow node:migrate 20140930125621``
 - Switch to PHP date format for inspector date editor
