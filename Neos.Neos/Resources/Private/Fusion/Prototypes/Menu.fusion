@@ -1,7 +1,7 @@
 # Neos.Neos:Menu provides basic menu rendering
 #
 prototype(Neos.Neos:Menu) < prototype(Neos.Fusion:Template) {
-	@class = 'Neos\\Neos\\TypoScript\\MenuImplementation'
+	@class = 'Neos\\Neos\\Fusion\\MenuImplementation'
 	templatePath = 'resource://Neos.Neos/Private/Templates/TypoScriptObjects/Menu.html'
 	node = ${node}
 	items = ${this.items}
