@@ -1,0 +1,47 @@
+prototype(Neos.Fusion:Array).@class = 'Neos\\Fusion\\FusionObjects\\ArrayImplementation'
+prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+
+contextOverride.test = Neos.Fusion:Array {
+
+	100 = Neos.Fusion:TestRenderer
+	100.@override.var1alias = ${var1}
+	100.@context.var2alias = ${var2}
+	100.test = ${var1alias + var2alias}
+
+	200 = Neos.Fusion:TestRenderer {
+		@override.var1alias = ${var1}
+		@context.var2alias = ${var2}
+	}
+	200.test = ${var1alias + var2alias}
+
+	300 = Neos.Fusion:TestRenderer {
+		@override {
+			var1alias = ${var1}
+		}
+		@context {
+			var2alias = ${var2}
+		}
+	}
+	300.test = ${var1alias + var2alias}
+
+	400 = Neos.Fusion:TestRenderer
+	400.@override.var1alias = Neos.Fusion:Value {
+		value = 'fooofooofooo'
+	}
+	400.@context.var2alias = Neos.Fusion:Value {
+		value = 'booobooobooo'
+	}
+	400.test = ${var1alias + var2alias}
+
+	500 = Neos.Fusion:TestRenderer
+	500.@override.var1alias = ${var1}
+	500.@context.var1alias = ${var2}
+	500.test = ${var1alias}
+
+	600 = Neos.Fusion:TestRenderer
+	600.@override.var1alias = ${var2}
+	600.@context.var1alias.@if.no = false
+	600.@override.var2alias.@process.wrap = ${value + 'Y'}
+	600.@context.var2alias = ${var2}
+	600.test = ${var1alias + var2alias}
+}

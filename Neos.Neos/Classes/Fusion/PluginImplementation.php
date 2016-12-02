@@ -18,12 +18,12 @@ use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\Fusion\TypoScriptObjects\AbstractArrayTypoScriptObject;
+use Neos\Fusion\FusionObjects\AbstractArrayFusionObject;
 
 /**
  * A TypoScript Plugin object.
  */
-class PluginImplementation extends AbstractArrayTypoScriptObject
+class PluginImplementation extends AbstractArrayFusionObject
 {
     /**
      * @Flow\Inject

@@ -29,8 +29,8 @@ use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\Fusion\Core\Runtime;
-use Neos\Fusion\TypoScriptObjects\Helpers\FluidView;
-use Neos\Fusion\TypoScriptObjects\TemplateImplementation;
+use Neos\Fusion\FusionObjects\Helpers\FluidView;
+use Neos\Fusion\FusionObjects\TemplateImplementation;
 
 /**
  * Functional test for the NodeViewHelper
