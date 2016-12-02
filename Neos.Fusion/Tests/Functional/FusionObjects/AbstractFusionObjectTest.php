@@ -75,7 +75,7 @@ abstract class AbstractFusionObjectTest extends FunctionalTestCase
     {
         $this->assertTyposcriptPath($expected, $basePath . 'Eel');
         $this->assertTyposcriptPath($expected, $basePath . 'PlainValue');
-        $this->assertTyposcriptPath($expected, $basePath . 'Fusion');
+        $this->assertTyposcriptPath($expected, $basePath . 'TypoScript');
     }
 
     /**
