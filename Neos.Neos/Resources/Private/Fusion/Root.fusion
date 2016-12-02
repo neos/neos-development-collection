@@ -1,2 +1,2 @@
-include: DefaultTypoScript.fusion
+include: DefaultFusion.fusion
 include: RawContentMode.fusion
