@@ -38,5 +38,5 @@ prototype(Neos.Neos:Content) < prototype(Neos.Fusion:Template) {
 		@position = 'end 999999999'
 	}
 
-	@exceptionHandler = 'Neos\\Neos\\TypoScript\\ExceptionHandlers\\NodeWrappingHandler'
+	@exceptionHandler = 'Neos\\Neos\\Fusion\\ExceptionHandlers\\NodeWrappingHandler'
 }

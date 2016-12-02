@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Neos\TypoScript\ExceptionHandlers;
+namespace Neos\Neos\Fusion\ExceptionHandlers;
 
 /*
  * This file is part of the Neos.Neos package.

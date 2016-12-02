@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Neos\TypoScript;
+namespace Neos\Neos\Fusion;
 
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
