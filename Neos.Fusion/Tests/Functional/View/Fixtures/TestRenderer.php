@@ -12,12 +12,12 @@ namespace Neos\Fusion\Tests\Functional\View\Fixtures;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Fusion\TypoScriptObjects\AbstractArrayTypoScriptObject;
+use Neos\Fusion\FusionObjects\AbstractArrayFusionObject;
 
 /**
  * Test renderer
  */
-class TestRenderer extends AbstractArrayTypoScriptObject
+class TestRenderer extends AbstractArrayFusionObject
 {
     /**
      * @return mixed

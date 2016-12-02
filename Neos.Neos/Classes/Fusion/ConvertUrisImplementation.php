@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Exception;
 use Neos\Neos\Service\LinkingService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\Fusion\TypoScriptObjects\AbstractTypoScriptObject;
+use Neos\Fusion\FusionObjects\AbstractFusionObject;
 
 /**
  * A TypoScript Object that converts link references in the format "<type>://<UUID>" to proper URIs
@@ -48,7 +48,7 @@ use Neos\Fusion\TypoScriptObjects\AbstractTypoScriptObject;
  *     absolute = true
  *   }
  */
-class ConvertUrisImplementation extends AbstractTypoScriptObject
+class ConvertUrisImplementation extends AbstractFusionObject
 {
     /**
      * @Flow\Inject

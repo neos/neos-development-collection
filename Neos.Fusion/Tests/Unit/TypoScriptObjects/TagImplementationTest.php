@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Fusion\Tests\Unit\TypoScriptObjects;
+namespace Neos\Fusion\Tests\Unit\FusionObjects;
 
 /*
  * This file is part of the Neos.Fusion package.
@@ -13,7 +13,7 @@ namespace Neos\Fusion\Tests\Unit\TypoScriptObjects;
 
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Runtime;
-use Neos\Fusion\TypoScriptObjects\TagImplementation;
+use Neos\Fusion\FusionObjects\TagImplementation;
 
 /**
  * Testcase for the TypoScript Tag object
