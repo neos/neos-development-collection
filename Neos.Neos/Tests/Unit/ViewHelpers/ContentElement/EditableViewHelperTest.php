@@ -20,8 +20,8 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Service\AuthorizationService;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\Fusion\Core\Runtime;
-use Neos\Fusion\TypoScriptObjects\Helpers\FluidView;
-use Neos\Fusion\TypoScriptObjects\TemplateImplementation;
+use Neos\Fusion\FusionObjects\Helpers\FluidView;
+use Neos\Fusion\FusionObjects\TemplateImplementation;
 use Neos\Neos\Service\ContentElementEditableService;
 
 /**

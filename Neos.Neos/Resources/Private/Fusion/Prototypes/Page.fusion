@@ -26,7 +26,7 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 
 	headerComment = Neos.Fusion:Template {
 		@position = 'before headTag'
-		templatePath = 'resource://Neos.Neos/Private/Templates/TypoScriptObjects/NeosLicenseHeader.html'
+		templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/NeosLicenseHeader.html'
 	}
 
 	# The opening head tag for the page. This is done to avoid deep nesting of TypoScript paths for integrators.
@@ -56,7 +56,7 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 		neosBackendHeader = Neos.Fusion:Value {
 			@position = 'end 10000'
 			value = Neos.Fusion:Template {
-				templatePath = 'resource://Neos.Neos/Private/Templates/TypoScriptObjects/NeosBackendHeaderData.html'
+				templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/NeosBackendHeaderData.html'
 				node = ${documentNode}
 
 				@cache {
@@ -74,7 +74,7 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 		neosBackendEndpoints = Neos.Fusion:Value {
 			@position = 'end 10001'
 			value = Neos.Fusion:Template {
-				templatePath = 'resource://Neos.Neos/Private/Templates/TypoScriptObjects/NeosBackendEndpoints.html'
+				templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/NeosBackendEndpoints.html'
 				node = ${documentNode}
 				account = ${Security.getAccount()}
 
@@ -143,7 +143,7 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 	neosBackendContainer = Neos.Fusion:Value {
 		@position = 'before closingBodyTag'
 		value = Neos.Fusion:Template {
-			templatePath = 'resource://Neos.Neos/Private/Templates/TypoScriptObjects/NeosBackendContainer.html'
+			templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/NeosBackendContainer.html'
 			node = ${documentNode}
 
 			@cache {
@@ -174,7 +174,7 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 
 	neosBackendFooter = Neos.Fusion:Template {
 		@position = 'after lastVisitedNodeScript 10000'
-		templatePath = 'resource://Neos.Neos/Private/Templates/TypoScriptObjects/NeosBackendFooterData.html'
+		templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/NeosBackendFooterData.html'
 		node = ${node}
 		@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
 	}

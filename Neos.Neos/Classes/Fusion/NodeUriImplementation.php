@@ -14,13 +14,13 @@ namespace Neos\Neos\Fusion;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Neos\Service\LinkingService;
-use Neos\Fusion\TypoScriptObjects\AbstractTypoScriptObject;
+use Neos\Fusion\FusionObjects\AbstractFusionObject;
 use Neos\Neos\Exception as NeosException;
 
 /**
  * Create a link to a node
  */
-class NodeUriImplementation extends AbstractTypoScriptObject
+class NodeUriImplementation extends AbstractFusionObject
 {
     /**
      * @Flow\Inject

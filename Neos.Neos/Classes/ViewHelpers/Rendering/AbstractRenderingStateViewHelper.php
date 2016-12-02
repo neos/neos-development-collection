@@ -16,7 +16,7 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\Fusion\TypoScriptObjects\Helpers\TypoScriptAwareViewInterface;
+use Neos\Fusion\FusionObjects\Helpers\TypoScriptAwareViewInterface;
 
 /**
  * Abstract ViewHelper for all Neos rendering state helpers.

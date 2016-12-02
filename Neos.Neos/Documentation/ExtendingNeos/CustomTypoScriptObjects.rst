@@ -16,7 +16,7 @@ In the example below, a Gravatar image tag is generated.
 Create a TypoScript Object Class
 --------------------------------
 
-To create a custom TypoScript object the ``TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject`` class is
+To create a custom TypoScript object the ``Neos\Fusion\FusionObjects\AbstractFusionObject`` class is
 extended. The only method that needs to be implemented is ``evaluate()``. To access values from TypoScript the method
 ``$this->tsValue('__ts_value_key__');`` is used:
 
@@ -24,10 +24,10 @@ extended. The only method that needs to be implemented is ``evaluate()``. To acc
 
 	namespace Vendor\Site\TypoScript;
 
-	use TYPO3\Flow\Annotations as Flow;
-	use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
+	use Neos\Flow\Annotations as Flow;
+	use Neos\Fusion\FusionObjects\AbstractFusionObject
 
-	class GravatarImplementation extends AbstractTypoScriptObject {
+	class GravatarImplementation extends AbstractFusionObject {
 		public function evaluate() {
 			$emailAddress = $this->tsValue('emailAddress');
 			$size = $this->tsValue('size') ? $this->tsValue('size') : 80;
@@ -36,7 +36,7 @@ extended. The only method that needs to be implemented is ``evaluate()``. To acc
 		}
 	}
 
-To use this implementation in TypoScript, you have to define a TS2-prototype first::
+To use this implementation in Fusion, you have to define a Fusion-prototype first::
 
 	prototype(Vendor.Site:Gravatar) {
 		@class = 'Vendor\\Site\\Fusion\\GravatarImplementation'
@@ -44,7 +44,7 @@ To use this implementation in TypoScript, you have to define a TS2-prototype fir
 		size = 80
 	}
 
-Afterwards the prototype can be used in TypoScript::
+Afterwards the prototype can be used in Fusion::
 
 	garavatarImage = Vendor.Site:Gravatar
 	garavatarImage {

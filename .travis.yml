@@ -26,6 +26,10 @@ matrix:
       dist: trusty
       addons:
         postgresql: "9.5"
+    - php: 7.1
+      env: DB=mysql
+    - php: 7.1
+      env: DB=mysql BEHAT=true
 cache:
   directories:
     - $HOME/.composer/cache

@@ -14,7 +14,7 @@ namespace Neos\Neos\Fusion;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Fusion\Exception as TypoScriptException;
-use Neos\Fusion\TypoScriptObjects\TemplateImplementation;
+use Neos\Fusion\FusionObjects\TemplateImplementation;
 
 /**
  * Base class for Menu and DimensionsMenu

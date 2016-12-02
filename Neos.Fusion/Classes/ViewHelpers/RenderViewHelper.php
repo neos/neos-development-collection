@@ -12,7 +12,7 @@ namespace Neos\Fusion\ViewHelpers;
  */
 
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use Neos\Fusion\TypoScriptObjects\AbstractTypoScriptObject;
+use Neos\Fusion\FusionObjects\AbstractFusionObject;
 use Neos\Fusion\View\FusionView;
 
 /**
@@ -84,7 +84,7 @@ class RenderViewHelper extends AbstractViewHelper
         $slashSeparatedPath = str_replace('.', '/', $path);
 
         if ($typoScriptPackageKey === null) {
-            /** @var $typoScriptObject AbstractTypoScriptObject */
+            /** @var $typoScriptObject AbstractFusionObject */
             $typoScriptObject = $this->viewHelperVariableContainer->getView()->getTypoScriptObject();
             if ($context !== null) {
                 $currentContext = $typoScriptObject->getTsRuntime()->getCurrentContext();
