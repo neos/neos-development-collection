@@ -45,7 +45,7 @@ TypoScript (Sites/Vendor.Site/Resources/Private/TypoScript/NodeTypes/Carousel.fu
 		// Enhance image prototype when inside the carousel
 		prototype(Neos.Neos.NodeTypes:Image) {
 			// Render images in the carousel with a special template.
-			templatePath = 'resource://Vendor.Site/Private/Templates/TypoScriptObjects/CarouselItem.html'
+			templatePath = 'resource://Vendor.Site/Private/Templates/FusionObjects/CarouselItem.html'
 
 			// The first item should later be marked as active
 			attributes.class = ${'item' + (carouselItemsIteration.isFirst ? ' active' : '')}
@@ -90,7 +90,7 @@ Html (Sites/Vendor.Site/Private/Templates/NodeTypes/Carousel.html) ::
 
 And now the fluid template for the slider items.
 
-Html (Sites/Vendor.Site/Private/Templates/TypoScriptObjects/CarouselItem.html) ::
+Html (Sites/Vendor.Site/Private/Templates/FusionObjects/CarouselItem.html) ::
 
 	{namespace neos=Neos\Neos\ViewHelpers}
 	{namespace media=TYPO3\Media\ViewHelpers}

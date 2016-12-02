@@ -249,7 +249,7 @@ Render a *Fluid template* specified by ``templatePath``.
 Example::
 
 	myTemplate = TYPO3.TypoScript:Template {
-		templatePath = 'resource://My.Package/Private/Templates/TypoScriptObjects/MyTemplate.html'
+		templatePath = 'resource://My.Package/Private/Templates/FusionObjects/MyTemplate.html'
 		someDataAvailableInsideFluid = 'my data'
 	}
 
@@ -676,7 +676,7 @@ Custom menu template:
 	menu = Menu {
 		entryLevel = 1
 		maximumLevels = 3
-		templatePath = 'resource://My.Site/Private/Templates/TypoScriptObjects/MyMenu.html'
+		templatePath = 'resource://My.Site/Private/Templates/FusionObjects/MyMenu.html'
 	}
 
 Menu including site node:
