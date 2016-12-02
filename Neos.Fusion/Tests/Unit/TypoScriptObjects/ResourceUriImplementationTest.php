@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Fusion\Tests\Unit\TypoScriptObjects;
+namespace Neos\Fusion\Tests\Unit\FusionObjects;
 
 /*
  * This file is part of the Neos.Fusion package.
@@ -19,7 +19,7 @@ use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Runtime;
-use Neos\Fusion\TypoScriptObjects\ResourceUriImplementation;
+use Neos\Fusion\FusionObjects\ResourceUriImplementation;
 
 /**
  * Testcase for the TypoScript ResourceUri object

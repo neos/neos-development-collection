@@ -51,7 +51,7 @@ object needs to have the same name as the Node Type:
 TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/Root.fusion)::
 
 	prototype(Vendor:YourContentElementName) < prototype(Neos.Neos:Content) {
-		templatePath = 'resource://Vendor.Site/Private/Templates/TypoScriptObjects/YourContentElementName.html'
+		templatePath = 'resource://Vendor.Site/Private/Templates/FusionObjects/YourContentElementName.html'
 
 		headline = ${q(node).property('headline')}
 		subheadline = ${q(node).property('subheadline')}
@@ -61,7 +61,7 @@ TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/Root.fusion)
 
 Last thing, add the required Fluid template:
 
-HTML (Vendor.Site/Private/Templates/TypoScriptObjects/YourContentElementName.html)::
+HTML (Vendor.Site/Private/Templates/FusionObjects/YourContentElementName.html)::
 
 	{namespace neos=Neos\Neos\ViewHelpers}
 	{namespace media=TYPO3\Media\ViewHelpers}

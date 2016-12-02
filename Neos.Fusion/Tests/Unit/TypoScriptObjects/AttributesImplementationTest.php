@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Fusion\Tests\Unit\TypoScriptObjects;
+namespace Neos\Fusion\Tests\Unit\FusionObjects;
 
 /*
  * This file is part of the Neos.Fusion package.
@@ -14,7 +14,7 @@ namespace Neos\Fusion\Tests\Unit\TypoScriptObjects;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Runtime;
-use Neos\Fusion\TypoScriptObjects\AttributesImplementation;
+use Neos\Fusion\FusionObjects\AttributesImplementation;
 
 /**
  * Testcase for the TypoScript Attributes object

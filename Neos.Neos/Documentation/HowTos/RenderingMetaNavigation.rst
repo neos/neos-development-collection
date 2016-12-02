@@ -20,7 +20,7 @@ TypoScript code::
         metaMenu {
             entryLevel = 2
             templatePath = 'resource://VendorName.VendorSite/Private
-            /Templates/TypoScriptObjects/MetaMenu.html'
+            /Templates/FusionObjects/MetaMenu.html'
             maximumLevels = 1
             startingPoint = ${q(site).children('[uriPathSegment="metamenu"]').get(0)}
         }

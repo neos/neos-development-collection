@@ -15,14 +15,14 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\ThumbnailConfiguration;
 use Neos\Media\Domain\Service\AssetService;
-use Neos\Fusion\TypoScriptObjects\AbstractTypoScriptObject;
+use Neos\Fusion\FusionObjects\AbstractFusionObject;
 
 /**
  * Render an AssetInterface: object. Accepts the same parameters as the uri.image ViewHelper of the Neos.Media package:
  * asset, width, maximumWidth, height, maximumHeight, allowCropping, allowUpScaling.
  *
  */
-class ImageUriImplementation extends AbstractTypoScriptObject
+class ImageUriImplementation extends AbstractFusionObject
 {
     /**
      * Resource publisher
