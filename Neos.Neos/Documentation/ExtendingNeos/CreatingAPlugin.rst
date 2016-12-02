@@ -154,7 +154,7 @@ Configure TypoScript
 Second, the rendering of the plugin needs to be specified using TypoScript, so the following
 TypoScript needs to be added to your package.
 
-*Resources/Private/TypoScript/Plugin.fusion*::
+*Resources/Private/Fusion/Plugin.fusion*::
 
   prototype(Sarkosh.CdCollection:Plugin) < prototype(Neos.Neos:Plugin)
   prototype(Sarkosh.CdCollection:Plugin) {
@@ -183,7 +183,7 @@ To automatically include the Root.fusion in Neos you have to add the following l
 Use TypoScript to configure the Plugin
 --------------------------------------
 
-To hand over configuration to your plugin you can add arbitrary TypoScript values to *Resources/Private/TypoScript/Plugin.fusion*::
+To hand over configuration to your plugin you can add arbitrary TypoScript values to *Resources/Private/Fusion/Plugin.fusion*::
 
   prototype(Sarkosh.CdCollection:Plugin) {
   	...

@@ -84,6 +84,6 @@ class HistoryController extends AbstractModuleController
     protected function initializeView(ViewInterface $view)
     {
         parent::initializeView($view);
-        $view->setTypoScriptPathPattern('resource://Neos.Neos/Private/TypoScript/Backend');
+        $view->setTypoScriptPathPattern('resource://Neos.Neos/Private/Fusion/Backend');
     }
 }
