@@ -56,7 +56,7 @@ a TypoScript object with the same name as the content element is used for render
 in this case a TypoScript object `My.Package:YouTube`::
 
 	prototype(Acme.Demo:YouTube) < prototype(Neos.Neos:Content) {
-		templatePath = 'resource://Acme.Demo/Private/Templates/TypoScriptObjects/YouTube.html'
+		templatePath = 'resource://Acme.Demo/Private/Templates/FusionObjects/YouTube.html'
 		videoUrl = ${q(node).property('videoUrl')}
 		width = '640'
 		height = '360'
@@ -145,7 +145,7 @@ The TypoScript for the content element is the same as for a non-inline-editable 
 element::
 
 	prototype(Acme.Demo:Quote) < prototype(Neos.Neos:Content) {
-		templatePath = 'resource://Acme.Demo/Private/Templates/TypoScriptObjects/Quote.html'
+		templatePath = 'resource://Acme.Demo/Private/Templates/FusionObjects/Quote.html'
 		quote = ${q(node).property('quote')}
 	}
 
