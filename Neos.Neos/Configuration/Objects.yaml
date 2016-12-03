@@ -14,9 +14,9 @@ Neos\ContentRepository\Domain\Service\ContextFactoryInterface:
 Neos\ContentRepository\Domain\Service\PublishingServiceInterface:
   className: Neos\Neos\Service\PublishingService
 
-Neos\Neos\Aspects\TypoScriptCachingAspect:
+Neos\Neos\Aspects\FusionCachingAspect:
   properties:
-    typoScriptCache:
+    fusionCache:
       object:
         factoryObjectName: Neos\Flow\Cache\CacheManager
         factoryMethodName: getCache
