@@ -2,7 +2,7 @@ TYPO3_Neos_Configuration_Version:
   frontend: Neos\Cache\Frontend\StringFrontend
   backend: Neos\Cache\Backend\FileBackend
 
-TYPO3_Neos_TypoScript:
+Neos_Neos_Fusion:
   frontend: Neos\Cache\Frontend\VariableFrontend
   backend: Neos\Cache\Backend\FileBackend
 
