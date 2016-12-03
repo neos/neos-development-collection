@@ -18,7 +18,7 @@ use Neos\Neos\Exception as NeosException;
 use Neos\Neos\Service\LinkingService;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\Fusion\ViewHelpers\TypoScriptContextTrait;
+use Neos\Fusion\ViewHelpers\FusionContextTrait;
 
 /**
  * A view helper for creating links with URIs pointing to nodes.
@@ -107,7 +107,7 @@ use Neos\Fusion\ViewHelpers\TypoScriptContextTrait;
  */
 class NodeViewHelper extends AbstractTagBasedViewHelper
 {
-    use TypoScriptContextTrait;
+    use FusionContextTrait;
 
     /**
      * @var string

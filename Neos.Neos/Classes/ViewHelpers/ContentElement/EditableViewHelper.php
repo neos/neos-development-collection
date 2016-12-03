@@ -18,7 +18,7 @@ use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Service\AuthorizationService;
-use Neos\Fusion\ViewHelpers\TypoScriptContextTrait;
+use Neos\Fusion\ViewHelpers\FusionContextTrait;
 use Neos\Neos\Service\ContentElementEditableService;
 
 /**
@@ -35,7 +35,7 @@ use Neos\Neos\Service\ContentElementEditableService;
  */
 class EditableViewHelper extends AbstractTagBasedViewHelper
 {
-    use TypoScriptContextTrait;
+    use FusionContextTrait;
 
     /**
      * @Flow\Inject
