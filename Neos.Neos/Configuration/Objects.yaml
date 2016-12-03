@@ -22,7 +22,7 @@ Neos\Neos\Aspects\FusionCachingAspect:
         factoryMethodName: getCache
         arguments:
           1:
-            value: TYPO3_Neos_TypoScript
+            value: Neos_Neos_Fusion
 
 'Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface':
   className: Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource
