@@ -309,7 +309,7 @@ Change the cache backend
 By default, all cache entries are stored on the local filesystem. You can change this in ``Caches.yaml``,
 the example below will use the Redis backend for the content cache::
 
-	TYPO3_TypoScript_Content:
+	Neos_Fusion_Content:
 	  backend: TYPO3\Flow\Cache\Backend\RedisBackend
 
 .. note::

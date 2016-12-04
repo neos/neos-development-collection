@@ -53,7 +53,7 @@ class FileMonitorListener
         );
 
         if (in_array($fileMonitorIdentifier, $fileMonitorsThatTriggerContentCacheFlush)) {
-            $this->flowCacheManager->getCache('TYPO3_TypoScript_Content')->flush();
+            $this->flowCacheManager->getCache('Neos_Fusion_Content')->flush();
         }
     }
 }

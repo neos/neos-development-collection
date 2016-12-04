@@ -16,4 +16,4 @@ Neos\Fusion\Core\Cache\ContentCache:
         factoryMethodName: getCache
         arguments:
           1:
-            value: TYPO3_TypoScript_Content
+            value: Neos_Fusion_Content
