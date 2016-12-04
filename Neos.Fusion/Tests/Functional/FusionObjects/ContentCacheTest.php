@@ -37,7 +37,7 @@ class ContentCacheTest extends AbstractFusionObjectTest
     {
         // Re-inject the original cache since some tests might replace it with a mock object
         $cacheManager = $this->objectManager->get(CacheManager::class);
-        $cacheFrontend = $cacheManager->getCache('TYPO3_TypoScript_Content');
+        $cacheFrontend = $cacheManager->getCache('Neos_Fusion_Content');
         $this->inject($this->contentCache, 'cache', $cacheFrontend);
     }
 
