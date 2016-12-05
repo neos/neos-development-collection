@@ -166,6 +166,12 @@ class NodeDataRepository extends Repository
         parent::remove($object);
     }
 
+    public function findByNodeIdentifier($nodeIdentifier)
+    {
+        $query = $this->createQuery();
+        return $query->matching($query->equals('identifier', $nodeIdentifier))->execute();
+    }
+
     /**
      * Find a single node by exact path.
      *
