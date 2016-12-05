@@ -424,10 +424,12 @@ class Workspace
             return;
         }
 
+        $sourceWorkspace = $node->getWorkspace();
         $targetNodeData = $this->findNodeDataInTargetWorkspace($node, $targetWorkspace);
         $matchingNodeVariantExistsInTargetWorkspace = $targetNodeData !== null && $targetNodeData->getDimensionValues() === $node->getDimensions();
         if ($matchingNodeVariantExistsInTargetWorkspace) {
             $this->replaceNodeData($node, $targetNodeData);
+            $this->moveWorkspaceVariants($node->getIdentifier(), $node->getPath(), $sourceWorkspace, $targetWorkspace);
         } else {
             $this->moveNodeVariantToTargetWorkspace($node, $targetWorkspace);
         }
@@ -449,7 +451,11 @@ class Workspace
     protected function replaceNodeData(NodeInterface $node, NodeData $targetNodeData)
     {
         $sourceNodeData = $node->getNodeData();
-        $nodeWasMoved = $this->handleShadowNodeData($sourceNodeData, $targetNodeData->getWorkspace(), $targetNodeData);
+        if ($sourceNodeData->getParentPath() !== $targetNodeData->getParentPath()) {
+            $this->moveTargetNodeToNewPosition($targetNodeData, $node->getPath());
+        }
+
+        $this->handleShadowNodeData($sourceNodeData, $targetNodeData->getWorkspace(), $targetNodeData);
 
         // Technically this shouldn't be needed but due to doctrines behavior we need it.
         if ($sourceNodeData->isRemoved() && $targetNodeData->getWorkspace()->getBaseWorkspace() === null) {
@@ -460,16 +466,58 @@ class Workspace
 
         $targetNodeData->similarize($sourceNodeData);
         $targetNodeData->setLastPublicationDateTime($this->now);
-        if ($nodeWasMoved) {
-            // TODO: This seems wrong and introduces a publish order between nodes. We should always set the path.
-            $targetNodeData->setPath($node->getPath(), false);
-        }
 
         $node->setNodeData($targetNodeData);
         $this->nodeService->cleanUpProperties($node);
         $targetNodeData->setRemoved($sourceNodeData->isRemoved());
 
         $this->nodeDataRepository->remove($sourceNodeData);
+    }
+
+    /**
+     * Moves workspace variants of the node that were not moved to the target destination.
+     *
+     * @param string $nodeIdentifier
+     * @param string $targetPath
+     * @param Workspace $sourceWorkspace
+     * @param Workspace $targetWorkspace
+     */
+    protected function moveWorkspaceVariants($nodeIdentifier, $targetPath, Workspace $sourceWorkspace, Workspace $targetWorkspace)
+    {
+        $nodeDataVariants = $this->nodeDataRepository->findByNodeIdentifier($nodeIdentifier);
+        /** @var NodeData $nodeDataVariant */
+        foreach ($nodeDataVariants as $nodeDataVariant) {
+            if (
+                $nodeDataVariant->getWorkspace()->getBaseWorkspace() === null ||
+                $nodeDataVariant->getPath() === $targetPath ||
+                $nodeDataVariant->getWorkspace() === $sourceWorkspace ||
+                $nodeDataVariant->getWorkspace() === $targetWorkspace
+            ) {
+                continue;
+            }
+
+            $shadowNodeData = $this->nodeDataRepository->findOneByMovedTo($nodeDataVariant);
+            if ($shadowNodeData === null) {
+                $nodeDataVariant->setPath($targetPath);
+            }
+        }
+    }
+
+    /**
+     * Moves an existing node in a target workspace to the place it should be in after publish,
+     * in order to move all children to the new position as well.
+     *
+     * @param NodeData $targetNodeData
+     * @param string $destinationPath
+     */
+    protected function moveTargetNodeToNewPosition(NodeData $targetNodeData, $destinationPath)
+    {
+        if ($targetNodeData->getWorkspace()->getBaseWorkspace() === null) {
+            $targetNodeData->setPath($destinationPath);
+            return;
+        }
+
+        $targetNodeData->move($destinationPath, $targetNodeData->getWorkspace());
     }
 
     /**
@@ -522,13 +570,7 @@ class Workspace
             return true;
         }
 
-        $targetWorkspaceBase = $targetWorkspace->getBaseWorkspace();
-        if ($targetWorkspaceBase !== null) {
-            $this->adjustShadowNodeData($shadowNodeData, $publishedNodeData, $targetWorkspace, $targetNodeData);
-        } else {
-            $this->nodeDataRepository->remove($shadowNodeData);
-        }
-
+        $this->adjustShadowNodeData($shadowNodeData, $publishedNodeData, $targetWorkspace, $targetNodeData);
         return true;
     }
 
@@ -543,8 +585,21 @@ class Workspace
      */
     protected function adjustShadowNodeData(NodeData $shadowNodeData, NodeData $publishedNodeData, Workspace $targetWorkspace, NodeData $targetNodeData)
     {
+        // no shadow nodes on base workspace
+        if ($targetWorkspace->getBaseWorkspace() === null) {
+            $this->nodeDataRepository->remove($shadowNodeData);
+            return;
+        }
+
         $nodeOnSamePathInTargetWorkspace = $this->nodeDataRepository->findOneByPath($shadowNodeData->getPath(), $targetWorkspace, $publishedNodeData->getDimensionValues());
         if ($nodeOnSamePathInTargetWorkspace !== null && $nodeOnSamePathInTargetWorkspace->getWorkspace() === $targetWorkspace) {
+            $this->nodeDataRepository->remove($shadowNodeData);
+            return;
+        }
+
+        $targetWorkspaceBase = $targetWorkspace->getBaseWorkspace();
+        $nodeInTargetWorkspaceBase = $this->nodeDataRepository->findOneByIdentifier($publishedNodeData->getIdentifier(), $targetWorkspaceBase, $publishedNodeData->getDimensionValues());
+        if ($nodeInTargetWorkspaceBase !== null && $nodeInTargetWorkspaceBase->getPath() === $publishedNodeData->getPath()) {
             $this->nodeDataRepository->remove($shadowNodeData);
             return;
         }
@@ -552,8 +607,6 @@ class Workspace
         $shadowNodeData->setMovedTo($targetNodeData);
         $shadowNodeData->setWorkspace($targetWorkspace);
 
-        $targetWorkspaceBase = $targetWorkspace->getBaseWorkspace();
-        $nodeInTargetWorkspaceBase = $this->nodeDataRepository->findOneByIdentifier($publishedNodeData->getIdentifier(), $targetWorkspaceBase, $publishedNodeData->getDimensionValues());
         if ($nodeInTargetWorkspaceBase !== null && $nodeInTargetWorkspaceBase->getPath() !== $shadowNodeData->getPath()) {
             $this->adjustShadowNodePath($shadowNodeData, $nodeInTargetWorkspaceBase->getPath(), $targetWorkspace, $publishedNodeData->getDimensionValues());
         }
