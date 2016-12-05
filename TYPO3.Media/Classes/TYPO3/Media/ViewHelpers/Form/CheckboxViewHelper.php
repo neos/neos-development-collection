@@ -12,6 +12,8 @@ namespace TYPO3\Media\ViewHelpers\Form;
  */
 use TYPO3\Fluid\ViewHelpers\Form\AbstractFormFieldViewHelper;
 
+use TYPO3\Fluid\ViewHelpers\Form\AbstractFormFieldViewHelper;
+
 /**
  * View Helper which creates a simple checkbox (<input type="checkbox">).
  *
