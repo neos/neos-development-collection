@@ -65,7 +65,7 @@ define(
 				reloadRequired = false;
 
 			LocalStorage.setItem('editPreviewMode', identifier);
-			if (this.get('previousActiveMode') && this.get('previousActiveMode.typoScriptRenderingPath') !== this.get('currentlyActiveMode.typoScriptRenderingPath')) {
+			if (this.get('previousActiveMode') !== this.get('currentlyActiveMode')) {
 				reloadRequired = true;
 			}
 			if (reloadRequired) {
