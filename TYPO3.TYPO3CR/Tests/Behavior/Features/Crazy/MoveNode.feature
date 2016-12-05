@@ -443,3 +443,30 @@ Feature: Move node
       | Path                               |
       | /sites/typo3cr/company/departments |
       | /sites/typo3cr/company/about-us    |
+
+
+  @fixtures
+  Scenario: Move a node that was changed in another workspace and finally publish.
+    Given I have the following nodes:
+      | Identifier                           | Path                                    | Node Type                  | Properties            | Workspace   |
+      | 0990ad05-cce6-4241-af8f-f0c77cbd9583 | /sites/typo3cr/company/history          | TYPO3.TYPO3CR.Testing:Page | {"title": "history"}  | user-editor |
+    And I get a node by path "/sites/typo3cr/company" with the following context:
+      | Workspace   |
+      | user-editor |
+    And I set the node property "title" to "We"
+    When I get a node by path "/sites/typo3cr/company" with the following context:
+      | Workspace  |
+      | user-admin |
+    And I move the node into the node with path "/sites/typo3cr/about"
+    And I publish the workspace "user-admin"
+    And I publish the workspace "user-editor"
+    And I get a node by path "/sites/typo3cr/about/company" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have one node
+    And the node property "title" should be "We"
+    When I get a node by path "/sites/typo3cr/about/company/history" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have one node
+
