@@ -1,0 +1,235 @@
+`2.3.8 (2016-12-05) <https://github.com/neos/neos-development-collection/releases/tag/2.3.8>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Move existing live node in publish <https://github.com/neos/neos-development-collection/pull/1293>`_
+-------------------------------------------------------------------------------------------------------------
+
+In order to retain integrity for nodes we need to move an already
+existing node that is to be reused to the target path including
+all children. Afterwards the node can be published. That keeps
+child nodes together with the published parent and avoids orphan
+nodes. Also makes sure child nodes will not exist in two paths.
+
+Fixes: #1277
+
+* Packages: ``TYPO3CR``
+
+`BUGFIX: Show changes in ContentCollection-Nodes in review-module <https://github.com/neos/neos-development-collection/pull/1184>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+This change adds the visualization of changes on ``TYPO3.Neos:ContentCollection`` nodes that also have the type ``TYPO3.Neos:Content`` to the review module. 
+
+Previously those changes were filtered out which prevented the visualization of changes and lead to the page beeing visualized as having changes without showing them in the review module.
+
+* Packages: ``Neos``
+
+`TASK: Use defined version constraints in 2.3 manifests <https://github.com/neos/neos-development-collection/pull/1275>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+The composer manifests for Neos 2.3 were not correctly adapted
+to use release versions only. Therefore installations could break
+after we tag stable versions of the next major as these would
+be pulled in by the current constraints.
+
+This change adds the missing constraints to Neos packages to
+prevent that.
+
+Fixes: #1247
+
+* Packages: ``Kickstarter`` ``Media`` ``Neos`` ``TYPO3CR`` ``TypoScript``
+
+`BUGFIX: preview/edit modes share content cache <https://github.com/neos/neos-development-collection/pull/1251>`_
+-----------------------------------------------------------------------------------------------------------------
+
+This change fixes an issue with the edit and preview modes in Neos which result in unexpected output if modes are based on the same Fusion object path.
+
+Prior to this change, preview mode "Desktop" and the edit mode "In-Place" shared a Fusion content
+cache. If a site integrator wanted to react on the current mode in her Fluid template (using the
+{neos:rendering.inEditMode()} view helper calls) she will get wrong results, depending on which
+mode has been called first with an empty cache.
+
+This change now introduces the mode identifier as a new part of the content cache identifier.
+Additionally, edit / preview mode buttons will now trigger a reload even for modes which are
+based on the same Fusion object path.
+
+Resolves #1249
+
+* Packages: ``Neos``
+
+`BUGFIX: Set default sort direction of the media browser to \`DESC\` <https://github.com/neos/neos-development-collection/pull/1231>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Changed sortDirection of the media browser back to DESC, so we see the most current media files in the media browser on the top.
+
+This is a possible fix for Issue: https://github.com/neos/neos-development-collection/issues/1230 without the possibility for configuration.
+
+* Packages: ``Media``
+
+`BUGFIX: Fix wrong indentations in documentation <https://github.com/neos/neos-development-collection/pull/1228>`_
+------------------------------------------------------------------------------------------------------------------
+
+Adjust wrong indentations in PropertyEditorReference documentation.
+
+* Packages: ``Neos``
+
+`TASK: Testing checkout must not be git repository <https://github.com/neos/neos-development-collection/pull/1224>`_
+--------------------------------------------------------------------------------------------------------------------
+
+`TASK: Use ComposerManifestUpdater in TravisCI builds <https://github.com/neos/neos-development-collection/pull/1223>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Media``
+
+`BUGFIX: Render empty \`alt\` attribute in ImageViewHelper <https://github.com/neos/neos-development-collection/pull/1207>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+With this the ImageViewHelper will always include an alt attribute, even if
+not given.
+
+Includes some namespace imports only present in 2.2 branch.
+
+Fixes #1075 
+
+* Packages: ``Media`` ``Neos`` ``TypoScript``
+
+`BUGFIX: Let DateStringConverter accept \`\`DateTimeInterface\`\` <https://github.com/neos/neos-development-collection/pull/1215>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+This lowers the matching possibility for this specialized type
+converter to avoid it being used accidentally on DateTime instances
+instead of the Flow ``StringConverter``.
+
+This indirectly fixes a problem with tests exhibited in master
+because Flow master has a changed ``StringConverter`` that is now
+assigned a lower priority for ``DateTime`` objects than this
+converter, which is unexpected.
+
+* Packages: ``Neos``
+
+`TASK: Update composer.json <https://github.com/neos/neos-development-collection/pull/1196>`_
+---------------------------------------------------------------------------------------------
+
+This updates the composer.json in `TYPO3.Neos.NodeTypes` and removes the packge-key entry wich was added by mistake and also updates the root `composer.json` with an autogenerated version of our ComposreManifestMerger.php
+
+* Packages: ``Neos``
+
+`TASK: Adjust test timezone to Africa/Tunis <https://github.com/neos/neos-development-collection/pull/1214>`_
+-------------------------------------------------------------------------------------------------------------
+
+The tests are currently supposed to be run in a UTC+1 timezone, due to DST
+we switch to a timezone that doesn't observe DST. 
+Africa/Tunis is a choice that fullfills these constraints.
+
+* Packages: ``Neos``
+
+`TASK: Remove duplicate privilege check from NodeController <https://github.com/neos/neos-development-collection/pull/689>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+This check is already handled by policies:
+- TYPO3.Neos:PublicFrontendAccess
+- TYPO3.Neos:Backend.GeneralAccess
+
+If that redundancy is removed it makes it possible to use the
+`TYPO3.Neos:Backend.OtherUsersPersonalWorkspaceAccess` policy
+to grant access to any workspace to e.g. other authenticated users.
+This is necessary to build a preview mechanism without an authenticated
+backend user to share the state of your content with external previewers.
+
+* Packages: ``Media`` ``Neos``
+
+`TASK: Add __type when converting assets to array <https://github.com/neos/neos-development-collection/pull/632>`_
+------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Media``
+
+`TASK: Add warning about breaking change in 2.3 <https://github.com/neos/neos-development-collection/pull/1170>`_
+-----------------------------------------------------------------------------------------------------------------
+
+Added warning about breaking change in 2.3
+
+* Packages: ``Neos``
+
+`TASK: document @ignoreProperties in TYPO3.TypoScript:Array <https://github.com/neos/neos-development-collection/pull/1201>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Correct ContentCollection reference <https://github.com/neos/neos-development-collection/pull/1197>`_
+------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Wrong Namespace for Template in docs <https://github.com/neos/neos-development-collection/pull/1192>`_
+---------------------------------------------------------------------------------------------------------------
+
+It's `TYPO3.TypoScript:Template` instead of `TYPO3.Neos:Template`
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix static compilation of ThumbnailGeneratorStrategy <https://github.com/neos/neos-development-collection/pull/1182>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+This fixes `ThumbnailGeneratorStrategy::getThumbnailGeneratorClassNames()` making the
+method `public`.
+Without this fix, the method is silently skipped from static compilation and will always
+use reflection to determine classes implementing `ThumbnailGeneratorInterface`.
+
+Note: With resolution of neos/flow-development-collection#662 this will prevent compilation
+in Production context
+
+* Packages: ``Media``
+
+`TASK: Fix typo, fix path to TextFieldEditor <https://github.com/neos/neos-development-collection/pull/1181>`_
+--------------------------------------------------------------------------------------------------------------
+
+The path to the `TextFieldEditor` is missing the `Inspector` path part.
+
+* Packages: ``Neos``
+
+`BUGFIX: Allow determination of \`\`ReadNodePrivilege\`\` <https://github.com/neos/neos-development-collection/pull/649>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Previously the `ReadNodePrivilege` did not implement a `matchesSubject()`
+method falling back to the default behavior of _not_ matching any subject.
+
+Usually this is not an issue because nodes protected by this privilege will
+normally not be loaded anyways, but it prevents "pro-active" lookups for
+this privilege using the `PrivilegeManager`::
+
+```
+$privilegeManager->isGranted(ReadNodePrivilege::class, $node)
+```
+
+Without this fix, the above will always return FALSE.
+
+* Related: `NEOS-945 <https://jira.neos.io/browse/NEOS-945>`_
+* Packages: ``TYPO3CR``
+
+`BUGFIX: Cancel in editing user settings links to user module <https://github.com/neos/neos-development-collection/pull/753>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+Cancel in editing user settings links to user module instead of management module.
+
+* Packages: ``Neos``
+
+`TASK: Remove references to typo3.org <https://github.com/neos/neos-development-collection/pull/723>`_
+------------------------------------------------------------------------------------------------------
+
+Replaces references to typo3.org with matching references to neos.io.
+
+* Packages: ``Neos`` ``TypoScript``
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/574>`_
+------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by StyleCI.
+
+For details see https://styleci.io/analyses/XVBZGg.
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.3.7...2.3.8>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
