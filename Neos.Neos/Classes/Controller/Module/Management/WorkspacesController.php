@@ -19,7 +19,6 @@ use Neos\Error\Messages\Message;
 use Neos\Flow\I18n\Translator;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Property\PropertyMapper;
-use Neos\Flow\Property\PropertyMappingConfigurationBuilder;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Context;
 use Neos\Media\Domain\Model\AssetInterface;
@@ -82,12 +81,6 @@ class WorkspacesController extends AbstractModuleController
      * @var ContentContextFactory
      */
     protected $contextFactory;
-
-    /**
-     * @Flow\Inject
-     * @var PropertyMappingConfigurationBuilder
-     */
-    protected $propertyMappingConfigurationBuilder;
 
     /**
      * @Flow\Inject
@@ -384,7 +377,7 @@ class WorkspacesController extends AbstractModuleController
      */
     public function publishOrDiscardNodesAction(array $nodes, $action, Workspace $selectedWorkspace = null)
     {
-        $propertyMappingConfiguration = $this->propertyMappingConfigurationBuilder->build();
+        $propertyMappingConfiguration = $this->propertyMapper->buildPropertyMappingConfiguration();
         $propertyMappingConfiguration->setTypeConverterOption(NodeConverter::class, NodeConverter::REMOVED_CONTENT_SHOWN, true);
         foreach ($nodes as $key => $node) {
             $nodes[$key] = $this->propertyMapper->convert($node, NodeInterface::class, $propertyMappingConfiguration);
