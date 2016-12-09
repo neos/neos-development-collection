@@ -66,12 +66,12 @@ General considerations
 *The Flow standard file header*::
 
  <?php
- namespace Neos\Flow\Something\New;
+ namespace YourCompany\Package\Something\New;
 
  /*
-  * This file is part of the Neos.Flow package.
+  * This file is part of the YourCompany.Package package.
   *
-  * (c) Contributors of the Neos Project - www.neos.io
+  * (c) YourCompany
   *
   * This package is Open Source Software. For the full copyright and license
   * information, please view the LICENSE file which was distributed with this
@@ -132,9 +132,9 @@ Vendor namespaces
 
 The base for namespaces as well as package keys is the vendor namespace. Since Flow is
 part of the Neos project, the core team decided to choose "Neos" as our vendor
-namespace (at some point this will change). The Object Manager for example is known under
-the class name ``Neos\Flow\ObjectManagement\ObjectManager``. In our examples you will find
-the ``Acme`` vendor namespace.
+namespace. The Object Manager for example is known under the class name
+``Neos\Flow\ObjectManagement\ObjectManager``. In our examples you will find the ``Acme``
+vendor namespace.
 
 Why do we use vendor namespaces? This has two great benefits: first of all we don't need a
 central package key registry and secondly, it allows anyone to seamlessly integrate third-party
@@ -153,7 +153,7 @@ only the characters a-z, A-Z, 0-9 and the dash sign "-" are allowed for package 
 don't use special characters.
 
 The full package key is then built by combining the vendor namespace and the package,
-like ``Neos.Fluid`` or ``Acme.Demo``.
+like ``Neos.Eel`` or ``Acme.Demo``.
 
 Namespace and Class names
 -------------------------
@@ -371,7 +371,7 @@ These are the rules for naming files:
 * Names of files containing code for unit tests must be the same as the class which is
   tested, appended with "Test.php".
 * Files are placed in a directory structure representing the namespace structure. You may
-  use PSR-0 ro PSR-4 autoloading as you like. We generally use PSR-4.
+  use PSR-0 or PSR-4 autoloading as you like. We generally use PSR-4.
 
 *File naming in Flow*
 
@@ -399,8 +399,34 @@ PSR-2
 -----
 
 We follow the PSR-2 standard which is defined by PHP FIG. You should read the full `PSR-2 standard`_.
-
 .. _`psr-2 standard`: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md
+
+Some things are not specified in PSR-2, so here are some amendments.
+
+Strings
+-------
+
+In general, we use single quotes to enclose literal strings::
+
+ $neos = 'A great project from a great team';
+
+If you'd like to insert values from variables, concatenate strings. A
+space must be inserted before and after the dot for better readability::
+
+ $message = 'Hey ' . $name . ', you look ' . $appearance . ' today!';
+
+You may break a string into multiple lines if you use the dot operator. You'll have to
+indent each following line to mark them as part of the value assignment::
+
+ $neos = 'A great ' .
+   'project from ' .
+   'a great ' .
+   'team';
+
+You should also consider using a PHP function such as `sprintf()` to concatenate
+strings to increase readability::
+
+ $message = sprintf('Hey %s, you look %s today!', $name, $appearance);
 
 Development Process
 ===================
@@ -502,7 +528,7 @@ Examples of good and bad subject lines::
    Introduce xyz service                               // BAD, missing code prefix
    BUGFIX: Fixed bug xyz                               // BAD, subject should be written in present tense
    WIP !!! TASK: A breaking change                     // BAD, subject has to start with [!!!] for breaking changes
-   BUGFIX: SessionManager will remove expired sessions // GOOD, the line explains what the change does, not what the
+   BUGFIX: Make SessionManager remove expired sessions // GOOD, the line explains what the change does, not what the
                                                           bug is about (this should be explained in the following lines
                                                           and in the related bug tracker ticket)
 
