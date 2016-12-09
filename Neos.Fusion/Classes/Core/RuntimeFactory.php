@@ -49,7 +49,7 @@ class RuntimeFactory
         $httpRequest = Request::createFromEnvironment();
 
         /** @var ActionRequest $request */
-        $request = $httpRequest->createActionRequest();
+        $request = new ActionRequest($httpRequest);
 
         $uriBuilder = new UriBuilder();
         $uriBuilder->setRequest($request);

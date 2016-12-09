@@ -13,6 +13,7 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Response;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
@@ -40,7 +41,7 @@ abstract class AbstractFusionObjectTest extends FunctionalTestCase
         $view = new FusionView();
 
         $httpRequest = Request::createFromEnvironment();
-        $request = $httpRequest->createActionRequest();
+        $request = new ActionRequest($httpRequest);
 
         $uriBuilder = new UriBuilder();
         $uriBuilder->setRequest($request);
