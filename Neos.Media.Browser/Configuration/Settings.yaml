@@ -36,6 +36,10 @@ Neos:
                 pattern: ControllerObjectName
                 patternOptions:
                   controllerObjectNamePattern: 'Neos\Media\Browser\Controller\Backend\.*'
+
+    mvc:
+      routes:
+        'Neos.Media.Browser': true
   Neos:
     modules:
       management:
