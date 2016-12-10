@@ -1,11 +1,1 @@
-{namespace neos=Neos\Neos\ViewHelpers}
-<neos:backend.documentBreadcrumbPath node="{node}">
-    <f:for each="{documentNodes}" as="documentNode" iteration="{iterator}">/
-        <f:if condition="{showIcon}">
-            <f:if condition="{documentNode.nodeType.ui.icon}"><i class="{documentNode.nodeType.ui.icon}"
-                                                                 title="{f:if(condition: documentNode.nodeType.label, then: '{neos:backend.translate(id: documentNode.nodeType.label)}', else: documentNode.nodeType.name)}"
-                                                                 data-neos-toggle="tooltip"></i></f:if>
-        </f:if>
-        {documentNode.label}
-    </f:for>
-</neos:backend.documentBreadcrumbPath>
+{namespace neos=Neos\Neos\ViewHelpers}<neos:backend.documentBreadcrumbPath node="{node}"><f:for each="{documentNodes}" as="documentNode" iteration="{iterator}">/<f:if condition="{showIcon}"><f:if condition="{documentNode.nodeType.ui.icon}"> <i class="{documentNode.nodeType.ui.icon}" title="{f:if(condition: documentNode.nodeType.label, then: '{neos:backend.translate(id: documentNode.nodeType.label)}', else: documentNode.nodeType.name)}" data-neos-toggle="tooltip"></i></f:if></f:if> {documentNode.label} </f:for></neos:backend.documentBreadcrumbPath>
