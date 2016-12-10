@@ -1,7 +1,7 @@
 {
     "name": "neos/media-browser",
     "type": "neos-package",
-    "description": "A media browser for the Neos content application platform",
+    "description": "This module allows managing of media assets including pictures, videos, audio and documents.",
     "license": "GPL-3.0+",
     "require": {
         "neos/media": "*"
