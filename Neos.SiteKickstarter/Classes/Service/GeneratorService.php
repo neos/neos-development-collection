@@ -86,7 +86,7 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
     }
 
     /**
-     * Generate basic TypoScript files.
+     * Generate basic Fusion files.
      *
      * @param string $packageKey
      * @param string $siteName
@@ -104,8 +104,8 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
 
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
-        $sitesTypoScriptPathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/Fusion/Root.fusion';
-        $this->generateFile($sitesTypoScriptPathAndFilename, $fileContent);
+        $sitesFusionPathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/Fusion/Root.fusion';
+        $this->generateFile($sitesFusionPathAndFilename, $fileContent);
     }
 
     /**
@@ -122,7 +122,7 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
         $contextVariables = array();
         $contextVariables['siteName'] = $siteName;
         $contextVariables['neosViewHelper'] = '{namespace neos=Neos\Neos\ViewHelpers}';
-        $contextVariables['typoScriptViewHelper'] = '{namespace ts=Neos\Fusion\ViewHelpers}';
+        $contextVariables['fusionViewHelper'] = '{namespace ts=Neos\Fusion\ViewHelpers}';
         $packageKeyDomainPart = substr(strrchr($packageKey, '.'), 1) ?: $packageKey;
         $contextVariables['siteNodeName'] = lcfirst($packageKeyDomainPart);
 
@@ -144,8 +144,8 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
 
         $fileContent = file_get_contents($templatePathAndFilename);
 
-        $sitesTypoScriptPathAndFilename = $this->packageManager->getPackage($packageKey)->getConfigurationPath() . 'NodeTypes.yaml';
-        $this->generateFile($sitesTypoScriptPathAndFilename, $fileContent);
+        $sitesNodeTypesPathAndFilename = $this->packageManager->getPackage($packageKey)->getConfigurationPath() . 'NodeTypes.yaml';
+        $this->generateFile($sitesNodeTypesPathAndFilename, $fileContent);
     }
 
     /**
