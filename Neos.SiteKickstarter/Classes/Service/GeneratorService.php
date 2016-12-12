@@ -53,7 +53,7 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
             ]
         ]);
         $this->generateSitesXml($packageKey, $siteName);
-        $this->generateSitesTypoScript($packageKey, $siteName);
+        $this->generateSitesFusion($packageKey, $siteName);
         $this->generateSitesTemplate($packageKey, $siteName);
         $this->generateNodeTypesConfiguration($packageKey);
         $this->generateAdditionalFolders($packageKey);
@@ -92,9 +92,9 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
      * @param string $siteName
      * @return void
      */
-    protected function generateSitesTypoScript($packageKey, $siteName)
+    protected function generateSitesFusion($packageKey, $siteName)
     {
-        $templatePathAndFilename = 'resource://Neos.SiteKickstarter/Private/Generator/TypoScript/Root.fusion';
+        $templatePathAndFilename = 'resource://Neos.SiteKickstarter/Private/Generator/Fusion/Root.fusion';
 
         $contextVariables = array();
         $contextVariables['packageKey'] = $packageKey;
@@ -104,7 +104,7 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
 
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
-        $sitesTypoScriptPathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/TypoScript/Root.fusion';
+        $sitesTypoScriptPathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/Fusion/Root.fusion';
         $this->generateFile($sitesTypoScriptPathAndFilename, $fileContent);
     }
 
