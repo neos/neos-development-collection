@@ -122,7 +122,7 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
         $contextVariables = array();
         $contextVariables['siteName'] = $siteName;
         $contextVariables['neosViewHelper'] = '{namespace neos=Neos\Neos\ViewHelpers}';
-        $contextVariables['fusionViewHelper'] = '{namespace ts=Neos\Fusion\ViewHelpers}';
+        $contextVariables['fusionViewHelper'] = '{namespace fusion=Neos\Fusion\ViewHelpers}';
         $packageKeyDomainPart = substr(strrchr($packageKey, '.'), 1) ?: $packageKey;
         $contextVariables['siteNodeName'] = lcfirst($packageKeyDomainPart);
 
