@@ -27,7 +27,7 @@ Edit/preview modes are added to the Neos-Backend via *Settings.yaml*.
             # show as preview mode
             isPreviewMode: TRUE
             # render path
-            typoScriptRenderingPath: 'print'
+            fusionRenderingPath: 'print'
             # show after the existing modes
             position: 200
 
