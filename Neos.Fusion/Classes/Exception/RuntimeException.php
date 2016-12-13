@@ -20,7 +20,7 @@ class RuntimeException extends Exception
     /**
      * @var string
      */
-    protected $typoScriptPath;
+    protected $fusionPath;
 
     /**
      * @param string $message
@@ -28,18 +28,27 @@ class RuntimeException extends Exception
      * @param \Exception $previous
      * @param null $typoScriptPath
      */
-    public function __construct($message = '', $code = 0, \Exception $previous = null, $typoScriptPath = null)
+    public function __construct($message = '', $code = 0, \Exception $previous = null, $fusionPath = null)
     {
         parent::__construct($message, $code, $previous);
 
-        $this->typoScriptPath = $typoScriptPath;
+        $this->fusionPath = $fusionPath;
     }
 
     /**
      * @return null|string
      */
+    public function getFusionPath()
+    {
+        return $this->fusionPath;
+    }
+
+    /**
+     * @return null|string
+     * @deprecated
+     */
     public function getTypoScriptPath()
     {
-        return $this->typoScriptPath;
+        return $this->fusionPath;
     }
 }
