@@ -177,8 +177,10 @@ class UserInterfaceMode
 
         if (isset($configuration['fusionRenderingPath'])) {
             $mode->setFusionPath($configuration['fusionRenderingPath']);
-        } else if (isset($configuration['typoScriptRenderingPath'])) {
+        } elseif (isset($configuration['typoScriptRenderingPath'])) {
             $mode->setFusionPath($configuration['typoScriptRenderingPath']);
+        } else {
+            $mode->setFusionPath('');
         }
 
         if (isset($configuration['options']) && is_array($configuration['options'])) {
