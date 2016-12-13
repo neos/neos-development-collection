@@ -421,20 +421,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getLabel()
     {
-        // TODO: remove second argument after deprecation phase ends for cropping.
-        return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this, false);
-    }
-
-    /**
-     * Returns a full length plain text description of this node
-     *
-     * @return string
-     * @deprecated since 1.2
-     */
-    public function getFullLabel()
-    {
-        // TODO: remove second argument after deprecation phase ends for cropping.
-        return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this, false);
+        return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this);
     }
 
     /**
