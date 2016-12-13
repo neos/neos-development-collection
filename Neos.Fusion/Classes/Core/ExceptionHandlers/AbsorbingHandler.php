@@ -27,14 +27,14 @@ class AbsorbingHandler extends AbstractRenderingExceptionHandler
     /**
      * Returns an empty string
      *
-     * @param string $typoScriptPath path causing the exception
+     * @param string $fusionPath path causing the exception
      * @param \Exception $exception exception to handle
      * @param integer $referenceCode
      * @return string
      */
-    protected function handle($typoScriptPath, \Exception $exception, $referenceCode)
+    protected function handle($fusionPath, \Exception $exception, $referenceCode)
     {
-        $this->systemLogger->log('Absorbed Exception: ' . $exception->getMessage(), LOG_DEBUG, array('typoScriptPath' => $typoScriptPath, 'referenceCode' => $referenceCode), 'Neos.Fusion', \Neos\Fusion\Core\ExceptionHandlers\AbsorbingHandler::class);
+        $this->systemLogger->log('Absorbed Exception: ' . $exception->getMessage(), LOG_DEBUG, array('fusionPath' => $fusionPath, 'referenceCode' => $referenceCode), 'Neos.Fusion', \Neos\Fusion\Core\ExceptionHandlers\AbsorbingHandler::class);
         return '';
     }
 
@@ -42,11 +42,11 @@ class AbsorbingHandler extends AbstractRenderingExceptionHandler
      * The absorbing handler is meant to catch loose evaluation errors (like missing assets) in a useful way,
      * therefor caching is desired.
      *
-     * @param string $typoScriptPath
+     * @param string $fusionPath
      * @param \Exception $exception
      * @return boolean
      */
-    protected function exceptionDisablesCache($typoScriptPath, \Exception $exception)
+    protected function exceptionDisablesCache($fusionPath, \Exception $exception)
     {
         return false;
     }
