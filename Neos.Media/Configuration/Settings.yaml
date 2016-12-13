@@ -50,10 +50,6 @@ Neos:
           position: 'before Neos.Neos'
 
   Media:
-    # This setting simulates how Neos 1.2 handled image cropping with "maximumWidth" and "maximumHeight".
-    # This behaviour is deprecated and will be removed in Neos 3.0, "maximumWidth" and "maximumHeight"
-    # need to be replaced by "width" and "height" if you need fixed dimensions.
-    behaviourFlag: '1.2'
     # Enable asynchronous thumbnails
     asyncThumbnails: true
     # Thumbnail presets
