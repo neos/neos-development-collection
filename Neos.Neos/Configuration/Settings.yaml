@@ -425,7 +425,7 @@ Neos:
         live:
           isEditingMode: false
           isPreviewMode: false
-          typoScriptRenderingPath: ''
+          fusionRenderingPath: ''
           title: Live
         inPlace:
           isEditingMode: true
@@ -436,13 +436,13 @@ Neos:
         rawContent:
           isEditingMode: true
           isPreviewMode: false
-          typoScriptRenderingPath: rawContent
+          fusionRenderingPath: rawContent
           title: 'Neos.Neos:Main:editPreviewModes.rawContent'
           position: 200
         desktop:
           isEditingMode: false
           isPreviewMode: true
-          typoScriptRenderingPath: ''
+          fusionRenderingPath: ''
           title: 'Neos.Neos:Main:editPreviewModes.desktop'
           position: 100
 
