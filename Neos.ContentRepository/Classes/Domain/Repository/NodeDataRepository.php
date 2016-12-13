@@ -1188,18 +1188,6 @@ class NodeDataRepository extends Repository
     }
 
     /**
-     * Reset instances (internal).
-     *
-     * @return void
-     * @deprecated Use flushNodeRegistry()
-     * @see flushNodeRegistry()
-     */
-    public function reset()
-    {
-        $this->flushNodeRegistry();
-    }
-
-    /**
      * If $dimensions is not empty, adds join constraints to the given $queryBuilder
      * limiting the query result to matching hits.
      *
