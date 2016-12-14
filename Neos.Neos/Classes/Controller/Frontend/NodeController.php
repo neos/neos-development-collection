@@ -97,14 +97,7 @@ class NodeController extends ActionController
 
         if ($inBackend) {
             $this->overrideViewVariablesFromInternalArguments();
-
-            /** @var UserInterfaceMode $renderingMode */
-            $renderingMode = $node->getContext()->getCurrentRenderingMode();
             $this->response->setHeader('Cache-Control', 'no-cache');
-            if ($renderingMode !== null) {
-                // Deprecated TypoScript context variable from version 2.0.
-                $this->view->assign('editPreviewMode', $renderingMode->getFusionPath());
-            }
             if (!$this->view->canRenderWithNodeAndPath()) {
                 $this->view->setTypoScriptPath('rawContent');
             }
