@@ -386,26 +386,6 @@ class NodeController extends AbstractServiceController
     }
 
     /**
-     * Search a page, needed for internal links.
-     *
-     * @deprecated will be removed with 3.0, use Service/NodesController->indexAction() instead
-     * @param string $query
-     * @return void
-     */
-    public function searchPageAction($query)
-    {
-        $searchResult = array();
-
-        $documentNodeTypes = $this->nodeTypeManager->getSubNodeTypes('Neos.Neos:Document');
-        /** @var NodeInterface $node */
-        foreach ($this->nodeSearchService->findByProperties($query, $documentNodeTypes, $this->createContext('live')) as $node) {
-            $searchResult[$node->getPath()] = $this->processNodeForEditorPlugins($node);
-        }
-
-        $this->view->assign('value', array('searchResult' => $searchResult, 'success' => true));
-    }
-
-    /**
      * Takes care of creating a redirect to properly render the collection the given node is in.
      *
      * @param NodeInterface $node
