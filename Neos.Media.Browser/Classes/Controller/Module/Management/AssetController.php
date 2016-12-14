@@ -13,10 +13,11 @@ namespace Neos\Media\Browser\Controller\Module\Management;
 
 use Doctrine\Common\Persistence\Proxy as DoctrineProxy;
 use Doctrine\ORM\EntityNotFoundException;
-use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Message;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Translator;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Exception\InvalidArgumentValueException;
@@ -25,9 +26,10 @@ use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\ResourceManagement\PersistentResource;
-use Neos\Flow\Security\Context;
 use Neos\FluidAdaptor\View\TemplateView;
 use Neos\Media\Domain\Model\Asset;
+use Neos\Media\Domain\Model\AssetCollection;
+use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Repository\AssetCollectionRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
@@ -39,23 +41,16 @@ use Neos\Media\Domain\Repository\VideoRepository;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Media\Domain\Session\BrowserState;
 use Neos\Media\TypeConverter\AssetInterfaceConverter;
-use Neos\Utility\Files;
-use Neos\Utility\MediaTypes;
-use Neos\Utility\TypeHandling;
-use Neos\Media\Domain\Model\AssetCollection;
-use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
 use Neos\Neos\Controller\CreateContentContextTrait;
 use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
-use Neos\Neos\Domain\Service\UserService as DomainUserService;
 use Neos\Neos\Service\UserService;
-use Neos\ContentRepository\Domain\Factory\NodeFactory;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
-use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
+use Neos\Utility\Files;
+use Neos\Utility\MediaTypes;
+use Neos\Utility\TypeHandling;
 
 /**
  * Controller for asset handling
@@ -77,28 +72,16 @@ class AssetController extends ActionController
     /**
      * @var array
      */
-    protected $viewFormatToObjectNameMap = array(
+    protected $viewFormatToObjectNameMap = [
         'html' => TemplateView::class,
         'json' => JsonView::class
-    );
+    ];
 
     /**
      * @Flow\Inject
      * @var NodeDataRepository
      */
     protected $nodeDataRepository;
-
-    /**
-     * @Flow\Inject
-     * @var NodeFactory
-     */
-    protected $nodeFactory;
-
-    /**
-     * @Flow\Inject
-     * @var ConfigurationManager
-     */
-    protected $configurationManager;
 
     /**
      * @Flow\Inject
@@ -113,34 +96,10 @@ class AssetController extends ActionController
     protected $domainRepository;
 
     /**
-     * @Flow\InjectConfiguration
-     * @var array
-     */
-    protected $settings;
-
-    /**
-     * @Flow\Inject
-     * @var Context
-     */
-    protected $securityContext;
-
-    /**
-     * @Flow\Inject
-     * @var WorkspaceRepository
-     */
-    protected $workspaceRepository;
-
-    /**
      * @Flow\Inject
      * @var UserService
      */
     protected $userService;
-
-    /**
-     * @Flow\Inject
-     * @var DomainUserService
-     */
-    protected $domainUserService;
 
     /**
      * @Flow\Inject
@@ -211,14 +170,14 @@ class AssetController extends ActionController
      */
     protected function initializeView(ViewInterface $view)
     {
-        $view->assignMultiple(array(
+        $view->assignMultiple([
             'view' => $this->browserState->get('view'),
             'sortBy' => $this->browserState->get('sortBy'),
             'sortDirection' => $this->browserState->get('sortDirection'),
             'filter' => $this->browserState->get('filter'),
             'activeTag' => $this->browserState->get('activeTag'),
             'activeAssetCollection' => $this->browserState->get('activeAssetCollection')
-        ));
+        ]);
     }
 
     /**
@@ -308,11 +267,11 @@ class AssetController extends ActionController
 
         switch ($this->browserState->get('sortBy')) {
             case 'Name':
-                $this->assetRepository->setDefaultOrderings(array('resource.filename' => $this->browserState->get('sortDirection')));
+                $this->assetRepository->setDefaultOrderings(['resource.filename' => $this->browserState->get('sortDirection')]);
                 break;
             case 'Modified':
             default:
-                $this->assetRepository->setDefaultOrderings(array('lastModified' => $this->browserState->get('sortDirection')));
+                $this->assetRepository->setDefaultOrderings(['lastModified' => $this->browserState->get('sortDirection')]);
                 break;
         }
 
@@ -320,18 +279,18 @@ class AssetController extends ActionController
             $this->browserState->set('tagMode', self::TAG_ALL);
         }
 
-        $assetCollections = array();
+        $assetCollections = [];
         foreach ($this->assetCollectionRepository->findAll() as $assetCollection) {
-            $assetCollections[] = array('object' => $assetCollection, 'count' => $this->assetRepository->countByAssetCollection($assetCollection));
+            $assetCollections[] = ['object' => $assetCollection, 'count' => $this->assetRepository->countByAssetCollection($assetCollection)];
         }
 
-        $tags = array();
+        $tags = [];
         foreach ($activeAssetCollection !== null ? $activeAssetCollection->getTags() : $this->tagRepository->findAll() as $tag) {
-            $tags[] = array('object' => $tag, 'count' => $this->assetRepository->countByTag($tag, $activeAssetCollection));
+            $tags[] = ['object' => $tag, 'count' => $this->assetRepository->countByTag($tag, $activeAssetCollection)];
         }
 
         if ($searchTerm !== null) {
-            $assets = $this->assetRepository->findBySearchTermOrTags($searchTerm, array(), $activeAssetCollection);
+            $assets = $this->assetRepository->findBySearchTermOrTags($searchTerm, [], $activeAssetCollection);
             $this->view->assign('searchTerm', $searchTerm);
         } elseif ($this->browserState->get('tagMode') === self::TAG_NONE) {
             $assets = $this->assetRepository->findUntagged($activeAssetCollection);
@@ -343,7 +302,7 @@ class AssetController extends ActionController
 
         $allCollectionsCount = $this->assetRepository->countAll();
         $maximumFileUploadSize = $this->maximumFileUploadSize();
-        $this->view->assignMultiple(array(
+        $this->view->assignMultiple([
             'assets' => $assets,
             'tags' => $tags,
             'allCollectionsCount' => $allCollectionsCount,
@@ -354,7 +313,7 @@ class AssetController extends ActionController
             'argumentNamespace' => $this->request->getArgumentNamespace(),
             'maximumFileUploadSize' => $maximumFileUploadSize,
             'humanReadableMaximumFileUploadSize' => Files::bytesToSizeString($maximumFileUploadSize)
-        ));
+        ]);
     }
 
     /**
@@ -365,12 +324,12 @@ class AssetController extends ActionController
     public function newAction()
     {
         $maximumFileUploadSize = $this->maximumFileUploadSize();
-        $this->view->assignMultiple(array(
+        $this->view->assignMultiple([
             'tags' => $this->tagRepository->findAll(),
             'assetCollections' => $this->assetCollectionRepository->findAll(),
             'maximumFileUploadSize' => $maximumFileUploadSize,
             'humanReadableMaximumFileUploadSize' => Files::bytesToSizeString($maximumFileUploadSize)
-        ));
+        ]);
     }
 
     /**
@@ -380,12 +339,12 @@ class AssetController extends ActionController
     public function replaceAssetResourceAction(Asset $asset)
     {
         $maximumFileUploadSize = $this->maximumFileUploadSize();
-        $this->view->assignMultiple(array(
+        $this->view->assignMultiple([
             'asset' => $asset,
             'maximumFileUploadSize' => $maximumFileUploadSize,
             'redirectPackageEnabled' => $this->packageManager->isPackageAvailable('Neos.RedirectHandler'),
             'humanReadableMaximumFileUploadSize' => Files::bytesToSizeString($maximumFileUploadSize)
-        ));
+        ]);
     }
 
     /**
@@ -396,11 +355,11 @@ class AssetController extends ActionController
      */
     public function editAction(Asset $asset)
     {
-        $this->view->assignMultiple(array(
+        $this->view->assignMultiple([
             'tags' => $asset->getAssetCollections()->count() > 0 ? $this->tagRepository->findByAssetCollections($asset->getAssetCollections()->toArray()) : $this->tagRepository->findAll(),
             'asset' => $asset,
             'assetCollections' => $this->assetCollectionRepository->findAll()
-        ));
+        ]);
     }
 
     /**
@@ -451,7 +410,7 @@ class AssetController extends ActionController
             $this->assetRepository->add($asset);
         }
         $this->addFlashMessage('assetHasBeenAdded', '', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())]);
-        $this->redirect('index', null, null, array(), 0, 201);
+        $this->redirect('index', null, null, [], 0, 201);
     }
 
     /**
@@ -563,10 +522,10 @@ class AssetController extends ActionController
      */
     public function editTagAction(Tag $tag)
     {
-        $this->view->assignMultiple(array(
+        $this->view->assignMultiple([
             'tag' => $tag,
             'assetCollections' => $this->assetCollectionRepository->findAll()
-        ));
+        ]);
     }
 
     /**
@@ -615,10 +574,10 @@ class AssetController extends ActionController
      */
     public function editAssetCollectionAction(AssetCollection $assetCollection)
     {
-        $this->view->assignMultiple(array(
+        $this->view->assignMultiple([
             'assetCollection' => $assetCollection,
             'tags' => $this->tagRepository->findAll()
-        ));
+        ]);
     }
 
     /**
@@ -641,7 +600,7 @@ class AssetController extends ActionController
     public function deleteAction(\Neos\Media\Domain\Model\Asset $asset)
     {
         $relationMap = [];
-        $relationMap[TypeHandling::getTypeForValue($asset)] = array($this->persistenceManager->getIdentifierByObject($asset));
+        $relationMap[TypeHandling::getTypeForValue($asset)] = [$this->persistenceManager->getIdentifierByObject($asset)];
 
         if ($asset instanceof \Neos\Media\Domain\Model\Image) {
             foreach ($asset->getVariants() as $variant) {
@@ -655,12 +614,12 @@ class AssetController extends ActionController
 
         $relatedNodes = $this->nodeDataRepository->findNodesByRelatedEntities($relationMap);
         if (count($relatedNodes) > 0) {
-            $this->addFlashMessage('Asset could not be deleted, because there are still Nodes using it.', '', Message::SEVERITY_WARNING, array(), 1412422767);
+            $this->addFlashMessage('Asset could not be deleted, because there are still Nodes using it.', '', Message::SEVERITY_WARNING, [], 1412422767);
             $this->redirect('index');
         }
 
         $this->assetRepository->remove($asset);
-        $this->addFlashMessage(sprintf('Asset "%s" has been deleted.', $asset->getLabel()), null, null, array(), 1412375050);
+        $this->addFlashMessage(sprintf('Asset "%s" has been deleted.', $asset->getLabel()), null, null, [], 1412375050);
         $this->redirect('index');
     }
 
