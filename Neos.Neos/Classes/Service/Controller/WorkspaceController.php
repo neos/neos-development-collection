@@ -13,7 +13,6 @@ namespace Neos\Neos\Service\Controller;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMapper;
-use Neos\Flow\Property\PropertyMappingConfigurationBuilder;
 use Neos\Neos\Service\PublishingService;
 use Neos\Neos\Service\View\NodeView;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -60,12 +59,6 @@ class WorkspaceController extends AbstractServiceController
      * @var PropertyMapper
      */
     protected $propertyMapper;
-
-    /**
-     * @Flow\Inject
-     * @var PropertyMappingConfigurationBuilder
-     */
-    protected $propertyMappingConfigurationBuilder;
 
     /**
      * @return void

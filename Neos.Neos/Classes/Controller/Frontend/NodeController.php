@@ -103,7 +103,7 @@ class NodeController extends ActionController
             $this->response->setHeader('Cache-Control', 'no-cache');
             if ($renderingMode !== null) {
                 // Deprecated TypoScript context variable from version 2.0.
-                $this->view->assign('editPreviewMode', $renderingMode->getTypoScriptPath());
+                $this->view->assign('editPreviewMode', $renderingMode->getFusionPath());
             }
             if (!$this->view->canRenderWithNodeAndPath()) {
                 $this->view->setTypoScriptPath('rawContent');

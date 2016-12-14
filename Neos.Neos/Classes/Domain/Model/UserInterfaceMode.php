@@ -37,7 +37,7 @@ class UserInterfaceMode
     /**
      * @var string
      */
-    protected $typoScriptPath;
+    protected $fusionPath;
 
     /**
      * @var string
@@ -103,18 +103,18 @@ class UserInterfaceMode
     /**
      * @return string
      */
-    public function getTypoScriptPath()
+    public function getFusionPath()
     {
-        return $this->typoScriptPath;
+        return $this->fusionPath;
     }
 
     /**
-     * @param string $typoScriptPath
+     * @param string $fusionPath
      * @return void
      */
-    public function setTypoScriptPath($typoScriptPath)
+    public function setFusionPath($fusionPath)
     {
-        $this->typoScriptPath = $typoScriptPath;
+        $this->fusionPath = $fusionPath;
     }
 
     /**
@@ -174,7 +174,14 @@ class UserInterfaceMode
         $mode->setPreview($configuration['isPreviewMode']);
         $mode->setEdit($configuration['isEditingMode']);
         $mode->setTitle($configuration['title']);
-        $mode->setTypoScriptPath($configuration['typoScriptRenderingPath']);
+
+        if (isset($configuration['fusionRenderingPath'])) {
+            $mode->setFusionPath($configuration['fusionRenderingPath']);
+        } elseif (isset($configuration['typoScriptRenderingPath'])) {
+            $mode->setFusionPath($configuration['typoScriptRenderingPath']);
+        } else {
+            $mode->setFusionPath('');
+        }
 
         if (isset($configuration['options']) && is_array($configuration['options'])) {
             $mode->setOptions($configuration['options']);
