@@ -694,6 +694,15 @@ Neos:
       Neos.Rendering: Neos\Neos\Fusion\Helper\RenderingHelper
       Neos.Caching: Neos\Neos\Fusion\Helper\CachingHelper
 
+  Media:
+    thumbnailPresets:
+      'Neos.Neos:Thumbnail':
+        maximumWidth: 250
+        maximumHeight: 250
+      'Neos.Neos:Preview':
+        maximumWidth: 1000
+        maximumHeight: 1000
+
   Setup:
     stepOrder:
       - neosRequirements
