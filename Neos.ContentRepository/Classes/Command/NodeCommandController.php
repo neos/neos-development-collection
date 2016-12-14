@@ -119,28 +119,6 @@ class NodeCommandController extends CommandController implements DescriptionAwar
     }
 
     /**
-     * Create missing child nodes
-     *
-     * This is a legacy command which automatically creates missing child nodes for a
-     * node type based on the structure defined in the NodeTypes configuration.
-     *
-     * NOTE: Usage of this command is deprecated and it will be remove eventually.
-     *       Please use node:repair instead.
-     *
-     * @param string $nodeType Node type name, if empty update all declared node types
-     * @param string $workspace Workspace name, default is 'live'
-     * @param boolean $dryRun Don't do anything, but report missing child nodes
-     * @return void
-     * @see typo3.typo3cr:node:repair
-     * @deprecated since 1.2
-     */
-    public function autoCreateChildNodesCommand($nodeType = null, $workspace = 'live', $dryRun = false)
-    {
-        $this->pluginConfigurations = self::detectPlugins($this->objectManager);
-        $this->pluginConfigurations[NodeCommandControllerPlugin::class]['object']->invokeSubCommand('repair', $this->output, $nodeType, $workspace, $dryRun);
-    }
-
-    /**
      * Processes the given short description of the specified command.
      *
      * @param string $controllerCommandName Name of the command the description is referring to, for example "flush"
