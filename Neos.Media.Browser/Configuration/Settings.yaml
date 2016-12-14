@@ -54,4 +54,5 @@ Neos:
       translation:
         autoInclude:
           Neos.Media.Browser:
+            - Main
             - Modules
