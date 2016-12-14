@@ -282,8 +282,8 @@
 		var uploadUrl = '<f:uri.action action="upload" additionalParams="{__csrfToken: \"{f:security.csrfToken()}\"}" absolute="true" />';
 		var maximumFileUploadSize = {maximumFileUploadSize};
 
-		if (window.parent !== window && window.parent.Typo3MediaBrowserCallbacks && window.parent.Typo3MediaBrowserCallbacks.refreshThumbnail) {
-			window.parent.Typo3MediaBrowserCallbacks.refreshThumbnail();
+		if (window.parent !== window && window.parent.NeosMediaBrowserCallbacks && window.parent.NeosMediaBrowserCallbacks.refreshThumbnail) {
+			window.parent.NeosMediaBrowserCallbacks.refreshThumbnail();
 		}
 	</script>
 	<f:form action="tagAsset" id="tag-asset-form" format="json">
