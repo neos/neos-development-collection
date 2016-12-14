@@ -7,7 +7,7 @@
 				<li class="asset">
 					<f:link.action action="edit" title="{neos:backend.translate(id: 'media.tooltip.editAsset', source: 'Modules', package: 'Neos.Neos')}" class="neos-thumbnail" arguments="{asset: asset}">
 						<div class="neos-img-container draggable-asset {f:if(condition: '{asset.tags -> f:count()} == 0', then: ' neos-media-untagged')}" data-asset-identifier="{asset -> f:format.identifier()}">
-							<m:thumbnail asset="{asset}" preset="Neos.Media.Browser:Thumbnail" alt="{asset.label}" async="{settings.asyncThumbnails}" />
+							<m:thumbnail asset="{asset}" preset="Neos.Neos:Thumbnail" alt="{asset.label}" async="{settings.asyncThumbnails}" />
 						</div>
 					</f:link.action>
 					<div class="neos-img-label">
