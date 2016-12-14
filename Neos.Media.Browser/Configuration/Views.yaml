@@ -5,11 +5,8 @@
       'Neos.Media.Browser': 'resource://Neos.Media.Browser/Private/Layouts/Module'
       'Neos.Neos': 'resource://Neos.Neos/Private/Layouts'
     partialRootPaths:
-      'Neos.Neos': 'resource://Neos.Neos/Private/Partials'
       'Neos.Media.Browser': 'resource://Neos.Media.Browser/Private/Partials'
-
-    templateRootPathPattern: 'resource://Neos.Media.Browser/Private/Templates'
-    templatePathAndFilenamePattern: '@templateRoot/@subpackage/Module/Management/Asset/@action.@format'
+      'Neos.Neos': 'resource://Neos.Neos/Private/Partials'
 
 -
   requestFilter: 'isPackage("Neos.Media.Browser") && isFormat("html")'
@@ -18,8 +15,5 @@
       'Neos.Media.Browser': 'resource://Neos.Media.Browser/Private/Layouts/Inspector'
       'Neos.Neos': 'resource://Neos.Neos/Private/Layouts'
     partialRootPaths:
-      'Neos.Neos': 'resource://Neos.Neos/Private/Partials'
       'Neos.Media.Browser': 'resource://Neos.Media.Browser/Private/Partials'
-
-    templateRootPathPattern: 'resource://Neos.Media.Browser/Private/Templates'
-    templatePathAndFilenamePattern: '@templateRoot/@subpackage/Module/Management/Asset/@action.@format'
+      'Neos.Neos': 'resource://Neos.Neos/Private/Partials'
