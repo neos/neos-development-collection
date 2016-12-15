@@ -19,6 +19,7 @@ Neos:
         - 'resource://Neos.Media.Browser/Public/JavaScript/Modules/media-browser.js'
       styles:
         - 'resource://Neos.Neos/Public/Styles/Neos.css'
+        - 'resource://Neos.Media.Browser/Public/Styles/MediaBrowser.css'
 
   Flow:
     security:
@@ -45,6 +46,9 @@ Neos:
             description: 'Neos.Media.Browser:Modules:media.description'
             icon: icon-camera
             privilegeTarget: 'Neos.Media.Browser:ManageAssets'
+            additionalResources:
+              styleSheets:
+                - 'resource://Neos.Media.Browser/Public/Styles/MediaBrowser.css'
     userInterface:
       translation:
         autoInclude:
