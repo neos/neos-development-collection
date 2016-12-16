@@ -10,14 +10,14 @@
 	<table class="neos-table neos-no-hover">
 		<thead>
 			<tr>
-				<th>{neos:backend.translate(id: 'document')}</th>
-				<th>{neos:backend.translate(id: 'reference')}</th>
+				<th>{neos:backend.translate(id: 'document', package: 'Neos.Neos')}</th>
+				<th>{neos:backend.translate(id: 'reference', package: 'Neos.Neos')}</th>
 				<th>&nbsp;</th>
 				<f:if condition="{contentDimensions}">
-					<th>{neos:backend.translate(id: 'contentDimensions')}</th>
+					<th>{neos:backend.translate(id: 'contentDimensions', package: 'Neos.Neos')}</th>
 				</f:if>
-				<th>{neos:backend.translate(id: 'workspace')}</th>
-				<th class="neos-aRight">{neos:backend.translate(id: 'lastModification')}</th>
+				<th>{neos:backend.translate(id: 'workspace', package: 'Neos.Neos')}</th>
+				<th class="neos-aRight">{neos:backend.translate(id: 'lastModification', package: 'Neos.Neos')}</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -130,7 +130,7 @@
 
 	<div class="neos-footer">
 		<!-- TODO: Find a nicer way to send the referer for a get request -->
-		<a href="javascript:window.history.back(1);" class="neos-button">{neos:backend.translate(id: 'back', source: 'Modules')}</a>
+		<a href="javascript:window.history.back(1);" class="neos-button">{neos:backend.translate(id: 'media.back', source: 'Modules', package: 'Neos.Media.Browser')}</a>
 	</div>
 
 </f:section>

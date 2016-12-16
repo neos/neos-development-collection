@@ -119,7 +119,7 @@
 </f:section>
 
 <f:section name="ContentImage">
-	<label>{neos:backend.translate(id: 'media.preview', source: 'Modules', package: 'Neos.Neos')}</label>
+	<label>{neos:backend.translate(id: 'media.preview', source: 'Modules', package: 'Neos.Media.Browser')}</label>
 	<div class="neos-preview-image">
 		<a href="{f:uri.resource(resource: asset.resource)}" target="_blank">
 			<m:thumbnail asset="{asset}" preset="Neos.Neos:Preview" alt="{asset.label}" async="{settings.asyncThumbnails}" class="img-polaroid" />
