@@ -5,7 +5,7 @@
 		<f:alias map="{'deleteAssetLabel': '{neos:backend.translate(id: \'media.tooltip.deleteAsset\', source: \'Modules\', package: \'Neos.Neos\')}', 'replaceAssetResourceLabel': '{neos:backend.translate(id: \'media.tooltip.replaceAssetResource\', source: \'Modules\', package: \'Neos.Neos\')}'}">
 			<f:for each="{paginatedAssets}" as="asset">
 				<li class="asset">
-					<f:link.action action="edit" title="{neos:backend.translate(id: 'media.tooltip.editAsset', source: 'Modules', package: 'Neos.Neos')}" class="neos-thumbnail" arguments="{asset: asset}">
+					<f:link.action action="edit" title="{neos:backend.translate(id: 'media.tooltip.editAsset', source: 'Modules', package: 'Neos.Media.Browser')}" class="neos-thumbnail" arguments="{asset: asset}">
 						<div class="neos-img-container draggable-asset {f:if(condition: '{asset.tags -> f:count()} == 0', then: ' neos-media-untagged')}" data-asset-identifier="{asset -> f:format.identifier()}">
 							<m:thumbnail asset="{asset}" preset="Neos.Neos:Thumbnail" alt="{asset.label}" async="{settings.asyncThumbnails}" />
 						</div>
@@ -20,20 +20,20 @@
 							<div class="neos-dropdown-menu-list neos-pull-right" role="menu">
 								<ul>
 									<li>
-										<f:link.action action="edit" arguments="{asset: asset}" title="{neos:backend.translate(id: 'media.tooltip.editAsset', source: 'Modules', package: 'Neos.Neos')}">
+										<f:link.action action="edit" arguments="{asset: asset}" title="{neos:backend.translate(id: 'media.tooltip.editAsset', source: 'Modules', package: 'Neos.Media.Browser')}">
 											<i class="icon-edit icon-white"></i> {neos:backend.translate(id: 'edit', package: 'Neos.Neos')}
 										</f:link.action>
 									</li>
 									<f:security.ifAccess privilegeTarget="Neos.Media.Browser:Backend.Module.Media.ReplaceAssetResource">
 										<li>
 											<f:link.action action="replaceAssetResource" arguments="{asset: asset}" title="{replaceAssetResourceLabel}">
-												<i class="icon-random icon-white"></i> {neos:backend.translate(id: 'media.replaceAssetResource', source: 'Modules', package: 'Neos.Neos')}
+												<i class="icon-random icon-white"></i> {neos:backend.translate(id: 'media.replaceAssetResource', source: 'Modules', package: 'Neos.Media.Browser')}
 											</f:link.action>
 										</li>
 									</f:security.ifAccess>
 									<li>
 										<a href="#" class="neos-media-delete" title="{deleteAssetLabel}" data-neos-toggle="tooltip" data-modal="delete-asset-modal" data-label="{asset.label -> f:format.crop(maxCharacters: 50)}" data-object-identifier="{asset -> f:format.identifier()}">
-											<i class="icon-trash icon-white"></i> {neos:backend.translate(id: 'media.delete', source: 'Modules', package: 'Neos.Neos')}
+											<i class="icon-trash icon-white"></i> {neos:backend.translate(id: 'media.delete', source: 'Modules', package: 'Neos.Media.Browser')}
 										</a>
 									</li>
 								</ul>
