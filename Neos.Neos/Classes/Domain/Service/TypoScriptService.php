@@ -21,110 +21,15 @@ use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\Runtime;
 
 /**
- * The TypoScript Service
+ * The TypoScript Service. It is replaced by the fusion service and therefore deprecated with 3.0.
+ * It will be removed with 4.0.
  *
  * @Flow\Scope("prototype")
  * @api
+ * @deprecated
  */
-class TypoScriptService
+class TypoScriptService extends FusionService
 {
-    /**
-     * @Flow\Inject
-     * @var Parser
-     */
-    protected $typoScriptParser;
-
-    /**
-     * @Flow\Inject
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager = null;
-
-    /**
-     * Pattern used for determining the TypoScript root file for a site
-     *
-     * @var string
-     */
-    protected $siteRootTypoScriptPattern = 'resource://%s/Private/Fusion/Root.fusion';
-
-    /**
-     * Legacy pattern used for determining the TypoScript root file for a site
-     *
-     * @var string
-     * @deprecated since 3.0 will be removed in 4.0
-     */
-    protected $legacySiteRootTypoScriptPattern = 'resource://%s/Private/TypoScript/Root.ts2';
-
-    /**
-     * Pattern used for determining the TypoScript root file for autoIncludes
-     *
-     * @var string
-     */
-    protected $autoIncludeTypoScriptPattern = 'resource://%s/Private/Fusion/Root.fusion';
-
-    /**
-     * Legacy pattern used for determining the TypoScript root file for autoIncludes
-     *
-     * @var string
-     * @deprecated since 3.0 will be removed in 4.0
-     */
-    protected $legacyAutoIncludeTypoScriptPattern = 'resource://%s/Private/TypoScript/Root.ts2';
-
-    /**
-     * Array of TypoScript files to include before the site TypoScript
-     *
-     * Example:
-     *
-     *     array(
-     *         'resources://MyVendor.MyPackageKey/Private/TypoScript/Root.fusion',
-     *         'resources://SomeVendor.OtherPackage/Private/Fusion/Root.fusion'
-     *     )
-     *
-     * @var array
-     */
-    protected $prependTypoScriptIncludes = array();
-
-    /**
-     * Array of TypoScript files to include after the site TypoScript
-     *
-     * Example:
-     *
-     *     array(
-     *         'resources://MyVendor.MyPackageKey/Private/Fusion/Root.fusion',
-     *         'resources://SomeVendor.OtherPackage/Private/Fusion/Root.fusion'
-     *     )
-     *
-     * @var array
-     */
-    protected $appendTypoScriptIncludes = array();
-
-    /**
-     * @Flow\InjectConfiguration("typoScript.autoInclude")
-     * @var array
-     */
-    protected $autoIncludeConfiguration = array();
-
-    /**
-     * @Flow\Inject
-     * @var \Neos\ContentRepository\Domain\Service\NodeTypeManager
-     */
-    protected $nodeTypeManager;
-
-    /**
-     * @Flow\Inject
-     * @var \Neos\Flow\Package\PackageManagerInterface
-     */
-    protected $packageManager;
-
-    /**
-     * Initializes the parser
-     *
-     * @return void
-     */
-    public function initializeObject()
-    {
-        $this->typoScriptParser->setObjectTypeNamespace('default', 'Neos.Neos');
-    }
 
     /**
      * Create a runtime for the given site node
@@ -135,9 +40,7 @@ class TypoScriptService
      */
     public function createRuntime(NodeInterface $currentSiteNode, ControllerContext $controllerContext)
     {
-        $typoScriptObjectTree = $this->getMergedTypoScriptObjectTree($currentSiteNode);
-        $typoScriptRuntime = new Runtime($typoScriptObjectTree, $controllerContext);
-        return $typoScriptRuntime;
+        return parent::createRuntime($currentSiteNode, $controllerContext);
     }
 
     /**
@@ -149,126 +52,7 @@ class TypoScriptService
      */
     public function getMergedTypoScriptObjectTree(NodeInterface $startNode)
     {
-        $contentContext = $startNode->getContext();
-        $siteResourcesPackageKey = $contentContext->getCurrentSite()->getSiteResourcesPackageKey();
-
-        $siteRootTypoScriptPathAndFilename = sprintf($this->siteRootTypoScriptPattern, $siteResourcesPackageKey);
-        $siteRootTypoScriptCode = $this->readExternalTypoScriptFile($siteRootTypoScriptPathAndFilename);
-
-        if ($siteRootTypoScriptCode === '') {
-            $siteRootTypoScriptPathAndFilename = sprintf($this->legacySiteRootTypoScriptPattern, $siteResourcesPackageKey);
-            $siteRootTypoScriptCode = $this->readExternalTypoScriptFile($siteRootTypoScriptPathAndFilename);
-        }
-
-        $mergedTypoScriptCode = '';
-        $mergedTypoScriptCode .= $this->generateNodeTypeDefinitions();
-        $mergedTypoScriptCode .= $this->getTypoScriptIncludes($this->prepareAutoIncludeTypoScript());
-        $mergedTypoScriptCode .= $this->getTypoScriptIncludes($this->prependTypoScriptIncludes);
-        $mergedTypoScriptCode .= $siteRootTypoScriptCode;
-        $mergedTypoScriptCode .= $this->getTypoScriptIncludes($this->appendTypoScriptIncludes);
-
-        return $this->typoScriptParser->parse($mergedTypoScriptCode, $siteRootTypoScriptPathAndFilename);
-    }
-
-    /**
-     * Reads the TypoScript file from the given path and filename.
-     * If it doesn't exist, this function will just return an empty string.
-     *
-     * @param string $pathAndFilename Path and filename of the TypoScript file
-     * @return string The content of the .fusion file, plus one chr(10) at the end
-     */
-    protected function readExternalTypoScriptFile($pathAndFilename)
-    {
-        return (is_file($pathAndFilename)) ? Files::getFileContents($pathAndFilename) . chr(10) : '';
-    }
-
-    /**
-     * Generate TypoScript prototype definitions for all node types
-     *
-     * Only fully qualified node types (e.g. MyVendor.MyPackage:NodeType) will be considered.
-     *
-     * @return string
-     */
-    protected function generateNodeTypeDefinitions()
-    {
-        $code = '';
-        /** @var NodeType $nodeType */
-        foreach ($this->nodeTypeManager->getNodeTypes(false) as $nodeType) {
-            $code .= $this->generateTypoScriptForNodeType($nodeType);
-        }
-        return $code;
-    }
-
-    /**
-     * Generate a TypoScript prototype definition for a given node type
-     *
-     * A prototype will be rendererd with the generator-class defined in the
-     * nodeType-configuration 'fusion.prototypeGenerator'
-     *
-     * @param NodeType $nodeType
-     * @return string
-     * @throws \Neos\Neos\Domain\Exception
-     */
-    protected function generateTypoScriptForNodeType(NodeType $nodeType)
-    {
-        if ($nodeType->hasConfiguration('options.fusion.prototypeGenerator') && $nodeType->getConfiguration('options.fusion.prototypeGenerator') !== null) {
-            $generatorClassName = $nodeType->getConfiguration('options.fusion.prototypeGenerator');
-            if (!class_exists($generatorClassName)) {
-                throw new \Neos\Neos\Domain\Exception('Fusion prototype-generator Class ' . $generatorClassName . ' does not exist');
-            }
-            $generator = $this->objectManager->get($generatorClassName);
-            if (!$generator instanceof DefaultPrototypeGeneratorInterface) {
-                throw new \Neos\Neos\Domain\Exception('Fusion prototype-generator Class ' . $generatorClassName . ' does not implement interface ' . DefaultPrototypeGeneratorInterface::class);
-            }
-            return $generator->generate($nodeType);
-        }
-        return '';
-    }
-
-    /**
-     * Concatenate the given TypoScript resources with include statements
-     *
-     * @param array $typoScriptResources An array of TypoScript resource URIs
-     * @return string A string of include statements for all resources
-     */
-    protected function getTypoScriptIncludes(array $typoScriptResources)
-    {
-        $code = chr(10);
-        foreach ($typoScriptResources as $typoScriptResource) {
-            $code .= 'include: ' . (string)$typoScriptResource . chr(10);
-        }
-        $code .= chr(10);
-        return $code;
-    }
-
-    /**
-     * Prepares an array with TypoScript paths to auto include before the Site TypoScript.
-     *
-     * @return array
-     */
-    protected function prepareAutoIncludeTypoScript()
-    {
-        $autoIncludeTypoScript = array();
-        foreach (array_keys($this->packageManager->getActivePackages()) as $packageKey) {
-            if (isset($this->autoIncludeConfiguration[$packageKey]) && $this->autoIncludeConfiguration[$packageKey] === true) {
-                $autoIncludeTypoScriptFile = sprintf($this->autoIncludeTypoScriptPattern, $packageKey);
-                if (is_file($autoIncludeTypoScriptFile)) {
-                    $autoIncludeTypoScript[] = $autoIncludeTypoScriptFile;
-                } else {
-                    // If there is no Root.fusion found in the default path pattern or the legacy path pattern
-                    // use the default path pattern so an exception will show the correct path pattern and not a
-                    // legacy path pattern
-                    $legacyAutoIncludeTypoScriptFile = sprintf($this->legacyAutoIncludeTypoScriptPattern, $packageKey);
-                    if (is_file($legacyAutoIncludeTypoScriptFile)) {
-                        $autoIncludeTypoScript[] = $legacyAutoIncludeTypoScriptFile;
-                    } else {
-                        $autoIncludeTypoScript[] = $autoIncludeTypoScriptFile;
-                    }
-                }
-            }
-        }
-
-        return $autoIncludeTypoScript;
+        return parent::getMergedFusionObjectTree($startNode);
     }
 
     /**
@@ -279,7 +63,7 @@ class TypoScriptService
      */
     public function setSiteRootTypoScriptPattern($siteRootTypoScriptPattern)
     {
-        $this->siteRootTypoScriptPattern = $siteRootTypoScriptPattern;
+        parent::setSiteRootFusionPattern($siteRootTypoScriptPattern);
     }
 
     /**
@@ -289,7 +73,7 @@ class TypoScriptService
      */
     public function getPrependTypoScriptIncludes()
     {
-        return $this->prependTypoScriptIncludes;
+        return parent::getPrependFusionIncludes();
     }
 
     /**
@@ -301,7 +85,7 @@ class TypoScriptService
      */
     public function setPrependTypoScriptIncludes(array $prependTypoScriptIncludes)
     {
-        $this->prependTypoScriptIncludes = $prependTypoScriptIncludes;
+        parent::setPrependFusionIncludes($prependTypoScriptIncludes);
     }
 
     /**
@@ -311,7 +95,7 @@ class TypoScriptService
      */
     public function getAppendTypoScriptIncludes()
     {
-        return $this->appendTypoScriptIncludes;
+        return parent::getAppendFusionIncludes();
     }
 
     /**
@@ -323,6 +107,6 @@ class TypoScriptService
      */
     public function setAppendTypoScriptIncludes(array $appendTypoScriptIncludes)
     {
-        $this->appendTypoScriptIncludes = $appendTypoScriptIncludes;
+        parent::setAppendFusionIncludes($appendTypoScriptIncludes);
     }
 }
