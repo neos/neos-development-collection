@@ -91,6 +91,9 @@
 			<trans-unit id="media.message.operationCannotBeUndone" xml:space="preserve">
 				<source>This operation cannot be undone.</source>
 			</trans-unit>
+			<trans-unit id="media.back" xml:space="preserve">
+				<source>Back</source>
+			</trans-unit>
 			<trans-unit id="media.cancel" xml:space="preserve">
 				<source>Cancel</source>
 			</trans-unit>
