@@ -20,7 +20,8 @@ A ``boolean`` value is rendered using a checkbox in the inspector::
 
 Options Reference:
 
-* (no options)
+``disabled`` (boolean)
+	HTML ``disabled`` property. If ``TRUE``, disable this checkbox.
 
 Property Type: string ``TextFieldEditor`` -- Single-line Text Editor (default)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
