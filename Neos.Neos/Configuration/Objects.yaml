@@ -14,15 +14,15 @@ Neos\ContentRepository\Domain\Service\ContextFactoryInterface:
 Neos\ContentRepository\Domain\Service\PublishingServiceInterface:
   className: Neos\Neos\Service\PublishingService
 
-Neos\Neos\Aspects\TypoScriptCachingAspect:
+Neos\Neos\Aspects\FusionCachingAspect:
   properties:
-    typoScriptCache:
+    fusionCache:
       object:
         factoryObjectName: Neos\Flow\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
-            value: TYPO3_Neos_TypoScript
+            value: Neos_Neos_Fusion
 
 'Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface':
   className: Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource

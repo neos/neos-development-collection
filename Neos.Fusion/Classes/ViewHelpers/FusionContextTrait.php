@@ -14,12 +14,12 @@ namespace Neos\Fusion\ViewHelpers;
 use Neos\Fusion\FusionObjects\Helpers\TypoScriptAwareViewInterface;
 
 /**
- * This trait is to be used in ViewHelpers that need to get information from the TypoScript runtime context.
+ * This trait is to be used in ViewHelpers that need to get information from the Fusion runtime context.
  * It will only work when the ViewHelper in question is used in a TypoScriptAwareViewInterface.
  *
  * A property "viewHelperVariableContainer" is expected in classes that use this, which will be the case for any Fluid ViewHelper.
  */
-trait TypoScriptContextTrait
+trait FusionContextTrait
 {
 
     /**
