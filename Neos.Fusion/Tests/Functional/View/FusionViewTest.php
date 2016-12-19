@@ -58,7 +58,7 @@ class FusionViewTest extends FunctionalTestCase
     public function typoScriptViewUsesGivenPathIfSet()
     {
         $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
-        $view->setTypoScriptPath('foo/bar');
+        $view->setFusionPath('foo/bar');
         $this->assertEquals('Xfoobar', $view->render());
     }
 
@@ -101,7 +101,7 @@ class FusionViewTest extends FunctionalTestCase
         $view = new FusionView();
         $view->setControllerContext($this->mockControllerContext);
         $this->inject($view, 'fallbackView', $this->mockFallbackView);
-        $view->setTypoScriptPathPattern(__DIR__ . '/Fixtures/Fusion');
+        $view->setFusionPathPattern(__DIR__ . '/Fixtures/Fusion');
 
         return $view;
     }

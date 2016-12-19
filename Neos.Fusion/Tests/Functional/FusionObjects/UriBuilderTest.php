@@ -33,7 +33,7 @@ class UriBuilderTest extends AbstractFusionObjectTest
             ));
 
         $view = $this->buildView();
-        $view->setTypoScriptPath('uriBuilder/foo');
+        $view->setFusionPath('uriBuilder/foo');
         $this->assertContains('/neos/flow/test/http/foo', $view->render());
     }
 }

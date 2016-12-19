@@ -24,7 +24,7 @@ class CollectionTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->assign('collection', array('element1', 'element2'));
-        $view->setTypoScriptPath('collection/basicLoop');
+        $view->setFusionPath('collection/basicLoop');
         $this->assertEquals('Xelement1Xelement2', $view->render());
     }
 
@@ -36,7 +36,7 @@ class CollectionTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->assign('collection', array('element1', 'element2'));
         $view->assign('other', 'var');
-        $view->setTypoScriptPath('collection/basicLoopOtherContextVariables');
+        $view->setFusionPath('collection/basicLoopOtherContextVariables');
         $this->assertEquals('Xelement1varXelement2var', $view->render());
     }
 
@@ -47,7 +47,7 @@ class CollectionTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->assign('collection', null);
-        $view->setTypoScriptPath('collection/basicLoop');
+        $view->setFusionPath('collection/basicLoop');
         $this->assertEquals('', $view->render());
     }
 
@@ -58,7 +58,7 @@ class CollectionTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->assign('collection', array('element1', 'element2', 'element3', 'element4'));
-        $view->setTypoScriptPath('collection/iteration');
+        $view->setFusionPath('collection/iteration');
         $this->assertEquals('Xelement1-0-1-1--1-Xelement2-1-2----1Xelement3-2-3---1-Xelement4-3-4--1--1', $view->render());
     }
 }

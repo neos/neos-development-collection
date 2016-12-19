@@ -22,7 +22,7 @@ class PrototypeInheritanceTest extends AbstractFusionObjectTest
     public function baseClassHasModifiedValue()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('prototypeInheritance/base');
+        $view->setFusionPath('prototypeInheritance/base');
         $this->assertEquals('BaseModified', $view->render());
     }
 
@@ -32,7 +32,7 @@ class PrototypeInheritanceTest extends AbstractFusionObjectTest
     public function subWithOverrideHasOverriddenValue()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('prototypeInheritance/subWithOverride');
+        $view->setFusionPath('prototypeInheritance/subWithOverride');
         $this->assertEquals('Sub', $view->render());
     }
 
@@ -42,7 +42,7 @@ class PrototypeInheritanceTest extends AbstractFusionObjectTest
     public function subWithoutOverrideHasModifiedBaseValue()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('prototypeInheritance/subWithoutOverride');
+        $view->setFusionPath('prototypeInheritance/subWithoutOverride');
         $this->assertEquals('BaseModified', $view->render());
     }
 
@@ -52,7 +52,7 @@ class PrototypeInheritanceTest extends AbstractFusionObjectTest
     public function advancedBaseObjectHasModifiedValue()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('prototypeInheritanceAdvanced/base');
+        $view->setFusionPath('prototypeInheritanceAdvanced/base');
         $this->assertEquals('prepend_beforeOverride|value_from_nested_prototype|append_afterOverride', $view->render());
     }
 
@@ -62,7 +62,7 @@ class PrototypeInheritanceTest extends AbstractFusionObjectTest
     public function advancedSubWithoutOverrideHasModifiedBaseValue()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('prototypeInheritanceAdvanced/subWithoutOverride');
+        $view->setFusionPath('prototypeInheritanceAdvanced/subWithoutOverride');
         $this->assertEquals('prepend_beforeOverride|value_from_nested_prototype|append_afterOverride', $view->render());
     }
 
@@ -72,7 +72,7 @@ class PrototypeInheritanceTest extends AbstractFusionObjectTest
     public function advancedSubWithOverrideHasModifiedBaseValue()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('prototypeInheritanceAdvanced/subWithOverride');
+        $view->setFusionPath('prototypeInheritanceAdvanced/subWithOverride');
         $this->assertEquals('prepend_inSub|value_from_nested_prototype|append_afterOverride', $view->render());
     }
 
@@ -82,7 +82,7 @@ class PrototypeInheritanceTest extends AbstractFusionObjectTest
     public function contextDependentPrototypesTakeInheritanceIntoAccount()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('prototypeInheritanceContentDependent/element');
+        $view->setFusionPath('prototypeInheritanceContentDependent/element');
         $this->assertEquals('NEW VALUE in base class', $view->render());
     }
 }
