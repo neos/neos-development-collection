@@ -460,7 +460,6 @@ class AssetController extends ActionController
      *
      * @param Asset $asset
      * @param Tag $tag
-     * @return boolean
      */
     public function tagAssetAction(Asset $asset, Tag $tag)
     {
@@ -470,7 +469,6 @@ class AssetController extends ActionController
             $success = true;
         }
         $this->view->assign('value', $success);
-        return $success;
     }
 
     /**
@@ -478,7 +476,6 @@ class AssetController extends ActionController
      *
      * @param Asset $asset
      * @param AssetCollection $assetCollection
-     * @return boolean
      */
     public function addAssetToCollectionAction(Asset $asset, AssetCollection $assetCollection)
     {
@@ -488,7 +485,6 @@ class AssetController extends ActionController
             $success = true;
         }
         $this->view->assign('value', $success);
-        return $success;
     }
 
     /**
