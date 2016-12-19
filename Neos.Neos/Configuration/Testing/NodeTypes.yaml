@@ -1,0 +1,97 @@
+'Acme.Demo:ThreeColumn':
+  superTypes:
+    'Neos.NodeTypes:Column': TRUE
+  ui:
+    label: 'Three column content'
+    group: 'structure'
+  childNodes:
+    column0:
+      type: 'Neos.Neos:ContentCollection'
+    column1:
+      type: 'Neos.Neos:ContentCollection'
+    column2:
+      type: 'Neos.Neos:ContentCollection'
+
+'Acme.Demo:List':
+  superTypes:
+    'Neos.Neos:Content': TRUE
+  ui:
+    label: 'List content'
+    group: 'structure'
+  childNodes:
+    items:
+      type: 'Neos.Neos:ContentCollection'
+
+'Acme.Demo:ListItem':
+  superTypes:
+    'Neos.Neos:Content': TRUE
+  properties:
+    text:
+      type: 'string'
+
+'Neos.Neos.BackendSchemaControllerTest:Node':
+  abstract: TRUE
+
+'Neos.Neos.BackendSchemaControllerTest:Document':
+  superTypes:
+    'Neos.Neos.BackendSchemaControllerTest:Node': TRUE
+
+'Neos.Neos.BackendSchemaControllerTest:Page':
+  superTypes:
+    'Neos.Neos.BackendSchemaControllerTest:Document': TRUE
+  constraints:
+    nodeTypes:
+      'Neos.Neos.BackendSchemaControllerTest:SubPage': TRUE
+
+'Neos.Neos.BackendSchemaControllerTest:SubPage':
+  superTypes:
+    'Neos.Neos.BackendSchemaControllerTest:Page': TRUE
+
+'Neos.Neos.BackendSchemaControllerTest:Folder':
+  superTypes:
+    'Neos.Neos.BackendSchemaControllerTest:Document': TRUE
+
+'Neos.Neos.BackendSchemaControllerTest:Content':
+  superTypes:
+    'Neos.Neos.BackendSchemaControllerTest:Node': TRUE
+
+'Neos.Neos.BackendSchemaControllerTest:Text':
+  superTypes:
+    'Neos.Neos.BackendSchemaControllerTest:Content': TRUE
+
+'Neos.Neos.BackendSchemaControllerTest:TwoColumn':
+  superTypes:
+    'Neos.Neos.BackendSchemaControllerTest:Content': TRUE
+  childNodes:
+    column0:
+      type: 'Neos.Neos:ContentCollection'
+      constraints:
+        nodeTypes:
+          'Neos.Neos.BackendSchemaControllerTest:AlohaNodeType': TRUE
+    column1:
+      type: 'Neos.Neos:ContentCollection'
+      constraints:
+        nodeTypes:
+          'Neos.Neos.BackendSchemaControllerTest:Document': FALSE
+          'Neos.Neos.BackendSchemaControllerTest:SubPage': FALSE
+          '*': TRUE
+
+
+'Neos.Neos.BackendSchemaControllerTest:ParentAlohaNodeType':
+  properties:
+    text:
+      ui:
+        aloha:
+          fallbackCase: ['defined', 'as', 'plain', 'array']
+
+'Neos.Neos.BackendSchemaControllerTest:AlohaNodeType':
+  superTypes:
+    'Neos.Neos.BackendSchemaControllerTest:ParentAlohaNodeType': TRUE
+  properties:
+    text:
+      ui:
+        aloha:
+          sampleCase:
+            'h3': TRUE
+            'sup': TRUE
+            'shouldBeExcluded': FALSE

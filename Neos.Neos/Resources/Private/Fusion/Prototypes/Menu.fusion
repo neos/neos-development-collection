@@ -1,0 +1,36 @@
+# Neos.Neos:Menu provides basic menu rendering
+#
+prototype(Neos.Neos:Menu) < prototype(Neos.Fusion:Template) {
+	@class = 'Neos\\Neos\\Fusion\\MenuImplementation'
+	templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/Menu.html'
+	node = ${node}
+	items = ${this.items}
+
+	entryLevel = ${this.startingPoint ? 0 : 1}
+	maximumLevels = 2
+
+	filter = 'Neos.Neos:Document'
+	attributes = Neos.Fusion:Attributes
+
+	active.attributes = Neos.Fusion:Attributes {
+		class = 'active'
+	}
+	current.attributes = Neos.Fusion:Attributes {
+		class = 'current'
+	}
+	normal.attributes = Neos.Fusion:Attributes {
+		class = 'normal'
+	}
+
+	@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\ContextDependentHandler'
+
+	@cache {
+		mode = 'cached'
+		entryIdentifier {
+			documentNode = ${documentNode}
+		}
+		entryTags {
+			1 = 'NodeType_Neos.Neos:Document'
+		}
+	}
+}

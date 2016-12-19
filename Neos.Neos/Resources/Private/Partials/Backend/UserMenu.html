@@ -1,0 +1,18 @@
+{namespace neos=Neos\Neos\ViewHelpers}
+<div class="neos-button-group neos-user-menu">
+	<button class="neos-dropdown-toggle neos-button" data-neos-toggle="dropdown" href="#" title="{neos:backend.translate(id: 'userSettings.usermenu', source: 'Modules', value: 'User Menu')}" data-neos-tooltip data-placement="left">
+		<i class="icon-user"></i> {user.name.fullName} <i class="icon-caret-down"></i>
+	</button>
+	<ul class="neos-dropdown-menu" role="menu" aria-labelledby="dLabel">
+		<li>
+			<f:form controller="Login" action="logout">
+				<f:form.button value="logout"><i class="icon-sign-out"></i> {neos:backend.translate(id: 'logout', value: 'Logout')}</f:form.button>
+			</f:form>
+		</li>
+		<li>
+			<neos:link.module path="user/usersettings">
+				<i class="icon-sliders"></i> {neos:backend.translate(id: 'userSettings.label', source: 'Modules', value: 'User Settings')}
+			</neos:link.module>
+		</li>
+	</ul>
+</div>

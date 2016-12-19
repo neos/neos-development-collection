@@ -1,0 +1,390 @@
+#                                                                        #
+# "Service" subroutes configuration for the Neos.Neos package           #
+#                                                                        #
+
+# RESTful routes for Nodes service
+-
+  name: 'Nodes - index'
+  uriPattern: 'nodes'
+  defaults:
+    '@controller': 'Service\Nodes'
+    '@action':     'index'
+  appendExceedingArguments: TRUE
+  httpMethods: ['GET']
+
+-
+  name: 'Nodes - single node'
+  uriPattern: 'nodes/{identifier}'
+  defaults:
+    '@controller': 'Service\Nodes'
+    '@action':     'show'
+  appendExceedingArguments: TRUE
+  httpMethods: ['HEAD', 'GET']
+
+-
+  name: 'Nodes - create/adopt node'
+  uriPattern: 'nodes'
+  defaults:
+    '@controller': 'Service\Nodes'
+    '@action':     'create'
+  appendExceedingArguments: TRUE
+  httpMethods: ['POST']
+
+# UserPreferencesController routes
+-
+  name: 'Services - UserPreferencesController->index'
+  uriPattern: 'user-preferences'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'UserPreference'
+    '@action':     'index'
+    '@format':     'json'
+  httpMethods: ['GET']
+
+-
+  name: 'Services - UserPreferencesController->update'
+  uriPattern: 'user-preferences'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'UserPreference'
+    '@action':     'update'
+    '@format':     'json'
+  httpMethods: ['PUT']
+
+# RESTful routes for Assets service
+-
+  name: 'Assets - index'
+  uriPattern: 'assets'
+  defaults:
+    '@controller': 'Service\Assets'
+    '@action':     'index'
+  appendExceedingArguments: TRUE
+  httpMethods: ['GET']
+
+-
+  name: 'Assets - single asset'
+  uriPattern: 'assets/{identifier}'
+  defaults:
+    '@controller': 'Service\Assets'
+    '@action':     'show'
+  appendExceedingArguments: TRUE
+  httpMethods: ['HEAD', 'GET']
+
+# RESTful WorkspacesController routes
+
+-
+  name: 'Services - WorkspacesController->indexAction()'
+  uriPattern: 'workspaces'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@controller': 'Service\Workspaces'
+    '@action':     'index'
+  appendExceedingArguments: TRUE
+  httpMethods: ['GET']
+
+-
+  name: 'Services - WorkspacesController->showAction()'
+  uriPattern: 'workspaces/{workspace}'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@controller': 'Service\Workspaces'
+    '@action':     'show'
+  httpMethods: ['GET']
+
+-
+  name: 'Services - WorkspacesController->createAction()'
+  uriPattern: 'workspaces/{baseWorkspace}/{workspaceName}'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@controller': 'Service\Workspaces'
+    '@action':     'create'
+    '@format':     'json'
+  httpMethods: ['POST']
+
+# Note: we need to specify the workspace as {workspace.__identity} in the uriPattern because if we just used
+# {workspace}, the properties could not be overridden through the parameters in the PUT request's body.
+# This is a shortcoming of the DispatchComponent and should be solved in a future version of Flow.
+-
+  name: 'Services - WorkspacesController->updateAction()'
+  uriPattern: 'workspaces/{workspace.__identity}'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@controller': 'Service\Workspaces'
+    '@action':     'update'
+    '@format':     'json'
+  appendExceedingArguments: TRUE
+  httpMethods: ['PUT']
+
+# Legacy WorkspaceController routes
+-
+  name: 'Services - WorkspaceController->getWorkspaceWideUnpublishedNodes'
+  uriPattern: 'workspaces-rpc/get-workspace-wide-unpublished-nodes'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@subpackage': 'Service'
+    '@action':     'getWorkspaceWideUnpublishedNodes'
+    '@controller': 'Workspace'
+    '@format':     'json'
+  appendExceedingArguments: TRUE
+  httpMethods: ['GET']
+
+-
+  name: 'Services - WorkspaceController->publishNode'
+  uriPattern: 'workspaces-rpc/publish-node'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@subpackage': 'Service'
+    '@action':     'publishNode'
+    '@controller': 'Workspace'
+    '@format':     'json'
+  httpMethods: ['PUT']
+
+-
+  name: 'Services - WorkspaceController->publishNodes'
+  uriPattern: 'workspaces-rpc/publish-nodes'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@subpackage': 'Service'
+    '@action':     'publishNodes'
+    '@controller': 'Workspace'
+    '@format':     'json'
+  httpMethods: ['PUT']
+
+-
+  name: 'Services - WorkspaceController->discardNode'
+  uriPattern: 'workspaces-rpc/discard-node'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@subpackage': 'Service'
+    '@action':     'discardNode'
+    '@controller': 'Workspace'
+    '@format':     'json'
+  httpMethods: ['PUT']
+
+-
+  name: 'Services - WorkspaceController->discardNodes'
+  uriPattern: 'workspaces-rpc/discard-nodes'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@subpackage': 'Service'
+    '@action':     'discardNodes'
+    '@controller': 'Workspace'
+    '@format':     'json'
+  httpMethods: ['PUT']
+
+-
+  name: 'Services - WorkspaceController->publishAll'
+  uriPattern: 'workspaces-rpc/publish-all'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@subpackage': 'Service'
+    '@action':     'publishAll'
+    '@controller': 'Workspace'
+    '@format':     'json'
+  httpMethods: ['PUT']
+
+-
+  name: 'Services - WorkspaceController->discardAll'
+  uriPattern: 'workspaces-rpc/discard-all'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@subpackage': 'Service'
+    '@action':     'discardAll'
+    '@controller': 'Workspace'
+    '@format':     'json'
+  httpMethods: ['PUT']
+
+# NodeController routes
+-
+  name: 'Services - NodeController->getChildNodesForTree'
+  uriPattern: 'node/get-child-nodes-for-tree'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+    '@action':     'getChildNodesForTree'
+    '@format':     'json'
+  httpMethods: ['GET']
+
+-
+  name: 'Services - NodeController->filterChildNodesForTree'
+  uriPattern: 'node/filter-child-nodes-for-tree'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+    '@action':     'filterChildNodesForTree'
+    '@format':     'json'
+  httpMethods: ['GET']
+
+-
+  name: 'Services - NodeController->searchPage'
+  uriPattern: 'node/search-page'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+    '@action':     'searchPage'
+    '@format':     'json'
+  httpMethods: ['GET']
+
+-
+  name: 'Services - NodeController->create'
+  uriPattern: 'node/create'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+    '@action':     'create'
+    '@format':     'json'
+  httpMethods: ['POST']
+
+-
+  name: 'Services - NodeController->createAndRender'
+  uriPattern: 'node/create-and-render'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+    '@action':     'createAndRender'
+    '@format':     'json'
+  httpMethods: ['POST']
+
+-
+  name: 'Services - NodeController->createNodeForTheTree'
+  uriPattern: 'node/create-node-for-the-tree'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+    '@action':     'createNodeForTheTree'
+    '@format':     'json'
+  httpMethods: ['POST']
+
+-
+  name: 'Services - NodeController->discardNode'
+  uriPattern: 'node/discard-node'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+    '@action':     'discardNode'
+    '@format':     'json'
+  httpMethods: ['PUT']
+
+-
+  name: 'Services - NodeController->move'
+  uriPattern: 'node/move'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+    '@action':     'move'
+    '@format':     'json'
+  httpMethods: ['PUT']
+
+-
+  name: 'Services - NodeController->moveAndRender'
+  uriPattern: 'node/move-and-render'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+    '@action':     'moveAndRender'
+    '@format':     'json'
+  httpMethods: ['PUT']
+
+-
+  name: 'Services - NodeController->copy'
+  uriPattern: 'node/copy'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+    '@action':     'copy'
+    '@format':     'json'
+  httpMethods: ['PUT']
+
+-
+  name: 'Services - NodeController->copyAndRender'
+  uriPattern: 'node/copy-and-render'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+    '@action':     'copyAndRender'
+    '@format':     'json'
+  httpMethods: ['PUT']
+
+-
+  name: 'Services - NodeController->update'
+  uriPattern: 'node/update'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+    '@action':     'update'
+    '@format':     'json'
+  httpMethods: ['PUT']
+
+-
+  name: 'Services - NodeController->updateAndRender'
+  uriPattern: 'node/update-and-render'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+    '@action':     'updateAndRender'
+    '@format':     'json'
+  httpMethods: ['PUT']
+
+-
+  name: 'Services - NodeController->delete'
+  uriPattern: 'node/delete'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+    '@action':     'delete'
+    '@format':     'json'
+  # TODO: make DELETE method with the full REST implementation
+  # For now we can not use DELETE and also pass arguments using the request body,
+  # and client side we don\t have a UrlTemplates implementation yet
+  httpMethods: ['POST']
+
+# DataSourceController routes
+-
+  name: 'Services - DataSourceController->index'
+  uriPattern: 'data-source(/{dataSourceIdentifier)'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'DataSource'
+    '@action':     'index'
+    '@format':     'json'
+    dataSourceIdentifier: ''
+  appendExceedingArguments: TRUE
+  httpMethods: ['GET']
+
+# ContentDimensionController routes
+-
+  name: 'Services - ContentDimensionController->index()'
+  uriPattern: 'content-dimensions'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@controller': 'Service\ContentDimensions'
+    '@action':     'index'
+  appendExceedingArguments: TRUE
+  httpMethods: ['GET']
+
+-
+  name: 'Services - ContentDimensionController->show()'
+  uriPattern: 'content-dimensions/{dimensionName}'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@controller': 'Service\ContentDimensions'
+    '@action':     'show'
+  appendExceedingArguments: TRUE
+  httpMethods: ['GET']

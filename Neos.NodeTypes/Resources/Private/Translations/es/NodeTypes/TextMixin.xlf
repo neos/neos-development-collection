@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.NodeTypes" source-language="en" datatype="plaintext" target-language="es-ES">
+    <body>
+      <trans-unit id="properties.text.aloha.placeholder" xml:space="preserve">
+				<source><![CDATA[<p>Enter text here</p>]]></source>
+			<target xml:lang="es-ES" state="translated"><![CDATA[<p>Escriba el texto aquí</p>]]></target></trans-unit>
+    </body>
+  </file>
+</xliff>

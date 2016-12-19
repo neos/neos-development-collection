@@ -1,0 +1,23 @@
+#                                                                        #
+# Default subroutes configuration for the Neos.Media.Browser package      #
+#                                                                        #
+
+-
+  name: 'Content Module - Media Browser'
+  uriPattern: 'media(/{@action}).{@format}'
+  defaults:
+    '@package':    'Neos.Media.Browser'
+    '@controller': 'Backend\MediaBrowser'
+    '@format': 'html'
+    '@action': 'index'
+  appendExceedingArguments: TRUE
+
+-
+  name: 'Content Module - Image Browser'
+  uriPattern: 'image(/{@action}).{@format}'
+  defaults:
+    '@package':    'Neos.Media.Browser'
+    '@controller': 'Backend\ImageBrowser'
+    '@format': 'html'
+    '@action': 'index'
+  appendExceedingArguments: TRUE

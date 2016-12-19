@@ -1,0 +1,15 @@
+# Neos.Neos.Shortcut is given a representation for editing purposes
+#
+prototype(Neos.Neos:Shortcut) < prototype(Neos.Fusion:Template) {
+	templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/Shortcut.html'
+
+	targetMode = ${q(node).property('targetMode')}
+	firstChildNode = ${q(node).children('[instanceof Neos.Neos:Document]').get(0)}
+	target = ${q(node).property('target')}
+	targetConverted = ${Neos.Link.hasSupportedScheme(this.target) ? Neos.Link.convertUriToObject(this.target, node) : null}
+	targetSchema = ${Neos.Link.getScheme(this.target)}
+
+	node = ${node}
+
+	@exceptionHandler = 'Neos\\Neos\\Fusion\\ExceptionHandlers\\NodeWrappingHandler'
+}

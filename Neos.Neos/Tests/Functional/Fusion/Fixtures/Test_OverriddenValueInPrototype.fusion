@@ -1,0 +1,5 @@
+#
+# This example modifies the rendering inside the sidebar section, setting the title to a static value
+#
+
+page1.body.content.sidebar.prototype(Neos.Neos.NodeTypes:Headline).title = 'Static Headline'

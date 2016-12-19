@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.NodeTypes" source-language="en" datatype="plaintext" target-language="lv">
+    <body>
+      <trans-unit id="ui.label" xml:space="preserve" approved="yes">
+				<source>Insert content references</source>
+			<target xml:lang="lv">Ievietot satura norādes</target></trans-unit>
+      <trans-unit id="groups.references" xml:space="preserve" approved="yes">
+				<source>References</source>
+			<target xml:lang="lv">Atsauces</target></trans-unit>
+      <trans-unit id="properties.references" xml:space="preserve" approved="yes">
+				<source>Select</source>
+			<target xml:lang="lv">Izvēlēties</target></trans-unit>
+      <trans-unit id="content.noReferencesSelected" xml:space="preserve">
+				<source>No references selected</source>
+			<target xml:lang="lv" state="translated">Nav iezīmētas atsauces</target></trans-unit>
+    </body>
+  </file>
+</xliff>

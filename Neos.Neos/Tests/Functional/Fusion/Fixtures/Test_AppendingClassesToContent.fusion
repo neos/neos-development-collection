@@ -1,0 +1,11 @@
+#
+# This example modifies the rendering inside the teaser and sidebar section, adding a class to headline elements
+#
+page1.body.content.teaser.prototype(Neos.Neos.NodeTypes:Headline) {
+	attributes.class = Neos.Fusion:RawArray
+	attributes.class.test = 'test'
+}
+
+page1.body.content.sidebar.prototype(Neos.Neos.NodeTypes:Headline) {
+	attributes.class = 'test'
+}

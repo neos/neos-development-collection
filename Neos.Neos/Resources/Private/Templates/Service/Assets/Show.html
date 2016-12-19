@@ -1,0 +1,16 @@
+{namespace neos=Neos\Neos\ViewHelpers}{namespace media=Neos\Media\ViewHelpers}<html>
+	<head>
+		<title>{neos:backend.translate(id: 'asset', value: 'Asset')}: {asset.label}</title>
+		<meta charset="UTF-8" />
+	</head>
+	<body>
+		<div>
+			<h1>{neos:backend.translate(id: 'asset', value: 'Asset')}: {asset.label}</h1>
+			<div class="asset">
+				<label class="asset-label">{asset.label}</label>
+				(<span class="asset-identifier">{asset.identifier}</span>)
+				<a rel="preview" href="{media:uri.image(asset: asset, preset: 'Neos.Media.Browser:Thumbnail', async: asyncThumbnails)}">{neos:backend.translate(id: 'preview', value: 'Preview')}</a>
+			</div>
+		</div>
+	</body>
+</html>

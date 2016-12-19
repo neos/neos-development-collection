@@ -1,0 +1,12 @@
+# ConvertUris implementation
+#
+# replaces all occurrences of "node://<UUID>" by proper URIs.
+#
+prototype(Neos.Neos:ConvertUris) {
+	@class = 'Neos\\Neos\\Fusion\\ConvertUrisImplementation'
+	value = ${value}
+	node = ${node}
+	externalLinkTarget = '_blank'
+	resourceLinkTarget = '_blank'
+	absolute = false
+}

@@ -1,8 +1,0 @@
-#                                                                        #
-# Security policy for the TYPO3CR package                                #
-#                                                                        #
-
-roles:
-
-  'TYPO3.TYPO3CR:Administrator':
-    abstract: TRUE

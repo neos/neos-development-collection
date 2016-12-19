@@ -1,0 +1,8 @@
+#                                                                        #
+# Security policy for the ContentRepository package                                #
+#                                                                        #
+
+roles:
+
+  'Neos.ContentRepository:Administrator':
+    abstract: TRUE

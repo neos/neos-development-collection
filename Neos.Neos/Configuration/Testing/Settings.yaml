@@ -1,0 +1,58 @@
+
+Neos:
+  Neos:
+    eventLog:
+      enabled: false
+  ContentRepository:
+    contentDimensions:
+      language:
+        default: en_US
+        defaultPreset: en_US
+        presets:
+          all: null
+          en_US:
+            label: 'English (US)'
+            values:
+              - en_US
+            uriSegment: en
+          en_UK:
+            label: 'English (UK)'
+            values:
+              - en_UK
+              - en_US
+            uriSegment: uk
+          de:
+            label: German
+            values:
+              - de
+              - en_UK
+              - en_US
+            uriSegment: de
+          fr:
+            label: French
+            values:
+              - fr
+              - de
+              - en_US
+            uriSegment: fr
+          nl:
+            label: Dutch
+            values:
+              - nl
+              - en_US
+            uriSegment: nl
+          dk:
+            label: Danish
+            values:
+              - dk
+              - en_US
+            uriSegment: dk
+          lv:
+            label: Latvian
+            values:
+              - lv
+              - en_US
+            uriSegment: lv
+  Fusion:
+    rendering:
+      exceptionHandler: Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler

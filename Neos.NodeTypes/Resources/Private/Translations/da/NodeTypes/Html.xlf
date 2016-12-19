@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.NodeTypes" source-language="en" datatype="plaintext" target-language="da">
+    <body>
+      <trans-unit id="ui.label" xml:space="preserve" approved="yes">
+				<source>HTML</source>
+			<target xml:lang="da">HTML</target></trans-unit>
+      <trans-unit id="groups.html" xml:space="preserve" approved="yes">
+				<source>HTML</source>
+			<target xml:lang="da">HTML</target></trans-unit>
+      <trans-unit id="properties.source" xml:space="preserve" approved="yes">
+				<source>HTML Content</source>
+			<target xml:lang="da">HTML-indhold</target></trans-unit>
+      <trans-unit id="properties.source.codeEditor.buttonLabel" xml:space="preserve" approved="yes">
+				<source>Edit HTML source</source>
+			<target xml:lang="da">Rediger HTML kode</target><alt-trans><target xml:lang="da">Redigere HTML kode</target></alt-trans></trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="sr">
+    <body>
+      <trans-unit id="ui.label" xml:space="preserve">
+				<source>Content</source>
+			<target xml:lang="sr" state="translated">Садржај</target></trans-unit>
+      <trans-unit id="groups.type" xml:space="preserve">
+				<source>Change type</source>
+			<target xml:lang="sr" state="needs-translation">Change type</target></trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -1,0 +1,14 @@
+# PluginView Implementation
+# This represents a View that is always bound to a master Plugin
+# Usually you won't need to extend this
+#
+prototype(Neos.Neos:PluginView) >
+prototype(Neos.Neos:PluginView) < prototype(Neos.Neos:Content) {
+	@class = 'Neos\\Neos\\Fusion\\PluginViewImplementation'
+	@cache {
+		mode = 'uncached'
+		context {
+			1 = 'node'
+		}
+	}
+}

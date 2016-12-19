@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.NodeTypes" source-language="en" datatype="plaintext" target-language="ru">
+    <body>
+      <trans-unit id="ui.label" xml:space="preserve" approved="yes">
+				<source>Insert content references</source>
+			<target xml:lang="ru">Вставка ссылок на содержимое</target><alt-trans><target xml:lang="ru">Вставить ссылку на содержимое</target></alt-trans><alt-trans><target xml:lang="ru">Вставка содержимого ссылок</target></alt-trans></trans-unit>
+      <trans-unit id="groups.references" xml:space="preserve" approved="yes">
+				<source>References</source>
+			<target xml:lang="ru">Ссылки</target></trans-unit>
+      <trans-unit id="properties.references" xml:space="preserve" approved="yes">
+				<source>Select</source>
+			<target xml:lang="ru">Выбрать</target></trans-unit>
+      <trans-unit id="content.noReferencesSelected" xml:space="preserve" approved="yes">
+				<source>No references selected</source>
+			<target xml:lang="ru">Нет выбранных ссылок</target></trans-unit>
+    </body>
+  </file>
+</xliff>
