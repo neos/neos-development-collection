@@ -23,7 +23,7 @@ class BasicRenderingTest extends AbstractFusionObjectTest
     public function basicRendering()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('basicRendering/test');
+        $view->setFusionPath('basicRendering/test');
         $this->assertEquals('XHello World', $view->render());
     }
 
@@ -33,7 +33,7 @@ class BasicRenderingTest extends AbstractFusionObjectTest
     public function basicRenderingReusingTypoScriptVariables()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('basicRendering/reuseTypoScriptVariables');
+        $view->setFusionPath('basicRendering/reuseTypoScriptVariables');
         $this->assertEquals('XHello World', $view->render());
     }
 
@@ -51,7 +51,7 @@ class BasicRenderingTest extends AbstractFusionObjectTest
     public function basicRenderingCrashing()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('basicRendering/crashing');
+        $view->setFusionPath('basicRendering/crashing');
         $this->assertEquals('XHello World', $view->render());
     }
 
@@ -61,7 +61,7 @@ class BasicRenderingTest extends AbstractFusionObjectTest
     public function basicRenderingReusingTypoScriptVariablesWithEel()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('basicRendering/reuseTypoScriptVariablesWithEel');
+        $view->setFusionPath('basicRendering/reuseTypoScriptVariablesWithEel');
         $this->assertEquals('XHello World', $view->render());
     }
 
@@ -71,7 +71,7 @@ class BasicRenderingTest extends AbstractFusionObjectTest
     public function complexExample()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('basicRendering/complexExample/toRender');
+        $view->setFusionPath('basicRendering/complexExample/toRender');
         $this->assertEquals('Static string post', $view->render());
     }
 
@@ -81,7 +81,7 @@ class BasicRenderingTest extends AbstractFusionObjectTest
     public function complexExample2()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('basicRendering/complexExample2/toRender');
+        $view->setFusionPath('basicRendering/complexExample2/toRender');
         $this->assertEquals('Static string post', $view->render());
     }
 
@@ -115,7 +115,7 @@ class BasicRenderingTest extends AbstractFusionObjectTest
     public function contentIsNotTrimmed()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('basicRendering/contentIsNotTrimmed');
+        $view->setFusionPath('basicRendering/contentIsNotTrimmed');
         $this->assertEquals('X I want to have some space after me ', $view->render());
     }
 }

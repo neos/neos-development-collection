@@ -39,8 +39,8 @@ class FusionView extends AbstractView
      * @var array
      */
     protected $supportedOptions = array(
-        'typoScriptPathPatterns' => array(array('resource://@package/Private/Fusion'), 'Fusion files will be recursively loaded from this paths.', 'array'),
-        'typoScriptPath' => array(null, 'The Fusion path which should be rendered; derived from the controller and action names or set by the user.', 'string'),
+        'fusionPathPatterns' => array(array('resource://@package/Private/Fusion'), 'Fusion files will be recursively loaded from this paths.', 'array'),
+        'fusionPath' => array(null, 'The Fusion path which should be rendered; derived from the controller and action names or set by the user.', 'string'),
         'packageKey' => array(null, 'The package key where the Fusion should be loaded from. If not given, is automatically derived from the current request.', 'string'),
         'debugMode' => array(false, 'Flag to enable debug mode of the Fusion runtime explicitly (overriding the global setting).', 'boolean'),
         'enableContentCache' => array(false, 'Flag to enable content caching inside Fusion (overriding the global setting).', 'boolean')
@@ -66,7 +66,7 @@ class FusionView extends AbstractView
     protected $parsedFusion;
 
     /**
-     * Runtime cache of the TypoScript path which should be rendered; derived from the controller
+     * Runtime cache of the Fusion path which should be rendered; derived from the controller
      * and action names or set by the user.
      *
      * @var string
@@ -81,7 +81,7 @@ class FusionView extends AbstractView
     protected $fallbackViewEnabled = true;
 
     /**
-     * The TypoScript Runtime
+     * The Fusion Runtime
      *
      * @var Runtime
      */
@@ -101,19 +101,19 @@ class FusionView extends AbstractView
     }
 
     /**
-     * Sets the TypoScript path to be rendered to an explicit value;
+     * Sets the Fusion path to be rendered to an explicit value;
      * to be used mostly inside tests.
      *
-     * @param string $typoScriptPath
+     * @param string $fusionPath
      * @return void
      */
-    public function setTypoScriptPath($typoScriptPath)
+    public function setFusionPath($fusionPath)
     {
-        $this->setOption('typoScriptPath', $typoScriptPath);
+        $this->setOption('fusionPath', $fusionPath);
     }
 
     /**
-     * The package key where the TypoScript should be loaded from. If not given,
+     * The package key where the Fusion should be loaded from. If not given,
      * is automatically derived from the current request.
      *
      * @param string $packageKey
@@ -128,18 +128,18 @@ class FusionView extends AbstractView
      * @param string $pathPattern
      * @return void
      */
-    public function setTypoScriptPathPattern($pathPattern)
+    public function setFusionPathPattern($pathPattern)
     {
-        $this->setOption('typoScriptPathPatterns', array($pathPattern));
+        $this->setOption('fusionPathPatterns', array($pathPattern));
     }
 
     /**
      * @param array $pathPatterns
      * @return void
      */
-    public function setTypoScriptPathPatterns(array $pathPatterns)
+    public function setFusionPathPatterns(array $pathPatterns)
     {
-        $this->setOption('typoScriptPathPatterns', $pathPatterns);
+        $this->setOption('fusionPathPatterns', $pathPatterns);
     }
 
     /**
@@ -172,7 +172,7 @@ class FusionView extends AbstractView
      */
     public function render()
     {
-        $this->initializeTypoScriptRuntime();
+        $this->initializeFusionRuntime();
         if ($this->fusionRuntime->canRender($this->getFusionPathForCurrentRequest()) || $this->fallbackViewEnabled === false) {
             return $this->renderFusion();
         } else {
@@ -181,13 +181,13 @@ class FusionView extends AbstractView
     }
 
     /**
-     * Load the TypoScript Files form the defined
+     * Load the Fusion Files form the defined
      * paths and construct a Runtime from the
      * parsed results
      *
      * @return void
      */
-    public function initializeTypoScriptRuntime()
+    public function initializeFusionRuntime()
     {
         if ($this->fusionRuntime === null) {
             $this->loadFusion();
@@ -202,14 +202,14 @@ class FusionView extends AbstractView
     }
 
     /**
-     * Load Fusion from the directories specified by $this->getOption('typoScriptPathPatterns')
+     * Load Fusion from the directories specified by $this->getOption('fusionPathPatterns')
      *
      * @return void
      */
     protected function loadFusion()
     {
         $mergedFusionCode = '';
-        $fusionPathPatterns = $this->getOption('typoScriptPathPatterns');
+        $fusionPathPatterns = $this->getOption('fusionPathPatterns');
         ksort($fusionPathPatterns);
         foreach ($fusionPathPatterns as $fusionPathPattern) {
             $fusionPathPattern = str_replace('@package', $this->getPackageKey(), $fusionPathPattern);
@@ -249,7 +249,7 @@ class FusionView extends AbstractView
     protected function getFusionPathForCurrentRequest()
     {
         if ($this->fusionPath === null) {
-            $fusionPath = $this->getOption('typoScriptPath');
+            $fusionPath = $this->getOption('fusionPath');
             if ($fusionPath !== null) {
                 $this->fusionPath = $fusionPath;
             } else {
@@ -265,16 +265,6 @@ class FusionView extends AbstractView
             }
         }
         return $this->fusionPath;
-    }
-
-    /**
-     * Determine whether we are able to find Fusion at the requested position
-     *
-     * @return boolean TRUE if Fusion exists at the current Fusion path; FALSE otherwise
-     */
-    protected function isTypoScriptFoundForCurrentRequest()
-    {
-        return (Arrays::getValueByPath($this->parsedFusion, str_replace('/', '.', $this->getFusionPathForCurrentRequest())) !== null);
     }
 
     /**

@@ -51,7 +51,7 @@ class ContentCacheTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->setOption('enableContentCache', true);
         $view->assign('object', $object);
-        $view->setTypoScriptPath('contentCache/cachedSegment');
+        $view->setFusionPath('contentCache/cachedSegment');
 
             // This render call should create the cache entry
         $firstRenderResult = $view->render();
@@ -74,7 +74,7 @@ class ContentCacheTest extends AbstractFusionObjectTest
 
         $view = $this->buildView();
         $view->setOption('enableContentCache', true);
-        $view->setTypoScriptPath('contentCache/nestedCacheSegments');
+        $view->setFusionPath('contentCache/nestedCacheSegments');
 
         $view->assign('site', 'site1');
         $view->assign('object', $object);
@@ -100,7 +100,7 @@ class ContentCacheTest extends AbstractFusionObjectTest
 
         $view = $this->buildView();
         $view->setOption('enableContentCache', true);
-        $view->setTypoScriptPath('contentCache/uncachedSegmentOnTopLevel');
+        $view->setFusionPath('contentCache/uncachedSegmentOnTopLevel');
 
         $view->assign('object', $object);
 
@@ -121,7 +121,7 @@ class ContentCacheTest extends AbstractFusionObjectTest
 
         $view = $this->buildView();
         $view->setOption('enableContentCache', true);
-        $view->setTypoScriptPath('contentCache/uncachedSegmentWithWronglyConfiguredContext');
+        $view->setFusionPath('contentCache/uncachedSegmentWithWronglyConfiguredContext');
 
         $view->assign('object', $object);
         $view->assign('otherContextVariable', $otherContextVariable);
@@ -142,7 +142,7 @@ class ContentCacheTest extends AbstractFusionObjectTest
 
         $view = $this->buildView();
         $view->setOption('enableContentCache', true);
-        $view->setTypoScriptPath('contentCache/uncachedSegmentInCachedSegment');
+        $view->setFusionPath('contentCache/uncachedSegmentInCachedSegment');
 
         $view->assign('object', $object);
 
@@ -165,7 +165,7 @@ class ContentCacheTest extends AbstractFusionObjectTest
 
         $view = $this->buildView();
         $view->setOption('enableContentCache', true);
-        $view->setTypoScriptPath('contentCache/uncachedSegmentInCachedSegment');
+        $view->setFusionPath('contentCache/uncachedSegmentInCachedSegment');
 
         $view->assign('object', $object);
 
@@ -192,7 +192,7 @@ class ContentCacheTest extends AbstractFusionObjectTest
 
         $view = $this->buildView();
         $view->setOption('enableContentCache', true);
-        $view->setTypoScriptPath('contentCache/cacheSegmentsWithTags');
+        $view->setFusionPath('contentCache/cacheSegmentsWithTags');
 
         $view->assign('object', $object);
         $view->assign('site', 'site1');
@@ -222,7 +222,7 @@ class ContentCacheTest extends AbstractFusionObjectTest
 
         $view = $this->buildView();
         $view->setOption('enableContentCache', true);
-        $view->setTypoScriptPath('contentCache/cacheSegmentsWithTags');
+        $view->setFusionPath('contentCache/cacheSegmentsWithTags');
 
         $view->assign('object', $object);
         $view->assign('site', 'site1');
@@ -256,7 +256,7 @@ class ContentCacheTest extends AbstractFusionObjectTest
 
         $view = $this->buildView();
         $view->setOption('enableContentCache', true);
-        $view->setTypoScriptPath('contentCache/cachedSegmentWithProcessor');
+        $view->setFusionPath('contentCache/cachedSegmentWithProcessor');
 
         $view->assign('object', $object);
 
@@ -276,7 +276,7 @@ class ContentCacheTest extends AbstractFusionObjectTest
 
         $view = $this->buildView();
         $view->setOption('enableContentCache', true);
-        $view->setTypoScriptPath('contentCache/uncachedSegmentWithProcessor');
+        $view->setFusionPath('contentCache/uncachedSegmentWithProcessor');
 
         $view->assign('object', $object);
 
@@ -296,7 +296,7 @@ class ContentCacheTest extends AbstractFusionObjectTest
 
         $view = $this->buildView();
         $view->setOption('enableContentCache', true);
-        $view->setTypoScriptPath('contentCache/cachedSegmentWithCondition');
+        $view->setFusionPath('contentCache/cachedSegmentWithCondition');
 
         $view->assignMultiple(array(
             'object' => $object,
@@ -324,7 +324,7 @@ class ContentCacheTest extends AbstractFusionObjectTest
 
         $view = $this->buildView();
         $view->setOption('enableContentCache', true);
-        $view->setTypoScriptPath('contentCache/uncachedSegmentWithCondition');
+        $view->setFusionPath('contentCache/uncachedSegmentWithCondition');
 
         $view->assignMultiple(array(
             'object' => $object
@@ -357,7 +357,7 @@ class ContentCacheTest extends AbstractFusionObjectTest
 
         $view = $this->buildView();
         $view->setOption('enableContentCache', true);
-        $view->setTypoScriptPath('contentCache/nestedCacheSegmentsWithInnerException');
+        $view->setFusionPath('contentCache/nestedCacheSegmentsWithInnerException');
 
         $view->assign('object', $object);
 
@@ -377,7 +377,7 @@ class ContentCacheTest extends AbstractFusionObjectTest
 
         $view = $this->buildView();
         $view->setOption('enableContentCache', true);
-        $view->setTypoScriptPath('contentCache/nestedCacheSegmentsWithConditionalException');
+        $view->setFusionPath('contentCache/nestedCacheSegmentsWithConditionalException');
 
         $view->assign('object', $object);
         $view->assign('throwException', false);
@@ -399,7 +399,7 @@ class ContentCacheTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->setOption('enableContentCache', true);
-        $view->setTypoScriptPath('contentCache/maximumLifetimeInNestedEmbedAndCachedSegments');
+        $view->setFusionPath('contentCache/maximumLifetimeInNestedEmbedAndCachedSegments');
 
         $mockCache = $this->createMock(\Neos\Cache\Frontend\FrontendInterface::class);
         $this->inject($this->contentCache, 'cache', $mockCache);
@@ -455,7 +455,7 @@ class ContentCacheTest extends AbstractFusionObjectTest
 
         $view = $this->buildView();
         $view->setOption('enableContentCache', true);
-        $view->setTypoScriptPath('contentCache/entryIdentifiersAreMergedWithGlobalIdentifiers');
+        $view->setFusionPath('contentCache/entryIdentifiersAreMergedWithGlobalIdentifiers');
 
         $view->assign('object', $object);
         $view->assign('site', 'site1');
@@ -497,7 +497,7 @@ class ContentCacheTest extends AbstractFusionObjectTest
 
         $view = $this->buildView();
         $view->setOption('enableContentCache', true);
-        $view->setTypoScriptPath('contentCache/globalIdentifiersAreUsedWithBlankEntryIdentifiers');
+        $view->setFusionPath('contentCache/globalIdentifiersAreUsedWithBlankEntryIdentifiers');
 
         $view->assign('site', 'site1');
 
@@ -552,7 +552,7 @@ class ContentCacheTest extends AbstractFusionObjectTest
 
         $view = $this->buildView();
         $view->setOption('enableContentCache', true);
-        $view->setTypoScriptPath('contentCache/entryIdentifierPrototypeCanBeOverwritten');
+        $view->setFusionPath('contentCache/entryIdentifierPrototypeCanBeOverwritten');
 
         $view->assign('object', $object);
         $view->assign('site', 'site1');
@@ -584,7 +584,7 @@ class ContentCacheTest extends AbstractFusionObjectTest
 
         $view = $this->buildView();
         $view->setOption('enableContentCache', true);
-        $view->setTypoScriptPath('contentCache/uncachedSegmentInCachedSegmentCanOverrideContextVariables');
+        $view->setFusionPath('contentCache/uncachedSegmentInCachedSegmentCanOverrideContextVariables');
 
         $view->assign('object', $object);
 

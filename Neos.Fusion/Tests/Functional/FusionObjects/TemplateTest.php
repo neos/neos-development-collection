@@ -23,7 +23,7 @@ class TemplateTest extends AbstractFusionObjectTest
     public function basicFluidTemplateCanBeUsedForRendering()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('template/basicTemplate');
+        $view->setFusionPath('template/basicTemplate');
         $this->assertEquals('Test Templatefoo', $view->render());
     }
 
@@ -33,7 +33,7 @@ class TemplateTest extends AbstractFusionObjectTest
     public function basicFluidTemplateContainsEelVariables()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('template/basicTemplateWithEelVariable');
+        $view->setFusionPath('template/basicTemplateWithEelVariable');
         $this->assertEquals('Test Templatefoobar', $view->render());
     }
 
@@ -43,7 +43,7 @@ class TemplateTest extends AbstractFusionObjectTest
     public function customPartialPathCanBeSetOnRendering()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('template/partial');
+        $view->setFusionPath('template/partial');
         $this->assertEquals('Test Template--partial contents', $view->render());
     }
 
@@ -53,7 +53,7 @@ class TemplateTest extends AbstractFusionObjectTest
     public function customLayoutPathCanBeSetOnRendering()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('template/layout');
+        $view->setFusionPath('template/layout');
         $this->assertEquals('layout start -- Test Template -- layout end', $view->render());
     }
 
@@ -63,7 +63,7 @@ class TemplateTest extends AbstractFusionObjectTest
     public function typoScriptExceptionInObjectAccessIsHandledCorrectly()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('template/offsetAccessException');
+        $view->setFusionPath('template/offsetAccessException');
         $this->assertStringStartsWith('Test TemplateException while rendering template', $view->render());
     }
 
@@ -73,7 +73,7 @@ class TemplateTest extends AbstractFusionObjectTest
     public function expressionCanBeOverridenWithSimpleValueForTemplate()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('template/overrideWithSimpleValueInTemplate');
+        $view->setFusionPath('template/overrideWithSimpleValueInTemplate');
         $this->assertSame('3', $view->render(), 'JSON encoded value should be a number');
     }
 }
