@@ -1,0 +1,2 @@
+Neos_ContentRepository_FullNodeTypeConfiguration:
+  backend: Neos\Cache\Backend\SimpleFileBackend

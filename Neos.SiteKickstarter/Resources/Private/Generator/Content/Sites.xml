@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+ <site name="{siteName}" state="1" siteResourcesPackageKey="{packageKey}" siteNodeName="{siteNodeName}">
+  <nodes formatVersion="2.0">
+   <node nodeName="{siteNodeName}">
+    <variant workspace="live" nodeType="Neos.NodeTypes:Page" sortingIndex="100" version="1" removed="" hidden="" hiddenInIndex="">
+     <dimensions>
+     <f:for each="{dimensions}" as="dimension">
+      <{dimension.identifier}>{dimension.default}</{dimension.identifier}>
+     </f:for>
+     </dimensions>
+     <accessRoles __type="array"/>
+     <properties>
+      <title __type="string">Home</title>
+      <uriPathSegment __type="string">home</uriPathSegment>
+     </properties>
+    </variant>
+    <node nodeName="main">
+     <variant workspace="live" nodeType="Neos.Neos:ContentCollection" sortingIndex="100" version="1" removed="" hidden="" hiddenInIndex="">
+      <dimensions>
+      <f:for each="{dimensions}" as="dimension">
+       <{dimension.identifier}>{dimension.default}</{dimension.identifier}>
+      </f:for>
+      </dimensions>
+      <accessRoles __type="array"/>
+     </variant>
+    </node>
+   </node>
+  </nodes>
+ </site>
+</root>

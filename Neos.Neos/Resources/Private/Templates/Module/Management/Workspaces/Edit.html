@@ -1,0 +1,72 @@
+{namespace neos=Neos\Neos\ViewHelpers}
+<f:layout name="BackendSubModule"/>
+
+<f:section name="subtitle">
+	<h2>{neos:backend.translate(id: 'workspaces.editWorkspace', source: 'Modules', package: 'Neos.Neos', arguments: {0: workspace.title})}</h2>
+</f:section>
+
+<f:section name="content">
+	<f:form action="update" name="workspace" object="{workspace}">
+		<fieldset>
+			<div class="neos-control-group">
+				<label class="neos-control-label" for="title">{neos:backend.translate(id: 'workspaces.workspace.title', source: 'Modules', package: 'Neos.Neos')}</label>
+				<div class="neos-controls">
+					<f:form.textfield property="title" id="title" class="neos-span3" autofocus="true"/>
+				</div>
+			</div>
+
+			<div class="neos-control-group">
+				<label class="neos-control-label" for="description">{neos:backend.translate(id: 'workspaces.workspace.description', source: 'Modules', package: 'Neos.Neos')}</label>
+				<div class="neos-controls">
+					<f:form.textfield property="description" id="description" class="neos-span10"/>
+				</div>
+			</div>
+
+			<div class="neos-control-group{f:validation.ifHasErrors(for: 'baseWorkspace', then: ' neos-error')}">
+				<label class="neos-control-label" for="baseWorkspace">{neos:backend.translate(id: 'workspaces.workspace.baseWorkspace', source: 'Modules', package: 'Neos.Neos')}</label>
+				<div class="neos-controls">
+					<f:if condition="{disableBaseWorkspaceSelector}">
+						<f:then>
+							<f:form.select property="baseWorkspace" id="baseWorkspace" options="{baseWorkspaceOptions}" disabled="disabled" title="{neos:backend.translate(id: 'workspaces.help.cantRebaseWorkspaceContainsChanges', source: 'Modules', package: 'Neos.Neos')}" />
+						</f:then>
+						<f:else>
+							<f:form.select property="baseWorkspace" id="baseWorkspace" options="{baseWorkspaceOptions}" />
+						</f:else>
+					</f:if>
+
+				</div>
+			</div>
+
+			<f:if condition="{showOwnerSelector}">
+				<div class="neos-control-group">
+					<label class="neos-control-label" for="owner">{neos:backend.translate(id: 'workspaces.workspace.owner', source: 'Modules', package: 'Neos.Neos')}</label>
+					<div class="neos-controls">
+						<f:form.select property="owner" name="owner" id="owner" options="{ownerOptions}" />
+					</div>
+				</div>
+			</f:if>
+
+			<div class="neos-control-group">
+				<label class="neos-control-label">{neos:backend.translate(id: 'workspaces.workspace.visibility', source: 'Modules', package: 'Neos.Neos')}</label>
+				<div class="neos-controls">
+					<label for="visibility.private" class="neos-radio">
+						<f:form.radio name="visibility" id="visibility.private" value="private" disabled="true" checked="{workspace.privateWorkspace}" /><span></span>
+						<span>{neos:backend.translate(id: 'workspaces.workspace.visibility.private', source: 'Modules', package: 'Neos.Neos')} <span class="neos-help-inline">{neos:backend.translate(id: 'workspaces.workspace.visibility.private.help', source: 'Modules', package: 'Neos.Neos')}</span></span>
+					</label>
+				</div>
+				<div class="neos-controls">
+					<label for="visibility.internal" class="neos-radio">
+						<f:form.radio name="visibility" id="visibility.internal" value="internal" disabled="true" checked="{workspace.internalWorkspace}"/><span></span>
+						<span>{neos:backend.translate(id: 'workspaces.workspace.visibility.internal', source: 'Modules', package: 'Neos.Neos')} <span class="neos-help-inline">{neos:backend.translate(id: 'workspaces.workspace.visibility.internal.help', source: 'Modules', package: 'Neos.Neos')}</span></span>
+					</label>
+				</div>
+			</div>
+		</fieldset>
+
+		<div class="neos-footer">
+			<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'cancel', package: 'Neos.Neos')}
+			</f:link.action>
+			<f:form.submit value="{neos:backend.translate(id: 'applyChanges')}" class="neos-button neos-button-primary"/>
+		</div>
+	</f:form>
+</f:section>

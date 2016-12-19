@@ -1,0 +1,5 @@
+Neos_Media_ImageSize:
+  frontend: Neos\Cache\Frontend\VariableFrontend
+  backend: Neos\Cache\Backend\SimpleFileBackend
+  backendOptions:
+    defaultLifetime: 0

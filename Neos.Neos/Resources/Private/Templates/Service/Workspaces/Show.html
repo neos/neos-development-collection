@@ -1,0 +1,17 @@
+{namespace neos=Neos\Neos\ViewHelpers}<html>
+<head>
+	<title>Workspace: {workspace.label}</title>
+	<meta charset="UTF-8" />
+</head>
+<body>
+<div>
+	<h1>Workspace</h1>
+	<div class="workspace">
+		<p><label class="workspace-title">{workspace.title}</label>
+			(<span class="workspace-name">{workspace.name}</span>)
+			based on "<span class="workspace-baseworkspace-name">{workspace.baseworkspace.name}</span>"</p>
+		<p class="workspace-description">{workspace.description}</p>
+	</div>
+</div>
+</body>
+</html>

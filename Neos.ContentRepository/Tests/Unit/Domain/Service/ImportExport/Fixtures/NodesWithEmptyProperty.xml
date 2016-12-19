@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nodes formatVersion="2.0">
+	<node identifier="995c9174-ddd6-4d5c-cfc0-1ffc82184677" nodeName="neosdemoio">
+		<variant sortingIndex="100" workspace="live" nodeType="Neos.NodeTypes:Page" version="14" removed="" hidden="" hiddenInIndex="">
+			<dimensions>
+				<language>en_US</language>
+			</dimensions>
+			<accessRoles __type="array" />
+			<properties>
+				<title __type="string">Home</title>
+				<layout __type="string">landingPage</layout>
+				<uriPathSegment __type="string">home</uriPathSegment>
+				<relatedDocuments __type="array" />
+				<image __type="object" __classname="Neos\Media\Domain\Model\ImageVariant" __encoding="json">{&quot;originalImage&quot;:{&quot;title&quot;:&quot;&quot;,&quot;resource&quot;:{&quot;filename&quot;:&quot;enjoy-the-view-by-daniel-bischoff.jpg&quot;,&quot;hash&quot;:&quot;a0fcd1a8d6529424beaa69e070320ee9dc387723&quot;,&quot;__identity&quot;:&quot;53488dec-7960-466d-2287-3fb627c3f587&quot;},&quot;__identity&quot;:&quot;4d01043b-d738-cbd3-199a-63cba0f66ef9&quot;},&quot;processingInstructions&quot;:[{&quot;command&quot;:&quot;crop&quot;,&quot;options&quot;:{&quot;start&quot;:{&quot;x&quot;:0,&quot;y&quot;:100},&quot;size&quot;:{&quot;width&quot;:3000,&quot;height&quot;:1500}}},{&quot;command&quot;:&quot;resize&quot;,&quot;options&quot;:{&quot;size&quot;:{&quot;width&quot;:3000,&quot;height&quot;:1500}}}]}</image>
+				<imageTitleText __type="string">Photo by www.daniel-bischoff.photo</imageTitleText>
+				<subpageLayout __type="string"></subpageLayout>
+			</properties>
+		</variant>
+	</node>
+	<node identifier="e45e3b2c-3f14-2c14-6230-687fa4696504" nodeName="node53a18fb53bdf2">
+		<variant sortingIndex="300" workspace="live" nodeType="Neos.NodeTypes:AssetList" version="3" removed="" hidden="" hiddenInIndex="">
+			<dimensions>
+				<language>en_US</language>
+			</dimensions>
+			<accessRoles __type="array" />
+			<properties>
+				<relatedDocuments __type="array" />
+				<assets __type="array">
+					<entry0 __type="object" __identifier="08aaeb84-dccc-6af4-0086-93499de4e1bc" __classname="Neos\Media\Domain\Model\Image" __encoding="json">
+						{&quot;title&quot;:&quot;&quot;,&quot;resource&quot;:{&quot;filename&quot;:&quot;alice-1.jpg&quot;,&quot;hash&quot;:&quot;30d0d71c6e7e4dd53636a8b9a5d5c8fd9b73f10f&quot;,&quot;__identity&quot;:&quot;3640b4ba-a68b-7e2f-4199-d4e3a2b684c3&quot;}}
+					</entry0>
+					<entry1 __type="object" __identifier="89cd85cc-270e-0902-7113-d14ac7539c75" __classname="Neos\Media\Domain\Model\Asset" __encoding="json">
+						{&quot;title&quot;:&quot;&quot;,&quot;resource&quot;:{&quot;filename&quot;:&quot;Neos-logo_sRGB_color.pdf&quot;,&quot;hash&quot;:&quot;bed9a3e45070e97b921877e2bd9c35ba368beca0&quot;,&quot;__identity&quot;:&quot;8a4496e4-fa0d-8550-0995-01fd869728bf&quot;}}
+					</entry1>
+				</assets>
+			</properties>
+		</variant>
+	</node>
+</nodes>

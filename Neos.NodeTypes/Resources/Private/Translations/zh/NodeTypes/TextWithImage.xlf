@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.NodeTypes" source-language="en" datatype="plaintext" target-language="zh-CN">
+    <body>
+      <trans-unit id="ui.label" xml:space="preserve">
+				<source>Text with Image</source>
+			<target xml:lang="zh-CN" state="translated">带有图片的文本</target><alt-trans><target xml:lang="zh-CN">带有图像的文本</target></alt-trans></trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="da">
+    <body>
+      <trans-unit id="ui.label" xml:space="preserve" approved="yes">
+				<source>Shortcut</source>
+			<target xml:lang="da">Genvej</target></trans-unit>
+      <trans-unit id="tabs.document" xml:space="preserve" approved="yes">
+				<source>Shortcut options</source>
+			<target xml:lang="da">Genvejsinstillinger</target><alt-trans><target xml:lang="da">Genvejs instillinger</target></alt-trans></trans-unit>
+      <trans-unit id="groups.document" xml:space="preserve" approved="yes">
+				<source>Shortcut options</source>
+			<target xml:lang="da">Genvejsinstillinger</target><alt-trans><target xml:lang="da">Genvejs instillinger</target></alt-trans></trans-unit>
+      <trans-unit id="properties.targetMode" xml:space="preserve" approved="yes">
+				<source>Target mode</source>
+			<target xml:lang="da">Destinationstype</target><alt-trans><target xml:lang="da">Siden skal åbne</target></alt-trans></trans-unit>
+      <trans-unit id="properties.target" xml:space="preserve" approved="yes">
+				<source>Target</source>
+			<target xml:lang="da">Destination</target><alt-trans><target xml:lang="da">Mål</target></alt-trans></trans-unit>
+      <trans-unit id="properties.targetMode.selectBoxEditor.values.firstChildNode" xml:space="preserve" approved="yes">
+				<source>First child node</source>
+			<target xml:lang="da">Første underordnede dokument</target><alt-trans><target xml:lang="da">Første underordnede node</target></alt-trans></trans-unit>
+      <trans-unit id="properties.targetMode.selectBoxEditor.values.parentNode" xml:space="preserve" approved="yes">
+				<source>Parent node</source>
+			<target xml:lang="da">Overordnet dokument</target><alt-trans><target xml:lang="da">Overordnet node</target></alt-trans></trans-unit>
+      <trans-unit id="properties.targetMode.selectBoxEditor.values.selectedTarget" xml:space="preserve" approved="yes">
+				<source>Selected target</source>
+			<target xml:lang="da">Udvalgte destination</target><alt-trans><target xml:lang="da">Udvalgte mål</target></alt-trans></trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="da">
+    <body>
+      <trans-unit id="properties.title" xml:space="preserve" approved="yes">
+				<source>Title</source>
+			<target xml:lang="da">Titel</target></trans-unit>
+      <trans-unit id="properties.uriPathSegment" xml:space="preserve" approved="yes">
+				<source>URL path segment</source>
+			<target xml:lang="da">URL adressesegment</target></trans-unit>
+      <trans-unit id="properties._hiddenInIndex" xml:space="preserve" approved="yes">
+				<source>Hide in menus</source>
+			<target xml:lang="da">Skjul i menuer</target></trans-unit>
+    </body>
+  </file>
+</xliff>

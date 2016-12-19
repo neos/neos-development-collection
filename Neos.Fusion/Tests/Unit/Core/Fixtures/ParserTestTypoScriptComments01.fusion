@@ -1,0 +1,63 @@
+//
+// Checks whether `#`, `/*`, `//` and `*/` in comments are parsed correctly
+// Related issue: NEOS-864
+//
+
+// */ after #
+# */asdf
+
+// // after #
+# comment with // and more comment
+
+// /* after #
+# comment with /* and more comment
+
+
+
+// // after /*
+/*
+comment with // and more comment
+*/
+
+// # after /*
+/*
+comment with # and more comment
+*/
+
+// // after /*
+/*
+comment with // ane more comment
+*/
+
+
+
+// // after /* inline
+/* comment with // and more comment */
+
+// # after /* inline
+/* comment with # and more comment */
+
+// // after /* inline
+/* comment with // ane more comment */
+
+
+
+// */ after //
+// comment with */ and more comment
+
+// /* after //
+// comment with /* and more comment
+
+// # after //
+// comment with # and more comment
+
+
+
+/*
+ Here comes some comment with # and /* and // in it
+*/
+
+
+
+// another edge-case mentioned in NEOS-864
+#include: Pages/**/*.fusion

@@ -1,2 +1,0 @@
-TYPO3_TYPO3CR_FullNodeTypeConfiguration:
-  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend

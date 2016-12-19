@@ -1,0 +1,206 @@
+{namespace neos=Neos\Neos\ViewHelpers}
+<f:layout name="BackendSubModule" />
+
+<f:section name="content">
+	<f:form action="batch">
+		<div class="neos-row-fluid">
+			<legend><neos:backend.translate id="packages.index.legend" source="Modules" package="Neos.Neos" /></legend>
+			<br />
+			<table class="neos-table">
+				<thead>
+					<th class="check">
+						<label for="check-all" class="neos-checkbox">
+							<input type="checkbox" id="check-all" /><span></span>
+						</label>
+					</th>
+					<th>{neos:backend.translate(id: 'packages.name', source: 'Modules', package: 'Neos.Neos')}</th>
+					<th>{neos:backend.translate(id: 'version', package: 'Neos.Neos')}</th>
+					<th>{neos:backend.translate(id: 'packages.key', source: 'Modules', package: 'Neos.Neos')}</th>
+					<th>{neos:backend.translate(id: 'packages.type', source: 'Modules', package: 'Neos.Neos')}</th>
+					<th>&nbsp;</th>
+				</thead>
+				<tbody>
+					<f:for each="{packageGroups}" key="packageGroup" as="packages">
+						<tr class="neos-folder" id="{packageGroup}">
+							<td colspan="2" class="neos-priority1">
+								<strong>{packageGroup}</strong>
+							</td>
+							<td class="neos-priority2">&nbsp;</td>
+							<td class="neos-priority3">&nbsp;</td>
+							<td class="neos-priority3">&nbsp;</td>
+							<td class="neos-priority1 neos-aRight">
+								<i class="fold-toggle icon-chevron-up icon-white" data-toggle="fold-{packageGroup}"></i>
+							</td>
+						</tr>
+						<f:for each="{packages}" key="packageKey" as="package">
+							<tr class="fold-{packageGroup}{f:if(condition: package.isActive, else: ' muted')}"{f:if(condition: package.description, then: ' title="{package.description}"')} data-neos-toggle="tooltip">
+								<td class="check neos-priority1">
+									<label for="{packageKey}" class="neos-checkbox">
+										<f:form.checkbox name="packageKeys[]" value="{packageKey}" id="{packageKey}" /><span></span>
+									</label>
+								</td>
+								<td class="package-name neos-priority1">
+									<label for="{packageKey}">
+										<span class="neos-label">{package.name}</span>
+										<f:if condition="{package.isActive}">
+											<f:else>
+												<span class="neos-badge neos-badge-warning">{neos:backend.translate(id: 'packages.deactivated', source: 'Modules', package: 'Neos.Neos')}</span>
+											</f:else>
+										</f:if>
+									</label>
+								</td>
+								<td class="package-version neos-priority2">
+									<label for="{packageKey}">
+										{f:if(condition: package.version, then: '{package.version}', else: '&nbsp;')}
+									</label>
+								</td>
+								<td class="package-key neos-priority3">
+									<label for="{packageKey}"">
+										<span class="neos-label">{packageKey}</span>
+									</label>
+								</td>
+								<td class="package-type neos-priority3">
+									<label for="{packageKey}">
+										<span class="neos-label">{package.type}</span>
+									</label>
+								</td>
+								<td class="neos-action neos-priority1">
+									<f:if condition="{package.isActive}">
+										<f:then>
+											<f:if condition="{isDevelopmentContext}">
+												<f:if condition="{package.isFrozen}">
+													<f:then>
+														<f:link.action action="unfreeze" class="neos-button neos-button-freeze neos-active" arguments="{packageKey: packageKey}" title="{neos:backend.translate(id: 'packages.tooltip.unfreeze', source: 'Modules', package: 'Neos.Neos')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
+															<i class="icon-asterisk icon-white"></i>
+														</f:link.action>
+													</f:then>
+													<f:else>
+														<f:link.action action="freeze" class="neos-button neos-button-freeze" arguments="{packageKey: packageKey}" title="{neos:backend.translate(id: 'packages.tooltip.freeze', source: 'Modules', package: 'Neos.Neos')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
+															<i class="icon-asterisk icon-white"></i>
+														</f:link.action>
+													</f:else>
+												</f:if>
+											</f:if>
+											<f:if condition="{package.isProtected}">
+												<f:then>
+													<button class="neos-button neos-button-warning neos-disabled" title="{neos:backend.translate(id: 'packages.tooltip.noDeactivate', source: 'Modules', package: 'Neos.Neos')}" disabled="disabled" data-neos-toggle="tooltip">
+														<i class="icon-pause icon-white"></i>
+													</button>
+												</f:then>
+												<f:else>
+													<f:link.action action="deactivate" class="neos-button neos-button-warning" arguments="{packageKey: packageKey}" title="{neos:backend.translate(id: 'packages.tooltip.deactivate', source: 'Modules', package: 'Neos.Neos')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
+														<i class="icon-pause icon-white"></i>
+													</f:link.action>
+												</f:else>
+											</f:if>
+										</f:then>
+										<f:else>
+											<f:link.action action="activate" class="neos-button neos-button-success" arguments="{packageKey: packageKey}" title="{neos:backend.translate(id: 'packages.tooltip.activate', source: 'Modules', package: 'Neos.Neos')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
+												<i class="icon-play icon-white"></i>
+											</f:link.action>
+										</f:else>
+									</f:if>
+									<f:if condition="{package.isProtected}">
+										<f:then>
+											<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'packages.tooltip.noDelete', source: 'Modules', package: 'Neos.Neos')}" disabled="disabled" data-neos-toggle="tooltip"><i class="icon-trash icon-white"></i></button>
+										</f:then>
+										<f:else>
+											<button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'packages.tooltip.delete', source: 'Modules', package: 'Neos.Neos')}" data-toggle="modal" href="#{package.sanitizedPackageKey}" data-neos-toggle="tooltip"><i class="icon-trash icon-white"></i></button>
+											<div class="neos-hide" id="{package.sanitizedPackageKey}">
+												<div class="neos-modal-centered">
+													<div class="neos-modal-content">
+														<div class="neos-modal-header">
+															<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+															<div class="neos-header">
+																<neos:backend.translate id="packages.message.reallyDelete" arguments="{0: packageKey}" source="Modules" package="Neos.Neos" />
+															</div>
+															<div class="neos-subheader">
+																<neos:backend.translate id="operationCannotBeUndone" package="Neos.Neos" />
+															</div>
+														</div>
+														<div class="neos-modal-footer">
+															<a href="#" class="neos-button" data-dismiss="modal"><neos:backend.translate id="cancel" package="Neos.Neos" /></a>
+															<f:link.action action="delete" class="neos-button neos-button-danger" arguments="{packageKey: packageKey}" title="Delete" additionalAttributes="{data-neos-toggle: 'tooltip'}"><neos:backend.translate id="packages.message.confirmDelete" source="Modules" package="Neos.Neos" /></f:link.action>
+														</div>
+													</div>
+												</div>
+												<div class="neos-modal-backdrop neos-in"></div>
+											</div>
+										</f:else>
+									</f:if>
+								</td>
+							</tr>
+						</f:for>
+					</f:for>
+				</tbody>
+			</table>
+		</div>
+		<div class="neos-footer">
+			<f:if condition="{isDevelopmentContext}">
+				<button type="submit" name="moduleArguments[action]" value="freeze" class="neos-button batch-action neos-disabled" disabled="disabled">
+					<neos:backend.translate id="packages.selected.freeze" source="Modules" package="Neos.Neos" />
+				</button>
+				<button type="submit" name="moduleArguments[action]" value="unfreeze" class="neos-button batch-action neos-disabled" disabled="disabled">
+					<neos:backend.translate id="packages.selected.unfreeze" source="Modules" package="Neos.Neos" />
+				</button>
+			</f:if>
+			<button class="neos-button neos-button-danger batch-action neos-disabled" data-toggle="modal" href="#delete" disabled="disabled">
+				<neos:backend.translate id="packages.selected.delete" source="Modules" package="Neos.Neos" />
+			</button>
+			<button type="submit" name="moduleArguments[action]" value="deactivate" class="neos-button neos-button-warning batch-action neos-disabled" disabled="disabled">
+				<neos:backend.translate id="packages.selected.deactivate" source="Modules" package="Neos.Neos" />
+			</button>
+			<button type="submit" name="moduleArguments[action]" value="activate" class="neos-button neos-button-success batch-action neos-disabled" disabled="disabled">
+				<neos:backend.translate id="packages.selected.activate" source="Modules" package="Neos.Neos" />
+			</button>
+		</div>
+		<div class="neos-hide" id="delete">
+			<div class="neos-modal-centered">
+				<div class="neos-modal-content">
+					<div class="neos-modal-header">
+						<button type="button" class="neos-close" data-dismiss="modal"></button>
+						<div class="neos-header">
+							<neos:backend.translate id="packages.message.selected.reallyDelete" source="Modules" package="Neos.Neos" />
+						</div>
+						<div class="neos-subheader">
+							<neos:backend.translate id="operationCannotBeUndone" package="Neos.Neos" />
+						</div>
+					</div>
+					<div class="neos-modal-footer">
+						<a href="#" class="neos-button" data-dismiss="modal"><neos:backend.translate id="cancel" package="Neos.Neos" /></a>
+						<button type="submit" name="moduleArguments[action]" value="delete" class="neos-button neos-button-danger">
+							<neos:backend.translate id="packages.message.confirmDeletes" source="Modules" package="Neos.Neos" />
+						</button>
+					</div>
+				</div>
+			</div>
+			<div class="neos-modal-backdrop neos-in"></div>
+		</div>
+	</f:form>
+
+	<script>
+		(function($) {
+			$('#check-all').change(function() {
+				var value = false;
+				if ($(this).is(':checked')) {
+					value = true;
+					$('.batch-action').removeClass('neos-disabled').removeAttr('disabled');
+				} else {
+					$('.batch-action').addClass('neos-disabled').attr('disabled', 'disabled');
+				}
+				$('tbody input[type="checkbox"]').prop('checked', value);
+			});
+			$('tbody input[type="checkbox"]').change(function() {
+				if ($('tbody input[type="checkbox"]:checked').length > 0) {
+					$('.batch-action').removeClass('neos-disabled').removeAttr('disabled')
+				} else {
+					$('.batch-action').addClass('neos-disabled').attr('disabled', 'disabled');
+				}
+			});
+			$('.fold-toggle').click(function() {
+				$(this).toggleClass('icon-chevron-down icon-chevron-up');
+				$('tr.' + $(this).data('toggle')).toggle();
+			});
+		})(jQuery);
+	</script>
+</f:section>

@@ -1,0 +1,214 @@
+{
+	"types":{
+		"typo3:Neos.Neos:ContentObject":{
+			"label":"Abstract content object",
+			"id":"typo3:Neos.Neos:ContentObject",
+			"properties":[
+
+			],
+			"specific_properties":[
+				"typo3:_hidden"
+			],
+			"subtypes":[
+				"typo3:Neos.Neos:MyFinalType",
+				"typo3:Neos.Neos:AbstractType",
+				"typo3:Neos.Neos:Text",
+				"typo3:Neos.Neos:TextWithImage"
+			],
+			"metadata":{
+				"ui":{
+					"label":"Abstract content object"
+				},
+				"abstract":true
+			},
+			"supertypes":[
+
+			],
+			"url":"http:\/\/www.typo3.org\/ns\/2012\/Flow\/Packages\/Neos\/Content\/",
+			"ancestors":[
+
+			],
+			"comment":"",
+			"comment_plain":""
+		},
+		"typo3:Neos.Neos:MyFinalType":{
+			"label":"Abstract content object",
+			"id":"typo3:Neos.Neos:MyFinalType",
+			"properties":[
+
+			],
+			"specific_properties":[
+				"typo3:_hidden"
+			],
+			"subtypes":[
+
+			],
+			"metadata":{
+				"ui":{
+					"label":"Abstract content object"
+				}
+			},
+			"supertypes":[
+				"typo3:Neos.Neos:ContentObject"
+			],
+			"url":"http:\/\/www.typo3.org\/ns\/2012\/Flow\/Packages\/Neos\/Content\/",
+			"ancestors":[
+				"typo3:Neos.Neos:ContentObject"
+			],
+			"comment":"",
+			"comment_plain":""
+		},
+		"typo3:Neos.Neos:AbstractType":{
+			"label":"Abstract type",
+			"id":"typo3:Neos.Neos:AbstractType",
+			"properties":[
+
+			],
+			"specific_properties":[
+				"typo3:_hidden"
+			],
+			"subtypes":[
+
+			],
+			"metadata":{
+				"ui":{
+					"label":"Abstract type"
+				},
+				"abstract":true
+			},
+			"supertypes":[
+				"typo3:Neos.Neos:ContentObject"
+			],
+			"url":"http:\/\/www.typo3.org\/ns\/2012\/Flow\/Packages\/Neos\/Content\/",
+			"ancestors":[
+				"typo3:Neos.Neos:ContentObject"
+			],
+			"comment":"",
+			"comment_plain":""
+		},
+		"typo3:Neos.Neos:Text":{
+			"label":"Text",
+			"id":"typo3:Neos.Neos:Text",
+			"properties":[
+
+			],
+			"specific_properties":[
+				"typo3:_hidden",
+				"typo3:headline",
+				"typo3:text"
+			],
+			"subtypes":[
+				"typo3:Neos.Neos:TextWithImage"
+			],
+			"metadata":{
+				"ui":{
+					"label":"Text"
+				}
+			},
+			"supertypes":[
+				"typo3:Neos.Neos:ContentObject"
+			],
+			"url":"http:\/\/www.typo3.org\/ns\/2012\/Flow\/Packages\/Neos\/Content\/",
+			"ancestors":[
+				"typo3:Neos.Neos:ContentObject"
+			],
+			"comment":"",
+			"comment_plain":""
+		},
+		"typo3:Neos.Neos:TextWithImage":{
+			"label":"Text with image",
+			"id":"typo3:Neos.Neos:TextWithImage",
+			"properties":[
+
+			],
+			"specific_properties":[
+				"typo3:_hidden",
+				"typo3:headline",
+				"typo3:text",
+				"typo3:image"
+			],
+			"subtypes":[
+
+			],
+			"metadata":{
+				"ui":{
+					"label":"Text with image"
+				}
+			},
+			"supertypes":[
+				"typo3:Neos.Neos:Text"
+			],
+			"url":"http:\/\/www.typo3.org\/ns\/2012\/Flow\/Packages\/Neos\/Content\/",
+			"ancestors":[
+				"typo3:Neos.Neos:Text",
+				"typo3:Neos.Neos:ContentObject"
+			],
+			"comment":"",
+			"comment_plain":""
+		}
+	},
+	"properties":{
+		"typo3:_hidden":{
+			"comment":"typo3:_hidden",
+			"comment_plain":"typo3:_hidden",
+			"domains":[
+				"typo3:Neos.Neos:ContentObject",
+				"typo3:Neos.Neos:MyFinalType",
+				"typo3:Neos.Neos:AbstractType",
+				"typo3:Neos.Neos:Text",
+				"typo3:Neos.Neos:TextWithImage"
+			],
+			"id":"typo3:_hidden",
+			"label":"typo3:_hidden",
+			"ranges":[
+
+			],
+			"min":0,
+			"max":-1
+		},
+		"typo3:headline":{
+			"comment":"typo3:headline",
+			"comment_plain":"typo3:headline",
+			"domains":[
+				"typo3:Neos.Neos:Text",
+				"typo3:Neos.Neos:TextWithImage"
+			],
+			"id":"typo3:headline",
+			"label":"typo3:headline",
+			"ranges":[
+
+			],
+			"min":0,
+			"max":-1
+		},
+		"typo3:text":{
+			"comment":"typo3:text",
+			"comment_plain":"typo3:text",
+			"domains":[
+				"typo3:Neos.Neos:Text",
+				"typo3:Neos.Neos:TextWithImage"
+			],
+			"id":"typo3:text",
+			"label":"typo3:text",
+			"ranges":[
+
+			],
+			"min":0,
+			"max":-1
+		},
+		"typo3:image":{
+			"comment":"typo3:image",
+			"comment_plain":"typo3:image",
+			"domains":[
+				"typo3:Neos.Neos:TextWithImage"
+			],
+			"id":"typo3:image",
+			"label":"typo3:image",
+			"ranges":[
+
+			],
+			"min":0,
+			"max":-1
+		}
+	}
+}
