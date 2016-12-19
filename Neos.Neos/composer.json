@@ -103,7 +103,8 @@
             "Neos.Neos-20161125122412",
             "TYPO3.FluidAdaptor-20161130112935",
             "Neos.Fusion-20161201202543",
-            "Neos.Neos-20161201222211"
+            "Neos.Neos-20161201222211",
+            "Neos.Fusion-20161202215034"
         ]
     }
 }
