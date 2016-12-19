@@ -1,4 +1,4 @@
-TYPO3_Media_ImageSize:
+Neos_Media_ImageSize:
   frontend: Neos\Cache\Frontend\VariableFrontend
   backend: Neos\Cache\Backend\SimpleFileBackend
   backendOptions:

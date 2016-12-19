@@ -67,6 +67,6 @@ class AccountPostEventListener
      */
     protected function flushConfigurationCache()
     {
-        $this->cacheManager->getCache('TYPO3_Neos_Configuration_Version')->flush();
+        $this->cacheManager->getCache('Neos_Neos_Configuration_Version')->flush();
     }
 }

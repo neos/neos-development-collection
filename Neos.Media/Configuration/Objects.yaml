@@ -9,7 +9,7 @@ Neos\Media\Domain\Service\ImageService:
         factoryMethodName: getCache
         arguments:
           1:
-            value: TYPO3_Media_ImageSize
+            value: Neos_Media_ImageSize
 
 # This is just to have a fallback default, you will probably want to create a ImageInterface type converter that converts to your implementation.
 Neos\Media\Domain\Model\ImageInterface:
