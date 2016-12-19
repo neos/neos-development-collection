@@ -16,17 +16,17 @@ use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\FusionService;
-use Neos\Neos\View\TypoScriptView;
+use Neos\Neos\View\FusionView;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Fusion\Core\Runtime;
 
 /**
- * Testcase for the TypoScript View
+ * Testcase for the Fusion View
  *
  */
-class TypoScriptViewTest extends UnitTestCase
+class FusionViewTest extends UnitTestCase
 {
     /**
      * @var ContentContext
@@ -39,7 +39,7 @@ class TypoScriptViewTest extends UnitTestCase
     protected $mockSecurityContext;
 
     /**
-     * @var TypoScriptView
+     * @var FusionView
      */
     protected $mockView;
 
@@ -80,7 +80,7 @@ class TypoScriptViewTest extends UnitTestCase
         $mockFusionService = $this->createMock(FusionService::class);
         $mockFusionService->expects($this->any())->method('createRuntime')->will($this->returnValue($this->mockRuntime));
 
-        $this->mockView = $this->getAccessibleMock(TypoScriptView::class, array('getClosestDocumentNode'));
+        $this->mockView = $this->getAccessibleMock(FusionView::class, array('getClosestDocumentNode'));
         $this->mockView->expects($this->any())->method('getClosestDocumentNode')->will($this->returnValue($this->mockContextualizedNode));
 
         $this->inject($this->mockView, 'controllerContext', $mockControllerContext);
@@ -96,7 +96,7 @@ class TypoScriptViewTest extends UnitTestCase
      */
     public function attemptToRenderWithoutNodeInformationAtAllThrowsException()
     {
-        $view = $this->getAccessibleMock(TypoScriptView::class, array('dummy'));
+        $view = $this->getAccessibleMock(FusionView::class, array('dummy'));
         $view->render();
     }
 
@@ -106,7 +106,7 @@ class TypoScriptViewTest extends UnitTestCase
      */
     public function attemptToRenderWithInvalidNodeInformationThrowsException()
     {
-        $view = $this->getAccessibleMock(TypoScriptView::class, array('dummy'));
+        $view = $this->getAccessibleMock(FusionView::class, array('dummy'));
         $view->_set('variables', array('value' => 'foo'));
         $view->render();
     }
@@ -114,7 +114,7 @@ class TypoScriptViewTest extends UnitTestCase
     /**
      * @test
      */
-    public function renderPutsSiteNodeInTypoScriptContext()
+    public function renderPutsSiteNodeInFusionContext()
     {
         $this->setUpMockView();
         $this->mockRuntime->expects($this->once())->method('pushContextArray')->with($this->arrayHasKey('site'));
@@ -151,7 +151,7 @@ class TypoScriptViewTest extends UnitTestCase
 
         $mockSecurityContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
-        $view = $this->getAccessibleMock(TypoScriptView::class, array('getClosestDocumentNode'));
+        $view = $this->getAccessibleMock(FusionView::class, array('getClosestDocumentNode'));
         $view->expects($this->any())->method('getClosestDocumentNode')->will($this->returnValue($mockContextualizedNode));
 
         $this->inject($view, 'securityContext', $mockSecurityContext);
