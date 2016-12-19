@@ -11,7 +11,7 @@ class AbstractRenderingExceptionHandler extends \Neos\Fusion\Core\ExceptionHandl
     /**
      * @var string
      */
-    protected $typoScriptPath;
+    protected $fusionPath;
 
     /**
      * @var \Exception
@@ -58,23 +58,32 @@ class AbstractRenderingExceptionHandler extends \Neos\Fusion\Core\ExceptionHandl
 
     /**
      * @return mixed
+     * @deprecated
      */
     public function getTypoScriptPath()
     {
-        return $this->typoScriptPath;
+        return $this->fusionPath;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFusionPath()
+    {
+        return $this->fusionPath;
     }
 
     /**
      * dummy implementation of message-generation-stub
      *
-     * @param string $typoScriptPath path causing the exception
+     * @param string $fusionPath path causing the exception
      * @param \Exception $exception exception to handle
      * @param integer $referenceCode reference code for the exception
      * @return string
      */
-    protected function handle($typoScriptPath, \Exception $exception, $referenceCode = null)
+    protected function handle($fusionPath, \Exception $exception, $referenceCode = null)
     {
-        $this->typoScriptPath = $typoScriptPath;
+        $this->fusionPath = $fusionPath;
         $this->exception = $exception;
         $this->referenceCode = $referenceCode;
         return $this->message;

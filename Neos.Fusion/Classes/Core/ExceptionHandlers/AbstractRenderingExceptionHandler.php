@@ -53,36 +53,36 @@ abstract class AbstractRenderingExceptionHandler
     /**
      * Handle an Exception thrown while rendering TypoScript
      *
-     * @param string $typoScriptPath
+     * @param string $fusionPath
      * @param \Exception $exception
      * @return string
      * @throws StopActionException|SecurityException
      */
-    public function handleRenderingException($typoScriptPath, \Exception $exception)
+    public function handleRenderingException($fusionPath, \Exception $exception)
     {
         if ($exception instanceof StopActionException || $exception instanceof SecurityException) {
             throw $exception;
         }
         if ($exception instanceof Exceptions\RuntimeException) {
-            $typoScriptPath = $exception->getTypoScriptPath();
+            $fusionPath = $exception->getFusionPath();
             $exception = $exception->getPrevious();
         }
-        if ($this->exceptionDisablesCache($typoScriptPath, $exception)) {
+        if ($this->exceptionDisablesCache($fusionPath, $exception)) {
             $this->runtime->setEnableContentCache(false);
         }
         $referenceCode = ($exception instanceof \Neos\Flow\Exception) ? $exception->getReferenceCode() : null;
-        return $this->handle($typoScriptPath, $exception, $referenceCode);
+        return $this->handle($fusionPath, $exception, $referenceCode);
     }
 
     /**
      * Handles an Exception thrown while rendering TypoScript
      *
-     * @param string $typoScriptPath path causing the exception
+     * @param string $fusionPath path causing the exception
      * @param \Exception $exception exception to handle
      * @param integer $referenceCode
      * @return string
      */
-    abstract protected function handle($typoScriptPath, \Exception $exception, $referenceCode);
+    abstract protected function handle($fusionPath, \Exception $exception, $referenceCode);
 
     /**
      * breaks the given path to multiple line to allow a nicer formatted logging
@@ -97,18 +97,18 @@ abstract class AbstractRenderingExceptionHandler
      *        content/
      *        main<ContentCollection>'
      *
-     * @param string $typoScriptPath path to format
+     * @param string $fusionPath path to format
      * @param string $delimiter path element delimiter
      * @param bool $escapeHtml indicates whether to escape html-characters in the given path
      * @return string
      */
-    protected function formatScriptPath($typoScriptPath, $delimiter, $escapeHtml = true)
+    protected function formatScriptPath($fusionPath, $delimiter, $escapeHtml = true)
     {
         if ($escapeHtml) {
-            $typoScriptPath = htmlspecialchars($typoScriptPath);
+            $fusionPath = htmlspecialchars($fusionPath);
         }
         // TODO: hardcoded parsing?! where is the library for that
-        $elements = explode('/', $typoScriptPath);
+        $elements = explode('/', $fusionPath);
 
         return implode('/' . $delimiter, $elements);
     }
@@ -116,11 +116,11 @@ abstract class AbstractRenderingExceptionHandler
     /**
      * Can be used to determine if handling the exception should disable the cache or not.
      *
-     * @param string $typoScriptPath The typoScriptPath that triggered the Exception
+     * @param string $fusionPath The Fusion-Path that triggered the Exception
      * @param \Exception $exception
      * @return boolean Should caching be disabled?
      */
-    protected function exceptionDisablesCache($typoScriptPath, \Exception $exception)
+    protected function exceptionDisablesCache($fusionPath, \Exception $exception)
     {
         return true;
     }

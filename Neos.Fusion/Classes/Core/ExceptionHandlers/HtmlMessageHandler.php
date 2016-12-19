@@ -28,17 +28,17 @@ class HtmlMessageHandler extends AbstractRenderingExceptionHandler
     /**
      * Renders the exception in HTML for display
      *
-     * @param string $typoScriptPath path causing the exception
+     * @param string $fusionPath path causing the exception
      * @param \Exception $exception exception to handle
      * @param integer $referenceCode
      * @return string
      */
-    protected function handle($typoScriptPath, \Exception $exception, $referenceCode)
+    protected function handle($fusionPath, \Exception $exception, $referenceCode)
     {
         $messageArray = array(
             'header' => 'An exception was thrown while Neos tried to render your page',
             'content' => htmlspecialchars($exception->getMessage()),
-            'stacktrace' => $this->formatTypoScriptPath($typoScriptPath),
+            'stacktrace' => $this->formatFusionPath($fusionPath),
             'referenceCode' => $this->formatErrorCodeMessage($referenceCode)
         );
 
@@ -90,11 +90,11 @@ class HtmlMessageHandler extends AbstractRenderingExceptionHandler
      * @param string $typoScriptPath
      * @return string Multi-line stack trace for the given TypoScript path
      */
-    protected function formatTypoScriptPath($typoScriptPath)
+    protected function formatFusionPath($fusionPath)
     {
         $pathSegments = array();
         $spacer = '';
-        foreach (explode('/', $typoScriptPath) as $segment) {
+        foreach (explode('/', $fusionPath) as $segment) {
             $pathSegments[] = $spacer . $segment . '/';
             $spacer .= ' ';
         }

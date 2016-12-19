@@ -29,12 +29,12 @@ class ContextDependentHandler extends AbstractRenderingExceptionHandler
     /**
      * Handle an exception depending on the context with an HTML message or XML comment
      *
-     * @param array $typoScriptPath path causing the exception
+     * @param array $fusionPath path causing the exception
      * @param \Exception $exception exception to handle
      * @param integer $referenceCode
      * @return string
      */
-    protected function handle($typoScriptPath, \Exception $exception, $referenceCode)
+    protected function handle($fusionPath, \Exception $exception, $referenceCode)
     {
         $context = $this->environment->getContext();
         if ($context->isDevelopment()) {
@@ -43,6 +43,6 @@ class ContextDependentHandler extends AbstractRenderingExceptionHandler
             $handler = new XmlCommentHandler();
         }
         $handler->setRuntime($this->getRuntime());
-        return $handler->handleRenderingException($typoScriptPath, $exception);
+        return $handler->handleRenderingException($fusionPath, $exception);
     }
 }
