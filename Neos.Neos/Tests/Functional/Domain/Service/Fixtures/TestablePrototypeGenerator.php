@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Tests\Functional\Domain\Service\Fixtures;
+namespace Neos\Neos\Tests\Functional\Domain\Service\Fixtures;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,9 +11,9 @@ namespace TYPO3\Neos\Tests\Functional\Domain\Service\Fixtures;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Neos\Domain\Service\DefaultPrototypeGeneratorInterface;
-use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Domain\Service\DefaultPrototypeGeneratorInterface;
+use Neos\ContentRepository\Domain\Model\NodeType;
 
 /**
  * A testable prototype generator

@@ -1,8 +1,8 @@
 <?php
-namespace TYPO3\Neos\Tests\Functional\Domain\Service;
+namespace Neos\Neos\Tests\Functional\Domain\Service;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,22 +13,22 @@ namespace TYPO3\Neos\Tests\Functional\Domain\Service;
 
 use ReflectionMethod;
 use Symfony\Component\Yaml\Parser as YamlParser;
-use TYPO3\Flow\Tests\FunctionalTestCase;
-use TYPO3\Neos\Domain\Service\TypoScriptService;
-use TYPO3\Neos\Tests\Functional\Domain\Service\Fixtures\TestablePrototypeGenerator;
-use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
+use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Neos\Domain\Service\FusionService;
+use Neos\Neos\Tests\Functional\Domain\Service\Fixtures\TestablePrototypeGenerator;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 
 /**
- * Tests for the TypoScriptService
+ * Tests for the TypoFusionService
  */
-class TypoScriptServiceTest extends FunctionalTestCase
+class FusionServiceTest extends FunctionalTestCase
 {
     const FIXTURE_FILE_NAME = 'Fixtures/NodeTypes.yaml';
 
     /**
-     * @var TypoScriptService
+     * @var FusionService
      */
-    protected $typoScriptService;
+    protected $fusionService;
 
     /**
      * @var NodeTypeManager
@@ -50,7 +50,6 @@ class TypoScriptServiceTest extends FunctionalTestCase
      */
     protected $expectedPrototypeGenerator;
 
-
     /**
      * @return void
      */
@@ -58,7 +57,7 @@ class TypoScriptServiceTest extends FunctionalTestCase
     {
         parent::setUp();
 
-        $this->typoScriptService = $this->objectManager->get(TypoScriptService::class);
+        $this->fusionService = $this->objectManager->get(FusionService::class);
         $this->expectedPrototypeGenerator = $this->objectManager->get(TestablePrototypeGenerator::class);
         $this->yamlParser = $this->objectManager->get(YamlParser::class);
         $this->originalNodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
@@ -79,11 +78,11 @@ class TypoScriptServiceTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException \TYPO3\Neos\Domain\Exception
+     * @expectedException \Neos\Neos\Domain\Exception
      */
     public function generateTypoScriptForNodeThrowsExceptionForInvalidFusionPrototypeGenerator()
     {
-        $this->invokeGenerateTypoScriptForNodeType('TYPO3.Neos:NodeTypeWithInvalidFusionPrototypeGenerator');
+        $this->invokeGenerateFusionForNodeType('Neos.Neos:NodeTypeWithInvalidFusionPrototypeGenerator');
     }
 
     /**
@@ -91,7 +90,7 @@ class TypoScriptServiceTest extends FunctionalTestCase
      */
     public function generateTypoScriptForNodeDoesNotUseFusionPrototypeGeneratorWithoutConfiguration()
     {
-        $this->invokeGenerateTypoScriptForNodeType('TYPO3.Neos:NodeTypeWithoutFusionPrototypeGenerator');
+        $this->invokeGenerateFusionForNodeType('Neos.Neos:NodeTypeWithoutFusionPrototypeGenerator');
         $this->assertSame(0, $this->expectedPrototypeGenerator->getCallCount());
     }
 
@@ -100,7 +99,7 @@ class TypoScriptServiceTest extends FunctionalTestCase
      */
     public function generateTypoScriptForNodeUsesDirectlyConfiguredFusionPrototypeGenerator()
     {
-        $this->invokeGenerateTypoScriptForNodeType('TYPO3.Neos:NodeTypeWithPrototypeGenerator');
+        $this->invokeGenerateFusionForNodeType('Neos.Neos:NodeTypeWithPrototypeGenerator');
         $this->assertSame(1, $this->expectedPrototypeGenerator->getCallCount());
     }
 
@@ -109,7 +108,7 @@ class TypoScriptServiceTest extends FunctionalTestCase
      */
     public function generateTypoScriptForNodeUsesInheritedFusionPrototypeGenerator()
     {
-        $this->invokeGenerateTypoScriptForNodeType('TYPO3.Neos:NodeTypeWithInheritedPrototypeGenerator');
+        $this->invokeGenerateFusionForNodeType('Neos.Neos:NodeTypeWithInheritedPrototypeGenerator');
         $this->assertSame(1, $this->expectedPrototypeGenerator->getCallCount());
     }
 
@@ -117,14 +116,14 @@ class TypoScriptServiceTest extends FunctionalTestCase
      * @param $nodeTypeName
      * @return void
      */
-    protected function invokeGenerateTypoScriptForNodeType($nodeTypeName)
+    protected function invokeGenerateFusionForNodeType($nodeTypeName)
     {
         $method = new ReflectionMethod(
-            TypoScriptService::class, 'generateTypoScriptForNodeType'
+            FusionService::class, 'generateFusionForNodeType'
         );
 
         $method->setAccessible(true);
 
-        $method->invoke($this->typoScriptService, $this->mockNodeTypeManager->getNodeType($nodeTypeName));
+        $method->invoke($this->fusionService, $this->mockNodeTypeManager->getNodeType($nodeTypeName));
     }
 }
