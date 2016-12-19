@@ -27,4 +27,4 @@
         factoryMethodName: getCache
         arguments:
           1:
-            value: TYPO3_TYPO3CR_FullNodeTypeConfiguration
+            value: Neos_ContentRepository_FullNodeTypeConfiguration
