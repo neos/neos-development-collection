@@ -63,7 +63,7 @@ class ProcessorTest extends AbstractFusionObjectTest
     public function processorsCanBeUnset($path)
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath($path);
+        $view->setFusionPath($path);
         $this->assertEquals('Foobaz', $view->render());
     }
 

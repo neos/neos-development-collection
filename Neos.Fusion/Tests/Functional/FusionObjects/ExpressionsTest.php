@@ -35,7 +35,7 @@ class ExpressionsTest extends AbstractFusionObjectTest
     public function expressionsWork($path, $expected)
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath($path);
+        $view->setFusionPath($path);
         $view->assign('foo', 'Bar');
         $this->assertSame($expected, $view->render());
     }

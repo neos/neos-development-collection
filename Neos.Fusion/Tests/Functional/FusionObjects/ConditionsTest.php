@@ -48,7 +48,7 @@ class ConditionsTest extends AbstractFusionObjectTest
     public function conditionsWork($path, $expected)
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath($path);
+        $view->setFusionPath($path);
         $view->assign('foo', 'Foo');
         $this->assertSame($expected, $view->render());
     }
@@ -72,7 +72,7 @@ class ConditionsTest extends AbstractFusionObjectTest
     public function everythingButFalseIsEvaluated($conditionValue, $expected)
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('conditions/variableCondition');
+        $view->setFusionPath('conditions/variableCondition');
         $view->assign('condition', $conditionValue);
         $this->assertSame($expected, $view->render());
     }
@@ -83,7 +83,7 @@ class ConditionsTest extends AbstractFusionObjectTest
     public function conditionsInFusionObjectsWithSubEvaluationUsedInProcessorRenderCorrectly()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('conditions/supportForTypoScriptObjectWithSubEvaluationUsedInProcessor');
+        $view->setFusionPath('conditions/supportForTypoScriptObjectWithSubEvaluationUsedInProcessor');
         $this->assertEquals('basic appended', $view->render());
     }
 }
