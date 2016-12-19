@@ -1,2 +1,2 @@
-TYPO3_TYPO3CR_FullNodeTypeConfiguration:
+Neos_ContentRepository_FullNodeTypeConfiguration:
   backend: Neos\Cache\Backend\SimpleFileBackend
