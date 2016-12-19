@@ -24,7 +24,7 @@ class FusionArrayTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
 
-        $view->setTypoScriptPath('array/basicOrdering');
+        $view->setFusionPath('array/basicOrdering');
         $this->assertEquals('Xtest10Xtest100', $view->render());
     }
 
@@ -35,7 +35,7 @@ class FusionArrayTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
 
-        $view->setTypoScriptPath('array/positionalOrdering');
+        $view->setFusionPath('array/positionalOrdering');
         $this->assertEquals('XbeforeXmiddleXafter', $view->render());
     }
 
@@ -46,7 +46,7 @@ class FusionArrayTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
 
-        $view->setTypoScriptPath('array/startEndOrdering');
+        $view->setFusionPath('array/startEndOrdering');
         $this->assertEquals('XbeforeXmiddleXafter', $view->render());
     }
 
@@ -57,7 +57,7 @@ class FusionArrayTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
 
-        $view->setTypoScriptPath('array/advancedStartEndOrdering');
+        $view->setFusionPath('array/advancedStartEndOrdering');
         $this->assertEquals('XeXdXfoobarXfXgX100XbXaXc', $view->render());
     }
 
@@ -68,7 +68,7 @@ class FusionArrayTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
 
-        $view->setTypoScriptPath('array/ignoreProperties');
+        $view->setFusionPath('array/ignoreProperties');
         $this->assertEquals('XbeforeXafter', $view->render());
     }
 }

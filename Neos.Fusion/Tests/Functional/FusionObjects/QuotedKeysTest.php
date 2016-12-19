@@ -23,7 +23,7 @@ class QuotedKeysTest extends AbstractFusionObjectTest
     public function mulitpleKeysWorks()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('quotedKeys/multipleKeys');
+        $view->setFusionPath('quotedKeys/multipleKeys');
         $result = $view->render();
 
         $this->assertSame(count($result), 6);
@@ -38,7 +38,7 @@ class QuotedKeysTest extends AbstractFusionObjectTest
     public function singleQuotedWorks()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('quotedKeys/single');
+        $view->setFusionPath('quotedKeys/single');
         $this->assertSame($view->render(), 1);
     }
 
@@ -48,7 +48,7 @@ class QuotedKeysTest extends AbstractFusionObjectTest
     public function doubleQuotedWorks()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('quotedKeys/double');
+        $view->setFusionPath('quotedKeys/double');
         $this->assertSame($view->render(), 1);
     }
 
@@ -58,7 +58,7 @@ class QuotedKeysTest extends AbstractFusionObjectTest
     public function nestedQuotedWorks()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('quotedKeys/nested/keys');
+        $view->setFusionPath('quotedKeys/nested/keys');
         $this->assertSame($view->render(), 1);
     }
 
@@ -68,7 +68,7 @@ class QuotedKeysTest extends AbstractFusionObjectTest
     public function specialCharactersWorks()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('quotedKeys/@special/_!');
+        $view->setFusionPath('quotedKeys/@special/_!');
         $this->assertSame($view->render(), 1);
     }
 
@@ -78,7 +78,7 @@ class QuotedKeysTest extends AbstractFusionObjectTest
     public function prototypeAndQuotedKeysWorks()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('quotedKeys/prototype/test');
+        $view->setFusionPath('quotedKeys/prototype/test');
         $this->assertSame($view->render(), 'X1');
     }
 }

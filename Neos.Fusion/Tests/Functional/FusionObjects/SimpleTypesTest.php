@@ -39,9 +39,9 @@ class SimpleTypesTest extends AbstractFusionObjectTest
     public function booleanSimpleTypeWorks()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('simpleTypes/booleanFalse');
+        $view->setFusionPath('simpleTypes/booleanFalse');
         $this->assertSame(false, $view->render());
-        $view->setTypoScriptPath('simpleTypes/booleanTrue');
+        $view->setFusionPath('simpleTypes/booleanTrue');
         $this->assertTrue($view->render());
     }
 
@@ -51,7 +51,7 @@ class SimpleTypesTest extends AbstractFusionObjectTest
     public function nullSimpleTypeWorks()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('simpleTypes/null');
+        $view->setFusionPath('simpleTypes/null');
         $this->assertNull($view->render());
     }
 
@@ -61,7 +61,7 @@ class SimpleTypesTest extends AbstractFusionObjectTest
     public function processorOnSimpleTypeWorks()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('simpleTypes/wrappedString');
+        $view->setFusionPath('simpleTypes/wrappedString');
         $this->assertSame('Hello, Foo', $view->render());
     }
 
@@ -72,7 +72,7 @@ class SimpleTypesTest extends AbstractFusionObjectTest
     public function renderingObjectWithMissingImplementationThrowsException()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('simpleTypes/missingImplementation');
+        $view->setFusionPath('simpleTypes/missingImplementation');
         $view->render();
     }
 
@@ -83,7 +83,7 @@ class SimpleTypesTest extends AbstractFusionObjectTest
     public function renderingNonExistingPathThrowsException()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('simpleTypes/nonExistingValue');
+        $view->setFusionPath('simpleTypes/nonExistingValue');
         $view->render();
     }
 }
