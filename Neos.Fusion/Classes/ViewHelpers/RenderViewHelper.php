@@ -103,7 +103,7 @@ class RenderViewHelper extends AbstractViewHelper
         } else {
             $this->initializeFusionView();
             $this->typoScriptView->setPackageKey($typoScriptPackageKey);
-            $this->typoScriptView->setTypoScriptPath($slashSeparatedPath);
+            $this->typoScriptView->setFusionPath($slashSeparatedPath);
             if ($context !== null) {
                 $this->typoScriptView->assignMultiple($context);
             }
@@ -125,7 +125,7 @@ class RenderViewHelper extends AbstractViewHelper
         $this->typoScriptView->setControllerContext($this->controllerContext);
         $this->typoScriptView->disableFallbackView();
         if ($this->hasArgument('typoScriptFilePathPattern')) {
-            $this->typoScriptView->setTypoScriptPathPattern($this->arguments['typoScriptFilePathPattern']);
+            $this->typoScriptView->setFusionPathPattern($this->arguments['typoScriptFilePathPattern']);
         }
     }
 }

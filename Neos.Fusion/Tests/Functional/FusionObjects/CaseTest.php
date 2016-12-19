@@ -21,7 +21,7 @@ class CaseTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->assign('cond', true);
-        $view->setTypoScriptPath($path);
+        $view->setFusionPath($path);
         $this->assertEquals('Xtestconditiontrue', $view->render());
 
         $view->assign('cond', false);
@@ -46,7 +46,7 @@ class CaseTest extends AbstractFusionObjectTest
         $view->setOption('debugMode', true);
 
         $view->assign('cond', true);
-        $view->setTypoScriptPath('case/numericMatching');
+        $view->setFusionPath('case/numericMatching');
         $this->assertContains('Xtestconditiontrue', $view->render());
 
         $view->assign('cond', false);
@@ -124,7 +124,7 @@ class CaseTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
 
-        $view->setTypoScriptPath('case/rendererHasAccessToThis');
+        $view->setFusionPath('case/rendererHasAccessToThis');
         $this->assertContains('foo', $view->render());
     }
 }
