@@ -41,7 +41,7 @@ class ImageEventListener
             /** @var PersistentResource $resource */
             $resource = $eventArgs->getEntity()->getResource();
             if ($resource !== null) {
-                $this->cacheManager->getCache('TYPO3_Media_ImageSize')->remove($resource->getCacheEntryIdentifier());
+                $this->cacheManager->getCache('Neos_Media_ImageSize')->remove($resource->getCacheEntryIdentifier());
             }
         }
     }
