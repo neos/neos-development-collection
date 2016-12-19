@@ -25,9 +25,9 @@ use Neos\Fusion\Exception\RuntimeException;
 use Neos\Flow\Security\Context;
 
 /**
- * A TypoScript view for Neos
+ * A Fusion view for Neos
  */
-class TypoScriptView extends AbstractView
+class FusionView extends AbstractView
 {
     /**
      * @Flow\Inject
@@ -41,7 +41,7 @@ class TypoScriptView extends AbstractView
      * @var array
      */
     protected $supportedOptions = array(
-        'enableContentCache' => array(null, 'Flag to enable content caching inside TypoScript (overriding the global setting).', 'boolean')
+        'enableContentCache' => array(null, 'Flag to enable content caching inside Fusion (overriding the global setting).', 'boolean')
     );
 
     /**
@@ -51,16 +51,16 @@ class TypoScriptView extends AbstractView
     protected $fusionService;
 
     /**
-     * The TypoScript path to use for rendering the node given in "value", defaults to "page".
+     * The Fusion path to use for rendering the node given in "value", defaults to "page".
      *
      * @var string
      */
-    protected $typoScriptPath = 'root';
+    protected $fusionPath = 'root';
 
     /**
      * @var Runtime
      */
-    protected $typoScriptRuntime;
+    protected $fusionRuntime;
 
     /**
      * @Flow\Inject
@@ -79,7 +79,7 @@ class TypoScriptView extends AbstractView
     {
         $currentNode = $this->getCurrentNode();
         $currentSiteNode = $currentNode->getContext()->getCurrentSiteNode();
-        $typoScriptRuntime = $this->getTypoScriptRuntime($currentSiteNode);
+        $fusionRuntime = $this->getFusionRuntime($currentSiteNode);
 
         $dimensions = $currentNode->getContext()->getDimensions();
         if (array_key_exists('language', $dimensions) && $dimensions['language'] !== array()) {
@@ -88,29 +88,29 @@ class TypoScriptView extends AbstractView
             $this->i18nService->getConfiguration()->setFallbackRule(array('strict' => false, 'order' => array_reverse($dimensions['language'])));
         }
 
-        $typoScriptRuntime->pushContextArray(array(
+        $fusionRuntime->pushContextArray(array(
             'node' => $currentNode,
             'documentNode' => $this->getClosestDocumentNode($currentNode) ?: $currentNode,
             'site' => $currentSiteNode,
             'editPreviewMode' => isset($this->variables['editPreviewMode']) ? $this->variables['editPreviewMode'] : null
         ));
         try {
-            $output = $typoScriptRuntime->render($this->typoScriptPath);
-            $output = $this->mergeHttpResponseFromOutput($output, $typoScriptRuntime);
+            $output = $fusionRuntime->render($this->fusionPath);
+            $output = $this->mergeHttpResponseFromOutput($output, $fusionRuntime);
         } catch (RuntimeException $exception) {
             throw $exception->getPrevious();
         }
-        $typoScriptRuntime->popContext();
+        $fusionRuntime->popContext();
 
         return $output;
     }
 
     /**
      * @param string $output
-     * @param Runtime $typoScriptRuntime
+     * @param Runtime $fusionRuntime
      * @return string The message body without the message head
      */
-    protected function mergeHttpResponseFromOutput($output, Runtime $typoScriptRuntime)
+    protected function mergeHttpResponseFromOutput($output, Runtime $fusionRuntime)
     {
         if (substr($output, 0, 5) === 'HTTP/') {
             $endOfHeader = strpos($output, "\r\n\r\n");
@@ -120,7 +120,7 @@ class TypoScriptView extends AbstractView
                     $renderedResponse = Response::createFromRaw($header);
 
                     /** @var Response $response */
-                    $response = $typoScriptRuntime->getControllerContext()->getResponse();
+                    $response = $fusionRuntime->getControllerContext()->getResponse();
                     $response->setStatus($renderedResponse->getStatusCode());
                     foreach ($renderedResponse->getHeaders()->getAll() as $headerName => $headerValues) {
                         $response->setHeader($headerName, $headerValues[0]);
@@ -136,9 +136,9 @@ class TypoScriptView extends AbstractView
     }
 
     /**
-     * Is it possible to render $node with $his->typoScriptPath?
+     * Is it possible to render $node with $his->fusionPath?
      *
-     * @return boolean TRUE if $node can be rendered at $typoScriptPath
+     * @return boolean TRUE if $node can be rendered at fusionPath
      *
      * @throws Exception
      */
@@ -146,28 +146,28 @@ class TypoScriptView extends AbstractView
     {
         $currentNode = $this->getCurrentNode();
         $currentSiteNode = $currentNode->getContext()->getCurrentSiteNode();
-        $typoScriptRuntime = $this->getTypoScriptRuntime($currentSiteNode);
+        $fusionRuntime = $this->getFusionRuntime($currentSiteNode);
 
-        return $typoScriptRuntime->canRender($this->typoScriptPath);
+        return $fusionRuntime->canRender($this->fusionPath);
     }
 
     /**
-     * Set the TypoScript path to use for rendering the node given in "value"
+     * Set the Fusion path to use for rendering the node given in "value"
      *
-     * @param string $typoScriptPath
+     * @param string $fusionPath
      * @return void
      */
-    public function setTypoScriptPath($typoScriptPath)
+    public function setFusionPath($fusionPath)
     {
-        $this->typoScriptPath = $typoScriptPath;
+        $this->fusionPath = $fusionPath;
     }
 
     /**
      * @return string
      */
-    public function getTypoScriptPath()
+    public function getFusionPath()
     {
-        return $this->typoScriptPath;
+        return $this->fusionPath;
     }
 
     /**
@@ -190,7 +190,7 @@ class TypoScriptView extends AbstractView
     {
         $currentNode = isset($this->variables['value']) ? $this->variables['value'] : null;
         if (!$currentNode instanceof Node) {
-            throw new Exception('TypoScriptView needs a variable \'value\' set with a Node object.', 1329736456);
+            throw new Exception('FusionView needs a variable \'value\' set with a Node object.', 1329736456);
         }
         return $currentNode;
     }
@@ -199,16 +199,16 @@ class TypoScriptView extends AbstractView
      * @param NodeInterface $currentSiteNode
      * @return \Neos\Fusion\Core\Runtime
      */
-    protected function getTypoScriptRuntime(NodeInterface $currentSiteNode)
+    protected function getFusionRuntime(NodeInterface $currentSiteNode)
     {
-        if ($this->typoScriptRuntime === null) {
-            $this->typoScriptRuntime = $this->fusionService->createRuntime($currentSiteNode, $this->controllerContext);
+        if ($this->fusionRuntime === null) {
+            $this->fusionRuntime = $this->fusionService->createRuntime($currentSiteNode, $this->controllerContext);
 
             if (isset($this->options['enableContentCache']) && $this->options['enableContentCache'] !== null) {
-                $this->typoScriptRuntime->setEnableContentCache($this->options['enableContentCache']);
+                $this->fusionRuntime->setEnableContentCache($this->options['enableContentCache']);
             }
         }
-        return $this->typoScriptRuntime;
+        return $this->fusionRuntime;
     }
 
     /**
@@ -216,11 +216,11 @@ class TypoScriptView extends AbstractView
      *
      * @param string $key
      * @param mixed $value
-     * @return TypoScriptView
+     * @return FusionView
      */
     public function assign($key, $value)
     {
-        $this->typoScriptRuntime = null;
+        $this->fusionRuntime = null;
         return parent::assign($key, $value);
     }
 }
