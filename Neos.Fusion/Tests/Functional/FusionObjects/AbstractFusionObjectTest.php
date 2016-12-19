@@ -56,7 +56,7 @@ abstract class AbstractFusionObjectTest extends FunctionalTestCase
         $view->setControllerContext($this->controllerContext);
         $view->disableFallbackView();
         $view->setPackageKey('Neos.Fusion');
-        $view->setTypoScriptPathPattern(__DIR__ . '/Fixtures/Fusion');
+        $view->setFusionPathPattern(__DIR__ . '/Fixtures/Fusion');
         $view->assign('fixtureDirectory', __DIR__ . '/Fixtures/');
 
         return $view;
@@ -88,7 +88,7 @@ abstract class AbstractFusionObjectTest extends FunctionalTestCase
     protected function assertTypoScriptPath($expected, $path)
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath($path);
+        $view->setFusionPath($path);
         $this->assertSame($expected, $view->render(), 'Fusion at path "' . $path . '" produced wrong results.');
     }
 }

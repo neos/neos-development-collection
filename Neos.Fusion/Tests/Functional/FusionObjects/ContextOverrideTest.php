@@ -24,7 +24,7 @@ class ContextOverrideTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->assignMultiple(array('var1' => 'var1', 'var2' => 'var2'));
-        $view->setTypoScriptPath('contextOverride/test');
+        $view->setFusionPath('contextOverride/test');
         $this->assertEquals('Xvar1var2Xvar1var2Xvar1var2XfooofooofoooboooboooboooXvar2Xvar2Y', $view->render());
     }
 }

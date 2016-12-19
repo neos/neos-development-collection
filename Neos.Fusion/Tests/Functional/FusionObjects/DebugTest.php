@@ -23,7 +23,7 @@ class DebugTest extends AbstractFusionObjectTest
     public function debugEmptyValue()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('debug/empty');
+        $view->setFusionPath('debug/empty');
         $lines = explode(chr(10), $view->render());
         $this->assertEquals($lines[1], 'NULL');
     }
@@ -34,7 +34,7 @@ class DebugTest extends AbstractFusionObjectTest
     public function debugNullValue()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('debug/null');
+        $view->setFusionPath('debug/null');
         $lines = explode(chr(10), $view->render());
         $this->assertEquals($lines[1], 'NULL');
     }
@@ -45,7 +45,7 @@ class DebugTest extends AbstractFusionObjectTest
     public function debugNullValueWithTitle()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('debug/nullWithTitle');
+        $view->setFusionPath('debug/nullWithTitle');
         $lines = explode(chr(10), $view->render());
         $this->assertEquals('Title', $lines[0]);
         $this->assertEquals('NULL', $lines[1]);
@@ -57,7 +57,7 @@ class DebugTest extends AbstractFusionObjectTest
     public function debugEelExpression()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('debug/eelExpression');
+        $view->setFusionPath('debug/eelExpression');
         $lines = explode(chr(10), $view->render());
         $this->assertEquals('string "hello world" (11)', $lines[1]);
     }
@@ -68,7 +68,7 @@ class DebugTest extends AbstractFusionObjectTest
     public function debugTsObjectExpression()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('debug/tsObjectExpression');
+        $view->setFusionPath('debug/tsObjectExpression');
         $lines = explode(chr(10), $view->render());
         $this->assertEquals('string "hello world" (11)', $lines[1]);
     }
@@ -79,7 +79,7 @@ class DebugTest extends AbstractFusionObjectTest
     public function debugMultipleValues()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('debug/multipleValues');
+        $view->setFusionPath('debug/multipleValues');
         $lines = explode(chr(10), $view->render());
         $this->assertEquals('array(2)', $lines[1]);
         $this->assertEquals(' string "foo" (3) => string "foo" (3)', $lines[2]);

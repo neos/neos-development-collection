@@ -23,7 +23,7 @@ class TagTest extends AbstractFusionObjectTest
     public function tagWithAttributesFromNonTsObjectWorks()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('tag/plainAttributes');
+        $view->setFusionPath('tag/plainAttributes');
         $this->assertSame('<link rel="stylesheet" type="text/css" />', $view->render());
     }
 
@@ -33,7 +33,7 @@ class TagTest extends AbstractFusionObjectTest
     public function tagWithAttributesFromTsObjectWorks()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('tag/objectAttributes');
+        $view->setFusionPath('tag/objectAttributes');
         $this->assertSame('<test sum="4" />', $view->render());
     }
 
@@ -43,7 +43,7 @@ class TagTest extends AbstractFusionObjectTest
     public function tagWithAttributesFromArraysWorks()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('tag/arrayAttributes');
+        $view->setFusionPath('tag/arrayAttributes');
         $this->assertSame('<div class="a b"></div>', $view->render());
     }
 
@@ -53,7 +53,7 @@ class TagTest extends AbstractFusionObjectTest
     public function tagWithContentFromNonTsObjectWorks()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('tag/plainContent');
+        $view->setFusionPath('tag/plainContent');
         $this->assertSame('<span>test</span>', $view->render());
     }
 
@@ -63,7 +63,7 @@ class TagTest extends AbstractFusionObjectTest
     public function tagWithContentFromTsObjectWorks()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('tag/objectContent');
+        $view->setFusionPath('tag/objectContent');
         $this->assertSame('<span>4</span>', $view->render());
     }
 
@@ -73,7 +73,7 @@ class TagTest extends AbstractFusionObjectTest
     public function registeredSelfClosingTagWorks()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('tag/registeredSelfClosingTag');
+        $view->setFusionPath('tag/registeredSelfClosingTag');
         $this->assertSame('<br />', $view->render());
     }
 
@@ -83,7 +83,7 @@ class TagTest extends AbstractFusionObjectTest
     public function omitClosingTagWorks()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('tag/omitClosingTag');
+        $view->setFusionPath('tag/omitClosingTag');
         $this->assertSame('<test>', $view->render());
     }
 
@@ -93,7 +93,7 @@ class TagTest extends AbstractFusionObjectTest
     public function tagWithEelExpressionUsingThis()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('tag/withThis');
+        $view->setFusionPath('tag/withThis');
         $this->assertSame('<title databar="baz" datafoo="baz_baz">foo</title>', $view->render());
     }
 
@@ -103,7 +103,7 @@ class TagTest extends AbstractFusionObjectTest
     public function tagWithIgnorePropertiesInAttributes()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('tag/withIgnorePropertiesInAttributes');
+        $view->setFusionPath('tag/withIgnorePropertiesInAttributes');
         $this->assertSame('<title datafoo="baz_baz">foo</title>', $view->render());
     }
 }
