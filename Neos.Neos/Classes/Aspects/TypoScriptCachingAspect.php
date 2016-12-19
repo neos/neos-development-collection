@@ -28,7 +28,7 @@ class TypoScriptCachingAspect
     protected $typoScriptCache;
 
     /**
-     * @Flow\Around("setting(Neos.Neos.typoScript.enableObjectTreeCache) && method(Neos\Neos\Domain\Service\TypoScriptService->getMergedTypoScriptObjectTree())")
+     * @Flow\Around("setting(Neos.Neos.typoScript.enableObjectTreeCache) && method(Neos\Neos\Domain\Service\FusionService->getMergedFusionObjectTree())")
      * @param JoinPointInterface $joinPoint The current join point
      * @return mixed
      */

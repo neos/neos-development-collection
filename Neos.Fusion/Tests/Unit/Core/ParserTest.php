@@ -739,7 +739,7 @@ class ParserTest extends UnitTestCase
         // Check that values were overridden by fixture #17:
         $expectedParseTree['__prototypes']['TYPO3.Foo:Bar2']['baz'] = 'New Value';
 
-        // Set the default namespace to Neos.Neos - that's what Neos does as well in Domain\Service\TypoScriptService:
+        // Set the default namespace to Neos.Neos - that's what Neos does as well in Domain\Service\FusionService:
         $this->parser->setObjectTypeNamespace('default', 'Neos.Neos');
 
         $text = array(

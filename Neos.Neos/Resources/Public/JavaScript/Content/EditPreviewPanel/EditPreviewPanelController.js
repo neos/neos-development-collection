@@ -65,8 +65,13 @@ define(
 				reloadRequired = false;
 
 			LocalStorage.setItem('editPreviewMode', identifier);
-			if (this.get('previousActiveMode') && this.get('previousActiveMode.typoScriptRenderingPath') !== this.get('currentlyActiveMode.typoScriptRenderingPath')) {
-				reloadRequired = true;
+
+			if (this.get('previousActiveMode')) {
+				currentRenderingPath = this.get('currentlyActiveMode.fusionRenderingPath') ? this.get('currentlyActiveMode.fusionRenderingPath') : this.get('currentlyActiveMode.typoScriptRenderingPath');
+				previousRenderingPath = this.get('previousActiveMode.fusionRenderingPath') ? this.get('previousActiveMode.fusionRenderingPath') : this.get('previousActiveMode.typoScriptRenderingPath');
+				if (currentRenderingPath !== previousRenderingPath){
+					reloadRequired = true;
+				}
 			}
 			if (reloadRequired) {
 				LoadingIndicator.start();

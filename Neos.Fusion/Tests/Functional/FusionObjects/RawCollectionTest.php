@@ -24,7 +24,7 @@ class RawCollectionTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->assign('collection', array('element1', 'element2'));
-        $view->setTypoScriptPath('rawCollection/basicLoop');
+        $view->setFusionPath('rawCollection/basicLoop');
         $this->assertEquals(['Xelement1','Xelement2'], $view->render());
     }
 
@@ -37,7 +37,7 @@ class RawCollectionTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->assign('collection', array('element1', 'element2'));
         $view->assign('other', 'var');
-        $view->setTypoScriptPath('rawCollection/basicLoopOtherContextVariables');
+        $view->setFusionPath('rawCollection/basicLoopOtherContextVariables');
         $this->assertEquals(['Xelement1var','Xelement2var'], $view->render());
     }
 
@@ -48,7 +48,7 @@ class RawCollectionTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->assign('collection', null);
-        $view->setTypoScriptPath('rawCollection/basicLoop');
+        $view->setFusionPath('rawCollection/basicLoop');
         $this->assertEquals([], $view->render());
     }
 
@@ -59,7 +59,7 @@ class RawCollectionTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->assign('collection', array('element1', 'element2', 'element3', 'element4'));
-        $view->setTypoScriptPath('rawCollection/iteration');
+        $view->setFusionPath('rawCollection/iteration');
         $this->assertEquals(['Xelement1-0-1-1--1-','Xelement2-1-2----1','Xelement3-2-3---1-','Xelement4-3-4--1--1'], $view->render());
     }
 }
