@@ -19,13 +19,13 @@ use Neos\Cache\Frontend\VariableFrontend;
  * @Flow\Scope("singleton")
  * @Flow\Aspect
  */
-class TypoScriptCachingAspect
+class FusionCachingAspect
 {
     /**
      * @Flow\Inject
      * @var VariableFrontend
      */
-    protected $typoScriptCache;
+    protected $fusionCache;
 
     /**
      * @Flow\Around("setting(Neos.Neos.typoScript.enableObjectTreeCache) && method(Neos\Neos\Domain\Service\FusionService->getMergedFusionObjectTree())")
@@ -37,13 +37,13 @@ class TypoScriptCachingAspect
         $currentSiteNode = $joinPoint->getMethodArgument('startNode');
         $cacheIdentifier = str_replace('.', '_', $currentSiteNode->getContext()->getCurrentSite()->getSiteResourcesPackageKey());
 
-        if ($this->typoScriptCache->has($cacheIdentifier)) {
-            $typoScriptObjectTree = $this->typoScriptCache->get($cacheIdentifier);
+        if ($this->fusionCache->has($cacheIdentifier)) {
+            $fusionObjectTree = $this->fusionCache->get($cacheIdentifier);
         } else {
-            $typoScriptObjectTree = $joinPoint->getAdviceChain()->proceed($joinPoint);
-            $this->typoScriptCache->set($cacheIdentifier, $typoScriptObjectTree);
+            $fusionObjectTree = $joinPoint->getAdviceChain()->proceed($joinPoint);
+            $this->fusionCache->set($cacheIdentifier, $fusionObjectTree);
         }
 
-        return $typoScriptObjectTree;
+        return $fusionObjectTree;
     }
 }
