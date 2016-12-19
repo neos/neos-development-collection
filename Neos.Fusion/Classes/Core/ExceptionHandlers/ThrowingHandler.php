@@ -21,29 +21,29 @@ use Neos\Flow\Mvc\Exception\StopActionException;
 class ThrowingHandler extends AbstractRenderingExceptionHandler
 {
     /**
-     * Handle an Exception thrown while rendering TypoScript
+     * Handle an Exception thrown while rendering Fusion
      *
-     * @param array $typoScriptPath
+     * @param array $fusionPath
      * @param \Exception $exception
      * @return string
      * @throws StopActionException
      * @throws InvalidConfigurationException
      * @throws \Exception
      */
-    public function handleRenderingException($typoScriptPath, \Exception $exception)
+    public function handleRenderingException($fusionPath, \Exception $exception)
     {
         throw $exception;
     }
 
     /**
-     * Handles an Exception thrown while rendering TypoScript
+     * Handles an Exception thrown while rendering Fusion
      *
-     * @param string $typoScriptPath path causing the exception
+     * @param string $fusionPath path causing the exception
      * @param \Exception $exception exception to handle
      * @param integer $referenceCode
      * @return string
      */
-    protected function handle($typoScriptPath, \Exception $exception, $referenceCode)
+    protected function handle($fusionPath, \Exception $exception, $referenceCode)
     {
     }
 }
