@@ -119,6 +119,25 @@ class UserInterfaceMode
 
     /**
      * @return string
+     * @deprecated since 3.0
+     */
+    public function getTypoScriptPath()
+    {
+        return $this->getFusionPath();
+    }
+
+    /**
+     * @param string $typoScriptPath
+     * @return void
+     * @deprecated since 3.0
+     */
+    public function setTypoScriptPath($typoScriptPath)
+    {
+        $this->setFusionPath($typoScriptPath);
+    }
+
+    /**
+     * @return string
      */
     public function getTitle()
     {
