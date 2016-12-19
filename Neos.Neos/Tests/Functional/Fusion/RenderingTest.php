@@ -20,7 +20,7 @@ use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\FlashMessageContainer;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Neos\Domain\Service\ContentContext;
-use Neos\Neos\Domain\Service\TypoScriptService;
+use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Tests\Functional\AbstractNodeTest;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -350,16 +350,16 @@ class RenderingTest extends AbstractNodeTest
      */
     protected function createRuntimeWithFixtures($additionalTypoScriptFile = null)
     {
-        $typoScriptService = new TypoScriptService();
-        $typoScriptService->setSiteRootTypoScriptPattern(__DIR__ . '/Fixtures/BaseTypoScript.fusion');
+        $fusionService = new FusionService();
+        $fusionService->setSiteRootFusionPattern(__DIR__ . '/Fixtures/BaseTypoScript.fusion');
 
         if ($additionalTypoScriptFile !== null) {
-            $typoScriptService->setAppendTypoScriptIncludes(array($additionalTypoScriptFile));
+            $fusionService->setAppendFusionIncludes(array($additionalTypoScriptFile));
         }
 
         $controllerContext = $this->buildMockControllerContext();
 
-        $runtime = $typoScriptService->createRuntime($this->node->getParent(), $controllerContext);
+        $runtime = $fusionService->createRuntime($this->node->getParent(), $controllerContext);
 
         return $runtime;
     }

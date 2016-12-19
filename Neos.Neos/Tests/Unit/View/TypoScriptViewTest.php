@@ -15,7 +15,7 @@ use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Service\ContentContext;
-use Neos\Neos\Domain\Service\TypoScriptService;
+use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\View\TypoScriptView;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeData;
@@ -77,15 +77,15 @@ class TypoScriptViewTest extends UnitTestCase
 
         $this->mockSecurityContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
-        $mockTypoScriptService = $this->createMock(TypoScriptService::class);
-        $mockTypoScriptService->expects($this->any())->method('createRuntime')->will($this->returnValue($this->mockRuntime));
+        $mockFusionService = $this->createMock(FusionService::class);
+        $mockFusionService->expects($this->any())->method('createRuntime')->will($this->returnValue($this->mockRuntime));
 
         $this->mockView = $this->getAccessibleMock(TypoScriptView::class, array('getClosestDocumentNode'));
         $this->mockView->expects($this->any())->method('getClosestDocumentNode')->will($this->returnValue($this->mockContextualizedNode));
 
         $this->inject($this->mockView, 'controllerContext', $mockControllerContext);
         $this->inject($this->mockView, 'securityContext', $this->mockSecurityContext);
-        $this->inject($this->mockView, 'typoScriptService', $mockTypoScriptService);
+        $this->inject($this->mockView, 'fusionService', $mockFusionService);
 
         $this->mockView->_set('variables', array('value' => $this->mockContextualizedNode));
     }
@@ -146,8 +146,8 @@ class TypoScriptViewTest extends UnitTestCase
         $mockRuntime->expects($this->any())->method('render')->will($this->returnValue("HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\nMessage body"));
         $mockRuntime->expects($this->any())->method('getControllerContext')->will($this->returnValue($mockControllerContext));
 
-        $mockTypoScriptService = $this->createMock(TypoScriptService::class);
-        $mockTypoScriptService->expects($this->any())->method('createRuntime')->will($this->returnValue($mockRuntime));
+        $mockFusionService = $this->createMock(FusionService::class);
+        $mockFusionService->expects($this->any())->method('createRuntime')->will($this->returnValue($mockRuntime));
 
         $mockSecurityContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
@@ -157,7 +157,7 @@ class TypoScriptViewTest extends UnitTestCase
         $this->inject($view, 'securityContext', $mockSecurityContext);
 
         $this->inject($view, 'controllerContext', $mockControllerContext);
-        $this->inject($view, 'typoScriptService', $mockTypoScriptService);
+        $this->inject($view, 'fusionService', $mockFusionService);
 
         $view->_set('variables', array('value' => $mockContextualizedNode));
 
