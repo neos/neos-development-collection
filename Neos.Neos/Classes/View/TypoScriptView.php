@@ -16,7 +16,7 @@ use Neos\Flow\Http\Response;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Service;
 use Neos\Flow\Mvc\View\AbstractView;
-use Neos\Neos\Domain\Service\TypoScriptService;
+use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Exception;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -46,9 +46,9 @@ class TypoScriptView extends AbstractView
 
     /**
      * @Flow\Inject
-     * @var TypoScriptService
+     * @var FusionService
      */
-    protected $typoScriptService;
+    protected $fusionService;
 
     /**
      * The TypoScript path to use for rendering the node given in "value", defaults to "page".
@@ -202,7 +202,7 @@ class TypoScriptView extends AbstractView
     protected function getTypoScriptRuntime(NodeInterface $currentSiteNode)
     {
         if ($this->typoScriptRuntime === null) {
-            $this->typoScriptRuntime = $this->typoScriptService->createRuntime($currentSiteNode, $this->controllerContext);
+            $this->typoScriptRuntime = $this->fusionService->createRuntime($currentSiteNode, $this->controllerContext);
 
             if (isset($this->options['enableContentCache']) && $this->options['enableContentCache'] !== null) {
                 $this->typoScriptRuntime->setEnableContentCache($this->options['enableContentCache']);
