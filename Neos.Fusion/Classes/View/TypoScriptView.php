@@ -13,8 +13,9 @@ namespace Neos\Fusion\View;
 
 /**
  * Deprecated View for using Fusion for standard MVC controllers. For more Details check `FusionView`
+ * This class will be removed with the release of Neos 4.0.
  *
- * @deprecated Will be removed with the next major version
+ * @deprecated since 3.0
  */
 class TypoScriptView extends FusionView
 {
@@ -25,7 +26,7 @@ class TypoScriptView extends FusionView
      * @param string $typoScriptPath
      * @return void
      */
-    public function setTypoScriptPathPath($typoScriptPath)
+    public function setTypoScriptPath($typoScriptPath)
     {
         parent::setFusionPath($typoScriptPath);
     }
@@ -34,7 +35,7 @@ class TypoScriptView extends FusionView
      * @param string $pathPattern
      * @return void
      */
-    public function setTypoScriptPathPathPattern($pathPattern)
+    public function setTypoScriptPathPattern($pathPattern)
     {
         parent::setFusionPathPattern($pathPattern);
     }
@@ -43,7 +44,7 @@ class TypoScriptView extends FusionView
      * @param array $pathPatterns
      * @return void
      */
-    public function setTypoScriptPathPathPatterns(array $pathPatterns)
+    public function setTypoScriptPathPatterns(array $pathPatterns)
     {
         parent::setFusionPathPatterns($pathPatterns);
     }
@@ -88,7 +89,6 @@ class TypoScriptView extends FusionView
      *
      * @param string $optionName
      * @return mixed
-     * @throws Exception
      */
     public function getOption($optionName)
     {

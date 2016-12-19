@@ -15,7 +15,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Flow\Mvc\View\ViewInterface;
-use Neos\Utility\Arrays;
 use Neos\Utility\Files;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\Runtime;
