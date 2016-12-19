@@ -23,7 +23,7 @@ class ExceptionHandlerTest extends AbstractFusionObjectTest
     public function exceptionalEelExpressionInPropertyIsHandledCorrectly()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('exceptionHandler/eelExpressionInProperty');
+        $view->setFusionPath('exceptionHandler/eelExpressionInProperty');
         $this->assertStringStartsWith('StartException while rendering exceptionHandler', $view->render());
     }
 
@@ -34,7 +34,7 @@ class ExceptionHandlerTest extends AbstractFusionObjectTest
     public function exceptionalEelExpressionInOverrideIsHandledCorrectly()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('exceptionHandler/eelExpressionInOverride');
+        $view->setFusionPath('exceptionHandler/eelExpressionInOverride');
         $output = $view->render();
         $this->assertStringStartsWith('StartException while rendering exceptionHandler', $output);
         $this->assertContains('myCollection', $output, 'The override path should be visible in the message TypoScript path');
@@ -50,7 +50,7 @@ class ExceptionHandlerTest extends AbstractFusionObjectTest
     public function exceptionHandlerIsEvaluatedForNestedFusionObjects()
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath('exceptionHandler/nestedHandlerIsEvaluated');
+        $view->setFusionPath('exceptionHandler/nestedHandlerIsEvaluated');
         $output = $view->render();
         $this->assertNotNull($output);
         $this->assertStringStartsWith('Exception while rendering', $output);
