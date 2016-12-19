@@ -13,28 +13,22 @@ namespace Neos\Neos\Domain\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Utility\Files;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\Runtime;
 
 /**
- * The TypoScript Service. It is replaced by the fusion service and therefore deprecated with 3.0.
- * It will be removed with 4.0.
+ * The TypoScript Service. It is replaced by the Fusion Service and therefore deprecated since Neos 3.0.
+ * This class will be removed with the release of Neos 4.0.
  *
  * @Flow\Scope("prototype")
- * @api
  * @deprecated
  */
 class TypoScriptService extends FusionService
 {
-
     /**
      * Create a runtime for the given site node
      *
-     * @param \Neos\ContentRepository\Domain\Model\NodeInterface $currentSiteNode
+     * @param NodeInterface $currentSiteNode
      * @param ControllerContext $controllerContext
      * @return Runtime
      */
@@ -46,7 +40,7 @@ class TypoScriptService extends FusionService
     /**
      * Returns a merged TypoScript object tree in the context of the given nodes
      *
-     * @param \Neos\ContentRepository\Domain\Model\NodeInterface $startNode Node marking the starting point
+     * @param NodeInterface $startNode Node marking the starting point
      * @return array The merged object tree as of the given node
      * @throws \Neos\Neos\Domain\Exception
      */
