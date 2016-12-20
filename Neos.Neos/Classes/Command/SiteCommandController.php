@@ -273,22 +273,18 @@ class SiteCommandController extends CommandController
      * Remove all content and related data - for now. In the future we need some more sophisticated cleanup.
      *
      * @param string $siteNode Name of a site root node to clear only content of this site.
-     * @param string $siteNodeName This option is deprecated, use --site-node instead
      * @return void
      */
-    public function pruneCommand($siteNode = null, $siteNodeName = null)
+    public function pruneCommand($siteNode = null)
     {
         if ($siteNode !== null) {
-            $siteNodeName = $siteNode;
-        }
-        if ($siteNodeName !== null) {
-            $possibleSite = $this->siteRepository->findOneByNodeName($siteNodeName);
+            $possibleSite = $this->siteRepository->findOneByNodeName($siteNode);
             if ($possibleSite === null) {
                 $this->outputLine('The given site site node did not match an existing site.');
                 $this->quit(1);
             }
             $this->siteService->pruneSite($possibleSite);
-            $this->outputLine('Site with root "' . $siteNodeName . '" has been removed.');
+            $this->outputLine('Site with root "' . $siteNode . '" has been removed.');
         } else {
             $this->siteService->pruneAll();
             $this->outputLine('All sites and content have been removed.');
