@@ -2,6 +2,9 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext" target-language="ar">
     <body>
+      <trans-unit id="groups.document" xml:space="preserve">
+				<source>Document</source>
+			<target xml:lang="ar" state="needs-translation">Document</target></trans-unit>
       <trans-unit id="properties.title" xml:space="preserve">
 				<source>Title</source>
 			<target xml:lang="ar" state="needs-translation">Title</target></trans-unit>

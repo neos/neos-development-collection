@@ -2,15 +2,18 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="TYPO3.Neos" source-language="en" datatype="plaintext" target-language="la-LA">
     <body>
+      <trans-unit id="groups.document" xml:space="preserve">
+				<source>Document</source>
+			<target xml:lang="la-LA">crwdns1459:0crwdne1459:0</target></trans-unit>
       <trans-unit id="properties.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="la-LA">crwdns286:0crwdne286:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns1460:0crwdne1460:0</target></trans-unit>
       <trans-unit id="properties.uriPathSegment" xml:space="preserve">
 				<source>URL path segment</source>
-			<target xml:lang="la-LA">crwdns287:0crwdne287:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns1461:0crwdne1461:0</target></trans-unit>
       <trans-unit id="properties._hiddenInIndex" xml:space="preserve">
 				<source>Hide in menus</source>
-			<target xml:lang="la-LA">crwdns288:0crwdne288:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns1462:0crwdne1462:0</target></trans-unit>
     </body>
   </file>
 </xliff>

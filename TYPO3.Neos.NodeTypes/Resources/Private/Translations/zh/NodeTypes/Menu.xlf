@@ -49,13 +49,13 @@
 			<target xml:lang="zh-CN" state="translated">选择</target></trans-unit>
       <trans-unit id="properties.startingPoint" xml:space="preserve">
 				<source>Starting Point</source>
-			<target xml:lang="zh-CN" state="needs-translation">Starting Point</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">起始点</target></trans-unit>
       <trans-unit id="properties.maximumLevels" xml:space="preserve">
 				<source>Maximum Levels</source>
 			<target xml:lang="zh-CN" state="translated">最大层次</target></trans-unit>
       <trans-unit id="content.emptyMenu" xml:space="preserve">
 				<source>Empty Menu</source>
-			<target xml:lang="zh-CN" state="needs-translation">Empty Menu</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">空菜单</target></trans-unit>
     </body>
   </file>
 </xliff>

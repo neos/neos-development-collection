@@ -895,6 +895,9 @@
       <trans-unit id="media.cannotUploadFile" xml:space="preserve" approved="yes">
 				<source>Cannot upload the file</source>
 			<target xml:lang="de">Datei kann nicht hochgeladen werden</target></trans-unit>
+      <trans-unit id="media.noFileSelected" xml:space="preserve">
+				<source>No file selected</source>
+			<target xml:lang="de" state="translated">Keine Datei ausgewählt</target></trans-unit>
       <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve" approved="yes">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target xml:lang="de">Die Dateigröße von {0} übersteigt das erlaubte Limit von {1}</target></trans-unit>
@@ -943,7 +946,7 @@
       <target xml:lang="de" state="translated">Diese Aktion wird die Datei in allen veröffentlichten und unveröffentlichten Arbeitsbereichen ersetzen, genauso wie in der Live-Website.</target></trans-unit>
       <trans-unit id="media.replaceAsset.chooseNewFile" xml:space="preserve">
         <source>Choose a new file</source>
-      <target xml:lang="de" state="translated">Neue Datei wählen</target></trans-unit>
+      <target xml:lang="de" state="translated">Neue Datei auswählen</target><alt-trans><target xml:lang="de">Neue Datei wählen</target></alt-trans></trans-unit>
       <trans-unit id="media.replace.usageCount" xml:space="preserve">
         <source>Currently the asset is used {usageCount} times.</source>
       <target xml:lang="de" state="translated">Derzeit wird die Datei {usageCount} Mal verwendet.</target></trans-unit>
