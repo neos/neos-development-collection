@@ -91,7 +91,7 @@ privilegeTargets:
       matcher: 'method(Neos\Neos\Controller\Module\User\UserSettingsController->(index|newElectronicAddress|createElectronicAddress|deleteElectronicAddress|edit|editAccount|updateAccount)Action())'
 
     'Neos.Neos:Backend.Module.User.UserSettings.UpdateOwnSettings':
-      matcher: 'method(Neos\Neos\Controller\Module\User\UserSettingsController->updateAccountAction(user === current.securityContext.account)) || method(Neos\Neos\Controller\Module\User\UserSettingsController->updateAction(user === current.securityContext.party))'
+      matcher: 'method(Neos\Neos\Controller\Module\User\UserSettingsController->updateAction(user === current.userInformation.backendUser))'
 
     'Neos.Neos:Backend.EditUserPreferences':
       matcher: 'method(Neos\Neos\Service\Controller\UserPreferenceController->(index|update|error)Action()) || method(Neos\Neos\Service\Controller\AbstractServiceController->(error)Action())'
