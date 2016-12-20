@@ -95,14 +95,6 @@ interface NodeInterface
     public function getLabel();
 
     /**
-     * Returns a full length plain text label of this node
-     *
-     * @return string
-     * @deprecated since 1.2
-     */
-    public function getFullLabel();
-
-    /**
      * Sets the specified property.
      *
      * If the node has a content object attached, the property will be set there
