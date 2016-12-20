@@ -5,8 +5,6 @@ include: Prototypes/PrimaryContent.fusion
 include: Prototypes/ContentCollection.fusion
 include: Prototypes/Page.fusion
 include: Prototypes/Shortcut.fusion
-# Note: The Neos.Neos:Breadcrumb prototype only exists for backwards compatibility and will be removed in a future version.
-include: Prototypes/Breadcrumb.fusion
 include: Prototypes/BreadcrumbMenu.fusion
 include: Prototypes/DimensionsMenu.fusion
 include: Prototypes/Menu.fusion
