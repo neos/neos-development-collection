@@ -560,6 +560,11 @@ Neos:
       applicationPackageKey: Neos.Neos
       applicationName: Neos
 
+    mvc:
+      routes:
+        'Neos.Neos':
+          position: 'start'
+
     security:
       authentication:
         providers:
