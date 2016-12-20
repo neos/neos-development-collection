@@ -208,8 +208,7 @@ class NodeType
             $superTypes[$inheritedSuperTypeName] = $inheritedSuperType;
         }
 
-        // the method getSuperTypes() is a magic getter
-        $superTypesInSuperType = $superType->getSuperTypes() ?: [];
+        $superTypesInSuperType = $superType->getConfiguration('superTypes') ?: [];
         foreach ($superTypesInSuperType as $inheritedSuperTypeName => $inheritedSuperType) {
             if (!$inheritedSuperType) {
                 unset($superTypes[$inheritedSuperTypeName]);
@@ -698,26 +697,5 @@ class NodeType
     public function __toString()
     {
         return $this->getName();
-    }
-
-    /**
-     * Magic get* and has* method for all properties inside $configuration.
-     *
-     * @param string $methodName
-     * @param array $arguments
-     * @return mixed
-     * @deprecated Use hasConfiguration() or getConfiguration() instead
-     */
-    public function __call($methodName, array $arguments)
-    {
-        if (substr($methodName, 0, 3) === 'get') {
-            $configurationKey = lcfirst(substr($methodName, 3));
-            return $this->getConfiguration($configurationKey);
-        } elseif (substr($methodName, 0, 3) === 'has') {
-            $configurationKey = lcfirst(substr($methodName, 3));
-            return $this->hasConfiguration($configurationKey);
-        }
-
-        trigger_error('Call to undefined method ' . get_class($this) . '::' . $methodName, E_USER_ERROR);
     }
 }
