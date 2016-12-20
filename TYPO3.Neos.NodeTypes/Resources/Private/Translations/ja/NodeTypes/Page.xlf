@@ -4,10 +4,10 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Page</source>
-			<target xml:lang="ja" state="needs-translation">Page</target></trans-unit>
+			<target xml:lang="ja" state="translated">ページ</target></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="ja" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="ja" state="translated">タイトル</target></trans-unit>
       <trans-unit id="groups.layout" xml:space="preserve">
 				<source>Layout</source>
 			<target xml:lang="ja" state="translated">レイアウト</target></trans-unit>

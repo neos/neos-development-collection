@@ -5,160 +5,160 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve">
 				<source>Auto-Publish</source>
-			<target xml:lang="ja" state="needs-translation">Auto-Publish</target></trans-unit>
+			<target xml:lang="ja" state="translated">自動公開</target></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
-			<target xml:lang="ja" state="needs-translation">Auto-Publish to {0}</target></trans-unit>
+			<target xml:lang="ja" state="translated">{0} へ自動公開</target></trans-unit>
       <trans-unit id="reviewChanges" xml:space="preserve">
 				<source>Review changes</source>
-			<target xml:lang="ja" state="needs-translation">Review changes</target></trans-unit>
+			<target xml:lang="ja" state="translated">変更をレビュー</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
-			<target xml:lang="ja" state="needs-translation">Apply</target></trans-unit>
+			<target xml:lang="ja" state="translated">適用</target></trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
 				<source>Apply changes</source>
-			<target xml:lang="ja" state="needs-translation">Apply changes</target></trans-unit>
+			<target xml:lang="ja" state="translated">変更を適用</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target xml:lang="ja" state="needs-translation">Cancel</target></trans-unit>
+			<target xml:lang="ja" state="translated">キャンセル</target></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
 			<target xml:lang="ja" state="needs-translation">Back</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
-			<target xml:lang="ja" state="needs-translation">Choose</target></trans-unit>
+			<target xml:lang="ja" state="translated">選択してください</target></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve">
 				<source>Type to search</source>
-			<target xml:lang="ja" state="needs-translation">Type to search</target></trans-unit>
+			<target xml:lang="ja" state="translated">検索キーワードを入力</target></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="ja" state="needs-translation">Content</target></trans-unit>
+			<target xml:lang="ja" state="translated">コンテンツ</target></trans-unit>
       <trans-unit id="node" xml:space="preserve">
 				<source>Node</source>
-			<target xml:lang="ja" state="needs-translation">Node</target></trans-unit>
+			<target xml:lang="ja" state="translated">ノード</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve">
 				<source>Content View</source>
-			<target xml:lang="ja" state="needs-translation">Content View</target></trans-unit>
+			<target xml:lang="ja" state="translated">コンテンツ ビュー</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
-			<target xml:lang="ja" state="needs-translation">Create after</target></trans-unit>
+			<target xml:lang="ja" state="translated">後に作成</target><alt-trans><target xml:lang="ja">後に作成します。</target></alt-trans></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
-			<target xml:lang="ja" state="needs-translation">Create new</target></trans-unit>
+			<target xml:lang="ja" state="translated">新規作成 </target></trans-unit>
       <trans-unit id="close" xml:space="preserve">
 				<source>Close</source>
-			<target xml:lang="ja" state="needs-translation">Close</target></trans-unit>
+			<target xml:lang="ja" state="translated"> 閉じる</target></trans-unit>
       <trans-unit id="copy" xml:space="preserve">
 				<source>Copy</source>
-			<target xml:lang="ja" state="needs-translation">Copy</target></trans-unit>
+			<target xml:lang="ja" state="translated">コピー</target></trans-unit>
       <trans-unit id="cut" xml:space="preserve">
 				<source>Cut</source>
-			<target xml:lang="ja" state="needs-translation">Cut</target></trans-unit>
+			<target xml:lang="ja" state="translated">カット（切り取り）</target></trans-unit>
       <trans-unit id="delete" xml:space="preserve">
 				<source>Delete</source>
-			<target xml:lang="ja" state="needs-translation">Delete</target></trans-unit>
+			<target xml:lang="ja" state="translated">削除</target></trans-unit>
       <trans-unit id="deleteElement" xml:space="preserve">
 				<source>Yes, delete the element</source>
-			<target xml:lang="ja" state="needs-translation">Yes, delete the element</target></trans-unit>
+			<target xml:lang="ja" state="translated">はい、エレメントを削除します</target></trans-unit>
       <trans-unit id="deleteElementTitle" xml:space="preserve">
 				<source>Delete the element</source>
-			<target xml:lang="ja" state="needs-translation">Delete the element</target></trans-unit>
+			<target xml:lang="ja" state="translated">エレメントを削除</target></trans-unit>
       <trans-unit id="discard" xml:space="preserve">
 				<source>Discard</source>
-			<target xml:lang="ja" state="needs-translation">Discard</target></trans-unit>
+			<target xml:lang="ja" state="translated">破棄</target></trans-unit>
       <trans-unit id="discardChanges" xml:space="preserve">
 				<source>Discard changes</source>
-			<target xml:lang="ja" state="needs-translation">Discard changes</target></trans-unit>
+			<target xml:lang="ja" state="translated">変更を破棄</target></trans-unit>
       <trans-unit id="editTitle" xml:space="preserve">
 				<source>Edit title</source>
-			<target xml:lang="ja" state="needs-translation">Edit title</target></trans-unit>
+			<target xml:lang="ja" state="translated">タイトルを編集</target></trans-unit>
       <trans-unit id="editPreview" xml:space="preserve">
 				<source>Edit / Preview</source>
-			<target xml:lang="ja" state="needs-translation">Edit / Preview</target></trans-unit>
+			<target xml:lang="ja" state="translated">編集/プレビュー</target></trans-unit>
       <trans-unit id="edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="ja" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="ja" state="translated">編集</target></trans-unit>
       <trans-unit id="hideUnhide" xml:space="preserve">
 				<source>Hide / Unhide</source>
-			<target xml:lang="ja" state="needs-translation">Hide / Unhide</target></trans-unit>
+			<target xml:lang="ja" state="translated">非表示/再表示</target></trans-unit>
       <trans-unit id="hide" xml:space="preserve">
 				<source>Hide</source>
 			<target xml:lang="ja" state="translated">非表示</target></trans-unit>
       <trans-unit id="unhide" xml:space="preserve">
 				<source>Unhide</source>
-			<target xml:lang="ja" state="needs-translation">Unhide</target></trans-unit>
+			<target xml:lang="ja" state="translated">再表示 </target></trans-unit>
       <trans-unit id="into" xml:space="preserve">
 				<source>into</source>
-			<target xml:lang="ja" state="needs-translation">into</target></trans-unit>
+			<target xml:lang="ja" state="translated">中に</target></trans-unit>
       <trans-unit id="before" xml:space="preserve">
 				<source>before</source>
-			<target xml:lang="ja" state="needs-translation">before</target></trans-unit>
+			<target xml:lang="ja" state="translated">前に</target></trans-unit>
       <trans-unit id="after" xml:space="preserve">
 				<source>after</source>
-			<target xml:lang="ja" state="needs-translation">after</target></trans-unit>
+			<target xml:lang="ja" state="translated">後に</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve">
 				<source>Loading</source>
-			<target xml:lang="ja" state="needs-translation">Loading</target></trans-unit>
+			<target xml:lang="ja" state="translated">読み込み中</target></trans-unit>
       <trans-unit id="newAfter" xml:space="preserve">
 				<source>New After</source>
-			<target xml:lang="ja" state="needs-translation">New After</target></trans-unit>
+			<target xml:lang="ja" state="translated">後に新規</target></trans-unit>
       <trans-unit id="newBefore" xml:space="preserve">
 				<source>New Before</source>
-			<target xml:lang="ja" state="needs-translation">New Before</target></trans-unit>
+			<target xml:lang="ja" state="translated">前に新規</target></trans-unit>
       <trans-unit id="newInto" xml:space="preserve">
 				<source>New Into</source>
-			<target xml:lang="ja" state="needs-translation">New Into</target></trans-unit>
+			<target xml:lang="ja" state="translated">中に新規</target></trans-unit>
       <trans-unit id="navigate" xml:space="preserve">
 				<source>Navigate</source>
-			<target xml:lang="ja" state="needs-translation">Navigate</target></trans-unit>
+			<target xml:lang="ja" state="translated">ナビゲート</target></trans-unit>
       <trans-unit id="okay" xml:space="preserve">
 				<source>OK</source>
-			<target xml:lang="ja" state="needs-translation">OK</target></trans-unit>
+			<target xml:lang="ja" state="translated">OK</target></trans-unit>
       <trans-unit id="page" xml:space="preserve">
 				<source>Page</source>
-			<target xml:lang="ja" state="needs-translation">Page</target></trans-unit>
+			<target xml:lang="ja" state="translated">ページ</target></trans-unit>
       <trans-unit id="paste" xml:space="preserve">
 				<source>Paste</source>
-			<target xml:lang="ja" state="needs-translation">Paste</target></trans-unit>
+			<target xml:lang="ja" state="translated">ペースト（貼り付け）</target></trans-unit>
       <trans-unit id="pasteAfter" xml:space="preserve">
 				<source>Paste After</source>
-			<target xml:lang="ja" state="needs-translation">Paste After</target></trans-unit>
+			<target xml:lang="ja" state="translated">後にペースト（貼り付け）</target></trans-unit>
       <trans-unit id="pasteBefore" xml:space="preserve">
 				<source>Paste Before</source>
-			<target xml:lang="ja" state="needs-translation">Paste Before</target></trans-unit>
+			<target xml:lang="ja" state="translated">前にペースト（貼り付け）</target></trans-unit>
       <trans-unit id="pasteInto" xml:space="preserve">
 				<source>Paste Into</source>
-			<target xml:lang="ja" state="needs-translation">Paste Into</target></trans-unit>
+			<target xml:lang="ja" state="translated">中にペースト（貼り付け）</target></trans-unit>
       <trans-unit id="password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="ja" state="needs-translation">Password</target></trans-unit>
+			<target xml:lang="ja" state="translated">パスワード</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve">
 				<source>Preview</source>
-			<target xml:lang="ja" state="needs-translation">Preview</target></trans-unit>
+			<target xml:lang="ja" state="translated">プレビュー</target></trans-unit>
       <trans-unit id="publish" xml:space="preserve">
 				<source>Publish</source>
-			<target xml:lang="ja" state="needs-translation">Publish</target></trans-unit>
+			<target xml:lang="ja" state="translated">公開</target></trans-unit>
       <trans-unit id="publishTo" xml:space="preserve">
 				<source>Publish to {0}</source>
-			<target xml:lang="ja" state="needs-translation">Publish to {0}</target></trans-unit>
+			<target xml:lang="ja" state="translated">{0} に公開</target></trans-unit>
       <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
 				<source>Publish all changes for current page</source>
-			<target xml:lang="ja" state="needs-translation">Publish all changes for current page</target></trans-unit>
+			<target xml:lang="ja" state="translated">現在のページのすべての変更を公開</target></trans-unit>
       <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
 				<source>Can't publish because the target workspace is read-only</source>
-			<target xml:lang="ja" state="needs-translation">Can't publish because the target workspace is read-only</target></trans-unit>
+			<target xml:lang="ja" state="translated">対象のワークスペースは読み取り専用のため、公開できません。</target></trans-unit>
       <trans-unit id="selectTargetWorkspace" xml:space="preserve">
 				<source>Select target workspace</source>
-			<target xml:lang="ja" state="needs-translation">Select target workspace</target></trans-unit>
+			<target xml:lang="ja" state="translated">対象のワークスペースを選択</target></trans-unit>
       <trans-unit id="publishing" xml:space="preserve">
 				<source>Publishing</source>
-			<target xml:lang="ja" state="needs-translation">Publishing</target></trans-unit>
+			<target xml:lang="ja" state="translated">公開中</target></trans-unit>
       <trans-unit id="published" xml:space="preserve">
 				<source>Published</source>
-			<target xml:lang="ja" state="needs-translation">Published</target></trans-unit>
+			<target xml:lang="ja" state="translated">公開済</target></trans-unit>
       <trans-unit id="togglePublishMenu" xml:space="preserve">
 				<source>Toggle publish menu</source>
-			<target xml:lang="ja" state="needs-translation">Toggle publish menu</target></trans-unit>
+			<target xml:lang="ja" state="translated">公開メニューを切り替え</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve">
 				<source>Target workspace</source>
 			<target xml:lang="ja" state="needs-translation">Target workspace</target></trans-unit>
@@ -284,11 +284,11 @@
 			<target xml:lang="ja" state="needs-translation">Port</target></trans-unit>
       <trans-unit id="primary" xml:space="preserve">
 				<source>Primary</source>
-			<target xml:lang="ja" state="needs-translation">Primary</target></trans-unit>
+			<target xml:lang="ja" state="translated">プライマリ</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>
-			<target xml:lang="ja" state="needs-translation">General</target></trans-unit>
+			<target xml:lang="ja" state="translated">一般設定</target></trans-unit>
       <trans-unit id="nodeTypes.groups.structure" xml:space="preserve">
 				<source>Structure</source>
 			<target xml:lang="ja" state="needs-translation">Structure</target></trans-unit>
@@ -342,10 +342,10 @@
 			<target xml:lang="ja" state="needs-translation">Publish all changes</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
 				<source>Are you sure that you want to publish all changes?</source>
-			<target xml:lang="ja" state="needs-translation">Are you sure that you want to publish all changes?</target></trans-unit>
+			<target xml:lang="ja" state="translated">すべての変更を公開してもよろしいでしょうか？</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve">
 				<source>Pending changes</source>
-			<target xml:lang="ja" state="needs-translation">Pending changes</target></trans-unit>
+			<target xml:lang="ja" state="translated">変更を保留中</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve">
 				<source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
 			<target xml:lang="ja" state="needs-translation">Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</target></trans-unit>
@@ -378,7 +378,7 @@
 			<target xml:lang="ja" state="needs-translation">Throw away</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
-			<target xml:lang="ja" state="needs-translation">Apply</target></trans-unit>
+			<target xml:lang="ja" state="translated">適用</target></trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
 				<source>Select a Plugin</source>
 			<target xml:lang="ja" state="needs-translation">Select a Plugin</target></trans-unit>
@@ -408,10 +408,10 @@
 			<target xml:lang="ja" state="needs-translation">Change type</target></trans-unit>
       <trans-unit id="content.inspector.groups.nodeInfo" xml:space="preserve">
 				<source>Additional info</source>
-			<target xml:lang="ja" state="needs-translation">Additional info</target></trans-unit>
+			<target xml:lang="ja" state="translated">追加情報</target></trans-unit>
       <trans-unit id="content.inspector.groups.visibility" xml:space="preserve">
 				<source>Visibility</source>
-			<target xml:lang="ja" state="needs-translation">Visibility</target></trans-unit>
+			<target xml:lang="ja" state="translated">可視性</target></trans-unit>
       <trans-unit id="content.inspector.groups.document" xml:space="preserve">
 				<source>Document options</source>
 			<target xml:lang="ja" state="needs-translation">Document options</target></trans-unit>
@@ -501,7 +501,7 @@
 			<target xml:lang="ja" state="needs-translation">Create and copy</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="ja" state="needs-translation">Content</target></trans-unit>
+			<target xml:lang="ja" state="translated">コンテンツ</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve">
 				<source>Toggle menu group</source>
 			<target xml:lang="ja" state="needs-translation">Toggle menu group</target></trans-unit>
