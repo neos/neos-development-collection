@@ -99,7 +99,7 @@ class FusionService
     protected $appendFusionIncludes = array();
 
     /**
-     * @Flow\InjectConfiguration("typoScript.autoInclude")
+     * @Flow\InjectConfiguration("fusion.autoInclude")
      * @var array
      */
     protected $autoIncludeConfiguration = array();
