@@ -15,7 +15,6 @@ use Neos\Eel\EelEvaluatorInterface;
 use Neos\Eel\Utility;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
-use Neos\Utility\Unicode\Functions;
 
 /**
  * The expression based node label generator that is used as default if a label expression is configured.
@@ -70,18 +69,11 @@ class ExpressionBasedNodeLabelGenerator implements NodeLabelGeneratorInterface
      * Render a node label
      *
      * @param NodeInterface $node
-     * @param boolean $crop This argument is deprecated as of Neos 1.2 and will be removed. Don't rely on this behavior and crop labels in the view.
      * @return string
      */
-    public function getLabel(NodeInterface $node, $crop = true)
+    public function getLabel(NodeInterface $node)
     {
         $label = Utility::evaluateEelExpression($this->getExpression(), $this->eelEvaluator, array('node' => $node), $this->defaultContextConfiguration);
-
-        if ($crop === false) {
-            return $label;
-        }
-
-        $croppedLabel = Functions::substr($label, 0, 30);
-        return $croppedLabel . (strlen($croppedLabel) < strlen($label) ? ' …' : '');
+        return $label;
     }
 }

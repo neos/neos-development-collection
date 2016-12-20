@@ -14,8 +14,6 @@
   className: Neos\ContentRepository\Domain\Service\ConfigurationContentDimensionPresetSource
 'Neos\ContentRepository\Domain\Model\NodeLabelGeneratorInterface':
   className: Neos\ContentRepository\Domain\Model\ExpressionBasedNodeLabelGenerator
-'Neos\ContentRepository\Domain\Model\NodeDataLabelGeneratorInterface':
-  className: Neos\ContentRepository\Domain\Model\FallbackNodeDataLabelGenerator
 'Neos\ContentRepository\Domain\Service\NodeServiceInterface':
   className: Neos\ContentRepository\Domain\Service\NodeService
 
