@@ -12,7 +12,7 @@ namespace Neos\Flow\Core\Migrations;
  */
 
 /**
- * Migrate usages of TypoScriptService to FusionService
+ * Migrate usages of the Settings path Neos.Neos.typoScript to Neos.Neos.fusion
  */
 class Version20161220163741 extends AbstractMigration
 {
