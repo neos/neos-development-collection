@@ -14,7 +14,6 @@ namespace Neos\Neos\Domain\Model;
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
-use Neos\Neos\Domain\Model\Site;
 
 /**
  * Domain Model of a Domain.
@@ -76,37 +75,12 @@ class Domain implements CacheAwareInterface
     }
 
     /**
-     * Sets the hostname
-     *
-     * @param string $hostPattern
-     * @return void
-     * @api
-     * @deprecated after 3.0, use setHostname() instead
-     */
-    public function setHostPattern($hostPattern)
-    {
-        $this->hostname = $hostPattern;
-    }
-
-    /**
      * Returns the hostname
      *
      * @return string
      * @api
      */
     public function getHostname()
-    {
-        return $this->hostname;
-    }
-
-    /**
-     * Returns the hostname
-     *
-     * @return string The name
-     * @api
-     * @deprecated after 3.0, use getHostname() instead
-     */
-    public function getHostPattern()
     {
         return $this->hostname;
     }
