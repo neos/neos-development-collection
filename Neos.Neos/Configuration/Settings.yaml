@@ -212,7 +212,6 @@ Neos:
       # (and thus the composer dependencies of your packages).
       # This also allows disabling of autoIncludes if needed.
       autoInclude:
-      autoInclude:
         Neos.Fusion: true
         Neos.Neos: true
 

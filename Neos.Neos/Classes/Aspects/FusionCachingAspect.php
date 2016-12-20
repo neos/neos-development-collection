@@ -28,7 +28,7 @@ class FusionCachingAspect
     protected $fusionCache;
 
     /**
-     * @Flow\Around("setting(Neos.Neos.typoScript.enableObjectTreeCache) && method(Neos\Neos\Domain\Service\FusionService->getMergedFusionObjectTree())")
+     * @Flow\Around("setting(Neos.Neos.fusion.enableObjectTreeCache) && method(Neos\Neos\Domain\Service\FusionService->getMergedFusionObjectTree())")
      * @param JoinPointInterface $joinPoint The current join point
      * @return mixed
      */
