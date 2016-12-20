@@ -4,5 +4,5 @@
 
 Neos:
   Neos:
-    typoScript:
+    fusion:
       enableObjectTreeCache: true
