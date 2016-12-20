@@ -562,8 +562,7 @@ Neos:
 
     mvc:
       routes:
-        'Neos.Neos':
-          position: 'start'
+        'Neos.Neos': TRUE
 
     security:
       authentication:
