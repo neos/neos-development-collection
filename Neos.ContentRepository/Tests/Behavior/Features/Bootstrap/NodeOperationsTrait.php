@@ -917,7 +917,7 @@ trait NodeOperationsTrait
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__);
         } else {
-            $this->objectManager->get(\Neos\ContentRepository\Domain\Repository\NodeDataRepository::class)->reset();
+            $this->objectManager->get(\Neos\ContentRepository\Domain\Repository\NodeDataRepository::class)->flushNodeRegistry();
             $this->objectManager->get(\Neos\ContentRepository\Domain\Service\ContextFactoryInterface::class)->reset();
             $this->objectManager->get(\Neos\ContentRepository\Domain\Factory\NodeFactory::class)->reset();
         }
