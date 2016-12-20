@@ -283,42 +283,6 @@ class NodeTypeTest extends UnitTestCase
     }
 
     /**
-     * Tests for the deprecated __call method to verify backwards compatibility
-     */
-
-    /**
-     * @test
-     */
-    public function configurationCanBeReturnedViaMagicGetter()
-    {
-        $baseType = new NodeType('Neos.ContentRepository:Base', array(), array(
-            'someKey' => 'someValue'
-        ));
-        $this->assertTrue($baseType->hasSomeKey());
-        $this->assertSame('someValue', $baseType->getSomeKey());
-    }
-
-    /**
-     * @test
-     */
-    public function magicHasReturnsFalseIfPropertyDoesNotExist()
-    {
-        $baseType = new NodeType('Neos.ContentRepository:Base', array(), array());
-        $this->assertFalse($baseType->hasFooKey());
-    }
-
-    /**
-     * @test
-     */
-    public function magicGettersInitializesTheNodeType()
-    {
-        $nodeType = $this->getAccessibleMock(NodeType::class, array('initialize'), array(), '', false);
-        $nodeType->_set('configuration', array('someProperty' => 'someValue'));
-        $nodeType->expects($this->once())->method('initialize');
-        $nodeType->getSomeProperty();
-    }
-
-    /**
      * @test
      */
     public function defaultValuesForPropertiesHandlesDateTypes()
