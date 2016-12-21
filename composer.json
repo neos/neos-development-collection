@@ -15,7 +15,7 @@
         "neos/setup": "~4.0",
         "neos/twitter-bootstrap": "~3.0",
         "neos/form": "~3.0",
-        "neos/kickstarter": "~3.0.0"
+        "neos/kickstarter": "~4.0.0"
     },
     "replace": {
         "typo3/typo3cr": "self.version",

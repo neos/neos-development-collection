@@ -5,7 +5,7 @@
     "license": "GPL-3.0+",
     "require": {
         "neos/neos": "~3.0.0",
-        "neos/kickstarter": "~3.0.0",
+        "neos/kickstarter": "~4.0.0",
         "neos/nodetypes": "~3.0.0",
         "neos/fluid-adaptor": "~4.0.0"
     },
