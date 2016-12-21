@@ -50,6 +50,6 @@ class RemoveNodePrivilege extends AbstractNodePrivilege
      */
     protected function buildMethodPrivilegeMatcher()
     {
-        return 'within(TYPO3\TYPO3CR\Domain\Model\NodeInterface) && method(.*->(remove|setRemoved)())';
+        return 'within(' . NodeInterface::class . ') && method(.*->setRemoved(removed == true))';
     }
 }
