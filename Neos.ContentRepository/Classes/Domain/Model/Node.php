@@ -878,9 +878,16 @@ class Node implements NodeInterface, CacheAwareInterface
     {
         $value = $this->nodeData->getProperty($propertyName);
         $nodeType = $this->getNodeType();
-        $expectedPropertyType = $nodeType->getPropertyType($propertyName);
 
-        if ($expectedPropertyType === 'Neos\Media\Domain\Model\ImageInterface' && empty($value)) {
+        if ($nodeType !== null) {
+            $expectedPropertyType = $nodeType->getPropertyType($propertyName);
+        }
+
+        if (
+            isset($expectedPropertyType) &&
+            $expectedPropertyType === 'Neos\Media\Domain\Model\ImageInterface' &&
+            empty($value)
+        ) {
             return null;
         }
 
