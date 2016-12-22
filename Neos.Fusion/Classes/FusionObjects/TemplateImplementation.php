@@ -13,6 +13,8 @@ namespace Neos\Fusion\FusionObjects;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\FluidAdaptor\Core\Parser\Interceptor\ResourceInterceptor;
+use TYPO3Fluid\Fluid\Core\Parser\InterceptorInterface;
 
 /**
  * TypoScript object rendering a fluid template
@@ -110,7 +112,11 @@ class TemplateImplementation extends AbstractArrayFusionObject
             // Template resources need to be evaluated from the templates package not the requests package.
         if (strpos($templatePath, 'resource://') === 0) {
             $templateResourcePathParts = parse_url($templatePath);
-            $fluidTemplate->setResourcePackage($templateResourcePathParts['host']);
+            foreach ($fluidTemplate->getRenderingContext()->buildParserConfiguration()->getInterceptors(InterceptorInterface::INTERCEPT_TEXT) as $interceptor) {
+                if ($interceptor instanceof ResourceInterceptor) {
+                    $interceptor->setDefaultPackageKey($templateResourcePathParts['host']);
+                }
+            }
         }
 
         foreach ($this->properties as $key => $value) {
