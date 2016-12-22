@@ -877,16 +877,28 @@ class Node implements NodeInterface, CacheAwareInterface
     public function getProperty($propertyName, $returnNodesAsIdentifiers = false)
     {
         $value = $this->nodeData->getProperty($propertyName);
-        if (empty($value)) {
+        $nodeType = $this->getNodeType();
+
+        if ($nodeType !== null) {
+            $expectedPropertyType = $nodeType->getPropertyType($propertyName);
+        }
+
+        if (
+            isset($expectedPropertyType) &&
+            $expectedPropertyType === 'Neos\Media\Domain\Model\ImageInterface' &&
+            empty($value)
+        ) {
             return null;
         }
 
-        $nodeType = $this->getNodeType();
+        if (empty($value)) {
+            return $value;
+        }
+
         if (!$nodeType->hasConfiguration('properties.' . $propertyName)) {
             return $value;
         }
 
-        $expectedPropertyType = $nodeType->getPropertyType($propertyName);
         if ($expectedPropertyType === 'references') {
             return ($returnNodesAsIdentifiers ? $value : $this->resolvePropertyReferences($value));
         }
