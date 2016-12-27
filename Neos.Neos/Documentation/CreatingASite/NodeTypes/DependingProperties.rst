@@ -42,7 +42,7 @@ with :ref:`custom-editors` for properties. Namespaces can be registered like thi
 
 .. code-block:: yaml
 
-  TYPO3:
+  Neos:
     Neos:
       userInterface:
         requireJsPathMapping:

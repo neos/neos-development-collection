@@ -16,7 +16,7 @@ Edit/preview modes are added to the Neos-Backend via *Settings.yaml*.
 
 .. code-block:: yaml
 
-  TYPO3:
+  Neos:
     Neos:
       userInterface:
         editPreviewModes:
@@ -35,18 +35,18 @@ The settings ``isEditingMode`` and ``isPreviewMode`` are controlling whether the
 or "Preview" of the Neos-Backend. The major difference between both sections is that inside "Preview" section the inline
 editing options are not activated.
 
-The actual rendering of the edit/preview mode is configured in TypoScript::
+The actual rendering of the edit/preview mode is configured in Fusion::
 
 	print < page
 	print {
 		head {
-			stylesheets.printCss = TYPO3.TypoScript:Tag {
+			stylesheets.printCss = Neos.Fusion:Tag {
 				@position = 'end 10'
 				tagName = 'link'
 				attributes {
 					media = 'all'
 					rel = 'stylesheet'
-					href = TYPO3.TypoScript:ResourceUri {
+					href = Neos.Fusion:ResourceUri {
 						path = 'resource://Neos.Demo/Public/Styles/Print.css'
 					}
 				}
@@ -64,7 +64,7 @@ To add an editing mode instead of a preview mode the configuration in *Settings.
 
  .. code-block:: yaml
 
-  TYPO3:
+  Neos:
     Neos:
       userInterface:
         editPreviewModes:

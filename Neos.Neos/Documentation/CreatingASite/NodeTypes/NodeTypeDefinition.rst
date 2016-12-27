@@ -3,7 +3,7 @@
 Node Type Definition
 ====================
 
-Each TYPO3CR Node (we'll just call it Node in the remaining text) has a specific
+Each Neos ContentRepository Node (we'll just call it Node in the remaining text) has a specific
 *node type*. Node Types can be defined in any package by declaring them in
 ``Configuration/NodeTypes.yaml``.
 
@@ -98,8 +98,8 @@ The following options are allowed:
 
   This adds a new ContentCollection called someChild to the default page.
   It will be positioned before the main ContentCollection that the default page has.
-  The position setting follows the same sorting logic used in TypoScript
-  (see the :ref:`neos-typoscript-reference`).
+  The position setting follows the same sorting logic used in Fusion
+  (see the :ref:`neos-fusion-reference`).
 
 ``label``
   When displaying a node inside the Neos UI (e.g. tree view, link editor, workspace module) the ``label`` option will
@@ -117,7 +117,7 @@ The following options are allowed:
 
   ``generatorClass``
     Alternatively the class of a node label generator implementing
-    ``TYPO3\TYPO3CR\Domain\Model\NodeLabelGeneratorInterface`` can be specified as a nested option.
+    ``Neos\ContentRepository\Domain\Model\NodeLabelGeneratorInterface`` can be specified as a nested option.
 
 ``options``
   Options for third party-code, the Content-Repository ignores those options but Neos or Packages may use this to adjust
@@ -135,13 +135,13 @@ The following options are allowed:
       If ``options.fusion.prototypeGenerator`` is set to ``null`` no prototype is created for this type.
 
       By default Neos has generators for all nodes of type ``Neos.Neos:Node`` and creates protoypes based on
-      ``TYPO3.TypoScript:Template``. A template path is assumed based on the package-prefix and the nodetype-name. All properties
+      ``Neos.Fusion:Template``. A template path is assumed based on the package-prefix and the nodetype-name. All properties
       of the node are passed to the template. For the nodeTypes of type ``Neos.Neos:Document``, ``Neos.Neos:Content`` and
       ``Neos.Neos:Plugin`` the corresponding prototype is used as base-prototype.
 
       Example::
 
-      prototype(Vendor.Site:Content.SpecialNodeType) < prototype(TYPO3.TypoScript:Content) {
+      prototype(Vendor.Site:Content.SpecialNodeType) < prototype(Neos.Fusion:Content) {
         templatePath = 'resource://Vendor.Site/Private/Templates/NodeTypes/Content.SpecialNodeType.html'
         # all properties of the nodeType are passed to the template
         date = ${q(node).property('date')}
@@ -383,7 +383,7 @@ Here is one of the standard Neos node types (slightly shortened)::
 	          position: 5
 	  properties:
 	    image:
-	      type: TYPO3\Media\Domain\Model\ImageInterface
+	      type: Neos\Media\Domain\Model\ImageInterface
 	      ui:
 	        label: 'Image'
 	        reloadIfChanged: true

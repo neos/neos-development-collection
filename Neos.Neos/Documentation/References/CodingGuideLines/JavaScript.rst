@@ -3,7 +3,7 @@ JavaScript Coding Guidelines
 ============================
 
 Here, you will find an explanation of the JavaScript Coding Guidelines we use.
-Generally, we strive to follow the TYPO3 Flow Coding Guidelines as closely as
+Generally, we strive to follow the Neos Flow Coding Guidelines as closely as
 possible, with exceptions which make sense in the JavaScript context.
 
 This guideline explains mostly how we want JavaScript code to be formatted;
@@ -16,12 +16,12 @@ Development" book.
 Naming Conventions
 ==================
 
-- one class per file, with the same naming convention as TYPO3 Flow.
+- one class per file, with the same naming convention as Neos Flow.
 - This means all classes are built like this:
   ``<PackageKey>.<SubNamespace>.<ClassName>``, and this class is
   implemented in a JavaScript file located at
   ``<Package>/.../JavaScript/<SubNamespace>/<ClassName>.js``
-- Right now, the base directory for JavaScript in TYPO3 Flow packages
+- Right now, the base directory for JavaScript in Neos Flow packages
   ``Resources/Public/JavaScript``, but this might still change.
 - We suggest that the base directory for JavaScript files is *JavaScript*.
 - Files have to be encoded in UTF-8 without byte order mark (BOM).

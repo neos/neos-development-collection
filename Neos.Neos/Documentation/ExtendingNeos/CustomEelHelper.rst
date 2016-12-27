@@ -4,17 +4,17 @@ Custom Eel Helper
 =================
 
 Eel Helpers provide methods that can be used inside of Eel expressions. That is mostly used to extend the capabilities
-for data-aquisition and processing of TypoScript.
+for data-aquisition and processing of Fusion.
 
 The first step is to create the EelHelper class. Every Helper has to implement the interface
-``TYPO3\Eel\ProtectedContextAwareInterface``.
+``Neos\Eel\ProtectedContextAwareInterface``.
 
 .. code-block:: php
 
 	namespace Vendor\Site\Eel\Helper;
 
-	use TYPO3\Flow\Annotations as Flow;
-	use TYPO3\Eel\ProtectedContextAwareInterface;
+	use Neos\Flow\Annotations as Flow;
+	use Neos\Eel\ProtectedContextAwareInterface;
 
 	class ExampleHelper implements ProtectedContextAwareInterface {
 
@@ -40,15 +40,15 @@ The first step is to create the EelHelper class. Every Helper has to implement t
 
 	}
 
-Afterwards the namespace of the Helper has to be registered for usage in TypoScript in the *Settings.yaml* of the package:
+Afterwards the namespace of the Helper has to be registered for usage in Fusion in the *Settings.yaml* of the package:
 
 .. code-block:: yaml
 
-  TYPO3:
-    TypoScript:
+  Neos:
+    Fusion:
       defaultContext:
         'Vendor.Example': 'Vendor\Site\Eel\Helper\ExampleHelper'
 
-In TypoScript you can call the methods of the helper inside of EelExpressions::
+In Fusion you can call the methods of the helper inside of EelExpressions::
 
 	exampleEelValue = ${Vendor.Example.wrapInCurlyBrackets('Hello World')}

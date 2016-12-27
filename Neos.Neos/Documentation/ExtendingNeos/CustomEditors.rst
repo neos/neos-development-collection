@@ -6,7 +6,7 @@ Custom Editors
 Like with validators, using custom editors is possible as well. Every dataType has its default editor set, which
 can have options applied like::
 
-	TYPO3:
+	Neos:
 	  Neos:
 	    userInterface:
 	      inspector:
@@ -18,7 +18,7 @@ can have options applied like::
 
 On a property level this can be overridden like::
 
-	TYPO3:
+	Neos:
 	  Neos:
 	    userInterface:
 	      inspector:
@@ -30,7 +30,7 @@ On a property level this can be overridden like::
 
 Namespaces can be registered like this, as with validators::
 
-	TYPO3:
+	Neos:
 	  Neos:
 	    userInterface:
 	      requireJsPathMapping:
@@ -41,7 +41,7 @@ for example.
 
 Registering specific editors is also possible like this::
 
-	TYPO3:
+	Neos:
 	  Neos:
 	    userInterface:
 	      inspector:

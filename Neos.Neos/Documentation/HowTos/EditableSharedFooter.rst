@@ -32,7 +32,7 @@ the following configuration in NodeTypes.yaml::
 
 		./flow node:repair --node-type Neos.Neos.NodeTypes:Page
 
-TypoScript code::
+Fusion code::
 
 	footer = Neos.Neos:ContentCollection {
 		nodePath = ${q(site).find('footer').property('_path')}

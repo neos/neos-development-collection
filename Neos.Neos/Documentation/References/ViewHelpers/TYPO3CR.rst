@@ -23,7 +23,7 @@ Arguments
 
 * ``as`` (string): Variable name for the result set
 
-* ``parentNode`` (TYPO3\TYPO3CR\Domain\Model\NodeInterface, *optional*): The parent node of the child nodes to show (instead of specifying the specific node set)
+* ``parentNode`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*): The parent node of the child nodes to show (instead of specifying the specific node set)
 
 * ``nodes`` (array, *optional*): The specific collection of nodes to use for this paginator (instead of specifying the parentNode)
 

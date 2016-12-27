@@ -30,7 +30,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml)::
 
 Next you need to define the prototype for the slider in typoscript.
 
-TypoScript (Sites/Vendor.Site/Resources/Private/Fusion/NodeTypes/Carousel.fusion)::
+Fusion (Sites/Vendor.Site/Resources/Private/Fusion/NodeTypes/Carousel.fusion)::
 
 	prototype(Vendor.Site:Carousel) {
 		carouselItems = Neos.Neos:ContentCollection {
@@ -65,7 +65,7 @@ For rendering you need the fluid templates for the slider.
 Html (Sites/Vendor.Site/Private/Templates/NodeTypes/Carousel.html) ::
 
 	{namespace neos=Neos\Neos\ViewHelpers}
-	{namespace ts=TYPO3\TypoScript\ViewHelpers}
+	{namespace fusion=Neos\Fusion\ViewHelpers}
 	<div{attributes -> f:format.raw()}>
 		<div class="carousel slide" id="{node.identifier}">
 			<!-- Indicators -->
@@ -93,7 +93,7 @@ And now the fluid template for the slider items.
 Html (Sites/Vendor.Site/Private/Templates/FusionObjects/CarouselItem.html) ::
 
 	{namespace neos=Neos\Neos\ViewHelpers}
-	{namespace media=TYPO3\Media\ViewHelpers}
+	{namespace media=Neos\Media\ViewHelpers}
 	<div{attributes -> f:format.raw()}>
 		<f:if condition="{image}">
 			<f:then>

@@ -34,9 +34,9 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
           inspector:
             group: 'advanced'
 
-You can add this property to your TypoScript:
+You can add this property to your Fusion:
 
-TypoScript (Sites/Vendor.Site/Resources/Private/Fusion/Root.fusion) ::
+Fusion (Sites/Vendor.Site/Resources/Private/Fusion/Root.fusion) ::
 
   prototype(Vendor.Site:YourContentElementName) < prototype(Neos.Neos:Content) {
     templatePath = 'resource://Vendor.Site/Private/Templates/FusionObjects/YourContentElementName.html'
@@ -103,9 +103,9 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
                 event:
                   label: 'Event'
 
-TypoScript (Sites/Vendor.Site/Resources/Private/Fusion/Root.fusion) ::
+Fusion (Sites/Vendor.Site/Resources/Private/Fusion/Root.fusion) ::
 
-  prototype(Vendor.Site:YourContentElementName) < prototype(TYPO3.TypoScript:Template) {
+  prototype(Vendor.Site:YourContentElementName) < prototype(Neos.Fusion:Template) {
     templatePath = 'resource://Vendor.Site/Private/Templates/FusionObjects/YourContentElementName.html'
     headline = ${q(node).property('headline')}
     subheadline = ${q(node).property('subheadline')}

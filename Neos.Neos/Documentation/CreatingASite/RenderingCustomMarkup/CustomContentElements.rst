@@ -9,9 +9,9 @@ to amend and even completely replace them.
 
 Defining new content elements is usually a three-step process:
 
-#. Defining a *TYPO3CR Node Type*, listing the properties and types of the node.
+#. Defining a *Neos ContentRepository Node Type*, listing the properties and types of the node.
 
-#. Defining a *TypoScript object* which is responsible for rendering this content type.
+#. Defining a *Fusion object* which is responsible for rendering this content type.
    Usually, this is a wrapper for a Fluid Template which then defines the rendered
    markup.
 
@@ -23,7 +23,7 @@ Creating a Simple Content Element
 The following example creates a new content element `Acme.Demo:YouTube` which needs
 the YouTube URL and then renders the video player.
 
-First, the *TYPO3CR Node Type* needs to be defined in `NodeTypes.yaml`. This can be done
+First, the *Neos ContentRepository Node Type* needs to be defined in `NodeTypes.yaml`. This can be done
 in your site package or in a package dedicated to content elements, if reuse is foreseeable.
 
 ::
@@ -51,9 +51,9 @@ in your site package or in a package dedicated to content elements, if reuse is 
 The declaration of node types with all required and optional properties is documented in
 :ref:`node-type-definition`.
 
-Next the TypoScript rendering for the content element has to be defined. By convention,
-a TypoScript object with the same name as the content element is used for rendering; thus
-in this case a TypoScript object `My.Package:YouTube`::
+Next the Fusion rendering for the content element has to be defined. By convention,
+a Fusion object with the same name as the content element is used for rendering; thus
+in this case a Fusion object `My.Package:YouTube`::
 
 	prototype(Acme.Demo:YouTube) < prototype(Neos.Neos:Content) {
 		templatePath = 'resource://Acme.Demo/Private/Templates/FusionObjects/YouTube.html'
@@ -62,13 +62,13 @@ in this case a TypoScript object `My.Package:YouTube`::
 		height = '360'
 	}
 
-A new TypoScript object prototype with the name `My.Package:YouTube` is declared, inheriting
-from the pre-defined `Template` TypoScript object which provides rendering through Fluid.
+A new Fusion object prototype with the name `My.Package:YouTube` is declared, inheriting
+from the pre-defined `Template` Fusion object which provides rendering through Fluid.
 
-The `templatePath` property of the `YouTube` TypoScript object is set to point to the
+The `templatePath` property of the `YouTube` Fusion object is set to point to the
 Fluid template to use for rendering. All (other) properties which are set on the `Template`
-TypoScript object are directly made available inside Fluid as variables -- and
-because the `YouTube` TypoScript object extends the `Template` TypoScript object, this
+Fusion object are directly made available inside Fluid as variables -- and
+because the `YouTube` Fusion object extends the `Template` Fusion object, this
 rule also applies there.
 
 Thus, the last line defines a `videoUrl` variable to be available inside Fluid, which is
@@ -76,7 +76,7 @@ set to the result of the Eel expression `${q(node).property('videoUrl')}`. Eel i
 in depth in :ref:`eel-flowquery`, but this is a close look at the used expression
 `q(node).property('videoUrl')`:
 
-* The q() function wraps its argument, in this case the TYPO3CR Node which is currently rendered,
+* The q() function wraps its argument, in this case the Neos ContentRepository Node which is currently rendered,
   into *FlowQuery*.
 
 * FlowQuery defines the `property(...)` operation used to access the property of a node.
@@ -89,13 +89,13 @@ template, f.e. with the following content::
 
 	<iframe width="{width}" height="{height}" src="{videoUrl}" frameborder="0" allowfullscreen></iframe>
 
-In the template the `{videoUrl}` variable which has been defined in TypoScript is used as we need it.
+In the template the `{videoUrl}` variable which has been defined in Fusion is used as we need it.
 
-What are the benefits of indirection through TypoScript?
+What are the benefits of indirection through Fusion?
 --------------------------------------------------------
 
 In the above example the `videoUrl` property of the *Node* is not directly rendered inside the
-Fluid template. Instead *TypoScript* is used to pass the `videoUrl` from the *Node* into the Fluid
+Fluid template. Instead *Fusion* is used to pass the `videoUrl` from the *Node* into the Fluid
 template.
 
 While this indirection might look superfluous at first sight, it has important benefits:
@@ -103,7 +103,7 @@ While this indirection might look superfluous at first sight, it has important b
 * The Fluid Template does not need to know anything about *Nodes*. It just needs to know
   that it outputs a certain property, but not where it came from.
 
-* Because the rendering is decoupled from the data storage this way, the TypoScript object can be
+* Because the rendering is decoupled from the data storage this way, the Fusion object can be
   instantiated directly, manually setting a `videoUrl`::
 
     page.body.parts.teaserVideo = My.Package:YouTube {
@@ -111,7 +111,7 @@ While this indirection might look superfluous at first sight, it has important b
     }
 
 * If a property needs to be modified *just slightly*, a *processor* can be used for declarative
-  modification of this property in TypoScript; not even touching the Fluid template. This is helpful
+  modification of this property in Fusion; not even touching the Fluid template. This is helpful
   for smaller adjustments to foreign packages.
 
 Creating Editable Content Elements
@@ -141,7 +141,7 @@ The node type definition must define which properties are inline editable throug
 	        label: 'Quote'
 	        inlineEditable: TRUE
 
-The TypoScript for the content element is the same as for a non-inline-editable content
+The Fusion for the content element is the same as for a non-inline-editable content
 element::
 
 	prototype(Acme.Demo:Quote) < prototype(Neos.Neos:Content) {
@@ -181,7 +181,7 @@ In case content elements do not only contain simple properties, but arbitrary su
 again is roughly the same. To demonstrate this, a `Video Grid` content element will be created, which
 can contain two texts and two videos.
 
-#. A TYPO3CR Node Type definition is created. It makes use of the `childNodes` property to define
+#. A Neos ContentRepository Node Type definition is created. It makes use of the `childNodes` property to define
    (and automatically create) sub-nodes when a node of this type is created. In the example the two
    video and text elements will be created directly upon element creation::
 
@@ -201,7 +201,7 @@ can contain two texts and two videos.
 	    text1:
 	      type: 'Neos.Neos.NodeTypes:Text'
 
-#. The needed TypoScript is created::
+#. The needed Fusion is created::
 
 	prototype(Acme.Demo:VideoGrid) {
 		videoRenderer = Acme.Demo:YouTube
@@ -214,28 +214,28 @@ can contain two texts and two videos.
 		text1 = ${q(node).children('text1').get(0)}
 	}
 
-   Instead of assigning variables to the Fluid template, *additional TypoScript objects* responsible
+   Instead of assigning variables to the Fluid template, *additional Fusion objects* responsible
    for the video and the text rendering are instantiated. Furthermore, the video and text nodes
    are fetched using Eel and then passed to the Fluid template.
 
 #. The Fluid template is created. Instead of outputting the content directly using object access
    on the passed nodes, the `<ts:render>` ViewHelper is used to defer rendering to
-   TypoScript again. The needed TYPO3CR Node is passed as context to TypoScript::
+   Fusion again. The needed Neos ContentRepository Node is passed as context to Fusion::
 
-	{namespace ts=TYPO3\TypoScript\ViewHelpers}
-	<ts:render path="videoRenderer" context="{node: video0}" />
-	<ts:render path="textRenderer" context="{node: text0}" />
+	{namespace fusion=Neos\Fusion\ViewHelpers}
+	<fusion:render path="videoRenderer" context="{node: video0}" />
+	<fusion:render path="textRenderer" context="{node: text0}" />
 	<br />
-	<ts:render path="videoRenderer" context="{node: video1}" />
-	<ts:render path="textRenderer" context="{node: text1}" />
+	<fusion:render path="videoRenderer" context="{node: video1}" />
+	<fusion:render path="textRenderer" context="{node: text1}" />
 
 Instead of referencing specific content types directly the use of the generic `ContentCollection` content
 element allows to insert *arbitrary content* inside other elements. An example can be found in the
 `Neos.Neos.NodeTypes:MultiColumn` and `Neos.Neos.NodeTypes:MultiColumnItem` content elements.
 
-As explained earlier (in `What are the benefits of indirection through TypoScript?`_) the major benefit
-if using TypoScript to decouple the rendering of items this way is flexibility. In the video grid
-it shows how this enables *composability*, other TypoScript objects can be re-used for rendering
+As explained earlier (in `What are the benefits of indirection through Fusion?`_) the major benefit
+if using Fusion to decouple the rendering of items this way is flexibility. In the video grid
+it shows how this enables *composability*, other Fusion objects can be re-used for rendering
 smaller parts of the element.
 
 Content Element Group
@@ -312,7 +312,7 @@ By default the following list of editors is available in Neos:
 * `Neos.Neos/Inspector/Editors/ImageEditor`
 
   An image editor with cropping and size support. By default configured for properties
-  of type `TYPO3\Media\Domain\Model\ImageInterface`.
+  of type `Neos\Media\Domain\Model\ImageInterface`.
 
 * `Neos.Neos/Inspector/Editors/ReferenceEditor`
 
@@ -352,7 +352,7 @@ Registering a namespace pointing to a folder containing editors works as follows
 
   ::
 
-    TYPO3:
+    Neos:
       Neos:
         userInterface:
           requireJsPathMapping:
@@ -376,7 +376,7 @@ To set global options for your editor you can set a set of defaults in Settings.
 
 ::
 
-    TYPO3:
+    Neos:
       Neos:
         userInterface:
           inspector:
@@ -391,7 +391,7 @@ To register just one specific path as an editor use the following code:
 
 ::
 
-  TYPO3:
+  Neos:
     Neos:
       userInterface:
         inspector:
@@ -486,7 +486,7 @@ Registering a namespace pointing to a folder containing validators works as foll
 
   ::
 
-    TYPO3:
+    Neos:
       Neos:
         userInterface:
           requireJsPathMapping:
@@ -507,7 +507,7 @@ To register just one specific path as a validator use the following code:
 
 ::
 
-  TYPO3:
+  Neos:
     Neos:
       userInterface:
         validators:
