@@ -2520,7 +2520,7 @@ Package *TYPO3.NEOS.KICKSTARTER*
 
 **Kickstart a new site package**
 
-This command generates a new site package with basic TypoScript and Sites.xml
+This command generates a new site package with basic Fusion and Sites.xml
 
 Arguments
 ^^^^^^^^^

@@ -13,28 +13,28 @@ First, the requested URL is resolved to a Node of type ``Neos.Neos:Document``.
 This happens by translating the URL path to a node path, and finding the node
 with this path then.
 
-The node is passed straight away to TypoScript, which is the rendering mechanism.
-TypoScript renders the node by traversing to sub-nodes and rendering them as well.
-The arguments which are passed to TypoScript are stored inside the so-called
-*context*, which contains all variables which are accessible by the TypoScript rendering
+The node is passed straight away to Fusion, which is the rendering mechanism.
+Fusion renders the node by traversing to sub-nodes and rendering them as well.
+The arguments which are passed to Fusion are stored inside the so-called
+*context*, which contains all variables which are accessible by the Fusion rendering
 engine.
 
-Internally, TypoScript then asks *Fluid* to render certain snippets of the page,
-which can, in turn, ask TypoScript again. This can go back and forth multiple
+Internally, Fusion then asks *Fluid* to render certain snippets of the page,
+which can, in turn, ask Fusion again. This can go back and forth multiple
 times, even recursively.
 
-The Page TypoScript Object and -Template
+The Page Fusion Object and -Template
 ========================================
 
-The rendering of a page by default starts at a ``Case`` matcher at the TypoScript path ``root``,
-which will usually select the TypoScript path ``page``.  The minimally needed TypoScript for rendering
+The rendering of a page by default starts at a ``Case`` matcher at the Fusion path ``root``,
+which will usually select the Fusion path ``page``.  The minimally needed Fusion for rendering
 looks as follows::
 
 	page = Page
 	page.body.templatePath = 'resource://My.Package/Private/Templates/PageTemplate.html'
 
-Here, the ``Page`` TypoScript object is assigned to the path ``page``, telling the
-system that the TypoScript object ``Page`` is responsible for further rendering.
+Here, the ``Page`` Fusion object is assigned to the path ``page``, telling the
+system that the Fusion object ``Page`` is responsible for further rendering.
 ``Page`` expects one parameter to be set: The path of the Fluid template which
 is rendered inside the ``<body>`` of the resulting HTML page.
 
@@ -84,14 +84,14 @@ covered in detail later.
 Of course the current template is still quite boring; it does not show any content
 or any menu. In order to change that, the Fluid template is adjusted as follows::
 
-	{namespace ts=TYPO3\TypoScript\ViewHelpers}
+	{namespace fusion=Neos\Fusion\ViewHelpers}
 	{parts.menu -> f:format.raw()}
 	<h1>{title}</h1>
 	{content.main -> f:format.raw()}
 
 Placeholders for the menu and the content have been added. Because the ``parts.menu`` and
-``content.main`` refer to a rendered TypoScript path, the output needs to be passed through
-the ``f:format.raw()`` ViewHelper. The TypoScript needs to be adjusted as well::
+``content.main`` refer to a rendered Fusion path, the output needs to be passed through
+the ``f:format.raw()`` ViewHelper. The Fusion needs to be adjusted as well::
 
 	page = Page
 	page.body {
@@ -103,12 +103,12 @@ the ``f:format.raw()`` ViewHelper. The TypoScript needs to be adjusted as well::
 		}
 	}
 
-In the above TypoScript, a TypoScript object at ``page.body.parts.menu`` is defined
-to be of type ``Menu``. It is exactly this TypoScript object which is rendered, by
+In the above Fusion, a Fusion object at ``page.body.parts.menu`` is defined
+to be of type ``Menu``. It is exactly this Fusion object which is rendered, by
 specifying its relative path inside ``{parts.menu -> f:format.raw()}``.
 
-Furthermore, the ``PrimaryContent`` TypoScript object is used to render a TYPO3CR
-``ContentCollection`` node. Through the ``nodePath`` property, the name of the TYPO3CR
+Furthermore, the ``PrimaryContent`` Fusion object is used to render a Neos ContentRepository
+``ContentCollection`` node. Through the ``nodePath`` property, the name of the Neos ContentRepository
 ``ContentCollection`` node to render is specified.
 
 As a result, the web page now contains a menu and the contents of the main content
@@ -122,5 +122,5 @@ will directly be edited in the content module of Neos.
 Further Reading
 ===============
 
-Details on how TypoScript works and can be used can be found in the section :ref:`inside-typoscript`.
+Details on how Fusion works and can be used can be found in the section :ref:`inside-fusion`.
 :ref:`adjusting-output` shows how page, menu and content markup can be adjusted freely.

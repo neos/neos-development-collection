@@ -10,7 +10,7 @@ You may override the default language of your installation in ``Configuration/Se
 
 .. code-block:: yaml
 
-  TYPO3:
+  Neos:
     Neos:
       userInterface:
         defaultLanguage: 'en'
@@ -27,7 +27,7 @@ is either content or non-translated.
 
 .. code-block:: yaml
 
- TYPO3:
+ Neos:
    Neos:
      userInterface:
        scrambleTranslatedLabels: TRUE
@@ -41,6 +41,6 @@ is either content or non-translated.
 
 .. code-block:: yaml
 
- TYPO3_Neos_XliffToJsonTranslations:
-   backend: TYPO3\Flow\Cache\Backend\NullBackend
+ Neos_Neos_XliffToJsonTranslations:
+   backend: Neos\Flow\Cache\Backend\NullBackend
 
