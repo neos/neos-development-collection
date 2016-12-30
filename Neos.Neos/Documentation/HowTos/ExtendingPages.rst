@@ -16,7 +16,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
 	          position: 900
 	  properties:
 	    backgroundImage:
-	      type: TYPO3\Media\Domain\Model\ImageInterface
+	      type: Neos\Media\Domain\Model\ImageInterface
 	      ui:
 	        label: 'Image'
 	        reloadPageIfChanged: TRUE
@@ -26,20 +26,20 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
 
 With this configuration, when you click on the page, you will see the Image editor in the Inspector.
 
-To access the backgroundImage in your page template you can also modify the Neos.Neos:Page TypoScript object, like
+To access the backgroundImage in your page template you can also modify the Neos.Neos:Page Fusion object, like
 in the below example:
 
-TypoScript (Sites/Vendor.Site/Resources/Private/Fusion/Root.fusion) ::
+Fusion (Sites/Vendor.Site/Resources/Private/Fusion/Root.fusion) ::
 
 	prototype(Neos.Neos:Page) {
 		backgroundImage = ${q(node).property('backgroundImage')}
 	}
 
-With TYPO3.Media ViewHelper you can display the Image with the follwing HTML snippet:
+With Neos.Media ViewHelper you can display the Image with the follwing HTML snippet:
 
 HTML ::
 
-	{namespace media=TYPO3\Media\ViewHelpers}
+	{namespace media=Neos\Media\ViewHelpers}
 	<style>
 	html {
 		margin:0;

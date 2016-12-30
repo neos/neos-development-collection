@@ -112,7 +112,7 @@ URI to PHP namespace mapping. The YAML syntax for that is:
 
 .. code-block:: yaml
 
-	TYPO3:
+	Neos:
 	  Fluid:
 	    namespaces:
 	      'http://some/unique/namespace': 'My\Php\Namespace'
@@ -611,7 +611,7 @@ With the above methods, the ``Link\ActionViewHelper`` from above can be condense
 
 .. code-block:: php
 
-	class ActionViewHelper extends \TYPO3\\F3\Fluid\Core\AbstractViewHelper {
+	class ActionViewHelper extends \TYPO3\Fluid\Core\AbstractViewHelper {
 
 		public function initializeArguments() {
 			$this->registerUniversalTagAttributes();

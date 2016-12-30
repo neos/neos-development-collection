@@ -40,7 +40,7 @@ Examples
 
 	TypoScript:
 	some.given {
-		path = TYPO3.TypoScript:Template
+		path = Neos.Fusion:Template
 		…
 	}
 	ViewHelper:

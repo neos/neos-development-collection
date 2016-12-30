@@ -38,17 +38,17 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml)::
 	        label: 'Text'
 	        reloadIfChanged: TRUE
 	    image:
-	      type: TYPO3\Media\Domain\Model\ImageInterface
+	      type: Neos\Media\Domain\Model\ImageInterface
 	      ui:
 	        label: 'Image'
 	        reloadIfChanged: TRUE
 	        inspector:
 	          group: 'image'
 
-Based on your Node Type configuration, now you need a TypoScript object to be able to use your new Node Type. This TypoScript
+Based on your Node Type configuration, now you need a Fusion object to be able to use your new Node Type. This Fusion
 object needs to have the same name as the Node Type:
 
-TypoScript (Sites/Vendor.Site/Resources/Private/Fusion/Root.fusion)::
+Fusion (Sites/Vendor.Site/Resources/Private/Fusion/Root.fusion)::
 
 	prototype(Vendor:YourContentElementName) < prototype(Neos.Neos:Content) {
 		templatePath = 'resource://Vendor.Site/Private/Templates/FusionObjects/YourContentElementName.html'
@@ -64,7 +64,7 @@ Last thing, add the required Fluid template:
 HTML (Vendor.Site/Private/Templates/FusionObjects/YourContentElementName.html)::
 
 	{namespace neos=Neos\Neos\ViewHelpers}
-	{namespace media=TYPO3\Media\ViewHelpers}
+	{namespace media=Neos\Media\ViewHelpers}
 	<article>
 		<header>
 			{neos:contentElement.editable(property: 'headline', tag: 'h2')}

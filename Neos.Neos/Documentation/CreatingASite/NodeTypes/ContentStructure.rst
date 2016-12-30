@@ -7,17 +7,17 @@ Content Structure
 Before we can understand how content is rendered, we have to see how it is structured
 and organized. These basics are explained in this section.
 
-Nodes inside the TYPO3 Content Repository
+Nodes inside the Neos Content Repository
 =========================================
 
 The content in Neos is stored not inside tables of a relational database, but
-inside a *tree-based* structure: the so-called TYPO3 Content Repository.
+inside a *tree-based* structure: the so-called Neos Content Repository.
 
 To a certain extent, it is comparable to files in a file-system: They are also
 structured as a tree, and are identified uniquely by the complete path towards
 the file.
 
-.. note:: Internally, the TYPO3CR currently stores the nodes inside database
+.. note:: Internally, the Neos ContentRepository currently stores the nodes inside database
    tables as well, but you do not need to worry about that as you'll never deal
    with the database directly. This high-level abstraction helps to decouple
    the data modelling layer from the data persistence layer.
@@ -34,7 +34,7 @@ Each element in this tree is called a *Node*, and is structured as follows:
 * Of course, nodes may have *sub nodes* underneath them.
 
 If we imagine a classical website with a hierarchical menu structure, then each
-of the pages is represented by a TYPO3CR Node of type ``Document``. However, not only
+of the pages is represented by a Neos ContentRepository Node of type ``Document``. However, not only
 the pages themselves are represented as tree: Imagine a page has two columns,
 with different content elements inside each of them. The columns are stored as
 Nodes of type ``ContentCollection``, and they contain nodes of type ``Text``, ``Image``, or

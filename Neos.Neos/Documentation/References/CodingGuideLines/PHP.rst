@@ -12,10 +12,10 @@ technically okay code or a well considered, mature solution.
 
 These guidelines try to cover both, the technical standards as well as giving incentives
 for a common development style. These guidelines must be followed by everyone who creates
-code for the TYPO3 Flow core. Because Neos is based on TYPO3 Flow, it follows the same principles -
-therefore, whenever we mention TYPO3 Flow in the following sections, we equally refer to Neos.
+code for the Neos Flow core. Because Neos is based on Neos Flow, it follows the same principles -
+therefore, whenever we mention Neos Flow in the following sections, we equally refer to Neos.
 We hope that you feel encouraged to follow these guidelines as well when creating your own
-packages and TYPO3 Flow based applications.
+packages and Neos Flow based applications.
 
 CGL on One Page
 ===============
@@ -44,14 +44,14 @@ programmers to contribute, but in the same style. This will help us to:
   programmers striving for excellence
 
 Some people may object to the visual guidelines since everyone has his own habits. You
-will have to overcome that in the case of TYPO3 Flow; the visual guidelines must be followed
+will have to overcome that in the case of Neos Flow; the visual guidelines must be followed
 along with coding guidelines for security. We want all contributions to the project to be
 as similar in style and as secure as possible.
 
 General considerations
 ----------------------
 
-* Almost every PHP file in TYPO3 Flow contains exactly one class and does not output anything
+* Almost every PHP file in Neos Flow contains exactly one class and does not output anything
   if it is called directly. Therefore you start your file with a ``<?php`` tag and must not end it
   with the closing ``?>``.
 * Every file must contain a header stating namespace and licensing information
@@ -60,7 +60,7 @@ General considerations
   * The copyright header itself must not start with ``/**``, as this may confuse
     documentation generators!
 
-*The TYPO3 Flow standard file header*::
+*The Neos Flow standard file header*::
 
  <?php
  namespace YourCompany\Package\Stuff\Here;
@@ -130,21 +130,19 @@ consensus is that english is much better to read for the most of us, compared to
 languages.
 
 When using abbreviations or acronyms remember to make them camel-cased as needed, no
-all-uppercase stuff. Admittedly there are a few places where we violate that rule
-willingly (TYPO3 – will not change) and historically.
-
+all-uppercase stuff.
 
 Vendor namespaces
 -----------------
 
 The base for namespaces as well as package keys is the vendor namespace. Since Flow is
-part of the TYPO3 project, the core team decided to choose "TYPO3" as our vendor
+part of the Neos project, the core team decided to choose "Neos" as our vendor
 namespace. The Object Manager for example is known under the class name
-``TYPO3\Flow\Object\ObjectManager``. In our examples you will find the ``Acme`` vendor
+``Neos\Flow\Object\ObjectManager``. In our examples you will find the ``Acme`` vendor
 namespace.
 
 Why do we use vendor namespaces? This has two great benefits: first of all we don't need a
-central package key registry (like the one we have for TYPO3 CMS extensions) and secondly,
+central package key registry and secondly,
 it allows anyone to seamlessly integrate third-party packages, such as Symfony2 components
 and Zend Framework components or virtually any other PHP 5.3+ based library.
 
@@ -160,7 +158,7 @@ only the characters a-z, A-Z, 0-9 and the dash sign "-" are allowed for package 
 don't use special characters.
 
 The full package key is then built by combining the vendor namespace and the package,
-like ``TYPO3.Fluid`` or ``Acme.Demo``.
+like ``Neos.Fluid`` or ``Acme.Demo``.
 
 Namespace and Class names
 -------------------------
@@ -180,11 +178,11 @@ Namespace and Class names
 ==================================== ================ ===========================================
 Fully qualified class name           Unqualified name Remarks
 ==================================== ================ ===========================================
-\\TYPO3\\Flow\\Session\\Php          Php              The class is not a representation of PHP
-\\TYPO3\\Flow\\Cache\\Backend\\File  File             The class doesn't represent a file!
-\\TYPO3\\Flow\\Session\\Interface    Interface        Not allowed, "Interface" is a reserved keyword
-\\TYPO3\\Foo\\Controller\\Default    Default          Not allowed, "Default" is a reserved keyword
-\\TYPO3\\Flow\\Object\\Manager       Manager          Just "Manager" is too fuzzy
+\\Neos\\Flow\\Session\\Php          Php              The class is not a representation of PHP
+\\Neos\\Flow\\Cache\\Backend\\File  File             The class doesn't represent a file!
+\\Neos\\Flow\\Session\\Interface    Interface        Not allowed, "Interface" is a reserved keyword
+\\Neos\\Foo\\Controller\\Default    Default          Not allowed, "Default" is a reserved keyword
+\\Neos\\Flow\\Object\\Manager       Manager          Just "Manager" is too fuzzy
 ==================================== ================ ===========================================
 
 *Correct naming of namespaces and classes*
@@ -192,11 +190,11 @@ Fully qualified class name           Unqualified name Remarks
 ============================================ ================== ==========================
 Fully qualified class name                   Unqualified name   Remarks
 ============================================ ================== ==========================
-\\TYPO3\\Flow\\Session\\PhpSession           PhpSession         That's a PHP Session
-\\TYPO3\\Flow\\Cache\\Backend\\FileBackend   FileBackend        A File Backend
-\\TYPO3\\Flow\\Session\\SessionInterface     SessionInterface   Interface for a session
-\\TYPO3\\Foo\\Controller\\StandardController StandardController The standard controller
-\\TYPO3\\Flow\\Object\\ObjectManager         ObjectManager      "ObjectManager" is clearer
+\\Neos\\Flow\\Session\\PhpSession           PhpSession         That's a PHP Session
+\\Neos\\Flow\\Cache\\Backend\\FileBackend   FileBackend        A File Backend
+\\Neos\\Flow\\Session\\SessionInterface     SessionInterface   Interface for a session
+\\Neos\\Foo\\Controller\\StandardController StandardController The standard controller
+\\Neos\\Flow\\Object\\ObjectManager         ObjectManager      "ObjectManager" is clearer
 ============================================ ================== ==========================
 
 *Edge cases in naming of namespaces and classes*
@@ -204,10 +202,10 @@ Fully qualified class name                   Unqualified name   Remarks
 ===================================================== =================== ==========================
 Fully qualified class name                            Unqualified name    Remarks
 ===================================================== =================== ==========================
-\\TYPO3\\Flow\\Mvc\\ControllerInterface               ControllerInterface Consequently the interface belongs to all the controllers in the Controller sub namespace
-\\TYPO3\\Flow\\Mvc\\Controller\\ControllerInterface                       Better
-\\TYPO3\\Flow\\Cache\\AbstractBackend                 AbstractBackend     Same here: In reality this class belongs to the backends
-\\TYPO3\\Flow\\Cache\\Backend\\AbstractBackend                            Better
+\\Neos\\Flow\\Mvc\\ControllerInterface               ControllerInterface Consequently the interface belongs to all the controllers in the Controller sub namespace
+\\Neos\\Flow\\Mvc\\Controller\\ControllerInterface                       Better
+\\Neos\\Flow\\Cache\\AbstractBackend                 AbstractBackend     Same here: In reality this class belongs to the backends
+\\Neos\\Flow\\Cache\\Backend\\AbstractBackend                            Better
 ===================================================== =================== ==========================
 
 .. note::
@@ -245,8 +243,8 @@ characters.
 All interface names are written in ``UpperCamelCase``. Interface names must be adjectives
 or nouns and have the Interface suffix. A few examples follow:
 
-* ``\TYPO3\Flow\Object\ObjectInterface``
-* ``\TYPO3\Flow\Object\ObjectManagerInterface``
+* ``\Neos\Flow\Object\ObjectInterface``
+* ``\Neos\Flow\Object\ObjectManagerInterface``
 * ``\MyCompany\MyPackage\MyObject\MySubObjectInterface``
 * ``\MyCompany\MyPackage\MyObject\MyHtmlParserInterface``
 
@@ -258,8 +256,8 @@ types of exceptions: generic exceptions and specific exceptions. Generic excepti
 be named "Exception" preceded by their namespace. Specific exceptions should reside in
 their own sub-namespace end with the word ``Exception``.
 
-* ``\TYPO3\Flow\Object\Exception``
-* ``\TYPO3\Flow\Object\Exception\InvalidClassNameException``
+* ``\Neos\Flow\Object\Exception``
+* ``\Neos\Flow\Object\Exception\InvalidClassNameException``
 * ``\MyCompany\MyPackage\MyObject\Exception``
 * ``\MyCompany\MyPackage\MyObject\Exception\OutOfCoffeeException``
 
@@ -379,22 +377,22 @@ These are the rules for naming files:
   tested, appended with "Test.php".
 * Files are placed in a directory structure representing the namespace structure.
 
-*File naming in TYPO3 Flow*
+*File naming in Neos Flow*
 
-``TYPO3.TemplateEngine/Classes/TYPO3/TemplateEngine/TemplateEngineInterface.php``
-  Contains the interface ``\TYPO3\TemplateEngine\TemplateEngineInterface`` which is part
-  of the package *TYPO3.TemplateEngine*
+``Neos.TemplateEngine/Classes/Neos/TemplateEngine/TemplateEngineInterface.php``
+  Contains the interface ``\Neos\TemplateEngine\TemplateEngineInterface`` which is part
+  of the package *Neos.TemplateEngine*
 
-``TYPO3.Flow/Classes/TYPO3/Flow/Error/RuntimeException.php``
-  Contains the ``\TYPO3\Flow\Error\RuntimeException`` being a part of the package
-  *TYPO3.Flow*
+``Neos.Flow/Classes/Neos/Flow/Error/RuntimeException.php``
+  Contains the ``\Neos\Flow\Error\RuntimeException`` being a part of the package
+  *Neos.Flow*
 
 ``Acme.DataAccess/Classes/Acme/DataAccess/CustomQuery.php``
   Contains class ``\Acme\DataAccess\CustomQuery`` which is part of the package
   *Acme.DataAccess*
 
-``TYPO3.Flow/Tests/Unit/Package/PackageManagerTest.php``
-	Contains the class ``\TYPO3\Flow\\Tests\Unit\Package\PackageManagerTest`` which
+``Neos.Flow/Tests/Unit/Package/PackageManagerTest.php``
+	Contains the class ``\Neos\Flow\\Tests\Unit\Package\PackageManagerTest`` which
 	is a PHPUnit testcase for ``Package\PackageManager``.
 
 
@@ -521,7 +519,7 @@ The syntax is as follows:
     the fix.
   [SECURITY]
     A security related change. Those must only be committed by active contributors in agreement with the
-    `TYPO3 Security Team`_.
+    `Neos Security Team`_.
   [TASK]
     Anything not covered by the above categories, e.g. coding style cleanup or documentation changes. Usually only used
     if there's no corresponding ticket.
@@ -595,11 +593,11 @@ Examples of good and bad subject lines::
    Introduce xyz service                             // BAD, missing code prefix
    [BUGFIX] Fixed bug xyz                            // BAD, subject should be written in present tense
    [WIP][!!!][TASK] A breaking change                // BAD, subject has to start with [!!!] for breaking changes
-   [BUGFIX] SessionManager removes expired sessions  // GOOD, the line explains what the change does, not what the
+   BUGFIX: SessionManager removes expired sessions  // GOOD, the line explains what the change does, not what the
                                                         bug is about (this should be explained in the following lines
                                                         and in the related bug tracker ticket)
 
-.. _`TYPO3 Security Team`: http://typo3.org/teams/security/
+.. _`Neos Security Team`: https://www.neos.io/about/security-bulletins.html
 
 Source Code Documentation
 -------------------------
@@ -676,11 +674,11 @@ don't we?)
   *
   * Paragraphs are separated by an empty line.
   *
-  * @param \TYPO3\Blog\Domain\Model\Post $post A post
+  * @param \Neos\Blog\Domain\Model\Post $post A post
   * @param string $someString This parameter should contain some string
   * @return void
   */
- public function addStringToPost(\TYPO3\Blog\Domain\Model\Post $post, $someString) {
+ public function addStringToPost(\Neos\Blog\Domain\Model\Post $post, $someString) {
   ...
  }
 
@@ -707,8 +705,8 @@ Defining the Public API
 -----------------------
 
 Not all methods with a public visibility are necessarily part of the intended public API
-of a project. For TYPO3 Flow, only the methods explicitly defined as part of the public API
-will be kept stable and are intended for use by developers using TYPO3 Flow. Also the API
+of a project. For Neos Flow, only the methods explicitly defined as part of the public API
+will be kept stable and are intended for use by developers using Neos Flow. Also the API
 documentation we produce will only cover the public API.
 
 To mark a method as part of the public API, include an ``@api`` annotation for it in the
@@ -735,7 +733,7 @@ docblock.
 Overview of Documentation Annotations
 -------------------------------------
 
-There are not only documentation annotations that can be used. In TYPO3 Flow annotations are
+There are not only documentation annotations that can be used. In Neos Flow annotations are
 also used in the MVC component, for defining aspects and advices for the AOP framework as
 well as for giving instructions to the Persistence framework. See the individual chapters
 for information on their purpose and use.
@@ -824,15 +822,15 @@ the order given here should be kept for the sake of consistency.
 Best Practices
 ==============
 
-TYPO3 Flow
+Neos Flow
 ----------
 
-This section gives you an overview of TYPO3 Flow's coding rules and best practices.
+This section gives you an overview of Neos Flow's coding rules and best practices.
 
 Error Handling and Exceptions
 -----------------------------
 
-TYPO3 Flow makes use of a hierarchy for its exception classes. The general rule is to throw
+Neos Flow makes use of a hierarchy for its exception classes. The general rule is to throw
 preferably specific exceptions and usually let them bubble up until a place where more
 general exceptions are caught. Consider the following example:
 
@@ -845,9 +843,9 @@ exception). This all works because we have the following hierarchy:
 
 .. code-block:: text
 
- + \TYPO3\Flow\Exception
- + \TYPO3\Flow\Object\Exception
- + \TYPO3\Flow\Object\Exception\InvalidObjectNameException
+ + \Neos\Flow\Exception
+ + \Neos\Flow\Object\Exception
+ + \Neos\Flow\Object\Exception\InvalidObjectNameException
 
 Throwing an exception
 ---------------------
@@ -855,9 +853,6 @@ Throwing an exception
 When throwing an exception, make sure to provide a clear error message and an *error code
 being the unix timestamp of when you write the ``throw`` statement*. That error code must
 be unique, so watch out when doing copy and paste!
-
-For every exception there should be a page on the TYPO3 wiki, as exception messages link
-to that page, identified by the error code (unix timestamp).
 
 Unit Testing
 ------------
@@ -874,7 +869,7 @@ Cross Platform Coding
 ---------------------
 
 * When concatenating paths, always use
-  ``\TYPO3\Flow\Utility\Files::concatenatePaths()`` to avoid trouble.
+  ``\Neos\Flow\Utility\Files::concatenatePaths()`` to avoid trouble.
 
 PHP in General
 --------------

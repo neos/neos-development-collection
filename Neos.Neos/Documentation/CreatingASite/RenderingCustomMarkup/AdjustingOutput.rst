@@ -14,7 +14,7 @@ The Body
 --------
 
 As briefly explained in :ref:`page-rendering` the path to your own template for the
-``body`` of a generated page can be set using TypoScript::
+``body`` of a generated page can be set using Fusion::
 
 	page = Page
 	page.body.templatePath = 'resource://My.Package/Private/Templates/PageTemplate.html'
@@ -42,7 +42,7 @@ a Fluid section::
 	</body>
 	</html>
 
-The TypoScript is then amended with the declaration of the section to use::
+The Fusion is then amended with the declaration of the section to use::
 
 	page = Page
 	page.body {
@@ -54,7 +54,7 @@ This results in only the part inside the template's "body" section to be used fo
 rendering the body of the generated page.
 
 To add actual content from Neos to the desired places in the markup, a special
-ViewHelper to turn control back to TypoScript is used. This has been mentioned
+ViewHelper to turn control back to Fusion is used. This has been mentioned
 in :ref:`page-rendering` already.
 
 This template uses the ``render`` ViewHelper twice, once to render the
@@ -67,9 +67,9 @@ path `parts/menu` and once to render the path `content.main`::
 	</f:section>
 
 Those paths are relative to the current path. Since that part of the template is
-rendered by the TypoScript object at `page.body`, this is the starting point
+rendered by the Fusion object at `page.body`, this is the starting point
 for the relative paths. This means the ``Menu`` and the ``ContentCollection`` in this
-TypoScript are used for rendering the output::
+Fusion are used for rendering the output::
 
 	page = Page
 	page.body {
@@ -91,7 +91,7 @@ Apart from the meta tag declaring the character set it is empty::
 	</head>
 
 To fill this with life, it is recommended to add sections to the head of your HTML template that
-group the needed parts. Additional TypoScript `Template` objects are then used to include them
+group the needed parts. Additional Fusion `Template` objects are then used to include them
 into the generated page. Here is an example:
 
 *Page/Default.html*
@@ -104,11 +104,11 @@ into the generated page. Here is an example:
 		</f:section>
 
 		<f:section name="stylesheets">
-			<!-- put your stylesheet inclusions here, they will be included in your website by TypoScript -->
+			<!-- put your stylesheet inclusions here, they will be included in your website by Fusion -->
 		</f:section>
 
 		<f:section name="scripts">
-			<!-- put your javascript inclusions here, they will be included in your website by TypoScript -->
+			<!-- put your javascript inclusions here, they will be included in your website by Fusion -->
 		</f:section>
 	</head>
 
@@ -117,25 +117,25 @@ into the generated page. Here is an example:
 ::
 
 	page.head {
-		meta = TYPO3.TypoScript:Template {
+		meta = Neos.Fusion:Template {
 			templatePath = 'resource://Acme.DemoCom/Private/Templates/Page/Default.html'
 			sectionName = 'meta'
 
 			title = ${q(node).property('title')}
 		}
-		stylesheets.site = TYPO3.TypoScript:Template {
+		stylesheets.site = Neos.Fusion:Template {
 			templatePath = 'resource://Acme.DemoCom/Private/Templates/Page/Default.html'
 			sectionName = 'stylesheets'
 		}
-		javascripts.site = TYPO3.TypoScript:Template {
+		javascripts.site = Neos.Fusion:Template {
 			templatePath = 'resource://Acme.DemoCom/Private/Templates/Page/Default.html'
 			sectionName = 'scripts'
 		}
 	}
 
-The TypoScript fills the `page.head` instance of ``TYPO3.TypoScript:Array`` with content. The predefined paths for
+The Fusion fills the `page.head` instance of ``Neos.Fusion:Array`` with content. The predefined paths for
 `page.head.stylesheets`, `page.head.javascripts` or `page.body.javascripts` should be used to add custom includes. They
-are implemented by a TypoScript `Array` and allow arbitrary items to specify JavaScript or CSS includes without any
+are implemented by a Fusion `Array` and allow arbitrary items to specify JavaScript or CSS includes without any
 restriction on the content.
 
 This will render some more head content::
@@ -143,8 +143,8 @@ This will render some more head content::
 		<head>
 		…
 		<title>Home</title>
-		<!-- put your stylesheet inclusions here, they will be included in your website by TypoScript -->
-		<!-- put your javascript inclusions here, they will be included in your website by TypoScript -->
+		<!-- put your stylesheet inclusions here, they will be included in your website by Fusion -->
+		<!-- put your javascript inclusions here, they will be included in your website by Fusion -->
 		…
 	</head>
 
@@ -169,15 +169,15 @@ Out of the box the `Menu` is rendered using a simple unsorted list::
 
 Wrapping this into some container (if needed) in a lot of cases provides for enough possibilities
 to style the menu using CSS. In case it still is needed, it is possible to change the rendered markup
-of `Menu` using TypoScript. `Menu` is defined inside the core of Neos together with Neos.Neos.NodeTypes:
+of `Menu` using Fusion. `Menu` is defined inside the core of Neos together with Neos.Neos.NodeTypes:
 
-*Neos.Neos/Resources/Private/DefaultTypoScript/ImplementationClasses.fusion*
+*Neos.Neos/Resources/Private/Fusion/Root.fusion*
 
 ::
 
 	prototype(Neos.Neos:Menu).@class = 'Neos\\Neos\\Fusion\\MenuImplementation'
 
-*Neos.Neos.NodeTypes/Resources/Private/Fusion/Root.fusion*
+*Neos.NodeTypes/Resources/Private/Fusion/Root.fusion*
 
 ::
 
@@ -229,15 +229,15 @@ Content Element Rendering
 =========================
 
 The rendering of content elements follows the same principle as shown for the `Menu`.
-The default TypoScript is defined in the Neos.NodeTypes package and the content elements
+The default Fusion is defined in the Neos.NodeTypes package and the content elements
 all have default Fluid templates.
 
 Combined with the possibility to define custom templates per instance or on the prototype
 level, this already provides a lot of flexibility. Another possibility is to inherit from
-the existing TypoScript and adjust as needed using TypoScript.
+the existing Fusion and adjust as needed using Fusion.
 
-The available properties and settings that the TypoScript objects in Neos provide are
-described in :ref:`neos-typoscript-reference`.
+The available properties and settings that the Fusion objects in Neos provide are
+described in :ref:`neos-fusion-reference`.
 
 
 Including CSS and JavaScript in a Neos Site
@@ -268,7 +268,7 @@ should be extended with an item that renders script or stylesheet includes::
 	}
 
 The `page.body.javascripts` content will be appended to the rendered page template so the included scripts should be
-placed before the closing body tag. As always in TypoScript the elements can be a simple string value, a TypoScript
+placed before the closing body tag. As always in Fusion the elements can be a simple string value, a Fusion
 object like `Template` or an expression::
 
 	page.head {
@@ -281,7 +281,7 @@ object like `Template` or an expression::
 
 	page.body {
 		# Use a Template object to access a special section of the site template
-		javascripts.site = TYPO3.TypoScript:Template {
+		javascripts.site = Neos.Fusion:Template {
 			templatePath = 'resource://Acme.DemoCom/Private/Templates/Page/Default.html'
 			sectionName = 'bodyScripts'
 		}
@@ -329,5 +329,5 @@ TODO "what about the UI below a single DOM element idea"
 Adjusting the HTTP response
 ===========================
 
-It is possible to set HTTP headers and the status code of the response from TypoScript. See :ref:`TYPO3_TypoScript__Http_Message`
+It is possible to set HTTP headers and the status code of the response from Fusion. See :ref:`TYPO3_TypoScript__Http_Message`
 for an example.

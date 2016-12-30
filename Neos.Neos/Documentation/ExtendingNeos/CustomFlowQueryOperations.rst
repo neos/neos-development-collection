@@ -12,10 +12,10 @@ allows the creation of filters, sorting algorithms and much more.
 Create FlowQuery Operation
 --------------------------
 
-Implementing a custom operation is done by extending the ``TYPO3\Eel\FlowQuery\Operations\AbstractOperation`` class.
+Implementing a custom operation is done by extending the ``Neos\Eel\FlowQuery\Operations\AbstractOperation`` class.
 The Operation is implemented in the evaluate method of that class.
 
-To identify the operation lateron in TypoScript the static class variable ``$shortName`` has to be set.
+To identify the operation lateron in Fusion the static class variable ``$shortName`` has to be set.
 
 If you pass arguments to the FlowQuery Operation they end up in the numerical array ``$arguments`` that is handed over
 to the evaluate method.
@@ -24,8 +24,8 @@ to the evaluate method.
 
 	namespace Vendor\Site\FlowQuery\Operation;
 
-	use TYPO3\Eel\FlowQuery\FlowQuery;
-	use TYPO3\Eel\FlowQuery\Operations\AbstractOperation;
+	use Neos\Eel\FlowQuery\FlowQuery;
+	use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 
 	class RandomElementOperation extends AbstractOperation {
 
@@ -51,7 +51,7 @@ to the evaluate method.
 		}
 	}
 
-In TypoScript you can use this operation to find a random element of the main ContentCollection of the Site-Node::
+In Fusion you can use this operation to find a random element of the main ContentCollection of the Site-Node::
 
 	randomStartpageContent = ${q(site).children('main').children().randomElement()}
 
@@ -68,8 +68,8 @@ If a FlowQuery operation does return a value instead of modifying the FlowQuery 
 
 	namespace Vendor\Site\FlowQuery\Operation;
 
-	use TYPO3\Eel\FlowQuery\FlowQuery;
-	use TYPO3\Eel\FlowQuery\Operations\AbstractOperation;
+	use Neos\Eel\FlowQuery\FlowQuery;
+	use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 
 	class DebugOperation extends AbstractOperation {
 
@@ -89,7 +89,7 @@ If a FlowQuery operation does return a value instead of modifying the FlowQuery 
 		 * @return void
 		 */
 		public function evaluate(FlowQuery $flowQuery, array $arguments) {
-			return \TYPO3\Flow\var_dump($flowQuery->getContext(), NULL, TRUE);
+			return \Neos\Flow\var_dump($flowQuery->getContext(), NULL, TRUE);
 		}
 	}
 
