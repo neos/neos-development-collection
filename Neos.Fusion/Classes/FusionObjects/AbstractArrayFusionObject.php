@@ -14,12 +14,12 @@ namespace Neos\Fusion\FusionObjects;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Base class for TypoScript objects that need access to arbitrary properties, like ArrayImplementation.
+ * Base class for Fusion objects that need access to arbitrary properties, like ArrayImplementation.
  */
 abstract class AbstractArrayFusionObject extends AbstractFusionObject implements \ArrayAccess
 {
     /**
-     * List of properties which have been set using array access. We store this for *every* TypoScript object
+     * List of properties which have been set using array access. We store this for *every* Fusion object
      * in order to do things like:
      * x = Foo {
      *   a = 'foo'

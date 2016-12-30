@@ -17,7 +17,7 @@ use Neos\Fusion\Core\Cache\ContentCache;
 use Neos\Fusion\Tests\Functional\FusionObjects\Fixtures\Model\TestModel;
 
 /**
- * Test case for the TypoScript ContentCache
+ * Test case for the Fusion ContentCache
  */
 class ContentCacheTest extends AbstractFusionObjectTest
 {

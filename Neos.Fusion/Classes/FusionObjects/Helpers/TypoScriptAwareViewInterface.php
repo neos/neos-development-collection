@@ -15,9 +15,9 @@ use Neos\Fusion\FusionObjects\AbstractFusionObject;
 
 /**
  * You should implement this interface with a View that should allow access
- * to the TypoScript object it is rendered from (and so the TypoScript runtime).
+ * to the Fusion object it is rendered from (and so the Fusion runtime).
  *
- * The TypoScript FluidView is the reference implementation for this.
+ * The Fusion FluidView is the reference implementation for this.
  * @see \Neos\Fusion\FusionObjects\Helpers\FluidView
  *
  * @api

@@ -1,5 +1,5 @@
 /**
- * This TypoScript template defines a rudimentary Page object,
+ * This Fusion template defines a rudimentary Page object,
  * which is used until real data can be fetched from the Content
  * Repository.
  */
@@ -13,4 +13,4 @@ rhabarber.10.value = "This value will be overwritten."
 
 # rhabarber.10.value.processors.1.wrap('<strong>', '<strong')
 
-rhabarber.10.value = "Hey this is real output from a TypoScript object!"
+rhabarber.10.value = "Hey this is real output from a Fusion object!"

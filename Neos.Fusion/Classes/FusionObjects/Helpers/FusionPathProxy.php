@@ -30,28 +30,28 @@ use Neos\Fusion\FusionObjects\TemplateImplementation;
 class FusionPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \IteratorAggregate, \Countable
 {
     /**
-     * Reference to the TypoScript Runtime which controls the whole rendering
+     * Reference to the Fusion Runtime which controls the whole rendering
      *
      * @var \Neos\Fusion\Core\Runtime
      */
     protected $fusionRuntime;
 
     /**
-     * Reference to the "parent" TypoScript object
+     * Reference to the "parent" Fusion object
      *
      * @var TemplateImplementation
      */
     protected $templateImplementation;
 
     /**
-     * The TypoScript path this object proxies
+     * The Fusion path this object proxies
      *
      * @var string
      */
     protected $path;
 
     /**
-     * This is a part of the TypoScript tree built when evaluating $this->path.
+     * This is a part of the Fusion tree built when evaluating $this->path.
      *
      * @var array
      */
@@ -105,7 +105,7 @@ class FusionPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \I
             // Simple type; we call "evaluate" nevertheless to make sure processors are applied.
             return $this->fusionRuntime->evaluate($this->path . '/' . $offset);
         } else {
-            // arbitrary array (could be Eel expression, TypoScript object, nested sub-array) again, so we wrap it with ourselves.
+            // arbitrary array (could be Eel expression, Fusion object, nested sub-array) again, so we wrap it with ourselves.
             return new FusionPathProxy($this->templateImplementation, $this->path . '/' . $offset, $this->partialTypoScriptTree[$offset]);
         }
     }
@@ -137,7 +137,7 @@ class FusionPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \I
      * Post-Processor which is called whenever this object is encountered in a Fluid
      * object access.
      *
-     * Evaluates TypoScript objects and eel expressions.
+     * Evaluates Fusion objects and eel expressions.
      *
      * @return FusionPathProxy|mixed
      */
@@ -185,9 +185,9 @@ class FusionPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \I
     }
 
     /**
-     * Finally evaluate the TypoScript path
+     * Finally evaluate the Fusion path
      *
-     * As PHP does not like throwing an exception here, we render any exception using the configured TypoScript exception
+     * As PHP does not like throwing an exception here, we render any exception using the configured Fusion exception
      * handler and will also catch and log any exceptions resulting from that as a last resort.
      *
      * @return string

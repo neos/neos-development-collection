@@ -16,7 +16,7 @@ use Neos\FluidAdaptor\View\StandaloneView;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
 
 /**
- * Extended Fluid Template View for use in TypoScript.
+ * Extended Fluid Template View for use in Fusion.
  */
 class FluidView extends StandaloneView implements TypoScriptAwareViewInterface
 {

@@ -111,7 +111,7 @@ prototype(Neos.Fusion:ResourceUri) {
 # These are globally applied cache identifiers.
 # If you don't make @cache.entryIdentifiers another prototype (like a Neos.Fusion:RawArray)
 # they will be rendered as this prototype, which means everything in here is added to ALL cached
-# TypoScript parts.
+# Fusion parts.
 # The baseUri contains the protocol (http/https), domain and port.
 #
 # WARNING: Do not delete this prototype, it is used inside of \Neos\Fusion\Core\Cache\RuntimeContentCache::buildCacheIdentifierValues() as a fallback.

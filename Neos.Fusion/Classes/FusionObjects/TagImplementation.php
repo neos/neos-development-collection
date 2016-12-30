@@ -14,7 +14,7 @@ namespace Neos\Fusion\FusionObjects;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * A TypoScript object for tag based content
+ * A Fusion object for tag based content
  *
  * //tsPath attributes An array with attributes for this tag (optional)
  * //tsPath content Content for the body of the tag (optional)

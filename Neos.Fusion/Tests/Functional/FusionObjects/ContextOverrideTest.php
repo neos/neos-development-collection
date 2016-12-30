@@ -12,7 +12,7 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  */
 
 /**
- * Testcase for the TypoScript View
+ * Testcase for the Fusion View
  *
  */
 class ContextOverrideTest extends AbstractFusionObjectTest

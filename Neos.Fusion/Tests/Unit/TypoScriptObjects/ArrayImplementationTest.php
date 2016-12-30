@@ -16,7 +16,7 @@ use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\FusionObjects\ArrayImplementation;
 
 /**
- * Testcase for the TypoScript Array object
+ * Testcase for the Fusion Array object
  */
 class ArrayImplementationTest extends UnitTestCase
 {
