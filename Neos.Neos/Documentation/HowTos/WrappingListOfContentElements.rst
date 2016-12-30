@@ -18,7 +18,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
       column0:
         type: 'Neos.Neos:ContentCollection'
 
-TypoScript (Sites/Vendor.Site/Resources/Private/Fusion/NodeTypes.fusion) ::
+Fusion (Sites/Vendor.Site/Resources/Private/Fusion/NodeTypes.fusion) ::
 
 	prototype(Vendor:Box) < prototype(Neos.Neos:Content) {
 		templatePath = 'resource://Vendor.Site/Private/Templates/FusionObjects/Box.html'
@@ -30,11 +30,11 @@ TypoScript (Sites/Vendor.Site/Resources/Private/Fusion/NodeTypes.fusion) ::
 
 Html (Sites/Vendor.Site/Private/Templates/FusionObjects/Box.html) ::
 
-	{namespace ts=TYPO3\TypoScript\ViewHelpers}
+	{namespace fusion=Neos\Fusion\ViewHelpers}
 
 	<div class="container box">
 		<div class="column">
-			<ts:render path="columnContent" />
+			<fusion:render path="columnContent" />
 		</div>
 	</div>
 
@@ -71,7 +71,7 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
       column0:
         type: 'Neos.Neos:ContentCollection'
 
-TypoScript (Sites/Vendor.Site/Resources/Private/Fusion/NodeTypes.fusion) ::
+Fusion (Sites/Vendor.Site/Resources/Private/Fusion/NodeTypes.fusion) ::
 
 	prototype(Vendor:Box) < prototype(Neos.Neos:Content) {
 		templatePath = 'resource://Vendor.Site/Private/Templates/FusionObjects/Box.html'
@@ -84,13 +84,13 @@ TypoScript (Sites/Vendor.Site/Resources/Private/Fusion/NodeTypes.fusion) ::
 
 Html (Sites/Vendor.Site/Private/Templates/FusionObjects/Box.html) ::
 
-	{namespace ts=TYPO3\TypoScript\ViewHelpers}
+	{namespace fusion=Neos\Fusion\ViewHelpers}
 
 	<f:if condition="{collapsed}">
 		<button>open the collapsed box via js</button>
 	</f:if>
 	<div class="container box {f:if(condition: collapsed, then: 'collapsed', else: '')}">
 		<div class="column">
-			<ts:render path="columnContent" />
+			<fusion:render path="columnContent" />
 		</div>
 	</div>

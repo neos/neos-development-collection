@@ -18,7 +18,7 @@ The implementation uses the JavaScript specificiation where applicable, includin
 See https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array for a documentation and
 specification of the JavaScript implementation.
 
-Implemented in: ``TYPO3\Eel\Helper\ArrayHelper``
+Implemented in: ``Neos\Eel\Helper\ArrayHelper``
 
 Array.concat(array1, array2, array\_)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -233,7 +233,7 @@ Configuration
 
 Configuration helpers for Eel contexts
 
-Implemented in: ``TYPO3\Eel\Helper\ConfigurationHelper``
+Implemented in: ``Neos\Eel\Helper\ConfigurationHelper``
 
 Configuration.setting(settingPath)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -242,7 +242,7 @@ Return the specified settings
 
 Examples::
 
-    Configuration.setting('TYPO3.Flow.core.context') == 'Production'
+    Configuration.setting('Neos.Flow.core.context') == 'Production'
 
     Configuration.setting('Acme.Demo.speedMode') == 'light speed'
 
@@ -262,7 +262,7 @@ Date
 
 Date helpers for Eel contexts
 
-Implemented in: ``TYPO3\Eel\Helper\DateHelper``
+Implemented in: ``Neos\Eel\Helper\DateHelper``
 
 Date.add(date, interval)
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -400,7 +400,7 @@ Json
 
 JSON helpers for Eel contexts
 
-Implemented in: ``TYPO3\Eel\Helper\JsonHelper``
+Implemented in: ``Neos\Eel\Helper\JsonHelper``
 
 Json.parse(json, associativeArrays)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -438,7 +438,7 @@ The implementation sticks to the JavaScript specificiation including EcmaScript 
 See https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Math for a documentation and
 specification of the JavaScript implementation.
 
-Implemented in: ``TYPO3\Eel\Helper\MathHelper``
+Implemented in: ``Neos\Eel\Helper\MathHelper``
 
 Math.abs(x)
 ^^^^^^^^^^^
@@ -932,7 +932,7 @@ Neos.Link.resolveNodeUri(uri, contextNode, controllerContext)
 Neos.Node
 ---------
 
-Eel helper for TYPO3CR Nodes
+Eel helper for Neos ContentRepository Nodes
 
 Implemented in: ``Neos\Neos\Fusion\Helper\NodeHelper``
 
@@ -1000,14 +1000,14 @@ Security
 
 Helper for security related information
 
-Implemented in: ``TYPO3\Eel\Helper\SecurityHelper``
+Implemented in: ``Neos\Eel\Helper\SecurityHelper``
 
 Security.getAccount()
 ^^^^^^^^^^^^^^^^^^^^^
 
 Get the account of the first authenticated token.
 
-**Return** (\TYPO3\Flow\Security\Account|NULL)
+**Return** (\Neos\Flow\Security\Account|NULL)
 
 Security.hasRole(roleIdentifier)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1031,7 +1031,7 @@ String
 
 String helpers for Eel contexts
 
-Implemented in: ``TYPO3\Eel\Helper\StringHelper``
+Implemented in: ``Neos\Eel\Helper\StringHelper``
 
 String.charAt(string, index)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1407,7 +1407,7 @@ Translation
 
 Translation helpers for Eel contexts
 
-Implemented in: ``TYPO3\Flow\I18n\EelHelper\TranslationHelper``
+Implemented in: ``Neos\Flow\I18n\EelHelper\TranslationHelper``
 
 Translation.id(id)
 ^^^^^^^^^^^^^^^^^^
@@ -1462,7 +1462,7 @@ Type
 
 Type helper for Eel contexts
 
-Implemented in: ``TYPO3\Eel\Helper\TypeHelper``
+Implemented in: ``Neos\Eel\Helper\TypeHelper``
 
 Type.className(variable)
 ^^^^^^^^^^^^^^^^^^^^^^^^

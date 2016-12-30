@@ -39,7 +39,7 @@ As a quick example, a privilege target giving access to a specific part of the n
 
 .. code-block:: yaml
 
-  'TYPO3\TYPO3CR\Security\Authorization\Privilege\NodeTreePrivilege':
+  'Neos\ContentRepository\Security\Authorization\Privilege\NodeTreePrivilege':
     'YourSite:EditWebsitePart':
       matcher: 'isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")'
 
@@ -51,9 +51,9 @@ Neos comes with a number of predefined roles that can be assigned to users:
 +-----------------------------+-----------------------------+--------------------------------------------------------+
 | Role                        | Parent role(s)              | Description                                            |
 +=============================+=============================+========================================================+
-| TYPO3.TYPO3CR:Administrator |                             | A no-op role for future use                            |
+| Neos.ContentRepository:Administrator |                             | A no-op role for future use                            |
 +-----------------------------+-----------------------------+--------------------------------------------------------+
-| Neos.Neos:AbstractEditor   | TYPO3.TYPO3CR:Administrator | Grants the very basic things needed to use Neos at all |
+| Neos.Neos:AbstractEditor   | Neos.ContentRepository:Administrator | Grants the very basic things needed to use Neos at all |
 +-----------------------------+-----------------------------+--------------------------------------------------------+
 | Neos.Neos:LivePublisher    |                             | A "helper role" to allow publishing to the live        |
 |                             |                             | workspace                                              |
@@ -80,7 +80,7 @@ Here is an example for a role (limiting editing to a specific language) that sho
 .. code-block:: yaml
 
   privilegeTargets:
-    'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\EditNodePrivilege':
+    'Neos\ContentRepository\Security\Authorization\Privilege\Node\EditNodePrivilege':
       # this privilegeTarget is defined to switch to a "whitelist" approach
       'Acme.Com:EditAllNodes':
         matcher: 'TRUE'
@@ -114,7 +114,7 @@ Node privileges define what can be restricted in relation to accessing and editi
   .. code-block:: yaml
 
     privilegeTargets:
-      'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\CreateNodePrivilege':
+      'Neos\ContentRepository\Security\Authorization\Privilege\Node\CreateNodePrivilege':
         'Some.Package:SomeIdentifier':
           matcher: >-
             isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")
@@ -126,7 +126,7 @@ Node privileges define what can be restricted in relation to accessing and editi
   .. code-block:: yaml
 
     privilegeTargets:
-      'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\CreateNodePrivilege':
+      'Neos\ContentRepository\Security\Authorization\Privilege\Node\CreateNodePrivilege':
         'Some.Package:SomeIdentifier':
           matcher: isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")
 
@@ -161,7 +161,7 @@ Usage example:
 .. code-block:: yaml
 
   privilegeTargets:
-    'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\EditNodePropertyPrivilege':
+    'Neos\ContentRepository\Security\Authorization\Privilege\Node\EditNodePropertyPrivilege':
       'Some.Package:SomeIdentifier':
         matcher: >-
           isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")
@@ -179,7 +179,7 @@ Usage example:
 
 .. code-block:: yaml
 
-  'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\ReadNodePropertyPrivilege':
+  'Neos\ContentRepository\Security\Authorization\Privilege\Node\ReadNodePropertyPrivilege':
     'Some.Package:SomeIdentifier':
       matcher: 'isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")'
 
@@ -195,7 +195,7 @@ Usage example:
 .. code-block:: yaml
 
   privilegeTargets:
-   'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\RemoveNodePrivilege':
+   'Neos\ContentRepository\Security\Authorization\Privilege\Node\RemoveNodePrivilege':
      'Some.Package:SomeIdentifier':
        matcher: 'isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")'
 
@@ -211,7 +211,7 @@ Usage example:
 .. code-block:: yaml
 
   privilegeTargets:
-    'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\CreateNodePrivilege':
+    'Neos\ContentRepository\Security\Authorization\Privilege\Node\CreateNodePrivilege':
       'Some.Package:SomeIdentifier':
         matcher: >-
           isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")
@@ -230,7 +230,7 @@ Usage example:
 .. code-block:: yaml
 
   privilegeTargets:
-   'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\EditNodePrivilege':
+   'Neos\ContentRepository\Security\Authorization\Privilege\Node\EditNodePrivilege':
       'Some.Package:SomeIdentifier':
         matcher: >-
           isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")
@@ -250,7 +250,7 @@ be hidden from the system unless explicitly granted to the current user (by assi
 .. code-block:: yaml
 
   privilegeTargets:
-    'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\ReadNodePrivilege':
+    'Neos\ContentRepository\Security\Authorization\Privilege\Node\ReadNodePrivilege':
       'Some.Package:MembersArea':
         matcher: 'isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")'
 
@@ -378,7 +378,7 @@ target is then granted for the "Editor" role.
 .. code-block:: yaml
 
   privilegeTargets:
-    'TYPO3\TYPO3CR\Security\Authorization\Privilege\Node\EditNodePrivilege':
+    'Neos\ContentRepository\Security\Authorization\Privilege\Node\EditNodePrivilege':
       # This privilegeTarget must be defined, so that we switch to a "whitelist" approach
       'Neos.Demo:EditAllNodes':
         matcher: 'TRUE'
@@ -405,7 +405,7 @@ only the relevant parts:
 
  .. code-block:: yaml
 
-  TYPO3:
+  Neos:
    Neos:
      modules:
       management:
@@ -437,7 +437,7 @@ To completely disable modules available in the Neos UI a setting can be used:
 
 .. code-block:: yaml
 
-  TYPO3:
+  Neos:
     Neos:
       modules:
         management:

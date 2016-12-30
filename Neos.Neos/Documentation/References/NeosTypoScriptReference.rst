@@ -11,7 +11,7 @@ This package contains general-purpose TypoScript objects, which are usable both 
 
 .. _TYPO3_TypoScript__Array:
 
-TYPO3.TypoScript:Array
+Neos.Fusion:Array
 ----------------------
 
 Render multiple nested definitions and concatenate the results.
@@ -55,7 +55,7 @@ Example Ordering::
 	# order (o1 ... o9) is *always* fixed, no matter in which order the
 	# individual statements are defined.
 
-	myArray = TYPO3.TypoScript:Array {
+	myArray = Neos.Fusion:Array {
 		o1 = Neos.Neos.NodeTypes:Text
 		o1.@position = 'start 12'
 		o2 = Neos.Neos.NodeTypes:Text
@@ -87,7 +87,7 @@ to use ``@position`` and meaningful keys in your application, and not numeric on
 
 Example of numeric keys (discouraged)::
 
-	myArray = TYPO3.TypoScript:Array {
+	myArray = Neos.Fusion:Array {
 		10 = Neos.Neos.NodeTypes:Text
 		20 = Neos.Neos.NodeTypes:Text
 	}
@@ -95,7 +95,7 @@ Example of numeric keys (discouraged)::
 
 .. _TYPO3_TypoScript__Collection:
 
-TYPO3.TypoScript:Collection
+Neos.Fusion:Collection
 ---------------------------
 
 Render each item in ``collection`` using ``itemRenderer``.
@@ -108,10 +108,10 @@ Render each item in ``collection`` using ``itemRenderer``.
 
 Example using an object ``itemRenderer``::
 
-	myCollection = TYPO3.TypoScript:Collection {
+	myCollection = Neos.Fusion:Collection {
 		collection = ${[1, 2, 3]}
 		itemName = 'element'
-		itemRenderer = TYPO3.TypoScript:Template {
+		itemRenderer = Neos.Fusion:Template {
 			templatePath = 'resource://...'
 			element = ${element}
 		}
@@ -120,7 +120,7 @@ Example using an object ``itemRenderer``::
 
 Example using an expression ``itemRenderer``::
 
-	myCollection = TYPO3.TypoScript:Collection {
+	myCollection = Neos.Fusion:Collection {
 		collection = ${[1, 2, 3]}
 		itemName = 'element'
 		itemRenderer = ${element * 2}
@@ -128,7 +128,7 @@ Example using an expression ``itemRenderer``::
 
 .. _TYPO3_TypoScript__RawCollection:
 
-TYPO3.TypoScript:RawCollection
+Neos.Fusion:RawCollection
 ------------------------------
 
 Render each item in ``collection`` using ``itemRenderer`` and return the result as an array (opposed to *string* for :ref:`TYPO3_TypoScript__Collection`)
@@ -141,7 +141,7 @@ Render each item in ``collection`` using ``itemRenderer`` and return the result 
 
 .. _TYPO3_TypoScript__Case:
 
-TYPO3.TypoScript:Case
+Neos.Fusion:Case
 ---------------------
 
 **Conditionally evaluate** nested definitions.
@@ -159,7 +159,7 @@ evaluate to a result using either ``renderer``, ``renderPath`` or ``type`` on th
 
 Simple Example::
 
-	myCase = TYPO3.TypoScript:Case {
+	myCase = Neos.Fusion:Case {
 		someCondition {
 			condition = ${q(node).is('[instanceof MyNamespace:My.Special.SuperType]')}
 			type = 'MyNamespace:My.Special.Type'
@@ -181,12 +181,12 @@ The ordering of matcher definitions can be specified with the ``@position`` prop
 Thus, the priority of existing matchers (e.g. the default Neos document rendering) can be changed by setting or
 overriding the ``@position`` property.
 
-.. note:: The internal ``TYPO3.TypoScript:Matcher`` object type is used to evaluate the matcher definitions which
-   is based on the ``TYPO3.TypoScript:Renderer``.
+.. note:: The internal ``Neos.Fusion:Matcher`` object type is used to evaluate the matcher definitions which
+   is based on the ``Neos.Fusion:Renderer``.
 
 .. _TYPO3_TypoScript__Renderer:
 
-TYPO3.TypoScript:Renderer
+Neos.Fusion:Renderer
 -------------------------
 
 The Renderer object will evaluate to a result using either ``renderer``, ``renderPath`` or ``type`` from the configuration.
@@ -198,8 +198,8 @@ The Renderer object will evaluate to a result using either ``renderer``, ``rende
 
 Simple Example::
 
-	myCase = TYPO3.TypoScript:Renderer {
-		type = 'TYPO3.TypoScript:Value'
+	myCase = Neos.Fusion:Renderer {
+		type = 'Neos.Fusion:Value'
 		element.value = 'hello World'
 	}
 
@@ -207,7 +207,7 @@ Simple Example::
 
 .. _TYPO3_TypoScript__Debug:
 
-TYPO3.TypoScript:Debug
+Neos.Fusion:Debug
 -------------------------
 
 Shows the result of TypoScript Expressions directly.
@@ -235,7 +235,7 @@ Example::
 
 .. _TYPO3_TypoScript__Template:
 
-TYPO3.TypoScript:Template
+Neos.Fusion:Template
 -------------------------
 
 Render a *Fluid template* specified by ``templatePath``.
@@ -248,7 +248,7 @@ Render a *Fluid template* specified by ``templatePath``.
 
 Example::
 
-	myTemplate = TYPO3.TypoScript:Template {
+	myTemplate = Neos.Fusion:Template {
 		templatePath = 'resource://My.Package/Private/Templates/FusionObjects/MyTemplate.html'
 		someDataAvailableInsideFluid = 'my data'
 	}
@@ -259,7 +259,7 @@ Example::
 
 .. _TYPO3_TypoScript__Value:
 
-TYPO3.TypoScript:Value
+Neos.Fusion:Value
 ----------------------
 
 Evaluate any value as a TypoScript object
@@ -268,7 +268,7 @@ Evaluate any value as a TypoScript object
 
 Example::
 
-	myValue = TYPO3.TypoScript:Value {
+	myValue = Neos.Fusion:Value {
 		value = 'Hello World'
 	}
 
@@ -277,7 +277,7 @@ Example::
 
 .. _TYPO3_TypoScript__RawArray:
 
-TYPO3.TypoScript:RawArray
+Neos.Fusion:RawArray
 -------------------------
 
 Evaluate nested definitions as an array (opposed to *string* for :ref:`TYPO3_TypoScript__Array`)
@@ -289,7 +289,7 @@ Evaluate nested definitions as an array (opposed to *string* for :ref:`TYPO3_Typ
 
 .. _TYPO3_TypoScript__Tag:
 
-TYPO3.TypoScript:Tag
+Neos.Fusion:Tag
 --------------------
 
 Render an HTML tag with attributes and optional body
@@ -305,7 +305,7 @@ Example:
 
 ::
 
-	htmlTag = TYPO3.TypoScript:Tag {
+	htmlTag = Neos.Fusion:Tag {
 		tagName = 'html'
 		omitClosingTag = TRUE
 
@@ -321,7 +321,7 @@ Evaluates to::
 
 .. _TYPO3_TypoScript__Attributes:
 
-TYPO3.TypoScript:Attributes
+Neos.Fusion:Attributes
 ---------------------------
 
 A TypoScript object to render HTML tag attributes. This object is used by the :ref:`TYPO3_TypoScript__Tag` object to
@@ -335,9 +335,9 @@ Example:
 
 ::
 
-	attributes = TYPO3.TypoScript:Attributes {
+	attributes = Neos.Fusion:Attributes {
 		foo = 'bar'
-		class = TYPO3.TypoScript:RawArray {
+		class = Neos.Fusion:RawArray {
 			class1 = 'class1'
 			class2 = 'class2'
 		}
@@ -355,7 +355,7 @@ this case.
 
 .. _TYPO3_TypoScript__Http_Message:
 
-TYPO3.TypoScript:Http.Message
+Neos.Fusion:Http.Message
 -----------------------------
 
 A prototype based on :ref:`TYPO3_TypoScript__Array` for rendering an HTTP message (response). It should be used to
@@ -371,7 +371,7 @@ Example:
 
 	// Page extends from Http.Message
 	//
-	// prototype(Neos.Neos:Page) < prototype(TYPO3.TypoScript:Http.Message)
+	// prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message)
 	//
 	page = Neos.Neos:Page {
 		httpResponseHead.headers.Content-Type = 'application/json'
@@ -379,7 +379,7 @@ Example:
 
 .. _TYPO3_TypoScript__Http_ResponseHead:
 
-TYPO3.TypoScript:Http.ResponseHead
+Neos.Fusion:Http.ResponseHead
 ----------------------------------
 
 A helper object to render the head of an HTTP response
@@ -389,7 +389,7 @@ A helper object to render the head of an HTTP response
 
 .. _TYPO3_TypoScript__UriBuilder:
 
-TYPO3.TypoScript:UriBuilder
+Neos.Fusion:UriBuilder
 ---------------------------
 
 Built a URI to a controller action
@@ -408,7 +408,7 @@ Built a URI to a controller action
 
 Example::
 
-	uri = TYPO3.TypoScript:UriBuilder {
+	uri = Neos.Fusion:UriBuilder {
 		package = 'My.Package'
 		controller = 'Registration'
 		action = 'new'
@@ -416,7 +416,7 @@ Example::
 
 .. _TYPO3_TypoScript__ResourceUri:
 
-TYPO3.TypoScript:ResourceUri
+Neos.Fusion:ResourceUri
 ----------------------------
 
 Build a URI to a static or persisted resource
@@ -428,10 +428,10 @@ Build a URI to a static or persisted resource
 
 Example::
 
-	scriptInclude = TYPO3.TypoScript:Tag {
+	scriptInclude = Neos.Fusion:Tag {
 		tagName = 'script'
 		attributes {
-			src = TYPO3.TypoScript:ResourceUri {
+			src = Neos.Fusion:ResourceUri {
 				path = 'resource://My.Package/Public/Scripts/App.js'
 			}
 		}
@@ -512,7 +512,7 @@ Including stylesheets from a template section in the head:
 
 ::
 
-	page.head.stylesheets.mySite = TYPO3.TypoScript:Template {
+	page.head.stylesheets.mySite = Neos.Fusion:Template {
 		templatePath = 'resource://My.Package/Private/MyTemplate.html'
 		sectionName = 'stylesheets'
 	}

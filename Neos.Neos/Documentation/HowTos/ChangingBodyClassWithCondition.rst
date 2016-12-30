@@ -6,7 +6,7 @@ In some cases there is the need to define different body classes based on a cert
 
 It can for example be that if a page has sub pages then we want to add a body class tag for this.
 
-TypoScript code::
+Fusion code::
 
     page {
         bodyTag {
@@ -14,7 +14,7 @@ TypoScript code::
         }
     }
 
-First of all we add the part called `bodyTag` to the TypoScript page object. Then inside we
+First of all we add the part called `bodyTag` to the Fusion page object. Then inside we
 add the `attributes.class`.
 
 Then we add a FlowQuery that checks if the current node has any children.
@@ -23,7 +23,7 @@ pages that have any children.
 
 An other example could be that we want to check if the current page is of type page.
 
-TypoScript code::
+Fusion code::
 
     page {
         bodyTag {

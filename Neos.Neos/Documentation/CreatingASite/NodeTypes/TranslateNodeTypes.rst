@@ -34,7 +34,7 @@ for this NodeTypes you have to add the following configuration to the Settings.y
 
 .. code-block:: yaml
 
-  TYPO3:
+  Neos:
     Neos:
       userInterface:
         translation:
@@ -125,7 +125,7 @@ Validate Translations
 To validate that all labels are translated Neos has the following setting in *Settings.yaml*::
 
 
-  TYPO3:
+  Neos:
     Neos:
       UserInterface:
         scrambleTranslatedLabels: true

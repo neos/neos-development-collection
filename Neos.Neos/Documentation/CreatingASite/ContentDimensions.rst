@@ -33,8 +33,8 @@ The available dimensions and presets can be configured via settings:
 
 .. code-block:: yaml
 
-	TYPO3:
-	  TYPO3CR:
+	Neos:
+	  ContentRepository:
 	    contentDimensions:
 
 	      # Content dimension "language" serves for translation of content into different languages. Its value specifies
@@ -62,7 +62,7 @@ The available dimensions and presets can be configured via settings:
 	            values: ['de_DE', 'de_ZZ', 'mul_ZZ']
 	            uriSegment: 'de'
 
-The TYPO3CR and Neos packages don't provide any dimension configuration per default.
+The Neos ContentRepository and Neos packages don't provide any dimension configuration per default.
 
 Preset Constraints
 ==================
@@ -79,8 +79,8 @@ in English and their respective local language. The following configuration woul
 
 .. code-block:: yaml
 
-	TYPO3:
-	  TYPO3CR:
+	Neos:
+	  ContentRepository:
 	    contentDimensions:
 	      'language':
 	        default: 'en'
@@ -133,8 +133,8 @@ example:
 
 .. code-block:: yaml
 
-	TYPO3:
-	  TYPO3CR:
+	Neos:
+	  ContentRepository:
 	    contentDimensions:
 	      'language':
 	        default: 'en'
@@ -190,7 +190,7 @@ Migration of existing content
 Adjusting content dimensions configuration can lead to issues for existing content. When a new content dimension is added,
 a corresponding value needs to be added to existing content, otherwise no nodes would be found.
 
-This can be done with a node migration which is included in the ``TYPO3.TYPO3CR`` package::
+This can be done with a node migration which is included in the ``Neos.ContentRepository`` package::
 
 	./flow node:migrate 20150716212459
 
@@ -211,8 +211,8 @@ The default preset can have an empty `uriSegment` value. The following example w
 
 .. code-block:: yaml
 
-  TYPO3:
-    TYPO3CR:
+  Neos:
+    ContentRepository:
       contentDimensions:
 
         'language':
@@ -231,7 +231,7 @@ switch support for non-empty dimensions off:
 
 .. code-block:: yaml
 
-  TYPO3:
+  Neos:
     Neos:
       routing:
         supportEmptySegmentForDimensions: FALSE
