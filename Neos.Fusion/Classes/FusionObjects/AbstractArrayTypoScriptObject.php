@@ -14,7 +14,7 @@ namespace Neos\Fusion\FusionObjects;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Base class for TypoScript objects that need access to arbitrary properties, like ArrayImplementation.
+ * Base class for Fusion objects that need access to arbitrary properties, like ArrayImplementation.
  *
  * @deprecated with 3.0 will be removed with 4.0
  */

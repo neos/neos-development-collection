@@ -17,15 +17,15 @@ simpleTypes.wrappedString = Value {
 
 
 // with the following lines, we test that TsRuntime::evaluate works on all three data types:
-// 1. Eel, 2. Plain Values, 3. TypoScript Objects
+// 1. Eel, 2. Plain Values, 3. Fusion Objects
 // (without processors. Processors are tested in Processor.fusion)
-simpleTypes.stringAsEel = ${'A simple string value is not a TypoScript object'}
-simpleTypes.stringAsPlainValue = 'A simple string value is not a TypoScript object'
+simpleTypes.stringAsEel = ${'A simple string value is not a Fusion object'}
+simpleTypes.stringAsPlainValue = 'A simple string value is not a Fusion object'
 simpleTypes.stringAsTypoScript = Value {
-	value = 'A simple string value is not a TypoScript object'
+	value = 'A simple string value is not a Fusion object'
 }
 
-// with the following lines, we test that AbstractTypoScriptObject::tsObject works on all three
+// with the following lines, we test that AbstractFusionObject::tsObject works on all three
 // data types (without processors. Processors are tested in Processor.fusion)
 simpleTypes.valueWithNestedPlainValue = Value {
 	value = 'A simple value'

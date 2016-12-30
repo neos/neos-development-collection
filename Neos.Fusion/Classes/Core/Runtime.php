@@ -30,18 +30,18 @@ use Neos\Fusion\FusionObjects\AbstractFusionObject;
 use Neos\Eel\Utility as EelUtility;
 
 /**
- * TypoScript Runtime
+ * Fusion Runtime
  *
- * TypoScript Rendering Process
+ * Fusion Rendering Process
  * ============================
  *
- * During rendering, all TypoScript objects form a tree.
+ * During rendering, all Fusion objects form a tree.
  *
- * When a TypoScript object at a certain $typoScriptPath is invoked, it has
+ * When a Fusion object at a certain $typoScriptPath is invoked, it has
  * access to all variables stored in the $context (which is an array).
  *
- * The TypoScript object can then add or replace variables to this context using pushContext()
- * or pushContextArray(), before rendering sub-TypoScript objects. After rendering
+ * The Fusion object can then add or replace variables to this context using pushContext()
+ * or pushContextArray(), before rendering sub-Fusion objects. After rendering
  * these, it must call popContext() to reset the context to the last state.
  */
 class Runtime
@@ -127,7 +127,7 @@ class Runtime
     protected $simpleTypeToArrayClosure;
 
     /**
-     * Constructor for the TypoScript Runtime
+     * Constructor for the Fusion Runtime
      *
      * @param array $typoScriptConfiguration
      * @param ControllerContext $controllerContext
@@ -230,7 +230,7 @@ class Runtime
     }
 
     /**
-     * Evaluate an absolute TypoScript path and return the result
+     * Evaluate an absolute Fusion path and return the result
      *
      * @param string $typoScriptPath
      * @param object $contextObject the object available as "this" in Eel expressions. ONLY FOR INTERNAL USE!
@@ -250,7 +250,7 @@ class Runtime
     }
 
     /**
-     * Render an absolute TypoScript path and return the result.
+     * Render an absolute Fusion path and return the result.
      *
      * Compared to $this->evaluate, this adds some more comments helpful for debugging.
      *
@@ -281,7 +281,7 @@ class Runtime
     }
 
     /**
-     * Handle an Exception thrown while rendering TypoScript according to
+     * Handle an Exception thrown while rendering Fusion according to
      * settings specified in Neos.Fusion.rendering.exceptionHandler
      *
      * @param array $typoScriptPath
@@ -336,7 +336,7 @@ class Runtime
     }
 
     /**
-     * Determine if the given TypoScript path is renderable, which means it exists
+     * Determine if the given Fusion path is renderable, which means it exists
      * and has an implementation.
      *
      * @param string $typoScriptPath
@@ -422,7 +422,7 @@ class Runtime
     }
 
     /**
-     * Does the evaluation of a TypoScript instance, first checking the cache and if conditions and afterwards applying processors.
+     * Does the evaluation of a Fusion instance, first checking the cache and if conditions and afterwards applying processors.
      *
      * @param AbstractFusionObject $typoScriptObject
      * @param string $typoScriptPath
@@ -483,7 +483,7 @@ class Runtime
     }
 
     /**
-     * Possibly prepares a new context for the current TypoScriptObject and cache context and pushes it to the stack.
+     * Possibly prepares a new context for the current FusionObject and cache context and pushes it to the stack.
      * Returns if a new context was pushed to the stack or not.
      *
      * @param AbstractFusionObject $typoScriptObject
@@ -536,7 +536,7 @@ class Runtime
     }
 
     /**
-     * Get the TypoScript Configuration for the given TypoScript path
+     * Get the Fusion Configuration for the given Fusion path
      *
      * @param string $typoScriptPath
      * @return array
@@ -642,7 +642,7 @@ class Runtime
             foreach ($prototypeMergingOrder as $prototypeName) {
                 if (!array_key_exists($prototypeName, $currentPrototypeDefinitions)) {
                     throw new Exception(sprintf(
-                        'The TypoScript object `%s` which you tried to inherit from does not exist.
+                        'The Fusion object `%s` which you tried to inherit from does not exist.
 									Maybe you have a typo on the right hand side of your inheritance statement for `%s`.',
                         $prototypeName, $currentPathSegmentType), 1427134340);
                 }
@@ -666,7 +666,7 @@ class Runtime
     }
 
     /**
-     * Instantiates a TypoScript object specified by the given path and configuration
+     * Instantiates a Fusion object specified by the given path and configuration
      *
      * @param string $typoScriptPath Path to the configuration for this object instance
      * @param array $typoScriptConfiguration Configuration at the given path
@@ -680,12 +680,12 @@ class Runtime
         $tsObjectClassName = isset($typoScriptConfiguration['__meta']['class']) ? $typoScriptConfiguration['__meta']['class'] : null;
 
         if (!preg_match('#<[^>]*>$#', $typoScriptPath)) {
-            // Only add TypoScript object type to last path part if not already set
+            // Only add Fusion object type to last path part if not already set
             $typoScriptPath .= '<' . $typoScriptObjectType . '>';
         }
         if (!class_exists($tsObjectClassName)) {
             throw new Exception(sprintf(
-                'The implementation class `%s` defined for TypoScript object of type `%s` does not exist.
+                'The implementation class `%s` defined for Fusion object of type `%s` does not exist.
 				Maybe a typo in the `@class` property.',
                 $tsObjectClassName, $typoScriptObjectType), 1347952109);
         }
@@ -715,7 +715,7 @@ class Runtime
     }
 
     /**
-     * Does the given TypoScript configuration array hold an EEL expression or simple value.
+     * Does the given Fusion configuration array hold an EEL expression or simple value.
      *
      * @param array $typoScriptConfiguration
      * @return boolean
@@ -726,7 +726,7 @@ class Runtime
     }
 
     /**
-     * Set options on the given (AbstractArray)TypoScript object
+     * Set options on the given (AbstractArray)Fusion object
      *
      * @param AbstractArrayFusionObject $typoScriptObject
      * @param array $typoScriptConfiguration
@@ -747,8 +747,8 @@ class Runtime
     /**
      * Evaluate a simple value or eel expression with processors
      *
-     * @param string $typoScriptPath the TypoScript path up to now
-     * @param array $valueConfiguration TypoScript configuration for the value
+     * @param string $typoScriptPath the Fusion path up to now
+     * @param array $valueConfiguration Fusion configuration for the value
      * @param \Neos\Fusion\FusionObjects\AbstractFusionObject $contextObject An optional object for the "this" value inside the context
      * @return mixed The result of the evaluation
      */
@@ -784,7 +784,7 @@ class Runtime
         $contextVariables = array_merge($this->getDefaultContextVariables(), $this->getCurrentContext());
 
         if (isset($contextVariables['this'])) {
-            throw new Exception('Context variable "this" not allowed, as it is already reserved for a pointer to the current TypoScript object.', 1344325044);
+            throw new Exception('Context variable "this" not allowed, as it is already reserved for a pointer to the current Fusion object.', 1344325044);
         }
         $contextVariables['this'] = $contextObject;
 
@@ -883,7 +883,7 @@ class Runtime
     /**
      * Checks and throws an exception for an unrenderable path.
      *
-     * @param string $typoScriptPath The TypoScript path that cannot be rendered
+     * @param string $typoScriptPath The Fusion path that cannot be rendered
      * @param array $typoScriptConfiguration
      * @param string $behaviorIfPathNotFound One of the BEHAVIOR_* constants
      * @throws Exception\MissingFusionImplementationException
@@ -894,18 +894,18 @@ class Runtime
         if (isset($typoScriptConfiguration['__objectType'])) {
             $objectType = $typoScriptConfiguration['__objectType'];
             throw new Exceptions\MissingFusionImplementationException(sprintf(
-                "The TypoScript object at path `%s` could not be rendered:
-					The TypoScript object `%s` is not completely defined (missing property `@class`).
+                "The Fusion object at path `%s` could not be rendered:
+					The Fusion object `%s` is not completely defined (missing property `@class`).
 					Most likely you didn't inherit from a basic object.
-					For example you could add the following line to your TypoScript:
+					For example you could add the following line to your Fusion:
 					`prototype(%s) < prototype(Neos.Fusion:Template)`",
                 $typoScriptPath, $objectType, $objectType), 1332493995);
         }
 
         if ($behaviorIfPathNotFound === self::BEHAVIOR_EXCEPTION) {
             throw new Exceptions\MissingFusionObjectException(sprintf(
-                'No TypoScript object found in path "%s"
-					Please make sure to define one in your TypoScript configuration.', $typoScriptPath
+                'No Fusion object found in path "%s"
+					Please make sure to define one in your Fusion configuration.', $typoScriptPath
             ), 1332493990);
         }
     }
@@ -928,7 +928,7 @@ class Runtime
     }
 
     /**
-     * If the TypoScript content cache should be enabled at all
+     * If the Fusion content cache should be enabled at all
      *
      * @param boolean $flag
      * @return void

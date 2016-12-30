@@ -14,7 +14,7 @@ namespace Neos\Fusion\FusionObjects;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * A TypoScript object for debugging ts-values
+ * A Fusion object for debugging ts-values
  *
  * If only value is given it is debugged directly. Otherwise all keys except title an plaintext are debugged.
  *

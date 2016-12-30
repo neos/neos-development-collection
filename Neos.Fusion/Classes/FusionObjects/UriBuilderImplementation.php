@@ -14,7 +14,7 @@ namespace Neos\Fusion\FusionObjects;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * A TypoScript UriBuilder object
+ * A Fusion UriBuilder object
  *
  * The following TS properties are evaluated:
  *  * package

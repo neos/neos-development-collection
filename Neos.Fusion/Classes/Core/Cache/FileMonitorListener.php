@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cache\CacheManager;
 
 /**
- * Listener to clear TypoScript caches if important files have changed
+ * Listener to clear Fusion caches if important files have changed
  *
  * It's used in the Package bootstrap as an early instance, so no full dependency injection is available.
  *

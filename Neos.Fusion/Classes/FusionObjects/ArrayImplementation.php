@@ -47,11 +47,11 @@ class ArrayImplementation extends AbstractArrayFusionObject
     }
 
     /**
-     * Sort the TypoScript objects inside $this->properties depending on:
+     * Sort the Fusion objects inside $this->properties depending on:
      * - numerical ordering
      * - position meta-property
      *
-     * This will ignore all properties defined in "@ignoreProperties" in TypoScript
+     * This will ignore all properties defined in "@ignoreProperties" in Fusion
      *
      * @see PositionalArraySorter
      *
