@@ -6,8 +6,6 @@
    :target: https://codeclimate.com/github/neos/neos-development-collection
 .. |StyleCI| image:: https://styleci.io/repos/40964014/shield?style=flat
    :target: https://styleci.io/repos/40964014
-.. |Latest Stable Version| image:: https://poser.pugx.org/neos/neos-development-collection/v/stable
-   :target: https://packagist.org/packages/neos/neos-development-collection
 .. |License| image:: https://poser.pugx.org/neos/neos-development-collection/license
    :target: https://packagist.org/packages/neos/neos-development-collection
 .. |Docs| image:: https://img.shields.io/badge/documentation-1.2-blue.svg
