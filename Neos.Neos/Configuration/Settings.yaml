@@ -489,12 +489,6 @@ Neos:
                 label: 'Neos.Neos:Modules:users.actions.new.label'
                 title: 'Neos.Neos:Modules:users.actions.new.title'
             privilegeTarget: 'Neos.Neos:Backend.Module.Administration.Users'
-          packages:
-            label: 'Neos.Neos:Modules:packages.label'
-            controller: \Neos\Neos\Controller\Module\Administration\PackagesController
-            description: 'Neos.Neos:Modules:packages.description'
-            icon: icon-archive
-            privilegeTarget: 'Neos.Neos:Backend.Module.Administration.Packages'
           sites:
             label: 'Neos.Neos:Modules:sites.label'
             controller: \Neos\Neos\Controller\Module\Administration\SitesController
