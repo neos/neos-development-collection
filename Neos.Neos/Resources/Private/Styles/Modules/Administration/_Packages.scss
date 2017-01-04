@@ -1,9 +1,5 @@
 &.neos-module-administration-packages {
 
-	.neos-button.neos-button-freeze {
-		background-color: $blue;
-	}
-
 	table {
 		table-layout: auto;
 
@@ -52,28 +48,6 @@
 				width: 20%;
 				text-align: right;
 			}
-		}
-
-		td > .neos-button,
-		td > div.neos-pull-right > .neos-button {
-			// Freeze Button
-			&.neos-button-freeze {
-				background-color: $grayMedium;
-
-				&:not([disabled]),
-				&:not(.neos-disabled) {
-					&:hover,
-					&:active,
-					&.neos-active,
-					&.neos-pressed {
-						background-color: $blue;
-					}
-				}
-			}
-		}
-
-		td.neos-action {
-			width: auto;
 		}
 	}
 }

@@ -36,7 +36,7 @@ since all the data will be removed after each scenario.
 
 `FLOW_ROOT/Configuration/Development/Behat/Settings.yaml`::
 
-	TYPO3:
+	Neos:
 	  Flow:
 	    persistence:
 	      backendOptions:
@@ -44,7 +44,7 @@ since all the data will be removed after each scenario.
 
 `FLOW_ROOT/Configuration/Testing/Behat/Settings.yaml`::
 
-	TYPO3:
+	Neos:
 	  Flow:
 	    persistence:
 	      backendOptions:
@@ -150,7 +150,7 @@ and access_key::
 
 .. tip::
 
-	Saucelabs provides unlimited video time for TYPO3 core development. If you want to contribute to Neos by writing
+	Saucelabs provides unlimited video time for Neos core development. If you want to contribute to Neos by writing
 	tests ask Christian Müller.
 
 To make tests with more browsers than the default browser you need to tell saucelabs which browser, version and OS you

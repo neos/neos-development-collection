@@ -2,14 +2,14 @@
 Rendering a Menu
 ================
 
-The implementation of a menu is done in TypoScript and HTML, this gives an
+The implementation of a menu is done in Fusion and HTML, this gives an
 flexibility in what can be rendered.
 
-First of all you have to add a new element (with a name) in TypoScript that is
-of type Menu. Then inside the TypoScript object you can set what kind of
+First of all you have to add a new element (with a name) in Fusion that is
+of type Menu. Then inside the Fusion object you can set what kind of
 rendering (templatePath) to use, an entryLevel and a maximumLevels properties.
 
-TypoScript code::
+Fusion code::
 
     mainMenu = Menu
     mainMenu {
@@ -44,7 +44,7 @@ Viewhelper include::
 
     {namespace neos=Neos\Neos\ViewHelpers}
 
-The next thing is to iterate through the nodes found by TypoScript.
+The next thing is to iterate through the nodes found by Fusion.
 
 Iterating through nodes::
 

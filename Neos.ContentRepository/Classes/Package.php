@@ -55,7 +55,7 @@ class Package extends BasePackage
         $context = $bootstrap->getContext();
         if (!$context->isProduction()) {
             $dispatcher->connect(Sequence::class, 'afterInvokeStep', function ($step) use ($bootstrap) {
-                if ($step->getIdentifier() === 'typo3.flow:systemfilemonitor') {
+                if ($step->getIdentifier() === 'neos.flow:systemfilemonitor') {
                     $nodeTypeConfigurationFileMonitor = FileMonitor::createFileMonitorAtBoot('ContentRepository_NodeTypesConfiguration', $bootstrap);
                     $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
                     foreach ($packageManager->getActivePackages() as $packageKey => $package) {
