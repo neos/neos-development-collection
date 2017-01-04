@@ -13,9 +13,9 @@ namespace Neos\Fusion\Exception;
 use Neos\Fusion\Exception;
 
 /**
- * This exception is thrown if the the object type for a given TypoScript path
+ * This exception is thrown if the the object type for a given Fusion path
  * could not be determined, f.e. if the user forgets to define "page = Page" in his
- * TypoScript.
+ * Fusion.
  */
 class MissingFusionObjectException extends Exception
 {

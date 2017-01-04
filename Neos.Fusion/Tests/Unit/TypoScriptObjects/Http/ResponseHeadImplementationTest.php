@@ -18,7 +18,7 @@ use Neos\Fusion\FusionObjects\Http\ResponseHeadImplementation;
 use Neos\Fusion\FusionObjects\TagImplementation;
 
 /**
- * Testcase for the TypoScript ResponseHead object
+ * Testcase for the Fusion ResponseHead object
  */
 class ResponseHeadImplementationTest extends UnitTestCase
 {

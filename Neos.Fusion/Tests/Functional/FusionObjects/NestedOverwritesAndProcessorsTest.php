@@ -12,7 +12,7 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  */
 
 /**
- * Testcase for basic TypoScript rendering
+ * Testcase for basic Fusion rendering
  *
  */
 class NestedOverwritesAndProcessorsTest extends AbstractFusionObjectTest

@@ -36,7 +36,7 @@ class BubblingHandler extends AbstractRenderingExceptionHandler
         if ($exception instanceof RuntimeException) {
             throw $exception;
         } else {
-            throw new RuntimeException('TypoScript Rendering Exception, see typoScriptPath and nested Exception for details.', 1401803055, $exception, $fusionPath);
+            throw new RuntimeException('Fusion Rendering Exception, see typoScriptPath and nested Exception for details.', 1401803055, $exception, $fusionPath);
         }
     }
 

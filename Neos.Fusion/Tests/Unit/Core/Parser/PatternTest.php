@@ -14,7 +14,7 @@ use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Parser;
 
 /**
- * Testcase for the TypoScript Parser - tests the regex patterns
+ * Testcase for the Fusion Parser - tests the regex patterns
  *
  */
 class PatternTest extends UnitTestCase

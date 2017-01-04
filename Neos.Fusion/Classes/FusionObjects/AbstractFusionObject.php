@@ -25,14 +25,14 @@ abstract class AbstractFusionObject implements \ArrayAccess
     protected $tsRuntime;
 
     /**
-     * The TypoScript path currently being rendered
+     * The Fusion path currently being rendered
      *
      * @var string
      */
     protected $path;
 
     /**
-     * Name of this TypoScript object, like Neos.Neos:Text
+     * Name of this Fusion object, like Neos.Neos:Text
      *
      * @var string
      */
@@ -58,14 +58,14 @@ abstract class AbstractFusionObject implements \ArrayAccess
     }
 
     /**
-     * Evaluate this TypoScript object and return the result
+     * Evaluate this Fusion object and return the result
      *
      * @return mixed
      */
     abstract public function evaluate();
 
     /**
-     * Get the TypoScript runtime this object was created in.
+     * Get the Fusion runtime this object was created in.
      *
      * @return Runtime
      */
@@ -75,9 +75,9 @@ abstract class AbstractFusionObject implements \ArrayAccess
     }
 
     /**
-     * Return the TypoScript value relative to this TypoScript object (with processors etc applied).
+     * Return the Fusion value relative to this Fusion object (with processors etc applied).
      *
-     * Note that subsequent calls of tsValue() with the same TypoScript path will return the same values since the
+     * Note that subsequent calls of tsValue() with the same Fusion path will return the same values since the
      * first evaluated value will be cached in memory.
      *
      * @param string $path

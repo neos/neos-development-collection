@@ -85,7 +85,7 @@ class FusionViewTest extends FunctionalTestCase
     }
 
     /**
-     * Prepare a TypoScriptView for testing that Mocks a request with the given controller and action names.
+     * Prepare a FusionView for testing that Mocks a request with the given controller and action names.
      *
      * @param string $controllerObjectName
      * @param string $controllerActionName
