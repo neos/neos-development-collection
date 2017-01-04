@@ -12,7 +12,7 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  */
 
 /**
- * Testcase for Eel expressions in TypoScript
+ * Testcase for Eel expressions in Fusion
  */
 class ExpressionsTest extends AbstractFusionObjectTest
 {

@@ -17,12 +17,12 @@ use Neos\Fusion\View\FusionView;
 
 /**
  * Render a Fusion object with a relative Fusion path, optionally
- * pushing new variables onto the TypoScript context.
+ * pushing new variables onto the Fusion context.
  *
  * = Examples =
  *
  * <code title="Simple">
- * TypoScript:
+ * Fusion:
  * some.given {
  * 	path = Neos.Fusion:Template
  * 	…

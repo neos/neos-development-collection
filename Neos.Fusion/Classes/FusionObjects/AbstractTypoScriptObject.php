@@ -14,7 +14,7 @@ namespace Neos\Fusion\FusionObjects;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Base class for all TypoScript objects
+ * Base class for all Fusion objects
  *
  * @deprecated with 3.0 and will be dropped with 4.0
  */

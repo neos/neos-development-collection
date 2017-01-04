@@ -14,7 +14,7 @@ namespace Neos\Fusion\FusionObjects;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Render a TypoScript collection of nodes as an array
+ * Render a Fusion collection of nodes as an array
  *
  * //tsPath collection *Collection
  * //tsPath itemRenderer the TS object which is triggered for each element in the node collection
