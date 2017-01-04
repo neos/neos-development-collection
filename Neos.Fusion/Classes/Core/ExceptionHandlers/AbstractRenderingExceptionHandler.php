@@ -23,14 +23,14 @@ use Neos\Fusion\Exception as Exceptions;
 abstract class AbstractRenderingExceptionHandler
 {
     /**
-     * Current TypoScript runtime
+     * Current Fusion runtime
      *
      * @var Runtime
      */
     protected $runtime;
 
     /**
-     * Sets the current TypoScript runtime
+     * Sets the current Fusion runtime
      *
      * @param Runtime $runtime
      * @return void
@@ -41,7 +41,7 @@ abstract class AbstractRenderingExceptionHandler
     }
 
     /**
-     * Returns current TypoScript runtime
+     * Returns current Fusion runtime
      *
      * @return Runtime
      */
@@ -51,7 +51,7 @@ abstract class AbstractRenderingExceptionHandler
     }
 
     /**
-     * Handle an Exception thrown while rendering TypoScript
+     * Handle an Exception thrown while rendering Fusion
      *
      * @param string $fusionPath
      * @param \Exception $exception
@@ -75,7 +75,7 @@ abstract class AbstractRenderingExceptionHandler
     }
 
     /**
-     * Handles an Exception thrown while rendering TypoScript
+     * Handles an Exception thrown while rendering Fusion
      *
      * @param string $fusionPath path causing the exception
      * @param \Exception $exception exception to handle

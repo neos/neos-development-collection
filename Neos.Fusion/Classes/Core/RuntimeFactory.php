@@ -20,7 +20,7 @@ use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 
 /**
- * This runtime factory takes care of instantiating a TypoScript runtime.
+ * This runtime factory takes care of instantiating a Fusion runtime.
  *
  * @Flow\Scope("singleton")
  * @api

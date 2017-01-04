@@ -16,7 +16,7 @@ use Neos\Fusion\Exception as TypoScriptException;
 use Neos\Fusion\Exception;
 
 /**
- * Abstract implementation of a collection renderer for TypoScript.
+ * Abstract implementation of a collection renderer for Fusion.
  */
 abstract class AbstractCollectionImplementation extends AbstractFusionObject
 {
@@ -67,7 +67,7 @@ abstract class AbstractCollectionImplementation extends AbstractFusionObject
      * Evaluate the collection nodes as concatenated string
      *
      * @return string
-     * @throws TypoScriptException
+     * @throws FusionException
      */
     public function evaluate()
     {
@@ -78,7 +78,7 @@ abstract class AbstractCollectionImplementation extends AbstractFusionObject
      * Evaluate the collection nodes as array
      *
      * @return array
-     * @throws TypoScriptException
+     * @throws FusionException
      */
     public function evaluateAsArray()
     {

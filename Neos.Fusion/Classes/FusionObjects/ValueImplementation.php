@@ -14,7 +14,7 @@ namespace Neos\Fusion\FusionObjects;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Value object for simple type handling as TypoScript objects
+ * Value object for simple type handling as Fusion objects
  *
  * //tsPath value The value this object should be evaluated to
  * @api

@@ -18,7 +18,7 @@ use Neos\Utility\Arrays;
 use Neos\Fusion;
 
 /**
- * The TypoScript Parser
+ * The Fusion Parser
  *
  * @api
  */
@@ -205,7 +205,7 @@ class Parser implements ParserInterface
     protected $objectManager;
 
     /**
-     * The TypoScript object tree, created by this parser.
+     * The Fusion object tree, created by this parser.
      * @var array
      */
     protected $objectTree = array();
@@ -236,13 +236,13 @@ class Parser implements ParserInterface
 
     /**
      * An optional context path which is used as a prefix for inclusion of further
-     * TypoScript files
+     * Fusion files
      * @var string
      */
     protected $contextPathAndFilename = null;
 
     /**
-     * Namespaces used for resolution of TypoScript object names. These namespaces
+     * Namespaces used for resolution of Fusion object names. These namespaces
      * are a mapping from a user defined key (alias) to a package key (the namespace).
      * By convention, the namespace should be a package key, but other strings would
      * be possible, too. Note that, in order to resolve an object type, a prototype
@@ -256,21 +256,21 @@ class Parser implements ParserInterface
     );
 
     /**
-     * Parses the given TypoScript source code and returns an object tree
+     * Parses the given Fusion source code and returns an object tree
      * as the result.
      *
-     * @param string $sourceCode The TypoScript source code to parse
-     * @param string $contextPathAndFilename An optional path and filename to use as a prefix for inclusion of further TypoScript files
+     * @param string $sourceCode The Fusion source code to parse
+     * @param string $contextPathAndFilename An optional path and filename to use as a prefix for inclusion of further Fusion files
      * @param array $objectTreeUntilNow Used internally for keeping track of the built object tree
      * @param boolean $buildPrototypeHierarchy Merge prototype configurations or not. Will be FALSE for includes to only do that once at the end.
-     * @return array A TypoScript object tree, generated from the source code
+     * @return array A Fusion object tree, generated from the source code
      * @throws Fusion\Exception
      * @api
      */
     public function parse($sourceCode, $contextPathAndFilename = null, array $objectTreeUntilNow = array(), $buildPrototypeHierarchy = true)
     {
         if (!is_string($sourceCode)) {
-            throw new Fusion\Exception('Cannot parse TypoScript - $sourceCode must be of type string!', 1180203775);
+            throw new Fusion\Exception('Cannot parse Fusion - $sourceCode must be of type string!', 1180203775);
         }
         $this->initialize();
         $this->objectTree = $objectTreeUntilNow;
@@ -290,15 +290,15 @@ class Parser implements ParserInterface
      * Sets the given alias to the specified namespace.
      *
      * The namespaces defined through this setter or through a "namespace" declaration
-     * in one of the TypoScripts are used to resolve a fully qualified TypoScript
-     * object name while parsing TypoScript code.
+     * in one of the Fusions are used to resolve a fully qualified Fusion
+     * object name while parsing Fusion code.
      *
      * The alias is the handle by wich the namespace can be referred to.
      * The namespace is, by convention, a package key which must correspond to a
-     * namespace used in the prototype definitions for TypoScript object types.
+     * namespace used in the prototype definitions for Fusion object types.
      *
      * The special alias "default" is used as a fallback for resolution of unqualified
-     * TypoScript object types.
+     * Fusion object types.
      *
      * @param string $alias An alias for the given namespace, for example "neos"
      * @param string $namespace The namespace, for example "Neos.Neos"
@@ -318,7 +318,7 @@ class Parser implements ParserInterface
     }
 
     /**
-     * Initializes the TypoScript parser
+     * Initializes the Fusion parser
      *
      * @return void
      */
@@ -332,7 +332,7 @@ class Parser implements ParserInterface
     }
 
     /**
-     * Get the next, unparsed line of TypoScript from this->currentSourceCodeLines and increase the pointer
+     * Get the next, unparsed line of Fusion from this->currentSourceCodeLines and increase the pointer
      *
      * @return string next line of typoscript to parse
      */
@@ -345,9 +345,9 @@ class Parser implements ParserInterface
     }
 
     /**
-     * Parses one line of TypoScript
+     * Parses one line of Fusion
      *
-     * @param string $typoScriptLine One line of TypoScript code
+     * @param string $typoScriptLine One line of Fusion code
      * @return void
      * @throws Fusion\Exception
      */
@@ -379,7 +379,7 @@ class Parser implements ParserInterface
     /**
      * Parses a line with comments or a line while parsing is in block comment mode.
      *
-     * @param string $typoScriptLine One line of TypoScript code
+     * @param string $typoScriptLine One line of Fusion code
      * @return void
      * @throws Fusion\Exception
      */
@@ -403,14 +403,14 @@ class Parser implements ParserInterface
                     break;
             }
         } elseif ($this->currentBlockCommentState === false) {
-            throw new Fusion\Exception('No comment type matched although the comment scan regex matched the TypoScript line (' . $typoScriptLine . ').', 1180614895);
+            throw new Fusion\Exception('No comment type matched although the comment scan regex matched the Fusion line (' . $typoScriptLine . ').', 1180614895);
         }
     }
 
     /**
      * Parses a line which opens or closes a confinement
      *
-     * @param string $typoScriptLine One line of TypoScript code
+     * @param string $typoScriptLine One line of Fusion code
      * @param boolean $isOpeningConfinement Set to TRUE, if an opening confinement is to be parsed and FALSE if it's a closing confinement.
      * @return void
      * @throws Fusion\Exception
@@ -431,7 +431,7 @@ class Parser implements ParserInterface
     /**
      * Parses a parser declaration of the form "declarationtype: declaration".
      *
-     * @param string $typoScriptLine One line of TypoScript code
+     * @param string $typoScriptLine One line of Fusion code
      * @return void
      * @throws Fusion\Exception
      */
@@ -455,7 +455,7 @@ class Parser implements ParserInterface
     /**
      * Parses an object definition.
      *
-     * @param string $typoScriptLine One line of TypoScript code
+     * @param string $typoScriptLine One line of Fusion code
      * @return void
      * @throws Fusion\Exception
      */
@@ -576,7 +576,7 @@ class Parser implements ParserInterface
      * Parse an include file. Currently, we start a new parser object; but we could as well re-use
      * the given one.
      *
-     * @param string $include The include value, for example " FooBar" or " resource://....". Can also include wildcard mask for TypoScript globbing.
+     * @param string $include The include value, for example " FooBar" or " resource://....". Can also include wildcard mask for Fusion globbing.
      * @return void
      * @throws Fusion\Exception
      */

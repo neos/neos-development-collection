@@ -14,7 +14,7 @@ namespace Neos\Fusion\FusionObjects;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Renderer TypoScript Object
+ * Renderer Fusion Object
  *
  * The Renderer object will evaluate to a result using either ``renderer``,
  * ``renderPath`` or ``type`` from the configuration.
@@ -33,7 +33,7 @@ class RendererImplementation extends AbstractFusionObject
     }
 
     /**
-     * A path to a TypoScript configuration
+     * A path to a Fusion configuration
      *
      * @return string
      */

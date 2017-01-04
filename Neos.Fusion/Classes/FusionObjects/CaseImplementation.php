@@ -15,13 +15,13 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Exception\UnsupportedObjectTypeAtPathException;
 
 /**
- * Case TypoScript Object
+ * Case Fusion Object
  *
- * The "case" TypoScript object renders its children in order. The first
+ * The "case" Fusion object renders its children in order. The first
  * result which is not MATCH_NORESULT is returned.
  *
- * Often, this TypoScript object is used together with the "Matcher" TypoScript
- * object; and all its children are by-default interpreted as "Matcher" TypoScript
+ * Often, this Fusion object is used together with the "Matcher" Fusion
+ * object; and all its children are by-default interpreted as "Matcher" Fusion
  * objects if no others are specified.
  */
 class CaseImplementation extends ArrayImplementation
@@ -74,9 +74,9 @@ class CaseImplementation extends ArrayImplementation
             );
             return $renderedMatcher;
         } elseif (!is_array($this->properties[$matcherKey])) {
-            throw new UnsupportedObjectTypeAtPathException('"Case" TypoScript object only supports nested TypoScript objects; no simple values.', 1372668062);
+            throw new UnsupportedObjectTypeAtPathException('"Case" Fusion object only supports nested Fusion objects; no simple values.', 1372668062);
         } elseif (isset($this->properties[$matcherKey]['__eelExpression'])) {
-            throw new UnsupportedObjectTypeAtPathException('"Case" TypoScript object only supports nested TypoScript objects; no Eel expressions.', 1372668077);
+            throw new UnsupportedObjectTypeAtPathException('"Case" Fusion object only supports nested Fusion objects; no Eel expressions.', 1372668077);
         } else {
             // No object type has been set, so we're using Neos.Fusion:Matcher as fallback
             $renderedMatcher = $this->tsRuntime->render(
