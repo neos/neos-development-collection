@@ -12,7 +12,7 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  */
 
 /**
- * Testcase for reserved TypoScript keys
+ * Testcase for reserved Fusion keys
  *
  */
 class ReservedKeysTest extends AbstractFusionObjectTest

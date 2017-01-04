@@ -75,7 +75,7 @@ class HtmlMessageHandler extends AbstractRenderingExceptionHandler
     }
 
     /**
-     * Renders an indented multi-line stack-trace for the given TypoScript path.
+     * Renders an indented multi-line stack-trace for the given Fusion path.
      *
      * example:
      *
@@ -88,7 +88,7 @@ class HtmlMessageHandler extends AbstractRenderingExceptionHandler
      *       content/
      *
      * @param string $typoScriptPath
-     * @return string Multi-line stack trace for the given TypoScript path
+     * @return string Multi-line stack trace for the given Fusion path
      */
     protected function formatFusionPath($fusionPath)
     {

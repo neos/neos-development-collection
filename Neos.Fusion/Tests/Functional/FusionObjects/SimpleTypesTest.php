@@ -12,7 +12,7 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  */
 
 /**
- * Testcase for the TypoScript View
+ * Testcase for the Fusion View
  *
  */
 class SimpleTypesTest extends AbstractFusionObjectTest
@@ -22,7 +22,7 @@ class SimpleTypesTest extends AbstractFusionObjectTest
      */
     public function valuesCanBeExpressedAsSimpleValueAsEelAsTypoScropt()
     {
-        $this->assertMultipleTypoScriptPaths('A simple string value is not a TypoScript object', 'simpleTypes/stringAs');
+        $this->assertMultipleTypoScriptPaths('A simple string value is not a Fusion object', 'simpleTypes/stringAs');
     }
 
     /**

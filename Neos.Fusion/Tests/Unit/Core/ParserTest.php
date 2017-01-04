@@ -16,7 +16,7 @@ use Neos\Fusion\Core\Parser;
 use Neos\Fusion\FusionObjects\ArrayImplementation;
 
 /**
- * Testcase for the TypoScript Parser
+ * Testcase for the Fusion Parser
  */
 class ParserTest extends UnitTestCase
 {
@@ -80,7 +80,7 @@ class ParserTest extends UnitTestCase
     }
 
     /**
-     * checks if the object tree returned by the TypoScript parser reflects source code fixture 01
+     * checks if the object tree returned by the Fusion parser reflects source code fixture 01
      *
      * @test
      */
@@ -123,7 +123,7 @@ class ParserTest extends UnitTestCase
     }
 
     /**
-     * checks if the object tree returned by the TypoScript parser reflects source code fixture 02
+     * checks if the object tree returned by the Fusion parser reflects source code fixture 02
      *
      * @test
      */
@@ -158,7 +158,7 @@ class ParserTest extends UnitTestCase
     }
 
     /**
-     * checks if the object tree returned by the TypoScript parser reflects source code fixture 03
+     * checks if the object tree returned by the Fusion parser reflects source code fixture 03
      *
      * @test
      */
@@ -205,7 +205,7 @@ class ParserTest extends UnitTestCase
     }
 
     /**
-     * checks if the object tree returned by the TypoScript parser reflects source code fixture 04
+     * checks if the object tree returned by the Fusion parser reflects source code fixture 04
      *
      * @test
      */
@@ -274,7 +274,7 @@ class ParserTest extends UnitTestCase
     }
 
     /**
-     * checks if the object tree returned by the TypoScript parser reflects source code fixture 05
+     * checks if the object tree returned by the Fusion parser reflects source code fixture 05
      *
      * @test
      */
@@ -343,7 +343,7 @@ class ParserTest extends UnitTestCase
     }
 
     /**
-     * checks if the object tree returned by the TypoScript parser reflects source code fixture 07
+     * checks if the object tree returned by the Fusion parser reflects source code fixture 07
      *
      * @test
      */
@@ -364,7 +364,7 @@ class ParserTest extends UnitTestCase
     }
 
     /**
-     * checks if the object tree returned by the TypoScript parser reflects source code fixture 08
+     * checks if the object tree returned by the Fusion parser reflects source code fixture 08
      *
      * @todo Implement lazy rendering support for variable substitutions
      * @test
@@ -428,7 +428,7 @@ class ParserTest extends UnitTestCase
     }
 
     /**
-     * checks if the object tree returned by the TypoScript parser reflects source code fixture 10
+     * checks if the object tree returned by the Fusion parser reflects source code fixture 10
      *
      * @test
      */
@@ -507,7 +507,7 @@ class ParserTest extends UnitTestCase
     }
 
     /**
-     * checks if the object tree returned by the TypoScript parser reflects source code fixture 13
+     * checks if the object tree returned by the Fusion parser reflects source code fixture 13
      *
      * @test
      */
@@ -559,7 +559,7 @@ class ParserTest extends UnitTestCase
     }
 
     /**
-     * checks if the object tree returned by the TypoScript parser reflects source code fixture 14
+     * checks if the object tree returned by the Fusion parser reflects source code fixture 14
      *
      * @test
      */
@@ -885,7 +885,7 @@ class ParserTest extends UnitTestCase
     }
 
     /**
-     * @param string $fixtureName File name of the TypoScript fixture to be read (without .fusion)
+     * @param string $fixtureName File name of the Fusion fixture to be read (without .fusion)
      * @return string The content of the fixture
      */
     protected function readTypoScriptFixture($fixtureName)

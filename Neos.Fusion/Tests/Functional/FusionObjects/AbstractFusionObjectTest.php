@@ -63,9 +63,9 @@ abstract class AbstractFusionObjectTest extends FunctionalTestCase
     }
 
     /**
-     * Used for TypoScript objects / Eel and plain value interoperability testing.
-     * Renders TypoScripts in the following paths and expects given $expected as result each time:
-     * $basePath . 'TypoScript'
+     * Used for Fusion objects / Eel and plain value interoperability testing.
+     * Renders Fusions in the following paths and expects given $expected as result each time:
+     * $basePath . 'Fusion'
      * $basePath . 'Eel'
      * $basePath . 'PlainValue'
      *
@@ -80,7 +80,7 @@ abstract class AbstractFusionObjectTest extends FunctionalTestCase
     }
 
     /**
-     * Renders the given TypoScript path and asserts that the result is the same es the given expected.
+     * Renders the given Fusion path and asserts that the result is the same es the given expected.
      *
      * @param string $expected
      * @param string $path

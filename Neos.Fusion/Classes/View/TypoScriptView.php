@@ -20,7 +20,7 @@ namespace Neos\Fusion\View;
 class TypoScriptView extends FusionView
 {
     /**
-     * Sets the TypoScript path to be rendered to an explicit value;
+     * Sets the Fusion path to be rendered to an explicit value;
      * to be used mostly inside tests.
      *
      * @param string $typoScriptPath
