@@ -16,8 +16,8 @@ in the file ``Configuration/Settings.yaml`` of your site package:
 
 .. code-block:: yaml
 
-	TYPO3:
-	  TYPO3CR:
+	Neos:
+	  ContentRepository:
 	    contentDimensions:
 	      'language':
 	        label: 'Language'
@@ -53,7 +53,7 @@ Migration of existing content
 =============================
 
 Existing content of a site needs to be migrated to use the dimension default value, otherwise no nodes would be found.
-This can be done with a node migration which is included in the ``TYPO3.TYPO3CR`` package::
+This can be done with a node migration which is included in the ``Neos.ContentRepository`` package::
 
 	./flow node:migrate 20150716212459
 
@@ -62,7 +62,7 @@ This migration has to be applied whenever a new dimension is configured to set t
 Integrate Language Menu
 =======================
 
-A simple language menu can be displayed on the site by using the ``Neos.Neos:DimensionsMenu`` TypoScript object::
+A simple language menu can be displayed on the site by using the ``Neos.Neos:DimensionsMenu`` Fusion object::
 
 	page {
 	    body {

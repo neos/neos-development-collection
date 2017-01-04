@@ -68,7 +68,7 @@ Example ``TestDataSource.php``:
   namespace Acme\YourPackage\DataSource;
 
   use Neos\Neos\Service\DataSource\AbstractDataSource;
-  use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+  use Neos\ContentRepository\Domain\Model\NodeInterface;
 
   class TestDataSource extends AbstractDataSource {
 

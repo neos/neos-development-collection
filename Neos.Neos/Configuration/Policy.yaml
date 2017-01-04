@@ -123,7 +123,7 @@ privilegeTargets:
       matcher: 'method(Neos\Neos\Controller\Module\AdministrationController->indexAction())'
 
     'Neos.Neos:Backend.Module.Administration.Packages':
-      matcher: 'method(Neos\Neos\Controller\Module\Administration\PackagesController->(index|activate|deactivate|delete|freeze|unfreeze|batch)Action())'
+      matcher: 'method(Neos\Neos\Controller\Module\Administration\PackagesController->indexAction())'
 
     'Neos.Neos:Backend.Module.Administration.Sites':
       matcher: 'method(Neos\Neos\Controller\Module\Administration\SitesController->(index|edit|updateSite|newSite|createSite|importSite|createSiteNode|createSitePackage|deleteSite|activateSite|deactivateSite|editDomain|updateDomain|newDomain|createDomain|deleteDomain|activateDomain|deactivateDomain)Action())'

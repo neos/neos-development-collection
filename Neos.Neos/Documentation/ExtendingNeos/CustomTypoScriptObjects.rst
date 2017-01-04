@@ -1,28 +1,28 @@
-.. _custom-typoscript-objects:
+.. _custom-fusion-objects:
 
-Custom TypoScript Objects
+Custom Fusion Objects
 =========================
 
-By adding custom TypoScript Objects it is possible to extend the capabilities of TypoScript in a powerful and configurable
+By adding custom Fusion Objects it is possible to extend the capabilities of Fusion in a powerful and configurable
 way. If you need to write a way to execute PHP code during rendering, for simple methods, Eel helpers should be used.
-For more complex functionality where custom classes with more configuration options are needed, TypoScript objects should
+For more complex functionality where custom classes with more configuration options are needed, Fusion objects should
 rather be created.
 
-As an example, you might want to create your own TypoScript objects if you are enriching the data that gets passed to the
+As an example, you might want to create your own Fusion objects if you are enriching the data that gets passed to the
 template with external information from an API or if you have to convert some entities from identifier to domain objects.
 
 In the example below, a Gravatar image tag is generated.
 
-Create a TypoScript Object Class
+Create a Fusion Object Class
 --------------------------------
 
-To create a custom TypoScript object the ``Neos\Fusion\FusionObjects\AbstractFusionObject`` class is
-extended. The only method that needs to be implemented is ``evaluate()``. To access values from TypoScript the method
+To create a custom Fusion object the ``Neos\Fusion\FusionObjects\AbstractFusionObject`` class is
+extended. The only method that needs to be implemented is ``evaluate()``. To access values from Fusion the method
 ``$this->tsValue('__ts_value_key__');`` is used:
 
 .. code-block:: php
 
-	namespace Vendor\Site\TypoScript;
+	namespace Vendor\Site\Fusion;
 
 	use Neos\Flow\Annotations as Flow;
 	use Neos\Fusion\FusionObjects\AbstractFusionObject

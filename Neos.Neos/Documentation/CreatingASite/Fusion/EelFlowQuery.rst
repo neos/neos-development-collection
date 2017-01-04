@@ -7,19 +7,19 @@ Eel, FlowQuery and Fizzle
 Eel - Embedded Expression Language
 ==================================
 
-Besides simple TypoScript assignments such as ``myObject.foo = 'bar'``, it is possible to write
+Besides simple Fusion assignments such as ``myObject.foo = 'bar'``, it is possible to write
 *expressions* using the *Eel* language such as ``myObject.foo = ${q(node).property('bar')}``.
 
 The *Embedded Expression Language* (Eel) is a building block for creating Domain Specific Languages.
 It provides a rich *syntax* for arbitrary expressions, such that the author of the DSL can focus
 on its Semantics.
 
-In this section, the focus lies on the use of Eel inside TypoScript.
+In this section, the focus lies on the use of Eel inside Fusion.
 
 Syntax
 ------
 
-Every Eel expression in TypoScript is surrounded by ``${...}``, which is the delimiter for Eel
+Every Eel expression in Fusion is surrounded by ``${...}``, which is the delimiter for Eel
 expressions. Basically, the Eel syntax and semantics is like a condensed version of JavaScript:
 
 * Most things you can write as a single JavaScript expression (that is, without a ``;``) can also
@@ -60,7 +60,7 @@ This means the following expressions are all valid Eel expressions:
 	${[foo, bar]}           // Array Literal
 	${{foo: bar, baz: test}} // Object Literal
 
-Semantics inside TypoScript
+Semantics inside Fusion
 ---------------------------
 
 Eel does not define any functions or variables by itself. Instead, it exposes the *Eel context
@@ -69,26 +69,26 @@ array*, meaning that functions and objects which should be accessible can be def
 Because of that, Eel is perfectly usable as a "domain-specific language construction kit", which
 provides the syntax, but not the semantics of a given language.
 
-For Eel inside TypoScript, the semantics are as follows:
+For Eel inside Fusion, the semantics are as follows:
 
-* All variables of the TypoScript context are made available inside the Eel context.
+* All variables of the Fusion context are made available inside the Eel context.
 
-* The special variable ``this`` always points to the current TypoScript object implementation.
+* The special variable ``this`` always points to the current Fusion object implementation.
 
 * The function ``q()`` is available, which wraps its argument into a FlowQuery
   object. `FlowQuery`_ is explained below.
 
 By default the following Eel helpers are available in the default context for Eel expressions:
 
-* ``String``, exposing ``TYPO3\Eel\Helper\StringHelper``
-* ``Array``, exposing ``TYPO3\Eel\Helper\ArrayHelper``
-* ``Date``, exposing ``TYPO3\Eel\Helper\DateHelper``
-* ``Configuration``, exposing ``TYPO3\Eel\Helper\ConfigurationHelper``
-* ``Math``, exposing ``TYPO3\Eel\Helper\MathHelper``
-* ``Json``, exposing ``TYPO3\Eel\Helper\JsonHelper``
-* ``Security``, exposing ``TYPO3\Eel\Helper\SecurityHelper``
+* ``String``, exposing ``Neos\Eel\Helper\StringHelper``
+* ``Array``, exposing ``Neos\Eel\Helper\ArrayHelper``
+* ``Date``, exposing ``Neos\Eel\Helper\DateHelper``
+* ``Configuration``, exposing ``Neos\Eel\Helper\ConfigurationHelper``
+* ``Math``, exposing ``Neos\Eel\Helper\MathHelper``
+* ``Json``, exposing ``Neos\Eel\Helper\JsonHelper``
+* ``Security``, exposing ``Neos\Eel\Helper\SecurityHelper``
 
-* ``Translation``, exposing ``TYPO3\Flow\I18n\EelHelper\TranslationHelper``
+* ``Translation``, exposing ``Neos\Flow\I18n\EelHelper\TranslationHelper``
 
 * ``Neos.Node``, exposing ``Neos\Neos\Fusion\Helper\NodeHelper``
 * ``Neos.Link``, exposing ``Neos\Neos\Fusion\Helper\LinkHelper``
@@ -97,7 +97,7 @@ By default the following Eel helpers are available in the default context for Ee
 
 See: :ref:`Eel Helpers Reference`
 
-This is configured via the setting ``TYPO3.TypoScript.defaultContext``.
+This is configured via the setting ``Neos.Fusion.defaultContext``.
 
 Additionally, the defaultContext contains the ``request`` object,
 where you have also access to Arguments. e.g.
@@ -109,16 +109,16 @@ FlowQuery
 FlowQuery, as the name might suggest, *is like jQuery for Flow*. It's syntax
 has been heavily influenced by jQuery.
 
-FlowQuery is a way to process the content (being a TYPO3CR node within Neos) of the Eel
+FlowQuery is a way to process the content (being a Neos ContentRepository node within Neos) of the Eel
 context. FlowQuery operations are implemented in PHP classes. For any FlowQuery operation
 to be available, the package containing the operation must be installed. Any package can
 add their own FlowQuery operations. A set of basic operations is always available as part
-of the TYPO3.Eel package itself.
+of the Neos.Eel package itself.
 
 In Neos.Neos, the following FlowQuery operations are defined:
 
 ``property``
-  Adjusted to access properties of a TYPO3CR node. If property names are prefixed with an
+  Adjusted to access properties of a Neos ContentRepository node. If property names are prefixed with an
   underscore, internal node properties like start time, end time, and hidden are accessed.
 
 ``filter``
@@ -127,14 +127,14 @@ In Neos.Neos, the following FlowQuery operations are defined:
   filter changes ``instanceof`` to work on node types instead of PHP classes.
 
 ``children``
-  Returns the children of a TYPO3CR node. They are optionally filtered with a
+  Returns the children of a Neos ContentRepository node. They are optionally filtered with a
   ``filter`` operation to limit the returned result set.
 
 ``parents``
-  Returns the parents of a TYPO3CR node. They are optionally filtered with a
+  Returns the parents of a Neos ContentRepository node. They are optionally filtered with a
   ``filter`` operation to limit the returned result set.
 
-A reference of all FlowQuery operations defined in TYPO3.Eel and Neos.Neos can be
+A reference of all FlowQuery operations defined in Neos.Eel and Neos.Neos can be
 found in the :ref:`FlowQuery Operation Reference`.
 
 Operation Resolving
@@ -242,7 +242,7 @@ as a simple string. Checks against property paths are not currently possible::
 	foo.bar.baz  //does not work
 
 In the context of Neos the property name is rarely used, as FlowQuery operates on
-TYPO3CR nodes and the ``children`` operation has a clear scope. If generic PHP objects are
+Neos ContentRepository nodes and the ``children`` operation has a clear scope. If generic PHP objects are
 used, the property name filter is essential to define which property actually contains
 the ``children``.
 
