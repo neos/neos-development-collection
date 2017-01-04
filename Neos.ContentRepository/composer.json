@@ -4,8 +4,8 @@
     "description": "Content repository based on Flow, specifically made for Neos.",
     "license": "GPL-3.0+",
     "require": {
-        "neos/flow": "~4.0.0",
-        "neos/fluid-adaptor": "~4.0.0",
+        "neos/flow": "*",
+        "neos/fluid-adaptor": "*",
         "gedmo/doctrine-extensions": "~2.3.0",
         "behat/transliterator": "~1.0"
     },
