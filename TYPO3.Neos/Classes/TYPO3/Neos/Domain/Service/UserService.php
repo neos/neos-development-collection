@@ -302,12 +302,8 @@ class UserService
      */
     public function deleteUser(User $user)
     {
-        $backendUserRole = $this->policyService->getRole('TYPO3.Neos:AbstractEditor');
         foreach ($user->getAccounts() as $account) {
-            /** @var Account $account */
-            if ($account->hasRole($backendUserRole)) {
-                $this->deletePersonalWorkspace($account->getAccountIdentifier());
-            }
+            $this->deletePersonalWorkspace($account->getAccountIdentifier());
             $this->accountRepository->remove($account);
         }
 
