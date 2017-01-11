@@ -29,12 +29,6 @@ class Version20170110133114 extends AbstractMigration
         $this->addSql('ALTER INDEX idx_1854b2075ceb2c15 RENAME TO IDX_9B02A4E5CEB2C15');
         $this->addSql('ALTER INDEX flow_identity_typo3_neos_domain_model_site RENAME TO flow_identity_neos_neos_domain_model_site');
         $this->addSql('ALTER INDEX uniq_fc846daae931a6f5 RENAME TO UNIQ_ED60F5E3E931A6F5');
-        $this->addSql('DROP INDEX documentnodeidentifier');
-        $this->addSql('CREATE SEQUENCE neos_neos_eventlog_domain_model_event_uid_seq');
-        $this->addSql('SELECT setval(\'neos_neos_eventlog_domain_model_event_uid_seq\', (SELECT MAX(uid) FROM neos_neos_eventlog_domain_model_event))');
-        $this->addSql('ALTER TABLE neos_neos_eventlog_domain_model_event ALTER uid SET DEFAULT nextval(\'neos_neos_eventlog_domain_model_event_uid_seq\')');
-        $this->addSql('ALTER TABLE neos_neos_eventlog_domain_model_event ALTER data TYPE jsonb');
-        $this->addSql('ALTER TABLE neos_neos_eventlog_domain_model_event ALTER data DROP DEFAULT');
         $this->addSql('ALTER INDEX idx_30ab3a75b684c08 RENAME TO IDX_D6DBC30A5B684C08');
     }
 
@@ -52,10 +46,6 @@ class Version20170110133114 extends AbstractMigration
         $this->addSql('ALTER INDEX flow_identity_neos_neos_domain_model_site RENAME TO flow_identity_typo3_neos_domain_model_site');
         $this->addSql('ALTER INDEX idx_9b02a4e5ceb2c15 RENAME TO idx_1854b2075ceb2c15');
         $this->addSql('ALTER INDEX idx_9b02a4eb8872b4a RENAME TO idx_1854b207b8872b4a');
-        $this->addSql('ALTER TABLE neos_neos_eventlog_domain_model_event ALTER uid DROP DEFAULT');
-        $this->addSql('ALTER TABLE neos_neos_eventlog_domain_model_event ALTER data TYPE TEXT');
-        $this->addSql('ALTER TABLE neos_neos_eventlog_domain_model_event ALTER data DROP DEFAULT');
-        $this->addSql('CREATE INDEX documentnodeidentifier ON neos_neos_eventlog_domain_model_event (documentnodeidentifier)');
         $this->addSql('ALTER INDEX idx_d6dbc30a5b684c08 RENAME TO idx_30ab3a75b684c08');
     }
 }
