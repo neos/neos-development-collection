@@ -56,7 +56,7 @@ class NodeService implements NodeServiceInterface
     {
         $nodeType = $node->getNodeType();
         foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $defaultValue) {
-            if (trim($node->getProperty($propertyName)) === '') {
+            if ((is_scalar($value) && trim($node->getProperty($propertyName)) === '') || $value === null) {
                 $node->setProperty($propertyName, $defaultValue);
             }
         }
