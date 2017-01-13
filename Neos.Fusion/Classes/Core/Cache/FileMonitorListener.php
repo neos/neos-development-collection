@@ -44,7 +44,7 @@ class FileMonitorListener
     public function flushContentCacheOnFileChanges($fileMonitorIdentifier, array $changedFiles)
     {
         $fileMonitorsThatTriggerContentCacheFlush = array(
-            'TYPO3CR_NodeTypesConfiguration',
+            'ContentRepository_NodeTypesConfiguration',
             'Fusion_Files',
             'Fluid_TemplateFiles',
             'Flow_ClassFiles',
