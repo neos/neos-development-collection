@@ -11,18 +11,18 @@ namespace Neos\Media\Browser\Controller\Module\Management;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\ContentRepository\Domain\Factory\NodeFactory;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Message;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Mvc\Exception\InvalidArgumentValueException;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\Security\Context;
-use Neos\Utility\MediaTypes;
-use Neos\Utility\TypeHandling;
 use Neos\Media\Domain\Model\AssetCollection;
 use Neos\Media\Domain\Model\AssetInterface;
-use Neos\Media\Exception\AssetServiceException;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
 use Neos\Neos\Controller\CreateContentContextTrait;
 use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
@@ -31,10 +31,7 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\Neos\Domain\Service\UserService as DomainUserService;
 use Neos\Neos\Service\UserService;
-use Neos\ContentRepository\Domain\Factory\NodeFactory;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
-use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
+use Neos\Utility\MediaTypes;
 
 /**
  * Controller for asset handling
@@ -45,12 +42,6 @@ class AssetController extends \Neos\Media\Browser\Controller\AssetController
 {
     use CreateContentContextTrait;
     use BackendUserTranslationTrait;
-
-    /**
-     * @Flow\Inject
-     * @var NodeDataRepository
-     */
-    protected $nodeDataRepository;
 
     /**
      * @Flow\Inject
@@ -133,28 +124,15 @@ class AssetController extends \Neos\Media\Browser\Controller\AssetController
      */
     public function deleteAction(\Neos\Media\Domain\Model\Asset $asset)
     {
-        $relationMap = [];
-        $relationMap[TypeHandling::getTypeForValue($asset)] = array($this->persistenceManager->getIdentifierByObject($asset));
-
-        if ($asset instanceof \Neos\Media\Domain\Model\Image) {
-            foreach ($asset->getVariants() as $variant) {
-                $type = TypeHandling::getTypeForValue($variant);
-                if (!isset($relationMap[$type])) {
-                    $relationMap[$type] = [];
-                }
-                $relationMap[$type][] = $this->persistenceManager->getIdentifierByObject($variant);
-            }
-        }
-
-        $relatedNodes = $this->nodeDataRepository->findNodesByRelatedEntities($relationMap);
-        if (count($relatedNodes) > 0) {
-            $this->addFlashMessage('Asset could not be deleted, because there are still Nodes using it.', '', Message::SEVERITY_WARNING, array(), 1412422767);
+        $usageReferences = $this->assetService->getUsageReferences($asset);
+        if (count($usageReferences) > 0) {
+            $this->addFlashMessage('Asset could not be deleted, because there are still Nodes using it.', '', Message::SEVERITY_WARNING, [], 1412422767);
             $this->redirect('index');
         }
 
         // FIXME: Resources are not deleted, because we cannot be sure that the resource isn't used anywhere else.
         $this->assetRepository->remove($asset);
-        $this->addFlashMessage(sprintf('Asset "%s" has been deleted.', $asset->getLabel()), null, null, array(), 1412375050);
+        $this->addFlashMessage(sprintf('Asset "%s" has been deleted.', $asset->getLabel()), null, null, [], 1412375050);
         $this->redirect('index');
     }
 
