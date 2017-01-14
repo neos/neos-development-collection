@@ -16,7 +16,7 @@ use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\FusionObjects\TagImplementation;
 
 /**
- * Testcase for the TypoScript Tag object
+ * Testcase for the Fusion Tag object
  */
 class TagImplementationTest extends UnitTestCase
 {

@@ -195,13 +195,13 @@ TYPO3:
 Neos:
 
   Neos:
-    typoScript:
-      # if set to TRUE, TypoScript is cached on a per-site basis.
-      # Depending on the size of your TypoScript, will improve rendering times 20-100+ ms.
+    fusion:
+      # if set to TRUE, Fusion is cached on a per-site basis.
+      # Depending on the size of your Fusion, will improve rendering times 20-100+ ms.
       # HOWEVER, the cache is NOT FLUSHED automatically (yet), so that's why we suggest that
       # you enable this setting only:
       #
-      # - if you do not change TypoScript in production context, but instead use e.g. TYPO3.Surf for automatic deployment
+      # - if you do not change Fusion in production context, but instead use e.g. TYPO3.Surf for automatic deployment
       # - in Production context
       enableObjectTreeCache: false
 
@@ -211,7 +211,6 @@ Neos:
       # The order of inclusions is set by the package loading order
       # (and thus the composer dependencies of your packages).
       # This also allows disabling of autoIncludes if needed.
-      autoInclude:
       autoInclude:
         Neos.Fusion: true
         Neos.Neos: true
@@ -447,7 +446,7 @@ Neos:
           position: 100
 
       backendLoginForm:
-        backgroundImage: 'resource://Neos.Neos/Public/Images/Login/Wallpaper23.jpg'
+        backgroundImage: 'resource://Neos.Neos/Public/Images/Login/Wallpaper.jpg'
         stylesheets:
           'Neos.Neos:DefaultStyles': 'resource://Neos.Neos/Public/Styles/Login.css'
 
@@ -559,6 +558,13 @@ Neos:
     core:
       applicationPackageKey: Neos.Neos
       applicationName: Neos
+
+    mvc:
+      routes:
+        'Neos.Neos':
+          variables:
+            # Set this to an empty string if you prefer URLs without the ".html" suffix
+            'defaultUriSuffix': '.html'
 
     security:
       authentication:

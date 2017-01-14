@@ -13,9 +13,11 @@ namespace Neos\Fusion\FusionObjects;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\FluidAdaptor\Core\Parser\Interceptor\ResourceInterceptor;
+use TYPO3Fluid\Fluid\Core\Parser\InterceptorInterface;
 
 /**
- * TypoScript object rendering a fluid template
+ * Fusion object rendering a fluid template
  *
  * //tsPath variables TODO The result of this TS object is made available inside the template as "variables"
  * @api
@@ -88,8 +90,8 @@ class TemplateImplementation extends AbstractArrayFusionObject
         if ($templatePath === null) {
             throw new \Exception(sprintf("
 				No template path set.
-				Most likely you didn't configure `templatePath` in your TypoScript object correctly.
-				For example you could add and adapt the following line to your TypoScript:
+				Most likely you didn't configure `templatePath` in your Fusion object correctly.
+				For example you could add and adapt the following line to your Fusion:
 				`prototype(%s) < prototype(Neos.Fusion:Template) {
 					templatePath = 'resource://Vendor.Package/Private/Templates/MyObject.html'
 				}`
@@ -110,7 +112,11 @@ class TemplateImplementation extends AbstractArrayFusionObject
             // Template resources need to be evaluated from the templates package not the requests package.
         if (strpos($templatePath, 'resource://') === 0) {
             $templateResourcePathParts = parse_url($templatePath);
-            $fluidTemplate->setResourcePackage($templateResourcePathParts['host']);
+            foreach ($fluidTemplate->getRenderingContext()->buildParserConfiguration()->getInterceptors(InterceptorInterface::INTERCEPT_TEXT) as $interceptor) {
+                if ($interceptor instanceof ResourceInterceptor) {
+                    $interceptor->setDefaultPackageKey($templateResourcePathParts['host']);
+                }
+            }
         }
 
         foreach ($this->properties as $key => $value) {
@@ -118,13 +124,13 @@ class TemplateImplementation extends AbstractArrayFusionObject
                 continue;
             }
             if (!is_array($value)) {
-                // if a value is a SIMPLE TYPE, e.g. neither an Eel expression nor a TypoScript object,
+                // if a value is a SIMPLE TYPE, e.g. neither an Eel expression nor a Fusion object,
                     // we can just evaluate it (to handle processors) and then assign it to the template.
                 $evaluatedValue = $this->tsValue($key);
                 $fluidTemplate->assign($key, $evaluatedValue);
             } else {
                 // It is an array; so we need to create a "proxy" for lazy evaluation, as it could be a
-                    // nested TypoScript object, Eel expression or simple value.
+                    // nested Fusion object, Eel expression or simple value.
                 $fluidTemplate->assign($key, new Helpers\FusionPathProxy($this, $this->path . '/' . $key, $value));
             }
         }

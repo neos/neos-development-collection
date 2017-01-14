@@ -19,26 +19,26 @@ use Neos\Flow\Annotations as Flow;
 class PlainTextHandler extends AbstractRenderingExceptionHandler
 {
     /**
-     * Handles an Exception thrown while rendering TypoScript
+     * Handles an Exception thrown while rendering Fusion
      *
-     * @param string $typoScriptPath path causing the exception
+     * @param string $fusionPath path causing the exception
      * @param \Exception $exception exception to handle
      * @param integer $referenceCode
      * @return string
      */
-    protected function handle($typoScriptPath, \Exception $exception, $referenceCode)
+    protected function handle($fusionPath, \Exception $exception, $referenceCode)
     {
         if (isset($referenceCode)) {
             return sprintf(
                 'Exception while rendering %s: %s (%s)',
-                $this->formatScriptPath($typoScriptPath, "\n\t", false),
+                $this->formatScriptPath($fusionPath, "\n\t", false),
                 strip_tags($exception->getMessage()),
                 $referenceCode
             );
         } else {
             return sprintf(
                 'Exception while rendering %s: %s',
-                $this->formatScriptPath($typoScriptPath, "\n\t", false),
+                $this->formatScriptPath($fusionPath, "\n\t", false),
                 strip_tags($exception->getMessage())
             );
         }

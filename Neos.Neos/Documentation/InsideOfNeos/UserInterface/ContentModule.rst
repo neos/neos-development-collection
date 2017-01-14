@@ -79,12 +79,12 @@ TODO write some intro text
 #. *Normal properties*
 
    Those properties contain normal values like a title, date or other value.
-   Serverside setting of the property is done using TYPO3CR Node::setProperty()
+   Serverside setting of the property is done using Neos ContentRepository Node::setProperty()
 
 #. *Visibility / lifecycle properties*
 
    These properties are prefixed using an underscore, like '_hidden'.
-   Serverside setting of the property is done using TYPO3CR Node::set<UpperCamelCasePropertyname>()
+   Serverside setting of the property is done using Neos ContentRepository Node::set<UpperCamelCasePropertyname>()
 
 #. *Neos internal properties*
 

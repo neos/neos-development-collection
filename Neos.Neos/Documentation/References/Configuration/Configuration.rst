@@ -14,7 +14,7 @@ A similar setting is available for the structure tree.
 
 If you have lots of nodes you can reduce the number of levels inside ``Settings.yaml`` to speed up page loading::
 
-  TYPO3:
+  Neos:
     Neos:
       userInterface:
         navigateComponent:
@@ -32,7 +32,7 @@ This example shows how to exclude one specific node type (and it's children) fro
 
 .. code-block:: yaml
 
-  TYPO3:
+  Neos:
     Neos:
       userInterface:
         navigateComponent:

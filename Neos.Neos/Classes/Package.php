@@ -48,17 +48,17 @@ class Package extends BasePackage
 
         $flushConfigurationCache = function () use ($bootstrap) {
             $cacheManager = $bootstrap->getEarlyInstance(CacheManager::class);
-            $cacheManager->getCache('TYPO3_Neos_Configuration_Version')->flush();
+            $cacheManager->getCache('Neos_Neos_Configuration_Version')->flush();
         };
 
         $flushXliffServiceCache = function () use ($bootstrap) {
             $cacheManager = $bootstrap->getEarlyInstance(CacheManager::class);
-            $cacheManager->getCache('TYPO3_Neos_XliffToJsonTranslations')->flush();
+            $cacheManager->getCache('Neos_Neos_XliffToJsonTranslations')->flush();
         };
 
         $dispatcher->connect(FileMonitor::class, 'filesHaveChanged', function ($fileMonitorIdentifier, array $changedFiles) use ($flushConfigurationCache, $flushXliffServiceCache) {
             switch ($fileMonitorIdentifier) {
-                case 'TYPO3CR_NodeTypesConfiguration':
+                case 'ContentRepository_NodeTypesConfiguration':
                 case 'Flow_ConfigurationFiles':
                     $flushConfigurationCache();
                     break;

@@ -12,7 +12,7 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  */
 
 /**
- * Testcase for the TypoScript View
+ * Testcase for the Fusion View
  *
  */
 class ProcessorTest extends AbstractFusionObjectTest
@@ -63,7 +63,7 @@ class ProcessorTest extends AbstractFusionObjectTest
     public function processorsCanBeUnset($path)
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath($path);
+        $view->setFusionPath($path);
         $this->assertEquals('Foobaz', $view->render());
     }
 

@@ -4,8 +4,8 @@
     "description": "Fusion is a hierarchical, prototype based processing language",
     "license": "GPL-3.0+",
     "require": {
-        "neos/flow": "*",
-        "neos/fluid-adaptor": "*"
+        "neos/flow": "~4.0.0",
+        "neos/fluid-adaptor": "~4.0.0"
     },
     "replace": {
         "typo3/typoscript": "self.version"

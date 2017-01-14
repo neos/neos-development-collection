@@ -1,8 +1,8 @@
-TypoScript
+Fusion
 ==========
 
 .. toctree::
 	:maxdepth: 2
 
-	InsideTypoScript
+	InsideFusion
 	EelFlowQuery

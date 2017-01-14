@@ -470,15 +470,15 @@ For the date format, these are the available placeholders:
 	* ``s``: seconds, 2 digits with leading zeros - 00 through 59
 
 
-Property Type: image (TYPO3\\Media\\Domain\\Model\\ImageInterface) ``ImageEditor`` -- Image Selection/Upload Editor
+Property Type: image (Neos\\Media\\Domain\\Model\\ImageInterface) ``ImageEditor`` -- Image Selection/Upload Editor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For properties of type ``TYPO3\Media\Domain\Model\ImageInterface``, an image editor is rendered. If you want cropping
+For properties of type ``Neos\Media\Domain\Model\ImageInterface``, an image editor is rendered. If you want cropping
 and resizing functionality, you need to set ``features.crop`` and ``features.resize`` to ``TRUE``, as in the following
 example::
 
     'teaserImage'
-      type: 'TYPO3\Media\Domain\Model\ImageInterface'
+      type: 'Neos\Media\Domain\Model\ImageInterface'
       ui:
         label: 'Teaser Image'
         inspector:
@@ -493,7 +493,7 @@ If cropping is enabled, you might want to enforce a certain aspect ratio, which 
 image format must be ``16:9``::
 
     'teaserImage'
-      type: 'TYPO3\Media\Domain\Model\ImageInterface'
+      type: 'Neos\Media\Domain\Model\ImageInterface'
       ui:
         label: 'Teaser Image'
         inspector:
@@ -513,7 +513,7 @@ shall be added to the list, ``crop.aspectRatio.enableOriginal`` must be set to `
 to choose a custom aspect ratio, set ``crop.aspectRatio.allowCustom`` to ``TRUE``::
 
     'teaserImage'
-      type: 'TYPO3\Media\Domain\Model\ImageInterface'
+      type: 'Neos\Media\Domain\Model\ImageInterface'
       ui:
         label: 'Teaser Image'
         inspector:
@@ -590,23 +590,23 @@ Options Reference:
 			``defaultOption`` (string)
 				default aspect ratio option to be chosen if no cropping has been applied already.
 
-Property Type: asset (TYPO3\\Media\\Domain\\Model\\Asset / array<TYPO3\\Media\\Domain\\Model\\Asset>) ``AssetEditor`` -- File Selection Editor
+Property Type: asset (Neos\\Media\\Domain\\Model\\Asset / array<Neos\\Media\\Domain\\Model\\Asset>) ``AssetEditor`` -- File Selection Editor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If an asset, i.e. ``TYPO3\Media\Domain\Model\Asset``, shall be uploaded or selected, the following configuration
+If an asset, i.e. ``Neos\Media\Domain\Model\Asset``, shall be uploaded or selected, the following configuration
 is an example::
 
     'caseStudyPdf'
-      type: 'TYPO3\Media\Domain\Model\Asset'
+      type: 'Neos\Media\Domain\Model\Asset'
       ui:
         label: 'Case Study PDF'
         inspector:
           group: 'document'
 
-Conversely, if multiple assets shall be uploaded, use ``array<TYPO3\Media\Domain\Model\Asset>`` as type::
+Conversely, if multiple assets shall be uploaded, use ``array<Neos\Media\Domain\Model\Asset>`` as type::
 
     'caseStudies'
-      type: 'array<TYPO3\Media\Domain\Model\Asset>'
+      type: 'array<Neos\Media\Domain\Model\Asset>'
       ui:
         label: 'Case Study PDF'
         inspector:

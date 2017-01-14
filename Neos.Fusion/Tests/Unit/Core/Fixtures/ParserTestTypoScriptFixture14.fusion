@@ -1,5 +1,5 @@
 //
-// TypoScript Fixture 14
+// Fusion Fixture 14
 //
 // This fixture is used to check that curly braces and comments are
 // ignored within literals. See #7555 and #7559.

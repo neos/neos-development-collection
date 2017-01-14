@@ -12,7 +12,7 @@ namespace Neos\Fusion;
  */
 
 /**
- * An exception thrown by TypoScript processors or generally in the TypoScript context.
+ * An exception thrown by Fusion processors or generally in the Fusion context.
  *
  */
 class Exception extends \Neos\Flow\Exception

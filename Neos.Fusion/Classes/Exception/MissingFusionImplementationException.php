@@ -13,7 +13,7 @@ namespace Neos\Fusion\Exception;
 use Neos\Fusion\Exception;
 
 /**
- * This exception is thrown if the PHP implementation class for a given TypoScript
+ * This exception is thrown if the PHP implementation class for a given Fusion
  * object could not be found; i.e. it was not set using @class.
  */
 class MissingFusionImplementationException extends Exception

@@ -4,7 +4,7 @@ Customize Login Screen
 
 You can customize the login screen by editing your ``Settings.yaml``::
 
-  TYPO3:
+  Neos:
     Neos:
       userInterface:
         backendLoginForm:
@@ -12,7 +12,7 @@ You can customize the login screen by editing your ``Settings.yaml``::
 
 Or alternatively add a custom stylesheet::
 
-  TYPO3:
+  Neos:
     Neos:
       userInterface:
         backendLoginForm:
@@ -30,7 +30,7 @@ How to disable a stylesheet ?
 You can disable existing stylesheets, by setting the value to ``FALSE``, the following snippet will disable
 the stylesheet provided by Neos, so your are free to implement your own::
 
-  TYPO3:
+  Neos:
     Neos:
       userInterface:
         backendLoginForm:

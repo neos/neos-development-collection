@@ -22,7 +22,7 @@ use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\FusionObjects\ResourceUriImplementation;
 
 /**
- * Testcase for the TypoScript ResourceUri object
+ * Testcase for the Fusion ResourceUri object
  */
 class ResourceUriImplementationTest extends UnitTestCase
 {

@@ -97,8 +97,6 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         $this->registerTagAttribute('alt', 'string', 'Specifies an alternate text for an image', true);
         $this->registerTagAttribute('ismap', 'string', 'Specifies an image as a server-side image-map. Rarely used. Look at usemap instead', false);
         $this->registerTagAttribute('usemap', 'string', 'Specifies an image as a client-side image-map', false);
-        // @deprecated since 2.0 use the "image" argument instead
-        $this->registerArgument('asset', AssetInterface::class, 'The asset to be rendered - DEPRECATED, use the "image" argument instead', false);
     }
 
     /**
@@ -117,10 +115,6 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
      */
     public function render(ImageInterface $image = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $preset = null)
     {
-        if ($image === null && $this->hasArgument('asset')) {
-            $image = $this->arguments['asset'];
-        }
-
         if ($image === null) {
             return '';
         }
