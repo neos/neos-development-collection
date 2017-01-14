@@ -14,7 +14,7 @@ namespace Neos\Fusion\FusionObjects;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Renders a string of xml attributes from the properties of this TypoScript object.
+ * Renders a string of xml attributes from the properties of this Fusion object.
  * So a configuration like:
  *
  * attributes = Neos.Fusion:Attributes

@@ -17,7 +17,7 @@ use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\FusionObjects\AttributesImplementation;
 
 /**
- * Testcase for the TypoScript Attributes object
+ * Testcase for the Fusion Attributes object
  */
 class AttributesImplementationTest extends UnitTestCase
 {

@@ -3,7 +3,7 @@ Rendering special formats (CSV, JSON, XML, ...)
 ===============================================
 
 Rendering an RSS feed as XML or a document in a different format than HTML is possible by configuring a new route
-and adding a TypoScript path that renders the format.
+and adding a Fusion path that renders the format.
 
 Let's have a look at an example that introduce a ``vcard`` format to render an imaginary ``Person`` document node type.
 
@@ -45,16 +45,16 @@ Global ``Configuration/Routes.yaml`` (before the Neos subroutes)::
 
 This will add the new route from the site package before the Neos subroutes.
 
-TypoScript
+Fusion
 ==========
 
-The ``root`` case in the default TypoScript will render every format that is different from ``html`` by rendering a path
+The ``root`` case in the default Fusion will render every format that is different from ``html`` by rendering a path
 with the format value.
 
 Root.fusion::
 
 	# Define a path for rendering the vcard format
-	vcard = TYPO3.TypoScript:Case {
+	vcard = Neos.Fusion:Case {
 		person {
 			condition = ${q(node).is('[instanceof My.Package:Person]')}
 			type = 'My.Package:Person.Vcard'
@@ -62,7 +62,7 @@ Root.fusion::
 	}
 
 	# Define a prototype to render a Person document as a vcard
-	prototype(My.Package:Person.Vcard) < prototype(TYPO3.TypoScript:Http.Message) {
+	prototype(My.Package:Person.Vcard) < prototype(Neos.Fusion:Http.Message) {
 		# Set the Content-Type header
 		httpResponseHead {
 			headers.Content-Type = 'text/x-vcard;charset=utf-8'

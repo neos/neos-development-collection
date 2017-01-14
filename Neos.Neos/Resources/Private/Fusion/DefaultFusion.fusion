@@ -5,8 +5,6 @@ include: Prototypes/PrimaryContent.fusion
 include: Prototypes/ContentCollection.fusion
 include: Prototypes/Page.fusion
 include: Prototypes/Shortcut.fusion
-# Note: The Neos.Neos:Breadcrumb prototype only exists for backwards compatibility and will be removed in a future version.
-include: Prototypes/Breadcrumb.fusion
 include: Prototypes/BreadcrumbMenu.fusion
 include: Prototypes/DimensionsMenu.fusion
 include: Prototypes/Menu.fusion
@@ -40,7 +38,7 @@ root {
 
 	editPreviewMode {
 		@position = 'end 9996'
-		possibleEditPreviewModePath = ${documentNode.context.currentRenderingMode.typoScriptPath}
+		possibleEditPreviewModePath = ${documentNode.context.currentRenderingMode.fusionPath}
 		condition = ${documentNode.context.inBackend && this.possibleEditPreviewModePath != null && this.possibleEditPreviewModePath != ''}
 		renderPath = ${'/' + this.possibleEditPreviewModePath}
 	}

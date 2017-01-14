@@ -37,7 +37,7 @@ class MatcherImplementation extends RendererImplementation
     }
 
     /**
-     * A path to a TypoScript configuration
+     * A path to a Fusion configuration
      *
      * @return string
      */

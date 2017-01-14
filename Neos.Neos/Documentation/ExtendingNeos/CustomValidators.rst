@@ -9,7 +9,7 @@ and can be referenced by ``My.Package/Public/Scripts/Validators/FooValidator`` f
 
 Namespaces can be registered like this in *Settings.yaml*::
 
-	TYPO3:
+	Neos:
 	  Neos:
 	    userInterface:
 	      requireJsPathMapping:
@@ -17,7 +17,7 @@ Namespaces can be registered like this in *Settings.yaml*::
 
 Registering specific validators is also possible like this::
 
-	TYPO3:
+	Neos:
 	  Neos:
 	    userInterface:
 	      validators:

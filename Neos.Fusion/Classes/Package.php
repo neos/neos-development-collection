@@ -37,13 +37,14 @@ class Package extends BasePackage
         $context = $bootstrap->getContext();
         if (!$context->isProduction()) {
             $dispatcher->connect(Sequence::class, 'afterInvokeStep', function ($step) use ($bootstrap, $dispatcher) {
-                if ($step->getIdentifier() === 'typo3.flow:systemfilemonitor') {
+                if ($step->getIdentifier() === 'neos.flow:systemfilemonitor') {
                     $fusionFileMonitor = FileMonitor::createFileMonitorAtBoot('Fusion_Files', $bootstrap);
                     $packageManager = $bootstrap->getEarlyInstance(PackageManagerInterface::class);
                     foreach ($packageManager->getActivePackages() as $packageKey => $package) {
                         if ($packageManager->isPackageFrozen($packageKey)) {
                             continue;
                         }
+
                         $fusionPaths = array(
                             $package->getResourcesPath() . 'Private/Fusion'
                         );
@@ -58,7 +59,7 @@ class Package extends BasePackage
                     $fusionFileMonitor->shutdownObject();
                 }
 
-                if ($step->getIdentifier() === 'typo3.flow:cachemanagement') {
+                if ($step->getIdentifier() === 'neos.flow:cachemanagement') {
                     $cacheManager = $bootstrap->getEarlyInstance(CacheManager::class);
                     $listener = new FileMonitorListener($cacheManager);
                     $dispatcher->connect(FileMonitor::class, 'filesHaveChanged', $listener, 'flushContentCacheOnFileChanges');

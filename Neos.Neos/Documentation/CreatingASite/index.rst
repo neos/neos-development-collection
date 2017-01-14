@@ -2,8 +2,8 @@ Creating a Site with Neos
 =========================
 
 This guide explains how to implement websites with Neos. It specifically
-covers the structuring of content using the *TYPO3 Content Repository (TYPO3CR)*,
-and how the content is rendered using *TypoScript* and *Fluid*.
+covers the structuring of content using the *Neos Content Repository*,
+and how the content is rendered using *Fusion* and *Fluid*.
 
 .. this Documentation contains all the informations an integrator needs to setup
    neos. No line of php goes in here but a basic 1.2.3 guide for
@@ -13,7 +13,7 @@ and how the content is rendered using *TypoScript* and *Fluid*.
 	:maxdepth: 2
 
 	NodeTypes/index
-	TypoScript/index
+	Fusion/index
 	RenderingCustomMarkup/index
 	ContentDimensions
 	MultiSite

@@ -18,7 +18,7 @@ use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception;
 
 /**
- * Integrate the ContentCache into the TypoScript Runtime
+ * Integrate the ContentCache into the Fusion Runtime
  *
  * Holds cache related runtime state.
  */
@@ -155,7 +155,7 @@ class RuntimeContentCache
      * minimum maximumLifetime).
      *
      * @param array $evaluateContext The current evaluation context
-     * @param object $tsObject The current TypoScript object (for "this" in evaluations)
+     * @param object $tsObject The current Fusion object (for "this" in evaluations)
      * @return array Cache hit state as boolean and value as mixed
      */
     public function preEvaluate(array &$evaluateContext, $tsObject)
@@ -224,7 +224,7 @@ class RuntimeContentCache
      * store cache entries.
      *
      * @param array $evaluateContext The current evaluation context
-     * @param object $tsObject The current TypoScript object (for "this" in evaluations)
+     * @param object $tsObject The current Fusion object (for "this" in evaluations)
      * @param mixed $output The generated output after caching information was removed
      * @return mixed The post-processed output with cache segment markers or cleaned for the entry point
      */
@@ -289,7 +289,7 @@ class RuntimeContentCache
     }
 
     /**
-     * Evaluate a TypoScript path with a given context without content caching
+     * Evaluate a Fusion path with a given context without content caching
      *
      * This is used to render uncached segments "out of band" in getCachedSegment of ContentCache.
      *
@@ -316,7 +316,7 @@ class RuntimeContentCache
      *
      * @param array $configuration
      * @param string $typoScriptPath
-     * @param object $tsObject The actual TypoScript object
+     * @param object $tsObject The actual Fusion object
      * @return array
      */
     protected function buildCacheIdentifierValues(array $configuration, $typoScriptPath, $tsObject)
@@ -333,7 +333,7 @@ class RuntimeContentCache
      *
      * @param array $configuration
      * @param string $typoScriptPath
-     * @param object $tsObject The actual TypoScript object
+     * @param object $tsObject The actual Fusion object
      * @return array
      */
     protected function buildCacheTags(array $configuration, $typoScriptPath, $tsObject)

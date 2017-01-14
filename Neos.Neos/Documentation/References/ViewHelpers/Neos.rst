@@ -121,7 +121,7 @@ the Neos backend into a website.
 Arguments
 *********
 
-* ``node`` (TYPO3\TYPO3CR\Domain\Model\NodeInterface)
+* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface)
 
 
 
@@ -154,7 +154,7 @@ Render a bread crumb path by using the labels of documents leading to the given 
 Arguments
 *********
 
-* ``node`` (TYPO3\TYPO3CR\Domain\Model\NodeInterface): A node
+* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface): A node
 
 
 
@@ -379,7 +379,7 @@ Arguments
 
 * ``tag`` (string, *optional*): The name of the tag that should be wrapped around the property. By default this is a <div>
 
-* ``node`` (TYPO3\TYPO3CR\Domain\Model\NodeInterface, *optional*): The node of the content element. Optional, will be resolved from the TypoScript context by default.
+* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*): The node of the content element. Optional, will be resolved from the TypoScript context by default.
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -424,7 +424,7 @@ templates. This is useful if you want to make properties of a custom document no
 Arguments
 *********
 
-* ``node`` (TYPO3\TYPO3CR\Domain\Model\NodeInterface, *optional*): The node of the content element. Optional, will be resolved from the TypoScript context by default.
+* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*): The node of the content element. Optional, will be resolved from the TypoScript context by default.
 
 
 
@@ -758,7 +758,7 @@ ViewHelper to find the closest document node to a given node
 Arguments
 *********
 
-* ``node`` (TYPO3\TYPO3CR\Domain\Model\NodeInterface)
+* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface)
 
 
 
@@ -778,7 +778,7 @@ ViewHelper to find out if Neos is rendering the backend.
 Arguments
 *********
 
-* ``node`` (TYPO3\TYPO3CR\Domain\Model\NodeInterface, *optional*)
+* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*)
 
 
 
@@ -820,7 +820,7 @@ ViewHelper to find out if Neos is rendering an edit mode.
 Arguments
 *********
 
-* ``node`` (TYPO3\TYPO3CR\Domain\Model\NodeInterface, *optional*): Optional Node to use context from
+* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*): Optional Node to use context from
 
 * ``mode`` (string, *optional*): Optional rendering mode name to check if this specific mode is active
 
@@ -881,7 +881,7 @@ ViewHelper to find out if Neos is rendering a preview mode.
 Arguments
 *********
 
-* ``node`` (TYPO3\TYPO3CR\Domain\Model\NodeInterface, *optional*): Optional Node to use context from
+* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*): Optional Node to use context from
 
 * ``mode`` (string, *optional*): Optional rendering mode name to check if this specific mode is active
 
@@ -942,7 +942,7 @@ ViewHelper to find out if Neos is rendering the live website.
 Arguments
 *********
 
-* ``node`` (TYPO3\TYPO3CR\Domain\Model\NodeInterface, *optional*)
+* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*)
 
 
 

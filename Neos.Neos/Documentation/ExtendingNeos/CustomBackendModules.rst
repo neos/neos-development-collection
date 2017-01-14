@@ -16,7 +16,7 @@ Controller Class
 ----------------
 
 Implementing a Backend Module starts by creating an action controller class derived from
-``\TYPO3\Flow\Mvc\Controller\ActionController``
+``\Neos\Flow\Mvc\Controller\ActionController``
 
 ``Classes/Vendor/Site/Domain/Controller/BackendController``:
 
@@ -24,9 +24,9 @@ Implementing a Backend Module starts by creating an action controller class deri
 
 	namespace Vendor\Site\Controller;
 
-	use TYPO3\Flow\Annotations as Flow;
+	use Neos\Flow\Annotations as Flow;
 
-	class BackendController extends \TYPO3\Flow\Mvc\Controller\ActionController {
+	class BackendController extends \Neos\Flow\Mvc\Controller\ActionController {
 		public function indexAction() {
 			$this->view->assign('exampleValue', 'Hello World');
 		}
@@ -61,7 +61,7 @@ To use the module the editors have to be granted access to the controller action
 
 	privilegeTargets:
 
-	  'TYPO3\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
+	  'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
 		'Vendor.Site:BackendModule':
 		  matcher: 'method(Vendor\Site\Controller\BackendController->.*Action())'
 
@@ -82,7 +82,7 @@ To show up in the management or the administration section the module is defined
 
 .. code-block:: yaml
 
-	TYPO3:
+	Neos:
 	  Neos:
 		modules:
 		  management:

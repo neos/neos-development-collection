@@ -20,7 +20,7 @@ use Neos\Neos\Controller\Exception\NodeNotFoundException;
 use Neos\Neos\Controller\Exception\UnresolvableShortcutException;
 use Neos\Neos\Domain\Model\UserInterfaceMode;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
-use Neos\Neos\View\TypoScriptView;
+use Neos\Neos\View\FusionView;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 
@@ -52,10 +52,10 @@ class NodeController extends ActionController
     /**
      * @var string
      */
-    protected $defaultViewObjectName = TypoScriptView::class;
+    protected $defaultViewObjectName = FusionView::class;
 
     /**
-     * @var TypoScriptView
+     * @var FusionView
      */
     protected $view;
 
@@ -97,16 +97,9 @@ class NodeController extends ActionController
 
         if ($inBackend) {
             $this->overrideViewVariablesFromInternalArguments();
-
-            /** @var UserInterfaceMode $renderingMode */
-            $renderingMode = $node->getContext()->getCurrentRenderingMode();
             $this->response->setHeader('Cache-Control', 'no-cache');
-            if ($renderingMode !== null) {
-                // Deprecated TypoScript context variable from version 2.0.
-                $this->view->assign('editPreviewMode', $renderingMode->getFusionPath());
-            }
             if (!$this->view->canRenderWithNodeAndPath()) {
-                $this->view->setTypoScriptPath('rawContent');
+                $this->view->setFusionPath('rawContent');
             }
         }
 
@@ -139,7 +132,7 @@ class NodeController extends ActionController
         }
 
         if (($typoScriptPath = $this->request->getInternalArgument('__typoScriptPath')) !== null) {
-            $this->view->setTypoScriptPath($typoScriptPath);
+            $this->view->setFusionPath($typoScriptPath);
         }
     }
 

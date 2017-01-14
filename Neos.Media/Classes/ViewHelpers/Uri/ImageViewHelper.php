@@ -61,8 +61,6 @@ class ImageViewHelper extends AbstractViewHelper
     public function initializeArguments()
     {
         parent::initializeArguments();
-        // @deprecated since 2.0 use the "image" argument instead
-        $this->registerArgument('asset', AssetInterface::class, 'The image to be rendered - DEPRECATED, use the "image" argument instead', false);
     }
 
     /**
@@ -81,10 +79,6 @@ class ImageViewHelper extends AbstractViewHelper
      */
     public function render(ImageInterface $image = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $preset = null)
     {
-        if ($image === null && $this->hasArgument('asset')) {
-            $image = $this->arguments['asset'];
-        }
-
         if ($image === null) {
             return '';
         }

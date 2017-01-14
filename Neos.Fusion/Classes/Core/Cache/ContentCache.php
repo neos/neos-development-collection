@@ -22,7 +22,7 @@ use Neos\Fusion\Exception\CacheException;
 
 /**
  * A wrapper around a TYPO3 Flow cache which provides additional functionality for caching partial content (segments)
- * rendered by the TypoScript Runtime.
+ * rendered by the Fusion Runtime.
  *
  * The cache build process generally follows these steps:
  *
@@ -105,16 +105,16 @@ class ContentCache
      * Takes the given content and adds markers for later use as a cached content segment.
      *
      * This function will add a start and an end token to the beginning and end of the content and generate a cache
-     * identifier based on the current TypoScript path and additional values which were defined in the TypoScript
+     * identifier based on the current Fusion path and additional values which were defined in the Fusion
      * configuration by the site integrator.
      *
      * The whole cache segment (START TOKEN + IDENTIFIER + SEPARATOR TOKEN + original content + END TOKEN) is returned
      * as a string.
      *
-     * This method is called by the TypoScript Runtime while rendering a TypoScript object.
+     * This method is called by the Fusion Runtime while rendering a Fusion object.
      *
      * @param string $content The (partial) content which should potentially be cached later on
-     * @param string $typoScriptPath The TypoScript path that rendered the content, for example "page<Neos.NodeTypes:Page>/body<Acme.Demo:DefaultPageTemplate>/parts/breadcrumbMenu"
+     * @param string $typoScriptPath The Fusion path that rendered the content, for example "page<Neos.NodeTypes:Page>/body<Acme.Demo:DefaultPageTemplate>/parts/breadcrumbMenu"
      * @param array $cacheIdentifierValues The values (simple type or implementing CacheAwareInterface) that should be used to create a cache identifier, will be sorted by keys for consistent ordering
      * @param array $tags Tags to add to the cache entry
      * @param integer $lifetime Lifetime of the cache segment in seconds. NULL for the default lifetime and 0 for unlimited lifetime.
@@ -134,11 +134,11 @@ class ContentCache
      * Similar to createCacheSegment() creates a content segment with markers added, but in contrast to that function
      * this method is used for rendering a segment which is not supposed to be cached.
      *
-     * This method is called by the TypoScript Runtime while rendering a TypoScript object.
+     * This method is called by the Fusion Runtime while rendering a Fusion object.
      *
-     * @param string $content The content rendered by the TypoScript Runtime
-     * @param string $typoScriptPath The TypoScript path that rendered the content, for example "page<Neos.NodeTypes:Page>/body<Acme.Demo:DefaultPageTemplate>/parts/breadcrumbMenu"
-     * @param array $contextVariables TypoScript context variables which are needed to correctly render the specified TypoScript object
+     * @param string $content The content rendered by the Fusion Runtime
+     * @param string $typoScriptPath The Fusion path that rendered the content, for example "page<Neos.NodeTypes:Page>/body<Acme.Demo:DefaultPageTemplate>/parts/breadcrumbMenu"
+     * @param array $contextVariables Fusion context variables which are needed to correctly render the specified Fusion object
      * @return string The original content, but with additional markers added
      */
     public function createUncachedSegment($content, $typoScriptPath, array $contextVariables)
@@ -151,11 +151,11 @@ class ContentCache
      * Similar to createUncachedSegment() creates a content segment with markers added, but in contrast to that function
      * this method is used for rendering a segment which will be evaluated at runtime but can still be cached.
      *
-     * This method is called by the TypoScript Runtime while rendering a TypoScript object.
+     * This method is called by the Fusion Runtime while rendering a Fusion object.
      *
-     * @param string $content The content rendered by the TypoScript Runtime
-     * @param string $typoScriptPath The TypoScript path that rendered the content, for example "page<Neos.NodeTypes:Page>/body<Acme.Demo:DefaultPageTemplate>/parts/breadcrumbMenu"
-     * @param array $contextVariables TypoScript context variables which are needed to correctly render the specified TypoScript object
+     * @param string $content The content rendered by the Fusion Runtime
+     * @param string $typoScriptPath The Fusion path that rendered the content, for example "page<Neos.NodeTypes:Page>/body<Acme.Demo:DefaultPageTemplate>/parts/breadcrumbMenu"
+     * @param array $contextVariables Fusion context variables which are needed to correctly render the specified Fusion object
      * @param array $cacheIdentifierValues
      * @param array $tags Tags to add to the cache entry
      * @param integer $lifetime Lifetime of the cache segment in seconds. NULL for the default lifetime and 0 for unlimited lifetime.
@@ -210,7 +210,7 @@ class ContentCache
      * Takes a string of content which includes cache segment markers, extracts the marked segments, writes those
      * segments which can be cached to the actual cache and returns the cleaned up original content without markers.
      *
-     * This method is called by the TypoScript Runtime while rendering a TypoScript object.
+     * This method is called by the Fusion Runtime while rendering a Fusion object.
      *
      * @param string $content The content with an outer cache segment
      * @param boolean $storeCacheEntries Whether to store extracted cache segments in the cache
@@ -242,7 +242,7 @@ class ContentCache
      * as well and segments which were not cacheable are rendered.
      *
      * @param \Closure $uncachedCommandCallback A callback to process commands in uncached segments
-     * @param string $typoScriptPath TypoScript path identifying the TypoScript object to retrieve from the content cache
+     * @param string $typoScriptPath Fusion path identifying the Fusion object to retrieve from the content cache
      * @param array $cacheIdentifierValues Further values which play into the cache identifier hash, must be the same as the ones specified while the cache entry was written
      * @param boolean $addCacheSegmentMarkersToPlaceholders If cache segment markers should be added – this makes sense if the cached segment is about to be included in a not-yet-cached segment
      * @return string|boolean The segment with replaced cache placeholders, or FALSE if a segment was missing in the cache
@@ -310,7 +310,7 @@ class ContentCache
     }
 
     /**
-     * Replace segments which are marked as not-cacheable by their actual content by invoking the TypoScript Runtime.
+     * Replace segments which are marked as not-cacheable by their actual content by invoking the Fusion Runtime.
      *
      * @param \Closure $uncachedCommandCallback
      * @param string $content The content potentially containing not cacheable segments marked by the respective tokens
@@ -371,7 +371,7 @@ class ContentCache
     /**
      * Flush content cache entries by tag
      *
-     * @param string $tag A tag value that was assigned to a cache entry in TypoScript, for example "Everything", "Node_[…]", "NodeType_[…]", "DescendantOf_[…]" whereas "…" is the node identifier or node type respectively
+     * @param string $tag A tag value that was assigned to a cache entry in Fusion, for example "Everything", "Node_[…]", "NodeType_[…]", "DescendantOf_[…]" whereas "…" is the node identifier or node type respectively
      * @return integer The number of cache entries which actually have been flushed
      */
     public function flushByTag($tag)

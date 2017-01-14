@@ -56,7 +56,7 @@ class AbstractRenderingExceptionHandlerTest extends UnitTestCase
         $this->assertEquals($this->handler->getMessage(), $actual, 'incorrect message received');
         $this->assertSame($exception, $this->handler->getException(), 'incorrect exception passed to stub');
         $this->assertEquals(null, $this->handler->getReferenceCode(), 'incorrect reference code passed to stub');
-        $this->assertEquals('path', $this->handler->getTypoScriptPath(), 'incorrect typo script path passed to stub');
+        $this->assertEquals('path', $this->handler->getFusionPath(), 'incorrect Fusion path passed to stub');
     }
 
     /**
@@ -72,7 +72,7 @@ class AbstractRenderingExceptionHandlerTest extends UnitTestCase
         $this->assertEquals($this->handler->getMessage(), $actual, 'incorrect message received');
         $this->assertSame($exception, $this->handler->getException(), 'incorrect exception passed to stub');
         $this->assertEquals($exception->getReferenceCode(), $this->handler->getReferenceCode(), 'incorrect reference code passed to stub');
-        $this->assertEquals('path', $this->handler->getTypoScriptPath(), 'incorrect typo script path passed to stub');
+        $this->assertEquals('path', $this->handler->getFusionPath(), 'incorrect Fusion path passed to stub');
     }
 
     /**
@@ -89,7 +89,7 @@ class AbstractRenderingExceptionHandlerTest extends UnitTestCase
         $this->assertEquals($this->handler->getMessage(), $actual, 'incorrect message received');
         $this->assertSame($exception, $this->handler->getException(), 'incorrect exception passed to stub');
         $this->assertEquals($exception->getReferenceCode(), $this->handler->getReferenceCode(), 'incorrect reference code passed to stub');
-        $this->assertEquals('path2', $this->handler->getTypoScriptPath(), 'incorrect typo script path passed to stub');
+        $this->assertEquals('path2', $this->handler->getFusionPath(), 'incorrect Fusion path passed to stub');
     }
 
     /**

@@ -27,25 +27,25 @@ class XmlCommentHandler extends AbstractRenderingExceptionHandler
     /**
      * Provides an XML comment containing the exception
      *
-     * @param string $typoScriptPath path causing the exception
+     * @param string $fusionPath path causing the exception
      * @param \Exception $exception exception to handle
      * @param integer $referenceCode
      * @return string
      */
-    protected function handle($typoScriptPath, \Exception $exception, $referenceCode)
+    protected function handle($fusionPath, \Exception $exception, $referenceCode)
     {
         $this->systemLogger->logException($exception);
         if (isset($referenceCode)) {
             return sprintf(
                 '<!-- Exception while rendering %s: %s (%s) -->',
-                $this->formatScriptPath($typoScriptPath, ''),
+                $this->formatScriptPath($fusionPath, ''),
                 htmlspecialchars($exception->getMessage()),
                 $referenceCode
             );
         } else {
             return sprintf(
                 '<!-- Exception while rendering %s: %s -->',
-                $this->formatScriptPath($typoScriptPath, ''),
+                $this->formatScriptPath($fusionPath, ''),
                 htmlspecialchars($exception->getMessage())
             );
         }

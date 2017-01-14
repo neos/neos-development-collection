@@ -19,7 +19,7 @@ use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Fusion\Exception as TypoScriptException;
 
 /**
- * A TypoScript object to create resource URIs
+ * A Fusion object to create resource URIs
  *
  * The following TS properties are evaluated:
  *  * path

@@ -139,6 +139,6 @@ class NeosSpecificRequirementsStep extends AbstractStep
         $this->distributionSettings = Arrays::setValueByPath($this->distributionSettings, 'Neos.Imagine.driver', $formValues['imagineDriver']);
         $this->configurationSource->save(FLOW_PATH_CONFIGURATION . ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $this->distributionSettings);
 
-        $this->configurationManager->flushConfigurationCache();
+        $this->configurationManager->refreshConfiguration();
     }
 }

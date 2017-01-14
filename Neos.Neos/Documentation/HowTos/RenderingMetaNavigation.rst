@@ -3,7 +3,7 @@ Rendering a Meta-Navigation
 ===========================
 
 To render a meta navigation (ex: footer navigation)
-in Neos all you need to use is TypoScript and
+in Neos all you need to use is Fusion and
 HTML.
 
 A common fact is that most sites have footer where all
@@ -13,7 +13,7 @@ way.
 
 VendorName.VendorSite/Resources/Private/Fusion/Root.fusion
 
-TypoScript code::
+Fusion code::
 
     page.body {
         metaMenu = Menu
@@ -59,7 +59,7 @@ Viewhelper include::
 
     {namespace neos=Neos\Neos\ViewHelpers}
 
-The next thing is to iterate through the nodes found by TypoScript.
+The next thing is to iterate through the nodes found by Fusion.
 
 Iterating through nodes::
 

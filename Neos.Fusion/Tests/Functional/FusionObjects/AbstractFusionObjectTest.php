@@ -56,16 +56,16 @@ abstract class AbstractFusionObjectTest extends FunctionalTestCase
         $view->setControllerContext($this->controllerContext);
         $view->disableFallbackView();
         $view->setPackageKey('Neos.Fusion');
-        $view->setTypoScriptPathPattern(__DIR__ . '/Fixtures/Fusion');
+        $view->setFusionPathPattern(__DIR__ . '/Fixtures/Fusion');
         $view->assign('fixtureDirectory', __DIR__ . '/Fixtures/');
 
         return $view;
     }
 
     /**
-     * Used for TypoScript objects / Eel and plain value interoperability testing.
-     * Renders TypoScripts in the following paths and expects given $expected as result each time:
-     * $basePath . 'TypoScript'
+     * Used for Fusion objects / Eel and plain value interoperability testing.
+     * Renders Fusions in the following paths and expects given $expected as result each time:
+     * $basePath . 'Fusion'
      * $basePath . 'Eel'
      * $basePath . 'PlainValue'
      *
@@ -80,7 +80,7 @@ abstract class AbstractFusionObjectTest extends FunctionalTestCase
     }
 
     /**
-     * Renders the given TypoScript path and asserts that the result is the same es the given expected.
+     * Renders the given Fusion path and asserts that the result is the same es the given expected.
      *
      * @param string $expected
      * @param string $path
@@ -88,7 +88,7 @@ abstract class AbstractFusionObjectTest extends FunctionalTestCase
     protected function assertTypoScriptPath($expected, $path)
     {
         $view = $this->buildView();
-        $view->setTypoScriptPath($path);
+        $view->setFusionPath($path);
         $this->assertSame($expected, $view->render(), 'Fusion at path "' . $path . '" produced wrong results.');
     }
 }

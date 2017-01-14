@@ -21,7 +21,7 @@ class RendererTest extends AbstractFusionObjectTest
     {
         $view = $this->buildView();
         $view->assign('cond', true);
-        $view->setTypoScriptPath($path);
+        $view->setFusionPath($path);
         $this->assertEquals($expectation, $view->render());
     }
 
