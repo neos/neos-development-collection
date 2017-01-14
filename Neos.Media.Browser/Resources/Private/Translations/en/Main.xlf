@@ -47,6 +47,12 @@
 			<trans-unit id="media.replace.options.generateRedirects" xml:space="preserve">
 				<source>Generate redirects from original file url to the new url</source>
 			</trans-unit>
+			<trans-unit id="media.brokenNode" xml:space="preserve">
+				<source>Broken node, missing document node</source>
+			</trans-unit>
+			<trans-unit id="media.checkOnLive" xml:space="preserve">
+				<source>Check the node on the live website</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
