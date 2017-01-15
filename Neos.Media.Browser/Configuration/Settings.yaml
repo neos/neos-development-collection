@@ -30,7 +30,7 @@ Neos:
     security:
       authentication:
         providers:
-          Typo3BackendProvider:
+          NeosDefaultProvider:
             requestPatterns:
               'Neos.Media.Browser:BackendControllers':
                 pattern: ControllerObjectName
