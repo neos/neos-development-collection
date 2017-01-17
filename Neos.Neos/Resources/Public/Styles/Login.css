@@ -3431,7 +3431,7 @@ html,
   -webkit-appearance: button;
   cursor: pointer;
 }
-.neos label[for],
+.neos label,
 .neos select,
 .neos button,
 .neos input[type="button"],
