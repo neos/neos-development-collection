@@ -11645,6 +11645,9 @@
 .neos.neos-module.neos-module-administration-configuration #configuration .value[title="string"] {
   color: #00b5ff;
 }
+.neos.neos-module.neos-module-administration-packages .neos-button.neos-button-freeze {
+  background-color: #00b5ff;
+}
 .neos.neos-module.neos-module-administration-packages table {
   table-layout: auto;
 }
@@ -11688,6 +11691,24 @@
 .neos.neos-module.neos-module-administration-packages table td.neos-action {
   width: 20%;
   text-align: right;
+}
+.neos.neos-module.neos-module-administration-packages table td > .neos-button.neos-button-freeze,
+.neos.neos-module.neos-module-administration-packages table td > div.neos-pull-right > .neos-button.neos-button-freeze {
+  background-color: #323232;
+}
+.neos.neos-module.neos-module-administration-packages table td > .neos-button.neos-button-freeze:not([disabled]):hover, .neos.neos-module.neos-module-administration-packages table td > .neos-button.neos-button-freeze:not([disabled]):active, .neos.neos-module.neos-module-administration-packages table td > .neos-button.neos-button-freeze:not([disabled]).neos-active, .neos.neos-module.neos-module-administration-packages table td > .neos-button.neos-button-freeze:not([disabled]).neos-pressed, .neos.neos-module.neos-module-administration-packages table td > .neos-button.neos-button-freeze:not(.neos-disabled):hover, .neos.neos-module.neos-module-administration-packages table td > .neos-button.neos-button-freeze:not(.neos-disabled):active, .neos.neos-module.neos-module-administration-packages table td > .neos-button.neos-button-freeze:not(.neos-disabled).neos-active, .neos.neos-module.neos-module-administration-packages table td > .neos-button.neos-button-freeze:not(.neos-disabled).neos-pressed,
+.neos.neos-module.neos-module-administration-packages table td > div.neos-pull-right > .neos-button.neos-button-freeze:not([disabled]):hover,
+.neos.neos-module.neos-module-administration-packages table td > div.neos-pull-right > .neos-button.neos-button-freeze:not([disabled]):active,
+.neos.neos-module.neos-module-administration-packages table td > div.neos-pull-right > .neos-button.neos-button-freeze:not([disabled]).neos-active,
+.neos.neos-module.neos-module-administration-packages table td > div.neos-pull-right > .neos-button.neos-button-freeze:not([disabled]).neos-pressed,
+.neos.neos-module.neos-module-administration-packages table td > div.neos-pull-right > .neos-button.neos-button-freeze:not(.neos-disabled):hover,
+.neos.neos-module.neos-module-administration-packages table td > div.neos-pull-right > .neos-button.neos-button-freeze:not(.neos-disabled):active,
+.neos.neos-module.neos-module-administration-packages table td > div.neos-pull-right > .neos-button.neos-button-freeze:not(.neos-disabled).neos-active,
+.neos.neos-module.neos-module-administration-packages table td > div.neos-pull-right > .neos-button.neos-button-freeze:not(.neos-disabled).neos-pressed {
+  background-color: #00b5ff;
+}
+.neos.neos-module.neos-module-administration-packages table td.neos-action {
+  width: auto;
 }
 .neos.neos-module.neos-module-administration-sites .fold-toggle {
   cursor: pointer;
