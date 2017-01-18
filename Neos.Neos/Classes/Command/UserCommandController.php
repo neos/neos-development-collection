@@ -72,7 +72,7 @@ class UserCommandController extends CommandController
      * will look for an account identified by "username" for that specific provider.
      *
      * @param string $username The username of the user to show. Usually refers to the account identifier of the user's Neos backend account.
-     * @param string $authenticationProvider Name of the authentication provider to use. Example: "NeosDefaultProvider"
+     * @param string $authenticationProvider Name of the authentication provider to use. Example: "Neos.Neos:Default"
      * @return void
      */
     public function showCommand($username, $authenticationProvider = null)
@@ -95,7 +95,7 @@ class UserCommandController extends CommandController
      * This command creates a new user which has access to the backend user interface.
      *
      * More specifically, this command will create a new user and a new account at the same time. The created account
-     * is, by default, a Neos backend account using the the "NeosDefaultProvider" for authentication. The given username
+     * is, by default, a Neos backend account using the the "Neos.Neos:Default" for authentication. The given username
      * will be used as an account identifier for that new account.
      *
      * If an authentication provider name is specified, the new account will be created for that provider instead.
@@ -108,7 +108,7 @@ class UserCommandController extends CommandController
      * @param string $firstName First name of the user to be created
      * @param string $lastName Last name of the user to be created
      * @param string $roles A comma separated list of roles to assign. Examples: "Editor, Acme.Foo:Reviewer"
-     * @param string $authenticationProvider Name of the authentication provider to use for the new account. Example: "NeosDefaultProvider"
+     * @param string $authenticationProvider Name of the authentication provider to use for the new account. Example: "Neos.Neos:Default"
      * @return void
      */
     public function createCommand($username, $password, $firstName, $lastName, $roles = null, $authenticationProvider = null)
@@ -164,7 +164,7 @@ class UserCommandController extends CommandController
      *
      * @param string $username The username of the user to be removed
      * @param boolean $assumeYes Assume "yes" as the answer to the confirmation dialog
-     * @param string $authenticationProvider Name of the authentication provider to use. Example: "NeosDefaultProvider"
+     * @param string $authenticationProvider Name of the authentication provider to use. Example: "Neos.Neos:Default"
      * @return void
      */
     public function deleteCommand($username, $assumeYes = false, $authenticationProvider = null)
@@ -193,7 +193,7 @@ class UserCommandController extends CommandController
      * found.
      *
      * @param string $username The username of the user to be activated.
-     * @param string $authenticationProvider Name of the authentication provider to use for finding the user. Example: "NeosDefaultProvider"
+     * @param string $authenticationProvider Name of the authentication provider to use for finding the user. Example: "Neos.Neos:Default"
      * @return void
      */
     public function activateCommand($username, $authenticationProvider = null)
@@ -214,7 +214,7 @@ class UserCommandController extends CommandController
      * found.
      *
      * @param string $username The username of the user to be deactivated.
-     * @param string $authenticationProvider Name of the authentication provider to use for finding the user. Example: "NeosDefaultProvider"
+     * @param string $authenticationProvider Name of the authentication provider to use for finding the user. Example: "Neos.Neos:Default"
      * @return void
      */
     public function deactivateCommand($username, $authenticationProvider = null)
@@ -236,7 +236,7 @@ class UserCommandController extends CommandController
      *
      * @param string $username Username of the user to modify
      * @param string $password The new password
-     * @param string $authenticationProvider Name of the authentication provider to use for finding the user. Example: "NeosDefaultProvider"
+     * @param string $authenticationProvider Name of the authentication provider to use for finding the user. Example: "Neos.Neos:Default"
      * @return void
      */
     public function setPasswordCommand($username, $password, $authenticationProvider = null)
@@ -260,7 +260,7 @@ class UserCommandController extends CommandController
      *
      * @param string $username The username of the user
      * @param string $role Role to be added to the user, for example "Neos.Neos:Administrator" or just "Administrator"
-     * @param string $authenticationProvider Name of the authentication provider to use. Example: "NeosDefaultProvider"
+     * @param string $authenticationProvider Name of the authentication provider to use. Example: "Neos.Neos:Default"
      * @return void
      */
     public function addRoleCommand($username, $role, $authenticationProvider = null)
@@ -290,7 +290,7 @@ class UserCommandController extends CommandController
      *
      * @param string $username The username of the user
      * @param string $role Role to be removed from the user, for example "Neos.Neos:Administrator" or just "Administrator"
-     * @param string $authenticationProvider Name of the authentication provider to use. Example: "NeosDefaultProvider"
+     * @param string $authenticationProvider Name of the authentication provider to use. Example: "Neos.Neos:Default"
      * @return void
      */
     public function removeRoleCommand($username, $role, $authenticationProvider = null)
