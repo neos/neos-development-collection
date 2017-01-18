@@ -5,7 +5,7 @@ use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
 /**
- * Rename Typo3BackendProvider to NeosDefaultProvider
+ * Rename Typo3BackendProvider to Neos.Neos:Default
  */
 class Version20170115115240 extends AbstractMigration
 {
@@ -17,7 +17,7 @@ class Version20170115115240 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on "postgresql".');
 
-        $this->addSql("UPDATE neos_flow_security_account SET authenticationprovidername = 'NeosDefaultProvider' WHERE authenticationprovidername = 'Typo3BackendProvider'");
+        $this->addSql("UPDATE neos_flow_security_account SET authenticationprovidername = 'Neos.Neos:Default' WHERE authenticationprovidername = 'Typo3BackendProvider'");
     }
 
     /**
@@ -28,6 +28,6 @@ class Version20170115115240 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on "postgresql".');
 
-        $this->addSql("UPDATE neos_flow_security_account SET authenticationprovidername = 'Typo3BackendProvider' WHERE authenticationprovidername = 'NeosDefaultProvider'");
+        $this->addSql("UPDATE neos_flow_security_account SET authenticationprovidername = 'Typo3BackendProvider' WHERE authenticationprovidername = 'Neos.Neos:Default'");
     }
 }

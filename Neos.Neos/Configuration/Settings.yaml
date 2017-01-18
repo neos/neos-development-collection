@@ -569,7 +569,7 @@ Neos:
     security:
       authentication:
         providers:
-          NeosDefaultProvider:
+          'Neos.Neos:Default':
             label: 'Neos Backend'
             provider: PersistedUsernamePasswordProvider
             requestPatterns:

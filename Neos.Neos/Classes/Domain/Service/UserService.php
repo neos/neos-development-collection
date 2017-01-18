@@ -51,7 +51,7 @@ class UserService
      *
      * @var string
      */
-    protected $defaultAuthenticationProviderName = 'NeosDefaultProvider';
+    protected $defaultAuthenticationProviderName = 'Neos.Neos:Default';
 
     /**
      * @Flow\Inject
@@ -151,7 +151,7 @@ class UserService
      * Retrieves an existing user by the given username
      *
      * @param string $username The username
-     * @param string $authenticationProviderName Name of the authentication provider to use. Example: "NeosDefaultProvider"
+     * @param string $authenticationProviderName Name of the authentication provider to use. Example: "Neos.Neos:Default"
      * @return User The user, or null if the user does not exist
      * @throws Exception
      * @api
@@ -232,7 +232,7 @@ class UserService
      * @param string $firstName First name of the user to be created
      * @param string $lastName Last name of the user to be created
      * @param array $roleIdentifiers A list of role identifiers to assign
-     * @param string $authenticationProviderName Name of the authentication provider to use. Example: "NeosDefaultProvider"
+     * @param string $authenticationProviderName Name of the authentication provider to use. Example: "Neos.Neos:Default"
      * @return User The created user instance
      * @api
      */
@@ -258,7 +258,7 @@ class UserService
      * @param string $password Password of the user to be created
      * @param User $user The pre-built user object to start with
      * @param array $roleIdentifiers A list of role identifiers to assign
-     * @param string $authenticationProviderName Name of the authentication provider to use. Example: "NeosDefaultProvider"
+     * @param string $authenticationProviderName Name of the authentication provider to use. Example: "Neos.Neos:Default"
      * @return User The same user object
      * @api
      */
