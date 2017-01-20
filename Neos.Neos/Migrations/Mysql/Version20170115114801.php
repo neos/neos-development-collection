@@ -10,6 +10,14 @@ use Doctrine\DBAL\Schema\Schema;
 class Version20170115114801 extends AbstractMigration
 {
     /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return 'Rename Typo3BackendProvider to Neos.Neos:Default';
+    }
+
+    /**
      * @param Schema $schema
      * @return void
      */
