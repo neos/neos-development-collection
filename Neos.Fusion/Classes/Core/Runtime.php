@@ -284,18 +284,18 @@ class Runtime
      * Handle an Exception thrown while rendering Fusion according to
      * settings specified in Neos.Fusion.rendering.exceptionHandler
      *
-     * @param array $typoScriptPath
+     * @param string $fusionPath
      * @param \Exception $exception
      * @param boolean $useInnerExceptionHandler
      * @return string
      * @throws InvalidConfigurationException
      */
-    public function handleRenderingException($typoScriptPath, \Exception $exception, $useInnerExceptionHandler = false)
+    public function handleRenderingException($fusionPath, \Exception $exception, $useInnerExceptionHandler = false)
     {
-        $typoScriptConfiguration = $this->getConfigurationForPath($typoScriptPath);
+        $fusionConfiguration = $this->getConfigurationForPath($fusionPath);
 
-        if (isset($typoScriptConfiguration['__meta']['exceptionHandler'])) {
-            $exceptionHandlerClass = $typoScriptConfiguration['__meta']['exceptionHandler'];
+        if (isset($fusionConfiguration['__meta']['exceptionHandler'])) {
+            $exceptionHandlerClass = $fusionConfiguration['__meta']['exceptionHandler'];
             $invalidExceptionHandlerMessage = 'The class "%s" is not valid for property "@exceptionHandler".';
         } else {
             if ($useInnerExceptionHandler === true) {
@@ -327,10 +327,10 @@ class Runtime
         }
 
         $exceptionHandler->setRuntime($this);
-        if (array_key_exists('__objectType', $typoScriptConfiguration)) {
-            $typoScriptPath .= sprintf('<%s>', $typoScriptConfiguration['__objectType']);
+        if (array_key_exists('__objectType', $fusionConfiguration)) {
+            $fusionPath .= sprintf('<%s>', $fusionConfiguration['__objectType']);
         }
-        $output = $exceptionHandler->handleRenderingException($typoScriptPath, $exception);
+        $output = $exceptionHandler->handleRenderingException($fusionPath, $exception);
 
         return $output;
     }
