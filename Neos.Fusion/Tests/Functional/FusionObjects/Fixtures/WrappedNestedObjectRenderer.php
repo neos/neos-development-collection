@@ -28,7 +28,7 @@ class WrappedNestedObjectRenderer extends AbstractArrayFusionObject
      */
     public function getPrepend()
     {
-        return $this->tsValue('prepend');
+        return $this->fusionValue('prepend');
     }
 
     /**
@@ -38,7 +38,7 @@ class WrappedNestedObjectRenderer extends AbstractArrayFusionObject
      */
     public function getAppend()
     {
-        return $this->tsValue('append');
+        return $this->fusionValue('append');
     }
 
     /**
@@ -48,6 +48,6 @@ class WrappedNestedObjectRenderer extends AbstractArrayFusionObject
      */
     public function evaluate()
     {
-        return $this->getPrepend() . $this->tsRuntime->evaluate($this->path . '/value') . $this->getAppend();
+        return $this->getPrepend() . $this->runtime->evaluate($this->path . '/value') . $this->getAppend();
     }
 }

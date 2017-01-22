@@ -41,7 +41,7 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
      */
     public function getDimension()
     {
-        return $this->tsValue('dimension');
+        return $this->fusionValue('dimension');
     }
 
     /**
@@ -49,7 +49,7 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
      */
     public function getPresets()
     {
-        return $this->tsValue('presets');
+        return $this->fusionValue('presets');
     }
 
     /**
@@ -57,7 +57,7 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
      */
     public function getIncludeAllPresets()
     {
-        return $this->tsValue('includeAllPresets');
+        return $this->fusionValue('includeAllPresets');
     }
 
     /**

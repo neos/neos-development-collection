@@ -24,7 +24,7 @@ class TestRenderer extends AbstractArrayFusionObject
      */
     public function getTest()
     {
-        return $this->tsValue('test');
+        return $this->fusionValue('test');
     }
 
     /**

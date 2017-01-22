@@ -28,7 +28,7 @@ class ArrayImplementation extends AbstractArrayFusionObject
      */
     public function evaluate()
     {
-        $sortedChildTypoScriptKeys = $this->sortNestedTypoScriptKeys();
+        $sortedChildTypoScriptKeys = $this->sortNestedFusionKeys();
 
         if (count($sortedChildTypoScriptKeys) === 0) {
             return null;
@@ -37,9 +37,9 @@ class ArrayImplementation extends AbstractArrayFusionObject
         $output = '';
         foreach ($sortedChildTypoScriptKeys as $key) {
             try {
-                $output .= $this->tsValue($key);
+                $output .= $this->fusionValue($key);
             } catch (\Exception $e) {
-                $output .= $this->tsRuntime->handleRenderingException($this->path . '/' . $key, $e);
+                $output .= $this->runtime->handleRenderingException($this->path . '/' . $key, $e);
             }
         }
 
@@ -55,10 +55,27 @@ class ArrayImplementation extends AbstractArrayFusionObject
      *
      * @see PositionalArraySorter
      *
+     * @deprecated with 3.0 will be removed with 4.0
      * @return array an ordered list of keys
      * @throws Fusion\Exception if the positional string has an unsupported format
      */
-    protected function sortNestedTypoScriptKeys()
+    protected function sortNestedTypoScriptKeys() {
+        return $this->sortNestedFusionKeys();
+    }
+
+    /**
+     * Sort the Fusion objects inside $this->properties depending on:
+     * - numerical ordering
+     * - position meta-property
+     *
+     * This will ignore all properties defined in "@ignoreProperties" in Fusion
+     *
+     * @see PositionalArraySorter
+     *
+     * @return array an ordered list of keys
+     * @throws Fusion\Exception if the positional string has an unsupported format
+     */
+    protected function sortNestedFusionKeys()
     {
         $arraySorter = new PositionalArraySorter($this->properties, '__meta.position');
         try {

@@ -22,7 +22,7 @@ abstract class AbstractFusionObject implements \ArrayAccess
     /**
      * @var Runtime
      */
-    protected $tsRuntime;
+    protected $runtime;
 
     /**
      * The Fusion path currently being rendered
@@ -36,7 +36,7 @@ abstract class AbstractFusionObject implements \ArrayAccess
      *
      * @var string
      */
-    protected $typoScriptObjectName;
+    protected $fusionObjectName;
 
     /**
      * @var array
@@ -46,15 +46,15 @@ abstract class AbstractFusionObject implements \ArrayAccess
     /**
      * Constructor
      *
-     * @param Runtime $tsRuntime
+     * @param Runtime $runtime
      * @param string $path
-     * @param string $typoScriptObjectName
+     * @param string $fusionObjectName
      */
-    public function __construct(Runtime $tsRuntime, $path, $typoScriptObjectName)
+    public function __construct(Runtime $runtime, $path, $fusionObjectName)
     {
-        $this->tsRuntime = $tsRuntime;
+        $this->runtime = $runtime;
         $this->path = $path;
-        $this->typoScriptObjectName = $typoScriptObjectName;
+        $this->fusionObjectName = $fusionObjectName;
     }
 
     /**
@@ -67,11 +67,36 @@ abstract class AbstractFusionObject implements \ArrayAccess
     /**
      * Get the Fusion runtime this object was created in.
      *
+     * @deprecated with 3.0 will be removed with 4.0
      * @return Runtime
      */
     public function getTsRuntime()
     {
-        return $this->tsRuntime;
+        return $this->getRuntime();
+    }
+
+    /**
+     * Get the Fusion runtime this object was created in.
+     *
+     * @return Runtime
+     */
+    public function getRuntime()
+    {
+        return $this->runtime;
+    }
+
+    /**
+     * Return the Fusion value relative to this Fusion object (with processors etc applied).
+     *
+     * Note that subsequent calls of tsValue() with the same Fusion path will return the same values since the
+     * first evaluated value will be cached in memory.
+     *
+     * @deprecated with 3.0 will be removed with 4.0
+     * @param string $path
+     * @return mixed
+     */
+    protected function tsValue($path) {
+        return $this->fusionValue($path);
     }
 
     /**
@@ -83,11 +108,11 @@ abstract class AbstractFusionObject implements \ArrayAccess
      * @param string $path
      * @return mixed
      */
-    protected function tsValue($path)
+    protected function fusionValue($path)
     {
         $fullPath = $this->path . '/' . $path;
         if (!isset($this->tsValueCache[$fullPath])) {
-            $this->tsValueCache[$fullPath] = $this->tsRuntime->evaluate($fullPath, $this);
+            $this->tsValueCache[$fullPath] = $this->runtime->evaluate($fullPath, $this);
         }
         return $this->tsValueCache[$fullPath];
     }
@@ -100,7 +125,7 @@ abstract class AbstractFusionObject implements \ArrayAccess
      */
     public function offsetExists($offset)
     {
-        return ($this->tsValue($offset) !== null);
+        return ($this->fusionValue($offset) !== null);
     }
 
     /**
@@ -111,7 +136,7 @@ abstract class AbstractFusionObject implements \ArrayAccess
      */
     public function offsetGet($offset)
     {
-        return $this->tsValue($offset);
+        return $this->fusionValue($offset);
     }
 
     /**

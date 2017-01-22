@@ -36,7 +36,7 @@ abstract class AbstractRenderingStateViewHelper extends AbstractViewHelper
         $view = $this->viewHelperVariableContainer->getView();
         if ($view instanceof TypoScriptAwareViewInterface) {
             $typoScriptObject = $view->getTypoScriptObject();
-            $currentContext = $typoScriptObject->getTsRuntime()->getCurrentContext();
+            $currentContext = $typoScriptObject->getRuntime()->getCurrentContext();
             if (isset($currentContext['node'])) {
                 $baseNode = $currentContext['node'];
             }

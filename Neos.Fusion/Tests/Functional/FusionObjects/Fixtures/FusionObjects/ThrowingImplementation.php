@@ -21,7 +21,7 @@ class ThrowingImplementation extends AbstractFusionObject
      */
     protected function getShouldThrow()
     {
-        return $this->tsValue('shouldThrow');
+        return $this->fusionValue('shouldThrow');
     }
 
     /**

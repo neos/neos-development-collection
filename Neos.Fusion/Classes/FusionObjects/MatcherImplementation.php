@@ -23,7 +23,7 @@ class MatcherImplementation extends RendererImplementation
      */
     public function getCondition()
     {
-        return (boolean)$this->tsValue('condition');
+        return (boolean)$this->fusionValue('condition');
     }
 
     /**
@@ -33,7 +33,7 @@ class MatcherImplementation extends RendererImplementation
      */
     public function getType()
     {
-        return $this->tsValue('type');
+        return $this->fusionValue('type');
     }
 
     /**
@@ -43,7 +43,7 @@ class MatcherImplementation extends RendererImplementation
      */
     public function getRenderPath()
     {
-        return $this->tsValue('renderPath');
+        return $this->fusionValue('renderPath');
     }
 
     /**

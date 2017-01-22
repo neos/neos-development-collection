@@ -87,18 +87,18 @@ class RenderViewHelper extends AbstractViewHelper
             /** @var $typoScriptObject AbstractFusionObject */
             $typoScriptObject = $this->viewHelperVariableContainer->getView()->getTypoScriptObject();
             if ($context !== null) {
-                $currentContext = $typoScriptObject->getTsRuntime()->getCurrentContext();
+                $currentContext = $typoScriptObject->getRuntime()->getCurrentContext();
                 foreach ($context as $key => $value) {
                     $currentContext[$key] = $value;
                 }
-                $typoScriptObject->getTsRuntime()->pushContextArray($currentContext);
+                $typoScriptObject->getRuntime()->pushContextArray($currentContext);
             }
             $absolutePath = $typoScriptObject->getPath() . '/' . $slashSeparatedPath;
 
-            $output = $typoScriptObject->getTsRuntime()->render($absolutePath);
+            $output = $typoScriptObject->getRuntime()->render($absolutePath);
 
             if ($context !== null) {
-                $typoScriptObject->getTsRuntime()->popContext();
+                $typoScriptObject->getRuntime()->popContext();
             }
         } else {
             $this->initializeFusionView();

@@ -42,7 +42,7 @@ class AttributesImplementation extends AbstractArrayFusionObject
             }
 
             $encodedAttributeName = htmlspecialchars($attributeName, ENT_COMPAT, 'UTF-8', false);
-            $attributeValue = $this->tsValue($attributeName);
+            $attributeValue = $this->fusionValue($attributeName);
             if ($attributeValue === null || $attributeValue === false) {
                 // No op
             } elseif ($attributeValue === true || $attributeValue === '') {
@@ -71,7 +71,7 @@ class AttributesImplementation extends AbstractArrayFusionObject
      */
     protected function getAllowEmpty()
     {
-        $allowEmpty = $this->tsValue('__meta/allowEmpty');
+        $allowEmpty = $this->fusionValue('__meta/allowEmpty');
         if ($allowEmpty === null) {
             return true;
         } else {
