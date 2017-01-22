@@ -22,14 +22,8 @@ use Neos\Fusion\FusionObjects\AbstractFusionObject;
  *
  * @api
  */
-interface FusionAwareViewInterface
+interface FusionAwareViewInterface extends TypoScriptAwareViewInterface
 {
-    /**
-     * @deprecated with 3.0 will be removed with 4.0
-     * @return AbstractFusionObject
-     */
-    public function getTypoScriptObject();
-
     /**
      * @return AbstractFusionObject
      */

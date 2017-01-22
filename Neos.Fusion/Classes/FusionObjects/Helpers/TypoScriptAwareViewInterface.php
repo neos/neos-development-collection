@@ -10,7 +10,9 @@ namespace Neos\Fusion\FusionObjects\Helpers;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-    
+
+use Neos\Fusion\FusionObjects\AbstractFusionObject;
+
 /**
  * You should implement this interface with a View that should allow access
  * to the Fusion object it is rendered from (and so the Fusion runtime).
@@ -21,6 +23,11 @@ namespace Neos\Fusion\FusionObjects\Helpers;
  * @deprecated with 3.0 will be removed with 4.0
  * @api
  */
-interface TypoScriptAwareViewInterface extends FusionAwareViewInterface
+interface TypoScriptAwareViewInterface
 {
+    /**
+     * @deprecated with 3.0 will be removed with 4.0
+     * @return AbstractFusionObject
+     */
+    public function getTypoScriptObject();
 }
