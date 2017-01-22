@@ -115,7 +115,7 @@ class NodeViewHelperTest extends FunctionalTestCase
         ));
         $this->inject($typoScriptObject, 'tsRuntime', $this->tsRuntime);
         $mockView = $this->getAccessibleMock(FluidView::class, array(), array(), '', false);
-        $mockView->expects($this->any())->method('getTypoScriptObject')->will($this->returnValue($typoScriptObject));
+        $mockView->expects($this->any())->method('getFusionObject')->will($this->returnValue($typoScriptObject));
         $viewHelperVariableContainer = new ViewHelperVariableContainer();
         $viewHelperVariableContainer->setView($mockView);
         $this->inject($this->viewHelper, 'viewHelperVariableContainer', $viewHelperVariableContainer);

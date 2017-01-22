@@ -20,9 +20,18 @@ use Neos\Fusion\FusionObjects\AbstractFusionObject;
  * The Fusion FluidView is the reference implementation for this.
  * @see \Neos\Fusion\FusionObjects\Helpers\FluidView
  *
- * @deprecated with 3.0 will be removed with 4.0
  * @api
  */
-interface TypoScriptAwareViewInterface extends FusionAwareViewInterface
+interface FusionAwareViewInterface
 {
+    /**
+     * @deprecated with 3.0 will be removed with 4.0
+     * @return AbstractFusionObject
+     */
+    public function getTypoScriptObject();
+
+    /**
+     * @return AbstractFusionObject
+     */
+    public function getFusionObject();
 }

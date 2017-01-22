@@ -16,7 +16,7 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\Fusion\FusionObjects\Helpers\TypoScriptAwareViewInterface;
+use Neos\Fusion\FusionObjects\Helpers\FusionAwareViewInterface;
 
 /**
  * Abstract ViewHelper for all Neos rendering state helpers.
@@ -34,8 +34,8 @@ abstract class AbstractRenderingStateViewHelper extends AbstractViewHelper
     {
         $baseNode = null;
         $view = $this->viewHelperVariableContainer->getView();
-        if ($view instanceof TypoScriptAwareViewInterface) {
-            $typoScriptObject = $view->getTypoScriptObject();
+        if ($view instanceof FusionAwareViewInterface) {
+            $typoScriptObject = $view->getFusionObject();
             $currentContext = $typoScriptObject->getRuntime()->getCurrentContext();
             if (isset($currentContext['node'])) {
                 $baseNode = $currentContext['node'];
