@@ -59,7 +59,8 @@ class ArrayImplementation extends AbstractArrayFusionObject
      * @return array an ordered list of keys
      * @throws Fusion\Exception if the positional string has an unsupported format
      */
-    protected function sortNestedTypoScriptKeys() {
+    protected function sortNestedTypoScriptKeys()
+    {
         return $this->sortNestedFusionKeys();
     }
 
