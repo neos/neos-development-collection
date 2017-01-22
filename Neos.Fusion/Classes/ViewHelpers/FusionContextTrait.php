@@ -11,7 +11,7 @@ namespace Neos\Fusion\ViewHelpers;
  * source code.
  */
 
-use Neos\Fusion\FusionObjects\Helpers\TypoScriptAwareViewInterface;
+use Neos\Fusion\FusionObjects\Helpers\FusionAwareViewInterface;
 
 /**
  * This trait is to be used in ViewHelpers that need to get information from the Fusion runtime context.
