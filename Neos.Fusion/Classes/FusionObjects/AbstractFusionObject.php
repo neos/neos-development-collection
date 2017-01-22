@@ -95,7 +95,8 @@ abstract class AbstractFusionObject implements \ArrayAccess
      * @param string $path
      * @return mixed
      */
-    protected function tsValue($path) {
+    protected function tsValue($path)
+    {
         return $this->fusionValue($path);
     }
 
