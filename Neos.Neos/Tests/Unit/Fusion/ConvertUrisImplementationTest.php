@@ -78,7 +78,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
     public function setUp()
     {
-        $this->convertUrisImplementation = $this->getAccessibleMock(ConvertUrisImplementation::class, array('tsValue'), array(), '', false);
+        $this->convertUrisImplementation = $this->getAccessibleMock(ConvertUrisImplementation::class, array('fusionValue'), array(), '', false);
 
         $this->mockWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
 
@@ -105,14 +105,14 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
         $this->mockTsRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
         $this->mockTsRuntime->expects($this->any())->method('getControllerContext')->will($this->returnValue($this->mockControllerContext));
-        $this->convertUrisImplementation->_set('tsRuntime', $this->mockTsRuntime);
+        $this->convertUrisImplementation->_set('runtime', $this->mockTsRuntime);
     }
 
     protected function addValueExpectation($value, $node = null, $forceConversion = false, $externalLinkTarget = null, $resourceLinkTarget = null, $absolute = false)
     {
         $this->convertUrisImplementation
             ->expects($this->atLeastOnce())
-            ->method('tsValue')
+            ->method('fusionValue')
             ->will($this->returnValueMap(array(
                 array('value', $value),
                 array('node', $node ?: $this->mockNode),

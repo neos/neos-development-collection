@@ -64,7 +64,7 @@ class NodeViewHelperTest extends FunctionalTestCase
     /**
      * @var Runtime
      */
-    protected $tsRuntime;
+    protected $runtime;
 
     /**
      * @var ContentContext
@@ -115,12 +115,12 @@ class NodeViewHelperTest extends FunctionalTestCase
         $this->inject($this->viewHelper, 'controllerContext', $controllerContext);
 
         $typoScriptObject = $this->getAccessibleMock(TemplateImplementation::class, array('dummy'), array(), '', false);
-        $this->tsRuntime = new Runtime(array(), $controllerContext);
-        $this->tsRuntime->pushContextArray(array(
+        $this->runtime = new Runtime(array(), $controllerContext);
+        $this->runtime->pushContextArray(array(
             'documentNode' => $this->contentContext->getCurrentSiteNode()->getNode('home'),
             'alternativeDocumentNode' => $this->contentContext->getCurrentSiteNode()->getNode('home/about-us/mission')
         ));
-        $this->inject($typoScriptObject, 'tsRuntime', $this->tsRuntime);
+        $this->inject($typoScriptObject, 'runtime', $this->runtime);
         /** @var AbstractTemplateView|\PHPUnit_Framework_MockObject_MockObject $mockView */
         $mockView = $this->getAccessibleMock(FluidView::class, array(), array(), '', false);
         $mockView->expects($this->any())->method('getFusionObject')->will($this->returnValue($typoScriptObject));
@@ -180,9 +180,9 @@ class NodeViewHelperTest extends FunctionalTestCase
      */
     public function viewHelperRendersUriViaStringPointingToSubNodes()
     {
-        $this->tsRuntime->pushContext('documentNode', $this->contentContext->getCurrentSiteNode()->getNode('home/about-us/mission'));
+        $this->runtime->pushContext('documentNode', $this->contentContext->getCurrentSiteNode()->getNode('home/about-us/mission'));
         $this->assertSame('<a href="/en/home/about-us/history.html">History</a>', $this->viewHelper->render('../history'));
-        $this->tsRuntime->popContext();
+        $this->runtime->popContext();
         $this->assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $this->viewHelper->render('about-us/mission'));
         $this->assertSame('<a href="/en/home/about-us/our-mission.html">Our mission</a>', $this->viewHelper->render('./about-us/mission'));
     }

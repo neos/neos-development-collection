@@ -61,7 +61,7 @@ class PluginImplementationTest extends UnitTestCase
 
         $this->mockTsRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
         $this->mockTsRuntime->expects($this->any())->method('getControllerContext')->will($this->returnValue($this->mockControllerContext));
-        $this->pluginImplementation->_set('tsRuntime', $this->mockTsRuntime);
+        $this->pluginImplementation->_set('runtime', $this->mockTsRuntime);
 
         $this->mockDispatcher = $this->getMockBuilder(Dispatcher::class)->disableOriginalConstructor()->getMock();
         $this->pluginImplementation->_set('dispatcher', $this->mockDispatcher);
