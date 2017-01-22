@@ -26,7 +26,7 @@ class ValueImplementation extends AbstractFusionObject
      */
     public function getValue()
     {
-        return $this->tsValue('value');
+        return $this->fusionValue('value');
     }
 
     /**

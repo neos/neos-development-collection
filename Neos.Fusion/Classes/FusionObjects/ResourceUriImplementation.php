@@ -16,7 +16,7 @@ use Neos\Flow\I18n\Service;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
-use Neos\Fusion\Exception as TypoScriptException;
+use Neos\Fusion\Exception as FusionException;
 
 /**
  * A Fusion object to create resource URIs
@@ -50,7 +50,7 @@ class ResourceUriImplementation extends AbstractFusionObject
      */
     public function getPath()
     {
-        return $this->tsValue('path');
+        return $this->fusionValue('path');
     }
 
     /**
@@ -60,7 +60,7 @@ class ResourceUriImplementation extends AbstractFusionObject
      */
     public function getPackage()
     {
-        return $this->tsValue('package');
+        return $this->fusionValue('package');
     }
 
     /**
@@ -70,7 +70,7 @@ class ResourceUriImplementation extends AbstractFusionObject
      */
     public function getResource()
     {
-        return $this->tsValue('resource');
+        return $this->fusionValue('resource');
     }
 
     /**
@@ -80,14 +80,14 @@ class ResourceUriImplementation extends AbstractFusionObject
      */
     public function isLocalize()
     {
-        return (boolean)$this->tsValue('localize');
+        return (boolean)$this->fusionValue('localize');
     }
 
     /**
      * Returns the absolute URL of a resource
      *
      * @return string
-     * @throws TypoScriptException
+     * @throws FusionException
      */
     public function evaluate()
     {
@@ -98,25 +98,25 @@ class ResourceUriImplementation extends AbstractFusionObject
                 $uri = $this->resourceManager->getPublicPersistentResourceUri($resource);
             }
             if ($uri === false) {
-                throw new TypoScriptException('The specified resource is invalid', 1386458728);
+                throw new FusionException('The specified resource is invalid', 1386458728);
             }
             return $uri;
         }
         $path = $this->getPath();
         if ($path === null) {
-            throw new TypoScriptException('Neither "resource" nor "path" were specified', 1386458763);
+            throw new FusionException('Neither "resource" nor "path" were specified', 1386458763);
         }
         if (strpos($path, 'resource://') === 0) {
             $matches = array();
             if (preg_match('#^resource://([^/]+)/Public/(.*)#', $path, $matches) !== 1) {
-                throw new TypoScriptException(sprintf('The specified path "%s" does not point to a public resource.', $path), 1386458851);
+                throw new FusionException(sprintf('The specified path "%s" does not point to a public resource.', $path), 1386458851);
             }
             $package = $matches[1];
             $path = $matches[2];
         } else {
             $package = $this->getPackage();
             if ($package === null) {
-                $controllerContext = $this->tsRuntime->getControllerContext();
+                $controllerContext = $this->runtime->getControllerContext();
                 /** @var $actionRequest ActionRequest */
                 $actionRequest = $controllerContext->getRequest();
                 $package = $actionRequest->getControllerPackageKey();

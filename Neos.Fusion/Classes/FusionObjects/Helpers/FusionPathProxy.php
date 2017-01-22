@@ -73,7 +73,7 @@ class FusionPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \I
     public function __construct(TemplateImplementation $templateImplementation, $path, array $partialTypoScriptTree)
     {
         $this->templateImplementation = $templateImplementation;
-        $this->fusionRuntime = $templateImplementation->getTsRuntime();
+        $this->fusionRuntime = $templateImplementation->getRuntime();
         $this->path = $path;
         $this->partialTypoScriptTree = $partialTypoScriptTree;
     }

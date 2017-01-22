@@ -39,7 +39,7 @@ trait FusionContextTrait
         $view = $this->viewHelperVariableContainer->getView();
         if ($view instanceof TypoScriptAwareViewInterface) {
             $typoScriptObject = $view->getTypoScriptObject();
-            $currentContext = $typoScriptObject->getTsRuntime()->getCurrentContext();
+            $currentContext = $typoScriptObject->getRuntime()->getCurrentContext();
             if (isset($currentContext[$variableName])) {
                 $value = $currentContext[$variableName];
             }
@@ -60,7 +60,7 @@ trait FusionContextTrait
         }
 
         $typoScriptObject = $view->getTypoScriptObject();
-        $currentContext = $typoScriptObject->getTsRuntime()->getCurrentContext();
+        $currentContext = $typoScriptObject->getRuntime()->getCurrentContext();
 
         return array_key_exists($variableName, $currentContext);
     }
