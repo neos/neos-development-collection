@@ -18,7 +18,7 @@ use Neos\Fusion\FusionObjects\AbstractFusionObject;
 /**
  * Extended Fluid Template View for use in Fusion.
  */
-class FluidView extends StandaloneView implements TypoScriptAwareViewInterface
+class FluidView extends StandaloneView implements FusionAwareViewInterface
 {
     /**
      * @var string
@@ -57,9 +57,18 @@ class FluidView extends StandaloneView implements TypoScriptAwareViewInterface
     }
 
     /**
+     * @deprecated with 3.0 will be removed with 4.0
      * @return AbstractFusionObject
      */
     public function getTypoScriptObject()
+    {
+        return $this->getFusionObject();
+    }
+
+    /**
+     * @return AbstractFusionObject
+     */
+    public function getFusionObject()
     {
         return $this->typoScriptObject;
     }

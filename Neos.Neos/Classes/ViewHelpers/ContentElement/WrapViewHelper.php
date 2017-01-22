@@ -16,7 +16,7 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\Neos\Service\ContentElementWrappingService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\Fusion\FusionObjects\Helpers\TypoScriptAwareViewInterface;
+use Neos\Fusion\FusionObjects\Helpers\FusionAwareViewInterface;
 
 /**
  * A view helper for manually wrapping content editables.
@@ -60,15 +60,15 @@ class WrapViewHelper extends AbstractViewHelper
     public function render(NodeInterface $node = null)
     {
         $view = $this->viewHelperVariableContainer->getView();
-        if (!$view instanceof TypoScriptAwareViewInterface) {
+        if (!$view instanceof FusionAwareViewInterface) {
             throw new ViewHelperException('This ViewHelper can only be used in a TypoScript content element. You have to specify the "node" argument if it cannot be resolved from the TypoScript context.', 1385737102);
         }
-        $typoScriptObject = $view->getTypoScriptObject();
-        $currentContext = $typoScriptObject->getRuntime()->getCurrentContext();
+        $fusionObject = $view->getFusionObject();
+        $currentContext = $fusionObject->getRuntime()->getCurrentContext();
 
         if ($node === null) {
             $node = $currentContext['node'];
         }
-        return $this->contentElementWrappingService->wrapContentObject($node, $this->renderChildren(), $typoScriptObject->getPath());
+        return $this->contentElementWrappingService->wrapContentObject($node, $this->renderChildren(), $fusionObject->getPath());
     }
 }

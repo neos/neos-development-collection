@@ -51,7 +51,7 @@ class RenderViewHelper extends AbstractViewHelper
     /**
      * @var FusionView
      */
-    protected $typoScriptView;
+    protected $fusionView;
 
     /**
      * Initialize the arguments.
@@ -84,31 +84,31 @@ class RenderViewHelper extends AbstractViewHelper
         $slashSeparatedPath = str_replace('.', '/', $path);
 
         if ($typoScriptPackageKey === null) {
-            /** @var $typoScriptObject AbstractFusionObject */
-            $typoScriptObject = $this->viewHelperVariableContainer->getView()->getTypoScriptObject();
+            /** @var $fusionObject AbstractFusionObject */
+            $fusionObject = $this->viewHelperVariableContainer->getView()->getFusionObject();
             if ($context !== null) {
-                $currentContext = $typoScriptObject->getRuntime()->getCurrentContext();
+                $currentContext = $fusionObject->getRuntime()->getCurrentContext();
                 foreach ($context as $key => $value) {
                     $currentContext[$key] = $value;
                 }
-                $typoScriptObject->getRuntime()->pushContextArray($currentContext);
+                $fusionObject->getRuntime()->pushContextArray($currentContext);
             }
-            $absolutePath = $typoScriptObject->getPath() . '/' . $slashSeparatedPath;
+            $absolutePath = $fusionObject->getPath() . '/' . $slashSeparatedPath;
 
-            $output = $typoScriptObject->getRuntime()->render($absolutePath);
+            $output = $fusionObject->getRuntime()->render($absolutePath);
 
             if ($context !== null) {
-                $typoScriptObject->getRuntime()->popContext();
+                $fusionObject->getRuntime()->popContext();
             }
         } else {
             $this->initializeFusionView();
-            $this->typoScriptView->setPackageKey($typoScriptPackageKey);
-            $this->typoScriptView->setFusionPath($slashSeparatedPath);
+            $this->fusionView->setPackageKey($typoScriptPackageKey);
+            $this->fusionView->setFusionPath($slashSeparatedPath);
             if ($context !== null) {
-                $this->typoScriptView->assignMultiple($context);
+                $this->fusionView->assignMultiple($context);
             }
 
-            $output = $this->typoScriptView->render();
+            $output = $this->fusionView->render();
         }
 
         return $output;
@@ -121,11 +121,11 @@ class RenderViewHelper extends AbstractViewHelper
      */
     protected function initializeFusionView()
     {
-        $this->typoScriptView = new FusionView();
-        $this->typoScriptView->setControllerContext($this->controllerContext);
-        $this->typoScriptView->disableFallbackView();
+        $this->fusionView = new FusionView();
+        $this->fusionView->setControllerContext($this->controllerContext);
+        $this->fusionView->disableFallbackView();
         if ($this->hasArgument('typoScriptFilePathPattern')) {
-            $this->typoScriptView->setFusionPathPattern($this->arguments['typoScriptFilePathPattern']);
+            $this->fusionView->setFusionPathPattern($this->arguments['typoScriptFilePathPattern']);
         }
     }
 }
