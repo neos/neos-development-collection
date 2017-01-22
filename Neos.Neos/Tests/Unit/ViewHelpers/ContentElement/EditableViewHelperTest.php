@@ -110,7 +110,7 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
 
         $this->mockTsContext = array('node' => $this->mockNode);
         $this->mockTsRuntime->expects($this->any())->method('getCurrentContext')->will($this->returnValue($this->mockTsContext));
-        $this->mockTemplateImplementation->expects($this->any())->method('getTsRuntime')->will($this->returnValue($this->mockTsRuntime));
+        $this->mockTemplateImplementation->expects($this->any())->method('getRuntime')->will($this->returnValue($this->mockTsRuntime));
         $this->mockView = $this->getAccessibleMock(FluidView::class, array(), array(), '', false);
         $this->mockView->expects($this->any())->method('getFusionObject')->will($this->returnValue($this->mockTemplateImplementation));
 
