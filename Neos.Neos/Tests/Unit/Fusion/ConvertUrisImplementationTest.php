@@ -44,7 +44,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
     /**
      * @var Runtime
      */
-    protected $mockTsRuntime;
+    protected $mockRuntime;
 
     /**
      * @var NodeDataRepository
@@ -103,9 +103,9 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $this->mockLinkingService = $this->createMock(LinkingService::class);
         $this->convertUrisImplementation->_set('linkingService', $this->mockLinkingService);
 
-        $this->mockTsRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
-        $this->mockTsRuntime->expects($this->any())->method('getControllerContext')->will($this->returnValue($this->mockControllerContext));
-        $this->convertUrisImplementation->_set('runtime', $this->mockTsRuntime);
+        $this->mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
+        $this->mockRuntime->expects($this->any())->method('getControllerContext')->will($this->returnValue($this->mockControllerContext));
+        $this->convertUrisImplementation->_set('runtime', $this->mockRuntime);
     }
 
     protected function addValueExpectation($value, $node = null, $forceConversion = false, $externalLinkTarget = null, $resourceLinkTarget = null, $absolute = false)

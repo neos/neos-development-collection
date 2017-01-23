@@ -23,12 +23,12 @@ class TagImplementationTest extends UnitTestCase
     /**
      * @var Runtime
      */
-    protected $mockTsRuntime;
+    protected $mockRuntime;
 
     public function setUp()
     {
         parent::setUp();
-        $this->mockTsRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
+        $this->mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
     }
 
     public function tagExamples()
@@ -51,7 +51,7 @@ class TagImplementationTest extends UnitTestCase
     public function evaluateTests($properties, $attributes, $content, $expectedOutput)
     {
         $path = 'tag/test';
-        $this->mockTsRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($evaluatePath, $that) use ($properties, $path, $attributes, $content) {
+        $this->mockRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($evaluatePath, $that) use ($properties, $path, $attributes, $content) {
             $relativePath = str_replace($path . '/', '', $evaluatePath);
             switch ($relativePath) {
                 case 'attributes':
@@ -63,7 +63,7 @@ class TagImplementationTest extends UnitTestCase
         }));
 
         $typoScriptObjectName = 'Neos.Fusion:Tag';
-        $renderer = new TagImplementation($this->mockTsRuntime, $path, $typoScriptObjectName);
+        $renderer = new TagImplementation($this->mockRuntime, $path, $typoScriptObjectName);
 
         $result = $renderer->evaluate();
         $this->assertEquals($expectedOutput, $result);

@@ -25,12 +25,12 @@ class ResponseHeadImplementationTest extends UnitTestCase
     /**
      * @var Runtime
      */
-    protected $mockTsRuntime;
+    protected $mockRuntime;
 
     public function setUp()
     {
         parent::setUp();
-        $this->mockTsRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
+        $this->mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
     }
 
     public function responseHeadExamples()
@@ -50,7 +50,7 @@ class ResponseHeadImplementationTest extends UnitTestCase
     {
         $path = 'responseHead/test';
 
-        $this->mockTsRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($evaluatePath) use ($path, $httpVersion, $statusCode, $headers) {
+        $this->mockRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($evaluatePath) use ($path, $httpVersion, $statusCode, $headers) {
             $relativePath = str_replace($path . '/', '', $evaluatePath);
             switch ($relativePath) {
                 case 'httpVersion':
@@ -64,7 +64,7 @@ class ResponseHeadImplementationTest extends UnitTestCase
         }));
 
         $typoScriptObjectName = 'Neos.Fusion:Http.ResponseHead';
-        $renderer = new ResponseHeadImplementation($this->mockTsRuntime, $path, $typoScriptObjectName);
+        $renderer = new ResponseHeadImplementation($this->mockRuntime, $path, $typoScriptObjectName);
 
         $result = $renderer->evaluate();
         $this->assertEquals($expectedOutput, $result);
