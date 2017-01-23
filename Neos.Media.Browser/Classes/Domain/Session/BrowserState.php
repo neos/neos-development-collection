@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Media\Domain\Session;
+namespace Neos\Media\Browser\Domain\Session;
 
 /*
  * This file is part of the Neos.Media package.
@@ -27,7 +27,7 @@ class BrowserState
         'activeTag' => null,
         'view' => 'Thumbnail',
         'sortBy' => 'Modified',
-        'sortDirection' => 'ASC',
+        'sortDirection' => 'DESC',
         'filter' => 'All'
     );
 

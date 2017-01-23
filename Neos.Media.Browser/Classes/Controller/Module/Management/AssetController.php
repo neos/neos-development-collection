@@ -11,7 +11,6 @@ namespace Neos\Media\Browser\Controller\Module\Management;
  * source code.
  */
 
-
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Message;
@@ -40,7 +39,7 @@ use Neos\Media\Domain\Repository\ImageRepository;
 use Neos\Media\Domain\Repository\TagRepository;
 use Neos\Media\Domain\Repository\VideoRepository;
 use Neos\Media\Domain\Service\AssetService;
-use Neos\Media\Domain\Session\BrowserState;
+use Neos\Media\Browser\Domain\Session\BrowserState;
 use Neos\Media\TypeConverter\AssetInterfaceConverter;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
 use Neos\Neos\Controller\CreateContentContextTrait;
