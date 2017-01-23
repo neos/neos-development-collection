@@ -26,7 +26,7 @@ class RawArrayImplementation extends ArrayImplementation
      */
     public function evaluate()
     {
-        $sortedChildTypoScriptKeys = $this->sortNestedTypoScriptKeys();
+        $sortedChildTypoScriptKeys = $this->sortNestedFusionKeys();
 
         if (count($sortedChildTypoScriptKeys) === 0) {
             return array();
@@ -34,8 +34,8 @@ class RawArrayImplementation extends ArrayImplementation
 
         $output = array();
         foreach ($sortedChildTypoScriptKeys as $key) {
-            $value = $this->tsValue($key);
-            if ($value === null && $this->tsRuntime->getLastEvaluationStatus() === Runtime::EVALUATION_SKIPPED) {
+            $value = $this->fusionValue($key);
+            if ($value === null && $this->runtime->getLastEvaluationStatus() === Runtime::EVALUATION_SKIPPED) {
                 continue;
             }
             $output[$key] = $value;

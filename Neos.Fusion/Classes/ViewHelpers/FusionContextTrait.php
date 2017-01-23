@@ -11,7 +11,7 @@ namespace Neos\Fusion\ViewHelpers;
  * source code.
  */
 
-use Neos\Fusion\FusionObjects\Helpers\TypoScriptAwareViewInterface;
+use Neos\Fusion\FusionObjects\Helpers\FusionAwareViewInterface;
 
 /**
  * This trait is to be used in ViewHelpers that need to get information from the Fusion runtime context.
@@ -37,9 +37,9 @@ trait FusionContextTrait
         $value = null;
 
         $view = $this->viewHelperVariableContainer->getView();
-        if ($view instanceof TypoScriptAwareViewInterface) {
-            $typoScriptObject = $view->getTypoScriptObject();
-            $currentContext = $typoScriptObject->getTsRuntime()->getCurrentContext();
+        if ($view instanceof FusionAwareViewInterface) {
+            $typoScriptObject = $view->getFusionObject();
+            $currentContext = $typoScriptObject->getRuntime()->getCurrentContext();
             if (isset($currentContext[$variableName])) {
                 $value = $currentContext[$variableName];
             }
@@ -55,12 +55,12 @@ trait FusionContextTrait
     protected function hasContextVariable($variableName)
     {
         $view = $this->viewHelperVariableContainer->getView();
-        if (!$view instanceof TypoScriptAwareViewInterface) {
+        if (!$view instanceof FusionAwareViewInterface) {
             return false;
         }
 
-        $typoScriptObject = $view->getTypoScriptObject();
-        $currentContext = $typoScriptObject->getTsRuntime()->getCurrentContext();
+        $typoScriptObject = $view->getFusionObject();
+        $currentContext = $typoScriptObject->getRuntime()->getCurrentContext();
 
         return array_key_exists($variableName, $currentContext);
     }

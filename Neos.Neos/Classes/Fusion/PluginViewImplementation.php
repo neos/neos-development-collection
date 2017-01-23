@@ -44,7 +44,7 @@ class PluginViewImplementation extends PluginImplementation
     protected function buildPluginRequest()
     {
         /** @var $parentRequest ActionRequest */
-        $parentRequest = $this->tsRuntime->getControllerContext()->getRequest();
+        $parentRequest = $this->runtime->getControllerContext()->getRequest();
         $pluginRequest = new ActionRequest($parentRequest);
 
         if (!$this->pluginViewNode instanceof NodeInterface) {
@@ -107,10 +107,10 @@ class PluginViewImplementation extends PluginImplementation
      */
     public function evaluate()
     {
-        $currentContext = $this->tsRuntime->getCurrentContext();
+        $currentContext = $this->runtime->getCurrentContext();
         $this->pluginViewNode = $currentContext['node'];
         /** @var $parentResponse Response */
-        $parentResponse = $this->tsRuntime->getControllerContext()->getResponse();
+        $parentResponse = $this->runtime->getControllerContext()->getResponse();
         $pluginResponse = new Response($parentResponse);
 
         $pluginRequest = $this->buildPluginRequest();

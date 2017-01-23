@@ -24,12 +24,12 @@ class AttributesImplementationTest extends UnitTestCase
     /**
      * @var Runtime
      */
-    protected $mockTsRuntime;
+    protected $mockRuntime;
 
     public function setUp()
     {
         parent::setUp();
-        $this->mockTsRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
+        $this->mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
     }
 
     public function attributeExamples()
@@ -54,13 +54,13 @@ class AttributesImplementationTest extends UnitTestCase
     public function evaluateTests($properties, $expectedOutput)
     {
         $path = 'attributes/test';
-        $this->mockTsRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($evaluatePath, $that) use ($path, $properties) {
+        $this->mockRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($evaluatePath, $that) use ($path, $properties) {
             $relativePath = str_replace($path . '/', '', $evaluatePath);
             return ObjectAccess::getPropertyPath($properties, str_replace('/', '.', $relativePath));
         }));
 
         $typoScriptObjectName = 'Neos.Fusion:Attributes';
-        $renderer = new AttributesImplementation($this->mockTsRuntime, $path, $typoScriptObjectName);
+        $renderer = new AttributesImplementation($this->mockRuntime, $path, $typoScriptObjectName);
         if ($properties !== null) {
             foreach ($properties as $name => $value) {
                 ObjectAccess::setProperty($renderer, $name, $value);

@@ -36,7 +36,7 @@ class TagImplementation extends AbstractFusionObject
      */
     public function getTagName()
     {
-        $tagName = $this->tsValue('tagName');
+        $tagName = $this->fusionValue('tagName');
         if ($tagName === null) {
             $tagName = 'div';
         }
@@ -50,7 +50,7 @@ class TagImplementation extends AbstractFusionObject
      */
     public function getOmitClosingTag()
     {
-        return $this->tsValue('omitClosingTag');
+        return $this->fusionValue('omitClosingTag');
     }
 
     /**
@@ -61,7 +61,7 @@ class TagImplementation extends AbstractFusionObject
      */
     public function isSelfClosingTag($tagName)
     {
-        return in_array($tagName, self::$SELF_CLOSING_TAGS, true) || (boolean)$this->tsValue('selfClosingTag');
+        return in_array($tagName, self::$SELF_CLOSING_TAGS, true) || (boolean)$this->fusionValue('selfClosingTag');
     }
 
     /**
@@ -76,8 +76,8 @@ class TagImplementation extends AbstractFusionObject
         $selfClosingTag = $this->isSelfClosingTag($tagName);
         $content = '';
         if (!$omitClosingTag && !$selfClosingTag) {
-            $content = $this->tsValue('content');
+            $content = $this->fusionValue('content');
         }
-        return '<' . $tagName . $this->tsValue('attributes') . ($selfClosingTag ? ' /' : '') . '>' . (!$omitClosingTag && !$selfClosingTag ? $content . '</' . $tagName . '>' : '');
+        return '<' . $tagName . $this->fusionValue('attributes') . ($selfClosingTag ? ' /' : '') . '>' . (!$omitClosingTag && !$selfClosingTag ? $content . '</' . $tagName . '>' : '');
     }
 }

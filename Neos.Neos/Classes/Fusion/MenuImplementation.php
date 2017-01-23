@@ -62,7 +62,7 @@ class MenuImplementation extends AbstractMenuImplementation
      */
     public function getEntryLevel()
     {
-        return $this->tsValue('entryLevel');
+        return $this->fusionValue('entryLevel');
     }
 
     /**
@@ -72,7 +72,7 @@ class MenuImplementation extends AbstractMenuImplementation
      */
     public function getFilter()
     {
-        $filter = $this->tsValue('filter');
+        $filter = $this->fusionValue('filter');
         if ($filter === null) {
             $filter = 'Neos.Neos:Document';
         }
@@ -87,7 +87,7 @@ class MenuImplementation extends AbstractMenuImplementation
     public function getMaximumLevels()
     {
         if ($this->maximumLevels === null) {
-            $this->maximumLevels = $this->tsValue('maximumLevels');
+            $this->maximumLevels = $this->fusionValue('maximumLevels');
             if ($this->maximumLevels > self::MAXIMUM_LEVELS_LIMIT) {
                 $this->maximumLevels = self::MAXIMUM_LEVELS_LIMIT;
             }
@@ -104,7 +104,7 @@ class MenuImplementation extends AbstractMenuImplementation
     public function getLastLevel()
     {
         if ($this->lastLevel === null) {
-            $this->lastLevel = $this->tsValue('lastLevel');
+            $this->lastLevel = $this->fusionValue('lastLevel');
             if ($this->lastLevel > self::MAXIMUM_LEVELS_LIMIT) {
                 $this->lastLevel = self::MAXIMUM_LEVELS_LIMIT;
             }
@@ -119,7 +119,7 @@ class MenuImplementation extends AbstractMenuImplementation
     public function getStartingPoint()
     {
         if ($this->startingPoint === null) {
-            $this->startingPoint = $this->tsValue('startingPoint');
+            $this->startingPoint = $this->fusionValue('startingPoint');
         }
 
         return $this->startingPoint;
@@ -130,7 +130,7 @@ class MenuImplementation extends AbstractMenuImplementation
      */
     public function getItemCollection()
     {
-        return $this->tsValue('itemCollection');
+        return $this->fusionValue('itemCollection');
     }
 
     /**
@@ -219,7 +219,7 @@ class MenuImplementation extends AbstractMenuImplementation
      */
     protected function findMenuStartingPoint()
     {
-        $typoScriptContext = $this->tsRuntime->getCurrentContext();
+        $typoScriptContext = $this->runtime->getCurrentContext();
         $startingPoint = $this->getStartingPoint();
 
         if (!isset($typoScriptContext['node']) && !$startingPoint) {
