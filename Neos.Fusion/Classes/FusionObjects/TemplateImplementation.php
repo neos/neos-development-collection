@@ -31,7 +31,7 @@ class TemplateImplementation extends AbstractArrayFusionObject
      */
     public function getTemplatePath()
     {
-        return $this->tsValue('templatePath');
+        return $this->fusionValue('templatePath');
     }
 
     /**
@@ -41,7 +41,7 @@ class TemplateImplementation extends AbstractArrayFusionObject
      */
     public function getPartialRootPath()
     {
-        return $this->tsValue('partialRootPath');
+        return $this->fusionValue('partialRootPath');
     }
 
     /**
@@ -51,7 +51,7 @@ class TemplateImplementation extends AbstractArrayFusionObject
      */
     public function getLayoutRootPath()
     {
-        return $this->tsValue('layoutRootPath');
+        return $this->fusionValue('layoutRootPath');
     }
 
     /**
@@ -61,7 +61,7 @@ class TemplateImplementation extends AbstractArrayFusionObject
      */
     public function getSectionName()
     {
-        return $this->tsValue('sectionName');
+        return $this->fusionValue('sectionName');
     }
 
     /**
@@ -80,7 +80,7 @@ class TemplateImplementation extends AbstractArrayFusionObject
      */
     public function evaluate()
     {
-        $actionRequest =  $this->tsRuntime->getControllerContext()->getRequest();
+        $actionRequest =  $this->runtime->getControllerContext()->getRequest();
         if (!$actionRequest instanceof ActionRequest) {
             $actionRequest = null;
         }
@@ -95,7 +95,7 @@ class TemplateImplementation extends AbstractArrayFusionObject
 				`prototype(%s) < prototype(Neos.Fusion:Template) {
 					templatePath = 'resource://Vendor.Package/Private/Templates/MyObject.html'
 				}`
-			", $templatePath, $this->typoScriptObjectName));
+			", $templatePath, $this->fusionObjectName));
         }
         $fluidTemplate->setTemplatePathAndFilename($templatePath);
 
@@ -126,7 +126,7 @@ class TemplateImplementation extends AbstractArrayFusionObject
             if (!is_array($value)) {
                 // if a value is a SIMPLE TYPE, e.g. neither an Eel expression nor a Fusion object,
                     // we can just evaluate it (to handle processors) and then assign it to the template.
-                $evaluatedValue = $this->tsValue($key);
+                $evaluatedValue = $this->fusionValue($key);
                 $fluidTemplate->assign($key, $evaluatedValue);
             } else {
                 // It is an array; so we need to create a "proxy" for lazy evaluation, as it could be a

@@ -41,7 +41,7 @@ class CaseImplementation extends ArrayImplementation
      */
     public function evaluate()
     {
-        $matcherKeys = $this->sortNestedTypoScriptKeys();
+        $matcherKeys = $this->sortNestedFusionKeys();
 
         foreach ($matcherKeys as $matcherName) {
             $renderedMatcher = $this->renderMatcher($matcherName);
@@ -69,7 +69,7 @@ class CaseImplementation extends ArrayImplementation
 
         if (isset($this->properties[$matcherKey]['__objectType'])) {
             // object type already set, so no need to set it
-            $renderedMatcher = $this->tsRuntime->render(
+            $renderedMatcher = $this->runtime->render(
                 sprintf('%s/%s', $this->path, $matcherKey)
             );
             return $renderedMatcher;
@@ -79,7 +79,7 @@ class CaseImplementation extends ArrayImplementation
             throw new UnsupportedObjectTypeAtPathException('"Case" Fusion object only supports nested Fusion objects; no Eel expressions.', 1372668077);
         } else {
             // No object type has been set, so we're using Neos.Fusion:Matcher as fallback
-            $renderedMatcher = $this->tsRuntime->render(
+            $renderedMatcher = $this->runtime->render(
                 sprintf('%s/%s<Neos.Fusion:Matcher>', $this->path, $matcherKey)
             );
             return $renderedMatcher;
@@ -96,7 +96,7 @@ class CaseImplementation extends ArrayImplementation
      */
     protected function matcherMatched($renderedMatcher)
     {
-        if ($this->tsRuntime->isDebugMode()) {
+        if ($this->runtime->isDebugMode()) {
             $renderedMatcher = preg_replace('/\s*<!--.*?-->\s*/', '', $renderedMatcher);
         }
         return $renderedMatcher !== self::MATCH_NORESULT;

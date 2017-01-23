@@ -62,7 +62,7 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
      */
     public function offsetGet($offset)
     {
-        return $this->tsValue($offset);
+        return $this->fusionValue($offset);
     }
 
     /**
