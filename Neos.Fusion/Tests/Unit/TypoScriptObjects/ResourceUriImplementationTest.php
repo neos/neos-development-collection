@@ -34,7 +34,7 @@ class ResourceUriImplementationTest extends UnitTestCase
     /**
      * @var Runtime
      */
-    protected $mockTsRuntime;
+    protected $mockRuntime;
 
     /**
      * @var ResourcePublisher
@@ -58,16 +58,16 @@ class ResourceUriImplementationTest extends UnitTestCase
 
     public function setUp()
     {
-        $this->mockTsRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
+        $this->mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
 
         $this->mockControllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
 
         $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $this->mockControllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($this->mockActionRequest));
 
-        $this->mockTsRuntime->expects($this->any())->method('getControllerContext')->will($this->returnValue($this->mockControllerContext));
+        $this->mockRuntime->expects($this->any())->method('getControllerContext')->will($this->returnValue($this->mockControllerContext));
 
-        $this->resourceUriImplementation = new ResourceUriImplementation($this->mockTsRuntime, 'resourceUri/test', 'Neos.Fusion:ResourceUri');
+        $this->resourceUriImplementation = new ResourceUriImplementation($this->mockRuntime, 'resourceUri/test', 'Neos.Fusion:ResourceUri');
 
         $this->mockResourceManager = $this->getMockBuilder(ResourceManager::class)->disableOriginalConstructor()->getMock();
         $this->inject($this->resourceUriImplementation, 'resourceManager', $this->mockResourceManager);
@@ -92,7 +92,7 @@ class ResourceUriImplementationTest extends UnitTestCase
     public function evaluateReturnsResourceUriForAGivenResource()
     {
         $validResource = $this->getMockBuilder(PersistentResource::class)->disableOriginalConstructor()->getMock();
-        $this->mockTsRuntime->expects($this->atLeastOnce())->method('evaluate')->with('resourceUri/test/resource')->will($this->returnCallback(function ($evaluatePath, $that) use ($validResource) {
+        $this->mockRuntime->expects($this->atLeastOnce())->method('evaluate')->with('resourceUri/test/resource')->will($this->returnCallback(function ($evaluatePath, $that) use ($validResource) {
             return $validResource;
         }));
         $this->mockResourceManager->expects($this->atLeastOnce())->method('getPublicPersistentResourceUri')->with($validResource)->will($this->returnValue('the/resolved/resource/uri'));
@@ -106,7 +106,7 @@ class ResourceUriImplementationTest extends UnitTestCase
      */
     public function evaluateThrowsExceptionIfNeitherResourceNorPathAreSpecified()
     {
-        $this->mockTsRuntime->expects($this->atLeastOnce())->method('evaluate')->will($this->returnCallback(function ($evaluatePath, $that) {
+        $this->mockRuntime->expects($this->atLeastOnce())->method('evaluate')->will($this->returnCallback(function ($evaluatePath, $that) {
             return null;
         }));
 
@@ -119,7 +119,7 @@ class ResourceUriImplementationTest extends UnitTestCase
      */
     public function evaluateThrowsExceptionIfSpecifiedPathPointsToAPrivateResource()
     {
-        $this->mockTsRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($evaluatePath, $that) {
+        $this->mockRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($evaluatePath, $that) {
             $relativePath = str_replace('resourceUri/test/', '', $evaluatePath);
             switch ($relativePath) {
                 case 'path':
@@ -136,7 +136,7 @@ class ResourceUriImplementationTest extends UnitTestCase
      */
     public function evaluateDeterminesCurrentPackageIfARelativePathIsSpecified()
     {
-        $this->mockTsRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($evaluatePath, $that) {
+        $this->mockRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($evaluatePath, $that) {
             $relativePath = str_replace('resourceUri/test/', '', $evaluatePath);
             switch ($relativePath) {
                 case 'path':
@@ -155,7 +155,7 @@ class ResourceUriImplementationTest extends UnitTestCase
      */
     public function evaluateUsesSpecifiedPackageIfARelativePathIsGiven()
     {
-        $this->mockTsRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($evaluatePath, $that) {
+        $this->mockRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($evaluatePath, $that) {
             $relativePath = str_replace('resourceUri/test/', '', $evaluatePath);
             switch ($relativePath) {
                 case 'path':
@@ -177,7 +177,7 @@ class ResourceUriImplementationTest extends UnitTestCase
      */
     public function evaluateReturnsResourceUriForAGivenResourcePath()
     {
-        $this->mockTsRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($evaluatePath, $that) {
+        $this->mockRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($evaluatePath, $that) {
             $relativePath = str_replace('resourceUri/test/', '', $evaluatePath);
             switch ($relativePath) {
                 case 'path':
@@ -195,7 +195,7 @@ class ResourceUriImplementationTest extends UnitTestCase
      */
     public function evaluateIgnoresPackagePropertyIfAResourcePathIsGiven()
     {
-        $this->mockTsRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($evaluatePath, $that) {
+        $this->mockRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($evaluatePath, $that) {
             $relativePath = str_replace('resourceUri/test/', '', $evaluatePath);
             switch ($relativePath) {
                 case 'path':
@@ -216,7 +216,7 @@ class ResourceUriImplementationTest extends UnitTestCase
      */
     public function evaluateLocalizesFilenameIfLocalize()
     {
-        $this->mockTsRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($evaluatePath, $that) {
+        $this->mockRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($evaluatePath, $that) {
             $relativePath = str_replace('resourceUri/test/', '', $evaluatePath);
             switch ($relativePath) {
                 case 'localize':
