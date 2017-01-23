@@ -1,9 +1,9 @@
 (function($) {
 	$(function() {
-		if (window.parent !== window && window.parent.Typo3MediaBrowserCallbacks) {
+		if (window.parent !== window && window.parent.NeosMediaBrowserCallbacks) {
 			$('.neos-action-cancel, .neos-button-primary', '.neos-footer').on('click', function(e) {
-				if (window.parent.Typo3MediaBrowserCallbacks && typeof window.parent.Typo3MediaBrowserCallbacks.close === 'function') {
-					window.parent.Typo3MediaBrowserCallbacks.close();
+				if (window.parent.NeosMediaBrowserCallbacks && typeof window.parent.NeosMediaBrowserCallbacks.close === 'function') {
+					window.parent.NeosMediaBrowserCallbacks.close();
 				}
 			});
 		}

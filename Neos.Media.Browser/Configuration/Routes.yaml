@@ -4,7 +4,7 @@
 
 -
   name: 'Content Module - Media Browser'
-  uriPattern: 'media(/{@action}).{@format}'
+  uriPattern: 'neos/module/media/browser/media(/{@action}).{@format}'
   defaults:
     '@package':    'Neos.Media.Browser'
     '@controller': 'Backend\MediaBrowser'
@@ -14,7 +14,7 @@
 
 -
   name: 'Content Module - Image Browser'
-  uriPattern: 'image(/{@action}).{@format}'
+  uriPattern: 'neos/module/media/browser/image(/{@action}).{@format}'
   defaults:
     '@package':    'Neos.Media.Browser'
     '@controller': 'Backend\ImageBrowser'

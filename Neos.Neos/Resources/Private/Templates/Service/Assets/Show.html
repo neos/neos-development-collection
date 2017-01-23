@@ -9,7 +9,7 @@
 			<div class="asset">
 				<label class="asset-label">{asset.label}</label>
 				(<span class="asset-identifier">{asset.identifier}</span>)
-				<a rel="preview" href="{media:uri.image(image: asset, preset: 'Neos.Media.Browser:Thumbnail', async: asyncThumbnails)}">{neos:backend.translate(id: 'preview', value: 'Preview')}</a>
+				<a rel="preview" href="{media:uri.image(asset: asset, preset: 'Neos.Neos:Thumbnail', async: asyncThumbnails)}">{neos:backend.translate(id: 'preview', value: 'Preview')}</a>
 			</div>
 		</div>
 	</body>

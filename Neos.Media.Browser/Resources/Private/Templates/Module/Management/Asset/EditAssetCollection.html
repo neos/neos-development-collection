@@ -9,11 +9,11 @@
 		<div class="neos-row-fluid">
 			<div class="neos-span6 neos-image-inputs">
 				<fieldset>
-					<legend>{neos:backend.translate(id: 'media.basics', source: 'Modules', package: 'Neos.Neos')}</legend>
-					<label for="title">{neos:backend.translate(id: 'media.field.title', source: 'Modules', package: 'Neos.Neos')}</label>
-					<f:form.textfield property="title" id="title" placeholder="{neos:backend.translate(id: 'media.field.title', source: 'Modules', package: 'Neos.Neos')}" />
+					<legend>{neos:backend.translate(id: 'media.basics', source: 'Modules', package: 'Neos.Media.Browser')}</legend>
+					<label for="title">{neos:backend.translate(id: 'media.field.title', source: 'Modules', package: 'Neos.Media.Browser')}</label>
+					<f:form.textfield property="title" id="title" placeholder="{neos:backend.translate(id: 'media.field.title', source: 'Modules', package: 'Neos.Media.Browser')}" />
 					<f:if condition="{tags}">
-						<label>{neos:backend.translate(id: 'media.tags', source: 'Modules', package: 'Neos.Neos')}</label>
+						<label>{neos:backend.translate(id: 'media.tags', source: 'Modules', package: 'Neos.Media.Browser')}</label>
 						<f:for each="{tags}" as="tag">
 							<label class="neos-checkbox neos-inline">
 								<m:form.checkbox property="tags" multiple="TRUE" value="{tag}" /><span></span> {tag.label}
@@ -24,28 +24,28 @@
 			</div>
 		</div>
 		<div class="neos-footer">
-			<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'media.cancel', source: 'Modules', package: 'Neos.Neos')}</f:link.action>
-			<a title="{neos:backend.translate(id: 'media.clickToDelete', source: 'Modules', package: 'Neos.Neos')}" data-toggle="modal" href="#collection-{assetCollection -> f:format.identifier()}" class="neos-button neos-button-danger">{neos:backend.translate(id: 'media.delete', source: 'Modules', package: 'Neos.Neos')}</a>
-			<f:form.submit id="save" class="neos-button neos-button-primary" value="{neos:backend.translate(id: 'media.save', source: 'Modules', package: 'Neos.Neos')}" />
+			<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'media.cancel', source: 'Modules', package: 'Neos.Media.Browser')}</f:link.action>
+			<a title="{neos:backend.translate(id: 'media.clickToDelete', source: 'Modules', package: 'Neos.Media.Browser')}" data-toggle="modal" href="#collection-{assetCollection -> f:format.identifier()}" class="neos-button neos-button-danger">{neos:backend.translate(id: 'media.delete', source: 'Modules', package: 'Neos.Media.Browser')}</a>
+			<f:form.submit id="save" class="neos-button neos-button-primary" value="{neos:backend.translate(id: 'media.save', source: 'Modules', package: 'Neos.Media.Browser')}" />
 			<div class="neos-hide" id="collection-{assetCollection -> f:format.identifier()}">
 				<div class="neos-modal-centered">
 					<div class="neos-modal-content">
 						<div class="neos-modal-header">
 							<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-							<div class="neos-header">{neos:backend.translate(id: 'media.message.reallyDeleteAsset', arguments: {0: assetCollection.title}, source: 'Modules', package: 'Neos.Neos')}</div>
+							<div class="neos-header">{neos:backend.translate(id: 'media.message.reallyDeleteAsset', arguments: {0: assetCollection.title}, source: 'Modules', package: 'Neos.Media.Browser')}</div>
 							<div>
 								<div class="neos-subheader">
 									<p>
-										{neos:backend.translate(id: 'media.message.willDeleteCollection', source: 'Modules', package: 'Neos.Neos')}<br />
-										{neos:backend.translate(id: 'media.message.operationCannotBeUndone', source: 'Modules', package: 'Neos.Neos')}
+										{neos:backend.translate(id: 'media.message.willDeleteCollection', source: 'Modules', package: 'Neos.Media.Browser')}<br />
+										{neos:backend.translate(id: 'media.message.operationCannotBeUndone', source: 'Modules', package: 'Neos.Media.Browser')}
 									</p>
 								</div>
 							</div>
 						</div>
 						<div class="neos-modal-footer">
-							<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'media.cancel', source: 'Modules', package: 'Neos.Neos')}</a>
-							<button type="submit" form="postHelper" formaction="{f:uri.action(action: 'deleteAssetCollection', arguments: {assetCollection: assetCollection})}" title="{neos:backend.translate(id: 'media.deleteCollection', source: 'Modules', package: 'Neos.Neos')}" class="neos-button neos-button-mini neos-button-danger">
-								{neos:backend.translate(id: 'media.message.confirmDeleteCollection', source: 'Modules', package: 'Neos.Neos')}
+							<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'media.cancel', source: 'Modules', package: 'Neos.Media.Browser')}</a>
+							<button type="submit" form="postHelper" formaction="{f:uri.action(action: 'deleteAssetCollection', arguments: {assetCollection: assetCollection})}" title="{neos:backend.translate(id: 'media.deleteCollection', source: 'Modules', package: 'Neos.Media.Browser')}" class="neos-button neos-button-mini neos-button-danger">
+								{neos:backend.translate(id: 'media.message.confirmDeleteCollection', source: 'Modules', package: 'Neos.Media.Browser')}
 							</button>
 						</div>
 					</div>
