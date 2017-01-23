@@ -596,12 +596,12 @@ class AssetController extends ActionController
     {
         $usageReferences = $this->assetService->getUsageReferences($asset);
         if (count($usageReferences) > 0) {
-            $this->addFlashMessage('Asset could not be deleted, because there are still Nodes using it.', '', Message::SEVERITY_WARNING, [], 1412422767);
+            $this->addFlashMessage('deleteRelatedNodes', '', Message::SEVERITY_WARNING, [], 1412422767);
             $this->redirect('index');
         }
 
         $this->assetRepository->remove($asset);
-        $this->addFlashMessage(sprintf('Asset "%s" has been deleted.', $asset->getLabel()), null, null, [], 1412375050);
+        $this->addFlashMessage('assetHasBeenDeleted', '', Message::SEVERITY_OK, [$asset->getLabel()], 1412375050);
         $this->redirect('index');
     }
 
@@ -622,7 +622,7 @@ class AssetController extends ActionController
         // Prevent replacement of image, audio and video by a different mimetype because of possible rendering issues.
         if (in_array($sourceMediaType['type'], ['image', 'audio', 'video']) && $sourceMediaType['type'] !== $replacementMediaType['type']) {
             $this->addFlashMessage(
-                'Resources of type "%s" can only be replaced by a similar resource. Got type "%s"',
+                'resourceCanOnlyBeReplacedBySimilarResource',
                 '',
                 Message::SEVERITY_WARNING,
                 [$sourceMediaType['type'], $resource->getMediaType()],
@@ -745,10 +745,10 @@ class AssetController extends ActionController
     public function addFlashMessage($messageBody, $messageTitle = '', $severity = Message::SEVERITY_OK, array $messageArguments = [], $messageCode = null)
     {
         if (is_string($messageBody)) {
-            $messageBody = $this->translator->translateById($messageBody, $messageArguments, null, null, 'Main', 'Neos.Media.Browser') ?: $messageBody;
+            $messageBody = $this->translator->translateById($messageBody, $messageArguments, null, null, 'Modules', 'Neos.Media.Browser') ?: $messageBody;
         }
 
-        $messageTitle = $this->translator->translateById($messageTitle, $messageArguments, null, null, 'Main', 'Neos.Media.Browser');
+        $messageTitle = $this->translator->translateById($messageTitle, $messageArguments, null, null, 'Modules', 'Neos.Media.Browser');
         parent::addFlashMessage($messageBody, $messageTitle, $severity, $messageArguments, $messageCode);
     }
 
