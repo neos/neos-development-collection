@@ -12,7 +12,7 @@ namespace Neos\Flow\Core\Migrations;
  */
 
 /**
- * Migrate usages of the Settings path Neos.Flow.security.authentication.providers.Typo3BackendProvider to Neos.Flow.security.authentication.providers[Neos.Neos:Default]
+ * Migrate usages of the Settings path Neos.Flow.security.authentication.providers.Typo3BackendProvider to Neos.Flow.security.authentication.providers[Neos.Neos:Backend]
  */
 class Version20170115114620 extends AbstractMigration
 {
@@ -29,7 +29,7 @@ class Version20170115114620 extends AbstractMigration
      */
     public function up()
     {
-        $this->searchAndReplace('Typo3BackendProvider', 'Neos.Neos:Default', ['php', 'ts2', 'fusion', 'js', 'json', 'html']);
-        $this->searchAndReplace('Typo3BackendProvider', "'Neos.Neos:Default'", ['yaml']);
+        $this->searchAndReplace('Typo3BackendProvider', 'Neos.Neos:Backend', ['php', 'ts2', 'fusion', 'js', 'json', 'html']);
+        $this->searchAndReplace('Typo3BackendProvider', "'Neos.Neos:Backend'", ['yaml']);
     }
 }

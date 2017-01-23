@@ -2006,7 +2006,7 @@ Options
 ^^^^^^^
 
 ``--authentication-provider``
-  Name of the authentication provider to use for finding the user. Example: "Neos.Neos:Default
+  Name of the authentication provider to use for finding the user. Example: "Neos.Neos:Backend"
 
 
 
@@ -2042,7 +2042,7 @@ Options
 ^^^^^^^
 
 ``--authentication-provider``
-  Name of the authentication provider to use. Example: "Neos.Neos:Default
+  Name of the authentication provider to use. Example: "Neos.Neos:Backend"
 
 
 
@@ -2058,7 +2058,7 @@ Options
 This command creates a new user which has access to the backend user interface.
 
 More specifically, this command will create a new user and a new account at the same time. The created account
-is, by default, a Neos backend account using the the "Neos.Neos:Default" for authentication. The given username
+is, by default, a Neos backend account using the the "Neos.Neos:Backend" for authentication. The given username
 will be used as an account identifier for that new account.
 
 If an authentication provider name is specified, the new account will be created for that provider instead.
@@ -2086,7 +2086,7 @@ Options
 ``--roles``
   A comma separated list of roles to assign. Examples: "Editor, Acme.Foo:Reviewer
 ``--authentication-provider``
-  Name of the authentication provider to use for the new account. Example: "Neos.Neos:Default
+  Name of the authentication provider to use for the new account. Example: "Neos.Neos:Backend"
 
 
 
@@ -2117,7 +2117,7 @@ Options
 ^^^^^^^
 
 ``--authentication-provider``
-  Name of the authentication provider to use for finding the user. Example: "Neos.Neos:Default
+  Name of the authentication provider to use for finding the user. Example: "Neos.Neos:Backend"
 
 
 
@@ -2154,7 +2154,7 @@ Options
 ``--assume-yes``
   Assume "yes" as the answer to the confirmation dialog
 ``--authentication-provider``
-  Name of the authentication provider to use. Example: "Neos.Neos:Default
+  Name of the authentication provider to use. Example: "Neos.Neos:Backend"
 
 
 
@@ -2202,7 +2202,7 @@ Options
 ^^^^^^^
 
 ``--authentication-provider``
-  Name of the authentication provider to use. Example: "Neos.Neos:Default
+  Name of the authentication provider to use. Example: "Neos.Neos:Backend"
 
 
 
@@ -2235,7 +2235,7 @@ Options
 ^^^^^^^
 
 ``--authentication-provider``
-  Name of the authentication provider to use for finding the user. Example: "Neos.Neos:Default
+  Name of the authentication provider to use for finding the user. Example: "Neos.Neos:Backend"
 
 
 
@@ -2267,7 +2267,7 @@ Options
 ^^^^^^^
 
 ``--authentication-provider``
-  Name of the authentication provider to use. Example: "Neos.Neos:Default
+  Name of the authentication provider to use. Example: "Neos.Neos:Backend"
 
 
 
