@@ -15,7 +15,7 @@
 				var readableMaximumFileSize = readablizeBytes(maximumFileUploadSize);
 				var message = 'The file size of ' + readableFileSize + ' exceeds the allowed limit of ' + readableMaximumFileSize;
 				if (window.Typo3Neos) {
-					message = window.Typo3Neos.I18n.translate('media.fileSizeExceedsAllowedLimit', message, 'TYPO3.Neos', 'Modules', [readableFileSize, readableMaximumFileSize]);
+					message = window.Typo3Neos.I18n.translate('fileSizeExceedsAllowedLimit', message, 'Neos.Media.Browser', 'Modules', [readableFileSize, readableMaximumFileSize]);
 					window.Typo3Neos.Notification.error(message);
 				} else {
 					alert(message);
@@ -24,7 +24,7 @@
 					e.preventDefault();
 					var message = 'Cannot upload the file';
 					if (window.Typo3Neos) {
-						message = window.Typo3Neos.I18n.translate('media.cannotUploadFile', message, 'TYPO3.Neos', 'Modules');
+						message = window.Typo3Neos.I18n.translate('cannotUploadFile', message, 'Neos.Media.Browser', 'Modules');
 						window.Typo3Neos.Notification.warning(message);
 					} else {
 						alert(message);
@@ -42,7 +42,7 @@
 					e.preventDefault();
 					var message = 'No file selected';
 					if (window.Typo3Neos) {
-						message = window.Typo3Neos.I18n.translate('media.noFileSelected', message, 'TYPO3.Neos', 'Modules');
+						message = window.Typo3Neos.I18n.translate('noFileSelected', message, 'Neos.Media.Browser', 'Modules');
 						window.Typo3Neos.Notification.warning(message);
 					} else {
 						alert(message);
