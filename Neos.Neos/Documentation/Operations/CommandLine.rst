@@ -37,7 +37,7 @@ Here is an example:
 
   OPTIONS:
     --authentication-provider Name of the authentication provider to use. Example:
-                         "Neos.Neos:Default
+                         "Neos.Neos:Backend
 
   DESCRIPTION:
     This command allows for adding a specific role to an existing user.
