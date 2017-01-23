@@ -459,6 +459,7 @@ class AssetController extends ActionController
      *
      * @param Asset $asset
      * @param Tag $tag
+     * @return void
      */
     public function tagAssetAction(Asset $asset, Tag $tag)
     {
@@ -475,6 +476,7 @@ class AssetController extends ActionController
      *
      * @param Asset $asset
      * @param AssetCollection $assetCollection
+     * @return void
      */
     public function addAssetToCollectionAction(Asset $asset, AssetCollection $assetCollection)
     {
