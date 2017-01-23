@@ -10,7 +10,7 @@
 				<li class="asset">
 					<label class="asset-label">{asset.label}</label>
 					(<span class="asset-identifier">{asset.identifier}</span>)
-					<a rel="thumbnail" href="{media:uri.image(asset: asset, preset: 'Neos.Neos:Thumbnail', async: asyncThumbnails)}">{neos:backend.translate(id: 'thumbnail', value: 'thumbnail')}</a>
+					<a rel="thumbnail" href="{media:uri.image(asset: asset, preset: 'Neos.Media.Browser:Thumbnail', async: asyncThumbnails)}">{neos:backend.translate(id: 'thumbnail', value: 'thumbnail')}</a>
 					<f:link.action rel="asset-show" controller="Service\Assets" action="show" arguments="{identifier: asset.identifier}" format="html">{neos:backend.translate(id: 'show', value: 'show')}</f:link.action>
 				</li></f:for>
 			</ul>
