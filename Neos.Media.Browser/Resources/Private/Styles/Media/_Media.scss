@@ -147,11 +147,14 @@
 	}
 }
 
+&.media-browser-inspector {
+  padding: 40px 54px;
+}
+
 &.media-browser {
 	background-color: transparent;
 
 	&:not(.media-module) {
-		padding: $unit $menuButtonWidth;
 
 		.neos-footer {
 			position: fixed;
@@ -553,7 +556,7 @@
 					padding-bottom: 100%;
 					height: 0;
 					background-color: $grayDarker;
-					background-image: url('../Images/ajax-preloader-222222.gif');
+					background-image: url('../../Neos.Neos/Images/ajax-preloader-222222.gif');
 					background-position: center center;
 					background-repeat: no-repeat;
 					overflow: hidden;
@@ -714,7 +717,7 @@
 			padding-bottom: 100%;
 			position: relative;
 			background-color: $grayDarker;
-			background-image: url('../Images/ajax-preloader-222222.gif');
+			background-image: url('../../Neos.Neos/Images/ajax-preloader-222222.gif');
 			background-position: center center;
 			background-repeat: no-repeat;
 			overflow: hidden;
@@ -767,7 +770,7 @@
 			position: relative;
 			display: inline-block;
 			float: left;
-			background-image: url('../Images/ajax-preloader-222222.gif');
+			background-image: url('../../Neos.Neos/Images/ajax-preloader-222222.gif');
 			background-position: center center;
 			background-repeat: no-repeat;
 			overflow: hidden;
@@ -804,7 +807,7 @@
 				height: 250px;
 				position: relative;
 				padding: 0;
-				background-image: url('../Images/ajax-preloader-222222.gif');
+				background-image: url('../../Neos.Neos/Images/ajax-preloader-222222.gif');
 				background-position: center center;
 				background-repeat: no-repeat;
 				overflow: hidden;
