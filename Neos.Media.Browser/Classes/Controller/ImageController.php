@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Media\Browser\Controller\Backend;
+namespace Neos\Media\Browser\Controller;
 
 /*
  * This file is part of the Neos.Media.Browser package.
@@ -19,7 +19,7 @@ use Neos\Media\Domain\Repository\ImageRepository;
 /**
  * Controller for browsing images in the ImageEditor
  */
-class ImageBrowserController extends MediaBrowserController
+class ImageController extends AssetController
 {
     /**
      * @Flow\Inject

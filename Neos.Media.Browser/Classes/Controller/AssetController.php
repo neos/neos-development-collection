@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Media\Browser\Controller\Module\Management;
+namespace Neos\Media\Browser\Controller;
 
 /*
  * This file is part of the Neos.Media.Browser package.

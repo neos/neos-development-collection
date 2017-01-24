@@ -98,7 +98,7 @@
 											<i class="icon-edit icon-white"></i> {editLabel}
 										</f:link.action>
 									</li>
-									<f:security.ifAccess privilegeTarget="Neos.Media.Browser:Backend.Module.Media.ReplaceAssetResource">
+									<f:security.ifAccess privilegeTarget="Neos.Media.Browser:ReplaceAssetResource">
 										<li>
 											<f:link.action action="replaceAssetResource" arguments="{asset: asset}" title="{replaceAssetResourceLabel}" data="{neos-toggle: 'tooltip', placement: 'left'}">
 												<i class="icon-random icon-white"></i> {replaceLabel}
