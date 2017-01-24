@@ -6,15 +6,15 @@
 
 <f:section name="Content">
 	<f:form method="post" action="updateTag" object="{tag}" objectName="tag">
-		<legend>{neos:backend.translate(id: 'editTag',  package: 'Neos.Media.Browser')}</legend>
+		<legend>{neos:backend.translate(id: 'editTag', package: 'Neos.Media.Browser')}</legend>
 		<div class="neos-row-fluid">
 			<div class="neos-span6 neos-image-inputs">
 				<fieldset>
-					<label for="label">{neos:backend.translate(id: 'field.label',  package: 'Neos.Media.Browser')}</label>
-					<f:form.textfield property="label" placeholder="{neos:backend.translate(id: 'field.label',  package: 'Neos.Media.Browser')}" id="label" />
+					<label for="label">{neos:backend.translate(id: 'field.label', package: 'Neos.Media.Browser')}</label>
+					<f:form.textfield property="label" placeholder="{neos:backend.translate(id: 'field.label', package: 'Neos.Media.Browser')}" id="label" />
 					<f:security.ifAccess privilegeTarget="Neos.Media.Browser:ManageAssetCollections">
 						<f:if condition="{assetCollections}">
-							<label>{neos:backend.translate(id: 'collections',  package: 'Neos.Media.Browser')}</label>
+							<label>{neos:backend.translate(id: 'collections', package: 'Neos.Media.Browser')}</label>
 							<f:for each="{assetCollections}" as="assetCollection">
 								<label class="neos-checkbox neos-inline">
 									<m:form.checkbox property="assetCollections" multiple="TRUE" value="{assetCollection}" /><span></span> {assetCollection.title}
@@ -34,19 +34,19 @@
 					<div class="neos-modal-content">
 						<div class="neos-modal-header">
 							<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-							<div class="neos-header">{neos:backend.translate(id: 'message.reallyDeleteAsset', arguments: {0: tag.label},  package: 'Neos.Media.Browser')}</div>
+							<div class="neos-header">{neos:backend.translate(id: 'message.reallyDeleteAsset', arguments: {0: tag.label}, package: 'Neos.Media.Browser')}</div>
 							<div>
 								<div class="neos-subheader">
 									<p>
-										{neos:backend.translate(id: 'message.willDeleteTag',  package: 'Neos.Media.Browser')}<br />
-										{neos:backend.translate(id: 'message.operationCannotBeUndone',  package: 'Neos.Media.Browser')}
+										{neos:backend.translate(id: 'message.willDeleteTag', package: 'Neos.Media.Browser')}<br />
+										{neos:backend.translate(id: 'message.operationCannotBeUndone', package: 'Neos.Media.Browser')}
 									</p>
 								</div>
 							</div>
 						</div>
 						<div class="neos-modal-footer">
 							<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', package: 'Neos.Neos')}</a>
-							<button type="submit" form="postHelper" formaction="{f:uri.action(action: 'deleteTag', arguments: {tag: tag})}" class="neos-button neos-button-danger">{neos:backend.translate(id: 'message.confirmDeleteTag',  package: 'Neos.Media.Browser')}</button>
+							<button type="submit" form="postHelper" formaction="{f:uri.action(action: 'deleteTag', arguments: {tag: tag})}" class="neos-button neos-button-danger">{neos:backend.translate(id: 'message.confirmDeleteTag', package: 'Neos.Media.Browser')}</button>
 						</div>
 					</div>
 				</div>
