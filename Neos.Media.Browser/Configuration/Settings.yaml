@@ -49,4 +49,4 @@ Neos:
       translation:
         autoInclude:
           Neos.Media.Browser:
-            - 'Modules'
+            - 'Main'
