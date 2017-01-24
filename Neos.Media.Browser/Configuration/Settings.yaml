@@ -38,8 +38,8 @@ Neos:
         submodules:
           media:
             controller: \Neos\Media\Browser\Controller\AssetController
-            label: 'Neos.Media.Browser:Modules:label'
-            description: 'Neos.Media.Browser:Modules:description'
+            label: 'Neos.Media.Browser:Main:module.label'
+            description: 'Neos.Media.Browser:Main:module.description'
             icon: 'icon-camera'
             privilegeTarget: 'Neos.Media.Browser:ManageAssets'
             additionalResources:
