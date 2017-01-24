@@ -74,7 +74,7 @@
 		</div>
 		<div class="neos-footer">
 			<f:link.action action="index" class="neos-button neos-action-cancel">{neos:backend.translate(id: 'cancel', source: 'Modules', package: 'Neos.Neos')}</f:link.action>
-			<f:security.ifAccess privilegeTarget="Neos.Media.Browser:Backend.Module.Media.ReplaceAssetResource">
+			<f:security.ifAccess privilegeTarget="Neos.Media.Browser:ReplaceAssetResource">
 				<f:link.action action="replaceAssetResource" arguments="{asset: asset}" class="neos-button" title="{neos:backend.translate(id: 'replaceAssetResource', source: 'Modules', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip', container: 'body'}">
 					{neos:backend.translate(id: 'replace', source: 'Modules', package: 'Neos.Media.Browser')}
 				</f:link.action>
