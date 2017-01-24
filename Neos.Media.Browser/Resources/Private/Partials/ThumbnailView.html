@@ -4,11 +4,11 @@
 	<ul class="neos-thumbnails asset-list">
 		<f:alias map="{
 			'editLabel': '{neos:backend.translate(id: \'edit\', package: \'Neos.Neos\')}',
-			'editAssetLabel': '{neos:backend.translate(id: \'editAsset\', source: \'Modules\', package: \'Neos.Media.Browser\')}',
-			'replaceLabel': '{neos:backend.translate(id: \'replace\', source: \'Modules\', package: \'Neos.Media.Browser\')}',
-			'replaceAssetResourceLabel': '{neos:backend.translate(id: \'replaceAssetResource\', source: \'Modules\', package: \'Neos.Media.Browser\')}',
+			'editAssetLabel': '{neos:backend.translate(id: \'editAsset\', package: \'Neos.Media.Browser\')}',
+			'replaceLabel': '{neos:backend.translate(id: \'replace\', package: \'Neos.Media.Browser\')}',
+			'replaceAssetResourceLabel': '{neos:backend.translate(id: \'replaceAssetResource\', package: \'Neos.Media.Browser\')}',
 			'deleteLabel': '{neos:backend.translate(id: \'delete\', package: \'Neos.Neos\')}',
-			'deleteAssetLabel': '{neos:backend.translate(id: \'deleteAsset\', source: \'Modules\', package: \'Neos.Media.Browser\')}'
+			'deleteAssetLabel': '{neos:backend.translate(id: \'deleteAsset\', package: \'Neos.Media.Browser\')}'
 		}">
 			<f:for each="{paginatedAssets}" as="asset">
 				<li class="asset">
