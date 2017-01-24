@@ -148,7 +148,7 @@
 }
 
 &.media-browser-inspector {
-  padding: 40px 54px;
+	padding: 40px 54px;
 }
 
 &.media-browser {
@@ -401,6 +401,7 @@
 									content: $fa-var-arrow-down;
 									position: absolute;
 									right: $relatedMargin + $tightMargin;
+									top: $relatedMargin + $tightMargin;
 								}
 
 								&:hover,

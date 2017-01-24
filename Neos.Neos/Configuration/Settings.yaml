@@ -573,18 +573,14 @@ Neos:
             label: 'Neos Backend'
             provider: PersistedUsernamePasswordProvider
             requestPatterns:
-              'Neos.Neos:backendControllers':
+              'Neos.Neos:BackendControllers':
                 pattern: 'ControllerObjectName'
                 patternOptions:
                   controllerObjectNamePattern: 'Neos\Neos\Controller\.*'
-              'Neos.Neos:serviceControllers':
+              'Neos.Neos:ServiceControllers':
                 pattern: 'ControllerObjectName'
                 patternOptions:
                   controllerObjectNamePattern: 'Neos\Neos\Service\.*'
-              'Neos.Neos:mediaControllers':
-                pattern: 'ControllerObjectName'
-                patternOptions:
-                  controllerObjectNamePattern: 'Neos\Media\Controller\.*'
             entryPoint: WebRedirect
             entryPointOptions:
               routeValues:
@@ -699,15 +695,6 @@ Neos:
       Neos.Array: Neos\Neos\Fusion\Helper\ArrayHelper
       Neos.Rendering: Neos\Neos\Fusion\Helper\RenderingHelper
       Neos.Caching: Neos\Neos\Fusion\Helper\CachingHelper
-
-  Media:
-    thumbnailPresets:
-      'Neos.Neos:Thumbnail':
-        maximumWidth: 250
-        maximumHeight: 250
-      'Neos.Neos:Preview':
-        maximumWidth: 1000
-        maximumHeight: 1000
 
   Setup:
     stepOrder:

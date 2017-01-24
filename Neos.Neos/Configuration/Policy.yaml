@@ -1,7 +1,7 @@
 #                                                                        #
 # Security policy for the Neos package                                   #
 #                                                                        #
----
+
 privilegeTargets:
 
   'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':

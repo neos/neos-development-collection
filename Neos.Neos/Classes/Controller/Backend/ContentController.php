@@ -251,7 +251,7 @@ class ContentController extends ActionController
             ],
             'mediaType' => $image->getResource()->getMediaType()
         ];
-        $thumbnail = $this->thumbnailService->getThumbnail($image, $this->thumbnailService->getThumbnailConfigurationForPreset('Neos.Neos:Preview'));
+        $thumbnail = $this->thumbnailService->getThumbnail($image, $this->thumbnailService->getThumbnailConfigurationForPreset('Neos.Media.Browser:Preview'));
         if ($thumbnail !== null) {
             $imageProperties['previewImageResourceUri'] = $this->thumbnailService->getUriForThumbnail($thumbnail);
             $imageProperties['previewDimensions'] = [
@@ -311,7 +311,7 @@ class ContentController extends ActionController
             'assetUuid' => $this->persistenceManager->getIdentifierByObject($asset),
             'filename' => $asset->getResource()->getFilename()
         ];
-        $thumbnail = $this->thumbnailService->getThumbnail($asset, $this->thumbnailService->getThumbnailConfigurationForPreset('Neos.Neos:Thumbnail'));
+        $thumbnail = $this->thumbnailService->getThumbnail($asset, $this->thumbnailService->getThumbnailConfigurationForPreset('Neos.Media.Browser:Thumbnail'));
         if ($thumbnail !== null) {
             $assetProperties['previewImageResourceUri'] = $this->thumbnailService->getUriForThumbnail($thumbnail);
             $assetProperties['previewSize'] = ['w' => $thumbnail->getWidth(), 'h' => $thumbnail->getHeight()];
