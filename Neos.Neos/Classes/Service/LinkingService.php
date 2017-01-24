@@ -333,7 +333,7 @@ class LinkingService
         return sprintf(
             '%s://%s%s%s',
             $primaryDomain->getScheme() ?: $requestUri->getScheme(),
-            $primaryDomain->getHostPattern(),
+            $primaryDomain->getHostname(),
             $port && !in_array($port, [80, 443], true) ? ':' . $port : '',
             rtrim($baseUri->getPath(), '/') // remove trailing slash, $uri has leading slash already
         );
