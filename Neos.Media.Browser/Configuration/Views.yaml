@@ -11,3 +11,6 @@
   options:
     layoutRootPaths:
       'Neos.Media.Browser': 'resource://Neos.Media.Browser/Private/Layouts/Module'
+    partialRootPaths:
+      'Neos.Neos': 'resource://Neos.Neos/Private/Partials'
+      'Neos.Media.Browser': 'resource://Neos.Media.Browser/Private/Partials'
