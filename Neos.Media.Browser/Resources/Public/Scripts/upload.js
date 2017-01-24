@@ -51,7 +51,7 @@
 					var readableMaximumFileSize = readablizeBytes(maximumFileUploadSize);
 					message = 'The file size of ' + readableFileSize + ' exceeds the allowed limit of ' + readableMaximumFileSize;
 					if (window.Typo3Neos) {
-						message = window.Typo3Neos.I18n.translate('fileSizeExceedsAllowedLimit', message, 'Neos.Media.Browser', 'Modules', [readableFileSize, readableMaximumFileSize]);
+						message = window.Typo3Neos.I18n.translate('fileSizeExceedsAllowedLimit', message, 'Neos.Media.Browser', 'Main', [readableFileSize, readableMaximumFileSize]);
 					}
 					break;
 				default:
@@ -60,7 +60,7 @@
 			if (err.file) {
 				message += ' ';
 				if (window.Typo3Neos) {
-					message += window.Typo3Neos.I18n.translate('forTheFile', 'for the file', 'Neos.Media.Browser', 'Modules');
+					message += window.Typo3Neos.I18n.translate('forTheFile', 'for the file', 'Neos.Media.Browser');
 				} else {
 					message += 'for the file';
 				}
@@ -80,7 +80,7 @@
 				$('#filelist').html('');
 				var message = 'Only some of the files were successfully uploaded. Refresh the page to see the those.';
 				if (window.Typo3Neos) {
-					message = window.Typo3Neos.I18n.translate('onlySomeFilesWereUploaded', message, 'Neos.Media.Browser', 'Modules');
+					message = window.Typo3Neos.I18n.translate('onlySomeFilesWereUploaded', message, 'Neos.Media.Browser');
 					window.Typo3Neos.Notification.warning(message);
 				} else {
 					alert(message);
