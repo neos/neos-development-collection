@@ -13,7 +13,7 @@ Neos:
         - 'resource://Neos.Neos/Public/Library/jquery/jquery-2.0.3.js'
         - 'resource://Neos.Twitter.Bootstrap/Public/2/js/bootstrap.min.js'
         - 'resource://Neos.Neos/Public/Library/bootstrap-components.js'
-        - 'resource://Neos.Media.Browser/Public/JavaScript/Modules/media-browser.js'
+        - 'resource://Neos.Media.Browser/Public/JavaScript/media-browser.js'
       styles:
         - 'resource://Neos.Neos/Public/Styles/Neos.css'
         - 'resource://Neos.Media.Browser/Public/Styles/MediaBrowser.css'
