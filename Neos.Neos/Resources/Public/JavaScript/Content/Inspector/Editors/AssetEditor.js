@@ -37,8 +37,8 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 				template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-media-browser"]').attr('href') + '"></iframe>'),
 				didInsertElement: function() {
 					this.$().find('iframe').on('load', function(event) {
-						if (window.Typo3MediaBrowserCallbacks && window.Typo3MediaBrowserCallbacks.onLoad) {
-							window.Typo3MediaBrowserCallbacks.onLoad(event);
+						if (window.NeosMediaBrowserCallbacks && window.NeosMediaBrowserCallbacks.onLoad) {
+							window.NeosMediaBrowserCallbacks.onLoad(event);
 						}
 					});
 				}
@@ -157,7 +157,7 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 
 		_beforeMediaBrowserIsShown: function() {
 			var that = this;
-			window.Typo3MediaBrowserCallbacks = {
+			window.NeosMediaBrowserCallbacks = {
 				assetChosen: function(assetIdentifier) {
 					// we hide the default upload preview image; as we only want the loading indicator to be visible
 					that.set('_loadPreviewImageHandler', HttpClient.getResource(

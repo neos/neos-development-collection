@@ -574,9 +574,13 @@ Neos:
             provider: PersistedUsernamePasswordProvider
             requestPatterns:
               'Neos.Neos:BackendControllers':
-                pattern: ControllerObjectName
+                pattern: 'ControllerObjectName'
                 patternOptions:
-                  controllerObjectNamePattern: 'Neos\Neos\Controller\.*|Neos\Neos\Service\.*|Neos\Media\Controller\.*'
+                  controllerObjectNamePattern: 'Neos\Neos\Controller\.*'
+              'Neos.Neos:ServiceControllers':
+                pattern: 'ControllerObjectName'
+                patternOptions:
+                  controllerObjectNamePattern: 'Neos\Neos\Service\.*'
             entryPoint: WebRedirect
             entryPointOptions:
               routeValues:

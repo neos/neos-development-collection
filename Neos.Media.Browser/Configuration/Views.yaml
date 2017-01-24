@@ -1,25 +1,16 @@
 -
+  requestFilter: 'isFormat("html") && isPackage("Neos.Media.Browser")'
+  options:
+    templatePathAndFilenamePattern: '@templateRoot/@subpackage/Asset/@action.@format'
+    partialRootPaths:
+      'Neos.Neos': 'resource://Neos.Neos/Private/Partials'
+      'Neos.Media.Browser': 'resource://Neos.Media.Browser/Private/Partials'
+
+-
   requestFilter: 'parentRequest.isPackage("Neos.Neos") && isFormat("html") && isPackage("Neos.Media.Browser")'
   options:
     layoutRootPaths:
       'Neos.Media.Browser': 'resource://Neos.Media.Browser/Private/Layouts/Module'
-      'Neos.Neos': 'resource://Neos.Neos/Private/Layouts'
     partialRootPaths:
       'Neos.Neos': 'resource://Neos.Neos/Private/Partials'
       'Neos.Media.Browser': 'resource://Neos.Media.Browser/Private/Partials'
-
-    templateRootPathPattern: 'resource://Neos.Media.Browser/Private/Templates'
-    templatePathAndFilenamePattern: '@templateRoot/@subpackage/Module/Management/Asset/@action.@format'
-
--
-  requestFilter: 'isPackage("Neos.Media.Browser") && isFormat("html")'
-  options:
-    layoutRootPaths:
-      'Neos.Media.Browser': 'resource://Neos.Media.Browser/Private/Layouts/Inspector'
-      'Neos.Neos': 'resource://Neos.Neos/Private/Layouts'
-    partialRootPaths:
-      'Neos.Neos': 'resource://Neos.Neos/Private/Partials'
-      'Neos.Media.Browser': 'resource://Neos.Media.Browser/Private/Partials'
-
-    templateRootPathPattern: 'resource://Neos.Media.Browser/Private/Templates'
-    templatePathAndFilenamePattern: '@templateRoot/@subpackage/Module/Management/Asset/@action.@format'
