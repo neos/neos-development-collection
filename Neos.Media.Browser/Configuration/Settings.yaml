@@ -24,7 +24,7 @@ Neos:
         providers:
           Typo3BackendProvider:
             requestPatterns:
-              'Neos.Media.Browser:controllers':
+              'Neos.Media.Browser:Controllers':
                 pattern: 'ControllerObjectName'
                 patternOptions:
                   controllerObjectNamePattern: 'Neos\Media\Browser\Controller\.*'
