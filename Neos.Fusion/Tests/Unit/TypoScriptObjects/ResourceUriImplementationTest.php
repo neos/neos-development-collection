@@ -14,7 +14,6 @@ namespace Neos\Fusion\Tests\Unit\FusionObjects;
 use Neos\Flow\I18n\Service;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
-use Neos\Flow\ResourceManagement\Publishing\ResourcePublisher;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\Tests\UnitTestCase;
@@ -37,7 +36,7 @@ class ResourceUriImplementationTest extends UnitTestCase
     protected $mockRuntime;
 
     /**
-     * @var ResourcePublisher
+     * @var ResourceManager
      */
     protected $mockResourceManager;
 
