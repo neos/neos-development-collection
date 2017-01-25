@@ -44,7 +44,7 @@ prototype(Neos.NodeTypes:Image) {
 	width = null
 	maximumHeight = 2560
 	height = null
-	imageClassName = ${q(node).property('alignment') ? ('typo3-neos-alignment-' + q(node).property('alignment')) : ''}
+	imageClassName = ${q(node).property('alignment') ? ('neos-alignment-' + q(node).property('alignment')) : ''}
 	allowCropping = false
 	allowUpScaling = false
 	link.@process.convertUris = Neos.Neos:ConvertUris {
