@@ -22,7 +22,7 @@ Neos:
     security:
       authentication:
         providers:
-          Typo3BackendProvider:
+          'Neos.Neos:Backend':
             requestPatterns:
               'Neos.Media.Browser:Controllers':
                 pattern: 'ControllerObjectName'

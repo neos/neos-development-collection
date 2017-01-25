@@ -569,7 +569,7 @@ Neos:
     security:
       authentication:
         providers:
-          Typo3BackendProvider:
+          'Neos.Neos:Backend':
             label: 'Neos Backend'
             provider: PersistedUsernamePasswordProvider
             requestPatterns:
