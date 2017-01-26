@@ -11,23 +11,23 @@ namespace Neos\Fusion\Core;
  * source code.
  */
 
+use Neos\Eel\Utility as EelUtility;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Utility\Arrays;
-use Neos\Utility\ObjectAccess;
-use Neos\Utility\PositionalArraySorter;
+use Neos\Flow\Security\Exception as SecurityException;
 use Neos\Fusion\Core\Cache\RuntimeContentCache;
 use Neos\Fusion\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
-use Neos\Fusion\Exception as Exceptions;
 use Neos\Fusion\Exception;
-use Neos\Flow\Security\Exception as SecurityException;
+use Neos\Fusion\Exception as Exceptions;
 use Neos\Fusion\Exception\RuntimeException;
 use Neos\Fusion\FusionObjects\AbstractArrayFusionObject;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
-use Neos\Eel\Utility as EelUtility;
+use Neos\Utility\Arrays;
+use Neos\Utility\ObjectAccess;
+use Neos\Utility\PositionalArraySorter;
 
 /**
  * Fusion Runtime
@@ -59,6 +59,17 @@ class Runtime
     const EVALUATION_EXECUTED = 'Executed';
 
     const EVALUATION_SKIPPED = 'Skipped';
+
+    /**
+     * @var array
+     */
+    protected $reserverMeta = ['cache', 'class', 'context', 'exceptionHandler', 'if', 'ignoreProperties', 'position', 'process'];
+
+    /**
+     * @var array
+     * @Flow\InjectConfiguration(path="externalMetaHandlers")
+     */
+    protected $externalMetaHandlers;
 
     /**
      * @var \Neos\Eel\CompilingEvaluator
@@ -453,6 +464,7 @@ class Runtime
 
         if ($evaluateObject) {
             $output = $this->evaluateProcessors($output, $typoScriptConfiguration, $typoScriptPath, $typoScriptObject);
+            $this->callExternalMetaHandlers($typoScriptConfiguration, $typoScriptPath, $typoScriptObject);
         }
         $output = $this->runtimeContentCache->postProcess($cacheContext, $typoScriptObject, $output);
         return $output;
@@ -806,28 +818,75 @@ class Runtime
      */
     protected function evaluateProcessors($valueToProcess, $configurationWithEventualProcessors, $typoScriptPath, AbstractFusionObject $contextObject = null)
     {
-        if (isset($configurationWithEventualProcessors['__meta']['process'])) {
-            $processorConfiguration = $configurationWithEventualProcessors['__meta']['process'];
-            $positionalArraySorter = new PositionalArraySorter($processorConfiguration, '__meta.position');
-            foreach ($positionalArraySorter->getSortedKeys() as $key) {
-                $processorPath = $typoScriptPath . '/__meta/process/' . $key;
-                if ($this->evaluateIfCondition($processorConfiguration[$key], $processorPath, $contextObject) === false) {
-                    continue;
-                }
-                if (isset($processorConfiguration[$key]['expression'])) {
-                    $processorPath .= '/expression';
-                }
+        if (!isset($configurationWithEventualProcessors['__meta']['process'])) {
+            return $valueToProcess;
+        }
 
-                $this->pushContext('value', $valueToProcess);
-                $result = $this->evaluateInternal($processorPath, self::BEHAVIOR_EXCEPTION, $contextObject);
-                if ($this->getLastEvaluationStatus() !== static::EVALUATION_SKIPPED) {
-                    $valueToProcess = $result;
-                }
-                $this->popContext();
+        $processorConfiguration = $configurationWithEventualProcessors['__meta']['process'];
+        $positionalArraySorter = new PositionalArraySorter($processorConfiguration, '__meta.position');
+
+        foreach ($positionalArraySorter->getSortedKeys() as $key) {
+            $processorPath = $typoScriptPath . '/__meta/process/' . $key;
+            if ($this->evaluateIfCondition($processorConfiguration[$key], $processorPath, $contextObject) === false) {
+                continue;
             }
+            if (isset($processorConfiguration[$key]['expression'])) {
+                $processorPath .= '/expression';
+            }
+
+            $this->pushContext('value', $valueToProcess);
+            $result = $this->evaluateInternal($processorPath, self::BEHAVIOR_EXCEPTION, $contextObject);
+            if ($this->getLastEvaluationStatus() !== static::EVALUATION_SKIPPED) {
+                $valueToProcess = $result;
+            }
+            $this->popContext();
         }
 
         return $valueToProcess;
+    }
+
+    /**
+     * Pass custom meta to external handler
+     *
+     * @param array $configurationWithEventualProcessors
+     * @param string $typoScriptPath
+     * @param AbstractFusionObject $contextObject
+     * @return void
+     */
+    protected function callExternalMetaHandlers($configurationWithEventualProcessors, $typoScriptPath, AbstractFusionObject $contextObject = null)
+    {
+        if (!isset($configurationWithEventualProcessors['__meta'])) {
+            return;
+        }
+
+        $filteredKey = function ($array) {
+            return array_keys(array_filter($array ?? []));
+        };
+
+        $availableMeta = array_keys($configurationWithEventualProcessors['__meta']);
+        foreach ($availableMeta as $meta) {
+            if (in_array($meta, $this->reserverMeta)) {
+                continue;
+            }
+
+            $processorPath = $typoScriptPath . '/__meta/' . $meta;
+            $result = $this->evaluateInternal($processorPath, self::BEHAVIOR_EXCEPTION, $contextObject);
+
+            $handleList = array_filter($this->externalMetaHandlers ?? [], function ($configuration) use ($meta, $filteredKey) {
+                if (!(isset($configuration['enable']) && $configuration['enable'] === true)) {
+                    return false;
+                }
+                $connectTo = $filteredKey($configuration['connectTo'] ?? []);
+                if (!in_array($meta, $connectTo)) {
+                    return false;
+                }
+                return true;
+            });
+
+            foreach ($handleList as  $handler => $handlerConfiguration) {
+                (new $handler)->handle($meta, $result, $typoScriptPath, $contextObject);
+            }
+        }
     }
 
     /**
