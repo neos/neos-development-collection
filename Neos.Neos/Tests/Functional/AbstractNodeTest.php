@@ -58,6 +58,7 @@ abstract class AbstractNodeTest extends FunctionalTestCase
     {
         parent::setUp();
         $this->markSkippedIfNodeTypesPackageIsNotInstalled();
+
         $this->contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
         $contentContext = $this->contextFactory->create(array('workspaceName' => 'live'));
         $siteImportService = $this->objectManager->get(SiteImportService::class);
