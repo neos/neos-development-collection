@@ -68,7 +68,7 @@ class MenuHelper
             /** @var $site Site */
             if ($site->hasActiveDomains()) {
                 $activeHostPatterns = $site->getActiveDomains()->map(function ($domain) {
-                    return $domain->getHostPattern();
+                    return $domain->getHostname();
                 })->toArray();
                 $active = in_array($requestUriHost, $activeHostPatterns, true);
                 if ($active) {
