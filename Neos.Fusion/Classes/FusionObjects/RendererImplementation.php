@@ -12,6 +12,7 @@ namespace Neos\Fusion\FusionObjects;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Fusion\Core\ObjectNamespace;
 
 /**
  * Renderer Fusion Object
@@ -21,6 +22,11 @@ use Neos\Flow\Annotations as Flow;
  */
 class RendererImplementation extends AbstractFusionObject
 {
+    /**
+     * @var ObjectNamespace
+     * @Flow\Inject
+     */
+    protected $objectNamespace;
 
     /**
      * The type to render if condition is TRUE
@@ -62,8 +68,9 @@ class RendererImplementation extends AbstractFusionObject
                 $renderedElement = $this->runtime->render($this->path . '/' . str_replace('.', '/', $renderPath));
             }
         } else {
+            $type = $this->objectNamespace->fullyQualifiedObjectType($this->getType());
             $renderedElement = $this->runtime->render(
-                sprintf('%s/element<%s>', $this->path, $this->getType())
+                sprintf('%s/element<%s>', $this->path, $type)
             );
         }
         return $renderedElement;

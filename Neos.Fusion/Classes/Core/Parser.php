@@ -13,7 +13,6 @@ namespace Neos\Fusion\Core;
 
 use Neos\Eel\Package;
 use Neos\Flow\Annotations as Flow;
-use Neos\Fusion\Exception;
 use Neos\Utility\Arrays;
 use Neos\Fusion;
 
@@ -249,11 +248,11 @@ class Parser implements ParserInterface
      * with that namespace and name must be defined elsewhere.
      *
      * These namespaces are _not_ used for resolution of processor class names.
-     * @var array
+     *
+     * @var ObjectNamespace
+     * @Flow\Inject
      */
-    protected $objectTypeNamespaces = array(
-        'default' => 'Neos.Fusion'
-    );
+    protected $objectNamespace;
 
     /**
      * Parses the given Fusion source code and returns an object tree
@@ -308,13 +307,7 @@ class Parser implements ParserInterface
      */
     public function setObjectTypeNamespace($alias, $namespace)
     {
-        if (!is_string($alias)) {
-            throw new Fusion\Exception('The alias of a namespace must be valid string!', 1180600696);
-        }
-        if (!is_string($namespace)) {
-            throw new Fusion\Exception('The namespace must be of type string!', 1180600697);
-        }
-        $this->objectTypeNamespaces[$alias] = $namespace;
+        $this->objectNamespace->register($alias, $namespace);
     }
 
     /**
@@ -567,9 +560,7 @@ class Parser implements ParserInterface
             throw new Fusion\Exception('Invalid namespace declaration "' . $namespaceDeclaration . '"', 1180547190);
         }
 
-        $namespaceAlias = $matches['alias'];
-        $namespacePackageKey = $matches['packageKey'];
-        $this->objectTypeNamespaces[$namespaceAlias] = $namespacePackageKey;
+        $this->objectNamespace->register($matches['alias'], $matches['packageKey']);
     }
 
     /**
@@ -659,15 +650,7 @@ class Parser implements ParserInterface
                     $objectPathArray[] = '__prototypes';
 
                     $unexpandedObjectType = substr($objectPathSegment, 10, -1);
-                    $objectTypeParts = explode(':', $unexpandedObjectType);
-                    if (!isset($objectTypeParts[1])) {
-                        $fullyQualifiedObjectType = $this->objectTypeNamespaces['default'] . ':' . $objectTypeParts[0];
-                    } elseif (isset($this->objectTypeNamespaces[$objectTypeParts[0]])) {
-                        $fullyQualifiedObjectType = $this->objectTypeNamespaces[$objectTypeParts[0]] . ':' . $objectTypeParts[1];
-                    } else {
-                        $fullyQualifiedObjectType = $unexpandedObjectType;
-                    }
-                    $objectPathArray[] = $fullyQualifiedObjectType;
+                    $objectPathArray[] = $this->objectNamespace->fullyQualifiedObjectType($unexpandedObjectType);
                 } else {
                     $key = $objectPathSegment;
                     if (substr($key, 0, 2) === '__' && in_array($key, self::$reservedParseTreeKeys, true)) {
@@ -723,9 +706,9 @@ class Parser implements ParserInterface
             $processedValue = null;
         } elseif (preg_match(self::SCAN_PATTERN_VALUEOBJECTTYPE, $unparsedValue, $matches) === 1) {
             if (empty($matches['namespace'])) {
-                $objectTypeNamespace = $this->objectTypeNamespaces['default'];
+                $objectTypeNamespace = $this->objectNamespace->defaultNamespace();
             } else {
-                $objectTypeNamespace = (isset($this->objectTypeNamespaces[$matches['namespace']])) ? $this->objectTypeNamespaces[$matches['namespace']] : $matches['namespace'];
+                $objectTypeNamespace = $this->objectNamespace->namespace($matches['namespace']);
             }
             $processedValue = array(
                 '__objectType' => $objectTypeNamespace . ':' . $matches['unqualifiedType'],
