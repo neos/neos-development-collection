@@ -315,29 +315,29 @@ class RenderingTest extends AbstractNodeTest
     /**
      * Simulate the rendering
      *
-     * @param string $additionalTypoScriptFile
+     * @param string $additionalFusionFile
      * @param boolean $debugMode
      * @return string
      */
-    protected function simulateRendering($additionalTypoScriptFile = null, $debugMode = false)
+    protected function simulateRendering($additionalFusionFile = null, $debugMode = false)
     {
-        $typoScriptRuntime = $this->createRuntimeWithFixtures($additionalTypoScriptFile);
-        $typoScriptRuntime->setEnableContentCache(false);
+        $fusionRuntime = $this->createRuntimeWithFixtures($additionalFusionFile);
+        $fusionRuntime->setEnableContentCache(false);
         if ($debugMode) {
-            $typoScriptRuntime->injectSettings(array('debugMode' => true, 'rendering' => array('exceptionHandler' => \Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler::class)));
+            $fusionRuntime->injectSettings(array('debugMode' => true, 'rendering' => array('exceptionHandler' => \Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler::class)));
         }
         $contentContext = $this->node->getContext();
         if (!$contentContext instanceof ContentContext) {
             $this->fail('Node context must be of type ContentContext');
         }
-        $typoScriptRuntime->pushContextArray(array(
+        $fusionRuntime->pushContextArray(array(
             'node' => $this->node,
             'documentNode' => $this->node,
             'site' => $contentContext->getCurrentSiteNode(),
             'fixturesDirectory' => __DIR__ . '/Fixtures'
         ));
-        $output = $typoScriptRuntime->render('page1');
-        $typoScriptRuntime->popContext();
+        $output = $fusionRuntime->render('page1');
+        $fusionRuntime->popContext();
 
         return $output;
     }
@@ -345,16 +345,16 @@ class RenderingTest extends AbstractNodeTest
     /**
      * Create a TypoScript runtime with the test base TypoScript and an optional additional fixture
      *
-     * @param string $additionalTypoScriptFile
+     * @param string $additionalFusionFile
      * @return \Neos\Fusion\Core\Runtime
      */
-    protected function createRuntimeWithFixtures($additionalTypoScriptFile = null)
+    protected function createRuntimeWithFixtures($additionalFusionFile = null)
     {
         $fusionService = new FusionService();
         $fusionService->setSiteRootFusionPattern(__DIR__ . '/Fixtures/BaseTypoScript.fusion');
 
-        if ($additionalTypoScriptFile !== null) {
-            $fusionService->setAppendFusionIncludes(array($additionalTypoScriptFile));
+        if ($additionalFusionFile !== null) {
+            $fusionService->setAppendFusionIncludes(array($additionalFusionFile));
         }
 
         $controllerContext = $this->buildMockControllerContext();

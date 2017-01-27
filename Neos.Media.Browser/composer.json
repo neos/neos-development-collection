@@ -1,7 +1,7 @@
 {
     "name": "neos/media-browser",
     "type": "neos-package",
-    "description": "A media browser for the Neos content application platform",
+    "description": "This module allows managing of media assets including pictures, videos, audio and documents.",
     "license": "GPL-3.0+",
     "require": {
         "neos/media": "*"
@@ -73,7 +73,8 @@
             "Neos.Neos-20161125122412",
             "Neos.Flow-20161125124112",
             "TYPO3.FluidAdaptor-20161130112935",
-            "Neos.Fusion-20161201202543"
+            "Neos.Fusion-20161201202543",
+            "Neos.Fusion-20170120013047"
         ]
     }
 }

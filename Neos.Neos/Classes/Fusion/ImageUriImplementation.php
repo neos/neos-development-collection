@@ -39,7 +39,7 @@ class ImageUriImplementation extends AbstractFusionObject
      */
     public function getAsset()
     {
-        return $this->tsValue('asset');
+        return $this->fusionValue('asset');
     }
 
     /**
@@ -49,7 +49,7 @@ class ImageUriImplementation extends AbstractFusionObject
      */
     public function getWidth()
     {
-        return $this->tsValue('width');
+        return $this->fusionValue('width');
     }
 
     /**
@@ -59,7 +59,7 @@ class ImageUriImplementation extends AbstractFusionObject
      */
     public function getMaximumWidth()
     {
-        return $this->tsValue('maximumWidth');
+        return $this->fusionValue('maximumWidth');
     }
 
     /**
@@ -69,7 +69,7 @@ class ImageUriImplementation extends AbstractFusionObject
      */
     public function getHeight()
     {
-        return $this->tsValue('height');
+        return $this->fusionValue('height');
     }
 
     /**
@@ -79,7 +79,7 @@ class ImageUriImplementation extends AbstractFusionObject
      */
     public function getMaximumHeight()
     {
-        return $this->tsValue('maximumHeight');
+        return $this->fusionValue('maximumHeight');
     }
 
     /**
@@ -89,7 +89,7 @@ class ImageUriImplementation extends AbstractFusionObject
      */
     public function getAllowCropping()
     {
-        return $this->tsValue('allowCropping');
+        return $this->fusionValue('allowCropping');
     }
 
     /**
@@ -99,7 +99,7 @@ class ImageUriImplementation extends AbstractFusionObject
      */
     public function getAllowUpScaling()
     {
-        return $this->tsValue('allowUpScaling');
+        return $this->fusionValue('allowUpScaling');
     }
 
     /**

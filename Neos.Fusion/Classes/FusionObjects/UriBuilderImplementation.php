@@ -40,7 +40,7 @@ class UriBuilderImplementation extends AbstractFusionObject
      */
     public function getPackage()
     {
-        return $this->tsValue('package');
+        return $this->fusionValue('package');
     }
 
     /**
@@ -50,7 +50,7 @@ class UriBuilderImplementation extends AbstractFusionObject
      */
     public function getSubpackage()
     {
-        return $this->tsValue('subpackage');
+        return $this->fusionValue('subpackage');
     }
 
     /**
@@ -60,7 +60,7 @@ class UriBuilderImplementation extends AbstractFusionObject
      */
     public function getController()
     {
-        return $this->tsValue('controller');
+        return $this->fusionValue('controller');
     }
 
     /**
@@ -70,7 +70,7 @@ class UriBuilderImplementation extends AbstractFusionObject
      */
     public function getAction()
     {
-        return $this->tsValue('action');
+        return $this->fusionValue('action');
     }
 
     /**
@@ -80,7 +80,7 @@ class UriBuilderImplementation extends AbstractFusionObject
      */
     public function getArguments()
     {
-        return $this->tsValue('arguments');
+        return $this->fusionValue('arguments');
     }
 
     /**
@@ -90,7 +90,7 @@ class UriBuilderImplementation extends AbstractFusionObject
      */
     public function getFormat()
     {
-        return $this->tsValue('format');
+        return $this->fusionValue('format');
     }
 
     /**
@@ -100,7 +100,7 @@ class UriBuilderImplementation extends AbstractFusionObject
      */
     public function getSection()
     {
-        return $this->tsValue('section');
+        return $this->fusionValue('section');
     }
 
     /**
@@ -110,7 +110,7 @@ class UriBuilderImplementation extends AbstractFusionObject
      */
     public function getAdditionalParams()
     {
-        return $this->tsValue('additionalParams');
+        return $this->fusionValue('additionalParams');
     }
 
     /**
@@ -120,7 +120,7 @@ class UriBuilderImplementation extends AbstractFusionObject
      */
     public function getArgumentsToBeExcludedFromQueryString()
     {
-        return $this->tsValue('argumentsToBeExcludedFromQueryString');
+        return $this->fusionValue('argumentsToBeExcludedFromQueryString');
     }
 
     /**
@@ -130,7 +130,7 @@ class UriBuilderImplementation extends AbstractFusionObject
      */
     public function isAddQueryString()
     {
-        return (boolean)$this->tsValue('addQueryString');
+        return (boolean)$this->fusionValue('addQueryString');
     }
 
     /**
@@ -140,7 +140,7 @@ class UriBuilderImplementation extends AbstractFusionObject
      */
     public function isAbsolute()
     {
-        return (boolean)$this->tsValue('absolute');
+        return (boolean)$this->fusionValue('absolute');
     }
 
     /**
@@ -148,7 +148,7 @@ class UriBuilderImplementation extends AbstractFusionObject
      */
     public function evaluate()
     {
-        $controllerContext = $this->tsRuntime->getControllerContext();
+        $controllerContext = $this->runtime->getControllerContext();
         $uriBuilder = $controllerContext->getUriBuilder()->reset();
 
         $format = $this->getFormat();
@@ -190,7 +190,7 @@ class UriBuilderImplementation extends AbstractFusionObject
                 $this->getSubpackage()
             );
         } catch (\Exception $exception) {
-            return $this->tsRuntime->handleRenderingException($this->path, $exception);
+            return $this->runtime->handleRenderingException($this->path, $exception);
         }
     }
 }

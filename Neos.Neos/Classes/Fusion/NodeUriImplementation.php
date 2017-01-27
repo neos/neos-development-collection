@@ -41,7 +41,7 @@ class NodeUriImplementation extends AbstractFusionObject
      */
     public function getNode()
     {
-        return $this->tsValue('node');
+        return $this->fusionValue('node');
     }
 
     /**
@@ -51,7 +51,7 @@ class NodeUriImplementation extends AbstractFusionObject
      */
     public function getArguments()
     {
-        return $this->tsValue('arguments');
+        return $this->fusionValue('arguments');
     }
 
     /**
@@ -61,7 +61,7 @@ class NodeUriImplementation extends AbstractFusionObject
      */
     public function getFormat()
     {
-        return $this->tsValue('format');
+        return $this->fusionValue('format');
     }
 
     /**
@@ -71,7 +71,7 @@ class NodeUriImplementation extends AbstractFusionObject
      */
     public function getSection()
     {
-        return (string)$this->tsValue('section');
+        return (string)$this->fusionValue('section');
     }
 
     /**
@@ -81,7 +81,7 @@ class NodeUriImplementation extends AbstractFusionObject
      */
     public function getAdditionalParams()
     {
-        return $this->tsValue('additionalParams');
+        return $this->fusionValue('additionalParams');
     }
 
     /**
@@ -91,7 +91,7 @@ class NodeUriImplementation extends AbstractFusionObject
      */
     public function getArgumentsToBeExcludedFromQueryString()
     {
-        return $this->tsValue('argumentsToBeExcludedFromQueryString');
+        return $this->fusionValue('argumentsToBeExcludedFromQueryString');
     }
 
     /**
@@ -101,7 +101,7 @@ class NodeUriImplementation extends AbstractFusionObject
      */
     public function getAddQueryString()
     {
-        return (boolean)$this->tsValue('addQueryString');
+        return (boolean)$this->fusionValue('addQueryString');
     }
 
     /**
@@ -111,7 +111,7 @@ class NodeUriImplementation extends AbstractFusionObject
      */
     public function isAbsolute()
     {
-        return (boolean)$this->tsValue('absolute');
+        return (boolean)$this->fusionValue('absolute');
     }
 
     /**
@@ -121,7 +121,7 @@ class NodeUriImplementation extends AbstractFusionObject
      */
     public function getBaseNodeName()
     {
-        return $this->tsValue('baseNodeName');
+        return $this->fusionValue('baseNodeName');
     }
 
     /**
@@ -134,7 +134,7 @@ class NodeUriImplementation extends AbstractFusionObject
     {
         $baseNode = null;
         $baseNodeName = $this->getBaseNodeName() ?: 'documentNode';
-        $currentContext = $this->tsRuntime->getCurrentContext();
+        $currentContext = $this->runtime->getCurrentContext();
         if (isset($currentContext[$baseNodeName])) {
             $baseNode = $currentContext[$baseNodeName];
         } else {
@@ -143,7 +143,7 @@ class NodeUriImplementation extends AbstractFusionObject
 
         try {
             return $this->linkingService->createNodeUri(
-                $this->tsRuntime->getControllerContext(),
+                $this->runtime->getControllerContext(),
                 $this->getNode(),
                 $baseNode,
                 $this->getFormat(),

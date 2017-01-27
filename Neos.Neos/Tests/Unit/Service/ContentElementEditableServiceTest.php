@@ -49,12 +49,12 @@ class ContentElementEditableServiceTest extends UnitTestCase
     /**
      * @var Runtime
      */
-    protected $mockTsRuntime;
+    protected $mockRuntime;
 
     /**
      * @var array
      */
-    protected $mockTsContext;
+    protected $mockContext;
 
     /**
      * @var NodeInterface
@@ -85,15 +85,15 @@ class ContentElementEditableServiceTest extends UnitTestCase
         $this->mockHtmlAugmenter = $this->getMockBuilder(HtmlAugmenter::class)->getMock();
         $this->inject($this->contentElementEditableService, 'htmlAugmenter', $this->mockHtmlAugmenter);
 
-        $this->mockTsRuntime = $this->getMockBuilder(\Neos\Fusion\Core\Runtime::class)->disableOriginalConstructor()->getMock();
+        $this->mockRuntime = $this->getMockBuilder(\Neos\Fusion\Core\Runtime::class)->disableOriginalConstructor()->getMock();
         $this->mockContentContext = $this->getMockBuilder(\Neos\Neos\Domain\Service\ContentContext::class)->disableOriginalConstructor()->getMock();
 
         $this->mockNode = $this->getMockBuilder(\Neos\ContentRepository\Domain\Model\NodeInterface::class)->getMock();
         $this->mockNode->expects($this->any())->method('getContext')->will($this->returnValue($this->mockContentContext));
         $this->mockNode->expects($this->any())->method('getNodeType')->will($this->returnValue(new NodeType('Acme.Test:Headline', [], [])));
 
-        $this->mockTsContext = array('node' => $this->mockNode);
-        $this->mockTsRuntime->expects($this->any())->method('getCurrentContext')->will($this->returnValue($this->mockTsContext));
+        $this->mockContext = array('node' => $this->mockNode);
+        $this->mockRuntime->expects($this->any())->method('getCurrentContext')->will($this->returnValue($this->mockContext));
     }
 
     /**

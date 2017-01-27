@@ -38,7 +38,7 @@ class DebugImplementation extends ArrayImplementation
      */
     public function getTitle()
     {
-        return $this->tsValue('title');
+        return $this->fusionValue('title');
     }
 
     /**
@@ -46,7 +46,7 @@ class DebugImplementation extends ArrayImplementation
      */
     public function getPlaintext()
     {
-        return $this->tsValue('plaintext');
+        return $this->fusionValue('plaintext');
     }
 
     /**
@@ -64,7 +64,7 @@ class DebugImplementation extends ArrayImplementation
             if (in_array($key, $this->ignoreProperties)) {
                 continue;
             }
-            $debugData[$key] = $this->tsValue($key);
+            $debugData[$key] = $this->fusionValue($key);
         }
 
         if (count($debugData) === 0) {

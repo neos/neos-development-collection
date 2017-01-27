@@ -12,8 +12,7 @@ namespace Neos\Fusion\FusionObjects;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Fusion\Exception as TypoScriptException;
-use Neos\Fusion\Exception;
+use Neos\Fusion\Exception as FusionException;
 
 /**
  * Abstract implementation of a collection renderer for Fusion.
@@ -34,7 +33,7 @@ abstract class AbstractCollectionImplementation extends AbstractFusionObject
      */
     public function getCollection()
     {
-        return $this->tsValue('collection');
+        return $this->fusionValue('collection');
     }
 
     /**
@@ -42,7 +41,7 @@ abstract class AbstractCollectionImplementation extends AbstractFusionObject
      */
     public function getItemName()
     {
-        return $this->tsValue('itemName');
+        return $this->fusionValue('itemName');
     }
 
     /**
@@ -50,7 +49,7 @@ abstract class AbstractCollectionImplementation extends AbstractFusionObject
      */
     public function getItemKey()
     {
-        return $this->tsValue('itemKey');
+        return $this->fusionValue('itemKey');
     }
 
     /**
@@ -60,7 +59,7 @@ abstract class AbstractCollectionImplementation extends AbstractFusionObject
      */
     public function getIterationName()
     {
-        return $this->tsValue('iterationName');
+        return $this->fusionValue('iterationName');
     }
 
     /**
@@ -91,13 +90,13 @@ abstract class AbstractCollectionImplementation extends AbstractFusionObject
         $this->numberOfRenderedNodes = 0;
         $itemName = $this->getItemName();
         if ($itemName === null) {
-            throw new Exception('The Collection needs an itemName to be set.', 1344325771);
+            throw new FusionException('The Collection needs an itemName to be set.', 1344325771);
         }
         $itemKey = $this->getItemKey();
         $iterationName = $this->getIterationName();
         $collectionTotalCount = count($collection);
         foreach ($collection as $collectionKey => $collectionElement) {
-            $context = $this->tsRuntime->getCurrentContext();
+            $context = $this->runtime->getCurrentContext();
             $context[$itemName] = $collectionElement;
             if ($itemKey !== null) {
                 $context[$itemKey] = $collectionKey;
@@ -106,9 +105,9 @@ abstract class AbstractCollectionImplementation extends AbstractFusionObject
                 $context[$iterationName] = $this->prepareIterationInformation($collectionTotalCount);
             }
 
-            $this->tsRuntime->pushContextArray($context);
-            $result[] =  $this->tsRuntime->render($this->path . '/itemRenderer');
-            $this->tsRuntime->popContext();
+            $this->runtime->pushContextArray($context);
+            $result[] =  $this->runtime->render($this->path . '/itemRenderer');
+            $this->runtime->popContext();
             $this->numberOfRenderedNodes++;
         }
 

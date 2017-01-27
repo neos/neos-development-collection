@@ -1,13 +1,3 @@
-#                                                                        #
-# Settings                                                               #
-#                                                                        #
-# This file contains settings for various parts of the application.      #
-# Just add your own modifications as necessary.                          #
-#                                                                        #
-# Please refer to the default settings file(s) or the manuals for        #
-# possible configuration options.                                        #
-#                                                                        #
-
 Neos:
   Media:
     thumbnailPresets:
@@ -23,31 +13,40 @@ Neos:
         - 'resource://Neos.Neos/Public/Library/jquery/jquery-2.0.3.js'
         - 'resource://Neos.Twitter.Bootstrap/Public/2/js/bootstrap.min.js'
         - 'resource://Neos.Neos/Public/Library/bootstrap-components.js'
-        - 'resource://Neos.Media.Browser/Public/JavaScript/Modules/media-browser.js'
+        - 'resource://Neos.Media.Browser/Public/JavaScript/media-browser.js'
       styles:
         - 'resource://Neos.Neos/Public/Styles/Neos.css'
+        - 'resource://Neos.Media.Browser/Public/Styles/MediaBrowser.css'
+
   Flow:
     security:
       authentication:
         providers:
-          Typo3BackendProvider:
+          'Neos.Neos:Backend':
             requestPatterns:
-              'Neos.Media.Browser:BackendControllers':
-                pattern: ControllerObjectName
+              'Neos.Media.Browser:Controllers':
+                pattern: 'ControllerObjectName'
                 patternOptions:
-                  controllerObjectNamePattern: 'Neos\Media\Browser\Controller\Backend\.*'
+                  controllerObjectNamePattern: 'Neos\Media\Browser\Controller\.*'
+    mvc:
+      routes:
+        'Neos.Media.Browser': true
+
   Neos:
     modules:
       management:
         submodules:
           media:
-            label: 'Neos.Media.Browser:Modules:media.label'
-            controller: \Neos\Media\Browser\Controller\Module\Management\AssetController
-            description: 'Neos.Media.Browser:Modules:media.description'
-            icon: icon-camera
+            controller: \Neos\Media\Browser\Controller\AssetController
+            label: 'Neos.Media.Browser:Main:module.label'
+            description: 'Neos.Media.Browser:Main:module.description'
+            icon: 'icon-camera'
             privilegeTarget: 'Neos.Media.Browser:ManageAssets'
+            additionalResources:
+              styleSheets:
+                - 'resource://Neos.Media.Browser/Public/Styles/MediaBrowser.css'
     userInterface:
       translation:
         autoInclude:
           Neos.Media.Browser:
-            - Modules
+            - 'Main'

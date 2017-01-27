@@ -13,7 +13,7 @@ namespace Neos\Media;
 
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Package\Package as BasePackage;
-use Neos\Media\Domain\Model\Asset;
+use Neos\Media\Domain\Service\AssetService;
 use Neos\Media\Domain\Service\ThumbnailGenerator;
 
 /**

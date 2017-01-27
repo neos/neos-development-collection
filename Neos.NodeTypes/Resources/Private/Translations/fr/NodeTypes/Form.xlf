@@ -16,7 +16,7 @@
 			<target xml:lang="fr">Sélectionner l'identifiant du formulaire</target></trans-unit>
       <trans-unit id="content.noValidFormIdentifier" xml:space="preserve">
 				<source>Please select a valid Form identifier in the inspector.</source>
-			<target xml:lang="fr" state="needs-translation">Please select a valid Form identifier in the inspector.</target></trans-unit>
+			<target xml:lang="fr" state="translated">Veuillez sélectionner un identifiant valide du formulaire dans l’inspecteur.</target></trans-unit>
     </body>
   </file>
 </xliff>

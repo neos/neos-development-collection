@@ -25,10 +25,10 @@ class ArrayImplementationTest extends UnitTestCase
      */
     public function evaluateWithEmptyArrayRendersNull()
     {
-        $mockTsRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
+        $mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
         $path = 'array/test';
         $typoScriptObjectName = 'Neos.Fusion:Array';
-        $renderer = new ArrayImplementation($mockTsRuntime, $path, $typoScriptObjectName);
+        $renderer = new ArrayImplementation($mockRuntime, $path, $typoScriptObjectName);
         $result = $renderer->evaluate();
         $this->assertNull($result);
     }
@@ -117,15 +117,15 @@ class ArrayImplementationTest extends UnitTestCase
      */
     public function evaluateRendersKeysSortedByPositionMetaProperty($message, $subElements, $expectedKeyOrder)
     {
-        $mockTsRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
+        $mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
 
-        $mockTsRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($path) use (&$renderedPaths) {
+        $mockRuntime->expects($this->any())->method('evaluate')->will($this->returnCallback(function ($path) use (&$renderedPaths) {
             $renderedPaths[] = $path;
         }));
 
         $path = '';
         $typoScriptObjectName = 'Neos.Fusion:Array';
-        $renderer = new ArrayImplementation($mockTsRuntime, $path, $typoScriptObjectName);
+        $renderer = new ArrayImplementation($mockRuntime, $path, $typoScriptObjectName);
         foreach ($subElements as $key => $value) {
             $renderer[$key] = $value;
         }
