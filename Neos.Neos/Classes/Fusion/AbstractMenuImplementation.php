@@ -70,7 +70,7 @@ abstract class AbstractMenuImplementation extends TemplateImplementation
     public function getRenderHiddenInIndex()
     {
         if ($this->renderHiddenInIndex === null) {
-            $this->renderHiddenInIndex = (boolean)$this->tsValue('renderHiddenInIndex');
+            $this->renderHiddenInIndex = (boolean)$this->fusionValue('renderHiddenInIndex');
         }
 
         return $this->renderHiddenInIndex;
@@ -84,7 +84,7 @@ abstract class AbstractMenuImplementation extends TemplateImplementation
     public function getItems()
     {
         if ($this->items === null) {
-            $typoScriptContext = $this->tsRuntime->getCurrentContext();
+            $typoScriptContext = $this->runtime->getCurrentContext();
             $this->currentNode = isset($typoScriptContext['activeNode']) ? $typoScriptContext['activeNode'] : $typoScriptContext['documentNode'];
             $this->currentLevel = 1;
             $this->items = $this->buildItems();

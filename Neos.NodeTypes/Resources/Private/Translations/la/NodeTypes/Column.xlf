@@ -4,13 +4,13 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Column</source>
-			<target xml:lang="la-LA">crwdns313:0crwdne313:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns1494:0crwdne1494:0</target></trans-unit>
       <trans-unit id="groups.column" xml:space="preserve">
 				<source>Columns</source>
-			<target xml:lang="la-LA">crwdns314:0crwdne314:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns1495:0crwdne1495:0</target></trans-unit>
       <trans-unit id="properties.layout" xml:space="preserve">
 				<source>Layout</source>
-			<target xml:lang="la-LA">crwdns315:0crwdne315:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns1496:0crwdne1496:0</target></trans-unit>
     </body>
   </file>
 </xliff>

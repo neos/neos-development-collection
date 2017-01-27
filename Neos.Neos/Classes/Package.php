@@ -58,7 +58,7 @@ class Package extends BasePackage
 
         $dispatcher->connect(FileMonitor::class, 'filesHaveChanged', function ($fileMonitorIdentifier, array $changedFiles) use ($flushConfigurationCache, $flushXliffServiceCache) {
             switch ($fileMonitorIdentifier) {
-                case 'TYPO3CR_NodeTypesConfiguration':
+                case 'ContentRepository_NodeTypesConfiguration':
                 case 'Flow_ConfigurationFiles':
                     $flushConfigurationCache();
                     break;

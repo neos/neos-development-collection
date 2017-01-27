@@ -4,19 +4,19 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Form</source>
-			<target xml:lang="la-LA">crwdns319:0crwdne319:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns1501:0crwdne1501:0</target></trans-unit>
       <trans-unit id="groups.form" xml:space="preserve">
 				<source>Form</source>
-			<target xml:lang="la-LA">crwdns320:0crwdne320:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns1502:0crwdne1502:0</target></trans-unit>
       <trans-unit id="properties.formIdentifier" xml:space="preserve">
 				<source>Form Identifier</source>
-			<target xml:lang="la-LA">crwdns321:0crwdne321:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns1503:0crwdne1503:0</target></trans-unit>
       <trans-unit id="properties.formIdentifier.selectBoxEditor.placeholder" xml:space="preserve">
 				<source>Select the Form identifier</source>
-			<target xml:lang="la-LA">crwdns566:0crwdne566:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns1504:0crwdne1504:0</target></trans-unit>
       <trans-unit id="content.noValidFormIdentifier" xml:space="preserve">
 				<source>Please select a valid Form identifier in the inspector.</source>
-			<target xml:lang="la-LA">crwdns774:0crwdne774:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns1505:0crwdne1505:0</target></trans-unit>
     </body>
   </file>
 </xliff>

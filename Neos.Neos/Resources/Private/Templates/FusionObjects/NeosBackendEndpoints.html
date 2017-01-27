@@ -53,6 +53,6 @@
 <link rel="neos-public-resources" href="{f:uri.resource(path: '', package: 'Neos.Neos')}" />
 <link rel="neos-module-workspacesmanagement" href="{neos:uri.module(path: 'management/workspaces')}" />
 <link rel="neos-module-workspacesmanagement-show" href="{neos:uri.module(path: 'management/workspaces', action: 'show')}" />
-<link rel="neos-media-browser" href="{f:uri.action(action: 'index', controller: 'Backend\MediaBrowser', package: 'Neos.Media.Browser', absolute: true, arguments: {assetCollection: node.context.currentSite.assetCollection})}" />
-<link rel="neos-image-browser" href="{f:uri.action(action: 'index', controller: 'Backend\ImageBrowser', package: 'Neos.Media.Browser', absolute: true, arguments: {assetCollection: node.context.currentSite.assetCollection})}" />
-<link rel="neos-image-browser-edit" href="{f:uri.action(action: 'edit', controller: 'Backend\ImageBrowser', package: 'Neos.Media.Browser', absolute: true)}" />
+<link rel="neos-media-browser" href="{f:uri.action(action: 'index', controller: 'Asset', package: 'Neos.Media.Browser', absolute: true, arguments: {assetCollection: node.context.currentSite.assetCollection})}" />
+<link rel="neos-image-browser" href="{f:uri.action(action: 'index', controller: 'Image', package: 'Neos.Media.Browser', absolute: true, arguments: {assetCollection: node.context.currentSite.assetCollection})}" />
+<link rel="neos-image-browser-edit" href="{f:uri.action(action: 'edit', controller: 'Image', package: 'Neos.Media.Browser', absolute: true)}" />

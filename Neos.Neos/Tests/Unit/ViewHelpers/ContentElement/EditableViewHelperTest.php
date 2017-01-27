@@ -57,12 +57,12 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
     /**
      * @var Runtime
      */
-    protected $mockTsRuntime;
+    protected $mockRuntime;
 
     /**
      * @var array
      */
-    protected $mockTsContext;
+    protected $mockContext;
 
     /**
      * @var NodeInterface
@@ -99,8 +99,8 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
         $this->inject($this->editableViewHelper, 'contentElementEditableService', $this->mockContentElementEditableService);
 
         $this->mockTemplateImplementation = $this->getMockBuilder(TemplateImplementation::class)->disableOriginalConstructor()->getMock();
-        
-        $this->mockTsRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
+
+        $this->mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
 
         $this->mockContentContext = $this->getMockBuilder(ContentContext::class)->disableOriginalConstructor()->getMock();
 
@@ -108,11 +108,11 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
         $this->mockNode->expects($this->any())->method('getContext')->will($this->returnValue($this->mockContentContext));
         $this->mockNode->expects($this->any())->method('getNodeType')->will($this->returnValue(new NodeType('Acme.Test:Headline', [], [])));
 
-        $this->mockTsContext = array('node' => $this->mockNode);
-        $this->mockTsRuntime->expects($this->any())->method('getCurrentContext')->will($this->returnValue($this->mockTsContext));
-        $this->mockTemplateImplementation->expects($this->any())->method('getTsRuntime')->will($this->returnValue($this->mockTsRuntime));
+        $this->mockContext = array('node' => $this->mockNode);
+        $this->mockRuntime->expects($this->any())->method('getCurrentContext')->will($this->returnValue($this->mockContext));
+        $this->mockTemplateImplementation->expects($this->any())->method('getRuntime')->will($this->returnValue($this->mockRuntime));
         $this->mockView = $this->getAccessibleMock(FluidView::class, array(), array(), '', false);
-        $this->mockView->expects($this->any())->method('getTypoScriptObject')->will($this->returnValue($this->mockTemplateImplementation));
+        $this->mockView->expects($this->any())->method('getFusionObject')->will($this->returnValue($this->mockTemplateImplementation));
 
         $this->editableViewHelper->initializeArguments();
     }

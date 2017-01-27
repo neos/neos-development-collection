@@ -29,7 +29,7 @@ class RendererImplementation extends AbstractFusionObject
      */
     public function getType()
     {
-        return $this->tsValue('type');
+        return $this->fusionValue('type');
     }
 
     /**
@@ -39,7 +39,7 @@ class RendererImplementation extends AbstractFusionObject
      */
     public function getRenderPath()
     {
-        return $this->tsValue('renderPath');
+        return $this->fusionValue('renderPath');
     }
 
     /**
@@ -50,19 +50,19 @@ class RendererImplementation extends AbstractFusionObject
     public function evaluate()
     {
         $rendererPath = sprintf('%s/renderer', $this->path);
-        $canRenderWithRenderer = $this->tsRuntime->canRender($rendererPath);
+        $canRenderWithRenderer = $this->runtime->canRender($rendererPath);
         $renderPath = $this->getRenderPath();
 
         if ($canRenderWithRenderer) {
-            $renderedElement = $this->tsRuntime->evaluate($rendererPath, $this);
+            $renderedElement = $this->runtime->evaluate($rendererPath, $this);
         } elseif ($renderPath !== null) {
             if (substr($renderPath, 0, 1) === '/') {
-                $renderedElement = $this->tsRuntime->render(substr($renderPath, 1));
+                $renderedElement = $this->runtime->render(substr($renderPath, 1));
             } else {
-                $renderedElement = $this->tsRuntime->render($this->path . '/' . str_replace('.', '/', $renderPath));
+                $renderedElement = $this->runtime->render($this->path . '/' . str_replace('.', '/', $renderPath));
             }
         } else {
-            $renderedElement = $this->tsRuntime->render(
+            $renderedElement = $this->runtime->render(
                 sprintf('%s/element<%s>', $this->path, $this->getType())
             );
         }

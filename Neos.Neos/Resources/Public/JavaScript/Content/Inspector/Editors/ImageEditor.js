@@ -310,7 +310,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 				console.log('Invalid JSON value in image editor', this.get('value'));
 			}
 
-			window.Typo3MediaBrowserCallbacks = {
+			window.NeosMediaBrowserCallbacks = {
 				_assetIdentifier: value && '__identity' in value ? value.__identity : null,
 				_frameLoaded: false,
 				_reloadPreviewImage: function() {
@@ -366,8 +366,8 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 				template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-image-browser-edit"]').attr('href') + '?asset[__identity]=' + this.get("_object").__identity + '"></iframe>'),
 				didInsertElement: function() {
 					this.$().find('iframe').on('load', function(event) {
-						if (window.Typo3MediaBrowserCallbacks && window.Typo3MediaBrowserCallbacks.onLoad) {
-							window.Typo3MediaBrowserCallbacks.onLoad(event, this);
+						if (window.NeosMediaBrowserCallbacks && window.NeosMediaBrowserCallbacks.onLoad) {
+							window.NeosMediaBrowserCallbacks.onLoad(event, this);
 						}
 					});
 				}
@@ -376,7 +376,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 
 		_beforeMediaBrowserEditIsShown: function () {
 			var that = this;
-			window.Typo3MediaBrowserCallbacks = {
+			window.NeosMediaBrowserCallbacks = {
 				close: function () {
 					SecondaryInspectorController.hide(that.get('_mediaBrowserEditView'));
 					that._initializeMediaBrowserEditView();
@@ -1080,8 +1080,8 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 				template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-image-browser"]').attr('href') + '"></iframe>'),
 				didInsertElement: function() {
 					this.$().find('iframe').on('load', function(event) {
-						if (window.Typo3MediaBrowserCallbacks && window.Typo3MediaBrowserCallbacks.onLoad) {
-							window.Typo3MediaBrowserCallbacks.onLoad(event, this);
+						if (window.NeosMediaBrowserCallbacks && window.NeosMediaBrowserCallbacks.onLoad) {
+							window.NeosMediaBrowserCallbacks.onLoad(event, this);
 						}
 					});
 				}

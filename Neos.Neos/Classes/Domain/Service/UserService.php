@@ -51,7 +51,7 @@ class UserService
      *
      * @var string
      */
-    protected $defaultAuthenticationProviderName = 'Typo3BackendProvider';
+    protected $defaultAuthenticationProviderName = 'Neos.Neos:Backend';
 
     /**
      * @Flow\Inject
@@ -151,7 +151,7 @@ class UserService
      * Retrieves an existing user by the given username
      *
      * @param string $username The username
-     * @param string $authenticationProviderName Name of the authentication provider to use. Example: "Typo3BackendProvider"
+     * @param string $authenticationProviderName Name of the authentication provider to use. Example: "Neos.Neos:Backend"
      * @return User The user, or null if the user does not exist
      * @throws Exception
      * @api
@@ -232,7 +232,7 @@ class UserService
      * @param string $firstName First name of the user to be created
      * @param string $lastName Last name of the user to be created
      * @param array $roleIdentifiers A list of role identifiers to assign
-     * @param string $authenticationProviderName Name of the authentication provider to use. Example: "Typo3BackendProvider"
+     * @param string $authenticationProviderName Name of the authentication provider to use. Example: "Neos.Neos:Backend"
      * @return User The created user instance
      * @api
      */
@@ -258,7 +258,7 @@ class UserService
      * @param string $password Password of the user to be created
      * @param User $user The pre-built user object to start with
      * @param array $roleIdentifiers A list of role identifiers to assign
-     * @param string $authenticationProviderName Name of the authentication provider to use. Example: "Typo3BackendProvider"
+     * @param string $authenticationProviderName Name of the authentication provider to use. Example: "Neos.Neos:Backend"
      * @return User The same user object
      * @api
      */
@@ -303,12 +303,8 @@ class UserService
      */
     public function deleteUser(User $user)
     {
-        $backendUserRole = $this->policyService->getRole('Neos.Neos:AbstractEditor');
         foreach ($user->getAccounts() as $account) {
-            /** @var Account $account */
-            if ($account->hasRole($backendUserRole)) {
-                $this->deletePersonalWorkspace($account->getAccountIdentifier());
-            }
+            $this->deletePersonalWorkspace($account->getAccountIdentifier());
             $this->accountRepository->remove($account);
         }
 

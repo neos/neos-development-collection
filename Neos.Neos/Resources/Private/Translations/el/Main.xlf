@@ -5,40 +5,40 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve">
 				<source>Auto-Publish</source>
-			<target xml:lang="el" state="needs-translation">Auto-Publish</target></trans-unit>
+			<target xml:lang="el" state="translated">Αυτόματη Δημοσίευση</target></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
 			<target xml:lang="el" state="needs-translation">Auto-Publish to {0}</target></trans-unit>
       <trans-unit id="reviewChanges" xml:space="preserve">
 				<source>Review changes</source>
-			<target xml:lang="el" state="needs-translation">Review changes</target></trans-unit>
+			<target xml:lang="el" state="translated">Επισκόπιση αλλαγών</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
-			<target xml:lang="el" state="needs-translation">Apply</target></trans-unit>
+			<target xml:lang="el" state="translated">Εφαρμογή</target></trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
 				<source>Apply changes</source>
-			<target xml:lang="el" state="needs-translation">Apply changes</target></trans-unit>
+			<target xml:lang="el" state="translated">Αποδοχή αλλαγών</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target xml:lang="el" state="needs-translation">Cancel</target></trans-unit>
+			<target xml:lang="el" state="translated">Άκυρο</target></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
-			<target xml:lang="el" state="needs-translation">Back</target></trans-unit>
+			<target xml:lang="el" state="translated">Επιστροφή</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
-			<target xml:lang="el" state="needs-translation">Choose</target></trans-unit>
+			<target xml:lang="el" state="translated">Επιλέξτε</target></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve">
 				<source>Type to search</source>
 			<target xml:lang="el" state="needs-translation">Type to search</target></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="el" state="needs-translation">Content</target></trans-unit>
+			<target xml:lang="el" state="translated">Περιεχόμενο</target></trans-unit>
       <trans-unit id="node" xml:space="preserve">
 				<source>Node</source>
-			<target xml:lang="el" state="needs-translation">Node</target></trans-unit>
+			<target xml:lang="el" state="translated">Κόμβος</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve">
 				<source>Content View</source>
-			<target xml:lang="el" state="needs-translation">Content View</target></trans-unit>
+			<target xml:lang="el" state="translated">Προβολή περιεχομένου</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
 			<target xml:lang="el" state="needs-translation">Create after</target></trans-unit>
@@ -47,16 +47,16 @@
 			<target xml:lang="el" state="needs-translation">Create new</target></trans-unit>
       <trans-unit id="close" xml:space="preserve">
 				<source>Close</source>
-			<target xml:lang="el" state="needs-translation">Close</target></trans-unit>
+			<target xml:lang="el" state="translated">Κλείσιμο</target></trans-unit>
       <trans-unit id="copy" xml:space="preserve">
 				<source>Copy</source>
-			<target xml:lang="el" state="needs-translation">Copy</target></trans-unit>
+			<target xml:lang="el" state="translated">Αντιγραφή</target></trans-unit>
       <trans-unit id="cut" xml:space="preserve">
 				<source>Cut</source>
-			<target xml:lang="el" state="needs-translation">Cut</target></trans-unit>
+			<target xml:lang="el" state="translated">Αποκοπή</target></trans-unit>
       <trans-unit id="delete" xml:space="preserve">
 				<source>Delete</source>
-			<target xml:lang="el" state="needs-translation">Delete</target></trans-unit>
+			<target xml:lang="el" state="translated">Διαγραφή</target></trans-unit>
       <trans-unit id="deleteElement" xml:space="preserve">
 				<source>Yes, delete the element</source>
 			<target xml:lang="el" state="needs-translation">Yes, delete the element</target></trans-unit>
@@ -65,19 +65,19 @@
 			<target xml:lang="el" state="needs-translation">Delete the element</target></trans-unit>
       <trans-unit id="discard" xml:space="preserve">
 				<source>Discard</source>
-			<target xml:lang="el" state="needs-translation">Discard</target></trans-unit>
+			<target xml:lang="el" state="translated">Απόρριψη</target></trans-unit>
       <trans-unit id="discardChanges" xml:space="preserve">
 				<source>Discard changes</source>
-			<target xml:lang="el" state="needs-translation">Discard changes</target></trans-unit>
+			<target xml:lang="el" state="translated">Απόρριψη αλλαγών</target></trans-unit>
       <trans-unit id="editTitle" xml:space="preserve">
 				<source>Edit title</source>
-			<target xml:lang="el" state="needs-translation">Edit title</target></trans-unit>
+			<target xml:lang="el" state="translated">Επεξεργασία τίτλου</target></trans-unit>
       <trans-unit id="editPreview" xml:space="preserve">
 				<source>Edit / Preview</source>
-			<target xml:lang="el" state="needs-translation">Edit / Preview</target></trans-unit>
+			<target xml:lang="el" state="translated">Επεξεργασία / Προεπισκόπιση</target></trans-unit>
       <trans-unit id="edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="el" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="el" state="translated">Επεξεργασία</target></trans-unit>
       <trans-unit id="hideUnhide" xml:space="preserve">
 				<source>Hide / Unhide</source>
 			<target xml:lang="el" state="needs-translation">Hide / Unhide</target></trans-unit>
@@ -89,16 +89,16 @@
 			<target xml:lang="el" state="needs-translation">Unhide</target></trans-unit>
       <trans-unit id="into" xml:space="preserve">
 				<source>into</source>
-			<target xml:lang="el" state="needs-translation">into</target></trans-unit>
+			<target xml:lang="el" state="translated">σε</target></trans-unit>
       <trans-unit id="before" xml:space="preserve">
 				<source>before</source>
-			<target xml:lang="el" state="needs-translation">before</target></trans-unit>
+			<target xml:lang="el" state="translated">πριν</target></trans-unit>
       <trans-unit id="after" xml:space="preserve">
 				<source>after</source>
-			<target xml:lang="el" state="needs-translation">after</target></trans-unit>
+			<target xml:lang="el" state="translated">μετα</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve">
 				<source>Loading</source>
-			<target xml:lang="el" state="needs-translation">Loading</target></trans-unit>
+			<target xml:lang="el" state="translated">Φόρτωση</target></trans-unit>
       <trans-unit id="newAfter" xml:space="preserve">
 				<source>New After</source>
 			<target xml:lang="el" state="needs-translation">New After</target></trans-unit>
@@ -110,16 +110,16 @@
 			<target xml:lang="el" state="needs-translation">New Into</target></trans-unit>
       <trans-unit id="navigate" xml:space="preserve">
 				<source>Navigate</source>
-			<target xml:lang="el" state="needs-translation">Navigate</target></trans-unit>
+			<target xml:lang="el" state="translated">Περιήγηση</target></trans-unit>
       <trans-unit id="okay" xml:space="preserve">
 				<source>OK</source>
-			<target xml:lang="el" state="needs-translation">OK</target></trans-unit>
+			<target xml:lang="el" state="translated">Εντάξει</target></trans-unit>
       <trans-unit id="page" xml:space="preserve">
 				<source>Page</source>
-			<target xml:lang="el" state="needs-translation">Page</target></trans-unit>
+			<target xml:lang="el" state="translated">Σελίδα</target></trans-unit>
       <trans-unit id="paste" xml:space="preserve">
 				<source>Paste</source>
-			<target xml:lang="el" state="needs-translation">Paste</target></trans-unit>
+			<target xml:lang="el" state="translated">Επικόλληση</target></trans-unit>
       <trans-unit id="pasteAfter" xml:space="preserve">
 				<source>Paste After</source>
 			<target xml:lang="el" state="needs-translation">Paste After</target></trans-unit>
@@ -131,13 +131,13 @@
 			<target xml:lang="el" state="needs-translation">Paste Into</target></trans-unit>
       <trans-unit id="password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="el" state="needs-translation">Password</target></trans-unit>
+			<target xml:lang="el" state="translated">Κωδικός</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve">
 				<source>Preview</source>
-			<target xml:lang="el" state="needs-translation">Preview</target></trans-unit>
+			<target xml:lang="el" state="translated">Προεπισκόπηση</target></trans-unit>
       <trans-unit id="publish" xml:space="preserve">
 				<source>Publish</source>
-			<target xml:lang="el" state="needs-translation">Publish</target></trans-unit>
+			<target xml:lang="el" state="translated">Δημοσίευση</target></trans-unit>
       <trans-unit id="publishTo" xml:space="preserve">
 				<source>Publish to {0}</source>
 			<target xml:lang="el" state="needs-translation">Publish to {0}</target></trans-unit>
@@ -152,10 +152,10 @@
 			<target xml:lang="el" state="needs-translation">Select target workspace</target></trans-unit>
       <trans-unit id="publishing" xml:space="preserve">
 				<source>Publishing</source>
-			<target xml:lang="el" state="needs-translation">Publishing</target></trans-unit>
+			<target xml:lang="el" state="translated">Γίνεται Δημοσίευση</target></trans-unit>
       <trans-unit id="published" xml:space="preserve">
 				<source>Published</source>
-			<target xml:lang="el" state="needs-translation">Published</target></trans-unit>
+			<target xml:lang="el" state="translated">Δημοσιευμένο</target></trans-unit>
       <trans-unit id="togglePublishMenu" xml:space="preserve">
 				<source>Toggle publish menu</source>
 			<target xml:lang="el" state="needs-translation">Toggle publish menu</target></trans-unit>
@@ -269,7 +269,7 @@
 			<target xml:lang="el" state="needs-translation">Site</target></trans-unit>
       <trans-unit id="document" xml:space="preserve">
 				<source>Document</source>
-			<target xml:lang="el" state="needs-translation">Document</target></trans-unit>
+			<target xml:lang="el" state="translated">Έγγραφο</target></trans-unit>
       <trans-unit id="reference" xml:space="preserve">
 				<source>Reference</source>
 			<target xml:lang="el" state="needs-translation">Reference</target></trans-unit>
@@ -378,7 +378,7 @@
 			<target xml:lang="el" state="needs-translation">Throw away</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
-			<target xml:lang="el" state="needs-translation">Apply</target></trans-unit>
+			<target xml:lang="el" state="translated">Εφαρμογή</target></trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
 				<source>Select a Plugin</source>
 			<target xml:lang="el" state="needs-translation">Select a Plugin</target></trans-unit>
@@ -408,10 +408,10 @@
 			<target xml:lang="el" state="needs-translation">Change type</target></trans-unit>
       <trans-unit id="content.inspector.groups.nodeInfo" xml:space="preserve">
 				<source>Additional info</source>
-			<target xml:lang="el" state="needs-translation">Additional info</target></trans-unit>
+			<target xml:lang="el" state="translated">Πρόσθετες πληροφορίες</target></trans-unit>
       <trans-unit id="content.inspector.groups.visibility" xml:space="preserve">
 				<source>Visibility</source>
-			<target xml:lang="el" state="needs-translation">Visibility</target></trans-unit>
+			<target xml:lang="el" state="translated">Ορατότητα</target></trans-unit>
       <trans-unit id="content.inspector.groups.document" xml:space="preserve">
 				<source>Document options</source>
 			<target xml:lang="el" state="needs-translation">Document options</target></trans-unit>
@@ -501,7 +501,7 @@
 			<target xml:lang="el" state="needs-translation">Create and copy</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="el" state="needs-translation">Content</target></trans-unit>
+			<target xml:lang="el" state="translated">Περιεχόμενο</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve">
 				<source>Toggle menu group</source>
 			<target xml:lang="el" state="needs-translation">Toggle menu group</target></trans-unit>

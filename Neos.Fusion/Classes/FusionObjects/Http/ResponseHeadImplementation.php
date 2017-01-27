@@ -29,7 +29,7 @@ class ResponseHeadImplementation extends AbstractFusionObject
      */
     public function getHttpVersion()
     {
-        $httpVersion = $this->tsValue('httpVersion');
+        $httpVersion = $this->fusionValue('httpVersion');
         if ($httpVersion === null) {
             $httpVersion = 'HTTP/1.1';
         }
@@ -41,7 +41,7 @@ class ResponseHeadImplementation extends AbstractFusionObject
      */
     public function getStatusCode()
     {
-        $statusCode = $this->tsValue('statusCode');
+        $statusCode = $this->fusionValue('statusCode');
         if ($statusCode === null) {
             $statusCode = 200;
         }
@@ -56,7 +56,7 @@ class ResponseHeadImplementation extends AbstractFusionObject
      */
     public function getHeaders()
     {
-        $headers = $this->tsValue('headers');
+        $headers = $this->fusionValue('headers');
         if (!is_array($headers)) {
             $headers = array();
         }

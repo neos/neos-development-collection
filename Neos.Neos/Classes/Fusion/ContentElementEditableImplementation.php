@@ -42,7 +42,7 @@ class ContentElementEditableImplementation extends AbstractFusionObject
      */
     public function getValue()
     {
-        return $this->tsValue('value');
+        return $this->fusionValue('value');
     }
 
     /**
@@ -55,13 +55,13 @@ class ContentElementEditableImplementation extends AbstractFusionObject
         $content = $this->getValue();
 
         /** @var $node NodeInterface */
-        $node = $this->tsValue('node');
+        $node = $this->fusionValue('node');
         if (!$node instanceof NodeInterface) {
             return $content;
         }
 
         /** @var $property string */
-        $property = $this->tsValue('property');
+        $property = $this->fusionValue('property');
 
         /** @var $contentContext ContentContext */
         $contentContext = $node->getContext();

@@ -42,7 +42,7 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
      */
     public function getValue()
     {
-        return $this->tsValue('value');
+        return $this->fusionValue('value');
     }
 
     /**
@@ -55,7 +55,7 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
         $content = $this->getValue();
 
         /** @var $node NodeInterface */
-        $node = $this->tsValue('node');
+        $node = $this->fusionValue('node');
         if (!$node instanceof NodeInterface) {
             return $content;
         }
@@ -74,7 +74,7 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
             $content = '';
         }
 
-        if ($this->tsValue('renderCurrentDocumentMetadata')) {
+        if ($this->fusionValue('renderCurrentDocumentMetadata')) {
             return $this->contentElementWrappingService->wrapCurrentDocumentMetadata($node, $content, $this->getContentElementTypoScriptPath());
         }
 

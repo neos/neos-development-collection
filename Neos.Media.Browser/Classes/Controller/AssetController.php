@@ -11,34 +11,45 @@ namespace Neos\Media\Browser\Controller;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\Error\Messages\Error;
+use Neos\Error\Messages\Message;
+use Neos\Flow\Annotations as Flow;
 use Doctrine\Common\Persistence\Proxy as DoctrineProxy;
 use Doctrine\ORM\EntityNotFoundException;
-use Neos\Flow\Annotations as Flow;
-use Neos\Error\Messages\Message;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\Flow\I18n\Translator;
 use Neos\Flow\Mvc\Controller\ActionController;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Mvc\Exception\InvalidArgumentValueException;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\Mvc\View\ViewInterface;
+use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\ResourceManagement\PersistentResource;
-use Neos\Utility\Files;
-use Neos\FluidAdaptor\View\TemplateView;
-use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Media\Domain\Model\AssetCollection;
 use Neos\Media\Domain\Model\AssetInterface;
+use Neos\FluidAdaptor\View\TemplateView;
+use Neos\Media\Domain\Model\Asset;
+use Neos\Media\Domain\Model\Tag;
+use Neos\Media\Domain\Repository\AssetCollectionRepository;
+use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Repository\AudioRepository;
 use Neos\Media\Domain\Repository\DocumentRepository;
 use Neos\Media\Domain\Repository\ImageRepository;
 use Neos\Media\Domain\Repository\TagRepository;
 use Neos\Media\Domain\Repository\VideoRepository;
-use Neos\Media\Domain\Model\Asset;
-use Neos\Media\Domain\Model\AssetCollection;
-use Neos\Media\Domain\Model\Tag;
-use Neos\Media\Domain\Repository\AssetCollectionRepository;
-use Neos\Media\Domain\Session\BrowserState;
 use Neos\Media\Domain\Service\AssetService;
-use Neos\Media\Exception\AssetServiceException;
+use Neos\Media\Browser\Domain\Session\BrowserState;
 use Neos\Media\TypeConverter\AssetInterfaceConverter;
+use Neos\Neos\Controller\BackendUserTranslationTrait;
+use Neos\Neos\Controller\CreateContentContextTrait;
+use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
+use Neos\Neos\Domain\Repository\DomainRepository;
+use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
+use Neos\Neos\Service\UserService;
+use Neos\Utility\MediaTypes;
+use Neos\Utility\Files;
 
 /**
  * Controller for asset handling
@@ -47,12 +58,53 @@ use Neos\Media\TypeConverter\AssetInterfaceConverter;
  */
 class AssetController extends ActionController
 {
+    use CreateContentContextTrait;
+    use BackendUserTranslationTrait;
+
     const TAG_GIVEN = 0;
     const TAG_ALL = 1;
     const TAG_NONE = 2;
 
     const COLLECTION_GIVEN = 0;
     const COLLECTION_ALL = 1;
+
+    /**
+     * @var array
+     */
+    protected $viewFormatToObjectNameMap = [
+        'html' => TemplateView::class,
+        'json' => JsonView::class
+    ];
+
+    /**
+     * @Flow\Inject
+     * @var NodeDataRepository
+     */
+    protected $nodeDataRepository;
+
+    /**
+     * @Flow\Inject
+     * @var SiteRepository
+     */
+    protected $siteRepository;
+
+    /**
+     * @Flow\Inject
+     * @var DomainRepository
+     */
+    protected $domainRepository;
+
+    /**
+     * @Flow\Inject
+     * @var UserService
+     */
+    protected $userService;
+
+    /**
+     * @Flow\Inject
+     * @var ContentDimensionPresetSourceInterface
+     */
+    protected $contentDimensionPresetSource;
 
     /**
      * @Flow\Inject
@@ -97,12 +149,17 @@ class AssetController extends ActionController
     protected $translator;
 
     /**
-     * @var array
+     * @return void
      */
-    protected $viewFormatToObjectNameMap = array(
-        'html' => TemplateView::class,
-        'json' => JsonView::class
-    );
+    public function initializeObject()
+    {
+        $domain = $this->domainRepository->findOneByActiveRequest();
+        // Set active asset collection to the current site's asset collection, if it has one, on the first view if a matching domain is found
+        if ($domain !== null && !$this->browserState->get('activeAssetCollection') && $this->browserState->get('automaticAssetCollectionSelection') !== true && $domain->getSite()->getAssetCollection() !== null) {
+            $this->browserState->set('activeAssetCollection', $domain->getSite()->getAssetCollection());
+            $this->browserState->set('automaticAssetCollectionSelection', true);
+        }
+    }
 
     /**
      * Set common variables on the view
@@ -112,14 +169,14 @@ class AssetController extends ActionController
      */
     protected function initializeView(ViewInterface $view)
     {
-        $view->assignMultiple(array(
+        $view->assignMultiple([
             'view' => $this->browserState->get('view'),
             'sortBy' => $this->browserState->get('sortBy'),
             'sortDirection' => $this->browserState->get('sortDirection'),
             'filter' => $this->browserState->get('filter'),
             'activeTag' => $this->browserState->get('activeTag'),
             'activeAssetCollection' => $this->browserState->get('activeAssetCollection')
-        ));
+        ]);
     }
 
     /**
@@ -209,11 +266,11 @@ class AssetController extends ActionController
 
         switch ($this->browserState->get('sortBy')) {
             case 'Name':
-                $this->assetRepository->setDefaultOrderings(array('resource.filename' => $this->browserState->get('sortDirection')));
+                $this->assetRepository->setDefaultOrderings(['resource.filename' => $this->browserState->get('sortDirection')]);
                 break;
             case 'Modified':
             default:
-                $this->assetRepository->setDefaultOrderings(array('lastModified' => $this->browserState->get('sortDirection')));
+                $this->assetRepository->setDefaultOrderings(['lastModified' => $this->browserState->get('sortDirection')]);
                 break;
         }
 
@@ -221,18 +278,18 @@ class AssetController extends ActionController
             $this->browserState->set('tagMode', self::TAG_ALL);
         }
 
-        $assetCollections = array();
+        $assetCollections = [];
         foreach ($this->assetCollectionRepository->findAll() as $assetCollection) {
-            $assetCollections[] = array('object' => $assetCollection, 'count' => $this->assetRepository->countByAssetCollection($assetCollection));
+            $assetCollections[] = ['object' => $assetCollection, 'count' => $this->assetRepository->countByAssetCollection($assetCollection)];
         }
 
-        $tags = array();
+        $tags = [];
         foreach ($activeAssetCollection !== null ? $activeAssetCollection->getTags() : $this->tagRepository->findAll() as $tag) {
-            $tags[] = array('object' => $tag, 'count' => $this->assetRepository->countByTag($tag, $activeAssetCollection));
+            $tags[] = ['object' => $tag, 'count' => $this->assetRepository->countByTag($tag, $activeAssetCollection)];
         }
 
         if ($searchTerm !== null) {
-            $assets = $this->assetRepository->findBySearchTermOrTags($searchTerm, array(), $activeAssetCollection);
+            $assets = $this->assetRepository->findBySearchTermOrTags($searchTerm, [], $activeAssetCollection);
             $this->view->assign('searchTerm', $searchTerm);
         } elseif ($this->browserState->get('tagMode') === self::TAG_NONE) {
             $assets = $this->assetRepository->findUntagged($activeAssetCollection);
@@ -244,7 +301,7 @@ class AssetController extends ActionController
 
         $allCollectionsCount = $this->assetRepository->countAll();
         $maximumFileUploadSize = $this->maximumFileUploadSize();
-        $this->view->assignMultiple(array(
+        $this->view->assignMultiple([
             'assets' => $assets,
             'tags' => $tags,
             'allCollectionsCount' => $allCollectionsCount,
@@ -255,7 +312,7 @@ class AssetController extends ActionController
             'argumentNamespace' => $this->request->getArgumentNamespace(),
             'maximumFileUploadSize' => $maximumFileUploadSize,
             'humanReadableMaximumFileUploadSize' => Files::bytesToSizeString($maximumFileUploadSize)
-        ));
+        ]);
     }
 
     /**
@@ -266,12 +323,12 @@ class AssetController extends ActionController
     public function newAction()
     {
         $maximumFileUploadSize = $this->maximumFileUploadSize();
-        $this->view->assignMultiple(array(
+        $this->view->assignMultiple([
             'tags' => $this->tagRepository->findAll(),
             'assetCollections' => $this->assetCollectionRepository->findAll(),
             'maximumFileUploadSize' => $maximumFileUploadSize,
             'humanReadableMaximumFileUploadSize' => Files::bytesToSizeString($maximumFileUploadSize)
-        ));
+        ]);
     }
 
     /**
@@ -281,34 +338,12 @@ class AssetController extends ActionController
     public function replaceAssetResourceAction(Asset $asset)
     {
         $maximumFileUploadSize = $this->maximumFileUploadSize();
-        $this->view->assignMultiple(array(
+        $this->view->assignMultiple([
             'asset' => $asset,
             'maximumFileUploadSize' => $maximumFileUploadSize,
             'redirectPackageEnabled' => $this->packageManager->isPackageAvailable('Neos.RedirectHandler'),
             'humanReadableMaximumFileUploadSize' => Files::bytesToSizeString($maximumFileUploadSize)
-        ));
-    }
-
-    /**
-     * Replace the resource on an asset.
-     *
-     * @param AssetInterface $asset
-     * @param PersistentResource $resource
-     * @param array $options
-     * @return void
-     */
-    public function updateAssetResourceAction(AssetInterface $asset, PersistentResource $resource, array $options = [])
-    {
-        try {
-            $originalFilename = $asset->getLabel();
-            $this->assetService->replaceAssetResource($asset, $resource, $options);
-        } catch (\Exception $exception) {
-            $this->addFlashMessage('couldNotReplaceAsset', '', Message::SEVERITY_OK, [], 1463472606);
-            $this->forwardToReferringRequest();
-        }
-
-        $this->addFlashMessage('assetHasBeenReplaced', '', Message::SEVERITY_OK, [htmlspecialchars($originalFilename)]);
-        $this->redirect('index');
+        ]);
     }
 
     /**
@@ -319,11 +354,11 @@ class AssetController extends ActionController
      */
     public function editAction(Asset $asset)
     {
-        $this->view->assignMultiple(array(
+        $this->view->assignMultiple([
             'tags' => $asset->getAssetCollections()->count() > 0 ? $this->tagRepository->findByAssetCollections($asset->getAssetCollections()->toArray()) : $this->tagRepository->findAll(),
             'asset' => $asset,
             'assetCollections' => $this->assetCollectionRepository->findAll()
-        ));
+        ]);
     }
 
     /**
@@ -374,7 +409,7 @@ class AssetController extends ActionController
             $this->assetRepository->add($asset);
         }
         $this->addFlashMessage('assetHasBeenAdded', '', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())]);
-        $this->redirect('index', null, null, array(), 0, 201);
+        $this->redirect('index', null, null, [], 0, 201);
     }
 
     /**
@@ -424,7 +459,7 @@ class AssetController extends ActionController
      *
      * @param Asset $asset
      * @param Tag $tag
-     * @return boolean
+     * @return void
      */
     public function tagAssetAction(Asset $asset, Tag $tag)
     {
@@ -441,7 +476,7 @@ class AssetController extends ActionController
      *
      * @param Asset $asset
      * @param AssetCollection $assetCollection
-     * @return boolean
+     * @return void
      */
     public function addAssetToCollectionAction(Asset $asset, AssetCollection $assetCollection)
     {
@@ -451,24 +486,6 @@ class AssetController extends ActionController
             $success = true;
         }
         $this->view->assign('value', $success);
-    }
-
-    /**
-     * Delete an asset
-     *
-     * @param Asset $asset
-     * @return void
-     */
-    public function deleteAction(Asset $asset)
-    {
-        try {
-            $this->assetRepository->remove($asset);
-            $this->addFlashMessage('assetHasBeenDeleted', '', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())]);
-        } catch (AssetServiceException $exception) {
-            $this->addFlashMessage('assetCouldNotBeDeleted', '', Message::SEVERITY_WARNING, [], 1462196565);
-        }
-
-        $this->redirect('index');
     }
 
     /**
@@ -502,10 +519,10 @@ class AssetController extends ActionController
      */
     public function editTagAction(Tag $tag)
     {
-        $this->view->assignMultiple(array(
+        $this->view->assignMultiple([
             'tag' => $tag,
             'assetCollections' => $this->assetCollectionRepository->findAll()
-        ));
+        ]);
     }
 
     /**
@@ -554,10 +571,10 @@ class AssetController extends ActionController
      */
     public function editAssetCollectionAction(AssetCollection $assetCollection)
     {
-        $this->view->assignMultiple(array(
+        $this->view->assignMultiple([
             'assetCollection' => $assetCollection,
             'tags' => $this->tagRepository->findAll()
-        ));
+        ]);
     }
 
     /**
@@ -572,11 +589,109 @@ class AssetController extends ActionController
     }
 
     /**
+     * Delete an asset
+     *
+     * @param Asset $asset
+     * @return void
+     */
+    public function deleteAction(Asset $asset)
+    {
+        $usageReferences = $this->assetService->getUsageReferences($asset);
+        if (count($usageReferences) > 0) {
+            $this->addFlashMessage('deleteRelatedNodes', '', Message::SEVERITY_WARNING, [], 1412422767);
+            $this->redirect('index');
+        }
+
+        $this->assetRepository->remove($asset);
+        $this->addFlashMessage('assetHasBeenDeleted', '', Message::SEVERITY_OK, [$asset->getLabel()], 1412375050);
+        $this->redirect('index');
+    }
+
+    /**
+     * Update the resource on an asset.
+     *
+     * @param AssetInterface $asset
+     * @param PersistentResource $resource
+     * @param array $options
+     * @throws InvalidArgumentValueException
+     * @return void
+     */
+    public function updateAssetResourceAction(AssetInterface $asset, PersistentResource $resource, array $options = [])
+    {
+        $sourceMediaType = MediaTypes::parseMediaType($asset->getMediaType());
+        $replacementMediaType = MediaTypes::parseMediaType($resource->getMediaType());
+
+        // Prevent replacement of image, audio and video by a different mimetype because of possible rendering issues.
+        if (in_array($sourceMediaType['type'], ['image', 'audio', 'video']) && $sourceMediaType['type'] !== $replacementMediaType['type']) {
+            $this->addFlashMessage(
+                'resourceCanOnlyBeReplacedBySimilarResource',
+                '',
+                Message::SEVERITY_WARNING,
+                [$sourceMediaType['type'], $resource->getMediaType()],
+                1462308179
+            );
+            $this->redirect('index');
+        }
+
+        try {
+            $originalFilename = $asset->getLabel();
+            $this->assetService->replaceAssetResource($asset, $resource, $options);
+        } catch (\Exception $exception) {
+            $this->addFlashMessage('couldNotReplaceAsset', '', Message::SEVERITY_OK, [], 1463472606);
+            $this->forwardToReferringRequest();
+            return;
+        }
+
+        $this->addFlashMessage('assetHasBeenReplaced', '', Message::SEVERITY_OK, [htmlspecialchars($originalFilename)]);
+        $this->redirect('index');
+    }
+
+    /**
+     * Get Related Nodes for an asset
+     *
+     * @param AssetInterface $asset
+     * @return void
+     */
+    public function relatedNodesAction(AssetInterface $asset)
+    {
+        $userWorkspace = $this->userService->getPersonalWorkspace();
+
+        $usageReferences = $this->assetService->getUsageReferences($asset);
+        $relatedNodes = [];
+
+        /** @var AssetUsageInNodeProperties $usage */
+        foreach ($usageReferences as $usage) {
+            $documentNodeIdentifier = $usage->getDocumentNode() instanceof NodeInterface ? $usage->getDocumentNode()->getIdentifier() : null;
+
+            $relatedNodes[$usage->getSite()->getNodeName()]['site'] = $usage->getSite();
+            $relatedNodes[$usage->getSite()->getNodeName()]['documentNodes'][$documentNodeIdentifier]['node'] = $usage->getDocumentNode();
+            $relatedNodes[$usage->getSite()->getNodeName()]['documentNodes'][$documentNodeIdentifier]['nodes'][] = [
+                'node' => $usage->getNode(),
+                'nodeData' => $usage->getNode()->getNodeData(),
+                'contextDocumentNode' => $usage->getDocumentNode(),
+                'accessible' => $usage->isAccessible()
+            ];
+        }
+
+        $this->view->assignMultiple([
+            'asset' => $asset,
+            'relatedNodes' => $relatedNodes,
+            'contentDimensions' => $this->contentDimensionPresetSource->getAllPresets(),
+            'userWorkspace' => $userWorkspace
+        ]);
+    }
+
+    /**
      * @param AssetCollection $assetCollection
      * @return void
      */
     public function deleteAssetCollectionAction(AssetCollection $assetCollection)
     {
+        foreach ($this->siteRepository->findByAssetCollection($assetCollection) as $site) {
+            $site->setAssetCollection(null);
+            $this->siteRepository->update($site);
+        }
+
         if ($this->browserState->get('activeAssetCollection') === $assetCollection) {
             $this->browserState->set('activeAssetCollection', null);
         }
@@ -586,13 +701,37 @@ class AssetController extends ActionController
     }
 
     /**
-     * Returns the lowest configured maximum upload file size
+     * This custom errorAction adds FlashMessages for validation results to give more information in the
      *
-     * @return integer
+     * @return string
      */
-    protected function maximumFileUploadSize()
+    protected function errorAction()
     {
-        return min(Files::sizeStringToBytes(ini_get('post_max_size')), Files::sizeStringToBytes(ini_get('upload_max_filesize')));
+        foreach ($this->arguments->getValidationResults()->getFlattenedErrors() as $propertyPath => $errors) {
+            foreach ($errors as $error) {
+                $this->flashMessageContainer->addMessage($error);
+            }
+        }
+
+        return parent::errorAction();
+    }
+
+    /**
+     * Individual error FlashMessage that hides which action fails in production.
+     *
+     * @return Message|bool The flash message or FALSE if no flash message should be set
+     */
+    protected function getErrorFlashMessage()
+    {
+        if ($this->arguments->getValidationResults()->hasErrors()) {
+            return false;
+        }
+        $errorMessage = 'An error occurred';
+        if ($this->objectManager->getContext()->isDevelopment()) {
+            $errorMessage .= ' while trying to call %1$s->%2$s()';
+        }
+
+        return new Error($errorMessage, null, [get_class($this), $this->actionMethodName]);
     }
 
     /**
@@ -605,13 +744,23 @@ class AssetController extends ActionController
      * @param integer $messageCode
      * @return void
      */
-    public function addFlashMessage($messageBody, $messageTitle = '', $severity = Message::SEVERITY_OK, array $messageArguments = array(), $messageCode = null)
+    public function addFlashMessage($messageBody, $messageTitle = '', $severity = Message::SEVERITY_OK, array $messageArguments = [], $messageCode = null)
     {
         if (is_string($messageBody)) {
-            $messageBody = $this->translator->translateById($messageBody, $messageArguments, null, null, 'Main', 'Neos.Media') ?: $messageBody;
+            $messageBody = $this->translator->translateById($messageBody, $messageArguments, null, null, 'Main', 'Neos.Media.Browser') ?: $messageBody;
         }
 
-        $messageTitle = $this->translator->translateById($messageTitle, $messageArguments, null, null, 'Main', 'Neos.Media');
+        $messageTitle = $this->translator->translateById($messageTitle, $messageArguments, null, null, 'Main', 'Neos.Media.Browser');
         parent::addFlashMessage($messageBody, $messageTitle, $severity, $messageArguments, $messageCode);
+    }
+
+    /**
+     * Returns the lowest configured maximum upload file size
+     *
+     * @return integer
+     */
+    protected function maximumFileUploadSize()
+    {
+        return min(Files::sizeStringToBytes(ini_get('post_max_size')), Files::sizeStringToBytes(ini_get('upload_max_filesize')));
     }
 }
