@@ -855,7 +855,21 @@ define(
 				}
 				var that = this;
 				try {
-					sourceNode.move(targetNode, position === 'into' ? 'over' : position);
+					// If moving within the same document
+					if (document.contains(sourceNode.span)) {
+						sourceNode.move(targetNode, position === 'into' ? 'over' : position);
+					} else {
+						switch (position) {
+							case 'before':
+								sourceNode = targetNode.getParent().addChild(sourceNode.data, targetNode);
+							break;
+							case 'after':
+								sourceNode = targetNode.getParent().addChild(sourceNode.data, targetNode.getNextSibling());
+							break;
+							case 'into':
+								sourceNode = targetNode.addChild(sourceNode.data);
+						}
+					}
 					sourceNode.activate();
 					sourceNode.setLazyNodeStatus(this.statusCodes.loading);
 					NodeEndpoint.move(

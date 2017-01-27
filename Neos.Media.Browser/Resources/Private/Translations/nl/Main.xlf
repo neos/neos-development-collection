@@ -92,9 +92,6 @@
       <trans-unit id="cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
 			<target xml:lang="nl">Annuleren</target></trans-unit>
-      <trans-unit id="replaceAssetResource" xml:space="preserve">
-				<source>Replace</source>
-			<target xml:lang="nl" state="translated">Vervang</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve" approved="yes">
 				<source>Save</source>
 			<target xml:lang="nl">Sla op</target></trans-unit>
@@ -351,9 +348,6 @@
       <trans-unit id="assetCouldNotBeDeleted" xml:space="preserve" approved="yes">
 				<source>Asset could not be deleted.</source>
 			<target xml:lang="nl">Het bestand kon niet worden verwijderd.</target></trans-unit>
-      <trans-unit id="assetHasBeenReplaced" xml:space="preserve" approved="yes">
-				<source>Asset "{0}" has been replaced.</source>
-			<target xml:lang="nl">Bestand "{0}" is vervangen.</target></trans-unit>
       <trans-unit id="tagAlreadyExistsAndAddedToCollection" xml:space="preserve" approved="yes">
 				<source>Tag "{0}" already exists and was added to collection.</source>
 			<target xml:lang="nl">Tag "{0}" bestond al en is toegevoegd aan de collectie.</target></trans-unit>

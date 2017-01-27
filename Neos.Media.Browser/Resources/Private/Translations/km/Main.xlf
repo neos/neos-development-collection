@@ -93,9 +93,6 @@
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
 			<target xml:lang="km" state="translated">បោះបង់</target></trans-unit>
-      <trans-unit id="replaceAssetResource" xml:space="preserve">
-				<source>Replace</source>
-			<target xml:lang="km" state="translated">ជំនួស</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="km" state="translated">សន្សំ រឺ រក្សាទុក</target></trans-unit>
@@ -350,9 +347,6 @@
       <trans-unit id="assetCouldNotBeDeleted" xml:space="preserve">
 				<source>Asset could not be deleted.</source>
 			<target xml:lang="km" state="translated">បណ្ដុំAsset{0}មិនអាចលុបចេាល</target><alt-trans><target xml:lang="km">Asset{0} មិនអាចលុបចេាល</target></alt-trans></trans-unit>
-      <trans-unit id="assetHasBeenReplaced" xml:space="preserve">
-				<source>Asset "{0}" has been replaced.</source>
-			<target xml:lang="km" state="translated">បណ្ដុំAsset{0}ត្រូវបានជំនួសទីកន្លែង</target><alt-trans><target xml:lang="km">Asset{0} ត្រូវបានជំនួសទីកន្លែង</target></alt-trans></trans-unit>
       <trans-unit id="tagAlreadyExistsAndAddedToCollection" xml:space="preserve">
 				<source>Tag "{0}" already exists and was added to collection.</source>
 			<target xml:lang="km" state="translated">ស្លាក{0}មាននិងបានបង្ចូលក្នុងការប្រមូលផ្តុំរួចហីេយ</target></trans-unit>
