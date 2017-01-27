@@ -284,7 +284,7 @@ class Runtime
      * Handle an Exception thrown while rendering TypoScript according to
      * settings specified in TYPO3.TypoScript.rendering.exceptionHandler
      *
-     * @param array $typoScriptPath
+     * @param string $typoScriptPath
      * @param \Exception $exception
      * @param boolean $useInnerExceptionHandler
      * @return string
