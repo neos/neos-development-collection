@@ -20,7 +20,7 @@ have custom properties and childNodes. The list of available NodeTypes is extens
 can be created by extending the existing ones.
 
 Neos already comes with a sophisticated list of ContentElements to cover the basic editing needs without further extension.
-The Standard ContentElements hat are implemented as NodeTypes from the Package Neos.Neos.NodeTypes and contain the elements
+The Standard ContentElements hat are implemented as NodeTypes from the Package Neos.NodeTypes and contain the elements
 Headline, Text, Image, Image with Text, 2- 3- 4-Columns, Download List, Forms and Menu.
 
 The List of ContentElements is easily extensible and the demo site already contains examples for YouTube and Flickr

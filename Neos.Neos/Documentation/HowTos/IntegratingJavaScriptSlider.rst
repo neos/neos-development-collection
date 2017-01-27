@@ -40,10 +40,10 @@ Fusion (Sites/Vendor.Site/Resources/Private/Fusion/NodeTypes/Carousel.fusion)::
 		}
 
 		// Collect the carousels children but only images
-		carouselItemArray = ${q(node).children('carouselItems').children('[instanceof Neos.Neos.NodeTypes:Image]')}
+		carouselItemArray = ${q(node).children('carouselItems').children('[instanceof Neos.NodeTypes:Image]')}
 
 		// Enhance image prototype when inside the carousel
-		prototype(Neos.Neos.NodeTypes:Image) {
+		prototype(Neos.NodeTypes:Image) {
 			// Render images in the carousel with a special template.
 			templatePath = 'resource://Vendor.Site/Private/Templates/FusionObjects/CarouselItem.html'
 

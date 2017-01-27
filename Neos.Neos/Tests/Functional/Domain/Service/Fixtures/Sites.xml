@@ -15,7 +15,7 @@
      </properties>
     </variant>
     <node identifier="b2e1b29c-0b33-455a-862b-88bbd09e5310" nodeName="home">
-     <variant sortingIndex="100" workspace="live" nodeType="Neos.Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
+     <variant sortingIndex="100" workspace="live" nodeType="Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
       <dimensions>
        <language>en_US</language>
       </dimensions>
@@ -28,7 +28,7 @@
       </properties>
      </variant>
      <node identifier="94165d9e-1c0d-43ca-b172-7b867524f349" nodeName="protected">
-      <variant sortingIndex="400" workspace="live" nodeType="Neos.Neos.NodeTypes:Page" version="3" removed="" hidden="" hiddenInIndex="">
+      <variant sortingIndex="400" workspace="live" nodeType="Neos.NodeTypes:Page" version="3" removed="" hidden="" hiddenInIndex="">
        <dimensions>
         <language>en_US</language>
        </dimensions>

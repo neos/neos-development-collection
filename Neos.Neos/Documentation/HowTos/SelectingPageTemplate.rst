@@ -6,7 +6,7 @@ Neos has a flexible way of choosing a layout, which can be selected in the backe
 
 First of all, the necessary layouts have to be configured inside `VendorName.VendorSite/Configuration/NodeTypes.yaml`::
 
-    'Neos.Neos.NodeTypes:Page':
+    'Neos.NodeTypes:Page':
       properties:
         layout:
           ui:
@@ -67,7 +67,7 @@ Select Template based on NodeType
 =================================
 
 It is also possible to select the page rendering configuration based on the node type of the
-page. Let's say you have a node type named `VendorName.VendorSite:Employee` which has `Neos.Neos.NodeTypes:Page`
+page. Let's say you have a node type named `VendorName.VendorSite:Employee` which has `Neos.NodeTypes:Page`
 as a supertype. This node type is used for displaying a personal page of employees working in
 your company. This page will have a different structure compared to your basic page.
 
@@ -143,12 +143,12 @@ Your basic `DefaultPage` prototype could look something like this::
         }
     }
 
-Now we define our basic prototype for all `Neos.Neos.NodeTypes:Page` nodes.
-Since we extend `VendorName:DefaultPage` here, we can only define custom needs for `Neos.Neos.NodeTypes:Page` node types.
+Now we define our basic prototype for all `Neos.NodeTypes:Page` nodes.
+Since we extend `VendorName:DefaultPage` here, we can only define custom needs for `Neos.NodeTypes:Page` node types.
 
 For example::
 
-    prototype(Neos.Neos.NodeTypes:Page.Document) < prototype(VendorName:DefaultPage) {
+    prototype(Neos.NodeTypes:Page.Document) < prototype(VendorName:DefaultPage) {
         body {
             content {
                 main = PrimaryContent {
@@ -166,6 +166,6 @@ All our custom document node types will be defined like this::
 
 In case we have a `layout` property within our node type configuration, we can define a prototype for this case too::
 
-    customLayout = Neos.Neos.NodeTypes:Page.Document {
+    customLayout = Neos.NodeTypes:Page.Document {
        # custom properties for your node type
     }
