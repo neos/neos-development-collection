@@ -169,7 +169,7 @@ Out of the box the `Menu` is rendered using a simple unsorted list::
 
 Wrapping this into some container (if needed) in a lot of cases provides for enough possibilities
 to style the menu using CSS. In case it still is needed, it is possible to change the rendered markup
-of `Menu` using Fusion. `Menu` is defined inside the core of Neos together with Neos.Neos.NodeTypes:
+of `Menu` using Fusion. `Menu` is defined inside the core of Neos together with Neos.NodeTypes:
 
 *Neos.Neos/Resources/Private/Fusion/Root.fusion*
 
@@ -181,9 +181,9 @@ of `Menu` using Fusion. `Menu` is defined inside the core of Neos together with 
 
 ::
 
-	prototype(Neos.Neos.NodeTypes:Menu) < prototype(Neos.Neos:Menu)
-	prototype(Neos.Neos.NodeTypes:Menu) {
-		templatePath = 'resource://Neos.Neos.NodeTypes/Private/Templates/FusionObjects/Menu.html'
+	prototype(Neos.NodeTypes:Menu) < prototype(Neos.Neos:Menu)
+	prototype(Neos.NodeTypes:Menu) {
+		templatePath = 'resource://Neos.NodeTypes/Private/Templates/FusionObjects/Menu.html'
 		entryLevel = ${String.toInteger(q(node).property('startLevel'))}
 		maximumLevels = ${String.toInteger(q(node).property('maximumLevels'))}
 		node = ${node}

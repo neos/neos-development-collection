@@ -56,29 +56,29 @@ Example Ordering::
 	# individual statements are defined.
 
 	myArray = Neos.Fusion:Array {
-		o1 = Neos.Neos.NodeTypes:Text
+		o1 = Neos.NodeTypes:Text
 		o1.@position = 'start 12'
-		o2 = Neos.Neos.NodeTypes:Text
+		o2 = Neos.NodeTypes:Text
 		o2.@position = 'start 5'
-		o2 = Neos.Neos.NodeTypes:Text
+		o2 = Neos.NodeTypes:Text
 		o2.@position = 'start'
 
-		o3 = Neos.Neos.NodeTypes:Text
+		o3 = Neos.NodeTypes:Text
 		o3.@position = '10'
-		o4 = Neos.Neos.NodeTypes:Text
+		o4 = Neos.NodeTypes:Text
 		o4.@position = '20'
 
-		o5 = Neos.Neos.NodeTypes:Text
+		o5 = Neos.NodeTypes:Text
 		o5.@position = 'before o6'
 
-		o6 = Neos.Neos.NodeTypes:Text
+		o6 = Neos.NodeTypes:Text
 		o6.@position = 'end'
-		o7 = Neos.Neos.NodeTypes:Text
+		o7 = Neos.NodeTypes:Text
 		o7.@position = 'end 20'
-		o8 = Neos.Neos.NodeTypes:Text
+		o8 = Neos.NodeTypes:Text
 		o8.@position = 'end 30'
 
-		o9 = Neos.Neos.NodeTypes:Text
+		o9 = Neos.NodeTypes:Text
 		o9.@position = 'after o8'
 	}
 
@@ -88,8 +88,8 @@ to use ``@position`` and meaningful keys in your application, and not numeric on
 Example of numeric keys (discouraged)::
 
 	myArray = Neos.Fusion:Array {
-		10 = Neos.Neos.NodeTypes:Text
-		20 = Neos.Neos.NodeTypes:Text
+		10 = Neos.NodeTypes:Text
+		20 = Neos.NodeTypes:Text
 	}
 
 

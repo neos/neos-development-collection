@@ -227,7 +227,7 @@ class WorkspaceCommandController extends CommandController
      * @param string $workspace Name of the workspace, for example "christmas-campaign"
      * @param boolean $force Delete the workspace and all of its contents
      * @return void
-     * @see typo3.neos:workspace:discard
+     * @see neos.neos:workspace:discard
      */
     public function deleteCommand($workspace, $force = false)
     {
@@ -319,7 +319,7 @@ class WorkspaceCommandController extends CommandController
      * @param boolean $verbose If enabled, information about individual nodes will be displayed
      * @return void
      * @deprecated since 1.2
-     * @see typo3.neos:workspace:publish
+     * @see neos.neos:workspace:publish
      */
     public function publishAllCommand($workspaceName, $verbose = false)
     {
@@ -335,7 +335,7 @@ class WorkspaceCommandController extends CommandController
      * @param boolean $verbose If enabled, information about individual nodes will be displayed
      * @return void
      * @deprecated since 1.2
-     * @see typo3.neos:workspace:discard
+     * @see neos.neos:workspace:discard
      */
     public function discardAllCommand($workspaceName, $verbose = false)
     {

@@ -197,15 +197,15 @@ can contain two texts and two videos.
 	    video1:
 	      type: 'Acme.Demo:YouTube'
 	    text0:
-	      type: 'Neos.Neos.NodeTypes:Text'
+	      type: 'Neos.NodeTypes:Text'
 	    text1:
-	      type: 'Neos.Neos.NodeTypes:Text'
+	      type: 'Neos.NodeTypes:Text'
 
 #. The needed Fusion is created::
 
 	prototype(Acme.Demo:VideoGrid) {
 		videoRenderer = Acme.Demo:YouTube
-		textRenderer = Neos.Neos.NodeTypes:Text
+		textRenderer = Neos.NodeTypes:Text
 
 		video0 = ${q(node).children('video0').get(0)}
 		video1 = ${q(node).children('video1').get(0)}
@@ -231,7 +231,7 @@ can contain two texts and two videos.
 
 Instead of referencing specific content types directly the use of the generic `ContentCollection` content
 element allows to insert *arbitrary content* inside other elements. An example can be found in the
-`Neos.Neos.NodeTypes:MultiColumn` and `Neos.Neos.NodeTypes:MultiColumnItem` content elements.
+`Neos.NodeTypes:MultiColumn` and `Neos.NodeTypes:MultiColumnItem` content elements.
 
 As explained earlier (in `What are the benefits of indirection through Fusion?`_) the major benefit
 if using Fusion to decouple the rendering of items this way is flexibility. In the video grid
