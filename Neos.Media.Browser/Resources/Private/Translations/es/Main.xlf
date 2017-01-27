@@ -92,9 +92,6 @@
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
 			<target xml:lang="es-ES" state="translated">Cancelar</target></trans-unit>
-      <trans-unit id="replaceAssetResource" xml:space="preserve">
-				<source>Replace</source>
-			<target xml:lang="es-ES" state="translated">Reemplazar</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="es-ES" state="translated">Guardar</target></trans-unit>
@@ -335,49 +332,46 @@
       <target xml:lang="es-ES" state="needs-translation">Preview current file</target></trans-unit>
       <trans-unit id="couldNotReplaceAsset" xml:space="preserve">
 				<source>Could not replace asset</source>
-			<target xml:lang="es-ES" state="translated">No se pueden reemplazar los recursos</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">No se puede reemplazar el recurso</target></trans-unit>
       <trans-unit id="assetHasBeenReplaced" xml:space="preserve">
 				<source>Asset "{0}" has been replaced.</source>
-			<target xml:lang="es-ES" state="needs-translation">Asset "{0}" has been replaced.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">El recurso "{0}" ha sido reemplazado.</target></trans-unit>
       <trans-unit id="assetHasBeenUpdated" xml:space="preserve">
 				<source>Asset "{0}" has been updated.</source>
-			<target xml:lang="es-ES" state="needs-translation">Asset "{0}" has been updated.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">El recurso "{0}" ha sido actualizado.</target></trans-unit>
       <trans-unit id="assetHasBeenAdded" xml:space="preserve">
 				<source>Asset "{0}" has been added.</source>
-			<target xml:lang="es-ES" state="needs-translation">Asset "{0}" has been added.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">El recurso "{0}" ha sido añadido.</target></trans-unit>
       <trans-unit id="assetHasBeenDeleted" xml:space="preserve">
 				<source>Asset "{0}" has been deleted.</source>
-			<target xml:lang="es-ES" state="needs-translation">Asset "{0}" has been deleted.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">El recurso "{0}" ha sido eliminado.</target></trans-unit>
       <trans-unit id="assetCouldNotBeDeleted" xml:space="preserve">
 				<source>Asset could not be deleted.</source>
-			<target xml:lang="es-ES" state="needs-translation">Asset could not be deleted.</target></trans-unit>
-      <trans-unit id="assetHasBeenReplaced" xml:space="preserve">
-				<source>Asset "{0}" has been replaced.</source>
-			<target xml:lang="es-ES" state="needs-translation">Asset "{0}" has been replaced.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">El recurso no puede ser eliminado.</target></trans-unit>
       <trans-unit id="tagAlreadyExistsAndAddedToCollection" xml:space="preserve">
 				<source>Tag "{0}" already exists and was added to collection.</source>
-			<target xml:lang="es-ES" state="needs-translation">Tag "{0}" already exists and was added to collection.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">La etiqueta "{0}" ya existe y fué añadida a la colección.</target></trans-unit>
       <trans-unit id="tagHasBeenCreated" xml:space="preserve">
 				<source>Tag "{0}" has been created.</source>
-			<target xml:lang="es-ES" state="translated">Etiqueta {0} ha sido creada.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">La etiqueta "{0}" ha sido creada.</target><alt-trans><target xml:lang="es-ES">Etiqueta {0} ha sido creada.</target></alt-trans></trans-unit>
       <trans-unit id="tagHasBeenUpdated" xml:space="preserve">
 				<source>Tag "{0}" has been updated.</source>
-			<target xml:lang="es-ES" state="translated">Etiqueta {0} ha sido actualizada.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">La etiqueta "{0}" ha sido actualizada.</target><alt-trans><target xml:lang="es-ES">Etiqueta {0} ha sido actualizada.</target></alt-trans></trans-unit>
       <trans-unit id="tagHasBeenDeleted" xml:space="preserve">
 				<source>Tag "{0}" has been deleted.</source>
-			<target xml:lang="es-ES" state="translated">Etiqueta {0} ha sido eliminada.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">La etiqueta "{0}" ha sido eliminada.</target><alt-trans><target xml:lang="es-ES">Etiqueta {0} ha sido eliminada.</target></alt-trans></trans-unit>
       <trans-unit id="collectionHasBeenCreated" xml:space="preserve">
 				<source>Collection "{0}" has been created.</source>
-			<target xml:lang="es-ES" state="translated">Colección {0} ha sido creada.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">La colección "{0}" ha sido creada.</target><alt-trans><target xml:lang="es-ES">Colección {0} ha sido creada.</target></alt-trans></trans-unit>
       <trans-unit id="collectionHasBeenUpdated" xml:space="preserve">
 				<source>Collection "{0}" has been updated.</source>
-			<target xml:lang="es-ES" state="translated">Colección {0} ha sido actualizada.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">La colección "{0}" ha sido actualizada.</target><alt-trans><target xml:lang="es-ES">Colección {0} ha sido actualizada.</target></alt-trans></trans-unit>
       <trans-unit id="collectionHasBeenDeleted" xml:space="preserve">
 				<source>Collection "{0}" has been deleted.</source>
-			<target xml:lang="es-ES" state="translated">Colección {0} ha sido eliminada.</target></trans-unit>
-      <trans-unit id="replace.options.generateRedirects" xml:space="preserve">
+			<target xml:lang="es-ES" state="translated">La colección "{0}" ha sido eliminada.</target><alt-trans><target xml:lang="es-ES">Colección {0} ha sido eliminada.</target></alt-trans></trans-unit>
+      <trans-unit id="media.replace.options.generateRedirects" xml:space="preserve">
 				<source>Generate redirects from original file url to the new url</source>
-			<target xml:lang="es-ES" state="needs-translation">Generate redirects from original file url to the new url</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Generar redirecciones de la url del archivo original a la nueva url</target></trans-unit>
     </body>
   </file>
 </xliff>

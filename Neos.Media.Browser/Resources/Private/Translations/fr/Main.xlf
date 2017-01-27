@@ -92,9 +92,6 @@
       <trans-unit id="cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
 			<target xml:lang="fr">Annuler</target></trans-unit>
-      <trans-unit id="replaceAssetResource" xml:space="preserve">
-				<source>Replace</source>
-			<target xml:lang="fr" state="needs-translation">Replace</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve" approved="yes">
 				<source>Save</source>
 			<target xml:lang="fr">Enregistrer</target></trans-unit>
@@ -335,25 +332,22 @@
       <target xml:lang="fr" state="needs-translation">Preview current file</target></trans-unit>
       <trans-unit id="couldNotReplaceAsset" xml:space="preserve">
 				<source>Could not replace asset</source>
-			<target xml:lang="fr" state="needs-translation">Could not replace asset</target></trans-unit>
+			<target xml:lang="fr" state="translated">Remplacement de la ressource impossible</target></trans-unit>
       <trans-unit id="assetHasBeenReplaced" xml:space="preserve">
 				<source>Asset "{0}" has been replaced.</source>
-			<target xml:lang="fr" state="needs-translation">Asset "{0}" has been replaced.</target></trans-unit>
+			<target xml:lang="fr" state="translated">La ressource "{0}" a été remplacée.</target></trans-unit>
       <trans-unit id="assetHasBeenUpdated" xml:space="preserve">
 				<source>Asset "{0}" has been updated.</source>
-			<target xml:lang="fr" state="needs-translation">Asset "{0}" has been updated.</target></trans-unit>
+			<target xml:lang="fr" state="translated">La ressource "{0}" a été mise à jour.</target></trans-unit>
       <trans-unit id="assetHasBeenAdded" xml:space="preserve">
 				<source>Asset "{0}" has been added.</source>
-			<target xml:lang="fr" state="needs-translation">Asset "{0}" has been added.</target></trans-unit>
+			<target xml:lang="fr" state="translated">La ressource "{0}" a été ajoutée.</target></trans-unit>
       <trans-unit id="assetHasBeenDeleted" xml:space="preserve">
 				<source>Asset "{0}" has been deleted.</source>
-			<target xml:lang="fr" state="needs-translation">Asset "{0}" has been deleted.</target></trans-unit>
+			<target xml:lang="fr" state="translated">La ressource "{0}" a été supprimée.</target></trans-unit>
       <trans-unit id="assetCouldNotBeDeleted" xml:space="preserve">
 				<source>Asset could not be deleted.</source>
-			<target xml:lang="fr" state="needs-translation">Asset could not be deleted.</target></trans-unit>
-      <trans-unit id="assetHasBeenReplaced" xml:space="preserve">
-				<source>Asset "{0}" has been replaced.</source>
-			<target xml:lang="fr" state="needs-translation">Asset "{0}" has been replaced.</target></trans-unit>
+			<target xml:lang="fr" state="translated">La ressource n'a pu être supprimée.</target></trans-unit>
       <trans-unit id="tagAlreadyExistsAndAddedToCollection" xml:space="preserve">
 				<source>Tag "{0}" already exists and was added to collection.</source>
 			<target xml:lang="fr" state="needs-translation">Tag "{0}" already exists and was added to collection.</target></trans-unit>
@@ -374,10 +368,10 @@
 			<target xml:lang="fr" state="needs-translation">Collection "{0}" has been updated.</target></trans-unit>
       <trans-unit id="collectionHasBeenDeleted" xml:space="preserve">
 				<source>Collection "{0}" has been deleted.</source>
-			<target xml:lang="fr" state="needs-translation">Collection "{0}" has been deleted.</target></trans-unit>
-      <trans-unit id="replace.options.generateRedirects" xml:space="preserve">
+			<target xml:lang="fr" state="translated">La collection "{0}" a été supprimée.</target><alt-trans><target xml:lang="fr">La collection « {0} » a été supprimée.</target></alt-trans></trans-unit>
+      <trans-unit id="media.replace.options.generateRedirects" xml:space="preserve">
 				<source>Generate redirects from original file url to the new url</source>
-			<target xml:lang="fr" state="needs-translation">Generate redirects from original file url to the new url</target></trans-unit>
+			<target xml:lang="fr" state="translated">Générer des redirections d’url du fichier original vers la nouvelle url</target></trans-unit>
     </body>
   </file>
 </xliff>

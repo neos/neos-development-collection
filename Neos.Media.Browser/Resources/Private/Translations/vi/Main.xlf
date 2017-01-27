@@ -92,9 +92,6 @@
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
 			<target xml:lang="vi" state="translated">Hủy bỏ</target></trans-unit>
-      <trans-unit id="replaceAssetResource" xml:space="preserve">
-				<source>Replace</source>
-			<target xml:lang="vi" state="needs-translation">Replace</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="vi" state="translated">Lưu</target></trans-unit>
@@ -347,9 +344,6 @@
       <trans-unit id="assetCouldNotBeDeleted" xml:space="preserve">
 				<source>Asset could not be deleted.</source>
 			<target xml:lang="vi" state="needs-translation">Asset could not be deleted.</target></trans-unit>
-      <trans-unit id="assetHasBeenReplaced" xml:space="preserve">
-				<source>Asset "{0}" has been replaced.</source>
-			<target xml:lang="vi" state="needs-translation">Asset "{0}" has been replaced.</target></trans-unit>
       <trans-unit id="tagAlreadyExistsAndAddedToCollection" xml:space="preserve">
 				<source>Tag "{0}" already exists and was added to collection.</source>
 			<target xml:lang="vi" state="needs-translation">Tag "{0}" already exists and was added to collection.</target></trans-unit>

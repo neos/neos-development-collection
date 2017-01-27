@@ -67,7 +67,6 @@ root {
 
 		entryIdentifier {
 			node = ${node}
-			editPreviewMode = ${documentNode.context.currentRenderingMode.name}
 		}
 		entryTags {
 			# Whenever the node changes the matched condition could change
@@ -88,4 +87,5 @@ root {
 #
 prototype(Neos.Fusion:GlobalCacheIdentifiers) {
 	workspaceChain = ${documentNode.context.workspace.name + ',' + Array.join(Array.keys(documentNode.context.workspace.baseWorkspaces), ',')}
+	editPreviewMode = ${documentNode.context.currentRenderingMode.name}
 }

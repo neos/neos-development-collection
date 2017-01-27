@@ -92,9 +92,6 @@
       <trans-unit id="cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
 			<target xml:lang="de">Abbrechen</target></trans-unit>
-      <trans-unit id="replaceAssetResource" xml:space="preserve" approved="yes">
-				<source>Replace</source>
-			<target xml:lang="de">Ersetzen</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve" approved="yes">
 				<source>Save</source>
 			<target xml:lang="de">Speichern</target></trans-unit>
@@ -351,9 +348,6 @@
       <trans-unit id="assetCouldNotBeDeleted" xml:space="preserve" approved="yes">
 				<source>Asset could not be deleted.</source>
 			<target xml:lang="de">Asset konnte nicht gelöscht werden.</target></trans-unit>
-      <trans-unit id="assetHasBeenReplaced" xml:space="preserve" approved="yes">
-				<source>Asset "{0}" has been replaced.</source>
-			<target xml:lang="de">Asset "{0}" wurde ersetzt.</target></trans-unit>
       <trans-unit id="tagAlreadyExistsAndAddedToCollection" xml:space="preserve" approved="yes">
 				<source>Tag "{0}" already exists and was added to collection.</source>
 			<target xml:lang="de">Tag "{0}" ist bereits vorhanden und wurde zur Sammlung hinzugefügt.</target><alt-trans><target xml:lang="de">Tag "{0}" ist bereits vorhanden und wurde der Sammlung hinzugefügt.</target></alt-trans></trans-unit>

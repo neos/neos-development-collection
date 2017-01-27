@@ -72,7 +72,7 @@ class AssetService
     /**
      * @var array
      */
-    protected $usageStrategies;
+    protected $usageStrategies = [];
 
     /**
      * @Flow\Inject

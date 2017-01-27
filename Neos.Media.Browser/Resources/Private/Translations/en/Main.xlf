@@ -68,9 +68,6 @@
 			<trans-unit id="editAsset" xml:space="preserve">
 				<source>Edit asset</source>
 			</trans-unit>
-			<trans-unit id="replaceAssetResource" xml:space="preserve">
-				<source>Replace</source>
-			</trans-unit>
 			<trans-unit id="deleteAsset" xml:space="preserve">
 				<source>Delete asset</source>
 			</trans-unit>
@@ -360,9 +357,6 @@
 			</trans-unit>
 			<trans-unit id="assetCouldNotBeDeleted" xml:space="preserve">
 				<source>Asset could not be deleted.</source>
-			</trans-unit>
-			<trans-unit id="assetHasBeenReplaced" xml:space="preserve">
-				<source>Asset "{0}" has been replaced.</source>
 			</trans-unit>
 			<trans-unit id="tagAlreadyExistsAndAddedToCollection" xml:space="preserve">
 				<source>Tag "{0}" already exists and was added to collection.</source>
