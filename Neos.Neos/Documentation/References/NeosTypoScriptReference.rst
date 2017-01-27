@@ -4,7 +4,7 @@
 TypoScript Reference
 ====================
 
-TYPO3.TypoScript
+Neos.Fusion
 ================
 
 This package contains general-purpose TypoScript objects, which are usable both within Neos and standalone.
