@@ -13,7 +13,7 @@ Node Structure:
       - text: 'This is our exemplary rendering test. Check it out and play around!'
   - main (section)
     - ___ (TextWithHeadline)
-      - title: 'Do you love TYPO3 Flow?'
+      - title: 'Do you love Neos Flow?'
       - text: 'If you do, make sure to post your opinion about it on Twitter!'
     - ___ (HTML)
       - source: '[TWITTER WIDGET]'
@@ -41,9 +41,9 @@ Node Structure:
 
   - products (page) (title: Products)
     - frameworks (page) (title: Frameworks)
-      - typo3-flow (page) (title: TYPO3 Flow)
+      - neos-flow (page) (title: Neos Flow)
     - cms (page) (title: CMS)
-      - typo3-neos (page) (title: TYPO3 Neos)
+      - neos-neos (page) (title: TYPO3 Neos)
 
 
 That is, we want to simulate the following layout with it:
@@ -56,7 +56,7 @@ That is, we want to simulate the following layout with it:
       | +--------------------------------------+  |
       +---------------------------------+---------+
       | +----------------------------+  |+-------+|
-      | |  DO YOU LOVE TYPO3 Flow?   |  ||LAST   ||
+      | |  DO YOU LOVE Neos Flow?    |  ||LAST   ||
       | |                            |  ||COMMITS||
       | |  If you do, make sure ...  |  ||       ||
       | +----------------------------+  ||lorem i||

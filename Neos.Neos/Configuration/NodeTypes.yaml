@@ -116,7 +116,7 @@
 
 # Abstract Document type.
 # "Documents" always have a publicly-visible URL.
-# The most prominent subclass of Document is "Neos.Neos.NodeTypes:Page", but
+# The most prominent subclass of Document is "Neos.NodeTypes:Page", but
 # anything page-like (like a blog post) should subclass "Neos.Neos:Document".
 'Neos.Neos:Document':
   superTypes:

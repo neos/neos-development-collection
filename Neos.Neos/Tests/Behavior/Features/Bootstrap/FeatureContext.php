@@ -387,7 +387,7 @@ class FeatureContext extends MinkContext
      */
     public function iSelectTheFirstHeadlineContentElement()
     {
-        $element = $this->assertSession()->elementExists('css', '.typo3-neos-nodetypes-headline');
+        $element = $this->assertSession()->elementExists('css', '.neos-nodetypes-headline');
         $element->click();
 
         $this->selectedContentElement = $element;

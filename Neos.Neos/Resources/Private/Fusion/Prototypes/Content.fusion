@@ -12,7 +12,7 @@ prototype(Neos.Neos:Content) < prototype(Neos.Fusion:Template) {
 	attributes.class = ''
 
 	# The following is used to automatically append a class attribute that reflects the underlying node type of a TypoScript object,
-	# for example "typo3-neos-nodetypes-form", "typo3-neos-nodetypes-headline", "typo3-neos-nodetypes-html", "typo3-neos-nodetypes-image", "typo3-neos-nodetypes-menu" and "typo3-neos-nodetypes-text"
+	# for example "neos-nodetypes-form", "neos-nodetypes-headline", "neos-nodetypes-html", "neos-nodetypes-image", "neos-nodetypes-menu" and "neos-nodetypes-text"
 	# You can disable the following line with:
 	# prototype(Neos.Neos:Content) {
 	#   attributes.class.@process.nodeType >

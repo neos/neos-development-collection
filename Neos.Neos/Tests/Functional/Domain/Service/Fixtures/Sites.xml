@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
- <site name="example.org" state="1" siteResourcesPackageKey="TYPO3.TypoScript" siteNodeName="example">
+ <site name="example.org" state="1" siteResourcesPackageKey="Neos.Fusion" siteNodeName="example">
   <nodes formatVersion="2.0">
    <node identifier="cb03e144-92af-4e60-8853-482083dcfbda" nodeName="example">
     <variant sortingIndex="100" workspace="live" nodeType="Neos.Neos:Shortcut" version="2" removed="" hidden="" hiddenInIndex="1">
@@ -15,7 +15,7 @@
      </properties>
     </variant>
     <node identifier="b2e1b29c-0b33-455a-862b-88bbd09e5310" nodeName="home">
-     <variant sortingIndex="100" workspace="live" nodeType="Neos.Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
+     <variant sortingIndex="100" workspace="live" nodeType="Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
       <dimensions>
        <language>en_US</language>
       </dimensions>
@@ -28,7 +28,7 @@
       </properties>
      </variant>
      <node identifier="94165d9e-1c0d-43ca-b172-7b867524f349" nodeName="protected">
-      <variant sortingIndex="400" workspace="live" nodeType="Neos.Neos.NodeTypes:Page" version="3" removed="" hidden="" hiddenInIndex="">
+      <variant sortingIndex="400" workspace="live" nodeType="Neos.NodeTypes:Page" version="3" removed="" hidden="" hiddenInIndex="">
        <dimensions>
         <language>en_US</language>
        </dimensions>
