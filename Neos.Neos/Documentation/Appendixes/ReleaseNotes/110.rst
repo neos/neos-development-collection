@@ -65,7 +65,7 @@ Switch a Node Type in Neos
 
 Using arbitrary files (Assets) from the media browser for a node property was a very demanded feature from many Neos users. The new Asset Editor provides two additional property types for nodes to edit a single or multiple Assets in the inspector. The editor will be used for property types “TYPO3\Media\Domain\Model\Asset” and “array<TYPO3\Media\Domain\Model\Asset>” for single and multiple assignment respectively.
 
-The new AssetList node type in the Neos.Neos.NodeTypes package is a simple implementation of a file list to render links to multiple Assets.
+The new AssetList node type in the TYPO3.Neos.NodeTypes package is a simple implementation of a file list to render links to multiple Assets.
 
 Asset editor in Neos
 
@@ -76,7 +76,7 @@ Asset editor in Neos
 
 Besides editing Asset properties in the inspector there’s also the need to link to Assets from any inline editable content. An extended link plugin for Aloha allows to search for Assets by tag or title and select them in the results.
 
-A new ConvertUris processor object is used to convert node:// and asset:// links via TypoScript. It’s already configured for the Neos.Neos:Content prototype, so no changes should be needed to use this feature.
+A new ConvertUris processor object is used to convert node:// and asset:// links via TypoScript. It’s already configured for the TYPO3.Neos:Content prototype, so no changes should be needed to use this feature.
 Linking to assets in Neos
 
 .. figure:: Images/110-asset-linking.png
@@ -129,7 +129,7 @@ A new view helper uri.module for creating links to modules was added as an addit
 The FlowQuery find operation added support for recursive node type or identifier queries. This allows many new exciting possibilities to query for content independent from the actual structure:
 
 - Find a node by identifier recursively inside the given site ${q(site).find('#60216562-0ad9-86ff-0b32-7b7072bcb6b2')}
-- Find all nodes of a specific type recursively inside the given site ${q(site).find('[instanceof Neos.Neos.NodeTypes:Text]')}
+- Find all nodes of a specific type recursively inside the given site ${q(site).find('[instanceof TYPO3.Neos.NodeTypes:Text]')}
 
 The filter operation now supports the != operator to support more situationens. Example::
 
@@ -154,7 +154,7 @@ The Context in TYPO3CR has a new property for the “dimensions” that will car
 
 Neos supports Content Dimensions in the backend by using the context path of nodes consistently. A new route part handler (experimental) can be activated to use prefixed route paths for a “locales” dimension. The Context in Neos will then be initialized to use the resolved locales fallback chain for all Node operations. The route part handler for the Neos frontend can be switched by configuring a different implementation for the Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface interface using Objects.yaml
 
-To restrict the available locale fallback chains and give them a URL path prefix Neos comes with a new configuration for dimension presets (see “Neos.Neos.contentDimensions.dimensions”) that will also be used to fill the view selector that will be part of the next release.
+To restrict the available locale fallback chains and give them a URL path prefix Neos comes with a new configuration for dimension presets (see “TYPO3.Neos.contentDimensions.dimensions”) that will also be used to fill the view selector that will be part of the next release.
 
 **Node Types**
 
@@ -162,14 +162,14 @@ The node type configuration (NodeTypes.yaml) can be split in multiple files now.
 
 **Independent**
 
-The TYPO3.TYPO3CR package had a dependency on Neos.Neos which has now been removed so the package can be used as a standalone package for Flow projects that would like to have the benefit of hierarchical nodes.
+The TYPO3.TYPO3CR package had a dependency on TYPO3.Neos which has now been removed so the package can be used as a standalone package for Flow projects that would like to have the benefit of hierarchical nodes.
 
 **Other changes**
 
 - The TYPO3CR Node implementation got support for the new CacheAwareInterface of Flow, this allows for easier caching of nodesThe Node API will emit signals (Node::NodeAdded, Node::NodeUpdated, Node::NodeRemoved) on changes to a node, this allows to create a search index over the content or react to events for other purposes
 - The ContextInterface interface was removed from the TYPO3CR package, the implementation class Context should be used instead for type hints
 - The NodeConverter does not support mapping via UUIDs anymore because they do not carry any context information (e.g. for dimensions), use node context paths instead
-- Removed the (implicit) dependency to the Neos.Neos package from TYPO3CR
+- Removed the (implicit) dependency to the TYPO3.Neos package from TYPO3CR
 - The NodeConverter supports the switching of node types by an additional “_nodeType” source property
 - Node Migrations now work directly on NodeData, this could be breaking if custom Transformations or Filters were implemented
 

@@ -118,7 +118,7 @@ Node privileges define what can be restricted in relation to accessing and editi
         'Some.Package:SomeIdentifier':
           matcher: >-
             isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")
-            && createdNodeIsOfType("Neos.Neos.NodeTypes:Text")
+            && createdNodeIsOfType("Neos.NodeTypes:Text")
 
   will actually only affect nodes of that type (and subtypes). All users will still be able to create other node types,
   unless you also add a more generic privilege target:
@@ -215,7 +215,7 @@ Usage example:
       'Some.Package:SomeIdentifier':
         matcher: >-
           isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")
-          && createdNodeIsOfType("Neos.Neos.NodeTypes:Text")
+          && createdNodeIsOfType("Neos.NodeTypes:Text")
 
 This defines a privilege target that intercepts creation of Text nodes in the specified node (and all of its child
 nodes).
@@ -234,7 +234,7 @@ Usage example:
       'Some.Package:SomeIdentifier':
         matcher: >-
           isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")
-          && nodeIsOfType("Neos.Neos.NodeTypes:Text")
+          && nodeIsOfType("Neos.NodeTypes:Text")
 
 This defines a privilege target that intercepts editing of Text nodes on the specified node (and all of its child
 nodes).

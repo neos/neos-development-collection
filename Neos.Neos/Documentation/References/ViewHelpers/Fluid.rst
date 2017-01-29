@@ -2817,12 +2817,12 @@ Examples
 
 **custom default scheme**::
 
-	<f:link.external uri="typo3.org" defaultScheme="ftp">external ftp link</f:link.external>
+	<f:link.external uri="neos.io" defaultScheme="ftp">external ftp link</f:link.external>
 
 
 Expected result::
 
-	<a href="ftp://typo3.org">external ftp link</a>
+	<a href="ftp://neos.io">external ftp link</a>
 
 
 
@@ -3415,12 +3415,12 @@ Examples
 
 **custom default scheme**::
 
-	<f:uri.external uri="typo3.org" defaultScheme="ftp" />
+	<f:uri.external uri="neos.io" defaultScheme="ftp" />
 
 
 Expected result::
 
-	ftp://typo3.org
+	ftp://neos.io
 
 
 

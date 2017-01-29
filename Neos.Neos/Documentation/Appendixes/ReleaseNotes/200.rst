@@ -297,7 +297,7 @@ See https://neos.io/develop/download/upgrade-instructions-2-0.html
 - Cleanup multi column rendering
    This is breaking if you rely on the MultiColumnItem having a template as MultiColumnItem is not a ContentCollection
    (so a plain tag). Attributes configured for MultiColumnItem still work as before.
-- Remove deprecated Neos.Neos:Page nodetype
+- Remove deprecated TYPO3.Neos:Page nodetype
 - Node path should always be lowercase
    This is breaking in case you have nodes with names that have uppercase letters and they are referenced by their
    path somewhere.

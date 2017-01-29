@@ -96,8 +96,8 @@ class SiteImportExportServiceTest extends FunctionalTestCase
     protected function markSkippedIfNodeTypesPackageIsNotInstalled()
     {
         $packageManager = $this->objectManager->get(PackageManagerInterface::class);
-        if (!$packageManager->isPackageActive('Neos.Neos.NodeTypes')) {
-            $this->markTestSkipped('This test needs the Neos.Neos.NodeTypes package.');
+        if (!$packageManager->isPackageActive('Neos.NodeTypes')) {
+            $this->markTestSkipped('This test needs the Neos.NodeTypes package.');
         }
     }
 }

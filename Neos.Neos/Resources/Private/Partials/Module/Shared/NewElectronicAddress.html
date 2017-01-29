@@ -11,7 +11,7 @@
 			</div>
 
 			<div class="neos-control-group{f:validation.ifHasErrors(for: 'electronicAddress.identifier', then: ' neos-error')}">
-				<label class="neos-control-label" for="addressIdentifier">{neos:backend.translate(id: 'electronicAddress.identifier', package: 'Neos.Party', value: 'Identifier (example: test@typo3.org)')}</label>
+				<label class="neos-control-label" for="addressIdentifier">{neos:backend.translate(id: 'electronicAddress.identifier', package: 'Neos.Party', value: 'Identifier (example: test@neos.io)')}</label>
 				<div class="neos-controls">
 					<f:form.textfield name="identifier" property="identifier" id="addressIdentifier" placeholder="{neos:backend.translate(id: 'electronicAddress.identifierPlaceholder', package: 'Neos.Party', value: 'Identifier')}" class="neos-span12" />
 					<f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'electronicAddress.identifier'}"/>
