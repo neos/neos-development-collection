@@ -5,8 +5,8 @@
 		<f:alias map="{'deleteAssetLabel': '{neos:backend.translate(id: \'media.tooltip.deleteAsset\', source: \'Modules\', package: \'TYPO3.Neos\')}'}">
 			<f:for each="{paginatedAssets}" as="asset">
 				<li class="asset">
-					<f:link.action action="edit" title="{neos:backend.translate(id: 'media.tooltip.editAsset', source: 'Modules', package: 'TYPO3.Neos')}" class="neos-thumbnail" arguments="{asset: asset}">
-						<div class="neos-img-container draggable-asset {f:if(condition: '{asset.tags -> f:count()} == 0', then: ' neos-media-untagged')}" data-asset-identifier="{asset -> f:format.identifier()}">
+					<f:link.action action="edit" title="{neos:backend.translate(id: 'media.tooltip.editAsset', source: 'Modules', package: 'TYPO3.Neos')}" class="neos-thumbnail" arguments="{asset: asset}" data="{asset-identifier: '{asset -> f:format.identifier()}'}">
+						<div class="neos-img-container draggable-asset {f:if(condition: '{asset.tags -> f:count()} == 0', then: ' neos-media-untagged')}">
 							<m:thumbnail asset="{asset}" preset="TYPO3.Neos:Thumbnail" alt="{asset.label}" async="{settings.asyncThumbnails}" />
 							<button class="neos-button neos-media-delete" title="{deleteAssetLabel}" data-neos-toggle="tooltip" data-modal="delete-asset-modal" data-label="{asset.label -> f:format.crop(maxCharacters: 50)}" data-object-identifier="{asset -> f:format.identifier()}"><i class="icon-trash icon-white"></i></button>
 						</div>
