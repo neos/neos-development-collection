@@ -1,0 +1,26 @@
+{
+    "description": "",
+    "type": "neos-package",
+    "name": "packagefactory/atomicfusion-afx",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "Martin Ficzel",
+            "email": "martin.ficzel@gmx.de",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "neos/flow": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "PackageFactory\\AtomicFusion\\AFX\\": "Classes/"
+        }
+    },
+    "extra": {
+        "neos": {
+            "package-key": "PackageFactory.AtomicFusion.AFX"
+        }
+    }
+}

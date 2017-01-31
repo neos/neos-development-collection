@@ -1,0 +1,12 @@
+
+prototype(PackageFactory.AtomicFusion.AFX:Test2) < prototype(PackageFactory.AtomicFusion:Component) {
+
+    @styleguide {
+    path = "test.2"
+    title  = "Test 2"
+    }
+
+    renderer = AFX::
+    <div>fooo</div>
+
+}
