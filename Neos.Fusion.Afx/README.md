@@ -1,4 +1,4 @@
-# PackageFactory.AtomicFusion.ASX
+# PackageFactory.AtomicFusion.AFX
 
 > JSX inspired compact syntax for Neos.Fusion
 
