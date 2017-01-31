@@ -2,11 +2,23 @@
 prototype(PackageFactory.AtomicFusion.AFX:Test2) < prototype(PackageFactory.AtomicFusion:Component) {
 
     @styleguide {
-    path = "test.2"
-    title  = "Test 2"
+        path = "test.2"
+        title  = "Test 2"
     }
 
+    id = 123
+    title = 'a title'
+    subtitle = 'a subtitle'
+    description = 'description lorem ipsum'
+
     renderer = AFX::
-    <div>fooo</div>
+        <div class="example" id="${props.id}" >
+            <h1 @key="headline" >${props.title}</h1>
+            <h2 @key="headline2" ><strong>SUB:</strong>${props.subtitle}</h2>
+            <Neos.Fusion:Tag @key="body" tagName="div" content="foo"/>
+            <Neos.Fusion:Tag tagName="div">
+                <p>${props.description}</p>
+            </Neos.Fusion:Tag>
+        </div>
 
 }

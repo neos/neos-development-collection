@@ -48,6 +48,17 @@ prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.At
 }
 ```
 
+this enables compact components but also offers unplanned extensibility that deeply modifies the rendered code 
+
+```
+prototype(PackageFactory.AtomicFusion.AFX:ExampleTwo) <  prototype(Neos.Neos:Value){
+    value = PackageFactory.AtomicFusion.AFX:Example {
+        content.headline.tagName = h2
+        content.image.attributes.class = 'image'
+    }
+} 
+```
+
 ## License
 
 see [LICENSE file](LICENSE)
