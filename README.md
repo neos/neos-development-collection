@@ -1,6 +1,6 @@
 # PackageFactory.AtomicFusion.ASX
 
-> JSX inspired syntax for Neos.Fusion
+> JSX inspired compact syntax for Neos.Fusion
 
 ## WARNING
 
@@ -17,6 +17,10 @@ prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.At
     title = 'foo'
     imageUri = 'https://dummyimage.com/600x400/000/fff'
     
+    #
+    # All lines following the AFX:: are read as xml and 
+    # converted to the fusion code below at parse time
+    # 
     renderer = AFX::
        <div>
          <h1 @key="headline" >${props.title}</h1>
