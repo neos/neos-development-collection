@@ -68,12 +68,11 @@ prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.At
 ## Rules
 
 
-### HTML-Tags
+### HTML-Tags (Tags without Namespace)
 
 HTML-Tags are converted to `Neos.Fusion:Tag` Objects. All attributes are rendered as attributes and the content/children 
 are renderd as content.
  
-
 The following html: 
 ```
 <h1 class="headline" @if.hasHeadline="{props.headline ? true : false}">${props.headline}</h1>
@@ -88,9 +87,9 @@ Neos.Fusion:Tag {
 }
 ``` 
 
-### Fusion-Object-Tags
+### Fusion-Object-Tags (namespaced Tags)
 
-The fusion object tags are interpreted as component-names and all attributes are passed as top-level fusion-properties.
+All namespaced-tags are interpreted as prototype-names and all attributes are passed as top-level fusion-properties.
 
 The following html: 
 ```
