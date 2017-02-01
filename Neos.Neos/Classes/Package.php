@@ -78,17 +78,17 @@ class Package extends BasePackage
 
         $dispatcher->connect(AssetService::class, 'assetResourceReplaced', ContentCacheFlusher::class, 'registerAssetResourceChange');
 
-        $dispatcher->connect(Node::class, 'nodeAdded', NodeUriPathSegmentGenerator::class, '::setUniqueUriPathSegment');
+        $dispatcher->connect(Node::class, 'nodeAdded', NodeUriPathSegmentGenerator::class, 'setUniqueUriPathSegment');
         $dispatcher->connect(Node::class, 'nodePropertyChanged', Service\ImageVariantGarbageCollector::class, 'removeUnusedImageVariant');
         $dispatcher->connect(Node::class, 'nodePropertyChanged', function (NodeInterface $node, $propertyName) use ($bootstrap) {
             if ($propertyName === 'uriPathSegment') {
-                NodeUriPathSegmentGenerator::setUniqueUriPathSegment($node);
+                $bootstrap->getObjectManager()->get(NodeUriPathSegmentGenerator::class)->setUniqueUriPathSegment($node);
                 $bootstrap->getObjectManager()->get(RouteCacheFlusher::class)->registerNodeChange($node);
             }
         });
-        $dispatcher->connect(Node::class, 'nodePathChanged', function (NodeInterface $node, $oldPath, $newPath, $recursion) {
+        $dispatcher->connect(Node::class, 'nodePathChanged', function (NodeInterface $node, $oldPath, $newPath, $recursion) use ($bootstrap) {
             if (!$recursion) {
-                NodeUriPathSegmentGenerator::setUniqueUriPathSegment($node);
+                $bootstrap->getObjectManager()->get(NodeUriPathSegmentGenerator::class)->setUniqueUriPathSegment($node);
             }
         });
 

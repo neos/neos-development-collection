@@ -15,9 +15,11 @@ use Behat\Transliterator\Transliterator;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Locale;
+use Neos\Neos\Domain\Service\NodeSearchServiceInterface;
 use Neos\Neos\Exception;
 use Neos\Neos\Service\TransliterationService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 
 /**
  * Utility to generate a valid, non-conflicting uriPathSegment for nodes.
@@ -33,6 +35,18 @@ class NodeUriPathSegmentGenerator
     protected $transliterationService;
 
     /**
+     * @Flow\Inject
+     * @var NodeTypeManager
+     */
+    protected $nodeTypeManager;
+
+    /**
+     * @Flow\Inject
+     * @var NodeSearchServiceInterface
+     */
+    protected $nodeSearchService;
+
+    /**
      * Sets the best possible uriPathSegment for the given Node.
      * Will use an already set uriPathSegment or alternatively the node name as base,
      * then checks if the uriPathSegment already exists on the same level and appends a counter until a unique path segment was found.
@@ -40,15 +54,23 @@ class NodeUriPathSegmentGenerator
      * @param NodeInterface $node
      * @return void
      */
-    public static function setUniqueUriPathSegment(NodeInterface $node)
+    public function setUniqueUriPathSegment(NodeInterface $node)
     {
         if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
-            $q = new FlowQuery(array($node));
-            $q = $q->context(array('invisibleContentShown' => true, 'removedContentShown' => true, 'inaccessibleContentShown' => true));
-
+            $parentNode = $node->getParent();
+            $documentNodeType = $this->nodeTypeManager->getNodeType('Neos.Neos:Document');
+            $context = $node->getContext();
             $possibleUriPathSegment = $initialUriPathSegment = !$node->hasProperty('uriPathSegment') ? $node->getName() : $node->getProperty('uriPathSegment');
+            $nodeExists = function ($possibleUriPathSegment) use ($documentNodeType, $context, $parentNode, $node) {
+                $nodes = $this->nodeSearchService->findByProperties(['uriPathSegment' => $possibleUriPathSegment], [$documentNodeType], $context, $parentNode);
+                $filteredNodes = array_filter($nodes, function ($currentNode) use ($node, $parentNode) {
+                    // Make sure nodes are true siblings only (and not ancestors) and that they are not equal to each other
+                    return ($currentNode->getParent()->getIdentifier() === $parentNode->getIdentifier()) && ($currentNode->getIdentifier() !== $node->getIdentifier());
+                });
+                return count($filteredNodes) > 0;
+            };
             $i = 1;
-            while ($q->siblings('[instanceof Neos.Neos:Document][uriPathSegment="' . $possibleUriPathSegment . '"]')->count() > 0) {
+            while ($nodeExists($possibleUriPathSegment)) {
                 $possibleUriPathSegment = $initialUriPathSegment . '-' . $i++;
             }
             $node->setProperty('uriPathSegment', $possibleUriPathSegment);
