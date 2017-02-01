@@ -2,6 +2,10 @@
 
 > JSX inspired compact syntax for Neos.Fusion
 
+This package provides a fusion preprocessor that expands a compact xml-ish syntax to pure fusion code. This allows
+to write compact components that do'nt need a seperate template file and enables unplanned extensibility for the defined 
+prototypes because the genrated fusion code can be overwritten and controlled from the outside if needed. 
+
 ## WARNING
 
 This is highly experimental and will very likely change in the future. 
@@ -14,7 +18,9 @@ With this package the following fusion code
 
 ```
 prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.AtomicFusion:Component) {
-    title = 'foo'
+    title = 'title text'
+    subtitle = 'subtitle line'
+
     imageUri = 'https://dummyimage.com/600x400/000/fff'
     
     #
@@ -23,14 +29,15 @@ prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.At
     # 
     renderer = AFX::
        <div>
-         <h1 @key="headline" >${props.title}</h1>
+         <h1 @key="headline">${props.title}</h1>
+         <h2 @key="subheadline" @if.hasSubtitle="${props.subtitle ? true : false}">${props.subtitle}</h1>
          <PackageFactory.AtomicFusion.AFX:Image @key="image" uri="${props.imageUri}" />
        </div>
 
 }
 ```
 
-will be interpreted as equivalent to the following fusion code
+Will be interpreted as equivalent to the following fusion-code
 
 ```
 prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.AtomicFusion:Component) {
@@ -44,6 +51,12 @@ prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.At
                 tagName = 'h1'
                 content = ${props.title}
             }
+            subheadline = Neos.Fusion:Tag {
+                tagName = 'h2'
+                content = ${props.subtitle}
+                @if.hasSubtitle = ${props.subtitle ? true : false}
+            }
+
             image = PackageFactory.AtomicFusion.AFX:Image {
                 uri = ${props.imageUri}
             }
@@ -52,16 +65,56 @@ prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.At
 }
 ```
 
-this enables compact components but also offers unplanned extensibility that deeply modifies the rendered code 
+## Rules
 
+
+### HTML-Tags
+
+HTML-Tags are converted to `Neos.Fusion:Tag` Objects. All attributes are rendered as attributes and the content/children 
+are renderd as content.
+ 
+
+The following html: 
 ```
-prototype(PackageFactory.AtomicFusion.AFX:ExampleTwo) <  prototype(Neos.Neos:Value){
-    value = PackageFactory.AtomicFusion.AFX:Example {
-        content.headline.tagName = h2
-        content.image.attributes.class = 'image'
-    }
-} 
+<h1 class="headline" @if.hasHeadline="{props.headline ? true : false}">${props.headline}</h1>
 ```
+Will be transformed into this fusion:
+```
+Neos.Fusion:Tag {
+    tagName = 'h1'
+    attributes.class = 'headline'
+    content = ${props.headline}
+    @if.hasHeadline="{props.headline ? true : false}
+}
+``` 
+
+### Fusion-Object-Tags
+
+The fusion object tags are interpreted as component-names and all attributes are passed as top-level fusion-properties.
+
+The following html: 
+```
+<Vendor.Site:Prototype type="headline" @if.hasHeadline="{props.headline ? true : false}" >${props.headline}</Vendor.Site:Prototype>
+```
+Will be transformed into this fusion:
+```
+Vendor.Site:Prototype {
+    type = 'headline'
+    renderer = ${props.headline}
+    @if.hasHeadline="{props.headline ? true : false}
+}
+```
+
+### Meta-Attributes
+
+In general all meta-attributes start with an @-sign. 
+
+The `@kchildren`-attribute defined the property that is used to render the content/children of the current tag into. For
+html-tags the default is `content` while for Fusion-Object-Tags the default is `renderer`.
+
+The `@key`-attribute can be used to define the name of an item among its children. 
+
+All other meta attributes are directly added to the generated prototype and can be used for @if or @process statements. 
 
 ## License
 
