@@ -1,5 +1,5 @@
-Neos:
-  Neos:
-    fusion:
-      autoInclude:
-        PackageFactory.AtomicFusion.AFX: true
+#Neos:
+#  Neos:
+#    fusion:
+#      autoInclude:
+#        PackageFactory.AtomicFusion.AFX: true
