@@ -15,15 +15,17 @@ use PackageFactory\AtomicFusion\AFX\Service\AfxService;
 class FusionParserAspect
 {
 
-    const SCAN_PATTERN_AFX = "/([ \\t]*)([a-z0-9.]+)[\\s]*=[\\s]*AFX::[\\s]*\\n(.*?)\\n[ \\t]*\\n/us";
-
+    /**
+     * Regex Pattern to detect the afx code in the fusion that will be parsed
+     */
+    const SCAN_PATTERN_AFX = "/\\n([ \\t]*)([a-zA-Z0-9.]+)[\\s]*=[\\s]*afx`([^`]*)`/us";
 
     /**
      * @Flow\Around("method(Neos\Fusion\Core\Parser->parse())")
      * @param JoinPointInterface $joinPoint The current join point
      * @return mixed
      */
-    public function expandASXToFusion(JoinPointInterface $joinPoint)
+    public function expandAfxToFusion(JoinPointInterface $joinPoint)
     {
         $fusionCode = $joinPoint->getMethodArgument('sourceCode');
 
@@ -39,7 +41,6 @@ class FusionParserAspect
                 },
                 $fusionCode
             );
-
             $joinPoint->setMethodArgument('sourceCode', $fusionCodeProcessed);
         }
 
