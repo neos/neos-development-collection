@@ -29,8 +29,8 @@ prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.At
     # 
     renderer = AFX::
        <div>
-         <h1 @key="headline">${props.title}</h1>
-         <h2 @key="subheadline" @if.hasSubtitle="${props.subtitle ? true : false}">${props.subtitle}</h1>
+         <h1 @key="headline" class="headline">${props.title}</h1>
+         <h2 @key="subheadline" class="subheadline" @if.hasSubtitle="${props.subtitle ? true : false}">${props.subtitle}</h1>
          <PackageFactory.AtomicFusion.AFX:Image @key="image" uri="${props.imageUri}" />
        </div>
 
@@ -50,10 +50,12 @@ prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.At
             headline = Neos.Fusion:Tag {
                 tagName = 'h1'
                 content = ${props.title}
+                attributes.class = 'headline'
             }
             subheadline = Neos.Fusion:Tag {
                 tagName = 'h2'
                 content = ${props.subtitle}
+                attributes.subheadline = 'subheadline'
                 @if.hasSubtitle = ${props.subtitle ? true : false}
             }
 
