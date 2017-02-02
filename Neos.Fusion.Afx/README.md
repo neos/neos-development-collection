@@ -29,8 +29,8 @@ prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.At
     # 
     renderer = AFX::
        <div>
-         <h1 @key="headline">${props.title}</h1>
-         <h2 @key="subheadline" @if.hasSubtitle="${props.subtitle ? true : false}">${props.subtitle}</h1>
+         <h1 @key="headline" class="headline">${props.title}</h1>
+         <h2 @key="subheadline" class="subheadline" @if.hasSubtitle="${props.subtitle ? true : false}">${props.subtitle}</h1>
          <PackageFactory.AtomicFusion.AFX:Image @key="image" uri="${props.imageUri}" />
        </div>
 
@@ -50,10 +50,12 @@ prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.At
             headline = Neos.Fusion:Tag {
                 tagName = 'h1'
                 content = ${props.title}
+                attributes.class = 'headline'
             }
             subheadline = Neos.Fusion:Tag {
                 tagName = 'h2'
                 content = ${props.subtitle}
+                attributes.subheadline = 'subheadline'
                 @if.hasSubtitle = ${props.subtitle ? true : false}
             }
 
@@ -111,7 +113,7 @@ In general all meta-attributes start with an @-sign.
 The `@kchildren`-attribute defined the property that is used to render the content/children of the current tag into. For
 html-tags the default is `content` while for Fusion-Object-Tags the default is `renderer`.
 
-The `@key`-attribute can be used to define the name of an item among its children. 
+The `@key`-attribute can be used to define the property name of an item among its siblings. If no key is defined the key `item_x` is used with x startting at 1.
 
 All other meta attributes are directly added to the generated prototype and can be used for @if or @process statements. 
 
