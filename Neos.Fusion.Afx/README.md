@@ -30,7 +30,7 @@ prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.At
     renderer = afx`
        <div>
          <h1 @key="headline" class="headline">${props.title}</h1>
-         <h2 @key="subheadline" class="subheadline" @if.hasSubtitle="${props.subtitle ? true : false}">${props.subtitle}</h1>
+         <h2 @key="subheadline" class="subheadline" @if.hasSubtitle="${props.subtitle ? true : false}">${props.subtitle}</h2>
          <PackageFactory.AtomicFusion.AFX:Image @key="image" uri="${props.imageUri}" />
        </div>`
 
