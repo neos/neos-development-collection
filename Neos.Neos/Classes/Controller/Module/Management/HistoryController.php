@@ -76,7 +76,7 @@ class HistoryController extends AbstractModuleController
     }
 
     /**
-     * Simply sets the TypoScript path pattern on the view.
+     * Simply sets the Fusion path pattern on the view.
      *
      * @param ViewInterface $view
      * @return void
