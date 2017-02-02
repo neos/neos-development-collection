@@ -18,30 +18,32 @@ With this package the following fusion code
 
 ```
 prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.AtomicFusion:Component) {
+
     title = 'title text'
     subtitle = 'subtitle line'
-
     imageUri = 'https://dummyimage.com/600x400/000/fff'
     
     #
     # All lines following the AFX:: are read as xml and 
     # converted to the fusion code below at parse time
     # 
-    renderer = AFX::
+    renderer = afx`
        <div>
          <h1 @key="headline" class="headline">${props.title}</h1>
          <h2 @key="subheadline" class="subheadline" @if.hasSubtitle="${props.subtitle ? true : false}">${props.subtitle}</h1>
          <PackageFactory.AtomicFusion.AFX:Image @key="image" uri="${props.imageUri}" />
-       </div>
+       </div>`
 
 }
 ```
 
-Will be interpreted as equivalent to the following fusion-code
+Will be transpiled, parsed and then cached as the following fusion-code
 
 ```
 prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.AtomicFusion:Component) {
-    title = 'foo'
+
+    title = 'title text'
+    subtitle = 'subtitle line'
     imageUri = 'https://dummyimage.com/600x400/000/fff'
     
     renderer = Neos.Fusion:Tag {
