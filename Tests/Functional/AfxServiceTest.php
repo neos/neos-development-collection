@@ -185,11 +185,45 @@ EOF;
     {
         $afxCode = <<<'EOF'
 <h1>
-
+    
     <strong>foo</strong>
     
     <i>bar</i>
-    
+        
+</h1>
+EOF;
+
+        $expectedFusion = <<<'EOF'
+Neos.Fusion:Tag {
+    tagName = 'h1'
+    content = Neos.Fusion:Array {
+        item_1 = Neos.Fusion:Tag {
+            tagName = 'strong'
+            content = 'foo'
+        }
+        item_2 = Neos.Fusion:Tag {
+            tagName = 'i'
+            content = 'bar'
+        }
+    }
+}
+
+EOF;
+        $this->assertEquals(AfxService::convertAfxToFusion($afxCode), $expectedFusion);
+    }
+
+    /**
+     * @test
+     */
+    public function complexChildrenAreRenderedAsArrayIgnoringCommentsBetween()
+    {
+        $afxCode = <<<'EOF'
+<h1>
+    <!-- comments -->
+    <strong>foo</strong>
+    <!-- are -->
+    <i>bar</i>
+    <!-- ignored -->    
 </h1>
 EOF;
 

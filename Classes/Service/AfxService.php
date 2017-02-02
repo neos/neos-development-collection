@@ -114,28 +114,26 @@ class AfxService
             }
         }
 
-
         if (count($renderableItems) == 1 && $renderableItems[0]->nodeType === XML_TEXT_NODE) {
             $fusion .=  AfxService::valueToFusionAssignment($xmlList[0]->nodeValue) . PHP_EOL;
         } else {
             $fusion .= 'Neos.Fusion:Array {' . PHP_EOL;
             $index = 1;
-            for ($i = 0; $i < $xmlList->length; $i++) {
-                $child = $xmlList->item($i);
+            foreach ($renderableItems as $item) {
 
                 // ignore empty text children
-                if ($child->nodeType === XML_TEXT_NODE && (trim($child->nodeValue) == false) ) {
+                if ($item->nodeType === XML_TEXT_NODE && (trim($item->nodeValue) == false) ) {
                     continue;
                 }
 
-                if ($child->hasAttributes() && $child->hasAttribute(AfxService::PREFIX . 'key')) {
-                    $fusionName = $child->getAttribute(AfxService::PREFIX . 'key');
+                if ($item->hasAttributes() && $item->hasAttribute(AfxService::PREFIX . 'key')) {
+                    $fusionName = $item->getAttribute(AfxService::PREFIX . 'key');
                 } else {
                     $fusionName = 'item_' . $index;
                 }
 
                 // $fusionName = 'item_' . $index;
-                $fusion .= $indentation . AfxService::INDENTATION . AfxService::INDENTATION . $fusionName . ' = ' . AfxService::xmlNodeToFusion($child, $indentation . AfxService::INDENTATION . AfxService::INDENTATION);
+                $fusion .= $indentation . AfxService::INDENTATION . AfxService::INDENTATION . $fusionName . ' = ' . AfxService::xmlNodeToFusion($item, $indentation . AfxService::INDENTATION . AfxService::INDENTATION);
                 $index ++;
             }
             $fusion .= $indentation . AfxService::INDENTATION . '}' . PHP_EOL;
