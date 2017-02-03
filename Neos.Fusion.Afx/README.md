@@ -24,7 +24,7 @@ prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.At
     imageUri = 'https://dummyimage.com/600x400/000/fff'
     
     #
-    # All lines between the <<<AFX ... AFX; is read as xml and 
+    # All lines between the <<<AFX ... AFX; are read as xml and 
     # converted to the fusion code below at parse time. 
     #
     # Please note that the closing AFX; has to be the first element on its line
