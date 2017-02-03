@@ -18,7 +18,7 @@ class FusionParserAspect
     /**
      * Regex Pattern to detect the afx code in the fusion that will be parsed
      */
-    const SCAN_PATTERN_AFX = "/\\n([ \\t]*)([a-zA-Z0-9.]+)[\\s]*=[\\s]*afx`([^`]*)`/us";
+    const SCAN_PATTERN_AFX = "/([ \\t]*)([a-zA-Z0-9\\.]+)[ \\t]*=[ \\t]*<<<AFX(.*?)\\n[ \\t]*AFX;/us";
 
     /**
      * @Flow\Around("method(Neos\Fusion\Core\Parser->parse())")
