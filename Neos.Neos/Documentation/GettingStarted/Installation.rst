@@ -21,7 +21,7 @@ The most important requirements are:
 * PHP >= 5.5.0 (make sure the PHP CLI has the same version)
 
   * PHP modules mbstring, tokenizer and pdo_mysql
-  * PHP functions system(), shell_exec(), escapeshellcmd() and escapeshellarg()
+  * PHP functions exec(), shell_exec(), escapeshellcmd() and escapeshellarg()
   * It is recommended to install one of the PHP modules imagick or gmagick
 
 Fundamental Installation
@@ -147,7 +147,7 @@ The Neos Setup Tool
 
 #. If all went well you'll get a confirmation the setup is completed, and you can enter the
    frontend or backend of your Neos website.
-   
+
    .. warning::
       If you install the Neos demo site and it is publicly accessible, make sure the "Try me" page in
       the page tree is not publicly accessible because it has a form allowing you to create backend
