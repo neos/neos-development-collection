@@ -76,7 +76,7 @@ class HistoryController extends AbstractModuleController
     }
 
     /**
-     * Simply sets the TypoScript path pattern on the view.
+     * Simply sets the Fusion path pattern on the view.
      *
      * @param ViewInterface $view
      * @return void
@@ -84,6 +84,7 @@ class HistoryController extends AbstractModuleController
     protected function initializeView(ViewInterface $view)
     {
         parent::initializeView($view);
-        $view->setTypoScriptPathPattern('resource://Neos.Neos/Private/Fusion/Backend');
+        /** @var FusionView $view */
+        $view->setFusionPathPattern('resource://Neos.Neos/Private/Fusion/Backend');
     }
 }
