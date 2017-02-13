@@ -429,7 +429,7 @@ Neos:
         inPlace:
           isEditingMode: true
           isPreviewMode: false
-          typoScriptRenderingPath: ''
+          fusionRenderingPath: ''
           title: 'Neos.Neos:Main:editPreviewModes.inPlace'
           position: 100
         rawContent:
