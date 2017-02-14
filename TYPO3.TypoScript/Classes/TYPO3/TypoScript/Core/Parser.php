@@ -583,7 +583,12 @@ class Parser implements ParserInterface
     protected function parseInclude($include)
     {
         $include = trim($include);
-        $parser = clone $this;
+        $parser = new Parser();
+        // transfer current namespaces to new parser
+        foreach ($this->objectTypeNamespaces as $key => $objectTypeNamespace) {
+            $parser->setObjectTypeNamespace($key, $objectTypeNamespace);
+        }
+
         if (strpos($include, 'resource://') !== 0) {
             // Resolve relative paths
             if ($this->contextPathAndFilename !== null) {
