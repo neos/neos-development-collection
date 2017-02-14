@@ -7,7 +7,7 @@ properties. Below you will find a simple example for adding a page background im
 
 Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml) ::
 
-	'Neos.Neos.NodeTypes:Page':
+	'Neos.NodeTypes:Page':
 	  ui:
 	    inspector:
 	      groups:

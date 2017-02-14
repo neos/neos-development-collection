@@ -1756,15 +1756,15 @@ Options
 
 
 
-.. _`Command Reference: TYPO3.NEOS`:
+.. _`Command Reference: NEOS.NEOS`:
 
-Package *TYPO3.NEOS*
+Package *NEOS.NEOS*
 --------------------
 
 
-.. _`Command Reference: TYPO3.NEOS typo3.neos:domain:activate`:
+.. _`Command Reference: NEOS.NEOS neos.neos:domain:activate`:
 
-``typo3.neos:domain:activate``
+``neos.neos:domain:activate``
 ******************************
 
 **Activate a domain record**
@@ -1783,9 +1783,9 @@ Arguments
 
 
 
-.. _`Command Reference: TYPO3.NEOS typo3.neos:domain:add`:
+.. _`Command Reference: NEOS.NEOS neos.neos:domain:add`:
 
-``typo3.neos:domain:add``
+``neos.neos:domain:add``
 *************************
 
 **Add a domain record**
@@ -1796,9 +1796,9 @@ Arguments
 ^^^^^^^^^
 
 ``--site-node-name``
-  The nodeName of the site rootNode, e.g. "neostypo3org
+  The nodeName of the site rootNode, e.g. "wwwneosio
 ``--host-pattern``
-  The host pattern to match on, e.g. "neos.typo3.org
+  The host pattern to match on, e.g. "www.neos.io
 
 
 
@@ -1814,9 +1814,9 @@ Options
 
 
 
-.. _`Command Reference: TYPO3.NEOS typo3.neos:domain:deactivate`:
+.. _`Command Reference: NEOS.NEOS neos.neos:domain:deactivate`:
 
-``typo3.neos:domain:deactivate``
+``neos.neos:domain:deactivate``
 ********************************
 
 **Deactivate a domain record**
@@ -1835,9 +1835,9 @@ Arguments
 
 
 
-.. _`Command Reference: TYPO3.NEOS typo3.neos:domain:delete`:
+.. _`Command Reference: NEOS.NEOS neos.neos:domain:delete`:
 
-``typo3.neos:domain:delete``
+``neos.neos:domain:delete``
 ****************************
 
 **Delete a domain record**
@@ -1856,9 +1856,9 @@ Arguments
 
 
 
-.. _`Command Reference: TYPO3.NEOS typo3.neos:domain:list`:
+.. _`Command Reference: NEOS.NEOS neos.neos:domain:list`:
 
-``typo3.neos:domain:list``
+``neos.neos:domain:list``
 **************************
 
 **Display a list of available domain records**
@@ -1877,9 +1877,9 @@ Options
 
 
 
-.. _`Command Reference: TYPO3.NEOS typo3.neos:site:export`:
+.. _`Command Reference: NEOS.NEOS neos.neos:site:export`:
 
-``typo3.neos:site:export``
+``neos.neos:site:export``
 **************************
 
 **Export sites content (e.g. site:export --package-key &quot;Neos.Demo&quot;)**
@@ -1915,9 +1915,9 @@ Options
 
 
 
-.. _`Command Reference: TYPO3.NEOS typo3.neos:site:import`:
+.. _`Command Reference: NEOS.NEOS neos.neos:site:import`:
 
-``typo3.neos:site:import``
+``neos.neos:site:import``
 **************************
 
 **Import sites content**
@@ -1945,9 +1945,9 @@ Options
 
 
 
-.. _`Command Reference: TYPO3.NEOS typo3.neos:site:list`:
+.. _`Command Reference: NEOS.NEOS neos.neos:site:list`:
 
-``typo3.neos:site:list``
+``neos.neos:site:list``
 ************************
 
 **Display a list of available sites**
@@ -1960,9 +1960,9 @@ Options
 
 
 
-.. _`Command Reference: TYPO3.NEOS typo3.neos:site:prune`:
+.. _`Command Reference: NEOS.NEOS neos.neos:site:prune`:
 
-``typo3.neos:site:prune``
+``neos.neos:site:prune``
 *************************
 
 **Remove all content and related data - for now. In the future we need some more sophisticated cleanup.**
@@ -1981,9 +1981,9 @@ Options
 
 
 
-.. _`Command Reference: TYPO3.NEOS typo3.neos:user:activate`:
+.. _`Command Reference: NEOS.NEOS neos.neos:user:activate`:
 
-``typo3.neos:user:activate``
+``neos.neos:user:activate``
 ****************************
 
 **Activate a user**
@@ -2012,9 +2012,9 @@ Options
 
 
 
-.. _`Command Reference: TYPO3.NEOS typo3.neos:user:addrole`:
+.. _`Command Reference: NEOS.NEOS neos.neos:user:addrole`:
 
-``typo3.neos:user:addrole``
+``neos.neos:user:addrole``
 ***************************
 
 **Add a role to a user**
@@ -2048,9 +2048,9 @@ Options
 
 
 
-.. _`Command Reference: TYPO3.NEOS typo3.neos:user:create`:
+.. _`Command Reference: NEOS.NEOS neos.neos:user:create`:
 
-``typo3.neos:user:create``
+``neos.neos:user:create``
 **************************
 
 **Create a new user**
@@ -2092,9 +2092,9 @@ Options
 
 
 
-.. _`Command Reference: TYPO3.NEOS typo3.neos:user:deactivate`:
+.. _`Command Reference: NEOS.NEOS neos.neos:user:deactivate`:
 
-``typo3.neos:user:deactivate``
+``neos.neos:user:deactivate``
 ******************************
 
 **Deactivate a user**
@@ -2123,9 +2123,9 @@ Options
 
 
 
-.. _`Command Reference: TYPO3.NEOS typo3.neos:user:delete`:
+.. _`Command Reference: NEOS.NEOS neos.neos:user:delete`:
 
-``typo3.neos:user:delete``
+``neos.neos:user:delete``
 **************************
 
 **Delete a user**
@@ -2160,9 +2160,9 @@ Options
 
 
 
-.. _`Command Reference: TYPO3.NEOS typo3.neos:user:list`:
+.. _`Command Reference: NEOS.NEOS neos.neos:user:list`:
 
-``typo3.neos:user:list``
+``neos.neos:user:list``
 ************************
 
 **List all users**
@@ -2175,9 +2175,9 @@ This command lists all existing Neos users.
 
 
 
-.. _`Command Reference: TYPO3.NEOS typo3.neos:user:removerole`:
+.. _`Command Reference: NEOS.NEOS neos.neos:user:removerole`:
 
-``typo3.neos:user:removerole``
+``neos.neos:user:removerole``
 ******************************
 
 **Remove a role from a user**
@@ -2208,9 +2208,9 @@ Options
 
 
 
-.. _`Command Reference: TYPO3.NEOS typo3.neos:user:setpassword`:
+.. _`Command Reference: NEOS.NEOS neos.neos:user:setpassword`:
 
-``typo3.neos:user:setpassword``
+``neos.neos:user:setpassword``
 *******************************
 
 **Set a new password for the given user**
@@ -2241,9 +2241,9 @@ Options
 
 
 
-.. _`Command Reference: TYPO3.NEOS typo3.neos:user:show`:
+.. _`Command Reference: NEOS.NEOS neos.neos:user:show`:
 
-``typo3.neos:user:show``
+``neos.neos:user:show``
 ************************
 
 **Shows the given user**
@@ -2273,9 +2273,9 @@ Options
 
 
 
-.. _`Command Reference: TYPO3.NEOS typo3.neos:workspace:create`:
+.. _`Command Reference: NEOS.NEOS neos.neos:workspace:create`:
 
-``typo3.neos:workspace:create``
+``neos.neos:workspace:create``
 *******************************
 
 **Create a new workspace**
@@ -2306,9 +2306,9 @@ Options
 
 
 
-.. _`Command Reference: TYPO3.NEOS typo3.neos:workspace:delete`:
+.. _`Command Reference: NEOS.NEOS neos.neos:workspace:delete`:
 
-``typo3.neos:workspace:delete``
+``neos.neos:workspace:delete``
 *******************************
 
 **Deletes a workspace**
@@ -2335,14 +2335,14 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.neos:workspace:discard``
+``neos.neos:workspace:discard``
   Discard changes in workspace
 
 
 
-.. _`Command Reference: TYPO3.NEOS typo3.neos:workspace:discard`:
+.. _`Command Reference: NEOS.NEOS neos.neos:workspace:discard`:
 
-``typo3.neos:workspace:discard``
+``neos.neos:workspace:discard``
 ********************************
 
 **Discard changes in workspace**
@@ -2369,9 +2369,9 @@ Options
 
 
 
-.. _`Command Reference: TYPO3.NEOS typo3.neos:workspace:discardall`:
+.. _`Command Reference: NEOS.NEOS neos.neos:workspace:discardall`:
 
-``typo3.neos:workspace:discardall``
+``neos.neos:workspace:discardall``
 ***********************************
 
 **Discard changes in workspace &lt;b&gt;(DEPRECATED)&lt;/b&gt;**
@@ -2397,14 +2397,14 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.neos:workspace:discard``
+``neos.neos:workspace:discard``
   Discard changes in workspace
 
 
 
-.. _`Command Reference: TYPO3.NEOS typo3.neos:workspace:list`:
+.. _`Command Reference: NEOS.NEOS neos.neos:workspace:list`:
 
-``typo3.neos:workspace:list``
+``neos.neos:workspace:list``
 *****************************
 
 **Display a list of existing workspaces**
@@ -2417,9 +2417,9 @@ Related commands
 
 
 
-.. _`Command Reference: TYPO3.NEOS typo3.neos:workspace:publish`:
+.. _`Command Reference: NEOS.NEOS neos.neos:workspace:publish`:
 
-``typo3.neos:workspace:publish``
+``neos.neos:workspace:publish``
 ********************************
 
 **Publish changes of a workspace**
@@ -2449,9 +2449,9 @@ Options
 
 
 
-.. _`Command Reference: TYPO3.NEOS typo3.neos:workspace:publishall`:
+.. _`Command Reference: NEOS.NEOS neos.neos:workspace:publishall`:
 
-``typo3.neos:workspace:publishall``
+``neos.neos:workspace:publishall``
 ***********************************
 
 **Publish changes of a workspace &lt;b&gt;(DEPRECATED)&lt;/b&gt;**
@@ -2477,14 +2477,14 @@ Options
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.neos:workspace:publish``
+``neos.neos:workspace:publish``
   Publish changes of a workspace
 
 
 
-.. _`Command Reference: TYPO3.NEOS typo3.neos:workspace:rebase`:
+.. _`Command Reference: NEOS.NEOS neos.neos:workspace:rebase`:
 
-``typo3.neos:workspace:rebase``
+``neos.neos:workspace:rebase``
 *******************************
 
 **Rebase a workspace**
@@ -2507,15 +2507,15 @@ Arguments
 
 
 
-.. _`Command Reference: TYPO3.NEOS.KICKSTARTER`:
+.. _`Command Reference: NEOS.NEOS.KICKSTARTER`:
 
-Package *TYPO3.NEOS.KICKSTARTER*
+Package *NEOS.NEOS.KICKSTARTER*
 --------------------------------
 
 
-.. _`Command Reference: TYPO3.NEOS.KICKSTARTER typo3.neos.kickstarter:kickstart:site`:
+.. _`Command Reference: NEOS.NEOS.KICKSTARTER neos.neos.kickstarter:kickstart:site`:
 
-``typo3.neos.kickstarter:kickstart:site``
+``neos.neos.kickstarter:kickstart:site``
 *****************************************
 
 **Kickstart a new site package**
@@ -2683,7 +2683,7 @@ value.
 
 ./flow node:repair
 
-./flow node:repair --node-type Neos.Neos.NodeTypes:Page
+./flow node:repair --node-type Neos.NodeTypes:Page
 
 ./flow node:repair --workspace user-robert --only removeOrphanNodes,removeNodesWithInvalidDimensions
 

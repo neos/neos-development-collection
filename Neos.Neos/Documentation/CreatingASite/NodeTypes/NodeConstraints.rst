@@ -39,7 +39,7 @@ additional constraints for each *auto-created child node*::
       'main':
         constraints:
           nodeTypes:
-            'Neos.Neos.NodeTypes:Text': true
+            'Neos.NodeTypes:Text': true
             '*': false
 
 
@@ -48,14 +48,14 @@ Examples
 
 Disallow nested Two/Three/FourColumn inside a multi column element::
 
-  'Neos.Neos.NodeTypes:Column':
+  'Neos.NodeTypes:Column':
     childNodes:
       column0:
         constraints: &columnConstraints
           nodeTypes:
-            'Neos.Neos.NodeTypes:TwoColumn': false
-            'Neos.Neos.NodeTypes:ThreeColumn': false
-            'Neos.Neos.NodeTypes:FourColumn': false
+            'Neos.NodeTypes:TwoColumn': false
+            'Neos.NodeTypes:ThreeColumn': false
+            'Neos.NodeTypes:FourColumn': false
       column1:
         constraints: *columnConstraints
       column2:

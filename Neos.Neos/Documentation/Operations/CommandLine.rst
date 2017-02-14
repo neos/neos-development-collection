@@ -25,7 +25,7 @@ Here is an example:
   Add a role to a user
 
   COMMAND:
-    typo3.neos:user:addrole
+    neos.neos:user:addrole
 
   USAGE:
     ./flow user:addrole [<options>] <username> <role>
