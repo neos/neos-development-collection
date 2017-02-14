@@ -1,18 +1,18 @@
-.. _neos-typoscript-reference:
+.. _neos-Fusion-reference:
 
-====================
-TypoScript Reference
-====================
-
-TYPO3.TypoScript
+================
+Fusion Reference
 ================
 
-This package contains general-purpose TypoScript objects, which are usable both within Neos and standalone.
+Neos.Fusion
+===========
 
-.. _TYPO3_TypoScript__Array:
+This package contains general-purpose Fusion objects, which are usable both within Neos and standalone.
+
+.. _Neos_Fusion__Array:
 
 Neos.Fusion:Array
-----------------------
+-----------------
 
 Render multiple nested definitions and concatenate the results.
 
@@ -56,29 +56,29 @@ Example Ordering::
 	# individual statements are defined.
 
 	myArray = Neos.Fusion:Array {
-		o1 = Neos.Neos.NodeTypes:Text
+		o1 = Neos.NodeTypes:Text
 		o1.@position = 'start 12'
-		o2 = Neos.Neos.NodeTypes:Text
+		o2 = Neos.NodeTypes:Text
 		o2.@position = 'start 5'
-		o2 = Neos.Neos.NodeTypes:Text
+		o2 = Neos.NodeTypes:Text
 		o2.@position = 'start'
 
-		o3 = Neos.Neos.NodeTypes:Text
+		o3 = Neos.NodeTypes:Text
 		o3.@position = '10'
-		o4 = Neos.Neos.NodeTypes:Text
+		o4 = Neos.NodeTypes:Text
 		o4.@position = '20'
 
-		o5 = Neos.Neos.NodeTypes:Text
+		o5 = Neos.NodeTypes:Text
 		o5.@position = 'before o6'
 
-		o6 = Neos.Neos.NodeTypes:Text
+		o6 = Neos.NodeTypes:Text
 		o6.@position = 'end'
-		o7 = Neos.Neos.NodeTypes:Text
+		o7 = Neos.NodeTypes:Text
 		o7.@position = 'end 20'
-		o8 = Neos.Neos.NodeTypes:Text
+		o8 = Neos.NodeTypes:Text
 		o8.@position = 'end 30'
 
-		o9 = Neos.Neos.NodeTypes:Text
+		o9 = Neos.NodeTypes:Text
 		o9.@position = 'after o8'
 	}
 
@@ -88,15 +88,15 @@ to use ``@position`` and meaningful keys in your application, and not numeric on
 Example of numeric keys (discouraged)::
 
 	myArray = Neos.Fusion:Array {
-		10 = Neos.Neos.NodeTypes:Text
-		20 = Neos.Neos.NodeTypes:Text
+		10 = Neos.NodeTypes:Text
+		20 = Neos.NodeTypes:Text
 	}
 
 
-.. _TYPO3_TypoScript__Collection:
+.. _Neos_Fusion__Collection:
 
 Neos.Fusion:Collection
----------------------------
+----------------------
 
 Render each item in ``collection`` using ``itemRenderer``.
 
@@ -126,12 +126,12 @@ Example using an expression ``itemRenderer``::
 		itemRenderer = ${element * 2}
 	}
 
-.. _TYPO3_TypoScript__RawCollection:
+.. _Neos_Fusion__RawCollection:
 
 Neos.Fusion:RawCollection
-------------------------------
+-------------------------
 
-Render each item in ``collection`` using ``itemRenderer`` and return the result as an array (opposed to *string* for :ref:`TYPO3_TypoScript__Collection`)
+Render each item in ``collection`` using ``itemRenderer`` and return the result as an array (opposed to *string* for :ref:`Neos_Fusion__Collection`)
 
 :collection: (array/Iterable, **required**) The array or iterable to iterate over
 :itemName: (string, defaults to ``item``) Context variable name for each item
@@ -139,10 +139,10 @@ Render each item in ``collection`` using ``itemRenderer`` and return the result 
 :iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``
 :itemRenderer: (string, **required**) The renderer definition (simple value, expression or object) will be called once for every collection element
 
-.. _TYPO3_TypoScript__Case:
+.. _Neos_Fusion__Case:
 
 Neos.Fusion:Case
----------------------
+----------------
 
 **Conditionally evaluate** nested definitions.
 
@@ -177,17 +177,17 @@ Simple Example::
 		}
 	}
 
-The ordering of matcher definitions can be specified with the ``@position`` property (see :ref:`TYPO3_TypoScript__Array`).
+The ordering of matcher definitions can be specified with the ``@position`` property (see :ref:`Neos_Fusion__Array`).
 Thus, the priority of existing matchers (e.g. the default Neos document rendering) can be changed by setting or
 overriding the ``@position`` property.
 
 .. note:: The internal ``Neos.Fusion:Matcher`` object type is used to evaluate the matcher definitions which
    is based on the ``Neos.Fusion:Renderer``.
 
-.. _TYPO3_TypoScript__Renderer:
+.. _Neos_Fusion__Renderer:
 
 Neos.Fusion:Renderer
--------------------------
+--------------------
 
 The Renderer object will evaluate to a result using either ``renderer``, ``renderPath`` or ``type`` from the configuration.
 
@@ -205,12 +205,12 @@ Simple Example::
 
 .. note:: This is especially handy if the prototype that should be rendered is determined via eel or passed via @context.
 
-.. _TYPO3_TypoScript__Debug:
+.. _Neos_Fusion__Debug:
 
 Neos.Fusion:Debug
--------------------------
+-----------------
 
-Shows the result of TypoScript Expressions directly.
+Shows the result of Fusion Expressions directly.
 
 :title: (optional) Title for the debug output
 :plaintext: (boolean) If set true, the result will be shown as plaintext
@@ -233,10 +233,10 @@ Example::
   # the value of this object is the formatted debug output of all keys given to the object
 
 
-.. _TYPO3_TypoScript__Template:
+.. _Neos_Fusion__Template:
 
 Neos.Fusion:Template
--------------------------
+--------------------
 
 Render a *Fluid template* specified by ``templatePath``.
 
@@ -257,12 +257,12 @@ Example::
 		{someDataAvailableInsideFluid}
 	</div>
 
-.. _TYPO3_TypoScript__Value:
+.. _Neos_Fusion__Value:
 
 Neos.Fusion:Value
-----------------------
+-----------------
 
-Evaluate any value as a TypoScript object
+Evaluate any value as a Fusion object
 
 :value: (mixed, **required**) The value to evaluate
 
@@ -275,22 +275,22 @@ Example::
 .. note:: Most of the time this can be simplified by directly assigning the value instead of using the ``Value`` object.
 
 
-.. _TYPO3_TypoScript__RawArray:
+.. _Neos_Fusion__RawArray:
 
 Neos.Fusion:RawArray
--------------------------
+--------------------
 
-Evaluate nested definitions as an array (opposed to *string* for :ref:`TYPO3_TypoScript__Array`)
+Evaluate nested definitions as an array (opposed to *string* for :ref:`Neos_Fusion__Array`)
 
 :[key]: (mixed) A nested definition (simple value, expression or object), ``[key]`` will be used for the resulting array key
 :[key].@position: (string/integer) Define the ordering of the nested definition
 
 .. tip:: For simple cases an expression with an array literal ``${[1, 2, 3]}`` might be easier to read
 
-.. _TYPO3_TypoScript__Tag:
+.. _Neos_Fusion__Tag:
 
 Neos.Fusion:Tag
---------------------
+---------------
 
 Render an HTML tag with attributes and optional body
 
@@ -298,7 +298,7 @@ Render an HTML tag with attributes and optional body
 :omitClosingTag: (boolean) Whether to render the element ``content`` and the closing tag, defaults to ``FALSE``
 :selfClosingTag: (boolean) Whether the tag is a self-closing tag with no closing tag. Will be resolved from ``tagName`` by default, so default HTML tags are treated correctly.
 :content: (string) The inner content of the element, will only be rendered if the tag is not self-closing and the closing tag is not omitted
-:attributes: (:ref:`TYPO3_TypoScript__Attributes`) Tag attributes
+:attributes: (:ref:`Neos_Fusion__Attributes`) Tag attributes
 
 Example:
 ^^^^^^^^
@@ -319,12 +319,12 @@ Evaluates to::
 
 	<html version="HTML+RDFa 1.1" xmlns="http://www.w3.org/1999/xhtml">
 
-.. _TYPO3_TypoScript__Attributes:
+.. _Neos_Fusion__Attributes:
 
 Neos.Fusion:Attributes
----------------------------
+----------------------
 
-A TypoScript object to render HTML tag attributes. This object is used by the :ref:`TYPO3_TypoScript__Tag` object to
+A Fusion object to render HTML tag attributes. This object is used by the :ref:`Neos_Fusion__Tag` object to
 render the attributes of a tag. But it's also useful standalone to render extensible attributes in a Fluid template.
 
 :[key]: (string) A single attribute, array values are joined with whitespace. Boolean values will be rendered as an empty or absent attribute.
@@ -353,16 +353,16 @@ Unsetting an attribute:
 It's possible to unset an attribute by assigning ``false`` or ``${null}`` as a value. No attribute will be rendered for
 this case.
 
-.. _TYPO3_TypoScript__Http_Message:
+.. _Neos_Fusion__Http_Message:
 
 Neos.Fusion:Http.Message
------------------------------
+------------------------
 
-A prototype based on :ref:`TYPO3_TypoScript__Array` for rendering an HTTP message (response). It should be used to
+A prototype based on :ref:`Neos_Fusion__Array` for rendering an HTTP message (response). It should be used to
 render documents since it generates a full HTTP response and allows to override the HTTP status code and headers.
 
-:httpResponseHead: (:ref:`TYPO3_TypoScript__Http_ResponseHead`) An HTTP response head with properties to adjust the status and headers, the position in the ``Array`` defaults to the very beginning
-:[key]: (string) A nested definition (see :ref:`TYPO3_TypoScript__Array`)
+:httpResponseHead: (:ref:`Neos_Fusion__Http_ResponseHead`) An HTTP response head with properties to adjust the status and headers, the position in the ``Array`` defaults to the very beginning
+:[key]: (string) A nested definition (see :ref:`Neos_Fusion__Array`)
 
 Example:
 ^^^^^^^^
@@ -377,20 +377,20 @@ Example:
 		httpResponseHead.headers.Content-Type = 'application/json'
 	}
 
-.. _TYPO3_TypoScript__Http_ResponseHead:
+.. _Neos_Fusion__Http_ResponseHead:
 
 Neos.Fusion:Http.ResponseHead
-----------------------------------
+-----------------------------
 
 A helper object to render the head of an HTTP response
 
 :statusCode: (integer) The HTTP status code for the response, defaults to ``200``
 :headers.*: (string) An HTTP header that should be set on the response, the property name (e.g. ``headers.Content-Type``) will be used for the header name
 
-.. _TYPO3_TypoScript__UriBuilder:
+.. _Neos_Fusion__UriBuilder:
 
 Neos.Fusion:UriBuilder
----------------------------
+----------------------
 
 Built a URI to a controller action
 
@@ -414,10 +414,10 @@ Example::
 		action = 'new'
 	}
 
-.. _TYPO3_TypoScript__ResourceUri:
+.. _Neos_Fusion__ResourceUri:
 
 Neos.Fusion:ResourceUri
-----------------------------
+-----------------------
 
 Build a URI to a static or persisted resource
 
@@ -438,36 +438,36 @@ Example::
 	}
 
 
-Neos.Neos TypoScript Objects
+Neos.Neos Fusion Objects
 =============================
 
-The TypoScript objects defined in the Neos package contain all TypoScript objects which
-are needed to integrate a site. Often, it contains generic TypoScript objects
+The Fusion objects defined in the Neos package contain all Fusion objects which
+are needed to integrate a site. Often, it contains generic Fusion objects
 which do not need a particular node type to work on.
 
-As Neos.Neos is the default namespace, the TypoScript objects do not need to be
+As Neos.Neos is the default namespace, the Fusion objects do not need to be
 prefixed with Neos.Neos.
 
-.. _TYPO3_Neos__Page:
+.. _Neos_Neos__Page:
 
 Page
 ----
-Subclass of :ref:`TYPO3_TypoScript__Http_Message`, which is based on :ref:`TYPO3_TypoScript__Array`. Main entry point
+Subclass of :ref:`Neos_Fusion__Http_Message`, which is based on :ref:`Neos_Fusion__Array`. Main entry point
 into rendering a page; responsible for rendering the ``<html>`` tag and everything inside.
 
 :doctype: (string) Defaults to ``<!DOCTYPE html>``
-:htmlTag: (:ref:`TYPO3_TypoScript__Tag`) The opening ``<html>`` tag
-:htmlTag.attributes: (:ref:`TYPO3_TypoScript__Attributes`) Attributes for the ``<html>`` tag
-:headTag: (:ref:`TYPO3_TypoScript__Tag`) The opening ``<head>`` tag
-:head: (:ref:`TYPO3_TypoScript__Array`) HTML markup for the ``<head>`` tag
-:head.titleTag: (:ref:`TYPO3_TypoScript__Tag`) The ``<title>`` tag
-:head.javascripts: (:ref:`TYPO3_TypoScript__Array`) Script includes in the head should go here
-:head.stylesheets: (:ref:`TYPO3_TypoScript__Array`) Link tags for stylesheets in the head should go here
+:htmlTag: (:ref:`Neos_Fusion__Tag`) The opening ``<html>`` tag
+:htmlTag.attributes: (:ref:`Neos_Fusion__Attributes`) Attributes for the ``<html>`` tag
+:headTag: (:ref:`Neos_Fusion__Tag`) The opening ``<head>`` tag
+:head: (:ref:`Neos_Fusion__Array`) HTML markup for the ``<head>`` tag
+:head.titleTag: (:ref:`Neos_Fusion__Tag`) The ``<title>`` tag
+:head.javascripts: (:ref:`Neos_Fusion__Array`) Script includes in the head should go here
+:head.stylesheets: (:ref:`Neos_Fusion__Array`) Link tags for stylesheets in the head should go here
 :body.templatePath: (string) Path to a fluid template for the page body
-:bodyTag: (:ref:`TYPO3_TypoScript__Tag`) The opening ``<body>`` tag
-:bodyTag.attributes: (:ref:`TYPO3_TypoScript__Attributes`) Attributes for the ``<body>`` tag
-:body: (:ref:`TYPO3_TypoScript__Template`) HTML markup for the ``<body>`` tag
-:body.javascripts: (:ref:`TYPO3_TypoScript__Array`) Body footer JavaScript includes
+:bodyTag: (:ref:`Neos_Fusion__Tag`) The opening ``<body>`` tag
+:bodyTag.attributes: (:ref:`Neos_Fusion__Attributes`) Attributes for the ``<body>`` tag
+:body: (:ref:`Neos_Fusion__Template`) HTML markup for the ``<body>`` tag
+:body.javascripts: (:ref:`Neos_Fusion__Array`) Body footer JavaScript includes
 :body.[key]: (mixed) Body template variables
 
 Examples:
@@ -486,7 +486,7 @@ Rendering a simple page:
 Rendering content in the body:
 """"""""""""""""""""""""""""""
 
-TypoScript::
+Fusion::
 
 	page.body {
 		sectionName = 'body'
@@ -526,18 +526,18 @@ Adding body attributes with ``bodyTag.attributes``:
 	page.bodyTag.attributes.class = 'body-css-class1 body-css-class2'
 
 
-.. _TYPO3_Neos__ContentCollection:
+.. _Neos_Neos__ContentCollection:
 
 ContentCollection
 -----------------
 
 Render nested content from a ``ContentCollection`` node. Individual nodes are rendered using the
-:ref:`TYPO3_Neos__ContentCase` object.
+:ref:`Neos_Neos__ContentCase` object.
 
 :nodePath: (string, **required**) The relative node path of the ``ContentCollection`` (e.g. ``'main'``)
 :@context.node: (Node) The content collection node, resolved from ``nodePath`` by default
 :tagName: (string) Tag name for the wrapper element
-:attributes: (:ref:`TYPO3_TypoScript__Attributes`) Tag attributes for the wrapper element
+:attributes: (:ref:`Neos_Fusion__Attributes`) Tag attributes for the wrapper element
 
 Example::
 
@@ -552,17 +552,17 @@ Example::
 		}
 	}
 
-.. _TYPO3_Neos__PrimaryContent:
+.. _Neos_Neos__PrimaryContent:
 
 PrimaryContent
 --------------
 
-Primary content rendering, extends :ref:`TYPO3_TypoScript__Case`. This is a prototype that can be used from packages
+Primary content rendering, extends :ref:`Neos_Fusion__Case`. This is a prototype that can be used from packages
 to extend the default content rendering (e.g. to handle specific document node types).
 
 :nodePath: (string, **required**) The relative node path of the ``ContentCollection`` (e.g. ``'main'``)
 :default: Default matcher that renders a ContentCollection
-:[key]: Additional matchers (see :ref:`TYPO3_TypoScript__Case`)
+:[key]: Additional matchers (see :ref:`Neos_Fusion__Case`)
 
 Example for basic usage::
 
@@ -583,28 +583,28 @@ Example for custom matcher::
 		}
 	}
 
-.. _TYPO3_Neos__ContentCase:
+.. _Neos_Neos__ContentCase:
 
 ContentCase
 -----------
 
-Render a content node, extends :ref:`TYPO3_TypoScript__Case`. This is a prototype that is used by the default content
-rendering (:ref:`TYPO3_Neos__ContentCollection`) and can be extended to add custom matchers.
+Render a content node, extends :ref:`Neos_Fusion__Case`. This is a prototype that is used by the default content
+rendering (:ref:`Neos_Neos__ContentCollection`) and can be extended to add custom matchers.
 
 :default: Default matcher that renders a prototype of the same name as the node type name
-:[key]: Additional matchers (see :ref:`TYPO3_TypoScript__Case`)
+:[key]: Additional matchers (see :ref:`Neos_Fusion__Case`)
 
-.. _TYPO3_Neos__Content:
+.. _Neos_Neos__Content:
 
 Content
 -------
 
-Base type to render content nodes, extends :ref:`TYPO3_TypoScript__Template`. This prototype is extended by the
-auto-generated TypoScript to define prototypes for each node type extending ``Neos.Neos:Content``.
+Base type to render content nodes, extends :ref:`Neos_Fusion__Template`. This prototype is extended by the
+auto-generated Fusion to define prototypes for each node type extending ``Neos.Neos:Content``.
 
 :templatePath: (string) The template path and filename, defaults to ``'resource://[packageKey]/Private/Templates/NodeTypes/[nodeType].html'`` (for auto-generated prototypes)
 :[key]: (mixed) Template variables, all node type properties are available by default (for auto-generated prototypes)
-:attributes: (:ref:`TYPO3_TypoScript__Attributes`) Extensible attributes, used in the default templates
+:attributes: (:ref:`Neos_Fusion__Attributes`) Extensible attributes, used in the default templates
 
 Example::
 
@@ -614,7 +614,7 @@ Example::
 		# title = ${q(node).property('title')}
 	}
 
-.. _TYPO3_Neos__Plugin:
+.. _Neos_Neos__Plugin:
 
 Plugin
 ------
@@ -636,12 +636,12 @@ Example::
 		controller = 'Registration'
 	}
 
-.. _TYPO3_Neos__Menu:
+.. _Neos_Neos__Menu:
 
 Menu
 ----
 
-Render a menu with items for nodes. Extends :ref:`TYPO3_TypoScript__Template`.
+Render a menu with items for nodes. Extends :ref:`Neos_Fusion__Template`.
 
 :templatePath: (string) Override the template path
 :entryLevel: (integer) Start the menu at the given depth
@@ -651,10 +651,10 @@ Render a menu with items for nodes. Extends :ref:`TYPO3_TypoScript__Template`.
 :filter: (string) Filter items by node type (e.g. ``'!My.Site:News,Neos.Neos:Document'``), defaults to ``'Neos.Neos:Document'``
 :renderHiddenInIndex: (boolean) Whether nodes with ``hiddenInIndex`` should be rendered, defaults to ``false``
 :itemCollection: (array) Explicitly set the Node items for the menu (alternative to ``startingPoints`` and levels)
-:attributes: (:ref:`TYPO3_TypoScript__Attributes`) Extensible attributes for the whole menu
-:normal.attributes: (:ref:`TYPO3_TypoScript__Attributes`) Attributes for normal state
-:active.attributes: (:ref:`TYPO3_TypoScript__Attributes`) Attributes for active state
-:current.attributes: (:ref:`TYPO3_TypoScript__Attributes`) Attributes for current state
+:attributes: (:ref:`Neos_Fusion__Attributes`) Extensible attributes for the whole menu
+:normal.attributes: (:ref:`Neos_Fusion__Attributes`) Attributes for normal state
+:active.attributes: (:ref:`Neos_Fusion__Attributes`) Attributes for active state
+:current.attributes: (:ref:`Neos_Fusion__Attributes`) Attributes for current state
 
 Menu item properties:
 ^^^^^^^^^^^^^^^^^^^^^
@@ -699,24 +699,24 @@ Menu with custom starting point:
 		startingPoint = ${q(site).children('[uriPathSegment="metamenu"]').get(0)}
 	}
 
-.. _TYPO3_Neos__BreadcrumbMenu:
+.. _Neos_Neos__BreadcrumbMenu:
 
 BreadcrumbMenu
 --------------
 
-Render a breadcrumb (ancestor documents), based on :ref:`TYPO3_Neos__Menu`.
+Render a breadcrumb (ancestor documents), based on :ref:`Neos_Neos__Menu`.
 
 Example::
 
 	breadcrumb = BreadcrumbMenu
 
-.. _TYPO3_Neos__DimensionMenu:
-.. _TYPO3_Neos__DimensionsMenu:
+.. _Neos_Neos__DimensionMenu:
+.. _Neos_Neos__DimensionsMenu:
 
 DimensionsMenu
 --------------
 
-Create links to other node variants (e.g. variants of the current node in other dimensions) by using this TypoScript object.
+Create links to other node variants (e.g. variants of the current node in other dimensions) by using this Fusion object.
 
 If the ``dimension`` setting is given, the menu will only include items for this dimension, with all other configured
 dimension being set to the value(s) of the current node. Without any ``dimension`` being configured, all possible
@@ -791,7 +791,7 @@ found, it is used.
 Only if the current node is not available at all (even after considering default presets with their fallback rules),
 no node be assigned (so no link will be created and the items will have the ``absent`` state.)
 
-.. _TYPO3_Neos__NodeUri:
+.. _Neos_Neos__NodeUri:
 
 NodeUri
 -------
@@ -814,7 +814,7 @@ Example::
 		node = ${q(node).parent().get(0)}
 	}
 
-.. _TYPO3_Neos__ImageUri:
+.. _Neos_Neos__ImageUri:
 
 ImageUri
 --------
@@ -837,15 +837,15 @@ Example::
 		allowUpScaling = TRUE
 	}
 
-.. _TYPO3_Neos__ImageTag:
+.. _Neos_Neos__ImageTag:
 
 ImageTag
 --------
 
 Render an image tag for an asset.
 
-:\*: All :ref:`TYPO3_Neos__ImageUri` properties
-:attributes: (:ref:`TYPO3_TypoScript__Attributes`) Image tag attributes
+:\*: All :ref:`Neos_Neos__ImageUri` properties
+:attributes: (:ref:`Neos_Fusion__Attributes`) Image tag attributes
 
 Example::
 
@@ -855,7 +855,7 @@ Example::
 		attributes.alt = 'A company logo'
 	}
 
-.. _TYPO3_Neos__ConvertUris:
+.. _Neos_Neos__ConvertUris:
 
 ConvertUris
 -----------

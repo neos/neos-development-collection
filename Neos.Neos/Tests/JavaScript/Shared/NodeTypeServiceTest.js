@@ -16,7 +16,7 @@
 								subTypes: {
 									'Neos.Neos:Document': [
 										'Neos.Neos:Shortcut',
-										'Neos.Neos.NodeTypes:Page',
+										'Neos.NodeTypes:Page',
 										'Neos.Neos:Page',
 										'Neos.Demo:Chapter',
 										'TYPO3.NonExisting:NodeType'
@@ -26,7 +26,7 @@
 							nodeTypes: {
 								'Neos.Neos:Document': {},
 								'Neos.Neos:Shortcut': {},
-								'Neos.Neos.NodeTypes:Page': {},
+								'Neos.NodeTypes:Page': {},
 								'Neos.Neos:Page': {},
 								'Neos.Demo:Chapter': {}
 							}
@@ -47,7 +47,7 @@
 					var documentSubNodeTypes = NodeTypeService.getSubNodeTypes('Neos.Neos:Document');
 
 					assert.ok(documentSubNodeTypes['Neos.Neos:Shortcut'], 'Neos.Neos:Shortcut');
-					assert.ok(documentSubNodeTypes['Neos.Neos.NodeTypes:Page'], 'Neos.Neos.NodeTypes:Page');
+					assert.ok(documentSubNodeTypes['Neos.NodeTypes:Page'], 'Neos.NodeTypes:Page');
 					assert.ok(documentSubNodeTypes['Neos.Neos:Page'], 'Neos.Neos:Page');
 					assert.ok(documentSubNodeTypes['Neos.Demo:Chapter'], 'Neos.Demo:Chapter');
 

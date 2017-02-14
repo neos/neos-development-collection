@@ -198,7 +198,7 @@ class NodeEvent extends Event
     {
         try {
             $context = $this->contextFactory->create(array(
-                'workspaceName' => $this->userService->getUserWorkspace()->getName(),
+                'workspaceName' => $this->userService->getPersonalWorkspace()->getName(),
                 'dimensions' => $this->dimension,
                 'currentSite' => $this->getCurrentSite(),
                 'invisibleContentShown' => true
@@ -222,7 +222,7 @@ class NodeEvent extends Event
     {
         try {
             $context = $this->contextFactory->create(array(
-                'workspaceName' => $this->userService->getUserWorkspace()->getName(),
+                'workspaceName' => $this->userService->getPersonalWorkspace()->getName(),
                 'dimensions' => $this->dimension,
                 'currentSite' => $this->getCurrentSite(),
                 'invisibleContentShown' => true

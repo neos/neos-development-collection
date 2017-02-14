@@ -304,7 +304,7 @@ Neos:
           presets:
             default:
               # Allows configuring the baseNodeType used in the node tree. It is a filter, so this also
-              # works: 'TYPO3.Neos:Document,!Acme.Com:SomeNodeTypeToIgnore'
+              # works: 'Neos.Neos:Document,!Acme.Com:SomeNodeTypeToIgnore'
               baseNodeType: 'Neos.Neos:Document'
         structureTree:
           # number of levels inside the structure tree which shall be loaded eagerly, at start.
@@ -429,7 +429,7 @@ Neos:
         inPlace:
           isEditingMode: true
           isPreviewMode: false
-          typoScriptRenderingPath: ''
+          fusionRenderingPath: ''
           title: 'Neos.Neos:Main:editPreviewModes.inPlace'
           position: 100
         rawContent:

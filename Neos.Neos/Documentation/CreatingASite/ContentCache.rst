@@ -182,7 +182,7 @@ The following patterns of tags will be flushed by Neos:
 ``NodeType_[My.Package:NodeTypeName]``
   Flushes cache entries if any node with the given node type changes. ``[My.Package:NodeTypeName]`` needs to be
   replaced by any node type name. Inheritance will be taken into account, so for a changed node of type
-  ``Neos.Neos.NodeTypes:Page`` the tags ``NodeType_Neos.Neos.NodeTypes:Page`` and ``NodeType_Neos.Neos:Document``
+  ``Neos.NodeTypes:Page`` the tags ``NodeType_Neos.NodeTypes:Page`` and ``NodeType_Neos.Neos:Document``
   (and some more) will be flushed.
 
 ``Node_[Identifier]``
@@ -237,7 +237,7 @@ The following list of Fusion prototypes is cached by default:
 
 The following list of Fusion prototypes is uncached by default:
 
-* Neos.Neos.NodeTypes:Form
+* Neos.NodeTypes:Form
 * Neos.Neos:Plugin
 
 .. note::

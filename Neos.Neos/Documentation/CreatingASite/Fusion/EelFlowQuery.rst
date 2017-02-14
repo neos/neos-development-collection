@@ -222,7 +222,7 @@ Querying for nodes of two or more different node types
 
 .. code-block:: text
 
-	elements = ${q(node).filter('[instanceof Neos.Neos.NodeTypes:Text],[instanceof Neos.Neos.NodeTypes:TextWithImage]').get()}
+	elements = ${q(node).filter('[instanceof Neos.NodeTypes:Text],[instanceof Neos.NodeTypes:TextWithImage]').get()}
 
 
 Fizzle
