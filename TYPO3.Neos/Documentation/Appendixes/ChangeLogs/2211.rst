@@ -1,0 +1,119 @@
+`2.2.11 (2017-02-15) <https://github.com/neos/neos-development-collection/releases/tag/2.2.11>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Make fusion-parser aspectable <https://github.com/neos/neos-development-collection/pull/1410>`_
+--------------------------------------------------------------------------------------------------------
+
+The fusion parser cloned itself previously to handle includes but to keep the defined namespaces.
+That made the use of aspects impossible since they were only applied on the initially created instance of the parser.
+
+This change fixes this by using a new instance of the parser for each include and transfers the namespaces explicitly to the new parser.
+
+* Packages: ``Neos`` ``TypoScript``
+
+`BUGFIX: make moving a content node across document nodes work from the tree <https://github.com/neos/neos-development-collection/pull/1396>`_
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+Moving a content node across document nodes used to give a JS error:
+![image](https://cloud.githubusercontent.com/assets/837032/22254950/0ac9dd9e-e267-11e6-8d81-efe7906e4106.png)
+
+**How I did it**
+
+The error happens inside DynaTree, the code which we do not control. The only way I found to prevent it is to check for existence of child nodes before calling DynaTree's move.
+
+**How to verify it**
+
+Cut some content node from the tree on one page and paste it on another.
+
+* Packages: ``Neos``
+
+`BUGFIX: Incorrect default sort direction in media browser <https://github.com/neos/neos-development-collection/pull/1392>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+Changes the default sort direction in the media browser back to descending (latest modified first).
+
+Regression introduced in `c7aed058d3a363db8e51e8e9b84a557e90bffd0e <https://github.com/neos/neos-development-collection/commit/c7aed058d3a363db8e51e8e9b84a557e90bffd0e>`_
+
+Resolves #1230
+
+* Packages: ``Media``
+
+`BUGFIX: Path parameter correctly annotated as string <https://github.com/neos/neos-development-collection/pull/1390>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+For `\\TYPO3\\TypoScript\\Core\\Runtime->handleRenderingException()`.
+
+Fixed for 3.0 in #1389.
+
+* Packages: ``TypoScript``
+
+`BUGFIX: Changing NodeType is broken <https://github.com/neos/neos-development-collection/pull/1378>`_
+------------------------------------------------------------------------------------------------------
+
+Without this change, it's impossible to change the NodeType (from the inspector) for a NodeType with a default value for a non-scalar property (e.g. DateTime). The service tries to trim a non-scalar value, and throws an error. 
+
+This change checks if the value is a scalar before trimming and adds a check for null value.
+
+* Packages: ``TYPO3CR``
+
+`BUGFIX: Set correct timezoneOffset in DateTime-picker <https://github.com/neos/neos-development-collection/pull/1209>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Fixes the bug that the DateTime-picker gets an hour off after
+daylight-saving-time switch.
+
+Fixes: #851
+
+* Packages: ``Neos``
+
+`BUGFIX: Remove role check when deleting workspaces for users <https://github.com/neos/neos-development-collection/pull/1377>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+This was broken by `5279a7489efcd3c5f5e411b6b5bda11ad1b4ca75 <https://github.com/neos/neos-development-collection/commit/5279a7489efcd3c5f5e411b6b5bda11ad1b4ca75>`_.
+Before, checks were done for the role TYPO3.Neos:Editor. However,
+checking for AbstractEditor is pointless; workspaces are
+now never deleted when a user is deleted. Since the deletePersonalWorkspace
+method checks for existence anyway, there's no reason to do
+this role check at all. If a user is deleted, his workspaces should be
+deleted as well.
+
+Fixes #1376.
+
+* Packages: ``Neos``
+
+`BUGFIX: RemoveNodePrivilege blocks editing <https://github.com/neos/neos-development-collection/pull/341>`_
+------------------------------------------------------------------------------------------------------------
+
+The RemoveNodePrivilege would block editing of nodes completely, since
+the inspector would send all properties of a node, but the setter for
+"removed" was blocked by the privilege.
+
+Now the privilege only matches on setRemoved(true) and thus only blocks
+what it should block.
+
+Fixes #896 
+
+`BUGFIX: Adjust exception page title <https://github.com/neos/neos-development-collection/pull/1227>`_
+------------------------------------------------------------------------------------------------------
+
+Remove "TYPO3" from error page title tag and NeosBackendMessage title tag
+
+* Packages: ``Neos``
+
+`TASK: Removed duplicate line in NodeUri prototype <https://github.com/neos/neos-development-collection/pull/1324>`_
+--------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Update PHP coding guidelines <https://github.com/neos/neos-development-collection/pull/1300>`_
+-----------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.2.10...2.2.11>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
