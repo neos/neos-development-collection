@@ -1,0 +1,59 @@
+`2.1.15 (2017-02-15) <https://github.com/neos/neos-development-collection/releases/tag/2.1.15>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Path parameter correctly annotated as string <https://github.com/neos/neos-development-collection/pull/1390>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+For `\\TYPO3\\TypoScript\\Core\\Runtime->handleRenderingException()`.
+
+Fixed for 3.0 in #1389.
+
+* Packages: ``TypoScript``
+
+`BUGFIX: Set correct timezoneOffset in DateTime-picker <https://github.com/neos/neos-development-collection/pull/1209>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Fixes the bug that the DateTime-picker gets an hour off after
+daylight-saving-time switch.
+
+Fixes: #851
+
+* Packages: ``Neos``
+
+`BUGFIX: Remove role check when deleting workspaces for users <https://github.com/neos/neos-development-collection/pull/1377>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+This was broken by `5279a7489efcd3c5f5e411b6b5bda11ad1b4ca75 <https://github.com/neos/neos-development-collection/commit/5279a7489efcd3c5f5e411b6b5bda11ad1b4ca75>`_.
+Before, checks were done for the role TYPO3.Neos:Editor. However,
+checking for AbstractEditor is pointless; workspaces are
+now never deleted when a user is deleted. Since the deletePersonalWorkspace
+method checks for existence anyway, there's no reason to do
+this role check at all. If a user is deleted, his workspaces should be
+deleted as well.
+
+Fixes #1376.
+
+* Packages: ``Neos``
+
+`BUGFIX: RemoveNodePrivilege blocks editing <https://github.com/neos/neos-development-collection/pull/341>`_
+------------------------------------------------------------------------------------------------------------
+
+The RemoveNodePrivilege would block editing of nodes completely, since
+the inspector would send all properties of a node, but the setter for
+"removed" was blocked by the privilege.
+
+Now the privilege only matches on setRemoved(true) and thus only blocks
+what it should block.
+
+Fixes #896 
+
+`TASK: Removed duplicate line in NodeUri prototype <https://github.com/neos/neos-development-collection/pull/1324>`_
+--------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.1.14...2.1.15>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
