@@ -14,7 +14,7 @@
         "neos/party": "~4.0",
         "neos/setup": "~4.0",
         "neos/twitter-bootstrap": "~3.0",
-        "neos/form": "~3.0",
+        "neos/form": "~4.0",
         "neos/kickstarter": "~4.0.0"
     },
     "replace": {
