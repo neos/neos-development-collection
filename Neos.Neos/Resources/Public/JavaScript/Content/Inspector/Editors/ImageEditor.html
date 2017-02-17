@@ -18,9 +18,11 @@
 		<button id="{{unbound view._browseButtonId}}" class="neos-button neos-button-icon neos-inspector-image-upload-files" {{bindAttr disabled="view._uploadInProgress:neos-disabled" title="view._fileUploadLabel"}} data-neos-tooltip>
 			<i class="icon-upload"></i>
 		</button>
-		<button class="neos-button neos-button-icon neos-inspector-image-remove-button" {{bindAttr disabled="view._uploadInProgress" title="view.removeButtonLabel"}} {{action "remove" target="view"}} data-neos-tooltip>
-			<i class="icon-remove"></i>
-		</button>
+		{{#if view.value}}
+			<button class="neos-button neos-button-icon neos-inspector-image-remove-button" {{bindAttr disabled="view._uploadInProgress" title="view.removeButtonLabel"}} {{action "remove" target="view"}} data-neos-tooltip>
+				<i class="icon-remove"></i>
+			</button>
+		{{/if}}
 		{{#if view.shouldRenderCrop}}
 			{{view view.SecondaryInspectorButton viewClassBinding="view._cropView" isVisibleBinding="view._uploadPreviewNotShown" class="neos-button-icon neos-inspector-image-crop-button" titleBinding="view.cropLabel" icon="crop" data-neos-tooltip=""}}
 		{{/if}}
