@@ -71,7 +71,7 @@ class AssetService
     /**
      * @var array
      */
-    protected $usageStrategies = [];
+    protected $usageStrategies;
 
     /**
      * @Flow\Inject
@@ -150,6 +150,7 @@ class AssetService
             return $this->usageStrategies;
         }
 
+        $this->usageStrategies = [];
         $assetUsageStrategieImplementations = $this->reflectionService->getAllImplementationClassNamesForInterface('TYPO3\Media\Domain\Strategy\AssetUsageStrategyInterface');
         foreach ($assetUsageStrategieImplementations as $assetUsageStrategieImplementationClassName) {
             $this->usageStrategies[] = $this->objectManager->get($assetUsageStrategieImplementationClassName);
