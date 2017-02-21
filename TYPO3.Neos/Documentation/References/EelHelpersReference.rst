@@ -47,9 +47,9 @@ Array.indexOf(array, searchElement, fromIndex)
 * ``searchElement`` (mixed)
 * ``fromIndex`` (integer, *optional*)
 
-Find out whether a certain value is part of an array::
+Check if an array contains a value::
 
-    Array.indexOf(myArray, 'myValue') > 0
+    Array.indexOf(myArray, 'myValue') >= 0
 
 **Return** (mixed)
 
