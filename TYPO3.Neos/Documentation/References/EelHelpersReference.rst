@@ -47,6 +47,8 @@ Array.indexOf(array, searchElement, fromIndex)
 * ``searchElement`` (mixed)
 * ``fromIndex`` (integer, *optional*)
 
+    Array.indexOf(myArray, 'myValue') > 0
+
 **Return** (mixed)
 
 Array.isEmpty(array)
