@@ -166,7 +166,7 @@
         'TYPO3.Neos/Validation/StringLengthValidator':
           minimum: 1
           maximum: 255
-        regularExpression:
+        'TYPO3.Neos/Validation/RegularExpressionValidator':
           regularExpression: '/^[a-z0-9\-]+$/i'
     _hidden:
       ui:
