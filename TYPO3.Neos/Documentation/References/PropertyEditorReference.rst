@@ -32,6 +32,8 @@ Example::
       type: string
       ui:
         label: 'Subtitle'
+        help:
+          message: 'Enter some help text for the editors here. The text will be shown via click.'
         inspector:
           group: 'document'
           editorOptions:
