@@ -65,6 +65,16 @@ additionalProperties:
             # we intentionally do not specify which properties are allowed here;
             # as other packages (such as TYPO3.Neos) might do that instead.
 
+          'options':
+            type: dictionary
+            # we intentionally do not specify which properties are allowed here;
+            # as other packages might do that instead.
+
+          'search':
+            type: dictionary
+            # we intentionally do not specify which properties are allowed here;
+            # as other packages might do that instead.
+
     'ui':
       type: dictionary
       # we intentionally do not specify which properties are allowed here (except the one expected in TYPO3CR);
@@ -74,6 +84,13 @@ additionalProperties:
 
     'options':
       type: dictionary
+      # we intentionally do not specify which properties are allowed here;
+      # as other packages might do that instead.
+
+    'search':
+      type: dictionary
+      # we intentionally do not specify which properties are allowed here;
+      # as other packages might do that instead.
 
     'postprocessors':
       type: dictionary
