@@ -9,8 +9,6 @@ prototypes because the genrated fusion code can be overwritten and controlled fr
 ## WARNING
 
 This is highly experimental and will very likely change in the future. 
-Additionally this requires the following MR to actually work. 
-https://github.com/neos/neos-development-collection/pull/1410
 
 ## Usage
 
@@ -24,23 +22,20 @@ prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.At
     imageUri = 'https://dummyimage.com/600x400/000/fff'
     
     #
-    # All lines between the <<<AFX ... AFX; are read as xml and 
-    # converted to the fusion code below at parse time. 
+    # The code the afx`...` is read as xml and converted to the fusion code below at parse time. 
+    # Attention: Currently there is no way to escape closing-backticks inside the Expression. 
     #
-    # Please note that the closing AFX; has to be the first element on its line
-    #
-    renderer = <<<AFX
+    renderer = afx`
        <div>
          <h1 @key="headline" class="headline">${props.title}</h1>
          <h2 @key="subheadline" class="subheadline" @if.hasSubtitle="${props.subtitle ? true : false}">${props.subtitle}</h2>
          <PackageFactory.AtomicFusion.AFX:Image @key="image" uri="${props.imageUri}" />
        </div>
-    AFX;
-
+    `
 }
 ```
 
-Will be transpiled, parsed and then cached as the following fusion-code
+Will be transpiled, parsed and then cached and evaluated as the following fusion-code
 
 ```
 prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.AtomicFusion:Component) {
