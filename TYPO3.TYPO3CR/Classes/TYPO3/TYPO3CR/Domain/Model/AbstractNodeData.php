@@ -173,7 +173,7 @@ abstract class AbstractNodeData
 
             $this->persistRelatedEntities($value);
 
-            if (isset($this->properties[$propertyName]) && $this->properties[$propertyName] === $value) {
+            if (array_key_exists($propertyName, $this->properties) && $this->properties[$propertyName] === $value) {
                 return;
             }
 
@@ -218,7 +218,7 @@ abstract class AbstractNodeData
         if (is_object($this->contentObjectProxy)) {
             return ObjectAccess::isPropertyGettable($this->contentObjectProxy->getObject(), $propertyName);
         }
-        return isset($this->properties[$propertyName]);
+        return array_key_exists($propertyName, $this->properties);
     }
 
     /**
