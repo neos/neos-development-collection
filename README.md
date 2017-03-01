@@ -6,6 +6,9 @@ This package provides a fusion preprocessor that expands a compact xml-ish synta
 to write compact components that do'nt need a seperate template file and enables unplanned extensibility for the defined 
 prototypes because the genrated fusion code can be overwritten and controlled from the outside if needed. 
 
+HINT: To use this package you have to install https://github.com/PackageFactory/afx aswell until the package becomes available
+via packagist.
+
 ## WARNING
 
 This is highly experimental and will very likely change in the future. 
@@ -27,9 +30,9 @@ prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.At
     #
     renderer = afx`
        <div>
-         <h1 @key="headline" class="headline">${props.title}</h1>
-         <h2 @key="subheadline" class="subheadline" @if.hasSubtitle="${props.subtitle ? true : false}">${props.subtitle}</h2>
-         <PackageFactory.AtomicFusion.AFX:Image @key="image" uri="${props.imageUri}" />
+         <h1 @key="headline" class="headline">{props.title}</h1>
+         <h2 @key="subheadline" class="subheadline" @if.hasSubtitle={props.subtitle ? true : false}>{props.subtitle}</h2>
+         <PackageFactory.AtomicFusion.AFX:Image @key="image" uri={props.imageUri} />
        </div>
     `
 }
@@ -49,16 +52,19 @@ prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.At
         content = Neos.Fusion:Array {
             headline = Neos.Fusion:Tag {
                 tagName = 'h1'
-                content = ${props.title}
+                content = Neos.Fusion:Array {
+                    1 = ${props.title}
+                }
                 attributes.class = 'headline'
             }
             subheadline = Neos.Fusion:Tag {
                 tagName = 'h2'
-                content = ${props.subtitle}
+                content = Neos.Fusion:Array {
+                    1 = ${props.subtitle}
+                }
                 attributes.subheadline = 'subheadline'
                 @if.hasSubtitle = ${props.subtitle ? true : false}
             }
-
             image = PackageFactory.AtomicFusion.AFX:Image {
                 uri = ${props.imageUri}
             }
@@ -73,18 +79,20 @@ prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.At
 ### HTML-Tags (Tags without Namespace)
 
 HTML-Tags are converted to `Neos.Fusion:Tag` Objects. All attributes are rendered as attributes and the content/children 
-are renderd as content.
+are rendered as fusion-array.
  
 The following html: 
 ```
-<h1 class="headline" @if.hasHeadline="{props.headline ? true : false}">${props.headline}</h1>
+<h1 class="headline" @if.hasHeadline={props.headline ? true : false}>{props.headline}</h1>
 ```
 Will be transformed into this fusion:
 ```
 Neos.Fusion:Tag {
     tagName = 'h1'
     attributes.class = 'headline'
-    content = ${props.headline}
+    content = Neos.Fusion:Array {
+        1 = ${props.headline}
+    }
     @if.hasHeadline="{props.headline ? true : false}
 }
 ``` 
@@ -95,13 +103,15 @@ All namespaced-tags are interpreted as prototype-names and all attributes are pa
 
 The following html: 
 ```
-<Vendor.Site:Prototype type="headline" @if.hasHeadline="{props.headline ? true : false}" >${props.headline}</Vendor.Site:Prototype>
+<Vendor.Site:Prototype type="headline" @if.hasHeadline={props.headline ? true : false} >{props.headline}</Vendor.Site:Prototype>
 ```
 Will be transformed into this fusion:
 ```
 Vendor.Site:Prototype {
     type = 'headline'
-    renderer = ${props.headline}
+    renderer = Neos.Fusion:Array {
+        1 = ${props.headline}
+    }
     @if.hasHeadline="{props.headline ? true : false}
 }
 ```
@@ -110,10 +120,10 @@ Vendor.Site:Prototype {
 
 In general all meta-attributes start with an @-sign. 
 
-The `@kchildren`-attribute defined the property that is used to render the content/children of the current tag into. For
+The `@children`-attribute defined the property that is used to render the content/children of the current tag into. For
 html-tags the default is `content` while for Fusion-Object-Tags the default is `renderer`.
 
-The `@key`-attribute can be used to define the property name of an item among its siblings. If no key is defined the key `item_x` is used with x startting at 1.
+The `@key`-attribute can be used to define the property name of an item among its siblings. If no key is defined the index is used starting at 1.
 
 All other meta attributes are directly added to the generated prototype and can be used for @if or @process statements. 
 

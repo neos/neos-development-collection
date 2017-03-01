@@ -2,6 +2,9 @@
 namespace PackageFactory\AtomicFusion\AFX\Service;
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Utility\Arrays;
+use PackageFactory\Afx\Parser as AfxParser;
+use PackageFactory\AtomicFusion\AFX\Exception\Exception;
 
 /**
  * Class AfxService
@@ -12,8 +15,6 @@ class AfxService
 {
 
     const INDENTATION = '    ';
-    
-    const PREFIX = 'AFX__';
 
     /**
      * @var string $afxCode the AFX code that is converted
@@ -22,70 +23,66 @@ class AfxService
      */
     public static function convertAfxToFusion($afxCode, $indentation = '')
     {
-        // replace namespaces to make the xml parsable
-        $afxCode = preg_replace_callback(
-            "/(<\/?)([A-Za-z\\\\.]+:[A-Za-z\\\\.]+)/us",
-            function($matches) {
-                return $matches[1] . AfxService::fusionNameToTagName($matches[2]);
-            },
-            $afxCode
-        );
-
-        // replace meta attributes with a prefix to make the xml parsable
-        $afxCode = preg_replace("/(?<= )@([a-zA-Z0-9\\.]+)(?=\\=\")/u", "AFX__$1", $afxCode);
-
-        $xml = new \DOMDocument();
-        $xml->loadXML($afxCode);
-        $fusion = AfxService::xmlNodeToFusion($xml->documentElement, $indentation);
-
+        $parser = new AfxParser($afxCode);
+        $ast = $parser->parse();
+        $fusion = AfxService::astNodeToFusion($ast, $indentation);
         return $fusion;
     }
 
     /**
-     * @param \DOMNode $xml
+     * @param array $astNode
      * @param string $indentation
      * @return string
      */
-    protected static function xmlNodeToFusion (\DOMNode $xml, $indentation = '')
+    protected static function astNodeToFusion ($astNode, $indentation = '')
     {
-        if ($xml->nodeType === XML_TEXT_NODE) {
-            return AfxService::valueToFusionAssignment($xml->nodeValue) . PHP_EOL;
-        }
+        $tagName = $astNode['identifier'];
 
-        $tagName = $xml->nodeName;
-
-
-        if (substr($tagName, 0, strlen(AfxService::PREFIX)) == AfxService::PREFIX){
-            // fusion object
-            $fusion = AfxService::tagNameToFusionName($tagName) . ' {' . PHP_EOL;
+        // Tag
+        if (strpos($tagName, ':') !== false) {
+            // Named fusion-object
+            $fusion = $indentation . $tagName . ' {' . PHP_EOL;
             $childrenPropertyName = 'renderer';
             $attributePrefix = '';
         } else {
-            // tag
+            // Neos.Fusion:Tag
             $fusion = 'Neos.Fusion:Tag {' . PHP_EOL;
             $fusion .= $indentation . AfxService::INDENTATION .'tagName = \'' .  $tagName . '\'' . PHP_EOL;
             $childrenPropertyName = 'content';
             $attributePrefix = 'attributes.';
         }
 
-        // attributes
-        if ($xml->hasAttributes()) {
-            foreach ($xml->attributes as $attribute) {
-                if ($attribute->name == AfxService::PREFIX . 'key') {
-                    // this is handled later
-                } elseif ($attribute->name == AfxService::PREFIX . 'children') {
-                    $childrenPropertyName = $attribute->value;
-                } elseif (substr($attribute->name, 0, strlen(AfxService::PREFIX)) == AfxService::PREFIX) {
-                    $fusion .= $indentation . AfxService::INDENTATION . '@' . substr($attribute->name, strlen(AfxService::PREFIX)) . ' = ' . AfxService::valueToFusionAssignment($attribute->value) . PHP_EOL;
+        // Attributes
+        if ($astNode['props'] && count($astNode['props']) > 0) {
+            foreach ($astNode['props'] as $propName => $prop) {
+                if ($propName == '@key') {
+                    continue;
+                }
+                if ($propName == '@children') {
+                    if ($prop['type'] == 'string') {
+                        $childrenPropertyName = $prop['payload'];
+                    } else {
+                        throw new Exception(sprintf('@children only supports string payloads %s found', $prop['type']));
+                    }
                 } else {
-                    $fusion .= $indentation . AfxService::INDENTATION . $attributePrefix . $attribute->name . ' = ' . AfxService::valueToFusionAssignment($attribute->value) . PHP_EOL;
+                    switch ($prop['type']) {
+                        case 'expression':
+                            $fusion .= $indentation . AfxService::INDENTATION . $attributePrefix . $propName . ' = ${' . $prop['payload'] . '}' . PHP_EOL;
+                            break;
+                        case 'string':
+                            $fusion .= $indentation . AfxService::INDENTATION . $attributePrefix . $propName . ' = \'' . $prop['payload'] . '\'' . PHP_EOL;
+                            break;
+                        case 'boolean':
+                            $fusion .= $indentation . AfxService::INDENTATION . $attributePrefix . $propName . ' = true ' . PHP_EOL;
+                            break;
+                    }
                 }
             }
         }
 
-        // children
-        if ($xml->hasChildNodes()) {
-            $fusion .= $indentation . AfxService::INDENTATION . $childrenPropertyName . ' = ' . AfxService::xmlNodeListToFusion($xml->childNodes, $indentation);
+        // Children
+        if ($astNode['children'] && count($astNode['children']) > 0) {
+            $fusion .= $indentation . AfxService::INDENTATION . $childrenPropertyName . ' = ' . AfxService::astNodeListToFusion($astNode['children'], $indentation);
         }
 
         $fusion .= $indentation . '}' . PHP_EOL;
@@ -93,89 +90,47 @@ class AfxService
         return $fusion;
     }
 
+
     /**
-     * @param \DOMNodeList $xml
+     * @param array $astNodeList
      * @param string $indentation
      * @return string
      */
-    protected static function xmlNodeListToFusion (\DOMNodeList $xmlList, $indentation = '')
+    protected static function astNodeListToFusion ($astNodeList, $indentation = '')
     {
-        $fusion = '';
-
-        // filter the items that can be converted to code
-        $renderableItems = [];
-        for ($i = 0; $i < $xmlList->length; $i++) {
-            $xmlListItem = $xmlList->item($i);
-            switch ($xmlListItem->nodeType) {
-                case XML_ELEMENT_NODE:
-                case XML_TEXT_NODE:
-                    $renderableItems[] = $xmlListItem;
+        $fusion = 'Neos.Fusion:Array {' . PHP_EOL;
+        $index = 1;
+        foreach ($astNodeList as $astNode) {
+            $nodeFusion = false;
+            switch ($astNode['type']) {
+                case 'expression':
+                    $nodeFusion = $index . ' = ${' . $astNode['payload'] . '}'  . PHP_EOL;;
+                    break;
+                case 'text':
+                    if (trim($astNode['payload']) !== '') {
+                        $nodeFusion = $index . ' = \'' . $astNode['payload'] . '\'' . PHP_EOL;;
+                    }
+                    break;
+                case 'node':
+                    $fusionName = $index;
+                    if ($keyProperty = Arrays::getValueByPath($astNode, 'payload.props.@key')) {
+                        if ($keyProperty['type'] == 'string') {
+                            $fusionName = $keyProperty['payload'];
+                        } else {
+                            throw new Exception(sprintf('@key only supports string payloads %s was given', $astNode['props']['@key']['type']));
+                        }
+                    }
+                    $nodeFusion = $fusionName . ' = ' . AfxService::astNodeToFusion($astNode['payload'], $indentation . AfxService::INDENTATION . AfxService::INDENTATION);
                     break;
             }
-        }
-
-        if (count($renderableItems) == 1 && $renderableItems[0]->nodeType === XML_TEXT_NODE) {
-            $fusion .=  AfxService::valueToFusionAssignment($xmlList[0]->nodeValue) . PHP_EOL;
-        } else {
-            $fusion .= 'Neos.Fusion:Array {' . PHP_EOL;
-            $index = 1;
-            foreach ($renderableItems as $item) {
-
-                // ignore empty text children
-                if ($item->nodeType === XML_TEXT_NODE && (trim($item->nodeValue) == false) ) {
-                    continue;
-                }
-
-                if ($item->hasAttributes() && $item->hasAttribute(AfxService::PREFIX . 'key')) {
-                    $fusionName = $item->getAttribute(AfxService::PREFIX . 'key');
-                } else {
-                    $fusionName = 'item_' . $index;
-                }
-
-                // $fusionName = 'item_' . $index;
-                $fusion .= $indentation . AfxService::INDENTATION . AfxService::INDENTATION . $fusionName . ' = ' . AfxService::xmlNodeToFusion($item, $indentation . AfxService::INDENTATION . AfxService::INDENTATION);
+            if ($nodeFusion) {
                 $index ++;
+                $fusion .= $indentation . AfxService::INDENTATION . AfxService::INDENTATION . $nodeFusion;
             }
-            $fusion .= $indentation . AfxService::INDENTATION . '}' . PHP_EOL;
         }
+
+        $fusion .= $indentation . AfxService::INDENTATION . '}' . PHP_EOL;
+
         return $fusion;
     }
-
-    /**
-     * Create a fusion value assignment
-     * 
-     * @param string $value
-     * @return string
-     */
-    protected static function valueToFusionAssignment($value) {
-        if (substr($value, 0, 2) == '${') {
-            return $value;
-        } else {
-            return '\'' . $value . '\'';
-        }
-    }
-
-    /**
-     * Convert a Fusion Prototype Name into a valid XML Tag Name with a prefix
-     *
-     * @param string $value
-     * @return string
-     */
-    protected static function fusionNameToTagName($name)
-    {
-        return AfxService::PREFIX . str_replace(['.',':'],['_','__'], $name);
-    }
-
-    /**
-     * Convert a XML Tag Name with a prefix back to fusion prototype name
-     *
-     * @param string $value
-     * @return string
-     */
-    protected static function tagNameToFusionName($name)
-    {
-        return str_replace(['__','_'], [':','.'], substr($name, strlen(AfxService::PREFIX)));
-    }
-
-
 }
