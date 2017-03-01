@@ -11,7 +11,8 @@
         }
     ],
     "require": {
-        "neos/fusion": "^3.0.1"
+        "neos/fusion": "^3.0.1",
+        "packagefactory/afx": "~1.0.0"
     },
     "autoload": {
         "psr-4": {
