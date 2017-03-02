@@ -37,7 +37,6 @@ class AfxService
     protected static function astNodeToFusion ($astNode, $indentation = '')
     {
         $tagName = $astNode['identifier'];
-        $childrenPropertyName = 'content';
 
         // Tag
         if (strpos($tagName, ':') !== false) {
@@ -54,15 +53,8 @@ class AfxService
         // Attributes
         if ($astNode['props'] && count($astNode['props']) > 0) {
             foreach ($astNode['props'] as $propName => $prop) {
-                if ($propName == '@key') {
+                if ($propName == '@key' || $propName == '@children') {
                     continue;
-                }
-                if ($propName == '@children') {
-                    if ($prop['type'] == 'string') {
-                        $childrenPropertyName = $prop['payload'];
-                    } else {
-                        throw new Exception(sprintf('@children only supports string payloads %s found', $prop['type']));
-                    }
                 } else {
                     switch ($prop['type']) {
                         case 'expression':
@@ -81,6 +73,16 @@ class AfxService
 
         // Children
         if ($astNode['children'] && count($astNode['children']) > 0) {
+            $childrenProp = Arrays::getValueByPath($astNode, 'props.@children');
+            if ($childrenProp) {
+                if ($childrenProp['type'] == 'string') {
+                    $childrenPropertyName = $prop['payload'];
+                } else {
+                    throw new Exception(sprintf('@children only supports string payloads %s found', $childrenProp['type']));
+                }
+            } else {
+                $childrenPropertyName = 'content';
+            }
             $fusion .= $indentation . AfxService::INDENTATION . $childrenPropertyName . ' = ' . AfxService::astNodeListToFusion($astNode['children'], $indentation);
         }
 
