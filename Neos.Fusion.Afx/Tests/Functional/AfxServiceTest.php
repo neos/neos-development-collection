@@ -35,10 +35,11 @@ EOF;
      */
     public function attributesInHtmlTagsAreConvertedToTagAttributes()
     {
-        $afxCode = '<h1 class="fooo" />';
+        $afxCode = '<h1 content="bar" class="fooo" />';
         $expectedFusion = <<<'EOF'
 Neos.Fusion:Tag {
     tagName = 'h1'
+    content = 'bar'
     attributes.class = 'fooo'
 }
 
