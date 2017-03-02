@@ -37,18 +37,17 @@ class AfxService
     protected static function astNodeToFusion ($astNode, $indentation = '')
     {
         $tagName = $astNode['identifier'];
+        $childrenPropertyName = 'content';
 
         // Tag
         if (strpos($tagName, ':') !== false) {
             // Named fusion-object
             $fusion = $indentation . $tagName . ' {' . PHP_EOL;
-            $childrenPropertyName = 'renderer';
             $attributePrefix = '';
         } else {
             // Neos.Fusion:Tag
             $fusion = 'Neos.Fusion:Tag {' . PHP_EOL;
             $fusion .= $indentation . AfxService::INDENTATION .'tagName = \'' .  $tagName . '\'' . PHP_EOL;
-            $childrenPropertyName = 'content';
             $attributePrefix = 'attributes.';
         }
 
