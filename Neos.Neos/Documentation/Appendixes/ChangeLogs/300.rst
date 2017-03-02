@@ -1,0 +1,4 @@
+`3.0.0 (2017-01-30) <https://github.com/neos/neos-development-collection/releases/tag/3.0.0>`_
+==============================================================================================
+
+Due to issues with the release process, no changelog has been rendered (yet.)
