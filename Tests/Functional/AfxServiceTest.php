@@ -118,7 +118,7 @@ EOF;
         $afxCode = '<Vendor.Site:Prototype>Fooo</Vendor.Site:Prototype>';
         $expectedFusion = <<<'EOF'
 Vendor.Site:Prototype {
-    renderer = Neos.Fusion:Array {
+    content = Neos.Fusion:Array {
         1 = 'Fooo'
     }
 }

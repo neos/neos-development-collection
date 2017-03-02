@@ -120,8 +120,8 @@ Vendor.Site:Prototype {
 
 In general all meta-attributes start with an @-sign. 
 
-The `@children`-attribute defined the property that is used to render the content/children of the current tag into. For
-html-tags the default is `content` while for Fusion-Object-Tags the default is `renderer`.
+The `@children`-attribute defined the property that is used to render the content/children of the current tag into. 
+The default property name for the children is `content`.
 
 The `@key`-attribute can be used to define the property name of an item among its siblings. If no key is defined the index is used starting at 1.
 
