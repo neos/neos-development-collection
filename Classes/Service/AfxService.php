@@ -38,16 +38,19 @@ class AfxService
     {
         $tagName = $astNode['identifier'];
 
+        $attributePrefix = NULL;
+        $attributePrefixExceptions = NULL;
+
         // Tag
         if (strpos($tagName, ':') !== false) {
             // Named fusion-object
             $fusion = $indentation . $tagName . ' {' . PHP_EOL;
-            $attributePrefix = '';
         } else {
             // Neos.Fusion:Tag
             $fusion = 'Neos.Fusion:Tag {' . PHP_EOL;
             $fusion .= $indentation . AfxService::INDENTATION .'tagName = \'' .  $tagName . '\'' . PHP_EOL;
             $attributePrefix = 'attributes.';
+            $attributePrefixExceptions = ['content', 'selfClosingTag', 'omitClosingTag'];
         }
 
         // Attributes
@@ -56,12 +59,17 @@ class AfxService
                 if ($propName == '@key' || $propName == '@children') {
                     continue;
                 } else {
+                    if ($attributePrefix && $attributePrefixExceptions && !in_array($propName, $attributePrefixExceptions)) {
+                        $fusionName = $attributePrefix . $propName;
+                    } else {
+                        $fusionName = $propName;
+                    }
                     switch ($prop['type']) {
                         case 'expression':
-                            $fusion .= $indentation . AfxService::INDENTATION . $attributePrefix . $propName . ' = ${' . $prop['payload'] . '}' . PHP_EOL;
+                            $fusion .= $indentation . AfxService::INDENTATION . $fusionName . ' = ${' . $prop['payload'] . '}' . PHP_EOL;
                             break;
                         case 'string':
-                            $fusion .= $indentation . AfxService::INDENTATION . $attributePrefix . $propName . ' = \'' . $prop['payload'] . '\'' . PHP_EOL;
+                            $fusion .= $indentation . AfxService::INDENTATION . $fusionName . ' = \'' . $prop['payload'] . '\'' . PHP_EOL;
                             break;
                         case 'boolean':
                             $fusion .= $indentation . AfxService::INDENTATION . $attributePrefix . $propName . ' = true ' . PHP_EOL;

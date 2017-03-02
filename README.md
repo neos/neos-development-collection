@@ -78,8 +78,8 @@ prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.At
 
 ### HTML-Tags (Tags without Namespace)
 
-HTML-Tags are converted to `Neos.Fusion:Tag` Objects. All attributes are rendered as attributes and the content/children 
-are rendered as fusion-array.
+HTML-Tags are converted to `Neos.Fusion:Tag` Objects. The attributes `content`, `omitClosingTag` and `selfClosingTag` are rendered as attributes and the content/children 
+are directly rendered as property names. All other attributes are rendered as tag-attributes.
  
 The following html: 
 ```
@@ -93,6 +93,20 @@ Neos.Fusion:Tag {
     content = Neos.Fusion:Array {
         1 = ${props.headline}
     }
+    @if.hasHeadline="{props.headline ? true : false}
+}
+``` 
+
+While this: 
+```
+<h1 class="headline" @if.hasHeadline={props.headline ? true : false} content={props.headline} />
+```
+Will be transformed into this fusion:
+```
+Neos.Fusion:Tag {
+    tagName = 'h1'
+    attributes.class = 'headline'
+    content = ${props.headline}
     @if.hasHeadline="{props.headline ? true : false}
 }
 ``` 
