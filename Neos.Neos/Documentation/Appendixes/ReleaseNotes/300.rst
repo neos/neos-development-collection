@@ -1,0 +1,22 @@
+=====
+3.0.0
+=====
+
+…
+
+See also the full `change log <http://neos.readthedocs.io/en/3.0/Appendixes/ChangeLogs/300.html>`_
+
+~~~~~~~~~~~~~~~~~~~~
+Upgrade instructions
+~~~~~~~~~~~~~~~~~~~~
+
+See https://www.neos.io/download-and-extend/upgrade-instructions-2-3-3-0.html
+
+~~~~~~~~~~~~~~~~~~~~
+!!! Breaking changes
+~~~~~~~~~~~~~~~~~~~~
+
+.. note::
+
+   Additionally all changes in Flow 4.0 apply, see the release notes to further information.
+   See http://flowframework.readthedocs.org/en/4.0/TheDefinitiveGuide/PartV/ReleaseNotes/400.html
