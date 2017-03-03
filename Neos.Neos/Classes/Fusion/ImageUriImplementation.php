@@ -102,6 +102,12 @@ class ImageUriImplementation extends AbstractFusionObject
         return $this->fusionValue('allowUpScaling');
     }
 
+
+    public function getQuality()
+    {
+        return $this->tsValue('quality');
+    }
+
     /**
      * Returns a processed image path
      *
@@ -114,7 +120,7 @@ class ImageUriImplementation extends AbstractFusionObject
         if (!$asset instanceof AssetInterface) {
             throw new \Exception('No asset given for rendering.', 1415184217);
         }
-        $thumbnailConfiguration = new ThumbnailConfiguration($this->getWidth(), $this->getMaximumWidth(), $this->getHeight(), $this->getMaximumHeight(), $this->getAllowCropping(), $this->getAllowUpScaling());
+        $thumbnailConfiguration = new ThumbnailConfiguration($this->getWidth(), $this->getMaximumWidth(), $this->getHeight(), $this->getMaximumHeight(), $this->getAllowCropping(), $this->getAllowUpScaling(), $this->getQuality());
         $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($asset, $thumbnailConfiguration);
         if ($thumbnailData === null) {
             return '';
