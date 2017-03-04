@@ -58,59 +58,59 @@ class AfxService
     }
 
     /**
-     * @param array $astBoolean
+     * @param array $payload
      * @param string $indentation
      * @return string
      */
-    protected static function astBooleanToFusion ($astBoolean, $indentation = '')
+    protected static function astBooleanToFusion ($payload, $indentation = '')
     {
         return 'true';
     }
 
     /**
-     * @param array $astExpression
+     * @param array $payload
      * @param string $indentation
      * @return string
      */
-    protected static function astExpressionToFusion ($astExpression, $indentation = '')
+    protected static function astExpressionToFusion ($payload, $indentation = '')
     {
-        return '${' . $astExpression . '}';
+        return '${' . $payload . '}';
     }
 
     /**
-     * @param array $astText
+     * @param array $payload
      * @param string $indentation
      * @return string
      */
-    protected static function astStringToFusion ($astText, $indentation = '')
+    protected static function astStringToFusion ($payload, $indentation = '')
     {
-        return '\'' . $astText . '\'';
+        return '\'' . $payload . '\'';
     }
 
     /**
-     * @param array $astText
+     * @param array $payload
      * @param string $indentation
      * @return string
      */
-    protected static function astTextToFusion ($astText, $indentation = '')
+    protected static function astTextToFusion ($payload, $indentation = '')
     {
-        if (trim($astText) === '') {
+        if (trim($payload) === '') {
             return null;
         }
-        return '\'' . $astText . '\'';
+        return '\'' . $payload . '\'';
     }
 
     /**
-     * @param array $astNode
+     * @param array $payload
      * @param string $indentation
      * @return string
      */
-    protected static function astNodeToFusion ($astNode, $indentation = '')
+    protected static function astNodeToFusion ($payload, $indentation = '')
     {
-        if (!$astNode['identifier']) {
-            \Neos\Flow\var_dump($astNode);
+        if (!$payload['identifier']) {
+            \Neos\Flow\var_dump($payload);
         }
-        $tagName = $astNode['identifier'];
+        $tagName = $payload['identifier'];
 
         $attributePrefix = NULL;
         $attributePrefixExceptions = NULL;
@@ -128,8 +128,8 @@ class AfxService
         }
 
         // Attributes
-        if ($astNode['props'] && count($astNode['props']) > 0) {
-            foreach ($astNode['props'] as $propName => $prop) {
+        if ($payload['props'] && count($payload['props']) > 0) {
+            foreach ($payload['props'] as $propName => $prop) {
                 if ($propName == '@key' || $propName == '@children') {
                     continue;
                 } else {
@@ -147,8 +147,8 @@ class AfxService
         }
 
         // Children
-        if ($astNode['children'] && count($astNode['children']) > 0) {
-            $childrenProp = Arrays::getValueByPath($astNode, 'props.@children');
+        if ($payload['children'] && count($payload['children']) > 0) {
+            $childrenProp = Arrays::getValueByPath($payload, 'props.@children');
             if ($childrenProp) {
                 if ($childrenProp['type'] == 'string') {
                     $childrenPropertyName = $prop['payload'];
@@ -158,7 +158,7 @@ class AfxService
             } else {
                 $childrenPropertyName = 'content';
             }
-            $childFusion = self::astNodeListToFusion($astNode['children'], $indentation . self::INDENTATION);
+            $childFusion = self::astNodeListToFusion($payload['children'], $indentation . self::INDENTATION);
             if ($childFusion !== NULL) {
                 $fusion .= $indentation . self::INDENTATION . $childrenPropertyName . ' = ' . $childFusion . PHP_EOL;
             }
@@ -171,15 +171,15 @@ class AfxService
 
 
     /**
-     * @param array $astNodeList
+     * @param array $payload
      * @param string $indentation
      * @return string
      */
-    protected static function astNodeListToFusion ($astNodeList, $indentation = '')
+    protected static function astNodeListToFusion ($payload, $indentation = '')
     {
         $fusion = 'Neos.Fusion:Array {' . PHP_EOL;
         $index = 1;
-        foreach ($astNodeList as $astNode) {
+        foreach ($payload as $astNode) {
             $fusionName = $index;
             if ($keyProperty = Arrays::getValueByPath($astNode, 'payload.props.@key')) {
                 if ($keyProperty['type'] == 'string') {
