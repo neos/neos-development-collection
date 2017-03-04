@@ -3,6 +3,7 @@ namespace PackageFactory\AtomicFusion\AFX\Aspects;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
+use PackageFactory\AtomicFusion\AFX\Package as AfxPackage;
 use PackageFactory\AtomicFusion\AFX\Service\AfxService;
 
 /**
@@ -16,11 +17,6 @@ class FusionParserAspect
 {
 
     /**
-     * Regex Pattern to detect the afx code in the fusion that will be parsed
-     */
-    const SCAN_PATTERN_AFX = "/([ \\t]*)([a-zA-Z0-9\\.]+)[ \\t]*=[ \\t]*afx`(.*?)`/us";
-
-    /**
      * @Flow\Around("method(Neos\Fusion\Core\Parser->parse())")
      * @param JoinPointInterface $joinPoint The current join point
      * @return mixed
@@ -29,15 +25,15 @@ class FusionParserAspect
     {
         $fusionCode = $joinPoint->getMethodArgument('sourceCode');
 
-        if (preg_match(self::SCAN_PATTERN_AFX, $fusionCode)) {
+        if (preg_match(AfxPackage::SCAN_PATTERN_AFX, $fusionCode)) {
             $fusionCodeProcessed = preg_replace_callback(
-                self::SCAN_PATTERN_AFX,
+                AfxPackage::SCAN_PATTERN_AFX,
                 function($matches) {
                     $indentation = $matches[1];
                     $property = $matches[2];
                     $afx = $matches[3];
-                    $fusion = AfxService::convertAfxToFusion($afx, $indentation);
-                    return $indentation . $property . ' = ' . $fusion;
+                    $fusion = $indentation . $property . ' = ' . AfxService::convertAfxToFusion($afx, $indentation);
+                    return $fusion;
                 },
                 $fusionCode
             );
