@@ -44,7 +44,7 @@ class AfxService
         // Tag
         if (strpos($tagName, ':') !== false) {
             // Named fusion-object
-            $fusion = $indentation . $tagName . ' {' . PHP_EOL;
+            $fusion = $tagName . ' {' . PHP_EOL;
         } else {
             // Neos.Fusion:Tag
             $fusion = 'Neos.Fusion:Tag {' . PHP_EOL;
