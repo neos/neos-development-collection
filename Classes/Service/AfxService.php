@@ -107,9 +107,6 @@ class AfxService
      */
     protected static function astNodeToFusion ($payload, $indentation = '')
     {
-        if (!$payload['identifier']) {
-            \Neos\Flow\var_dump($payload);
-        }
         $tagName = $payload['identifier'];
 
         $attributePrefix = NULL;
