@@ -26,8 +26,8 @@ class AfxCommandController extends CommandController
     protected $packageManager;
 
     /**
-     * Expand afx in fusion code to pure fusion, this can be usefull for
-     * removing the afxc package if.
+     * Expand afx in fusion code to pure fusion, this can be usefull before
+     * removing the afx package.
      *
      * @param string $packageKey the key of the fusion file package
      * @param boolean $yes confirm execution without further input
@@ -90,7 +90,7 @@ class AfxCommandController extends CommandController
 
 
     /**
-     * Show the afx-expansion to pure fusion, this is useful for learning and understanding
+     * Show the afx detection and expansion to pure fusion, this is useful for learning and understanding
      *
      * @param string $packageKey the key of the fusion file package
      * @return void

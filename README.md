@@ -73,6 +73,13 @@ prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.At
 }
 ```
 
+## CLI - Usage
+
+The package contains the following cli-commands.
+
+1. `./flow afx:show` - Show the afx detection and expansion to pure fusion, this is useful for learning and understanding.
+1. `./flow afx:eject` - Expand afx in fusion code to pure fusion, this is usefull before removing the afx package. 
+
 ## Rules
 
 
