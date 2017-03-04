@@ -7,14 +7,6 @@ use PackageFactory\AtomicFusion\AFX\Service\AfxService;
 class AfxServiceTest extends FunctionalTestCase
 {
 
-    public function setUp()
-    {
-    }
-
-    public function tearDown()
-    {
-    }
-
     /**
      * @test
      */
@@ -25,7 +17,6 @@ class AfxServiceTest extends FunctionalTestCase
 Neos.Fusion:Tag {
     tagName = 'h1'
 }
-
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
@@ -42,7 +33,6 @@ Neos.Fusion:Tag {
     content = 'bar'
     attributes.class = 'fooo'
 }
-
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
@@ -56,7 +46,6 @@ EOF;
         $expectedFusion = <<<'EOF'
 Vendor.Site:Prototype {
 }
-
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
@@ -72,7 +61,6 @@ Vendor.Site:Prototype {
     foo = 'bar'
     baz = 'bam'
 }
-
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
@@ -88,7 +76,6 @@ Vendor.Site:Prototype {
     @position = 'start'
     @if.hasTitle = ${title}
 }
-
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
@@ -106,7 +93,6 @@ Neos.Fusion:Tag {
         1 = 'Fooo'
     }
 }
-
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
@@ -123,7 +109,6 @@ Vendor.Site:Prototype {
         1 = 'Fooo'
     }
 }
-
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
@@ -140,7 +125,6 @@ Vendor.Site:Prototype {
         1 = 'Fooo'
     }
 }
-
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
@@ -157,7 +141,6 @@ Vendor.Site:Prototype {
         1 = ${eelExpression()}
     }
 }
-
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
@@ -186,7 +169,6 @@ Neos.Fusion:Tag {
         }
     }
 }
-
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
@@ -224,7 +206,6 @@ Neos.Fusion:Tag {
         }
     }
 }
-
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
@@ -253,7 +234,6 @@ Neos.Fusion:Tag {
         }
     }
 }
-
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
@@ -278,7 +258,6 @@ Neos.Fusion:Tag {
         3 = ${eelExpression()}
     }
 }
-
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
