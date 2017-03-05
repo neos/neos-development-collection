@@ -104,17 +104,15 @@ Neos.Fusion:Tag {
 }
 ``` 
 
-While this: 
+The following example defines the tag-content as a single expression instead of an fusion array: 
 ```
-<h1 class="headline" @if.hasHeadline={props.headline ? true : false} content={props.headline} />
+<h1 class="headline" content={props.headline} />
 ```
 Will be transformed into this fusion:
 ```
 Neos.Fusion:Tag {
-    tagName = 'h1'
     attributes.class = 'headline'
     content = ${props.headline}
-    @if.hasHeadline="{props.headline ? true : false}
 }
 ``` 
 
