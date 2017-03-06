@@ -172,6 +172,7 @@ module.exports = function (grunt) {
 						src = src.replace('data-toggle', 'data-neos-toggle');
 
 						// Tooltip
+						src = src.replace(/trigger: 'hover focus'/g, "trigger: 'hover'");
 						src = src.replace(/in top bottom left right/g, 'neos-in neos-top neos-bottom neos-left neos-right');
 						src = src.replace(/\.addClass\(placement\)/g, ".addClass('neos-' + placement)");
 						src = src.replace('delay: 0', "delay: { 'show': 500, 'hide': 100 }");
