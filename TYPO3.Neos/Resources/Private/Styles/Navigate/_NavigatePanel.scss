@@ -54,6 +54,12 @@
 		left: $menuButtonWidth;
 	}
 
+  // fix https://github.com/neos/neos-development-collection/issues/1387
+  .neos-tooltip {
+    position: fixed;
+  }
+
+
 	@import "NodeTree";
 	@import "ContextStructureTree";
 
