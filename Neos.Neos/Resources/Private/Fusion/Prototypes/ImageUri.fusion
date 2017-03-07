@@ -7,6 +7,7 @@ prototype(Neos.Neos:ImageUri) {
 	height = NULL
 	allowCropping = FALSE
 	allowUpScaling = FALSE
+	preset = NULL
 	@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
 }
 
@@ -19,6 +20,7 @@ prototype(Neos.Neos:ImageTag) < prototype(Neos.Fusion:Tag) {
 	height = NULL
 	allowCropping = FALSE
 	allowUpScaling = FALSE
+	preset = NULL
 	@context.asset = ${this.asset}
 	@context.width = ${this.width}
 	@context.maximumWidth = ${this.maximumWidth}
@@ -26,6 +28,7 @@ prototype(Neos.Neos:ImageTag) < prototype(Neos.Fusion:Tag) {
 	@context.maximumHeight = ${this.maximumHeight}
 	@context.allowCropping = ${this.allowCropping}
 	@context.allowUpScaling = ${this.allowUpScaling}
+	@context.preset = ${this.preset}
 
 	tagName = 'img'
 	attributes {
@@ -37,6 +40,7 @@ prototype(Neos.Neos:ImageTag) < prototype(Neos.Fusion:Tag) {
 			maximumHeight = ${maximumHeight}
 			allowCropping = ${allowCropping}
 			allowUpScaling = ${allowUpScaling}
+			preset = ${preset}
 		}
 	}
 }
