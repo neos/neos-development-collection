@@ -45,6 +45,7 @@ before_script:
 script:
   - if [ "$BEHAT" != "true" ]; then bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/UnitTests.xml; fi
   - if [ "$BEHAT" != "true" ]; then bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests"; fi
+  - if [ "$BEHAT" != "true" ]; then find Packages/Neos -type f -name "*.php" -exec php -l "{}" \;; fi
   - if [ "$BEHAT" = "true" ]; then bin/behat --ansi --stop-on-failure -f progress -c Packages/Neos/TYPO3.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser; fi
   - if [ "$BEHAT" = "true" ]; then bin/behat --ansi --stop-on-failure -f progress -c Packages/Neos/TYPO3.TYPO3CR/Tests/Behavior/behat.yml.dist; fi
 notifications:
