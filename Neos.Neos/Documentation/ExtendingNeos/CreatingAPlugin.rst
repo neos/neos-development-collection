@@ -54,7 +54,7 @@ Configure Access Rights
 -----------------------
 
 To be able to call the actions of the controller you have to configure a matching set of rights.
-Create a *Policy.yaml* file under *Packages/Application/Sarkosh.CdCollection/Configuration/Policy.yaml* within following:
+Create a *Policy.yaml* file in *Packages/Application/Sarkosh.CdCollection/Configuration/Policy.yaml* containing:
 
 .. code-block:: yaml
 
