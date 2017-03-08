@@ -4,9 +4,19 @@
     "description": "The Media package",
     "license": "GPL-3.0+",
     "require": {
-        "neos/flow": "*",
         "neos/imagine": "*",
-        "neos/fluid-adaptor": "*"
+
+        "neos/flow": "*",
+        "neos/cache": "*",
+        "neos/fluid-adaptor": "*",
+        "neos/utility-objecthandling": "*",
+        "neos/utility-arrays": "*",
+
+        "imagine/imagine": "*",
+
+        "doctrine/common": "~2.7.0",
+        "doctrine/orm": "~2.5.0",
+        "doctrine/dbal": "~2.5.0"
     },
     "replace": {
         "typo3/media": "self.version"
