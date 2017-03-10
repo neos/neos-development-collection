@@ -66,7 +66,9 @@ define(['Library/jquery-with-dependencies', 'Library/vie'], function($, VIE) {
 		return originalRdfaServiceWriteEntityFn.apply(this, arguments);
 	};
 
-	vieInstance.use(new vieInstance.RdfaService());
+	vieInstance.use(new vieInstance.RdfaService({
+		predicateSelector: '[property^="typo3:"],[rel^="typo3:"]'
+	}));
 	vieInstance.Util = VIE.Util;
 	return vieInstance;
 });
