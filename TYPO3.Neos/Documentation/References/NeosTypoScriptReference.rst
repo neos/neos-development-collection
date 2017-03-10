@@ -787,7 +787,9 @@ ImageUri
 Get a URI to a (thumbnail) image for an asset.
 
 :asset: (Asset) An asset object (``Image``, ``ImageInterface`` or other ``AssetInterface``)
+:width: (integer) Desired width of the image
 :maximumWidth: (integer) Desired maximum height of the image
+:height: (integer) Desired height of the image
 :maximumHeight: (integer) Desired maximum width of the image
 :allowCropping: (boolean) Whether the image should be cropped if the given sizes would hurt the aspect ratio, defaults to ``FALSE``
 :allowUpScaling: (boolean) Whether the resulting image size might exceed the size of the original image, defaults to ``FALSE``
@@ -796,8 +798,8 @@ Example::
 
 	logoUri = TYPO3.Neos:ImageUri {
 		asset = ${q(node).property('image')}
-		maximumWidth = 100
-		maximumHeight = 100
+		width = 100
+		height = 100
 		allowCropping = TRUE
 		allowUpScaling = TRUE
 	}

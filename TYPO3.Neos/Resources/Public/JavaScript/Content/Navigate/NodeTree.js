@@ -226,7 +226,7 @@ define(
 						if (PublishableNodes.get('workspaceWidePublishableEntitySubjects').findBy('documentNodeContextPath', node.data.key)) {
 							$(nodeSpan).addClass('neos-dynatree-dirty');
 						}
-						$('a[title]', nodeSpan).tooltip({container: '#neos-application'});
+						$('a[title]', nodeSpan).tooltip({container: '#neos-application', trigger: 'hover'});
 					}
 				}));
 
