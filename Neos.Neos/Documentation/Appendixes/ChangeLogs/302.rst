@@ -1,0 +1,94 @@
+`3.0.2 (2017-03-10) <https://github.com/neos/neos-development-collection/releases/tag/3.0.2>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Avoid stuck tooltip in node tree <https://github.com/neos/neos-development-collection/pull/1450>`_
+-----------------------------------------------------------------------------------------------------------
+
+This switches (bootstrap) tooltips from being triggered on hover
+and focus to just hover. This avoids the tooltip being activated e.g.
+by expand a subtree.
+
+Should fix #1386
+
+`BUGFIX: Only show remove button when image selected in ImageEditor <https://github.com/neos/neos-development-collection/pull/1446>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Do not show the "remove" button in ImageEditor when no image is selected.
+
+`BUGFIX: Limit VIE to predicates with custom namespace <https://github.com/neos/neos-development-collection/pull/1452>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Instead of applying VIE to all elements with `[rel]` or `[property]` attributes,
+only apply to those starting prefixed with the `typo3` namespace.
+
+This prevents side effects for other tags like `<a href="#" rel="nofollow">Link</a>`.
+
+Resolves #1449
+
+`BUGFIX: Add missing colons to resourcepaths in documentation <https://github.com/neos/neos-development-collection/pull/1444>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+This adds missing colons to the resource paths in the examples on selecting a page template.
+
+`BUGFIX: Fix changelog and release note rendering <https://github.com/neos/neos-development-collection/pull/1441>`_
+-------------------------------------------------------------------------------------------------------------------
+
+This fixes a few places and adjusts some files so the 3.0 branch has proper
+release notes and changelog rendering.
+
+* Packages: ``Neos``
+
+`BUGFIX: Adjust policy-matchers after deprecation of userWorkspaceName to personalWorkspaceName <https://github.com/neos/neos-development-collection/pull/1442>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: getPersonalWorkspace()->getName() replaced with getPersonalWorkspaceName() <https://github.com/neos/neos-development-collection/pull/1436>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+`f13a82c2d9d5a3185889d21c4cbfca4dbdfde579 <https://github.com/neos/neos-development-collection/commit/f13a82c2d9d5a3185889d21c4cbfca4dbdfde579>`_ introduced a regression: No workspace is created for new users.
+
+This fixes it.
+
+* Packages: ``Media`` ``Neos``
+
+`TASK: Document width and height property in ImageUri Fusion-prototype <https://github.com/neos/neos-development-collection/pull/1431>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+This documents changes that were introduced in Neos 2.0 with revision `75430099fe2dbd3646eb549dac5e9778abf4c82a <https://github.com/neos/neos-development-collection/commit/75430099fe2dbd3646eb549dac5e9778abf4c82a>`_.
+
+`TASK: Documentation adjustments <https://github.com/neos/neos-development-collection/pull/1430>`_
+--------------------------------------------------------------------------------------------------
+
+Adds a small example to the Eel Helpers Reference (Array.indexOf).
+Adds an example on how to use the help messages inside properties (Property Editor Reference).
+
+`TASK: Prefix \`uriPathSegment\` field inspector validator <https://github.com/neos/neos-development-collection/pull/1428>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+I changed the non prefixed `regularExpression`-validator to the correct `TYPO3.Neos/Validation/RegularExpressionValidator`-validator
+
+**How to test**
+
+You could easily try to change the `uriPathSegment` on every document node type.
+
+`BUGFIX: Initialization of asset usage strategies <https://github.com/neos/neos-development-collection/pull/1427>`_
+-------------------------------------------------------------------------------------------------------------------
+
+Fixes a regression introduced in https://github.com/neos/neos-development-collection/pull/1323,
+causing the asset usage strategies to never be initialized.
+
+Closes #1425
+
+`BUGFIX: Require ~4.0 of neos/form <https://github.com/neos/neos-development-collection/pull/1424>`_
+----------------------------------------------------------------------------------------------------
+
+The 3.0 branch of neos/form is not compatible with the current codebase.
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/3.0.1...3.0.2>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
