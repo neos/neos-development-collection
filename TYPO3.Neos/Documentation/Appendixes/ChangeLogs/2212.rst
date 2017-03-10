@@ -1,0 +1,63 @@
+`2.2.12 (2017-03-10) <https://github.com/neos/neos-development-collection/releases/tag/2.2.12>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Avoid stuck tooltip in node tree <https://github.com/neos/neos-development-collection/pull/1450>`_
+-----------------------------------------------------------------------------------------------------------
+
+This switches (bootstrap) tooltips from being triggered on hover
+and focus to just hover. This avoids the tooltip being activated e.g.
+by expand a subtree.
+
+Should fix #1386
+
+* Packages: ``Neos``
+
+`BUGFIX: Only show remove button when image selected in ImageEditor <https://github.com/neos/neos-development-collection/pull/1446>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Do not show the "remove" button in ImageEditor when no image is selected.
+
+* Packages: ``Neos``
+
+`BUGFIX: Limit VIE to predicates with custom namespace <https://github.com/neos/neos-development-collection/pull/1452>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Instead of applying VIE to all elements with `[rel]` or `[property]` attributes,
+only apply to those starting prefixed with the `typo3` namespace.
+
+This prevents side effects for other tags like `<a href="#" rel="nofollow">Link</a>`.
+
+Resolves #1449
+
+* Packages: ``Neos``
+
+`BUGFIX: Add missing colons to resourcepaths in documentation <https://github.com/neos/neos-development-collection/pull/1444>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+This adds missing colons to the resource paths in the examples on selecting a page template.
+
+* Packages: ``Neos``
+
+`TASK: Document width and height property in ImageUri Fusion-prototype <https://github.com/neos/neos-development-collection/pull/1431>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+This documents changes that were introduced in Neos 2.0 with revision `75430099fe2dbd3646eb549dac5e9778abf4c82a <https://github.com/neos/neos-development-collection/commit/75430099fe2dbd3646eb549dac5e9778abf4c82a>`_.
+
+* Packages: ``Neos``
+
+`TASK: Prefix \`uriPathSegment\` field inspector validator <https://github.com/neos/neos-development-collection/pull/1428>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+I changed the non prefixed `regularExpression`-validator to the correct `TYPO3.Neos/Validation/RegularExpressionValidator`-validator
+
+**How to test**
+
+You could easily try to change the `uriPathSegment` on every document node type.
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.2.11...2.2.12>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
