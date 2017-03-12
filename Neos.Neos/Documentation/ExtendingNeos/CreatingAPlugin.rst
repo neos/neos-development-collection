@@ -70,7 +70,7 @@ Add the following to *Configuration/Policy.yaml* of your package:
           privilegeTarget: 'Sarkosh.CdCollection:StandardControllerActions'
           permission: GRANT
 
-.. note:: If you add new actions later on you will have to extend the matcher rule to look like ``(index|other|third)``.
+.. note:: If you add new actions later on you will have to extend the matcher rule to look like ``(index|other|third)``. For further details on privileges and permissions have a look at the Section :ref:`security` and the `corresponding Flow Framework documentation on Security <http://flowframework.readthedocs.io/en/stable/TheDefinitiveGuide/PartIII/Security.html>`_.
 
 Configure Routes
 ----------------
@@ -176,7 +176,7 @@ To automatically include the Root.fusion in Neos you have to add the following l
 
   Neos:
     Neos:
-      Fusion:
+      fusion:
         autoInclude:
           'Sarkosh.CdCollection': TRUE
 
