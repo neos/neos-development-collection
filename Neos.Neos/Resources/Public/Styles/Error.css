@@ -3420,7 +3420,7 @@ body {
   -webkit-appearance: button;
   cursor: pointer;
 }
-.neos label,
+.neos label[for],
 .neos select,
 .neos button,
 .neos input[type="button"],
