@@ -33,7 +33,7 @@ class DimensionController extends AbstractModuleController
      * @param string $subgraphIdentifier
      * @return void
      */
-    public function indexAction(string $type = '', string $subgraphIdentifier = null)
+    public function indexAction(string $type = 'intraDimension', string $subgraphIdentifier = null)
     {
         switch ($type) {
             case 'intraDimension':
