@@ -563,6 +563,14 @@
       <trans-unit id="configuration.description" xml:space="preserve" approved="yes">
 				<source>The Configuration module provides you with an overview of all configuration types.</source>
 			<target xml:lang="de">Das Konfigurations-Modul bietet Ihnen eine Übersicht aller Konfigurationstypen.</target></trans-unit>
+      <trans-unit id="dimensions.label" xml:space="preserve">
+				<source>Dimensions</source>
+        <target xml:lang="de">Dimensionen</target>
+			</trans-unit>
+			<trans-unit id="dimensions.description" xml:space="preserve">
+				<source>Grants a graphical overview over the configured fallbacks within each content dimension and across content dimensions.</source>
+        <target xml:lang="de">Bietet eine grafische Übersicht über die konfigurierten Fallbacks, sowohl innerhalb der Inhaltsdimensionen als auch dimensionsübergreifend</target>
+			</trans-unit>
       <!-- User -->
       <trans-unit id="user.label" xml:space="preserve" approved="yes">
 				<source>User</source>
