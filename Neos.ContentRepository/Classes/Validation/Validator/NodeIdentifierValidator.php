@@ -27,7 +27,7 @@ class NodeIdentifierValidator extends AbstractValidator
      * A preg pattern to match against node identifiers
      * @var string
      */
-    const PATTERN_MATCH_NODE_IDENTIFIER = '/^([a-z0-9\-]+)$/';
+    const PATTERN_MATCH_NODE_IDENTIFIER = '/^([a-z0-9\-]{1,255})$/';
 
     /**
      * Checks if the given value is a syntactically valid node identifier.
