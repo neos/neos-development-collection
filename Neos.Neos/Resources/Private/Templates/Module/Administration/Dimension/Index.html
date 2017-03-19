@@ -9,6 +9,8 @@
     </f:for>
     <br /><br />
     <f:if condition="{graph}">
+        <legend><neos:backend.translate id="dimensions.{type}.legend" source="Modules" /></legend>
+        <p><f:format.nl2br><neos:backend.translate id="dimensions.{type}.description" source="Modules" /></f:format.nl2br></p>
         <div id="graph" style="position: relative; width: 100%; height: 100%; overflow:scroll">
             <f:render section="{type}" arguments="{_all}" />
         </div>
@@ -27,7 +29,7 @@
         </f:for>
     </svg>
     <f:for each="{graph.dimensions}" as="dimension">
-        <div style="position: absolute; top: 10px; left:{dimension.offset}px;">{dimension.name}</div>
+        <h2 style="position: absolute; top: 10px; left:{dimension.offset}px;">{dimension.name}</h2>
         <f:for each="{dimension.nodes}" as="node">
             <div style="position: absolute; top: {node.textY}px; left:{node.textX}px; width: 80px; text-align: center;">{node.name}</div>
         </f:for>
