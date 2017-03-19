@@ -11,9 +11,9 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
  * source code.
  */
 
+use Neos\ContentRepository\Validation\Validator\NodeIdentifierValidator;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context as SecurityContext;
-use Neos\Flow\Validation\Validator\UuidValidator;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\ContentRepository\Domain\Service\ContextFactory;
@@ -203,7 +203,7 @@ class NodePrivilegeContext
         if ($this->node === null) {
             return true;
         }
-        if (preg_match(UuidValidator::PATTERN_MATCH_UUID, $nodePathOrIdentifier) !== 1) {
+        if (preg_match(NodeIdentifierValidator::PATTERN_MATCH_NODE_IDENTIFIER, $nodePathOrIdentifier) !== 1) {
             return rtrim($nodePathOrIdentifier, '/') . '/';
         }
         if ($this->node->getIdentifier() === $nodePathOrIdentifier) {

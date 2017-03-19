@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node\Doctrine;
  * source code.
  */
 
+use Neos\ContentRepository\Validation\Validator\NodeIdentifierValidator;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\FalseConditionGenerator;
 use Neos\Flow\Security\Context;
@@ -18,7 +19,6 @@ use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\ConditionGenerato
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\DisjunctionGenerator;
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\PropertyConditionGenerator;
 use Neos\Flow\Security\Exception\InvalidPrivilegeException;
-use Neos\Flow\Validation\Validator\UuidValidator;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Service\ContextFactory;
@@ -69,7 +69,7 @@ class ConditionGenerator extends EntityConditionGenerator
      */
     public function isDescendantNodeOf($nodePathOrIdentifier)
     {
-        if (preg_match(UuidValidator::PATTERN_MATCH_UUID, $nodePathOrIdentifier) === 1) {
+        if (preg_match(NodeIdentifierValidator::PATTERN_MATCH_NODE_IDENTIFIER, $nodePathOrIdentifier) === 1) {
             $node = $this->getNodeByIdentifier($nodePathOrIdentifier);
             if ($node === null) {
                 return new FalseConditionGenerator();
