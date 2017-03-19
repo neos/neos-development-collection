@@ -543,6 +543,13 @@
 				<source>The Configuration module provides you with an overview of all configuration types.</source>
 			</trans-unit>
 
+			<trans-unit id="dimensions.label" xml:space="preserve">
+				<source>Dimensions</source>
+			</trans-unit>
+			<trans-unit id="dimensions.description" xml:space="preserve">
+				<source>Grants a graphical overview over the configured fallbacks within each content dimension and across content dimensions.</source>
+			</trans-unit>
+
 
 			<!-- User -->
 			<trans-unit id="user.label" xml:space="preserve">
