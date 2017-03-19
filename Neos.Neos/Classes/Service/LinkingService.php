@@ -64,7 +64,7 @@ class LinkingService
      *
      * @var string
      */
-    const PATTERN_SUPPORTED_URIS = '/(node|asset):\/\/(([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12})/';
+    const PATTERN_SUPPORTED_URIS = '/(node:\/\/([a-z0-9\-]+)|asset:\/\/(([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}))/';
 
     /**
      * @Flow\Inject
