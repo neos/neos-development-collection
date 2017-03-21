@@ -258,6 +258,14 @@ class ContentController extends ActionController
                 'height' => $thumbnail->getHeight()
             ];
         }
+        $thumbnail = $this->thumbnailService->getThumbnail($image, $this->thumbnailService->getThumbnailConfigurationForPreset('TYPO3.Neos:InspectorImage'));
+        if ($thumbnail !== null) {
+            $imageProperties['inspectorImageUri'] = $this->thumbnailService->getUriForThumbnail($thumbnail);
+            $imageProperties['inspectorImageDimensions'] = [
+                'width' => $thumbnail->getWidth(),
+                'height' => $thumbnail->getHeight()
+            ];
+        }
         return $imageProperties;
     }
 
