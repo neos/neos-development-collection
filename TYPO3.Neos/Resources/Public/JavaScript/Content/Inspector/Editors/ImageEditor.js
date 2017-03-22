@@ -66,12 +66,6 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 		 */
 		_imageFullyLoaded: false,
 
-		/**
-		 * @var boolean
-		 * Set to `true` if original image is needed (for cropped image only).
-		 */
-		_showOriginalImageInInspector: false,
-
 		/****************************************
 		 * IMAGE SIZING
 		 ***************************************/
@@ -605,8 +599,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 				}.observes('aspectRatioWidth', 'aspectRatioHeight').on('init'),
 
 				_aspectRatioDidChange: function () {
-					parent.set('_showOriginalImageInInspector', false);
-					parent.set('_showOriginalImageInInspector', true);
+					parent._swapPreviewWithOriginal();
 					var aspectRatioWidth = this.get('aspectRatioWidth'),
 						aspectRatioHeight = this.get('aspectRatioHeight'),
 						api = this.get('api');
@@ -752,8 +745,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 
 				// show original image in inspector if cropping took place
 				if (that._shouldApplyCrop(cropProperties, that.get('_previewImageDimensions.width'), that.get('_previewImageDimensions.height'))) {
-					that.set('_showOriginalImageInInspector', false);
-					that.set('_showOriginalImageInInspector', true);
+					that._swapPreviewWithOriginal();
 				}
 
 				if (that.get('_inspectorImageUri') && that._shouldApplyCrop(cropProperties, that.get('_previewImageDimensions.width'), that.get('_previewImageDimensions.height'))) {
@@ -1082,11 +1074,9 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 		/**
 		 * Swaps the small preview inspector image with the original for cropping preview
 		 */
-		_swapPreviewWithOriginal:function() {
-			if (this.get('_showOriginalImageInInspector') === true) {
+		_swapPreviewWithOriginal: function() {
 				this.set('_inspectorImageUri', this.get('_originalImageUri'));
-			}
-		}.observes('_showOriginalImageInInspector'),
+		},
 
 		/**
 		 * Image Loader
