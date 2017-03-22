@@ -19,10 +19,12 @@ use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Strategy\AbstractAssetUsageStrategy;
 use TYPO3\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
+use TYPO3\Neos\Domain\Service\SiteService;
 use TYPO3\Neos\Service\UserService;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Neos\Controller\CreateContentContextTrait;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\Neos\Domain\Service\UserService as DomainUserService;
 
@@ -88,15 +90,16 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
             return $this->firstlevelCache[$assetIdentifier];
         }
 
-        $userWorkspace = $this->userService->getPersonalWorkspace();
+        $userWorkspaceName = $this->userService->getPersonalWorkspace()->getName();
 
         $relatedNodes = [];
         foreach ($this->getRelatedNodes($asset) as $relatedNodeData) {
+            /** @var NodeData $relatedNodeData */
             $accessible = $this->domainUserService->currentUserCanReadWorkspace($relatedNodeData->getWorkspace());
             if ($accessible) {
                 $context = $this->createContextMatchingNodeData($relatedNodeData);
             } else {
-                $context = $this->createContentContext($userWorkspace->getName());
+                $context = $this->createContentContext($userWorkspaceName);
             }
             $site = $context->getCurrentSite();
             $node = $this->nodeFactory->createFromNodeData($relatedNodeData, $context);
@@ -132,6 +135,12 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
             }
         }
 
-        return $this->nodeDataRepository->findNodesByRelatedEntities($relationMap);
+        return array_filter(
+            $this->nodeDataRepository->findNodesByRelatedEntities($relationMap),
+            function ($nodeData) {
+                /** @var NodeData $nodeData */
+                return $nodeData->isRemoved() === false && strpos($nodeData->getPath(), SiteService::SITES_ROOT_PATH) === 0;
+            }
+        );
     }
 }

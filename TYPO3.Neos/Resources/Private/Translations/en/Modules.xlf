@@ -59,6 +59,9 @@
 			<trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve">
 				<source>Read-only workspace</source>
 			</trans-unit>
+			<trans-unit id="workspaces.noAccessToWorkspace" xml:space="preserve">
+				<source>No access to workspace</source>
+			</trans-unit>
 			<trans-unit id="workspaces.workspace.title" xml:space="preserve">
 				<source>Title</source>
 			</trans-unit>
@@ -925,6 +928,9 @@
 			</group>
 			<trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve">
 				<source>References to "{asset}"</source>
+			</trans-unit>
+			<trans-unit id="media.relatedNodes.missingDocumentNode" xml:space="preserve">
+				<source>Related document node is missing.</source>
 			</trans-unit>
 			<trans-unit id="media.replaceAsset.replaceFilename" xml:space="preserve">
 				<source>Replace "{filename}"</source>

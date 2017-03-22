@@ -78,6 +78,10 @@
       <trans-unit id="edit" xml:space="preserve" approved="yes">
 				<source>Edit</source>
 			<target xml:lang="de">Bearbeiten</target></trans-unit>
+			<trans-unit id="edit.argument" xml:space="preserve">
+				<source>Edit {0}</source>
+				<target xml:lang="de">{0} bearbeiten</target>
+			</trans-unit>
       <trans-unit id="hideUnhide" xml:space="preserve" approved="yes">
 				<source>Hide / Unhide</source>
 			<target xml:lang="de">Verbergen / Anzeigen</target></trans-unit>
