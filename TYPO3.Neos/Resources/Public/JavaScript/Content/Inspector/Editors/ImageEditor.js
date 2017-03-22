@@ -743,11 +743,6 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 					container = that.$().find('.neos-inspector-image-thumbnail-inner'),
 					image = container.find('img');
 
-				// show original image in inspector if cropping took place
-				if (that._shouldApplyCrop(cropProperties, that.get('_previewImageDimensions.width'), that.get('_previewImageDimensions.height'))) {
-					that._swapPreviewWithOriginal();
-				}
-
 				if (that.get('_inspectorImageUri') && that._shouldApplyCrop(cropProperties, that.get('_previewImageDimensions.width'), that.get('_previewImageDimensions.height'))) {
 					var scalingFactorX = that.imagePreviewMaximumDimensions.width / cropProperties.width,
 						scalingFactorY = that.imagePreviewMaximumDimensions.height / cropProperties.height,
@@ -756,6 +751,9 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 							width: Math.floor(cropProperties.width * overallScalingFactor),
 							height: Math.floor(cropProperties.height * overallScalingFactor)
 						};
+
+					// show original image in inspector if cropping took place
+					that._swapPreviewWithOriginal();
 
 					// Update size of preview bounding box and center preview image thumbnail
 					container.css({
