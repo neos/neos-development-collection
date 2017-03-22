@@ -22,6 +22,7 @@ use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Model\ImageInterface;
 use TYPO3\Media\Domain\Model\ImageVariant;
+use TYPO3\Media\Domain\Model\ThumbnailConfiguration;
 use TYPO3\Media\Domain\Repository\AssetRepository;
 use TYPO3\Media\Domain\Repository\ImageRepository;
 use TYPO3\Media\Domain\Service\ThumbnailService;
@@ -258,7 +259,7 @@ class ContentController extends ActionController
                 'height' => $thumbnail->getHeight()
             ];
         }
-        $thumbnail = $this->thumbnailService->getThumbnail($image, $this->thumbnailService->getThumbnailConfigurationForPreset('TYPO3.Neos:InspectorImage'));
+        $thumbnail = $this->thumbnailService->getThumbnail($image, new ThumbnailConfiguration(null, 300, null, 300));
         if ($thumbnail !== null) {
             $imageProperties['inspectorImageUri'] = $this->thumbnailService->getUriForThumbnail($thumbnail);
             $imageProperties['inspectorImageDimensions'] = [

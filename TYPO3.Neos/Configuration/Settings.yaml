@@ -464,9 +464,6 @@ TYPO3:
       'TYPO3.Neos:Preview':
         maximumWidth: 1000
         maximumHeight: 1000
-      'TYPO3.Neos:InspectorImage':
-        maximumWidth: 300
-        maximumHeight: 300
     bodyClasses: 'neos neos-module media-browser'
     scripts:
       - resource://TYPO3.Neos/Public/Library/jquery/jquery-2.0.3.js
