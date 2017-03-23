@@ -25,7 +25,7 @@ prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.At
     imageUri = 'https://dummyimage.com/600x400/000/fff'
     
     #
-    # The code the afx`...` is read as xml and converted to the fusion code below at parse time. 
+    # The code afx`...` is converted to the fusion code below at parse time. 
     # Attention: Currently there is no way to escape closing-backticks inside the Expression. 
     #
     renderer = afx`
