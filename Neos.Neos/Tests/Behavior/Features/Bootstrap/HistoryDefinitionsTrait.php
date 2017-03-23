@@ -2,15 +2,15 @@
 
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
-use PHPUnit_Framework_Assert as Assert;
-use Symfony\Component\Yaml\Yaml;
-use Neos\Utility\Arrays;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\EventLog\Domain\Model\Event;
 use Neos\Neos\EventLog\Domain\Model\NodeEvent;
 use Neos\Neos\EventLog\Domain\Repository\EventRepository;
-use Neos\Neos\EventLog\Integrations\EntityIntegrationService;
 use Neos\Neos\EventLog\Integrations\ContentRepositoryIntegrationService;
+use Neos\Neos\EventLog\Integrations\EntityIntegrationService;
+use Neos\Utility\Arrays;
+use PHPUnit\Framework\Assert as Assert;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * A trait with shared step definitions for common use by other contexts
