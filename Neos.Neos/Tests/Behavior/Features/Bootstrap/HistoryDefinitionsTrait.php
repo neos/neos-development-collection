@@ -61,7 +61,7 @@ trait HistoryDefinitionsTrait
                         $this->checkSingleEvent($row, $event, $eventsByInternalId, $unmatchedParentEvents);
                         // no exception thrown so far, so that means there is an $event which fits to the current expectation row $i. Thus, we continue in the next iteration.
                         continue 2;
-                    } catch (PHPUnit_Framework_ExpectationFailedException $assertionFailed) {
+                    } catch (PHPUnit\Framework\ExpectationFailedException $assertionFailed) {
                         // do nothing, we just retry the row on the next event.
                     }
                 }
