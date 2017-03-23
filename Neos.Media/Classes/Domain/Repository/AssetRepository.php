@@ -280,7 +280,7 @@ class AssetRepository extends Repository
      */
     public function findAllIterator()
     {
-        /** @var QueryBuilder $queryBuilder */
+        /** @var \Doctrine\ORM\QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->createQueryBuilder();
         return $queryBuilder
             ->select('a')

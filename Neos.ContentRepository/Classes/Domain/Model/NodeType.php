@@ -87,7 +87,7 @@ class NodeType
     protected $nodeTypeManager;
 
     /**
-     * @var NodeDataLabelGeneratorInterface|NodeLabelGeneratorInterface
+     * @var NodeLabelGeneratorInterface
      */
     protected $nodeLabelGenerator;
 
@@ -414,17 +414,10 @@ class NodeType
             if ($this->hasConfiguration('label.generatorClass')) {
                 $nodeLabelGenerator = $this->objectManager->get($this->getConfiguration('label.generatorClass'));
             } elseif ($this->hasConfiguration('label') && is_string($this->getConfiguration('label'))) {
-                $nodeLabelGenerator = $this->objectManager->get(\Neos\ContentRepository\Domain\Model\ExpressionBasedNodeLabelGenerator::class);
+                $nodeLabelGenerator = $this->objectManager->get(ExpressionBasedNodeLabelGenerator::class);
                 $nodeLabelGenerator->setExpression($this->getConfiguration('label'));
             } else {
-                $nodeLabelGenerator = $this->objectManager->get(\Neos\ContentRepository\Domain\Model\NodeLabelGeneratorInterface::class);
-            }
-
-            // TODO: Remove after deprecation phase of NodeDataLabelGeneratorInterface
-            if ($nodeLabelGenerator instanceof NodeDataLabelGeneratorInterface) {
-                $adaptor = new NodeDataLabelGeneratorAdaptor();
-                $adaptor->setNodeDataLabelGenerator($nodeLabelGenerator);
-                $nodeLabelGenerator = $adaptor;
+                $nodeLabelGenerator = $this->objectManager->get(NodeLabelGeneratorInterface::class);
             }
 
             $this->nodeLabelGenerator = $nodeLabelGenerator;
