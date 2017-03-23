@@ -861,7 +861,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 		_applyLoadedMetadata: function (metadata) {
 			this.set('_object', metadata.object);
 			this.set('_originalImageDimensions', metadata.originalDimensions);
-			this.set('_inspectorImageUri', metadata.inspectorImageUri);
+			this.set('_inspectorImageUri', metadata.previewImageResourceUri);
 			this.set('_originalImageUri', metadata.originalImageResourceUri);
 			this.set('_previewImageDimensions', metadata.previewDimensions);
 			this.set('_previewImageUri', metadata.previewImageResourceUri);
