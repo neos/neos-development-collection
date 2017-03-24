@@ -11,7 +11,7 @@ namespace Neos\Neos\View;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * A TypoScript view for Neos
