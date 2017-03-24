@@ -20,7 +20,6 @@ use Neos\Flow\Persistence\RepositoryInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
-use Neos\Utility\Arrays;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetVariantInterface;
 use Neos\Media\Domain\Model\ImageInterface;
@@ -30,6 +29,8 @@ use Neos\Media\Domain\Model\ThumbnailConfiguration;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Strategy\AssetUsageStrategyInterface;
 use Neos\Media\Exception\AssetServiceException;
+use Neos\RedirectHandler\Storage\RedirectStorageInterface;
+use Neos\Utility\Arrays;
 
 /**
  * An asset service that handles for example commands on assets, retrieves information
@@ -125,18 +126,19 @@ class AssetService
                 $uri = $this->uriBuilder
                     ->reset()
                     ->setCreateAbsoluteUri(true)
-                    ->uriFor('thumbnail', array('thumbnail' => $thumbnailImage), 'Thumbnail', 'Neos.Media');
+                    ->uriFor('thumbnail', ['thumbnail' => $thumbnailImage], 'Thumbnail', 'Neos.Media');
             } else {
                 $uri = $this->thumbnailService->getUriForThumbnail($thumbnailImage);
             }
         } else {
             $uri = $this->resourceManager->getPublicPersistentResourceUri($resource);
         }
-        return array(
+
+        return [
             'width' => $thumbnailImage->getWidth(),
             'height' => $thumbnailImage->getHeight(),
             'src' => $uri
-        );
+        ];
     }
 
     /**
@@ -280,8 +282,8 @@ class AssetService
         }
 
         if ($redirectHandlerEnabled) {
-            /** @var \Neos\RedirectHandler\Storage\RedirectStorageInterface $redirectStorage */
-            $redirectStorage = $this->objectManager->get(\Neos\RedirectHandler\Storage\RedirectStorageInterface::class);
+            /** @var RedirectStorageInterface $redirectStorage */
+            $redirectStorage = $this->objectManager->get(RedirectStorageInterface::class);
             foreach ($uriMapping as $originalUri => $newUri) {
                 $existingRedirect = $redirectStorage->getOneBySourceUriPathAndHost($originalUri);
                 if ($existingRedirect === null) {
