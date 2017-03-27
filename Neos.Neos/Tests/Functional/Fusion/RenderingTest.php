@@ -308,7 +308,7 @@ class RenderingTest extends AbstractNodeTest
                 self::assertTrue($found <= $count['<='], $message);
             }
         } else {
-            throw new \PHPUnit_Framework_Exception('Invalid count format');
+            throw new \PHPUnit\Framework\Exception('Invalid count format');
         }
     }
 

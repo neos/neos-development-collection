@@ -799,10 +799,9 @@ NodeUri
 Build a URI to a node. Accepts the same arguments as the node link/uri view helpers.
 
 :node: (string/Node) A node object or a node path (relative or absolute) or empty to resolve the current document node
-:arguments: (array) Additional arguments to be passed to the UriBuilder (for example pagination parameters)
 :format: (string) An optional request format (e.g. ``'html'``)
 :section: (string) An optional fragment (hash) for the URI
-:additionalParams: (array) Additional URI query parameters (overrule ``arguments``).
+:additionalParams: (array) Additional URI query parameters.
 :argumentsToBeExcludedFromQueryString: (array) Query parameters to exclude for ``addQueryString``
 :addQueryString: (boolean) Whether to keep current query parameters, defaults to ``FALSE``
 :absolute: (boolean) Whether to create an absolute URI, defaults to ``FALSE``
