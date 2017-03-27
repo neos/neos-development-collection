@@ -44,6 +44,7 @@ use TYPO3\TYPO3CR\Utility;
  *    },
  *    indexes={
  * 		@ORM\Index(name="parentpath_sortingindex",columns={"parentpathhash", "sortingindex"}),
+ * 		@ORM\Index(name="parentpath",columns={"parentpath"}),
  * 		@ORM\Index(name="identifierindex",columns={"identifier"}),
  * 		@ORM\Index(name="nodetypeindex",columns={"nodetype"})
  *    }
