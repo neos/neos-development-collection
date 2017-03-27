@@ -191,7 +191,7 @@ class InterDimensionalFallbackGraphTest extends UnitTestCase
      * @param array $primaryFallbackWeight
      * @param array $secondaryFallbackWeight
      */
-    public function getPrimaryFallbackReturnsFallbackWithLowestNormalizedWeight( $primaryFallbackWeight,  $secondaryFallbackWeight)
+    public function getPrimaryFallbackReturnsFallbackWithLowestNormalizedWeight($primaryFallbackWeight, $secondaryFallbackWeight)
     {
         $primaryDimension = new IntraDimension\ContentDimension('primary');
         $primaryVariantValue = $primaryDimension->createValue('variant');
