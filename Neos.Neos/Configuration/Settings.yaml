@@ -323,7 +323,7 @@ Neos:
             editor: Neos.Neos/Inspector/Editors/BooleanEditor
             defaultValue: false
           array:
-            typeConverter: Neos\Flow\Property\TypeConverter\TypedArrayConverter
+            typeConverter: Neos\Flow\Property\TypeConverter\ArrayConverter
             editor: Neos.Neos/Inspector/Editors/SelectBoxEditor
             editorOptions:
               multiple: true
