@@ -25,9 +25,9 @@ class IntraDimensionalFallbackGraph
     protected $dimensions = [];
 
 
-    public function createDimension(string $dimensionName): ContentDimension
+    public function createDimension(string $dimensionName, string $label = null): ContentDimension
     {
-        $dimension = new ContentDimension($dimensionName);
+        $dimension = new ContentDimension($dimensionName, $label);
         $this->dimensions[$dimension->getName()] = $dimension;
 
         return $dimension;

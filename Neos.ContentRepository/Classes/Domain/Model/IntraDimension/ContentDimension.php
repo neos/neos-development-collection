@@ -24,6 +24,11 @@ class ContentDimension
     protected $name;
 
     /**
+     * @var string
+     */
+    protected $label;
+
+    /**
      * @var array
      */
     protected $valueRegistry = [];
@@ -34,15 +39,21 @@ class ContentDimension
     protected $depth = 0;
 
 
-    public function __construct(string $name)
+    public function __construct(string $name, $label = null)
     {
         $this->name = $name;
+        $this->label = $label ?: $name;
     }
 
 
     public function getName(): string
     {
         return $this->name;
+    }
+
+    public function getLabel(): string
+    {
+        return $this->label;
     }
 
 
