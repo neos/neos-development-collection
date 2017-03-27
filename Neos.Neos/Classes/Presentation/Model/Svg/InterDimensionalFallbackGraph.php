@@ -186,7 +186,6 @@ class InterDimensionalFallbackGraph
     }
 
 
-
     protected function initializeFullGraphNode(InterDimension\ContentSubgraph $subgraph)
     {
         $x = 0;
@@ -195,7 +194,7 @@ class InterDimensionalFallbackGraph
         $previousDepthFactor = 1;
         $previousWidthFactor = 1;
         foreach (array_reverse($subgraph->getDimensionValues()) as $dimensionName => $dimensionValue) {
-            /** @var IntraDimension\ContentDimensionValue $dimensionValue  */
+            /** @var IntraDimension\ContentDimensionValue $dimensionValue */
             $y += $dimensionValue->getDepth() * $previousDepthFactor;
             $previousDepthFactor *= $this->offsets[$dimensionName]['_height'];
 
@@ -258,12 +257,12 @@ class InterDimensionalFallbackGraph
     protected function initializeEdges($hideInactive = true)
     {
         $subgraphs = $this->fallbackGraph->getSubgraphs();
-        usort($subgraphs, function(InterDimension\ContentSubgraph $subgraphA, InterDimension\ContentSubgraph $subgraphB) {
+        usort($subgraphs, function (InterDimension\ContentSubgraph $subgraphA, InterDimension\ContentSubgraph $subgraphB) {
             return $subgraphB->getWeight() <=> $subgraphA->getWeight();
         });
         foreach ($subgraphs as $subgraph) {
             $fallback = $subgraph->getFallback();
-            usort($fallback, function(InterDimension\ContentSubgraph $subgraphA, InterDimension\ContentSubgraph $subgraphB) {
+            usort($fallback, function (InterDimension\ContentSubgraph $subgraphA, InterDimension\ContentSubgraph $subgraphB) {
                 return $subgraphA->getWeight() <=> $subgraphB->getWeight();
             });
             $i = 1;

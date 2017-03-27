@@ -60,6 +60,7 @@ class IntraDimensionalFallbackGraph
         if (is_null($this->width)) {
             $this->initialize();
         }
+
         return $this->width ?: 0;
     }
 
@@ -68,6 +69,7 @@ class IntraDimensionalFallbackGraph
         if (is_null($this->height)) {
             $this->initialize();
         }
+
         return $this->height ?: 0;
     }
 
