@@ -15,6 +15,8 @@
             <f:render section="{type}" arguments="{_all}" />
         </div>
     </f:if>
+
+    <script src="{f:uri.resource(path:'resource://Neos.Neos/Public/JavaScript/Module/Administration/Dimension.js')}"></script>
 </f:section>
 
 <f:section name="intraDimension">
@@ -31,7 +33,7 @@
     <f:for each="{graph.dimensions}" as="dimension">
         <h2 style="position: absolute; top: 10px; left:{dimension.offset}px;">{dimension.label}</h2>
         <f:for each="{dimension.nodes}" as="node">
-            <div style="position: absolute; top: {node.textY}px; left:{node.textX}px; width: 80px; text-align: center;">{node.name}</div>
+            <div style="position: absolute; top: {node.textY}px; left:{node.textX}px; width: 80px; text-align: center; pointer-events: none;">{node.name}</div>
         </f:for>
     </f:for>
   </f:section>
@@ -39,18 +41,18 @@
 <f:section name="interDimension">
     <svg id="graph" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" baseProfile="full" width="{graph.width}px" height="{graph.height}px" style="position:relative; padding-top:50px;">
       <f:for each="{graph.edges}" as="edge">
-          <line x1="{edge.x1}" y1="{edge.y1}" x2="{edge.x2}" y2="{edge.y2}" stroke-width="2" stroke="{edge.color}"/>
+          <line x1="{edge.x1}" y1="{edge.y1}" x2="{edge.x2}" y2="{edge.y2}" stroke-width="2" stroke="{edge.color}" opacity="{edge.opacity}" style="{edge.style}" data-from="{edge.from}" data-to="{edge.to}"/>
       </f:for>
         <f:for each="{graph.nodes}" as="node" key="subgraphIdentifier">
             <f:if condition="{selectedSubgraphIdentifier} == {subgraphIdentifier}">
                 <f:then>
                     <f:link.action action="index" arguments="{type: type}">
-                        <circle cx="{node.x}" cy="{node.y}" r="40" stroke="#FFFFFF" stroke-width="2" fill="{node.color}" />
+                        <circle id="{node.id}" cx="{node.x}" cy="{node.y}" r="40" stroke="#FFFFFF" stroke-width="2" fill="{node.color}" />
                     </f:link.action>
                 </f:then>
                 <f:else>
                     <f:link.action action="index" arguments="{type: type, subgraphIdentifier: subgraphIdentifier}">
-                        <circle cx="{node.x}" cy="{node.y}" r="40" stroke="#FFFFFF" stroke-width="2" fill="{node.color}" />
+                        <circle id="{node.id}" cx="{node.x}" cy="{node.y}" r="40" stroke="#FFFFFF" stroke-width="2" fill="{node.color}" />
                     </f:link.action>
                 </f:else>
             </f:if>
@@ -60,12 +62,12 @@
         <f:if condition="{selectedSubgraphIdentifier} == {subgraphIdentifier}">
             <f:then>
                 <f:link.action action="index" arguments="{type: type}">
-                    <div style="position: absolute; top: {node.textY}px; left:{node.textX}px; width: 80px; text-align: center;">{node.name}</div>
+                    <div style="position: absolute; top: {node.textY}px; left:{node.textX}px; width: 80px; text-align: center; pointer-events: none;">{node.name}</div>
                 </f:link.action>
             </f:then>
             <f:else>
                 <f:link.action action="index" arguments="{type: type, subgraphIdentifier: subgraphIdentifier}">
-                    <div style="position: absolute; top: {node.textY}px; left:{node.textX}px; width: 80px; text-align: center;">{node.name}</div>
+                    <div style="position: absolute; top: {node.textY}px; left:{node.textX}px; width: 80px; text-align: center; pointer-events: none;">{node.name}</div>
                 </f:link.action>
             </f:else>
         </f:if>

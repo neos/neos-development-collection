@@ -40,7 +40,11 @@ class DimensionController extends AbstractModuleController
                 $graph = new Svg\IntraDimensionalFallbackGraph($this->fallbackGraphService->getIntraDimensionalFallbackGraph());
                 break;
             case 'interDimension':
-                $graph = new Svg\InterDimensionalFallbackGraph($this->fallbackGraphService->getInterDimensionalFallbackGraph(), $subgraphIdentifier);
+                $graph = new Svg\InterDimensionalFallbackGraph(
+                    $this->fallbackGraphService->getInterDimensionalFallbackGraph(),
+                    $this->fallbackGraphService->getIntraDimensionalFallbackGraph(),
+                    $subgraphIdentifier
+                );
                 break;
             default:
                 $graph = null;
