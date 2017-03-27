@@ -27,7 +27,7 @@ class FindOperationTest extends AbstractNodeTest
     public function findByNodeIdentifierThrowsExceptionOnInvalidIdentifier()
     {
         $q = new FlowQuery(array($this->node));
-        $q->find('#test')->get(0);
+        $q->find('#_test')->get(0);
     }
 
     /**
