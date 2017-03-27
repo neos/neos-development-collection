@@ -4,7 +4,7 @@
 <f:section name="content">
     <f:for each="{availableGraphTypes}" as="availableGraphType">
         <f:link.action action="index" arguments="{type: availableGraphType}" class="neos-button{f:if(condition: '{availableGraphType} == {type}', then: ' neos-active')}">
-            {availableGraphType}
+          <neos:backend.translate id="dimensions.{availableGraphType}.short" source="Modules" />
         </f:link.action>
     </f:for>
     <br /><br />
@@ -29,7 +29,7 @@
         </f:for>
     </svg>
     <f:for each="{graph.dimensions}" as="dimension">
-        <h2 style="position: absolute; top: 10px; left:{dimension.offset}px;">{dimension.name}</h2>
+        <h2 style="position: absolute; top: 10px; left:{dimension.offset}px;">{dimension.label}</h2>
         <f:for each="{dimension.nodes}" as="node">
             <div style="position: absolute; top: {node.textY}px; left:{node.textX}px; width: 80px; text-align: center;">{node.name}</div>
         </f:for>

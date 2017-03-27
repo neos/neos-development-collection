@@ -81,6 +81,7 @@ class IntraDimensionalFallbackGraph
             $this->dimensions[$contentDimension->getName()] = [
                 'offset' => $horizontalOffset,
                 'name' => $contentDimension->getName(),
+                'label' => $contentDimension->getLabel(),
                 'nodes' => [],
                 'edges' => []
             ];

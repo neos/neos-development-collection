@@ -71,7 +71,7 @@ class FallbackGraphService
     protected function populatePresetDimensions(array & $prioritizedContentDimensions)
     {
         foreach ($this->contentDimensionPresetSource->getAllPresets() as $dimensionName => $dimensionConfiguration) {
-            $presetDimension = $this->intraDimensionalFallbackGraph->createDimension($dimensionName);
+            $presetDimension = $this->intraDimensionalFallbackGraph->createDimension($dimensionName, $dimensionConfiguration['label'] ?? null);
             foreach ($dimensionConfiguration['presets'] as $valueName => $valueConfiguration) {
                 if (!isset($valueConfiguration['values'])) {
                     continue;
