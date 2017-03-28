@@ -12,6 +12,7 @@ namespace Neos\Media\TypeConverter;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Media\Domain\Model\ImageVariant;
 
 /**
  * This converter transforms to \Neos\Media\Domain\Model\ImageVariant objects.

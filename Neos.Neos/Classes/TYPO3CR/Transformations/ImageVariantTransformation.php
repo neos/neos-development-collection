@@ -97,7 +97,7 @@ class ImageVariantTransformation extends AbstractTransformation
                             switch (substr($variantPropertyName, 3)) {
                                 case 'originalImage':
                                     /**
-                                     * @var $originalAsset Image
+                                     * @var $originalAsset \Neos\Media\Domain\Model\Image
                                      */
                                     $originalAsset = $this->assetRepository->findByIdentifier($this->persistenceManager->getIdentifierByObject($property));
                                     break;

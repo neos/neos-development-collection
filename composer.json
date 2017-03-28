@@ -9,13 +9,13 @@
         "neos/fluid-adaptor": "*",
         "gedmo/doctrine-extensions": "~2.3.0",
         "behat/transliterator": "~1.0",
-        "php": ">=5.5.0",
-        "neos/imagine": "*",
-        "neos/party": "*",
-        "neos/setup": "*",
-        "neos/twitter-bootstrap": "*",
-        "neos/form": "*",
-        "neos/kickstarter": "*"
+        "php": "~7.0",
+        "neos/imagine": "~3.0",
+        "neos/party": "~4.0",
+        "neos/setup": "~4.0",
+        "neos/twitter-bootstrap": "~3.0",
+        "neos/form": "~4.0",
+        "neos/kickstarter": "~4.0.0"
     },
     "replace": {
         "typo3/typo3cr": "self.version",
