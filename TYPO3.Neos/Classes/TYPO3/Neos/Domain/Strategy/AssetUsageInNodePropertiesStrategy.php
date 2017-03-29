@@ -133,6 +133,6 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
             }
         }
 
-        return $this->nodeDataRepository->findNodesByRelatedEntities($relationMap, SiteService::SITES_ROOT_PATH);
+        return $this->nodeDataRepository->findNodesByPathPrefixAndRelatedEntities(SiteService::SITES_ROOT_PATH, $relationMap);
     }
 }
