@@ -118,8 +118,14 @@ The Neos Setup Tool
    in some secure place, the generated file will be removed upon login! It is possible to have a new password
    rendered if you lost it, so don't worry too much.
 
-   .. figure:: Images/Setup-Step-1.png
+   .. figure:: Images/Setup-Step-0.png
       :alt: Neos login page
+      :class: screenshot-fullsize
+      
+#. The `NEOS requirements check` checks, if you have installed an image manipulation software.
+
+   .. figure:: Images/Setup-Step-1.png
+      :alt: NEOS requirements check
       :class: screenshot-fullsize
 
 #. Fill in the database credentials in the first step. The selector box will be updated with
