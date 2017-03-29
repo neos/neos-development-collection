@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2016-06-07
+This reference was automatically generated from code on 2017-03-29
 
 
 .. _`Eel Helpers Reference: Array`:
@@ -40,16 +40,24 @@ Get the first element of an array
 
 **Return** (mixed)
 
+Array.flip(array)
+^^^^^^^^^^^^^^^^^
+
+Exchanges all keys with their associated values in an array
+
+Note that the values of array need to be valid keys, i.e. they need to be either integer or string.
+If a value has several occurrences, the latest key will be used as its value, and all others will be lost.
+
+* ``array`` (array)
+
+**Return** (array) The array with flipped keys and values
+
 Array.indexOf(array, searchElement, fromIndex)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * ``array`` (array)
 * ``searchElement`` (mixed)
 * ``fromIndex`` (integer, *optional*)
-
-Check if an array contains a value::
-
-    Array.indexOf(myArray, 'myValue') >= 0
 
 **Return** (mixed)
 
@@ -936,7 +944,7 @@ Neos.Link.resolveNodeUri(uri, contextNode, controllerContext)
 Neos.Node
 ---------
 
-Eel helper for Neos ContentRepository Nodes
+Eel helper for ContentRepository Nodes
 
 Implemented in: ``Neos\Neos\Fusion\Helper\NodeHelper``
 
@@ -1011,7 +1019,7 @@ Security.getAccount()
 
 Get the account of the first authenticated token.
 
-**Return** (\Neos\Flow\Security\Account|NULL)
+**Return** (Account|NULL)
 
 Security.hasRole(roleIdentifier)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1204,8 +1212,13 @@ String.pregMatch(string, pattern)
 
 Match a string with a regular expression (PREG style)
 
-* ``string`` (string)
-* ``pattern`` (string)
+Example::
+
+    String.pregMatch("For more information, see Chapter 3.4.5.1", "/(chapter \d+(\.\d)*)/i")
+      == ['Chapter 3.4.5.1', 'Chapter 3.4.5.1', '.1']
+
+* ``string`` (string) The input string
+* ``pattern`` (string) A PREG pattern
 
 **Return** (array) The matches as array or NULL if not matched
 
@@ -1214,11 +1227,32 @@ String.pregReplace(string, pattern, replace)
 
 Replace occurrences of a search string inside the string using regular expression matching (PREG style)
 
-* ``string`` (string)
-* ``pattern`` (string)
-* ``replace`` (string)
+Examples::
+
+    String.pregReplace("Some.String with sp:cial characters", "/[[:^alnum:]]/", "-") == "Some-String-with-sp-cial-characters"
+    String.pregReplace("2016-08-31", "/([0-9]+)-([0-9]+)-([0-9]+)/", "$3.$2.$1") == "31.08.2016"
+
+* ``string`` (string) The input string
+* ``pattern`` (string) A PREG pattern
+* ``replace`` (string) A replacement string, can contain references to capture groups with "\\n" or "$n
 
 **Return** (string) The string with all occurrences replaced
+
+String.pregSplit(string, pattern, limit)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Split a string by a separator using regular expression matching (PREG style)
+
+Examples::
+
+    String.pregSplit("foo bar   baz", "/\s+/") == ['foo', 'bar', 'baz']
+    String.pregSplit("first second third", "/\s+/", 2) == ['first', 'second third']
+
+* ``string`` (string) The input string
+* ``pattern`` (string) A PREG pattern
+* ``limit`` (integer, *optional*) The maximum amount of items to return, in contrast to split() this will return all remaining characters in the last item (see example)
+
+**Return** (array) An array of the splitted parts, excluding the matched pattern
 
 String.rawUrlDecode(string)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1243,11 +1277,15 @@ String.replace(string, search, replace)
 
 Replace occurrences of a search string inside the string
 
+Example::
+
+    String.replace("canal", "ana", "oo") == "cool"
+
 Note: this method does not perform regular expression matching, @see pregReplace().
 
-* ``string`` (string)
-* ``search`` (string)
-* ``replace`` (string)
+* ``string`` (string) The input string
+* ``search`` (string) A search string
+* ``replace`` (string) A replacement string
 
 **Return** (string) The string with all occurrences replaced
 
@@ -1256,11 +1294,16 @@ String.split(string, separator, limit)
 
 Split a string by a separator
 
+Example::
+
+    String.split("My hovercraft is full of eels", " ") == ['My', 'hovercraft', 'is', 'full', 'of', 'eels']
+    String.split("Foo", "", 2) == ['F', 'o']
+
 Node: This implementation follows JavaScript semantics without support of regular expressions.
 
 * ``string`` (string) The string to split
 * ``separator`` (string, *optional*) The separator where the string should be splitted
-* ``limit`` (integer, *optional*) The maximum amount of items to split
+* ``limit`` (integer, *optional*) The maximum amount of items to split (exceeding items will be discarded)
 
 **Return** (array) An array of the splitted parts, excluding the separators
 
@@ -1281,8 +1324,8 @@ Examples::
 
 **Return** (boolean)
 
-String.stripTags(string)
-^^^^^^^^^^^^^^^^^^^^^^^^
+String.stripTags(string, allowableTags)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Strip all HTML tags from the given string
 
@@ -1293,6 +1336,7 @@ Example::
 This is a wrapper for the strip_tags() PHP function.
 
 * ``string`` (string) The string to strip
+* ``allowableTags`` (string, *optional*) Specify tags which should not be stripped
 
 **Return** (string) The string with tags stripped
 

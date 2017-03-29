@@ -3,7 +3,7 @@
 Media Validator Reference
 =========================
 
-This reference was automatically generated from code on 2016-06-07
+This reference was automatically generated from code on 2017-03-29
 
 
 .. _`Media Validator Reference: ImageOrientationValidator`:
@@ -17,12 +17,12 @@ Supported validator options are (array)allowedOrientations with one or two out o
 
 *Example*::
 
-  [at]Flow\Validate("$image", type="\TYPO3\Media\Validator\ImageOrientationValidator",
+  [at]Flow\Validate("$image", type="\Neos\Media\Validator\ImageOrientationValidator",
         options={ "allowedOrientations"={"square", "landscape"} })
 
 this would refuse an image that is in portrait orientation, but allow landscape and square ones.
 
-The given $value is valid if it is an \TYPO3\Media\Domain\Model\ImageInterface of the
+The given $value is valid if it is an \Neos\Media\Domain\Model\ImageInterface of the
 configured orientation (square, portrait and/or landscape)
 Note: a value of NULL or empty string ('') is considered valid
 
@@ -46,9 +46,9 @@ ImageSizeValidator
 Validator that checks size (resolution) of a given image
 
 Example:
-[at]Flow\Validate("$image", type="\TYPO3\Media\Validator\ImageSizeValidator", options={ "minimumWidth"=150, "maximumResolution"=60000 })
+[at]Flow\Validate("$image", type="\Neos\Media\Validator\ImageSizeValidator", options={ "minimumWidth"=150, "maximumResolution"=60000 })
 
-The given $value is valid if it is an \TYPO3\Media\Domain\Model\ImageInterface of the configured resolution
+The given $value is valid if it is an \Neos\Media\Domain\Model\ImageInterface of the configured resolution
 Note: a value of NULL or empty string ('') is considered valid
 
 .. note:: A value of NULL or an empty string ('') is considered valid
@@ -81,9 +81,9 @@ ImageTypeValidator
 Validator that checks the type of a given image
 
 Example:
-[at]Flow\Validate("$image", type="\TYPO3\Media\Validator\ImageTypeValidator", options={ "allowedTypes"={"jpeg", "png"} })
+[at]Flow\Validate("$image", type="\Neos\Media\Validator\ImageTypeValidator", options={ "allowedTypes"={"jpeg", "png"} })
 
-The given $value is valid if it is an \TYPO3\Media\Domain\Model\ImageInterface of the
+The given $value is valid if it is an \Neos\Media\Domain\Model\ImageInterface of the
 configured type (one of the image/* IANA media subtypes)
 
 Note: a value of NULL or empty string ('') is considered valid

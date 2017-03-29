@@ -13,6 +13,7 @@ namespace Neos\Neos\Domain\Strategy;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Neos\Domain\Service\SiteService;
 use Neos\Utility\TypeHandling;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\Image;
@@ -132,6 +133,6 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
             }
         }
 
-        return $this->nodeDataRepository->findNodesByRelatedEntities($relationMap, SiteService::SITES_ROOT_PATH);
+        return $this->nodeDataRepository->findNodesByPathPrefixAndRelatedEntities(SiteService::SITES_ROOT_PATH, $relationMap);
     }
 }
