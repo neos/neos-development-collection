@@ -1,64 +1,12 @@
-.. _`Fluid ViewHelper Reference`:
+.. _`FluidAdaptor ViewHelper Reference`:
 
-Fluid ViewHelper Reference
-==========================
+FluidAdaptor ViewHelper Reference
+=================================
 
-This reference was automatically generated from code on 2016-06-07
-
-
-.. _`Fluid ViewHelper Reference: f:alias`:
-
-f:alias
--------
-
-Declares new variables which are aliases of other variables.
-Takes a "map"-Parameter which is an associative array which defines the shorthand mapping.
-
-The variables are only declared inside the <f:alias>...</f:alias>-tag. After the
-closing tag, all declared variables are removed again.
-
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\AliasViewHelper
+This reference was automatically generated from code on 2017-03-29
 
 
-
-
-Arguments
-*********
-
-* ``map`` (array): array that specifies which variables should be mapped to which alias
-
-
-
-
-Examples
-********
-
-**Single alias**::
-
-	<f:alias map="{x: 'foo'}">{x}</f:alias>
-
-
-Expected result::
-
-	foo
-
-
-**Multiple mappings**::
-
-	<f:alias map="{x: foo.bar.baz, y: foo.bar.baz.name}">
-	  {x.name} or {y}
-	</f:alias>
-
-
-Expected result::
-
-	[name] or [name]
-	depending on {foo.bar.baz}
-
-
-
-
-.. _`Fluid ViewHelper Reference: f:base`:
+.. _`FluidAdaptor ViewHelper Reference: f:base`:
 
 f:base
 ------
@@ -66,7 +14,7 @@ f:base
 View helper which creates a <base href="..." /> tag. The Base URI
 is taken from the current request.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\BaseViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\BaseViewHelper
 
 
 
@@ -88,183 +36,14 @@ Expected result::
 
 
 
-.. _`Fluid ViewHelper Reference: f:case`:
-
-f:case
-------
-
-Case view helper that is only usable within the SwitchViewHelper.
-
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\CaseViewHelper
-
-
-
-
-Arguments
-*********
-
-* ``value`` (mixed)
-
-
-
-
-.. _`Fluid ViewHelper Reference: f:comment`:
-
-f:comment
----------
-
-This ViewHelper prevents rendering of any content inside the tag
-Note: Contents of the comment will still be **parsed** thus throwing an
-Exception if it contains syntax errors. You can put child nodes in
-CDATA tags to avoid this.
-
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\CommentViewHelper
-
-
-
-
-
-Examples
-********
-
-**Commenting out fluid code**::
-
-	Before
-	<f:comment>
-	  This is completely hidden.
-	  <f:debug>This does not get rendered</f:debug>
-	</f:comment>
-	After
-
-
-Expected result::
-
-	Before
-	After
-
-
-**Prevent parsing**::
-
-	<f:comment><![CDATA[
-	 <f:some.invalid.syntax />
-	]]></f:comment>
-
-
-
-
-.. _`Fluid ViewHelper Reference: f:count`:
-
-f:count
--------
-
-This ViewHelper counts elements of the specified array or countable object.
-
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\CountViewHelper
-
-
-
-
-Arguments
-*********
-
-* ``subject`` (array|\Countable, *optional*): The array or \Countable to be counted
-
-
-
-
-Examples
-********
-
-**Count array elements**::
-
-	<f:count subject="{0:1, 1:2, 2:3, 3:4}" />
-
-
-Expected result::
-
-	4
-
-
-**inline notation**::
-
-	{objects -> f:count()}
-
-
-Expected result::
-
-	10 (depending on the number of items in {objects})
-
-
-
-
-.. _`Fluid ViewHelper Reference: f:cycle`:
-
-f:cycle
--------
-
-This ViewHelper cycles through the specified values.
-This can be often used to specify CSS classes for example.
-**Note:** To achieve the "zebra class" effect in a loop you can also use the "iteration" argument of the **for** ViewHelper.
-
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\CycleViewHelper
-
-
-
-
-Arguments
-*********
-
-* ``values`` (array): The array or object implementing \ArrayAccess (for example \SplObjectStorage) to iterated over
-
-* ``as`` (string): The name of the iteration variable
-
-
-
-
-Examples
-********
-
-**Simple**::
-
-	<f:for each="{0:1, 1:2, 2:3, 3:4}" as="foo"><f:cycle values="{0: 'foo', 1: 'bar', 2: 'baz'}" as="cycle">{cycle}</f:cycle></f:for>
-
-
-Expected result::
-
-	foobarbazfoo
-
-
-**Alternating CSS class**::
-
-	<ul>
-	  <f:for each="{0:1, 1:2, 2:3, 3:4}" as="foo">
-	    <f:cycle values="{0: 'odd', 1: 'even'}" as="zebraClass">
-	      <li class="{zebraClass}">{foo}</li>
-	    </f:cycle>
-	  </f:for>
-	</ul>
-
-
-Expected result::
-
-	<ul>
-	  <li class="odd">1</li>
-	  <li class="even">2</li>
-	  <li class="odd">3</li>
-	  <li class="even">4</li>
-	</ul>
-
-
-
-
-.. _`Fluid ViewHelper Reference: f:debug`:
+.. _`FluidAdaptor ViewHelper Reference: f:debug`:
 
 f:debug
 -------
 
-View helper that outputs its child nodes with \TYPO3\Flow\var_dump()
+View helper that outputs its child nodes with \Neos\Flow\var_dump()
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\DebugViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\DebugViewHelper
 
 
 
@@ -304,60 +83,14 @@ Expected result::
 
 
 
-.. _`Fluid ViewHelper Reference: f:defaultCase`:
-
-f:defaultCase
--------------
-
-A view helper which specifies the "default" case when used within the SwitchViewHelper.
-
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\DefaultCaseViewHelper
-
-
-
-
-
-.. _`Fluid ViewHelper Reference: f:else`:
-
-f:else
-------
-
-Else-Branch of a condition. Only has an effect inside of "If". See the If-ViewHelper for documentation.
-
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\ElseViewHelper
-
-
-
-
-
-Examples
-********
-
-**Output content if condition is not met**::
-
-	<f:if condition="{someCondition}">
-	  <f:else>
-	    condition was not true
-	  </f:else>
-	</f:if>
-
-
-Expected result::
-
-	Everything inside the "else" tag is displayed if the condition evaluates to FALSE.
-	Otherwise nothing is outputted in this example.
-
-
-
-
-.. _`Fluid ViewHelper Reference: f:flashMessages`:
+.. _`FluidAdaptor ViewHelper Reference: f:flashMessages`:
 
 f:flashMessages
 ---------------
 
 View helper which renders the flash messages (if there are any) as an unsorted list.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\FlashMessagesViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\FlashMessagesViewHelper
 
 
 
@@ -371,7 +104,7 @@ Arguments
 
 * ``as`` (string, *optional*): The name of the current flashMessage variable for rendering inside
 
-* ``severity`` (string, *optional*): severity of the messages (One of the \TYPO3\Flow\Error\Message::SEVERITY_* constants)
+* ``severity`` (string, *optional*): severity of the messages (One of the \Neos\Error\Messages\Message::SEVERITY_* constants)
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -445,96 +178,14 @@ Expected result::
 
 
 
-.. _`Fluid ViewHelper Reference: f:for`:
-
-f:for
------
-
-Loop view helper which can be used to iterate over arrays.
-Implements what a basic foreach()-PHP-method does.
-
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\ForViewHelper
-
-
-
-
-Arguments
-*********
-
-* ``each`` (array): The array or \SplObjectStorage to iterated over
-
-* ``as`` (string): The name of the iteration variable
-
-* ``key`` (string, *optional*): The name of the variable to store the current array key
-
-* ``reverse`` (boolean, *optional*): If enabled, the iterator will start with the last element and proceed reversely
-
-* ``iteration`` (string, *optional*): The name of the variable to store iteration information (index, cycle, isFirst, isLast, isEven, isOdd)
-
-
-
-
-Examples
-********
-
-**Simple Loop**::
-
-	<f:for each="{0:1, 1:2, 2:3, 3:4}" as="foo">{foo}</f:for>
-
-
-Expected result::
-
-	1234
-
-
-**Output array key**::
-
-	<ul>
-	  <f:for each="{fruit1: 'apple', fruit2: 'pear', fruit3: 'banana', fruit4: 'cherry'}" as="fruit" key="label">
-	    <li>{label}: {fruit}</li>
-	  </f:for>
-	</ul>
-
-
-Expected result::
-
-	<ul>
-	  <li>fruit1: apple</li>
-	  <li>fruit2: pear</li>
-	  <li>fruit3: banana</li>
-	  <li>fruit4: cherry</li>
-	</ul>
-
-
-**Iteration information**::
-
-	<ul>
-	  <f:for each="{0:1, 1:2, 2:3, 3:4}" as="foo" iteration="fooIterator">
-	    <li>Index: {fooIterator.index} Cycle: {fooIterator.cycle} Total: {fooIterator.total}{f:if(condition: fooIterator.isEven, then: ' Even')}{f:if(condition: fooIterator.isOdd, then: ' Odd')}{f:if(condition: fooIterator.isFirst, then: ' First')}{f:if(condition: fooIterator.isLast, then: ' Last')}</li>
-	  </f:for>
-	</ul>
-
-
-Expected result::
-
-	<ul>
-	  <li>Index: 0 Cycle: 1 Total: 4 Odd First</li>
-	  <li>Index: 1 Cycle: 2 Total: 4 Even</li>
-	  <li>Index: 2 Cycle: 3 Total: 4 Odd</li>
-	  <li>Index: 3 Cycle: 4 Total: 4 Even Last</li>
-	</ul>
-
-
-
-
-.. _`Fluid ViewHelper Reference: f:form`:
+.. _`FluidAdaptor ViewHelper Reference: f:form`:
 
 f:form
 ------
 
 Used to output an HTML <form> tag which is targeted at the specified action, in the current controller and package.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\FormViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\FormViewHelper
 
 
 
@@ -658,14 +309,14 @@ Expected result::
 
 
 
-.. _`Fluid ViewHelper Reference: f:form.button`:
+.. _`FluidAdaptor ViewHelper Reference: f:form.button`:
 
 f:form.button
 -------------
 
 Creates a button.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Form\\ButtonViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Form\\ButtonViewHelper
 
 
 
@@ -747,14 +398,14 @@ Expected result::
 
 
 
-.. _`Fluid ViewHelper Reference: f:form.checkbox`:
+.. _`FluidAdaptor ViewHelper Reference: f:form.checkbox`:
 
 f:form.checkbox
 ---------------
 
 View Helper which creates a simple checkbox (<input type="checkbox">).
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Form\\CheckboxViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Form\\CheckboxViewHelper
 
 
 
@@ -772,7 +423,7 @@ Arguments
 
 * ``name`` (string, *optional*): Name of input tag
 
-* ``value`` (string): Value of input tag. Required for checkboxes
+* ``value`` (mixed): Value of input tag. Required for checkboxes
 
 * ``property`` (string, *optional*): Name of Object Property. If used in conjunction with <f:form object="...">, "name" and "value" properties will be ignored.
 
@@ -838,14 +489,14 @@ Expected result::
 
 
 
-.. _`Fluid ViewHelper Reference: f:form.hidden`:
+.. _`FluidAdaptor ViewHelper Reference: f:form.hidden`:
 
 f:form.hidden
 -------------
 
 Renders an <input type="hidden" ...> tag.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Form\\HiddenViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Form\\HiddenViewHelper
 
 
 
@@ -899,14 +550,14 @@ Expected result::
 
 
 
-.. _`Fluid ViewHelper Reference: f:form.password`:
+.. _`FluidAdaptor ViewHelper Reference: f:form.password`:
 
 f:form.password
 ---------------
 
 View Helper which creates a simple Password Text Box (<input type="password">).
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Form\\PasswordViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Form\\PasswordViewHelper
 
 
 
@@ -974,14 +625,14 @@ Expected result::
 
 
 
-.. _`Fluid ViewHelper Reference: f:form.radio`:
+.. _`FluidAdaptor ViewHelper Reference: f:form.radio`:
 
 f:form.radio
 ------------
 
 View Helper which creates a simple radio button (<input type="radio">).
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Form\\RadioViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Form\\RadioViewHelper
 
 
 
@@ -1065,7 +716,7 @@ Expected result::
 
 
 
-.. _`Fluid ViewHelper Reference: f:form.select`:
+.. _`FluidAdaptor ViewHelper Reference: f:form.select`:
 
 f:form.select
 -------------
@@ -1107,7 +758,7 @@ The array can have the following keys:
 - "package" defines the package key of the translation source, optional, defaults to current package
 - "prefix" defines a prefix to use for the message id – only works in combination with "by id"
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Form\\SelectViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Form\\SelectViewHelper
 
 
 
@@ -1247,14 +898,14 @@ Expected result::
 
 
 
-.. _`Fluid ViewHelper Reference: f:form.submit`:
+.. _`FluidAdaptor ViewHelper Reference: f:form.submit`:
 
 f:form.submit
 -------------
 
 Creates a submit button.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Form\\SubmitViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Form\\SubmitViewHelper
 
 
 
@@ -1320,7 +971,7 @@ Expected result::
 
 
 
-.. _`Fluid ViewHelper Reference: f:form.textarea`:
+.. _`FluidAdaptor ViewHelper Reference: f:form.textarea`:
 
 f:form.textarea
 ---------------
@@ -1328,7 +979,7 @@ f:form.textarea
 Textarea view helper.
 The value of the text area needs to be set via the "value" attribute, as with all other form ViewHelpers.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Form\\TextareaViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Form\\TextareaViewHelper
 
 
 
@@ -1396,14 +1047,14 @@ Expected result::
 
 
 
-.. _`Fluid ViewHelper Reference: f:form.textfield`:
+.. _`FluidAdaptor ViewHelper Reference: f:form.textfield`:
 
 f:form.textfield
 ----------------
 
 View Helper which creates a text field (<input type="text">).
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Form\\TextfieldViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Form\\TextfieldViewHelper
 
 
 
@@ -1475,7 +1126,7 @@ Expected result::
 
 
 
-.. _`Fluid ViewHelper Reference: f:form.upload`:
+.. _`FluidAdaptor ViewHelper Reference: f:form.upload`:
 
 f:form.upload
 -------------
@@ -1489,7 +1140,7 @@ won't have to upload the file again.
 
 You can use a separate ViewHelper to display previously uploaded resources in order to remove/replace them.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Form\\UploadViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Form\\UploadViewHelper
 
 
 
@@ -1583,14 +1234,14 @@ Expected result::
 
 
 
-.. _`Fluid ViewHelper Reference: f:form.validationResults`:
+.. _`FluidAdaptor ViewHelper Reference: f:form.validationResults`:
 
 f:form.validationResults
 ------------------------
 
 
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Form\\ValidationResultsViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Form\\ValidationResultsViewHelper
 
 
 
@@ -1605,14 +1256,38 @@ Arguments
 
 
 
-.. _`Fluid ViewHelper Reference: f:format.bytes`:
+.. _`FluidAdaptor ViewHelper Reference: f:format.base64Decode`:
+
+f:format.base64Decode
+---------------------
+
+Applies base64_decode to the input
+
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Format\\Base64DecodeViewHelper
+
+
+
+
+Arguments
+*********
+
+* ``value`` (string, *optional*): string to format
+
+* ``keepQuotes`` (boolean, *optional*): if TRUE, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)
+
+* ``encoding`` (string, *optional*)
+
+
+
+
+.. _`FluidAdaptor ViewHelper Reference: f:format.bytes`:
 
 f:format.bytes
 --------------
 
 Formats an integer with a byte count into human-readable form.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\BytesViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Format\\BytesViewHelper
 
 
 
@@ -1658,7 +1333,7 @@ Expected result::
 
 
 
-.. _`Fluid ViewHelper Reference: f:format.case`:
+.. _`FluidAdaptor ViewHelper Reference: f:format.case`:
 
 f:format.case
 -------------
@@ -1686,7 +1361,7 @@ Possible modes are:
 Note that the behavior will be the same as in the appropriate PHP function ``mb_convert_case`` [1];
 especially regarding locale and multibyte behavior.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\CaseViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Format\\CaseViewHelper
 
 
 
@@ -1701,14 +1376,14 @@ Arguments
 
 
 
-.. _`Fluid ViewHelper Reference: f:format.crop`:
+.. _`FluidAdaptor ViewHelper Reference: f:format.crop`:
 
 f:format.crop
 -------------
 
 Use this view helper to crop the text between its opening and closing tags.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\CropViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Format\\CropViewHelper
 
 
 
@@ -1760,14 +1435,14 @@ Expected result::
 
 
 
-.. _`Fluid ViewHelper Reference: f:format.currency`:
+.. _`FluidAdaptor ViewHelper Reference: f:format.currency`:
 
 f:format.currency
 -----------------
 
 Formats a given float to a currency representation.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\CurrencyViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Format\\CurrencyViewHelper
 
 
 
@@ -1775,13 +1450,19 @@ Formats a given float to a currency representation.
 Arguments
 *********
 
-* ``forceLocale`` (mixed, *optional*): Whether if, and what, Locale should be used. May be boolean, string or \TYPO3\Flow\I18n\Locale
+* ``forceLocale`` (mixed, *optional*): Whether if, and what, Locale should be used. May be boolean, string or \Neos\Flow\I18n\Locale
 
 * ``currencySign`` (string, *optional*): (optional) The currency sign, eg $ or €.
 
 * ``decimalSeparator`` (string, *optional*): (optional) The separator for the decimal point.
 
 * ``thousandsSeparator`` (string, *optional*): (optional) The thousands separator.
+
+* ``prependCurrency`` (boolean, *optional*): (optional) Indicates if currency symbol should be placed before or after the numeric value.
+
+* ``separateCurrency`` (boolean, *optional*): (optional) Indicates if a space character should be placed between the number and the currency sign.
+
+* ``decimals`` (integer, *optional*): (optional) The number of decimal places.
 
 
 
@@ -1801,7 +1482,7 @@ Expected result::
 
 **All parameters**::
 
-	<f:format.currency currencySign="$" decimalSeparator="." thousandsSeparator=",">54321</f:format.currency>
+	<f:format.currency currencySign="$" decimalSeparator="." thousandsSeparator="," prependCurrency="false", separateCurrency="true", decimals="2">54321</f:format.currency>
 
 
 Expected result::
@@ -1842,16 +1523,38 @@ Expected result::
 	(depending on the value of {someNumber})
 
 
+**Inline notation with different position for the currency sign**::
+
+	{someNumber -> f:format.currency(currencySign: '€', prependCurrency: 'true')}
 
 
-.. _`Fluid ViewHelper Reference: f:format.date`:
+Expected result::
+
+	€ 54.321,00
+	(depending on the value of {someNumber})
+
+
+**Inline notation with no space between the currency and no decimal places**::
+
+	{someNumber -> f:format.currency(currencySign: '€', separateCurrency: 'false', decimals: '0')}
+
+
+Expected result::
+
+	54.321€
+	(depending on the value of {someNumber})
+
+
+
+
+.. _`FluidAdaptor ViewHelper Reference: f:format.date`:
 
 f:format.date
 -------------
 
 Formats a \DateTime object.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\DateViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Format\\DateViewHelper
 
 
 
@@ -1859,15 +1562,15 @@ Formats a \DateTime object.
 Arguments
 *********
 
-* ``forceLocale`` (mixed, *optional*): Whether if, and what, Locale should be used. May be boolean, string or \TYPO3\Flow\I18n\Locale
+* ``forceLocale`` (mixed, *optional*): Whether if, and what, Locale should be used. May be boolean, string or \Neos\Flow\I18n\Locale
 
 * ``date`` (mixed, *optional*): either a \DateTime object or a string that is accepted by \DateTime constructor
 
 * ``format`` (string, *optional*): Format String which is taken to format the Date/Time if none of the locale options are set.
 
-* ``localeFormatType`` (string, *optional*): Whether to format (according to locale set in $forceLocale) date, time or datetime. Must be one of TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_*'s constants.
+* ``localeFormatType`` (string, *optional*): Whether to format (according to locale set in $forceLocale) date, time or datetime. Must be one of Neos\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_*'s constants.
 
-* ``localeFormatLength`` (string, *optional*): Format length if locale set in $forceLocale. Must be one of TYPO3\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_*'s constants.
+* ``localeFormatLength`` (string, *optional*): Format length if locale set in $forceLocale. Must be one of Neos\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_*'s constants.
 
 * ``cldrFormat`` (string, *optional*): Format string in CLDR format (see http://cldr.unicode.org/translation/date-time)
 
@@ -1967,14 +1670,14 @@ Expected result::
 
 
 
-.. _`Fluid ViewHelper Reference: f:format.htmlentities`:
+.. _`FluidAdaptor ViewHelper Reference: f:format.htmlentities`:
 
 f:format.htmlentities
 ---------------------
 
 Applies htmlentities() escaping to a value
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\HtmlentitiesViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Format\\HtmlentitiesViewHelper
 
 
 
@@ -1993,14 +1696,14 @@ Arguments
 
 
 
-.. _`Fluid ViewHelper Reference: f:format.htmlentitiesDecode`:
+.. _`FluidAdaptor ViewHelper Reference: f:format.htmlentitiesDecode`:
 
 f:format.htmlentitiesDecode
 ---------------------------
 
 Applies html_entity_decode() to a value
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\HtmlentitiesDecodeViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Format\\HtmlentitiesDecodeViewHelper
 
 
 
@@ -2017,33 +1720,7 @@ Arguments
 
 
 
-.. _`Fluid ViewHelper Reference: f:format.htmlspecialchars`:
-
-f:format.htmlspecialchars
--------------------------
-
-Applies htmlspecialchars() escaping to a value
-
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\HtmlspecialcharsViewHelper
-
-
-
-
-Arguments
-*********
-
-* ``value`` (string, *optional*): string to format
-
-* ``keepQuotes`` (boolean, *optional*): if TRUE, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)
-
-* ``encoding`` (string, *optional*)
-
-* ``doubleEncode`` (boolean, *optional*): If FALSE existing html entities won't be encoded, the default is to convert everything.
-
-
-
-
-.. _`Fluid ViewHelper Reference: f:format.identifier`:
+.. _`FluidAdaptor ViewHelper Reference: f:format.identifier`:
 
 f:format.identifier
 -------------------
@@ -2052,7 +1729,7 @@ This ViewHelper renders the identifier of a persisted object (if it has an ident
 Usually the identifier is the UUID of the object, but it could be an array of the
 identity properties, too.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\IdentifierViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Format\\IdentifierViewHelper
 
 
 
@@ -2065,14 +1742,14 @@ Arguments
 
 
 
-.. _`Fluid ViewHelper Reference: f:format.json`:
+.. _`FluidAdaptor ViewHelper Reference: f:format.json`:
 
 f:format.json
 -------------
 
 Wrapper for PHPs json_encode function.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\JsonViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Format\\JsonViewHelper
 
 
 
@@ -2123,14 +1800,14 @@ Expected result::
 
 
 
-.. _`Fluid ViewHelper Reference: f:format.nl2br`:
+.. _`FluidAdaptor ViewHelper Reference: f:format.nl2br`:
 
 f:format.nl2br
 --------------
 
 Wrapper for PHPs nl2br function.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\Nl2brViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Format\\Nl2brViewHelper
 
 
 
@@ -2143,14 +1820,14 @@ Arguments
 
 
 
-.. _`Fluid ViewHelper Reference: f:format.number`:
+.. _`FluidAdaptor ViewHelper Reference: f:format.number`:
 
 f:format.number
 ---------------
 
 Formats a number with custom precision, decimal point and grouped thousands.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\NumberViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Format\\NumberViewHelper
 
 
 
@@ -2158,7 +1835,7 @@ Formats a number with custom precision, decimal point and grouped thousands.
 Arguments
 *********
 
-* ``forceLocale`` (mixed, *optional*): Whether if, and what, Locale should be used. May be boolean, string or \TYPO3\Flow\I18n\Locale
+* ``forceLocale`` (mixed, *optional*): Whether if, and what, Locale should be used. May be boolean, string or \Neos\Flow\I18n\Locale
 
 * ``decimals`` (integer, *optional*): The number of digits after the decimal point
 
@@ -2166,19 +1843,19 @@ Arguments
 
 * ``thousandsSeparator`` (string, *optional*): The character for grouping the thousand digits
 
-* ``localeFormatLength`` (string, *optional*): Format length if locale set in $forceLocale. Must be one of TYPO3\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_*'s constants.
+* ``localeFormatLength`` (string, *optional*): Format length if locale set in $forceLocale. Must be one of Neos\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_*'s constants.
 
 
 
 
-.. _`Fluid ViewHelper Reference: f:format.padding`:
+.. _`FluidAdaptor ViewHelper Reference: f:format.padding`:
 
 f:format.padding
 ----------------
 
 Formats a string using PHPs str_pad function.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\PaddingViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Format\\PaddingViewHelper
 
 
 
@@ -2197,142 +1874,14 @@ Arguments
 
 
 
-.. _`Fluid ViewHelper Reference: f:format.printf`:
-
-f:format.printf
----------------
-
-A view helper for formatting values with printf. Either supply an array for
-the arguments or a single value.
-See http://www.php.net/manual/en/function.sprintf.php
-
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\PrintfViewHelper
-
-
-
-
-Arguments
-*********
-
-* ``arguments`` (array): The arguments for vsprintf
-
-* ``value`` (string, *optional*): string to format
-
-
-
-
-Examples
-********
-
-**Scientific notation**::
-
-	<f:format.printf arguments="{number: 362525200}">%.3e</f:format.printf>
-
-
-Expected result::
-
-	3.625e+8
-
-
-**Argument swapping**::
-
-	<f:format.printf arguments="{0: 3, 1: 'Kasper'}">%2$s is great, TYPO%1$d too. Yes, TYPO%1$d is great and so is %2$s!</f:format.printf>
-
-
-Expected result::
-
-	Kasper is great, TYPO3 too. Yes, TYPO3 is great and so is Kasper!
-
-
-**Single argument**::
-
-	<f:format.printf arguments="{1: 'TYPO3'}">We love %s</f:format.printf>
-
-
-Expected result::
-
-	We love TYPO3
-
-
-**Inline notation**::
-
-	{someText -> f:format.printf(arguments: {1: 'TYPO3'})}
-
-
-Expected result::
-
-	We love TYPO3
-
-
-
-
-.. _`Fluid ViewHelper Reference: f:format.raw`:
-
-f:format.raw
-------------
-
-Outputs an argument/value without any escaping. Is normally used to output
-an ObjectAccessor which should not be escaped, but output as-is.
-
-PAY SPECIAL ATTENTION TO SECURITY HERE (especially Cross Site Scripting),
-as the output is NOT SANITIZED!
-
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\RawViewHelper
-
-
-
-
-Arguments
-*********
-
-* ``value`` (mixed, *optional*): The value to output
-
-
-
-
-Examples
-********
-
-**Child nodes**::
-
-	<f:format.raw>{string}</f:format.raw>
-
-
-Expected result::
-
-	(Content of {string} without any conversion/escaping)
-
-
-**Value attribute**::
-
-	<f:format.raw value="{string}" />
-
-
-Expected result::
-
-	(Content of {string} without any conversion/escaping)
-
-
-**Inline notation**::
-
-	{string -> f:format.raw()}
-
-
-Expected result::
-
-	(Content of {string} without any conversion/escaping)
-
-
-
-
-.. _`Fluid ViewHelper Reference: f:format.stripTags`:
+.. _`FluidAdaptor ViewHelper Reference: f:format.stripTags`:
 
 f:format.stripTags
 ------------------
 
 Removes tags from the given string (applying PHPs strip_tags() function)
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\StripTagsViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Format\\StripTagsViewHelper
 
 
 
@@ -2345,14 +1894,14 @@ Arguments
 
 
 
-.. _`Fluid ViewHelper Reference: f:format.urlencode`:
+.. _`FluidAdaptor ViewHelper Reference: f:format.urlencode`:
 
 f:format.urlencode
 ------------------
 
 Encodes the given string according to http://www.faqs.org/rfcs/rfc3986.html (applying PHPs rawurlencode() function)
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Format\\UrlencodeViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Format\\UrlencodeViewHelper
 
 
 
@@ -2365,234 +1914,14 @@ Arguments
 
 
 
-.. _`Fluid ViewHelper Reference: f:groupedFor`:
-
-f:groupedFor
-------------
-
-Grouped loop view helper.
-Loops through the specified values.
-
-The groupBy argument also supports property paths.
-
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\GroupedForViewHelper
-
-
-
-
-Arguments
-*********
-
-* ``each`` (array): The array or \SplObjectStorage to iterated over
-
-* ``as`` (string): The name of the iteration variable
-
-* ``groupBy`` (string): Group by this property
-
-* ``groupKey`` (string, *optional*): The name of the variable to store the current group
-
-
-
-
-Examples
-********
-
-**Simple**::
-
-	<f:groupedFor each="{0: {name: 'apple', color: 'green'}, 1: {name: 'cherry', color: 'red'}, 2: {name: 'banana', color: 'yellow'}, 3: {name: 'strawberry', color: 'red'}}" as="fruitsOfThisColor" groupBy="color">
-	  <f:for each="{fruitsOfThisColor}" as="fruit">
-	    {fruit.name}
-	  </f:for>
-	</f:groupedFor>
-
-
-Expected result::
-
-	apple cherry strawberry banana
-
-
-**Two dimensional list**::
-
-	<ul>
-	  <f:groupedFor each="{0: {name: 'apple', color: 'green'}, 1: {name: 'cherry', color: 'red'}, 2: {name: 'banana', color: 'yellow'}, 3: {name: 'strawberry', color: 'red'}}" as="fruitsOfThisColor" groupBy="color" groupKey="color">
-	    <li>
-	      {color} fruits:
-	      <ul>
-	        <f:for each="{fruitsOfThisColor}" as="fruit" key="label">
-	          <li>{label}: {fruit.name}</li>
-	        </f:for>
-	      </ul>
-	    </li>
-	  </f:groupedFor>
-	</ul>
-
-
-Expected result::
-
-	<ul>
-	  <li>green fruits
-	    <ul>
-	      <li>0: apple</li>
-	    </ul>
-	  </li>
-	  <li>red fruits
-	    <ul>
-	      <li>1: cherry</li>
-	    </ul>
-	    <ul>
-	      <li>3: strawberry</li>
-	    </ul>
-	  </li>
-	  <li>yellow fruits
-	    <ul>
-	      <li>2: banana</li>
-	    </ul>
-	  </li>
-	</ul>
-
-
-
-
-.. _`Fluid ViewHelper Reference: f:if`:
-
-f:if
-----
-
-This view helper implements an if/else condition.
-Check \Neos\FluidAdaptor\Core\Parser\SyntaxTree\ViewHelperNode::convertArgumentValue() to see how boolean arguments are evaluated
-
-**Conditions:**
-
-As a condition is a boolean value, you can just use a boolean argument.
-Alternatively, you can write a boolean expression there.
-Boolean expressions have the following form:
-XX Comparator YY
-Comparator is one of: ==, !=, <, <=, >, >= and %
-The % operator converts the result of the % operation to boolean.
-
-XX and YY can be one of:
-- number
-- string
-- Object Accessor
-- Array
-- a ViewHelper
-::
-
-  <f:if condition="{rank} > 100">
-    Will be shown if rank is > 100
-  </f:if>
-  <f:if condition="{rank} % 2">
-    Will be shown if rank % 2 != 0.
-  </f:if>
-  <f:if condition="{rank} == {k:bar()}">
-    Checks if rank is equal to the result of the ViewHelper "k:bar"
-  </f:if>
-  <f:if condition="{foo.bar} == 'stringToCompare'">
-    Will result true if {foo.bar}'s represented value equals 'stringToCompare'.
-  </f:if>
-
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\IfViewHelper
-
-
-
-
-Arguments
-*********
-
-* ``then`` (mixed, *optional*): Value to be returned if the condition if met.
-
-* ``else`` (mixed, *optional*): Value to be returned if the condition if not met.
-
-* ``condition`` (boolean): View helper condition
-
-
-
-
-Examples
-********
-
-**Basic usage**::
-
-	<f:if condition="somecondition">
-	  This is being shown in case the condition matches
-	</f:if>
-
-
-Expected result::
-
-	Everything inside the <f:if> tag is being displayed if the condition evaluates to TRUE.
-
-
-**If / then / else**::
-
-	<f:if condition="somecondition">
-	  <f:then>
-	    This is being shown in case the condition matches.
-	  </f:then>
-	  <f:else>
-	    This is being displayed in case the condition evaluates to FALSE.
-	  </f:else>
-	</f:if>
-
-
-Expected result::
-
-	Everything inside the "then" tag is displayed if the condition evaluates to TRUE.
-	Otherwise, everything inside the "else"-tag is displayed.
-
-
-**inline notation**::
-
-	{f:if(condition: someVariable, then: 'condition is met', else: 'condition is not met')}
-
-
-Expected result::
-
-	The value of the "then" attribute is displayed if the variable evaluates to TRUE.
-	Otherwise, everything the value of the "else"-attribute is displayed.
-
-
-**inline notation with comparison**::
-
-	{f:if(condition: '{workspace} == {userWorkspace}', then: 'this is a user workspace', else: 'no user workspace')}
-
-
-Expected result::
-
-	If the condition is not just a single variable, the whole expression must be enclosed in quotes and variables need
-	to be enclosed in curly braces.
-
-
-
-
-.. _`Fluid ViewHelper Reference: f:layout`:
-
-f:layout
---------
-
-With this tag, you can select a layout to be used for the current template.
-
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\LayoutViewHelper
-
-
-
-
-Arguments
-*********
-
-* ``name`` (string, *optional*): Name of layout to use. If none given, "Default" is used.
-
-
-
-
-.. _`Fluid ViewHelper Reference: f:link.action`:
+.. _`FluidAdaptor ViewHelper Reference: f:link.action`:
 
 f:link.action
 -------------
 
 A view helper for creating links to actions.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Link\\ActionViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Link\\ActionViewHelper
 
 
 
@@ -2624,9 +1953,11 @@ Arguments
 
 * ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = TRUE
 
-* ``useParentRequest`` (boolean, *optional*): If set, the parent Request will be used instead of the current one
+* ``useParentRequest`` (boolean, *optional*): If set, the parent Request will be used instead of the current one. Note: using this argument can be a sign of undesired tight coupling, use with care
 
 * ``absolute`` (boolean, *optional*): By default this ViewHelper renders links with absolute URIs. If this is FALSE, a relative URI is created instead
+
+* ``useMainRequest`` (boolean, *optional*): If set, the main Request will be used instead of the current one. Note: using this argument can be a sign of undesired tight coupling, use with care
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -2684,7 +2015,7 @@ Expected result::
 
 
 
-.. _`Fluid ViewHelper Reference: f:link.email`:
+.. _`FluidAdaptor ViewHelper Reference: f:link.email`:
 
 f:link.email
 ------------
@@ -2692,7 +2023,7 @@ f:link.email
 Email link view helper.
 Generates an email link.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Link\\EmailViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Link\\EmailViewHelper
 
 
 
@@ -2760,14 +2091,14 @@ Expected result::
 
 
 
-.. _`Fluid ViewHelper Reference: f:link.external`:
+.. _`FluidAdaptor ViewHelper Reference: f:link.external`:
 
 f:link.external
 ---------------
 
 A view helper for creating links to external targets.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Link\\ExternalViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Link\\ExternalViewHelper
 
 
 
@@ -2817,110 +2148,17 @@ Examples
 
 **custom default scheme**::
 
-	<f:link.external uri="neos.io" defaultScheme="ftp">external ftp link</f:link.external>
+	<f:link.external uri="neos.io" defaultScheme="sftp">external ftp link</f:link.external>
 
 
 Expected result::
 
-	<a href="ftp://neos.io">external ftp link</a>
+	<a href="sftp://neos.io">external ftp link</a>
 
 
 
 
-.. _`Fluid ViewHelper Reference: f:render`:
-
-f:render
---------
-
-A ViewHelper to render a section or a specified partial in a template.
-
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\RenderViewHelper
-
-
-
-
-Arguments
-*********
-
-* ``section`` (string, *optional*): Name of section to render. If used in a layout, renders a section of the main content file. If used inside a standard template, renders a section of the same file.
-
-* ``partial`` (string, *optional*): Reference to a partial.
-
-* ``arguments`` (array, *optional*): Arguments to pass to the partial.
-
-* ``optional`` (boolean, *optional*): Set to TRUE, to ignore unknown sections, so the definition of a section inside a template can be optional for a layout
-
-
-
-
-Examples
-********
-
-**Rendering partials**::
-
-	<f:render partial="SomePartial" arguments="{foo: someVariable}" />
-
-
-Expected result::
-
-	the content of the partial "SomePartial". The content of the variable {someVariable} will be available in the partial as {foo}
-
-
-**Rendering sections**::
-
-	<f:section name="someSection">This is a section. {foo}</f:section>
-	<f:render section="someSection" arguments="{foo: someVariable}" />
-
-
-Expected result::
-
-	the content of the section "someSection". The content of the variable {someVariable} will be available in the partial as {foo}
-
-
-**Rendering recursive sections**::
-
-	<f:section name="mySection">
-	 <ul>
-	   <f:for each="{myMenu}" as="menuItem">
-	     <li>
-	       {menuItem.text}
-	       <f:if condition="{menuItem.subItems}">
-	         <f:render section="mySection" arguments="{myMenu: menuItem.subItems}" />
-	       </f:if>
-	     </li>
-	   </f:for>
-	 </ul>
-	</f:section>
-	<f:render section="mySection" arguments="{myMenu: menu}" />
-
-
-Expected result::
-
-	<ul>
-	  <li>menu1
-	    <ul>
-	      <li>menu1a</li>
-	      <li>menu1b</li>
-	    </ul>
-	  </li>
-	[...]
-	(depending on the value of {menu})
-
-
-**Passing all variables to a partial**::
-
-	<f:render partial="somePartial" arguments="{_all}" />
-
-
-Expected result::
-
-	the content of the partial "somePartial".
-	Using the reserved keyword "_all", all available variables will be passed along to the partial
-
-
-
-
-.. _`Fluid ViewHelper Reference: f:renderChildren`:
+.. _`FluidAdaptor ViewHelper Reference: f:renderChildren`:
 
 f:renderChildren
 ----------------
@@ -2931,7 +2169,7 @@ This ViewHelper can only be used in a template which belongs to a Widget Control
 It renders everything inside the Widget ViewHelper, and you can pass additional
 arguments.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\RenderChildrenViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\RenderChildrenViewHelper
 
 
 
@@ -2953,9 +2191,9 @@ Examples
 	Header
 	<f:renderChildren arguments="{foo: 'bar'}" />
 	Footer
-
+	
 	<-- in the outer template, using the widget -->
-
+	
 	<x:widget.someWidget>
 	  Foo: {foo}
 	</x:widget.someWidget>
@@ -2970,73 +2208,7 @@ Expected result::
 
 
 
-.. _`Fluid ViewHelper Reference: f:section`:
-
-f:section
----------
-
-A ViewHelper to declare sections in templates for later use with e.g. the RenderViewHelper.
-
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\SectionViewHelper
-
-
-
-
-Arguments
-*********
-
-* ``name`` (string): Name of the section
-
-
-
-
-Examples
-********
-
-**Rendering sections**::
-
-	<f:section name="someSection">This is a section. {foo}</f:section>
-	<f:render section="someSection" arguments="{foo: someVariable}" />
-
-
-Expected result::
-
-	the content of the section "someSection". The content of the variable {someVariable} will be available in the partial as {foo}
-
-
-**Rendering recursive sections**::
-
-	<f:section name="mySection">
-	 <ul>
-	   <f:for each="{myMenu}" as="menuItem">
-	     <li>
-	       {menuItem.text}
-	       <f:if condition="{menuItem.subItems}">
-	         <f:render section="mySection" arguments="{myMenu: menuItem.subItems}" />
-	       </f:if>
-	     </li>
-	   </f:for>
-	 </ul>
-	</f:section>
-	<f:render section="mySection" arguments="{myMenu: menu}" />
-
-
-Expected result::
-
-	<ul>
-	  <li>menu1
-	    <ul>
-	      <li>menu1a</li>
-	      <li>menu1b</li>
-	    </ul>
-	  </li>
-	[...]
-	(depending on the value of {menu})
-
-
-
-
-.. _`Fluid ViewHelper Reference: f:security.csrfToken`:
+.. _`FluidAdaptor ViewHelper Reference: f:security.csrfToken`:
 
 f:security.csrfToken
 --------------------
@@ -3046,20 +2218,20 @@ ViewHelper that outputs a CSRF token which is required for "unsafe" requests (e.
 Note: You won't need this ViewHelper if you use the Form ViewHelper, because that creates a hidden field with
 the CSRF token for unsafe requests automatically. This ViewHelper is mainly useful in conjunction with AJAX.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Security\\CsrfTokenViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Security\\CsrfTokenViewHelper
 
 
 
 
 
-.. _`Fluid ViewHelper Reference: f:security.ifAccess`:
+.. _`FluidAdaptor ViewHelper Reference: f:security.ifAccess`:
 
 f:security.ifAccess
 -------------------
 
 This view helper implements an ifAccess/else condition.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Security\\IfAccessViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Security\\IfAccessViewHelper
 
 
 
@@ -3071,21 +2243,21 @@ Arguments
 
 * ``else`` (mixed, *optional*): Value to be returned if the condition if not met.
 
-* ``privilegeTarget`` (string): The Privilege target identifier
+* ``privilegeTarget`` (string): Condition expression conforming to Fluid boolean rules
 
-* ``parameters`` (array, *optional*): optional privilege target parameters to be evaluated
-
-
+* ``parameters`` (array, *optional*): Condition expression conforming to Fluid boolean rules
 
 
-.. _`Fluid ViewHelper Reference: f:security.ifAuthenticated`:
+
+
+.. _`FluidAdaptor ViewHelper Reference: f:security.ifAuthenticated`:
 
 f:security.ifAuthenticated
 --------------------------
 
 This view helper implements an ifAuthenticated/else condition.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Security\\IfAuthenticatedViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Security\\IfAuthenticatedViewHelper
 
 
 
@@ -3097,93 +2269,40 @@ Arguments
 
 * ``else`` (mixed, *optional*): Value to be returned if the condition if not met.
 
+* ``condition`` (boolean, *optional*): Condition expression conforming to Fluid boolean rules
 
 
 
-.. _`Fluid ViewHelper Reference: f:security.ifHasRole`:
+
+.. _`FluidAdaptor ViewHelper Reference: f:security.ifHasRole`:
 
 f:security.ifHasRole
 --------------------
 
 This view helper implements an ifHasRole/else condition.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Security\\IfHasRoleViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Security\\IfHasRoleViewHelper
 
 
 
 
 Arguments
 *********
+
+* ``role`` (mixed): The role or role identifier.
+
+* ``packageKey`` (string, *optional*): PackageKey of the package defining the role.
+
+* ``account`` (Neos\Flow\Security\Account, *optional*): If specified, this subject of this check is the given Account instead of the currently authenticated account
 
 * ``then`` (mixed, *optional*): Value to be returned if the condition if met.
 
 * ``else`` (mixed, *optional*): Value to be returned if the condition if not met.
 
-* ``role`` (string): The role or role identifier
-
-* ``packageKey`` (string, *optional*): PackageKey of the package defining the role
-
-* ``account`` (TYPO3\Flow\Security\Account, *optional*): If specified, this subject of this check is the given Account instead of the currently authenticated account
 
 
 
-
-.. _`Fluid ViewHelper Reference: f:switch`:
-
-f:switch
---------
-
-Switch view helper which can be used to render content depending on a value or expression.
-Implements what a basic switch()-PHP-method does.
-
-An optional default case can be specified which is rendered if none of the "f:case" conditions matches.
-
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\SwitchViewHelper
-
-
-
-
-Arguments
-*********
-
-* ``expression`` (mixed)
-
-
-
-
-Examples
-********
-
-**Simple Switch statement**::
-
-	<f:switch expression="{person.gender}">
-	  <f:case value="male">Mr.</f:case>
-	  <f:case value="female">Mrs.</f:case>
-	  <f:defaultCase>Mr. / Mrs.</f:defaultCase>
-	</f:switch>
-
-
-Expected result::
-
-	"Mr.", "Mrs." or "Mr. / Mrs." (depending on the value of {person.gender})
-
-
-
-
-.. _`Fluid ViewHelper Reference: f:then`:
-
-f:then
-------
-
-"THEN" -> only has an effect inside of "IF". See If-ViewHelper for documentation.
-
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\ThenViewHelper
-
-
-
-
-
-.. _`Fluid ViewHelper Reference: f:translate`:
+.. _`FluidAdaptor ViewHelper Reference: f:translate`:
 
 f:translate
 -----------
@@ -3192,7 +2311,7 @@ Returns translated message using source message or key ID.
 
 Also replaces all placeholders with formatted versions of provided values.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\TranslateViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\TranslateViewHelper
 
 
 
@@ -3206,7 +2325,7 @@ Arguments
 
 * ``arguments`` (array, *optional*): Numerically indexed array of values to be inserted into placeholders
 
-* ``source`` (string, *optional*): Name of file with translations
+* ``source`` (string, *optional*): Name of file with translations (use / as a directory separator)
 
 * ``package`` (string, *optional*): Target package key. If not set, the current package key will be used
 
@@ -3282,14 +2401,14 @@ Expected result::
 
 
 
-.. _`Fluid ViewHelper Reference: f:uri.action`:
+.. _`FluidAdaptor ViewHelper Reference: f:uri.action`:
 
 f:uri.action
 ------------
 
 A view helper for creating URIs to actions.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Uri\\ActionViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Uri\\ActionViewHelper
 
 
 
@@ -3319,7 +2438,9 @@ Arguments
 
 * ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = TRUE
 
-* ``useParentRequest`` (boolean, *optional*): If set, the parent Request will be used instead of the current one
+* ``useParentRequest`` (boolean, *optional*): If set, the parent Request will be used instead of the current one. Note: using this argument can be a sign of undesired tight coupling, use with care
+
+* ``useMainRequest`` (boolean, *optional*): If set, the main Request will be used instead of the current one. Note: using this argument can be a sign of undesired tight coupling, use with care
 
 
 
@@ -3351,7 +2472,7 @@ Expected result::
 
 
 
-.. _`Fluid ViewHelper Reference: f:uri.email`:
+.. _`FluidAdaptor ViewHelper Reference: f:uri.email`:
 
 f:uri.email
 -----------
@@ -3359,7 +2480,7 @@ f:uri.email
 Email uri view helper.
 Currently the specified email is simply prepended by "mailto:" but we might add spam protection.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Uri\\EmailViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Uri\\EmailViewHelper
 
 
 
@@ -3387,7 +2508,7 @@ Expected result::
 
 
 
-.. _`Fluid ViewHelper Reference: f:uri.external`:
+.. _`FluidAdaptor ViewHelper Reference: f:uri.external`:
 
 f:uri.external
 --------------
@@ -3395,7 +2516,7 @@ f:uri.external
 A view helper for creating URIs to external targets.
 Currently the specified URI is simply passed through.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Uri\\ExternalViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Uri\\ExternalViewHelper
 
 
 
@@ -3415,24 +2536,24 @@ Examples
 
 **custom default scheme**::
 
-	<f:uri.external uri="neos.io" defaultScheme="ftp" />
+	<f:uri.external uri="neos.io" defaultScheme="sftp" />
 
 
 Expected result::
 
-	ftp://neos.io
+	sftp://neos.io
 
 
 
 
-.. _`Fluid ViewHelper Reference: f:uri.resource`:
+.. _`FluidAdaptor ViewHelper Reference: f:uri.resource`:
 
 f:uri.resource
 --------------
 
 A view helper for creating URIs to resources.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Uri\\ResourceViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Uri\\ResourceViewHelper
 
 
 
@@ -3444,7 +2565,7 @@ Arguments
 
 * ``package`` (string, *optional*): Target package key. If not set, the current package key will be used
 
-* ``resource`` (TYPO3\Flow\Resource\Resource, *optional*): If specified, this resource object is used instead of the path and package information
+* ``resource`` (Neos\Flow\ResourceManagement\PersistentResource, *optional*): If specified, this resource object is used instead of the path and package information
 
 * ``localize`` (boolean, *optional*): Whether resource localization should be attempted or not
 
@@ -3476,7 +2597,7 @@ Expected result::
 	(depending on domain)
 
 
-**Resource URI**::
+**Static resource URI**::
 
 	{f:uri.resource(path: 'resource://DifferentPackage/Public/gfx/SomeImage.png')}
 
@@ -3487,7 +2608,7 @@ Expected result::
 	(depending on domain)
 
 
-**Resource object**::
+**Persistent resource object**::
 
 	<img src="{f:uri.resource(resource: myImage.resource)}" />
 
@@ -3500,14 +2621,14 @@ Expected result::
 
 
 
-.. _`Fluid ViewHelper Reference: f:validation.ifHasErrors`:
+.. _`FluidAdaptor ViewHelper Reference: f:validation.ifHasErrors`:
 
 f:validation.ifHasErrors
 ------------------------
 
 This view helper allows to check whether validation errors adhere to the current request.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Validation\\IfHasErrorsViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Validation\\IfHasErrorsViewHelper
 
 
 
@@ -3519,19 +2640,19 @@ Arguments
 
 * ``else`` (mixed, *optional*): Value to be returned if the condition if not met.
 
-* ``for`` (string, *optional*): The argument or property name or path to check for error(s)
+* ``for`` (string, *optional*): The argument or property name or path to check for error(s). If not set any validation error leads to the "then child" to be rendered
 
 
 
 
-.. _`Fluid ViewHelper Reference: f:validation.results`:
+.. _`FluidAdaptor ViewHelper Reference: f:validation.results`:
 
 f:validation.results
 --------------------
 
 Validation results view helper
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Validation\\ResultsViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Validation\\ResultsViewHelper
 
 
 
@@ -3597,7 +2718,7 @@ Expected result::
 
 
 
-.. _`Fluid ViewHelper Reference: f:widget.autocomplete`:
+.. _`FluidAdaptor ViewHelper Reference: f:widget.autocomplete`:
 
 f:widget.autocomplete
 ---------------------
@@ -3612,7 +2733,7 @@ Make sure to include jQuery and jQuery UI in the HTML, like that:
    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.3/themes/base/jquery-ui.css" type="text/css" media="all" />
    <link rel="stylesheet" href="http://static.jquery.com/ui/css/demo-docs-theme/ui.theme.css" type="text/css" media="all" />
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Widget\\AutocompleteViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Widget\\AutocompleteViewHelper
 
 
 
@@ -3620,7 +2741,7 @@ Make sure to include jQuery and jQuery UI in the HTML, like that:
 Arguments
 *********
 
-* ``objects`` (TYPO3\Flow\Persistence\QueryResultInterface)
+* ``objects`` (Neos\Flow\Persistence\QueryResultInterface)
 
 * ``for`` (string)
 
@@ -3633,7 +2754,7 @@ Arguments
 
 
 
-.. _`Fluid ViewHelper Reference: f:widget.link`:
+.. _`FluidAdaptor ViewHelper Reference: f:widget.link`:
 
 f:widget.link
 -------------
@@ -3641,7 +2762,7 @@ f:widget.link
 widget.link ViewHelper
 This ViewHelper can be used inside widget templates in order to render links pointing to widget actions
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Widget\\LinkViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Widget\\LinkViewHelper
 
 
 
@@ -3694,14 +2815,14 @@ Arguments
 
 
 
-.. _`Fluid ViewHelper Reference: f:widget.paginate`:
+.. _`FluidAdaptor ViewHelper Reference: f:widget.paginate`:
 
 f:widget.paginate
 -----------------
 
 This ViewHelper renders a Pagination of objects.
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Widget\\PaginateViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Widget\\PaginateViewHelper
 
 
 
@@ -3709,7 +2830,7 @@ This ViewHelper renders a Pagination of objects.
 Arguments
 *********
 
-* ``objects`` (TYPO3\Flow\Persistence\QueryResultInterface)
+* ``objects`` (Neos\Flow\Persistence\QueryResultInterface)
 
 * ``as`` (string)
 
@@ -3720,7 +2841,7 @@ Arguments
 
 
 
-.. _`Fluid ViewHelper Reference: f:widget.uri`:
+.. _`FluidAdaptor ViewHelper Reference: f:widget.uri`:
 
 f:widget.uri
 ------------
@@ -3728,7 +2849,7 @@ f:widget.uri
 widget.uri ViewHelper
 This ViewHelper can be used inside widget templates in order to render URIs pointing to widget actions
 
-:Implementation: TYPO3\\Fluid\\ViewHelpers\\Widget\\UriViewHelper
+:Implementation: Neos\\FluidAdaptor\\ViewHelpers\\Widget\\UriViewHelper
 
 
 
