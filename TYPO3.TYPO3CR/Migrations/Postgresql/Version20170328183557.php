@@ -25,7 +25,7 @@ class Version20170328183557 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on "postgresql".');
 
-        $this->addSql('CREATE INDEX parentpath ON neos_contentrepository_domain_model_nodedata (parentpath)');
+        $this->addSql('CREATE INDEX parentpath ON typo3_typo3cr_domain_model_nodedata (parentpath)');
     }
 
     /**
