@@ -685,7 +685,7 @@ Neos:
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/Signals/Flow.rst'
         affectedClasses:
           classesContainingMethodsAnnotatedWith: Neos\Flow\Annotations\Signal
-          classNamePattern: '/^TYPO3\\Flow\\.*$/i'
+          classNamePattern: '/^Neos\\Flow\\.*$/i'
           includeAbstractClasses: true
         parser:
           implementationClassName: Neos\DocTools\Domain\Service\SignalsParser
