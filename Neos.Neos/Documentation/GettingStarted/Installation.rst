@@ -58,7 +58,7 @@ Fundamental Installation
 
 
 #. Next set up a virtual host inside your Apache configuration. Set the ``DocumentRoot`` to the ``Web`` directory inside
-   the Neos installation.
+   the Neos installation. Set the directive ``AllowOverride`` to ``ÀLL`` to allow access to `.htaccess`
 
    .. code-block:: apache
 
@@ -70,6 +70,11 @@ Fundamental Installation
          #SetEnv FLOW_CONTEXT Production
          ServerName neos.demo
       </VirtualHost>
+      
+      <Directory /your/htdocs/Neos/Web>
+         AllowOverride All
+      </Directory>
+
 
    Make sure that the ``mod_rewrite`` module is loaded and restart apache. For further information on how to set up a
    virtual host with apache please refer to the `Apache Virtual Host documentation
