@@ -183,34 +183,4 @@ class FusionPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \I
     {
         return count($this->partialTypoScriptTree);
     }
-
-    /**
-     * Finally evaluate the Fusion path
-     *
-     * As PHP does not like throwing an exception here, we render any exception using the configured Fusion exception
-     * handler and will also catch and log any exceptions resulting from that as a last resort.
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        try {
-            return (string)$this->objectAccess();
-        } catch (\Exception $exceptionHandlerException) {
-            try {
-                // Throwing an exception in __toString causes a fatal error, so if that happens we catch them and use the context dependent exception handler instead.
-                $contextDependentExceptionHandler = new ContextDependentHandler();
-                $contextDependentExceptionHandler->setRuntime($this->fusionRuntime);
-                return $contextDependentExceptionHandler->handleRenderingException($this->path, $exception);
-            } catch (\Exception $contextDepndentExceptionHandlerException) {
-                $this->systemLogger->logException($contextDepndentExceptionHandlerException, array('path' => $this->path));
-                return sprintf(
-                    '<!-- Exception while rendering exception in %s: %s (%s) -->',
-                    $this->path,
-                    $contextDepndentExceptionHandlerException->getMessage(),
-                    $contextDepndentExceptionHandlerException instanceof Exception ? 'see reference code ' . $contextDepndentExceptionHandlerException->getReferenceCode() . ' in log' : $contextDepndentExceptionHandlerException->getCode()
-                );
-            }
-        }
-    }
 }
