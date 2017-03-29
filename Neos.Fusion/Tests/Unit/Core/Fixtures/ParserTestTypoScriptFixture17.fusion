@@ -10,7 +10,7 @@ include: ParserTestTypoScriptFixture16.fusion
 
 include: ParserTestTypoScriptFixture17b.fusion
 
-prototype(TYPO3.Foo:Bar2).baz = "New Value"
+prototype(Neos.Foo:Bar2).baz = "New Value"
 
 # Test for globbing and recursive globbing
 include: Globbing/*
