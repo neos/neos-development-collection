@@ -185,5 +185,4 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
 
         $this->assertEquals($expected, $actual);
     }
-
 }
