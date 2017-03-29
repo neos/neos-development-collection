@@ -47,7 +47,7 @@ class AssetUsageInNodeProperties extends UsageReference
      * @param NodeInterface $node
      * @param boolean $accessible
      */
-    public function __construct(AssetInterface $asset, Site $site, NodeInterface $documentNode = null, NodeInterface $node, $accessible)
+    public function __construct(AssetInterface $asset, Site $site = null, NodeInterface $documentNode = null, NodeInterface $node = null, $accessible = false)
     {
         parent::__construct($asset);
         $this->site = $site;
