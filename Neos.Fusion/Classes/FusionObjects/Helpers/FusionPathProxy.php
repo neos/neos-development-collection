@@ -146,7 +146,7 @@ class FusionPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \I
     public function objectAccess()
     {
         if (!$this->fusionRuntime->canRender($this->path)) {
-            throw new FusionException('The configuration in the path "' . $this->path . '" can not be rendered.', 1490778362);
+            return $this;
         }
 
         try {
@@ -197,7 +197,12 @@ class FusionPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \I
     public function __toString()
     {
         try {
-            return (string)$this->objectAccess();
+            $result = $this->objectAccess();
+            if ($result === $this) {
+                throw new \RuntimeException('The fusion path "' . $this->path . '" cannot be rendered. Either no fusion object defined or the object does not exist.', 1490801683237);
+            }
+
+            return (string)$result;
         } catch (\Exception $exceptionHandlerException) {
             try {
                 // Throwing an exception in __toString causes a fatal error, so if that happens we catch them and use the context dependent exception handler instead.
