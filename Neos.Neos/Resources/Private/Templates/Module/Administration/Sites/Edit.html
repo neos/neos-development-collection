@@ -19,14 +19,14 @@
 						</div>
 					</div>
 					<div class="neos-control-group{f:validation.ifHasErrors(for: 'newSiteNodeName', then: ' neos-error')}">
-						<label class="neos-control-label" for="node-name">{neos:backend.translate(id: 'rootNodeName', value: 'Root node name')}</label>
+						<label class="neos-control-label" for="node-name">{neos:backend.translate(id: 'sites.rootNodeName', value: 'Root node name')}</label>
 						<div class="neos-controls">
 							<f:form.textfield name="newSiteNodeName" id="node-name" value="{site.nodeName}" additionalAttributes="{pattern: '^[a-z0-9\-]+$'}" class="neos-span12" required="true" />
 							<f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'newSiteNodeName'}"/>
 						</div>
 					</div>
 					<div class="neos-control-group">
-						<label class="neos-control-label" for="asset-collection">{neos:backend.translate(id: 'state', value: 'Default asset collection')}</label>
+						<label class="neos-control-label" for="asset-collection">{neos:backend.translate(id: 'sites.defaultAssetCollection', value: 'Default asset collection')}</label>
 						<div class="neos-controls">
 							<f:form.select property="assetCollection" id="asset-collection" options="{assetCollections}" optionLabelField="title" prependOptionLabel="None" prependOptionValue="" class="neos-span12" />
 						</div>
