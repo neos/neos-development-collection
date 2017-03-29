@@ -44,11 +44,14 @@ use TYPO3\TYPO3CR\Utility;
  *    },
  *    indexes={
  *      @ORM\Index(name="parentpath_sortingindex",columns={"parentpathhash", "sortingindex"}),
- *      @ORM\Index(name="parentpath",columns={"parentpath"},options={"length": 255}),
+ *      @ORM\Index(name="parentpath",columns={"parentpath"}),
  *      @ORM\Index(name="identifierindex",columns={"identifier"}),
  *      @ORM\Index(name="nodetypeindex",columns={"nodetype"})
  *    }
  * )
+ *
+ * The parentpath index above is actually limited to a size of 255 characters in the corresponding MySQL migration,
+ * something that cannot be expressed through the annotation.
  */
 class NodeData extends AbstractNodeData
 {
