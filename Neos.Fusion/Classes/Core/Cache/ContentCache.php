@@ -21,7 +21,7 @@ use Doctrine\ORM\Proxy\Proxy;
 use Neos\Fusion\Exception\CacheException;
 
 /**
- * A wrapper around a TYPO3 Flow cache which provides additional functionality for caching partial content (segments)
+ * A wrapper around a Neos Flow cache which provides additional functionality for caching partial content (segments)
  * rendered by the Fusion Runtime.
  *
  * The cache build process generally follows these steps:
@@ -393,7 +393,7 @@ class ContentCache
      * Sanitizes the given tag for use with the cache framework
      *
      * @param string $tag A tag which possibly contains non-allowed characters, for example "NodeType_Neos.NodeTypes:Page"
-     * @return string A cleaned up tag, for example "NodeType_TYPO3_Neos-Page"
+     * @return string A cleaned up tag, for example "NodeType_Neos_Neos-Page"
      */
     protected function sanitizeTag($tag)
     {
