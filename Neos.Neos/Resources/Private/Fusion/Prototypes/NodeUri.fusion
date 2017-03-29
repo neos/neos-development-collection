@@ -7,3 +7,46 @@ prototype(Neos.Neos:NodeUri) {
 	argumentsToBeExcludedFromQueryString = Neos.Fusion:RawArray
 	@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
 }
+
+# Renders a <a> tag linking to a node
+# LinkNode object works exactly the same way as neos:link.node ViewHelper in
+# the Neos.Neos package
+prototype(Neos.Neos:NodeLink) < prototype(Neos.Fusion:Tag) {
+	node = 'pass-the-node'
+
+	absolute = FALSE
+	additionalParams = Neos.Fusion:RawArray
+	addQueryString = FALSE
+	arguments = Neos.Fusion:RawArray
+	argumentsToBeExcludedFromQueryString = Neos.Fusion:RawArray
+	baseNodeName = 'documentNode'
+	format = NULL
+	section = ''
+	@context.node = ${this.node}
+	@context.absolute = ${this.absolute}
+	@context.additionalParams = ${this.additionalParams}
+	@context.addQueryString = ${this.addQueryString}
+	@context.arguments = ${this.arguments}
+	@context.argumentsToBeExcludedFromQueryString = ${this.argumentsToBeExcludedFromQueryString}
+	@context.baseNodeName = ${this.baseNodeName}
+	@context.format = ${this.format}
+	@context.section = ${this.section}
+
+	tagName = 'a'
+	content = ${this.node.label}
+
+	attributes {
+		href = Neos.Neos:NodeUri {
+			node = ${node}
+			absolute = ${absolute}
+			additionalParams = ${additionalParams}
+			addQueryString = ${addQueryString}
+			arguments = ${arguments}
+			argumentsToBeExcludedFromQueryString = ${argumentsToBeExcludedFromQueryString}
+			baseNodeName = ${baseNodeName}
+			format = ${format}
+			section = ${section}
+		}
+	}
+}
+
