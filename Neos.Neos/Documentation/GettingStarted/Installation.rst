@@ -57,28 +57,38 @@ Fundamental Installation
    .svn..) history? [Y,n]?'.
 
 
-#. Next set up a virtual host inside your Apache configuration. Set the ``DocumentRoot`` to the ``Web`` directory inside
-   the Neos installation. Set the directive ``AllowOverride`` to ``ÀLL`` to allow access to `.htaccess`
+#. Next set up a virtual domain/host in your webserver configuration
 
-   .. code-block:: apache
+   * Apache configuration
 
-      NameVirtualHost *:80 # if needed
+      Set up a virtual host inside your Apache configuration. Set the ``DocumentRoot`` to the ``Web`` directory inside
+      the Neos installation. Set the directive ``AllowOverride`` to ``ÀLL`` to allow access to `.htaccess`
 
-      <VirtualHost *:80>
-         DocumentRoot "/your/htdocs/Neos/Web/"
-         # enable the following line for production context
-         #SetEnv FLOW_CONTEXT Production
-         ServerName neos.demo
-      </VirtualHost>
+      .. code-block:: apache
+
+         NameVirtualHost *:80 # if needed
+
+         <VirtualHost *:80>
+           DocumentRoot "/your/htdocs/Neos/Web/"
+           # enable the following line for production context
+           #SetEnv FLOW_CONTEXT Production
+           ServerName neos.demo
+         </VirtualHost>
       
-      <Directory /your/htdocs/Neos/Web>
-         AllowOverride All
-      </Directory>
+         <Directory /your/htdocs/Neos/Web>
+           AllowOverride All
+         </Directory>
 
 
-   Make sure that the ``mod_rewrite`` module is loaded and restart apache. For further information on how to set up a
-   virtual host with apache please refer to the `Apache Virtual Host documentation
-   <https://httpd.apache.org/docs/2.2/en/vhosts/>`_.
+     Make sure that the ``mod_rewrite`` module is loaded and restart apache. For further information on how to set up a
+     virtual host with apache please refer to the `Apache Virtual Host documentation
+     <https://httpd.apache.org/docs/2.2/en/vhosts/>`_.
+     
+   * nginx configuration
+   
+     For further information on how to set up a virtual domain with nginx please refer to the `nginx  documentation 
+     <https://www.linode.com/docs/websites/nginx/how-to-configure-nginx>`_.
+   
 
 
 #. Add an entry to */etc/hosts* to make your virtual host reachable:
