@@ -398,7 +398,7 @@ Options Reference:
 	the node path is shown instead of the url path.
 
 ``threshold`` (number)
-	Minimum amount of characters which trigger a search
+	Minimum amount of characters which trigger a search. Default is set to 2.
 
 Property Type: DateTime ``DateTimeEditor`` -- Date & Time Selection Editor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
