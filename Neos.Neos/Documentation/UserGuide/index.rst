@@ -7,5 +7,6 @@ basic principles and usage instructions.
 .. toctree::
 	:maxdepth: 2
 
+	UserLogin
 	UserInterfaceBasics
 	Workspaces
