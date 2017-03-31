@@ -17,6 +17,7 @@ use Neos\FluidAdaptor\Core\Parser\SyntaxTree\TemplateObjectAccessInterface;
 use Neos\Fusion\Core\ExceptionHandlers\ContextDependentHandler;
 use Neos\Fusion\Exception\UnsupportedProxyMethodException;
 use Neos\Fusion\FusionObjects\TemplateImplementation;
+use Neos\Fusion\Exception as FusionException;
 
 /**
  * A proxy object representing a Fusion path inside a Fluid Template. It allows
@@ -140,6 +141,7 @@ class FusionPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \I
      * Evaluates Fusion objects and eel expressions.
      *
      * @return FusionPathProxy|mixed
+     * @throws FusionException
      */
     public function objectAccess()
     {
@@ -195,13 +197,18 @@ class FusionPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \I
     public function __toString()
     {
         try {
-            return (string)$this->objectAccess();
+            $result = $this->objectAccess();
+            if ($result === $this) {
+                throw new \RuntimeException('The fusion path "' . $this->path . '" cannot be rendered. Either no fusion object defined or the object does not exist.', 1490801683237);
+            }
+
+            return (string)$result;
         } catch (\Exception $exceptionHandlerException) {
             try {
                 // Throwing an exception in __toString causes a fatal error, so if that happens we catch them and use the context dependent exception handler instead.
                 $contextDependentExceptionHandler = new ContextDependentHandler();
                 $contextDependentExceptionHandler->setRuntime($this->fusionRuntime);
-                return $contextDependentExceptionHandler->handleRenderingException($this->path, $exception);
+                return $contextDependentExceptionHandler->handleRenderingException($this->path, $exceptionHandlerException);
             } catch (\Exception $contextDepndentExceptionHandlerException) {
                 $this->systemLogger->logException($contextDepndentExceptionHandlerException, array('path' => $this->path));
                 return sprintf(
