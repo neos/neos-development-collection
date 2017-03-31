@@ -141,14 +141,14 @@ The following options are allowed:
 
       Example::
 
-      prototype(Vendor.Site:Content.SpecialNodeType) < prototype(Neos.Fusion:Content) {
-        templatePath = 'resource://Vendor.Site/Private/Templates/NodeTypes/Content.SpecialNodeType.html'
-        # all properties of the nodeType are passed to the template
-        date = ${q(node).property('date')}
-        # inline-editable strings additionally get the convertUris processor
-        title = ${q(node).property('title')}
-        title.@process.convertUris = Neos.Neos:ConvertUris
-      }
+        prototype(Vendor.Site:Content.SpecialNodeType) < prototype(Neos.Fusion:Content) {
+          templatePath = 'resource://Vendor.Site/Private/Templates/NodeTypes/Content.SpecialNodeType.html'
+          # all properties of the nodeType are passed to the template
+          date = ${q(node).property('date')}
+          # inline-editable strings additionally get the convertUris processor
+          title = ${q(node).property('title')}
+          title.@process.convertUris = Neos.Neos:ConvertUris
+        }
 
 ``ui``
   Configuration options related to the user interface representation of the node type
