@@ -312,13 +312,13 @@ TYPO3:
           'TYPO3.Neos/Inspector/Editors/ReferencesEditor':
             editorOptions:
               placeholder: 'TYPO3.Neos:Main:typeToSearch'
-              nodeTypes: ['Neos.Neos:Document']
+              nodeTypes: ['TYPO3.Neos:Document']
               threshold: 2
 
           'TYPO3.Neos/Inspector/Editors/ReferenceEditor':
             editorOptions:
               placeholder: 'TYPO3.Neos:Main:typeToSearch'
-              nodeTypes: ['Neos.Neos:Document']
+              nodeTypes: ['TYPO3.Neos:Document']
               threshold: 2
 
           'TYPO3.Neos/Inspector/Editors/SelectBoxEditor':
