@@ -38,7 +38,8 @@ Show or hide the Module Menu using this button.
    :alt: navigate
    :scale: 30 %
 
-Using the Navigate component you can conveniently find your way through your contents. See '4. The Page tree'. Pressing the ``navigate``-button opens and closes the left panel with `page tree` and `structure tree`.
+Using the Navigate component you can conveniently find your way through your content. See '4. The Page tree'.
+Pressing the ``navigate``-button opens and closes the left panel with `page tree` and `structure tree`.
 
 3. The Edit/Preview Panel
 -------------------------
@@ -92,7 +93,9 @@ a page or a content element.
 The Structure tree is a nodetype tree which gives you detailed information of how your content is structured.
 It gives you information about which type, its position and its nesting level. This can also be used to navigate
 the content of a page.
-In the example the headline `Imagine this..` is child of `Content colection (column0)` grandchild of `Two column content`  and grandgrandchild of `Content collection (main)`.
+
+In the example the headline `Imagine this…` is a child of `Content colection (column0)`, a grandchild of
+`Two column content` and  a grandgrandchild of `Content collection (main)`.
 
 8. The content canvas
 ---------------------
