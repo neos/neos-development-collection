@@ -61,7 +61,7 @@ Import Export
 Neos has full support for importing and exporting site content using content stored in XML files. That can be also used
 to regulary import external data into Neos or to migrate content from other systems to.
 
-.. note:: The reference of the import and export command can be found in the  :ref:`Neos Command Reference`.
+.. note:: The reference of the import and export command can be found in the  :ref:`Command Reference`.
 
 Multi Domain Support
 ====================

@@ -176,7 +176,7 @@ To automatically include the Root.fusion in Neos you have to add the following l
 
   Neos:
     Neos:
-      Fusion:
+      fusion:
         autoInclude:
           'Sarkosh.CdCollection': TRUE
 

@@ -329,5 +329,5 @@ TODO "what about the UI below a single DOM element idea"
 Adjusting the HTTP response
 ===========================
 
-It is possible to set HTTP headers and the status code of the response from Fusion. See :ref:`TYPO3_TypoScript__Http_Message`
+It is possible to set HTTP headers and the status code of the response from Fusion. See :ref:`Neos_Fusion__Http_Message`
 for an example.
