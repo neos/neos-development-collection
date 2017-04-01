@@ -225,10 +225,14 @@ Neos:
           Neos.Neos/Inspector/Editors/ReferencesEditor:
             editorOptions:
               placeholder: 'Neos.Neos:Main:typeToSearch'
+              nodeTypes: ['Neos.Neos:Document']
+              threshold: 2
 
           Neos.Neos/Inspector/Editors/ReferenceEditor:
             editorOptions:
               placeholder: 'Neos.Neos:Main:typeToSearch'
+              nodeTypes: ['Neos.Neos:Document']
+              threshold: 2
 
           Neos.Neos/Inspector/Editors/SelectBoxEditor:
             editorOptions:
