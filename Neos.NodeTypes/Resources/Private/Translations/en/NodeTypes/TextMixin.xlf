@@ -3,7 +3,7 @@
 	<file original="" product-name="Neos.NodeTypes" source-language="en" datatype="plaintext">
 		<body>
 			<trans-unit id="properties.text.aloha.placeholder" xml:space="preserve">
-				<source><![CDATA[<p>Enter text here</p>]]></source>
+				<source><![CDATA[Enter text here]]></source>
 			</trans-unit>
 		</body>
 	</file>
