@@ -1,0 +1,12 @@
+{namespace neos=Neos\Neos\ViewHelpers}
+<f:layout name="BackendSubModule" />
+
+<f:section name="subtitle">
+	<h2>{neos:backend.translate(id: 'domain.edit', value: 'Edit domain')}</h2>
+</f:section>
+
+<f:section name="content">
+	<f:form action="updateDomain" name="domain" object="{domain}">
+		<f:render partial="Module/Shared/DomainForm" arguments="{_all}" />
+	</f:form>
+</f:section>

@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Media.Browser" source-language="en" datatype="plaintext" target-language="da">
+    <body>
+      <trans-unit id="dragHelp" xml:space="preserve" approved="yes">
+				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
+			<target xml:lang="da">Træk og slip en fil til en samling / tag for at føje dem til den.</target></trans-unit>
+      <trans-unit id="replace.options.keepOriginalFilename" xml:space="preserve" approved="yes">
+				<source>Keep the filename "{0}"</source>
+			<target xml:lang="da">Behold filnavnet "{0}"</target></trans-unit>
+      <trans-unit id="module.label" xml:space="preserve" approved="yes">
+				<source>Media</source>
+			<target xml:lang="da">Medie</target></trans-unit>
+      <trans-unit id="module.description" xml:space="preserve" approved="yes">
+				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
+			<target xml:lang="da">Dette modul giver mulighed for administration af medier, herunder billeder, videoer, lyd og dokumenter.</target></trans-unit>
+      <trans-unit id="field.name" xml:space="preserve" approved="yes">
+				<source>Name</source>
+			<target xml:lang="da">Navn</target></trans-unit>
+      <trans-unit id="field.title" xml:space="preserve" approved="yes">
+				<source>Title</source>
+			<target xml:lang="da">Titel</target></trans-unit>
+      <trans-unit id="field.label" xml:space="preserve" approved="yes">
+				<source>Label</source>
+			<target xml:lang="da">Etiket</target></trans-unit>
+      <trans-unit id="field.caption" xml:space="preserve" approved="yes">
+				<source>Caption</source>
+			<target xml:lang="da">Billedtekst</target></trans-unit>
+      <trans-unit id="field.lastModified" xml:space="preserve" approved="yes">
+				<source>Last modified</source>
+			<target xml:lang="da">Sidst ændret</target></trans-unit>
+      <trans-unit id="field.fileSize" xml:space="preserve" approved="yes">
+				<source>File size</source>
+			<target xml:lang="da">Filstørrelse</target></trans-unit>
+      <trans-unit id="field.type" xml:space="preserve" approved="yes">
+				<source>Type</source>
+			<target xml:lang="da">Type</target></trans-unit>
+      <trans-unit id="field.tags" xml:space="preserve" approved="yes">
+				<source>Tags</source>
+			<target xml:lang="da">Tags</target></trans-unit>
+      <trans-unit id="sortByName" xml:space="preserve" approved="yes">
+				<source>Sort by name</source>
+			<target xml:lang="da">Sorter efter navn</target></trans-unit>
+      <trans-unit id="sortByLastModified" xml:space="preserve" approved="yes">
+				<source>Sort by last modified</source>
+			<target xml:lang="da">Sorter efter sidste ændring</target></trans-unit>
+      <trans-unit id="sortby" xml:space="preserve" approved="yes">
+				<source>Sort by</source>
+			<target xml:lang="da">Sortér efter</target></trans-unit>
+      <trans-unit id="sortDirection" xml:space="preserve" approved="yes">
+				<source>Sort direction</source>
+			<target xml:lang="da">Sorteringsretning</target></trans-unit>
+      <trans-unit id="sortDirection.asc" xml:space="preserve" approved="yes">
+				<source>Ascending</source>
+			<target xml:lang="da">Stigende</target></trans-unit>
+      <trans-unit id="sortDirection.desc" xml:space="preserve" approved="yes">
+				<source>Descending</source>
+			<target xml:lang="da">Faldende</target></trans-unit>
+      <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve" approved="yes">
+				<source>Drag and drop on tag or collection</source>
+			<target xml:lang="da">Træk og slip på tag eller samling</target></trans-unit>
+      <trans-unit id="editAsset" xml:space="preserve" approved="yes">
+				<source>Edit asset</source>
+			<target xml:lang="da">Rediger fil</target><alt-trans><target xml:lang="da">Rediger</target></alt-trans></trans-unit>
+      <trans-unit id="replaceAssetResource" xml:space="preserve" approved="yes">
+				<source>Replace</source>
+			<target xml:lang="da">Erstat</target></trans-unit>
+      <trans-unit id="deleteAsset" xml:space="preserve" approved="yes">
+				<source>Delete asset</source>
+			<target xml:lang="da">Slet fil</target><alt-trans><target xml:lang="da">Slet</target></alt-trans></trans-unit>
+      <trans-unit id="message.reallyDeleteAsset" xml:space="preserve" approved="yes">
+				<source>Do you really want to delete asset "{0}"?</source>
+			<target xml:lang="da">Vil du slette "{0}"?</target></trans-unit>
+      <trans-unit id="message.reallyDeleteCollection" xml:space="preserve" approved="yes">
+				<source>Do you really want to delete collection "{0}"?</source>
+			<target xml:lang="da">Vil du slette samlingen "{0}"?</target></trans-unit>
+      <trans-unit id="message.reallyDeleteTag" xml:space="preserve" approved="yes">
+				<source>Do you really want to delete tag "{0}"?</source>
+			<target xml:lang="da">Vil du slette tagget "{0}"?</target></trans-unit>
+      <trans-unit id="message.willBeDeleted" xml:space="preserve" approved="yes">
+				<source>This will delete the asset.</source>
+			<target xml:lang="da">Dette vil slette filen.</target></trans-unit>
+      <trans-unit id="message.willDeleteCollection" xml:space="preserve" approved="yes">
+				<source>This will delete the collection, but not the assets that it contains.</source>
+			<target xml:lang="da">Dette vil slette samlingen, men ikke filerne som den indeholder.</target></trans-unit>
+      <trans-unit id="message.willDeleteTag" xml:space="preserve" approved="yes">
+				<source>This will delete the tag, but not the assets that has it.</source>
+			<target xml:lang="da">Dette vil slette tagget, men ikke filerne som bruger det.</target></trans-unit>
+      <trans-unit id="message.operationCannotBeUndone" xml:space="preserve" approved="yes">
+				<source>This operation cannot be undone.</source>
+			<target xml:lang="da">Denne handling kan ikke fortrydes.</target></trans-unit>
+      <trans-unit id="cancel" xml:space="preserve" approved="yes">
+				<source>Cancel</source>
+			<target xml:lang="da">Annullér</target><alt-trans><target xml:lang="da">Anuller</target></alt-trans></trans-unit>
+      <trans-unit id="saveEditing" xml:space="preserve" approved="yes">
+				<source>Save</source>
+			<target xml:lang="da">Gem</target></trans-unit>
+      <trans-unit id="message.confirmDelete" xml:space="preserve" approved="yes">
+				<source>Yes, delete the asset</source>
+			<target xml:lang="da">Ja, slet filen</target></trans-unit>
+      <trans-unit id="message.confirmDeleteCollection" xml:space="preserve" approved="yes">
+				<source>Yes, delete the collection</source>
+			<target xml:lang="da">Ja, slet samlingen</target></trans-unit>
+      <trans-unit id="message.confirmDeleteTag" xml:space="preserve" approved="yes">
+				<source>Yes, delete the tag</source>
+			<target xml:lang="da">Ja, slet tagget</target></trans-unit>
+      <trans-unit id="thumbnail.editTitle" xml:space="preserve" approved="yes">
+				<source>Edit {0}</source>
+			<target xml:lang="da">Rediger {0}</target></trans-unit>
+      <trans-unit id="search.title" xml:space="preserve" approved="yes">
+				<source>Search in assets</source>
+			<target xml:lang="da">Søg blandt filer</target></trans-unit>
+      <trans-unit id="search.placeholder" xml:space="preserve" approved="yes">
+				<source>Search</source>
+			<target xml:lang="da">Søg</target></trans-unit>
+      <trans-unit id="search.itemCount" xml:space="preserve" approved="yes">
+				<source>{0} items</source>
+			<target xml:lang="da">{0} elementer</target></trans-unit>
+      <trans-unit id="search.foundMatches" xml:space="preserve" approved="yes">
+				<source>found matching "{0}"</source>
+			<target xml:lang="da">matchede "{0}"</target><alt-trans><target xml:lang="da">matchede til "{0}"</target></alt-trans><alt-trans><target xml:lang="da">passede til "{0}"</target></alt-trans></trans-unit>
+      <trans-unit id="upload" xml:space="preserve" approved="yes">
+				<source>Upload</source>
+			<target xml:lang="da">Upload</target></trans-unit>
+      <trans-unit id="filterOptions" xml:space="preserve" approved="yes">
+				<source>Filter options</source>
+			<target xml:lang="da">Filterindstillinger</target></trans-unit>
+      <trans-unit id="filter.title.all" xml:space="preserve" approved="yes">
+				<source>Display all asset types</source>
+			<target xml:lang="da">Vis alle filtyper</target></trans-unit>
+      <trans-unit id="filter.title.images" xml:space="preserve" approved="yes">
+				<source>Only display image assets</source>
+			<target xml:lang="da">Vis kun billedefiler</target><alt-trans><target xml:lang="da">Vis kun billeder</target></alt-trans></trans-unit>
+      <trans-unit id="filter.title.documents" xml:space="preserve" approved="yes">
+				<source>Only display document assets</source>
+			<target xml:lang="da">Vis kun dokumenter</target></trans-unit>
+      <trans-unit id="filter.title.video" xml:space="preserve" approved="yes">
+				<source>Only display video assets</source>
+			<target xml:lang="da">Vis kun videofiler</target><alt-trans><target xml:lang="da">Vis kun videoer</target></alt-trans></trans-unit>
+      <trans-unit id="filter.title.audio" xml:space="preserve" approved="yes">
+				<source>Only display audio assets</source>
+			<target xml:lang="da">Vis kun lydfiler</target></trans-unit>
+      <trans-unit id="filter.all" xml:space="preserve" approved="yes">
+				<source>All</source>
+			<target xml:lang="da">Alle</target></trans-unit>
+      <trans-unit id="filter.images" xml:space="preserve" approved="yes">
+				<source>Images</source>
+			<target xml:lang="da">Billeder</target></trans-unit>
+      <trans-unit id="filter.documents" xml:space="preserve" approved="yes">
+				<source>Documents</source>
+			<target xml:lang="da">Dokumenter</target></trans-unit>
+      <trans-unit id="filter.video" xml:space="preserve" approved="yes">
+				<source>Video</source>
+			<target xml:lang="da">Video</target></trans-unit>
+      <trans-unit id="filter.audio" xml:space="preserve" approved="yes">
+				<source>Audio</source>
+			<target xml:lang="da">Lyd</target></trans-unit>
+      <trans-unit id="tooltip.sortOptions" xml:space="preserve" approved="yes">
+				<source>Sort options</source>
+			<target xml:lang="da">Sorteringsindstillinger</target></trans-unit>
+      <trans-unit id="tooltip.listView" xml:space="preserve" approved="yes">
+				<source>List view</source>
+			<target xml:lang="da">Listevisning</target></trans-unit>
+      <trans-unit id="tooltip.thumbnailView" xml:space="preserve" approved="yes">
+				<source>Thumbnail view</source>
+			<target xml:lang="da">Eksempelvisning</target><alt-trans><target xml:lang="da">Eksempel visning</target></alt-trans></trans-unit>
+      <trans-unit id="collections" xml:space="preserve" approved="yes">
+				<source>Collections</source>
+			<target xml:lang="da">Samlinger</target></trans-unit>
+      <trans-unit id="editCollections" xml:space="preserve" approved="yes">
+				<source>Edit collections</source>
+			<target xml:lang="da">Rediger samlinger</target></trans-unit>
+      <trans-unit id="editCollection" xml:space="preserve" approved="yes">
+				<source>Edit collection</source>
+			<target xml:lang="da">Rediger samling</target></trans-unit>
+      <trans-unit id="deleteCollection" xml:space="preserve" approved="yes">
+				<source>Delete collection</source>
+			<target xml:lang="da">Slet samling</target></trans-unit>
+      <trans-unit id="createCollection" xml:space="preserve" approved="yes">
+				<source>Create collection</source>
+			<target xml:lang="da">Opret samling</target></trans-unit>
+      <trans-unit id="newCollection.placeholder" xml:space="preserve" approved="yes">
+				<source>Enter collection title</source>
+			<target xml:lang="da">Angiv titel på samling</target></trans-unit>
+      <trans-unit id="allCollections" xml:space="preserve" approved="yes">
+				<source>All collections</source>
+			<target xml:lang="da">Alle samlinger</target></trans-unit>
+      <trans-unit id="tags" xml:space="preserve" approved="yes">
+				<source>Tags</source>
+			<target xml:lang="da">Tags</target></trans-unit>
+      <trans-unit id="editTags" xml:space="preserve" approved="yes">
+				<source>Edit tags</source>
+			<target xml:lang="da">Rediger tags</target></trans-unit>
+      <trans-unit id="editTag" xml:space="preserve" approved="yes">
+				<source>Edit tag</source>
+			<target xml:lang="da">Rediger tag</target></trans-unit>
+      <trans-unit id="deleteTag" xml:space="preserve" approved="yes">
+				<source>Delete tag</source>
+			<target xml:lang="da">Slet tag</target></trans-unit>
+      <trans-unit id="placeholder.createTag" xml:space="preserve" approved="yes">
+				<source>Enter tag label</source>
+			<target xml:lang="da">Angiv tag navn</target></trans-unit>
+      <trans-unit id="createTag" xml:space="preserve" approved="yes">
+				<source>Create tag</source>
+			<target xml:lang="da">Opret tag</target></trans-unit>
+      <trans-unit id="tags.title.all" xml:space="preserve" approved="yes">
+				<source>All assets</source>
+			<target xml:lang="da">Alle filer</target></trans-unit>
+      <trans-unit id="tags.all" xml:space="preserve" approved="yes">
+				<source>All</source>
+			<target xml:lang="da">Alle</target></trans-unit>
+      <trans-unit id="untaggedAssets" xml:space="preserve" approved="yes">
+				<source>Untagged assets</source>
+			<target xml:lang="da">Ikke-taggede filer</target><alt-trans><target xml:lang="da">Ikke-tagget filer</target></alt-trans></trans-unit>
+      <trans-unit id="untagged" xml:space="preserve" approved="yes">
+				<source>Untagged</source>
+			<target xml:lang="da">Ikke-taggede</target><alt-trans><target xml:lang="da">Ikke-tagget</target></alt-trans></trans-unit>
+      <trans-unit id="maxUploadSize" xml:space="preserve" approved="yes">
+				<source>Max. upload size {0} per file</source>
+			<target xml:lang="da">Max. upload størrelse {0} pr. fil</target></trans-unit>
+      <trans-unit id="dropFiles" xml:space="preserve" approved="yes">
+				<source>Drop files here</source>
+			<target xml:lang="da">Smid filer her</target><alt-trans><target xml:lang="da">Slip filer her</target></alt-trans></trans-unit>
+      <trans-unit id="clickToUpload" xml:space="preserve" approved="yes">
+				<source>or click to upload</source>
+			<target xml:lang="da">eller tryk for at uploade</target></trans-unit>
+      <trans-unit id="chooseFile" xml:space="preserve" approved="yes">
+				<source>Choose file</source>
+			<target xml:lang="da">Vælg fil</target></trans-unit>
+      <trans-unit id="noAssetsFound" xml:space="preserve" approved="yes">
+				<source>No Assets found.</source>
+			<target xml:lang="da">Ingen filer fundet.</target></trans-unit>
+      <trans-unit id="basics" xml:space="preserve" approved="yes">
+				<source>Basics</source>
+			<target xml:lang="da">Grundlæggende</target></trans-unit>
+      <trans-unit id="delete" xml:space="preserve" approved="yes">
+				<source>Delete</source>
+			<target xml:lang="da">Slet</target></trans-unit>
+      <trans-unit id="clickToDelete" xml:space="preserve" approved="yes">
+				<source>Click to delete</source>
+			<target xml:lang="da">Klik for at slette</target></trans-unit>
+      <trans-unit id="save" xml:space="preserve" approved="yes">
+				<source>Save</source>
+			<target xml:lang="da">Gem</target></trans-unit>
+      <trans-unit id="metadata" xml:space="preserve" approved="yes">
+				<source>Metadata</source>
+			<target xml:lang="da">Metadata</target></trans-unit>
+      <trans-unit id="metadata.filename" xml:space="preserve" approved="yes">
+				<source>Filename</source>
+			<target xml:lang="da">Filnavn</target></trans-unit>
+      <trans-unit id="metadata.lastModified" xml:space="preserve" approved="yes">
+				<source>Last modified (resource)</source>
+			<target xml:lang="da">Sidst ændret (fil)</target></trans-unit>
+      <trans-unit id="metadata.fileSize" xml:space="preserve" approved="yes">
+				<source>File size</source>
+			<target xml:lang="da">Filstørrelse</target></trans-unit>
+      <trans-unit id="metadata.dimensions" xml:space="preserve" approved="yes">
+				<source>Dimensions</source>
+			<target xml:lang="da">Dimensioner</target></trans-unit>
+      <trans-unit id="metadata.type" xml:space="preserve" approved="yes">
+				<source>Type</source>
+			<target xml:lang="da">Type</target></trans-unit>
+      <trans-unit id="metadata.identifier" xml:space="preserve" approved="yes">
+				<source>Identifier</source>
+			<target xml:lang="da">ID</target><alt-trans><target xml:lang="da">Identifikator</target></alt-trans></trans-unit>
+      <trans-unit id="preview" xml:space="preserve" approved="yes">
+				<source>Preview</source>
+			<target xml:lang="da">Forhåndsvisning</target></trans-unit>
+      <trans-unit id="cannotUploadFile" xml:space="preserve" approved="yes">
+				<source>Cannot upload the file</source>
+			<target xml:lang="da">Kan ikke uploade filen</target></trans-unit>
+      <trans-unit id="fileSizeExceedsAllowedLimit" xml:space="preserve" approved="yes">
+				<source>The file size of {0} exceeds the allowed limit of {1}</source>
+			<target xml:lang="da">Filstørrelsen for {0} overstiger den tilladte grænse {1}</target><alt-trans><target xml:lang="da">Filstørrelsen for {0} overstiger den tilladte grænse for {1}</target></alt-trans></trans-unit>
+      <trans-unit id="forTheFile" xml:space="preserve" approved="yes">
+				<source>for the file</source>
+			<target xml:lang="da">for filen</target></trans-unit>
+      <trans-unit id="onlySomeFilesWereUploaded" xml:space="preserve" approved="yes">
+				<source>Only some of the files were successfully uploaded. Refresh the page to see the those.</source>
+			<target xml:lang="da">Kun nogle af filerne blev uploadet. Opdater siden for at se disse.</target></trans-unit>
+      <trans-unit id="taggingAssetsFailed" xml:space="preserve" approved="yes">
+				<source>Tagging the asset failed.</source>
+			<target xml:lang="da">Tagging af filen fejlede.</target></trans-unit>
+      <trans-unit id="addingAssetsToCollectionFailed" xml:space="preserve" approved="yes">
+				<source>Adding the asset to the collection failed.</source>
+			<target xml:lang="da">Tilføjelse af filen til samlingen fejlede.</target></trans-unit>
+      <trans-unit id="creating" xml:space="preserve" approved="yes">
+				<source>Creating</source>
+			<target xml:lang="da">Opretter</target></trans-unit>
+      <trans-unit id="deleteRelatedNodes" xml:space="preserve" approved="yes">
+				<source>Asset could not be deleted, because there are still Nodes using it</source>
+			<target xml:lang="da">Filen kunne ikke slettes da der er indhold som bruger den</target><alt-trans><target xml:lang="da">Filen kunne ikke slettes da der indhold som bruger den</target></alt-trans></trans-unit>
+      <group id="relatedNodes" restype="x-gettext-plurals">
+        <trans-unit id="relatedNodes[0]" approved="yes">
+          <source>{0} usages</source>
+          <target xml:lang="da">{0} anvendelser</target>
+        </trans-unit>
+        <trans-unit id="relatedNodes[1]">
+          <source>{0} usages</source>
+          <target xml:lang="da" state="translated">{0} anvendelser</target>
+        </trans-unit>
+      </group>
+      <trans-unit id="relatedNodes.referencesTo" xml:space="preserve" approved="yes">
+				<source>References to "{asset}"</source>
+			<target xml:lang="da">Henvisninger til "{asset}"</target><alt-trans><target xml:lang="da">Referencer til "{asset}"</target></alt-trans></trans-unit>
+      <trans-unit id="replaceAsset.replaceFilename" xml:space="preserve">
+				<source>Replace "{filename}"</source>
+			<target xml:lang="da" state="needs-translation">Replace "{filename}"</target></trans-unit>
+      <trans-unit id="replaceAsset.description" xml:space="preserve">
+        <source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
+      <target xml:lang="da" state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
+      <trans-unit id="replaceAsset.note" xml:space="preserve">
+        <source>Note</source>
+      <target xml:lang="da" state="needs-translation">Note</target></trans-unit>
+      <trans-unit id="replaceAsset.noteText" xml:space="preserve">
+        <source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
+      <target xml:lang="da" state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
+      <trans-unit id="replaceAsset.chooseNewFile" xml:space="preserve">
+        <source>Choose a new file</source>
+      <target xml:lang="da" state="needs-translation">Choose a new file</target></trans-unit>
+      <trans-unit id="replace.usageCount" xml:space="preserve">
+        <source>Currently the asset is used {usageCount} times.</source>
+      <target xml:lang="da" state="needs-translation">Currently the asset is used {usageCount} times.</target></trans-unit>
+      <trans-unit id="replace.allUsages" xml:space="preserve">
+        <source>Show all usages</source>
+      <target xml:lang="da" state="needs-translation">Show all usages</target></trans-unit>
+      <trans-unit id="replace.notUsed" xml:space="preserve">
+        <source>Currently the asset is not in used anywhere on the website.</source>
+      <target xml:lang="da" state="needs-translation">Currently the asset is not in used anywhere on the website.</target></trans-unit>
+      <trans-unit id="replace.previewFile" xml:space="preserve">
+        <source>Preview current file</source>
+      <target xml:lang="da" state="needs-translation">Preview current file</target></trans-unit>
+      <trans-unit id="couldNotReplaceAsset" xml:space="preserve" approved="yes">
+				<source>Could not replace asset</source>
+			<target xml:lang="da">Kunne ikke erstatte filen</target></trans-unit>
+      <trans-unit id="assetHasBeenReplaced" xml:space="preserve" approved="yes">
+				<source>Asset "{0}" has been replaced.</source>
+			<target xml:lang="da">Filen "{0}" er blevet erstattet.</target></trans-unit>
+      <trans-unit id="assetHasBeenUpdated" xml:space="preserve" approved="yes">
+				<source>Asset "{0}" has been updated.</source>
+			<target xml:lang="da">Filen "{0}" er blevet opdateret.</target></trans-unit>
+      <trans-unit id="assetHasBeenAdded" xml:space="preserve" approved="yes">
+				<source>Asset "{0}" has been added.</source>
+			<target xml:lang="da">Filen "{0}" er blevet tilføjet.</target></trans-unit>
+      <trans-unit id="assetHasBeenDeleted" xml:space="preserve" approved="yes">
+				<source>Asset "{0}" has been deleted.</source>
+			<target xml:lang="da">Filen "{0}" er blevet slettet.</target></trans-unit>
+      <trans-unit id="assetCouldNotBeDeleted" xml:space="preserve" approved="yes">
+				<source>Asset could not be deleted.</source>
+			<target xml:lang="da">Filen kunne ikke slettes.</target></trans-unit>
+      <trans-unit id="assetHasBeenReplaced" xml:space="preserve" approved="yes">
+				<source>Asset "{0}" has been replaced.</source>
+			<target xml:lang="da">Filen "{0}" er blevet erstattet.</target></trans-unit>
+      <trans-unit id="tagAlreadyExistsAndAddedToCollection" xml:space="preserve" approved="yes">
+				<source>Tag "{0}" already exists and was added to collection.</source>
+			<target xml:lang="da">Tagget "{0}" findes allerede og blev føjet til samlingen.</target></trans-unit>
+      <trans-unit id="tagHasBeenCreated" xml:space="preserve" approved="yes">
+				<source>Tag "{0}" has been created.</source>
+			<target xml:lang="da">Tagget "{0}" er blevet oprettet.</target></trans-unit>
+      <trans-unit id="tagHasBeenUpdated" xml:space="preserve" approved="yes">
+				<source>Tag "{0}" has been updated.</source>
+			<target xml:lang="da">Tagget "{0}" er blevet opdateret.</target></trans-unit>
+      <trans-unit id="tagHasBeenDeleted" xml:space="preserve" approved="yes">
+				<source>Tag "{0}" has been deleted.</source>
+			<target xml:lang="da">Tagget "{0}" er blevet slettet.</target></trans-unit>
+      <trans-unit id="collectionHasBeenCreated" xml:space="preserve" approved="yes">
+				<source>Collection "{0}" has been created.</source>
+			<target xml:lang="da">Samlingen "{0}" er blevet oprettet.</target></trans-unit>
+      <trans-unit id="collectionHasBeenUpdated" xml:space="preserve" approved="yes">
+				<source>Collection "{0}" has been updated.</source>
+			<target xml:lang="da">Samlingen "{0}" er blevet opdateret.</target></trans-unit>
+      <trans-unit id="collectionHasBeenDeleted" xml:space="preserve" approved="yes">
+				<source>Collection "{0}" has been deleted.</source>
+			<target xml:lang="da">Samlingen "{0}" er blevet slettet.</target></trans-unit>
+      <trans-unit id="replace.options.generateRedirects" xml:space="preserve" approved="yes">
+				<source>Generate redirects from original file url to the new url</source>
+			<target xml:lang="da">Opret omdirigeringer fra den oprindelige fil URL hen til den nye fil URL</target></trans-unit>
+    </body>
+  </file>
+</xliff>

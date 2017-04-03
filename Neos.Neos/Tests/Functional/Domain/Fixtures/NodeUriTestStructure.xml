@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<site name="example.org" state="1" siteResourcesPackageKey="Neos.Fusion" siteNodeName="uri-test">
+		<nodes formatVersion="2.0">
+			<node nodeName="uri-test">
+				<variant sortingIndex="100" workspace="live" nodeType="Neos.Neos:Shortcut" version="2" removed="" hidden="" hiddenInIndex="1">
+					<dimensions>
+						<language>en_US</language>
+					</dimensions>
+					<accessRoles __type="array" />
+					<properties>
+						<name __type="string">example.org</name>
+						<state __type="string">1</state>
+						<siteResourcesPackageKey __type="string">Neos.Fusion</siteResourcesPackageKey>
+						<title __type="string">example.org</title>
+					</properties>
+				</variant>
+				<variant sortingIndex="100" workspace="live" nodeType="Neos.Neos:Shortcut" version="2" removed="" hidden="" hiddenInIndex="1">
+					<dimensions>
+						<language>de</language>
+					</dimensions>
+					<accessRoles __type="array" />
+					<properties>
+						<name __type="string">example.org</name>
+						<state __type="string">1</state>
+						<siteResourcesPackageKey __type="string">Neos.Fusion</siteResourcesPackageKey>
+						<title __type="string">example.org</title>
+					</properties>
+				</variant>
+				<node nodeName="home">
+					<variant sortingIndex="100" workspace="live" nodeType="Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
+						<dimensions>
+							<language>en_US</language>
+						</dimensions>
+						<accessRoles __type="array" />
+						<properties>
+							<title __type="string">&lt;h1&gt;Home&lt;/h1&gt;</title>
+							<someSpecialProperty __type="string">&lt;h1&gt;SomeValue&lt;/h1&gt;</someSpecialProperty>
+							<uriPathSegment __type="string">home</uriPathSegment>
+						</properties>
+					</variant>
+					<variant sortingIndex="100" workspace="live" nodeType="Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
+						<dimensions>
+							<language>de</language>
+						</dimensions>
+						<accessRoles __type="array" />
+						<properties>
+							<title __type="string">&lt;h1&gt;Home&lt;/h1&gt;</title>
+							<someSpecialProperty __type="string">&lt;h1&gt;SomeValue&lt;/h1&gt;</someSpecialProperty>
+							<uriPathSegment __type="string">home</uriPathSegment>
+						</properties>
+					</variant>
+					<node nodeName="about-us">
+						<variant sortingIndex="400" workspace="live" nodeType="Neos.NodeTypes:Page" version="3" removed="" hidden="" hiddenInIndex="">
+							<dimensions>
+								<language>en_US</language>
+							</dimensions>
+							<accessRoles __type="array" />
+							<properties>
+								<title __type="string">&lt;h1&gt;About Us Test&lt;/h1&gt;</title>
+								<uriPathSegment __type="string">about-us</uriPathSegment>
+							</properties>
+						</variant>
+						<variant sortingIndex="400" workspace="live" nodeType="Neos.NodeTypes:Page" version="3" removed="" hidden="" hiddenInIndex="">
+							<dimensions>
+								<language>de</language>
+							</dimensions>
+							<accessRoles __type="array" />
+							<properties>
+								<title __type="string">&lt;h1&gt;Ueber Uns Test&lt;/h1&gt;</title>
+								<uriPathSegment __type="string">ueber-uns</uriPathSegment>
+							</properties>
+						</variant>
+						<node nodeName="history">
+							<variant sortingIndex="100" workspace="live" nodeType="Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
+								<dimensions>
+									<language>en_US</language>
+								</dimensions>
+								<accessRoles __type="array" />
+								<properties>
+									<title __type="string">&lt;h1&gt;History&lt;/h1&gt;</title>
+									<uriPathSegment __type="string">history</uriPathSegment>
+								</properties>
+							</variant>
+							<variant sortingIndex="100" workspace="live" nodeType="Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
+								<dimensions>
+									<language>de</language>
+								</dimensions>
+								<accessRoles __type="array" />
+								<properties>
+									<title __type="string">&lt;h1&gt;Geschichte&lt;/h1&gt;</title>
+									<uriPathSegment __type="string">geschichte</uriPathSegment>
+								</properties>
+							</variant>
+						</node>
+						<node nodeName="mission">
+							<variant sortingIndex="200" workspace="live" nodeType="Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
+								<dimensions>
+									<language>en_US</language>
+								</dimensions>
+								<accessRoles __type="array" />
+								<properties>
+									<title __type="string">&lt;h1&gt;Our mission&lt;/h1&gt;</title>
+									<uriPathSegment __type="string">our-mission</uriPathSegment>
+								</properties>
+							</variant>
+							<variant sortingIndex="200" workspace="live" nodeType="Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
+								<dimensions>
+									<language>de</language>
+								</dimensions>
+								<accessRoles __type="array" />
+								<properties>
+									<title __type="string">&lt;h1&gt;Unsere Ziele&lt;/h1&gt;</title>
+									<uriPathSegment __type="string">unsere-ziele</uriPathSegment>
+								</properties>
+							</variant>
+						</node>
+					</node>
+					<node nodeName="products">
+						<variant sortingIndex="500" workspace="live" nodeType="Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
+							<dimensions>
+								<language>en_US</language>
+							</dimensions>
+							<accessRoles __type="array" />
+							<properties>
+								<title __type="string">&lt;h1&gt;Products&lt;/h1&gt;</title>
+								<uriPathSegment __type="string">products</uriPathSegment>
+							</properties>
+						</variant>
+						<variant sortingIndex="500" workspace="live" nodeType="Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
+							<dimensions>
+								<language>de</language>
+							</dimensions>
+							<accessRoles __type="array" />
+							<properties>
+								<title __type="string">&lt;h1&gt;Produkte&lt;/h1&gt;</title>
+								<uriPathSegment __type="string">products</uriPathSegment>
+							</properties>
+						</variant>
+						<node nodeName="neos">
+							<variant sortingIndex="200" workspace="live" nodeType="Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
+								<dimensions>
+									<language>en_US</language>
+								</dimensions>
+								<accessRoles __type="array" />
+								<properties>
+									<title __type="string">&lt;h1&gt;CMS&lt;/h1&gt;</title>
+									<uriPathSegment __type="string">neos</uriPathSegment>
+								</properties>
+							</variant>
+							<variant sortingIndex="200" workspace="live" nodeType="Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
+								<dimensions>
+									<language>de</language>
+								</dimensions>
+								<accessRoles __type="array" />
+								<properties>
+									<title __type="string">&lt;h1&gt;CMS&lt;/h1&gt;</title>
+									<uriPathSegment __type="string">neos</uriPathSegment>
+								</properties>
+							</variant>
+						</node>
+						<node nodeName="flow">
+							<variant sortingIndex="100" workspace="live" nodeType="Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
+								<dimensions>
+									<language>en_US</language>
+								</dimensions>
+								<accessRoles __type="array" />
+								<properties>
+									<title __type="string">&lt;h1&gt;Framework&lt;/h1&gt;</title>
+									<uriPathSegment __type="string">flow</uriPathSegment>
+								</properties>
+							</variant>
+							<variant sortingIndex="100" workspace="live" nodeType="Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
+								<dimensions>
+									<language>de</language>
+								</dimensions>
+								<accessRoles __type="array" />
+								<properties>
+									<title __type="string">&lt;h1&gt;Framework&lt;/h1&gt;</title>
+									<uriPathSegment __type="string">flow</uriPathSegment>
+								</properties>
+							</variant>
+						</node>
+					</node>
+				</node>
+			</node>
+		</nodes>
+	</site>
+</root>

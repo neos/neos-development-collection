@@ -1,0 +1,27 @@
+{namespace neos=Neos\Neos\ViewHelpers}
+{namespace media=Neos\Media\ViewHelpers}
+<f:if condition="{image}">
+	<f:then>
+		<f:if condition="{link}">
+			<f:then>
+				<a href="{link}">
+					<f:render section="imageRendering" arguments="{_all}" />
+				</a>
+			</f:then>
+			<f:else>
+				<f:render section="imageRendering" arguments="{_all}" />
+			</f:else>
+		</f:if>
+	</f:then>
+	<f:else>
+		<f:if condition="{neos:rendering.inEditMode()}">
+			<img src="{f:uri.resource(package: 'Neos.Neos', path: 'Images/dummy-image.svg')}" title="Dummy image" alt="Dummy image" class="neos-handle" />
+		</f:if>
+	</f:else>
+</f:if>
+
+<f:section name="imageRendering">
+	<media:image image="{image}" alt="{alternativeText}" title="{title}" width="{width}"
+				 maximumWidth="{maximumWidth}" height="{height}" maximumHeight="{maximumHeight}"
+				 allowUpScaling="{allowUpScaling}" allowCropping="{allowCropping}" />
+</f:section>

@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Media.Browser" source-language="en" datatype="plaintext" target-language="km">
+    <body>
+      <trans-unit id="dragHelp" xml:space="preserve">
+				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
+			<target xml:lang="km" state="translated">អូសនិងរូបភាពធ្លាក់ចុះនៅលើការប្រមូល / ស្លាកដើម្បីបន្ថែមពួកវាទៅវា។</target></trans-unit>
+      <trans-unit id="replace.options.keepOriginalFilename" xml:space="preserve">
+				<source>Keep the filename "{0}"</source>
+			<target xml:lang="km" state="translated">រក្សាឈ្មោះឯកសារ "{0}"</target></trans-unit>
+      <trans-unit id="module.label" xml:space="preserve">
+				<source>Media</source>
+			<target xml:lang="km" state="translated">ប្រព័ន្ធផ្សព្វផ្សាយ</target></trans-unit>
+      <trans-unit id="module.description" xml:space="preserve">
+				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
+			<target xml:lang="km" state="translated">ម៉ូឌុលមួយនេះអនុញ្ញាតិ អោយគ្រប់គ្រងឯកសារផ្សព្វផ្សាយបាន រួមទាំង រូបភាព កុន សំលេង និង ឯកសារផ្សេងៗ។</target></trans-unit>
+      <trans-unit id="field.name" xml:space="preserve">
+				<source>Name</source>
+			<target xml:lang="km" state="translated">ឈ្មោះ</target></trans-unit>
+      <trans-unit id="field.title" xml:space="preserve">
+				<source>Title</source>
+			<target xml:lang="km" state="translated">ចំណងជើង</target></trans-unit>
+      <trans-unit id="field.label" xml:space="preserve">
+				<source>Label</source>
+			<target xml:lang="km" state="translated">ស្លាក</target></trans-unit>
+      <trans-unit id="field.caption" xml:space="preserve">
+				<source>Caption</source>
+			<target xml:lang="km" state="translated">
+ចំណងជើង</target></trans-unit>
+      <trans-unit id="field.lastModified" xml:space="preserve">
+				<source>Last modified</source>
+			<target xml:lang="km" state="translated">ការកែប្រែចុងក្រោយ</target></trans-unit>
+      <trans-unit id="field.fileSize" xml:space="preserve">
+				<source>File size</source>
+			<target xml:lang="km" state="translated">ទំហំឯកសារ</target></trans-unit>
+      <trans-unit id="field.type" xml:space="preserve">
+				<source>Type</source>
+			<target xml:lang="km" state="translated">ប្រភេទ</target></trans-unit>
+      <trans-unit id="field.tags" xml:space="preserve">
+				<source>Tags</source>
+			<target xml:lang="km" state="translated">ស្លាក</target></trans-unit>
+      <trans-unit id="sortByName" xml:space="preserve">
+				<source>Sort by name</source>
+			<target xml:lang="km" state="translated">តម្រៀបតាមឈ្មោះ</target></trans-unit>
+      <trans-unit id="sortByLastModified" xml:space="preserve">
+				<source>Sort by last modified</source>
+			<target xml:lang="km" state="translated">តម្រៀបតាមការកែប្រែចុងក្រោយ</target></trans-unit>
+      <trans-unit id="sortby" xml:space="preserve">
+				<source>Sort by</source>
+			<target xml:lang="km" state="translated">តម្រៀបតាម</target></trans-unit>
+      <trans-unit id="sortDirection" xml:space="preserve">
+				<source>Sort direction</source>
+			<target xml:lang="km" state="translated">ទិសដៅតម្រៀប</target></trans-unit>
+      <trans-unit id="sortDirection.asc" xml:space="preserve">
+				<source>Ascending</source>
+			<target xml:lang="km" state="translated">លំដាប់ឡើង</target></trans-unit>
+      <trans-unit id="sortDirection.desc" xml:space="preserve">
+				<source>Descending</source>
+			<target xml:lang="km" state="translated">ចុះ</target></trans-unit>
+      <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve">
+				<source>Drag and drop on tag or collection</source>
+			<target xml:lang="km" state="translated">អូសនិងទម្លាក់លើស្លាករឺការប្រមូល</target></trans-unit>
+      <trans-unit id="editAsset" xml:space="preserve">
+				<source>Edit asset</source>
+			<target xml:lang="km" state="translated">កែសម្រួលទ្រព្យសម្បត្តិ</target></trans-unit>
+      <trans-unit id="replaceAssetResource" xml:space="preserve">
+				<source>Replace</source>
+			<target xml:lang="km" state="translated">ជំនួស</target></trans-unit>
+      <trans-unit id="deleteAsset" xml:space="preserve">
+				<source>Delete asset</source>
+			<target xml:lang="km" state="translated">លុបទ្រព្យសម្បត្តិ</target></trans-unit>
+      <trans-unit id="message.reallyDeleteAsset" xml:space="preserve">
+				<source>Do you really want to delete asset "{0}"?</source>
+			<target xml:lang="km" state="translated">តើអ្នកពិតជាចង់លុបទ្រព្យសម្បត្តិ "{0}"?</target></trans-unit>
+      <trans-unit id="message.reallyDeleteCollection" xml:space="preserve">
+				<source>Do you really want to delete collection "{0}"?</source>
+			<target xml:lang="km" state="translated">តើអ្នកពិតជាចង់លុបការប្រមូល "{0}"?</target></trans-unit>
+      <trans-unit id="message.reallyDeleteTag" xml:space="preserve">
+				<source>Do you really want to delete tag "{0}"?</source>
+			<target xml:lang="km" state="translated">តើអ្នកពិតជាចង់លុបស្លាក "{0}"?</target></trans-unit>
+      <trans-unit id="message.willBeDeleted" xml:space="preserve">
+				<source>This will delete the asset.</source>
+			<target xml:lang="km" state="translated">វានឹងលុបទ្រព្យសកម្ម។</target></trans-unit>
+      <trans-unit id="message.willDeleteCollection" xml:space="preserve">
+				<source>This will delete the collection, but not the assets that it contains.</source>
+			<target xml:lang="km" state="translated">វានឹងលុបការប្រមូល, ប៉ុន្តែមិនមែនទ្រព្យសម្បត្តិដែលវាមាន។</target></trans-unit>
+      <trans-unit id="message.willDeleteTag" xml:space="preserve">
+				<source>This will delete the tag, but not the assets that has it.</source>
+			<target xml:lang="km" state="translated">វានឹងលុបស្លាកនេះប៉ុន្តែមិនមែនទ្រព្យសម្បត្តិដែលមានវានោះទេ។</target></trans-unit>
+      <trans-unit id="message.operationCannotBeUndone" xml:space="preserve">
+				<source>This operation cannot be undone.</source>
+			<target xml:lang="km" state="translated">ប្រតិបត្តិការនេះមិនអាចមិនធ្វើវិញ។</target></trans-unit>
+      <trans-unit id="cancel" xml:space="preserve">
+				<source>Cancel</source>
+			<target xml:lang="km" state="translated">បោះបង់</target></trans-unit>
+      <trans-unit id="saveEditing" xml:space="preserve">
+				<source>Save</source>
+			<target xml:lang="km" state="translated">សន្សំ រឺ រក្សាទុក</target></trans-unit>
+      <trans-unit id="message.confirmDelete" xml:space="preserve">
+				<source>Yes, delete the asset</source>
+			<target xml:lang="km" state="translated">យល់ព្រមលុបទ្រព្យ</target></trans-unit>
+      <trans-unit id="message.confirmDeleteCollection" xml:space="preserve">
+				<source>Yes, delete the collection</source>
+			<target xml:lang="km" state="translated">យល់ព្រមលុបការប្រមូល</target></trans-unit>
+      <trans-unit id="message.confirmDeleteTag" xml:space="preserve">
+				<source>Yes, delete the tag</source>
+			<target xml:lang="km" state="translated">យល់ព្រមលុបស្លាក</target></trans-unit>
+      <trans-unit id="thumbnail.editTitle" xml:space="preserve">
+				<source>Edit {0}</source>
+			<target xml:lang="km" state="translated">កែសម្រួល{0}</target></trans-unit>
+      <trans-unit id="search.title" xml:space="preserve">
+				<source>Search in assets</source>
+			<target xml:lang="km" state="translated">ស្វែងរកក្នុងទ្រព្យសម្បត្តិ</target></trans-unit>
+      <trans-unit id="search.placeholder" xml:space="preserve">
+				<source>Search</source>
+			<target xml:lang="km" state="translated">ស្វែងរក</target></trans-unit>
+      <trans-unit id="search.itemCount" xml:space="preserve">
+				<source>{0} items</source>
+			<target xml:lang="km" state="translated">{0} ធាតុ</target></trans-unit>
+      <trans-unit id="search.foundMatches" xml:space="preserve">
+				<source>found matching "{0}"</source>
+			<target xml:lang="km" state="translated">រកឃើញផ្គូផ្គង "{0}"</target></trans-unit>
+      <trans-unit id="upload" xml:space="preserve">
+				<source>Upload</source>
+			<target xml:lang="km" state="translated">ផ្ទុកឡើង</target></trans-unit>
+      <trans-unit id="filterOptions" xml:space="preserve">
+				<source>Filter options</source>
+			<target xml:lang="km" state="translated">ជម្រើសតម្រង</target></trans-unit>
+      <trans-unit id="filter.title.all" xml:space="preserve">
+				<source>Display all asset types</source>
+			<target xml:lang="km" state="translated">បង្ហាញគ្រប់ប្រភេទទ្រព្យសម្បត្តិ</target></trans-unit>
+      <trans-unit id="filter.title.images" xml:space="preserve">
+				<source>Only display image assets</source>
+			<target xml:lang="km" state="translated">បង្ហាញតែទ្រព្យសម្បត្តិរូបភាព</target></trans-unit>
+      <trans-unit id="filter.title.documents" xml:space="preserve">
+				<source>Only display document assets</source>
+			<target xml:lang="km" state="translated">បង្ហាញតែទ្រព្យសម្បត្តិឯកសារ</target></trans-unit>
+      <trans-unit id="filter.title.video" xml:space="preserve">
+				<source>Only display video assets</source>
+			<target xml:lang="km" state="translated">បង្ហាញតែទ្រព្យសម្បត្តិជាវីដេអូ</target></trans-unit>
+      <trans-unit id="filter.title.audio" xml:space="preserve">
+				<source>Only display audio assets</source>
+			<target xml:lang="km" state="translated">បង្ហាញតែទ្រព្យសម្បត្តិអូឌីយ៉ូ</target></trans-unit>
+      <trans-unit id="filter.all" xml:space="preserve">
+				<source>All</source>
+			<target xml:lang="km" state="translated">ទាំងអស់</target></trans-unit>
+      <trans-unit id="filter.images" xml:space="preserve">
+				<source>Images</source>
+			<target xml:lang="km" state="translated">រូបភាព</target></trans-unit>
+      <trans-unit id="filter.documents" xml:space="preserve">
+				<source>Documents</source>
+			<target xml:lang="km" state="translated">ឯកសារ</target></trans-unit>
+      <trans-unit id="filter.video" xml:space="preserve">
+				<source>Video</source>
+			<target xml:lang="km" state="translated">វីដេអូ</target></trans-unit>
+      <trans-unit id="filter.audio" xml:space="preserve">
+				<source>Audio</source>
+			<target xml:lang="km" state="translated">អូឌីយ៉ូ</target></trans-unit>
+      <trans-unit id="tooltip.sortOptions" xml:space="preserve">
+				<source>Sort options</source>
+			<target xml:lang="km" state="translated">ប្រភេទនៃជម្រើស</target></trans-unit>
+      <trans-unit id="tooltip.listView" xml:space="preserve">
+				<source>List view</source>
+			<target xml:lang="km" state="translated">ការមេីលបញ្ជី</target></trans-unit>
+      <trans-unit id="tooltip.thumbnailView" xml:space="preserve">
+				<source>Thumbnail view</source>
+			<target xml:lang="km" state="translated">ទិដ្ឋភាពរូបភាពតូច</target></trans-unit>
+      <trans-unit id="collections" xml:space="preserve">
+				<source>Collections</source>
+			<target xml:lang="km" state="translated">ការប្រមូល</target></trans-unit>
+      <trans-unit id="editCollections" xml:space="preserve">
+				<source>Edit collections</source>
+			<target xml:lang="km" state="translated">កែសម្រួលការប្រមូល</target></trans-unit>
+      <trans-unit id="editCollection" xml:space="preserve">
+				<source>Edit collection</source>
+			<target xml:lang="km" state="translated">ការប្រមូលការកែសម្រួល</target></trans-unit>
+      <trans-unit id="deleteCollection" xml:space="preserve">
+				<source>Delete collection</source>
+			<target xml:lang="km" state="translated">លុបការប្រមូល</target></trans-unit>
+      <trans-unit id="createCollection" xml:space="preserve">
+				<source>Create collection</source>
+			<target xml:lang="km" state="translated">បង្កើតការប្រមូល</target></trans-unit>
+      <trans-unit id="newCollection.placeholder" xml:space="preserve">
+				<source>Enter collection title</source>
+			<target xml:lang="km" state="translated">បញ្ចូលចំណងជើងការប្រមូល</target></trans-unit>
+      <trans-unit id="allCollections" xml:space="preserve">
+				<source>All collections</source>
+			<target xml:lang="km" state="translated">ការប្រមូលទាំងអស់</target></trans-unit>
+      <trans-unit id="tags" xml:space="preserve">
+				<source>Tags</source>
+			<target xml:lang="km" state="translated">ស្លាក</target></trans-unit>
+      <trans-unit id="editTags" xml:space="preserve">
+				<source>Edit tags</source>
+			<target xml:lang="km" state="translated">កែសម្រួលស្លាក</target></trans-unit>
+      <trans-unit id="editTag" xml:space="preserve">
+				<source>Edit tag</source>
+			<target xml:lang="km" state="translated">កែសម្រួលស្លាក</target></trans-unit>
+      <trans-unit id="deleteTag" xml:space="preserve">
+				<source>Delete tag</source>
+			<target xml:lang="km" state="translated">លុបស្លាក</target></trans-unit>
+      <trans-unit id="placeholder.createTag" xml:space="preserve">
+				<source>Enter tag label</source>
+			<target xml:lang="km" state="translated">បញ្ចូលស្លាកស្លាក</target></trans-unit>
+      <trans-unit id="createTag" xml:space="preserve">
+				<source>Create tag</source>
+			<target xml:lang="km" state="translated">បង្កើតស្លាក</target></trans-unit>
+      <trans-unit id="tags.title.all" xml:space="preserve">
+				<source>All assets</source>
+			<target xml:lang="km" state="translated">ទ្រព្យសម្បត្តិទាំងអស់</target></trans-unit>
+      <trans-unit id="tags.all" xml:space="preserve">
+				<source>All</source>
+			<target xml:lang="km" state="translated">ទាំងអស់</target></trans-unit>
+      <trans-unit id="untaggedAssets" xml:space="preserve">
+				<source>Untagged assets</source>
+			<target xml:lang="km" state="translated">ទ្រព្យសម្បត្តិ Untagged</target></trans-unit>
+      <trans-unit id="untagged" xml:space="preserve">
+				<source>Untagged</source>
+			<target xml:lang="km" state="translated">Untagged</target></trans-unit>
+      <trans-unit id="maxUploadSize" xml:space="preserve">
+				<source>Max. upload size {0} per file</source>
+			<target xml:lang="km" state="translated">ទំហំផ្ទុកឡើងជាអតិបរមា {0} ក្នុងឯកសារ</target></trans-unit>
+      <trans-unit id="dropFiles" xml:space="preserve">
+				<source>Drop files here</source>
+			<target xml:lang="km" state="translated">ទម្លាក់ឯកសារនៅទីនេះ</target></trans-unit>
+      <trans-unit id="clickToUpload" xml:space="preserve">
+				<source>or click to upload</source>
+			<target xml:lang="km" state="translated">ឬចុចដើម្បីផ្ទុកឡើង</target></trans-unit>
+      <trans-unit id="chooseFile" xml:space="preserve">
+				<source>Choose file</source>
+			<target xml:lang="km" state="translated">
+ជ្រើសរេីសឯកសារ</target></trans-unit>
+      <trans-unit id="noAssetsFound" xml:space="preserve">
+				<source>No Assets found.</source>
+			<target xml:lang="km" state="translated">រកមិនឃើញទ្រព្យសម្បត្តិ។</target></trans-unit>
+      <trans-unit id="basics" xml:space="preserve">
+				<source>Basics</source>
+			<target xml:lang="km" state="translated">មូលដ្ឋានគ្រឹះ</target></trans-unit>
+      <trans-unit id="delete" xml:space="preserve">
+				<source>Delete</source>
+			<target xml:lang="km" state="translated">លុប</target></trans-unit>
+      <trans-unit id="clickToDelete" xml:space="preserve">
+				<source>Click to delete</source>
+			<target xml:lang="km" state="translated">ចុចដើម្បីលុប</target></trans-unit>
+      <trans-unit id="save" xml:space="preserve">
+				<source>Save</source>
+			<target xml:lang="km" state="translated">សន្សំ រឺ រក្សាទុក</target></trans-unit>
+      <trans-unit id="metadata" xml:space="preserve">
+				<source>Metadata</source>
+			<target xml:lang="km" state="translated">ទិន្នន័យមេតា</target></trans-unit>
+      <trans-unit id="metadata.filename" xml:space="preserve">
+				<source>Filename</source>
+			<target xml:lang="km" state="translated">ឈ្មោះឯកសារ</target></trans-unit>
+      <trans-unit id="metadata.lastModified" xml:space="preserve">
+				<source>Last modified (resource)</source>
+			<target xml:lang="km" state="translated">កែចុងក្រោយ (ធនធាន)</target></trans-unit>
+      <trans-unit id="metadata.fileSize" xml:space="preserve">
+				<source>File size</source>
+			<target xml:lang="km" state="translated">ទំហំឯកសារ</target></trans-unit>
+      <trans-unit id="metadata.dimensions" xml:space="preserve">
+				<source>Dimensions</source>
+			<target xml:lang="km" state="translated">
+វិមាត្រ</target></trans-unit>
+      <trans-unit id="metadata.type" xml:space="preserve">
+				<source>Type</source>
+			<target xml:lang="km" state="translated">ប្រភេទ</target></trans-unit>
+      <trans-unit id="metadata.identifier" xml:space="preserve">
+				<source>Identifier</source>
+			<target xml:lang="km" state="translated">អត្តសញ្ញាណ</target></trans-unit>
+      <trans-unit id="preview" xml:space="preserve">
+				<source>Preview</source>
+			<target xml:lang="km" state="translated">មើលជាមុន</target></trans-unit>
+      <trans-unit id="cannotUploadFile" xml:space="preserve">
+				<source>Cannot upload the file</source>
+			<target xml:lang="km" state="translated">មិនអាចផ្ទុកនូវឯកសារ</target></trans-unit>
+      <trans-unit id="fileSizeExceedsAllowedLimit" xml:space="preserve">
+				<source>The file size of {0} exceeds the allowed limit of {1}</source>
+			<target xml:lang="km" state="translated">ទំហំឯកសារ {0} លើសពីដែនកំណត់អនុញ្ញាត {1}</target></trans-unit>
+      <trans-unit id="forTheFile" xml:space="preserve">
+				<source>for the file</source>
+			<target xml:lang="km" state="translated">សម្រាប់ឯកសារ</target></trans-unit>
+      <trans-unit id="onlySomeFilesWereUploaded" xml:space="preserve">
+				<source>Only some of the files were successfully uploaded. Refresh the page to see the those.</source>
+			<target xml:lang="km" state="translated">មានតែឯកសារមួយចំនួនត្រូវបានផ្ទុកឡើងដោយជោគជ័យ។ refresh ទំព័រនេះដើម្បីមើលឃើញនោះ។</target></trans-unit>
+      <trans-unit id="taggingAssetsFailed" xml:space="preserve">
+				<source>Tagging the asset failed.</source>
+			<target xml:lang="km" state="translated">ការដាក់ស្លាកទ្រព្យសកម្មបានបរាជ័យ។</target></trans-unit>
+      <trans-unit id="addingAssetsToCollectionFailed" xml:space="preserve">
+				<source>Adding the asset to the collection failed.</source>
+			<target xml:lang="km" state="translated">ការបន្ថែមទ្រព្យសម្បត្តិដល់ការប្រមូលបរាជ័យ។</target></trans-unit>
+      <trans-unit id="creating" xml:space="preserve">
+				<source>Creating</source>
+			<target xml:lang="km" state="translated">ការបង្កេីត</target></trans-unit>
+      <trans-unit id="deleteRelatedNodes" xml:space="preserve">
+				<source>Asset could not be deleted, because there are still Nodes using it</source>
+			<target xml:lang="km" state="translated">ទ្រព្យសម្បត្តិមិនអាចត្រូវបានលុបដោយសារតែមាននៅតែត្រូវបាន Nodes ប្រើវា</target></trans-unit>
+      <group id="relatedNodes" restype="x-gettext-plurals">
+        <trans-unit id="relatedNodes[0]">
+          <source>{0} usages</source>
+          <target xml:lang="km" state="translated">{0} ប្រើប្រាស់</target>
+        </trans-unit>
+      </group>
+      <trans-unit id="relatedNodes.referencesTo" xml:space="preserve">
+				<source>References to "{asset}"</source>
+			<target xml:lang="km" state="translated">សេចក្តីយោងទៅ "{ទ្រព្យសម្បត្តិ}"</target></trans-unit>
+      <trans-unit id="replaceAsset.replaceFilename" xml:space="preserve">
+				<source>Replace "{filename}"</source>
+			<target xml:lang="km" state="needs-translation">Replace "{filename}"</target></trans-unit>
+      <trans-unit id="replaceAsset.description" xml:space="preserve">
+        <source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
+      <target xml:lang="km" state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
+      <trans-unit id="replaceAsset.note" xml:space="preserve">
+        <source>Note</source>
+      <target xml:lang="km" state="needs-translation">Note</target></trans-unit>
+      <trans-unit id="replaceAsset.noteText" xml:space="preserve">
+        <source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
+      <target xml:lang="km" state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
+      <trans-unit id="replaceAsset.chooseNewFile" xml:space="preserve">
+        <source>Choose a new file</source>
+      <target xml:lang="km" state="needs-translation">Choose a new file</target></trans-unit>
+      <trans-unit id="replace.usageCount" xml:space="preserve">
+        <source>Currently the asset is used {usageCount} times.</source>
+      <target xml:lang="km" state="needs-translation">Currently the asset is used {usageCount} times.</target></trans-unit>
+      <trans-unit id="replace.allUsages" xml:space="preserve">
+        <source>Show all usages</source>
+      <target xml:lang="km" state="needs-translation">Show all usages</target></trans-unit>
+      <trans-unit id="replace.notUsed" xml:space="preserve">
+        <source>Currently the asset is not in used anywhere on the website.</source>
+      <target xml:lang="km" state="needs-translation">Currently the asset is not in used anywhere on the website.</target></trans-unit>
+      <trans-unit id="replace.previewFile" xml:space="preserve">
+        <source>Preview current file</source>
+      <target xml:lang="km" state="needs-translation">Preview current file</target></trans-unit>
+      <trans-unit id="couldNotReplaceAsset" xml:space="preserve">
+				<source>Could not replace asset</source>
+			<target xml:lang="km" state="translated">មិនអាចជំនួសទីកន្លែង asseet</target></trans-unit>
+      <trans-unit id="assetHasBeenReplaced" xml:space="preserve">
+				<source>Asset "{0}" has been replaced.</source>
+			<target xml:lang="km" state="translated">បណ្ដុំAsset{0}ត្រូវបានជំនួសទីកន្លែង</target><alt-trans><target xml:lang="km">Asset{0} ត្រូវបានជំនួសទីកន្លែង</target></alt-trans></trans-unit>
+      <trans-unit id="assetHasBeenUpdated" xml:space="preserve">
+				<source>Asset "{0}" has been updated.</source>
+			<target xml:lang="km" state="translated">បណ្ដុំAsset{0}ត្រូវបានបង្គីេតថ្មីឡេីងវិញ</target><alt-trans><target xml:lang="km">Asset{0}ត្រូវបានបង្គីេតថ្មីឡេីងវិញ</target></alt-trans><alt-trans><target xml:lang="km">Asset{0} ត្រូវបានបង្គីេតថ្មីឡេីងវិញ</target></alt-trans></trans-unit>
+      <trans-unit id="assetHasBeenAdded" xml:space="preserve">
+				<source>Asset "{0}" has been added.</source>
+			<target xml:lang="km" state="translated">បណ្ដុំAsset{0}ត្រូវបានបង្ចូល</target><alt-trans><target xml:lang="km">Asset{0} ត្រូវបានបង្ចូល</target></alt-trans></trans-unit>
+      <trans-unit id="assetHasBeenDeleted" xml:space="preserve">
+				<source>Asset "{0}" has been deleted.</source>
+			<target xml:lang="km" state="translated">បណ្ដុំAsset{0}ត្រូវបានលុបចេាល</target><alt-trans><target xml:lang="km">Asset{0}ត្រូវបានលុបចេាល</target></alt-trans><alt-trans><target xml:lang="km">Asset{0} ត្រូវបានលុបចេាល</target></alt-trans></trans-unit>
+      <trans-unit id="assetCouldNotBeDeleted" xml:space="preserve">
+				<source>Asset could not be deleted.</source>
+			<target xml:lang="km" state="translated">បណ្ដុំAsset{0}មិនអាចលុបចេាល</target><alt-trans><target xml:lang="km">Asset{0} មិនអាចលុបចេាល</target></alt-trans></trans-unit>
+      <trans-unit id="tagAlreadyExistsAndAddedToCollection" xml:space="preserve">
+				<source>Tag "{0}" already exists and was added to collection.</source>
+			<target xml:lang="km" state="translated">ស្លាក{0}មាននិងបានបង្ចូលក្នុងការប្រមូលផ្តុំរួចហីេយ</target></trans-unit>
+      <trans-unit id="tagHasBeenCreated" xml:space="preserve">
+				<source>Tag "{0}" has been created.</source>
+			<target xml:lang="km" state="translated">ស្លាក{0}ត្រូវបានបង្គេីត</target></trans-unit>
+      <trans-unit id="tagHasBeenUpdated" xml:space="preserve">
+				<source>Tag "{0}" has been updated.</source>
+			<target xml:lang="km" state="translated">ស្លាក{0}ត្រូវបានធ្វើឡេីងជាថ្មី</target></trans-unit>
+      <trans-unit id="tagHasBeenDeleted" xml:space="preserve">
+				<source>Tag "{0}" has been deleted.</source>
+			<target xml:lang="km" state="translated">ស្លាក{0}ត្រូវបានលុបចេាល</target></trans-unit>
+      <trans-unit id="collectionHasBeenCreated" xml:space="preserve">
+				<source>Collection "{0}" has been created.</source>
+			<target xml:lang="km" state="translated">ការប្រមូលផ្ដុំ{0}ត្រូវបានបង្កើត</target></trans-unit>
+      <trans-unit id="collectionHasBeenUpdated" xml:space="preserve">
+				<source>Collection "{0}" has been updated.</source>
+			<target xml:lang="km" state="translated">ការប្រមូលផ្ដុំ{0}ត្រូវធ្វើឡេីងជាថ្មី</target></trans-unit>
+      <trans-unit id="collectionHasBeenDeleted" xml:space="preserve">
+				<source>Collection "{0}" has been deleted.</source>
+			<target xml:lang="km" state="translated">ការប្រមូលផ្ដុំ{0}ត្រូវបានលុបចេាល</target></trans-unit>
+      <trans-unit id="replace.options.generateRedirects" xml:space="preserve">
+				<source>Generate redirects from original file url to the new url</source>
+			<target xml:lang="km" state="translated">បង្កើតការបញ្ជូនបន្តពី Url ឯកសារដើមទៅ Url ថ្មីនេះ</target></trans-unit>
+    </body>
+  </file>
+</xliff>

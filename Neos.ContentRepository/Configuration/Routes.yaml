@@ -1,0 +1,20 @@
+#                                                                        #
+# Default subroutes configuration for the ContentRepository package                #
+#                                                                        #
+
+-
+  name: 'REST service with controller and id'
+  uriPattern: '{@controller}/{id}(.{@format})'
+  defaults:
+    '@package':    'Neos.ContentRepository'
+    '@subpackage': 'Service'
+    '@format':     'json'
+    '@action': 'andi'
+
+-
+  name: 'REST service with controller'
+  uriPattern: '{@controller}(.{@format})'
+  defaults:
+    '@package':    'Neos.ContentRepository'
+    '@subpackage': 'Service'
+    '@format':     'json'

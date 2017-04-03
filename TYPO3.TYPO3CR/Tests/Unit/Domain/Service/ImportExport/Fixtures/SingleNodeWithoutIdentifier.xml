@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<nodes formatVersion="2.0">
-	<node nodeName="neosdemotypo3org">
-		<variant sortingIndex="100" workspace="live" nodeType="TYPO3.Neos.NodeTypes:Page" version="14" removed="" hidden="" hiddenInIndex="">
-		</variant>
-	</node>
-</nodes>

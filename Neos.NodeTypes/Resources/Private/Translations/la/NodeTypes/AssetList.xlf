@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.NodeTypes" source-language="en" datatype="plaintext" target-language="la-LA">
+    <body>
+      <trans-unit id="ui.label" xml:space="preserve">
+				<source>Asset list</source>
+			<target xml:lang="la-LA">crwdns1490:0crwdne1490:0</target></trans-unit>
+      <trans-unit id="groups.resources" xml:space="preserve">
+				<source>Resources</source>
+			<target xml:lang="la-LA">crwdns1491:0crwdne1491:0</target></trans-unit>
+      <trans-unit id="properties.assets" xml:space="preserve">
+				<source>Assets</source>
+			<target xml:lang="la-LA">crwdns1492:0crwdne1492:0</target></trans-unit>
+      <trans-unit id="content.emptyAssetList" xml:space="preserve">
+				<source>Empty asset list</source>
+			<target xml:lang="la-LA">crwdns1493:0crwdne1493:0</target></trans-unit>
+    </body>
+  </file>
+</xliff>

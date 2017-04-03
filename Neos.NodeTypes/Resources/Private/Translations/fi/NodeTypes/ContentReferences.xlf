@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.NodeTypes" source-language="en" datatype="plaintext" target-language="fi">
+    <body>
+      <trans-unit id="ui.label" xml:space="preserve" approved="yes">
+				<source>Insert content references</source>
+			<target xml:lang="fi">Lisää sisällön viittauksia</target></trans-unit>
+      <trans-unit id="groups.references" xml:space="preserve" approved="yes">
+				<source>References</source>
+			<target xml:lang="fi">Viittaukset</target></trans-unit>
+      <trans-unit id="properties.references" xml:space="preserve" approved="yes">
+				<source>Select</source>
+			<target xml:lang="fi">Valitse</target></trans-unit>
+      <trans-unit id="content.noReferencesSelected" xml:space="preserve" approved="yes">
+				<source>No references selected</source>
+			<target xml:lang="fi">Ei sisältöviittauksia valittuna</target></trans-unit>
+    </body>
+  </file>
+</xliff>

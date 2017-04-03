@@ -1,0 +1,9 @@
+//
+// Fusion Fixture 15
+//
+// Override behavior
+
+foo = Text
+foo.prop = 'myValue'
+
+foo = Bar

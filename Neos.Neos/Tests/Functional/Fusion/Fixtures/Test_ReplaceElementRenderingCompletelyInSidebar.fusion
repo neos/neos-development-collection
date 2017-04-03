@@ -1,0 +1,11 @@
+#
+# completely replace the rendering for TextWithHeadline inside the right column
+#
+
+page1.body.content.sidebar.prototype(Neos.Neos:ContentCase).smallHeadline {
+	condition = ${q(node).is('[instanceof Neos.NodeTypes:Headline]')}
+	type = 'Neos.NodeTypes:SmallHeadline'
+	@position = 'start'
+}
+prototype(Neos.NodeTypes:SmallHeadline) < prototype(Neos.NodeTypes:Headline)
+prototype(Neos.NodeTypes:SmallHeadline).templatePath = ${fixturesDirectory + '/SmallHeadlineTemplate.html'}

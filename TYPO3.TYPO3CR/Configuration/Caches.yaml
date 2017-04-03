@@ -1,5 +1,0 @@
-# This cache is currently not cleared via FileMonitor,
-# therefore it is activated only in Production Context (see Production/Caches.yaml).
-TYPO3_TYPO3CR_FullNodeTypeConfiguration:
-  frontend: TYPO3\Flow\Cache\Frontend\VariableFrontend
-  backend: TYPO3\Flow\Cache\Backend\NullBackend

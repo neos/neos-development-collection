@@ -1,0 +1,6 @@
+#
+# This example modifies the rendering pf all texts inside the three column element, setting the title to a static value
+#
+
+prototype(Acme.Demo:ThreeColumn).prototype(Neos.NodeTypes:Headline).title = 'Static Headline'
+prototype(Acme.Demo:ThreeColumn).prototype(Neos.NodeTypes:Headline).title.@process.1 = ${'<header>' + value + '</header>'}

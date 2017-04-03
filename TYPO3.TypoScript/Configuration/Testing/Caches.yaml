@@ -1,3 +1,0 @@
-TYPO3_TypoScript_Content:
-  backend: TYPO3\Flow\Cache\Backend\TransientMemoryBackend
-  backendOptions: ~

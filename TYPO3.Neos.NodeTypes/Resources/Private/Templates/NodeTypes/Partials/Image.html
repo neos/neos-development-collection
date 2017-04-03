@@ -1,9 +1,0 @@
-{namespace neos=TYPO3\Neos\ViewHelpers}
-<figure{f:if(condition: imageClassName, then: ' class="{imageClassName}"')}>
-	<f:render partial="SimpleImage" arguments="{_all}" />
-	<f:if condition="{hasCaption}">
-		<figcaption>
-			{neos:contentElement.editable(property: 'caption', node: node)}
-		</figcaption>
-	</f:if>
-</figure>

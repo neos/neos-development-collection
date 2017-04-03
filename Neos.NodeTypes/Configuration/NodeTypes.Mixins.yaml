@@ -1,0 +1,161 @@
+# Title mixin
+'Neos.NodeTypes:TitleMixin':
+  abstract: TRUE
+  properties:
+    title:
+      type: string
+      defaultValue: '<h1>Enter headline here</h1>'
+      ui:
+        inlineEditable: TRUE
+        aloha:
+          'format':
+            'p': FALSE
+            'h1': TRUE
+            'h2': TRUE
+            'h3': TRUE
+            'removeFormat': TRUE
+          'link':
+            'a': TRUE
+
+# Text mixin
+'Neos.NodeTypes:TextMixin':
+  abstract: TRUE
+  properties:
+    text:
+      type: string
+      defaultValue: ''
+      ui:
+        inlineEditable: TRUE
+        aloha:
+          placeholder: i18n
+          autoparagraph: TRUE
+          'format':
+            'strong': TRUE
+            'em': TRUE
+            'u': FALSE
+            'sub': FALSE
+            'sup': FALSE
+            'del': FALSE
+            'p': TRUE
+            'h1': TRUE
+            'h2': TRUE
+            'h3': TRUE
+            'pre': TRUE
+            'removeFormat': TRUE
+          'table':
+            'table': TRUE
+          'list':
+            'ol': TRUE
+            'ul': TRUE
+          'link':
+            'a': TRUE
+
+# Image mixin
+'Neos.NodeTypes:ImageMixin':
+  abstract: TRUE
+  ui:
+    inspector:
+      groups:
+        image:
+          label: i18n
+          position: 5
+          icon: 'icon-image'
+  properties:
+    image:
+      type: Neos\Media\Domain\Model\ImageInterface
+      ui:
+        label: i18n
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'image'
+          position: 50
+    alternativeText:
+      type: string
+      ui:
+        label: i18n
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'image'
+          position: 100
+    title:
+      type: string
+      ui:
+        label: i18n
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'image'
+          position: 150
+
+# Image caption mixin
+'Neos.NodeTypes:ImageCaptionMixin':
+  abstract: TRUE
+  properties:
+    hasCaption:
+      type: boolean
+      ui:
+        label: i18n
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'image'
+          position: 200
+    caption:
+      type: string
+      defaultValue: ''
+      ui:
+        inlineEditable: TRUE
+        aloha:
+          placeholder: i18n
+          autoparagraph: TRUE
+
+# Image alignment mixin
+'Neos.NodeTypes:ImageAlignmentMixin':
+  abstract: TRUE
+  properties:
+    alignment:
+      type: string
+      defaultValue: ''
+      ui:
+        label: i18n
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'image'
+          position: 400
+          editor: 'Neos.Neos/Inspector/Editors/SelectBoxEditor'
+          editorOptions:
+            placeholder: i18n
+            values:
+              '':
+                label: ''
+              center:
+                label: i18n
+              left:
+                label: i18n
+              right:
+                label: i18n
+
+# Link mixin
+'Neos.NodeTypes:LinkMixin':
+  abstract: TRUE
+  properties:
+    link:
+      type: string
+      ui:
+        label: i18n
+        reloadIfChanged: TRUE
+        inspector:
+          position: 300
+          editor: 'Neos.Neos/Inspector/Editors/LinkEditor'
+
+# Content image mixin
+'Neos.NodeTypes:ContentImageMixin':
+  abstract: TRUE
+  superTypes:
+    'Neos.NodeTypes:ImageMixin': TRUE
+    'Neos.NodeTypes:LinkMixin': TRUE
+    'Neos.NodeTypes:ImageCaptionMixin': TRUE
+    'Neos.NodeTypes:ImageAlignmentMixin': TRUE
+  properties:
+    link:
+      ui:
+        inspector:
+          group: 'image'

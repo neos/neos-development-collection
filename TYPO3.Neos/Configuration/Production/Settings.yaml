@@ -1,8 +1,0 @@
-#                                                                        #
-# Settings for the Production context                                    #
-#                                                                        #
-
-TYPO3:
-  Neos:
-    typoScript:
-      enableObjectTreeCache: TRUE

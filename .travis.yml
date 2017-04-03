@@ -26,17 +26,18 @@ matrix:
       dist: trusty
       addons:
         postgresql: "9.5"
-    - php: 5.6
-      env: DB=sqlite
-    - php: 5.5
-      env: DB=sqlite
+    - php: 7.1
+      env: DB=mysql
+    - php: 7.1
+      env: DB=mysql BEHAT=true
 cache:
   directories:
     - $HOME/.composer/cache
 before_install:
   - phpenv config-rm xdebug.ini
   - export NEOS_TARGET_REPOSITORY=neos/neos-development-collection
-  - export NEOS_TARGET_VERSION=2.3
+  - export NEOS_TARGET_VERSION=master
+  - env
   - sudo add-apt-repository ppa:git-core/ppa -y
   - sudo apt-get update
   - sudo apt-get install git -y
@@ -64,8 +65,8 @@ before_script:
 script:
   - if [ "$BEHAT" != "true" ]; then bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/UnitTests.xml; fi
   - if [ "$BEHAT" != "true" ]; then bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests"; fi
-  - if [ "$BEHAT" = "true" ]; then bin/behat --ansi --stop-on-failure -f progress -c Packages/Neos/TYPO3.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser; fi
-  - if [ "$BEHAT" = "true" ]; then bin/behat --ansi --stop-on-failure -f progress -c Packages/Neos/TYPO3.TYPO3CR/Tests/Behavior/behat.yml.dist; fi
+  - if [ "$BEHAT" = "true" ]; then bin/behat --ansi --stop-on-failure -f progress -c Packages/Neos/Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser; fi
+  - if [ "$BEHAT" = "true" ]; then bin/behat --ansi --stop-on-failure -f progress -c Packages/Neos/Neos.ContentRepository/Tests/Behavior/behat.yml.dist; fi
 notifications:
   email: false
   slack:

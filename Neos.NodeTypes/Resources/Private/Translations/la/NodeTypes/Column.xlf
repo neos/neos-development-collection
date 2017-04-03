@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.NodeTypes" source-language="en" datatype="plaintext" target-language="la-LA">
+    <body>
+      <trans-unit id="ui.label" xml:space="preserve">
+				<source>Column</source>
+			<target xml:lang="la-LA">crwdns1494:0crwdne1494:0</target></trans-unit>
+      <trans-unit id="groups.column" xml:space="preserve">
+				<source>Columns</source>
+			<target xml:lang="la-LA">crwdns1495:0crwdne1495:0</target></trans-unit>
+      <trans-unit id="properties.layout" xml:space="preserve">
+				<source>Layout</source>
+			<target xml:lang="la-LA">crwdns1496:0crwdne1496:0</target></trans-unit>
+    </body>
+  </file>
+</xliff>

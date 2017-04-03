@@ -1,0 +1,134 @@
+{namespace m=Neos\Media\ViewHelpers}
+{namespace neos=Neos\Neos\ViewHelpers}
+<f:layout name="EditImage"/>
+
+<f:section name="Title">Edit view</f:section>
+
+<f:section name="Content">
+	<f:form method="post" action="update" object="{asset}" objectName="asset">
+		<div class="neos-row-fluid">
+			<div class="neos-span6 neos-image-inputs">
+				<fieldset>
+					<legend>{neos:backend.translate(id: 'basics', package: 'Neos.Media.Browser')}</legend>
+					<label for="title">{neos:backend.translate(id: 'field.title', package: 'Neos.Media.Browser')}</label>
+					<f:form.textfield property="title" id="title" placeholder="{neos:backend.translate(id: 'field.title', package: 'Neos.Media.Browser')}"/>
+					<label for="caption">{neos:backend.translate(id: 'field.caption', package: 'Neos.Media.Browser')}</label>
+					<f:form.textarea property="caption" id="caption" rows="3" placeholder="{neos:backend.translate(id: 'field.caption', package: 'Neos.Media.Browser')}"/>
+					<f:if condition="{tags}">
+						<label>{neos:backend.translate(id: 'tags', package: 'Neos.Media.Browser')}</label>
+						<f:for each="{tags}" as="tag">
+							<label class="neos-checkbox neos-inline">
+								<m:form.checkbox property="tags" multiple="TRUE" value="{tag}" /><span></span> {tag.label}
+							</label>
+						</f:for>
+					</f:if>
+					<f:if condition="{assetCollections}">
+						<label>{neos:backend.translate(id: 'collections', package: 'Neos.Media.Browser')}</label>
+						<f:for each="{assetCollections}" as="assetCollection">
+							<label class="neos-checkbox neos-inline">
+								<m:form.checkbox property="assetCollections" multiple="TRUE" value="{assetCollection}" /><span></span> {assetCollection.title}
+							</label>
+						</f:for>
+					</f:if>
+				</fieldset>
+				<fieldset>
+					<legend>{neos:backend.translate(id: 'metadata', package: 'Neos.Media.Browser')}</legend>
+					<table class="neos-info-table">
+						<tbody>
+							<tr>
+								<th>{neos:backend.translate(id: 'metadata.filename', package: 'Neos.Media.Browser')}</th>
+								<td><a href="{f:uri.resource(resource:asset.resource)}" target="_blank">{asset.resource.filename}</a></td>
+							</tr>
+							<tr>
+								<th>{neos:backend.translate(id: 'metadata.lastModified', package: 'Neos.Media.Browser')}</th>
+								<td><span title="{asset.lastModified -> f:format.date(format: 'd-m-Y H:i')}" data-neos-toggle="tooltip">{asset.lastModified -> m:format.relativeDate()}</span></td>
+							</tr>
+							<tr>
+								<th>{neos:backend.translate(id: 'metadata.fileSize', package: 'Neos.Media.Browser')}</th>
+								<td>{asset.resource.fileSize -> f:format.bytes()}</td>
+							</tr>
+							<f:if condition="{asset.width}">
+								<tr>
+									<th>{neos:backend.translate(id: 'metadata.dimensions', package: 'Neos.Media.Browser')}</th>
+									<td>{asset.width} x {asset.height}</td>
+								</tr>
+							</f:if>
+							<tr>
+								<th>{neos:backend.translate(id: 'metadata.type', package: 'Neos.Media.Browser')}</th>
+								<td><span class="neos-label">{asset.resource.mediatype}</span></td>
+							</tr>
+							<tr>
+								<th>{neos:backend.translate(id: 'metadata.identifier', package: 'Neos.Media.Browser')}</th>
+								<td><span class="neos-label">{asset.identifier}</span></td>
+							</tr>
+						</tbody>
+					</table>
+					<f:if condition="{asset.inUse}">
+						<f:link.action action="relatedNodes" arguments="{asset:asset}" class="neos-button">{neos:backend.translate(id: 'relatedNodes', quantity: '{asset.usageCount}', arguments: {0: asset.usageCount}, package: 'Neos.Media.Browser')}</f:link.action>
+					</f:if>
+				</fieldset>
+			</div>
+			<div class="neos-span6 neos-image-example">
+				<f:render section="ContentImage" arguments="{_all}" />
+			</div>
+		</div>
+		<div class="neos-footer">
+			<f:link.action action="index" class="neos-button neos-action-cancel">{neos:backend.translate(id: 'cancel', package: 'Neos.Neos')}</f:link.action>
+			<f:security.ifAccess privilegeTarget="Neos.Media.Browser:ReplaceAssetResource">
+				<f:link.action action="replaceAssetResource" arguments="{asset: asset}" class="neos-button" title="{neos:backend.translate(id: 'replaceAssetResource', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip', container: 'body'}">
+					{neos:backend.translate(id: 'replace', package: 'Neos.Media.Browser')}
+				</f:link.action>
+			</f:security.ifAccess>
+			<f:if condition="{asset.inUse}">
+				<f:then>
+					<a title="{neos:backend.translate(id: 'deleteRelatedNodes', package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip" data-container="body" class="neos-button neos-button-danger neos-disabled">{neos:backend.translate(id: 'delete', package: 'Neos.Neos')}</a>
+				</f:then>
+				<f:else>
+					<a data-toggle="modal" href="#asset-{asset -> f:format.identifier()}" class="neos-button neos-button-danger">{neos:backend.translate(id: 'delete', package: 'Neos.Neos')}</a>
+				</f:else>
+			</f:if>
+			<f:form.submit id="save" class="neos-button neos-button-primary" value="{neos:backend.translate(id: 'saveEditing', package: 'Neos.Media.Browser')}" />
+		</div>
+		<div class="neos-hide" id="asset-{asset -> f:format.identifier()}">
+			<div class="neos-modal-centered">
+				<div class="neos-modal-content">
+					<div class="neos-modal-header">
+						<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+						<div class="neos-header">
+							{neos:backend.translate(id: 'message.reallyDeleteAsset', arguments: {0: asset.label}, package: 'Neos.Media.Browser')}
+						</div>
+						<div>
+							<div class="neos-subheader">
+								<p>
+									{neos:backend.translate(id: 'message.willBeDeleted', package: 'Neos.Media.Browser')}<br />
+									{neos:backend.translate(id: 'message.operationCannotBeUndone', package: 'Neos.Media.Browser')}
+								</p>
+							</div>
+						</div>
+					</div>
+					<div class="neos-modal-footer">
+						<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', package: 'Neos.Neos')}</a>
+						<button type="submit" form="postHelper" formaction="{f:uri.action(action: 'delete', arguments: {asset: asset})}" class="neos-button neos-button-mini neos-button-danger">
+							{neos:backend.translate(id: 'message.confirmDelete', package: 'Neos.Media.Browser')}
+						</button>
+					</div>
+				</div>
+			</div>
+			<div class="neos-modal-backdrop neos-in"></div>
+		</div>
+	</f:form>
+	<f:form action="index" id="postHelper" method="post"></f:form>
+</f:section>
+
+<f:section name="ContentImage">
+	<label>{neos:backend.translate(id: 'preview', package: 'Neos.Media.Browser')}</label>
+	<div class="neos-preview-image">
+		<a href="{f:uri.resource(resource: asset.resource)}" target="_blank">
+			<m:thumbnail asset="{asset}" preset="Neos.Media.Browser:Preview" alt="{asset.label}" async="{settings.asyncThumbnails}" class="img-polaroid" />
+		</a>
+	</div>
+</f:section>
+
+<f:section name="Scripts">
+	<script type="text/javascript" src="{f:uri.resource(package: 'Neos.Media.Browser', path: 'JavaScript/edit.js')}"></script>
+</f:section>

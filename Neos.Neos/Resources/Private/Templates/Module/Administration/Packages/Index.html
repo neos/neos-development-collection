@@ -1,0 +1,67 @@
+{namespace neos=Neos\Neos\ViewHelpers}
+<f:layout name="BackendSubModule" />
+
+<f:section name="content">
+<div class="neos-row-fluid">
+  <legend><neos:backend.translate id="packages.index.legend" source="Modules" package="Neos.Neos" /></legend>
+  <br />
+  <table class="neos-table">
+    <thead>
+      <th>{neos:backend.translate(id: 'packages.name', source: 'Modules', package: 'Neos.Neos')}</th>
+      <th>{neos:backend.translate(id: 'version', package: 'Neos.Neos')}</th>
+      <th>{neos:backend.translate(id: 'packages.key', source: 'Modules', package: 'Neos.Neos')}</th>
+      <th>{neos:backend.translate(id: 'packages.type', source: 'Modules', package: 'Neos.Neos')}</th>
+      <th class="neos-aCenter neos-span1">Active</th>
+      <th class="neos-aCenter neos-span1">Frozen</th>
+      <th class="neos-aCenter neos-span1">Protected</th>
+    </thead>
+    <tbody>
+      <f:for each="{packageGroups}" key="packageGroup" as="packages">
+        <tr class="neos-folder" id="{packageGroup}">
+          <td class="neos-priority1">
+            <strong>{packageGroup}</strong>
+          </td>
+          <td class="neos-priority2">&nbsp;</td>
+          <td class="neos-priority3">&nbsp;</td>
+          <td class="neos-priority3">&nbsp;</td>
+          <td class="neos-priority1"> </td>
+          <td class="neos-priority1"> </td>
+          <td class="neos-priority1"> </td>
+        </tr>
+        <f:for each="{packages}" key="packageKey" as="package">
+          <tr class="fold-{packageGroup}{f:if(condition: package.isActive, else: ' muted')}"{f:if(condition: package.description, then: ' title="{package.description}"')} data-neos-toggle="tooltip">
+            <td class="package-name neos-priority1">
+              <label for="{packageKey}">
+                <span class="neos-label">{package.name}</span>
+                <f:if condition="{package.isActive}">
+                  <f:else>
+                    <span class="neos-badge neos-badge-warning">{neos:backend.translate(id: 'packages.deactivated', source: 'Modules', package: 'Neos.Neos')}</span>
+                  </f:else>
+                </f:if>
+              </label>
+            </td>
+            <td class="package-version neos-priority2">
+              <label for="{packageKey}">
+                {f:if(condition: package.version, then: '{package.version}', else: '&nbsp;')}
+              </label>
+            </td>
+            <td class="package-key neos-priority3">
+              <label for="{packageKey}">
+                <span class="neos-label">{packageKey}</span>
+              </label>
+            </td>
+            <td class="package-type neos-priority3">
+              <label for="{packageKey}">
+                <span class="neos-label">{package.type}</span>
+              </label>
+            </td>
+            <td class="neos-priority1 neos-aCenter"><i class="icon-{f:if(condition: package.isActive, then: 'check', else: 'times')}"></i></td>
+            <td class="neos-priority1 neos-aCenter"><i class="icon-{f:if(condition: package.isFrozen, then: 'check', else: 'times')}"></i></td>
+            <td class="neos-priority1 neos-aCenter"><i class="icon-{f:if(condition: package.isProtected, then: 'check', else: 'times')}"></i></td>
+          </tr>
+        </f:for>
+      </f:for>
+    </tbody>
+  </table>
+</div>
+</f:section>

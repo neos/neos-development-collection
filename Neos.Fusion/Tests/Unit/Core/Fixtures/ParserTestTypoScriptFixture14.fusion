@@ -1,0 +1,19 @@
+//
+// Fusion Fixture 14
+//
+// This fixture is used to check that curly braces and comments are
+// ignored within literals. See #7555 and #7559.
+
+
+
+object1 = Text
+object1.value = 'Curly braces like this {} or {that} are ignored.'
+
+object2 = Text
+object2.value = "Curly braces like this {} or {that} are ignored."
+
+object3 = Text
+object3.value = 'Slashes // or hashes # or /* signs are not interpreted as comments.'
+
+object4 = Text
+object4.value = "Slashes // or hashes # or /* signs are not interpreted as comments."

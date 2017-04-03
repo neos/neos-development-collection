@@ -1,0 +1,7 @@
+#
+# Here, we test that the processor 1 is evaluated FIRST, and then processor 2
+#
+
+page1.body.content.sidebar.prototype(Neos.NodeTypes:Headline).title = 'Static Headline'
+page1.body.content.sidebar.prototype(Neos.NodeTypes:Headline).title.@process.1 = ${'<div class="processor-wrap">BEFORE' + value + 'AFTER</div>'}
+prototype(Neos.NodeTypes:Headline).title.@process.2 = ${'<header>' + value + '</header>'}

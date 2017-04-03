@@ -1,0 +1,52 @@
+Neos:
+  Media:
+    thumbnailPresets:
+      'Neos.Media.Browser:Thumbnail':
+        maximumWidth: 250
+        maximumHeight: 250
+      'Neos.Media.Browser:Preview':
+        maximumWidth: 1000
+        maximumHeight: 1000
+    Browser:
+      bodyClasses: 'neos neos-module media-browser'
+      scripts:
+        - 'resource://Neos.Neos/Public/Library/jquery/jquery-2.0.3.js'
+        - 'resource://Neos.Twitter.Bootstrap/Public/2/js/bootstrap.min.js'
+        - 'resource://Neos.Neos/Public/Library/bootstrap-components.js'
+        - 'resource://Neos.Media.Browser/Public/JavaScript/media-browser.js'
+      styles:
+        - 'resource://Neos.Neos/Public/Styles/Neos.css'
+        - 'resource://Neos.Media.Browser/Public/Styles/MediaBrowser.css'
+
+  Flow:
+    security:
+      authentication:
+        providers:
+          'Neos.Neos:Backend':
+            requestPatterns:
+              'Neos.Media.Browser:Controllers':
+                pattern: 'ControllerObjectName'
+                patternOptions:
+                  controllerObjectNamePattern: 'Neos\Media\Browser\Controller\.*'
+    mvc:
+      routes:
+        'Neos.Media.Browser': true
+
+  Neos:
+    modules:
+      management:
+        submodules:
+          media:
+            controller: \Neos\Media\Browser\Controller\AssetController
+            label: 'Neos.Media.Browser:Main:module.label'
+            description: 'Neos.Media.Browser:Main:module.description'
+            icon: 'icon-camera'
+            privilegeTarget: 'Neos.Media.Browser:ManageAssets'
+            additionalResources:
+              styleSheets:
+                - 'resource://Neos.Media.Browser/Public/Styles/MediaBrowser.css'
+    userInterface:
+      translation:
+        autoInclude:
+          Neos.Media.Browser:
+            - 'Main'

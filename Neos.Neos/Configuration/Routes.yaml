@@ -1,0 +1,69 @@
+#                                                                        #
+# Default subroutes configuration for the Neos.Neos package             #
+#                                                                        #
+
+##
+# Authentication
+
+-
+  name:  'Authentication'
+  uriPattern: 'neos/<AuthenticationSubRoutes>'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@controller': 'Login'
+    '@action':     'index'
+    '@format':     'html'
+  subRoutes:
+    'AuthenticationSubRoutes':
+      package: 'Neos.Neos'
+      suffix:  'Authentication'
+
+##
+# Backend
+
+-
+  name:  'Backend'
+  uriPattern: 'neos/<BackendSubRoutes>'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@action':     'index'
+    '@format':     'html'
+  subRoutes:
+    'BackendSubRoutes':
+      package: 'Neos.Neos'
+      suffix:  'Backend'
+
+##
+# Service
+
+-
+  name:  'Service'
+  uriPattern: 'neos/service/<ServiceSubRoutes>'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@action':     'index'
+  subRoutes:
+    'ServiceSubRoutes':
+      package: 'Neos.Neos'
+      suffix:  'Service'
+
+##
+# Frontend
+
+-
+  name:  'Frontend'
+  uriPattern: '<FrontendSubRoutes>'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@controller': 'Frontend\Node'
+    '@action':     'show'
+    '@format':     'html'
+  routeParts:
+    'node':
+      handler:     'Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface'
+  subRoutes:
+    'FrontendSubRoutes':
+      package: 'Neos.Neos'
+      suffix:  'Frontend'
+      variables:
+        'defaultUriSuffix': '<defaultUriSuffix>'
