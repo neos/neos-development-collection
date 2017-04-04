@@ -114,8 +114,8 @@
 		if (window.parent !== window && window.parent.Typo3MediaBrowserCallbacks) {
 			// we are inside iframe
 			$('.asset-list').on('click', '[data-asset-identifier]', function(e) {
-				if ($(e.target).closest('button').length === 0) {
-					if(window.parent.Typo3MediaBrowserCallbacks && typeof window.parent.Typo3MediaBrowserCallbacks.assetChosen === 'function') {
+				if ($(e.target).closest('a, button').not('[data-asset-identifier]').length === 0) {
+					if (window.parent.Typo3MediaBrowserCallbacks && typeof window.parent.Typo3MediaBrowserCallbacks.assetChosen === 'function') {
 						window.parent.Typo3MediaBrowserCallbacks.assetChosen($(this).attr('data-asset-identifier'));
 					}
 					e.preventDefault();
