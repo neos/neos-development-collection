@@ -5,8 +5,8 @@
 		<f:alias map="{'deleteAssetLabel': '{neos:backend.translate(id: \'media.tooltip.deleteAsset\', source: \'Modules\', package: \'TYPO3.Neos\')}', 'replaceAssetResourceLabel': '{neos:backend.translate(id: \'media.tooltip.replaceAssetResource\', source: \'Modules\', package: \'TYPO3.Neos\')}'}">
 			<f:for each="{paginatedAssets}" as="asset">
 				<li class="asset">
-					<f:link.action action="edit" title="{neos:backend.translate(id: 'media.tooltip.editAsset', source: 'Modules', package: 'TYPO3.Neos')}" class="neos-thumbnail" arguments="{asset: asset}">
-						<div class="neos-img-container draggable-asset {f:if(condition: '{asset.tags -> f:count()} == 0', then: ' neos-media-untagged')}" data-asset-identifier="{asset -> f:format.identifier()}">
+					<f:link.action action="edit" title="{neos:backend.translate(id: 'media.tooltip.editAsset', source: 'Modules', package: 'TYPO3.Neos')}" class="neos-thumbnail" arguments="{asset: asset}" data="{asset-identifier: '{asset -> f:format.identifier()}'}">
+						<div class="neos-img-container draggable-asset {f:if(condition: '{asset.tags -> f:count()} == 0', then: ' neos-media-untagged')}">
 							<m:thumbnail asset="{asset}" preset="TYPO3.Neos:Thumbnail" alt="{asset.label}" async="{settings.asyncThumbnails}" />
 						</div>
 					</f:link.action>

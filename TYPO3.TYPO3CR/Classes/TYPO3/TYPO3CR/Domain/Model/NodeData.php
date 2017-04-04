@@ -39,15 +39,19 @@ use TYPO3\TYPO3CR\Utility;
  * @Flow\Entity
  * @ORM\Table(
  *    uniqueConstraints={
- * 		@ORM\UniqueConstraint(name="path_workspace_dimensions",columns={"pathhash", "workspace", "dimensionshash"}),
- * 		@ORM\UniqueConstraint(name="identifier_workspace_dimensions_movedto",columns={"identifier", "workspace", "dimensionshash", "movedto"})
+ *      @ORM\UniqueConstraint(name="path_workspace_dimensions",columns={"pathhash", "workspace", "dimensionshash"}),
+ *      @ORM\UniqueConstraint(name="identifier_workspace_dimensions_movedto",columns={"identifier", "workspace", "dimensionshash", "movedto"})
  *    },
  *    indexes={
- * 		@ORM\Index(name="parentpath_sortingindex",columns={"parentpathhash", "sortingindex"}),
- * 		@ORM\Index(name="identifierindex",columns={"identifier"}),
- * 		@ORM\Index(name="nodetypeindex",columns={"nodetype"})
+ *      @ORM\Index(name="parentpath_sortingindex",columns={"parentpathhash", "sortingindex"}),
+ *      @ORM\Index(name="parentpath",columns={"parentpath"}),
+ *      @ORM\Index(name="identifierindex",columns={"identifier"}),
+ *      @ORM\Index(name="nodetypeindex",columns={"nodetype"})
  *    }
  * )
+ *
+ * The parentpath index above is actually limited to a size of 255 characters in the corresponding MySQL migration,
+ * something that cannot be expressed through the annotation.
  */
 class NodeData extends AbstractNodeData
 {
