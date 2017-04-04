@@ -82,7 +82,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
     protected $allowUpScaling;
 
     /**
-     * @Flow\InjectConfiguration(package="TYPO3.Media", path="image.defaultOptions.resizeFilter")
+     * @Flow\InjectConfiguration(package="Neos.Media", path="image.defaultOptions.resizeFilter")
      * @var string
      */
     protected $filter;
