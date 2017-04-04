@@ -6,18 +6,18 @@
 // - multiline Eel expressions
 
 
-prototype(TYPO3.Foo:Bar).baz = 'Hallo'
+prototype(Neos.Foo:Bar).baz = 'Hallo'
 
-test.prototype(TYPO3.Foo:Bar).baz = 'Hallo'
+test.prototype(Neos.Foo:Bar).baz = 'Hallo'
 
 
-prototype(TYPO3.Foo:Bar2) {
+prototype(Neos.Foo:Bar2) {
 	baz = 'Foo'
 	test2 = 42
 }
 
 
-foo.bar.prototype(TYPO3.Foo:Bar2) {
+foo.bar.prototype(Neos.Foo:Bar2) {
 	baz = 'Foo'
 	test2 = 42
 	blah = ${my.expression()}
@@ -47,4 +47,4 @@ prototype(Foo.Bar:Baz) {
 }
 
 
-prototype(TYPO3.Foo:Bar3) < prototype(TYPO3.Foo:Bar2)
+prototype(Neos.Foo:Bar3) < prototype(Neos.Foo:Bar2)
