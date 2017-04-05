@@ -1,0 +1,136 @@
+`2.3.12 (2017-04-05) <https://github.com/neos/neos-development-collection/releases/tag/2.3.12>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Allow choice of filter for resizing images <https://github.com/neos/neos-development-collection/pull/1513>`_
+---------------------------------------------------------------------------------------------------------------------
+
+The resize filter can have considerable impact on file size and
+processing power needed to do the resize, it's therefore sensible
+to give the user a choice in this.
+
+Additionally removes copying the image as that is entirely unnecessary
+and impacts memory usage profoundly.
+
+* Packages: ``Media`` ``Neos``
+
+`FEATURE: Add default editorOptions to settings <https://github.com/neos/neos-development-collection/pull/1505>`_
+-----------------------------------------------------------------------------------------------------------------
+
+Add default editorOptions to settings for the new react ui [https://github.com/neos/neos-ui/issues/641](https://github.com/neos/neos-ui/issues/641)
+
+* Packages: ``Neos``
+
+`BUGFIX: Use findNodesByPathPrefixAndRelatedEntities <https://github.com/neos/neos-development-collection/pull/1497>`_
+----------------------------------------------------------------------------------------------------------------------
+
+ in getRelatedNodeMethod
+
+* Packages: ``Neos``
+
+`BUGFIX: Add mysql-index for the field \`parentpath\` in the \`nodeData\`-table <https://github.com/neos/neos-development-collection/pull/1478>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+The find operation is currently very expensive because of an unoptimized LIKE statement.
+This index will to optimize the performance for find operations especially in larger cr-instances
+
+The size of the index is a compromise between space and an assumption of the normal length of the nodePath.
+
+* Packages: ``TYPO3CR``
+
+`BUGFIX: MediaModule asset edit should not fail <https://github.com/neos/neos-development-collection/pull/1485>`_
+-----------------------------------------------------------------------------------------------------------------
+
+if no Site is defined.
+
+**How to verify it**
+
+- delete your sites in the site management
+- got to the media browser and open an image
+
+An exception occurres.
+
+See: https://github.com/neos/neos-development-collection/issues/1483
+
+* Packages: ``Neos``
+
+`BUGFIX: NodePropertiesStrategy in Neos should only handle site nodes <https://github.com/neos/neos-development-collection/pull/1486>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Currently the AssetUsageInNodePropertiesStrategy handles
+all asset references in all nodes in the node data table.
+The handling than is specific for nodes under the `/site` root node
+and fails when a node references an asset that is located under another root.
+
+This fixes the issue by only selecting site nodes.
+
+**What I did**
+Filter the nodes by site root.
+
+**How to verify it**
+Add an asset reference to a node that is not under sites.
+The edit view of an asset fails.
+
+* Packages: ``Media`` ``Neos`` ``TYPO3CR``
+
+`BUGFIX: Configuration reference nested twice <https://github.com/neos/neos-development-collection/pull/1484>`_
+---------------------------------------------------------------------------------------------------------------
+
+This causes issues with search results and creates confusion.
+
+* Packages: ``Neos``
+
+`BUGFIX: Opening context menu in media browser list view <https://github.com/neos/neos-development-collection/pull/1409>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Backports `f169275c9a05071531dc5bd9b3d2533ebf093184 <https://github.com/neos/neos-development-collection/commit/f169275c9a05071531dc5bd9b3d2533ebf093184>`_ and `d4efa8b305c925aa4e8482db74d5eaf8da9817dc <https://github.com/neos/neos-development-collection/commit/d4efa8b305c925aa4e8482db74d5eaf8da9817dc>`_ from the 3.0 branch.
+
+closes #1408
+
+* Packages: ``Media``
+
+`BUGFIX: Check for existing node data property works with null <https://github.com/neos/neos-development-collection/pull/1440>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+The ``AbstractNodeData::hasProperty()`` method checked
+the existence of the given property with ``isset`` but that
+leads to an exception if the property has a ``null`` value.
+The check has been changed to ``array_key_exists``.
+
+Same is done in the optimization check to avoid setting
+existing values again in ``AbstractNodeData::setProperty``.
+
+Resolves #1174
+
+* Packages: ``TYPO3CR``
+
+`BUGFIX: If thumbnail refresh fails, handle gracefully <https://github.com/neos/neos-development-collection/pull/1459>`_
+------------------------------------------------------------------------------------------------------------------------
+
+If refreshing a thumbnail fails (e.g. because a PDF cannot be converted
+correctly), the media module dies with an exception screen.
+
+This change catches and logs the error, and returns null as result. This
+leads to a missing thumbnail, but the media management stays usable.
+
+* Packages: ``Media``
+
+`BUGFIX: Make layout sliding query match properly <https://github.com/neos/neos-development-collection/pull/1422>`_
+-------------------------------------------------------------------------------------------------------------------
+
+The page layout determination in `DefaultTypoScript.ts2` contains the query
+
+`q(node).parents('[subpageLayout]').first().property('subpageLayout')`
+
+However that immediately also matches nodes which have `subpageLayout` being an empty string, hence this being taken into account. This results in an empty value, even if there would be actual set layouts higher above.
+
+The `.parents()` part need to be replaced with `.parents('[subpageLayout][subpageLayout != ""]')`
+
+Fixes #1117
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.3.11...2.3.12>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
