@@ -80,7 +80,7 @@ The package contains the following cli-commands.
 1. `./flow afx:show` - Show the afx detection and expansion to pure fusion, this is useful for learning and understanding.
 1. `./flow afx:eject` - Expand afx in fusion code to pure fusion, this is usefull before removing the afx package. 
 
-## Rules
+## AFX Language Rules
 
 
 ### HTML-Tags (Tags without Namespace)
@@ -145,6 +145,51 @@ The default property name for the children is `content`.
 The `@key`-attribute can be used to define the property name of an item among its siblings. If no key is defined the index is used starting at 1.
 
 All other meta attributes are directly added to the generated prototype and can be used for @if or @process statements. 
+
+
+### Whitespace and Newlines
+ 
+AFX is not html and makes some simplifications to the code to optimize the generated fusion and allow a structured notation 
+of the component hierarchy. The following rules are applied for that.
+
+#### 1. Newlines and Whitespace-Characters that are connected to a newline are considered irrelevant and are ignored
+
+```
+<h1>
+	{'eelExpression 1'}
+	{'eelExpression 2'}
+</h1>
+```
+is parsed as: 
+```
+Neos.Fusion:Tag {
+	tagName = 'h1'
+	contents = Neos.Fusion:Array {
+		1 = ${'eelExpression 1'}
+		2 = ${'eelExpression 2'}   
+	}
+}
+```
+
+#### 2. Spaces between Elements on a single line are considered meaningful and are preserved*
+ 
+```
+<h1>
+	{'eelExpression 1'} {'eelExpression 2'}
+</h1>
+```
+is parsed as: 
+```
+Neos.Fusion:Tag {
+	tagName = 'h1'
+	contents = Neos.Fusion:Array {
+		1 = ${'eelExpression 1'}
+		2 = ' '
+		2 = ${'eelExpression 2'}   
+	}
+}
+```
+  
 
 ## License
 
