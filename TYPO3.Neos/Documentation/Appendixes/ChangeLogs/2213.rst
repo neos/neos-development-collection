@@ -1,0 +1,83 @@
+`2.2.13 (2017-04-05) <https://github.com/neos/neos-development-collection/releases/tag/2.2.13>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Include configuration reference in TOC <https://github.com/neos/neos-development-collection/pull/1515>`_
+-----------------------------------------------------------------------------------------------------------------
+
+The configuration reference was no longer included in the documentation TOC
+at all, after a recent fix aimed at no longer including it twice.
+
+* Packages: ``Neos``
+
+`BUGFIX: Add mysql-index for the field \`parentpath\` in the \`nodeData\`-table <https://github.com/neos/neos-development-collection/pull/1478>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+The find operation is currently very expensive because of an unoptimized LIKE statement.
+This index will to optimize the performance for find operations especially in larger cr-instances
+
+The size of the index is a compromise between space and an assumption of the normal length of the nodePath.
+
+* Packages: ``TYPO3CR``
+
+`BUGFIX: Configuration reference nested twice <https://github.com/neos/neos-development-collection/pull/1484>`_
+---------------------------------------------------------------------------------------------------------------
+
+This causes issues with search results and creates confusion.
+
+* Packages: ``Neos``
+
+`BUGFIX: Opening context menu in media browser list view <https://github.com/neos/neos-development-collection/pull/1409>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Backports `f169275c9a05071531dc5bd9b3d2533ebf093184 <https://github.com/neos/neos-development-collection/commit/f169275c9a05071531dc5bd9b3d2533ebf093184>`_ and `d4efa8b305c925aa4e8482db74d5eaf8da9817dc <https://github.com/neos/neos-development-collection/commit/d4efa8b305c925aa4e8482db74d5eaf8da9817dc>`_ from the 3.0 branch.
+
+closes #1408
+
+* Packages: ``Media``
+
+`BUGFIX: Check for existing node data property works with null <https://github.com/neos/neos-development-collection/pull/1440>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+The ``AbstractNodeData::hasProperty()`` method checked
+the existence of the given property with ``isset`` but that
+leads to an exception if the property has a ``null`` value.
+The check has been changed to ``array_key_exists``.
+
+Same is done in the optimization check to avoid setting
+existing values again in ``AbstractNodeData::setProperty``.
+
+Resolves #1174
+
+* Packages: ``TYPO3CR``
+
+`BUGFIX: If thumbnail refresh fails, handle gracefully <https://github.com/neos/neos-development-collection/pull/1459>`_
+------------------------------------------------------------------------------------------------------------------------
+
+If refreshing a thumbnail fails (e.g. because a PDF cannot be converted
+correctly), the media module dies with an exception screen.
+
+This change catches and logs the error, and returns null as result. This
+leads to a missing thumbnail, but the media management stays usable.
+
+* Packages: ``Media``
+
+`BUGFIX: Make layout sliding query match properly <https://github.com/neos/neos-development-collection/pull/1422>`_
+-------------------------------------------------------------------------------------------------------------------
+
+The page layout determination in `DefaultTypoScript.ts2` contains the query
+
+`q(node).parents('[subpageLayout]').first().property('subpageLayout')`
+
+However that immediately also matches nodes which have `subpageLayout` being an empty string, hence this being taken into account. This results in an empty value, even if there would be actual set layouts higher above.
+
+The `.parents()` part need to be replaced with `.parents('[subpageLayout][subpageLayout != ""]')`
+
+Fixes #1117
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.2.12...2.2.13>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
