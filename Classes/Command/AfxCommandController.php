@@ -36,10 +36,9 @@ class AfxCommandController extends CommandController
     public function ejectCommand($packageKey, $yes = false)
     {
 
-        if ($this->packageManager->isPackageAvailable($packageKey) == FALSE) {
+        if ($this->packageManager->isPackageAvailable($packageKey) == false) {
             $this->outputLine('Package %s is not available', [$packageKey]);
             $this->quit(1);
-
         }
 
         $this->outputLine(
@@ -98,10 +97,9 @@ class AfxCommandController extends CommandController
     public function showCommand($packageKey)
     {
 
-        if ($this->packageManager->isPackageAvailable($packageKey) == FALSE) {
+        if ($this->packageManager->isPackageAvailable($packageKey) == false) {
             $this->outputLine('Package %s is not available', [$packageKey]);
             $this->quit(1);
-
         }
 
         $this->outputLine(

@@ -28,7 +28,7 @@ class FusionParserAspect
         if (preg_match(AfxPackage::SCAN_PATTERN_AFX, $fusionCode)) {
             $fusionCodeProcessed = preg_replace_callback(
                 AfxPackage::SCAN_PATTERN_AFX,
-                function($matches) {
+                function ($matches) {
                     $indentation = $matches[1];
                     $property = $matches[2];
                     $afx = $matches[3];
@@ -40,7 +40,7 @@ class FusionParserAspect
             $joinPoint->setMethodArgument('sourceCode', $fusionCodeProcessed);
         }
 
-        return $joinPoint->getAdviceChain()->proceed($joinPoint);;
+        return $joinPoint->getAdviceChain()->proceed($joinPoint);
+        ;
     }
-
 }
