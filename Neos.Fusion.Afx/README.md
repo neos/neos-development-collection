@@ -150,9 +150,11 @@ All other meta attributes are directly added to the generated prototype and can 
 ### Whitespace and Newlines
  
 AFX is not html and makes some simplifications to the code to optimize the generated fusion and allow a structured notation 
-of the component hierarchy. The following rules are applied for that.
+of the component hierarchy. 
 
-#### 1. Newlines and Whitespace-Characters that are connected to a newline are considered irrelevant and are ignored
+The following rules are applied for that:
+
+1. **Newlines and Whitespace-Characters that are connected to a newline are considered irrelevant and are ignored**
 
 ```
 <h1>
@@ -171,7 +173,7 @@ Neos.Fusion:Tag {
 }
 ```
 
-#### 2. Spaces between Elements on a single line are considered meaningful and are preserved*
+2. **Spaces between Elements on a single line are considered meaningful and are preserved**
  
 ```
 <h1>
