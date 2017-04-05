@@ -23,10 +23,24 @@ class AfxService
      */
     public static function convertAfxToFusion($afxCode, $indentation = '')
     {
-        $parser = new AfxParser($afxCode);
+        $parser = new AfxParser(self::preprocess($afxCode));
         $ast = $parser->parse();
         $fusion = self::astNodeToFusion($ast, $indentation);
         return $fusion;
+    }
+
+    /**
+     * Optimize the given afx before processing
+     *
+     * This step removes all newlines and spaces that are connected to an newline
+     * spaces between tags on a single level are preserved.
+     *
+     * @param string $afxCode
+     * @return string
+     */
+    protected static function preprocess($afxCode)
+    {
+        return preg_replace('/[\\s]*\\n[\\s]*/', '', $afxCode);
     }
 
     /**
@@ -34,9 +48,9 @@ class AfxService
      * @param string $indentation
      * @return string
      */
-    protected static function astToFusion ($ast, $indentation = '')
+    protected static function astToFusion($ast, $indentation = '')
     {
-        switch ($ast['type']){
+        switch ($ast['type']) {
             case 'expression':
                 return self::astExpressionToFusion($ast['payload'], $indentation);
                 break;
@@ -52,8 +66,8 @@ class AfxService
             case 'node':
                 return self::astNodeToFusion($ast['payload'], $indentation);
                 break;
-            default :
-                throw new Exception(sprintf('ast type %s is unkonwn', $ast['type'] ));
+            default:
+                throw new Exception(sprintf('ast type %s is unkonwn', $ast['type']));
         }
     }
 
@@ -62,7 +76,7 @@ class AfxService
      * @param string $indentation
      * @return string
      */
-    protected static function astBooleanToFusion ($payload, $indentation = '')
+    protected static function astBooleanToFusion($payload, $indentation = '')
     {
         return 'true';
     }
@@ -72,7 +86,7 @@ class AfxService
      * @param string $indentation
      * @return string
      */
-    protected static function astExpressionToFusion ($payload, $indentation = '')
+    protected static function astExpressionToFusion($payload, $indentation = '')
     {
         return '${' . $payload . '}';
     }
@@ -82,7 +96,7 @@ class AfxService
      * @param string $indentation
      * @return string
      */
-    protected static function astStringToFusion ($payload, $indentation = '')
+    protected static function astStringToFusion($payload, $indentation = '')
     {
         return '\'' . $payload . '\'';
     }
@@ -92,11 +106,8 @@ class AfxService
      * @param string $indentation
      * @return string
      */
-    protected static function astTextToFusion ($payload, $indentation = '')
+    protected static function astTextToFusion($payload, $indentation = '')
     {
-        if (trim($payload) === '') {
-            return null;
-        }
         return '\'' . $payload . '\'';
     }
 
@@ -105,12 +116,12 @@ class AfxService
      * @param string $indentation
      * @return string
      */
-    protected static function astNodeToFusion ($payload, $indentation = '')
+    protected static function astNodeToFusion($payload, $indentation = '')
     {
         $tagName = $payload['identifier'];
 
-        $attributePrefix = NULL;
-        $attributePrefixExceptions = NULL;
+        $attributePrefix = null;
+        $attributePrefixExceptions = null;
 
         // Tag
         if (strpos($tagName, ':') !== false) {
@@ -130,13 +141,16 @@ class AfxService
                 if ($propName == '@key' || $propName == '@children') {
                     continue;
                 } else {
-                    if ($attributePrefix && $attributePrefixExceptions && !in_array($propName, $attributePrefixExceptions)) {
+                    if ($attributePrefix
+                        && $attributePrefixExceptions
+                        && !in_array($propName, $attributePrefixExceptions)
+                    ) {
                         $fusionName = $attributePrefix . $propName;
                     } else {
                         $fusionName = $propName;
                     }
-                    $propFusion =  self::astToFusion($prop, $indentation . self::INDENTATION );
-                    if ($propFusion !== NULL) {
+                    $propFusion =  self::astToFusion($prop, $indentation . self::INDENTATION);
+                    if ($propFusion !== null) {
                         $fusion .= $indentation . self::INDENTATION . $fusionName . ' = ' . $propFusion . PHP_EOL;
                     }
                 }
@@ -150,13 +164,15 @@ class AfxService
                 if ($childrenProp['type'] == 'string') {
                     $childrenPropertyName = $prop['payload'];
                 } else {
-                    throw new Exception(sprintf('@children only supports string payloads %s found', $childrenProp['type']));
+                    throw new Exception(
+                        sprintf('@children only supports string payloads %s found', $childrenProp['type'])
+                    );
                 }
             } else {
                 $childrenPropertyName = 'content';
             }
             $childFusion = self::astNodeListToFusion($payload['children'], $indentation . self::INDENTATION);
-            if ($childFusion !== NULL) {
+            if ($childFusion !== null) {
                 $fusion .= $indentation . self::INDENTATION . $childrenPropertyName . ' = ' . $childFusion . PHP_EOL;
             }
         }
@@ -166,13 +182,12 @@ class AfxService
         return $fusion;
     }
 
-
     /**
      * @param array $payload
      * @param string $indentation
      * @return string
      */
-    protected static function astNodeListToFusion ($payload, $indentation = '')
+    protected static function astNodeListToFusion($payload, $indentation = '')
     {
         $fusion = 'Neos.Fusion:Array {' . PHP_EOL;
         $index = 1;
@@ -182,11 +197,13 @@ class AfxService
                 if ($keyProperty['type'] == 'string') {
                     $fusionName = $keyProperty['payload'];
                 } else {
-                    throw new Exception(sprintf('@key only supports string payloads %s was given', $astNode['props']['@key']['type']));
+                    throw new Exception(
+                        sprintf('@key only supports string payloads %s was given', $astNode['props']['@key']['type'])
+                    );
                 }
             }
-            $nodeFusion = self::astToFusion($astNode, $indentation .  self::INDENTATION );
-            if ($nodeFusion !== NULL) {
+            $nodeFusion = self::astToFusion($astNode, $indentation .  self::INDENTATION);
+            if ($nodeFusion !== null) {
                 $fusion .= $indentation . self::INDENTATION . $fusionName . ' = ' . $nodeFusion . PHP_EOL;
                 $index++;
             }

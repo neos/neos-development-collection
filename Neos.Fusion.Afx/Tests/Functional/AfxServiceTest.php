@@ -262,4 +262,49 @@ EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
 
+    /**
+     * @test
+     */
+    public function spacesNewLinesAndSpacesAroundAreIgnored()
+    {
+        $afxCode = '<h1>
+            {eelExpression1}
+            {eelExpression2}
+            {eelExpression3}
+        </h1>';
+
+        $expectedFusion = <<<'EOF'
+Neos.Fusion:Tag {
+    tagName = 'h1'
+    content = Neos.Fusion:Array {
+        1 = ${eelExpression1}
+        2 = ${eelExpression2}
+        3 = ${eelExpression3}
+    }
+}
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+    /**
+     * @test
+     */
+    public function spacesInsideALineArePreserved()
+    {
+        $afxCode = '<h1>
+            {eelExpression1} {eelExpression2}
+        </h1>';
+
+        $expectedFusion = <<<'EOF'
+Neos.Fusion:Tag {
+    tagName = 'h1'
+    content = Neos.Fusion:Array {
+        1 = ${eelExpression1}
+        2 = ' '
+        3 = ${eelExpression2}
+    }
+}
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
 }
