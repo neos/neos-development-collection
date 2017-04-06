@@ -4,7 +4,7 @@
     "description": "This module allows managing of media assets including pictures, videos, audio and documents.",
     "license": "GPL-3.0+",
     "require": {
-        "neos/media": "~3.0.0"
+        "neos/media": "*"
     },
     "autoload": {
         "psr-4": {
