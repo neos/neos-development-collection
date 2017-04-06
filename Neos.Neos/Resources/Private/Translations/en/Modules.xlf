@@ -2,17 +2,11 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
 	<file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext">
 		<body>
-			<trans-unit id="clickToEdit" xml:space="preserve">
-				<source>Click to edit</source>
-			</trans-unit>
-			<trans-unit id="clickToDelete" xml:space="preserve">
-				<source>Click to delete</source>
+			<trans-unit id="back" xml:space="preserve">
+				<source>Back</source>
 			</trans-unit>
 			<trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			</trans-unit>
-			<trans-unit id="back" xml:space="preserve">
-				<source>Back</source>
 			</trans-unit>
 
 			<!-- Management -->
@@ -529,11 +523,87 @@
 			<trans-unit id="sites.description" xml:space="preserve">
 				<source>The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</source>
 			</trans-unit>
+			<trans-unit id="sites.add" xml:space="preserve">
+				<source>Add new site</source>
+			</trans-unit>
 			<trans-unit id="sites.actions.newSite.label" xml:space="preserve">
 				<source>Create site</source>
 			</trans-unit>
 			<trans-unit id="sites.actions.newSite.title" xml:space="preserve">
 				<source>Create a new site</source>
+			</trans-unit>
+			<trans-unit id="sites.rootNodeName" xml:space="preserve">
+				<source>Root node name</source>
+			</trans-unit>
+			<trans-unit id="sites.domains" xml:space="preserve">
+				<source>Domains</source>
+			</trans-unit>
+			<trans-unit id="sites" xml:space="preserve">
+				<source>Site</source>
+			</trans-unit>
+			<trans-unit id="site.name" xml:space="preserve">
+				<source>Name</source>
+			</trans-unit>
+			<trans-unit id="sites.defaultAssetCollection" xml:space="preserve">
+				<source>Default asset collection</source>
+			</trans-unit>
+			<trans-unit id="sites.sitePackage" xml:space="preserve">
+				<source>Site package</source>
+			</trans-unit>
+			<trans-unit id="sites.delete" xml:space="preserve">
+				<source>Delete this site</source>
+			</trans-unit>
+			<trans-unit id="sites.deactivate" xml:space="preserve">
+				<source>Deactivate site</source>
+			</trans-unit>
+			<trans-unit id="sites.activate" xml:space="preserve">
+				<source>Activate site</source>
+			</trans-unit>
+			<trans-unit id="sites.confirmDeleteQuestion" xml:space="preserve">
+				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
+			</trans-unit>
+			<trans-unit id="sites.confirmDelete" xml:space="preserve">
+				<source>Yes, delete the site</source>
+			</trans-unit>
+			<trans-unit id="sites.import" xml:space="preserve">
+				<source>Import a site</source>
+			</trans-unit>
+			<trans-unit id="sites.select" xml:space="preserve">
+				<source>Select a site package</source>
+			</trans-unit>
+			<trans-unit id="sites.noPackackeInfo" xml:space="preserve">
+				<source>No site packages are available. Make sure you have an active site package.</source>
+			</trans-unit>
+			<trans-unit id="sites.createBlank" xml:space="preserve">
+				<source>Create a blank site</source>
+			</trans-unit>
+			<trans-unit id="sites.documentType" xml:space="preserve">
+				<source>Select a document nodeType</source>
+			</trans-unit>
+			<trans-unit id="sites.name" xml:space="preserve">
+				<source>Site name</source>
+			</trans-unit>
+			<trans-unit id="sites.createNode" xml:space="preserve">
+				<source>Create empty site</source>
+			</trans-unit>
+			<trans-unit id="sites.createPackage" xml:space="preserve">
+				<source>Create a new site package</source>
+			</trans-unit>
+			<trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
+				<source>VendorName.MyPackageKey</source>
+			</trans-unit>
+			<trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
+				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
+			</trans-unit>
+
+			<trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
+				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
+			</trans-unit>
+			<trans-unit id="domain.new" xml:space="preserve">
+				<source>New domain</source>
+			</trans-unit>
+			<trans-unit id="domain.edit" xml:space="preserve">
+				<source>Edit domain</source>
 			</trans-unit>
 
 			<trans-unit id="configuration.label" xml:space="preserve">
