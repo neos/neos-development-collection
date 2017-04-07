@@ -322,7 +322,7 @@ If internal links to other nodes, external links or asset links shall be editabl
       type: string
       ui:
         inspector:
-          editor: 'TYPO3.Neos/Inspector/Editors/LinkEditor'
+          editor: 'Neos.Neos/Inspector/Editors/LinkEditor'
 
 The searchbox will accept:
 
@@ -343,10 +343,10 @@ Furthermore, the placeholder text can be customized by setting the ``placeholder
       ui:
         inspector:
           group: 'document'
-          editor: 'TYPO3.Neos/Inspector/Editors/LinkEditor'
+          editor: 'Neos.Neos/Inspector/Editors/LinkEditor'
           editorOptions:
             assets: FALSE
-            nodeTypes: ['TYPO3.Neos:Shortcut']
+            nodeTypes: ['Neos.Neos:Shortcut']
             placeholder: 'Paste a link, or type to search for nodes'
 
 Property Type: integer ``TextFieldEditor``
