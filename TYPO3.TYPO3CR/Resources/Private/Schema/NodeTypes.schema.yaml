@@ -45,14 +45,14 @@ additionalProperties:
           'constraints': *constraints
 
     'properties':
-      type:
-        -
-          type: 'null'
-        -
-          type: dictionary
-          additionalProperties:
+      type: dictionary
 
-            # for each property...
+      # for each property...
+      additionalProperties:
+        type:
+          -
+            type: 'null'
+          -
             type: dictionary
             additionalProperties: FALSE
             properties:
