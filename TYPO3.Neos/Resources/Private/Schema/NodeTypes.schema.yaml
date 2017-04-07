@@ -4,13 +4,14 @@ additionalProperties:
   type: dictionary
   properties:
     'properties':
+      type: dictionary
+
       # for each property...
-      type:
-        -
-          type: 'null'
-        -
-          type: dictionary
-          additionalProperties:
+      additionalProperties:
+        type:
+          -
+            type: 'null'
+          -
             type: dictionary
             properties:
               'ui':
