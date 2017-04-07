@@ -107,6 +107,10 @@ additionalProperties:
 
                       'placeholder': { type: string, description: "Optional text that will be rendered in the aloha editor when there is no content." }
 
+                      'sampleCase' : { type: any }
+
+                      'fallbackCase' :  { type: any }
+
                   'inspector':
                     type: dictionary
                     additionalProperties: FALSE
