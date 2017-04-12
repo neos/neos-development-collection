@@ -121,7 +121,7 @@ class AfxService
         $tagName = $payload['identifier'];
 
         $attributePrefix = null;
-        $attributePrefixExceptions = null;
+        $attributePrefixExceptions = [];
 
         // Tag
         if (strpos($tagName, ':') !== false) {
@@ -131,8 +131,22 @@ class AfxService
             // Neos.Fusion:Tag
             $fusion = 'Neos.Fusion:Tag {' . PHP_EOL;
             $fusion .= $indentation . self::INDENTATION .'tagName = \'' .  $tagName . '\'' . PHP_EOL;
+
             $attributePrefix = 'attributes.';
-            $attributePrefixExceptions = ['content', 'selfClosingTag', 'omitClosingTag'];
+            $attributePrefixExceptions = ['content'];
+
+            $hasContent = false;
+            if ($payload['props'] && count($payload['props']) > 0) {
+                foreach ($payload['props'] as $propName => $prop) {
+                    if ($propName == 'content') {
+                        $hasContent = true;
+                    }
+                }
+            }
+
+            if ($payload['selfClosing'] === true && $hasContent === false) {
+                $fusion .= $indentation . self::INDENTATION .'selfClosingTag = true' . PHP_EOL;
+            }
         }
 
         // Attributes
@@ -141,10 +155,7 @@ class AfxService
                 if ($propName == '@key' || $propName == '@children') {
                     continue;
                 } else {
-                    if ($attributePrefix
-                        && $attributePrefixExceptions
-                        && !in_array($propName, $attributePrefixExceptions)
-                    ) {
+                    if ($attributePrefix && !in_array($propName, $attributePrefixExceptions)) {
                         $fusionName = $attributePrefix . $propName;
                     } else {
                         $fusionName = $propName;
