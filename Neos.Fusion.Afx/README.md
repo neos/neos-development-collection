@@ -85,7 +85,7 @@ The package contains the following cli-commands.
 
 ### HTML-Tags (Tags without Namespace)
 
-HTML-Tags are converted to `Neos.Fusion:Tag` Objects. The attributes `content`, `omitClosingTag` and `selfClosingTag` are rendered as attributes and the content/children 
+HTML-Tags are converted to `Neos.Fusion:Tag` Objects. All attributes except `content` are rendered as attributes and the content/children 
 are directly rendered as property names. All other attributes are rendered as tag-attributes.
  
 The following html: 
@@ -111,8 +111,21 @@ The following example defines the tag-content as a single expression instead of 
 Will be transformed into this fusion:
 ```
 Neos.Fusion:Tag {
+    tagName = 'h1'
     attributes.class = 'headline'
     content = ${props.headline}
+}
+``` 
+
+If a tag is self closing and has no content it will be rendered as self closing fusion-tag.  
+```
+<br/>
+```
+Will be transformed into this fusion:
+```
+Neos.Fusion:Tag {
+    tagName = 'br'
+    selfClosingTag = true
 }
 ``` 
 

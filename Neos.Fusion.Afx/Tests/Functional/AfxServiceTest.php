@@ -12,10 +12,25 @@ class AfxServiceTest extends FunctionalTestCase
      */
     public function htmlTagsAreConvertedToFusionTags()
     {
+        $afxCode = '<h1></h1>';
+        $expectedFusion = <<<'EOF'
+Neos.Fusion:Tag {
+    tagName = 'h1'
+}
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+    /**
+     * @test
+     */
+    public function htmlTagsAreConvertedToSelfClosingFusionTags()
+    {
         $afxCode = '<h1/>';
         $expectedFusion = <<<'EOF'
 Neos.Fusion:Tag {
     tagName = 'h1'
+    selfClosingTag = true
 }
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
