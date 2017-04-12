@@ -19,6 +19,7 @@ use Imagine\Imagick\Imagine;
 use TYPO3\Flow\Cache\Frontend\VariableFrontend;
 use TYPO3\Flow\Resource\Exception;
 use TYPO3\Flow\Resource\ResourceManager;
+use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\Flow\Utility\Environment;
 use TYPO3\Media\Domain\Repository\AssetRepository;
 use TYPO3\Media\Imagine\Box;
@@ -111,7 +112,7 @@ class ImageService
         $resourceUri = $originalResource->createTemporaryLocalCopy();
 
         $resultingFileExtension = $originalResource->getFileExtension();
-        $transformedImageTemporaryPathAndFilename = $this->environment->getPathToTemporaryDirectory() . uniqid('ProcessedImage-') . '.' . $resultingFileExtension;
+        $transformedImageTemporaryPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'ProcessedImage-' . Algorithms::generateRandomString(13) . '.' . $resultingFileExtension;
 
         if (!file_exists($resourceUri)) {
             throw new ImageFileException(sprintf('An error occurred while transforming an image: the resource data of the original image does not exist (%s, %s).', $originalResource->getSha1(), $resourceUri), 1374848224);
