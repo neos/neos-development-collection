@@ -3,6 +3,11 @@ Neos:
   Neos:
     eventLog:
       enabled: false
+    userInterface:
+      inspector:
+        dataTypes:
+          array<string>:
+            typeConverter: Neos\Flow\Property\TypeConverter\TypedArrayConverter
   ContentRepository:
     contentDimensions:
       language:

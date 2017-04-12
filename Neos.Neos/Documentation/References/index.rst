@@ -16,5 +16,5 @@ all Packages that are in a default (Demo Package) setup.
    Validators/index
    Signals/index
    CodingGuideLines/index
-   Configuration/index
+   Configuration/Configuration.rst
    NodeMigrations

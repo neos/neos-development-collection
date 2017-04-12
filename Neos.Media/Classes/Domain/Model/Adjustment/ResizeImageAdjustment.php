@@ -82,6 +82,12 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
     protected $allowUpScaling;
 
     /**
+     * @Flow\InjectConfiguration(package="Neos.Media", path="image.defaultOptions.resizeFilter")
+     * @var string
+     */
+    protected $filter;
+
+    /**
      * Sets maximumHeight
      *
      * @param integer $maximumHeight
@@ -286,7 +292,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
     public function applyToImage(ImagineImageInterface $image)
     {
         $ratioMode = $this->ratioMode ?: ImageInterface::RATIOMODE_INSET;
-        return $this->resize($image, $ratioMode);
+        return $this->resize($image, $ratioMode, $this->filter);
     }
 
     /**
@@ -445,25 +451,23 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
         $imageSize = $image->getSize();
         $requestedDimensions = $this->calculateDimensions($imageSize);
 
-        $resizedImage = $image->copy();
-        $resizedImage->usePalette($image->palette());
-        $resizedImage->strip();
+        $image->strip();
 
         $resizeDimensions = $requestedDimensions;
         if ($mode === ImageInterface::RATIOMODE_OUTBOUND) {
             $resizeDimensions = $this->calculateOutboundScalingDimensions($imageSize, $requestedDimensions);
         }
 
-        $resizedImage->resize($resizeDimensions, $filter);
+        $image->resize($resizeDimensions, $filter);
 
         if ($mode === ImageInterface::RATIOMODE_OUTBOUND) {
-            $resizedImage->crop(new Point(
+            $image->crop(new Point(
                 max(0, round(($resizeDimensions->getWidth() - $requestedDimensions->getWidth()) / 2)),
                 max(0, round(($resizeDimensions->getHeight() - $requestedDimensions->getHeight()) / 2))
             ), $requestedDimensions);
         }
 
-        return $resizedImage;
+        return $image;
     }
 
     /**
