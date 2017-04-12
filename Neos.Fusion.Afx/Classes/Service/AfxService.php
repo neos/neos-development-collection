@@ -98,7 +98,7 @@ class AfxService
      */
     protected static function astStringToFusion($payload, $indentation = '')
     {
-        return '\'' . $payload . '\'';
+        return '\'' . str_replace('\'', '\\\'', $payload) . '\'';
     }
 
     /**
@@ -108,7 +108,7 @@ class AfxService
      */
     protected static function astTextToFusion($payload, $indentation = '')
     {
-        return '\'' . $payload . '\'';
+        return '\'' . str_replace('\'', '\\\'', $payload) . '\'';
     }
 
     /**

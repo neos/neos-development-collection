@@ -55,6 +55,24 @@ EOF;
     /**
      * @test
      */
+    public function sindgleQuotesAreEscapedInAttributesAndChildren()
+    {
+        $afxCode = '<h1 class="foo\'bar" >foo\'bar</h1>';
+        $expectedFusion = <<<'EOF'
+Neos.Fusion:Tag {
+    tagName = 'h1'
+    attributes.class = 'foo\'bar'
+    content = Neos.Fusion:Array {
+        1 = 'foo\'bar'
+    }
+}
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+    /**
+     * @test
+     */
     public function fusionTagsAreConvertedToFusionObjects()
     {
         $afxCode = '<Vendor.Site:Prototype/>';
