@@ -137,7 +137,12 @@ class ThumbnailService
             $this->persistenceManager->whiteListObject($thumbnail);
             $this->thumbnailCache[$assetIdentifier][$configurationHash] = $thumbnail;
         } elseif ($thumbnail->getResource() === null && $async === false) {
-            $this->refreshThumbnail($thumbnail);
+            try {
+                $this->refreshThumbnail($thumbnail);
+            } catch (NoThumbnailAvailableException $exception) {
+                $this->systemLogger->logException($exception);
+                return null;
+            }
         }
 
         return $thumbnail;

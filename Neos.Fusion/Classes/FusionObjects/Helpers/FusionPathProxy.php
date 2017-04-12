@@ -17,6 +17,7 @@ use Neos\FluidAdaptor\Core\Parser\SyntaxTree\TemplateObjectAccessInterface;
 use Neos\Fusion\Core\ExceptionHandlers\ContextDependentHandler;
 use Neos\Fusion\Exception\UnsupportedProxyMethodException;
 use Neos\Fusion\FusionObjects\TemplateImplementation;
+use Neos\Fusion\Exception as FusionException;
 
 /**
  * A proxy object representing a Fusion path inside a Fluid Template. It allows
@@ -140,6 +141,7 @@ class FusionPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \I
      * Evaluates Fusion objects and eel expressions.
      *
      * @return FusionPathProxy|mixed
+     * @throws FusionException
      */
     public function objectAccess()
     {

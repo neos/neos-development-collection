@@ -8,4 +8,5 @@ basic principles and usage instructions.
 	:maxdepth: 2
 
 	UserInterfaceBasics
+	UserSettings
 	Workspaces

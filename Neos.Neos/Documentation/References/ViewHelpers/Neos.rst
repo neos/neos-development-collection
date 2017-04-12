@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 =========================
 
-This reference was automatically generated from code on 2016-06-07
+This reference was automatically generated from code on 2017-03-30
 
 
 .. _`Neos ViewHelper Reference: neos:backend.authenticationProviderLabel`:
@@ -475,34 +475,6 @@ Expected result::
 
 
 
-.. _`Neos ViewHelper Reference: neos:includeJavaScript`:
-
-neos:includeJavaScript
-----------------------
-
-A View Helper to include JavaScript files inside Resources/Public/JavaScript of the package.
-
-:Implementation: Neos\\Neos\\ViewHelpers\\IncludeJavaScriptViewHelper
-
-
-
-
-Arguments
-*********
-
-* ``include`` (string): Regular expression of files to include
-
-* ``exclude`` (string, *optional*): Regular expression of files to exclude
-
-* ``package`` (string, *optional*): The package key of the resources to include or current controller package if NULL
-
-* ``subpackage`` (string, *optional*): The subpackage key of the resources to include or current controller subpackage if NULL
-
-* ``directory`` (string, *optional*): The directory inside the current subpackage. By default, the "JavaScript" directory will be used.
-
-
-
-
 .. _`Neos ViewHelper Reference: neos:link.module`:
 
 neos:link.module
@@ -623,7 +595,7 @@ Arguments
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
 
-* ``node`` (mixed, *optional*): A node object or a string node path or NULL to resolve the current document node
+* ``node`` (mixed, *optional*): A node object, a string node path (absolute or relative), a string node://-uri or NULL
 
 * ``format`` (string, *optional*): Format to use for the URL, for example "html" or "json
 
@@ -708,6 +680,17 @@ Expected result::
 	(depending on current workspace, current node, format etc.)
 
 
+**Target node given as node://-uri**::
+
+	<neos:link.node node="node://30e893c1-caef-0ca5-b53d-e5699bb8e506">Corporate imprint</neos:link.node>
+
+
+Expected result::
+
+	<a href="contact/imprint.html">Corporate imprint</a>
+	(depending on current workspace, current node, format etc.)
+
+
 **Target node given as relative node path**::
 
 	<neos:link.node node="~/about/us">About us</neos:link.node>
@@ -730,7 +713,7 @@ Expected result::
 	(depending on current workspace, current node, format etc.)
 
 
-**Dynamic tag content involving the linked node's properties**::
+**Dynamic tag content involving the linked node&#039;s properties**::
 
 	<neos:link.node node="about-us">see our <span>{linkedNode.label}</span> page</neos:link.node>
 
@@ -1097,7 +1080,7 @@ Example: given that the current node is ``/sites/acmecom/products/``,
 Arguments
 *********
 
-* ``node`` (mixed, *optional*): A node object or a string node path (absolute or relative) or NULL to resolve the current document node
+* ``node`` (mixed, *optional*): A node object, a string node path (absolute or relative), a string node://-uri or NULL
 
 * ``format`` (string, *optional*): Format to use for the URL, for example "html" or "json
 
@@ -1157,6 +1140,17 @@ Expected result::
 **Target node given as relative node path**::
 
 	<neos:uri.node node="~/about/us" />
+
+
+Expected result::
+
+	about/us.html
+	(depending on current workspace, current node, format etc.)
+
+
+**Target node given as node://-uri**::
+
+	<neos:uri.node node="node://30e893c1-caef-0ca5-b53d-e5699bb8e506" />
 
 
 Expected result::

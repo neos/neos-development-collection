@@ -57,23 +57,38 @@ Fundamental Installation
    .svn..) history? [Y,n]?'.
 
 
-#. Next set up a virtual host inside your Apache configuration. Set the ``DocumentRoot`` to the ``Web`` directory inside
-   the Neos installation.
+#. Next set up a virtual domain/host in your webserver configuration
 
-   .. code-block:: apache
+   * Apache configuration
 
-      NameVirtualHost *:80 # if needed
+      Set up a virtual host inside your Apache configuration. Set the ``DocumentRoot`` to the ``Web`` directory inside
+      the Neos installation. Set the directive ``AllowOverride`` to ``ÀLL`` to allow access to `.htaccess`
 
-      <VirtualHost *:80>
-         DocumentRoot "/your/htdocs/Neos/Web/"
-         # enable the following line for production context
-         #SetEnv FLOW_CONTEXT Production
-         ServerName neos.demo
-      </VirtualHost>
+      .. code-block:: apache
 
-   Make sure that the ``mod_rewrite`` module is loaded and restart apache. For further information on how to set up a
-   virtual host with apache please refer to the `Apache Virtual Host documentation
-   <https://httpd.apache.org/docs/2.2/en/vhosts/>`_.
+         NameVirtualHost *:80 # if needed
+
+         <VirtualHost *:80>
+           DocumentRoot "/your/htdocs/Neos/Web/"
+           # enable the following line for production context
+           #SetEnv FLOW_CONTEXT Production
+           ServerName neos.demo
+         </VirtualHost>
+      
+         <Directory /your/htdocs/Neos/Web>
+           AllowOverride All
+         </Directory>
+
+
+     Make sure that the ``mod_rewrite`` module is loaded and restart apache. For further information on how to set up a
+     virtual host with apache please refer to the `Apache Virtual Host documentation
+     <https://httpd.apache.org/docs/2.2/en/vhosts/>`_.
+     
+   * nginx configuration
+   
+     For further information on how to set up a virtual domain with nginx please refer to the `nginx  documentation 
+     <https://www.linode.com/docs/websites/nginx/how-to-configure-nginx>`_.
+   
 
 
 #. Add an entry to */etc/hosts* to make your virtual host reachable:
@@ -113,8 +128,14 @@ The Neos Setup Tool
    in some secure place, the generated file will be removed upon login! It is possible to have a new password
    rendered if you lost it, so don't worry too much.
 
-   .. figure:: Images/Setup-Step-1.png
+   .. figure:: Images/Setup-Step-0.png
       :alt: Neos login page
+      :class: screenshot-fullsize
+      
+#. The `NEOS requirements check` checks, if you have installed an image manipulation software.
+
+   .. figure:: Images/Setup-Step-1.png
+      :alt: NEOS requirements check
       :class: screenshot-fullsize
 
 #. Fill in the database credentials in the first step. The selector box will be updated with

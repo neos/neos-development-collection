@@ -3,7 +3,7 @@
 FlowQuery Operation Reference
 =============================
 
-This reference was automatically generated from code on 2016-07-20
+This reference was automatically generated from code on 2017-03-30
 
 
 .. _`FlowQuery Operation Reference: add`:
@@ -13,7 +13,7 @@ add
 
 Add another $flowQuery object to the current one.
 
-:Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\AddOperation
+:Implementation: Neos\\Eel\\FlowQuery\\Operations\\AddOperation
 :Priority: 1
 :Final: No
 :Returns: void
@@ -27,7 +27,7 @@ Add another $flowQuery object to the current one.
 cacheLifetime
 -------------
 
-"cacheLifetime" operation working on TYPO3CR nodes. Will get the minimum of all allowed cache lifetimes for the
+"cacheLifetime" operation working on ContentRepository nodes. Will get the minimum of all allowed cache lifetimes for the
 nodes in the current FlowQuery context. This means it will evaluate to the nearest future value of the
 hiddenBeforeDateTime or hiddenAfterDateTime properties of all nodes in the context. If none are set or all values
 are in the past it will evaluate to NULL.
@@ -39,7 +39,7 @@ Example:
 
 	q(node).context({'invisibleContentShown': true}).children().cacheLifetime()
 
-:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\CacheLifetimeOperation
+:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\CacheLifetimeOperation
 :Priority: 1
 :Final: Yes
 :Returns: integer The cache lifetime in seconds or NULL if either no content collection was given or no child node had a "hiddenBeforeDateTime" or "hiddenAfterDateTime" property set
@@ -53,11 +53,11 @@ Example:
 children
 --------
 
-"children" operation working on TYPO3CR nodes. It iterates over all
+"children" operation working on ContentRepository nodes. It iterates over all
 context elements and returns all child nodes or only those matching
 the filter expression specified as optional argument.
 
-:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\ChildrenOperation
+:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\ChildrenOperation
 :Priority: 100
 :Final: No
 :Returns: void
@@ -76,7 +76,7 @@ context elements and returns the values of the properties given in the
 filter expression that has to be specified as argument or in a following
 filter operation.
 
-:Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\Object\\ChildrenOperation
+:Implementation: Neos\\Eel\\FlowQuery\\Operations\\Object\\ChildrenOperation
 :Priority: 1
 :Final: No
 :Returns: void
@@ -90,11 +90,11 @@ filter operation.
 closest
 -------
 
-"closest" operation working on TYPO3CR nodes. For each node in the context,
+"closest" operation working on ContentRepository nodes. For each node in the context,
 get the first node that matches the selector by testing the node itself and
 traversing up through its ancestors.
 
-:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\ClosestOperation
+:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\ClosestOperation
 :Priority: 100
 :Final: No
 :Returns: void
@@ -108,7 +108,7 @@ traversing up through its ancestors.
 context
 -------
 
-"context" operation working on TYPO3CR nodes. Modifies the TYPO3CR Context of each
+"context" operation working on ContentRepository nodes. Modifies the ContentRepository Context of each
 node in the current FlowQuery context by the given properties and returns the same
 nodes by identifier if they can be accessed in the new Context (otherwise they
 will be skipped).
@@ -117,7 +117,7 @@ Example:
 
 	q(node).context({'invisibleContentShown': true}).children()
 
-:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\ContextOperation
+:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\ContextOperation
 :Priority: 1
 :Final: No
 :Returns: void
@@ -135,37 +135,10 @@ Count the number of elements in the context.
 
 If arguments are given, these are used to filter the elements before counting.
 
-:Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\CountOperation
+:Implementation: Neos\\Eel\\FlowQuery\\Operations\\CountOperation
 :Priority: 1
 :Final: Yes
 :Returns: void|integer with the number of elements
-
-
-
-
-
-.. _`FlowQuery Operation Reference: filter`:
-
-filter
-------
-
-This filter implementation contains specific behavior for use on TYPO3CR
-nodes. It will not evaluate any elements that are not instances of the
-`NodeInterface`.
-
-The implementation changes the behavior of the `instanceof` operator to
-work on node types instead of PHP object types, so that::
-
-	[instanceof Neos.NodeTypes:Page]
-
-will in fact use `isOfType()` on the `NodeType` of context elements to
-filter. This filter allow also to filter the current context by a given
-node. Anything else remains unchanged.
-
-:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\FilterOperation
-:Priority: 100
-:Final: No
-:Returns: void
 
 
 
@@ -213,8 +186,35 @@ object, array, int(eger), float, double, bool(ean) or string the value is checke
 for being of the specified type. For any other strings the value is used as
 classname with the PHP instanceof operation to check if the value matches.
 
-:Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\Object\\FilterOperation
+:Implementation: Neos\\Eel\\FlowQuery\\Operations\\Object\\FilterOperation
 :Priority: 1
+:Final: No
+:Returns: void
+
+
+
+
+
+.. _`FlowQuery Operation Reference: filter`:
+
+filter
+------
+
+This filter implementation contains specific behavior for use on ContentRepository
+nodes. It will not evaluate any elements that are not instances of the
+`NodeInterface`.
+
+The implementation changes the behavior of the `instanceof` operator to
+work on node types instead of PHP object types, so that::
+
+	[instanceof Neos.NodeTypes:Page]
+
+will in fact use `isOfType()` on the `NodeType` of context elements to
+filter. This filter allow also to filter the current context by a given
+node. Anything else remains unchanged.
+
+:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\FilterOperation
+:Priority: 100
 :Final: No
 :Returns: void
 
@@ -227,7 +227,7 @@ classname with the PHP instanceof operation to check if the value matches.
 find
 ----
 
-"find" operation working on TYPO3CR nodes. This operation allows for retrieval
+"find" operation working on ContentRepository nodes. This operation allows for retrieval
 of nodes specified by a path, identifier or node type (recursive).
 
 Example (node name):
@@ -258,7 +258,7 @@ Example (node type with filter):
 
 	q(node).find('[instanceof Neos.NodeTypes:Text][text*="Neos"]')
 
-:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\FindOperation
+:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\FindOperation
 :Priority: 100
 :Final: No
 :Returns: void
@@ -274,7 +274,7 @@ first
 
 Get the first element inside the context.
 
-:Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\FirstOperation
+:Implementation: Neos\\Eel\\FlowQuery\\Operations\\FirstOperation
 :Priority: 1
 :Final: No
 :Returns: void
@@ -298,7 +298,7 @@ If no arguments are given, the full context is returned. Otherwise the
 value contained in the context at the index given as argument is
 returned. If no such index exists, NULL is returned.
 
-:Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\GetOperation
+:Implementation: Neos\\Eel\\FlowQuery\\Operations\\GetOperation
 :Priority: 1
 :Final: Yes
 :Returns: mixed
@@ -318,7 +318,7 @@ to those that have a child node that matches the selector or given subject.
 Accepts a selector, an array, an object, a traversable object & a FlowQuery
 object as argument.
 
-:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\HasOperation
+:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\HasOperation
 :Priority: 100
 :Final: No
 :Returns: void
@@ -337,7 +337,7 @@ Check whether the at least one of the context elements match the given filter.
 Without arguments is evaluates to TRUE if the context is not empty. If arguments
 are given, they are used to filter the context before evaluation.
 
-:Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\IsOperation
+:Implementation: Neos\\Eel\\FlowQuery\\Operations\\IsOperation
 :Priority: 1
 :Final: Yes
 :Returns: void|boolean
@@ -353,7 +353,7 @@ last
 
 Get the last element inside the context.
 
-:Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\LastOperation
+:Implementation: Neos\\Eel\\FlowQuery\\Operations\\LastOperation
 :Priority: 1
 :Final: No
 :Returns: void
@@ -367,12 +367,12 @@ Get the last element inside the context.
 next
 ----
 
-"next" operation working on TYPO3CR nodes. It iterates over all
+"next" operation working on ContentRepository nodes. It iterates over all
 context elements and returns the immediately following sibling.
 If an optional filter expression is provided, it only returns the node
 if it matches the given expression.
 
-:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\NextOperation
+:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\NextOperation
 :Priority: 100
 :Final: No
 :Returns: void
@@ -386,11 +386,11 @@ if it matches the given expression.
 nextAll
 -------
 
-"nextAll" operation working on TYPO3CR nodes. It iterates over all
+"nextAll" operation working on ContentRepository nodes. It iterates over all
 context elements and returns each following sibling or only those matching
 the filter expression specified as optional argument.
 
-:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\NextAllOperation
+:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\NextAllOperation
 :Priority: 0
 :Final: No
 :Returns: void
@@ -404,12 +404,12 @@ the filter expression specified as optional argument.
 nextUntil
 ---------
 
-"nextUntil" operation working on TYPO3CR nodes. It iterates over all context elements
+"nextUntil" operation working on ContentRepository nodes. It iterates over all context elements
 and returns each following sibling until the matching sibling is found.
 If an optional filter expression is provided as a second argument,
 it only returns the nodes matching the given expression.
 
-:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\NextUntilOperation
+:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\NextUntilOperation
 :Priority: 0
 :Final: No
 :Returns: void
@@ -423,11 +423,11 @@ it only returns the nodes matching the given expression.
 parent
 ------
 
-"parent" operation working on TYPO3CR nodes. It iterates over all
+"parent" operation working on ContentRepository nodes. It iterates over all
 context elements and returns each direct parent nodes or only those matching
 the filter expression specified as optional argument.
 
-:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\ParentOperation
+:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\ParentOperation
 :Priority: 100
 :Final: No
 :Returns: void
@@ -441,7 +441,25 @@ the filter expression specified as optional argument.
 parents
 -------
 
-"parents" operation working on TYPO3CR nodes. It iterates over all
+"parents" operation working on ContentRepository nodes. It iterates over all
+context elements and returns the parent nodes or only those matching
+the filter expression specified as optional argument.
+
+:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\ParentsOperation
+:Priority: 0
+:Final: No
+:Returns: void
+
+
+
+
+
+.. _`FlowQuery Operation Reference: parents`:
+
+parents
+-------
+
+"parents" operation working on ContentRepository nodes. It iterates over all
 context elements and returns the parent nodes or only those matching
 the filter expression specified as optional argument.
 
@@ -454,16 +472,17 @@ the filter expression specified as optional argument.
 
 
 
-.. _`FlowQuery Operation Reference: parents`:
+.. _`FlowQuery Operation Reference: parentsUntil`:
 
-parents
--------
+parentsUntil
+------------
 
-"parents" operation working on TYPO3CR nodes. It iterates over all
-context elements and returns the parent nodes or only those matching
-the filter expression specified as optional argument.
+"parentsUntil" operation working on ContentRepository nodes. It iterates over all
+context elements and returns the parent nodes until the matching parent is found.
+If an optional filter expression is provided as a second argument,
+it only returns the nodes matching the given expression.
 
-:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\ParentsOperation
+:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\ParentsUntilOperation
 :Priority: 0
 :Final: No
 :Returns: void
@@ -477,7 +496,7 @@ the filter expression specified as optional argument.
 parentsUntil
 ------------
 
-"parentsUntil" operation working on TYPO3CR nodes. It iterates over all
+"parentsUntil" operation working on ContentRepository nodes. It iterates over all
 context elements and returns the parent nodes until the matching parent is found.
 If an optional filter expression is provided as a second argument,
 it only returns the nodes matching the given expression.
@@ -491,36 +510,17 @@ it only returns the nodes matching the given expression.
 
 
 
-.. _`FlowQuery Operation Reference: parentsUntil`:
-
-parentsUntil
-------------
-
-"parentsUntil" operation working on TYPO3CR nodes. It iterates over all
-context elements and returns the parent nodes until the matching parent is found.
-If an optional filter expression is provided as a second argument,
-it only returns the nodes matching the given expression.
-
-:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\ParentsUntilOperation
-:Priority: 0
-:Final: No
-:Returns: void
-
-
-
-
-
 .. _`FlowQuery Operation Reference: prev`:
 
 prev
 ----
 
-"prev" operation working on TYPO3CR nodes. It iterates over all
+"prev" operation working on ContentRepository nodes. It iterates over all
 context elements and returns the immediately preceding sibling.
 If an optional filter expression is provided, it only returns the node
 if it matches the given expression.
 
-:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\PrevOperation
+:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\PrevOperation
 :Priority: 100
 :Final: No
 :Returns: void
@@ -534,11 +534,11 @@ if it matches the given expression.
 prevAll
 -------
 
-"prevAll" operation working on TYPO3CR nodes. It iterates over all
+"prevAll" operation working on ContentRepository nodes. It iterates over all
 context elements and returns each preceding sibling or only those matching
 the filter expression specified as optional argument
 
-:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\PrevAllOperation
+:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\PrevAllOperation
 :Priority: 0
 :Final: No
 :Returns: void
@@ -552,12 +552,12 @@ the filter expression specified as optional argument
 prevUntil
 ---------
 
-"prevUntil" operation working on TYPO3CR nodes. It iterates over all context elements
+"prevUntil" operation working on ContentRepository nodes. It iterates over all context elements
 and returns each preceding sibling until the matching sibling is found.
 If an optional filter expression is provided as a second argument,
 it only returns the nodes matching the given expression.
 
-:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\PrevUntilOperation
+:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\PrevUntilOperation
 :Priority: 0
 :Final: No
 :Returns: void
@@ -571,11 +571,11 @@ it only returns the nodes matching the given expression.
 property
 --------
 
-Used to access properties of a TYPO3CR Node. If the property mame is
+Used to access properties of a ContentRepository Node. If the property mame is
 prefixed with _, internal node properties like start time, end time,
 hidden are accessed.
 
-:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\PropertyOperation
+:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\PropertyOperation
 :Priority: 100
 :Final: Yes
 :Returns: mixed
@@ -595,7 +595,7 @@ Expects the name of a property as argument. If the context is empty, NULL
 is returned. Otherwise the value of the property on the first context
 element is returned.
 
-:Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\Object\\PropertyOperation
+:Implementation: Neos\\Eel\\FlowQuery\\Operations\\Object\\PropertyOperation
 :Priority: 1
 :Final: Yes
 :Returns: mixed
@@ -609,11 +609,11 @@ element is returned.
 siblings
 --------
 
-"siblings" operation working on TYPO3CR nodes. It iterates over all
+"siblings" operation working on ContentRepository nodes. It iterates over all
 context elements and returns all sibling nodes or only those matching
 the filter expression specified as optional argument.
 
-:Implementation: TYPO3\\TYPO3CR\\Eel\\FlowQueryOperations\\SiblingsOperation
+:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\SiblingsOperation
 :Priority: 100
 :Final: No
 :Returns: void
@@ -632,7 +632,7 @@ Slice the current context
 If no arguments are given, the full context is returned. Otherwise the
 value contained in the context are sliced with offset and length.
 
-:Implementation: TYPO3\\Eel\\FlowQuery\\Operations\\SliceOperation
+:Implementation: Neos\\Eel\\FlowQuery\\Operations\\SliceOperation
 :Priority: 1
 :Final: No
 :Returns: void
@@ -646,7 +646,7 @@ value contained in the context are sliced with offset and length.
 sort
 ----
 
-"sort" operation working on TYPO3CR nodes.
+"sort" operation working on ContentRepository nodes.
 Sorts nodes by specified node properties.
 
 {@inheritdoc}

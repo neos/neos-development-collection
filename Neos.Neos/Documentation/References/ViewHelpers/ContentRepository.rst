@@ -3,7 +3,7 @@
 Content Repository ViewHelper Reference
 =======================================
 
-This reference was automatically generated from code on 2016-06-07
+This reference was automatically generated from code on 2017-03-30
 
 
 .. _`Content Repository ViewHelper Reference: PaginateViewHelper`:
@@ -13,7 +13,7 @@ PaginateViewHelper
 
 This ViewHelper renders a Pagination of nodes.
 
-:Implementation: TYPO3\\TYPO3CR\\ViewHelpers\\Widget\\PaginateViewHelper
+:Implementation: Neos\\ContentRepository\\ViewHelpers\\Widget\\PaginateViewHelper
 
 
 

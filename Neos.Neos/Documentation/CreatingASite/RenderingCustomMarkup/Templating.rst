@@ -669,7 +669,7 @@ is not part of HTML, you could do that as follows:
 
 .. code-block:: xml
 
-	<f:link.action ... additionalAttributes="{fadeDuration : 800}">
+	<f:link.action action="..." additionalAttributes="{fadeDuration : 800}">
 		Link with fadeDuration set
 	</f:link.action>
 
