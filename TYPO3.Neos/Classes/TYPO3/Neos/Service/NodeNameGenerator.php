@@ -12,6 +12,7 @@ namespace TYPO3\Neos\Service;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
@@ -55,7 +56,7 @@ class NodeNameGenerator
         if ($idealNodeName !== null) {
             $possibleNodeName = \TYPO3\TYPO3CR\Utility::renderValidNodeName($idealNodeName);
         } else {
-            $possibleNodeName = uniqid('node-');
+            $possibleNodeName = 'node-' . Algorithms::generateRandomString(13);
         }
 
         return $possibleNodeName;
