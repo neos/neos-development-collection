@@ -16,6 +16,7 @@ use Neos\Cache\CacheAwareInterface;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Context;
+use Neos\Flow\Utility\Algorithms;
 use Neos\Fusion\Exception;
 use Doctrine\ORM\Proxy\Proxy;
 use Neos\Fusion\Exception\CacheException;
@@ -98,7 +99,7 @@ class ContentCache
      */
     public function __construct()
     {
-        $this->randomCacheMarker = uniqid();
+        $this->randomCacheMarker = Algorithms::generateRandomString(13);
     }
 
     /**
