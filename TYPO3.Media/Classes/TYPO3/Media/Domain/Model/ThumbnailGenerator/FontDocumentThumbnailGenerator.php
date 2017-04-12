@@ -14,6 +14,7 @@ namespace TYPO3\Media\Domain\Model\ThumbnailGenerator;
 use TYPO3\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Resource\Resource;
+use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\Flow\Utility\Files;
 use TYPO3\Media\Domain\Model\Adjustment\ResizeImageAdjustment;
 use TYPO3\Media\Domain\Model\Thumbnail;
@@ -67,7 +68,7 @@ class FontDocumentThumbnailGenerator extends AbstractThumbnailGenerator
             $filename = pathinfo($thumbnail->getOriginalAsset()->getResource()->getFilename(), PATHINFO_FILENAME);
 
             $temporaryLocalCopyFilename = $thumbnail->getOriginalAsset()->getResource()->createTemporaryLocalCopy();
-            $temporaryPathAndFilename = $this->environment->getPathToTemporaryDirectory() . uniqid('ProcessedFontThumbnail-') . '.' . $filename . '.jpg';
+            $temporaryPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'ProcessedFontThumbnail-' . Algorithms::generateRandomString(13) . '.' . $filename . '.jpg';
 
             $width = 1000;
             $height = 1000;
