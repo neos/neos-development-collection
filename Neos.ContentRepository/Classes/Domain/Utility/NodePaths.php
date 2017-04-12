@@ -216,7 +216,7 @@ abstract class NodePaths
      */
     public static function generateRandomNodeName()
     {
-        return 'node-' . Algorithms::generateRandomString(13);
+        return 'node-' . Algorithms::generateRandomString(13, 'abcdefghijklmnopqrstuvwxyz0123456789');
     }
 
     /**
