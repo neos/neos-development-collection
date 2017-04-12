@@ -8,7 +8,7 @@
         "neos/flow": "~4.1.0",
         "neos/media-browser": "~3.1.0",
         "neos/party": "~4.0",
-        "neos/setup": "~2.0",
+        "neos/setup": "~4.0",
         "neos/twitter-bootstrap": "~3.0",
         "neos/content-repository": "~3.1.0",
         "neos/fusion": "~3.1.0",
