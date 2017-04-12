@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\Flow\Validation\Validator\UuidValidator;
 
 /**
@@ -95,7 +96,7 @@ class NodeTemplate extends AbstractNodeData
             return $this->name;
         }
 
-        return uniqid('node');
+        return 'node-' . Algorithms::generateRandomString(13);
     }
 
     /**
