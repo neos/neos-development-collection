@@ -4,7 +4,7 @@
 
 
 // intentionally-left-open eel expression
-foo.bar.prototype(TYPO3.Foo:Bar2) {
+foo.bar.prototype(Neos.Foo:Bar2) {
 	blah3 = ${my.expression("as}
 		" + "df"
 }
@@ -14,4 +14,4 @@ prototype(Foo.Bar:Baz) {
 }
 
 
-prototype(TYPO3.Foo:Bar3) < prototype(TYPO3.Foo:Bar2)
+prototype(Neos.Foo:Bar3) < prototype(Neos.Foo:Bar2)
