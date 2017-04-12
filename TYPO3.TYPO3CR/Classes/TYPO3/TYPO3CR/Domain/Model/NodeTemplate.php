@@ -96,7 +96,7 @@ class NodeTemplate extends AbstractNodeData
             return $this->name;
         }
 
-        return 'node-' . Algorithms::generateRandomString(13);
+        return 'node-' . Algorithms::generateRandomString(13, 'abcdefghijklmnopqrstuvwxyz0123456789');
     }
 
     /**

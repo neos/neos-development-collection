@@ -56,7 +56,7 @@ class NodeNameGenerator
         if ($idealNodeName !== null) {
             $possibleNodeName = \TYPO3\TYPO3CR\Utility::renderValidNodeName($idealNodeName);
         } else {
-            $possibleNodeName = 'node-' . Algorithms::generateRandomString(13);
+            $possibleNodeName = 'node-' . Algorithms::generateRandomString(13, 'abcdefghijklmnopqrstuvwxyz0123456789');
         }
 
         return $possibleNodeName;
