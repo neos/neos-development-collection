@@ -11,6 +11,7 @@ namespace TYPO3\TYPO3CR\Domain\Utility;
  * source code.
  */
 
+use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
@@ -215,7 +216,7 @@ abstract class NodePaths
      */
     public static function generateRandomNodeName()
     {
-        return uniqid('node-');
+        return 'node-' . Algorithms::generateRandomString(13);
     }
 
     /**
