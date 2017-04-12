@@ -198,6 +198,9 @@ This migration adds missing content dimensions by setting the default value on a
 
 Alternatively a custom node migration can be created allowing flexibility and constraints. See :ref:`node-migrations`.
 
+.. tip:: Neos utilizes the Web Storage API to save dimension information for the backend in the client's browser.
+         Delete your browser cache and session storage to make sure you see the correct dimensions in Neos.
+
 Routing
 =======
 
