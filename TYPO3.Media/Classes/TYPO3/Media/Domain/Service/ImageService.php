@@ -11,6 +11,7 @@ namespace TYPO3\Media\Domain\Service;
  * source code.
  */
 
+use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\Media\Imagine\Box;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Configuration\Exception\InvalidConfigurationException;
@@ -101,7 +102,7 @@ class ImageService
         $resourceUri = $originalResource->createTemporaryLocalCopy();
 
         $resultingFileExtension = $originalResource->getFileExtension();
-        $transformedImageTemporaryPathAndFilename = $this->environment->getPathToTemporaryDirectory() . uniqid('ProcessedImage-') . '.' . $resultingFileExtension;
+        $transformedImageTemporaryPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'ProcessedImage-' . Algorithms::generateRandomString(13) . '.' . $resultingFileExtension;
 
         if (!file_exists($resourceUri)) {
             throw new ImageFileException(sprintf('An error occurred while transforming an image: the resource data of the original image does not exist (%s, %s).', $originalResource->getSha1(), $resourceUri), 1374848224);
