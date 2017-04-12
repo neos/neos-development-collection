@@ -14,6 +14,7 @@ namespace TYPO3\TypoScript\Core\Cache;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Cache\CacheAwareInterface;
 use TYPO3\Flow\Security\Context;
+use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\TypoScript\Exception;
 use Doctrine\ORM\Proxy\Proxy;
 
@@ -91,7 +92,7 @@ class ContentCache
 
     public function __construct()
     {
-        $this->randomCacheMarker = uniqid();
+        $this->randomCacheMarker = Algorithms::generateRandomString(13);
     }
 
     /**
