@@ -40,7 +40,7 @@ class AfxService
      */
     protected static function preprocess($afxCode)
     {
-        return preg_replace('/[\\s]*\\n[\\s]*/', '', trim($afxCode));
+        return trim($afxCode);
     }
 
     /**
@@ -203,6 +203,16 @@ class AfxService
         $fusion = 'Neos.Fusion:Array {' . PHP_EOL;
         $index = 1;
         foreach ($payload as $astNode) {
+
+            // ignore blank text if it is connected to a newline
+            if ($astNode['type'] == 'text') {
+                $astNode['payload']  = preg_replace('/[\\s]*\\n[\\s]*/u', '', $astNode['payload'] );
+                if ($astNode['payload'] == '') {
+                    continue;
+                };
+            }
+
+            // detect key
             $fusionName = $index;
             if ($keyProperty = Arrays::getValueByPath($astNode, 'payload.props.@key')) {
                 if ($keyProperty['type'] == 'string') {
@@ -213,6 +223,8 @@ class AfxService
                     );
                 }
             }
+
+            // convert node
             $nodeFusion = self::astToFusion($astNode, $indentation .  self::INDENTATION);
             if ($nodeFusion !== null) {
                 $fusion .= $indentation . self::INDENTATION . $fusionName . ' = ' . $nodeFusion . PHP_EOL;
