@@ -356,4 +356,25 @@ Neos.Fusion:Tag {
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
+    /**
+     * @test
+     */
+    public function spacesInsideALineArePreservedAlsoForStrings()
+    {
+        $afxCode = '<h1>
+            String {eelExpression} String
+        </h1>';
+
+        $expectedFusion = <<<'EOF'
+Neos.Fusion:Tag {
+    tagName = 'h1'
+    content = Neos.Fusion:Array {
+        1 = 'String '
+        2 = ${eelExpression}
+        3 = ' String'
+    }
+}
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
 }
