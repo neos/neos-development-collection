@@ -4,7 +4,7 @@
     "license": "GPL-3.0+",
     "type": "neos-package-collection",
     "require": {
-        "neos/flow-development-collection": "4.0.x-dev",
+        "neos/flow-development-collection": "~4.0.0 || 4.0.x-dev",
         "neos/flow": "~4.0.0",
         "neos/fluid-adaptor": "~4.0.0",
         "gedmo/doctrine-extensions": "~2.3.0",
