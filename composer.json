@@ -4,7 +4,7 @@
     "license": "GPL-3.0+",
     "type": "neos-package-collection",
     "require": {
-        "neos/flow-development-collection": "3.3.x-dev",
+        "neos/flow-development-collection": "~3.3.0 || 3.3.x-dev",
         "php": ">=5.5.0",
         "typo3/flow": "~3.3.0",
         "typo3/imagine": "~2.0",
