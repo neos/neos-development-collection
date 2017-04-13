@@ -40,7 +40,7 @@ class AfxService
      */
     protected static function preprocess($afxCode)
     {
-        return preg_replace('/[\\s]*\\n[\\s]*/', '', $afxCode);
+        return preg_replace('/[\\s]*\\n[\\s]*/', '', trim($afxCode));
     }
 
     /**
