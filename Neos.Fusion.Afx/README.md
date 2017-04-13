@@ -13,6 +13,13 @@ via packagist.
 
 This is highly experimental and will very likely change in the future. 
 
+## Installation
+
+Installation
+
+PackageFactory.AtomicFusion.AFX is available via packagist. Just add "packagefactory/atomicfusion-afx" : "dev-master"``
+to the require-section of the composer.json or run composer require `packagefactory/atomicfusion-afx dev-master.
+
 ## Usage
 
 With this package the following fusion code
@@ -82,6 +89,8 @@ The package contains the following cli-commands.
 
 ## AFX Language Rules
 
+The AFX Language expects the code to be wrapped into a single tag-element that can either be an html- or a 
+fusion-object-Tag. All whitepaces around the outer elements are ignored.
 
 ### HTML-Tags (Tags without Namespace)
 
@@ -148,6 +157,56 @@ Vendor.Site:Prototype {
 }
 ```
 
+### Tag-Children
+ 
+By default all children of AFX-Tags are rendered as `Neos.Fusion:Array` into the `content`-attribute. The children are 
+interpreted as string, eel-expression, html- or fusion-object-tag. 
+ 
+The following AFX-Code: 
+ 
+```
+<h1>{props.title}: {props.subtitle}</h1>
+``` 
+Is transpiled as:
+```
+Neos.Fusion:Tag {
+    tagName = 'h1'
+    content = Neos.Fusion:Array {
+        1 = {props.title}
+        2 = ': '
+        3 = ${props.subtitle}
+    }
+}
+```
+
+Some more rules are applied to the tag-content: 
+
+- Newlines and spaces that are connected to newlines are ignored.
+- The `@children`-property of the parent-element alters the name of the fusion-attribute to recive the children.
+- The `@key`-property of tag-children alters the name of the fusion-attribute to recive the children.
+
+```
+<Vendor.Site:Prototype @children="text">
+    <h2 @key="title" content={props.title} />
+    <p @key="description" content={props.description} />
+</Vendor.Site:Prototype>
+``` 
+Is transpiled as:
+```
+Vendor.Site:Prototype {
+    text = Neos.Fusion:Array { 
+        title = Neos.Fusion:Tag {
+            tagName = 'h2'
+            content  = ${props.title}
+        }
+        description = Neos.Fusion:Tag {
+            tagName = 'p'
+            content  = ${props.description}
+        }
+    }
+}
+```
+
 ### Meta-Attributes
 
 In general all meta-attributes start with an @-sign. 
@@ -158,7 +217,6 @@ The default property name for the children is `content`.
 The `@key`-attribute can be used to define the property name of an item among its siblings. If no key is defined the index is used starting at 1.
 
 All other meta attributes are directly added to the generated prototype and can be used for @if or @process statements. 
-
 
 ### Whitespace and Newlines
  
