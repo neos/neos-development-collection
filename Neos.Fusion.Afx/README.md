@@ -92,7 +92,7 @@ The following html:
 ```
 <h1 class="headline" @if.hasHeadline={props.headline ? true : false}>{props.headline}</h1>
 ```
-Will be transformed into this fusion:
+Is transpiled to:
 ```
 Neos.Fusion:Tag {
     tagName = 'h1'
@@ -100,7 +100,7 @@ Neos.Fusion:Tag {
     content = Neos.Fusion:Array {
         1 = ${props.headline}
     }
-    @if.hasHeadline="{props.headline ? true : false}
+    @if.hasHeadline = ${props.headline ? true : false}
 }
 ``` 
 
@@ -108,20 +108,20 @@ The following example defines the tag-content as a single expression instead of 
 ```
 <h1 class="headline" content={props.headline} />
 ```
-Will be transformed into this fusion:
+Is transpiled to:
 ```
 Neos.Fusion:Tag {
     tagName = 'h1'
     attributes.class = 'headline'
     content = ${props.headline}
 }
-``` 
+```
 
-If a tag is self closing and has no content it will be rendered as self closing fusion-tag.  
+If a tag is self closing and has no content it will be rendered as self closing fusion-tag:.  
 ```
 <br/>
 ```
-Will be transformed into this fusion:
+Is transpiled to:
 ```
 Neos.Fusion:Tag {
     tagName = 'br'
@@ -135,16 +135,16 @@ All namespaced-tags are interpreted as prototype-names and all attributes are pa
 
 The following html: 
 ```
-<Vendor.Site:Prototype type="headline" @if.hasHeadline={props.headline ? true : false} >{props.headline}</Vendor.Site:Prototype>
+<Vendor.Site:Prototype type="headline" @if.hasHeadline={props.headline ? true : false}>{props.headline}</Vendor.Site:Prototype>
 ```
-Will be transformed into this fusion:
+Is transpiled as:
 ```
 Vendor.Site:Prototype {
     type = 'headline'
     renderer = Neos.Fusion:Array {
         1 = ${props.headline}
     }
-    @if.hasHeadline="{props.headline ? true : false}
+    @if.hasHeadline= ${props.headline ? true : false}
 }
 ```
 
@@ -175,7 +175,7 @@ The following rules are applied for that:
 	{'eelExpression 2'}
 </h1>
 ```
-is parsed as: 
+Is transpiled as: 
 ```
 Neos.Fusion:Tag {
 	tagName = 'h1'
@@ -193,7 +193,7 @@ Neos.Fusion:Tag {
 	{'eelExpression 1'} {'eelExpression 2'}
 </h1>
 ```
-is parsed as: 
+Is transpiled as: 
 ```
 Neos.Fusion:Tag {
 	tagName = 'h1'
