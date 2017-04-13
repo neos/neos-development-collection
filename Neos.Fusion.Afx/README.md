@@ -4,10 +4,7 @@
 
 This package provides a fusion preprocessor that expands a compact xml-ish syntax to pure fusion code. This allows
 to write compact components that do'nt need a seperate template file and enables unplanned extensibility for the defined 
-prototypes because the genrated fusion code can be overwritten and controlled from the outside if needed. 
-
-HINT: To use this package you have to install https://github.com/PackageFactory/afx aswell until the package becomes available
-via packagist.
+prototypes because the genrated fusion code can be overwritten and controlled from the outside if needed.
 
 ## WARNING
 
