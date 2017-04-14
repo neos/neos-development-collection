@@ -34,7 +34,7 @@ class MediaCommandController extends CommandController
     protected $persistenceManager;
 
     /**
-     * @Flow\Inject
+     * @Flow\Inject(lazy=false)
      * @var ObjectManager
      */
     protected $entityManager;
@@ -86,10 +86,10 @@ class MediaCommandController extends CommandController
         $sql = '
 			SELECT
 				r.persistence_object_identifier, r.filename, r.mediatype
-			FROM typo3_flow_resource_resource r
-			LEFT JOIN typo3_media_domain_model_asset a
+			FROM neos_flow_resourcemanagement_persistentresource r
+			LEFT JOIN neos_media_domain_model_asset a
 			ON a.resource = r.persistence_object_identifier
-			LEFT JOIN typo3_media_domain_model_thumbnail t
+			LEFT JOIN neos_media_domain_model_thumbnail t
 			ON t.resource = r.persistence_object_identifier
 			WHERE a.persistence_object_identifier IS NULL AND t.persistence_object_identifier IS NULL
 		';
