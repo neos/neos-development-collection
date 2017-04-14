@@ -146,7 +146,7 @@ class FusionPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \I
     public function objectAccess()
     {
         if (!$this->fusionRuntime->canRender($this->path)) {
-            return $this;
+            throw new FusionException('The configuration in the path "' . $this->path . '" can not be rendered.', 1490778362);
         }
 
         try {
