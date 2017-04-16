@@ -25,8 +25,6 @@ use Neos\Neos\Controller\Exception\DisabledModuleException;
 use Neos\Party\Domain\Service\PartyService;
 
 /**
- * The TYPO3 Module
- *
  * @Flow\Scope("singleton")
  */
 class ModuleController extends ActionController
