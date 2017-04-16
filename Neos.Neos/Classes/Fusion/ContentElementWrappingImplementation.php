@@ -46,7 +46,7 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
     }
 
     /**
-     * Evaluate this TypoScript object and return the result
+     * Evaluate this Fusion object and return the result
      *
      * @return mixed
      */
@@ -82,7 +82,7 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
     }
 
     /**
-     * Returns the TypoScript path to the wrapped Content Element
+     * Returns the Fusion path to the wrapped Content Element
      *
      * @return string
      */

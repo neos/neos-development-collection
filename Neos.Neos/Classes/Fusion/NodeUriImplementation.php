@@ -115,7 +115,7 @@ class NodeUriImplementation extends AbstractFusionObject
     }
 
     /**
-     * The name of the base node inside the TypoScript context to use for resolving relative paths.
+     * The name of the base node inside the Fusion context to use for resolving relative paths.
      *
      * @return string
      */
