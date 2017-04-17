@@ -137,6 +137,10 @@ class SiteCommandController extends CommandController
      */
     public function exportCommand($siteNode = null, $tidy = false, $filename = null, $packageKey = null, $nodeTypeFilter = null)
     {
+        if ($packageKey === null && $filename === null) {
+            $this->outputLine('Please specify either a package key or path and filename using --package-key or --filename respectively.');
+            $this->quit(2);
+        }
         if ($siteNode === null) {
             $sites = $this->siteRepository->findAll()->toArray();
         } else {
