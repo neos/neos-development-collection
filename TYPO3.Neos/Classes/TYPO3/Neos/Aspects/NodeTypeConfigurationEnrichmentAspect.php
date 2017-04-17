@@ -16,6 +16,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Aop\JoinPointInterface;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\Flow\Utility\Arrays;
+use TYPO3\Neos\Service\UserService;
 
 /**
  * @Flow\Scope("singleton")
@@ -53,6 +54,12 @@ class NodeTypeConfigurationEnrichmentAspect
      * @var ResourceManager
      */
     protected $resourceManager;
+
+    /**
+     * @Flow\Inject
+     * @var UserService
+     */
+    protected $userService;
 
     /**
      * @Flow\Around("method(TYPO3\TYPO3CR\Domain\Model\NodeType->__construct())")
@@ -316,12 +323,13 @@ class NodeTypeConfigurationEnrichmentAspect
     protected function addHelpTextsToNodeTypeConfiguration($nodeTypeName, array &$configuration)
     {
         $nodeTypeLabelIdPrefix = $this->generateNodeTypeLabelIdPrefix($nodeTypeName);
+        $interfaceLocale = new \TYPO3\Flow\I18n\Locale($this->userService->getInterfaceLanguage());
 
-        $this->translateAndConvertHelpMessage($configuration, $nodeTypeLabelIdPrefix, $nodeTypeName);
+        $this->translateAndConvertHelpMessage($configuration, $nodeTypeLabelIdPrefix, $nodeTypeName, $interfaceLocale);
 
         if (isset($configuration['properties'])) {
             foreach ($configuration['properties'] as $propertyName => &$propertyConfiguration) {
-                $this->translateAndConvertHelpMessage($propertyConfiguration, $nodeTypeLabelIdPrefix . 'properties.' . $propertyName . '.');
+                $this->translateAndConvertHelpMessage($propertyConfiguration, $nodeTypeLabelIdPrefix . 'properties.' . $propertyName . '.', null, $interfaceLocale);
             }
         }
     }
@@ -332,9 +340,10 @@ class NodeTypeConfigurationEnrichmentAspect
      * @param array $configuration
      * @param string $idPrefix
      * @param string $nodeTypeName
+     * @param \TYPO3\Flow\I18n\Locale $interfaceLanguage
      * @return void
      */
-    protected function translateAndConvertHelpMessage(array &$configuration, $idPrefix, $nodeTypeName = null)
+    protected function translateAndConvertHelpMessage(array &$configuration, $idPrefix, $nodeTypeName = null, $interfaceLanguage = null)
     {
         $helpMessage = '';
         if (isset($configuration['ui']['help'])) {
@@ -342,7 +351,7 @@ class NodeTypeConfigurationEnrichmentAspect
             if (isset($configuration['ui']['help']['message'])) {
                 if ($this->shouldFetchTranslation($configuration['ui']['help'], 'message')) {
                     $translationIdentifier = $this->splitIdentifier($idPrefix . 'ui.help.message');
-                    $helpMessage = $this->translator->translateById($translationIdentifier['id'], [], null, null, $translationIdentifier['source'], $translationIdentifier['packageKey']);
+                    $helpMessage = $this->translator->translateById($translationIdentifier['id'], [], null, $interfaceLanguage, $translationIdentifier['source'], $translationIdentifier['packageKey']);
                 } else {
                     $helpMessage = $configuration['ui']['help']['message'];
                 }
