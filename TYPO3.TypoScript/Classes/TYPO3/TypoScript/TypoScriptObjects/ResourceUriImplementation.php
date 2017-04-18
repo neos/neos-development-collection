@@ -17,6 +17,7 @@ use TYPO3\Flow\Mvc\ActionRequest;
 use TYPO3\Flow\Resource\Resource;
 use TYPO3\Flow\Resource\ResourceManager;
 use TYPO3\TypoScript\Exception as TypoScriptException;
+use TYPO3\Flow\Resource\Exception as ResourceException;
 
 /**
  * A TypoScript object to create resource URIs
@@ -107,12 +108,11 @@ class ResourceUriImplementation extends AbstractTypoScriptObject
             throw new TypoScriptException('Neither "resource" nor "path" were specified', 1386458763);
         }
         if (strpos($path, 'resource://') === 0) {
-            $matches = array();
-            if (preg_match('#^resource://([^/]+)/Public/(.*)#', $path, $matches) !== 1) {
-                throw new TypoScriptException(sprintf('The specified path "%s" does not point to a public resource.', $path), 1386458851);
+            try {
+                list($package, $path) = $this->resourceManager->getPackageAndPathByPublicPath($path);
+            } catch (ResourceException $exception) {
+                throw new TypoScriptException(sprintf('The specified path "%s" does not point to a public resource.', $path), 1386458851, $exception);
             }
-            $package = $matches[1];
-            $path = $matches[2];
         } else {
             $package = $this->getPackage();
             if ($package === null) {
