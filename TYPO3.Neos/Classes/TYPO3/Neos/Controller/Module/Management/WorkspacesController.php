@@ -486,6 +486,11 @@ class WorkspacesController extends AbstractModuleController
                             'node' => $node,
                             'contentChanges' => $this->renderContentChanges($node)
                         ];
+
+                        if (!empty($node->getContext()->getTargetDimensions())) {
+                            $change['targetDimensions'] = $node->getContext()->getTargetDimensions();
+                        }
+
                         if ($node->getNodeType()->isOfType('TYPO3.Neos:Node')) {
                             $change['configuration'] = $node->getNodeType()->getFullConfiguration();
                         }
