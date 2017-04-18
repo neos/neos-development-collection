@@ -175,8 +175,13 @@ class AssetController extends \TYPO3\Flow\Mvc\Controller\ActionController
             }
         }
 
-        if ($this->browserState->get('sort') !== 'Modified') {
-            $this->assetRepository->setDefaultOrderings(array('resource.filename' => \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING));
+        if ($this->browserState->get('sort') !== 'Modified-ASC') {
+            $sortOptions = explode('-', $this->browserState->get('sort'));
+
+            ($sortOptions[0] == 'Name') ? $sortFor = 'resource.filename' : $sortFor = 'lastModified';
+            ($sortOptions[1] == 'DESC') ? $sortDirection = \TYPO3\Flow\Persistence\QueryInterface::ORDER_DESCENDING : $sortDirection = \TYPO3\Flow\Persistence\QueryInterface::ORDER_ASCENDING;
+
+            $this->assetRepository->setDefaultOrderings(array($sortFor => $sortDirection));
         }
 
         if (!$this->browserState->get('activeTag') && $this->browserState->get('tagMode') === self::TAG_GIVEN) {

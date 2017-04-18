@@ -44,10 +44,16 @@
 			</span>
 			<ul class="neos-dropdown-menu neos-pull-right" role="menu">
 				<li>
-					<f:link.action action="index" title="{neos:backend.translate(id: 'media.sortByLastModified', source: 'Modules', package: 'TYPO3.Neos')}" arguments="{sort: 'Modified'}" addQueryString="TRUE" class="{f:if(condition: '{sort} == \'Modified\'', then: 'neos-active')}"><i class="icon-sort-by-order"></i> {neos:backend.translate(id: 'media.field.lastModified', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
+					<f:link.action action="index" title="{neos:backend.translate(id: 'media.sortByLastModified', source: 'Modules', package: 'TYPO3.Neos')}" arguments="{sort: 'Modified-ASC'}" addQueryString="TRUE" class="{f:if(condition: '{sort} == \'Modified-ASC\'', then: 'neos-active')}"><i class="icon-sort-by-order"></i> {neos:backend.translate(id: 'media.field.lastModified', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
 				</li>
 				<li>
-					<f:link.action action="index" title="{neos:backend.translate(id: 'media.sortByName', source: 'Modules', package: 'TYPO3.Neos')}" arguments="{sort: 'Name'}" addQueryString="TRUE" class="{f:if(condition: '{sort} == \'Name\'', then: 'neos-active')}"><i class="icon-sort-by-alphabet"></i> {neos:backend.translate(id: 'media.field.name', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
+					<f:link.action action="index" title="{neos:backend.translate(id: 'media.sortByLastModified', source: 'Modules', package: 'TYPO3.Neos')}" arguments="{sort: 'Modified-DESC'}" addQueryString="TRUE" class="{f:if(condition: '{sort} == \'Modified-DESC\'', then: 'neos-active')}"><i class="icon-sort-by-order-alt"></i> {neos:backend.translate(id: 'media.field.lastModified', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
+				</li>
+				<li>
+					<f:link.action action="index" title="{neos:backend.translate(id: 'media.sortByName', source: 'Modules', package: 'TYPO3.Neos')}" arguments="{sort: 'Name-ASC'}" addQueryString="TRUE" class="{f:if(condition: '{sort} == \'Name-ASC\'', then: 'neos-active')}"><i class="icon-sort-by-alphabet"></i> {neos:backend.translate(id: 'media.field.name', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
+				</li>
+				<li>
+					<f:link.action action="index" title="{neos:backend.translate(id: 'media.sortByName', source: 'Modules', package: 'TYPO3.Neos')}" arguments="{sort: 'Name-DESC'}" addQueryString="TRUE" class="{f:if(condition: '{sort} == \'Name-DESC\'', then: 'neos-active')}"><i class="icon-sort-by-alphabet-alt"></i> {neos:backend.translate(id: 'media.field.name', source: 'Modules', package: 'TYPO3.Neos')}</f:link.action>
 				</li>
 			</ul>
 		</div>

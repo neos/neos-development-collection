@@ -40,10 +40,16 @@
 			</span>
 			<ul class="neos-dropdown-menu neos-pull-right" role="menu">
 				<li>
-					<f:link.action action="index" title="Sort by last modified" arguments="{sort: 'Modified'}" addQueryString="TRUE" class="{f:if(condition: '{sort} == \'Modified\'', then: 'neos-active')}"><i class="icon-sort-by-order"></i> Last modified</f:link.action>
+					<f:link.action action="index" title="Sort by last modified" arguments="{sort: 'Modified-ASC'}" addQueryString="TRUE" class="{f:if(condition: '{sort} == \'Modified-ASC\'', then: 'neos-active')}"><i class="icon-sort-by-order"></i> Last modified</f:link.action>
 				</li>
 				<li>
-					<f:link.action action="index" title="Sort by name" arguments="{sort: 'Name'}" addQueryString="TRUE" class="{f:if(condition: '{sort} == \'Name\'', then: 'neos-active')}"><i class="icon-sort-by-alphabet"></i> Name</f:link.action>
+					<f:link.action action="index" title="Sort by last modified" arguments="{sort: 'Modified-DESC'}" addQueryString="TRUE" class="{f:if(condition: '{sort} == \'Modified-DESC\'', then: 'neos-active')}"><i class="icon-sort-by-order"></i> Last modified</f:link.action>
+				</li>
+				<li>
+					<f:link.action action="index" title="Sort by name" arguments="{sort: 'Name-DESC'}" addQueryString="TRUE" class="{f:if(condition: '{sort} == \'Name\'', then: 'neos-active')}"><i class="icon-sort-by-alphabet"></i> Name</f:link.action>
+				</li>
+				<li>
+					<f:link.action action="index" title="Sort by name" arguments="{sort: 'Name-DESC'}" addQueryString="TRUE" class="{f:if(condition: '{sort} == \'Name\'', then: 'neos-active')}"><i class="icon-sort-by-alphabet"></i> Name</f:link.action>
 				</li>
 			</ul>
 		</div>
