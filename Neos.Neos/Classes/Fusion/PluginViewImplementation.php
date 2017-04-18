@@ -20,7 +20,7 @@ use Neos\Neos\Service\PluginService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
- * A TypoScript PluginView.
+ * A Fusion PluginView.
  */
 class PluginViewImplementation extends PluginImplementation
 {
