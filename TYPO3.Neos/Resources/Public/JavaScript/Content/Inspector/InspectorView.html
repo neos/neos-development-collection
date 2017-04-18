@@ -8,10 +8,12 @@
 	</div>
 </div>
 <div class="neos-inspector-form">
-	<div class="neos-inspector-field">
-		<label for="neos-content-breadcrumb">Selected element</label>
-		{{view view.Breadcrumb}}
-	</div>
+	{{#if showBreadcrumb}}
+		<div class="neos-inspector-field">
+			<label for="neos-content-breadcrumb">Selected element</label>
+			{{view view.Breadcrumb}}
+		</div>
+	{{/if}}
 	{{#each tab in groupedPropertyViews}}
 		<div {{bindAttr class="tab.isActive:is-visible :neos-inspector-tab-content"}}>
 			{{#each group in tab.groups}}
