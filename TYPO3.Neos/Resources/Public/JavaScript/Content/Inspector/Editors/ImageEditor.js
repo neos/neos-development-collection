@@ -1025,10 +1025,35 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 			};
 		},
 
+		/**
+		 * Keep track of the media view to reset the view every time it's reopened
+		 */
+		_mediaViewDomId: null,
+
 		_initializeMediaView: function () {
+			var mediaViewDomId = Ember.guidFor(this);
+			this.set('_mediaViewDomId', mediaViewDomId);
+			var url = $('link[rel="neos-image-browser"]').attr('href');
 			this.set('_mediaBrowserView', Ember.View.extend({
-				template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" src="' + $('link[rel="neos-image-browser"]').attr('href') + '"></iframe>')
+				template: Ember.Handlebars.compile('<iframe style="width:100%; height: 100%" id="' + mediaViewDomId + '" src="' + url + '"></iframe>')
 			}));
+
+			// If the media editor is reopened, make sure that it's back into
+			// the initial state by resetting the iframe url.
+			// for performance reasons we prefer to do it on close, this cover almost
+			// all use cases. If the user switches from one media view directly to another,
+			// it is handled inside _beforeMediaBrowserIsShown.
+			var that = this;
+			SecondaryInspectorController.addObserver('_visible', function(controller) {
+				if(that.get('_mediaBrowserView') !== controller.get('_viewClass') || controller.get('_visible')) {
+					return;
+				}
+				var iframe = $('#'+mediaViewDomId);
+				// src attribute is not updated, get the current href from the iframe
+				if(iframe[0].contentWindow.location.href !== url) {
+					iframe.attr('src', url);
+				}
+			});
 		},
 
 		_initializeUploader: function () {
