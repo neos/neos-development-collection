@@ -376,7 +376,6 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 			var that = this;
 			window.Typo3MediaBrowserCallbacks = {
 				close: function () {
-					SecondaryInspectorController.hide(that.get('_mediaBrowserEditView'));
 					that._initializeMediaBrowserEditView();
 				}
 			};
