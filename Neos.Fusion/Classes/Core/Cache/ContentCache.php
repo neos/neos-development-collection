@@ -115,15 +115,15 @@ class ContentCache
      * This method is called by the Fusion Runtime while rendering a Fusion object.
      *
      * @param string $content The (partial) content which should potentially be cached later on
-     * @param string $typoScriptPath The Fusion path that rendered the content, for example "page<Neos.NodeTypes:Page>/body<Acme.Demo:DefaultPageTemplate>/parts/breadcrumbMenu"
+     * @param string $fusionPath The Fusion path that rendered the content, for example "page<Neos.NodeTypes:Page>/body<Acme.Demo:DefaultPageTemplate>/parts/breadcrumbMenu"
      * @param array $cacheIdentifierValues The values (simple type or implementing CacheAwareInterface) that should be used to create a cache identifier, will be sorted by keys for consistent ordering
      * @param array $tags Tags to add to the cache entry
      * @param integer $lifetime Lifetime of the cache segment in seconds. NULL for the default lifetime and 0 for unlimited lifetime.
      * @return string The original content, but with additional markers and a cache identifier added
      */
-    public function createCacheSegment($content, $typoScriptPath, array $cacheIdentifierValues, array $tags = [], $lifetime = null)
+    public function createCacheSegment($content, $fusionPath, array $cacheIdentifierValues, array $tags = [], $lifetime = null)
     {
-        $cacheIdentifier = $this->renderContentCacheEntryIdentifier($typoScriptPath, $cacheIdentifierValues);
+        $cacheIdentifier = $this->renderContentCacheEntryIdentifier($fusionPath, $cacheIdentifierValues);
         $metadata = implode(',', $tags);
         if ($lifetime !== null) {
             $metadata .= ';' . $lifetime;
@@ -138,14 +138,14 @@ class ContentCache
      * This method is called by the Fusion Runtime while rendering a Fusion object.
      *
      * @param string $content The content rendered by the Fusion Runtime
-     * @param string $typoScriptPath The Fusion path that rendered the content, for example "page<Neos.NodeTypes:Page>/body<Acme.Demo:DefaultPageTemplate>/parts/breadcrumbMenu"
+     * @param string $fusionPath The Fusion path that rendered the content, for example "page<Neos.NodeTypes:Page>/body<Acme.Demo:DefaultPageTemplate>/parts/breadcrumbMenu"
      * @param array $contextVariables Fusion context variables which are needed to correctly render the specified Fusion object
      * @return string The original content, but with additional markers added
      */
-    public function createUncachedSegment($content, $typoScriptPath, array $contextVariables)
+    public function createUncachedSegment($content, $fusionPath, array $contextVariables)
     {
         $serializedContext = $this->serializeContext($contextVariables);
-        return self::CACHE_SEGMENT_START_TOKEN . $this->randomCacheMarker . 'eval=' . $typoScriptPath . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . json_encode(['context' => $serializedContext]) . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . $content . self::CACHE_SEGMENT_END_TOKEN . $this->randomCacheMarker;
+        return self::CACHE_SEGMENT_START_TOKEN . $this->randomCacheMarker . 'eval=' . $fusionPath . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . json_encode(['context' => $serializedContext]) . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . $content . self::CACHE_SEGMENT_END_TOKEN . $this->randomCacheMarker;
     }
 
     /**
@@ -155,7 +155,7 @@ class ContentCache
      * This method is called by the Fusion Runtime while rendering a Fusion object.
      *
      * @param string $content The content rendered by the Fusion Runtime
-     * @param string $typoScriptPath The Fusion path that rendered the content, for example "page<Neos.NodeTypes:Page>/body<Acme.Demo:DefaultPageTemplate>/parts/breadcrumbMenu"
+     * @param string $fusionPath The Fusion path that rendered the content, for example "page<Neos.NodeTypes:Page>/body<Acme.Demo:DefaultPageTemplate>/parts/breadcrumbMenu"
      * @param array $contextVariables Fusion context variables which are needed to correctly render the specified Fusion object
      * @param array $cacheIdentifierValues
      * @param array $tags Tags to add to the cache entry
@@ -163,16 +163,16 @@ class ContentCache
      * @param string $cacheDiscriminator The evaluated cache discriminator value
      * @return string The original content, but with additional markers added
      */
-    public function createDynamicCachedSegment($content, $typoScriptPath, array $contextVariables, array $cacheIdentifierValues, array $tags = [], $lifetime = null, $cacheDiscriminator)
+    public function createDynamicCachedSegment($content, $fusionPath, array $contextVariables, array $cacheIdentifierValues, array $tags = [], $lifetime = null, $cacheDiscriminator)
     {
         $metadata = implode(',', $tags);
         if ($lifetime !== null) {
             $metadata .= ';' . $lifetime;
         }
         $cacheDiscriminator = md5($cacheDiscriminator);
-        $identifier = $this->renderContentCacheEntryIdentifier($typoScriptPath, $cacheIdentifierValues) . '_' . $cacheDiscriminator;
+        $identifier = $this->renderContentCacheEntryIdentifier($fusionPath, $cacheIdentifierValues) . '_' . $cacheDiscriminator;
         $segmentData = [
-            'path' => $typoScriptPath,
+            'path' => $fusionPath,
             'metadata' => $metadata,
             'context' => $this->serializeContext($contextVariables),
         ];
@@ -183,12 +183,12 @@ class ContentCache
     /**
      * Renders an identifier for a content cache entry
      *
-     * @param string $typoScriptPath
+     * @param string $fusionPath
      * @param array $cacheIdentifierValues
-     * @return string An MD5 hash built from the typoScriptPath and certain elements of the given identifier values
+     * @return string An MD5 hash built from the fusionPath and certain elements of the given identifier values
      * @throws CacheException If an invalid entry identifier value is given
      */
-    protected function renderContentCacheEntryIdentifier($typoScriptPath, array $cacheIdentifierValues)
+    protected function renderContentCacheEntryIdentifier($fusionPath, array $cacheIdentifierValues)
     {
         ksort($cacheIdentifierValues);
 
@@ -199,12 +199,12 @@ class ContentCache
             } elseif (is_string($value) || is_bool($value) || is_integer($value)) {
                 $identifierSource .= $key . '=' . $value . '&';
             } elseif ($value !== null) {
-                throw new CacheException(sprintf('Invalid cache entry identifier @cache.entryIdentifier.%s for path "%s". A entry identifier value must be a string or implement CacheAwareInterface.', $key, $typoScriptPath), 1395846615);
+                throw new CacheException(sprintf('Invalid cache entry identifier @cache.entryIdentifier.%s for path "%s". A entry identifier value must be a string or implement CacheAwareInterface.', $key, $fusionPath), 1395846615);
             }
         }
         $identifierSource .= 'securityContextHash=' . $this->securityContext->getContextHash();
 
-        return md5($typoScriptPath . '@' . $identifierSource);
+        return md5($fusionPath . '@' . $identifierSource);
     }
 
     /**
@@ -243,15 +243,15 @@ class ContentCache
      * as well and segments which were not cacheable are rendered.
      *
      * @param \Closure $uncachedCommandCallback A callback to process commands in uncached segments
-     * @param string $typoScriptPath Fusion path identifying the Fusion object to retrieve from the content cache
+     * @param string $fusionPath Fusion path identifying the Fusion object to retrieve from the content cache
      * @param array $cacheIdentifierValues Further values which play into the cache identifier hash, must be the same as the ones specified while the cache entry was written
      * @param boolean $addCacheSegmentMarkersToPlaceholders If cache segment markers should be added – this makes sense if the cached segment is about to be included in a not-yet-cached segment
      * @return string|boolean The segment with replaced cache placeholders, or FALSE if a segment was missing in the cache
      * @throws Exception
      */
-    public function getCachedSegment($uncachedCommandCallback, $typoScriptPath, $cacheIdentifierValues, $addCacheSegmentMarkersToPlaceholders = false)
+    public function getCachedSegment($uncachedCommandCallback, $fusionPath, $cacheIdentifierValues, $addCacheSegmentMarkersToPlaceholders = false)
     {
-        $cacheIdentifier = $this->renderContentCacheEntryIdentifier($typoScriptPath, $cacheIdentifierValues);
+        $cacheIdentifier = $this->renderContentCacheEntryIdentifier($fusionPath, $cacheIdentifierValues);
         $content = $this->cache->get($cacheIdentifier);
 
         if ($content === false) {

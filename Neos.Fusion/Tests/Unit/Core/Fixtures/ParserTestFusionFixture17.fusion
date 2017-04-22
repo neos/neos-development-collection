@@ -3,12 +3,12 @@
 //
 // - Inclusion globing
 
-include: ParserTestTypoScriptFixture16.fusion
+include: ParserTestFusionFixture16.fusion
 
 # Also include fixture #17b to check if the default namespace which has been defined for the Parser
 # via the PHP API, also is available in the included file:
 
-include: ParserTestTypoScriptFixture17b.fusion
+include: ParserTestFusionFixture17b.fusion
 
 prototype(Neos.Foo:Bar2).baz = "New Value"
 

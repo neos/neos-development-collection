@@ -157,12 +157,12 @@ class ContentCacheTest extends UnitTestCase
 
         $invalidContent = 'You should probably not use ' . ContentCache::CACHE_SEGMENT_START_TOKEN . ', ' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . ' or ' . ContentCache::CACHE_SEGMENT_END_TOKEN . ' inside your content.';
 
-        $content = $contentCache->createCacheSegment($invalidContent, 'some.typoscripth.path', array('node' => 'foo'),
+        $content = $contentCache->createCacheSegment($invalidContent, 'some.fusionh.path', array('node' => 'foo'),
             array('mytag1', 'mytag2'));
 
         $validContent = 'But the cache should not fail because of it.';
 
-        $content .= $contentCache->createCacheSegment($validContent, 'another.typoscripth.path', array('node' => 'bar'),
+        $content .= $contentCache->createCacheSegment($validContent, 'another.fusionh.path', array('node' => 'bar'),
             array('mytag2'), 86400);
 
         $mockCache->expects($this->at(0))->method('set')->with($this->anything(), $invalidContent,
@@ -192,7 +192,7 @@ class ContentCacheTest extends UnitTestCase
 
         $invalidContent = 'You should probably not use ' . ContentCache::CACHE_SEGMENT_START_TOKEN . ', ' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . ' or ' . ContentCache::CACHE_SEGMENT_END_TOKEN . ' inside your uncached content.';
 
-        $content = $contentCache->createUncachedSegment($invalidContent, 'uncached.typoscript.path',
+        $content = $contentCache->createUncachedSegment($invalidContent, 'uncached.fusion.path',
             array('node' => 'A node identifier'));
 
         $output = $contentCache->processCacheSegments($content);
@@ -224,12 +224,12 @@ class ContentCacheTest extends UnitTestCase
 
         $invalidContent = 'You should probably not use ' . ContentCache::CACHE_SEGMENT_START_TOKEN . ', ' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . ' or ' . ContentCache::CACHE_SEGMENT_END_TOKEN . ' inside your content.';
 
-        $innerCachedContent = $contentCache->createCacheSegment($invalidContent, 'some.typoscripth.path.innerCached',
+        $innerCachedContent = $contentCache->createCacheSegment($invalidContent, 'some.fusionh.path.innerCached',
             array('node' => 'foo'), array('mytag1', 'mytag2'));
 
         $uncachedCommandOutput = 'This content is highly dynamic with ' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . ' and ' . ContentCache::CACHE_SEGMENT_END_TOKEN;
         $innerUncachedContent = $contentCache->createUncachedSegment($uncachedCommandOutput,
-            'some.typoscripth.path.innerUncached', array('node' => 'A node identifier'));
+            'some.fusionh.path.innerUncached', array('node' => 'A node identifier'));
 
         $outerContentStart = 'You can nest cached segments like <';
         $outerContentMiddle = '> or uncached segments like <';
@@ -237,7 +237,7 @@ class ContentCacheTest extends UnitTestCase
 
         $outerContent = $outerContentStart . $innerCachedContent . $outerContentMiddle . $innerUncachedContent . $outerContentEnd;
 
-        $content = $contentCache->createCacheSegment($outerContent, 'some.typoscripth.path', array('node' => 'bar'),
+        $content = $contentCache->createCacheSegment($outerContent, 'some.fusionh.path', array('node' => 'bar'),
             array('mytag2'), 86400);
         $output = $contentCache->processCacheSegments($content);
 
@@ -246,12 +246,12 @@ class ContentCacheTest extends UnitTestCase
         $this->assertSame($expectedOutput, $output);
 
         $cachedContent = $contentCache->getCachedSegment(function ($command) use ($uncachedCommandOutput) {
-            if ($command === 'eval=some.typoscripth.path.innerUncached') {
+            if ($command === 'eval=some.fusionh.path.innerUncached') {
                 return $uncachedCommandOutput;
             } else {
                 $this->fail('Unexpected command: ' . $command);
             }
-        }, 'some.typoscripth.path', array('node' => 'bar'));
+        }, 'some.fusionh.path', array('node' => 'bar'));
 
         $this->assertSame($expectedOutput, $cachedContent);
     }

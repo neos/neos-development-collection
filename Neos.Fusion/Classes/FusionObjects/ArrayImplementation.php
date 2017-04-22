@@ -28,14 +28,14 @@ class ArrayImplementation extends AbstractArrayFusionObject
      */
     public function evaluate()
     {
-        $sortedChildTypoScriptKeys = $this->sortNestedFusionKeys();
+        $sortedChildFusionKeys = $this->sortNestedFusionKeys();
 
-        if (count($sortedChildTypoScriptKeys) === 0) {
+        if (count($sortedChildFusionKeys) === 0) {
             return null;
         }
 
         $output = '';
-        foreach ($sortedChildTypoScriptKeys as $key) {
+        foreach ($sortedChildFusionKeys as $key) {
             try {
                 $output .= $this->fusionValue($key);
             } catch (\Exception $e) {
@@ -80,17 +80,17 @@ class ArrayImplementation extends AbstractArrayFusionObject
     {
         $arraySorter = new PositionalArraySorter($this->properties, '__meta.position');
         try {
-            $sortedTypoScriptKeys = $arraySorter->getSortedKeys();
+            $sortedFusionKeys = $arraySorter->getSortedKeys();
         } catch (InvalidPositionException $exception) {
             throw new Fusion\Exception('Invalid position string', 1345126502, $exception);
         }
 
         foreach ($this->ignoreProperties as $ignoredPropertyName) {
-            $key = array_search($ignoredPropertyName, $sortedTypoScriptKeys);
+            $key = array_search($ignoredPropertyName, $sortedFusionKeys);
             if ($key !== false) {
-                unset($sortedTypoScriptKeys[$key]);
+                unset($sortedFusionKeys[$key]);
             }
         }
-        return $sortedTypoScriptKeys;
+        return $sortedFusionKeys;
     }
 }

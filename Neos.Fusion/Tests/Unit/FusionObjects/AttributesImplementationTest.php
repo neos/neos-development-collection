@@ -59,8 +59,8 @@ class AttributesImplementationTest extends UnitTestCase
             return ObjectAccess::getPropertyPath($properties, str_replace('/', '.', $relativePath));
         }));
 
-        $typoScriptObjectName = 'Neos.Fusion:Attributes';
-        $renderer = new AttributesImplementation($this->mockRuntime, $path, $typoScriptObjectName);
+        $fusionObjectName = 'Neos.Fusion:Attributes';
+        $renderer = new AttributesImplementation($this->mockRuntime, $path, $fusionObjectName);
         if ($properties !== null) {
             foreach ($properties as $name => $value) {
                 ObjectAccess::setProperty($renderer, $name, $value);

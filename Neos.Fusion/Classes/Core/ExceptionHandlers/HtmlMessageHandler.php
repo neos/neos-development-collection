@@ -87,7 +87,7 @@ class HtmlMessageHandler extends AbstractRenderingExceptionHandler
      *      body<Neos.Fusion:Template>/
      *       content/
      *
-     * @param string $typoScriptPath
+     * @param string $fusionPath
      * @return string Multi-line stack trace for the given Fusion path
      */
     protected function formatFusionPath($fusionPath)
