@@ -22,15 +22,15 @@ class SimpleTypesTest extends AbstractFusionObjectTest
      */
     public function valuesCanBeExpressedAsSimpleValueAsEelAsTypoScropt()
     {
-        $this->assertMultipleTypoScriptPaths('A simple string value is not a Fusion object', 'simpleTypes/stringAs');
+        $this->assertMultipleFusionPaths('A simple string value is not a Fusion object', 'simpleTypes/stringAs');
     }
 
     /**
      * @test
      */
-    public function typoScriptPropertiesCanContainSimpleValueOrEelOrTypoScropt()
+    public function fusionPropertiesCanContainSimpleValueOrEelOrTypoScropt()
     {
-        $this->assertMultipleTypoScriptPaths('A simple value', 'simpleTypes/valueWithNested');
+        $this->assertMultipleFusionPaths('A simple value', 'simpleTypes/valueWithNested');
     }
 
     /**

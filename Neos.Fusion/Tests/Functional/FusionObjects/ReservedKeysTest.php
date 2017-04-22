@@ -24,7 +24,7 @@ class ReservedKeysTest extends AbstractFusionObjectTest
     public function usingReservedKeysThrowsException()
     {
         $view = $this->buildView();
-        $view->setFusionPathPattern(__DIR__ . '/Fixtures/ReservedKeysTypoScript');
+        $view->setFusionPathPattern(__DIR__ . '/Fixtures/ReservedKeysFusion');
         $view->render();
     }
 

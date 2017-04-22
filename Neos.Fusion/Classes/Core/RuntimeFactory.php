@@ -28,17 +28,17 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
 class RuntimeFactory
 {
     /**
-     * @param array $typoScriptConfiguration
+     * @param array $fusionConfiguration
      * @param ControllerContext $controllerContext
      * @return Runtime
      */
-    public function create($typoScriptConfiguration, ControllerContext $controllerContext = null)
+    public function create($fusionConfiguration, ControllerContext $controllerContext = null)
     {
         if ($controllerContext === null) {
             $controllerContext = $this->createControllerContextFromEnvironment();
         }
 
-        return new Runtime($typoScriptConfiguration, $controllerContext);
+        return new Runtime($fusionConfiguration, $controllerContext);
     }
 
     /**

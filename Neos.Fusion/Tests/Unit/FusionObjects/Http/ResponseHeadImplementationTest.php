@@ -63,8 +63,8 @@ class ResponseHeadImplementationTest extends UnitTestCase
             return isset($properties[$relativePath]) ? $properties[$relativePath] : null;
         }));
 
-        $typoScriptObjectName = 'Neos.Fusion:Http.ResponseHead';
-        $renderer = new ResponseHeadImplementation($this->mockRuntime, $path, $typoScriptObjectName);
+        $fusionObjectName = 'Neos.Fusion:Http.ResponseHead';
+        $renderer = new ResponseHeadImplementation($this->mockRuntime, $path, $fusionObjectName);
 
         $result = $renderer->evaluate();
         $this->assertEquals($expectedOutput, $result);

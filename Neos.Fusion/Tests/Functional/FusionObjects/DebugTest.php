@@ -65,10 +65,10 @@ class DebugTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function debugTsObjectExpression()
+    public function debugFusionObjectExpression()
     {
         $view = $this->buildView();
-        $view->setFusionPath('debug/tsObjectExpression');
+        $view->setFusionPath('debug/fusionObjectExpression');
         $lines = explode(chr(10), $view->render());
         $this->assertEquals('string "hello world" (11)', $lines[1]);
     }

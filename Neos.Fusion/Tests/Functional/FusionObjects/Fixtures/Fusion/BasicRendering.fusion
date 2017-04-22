@@ -5,7 +5,7 @@ basicRendering.test = Neos.Fusion:TestRenderer {
 	test = 'Hello World'
 }
 
-basicRendering.reuseTypoScriptVariables = Neos.Fusion:TestRenderer {
+basicRendering.reuseFusionVariables = Neos.Fusion:TestRenderer {
 	test2 = 'orld'
 	test = ${'Hello W' + this.test2}
 }
@@ -14,7 +14,7 @@ basicRendering.crashing = Neos.Fusion:Template {
 	templatePath = 'no.such.file.here.so.crash.please'
 }
 
-basicRendering.reuseTypoScriptVariablesWithEel = Neos.Fusion:TestRenderer {
+basicRendering.reuseFusionVariablesWithEel = Neos.Fusion:TestRenderer {
 	test2 = ${'or' + 'ld'}
 	test = ${'Hello W' + this.test2}
 }
@@ -54,8 +54,8 @@ basicRendering.contentIsNotTrimmed = Neos.Fusion:TestRenderer {
 basicRendering.overridePlainValueWithEel = 'Test'
 basicRendering.overridePlainValueWithEel = ${'overridden'}
 
-basicRendering.overridePlainValueWithTypoScript = 'Test'
-basicRendering.overridePlainValueWithTypoScript = Neos.Fusion:Value {
+basicRendering.overridePlainValueWithFusion = 'Test'
+basicRendering.overridePlainValueWithFusion = Neos.Fusion:Value {
 	value = 'overridden'
 }
 
@@ -69,8 +69,8 @@ basicRendering.overridePlainValueWithPlainValue = 'overridden'
 basicRendering.overrideEelWithPlainValue = ${'Test'}
 basicRendering.overrideEelWithPlainValue = 'overridden'
 
-basicRendering.overrideEelWithTypoScript = ${'Test'}
-basicRendering.overrideEelWithTypoScript = Neos.Fusion:Value {
+basicRendering.overrideEelWithFusion = ${'Test'}
+basicRendering.overrideEelWithFusion = Neos.Fusion:Value {
 	value = 'overridden'
 }
 basicRendering.overrideEelWithEel = ${'Test'}
@@ -80,18 +80,18 @@ basicRendering.overrideEelWithEel = ${'overridden'}
 
 
 
-basicRendering.overrideTypoScriptWithPlainValue = Neos.Fusion:Value {
+basicRendering.overrideFusionWithPlainValue = Neos.Fusion:Value {
 	value = 'Test'
 }
-basicRendering.overrideTypoScriptWithPlainValue = 'overridden'
+basicRendering.overrideFusionWithPlainValue = 'overridden'
 
-basicRendering.overrideTypoScriptWithTypoScript = Neos.Fusion:Value {
+basicRendering.overrideFusionWithFusion = Neos.Fusion:Value {
 	value = 'Test'
 }
-basicRendering.overrideTypoScriptWithTypoScript = Neos.Fusion:Value {
+basicRendering.overrideFusionWithFusion = Neos.Fusion:Value {
 	value = 'overridden'
 }
-basicRendering.overrideTypoScriptWithEel = Neos.Fusion:Value {
+basicRendering.overrideFusionWithEel = Neos.Fusion:Value {
 	value = 'Test'
 }
-basicRendering.overrideTypoScriptWithEel = ${'overridden'}
+basicRendering.overrideFusionWithEel = ${'overridden'}

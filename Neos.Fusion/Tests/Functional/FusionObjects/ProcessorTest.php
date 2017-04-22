@@ -22,7 +22,7 @@ class ProcessorTest extends AbstractFusionObjectTest
      */
     public function basicProcessorsWork()
     {
-        $this->assertMultipleTypoScriptPaths('Hello World foo', 'processors/newSyntax/basicProcessor/valueWithNested');
+        $this->assertMultipleFusionPaths('Hello World foo', 'processors/newSyntax/basicProcessor/valueWithNested');
     }
 
     /**
@@ -30,7 +30,7 @@ class ProcessorTest extends AbstractFusionObjectTest
      */
     public function basicProcessorsBeforeValueWork()
     {
-        $this->assertMultipleTypoScriptPaths('Hello World foo', 'processors/newSyntax/processorBeforeValue/valueWithNested');
+        $this->assertMultipleFusionPaths('Hello World foo', 'processors/newSyntax/processorBeforeValue/valueWithNested');
     }
 
     /**
@@ -38,7 +38,7 @@ class ProcessorTest extends AbstractFusionObjectTest
      */
     public function extendedSyntaxProcessorsWork()
     {
-        $this->assertMultipleTypoScriptPaths('Hello World foo', 'processors/newSyntax/extendedSyntaxProcessor/valueWithNested');
+        $this->assertMultipleFusionPaths('Hello World foo', 'processors/newSyntax/extendedSyntaxProcessor/valueWithNested');
     }
 
     /**
@@ -72,6 +72,6 @@ class ProcessorTest extends AbstractFusionObjectTest
      */
     public function usingThisInProcessorWorks()
     {
-        $this->assertTyposcriptPath('my value append', 'processors/newSyntax/usingThisInProcessor');
+        $this->assertFusionPath('my value append', 'processors/newSyntax/usingThisInProcessor');
     }
 }

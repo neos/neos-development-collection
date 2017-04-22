@@ -17,7 +17,7 @@ use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Fusion\Exception\RuntimeException;
 
 /**
- * Wrap the exception to retain the typoScript path at which it was originally thrown
+ * Wrap the exception to retain the fusion path at which it was originally thrown
  */
 class BubblingHandler extends AbstractRenderingExceptionHandler
 {
@@ -36,7 +36,7 @@ class BubblingHandler extends AbstractRenderingExceptionHandler
         if ($exception instanceof RuntimeException) {
             throw $exception;
         } else {
-            throw new RuntimeException('Fusion Rendering Exception, see typoScriptPath and nested Exception for details.', 1401803055, $exception, $fusionPath);
+            throw new RuntimeException('Fusion Rendering Exception, see fusionPath and nested Exception for details.', 1401803055, $exception, $fusionPath);
         }
     }
 

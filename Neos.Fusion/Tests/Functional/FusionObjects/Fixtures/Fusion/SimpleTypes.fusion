@@ -21,11 +21,11 @@ simpleTypes.wrappedString = Value {
 // (without processors. Processors are tested in Processor.fusion)
 simpleTypes.stringAsEel = ${'A simple string value is not a Fusion object'}
 simpleTypes.stringAsPlainValue = 'A simple string value is not a Fusion object'
-simpleTypes.stringAsTypoScript = Value {
+simpleTypes.stringAsFusion = Value {
 	value = 'A simple string value is not a Fusion object'
 }
 
-// with the following lines, we test that AbstractFusionObject::tsObject works on all three
+// with the following lines, we test that AbstractFusionObject::fusionObject works on all three
 // data types (without processors. Processors are tested in Processor.fusion)
 simpleTypes.valueWithNestedPlainValue = Value {
 	value = 'A simple value'
@@ -33,7 +33,7 @@ simpleTypes.valueWithNestedPlainValue = Value {
 simpleTypes.valueWithNestedEel = Value {
 	value = ${'A simple value'}
 }
-simpleTypes.valueWithNestedTypoScript = Value {
+simpleTypes.valueWithNestedFusion = Value {
 	value = Value {
 		value = 'A simple value'
 	}

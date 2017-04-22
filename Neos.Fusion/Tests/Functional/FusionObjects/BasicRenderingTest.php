@@ -30,10 +30,10 @@ class BasicRenderingTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function basicRenderingReusingTypoScriptVariables()
+    public function basicRenderingReusingFusionVariables()
     {
         $view = $this->buildView();
-        $view->setFusionPath('basicRendering/reuseTypoScriptVariables');
+        $view->setFusionPath('basicRendering/reuseFusionVariables');
         $this->assertEquals('XHello World', $view->render());
     }
 
@@ -58,10 +58,10 @@ class BasicRenderingTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function basicRenderingReusingTypoScriptVariablesWithEel()
+    public function basicRenderingReusingFusionVariablesWithEel()
     {
         $view = $this->buildView();
-        $view->setFusionPath('basicRendering/reuseTypoScriptVariablesWithEel');
+        $view->setFusionPath('basicRendering/reuseFusionVariablesWithEel');
         $this->assertEquals('XHello World', $view->render());
     }
 
@@ -90,7 +90,7 @@ class BasicRenderingTest extends AbstractFusionObjectTest
      */
     public function plainValueCanBeOverridden()
     {
-        $this->assertMultipleTypoScriptPaths('overridden', 'basicRendering/overridePlainValueWith');
+        $this->assertMultipleFusionPaths('overridden', 'basicRendering/overridePlainValueWith');
     }
 
     /**
@@ -98,15 +98,15 @@ class BasicRenderingTest extends AbstractFusionObjectTest
      */
     public function eelExpressionCanBeOverridden()
     {
-        $this->assertMultipleTypoScriptPaths('overridden', 'basicRendering/overrideEelWith');
+        $this->assertMultipleFusionPaths('overridden', 'basicRendering/overrideEelWith');
     }
 
     /**
      * @test
      */
-    public function typoScriptCanBeOverridden()
+    public function fusionCanBeOverridden()
     {
-        $this->assertMultipleTypoScriptPaths('overridden', 'basicRendering/overrideTypoScriptWith');
+        $this->assertMultipleFusionPaths('overridden', 'basicRendering/overrideFusionWith');
     }
 
     /**

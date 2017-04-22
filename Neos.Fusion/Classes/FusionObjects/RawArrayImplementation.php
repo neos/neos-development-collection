@@ -26,14 +26,14 @@ class RawArrayImplementation extends ArrayImplementation
      */
     public function evaluate()
     {
-        $sortedChildTypoScriptKeys = $this->sortNestedFusionKeys();
+        $sortedChildFusionKeys = $this->sortNestedFusionKeys();
 
-        if (count($sortedChildTypoScriptKeys) === 0) {
+        if (count($sortedChildFusionKeys) === 0) {
             return array();
         }
 
         $output = array();
-        foreach ($sortedChildTypoScriptKeys as $key) {
+        foreach ($sortedChildFusionKeys as $key) {
             $value = $this->fusionValue($key);
             if ($value === null && $this->runtime->getLastEvaluationStatus() === Runtime::EVALUATION_SKIPPED) {
                 continue;
