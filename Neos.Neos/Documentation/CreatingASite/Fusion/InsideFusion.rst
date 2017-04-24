@@ -505,7 +505,7 @@ Debugging
 
 To show the result of Fusion Expressions directly you can use the Neos.Fusion:Debug Fusion-Object::
 
-	debugObject = Debug {
+	debugObject = Neos.Fusion:Debug {
 		# optional: set title for the debug output
 		# title = 'Debug'
 
