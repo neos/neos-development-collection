@@ -1,7 +1,7 @@
 {
-    "description": "",
-    "type": "neos-package",
     "name": "packagefactory/atomicfusion-afx",
+    "description": "JSX inspired compact syntax for Neos.Fusion",
+    "type": "neos-package",
     "license": "GPL-3.0",
     "authors": [
         {
@@ -12,7 +12,7 @@
     ],
     "require": {
         "neos/fusion": "^3.0.1",
-        "packagefactory/afx": "~1.0.0"
+        "packagefactory/afx": "~1.0.1"
     },
     "autoload": {
         "psr-4": {
