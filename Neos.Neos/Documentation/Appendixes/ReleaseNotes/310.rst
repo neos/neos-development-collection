@@ -1,0 +1,26 @@
+=====
+3.1.0
+=====
+
+Shipping the new UI as dev dependency
+=====================================
+The Neos UI is currently undergoing a massive rewrite in ReactJS and very recently we proudly announced beta. If you install Neos 3.1 including dev dependencies, you'll have access to the new UI just by using ``/neos!`` as login URI. Please help us to improve the interface further by trying it out the new UI with your websites and provide feedback in our public `Slack <neos-project.slack.com>`_ or on `discuss <https://discuss.neos.io/c/creating/design-ux>`_.
+
+Build environment overhaul
+==========================
+For 3.1 our internal build tools have been tweaked when it comes to branching and dependency management. This way it will be less painful for us to provide you with new releases of Neos and Flow.
+
+Preset support in Fusion
+========================
+``Neos.Neos:ImageUri`` and ``Neos.Neos:ImageTag`` prototypes now accept `preset` as an argument. This has been possible for ``neos.media:image`` and ``typo3.media:uri.image`` view helpers since 2.1 and is now also possible for the image related Fusion prototypes. For more general information about presets look up the `RTD manual <http://neos-media.readthedocs.io/en/latest/ThumbnailPresets.html>`_.
+
+~~~~~~~~~~~~~~~~~~~~
+Upgrade instructions
+~~~~~~~~~~~~~~~~~~~~
+See https://www.neos.io/download-and-extend/upgrade-instructions-3-0-0-3-1.html
+
+
+.. note::
+
+   Additionally all changes in Flow 4.1 apply, see the release notes to further information.
+   See http://flowframework.readthedocs.org/en/4.1/TheDefinitiveGuide/PartV/ReleaseNotes/410.html
