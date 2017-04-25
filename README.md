@@ -8,14 +8,14 @@ prototypes because the genrated fusion code can be overwritten and controlled fr
 
 ## WARNING
 
-This is highly experimental and will very likely change in the future. 
+This is still a bit experimental and may change in the future. Due to semantic-versioning we will raise the major version number for breaking changes.
 
 ## Installation
 
-Installation
+PackageFactory.AtomicFusion.AFX is available via packagist. Just add `"packagefactory/atomicfusion-afx" : "~1.0.0"`
+to the require-section of the composer.json or run `composer require packagefactory/atomicfusion-afx`.
 
-PackageFactory.AtomicFusion.AFX is available via packagist. Just add "packagefactory/atomicfusion-afx" : "dev-master"``
-to the require-section of the composer.json or run composer require `packagefactory/atomicfusion-afx dev-master.
+We use semantic-versioning so every breaking change will increase the major-version number.
 
 ## Usage
 
