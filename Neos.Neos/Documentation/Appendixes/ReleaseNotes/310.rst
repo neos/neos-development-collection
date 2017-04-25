@@ -18,3 +18,9 @@ Preset support in Fusion
 Upgrade instructions
 ~~~~~~~~~~~~~~~~~~~~
 See https://www.neos.io/download-and-extend/upgrade-instructions-3-0-0-3-1.html
+
+
+.. note::
+
+   Additionally all changes in Flow 4.1 apply, see the release notes to further information.
+   See http://flowframework.readthedocs.org/en/4.1/TheDefinitiveGuide/PartV/ReleaseNotes/410.html
