@@ -4,6 +4,9 @@ namespace PackageFactory\AtomicFusion\AFX\Service;
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Arrays;
 use PackageFactory\Afx\Parser as AfxParser;
+use PackageFactory\Afx\Exception as AfxException;
+use Neos\Fusion\Exception as FusionException;
+
 use PackageFactory\AtomicFusion\AFX\Exception\Exception;
 
 /**
@@ -23,10 +26,16 @@ class AfxService
      */
     public static function convertAfxToFusion($afxCode, $indentation = '')
     {
-        $parser = new AfxParser(self::preprocess($afxCode));
-        $ast = $parser->parse();
-        $fusion = self::astNodeToFusion($ast, $indentation);
-        return $fusion;
+        try {
+            $parser = new AfxParser(self::preprocess($afxCode));
+            $ast = $parser->parse();
+            $fusion = self::astNodeToFusion($ast, $indentation);
+            return $fusion;
+        } catch (AfxException $afxException) {
+            throw new FusionException(sprintf('Error during AFX-parsing: %s', $afxException->getMessage()));
+        }
+
+
     }
 
     /**
