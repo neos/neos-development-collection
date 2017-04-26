@@ -45,25 +45,39 @@ additionalProperties:
           'constraints': *constraints
 
     'properties':
-      type: ['dictionary', 'null']
+      type: dictionary
+
+      # for each property...
       additionalProperties:
-
-        # for each property...
-        type: dictionary
-        additionalProperties: FALSE
-        properties:
-
-          'type': { type: string, description: "PHP type of this property. Either simple type or fully qualified PHP class name." }
-
-          'defaultValue': { type: any, description: "Default value of this property. Used at node creation time. Type must match specified 'type'." }
-
-          'validation':
-            type: ['dictionary', 'null']
-
-          'ui':
+        type:
+          -
+            type: 'null'
+          -
             type: dictionary
-            # we intentionally do not specify which properties are allowed here;
-            # as other packages (such as TYPO3.Neos) might do that instead.
+            additionalProperties: FALSE
+            properties:
+
+              'type': { type: string, description: "PHP type of this property. Either simple type or fully qualified PHP class name." }
+
+              'defaultValue': { type: any, description: "Default value of this property. Used at node creation time. Type must match specified 'type'." }
+
+              'validation':
+                type: ['dictionary', 'null']
+
+              'ui':
+                type: dictionary
+                # we intentionally do not specify which properties are allowed here;
+                # as other packages (such as TYPO3.Neos) might do that instead.
+
+              'options':
+                type: dictionary
+                # we intentionally do not specify which properties are allowed here;
+                # as other packages might do that instead.
+
+              'search':
+                type: dictionary
+                # we intentionally do not specify which properties are allowed here;
+                # as other packages might do that instead.
 
     'ui':
       type: dictionary
@@ -74,6 +88,13 @@ additionalProperties:
 
     'options':
       type: dictionary
+      # we intentionally do not specify which properties are allowed here;
+      # as other packages might do that instead.
+
+    'search':
+      type: dictionary
+      # we intentionally do not specify which properties are allowed here;
+      # as other packages might do that instead.
 
     'postprocessors':
       type: dictionary
