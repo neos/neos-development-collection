@@ -40,5 +40,4 @@ class ModulePrivilegeSubject implements PrivilegeSubjectInterface
     {
         return $this->modulePath;
     }
-
 }
