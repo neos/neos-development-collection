@@ -50,29 +50,6 @@ The user interface of the module is defined in a fluid template in the same way 
 .. note:: Neos comes with some ViewHelpers for easing backend tasks. Have a look at the ``neos:backend`` ViewHelpers
    from the :ref:`Neos ViewHelper Reference`
 
-Access Rights
--------------
-
-To use the module the editors have to be granted access to the controller actions of the module.
-
-``Configuration/Policy.yaml``:
-
-.. code-block:: yaml
-
-	privilegeTargets:
-
-	  'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
-		'Vendor.Site:BackendModule':
-		  matcher: 'method(Vendor\Site\Controller\BackendController->.*Action())'
-
-	roles:
-
-	  'Neos.Neos:Editor':
-		privileges:
-		  -
-			privilegeTarget: 'Vendor.Site:BackendModule'
-			permission: GRANT
-
 Configuration
 -------------
 
@@ -84,14 +61,38 @@ To show up in the management or the administration section the module is defined
 
 	Neos:
 	  Neos:
-		modules:
-		  management:
-			submodules:
-			  exampleModule:
-				label: 'Example Module'
-				controller: 'Vendor\Site\Controller\BackendController'
-				description: 'An Example for implementing Backend Modules'
-				icon: 'icon-star'
-				privilegeTarget: 'Vendor.Site:BackendModule'
+	    modules:
+	      'management':
+	        submodules:
+	          'exampleModule':
+	            label: 'Example Module'
+	            controller: 'Vendor\Site\Controller\BackendController'
+	            description: 'An Example for implementing Backend Modules'
+	            icon: 'icon-star'
+
+Access Rights
+-------------
+
+To use the module the editors have to be granted access to the controller actions of the module.
+
+``Configuration/Policy.yaml``:
+
+.. code-block:: yaml
+
+	privilegeTargets:
+	
+	  'Neos\Neos\Security\Authorization\Privilege\ModulePrivilege':
+	
+	    'Vendor.Site:BackendModule':
+	      matcher: 'management/exampleModule'
+	
+	roles:
+	
+	  'Neos.Neos:Editor':
+	    privileges:
+	      -
+	        privilegeTarget: 'Vendor.Site:BackendModule'
+	        permission: GRANT
+
 
 .. tip:: Neos contains several backend modules build with the same API which can be used for inspiration.
