@@ -5,7 +5,7 @@ prototype(Neos.Neos:ContentCollectionRenderer) < prototype(Neos.Fusion:Collectio
 	# Set context removedContentShown to get removed nodes too.
 	# Needed for publish function to be able to publish removed nodes.
 	collection = ${nodeAvailable ? q(node).children() : []}
-	# Render every item by its own TS object
+	# Render every item by its own Fusion object
 	itemRenderer = Neos.Neos:ContentCase
 	itemName = 'node'
 	iterationName = 'iterator'
@@ -16,7 +16,7 @@ prototype(Neos.Neos:ContentCollectionRenderer) < prototype(Neos.Fusion:Collectio
 
 		removedContent = Neos.Fusion:Collection {
 			collection = ${nodeAvailable ? q(node).context({'removedContentShown': true}).children('[_removed = true]') : []}
-			# Render every item by its own TS object
+			# Render every item by its own Fusion object
 			itemRenderer = Neos.Neos:ContentElementWrapping
 			itemName = 'node'
 			iterationName = 'iterator'

@@ -18,7 +18,7 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
 
 /**
- * A TypoScript Object that converts link references in the format "<type>://<UUID>" to proper URIs
+ * A Fusion Object that converts link references in the format "<type>://<UUID>" to proper URIs
  *
  * Right now node://<UUID> and asset://<UUID> are supported URI schemes.
  *
@@ -74,7 +74,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
         }
 
         if (!is_string($text)) {
-            throw new Exception(sprintf('Only strings can be processed by this TypoScript object, given: "%s".', gettype($text)), 1382624080);
+            throw new Exception(sprintf('Only strings can be processed by this Fusion object, given: "%s".', gettype($text)), 1382624080);
         }
 
         $node = $this->fusionValue('node');

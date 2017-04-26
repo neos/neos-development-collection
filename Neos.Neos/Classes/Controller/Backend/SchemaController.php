@@ -17,8 +17,6 @@ use Neos\Neos\Service\NodeTypeSchemaBuilder;
 use Neos\Neos\Service\VieSchemaBuilder;
 
 /**
- * The TYPO3 Module
- *
  * @Flow\Scope("singleton")
  */
 class SchemaController extends ActionController

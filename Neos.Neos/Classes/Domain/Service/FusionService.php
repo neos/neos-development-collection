@@ -63,7 +63,7 @@ class FusionService
     protected $autoIncludeFusionPattern = 'resource://%s/Private/Fusion/Root.fusion';
 
     /**
-     * Legacy pattern used for determining the TypoScript root file for autoIncludes
+     * Legacy pattern used for determining the Fusion root file for autoIncludes
      *
      * @var string
      * @deprecated since 3.0 will be removed in 4.0

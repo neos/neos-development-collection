@@ -14,14 +14,15 @@ namespace Neos\Neos\View;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
- * A TypoScript view for Neos
+ * A Fusion view for Neos
+ *
  * @deprecated
  */
 class TypoScriptView extends FusionView
 {
 
     /**
-     * Set the TypoScript path to use for rendering the node given in "value"
+     * Set the Fusion path to use for rendering the node given in "value"
      *
      * @param string $typoScriptPath
      * @return void
