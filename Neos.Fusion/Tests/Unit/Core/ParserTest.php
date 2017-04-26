@@ -872,6 +872,16 @@ class ParserTest extends UnitTestCase
     }
 
     /**
+     * @test
+     * @expectedException \Neos\Fusion\Exception
+     */
+    public function parserDetectsDirectRecursions()
+    {
+        $sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture21');
+        $this->parser->parse($sourceCode);
+    }
+
+    /**
      * Checks if comments in comments are parsed correctly
      *
      * @test
