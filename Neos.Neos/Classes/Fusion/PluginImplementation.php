@@ -21,7 +21,7 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Fusion\FusionObjects\AbstractArrayFusionObject;
 
 /**
- * A TypoScript Plugin object.
+ * A Fusion Plugin object.
  */
 class PluginImplementation extends AbstractArrayFusionObject
 {

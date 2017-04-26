@@ -14,7 +14,7 @@ namespace Neos\Neos\Domain\Service;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Generate a TypoScript prototype definition based on Neos.Neos:Content
+ * Generate a Fusion prototype definition based on Neos.Neos:Content
  *
  * @Flow\Scope("singleton")
  * @api
