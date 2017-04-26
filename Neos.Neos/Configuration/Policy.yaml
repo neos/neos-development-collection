@@ -24,7 +24,7 @@ privilegeTargets:
       matcher: 'method(Neos\Neos\Controller\LoginController->(index|tokenLogin|authenticate)Action()) || method(Neos\Flow\Security\Authentication\Controller\AbstractAuthenticationController->authenticateAction())'
 
     'Neos.Neos:Backend.GeneralAccess':
-      matcher: 'method(Neos\Neos\Controller\Backend\BackendController->(index|switchSite|xliffAsJson)Action()) || method(Neos\Neos\Controller\Backend\ModuleController->indexAction()) || method(Neos\Neos\Controller\LoginController->logoutAction()) || method(Neos\Flow\Security\Authentication\Controller\AbstractAuthenticationController->logoutAction()) || method(Neos\Neos\Controller\Module\AbstractModuleController->indexAction())'
+      matcher: 'method(Neos\Neos\Controller\Backend\BackendController->(index|switchSite|xliffAsJson)Action()) || method(Neos\Neos\Controller\Backend\ModuleController->indexAction()) || method(Neos\Neos\Controller\LoginController->logoutAction()) || method(Neos\Flow\Security\Authentication\Controller\AbstractAuthenticationController->logoutAction()) || method(Neos\Neos\Controller\Module\AbstractModuleController->indexAction()) || method(Neos\Neos\Service\Controller\AbstractServiceController->errorAction())'
 
     #
     # Content access and publishing
@@ -41,7 +41,7 @@ privilegeTargets:
       matcher: 'method(Neos\ContentRepository\Domain\Service\Context->validateWorkspace()) && evaluate(this.workspace.owner !== current.userInformation.backendUser, this.workspace.personalWorkspace === true)'
 
     'Neos.Neos:Backend.EditContent':
-      matcher: 'method(Neos\Neos\Service\Controller\NodeController->(show|getPrimaryChildNode|getChildNodesForTree|filterChildNodesForTree|getChildNodes|getChildNodesFromParent|create|createAndRender|createNodeForTheTree|move|moveBefore|moveAfter|moveInto|moveAndRender|copy|copyBefore|copyAfter|copyInto|copyAndRender|update|updateAndRender|delete|searchPage|error)Action()) || method(Neos\Neos\Controller\Backend\ContentController->(uploadAsset|assetsWithMetadata|imageWithMetadata|pluginViews|createImageVariant|masterPlugins|error)Action()) || method(Neos\Neos\Controller\Service\AssetsController->(index|show|error)Action()) || method(Neos\Neos\Controller\Service\NodesController->(index|show|create|error)Action()) || method(Neos\Neos\Service\Controller\AbstractServiceController->(error)Action())'
+      matcher: 'method(Neos\Neos\Service\Controller\NodeController->(show|getPrimaryChildNode|getChildNodesForTree|filterChildNodesForTree|getChildNodes|getChildNodesFromParent|create|createAndRender|createNodeForTheTree|move|moveBefore|moveAfter|moveInto|moveAndRender|copy|copyBefore|copyAfter|copyInto|copyAndRender|update|updateAndRender|delete|searchPage|error)Action()) || method(Neos\Neos\Controller\Backend\ContentController->(uploadAsset|assetsWithMetadata|imageWithMetadata|pluginViews|createImageVariant|masterPlugins|error)Action()) || method(Neos\Neos\Controller\Service\AssetsController->(index|show|error)Action()) || method(Neos\Neos\Controller\Service\NodesController->(index|show|create|error)Action())'
 
     'Neos.Neos:Backend.PublishToLiveWorkspace':
       matcher: 'method(Neos\ContentRepository\Domain\Model\Workspace->(publish|publishNode|publishNodes)(targetWorkspace.name === "live"))'
@@ -50,10 +50,10 @@ privilegeTargets:
       matcher: 'method(Neos\Neos\Controller\Module\Management\WorkspacesController->publishWorkspaceAction(workspace.baseWorkspace.name === "live"))'
 
     'Neos.Neos:Backend.PublishOwnWorkspaceContent':
-      matcher: 'method(Neos\Neos\Service\Controller\WorkspaceController->(publishNode|publishNodes|error)Action()) || method(Neos\Neos\Service\Controller\WorkspaceController->publishAllAction(workspaceName = current.userInformation.personalWorkspaceName)) || method(Neos\Neos\Service\Controller\WorkspaceController->getWorkspaceWideUnpublishedNodesAction(workspace.name = current.userInformation.personalWorkspaceName)) || method(Neos\Neos\Service\Controller\AbstractServiceController->(error)Action())'
+      matcher: 'method(Neos\Neos\Service\Controller\WorkspaceController->(publishNode|publishNodes|error)Action()) || method(Neos\Neos\Service\Controller\WorkspaceController->publishAllAction(workspaceName = current.userInformation.personalWorkspaceName)) || method(Neos\Neos\Service\Controller\WorkspaceController->getWorkspaceWideUnpublishedNodesAction(workspace.name = current.userInformation.personalWorkspaceName))'
 
     'Neos.Neos:Backend.DiscardOwnWorkspaceContent':
-      matcher: 'method(Neos\Neos\Service\Controller\WorkspaceController->(discardNode|discardNodes|error)Action()) || method(Neos\Neos\Service\Controller\WorkspaceController->discardAllAction(workspace.name === current.userInformation.personalWorkspaceName)) || method(Neos\Neos\Service\Controller\AbstractServiceController->(error)Action())'
+      matcher: 'method(Neos\Neos\Service\Controller\WorkspaceController->(discardNode|discardNodes|error)Action()) || method(Neos\Neos\Service\Controller\WorkspaceController->discardAllAction(workspace.name === current.userInformation.personalWorkspaceName))'
 
     #
     # Workspace management
@@ -61,9 +61,6 @@ privilegeTargets:
 
     'Neos.Neos:Backend.CreateWorkspaces':
       matcher: 'method(Neos\Neos\Controller\Service\WorkspacesController->(new|create)Action()) || method(Neos\Neos\Controller\Module\Management\WorkspacesController->(create|new)Action())'
-
-    'Neos.Neos:Backend.Module.Management.Workspaces':
-      matcher: 'method(Neos\Neos\Controller\Module\Management\WorkspacesController->(index|show|publishNode|discardNode|publishOrDiscardNodes|publishWorkspace|discardWorkspace|rebaseAndRedirect)Action()) || method(Neos\Neos\Service\Controller\AbstractServiceController->(error)Action())'
 
     'Neos.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces':
       matcher: 'method(Neos\Neos\Controller\Module\Management\WorkspacesController->(publishWorkspace|discardWorkspace|edit|update|delete)Action(workspace.owner === current.userInformation.backendUser))'
@@ -84,20 +81,11 @@ privilegeTargets:
     # User management and user settings
     #
 
-    'Neos.Neos:Backend.Module.User':
-      matcher: 'method(Neos\Neos\Controller\Module\UserController->indexAction())'
-
-    'Neos.Neos:Backend.Module.User.UserSettings':
-      matcher: 'method(Neos\Neos\Controller\Module\User\UserSettingsController->(index|newElectronicAddress|createElectronicAddress|deleteElectronicAddress|edit|editAccount|updateAccount)Action())'
-
     'Neos.Neos:Backend.Module.User.UserSettings.UpdateOwnSettings':
       matcher: 'method(Neos\Neos\Controller\Module\User\UserSettingsController->updateAction(user === current.userInformation.backendUser))'
 
     'Neos.Neos:Backend.EditUserPreferences':
-      matcher: 'method(Neos\Neos\Service\Controller\UserPreferenceController->(index|update|error)Action()) || method(Neos\Neos\Service\Controller\AbstractServiceController->(error)Action())'
-
-    'Neos.Neos:Backend.Module.Administration.Users':
-      matcher: 'method(Neos\Neos\Controller\Module\Administration\UsersController->(index|show|new|create|edit|update|delete|newElectronicAddress|createElectronicAddress|deleteElectronicAddress|editAccount|updateAccount)Action())'
+      matcher: 'method(Neos\Neos\Service\Controller\UserPreferenceController->(index|update|error)Action())'
 
     #
     # Miscellaneous services
@@ -107,29 +95,43 @@ privilegeTargets:
       matcher: 'method(Neos\Neos\Controller\Service\ContentDimensionsController->(index|show|error)Action())'
 
     'Neos.Neos:Backend.DataSource':
-      matcher: 'method(Neos\Neos\Service\Controller\DataSourceController->(index|error)Action()) || method(Neos\Neos\Service\Controller\AbstractServiceController->(error)Action())'
+      matcher: 'method(Neos\Neos\Service\Controller\DataSourceController->(index|error)Action())'
 
-    #
-    # Miscellaneous backend modules
-    #
+  #
+  # General access to Neos Backend modules
+  #
+
+  'Neos\Neos\Security\Authorization\Privilege\ModulePrivilege':
+
+    'Neos.Neos:Backend.Module.User':
+      matcher: 'user'
+
+    'Neos.Neos:Backend.Module.User.UserSettings':
+      matcher: 'user/usersettings'
 
     'Neos.Neos:Backend.Module.Management':
-      matcher: 'method(Neos\Neos\Controller\Module\ManagementController->indexAction())'
+      matcher: 'management'
+
+    'Neos.Neos:Backend.Module.Management.Workspaces':
+      matcher: 'management/workspaces'
 
     'Neos.Neos:Backend.Module.Management.History':
-      matcher: 'method(Neos\Neos\Controller\Module\Management\HistoryController->(index)Action())'
+      matcher: 'management/history'
 
     'Neos.Neos:Backend.Module.Administration':
-      matcher: 'method(Neos\Neos\Controller\Module\AdministrationController->indexAction())'
+      matcher: 'administration'
+
+    'Neos.Neos:Backend.Module.Administration.Users':
+      matcher: 'administration/users'
 
     'Neos.Neos:Backend.Module.Administration.Packages':
-      matcher: 'method(Neos\Neos\Controller\Module\Administration\PackagesController->indexAction())'
+      matcher: 'administration/packages'
 
     'Neos.Neos:Backend.Module.Administration.Sites':
-      matcher: 'method(Neos\Neos\Controller\Module\Administration\SitesController->(index|edit|updateSite|newSite|createSite|importSite|createSiteNode|createSitePackage|deleteSite|activateSite|deactivateSite|editDomain|updateDomain|newDomain|createDomain|deleteDomain|activateDomain|deactivateDomain)Action())'
+      matcher: 'administration/sites'
 
     'Neos.Neos:Backend.Module.Administration.Configuration':
-      matcher: 'method(Neos\Neos\Controller\Module\Administration\ConfigurationController->indexAction())'
+      matcher: 'administration/configuration'
 
 roles:
 

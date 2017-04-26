@@ -275,33 +275,33 @@ Neos:
     modules:
       management:
         label: 'Neos.Neos:Modules:management.label'
-        controller: \Neos\Neos\Controller\Module\ManagementController
+        controller: 'Neos\Neos\Controller\Module\ManagementController'
         description: 'Neos.Neos:Modules:management.description'
         icon: icon-briefcase
         privilegeTarget: 'Neos.Neos:Backend.Module.Management'
         submodules:
           workspaces:
             label: 'Neos.Neos:Modules:workspaces.label'
-            controller: \Neos\Neos\Controller\Module\Management\WorkspacesController
+            controller: 'Neos\Neos\Controller\Module\Management\WorkspacesController'
             description: 'Neos.Neos:Modules:workspaces.description'
             icon: icon-th-large
             privilegeTarget: 'Neos.Neos:Backend.Module.Management.Workspaces'
           history:
             label: 'Neos.Neos:Modules:history.label'
-            controller: \Neos\Neos\Controller\Module\Management\HistoryController
+            controller: 'Neos\Neos\Controller\Module\Management\HistoryController'
             description: 'Neos.Neos:Modules:history.description'
             icon: icon-calendar
             privilegeTarget: 'Neos.Neos:Backend.Module.Management.History'
       administration:
         label: 'Neos.Neos:Modules:administration.label'
-        controller: \Neos\Neos\Controller\Module\AdministrationController
+        controller: 'Neos\Neos\Controller\Module\AdministrationController'
         description: 'Neos.Neos:Modules:administration.description'
         icon: icon-gears
         privilegeTarget: 'Neos.Neos:Backend.Module.Administration'
         submodules:
           users:
             label: 'Neos.Neos:Modules:users.label'
-            controller: \Neos\Neos\Controller\Module\Administration\UsersController
+            controller: 'Neos\Neos\Controller\Module\Administration\UsersController'
             description: 'Neos.Neos:Modules:users.description'
             icon: icon-group
             actions:
@@ -311,13 +311,13 @@ Neos:
             privilegeTarget: 'Neos.Neos:Backend.Module.Administration.Users'
           packages:
             label: 'Neos.Neos:Modules:packages.label'
-            controller: \Neos\Neos\Controller\Module\Administration\PackagesController
+            controller: 'Neos\Neos\Controller\Module\Administration\PackagesController'
             description: 'Neos.Neos:Modules:packages.description'
             icon: icon-archive
             privilegeTarget: 'Neos.Neos:Backend.Module.Administration.Packages'
           sites:
             label: 'Neos.Neos:Modules:sites.label'
-            controller: \Neos\Neos\Controller\Module\Administration\SitesController
+            controller: 'Neos\Neos\Controller\Module\Administration\SitesController'
             description: 'Neos.Neos:Modules:sites.description'
             icon: icon-globe
             actions:
@@ -327,7 +327,7 @@ Neos:
             privilegeTarget: 'Neos.Neos:Backend.Module.Administration.Sites'
           configuration:
             label: 'Neos.Neos:Modules:configuration.label'
-            controller: \Neos\Neos\Controller\Module\Administration\ConfigurationController
+            controller: 'Neos\Neos\Controller\Module\Administration\ConfigurationController'
             description: 'Neos.Neos:Modules:configuration.description'
             icon: icon-list-alt
             privilegeTarget: 'Neos.Neos:Backend.Module.Administration.Configuration'
