@@ -131,7 +131,7 @@ abstract class AbstractMenuImplementation extends TemplateImplementation
 
     /**
      * Return TRUE/FALSE if the node is currently hidden or not in the menu; taking the "renderHiddenInIndex" configuration
-     * of the Menu TypoScript object into account.
+     * of the Menu Fusion object into account.
      *
      * This method needs to be called inside buildItems() in the subclasses.
      *
