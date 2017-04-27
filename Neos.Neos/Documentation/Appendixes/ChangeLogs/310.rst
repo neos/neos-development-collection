@@ -1,0 +1,592 @@
+`3.1.0 (2017-04-27) <https://github.com/neos/neos-development-collection/releases/tag/3.1.0>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Fix the NodeTypes schema files and allow properties \`search\` and \`options\` <https://github.com/neos/neos-development-collection/pull/1432>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+The NodeType schemas can now handle the case that a property in a NodeType definition can be either a dictionary or null.
+
+Additionally the keys `search`  and `options` as extension point for package-configuration.
+
+The key `search` is used by several search implementations and currently causes validation errors.
+The key `options` is allowed to avoid such problems in the future and to create a place where packages can place custom configuration.
+
+`TASK: Add release notes for 3.1 <https://github.com/neos/neos-development-collection/pull/1532>`_
+--------------------------------------------------------------------------------------------------
+
+Release notes for Neos 3.1
+
+Fixes #1488 
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix Neos.Fusion:Debug example <https://github.com/neos/neos-development-collection/pull/1540>`_
+--------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Rename legacy strings in comments <https://github.com/neos/neos-development-collection/pull/1533>`_
+----------------------------------------------------------------------------------------------------------
+
+This change renames TS / TypoScript and TYPO3
+left overs in comments all over the package.
+No code changes included.
+
+* Packages: ``Neos``
+
+`TASK: Improve documentation on plugin creation <https://github.com/neos/neos-development-collection/pull/1454>`_
+-----------------------------------------------------------------------------------------------------------------
+
+The file Policy.yaml is missing in Sarkosh.CdCollection, clearly point out
+it needs to be created.
+
+Also explain that packages need to be rescanned (or the cache needs to
+be flushed) before you can use the plugin after the optional move to a
+"Plugins" folder.
+
+* Packages: ``ContentRepository`` ``Neos`` ``NodeTypes``
+
+`BUGFIX: Allow content dimension preset translation <https://github.com/neos/neos-development-collection/pull/1522>`_
+---------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+Tranlate content dimension labels.
+
+**How I did it**
+Just like it is already done for dimension labels
+
+**How to verify it**
+Add content dimension. Enter translation id as label. Add id in your translation. Enjoy!
+
+`TASK: Update badges to 3.1 branch <https://github.com/neos/neos-development-collection/pull/1531>`_
+----------------------------------------------------------------------------------------------------
+
+`BUGFIX: Fix code migrations to prevent unnecessary changes <https://github.com/neos/neos-development-collection/pull/1530>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+This change adjusts two code migrations (in a backwards compatible manner)
+so that they don't produce invalid YAML files.
+
+Background:
+
+The two migrations `TYPO3.TYPO3CR-130523180140` and `TYPO3.Neos.NodeTypes-201309111655`
+both replace some "superType"/"childNode" NodeType settings.
+In cases where those already use the suggested format `['<value>' => true]` this leads
+to invalid results (`['<value>' => '1']`).
+With `TYPO3.TYPO3CR-20150510103823` these invalid values are fixed again, but applying
+all migrations lead to three unnecessary commits, possibly corrupting the configuration
+and/or removing important comments.
+
+Fixes: #1351
+
+`TASK: allow to require stable version of \`flow-development-collection\` <https://github.com/neos/neos-development-collection/pull/1528>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+This relaxes the constraints in order to be able to run stable versions of our development collections.
+
+This is useful when you want to say use beard in production, without having to use the -dev versions.
+
+`BUGFIX: Correct the NodeType schema of a nulled fusion.prototypeGenerator <https://github.com/neos/neos-development-collection/pull/1473>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+The type 'null' has to be written in quotes to be distinguished from the NULL value of yaml.
+
+* Packages: ``ContentRepository`` ``Neos``
+
+`TASK: Add tests for node name generation <https://github.com/neos/neos-development-collection/pull/1525>`_
+-----------------------------------------------------------------------------------------------------------
+
+Tests to prove neos/neos-development-collection#1524
+
+`BUGFIX: No uppercase characters allowed in node names <https://github.com/neos/neos-development-collection/pull/1524>`_
+------------------------------------------------------------------------------------------------------------------------
+
+The changed generation of node names must avoid uppercase characters.
+
+This is a followup to neos/neos-development-collection#1523
+
+`TASK: Use generateRandomString() instead of uniqid() <https://github.com/neos/neos-development-collection/pull/1523>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+This reduces the risk of collision on temporary names for nodes and
+files, as well as cache markers.
+
+`BUGFIX: Asset should return same extension as attached resource <https://github.com/neos/neos-development-collection/pull/1519>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+Using the resource media type to find an extension for an asset
+is suboptimal because the asset knows the extension directly and
+the media type -> extension conversion is ambiguous so you might
+end up with a different extension than the resource has afterwards.
+
+`TASK: Corrected naming in documentation <https://github.com/neos/neos-development-collection/pull/1518>`_
+----------------------------------------------------------------------------------------------------------
+
+Replaces ``TYPO3.Neos`` with ``Neos.Neos``
+
+* Packages: ``Neos``
+
+`TASK: Enable translations for labels of the Site Management module <https://github.com/neos/neos-development-collection/pull/1501>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+- Add translation for labels with none in the XLIFF files to enable the translation to other languages
+- Eliminated labels with duplicated IDs and different values
+- Some simple sorting and cleanup of the XLIFF files
+
+**How I did it**
+- I took the labels of the templates and searched the XLIFF files for them
+- I put the specific Site Management labels to `Modules.xlf`
+- I put the generic labels to `Main.xlf`
+
+**How to verify it**
+- Login to the backend and go to the Site Management module
+- Click through it and check whether there are corrupted labels
+- The labels should look like before
+
+* Packages: ``Neos``
+
+`TASK: Remove occurences of TYPO3 in Neos.Fusion <https://github.com/neos/neos-development-collection/pull/1502>`_
+------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Fusion``
+
+`BUGFIX: Fix upmerge mistake in ResizeImageAdjustment <https://github.com/neos/neos-development-collection/pull/1516>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+The wrong namespace/vendor name was pulled in from the 2.3 branch
+during an upmerge.
+
+* Packages: ``ContentRepository`` ``Media``
+
+`BUGFIX: Include configuration reference in TOC <https://github.com/neos/neos-development-collection/pull/1515>`_
+-----------------------------------------------------------------------------------------------------------------
+
+The configuration reference was no longer included in the documentation TOC
+at all, after a recent fix aimed at no longer including it twice.
+
+`BUGFIX: Allow choice of filter for resizing images <https://github.com/neos/neos-development-collection/pull/1513>`_
+---------------------------------------------------------------------------------------------------------------------
+
+The resize filter can have considerable impact on file size and
+processing power needed to do the resize, it's therefore sensible
+to give the user a choice in this.
+
+Additionally removes copying the image as that is entirely unnecessary
+and impacts memory usage profoundly.
+
+`TASK: Improve documentation Installation <https://github.com/neos/neos-development-collection/pull/1499>`_
+-----------------------------------------------------------------------------------------------------------
+
+This change
+
+- updates screenshots with new logo in documentation
+- adds step "Neos requirements" to documentation
+- adds info on "AllowOverride directive" to documentation
+
+* Packages: ``Neos``
+
+`TASK: Add "User Settings" to documentation <https://github.com/neos/neos-development-collection/pull/1508>`_
+-------------------------------------------------------------------------------------------------------------
+
+This adds a page on „User Settings“ to the documentation, explaining how to change
+your personal data.
+
+* Packages: ``Neos``
+
+`TASK: Update screenshots in "User Interface Basics" <https://github.com/neos/neos-development-collection/pull/1504>`_
+----------------------------------------------------------------------------------------------------------------------
+
+This updates the screenshots of the complete user interface
+and adds screenshots of user interface details.
+
+* Packages: ``Neos``
+
+`TASK: Change login wallpaper for 3.1 <https://github.com/neos/neos-development-collection/pull/1503>`_
+-------------------------------------------------------------------------------------------------------
+
+**What I did**
+Changed the picture.
+
+**How I did it**
+Travelled to iceland, walked up the canyon. Fearlessly leant over the cliff.
+
+Resolves #1481
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix the infinite loop if a fusion object can not be resolved <https://github.com/neos/neos-development-collection/pull/1496>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Fusion``
+
+`BUGFIX: Fix some Sphinx rendering errors <https://github.com/neos/neos-development-collection/pull/1487>`_
+-----------------------------------------------------------------------------------------------------------
+
+- TASK: Bring back old release notes
+- BUGFIX: Fix some Sphinx rendering errors
+
+* Packages: ``Neos``
+
+`FEATURE: Add default editorOptions to settings <https://github.com/neos/neos-development-collection/pull/1505>`_
+-----------------------------------------------------------------------------------------------------------------
+
+Add default editorOptions to settings for the new react ui [https://github.com/neos/neos-ui/issues/641](https://github.com/neos/neos-ui/issues/641)
+
+`BUGFIX: Correct typo in plugin's Settings.yaml <https://github.com/neos/neos-development-collection/pull/1498>`_
+-----------------------------------------------------------------------------------------------------------------
+
+**What I did**
+- Changed  to  in Settings.yaml. It needs to be lower-case in order to work properly.
+
+* Packages: ``Neos``
+
+`TASK: Set \`ArrayConverter\` as node property default type converter <https://github.com/neos/neos-development-collection/pull/1472>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+<!--
+Thanks for your contribution, we appreciate it!
+
+Please read through our pull request guidelines, there are some interesting things there:
+https://discuss.neos.io/t/creating-a-pull-request/506
+
+And one more thing... Don't forget about the tests!
+-->
+
+Hi @kitsunet,
+
+this refactoring was done at the NEOS Sprint. Let's review it together.
+
+Best
+Jo (@joachimmathes) and Dani (@dgrammlich)
+
+* Packages: ``Neos``
+
+`TASK: Adjust DocTools settings <https://github.com/neos/neos-development-collection/pull/1491>`_
+-------------------------------------------------------------------------------------------------
+
+Fixes #1490
+
+* Packages: ``ContentRepository`` ``Media`` ``Neos``
+
+`BUGFIX: Use findNodesByPathPrefixAndRelatedEntities <https://github.com/neos/neos-development-collection/pull/1497>`_
+----------------------------------------------------------------------------------------------------------------------
+
+ in getRelatedNodeMethod
+
+`BUGFIX: Add mysql-index for the field \`parentpath\` in the \`nodeData\`-table <https://github.com/neos/neos-development-collection/pull/1478>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+The find operation is currently very expensive because of an unoptimized LIKE statement.
+This index will to optimize the performance for find operations especially in larger cr-instances
+
+The size of the index is a compromise between space and an assumption of the normal length of the nodePath.
+
+`BUGFIX: MediaModule asset edit should not fail <https://github.com/neos/neos-development-collection/pull/1485>`_
+-----------------------------------------------------------------------------------------------------------------
+
+if no Site is defined.
+
+**How to verify it**
+
+- delete your sites in the site management
+- got to the media browser and open an image
+
+An exception occurres.
+
+See: https://github.com/neos/neos-development-collection/issues/1483
+
+`BUGFIX: NodePropertiesStrategy in Neos should only handle site nodes <https://github.com/neos/neos-development-collection/pull/1486>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Currently the AssetUsageInNodePropertiesStrategy handles
+all asset references in all nodes in the node data table.
+The handling than is specific for nodes under the `/site` root node
+and fails when a node references an asset that is located under another root.
+
+This fixes the issue by only selecting site nodes.
+
+**What I did**
+Filter the nodes by site root.
+
+**How to verify it**
+Add an asset reference to a node that is not under sites.
+The edit view of an asset fails.
+
+`TASK: Add transitive dependencies to Neos packages <https://github.com/neos/neos-development-collection/pull/1455>`_
+---------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Browser`` ``ContentRepository`` ``Fusion`` ``Media`` ``Neos`` ``NodeTypes`` ``SiteKickstarter``
+
+`BUGFIX: Configuration reference nested twice <https://github.com/neos/neos-development-collection/pull/1484>`_
+---------------------------------------------------------------------------------------------------------------
+
+This causes issues with search results and creates confusion.
+
+`BUGFIX: Fix EXTRACT_CONTENT_TYPE_PATTERN namespace use <https://github.com/neos/neos-development-collection/pull/1467>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+Make NodeTemplateConverter::EXTRACT_CONTENT_TYPE_PATTERN match against
+`Neos\\ContentRepository\\…`.
+
+Fixes #1466
+
+* Packages: ``ContentRepository``
+
+`BUGFIX: Opening context menu in media browser list view <https://github.com/neos/neos-development-collection/pull/1409>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Backports `f169275c9a05071531dc5bd9b3d2533ebf093184 <https://github.com/neos/neos-development-collection/commit/f169275c9a05071531dc5bd9b3d2533ebf093184>`_ and `d4efa8b305c925aa4e8482db74d5eaf8da9817dc <https://github.com/neos/neos-development-collection/commit/d4efa8b305c925aa4e8482db74d5eaf8da9817dc>`_ from the 3.0 branch.
+
+closes #1408
+
+`BUGFIX: Check for existing node data property works with null <https://github.com/neos/neos-development-collection/pull/1440>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+The ``AbstractNodeData::hasProperty()`` method checked
+the existence of the given property with ``isset`` but that
+leads to an exception if the property has a ``null`` value.
+The check has been changed to ``array_key_exists``.
+
+Same is done in the optimization check to avoid setting
+existing values again in ``AbstractNodeData::setProperty``.
+
+Resolves #1174
+
+`TASK: Fix "undefined class" warnings <https://github.com/neos/neos-development-collection/pull/1465>`_
+-------------------------------------------------------------------------------------------------------
+
+Mostly fixes comments, but some use statements as well.
+
+Also removes some dead code that was not removed along with the
+deprecated NodeDataLabelGeneratorInterface.
+
+* Packages: ``ContentRepository`` ``Media`` ``Neos``
+
+`BUGFIX: If thumbnail refresh fails, handle gracefully <https://github.com/neos/neos-development-collection/pull/1459>`_
+------------------------------------------------------------------------------------------------------------------------
+
+If refreshing a thumbnail fails (e.g. because a PDF cannot be converted
+correctly), the media module dies with an exception screen.
+
+This change catches and logs the error, and returns null as result. This
+leads to a missing thumbnail, but the media management stays usable.
+
+`TASK: Adjust more Behat-related code to PhpUnit 6 <https://github.com/neos/neos-development-collection/pull/1464>`_
+--------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Adjust Behat-related code to PhpUnit 6 <https://github.com/neos/neos-development-collection/pull/1461>`_
+---------------------------------------------------------------------------------------------------------------
+
+* Packages: ``ContentRepository`` ``Neos``
+
+`TASK: Declare dependency on PHP 7 for Neos.Neos <https://github.com/neos/neos-development-collection/pull/1462>`_
+------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: remove arguments argument for NodeUri <https://github.com/neos/neos-development-collection/pull/1423>`_
+--------------------------------------------------------------------------------------------------------------
+
+The fusion argument 'arguments' in NodeUriImplementation was never used. The documentation was confusing saying it is possible to use 'arguments' argument in Fusion.
+
+**What I did**
+
+Removed `arguments` argument from `NodeUri` documentation.
+Removed `getArguments()` method from `NodeUriImplementation` because it was never used.
+
+* Packages: ``Neos``
+
+`BUGFIX: Avoid stuck tooltip in node tree <https://github.com/neos/neos-development-collection/pull/1450>`_
+-----------------------------------------------------------------------------------------------------------
+
+This switches (bootstrap) tooltips from being triggered on hover
+and focus to just hover. This avoids the tooltip being activated e.g.
+by expand a subtree.
+
+Should fix #1386
+
+`FEATURE: Add support for image presets in Fusion <https://github.com/neos/neos-development-collection/pull/1437>`_
+-------------------------------------------------------------------------------------------------------------------
+
+Add image preset support for `Neos.Neos:ImageUri` and `Neos.Neos:ImageTag`.
+
+* Packages: ``Neos``
+
+`BUGFIX: Only show remove button when image selected in ImageEditor <https://github.com/neos/neos-development-collection/pull/1446>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Do not show the "remove" button in ImageEditor when no image is selected.
+
+`BUGFIX: Limit VIE to predicates with custom namespace <https://github.com/neos/neos-development-collection/pull/1452>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Instead of applying VIE to all elements with `[rel]` or `[property]` attributes,
+only apply to those starting prefixed with the `typo3` namespace.
+
+This prevents side effects for other tags like `<a href="#" rel="nofollow">Link</a>`.
+
+Resolves #1449
+
+`BUGFIX: Add missing colons to resourcepaths in documentation <https://github.com/neos/neos-development-collection/pull/1444>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+This adds missing colons to the resource paths in the examples on selecting a page template.
+
+`TASK: Only show remove button when image selected in ImageEditor <https://github.com/neos/neos-development-collection/pull/1426>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix changelog and release note rendering <https://github.com/neos/neos-development-collection/pull/1441>`_
+-------------------------------------------------------------------------------------------------------------------
+
+This fixes a few places and adjusts some files so the 3.0 branch has proper
+release notes and changelog rendering.
+
+* Packages: ``Neos``
+
+`BUGFIX: Adjust policy-matchers after deprecation of userWorkspaceName to personalWorkspaceName <https://github.com/neos/neos-development-collection/pull/1442>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: getPersonalWorkspace()->getName() replaced with getPersonalWorkspaceName() <https://github.com/neos/neos-development-collection/pull/1436>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+`f13a82c2d9d5a3185889d21c4cbfca4dbdfde579 <https://github.com/neos/neos-development-collection/commit/f13a82c2d9d5a3185889d21c4cbfca4dbdfde579>`_ introduced a regression: No workspace is created for new users.
+
+This fixes it.
+
+* Packages: ``Media`` ``Neos``
+
+`TASK: Document width and height property in ImageUri Fusion-prototype <https://github.com/neos/neos-development-collection/pull/1431>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+This documents changes that were introduced in Neos 2.0 with revision `75430099fe2dbd3646eb549dac5e9778abf4c82a <https://github.com/neos/neos-development-collection/commit/75430099fe2dbd3646eb549dac5e9778abf4c82a>`_.
+
+`BUGFIX: Make layout sliding query match properly <https://github.com/neos/neos-development-collection/pull/1422>`_
+-------------------------------------------------------------------------------------------------------------------
+
+The page layout determination in `DefaultTypoScript.ts2` contains the query
+
+`q(node).parents('[subpageLayout]').first().property('subpageLayout')`
+
+However that immediately also matches nodes which have `subpageLayout` being an empty string, hence this being taken into account. This results in an empty value, even if there would be actual set layouts higher above.
+
+The `.parents()` part need to be replaced with `.parents('[subpageLayout][subpageLayout != ""]')`
+
+Fixes #1117
+
+`TASK: Remove note about behavior in unsupported version 1.2 <https://github.com/neos/neos-development-collection/pull/1433>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Documentation adjustments <https://github.com/neos/neos-development-collection/pull/1430>`_
+--------------------------------------------------------------------------------------------------
+
+Adds a small example to the Eel Helpers Reference (Array.indexOf).
+Adds an example on how to use the help messages inside properties (Property Editor Reference).
+
+`TASK: Prefix \`uriPathSegment\` field inspector validator <https://github.com/neos/neos-development-collection/pull/1428>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+I changed the non prefixed `regularExpression`-validator to the correct `TYPO3.Neos/Validation/RegularExpressionValidator`-validator
+
+**How to test**
+
+You could easily try to change the `uriPathSegment` on every document node type.
+
+`BUGFIX: Initialization of asset usage strategies <https://github.com/neos/neos-development-collection/pull/1427>`_
+-------------------------------------------------------------------------------------------------------------------
+
+Fixes a regression introduced in https://github.com/neos/neos-development-collection/pull/1323,
+causing the asset usage strategies to never be initialized.
+
+Closes #1425
+
+`BUGFIX: Require ~4.0 of neos/form <https://github.com/neos/neos-development-collection/pull/1424>`_
+----------------------------------------------------------------------------------------------------
+
+The 3.0 branch of neos/form is not compatible with the current codebase.
+
+* Packages: ``Neos``
+
+`BUGFIX: Adding media element to tag or asset collection <https://github.com/neos/neos-development-collection/pull/1414>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Adding a media asset to a tag or collection in the thumbnail in the media browser by dragging it fails.
+
+Resolves #1413
+
+* Packages: ``Browser``
+
+`TASK: Remove deprecated getters for \`\`userWorkspace\`\` and name <https://github.com/neos/neos-development-collection/pull/1393>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+These are fully replaced by
+``\\Neos\\Neos\\Service\UserService::getPersonalWorkspace``
+and
+``\\Neos\\Neos\\Service\UserService::getPersonalWorkspaceName``
+
+* Packages: ``Neos``
+
+`TASK: Remove TYPO3 & TypoScript in the Fusion documentation <https://github.com/neos/neos-development-collection/pull/1418>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+In the [documentation](https://neos.readthedocs.io/en/stable/References/) are still some references to TYPO3 and TypoScript. This PR fix it for the fusion part
+
+* Packages: ``Fusion`` ``Neos``
+
+`TASK: Replace leftover occurrence of \`\`typoScriptRenderingPath\`\` <https://github.com/neos/neos-development-collection/pull/1419>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Make fusion-parser aspectable <https://github.com/neos/neos-development-collection/pull/1410>`_
+--------------------------------------------------------------------------------------------------------
+
+The fusion parser cloned itself previously to handle includes but to keep the defined namespaces.
+That made the use of aspects impossible since they were only applied on the initially created instance of the parser.
+
+This change fixes this by using a new instance of the parser for each include and transfers the namespaces explicitly to the new parser.
+
+`BUGFIX: Correctly require \`\`exec\`\` instead of \`\`system\`\` <https://github.com/neos/neos-development-collection/pull/1415>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+The documentation requested ``system`` to be enabled but in fact ``exec``
+is used for proxy building in Flow.
+
+Related: neos/flow-development-collection#634
+
+* Packages: ``Neos``
+
+`BUGFIX: Use setFusionPathPattern() in HistoryController <https://github.com/neos/neos-development-collection/pull/1411>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+The view was updated to `FusionView`, but `setTypoScriptPathPattern` was still called.
+I updated it to the correct method `setFusionPathPattern`.
+
+* Packages: ``Neos``
+
+`BUGFIX: RemoveNodePrivilege blocks editing <https://github.com/neos/neos-development-collection/pull/341>`_
+------------------------------------------------------------------------------------------------------------
+
+The RemoveNodePrivilege would block editing of nodes completely, since
+the inspector would send all properties of a node, but the setter for
+"removed" was blocked by the privilege.
+
+Now the privilege only matches on setRemoved(true) and thus only blocks
+what it should block.
+
+Fixes #896 
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/3.0.0...3.1.0>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
