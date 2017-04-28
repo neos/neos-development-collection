@@ -11,7 +11,6 @@ namespace Neos\Neos\Fusion\Helper;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\Node;
 use Neos\Flow\Annotations as Flow;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Neos\Exception;
