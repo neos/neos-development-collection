@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3CR;
  */
 
 use Behat\Transliterator\Transliterator;
+use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
@@ -30,6 +31,7 @@ class Utility
      */
     public static function renderValidNodeName($name)
     {
+        $originalName = $name;
         // Check if name already match name pattern to prevent unnecessary transliteration
         if (preg_match(NodeInterface::MATCH_PATTERN_NAME, $name) === 1) {
             return $name;
@@ -43,6 +45,11 @@ class Utility
 
         // Ensure only allowed characters are left
         $name = preg_replace('/[^a-z0-9\-]/', '', $name);
+
+        // Make sure we don't have an empty string left.
+        if ($name === '') {
+            $name = md5($originalName);
+        }
 
         return $name;
     }
