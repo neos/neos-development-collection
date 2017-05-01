@@ -31,11 +31,12 @@ class Utility
      */
     public static function renderValidNodeName($name)
     {
-        $originalName = $name;
         // Check if name already match name pattern to prevent unnecessary transliteration
         if (preg_match(NodeInterface::MATCH_PATTERN_NAME, $name) === 1) {
             return $name;
         }
+
+        $originalName = $name;
 
         // Transliterate (transform 北京 to 'Bei Jing')
         $name = Transliterator::transliterate($name);
