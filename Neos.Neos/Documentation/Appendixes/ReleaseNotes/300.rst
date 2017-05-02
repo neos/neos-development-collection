@@ -2,7 +2,58 @@
 3.0.0
 =====
 
-…
+Neos 3.0 and Flow 4.0 represent the biggest refactoring effort the Neos project has undergone so far. Not only have Neos and Flow, and more than 100 related packages, been ported over to the new Neos namespace - you can now also say hello to Fusion, which is the new name for TypoScript2. These steps are the basis for all the exciting things that we have planned for Neos and Flow in the future.
+
+Since a lot of refactoring, especially regarding the naming of things, has been done, developers will need to get familiar with a few changes. This was necessary to prepare our basis for the features we are planning to build. Here's a list of the most important changes and renamings, to help you get used to Neos 3.0 quickly.
+
+“Neos” Namespace
+================
+
+Up until Neos 2.3, we were still using the TYPO3 namespace for all our PHP classes in Neos and Flow. The team pulled a bunch of long nights, armed with a few crates of beer (but mostly coffee), to remove every reference to the old namespace from both Neos and Flow. We’re happy to see this completed. Flow is now in the Neos\Flow namespace, Neos itself is using Neos\Neos. This is a rather trivial, but very important change as it breaks compatibility with practically all sites and packages developed for pre-3.0. This means that there’s quite a bit of code to adust when you upgrade a package to Neos 3.0 / Flow 4.0. But fear not, we solved migration the "Flow" way – most of the adjustments can be applied automatically! We have compiled a list of things to look at further below in this post.
+
+TypoScript 2 becomes Neos Fusion
+================================
+
+The name TypoScript has, until now, been used for both TYPO3 TypoScript and “our” rendering layer, called TypoScript2. As the two languages do not have much in common anymore and many developers are confused by the similar names, the team decided to rename TypoScript2 to Fusion with Neos 3.0. This means that the name TypoScript is officially deprecated in Neos. We even get a new file ending - say hello to .fusion!
+
+Having said that, to not break compatibility too badly, we will continue to support the legacy .ts2 file ending and will also provide a legacy TypoScriptService until the release of Neos 4.0. Check the upgrade guide below to see what you will need to change.
+
+PHP 7.1 Support
+===============
+
+PHP 7.1 and Flow 3.3/Neos 2.3 have not been getting along very well, breaking the rendering (Fluid and Fusion) for most sites. This has been fixed, Neos 3.0 and Flow 4.0 are fully compatible with PHP 7.1. Additionally, since PHP 7.0 a few more keywords have been reserved for future use. Among them are “Resource” and “Object”, which previously were used as class names in Flow’s resource framework. Even though this does not cause real problems at present, we refactored our class names and namespaces to comply with these new reserved keywords in order to be compatible with future versions of PHP.
+
+PSR-4 Autoloading Replaces PSR-0
+================================
+
+All our packages now use PSR-4 autoloading. In most cases, this means that you will move all your package content from something like Packages/Sites/Vendor.Namespace/Vendor/Namespace/... to just Packages/Sites/Vendor.Namespace, and update your composer.json to indicate the use of PSR-4 instead of PSR-0.
+
+Standalone Fluid
+================
+
+Fluid, the template rendering engine we use in Flow and Neos, has been an integral part of our framework up until now. To allow other projects to use the power of Fluid and make contributing and sharing code easier, Fluid is now a standalone PSR-4 package that can be used by any PHP application. This includes the Fluid core (such as template parser, compiler, cache and rendering) as well as some of the basic view helpers, such as the AbstractTagBasedViewHelper. Fluid is now pulled into Flow and Neos via the `Neos.FluidAdaptor <https://github.com/neos/fluidadaptor>`_. You can `find Fluid standalone here <https://github.com/TYPO3/Fluid>`_.
+
+Standalone Media Package
+========================
+
+The media browser is now a separate package in Neos which makes it easier to maintain and also easier for developers to adapt it to their own needs.
+
+Neos Content Repository
+=======================
+
+Since we were at it, we did some more restructuring. Among others, our Content Repository (formerly TYPO3.TYPO3CR) is now officially called Neos.ContentRepository.
+
+We are currently in the research stage for the implementation of the Neos Content Repository with a CQRS/ES architecture. We wrote a comprehensive blog post on the research progress which is absolutely read-worthy.
+
+Experimental Feature: Developer Preview of the React-based Neos Backend UI
+==========================================================================
+
+At the beginning of 2016, the team decided to do a complete rewrite of the Neos backend user interface on top of a React/Redux stack. With the adoption of React and Redux, we are bringing the current best practices in the JS ecosystem to Neos. At the same time, we are improving the development experience in the backend - it will be much easier to work on (and extend) the Neos backend. Adding new editors in the inspector, for example, will become a breeze because the new React UI is designed for much better extensibility. Most importantly, moving to React will also help us improve the stability and speed for our most important users - the editors. With the release of Neos 3.0, we will begin the alpha stage for this new implementation.
+
+Aside from the technical changes, the alpha ships with new features already. Most prominently, there is the node creation dialog, which allows you to take control over the initialization of newly created nodes. Moreover, we now have an iframe-driven content view, which reduces interference with your own frontend implementation and makes media queries work correctly. Lastly, our inline editing now relies on CKEditor instead of Aloha, which does provide a much-improved RTE experience out of the box.
+
+During the alpha, you will be able to install the new UI in parallel to the continuously supported current UI, so that you can safely test it. We are looking forward to your feedback to further improve the user experience of Neos. Get started by heading over to the Neos UI Github repo and follow the installation instructions (and start contributing).
+
 
 See also the full `change log <http://neos.readthedocs.io/en/3.0/Appendixes/ChangeLogs/300.html>`_
 
@@ -15,6 +66,12 @@ See https://www.neos.io/download-and-extend/upgrade-instructions-2-3-3-0.html
 ~~~~~~~~~~~~~~~~~~~~
 !!! Breaking changes
 ~~~~~~~~~~~~~~~~~~~~
+
+We have done our best do make the upgrade process as simple as possible. Due to all the refactoring, upgrading a site from 2.3 to 3.0 will probably not be as smooth as you have been used to during the 2.x releases. We have created a script to take some work off your shoulders, however we still recommend to have a look at things afterwards and check that everything is in order. For sites using more advanced features, you will need to perform a few steps manually.
+
+See https://www.neos.io/download-and-extend/upgrade-instructions-2-3-3-0.html
+
+In case you have any problems with this guide, please get in touch with us via `discuss.neos.io <https://discuss.neos.io/>`_ or on `Slack <https://neos-project.slack.com/>`_.
 
 .. note::
 
