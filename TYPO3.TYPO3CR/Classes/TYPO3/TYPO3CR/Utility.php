@@ -49,7 +49,7 @@ class Utility
 
         // Make sure we don't have an empty string left.
         if ($name === '') {
-            $name = md5($originalName);
+            $name = 'node-' . strtolower(md5($originalName));
         }
 
         return $name;
