@@ -40,16 +40,16 @@ Change your password
    :class: screenshot-fullsize
 
 
-Add electronic adress
+Add electronic address
 ---------------------
 
-Press `add electronic adress` button to add a electronic adress
+Press `add electronic address` button to add a electronic address
 
 .. figure:: Images/Usersettings-electronic-adress-add-button.png
    :alt: Add electronic address
    :class: screenshot-fullsize
    
-Add your electronic adress.
+Add your electronic address.
 
 .. figure:: Images/Usersettings-electronic-adress-add.png
    :alt: Add electronic address
