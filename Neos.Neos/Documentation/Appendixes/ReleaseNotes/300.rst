@@ -31,7 +31,7 @@ All our packages now use PSR-4 autoloading. In most cases, this means that you w
 Standalone Fluid
 ================
 
-Fluid, the template rendering engine we use in Flow and Neos, has been an integral part of our framework up until now. To allow other projects to use the power of Fluid and make contributing and sharing code easier, Fluid is now a standalone PSR-4 package that can be used by any PHP application. This includes the Fluid core (such as template parser, compiler, cache and rendering) as well as some of the basic view helpers, such as the AbstractTagBasedViewHelper. Fluid is now pulled into Flow and Neos via the `Neos.FluidAdaptor<https://github.com/neos/fluidadaptor>`. You can `find Fluid standalone here<https://github.com/TYPO3/Fluid>`.
+Fluid, the template rendering engine we use in Flow and Neos, has been an integral part of our framework up until now. To allow other projects to use the power of Fluid and make contributing and sharing code easier, Fluid is now a standalone PSR-4 package that can be used by any PHP application. This includes the Fluid core (such as template parser, compiler, cache and rendering) as well as some of the basic view helpers, such as the AbstractTagBasedViewHelper. Fluid is now pulled into Flow and Neos via the `Neos.FluidAdaptor <https://github.com/neos/fluidadaptor>`. You can `find Fluid standalone here <https://github.com/TYPO3/Fluid>`.
 
 Standalone Media Package
 ========================
@@ -71,7 +71,7 @@ We have done our best do make the upgrade process as simple as possible. Due to 
 
 See https://www.neos.io/download-and-extend/upgrade-instructions-2-3-3-0.html
 
-In case you have any problems with this guide, please get in touch with us via `discuss.neos.io<https://discuss.neos.io/>` or on `Slack<https://neos-project.slack.com/>`.
+In case you have any problems with this guide, please get in touch with us via `discuss.neos.io <https://discuss.neos.io/>` or on `Slack <https://neos-project.slack.com/>`.
 
 .. note::
 
