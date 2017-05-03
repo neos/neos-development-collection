@@ -2,8 +2,8 @@
 	<div class="typo3-fileupload-dropzone" id="{{unbound view._fileDropZoneId}}">
 		<div class="neos-inspector-image-thumbnail">
 			<div class="neos-inspector-image-thumbnail-inner">
-				{{#if view._originalImageUri}}
-					<img {{bindAttr src="view._originalImageUri"}} alt="" />
+				{{#if view._inspectorImageUri}}
+					<img {{bindAttr src="view._inspectorImageUri"}} alt="" />
 				{{else}}
 					{{#unless view._uploadInProgress}}
 						<img {{bindAttr src="view._defaultUploadPreviewImageSource"}} alt="" class="neos-inspector-image-thumbnail-dummy" />
