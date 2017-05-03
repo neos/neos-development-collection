@@ -12,7 +12,6 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Model\IntraDimension;
  */
 
 use Neos\ContentRepository\Domain\Model\IntraDimension;
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Utility\ObjectAccess;
 

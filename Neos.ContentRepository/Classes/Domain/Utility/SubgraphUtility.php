@@ -11,7 +11,6 @@ namespace Neos\ContentRepository\Domain\Utility;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Arrays;
 
 /**

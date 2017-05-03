@@ -13,7 +13,6 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Model\InterDimension;
 
 use Neos\ContentRepository\Domain\Model\InterDimension;
 use Neos\ContentRepository\Domain\Model\IntraDimension;
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**

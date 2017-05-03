@@ -13,7 +13,6 @@ namespace Neos\Neos\Presentation\Model\Svg;
 
 use Neos\ContentRepository\Domain\Model\InterDimension;
 use Neos\ContentRepository\Domain\Model\IntraDimension;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The InterDimensionalFallbackGraph presentation model for SVG
