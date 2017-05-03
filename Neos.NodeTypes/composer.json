@@ -5,7 +5,11 @@
     "license": "GPL-3.0+",
     "require": {
         "neos/form": "*",
-        "neos/neos": "*"
+
+        "neos/media": "self.version",
+        "neos/content-repository": "self.version",
+        "neos/neos": "self.version",
+        "neos/fusion": "self.version"
     },
     "replace": {
         "typo3/neos-nodetypes": "self.version"

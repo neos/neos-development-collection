@@ -12,7 +12,7 @@ namespace Neos\Neos;
  */
 
 /**
- * A generic TYPO3 exception
+ * A generic Neos exception
  */
 class Exception extends \Neos\Flow\Exception
 {

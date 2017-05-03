@@ -5,7 +5,15 @@
     "license": "GPL-3.0+",
     "require": {
         "neos/flow": "*",
-        "neos/fluid-adaptor": "*"
+        "neos/fluid-adaptor": "*",
+        "neos/cache": "*",
+        "neos/eel": "*",
+        "neos/fluid-adaptor": "*",
+        "neos/utility-arrays": "*",
+        "neos/utility-objecthandling": "*",
+        "neos/utility-unicode": "*",
+
+        "doctrine/orm": "~2.5.0"
     },
     "replace": {
         "typo3/typoscript": "self.version"

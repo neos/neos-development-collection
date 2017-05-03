@@ -18,7 +18,7 @@ expressions.arrayHelper = Value {
 }
 
 expressions.customHelper = Value {
-	value = ${Testing.String.substr('TYPO3 Flow', 6)}
+	value = ${Testing.String.substr('Neos Flow', 5)}
 }
 
 expressions.flowQuery = Value {

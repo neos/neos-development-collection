@@ -40,7 +40,7 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 
 /**
- * The TYPO3 ContentModule controller; providing backend functionality for the Content Module.
+ * The Neos ContentModule controller; providing backend functionality for the Content Module.
  *
  * @Flow\Scope("singleton")
  */

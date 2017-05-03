@@ -48,25 +48,25 @@ Adjusting and defining roles
 
 Neos comes with a number of predefined roles that can be assigned to users:
 
-+-----------------------------+-----------------------------+--------------------------------------------------------+
-| Role                        | Parent role(s)              | Description                                            |
-+=============================+=============================+========================================================+
-| Neos.ContentRepository:Administrator |                             | A no-op role for future use                            |
-+-----------------------------+-----------------------------+--------------------------------------------------------+
-| Neos.Neos:AbstractEditor   | Neos.ContentRepository:Administrator | Grants the very basic things needed to use Neos at all |
-+-----------------------------+-----------------------------+--------------------------------------------------------+
-| Neos.Neos:LivePublisher    |                             | A "helper role" to allow publishing to the live        |
-|                             |                             | workspace                                              |
-+-----------------------------+-----------------------------+--------------------------------------------------------+
-| Neos.Neos:RestrictedEditor | Neos.Neos:AbstractEditor   | Allows to edit content but not publish to the live     |
-|                             |                             | workspace                                              |
-+-----------------------------+-----------------------------+--------------------------------------------------------+
-| Neos.Neos:Editor           | Neos.Neos:AbstractEditor   | Allows to edit and publish content                     |
-|                             |                             |                                                        |
-|                             | Neos.Neos:LivePublisher    |                                                        |
-+-----------------------------+-----------------------------+--------------------------------------------------------+
-| Neos.Neos:Administrator    | Neos.Neos:Editor           | Everything the Editor can do, plus admin things        |
-+-----------------------------+-----------------------------+--------------------------------------------------------+
++--------------------------------------+--------------------------------------+--------------------------------------------------------+
+| Role                                 | Parent role(s)                       | Description                                            |
++======================================+======================================+========================================================+
+| Neos.ContentRepository:Administrator |                                      | A no-op role for future use                            |
++--------------------------------------+--------------------------------------+--------------------------------------------------------+
+| Neos.Neos:AbstractEditor             | Neos.ContentRepository:Administrator | Grants the very basic things needed to use Neos at all |
++--------------------------------------+--------------------------------------+--------------------------------------------------------+
+| Neos.Neos:LivePublisher              |                                      | A "helper role" to allow publishing to the live        |
+|                                      |                                      | workspace                                              |
++--------------------------------------+--------------------------------------+--------------------------------------------------------+
+| Neos.Neos:RestrictedEditor           | Neos.Neos:AbstractEditor             | Allows to edit content but not publish to the live     |
+|                                      |                                      | workspace                                              |
++--------------------------------------+--------------------------------------+--------------------------------------------------------+
+| Neos.Neos:Editor                     | Neos.Neos:AbstractEditor             | Allows to edit and publish content                     |
+|                                      |                                      |                                                        |
+|                                      | Neos.Neos:LivePublisher              |                                                        |
++--------------------------------------+--------------------------------------+--------------------------------------------------------+
+| Neos.Neos:Administrator              | Neos.Neos:Editor                     | Everything the Editor can do, plus admin things        |
++--------------------------------------+--------------------------------------+--------------------------------------------------------+
 
 To adjust permissions for your editors, you can of course just adjust the existing roles (`Neos.Neos:RestrictedEditor`
 and `Neos.Neos:Editor` in most cases). If you need different sets of permissions, you will need to define your own

@@ -285,6 +285,54 @@
 			<trans-unit id="primary" xml:space="preserve">
 				<source>Primary</source>
 			</trans-unit>
+			<trans-unit id="package" xml:space="preserve">
+				<source>Package</source>
+			</trans-unit>
+			<trans-unit id="deactivated" xml:space="preserve">
+				<source>Deactivated</source>
+			</trans-unit>
+			<trans-unit id="unavailable" xml:space="preserve">
+				<source>Unavailable</source>
+			</trans-unit>
+			<trans-unit id="inactive" xml:space="preserve">
+				<source>Inactive</source>
+			</trans-unit>
+			<trans-unit id="clickToEdit" xml:space="preserve">
+				<source>Click to edit</source>
+			</trans-unit>
+			<trans-unit id="clickToDeactivate" xml:space="preserve">
+				<source>Click to deactivate</source>
+			</trans-unit>
+			<trans-unit id="clickToActivate" xml:space="preserve">
+				<source>Click to activate</source>
+			</trans-unit>
+			<trans-unit id="clickToDelete" xml:space="preserve">
+				<source>Click to delete</source>
+			</trans-unit>
+			<trans-unit id="clickToCreate" xml:space="preserve">
+				<source>Click to create new</source>
+			</trans-unit>
+			<trans-unit id="state" xml:space="preserve">
+				<source>Status</source>
+			</trans-unit>
+			<trans-unit id="active" xml:space="preserve">
+				<source>Active</source>
+			</trans-unit>
+			<trans-unit id="domains" xml:space="preserve">
+				<source>Domains</source>
+			</trans-unit>
+			<trans-unit id="domain" xml:space="preserve">
+				<source>Domain</source>
+			</trans-unit>
+			<trans-unit id="deleteConfirm" xml:space="preserve">
+				<source>Yes, delete it!</source>
+			</trans-unit>
+			<trans-unit id="packageKey" xml:space="preserve">
+				<source>Package Key</source>
+			</trans-unit>
+			<trans-unit id="description" xml:space="preserve">
+				<source>Description</source>
+			</trans-unit>
 
 			<!-- node types -->
 			<trans-unit id="nodeTypes.groups.general" xml:space="preserve">

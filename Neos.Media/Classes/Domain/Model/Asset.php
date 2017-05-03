@@ -215,7 +215,7 @@ class Asset implements AssetInterface
      */
     public function getFileExtension()
     {
-        return MediaTypes::getFilenameExtensionFromMediaType($this->resource->getMediaType());
+        return $this->resource->getFileExtension();
     }
 
     /**

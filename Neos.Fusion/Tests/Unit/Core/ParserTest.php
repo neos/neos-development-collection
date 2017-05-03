@@ -72,7 +72,7 @@ class ParserTest extends UnitTestCase
             case 'Neos\Fusion\Processors\WrapProcessor':
             case 'Neos\Fusion\Processors\SubstringProcessor':
             case 'Neos\Fusion\Processors\MultiplyProcessor':
-            case 'TYPO3\SomeOther\Namespace\MyWrapProcessor':
+            case 'Neos\SomeOther\Namespace\MyWrapProcessor':
                 return true;
             default:
                 return false;
@@ -622,10 +622,10 @@ class ParserTest extends UnitTestCase
     {
         $expectedParseTree = array(
             '__prototypes' => array(
-                'TYPO3.Foo:Bar' => array(
+                'Neos.Foo:Bar' => array(
                     'baz' => 'Hallo'
                 ),
-                'TYPO3.Foo:Bar2' => array(
+                'Neos.Foo:Bar2' => array(
                     'baz' => 'Foo',
                     'test2' => 42
                 ),
@@ -636,16 +636,16 @@ class ParserTest extends UnitTestCase
                         )
                     )
                 ),
-                'TYPO3.Foo:Bar3' => array(
-                    '__prototypeObjectName' => 'TYPO3.Foo:Bar2',
+                'Neos.Foo:Bar3' => array(
+                    '__prototypeObjectName' => 'Neos.Foo:Bar2',
                     '__prototypeChain' => array(
-                        'TYPO3.Foo:Bar2'
+                        'Neos.Foo:Bar2'
                     )
                 )
             ),
             'test' => array(
                 '__prototypes' => array(
-                    'TYPO3.Foo:Bar' => array(
+                    'Neos.Foo:Bar' => array(
                         'baz' => 'Hallo'
                     )
                 ),
@@ -653,7 +653,7 @@ class ParserTest extends UnitTestCase
             'foo' => array(
                 'bar' => array(
                     '__prototypes' => array(
-                        'TYPO3.Foo:Bar2' => array(
+                        'Neos.Foo:Bar2' => array(
                             'baz' => 'Foo',
                             'test2' => 42,
                             'blah' => array(
@@ -737,7 +737,7 @@ class ParserTest extends UnitTestCase
         $expectedParseTree = $this->getExpectedParseTreeForFixture16();
 
         // Check that values were overridden by fixture #17:
-        $expectedParseTree['__prototypes']['TYPO3.Foo:Bar2']['baz'] = 'New Value';
+        $expectedParseTree['__prototypes']['Neos.Foo:Bar2']['baz'] = 'New Value';
 
         // Set the default namespace to Neos.Neos - that's what Neos does as well in Domain\Service\FusionService:
         $this->parser->setObjectTypeNamespace('default', 'Neos.Neos');
@@ -785,12 +785,12 @@ class ParserTest extends UnitTestCase
                 '__eelExpression' => null
             ),
             'object3' => array(
-                '__objectType' => 'TYPO3.Schirmchen:Text',
+                '__objectType' => 'Neos.Schirmchen:Text',
                 '__value' => null,
                 '__eelExpression' => null
             ),
             'object4' => array(
-                '__objectType' => 'TYPO3.Future:Text',
+                '__objectType' => 'Neos.Future:Text',
                 '__value' => null,
                 '__eelExpression' => null
             ),
@@ -805,12 +805,12 @@ class ParserTest extends UnitTestCase
                         'class' => ArrayImplementation::class
                     )
                 ),
-                'TYPO3.Schirmchen:Baz' => array(
+                'Neos.Schirmchen:Baz' => array(
                     '__meta' => array(
                         'class' => ArrayImplementation::class
                     )
                 ),
-                'TYPO3.Future:Quux' => array(
+                'Neos.Future:Quux' => array(
                     '__meta' => array(
                         'class' => ArrayImplementation::class
                     )
