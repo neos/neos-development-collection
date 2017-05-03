@@ -265,7 +265,7 @@ class AssetService
 
                 if (method_exists($variant, 'getAdjustments')) {
                     foreach ($variant->getAdjustments() as $adjustment) {
-                        if (method_exists($adjustment, 'refit')) {
+                        if (method_exists($adjustment, 'refit') && $this->imageService->getImageSize($originalAssetResource) != $this->imageService->getImageSize($resource)) {
                             $adjustment->refit($asset);
                         }
                     }
