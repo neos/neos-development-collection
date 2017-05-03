@@ -11,8 +11,6 @@ namespace Neos\ContentRepository\Domain\Model\IntraDimension;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-
 /**
  * The intra dimensional fallback graph domain model
  * Represents the fallback mechanism within each content subgraph dimension

@@ -12,7 +12,6 @@ namespace Neos\ContentRepository\Domain\Model\InterDimension;
  */
 
 use Neos\ContentRepository\Domain\Model\IntraDimension;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The inter dimensional fallback graph domain model

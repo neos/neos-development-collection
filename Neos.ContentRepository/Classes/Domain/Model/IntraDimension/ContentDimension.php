@@ -11,8 +11,6 @@ namespace Neos\ContentRepository\Domain\Model\IntraDimension;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-
 /**
  * The content dimension domain model
  */

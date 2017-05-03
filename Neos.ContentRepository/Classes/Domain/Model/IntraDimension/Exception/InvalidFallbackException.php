@@ -11,7 +11,6 @@ namespace Neos\ContentRepository\Domain\Model\IntraDimension\Exception;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception;
 
 /**

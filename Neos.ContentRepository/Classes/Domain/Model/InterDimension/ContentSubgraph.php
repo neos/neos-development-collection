@@ -13,7 +13,6 @@ namespace Neos\ContentRepository\Domain\Model\InterDimension;
 
 use Neos\ContentRepository\Domain\Model\IntraDimension;
 use Neos\ContentRepository\Domain\Utility\SubgraphUtility;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The content subgraph domain model

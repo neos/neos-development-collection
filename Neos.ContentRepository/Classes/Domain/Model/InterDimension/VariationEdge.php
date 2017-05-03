@@ -11,8 +11,6 @@ namespace Neos\ContentRepository\Domain\Model\InterDimension;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-
 /**
  * The variation edge domain model
  * May serve as a fallback edge for variants or as a variant edge for fallbacks
