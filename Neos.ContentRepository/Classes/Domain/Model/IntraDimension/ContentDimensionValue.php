@@ -36,7 +36,10 @@ class ContentDimensionValue
      */
     protected $depth = 0;
 
-
+    /**
+     * @param string $value
+     * @param ContentDimensionValue|null $fallback
+     */
     public function __construct(string $value, ContentDimensionValue $fallback = null)
     {
         $this->value = $value;
@@ -46,7 +49,10 @@ class ContentDimensionValue
         }
     }
 
-
+    /**
+     * @param ContentDimensionValue $variant
+     * @return void
+     */
     public function registerVariant(ContentDimensionValue $variant)
     {
         $this->variants[$variant->getValue()] = $variant;
@@ -68,11 +74,17 @@ class ContentDimensionValue
         return $this->fallback;
     }
 
+    /**
+     * @return string
+     */
     public function getValue(): string
     {
         return $this->value;
     }
 
+    /**
+     * @return int
+     */
     public function getDepth(): int
     {
         return $this->depth;
@@ -103,6 +115,9 @@ class ContentDimensionValue
         return $fallbackDepth;
     }
 
+    /**
+     * @return string
+     */
     public function __toString(): string
     {
         return $this->value;

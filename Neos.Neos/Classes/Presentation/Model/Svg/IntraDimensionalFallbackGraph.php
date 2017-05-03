@@ -38,13 +38,17 @@ class IntraDimensionalFallbackGraph
      */
     protected $height;
 
-
+    /**
+     * @param IntraDimension\IntraDimensionalFallbackGraph $fallbackGraph
+     */
     public function __construct(IntraDimension\IntraDimensionalFallbackGraph $fallbackGraph)
     {
         $this->fallbackGraph = $fallbackGraph;
     }
 
-
+    /**
+     * @return array
+     */
     public function getDimensions(): array
     {
         if (is_null($this->dimensions)) {
@@ -54,6 +58,9 @@ class IntraDimensionalFallbackGraph
         return $this->dimensions;
     }
 
+    /**
+     * @return int
+     */
     public function getWidth(): int
     {
         if (is_null($this->width)) {
@@ -63,6 +70,9 @@ class IntraDimensionalFallbackGraph
         return $this->width ?: 0;
     }
 
+    /**
+     * @return int
+     */
     public function getHeight(): int
     {
         if (is_null($this->height)) {
@@ -72,6 +82,9 @@ class IntraDimensionalFallbackGraph
         return $this->height ?: 0;
     }
 
+    /**
+     * @return void
+     */
     protected function initialize()
     {
         $this->dimensions = [];
@@ -94,6 +107,15 @@ class IntraDimensionalFallbackGraph
         }
     }
 
+    /**
+     * @param string $dimensionName
+     * @param IntraDimension\ContentDimensionValue $value
+     * @param int $counter
+     * @param int $depth
+     * @param int $horizontalOffset
+     * @param int $parent
+     * @return void
+     */
     protected function traverseDimension(string $dimensionName, IntraDimension\ContentDimensionValue $value, int & $counter, int $depth, int & $horizontalOffset, int $parent)
     {
         $counter++;

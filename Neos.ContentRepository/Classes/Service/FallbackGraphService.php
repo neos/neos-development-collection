@@ -45,7 +45,6 @@ class FallbackGraphService
      */
     protected $interDimensionalFallbackGraph;
 
-
     /**
      * @throws Exception\InvalidDimensionConfigurationException
      */
@@ -68,6 +67,11 @@ class FallbackGraphService
         return $prioritizedContentDimensions;
     }
 
+    /**
+     * @param array $prioritizedContentDimensions
+     * @return void
+     * @throws Exception\InvalidDimensionConfigurationException
+     */
     protected function populatePresetDimensions(array & $prioritizedContentDimensions)
     {
         foreach ($this->contentDimensionPresetSource->getAllPresets() as $dimensionName => $dimensionConfiguration) {

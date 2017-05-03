@@ -36,25 +36,37 @@ class ContentDimension
      */
     protected $depth = 0;
 
-
+    /**
+     * @param string $name
+     * @param null $label
+     */
     public function __construct(string $name, $label = null)
     {
         $this->name = $name;
         $this->label = $label ?: $name;
     }
 
-
+    /**
+     * @return string
+     */
     public function getName(): string
     {
         return $this->name;
     }
 
+    /**
+     * @return string
+     */
     public function getLabel(): string
     {
         return $this->label;
     }
 
-
+    /**
+     * @param string $value
+     * @param ContentDimensionValue|null $fallback
+     * @return ContentDimensionValue
+     */
     public function createValue(string $value, ContentDimensionValue $fallback = null): ContentDimensionValue
     {
         $contentDimensionValue = new ContentDimensionValue($value, $fallback);
@@ -94,6 +106,9 @@ class ContentDimension
         });
     }
 
+    /**
+     * @return int
+     */
     public function getDepth(): int
     {
         return $this->depth;
