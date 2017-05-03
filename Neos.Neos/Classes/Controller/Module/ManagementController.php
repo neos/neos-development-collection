@@ -14,8 +14,6 @@ namespace Neos\Neos\Controller\Module;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * The TYPO3 Management module controller
- *
  * @Flow\Scope("singleton")
  */
 class ManagementController extends AbstractModuleController

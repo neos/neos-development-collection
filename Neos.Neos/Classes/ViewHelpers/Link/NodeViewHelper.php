@@ -24,7 +24,7 @@ use Neos\Fusion\ViewHelpers\FusionContextTrait;
  * A view helper for creating links with URIs pointing to nodes.
  *
  * The target node can be provided as string or as a Node object; if not specified
- * at all, the generated URI will refer to the current document node inside the TypoScript context.
+ * at all, the generated URI will refer to the current document node inside the Fusion context.
  *
  * When specifying the ``node`` argument as string, the following conventions apply:
  *
@@ -145,7 +145,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
      * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
      * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
      * @param string $nodeVariableName The variable the node will be assigned to for the rendered child content
-     * @param string $baseNodeName The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
+     * @param string $baseNodeName The name of the base node inside the Fusion context to use for the ContentContext or resolving relative paths
      * @param boolean $resolveShortcuts INTERNAL Parameter - if FALSE, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
      * @return string The rendered link
      * @throws ViewHelperException

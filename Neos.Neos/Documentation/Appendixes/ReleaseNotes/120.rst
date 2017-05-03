@@ -1,0 +1,270 @@
+==================
+1.2.0 (2014-12-10)
+==================
+
+The third release of Neos focuses on adding translation support, improving the editor experience and implementing
+many new features. Neos is getting closer to being able to solve most project needs without custom code.
+
+A lot of work has been put into this release to deliver a truly great user experience. Check out the online demo site
+(http://neos.demo.typo3.org/) for trying out the new version.
+
+In total 94 new features, 339 tasks and 282 bugfixes made it into the beta and more non-breaking improvements will come
+during the finalization phase.
+
+Upgrading from 1.1 can be done easily using the available migrations. Instructions available here
+http://neos.typo3.org/develop/download/upgrade-instructions-1-2.html. If you experience any issues please report them
+to https://jira.typo3.org/browse/NEOS.
+
+A big thanks goes out to all the contributors that made this happen.
+
+A bunch of teaser videos can be found here https://www.youtube.com/playlist?list=PLmMUGpq3yu-heNfu_e2HtcMH0RtaRPeJU
+
+~~~~~~~~~~~~~~~~~~~
+Translation support
+~~~~~~~~~~~~~~~~~~~
+
+Support for creating localized websites with Neos is years in the making. We took all the experience from a decade of
+TYPO3 CMS customer projects into account and came up with a universal concept: Content Dimensions. This feature, which
+is deeply rooted in Neos’ content repository, allows for creating and combining an arbitrary number of variants of a
+piece of content. In Neos 1.2 we use Content Dimensions for realizing translations. Once the site integrator has
+defined which languages should be available, an editor can translate content by simply navigating to the part of the
+website he’d like to translate, switch to another language and type away.
+
+All aspects of a node – which is the technical term for any kind of content - can be translated. A new implementation
+of the routing component for Neos even allows for translation and customization of the URL of a particular document.
+
+For a first impression you might want to watch a talk about multi language websites with Neos 1.2 from this year’s
+T3CON: http://rlmk.me/neosmulti1-2
+
+Information about the general UI approach to localization and full use of content dimensions, some of the planned
+concepts are explained at http://rasmusskjoldan.com/post/82289319462/localization-is-not-about-localization
+
+Many more features regarding content translation and content dimensions in general are on our roadmap.
+
+See the chapter :ref:`content-dimensions` for details.
+
+~~~~~~~~~~~
+Constraints
+~~~~~~~~~~~
+
+In a typical project, you will create lots of custom node types. However, many node types should only be
+used in a specific context and not everywhere. Using *node type constraints*, it is now possible to restrict the allowed
+child node types inside a given node type. Additionally for being able to specify direct child node constraints, it is
+also possible to specify grandchild constraints for auto-created node types.
+
+See the chapter :ref:`node-constraints` for details.
+
+Node type constraints are supported in the following places in Neos:
+
+- "Create New" panel in content element handles
+- "Create New" panel in the navigate component (document and structure tree)
+- moving in Navigate component
+- changing node type in the inspector
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Additional editor experience improvements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Link editor for nodes, assets and external links
+   A link editor for the inspector that can handle internal and external links
+- Add ability to Shortcut to an external target
+   Allows for linking to an external URL for shortcut pages
+- Crop aspect ratio lock presets (image editor)
+   Allow locking or predefining aspect ratios for the image cropping
+- Tabs for property groups in the inspector
+   Allow grouping properties and property groups across different tabs
+- Update Aloha editor
+   Update to a stable version of the editor with various bugfixes and some new features
+- Improve exception handling during rendering
+   Make broken pages less broken
+- Mark unpublished nodes in context structure tree
+   Unpublished nodes are now highlighted in the context structure tree
+- Manual node selection in Menu element
+   The menu content element now supports selecting specify menu items to show
+- Add new content element for inserting records
+   New content element to insert other content elements
+- Improve usability of publishing button
+   The publish button now has a active state during publishing, is disabled during saving and has become more responsive
+- Allow advanced default values for properties of type date
+   Allows setting the current date and more advanced default values for date editors
+- Add icons to reference(s) inspector editor results
+   The reference editor in the inspector now shows icons for the nodes
+- Allow closing dialogs with esc key
+   All the different dialogs now support closing by hitting the escape key
+- Warn the user about an expired / lost session
+   A login dialog appears when a session has expired allowing the editor to login again and resume work
+- Warn editors when navigating away during saving/publishing
+   Warns the editor when navigating away or closing the page during saving/publishing to avoid loss of changes
+- Improve stability of content saving
+   The saving of content has greatly been improved, preventing issues with content not being saved
+- Improve 404 handling in Neos backend
+   When deleting the current page it would end in a 404, instead the closest parent page is found
+- Login screen removes username on failed login
+   The username is kept on failed logins
+- Use correct icons for node results in Aloha link field
+   Previously all results in the aloha link field had the same icon, now they have the one matching their node type
+- Use placeholder instead of default value in inline link editor
+   Adds a placeholder, removes the "http://" and makes it clear that the field allows for searching
+- Improve usability of new/paste buttons in navigate component
+   Adds indication that the new & paste buttons allows for altering insert/paste position
+- Sorting of node types in insert new panels
+   Allows for sorting the node types in the new panels (navigate/content)
+- Login dialog improvements
+   Added progress indication and streamlined normal and re-login forms.
+- Group, sort & add icons for node types in NodeTypeEditor
+   Gives a better overview of available options when changing the node type.
+- Insert new panel improvements
+   Options styled as cards instead of links, supports tab navigation, can handle lots of options and long labels.
+
+~~~~~~~~~~~~~~~~~~
+Inspector features
+~~~~~~~~~~~~~~~~~~
+
+- Dynamically loaded options for the inspectors SelectBoxEditor
+   Support for loading option values dynamically from the server
+- Multiple selection & grouping in inspector SelectBoxEditor
+   Support for selecting multiple options and grouping options
+- Time support for the inspector date editor
+   Allows date selectors with time selection
+- Textarea inspector editor
+   An editor used for multiple lines of text in the inspector (meta description e.g.)
+- Make button label and highlighting mode configurable
+   Allows for more than the HTML format for the code editor in the inspector
+- Switch to PHP date format for inspector
+   The default date format for the date editor is now the PHP date format for easier usage
+- Make NodeTree baseNodeType configurable
+   It's possible to filter the node tree in a custom way to exclude unwanted document nodes
+
+~~~~~~~~~~~~~~~~~~~~~~~
+Inline editing features
+~~~~~~~~~~~~~~~~~~~~~~~
+
+- Placeholder support for inline editable properties
+   Allows for having empty inline editable properties
+- add <code> tag to Aloha Editor (disabled by default)
+   Enables the use of wrapping text in a <code> tag
+
+~~~~~~~~~~~~~~~~~~~
+TypoScript features
+~~~~~~~~~~~~~~~~~~~
+
+- TypoScript prototype to handle HTTP headers and response status
+   Allows adding custom headers from TypoScript to the response (e.g. application/xml)
+- Implement TypoScript inclusion globbing
+   Include multiple TypoScript files with one include line
+- @if meta property for conditional evaluation of paths
+   Use conditions to disable TypoScript keys
+- NodeUri TypoScript object for linking to nodes
+   A TypoScript object for making linking to nodes easier (link view helper equivalent)
+- ImageTag and ImageUri TypoScript objects
+   TypoScript objects for creating images directly in TypoScript (image view helper equivalents)
+- Has FlowQuery operation
+   Like the jQuery has function for filtering nodes containing specific children
+- Implement BreadcrumbMenu to replace Breadcrumb
+   Breadcrumb menu streamlined with the normal menu implementation (old one deprecated)
+- Menu item attributes should have access to item in context
+   The menu implementation now has access to the current item when evaluating the attributes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Backend interaction features
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- External event for node creation / removal
+   Allows for updating the dom when content is created/removed in the backend
+- Expose public JavaScript API for reloading the page
+   Allows for externally reloading the current page in the backend
+- External events when panels open/close and layout changes
+   Events that integrators can use to update the dom when the backend panels change
+
+~~~~~~~~~~~~~~
+Fluid features
+~~~~~~~~~~~~~~
+
+- Use node label for link.node view helper
+   Makes it easier to link to nodes with a relative path by making the linked node accessible
+- uri.module view helper
+   Equivalent of the link.module view helper
+- Allow linking to site node in NodeLinkingService
+   Allows for linking to the site node with the relative path ``~`` in the node link view helper
+
+~~~~~~~~~~~~~~~~~~~
+Additional features
+~~~~~~~~~~~~~~~~~~~
+
+- Dimension/Language Menu
+   A new menu for linking to other dimensions (e.g. between languages) – see demo site for an example
+- Configuration module
+   A new backend module to display configuration (Settings, NodeTypes, Policies, Routes, Caches, Objects, Views)
+- Introduce mixins to avoid illogical inheritance
+   Multiple mixins has been added which can be reused in custom elements (TYPO3.Neos.NodeTypes:TextMixin, TYPO3.Neos.NodeTypes:ImageMixin, etc.)
+- REST services
+   New REST controllers were introduced to handle various backend requests (outputs both html/json)
+- Data sources
+   A new way of providing content to the backend via AJAX easily. See the chapter :ref:`data-sources` for details.
+- Allow simple search/replace in ChangePropertyValue transformation
+   Allow node migrations to search and replace in text properties
+- Commands to activate/deactivate domains
+   ./flow domain:activate & domain:deactivate
+- Handle properties of type array
+   Node type properties can now be arrays (used for multiple selection in the SelectBoxEditor)
+
+~~~~~~~~~~~~~~~~~~~~
+!!! Breaking changes
+~~~~~~~~~~~~~~~~~~~~
+
+- Move ImageTag and ImageUri TypoScript objects to TYPO3.Neos
+   Replace all occurrences of ``TYPO3.Media:Image*`` with ``TYPO3.Neos:Image*`` to adjust your code.
+- Serialized image objects cause Doctrine errors
+   Images inserted in existing sites cause fatal errors. Running ``./doctrine migrate`` solves the issue.
+- Rename "Insert records" content element
+   To adjust your existing "Insert records" nodes, run the following node migration: ``./flow node:migrate 20141210114800``
+- Move FlowQueryOperations concerning nodes to TYPO3CR
+   Breaking if you extended existing FlowQueryOperations concerning nodes
+- Fix linking behavior
+   Links to shortcut nodes now point to the end target instead of intermediary URLs
+- HTML editor: Make button label and highlighting mode configurable
+   This is breaking if you used the HtmlEditor in your node types. To adjust, you need to replace *HtmlEditor*
+   with *CodeEditor*, either manually or with ./flow core:migrate --package-key <your package>
+- Use node label for link.node view helper
+   This is breaking since it changes the behavior of empty links, so if you relied on that you need to use the
+   f:link.uri view helper inside the href attribute of a normal a tag.
+- Update Aloha editor
+   b and i tags are now replaced with strong and em (old ones can still be configured).
+
+   Now automatically adds paragraph around non formatted blocks.
+
+   Target _blank is now added automatically to external links.
+- Harmonize TypoScript paths
+   The old path ``Private/TypoScripts(/Library)/Root.ts2`` is deprecated in favor of ``/Private/TypoScript/Root.ts2``
+- Add ability to Shortcut to an external target
+   To adjust your existing Shortcut nodes, run the following node migration: ``./flow node:migrate 20140930125621``
+- Switch to PHP date format for inspector date editor
+   To adjust the code use the new format, it should be enough to run this on your site package(s):
+   ``./flow flow:core:migrate --package-key <sitepackagekey>``
+- Deprecate unused IncludeJavaScriptViewHelper
+- Menu state should not be calculated based on a shortcut
+   This is only breaking compared to the 1.1 branch not to 1.0. If you need a link to the site root page with correct
+   active state you shouldn't create a shortcut pointing to it but rather include the real site root in the menu, by
+   using the itemCollection property of the Menu TypoScript object.
+- Hide document layout properties by default
+   If you rely on these properties, adjust your node type configuration by setting the group on the two layout
+   properties.
+- Change default inline editing options
+   Disables the underline tag as well as sub- and super script tags by default. They can be enabled again with
+   configuration.
+- Use strong and em instead of b and i as default
+   Breaking if relying on non-native browser styling of b and i tags.
+- Mark NodeInterface::getFullLabel deprecated
+   The getFullLabel method is now deprecated. The getLabel method returns the full label instead.
+- New node label management
+   The code migration 20140911160326 takes care of changing existing implementations of the old
+   ``NodeLabelGeneratorInterface`` to the deprecated ``NodeDataLabelGeneratorInterface`` and to change the NodeTypes
+   configuration to the new format.
+- Node Migrations work on NodeData
+   This is considered breaking if you added your own Transformations or Filters for Node Migrations or rely on them to
+   only apply to a specific workspace.
+- Change handling of empty, false and null attribute values
+   This will be breaking if code relied on the previous conversion of values or the output is used for XML, where the
+   new meta property ``@allowEmpty`` should be used to disable empty attributes.
+
+**Further details can be found in the commit messages of the changes**

@@ -12,6 +12,7 @@ namespace Neos\Neos\Controller;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\ContentRepository\Domain\Model\NodeData;
@@ -86,7 +87,7 @@ trait CreateContentContextTrait
             'currentSite' => $site
         ];
 
-        if ($domain = $site->getFirstActiveDomain()) {
+        if ($site instanceof Site && $domain = $site->getFirstActiveDomain()) {
             $contextProperties['currentDomain'] = $domain;
         }
 

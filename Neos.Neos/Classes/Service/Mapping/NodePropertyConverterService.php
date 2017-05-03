@@ -130,19 +130,19 @@ class NodePropertyConverterService
      */
     protected function convertValue($propertyValue, $dataType)
     {
-        $rawType = TypeHandling::truncateElementType($dataType);
+        $parsedType = TypeHandling::parseType($dataType);
 
         // This hardcoded handling is to circumvent rewriting PropertyMappers that convert objects. Usually they expect the source to be an object already and break if not.
-        if (!TypeHandling::isSimpleType($rawType) && !is_object($propertyValue) && !is_array($propertyValue)) {
+        if (!TypeHandling::isSimpleType($parsedType['type']) && !is_object($propertyValue) && !is_array($propertyValue)) {
             return null;
         }
 
-        if ($rawType === 'array') {
-            $conversionTargetType = 'array<string>';
-        } elseif (TypeHandling::isSimpleType($rawType)) {
-            $conversionTargetType = TypeHandling::normalizeType($rawType);
-        } else {
+        $conversionTargetType = $parsedType['type'];
+        if (!TypeHandling::isSimpleType($parsedType['type'])) {
             $conversionTargetType = 'array';
+        }
+        if ($parsedType['type'] === 'array' && $parsedType['elementType'] !== null) {
+            $conversionTargetType .= '<' . $parsedType['elementType'] . '>';
         }
 
         $propertyMappingConfiguration = $this->createConfiguration($dataType);
@@ -158,7 +158,7 @@ class NodePropertyConverterService
     /**
      * Tries to find a default value for the given property trying:
      * 1) The specific property configuration for the given NodeType
-     * 2) The generic configuration for the property type in setings.
+     * 2) The generic configuration for the property type in settings.
      *
      * @param NodeType $nodeType
      * @param string $propertyName

@@ -1403,38 +1403,39 @@ class NodeDataRepository extends Repository
     /**
      * Searches for possible relations to the given entity identifiers in NodeData.
      * Will return all possible NodeData objects that contain this identifiers.
+     * See buildQueryBuilderForRelationMap for the relationMap definition.
      *
      * Note: This is an internal method that is likely to be replaced in the future.
-     *
-     * $objectTypeMap = array(
-     *    'Neos\Media\Domain\Model\Asset' => array('some-uuid-here'),
-     *    'Neos\Media\Domain\Model\ImageVariant' => array('some-uuid-here', 'another-uuid-here')
-     * )
      *
      * @param array $relationMap
      * @return array
      */
     public function findNodesByRelatedEntities($relationMap)
     {
-        /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = $this->entityManager->createQueryBuilder();
+        return $this->buildQueryBuilderForRelationMap($relationMap)->getQuery()->getResult();
+    }
 
-        $queryBuilder->select('n')
-            ->from(NodeData::class, 'n');
+    /**
+     * Searches for possible relations to the given entity identifiers in NodeData using a path prefix.
+     * Will return all possible NodeData objects that contain this identifiers.
+     * See buildQueryBuilderForRelationMap for the relationMap definition.
+     *
+     * Note: This is an internal method that is likely to be replaced in the future.
+     *
+     * @param string $pathPrefix
+     * @param array $relationMap
+     * @return array
+     */
+    public function findNodesByPathPrefixAndRelatedEntities($pathPrefix, $relationMap)
+    {
+        $queryBuilder = $this->buildQueryBuilderForRelationMap($relationMap);
 
-        $constraints = [];
-        $parameters = [];
-        foreach ($relationMap as $relatedObjectType => $relatedIdentifiers) {
-            foreach ($relatedIdentifiers as $relatedIdentifier) {
-                $constraints[] = '(LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :entity' . md5($relatedIdentifier) . ' )';
-                $parameters['entity' . md5($relatedIdentifier)] = '%"__identifier": "' . strtolower($relatedIdentifier) . '"%';
-            }
+        if (trim($pathPrefix) !== '') {
+            $queryBuilder->andWhere('n.path LIKE :pathPrefix');
+            $queryBuilder->setParameter('pathPrefix', trim($pathPrefix) . '%');
         }
-        $queryBuilder->where(implode(' OR ', $constraints));
-        $queryBuilder->setParameters($parameters);
-        $possibleNodeData = $queryBuilder->getQuery()->getResult();
 
-        return $possibleNodeData;
+        return $queryBuilder->getQuery()->getResult();
     }
 
     /**
@@ -1601,5 +1602,40 @@ class NodeDataRepository extends Repository
         }
 
         return $workspaces;
+    }
+
+    /**
+     * Returns a query builder for a query on node data using the given
+     * relation map.
+     *
+     * $objectTypeMap = [
+     *    'Neos\Media\Domain\Model\Asset' => ['some-uuid-here'],
+     *    'Neos\Media\Domain\Model\ImageVariant' => ['some-uuid-here', 'another-uuid-here']
+     * ]
+     *
+     * @param array $relationMap
+     * @return QueryBuilder
+     */
+    protected function buildQueryBuilderForRelationMap($relationMap)
+    {
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+
+        $queryBuilder->select('n')
+            ->from(NodeData::class, 'n');
+
+        $constraints = [];
+        $parameters = [];
+
+        foreach ($relationMap as $relatedObjectType => $relatedIdentifiers) {
+            foreach ($relatedIdentifiers as $relatedIdentifier) {
+                $constraints[] = '(LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :entity' . md5($relatedIdentifier) . ' )';
+                $parameters['entity' . md5($relatedIdentifier)] = '%"__identifier": "' . strtolower($relatedIdentifier) . '"%';
+            }
+        }
+
+        $queryBuilder->where(implode(' OR ', $constraints));
+        $queryBuilder->setParameters($parameters);
+        return $queryBuilder;
     }
 }

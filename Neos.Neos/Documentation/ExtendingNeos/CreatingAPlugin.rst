@@ -54,7 +54,7 @@ Configure Access Rights
 -----------------------
 
 To be able to call the actions of the controller you have to configure a matching set of rights.
-Add the following to *Configuration/Policy.yaml* of your package:
+Create a *Policy.yaml* file in *Packages/Application/Sarkosh.CdCollection/Configuration/Policy.yaml* containing:
 
 .. code-block:: yaml
 
@@ -122,6 +122,14 @@ to keep things organized. Technically it has no relevance.
   mkdir Packages/Plugins
   mv Packages/Application/Sarkosh.CdCollection Packages/Plugins/Sarkosh.CdCollection
 
+If you do this, it is important to rescan the available packages:
+
+.. code-block:: bash
+
+  ./flow flow:package:rescan
+
+After this, you can use the Plugin with the same url ``http://neos.demo/flow/sarkosh.cdcollection``
+
 Converting a Flow Package Into a Neos Plugin
 ============================================
 
@@ -176,7 +184,7 @@ To automatically include the Root.fusion in Neos you have to add the following l
 
   Neos:
     Neos:
-      Fusion:
+      fusion:
         autoInclude:
           'Sarkosh.CdCollection': TRUE
 

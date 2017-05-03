@@ -112,8 +112,8 @@ class PatternTest extends UnitTestCase
         $this->assertEquals(preg_match($pattern, 'foo.bar'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match a simple object path (1)');
         $this->assertEquals(preg_match($pattern, 'foo.\'b@r\''), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match a object path with a single quoted key');
         $this->assertEquals(preg_match($pattern, 'foo."b@r"'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match a object path with a double quoted key');
-        $this->assertEquals(preg_match($pattern, 'foo.prototype(TYPO3.Foo).bar'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match an object path with a prototype definition inside (2)');
-        $this->assertEquals(preg_match($pattern, 'prototype(TYPO3.Foo)'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match an object path which consists only of a prototype definition (3)');
+        $this->assertEquals(preg_match($pattern, 'foo.prototype(Neos.Foo).bar'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match an object path with a prototype definition inside (2)');
+        $this->assertEquals(preg_match($pattern, 'prototype(Neos.Foo)'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match an object path which consists only of a prototype definition (3)');
         $this->assertEquals(preg_match($pattern, 'foo.bar.10.baz'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match a simple object path (4)');
         $this->assertEquals(preg_match($pattern, 'foo.bar.as10.baz'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did not match a simple object path (5)');
         $this->assertEquals(preg_match($pattern, '12foo.bar.as.baz'), 1, 'The SCAN_PATTERN_OBJECTPATH pattern did match a simple object path (6)');
@@ -135,41 +135,41 @@ class PatternTest extends UnitTestCase
         $this->assertSame($expected, preg_split($pattern, 'foo.bar'));
 
         $expected = array(
-            0 => 'prototype(TYPO3.Foo)',
+            0 => 'prototype(Neos.Foo)',
             1 => 'bar'
         );
-        $this->assertSame($expected, preg_split($pattern, 'prototype(TYPO3.Foo).bar'));
+        $this->assertSame($expected, preg_split($pattern, 'prototype(Neos.Foo).bar'));
 
         $expected = array(
             0 => 'asdf',
-            1 => 'prototype(TYPO3.Foo)',
+            1 => 'prototype(Neos.Foo)',
             2 => 'bar'
         );
-        $this->assertSame($expected, preg_split($pattern, 'asdf.prototype(TYPO3.Foo).bar'));
+        $this->assertSame($expected, preg_split($pattern, 'asdf.prototype(Neos.Foo).bar'));
 
         $expected = array(
             0 =>  'blah',
             1 => 'asdf',
-            2 => 'prototype(TYPO3.Foo)',
+            2 => 'prototype(Neos.Foo)',
             3 => 'bar'
         );
-        $this->assertSame($expected, preg_split($pattern, 'blah.asdf.prototype(TYPO3.Foo).bar'));
+        $this->assertSame($expected, preg_split($pattern, 'blah.asdf.prototype(Neos.Foo).bar'));
 
         $expected = array(
             0 =>  'b-lah',
             1 => 'asdf',
-            2 => 'prototype(TYPO3.Foo)',
+            2 => 'prototype(Neos.Foo)',
             3 => 'b-ar'
         );
-        $this->assertSame($expected, preg_split($pattern, 'b-lah.asdf.prototype(TYPO3.Foo).b-ar'));
+        $this->assertSame($expected, preg_split($pattern, 'b-lah.asdf.prototype(Neos.Foo).b-ar'));
 
         $expected = array(
             0 =>  'b:lah',
             1 => 'asdf',
-            2 => 'prototype(TYPO3.Foo)',
+            2 => 'prototype(Neos.Foo)',
             3 => 'b:ar'
         );
-        $this->assertSame($expected, preg_split($pattern, 'b:lah.asdf.prototype(TYPO3.Foo).b:ar'));
+        $this->assertSame($expected, preg_split($pattern, 'b:lah.asdf.prototype(Neos.Foo).b:ar'));
     }
 
     /**
@@ -213,30 +213,30 @@ class PatternTest extends UnitTestCase
         $this->assertRegexMatches('foo."@bar" = Test', $pattern, $expected, 'Simple assignment with double quoted key');
 
         $expected = array(
-            0 => 'foo.prototype(TYPO3.Blah).bar = Test',
-            'ObjectPath' => 'foo.prototype(TYPO3.Blah).bar',
-            1 => 'foo.prototype(TYPO3.Blah).bar',
+            0 => 'foo.prototype(Neos.Blah).bar = Test',
+            'ObjectPath' => 'foo.prototype(Neos.Blah).bar',
+            1 => 'foo.prototype(Neos.Blah).bar',
             'Operator' => '=',
             2 => '=',
             'Value' => 'Test',
             3 => 'Test'
         );
-        $this->assertRegexMatches('foo.prototype(TYPO3.Blah).bar = Test', $pattern, $expected, 'Prototype Object assignment');
+        $this->assertRegexMatches('foo.prototype(Neos.Blah).bar = Test', $pattern, $expected, 'Prototype Object assignment');
 
         $expected = array(
-            0 => 'prototype(TYPO3.Blah).bar = Test',
-            'ObjectPath' => 'prototype(TYPO3.Blah).bar',
-            1 => 'prototype(TYPO3.Blah).bar',
+            0 => 'prototype(Neos.Blah).bar = Test',
+            'ObjectPath' => 'prototype(Neos.Blah).bar',
+            1 => 'prototype(Neos.Blah).bar',
             'Operator' => '=',
             2 => '=',
             'Value' => 'Test',
             3 => 'Test'
         );
-        $this->assertRegexMatches('prototype(TYPO3.Blah).bar = Test', $pattern, $expected, 'Prototype Object assignment at root object');
+        $this->assertRegexMatches('prototype(Neos.Blah).bar = Test', $pattern, $expected, 'Prototype Object assignment at root object');
 
         $expected = array(
         );
-        $this->assertRegexMatches('prototype(TYPO3.Blah) {', $pattern, $expected, 'Prototype Object assignment at root object');
+        $this->assertRegexMatches('prototype(Neos.Blah) {', $pattern, $expected, 'Prototype Object assignment at root object');
     }
 
     /**

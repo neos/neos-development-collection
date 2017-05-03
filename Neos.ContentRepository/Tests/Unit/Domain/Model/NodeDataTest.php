@@ -238,6 +238,34 @@ class NodeDataTest extends UnitTestCase
         $this->nodeData->removeProperty('title');
 
         $this->assertFalse($this->nodeData->hasProperty('title'));
+
+        $this->assertNotContains('title', $this->nodeData->getPropertyNames());
+
+        $this->assertArrayNotHasKey('title', $this->nodeData->getProperties());
+    }
+
+    /**
+     * @test
+     */
+    public function propertiesHandlesNullValuesCorrectly()
+    {
+        $this->nodeData->setProperty('value', null);
+
+        $this->assertTrue($this->nodeData->hasProperty('value'));
+
+        $this->assertNull($this->nodeData->getProperty('value'));
+
+        $this->assertContains('value', $this->nodeData->getPropertyNames());
+
+        $this->assertArrayHasKey('value', $this->nodeData->getProperties());
+
+        $this->nodeData->removeProperty('value');
+
+        $this->assertFalse($this->nodeData->hasProperty('value'));
+
+        $this->assertNotContains('value', $this->nodeData->getPropertyNames());
+
+        $this->assertArrayNotHasKey('value', $this->nodeData->getProperties());
     }
 
     /**

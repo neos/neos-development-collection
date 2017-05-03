@@ -8,6 +8,9 @@ It is possible to extend the media handling by defining asset usage strategies. 
 strategies can tell the media package if an asset is in used, how many times it is
 used and how it is used.
 
+An asset usage strategy is already implemented for Neos ContentRepository nodes under the sites root,
+like document and content nodes. For all other usage scenarios, you need to build your own strategy.
+
 To define your own custom usage strategy you have to implement the
 ``Neos\Media\Domain\Strategy\AssetUsageStrategyInterface``. For convenience you can
 extend the ``Neos\Media\Domain\Strategy\AbstractAssetUsageStrategy``.

@@ -12,7 +12,6 @@ namespace Neos\Neos\Tests\Unit\Service;
  */
 
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Neos\Exception;
 use Neos\Neos\Service\HtmlAugmenter;
 
 /**
@@ -43,12 +42,13 @@ class HtmlAugmenterTest extends UnitTestCase
     public function addAttributesDataProvider()
     {
         eval('
-			class ClassWithToStringMethod {
-				public function __toString() {
-					return "casted value";
-				}
-			}
-		');
+            class ClassWithToStringMethod {
+                public function __toString() {
+                    return "casted value";
+                }
+            }
+        ');
+        /** @noinspection PhpUndefinedClassInspection */
         $mockObject = new \ClassWithToStringMethod();
 
         return array(
