@@ -68,21 +68,35 @@ class ContentSubgraph
         return $this->dimensionValues;
     }
 
+    /**
+     * @param string $dimensionName
+     * @return IntraDimension\ContentDimensionValue
+     */
     public function getDimensionValue($dimensionName): IntraDimension\ContentDimensionValue
     {
         return $this->dimensionValues[$dimensionName];
     }
 
+    /**
+     * @return string
+     */
     public function getIdentityHash(): string
     {
         return $this->identityHash;
     }
 
+    /**
+     * @return array
+     */
     public function getWeight(): array
     {
         return $this->weight;
     }
 
+    /**
+     * @param VariationEdge $variant
+     * @return void
+     */
     public function registerVariantEdge(VariationEdge $variant)
     {
         $this->variantEdges[$variant->getVariant()->getIdentityHash()] = $variant;
@@ -96,6 +110,10 @@ class ContentSubgraph
         return $this->variantEdges;
     }
 
+    /**
+     * @param VariationEdge $fallback
+     * @return void
+     */
     public function registerFallbackEdge(VariationEdge $fallback)
     {
         $this->fallbackEdges[$fallback->getFallback()->getIdentityHash()] = $fallback;

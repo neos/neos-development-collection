@@ -27,7 +27,6 @@ class DimensionController extends AbstractModuleController
      */
     protected $fallbackGraphService;
 
-
     /**
      * @param string $type
      * @param string $subgraphIdentifier

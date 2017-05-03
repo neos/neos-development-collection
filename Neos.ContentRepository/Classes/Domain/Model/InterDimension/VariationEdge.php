@@ -32,7 +32,11 @@ class VariationEdge
      */
     protected $weight;
 
-
+    /**
+     * @param ContentSubgraph $variant
+     * @param ContentSubgraph $fallback
+     * @param array $weight
+     */
     public function __construct(ContentSubgraph $variant, ContentSubgraph $fallback, array $weight)
     {
         $this->variant = $variant;
@@ -42,17 +46,25 @@ class VariationEdge
         $fallback->registerVariantEdge($this);
     }
 
-
+    /**
+     * @return ContentSubgraph
+     */
     public function getVariant(): ContentSubgraph
     {
         return $this->variant;
     }
 
+    /**
+     * @return ContentSubgraph
+     */
     public function getFallback(): ContentSubgraph
     {
         return $this->fallback;
     }
 
+    /**
+     * @return array
+     */
     public function getWeight(): array
     {
         return $this->weight;

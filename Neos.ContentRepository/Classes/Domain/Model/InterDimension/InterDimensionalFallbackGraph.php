@@ -29,13 +29,18 @@ class InterDimensionalFallbackGraph
      */
     protected $prioritizedContentDimensions = [];
 
-
+    /**
+     * @param array $prioritizedContentDimensions
+     */
     public function __construct(array $prioritizedContentDimensions)
     {
         $this->prioritizedContentDimensions = $prioritizedContentDimensions;
     }
 
-
+    /**
+     * @param array $dimensionValues
+     * @return ContentSubgraph
+     */
     public function createContentSubgraph(array $dimensionValues): ContentSubgraph
     {
         $subgraph = new ContentSubgraph($dimensionValues);
@@ -44,6 +49,12 @@ class InterDimensionalFallbackGraph
         return $subgraph;
     }
 
+    /**
+     * @param ContentSubgraph $variant
+     * @param ContentSubgraph $fallback
+     * @return VariationEdge
+     * @throws IntraDimension\Exception\InvalidFallbackException
+     */
     public function connectSubgraphs(ContentSubgraph $variant, ContentSubgraph $fallback): VariationEdge
     {
         if ($variant === $fallback) {
@@ -52,6 +63,11 @@ class InterDimensionalFallbackGraph
         return new VariationEdge($variant, $fallback, $this->calculateFallbackWeight($variant, $fallback));
     }
 
+    /**
+     * @param ContentSubgraph $variant
+     * @param ContentSubgraph $fallback
+     * @return array
+     */
     public function calculateFallbackWeight(ContentSubgraph $variant, ContentSubgraph $fallback)
     {
         $weight = [];
@@ -64,6 +80,10 @@ class InterDimensionalFallbackGraph
         return $weight;
     }
 
+    /**
+     * @param array $weight
+     * @return int
+     */
     public function normalizeWeight(array $weight): int
     {
         $base = $this->determineWeightNormalizationBase();
@@ -77,6 +97,9 @@ class InterDimensionalFallbackGraph
         return $normalizedWeight;
     }
 
+    /**
+     * @return int
+     */
     public function determineWeightNormalizationBase(): int
     {
         $base = 0;

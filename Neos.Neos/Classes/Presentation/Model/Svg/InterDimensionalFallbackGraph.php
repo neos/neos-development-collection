@@ -59,7 +59,11 @@ class InterDimensionalFallbackGraph
      */
     protected $height;
 
-
+    /**
+     * @param InterDimension\InterDimensionalFallbackGraph $fallbackGraph
+     * @param IntraDimension\IntraDimensionalFallbackGraph $intraDimensionalFallbackGraph
+     * @param string|null $rootSubgraphIdentifier
+     */
     public function __construct(
         InterDimension\InterDimensionalFallbackGraph $fallbackGraph,
         IntraDimension\IntraDimensionalFallbackGraph $intraDimensionalFallbackGraph,
@@ -70,7 +74,9 @@ class InterDimensionalFallbackGraph
         $this->rootSubgraphIdentifier = $rootSubgraphIdentifier;
     }
 
-
+    /**
+     * @return array
+     */
     public function getNodes(): array
     {
         if (is_null($this->nodes)) {
@@ -80,6 +86,9 @@ class InterDimensionalFallbackGraph
         return $this->nodes;
     }
 
+    /**
+     * @return array
+     */
     public function getEdges(): array
     {
         if (is_null($this->edges)) {
@@ -89,6 +98,9 @@ class InterDimensionalFallbackGraph
         return $this->edges;
     }
 
+    /**
+     * @return int
+     */
     public function getWidth(): int
     {
         if (is_null($this->width)) {
@@ -98,6 +110,9 @@ class InterDimensionalFallbackGraph
         return $this->width ?: 0;
     }
 
+    /**
+     * @return int
+     */
     public function getHeight(): int
     {
         if (is_null($this->height)) {
@@ -107,6 +122,9 @@ class InterDimensionalFallbackGraph
         return $this->height ?: 0;
     }
 
+    /**
+     * @return void
+     */
     protected function initialize()
     {
         $this->nodes = [];
@@ -119,6 +137,9 @@ class InterDimensionalFallbackGraph
         }
     }
 
+    /**
+     * @return void
+     */
     protected function initializeFullGraph()
     {
         $this->initializeOffsets();
@@ -129,6 +150,9 @@ class InterDimensionalFallbackGraph
         $this->initializeEdges();
     }
 
+    /**
+     * @return void
+     */
     protected function initializeOffsets()
     {
         foreach ($this->intraDimensionalFallbackGraph->getDimensions() as $contentDimension) {
@@ -143,6 +167,14 @@ class InterDimensionalFallbackGraph
         }
     }
 
+    /**
+     * @param string $dimensionName
+     * @param IntraDimension\ContentDimensionValue $value
+     * @param int $depth
+     * @param int $horizontalOffset
+     * @param int $baseOffset
+     * @return void
+     */
     protected function traverseDimension(string $dimensionName, IntraDimension\ContentDimensionValue $value, int $depth, int & $horizontalOffset, int $baseOffset)
     {
         $leftOffset = $horizontalOffset;
@@ -167,7 +199,9 @@ class InterDimensionalFallbackGraph
         $horizontalOffset++;
     }
 
-
+    /**
+     * @return void
+     */
     protected function initializeSubgraph()
     {
         $subgraph = $this->fallbackGraph->getSubgraph($this->rootSubgraphIdentifier);
@@ -184,7 +218,10 @@ class InterDimensionalFallbackGraph
         $this->initializeEdges(false);
     }
 
-
+    /**
+     * @param InterDimension\ContentSubgraph $subgraph
+     * @return void
+     */
     protected function initializeFullGraphNode(InterDimension\ContentSubgraph $subgraph)
     {
         $x = 0;
@@ -223,6 +260,12 @@ class InterDimensionalFallbackGraph
         $this->height = max($this->height, $y + 110);
     }
 
+    /**
+     * @param InterDimension\ContentSubgraph $subgraph
+     * @param int $horizontalOffset
+     * @param int $y
+     * @return void
+     */
     protected function initializeSubgraphNode(InterDimension\ContentSubgraph $subgraph, int & $horizontalOffset, int & $y)
     {
         $nameComponents = $subgraph->getDimensionValues();
@@ -253,6 +296,10 @@ class InterDimensionalFallbackGraph
         $this->height = max($this->height, $y + 42 + 10);
     }
 
+    /**
+     * @param bool $hideInactive
+     * @return void
+     */
     protected function initializeEdges($hideInactive = true)
     {
         $subgraphs = $this->fallbackGraph->getSubgraphs();
