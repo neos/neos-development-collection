@@ -12,7 +12,6 @@ namespace TYPO3\TYPO3CR;
  */
 
 use Behat\Transliterator\Transliterator;
-use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
