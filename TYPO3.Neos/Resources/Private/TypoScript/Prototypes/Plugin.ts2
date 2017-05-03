@@ -10,6 +10,7 @@ prototype(TYPO3.Neos:Plugin) < prototype(TYPO3.Neos:Content) {
 		context {
 			1 = 'node'
 			2 = 'documentNode'
+			3 = 'site'
 		}
 	}
 }
