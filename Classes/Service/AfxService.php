@@ -184,7 +184,7 @@ class AfxService
             $childrenProp = Arrays::getValueByPath($payload, 'props.@children');
             if ($childrenProp) {
                 if ($childrenProp['type'] == 'string') {
-                    $childrenPropertyName = $prop['payload'];
+                    $childrenPropertyName = $childrenProp['payload'];
                 } else {
                     throw new Exception(
                         sprintf('@children only supports string payloads %s found', $childrenProp['type'])
