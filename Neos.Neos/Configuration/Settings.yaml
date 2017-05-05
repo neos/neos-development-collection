@@ -278,26 +278,22 @@ Neos:
         controller: 'Neos\Neos\Controller\Module\ManagementController'
         description: 'Neos.Neos:Modules:management.description'
         icon: icon-briefcase
-        privilegeTarget: 'Neos.Neos:Backend.Module.Management'
         submodules:
           workspaces:
             label: 'Neos.Neos:Modules:workspaces.label'
             controller: 'Neos\Neos\Controller\Module\Management\WorkspacesController'
             description: 'Neos.Neos:Modules:workspaces.description'
             icon: icon-th-large
-            privilegeTarget: 'Neos.Neos:Backend.Module.Management.Workspaces'
           history:
             label: 'Neos.Neos:Modules:history.label'
             controller: 'Neos\Neos\Controller\Module\Management\HistoryController'
             description: 'Neos.Neos:Modules:history.description'
             icon: icon-calendar
-            privilegeTarget: 'Neos.Neos:Backend.Module.Management.History'
       administration:
         label: 'Neos.Neos:Modules:administration.label'
         controller: 'Neos\Neos\Controller\Module\AdministrationController'
         description: 'Neos.Neos:Modules:administration.description'
         icon: icon-gears
-        privilegeTarget: 'Neos.Neos:Backend.Module.Administration'
         submodules:
           users:
             label: 'Neos.Neos:Modules:users.label'
@@ -308,13 +304,11 @@ Neos:
               new:
                 label: 'Neos.Neos:Modules:users.actions.new.label'
                 title: 'Neos.Neos:Modules:users.actions.new.title'
-            privilegeTarget: 'Neos.Neos:Backend.Module.Administration.Users'
           packages:
             label: 'Neos.Neos:Modules:packages.label'
             controller: 'Neos\Neos\Controller\Module\Administration\PackagesController'
             description: 'Neos.Neos:Modules:packages.description'
             icon: icon-archive
-            privilegeTarget: 'Neos.Neos:Backend.Module.Administration.Packages'
           sites:
             label: 'Neos.Neos:Modules:sites.label'
             controller: 'Neos\Neos\Controller\Module\Administration\SitesController'
@@ -324,25 +318,21 @@ Neos:
               newSite:
                 label: 'Neos.Neos:Modules:sites.actions.newSite.label'
                 title: 'Neos.Neos:Modules:sites.actions.newSite.title'
-            privilegeTarget: 'Neos.Neos:Backend.Module.Administration.Sites'
           configuration:
             label: 'Neos.Neos:Modules:configuration.label'
             controller: 'Neos\Neos\Controller\Module\Administration\ConfigurationController'
             description: 'Neos.Neos:Modules:configuration.description'
             icon: icon-list-alt
-            privilegeTarget: 'Neos.Neos:Backend.Module.Administration.Configuration'
       user:
         label: 'Neos.Neos:Modules:user.label'
         controller: \Neos\Neos\Controller\Module\UserController
         hideInMenu: true
-        privilegeTarget: 'Neos.Neos:Backend.Module.User'
         submodules:
           usersettings:
             label: 'Neos.Neos:Modules:userSettings.label'
             controller: \Neos\Neos\Controller\Module\User\UserSettingsController
             description: 'Neos.Neos:Modules:userSettings.description'
             icon: icon-user
-            privilegeTarget: 'Neos.Neos:Backend.Module.User.UserSettings'
 
      # Settings for the Neos Event Log (** DO NOT USE, NO PUBLIC API YET **)
     eventLog:
