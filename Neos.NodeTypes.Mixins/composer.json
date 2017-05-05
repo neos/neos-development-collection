@@ -1,0 +1,14 @@
+{
+    "name": "neos/nodetypes-mixins",
+    "type": "neos-package",
+    "description": "Node type mixins configuration for Neos",
+    "license": "GPL-3.0+",
+    "require": {
+        "neos/content-repository": "self.version"
+    },
+    "extra": {
+        "neos": {
+            "package-key": "Neos.NodeTypes.Mixins"
+        }
+    }
+}

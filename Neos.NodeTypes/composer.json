@@ -5,6 +5,7 @@
     "license": "GPL-3.0+",
     "require": {
         "neos/form": "*",
+        "neos/nodetypes-mixins": "self.version",
 
         "neos/media": "self.version",
         "neos/content-repository": "self.version",
