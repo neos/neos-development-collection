@@ -27,7 +27,7 @@
       ui:
         inlineEditable: TRUE
         aloha:
-          placeholder: i18n
+          placeholder: 'Neos.NodeTypes.Mixins:NodeTypes.TextMixin:properties.text.aloha.placeholder'
           autoparagraph: TRUE
           'format':
             'strong': TRUE
@@ -57,14 +57,14 @@
     inspector:
       groups:
         image:
-          label: i18n
+          label: 'Neos.NodeTypes.Mixins:NodeTypes.ImageMixin:groups.image'
           position: 5
           icon: 'icon-image'
   properties:
     image:
       type: Neos\Media\Domain\Model\ImageInterface
       ui:
-        label: i18n
+        label: 'Neos.NodeTypes.Mixins:NodeTypes.ImageMixin:properties.image'
         reloadIfChanged: TRUE
         inspector:
           group: 'image'
@@ -72,7 +72,7 @@
     alternativeText:
       type: string
       ui:
-        label: i18n
+        label: 'Neos.NodeTypes.Mixins:NodeTypes.ImageMixin:properties.alternativeText'
         reloadIfChanged: TRUE
         inspector:
           group: 'image'
@@ -80,7 +80,7 @@
     title:
       type: string
       ui:
-        label: i18n
+        label: 'Neos.NodeTypes.Mixins:NodeTypes.ImageMixin:properties.title'
         reloadIfChanged: TRUE
         inspector:
           group: 'image'
@@ -93,7 +93,7 @@
     hasCaption:
       type: boolean
       ui:
-        label: i18n
+        label: 'Neos.NodeTypes.Mixins:NodeTypes.ImageCaptionMixin:properties.hasCaption'
         reloadIfChanged: TRUE
         inspector:
           group: 'image'
@@ -104,7 +104,7 @@
       ui:
         inlineEditable: TRUE
         aloha:
-          placeholder: i18n
+          placeholder: 'Neos.NodeTypes.Mixins:NodeTypes.ImageCaptionMixin:properties.hasCaption.aloha.placeholder'
           autoparagraph: TRUE
 
 # Image alignment mixin
@@ -115,23 +115,23 @@
       type: string
       defaultValue: ''
       ui:
-        label: i18n
+        label: 'Neos.NodeTypes.Mixins:NodeTypes.ImageAlignmentMixin:properties.alignment'
         reloadIfChanged: TRUE
         inspector:
           group: 'image'
           position: 400
           editor: 'Neos.Neos/Inspector/Editors/SelectBoxEditor'
           editorOptions:
-            placeholder: i18n
+            placeholder: 'Neos.NodeTypes.Mixins:NodeTypes.ImageAlignmentMixin:properties.alignment.selectBoxEditor.placeholder'
             values:
               '':
                 label: ''
               center:
-                label: i18n
+                label: 'Neos.NodeTypes.Mixins:NodeTypes.ImageAlignmentMixin:properties.alignment.selectBoxEditor.values.center'
               left:
-                label: i18n
+                label: 'Neos.NodeTypes.Mixins:NodeTypes.ImageAlignmentMixin:properties.alignment.selectBoxEditor.values.left'
               right:
-                label: i18n
+                label: 'Neos.NodeTypes.Mixins:NodeTypes.ImageAlignmentMixin:properties.alignment.selectBoxEditor.values.right'
 
 # Link mixin
 'Neos.NodeTypes:LinkMixin':
@@ -140,7 +140,7 @@
     link:
       type: string
       ui:
-        label: i18n
+        label: 'Neos.NodeTypes.Mixins:NodeTypes.LinkMixin:properties.link'
         reloadIfChanged: TRUE
         inspector:
           position: 300
