@@ -164,7 +164,9 @@ class AfxService
                 if ($propName == '@key' || $propName == '@children') {
                     continue;
                 } else {
-                    if ($attributePrefix && !in_array($propName, $attributePrefixExceptions)) {
+                    if ($propName{0} === '@') {
+                        $fusionName = $propName;
+                    } elseif ($attributePrefix && !in_array($propName, $attributePrefixExceptions)) {
                         $fusionName = $attributePrefix . $propName;
                     } else {
                         $fusionName = $propName;
