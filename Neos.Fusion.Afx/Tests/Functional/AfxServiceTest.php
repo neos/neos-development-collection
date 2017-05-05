@@ -117,11 +117,27 @@ EOF;
     /**
      * @test
      */
-    public function metaAttributesAreConvertedToFusionProperties()
+    public function metaAttributesOfFusionObjectTagsAreConvertedToFusionProperties()
     {
         $afxCode = '<Vendor.Site:Prototype @position="start" @if.hasTitle={title} />';
         $expectedFusion = <<<'EOF'
 Vendor.Site:Prototype {
+    @position = 'start'
+    @if.hasTitle = ${title}
+}
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+    /**
+     * @test
+     */
+    public function metaAttributesOfHtmlTagsAreConvertedToFusionProperties()
+    {
+        $afxCode = '<div @position="start" @if.hasTitle={title} ></div>';
+        $expectedFusion = <<<'EOF'
+Neos.Fusion:Tag {
+    tagName = 'div'
     @position = 'start'
     @if.hasTitle = ${title}
 }
