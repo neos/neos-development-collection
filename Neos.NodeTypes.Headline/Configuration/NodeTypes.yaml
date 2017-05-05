@@ -1,0 +1,8 @@
+'Neos.NodeTypes:Headline':
+  superTypes:
+    'Neos.Neos:Content': TRUE
+    'Neos.NodeTypes:TitleMixin': TRUE
+  ui:
+    label: 'Neos.NodeTypes.Headline:NodeTypes.Headline:ui.label'
+    icon: 'icon-header'
+    position: 100

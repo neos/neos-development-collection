@@ -1,0 +1,3 @@
+prototype(Neos.NodeTypes:Headline) {
+    templatePath = 'resource://Neos.NodeTypes.Headline/Private/Fusion/Headline.html'
+}

@@ -1,0 +1,10 @@
+Neos:
+  Neos:
+    fusion:
+      autoInclude:
+        Neos.NodeTypes.Headline: true
+    userInterface:
+      translation:
+        autoInclude:
+          Neos.NodeTypes.Headline:
+            - 'NodeTypes/*'

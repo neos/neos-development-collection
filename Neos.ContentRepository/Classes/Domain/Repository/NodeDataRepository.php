@@ -482,7 +482,7 @@ class NodeDataRepository extends Repository
         $foundNodes = $this->getNodeDataForParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $dimensions, $removedNodes, $recursive);
 
         $childNodeDepth = NodePaths::getPathDepth($parentPath) + 1;
-        $constraints = $nodeTypeFilter !== '' ? $this->getNodeTypeFilterConstraintsForDql($nodeTypeFilter) : array();
+        $constraints = trim($nodeTypeFilter) !== '' ? $this->getNodeTypeFilterConstraintsForDql($nodeTypeFilter) : [];
         /** @var $addedNode NodeData */
         foreach ($this->addedNodes as $addedNode) {
             if (
