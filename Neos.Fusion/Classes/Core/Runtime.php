@@ -843,7 +843,7 @@ class Runtime
         if (isset($configurationWithEventualIf['__meta']['if'])) {
             foreach ($configurationWithEventualIf['__meta']['if'] as $conditionKey => $conditionValue) {
                 $conditionValue = $this->evaluateInternal($configurationPath . '/__meta/if/' . $conditionKey, self::BEHAVIOR_EXCEPTION, $contextObject);
-                if ($conditionValue === false) {
+                if ((bool)$conditionValue === false) {
                     return false;
                 }
             }
