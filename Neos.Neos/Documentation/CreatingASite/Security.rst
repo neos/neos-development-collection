@@ -431,6 +431,11 @@ The targets are defined as usual in the security policy, using `ModulePrivilege`
         matcher: 'management/workspaces'
 
 Now those privilege targets can be used to grant/deny access for specific roles.
+Internally those module privileges create a `MethodPrivilege` covering all public actions of the configured module
+controller. Additionally more fine-grained permissions can be configured on top.
+
+*Note:* If the path of a module changes the corresponding privilege target needs to be adjusted accordingly.
+
 See chapter :ref:`custom-backend-modules` for more examples.
 
 Disable Modules
