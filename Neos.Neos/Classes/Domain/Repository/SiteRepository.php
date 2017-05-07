@@ -16,6 +16,7 @@ use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Persistence\Repository;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Exception as NeosException;
+use Neos\Neos\Domain\Service\SiteService;
 
 /**
  * The Site Repository
@@ -85,5 +86,27 @@ class SiteRepository extends Repository
             throw new NeosException(sprintf('DefaultSiteNode %s not found or not active', $this->defaultSiteNodeName), 1476374818);
         }
         return $defaultSite;
+    }
+
+    /**
+     * Find the matching site for a given Node
+     *
+     * @param string $nodePath
+     * @return Site
+     */
+    public function findOneByNodePath($nodePath)
+    {
+        if (!NodePaths::isSubPathOf(SiteService::SITES_ROOT_PATH, $nodePath)) {
+            return null;
+        }
+
+        $nodePathParts = explode('/', $nodePath);
+        if (!isset($nodePathParts[2])) {
+            return null;
+        }
+
+        $siteNodeName = $nodePathParts[2];
+
+        return $this->findOneByNodeName($siteNodeName);
     }
 }

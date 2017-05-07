@@ -32,7 +32,7 @@ use Neos\ContentRepository\Exception\NodeException;
  *       NodeInterface in sync!
  *
  */
-abstract class AbstractNodeData
+abstract class AbstractNodeData implements ReadablePropertiesInterface, WriteablePropertiesInterface
 {
     /**
      * Properties of this Node

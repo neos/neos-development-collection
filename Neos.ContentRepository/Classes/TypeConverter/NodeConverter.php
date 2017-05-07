@@ -18,14 +18,8 @@ use Neos\Flow\Property\Exception\TypeConverterException;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
-use Neos\Utility\ObjectAccess;
-use Neos\Flow\Security\Context;
-use Neos\Utility\Exception\InvalidTypeException;
-use Neos\Utility\TypeHandling;
-use Neos\ContentRepository\Domain\Factory\NodeFactory;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\Service\Context as TYPO3CRContext;
+use Neos\ContentRepository\Domain\Service\Context as ContentRepositoryContext;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
@@ -40,6 +34,8 @@ use Neos\ContentRepository\Exception\NodeException;
  */
 class NodeConverter extends AbstractTypeConverter
 {
+    use NodeLikeConverterHelperTrait;
+
     /**
      * @var boolean
      */
@@ -49,12 +45,6 @@ class NodeConverter extends AbstractTypeConverter
      * @var array
      */
     protected $sourceTypes = array('string', 'array');
-
-    /**
-     * @Flow\Inject
-     * @var Context
-     */
-    protected $securityContext;
 
     /**
      * @Flow\Inject
@@ -73,12 +63,6 @@ class NodeConverter extends AbstractTypeConverter
      * @var ContextFactoryInterface
      */
     protected $contextFactory;
-
-    /**
-     * @Flow\Inject
-     * @var NodeFactory
-     */
-    protected $nodeFactory;
 
     /**
      * @Flow\Inject
@@ -136,163 +120,140 @@ class NodeConverter extends AbstractTypeConverter
     public function convertFrom($source, $targetType = null, array $subProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
     {
         if (is_string($source)) {
-            $source = array('__contextNodePath' => $source);
+            try {
+                $source = $this->prepareStringSource($source);
+            } catch (\InvalidArgumentException $exception) {
+                return new Error('Could not convert array to Node object because the node path was invalid.', 1285162903);
+            }
         }
 
-        if (!is_array($source) || !isset($source['__contextNodePath'])) {
-            return new Error('Could not convert ' . gettype($source) . ' to Node object, a valid absolute context node path as a string or array is expected.', 1302879936);
+        if (isset($source['__contextNodePath'])) {
+            try {
+                $source = array_merge($source, $this->explodeNodePath($source['__contextNodePath']));
+            } catch (\InvalidArgumentException $exception) {
+                return new Error('Could not convert array to Node object because the node path was invalid.', 1285162903);
+            }
+            unset($source['__contextNodePath']);
         }
 
-        try {
-            $nodePathAndContext = NodePaths::explodeContextPath($source['__contextNodePath']);
-            $nodePath = $nodePathAndContext['nodePath'];
-            $workspaceName = $nodePathAndContext['workspaceName'];
-            $dimensions = $nodePathAndContext['dimensions'];
-        } catch (\InvalidArgumentException $exception) {
-            return new Error('Could not convert array to Node object because the node path was invalid.', 1285162903);
+        if (!isset($source['__nodePath']) && !isset($source['__identifier'])) {
+            return new Error('Could not convert ' . gettype($source) . ' to Node object, a valid absolute (context) node path or identifier as a string or an array is expected.', 1302879936);
         }
 
-        $context = $this->contextFactory->create($this->prepareContextProperties($workspaceName, $configuration, $dimensions));
+        $context = $this->contextFactory->create($this->prepareContextProperties($source, $configuration));
+
         $workspace = $context->getWorkspace(false);
         if (!$workspace) {
-            return new Error(sprintf('Could not convert the given source to Node object because the workspace "%s" as specified in the context node path does not exist.', $workspaceName), 1383577859);
+            return new Error(sprintf('Could not convert the given source to Node object because the workspace "%s" as specified in the context node path does not exist.', $source['__workspaceName']), 1383577859);
         }
 
-        $node = $context->getNode($nodePath);
+        $node = $this->getNode($context, $source);
+
         if (!$node) {
             return new Error(sprintf('Could not convert array to Node object because the node "%s" does not exist.', $nodePath), 1370502328);
         }
 
-        if (isset($source['_nodeType']) && $source['_nodeType'] !== $node->getNodeType()->getName()) {
-            if ($context->getWorkspace()->getName() === 'live') {
-                throw new NodeException('Could not convert the node type in live workspace', 1429989736);
-            }
-
-            $oldNodeType = $node->getNodeType();
-            $targetNodeType = $this->nodeTypeManager->getNodeType($source['_nodeType']);
-            $node->setNodeType($targetNodeType);
-            $this->nodeService->setDefaultValues($node);
-            $this->nodeService->cleanUpAutoCreatedChildNodes($node, $oldNodeType);
-            $this->nodeService->createChildNodes($node);
-        }
+        $node = $this->changeNodeTypeIfRequested($node, $source);
         unset($source['_nodeType']);
 
-        $this->setNodeProperties($node, $node->getNodeType(), $source, $context, $configuration);
+        $this->setNodeProperties($node, $source, $configuration);
+        return $node;
+    }
+
+    /**
+     * Adjusts a string source to an array source.
+     *
+     * @param $source
+     * @return array
+     */
+    protected function prepareStringSource($source)
+    {
+        $actualSoure = [
+            '__workspaceName' => 'live',
+            '__dimensions' => []
+        ];
+        // Doesn't start with slash so we must assume this is a node identifier
+        if (strpos($source, '/') !== 0) {
+            $actualSoure['__identifier'] = $source;
+            return $actualSoure;
+        }
+
+        return $this->explodeNodePath($source);
+    }
+
+    /**
+     * Explode a (context) node path to an array of source properties.
+     *
+     * @param $nodePath
+     * @return array
+     */
+    protected function explodeNodePath($nodePath)
+    {
+        $explodedPath = NodePaths::explodeContextPath($nodePath);
+        $actualSoure = [
+            '__nodePath' => $explodedPath['nodePath'],
+            '__workspaceName' => $explodedPath['workspaceName'],
+            '__dimensions' => $explodedPath['dimensions']
+        ];
+
+        return $actualSoure;
+    }
+
+    /**
+     * Get a node from the context with the given source.
+     *
+     * @param ContentRepositoryContext $context
+     * @param array $source
+     * @return NodeInterface
+     */
+    protected function getNode(ContentRepositoryContext $context, array $source)
+    {
+        if (isset($source['__identifier'])) {
+            return $context->getNodeByIdentifier($source['__identifier']);
+        }
+
+        return $context->getNode($source['__nodePath']);
+    }
+
+    /**
+     * Changes node type if requested in source.
+     *
+     * @param NodeInterface $node
+     * @param array $source
+     * @return NodeInterface
+     * @throws NodeException
+     */
+    protected function changeNodeTypeIfRequested(NodeInterface $node, array $source)
+    {
+        if (!isset($source['_nodeType']) || $source['_nodeType'] === $node->getNodeType()->getName()) {
+            return $node;
+        }
+
+        if ($node->getContext()->getWorkspace()->isPublicWorkspace()) {
+            throw new NodeException('Could not convert the node type in public workspace', 1429989736);
+        }
+
+        $oldNodeType = $node->getNodeType();
+        $targetNodeType = $this->nodeTypeManager->getNodeType($source['_nodeType']);
+        $node->setNodeType($targetNodeType);
+        $this->nodeService->setDefaultValues($node);
+        $this->nodeService->cleanUpAutoCreatedChildNodes($node, $oldNodeType);
+        $this->nodeService->createChildNodes($node);
+
         return $node;
     }
 
     /**
      * Iterates through the given $properties setting them on the specified $node using the appropriate TypeConverters.
      *
-     * @param object $nodeLike
-     * @param NodeType $nodeType
+     * @param NodeInterface $node
      * @param array $properties
-     * @param TYPO3CRContext $context
      * @param PropertyMappingConfigurationInterface $configuration
      * @return void
      * @throws TypeConverterException
      */
-    protected function setNodeProperties($nodeLike, NodeType $nodeType, array $properties, TYPO3CRContext $context, PropertyMappingConfigurationInterface $configuration = null)
+    protected function setNodeProperties(NodeInterface $node, array $properties, PropertyMappingConfigurationInterface $configuration = null)
     {
-        $nodeTypeProperties = $nodeType->getProperties();
-        unset($properties['_lastPublicationDateTime']);
-        foreach ($properties as $nodePropertyName => $nodePropertyValue) {
-            if (substr($nodePropertyName, 0, 2) === '__') {
-                continue;
-            }
-            $nodePropertyType = isset($nodeTypeProperties[$nodePropertyName]['type']) ? $nodeTypeProperties[$nodePropertyName]['type'] : null;
-            switch ($nodePropertyType) {
-                case 'reference':
-                    $nodePropertyValue = $context->getNodeByIdentifier($nodePropertyValue);
-                break;
-                case 'references':
-                    $nodeIdentifiers = json_decode($nodePropertyValue);
-                    $nodePropertyValue = array();
-                    if (is_array($nodeIdentifiers)) {
-                        foreach ($nodeIdentifiers as $nodeIdentifier) {
-                            $referencedNode = $context->getNodeByIdentifier($nodeIdentifier);
-                            if ($referencedNode !== null) {
-                                $nodePropertyValue[] = $referencedNode;
-                            }
-                        }
-                    } elseif ($nodeIdentifiers !== null) {
-                        throw new TypeConverterException(sprintf('node type "%s" expects an array of identifiers for its property "%s"', $nodeType->getName(), $nodePropertyName), 1383587419);
-                    }
-                break;
-                case 'DateTime':
-                    if ($nodePropertyValue !== '' && ($nodePropertyValue = \DateTime::createFromFormat(\DateTime::W3C, $nodePropertyValue)) !== false) {
-                        $nodePropertyValue->setTimezone(new \DateTimeZone(date_default_timezone_get()));
-                    } else {
-                        $nodePropertyValue = null;
-                    }
-                break;
-                case 'integer':
-                    $nodePropertyValue = intval($nodePropertyValue);
-                break;
-                case 'boolean':
-                    if (is_string($nodePropertyValue)) {
-                        $nodePropertyValue = $nodePropertyValue === 'true' ? true : false;
-                    }
-                break;
-                case 'array':
-                    $nodePropertyValue = json_decode($nodePropertyValue, true);
-                break;
-            }
-            if (substr($nodePropertyName, 0, 1) === '_') {
-                $nodePropertyName = substr($nodePropertyName, 1);
-                ObjectAccess::setProperty($nodeLike, $nodePropertyName, $nodePropertyValue);
-                continue;
-            }
-
-            if (!isset($nodeTypeProperties[$nodePropertyName])) {
-                if ($configuration !== null && $configuration->shouldSkipUnknownProperties()) {
-                    continue;
-                } else {
-                    throw new TypeConverterException(sprintf('Node type "%s" does not have a property "%s" according to the schema', $nodeType->getName(), $nodePropertyName), 1359552744);
-                }
-            }
-            $innerType = $nodePropertyType;
-            if ($nodePropertyType !== null) {
-                try {
-                    $parsedType = TypeHandling::parseType($nodePropertyType);
-                    $innerType = $parsedType['elementType'] ?: $parsedType['type'];
-                } catch (InvalidTypeException $exception) {
-                }
-            }
-
-            if (is_string($nodePropertyValue) && $this->objectManager->isRegistered($innerType) && $nodePropertyValue !== '') {
-                $nodePropertyValue = $this->propertyMapper->convert(json_decode($nodePropertyValue, true), $nodePropertyType, $configuration);
-            }
-            $nodeLike->setProperty($nodePropertyName, $nodePropertyValue);
-        }
-    }
-
-    /**
-     * Prepares the context properties for the nodes based on the given workspace and dimensions
-     *
-     * @param string $workspaceName
-     * @param PropertyMappingConfigurationInterface $configuration
-     * @param array $dimensions
-     * @return array
-     */
-    protected function prepareContextProperties($workspaceName, PropertyMappingConfigurationInterface $configuration = null, array $dimensions = null)
-    {
-        $contextProperties = array(
-            'workspaceName' => $workspaceName,
-            'invisibleContentShown' => false,
-            'removedContentShown' => false
-        );
-        if ($workspaceName !== 'live') {
-            $contextProperties['invisibleContentShown'] = true;
-            if ($configuration !== null && $configuration->getConfigurationValue(\Neos\ContentRepository\TypeConverter\NodeConverter::class, self::REMOVED_CONTENT_SHOWN) === true) {
-                $contextProperties['removedContentShown'] = true;
-            }
-        }
-
-        if ($dimensions !== null) {
-            $contextProperties['dimensions'] = $dimensions;
-        }
-
-        return $contextProperties;
+        $this->_setNodeProperties($node, $node->getNodeType(), $properties, $node->getContext(), $this->objectManager, $this->propertyMapper, $configuration);
     }
 }

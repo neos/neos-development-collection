@@ -23,7 +23,7 @@ use Neos\ContentRepository\Exception\NodeExistsException;
  *
  * @api
  */
-interface NodeInterface
+interface NodeInterface extends ReadablePropertiesInterface, WriteablePropertiesInterface
 {
     /**
      * Regex pattern which matches a node path without any context information

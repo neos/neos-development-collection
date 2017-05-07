@@ -11,28 +11,62 @@ namespace Neos\ContentRepository\TypeConverter;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\ContentRepository\Domain\Model\NodeTemplate;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 
 /**
  * An Object Converter for NodeTemplates.
  *
- * @Flow\Scope("singleton")
  */
-class NodeTemplateConverter extends NodeConverter
+class NodeTemplateConverter extends AbstractTypeConverter
 {
+    use NodeLikeConverterHelperTrait;
+
+    /**
+     * @var boolean
+     */
+    const REMOVED_CONTENT_SHOWN = 1;
+
     /**
      * A pattern that separates the node content object type from the node type
      */
     const EXTRACT_CONTENT_TYPE_PATTERN = '/^\\\\?(?P<type>Neos\\\ContentRepository\\\Domain\\\Model\\\NodeTemplate)(?:<\\\\?(?P<nodeType>[a-zA-Z0-9\\\\\:\.]+)>)?/';
 
     /**
+     * @Flow\Inject
+     * @var NodeTypeManager
+     */
+    protected $nodeTypeManager;
+
+    /**
+     * @Flow\Inject
+     * @var ContextFactoryInterface
+     */
+    protected $contextFactory;
+
+    /**
+     * @Flow\Inject
+     * @var ObjectManagerInterface
+     */
+    protected $objectManager;
+
+    /**
+     * @Flow\Inject
+     * @var PropertyMapper
+     */
+    protected $propertyMapper;
+
+    /**
      * @var array
      */
-    protected $sourceTypes = array('array');
+    protected $sourceTypes = ['array'];
 
     /**
      * @var string
@@ -45,19 +79,8 @@ class NodeTemplateConverter extends NodeConverter
     protected $priority = 1;
 
     /**
-     * @Flow\Inject
-     * @var NodeTypeManager
-     */
-    protected $nodeTypeManager;
-
-    /**
-     * Converts the specified node path into a Node.
-     *
-     * The node path must be an absolute context node path and can be specified as a string or as an array item with the
-     * key "__contextNodePath". The latter case is for updating existing nodes.
-     *
-     * This conversion method supports creation of new nodes because new nodes
-     *
+     * Converts the specified source into a NodeTemplate.
+     **
      * Also note that the context's "current node" is not affected by this object converter, you will need to set it to
      * whatever node your "current" node is, if any.
      *
@@ -69,8 +92,7 @@ class NodeTemplateConverter extends NodeConverter
      *
      * All other elements, not being prefixed with underscore, are properties of the node.
      *
-     *
-     * @param string|array $source Either a string or array containing the absolute context node path which identifies the node. For example "/sites/mysitecom/homepage/about@user-admin"
+     * @param array $source An array containing the absolute context node path which identifies the node. For example "/sites/mysitecom/homepage/about@user-admin"
      * @param string $targetType not used
      * @param array $subProperties not used
      * @param PropertyMappingConfigurationInterface $configuration not used
@@ -85,9 +107,9 @@ class NodeTemplateConverter extends NodeConverter
 
         // we don't need a context or workspace for creating NodeTemplate objects, but in order to satisfy the method
         // signature of setNodeProperties(), we do need one:
-        $context = $this->contextFactory->create($this->prepareContextProperties('live'));
+        $context = $this->contextFactory->create($this->prepareContextProperties(['__workspaceName' => 'live'], $configuration));
 
-        $this->setNodeProperties($nodeTemplate, $nodeTemplate->getNodeType(), $source, $context);
+        $this->_setNodeProperties($nodeTemplate, $nodeTemplate->getNodeType(), $source, $context, $this->objectManager, $this->propertyMapper, $configuration);
         return $nodeTemplate;
     }
 
