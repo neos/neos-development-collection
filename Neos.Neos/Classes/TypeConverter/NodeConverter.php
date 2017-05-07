@@ -12,6 +12,8 @@ namespace Neos\Neos\TypeConverter;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Property\PropertyMappingConfigurationInterface;
+use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 
@@ -39,4 +41,23 @@ class NodeConverter extends \Neos\ContentRepository\TypeConverter\NodeConverter
      * @var integer
      */
     protected $priority = 3;
+
+    /**
+     * @param array $source
+     * @param PropertyMappingConfigurationInterface|null $configuration
+     * @return array
+     */
+    protected function prepareContextProperties(array $source, PropertyMappingConfigurationInterface $configuration = null)
+    {
+        $contextProperties = parent::prepareContextProperties($source, $configuration);
+        if (!isset($source['__nodePath'])) {
+            return $contextProperties;
+        }
+
+        $siteMatchingNodePath = $this->siteRepository->findOneByNodePath($source['__nodePath']);
+        $contextProperties['currentSite'] = $siteMatchingNodePath;
+        $contextProperties['currentDomain'] = ($siteMatchingNodePath instanceof Site) ? $siteMatchingNodePath->getPrimaryDomain() : null;
+
+        return $contextProperties;
+    }
 }

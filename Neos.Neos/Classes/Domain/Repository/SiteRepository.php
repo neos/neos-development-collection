@@ -11,6 +11,7 @@ namespace Neos\Neos\Domain\Repository;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Persistence\Repository;
