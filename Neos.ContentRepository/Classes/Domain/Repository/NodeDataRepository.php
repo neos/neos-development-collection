@@ -1055,7 +1055,7 @@ class NodeDataRepository extends Repository
      *
      * Both are numeric arrays with the respective node types that are included or excluded.
      *
-     * @param string $nodeTypeFilter
+     * @param string|null $nodeTypeFilter
      * @return array
      */
     protected function getNodeTypeFilterConstraintsForDql($nodeTypeFilter = '')
