@@ -18,7 +18,7 @@ The most important requirements are:
 * A Webserver (Apache and Nginx are preferred but others work as well)
 * A Database (MySQL and MariaDB are preferred but any `Database supported by Doctrine DBAL
   <http://www.doctrine-project.org/projects/dbal.html>`_ should work).
-* PHP >= 5.5.0 (make sure the PHP CLI has the same version)
+* PHP >= 7.0.0 (make sure the PHP CLI has the same version)
 
   * PHP modules mbstring, tokenizer and pdo_mysql
   * PHP functions exec(), shell_exec(), escapeshellcmd() and escapeshellarg()
