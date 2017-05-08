@@ -1,0 +1,10 @@
+//
+// Fusion Fixture 22
+//
+// Checks if parser detects indirect recursions
+
+prototype(Neos.Foo:Bar) < prototype(Neos.Foo:Baz) {
+}
+
+prototype(Neos.Foo:Baz) < prototype(Neos.Foo:Bar) {
+}
