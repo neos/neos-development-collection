@@ -78,7 +78,12 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 		_object: null,
 
 		/**
-		 * The "original" image is shown in the sidebar.
+		 * The URI to the image within the inspector.
+		 */
+		_inspectorImageUri: null,
+
+		/**
+		 * The URI to the original-sized image used for cropping preview inside the inspector.
 		 */
 		_originalImageUri: null,
 
@@ -397,6 +402,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 			}
 			this.set('_object', null);
 			this.set('_originalImageUri', null);
+			this.set('_inspectorImageUri', null);
 			this.set('_previewImageUri', null);
 			this.set('_finalImageDimensions.width', null);
 			this.set('_finalImageDimensions.height', null);
@@ -643,6 +649,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 				}.observes('aspectRatioWidth', 'aspectRatioHeight').on('init'),
 
 				_aspectRatioDidChange: function () {
+					parent._swapPreviewWithOriginal();
 					var aspectRatioWidth = this.get('aspectRatioWidth'),
 						aspectRatioHeight = this.get('aspectRatioHeight'),
 						api = this.get('api');
@@ -786,7 +793,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 					container = that.$().find('.neos-inspector-image-thumbnail-inner'),
 					image = container.find('img');
 
-				if (that.get('_originalImageUri') && that._shouldApplyCrop(cropProperties, that.get('_previewImageDimensions.width'), that.get('_previewImageDimensions.height'))) {
+				if (that.get('_inspectorImageUri') && that._shouldApplyCrop(cropProperties, that.get('_previewImageDimensions.width'), that.get('_previewImageDimensions.height'))) {
 					var scalingFactorX = that.imagePreviewMaximumDimensions.width / cropProperties.width,
 						scalingFactorY = that.imagePreviewMaximumDimensions.height / cropProperties.height,
 						overallScalingFactor = Math.min(scalingFactorX, scalingFactorY),
@@ -794,6 +801,9 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 							width: Math.floor(cropProperties.width * overallScalingFactor),
 							height: Math.floor(cropProperties.height * overallScalingFactor)
 						};
+
+					// show original image in inspector if cropping took place
+					that._swapPreviewWithOriginal();
 
 					// Update size of preview bounding box and center preview image thumbnail
 					container.css({
@@ -901,6 +911,7 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 		_applyLoadedMetadata: function (metadata) {
 			this.set('_object', metadata.object);
 			this.set('_originalImageDimensions', metadata.originalDimensions);
+			this.set('_inspectorImageUri', metadata.previewImageResourceUri);
 			this.set('_originalImageUri', metadata.originalImageResourceUri);
 			this.set('_previewImageDimensions', metadata.previewDimensions);
 			this.set('_previewImageUri', metadata.previewImageResourceUri);
@@ -1114,6 +1125,13 @@ function (Ember, $, FileUpload, template, cropTemplate, BooleanEditor, Spinner, 
 		shouldRenderResize: function () {
 			return (this.get('features.resize') && this.get('_originalImageUri'));
 		}.property('features.resize', '_originalImageUri'),
+
+		/**
+		 * Swaps the small preview inspector image with the original for cropping preview
+		 */
+		_swapPreviewWithOriginal: function() {
+				this.set('_inspectorImageUri', this.get('_originalImageUri'));
+		},
 
 		/**
 		 * Image Loader
