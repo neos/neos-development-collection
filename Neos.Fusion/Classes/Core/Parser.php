@@ -275,6 +275,7 @@ class Parser implements ParserInterface
         $this->initialize();
         $this->objectTree = $objectTreeUntilNow;
         $this->contextPathAndFilename = $contextPathAndFilename;
+        $sourceCode = str_replace("\r\n", "\n", $sourceCode);
         $this->currentSourceCodeLines = explode(chr(10), $sourceCode);
         while (($typoScriptLine = $this->getNextTypoScriptLine()) !== false) {
             $this->parseTypoScriptLine($typoScriptLine);
