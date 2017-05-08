@@ -137,7 +137,7 @@ additionalProperties:
       additionalProperties: TRUE
       properties:
         prototypeGenerator:
-          - { type: null }
+          - { type: 'null' }
           - { type: string, format: class-name }
 
     'ui':
