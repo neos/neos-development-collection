@@ -60,6 +60,7 @@ additionalProperties:
                           'h5': { type: boolean }
                           'h6': { type: boolean }
                           'pre': { type: boolean }
+                          'code': { type: boolean }
                           'removeFormat': { type: boolean }
 
                       'table':
@@ -106,10 +107,6 @@ additionalProperties:
                       'autoparagraph': { type: boolean, description: "Automatically wrap non-wrapped text blocks in paragraph blocks." }
 
                       'placeholder': { type: string, description: "Optional text that will be rendered in the aloha editor when there is no content." }
-
-                      'sampleCase' : { type: any }
-
-                      'fallbackCase' :  { type: any }
 
                   'inspector':
                     type: dictionary
