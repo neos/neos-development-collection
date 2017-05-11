@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2017-03-30
+This reference was automatically generated from code on 2017-05-11
 
 
 .. _`Eel Helpers Reference: Array`:
@@ -1442,6 +1442,17 @@ Trim whitespace at the beginning and end of a string
 * ``charlist`` (string, *optional*) List of characters that should be trimmed, defaults to whitespace
 
 **Return** (string) The trimmed string
+
+String.wordCount(unicodeString)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Return the count of words for a given string. Remove marks & digits and
+flatten all kind of whitespaces (tabs, new lines and multiple spaces)
+For example this helper can be utilized to calculate the reading time of an article.
+
+* ``unicodeString`` (string) The input string
+
+**Return** (integer) Number of words
 
 
 
