@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 =========================
 
-This reference was automatically generated from code on 2017-03-30
+This reference was automatically generated from code on 2017-05-11
 
 
 .. _`Neos ViewHelper Reference: neos:backend.authenticationProviderLabel`:
@@ -379,7 +379,7 @@ Arguments
 
 * ``tag`` (string, *optional*): The name of the tag that should be wrapped around the property. By default this is a <div>
 
-* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*): The node of the content element. Optional, will be resolved from the TypoScript context by default.
+* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*): The node of the content element. Optional, will be resolved from the Fusion context by default.
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -424,7 +424,7 @@ templates. This is useful if you want to make properties of a custom document no
 Arguments
 *********
 
-* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*): The node of the content element. Optional, will be resolved from the TypoScript context by default.
+* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*): The node of the content element. Optional, will be resolved from the Fusion context by default.
 
 
 
@@ -562,7 +562,7 @@ neos:link.node
 A view helper for creating links with URIs pointing to nodes.
 
 The target node can be provided as string or as a Node object; if not specified
-at all, the generated URI will refer to the current document node inside the TypoScript context.
+at all, the generated URI will refer to the current document node inside the Fusion context.
 
 When specifying the ``node`` argument as string, the following conventions apply:
 
@@ -611,7 +611,7 @@ Arguments
 
 * ``baseNodeName`` (string, *optional*): The variable the node will be assigned to for the rendered child content
 
-* ``nodeVariableName`` (string, *optional*): The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
+* ``nodeVariableName`` (string, *optional*): The name of the base node inside the Fusion context to use for the ContentContext or resolving relative paths
 
 * ``resolveShortcuts`` (boolean, *optional*): INTERNAL Parameter - if FALSE, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
 
@@ -1051,7 +1051,7 @@ neos:uri.node
 A view helper for creating URIs pointing to nodes.
 
 The target node can be provided as string or as a Node object; if not specified
-at all, the generated URI will refer to the current document node inside the TypoScript context.
+at all, the generated URI will refer to the current document node inside the Fusion context.
 
 When specifying the ``node`` argument as string, the following conventions apply:
 
@@ -1094,7 +1094,7 @@ Arguments
 
 * ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = TRUE
 
-* ``baseNodeName`` (string, *optional*): The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
+* ``baseNodeName`` (string, *optional*): The name of the base node inside the Fusion context to use for the ContentContext or resolving relative paths
 
 * ``resolveShortcuts`` (boolean, *optional*): INTERNAL Parameter - if FALSE, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
 
