@@ -1,0 +1,89 @@
+`3.1.1 (2017-05-14) <https://github.com/neos/neos-development-collection/releases/tag/3.1.1>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Correctly require a stable version of neos/imagine <https://github.com/neos/neos-development-collection/pull/1570>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+The ``neos/image`` version should be a stable version. Additionally
+corrects the ``PHP`` version requirement to 7.0 an higher.
+
+* Packages: ``Media`` ``Neos``
+
+`TASK: Corrected required php version in documentation <https://github.com/neos/neos-development-collection/pull/1555>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Replaced 5.5.0 with 7.0.0
+
+_Please note that this should be also changed in 3.1 and master branch_
+
+* Packages: ``Neos``
+
+`TASK: Rewrite Node Type Constraint docs for correctness and clarity <https://github.com/neos/neos-development-collection/pull/1492>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Completely rewrote that chapter of the docs in order to make it more explicit and understandable.
+
+* Packages: ``Neos``
+
+`BUGFIX: Context variable \`site\` is available in Plugin prototype <https://github.com/neos/neos-development-collection/pull/1544>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+As plugins are uncached the prototype defines which context variables
+will be available inside. As ``node``, ``documentNode`` and ``site`` are
+defaults that apply everywhere else, the missing ``site`` variable
+was added to the context for consistency.
+
+Fixes: #841
+
+`BUGFIX: Avoid loading original image unless cropping occurs <https://github.com/neos/neos-development-collection/pull/1460>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+The image inspector used to load the full image for preview. With this change a much smaller thumbnail will be loaded instead, unless the image has been cropped or is being cropped in the cropping editor. In that case we need to load the full image to give the user a crisp preview of the selected image segment.
+
+`TASK: Add content to 3.0.0 release notes <https://github.com/neos/neos-development-collection/pull/1548>`_
+-----------------------------------------------------------------------------------------------------------
+
+Fixes #1420
+
+* Packages: ``Neos``
+
+`BUGFIX: Typo in User Settings doc <https://github.com/neos/neos-development-collection/pull/1551>`_
+----------------------------------------------------------------------------------------------------
+
+Fixed a typo in documentation in the User Settings document.
+
+Can we verified using : https://neos.readthedocs.io/en/stable/UserGuide/UserSettings.html
+
+* Packages: ``Neos``
+
+`BUGFIX: Detect recursive prototype inheritance <https://github.com/neos/neos-development-collection/pull/1537>`_
+-----------------------------------------------------------------------------------------------------------------
+
+This throws an exception if there is a direct or indirect prototype inheritance recursion.
+
+Fix #1115
+
+* Packages: ``ContentRepository`` ``Fusion`` ``Neos``
+
+`BUGFIX: Clarified doc block for LiveViewHelper <https://github.com/neos/neos-development-collection/pull/1547>`_
+-----------------------------------------------------------------------------------------------------------------
+
+If the ``LiveViewHelper`` doesn't get a node as argument and neither
+there is a node in the template variables it will always return true.
+The adjusted doc block clarifies that you need either.
+
+Fixes: #1416
+
+`BUGFIX: Clean TypoScript of windows line-breaks <https://github.com/neos/neos-development-collection/pull/1543>`_
+------------------------------------------------------------------------------------------------------------------
+
+Multi-line EEL expressions fail if the TypoScript file had
+Windows linebreaks as the explode on line feed leaves the
+carriage return in every line which then stops the parser
+from detecting the end of a multi-line EEL expression.
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/3.1.0...3.1.1>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
