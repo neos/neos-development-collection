@@ -4,7 +4,7 @@
     "description": "The Media package",
     "license": "GPL-3.0+",
     "require": {
-        "neos/imagine": "*",
+        "neos/imagine": "~3.0",
 
         "neos/flow": "*",
         "neos/cache": "*",
