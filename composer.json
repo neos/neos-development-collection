@@ -20,7 +20,7 @@
         "neos/utility-mediatypes": "*",
         "neos/error-messages": "*",
         "doctrine/common": "~2.7.0",
-        "neos/imagine": "~3.0",
+        "neos/imagine": "^3.0.2",
         "imagine/imagine": "*",
         "doctrine/dbal": "~2.5.0",
         "neos/party": "~4.0",
