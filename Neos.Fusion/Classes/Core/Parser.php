@@ -275,6 +275,7 @@ class Parser implements ParserInterface
         $this->initialize();
         $this->objectTree = $objectTreeUntilNow;
         $this->contextPathAndFilename = $contextPathAndFilename;
+        $sourceCode = str_replace("\r\n", "\n", $sourceCode);
         $this->currentSourceCodeLines = explode(chr(10), $sourceCode);
         while (($typoScriptLine = $this->getNextTypoScriptLine()) !== false) {
             $this->parseTypoScriptLine($typoScriptLine);
@@ -864,6 +865,7 @@ class Parser implements ParserInterface
      * Precalculate merged configuration for inherited prototypes.
      *
      * @return void
+     * @throws Fusion\Exception
      */
     protected function buildPrototypeHierarchy()
     {
@@ -877,6 +879,9 @@ class Parser implements ParserInterface
             while (isset($this->objectTree['__prototypes'][$currentPrototypeName]['__prototypeObjectName'])) {
                 $currentPrototypeName = $this->objectTree['__prototypes'][$currentPrototypeName]['__prototypeObjectName'];
                 array_unshift($prototypeInheritanceHierarchy, $currentPrototypeName);
+                if ($prototypeName === $currentPrototypeName) {
+                    throw new Fusion\Exception(sprintf('Recursive inheritance found for prototype "%s". Prototype chain: %s', $prototypeName, implode(' < ', array_reverse($prototypeInheritanceHierarchy))), 1492801503);
+                }
             }
 
             if (count($prototypeInheritanceHierarchy)) {

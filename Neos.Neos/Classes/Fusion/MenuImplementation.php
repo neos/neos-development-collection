@@ -17,7 +17,7 @@ use Neos\Fusion\Exception as TypoScriptException;
 use Neos\Fusion\Exception;
 
 /**
- * A TypoScript Menu object
+ * A Fusion Menu object
  */
 class MenuImplementation extends AbstractMenuImplementation
 {
@@ -210,7 +210,7 @@ class MenuImplementation extends AbstractMenuImplementation
     /**
      * Find the starting point for this menu. depending on given startingPoint
      * If startingPoint is given, this is taken as starting point for this menu level,
-     * as a fallback the TypoScript context variable node is used.
+     * as a fallback the Fusion context variable node is used.
      *
      * If entryLevel is configured this will be taken into account as well.
      *
@@ -223,7 +223,7 @@ class MenuImplementation extends AbstractMenuImplementation
         $startingPoint = $this->getStartingPoint();
 
         if (!isset($typoScriptContext['node']) && !$startingPoint) {
-            throw new TypoScriptException('You must either set a "startingPoint" for the menu or "node" must be set in the TypoScript context.', 1369596980);
+            throw new TypoScriptException('You must either set a "startingPoint" for the menu or "node" must be set in the Fusion context.', 1369596980);
         }
         $startingPoint = $startingPoint ? : $typoScriptContext['node'];
         $entryParentNode = $this->findParentNodeInBreadcrumbPathByLevel($this->getEntryLevel(), $startingPoint);

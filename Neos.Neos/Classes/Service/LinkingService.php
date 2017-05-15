@@ -34,7 +34,7 @@ use Neos\ContentRepository\Domain\Utility\NodePaths;
  * A service for creating URIs pointing to nodes and assets.
  *
  * The target node can be provided as string or as a Node object; if not specified
- * at all, the generated URI will refer to the current document node inside the TypoScript context.
+ * at all, the generated URI will refer to the current document node inside the Fusion context.
  *
  * When specifying the ``node`` argument as string, the following conventions apply:
  *

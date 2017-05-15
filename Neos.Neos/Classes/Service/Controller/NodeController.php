@@ -196,7 +196,7 @@ class NodeController extends AbstractServiceController
      * Creates a new node and renders the node inside the containing content collection.
      *
      * @param Node $referenceNode
-     * @param string $typoScriptPath The TypoScript path of the collection
+     * @param string $typoScriptPath The Fusion path of the collection
      * @param array $nodeData
      * @param string $position where the node should be added (allowed: before, into, after)
      * @return string
@@ -254,7 +254,7 @@ class NodeController extends AbstractServiceController
      * @param Node $node The node to be moved
      * @param Node $targetNode The target node to be moved "to", see $position
      * @param string $position Where the node should be added in relation to $targetNode (allowed: before, into, after)
-     * @param string $typoScriptPath The TypoScript path of the collection
+     * @param string $typoScriptPath The Fusion path of the collection
      * @return void
      */
     public function moveAndRenderAction(Node $node, Node $targetNode, $position, $typoScriptPath)
@@ -306,7 +306,7 @@ class NodeController extends AbstractServiceController
      * @param Node $targetNode The target node to be copied "to", see $position
      * @param string $position Where the node should be added in relation to $targetNode (allowed: before, into, after)
      * @param string $nodeName Optional node name (if empty random node name will be generated)
-     * @param string $typoScriptPath The TypoScript path of the collection
+     * @param string $typoScriptPath The Fusion path of the collection
      * @return void
      */
     public function copyAndRenderAction(Node $node, Node $targetNode, $position, $typoScriptPath, $nodeName = null)
@@ -354,7 +354,7 @@ class NodeController extends AbstractServiceController
      * Updates the specified node and renders it's content collection.
      *
      * @param Node $node The node to be updated
-     * @param string $typoScriptPath The TypoScript path of the collection
+     * @param string $typoScriptPath The Fusion path of the collection
      * @return void
      */
     public function updateAndRenderAction(Node $node, $typoScriptPath)

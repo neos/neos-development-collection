@@ -482,7 +482,7 @@ class NodeDataRepository extends Repository
         $foundNodes = $this->getNodeDataForParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $dimensions, $removedNodes, $recursive);
 
         $childNodeDepth = NodePaths::getPathDepth($parentPath) + 1;
-        $constraints = $nodeTypeFilter !== '' ? $this->getNodeTypeFilterConstraintsForDql($nodeTypeFilter) : array();
+        $constraints = $this->getNodeTypeFilterConstraintsForDql($nodeTypeFilter);
         /** @var $addedNode NodeData */
         foreach ($this->addedNodes as $addedNode) {
             if (
@@ -1055,11 +1055,12 @@ class NodeDataRepository extends Repository
      *
      * Both are numeric arrays with the respective node types that are included or excluded.
      *
-     * @param string $nodeTypeFilter
+     * @param string|null $nodeTypeFilter
      * @return array
      */
-    protected function getNodeTypeFilterConstraintsForDql($nodeTypeFilter)
+    protected function getNodeTypeFilterConstraintsForDql($nodeTypeFilter = '')
     {
+        $nodeTypeFilter = empty($nodeTypeFilter) ? '' : $nodeTypeFilter;
         $constraints = [
             'excludeNodeTypes' => [],
             'includeNodeTypes' => []

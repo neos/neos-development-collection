@@ -1,6 +1,6 @@
 <div class="neos-content-dimension-selector-summary" title="{{translate id='content.dimension.panel.toggle' fallback='Toggle content dimensions selector'}}" data-neos-tooltip data-placement="right">
 	{{#each dimension in dimensions}}
-		<span class="neos-content-dimension-selector-dimension"><i class="{{unbound dimension.icon}}"></i> {{dimension.selected.label}}</span>
+		<span class="neos-content-dimension-selector-dimension"><i class="{{unbound dimension.icon}}"></i> {{boundTranslate idBinding="dimension.selected.label"}}</span>
 	{{/each}}
 </div>
 <div class="neos-content-dimension-selector-dimensions">
@@ -9,7 +9,7 @@
 			<label for="neos-content-dimension-{{unbound dimension.identifier}}"><i class="{{unbound dimension.icon}}"></i> {{boundTranslate idBinding="dimension.label"}}</label>
 			<select name="{{unbound dimension.identifier}}" id="neos-content-dimension-{{unbound dimension.identifier}}">
 				{{#each preset in dimension.presets}}
-					<option value="{{unbound preset.identifier}}" {{bind-attr selected=preset.selected}} {{bind-attr disabled=preset.disabled}}>{{unbound preset.label}}</option>
+					<option value="{{unbound preset.identifier}}" {{bind-attr selected=preset.selected}} {{bind-attr disabled=preset.disabled}}>{{boundTranslate idBinding="preset.label"}}</option>
 				{{/each}}
 			</select>
 		</div>
