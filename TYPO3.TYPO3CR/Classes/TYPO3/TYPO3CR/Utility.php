@@ -35,6 +35,8 @@ class Utility
             return $name;
         }
 
+        $originalName = $name;
+
         // Transliterate (transform 北京 to 'Bei Jing')
         $name = Transliterator::transliterate($name);
 
@@ -43,6 +45,11 @@ class Utility
 
         // Ensure only allowed characters are left
         $name = preg_replace('/[^a-z0-9\-]/', '', $name);
+
+        // Make sure we don't have an empty string left.
+        if ($name === '') {
+            $name = 'node-' . strtolower(md5($originalName));
+        }
 
         return $name;
     }
