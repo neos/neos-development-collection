@@ -39,7 +39,9 @@ class UtilityTest extends UnitTestCase
             ['ελληνικά', 'ellenika'],
             ['မြန်မာဘာသာ', 'm-n-maabhaasaa'],
             [' हिन्दी', 'hindii'],
-            [' x- ', 'x']
+            [' x- ', 'x'],
+            ['', 'node-' . md5('')],
+            [',.~', 'node-' . md5(',.~')]
         ];
     }
 
