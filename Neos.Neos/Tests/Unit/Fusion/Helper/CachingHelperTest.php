@@ -41,7 +41,7 @@ class CachingHelperTest extends UnitTestCase
         $nodeTypeObject3->expects(self::any())->method('getName')->willReturn($nodeTypeName3);
 
         return [
-            [$nodeTypeName1, ['NodeType_' . $nodeTypeName1]],
+            [$nodeTypeName1, 'NodeType_' . $nodeTypeName1],
             [[$nodeTypeName1, $nodeTypeName2, $nodeTypeName3],
                 [
                     'NodeType_' . $nodeTypeName1,
@@ -49,7 +49,7 @@ class CachingHelperTest extends UnitTestCase
                     'NodeType_' . $nodeTypeName3
                 ]
             ],
-            [$nodeTypeObject1, ['NodeType_' . $nodeTypeName1]],
+            [$nodeTypeObject1, 'NodeType_' . $nodeTypeName1],
             [[$nodeTypeName1, $nodeTypeObject2, $nodeTypeObject3],
                 [
                     'NodeType_' . $nodeTypeName1,
@@ -64,7 +64,7 @@ class CachingHelperTest extends UnitTestCase
                     'NodeType_' . $nodeTypeName3
                 ]
             ],
-            [(object)['stdClass' => 'will do nothing'], []]
+            [(object)['stdClass' => 'will do nothing'], '']
         ];
     }
 

@@ -74,13 +74,12 @@ class CachingHelper implements ProtectedContextAwareInterface
      * (including inheritance) is updated.
      *
      * @param string|NodeType|string[]|NodeType[] $nodeType
-     * @return string[]
+     * @return string|string[]
      */
-    public function nodeTypeTag($nodeType) : array
+    public function nodeTypeTag($nodeType)
     {
         if (!is_array($nodeType) && !($nodeType instanceof \Traversable)) {
-            $result = [$this->getNodeTypeTagFor($nodeType)];
-            return array_filter($result);
+            return $this->getNodeTypeTagFor($nodeType);
         }
 
         $result = [];
@@ -92,7 +91,7 @@ class CachingHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param $nodeType
+     * @param string|NodeType $nodeType
      * @return string
      */
     protected function getNodeTypeTagFor($nodeType)
