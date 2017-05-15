@@ -15,5 +15,4 @@ interface WriteablePropertiesInterface
      * @return void
      */
     public function removeProperty($propertyName);
-
 }
