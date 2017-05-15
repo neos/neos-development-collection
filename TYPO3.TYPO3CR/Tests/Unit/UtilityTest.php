@@ -51,4 +51,16 @@ class UtilityTest extends UnitTestCase
     {
         $this->assertEquals($expectedNodeName, Utility::renderValidNodeName($source));
     }
+
+    /**
+     * @test
+     */
+    public function removeControlCharactersCleansStringButLeavesItIntact()
+    {
+        $simpleStringContent = 'Soemthing with control characters and other stuff #ä#+´´)(=?:_;ÄÖ*+ü ';
+        $originalString = chr(9) . $simpleStringContent . chr(4) . chr(30) . chr(10);
+
+        $result = Utility::removeControlCharactersFrom($originalString);
+        $this->assertEquals(chr(9) . $simpleStringContent  . chr(10), $result);
+    }
 }
