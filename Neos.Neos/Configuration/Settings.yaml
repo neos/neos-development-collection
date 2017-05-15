@@ -344,7 +344,7 @@ Neos:
             icon: icon-user
             privilegeTarget: 'Neos.Neos:Backend.Module.User.UserSettings'
 
-     # Settings for the TYPO3 Neos Event Log (** DO NOT USE, NO PUBLIC API YET **)
+     # Settings for the Neos Event Log (** DO NOT USE, NO PUBLIC API YET **)
     eventLog:
       enabled: false
       monitorEntities:

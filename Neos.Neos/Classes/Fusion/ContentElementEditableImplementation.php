@@ -46,7 +46,7 @@ class ContentElementEditableImplementation extends AbstractFusionObject
     }
 
     /**
-     * Evaluate this TypoScript object and return the result
+     * Evaluate this Fusion object and return the result
      *
      * @return mixed
      */

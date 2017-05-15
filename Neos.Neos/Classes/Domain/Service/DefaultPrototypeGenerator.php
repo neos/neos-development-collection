@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeType;
 
 /**
- * Generate a TypoScript prototype definition based on Neos.Fusion:Template and pass all node properties to it
+ * Generate a Fusion prototype definition based on Neos.Fusion:Template and pass all node properties to it
  *
  * @Flow\Scope("singleton")
  */
@@ -29,11 +29,11 @@ class DefaultPrototypeGenerator implements DefaultPrototypeGeneratorInterface
     protected $basePrototypeName = 'Neos.Fusion:Template';
 
     /**
-     * Generate a TypoScript prototype definition for a given node type
+     * Generate a Fusion prototype definition for a given node type
      *
      * A node will be rendered by Neos.Neos:Content by default with a template in
      * resource://PACKAGE_KEY/Private/Templates/NodeTypes/NAME.html and forwards all public
-     * node properties to the template TypoScript object.
+     * node properties to the template Fusion object.
      *
      * @param NodeType $nodeType
      * @return string
