@@ -1641,8 +1641,13 @@ class NodeDataRepository extends Repository
 
         foreach ($relationMap as $relatedObjectType => $relatedIdentifiers) {
             foreach ($relatedIdentifiers as $relatedIdentifier) {
+                // entity references like "__identifier": "so-me-uu-id"
                 $constraints[] = '(LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :entity' . md5($relatedIdentifier) . ' )';
                 $parameters['entity' . md5($relatedIdentifier)] = '%"__identifier": "' . strtolower($relatedIdentifier) . '"%';
+
+                // asset references in text like "asset://so-me-uu-id"
+                $constraints[] = '(LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :asset' . md5($relatedIdentifier) . ' )';
+                $parameters['asset' . md5($relatedIdentifier)] = '%asset:\\\\\\/\\\\\\/' . strtolower($relatedIdentifier) . '%';
             }
         }
 
