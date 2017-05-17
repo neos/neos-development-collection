@@ -286,7 +286,7 @@ abstract class AbstractNodeData
         }
 
         $properties = array();
-        foreach (array_keys($this->properties) as $propertyName) {
+        foreach ($this->properties as $propertyName => $propertyValue) {
             $properties[$propertyName] = $this->getProperty($propertyName);
         }
         return $properties;
