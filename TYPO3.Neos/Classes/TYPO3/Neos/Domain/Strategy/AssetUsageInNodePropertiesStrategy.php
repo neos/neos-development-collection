@@ -24,6 +24,7 @@ use TYPO3\Neos\Service\UserService;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Neos\Controller\CreateContentContextTrait;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\Neos\Domain\Service\UserService as DomainUserService;
 
@@ -89,22 +90,16 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
             return $this->firstlevelCache[$assetIdentifier];
         }
 
-        $userWorkspace = $this->userService->getPersonalWorkspace();
-
         $relatedNodes = [];
         foreach ($this->getRelatedNodes($asset) as $relatedNodeData) {
-            $accessible = $this->domainUserService->currentUserCanReadWorkspace($relatedNodeData->getWorkspace());
-            if ($accessible) {
-                $context = $this->createContextMatchingNodeData($relatedNodeData);
-            } else {
-                $context = $this->createContentContext($userWorkspace->getName());
-            }
-            $site = $context->getCurrentSite();
+            $context = $this->createContextMatchingNodeData($relatedNodeData);
             $node = $this->nodeFactory->createFromNodeData($relatedNodeData, $context);
             $flowQuery = new FlowQuery([$node]);
-            /** @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface $documentNode */
+            /** @var NodeInterface $documentNode */
             $documentNode = $flowQuery->closest('[instanceof TYPO3.Neos:Document]')->get(0);
 
+            $site = $context->getCurrentSite();
+            $accessible = $this->domainUserService->currentUserCanReadWorkspace($relatedNodeData->getWorkspace());
             $relatedNodes[] = new AssetUsageInNodeProperties($asset, $site, $documentNode, $node, $accessible);
         }
 
