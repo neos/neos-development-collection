@@ -389,10 +389,10 @@ class NodeController extends AbstractServiceController
      * Takes care of creating a redirect to properly render the collection the given node is in.
      *
      * @param NodeInterface $node
-     * @param string $typoScriptPath
+     * @param string $fusionPath
      * @return string
      */
-    protected function redirectToRenderNode(NodeInterface $node, $typoScriptPath)
+    protected function redirectToRenderNode(NodeInterface $node, $fusionPath)
     {
         $q = new FlowQuery(array($node));
         $closestContentCollection = $q->closest('[instanceof Neos.Neos:ContentCollection]')->get(0);
@@ -402,7 +402,7 @@ class NodeController extends AbstractServiceController
             'node' => $closestDocumentNode,
             '__nodeContextPath' => $closestContentCollection->getContextPath(),
             '__affectedNodeContextPath' => $node->getContextPath(),
-            '__typoScriptPath' => $typoScriptPath
+            '__typoScriptPath' => $fusionPath,
         ], 0, 303, 'html');
     }
 

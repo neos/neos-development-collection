@@ -54,7 +54,7 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
         ]);
         $this->generateSitesXml($packageKey, $siteName);
         $this->generateSitesFusion($packageKey, $siteName);
-        $this->generateSitesTemplate($packageKey, $siteName);
+        $this->generateDefaultTemplate($packageKey, $siteName);
         $this->generateNodeTypesConfiguration($packageKey);
         $this->generateAdditionalFolders($packageKey);
 
@@ -115,7 +115,7 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
      * @param string $siteName
      * @return void
      */
-    protected function generateSitesTemplate($packageKey, $siteName)
+    protected function generateDefaultTemplate($packageKey, $siteName)
     {
         $templatePathAndFilename = 'resource://Neos.SiteKickstarter/Private/Generator/Template/SiteTemplate.html';
 
@@ -128,8 +128,8 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
 
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
-        $sitesTypoScriptPathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/Templates/Page/Default.html';
-        $this->generateFile($sitesTypoScriptPathAndFilename, $fileContent);
+        $defaultTemplatePathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/Templates/Page/Default.html';
+        $this->generateFile($defaultTemplatePathAndFilename, $fileContent);
     }
 
     /**
