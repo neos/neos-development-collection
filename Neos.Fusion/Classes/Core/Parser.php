@@ -277,8 +277,8 @@ class Parser implements ParserInterface
         $this->contextPathAndFilename = $contextPathAndFilename;
         $sourceCode = str_replace("\r\n", "\n", $sourceCode);
         $this->currentSourceCodeLines = explode(chr(10), $sourceCode);
-        while (($typoScriptLine = $this->getNextTypoScriptLine()) !== false) {
-            $this->parseTypoScriptLine($typoScriptLine);
+        while (($fusionLine = $this->getNextfusionLine()) !== false) {
+            $this->parseFusionLine($fusionLine);
         }
 
         if ($buildPrototypeHierarchy) {
@@ -335,44 +335,68 @@ class Parser implements ParserInterface
     /**
      * Get the next, unparsed line of Fusion from this->currentSourceCodeLines and increase the pointer
      *
-     * @return string next line of typoscript to parse
+     * @deprecated with 3.0 will be removed with 4.0
+     * @return string next line of Fusion to parse
      */
     protected function getNextTypoScriptLine()
     {
-        $typoScriptLine = current($this->currentSourceCodeLines);
+        return $this->getNextFusionLine();
+    }
+
+    /**
+     * Get the next, unparsed line of Fusion from this->currentSourceCodeLines and increase the pointer
+     *
+     * @return string next line of Fusion to parse
+     */
+    protected function getNextFusionLine()
+    {
+        $fusionLine = current($this->currentSourceCodeLines);
         next($this->currentSourceCodeLines);
         $this->currentLineNumber++;
-        return $typoScriptLine;
+        return $fusionLine;
     }
 
     /**
      * Parses one line of Fusion
      *
-     * @param string $typoScriptLine One line of Fusion code
+     * @deprecated with 3.0 will be removed with 4.0
+     * @param string $fusionLine One line of Fusion code
      * @return void
      * @throws Fusion\Exception
      */
-    protected function parseTypoScriptLine($typoScriptLine)
+    protected function parseTypoScriptLine($fusionLine)
     {
-        $typoScriptLine = trim($typoScriptLine);
+        $this->parseFusionLine($fusionLine);
+    }
+
+    /**
+     * Parses one line of Fusion
+     *
+     * @param string $fusionLine One line of Fusion code
+     * @return void
+     * @throws Fusion\Exception
+     */
+    protected function parseFusionLine($fusionLine)
+    {
+        $fusionLine = trim($fusionLine);
 
         if ($this->currentBlockCommentState === true) {
-            $this->parseComment($typoScriptLine);
+            $this->parseComment($fusionLine);
         } else {
-            if ($typoScriptLine === '') {
+            if ($fusionLine === '') {
                 return;
-            } elseif (preg_match(self::SCAN_PATTERN_COMMENT, $typoScriptLine)) {
-                $this->parseComment($typoScriptLine);
-            } elseif (preg_match(self::SCAN_PATTERN_OPENINGCONFINEMENT, $typoScriptLine)) {
-                $this->parseConfinementBlock($typoScriptLine, true);
-            } elseif (preg_match(self::SCAN_PATTERN_CLOSINGCONFINEMENT, $typoScriptLine)) {
-                $this->parseConfinementBlock($typoScriptLine, false);
-            } elseif (preg_match(self::SCAN_PATTERN_DECLARATION, $typoScriptLine)) {
-                $this->parseDeclaration($typoScriptLine);
-            } elseif (preg_match(self::SCAN_PATTERN_OBJECTDEFINITION, $typoScriptLine)) {
-                $this->parseObjectDefinition($typoScriptLine);
+            } elseif (preg_match(self::SCAN_PATTERN_COMMENT, $fusionLine)) {
+                $this->parseComment($fusionLine);
+            } elseif (preg_match(self::SCAN_PATTERN_OPENINGCONFINEMENT, $fusionLine)) {
+                $this->parseConfinementBlock($fusionLine, true);
+            } elseif (preg_match(self::SCAN_PATTERN_CLOSINGCONFINEMENT, $fusionLine)) {
+                $this->parseConfinementBlock($fusionLine, false);
+            } elseif (preg_match(self::SCAN_PATTERN_DECLARATION, $fusionLine)) {
+                $this->parseDeclaration($fusionLine);
+            } elseif (preg_match(self::SCAN_PATTERN_OBJECTDEFINITION, $fusionLine)) {
+                $this->parseObjectDefinition($fusionLine);
             } else {
-                throw new Fusion\Exception('Syntax error in line ' . $this->currentLineNumber . '. (' . $typoScriptLine . ')', 1180547966);
+                throw new Fusion\Exception('Syntax error in line ' . $this->currentLineNumber . '. (' . $fusionLine . ')', 1180547966);
             }
         }
     }
@@ -380,13 +404,13 @@ class Parser implements ParserInterface
     /**
      * Parses a line with comments or a line while parsing is in block comment mode.
      *
-     * @param string $typoScriptLine One line of Fusion code
+     * @param string $fusionLine One line of Fusion code
      * @return void
      * @throws Fusion\Exception
      */
-    protected function parseComment($typoScriptLine)
+    protected function parseComment($fusionLine)
     {
-        if (preg_match(self::SPLIT_PATTERN_COMMENTTYPE, $typoScriptLine, $matches, PREG_OFFSET_CAPTURE) === 1) {
+        if (preg_match(self::SPLIT_PATTERN_COMMENTTYPE, $fusionLine, $matches, PREG_OFFSET_CAPTURE) === 1) {
             switch ($matches[1][0]) {
                 case '/*':
                     $this->currentBlockCommentState = true;
@@ -396,7 +420,7 @@ class Parser implements ParserInterface
                         throw new Fusion\Exception('Unexpected closing block comment without matching opening block comment.', 1180615119);
                     }
                     $this->currentBlockCommentState = false;
-                    $this->parseTypoScriptLine(substr($typoScriptLine, ($matches[1][1] + 2)));
+                    $this->parseFusionLine(substr($fusionLine, ($matches[1][1] + 2)));
                     break;
                 case '#':
                 case '//':
@@ -404,22 +428,22 @@ class Parser implements ParserInterface
                     break;
             }
         } elseif ($this->currentBlockCommentState === false) {
-            throw new Fusion\Exception('No comment type matched although the comment scan regex matched the Fusion line (' . $typoScriptLine . ').', 1180614895);
+            throw new Fusion\Exception('No comment type matched although the comment scan regex matched the Fusion line (' . $fusionLine . ').', 1180614895);
         }
     }
 
     /**
      * Parses a line which opens or closes a confinement
      *
-     * @param string $typoScriptLine One line of Fusion code
+     * @param string $fusionLine One line of Fusion code
      * @param boolean $isOpeningConfinement Set to TRUE, if an opening confinement is to be parsed and FALSE if it's a closing confinement.
      * @return void
      * @throws Fusion\Exception
      */
-    protected function parseConfinementBlock($typoScriptLine, $isOpeningConfinement)
+    protected function parseConfinementBlock($fusionLine, $isOpeningConfinement)
     {
         if ($isOpeningConfinement) {
-            $result = trim(trim(trim($typoScriptLine), '{'));
+            $result = trim(trim(trim($fusionLine), '{'));
             array_push($this->currentObjectPathStack, $this->getCurrentObjectPathPrefix() . $result);
         } else {
             if (count($this->currentObjectPathStack) < 1) {
@@ -432,15 +456,15 @@ class Parser implements ParserInterface
     /**
      * Parses a parser declaration of the form "declarationtype: declaration".
      *
-     * @param string $typoScriptLine One line of Fusion code
+     * @param string $fusionLine One line of Fusion code
      * @return void
      * @throws Fusion\Exception
      */
-    protected function parseDeclaration($typoScriptLine)
+    protected function parseDeclaration($fusionLine)
     {
-        $result = preg_match(self::SPLIT_PATTERN_DECLARATION, $typoScriptLine, $matches);
+        $result = preg_match(self::SPLIT_PATTERN_DECLARATION, $fusionLine, $matches);
         if ($result !== 1 || !(isset($matches['declarationType']) && isset($matches['declaration']))) {
-            throw new Fusion\Exception('Invalid declaration "' . $typoScriptLine . '"', 1180544656);
+            throw new Fusion\Exception('Invalid declaration "' . $fusionLine . '"', 1180544656);
         }
 
         switch ($matches['declarationType']) {
@@ -456,15 +480,15 @@ class Parser implements ParserInterface
     /**
      * Parses an object definition.
      *
-     * @param string $typoScriptLine One line of Fusion code
+     * @param string $fusionLine One line of Fusion code
      * @return void
      * @throws Fusion\Exception
      */
-    protected function parseObjectDefinition($typoScriptLine)
+    protected function parseObjectDefinition($fusionLine)
     {
-        $result = preg_match(self::SPLIT_PATTERN_OBJECTDEFINITION, $typoScriptLine, $matches);
+        $result = preg_match(self::SPLIT_PATTERN_OBJECTDEFINITION, $fusionLine, $matches);
         if ($result !== 1) {
-            throw new Fusion\Exception('Invalid object definition "' . $typoScriptLine . '"', 1180548488);
+            throw new Fusion\Exception('Invalid object definition "' . $fusionLine . '"', 1180548488);
         }
 
         $objectPath = $this->getCurrentObjectPathPrefix() . $matches['ObjectPath'];
@@ -716,8 +740,8 @@ class Parser implements ParserInterface
             $processedValue = stripslashes(isset($matches['SingleQuoteValue']) ? $matches['SingleQuoteValue'] : $matches['DoubleQuoteValue']);
             $closingQuoteChar = isset($matches['SingleQuoteChar']) ? $matches['SingleQuoteChar'] : $matches['DoubleQuoteChar'];
             $regexp = '/(?P<Value>(?:\\\\.|[^\\\\' . $closingQuoteChar . '])*)(?P<QuoteChar>' . $closingQuoteChar . '?)/';
-            while (($typoScriptLine = $this->getNextTypoScriptLine()) !== false) {
-                preg_match($regexp, $typoScriptLine, $matches);
+            while (($fusionLine = $this->getNextFusionLine()) !== false) {
+                preg_match($regexp, $fusionLine, $matches);
                 $processedValue .= "\n" . stripslashes($matches['Value']);
                 if (!empty($matches['QuoteChar'])) {
                     break;
@@ -743,7 +767,7 @@ class Parser implements ParserInterface
             if (strpos($unparsedValue, '${') === 0) {
                 $eelExpressionSoFar = $unparsedValue;
                 // potential start of multiline Eel Expression; trying to consume next lines...
-                while (($line = $this->getNextTypoScriptLine()) !== false) {
+                while (($line = $this->getNextFusionLine()) !== false) {
                     $eelExpressionSoFar .= chr(10) . $line;
 
                     if (substr($line, -1) === '}') {

@@ -28,16 +28,16 @@ class FluidView extends StandaloneView implements FusionAwareViewInterface
     /**
      * @var AbstractFusionObject
      */
-    protected $typoScriptObject;
+    protected $fusionObject;
 
     /**
-     * @param AbstractFusionObject $typoScriptObject
+     * @param AbstractFusionObject $fusionObject
      * @param ActionRequest $request The current action request. If none is specified it will be created from the environment.
      */
-    public function __construct(AbstractFusionObject $typoScriptObject, ActionRequest $request = null)
+    public function __construct(AbstractFusionObject $fusionObject, ActionRequest $request = null)
     {
         parent::__construct($request);
-        $this->typoScriptObject = $typoScriptObject;
+        $this->fusionObject = $fusionObject;
     }
 
     /**
@@ -70,6 +70,6 @@ class FluidView extends StandaloneView implements FusionAwareViewInterface
      */
     public function getFusionObject()
     {
-        return $this->typoScriptObject;
+        return $this->fusionObject;
     }
 }
