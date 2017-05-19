@@ -25,7 +25,7 @@ If you do not have the Kickstart package installed, you must do this now:
 .. code-block:: bash
 
   cd /your/htdocs/Neos
-  php /path/to/composer.phar require typo3/kickstart \*
+  php /path/to/composer.phar require neos/kickstarter \*
 
 Now create a package with a model, so we have something to show in the plugin:
 
