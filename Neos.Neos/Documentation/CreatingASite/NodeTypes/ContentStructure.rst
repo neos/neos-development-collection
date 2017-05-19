@@ -42,19 +42,6 @@ whatever structure is needed. This nesting can be done indefinitely: Inside
 a ``ContentCollection``, there could be another three-column element which again contains
 ``ContentCollection`` elements with arbitrary content inside.
 
-.. admonition:: Comparison to TYPO3 CMS
-
-	In TYPO3 CMS, the *page tree* is the central data structure, and the content
-	of a page is stored in a more-or-less flat manner in a separate database table.
-
-	Because this was too limited for complex content, TemplaVoila was invented.
-	It allows to create an arbitrary nesting of content elements, but is still
-	plugged into the classical table-based architecture.
-
-	Basically, Neos generalizes the tree-based concept found in TYPO3 CMS
-	and TemplaVoila and implements it in a consistent manner, where we do not
-	have to distinguish between pages and other content.
-
 
 Predefined Node Types
 ---------------------
