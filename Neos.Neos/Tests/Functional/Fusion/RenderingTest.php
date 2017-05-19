@@ -351,7 +351,7 @@ class RenderingTest extends AbstractNodeTest
     protected function createRuntimeWithFixtures($additionalFusionFile = null)
     {
         $fusionService = new FusionService();
-        $fusionService->setSiteRootFusionPattern(__DIR__ . '/Fixtures/BaseTypoScript.fusion');
+        $fusionService->setSiteRootFusionPattern(__DIR__ . '/Fixtures/Base.fusion');
 
         if ($additionalFusionFile !== null) {
             $fusionService->setAppendFusionIncludes(array($additionalFusionFile));
