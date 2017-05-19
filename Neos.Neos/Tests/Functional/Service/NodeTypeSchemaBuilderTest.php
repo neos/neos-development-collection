@@ -62,8 +62,8 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
 
         $expectedSuperTypes = array('Neos.Neos.BackendSchemaControllerTest:ParentAlohaNodeType' => true);
         $expectedPropertyConfiguration = array(
-            'fallbackCase' => array('defined', 'as', 'plain', 'array'),
-            'sampleCase' => array('h3', 'sup')
+            'alignment' => array('left', 'center', 'right'),
+            'format' => array('h3', 'sup')
         );
 
         $this->assertEquals($expectedSuperTypes, $this->schema['nodeTypes']['Neos.Neos.BackendSchemaControllerTest:AlohaNodeType']['superTypes']);
@@ -90,15 +90,14 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
     public function alohaUiConfigurationPartsAreActualArrayAndDontContainExcludedElements()
     {
         $alohaConfiguration = $this->schema['nodeTypes']['Neos.Neos.BackendSchemaControllerTest:AlohaNodeType']['properties']['text']['ui']['aloha'];
-        $this->assertInternalType('array', $alohaConfiguration['fallbackCase']);
-        $this->assertInternalType('array', $alohaConfiguration['sampleCase']);
+        $this->assertInternalType('array', $alohaConfiguration['alignment']);
+        $this->assertInternalType('array', $alohaConfiguration['format']);
 
-        $this->assertArrayNotHasKey('h3', $alohaConfiguration['sampleCase']);
-        $this->assertArrayNotHasKey('sup', $alohaConfiguration['sampleCase']);
-        $this->assertArrayNotHasKey('shouldBeExcluded', $alohaConfiguration['sampleCase']);
+        $this->assertArrayNotHasKey('h3', $alohaConfiguration['format']);
+        $this->assertArrayNotHasKey('sup', $alohaConfiguration['format']);
 
-        $this->assertEquals(array('defined', 'as', 'plain', 'array'), $alohaConfiguration['fallbackCase']);
-        $this->assertEquals(array('h3', 'sup'), $alohaConfiguration['sampleCase']);
+        $this->assertEquals(array('left', 'center', 'right'), $alohaConfiguration['alignment']);
+        $this->assertEquals(array('h3', 'sup'), $alohaConfiguration['format']);
     }
 
     /**
