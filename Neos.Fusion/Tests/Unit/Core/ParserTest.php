@@ -877,7 +877,7 @@ class ParserTest extends UnitTestCase
      */
     public function parserDetectsDirectRecursions()
     {
-        $sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture21');
+        $sourceCode = $this->readFusionFixture('ParserTestFusionFixture21');
         $this->parser->parse($sourceCode);
     }
 
@@ -887,7 +887,7 @@ class ParserTest extends UnitTestCase
      */
     public function parserDetectsIndirectRecursions()
     {
-        $sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture22');
+        $sourceCode = $this->readFusionFixture('ParserTestFusionFixture22');
         $this->parser->parse($sourceCode);
     }
 
