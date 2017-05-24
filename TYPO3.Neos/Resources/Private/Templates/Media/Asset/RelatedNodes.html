@@ -66,7 +66,7 @@
 												</f:if>
 											</f:then>
 											<f:else>
-												<span><i class="icon-warning" data-neos-toggle="tooltip" data-placement="left" title="{neos:backend.translate(id: 'media.missingDocumentNode', source: 'Modules')}"></i></span>
+												<span><i class="icon-warning" data-neos-toggle="tooltip" data-placement="left" title="{neos:backend.translate(id: 'media.missingDocumentNode', source: 'Modules', package: 'TYPO3.Neos')}"></i></span>
 											</f:else>
 										</f:if>
 									</li>
@@ -105,7 +105,7 @@
 														</f:if>
 													</f:then>
 													<f:else>
-														<i class="icon-lock" title="{neos:backend.translate(id: 'media.noAccessToWorkspace', source: 'Modules', arguments: {0: relatedNode.nodeData.workspace.title})}" data-neos-toggle="tooltip"></i>
+														<i class="icon-lock" title="{neos:backend.translate(id: 'media.noAccessToWorkspace', source: 'Modules', package: 'TYPO3.Neos', arguments: {0: relatedNode.nodeData.workspace.title})}" data-neos-toggle="tooltip"></i>
 													</f:else>
 												</f:if>
 											</f:else>
