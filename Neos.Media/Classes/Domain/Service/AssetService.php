@@ -251,9 +251,9 @@ class AssetService
         $uriMapping = [];
         $redirectHandlerEnabled = isset($options['generateRedirects']) && (boolean)$options['generateRedirects'] === true && $this->packageManager->isPackageAvailable('Neos.RedirectHandler');
         if ($redirectHandlerEnabled) {
-            $uriMapping[
-                $this->resourceManager->getPublicPersistentResourceUri($originalAssetResource)
-            ] = $this->resourceManager->getPublicPersistentResourceUri($asset->getResource());
+            $originalAssetResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($originalAssetResource));
+            $newAssetResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($asset->getResource()));
+            $uriMapping[$originalAssetResourceUri->getPath()] = $newAssetResourceUri->getPath();
         }
 
         if (method_exists($asset, 'getVariants')) {
@@ -272,9 +272,9 @@ class AssetService
                 }
 
                 if ($redirectHandlerEnabled) {
-                    $uriMapping[
-                        $this->resourceManager->getPublicPersistentResourceUri($originalVariantResource)
-                    ] = $this->resourceManager->getPublicPersistentResourceUri($variant->getResource());
+                    $originalVariantResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($originalVariantResource));
+                    $newVariantResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($variant->getResource()));
+                    $uriMapping[$originalVariantResourceUri->getPath()] = $newVariantResourceUri->getPath();
                 }
 
                 $this->getRepository($variant)->update($variant);
