@@ -3,7 +3,7 @@
 FlowQuery Operation Reference
 =============================
 
-This reference was automatically generated from code on 2017-03-30
+This reference was automatically generated from code on 2017-05-11
 
 
 .. _`FlowQuery Operation Reference: add`:
@@ -53,12 +53,13 @@ Example:
 children
 --------
 
-"children" operation working on ContentRepository nodes. It iterates over all
-context elements and returns all child nodes or only those matching
-the filter expression specified as optional argument.
+"children" operation working on generic objects. It iterates over all
+context elements and returns the values of the properties given in the
+filter expression that has to be specified as argument or in a following
+filter operation.
 
-:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\ChildrenOperation
-:Priority: 100
+:Implementation: Neos\\Eel\\FlowQuery\\Operations\\Object\\ChildrenOperation
+:Priority: 1
 :Final: No
 :Returns: void
 
@@ -71,13 +72,12 @@ the filter expression specified as optional argument.
 children
 --------
 
-"children" operation working on generic objects. It iterates over all
-context elements and returns the values of the properties given in the
-filter expression that has to be specified as argument or in a following
-filter operation.
+"children" operation working on ContentRepository nodes. It iterates over all
+context elements and returns all child nodes or only those matching
+the filter expression specified as optional argument.
 
-:Implementation: Neos\\Eel\\FlowQuery\\Operations\\Object\\ChildrenOperation
-:Priority: 1
+:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\ChildrenOperation
+:Priority: 100
 :Final: No
 :Returns: void
 
@@ -482,8 +482,8 @@ context elements and returns the parent nodes until the matching parent is found
 If an optional filter expression is provided as a second argument,
 it only returns the nodes matching the given expression.
 
-:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\ParentsUntilOperation
-:Priority: 0
+:Implementation: Neos\\Neos\\Eel\\FlowQueryOperations\\ParentsUntilOperation
+:Priority: 100
 :Final: No
 :Returns: void
 
@@ -501,8 +501,8 @@ context elements and returns the parent nodes until the matching parent is found
 If an optional filter expression is provided as a second argument,
 it only returns the nodes matching the given expression.
 
-:Implementation: Neos\\Neos\\Eel\\FlowQueryOperations\\ParentsUntilOperation
-:Priority: 100
+:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\ParentsUntilOperation
+:Priority: 0
 :Final: No
 :Returns: void
 
@@ -571,12 +571,14 @@ it only returns the nodes matching the given expression.
 property
 --------
 
-Used to access properties of a ContentRepository Node. If the property mame is
-prefixed with _, internal node properties like start time, end time,
-hidden are accessed.
+Access properties of an object using ObjectAccess.
 
-:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\PropertyOperation
-:Priority: 100
+Expects the name of a property as argument. If the context is empty, NULL
+is returned. Otherwise the value of the property on the first context
+element is returned.
+
+:Implementation: Neos\\Eel\\FlowQuery\\Operations\\Object\\PropertyOperation
+:Priority: 1
 :Final: Yes
 :Returns: mixed
 
@@ -589,14 +591,12 @@ hidden are accessed.
 property
 --------
 
-Access properties of an object using ObjectAccess.
+Used to access properties of a ContentRepository Node. If the property mame is
+prefixed with _, internal node properties like start time, end time,
+hidden are accessed.
 
-Expects the name of a property as argument. If the context is empty, NULL
-is returned. Otherwise the value of the property on the first context
-element is returned.
-
-:Implementation: Neos\\Eel\\FlowQuery\\Operations\\Object\\PropertyOperation
-:Priority: 1
+:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\PropertyOperation
+:Priority: 100
 :Final: Yes
 :Returns: mixed
 

@@ -62,8 +62,8 @@ class TagImplementationTest extends UnitTestCase
             return isset($properties[$relativePath]) ? $properties[$relativePath] : null;
         }));
 
-        $typoScriptObjectName = 'Neos.Fusion:Tag';
-        $renderer = new TagImplementation($this->mockRuntime, $path, $typoScriptObjectName);
+        $fusionObjectName = 'Neos.Fusion:Tag';
+        $renderer = new TagImplementation($this->mockRuntime, $path, $fusionObjectName);
 
         $result = $renderer->evaluate();
         $this->assertEquals($expectedOutput, $result);
