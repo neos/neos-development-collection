@@ -27,8 +27,8 @@ class ArrayImplementationTest extends UnitTestCase
     {
         $mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
         $path = 'array/test';
-        $typoScriptObjectName = 'Neos.Fusion:Array';
-        $renderer = new ArrayImplementation($mockRuntime, $path, $typoScriptObjectName);
+        $fusionObjectName = 'Neos.Fusion:Array';
+        $renderer = new ArrayImplementation($mockRuntime, $path, $fusionObjectName);
         $result = $renderer->evaluate();
         $this->assertNull($result);
     }
@@ -124,8 +124,8 @@ class ArrayImplementationTest extends UnitTestCase
         }));
 
         $path = '';
-        $typoScriptObjectName = 'Neos.Fusion:Array';
-        $renderer = new ArrayImplementation($mockRuntime, $path, $typoScriptObjectName);
+        $fusionObjectName = 'Neos.Fusion:Array';
+        $renderer = new ArrayImplementation($mockRuntime, $path, $fusionObjectName);
         foreach ($subElements as $key => $value) {
             $renderer[$key] = $value;
         }

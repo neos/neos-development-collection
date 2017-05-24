@@ -56,7 +56,7 @@ class FusionPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \I
      *
      * @var array
      */
-    protected $partialTypoScriptTree;
+    protected $partialFusionTree;
 
     /**
      * @Flow\Inject
@@ -69,14 +69,14 @@ class FusionPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \I
      *
      * @param TemplateImplementation $templateImplementation
      * @param string $path
-     * @param array $partialTypoScriptTree
+     * @param array $partialFusionTree
      */
-    public function __construct(TemplateImplementation $templateImplementation, $path, array $partialTypoScriptTree)
+    public function __construct(TemplateImplementation $templateImplementation, $path, array $partialFusionTree)
     {
         $this->templateImplementation = $templateImplementation;
         $this->fusionRuntime = $templateImplementation->getRuntime();
         $this->path = $path;
-        $this->partialTypoScriptTree = $partialTypoScriptTree;
+        $this->partialFusionTree = $partialFusionTree;
     }
 
     /**
@@ -87,7 +87,7 @@ class FusionPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \I
      */
     public function offsetExists($offset)
     {
-        return isset($this->partialTypoScriptTree[$offset]);
+        return isset($this->partialFusionTree[$offset]);
     }
 
     /**
@@ -99,15 +99,15 @@ class FusionPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \I
      */
     public function offsetGet($offset)
     {
-        if (!isset($this->partialTypoScriptTree[$offset])) {
+        if (!isset($this->partialFusionTree[$offset])) {
             return null;
         }
-        if (!is_array($this->partialTypoScriptTree[$offset])) {
+        if (!is_array($this->partialFusionTree[$offset])) {
             // Simple type; we call "evaluate" nevertheless to make sure processors are applied.
             return $this->fusionRuntime->evaluate($this->path . '/' . $offset);
         } else {
             // arbitrary array (could be Eel expression, Fusion object, nested sub-array) again, so we wrap it with ourselves.
-            return new FusionPathProxy($this->templateImplementation, $this->path . '/' . $offset, $this->partialTypoScriptTree[$offset]);
+            return new FusionPathProxy($this->templateImplementation, $this->path . '/' . $offset, $this->partialFusionTree[$offset]);
         }
     }
 
@@ -164,7 +164,7 @@ class FusionPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \I
     public function getIterator()
     {
         $evaluatedArray = array();
-        foreach ($this->partialTypoScriptTree as $key => $value) {
+        foreach ($this->partialFusionTree as $key => $value) {
             if (!is_array($value)) {
                 $evaluatedArray[$key] = $value;
             } elseif (isset($value['__objectType'])) {
@@ -172,7 +172,7 @@ class FusionPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \I
             } elseif (isset($value['__eelExpression'])) {
                 $evaluatedArray[$key] = $this->fusionRuntime->evaluate($this->path . '/' . $key, $this->templateImplementation);
             } else {
-                $evaluatedArray[$key] = new FusionPathProxy($this->templateImplementation, $this->path . '/' . $key, $this->partialTypoScriptTree[$key]);
+                $evaluatedArray[$key] = new FusionPathProxy($this->templateImplementation, $this->path . '/' . $key, $this->partialFusionTree[$key]);
             }
         }
         return new \ArrayIterator($evaluatedArray);
@@ -183,7 +183,7 @@ class FusionPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \I
      */
     public function count()
     {
-        return count($this->partialTypoScriptTree);
+        return count($this->partialFusionTree);
     }
 
     /**
