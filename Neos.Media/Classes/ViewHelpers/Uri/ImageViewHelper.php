@@ -23,7 +23,7 @@ use Neos\Media\Domain\Model\ThumbnailConfiguration;
  * = Examples =
  *
  * <code title="Rendering an image path as-is">
- * {typo3.media:uri.image(image: imageObject)}
+ * {neos.media:uri.image(image: imageObject)}
  * </code>
  * <output>
  * (depending on the image)
@@ -32,7 +32,7 @@ use Neos\Media\Domain\Model\ThumbnailConfiguration;
  *
  *
  * <code title="Rendering an image path with scaling at a given width only">
- * {typo3.media:uri.image(image: imageObject, maximumWidth: 80)}
+ * {neos.media:uri.image(image: imageObject, maximumWidth: 80)}
  * </code>
  * <output>
  * (depending on the image; has scaled keeping the aspect ratio)
