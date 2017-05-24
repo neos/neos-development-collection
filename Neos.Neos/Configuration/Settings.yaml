@@ -128,6 +128,9 @@ Neos:
           loadingDepth: 4
 
       inspector:
+        # If you use other datatypes you should configure them in the same way. Specifically if
+        # you use arrays of objects make sure to configure a object-to-simpletype converter for the
+        # object type (class, interface) and additionally the TypedArrayConverter for the "array<Of\ObjectType>".
         dataTypes:
           string:
             editor: Neos.Neos/Inspector/Editors/TextFieldEditor
@@ -187,6 +190,7 @@ Neos:
             typeConverter: Neos\Neos\TypeConverter\EntityToIdentityConverter
             editor: Neos.Neos/Inspector/Editors/AssetEditor
           array<Neos\Media\Domain\Model\Asset>:
+            typeConverter: Neos\Flow\Property\TypeConverter\TypedArrayConverter
             editor: Neos.Neos/Inspector/Editors/AssetEditor
             editorOptions:
               multiple: true

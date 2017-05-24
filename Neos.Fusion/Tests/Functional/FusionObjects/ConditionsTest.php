@@ -88,7 +88,7 @@ class ConditionsTest extends AbstractFusionObjectTest
     public function conditionsInFusionObjectsWithSubEvaluationUsedInProcessorRenderCorrectly()
     {
         $view = $this->buildView();
-        $view->setFusionPath('conditions/supportForTypoScriptObjectWithSubEvaluationUsedInProcessor');
+        $view->setFusionPath('conditions/supportForFusionObjectWithSubEvaluationUsedInProcessor');
         $this->assertEquals('basic appended', $view->render());
     }
 }

@@ -19,7 +19,7 @@ debug.eelExpression = Debug {
 	value = ${'hello' + ' ' + 'world'}
 }
 
-debug.tsObjectExpression = Debug {
+debug.fusionObjectExpression = Debug {
 	value = Value {
 		value = 'hello world'
 	}
