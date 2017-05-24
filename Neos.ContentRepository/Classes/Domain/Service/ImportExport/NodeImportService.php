@@ -180,9 +180,15 @@ class NodeImportService
     public function import(\XMLReader $xmlReader, $targetPath, $resourceLoadPath = null)
     {
         $this->propertyMappingConfiguration = new ImportExportPropertyMappingConfiguration($resourceLoadPath);
-        $this->nodeNameStack = ($targetPath === '/') ? array() : array_map(function ($pathSegment) {
-            return Utility::renderValidNodeName($pathSegment);
-        }, explode('/', $targetPath));
+        $this->nodeNameStack = [];
+
+        if ($targetPath !== '/') {
+            $pathSegments = explode('/', $targetPath);
+            array_shift($pathSegments);
+            $this->nodeNameStack = array_map(function ($pathSegment) {
+                return Utility::renderValidNodeName($pathSegment);
+            }, $pathSegments);
+        }
 
         $formatVersion = $this->determineFormatVersion($xmlReader);
         switch ($formatVersion) {
@@ -267,7 +273,7 @@ class NodeImportService
                 $this->nodeIdentifierStack[] = $xmlReader->getAttribute('identifier');
                 // update current path
                 $nodeName = $xmlReader->getAttribute('nodeName');
-                if ($nodeName !== '/') {
+                if ($nodeName !== '/' && $nodeName !== '') {
                     $this->nodeNameStack[] = Utility::renderValidNodeName($nodeName);
                 }
                 break;
@@ -583,7 +589,7 @@ class NodeImportService
     protected function getCurrentPath()
     {
         $path = implode('/', $this->nodeNameStack);
-        return ($path === '') ? '/' : $path;
+        return '/' . $path;
     }
 
     /**

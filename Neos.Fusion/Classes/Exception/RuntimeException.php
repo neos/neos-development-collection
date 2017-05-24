@@ -26,7 +26,7 @@ class RuntimeException extends Exception
      * @param string $message
      * @param int $code
      * @param \Exception $previous
-     * @param null $typoScriptPath
+     * @param null $fusionPath
      */
     public function __construct($message = '', $code = 0, \Exception $previous = null, $fusionPath = null)
     {
