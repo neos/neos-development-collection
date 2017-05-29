@@ -124,10 +124,11 @@ Validate Translations
 
 To validate that all labels are translated Neos has the following setting in *Settings.yaml*::
 
+.. code-block:: yaml
 
   Neos:
     Neos:
-      UserInterface:
+      userInterface:
         scrambleTranslatedLabels: true
 
 If that setting is enabled all already translated labels are replaced with ###### -- that way you can easily identify the labels that still lack translations.
