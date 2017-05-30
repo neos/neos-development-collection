@@ -27,29 +27,13 @@ class AfxService
     public static function convertAfxToFusion($afxCode, $indentation = '')
     {
         try {
-            $parser = new AfxParser(self::preprocess($afxCode));
+            $parser = new AfxParser(trim($afxCode));
             $ast = $parser->parse();
-            $fusion = self::astNodeToFusion($ast, $indentation);
+            $fusion = self::astNodeListToFusion($ast, $indentation);
             return $fusion;
         } catch (AfxException $afxException) {
             throw new FusionException(sprintf('Error during AFX-parsing: %s', $afxException->getMessage()));
         }
-
-
-    }
-
-    /**
-     * Optimize the given afx before processing
-     *
-     * This step removes all newlines and spaces that are connected to an newline
-     * spaces between tags on a single level are preserved.
-     *
-     * @param string $afxCode
-     * @return string
-     */
-    protected static function preprocess($afxCode)
-    {
-        return trim($afxCode);
     }
 
     /**
@@ -211,38 +195,56 @@ class AfxService
      */
     protected static function astNodeListToFusion($payload, $indentation = '')
     {
-        $fusion = 'Neos.Fusion:Array {' . PHP_EOL;
         $index = 1;
-        foreach ($payload as $astNode) {
 
-            // ignore blank text if it is connected to a newline
+        // ignore blank text if it is connected to a newline
+        $payload = array_map(function ($astNode) {
             if ($astNode['type'] == 'text') {
-                $astNode['payload']  = preg_replace('/[\\s]*\\n[\\s]*/u', '', $astNode['payload'] );
-                if ($astNode['payload'] == '') {
-                    continue;
-                };
+                $astNode['payload'] = preg_replace('/[\\s]*\\n[\\s]*/u', '', $astNode['payload']);
             }
+            return $astNode;
+        }, $payload);
 
-            // detect key
-            $fusionName = $index;
-            if ($keyProperty = Arrays::getValueByPath($astNode, 'payload.props.@key')) {
-                if ($keyProperty['type'] == 'string') {
-                    $fusionName = $keyProperty['payload'];
-                } else {
-                    throw new Exception(
-                        sprintf('@key only supports string payloads %s was given', $astNode['props']['@key']['type'])
-                    );
+        // filter empty text nodes
+        $payload = array_filter($payload, function ($astNode) {
+            if ($astNode['type'] == 'text' && $astNode['payload'] == '') {
+                return false;
+            } else {
+                return true;
+            }
+        });
+
+        if (count($payload) == 0) {
+            return '';
+        } elseif (count($payload) == 1) {
+            return self::astToFusion(array_shift($payload), $indentation);
+        } else {
+            $fusion = 'Neos.Fusion:Array {' . PHP_EOL;
+            foreach ($payload as $astNode) {
+                // detect key
+                $fusionName = $index;
+                if ($keyProperty = Arrays::getValueByPath($astNode, 'payload.props.@key')) {
+                    if ($keyProperty['type'] == 'string') {
+                        $fusionName = $keyProperty['payload'];
+                    } else {
+                        throw new Exception(
+                            sprintf(
+                                '@key only supports string payloads %s was given',
+                                $astNode['props']['@key']['type']
+                            )
+                        );
+                    }
+                }
+
+                // convert node
+                $nodeFusion = self::astToFusion($astNode, $indentation . self::INDENTATION);
+                if ($nodeFusion !== null) {
+                    $fusion .= $indentation . self::INDENTATION . $fusionName . ' = ' . $nodeFusion . PHP_EOL;
+                    $index++;
                 }
             }
-
-            // convert node
-            $nodeFusion = self::astToFusion($astNode, $indentation .  self::INDENTATION);
-            if ($nodeFusion !== null) {
-                $fusion .= $indentation . self::INDENTATION . $fusionName . ' = ' . $nodeFusion . PHP_EOL;
-                $index++;
-            }
+            $fusion .= $indentation . '}';
+            return $fusion;
         }
-        $fusion .= $indentation . '}';
-        return $fusion;
     }
 }
