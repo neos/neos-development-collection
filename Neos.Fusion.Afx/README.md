@@ -175,7 +175,7 @@ Neos.Fusion:Tag {
 }
 ```
 
-### Multiple tag-children
+#### Multiple tag-children
 
 If an AFX-tag contains more than one child the content is are rendered as `Neos.Fusion:Array` into the 
 `content`-attribute. The children are interpreted as string, eel-expression, html- or fusion-object-tag. 
