@@ -86,8 +86,7 @@ The package contains the following cli-commands.
 
 ## AFX Language Rules
 
-The AFX Language expects the code to be wrapped into a single tag-element that can either be an html- or a 
-fusion-object-Tag. All whitepaces around the outer elements are ignored.
+All whitepaces around the outer elements are ignored.
 
 ### HTML-Tags (Tags without Namespace)
 
@@ -155,11 +154,33 @@ Vendor.Site:Prototype {
 ```
 
 ### Tag-Children
- 
-By default all children of AFX-Tags are rendered as `Neos.Fusion:Array` into the `content`-attribute. The children are 
-interpreted as string, eel-expression, html- or fusion-object-tag. 
- 
+
+The handling of child nodes below an afx-node is different based on the number of childNodes that are found.
+
+#### Single tag-children
+
+If a AFX-tag contains exactly one child this child is rendered directly into the `content`-attribute.  
+The childr is interpreted as string, eel-expression, html- or fusion-object-tag. 
+
 The following AFX-Code: 
+ 
+```
+<h1>{props.title}</h1>
+``` 
+Is transpiled as:
+```
+Neos.Fusion:Tag {
+    tagName = 'h1'
+    content = {props.title}
+}
+```
+
+### Multiple tag-children
+
+If an AFX-tag contains more than one child the content is are rendered as `Neos.Fusion:Array` into the 
+`content`-attribute. The children are interpreted as string, eel-expression, html- or fusion-object-tag. 
+ 
+The following AFX-Code:
  
 ```
 <h1>{props.title}: {props.subtitle}</h1>
