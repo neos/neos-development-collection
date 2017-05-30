@@ -10,6 +10,28 @@ class AfxServiceTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function emptyCodeConvertedToEmptyFusion()
+    {
+        $afxCode = '';
+        $expectedFusion = <<<'EOF'
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+    /**
+     * @test
+     */
+    public function whitepaceCodeIsConvertedToEmptyFusion()
+    {
+        $afxCode = '   ';
+        $expectedFusion = <<<'EOF'
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+    /**
+     * @test
+     */
     public function htmlTagsAreConvertedToFusionTags()
     {
         $afxCode = '<h1></h1>';
