@@ -24,6 +24,90 @@ EOF;
     /**
      * @test
      */
+    public function multipleHtmlTagsAreConvertedToFusionArray()
+    {
+        $afxCode = '<h1></h1><p></p><p></p>';
+        $expectedFusion = <<<'EOF'
+Neos.Fusion:Array {
+    1 = Neos.Fusion:Tag {
+        tagName = 'h1'
+    }
+    2 = Neos.Fusion:Tag {
+        tagName = 'p'
+    }
+    3 = Neos.Fusion:Tag {
+        tagName = 'p'
+    }
+}
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+    /**
+     * @test
+     */
+    public function multipleHtmlTagsAndTextsAreConvertedToFusionArray()
+    {
+        $afxCode = 'Foo<h1></h1>Bar<p></p>Baz';
+        $expectedFusion = <<<'EOF'
+Neos.Fusion:Array {
+    1 = 'Foo'
+    2 = Neos.Fusion:Tag {
+        tagName = 'h1'
+    }
+    3 = 'Bar'
+    4 = Neos.Fusion:Tag {
+        tagName = 'p'
+    }
+    5 = 'Baz'
+}
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+    /**
+     * @test
+     */
+    public function whitepaceAroundAfxIsIgnored()
+    {
+        $afxCode = '  <h1></h1><p></p>  ';
+        $expectedFusion = <<<'EOF'
+Neos.Fusion:Array {
+    1 = Neos.Fusion:Tag {
+        tagName = 'h1'
+    }
+    2 = Neos.Fusion:Tag {
+        tagName = 'p'
+    }
+}
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+    /**
+     * @test
+     */
+    public function multipleHtmlTagsAreConvertedToFusionTags()
+    {
+        $afxCode = '<h1></h1><p></p><p></p>';
+        $expectedFusion = <<<'EOF'
+Neos.Fusion:Array {
+    1 = Neos.Fusion:Tag {
+        tagName = 'h1'
+    }
+    2 = Neos.Fusion:Tag {
+        tagName = 'p'
+    }
+    3 = Neos.Fusion:Tag {
+        tagName = 'p'
+    }
+}
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+    /**
+     * @test
+     */
     public function whitespacesAndNewlinesAroundAfxCodeAreIgnored()
     {
         $afxCode = '   
@@ -78,9 +162,7 @@ EOF;
 Neos.Fusion:Tag {
     tagName = 'h1'
     attributes.class = 'foo\'bar'
-    content = Neos.Fusion:Array {
-        1 = 'foo\'bar'
-    }
+    content = 'foo\'bar'
 }
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
@@ -154,9 +236,7 @@ EOF;
         $expectedFusion = <<<'EOF'
 Neos.Fusion:Tag {
     tagName = 'h1'
-    content = Neos.Fusion:Array {
-        1 = 'Fooo'
-    }
+    content = 'Fooo'
 }
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
@@ -170,9 +250,7 @@ EOF;
         $afxCode = '<Vendor.Site:Prototype>Fooo</Vendor.Site:Prototype>';
         $expectedFusion = <<<'EOF'
 Vendor.Site:Prototype {
-    content = Neos.Fusion:Array {
-        1 = 'Fooo'
-    }
+    content = 'Fooo'
 }
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
@@ -186,9 +264,7 @@ EOF;
         $afxCode = '<Vendor.Site:Prototype @children="children">Fooo</Vendor.Site:Prototype>';
         $expectedFusion = <<<'EOF'
 Vendor.Site:Prototype {
-    children = Neos.Fusion:Array {
-        1 = 'Fooo'
-    }
+    children = 'Fooo'
 }
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
@@ -202,9 +278,7 @@ EOF;
         $afxCode = '<Vendor.Site:Prototype @children="children">{eelExpression()}</Vendor.Site:Prototype>';
         $expectedFusion = <<<'EOF'
 Vendor.Site:Prototype {
-    children = Neos.Fusion:Array {
-        1 = ${eelExpression()}
-    }
+    children = ${eelExpression()}
 }
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
@@ -222,15 +296,11 @@ Neos.Fusion:Tag {
     content = Neos.Fusion:Array {
         1 = Neos.Fusion:Tag {
             tagName = 'strong'
-            content = Neos.Fusion:Array {
-                1 = 'foo'
-            }
+            content = 'foo'
         }
         2 = Neos.Fusion:Tag {
             tagName = 'i'
-            content = Neos.Fusion:Array {
-                1 = 'bar'
-            }
+            content = 'bar'
         }
     }
 }
@@ -259,15 +329,11 @@ Neos.Fusion:Tag {
     content = Neos.Fusion:Array {
         1 = Neos.Fusion:Tag {
             tagName = 'strong'
-            content = Neos.Fusion:Array {
-                1 = 'foo'
-            }
+            content = 'foo'
         }
         2 = Neos.Fusion:Tag {
             tagName = 'i'
-            content = Neos.Fusion:Array {
-                1 = 'bar'
-            }
+            content = 'bar'
         }
     }
 }
@@ -287,15 +353,11 @@ Neos.Fusion:Tag {
     content = Neos.Fusion:Array {
         key_one = Neos.Fusion:Tag {
             tagName = 'strong'
-            content = Neos.Fusion:Array {
-                1 = 'foo'
-            }
+            content = 'foo'
         }
         key_two = Neos.Fusion:Tag {
             tagName = 'i'
-            content = Neos.Fusion:Array {
-                1 = 'bar'
-            }
+            content = 'bar'
         }
     }
 }
@@ -316,9 +378,7 @@ Neos.Fusion:Tag {
         1 = 'a string'
         2 = Neos.Fusion:Tag {
             tagName = 'strong'
-            content = Neos.Fusion:Array {
-                1 = 'a tag'
-            }
+            content = 'a tag'
         }
         3 = ${eelExpression()}
     }
@@ -372,6 +432,7 @@ Neos.Fusion:Tag {
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
+
     /**
      * @test
      */
@@ -392,5 +453,35 @@ Neos.Fusion:Tag {
 }
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+    /**
+     * @test
+     * @expectedException \Neos\Fusion\Exception
+     */
+    public function unclosedTagsRaisesException()
+    {
+        $afxCode = '<h1>';
+        AfxService::convertAfxToFusion($afxCode);
+    }
+
+    /**
+     * @test
+     * @expectedException \Neos\Fusion\Exception
+     */
+    public function unclosedAttributeRaisesException()
+    {
+        $afxCode = '<h1 foo="bar />';
+        AfxService::convertAfxToFusion($afxCode);
+    }
+
+    /**
+     * @test
+     * @expectedException \Neos\Fusion\Exception
+     */
+    public function unclosedExpressionRaisesException()
+    {
+        $afxCode = '<h1 foo={"123" />';
+        AfxService::convertAfxToFusion($afxCode);
     }
 }
