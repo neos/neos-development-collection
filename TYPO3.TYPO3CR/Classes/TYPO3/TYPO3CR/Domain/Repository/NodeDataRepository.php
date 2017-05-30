@@ -18,6 +18,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Persistence\QueryInterface;
 use TYPO3\Flow\Persistence\Repository;
+use TYPO3\Flow\Security\Context as SecurityContext;
 use TYPO3\Flow\Utility\Arrays;
 use TYPO3\Flow\Utility\Unicode\Functions as UnicodeFunctions;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
@@ -25,7 +26,6 @@ use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\Workspace;
 use TYPO3\TYPO3CR\Domain\Service\Context;
-use TYPO3\Flow\Security\Context as SecurityContext;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Domain\Utility\NodePaths;
 use TYPO3\TYPO3CR\Exception;
@@ -1647,7 +1647,16 @@ class NodeDataRepository extends Repository
 
                 // asset references in text like "asset://so-me-uu-id"
                 $constraints[] = '(LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :asset' . md5($relatedIdentifier) . ' )';
-                $parameters['asset' . md5($relatedIdentifier)] = '%asset:\\\\\\/\\\\\\/' . strtolower($relatedIdentifier) . '%';
+                switch ($this->entityManager->getConnection()->getDatabasePlatform()->getName()) {
+                    case 'postgresql':
+                        $parameters['asset' . md5($relatedIdentifier)] = '%asset://' . strtolower($relatedIdentifier) . '%';
+                    break;
+                    case 'sqlite':
+                        $parameters['asset' . md5($relatedIdentifier)] = '%asset:\/\/' . strtolower($relatedIdentifier) . '%';
+                    break;
+                    default:
+                        $parameters['asset' . md5($relatedIdentifier)] = '%asset:\\\\/\\\\/' . strtolower($relatedIdentifier) . '%';
+                }
             }
         }
 
