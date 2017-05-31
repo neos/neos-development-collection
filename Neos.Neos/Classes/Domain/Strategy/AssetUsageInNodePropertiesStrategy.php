@@ -101,11 +101,13 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
             }
             $site = $context->getCurrentSite();
             $node = $this->nodeFactory->createFromNodeData($relatedNodeData, $context);
-            $flowQuery = new FlowQuery([$node]);
-            /** @var \Neos\ContentRepository\Domain\Model\NodeInterface $documentNode */
-            $documentNode = $flowQuery->closest('[instanceof Neos.Neos:Document]')->get(0);
+            if ($node !== null) {
+                $flowQuery = new FlowQuery([$node]);
+                /** @var \Neos\ContentRepository\Domain\Model\NodeInterface $documentNode */
+                $documentNode = $flowQuery->closest('[instanceof Neos.Neos:Document]')->get(0);
 
-            $relatedNodes[] = new AssetUsageInNodeProperties($asset, $site, $documentNode, $node, $accessible);
+                $relatedNodes[] = new AssetUsageInNodeProperties($asset, $site, $documentNode, $node, $accessible);
+            }
         }
 
         $this->firstlevelCache[$assetIdentifier] = $relatedNodes;
