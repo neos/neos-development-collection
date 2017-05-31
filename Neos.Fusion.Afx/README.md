@@ -4,18 +4,14 @@
 
 This package provides a fusion preprocessor that expands a compact xml-ish syntax to pure fusion code. This allows
 to write compact components that do'nt need a seperate template file and enables unplanned extensibility for the defined 
-prototypes because the genrated fusion code can be overwritten and controlled from the outside if needed.
-
-## WARNING
-
-This is still a bit experimental and may change in the future. Due to semantic-versioning we will raise the major version number for breaking changes.
+prototypes because the generated fusion-code can be overwritten and controlled from the outside if needed.
 
 ## Installation
 
-PackageFactory.AtomicFusion.AFX is available via packagist. Just add `"packagefactory/atomicfusion-afx" : "~1.0.0"`
+PackageFactory.AtomicFusion.AFX is available via packagist. Just add `"packagefactory/atomicfusion-afx" : "~2.0.0"`
 to the require-section of the composer.json or run `composer require packagefactory/atomicfusion-afx`.
 
-We use semantic-versioning so every breaking change will increase the major-version number.
+__We use semantic-versioning so every breaking change will increase the major-version number.__
 
 ## Usage
 
@@ -42,7 +38,7 @@ prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.At
 }
 ```
 
-Will be transpiled, parsed and then cached and evaluated as the following fusion-code
+Will be transpiled, parsed and then cached and evaluated as beeing equivalent to the following fusion-code
 
 ```
 prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.AtomicFusion:Component) {
@@ -56,16 +52,12 @@ prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.At
         content = Neos.Fusion:Array {
             headline = Neos.Fusion:Tag {
                 tagName = 'h1'
-                content = Neos.Fusion:Array {
-                    1 = ${props.title}
-                }
+                content = ${props.title}
                 attributes.class = 'headline'
             }
             subheadline = Neos.Fusion:Tag {
                 tagName = 'h2'
-                content = Neos.Fusion:Array {
-                    1 = ${props.subtitle}
-                }
+                content = ${props.subtitle}
                 attributes.subheadline = 'subheadline'
                 @if.hasSubtitle = ${props.subtitle ? true : false}
             }
@@ -82,16 +74,15 @@ prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.At
 The package contains the following cli-commands.
 
 1. `./flow afx:show` - Show the afx detection and expansion to pure fusion, this is useful for learning and understanding.
-1. `./flow afx:eject` - Expand afx in fusion code to pure fusion, this is usefull before removing the afx package. 
+2. `./flow afx:eject` - Expand afx in fusion code to pure fusion, this is usefull before removing the afx package. 
 
 ## AFX Language Rules
 
-All whitepaces around the outer elements are ignored.
+All whitepaces around the outer elements are ignored. Whitepaces that are connected to a newline are considered irrelevant and are ignored.
 
 ### HTML-Tags (Tags without Namespace)
 
-HTML-Tags are converted to `Neos.Fusion:Tag` Objects. All attributes except `content` are rendered as attributes and the content/children 
-are directly rendered as property names. All other attributes are rendered as tag-attributes.
+HTML-Tags are converted to `Neos.Fusion:Tag` Objects. All attributes except `content` are rendered as attributes and the content/children are directly rendered as property-names. All other attributes are rendered as tag-attributes.
  
 The following html: 
 ```
@@ -102,27 +93,12 @@ Is transpiled to:
 Neos.Fusion:Tag {
     tagName = 'h1'
     attributes.class = 'headline'
-    content = Neos.Fusion:Array {
-        1 = ${props.headline}
-    }
+    content = ${props.headline}
     @if.hasHeadline = ${props.headline ? true : false}
 }
 ``` 
 
-The following example defines the tag-content as a single expression instead of an fusion array: 
-```
-<h1 class="headline" content={props.headline} />
-```
-Is transpiled to:
-```
-Neos.Fusion:Tag {
-    tagName = 'h1'
-    attributes.class = 'headline'
-    content = ${props.headline}
-}
-```
-
-If a tag is self closing and has no content it will be rendered as self closing fusion-tag:.  
+If a tag is self-closing and has no content it will be rendered as self closing fusion-tag:.  
 ```
 <br/>
 ```
@@ -146,21 +122,19 @@ Is transpiled as:
 ```
 Vendor.Site:Prototype {
     type = 'headline'
-    renderer = Neos.Fusion:Array {
-        1 = ${props.headline}
-    }
+    content = ${props.headline}
     @if.hasHeadline= ${props.headline ? true : false}
 }
 ```
 
 ### Tag-Children
 
-The handling of child nodes below an afx-node is different based on the number of childNodes that are found.
+The handling of child-nodes below an afx-node is differs based on the number of childNodes that are found.
 
 #### Single tag-children
 
 If a AFX-tag contains exactly one child this child is rendered directly into the `content`-attribute.  
-The childr is interpreted as string, eel-expression, html- or fusion-object-tag. 
+The child is then interpreted as string, eel-expression, html- or fusion-object-tag. 
 
 The following AFX-Code: 
  
@@ -197,16 +171,13 @@ Neos.Fusion:Tag {
 }
 ```
 
-Some more rules are applied to the tag-content: 
-
-- Newlines and spaces that are connected to newlines are ignored.
-- The `@children`-property of the parent-element alters the name of the fusion-attribute to recive the children.
-- The `@key`-property of tag-children alters the name of the fusion-attribute to recive the children.
+The `@key`-property of tag-children inside alters the name of the fusion-attribute to recive render the array-child into. 
+If no `@key`-property is given the numerical index starting with 1 is used.
 
 ```
 <Vendor.Site:Prototype @children="text">
-    <h2 @key="title" content={props.title} />
-    <p @key="description" content={props.description} />
+    <h2 @key="title">{props.title}</h1> 
+    <p @key="description">{props.description}</p>
 </Vendor.Site:Prototype>
 ``` 
 Is transpiled as:
@@ -232,7 +203,8 @@ In general all meta-attributes start with an @-sign.
 The `@children`-attribute defined the property that is used to render the content/children of the current tag into. 
 The default property name for the children is `content`.
 
-The `@key`-attribute can be used to define the property name of an item among its siblings. If no key is defined the index is used starting at 1.
+The `@key`-attribute can be used to define the property name of an item among its siblings if an array is rendered. 
+If no `@key` is defined the index is used starting at 1. 
 
 All other meta attributes are directly added to the generated prototype and can be used for @if or @process statements. 
 
