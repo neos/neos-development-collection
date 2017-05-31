@@ -842,3 +842,51 @@ Example::
 	prototype(My.Site:Special.Type) {
 		title.@process.convertUris = TYPO3.Neos:ConvertUris
 	}
+
+.. _TYPO3_Neos__ContentElementWrapping:
+
+ContentElementWrapping
+----------------------
+
+Processor to augment the rendered html-code with node-metadata that allows the backend to select the node and to show the
+node properties in the inspector. This is especially useful if your content-prototype is not derived from ``TYPO3.Neos:Content``.
+
+The processor expects beeing applied on html-code with a single container tag that is augmented.
+
+:node: (Node) The node of the content element. Optional, will be resolved from the Fusion context by default.
+
+Example::
+
+	prototype(Vendor.Site:ExampleContent) {
+		value = '<div>Example</div>'
+
+		# The following line must not be removed as it adds required meta data
+		# to edit content elements in the backend
+		@process.contentElementWrapping {
+			expression = TYPO3.Neos:ContentElementWrapping
+			@position = 'end'
+		}
+	}
+
+
+.. _TYPO3_Neos__ContentElementEditable:
+
+ContentElementEditable
+----------------------
+
+Processor to augment an html-tag with inline editing-metadata to make a rendered representation of a property editable.
+
+The processor expects beeing applied to an html-tag with the content of the edited property.
+
+:node: (Node) The node of the content element. Optional, will be resolved from the Fusion context by default.
+:property: (string) The name of the property that shall be changed
+
+Example::
+
+	renderer = Neos.Fusion:Tag {
+		tagName = 'h1'
+		content = ${q(node).property('title')}
+		@process.contentElementEditableWrapping = TYPO3.Neos:ContentElementEditable {
+			property = 'title'
+		}
+	}
