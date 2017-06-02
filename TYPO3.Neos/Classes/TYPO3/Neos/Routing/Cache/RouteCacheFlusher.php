@@ -61,6 +61,7 @@ class RouteCacheFlusher
      * @param Workspace $workspace
      * @param Workspace|null $oldBaseWorkspace
      * @param Workspace|null $newBaseWorkspace
+     * @return void
      */
     public function registerBaseWorkspaceChange(Workspace $workspace, Workspace $oldBaseWorkspace = null, Workspace $newBaseWorkspace = null)
     {
