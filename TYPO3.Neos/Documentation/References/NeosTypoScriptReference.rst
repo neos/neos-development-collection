@@ -848,12 +848,12 @@ Example::
 ContentElementWrapping
 ----------------------
 
-Processor to augment the rendered html-code with node-metadata that allows the backend to select the node and to show the
-node properties in the inspector. This is especially useful if your content-prototype is not derived from ``TYPO3.Neos:Content``.
+Processor to augment rendered HTML code with node metadata that allows the Neos UI to select the node and show
+node properties in the inspector. This is especially useful if your renderer prototype is not derived from ``TYPO3.Neos:Content``.
 
-The processor expects beeing applied on html-code with a single container tag that is augmented.
+The processor expects being applied on HTML code with a single container tag that is augmented.
 
-:node: (Node) The node of the content element. Optional, will be resolved from the Fusion context by default.
+:node: (Node) The node of the content element. Optional, will use the Fusion context variable ``node`` by default.
 
 Example::
 
@@ -873,16 +873,16 @@ Example::
 ContentElementEditable
 ----------------------
 
-Processor to augment an html-tag with inline editing-metadata to make a rendered representation of a property editable.
+Processor to augment an HTML tag with metadata for inline editing to make a rendered representation of a property editable.
 
-The processor expects beeing applied to an html-tag with the content of the edited property.
+The processor expects beeing applied to an HTML tag with the content of the edited property.
 
-:node: (Node) The node of the content element. Optional, will be resolved from the Fusion context by default.
-:property: (string) The name of the property that shall be changed
+:node: (Node) The node of the content element. Optional, will use the Fusion context variable ``node`` by default.
+:property: (string) Node property that should be editable
 
 Example::
 
-	renderer = Neos.Fusion:Tag {
+	renderer = TYPO3.TypoScript:Tag {
 		tagName = 'h1'
 		content = ${q(node).property('title')}
 		@process.contentElementEditableWrapping = TYPO3.Neos:ContentElementEditable {
