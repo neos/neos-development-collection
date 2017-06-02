@@ -132,6 +132,7 @@ class Package extends BasePackage
 
         $dispatcher->connect(Workspace::class, 'beforeNodePublishing', TYPO3CRIntegrationService::class, 'beforeNodePublishing');
         $dispatcher->connect(Workspace::class, 'afterNodePublishing', TYPO3CRIntegrationService::class, 'afterNodePublishing');
+        $dispatcher->connect(Workspace::class, 'baseWorkspaceChanged', 'TYPO3\Neos\Routing\Cache\RouteCacheFlusher', 'registerBaseWorkspaceChange');
 
         $dispatcher->connect(PersistenceManager::class, 'allObjectsPersisted', TYPO3CRIntegrationService::class, 'updateEventsAfterPublish');
         $dispatcher->connect(NodeDataRepository::class, 'repositoryObjectsPersisted', TYPO3CRIntegrationService::class, 'updateEventsAfterPublish');
