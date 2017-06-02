@@ -862,8 +862,7 @@ Example::
 
 		# The following line must not be removed as it adds required meta data
 		# to edit content elements in the backend
-		@process.contentElementWrapping {
-			expression = TYPO3.Neos:ContentElementWrapping
+		@process.contentElementWrapping = TYPO3.Neos:ContentElementWrapping {
 			@position = 'end'
 		}
 	}
