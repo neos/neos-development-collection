@@ -11,9 +11,8 @@ namespace Neos\Neos\Fusion;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\Fusion\Exception as TypoScriptException;
+use Neos\Fusion\Exception as FusionException;
 use Neos\Fusion\FusionObjects\TemplateImplementation;
 
 /**
@@ -84,8 +83,8 @@ abstract class AbstractMenuImplementation extends TemplateImplementation
     public function getItems()
     {
         if ($this->items === null) {
-            $typoScriptContext = $this->runtime->getCurrentContext();
-            $this->currentNode = isset($typoScriptContext['activeNode']) ? $typoScriptContext['activeNode'] : $typoScriptContext['documentNode'];
+            $fusionContext = $this->runtime->getCurrentContext();
+            $this->currentNode = isset($fusionContext['activeNode']) ? $fusionContext['activeNode'] : $fusionContext['documentNode'];
             $this->currentLevel = 1;
             $this->items = $this->buildItems();
         }
@@ -99,7 +98,7 @@ abstract class AbstractMenuImplementation extends TemplateImplementation
      *
      * Must be overridden in subclasses.
      *
-     * @throws TypoScriptException
+     * @throws FusionException
      * @return array An array of menu items and further information
      */
     abstract protected function buildItems();

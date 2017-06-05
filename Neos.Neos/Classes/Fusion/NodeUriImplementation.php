@@ -138,7 +138,7 @@ class NodeUriImplementation extends AbstractFusionObject
         if (isset($currentContext[$baseNodeName])) {
             $baseNode = $currentContext[$baseNodeName];
         } else {
-            throw new NeosException(sprintf('Could not find a node instance in TypoScript context with name "%s" and no node instance was given to the node argument. Set a node instance in the TypoScript context or pass a node object to resolve the URI.', $baseNodeName), 1373100400);
+            throw new NeosException(sprintf('Could not find a node instance in Fusion context with name "%s" and no node instance was given to the node argument. Set a node instance in the Fusion context or pass a node object to resolve the URI.', $baseNodeName), 1373100400);
         }
 
         try {

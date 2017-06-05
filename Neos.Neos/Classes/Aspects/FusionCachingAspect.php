@@ -32,7 +32,7 @@ class FusionCachingAspect
      * @param JoinPointInterface $joinPoint The current join point
      * @return mixed
      */
-    public function cacheGetMergedTypoScriptObjectTree(JoinPointInterface $joinPoint)
+    public function cacheGetMergedFusionObjectTree(JoinPointInterface $joinPoint)
     {
         $currentSiteNode = $joinPoint->getMethodArgument('startNode');
         $cacheIdentifier = str_replace('.', '_', $currentSiteNode->getContext()->getCurrentSite()->getSiteResourcesPackageKey());
