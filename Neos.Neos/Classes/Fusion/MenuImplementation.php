@@ -11,9 +11,8 @@ namespace Neos\Neos\Fusion;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\Fusion\Exception as TypoScriptException;
+use Neos\Fusion\Exception as FusionException;
 use Neos\Fusion\Exception;
 
 /**
@@ -137,7 +136,7 @@ class MenuImplementation extends AbstractMenuImplementation
      * Builds the array of menu items containing those items which match the
      * configuration set for this Menu object.
      *
-     * @throws TypoScriptException
+     * @throws FusionException
      * @return array An array of menu items and further information
      */
     protected function buildItems()
@@ -219,13 +218,13 @@ class MenuImplementation extends AbstractMenuImplementation
      */
     protected function findMenuStartingPoint()
     {
-        $typoScriptContext = $this->runtime->getCurrentContext();
+        $fusionContext = $this->runtime->getCurrentContext();
         $startingPoint = $this->getStartingPoint();
 
-        if (!isset($typoScriptContext['node']) && !$startingPoint) {
-            throw new TypoScriptException('You must either set a "startingPoint" for the menu or "node" must be set in the Fusion context.', 1369596980);
+        if (!isset($fusionContext['node']) && !$startingPoint) {
+            throw new FusionException('You must either set a "startingPoint" for the menu or "node" must be set in the Fusion context.', 1369596980);
         }
-        $startingPoint = $startingPoint ? : $typoScriptContext['node'];
+        $startingPoint = $startingPoint ? : $fusionContext['node'];
         $entryParentNode = $this->findParentNodeInBreadcrumbPathByLevel($this->getEntryLevel(), $startingPoint);
 
         return $entryParentNode;

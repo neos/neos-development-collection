@@ -64,17 +64,18 @@ class ContentElementWrappingService
      *
      * @param NodeInterface $node
      * @param string $content
-     * @param string $typoScriptPath
+     * @param string $fusionPath
      * @return string
      */
-    public function wrapContentObject(NodeInterface $node, $content, $typoScriptPath)
+    public function wrapContentObject(NodeInterface $node, $content, $fusionPath)
     {
         if ($this->needsMetadata($node, false) === false) {
             return $content;
         }
 
         $attributes = [];
-        $attributes['data-node-__typoscript-path'] = $typoScriptPath;
+        $attributes['data-node-__typoscript-path'] = $fusionPath; // @deprecated
+        $attributes['data-node-__fusion-path'] = $fusionPath;
         $attributes['tabindex'] = 0;
         $attributes = $this->addGenericEditingMetadata($attributes, $node);
         $attributes = $this->addNodePropertyAttributes($attributes, $node);
@@ -86,17 +87,18 @@ class ContentElementWrappingService
     /**
      * @param NodeInterface $node
      * @param string $content
-     * @param string $typoScriptPath
+     * @param string $fusionPath
      * @return string
      */
-    public function wrapCurrentDocumentMetadata(NodeInterface $node, $content, $typoScriptPath)
+    public function wrapCurrentDocumentMetadata(NodeInterface $node, $content, $fusionPath)
     {
         if ($this->needsMetadata($node, true) === false) {
             return $content;
         }
 
         $attributes = [];
-        $attributes['data-node-__typoscript-path'] = $typoScriptPath;
+        $attributes['data-node-__typoscript-path'] = $fusionPath; // @deprecated
+        $attributes['data-node-__fusion-path'] = $fusionPath;
         $attributes = $this->addGenericEditingMetadata($attributes, $node);
         $attributes = $this->addNodePropertyAttributes($attributes, $node);
         $attributes = $this->addDocumentMetadata($attributes, $node);

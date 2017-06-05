@@ -1,8 +1,8 @@
-####################################
-# BASIC TYPOSCRIPT FOR THE TEST CASE
-####################################
+################################
+# BASIC FUSION FOR THE TEST CASE
+################################
 
-# Definition of custom TypoScript types
+# Definition of custom Fusion types
 prototype(Acme.Demo:ThreeColumn) < prototype(Neos.Neos:Content) {
 	templatePath = ${fixturesDirectory + '/ThreeColumnTemplate.html'}
 	left = Neos.Neos:ContentCollection

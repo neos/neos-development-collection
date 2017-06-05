@@ -343,7 +343,7 @@ class RenderingTest extends AbstractNodeTest
     }
 
     /**
-     * Create a TypoScript runtime with the test base TypoScript and an optional additional fixture
+     * Create a Fusion runtime with the test base Fusion and an optional additional fixture
      *
      * @param string $additionalFusionFile
      * @return \Neos\Fusion\Core\Runtime
@@ -351,7 +351,7 @@ class RenderingTest extends AbstractNodeTest
     protected function createRuntimeWithFixtures($additionalFusionFile = null)
     {
         $fusionService = new FusionService();
-        $fusionService->setSiteRootFusionPattern(__DIR__ . '/Fixtures/BaseTypoScript.fusion');
+        $fusionService->setSiteRootFusionPattern(__DIR__ . '/Fixtures/Base.fusion');
 
         if ($additionalFusionFile !== null) {
             $fusionService->setAppendFusionIncludes(array($additionalFusionFile));
