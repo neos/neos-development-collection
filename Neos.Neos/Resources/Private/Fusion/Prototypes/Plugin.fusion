@@ -10,6 +10,7 @@ prototype(Neos.Neos:Plugin) < prototype(Neos.Neos:Content) {
 		context {
 			1 = 'node'
 			2 = 'documentNode'
+			3 = 'site'
 		}
 	}
 }

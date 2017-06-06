@@ -58,10 +58,15 @@ class ConditionsTest extends AbstractFusionObjectTest
         return array(
             array(false, null),
             array(true, 'Rendered'),
-            array(null, 'Rendered'),
+            array(null, null),
             array(1, 'Rendered'),
-            array('0', 'Rendered'),
-            array(0, 'Rendered')
+            array('', null),
+            array('0', null),
+            array('Foo', 'Rendered'),
+            array(0, null),
+            array(-1, 'Rendered'),
+            array([], null),
+            array([12], 'Rendered')
         );
     }
 
@@ -83,7 +88,7 @@ class ConditionsTest extends AbstractFusionObjectTest
     public function conditionsInFusionObjectsWithSubEvaluationUsedInProcessorRenderCorrectly()
     {
         $view = $this->buildView();
-        $view->setFusionPath('conditions/supportForTypoScriptObjectWithSubEvaluationUsedInProcessor');
+        $view->setFusionPath('conditions/supportForFusionObjectWithSubEvaluationUsedInProcessor');
         $this->assertEquals('basic appended', $view->render());
     }
 }

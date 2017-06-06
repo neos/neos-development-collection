@@ -916,6 +916,8 @@ neos:rendering.live
 -------------------
 
 ViewHelper to find out if Neos is rendering the live website.
+Make sure you either give a node from the current context to
+the ViewHelper or have "node" set as template variable at least.
 
 :Implementation: Neos\\Neos\\ViewHelpers\\Rendering\\LiveViewHelper
 

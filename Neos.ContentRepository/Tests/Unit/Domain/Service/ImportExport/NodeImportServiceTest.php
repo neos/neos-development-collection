@@ -14,7 +14,6 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service\ImportExport;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Utility\Now;
 use Neos\ContentRepository\Domain\Service\ImportExport\NodeImportService;
 
 class NodeImportServiceTest extends UnitTestCase
@@ -63,8 +62,8 @@ class NodeImportServiceTest extends UnitTestCase
             'removed' => false,
             'hidden' => false,
             'hiddenInIndex' => false,
-            'path' => 'neosdemoio',
-            'pathHash' => '0423106850d41d93150a4e8e3ecd68b3',
+            'path' => '/neosdemoio',
+            'pathHash' => '9204ab1d1079b1d950fffecf874955c3',
             'parentPath' => '/',
             'parentPathHash' => '6666cd76f96956469e7be39d750cc7d9',
             'properties' => array(
@@ -129,8 +128,8 @@ class NodeImportServiceTest extends UnitTestCase
             'removed' => false,
             'hidden' => false,
             'hiddenInIndex' => false,
-            'path' => 'neosdemoio',
-            'pathHash' => '0423106850d41d93150a4e8e3ecd68b3',
+            'path' => '/neosdemoio',
+            'pathHash' => '9204ab1d1079b1d950fffecf874955c3',
             'parentPath' => '/',
             'parentPathHash' => '6666cd76f96956469e7be39d750cc7d9',
             'properties' => array(
@@ -184,8 +183,8 @@ class NodeImportServiceTest extends UnitTestCase
                 'removed' => false,
                 'hidden' => false,
                 'hiddenInIndex' => false,
-                'path' => 'neosdemoio',
-                'pathHash' => '0423106850d41d93150a4e8e3ecd68b3',
+                'path' => '/neosdemoio',
+                'pathHash' => '9204ab1d1079b1d950fffecf874955c3',
                 'parentPath' => '/',
                 'parentPathHash' => '6666cd76f96956469e7be39d750cc7d9',
                 'properties' => array(
@@ -259,8 +258,8 @@ class NodeImportServiceTest extends UnitTestCase
                 'removed' => false,
                 'hidden' => false,
                 'hiddenInIndex' => false,
-                'path' => 'node53a18fb53bdf2',
-                'pathHash' => '3f1d4fea7c0b21d21098960149de9c80',
+                'path' => '/node53a18fb53bdf2',
+                'pathHash' => 'adb885c51ef09d0d4beec84adff97355',
                 'parentPath' => '/',
                 'parentPathHash' => '6666cd76f96956469e7be39d750cc7d9',
                 'properties' => array(
@@ -352,8 +351,8 @@ class NodeImportServiceTest extends UnitTestCase
                 'removed' => false,
                 'hidden' => false,
                 'hiddenInIndex' => false,
-                'path' => 'node53a18fb53bdf2',
-                'pathHash' => '3f1d4fea7c0b21d21098960149de9c80',
+                'path' => '/node53a18fb53bdf2',
+                'pathHash' => 'adb885c51ef09d0d4beec84adff97355',
                 'parentPath' => '/',
                 'parentPathHash' => '6666cd76f96956469e7be39d750cc7d9',
                 'properties' => array(
