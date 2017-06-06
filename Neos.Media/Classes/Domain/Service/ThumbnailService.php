@@ -92,11 +92,6 @@ class ThumbnailService
             if ($asset->getWidth() === null && $asset->getHeight() === null) {
                 return $asset;
             }
-            $maximumWidth = ($configuration->getMaximumWidth() > $asset->getWidth()) ? $asset->getWidth() : $configuration->getMaximumWidth();
-            $maximumHeight = ($configuration->getMaximumHeight() > $asset->getHeight()) ? $asset->getHeight() : $configuration->getMaximumHeight();
-            if ($configuration->isUpScalingAllowed() === false && $maximumWidth === $asset->getWidth() && $maximumHeight === $asset->getHeight()) {
-                return $asset;
-            }
         }
 
         $assetIdentifier = $this->persistenceManager->getIdentifierByObject($asset);

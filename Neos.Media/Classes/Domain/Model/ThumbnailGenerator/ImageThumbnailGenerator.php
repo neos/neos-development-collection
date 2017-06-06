@@ -12,7 +12,7 @@ namespace Neos\Media\Domain\Model\ThumbnailGenerator;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Doctrine\ORM\Mapping as ORM;
+use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Media\Domain\Model\Adjustment\ResizeImageAdjustment;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Domain\Model\Thumbnail;
@@ -70,7 +70,7 @@ class ImageThumbnailGenerator extends AbstractThumbnailGenerator
                 )
             );
 
-            $processedImageInfo = $this->imageService->processImage($thumbnail->getOriginalAsset()->getResource(), $adjustments);
+            $processedImageInfo = $this->processResource($thumbnail->getOriginalAsset()->getResource(), $adjustments);
 
             $thumbnail->setResource($processedImageInfo['resource']);
             $thumbnail->setWidth($processedImageInfo['width']);
@@ -79,5 +79,15 @@ class ImageThumbnailGenerator extends AbstractThumbnailGenerator
             $message = sprintf('Unable to generate thumbnail for the given image (filename: %s, SHA1: %s)', $thumbnail->getOriginalAsset()->getResource()->getFilename(), $thumbnail->getOriginalAsset()->getResource()->getSha1());
             throw new Exception\NoThumbnailAvailableException($message, 1433109654, $exception);
         }
+    }
+
+    /**
+     * @param PersistentResource $resource
+     * @param array $adjustments
+     * @return array
+     */
+    protected function processResource(PersistentResource $resource, array $adjustments)
+    {
+        return $this->imageService->processImage($resource, $adjustments);
     }
 }
