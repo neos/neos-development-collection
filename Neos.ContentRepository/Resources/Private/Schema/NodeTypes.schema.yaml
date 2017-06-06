@@ -4,7 +4,7 @@ additionalProperties:
   type: dictionary
   additionalProperties: FALSE
   properties:
-
+    'class': { type: string, format: class-name }
     'abstract': { type: boolean, description: "Abstract node type for default/mixin usage" }
     'final': { type: boolean, description: "If final, this node type cannot be subclassed" }
     'aggregate': { type: boolean, description: "INTERNAL. If aggregate, this node type is something like a Document. If not aggregate, it is seen as part of an aggregate node type - has influence on how e.g. moving of nodes across dimensions work." }

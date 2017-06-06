@@ -496,7 +496,9 @@ a property using the ``@if`` meta-property::
 	myObject = Menu {
 		@if.1 = ${q(node).property('showMenu') == true}
 	}
-	# results in the menu object only being evaluated if the node's showMenu property is ``true``
+	# results in the menu object only being evaluated if the node's showMenu property is not ``false``
+	# the php rules for mapping values to boolean are used internally so following values are
+	# considered beeing false: ``null, false, '', 0, []``
 
 Multiple conditions can be used, and if one of them doesn't return ``true`` the condition stops evaluation.
 

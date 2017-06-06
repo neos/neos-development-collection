@@ -25,7 +25,7 @@ use Neos\Media\Domain\Service\ThumbnailService;
  * = Examples =
  *
  * <code title="Rendering an asset thumbnail path as-is">
- * {typo3.media:uri.thumbnail(asset: assetObject)}
+ * {neos.media:uri.thumbnail(asset: assetObject)}
  * </code>
  * <output>
  * (depending on the asset)
@@ -34,7 +34,7 @@ use Neos\Media\Domain\Service\ThumbnailService;
  *
  *
  * <code title="Rendering an asset thumbnail path with scaling at a given width only">
- * {typo3.media:uri.thumbnail(asset: assetObject, maximumWidth: 80)}
+ * {neos.media:uri.thumbnail(asset: assetObject, maximumWidth: 80)}
  * </code>
  * <output>
  * (depending on the asset; has scaled keeping the aspect ratio)

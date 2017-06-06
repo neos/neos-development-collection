@@ -77,7 +77,7 @@ class AbstractRenderingExceptionHandlerTest extends UnitTestCase
 
     /**
      * runtime exceptions are unpacked,
-     * meaning that the inner typoscript path an the inner exception is used to generate the message
+     * meaning that the inner fusion path an the inner exception is used to generate the message
      *
      * @test
      */

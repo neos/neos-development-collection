@@ -21,7 +21,7 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
  * = Examples =
  *
  * <code title="Defaults">
- * <link rel="some-module" href="{neos:link.module(path: 'system/useradmin')}" />
+ * <link rel="some-module" href="{neos:uri.module(path: 'system/useradmin')}" />
  * </code>
  *
  * <output>

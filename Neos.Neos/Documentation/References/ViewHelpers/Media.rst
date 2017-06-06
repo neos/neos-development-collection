@@ -3,7 +3,7 @@
 Media ViewHelper Reference
 ==========================
 
-This reference was automatically generated from code on 2017-03-30
+This reference was automatically generated from code on 2017-05-11
 
 
 .. _`Media ViewHelper Reference: neos.media:fileTypeIcon`:
@@ -57,7 +57,7 @@ Examples
 
 **Rendering an asset filetype icon**::
 
-	<typo3.media:fileTypeIcon file="{assetObject}" height="16" />
+	<neos.media:fileTypeIcon file="{assetObject}" height="16" />
 
 
 Expected result::
@@ -127,7 +127,7 @@ Examples
 
 **Example**::
 
-	<typo3.media:form.checkbox name="myCheckBox" value="someValue" />
+	<neos.media:form.checkbox name="myCheckBox" value="someValue" />
 
 
 Expected result::
@@ -137,7 +137,7 @@ Expected result::
 
 **Preselect**::
 
-	<typo3.media:form.checkbox name="myCheckBox" value="someValue" checked="{object.value} == 5" />
+	<neos.media:form.checkbox name="myCheckBox" value="someValue" checked="{object.value} == 5" />
 
 
 Expected result::
@@ -148,7 +148,7 @@ Expected result::
 
 **Bind to object property**::
 
-	<typo3.media:form.checkbox property="interests" value="TYPO3" />
+	<neos.media:form.checkbox property="interests" value="TYPO3" />
 
 
 Expected result::
@@ -248,7 +248,7 @@ Examples
 
 **Rendering an image as-is**::
 
-	<typo3.media:image image="{imageObject}" alt="a sample image without scaling" />
+	<neos.media:image image="{imageObject}" alt="a sample image without scaling" />
 
 
 Expected result::
@@ -259,7 +259,7 @@ Expected result::
 
 **Rendering an image with scaling at a given width only**::
 
-	<typo3.media:image image="{imageObject}" maximumWidth="80" alt="sample" />
+	<neos.media:image image="{imageObject}" maximumWidth="80" alt="sample" />
 
 
 Expected result::
@@ -270,7 +270,7 @@ Expected result::
 
 **Rendering an image with scaling at given width and height, keeping aspect ratio**::
 
-	<typo3.media:image image="{imageObject}" maximumWidth="80" maximumHeight="80" alt="sample" />
+	<neos.media:image image="{imageObject}" maximumWidth="80" maximumHeight="80" alt="sample" />
 
 
 Expected result::
@@ -281,7 +281,7 @@ Expected result::
 
 **Rendering an image with crop-scaling at given width and height**::
 
-	<typo3.media:image image="{imageObject}" maximumWidth="80" maximumHeight="80" allowCropping="true" alt="sample" />
+	<neos.media:image image="{imageObject}" maximumWidth="80" maximumHeight="80" allowCropping="true" alt="sample" />
 
 
 Expected result::
@@ -292,7 +292,7 @@ Expected result::
 
 **Rendering an image with allowed up-scaling at given width and height**::
 
-	<typo3.media:image image="{imageObject}" maximumWidth="5000" allowUpScaling="true" alt="sample" />
+	<neos.media:image image="{imageObject}" maximumWidth="5000" allowUpScaling="true" alt="sample" />
 
 
 Expected result::
@@ -368,7 +368,7 @@ Examples
 
 **Rendering an asset thumbnail**::
 
-	<typo3.media:thumbnail asset="{assetObject}" alt="a sample asset without scaling" />
+	<neos.media:thumbnail asset="{assetObject}" alt="a sample asset without scaling" />
 
 
 Expected result::
@@ -379,7 +379,7 @@ Expected result::
 
 **Rendering an asset thumbnail with scaling at a given width only**::
 
-	<typo3.media:thumbnail asset="{assetObject}" maximumWidth="80" alt="sample" />
+	<neos.media:thumbnail asset="{assetObject}" maximumWidth="80" alt="sample" />
 
 
 Expected result::
@@ -390,7 +390,7 @@ Expected result::
 
 **Rendering an asset thumbnail with scaling at given width and height, keeping aspect ratio**::
 
-	<typo3.media:thumbnail asset="{assetObject}" maximumWidth="80" maximumHeight="80" alt="sample" />
+	<neos.media:thumbnail asset="{assetObject}" maximumWidth="80" maximumHeight="80" alt="sample" />
 
 
 Expected result::
@@ -401,7 +401,7 @@ Expected result::
 
 **Rendering an asset thumbnail with crop-scaling at given width and height**::
 
-	<typo3.media:thumbnail asset="{assetObject}" maximumWidth="80" maximumHeight="80" allowCropping="true" alt="sample" />
+	<neos.media:thumbnail asset="{assetObject}" maximumWidth="80" maximumHeight="80" allowCropping="true" alt="sample" />
 
 
 Expected result::
@@ -412,7 +412,7 @@ Expected result::
 
 **Rendering an asset thumbnail with allowed up-scaling at given width and height**::
 
-	<typo3.media:thumbnail asset="{assetObject}" maximumWidth="5000" allowUpScaling="true" alt="sample" />
+	<neos.media:thumbnail asset="{assetObject}" maximumWidth="5000" allowUpScaling="true" alt="sample" />
 
 
 Expected result::
@@ -464,7 +464,7 @@ Examples
 
 **Rendering an image path as-is**::
 
-	{typo3.media:uri.image(image: imageObject)}
+	{neos.media:uri.image(image: imageObject)}
 
 
 Expected result::
@@ -475,7 +475,7 @@ Expected result::
 
 **Rendering an image path with scaling at a given width only**::
 
-	{typo3.media:uri.image(image: imageObject, maximumWidth: 80)}
+	{neos.media:uri.image(image: imageObject, maximumWidth: 80)}
 
 
 Expected result::
@@ -527,7 +527,7 @@ Examples
 
 **Rendering an asset thumbnail path as-is**::
 
-	{typo3.media:uri.thumbnail(asset: assetObject)}
+	{neos.media:uri.thumbnail(asset: assetObject)}
 
 
 Expected result::
@@ -538,7 +538,7 @@ Expected result::
 
 **Rendering an asset thumbnail path with scaling at a given width only**::
 
-	{typo3.media:uri.thumbnail(asset: assetObject, maximumWidth: 80)}
+	{neos.media:uri.thumbnail(asset: assetObject, maximumWidth: 80)}
 
 
 Expected result::

@@ -72,11 +72,11 @@ abstract class AbstractFusionObjectTest extends FunctionalTestCase
      * @param string $expected
      * @param string $basePath
      */
-    protected function assertMultipleTypoScriptPaths($expected, $basePath)
+    protected function assertMultipleFusionPaths($expected, $basePath)
     {
-        $this->assertTyposcriptPath($expected, $basePath . 'Eel');
-        $this->assertTyposcriptPath($expected, $basePath . 'PlainValue');
-        $this->assertTyposcriptPath($expected, $basePath . 'TypoScript');
+        $this->assertFusionPath($expected, $basePath . 'Eel');
+        $this->assertFusionPath($expected, $basePath . 'PlainValue');
+        $this->assertFusionPath($expected, $basePath . 'Fusion');
     }
 
     /**
@@ -85,7 +85,7 @@ abstract class AbstractFusionObjectTest extends FunctionalTestCase
      * @param string $expected
      * @param string $path
      */
-    protected function assertTypoScriptPath($expected, $path)
+    protected function assertFusionPath($expected, $path)
     {
         $view = $this->buildView();
         $view->setFusionPath($path);
