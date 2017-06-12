@@ -500,10 +500,39 @@ class Workspace
             }
 
             $shadowNodeData = $this->nodeDataRepository->findOneByMovedTo($nodeDataVariant);
+//            if ($shadowNodeData === null && $this->areWorkspacesOnTheSameWorkspaceBranch($targetWorkspace, $nodeDataVariant->getWorkspace())) {
             if ($shadowNodeData === null) {
                 $nodeDataVariant->setPath($targetPath);
             }
         }
+    }
+
+    /**
+     * @param Workspace $workspaceA
+     * @param Workspace $workspaceB
+     * @return bool
+     */
+    protected function areWorkspacesOnTheSameWorkspaceBranch(Workspace $workspaceA, Workspace $workspaceB)
+    {
+        $workspaceNamesBetweenWorkspaceAAndFirstLevelWorkspace = $this->getBaseWorkspaceNamesUntilFirstLevelWorkspace($workspaceA);
+        $workspaceNamesBetweenWorkspaceBAndFirstLevelWorkspace = $this->getBaseWorkspaceNamesUntilFirstLevelWorkspace($workspaceB);
+        return array_intersect($workspaceNamesBetweenWorkspaceAAndFirstLevelWorkspace, $workspaceNamesBetweenWorkspaceBAndFirstLevelWorkspace) !== [];
+    }
+
+    /**
+     *
+     *
+     * @param Workspace $workspace
+     * @return array
+     */
+    protected function getBaseWorkspaceNamesUntilFirstLevelWorkspace(Workspace $workspace)
+    {
+        $workspaceNames = [];
+        while ($workspace->getBaseWorkspace() !== null ) {
+            $workspaceNames[] = $workspace->getName();
+            $workspace = $workspace->getBaseWorkspace();
+        }
+        return $workspaceNames;
     }
 
     /**
@@ -588,7 +617,7 @@ class Workspace
      */
     protected function adjustShadowNodeData(NodeData $shadowNodeData, NodeData $publishedNodeData, Workspace $targetWorkspace, NodeData $targetNodeData)
     {
-        // no shadow nodes on base workspace
+        // there are no shadow nodes to be considered for a top-level base workspace:
         if ($targetWorkspace->getBaseWorkspace() === null) {
             $this->nodeDataRepository->remove($shadowNodeData);
             return;
@@ -612,6 +641,16 @@ class Workspace
 
         if ($nodeInTargetWorkspaceBase !== null && $nodeInTargetWorkspaceBase->getPath() !== $shadowNodeData->getPath()) {
             $this->adjustShadowNodePath($shadowNodeData, $nodeInTargetWorkspaceBase->getPath(), $targetWorkspace, $publishedNodeData->getDimensionValues());
+        }
+
+        // Check if a shadow node which has the same path, workspace and dimension values like the shadow node data we just created already exists (in the target workspace).
+        // If it does, we re-use the existing node and make sure that all properties etc. are taken from the node which is being published.
+        $existingShadowNodeDataInTargetWorkspace = $this->nodeDataRepository->findOneByPath($shadowNodeData->getPath(), $shadowNodeData->getWorkspace(), $shadowNodeData->getDimensionValues(), true);
+        if ($existingShadowNodeDataInTargetWorkspace !== null) {
+            $existingShadowNodeDataInTargetWorkspace->similarize($shadowNodeData);
+            $existingShadowNodeDataInTargetWorkspace->setMovedTo($shadowNodeData->getMovedTo());
+            $existingShadowNodeDataInTargetWorkspace->setRemoved($shadowNodeData->isRemoved());
+            $this->nodeDataRepository->remove($shadowNodeData);
         }
     }
 
