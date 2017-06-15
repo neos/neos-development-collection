@@ -140,11 +140,11 @@ class NodeConverter extends AbstractTypeConverter
             if ($source[0] == '/') {
                 $source = array('__contextNodePath' => $source);
             } else {
-                $source = array('__contextIdentifier' => $source);
+                $source = array('__contextNodeIdentifier' => $source);
             }
         }
 
-        if (!is_array($source) || (!isset($source['__contextNodePath']) && !isset($source['__contextIdentifier']))) {
+        if (!is_array($source) || (!isset($source['__contextNodePath']) && !isset($source['__contextNodeIdentifier']))) {
             return new Error('Could not convert ' . gettype($source) . ' to Node object, a valid absolute context node path or identifier as a string or array is expected.', 1302879936);
         }
 
@@ -159,9 +159,9 @@ class NodeConverter extends AbstractTypeConverter
             }
         }
 
-        if (isset($source['__contextIdentifier'])) {
+        if (isset($source['__contextNodeIdentifier'])) {
             try {
-                $nodePathAndContext = NodeIdentifiers::explodeContextIdentifier($source['__contextIdentifier']);
+                $nodePathAndContext = NodeIdentifiers::explodeContextIdentifier($source['__contextNodeIdentifier']);
                 $nodeIdentifier = $nodePathAndContext['nodeIdentifier'];
                 $workspaceName = $nodePathAndContext['workspaceName'];
                 $dimensions = $nodePathAndContext['dimensions'];

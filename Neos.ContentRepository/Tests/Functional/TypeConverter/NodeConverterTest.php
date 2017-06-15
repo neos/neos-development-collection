@@ -241,7 +241,7 @@ class NodeConverterTest extends FunctionalTestCase
     {
         $this->setupNodeWithShadowNodeInPersonalWorkspace();
         $input = array(
-            '__contextIdentifier' => 'bb640c20-51b0-11e7-b114-b2f933d5fe66@' . $this->currentTestWorkspaceName,
+            '__contextNodeIdentifier' => 'bb640c20-51b0-11e7-b114-b2f933d5fe66@' . $this->currentTestWorkspaceName,
             'title' => 'New title'
         );
 
@@ -273,7 +273,7 @@ class NodeConverterTest extends FunctionalTestCase
     {
         $this->setupNodeWithShadowNodeInPersonalWorkspace();
         $input = array(
-            '__contextIdentifier' => 'bb640c20-51b0-11e7-b114-b2f933d5fe66@' . $this->currentTestWorkspaceName,
+            '__contextNodeIdentifier' => 'bb640c20-51b0-11e7-b114-b2f933d5fe66@' . $this->currentTestWorkspaceName,
             'title' => 'New title',
             'non-existing-input' => 'test'
         );
@@ -306,7 +306,7 @@ class NodeConverterTest extends FunctionalTestCase
     {
         $this->setupNodeWithShadowNodeInPersonalWorkspace();
         $input = array(
-            '__contextIdentifier' => 'bb640c20-51b0-11e7-b114-b2f933d5fe66@' . $this->currentTestWorkspaceName,
+            '__contextNodeIdentifier' => 'bb640c20-51b0-11e7-b114-b2f933d5fe66@' . $this->currentTestWorkspaceName,
             'title' => 'New title',
             'non-existing-input' => 'test'
         );

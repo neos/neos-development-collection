@@ -20,7 +20,7 @@ use Neos\Flow\Utility\Algorithms;
 abstract class NodeIdentifiers
 {
     /**
-     * Returns the given absolute node path appended with additional context information (such as the workspace name and dimensions).
+     * Returns the given node identifier appended with additional context information (such as the workspace name and dimensions).
      *
      * @param string $identifier node identifier
      * @param string $workspaceName
@@ -40,7 +40,7 @@ abstract class NodeIdentifiers
     }
 
     /**
-     * Splits the given context path into relevant information, which results in an array with keys:
+     * Splits the given context identifier into relevant information, which results in an array with keys:
      * "nodePath", "workspaceName", "dimensions"
      *
      * @param string $contextIdentifier a context path including workspace and/or dimension information.
