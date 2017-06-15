@@ -32,10 +32,10 @@ define([
 			);
 		},
 
-		createAndRender: function(referenceNode, typoScriptPath, nodeData, position, optionsOverride) {
+		createAndRender: function(referenceNode, fusionPath, nodeData, position, optionsOverride) {
 			return HttpClient.createResource(
 				HttpClient._getEndpointUrl('neos-service-node-createAndRender'),
-				$.extend({data: {referenceNode: referenceNode, typoScriptPath: typoScriptPath, nodeData: nodeData, position: position}}, optionsOverride || {})
+				$.extend({data: {referenceNode: referenceNode, fusionPath: fusionPath, nodeData: nodeData, position: position}}, optionsOverride || {})
 			);
 		},
 
@@ -53,10 +53,10 @@ define([
 			);
 		},
 
-		moveAndRender: function(node, targetNode, position, typoScriptPath, optionsOverride) {
+		moveAndRender: function(node, targetNode, position, fusionPath, optionsOverride) {
 			return HttpClient.updateResource(
 				HttpClient._getEndpointUrl('neos-service-node-moveAndRender'),
-				$.extend({data: {node: node, targetNode: targetNode, position: position, typoScriptPath: typoScriptPath}}, optionsOverride || {})
+				$.extend({data: {node: node, targetNode: targetNode, position: position, fusionPath: fusionPath}}, optionsOverride || {})
 			);
 		},
 
@@ -67,10 +67,10 @@ define([
 			);
 		},
 
-		copyAndRender: function(node, targetNode, position, typoScriptPath, nodeName, optionsOverride) {
+		copyAndRender: function(node, targetNode, position, fusionPath, nodeName, optionsOverride) {
 			return HttpClient.updateResource(
 				HttpClient._getEndpointUrl('neos-service-node-copyAndRender'),
-				$.extend({data: {node: node, targetNode: targetNode, position: position, typoScriptPath: typoScriptPath, nodeName: nodeName}}, optionsOverride || {})
+				$.extend({data: {node: node, targetNode: targetNode, position: position, fusionPath: fusionPath, nodeName: nodeName}}, optionsOverride || {})
 			);
 		},
 
@@ -81,10 +81,10 @@ define([
 			);
 		},
 
-		updateAndRender: function(node, typoScriptPath, optionsOverride) {
+		updateAndRender: function(node, fusionPath, optionsOverride) {
 			return HttpClient.updateResource(
 				HttpClient._getEndpointUrl('neos-service-node-updateAndRender'),
-				$.extend({data: {node: node, typoScriptPath: typoScriptPath}}, optionsOverride || {})
+				$.extend({data: {node: node, fusionPath: fusionPath}}, optionsOverride || {})
 			);
 		},
 

@@ -12,6 +12,7 @@ namespace Neos\Media\Domain\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;

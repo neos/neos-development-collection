@@ -54,16 +54,16 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler
     /**
      * renders the exception to nice html content element to display, edit, remove, ...
      *
-     * @param string $typoScriptPath - path causing the exception
+     * @param string $fusionPath - path causing the exception
      * @param \Exception $exception - exception to handle
      * @param integer $referenceCode - might be unset
      * @return string
      */
-    protected function handle($typoScriptPath, \Exception $exception, $referenceCode)
+    protected function handle($fusionPath, \Exception $exception, $referenceCode)
     {
         $handler = new ContextDependentHandler();
         $handler->setRuntime($this->runtime);
-        $output = $handler->handleRenderingException($typoScriptPath, $exception);
+        $output = $handler->handleRenderingException($fusionPath, $exception);
 
         $currentContext = $this->getRuntime()->getCurrentContext();
         if (isset($currentContext['node'])) {
@@ -74,7 +74,7 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler
                 $output = '<div class="neos-rendering-exception"><div class="neos-rendering-exception-title">Failed to render element' . $output . '</div></div>';
             }
 
-            return $this->contentElementWrappingService->wrapContentObject($node, $output, $typoScriptPath);
+            return $this->contentElementWrappingService->wrapContentObject($node, $output, $fusionPath);
         }
 
         return $output;
