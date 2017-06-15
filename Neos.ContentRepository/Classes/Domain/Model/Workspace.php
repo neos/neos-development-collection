@@ -243,7 +243,7 @@ class Workspace
     /**
      * Returns the workspace owner.
      *
-     * @param UserInterface|string $user The new user, or user's UUID
+     * @param UserInterface|string|null $user The new user, or user's UUID
      * @api
      */
     public function setOwner($user)
@@ -253,7 +253,7 @@ class Workspace
         // mapper will call setOwner() with a string parameter (because the property $owner is string), but developers
         // will want to use objects, we need to support both.
         if ($user === null || $user === '') {
-            $this->owner = '';
+            $this->owner = null;
             return;
         }
         if (is_string($user) && preg_match('/^([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}$/', $user)) {
