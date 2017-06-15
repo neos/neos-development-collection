@@ -14,6 +14,7 @@ namespace Neos\Neos\Routing\Cache;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\RouterCachingService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\Workspace;
 
 /**
  * This service flushes Route caches triggered by node changes.
@@ -49,6 +50,24 @@ class RouteCacheFlusher
             return;
         }
         $this->tagsToFlush[] = $node->getIdentifier();
+    }
+
+    /**
+     * Schedules flushing of the all routing cache entries of the workspace whose base workspace has changed.
+     * In most cases $workspace will be a user's personal workspace. Flushing the respective cache entries guards
+     * against mismatches for nodes which exist in the old and the new base workspace but have different node
+     * identifiers and the same URI path (segment).
+     *
+     * @param Workspace $workspace
+     * @param Workspace|null $oldBaseWorkspace
+     * @param Workspace|null $newBaseWorkspace
+     * @return void
+     */
+    public function registerBaseWorkspaceChange(Workspace $workspace, Workspace $oldBaseWorkspace = null, Workspace $newBaseWorkspace = null)
+    {
+        if (!in_array($workspace->getName(), $this->tagsToFlush)) {
+            $this->tagsToFlush[] = $workspace->getName();
+        }
     }
 
     /**

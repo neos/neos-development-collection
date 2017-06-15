@@ -109,7 +109,7 @@ class NodeController extends ActionController
     }
 
     /**
-     * Checks if the optionally given node context path, affected node context path and typoscript path are set
+     * Checks if the optionally given node context path, affected node context path and Fusion path are set
      * and overrides the rendering to use those. Will also add a "X-Neos-AffectedNodePath" header in case the
      * actually affected node is different from the one routing resolved.
      * This is used in out of band rendering for the backend.
@@ -131,8 +131,8 @@ class NodeController extends ActionController
             $this->response->setHeader('X-Neos-AffectedNodePath', $affectedNodeContextPath);
         }
 
-        if (($typoScriptPath = $this->request->getInternalArgument('__typoScriptPath')) !== null) {
-            $this->view->setFusionPath($typoScriptPath);
+        if (($fusionPath = $this->request->getInternalArgument('__fusionPath')) !== null) {
+            $this->view->setFusionPath($fusionPath);
         }
     }
 
