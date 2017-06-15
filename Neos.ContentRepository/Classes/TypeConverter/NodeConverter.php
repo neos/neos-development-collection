@@ -30,6 +30,7 @@ use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
+use Neos\ContentRepository\Domain\Utility\NodeIdentifiers;
 use Neos\ContentRepository\Exception\NodeException;
 
 /**
@@ -160,7 +161,7 @@ class NodeConverter extends AbstractTypeConverter
 
         if (isset($source['__contextIdentifier'])) {
             try {
-                $nodePathAndContext = NodePaths::explodeContextIdentifier($source['__contextIdentifier']);
+                $nodePathAndContext = NodeIdentifiers::explodeContextIdentifier($source['__contextIdentifier']);
                 $nodeIdentifier = $nodePathAndContext['nodeIdentifier'];
                 $workspaceName = $nodePathAndContext['workspaceName'];
                 $dimensions = $nodePathAndContext['dimensions'];

@@ -50,11 +50,7 @@ abstract class NodePaths
         $contextPath .= '@' . $workspaceName;
 
         if ($dimensionValues !== array()) {
-            $contextPath .= ';';
-            foreach ($dimensionValues as $dimensionName => $innerDimensionValues) {
-                $contextPath .= $dimensionName . '=' . implode(',', $innerDimensionValues) . '&';
-            }
-            $contextPath = substr($contextPath, 0, -1);
+            $contextPath .= ';' . NodeContexts::parseDimensionValuesToString($dimensionValues);
         }
 
         return $contextPath;
@@ -77,7 +73,7 @@ abstract class NodePaths
 
         $nodePath = $matches['NodePath'];
         $workspaceName = (isset($matches['WorkspaceName']) && $matches['WorkspaceName'] !== '' ? $matches['WorkspaceName'] : 'live');
-        $dimensions = isset($matches['Dimensions']) ? static::parseDimensionValueStringToArray($matches['Dimensions']) : array();
+        $dimensions = isset($matches['Dimensions']) ? NodeContexts::parseDimensionValueStringToArray($matches['Dimensions']) : array();
 
         return array(
             'nodePath' => $nodePath,
@@ -87,67 +83,13 @@ abstract class NodePaths
     }
 
     /**
-     * Returns the given absolute node path appended with additional context information (such as the workspace name and dimensions).
-     *
-     * @param string $identifier node identifier
-     * @param string $workspaceName
-     * @param array $dimensionValues
-     * @return string
-     */
-    public static function generateContextIdentifier($identifier, $workspaceName, array $dimensionValues = array())
-    {
-        $contextIdentifier = $identifier;
-        $contextIdentifier .= '@' . $workspaceName;
-
-        if ($dimensionValues !== array()) {
-            $contextIdentifier .= ';';
-            foreach ($dimensionValues as $dimensionName => $innerDimensionValues) {
-                $contextIdentifier .= $dimensionName . '=' . implode(',', $innerDimensionValues) . '&';
-            }
-            $contextIdentifier = substr($contextIdentifier, 0, -1);
-        }
-
-        return $contextIdentifier;
-    }
-
-    /**
-     * Splits the given context path into relevant information, which results in an array with keys:
-     * "nodePath", "workspaceName", "dimensions"
-     *
-     * @param string $contextIdentifier a context path including workspace and/or dimension information.
-     * @return array split information from the context path
-     * @see generateContextPath()
-     */
-    public static function explodeContextIdentifier($contextIdentifier)
-    {
-        preg_match(NodeInterface::MATCH_PATTERN_CONTEXTIDENTIFIER, $contextIdentifier, $matches);
-        if (!isset($matches['NodeIdentifier'])) {
-            throw new \InvalidArgumentException('The given string was not a valid contextIdentifier.', 1497457303);
-        }
-
-        $nodeIdentifier = $matches['NodeIdentifier'];
-        $workspaceName = (isset($matches['WorkspaceName']) && $matches['WorkspaceName'] !== '' ? $matches['WorkspaceName'] : 'live');
-        $dimensions = isset($matches['Dimensions']) ? static::parseDimensionValueStringToArray($matches['Dimensions']) : array();
-
-        return array(
-            'nodeIdentifier' => $nodeIdentifier,
-            'workspaceName' => $workspaceName,
-            'dimensions' => $dimensions
-        );
-    }
-
-    /**
      * @param string $dimensionValueString
      * @return array
+     * @deprecated Will be removed with Neos 4.0
      */
     public static function parseDimensionValueStringToArray($dimensionValueString)
     {
-        parse_str($dimensionValueString, $dimensions);
-        $dimensions = array_map(function ($commaSeparatedValues) {
-            return explode(',', $commaSeparatedValues);
-        }, $dimensions);
-
-        return $dimensions;
+        return NodeContexts::parseDimensionValueStringToArray($dimensionValueString);
     }
 
     /**
@@ -155,10 +97,11 @@ abstract class NodePaths
      *
      * @param string $contextPath
      * @return boolean
+     * @deprecated Will be removed with Neos 4.0
      */
     public static function isContextPath($contextPath)
     {
-        return (strpos($contextPath, '@') !== false);
+        return NodeContexts::hasContext($contextPath);
     }
 
     /**
