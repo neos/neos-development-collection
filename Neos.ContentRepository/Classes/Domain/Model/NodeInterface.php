@@ -68,9 +68,8 @@ interface NodeInterface
      * workspace name. This pattern is used at least in the route part handler.
      */
     const MATCH_PATTERN_CONTEXTIDENTIFIER = '/^   # A Context Identifier consists of...
-		(?> (?P<NodeIdentifier>             # 1) a NODE Identifier
-			(?>
-			[a-z0-9\-]+                     # Which either starts with a # followed by a node identifier
+		(?>(?P<NodeIdentifier>              # 1) a NODE Identifier
+			(?>[a-z0-9\-]+)                    # Which either starts with a node identifier
 		))
 		(?:                                 # 2) a CONTEXT
 			@                               #    which is delimited from the node path by the "@" sign

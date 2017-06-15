@@ -176,9 +176,9 @@ class NodeConverter extends AbstractTypeConverter
             return new Error(sprintf('Could not convert the given source to Node object because the workspace "%s" as specified in the context node path does not exist.', $workspaceName), 1383577859);
         }
 
-        if ($nodePath) {
+        if (isset($nodePath)) {
             $node = $context->getNode($nodePath);
-        } elseif ($nodeIdentifier) {
+        } elseif (isset($nodeIdentifier)) {
             $node = $context->getNodeByIdentifier($nodeIdentifier);
         }
 
