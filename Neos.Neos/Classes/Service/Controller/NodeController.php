@@ -196,15 +196,15 @@ class NodeController extends AbstractServiceController
      * Creates a new node and renders the node inside the containing content collection.
      *
      * @param Node $referenceNode
-     * @param string $typoScriptPath The Fusion path of the collection
+     * @param string $fusionPath The Fusion path of the collection
      * @param array $nodeData
      * @param string $position where the node should be added (allowed: before, into, after)
      * @return string
      */
-    public function createAndRenderAction(Node $referenceNode, $typoScriptPath, array $nodeData, $position)
+    public function createAndRenderAction(Node $referenceNode, $fusionPath, array $nodeData, $position)
     {
         $newNode = $this->nodeOperations->create($referenceNode, $nodeData, $position);
-        $this->redirectToRenderNode($newNode, $typoScriptPath);
+        $this->redirectToRenderNode($newNode, $fusionPath);
     }
 
     /**
@@ -254,13 +254,13 @@ class NodeController extends AbstractServiceController
      * @param Node $node The node to be moved
      * @param Node $targetNode The target node to be moved "to", see $position
      * @param string $position Where the node should be added in relation to $targetNode (allowed: before, into, after)
-     * @param string $typoScriptPath The Fusion path of the collection
+     * @param string $fusionPath The Fusion path of the collection
      * @return void
      */
-    public function moveAndRenderAction(Node $node, Node $targetNode, $position, $typoScriptPath)
+    public function moveAndRenderAction(Node $node, Node $targetNode, $position, $fusionPath)
     {
         $this->nodeOperations->move($node, $targetNode, $position);
-        $this->redirectToRenderNode($node, $typoScriptPath);
+        $this->redirectToRenderNode($node, $fusionPath);
     }
 
     /**
@@ -306,13 +306,13 @@ class NodeController extends AbstractServiceController
      * @param Node $targetNode The target node to be copied "to", see $position
      * @param string $position Where the node should be added in relation to $targetNode (allowed: before, into, after)
      * @param string $nodeName Optional node name (if empty random node name will be generated)
-     * @param string $typoScriptPath The Fusion path of the collection
+     * @param string $fusionPath The Fusion path of the collection
      * @return void
      */
-    public function copyAndRenderAction(Node $node, Node $targetNode, $position, $typoScriptPath, $nodeName = null)
+    public function copyAndRenderAction(Node $node, Node $targetNode, $position, $fusionPath, $nodeName = null)
     {
         $copiedNode = $this->nodeOperations->copy($node, $targetNode, $position, $nodeName);
-        $this->redirectToRenderNode($copiedNode, $typoScriptPath);
+        $this->redirectToRenderNode($copiedNode, $fusionPath);
     }
 
     /**
@@ -354,12 +354,12 @@ class NodeController extends AbstractServiceController
      * Updates the specified node and renders it's content collection.
      *
      * @param Node $node The node to be updated
-     * @param string $typoScriptPath The Fusion path of the collection
+     * @param string $fusionPath The Fusion path of the collection
      * @return void
      */
-    public function updateAndRenderAction(Node $node, $typoScriptPath)
+    public function updateAndRenderAction(Node $node, $fusionPath)
     {
-        $this->redirectToRenderNode($node, $typoScriptPath);
+        $this->redirectToRenderNode($node, $fusionPath);
     }
 
     /**
@@ -389,10 +389,10 @@ class NodeController extends AbstractServiceController
      * Takes care of creating a redirect to properly render the collection the given node is in.
      *
      * @param NodeInterface $node
-     * @param string $typoScriptPath
+     * @param string $fusionPath
      * @return string
      */
-    protected function redirectToRenderNode(NodeInterface $node, $typoScriptPath)
+    protected function redirectToRenderNode(NodeInterface $node, $fusionPath)
     {
         $q = new FlowQuery(array($node));
         $closestContentCollection = $q->closest('[instanceof Neos.Neos:ContentCollection]')->get(0);
@@ -402,7 +402,7 @@ class NodeController extends AbstractServiceController
             'node' => $closestDocumentNode,
             '__nodeContextPath' => $closestContentCollection->getContextPath(),
             '__affectedNodeContextPath' => $node->getContextPath(),
-            '__typoScriptPath' => $typoScriptPath
+            '__fusionPath' => $fusionPath
         ], 0, 303, 'html');
     }
 
