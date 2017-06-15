@@ -114,16 +114,16 @@ class NodeViewHelperTest extends FunctionalTestCase
         $controllerContext = new ControllerContext(new ActionRequest($httpRequest), $requestHandler->getHttpResponse(), new Arguments(array()), new UriBuilder());
         $this->inject($this->viewHelper, 'controllerContext', $controllerContext);
 
-        $typoScriptObject = $this->getAccessibleMock(TemplateImplementation::class, array('dummy'), array(), '', false);
+        $fusionObject = $this->getAccessibleMock(TemplateImplementation::class, array('dummy'), array(), '', false);
         $this->runtime = new Runtime(array(), $controllerContext);
         $this->runtime->pushContextArray(array(
             'documentNode' => $this->contentContext->getCurrentSiteNode()->getNode('home'),
             'alternativeDocumentNode' => $this->contentContext->getCurrentSiteNode()->getNode('home/about-us/mission')
         ));
-        $this->inject($typoScriptObject, 'runtime', $this->runtime);
+        $this->inject($fusionObject, 'runtime', $this->runtime);
         /** @var AbstractTemplateView|\PHPUnit_Framework_MockObject_MockObject $mockView */
         $mockView = $this->getAccessibleMock(FluidView::class, array(), array(), '', false);
-        $mockView->expects($this->any())->method('getFusionObject')->will($this->returnValue($typoScriptObject));
+        $mockView->expects($this->any())->method('getFusionObject')->will($this->returnValue($fusionObject));
         $viewHelperVariableContainer = new ViewHelperVariableContainer();
         $viewHelperVariableContainer->setView($mockView);
         $this->inject($this->viewHelper, 'viewHelperVariableContainer', $viewHelperVariableContainer);

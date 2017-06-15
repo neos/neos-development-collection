@@ -6,7 +6,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Service\ContentDimensionCombinator;
-use Neos\Fusion\Exception as TypoScriptException;
 
 /**
  * Fusion implementation for a dimensions menu.

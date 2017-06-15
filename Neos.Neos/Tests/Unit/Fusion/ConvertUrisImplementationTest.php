@@ -27,7 +27,7 @@ use Neos\ContentRepository\Domain\Service\Context;
 use Neos\Fusion\Core\Runtime;
 
 /**
- * Testcase for the ConvertNodeUris TypoScript implementation
+ * Testcase for the ConvertNodeUris Fusion implementation
  */
 class ConvertUrisImplementationTest extends UnitTestCase
 {
