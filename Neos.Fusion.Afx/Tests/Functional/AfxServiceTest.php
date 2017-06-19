@@ -167,7 +167,8 @@ EOF;
         $expectedFusion = <<<'EOF'
 Neos.Fusion:Tag {
     tagName = 'h1'
-    content = 'bar'
+    selfClosingTag = true
+    attributes.content = 'bar'
     attributes.class = 'fooo'
 }
 EOF;
