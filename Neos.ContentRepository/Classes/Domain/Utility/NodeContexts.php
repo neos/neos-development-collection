@@ -39,6 +39,7 @@ abstract class NodeContexts
             foreach ($dimensionValues as $dimensionName => $innerDimensionValues) {
                 $dimensionString .= $dimensionName . '=' . implode(',', $innerDimensionValues) . '&';
             }
+            $dimensionString = substr($dimensionString, 0, -1);
         }
         return $dimensionString;
     }
