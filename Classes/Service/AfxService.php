@@ -113,31 +113,20 @@ class AfxService
     {
         $tagName = $payload['identifier'];
 
-        $attributePrefix = null;
-        $attributePrefixExceptions = [];
-
         // Tag
         if (strpos($tagName, ':') !== false) {
             // Named fusion-object
             $fusion = $tagName . ' {' . PHP_EOL;
+            // Attributes are not prefixed
+            $attributePrefix = '';
         } else {
             // Neos.Fusion:Tag
             $fusion = 'Neos.Fusion:Tag {' . PHP_EOL;
             $fusion .= $indentation . self::INDENTATION .'tagName = \'' .  $tagName . '\'' . PHP_EOL;
-
+            // Attributes are rendered as tag-attributes
             $attributePrefix = 'attributes.';
-            $attributePrefixExceptions = ['content'];
-
-            $hasContent = false;
-            if ($payload['props'] && count($payload['props']) > 0) {
-                foreach ($payload['props'] as $propName => $prop) {
-                    if ($propName == 'content') {
-                        $hasContent = true;
-                    }
-                }
-            }
-
-            if ($payload['selfClosing'] === true && $hasContent === false) {
+            // Self closing Tags stay self closing
+            if ($payload['selfClosing'] === true) {
                 $fusion .= $indentation . self::INDENTATION .'selfClosingTag = true' . PHP_EOL;
             }
         }
@@ -150,10 +139,8 @@ class AfxService
                 } else {
                     if ($propName{0} === '@') {
                         $fusionName = $propName;
-                    } elseif ($attributePrefix && !in_array($propName, $attributePrefixExceptions)) {
-                        $fusionName = $attributePrefix . $propName;
                     } else {
-                        $fusionName = $propName;
+                        $fusionName = $attributePrefix . $propName;
                     }
                     $propFusion =  self::astToFusion($prop, $indentation . self::INDENTATION);
                     if ($propFusion !== null) {

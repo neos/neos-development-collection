@@ -82,7 +82,7 @@ All whitepaces around the outer elements are ignored. Whitepaces that are connec
 
 ### HTML-Tags (Tags without Namespace)
 
-HTML-Tags are converted to `Neos.Fusion:Tag` Objects. All attributes except `content` are rendered as attributes and the content/children are directly rendered as property-names. All other attributes are rendered as tag-attributes.
+HTML-Tags are converted to `Neos.Fusion:Tag` Objects. All attributes of the afx-tag are rendered as tag-attributes.
  
 The following html: 
 ```
