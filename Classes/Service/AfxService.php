@@ -165,7 +165,7 @@ class AfxService
                 $childrenPropertyName = 'content';
             }
             $childFusion = self::astNodeListToFusion($payload['children'], $indentation . self::INDENTATION);
-            if ($childFusion !== null) {
+            if ($childFusion) {
                 $fusion .= $indentation . self::INDENTATION . $childrenPropertyName . ' = ' . $childFusion . PHP_EOL;
             }
         }
@@ -202,7 +202,7 @@ class AfxService
         });
 
         if (count($payload) == 0) {
-            return '';
+            return '\'\'';
         } elseif (count($payload) == 1) {
             return self::astToFusion(array_shift($payload), $indentation);
         } else {

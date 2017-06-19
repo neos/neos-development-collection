@@ -14,6 +14,7 @@ class AfxServiceTest extends FunctionalTestCase
     {
         $afxCode = '';
         $expectedFusion = <<<'EOF'
+''
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
@@ -25,6 +26,7 @@ EOF;
     {
         $afxCode = '   ';
         $expectedFusion = <<<'EOF'
+''
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
     }
@@ -38,6 +40,38 @@ EOF;
         $expectedFusion = <<<'EOF'
 Neos.Fusion:Tag {
     tagName = 'h1'
+}
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+    /**
+     * @test
+     */
+    public function htmlTagsWithSpaceContentAreConvertedToFusionTags()
+    {
+        $afxCode = '<h1>   </h1>';
+        $expectedFusion = <<<'EOF'
+Neos.Fusion:Tag {
+    tagName = 'h1'
+    content = '   '
+}
+EOF;
+        $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
+    }
+
+    /**
+     * @test
+     */
+    public function htmlTagsWithIgnoredContentAreConvertedToFusionTags()
+    {
+        $afxCode = '<h1>
+   
+</h1>';
+        $expectedFusion = <<<'EOF'
+Neos.Fusion:Tag {
+    tagName = 'h1'
+    content = ''
 }
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
