@@ -1,0 +1,139 @@
+`3.1.2 (2017-06-20) <https://github.com/neos/neos-development-collection/releases/tag/3.1.2>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Use null, not empty string in Workspace->setOwner <https://github.com/neos/neos-development-collection/pull/1611>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+A workspace having an owner of `null` (plus some other factors) is considered
+an internal workspace. This change makes sure the owner is set to null if an
+empty string is passed to `setOwner()`.
+
+Fixes #1610
+
+`BUGFIX: Nodes are inaccessible after base workspace switch <https://github.com/neos/neos-development-collection/pull/1603>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+This change fixes a problem with the routing cache which results in
+inaccessible document nodes for cases where nodes with different
+identifiers but the same URI path exist in separate workspaces.
+
+Fixes #1602
+
+`TASK: Remove further TypoScript references <https://github.com/neos/neos-development-collection/pull/1583>`_
+-------------------------------------------------------------------------------------------------------------
+
+This removes even more uses of TypoScript from various places in the codebase:
+
+- TASK: Rename typoScriptPath to fusionPath in FE/BE interaction
+- TASK: Fusion RenderViewHelper adjustments
+- TASK: Rename BaseTypoScript.fusion test fixture to Base.fusion
+- TASK: Remove unused NoTypoScriptConfigurationException
+- TASK: Remove TypoScript from internal variable/function names
+
+* Packages: ``Neos``
+
+`BUGFIX: Reset broken properties to array <https://github.com/neos/neos-development-collection/pull/1601>`_
+-----------------------------------------------------------------------------------------------------------
+
+If the content of the `properties` property cannot be decoded from JSON
+correctly, it will be `null`. This leads to errors when any operation is done
+that expects it to always be an array.
+
+This change adds a PostLoad Doctrine lifecycle method to reset `properties`
+to an empty array if it is `null` after reconstitution.
+
+Fixes issue #1580
+
+`BUGFIX: Add missing namespace import in AssetService <https://github.com/neos/neos-development-collection/pull/1598>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+This adds a missing namespace import for `Uri` after the upmerge of #1574.
+
+* Packages: ``Media`` ``Neos``
+
+`BUGFIX: Fix sample code <https://github.com/neos/neos-development-collection/pull/1594>`_
+------------------------------------------------------------------------------------------
+
+The sample code inside the DocBlock used the wrong view helper
+
+`BUGFIX: Fix a typo in the docs <https://github.com/neos/neos-development-collection/pull/1590>`_
+-------------------------------------------------------------------------------------------------
+
+* Packages: ``ContentRepository`` ``Media`` ``Neos``
+
+`BUGFIX: Create resource redirects correctly <https://github.com/neos/neos-development-collection/pull/1574>`_
+--------------------------------------------------------------------------------------------------------------
+
+The redirects for replaced resources were created using full URLs,
+but the redirect handler expects relative URL paths to be given.
+
+Fixes #1573
+
+`BUGFIX: Add missing Noto Sans fonts to Media.Browser <https://github.com/neos/neos-development-collection/pull/1584>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Browser``
+
+`TASK: Correct kickstarter package name in documentation <https://github.com/neos/neos-development-collection/pull/1581>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+The kickstart package name is outdated in documentation (Creating a plugin: http://neos.readthedocs.io/en/stable/ExtendingNeos/CreatingAPlugin.html). I replaced it with the current and right one (https://packagist.org/packages/neos/kickstarter).
+
+* Packages: ``Fusion`` ``Neos``
+
+`!!!TASK: Replace occurrences of 'typoScript' with 'fusion' <https://github.com/neos/neos-development-collection/pull/1538>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+* Deprecates methods with 'TypoScript' in name
+* Replaces 'typoScript' with 'fusion' in variable names, doc blocks
+
+* Packages: ``Fusion``
+
+`TASK: Update ViewHelper and Command references <https://github.com/neos/neos-development-collection/pull/1567>`_
+-----------------------------------------------------------------------------------------------------------------
+
+Replaces some left over occurrences of "typo3" and updates
+ViewHelper and Command references accordingly.
+
+Fixes: #1558
+
+* Packages: ``Fusion`` ``Media`` ``Neos``
+
+`BUGFIX: Asset list should be correctly converted for UI <https://github.com/neos/neos-development-collection/pull/1569>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Since PR #1472 was merged the asset list was not correctly converted anymore,
+this had two reasons, first the wrong converter was used for the array
+itself (``ArrayTypeConverter`` vs. ``TypedArrayConverter``). This is
+corrected by setting the correct converter for the respective node property
+data type in the settings.
+
+Note that user code should follow the added comment in settings on how to
+configure custom types, especially array of objects. It is important to define
+the ``TypedArrayConverter`` for the array data type.
+
+Additionally the ``PropertyMapper`` prevent conversion of the inner objects
+as with the change the targetType suddenly matched the expected type and so
+the PropertyMapper just skipped those objects. That was an unexpected side
+effect as the expectation was, that the configured type converter is used no
+matter what. By setting the inner target type to the dummy value "string" the
+``PropertyMapper`` will proceed with the configured ``TypeConverter``.
+
+Fixes: #1568
+Fixes: #1565
+
+* Packages: ``Neos``
+
+`BUGFIX: An empty string is not rendered as a valid node name <https://github.com/neos/neos-development-collection/pull/1546>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Making sure that ``Utility::renderValidNodeName()`` actually only
+result in strings with length greater zero.
+
+Fixes: #1091
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/3.1.1...3.1.2>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
