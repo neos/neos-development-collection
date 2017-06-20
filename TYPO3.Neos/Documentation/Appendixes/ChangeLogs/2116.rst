@@ -1,0 +1,47 @@
+`2.1.16 (2017-06-20) <https://github.com/neos/neos-development-collection/releases/tag/2.1.16>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Add tests for node name generation <https://github.com/neos/neos-development-collection/pull/1525>`_
+-----------------------------------------------------------------------------------------------------------
+
+Tests to prove neos/neos-development-collection#1524
+
+* Packages: ``TYPO3CR``
+
+`BUGFIX: No uppercase characters allowed in node names <https://github.com/neos/neos-development-collection/pull/1524>`_
+------------------------------------------------------------------------------------------------------------------------
+
+The changed generation of node names must avoid uppercase characters.
+
+This is a followup to neos/neos-development-collection#1523
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`TASK: Use generateRandomString() instead of uniqid() <https://github.com/neos/neos-development-collection/pull/1523>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+This reduces the risk of collision on temporary names for nodes and
+files, as well as cache markers.
+
+* Packages: ``Media`` ``Neos`` ``TYPO3CR`` ``TypoScript``
+
+`BUGFIX: Make layout sliding query match properly <https://github.com/neos/neos-development-collection/pull/1422>`_
+-------------------------------------------------------------------------------------------------------------------
+
+The page layout determination in `DefaultTypoScript.ts2` contains the query
+
+`q(node).parents('[subpageLayout]').first().property('subpageLayout')`
+
+However that immediately also matches nodes which have `subpageLayout` being an empty string, hence this being taken into account. This results in an empty value, even if there would be actual set layouts higher above.
+
+The `.parents()` part need to be replaced with `.parents('[subpageLayout][subpageLayout != ""]')`
+
+Fixes #1117
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.1.15...2.1.16>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
