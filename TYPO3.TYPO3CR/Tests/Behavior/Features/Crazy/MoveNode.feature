@@ -11,6 +11,7 @@ Feature: Move node
       | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/company | TYPO3.TYPO3CR.Testing:Page | {"title": "Company"} | live      |
       | 52540602-b417-11e3-9358-14109fd7a2dd | /sites/typo3cr/service | TYPO3.TYPO3CR.Testing:Page | {"title": "Service"} | live      |
       | dc48851c-f653-ebd5-4d35-3feac69a3e09 | /sites/typo3cr/about   | TYPO3.TYPO3CR.Testing:Page | {"title": "About"}   | live      |
+    And I am authenticated with role "TYPO3.Neos:Editor"
 
   @fixtures
   Scenario: Move a node (into) in user workspace and get by path

@@ -12,6 +12,7 @@ Feature: Rename node
       | bdbc9add-800b-6613-8a86-263858cc7964 | /sites/typo3cr/service/request  | TYPO3.TYPO3CR.Testing:Page | {"title": "Service Request"} | live      |
       | c41d35bf-27e5-5645-a290-6a8b35c5935a | /sites/typo3cr/company          | TYPO3.TYPO3CR.Testing:Page | {"title": "Company"}         | live      |
       | 23ebd69e-4e0e-27e6-a41a-42dd14df615f | /sites/typo3cr/company/about-us | TYPO3.TYPO3CR.Testing:Page | {"title": "About us"}        | live      |
+    And I am authenticated with role "TYPO3.Neos:Editor"
 
   @fixtures
   Scenario: Rename a non-materialized node
