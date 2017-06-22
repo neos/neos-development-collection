@@ -9,6 +9,7 @@ Feature: Translate existing node
       | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /sites                 | unstructured               |                      | mul_ZZ   | live      |
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr         | TYPO3.TYPO3CR.Testing:Page | {"title": "Home"}    | mul_ZZ   | live      |
       | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/typo3cr/company | TYPO3.TYPO3CR.Testing:Page | {"title": "Company"} | en_ZZ    | live      |
+    And I am authenticated with role "TYPO3.Neos:Editor"
 
   @fixtures
   Scenario: An existing node can be translated to a new language by adopting it from a different context

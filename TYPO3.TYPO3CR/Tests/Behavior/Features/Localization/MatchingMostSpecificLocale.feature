@@ -8,6 +8,7 @@ Feature: Matching most specific language
       | Path           | Node Type                  | Properties        | Language |
       | /sites         | unstructured               |                   | mul_ZZ   |
       | /sites/typo3cr | TYPO3.TYPO3CR.Testing:Page | {"title": "Home"} | mul_ZZ   |
+    And I am authenticated with role "TYPO3.Neos:Editor"
 
   @fixtures
   Scenario: One document node and specific languages
