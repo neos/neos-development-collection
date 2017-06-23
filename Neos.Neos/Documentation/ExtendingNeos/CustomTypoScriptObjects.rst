@@ -25,15 +25,20 @@ extended. The only method that needs to be implemented is ``evaluate()``. To acc
 	namespace Vendor\Site\Fusion;
 
 	use Neos\Flow\Annotations as Flow;
-	use Neos\Fusion\FusionObjects\AbstractFusionObject
+	use Neos\Fusion\FusionObjects\AbstractFusionObject;
 
 	class GravatarImplementation extends AbstractFusionObject {
+
+		/**
+		 * @return string
+		 */
 		public function evaluate() {
 			$emailAddress = $this->tsValue('emailAddress');
-			$size = $this->tsValue('size') ? $this->tsValue('size') : 80;
-			$gravatarImageSource = 'http://www.gravatar.com/avatar/' . md5( strtolower( trim( $emailAddress ) ) ) . "?s=$size&d=mm&r=g";
+			$size = $this->tsValue('size') ?: 80;
+			$gravatarImageSource = 'http://www.gravatar.com/avatar/' . md5(strtolower(trim($emailAddress))) . '?s=' . $size . '&d=mm&r=g';
 			return '<img src="' . $gravatarImageSource . '" alt="" />';
 		}
+
 	}
 
 To use this implementation in Fusion, you have to define a Fusion-prototype first::
