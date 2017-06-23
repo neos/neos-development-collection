@@ -13,6 +13,7 @@ Feature: Move node with dimension support
       | 8952d7b2-64d1-11e4-9fe2-14109fd7a2dd | /sites/typo3cr         | TYPO3.TYPO3CR.Testing:Page | {"title": "Startseite"}       | live      | de       |
       | 8ed74376-64d1-11e4-b98b-14109fd7a2dd | /sites/typo3cr/company | TYPO3.TYPO3CR.Testing:Page | {"title": "Die Firma"}        | live      | de       |
       | 9315622e-64d1-11e4-a28c-14109fd7a2dd | /sites/typo3cr/service | TYPO3.TYPO3CR.Testing:Page | {"title": "Dienstleistungen"} | live      | de       |
+    And I am authenticated with role "TYPO3.Neos:Editor"
 
   @fixtures
   Scenario: Moving an aggregate node (Document) in user workspace should move across all dimensions; making sure the live workspace is unaffected

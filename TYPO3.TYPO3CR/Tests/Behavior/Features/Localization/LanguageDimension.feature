@@ -8,6 +8,7 @@ Feature: Multiple languages as content dimension
       | Path           | Node Type                  | Properties        |
       | /sites         | unstructured               |                   |
       | /sites/typo3cr | TYPO3.TYPO3CR.Testing:Page | {"title": "Home"} |
+    And I am authenticated with role "TYPO3.Neos:Editor"
 
   @fixtures
   Scenario: Assign multiple values to language content dimension for a node variant

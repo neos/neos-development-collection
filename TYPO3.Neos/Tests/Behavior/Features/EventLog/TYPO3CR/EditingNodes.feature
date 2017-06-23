@@ -10,6 +10,7 @@ Feature: Editing Nodes
       | 49f324f2-6a65-11e4-a901-7831c1d118bc | /sites/typo3cr/main/headline | TYPO3.TYPO3CR.Testing:Headline | {"title": "Welcome"}            | live      |
       | be87d1dc-6a65-11e4-884b-7831c1d118bc | /sites/typo3cr/main/text     | TYPO3.TYPO3CR.Testing:Text     | {"text": "... to this website"} | live      |
     And I have an empty history
+    And I am authenticated with role "TYPO3.Neos:Editor"
 
   @fixtures
   Scenario: Change a Document node property in the live workspace (e.g. like an API)
