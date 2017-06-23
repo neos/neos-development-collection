@@ -13,6 +13,7 @@ Feature: Rename node with dimension support
       | c41d35bf-27e5-5645-a290-6a8b35c5935a | /sites/typo3cr/company          | TYPO3.TYPO3CR.Testing:Page | {"title": "Company"}         | live      | en       |
       | c41d35bf-27e5-5645-a290-6a8b35c5935a | /sites/typo3cr/company          | TYPO3.TYPO3CR.Testing:Page | {"title": "Unternehmen"}     | live      | de       |
       | 4f19cb3c-6148-11e4-a977-14109fd7a2dd | /sites/typo3cr/contact          | TYPO3.TYPO3CR.Testing:Page | {"title": "Kontakt"}         | live      | de       |
+    And I am authenticated with role "TYPO3.Neos:Editor"
 
   @fixtures
   Scenario: Rename a node to a name conflicting with an existing node

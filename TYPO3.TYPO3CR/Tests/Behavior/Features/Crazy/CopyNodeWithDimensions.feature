@@ -15,7 +15,7 @@ Feature: Copy node with dimension support
       | 864b6a8c-6442-11e4-8791-14109fd7a2dd | /sites/typo3cr/company/main/two-col/column0/text0 | TYPO3.TYPO3CR.Testing:Text      | {"text": "The Company"}    | live      | en       |
       | 0c1a50e9-3db5-4c57-a5c7-6cc0b7649ee7 | /sites/typo3cr/about-us                           | TYPO3.TYPO3CR.Testing:Page      | {"title": "About Us"}      | live      | en       |
       | 1c063cf4-65ca-11e4-b79a-14109fd7a2dd | /sites/typo3cr/about-us/main/text0                | TYPO3.TYPO3CR.Testing:Text      | {"text": "Infos about us"} | live      | en       |
-
+    And I am authenticated with role "TYPO3.Neos:Editor"
 
   @fixtures
   Scenario: Copying a non-aggregate node creates a node variant in the other dimension if the node does not exist in the target dimension.

@@ -12,6 +12,7 @@ Feature: Localized structure
       | /sites/typo3cr         | TYPO3.TYPO3CR.Testing:Page | {"title": "Home"}    | mul_ZZ   |
       | /sites/typo3cr/company | TYPO3.TYPO3CR.Testing:Page | {"title": "Company"} | mul_ZZ   |
       | /sites/typo3cr/service | TYPO3.TYPO3CR.Testing:Page | {"title": "Company"} | mul_ZZ   |
+    And I am authenticated with role "TYPO3.Neos:Editor"
 
   @fixtures
   Scenario: The same node can be fetched using different node paths in different languages

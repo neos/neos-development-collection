@@ -8,6 +8,7 @@ Feature: Adding Nodes
       | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /sites         | unstructured               |                   | live      |
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/typo3cr | TYPO3.TYPO3CR.Testing:Page | {"title": "Home"} | live      |
     And I have an empty history
+    And I am authenticated with role "TYPO3.Neos:Editor"
 
   @fixtures
   Scenario: Add a new document node to live workspace

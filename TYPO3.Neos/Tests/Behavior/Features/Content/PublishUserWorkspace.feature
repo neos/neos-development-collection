@@ -10,6 +10,7 @@ Feature: Publish user workspace
       | Identifier                           | Path                 | Node Type                 | Properties        | Workspace |
       | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /sites               | unstructured              |                   | live      |
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/example       | TYPO3.Neos.NodeTypes:Page | {"title": "Home"} | live      |
+    And I am authenticated with role "TYPO3.Neos:Editor"
 
   @fixtures
   Scenario: Publish a new ContentCollection with Content

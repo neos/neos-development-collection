@@ -12,6 +12,7 @@ Feature: Node variants
       | 8ed74376-64d1-11e4-b98b-14109fd7a2dd | /sites/typo3cr/company | TYPO3.TYPO3CR.Testing:Page | {"title": "Unternehmen"} | live      | de       |
       | 8ed74376-64d1-11e4-b98b-14109fd7a2dd | /sites/typo3cr/company | TYPO3.TYPO3CR.Testing:Page | {"title": "Firma"}       | live      | de_CH    |
       | 8ed74376-64d1-11e4-b98b-14109fd7a2dd | /sites/typo3cr/company | TYPO3.TYPO3CR.Testing:Page | {"title": "Entreprise"}  | live      | fr       |
+    And I am authenticated with role "TYPO3.Neos:Editor"
 
   @fixtures
   Scenario: Get other node variants of an aggregate node
