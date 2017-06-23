@@ -500,39 +500,10 @@ class Workspace
             }
 
             $shadowNodeData = $this->nodeDataRepository->findOneByMovedTo($nodeDataVariant);
-//            if ($shadowNodeData === null && $this->areWorkspacesOnTheSameWorkspaceBranch($targetWorkspace, $nodeDataVariant->getWorkspace())) {
             if ($shadowNodeData === null) {
                 $nodeDataVariant->setPath($targetPath);
             }
         }
-    }
-
-    /**
-     * @param Workspace $workspaceA
-     * @param Workspace $workspaceB
-     * @return bool
-     */
-    protected function areWorkspacesOnTheSameWorkspaceBranch(Workspace $workspaceA, Workspace $workspaceB)
-    {
-        $workspaceNamesBetweenWorkspaceAAndFirstLevelWorkspace = $this->getBaseWorkspaceNamesUntilFirstLevelWorkspace($workspaceA);
-        $workspaceNamesBetweenWorkspaceBAndFirstLevelWorkspace = $this->getBaseWorkspaceNamesUntilFirstLevelWorkspace($workspaceB);
-        return array_intersect($workspaceNamesBetweenWorkspaceAAndFirstLevelWorkspace, $workspaceNamesBetweenWorkspaceBAndFirstLevelWorkspace) !== [];
-    }
-
-    /**
-     *
-     *
-     * @param Workspace $workspace
-     * @return array
-     */
-    protected function getBaseWorkspaceNamesUntilFirstLevelWorkspace(Workspace $workspace)
-    {
-        $workspaceNames = [];
-        while ($workspace->getBaseWorkspace() !== null ) {
-            $workspaceNames[] = $workspace->getName();
-            $workspace = $workspace->getBaseWorkspace();
-        }
-        return $workspaceNames;
     }
 
     /**
