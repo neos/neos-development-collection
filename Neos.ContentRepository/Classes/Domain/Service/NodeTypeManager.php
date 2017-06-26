@@ -66,6 +66,16 @@ class NodeTypeManager
     protected $fullNodeTypeConfigurations;
 
     /**
+     * Injects the configuration manager
+     *
+     * @param ConfigurationManager $configurationManager
+     * @return void
+     */
+    public function injectConfigurationManager(ConfigurationManager $configurationManager) {
+        $this->configurationManager = $configurationManager;
+    }
+
+    /**
      * Return all registered node types.
      *
      * @param boolean $includeAbstractNodeTypes Whether to include abstract node types, defaults to TRUE
