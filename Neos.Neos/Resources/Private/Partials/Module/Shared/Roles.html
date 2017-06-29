@@ -1,0 +1,9 @@
+{namespace neos=Neos\Neos\ViewHelpers}
+<f:for each="{roles}" as="role" iteration="iteration">
+	<span class="neos-label" title="{f:render(section: 'tooltip', arguments: {role: role})}" data-neos-toggle="tooltip" data-placement="right" data-html="true">
+		{role.name}
+	</span>
+</f:for>
+
+<f:section name="tooltip">{neos:backend.translate(id: 'package', value: 'Package')}: {role.packageKey}<br />
+<f:if condition="{role.parentRoles}">{neos:backend.translate(id: 'parentRoles', value: 'Parent role(s)')}: <f:for each="{role.parentRoles}" as="parentRole" iteration="iteration">{parentRole}{f:if(condition: iteration.isLast, else: ', ')}</f:for></f:if></f:section>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="no">
+    <body>
+      <trans-unit id="ui.label" xml:space="preserve">
+				<source>Plugin View</source>
+			<target xml:lang="no" state="translated">Pluginvisning</target></trans-unit>
+      <trans-unit id="groups.pluginViews" xml:space="preserve">
+				<source>Plugin Views</source>
+			<target xml:lang="no" state="translated">Pluginvisninger</target></trans-unit>
+      <trans-unit id="properties.plugin" xml:space="preserve">
+				<source>Master View</source>
+			<target xml:lang="no" state="translated">Hovedvisning</target></trans-unit>
+      <trans-unit id="properties.view" xml:space="preserve">
+				<source>Plugin View</source>
+			<target xml:lang="no" state="translated">Pluginvisning</target></trans-unit>
+    </body>
+  </file>
+</xliff>

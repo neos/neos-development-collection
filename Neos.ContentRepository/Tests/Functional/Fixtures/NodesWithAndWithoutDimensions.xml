@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!--
+	NOTE: This fixture is for the test \Neos\ContentRepository\Tests\Functional\Domain\NodeDataTest::inContextWithEmptyDimensionsNodeVariantsWithoutDimensionsArePrioritized()
+	Please don't change the node identifier as it is used in the test.
+	Also the two node variants are important (one with dimensions one without).
+	 -->
+	<site name="example" state="1" siteResourcesPackageKey="Neos.Fusion" siteNodeName="example">
+		<nodes formatVersion="2.0">
+			<node identifier="78f5c720-e8df-2573-1fc1-f7ce5b338485" nodeName="example">
+				<variant sortingIndex="100" workspace="live" nodeType="unstructured" version="1" removed="" hidden="" hiddenInIndex="1">
+					<dimensions>
+						<language>en_US</language>
+					</dimensions>
+					<properties>
+						<uriPathSegment __type="string">example</uriPathSegment>
+						<title __type="string">en_US</title>
+					</properties>
+				</variant>
+				<variant sortingIndex="100" workspace="live" nodeType="unstructured" version="1" removed="" hidden="" hiddenInIndex="1">
+					<dimensions>
+					</dimensions>
+					<properties>
+						<uriPathSegment __type="string">example</uriPathSegment>
+						<title __type="string">No Dimensions</title>
+					</properties>
+				</variant>
+			</node>
+		</nodes>
+	</site>
+</root>

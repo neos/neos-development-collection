@@ -1,0 +1,120 @@
+{
+    "name": "neos/neos",
+    "type": "neos-package",
+    "license": "GPL-3.0+",
+    "description": "An open source Content Application Platform based on Flow. A set of core Content Management features is resting within a larger context that allows you to build a perfectly customized experience for your users.",
+    "require": {
+        "neos/diff": "dev-master",
+        "neos/flow": "dev-master",
+        "neos/media-browser": "dev-master",
+        "neos/party": "dev-master",
+        "neos/setup": "dev-master",
+        "neos/twitter-bootstrap": "dev-master",
+        "neos/content-repository": "dev-master",
+        "neos/fusion": "dev-master",
+        "neos/fluid-adaptor": "dev-master",
+        "behat/transliterator": "~1.0",
+        "neos/media": "dev-master"
+    },
+    "suggest": {
+        "neos/site-kickstarter": "Helps with creating new site packages for Neos.",
+        "neos/redirecthandler-neosadapter": "Adds automatic redirects for moved/renamed pages"
+    },
+    "replace": {
+        "typo3/neos": "self.version"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neos\\Neos\\": "Classes"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Neos\\Neos\\Tests\\": "Tests"
+        }
+    },
+    "extra": {
+        "typo3/flow": {
+            "manage-resources": true
+        },
+        "neos": {
+            "installer-resource-folders": [
+                "Resources/Private/Installer/"
+            ]
+        },
+        "applied-flow-migrations": [
+            "TYPO3.TYPO3CR-20150510103823",
+            "TYPO3.FLOW3-201201261636",
+            "TYPO3.Fluid-201205031303",
+            "TYPO3.FLOW3-201205292145",
+            "TYPO3.FLOW3-201206271128",
+            "TYPO3.Flow-201211151101",
+            "TYPO3.Neos.NodeTypes-130516220640",
+            "TYPO3.TypoScript-130516234520",
+            "TYPO3.TypoScript-130516235550",
+            "TYPO3.TYPO3CR-130523180140",
+            "TYPO3.Neos.NodeTypes-201309111655",
+            "TYPO3.Neos-201310021548",
+            "TYPO3.Flow-201310031523",
+            "TYPO3.Flow-201405111147",
+            "TYPO3.Neos-201409071922",
+            "TYPO3.TYPO3CR-140911160326",
+            "TYPO3.Neos-201410010000",
+            "TYPO3.TYPO3CR-141101082142",
+            "TYPO3.Neos-20141113115300",
+            "TYPO3.Fluid-20141121091700",
+            "TYPO3.Neos-20141218134700",
+            "TYPO3.Fluid-20150214130800",
+            "TYPO3.Neos-201407061038",
+            "TYPO3.Flow-201212051340",
+            "TYPO3.Fluid-20141113120800",
+            "TYPO3.Flow-20141113121400",
+            "Typo3.Neos.NodeTypes-201309111655",
+            "TYPO3.TYPO3CR-20140911160326",
+            "TYPO3.Flow-201209251426",
+            "TYPO3.FLOW3-201209201112",
+            "TYPO3.Neos-20150303231600",
+            "TYPO3.Flow-20151113161300",
+            "TYPO3.Form-20160601101500",
+            "TYPO3.Flow-20161115140400",
+            "TYPO3.Flow-20161115140430",
+            "Neos.Flow-20161124204700",
+            "Neos.Flow-20161124204701",
+            "Neos.Twitter.Bootstrap-20161124204912",
+            "Neos.Form-20161124205254",
+            "Neos.Flow-20161124224015",
+            "Neos.Party-20161124225257",
+            "Neos.Eel-20161124230101",
+            "Neos.Kickstart-20161124230102",
+            "Neos.Setup-20161124230842",
+            "Neos.Imagine-20161124231742",
+            "Neos.Media-20161124233100",
+            "Neos.NodeTypes-20161125002300",
+            "Neos.SiteKickstarter-20161125002311",
+            "Neos.Neos-20161125002322",
+            "Neos.ContentRepository-20161125012000",
+            "Neos.Fusion-20161125013710",
+            "Neos.Setup-20161125014759",
+            "Neos.SiteKickstarter-20161125095901",
+            "Neos.Fusion-20161125104701",
+            "Neos.NodeTypes-20161125104800",
+            "Neos.Neos-20161125104802",
+            "Neos.Kickstarter-20161125110814",
+            "Neos.Flow-20161125124112",
+            "Neos.Neos-20161125122412",
+            "TYPO3.FluidAdaptor-20161130112935",
+            "Neos.Fusion-20161201202543",
+            "Neos.Neos-20161201222211",
+            "Neos.Fusion-20161202215034",
+            "Neos.ContentRepository-20161219093512",
+            "Neos.Media-20161219094126",
+            "Neos.Neos-20161219094403",
+            "Neos.Fusion-20161219092345",
+            "Neos.Neos-20161219122512",
+            "Neos.Fusion-20161219130100",
+            "Neos.Neos-20161220163741",
+            "Neos.Fusion-20170120013047",
+            "Neos.Flow-20170125103800"
+        ]
+    }
+}

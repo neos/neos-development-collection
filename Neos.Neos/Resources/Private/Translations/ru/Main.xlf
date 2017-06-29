@@ -1,0 +1,669 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="ru">
+    <body>
+      <!-- general translations like button -->
+      <trans-unit id="autoPublish" xml:space="preserve" approved="yes">
+				<source>Auto-Publish</source>
+			<target xml:lang="ru">Автоматическая публикация</target></trans-unit>
+      <trans-unit id="autoPublishTo" xml:space="preserve" approved="yes">
+				<source>Auto-Publish to {0}</source>
+			<target xml:lang="ru">Автоматическая публикация в {0}</target></trans-unit>
+      <trans-unit id="reviewChanges" xml:space="preserve" approved="yes">
+				<source>Review changes</source>
+			<target xml:lang="ru">Обзор изменений</target></trans-unit>
+      <trans-unit id="apply" xml:space="preserve" approved="yes">
+				<source>Apply</source>
+			<target xml:lang="ru">Применить</target></trans-unit>
+      <trans-unit id="applyChanges" xml:space="preserve" approved="yes">
+				<source>Apply changes</source>
+			<target xml:lang="ru">Применить изменения</target></trans-unit>
+      <trans-unit id="cancel" xml:space="preserve" approved="yes">
+				<source>Cancel</source>
+			<target xml:lang="ru">Отмена</target></trans-unit>
+      <trans-unit id="back" xml:space="preserve" approved="yes">
+				<source>Back</source>
+			<target xml:lang="ru">Назад</target></trans-unit>
+      <trans-unit id="choose" xml:space="preserve" approved="yes">
+				<source>Choose</source>
+			<target xml:lang="ru">Выбрать</target><alt-trans><target xml:lang="ru">Выберите</target></alt-trans></trans-unit>
+      <trans-unit id="typeToSearch" xml:space="preserve" approved="yes">
+				<source>Type to search</source>
+			<target xml:lang="ru">Введите для поиска</target><alt-trans><target xml:lang="ru">Начните печатать а мы найдём</target></alt-trans></trans-unit>
+      <trans-unit id="content" xml:space="preserve" approved="yes">
+				<source>Content</source>
+			<target xml:lang="ru">Содержимое</target><alt-trans><target xml:lang="ru">Контент</target></alt-trans></trans-unit>
+      <trans-unit id="node" xml:space="preserve" approved="yes">
+				<source>Node</source>
+			<target xml:lang="ru">Элемент</target><alt-trans><target xml:lang="ru">Узел</target></alt-trans></trans-unit>
+      <trans-unit id="contentView" xml:space="preserve" approved="yes">
+				<source>Content View</source>
+			<target xml:lang="ru">Просмотр содержимого</target><alt-trans><target xml:lang="ru">Просмотр контента</target></alt-trans></trans-unit>
+      <trans-unit id="createAfter" xml:space="preserve" approved="yes">
+				<source>Create after</source>
+			<target xml:lang="ru">Создать после</target></trans-unit>
+      <trans-unit id="createNew" xml:space="preserve" approved="yes">
+				<source>Create new</source>
+			<target xml:lang="ru">Создать новый</target></trans-unit>
+      <trans-unit id="close" xml:space="preserve" approved="yes">
+				<source>Close</source>
+			<target xml:lang="ru">Закрыть</target></trans-unit>
+      <trans-unit id="copy" xml:space="preserve" approved="yes">
+				<source>Copy</source>
+			<target xml:lang="ru">Копировать</target></trans-unit>
+      <trans-unit id="cut" xml:space="preserve" approved="yes">
+				<source>Cut</source>
+			<target xml:lang="ru">Вырезать</target></trans-unit>
+      <trans-unit id="delete" xml:space="preserve" approved="yes">
+				<source>Delete</source>
+			<target xml:lang="ru">Удалить</target></trans-unit>
+      <trans-unit id="deleteElement" xml:space="preserve" approved="yes">
+				<source>Yes, delete the element</source>
+			<target xml:lang="ru">Да, удалить элемент</target></trans-unit>
+      <trans-unit id="deleteElementTitle" xml:space="preserve" approved="yes">
+				<source>Delete the element</source>
+			<target xml:lang="ru">Удалить элемент</target></trans-unit>
+      <trans-unit id="discard" xml:space="preserve" approved="yes">
+				<source>Discard</source>
+			<target xml:lang="ru">Сбросить</target><alt-trans><target xml:lang="ru">Отменить</target></alt-trans></trans-unit>
+      <trans-unit id="discardChanges" xml:space="preserve" approved="yes">
+				<source>Discard changes</source>
+			<target xml:lang="ru">Сбросить изменения</target><alt-trans><target xml:lang="ru">Отменить изменения</target></alt-trans></trans-unit>
+      <trans-unit id="editTitle" xml:space="preserve" approved="yes">
+				<source>Edit title</source>
+			<target xml:lang="ru">Редактировать название</target><alt-trans><target xml:lang="ru">Правка названия</target></alt-trans><alt-trans><target xml:lang="ru">Переименовать</target></alt-trans></trans-unit>
+      <trans-unit id="editPreview" xml:space="preserve" approved="yes">
+				<source>Edit / Preview</source>
+			<target xml:lang="ru">Правка / просмотр</target><alt-trans><target xml:lang="ru">Редактировать / просмотр</target></alt-trans></trans-unit>
+      <trans-unit id="edit" xml:space="preserve" approved="yes">
+				<source>Edit</source>
+			<target xml:lang="ru">Редактировать</target><alt-trans><target xml:lang="ru">Править</target></alt-trans></trans-unit>
+      <trans-unit id="hideUnhide" xml:space="preserve" approved="yes">
+				<source>Hide / Unhide</source>
+			<target xml:lang="ru">Скрыть / Показать</target></trans-unit>
+      <trans-unit id="hide" xml:space="preserve" approved="yes">
+				<source>Hide</source>
+			<target xml:lang="ru">Скрыть</target></trans-unit>
+      <trans-unit id="unhide" xml:space="preserve" approved="yes">
+				<source>Unhide</source>
+			<target xml:lang="ru">Показать</target></trans-unit>
+      <trans-unit id="into" xml:space="preserve" approved="yes">
+				<source>into</source>
+			<target xml:lang="ru">в</target></trans-unit>
+      <trans-unit id="before" xml:space="preserve" approved="yes">
+				<source>before</source>
+			<target xml:lang="ru">до</target><alt-trans><target xml:lang="ru">перед</target></alt-trans></trans-unit>
+      <trans-unit id="after" xml:space="preserve" approved="yes">
+				<source>after</source>
+			<target xml:lang="ru">после</target><alt-trans><target xml:lang="ru">После</target></alt-trans></trans-unit>
+      <trans-unit id="loading" xml:space="preserve" approved="yes">
+				<source>Loading</source>
+			<target xml:lang="ru">Загрузка</target><alt-trans><target xml:lang="ru">Загружается</target></alt-trans></trans-unit>
+      <trans-unit id="newAfter" xml:space="preserve" approved="yes">
+				<source>New After</source>
+			<target xml:lang="ru">Добавить после</target></trans-unit>
+      <trans-unit id="newBefore" xml:space="preserve" approved="yes">
+				<source>New Before</source>
+			<target xml:lang="ru">Добавить перед</target></trans-unit>
+      <trans-unit id="newInto" xml:space="preserve" approved="yes">
+				<source>New Into</source>
+			<target xml:lang="ru">Добавить в</target><alt-trans><target xml:lang="ru">Добавить внутрь</target></alt-trans></trans-unit>
+      <trans-unit id="navigate" xml:space="preserve" approved="yes">
+				<source>Navigate</source>
+			<target xml:lang="ru">Навигировать</target><alt-trans><target xml:lang="ru">Навигация</target></alt-trans></trans-unit>
+      <trans-unit id="okay" xml:space="preserve" approved="yes">
+				<source>OK</source>
+			<target xml:lang="ru">ОК</target></trans-unit>
+      <trans-unit id="page" xml:space="preserve" approved="yes">
+				<source>Page</source>
+			<target xml:lang="ru">Страница</target></trans-unit>
+      <trans-unit id="paste" xml:space="preserve" approved="yes">
+				<source>Paste</source>
+			<target xml:lang="ru">Вставить</target></trans-unit>
+      <trans-unit id="pasteAfter" xml:space="preserve" approved="yes">
+				<source>Paste After</source>
+			<target xml:lang="ru">Вставить после</target></trans-unit>
+      <trans-unit id="pasteBefore" xml:space="preserve" approved="yes">
+				<source>Paste Before</source>
+			<target xml:lang="ru">Вставить перед</target></trans-unit>
+      <trans-unit id="pasteInto" xml:space="preserve" approved="yes">
+				<source>Paste Into</source>
+			<target xml:lang="ru">Вставить в</target><alt-trans><target xml:lang="ru">Вставить внутрь</target></alt-trans></trans-unit>
+      <trans-unit id="password" xml:space="preserve" approved="yes">
+				<source>Password</source>
+			<target xml:lang="ru">Пароль</target></trans-unit>
+      <trans-unit id="preview" xml:space="preserve" approved="yes">
+				<source>Preview</source>
+			<target xml:lang="ru">Предпросмотр</target><alt-trans><target xml:lang="ru">Просмотр</target></alt-trans><alt-trans><target xml:lang="ru">Предв. Просмотр</target></alt-trans></trans-unit>
+      <trans-unit id="publish" xml:space="preserve" approved="yes">
+				<source>Publish</source>
+			<target xml:lang="ru">Опубликовать</target></trans-unit>
+      <trans-unit id="publishTo" xml:space="preserve" approved="yes">
+				<source>Publish to {0}</source>
+			<target xml:lang="ru">Опубликовать в {0}</target></trans-unit>
+      <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve" approved="yes">
+				<source>Publish all changes for current page</source>
+			<target xml:lang="ru">Опубликовать все изменения на текущей странице</target><alt-trans><target xml:lang="ru">Опубликовать все изменения для текущей страницы</target></alt-trans></trans-unit>
+      <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve" approved="yes">
+				<source>Can't publish because the target workspace is read-only</source>
+			<target xml:lang="ru">Не удается опубликовать, потому что целевая рабочая область доступна только для чтения</target><alt-trans><target xml:lang="ru">Не удается опубликовать, потому что целевая рабочая область является неизменяемой</target></alt-trans></trans-unit>
+      <trans-unit id="selectTargetWorkspace" xml:space="preserve" approved="yes">
+				<source>Select target workspace</source>
+			<target xml:lang="ru">Выбрать рабочую область</target><alt-trans><target xml:lang="ru">Выбор рабочего пространтсва</target></alt-trans></trans-unit>
+      <trans-unit id="publishing" xml:space="preserve" approved="yes">
+				<source>Publishing</source>
+			<target xml:lang="ru">Публикация</target><alt-trans><target xml:lang="ru">Oпубликовать</target></alt-trans></trans-unit>
+      <trans-unit id="published" xml:space="preserve" approved="yes">
+				<source>Published</source>
+			<target xml:lang="ru">Опубликовано</target></trans-unit>
+      <trans-unit id="togglePublishMenu" xml:space="preserve" approved="yes">
+				<source>Toggle publish menu</source>
+			<target xml:lang="ru">Переключить меню публикаций</target><alt-trans><target xml:lang="ru">Переключить меню публикации</target></alt-trans></trans-unit>
+      <trans-unit id="targetWorkspace" xml:space="preserve" approved="yes">
+				<source>Target workspace</source>
+			<target xml:lang="ru">Целевая рабочая область</target><alt-trans><target xml:lang="ru">Целевая рабочее место</target></alt-trans><alt-trans><target xml:lang="ru">Целевой рабочая область</target></alt-trans><alt-trans><target xml:lang="ru">Целевой Workspace</target></alt-trans><alt-trans><target xml:lang="ru">Целевое рабочее пространство</target></alt-trans><alt-trans><target xml:lang="ru">Целевое рабочее место</target></alt-trans></trans-unit>
+      <trans-unit id="currentWorkspace" xml:space="preserve" approved="yes">
+				<source>Current workspace</source>
+			<target xml:lang="ru">Текущая рабочая область</target></trans-unit>
+      <trans-unit id="remove" xml:space="preserve" approved="yes">
+				<source>Remove</source>
+			<target xml:lang="ru">Удалить</target></trans-unit>
+      <trans-unit id="refresh" xml:space="preserve" approved="yes">
+				<source>Refresh</source>
+			<target xml:lang="ru">Обновить</target></trans-unit>
+      <trans-unit id="save" xml:space="preserve" approved="yes">
+				<source>Save</source>
+			<target xml:lang="ru">Сохранить</target></trans-unit>
+      <trans-unit id="saving" xml:space="preserve" approved="yes">
+				<source>Saving</source>
+			<target xml:lang="ru">Сохранение</target><alt-trans><target xml:lang="ru">Сохранение...</target></alt-trans></trans-unit>
+      <trans-unit id="saved" xml:space="preserve" approved="yes">
+				<source>Saved</source>
+			<target xml:lang="ru">Сохранено</target></trans-unit>
+      <trans-unit id="search" xml:space="preserve" approved="yes">
+				<source>Search</source>
+			<target xml:lang="ru">Поиск</target></trans-unit>
+      <trans-unit id="toggleInspector" xml:space="preserve" approved="yes">
+				<source>Toggle inspector</source>
+			<target xml:lang="ru">Переключить инспектор</target></trans-unit>
+      <trans-unit id="username" xml:space="preserve" approved="yes">
+				<source>Username</source>
+			<target xml:lang="ru">Имя пользователя</target></trans-unit>
+      <trans-unit id="you" xml:space="preserve" approved="yes">
+				<source>You</source>
+			<target xml:lang="ru">Вы</target></trans-unit>
+      <trans-unit id="noTitle" xml:space="preserve" approved="yes">
+				<source>[no title]</source>
+			<target xml:lang="ru">[без названия]</target></trans-unit>
+      <trans-unit id="labelCaption" xml:space="preserve" approved="yes">
+				<source>Label</source>
+			<target xml:lang="ru">Обозначение</target><alt-trans><target xml:lang="ru">Этикетка</target></alt-trans><alt-trans><target xml:lang="ru">Подпись</target></alt-trans><alt-trans><target xml:lang="ru">Метка</target></alt-trans></trans-unit>
+      <trans-unit id="nodeTypeCaption" xml:space="preserve" approved="yes">
+				<source>Content Type</source>
+			<target xml:lang="ru">Тип содержимого</target><alt-trans><target xml:lang="ru">Тип контента</target></alt-trans></trans-unit>
+      <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
+				<source>Path</source>
+			<target xml:lang="ru">Путь</target></trans-unit>
+      <trans-unit id="relativePathCaption" xml:space="preserve" approved="yes">
+				<source>Relative Path</source>
+			<target xml:lang="ru">Относительный путь</target></trans-unit>
+      <trans-unit id="version" xml:space="preserve" approved="yes">
+				<source>Version</source>
+			<target xml:lang="ru">Версия</target></trans-unit>
+      <trans-unit id="operationCannotBeUndone" xml:space="preserve" approved="yes">
+				<source>This operation cannot be undone.</source>
+			<target xml:lang="ru">Эта операция не может быть отменена.</target></trans-unit>
+      <trans-unit id="asset" xml:space="preserve" approved="yes">
+				<source>Asset</source>
+			<target xml:lang="ru">Медиа-ресурс</target><alt-trans><target xml:lang="ru">Ассет</target></alt-trans></trans-unit>
+      <trans-unit id="created" xml:space="preserve" approved="yes">
+				<source>Created</source>
+			<target xml:lang="ru">создано</target></trans-unit>
+      <trans-unit id="lastModification" xml:space="preserve" approved="yes">
+				<source>Last modification</source>
+			<target xml:lang="ru">Последнее изменение</target></trans-unit>
+      <trans-unit id="lastPublication" xml:space="preserve" approved="yes">
+				<source>Last publication</source>
+			<target xml:lang="ru">Последняя публикация</target></trans-unit>
+      <trans-unit id="identifier" xml:space="preserve" approved="yes">
+				<source>Identifier</source>
+			<target xml:lang="ru">Идентификатор</target></trans-unit>
+      <trans-unit id="name" xml:space="preserve" approved="yes">
+				<source>Name</source>
+			<target xml:lang="ru">Имя</target></trans-unit>
+      <trans-unit id="workspace" xml:space="preserve" approved="yes">
+				<source>Workspace</source>
+			<target xml:lang="ru">Рабочая область</target></trans-unit>
+      <trans-unit id="structure.label" xml:space="preserve" approved="yes">
+				<source>Structure</source>
+			<target xml:lang="ru">Структура</target></trans-unit>
+      <trans-unit id="structure.toggle" xml:space="preserve" approved="yes">
+				<source>Toggle context structure</source>
+			<target xml:lang="ru">Переключить структуру контекста</target></trans-unit>
+      <trans-unit id="filter" xml:space="preserve" approved="yes">
+				<source>Filter</source>
+			<target xml:lang="ru">Фильтр</target></trans-unit>
+      <trans-unit id="toggleMenu" xml:space="preserve" approved="yes">
+				<source>Toggle menu</source>
+			<target xml:lang="ru">Переключить меню</target></trans-unit>
+      <trans-unit id="loadError" xml:space="preserve" approved="yes">
+				<source>Load error!</source>
+			<target xml:lang="ru">Ошибка загрузки!</target></trans-unit>
+      <trans-unit id="aNodeMustBeSelected" xml:space="preserve" approved="yes">
+				<source>You have to select a node</source>
+			<target xml:lang="ru">Вы должны выбрать элемент</target><alt-trans><target xml:lang="ru">Вы должны выбрать узел</target></alt-trans></trans-unit>
+      <trans-unit id="rootNodeCannotBeDeleted" xml:space="preserve" approved="yes">
+				<source>The Root node cannot be deleted.</source>
+			<target xml:lang="ru">Корневой элемент не может быть удален.</target><alt-trans><target xml:lang="ru">Корневой узел не может быть удален.</target></alt-trans></trans-unit>
+      <trans-unit id="cannotCopyNode" xml:space="preserve" approved="yes">
+				<source>You cannot copy this node</source>
+			<target xml:lang="ru">Нельзя скопировать этот элемент</target><alt-trans><target xml:lang="ru">Нельзя скопировать этот узел</target></alt-trans></trans-unit>
+      <trans-unit id="cannotCutNode" xml:space="preserve" approved="yes">
+				<source>You cannot cut this node</source>
+			<target xml:lang="ru">Нельзя вырезать этот элемент</target><alt-trans><target xml:lang="ru">Нельзя вырезать этот узел</target></alt-trans></trans-unit>
+      <trans-unit id="contentDimensions" xml:space="preserve" approved="yes">
+				<source>Content Dimensions</source>
+			<target xml:lang="ru">Пространства содержимого</target><alt-trans><target xml:lang="ru">Пространства контента</target></alt-trans><alt-trans><target xml:lang="ru">Измерения содержимого</target></alt-trans><alt-trans><target xml:lang="ru">Измерения контента</target></alt-trans></trans-unit>
+      <trans-unit id="site" xml:space="preserve" approved="yes">
+				<source>Site</source>
+			<target xml:lang="ru">Сайт</target></trans-unit>
+      <trans-unit id="document" xml:space="preserve" approved="yes">
+				<source>Document</source>
+			<target xml:lang="ru">Документ</target></trans-unit>
+      <trans-unit id="reference" xml:space="preserve" approved="yes">
+				<source>Reference</source>
+			<target xml:lang="ru">Ссылка</target></trans-unit>
+      <trans-unit id="host" xml:space="preserve" approved="yes">
+				<source>Host</source>
+			<target xml:lang="ru">Хост</target></trans-unit>
+      <trans-unit id="scheme" xml:space="preserve" approved="yes">
+				<source>Scheme</source>
+			<target xml:lang="ru">Схема</target></trans-unit>
+      <trans-unit id="port" xml:space="preserve" approved="yes">
+				<source>Port</source>
+			<target xml:lang="ru">Порт</target></trans-unit>
+      <trans-unit id="primary" xml:space="preserve" approved="yes">
+				<source>Primary</source>
+			<target xml:lang="ru">Основной</target><alt-trans><target xml:lang="ru">Основное</target></alt-trans></trans-unit>
+      <!-- node types -->
+      <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
+				<source>General</source>
+			<target xml:lang="ru">Общие</target></trans-unit>
+      <trans-unit id="nodeTypes.groups.structure" xml:space="preserve" approved="yes">
+				<source>Structure</source>
+			<target xml:lang="ru">Структура</target></trans-unit>
+      <trans-unit id="nodeTypes.groups.plugins" xml:space="preserve" approved="yes">
+				<source>Plugins</source>
+			<target xml:lang="ru">Плагины</target><alt-trans><target xml:lang="ru">Расширения</target></alt-trans></trans-unit>
+      <!-- shortcuts -->
+      <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve" approved="yes">
+				<source>Click {0} to continue to the page.</source>
+			<target xml:lang="ru">Нажмите {0}, чтобы перейти на страницу.</target><alt-trans><target xml:lang="ru">Нажмите здесь, чтобы перейти на страницу {0}.</target></alt-trans></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve" approved="yes">
+				<source>Click {0} to see the file.</source>
+			<target xml:lang="ru">Нажмите {0} для просмотра файла.</target><alt-trans><target xml:lang="ru">Нажмите {0}, для перехода к ресурсу.</target></alt-trans><alt-trans><target xml:lang="ru">Нажмите здесь, для перехода к ресурсу {0}.</target></alt-trans></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve" approved="yes">
+				<source>Click {0} to open the link.</source>
+			<target xml:lang="ru">Нажмите {0}, чтобы перейти на внешнюю страницу.</target><alt-trans><target xml:lang="ru">Нажмите {0}, чтобы перейти по ссылке.</target></alt-trans><alt-trans><target xml:lang="ru">Нажмите здесь, чтобы перейти на внешнюю страницу {0}.</target></alt-trans></trans-unit>
+      <trans-unit id="shortcut.noTargetSelected" xml:space="preserve" approved="yes">
+				<source>(no target has been selected)</source>
+			<target xml:lang="ru">(цель не была выбрана)</target></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve" approved="yes">
+				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
+			<target xml:lang="ru">Это ярлык для первой дочерней страницы.&lt;br /&gt;Нажмите {0}, для перехода на эту страницу.</target><alt-trans><target xml:lang="ru">Это ярлык для первой дочерней страницы. &lt;br /&gt;Нажмите {0} для перехода на эту страницу.</target></alt-trans></trans-unit>
+      <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve" approved="yes">
+				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
+			<target xml:lang="ru">Это ярлык для родительской страницы.&lt;br /&gt;Нажмите {0}, для перехода на эту страницу.</target><alt-trans><target xml:lang="ru">Это ярлык для родительской страницы. &lt;br /&gt;Нажмите {0} для перехода на эту страницу.</target></alt-trans></trans-unit>
+      <!-- javascript -->
+      <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve" approved="yes">
+				<source>Full Screen</source>
+			<target xml:lang="ru">Во весь экран</target></trans-unit>
+      <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve" approved="yes">
+				<source>Open page in live workspace</source>
+        <note>Deprecated, replaced by previewShortcutButton.title</note>
+			<target xml:lang="ru">Открыть страницу в публичной рабочей области</target><alt-trans><target xml:lang="ru">Открыть страницу в Live-Workspace</target></alt-trans></trans-unit>
+      <trans-unit id="content.components.contentContextBar.previewShortcutButton.title" xml:space="preserve" approved="yes">
+				<source>Open page in target workspace</source>
+			<target xml:lang="ru">Открыть страницу в целевой рабочей области</target></trans-unit>
+      <trans-unit id="discardAll" xml:space="preserve" approved="yes">
+				<source>Discard all</source>
+			<target xml:lang="ru">Отменить все</target></trans-unit>
+      <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve" approved="yes">
+				<source>Discard all changes</source>
+			<target xml:lang="ru">Отменить все изменения</target></trans-unit>
+      <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve" approved="yes">
+				<source>Are you sure that you want to discard all changes in this workspace?</source>
+			<target xml:lang="ru">Вы уверены, что хотите отменить все изменения в этой рабочей области?</target><alt-trans><target xml:lang="ru">Подтвердите отмену всех сделанных изменений в этой рабочей области.</target></alt-trans></trans-unit>
+      <trans-unit id="publishAll" xml:space="preserve" approved="yes">
+				<source>Publish all</source>
+			<target xml:lang="ru">Опубликовать все</target></trans-unit>
+      <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve" approved="yes">
+				<source>Publish all changes</source>
+			<target xml:lang="ru">Опубликовать все изменения</target></trans-unit>
+      <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve" approved="yes">
+				<source>Are you sure that you want to publish all changes?</source>
+			<target xml:lang="ru">Вы уверены, что хотите опубликовать все изменения?</target><alt-trans><target xml:lang="ru">Подтвердите публикацию всех сделанных изменений.</target></alt-trans></trans-unit>
+      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceHeader" xml:space="preserve" approved="yes">
+				<source>Pending changes</source>
+			<target xml:lang="ru">Невыполненные изменения</target><alt-trans><target xml:lang="ru">Ожидающие изменения</target></alt-trans></trans-unit>
+      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve" approved="yes">
+				<source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
+			<target xml:lang="ru">Ваша личная рабочай область в настоящее время содержит неопубликованные изменения. Чтобы переключиться на другое целевое рабоче пространство необходимо сначала опубликовать или отменить неопубликованные изменения.</target><alt-trans><target xml:lang="ru">Ваше личное рабочее пространство в настоящее время содержит неопубликованные изменения. Чтобы переключиться на другое целевое рабочее пространство необходимо сначала опубликовать или отменить неопубликованные изменения.</target></alt-trans><alt-trans><target xml:lang="ru">Ваш личный Workspace в настоящее время содержит неопубликованные изменения. Чтобы переключиться на другой целевой Workspace необходимо сначала опубликовать или отменить неопубликованные изменения.</target></alt-trans><alt-trans><target xml:lang="ru">Ваше личное рабочее пространство в настоящее время содержит неопубликованные изменения. Чтобы переключиться на другое целевое рабочее пространство необходимо сначала опубликовать или отменить неопобликованные изменения.</target></alt-trans></trans-unit>
+      <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve" approved="yes">
+				<source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
+			<target xml:lang="ru">Пожалуйста просмотрите ваши изменения, опубликуйте или отмените их, а затем снова выбирите целевую рабочую область.</target><alt-trans><target xml:lang="ru">Пожалуйста, просмотрите ваши изменения, опубликуйте или отмените их, а затем снова выбирите целевое рабочее пространство.</target></alt-trans><alt-trans><target xml:lang="ru">Пожалуйста просмотрите ваши изменения, опубликуйте или отмените их, а затем снова выбирите целевой Workspace.</target></alt-trans><alt-trans><target xml:lang="ru">Пожалуйста, просмотрите ваши изменения, опубликуйте или отмените их, а затем снова выбирите целевой Workspace.</target></alt-trans></trans-unit>
+      <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve" approved="yes">
+				<source>Editing Modes</source>
+			<target xml:lang="ru">Режимы редактирования</target></trans-unit>
+      <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve" approved="yes">
+				<source>Preview Central</source>
+			<target xml:lang="ru">Центр предпросмотра</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve" approved="yes">
+				<source>You still have changes. What do you want to do with them?</source>
+			<target xml:lang="ru">Имеются несохраненные изменения. Что с ними делать?</target><alt-trans><target xml:lang="ru">Имеются несохраненные изменения. Что с ними сделать?</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve" approved="yes">
+				<source>Selected element</source>
+			<target xml:lang="ru">Выбранный элемент</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve" approved="yes">
+				<source>There are fields that are not correctly filled in.</source>
+			<target xml:lang="ru">Есть поля, которые заполнены неправильно.</target><alt-trans><target xml:lang="ru">Поля заполнены неверно.</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve" approved="yes">
+				<source>The fields marked with an error are not yet correctly filled in. Please complete them properly.</source>
+			<target xml:lang="ru">Отмеченные ошибкой поля всё еще заполнены не верно. Пожалуйста, заполните их должным образом.</target><alt-trans><target xml:lang="ru">Указанные поля заполнены неверно. Заполните их правильно.</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.button.default" xml:space="preserve" approved="yes">
+				<source>Continue editing</source>
+			<target xml:lang="ru">Продолжить правку</target></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.button.danger" xml:space="preserve" approved="yes">
+				<source>Throw away</source>
+			<target xml:lang="ru">Отклонить</target><alt-trans><target xml:lang="ru">Выбросить</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve" approved="yes">
+				<source>Apply</source>
+			<target xml:lang="ru">Применить</target></trans-unit>
+      <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve" approved="yes">
+				<source>Select a Plugin</source>
+			<target xml:lang="ru">Выберите плагин</target></trans-unit>
+      <trans-unit id="content.inspector.editors.masterPluginEditor.noPluginConfigured" xml:space="preserve" approved="yes">
+				<source>No plugin configured</source>
+			<target xml:lang="ru">Ни один плагин не настроен</target></trans-unit>
+      <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnPage" xml:space="preserve" approved="yes">
+				<source>view is displayed on page</source>
+			<target xml:lang="ru">представление отображается на странице</target><alt-trans><target xml:lang="ru">режим выведен на странице</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.editors.pluginViewsEditor.displayedOnCurrentPage" xml:space="preserve" approved="yes">
+				<source>view is displayed on current page</source>
+			<target xml:lang="ru">представление отображается на текущей странице</target><alt-trans><target xml:lang="ru">режим выведен на текущей странице</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve" approved="yes">
+				<source>No date set</source>
+			<target xml:lang="ru">Дата не установлена</target></trans-unit>
+      <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve" approved="yes">
+				<source>Edit code</source>
+			<target xml:lang="ru">Редактировать код</target></trans-unit>
+      <trans-unit id="content.inspector.editors.linkEditor.search" xml:space="preserve" approved="yes">
+				<source>Paste a link, or type to search</source>
+			<target xml:lang="ru">Вставьте ссылку или введите для поиска</target></trans-unit>
+      <trans-unit id="content.inspector.editors.nodeTypeEditor.unableToLoadSubNodeTypes" xml:space="preserve" approved="yes">
+				<source>Unable to load sub node types of:</source>
+			<target xml:lang="ru">Не удается загрузить подтипы элементов:</target><alt-trans><target xml:lang="ru">Не удается загрузить подтипы узлов:</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.groups.type" xml:space="preserve" approved="yes">
+				<source>Change type</source>
+			<target xml:lang="ru">Изменить тип</target></trans-unit>
+      <trans-unit id="content.inspector.groups.nodeInfo" xml:space="preserve" approved="yes">
+				<source>Additional info</source>
+			<target xml:lang="ru">Дополнительная информация</target></trans-unit>
+      <trans-unit id="content.inspector.groups.visibility" xml:space="preserve" approved="yes">
+				<source>Visibility</source>
+			<target xml:lang="ru">Видимость</target></trans-unit>
+      <trans-unit id="content.inspector.groups.document" xml:space="preserve" approved="yes">
+				<source>Document options</source>
+			<target xml:lang="ru">Параметры документа</target></trans-unit>
+      <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve" approved="yes">
+				<source>The length of this text must be between {minimum} and {maximum} characters.</source>
+			<target xml:lang="ru">Длина этого текста должна быть между {minimum} и {maximum} символами.</target><alt-trans><target xml:lang="ru">Длина этого текста должна быть между {{minimum}} и {{maximum}} символами.</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.validators.stringLength.smallerThanMinimum" xml:space="preserve" approved="yes">
+				<source>This field must contain at least {minimum} characters.</source>
+			<target xml:lang="ru">Это поле должно содержать по крайней мере {minimum} символов.</target><alt-trans><target xml:lang="ru">Это поле должно содержать по крайней мере {{minimum}} символов.</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.validators.stringLength.greaterThanMaximum" xml:space="preserve" approved="yes">
+				<source>This text may not exceed {maximum} characters.</source>
+			<target xml:lang="ru">Этот текст не может превышать {maximum} символов.</target><alt-trans><target xml:lang="ru">Этот текст не может превышать {{maximum}} символов.</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve" approved="yes">
+				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
+			<target xml:lang="ru">Разрешены только латинские(a до z, умлауты, ...) малые буквы и цифры.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve" approved="yes">
+				<source>The given subject was not countable.</source>
+			<target xml:lang="ru">Содержимое не является исчислимым.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.countValidator.countBetween" xml:space="preserve" approved="yes">
+				<source>The count must be between {minimum} and {maximum}.</source>
+			<target xml:lang="ru">Количество должно быть между {minimum} и {maximum}.</target><alt-trans><target xml:lang="ru">Количество должно быть между {{minimum}} и {{maximum}}.</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.invalidDate" xml:space="preserve" approved="yes">
+				<source>The given value was not a valid date.</source>
+			<target xml:lang="ru">Данное значение не является допустимой датой.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBetween" xml:space="preserve" approved="yes">
+				<source>The given date must be between {formatEarliestDate} and {formatLatestDate}</source>
+			<target xml:lang="ru">Данная дата должна быть между {formatEarliestDate} и {formatLatestDate}</target><alt-trans><target xml:lang="ru">Данная дата должна быть между {{formatEarliestDate}} и {{formatLatestDate}}</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeAfter" xml:space="preserve" approved="yes">
+				<source>The given date must be after {formatEarliestDate}</source>
+			<target xml:lang="ru">Данная дата должна быть позже чем {formatEarliestDate}</target><alt-trans><target xml:lang="ru">Данная дата должна быть позже {formatEarliestDate}</target></alt-trans><alt-trans><target xml:lang="ru">Данная дата должна быть позже чем {{formatEarliestDate}}</target></alt-trans><alt-trans><target xml:lang="ru">Данная дата должна быть позже {{formatEarliestDate}}</target></alt-trans><alt-trans><target xml:lang="ru">Данная дата должна быть после {{formatEarliestDate}}</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBefore" xml:space="preserve" approved="yes">
+				<source>The given date must be before {formatLatestDate}</source>
+			<target xml:lang="ru">Данная дата должна быть раньше {formatLatestDate}</target><alt-trans><target xml:lang="ru">Данная дата должна быть раньше чем {formatLatestDate}</target></alt-trans><alt-trans><target xml:lang="ru">Данная дата должна быть раньше чем {{formatLatestDate}}</target></alt-trans><alt-trans><target xml:lang="ru">Данная дата должна быть до {{formatLatestDate}}</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.validators.emailAddressValidator.invalidEmail" xml:space="preserve" approved="yes">
+				<source>Please specify a valid email address.</source>
+			<target xml:lang="ru">Пожалуйста укажите верный адрес электронной почты.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.floatValidator.validFloatExpected" xml:space="preserve" approved="yes">
+				<source>A valid float number is expected.</source>
+			<target xml:lang="ru">Ожидается вещественное число.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.integerValidator.aValidIntegerNumberIsExpected" xml:space="preserve" approved="yes">
+				<source>A valid integer number is expected.</source>
+			<target xml:lang="ru">Ожидается целое число.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.labelValidator.invalidLabel" xml:space="preserve" approved="yes">
+				<source>Only letters, numbers, spaces and certain punctuation marks are expected.</source>
+			<target xml:lang="ru">Ожидаются только буквы, цифры, пробелы и определенные знаки пунктуации.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.notEmptyValidator.isEmpty" xml:space="preserve" approved="yes">
+				<source>This property is required.</source>
+			<target xml:lang="ru">Это свойство является обязательным.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.numberRangeValidator.validNumberExpected" xml:space="preserve" approved="yes">
+				<source>A valid number is expected.</source>
+			<target xml:lang="ru">Ожидается число.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.numberRangeValidator.numberShouldBeInRange" xml:space="preserve" approved="yes">
+				<source>Please enter a valid number between {minimum} and {maximum}</source>
+			<target xml:lang="ru">Пожалуйста, введите число от {minimum} до {maximum}</target><alt-trans><target xml:lang="ru">Пожалуйста, введите число от {{minimum}} до {{maximum}}</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve" approved="yes">
+				<source>The given subject did not match the pattern ({pattern})</source>
+			<target xml:lang="ru">Данное поле не соответствует шаблону ({pattern})</target></trans-unit>
+      <trans-unit id="content.inspector.validators.stringValidator.stringIsExpected" xml:space="preserve" approved="yes">
+				<source>A valid string is expected.</source>
+			<target xml:lang="ru">Ожидается строковый тип.</target><alt-trans><target xml:lang="ru">Ожидается текст.</target></alt-trans></trans-unit>
+      <trans-unit id="content.inspector.validators.textValidator.validTextWithoutAnyXMLtagsIsExpected" xml:space="preserve" approved="yes">
+				<source>Valid text without any XML tags is expected.</source>
+			<target xml:lang="ru">Ожидается текст без XML-тэгов.</target></trans-unit>
+      <trans-unit id="content.inspector.validators.uuidValidator.invalidUuid" xml:space="preserve" approved="yes">
+				<source>The given subject is not a valid UUID.</source>
+			<target xml:lang="ru">Значение не является допустимым UUID.</target></trans-unit>
+      <trans-unit id="content.dimension.panel.toggle" xml:space="preserve" approved="yes">
+				<source>Toggle content dimensions selector</source>
+			<target xml:lang="ru">Переключить выбор пространств содержимого</target><alt-trans><target xml:lang="ru">Переключить выбор измерений содержимого</target></alt-trans><alt-trans><target xml:lang="ru">Переключить выбор измерений контента</target></alt-trans></trans-unit>
+      <trans-unit id="content.dimension.createDialog.header" xml:space="preserve" approved="yes">
+				<source>Start with an empty or pre-filled document?</source>
+			<target xml:lang="ru">Начинать с чистиго листа или с пред-заполненного документа?</target><alt-trans><target xml:lang="ru">Начинать с чистиго листа или открыть пред-заполненный документ?</target></alt-trans><alt-trans><target xml:lang="ru">Начинать с чистиго листа или открыть заполненный документ?</target></alt-trans></trans-unit>
+      <trans-unit id="content.dimension.createDialog.nodeTypeDoesNotExistInDimension" xml:space="preserve" approved="yes">
+				<source>This {nodeTypeLabel} does not exist yet in {currentDimensionChoiceText}.</source>
+			<target xml:lang="ru">Этот элемент ({nodeTypeLabel}) еще не существует в пространстве содержимого "{currentDimensionChoiceText}".</target><alt-trans><target xml:lang="ru">Этот {nodeTypeLabel} еще не существует в {currentDimensionChoiceText}.</target></alt-trans></trans-unit>
+      <trans-unit id="content.dimension.createDialog.createEmptyOrCopy" xml:space="preserve" approved="yes">
+				<source>You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</source>
+			<target xml:lang="ru">Можно создать сейчас, начиная с пустого элемента {nodeTypeLabel} или путём копирования всего содержимого из открытого в данный момент элемента {nodeTypeLabel} в {currentDocumentDimensionChoiceText}.</target><alt-trans><target xml:lang="ru">Можно создать сейчас, начиная с пустого элемента {nodeTypeLabel} или путём копирования всего контента из открытого в данный момент элемента {nodeTypeLabel} в {currentDocumentDimensionChoiceText}.</target></alt-trans></trans-unit>
+      <trans-unit id="content.dimension.createDialog.existingAncestorDocuments" xml:space="preserve" approved="yes">
+				<source>Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</source>
+			<target xml:lang="ru">В выбранном варианте содержится {numberOfNodesMissingInRootline} не существующих родительских элементов, которые также будут созданы.</target></trans-unit>
+      <trans-unit id="content.dimension.createDialog.createEmpty" xml:space="preserve" approved="yes">
+				<source>Create empty</source>
+			<target xml:lang="ru">Создать пустой</target><alt-trans><target xml:lang="ru">Создать пустым</target></alt-trans><alt-trans><target xml:lang="ru">Создайте пустой</target></alt-trans></trans-unit>
+      <trans-unit id="content.dimension.createDialog.createAndCopy" xml:space="preserve" approved="yes">
+				<source>Create and copy</source>
+			<target xml:lang="ru">Создать и скопировать</target></trans-unit>
+      <trans-unit id="content.menu.menuPanel.content" xml:space="preserve" approved="yes">
+				<source>Content</source>
+			<target xml:lang="ru">Содержимое</target><alt-trans><target xml:lang="ru">Контент</target></alt-trans></trans-unit>
+      <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve" approved="yes">
+				<source>Toggle menu group</source>
+			<target xml:lang="ru">Скрыть/отобразить группу меню</target><alt-trans><target xml:lang="ru">Переключить группу меню</target></alt-trans><alt-trans><target xml:lang="ru">Скрыть/отобразить группы меню</target></alt-trans><alt-trans><target xml:lang="ru">Переключить группы меню</target></alt-trans></trans-unit>
+      <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve" approved="yes">
+				<source>Toggle sticky menu mode</source>
+			<target xml:lang="ru">Переключить режим залипающего меню</target><alt-trans><target xml:lang="ru">Переключить клейкое меню</target></alt-trans><alt-trans><target xml:lang="ru">Скрыть/отобразить клейкое меню</target></alt-trans></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve" approved="yes">
+				<source>Do you really want to delete</source>
+			<target xml:lang="ru">Вы действительно хотите удалить</target><alt-trans><target xml:lang="ru">Подтвердите удаление</target></alt-trans></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve" approved="yes">
+				<source>This will delete the element</source>
+			<target xml:lang="ru">Это приведёт к удалению элемента</target><alt-trans><target xml:lang="ru">Это приведёт к удалению страницы</target></alt-trans></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve" approved="yes">
+				<source>and it's children</source>
+			<target xml:lang="ru">и его дочерних элементов</target><alt-trans><target xml:lang="ru">и ее подстраниц</target></alt-trans></trans-unit>
+      <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve" approved="yes">
+				<source>This action can be undone in the workspace management.</source>
+			<target xml:lang="ru">Операцию можно отменить в меню управления рабочими областями.</target><alt-trans><target xml:lang="ru">Операцию можно отменить в меню управления рабочей областью.</target></alt-trans><alt-trans><target xml:lang="ru">Операцию можно отменить в меню управления Workspace.</target></alt-trans><alt-trans><target xml:lang="ru">Операцию можно отменить при управлении рабочей областью.</target></alt-trans></trans-unit>
+      <trans-unit id="height" xml:space="preserve" approved="yes">
+				<source>Height</source>
+			<target xml:lang="ru">Высота</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve" approved="yes">
+				<source>Do you really want to delete</source>
+			<target xml:lang="ru">Вы действительно хотите удалить</target><alt-trans><target xml:lang="ru">Подтвердите удаление</target></alt-trans></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve" approved="yes">
+				<source>this element</source>
+			<target xml:lang="ru">этот элемент</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve" approved="yes">
+				<source>This will delete the element.</source>
+			<target xml:lang="ru">Это приведет к удалению элемента.</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve" approved="yes">
+				<source>This action can be undone in the workspace management.</source>
+			<target xml:lang="ru">Операцию можно отменить в меню управления рабочими областями.</target><alt-trans><target xml:lang="ru">Операцию можно отменить в меню управления рабочей областью.</target></alt-trans><alt-trans><target xml:lang="ru">Операцию можно отменить в меню управления Workspace.</target></alt-trans><alt-trans><target xml:lang="ru">Операцию можно отменить при управлении рабочей областью.</target></alt-trans></trans-unit>
+      <trans-unit id="media" xml:space="preserve" approved="yes">
+				<source>Media</source>
+			<target xml:lang="ru">Медиатека</target></trans-unit>
+      <trans-unit id="crop" xml:space="preserve" approved="yes">
+				<source>Crop</source>
+			<target xml:lang="ru">Обрезать</target></trans-unit>
+      <trans-unit id="width" xml:space="preserve" approved="yes">
+				<source>Width</source>
+			<target xml:lang="ru">Ширина</target></trans-unit>
+      <trans-unit id="translate.requiredProperty" xml:space="preserve" approved="yes">
+				<source>Missing required property: </source>
+			<target xml:lang="ru">Отсутствует обязательное свойство: </target><alt-trans><target xml:lang="ru">Отсутствует требуемое свойство: </target></alt-trans></trans-unit>
+      <trans-unit id="workspace" xml:space="preserve" approved="yes">
+				<source>Workspace</source>
+			<target xml:lang="ru">Рабочая область</target></trans-unit>
+      <trans-unit id="workspaces" xml:space="preserve" approved="yes">
+				<source>Workspaces</source>
+			<target xml:lang="ru">Рабочие области</target><alt-trans><target xml:lang="ru">Рабочее пространство</target></alt-trans><alt-trans><target xml:lang="ru">Рабочие пространства</target></alt-trans><alt-trans><target xml:lang="ru">Workspaces</target></alt-trans></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve" approved="yes">
+				<source>An error occurred during saving</source>
+			<target xml:lang="ru">Произошла ошибка при сохранении</target></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve" approved="yes">
+				<source>Reload the page to attempt to fix the problem.</source>
+			<target xml:lang="ru">Обновите страницу, чтобы попытаться исправить эту проблему.</target><alt-trans><target xml:lang="ru">Перезагрузите страницу, чтобы попытаться исправить эту проблему.</target></alt-trans></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve" approved="yes">
+				<source>Reload the backend</source>
+			<target xml:lang="ru">Перезагрузить Neos</target><alt-trans><target xml:lang="ru">Обновить бэкэнд</target></alt-trans><alt-trans><target xml:lang="ru">Перезагрузить бэкэнд</target></alt-trans></trans-unit>
+      <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve" approved="yes">
+				<source>Reload</source>
+			<target xml:lang="ru">Обновить</target><alt-trans><target xml:lang="ru">Перезагрузить</target></alt-trans></trans-unit>
+      <!-- Edit / preview modes -->
+      <trans-unit id="editPreviewModes.inPlace" xml:space="preserve" approved="yes">
+				<source>In-Place</source>
+			<target xml:lang="ru">Правка напрямую</target><alt-trans><target xml:lang="ru">На месте</target></alt-trans></trans-unit>
+      <trans-unit id="editPreviewModes.rawContent" xml:space="preserve" approved="yes">
+				<source>Raw Content</source>
+			<target xml:lang="ru">Необработанное содержимое</target><alt-trans><target xml:lang="ru">Исходный контент</target></alt-trans><alt-trans><target xml:lang="ru">Исходное содержимое</target></alt-trans></trans-unit>
+      <trans-unit id="rawContentMode" xml:space="preserve" approved="yes">
+				<source>Raw Content Mode</source>
+			<target xml:lang="ru">Режим необработанного содержимого</target><alt-trans><target xml:lang="ru">Режим необработанного контента</target></alt-trans><alt-trans><target xml:lang="ru">Режим исходного контента</target></alt-trans><alt-trans><target xml:lang="ru">Режим исходного содержимого</target></alt-trans></trans-unit>
+      <trans-unit id="editPreviewModes.desktop" xml:space="preserve" approved="yes">
+				<source>Desktop</source>
+			<target xml:lang="ru">Настольный компьютер</target><alt-trans><target xml:lang="ru">Компьютер</target></alt-trans><alt-trans><target xml:lang="ru">Обычная версия</target></alt-trans></trans-unit>
+      <!-- Login -->
+      <trans-unit id="login.index.title" xml:space="preserve" approved="yes">
+				<source>Login to</source>
+			<target xml:lang="ru">Войти в</target><alt-trans><target xml:lang="ru">Войти в Neos</target></alt-trans><alt-trans><target xml:lang="ru">Вход в систему TYPO3 Neos</target></alt-trans></trans-unit>
+      <trans-unit id="authenticating" xml:space="preserve" approved="yes">
+				<source>Authenticating</source>
+			<target xml:lang="ru">Аутентификация</target><alt-trans><target xml:lang="ru">Проверка подлинности</target></alt-trans></trans-unit>
+      <trans-unit id="logout" xml:space="preserve" approved="yes">
+				<source>Logout</source>
+			<target xml:lang="ru">Выйти из системы</target><alt-trans><target xml:lang="ru">Выйти из профиля</target></alt-trans></trans-unit>
+      <trans-unit id="wrongCredentials" xml:space="preserve" approved="yes">
+				<source>The entered username or password was wrong</source>
+			<target xml:lang="ru">Введенные имя пользователя или пароль неверные</target><alt-trans><target xml:lang="ru">Введенное имя пользователя или пароль был неправ</target></alt-trans></trans-unit>
+      <trans-unit id="login.expired" xml:space="preserve" approved="yes">
+				<source>Your login has expired. Please log in again.</source>
+			<target xml:lang="ru">Ваша сессия истекла. Пожалуйста, войдите снова.</target><alt-trans><target xml:lang="ru">Ваш логин истек. Пожалуйста, войдите снова.</target></alt-trans></trans-unit>
+      <!-- Error handlers -->
+      <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
+				<source>Go to setup</source>
+			<target xml:lang="ru">Перейти к установке</target></trans-unit>
+      <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve" approved="yes">
+				<source>Missing Homepage</source>
+			<target xml:lang="ru">Домашняя страница отсутствует</target><alt-trans><target xml:lang="ru">Стартовая страница отсутствует</target></alt-trans></trans-unit>
+      <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve" approved="yes">
+				<source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
+			<target xml:lang="ru">Сайт не был задан, либо сайт не содержит стартовую страницу, либо невозможно определить активный сайт.</target><alt-trans><target xml:lang="ru">Либо сайт не был задан, либо сайт не содержит домашнюю страницу, либо невозможно определить активный сайт.</target></alt-trans></trans-unit>
+      <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve" approved="yes">
+				<source>You might want to set the site's domain or import a new site in the setup.</source>
+			<target xml:lang="ru">Попробуйте задать домен сайта или импортировать новый сайт в программе установки.</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve" approved="yes">
+				<source>Database Error</source>
+			<target xml:lang="ru">Ошибка базы данных</target></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve" approved="yes">
+				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
+			<target xml:lang="ru">К сожалению, мы обнаружили ошибку с вашей базой данных. Смотрите файлы журнала в Data/Logs/* для получения более подробной информации.</target><alt-trans><target xml:lang="ru">Обнаружена ошибка в вашей базе данных. Загляните в файлы журнала в Data/Logs/* для получения более подробной информации.</target></alt-trans></trans-unit>
+      <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve" approved="yes">
+				<source>You might want to configure or check your database configuration in the setup.</source>
+			<target xml:lang="ru">Попробуйте настроить или проверить конфигурацию базы данных в программе установки.</target></trans-unit>
+      <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve" approved="yes">
+				<source>Page Not Found</source>
+			<target xml:lang="ru">Страница не найдена</target></trans-unit>
+      <trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve" approved="yes">
+				<source>Sorry, the page you requested was not found.</source>
+			<target xml:lang="ru">К сожалению, запрашиваемая вами страница не найдена.</target></trans-unit>
+      <trans-unit id="error.invalidNodeType.title" xml:space="preserve" approved="yes">
+				<source>Invalid NodeType</source>
+			<target xml:lang="ru">Недопустимый тип элемента</target></trans-unit>
+      <trans-unit id="error.invalidNodeType.description" xml:space="preserve" approved="yes">
+				<source>The configuration of the NodeType that is supposed to be rendered here is not available. Probably you renamed the NodeType and are missing a migration or you simply misspelled it.</source>
+			<target xml:lang="ru">Настройка типа элемента, который должен отображаться здесь не доступен. Вероятно вы переименовали тип элемента и не выполнили миграцию или просто допустили опечатку.</target></trans-unit>
+      <trans-unit id="error.node.create.unexpected" xml:space="preserve" approved="yes">
+				<source>Unexpected error while creating node</source>
+			<target xml:lang="ru">Непредвиденная ошибка при создании элемента</target><alt-trans><target xml:lang="ru">Непредвиденная ошибка при создании узла</target></alt-trans></trans-unit>
+      <trans-unit id="error.node.delete.unexpected" xml:space="preserve" approved="yes">
+				<source>Unexpected error while deleting node</source>
+			<target xml:lang="ru">Непредвиденная ошибка при удалении элемента</target><alt-trans><target xml:lang="ru">Непредвиденная ошибка при удалении узла</target></alt-trans></trans-unit>
+      <trans-unit id="error.node.update.unexpected" xml:space="preserve" approved="yes">
+				<source>Unexpected error while updating node</source>
+			<target xml:lang="ru">Непредвиденная ошибка при обновлении элемента</target><alt-trans><target xml:lang="ru">Непредвиденная ошибка при обновлении узла</target></alt-trans></trans-unit>
+      <trans-unit id="error.node.move.unexpected" xml:space="preserve" approved="yes">
+				<source>Unexpected error while moving node</source>
+			<target xml:lang="ru">Непредвиденная ошибка при перемещении элемента</target><alt-trans><target xml:lang="ru">Неожиданная ошибка при перемещении узла</target></alt-trans></trans-unit>
+      <trans-unit id="error.nodeTree.load" xml:space="preserve" approved="yes">
+				<source>Node Tree loading error.</source>
+			<target xml:lang="ru">Ошибка при загрузке дерева элементов.</target></trans-unit>
+      <!-- FlashMessages -->
+      <trans-unit id="flashMessage.1222204027" xml:space="preserve" approved="yes">
+				<source>The entered username or password was wrong</source>
+			<target xml:lang="ru">Введенные имя пользователя или пароль неверные</target><alt-trans><target xml:lang="ru">Введенное имя пользователя или пароль был неправ</target></alt-trans></trans-unit>
+      <!-- Miscellaneous -->
+      <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve" approved="yes">
+				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
+			<target xml:lang="ru">"{nodeTypeName}" на странице "{pageLabel}"</target></trans-unit>
+      <!-- Service output -->
+      <trans-unit id="service.nodes.title" xml:space="preserve" approved="yes">
+				<source>Nodes</source>
+			<target xml:lang="ru">Элементы</target><alt-trans><target xml:lang="ru">Узлы</target></alt-trans></trans-unit>
+      <trans-unit id="service.nodes.show" xml:space="preserve" approved="yes">
+				<source>Show</source>
+			<target xml:lang="ru">Показать</target></trans-unit>
+      <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve" approved="yes">
+				<source>This node cannot be accessed through a public URL</source>
+			<target xml:lang="ru">Этот элемент не может быть доступным через общедоступный URL-адрес</target><alt-trans><target xml:lang="ru">Этот узел не может быть доступным через общедоступный URL-адрес</target></alt-trans></trans-unit>
+      <trans-unit id="service.nodes.nodeProperties" xml:space="preserve" approved="yes">
+				<source>Node Properties</source>
+			<target xml:lang="ru">Свойства элемента</target><alt-trans><target xml:lang="ru">Свойства узла</target></alt-trans></trans-unit>
+    </body>
+  </file>
+</xliff>

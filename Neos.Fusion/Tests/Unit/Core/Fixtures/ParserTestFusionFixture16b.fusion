@@ -1,0 +1,17 @@
+//
+// Fusion Fixture 16b
+// - invalid multiline Eel expressions
+
+
+// intentionally-left-open eel expression
+foo.bar.prototype(Neos.Foo:Bar2) {
+	blah3 = ${my.expression("as}
+		" + "df"
+}
+
+prototype(Foo.Bar:Baz) {
+	prototype(Foo.Bar:Baz2).test = 'asdf'
+}
+
+
+prototype(Neos.Foo:Bar3) < prototype(Neos.Foo:Bar2)

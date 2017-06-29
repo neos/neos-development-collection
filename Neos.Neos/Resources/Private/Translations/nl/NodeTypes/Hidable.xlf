@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="nl">
+    <body>
+      <trans-unit id="properties._hidden" xml:space="preserve" approved="yes">
+				<source>Hide</source>
+			<target xml:lang="nl">Verbergen</target><alt-trans><target xml:lang="nl">Verberg</target></alt-trans></trans-unit>
+    </body>
+  </file>
+</xliff>

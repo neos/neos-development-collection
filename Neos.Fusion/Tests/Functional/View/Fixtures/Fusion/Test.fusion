@@ -1,0 +1,9 @@
+prototype(Neos.Fusion:TestRenderer) {
+	@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+	test = ${test}
+}
+
+Foo.Bar.TestController.index = Neos.Fusion:TestRenderer
+
+foo.bar = Neos.Fusion:TestRenderer
+foo.bar.test = 'foobar'
