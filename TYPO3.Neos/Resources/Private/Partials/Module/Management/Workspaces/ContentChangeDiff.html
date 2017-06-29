@@ -44,7 +44,7 @@
                             </f:for>
                         </table>
                     </f:if>
-                    <f:if condition="{contentChanges.type} == 'asset'">
+                    <f:if condition="{contentChanges.type} == 'image'">
                         <table>
                             <tr>
                                 <td>
@@ -59,6 +59,22 @@
                                 </td>
                             </tr>
                         </table>
+                    </f:if>
+                    <f:if condition="{contentChanges.type} == 'asset'">
+                        <table>
+                            <tr>
+                                <td>
+                                    <f:if condition="{contentChanges.original}">
+                                        <del><a href="{f:uri.resource(resource: contentChanges.original.resource)}">{contentChanges.original.resource.filename}</a></del>
+                                    </f:if>
+                                </td>
+                                <td>
+                                    <f:if condition="{contentChanges.changed}">
+                                        <ins><a href="{f:uri.resource(resource: contentChanges.changed.resource)}">{contentChanges.changed.resource.filename}</a></ins>
+                                    </f:if>
+                              </td>
+                          </tr>
+                       </table>
                     </f:if>
                     <f:if condition="{contentChanges.type} == 'datetime'">
                         <table>
