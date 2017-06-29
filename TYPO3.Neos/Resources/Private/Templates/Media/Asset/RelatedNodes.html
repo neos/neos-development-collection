@@ -10,14 +10,14 @@
 	<table class="neos-table neos-no-hover">
 		<thead>
 			<tr>
-				<th>{neos:backend.translate(id: 'document')}</th>
-				<th>{neos:backend.translate(id: 'reference')}</th>
+				<th>{neos:backend.translate(id: 'document', package: 'TYPO3.Neos')}</th>
+				<th>{neos:backend.translate(id: 'reference', package: 'TYPO3.Neos')}</th>
 				<th>&nbsp;</th>
 				<f:if condition="{contentDimensions}">
-					<th>{neos:backend.translate(id: 'contentDimensions')}</th>
+					<th>{neos:backend.translate(id: 'contentDimensions', package: 'TYPO3.Neos')}</th>
 				</f:if>
-				<th>{neos:backend.translate(id: 'workspace')}</th>
-				<th class="neos-aRight">{neos:backend.translate(id: 'lastModification')}</th>
+				<th>{neos:backend.translate(id: 'workspace', package: 'TYPO3.Neos')}</th>
+				<th class="neos-aRight">{neos:backend.translate(id: 'lastModification', package: 'TYPO3.Neos')}</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -25,7 +25,7 @@
 				<f:if condition="{relatedNodes -> f:count()} > 1">
 					<tr class="neos-folder">
 						<td class="neos-priority1" colspan="{f:if(condition: contentDimensions, then: 4, else: 3)}">
-							{neos:backend.translate(id: 'site')}:
+							{neos:backend.translate(id: 'site', package: 'TYPO3.Neos')}:
 							<span title="{site.site.nodeName}" data-neos-toggle="tooltip">{site.site.name}</span>
 						</td>
 						<td class="neos-priority1 neos-aRight">
@@ -37,7 +37,7 @@
 					<tr class="fold-{site.site.nodeName}">
 						<td>
 							<f:if condition="{documentNode.node.nodeType.ui.icon}">
-								<i class="{documentNode.node.nodeType.ui.icon}" title="{f:if(condition: documentNode.node.nodeType.label, then: '{neos:backend.translate(id: documentNode.node.nodeType.label)}', else: documentNode.node.nodeType.name)}" data-neos-toggle="tooltip"></i>
+								<i class="{documentNode.node.nodeType.ui.icon}" title="{f:if(condition: documentNode.node.nodeType.label, then: '{neos:backend.translate(id: documentNode.node.nodeType.label, package: 'TYPO3.Neos')}', else: documentNode.node.nodeType.name)}" data-neos-toggle="tooltip"></i>
 							</f:if>
 							<f:if condition="{documentNode.node}">
 								<span title="{f:render(partial: '../Module/Shared/DocumentBreadcrumb', arguments: {node: documentNode.node})}" data-neos-toggle="tooltip">{documentNode.node.label}</span>
@@ -48,7 +48,7 @@
 								<f:for each="{documentNode.nodes}" as="relatedNode">
 									<li>
 										<f:if condition="{relatedNode.node.nodeType.ui.icon}">
-											<i class="{relatedNode.node.nodeType.ui.icon}" title="{f:if(condition: relatedNode.node.nodeType.label, then: '{neos:backend.translate(id: relatedNode.node.nodeType.label)}', else: '{relatedNode.node.nodeType.name}')}" data-neos-toggle="tooltip" data-placement="left"></i>
+											<i class="{relatedNode.node.nodeType.ui.icon}" title="{f:if(condition: relatedNode.node.nodeType.label, then: '{neos:backend.translate(id: relatedNode.node.nodeType.label, package: 'TYPO3.Neos')}', else: '{relatedNode.node.nodeType.name}')}" data-neos-toggle="tooltip" data-placement="left"></i>
 										</f:if>
 										<span title="{relatedNode.node.path}" data-neos-toggle="tooltip" data-placement="left">{relatedNode.node.label}</span>
 									</li>
@@ -61,10 +61,12 @@
 									<li>
 										<f:if condition="{relatedNode.contextDocumentNode}">
 											<f:then>
-												<neos:link.node node="{relatedNode.contextDocumentNode}" target="_blank" title="{neos:backend.translate(id: 'edit')} \"{neos:backend.translate(id: documentNode.node.label)}\""><i class="icon-external-link"></i></neos:link.node>
+												<f:if condition="{relatedNode.accessible}">
+													<neos:link.node node="{relatedNode.contextDocumentNode}" target="_blank" title="{neos:backend.translate(id: 'workspaces.openPageInWorkspace', source: 'Modules', package: 'TYPO3.Neos', arguments: {0: relatedNode.nodeData.workspace.title})}"><i class="icon-external-link"></i></neos:link.node>
+												</f:if>
 											</f:then>
 											<f:else>
-												<span><i class="icon-warning" data-neos-toggle="tooltip" data-placement="left" title="Broken node, missing document node"></i></span>
+												<span><i class="icon-warning" data-neos-toggle="tooltip" data-placement="left" title="{neos:backend.translate(id: 'media.missingDocumentNode', source: 'Modules', package: 'TYPO3.Neos')}"></i></span>
 											</f:else>
 										</f:if>
 									</li>
@@ -95,15 +97,15 @@
 													<f:then>
 														<f:if condition="{relatedNode.nodeData.workspace.privateWorkspace}">
 															<f:then>
-																<i class="icon-shield" title="{neos:backend.translate(id: 'workspaces.privateWorkspace', source: 'Modules')}" data-neos-toggle="tooltip"></i>
+																<i class="icon-shield" title="{neos:backend.translate(id: 'workspaces.privateWorkspace', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip"></i>
 															</f:then>
 															<f:else>
-																<i class="icon-group" title="{neos:backend.translate(id: 'workspaces.internalWorkspace', source: 'Modules')}" data-neos-toggle="tooltip"></i>
+																<i class="icon-group" title="{neos:backend.translate(id: 'workspaces.internalWorkspace', source: 'Modules', package: 'TYPO3.Neos')}" data-neos-toggle="tooltip"></i>
 															</f:else>
 														</f:if>
 													</f:then>
 													<f:else>
-														<i class="icon-lock" title="{neos:backend.translate(id: 'workspaces.readonlyWorkspace', source: 'Modules')}" data-neos-toggle="tooltip"></i>
+														<i class="icon-lock" title="{neos:backend.translate(id: 'media.noAccessToWorkspace', source: 'Modules', package: 'TYPO3.Neos', arguments: {0: relatedNode.nodeData.workspace.title})}" data-neos-toggle="tooltip"></i>
 													</f:else>
 												</f:if>
 											</f:else>
@@ -130,7 +132,7 @@
 
 	<div class="neos-footer">
 		<!-- TODO: Find a nicer way to send the referer for a get request -->
-		<a href="javascript:window.history.back(1);" class="neos-button">{neos:backend.translate(id: 'back', source: 'Modules')}</a>
+		<a href="javascript:window.history.back(1);" class="neos-button">{neos:backend.translate(id: 'back', package: 'TYPO3.Neos')}</a>
 	</div>
 
 </f:section>
