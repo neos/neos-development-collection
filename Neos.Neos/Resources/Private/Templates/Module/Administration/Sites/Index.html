@@ -1,0 +1,114 @@
+{namespace neos=Neos\Neos\ViewHelpers}
+<f:layout name="BackendSubModule" />
+
+<f:section name="content">
+	<table class="neos-table">
+		<thead>
+			<tr>
+				<th>{neos:backend.translate(id: 'name', value: 'Name')}</th>
+				<th>{neos:backend.translate(id: 'sites.rootNodeName', value: 'Rootnode name')}</th>
+				<th>{neos:backend.translate(id: 'sites.domains', value: 'Domains')}</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			<f:for each="{sitePackagesAndSites}" as="sitePackageAndSite" key="sitePackageKey">
+				<tr class="neos-folder">
+					<td class="neos-priority1" colspan="3">
+						{neos:backend.translate(id: 'package', value: 'Package')}:
+						<neos:link.module path="administration/packages" section="Sites" class="neos-label" title="{sitePackageAndSite.package.packageMetaData.description}" additionalAttributes="{data-neos-toggle: 'tooltip'}">{sitePackageAndSite.packageKey}</neos:link.module>
+						<f:if condition="{sitePackageAndSite.package}">
+							<f:then>
+								<f:if condition="{sitePackageAndSite.packageIsActive}"><f:else><span class="neos-badge neos-badge-{f:if(condition: sitePackageAndSite.sites, then: 'important', else: 'warning')}">{neos:backend.translate(id: 'deactivated', value: 'Deactivated')}</span></f:else></f:if>
+							</f:then>
+							<f:else><span class="neos-badge neos-badge-important">{neos:backend.translate(id: 'unavailable', value: 'Unavailable')}</span></f:else>
+						</f:if>
+					</td>
+					<td class="neos-priority1 neos-aRight">
+						<i class="fold-toggle icon-chevron-up icon-white" data-toggle="fold-{sitePackageKey}"></i>
+					</td>
+				</tr>
+				<f:if condition="{sitePackageAndSite.sites}">
+					<f:then>
+						<f:for each="{sitePackageAndSite.sites}" as="site">
+							<tr class="fold-{sitePackageKey}">
+								<td>
+									{site.name}
+									<f:if condition="{site.online}">
+										<f:else>
+											<span class="neos-badge neos-badge-warning">{neos:backend.translate(id: 'inactive', value: 'Inactive')}</span>
+										</f:else>
+									</f:if>
+								</td>
+								<td><span class="neos-label">{site.nodeName}</span></td>
+								<td><span class="neos-badge neos-badge-{f:if(condition: '{site.activeDomains -> f:count()} > 0', then: 'info', else: '{f:if(condition: multipleSites, then: \'important\', else: \'inverse\')}')}">{site.domains -> f:count()}</span><f:if condition="{site.activeDomains}"> <span class="neos-label neos-label-inverse">{site.primaryDomain}</span></f:if></td>
+								<td class="neos-action">
+									<div class="neos-pull-right">
+										<f:link.action action="edit" arguments="{site: site}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'clickToEdit', value: 'Click to edit')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
+											<i class="icon-pencil icon-white"></i>
+										</f:link.action>
+										<f:if condition="{site.state} == 1">
+											<f:then>
+												<f:form action="deactivateSite" arguments="{site: site}" class="neos-inline">
+													<button class="neos-button neos-button-warning" title="{neos:backend.translate(id: 'clickToDeactivate', value: 'Click to deactivate')}" data-neos-toggle="tooltip">
+														<i class="icon-minus-sign icon-white"></i>
+													</button>
+												</f:form>
+											</f:then>
+											<f:else>
+												<f:form action="activateSite" arguments="{site: site}" class="neos-inline">
+													<button class="neos-button neos-button-success" title="{neos:backend.translate(id: 'clickToActivate', value: 'Click to activate')}" data-neos-toggle="tooltip">
+														<i class="icon-plus-sign icon-white"></i>
+													</button>
+												</f:form>
+											</f:else>
+										</f:if>
+										<button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'clickToDelete', value: 'Click to delete')}" data-toggle="modal" href="#{site.nodeName}" data-neos-toggle="tooltip">
+											<i class="icon-trash icon-white"></i>
+										</button>
+										<div class="neos-hide" id="{site.nodeName}">
+											<div class="neos-modal-centered">
+												<div class="neos-modal-content">
+													<div class="neos-modal-header">
+														<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+														<div class="neos-header">Do you really want to delete "{site.name}"? This action cannot be undone.</div>
+													</div>
+													<div class="neos-modal-footer">
+														<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</a>
+														<f:form action="deleteSite" arguments="{site: site}" class="neos-inline">
+															<button class="neos-button neos-button-danger" title="Delete this site">
+																{neos:backend.translate(id: 'sites.confirmDelete', value: 'Yes, delete this site')}
+															</button>
+														</f:form>
+													</div>
+												</div>
+											</div>
+											<div class="neos-modal-backdrop neos-in"></div>
+										</div>
+									</div>
+								</td>
+							</tr>
+						</f:for>
+					</f:then>
+					<f:else>
+						<tr class="fold-{sitePackageKey}">
+							<td colspan="4"><i>No sites available</i></td>
+						</tr>
+					</f:else>
+				</f:if>
+			</f:for>
+		</tbody>
+	</table>
+	<div class="neos-footer">
+		<f:link.action action="newSite" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'clickToCreate', value: 'Click to create new')}">{neos:backend.translate(id: 'sites.add', value: 'Add new site')}</f:link.action>
+	</div>
+
+	<script>
+		(function($) {
+			$('.fold-toggle').click(function() {
+				$(this).toggleClass('icon-chevron-down icon-chevron-up');
+				$('tr.' + $(this).data('toggle')).toggle();
+			});
+		})(jQuery);
+	</script>
+</f:section>

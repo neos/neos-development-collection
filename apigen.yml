@@ -6,7 +6,7 @@ title: 'Neos (master branch)'
 # some project specific settings
 docs-repository: 'neos/neos.github.io'
 docs-branch: 'master'
-exclude: 'TYPO3.*/Tests/*,TYPO3.*/Resources/*,TYPO3.*/Migrations/*'
+exclude: 'Neos.*/Tests/*,Neos.*/Resources/*,Neos.*/Migrations/*'
 template-theme: 'bootstrap'
 annotation-groups: 'api,deprecated,todo'
 

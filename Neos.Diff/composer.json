@@ -1,6 +1,6 @@
 {
   "name": "neos/diff",
-  "type": "typo3-flow-package",
+  "type": "neos-package",
   "license": "BSD-3-Clause",
   "description": "This is a comprehensive library for generating differences between two strings or arrays",
   "require": {

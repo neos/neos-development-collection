@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.NodeTypes" source-language="en" datatype="plaintext" target-language="pl">
+    <body>
+      <trans-unit id="ui.label" xml:space="preserve" approved="yes">
+				<source>Form</source>
+			<target xml:lang="pl">Formularz</target></trans-unit>
+      <trans-unit id="groups.form" xml:space="preserve" approved="yes">
+				<source>Form</source>
+			<target xml:lang="pl">Formularz</target></trans-unit>
+      <trans-unit id="properties.formIdentifier" xml:space="preserve" approved="yes">
+				<source>Form Identifier</source>
+			<target xml:lang="pl">Identyfikator formularza</target></trans-unit>
+      <trans-unit id="properties.formIdentifier.selectBoxEditor.placeholder" xml:space="preserve" approved="yes">
+				<source>Select the Form identifier</source>
+			<target xml:lang="pl">Wybierz identyfikator formularza</target></trans-unit>
+      <trans-unit id="content.noValidFormIdentifier" xml:space="preserve" approved="yes">
+				<source>Please select a valid Form identifier in the inspector.</source>
+			<target xml:lang="pl">Proszę wybrać prawidłowy identyfikator Formularza w inspektorze.</target></trans-unit>
+    </body>
+  </file>
+</xliff>

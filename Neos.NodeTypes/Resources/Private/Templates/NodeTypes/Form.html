@@ -1,0 +1,11 @@
+{namespace form=Neos\Form\ViewHelpers}
+<div{attributes -> f:format.raw()}>
+	<f:if condition="{formIdentifier}">
+		<f:then>
+			<form:render persistenceIdentifier="{formIdentifier}" presetName="{presetName}" overrideConfiguration="{overrideConfiguration}" />
+		</f:then>
+		<f:else>
+			<p>{f:translate(id: 'content.noValidFormIdentifier', package: 'Neos.NodeTypes', source: 'NodeTypes/Form')}</p>
+		</f:else>
+	</f:if>
+</div>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nodes formatVersion="2.0">
+	<node identifier="995c9174-ddd6-4d5c-cfc0-1ffc82184677" nodeName="neosdemotypo3org">
+		<variant sortingIndex="100" workspace="live" nodeType="Neos.NodeTypes:Page" version="14" removed="" hidden="" hiddenInIndex="">
+			<dimensions>
+				<language>en_US</language>
+				<language>en_UK</language>
+			</dimensions>
+			<accessRoles __type="array" />
+			<creationDateTime __type="object" __classname="DateTime">2015-12-21T21:56:53+00:00
+			</creationDateTime>
+			<hiddenBeforeDateTime __type="object" __classname="DateTime">2015-10-01T03:45:04+02:00</hiddenBeforeDateTime>
+			<hiddenAfterDateTime __type="object" __classname="DateTime">2015-10-22T07:50:04+02:00</hiddenAfterDateTime>
+			<properties>
+				<title __type="string">Home</title>
+				<layout __type="string">landingPage</layout>
+				<uriPathSegment __type="string">home</uriPathSegment>
+				<imageTitleText __type="string">Photo by www.daniel-bischoff.photo</imageTitleText>
+				<subpageLayout __type="string"></subpageLayout>
+			</properties>
+		</variant>
+	</node>
+</nodes>

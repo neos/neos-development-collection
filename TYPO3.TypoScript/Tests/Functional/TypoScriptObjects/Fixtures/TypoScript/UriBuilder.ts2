@@ -1,8 +1,0 @@
-prototype(TYPO3.TypoScript:UriBuilder).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\UriBuilderImplementation'
-
-uriBuilder.foo = TYPO3.TypoScript:UriBuilder {
-	package = 'TYPO3.Flow'
-	subpackage = 'Tests\\Functional\\Http\\Fixtures'
-	controller = 'Foo'
-	action = 'index'
-}

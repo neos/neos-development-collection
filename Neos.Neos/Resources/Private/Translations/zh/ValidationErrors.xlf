@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="zh-CN">
+    <body>
+      <!-- UserDoesNotExistValidator -->
+      <trans-unit id="1325156008" xml:space="preserve">
+				<source>The username is already in use.</source>
+			<target xml:lang="zh-CN" state="translated">用户名已存在</target><alt-trans><target xml:lang="zh-CN">用户名已被使用。</target></alt-trans></trans-unit>
+      <!-- HostnameValidator -->
+      <trans-unit id="1415392993" xml:space="preserve">
+				<source>The hostname "{0}" was not valid.</source>
+			<target xml:lang="zh-CN" state="translated">非法主机"{0}"</target><alt-trans><target xml:lang="zh-CN">主机名"{0}"不是有效的。</target></alt-trans></trans-unit>
+      <!-- PasswordValidator -->
+      <trans-unit id="1324641097" xml:space="preserve">
+				<source>The given password was empty.</source>
+			<target xml:lang="zh-CN" state="translated">密码为空</target><alt-trans><target xml:lang="zh-CN">输入的密码是空的。</target></alt-trans></trans-unit>
+      <trans-unit id="1324640997" xml:space="preserve">
+				<source>The passwords did not match.</source>
+			<target xml:lang="zh-CN" state="translated">密码不匹配。</target></trans-unit>
+    </body>
+  </file>
+</xliff>

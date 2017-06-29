@@ -1,0 +1,18 @@
+#                                                                        #
+# Security policy for the Neos Media package                             #
+#                                                                        #
+
+privilegeTargets:
+
+  'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
+
+    'Neos.Media:Thumbnail':
+      matcher: 'method(Neos\Media\Controller\ThumbnailController->thumbnailAction())'
+
+roles:
+
+  'Neos.Flow:Everybody':
+    privileges:
+      -
+        privilegeTarget: 'Neos.Media:Thumbnail'
+        permission: GRANT

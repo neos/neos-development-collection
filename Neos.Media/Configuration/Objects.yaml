@@ -1,0 +1,19 @@
+Neos\Media\Domain\Service\ImageService:
+  properties:
+    imagineService:
+      object:
+        factoryObjectName: Neos\Imagine\ImagineFactory
+    imageSizeCache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Neos_Media_ImageSize
+
+# This is just to have a fallback default, you will probably want to create a ImageInterface type converter that converts to your implementation.
+Neos\Media\Domain\Model\ImageInterface:
+  className: Neos\Media\Domain\Model\Image
+
+Neos\Media\Domain\Strategy\AssetModelMappingStrategyInterface:
+  className: Neos\Media\Domain\Strategy\ConfigurationAssetModelMappingStrategy

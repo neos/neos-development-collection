@@ -1,0 +1,13 @@
+#
+# If the title starts with "Docume", prefix it with "DOCS" (globally)
+#
+
+prototype(Neos.Neos:ContentCase).override {
+	condition = ${q(node).is('[title *= Docume]')}
+	type = 'Neos.Fusion:DocumentationText'
+	@position = 'start'
+}
+
+prototype(Neos.Fusion:DocumentationText) < prototype(Neos.NodeTypes:Headline)
+prototype(Neos.Fusion:DocumentationText).title = 'Documentation'
+prototype(Neos.Fusion:DocumentationText).title.@process.1 = ${'<header>DOCS: ' + value + '</header>'}

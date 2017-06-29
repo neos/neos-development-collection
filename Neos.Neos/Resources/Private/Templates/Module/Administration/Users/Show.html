@@ -1,0 +1,137 @@
+{namespace neos=Neos\Neos\ViewHelpers}
+<f:layout name="BackendSubModule" />
+
+<f:section name="subtitle">
+	<h2>{neos:backend.translate(id: 'users.show.subtitle', value: 'Details for user', source: 'Modules', package: 'Neos.Neos')}: {user.name}</h2>
+</f:section>
+
+<f:section name="content">
+	<div class="neos-row-fluid neos-module-container">
+		<div class="neos-span5">
+			<legend>{neos:backend.translate(id: 'users.show.personalData', value: 'Personal Data', source: 'Modules', package: 'Neos.Neos')}</legend>
+
+			<table class="neos-info-table">
+				<tbody>
+					<f:if condition="{user.name.title}">
+						<tr>
+							<th>{neos:backend.translate(id: 'users.show.personalData.title', value: 'Title', source: 'Modules', package: 'Neos.Neos')}</th>
+							<td>{user.name.title}</td>
+						</tr>
+					</f:if>
+					<f:if condition="{user.name.firstName}">
+						<tr>
+							<th>{neos:backend.translate(id: 'users.show.personalData.firstName', value: 'First Name', source: 'Modules', package: 'Neos.Neos')}</th>
+							<td>{user.name.firstName}</td>
+						</tr>
+					</f:if>
+					<f:if condition="{user.name.middleName}">
+						<tr>
+							<th>{neos:backend.translate(id: 'users.show.personalData.middleName', value: 'Middle Name', source: 'Modules', package: 'Neos.Neos')}</th>
+							<td>{user.name.middleName}</td>
+						</tr>
+					</f:if>
+					<f:if condition="{user.name.lastName}">
+						<tr>
+							<th>{neos:backend.translate(id: 'users.show.personalData.lastName', value: 'Last Name', source: 'Modules', package: 'Neos.Neos')}</th>
+							<td>{user.name.lastName}</td>
+						</tr>
+					</f:if>
+					<f:if condition="{user.name.otherName}">
+						<tr>
+							<th>{neos:backend.translate(id: 'users.show.personalData.otherName', value: 'Other Name', source: 'Modules', package: 'Neos.Neos')}</th>
+							<td>{user.name.otherName}</td>
+						</tr>
+					</f:if>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="neos-span5 neos-offset1">
+			<legend>{neos:backend.translate(id: 'users.show.accounts', value: 'Accounts', source: 'Modules', package: 'Neos.Neos')}</legend>
+
+			<table class="neos-info-table">
+				<tbody>
+				<tr>
+					<th>{neos:backend.translate(id: 'users.show.username', value: 'Username', source: 'Modules', package: 'Neos.Neos')}</th>
+					<th>{neos:backend.translate(id: 'users.show.roles', value: 'Roles', source: 'Modules', package: 'Neos.Neos')}</th>
+				</tr>
+				<f:for each="{user.accounts}" as="account">
+				<tr>
+					<td><i class="icon-user icon-white"></i>{account.accountIdentifier}</td>
+					<td><f:render partial="Module/Shared/Roles" arguments="{roles: account.roles}" /></td>
+				</tr>
+				</f:for>
+				</tbody>
+			</table>
+		</div>
+
+	</div>
+
+	<div class="neos-row-fluid neos-module-container">
+		<div class="neos-span5">
+			<legend>{neos:backend.translate(id: 'users.show.electronicAddresses', value: 'Electronic Addresses', source: 'Modules', package: 'Neos.Neos')}</legend>
+			<f:if condition="{user.electronicAddresses}">
+				<f:then>
+
+					<table class="neos-info-table">
+						<tbody>
+							<f:for each="{user.electronicAddresses}" as="electronicAddress">
+								<tr>
+									<th>{electronicAddress.type} <f:if condition="{user.primaryElectronicAddress} == {electronicAddress}"><span>({neos:backend.translate(id: 'users.show.electronicAddresses.primary', value: 'Primary', source: 'Modules', package: 'Neos.Neos')})</span></f:if></th>
+									<td>{electronicAddress.identifier}</td>
+								</tr>
+							</f:for>
+						</tbody>
+					</table>
+				</f:then>
+				<f:else>
+					<em>{neos:backend.translate(id: 'users.show.electronicAddresses.notAvailable', value: 'N/A', source: 'Modules', package: 'Neos.Neos')}</em>
+				</f:else>
+			</f:if>
+		</div>
+	</div>
+
+	<div class="neos-footer">
+		<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'back', value: 'Back')}</f:link.action>
+		<f:if condition="{currentUser} == {user}">
+			<f:then>
+				<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'users.show.cannotDeleteYourself', value: 'You are logged in as this user and you cannot delete yourself.', source: 'Modules', package: 'Neos.Neos')}">
+					<i class="icon-trash icon-white"></i> {neos:backend.translate(id: 'users.show.deleteUser', value: 'Delete User', source: 'Modules', package: 'Neos.Neos')}
+				</button>
+			</f:then>
+			<f:else>
+				<button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'users.show.clickToDeleteUser', value: 'Click here to delete this user', source: 'Modules', package: 'Neos.Neos')}" data-toggle="modal" href="#delete">
+					<i class="icon-trash icon-white"></i> {neos:backend.translate(id: 'users.show.deleteUser', value: 'Delete User', source: 'Modules', package: 'Neos.Neos')}
+				</button>
+			</f:else>
+		</f:if>
+		<f:link.action action="edit" arguments="{user: user}" class="neos-button">
+			<i class="icon-pencil icon-white"></i> {neos:backend.translate(id: 'users.show.editUser', value: 'Edit User', source: 'Modules', package: 'Neos.Neos')}
+		</f:link.action>
+		<div class="neos-hide" id="delete">
+			<div class="neos-modal-centered">
+				<div class="neos-modal-content">
+					<div class="neos-modal-header">
+					<button type="button" class="neos-close" data-dismiss="modal"></button>
+					<div class="neos-header">{neos:backend.translate(id: 'users.show.buttonDelete', value: 'Do you really want to delete the user "{user.name}"?', arguments: {0: user.name}, source: 'Modules', package: 'Neos.Neos')}</div>
+					<div>
+						<div class="neos-subheader">
+							{neos:backend.translate(id: 'users.show.deleteDialogWarning', value: 'This will delete the user, the related accounts and his personal workspace, including all unpublished content.', source: 'Modules', package: 'Neos.Neos')}
+							{neos:backend.translate(id: 'users.show.operationCannotBeUndone', value: 'This operation cannot be undone', source: 'Modules', package: 'Neos.Neos')}.
+						</div>
+					</div>
+				</div>
+					<div class="neos-modal-footer">
+						<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', value: 'Cancel', source: 'Modules', package: 'Neos.Neos')}</a>
+						<f:form action="delete" arguments="{user: user}" class="neos-inline">
+							<button type="submit" class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'users.show.deleteUser', value: 'Delete User', source: 'Modules', package: 'Neos.Neos')}">
+								{neos:backend.translate(id: 'users.show.confirmDeleteButton', value: 'Yes, delete the user', source: 'Modules', package: 'Neos.Neos')}
+							</button>
+						</f:form>
+					</div>
+				</div>
+			</div>
+			<div class="neos-modal-backdrop neos-in"></div>
+		</div>
+	</div>
+</f:section>
