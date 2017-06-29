@@ -11941,11 +11941,11 @@
   background-color: #3f3f3f;
   width: 100%;
 }
-.neos.neos-module.neos-module-management-workspaces ins {
+.neos.neos-module.neos-module-management-workspaces ins, .neos.neos-module.neos-module-management-workspaces ins a {
   color: #00a338;
   text-decoration: none;
 }
-.neos.neos-module.neos-module-management-workspaces del {
+.neos.neos-module.neos-module-management-workspaces del, .neos.neos-module.neos-module-management-workspaces del a {
   color: #9d261d;
   text-decoration: none;
 }
