@@ -335,6 +335,12 @@ Neos:
             description: 'Neos.Neos:Modules:configuration.description'
             icon: icon-list-alt
             privilegeTarget: 'Neos.Neos:Backend.Module.Administration.Configuration'
+          dimensions:
+            label: 'Neos.Neos:Modules:dimensions.label'
+            controller: \Neos\Neos\Controller\Module\Administration\DimensionController
+            description: 'Neos.Neos:Modules:dimensions.description'
+            icon: icon-code-fork
+            privilegeTarget: 'Neos.Neos:Backend.Module.Administration.Dimensions'
       user:
         label: 'Neos.Neos:Modules:user.label'
         controller: \Neos\Neos\Controller\Module\UserController

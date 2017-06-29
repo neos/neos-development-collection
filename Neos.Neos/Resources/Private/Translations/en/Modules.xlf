@@ -613,6 +613,32 @@
 				<source>The Configuration module provides you with an overview of all configuration types.</source>
 			</trans-unit>
 
+			<trans-unit id="dimensions.label" xml:space="preserve">
+				<source>Dimensions</source>
+			</trans-unit>
+			<trans-unit id="dimensions.description" xml:space="preserve">
+				<source>Grants a graphical overview over the configured fallbacks within each content dimension and across content dimensions.</source>
+			</trans-unit>
+			<trans-unit id="dimensions.interDimension.legend" xml:space="preserve">
+				<source>Inter dimensional fallback graph</source>
+			</trans-unit>
+			<trans-unit id="dimensions.interDimension.short" xml:space="preserve">
+				<source>Inter dimensional</source>
+			</trans-unit>
+			<trans-unit id="dimensions.interDimension.description" xml:space="preserve">
+				<source>The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
+Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The higher the priority the higher the opacity.
+Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</source>
+			</trans-unit>
+			<trans-unit id="dimensions.intraDimension.legend" xml:space="preserve">
+				<source>Intra dimensional fallback graph</source>
+			</trans-unit>
+			<trans-unit id="dimensions.intraDimension.short" xml:space="preserve">
+				<source>Intra dimensional</source>
+			</trans-unit>
+			<trans-unit id="dimensions.intraDimension.description" xml:space="preserve">
+				<source>The intra dimensional fallback graph displays fallbacks within each content dimension.</source>
+			</trans-unit>
 
 			<!-- User -->
 			<trans-unit id="user.label" xml:space="preserve">
