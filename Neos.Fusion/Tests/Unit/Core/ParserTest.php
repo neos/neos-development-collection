@@ -905,6 +905,40 @@ class ParserTest extends UnitTestCase
     }
 
     /**
+     * Checks if dsl value is handed over to the invokeAndParseDsl method
+     *
+     * @test
+     */
+    public function parserInvokesFusionDslParsingIfADslPatternIsDetected()
+    {
+        $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->setMethods(array('invokeAndParseDsl'))->getMock();
+
+        $sourceCode = $this->readFusionFixture('ParserTestFusionFixture23');
+
+        $parser
+            ->expects($this->exactly(2))
+            ->method('invokeAndParseDsl')
+            ->withConsecutive(
+                ['dsl1', 'example value' ],
+                ['dsl2', 'another' . chr(10) . 'multiline' . chr(10) . 'value' ]
+            );
+
+        $parser->parse($sourceCode);
+    }
+
+    /**
+     * Checks unclosed dsl-expressions are
+     *
+     * @test
+     * @expectedException \Neos\Fusion\Exception
+     * @expectedExceptionCode 1490714685
+     */
+    public function parserThrowsFusionExceptionIfUnfinishedDslIsDetected()
+    {
+        $this->parser->parse('dslValue1 = dsl1`unclosed dsl expression');
+    }
+
+    /**
      * @param string $fixtureName File name of the Fusion fixture to be read (without .fusion)
      * @return string The content of the fixture
      */

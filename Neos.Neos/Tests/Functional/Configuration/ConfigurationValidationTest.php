@@ -39,7 +39,7 @@ class ConfigurationValidationTest extends FlowConfigurationValidationTest
      *
      * @var array<string>
      */
-    protected $schemaPackageKeys = ['Neos.Flow', 'Neos.Neos', 'Neos.ContentRepository'];
+    protected $schemaPackageKeys = ['Neos.Flow', 'Neos.Neos', 'Neos.ContentRepository', 'Neos.Fusion'];
 
     /**
      * The packages that contain the configuration that is validated
