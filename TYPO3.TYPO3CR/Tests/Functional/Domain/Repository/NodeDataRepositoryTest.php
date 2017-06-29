@@ -110,6 +110,31 @@ class NodeDataRepositoryTest extends FunctionalTestCase
         $this->assertCount(1, $result);
     }
 
+    /**
+     * @test
+     */
+    public function findNodesByRelatedEntitiesFindsExistingNodeWithMatchingAssetLink()
+    {
+        $rootNode = $this->context->getRootNode();
+        $newNode = $rootNode->createNode('test', $this->nodeTypeManager->getNodeType('TYPO3.TYPO3CR.Testing:Text'));
+
+        $testImage = new Image();
+        $this->persistenceManager->add($testImage);
+        $testImageIdentifier = $this->persistenceManager->getIdentifierByObject($testImage);
+
+        $newNode->setProperty('text', sprintf('a linked <a href="asset://%s">image</a>', $testImageIdentifier));
+
+        $this->persistenceManager->persistAll();
+
+        $relationMap = [
+            Fixtures\Image::class => [$testImageIdentifier]
+        ];
+
+        $result = $this->nodeDataRepository->findNodesByRelatedEntities($relationMap);
+
+        $this->assertCount(1, $result);
+    }
+
     protected function setUpNodes()
     {
         $rootNode = $this->context->getRootNode();
