@@ -212,11 +212,11 @@ Neos:
 
           Neos.Neos/Inspector/Editors/AssetEditor:
             editorOptions:
-              fileUploadLabel: 'Neos.Neos:Main:upload'
+              fileUploadLabel: 'Neos.Neos:Main:choose'
 
           Neos.Neos/Inspector/Editors/ImageEditor:
             editorOptions:
-              fileUploadLabel: 'Neos.Neos:Main:upload'
+              fileUploadLabel: 'Neos.Neos:Main:choose'
 
           Neos.Neos/Inspector/Editors/LinkEditor:
             editorOptions:
