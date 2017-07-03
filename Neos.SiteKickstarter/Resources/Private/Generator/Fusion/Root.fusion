@@ -1,0 +1,37 @@
+/**
+ * Root Fusion template for the {siteName} site
+ */
+page = Neos.Neos:Page {
+	head {
+		stylesheets.site = Neos.Fusion:Template {
+			templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
+			sectionName = 'stylesheets'
+		}
+
+		javascripts.site = Neos.Fusion:Template {
+			templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
+			sectionName = 'headScripts'
+		}
+	}
+
+	body {
+		templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
+		sectionName = 'body'
+		parts {
+			menu = Neos.Neos:Menu
+		}
+
+		// These are your content areas, you can define as many as you want, just name them and the nodePath.
+		content {
+			// The default content section
+			main = Neos.Neos:PrimaryContent {
+				nodePath = 'main'
+			}
+		}
+
+		javascripts.site = Neos.Fusion:Template {
+			templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
+			sectionName = 'bodyScripts'
+		}
+	}
+}

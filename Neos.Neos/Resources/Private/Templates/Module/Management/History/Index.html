@@ -1,0 +1,82 @@
+{namespace neos=Neos\Neos\ViewHelpers}
+{namespace ts=Neos\Fusion\ViewHelpers}
+
+<div class="neos-history">
+	<legend>{neos:backend.translate(id: 'history.messages.hereIsWhatHappenedRecentlyInNeos', source: 'Modules')}</legend>
+	<f:if condition="{eventsByDate}">
+		<f:then>
+			<f:for each="{eventsByDate}" as="eventsOnSingleDay" iteration="iteration">
+				<div class="neos-history-day" data-date="{eventsOnSingleDay.day -> f:format.date(format: 'dmy')}">
+					<div class="neos-history-date">
+						<div class="neos-history-date-inner">{eventsOnSingleDay.day -> f:format.date(format: 'M d')}
+						</div>
+					</div>
+					<div class="neos-history-events neos-history-alignment">
+						<hr class="neos-history-events-divider" />
+						<f:for each="{eventsOnSingleDay.events}" as="event">
+							<ts:render path="eventRenderer" context="{event: event}" />
+						</f:for>
+					</div>
+				</div>
+			</f:for>
+		</f:then>
+		<f:else>
+			<p>{neos:backend.translate(id: 'history.messages.emptyHistory', source: 'Modules')}</p>
+		</f:else>
+	</f:if>
+</div>
+
+<f:section name="eventElement">
+	<div class="neos-history-event" id="{subEventType}-{f:format.identifier(value: event)}">
+		<div class="neos-history-event-time"><sub>{event.timestamp -> f:format.date(format: 'H:i')}</sub></div>
+		<div class="neos-history-event-user" title="{event.accountIdentifier -> neos:backend.userInitials(format: 'fullName')}">
+			{event.accountIdentifier -> neos:backend.userInitials()}
+		</div>
+		<div class="neos-history-event-description">
+			<strong>{neos:backend.translate(id: descriptionTranslationId, source: 'Modules', arguments: descriptionTranslationArguments) -> f:format.raw()}</strong>
+		</div>
+	</div>
+</f:section>
+
+<f:if condition="{nextPage}">
+  <div class="loadMore" data-neos-history-nextpage="{nextPage}">
+	  <button>{neos:backend.translate(id: 'history.loadMore.label', source: 'Modules', package: 'Neos.Neos')}</button>
+  </div>
+</f:if>
+
+<script>
+	$(function() {
+
+		var nextPage = '{nextPage}';
+		var historyContainer = $('.neos-history');
+		$('.loadMore button').click(function() {
+
+			$.ajax({
+				url: nextPage,
+				type: 'GET'
+			}).done(function(data) {
+
+				nextPage = $(data).find('div.loadMore').data('neos-history-nextpage');
+				if (typeof nextPage === 'undefined') {
+					$('.loadMore').hide();
+				}
+
+				var days = $(data).find('.neos-history-day');
+				days.each(function(index, day) {
+					var date = $(day).data('date');
+					var $existingDay = $('[data-date="' + date + '"]');
+
+					if ($existingDay.length > 0) {
+						$(day).find('.neos-history-event').each(function(index, event) {
+							$existingDay.find('.neos-history-events').append(event);
+						});
+
+					} else {
+						historyContainer.append(day);
+					}
+				});
+
+			});
+		});
+	})
+</script>

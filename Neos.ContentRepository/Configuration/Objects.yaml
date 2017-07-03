@@ -1,0 +1,28 @@
+'Neos\ContentRepository\Domain\Repository\ContentDimensionRepository':
+  properties:
+    dimensionsConfiguration:
+      setting: 'Neos.ContentRepository.contentDimensions'
+'Neos\ContentRepository\Domain\Service\PublishingServiceInterface':
+  className: Neos\ContentRepository\Domain\Service\PublishingService
+'Neos\ContentRepository\Domain\Model\NodeInterface':
+  className: Neos\ContentRepository\Domain\Model\Node
+'Neos\ContentRepository\Domain\Service\ConfigurationContentDimensionPresetSource':
+  properties:
+    configuration:
+      setting: 'Neos.ContentRepository.contentDimensions'
+'Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface':
+  className: Neos\ContentRepository\Domain\Service\ConfigurationContentDimensionPresetSource
+'Neos\ContentRepository\Domain\Model\NodeLabelGeneratorInterface':
+  className: Neos\ContentRepository\Domain\Model\ExpressionBasedNodeLabelGenerator
+'Neos\ContentRepository\Domain\Service\NodeServiceInterface':
+  className: Neos\ContentRepository\Domain\Service\NodeService
+
+'Neos\ContentRepository\Domain\Service\NodeTypeManager':
+  properties:
+    fullConfigurationCache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Neos_ContentRepository_FullNodeTypeConfiguration

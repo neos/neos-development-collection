@@ -1,0 +1,11 @@
+##
+# Thumbnail
+
+-
+  name:  'Thumbnail'
+  uriPattern: 'media/thumbnail/{thumbnail}'
+  defaults:
+    '@package':    'Neos.Media'
+    '@controller': 'Thumbnail'
+    '@action':     'thumbnail'
+  httpMethods: ['GET']

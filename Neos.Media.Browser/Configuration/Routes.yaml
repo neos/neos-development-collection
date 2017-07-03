@@ -1,0 +1,19 @@
+-
+  name: 'Media Browser'
+  uriPattern: 'neos/media/browser/assets(/{@action}).{@format}'
+  defaults:
+    '@package': 'Neos.Media.Browser'
+    '@controller': 'Asset'
+    '@format': 'html'
+    '@action': 'index'
+  appendExceedingArguments: TRUE
+
+-
+  name: 'Image Browser'
+  uriPattern: 'neos/media/browser/images(/{@action}).{@format}'
+  defaults:
+    '@package': 'Neos.Media.Browser'
+    '@controller': 'Image'
+    '@format': 'html'
+    '@action': 'index'
+  appendExceedingArguments: TRUE

@@ -1,0 +1,19 @@
+{namespace neos=Neos\Neos\ViewHelpers}
+<f:form.validationResults>
+	<f:if condition="{validationResults.flattenedErrors}">
+		<div class="neos-row neos-module-container">
+			<div class="neos-span12">
+				<div class="neos-alert neos-alert-error">
+					<p><strong>{neos:backend.translate(id: 'backend.errorheader', value: 'The following errors occurred')}</strong></p>
+					<ul class="neos-error">
+						<f:for each="{validationResults.flattenedErrors}" key="propertyPath" as="errors">
+							<li>
+								<f:for each="{errors}" as="error">{neos:backend.translate(id: error.code, source: 'ValidationErrors', arguments: error.arguments, value: error)}</f:for>
+							</li>
+						</f:for>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</f:if>
+</f:form.validationResults>
