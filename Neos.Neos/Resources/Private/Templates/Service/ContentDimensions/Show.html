@@ -1,0 +1,30 @@
+{namespace neos=Neos\Neos\ViewHelpers}<html>
+<head>
+	<title>Content Dimension </title>
+	<meta charset="UTF-8" />
+</head>
+<body>
+<div>
+	<h1>Content Dimensions</h1>
+	<ul class="contentdimensions"><f:for each="{contentDimensionsPresets}" key="dimensionIdentifier" as="contentDimensionPresetConfiguration">
+		<li class="contentdimension">
+			<label class="contentdimension-label">{neos:backend.translate(id: contentDimensionPresetConfiguration.label)}</label>
+			(<span class="contentdimension-identifier">{dimensionIdentifier}</span>)
+			<span class="contentdimension-icon">{contentDimensionPresetConfiguration.icon}</span>
+			<h2>Presets</h2>
+			<ol class="contentdimension-presets"><f:for each="{contentDimensionPresetConfiguration.presets}" key="presetIdentifier" as="preset">
+				<li class="contentdimension-preset{f:if(condition: '{presetIdentifier} == {contentDimensionPresetConfiguration.defaultPreset}', then: ' contentdimension-defaultpreset')}">
+					<label class="contentdimension-preset-label">{neos:backend.translate(id: preset.label)}</label>
+					<span class="contentdimension-preset-identifier">{presetIdentifier}</span>
+					<ol class="contentdimension-preset-values">
+						<f:for each="{preset.values}" as="value">
+							<li>{value}</li>
+						</f:for>
+					</ol>
+				</li></f:for>
+			</ol>
+		</li></f:for>
+	</ul>
+</div>
+</body>
+</html>

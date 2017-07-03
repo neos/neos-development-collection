@@ -1,0 +1,194 @@
+# Node Types for Functional Tests
+
+'Neos.ContentRepository.Testing:NodeType':
+  properties:
+    test1:
+      defaultValue: 'default value 1'
+    test2:
+      defaultValue: 'default value 2'
+  constraints:
+    nodeTypes:
+      'Neos.ContentRepository.Testing:NodeType': TRUE
+      'Neos.ContentRepository.Testing:NodeTypeWithSubnodes': TRUE
+
+'Neos.ContentRepository.Testing:NodeTypeWithSubnodes':
+  childNodes:
+    subnode1:
+      type: 'Neos.ContentRepository.Testing:NodeType'
+  constraints:
+    nodeTypes:
+      'Neos.ContentRepository.Testing:NodeType': TRUE
+      'Neos.ContentRepository.Testing:Document': TRUE
+
+'Neos.ContentRepository.Testing:NodeTypeWithProcessor':
+  properties:
+    test1:
+      defaultValue: 'default value 1'
+  postprocessors:
+    'processor1':
+      postprocessor: 'Neos\ContentRepository\Tests\Functional\Domain\Fixtures\TestNodePostprocessor'
+      postprocessorOptions:
+        someOption: 'someValue'
+    'processor2':
+      postprocessor: 'Neos\ContentRepository\Tests\Functional\Domain\Fixtures\TestNodePostprocessor'
+      postprocessorOptions:
+        someOption: 'someOverriddenValue'
+        someOtherOption: 'someOtherValue'
+
+'Neos.ContentRepository.Testing:NodeTypeWithReferences':
+  properties:
+    property1:
+      type: string
+    property2:
+      type: reference
+    property3:
+      type: references
+
+'Neos.ContentRepository.Testing:Headline':
+  superTypes:
+    'Neos.ContentRepository.Testing:Content': TRUE
+  properties:
+    title:
+      type: string
+
+'Neos.ContentRepository.Testing:NodeTypeWithEntities':
+  properties:
+    image:
+      type: 'Neos\Flow\Tests\Functional\Persistence\Fixtures\Image'
+    wrappedImage:
+      type: 'Neos\ContentRepository\Tests\Functional\Domain\Fixtures\TestObjectForSerialization'
+    images:
+      type: 'array<Neos\Flow\Tests\Functional\Persistence\Fixtures\Image>'
+
+'Neos.ContentRepository.Testing:HappyTestingNode':
+  class: 'Neos\ContentRepository\Tests\Functional\Domain\Fixtures\HappyNode'
+
+# Constraint behat test nodetypes
+'Neos.ContentRepository.Testing:Node':
+  abstract: TRUE
+
+'Neos.ContentRepository.Testing:ContentCollection':
+  superTypes:
+    'Neos.ContentRepository.Testing:Node': TRUE
+  constraints:
+    nodeTypes:
+      'Neos.ContentRepository.Testing:Headline': TRUE
+      'Neos.ContentRepository.Testing:TwoColumn': TRUE
+      'Neos.ContentRepository.Testing:ThreeColumn': TRUE
+      'Neos.ContentRepository.Testing:Text': TRUE
+      'Neos.ContentRepository.Testing:Html': TRUE
+      'Neos.ContentRepository.Testing:List': TRUE
+
+'Neos.ContentRepository.Testing:Document':
+  aggregate: TRUE
+
+'Neos.ContentRepository.Testing:Page':
+  superTypes:
+    'Neos.ContentRepository.Testing:Document': TRUE
+  properties:
+    title:
+      type: string
+  childNodes:
+    'main':
+      type: 'Neos.ContentRepository.Testing:ContentCollection'
+  constraints:
+    nodeTypes:
+      '*': TRUE
+
+'Neos.ContentRepository.Testing:Chapter':
+  superTypes:
+    'Neos.ContentRepository.Testing:Page': TRUE
+
+'Neos.ContentRepository.Testing:PageWithConfiguredLabel':
+  superTypes:
+    'Neos.ContentRepository.Testing:Page': TRUE
+  label: "${q(node).property('title') || q(node).property('text') || ((node.nodeType.label || node.nodeType.name) + ' (' + node.name + ')')}"
+  ui:
+    label: 'Labeled Page'
+
+'Neos.ContentRepository.Testing:Column':
+  superTypes:
+    'Neos.ContentRepository.Testing:Content': TRUE
+  abstract: TRUE
+
+'Neos.ContentRepository.Testing:TwoColumn':
+  superTypes:
+    'Neos.ContentRepository.Testing:Column': TRUE
+  childNodes:
+    column0:
+      type: 'Neos.ContentRepository.Testing:ContentCollection'
+    column1:
+      type: 'Neos.ContentRepository.Testing:ContentCollection'
+
+'Neos.ContentRepository.Testing:ThreeColumn':
+  superTypes:
+    'Neos.ContentRepository.Testing:Column': TRUE
+  childNodes:
+    column0:
+      type: 'Neos.ContentRepository.Testing:ContentCollection'
+    column1:
+      type: 'Neos.ContentRepository.Testing:ContentCollection'
+    column2:
+      type: 'Neos.ContentRepository.Testing:ContentCollection'
+
+'Neos.ContentRepository.Testing:Content':
+  constraints:
+    nodeTypes:
+      '*': FALSE
+
+'Neos.ContentRepository.Testing:Text':
+  superTypes:
+    'Neos.ContentRepository.Testing:Content': TRUE
+  properties:
+    text:
+      type: string
+
+'Neos.ContentRepository.Testing:NodeTypeWithSubnodesAndConstraints':
+  childNodes:
+    subnode1:
+      type: 'Neos.ContentRepository.Testing:NodeType'
+      constraints:
+        nodeTypes:
+          'Neos.ContentRepository.Testing:Headline': TRUE # allowed
+
+'Neos.ContentRepository.Testing:Image':
+  superTypes:
+    'Neos.ContentRepository.Testing:Content': TRUE
+
+'Neos.ContentRepository.Testing:TextWithImage':
+  superTypes:
+    'Neos.ContentRepository.Testing:Text': TRUE
+    'Neos.ContentRepository.Testing:Image': TRUE
+
+'Neos.ContentRepository.Testing:Html':
+  superTypes:
+    'Neos.ContentRepository.Testing:Content': TRUE
+  properties:
+    source:
+      type: string
+      defaultValue: '<p>Enter HTML here</p>'
+
+'Neos.ContentRepository.Testing:List':
+  superTypes:
+    'Neos.ContentRepository.Testing:Content': TRUE
+  childNodes:
+    items:
+      type: 'Neos.ContentRepository.Testing:ContentCollection'
+      constraints:
+        nodeTypes:
+          'Neos.ContentRepository.Testing:ListItem': TRUE
+          '*': FALSE
+
+'Neos.ContentRepository.Testing:ListItem':
+  superTypes:
+    'Neos.ContentRepository.Testing:Content': TRUE
+  properties:
+    text:
+      type: 'string'
+
+'Neos.ContentRepository.Testing:ImportExport':
+  properties:
+    description:
+      type: string
+    someDate:
+      type: DateTime

@@ -1,0 +1,9 @@
+#                                                                        #
+# ContentRepository Node Types                                                     #
+#                                                                        #
+
+'unstructured':
+  abstract: false
+  constraints:
+    nodeTypes:
+      '*': TRUE

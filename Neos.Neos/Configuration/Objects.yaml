@@ -1,0 +1,79 @@
+Neos\Neos\ViewHelpers\Backend\ConfigurationCacheVersionViewHelper:
+  properties:
+    configurationCache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Neos_Neos_Configuration_Version
+
+Neos\ContentRepository\Domain\Service\ContextFactoryInterface:
+  className: Neos\Neos\Domain\Service\ContentContextFactory
+
+Neos\ContentRepository\Domain\Service\PublishingServiceInterface:
+  className: Neos\Neos\Service\PublishingService
+
+Neos\Neos\Aspects\FusionCachingAspect:
+  properties:
+    fusionCache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Neos_Neos_Fusion
+
+'Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface':
+  className: Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource
+
+'Neos\ContentRepository\Domain\Service\NodeServiceInterface':
+  className: Neos\Neos\TYPO3CR\NeosNodeService
+
+# This interface extends the Neos\ContentRepository\Domain\Service\NodeServiceInterface
+'Neos\Neos\TYPO3CR\NeosNodeServiceInterface':
+  className: Neos\Neos\TYPO3CR\NeosNodeService
+
+'Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface':
+  className: Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource
+
+Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource:
+  properties:
+    configuration:
+      setting: Neos.ContentRepository.contentDimensions
+
+Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface:
+  className: Neos\Neos\Routing\FrontendNodeRoutePartHandler
+
+Neos\Neos\Domain\Service\NodeSearchServiceInterface:
+  className: Neos\Neos\Domain\Service\NodeSearchService
+
+Neos\Neos\Service\XliffService:
+  properties:
+    xliffToJsonTranslationsCache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Neos_Neos_XliffToJsonTranslations
+
+Neos\Neos\Controller\Backend\BackendController:
+  properties:
+    loginTokenCache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Neos_Neos_LoginTokenCache
+
+Neos\Neos\Controller\LoginController:
+  properties:
+    loginTokenCache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Neos_Neos_LoginTokenCache

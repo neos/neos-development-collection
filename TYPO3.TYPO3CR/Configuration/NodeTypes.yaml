@@ -1,9 +1,0 @@
-#                                                                        #
-# TYPO3CR Node Types                                                     #
-#                                                                        #
-
-'unstructured':
-  abstract: false
-  constraints:
-    nodeTypes:
-      '*': TRUE

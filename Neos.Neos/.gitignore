@@ -1,0 +1,16 @@
+/Scripts/node_modules/
+/Scripts/.bundle
+/Scripts/bundle/
+/Scripts/bin/
+/Scripts/bower_components/
+.sass-cache
+.DS_Store
+/Scripts/**/src
+/Tests/Behavior/behat.yml
+/Resources/Public/JavaScript/ContentModule-built.js
+/Resources/Public/Styles/Error.css
+/Resources/Public/Styles/Includes-built.css
+/Resources/Public/Styles/Login.css
+/Resources/Public/Styles/Neos.css
+/Resources/Public/Styles/RawContentMode.css
+

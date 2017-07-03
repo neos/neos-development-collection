@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.NodeTypes" source-language="en" datatype="plaintext" target-language="pl">
+    <body>
+      <trans-unit id="ui.label" xml:space="preserve" approved="yes">
+				<source>Insert content references</source>
+			<target xml:lang="pl">Wstaw referencje do treści</target></trans-unit>
+      <trans-unit id="groups.references" xml:space="preserve" approved="yes">
+				<source>References</source>
+			<target xml:lang="pl">Referencje</target><alt-trans><target xml:lang="pl">Odniesienia</target></alt-trans></trans-unit>
+      <trans-unit id="properties.references" xml:space="preserve" approved="yes">
+				<source>Select</source>
+			<target xml:lang="pl">wybierz</target></trans-unit>
+      <trans-unit id="content.noReferencesSelected" xml:space="preserve" approved="yes">
+				<source>No references selected</source>
+			<target xml:lang="pl">Nie wybrano referencji</target></trans-unit>
+    </body>
+  </file>
+</xliff>

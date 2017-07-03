@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="no">
+    <body>
+      <trans-unit id="properties._hiddenBeforeDateTime" xml:space="preserve">
+				<source>Hide before</source>
+			<target xml:lang="no" state="translated">Skjul før</target></trans-unit>
+      <trans-unit id="properties._hiddenAfterDateTime" xml:space="preserve">
+				<source>Hide after</source>
+			<target xml:lang="no" state="translated">Skjul etter</target></trans-unit>
+    </body>
+  </file>
+</xliff>

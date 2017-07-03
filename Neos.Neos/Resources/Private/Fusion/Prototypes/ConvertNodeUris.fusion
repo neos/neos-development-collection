@@ -1,0 +1,6 @@
+# ConvertNodeUris implementation
+#
+# replaces all occurrences of "node://<UUID>" by proper URIs.
+#
+# Deprecated since 1.1, use Neos.Neos:ConvertUris instead
+prototype(Neos.Neos:ConvertNodeUris) < prototype(Neos.Neos:ConvertUris)

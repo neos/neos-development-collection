@@ -1,0 +1,10 @@
+{namespace neos=Neos\Neos\ViewHelpers}
+<div{attributes -> f:format.raw()}>
+	<div class="neos-message-header">
+		<div class="neos-message-icon"><i class="icon-warning-sign"></i></div>
+		<h1>{neos:backend.translate(id: 'error.invalidNodeType.title', package: 'Neos.Neos')}</h1>
+	</div>
+	<div class="neos-message-wrapper">
+		<p class="neos-message-content">{neos:backend.translate(id: 'error.invalidNodeType.description', package: 'Neos.Neos')}</p>
+	</div>
+</div>

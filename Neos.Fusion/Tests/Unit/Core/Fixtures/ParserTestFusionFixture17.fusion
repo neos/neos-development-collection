@@ -1,0 +1,18 @@
+//
+// Fusion Fixture 21
+//
+// - Inclusion globing
+
+include: ParserTestFusionFixture16.fusion
+
+# Also include fixture #17b to check if the default namespace which has been defined for the Parser
+# via the PHP API, also is available in the included file:
+
+include: ParserTestFusionFixture17b.fusion
+
+prototype(Neos.Foo:Bar2).baz = "New Value"
+
+# Test for globbing and recursive globbing
+include: Globbing/*
+include: Globbing/RecursiveGlobbing/**/*
+include: ../Fixtures/Globbing/GlobbingWithDots/**/*

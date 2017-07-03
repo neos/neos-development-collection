@@ -1,0 +1,961 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="es-ES">
+    <body>
+      <trans-unit id="clickToEdit" xml:space="preserve">
+				<source>Click to edit</source>
+			<target xml:lang="es-ES" state="translated">Haga clic para editar</target></trans-unit>
+      <trans-unit id="clickToDelete" xml:space="preserve">
+				<source>Click to delete</source>
+			<target xml:lang="es-ES" state="translated">Haga clic para borrar</target></trans-unit>
+      <trans-unit id="cancel" xml:space="preserve">
+				<source>Cancel</source>
+			<target xml:lang="es-ES" state="translated">Cancelar</target></trans-unit>
+      <trans-unit id="back" xml:space="preserve">
+				<source>Back</source>
+			<target xml:lang="es-ES" state="translated">Atrás</target></trans-unit>
+      <!-- Management -->
+      <trans-unit id="management.label" xml:space="preserve">
+				<source>Management</source>
+			<target xml:lang="es-ES" state="translated">Administración</target></trans-unit>
+      <trans-unit id="management.description" xml:space="preserve">
+				<source>Contains multiple modules related to management of content</source>
+			<target xml:lang="es-ES" state="translated">Contiene varios módulos relacionados con la gestión de contenidos</target></trans-unit>
+      <trans-unit id="workspaces.label" xml:space="preserve">
+				<source>Workspaces</source>
+			<target xml:lang="es-ES" state="translated">Espacios de Trabajo</target></trans-unit>
+      <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve">
+				<source>Details for "{0}"</source>
+			<target xml:lang="es-ES" state="translated">Detalles de "{0}"</target></trans-unit>
+      <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve">
+				<source>Create new workspace</source>
+			<target xml:lang="es-ES" state="translated">Crear un nuevo espacio de trabajo</target></trans-unit>
+      <trans-unit id="workspaces.createWorkspace" xml:space="preserve">
+				<source>Create workspace</source>
+			<target xml:lang="es-ES" state="translated">Crear espacio de trabajo</target></trans-unit>
+      <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve">
+				<source>Delete workspace</source>
+			<target xml:lang="es-ES" state="translated">Eliminar espacio de trabajo</target></trans-unit>
+      <trans-unit id="workspaces.editWorkspace" xml:space="preserve">
+				<source>Edit workspace</source>
+			<target xml:lang="es-ES" state="translated">Editar espacio de trabajo</target></trans-unit>
+      <trans-unit id="workspaces.yesDeleteWorkspace" xml:space="preserve">
+				<source>Yes, delete the workspace</source>
+			<target xml:lang="es-ES" state="translated">Sí, elimínalo</target><alt-trans><target xml:lang="es-ES">Sí, elimínal</target></alt-trans></trans-unit>
+      <trans-unit id="workspaces.editWorkspace" xml:space="preserve">
+				<source>Edit workspace "{0}"</source>
+			<target xml:lang="es-ES" state="translated">Editar espacio de trabajo</target></trans-unit>
+      <trans-unit id="workspaces.personalWorkspace" xml:space="preserve">
+				<source>Personal workspace</source>
+			<target xml:lang="es-ES" state="translated">Espacio de trabajo personal</target></trans-unit>
+      <trans-unit id="workspaces.privateWorkspace" xml:space="preserve">
+				<source>Private workspace</source>
+			<target xml:lang="es-ES" state="translated">Espacio de trabajo privado</target></trans-unit>
+      <trans-unit id="workspaces.internalWorkspace" xml:space="preserve">
+				<source>Internal workspace</source>
+			<target xml:lang="es-ES" state="translated">Espacio de trabajo interno</target></trans-unit>
+      <trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve">
+				<source>Read-only workspace</source>
+			<target xml:lang="es-ES" state="translated">Espacio de trabajo de solo lectura</target></trans-unit>
+      <trans-unit id="workspaces.workspace.title" xml:space="preserve">
+				<source>Title</source>
+			<target xml:lang="es-ES" state="translated">Título</target></trans-unit>
+      <trans-unit id="workspaces.workspace.description" xml:space="preserve">
+				<source>Description</source>
+			<target xml:lang="es-ES" state="translated">Descripción</target></trans-unit>
+      <trans-unit id="workspaces.workspace.baseWorkspace" xml:space="preserve">
+				<source>Base workspace</source>
+			<target xml:lang="es-ES" state="translated">Espacio de trabajo base</target></trans-unit>
+      <trans-unit id="workspaces.workspace.owner" xml:space="preserve">
+				<source>Owner</source>
+			<target xml:lang="es-ES" state="translated">Dueño</target></trans-unit>
+      <trans-unit id="workspaces.workspace.visibility" xml:space="preserve">
+				<source>Visibility</source>
+			<target xml:lang="es-ES" state="translated">Visibilidad</target></trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.private" xml:space="preserve">
+				<source>Private</source>
+			<target xml:lang="es-ES" state="translated">Privado</target></trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
+				<source>Only reviewers and administrators can access and modify this workspace</source>
+			<target xml:lang="es-ES" state="translated">Solo los revisores y administradores pueden acceder y modificar este espacio de trabajo</target></trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve">
+				<source>Internal</source>
+			<target xml:lang="es-ES" state="translated">Interno</target></trans-unit>
+      <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve">
+				<source>Any logged in editor can see and modify this workspace.</source>
+			<target xml:lang="es-ES" state="translated">Cualquiera que inicie sesión en el editor puede ver y modificar este espacio de trabajo.</target></trans-unit>
+      <trans-unit id="workspaces.workspace.changes" xml:space="preserve">
+				<source>Changes</source>
+			<target xml:lang="es-ES" state="translated">Cambios</target></trans-unit>
+      <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve">
+				<source>Open page in "{0}" workspace</source>
+			<target xml:lang="es-ES" state="translated">Abrir la página en el espacio de trabajo "{0}"</target></trans-unit>
+      <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve">
+				<source>This is your personal workspace which you can't delete.</source>
+			<target xml:lang="es-ES" state="translated">Este es tu espacio de trabajo personal que no se puede eliminar.</target></trans-unit>
+      <trans-unit id="workspaces.help.workspaceContainsChanges" xml:space="preserve">
+				<source>The workspace contains changes. To delete, discard the changes first.</source>
+			<target xml:lang="es-ES" state="translated">El espacio de trabajo contiene cambios. Para eliminarlos, descarta los cambios primero.</target></trans-unit>
+      <trans-unit id="workspaces.help.cantRebaseWorkspaceContainsChanges" xml:space="preserve">
+				<source>Workspace can't be rebased on a different workspace because it still contains changes.</source>
+			<target xml:lang="es-ES" state="needs-translation">Workspace can't be rebased on a different workspace because it still contains changes.</target></trans-unit>
+      <trans-unit id="workspaces.help.cantDeleteWorkspaceHasDependencies" xml:space="preserve">
+				<source>The workspace cannot be deleted because other workspaces depend on it.</source>
+			<target xml:lang="es-ES" state="needs-translation">The workspace cannot be deleted because other workspaces depend on it.</target></trans-unit>
+      <trans-unit id="workspaces.help.cantDeleteNoPermission" xml:space="preserve">
+				<source>You don't have the permissions for deleting this workspace.</source>
+			<target xml:lang="es-ES" state="needs-translation">You don't have the permissions for deleting this workspace.</target></trans-unit>
+      <trans-unit id="workspaces.dialog.confirmWorkspaceDeletion" xml:space="preserve">
+				<source>Do you really want to delete the workspace "{0}"?</source>
+			<target xml:lang="es-ES" state="needs-translation">Do you really want to delete the workspace "{0}"?</target></trans-unit>
+      <trans-unit id="workspaces.dialog.thisWillDeleteTheWorkspace" xml:space="preserve">
+				<source>This will delete the workspace including all unpublished content. This operation cannot be undone.</source>
+			<target xml:lang="es-ES" state="needs-translation">This will delete the workspace including all unpublished content. This operation cannot be undone.</target></trans-unit>
+      <trans-unit id="workspaces.description" xml:space="preserve">
+				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
+			<target xml:lang="es-ES" state="translated">Este módulo contiene el resumen de todos los elementos dentro del espacio de trabajo actual y permite seguir el flujo de trabajo de revisión y publicación para ellos.</target></trans-unit>
+      <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve">
+				<source>Unpublished changes in workspace "{0}"</source>
+			<target xml:lang="es-ES" state="translated">Cambios no publicados</target></trans-unit>
+      <trans-unit id="workspaces.changesCounts" xml:space="preserve">
+				<source>additions: {new}, changes: {changed}, removals: {removed}</source>
+			<target xml:lang="es-ES" state="translated">añadidos: {new}, cambios: {changed}, removidos: {removed}</target></trans-unit>
+      <trans-unit id="workspaces.review" xml:space="preserve">
+				<source>Review</source>
+			<target xml:lang="es-ES" state="translated">Revisar 	</target></trans-unit>
+      <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve">
+				<source>Discard selected changes</source>
+			<target xml:lang="es-ES" state="translated">Descartar los cambios seleccionados</target></trans-unit>
+      <trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve">
+				<source>Publish selected changes</source>
+			<target xml:lang="es-ES" state="translated">Publicar cambios seleccionados</target></trans-unit>
+      <trans-unit id="workspaces.discardAllChanges" xml:space="preserve">
+				<source>Discard all changes</source>
+			<target xml:lang="es-ES" state="translated">Descartar todos los cambios</target></trans-unit>
+      <trans-unit id="workspaces.publishAllChanges" xml:space="preserve">
+				<source>Publish all changes</source>
+			<target xml:lang="es-ES" state="translated">Publicar todos los cambios</target></trans-unit>
+      <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve">
+				<source>Publish all changes to {0}</source>
+			<target xml:lang="es-ES" state="translated">Publicar todos los cambios en {0}</target></trans-unit>
+      <trans-unit id="changedContentCaption" xml:space="preserve">
+				<source>Changed Content</source>
+			<target xml:lang="es-ES" state="translated">Contenido cambiado</target></trans-unit>
+      <trans-unit id="workspaces.legend.deleted" xml:space="preserve">
+				<source>deleted</source>
+			<target xml:lang="es-ES" state="translated">eliminado</target></trans-unit>
+      <trans-unit id="workspaces.legend.created" xml:space="preserve">
+				<source>created</source>
+			<target xml:lang="es-ES" state="translated">creado</target></trans-unit>
+      <trans-unit id="workspaces.legend.moved" xml:space="preserve">
+				<source>moved</source>
+			<target xml:lang="es-ES" state="translated">movido</target></trans-unit>
+      <trans-unit id="workspaces.legend.hidden" xml:space="preserve">
+				<source>hidden</source>
+			<target xml:lang="es-ES" state="translated">oculto</target></trans-unit>
+      <trans-unit id="workspaces.legend.edited" xml:space="preserve">
+				<source>edited</source>
+			<target xml:lang="es-ES" state="translated">editado</target></trans-unit>
+      <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve">
+				<source>There are no unpublished changes in this workspace.</source>
+			<target xml:lang="es-ES" state="translated">No hay cambios sin publicar en este espacio de trabajo.</target></trans-unit>
+      <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve">
+				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
+			<target xml:lang="es-ES" state="translated">¿Desea descartar todos los cambios en el espacio de trabajo "{0}"?</target></trans-unit>
+      <trans-unit id="workspaces.workspaceWithThisTitleAlreadyExists">
+        <source>A workspace with this title already exists.</source>
+        <target xml:lang="es-ES" state="needs-translation">A workspace with this title already exists.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspaceHasBeenUpdated">
+        <source>The workspace "{0}" has been updated.</source>
+        <target xml:lang="es-ES" state="needs-translation">The workspace "{0}" has been updated.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfDependencies">
+        <source>Workspace "{0}" cannot be deleted because the following workspaces are based on it: {1}</source>
+        <target xml:lang="es-ES" state="needs-translation">Workspace "{0}" cannot be deleted because the following workspaces are based on it: {1}</target>
+      </trans-unit>
+      <trans-unit id="workspaces.notDeletedErrorWhileFetchingUnpublishedNodes">
+        <source>An error occurred while fetching unpublished nodes from workspace "{0}", nothing was deleted.</source>
+        <target xml:lang="es-ES" state="needs-translation">An error occurred while fetching unpublished nodes from workspace "{0}", nothing was deleted.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.cantEditBecauseWorkspaceContainsChanges">
+        <source>Your personal workspace contains changes, please publish or discard them first.</source>
+        <target xml:lang="es-ES" state="needs-translation">Your personal workspace contains changes, please publish or discard them first.</target>
+      </trans-unit>
+      <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
+          <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
+          <target xml:lang="es-ES" state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} node.</target>
+        </trans-unit>
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
+          <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
+          <target xml:lang="es-ES" state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} nodes.</target>
+        </trans-unit>
+      </group>
+      <trans-unit id="workspaces.workspaceHasBeenRemoved">
+        <source>The workspace "{0}" has been removed.</source>
+        <target xml:lang="es-ES" state="needs-translation">The workspace "{0}" has been removed.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectedChangeHasBeenPublished">
+        <source>The selected change has been published.</source>
+        <target xml:lang="es-ES" state="translated">El cambio seleccionado ha sido publicado.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectedChangeHasBeenDiscarded">
+        <source>The selected change has been discarded.</source>
+        <target xml:lang="es-ES" state="translated">El cambio seleccionado ha sido descartado.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectedChangesHaveBeenPublished">
+        <source>The selected changes have been published.</source>
+        <target xml:lang="es-ES" state="translated">Los cambios seleccionados ha sido publicados.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectedChangesHaveBeenDiscarded">
+        <source>The selected changes have been discarded.</source>
+        <target xml:lang="es-ES" state="translated">Los cambios seleccionados ha sido descartados.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenPublished">
+        <source>All changes from workspace "{0}" have been published to {1}.</source>
+        <target xml:lang="es-ES" state="needs-translation">All changes from workspace "{0}" have been published to {1}.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenDiscarded">
+        <source>All changes from workspace "{0}" have been discarded.</source>
+        <target xml:lang="es-ES" state="needs-translation">All changes from workspace "{0}" have been discarded.</target>
+      </trans-unit>
+      <trans-unit id="media.dragHelp" xml:space="preserve">
+				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
+			<target xml:lang="es-ES" state="needs-translation">Drag and drop an asset on a collection / tag to add them to it.</target></trans-unit>
+      <trans-unit id="media.replace.options.keepOriginalFilename" xml:space="preserve">
+				<source>Keep the filename "{0}"</source>
+			<target xml:lang="es-ES" state="translated">Conservar el archivo "{0}"</target></trans-unit>
+      <trans-unit id="media.label" xml:space="preserve">
+				<source>Media</source>
+			<target xml:lang="es-ES" state="translated">Media</target></trans-unit>
+      <trans-unit id="media.description" xml:space="preserve">
+				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
+			<target xml:lang="es-ES" state="translated">Este módulo permite la gestión de activos de medios incluyendo fotos, videos, audio y documentos.</target></trans-unit>
+      <trans-unit id="history.label" xml:space="preserve">
+				<source>History</source>
+			<target xml:lang="es-ES" state="translated">Historial</target></trans-unit>
+      <trans-unit id="history.description" xml:space="preserve">
+				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
+			<target xml:lang="es-ES" state="translated">Este módulo proporciona una visión general de todos los eventos relevantes que afectan a esta instalación de Neos.</target></trans-unit>
+      <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve">
+				<source>Here's what happened recently in Neos</source>
+			<target xml:lang="es-ES" state="translated">Esto es lo que sucedió recientemente en Neos:</target></trans-unit>
+      <trans-unit id="history.messages.emptyHistory" xml:space="preserve">
+				<source>There have not been recorded any events yet which could be displayed in this history.</source>
+			<target xml:lang="es-ES" state="translated">Aún no se ha registrado ningún evento que podamos mostrar en esta historia.</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
+				<source>{0} created the {1} {2}.</source>
+			<target xml:lang="es-ES" state="translated">{0} creado el {1} {2}.</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.removed" xml:space="preserve">
+				<source>{0} removed the {1} {2}.</source>
+			<target xml:lang="es-ES" state="translated">{0} eliminó el {1} {2}.</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
+				<source>{0} created the variant {1} of {2} {3}.</source>
+			<target xml:lang="es-ES" state="translated">{0} creó la variante {1} de {2} {3}.</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.changed" xml:space="preserve">
+				<source>{0} changed {1} {2}.</source>
+			<target xml:lang="es-ES" state="translated">{0} cambió {1} {2}.</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.moved" xml:space="preserve">
+				<source>{0} moved {1} {2}.</source>
+			<target xml:lang="es-ES" state="translated">{0} movió {1} {2}.</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.copied" xml:space="preserve">
+				<source>{0} copied {1} {2}.</source>
+			<target xml:lang="es-ES" state="translated">{0} copió {1} {2}.</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.renamed" xml:space="preserve">
+				<source>{0} renamed {1} "{2}" to "{3}".</source>
+			<target xml:lang="es-ES" state="translated">{0} renombró {1} "{2}" como "{3}".</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve">
+				<source>{0} changed content on {1} {2}.</source>
+			<target xml:lang="es-ES" state="translated">{0} cambió contenido en {1} {2}.</target></trans-unit>
+      <trans-unit id="history.eventDescription.account.created" xml:space="preserve">
+				<source>{0} created a new user "{1}" for {2}.</source>
+			<target xml:lang="es-ES" state="translated">{0} creó un nuevo usuario "{1}" para {2}.</target></trans-unit>
+      <trans-unit id="history.eventDescription.account.deleted" xml:space="preserve">
+				<source>{0} deleted the account "{1}" of {2}.</source>
+			<target xml:lang="es-ES" state="translated">{0} borró la cuenta "{1}" de {2}.</target></trans-unit>
+      <trans-unit id="history.loadMore.label" xml:space="preserve">
+				<source>Load More</source>
+			<target xml:lang="es-ES" state="translated">Cargar más</target></trans-unit>
+      <trans-unit id="history.nodeRemovedInMeantime" xml:space="preserve">
+				<source>This node has been removed in the meantime</source>
+			<target xml:lang="es-ES" state="needs-translation">This node has been removed in the meantime</target></trans-unit>
+      <!-- Administration -->
+      <trans-unit id="administration.label" xml:space="preserve">
+				<source>Administration</source>
+			<target xml:lang="es-ES" state="translated">Administración</target></trans-unit>
+      <trans-unit id="administration.description" xml:space="preserve">
+				<source>Contains multiple modules related to administration</source>
+			<target xml:lang="es-ES" state="translated">Contiene varios módulos relacionados con la administración</target></trans-unit>
+      <trans-unit id="users.label" xml:space="preserve">
+				<source>User Management</source>
+			<target xml:lang="es-ES" state="translated">Gestión de usuarios</target></trans-unit>
+      <trans-unit id="users.description" xml:space="preserve">
+				<source>The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</source>
+			<target xml:lang="es-ES" state="translated">El módulo de gestión de usuario le proporciona una visión general de todos los usuarios del back-end. Puede agruparlos por sus propiedades para controlar sus permisos, puntos de montaje de archivos, grupos miembros, etc... Este módulo es una herramienta indispensable para asegurarse de que los usuarios están configurados correctamente.</target></trans-unit>
+      <trans-unit id="users.action.index" xml:space="preserve">
+				<source>Overview</source>
+			<target xml:lang="es-ES" state="translated">Resumen</target></trans-unit>
+      <trans-unit id="users.action.show" xml:space="preserve">
+				<source>Show</source>
+			<target xml:lang="es-ES" state="translated">Mostrar</target></trans-unit>
+      <trans-unit id="users.action.new" xml:space="preserve">
+				<source>New</source>
+			<target xml:lang="es-ES" state="translated">Nuevo</target></trans-unit>
+      <trans-unit id="users.action.edit" xml:space="preserve">
+				<source>Edit</source>
+			<target xml:lang="es-ES" state="translated">Editar</target></trans-unit>
+      <trans-unit id="users.action.editAccount" xml:space="preserve">
+				<source>Edit account</source>
+			<target xml:lang="es-ES" state="translated">Editar cuenta</target></trans-unit>
+      <trans-unit id="users.action.newElectronicAddress" xml:space="preserve">
+				<source>New electronic address</source>
+			<target xml:lang="es-ES" state="translated">Nueva dirección electrónica</target></trans-unit>
+      <trans-unit id="user.preferences.useDefaultInterfaceLanguage" xml:space="preserve">
+				<source>Use system default</source>
+			<target xml:lang="es-ES" state="translated">Utilizar valores predeterminados del sistema</target></trans-unit>
+      <trans-unit id="users.actions.new.label" xml:space="preserve">
+				<source>Create user</source>
+			<target xml:lang="es-ES" state="translated">Crear usuario</target></trans-unit>
+      <trans-unit id="users.actions.new.title" xml:space="preserve">
+				<source>Create a new user</source>
+			<target xml:lang="es-ES" state="needs-translation">Create a new user</target></trans-unit>
+      <trans-unit id="users.new.userData" xml:space="preserve">
+				<source>User Data</source>
+			<target xml:lang="es-ES" state="translated">Datos de usuario</target></trans-unit>
+      <trans-unit id="users.new.userData.username" xml:space="preserve">
+				<source>Username</source>
+			<target xml:lang="es-ES" state="translated">Nombre de usuario</target></trans-unit>
+      <trans-unit id="users.new.userData.password" xml:space="preserve">
+				<source>Password</source>
+			<target xml:lang="es-ES" state="translated">Contraseña</target></trans-unit>
+      <trans-unit id="users.new.userData.repeatPassword" xml:space="preserve">
+				<source>Repeat password</source>
+			<target xml:lang="es-ES" state="translated">Repetir contraseña</target></trans-unit>
+      <trans-unit id="users.new.userData.roles" xml:space="preserve">
+				<source>Role(s)</source>
+			<target xml:lang="es-ES" state="translated">Rol(es)</target></trans-unit>
+      <trans-unit id="users.new.personalData" xml:space="preserve">
+				<source>Personal Data</source>
+			<target xml:lang="es-ES" state="translated">Datos de carácter personal</target></trans-unit>
+      <trans-unit id="users.new.personalData.firstName" xml:space="preserve">
+				<source>First Name</source>
+			<target xml:lang="es-ES" state="translated">Nombre</target><alt-trans><target xml:lang="es-ES">Nombre de pila</target></alt-trans></trans-unit>
+      <trans-unit id="users.new.personalData.lastName" xml:space="preserve">
+				<source>Last Name</source>
+			<target xml:lang="es-ES" state="translated">Apellidos</target></trans-unit>
+      <trans-unit id="users.new.userPreferences" xml:space="preserve">
+				<source>User Preferences</source>
+			<target xml:lang="es-ES" state="translated">Preferencias de usuario</target></trans-unit>
+      <trans-unit id="users.new.userPreferences.interfaceLanguage" xml:space="preserve">
+				<source>Interface Language</source>
+			<target xml:lang="es-ES" state="translated">Idioma de la interfaz</target></trans-unit>
+      <trans-unit id="users.new.createButton" xml:space="preserve">
+				<source>Create user</source>
+			<target xml:lang="es-ES" state="translated">Crear usuario</target></trans-unit>
+      <trans-unit id="users.show.subtitle" xml:space="preserve">
+				<source>Details for user</source>
+			<target xml:lang="es-ES" state="translated">Detalles del usuario</target></trans-unit>
+      <trans-unit id="users.show.personalData" xml:space="preserve">
+				<source>Personal Data</source>
+			<target xml:lang="es-ES" state="translated">Datos de carácter personal</target></trans-unit>
+      <trans-unit id="users.show.personalData.title" xml:space="preserve">
+				<source>Title</source>
+			<target xml:lang="es-ES" state="translated">Título</target></trans-unit>
+      <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
+				<source>First Name</source>
+			<target xml:lang="es-ES" state="translated">Nombre</target><alt-trans><target xml:lang="es-ES">Nombre de pila</target></alt-trans></trans-unit>
+      <trans-unit id="users.show.personalData.middleName" xml:space="preserve">
+				<source>Middle Name</source>
+			<target xml:lang="es-ES" state="translated">Segundo nombre</target></trans-unit>
+      <trans-unit id="users.show.personalData.lastName" xml:space="preserve">
+				<source>Last Name</source>
+			<target xml:lang="es-ES" state="translated">Apellidos</target></trans-unit>
+      <trans-unit id="users.show.personalData.otherName" xml:space="preserve">
+				<source>Other Name</source>
+			<target xml:lang="es-ES" state="translated">Otro nombre</target></trans-unit>
+      <trans-unit id="users.show.accounts" xml:space="preserve">
+				<source>Accounts</source>
+			<target xml:lang="es-ES" state="translated">Cuentas</target></trans-unit>
+      <trans-unit id="users.show.username" xml:space="preserve">
+				<source>Username</source>
+			<target xml:lang="es-ES" state="translated">Nombre de usuario</target></trans-unit>
+      <trans-unit id="users.show.roles" xml:space="preserve">
+				<source>Roles</source>
+			<target xml:lang="es-ES" state="translated">Roles</target></trans-unit>
+      <trans-unit id="users.show.electronicAddresses" xml:space="preserve">
+				<source>Electronic Addresses</source>
+			<target xml:lang="es-ES" state="translated">Direcciones electrónicas</target></trans-unit>
+      <trans-unit id="users.show.electronicAddresses.primary" xml:space="preserve">
+				<source>Primary</source>
+			<target xml:lang="es-ES" state="translated">Primario</target></trans-unit>
+      <trans-unit id="users.show.electronicAddresses.notAvailable" xml:space="preserve">
+				<source>N/A</source>
+			<target xml:lang="es-ES" state="translated">N/A</target></trans-unit>
+      <trans-unit id="users.show.deleteUser" xml:space="preserve">
+				<source>Delete User</source>
+			<target xml:lang="es-ES" state="translated">Eliminar usuario</target></trans-unit>
+      <trans-unit id="users.show.editUser" xml:space="preserve">
+				<source>Edit User</source>
+			<target xml:lang="es-ES" state="translated">Editar usuario</target></trans-unit>
+      <trans-unit id="users.show.cannotDeleteYourself" xml:space="preserve">
+				<source>You are logged in as this user and you cannot delete yourself.</source>
+			<target xml:lang="es-ES" state="translated">Estas conectado como este usuario y no se puede eliminar usted mismo.</target></trans-unit>
+      <trans-unit id="users.show.clickToDeleteUser" xml:space="preserve">
+				<source>Click here to delete this user</source>
+			<target xml:lang="es-ES" state="translated">Haga clic aquí para eliminar este usuario</target></trans-unit>
+      <trans-unit id="users.show.buttonDelete" xml:space="preserve">
+				<source>Do you really want to delete the user "{0}"?</source>
+			<target xml:lang="es-ES" state="translated">¿Realmente desea eliminar el usuario "{0}"?</target></trans-unit>
+      <trans-unit id="users.show.confirmDeleteButton" xml:space="preserve">
+				<source>Yes, delete the user</source>
+			<target xml:lang="es-ES" state="translated">Sí, eliminar el usuario</target></trans-unit>
+      <trans-unit id="users.show.confirmDeleteWarning" xml:space="preserve">
+				<source>This will delete the user, the related accounts and his personal workspace, including all unpublished content.</source>
+			<target xml:lang="es-ES" state="translated">Esto eliminará el usuario, las cuentas correspondientes y su espacio de trabajo personal, incluyendo todos los contenidos no publicados.</target></trans-unit>
+      <trans-unit id="users.show.operationCannotBeUndone" xml:space="preserve">
+				<source>This operation cannot be undone</source>
+			<target xml:lang="es-ES" state="translated">Esta operación no se puede deshacer</target></trans-unit>
+      <trans-unit id="users.editAccount.title" xml:space="preserve">
+				<source>Edit account "{accountIdentifier}"</source>
+			<target xml:lang="es-ES" state="translated">Editar cuenta "{accountIdentifier}"</target></trans-unit>
+      <trans-unit id="users.account" xml:space="preserve">
+				<source>Account</source>
+			<target xml:lang="es-ES" state="translated">Cuenta</target></trans-unit>
+      <trans-unit id="users.username" xml:space="preserve">
+				<source>Username</source>
+			<target xml:lang="es-ES" state="translated">Nombre de usuario</target></trans-unit>
+      <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve">
+				<source>The username can't be changed via the user interface</source>
+			<target xml:lang="es-ES" state="translated">El nombre de usuario no se puede cambiar mediante la interfaz de usuario</target></trans-unit>
+      <trans-unit id="users.saveAccount" xml:space="preserve">
+				<source>Save account</source>
+			<target xml:lang="es-ES" state="translated">Guardar cuenta</target></trans-unit>
+      <trans-unit id="users.repeatPassword" xml:space="preserve">
+				<source>Repeat password</source>
+			<target xml:lang="es-ES" state="translated">Repetir contraseña</target></trans-unit>
+      <trans-unit id="users.roles" xml:space="preserve">
+				<source>Roles</source>
+			<target xml:lang="es-ES" state="translated">Roles</target></trans-unit>
+      <trans-unit id="users.name" xml:space="preserve">
+				<source>Name</source>
+			<target xml:lang="es-ES" state="translated">Nombre</target></trans-unit>
+      <trans-unit id="users.accountsAndRoles" xml:space="preserve">
+				<source>Accounts and Roles</source>
+			<target xml:lang="es-ES" state="needs-translation">Accounts and Roles</target></trans-unit>
+      <trans-unit id="users.tooltip.view" xml:space="preserve">
+				<source>View user</source>
+			<target xml:lang="es-ES" state="needs-translation">View user</target></trans-unit>
+      <trans-unit id="users.tooltip.edit" xml:space="preserve">
+				<source>Edit user</source>
+			<target xml:lang="es-ES" state="needs-translation">Edit user</target></trans-unit>
+      <trans-unit id="users.tooltip.delete" xml:space="preserve">
+				<source>Delete user</source>
+			<target xml:lang="es-ES" state="translated">Eliminar usuario</target></trans-unit>
+      <trans-unit id="users.tooltip.cannotDeleteYourself" xml:space="preserve">
+				<source>You are logged in as this user and you cannot delete yourself.</source>
+			<target xml:lang="es-ES" state="translated">Estas conectado como este usuario y no se puede eliminar usted mismo.</target></trans-unit>
+      <trans-unit id="users.message.reallyDelete" xml:space="preserve">
+				<source>Do you really want to delete the user "{0}"?</source>
+			<target xml:lang="es-ES" state="translated">¿Realmente desea eliminar el usuario "{0}"?</target></trans-unit>
+      <trans-unit id="users.message.willBeDeleted" xml:space="preserve">
+				<source>This will delete the user, the related accounts and his personal workspace, including all unpublished content.</source>
+			<target xml:lang="es-ES" state="translated">Esto eliminará el usuario, las cuentas correspondientes y su espacio de trabajo personal, incluyendo todos los contenidos no publicados.</target></trans-unit>
+      <trans-unit id="users.message.confirmDelete" xml:space="preserve">
+				<source>Yes, delete the user</source>
+			<target xml:lang="es-ES" state="translated">Sí, eliminar el usuario</target></trans-unit>
+      <trans-unit id="users.editUser" xml:space="preserve">
+				<source>Edit user "{0}"</source>
+			<target xml:lang="es-ES" state="translated">Editar usuario "{0}"</target></trans-unit>
+      <trans-unit id="users.electronicAddress.usage.type.Home" xml:space="preserve">
+				<source>Home</source>
+			<target xml:lang="es-ES" state="translated">Inicio</target></trans-unit>
+      <trans-unit id="users.electronicAddress.usage.type.Work" xml:space="preserve">
+				<source>Work</source>
+			<target xml:lang="es-ES" state="needs-translation">Work</target></trans-unit>
+      <trans-unit id="packages.label" xml:space="preserve">
+				<source>Package Management</source>
+			<target xml:lang="es-ES" state="translated">Administrar paquetes</target></trans-unit>
+      <trans-unit id="packages.description" xml:space="preserve">
+				<source>The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context.</source>
+			<target xml:lang="es-ES" state="translated">El módulo de gestión de paquetes proporciona una visión general de todos los paquetes. Puede activar y desactivar los paquetes individuales, importar paquetes nuevos y eliminar paquetes existentes. También le proporciona la capacidad para congelar y descongelar los paquetes en el contexto de desarrollo.</target></trans-unit>
+      <trans-unit id="packages.index.legend" xml:space="preserve">
+				<source>Available packages</source>
+			<target xml:lang="es-ES" state="translated">Paquetes disponibles</target></trans-unit>
+      <trans-unit id="packages.name" xml:space="preserve">
+				<source>Package Name</source>
+			<target xml:lang="es-ES" state="translated">Nombre del paquete</target></trans-unit>
+      <trans-unit id="packages.key" xml:space="preserve">
+				<source>Package Key</source>
+			<target xml:lang="es-ES" state="translated">Clave de paquete</target></trans-unit>
+      <trans-unit id="packages.type" xml:space="preserve">
+				<source>Package Type</source>
+			<target xml:lang="es-ES" state="translated">Tipos de paquete</target></trans-unit>
+      <trans-unit id="packages.deactivated" xml:space="preserve">
+				<source>Deactivated</source>
+			<target xml:lang="es-ES" state="translated">Desactivado</target></trans-unit>
+      <trans-unit id="packages.tooltip.unfreeze" xml:space="preserve">
+				<source>This package is currently frozen. Click to unfreeze it.</source>
+			<target xml:lang="es-ES" state="translated">Este paquete está actualmente congelado. Haga clic para liberarlo.</target></trans-unit>
+      <trans-unit id="packages.tooltip.freeze" xml:space="preserve">
+				<source>Freeze the package in order to speed up your website.</source>
+			<target xml:lang="es-ES" state="translated">Congelar el paquete con el fin de acelerar su sitio de Internet.</target></trans-unit>
+      <trans-unit id="packages.tooltip.noDeactivate" xml:space="preserve">
+				<source>This package is protected and cannot be deactivated.</source>
+			<target xml:lang="es-ES" state="translated">Este paquete está protegido y no se puede desactivar.</target></trans-unit>
+      <trans-unit id="packages.tooltip.deactivate" xml:space="preserve">
+				<source>Deactivate Package</source>
+			<target xml:lang="es-ES" state="translated">Desactivar el paquete</target></trans-unit>
+      <trans-unit id="packages.tooltip.activate" xml:space="preserve">
+				<source>Activate Package</source>
+			<target xml:lang="es-ES" state="translated">Activar paquete</target></trans-unit>
+      <trans-unit id="packages.tooltip.noDelete" xml:space="preserve">
+				<source>This package is protected and cannot be deleted.</source>
+			<target xml:lang="es-ES" state="translated">Este paquete está protegido y no se puede eliminar.</target></trans-unit>
+      <trans-unit id="packages.tooltip.delete" xml:space="preserve">
+				<source>Delete Package</source>
+			<target xml:lang="es-ES" state="translated">Eliminar paquete</target></trans-unit>
+      <trans-unit id="packages.message.reallyDelete" xml:space="preserve">
+				<source>Do you really want to delete "{0}"?</source>
+			<target xml:lang="es-ES" state="translated">¿Realmente deseas eliminar "{0}"?</target><alt-trans><target xml:lang="es-ES">¿Realmente desas eliminar "{0}"?</target></alt-trans></trans-unit>
+      <trans-unit id="packages.message.confirmDelete" xml:space="preserve">
+				<source>Yes, delete the package</source>
+			<target xml:lang="es-ES" state="translated">Sí, eliminar el paquete</target></trans-unit>
+      <trans-unit id="packages.message.confirmDeletes" xml:space="preserve">
+				<source>Yes, delete the packages</source>
+			<target xml:lang="es-ES" state="translated">Sí, eliminar los paquetes</target></trans-unit>
+      <trans-unit id="packages.message.selected.reallyDelete" xml:space="preserve">
+				<source>Do you really want to delete the selected packages?</source>
+			<target xml:lang="es-ES" state="translated">¿Está seguro de querer borrar este paquete?</target></trans-unit>
+      <trans-unit id="packages.selected.freeze" xml:space="preserve">
+				<source>Freeze selected packages</source>
+			<target xml:lang="es-ES" state="translated">Congelar paquetes seleccionados</target></trans-unit>
+      <trans-unit id="packages.selected.unfreeze" xml:space="preserve">
+				<source>Unfreeze selected packages</source>
+			<target xml:lang="es-ES" state="translated">Liberar paquetes seleccionados</target></trans-unit>
+      <trans-unit id="packages.selected.delete" xml:space="preserve">
+				<source>Delete selected packages</source>
+			<target xml:lang="es-ES" state="translated">Eliminar paquetes seleccionados</target></trans-unit>
+      <trans-unit id="packages.selected.deactivate" xml:space="preserve">
+				<source>Deactivate selected packages</source>
+			<target xml:lang="es-ES" state="translated">Desactivar los paquetes seleccionados</target></trans-unit>
+      <trans-unit id="packages.selected.activate" xml:space="preserve">
+				<source>Activate selected packages</source>
+			<target xml:lang="es-ES" state="translated">Activar los paquetes seleccionados</target></trans-unit>
+      <trans-unit id="sites.label" xml:space="preserve">
+				<source>Sites Management</source>
+			<target xml:lang="es-ES" state="translated">Gestión de sitios</target></trans-unit>
+      <trans-unit id="sites.description" xml:space="preserve">
+				<source>The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</source>
+			<target xml:lang="es-ES" state="translated">El módulo de administración de sitios web le proporciona una visión general de todos los sitios. Puede editar, agregar y eliminar información sobre sus sitios, por ejemplo, agregar un nuevo dominio.</target></trans-unit>
+      <trans-unit id="sites.actions.newSite.label" xml:space="preserve">
+				<source>Create site</source>
+			<target xml:lang="es-ES" state="translated">Crear sitio</target></trans-unit>
+      <trans-unit id="sites.actions.newSite.title" xml:space="preserve">
+				<source>Create a new site</source>
+			<target xml:lang="es-ES" state="translated">Crear un nuevo sitio</target></trans-unit>
+      <trans-unit id="configuration.label" xml:space="preserve">
+				<source>Configuration</source>
+			<target xml:lang="es-ES" state="translated">Configuración</target></trans-unit>
+      <trans-unit id="configuration.description" xml:space="preserve">
+				<source>The Configuration module provides you with an overview of all configuration types.</source>
+			<target xml:lang="es-ES" state="translated">El módulo de configuración le proporciona una visión general de todos los tipos de configuración.</target></trans-unit>
+      <!-- User -->
+      <trans-unit id="user.label" xml:space="preserve">
+				<source>User</source>
+			<target xml:lang="es-ES" state="translated">Usuario</target></trans-unit>
+      <trans-unit id="userSettings.label" xml:space="preserve">
+				<source>User Settings</source>
+			<target xml:lang="es-ES" state="translated">Configuración de usuario</target></trans-unit>
+      <trans-unit id="userSettings.description" xml:space="preserve">
+				<source>This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</source>
+			<target xml:lang="es-ES" state="translated">Este módulo permite personalizar tu perfil de usuario del backend. Aquí puede cambiar su idioma activo, nombre y dirección de email. También puede configurar otras características generales del sistema.</target></trans-unit>
+      <trans-unit id="userSettings.action.index" xml:space="preserve">
+				<source>Edit</source>
+			<target xml:lang="es-ES" state="translated">Editar</target></trans-unit>
+      <trans-unit id="userSettings.action.edit" xml:space="preserve">
+				<source>Edit</source>
+			<target xml:lang="es-ES" state="translated">Editar</target></trans-unit>
+      <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve">
+				<source>New electronic address</source>
+			<target xml:lang="es-ES" state="translated">Nueva dirección electrónica</target></trans-unit>
+      <trans-unit id="userSettings.action.editAccount" xml:space="preserve">
+				<source>Edit account</source>
+			<target xml:lang="es-ES" state="translated">Editar cuenta</target></trans-unit>
+      <trans-unit id="userSettings.personalData" xml:space="preserve">
+				<source>Personal Data</source>
+			<target xml:lang="es-ES" state="translated">Datos de carácter personal</target></trans-unit>
+      <trans-unit id="userSettings.userData" xml:space="preserve">
+				<source>User Data</source>
+			<target xml:lang="es-ES" state="translated">Datos de usuario</target></trans-unit>
+      <trans-unit id="userSettings.usermenu" xml:space="preserve">
+				<source>User Menu</source>
+			<target xml:lang="es-ES" state="translated">Menú de usuario</target></trans-unit>
+      <trans-unit id="userSettings.preferences" xml:space="preserve">
+				<source>User Preferences</source>
+			<target xml:lang="es-ES" state="translated">Preferencias de usuario</target></trans-unit>
+      <trans-unit id="userSettings.preferences.interfaceLanguage" xml:space="preserve">
+				<source>Interface Language</source>
+			<target xml:lang="es-ES" state="translated">Idioma de la interfaz</target></trans-unit>
+      <trans-unit id="userSettings.preferences.useDefaultInterfaceLanguage" xml:space="preserve">
+				<source>Use system default</source>
+			<target xml:lang="es-ES" state="translated">Utilizar valores predeterminados del sistema</target></trans-unit>
+      <trans-unit id="userSettings.accounts" xml:space="preserve">
+				<source>Accounts</source>
+			<target xml:lang="es-ES" state="translated">Cuentas</target></trans-unit>
+      <trans-unit id="userSettings.accounts.username" xml:space="preserve">
+				<source>Username</source>
+			<target xml:lang="es-ES" state="translated">Nombre de usuario</target></trans-unit>
+      <trans-unit id="userSettings.accounts.roles" xml:space="preserve">
+				<source>Roles</source>
+			<target xml:lang="es-ES" state="translated">Roles</target></trans-unit>
+      <trans-unit id="userSettings.accounts.authenticationProvider" xml:space="preserve">
+				<source>Authentication Provider</source>
+			<target xml:lang="es-ES" state="translated">Proveedor de autenticación</target></trans-unit>
+      <trans-unit id="userSettings.electronicAddresses" xml:space="preserve">
+				<source>Electronic addresses</source>
+			<target xml:lang="es-ES" state="translated">Direcciones electrónicas</target></trans-unit>
+      <trans-unit id="userSettings.electronicAddresses.buttonDelete" xml:space="preserve">
+				<source>Do you really want to delete</source>
+			<target xml:lang="es-ES" state="translated">Realmente quiere borrar</target><alt-trans><target xml:lang="es-ES">Realmente quieres borrar</target></alt-trans></trans-unit>
+      <trans-unit id="userSettings.electronicAddresses.buttonDelete.confirmation" xml:space="preserve">
+				<source>Yes, delete electronic address</source>
+			<target xml:lang="es-ES" state="translated">Sí, eliminar correo electrónico</target></trans-unit>
+      <trans-unit id="userSettings.electronicAddresses.clickAddElectronicAddress" xml:space="preserve">
+				<source>Click to add a new Electronic address</source>
+			<target xml:lang="es-ES" state="translated">Haga clic para agregar una nueva dirección electrónica</target></trans-unit>
+      <trans-unit id="userSettings.electronicAddresses.addElectronicAddress" xml:space="preserve">
+				<source>Add electronic address</source>
+			<target xml:lang="es-ES" state="translated">Agregar dirección electrónica</target></trans-unit>
+      <trans-unit id="userSettings.saveUser" xml:space="preserve">
+				<source>Save User</source>
+			<target xml:lang="es-ES" state="translated">Guardar usuario</target></trans-unit>
+      <trans-unit id="userSettings.editUser" xml:space="preserve">
+				<source>Edit User</source>
+			<target xml:lang="es-ES" state="translated">Editar usuario</target></trans-unit>
+      <!-- Media -->
+      <trans-unit id="media.field.name" xml:space="preserve">
+				<source>Name</source>
+			<target xml:lang="es-ES" state="translated">Nombre</target></trans-unit>
+      <trans-unit id="media.field.title" xml:space="preserve">
+				<source>Title</source>
+			<target xml:lang="es-ES" state="translated">Título</target></trans-unit>
+      <trans-unit id="media.field.label" xml:space="preserve">
+				<source>Label</source>
+			<target xml:lang="es-ES" state="translated">Etiqueta</target></trans-unit>
+      <trans-unit id="media.field.caption" xml:space="preserve">
+				<source>Caption</source>
+			<target xml:lang="es-ES" state="translated">Pie de foto</target></trans-unit>
+      <trans-unit id="media.field.lastModified" xml:space="preserve">
+				<source>Last modified</source>
+			<target xml:lang="es-ES" state="translated">Última modificación</target></trans-unit>
+      <trans-unit id="media.field.fileSize" xml:space="preserve">
+				<source>File size</source>
+			<target xml:lang="es-ES" state="translated">Tamaño del archivo</target></trans-unit>
+      <trans-unit id="media.field.type" xml:space="preserve">
+				<source>Type</source>
+			<target xml:lang="es-ES" state="translated">Tipo</target></trans-unit>
+      <trans-unit id="media.field.tags" xml:space="preserve">
+				<source>Tags</source>
+			<target xml:lang="es-ES" state="translated">Etiquetas</target></trans-unit>
+      <trans-unit id="media.sortByName" xml:space="preserve">
+				<source>Sort by name</source>
+			<target xml:lang="es-ES" state="translated">Ordenar por nombre</target></trans-unit>
+      <trans-unit id="media.sortByLastModified" xml:space="preserve">
+				<source>Sort by last modified</source>
+			<target xml:lang="es-ES" state="translated">Ordenar por última modificación</target></trans-unit>
+      <trans-unit id="media.sortby" xml:space="preserve">
+				<source>Sort by</source>
+			<target xml:lang="es-ES" state="translated">Clasificar por</target></trans-unit>
+      <trans-unit id="media.sortdirection" xml:space="preserve">
+				<source>Sort direction</source>
+			<target xml:lang="es-ES" state="translated">Ordenar por dirección</target></trans-unit>
+      <trans-unit id="media.sortdirection.asc" xml:space="preserve">
+				<source>Ascending</source>
+			<target xml:lang="es-ES" state="translated">Ascendente</target></trans-unit>
+      <trans-unit id="media.sortdirection.desc" xml:space="preserve">
+				<source>Descending</source>
+			<target xml:lang="es-ES" state="translated">Descendete</target></trans-unit>
+      <trans-unit id="media.tooltip.dragAndDropOnTagOrCollection" xml:space="preserve">
+				<source>Drag and drop on tag or collection</source>
+			<target xml:lang="es-ES" state="translated">Arrastrar y soltar en la etiqueta o colección</target></trans-unit>
+      <trans-unit id="media.tooltip.editAsset" xml:space="preserve">
+				<source>Edit asset</source>
+			<target xml:lang="es-ES" state="translated">Editar activos</target></trans-unit>
+      <trans-unit id="media.tooltip.replaceAssetResource" xml:space="preserve">
+				<source>Replace</source>
+			<target xml:lang="es-ES" state="translated">Reemplazar</target></trans-unit>
+      <trans-unit id="media.tooltip.deleteAsset" xml:space="preserve">
+				<source>Delete asset</source>
+			<target xml:lang="es-ES" state="translated">Eliminar activos</target></trans-unit>
+      <trans-unit id="media.message.reallyDeleteAsset" xml:space="preserve">
+				<source>Do you really want to delete asset "{0}"?</source>
+			<target xml:lang="es-ES" state="translated">¿Realmente desea eliminar el activo "{0}"?</target></trans-unit>
+      <trans-unit id="media.message.reallyDeleteCollection" xml:space="preserve">
+				<source>Do you really want to delete collection "{0}"?</source>
+			<target xml:lang="es-ES" state="translated">¿Realmente desea eliminar la colección "{0}"?</target></trans-unit>
+      <trans-unit id="media.message.reallyDeleteTag" xml:space="preserve">
+				<source>Do you really want to delete tag "{0}"?</source>
+			<target xml:lang="es-ES" state="translated">¿Realmente desea eliminar la etiqueta "{0}"?</target></trans-unit>
+      <trans-unit id="media.message.willBeDeleted" xml:space="preserve">
+				<source>This will delete the asset.</source>
+			<target xml:lang="es-ES" state="translated">Esto eliminará el activo.</target></trans-unit>
+      <trans-unit id="media.message.willDeleteCollection" xml:space="preserve">
+				<source>This will delete the collection, but not the assets that it contains.</source>
+			<target xml:lang="es-ES" state="translated">Esto eliminará la colección, pero no los activos que contiene.</target></trans-unit>
+      <trans-unit id="media.message.willDeleteTag" xml:space="preserve">
+				<source>This will delete the tag, but not the assets that has it.</source>
+			<target xml:lang="es-ES" state="translated">Esto eliminará la etiqueta, pero no los activos que contiene.</target></trans-unit>
+      <trans-unit id="media.message.operationCannotBeUndone" xml:space="preserve">
+				<source>This operation cannot be undone.</source>
+			<target xml:lang="es-ES" state="translated">Esta operación no se puede deshacer.</target></trans-unit>
+      <trans-unit id="media.cancel" xml:space="preserve">
+				<source>Cancel</source>
+			<target xml:lang="es-ES" state="translated">Cancelar</target></trans-unit>
+      <trans-unit id="media.replaceAssetResource" xml:space="preserve">
+				<source>Replace</source>
+			<target xml:lang="es-ES" state="translated">Reemplazar</target></trans-unit>
+      <trans-unit id="media.saveEditing" xml:space="preserve">
+				<source>Save</source>
+			<target xml:lang="es-ES" state="translated">Guardar</target></trans-unit>
+      <trans-unit id="media.message.confirmDelete" xml:space="preserve">
+				<source>Yes, delete the asset</source>
+			<target xml:lang="es-ES" state="translated">Sí, eliminar el activo</target></trans-unit>
+      <trans-unit id="media.message.confirmDeleteCollection" xml:space="preserve">
+				<source>Yes, delete the collection</source>
+			<target xml:lang="es-ES" state="translated">Sí, borrar la colección</target></trans-unit>
+      <trans-unit id="media.message.confirmDeleteTag" xml:space="preserve">
+				<source>Yes, delete the tag</source>
+			<target xml:lang="es-ES" state="translated">Sí, eliminar la etiqueta</target></trans-unit>
+      <trans-unit id="media.thumbnail.editTitle" xml:space="preserve">
+				<source>Edit {0}</source>
+			<target xml:lang="es-ES" state="translated">Editar {0}</target></trans-unit>
+      <trans-unit id="media.search.title" xml:space="preserve">
+				<source>Search in assets</source>
+			<target xml:lang="es-ES" state="translated">Buscar en activos</target></trans-unit>
+      <trans-unit id="media.search.placeholder" xml:space="preserve">
+				<source>Search</source>
+			<target xml:lang="es-ES" state="translated">Buscar</target></trans-unit>
+      <trans-unit id="media.search.itemCount" xml:space="preserve">
+				<source>{0} items</source>
+			<target xml:lang="es-ES" state="translated">{0} elementos</target></trans-unit>
+      <trans-unit id="media.search.foundMatches" xml:space="preserve">
+				<source>found matching "{0}"</source>
+			<target xml:lang="es-ES" state="translated">encontrados coincidentes con "{0}"</target></trans-unit>
+      <trans-unit id="media.upload" xml:space="preserve">
+				<source>Upload</source>
+			<target xml:lang="es-ES" state="translated">Subir</target></trans-unit>
+      <trans-unit id="media.filterOptions" xml:space="preserve">
+				<source>Filter options</source>
+			<target xml:lang="es-ES" state="translated">Opciones del filtro</target></trans-unit>
+      <trans-unit id="media.filter.title.all" xml:space="preserve">
+				<source>Display all asset types</source>
+			<target xml:lang="es-ES" state="translated">Mostrar todos los tipos de activos</target></trans-unit>
+      <trans-unit id="media.filter.title.images" xml:space="preserve">
+				<source>Only display image assets</source>
+			<target xml:lang="es-ES" state="translated">Mostrar sólo activos de imágenes</target><alt-trans><target xml:lang="es-ES">Sólo mostrar activos de imágenes</target></alt-trans></trans-unit>
+      <trans-unit id="media.filter.title.documents" xml:space="preserve">
+				<source>Only display document assets</source>
+			<target xml:lang="es-ES" state="translated">Mostrar sólo activos de documento</target></trans-unit>
+      <trans-unit id="media.filter.title.video" xml:space="preserve">
+				<source>Only display video assets</source>
+			<target xml:lang="es-ES" state="translated">Mostrar sólo activos de video</target><alt-trans><target xml:lang="es-ES">Mostrar sólo videos</target></alt-trans></trans-unit>
+      <trans-unit id="media.filter.title.audio" xml:space="preserve">
+				<source>Only display audio assets</source>
+			<target xml:lang="es-ES" state="translated">Mostrar sólo activos de audio</target></trans-unit>
+      <trans-unit id="media.filter.all" xml:space="preserve">
+				<source>All</source>
+			<target xml:lang="es-ES" state="translated">Todo</target></trans-unit>
+      <trans-unit id="media.filter.images" xml:space="preserve">
+				<source>Images</source>
+			<target xml:lang="es-ES" state="translated">Imágenes</target></trans-unit>
+      <trans-unit id="media.filter.documents" xml:space="preserve">
+				<source>Documents</source>
+			<target xml:lang="es-ES" state="translated">Documentos</target></trans-unit>
+      <trans-unit id="media.filter.video" xml:space="preserve">
+				<source>Video</source>
+			<target xml:lang="es-ES" state="translated">Vídeo</target></trans-unit>
+      <trans-unit id="media.filter.audio" xml:space="preserve">
+				<source>Audio</source>
+			<target xml:lang="es-ES" state="translated">Audio</target></trans-unit>
+      <trans-unit id="media.tooltip.sortOptions" xml:space="preserve">
+				<source>Sort options</source>
+			<target xml:lang="es-ES" state="translated">Opciones de ordenación</target></trans-unit>
+      <trans-unit id="media.tooltip.listView" xml:space="preserve">
+				<source>List view</source>
+			<target xml:lang="es-ES" state="translated">Vista de lista</target></trans-unit>
+      <trans-unit id="media.tooltip.thumbnailView" xml:space="preserve">
+				<source>Thumbnail view</source>
+			<target xml:lang="es-ES" state="translated">Vista en miniatura</target></trans-unit>
+      <trans-unit id="media.collections" xml:space="preserve">
+				<source>Collections</source>
+			<target xml:lang="es-ES" state="translated">Colecciones</target></trans-unit>
+      <trans-unit id="media.editCollections" xml:space="preserve">
+				<source>Edit collections</source>
+			<target xml:lang="es-ES" state="translated">Editar colecciones</target></trans-unit>
+      <trans-unit id="media.editCollection" xml:space="preserve">
+				<source>Edit collection</source>
+			<target xml:lang="es-ES" state="translated">Editar colección</target></trans-unit>
+      <trans-unit id="media.deleteCollection" xml:space="preserve">
+				<source>Delete collection</source>
+			<target xml:lang="es-ES" state="translated">Eliminar colección</target></trans-unit>
+      <trans-unit id="media.createCollection" xml:space="preserve">
+				<source>Create collection</source>
+			<target xml:lang="es-ES" state="translated">Crear colección</target></trans-unit>
+      <trans-unit id="media.newCollection.placeholder" xml:space="preserve">
+				<source>Enter collection title</source>
+			<target xml:lang="es-ES" state="translated">Título de la colección</target></trans-unit>
+      <trans-unit id="media.allCollections" xml:space="preserve">
+				<source>All collections</source>
+			<target xml:lang="es-ES" state="translated">Todas las colecciones</target></trans-unit>
+      <trans-unit id="media.tags" xml:space="preserve">
+				<source>Tags</source>
+			<target xml:lang="es-ES" state="translated">Etiquetas</target></trans-unit>
+      <trans-unit id="media.editTags" xml:space="preserve">
+				<source>Edit tags</source>
+			<target xml:lang="es-ES" state="translated">Editar etiquetas</target></trans-unit>
+      <trans-unit id="media.editTag" xml:space="preserve">
+				<source>Edit tag</source>
+			<target xml:lang="es-ES" state="translated">Editar etiqueta</target></trans-unit>
+      <trans-unit id="media.deleteTag" xml:space="preserve">
+				<source>Delete tag</source>
+			<target xml:lang="es-ES" state="translated">Eliminar etiqueta</target></trans-unit>
+      <trans-unit id="media.placeholder.createTag" xml:space="preserve">
+				<source>Enter tag label</source>
+			<target xml:lang="es-ES" state="needs-translation">Enter tag label</target></trans-unit>
+      <trans-unit id="media.createTag" xml:space="preserve">
+				<source>Create tag</source>
+			<target xml:lang="es-ES" state="translated">Crear etiqueta</target></trans-unit>
+      <trans-unit id="media.tags.title.all" xml:space="preserve">
+				<source>All assets</source>
+			<target xml:lang="es-ES" state="needs-translation">All assets</target></trans-unit>
+      <trans-unit id="media.tags.all" xml:space="preserve">
+				<source>All</source>
+			<target xml:lang="es-ES" state="translated">Todo</target></trans-unit>
+      <trans-unit id="media.untaggedAssets" xml:space="preserve">
+				<source>Untagged assets</source>
+			<target xml:lang="es-ES" state="translated">Activos sin etiquetar</target></trans-unit>
+      <trans-unit id="media.untagged" xml:space="preserve">
+				<source>Untagged</source>
+			<target xml:lang="es-ES" state="translated">Sin etiquetar</target></trans-unit>
+      <trans-unit id="media.maxUploadSize" xml:space="preserve">
+				<source>Max. upload size {0} per file</source>
+			<target xml:lang="es-ES" state="translated">Max. tamaño de subida {0} por archivo</target></trans-unit>
+      <trans-unit id="media.dropFiles" xml:space="preserve">
+				<source>Drop files here</source>
+			<target xml:lang="es-ES" state="translated">Soltar archivos aquí</target></trans-unit>
+      <trans-unit id="media.clickToUpload" xml:space="preserve">
+				<source>or click to upload</source>
+			<target xml:lang="es-ES" state="translated">o haga clic para subir</target></trans-unit>
+      <trans-unit id="media.chooseFile" xml:space="preserve">
+				<source>Choose file</source>
+			<target xml:lang="es-ES" state="translated">Seleccione archivo</target><alt-trans><target xml:lang="es-ES">Seleccione Archivo</target></alt-trans></trans-unit>
+      <trans-unit id="media.noAssetsFound" xml:space="preserve">
+				<source>No Assets found.</source>
+			<target xml:lang="es-ES" state="translated">No se han encontrado activos.</target></trans-unit>
+      <trans-unit id="media.basics" xml:space="preserve">
+				<source>Basics</source>
+			<target xml:lang="es-ES" state="translated">Fundamentos</target></trans-unit>
+      <trans-unit id="media.delete" xml:space="preserve">
+				<source>Delete</source>
+			<target xml:lang="es-ES" state="translated">Borrar</target></trans-unit>
+      <trans-unit id="media.clickToDelete" xml:space="preserve">
+				<source>Click to delete</source>
+			<target xml:lang="es-ES" state="translated">Haga clic para borrar</target></trans-unit>
+      <trans-unit id="media.save" xml:space="preserve">
+				<source>Save</source>
+			<target xml:lang="es-ES" state="translated">Guardar</target></trans-unit>
+      <trans-unit id="media.metadata" xml:space="preserve">
+				<source>Metadata</source>
+			<target xml:lang="es-ES" state="translated">Metadatos</target></trans-unit>
+      <trans-unit id="media.metadata.filename" xml:space="preserve">
+				<source>Filename</source>
+			<target xml:lang="es-ES" state="translated">Nombre de archivo</target></trans-unit>
+      <trans-unit id="media.metadata.lastModified" xml:space="preserve">
+				<source>Last modified (resource)</source>
+			<target xml:lang="es-ES" state="translated">Última modificación (recurso)</target></trans-unit>
+      <trans-unit id="media.metadata.fileSize" xml:space="preserve">
+				<source>File size</source>
+			<target xml:lang="es-ES" state="translated">Tamaño del archivo</target></trans-unit>
+      <trans-unit id="media.metadata.dimensions" xml:space="preserve">
+				<source>Dimensions</source>
+			<target xml:lang="es-ES" state="translated">Dimensiones</target></trans-unit>
+      <trans-unit id="media.metadata.type" xml:space="preserve">
+				<source>Type</source>
+			<target xml:lang="es-ES" state="translated">Tipo</target></trans-unit>
+      <trans-unit id="media.metadata.identifier" xml:space="preserve">
+				<source>Identifier</source>
+			<target xml:lang="es-ES" state="translated">Identificador</target></trans-unit>
+      <trans-unit id="media.preview" xml:space="preserve">
+				<source>Preview</source>
+			<target xml:lang="es-ES" state="translated">Vista previa</target></trans-unit>
+      <trans-unit id="media.cannotUploadFile" xml:space="preserve">
+				<source>Cannot upload the file</source>
+			<target xml:lang="es-ES" state="translated">No se puede cargar el archivo</target></trans-unit>
+      <trans-unit id="media.noFileSelected" xml:space="preserve">
+				<source>No file selected</source>
+			<target xml:lang="es-ES" state="needs-translation">No file selected</target></trans-unit>
+      <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve">
+				<source>The file size of {0} exceeds the allowed limit of {1}</source>
+			<target xml:lang="es-ES" state="translated">El tamaño del archivo de {0} supera el límite permitido de {1}</target></trans-unit>
+      <trans-unit id="media.forTheFile" xml:space="preserve">
+				<source>for the file</source>
+			<target xml:lang="es-ES" state="translated">para el archivo</target></trans-unit>
+      <trans-unit id="media.onlySomeFilesWereUploaded" xml:space="preserve">
+				<source>Only some of the files were successfully uploaded. Refresh the page to see the those.</source>
+			<target xml:lang="es-ES" state="translated">Sólo algunos de los archivos fueron subidos con éxito. Actualice la página para ver cuales han sido.</target></trans-unit>
+      <trans-unit id="media.taggingAssetsFailed" xml:space="preserve">
+				<source>Tagging the asset failed.</source>
+			<target xml:lang="es-ES" state="translated">El etiquetado del activo ha fallado.</target><alt-trans><target xml:lang="es-ES">El etiquetado ha fallado.</target></alt-trans></trans-unit>
+      <trans-unit id="media.addingAssetsToCollectionFailed" xml:space="preserve">
+				<source>Adding the asset to the collection failed.</source>
+			<target xml:lang="es-ES" state="translated">El agregar el recurso a la colección ha fallado.</target><alt-trans><target xml:lang="es-ES">No pudo agregar el recurso a la colección.</target></alt-trans></trans-unit>
+      <trans-unit id="media.creating" xml:space="preserve">
+				<source>Creating</source>
+			<target xml:lang="es-ES" state="translated">Creando</target></trans-unit>
+      <trans-unit id="media.deleteRelatedNodes" xml:space="preserve">
+				<source>Asset could not be deleted, because there are still Nodes using it</source>
+			<target xml:lang="es-ES" state="needs-translation">Asset could not be deleted, because there are still Nodes using it</target></trans-unit>
+      <group id="media.relatedNodes" restype="x-gettext-plurals">
+        <trans-unit id="media.relatedNodes[0]">
+          <source>{0} usages</source>
+          <target xml:lang="es-ES" state="translated">{0} uso</target>
+        </trans-unit>
+        <trans-unit id="media.relatedNodes[1]">
+          <source>{0} usages</source>
+          <target xml:lang="es-ES" state="translated">{0} usos</target>
+        </trans-unit>
+      </group>
+      <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve">
+				<source>References to "{asset}"</source>
+			<target xml:lang="es-ES" state="needs-translation">References to "{asset}"</target></trans-unit>
+      <trans-unit id="media.replaceAsset.replaceFilename" xml:space="preserve">
+				<source>Replace "{filename}"</source>
+			<target xml:lang="es-ES" state="needs-translation">Replace "{filename}"</target></trans-unit>
+      <trans-unit id="media.replaceAsset.description" xml:space="preserve">
+        <source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
+      <target xml:lang="es-ES" state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
+      <trans-unit id="media.replaceAsset.note" xml:space="preserve">
+        <source>Note</source>
+      <target xml:lang="es-ES" state="needs-translation">Note</target></trans-unit>
+      <trans-unit id="media.replaceAsset.noteText" xml:space="preserve">
+        <source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
+      <target xml:lang="es-ES" state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
+      <trans-unit id="media.replaceAsset.chooseNewFile" xml:space="preserve">
+        <source>Choose a new file</source>
+      <target xml:lang="es-ES" state="needs-translation">Choose a new file</target></trans-unit>
+      <trans-unit id="media.replace.usageCount" xml:space="preserve">
+        <source>Currently the asset is used {usageCount} times.</source>
+      <target xml:lang="es-ES" state="needs-translation">Currently the asset is used {usageCount} times.</target></trans-unit>
+      <trans-unit id="media.replace.allUsages" xml:space="preserve">
+        <source>Show all usages</source>
+      <target xml:lang="es-ES" state="needs-translation">Show all usages</target></trans-unit>
+      <trans-unit id="media.replace.notUsed" xml:space="preserve">
+        <source>Currently the asset is not in used anywhere on the website.</source>
+      <target xml:lang="es-ES" state="needs-translation">Currently the asset is not in used anywhere on the website.</target></trans-unit>
+      <trans-unit id="media.replace.previewFile" xml:space="preserve">
+        <source>Preview current file</source>
+      <target xml:lang="es-ES" state="needs-translation">Preview current file</target></trans-unit>
+    </body>
+  </file>
+</xliff>
