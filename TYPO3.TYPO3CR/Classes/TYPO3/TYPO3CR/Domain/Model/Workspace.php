@@ -473,7 +473,9 @@ class Workspace
     {
         $sourceNodeData = $sourceNode->getNodeData();
         if ($sourceNodeData->getParentPath() !== $targetNodeData->getParentPath()) {
-            $this->moveTargetNodeDataToNewPosition($targetNodeData, $sourceNode->getPath());
+            // When $targetNodeData is moved, the NodeData::move() operation may transform it to a shadow node.
+            // moveTargetNodeDataToNewPosition() will return the correct (non-shadow) node in any case.
+            $targetNodeData = $this->moveTargetNodeDataToNewPosition($targetNodeData, $sourceNode->getPath());
         }
 
         $this->adjustShadowNodeDataForNodePublishing($sourceNodeData, $targetNodeData->getWorkspace(), $targetNodeData);
@@ -532,15 +534,16 @@ class Workspace
      *
      * @param NodeData $targetNodeData The (publish-) target node data to be moved
      * @param string $destinationPath The destination path of the move
+     * @return NodeData Either the same object like $targetNodeData, or, if $targetNodeData was transformed into a shadow node, the new target node (see move())
      */
     protected function moveTargetNodeDataToNewPosition(NodeData $targetNodeData, $destinationPath)
     {
         if ($targetNodeData->getWorkspace()->getBaseWorkspace() === null) {
             $targetNodeData->setPath($destinationPath);
-            return;
+            return $targetNodeData;
         }
 
-        $targetNodeData->move($destinationPath, $targetNodeData->getWorkspace());
+        return $targetNodeData->move($destinationPath, $targetNodeData->getWorkspace());
     }
 
     /**
