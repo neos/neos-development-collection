@@ -1238,7 +1238,7 @@ class NodeDataRepository extends Repository
      */
     protected function reduceNodeVariantsByWorkspacesAndDimensions(array $nodes, array $workspaces, array $dimensions)
     {
-        $foundNodes = [];
+        $reducedNodes = [];
 
         $minimalDimensionPositionsByIdentifier = [];
         foreach ($nodes as $node) {
@@ -1283,12 +1283,12 @@ class NodeDataRepository extends Repository
             $identifier = $node->getIdentifier();
             // Yes, it seems to work comparing arrays that way!
             if (!isset($minimalDimensionPositionsByIdentifier[$identifier]) || $dimensionPositions < $minimalDimensionPositionsByIdentifier[$identifier]) {
-                $foundNodes[$identifier] = $node;
+                $reducedNodes[$identifier] = $node;
                 $minimalDimensionPositionsByIdentifier[$identifier] = $dimensionPositions;
             }
         }
 
-        return $foundNodes;
+        return $reducedNodes;
     }
 
     /**
