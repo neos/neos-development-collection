@@ -8,6 +8,7 @@ Feature: Localization in workspaces
       | Path           | Node Type                  | Properties        | Language |
       | /sites         | unstructured               |                   | mul_ZZ   |
       | /sites/content-repository | Neos.ContentRepository.Testing:Page | {"title": "Home"} | mul_ZZ   |
+    And I am authenticated with role "Neos.Neos:Editor"
 
   @fixtures
   Scenario: Translate existing node in user workspace, get by path

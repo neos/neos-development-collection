@@ -13,6 +13,7 @@ Feature: Empty dimension values act as a fallback
       # Intentionally the /sites node should not have any dimension value assigned!
       | 0befa678-79ad-11e5-b465-14109fd7a2dd | /sites         | unstructured               |                   |                     |                            |                     |                            |
       | 17046dc8-79ad-11e5-9fef-14109fd7a2dd | /sites/content-repository | Neos.ContentRepository.Testing:Page | {"title": "Home"} | en_US               | en_US                      | specialist          | specialist                 |
+    And I am authenticated with role "Neos.Neos:Editor"
 
   @fixtures
   Scenario: Node variant with empty dimension values is found
