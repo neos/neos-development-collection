@@ -12,6 +12,7 @@ Feature: Multiple languages as content dimension
       | Path           | Node Type                  | Properties        |
       | /sites         | unstructured               |                   |
       | /sites/content-repository | Neos.ContentRepository.Testing:Page | {"title": "Home"} |
+    And I am authenticated with role "Neos.Neos:Editor"
 
   @fixtures
   Scenario: Get a node from multiple mixed content dimensions

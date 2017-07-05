@@ -45,14 +45,46 @@ class PublishingService extends \Neos\ContentRepository\Domain\Service\Publishin
         }
         $nodes = array($node);
         $nodeType = $node->getNodeType();
+
         if ($nodeType->isOfType('Neos.Neos:Document') || $nodeType->hasConfiguration('childNodes')) {
-            foreach ($node->getChildNodes('Neos.Neos:ContentCollection') as $contentCollectionNode) {
-                array_push($nodes, $contentCollectionNode);
-            }
+            $nodes = array_merge($nodes, $this->collectAllContentChildNodes($node));
         }
         $sourceWorkspace = $node->getWorkspace();
         $sourceWorkspace->publishNodes($nodes, $targetWorkspace);
 
         $this->emitNodePublished($node, $targetWorkspace);
+    }
+
+    /**
+     * Discards the given node from its workspace.
+     *
+     * If the given node is a Document or has ContentCollection child nodes, these nodes are discarded as well.
+     *
+     * @param NodeInterface $node
+     */
+    public function discardNode(NodeInterface $node)
+    {
+        $nodes = array($node);
+        $nodeType = $node->getNodeType();
+
+        if ($nodeType->isOfType('Neos.Neos:Document') || $nodeType->hasConfiguration('childNodes')) {
+            $nodes = array_merge($nodes, $this->collectAllContentChildNodes($node));
+        }
+
+        $this->discardNodes($nodes);
+    }
+
+    /**
+     * @param NodeInterface $parentNode
+     * @param array $collectedNodes
+     * @return array
+     */
+    protected function collectAllContentChildNodes(NodeInterface $parentNode, $collectedNodes = [])
+    {
+        foreach ($parentNode->getChildNodes('!Neos.Neos:Document') as $contentNode) {
+            $collectedNodes[] = $contentNode;
+            $collectedNodes = array_merge($collectedNodes, $this->collectAllContentChildNodes($contentNode));
+        }
+        return $collectedNodes;
     }
 }
