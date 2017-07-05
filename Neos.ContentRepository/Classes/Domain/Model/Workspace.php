@@ -17,7 +17,6 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Utility\Now;
-use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
 use Neos\ContentRepository\Domain\Service\PublishingServiceInterface;
@@ -403,62 +402,84 @@ class Workspace
      *
      * The specified workspace must be a base workspace of this workspace.
      *
-     * @param NodeInterface $node The node to publish
+     * @param NodeInterface $nodeToPublish The node to publish
      * @param Workspace $targetWorkspace The workspace to publish to
      * @return void
      * @api
      */
-    public function publishNode(NodeInterface $node, Workspace $targetWorkspace)
+    public function publishNode(NodeInterface $nodeToPublish, Workspace $targetWorkspace)
     {
-        if ($this->baseWorkspace === null) {
+        if ($this->publishNodeCanBeSkipped($nodeToPublish, $targetWorkspace)) {
             return;
         }
+        $this->emitBeforeNodePublishing($nodeToPublish, $targetWorkspace);
+
+        $correspondingNodeDataInTargetWorkspace = $this->findCorrespondingNodeDataInTargetWorkspace($nodeToPublish, $targetWorkspace);
+        $matchingNodeVariantExistsInTargetWorkspace = ($correspondingNodeDataInTargetWorkspace !== null && $correspondingNodeDataInTargetWorkspace->getDimensionValues() === $nodeToPublish->getDimensions());
+
+        // Save the original node workspace because the workspace of $nodeToPublish can be changed by replaceNodeData():
+        $originalNodeWorkspace = $nodeToPublish->getWorkspace();
+
+        if ($matchingNodeVariantExistsInTargetWorkspace) {
+            $this->replaceNodeData($nodeToPublish, $correspondingNodeDataInTargetWorkspace);
+            $this->moveNodeVariantsInOtherWorkspaces($nodeToPublish->getIdentifier(), $nodeToPublish->getPath(), $originalNodeWorkspace, $targetWorkspace);
+        } else {
+            $this->moveNodeVariantToTargetWorkspace($nodeToPublish, $targetWorkspace);
+        }
+
+        $this->emitAfterNodePublishing($nodeToPublish, $targetWorkspace);
+    }
+
+    /**
+     * Checks if the given node can / needs to be published to the given target workspace or if that operation can
+     * be skipped.
+     *
+     * @param NodeInterface $node The node to be published
+     * @param Workspace $targetWorkspace The target workspace
+     * @return bool
+     */
+    protected function publishNodeCanBeSkipped(NodeInterface $node, Workspace $targetWorkspace)
+    {
+        if ($this->baseWorkspace === null) {
+            return true;
+        }
         if ($node->getWorkspace() !== $this) {
-            return;
+            return true;
         }
         // Might happen if a node which has been published during an earlier call of publishNode() is attempted to
         // be published again:
         if ($node->getWorkspace() === $targetWorkspace) {
-            return;
+            return true;
         }
         $this->verifyPublishingTargetWorkspace($targetWorkspace);
-        $this->emitBeforeNodePublishing($node, $targetWorkspace);
         if ($node->getPath() === '/') {
-            return;
+            return true;
         }
 
-        $sourceWorkspace = $node->getWorkspace();
-        $targetNodeData = $this->findNodeDataInTargetWorkspace($node, $targetWorkspace);
-        $matchingNodeVariantExistsInTargetWorkspace = $targetNodeData !== null && $targetNodeData->getDimensionValues() === $node->getDimensions();
-        if ($matchingNodeVariantExistsInTargetWorkspace) {
-            $this->replaceNodeData($node, $targetNodeData);
-            $this->moveWorkspaceVariants($node->getIdentifier(), $node->getPath(), $sourceWorkspace, $targetWorkspace);
-        } else {
-            $this->moveNodeVariantToTargetWorkspace($node, $targetWorkspace);
-        }
-
-        $this->emitAfterNodePublishing($node, $targetWorkspace);
+        return false;
     }
+
 
     /**
      * Replace the node data of a node instance with a given target node data
      *
-     * The node data of the node that is published will be removed and the existing node data inside the target
-     * workspace is updated to the changes and will be injected into the node instance. If the node was marked as
-     * removed, both node data are removed.
+     * The current node data of $node will be removed and be replaced by $targetNodeData.
+     * If $node was marked as removed, both node data instances are removed.
      *
-     * @param NodeInterface $node The node instance with node data to be published
+     * @param NodeInterface $sourceNode The node instance with node data to be published
      * @param NodeData $targetNodeData The existing node data in the target workspace
      * @return void
      */
-    protected function replaceNodeData(NodeInterface $node, NodeData $targetNodeData)
+    protected function replaceNodeData(NodeInterface $sourceNode, NodeData $targetNodeData)
     {
-        $sourceNodeData = $node->getNodeData();
+        $sourceNodeData = $sourceNode->getNodeData();
         if ($sourceNodeData->getParentPath() !== $targetNodeData->getParentPath()) {
-            $this->moveTargetNodeToNewPosition($targetNodeData, $node->getPath());
+            // When $targetNodeData is moved, the NodeData::move() operation may transform it to a shadow node.
+            // moveTargetNodeDataToNewPosition() will return the correct (non-shadow) node in any case.
+            $targetNodeData = $this->moveTargetNodeDataToNewPosition($targetNodeData, $sourceNode->getPath());
         }
 
-        $this->handleShadowNodeData($sourceNodeData, $targetNodeData->getWorkspace(), $targetNodeData);
+        $this->adjustShadowNodeDataForNodePublishing($sourceNodeData, $targetNodeData->getWorkspace(), $targetNodeData);
 
         // Technically this shouldn't be needed but due to doctrines behavior we need it.
         if ($sourceNodeData->isRemoved() && $targetNodeData->getWorkspace()->getBaseWorkspace() === null) {
@@ -470,22 +491,24 @@ class Workspace
         $targetNodeData->similarize($sourceNodeData);
         $targetNodeData->setLastPublicationDateTime($this->now);
 
-        $node->setNodeData($targetNodeData);
-        $this->nodeService->cleanUpProperties($node);
+        $sourceNode->setNodeData($targetNodeData);
+        $this->nodeService->cleanUpProperties($sourceNode);
+
+        // If the source node was "removed", make sure that the new target node data is "removed" as well.
         $targetNodeData->setRemoved($sourceNodeData->isRemoved());
 
         $this->nodeDataRepository->remove($sourceNodeData);
     }
 
     /**
-     * Moves workspace variants of the node that were not moved to the target destination.
+     * Moves variants of a given node which exists in other workspaces than source and target workspace.
      *
-     * @param string $nodeIdentifier
-     * @param string $targetPath
-     * @param Workspace $sourceWorkspace
-     * @param Workspace $targetWorkspace
+     * @param string $nodeIdentifier The node which is about to be moved
+     * @param string $targetPath The target node path the node is being moved to
+     * @param Workspace $sourceWorkspace The workspace the node is currently located
+     * @param Workspace $targetWorkspace The workspace the node is being published to
      */
-    protected function moveWorkspaceVariants($nodeIdentifier, $targetPath, Workspace $sourceWorkspace, Workspace $targetWorkspace)
+    protected function moveNodeVariantsInOtherWorkspaces($nodeIdentifier, $targetPath, Workspace $sourceWorkspace, Workspace $targetWorkspace)
     {
         $nodeDataVariants = $this->nodeDataRepository->findByNodeIdentifier($nodeIdentifier);
         /** @var NodeData $nodeDataVariant */
@@ -510,33 +533,34 @@ class Workspace
      * Moves an existing node in a target workspace to the place it should be in after publish,
      * in order to move all children to the new position as well.
      *
-     * @param NodeData $targetNodeData
-     * @param string $destinationPath
+     * @param NodeData $targetNodeData The (publish-) target node data to be moved
+     * @param string $destinationPath The destination path of the move
+     * @return NodeData Either the same object like $targetNodeData, or, if $targetNodeData was transformed into a shadow node, the new target node (see move())
      */
-    protected function moveTargetNodeToNewPosition(NodeData $targetNodeData, $destinationPath)
+    protected function moveTargetNodeDataToNewPosition(NodeData $targetNodeData, $destinationPath)
     {
         if ($targetNodeData->getWorkspace()->getBaseWorkspace() === null) {
             $targetNodeData->setPath($destinationPath);
-            return;
+            return $targetNodeData;
         }
 
-        $targetNodeData->move($destinationPath, $targetNodeData->getWorkspace());
+        return $targetNodeData->move($destinationPath, $targetNodeData->getWorkspace());
     }
 
     /**
      * Move the given node instance to the target workspace
      *
      * If no target node variant (having the same dimension values) exists in the target workspace, the node that
-     * is published will be used as a new node variant in the target workspace.
+     * is published will be re-used as a new node variant in the target workspace.
      *
-     * @param NodeInterface $node The node to publish
+     * @param NodeInterface $nodeToPublish The node to publish
      * @param Workspace $targetWorkspace The workspace to publish to
      * @return void
      */
-    protected function moveNodeVariantToTargetWorkspace(NodeInterface $node, Workspace $targetWorkspace)
+    protected function moveNodeVariantToTargetWorkspace(NodeInterface $nodeToPublish, Workspace $targetWorkspace)
     {
-        $nodeData = $node->getNodeData();
-        $this->handleShadowNodeData($nodeData, $targetWorkspace, $nodeData);
+        $nodeData = $nodeToPublish->getNodeData();
+        $this->adjustShadowNodeDataForNodePublishing($nodeData, $targetWorkspace, $nodeData);
 
         // Technically this shouldn't be needed but due to doctrines behavior we need it.
         if ($nodeData->isRemoved() && $targetWorkspace->getBaseWorkspace() === null) {
@@ -547,95 +571,78 @@ class Workspace
         $nodeData->setMovedTo(null);
         $nodeData->setWorkspace($targetWorkspace);
         $nodeData->setLastPublicationDateTime($this->now);
-        $node->setNodeDataIsMatchingContext(null);
-        $this->nodeService->cleanUpProperties($node);
+        $nodeToPublish->setNodeDataIsMatchingContext(null);
+        $this->nodeService->cleanUpProperties($nodeToPublish);
     }
 
     /**
-     * Look for a shadow node of $publishedNodeData either adjust or remove it based on $targetWorkspace if the shadow
-     * node is marked as removed.
+     * Adjusts related shadow nodes for a "publish node" operation.
      *
-     * @param NodeData $publishedNodeData
-     * @param Workspace $targetWorkspace
-     * @param NodeData $targetNodeData
-     * @return boolean false if no shadow node was found, true otherwise
-     */
-    protected function handleShadowNodeData(NodeData $publishedNodeData, Workspace $targetWorkspace, NodeData $targetNodeData)
-    {
-        /** @var NodeData $shadowNodeData */
-        $shadowNodeData = $this->nodeDataRepository->findOneByMovedTo($publishedNodeData);
-        if ($shadowNodeData === null) {
-            return false;
-        }
-
-        // Technically this is not a shadow node
-        if ($shadowNodeData->isRemoved() === false) {
-            return true;
-        }
-
-        $this->adjustShadowNodeData($shadowNodeData, $publishedNodeData, $targetWorkspace, $targetNodeData);
-        return true;
-    }
-
-    /**
-     * Adjust the given $shadowNodeData by removing it or moving it to the $targetWorkspace, as needed.
+     * This method will look for a shadow node of $sourceNodeData. That shadow node will either be adjusted or,
+     * if the target node in the given target workspace is marked as removed, remove it.
      *
-     * @param NodeData $shadowNodeData
-     * @param NodeData $publishedNodeData
-     * @param Workspace $targetWorkspace
+     * @param NodeData $sourceNodeData Node Data of the node to publish
+     * @param Workspace $targetWorkspace Workspace the node is going to be published to
      * @param NodeData $targetNodeData
      * @return void
      */
-    protected function adjustShadowNodeData(NodeData $shadowNodeData, NodeData $publishedNodeData, Workspace $targetWorkspace, NodeData $targetNodeData)
+    protected function adjustShadowNodeDataForNodePublishing(NodeData $sourceNodeData, Workspace $targetWorkspace, NodeData $targetNodeData)
     {
-        // no shadow nodes on base workspace
-        if ($targetWorkspace->getBaseWorkspace() === null) {
-            $this->nodeDataRepository->remove($shadowNodeData);
+        /** @var NodeData $sourceShadowNodeData */
+        $sourceShadowNodeData = $this->nodeDataRepository->findOneByMovedTo($sourceNodeData);
+        if ($sourceShadowNodeData === null) {
             return;
         }
 
-        $nodeOnSamePathInTargetWorkspace = $this->nodeDataRepository->findOneByPath($shadowNodeData->getPath(), $targetWorkspace, $publishedNodeData->getDimensionValues());
+        // Technically this is not a shadow node
+        if ($sourceShadowNodeData->isRemoved() === false) {
+            return;
+        }
+
+        // There are no shadow nodes to be considered for a top-level base workspace:
+        if ($targetWorkspace->getBaseWorkspace() === null) {
+            $this->nodeDataRepository->remove($sourceShadowNodeData);
+            return;
+        }
+
+        $nodeOnSamePathInTargetWorkspace = $this->nodeDataRepository->findOneByPath($sourceShadowNodeData->getPath(), $targetWorkspace, $sourceNodeData->getDimensionValues());
         if ($nodeOnSamePathInTargetWorkspace !== null && $nodeOnSamePathInTargetWorkspace->getWorkspace() === $targetWorkspace) {
-            $this->nodeDataRepository->remove($shadowNodeData);
+            $this->nodeDataRepository->remove($sourceShadowNodeData);
             return;
         }
 
         $targetWorkspaceBase = $targetWorkspace->getBaseWorkspace();
-        $nodeInTargetWorkspaceBase = $this->nodeDataRepository->findOneByIdentifier($publishedNodeData->getIdentifier(), $targetWorkspaceBase, $publishedNodeData->getDimensionValues());
-        if ($nodeInTargetWorkspaceBase !== null && $nodeInTargetWorkspaceBase->getPath() === $publishedNodeData->getPath()) {
-            $this->nodeDataRepository->remove($shadowNodeData);
+        $nodeInTargetWorkspaceBase = $this->nodeDataRepository->findOneByIdentifier($sourceNodeData->getIdentifier(), $targetWorkspaceBase, $sourceNodeData->getDimensionValues());
+        if ($nodeInTargetWorkspaceBase !== null && $nodeInTargetWorkspaceBase->getPath() === $sourceNodeData->getPath()) {
+            $this->nodeDataRepository->remove($sourceShadowNodeData);
             return;
         }
 
-        $shadowNodeData->setMovedTo($targetNodeData);
-        $shadowNodeData->setWorkspace($targetWorkspace);
+        // From now on $sourceShadowNodeData is published to the target workspace:
+        $sourceShadowNodeData->setMovedTo($targetNodeData);
+        $sourceShadowNodeData->setWorkspace($targetWorkspace);
 
-        if ($nodeInTargetWorkspaceBase !== null && $nodeInTargetWorkspaceBase->getPath() !== $shadowNodeData->getPath()) {
-            $this->adjustShadowNodePath($shadowNodeData, $nodeInTargetWorkspaceBase->getPath(), $targetWorkspace, $publishedNodeData->getDimensionValues());
-        }
-    }
-
-    /**
-     * Adjusts the path of $shadowNodeData to $path, if needed/possible.
-     *
-     * If the $path is occupied in $targetWorkspace, the shadow is removed.
-     *
-     * @param NodeData $shadowNodeData
-     * @param $path
-     * @param Workspace $targetWorkspace
-     * @param array $dimensionValues
-     * @return void
-     */
-    protected function adjustShadowNodePath(NodeData $shadowNodeData, $path, Workspace $targetWorkspace, array $dimensionValues)
-    {
-        $nodeOnSamePathInTargetWorkspace = $this->nodeDataRepository->findOneByPath($path, $targetWorkspace, $dimensionValues);
-        if ($nodeOnSamePathInTargetWorkspace === null || $nodeOnSamePathInTargetWorkspace->getWorkspace() !== $targetWorkspace) {
-            $shadowNodeData->setPath($path, false);
-            return;
+        if ($nodeInTargetWorkspaceBase !== null && $nodeInTargetWorkspaceBase->getPath() !== $sourceShadowNodeData->getPath()) {
+            $nodeOnSamePathInTargetWorkspace = $this->nodeDataRepository->findOneByPath($nodeInTargetWorkspaceBase->getPath(), $targetWorkspace, $sourceNodeData->getDimensionValues());
+            if ($nodeOnSamePathInTargetWorkspace === null || $nodeOnSamePathInTargetWorkspace->getWorkspace() !== $targetWorkspace) {
+                $sourceShadowNodeData->setPath($nodeInTargetWorkspaceBase->getPath(), false);
+            } else {
+                // A node exists in that path, so no shadow node is needed/possible.
+                $this->nodeDataRepository->remove($sourceShadowNodeData);
+            }
         }
 
-        // A node exists in that path, so no shadow node is needed/possible.
-        $this->nodeDataRepository->remove($shadowNodeData);
+        // Check if a shadow node which has the same path, workspace and dimension values like the shadow node data we just created already exists (in the target workspace).
+        // If it does, we re-use the existing node and make sure that all properties etc. are taken from the node which is being published.
+        $existingShadowNodeDataInTargetWorkspace = $this->nodeDataRepository->findOneByPath($sourceShadowNodeData->getPath(), $targetWorkspace, $sourceShadowNodeData->getDimensionValues(), true);
+
+        // findOneByPath() might return a node from a different workspace than the $targetWorkspace we specified, so we need to check that, too:
+        if ($existingShadowNodeDataInTargetWorkspace !== null && $existingShadowNodeDataInTargetWorkspace->getWorkspace() === $targetWorkspace) {
+            $existingShadowNodeDataInTargetWorkspace->similarize($sourceShadowNodeData);
+            $existingShadowNodeDataInTargetWorkspace->setMovedTo($sourceShadowNodeData->getMovedTo());
+            $existingShadowNodeDataInTargetWorkspace->setRemoved($sourceShadowNodeData->isRemoved());
+            $this->nodeDataRepository->remove($sourceShadowNodeData);
+        }
     }
 
     /**
@@ -677,17 +684,19 @@ class Workspace
 
     /**
      * Returns the NodeData instance with the given identifier from the target workspace.
-     * If no NodeData instance is found, null is returned.
+     * If no NodeData instance is found in that target workspace, null is returned.
      *
      * @param NodeInterface $node
      * @param Workspace $targetWorkspace
      * @return NodeData
      */
-    protected function findNodeDataInTargetWorkspace(NodeInterface $node, Workspace $targetWorkspace)
+    protected function findCorrespondingNodeDataInTargetWorkspace(NodeInterface $node, Workspace $targetWorkspace)
     {
         $nodeData = $this->nodeDataRepository->findOneByIdentifier($node->getIdentifier(), $targetWorkspace, $node->getDimensions());
-
-        return ($nodeData === null || $nodeData->getWorkspace() === $targetWorkspace) ? $nodeData : null;
+        if ($nodeData === null || $nodeData->getWorkspace() !== $targetWorkspace) {
+            return null;
+        }
+        return $nodeData;
     }
 
     /**
