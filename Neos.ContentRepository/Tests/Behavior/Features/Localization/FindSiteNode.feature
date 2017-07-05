@@ -34,6 +34,7 @@ Feature: Find site node in non-default content dimension context
       | 0d80f01c-1234-4b73-9c0f-d1ec6f4592ed | /sites/wwwexamplecom/shop/coffeemachine | Neos.ContentRepository.Testing:Page | {"title": "Coffee Machine FR FR"}  | fr                  | fr                         | fr                 | fr                        |
       | 46c505c2-fb5f-46f5-aba1-37fe17a1a000 | /sites/wwwexamplecom/shop/coffeemachine | Neos.ContentRepository.Testing:Page | {"title": "Coffee Machine ES INT"} | es                  | es                         | int                | int                       |
       | ebd4bef1-5f51-4348-9d31-f221cc8cc1d7 | /sites/wwwexamplecom/shop/coffeemachine | Neos.ContentRepository.Testing:Page | {"title": "Coffee Machine IT INT"} | it                  | it                         | int                | int                       |
+    And I am authenticated with role "Neos.Neos:Editor"
 
   @fixtures
   Scenario: Retrieve site node from a node which is connected to the site node through a node with the same dimension values

@@ -996,6 +996,12 @@ Auf einen Knoten klicken, um ausschließlich dessen Fallbacks und Varianten zu s
       <trans-unit id="media.replace.previewFile" xml:space="preserve">
         <source>Preview current file</source>
       <target xml:lang="de" state="translated">Vorschau der aktuellen Datei</target></trans-unit>
+      <trans-unit id="media.noAccessToWorkspace" xml:space="preserve" approved="yes">
+        <source>No access to workspace "{0}"</source>
+      <target xml:lang="de">Kein Zugriff auf Arbeitsbereich "{0}"</target></trans-unit>
+      <trans-unit id="media.missingDocumentNode" xml:space="preserve">
+        <source>No document node found for this node</source>
+      <target xml:lang="de">Für diesen Knoten wurde kein Dokumentknoten gefunden</target></trans-unit>
     </body>
   </file>
 </xliff>

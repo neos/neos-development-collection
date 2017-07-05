@@ -22,6 +22,7 @@ use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Context;
 use Neos\Media\Domain\Model\AssetInterface;
+use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Neos\Controller\Module\AbstractModuleController;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Repository\SiteRepository;
@@ -576,6 +577,13 @@ class WorkspacesController extends AbstractModuleController
                         'diff' => $diffArray
                     ];
                 }
+            } elseif ($originalPropertyValue instanceof ImageInterface || $changedPropertyValue instanceof ImageInterface) {
+                $contentChanges[$propertyName] = [
+                    'type' => 'image',
+                    'propertyLabel' => $this->getPropertyLabel($propertyName, $changedNode),
+                    'original' => $originalPropertyValue,
+                    'changed' => $changedPropertyValue
+                ];
             } elseif ($originalPropertyValue instanceof AssetInterface || $changedPropertyValue instanceof AssetInterface) {
                 $contentChanges[$propertyName] = [
                     'type' => 'asset',
