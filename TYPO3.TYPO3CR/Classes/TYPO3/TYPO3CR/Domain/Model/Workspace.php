@@ -617,6 +617,7 @@ class Workspace
             return;
         }
 
+        // From now on $sourceShadowNodeData is published to the target workspace:
         $sourceShadowNodeData->setMovedTo($targetNodeData);
         $sourceShadowNodeData->setWorkspace($targetWorkspace);
 
@@ -632,8 +633,10 @@ class Workspace
 
         // Check if a shadow node which has the same path, workspace and dimension values like the shadow node data we just created already exists (in the target workspace).
         // If it does, we re-use the existing node and make sure that all properties etc. are taken from the node which is being published.
-        $existingShadowNodeDataInTargetWorkspace = $this->nodeDataRepository->findOneByPath($sourceShadowNodeData->getPath(), $sourceShadowNodeData->getWorkspace(), $sourceShadowNodeData->getDimensionValues(), true);
-        if ($existingShadowNodeDataInTargetWorkspace !== null) {
+        $existingShadowNodeDataInTargetWorkspace = $this->nodeDataRepository->findOneByPath($sourceShadowNodeData->getPath(), $targetWorkspace, $sourceShadowNodeData->getDimensionValues(), true);
+
+        // findOneByPath() might return a node from a different workspace then the $targetWorkspace we specified, so we need to check that, too:
+        if ($existingShadowNodeDataInTargetWorkspace !== null && $existingShadowNodeDataInTargetWorkspace->getWorkspace() === $targetWorkspace) {
             $existingShadowNodeDataInTargetWorkspace->similarize($sourceShadowNodeData);
             $existingShadowNodeDataInTargetWorkspace->setMovedTo($sourceShadowNodeData->getMovedTo());
             $existingShadowNodeDataInTargetWorkspace->setRemoved($sourceShadowNodeData->isRemoved());
