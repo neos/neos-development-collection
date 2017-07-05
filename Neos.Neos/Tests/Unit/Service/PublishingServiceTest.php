@@ -98,7 +98,7 @@ class PublishingServiceTest extends UnitTestCase
 
         $this->mockContextFactory = $this->getMockBuilder(ContextFactoryInterface::class)->disableOriginalConstructor()->getMock();
         $this->inject($this->publishingService, 'contextFactory', $this->mockContextFactory);
-        
+
         $this->mockBaseWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
         $this->mockBaseWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
         $this->mockBaseWorkspace->expects($this->any())->method('getBaseWorkspace')->will($this->returnValue(null));
@@ -250,13 +250,14 @@ class PublishingServiceTest extends UnitTestCase
     {
         $mockNode = $this->getMockBuilder(NodeInterface::class)->getMock();
         $mockChildNode = $this->getMockBuilder(NodeInterface::class)->getMock();
+        $mockChildNode->expects($this->any())->method('getChildNodes')->with('!Neos.Neos:Document')->will($this->returnValue(array()));
 
         $mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
         $mockNodeType->expects($this->atLeastOnce())->method('isOfType')->with('Neos.Neos:Document')->will($this->returnValue(true));
         $mockNode->expects($this->atLeastOnce())->method('getNodeType')->will($this->returnValue($mockNodeType));
 
         $mockNode->expects($this->atLeastOnce())->method('getWorkspace')->will($this->returnValue($this->mockWorkspace));
-        $mockNode->expects($this->atLeastOnce())->method('getChildNodes')->with('Neos.Neos:ContentCollection')->will($this->returnValue(array($mockChildNode)));
+        $mockNode->expects($this->atLeastOnce())->method('getChildNodes')->with('!Neos.Neos:Document')->will($this->returnValue(array($mockChildNode)));
 
         $mockTargetWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
 
@@ -272,13 +273,14 @@ class PublishingServiceTest extends UnitTestCase
     {
         $mockNode = $this->getMockBuilder(NodeInterface::class)->getMock();
         $mockChildNode = $this->getMockBuilder(NodeInterface::class)->getMock();
+        $mockChildNode->expects($this->any())->method('getChildNodes')->with('!Neos.Neos:Document')->will($this->returnValue(array()));
 
         $mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->setMethods(array('hasConfiguration', 'isOfType'))->getMock();
         $mockNodeType->expects($this->atLeastOnce())->method('hasConfiguration')->with('childNodes')->will($this->returnValue(true));
         $mockNode->expects($this->atLeastOnce())->method('getNodeType')->will($this->returnValue($mockNodeType));
 
         $mockNode->expects($this->atLeastOnce())->method('getWorkspace')->will($this->returnValue($this->mockWorkspace));
-        $mockNode->expects($this->atLeastOnce())->method('getChildNodes')->with('Neos.Neos:ContentCollection')->will($this->returnValue(array($mockChildNode)));
+        $mockNode->expects($this->atLeastOnce())->method('getChildNodes')->with('!Neos.Neos:Document')->will($this->returnValue(array($mockChildNode)));
 
         $mockTargetWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
 
