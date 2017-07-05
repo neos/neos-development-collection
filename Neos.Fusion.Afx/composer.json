@@ -8,6 +8,11 @@
             "name": "Martin Ficzel",
             "email": "martin.ficzel@gmx.de",
             "role": "Developer"
+        },
+        {
+            "name": "Wilhelm Behncke",
+            "email": "wilhelm.behncke@googlemail.com",
+            "role": "Developer"
         }
     ],
     "require": {
