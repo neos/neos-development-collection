@@ -12,6 +12,7 @@ Feature: Rename node
       | bdbc9add-800b-6613-8a86-263858cc7964 | /sites/content-repository/service/request  | Neos.ContentRepository.Testing:Page | {"title": "Service Request"} | live      |
       | c41d35bf-27e5-5645-a290-6a8b35c5935a | /sites/content-repository/company          | Neos.ContentRepository.Testing:Page | {"title": "Company"}         | live      |
       | 23ebd69e-4e0e-27e6-a41a-42dd14df615f | /sites/content-repository/company/about-us | Neos.ContentRepository.Testing:Page | {"title": "About us"}        | live      |
+    And I am authenticated with role "Neos.Neos:Editor"
 
   @fixtures
   Scenario: Rename a non-materialized node
