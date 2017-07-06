@@ -56,6 +56,7 @@ define(
 			this._super();
 			this._loadView();
 			this.get('inspector').registerPropertyEditor(this.get('propertyDefinition.key'), this);
+			this.get('inspector').registerPendingChange(this.get('propertyDefinition').key, this.get('value'));
 		},
 
 		_loadView: function() {
