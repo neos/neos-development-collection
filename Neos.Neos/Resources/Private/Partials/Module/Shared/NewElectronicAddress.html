@@ -24,7 +24,7 @@
 					<f:for each="{electronicAddressUsageTypes}" as="electronicAddressUsageType" iteration="iterator">
 						<f:if condition="{electronicAddressUsageType}">
 							<label class="neos-radio neos-inline">
-								<f:form.radio property="usage" value="{electronicAddressUsageType}" checked="{f:if(condition: '{iterator.index} == 1', then: 'checked')}" /><span></span>
+								<f:form.radio property="usage" value="{electronicAddressUsageType}" checked="{f:if(condition: '{iterator.index} === 1', then: 'checked')}" /><span></span>
 								{neos:backend.translate(id: 'users.electronicAddress.usage.type.{electronicAddressUsageType}', package: 'Neos.Neos', value: '{electronicAddressUsageType}')}
 							</label>
 						</f:if>
