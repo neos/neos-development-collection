@@ -28,7 +28,7 @@
 								<i class="icon-pencil icon-white"></i>
 							</f:link.action>
 
-							<f:if condition="{currentUser} == {user}">
+							<f:if condition="{currentUser} === {user}">
 								<f:then>
 									<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'users.tooltip.cannotDeleteYourself', source: 'Modules', package: 'Neos.Neos')}" data-neos-toggle="tooltip"><i class="icon-trash icon-white"></i></button>
 								</f:then>
