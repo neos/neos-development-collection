@@ -1,0 +1,137 @@
+`3.1.3 (2017-07-07) <https://github.com/neos/neos-development-collection/releases/tag/3.1.3>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Use strict comparison to avoid nesting level error <https://github.com/neos/neos-development-collection/pull/1627>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+Comparing objects in Fluid templates using `==` may lead to "nesting
+level too deep" errors, depending on the objects being compared.
+
+This change adjusts all non-strict comparisons against strict ones.
+
+Fixes #1626
+
+* Packages: ``Browser`` ``Neos``
+
+`BUGFIX: Skip apply change handler if the editor is undefined <https://github.com/neos/neos-development-collection/pull/1628>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+This change fix a JS console error, when ember try to call _applyChangeHandler
+on property like _nodeType, because this property is not really an editor.
+
+`BUGFIX: Correct merge of RelatedNodes template/xliff <https://github.com/neos/neos-development-collection/pull/1624>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+This moves added labels to the Neos.Media.Browser package and adjusts
+the RelatedNodes.html template as needed.
+
+Some german translations are moved as well.
+
+Related to `d5824fd4097bb658d22d0abc633ce68341c735c1 <https://github.com/neos/neos-development-collection/commit/d5824fd4097bb658d22d0abc633ce68341c735c1>`_ and the merge in
+`00f07ee986fcecf284f3548dc8b687780ccdb272 <https://github.com/neos/neos-development-collection/commit/00f07ee986fcecf284f3548dc8b687780ccdb272>`_.
+
+* Packages: ``Browser`` ``Neos``
+
+`BUGFIX: Publish moved nodes in nested workspaces <https://github.com/neos/neos-development-collection/pull/1609>`_
+-------------------------------------------------------------------------------------------------------------------
+
+This change contains a fix and additional Behat tests which solves an issue with moving and publishing nodes in a nested workspace scenario which can lead to data corruption in the content repository.
+
+Resolves #1608 
+
+`BUGFIX: Fix missing translation for inspector file uploads <https://github.com/neos/neos-development-collection/pull/1621>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+This changes the occurrences of `Neos.Neos:Main:upload` to `Neos.Neos:Main:choose` in Settings.yaml, as this has been the label formerly used for upload-related Inspector editors.
+
+The label `Neos.Neos:Main:upload` does not seem to exist currently, so the tooltips above upload buttons in the Inspector haven't been translated.
+
+<!--
+Thanks for your contribution, we appreciate it!
+
+Please read through our pull request guidelines, there are some interesting things there:
+https://discuss.neos.io/t/creating-a-pull-request/506
+
+And one more thing... Don't forget about the tests!
+-->
+
+
+**What I did**
+Fix the missing translation for the upload buttons in the image and asset inspector editors.
+
+**How I did it**
+Change all occurrences of `Neos.Neos:Main:upload` to `Neos.Neos:Main:choose` in Settings.yaml.
+
+**How to verify it**
+
+Hover above the upload Button of the image editor. Without this change, the tooltip contains the fallback label "Upload file" in every language. 
+
+**Checklist**
+
+- [x] Code follows the PSR-2 coding style
+- [x] Tests have been created, run and adjusted as needed
+- [x] The PR is created against the [lowest maintained branch](https://www.neos.io/features/release-roadmap.html) **PR is against 3.0, since the problem doesn't seem to occur prior to that**
+
+* Packages: ``Neos``
+
+`BUGFIX: NodeData property exists even if set to NULL <https://github.com/neos/neos-development-collection/pull/1211>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Even if the property is set to `null` `AbstractNodeData::hasProperty()` should return `true`.
+
+`BUGFIX: Detect asset://so-me-uu-id links in node properties <https://github.com/neos/neos-development-collection/pull/1576>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+To detect links to assets as "usage" in the media management, the
+search in the NodeDataRepository is amended as needed.
+
+Fixes #1575
+
+`BUGFIX: Only show link to accessible nodes <https://github.com/neos/neos-development-collection/pull/1579>`_
+-------------------------------------------------------------------------------------------------------------
+
+Fixed some misleading text on the listing page and added i18n.
+
+related to #1578.
+
+for 3.x upmerge have a look at https://github.com/ComiR/neos-development-collection/commit/`e2d0e44dd6f21179b2e9eeeac1481ae3a4f8a3f6 <https://github.com/neos/neos-development-collection/commit/e2d0e44dd6f21179b2e9eeeac1481ae3a4f8a3f6>`_.
+
+`BUGFIX: render asset changes correctly in workspaces overview <https://github.com/neos/neos-development-collection/pull/1605>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+This change fixes asset rendering in the workspace overview.
+
+Fixes #1592.
+
+`BUGFIX: Avoid orphaned content nodes when calling publishNode() <https://github.com/neos/neos-development-collection/pull/1618>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+This changes an issue with using the `PublishingService::publishNode()`
+which can result in an inconsistent structure in a user's workspace.
+
+This change also changes the behavior of `PublishingService::discardNode()`
+which now will also discard content of a given document node to protect
+consistency.
+
+Document nodes and their content must be published or discarded together
+in order to protect against inconsistencies when the document node is
+moved or removed in one of the base workspaces.
+
+Fixes #1617
+
+`BUGFIX: Behat tests fail with fresh checkout <https://github.com/neos/neos-development-collection/pull/1616>`_
+---------------------------------------------------------------------------------------------------------------
+
+This change fixes an issue with failing Behat tests caused by
+missing isolation between tests.
+
+When certain tests were run in a specific order, they might fail
+with an access denied error because no user is authenticated.
+
+Fixes #1613
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/3.1.2...3.1.3>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
