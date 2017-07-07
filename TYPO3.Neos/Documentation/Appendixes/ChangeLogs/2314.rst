@@ -1,0 +1,93 @@
+`2.3.14 (2017-07-07) <https://github.com/neos/neos-development-collection/releases/tag/2.3.14>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Skip apply change handler if the editor is undefined <https://github.com/neos/neos-development-collection/pull/1628>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+This change fix a JS console error, when ember try to call _applyChangeHandler
+on property like _nodeType, because this property is not really an editor.
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`BUGFIX: Publish moved nodes in nested workspaces <https://github.com/neos/neos-development-collection/pull/1609>`_
+-------------------------------------------------------------------------------------------------------------------
+
+This change contains a fix and additional Behat tests which solves an issue with moving and publishing nodes in a nested workspace scenario which can lead to data corruption in the content repository.
+
+Resolves #1608 
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`BUGFIX: NodeData property exists even if set to NULL <https://github.com/neos/neos-development-collection/pull/1211>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Even if the property is set to `null` `AbstractNodeData::hasProperty()` should return `true`.
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`BUGFIX: Detect asset://so-me-uu-id links in node properties <https://github.com/neos/neos-development-collection/pull/1576>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+To detect links to assets as "usage" in the media management, the
+search in the NodeDataRepository is amended as needed.
+
+Fixes #1575
+
+* Packages: ``TYPO3CR``
+
+`BUGFIX: Only show link to accessible nodes <https://github.com/neos/neos-development-collection/pull/1579>`_
+-------------------------------------------------------------------------------------------------------------
+
+Fixed some misleading text on the listing page and added i18n.
+
+related to #1578.
+
+for 3.x upmerge have a look at https://github.com/ComiR/neos-development-collection/commit/`e2d0e44dd6f21179b2e9eeeac1481ae3a4f8a3f6 <https://github.com/neos/neos-development-collection/commit/e2d0e44dd6f21179b2e9eeeac1481ae3a4f8a3f6>`_.
+
+* Packages: ``Neos``
+
+`BUGFIX: render asset changes correctly in workspaces overview <https://github.com/neos/neos-development-collection/pull/1605>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+This change fixes asset rendering in the workspace overview.
+
+Fixes #1592.
+
+* Packages: ``Neos``
+
+`BUGFIX: Avoid orphaned content nodes when calling publishNode() <https://github.com/neos/neos-development-collection/pull/1618>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+This changes an issue with using the `PublishingService::publishNode()`
+which can result in an inconsistent structure in a user's workspace.
+
+This change also changes the behavior of `PublishingService::discardNode()`
+which now will also discard content of a given document node to protect
+consistency.
+
+Document nodes and their content must be published or discarded together
+in order to protect against inconsistencies when the document node is
+moved or removed in one of the base workspaces.
+
+Fixes #1617
+
+* Packages: ``Neos``
+
+`BUGFIX: Behat tests fail with fresh checkout <https://github.com/neos/neos-development-collection/pull/1616>`_
+---------------------------------------------------------------------------------------------------------------
+
+This change fixes an issue with failing Behat tests caused by
+missing isolation between tests.
+
+When certain tests were run in a specific order, they might fail
+with an access denied error because no user is authenticated.
+
+Fixes #1613
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.3.13...2.3.14>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
