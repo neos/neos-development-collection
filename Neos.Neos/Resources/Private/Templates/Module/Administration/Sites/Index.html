@@ -47,7 +47,7 @@
 										<f:link.action action="edit" arguments="{site: site}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'clickToEdit', value: 'Click to edit')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
 											<i class="icon-pencil icon-white"></i>
 										</f:link.action>
-										<f:if condition="{site.state} == 1">
+										<f:if condition="{site.state} === 1">
 											<f:then>
 												<f:form action="deactivateSite" arguments="{site: site}" class="neos-inline">
 													<button class="neos-button neos-button-warning" title="{neos:backend.translate(id: 'clickToDeactivate', value: 'Click to deactivate')}" data-neos-toggle="tooltip">
