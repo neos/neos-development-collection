@@ -13,7 +13,7 @@
 			<f:for each="{paginatedAssets}" as="asset">
 				<li class="asset">
 					<f:link.action action="edit" class="neos-thumbnail" arguments="{asset: asset}" data="{asset-identifier: '{asset -> f:format.identifier()}'}">
-						<div class="neos-img-container draggable-asset {f:if(condition: '{asset.tags -> f:count()} == 0', then: ' neos-media-untagged')}">
+						<div class="neos-img-container draggable-asset {f:if(condition: '{asset.tags -> f:count()} === 0', then: ' neos-media-untagged')}">
 							<m:thumbnail asset="{asset}" preset="Neos.Media.Browser:Thumbnail" alt="{asset.label}" async="{settings.asyncThumbnails}" />
 						</div>
 					</f:link.action>

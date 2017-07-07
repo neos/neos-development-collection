@@ -18,7 +18,7 @@
 				<f:alias map="{workspace: workspaceAndCounts.workspace, changesCounts: workspaceAndCounts.changesCounts, canPublish: workspaceAndCounts.canPublish, canManage: workspaceAndCounts.canManage, dependentWorkspacesCount: workspaceAndCounts.dependentWorkspacesCount}">
 					<tr>
 						<td class="neos-workspace-type">
-							<f:if condition="{userWorkspace} == {workspace}">
+							<f:if condition="{userWorkspace} === {workspace}">
 								<f:then>
 									<i class="icon-user" title="{neos:backend.translate(id: 'workspaces.personalWorkspace', source: 'Modules', package: 'Neos.Neos')}" data-neos-toggle="tooltip"></i>
 								</f:then>
@@ -94,7 +94,7 @@
 									</f:link.action>
 								</f:if>
 
-								<f:if condition="{userWorkspace} == {workspace}">
+								<f:if condition="{userWorkspace} === {workspace}">
 									<f:then>
 										<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'workspaces.help.cantDeletePersonalWorkspace', source: 'Modules', package: 'Neos.Neos')}" data-neos-toggle="tooltip"><i class="icon-trash icon-white"></i></button>
 									</f:then>

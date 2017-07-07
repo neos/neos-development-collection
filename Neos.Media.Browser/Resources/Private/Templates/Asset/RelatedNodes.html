@@ -88,7 +88,7 @@
 							<ul>
 								<f:for each="{documentNode.nodes}" as="relatedNode">
 									<li>
-										<f:if condition="{userWorkspace} == {relatedNode.nodeData.workspace}">
+										<f:if condition="{userWorkspace} === {relatedNode.nodeData.workspace}">
 											<f:then>
 												<i class="icon-user" title="{neos:backend.translate(id: 'workspaces.personalWorkspace', package: 'Neos.Neos')}" data-neos-toggle="tooltip"></i>
 											</f:then>
