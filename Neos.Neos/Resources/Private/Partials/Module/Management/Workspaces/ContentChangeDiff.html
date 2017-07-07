@@ -24,7 +24,7 @@
             </tr>
             <tr>
                 <td colspan="3">
-                    <f:if condition="{contentChanges.type} == 'text'">
+                    <f:if condition="{contentChanges.type} === 'text'">
                         <table>
                             <f:for each="{contentChanges.diff}" key="index" as="blocks">
                                 <f:for each="{blocks}" as="block">
@@ -44,7 +44,7 @@
                             </f:for>
                         </table>
                     </f:if>
-                    <f:if condition="{contentChanges.type} == 'image'">
+                    <f:if condition="{contentChanges.type} === 'image'">
                         <table>
                             <tr>
                                 <td>
@@ -60,7 +60,7 @@
                             </tr>
                         </table>
                     </f:if>
-                    <f:if condition="{contentChanges.type} == 'asset'">
+                    <f:if condition="{contentChanges.type} === 'asset'">
                         <table>
                             <tr>
                                 <td>
@@ -76,7 +76,7 @@
                           </tr>
                        </table>
                     </f:if>
-                    <f:if condition="{contentChanges.type} == 'datetime'">
+                    <f:if condition="{contentChanges.type} === 'datetime'">
                         <table>
                             <tr>
                                 <td>

@@ -77,7 +77,7 @@
 						<tbody>
 							<f:for each="{user.electronicAddresses}" as="electronicAddress">
 								<tr>
-									<th>{electronicAddress.type} <f:if condition="{user.primaryElectronicAddress} == {electronicAddress}"><span>({neos:backend.translate(id: 'users.show.electronicAddresses.primary', value: 'Primary', source: 'Modules', package: 'Neos.Neos')})</span></f:if></th>
+									<th>{electronicAddress.type} <f:if condition="{user.primaryElectronicAddress} === {electronicAddress}"><span>({neos:backend.translate(id: 'users.show.electronicAddresses.primary', value: 'Primary', source: 'Modules', package: 'Neos.Neos')})</span></f:if></th>
 									<td>{electronicAddress.identifier}</td>
 								</tr>
 							</f:for>
@@ -93,7 +93,7 @@
 
 	<div class="neos-footer">
 		<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'back', value: 'Back')}</f:link.action>
-		<f:if condition="{currentUser} == {user}">
+		<f:if condition="{currentUser} === {user}">
 			<f:then>
 				<button class="neos-button neos-button-danger neos-disabled" title="{neos:backend.translate(id: 'users.show.cannotDeleteYourself', value: 'You are logged in as this user and you cannot delete yourself.', source: 'Modules', package: 'Neos.Neos')}">
 					<i class="icon-trash icon-white"></i> {neos:backend.translate(id: 'users.show.deleteUser', value: 'Delete User', source: 'Modules', package: 'Neos.Neos')}
