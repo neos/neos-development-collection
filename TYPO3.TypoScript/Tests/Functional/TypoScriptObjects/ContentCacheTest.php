@@ -597,4 +597,52 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest
         $secondRenderResult = $view->render();
         $this->assertSame('Outer segment|object=Object value 1|Uncached segment|counter=2|End uncached|End outer', $secondRenderResult);
     }
+
+    /**
+     * @test
+     */
+    public function dynamicSegmentIsCachedIfDiscriminatorIsNotChanged()
+    {
+        $renderObject = new TestModel(42, 'Render object');
+        $discriminatorObject = new TestModel(43, 'Discriminator object');
+
+        $view = $this->buildView();
+        $view->setOption('enableContentCache', true);
+        $view->assign('renderObject', $renderObject);
+        $view->assign('discriminatorObject', $discriminatorObject);
+        $view->setTypoScriptPath('contentCache/dynamicSegment');
+
+        $firstRenderResult = $view->render();
+
+        $renderObject->setValue('Should not affect the cache');
+
+        $secondRenderResult = $view->render();
+
+        $this->assertSame('Dynamic segment|counter=1', $secondRenderResult);
+        $this->assertSame($firstRenderResult, $secondRenderResult);
+    }
+
+    /**
+     * @test
+     */
+    public function dynamicSegmentCacheIsFlushedIfDiscriminatorIsChanged()
+    {
+        $renderObject = new TestModel(42, 'Render object');
+        $discriminatorObject = new TestModel(43, 'Discriminator object');
+
+        $view = $this->buildView();
+        $view->setOption('enableContentCache', true);
+        $view->assign('renderObject', $renderObject);
+        $view->assign('discriminatorObject', $discriminatorObject);
+        $view->setTypoScriptPath('contentCache/dynamicSegment');
+
+        $firstRenderResult = $view->render();
+
+        $discriminatorObject->setValue('This should affect the cache');
+
+        $secondRenderResult = $view->render();
+
+        $this->assertSame('Dynamic segment|counter=2', $secondRenderResult);
+        $this->assertNotSame($firstRenderResult, $secondRenderResult);
+    }
 }
