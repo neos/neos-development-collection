@@ -542,24 +542,3 @@ contentCache.dynamicSegment = TYPO3.TypoScript:Array {
 		entryDiscriminator = ${discriminatorObject.value}
 	}
 }
-
-root = Neos.Fusion:Value {
-    value = Neos.Fusion:Value {
-        value = Neos.Fusion:Value {
-            value = 'hi'
-            @cache {
-                mode = 'cached'
-            }
-        }
-        @cache {
-            mode = 'dynamic'
-            context {
-                1 = 'node'
-                2 = 'documentNode'
-            }
-        }
-    }
-    @cache {
-        mode = 'cached'
-    }
-}
