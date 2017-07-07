@@ -3,7 +3,7 @@
 
 <f:section name="content">
 	<f:for each="{availableConfigurationTypes}" as="availableConfigurationType">
-		<f:link.action action="index" arguments="{type: availableConfigurationType}" class="neos-button{f:if(condition: '{availableConfigurationType} == {type}', then: ' neos-active')}">{availableConfigurationType}</f:link.action>
+		<f:link.action action="index" arguments="{type: availableConfigurationType}" class="neos-button{f:if(condition: '{availableConfigurationType} === {type}', then: ' neos-active')}">{availableConfigurationType}</f:link.action>
 	</f:for>
 	<f:if condition="{validationResult.flattenedErrors -> f:count()} > 0">
 		<ul id="neos-notifications-inline">
