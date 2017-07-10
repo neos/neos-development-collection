@@ -525,3 +525,20 @@ contentCache.uncachedSegmentInCachedSegmentCanOverrideContextVariables = TYPO3.T
 		}
 	}
 }
+
+contentCache.dynamicSegment = TYPO3.TypoScript:Array {
+	5 = 'Dynamic segment|'
+	10 = ${'counter=' + renderObject.counter}
+
+	@cache {
+		mode = 'dynamic'
+		context {
+			1 = 'renderObject'
+			2 = 'discriminatorObject'
+		}
+		entryIdentifier {
+			renderObject = 'static'
+		}
+		entryDiscriminator = ${discriminatorObject.value}
+	}
+}

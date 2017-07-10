@@ -161,8 +161,12 @@ class RuntimeContentCache
     public function preEvaluate(array &$evaluateContext, $tsObject)
     {
         if ($this->enableContentCache) {
+            if ($evaluateContext['cacheForPathEnabled'] && $evaluateContext['cacheForPathDisabled']) {
+                $evaluateContext['cacheDiscriminator'] = $this->runtime->evaluate($evaluateContext['typoScriptPath'] . '/__meta/cache/entryDiscriminator');
+            }
             if ($evaluateContext['cacheForPathEnabled']) {
                 $evaluateContext['cacheIdentifierValues'] = $this->buildCacheIdentifierValues($evaluateContext['configuration'], $evaluateContext['typoScriptPath'], $tsObject);
+                $cacheDiscriminator = isset($evaluateContext['cacheDiscriminator']) ? $evaluateContext['cacheDiscriminator'] : null;
                 $self = $this;
                 $segment = $this->contentCache->getCachedSegment(function ($command, $additionalData, $cache) use ($self, $evaluateContext, $tsObject) {
                     if (strpos($command, 'eval=') === 0) {
@@ -190,7 +194,7 @@ class RuntimeContentCache
                     } else {
                         throw new Exception(sprintf('Unknown uncached command "%s"', $command), 1392837596);
                     }
-                }, $evaluateContext['typoScriptPath'], $evaluateContext['cacheIdentifierValues'], $this->addCacheSegmentMarkersToPlaceholders);
+                }, $evaluateContext['typoScriptPath'], $evaluateContext['cacheIdentifierValues'], $this->addCacheSegmentMarkersToPlaceholders, $cacheDiscriminator);
                 if ($segment !== false) {
                     return [true, $segment];
                 } else {
@@ -200,9 +204,7 @@ class RuntimeContentCache
                 $this->cacheMetadata[] = ['lifetime' => null];
             }
 
-            if ($evaluateContext['cacheForPathEnabled'] && $evaluateContext['cacheForPathDisabled']) {
-                $evaluateContext['cacheDiscriminator'] = $this->runtime->evaluate($evaluateContext['typoScriptPath'] . '/__meta/cache/entryDiscriminator');
-            }
+
 
             if (isset($evaluateContext['configuration']['maximumLifetime'])) {
                 $maximumLifetime = $this->runtime->evaluate($evaluateContext['typoScriptPath'] . '/__meta/cache/maximumLifetime', $tsObject);
