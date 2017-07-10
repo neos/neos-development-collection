@@ -645,4 +645,32 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest
         $this->assertSame('Dynamic segment|counter=2', $secondRenderResult);
         $this->assertNotSame($firstRenderResult, $secondRenderResult);
     }
+
+    /**
+     * @test
+     */
+    public function dynamicSegmentCacheBehavesLikeUncachedIfDiscriminatorIsDisabled()
+    {
+        $renderObject = new TestModel(42, 'Render object');
+        $discriminatorObject = new TestModel(43, 'Discriminator object');
+
+        $view = $this->buildView();
+        $view->setOption('enableContentCache', true);
+        $view->assign('renderObject', $renderObject);
+        $view->assign('discriminatorObject', $discriminatorObject);
+        $view->setTypoScriptPath('contentCache/dynamicSegmentWithDisabledDiscriminator');
+
+        $firstRenderResult = $view->render();
+        $secondRenderResult = $view->render();
+
+        $discriminatorObject->setValue('disable');
+
+        $thirdRenderResult = $view->render();
+        $fourthRenderResult = $view->render();
+
+        $this->assertSame('Dynamic segment|counter=1', $firstRenderResult);
+        $this->assertSame($firstRenderResult, $secondRenderResult);
+        $this->assertSame('Dynamic segment|counter=2', $thirdRenderResult);
+        $this->assertSame('Dynamic segment|counter=3', $fourthRenderResult);
+    }
 }
