@@ -258,7 +258,7 @@ Neos.Fusion:Tag {
 ### Rendering of Collections with `Neos.Fusion:Collection`
 
 For rendering of lists or menus a presentational-component usually will recieve arrays of 
-preprocessed data as prop. To itereate over such an Array the `Neos.Fusion:Collection` 
+preprocessed data as prop. To iterate over such an array the `Neos.Fusion:Collection` 
 can be used in afx.
 
 ```
