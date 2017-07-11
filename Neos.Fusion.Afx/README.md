@@ -252,7 +252,30 @@ Neos.Fusion:Tag {
 	}
 }
 ```
-  
+
+## Examples
+
+### Rendering of Collections with `Neos.Fusion:Collection`
+
+For rendering of lists or menus a presentational-component usually will recieve arrays of 
+preprocessed data as prop. To iterate over such an array the `Neos.Fusion:Collection` 
+can be used in afx.
+
+```
+prototype(PackageFactory.AtomicFusion.AFX:IterationExample) < prototype(PackageFactory.AtomicFusion:Component) {
+    
+    # array {[href:'http://www.example_1.com', title:'Title 1'], [href:'http://example_2.com', title:'Title 2']}
+    items = null
+    
+    renderer = afx`
+        <ul @if.has={props.items ? true : false}>
+        <Neos.Fusion:Collection collection={props.items} itemName="item" @children="itemRenderer">
+            <li><a href={item.href}>{item.title}</a></li>
+        </Neos.Fusion:Collection>
+        </ul>
+    `
+}
+```
 
 ## License
 
