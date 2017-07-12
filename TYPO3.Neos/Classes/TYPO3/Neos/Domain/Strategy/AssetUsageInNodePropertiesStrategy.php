@@ -13,6 +13,7 @@ namespace TYPO3\Neos\Domain\Strategy;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Persistence\PersistenceManagerInterface;
+use TYPO3\Flow\Security\Context as SecurityContext;
 use TYPO3\Flow\Utility\TypeHandling;
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\Image;
@@ -24,6 +25,7 @@ use TYPO3\Neos\Service\UserService;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Neos\Controller\CreateContentContextTrait;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\Neos\Domain\Service\UserService as DomainUserService;
@@ -77,6 +79,12 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
     protected $persistenceManager;
 
     /**
+     * @Flow\Inject
+     * @var SecurityContext
+     */
+    protected $securityContext;
+
+    /**
      * Returns an array of usage reference objects.
      *
      * @param AssetInterface $asset
@@ -92,11 +100,14 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
 
         $relatedNodes = [];
         foreach ($this->getRelatedNodes($asset) as $relatedNodeData) {
+            /** @var NodeData $relatedNodeData */
             $context = $this->createContextMatchingNodeData($relatedNodeData);
             $node = $this->nodeFactory->createFromNodeData($relatedNodeData, $context);
-            $flowQuery = new FlowQuery([$node]);
-            /** @var NodeInterface $documentNode */
-            $documentNode = $flowQuery->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+            $this->securityContext->withoutAuthorizationChecks(function () use ($node, &$documentNode) {
+                $flowQuery = new FlowQuery([$node]);
+                /** @var NodeInterface $documentNode */
+                $documentNode = $flowQuery->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+            });
 
             $site = $context->getCurrentSite();
             $accessible = $this->domainUserService->currentUserCanReadWorkspace($relatedNodeData->getWorkspace());
@@ -128,6 +139,10 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
             }
         }
 
-        return $this->nodeDataRepository->findNodesByPathPrefixAndRelatedEntities(SiteService::SITES_ROOT_PATH, $relationMap);
+        $allRelatedNodeDatas = $this->nodeDataRepository->findNodesByPathPrefixAndRelatedEntities(SiteService::SITES_ROOT_PATH, $relationMap);
+
+        return array_filter($allRelatedNodeDatas, function (NodeData $relatedNodeData) {
+            return !$relatedNodeData->isInternal();
+        });
     }
 }
