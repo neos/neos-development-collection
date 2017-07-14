@@ -196,3 +196,23 @@ Feature: Multi layered workspaces
       | live   |
     Then I should have 0 nodes
     And the unpublished node count in workspace "hotfix" should be 0
+
+  @fixtures
+  Scenario: Move node back and forth
+
+    When I get a node by path "/sites/neos/foundation" with the following context:
+      | Workspace |
+      | user-admin |
+    And I move the node into the node with path "/sites/neos/about"
+    And I publish the workspace "user-admin"
+    Then the unpublished node count in workspace "campaign" should be 4
+
+    When I get a node by path "/sites/neos/about/foundation" with the following context:
+      | Workspace |
+      | user-admin |
+    And I move the node after the node with path "/sites/neos/about"
+    And I publish the workspace "user-admin"
+    And  I get a node by path "/sites/neos/foundation" with the following context:
+      | Workspace |
+      | user-campaign |
+    Then I should have one node
