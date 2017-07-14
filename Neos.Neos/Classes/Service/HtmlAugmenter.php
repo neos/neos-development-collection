@@ -62,7 +62,8 @@ class HtmlAugmenter
      */
     protected function getHtmlRootElement($html)
     {
-        if (trim($html) === '') {
+        $html = trim($html);
+        if ($html === '') {
             return null;
         }
         $domDocument = new \DOMDocument('1.0', 'UTF-8');
@@ -75,6 +76,10 @@ class HtmlAugmenter
             libxml_use_internal_errors($useInternalErrorsBackup);
         }
         if ($rootElement === false || $rootElement->length !== 1) {
+            return null;
+        }
+        // detect whether loadHTML has wrapped plaintext in a p-tag without asking for permission
+        if ($rootElement instanceof \DOMNodeList && $rootElement->item(0)->tagName === 'p' && substr($html, 0, 2) !== '<p') {
             return null;
         }
         return $rootElement->item(0);
