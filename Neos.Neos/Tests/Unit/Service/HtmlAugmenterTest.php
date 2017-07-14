@@ -77,6 +77,15 @@ class HtmlAugmenterTest extends UnitTestCase
                 'expectedResult' => '<div class="new-class">   	' . chr(10) . '  </div>',
             ),
 
+            // plaintext source
+            array(
+                'html' => 'Plain Text without html',
+                'attributes' => array('class' => 'some-class'),
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'expectedResult' => '<div class="some-class">Plain Text without html</div>',
+            ),
+
             // root element detection
             array(
                 'html' => '<p>Simple HTML with unique root element</p>',
@@ -91,6 +100,20 @@ class HtmlAugmenterTest extends UnitTestCase
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
                 'expectedResult' => '<div class="new-class"><p>Simple HTML without</p><p> unique root element</p></div>',
+            ),
+            array(
+                'html' => 'Plain text and simple HTML without<p> unique root element</p>',
+                'attributes' => array('class' => 'new-class'),
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'expectedResult' => '<div class="new-class">Plain text and simple HTML without<p> unique root element</p></div>',
+            ),
+            array(
+                'html' => '   <p>Simple HTML with unique root element in whitespace</p>   ',
+                'attributes' => array('class' => 'some-class'),
+                'fallbackTagName' => 'fallback-tag',
+                'exclusiveAttributes' => null,
+                'expectedResult' => '   <p class="some-class">Simple HTML with unique root element in whitespace</p>   ',
             ),
             array(
                 'html' => '<p class="some-class">Simple HTML without</p><p> unique root element</p>',
