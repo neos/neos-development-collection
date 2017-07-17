@@ -16,7 +16,7 @@
         }
     ],
     "require": {
-        "neos/fusion": "^3.2.0|dev-master",
+        "neos/fusion": "^3.2.0 || dev-master",
         "packagefactory/afx": "~2.0.1"
     },
     "autoload": {
