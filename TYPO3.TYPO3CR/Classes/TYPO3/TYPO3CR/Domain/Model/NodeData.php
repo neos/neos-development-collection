@@ -877,7 +877,7 @@ class NodeData extends AbstractNodeData
             return $this;
         }
 
-        $targetPathShadowNodeData = $this->getExistingShadowNodeData($path, $workspace, $nodeData->getDimensionValues());
+        $targetPathShadowNodeData = $this->getExistingShadowNodeDataInExactWorkspace($path, $workspace, $nodeData->getDimensionValues());
 
         if ($this->workspace->getName() !== $workspace->getName()) {
             if ($targetPathShadowNodeData === null) {
@@ -942,13 +942,17 @@ class NodeData extends AbstractNodeData
      * Find an existing shadow node data on the given path for the current node data of the node (used by setPath)
      *
      * @param string $path The (new) path of the node data
-     * @param Workspace $workspace
-     * @param array $dimensionValues
+     * @param Workspace $workspace The workspace. Only shadow node data object with exactly this workspace will be considered
+     * @param array $dimensionValues Dimension values which must match with an existing node data object
      * @return NodeData|null
      */
-    protected function getExistingShadowNodeData($path, $workspace, $dimensionValues)
+    protected function getExistingShadowNodeDataInExactWorkspace($path, $workspace, $dimensionValues)
     {
-        return $this->nodeDataRepository->findShadowNodeByPath($path, $workspace, $dimensionValues);
+        $shadowNodeData = $this->nodeDataRepository->findShadowNodeByPath($path, $workspace, $dimensionValues);
+        if ($shadowNodeData !== null && $shadowNodeData->getWorkspace()->getName() !== $workspace->getName()) {
+            $shadowNodeData = null;
+        }
+        return $shadowNodeData;
     }
 
     /**
