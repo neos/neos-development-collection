@@ -4,14 +4,11 @@ namespace PackageFactory\AtomicFusion\AFX\Service;
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Arrays;
 use PackageFactory\Afx\Parser as AfxParser;
-use PackageFactory\Afx\Exception as AfxException;
-use Neos\Fusion\Exception as FusionException;
-
-use PackageFactory\AtomicFusion\AFX\Exception\Exception;
+use PackageFactory\AtomicFusion\AFX\Exception\AfxException;
 
 /**
  * Class AfxService
- * @package PackageFactory\AtomicFusion\AFX\Service
+ *
  * @Flow\Scope("singleton")
  */
 class AfxService
@@ -26,14 +23,10 @@ class AfxService
      */
     public static function convertAfxToFusion($afxCode, $indentation = '')
     {
-        try {
-            $parser = new AfxParser(trim($afxCode));
-            $ast = $parser->parse();
-            $fusion = self::astNodeListToFusion($ast, $indentation);
-            return $fusion;
-        } catch (AfxException $afxException) {
-            throw new FusionException(sprintf('Error during AFX-parsing: %s', $afxException->getMessage()));
-        }
+        $parser = new AfxParser(trim($afxCode));
+        $ast = $parser->parse();
+        $fusion = self::astNodeListToFusion($ast, $indentation);
+        return $fusion;
     }
 
     /**
@@ -60,7 +53,7 @@ class AfxService
                 return self::astNodeToFusion($ast['payload'], $indentation);
                 break;
             default:
-                throw new Exception(sprintf('ast type %s is unkonwn', $ast['type']));
+                throw new AfxException(sprintf('ast type %s is unkonwn', $ast['type']));
         }
     }
 
@@ -157,7 +150,7 @@ class AfxService
                 if ($childrenProp['type'] == 'string') {
                     $childrenPropertyName = $childrenProp['payload'];
                 } else {
-                    throw new Exception(
+                    throw new AfxException(
                         sprintf('@children only supports string payloads %s found', $childrenProp['type'])
                     );
                 }
@@ -214,7 +207,7 @@ class AfxService
                     if ($keyProperty['type'] == 'string') {
                         $fusionName = $keyProperty['payload'];
                     } else {
-                        throw new Exception(
+                        throw new AfxException(
                             sprintf(
                                 '@key only supports string payloads %s was given',
                                 $astNode['props']['@key']['type']

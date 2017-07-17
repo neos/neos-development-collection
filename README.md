@@ -8,7 +8,7 @@ prototypes because the generated fusion-code can be overwritten and controlled f
 
 ## Installation
 
-PackageFactory.AtomicFusion.AFX is available via packagist. Just add `"packagefactory/atomicfusion-afx" : "~2.0.0"`
+PackageFactory.AtomicFusion.AFX is available via packagist. Just add `"packagefactory/atomicfusion-afx" : "~3.0.0"`
 to the require-section of the composer.json or run `composer require packagefactory/atomicfusion-afx`.
 
 __We use semantic-versioning so every breaking change will increase the major-version number.__
@@ -68,13 +68,6 @@ prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.At
     }
 }
 ```
-
-## CLI - Usage
-
-The package contains the following cli-commands.
-
-1. `./flow afx:show` - Show the afx detection and expansion to pure fusion, this is useful for learning and understanding.
-2. `./flow afx:eject` - Expand afx in fusion code to pure fusion, this is usefull before removing the afx package. 
 
 ## AFX Language Rules
 
