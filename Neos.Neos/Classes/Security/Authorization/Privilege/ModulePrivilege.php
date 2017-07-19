@@ -92,7 +92,14 @@ class ModulePrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
     public function matchesSubject(PrivilegeSubjectInterface $subject)
     {
         if (!($subject instanceof ModulePrivilegeSubject) && !($subject instanceof MethodPrivilegeSubject)) {
-            throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "%s" only support subjects of type "%s" or "%s", but we got a subject of type: "%s".', self::class, ModulePrivilegeSubject::class, MethodPrivilegeSubject::class, get_class($subject)), 1493130646);
+            throw new InvalidPrivilegeTypeException(
+                sprintf(
+                    'Privileges of type "%s" only support subjects of type "%s" or "%s", but we got a subject of type: "%s".',
+                    self::class,
+                    ModulePrivilegeSubject::class,
+                    MethodPrivilegeSubject::class,
+                    get_class($subject)
+                ), 1493130646);
         }
         $this->initialize();
         if ($subject instanceof MethodPrivilegeSubject) {
