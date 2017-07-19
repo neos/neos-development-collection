@@ -241,7 +241,7 @@ Neos.Fusion:Tag {
 	contents = Neos.Fusion:Array {
 		1 = ${'eelExpression 1'}
 		2 = ' '
-		2 = ${'eelExpression 2'}   
+		3 = ${'eelExpression 2'}   
 	}
 }
 ```
