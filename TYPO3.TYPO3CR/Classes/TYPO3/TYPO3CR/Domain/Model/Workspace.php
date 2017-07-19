@@ -691,7 +691,7 @@ class Workspace
      */
     protected function findCorrespondingNodeDataInTargetWorkspace(NodeInterface $node, Workspace $targetWorkspace)
     {
-        $nodeData = $this->nodeDataRepository->findOneByIdentifier($node->getIdentifier(), $targetWorkspace, $node->getDimensions());
+        $nodeData = $this->nodeDataRepository->findOneByIdentifier($node->getIdentifier(), $targetWorkspace, $node->getDimensions(), true);
         if ($nodeData === null || $nodeData->getWorkspace() !== $targetWorkspace) {
             return null;
         }
