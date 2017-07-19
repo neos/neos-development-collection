@@ -134,7 +134,7 @@ privilegeTargets:
       matcher: 'administration/configuration'
 
     'Neos.Neos:Backend.Module.Administration.Dimensions':
-      matcher: 'method(Neos\Neos\Controller\Module\Administration\DimensionController->(index)Action())'
+      matcher: 'administration/dimensions'
 
 roles:
 
