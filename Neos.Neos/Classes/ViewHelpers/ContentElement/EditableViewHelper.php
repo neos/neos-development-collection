@@ -81,7 +81,7 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
         $content = $this->renderChildren();
 
         if ($node === null) {
-            $node = $this->getNodeFromTypoScriptContext();
+            $node = $this->getNodeFromFusionContext();
         }
 
         if ($node === null) {
@@ -103,7 +103,7 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
      * @return NodeInterface
      * @throws ViewHelperException
      */
-    protected function getNodeFromTypoScriptContext()
+    protected function getNodeFromFusionContext()
     {
         $node = $this->getContextVariable('node');
         if ($node === null) {

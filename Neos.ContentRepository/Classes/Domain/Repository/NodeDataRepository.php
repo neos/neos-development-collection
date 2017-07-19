@@ -1227,7 +1227,7 @@ class NodeDataRepository extends Repository
      */
     protected function reduceNodeVariantsByWorkspacesAndDimensions(array $nodes, array $workspaces, array $dimensions)
     {
-        $foundNodes = [];
+        $reducedNodes = [];
 
         $minimalDimensionPositionsByIdentifier = [];
         foreach ($nodes as $node) {
@@ -1272,12 +1272,12 @@ class NodeDataRepository extends Repository
             $identifier = $node->getIdentifier();
             // Yes, it seems to work comparing arrays that way!
             if (!isset($minimalDimensionPositionsByIdentifier[$identifier]) || $dimensionPositions < $minimalDimensionPositionsByIdentifier[$identifier]) {
-                $foundNodes[$identifier] = $node;
+                $reducedNodes[$identifier] = $node;
                 $minimalDimensionPositionsByIdentifier[$identifier] = $dimensionPositions;
             }
         }
 
-        return $foundNodes;
+        return $reducedNodes;
     }
 
     /**
@@ -1630,8 +1630,22 @@ class NodeDataRepository extends Repository
 
         foreach ($relationMap as $relatedObjectType => $relatedIdentifiers) {
             foreach ($relatedIdentifiers as $relatedIdentifier) {
+                // entity references like "__identifier": "so-me-uu-id"
                 $constraints[] = '(LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :entity' . md5($relatedIdentifier) . ' )';
                 $parameters['entity' . md5($relatedIdentifier)] = '%"__identifier": "' . strtolower($relatedIdentifier) . '"%';
+
+                // asset references in text like "asset://so-me-uu-id"
+                $constraints[] = '(LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :asset' . md5($relatedIdentifier) . ' )';
+                switch ($this->entityManager->getConnection()->getDatabasePlatform()->getName()) {
+                    case 'postgresql':
+                        $parameters['asset' . md5($relatedIdentifier)] = '%asset://' . strtolower($relatedIdentifier) . '%';
+                    break;
+                    case 'sqlite':
+                        $parameters['asset' . md5($relatedIdentifier)] = '%asset:\/\/' . strtolower($relatedIdentifier) . '%';
+                    break;
+                    default:
+                        $parameters['asset' . md5($relatedIdentifier)] = '%asset:\\\\/\\\\/' . strtolower($relatedIdentifier) . '%';
+                }
             }
         }
 

@@ -133,6 +133,9 @@ privilegeTargets:
     'Neos.Neos:Backend.Module.Administration.Configuration':
       matcher: 'administration/configuration'
 
+    'Neos.Neos:Backend.Module.Administration.Dimensions':
+      matcher: 'method(Neos\Neos\Controller\Module\Administration\DimensionController->(index)Action())'
+
 roles:
 
   'Neos.Flow:Everybody':
@@ -275,4 +278,8 @@ roles:
 
       -
         privilegeTarget: 'Neos.Neos:Backend.Module.Administration.Configuration'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'Neos.Neos:Backend.Module.Administration.Dimensions'
         permission: GRANT

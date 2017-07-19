@@ -86,16 +86,16 @@
 									</button>
 									<f:flashMessages as="flashMessages">
 										<f:for each="{flashMessages}" as="flashMessage">
-											<f:if condition="{flashMessage.severity} == 'OK'">
+											<f:if condition="{flashMessage.severity} === 'OK'">
 												<div class="neos-tooltip neos-bottom neos-in neos-tooltip-success">
 											</f:if>
-											<f:if condition="{flashMessage.severity} == 'Notice'">
+											<f:if condition="{flashMessage.severity} === 'Notice'">
 												<div class="neos-tooltip neos-bottom neos-in neos-tooltip-notice">
 											</f:if>
-											<f:if condition="{flashMessage.severity} == 'Warning'">
+											<f:if condition="{flashMessage.severity} === 'Warning'">
 												<div class="neos-tooltip neos-bottom neos-in neos-tooltip-warning">
 											</f:if>
-											<f:if condition="{flashMessage.severity} == 'Error'">
+											<f:if condition="{flashMessage.severity} === 'Error'">
 												<script>
 													$(function () {
 														$('fieldset').effect('shake', {times: 1}, 60);

@@ -13,6 +13,7 @@ Feature: Rename node with dimension support
       | c41d35bf-27e5-5645-a290-6a8b35c5935a | /sites/content-repository/company          | Neos.ContentRepository.Testing:Page | {"title": "Company"}         | live      | en       |
       | c41d35bf-27e5-5645-a290-6a8b35c5935a | /sites/content-repository/company          | Neos.ContentRepository.Testing:Page | {"title": "Unternehmen"}     | live      | de       |
       | 4f19cb3c-6148-11e4-a977-14109fd7a2dd | /sites/content-repository/contact          | Neos.ContentRepository.Testing:Page | {"title": "Kontakt"}         | live      | de       |
+    And I am authenticated with role "Neos.Neos:Editor"
 
   @fixtures
   Scenario: Rename a node to a name conflicting with an existing node
