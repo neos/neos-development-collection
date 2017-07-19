@@ -613,7 +613,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             $uriSegment .= $preset['uriSegment'] . '_';
         }
 
-        if ($allDimensionPresetsAreDefault && $currentNodeIsSiteNode) {
+        if ($this->supportEmptySegmentForDimensions && $allDimensionPresetsAreDefault && $currentNodeIsSiteNode) {
             return '/';
         } else {
             return ltrim(trim($uriSegment, '_') . '/', '/');
