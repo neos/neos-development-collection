@@ -14,6 +14,8 @@ namespace Neos\Neos\Controller\Backend;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
+use Neos\Neos\Security\Authorization\Privilege\ModulePrivilege;
+use Neos\Neos\Security\Authorization\Privilege\ModulePrivilegeSubject;
 use Neos\Utility\Arrays;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
@@ -110,28 +112,37 @@ class MenuHelper
     public function buildModuleList(ControllerContext $controllerContext)
     {
         $modules = array();
-        foreach ($this->settings['modules'] as $module => $moduleConfiguration) {
-            if (!$this->isModuleEnabled($module)) {
+        foreach ($this->settings['modules'] as $moduleName => $moduleConfiguration) {
+            if (!$this->isModuleEnabled($moduleName)) {
                 continue;
             }
+            if (!$this->privilegeManager->isGranted(ModulePrivilege::class, new ModulePrivilegeSubject($moduleName))) {
+                continue;
+            }
+            // @deprecated since Neos 3.2, use the ModulePrivilegeTarget instead!
             if (isset($moduleConfiguration['privilegeTarget']) && !$this->privilegeManager->isPrivilegeTargetGranted($moduleConfiguration['privilegeTarget'])) {
                 continue;
             }
             $submodules = array();
             if (isset($moduleConfiguration['submodules'])) {
-                foreach ($moduleConfiguration['submodules'] as $submodule => $submoduleConfiguration) {
-                    if (!$this->isModuleEnabled($module . '/' . $submodule)) {
+                foreach ($moduleConfiguration['submodules'] as $submoduleName => $submoduleConfiguration) {
+                    $modulePath = $moduleName . '/' . $submoduleName;
+                    if (!$this->isModuleEnabled($modulePath)) {
                         continue;
                     }
+                    if (!$this->privilegeManager->isGranted(ModulePrivilege::class, new ModulePrivilegeSubject($modulePath))) {
+                        continue;
+                    }
+                    // @deprecated since Neos 3.2, use the ModulePrivilegeTarget instead!
                     if (isset($submoduleConfiguration['privilegeTarget']) && !$this->privilegeManager->isPrivilegeTargetGranted($submoduleConfiguration['privilegeTarget'])) {
                         continue;
                     }
-                    $submodules[] = $this->collectModuleData($controllerContext, $submodule, $submoduleConfiguration, $module . '/' . $submodule);
+                    $submodules[] = $this->collectModuleData($controllerContext, $submoduleName, $submoduleConfiguration, $moduleName . '/' . $submoduleName);
                 }
             }
             $modules[] = array_merge(
-                $this->collectModuleData($controllerContext, $module, $moduleConfiguration, $module),
-                array('group' => $module, 'submodules' => $submodules)
+                $this->collectModuleData($controllerContext, $moduleName, $moduleConfiguration, $moduleName),
+                array('group' => $moduleName, 'submodules' => $submodules)
             );
         }
         return $modules;
