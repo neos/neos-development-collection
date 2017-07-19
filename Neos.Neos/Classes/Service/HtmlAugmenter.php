@@ -79,7 +79,7 @@ class HtmlAugmenter
             return null;
         }
         // detect whether loadHTML has wrapped plaintext in a p-tag without asking for permission
-        if ($rootElement instanceof \DOMNodeList && $rootElement->item(0)->tagName === 'p' && !preg_match('/^<p/ui', $html)) {
+        if ($rootElement instanceof \DOMNodeList && $rootElement->item(0)->tagName === 'p' && preg_match('/^<p/ui', $html) === 0) {
             return null;
         }
         return $rootElement->item(0);
