@@ -23,7 +23,7 @@ use Neos\Neos\Fusion\PluginImplementation;
 use Neos\Fusion\Core\Runtime;
 
 /**
- * Testcase for the ConvertNodeUris TypoScript implementation
+ * Testcase for the ConvertNodeUris Fusion implementation
  */
 class PluginImplementationTest extends UnitTestCase
 {

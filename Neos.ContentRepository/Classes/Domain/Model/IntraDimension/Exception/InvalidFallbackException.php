@@ -1,8 +1,8 @@
 <?php
-namespace Neos\Neos\Controller\Exception;
+namespace Neos\ContentRepository\Domain\Model\IntraDimension\Exception;
 
 /*
- * This file is part of the Neos.Neos package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -10,12 +10,12 @@ namespace Neos\Neos\Controller\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Neos\Controller\Exception;
+
+use Neos\Flow\Exception;
 
 /**
- * A "No TypoScript" exception
- *
+ * The invalid fallback exception
  */
-class NoTypoScriptConfigurationException extends Exception
+class InvalidFallbackException extends Exception
 {
 }

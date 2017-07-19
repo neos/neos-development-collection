@@ -372,6 +372,33 @@
       <trans-unit id="replace.options.generateRedirects" xml:space="preserve" approved="yes">
 				<source>Generate redirects from original file url to the new url</source>
 			<target xml:lang="de">Erstelle Weiterleitungen vom ursprünglichen Dateipfad auf die neue URL</target><alt-trans><target xml:lang="de">Erstelle Redirects von der Original-URL auf die Neue</target></alt-trans></trans-unit>
+      <trans-unit id="sortdirection" xml:space="preserve" approved="yes">
+				<source>Sort direction</source>
+			<target xml:lang="de">Sortierreihenfolge</target></trans-unit>
+      <trans-unit id="sortdirection.asc" xml:space="preserve" approved="yes">
+				<source>Ascending</source>
+			<target xml:lang="de">Aufsteigend</target></trans-unit>
+      <trans-unit id="sortdirection.desc" xml:space="preserve" approved="yes">
+				<source>Descending</source>
+			<target xml:lang="de">Absteigend</target><alt-trans><target xml:lang="de">Absteigende Reihenfolge</target></alt-trans></trans-unit>
+      <trans-unit id="tooltip.dragAndDropOnTagOrCollection" xml:space="preserve" approved="yes">
+				<source>Drag and drop on tag or collection</source>
+			<target xml:lang="de">Auf Tag oder Sammlung ziehen und loslassen</target></trans-unit>
+      <trans-unit id="tooltip.editAsset" xml:space="preserve" approved="yes">
+				<source>Edit asset</source>
+			<target xml:lang="de">Asset bearbeiten</target></trans-unit>
+      <trans-unit id="tooltip.replaceAssetResource" xml:space="preserve" approved="yes">
+				<source>Replace</source>
+			<target xml:lang="de">Ersetzen</target></trans-unit>
+      <trans-unit id="tooltip.deleteAsset" xml:space="preserve" approved="yes">
+				<source>Delete asset</source>
+			<target xml:lang="de">Asset löschen</target></trans-unit>
+      <trans-unit id="noAccessToWorkspace" xml:space="preserve" approved="yes">
+        <source>No access to workspace "{0}"</source>
+      <target xml:lang="de">Kein Zugriff auf Arbeitsbereich "{0}"</target></trans-unit>
+      <trans-unit id="missingDocumentNode" xml:space="preserve">
+        <source>No document node found for this node</source>
+      <target xml:lang="de">Für diesen Knoten wurde kein Dokumentknoten gefunden</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -16,6 +16,7 @@ Feature: Copy node with dimension support
       | 0c1a50e9-3db5-4c57-a5c7-6cc0b7649ee7 | /sites/content-repository/about-us                           | Neos.ContentRepository.Testing:Page      | {"title": "About Us"}      | live      | en       |
       | 1c063cf4-65ca-11e4-b79a-14109fd7a2dd | /sites/content-repository/about-us/main/text0                | Neos.ContentRepository.Testing:Text      | {"text": "Infos about us"} | live      | en       |
 
+    And I am authenticated with role "Neos.Neos:Editor"
 
   @fixtures
   Scenario: Copying a non-aggregate node creates a node variant in the other dimension if the node does not exist in the target dimension.

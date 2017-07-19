@@ -116,7 +116,7 @@
 						</td>
 						<td class="neos-aCenter check">
 							<label class="neos-radio">
-								<f:form.radio property="primaryElectronicAddress" value="{electronicAddress}" checked="{f:if(condition: '{user.primaryElectronicAddress} == {electronicAddress}', then: 'checked')}" /><span></span>
+								<f:form.radio property="primaryElectronicAddress" value="{electronicAddress}" checked="{f:if(condition: '{user.primaryElectronicAddress} === {electronicAddress}', then: 'checked')}" /><span></span>
 							</label>
 						</td>
 						<td class="neos-action">
