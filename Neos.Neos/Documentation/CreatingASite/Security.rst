@@ -399,36 +399,44 @@ Restricting Access to Backend Modules
 Restrict Module Access
 ----------------------
 
-The available modules are defined in the settings of Neos. Along with those settings privilege targets can be defined.
-Those are used to remove the module from the UI if access would not be granted. Here is a shortened example containing
-only the relevant parts:
+The available modules are defined in the settings of Neos. Here is a shortened example containing only the relevant
+parts:
 
  .. code-block:: yaml
 
   Neos:
    Neos:
      modules:
-      management:
-        privilegeTarget: 'Neos.Neos:Backend.Module.Management'
+      'management':
+        controller: 'Some\Management\Controller'
         submodules:
-          workspaces:
-            privilegeTarget: 'Neos.Neos:Backend.Module.Management.Workspaces'
+          'workspaces':
+            controller: 'Some\Workspaces\Controller'
 
-The targets are defined as usual in the security policy, here is a shortened example:
+Along with those settings privilege targets should be defined. Those are used to hide the module links from the UI and
+to protect access to the modules if no access is granted.
+
+The targets are defined as usual in the security policy, using `ModulePrivilege`. Here is a shortened example:
 
 .. code-block:: yaml
 
-    'Neos.Neos:Backend.Module.Management':
-      matcher: 'method(Neos\Neos\Controller\Module\ManagementController->indexAction())'
+  privilegeTargets:
 
-    'Neos.Neos:Backend.Module.Management.Workspaces':
-      matcher: >-
-        method(
-          Neos\Neos\Controller\Module\Management\WorkspacesController
-          ->(publishNode|discardNode|publishOrDiscardNodes)Action()
-        ) || method(Neos\Neos\Service\Controller\AbstractServiceController->(error)Action())
+    'Neos\Neos\Security\Authorization\Privilege\ModulePrivilege':
+
+      'Neos.Neos:Backend.Module.Management':
+        matcher: 'management'
+
+      'Neos.Neos:Backend.Module.Management.Workspaces':
+        matcher: 'management/workspaces'
 
 Now those privilege targets can be used to grant/deny access for specific roles.
+Internally those module privileges create a `MethodPrivilege` covering all public actions of the configured module
+controller. Additionally more fine-grained permissions can be configured on top.
+
+*Note:* If the path of a module changes the corresponding privilege target needs to be adjusted accordingly.
+
+See chapter :ref:`custom-backend-modules` for more examples.
 
 Disable Modules
 ---------------
@@ -440,9 +448,9 @@ To completely disable modules available in the Neos UI a setting can be used:
   Neos:
     Neos:
       modules:
-        management:
+        'management':
           submodules:
-            history:
+            'history':
               enabled: FALSE
 
 Limitations
