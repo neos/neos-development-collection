@@ -270,6 +270,30 @@ prototype(PackageFactory.AtomicFusion.AFX:IterationExample) < prototype(PackageF
 }
 ```
 
+### Augmentation of Child-Components with `PackageFactory.AtomicFusion:Augmenter`
+
+The `PackageFactory.AtomicFusion:Augmenter` can be used to add additional attributes to rendered content. 
+This allows some rendering flexibility without extending the api of the component. This is a 
+useful pattern to avoid unneeded tag-wrapping in cases where only additional classes are needed.
+
+```
+prototype(PackageFactory.AtomicFusion.AFX:SliderExample) < prototype(Packagefactory.AtomicFusion:Component) {
+  images = ${[]}
+  renderer = afx`
+     <div class="slider">
+        <Neos.Fusion:Collection collection={props.images} itemName="image" iterationName="iteration" @children="itemRenderer">
+            <PackageFactory.AtomicFusion:Augmenter class="slider__slide" data-index={iteration.index}>
+                <PackageFactory.AtomicFusion.AFX:ImageExample image={image} /> 
+            </PackageFactory.AtomicFusion:Augmenter>
+        </Neos.Fusion:Collection>  
+     </div>
+  `
+}
+```
+
+The example iterates over a list of images and uses the `PackageFactory.AtomicFusion.AFX:ImageExample` to render each one 
+while the `PackageFactory.AtomicFusion:Augmenter` adds a class- and data-attribute from outside.
+
 ## License
 
 see [LICENSE file](LICENSE)
