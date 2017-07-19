@@ -2,7 +2,7 @@
 namespace Neos\Neos\Security\Authorization\Privilege;
 
 /*
- * This file is part of the Neos.ContentRepository package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
