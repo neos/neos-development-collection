@@ -319,9 +319,10 @@ class NodeDataRepository extends Repository
      * @param string $identifier Identifier of the node
      * @param Workspace $workspace The containing workspace
      * @param array $dimensions An array of dimensions with array of ordered values to use for fallback matching
+     * @param bool $removedNodes If shadow nodes should be considered while finding the specified node
      * @return NodeData The matching node if found, otherwise NULL
      */
-    public function findOneByIdentifier($identifier, Workspace $workspace, array $dimensions = null)
+    public function findOneByIdentifier($identifier, Workspace $workspace, array $dimensions = null, $removedNodes = false)
     {
         $workspaces = [];
         while ($workspace !== null) {
@@ -355,7 +356,9 @@ class NodeDataRepository extends Repository
         $nodes = $query->getResult();
 
         $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($nodes, $workspaces, $dimensions);
-        $foundNodes = $this->withoutRemovedNodes($foundNodes);
+        if ($removedNodes === false) {
+            $foundNodes = $this->withoutRemovedNodes($foundNodes);
+        }
 
         if ($foundNodes !== []) {
             return reset($foundNodes);
