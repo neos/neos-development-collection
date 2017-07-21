@@ -869,7 +869,7 @@ class NodeData extends AbstractNodeData
      * @param Workspace $targetWorkspace
      * @return NodeData If a shadow node was created this is the new NodeData object after the move.
      */
-    public function move(string $targetPath, Workspace $targetWorkspace)
+    public function move($targetPath, Workspace $targetWorkspace)
     {
         $sourceNodeData = $this;
         $originalPath = $this->path;
