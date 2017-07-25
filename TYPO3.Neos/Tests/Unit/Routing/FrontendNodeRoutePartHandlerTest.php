@@ -133,12 +133,13 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     public function contextPathsAndRequestPathsDataProvider()
     {
         return array(
-            array('/sites/examplecom@live;language=en_US', ''),
-            array('/sites/examplecom@user-robert;language=de_DE,en_US', 'de_global'),
-            array('/sites/examplecom/features@user-robert;language=de_DE,en_US', 'de_global/features'),
-            array('/sites/examplecom/features@user-robert;language=en_US', 'en_global/features'),
-            array('/sites/examplecom/features@user-robert;language=de_DE,en_US&country=global', 'de_global/features'),
-            array('/sites/examplecom/features@user-robert;country=de', 'en_de/features')
+            array('/sites/examplecom@live;language=en_US', '', true),
+            array('/sites/examplecom@live;language=en_US', 'en_global', false),
+            array('/sites/examplecom@user-robert;language=de_DE,en_US', 'de_global', false),
+            array('/sites/examplecom/features@user-robert;language=de_DE,en_US', 'de_global/features', false),
+            array('/sites/examplecom/features@user-robert;language=en_US', 'en_global/features', false),
+            array('/sites/examplecom/features@user-robert;language=de_DE,en_US&country=global', 'de_global/features', false),
+            array('/sites/examplecom/features@user-robert;country=de', 'en_de/features', false)
         );
     }
 
@@ -323,7 +324,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
      * @test
      * @dataProvider contextPathsAndRequestPathsDataProvider
      */
-    public function matchConsidersDimensionValuePresetsSpecifiedInTheRequestUriWhileBuildingTheContext($expectedContextPath, $requestPath)
+    public function matchConsidersDimensionValuePresetsSpecifiedInTheRequestUriWhileBuildingTheContext($expectedContextPath, $requestPath, $supportEmptySegmentForDimensions)
     {
         $this->contentDimensionPresetSource->setConfiguration(array(
             'language' => array(
@@ -372,6 +373,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'features');
         $mockSubNode->mockProperties['uriPathSegment'] = 'features';
 
+        $this->inject($this->routePartHandler, 'supportEmptySegmentForDimensions', $supportEmptySegmentForDimensions);
         $this->assertTrue($this->routePartHandler->match($requestPath));
         $value = $this->routePartHandler->getValue();
     }
@@ -613,7 +615,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
      * @dataProvider contextPathsAndRequestPathsDataProvider
      * @test
      */
-    public function resolveConsidersDimensionValuesPassedViaTheContextPathForRenderingTheUrl($contextPath, $expectedUriPath)
+    public function resolveConsidersDimensionValuesPassedViaTheContextPathForRenderingTheUrl($contextPath, $expectedUriPath, $supportEmptySegmentForDimensions)
     {
         $this->contentDimensionPresetSource->setConfiguration(array(
             'language' => array(
@@ -678,6 +680,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         }));
 
         $routeValues = array('node' => $contextPath);
+        $this->inject($this->routePartHandler, 'supportEmptySegmentForDimensions', $supportEmptySegmentForDimensions);
         $this->assertTrue($this->routePartHandler->resolve($routeValues));
         $this->assertSame($expectedUriPath, $this->routePartHandler->getValue());
     }
