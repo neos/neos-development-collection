@@ -20,12 +20,12 @@ abstract class NodeContexts
     /**
      * Determine if the given node path is a context path.
      *
-     * @param string $string path or identifier
+     * @param string $string context path or context identifier
      * @return boolean
      */
     public static function hasContext($string)
     {
-        return (strpos($string, '@') !== false);
+        return (preg_match('/@/u', $string) === 1);
     }
 
     /**

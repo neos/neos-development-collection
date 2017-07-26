@@ -112,7 +112,7 @@ class Node implements NodeInterface, CacheAwareInterface
     /**
      * Returns the identifier of this node with additional context information (such as the workspace name).
      *
-     * Example: #661369c8-826a-63db-ad24-23a61a6800fe@user-admin
+     * Example: 661369c8-826a-63db-ad24-23a61a6800fe@user-admin
      *
      * @return string Node identifier with context information
      * @api
