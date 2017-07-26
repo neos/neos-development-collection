@@ -173,7 +173,7 @@ This can be used to make the cache behavior dependable on some context, i.e. the
 			entryIdentifier {
 			  node = ${node}
 			}
-			entryDiscriminator = ${request.arguments.pagination}
+			entryDiscriminator = ${request.arguments.pagination ? request.arguments.pagination : false}
 			context {
 				1 = 'node'
 				2 = 'documentNode'
