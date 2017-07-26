@@ -143,7 +143,7 @@ class ImageUriImplementation extends AbstractFusionObject
         if (!$asset instanceof AssetInterface) {
             throw new \Exception('No asset given for rendering.', 1415184217);
         }
-        if ($preset !== null && $preset !== false) {
+        if (!empty($preset)) {
             $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset);
         } else {
             $thumbnailConfiguration = new ThumbnailConfiguration($this->getWidth(), $this->getMaximumWidth(), $this->getHeight(), $this->getMaximumHeight(), $this->getAllowCropping(), $this->getAllowUpScaling(), $this->getAsync());
