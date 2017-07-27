@@ -1,0 +1,48 @@
+`2.3.15 (2017-07-27) <https://github.com/neos/neos-development-collection/releases/tag/2.3.15>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Moving node back and forth in nested workspace causes SQL error <https://github.com/neos/neos-development-collection/pull/1640>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+This change fixes a problem in the content repository which can lead to a uniqueness constraint error when a node is moved back and forth in a nested workspace.
+
+Fixes #1639 
+
+* Packages: ``TYPO3CR``
+
+`BUGFIX: Prevent space if no css class is given <https://github.com/neos/neos-development-collection/pull/1650>`_
+-----------------------------------------------------------------------------------------------------------------
+
+If no `attributes.class` is given the attribute always starts with space. Like that the attributes get trimmed.
+
+### Output before:
+`class=" foo-bar-content"`
+
+### Output after:
+`class="foo-bar-content"`
+
+* Packages: ``Neos``
+
+`BUGFIX: Valid URLs with \`supportEmptySegmentForDimensions\` <https://github.com/neos/neos-development-collection/pull/1645>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Makes sure that generated URLs observe the setting.
+
+Fixes: #1644
+
+* Packages: ``Neos``
+
+`BUGFIX: Trigger ContentCacheFlusher on asset update <https://github.com/neos/neos-development-collection/pull/1646>`_
+----------------------------------------------------------------------------------------------------------------------
+
+The content cache does not invalidate on changes to an asset. Expected behavior would be to flush the content cache on changes to an asset (e.g title, caption).
+
+Neos 2.3 PR of: https://github.com/neos/neos-development-collection/pull/1636
+
+* Packages: ``Neos`` ``TypoScript``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.3.14...2.3.15>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
