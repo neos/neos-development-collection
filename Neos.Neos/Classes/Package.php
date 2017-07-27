@@ -76,7 +76,8 @@ class Package extends BasePackage
         $dispatcher->connect(Node::class, 'nodeRemoved', ContentCacheFlusher::class, 'registerNodeChange');
         $dispatcher->connect(Node::class, 'beforeNodeMove', ContentCacheFlusher::class, 'registerNodeChange');
 
-        $dispatcher->connect(AssetService::class, 'assetResourceReplaced', ContentCacheFlusher::class, 'registerAssetResourceChange');
+        $dispatcher->connect(AssetService::class, 'assetUpdated', ContentCacheFlusher::class, 'registerAssetChange');
+        $dispatcher->connect(AssetService::class, 'assetResourceReplaced', ContentCacheFlusher::class, 'registerAssetChange');
 
         $dispatcher->connect(Node::class, 'nodeAdded', NodeUriPathSegmentGenerator::class, '::setUniqueUriPathSegment');
         $dispatcher->connect(Node::class, 'nodePropertyChanged', Service\ImageVariantGarbageCollector::class, 'removeUnusedImageVariant');
