@@ -161,8 +161,12 @@ class RuntimeContentCache
     public function preEvaluate(array &$evaluateContext, $fusionObject)
     {
         if ($this->enableContentCache) {
+            if ($evaluateContext['cacheForPathEnabled'] && $evaluateContext['cacheForPathDisabled']) {
+                $evaluateContext['cacheDiscriminator'] = $this->runtime->evaluate($evaluateContext['fusionPath'] . '/__meta/cache/entryDiscriminator');
+            }
             if ($evaluateContext['cacheForPathEnabled']) {
                 $evaluateContext['cacheIdentifierValues'] = $this->buildCacheIdentifierValues($evaluateContext['configuration'], $evaluateContext['fusionPath'], $fusionObject);
+                $cacheDiscriminator = isset($evaluateContext['cacheDiscriminator']) ? $evaluateContext['cacheDiscriminator'] : null;
                 $self = $this;
                 $segment = $this->contentCache->getCachedSegment(function ($command, $additionalData, $cache) use ($self, $evaluateContext, $fusionObject) {
                     if (strpos($command, 'eval=') === 0) {
@@ -190,7 +194,7 @@ class RuntimeContentCache
                     } else {
                         throw new Exception(sprintf('Unknown uncached command "%s"', $command), 1392837596);
                     }
-                }, $evaluateContext['fusionPath'], $evaluateContext['cacheIdentifierValues'], $this->addCacheSegmentMarkersToPlaceholders);
+                }, $evaluateContext['fusionPath'], $evaluateContext['cacheIdentifierValues'], $this->addCacheSegmentMarkersToPlaceholders, $cacheDiscriminator);
                 if ($segment !== false) {
                     return [true, $segment];
                 } else {
@@ -200,9 +204,6 @@ class RuntimeContentCache
                 $this->cacheMetadata[] = ['lifetime' => null];
             }
 
-            if ($evaluateContext['cacheForPathEnabled'] && $evaluateContext['cacheForPathDisabled']) {
-                $evaluateContext['cacheDiscriminator'] = $this->runtime->evaluate($evaluateContext['fusionPath'] . '/__meta/cache/entryDiscriminator');
-            }
 
             if (isset($evaluateContext['configuration']['maximumLifetime'])) {
                 $maximumLifetime = $this->runtime->evaluate($evaluateContext['fusionPath'] . '/__meta/cache/maximumLifetime', $fusionObject);
