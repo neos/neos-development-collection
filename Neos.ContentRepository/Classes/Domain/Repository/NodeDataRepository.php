@@ -193,7 +193,12 @@ class NodeDataRepository extends Repository
         $dimensions = $dimensions === null ? [] : $dimensions;
         $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($nodes, $workspaces, $dimensions);
         $foundNodes = $this->filterNodeDataByBestMatchInContext($foundNodes, $workspace, $dimensions, $removedNodes);
-        $foundNodes = $this->filterRemovedNodes($foundNodes, $removedNodes);
+
+        if ($removedNodes === true) {
+            $foundNodes = $this->onlyRemovedNodes($foundNodes);
+        } elseif ($removedNodes === false) {
+            $foundNodes = $this->withoutRemovedNodes($foundNodes);
+        }
 
         if ($foundNodes !== []) {
             return reset($foundNodes);
@@ -216,7 +221,7 @@ class NodeDataRepository extends Repository
         $nodes = $this->findRawNodesByPath($path, $workspace, $dimensions, true);
         $dimensions = $dimensions === null ? [] : $dimensions;
         $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($nodes, $workspaces, $dimensions);
-        $foundNodes = $this->filterRemovedNodes($foundNodes, true);
+        $foundNodes = $this->onlyRemovedNodes($foundNodes);
 
         if ($foundNodes !== []) {
             return reset($foundNodes);
@@ -314,9 +319,10 @@ class NodeDataRepository extends Repository
      * @param string $identifier Identifier of the node
      * @param Workspace $workspace The containing workspace
      * @param array $dimensions An array of dimensions with array of ordered values to use for fallback matching
+     * @param bool $removedNodes If shadow nodes should be considered while finding the specified node
      * @return NodeData The matching node if found, otherwise NULL
      */
-    public function findOneByIdentifier($identifier, Workspace $workspace, array $dimensions = null)
+    public function findOneByIdentifier($identifier, Workspace $workspace, array $dimensions = null, $removedNodes = false)
     {
         $workspaces = [];
         while ($workspace !== null) {
@@ -350,7 +356,9 @@ class NodeDataRepository extends Repository
         $nodes = $query->getResult();
 
         $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($nodes, $workspaces, $dimensions);
-        $foundNodes = $this->filterRemovedNodes($foundNodes, false);
+        if ($removedNodes === false) {
+            $foundNodes = $this->withoutRemovedNodes($foundNodes);
+        }
 
         if ($foundNodes !== []) {
             return reset($foundNodes);
@@ -555,7 +563,12 @@ class NodeDataRepository extends Repository
 
         $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($nodes, $workspaces, $dimensions);
         $foundNodes = $this->filterNodeDataByBestMatchInContext($foundNodes, $workspaces[0], $dimensions, $removedNodes);
-        $foundNodes = $this->filterRemovedNodes($foundNodes, $removedNodes);
+
+        if ($removedNodes === true) {
+            $foundNodes = $this->onlyRemovedNodes($foundNodes);
+        } elseif ($removedNodes === false) {
+            $foundNodes = $this->withoutRemovedNodes($foundNodes);
+        }
 
         return $foundNodes;
     }
@@ -943,7 +956,7 @@ class NodeDataRepository extends Repository
         $foundNodes = $this->filterNodeDataByBestMatchInContext($foundNodes, $workspaces[0], $dimensions, $includeRemovedNodes);
 
         if ($includeRemovedNodes === false) {
-            $foundNodes = $this->filterRemovedNodes($foundNodes, false);
+            $foundNodes = $this->withoutRemovedNodes($foundNodes);
         }
 
         $nodesByDepth = [];
@@ -1008,7 +1021,7 @@ class NodeDataRepository extends Repository
         $query = $queryBuilder->getQuery();
         $foundNodes = $query->getResult();
         $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($foundNodes, $workspaces, $dimensions);
-        $foundNodes = $this->filterRemovedNodes($foundNodes, false);
+        $foundNodes = $this->withoutRemovedNodes($foundNodes);
 
         return $foundNodes;
     }
@@ -1144,25 +1157,29 @@ class NodeDataRepository extends Repository
     }
 
     /**
-     * Removes NodeData with the removed property set from the given array.
+     * Returns a subset of $nodes which are not flagged as removed.
      *
      * @param array $nodes NodeData including removed entries
-     * @param boolean|NULL $removedNodes If TRUE the result has ONLY removed nodes. If FALSE removed nodes are NOT inside the result. If NULL the result contains BOTH removed and non-removed nodes.
-     * @return array NodeData with removed entries removed
+     * @return array Only those NodeData instances which are not flagged as removed
      */
-    protected function filterRemovedNodes($nodes, $removedNodes)
+    protected function withoutRemovedNodes(array $nodes)
     {
-        if ($removedNodes === true) {
-            return array_filter($nodes, function (NodeData $node) use ($removedNodes) {
-                return $node->isRemoved();
-            });
-        } elseif ($removedNodes === false) {
-            return array_filter($nodes, function (NodeData $node) use ($removedNodes) {
-                return !$node->isRemoved();
-            });
-        } else {
-            return $nodes;
-        }
+        return array_filter($nodes, function (NodeData $node) {
+            return !$node->isRemoved();
+        });
+    }
+
+    /**
+     * Returns a subset of $nodes which are flagged as removed.
+     *
+     * @param array $nodes NodeData including removed entries
+     * @return array Only those NodeData instances which are flagged as removed
+     */
+    protected function onlyRemovedNodes(array $nodes)
+    {
+        return array_filter($nodes, function (NodeData $node) {
+            return $node->isRemoved();
+        });
     }
 
     /**
@@ -1394,7 +1411,7 @@ class NodeDataRepository extends Repository
 
         $foundNodes = $this->reduceNodeVariantsByWorkspaces($foundNodes, $workspaces);
         if ($includeRemovedNodes === false) {
-            $foundNodes = $this->filterRemovedNodes($foundNodes, false);
+            $foundNodes = $this->withoutRemovedNodes($foundNodes);
         }
 
         return $foundNodes;
@@ -1579,7 +1596,12 @@ class NodeDataRepository extends Repository
         $nodes = $query->getResult();
         $foundNodes = array_merge($nodes, $nonPersistedNodes);
         $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($foundNodes, $workspaces, $dimensions);
-        $foundNodes = $this->filterRemovedNodes($foundNodes, $includeRemovedNodes);
+
+        if ($includeRemovedNodes === true) {
+            $foundNodes = $this->onlyRemovedNodes($foundNodes);
+        } elseif ($includeRemovedNodes === false) {
+            $foundNodes = $this->withoutRemovedNodes($foundNodes);
+        }
 
         /** @var NodeData $nodeData */
         return array_filter($nodeDataObjects, function (NodeData $nodeData) use ($foundNodes) {

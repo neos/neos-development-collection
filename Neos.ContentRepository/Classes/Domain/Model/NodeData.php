@@ -865,51 +865,74 @@ class NodeData extends AbstractNodeData
      * Because unique key constraints and Doctrine ORM don't support arbitrary removal and update combinations,
      * existing NodeData instances are re-used and the metadata and content is swapped around.
      *
-     * @param string $path
-     * @param Workspace $workspace
+     * @param string $targetPath
+     * @param Workspace $targetWorkspace
      * @return NodeData If a shadow node was created this is the new NodeData object after the move.
      */
-    public function move($path, $workspace)
+    public function move($targetPath, Workspace $targetWorkspace)
     {
-        $nodeData = $this;
+        $sourceNodeData = $this;
         $originalPath = $this->path;
-        if ($originalPath === $path) {
+        if ($originalPath === $targetPath && $this->workspace->getName() === $targetWorkspace) {
             return $this;
         }
 
-        $targetPathShadowNodeData = $this->getExistingShadowNodeData($path, $workspace, $nodeData->getDimensionValues());
+        $targetPathShadowNodeData = $this->getExistingShadowNodeDataInExactWorkspace($targetPath, $targetWorkspace, $sourceNodeData->getDimensionValues());
 
-        if ($this->workspace->getName() !== $workspace->getName()) {
-            if ($targetPathShadowNodeData === null) {
-                // If there is no shadow node at the target path we need to materialize before moving and create a shadow node.
-                $nodeData = $this->materializeToWorkspace($workspace);
-                $nodeData->setPath($path, false);
-                $movedNodeData = $nodeData;
-            } else {
-                // The existing shadow node on the target path will be used as the moved node. We don't need to materialize into the workspace.
+        if ($this->workspace->getName() !== $targetWorkspace->getName()) {
+            if ($targetPath === $originalPath) {
+
+                // The existing shadow node in the target workspace will be used as the actual moved node
+                $movedNodeDataInTargetWorkspace = $targetPathShadowNodeData->getMovedTo();
+                if ($movedNodeDataInTargetWorkspace !== null) {
+                    $this->nodeDataRepository->remove($movedNodeDataInTargetWorkspace);
+                }
+
+                $referencedShadowNode = $this->nodeDataRepository->findOneByMovedTo($sourceNodeData);
+                if ($referencedShadowNode !== null) {
+                    $this->nodeDataRepository->remove($referencedShadowNode);
+                }
+
                 $movedNodeData = $targetPathShadowNodeData;
                 $movedNodeData->setAsShadowOf(null);
-                $movedNodeData->setIdentifier($nodeData->getIdentifier());
-                $movedNodeData->similarize($nodeData);
-                // A new shadow node will be created for the node data that references the recycled, existing shadow node
+                $movedNodeData->setIdentifier($sourceNodeData->getIdentifier());
+                $movedNodeData->similarize($sourceNodeData);
+
+                $this->nodeDataRepository->remove($sourceNodeData);
+            } else {
+                if ($targetPathShadowNodeData === null) {
+                    // If there is no shadow node at the target path we need to materialize before moving and create a shadow node.
+                    $sourceNodeData = $this->materializeToWorkspace($targetWorkspace);
+                    $sourceNodeData->setPath($targetPath, false);
+                    $movedNodeData = $sourceNodeData;
+                } else {
+                    // The existing shadow node on the target path will be used as the moved node. We don't need to materialize into the workspace.
+                    $movedNodeData = $targetPathShadowNodeData;
+                    $movedNodeData->setAsShadowOf(null);
+                    $movedNodeData->setIdentifier($sourceNodeData->getIdentifier());
+                    $movedNodeData->similarize($sourceNodeData);
+                    // A new shadow node will be created for the node data that references the recycled, existing shadow node
+                }
+                $movedNodeData->createShadow($originalPath);
             }
-            $movedNodeData->createShadow($originalPath);
         } else {
-            $referencedShadowNode = $this->nodeDataRepository->findOneByMovedTo($nodeData);
+            $referencedShadowNode = $this->nodeDataRepository->findOneByMovedTo($sourceNodeData);
             if ($targetPathShadowNodeData === null) {
                 if ($referencedShadowNode === null) {
                     // There is no shadow node on the original or target path, so the current node data will be turned to a shadow node and a new node data will be created for the moved node.
                     // We cannot just create a new shadow node, since the order of Doctrine queries would cause unique key conflicts
-                    $movedNodeData = new NodeData($path, $nodeData->getWorkspace(), $nodeData->getIdentifier(), $nodeData->getDimensionValues());
-                    $movedNodeData->similarize($nodeData);
+                    $movedNodeData = new NodeData($targetPath, $sourceNodeData->getWorkspace(), $sourceNodeData->getIdentifier(), $sourceNodeData->getDimensionValues());
+                    $movedNodeData->similarize($sourceNodeData);
                     $this->addOrUpdate($movedNodeData);
 
-                    $shadowNodeData = $nodeData;
-                    $shadowNodeData->setAsShadowOf($movedNodeData);
+                    $shadowNodeData = $sourceNodeData;
+                    $shadowNodeData->setRemoved(true);
+                    $shadowNodeData->setMovedTo($movedNodeData);
+                    $this->addOrUpdate($shadowNodeData);
                 } else {
                     // A shadow node that references this node data already exists, so we just move the current node data
-                    $movedNodeData = $nodeData;
-                    $movedNodeData->setPath($path, false);
+                    $movedNodeData = $sourceNodeData;
+                    $movedNodeData->setPath($targetPath, false);
                 }
             } else {
                 if ($referencedShadowNode === null) {
@@ -918,19 +941,19 @@ class NodeData extends AbstractNodeData
                     $movedNodeData = $targetPathShadowNodeData;
                     // Since the shadow node at the target path does not belong to the current node, we have to adjust the identifier
                     $movedNodeData->setRemoved(false);
-                    $movedNodeData->setIdentifier($nodeData->getIdentifier());
-                    $movedNodeData->similarize($nodeData);
+                    $movedNodeData->setIdentifier($sourceNodeData->getIdentifier());
+                    $movedNodeData->similarize($sourceNodeData);
                     // Create a shadow node from the current node that shadows the recycled node
-                    $shadowNodeData = $nodeData;
+                    $shadowNodeData = $sourceNodeData;
                     $shadowNodeData->setAsShadowOf($movedNodeData);
                 } else {
                     // If there is already shadow node on the target path, we need to make that shadow node the actual moved node and remove the current node data (which cannot be live).
                     // We cannot remove the shadow node and update the current node data, since the order of Doctrine queries would cause unique key conflicts.
                     $movedNodeData = $targetPathShadowNodeData;
                     $movedNodeData->setAsShadowOf(null);
-                    $movedNodeData->similarize($nodeData);
-                    $movedNodeData->setPath($path, false);
-                    $this->nodeDataRepository->remove($nodeData);
+                    $movedNodeData->similarize($sourceNodeData);
+                    $movedNodeData->setPath($targetPath, false);
+                    $this->nodeDataRepository->remove($sourceNodeData);
                 }
             }
         }
@@ -942,13 +965,17 @@ class NodeData extends AbstractNodeData
      * Find an existing shadow node data on the given path for the current node data of the node (used by setPath)
      *
      * @param string $path The (new) path of the node data
-     * @param Workspace $workspace
-     * @param array $dimensionValues
+     * @param Workspace $workspace The workspace. Only shadow node data object with exactly this workspace will be considered
+     * @param array $dimensionValues Dimension values which must match with an existing node data object
      * @return NodeData|null
      */
-    protected function getExistingShadowNodeData($path, $workspace, $dimensionValues)
+    protected function getExistingShadowNodeDataInExactWorkspace($path, $workspace, $dimensionValues)
     {
-        return $this->nodeDataRepository->findShadowNodeByPath($path, $workspace, $dimensionValues);
+        $shadowNodeData = $this->nodeDataRepository->findShadowNodeByPath($path, $workspace, $dimensionValues);
+        if ($shadowNodeData !== null && $shadowNodeData->getWorkspace()->getName() !== $workspace->getName()) {
+            $shadowNodeData = null;
+        }
+        return $shadowNodeData;
     }
 
     /**
@@ -1021,8 +1048,9 @@ class NodeData extends AbstractNodeData
             return;
         }
 
-        // If the node is marked to be removed but didn't exist in a base workspace yet, we can delete it for real, without creating a shadow node:
-        if ($nodeData->isRemoved() && $this->nodeDataRepository->findOneByIdentifier($nodeData->getIdentifier(), $this->workspace->getBaseWorkspace()) === null) {
+        // If the node is marked to be removed but didn't exist in a base workspace yet, we can delete it for real, without creating a shadow node.
+        // This optimization cannot be made for shadow nodes which are moved.
+        if ($nodeData->isRemoved() && $nodeData->getMovedTo() === null && $this->nodeDataRepository->findOneByIdentifier($nodeData->getIdentifier(), $this->workspace->getBaseWorkspace()) === null) {
             if ($this->persistenceManager->isNewObject($nodeData) === false) {
                 $this->nodeDataRepository->remove($nodeData);
             }

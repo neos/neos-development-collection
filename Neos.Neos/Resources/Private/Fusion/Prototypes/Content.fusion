@@ -23,7 +23,7 @@ prototype(Neos.Neos:Content) < prototype(Neos.Fusion:Template) {
 
 		classIsString {
 			condition = ${Type.isString(value)}
-			renderer = ${String.trim(value) + ' ' + nodeTypeClassName}
+			renderer = ${String.trim(String.trim(value) + ' ' + nodeTypeClassName)}
 		}
 
 		classIsArray {
