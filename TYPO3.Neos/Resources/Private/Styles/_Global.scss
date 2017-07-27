@@ -152,6 +152,11 @@ body {
 	}
 }
 
+// fix https://github.com/neos/neos-development-collection/issues/1387
+#neos-application {
+  position: fixed;
+}
+
 #neos-document-metadata {
 	display: none;
 }
