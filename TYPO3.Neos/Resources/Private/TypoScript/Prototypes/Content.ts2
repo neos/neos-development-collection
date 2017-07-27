@@ -23,7 +23,7 @@ prototype(TYPO3.Neos:Content) < prototype(TYPO3.TypoScript:Template) {
 
 		classIsString {
 			condition = ${Type.isString(value)}
-			renderer = ${String.trim(value) + ' ' + nodeTypeClassName}
+			renderer = ${String.trim(String.trim(value) + ' ' + nodeTypeClassName)}
 		}
 
 		classIsArray {
