@@ -246,12 +246,15 @@ class ContentCache
      * @param string $typoScriptPath TypoScript path identifying the TypoScript object to retrieve from the content cache
      * @param array $cacheIdentifierValues Further values which play into the cache identifier hash, must be the same as the ones specified while the cache entry was written
      * @param boolean $addCacheSegmentMarkersToPlaceholders If cache segment markers should be added – this makes sense if the cached segment is about to be included in a not-yet-cached segment
-     * @param string $cacheDiscriminator The evaluated cache discriminator value, if any
+     * @param string|bool $cacheDiscriminator The evaluated cache discriminator value, if any and FALSE if the cache discriminator is disabled for the current context
      * @return string|boolean The segment with replaced cache placeholders, or FALSE if a segment was missing in the cache
      * @throws Exception
      */
     public function getCachedSegment($uncachedCommandCallback, $typoScriptPath, $cacheIdentifierValues, $addCacheSegmentMarkersToPlaceholders = false, $cacheDiscriminator = null)
     {
+        if ($cacheDiscriminator === false) {
+            return false;
+        }
         $cacheIdentifier = $this->renderContentCacheEntryIdentifier($typoScriptPath, $cacheIdentifierValues);
         if ($cacheDiscriminator !== null) {
             $cacheIdentifier .= '_' . md5($cacheDiscriminator);
