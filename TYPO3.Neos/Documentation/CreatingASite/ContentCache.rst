@@ -164,6 +164,26 @@ In the ``@cache`` meta property the following subproperties are allowed:
 	}
 
 
+When using ``dynamic`` as the cache mode, the cache can be *disabled* by setting the ``entryDiscriminator`` to ``false``.
+This can be used to make the cache behavior dependable on some context, i.e. the current request method::
+
+	prototype(TYPO3.Neos.NodeTypes:Form) {
+		@cache {
+			mode = 'dynamic'
+			entryIdentifier {
+			  node = ${node}
+			}
+			entryDiscriminator = ${request.httpRequest.methodSafe ? 'static' : false}
+			context {
+				1 = 'node'
+				2 = 'documentNode'
+			}
+		}
+	}
+
+In this example the Form will be ``cached`` unless the request method is unsafe (for example ``POST``) in which case it is
+switched to ``uncached``.
+
 .. _Cache Entry Tags:
 
 Cache Entry Tags
