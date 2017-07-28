@@ -157,7 +157,7 @@ The following options are allowed:
 
       If the ``thumbnail`` setting is undefined but an image matching the nodetype name
        is found, it will be used automatically. It will be looked for in
-       ``<packageKey>/Resources/Public/Images/NodeTypes/<nodeTypeName>.png`` with
+       ``<packageKey>/Resources/Public/NodeTypes/Thumbnails/<nodeTypeName>.png`` with
        ``packageKey`` and ``nodeTypeName`` being extracted from the full nodetype name
        like this:
 
