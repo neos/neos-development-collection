@@ -11,7 +11,6 @@ namespace TYPO3\TypoScript\TypoScriptObjects\Http;
  * source code.
  */
 
-use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Http\Headers;
 use TYPO3\Flow\Http\Response;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
@@ -71,6 +70,7 @@ class ResponseHeadImplementation extends AbstractTypoScriptObject
     public function evaluate()
     {
         $httpResponse = new Response();
+        $httpResponse->setVersion($this->getHttpVersion());
         $httpResponse->setStatus($this->getStatusCode());
         $httpResponse->setHeaders(new Headers());
 
