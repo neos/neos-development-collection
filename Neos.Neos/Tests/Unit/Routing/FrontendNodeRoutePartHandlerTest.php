@@ -811,6 +811,13 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
             return $mockContext->mockTargetDimensions;
         }));
 
+        $mockContext->expects($this->any())->method('getNodeByIdentifier')->will($this->returnCallback(function ($identifier) use ($mockContext) {
+            if(array_key_exists($identifier, $mockContext->mockNodesByIdentifier)) {
+                    return $mockContext->mockNodesByIdentifier[$identifier];
+            }
+            return null;
+        }));
+
         $mockContext->expects($this->any())->method('getProperties')->will($this->returnCallback(function () use ($mockContext, $contextProperties) {
             return array(
                 'workspaceName' => $contextProperties['workspaceName'],
@@ -848,10 +855,13 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
 
         $mockNode = $this->createMock(NodeInterface::class);
         $mockNode->expects($this->any())->method('getContext')->will($this->returnValue($mockContext));
-        $mockNode->expects($this->any())->method('getIdentifier')->will($this->returnValue('site-node-uuid'));
         $mockNode->expects($this->any())->method('getName')->will($this->returnValue($nodeName));
         $mockNode->expects($this->any())->method('getNodeType')->will($this->returnValue($mockNodeType));
         $mockNode->expects($this->any())->method('getWorkspace')->will($this->returnValue($mockContext->getWorkspace()));
+
+        $mockNodeIdentifier = Algorithms::generateUUID();
+        $mockNode->expects($this->any())->method('getIdentifier')->will($this->returnValue($mockNodeIdentifier));
+        $mockContext->mockNodesByIdentifier[$mockNodeIdentifier] = $mockNode;
 
         // Parent node is set by buildSubNode()
         $mockNode->mockParentNode = null;
