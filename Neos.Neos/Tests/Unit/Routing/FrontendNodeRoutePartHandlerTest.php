@@ -14,13 +14,12 @@ namespace Neos\Neos\Tests\Unit\Routing;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Neos\Domain\Model\Domain;
+use Neos\Flow\Utility\Algorithms;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource;
 use Neos\Neos\Domain\Service\ContentContext;
-use Neos\Neos\Routing\Exception\NoHomepageException;
 use Neos\Neos\Routing\FrontendNodeRoutePartHandler;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
@@ -913,6 +912,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
      *
      * @param NodeInterface $mockParentNode
      * @param string $nodeName
+     * @param string $nodeTypeName
      * @return NodeInterface
      */
     protected function buildSubNode($mockParentNode, $nodeName, $nodeTypeName = 'Neos.Neos:Document')
