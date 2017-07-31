@@ -14,13 +14,11 @@ namespace TYPO3\Neos\Tests\Unit\Routing;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Security\Context as SecurityContext;
 use TYPO3\Flow\Tests\UnitTestCase;
-use TYPO3\Neos\Domain\Model\Domain;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ConfigurationContentDimensionPresetSource;
 use TYPO3\Neos\Domain\Service\ContentContext;
-use TYPO3\Neos\Routing\Exception\NoHomepageException;
 use TYPO3\Neos\Routing\FrontendNodeRoutePartHandler;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
@@ -913,6 +911,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
      *
      * @param NodeInterface $mockParentNode
      * @param string $nodeName
+     * @param string $nodeTypeName
      * @return NodeInterface
      */
     protected function buildSubNode($mockParentNode, $nodeName, $nodeTypeName = 'TYPO3.Neos:Document')
