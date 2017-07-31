@@ -850,6 +850,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockNode->expects($this->any())->method('getIdentifier')->will($this->returnValue('site-node-uuid'));
         $mockNode->expects($this->any())->method('getName')->will($this->returnValue($nodeName));
         $mockNode->expects($this->any())->method('getNodeType')->will($this->returnValue($mockNodeType));
+        $mockNode->expects($this->any())->method('getWorkspace')->will($this->returnValue($mockContext->getWorkspace()));
 
         // Parent node is set by buildSubNode()
         $mockNode->mockParentNode = null;
