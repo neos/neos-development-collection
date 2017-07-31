@@ -327,7 +327,7 @@
     'Neos.Neos:Node': TRUE
   ui:
     label: i18n
-    icon: 'icon-folder-open-alt'
+    icon: 'icon-folder-open'
   constraints:
     nodeTypes:
       'Neos.Neos:Document': FALSE
