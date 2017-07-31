@@ -494,7 +494,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         }));
 
         $that = $this;
-        $this->mockContextFactory->expects($this->once())->method('create')->will($this->returnCallback(function ($contextProperties) use ($that, $mockContext) {
+        $this->mockContextFactory->expects($this->atLeastOnce())->method('create')->will($this->returnCallback(function ($contextProperties) use ($that, $mockContext) {
             // The important assertion:
             $that->assertSame('live', $contextProperties['workspaceName']);
             return $mockContext;
@@ -522,7 +522,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         }));
 
         $that = $this;
-        $this->mockContextFactory->expects($this->once())->method('create')->will($this->returnCallback(function ($contextProperties) use ($that, $mockContext) {
+        $this->mockContextFactory->expects($this->atLeastOnce())->method('create')->will($this->returnCallback(function ($contextProperties) use ($that, $mockContext) {
             // The important assertion:
             $that->assertSame('user-johndoe', $contextProperties['workspaceName']);
             return $mockContext;
