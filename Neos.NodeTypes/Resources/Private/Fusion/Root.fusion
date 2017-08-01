@@ -103,23 +103,5 @@ prototype(Neos.NodeTypes:Form) {
 	}
 }
 
-# "Insert content references" TS Object
-prototype(Neos.NodeTypes:ContentReferences) {
-	@context.referenceNodesArray = ${q(node).property('references')}
-	referenceNodes = Neos.Fusion:Collection {
-		collection = ${referenceNodesArray}
-		itemRenderer = Neos.Neos:ContentCase
-		itemName = 'node'
-	}
-	@cache {
-		mode = 'cached'
-		entryIdentifier {
-			node = ${node}
-		}
-		entryTags {
-			1 = ${'Node_' + node.identifier}
-			2 = ${Neos.Caching.nodeTag(referenceNodesArray)}
-			3 = ${Neos.Caching.descendantOfTag(referenceNodesArray)}
-		}
-	}
-}
+# Map node types for backwards compability
+prototype(Neos.NodeTypes:ContentReferences) < prototype(Neos.ContentReferences:ContentReferences)
