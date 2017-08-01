@@ -784,8 +784,8 @@ class Parser implements ParserInterface
         }
 
         $currentKey = array_shift($objectPathArray);
-        if ((integer)$currentKey > 0) {
-            $currentKey = (integer)$currentKey;
+        if (is_numeric($currentKey)) {
+            $currentKey = (int)$currentKey;
         }
 
         if (empty($objectPathArray)) {
@@ -837,8 +837,8 @@ class Parser implements ParserInterface
 
         if (count($objectPathArray) > 0) {
             $currentKey = array_shift($objectPathArray);
-            if ((integer)$currentKey > 0) {
-                $currentKey = intval($currentKey);
+            if (is_numeric($currentKey)) {
+                $currentKey = (int)$currentKey;
             }
             if (!isset($objectTree[$currentKey])) {
                 $objectTree[$currentKey] = array();
