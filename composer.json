@@ -77,7 +77,7 @@
             "Neos\\SiteKickstarter\\": [
                 "Neos.SiteKickstarter/Classes"
             ],
-            "Neos\\ContentReferences\\": [
+            "Neos\\NodeTypes\\ContentReferences\\": [
                 "Neos.NodeTypes.ContentReferences/Classes"
             ]
         }
