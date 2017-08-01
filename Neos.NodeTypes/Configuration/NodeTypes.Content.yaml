@@ -317,9 +317,9 @@
 # To prevent any breaking change, we map the separate package the old NodeTypes package
 'Neos.NodeTypes:ContentReferences':
   superTypes:
-    'Neos.ContentReferences:ContentReferences': TRUE
+    'Neos.NodeTypes.ContentReferences:ContentReferences': TRUE
 
-'Neos.ContentReferences:ContentReferences':
+'Neos.NodeTypes.ContentReferences:ContentReferences':
   abstract: true
 
 # DEPRECATED with Neos 1.2: This node type was renamed to "Neos.NodeTypes:ContentReferences"
