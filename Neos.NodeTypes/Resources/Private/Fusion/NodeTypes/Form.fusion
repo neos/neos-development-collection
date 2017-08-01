@@ -1,0 +1,10 @@
+prototype(Neos.NodeTypes:Form) {
+  presetName = 'default'
+  @cache {
+    mode = 'uncached'
+    context {
+      1 = 'node'
+      2 = 'documentNode'
+    }
+  }
+}
