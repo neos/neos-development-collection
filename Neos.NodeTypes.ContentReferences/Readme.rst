@@ -1,5 +1,5 @@
 --------------
-Neos ContentReferences
+Neos NodeType: ContentReferences
 --------------
 
 This package implements a node type ContentReferences. It displays referenced nodes. This originally was part of the Neos.NodeTypes package.
