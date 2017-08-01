@@ -1,27 +1,14 @@
 {
-    "name": "neos/nodetypes",
+    "name": "neos/nodetypes-columnlayouts",
     "type": "neos-package",
-    "description": "Node type configuration for Neos",
+    "description": "Various simple column layouts node type.",
     "license": "GPL-3.0+",
     "require": {
-        "neos/form": "*",
-
-        "neos/media": "self.version",
-        "neos/content-repository": "self.version",
-        "neos/neos": "self.version",
-        "neos/fusion": "self.version",
-
-        "neos/nodetypes-assetlist": "self.version",
-        "neos/nodetypes-columnlayouts": "self.version",
-        "neos/nodetypes-contentreferences": "self.version",
-        "neos/nodetypes-html": "self.version"
-    },
-    "replace": {
-        "typo3/neos-nodetypes": "self.version"
+        "neos/neos": "*"
     },
     "autoload": {
         "psr-4": {
-            "Neos\\NodeTypes\\": "Classes"
+            "Neos\\NodeTypes\\ColumnLayouts\\": "Classes"
         }
     },
     "extra": {
