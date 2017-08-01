@@ -29,7 +29,10 @@
 						<f:for each="{siteChanges}" as="site">
 							<f:for each="{site.documents}" key="documentPath" as="document">
 								<tr class="neos-document" data-nodepath="{document.documentNode.path}" data-ismoved="{f:if(condition: document.isMoved, then: 'true', else: 'false')}" data-isnew="{f:if(condition: document.isNew, then: 'true', else: 'false')}">
-									<td colspan="2" class="neos-priority1 path-caption">
+									<td class="check neos-priority1">
+										<label for="check-document-{document.documentNode.identifier}" class="neos-checkbox"><f:form.checkbox id="check-document-{document.documentNode.identifier}" class="neos-check-document" value="{document.documentNode.identifier}"/><span></span></label>
+									</td>
+									<td class="neos-priority1 path-caption">
 										<div class="neos-row-fluid">
 											<div class="neos-span2">
 												{neos:backend.translate(id: 'pathCaption', source: 'Main', package: 'Neos.Neos')}:
@@ -50,7 +53,7 @@
 									</td>
 								</tr>
 								<f:for each="{document.changes}" key="relativePath" as="change">
-									<tr class="neos-change fold-{document.documentNode.identifier}" data-nodepath="{change.node.path}" data-ismoved="{f:if(condition: change.isMoved, then: 'true', else: 'false')}" data-isnew="{f:if(condition: change.isNew, then: 'true', else: 'false')}">
+									<tr class="neos-change fold-{document.documentNode.identifier} document-{document.documentNode.identifier}" data-nodepath="{change.node.path}" data-ismoved="{f:if(condition: change.isMoved, then: 'true', else: 'false')}" data-isnew="{f:if(condition: change.isNew, then: 'true', else: 'false')}">
 										<td class="check neos-priority1">
 											<label for="{change.node.identifier}" class="neos-checkbox"><f:form.checkbox name="nodes[]" value="{change.node.contextPath}" id="{change.node.identifier}" /><span></span></label>
 										</td>
@@ -110,6 +113,13 @@
 						}
 						$('tbody input[type="checkbox"]').prop('checked', value);
 					});
+
+					$('.neos-check-document').change(function() {
+						var documentIdentifier = $(this).val();
+						var checked = $(this).prop('checked');
+						$(this).closest('table').find('tr.neos-change.document-' + documentIdentifier + ' td.check input').prop('checked', checked);
+					});
+
 					$('tbody input[type="checkbox"]').change(function() {
 						if ($(this).closest('tr').data('ismoved') === true || $(this).closest('tr').data('isnew') === true) {
 							var currentNodePath = $(this).closest('tr').attr('data-nodepath') + '/';
@@ -132,6 +142,7 @@
 							$('.batch-action').addClass('neos-hidden').addClass('neos-disabled').attr('disabled', 'disabled');
 						}
 					});
+
 					$('.fold-toggle').click(function() {
 						$(this).toggleClass('icon-chevron-down icon-chevron-up');
 						$('tr.' + $(this).data('toggle')).toggle();
