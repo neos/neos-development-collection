@@ -1,24 +1,14 @@
 {
-    "name": "neos/nodetypes",
+    "name": "neos/nodetypes-contentreferences",
     "type": "neos-package",
-    "description": "Node type configuration for Neos",
+    "description": "A simple content reference node type.",
     "license": "GPL-3.0+",
     "require": {
-        "neos/form": "*",
-
-        "neos/media": "self.version",
-        "neos/content-repository": "self.version",
-        "neos/neos": "self.version",
-        "neos/fusion": "self.version",
-
-        "neos/nodetypes-contentreference": "self.version"
-    },
-    "replace": {
-        "typo3/neos-nodetypes": "self.version"
+        "neos/neos": "*"
     },
     "autoload": {
         "psr-4": {
-            "Neos\\NodeTypes\\": "Classes"
+            "Neos\\ContentReferences\\": "Classes"
         }
     },
     "extra": {

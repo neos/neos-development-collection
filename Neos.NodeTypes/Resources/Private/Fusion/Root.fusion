@@ -104,4 +104,5 @@ prototype(Neos.NodeTypes:Form) {
 }
 
 # Map node types for backwards compability
-prototype(Neos.NodeTypes:ContentReferences) < prototype(Neos.ContentReferences:ContentReferences)
+prototype(Neos.NodeTypes:ContentReferences) >
+prototype(Neos.NodeTypes:ContentReferences) < prototype(Neos.NodeTypes.ContentReferences:ContentReferences)
