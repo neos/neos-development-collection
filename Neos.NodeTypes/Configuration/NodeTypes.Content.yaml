@@ -314,29 +314,13 @@
         label: i18n
         reloadIfChanged: TRUE
 
+# To prevent any breaking change, we map the separate package the old NodeTypes package
 'Neos.NodeTypes:ContentReferences':
   superTypes:
-    'Neos.Neos:Content': TRUE
-  ui:
-    label: i18n
-    icon: 'icon-copy'
-    position: 800
-    inspector:
-      groups:
-        references:
-          label: i18n
-          position: 10
-          icon: 'icon-copy'
-  properties:
-    references:
-      type: 'references'
-      ui:
-        inspector:
-          group: 'references'
-          editorOptions:
-            nodeTypes: ['Neos.Neos:Content']
-        label: i18n
-        reloadIfChanged: TRUE
+    'Neos.ContentReferences:ContentReferences': TRUE
+
+'Neos.ContentReferences:ContentReferences':
+  abstract: true
 
 # DEPRECATED with Neos 1.2: This node type was renamed to "Neos.NodeTypes:ContentReferences"
 'Neos.NodeTypes:Records':
