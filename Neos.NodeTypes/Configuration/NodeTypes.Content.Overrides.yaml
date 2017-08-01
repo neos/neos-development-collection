@@ -1,0 +1,71 @@
+# To prevent any breaking change, we map the separate packages the old NodeTypes package
+
+
+# Neos.NodeTypes.AssetList
+'Neos.NodeTypes:AssetList':
+  superTypes:
+    'Neos.NodeTypes.AssetList:AssetList': TRUE
+
+'Neos.NodeTypes.AssetList:AssetList':
+  abstract: TRUE
+
+
+# Neos.NodeTypes.ContentReferences
+'Neos.NodeTypes:ContentReferences':
+  superTypes:
+    'Neos.NodeTypes.ContentReferences:ContentReferences': TRUE
+
+'Neos.NodeTypes.ContentReferences:ContentReferences':
+  abstract: TRUE
+
+
+# Neos.NodeTypes.Html
+'Neos.NodeTypes:Html':
+  superTypes:
+    'Neos.NodeTypes.Html:Html': TRUE
+
+'Neos.NodeTypes.Html:Html':
+  abstract: TRUE
+
+
+# Neos.NodeTypes.Navigation
+'Neos.NodeTypes:Menu':
+  superTypes:
+    'Neos.NodeTypes.Navigation:Navigation': TRUE
+
+'Neos.NodeTypes.Navigation:Navigation':
+  abstract: TRUE
+
+
+# Neos.NodeTypes.ColumnLayouts
+'Neos.NodeTypes:Column':
+  superTypes:
+    'Neos.NodeTypes.ColumnLayouts:Column': TRUE
+
+'Neos.NodeTypes:TwoColumn':
+  superTypes:
+    'Neos.NodeTypes.ColumnLayouts:TwoColumn': TRUE
+
+'Neos.NodeTypes.ColumnLayouts:TwoColumn':
+  abstract: TRUE
+
+'Neos.NodeTypes:ThreeColumn':
+  superTypes:
+    'Neos.NodeTypes.ColumnLayouts:ThreeColumn': TRUE
+
+'Neos.NodeTypes.ColumnLayouts:ThreeColumn':
+  abstract: TRUE
+
+'Neos.NodeTypes:FourColumn':
+  superTypes:
+    'Neos.NodeTypes.ColumnLayouts:FourColumn': TRUE
+
+'Neos.NodeTypes.ColumnLayouts:FourColumn':
+  abstract: TRUE
+
+
+# DEPRECATED with Neos 1.2: This node type was renamed to "Neos.NodeTypes:ContentReferences"
+'Neos.NodeTypes:Records':
+  superTypes:
+    'Neos.NodeTypes:ContentReferences': TRUE
+  abstract: TRUE
