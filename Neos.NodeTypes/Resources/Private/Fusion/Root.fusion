@@ -104,5 +104,10 @@ prototype(Neos.NodeTypes:Form) {
 }
 
 # Map node types for backwards compability
+prototype(Neos.NodeTypes:Html) {
+  templatePath = 'resource://Neos.NodeTypes.Html/Private/Templates/NodeTypes/Html.html'
+}
+
+# Map node types for backwards compability
 prototype(Neos.NodeTypes:ContentReferences) >
 prototype(Neos.NodeTypes:ContentReferences) < prototype(Neos.NodeTypes.ContentReferences:ContentReferences)

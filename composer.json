@@ -44,7 +44,8 @@
         "neos/neos": "self.version",
         "neos/nodetypes": "self.version",
         "neos/site-kickstarter": "self.version",
-        "neos/nodetypes-contentreferences": "self.version"
+        "neos/nodetypes-contentreferences": "self.version",
+        "neos/nodetypes-html": "self.version"
     },
     "suggest": {
         "neos/utility-schema": "Validate NodeType schema.",
@@ -79,6 +80,9 @@
             ],
             "Neos\\NodeTypes\\ContentReferences\\": [
                 "Neos.NodeTypes.ContentReferences/Classes"
+            ],
+            "Neos\\NodeTypes\\Html\\": [
+                "Neos.NodeTypes.Html/Classes"
             ]
         }
     },
