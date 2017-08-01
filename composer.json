@@ -44,6 +44,7 @@
         "neos/neos": "self.version",
         "neos/nodetypes": "self.version",
         "neos/site-kickstarter": "self.version",
+        "neos/nodetypes-assetlist": "self.version",
         "neos/nodetypes-contentreferences": "self.version",
         "neos/nodetypes-html": "self.version"
     },
@@ -77,6 +78,9 @@
             ],
             "Neos\\SiteKickstarter\\": [
                 "Neos.SiteKickstarter/Classes"
+            ],
+            "Neos\\NodeTypes\\AssetList\\": [
+                "Neos.NodeTypes.AssetList/Classes"
             ],
             "Neos\\NodeTypes\\ContentReferences\\": [
                 "Neos.NodeTypes.ContentReferences/Classes"
