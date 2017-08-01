@@ -1,43 +1,3 @@
-# Menu TS Object - extends Neos.Neos:Menu and is rendering menus inserted as content elements
-prototype(Neos.NodeTypes:Menu) {
-	@class = 'Neos\\Neos\\Fusion\\MenuImplementation'
-
-	startingPoint = ${q(node).property('startingPoint') ? q(node).property('startingPoint') : documentNode}
-
-	itemCollection = ${Array.isEmpty(q(node).property('selection') ? q(node).property('selection') : {}) ? null : q(node).property('selection')}
-
-	entryLevel = ${q(node).property('startLevel')}
-	entryLevel.@process.1 = ${String.toInteger(value)}
-
-	maximumLevels = ${q(node).property('maximumLevels')}
-	maximumLevels.@process.1 = ${String.toInteger(value)}
-
-	active.attributes = Neos.Fusion:Attributes {
-		class = 'active'
-	}
-	current.attributes = Neos.Fusion:Attributes {
-		class = 'current'
-	}
-	normal.attributes = Neos.Fusion:Attributes {
-		class = 'normal'
-	}
-
-	node = ${node}
-	items = ${this.items}
-
-	@cache {
-		mode = 'cached'
-		entryIdentifier {
-			documentNode = ${documentNode}
-			node = ${node}
-		}
-		entryTags {
-			1 = 'NodeType_Neos.Neos:Document'
-			2 = ${'Node_' + node.identifier}
-		}
-	}
-}
-
 # Image TS Object
 prototype(Neos.NodeTypes:Image) {
 	maximumWidth = 2560
@@ -104,3 +64,7 @@ prototype(Neos.NodeTypes:Html) {
 # Map node types for backwards compability
 prototype(Neos.NodeTypes:ContentReferences) >
 prototype(Neos.NodeTypes:ContentReferences) < prototype(Neos.NodeTypes.ContentReferences:ContentReferences)
+
+# Map node types for backwards compability
+prototype(Neos.NodeTypes:Menu) >
+prototype(Neos.NodeTypes:Menu) < prototype(Neos.NodeTypes.Navigation:Navigation)

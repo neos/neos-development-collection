@@ -47,7 +47,8 @@
         "neos/nodetypes-assetlist": "self.version",
         "neos/nodetypes-columnlayouts": "self.version",
         "neos/nodetypes-contentreferences": "self.version",
-        "neos/nodetypes-html": "self.version"
+        "neos/nodetypes-html": "self.version",
+        "neos/nodetypes-navigation": "self.version"
     },
     "suggest": {
         "neos/utility-schema": "Validate NodeType schema.",
@@ -91,6 +92,9 @@
             ],
             "Neos\\NodeTypes\\Html\\": [
                 "Neos.NodeTypes.Html/Classes"
+            ],
+            "Neos\\NodeTypes\\Navigation\\": [
+                "Neos.NodeTypes.Navigation/Classes"
             ]
         }
     },
