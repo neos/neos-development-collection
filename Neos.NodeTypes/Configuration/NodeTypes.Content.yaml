@@ -41,7 +41,7 @@
     'Neos.NodeTypes.Html:Html': TRUE
 
 'Neos.NodeTypes.Html:Html':
-  abstract: true
+  abstract: TRUE
 
 # To prevent any breaking change, we map the separate package the old NodeTypes package
 'Neos.NodeTypes:Menu':
@@ -62,7 +62,7 @@
     'Neos.NodeTypes.ColumnLayouts:TwoColumn': TRUE
 
 'Neos.NodeTypes.ColumnLayouts:TwoColumn':
-  abstract: true
+  abstract: TRUE
 
 # To prevent any breaking change, we map the separate package the old NodeTypes package
 'Neos.NodeTypes:ThreeColumn':
@@ -70,7 +70,7 @@
     'Neos.NodeTypes.ColumnLayouts:ThreeColumn': TRUE
 
 'Neos.NodeTypes.ColumnLayouts:ThreeColumn':
-  abstract: true
+  abstract: TRUE
 
 # To prevent any breaking change, we map the separate package the old NodeTypes package
 'Neos.NodeTypes:FourColumn':
@@ -78,7 +78,7 @@
     'Neos.NodeTypes.ColumnLayouts:FourColumn': TRUE
 
 'Neos.NodeTypes.ColumnLayouts:FourColumn':
-  abstract: true
+  abstract: TRUE
 
 'Neos.NodeTypes:Form':
   superTypes:
@@ -112,7 +112,7 @@
     'Neos.NodeTypes.AssetList:AssetList': TRUE
 
 'Neos.NodeTypes.AssetList:AssetList':
-  abstract: true
+  abstract: TRUE
 
 # To prevent any breaking change, we map the separate package the old NodeTypes package
 'Neos.NodeTypes:ContentReferences':
@@ -120,7 +120,7 @@
     'Neos.NodeTypes.ContentReferences:ContentReferences': TRUE
 
 'Neos.NodeTypes.ContentReferences:ContentReferences':
-  abstract: true
+  abstract: TRUE
 
 # DEPRECATED with Neos 1.2: This node type was renamed to "Neos.NodeTypes:ContentReferences"
 'Neos.NodeTypes:Records':
