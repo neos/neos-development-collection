@@ -19,6 +19,15 @@
   abstract: TRUE
 
 
+# Neos.NodeTypes.Form
+'Neos.NodeTypes:Form':
+  superTypes:
+    'Neos.NodeTypes.Form:Form': TRUE
+
+'Neos.NodeTypes.Form:Form':
+  abstract: TRUE
+
+
 # Neos.NodeTypes.Html
 'Neos.NodeTypes:Html':
   superTypes:
