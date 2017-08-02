@@ -7,6 +7,11 @@ prototype(Neos.NodeTypes:AssetList) {
 }
 
 
+# Neos.NodeTypes.Form
+prototype(Neos.NodeTypes:Form) >
+prototype(Neos.NodeTypes:Form) < prototype(Neos.NodeTypes.Form:Form)
+
+
 # Neos.NodeTypes.ColumnLayouts
 prototype(Neos.NodeTypes:MultiColumn) >
 prototype(Neos.NodeTypes:MultiColumn) < prototype(Neos.NodeTypes.ColumnLayouts:MultiColumn) {
