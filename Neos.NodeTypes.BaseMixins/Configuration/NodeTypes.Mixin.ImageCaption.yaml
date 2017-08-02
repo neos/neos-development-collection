@@ -1,0 +1,19 @@
+'Neos.NodeTypes.BaseMixins:ImageCaptionMixin':
+  abstract: TRUE
+  properties:
+    hasCaption:
+      type: boolean
+      ui:
+        label: i18n
+        reloadIfChanged: TRUE
+        inspector:
+          group: 'image'
+          position: 200
+    caption:
+      type: string
+      defaultValue: ''
+      ui:
+        inlineEditable: TRUE
+        aloha:
+          placeholder: i18n
+          autoparagraph: TRUE

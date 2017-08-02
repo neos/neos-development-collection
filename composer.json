@@ -45,6 +45,7 @@
         "neos/nodetypes": "self.version",
         "neos/site-kickstarter": "self.version",
         "neos/nodetypes-assetlist": "self.version",
+        "neos/nodetypes-basemixins": "self.version",
         "neos/nodetypes-columnlayouts": "self.version",
         "neos/nodetypes-contentreferences": "self.version",
         "neos/nodetypes-html": "self.version",
@@ -83,6 +84,9 @@
             ],
             "Neos\\NodeTypes\\AssetList\\": [
                 "Neos.NodeTypes.AssetList/Classes"
+            ],
+            "Neos\\NodeTypes\\BaseMixins\\": [
+                "Neos.NodeTypes.BaseMixins/Classes"
             ],
             "Neos\\NodeTypes\\ColumnLayouts\\": [
                 "Neos.NodeTypes.ColumnLayouts/Classes"
