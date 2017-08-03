@@ -16,18 +16,6 @@ namespace Neos\ContentRepository\Domain\Utility;
  */
 abstract class NodeContexts
 {
-
-    /**
-     * Determine if the given node path is a context path.
-     *
-     * @param string $string context path or context identifier
-     * @return boolean
-     */
-    public static function hasContext($string)
-    {
-        return (preg_match('/@/u', $string) === 1);
-    }
-
     /**
      * @param array $dimensionValues
      * @return string

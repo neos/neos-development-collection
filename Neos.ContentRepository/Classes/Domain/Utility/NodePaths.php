@@ -101,7 +101,7 @@ abstract class NodePaths
      */
     public static function isContextPath($contextPath)
     {
-        return NodeContexts::hasContext($contextPath);
+        return (strpos($contextPath, '@') !== false);
     }
 
     /**
