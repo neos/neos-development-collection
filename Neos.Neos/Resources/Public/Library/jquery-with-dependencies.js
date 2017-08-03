@@ -24533,7 +24533,7 @@ var _registerDnd = function() {
             results_group.active_options += 1;
           }
           if (!(option.group && !this.group_search)) {
-            option.search_text = option.group ? option.label : option.html;
+            option.search_text = option.group ? option.label : option.text;
             option.search_match = this.search_string_match(option.search_text, regex);
             if (option.search_match && !option.group) {
               results += 1;
