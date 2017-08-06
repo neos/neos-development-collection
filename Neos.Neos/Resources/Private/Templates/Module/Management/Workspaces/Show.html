@@ -29,10 +29,17 @@
 						<f:for each="{siteChanges}" as="site">
 							<f:for each="{site.documents}" key="documentPath" as="document">
 								<tr class="neos-document" data-nodepath="{document.documentNode.path}" data-ismoved="{f:if(condition: document.isMoved, then: 'true', else: 'false')}" data-isnew="{f:if(condition: document.isNew, then: 'true', else: 'false')}">
-									<td class="check neos-priority1">
-										<label for="check-document-{document.documentNode.identifier}" class="neos-checkbox"><f:form.checkbox id="check-document-{document.documentNode.identifier}" class="neos-check-document" value="{document.documentNode.identifier}"/><span></span></label>
-									</td>
-									<td class="neos-priority1 path-caption">
+									<f:if condition="{document.changes -> f:count()} > 1">
+										<f:then>
+											<td class="check neos-priority1">
+												<label for="check-document-{document.documentNode.identifier}" class="neos-checkbox"><f:form.checkbox id="check-document-{document.documentNode.identifier}" class="neos-check-document" value="{document.documentNode.identifier}"/><span></span></label>
+											</td>
+											<td class="neos-priority1 path-caption">
+										</f:then>
+										<f:else>
+											<td colspan="2" class="neos-priority1 path-caption">
+										</f:else>
+									</f:if>
 										<div class="neos-row-fluid">
 											<div class="neos-span2">
 												{neos:backend.translate(id: 'pathCaption', source: 'Main', package: 'Neos.Neos')}:
