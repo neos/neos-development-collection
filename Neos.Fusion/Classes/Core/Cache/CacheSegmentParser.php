@@ -21,12 +21,37 @@ class CacheSegmentParser
     /**
      * @var string
      */
-    protected $output;
+    protected $randomCacheMarker = '';
+
+    /**
+     * @var int
+     */
+    protected $randomCacheMarkerLength;
+
+    /**
+     * @var string
+     */
+    protected $output = '';
+
+    /**
+     * @var string
+     */
+    protected $outerSegmentContent;
 
     /**
      * @var array
      */
-    protected $cacheEntries;
+    protected $cacheSegments = [];
+
+    /**
+     * @var integer
+     */
+    protected $uncachedPartCount = 0;
+
+    /**
+     * @var string
+     */
+    protected $content;
 
     /**
      * Parses the given content and extracts segments by searching for start end end markers. Those segments can later
@@ -34,121 +59,215 @@ class CacheSegmentParser
      *
      * This method also prepares a cleaned up output which can be retrieved later. See getOutput() for more information.
      *
-     * @param string $content The content to process, ie. the rendered content with some segment markers already in place
-     * @param string $randomCacheMarker A random cache marker that should be used to "protect" against content containing special characters used to mark cache segments
-     * @return string The outer content with placeholders instead of the actual content segments
+     * @param string $content
+     * @param string $randomCacheMarker
      * @throws Exception
      */
-    public function extractRenderedSegments($content, $randomCacheMarker = '')
+    public function __construct($content, $randomCacheMarker = '')
     {
-        $this->output = '';
-        $this->cacheEntries = [];
-        $parts = [['content' => '']];
-
+        $this->randomCacheMarker = $randomCacheMarker;
+        $this->randomCacheMarkerLength = strlen($randomCacheMarker);
+        $this->content = $content;
+        $this->outerSegmentContent = '';
         $currentPosition = 0;
-        $level = 0;
-        $nextStartPosition = strpos($content, ContentCache::CACHE_SEGMENT_START_TOKEN . $randomCacheMarker, $currentPosition);
-        $nextEndPosition = strpos($content, ContentCache::CACHE_SEGMENT_END_TOKEN . $randomCacheMarker, $currentPosition);
+        $nextStartPosition = $this->calculateNextTokenPosition($currentPosition, ContentCache::CACHE_SEGMENT_START_TOKEN);
+        while ($nextStartPosition !== false) {
+            $part = $this->extractContent($currentPosition, $nextStartPosition);
+            $this->output .= $part;
+            $this->outerSegmentContent .= $part;
+            $result = $this->parseSegment($nextStartPosition);
+            $this->output .= $result['cleanContent'];
+            $this->outerSegmentContent .= $result['embed'];
+            $currentPosition = $this->calculateCurrentPosition($result['endPosition']);
+            $nextStartPosition = $this->calculateNextTokenPosition($currentPosition, ContentCache::CACHE_SEGMENT_START_TOKEN);
+        }
 
-        while (true) {
+        $nextEndPosition = $this->calculateNextTokenPosition($currentPosition, ContentCache::CACHE_SEGMENT_END_TOKEN);
+        if ($nextEndPosition !== false) {
+            throw new Exception(sprintf('Exceeding segment end token after position %d', $currentPosition), 1391853689);
+        }
 
-            // Nothing else to do, all segments are parsed
-            if ($nextStartPosition === false && $nextEndPosition === false) {
-                $part = substr($content, $currentPosition);
-                $parts[0]['content'] .= $part;
-                $this->output .= $part;
-                break;
-            }
+        $currentPosition = isset($result['endPosition']) ? $this->calculateCurrentPosition($result['endPosition']) : $currentPosition;
+        $part = $this->extractContent($currentPosition);
+        $this->output .= $part;
+        $this->outerSegmentContent .= $part;
+        // we no longer need the content
+        unset($this->content);
+    }
 
-            // A cache segment is started and no end token can be found
-            if ($nextStartPosition !== false && $nextEndPosition === false) {
-                throw new Exception(sprintf('No cache segment end token can be found after position %d', $currentPosition), 1391853500);
-            }
+    /**
+     * Parses a segment at current position diving down into nested segments.
+     *
+     * The returned segmentData array has the following keys:
+     * - identifier -> The identifier of this entry for cached segments (or the eval expression for everything else)
+     * - type -> The type of segment (one of the ContentCache::SEGMENT_TYPE_* constants)
+     * - context -> eventual context information saved for a cached segment (optional)
+     * - metadata -> cache entry metadata like tags
+     * - content -> the content of this segment including embed code for sub segments
+     * - cleanContent -> the raw content without any cache references for this segment and all sub segments
+     * - embed -> the placeholder content for this segment to be used in "content" of parent segments
+     *
+     * @param integer $currentPosition
+     * @return array
+     * @throws Exception
+     */
+    protected function parseSegment($currentPosition)
+    {
+        $nextStartPosition = $this->calculateNextTokenPosition($currentPosition, ContentCache::CACHE_SEGMENT_START_TOKEN);
+        if ($nextStartPosition !== $currentPosition) {
+            throw new Exception(sprintf('The current position (%d) is not the start of a segment, next start position %d', $currentPosition, $nextStartPosition), 1472464124);
+        }
 
-            if ($level === 0 && $nextEndPosition !== false && ($nextStartPosition === false || $nextEndPosition < $nextStartPosition)) {
-                throw new Exception(sprintf('Exceeding segment end token after position %d', $currentPosition), 1391853689);
-            }
+        $segmentData = [
+            'identifier' => '',
+            'type' => '',
+            'context' => '',
+            'metadata' => '',
+            'content' => '',
+            'cleanContent' => '',
+            'embed' => ''
+        ];
 
-            // Either no other segment start was found or we encountered an segment end before the next start
-            if ($nextStartPosition === false || $nextEndPosition < $nextStartPosition) {
+        $nextEndPosition = $this->calculateNextTokenPosition($currentPosition, ContentCache::CACHE_SEGMENT_END_TOKEN);
+        $currentPosition = $this->calculateCurrentPosition($nextStartPosition);
+        $nextStartPosition = $this->calculateNextTokenPosition($currentPosition, ContentCache::CACHE_SEGMENT_START_TOKEN);
 
-                // Add everything until end to current level
-                $part = substr($content, $currentPosition, $nextEndPosition - $currentPosition);
-                $parts[$level]['content'] .= $part;
-                $currentLevelPart = &$parts[$level];
-                $identifier = $currentLevelPart['identifier'];
-                $this->output .= $part;
+        $nextIdentifierSeparatorPosition = $this->calculateNextTokenPosition($currentPosition, ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN);
+        $nextSecondIdentifierSeparatorPosition = $this->calculateNextTokenPosition($nextIdentifierSeparatorPosition + 1, ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN);
 
-                if ($currentLevelPart['type'] === ContentCache::SEGMENT_TYPE_CACHED || $currentLevelPart['type'] === ContentCache::SEGMENT_TYPE_DYNAMICCACHED) {
-                    $this->cacheEntries[$identifier] = $parts[$level];
-                }
+        if ($nextIdentifierSeparatorPosition === false || $nextSecondIdentifierSeparatorPosition === false
+            || $nextStartPosition !== false && $nextStartPosition < $nextSecondIdentifierSeparatorPosition
+            || $nextEndPosition !== false && $nextEndPosition < $nextSecondIdentifierSeparatorPosition
+        ) {
+            throw new Exception(sprintf('Missing segment separator token after position %d', $currentPosition), 1391855139);
+        }
 
-                // The end marker ends the current level
-                unset($parts[$level]);
-                $level--;
+        $identifier = $this->extractContent($currentPosition, $nextIdentifierSeparatorPosition);
+        $contextOrMetadata = $this->extractContent($this->calculateCurrentPosition($nextIdentifierSeparatorPosition), $nextSecondIdentifierSeparatorPosition);
 
-                if ($currentLevelPart['type'] === ContentCache::SEGMENT_TYPE_UNCACHED) {
-                    $parts[$level]['content'] .= ContentCache::CACHE_SEGMENT_START_TOKEN . ContentCache::CACHE_SEGMENT_MARKER . $identifier . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . ContentCache::CACHE_SEGMENT_MARKER . $currentLevelPart['context'] . ContentCache::CACHE_SEGMENT_END_TOKEN . ContentCache::CACHE_SEGMENT_MARKER;
-                } elseif ($currentLevelPart['type'] === ContentCache::SEGMENT_TYPE_DYNAMICCACHED) {
-                    $parts[$level]['content'] .= ContentCache::CACHE_SEGMENT_START_TOKEN . ContentCache::CACHE_SEGMENT_MARKER . 'evalCached=' . $identifier . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . ContentCache::CACHE_SEGMENT_MARKER . $currentLevelPart['context'] . ContentCache::CACHE_SEGMENT_END_TOKEN . ContentCache::CACHE_SEGMENT_MARKER;
-                } else {
-                    $parts[$level]['content'] .= ContentCache::CACHE_SEGMENT_START_TOKEN . ContentCache::CACHE_SEGMENT_MARKER . $identifier . ContentCache::CACHE_SEGMENT_END_TOKEN . ContentCache::CACHE_SEGMENT_MARKER;
-                }
+        $segmentData['identifier'] = $identifier;
+        $segmentData['type'] = ContentCache::SEGMENT_TYPE_CACHED;
+        $segmentData['metadata'] = $contextOrMetadata;
+        $segmentData['context'] = $contextOrMetadata;
 
-                $currentPosition = $nextEndPosition + 1 + strlen($randomCacheMarker);
+        if (strpos($identifier, 'eval=') === 0) {
+            $segmentData['type'] = ContentCache::SEGMENT_TYPE_UNCACHED;
+            unset($segmentData['metadata']);
+            $this->uncachedPartCount++;
+        }
 
-                $nextEndPosition = strpos($content, ContentCache::CACHE_SEGMENT_END_TOKEN . $randomCacheMarker, $currentPosition);
-            } else {
+        if (strpos($identifier, 'evalCached=') === 0) {
+            $segmentData['type'] = ContentCache::SEGMENT_TYPE_DYNAMICCACHED;
+            $segmentData['identifier'] = substr($identifier, 11);
+            $additionalData = json_decode($contextOrMetadata, true);
+            $segmentData['metadata'] = $additionalData['metadata'];
+            $this->uncachedPartCount++;
+        }
 
-                // Push everything until now to the current stack value
-                $part = substr($content, $currentPosition, $nextStartPosition - $currentPosition);
-                $parts[$level]['content'] .= $part;
-                $this->output .= $part;
+        $currentPosition = $this->calculateCurrentPosition($nextSecondIdentifierSeparatorPosition);
+        $segmentData = $this->extractContentAndSubSegments($currentPosition, $segmentData);
 
-                // Found opening marker, increase level
-                $level++;
-                $parts[$level] = ['content' => ''];
+        if ($segmentData['type'] === ContentCache::SEGMENT_TYPE_CACHED || $segmentData['type'] === ContentCache::SEGMENT_TYPE_DYNAMICCACHED) {
+            $this->cacheSegments[$identifier] = $this->reduceSegmentDataToCacheRelevantInformation($segmentData);
+        }
 
-                $currentPosition = $nextStartPosition + 1 + strlen($randomCacheMarker);
+        return $segmentData;
+    }
 
-                $nextStartPosition = strpos($content, ContentCache::CACHE_SEGMENT_START_TOKEN . $randomCacheMarker, $currentPosition);
+    /**
+     * @param integer $currentPosition
+     * @param array $segmentData
+     * @return array
+     */
+    protected function extractContentAndSubSegments($currentPosition, array $segmentData)
+    {
+        $nextStartPosition = $this->calculateNextTokenPosition($currentPosition, ContentCache::CACHE_SEGMENT_START_TOKEN);
+        $nextEndPosition = $this->calculateNextTokenPosition($currentPosition, ContentCache::CACHE_SEGMENT_END_TOKEN);
 
-                $nextIdentifierSeparatorPosition = strpos($content, ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . $randomCacheMarker, $currentPosition);
-                $nextSecondIdentifierSeparatorPosition = strpos($content, ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . $randomCacheMarker, $nextIdentifierSeparatorPosition + 1);
+        $segmentData['content'] = '';
+        $segmentData['cleanContent'] = '';
+        while ($nextStartPosition !== false && $nextStartPosition < $nextEndPosition) {
+            $segmentContent = $this->extractContent($currentPosition, $nextStartPosition);
+            $segmentData['content'] .= $segmentContent;
+            $segmentData['cleanContent'] .= $segmentContent;
 
-                if ($nextIdentifierSeparatorPosition === false || $nextSecondIdentifierSeparatorPosition === false
-                    || $nextStartPosition !== false && $nextStartPosition < $nextIdentifierSeparatorPosition
-                    || $nextEndPosition !== false && $nextEndPosition < $nextIdentifierSeparatorPosition
-                    || $nextStartPosition !== false && $nextStartPosition < $nextSecondIdentifierSeparatorPosition
-                    || $nextEndPosition !== false && $nextEndPosition < $nextSecondIdentifierSeparatorPosition) {
-                    throw new Exception(sprintf('Missing segment separator token after position %d', $currentPosition), 1391855139);
-                }
+            $nextLevelData = $this->parseSegment($nextStartPosition);
+            $segmentData['content'] .= $nextLevelData['embed'];
+            $segmentData['cleanContent'] .= $nextLevelData['cleanContent'];
 
-                $identifier = substr($content, $currentPosition, $nextIdentifierSeparatorPosition - $currentPosition);
-                $contextOrMetadata = substr($content, $nextIdentifierSeparatorPosition + 1 + strlen($randomCacheMarker), $nextSecondIdentifierSeparatorPosition - $nextIdentifierSeparatorPosition - 1 - strlen($randomCacheMarker));
+            $currentPosition = $this->calculateCurrentPosition($nextLevelData['endPosition']);
+            $nextStartPosition = $this->calculateNextTokenPosition($currentPosition, ContentCache::CACHE_SEGMENT_START_TOKEN);
+            $nextEndPosition = $this->calculateNextTokenPosition($currentPosition, ContentCache::CACHE_SEGMENT_END_TOKEN);
+        }
 
-                $parts[$level]['identifier'] = $identifier;
-                if (strpos($identifier, 'eval=') === 0) {
-                    $parts[$level]['type'] = ContentCache::SEGMENT_TYPE_UNCACHED;
-                    $parts[$level]['context'] = $contextOrMetadata;
-                } elseif (strpos($identifier, 'evalCached=') === 0) {
-                    $parts[$level]['type'] = ContentCache::SEGMENT_TYPE_DYNAMICCACHED;
-                    $parts[$level]['identifier'] = substr($identifier, 11);
-                    $additionalData = json_decode($contextOrMetadata, true);
-                    $parts[$level]['context'] = $contextOrMetadata;
-                    $parts[$level]['metadata'] = $additionalData['metadata'];
-                } else {
-                    $parts[$level]['type'] = ContentCache::SEGMENT_TYPE_CACHED;
-                    $parts[$level]['metadata'] = $contextOrMetadata;
-                }
+        $remainingContent = $this->extractContent($currentPosition, $nextEndPosition);
+        $segmentData['content'] .= $remainingContent;
+        $segmentData['cleanContent'] .= $remainingContent;
+        $segmentData['endPosition'] = $nextEndPosition;
 
-                $currentPosition = $nextSecondIdentifierSeparatorPosition + 1 + strlen($randomCacheMarker);
+        if ($segmentData['type'] === ContentCache::SEGMENT_TYPE_UNCACHED) {
+            $segmentData['embed'] = ContentCache::CACHE_SEGMENT_START_TOKEN . ContentCache::CACHE_SEGMENT_MARKER . $segmentData['identifier'] . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . ContentCache::CACHE_SEGMENT_MARKER . $segmentData['context'] . ContentCache::CACHE_SEGMENT_END_TOKEN . ContentCache::CACHE_SEGMENT_MARKER;
+        } elseif ($segmentData['type'] === ContentCache::SEGMENT_TYPE_DYNAMICCACHED) {
+            $segmentData['embed'] = ContentCache::CACHE_SEGMENT_START_TOKEN . ContentCache::CACHE_SEGMENT_MARKER . 'evalCached=' . $segmentData['identifier'] . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN . ContentCache::CACHE_SEGMENT_MARKER . $segmentData['context'] . ContentCache::CACHE_SEGMENT_END_TOKEN . ContentCache::CACHE_SEGMENT_MARKER;
+        } else {
+            $segmentData['embed'] = ContentCache::CACHE_SEGMENT_START_TOKEN . ContentCache::CACHE_SEGMENT_MARKER . $segmentData['identifier'] . ContentCache::CACHE_SEGMENT_END_TOKEN . ContentCache::CACHE_SEGMENT_MARKER;
+        }
 
-                $nextStartPosition = strpos($content, ContentCache::CACHE_SEGMENT_START_TOKEN . $randomCacheMarker, $currentPosition);
-            }
-        };
+        return $segmentData;
+    }
 
-        return $parts[0]['content'];
+    /**
+     * Make sure that we keep only necessary information for caching and strip all internal segment data.
+     *
+     * @param array $segmentData
+     * @return array
+     */
+    protected function reduceSegmentDataToCacheRelevantInformation(array $segmentData)
+    {
+        return [
+            'identifier' => $segmentData['identifier'],
+            'type' => $segmentData['type'],
+            'content' => $segmentData['content'],
+            'metadata' => $segmentData['metadata']
+        ];
+    }
+
+    /**
+     * @param integer $fromPosition
+     * @param integer $toPosition
+     * @return string
+     */
+    protected function extractContent($fromPosition, $toPosition = null)
+    {
+        // substr behaves differently if the third parameter is not given or if it's null, so we need to take this detour
+        if ($toPosition === null) {
+            return substr($this->content, $fromPosition);
+        }
+
+        return substr($this->content, $fromPosition, ($toPosition - $fromPosition));
+    }
+
+    /**
+     * Calculates a position assuming that the given position is a token followed by the random cache marker
+     *
+     * @param int $position
+     * @return int
+     */
+    protected function calculateCurrentPosition($position)
+    {
+        return $position + 1 + $this->randomCacheMarkerLength;
+    }
+
+    /**
+     * Find the next position of the given token (one of the ContentCache::CACHE_SEGMENT_*_TOKEN constants) in the parsed content.
+     *
+     * @param integer $currentPosition The position to start searching from
+     * @param string $token the token to search for (will internally be appeneded by the randomCacheMarker)
+     * @return integer|boolean Position of the token or false if the token was not found
+     */
+    protected function calculateNextTokenPosition($currentPosition, $token)
+    {
+        return strpos($this->content, $token . $this->randomCacheMarker, $currentPosition);
     }
 
     /**
@@ -170,6 +289,22 @@ class CacheSegmentParser
      */
     public function getCacheSegments()
     {
-        return $this->cacheEntries;
+        return $this->cacheSegments;
+    }
+
+    /**
+     * @return integer
+     */
+    public function getUncachedPartCount()
+    {
+        return $this->uncachedPartCount;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOuterSegmentContent()
+    {
+        return $this->outerSegmentContent;
     }
 }
