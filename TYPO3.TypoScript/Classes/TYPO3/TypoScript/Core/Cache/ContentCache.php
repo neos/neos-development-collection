@@ -177,7 +177,7 @@ class ContentCache
             'context' => $this->serializeContext($contextVariables),
         ];
 
-        return self::CACHE_SEGMENT_START_TOKEN . $this->randomCacheMarker . 'evalCached=' . $identifier . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . json_encode($segmentData) . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . $content . self::CACHE_SEGMENT_END_TOKEN . $this->randomCacheMarker;
+        return self::CACHE_SEGMENT_START_TOKEN . $this->randomCacheMarker . 'evalCached=' . $identifier . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . json_encode($segmentData) . self::CACHE_SEGMENT_SEPARATOR_TOKEN . $this->randomCacheMarker . $this->processCacheSegments($content, false) . self::CACHE_SEGMENT_END_TOKEN . $this->randomCacheMarker;
     }
 
     /**
