@@ -559,3 +559,29 @@ contentCache.dynamicSegmentWithDisabledDiscriminator = TYPO3.TypoScript:Array {
 		entryDiscriminator = ${discriminatorObject.value == 'disable' ? false : discriminatorObject.value}
 	}
 }
+
+contentCache.dynamicSegmentWithNestedCachedSegment = TYPO3.TypoScript:Array {
+	5 = 'Cached segment|'
+	10 = ${'counter=' + renderObject.counter + '|'}
+	15 = TYPO3.TypoScript:Array {
+		5 = 'Nested dynamic segment|'
+		10 = ${'counter=' + renderObject.counter + '|'}
+		15 = TYPO3.TypoScript:Array {
+			5 = 'Nested cached segment|'
+			10 = ${'counter=' + renderObject.counter}
+			@cache {
+				mode = 'cached'
+			}
+		}
+		@cache {
+			mode = 'dynamic'
+			context {
+				1 = 'node'
+				2 = 'documentNode'
+			}
+		}
+	}
+	@cache {
+		mode = 'cached'
+	}
+}
