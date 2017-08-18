@@ -14,13 +14,12 @@ namespace TYPO3\Neos\Tests\Unit\Routing;
 use TYPO3\Flow\Log\SystemLoggerInterface;
 use TYPO3\Flow\Security\Context as SecurityContext;
 use TYPO3\Flow\Tests\UnitTestCase;
-use TYPO3\Neos\Domain\Model\Domain;
+use TYPO3\Flow\Utility\Algorithms;
 use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ConfigurationContentDimensionPresetSource;
 use TYPO3\Neos\Domain\Service\ContentContext;
-use TYPO3\Neos\Routing\Exception\NoHomepageException;
 use TYPO3\Neos\Routing\FrontendNodeRoutePartHandler;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
@@ -495,7 +494,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         }));
 
         $that = $this;
-        $this->mockContextFactory->expects($this->once())->method('create')->will($this->returnCallback(function ($contextProperties) use ($that, $mockContext) {
+        $this->mockContextFactory->expects($this->atLeastOnce())->method('create')->will($this->returnCallback(function ($contextProperties) use ($that, $mockContext) {
             // The important assertion:
             $that->assertSame('live', $contextProperties['workspaceName']);
             return $mockContext;
@@ -523,7 +522,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         }));
 
         $that = $this;
-        $this->mockContextFactory->expects($this->once())->method('create')->will($this->returnCallback(function ($contextProperties) use ($that, $mockContext) {
+        $this->mockContextFactory->expects($this->atLeastOnce())->method('create')->will($this->returnCallback(function ($contextProperties) use ($that, $mockContext) {
             // The important assertion:
             $that->assertSame('user-johndoe', $contextProperties['workspaceName']);
             return $mockContext;
@@ -812,6 +811,13 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
             return $mockContext->mockTargetDimensions;
         }));
 
+        $mockContext->expects($this->any())->method('getNodeByIdentifier')->will($this->returnCallback(function ($identifier) use ($mockContext) {
+            if (array_key_exists($identifier, $mockContext->mockNodesByIdentifier)) {
+                return $mockContext->mockNodesByIdentifier[$identifier];
+            }
+            return null;
+        }));
+
         $mockContext->expects($this->any())->method('getProperties')->will($this->returnCallback(function () use ($mockContext, $contextProperties) {
             return array(
                 'workspaceName' => $contextProperties['workspaceName'],
@@ -849,9 +855,13 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
 
         $mockNode = $this->createMock(NodeInterface::class);
         $mockNode->expects($this->any())->method('getContext')->will($this->returnValue($mockContext));
-        $mockNode->expects($this->any())->method('getIdentifier')->will($this->returnValue('site-node-uuid'));
         $mockNode->expects($this->any())->method('getName')->will($this->returnValue($nodeName));
         $mockNode->expects($this->any())->method('getNodeType')->will($this->returnValue($mockNodeType));
+        $mockNode->expects($this->any())->method('getWorkspace')->will($this->returnValue($mockContext->getWorkspace()));
+
+        $mockNodeIdentifier = Algorithms::generateUUID();
+        $mockNode->expects($this->any())->method('getIdentifier')->will($this->returnValue($mockNodeIdentifier));
+        $mockContext->mockNodesByIdentifier[$mockNodeIdentifier] = $mockNode;
 
         // Parent node is set by buildSubNode()
         $mockNode->mockParentNode = null;
@@ -913,6 +923,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
      *
      * @param NodeInterface $mockParentNode
      * @param string $nodeName
+     * @param string $nodeTypeName
      * @return NodeInterface
      */
     protected function buildSubNode($mockParentNode, $nodeName, $nodeTypeName = 'TYPO3.Neos:Document')
