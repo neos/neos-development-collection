@@ -161,7 +161,7 @@ class FusionViewTest extends UnitTestCase
 
         $view->_set('variables', array('value' => $mockContextualizedNode));
 
-        $mockResponse->expects($this->atLeastOnce())->method('setHeader')->with('Content-Type', 'application/json');
+        $mockResponse->expects($this->atLeastOnce())->method('setHeader')->with('Content-Type', ['application/json']);
 
         $output = $view->render();
         $this->assertEquals('Message body', $output);

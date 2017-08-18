@@ -892,6 +892,30 @@ class ParserTest extends UnitTestCase
     }
 
     /**
+     * Checks if identifiers starting with digits are parsed correctly
+     *
+     * @test
+     */
+    public function parserCorrectlyParsesFixture21()
+    {
+        $sourceCode = $this->readFusionFixture('ParserTestFusionFixture23');
+
+        $expectedParseTree = array(
+            '__prototypes' => array(
+                '4Testing:Example' => array(
+                    'someValue' => true
+                )
+            ),
+            'somepath' => array(
+                '101Neos' => 'A string value',
+            ),
+        );
+
+        $actualParseTree = $this->parser->parse($sourceCode);
+        $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 21.');
+    }
+
+    /**
      * Checks if comments in comments are parsed correctly
      *
      * @test
