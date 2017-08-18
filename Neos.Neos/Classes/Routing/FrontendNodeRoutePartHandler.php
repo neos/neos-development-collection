@@ -417,15 +417,23 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             return '';
         }
 
+        // To allow building of paths to non-hidden nodes beneath hidden nodes, we assume
+        // the input node is allowed to be seen and we must generate the full path here.
+        // To disallow showing a node actually hidden itself has to be ensured in matching
+        // a request path, not in building one.
+        $contextProperties = $node->getContext()->getProperties();
+        $contextAllowingHiddenNodes = $this->contextFactory->create(array_merge($contextProperties, ['invisibleContentShown' => true]));
+        $currentNode = $contextAllowingHiddenNodes->getNodeByIdentifier($node->getIdentifier());
+
         $requestPathSegments = [];
-        while ($node instanceof NodeInterface && $node->getParentPath() !== SiteService::SITES_ROOT_PATH) {
-            if (!$node->hasProperty('uriPathSegment')) {
+        while ($currentNode instanceof NodeInterface && $currentNode->getParentPath() !== SiteService::SITES_ROOT_PATH) {
+            if (!$currentNode->hasProperty('uriPathSegment')) {
                 throw new Exception\MissingNodePropertyException(sprintf('Missing "uriPathSegment" property for node "%s". Nodes can be migrated with the "flow node:repair" command.', $node->getPath()), 1415020326);
             }
 
-            $pathSegment = $node->getProperty('uriPathSegment');
+            $pathSegment = $currentNode->getProperty('uriPathSegment');
             $requestPathSegments[] = $pathSegment;
-            $node = $node->getParent();
+            $currentNode = $currentNode->getParent();
         }
 
         return implode('/', array_reverse($requestPathSegments));
