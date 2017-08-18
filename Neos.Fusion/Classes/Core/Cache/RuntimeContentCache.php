@@ -177,6 +177,10 @@ class RuntimeContentCache
                     } elseif (strpos($command, 'evalCached=') === 0) {
                         $identifier = substr($command, 11);
                         $cacheDiscriminator = $this->runtime->evaluate($additionalData['path'] . '/__meta/cache/entryDiscriminator');
+                        if ($cacheDiscriminator === false) {
+                            $unserializedContext = $self->unserializeContext($additionalData['context']);
+                            return $self->evaluateUncached($additionalData['path'], $unserializedContext);
+                        }
                         $cacheIdentifier = substr($identifier, 0, strpos($identifier, '_')) . '_' . md5($cacheDiscriminator);
                         $result = $cache->get($cacheIdentifier);
                         if ($result === false) {

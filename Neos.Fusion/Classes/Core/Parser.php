@@ -555,19 +555,19 @@ class Parser implements ParserInterface
             // either source or target are a prototype definition
             if ($sourceIsPrototypeDefinition && $targetIsPrototypeDefinition && count($sourceObjectPathArray) === 2 && count($targetObjectPathArray) === 2) {
                 // both are a prototype definition and the path has length 2: this means
-                    // it must be of the form "prototype(Foo) < prototype(Bar)"
+                // it must be of the form "prototype(Foo) < prototype(Bar)"
                 $targetObjectPathArray[] = '__prototypeObjectName';
                 $this->setValueInObjectTree($targetObjectPathArray, end($sourceObjectPathArray));
             } elseif ($sourceIsPrototypeDefinition && $targetIsPrototypeDefinition) {
                 // Both are prototype definitions, but at least one is nested (f.e. foo.prototype(Bar))
-                    // Currently, it is not supported to override the prototypical inheritance in
-                    // parts of the TS rendering tree.
-                    // Although this might work conceptually, it makes reasoning about the prototypical
-                    // inheritance tree a lot more complex; that's why we forbid it right away.
+                // Currently, it is not supported to override the prototypical inheritance in
+                // parts of the TS rendering tree.
+                // Although this might work conceptually, it makes reasoning about the prototypical
+                // inheritance tree a lot more complex; that's why we forbid it right away.
                 throw new Fusion\Exception('Tried to parse "' . $targetObjectPath . '" < "' . $sourceObjectPath . '", however one of the sides is nested (e.g. foo.prototype(Bar)). Setting up prototype inheritance is only supported at the top level: prototype(Foo) < prototype(Bar)', 1358418019);
             } else {
                 // Either "source" or "target" are no prototypes. We do not support copying a
-                    // non-prototype value to a prototype value or vice-versa.
+                // non-prototype value to a prototype value or vice-versa.
                 throw new Fusion\Exception('Tried to parse "' . $targetObjectPath . '" < "' . $sourceObjectPath . '", however one of the sides is no prototype definition of the form prototype(Foo). It is only allowed to build inheritance chains with prototype objects.', 1358418015);
             }
         } else {
@@ -631,7 +631,7 @@ class Parser implements ParserInterface
             }
             $recursiveDirectoryIterator = new \RecursiveDirectoryIterator($basePath);
             $iterator = new \RecursiveIteratorIterator($recursiveDirectoryIterator);
-        // Match simple wildcard globbing "*"
+            // Match simple wildcard globbing "*"
         } elseif (preg_match('#([^\*]*)\*#', $include, $matches) === 1) {
             $basePath = $matches['1'];
             if (!is_dir($basePath)) {
@@ -807,8 +807,8 @@ class Parser implements ParserInterface
         }
 
         $currentKey = array_shift($objectPathArray);
-        if ((integer)$currentKey > 0) {
-            $currentKey = (integer)$currentKey;
+        if (is_numeric($currentKey)) {
+            $currentKey = (int)$currentKey;
         }
 
         if (empty($objectPathArray)) {
@@ -860,8 +860,8 @@ class Parser implements ParserInterface
 
         if (count($objectPathArray) > 0) {
             $currentKey = array_shift($objectPathArray);
-            if ((integer)$currentKey > 0) {
-                $currentKey = intval($currentKey);
+            if (is_numeric($currentKey)) {
+                $currentKey = (int)$currentKey;
             }
             if (!isset($objectTree[$currentKey])) {
                 $objectTree[$currentKey] = array();
