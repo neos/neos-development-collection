@@ -1,0 +1,104 @@
+=====
+3.2.0
+=====
+
+Allow non-uuid node identifiers
+===============================
+This replaces all occurrences of node identifier validation against the UUID pattern with a validation against a less restrictive NodeIdentifier pattern
+In addition to removing the restriction that characters have to appear in a specific order, it also allows all other lowercase characters.
+
+Allow to select all changes in a document with one click
+========================================================
+The workspace module shows changes grouped by document, but until now
+there it was only possible to select individual or all changes for
+further action.
+This change adds the possibility to select all changes on a document
+with a single click.
+
+Setting authentication provider on new user creation in user backend module
+===========================================================================
+Allow setting authentication provider on new user creation in user backend module.
+If less then two providers are given, the selector does not appear and the default authentication provider is used. Same as no authentication provider is explicit selected.
+
+Add ModulePrivilege to protect Neos Backend modules
+===================================================
+Introduces a new Privilege `ModulePrivilege` that should be used to
+access-protect Neos Backend modules.
+Usage:
+```
+privilegeTargets:
+  'Neos\\Neos\\Security\\Authorization\\Privilege\\ModulePrivilege':
+
+    'SomePrivilegeTargetIdentifier':
+      matcher: 'module/path'
+```
+
+This new privilege will be used to hide links to inaccessible modules
+in the Backend. Furthermore they automatically protect access to all
+actions of the configured controller of the affected module.
+
+Setting a `privilegeTarget` in the module settings is still supported
+but deprecated as of Neos 3.2.
+
+FEATURE: HtmlAugmenter will augment plaintext with the given fallback-tag
+=========================================================================
+If plaintext is given to the html augmenter now uses the fallback-tag
+as it already does if multiple tags are found on the same level.
+
+This fixed the problem of contents not beeing selectable in the backend
+if no tags are found but just some text.
+
+Add async flag to the ``Neos.Neos:ImageUri`` and ``Neos.Neos:ImageTag``
+=======================================================================
+Adds support for generating asynchronous image URIs in case the requested image does
+not exist already. The feature is already supported in the `ImageViewHelper` but was missing
+in the fusion objects.
+
+This works as follows:
+
+- If a resource still has to be processed a /media/thumbnail-uri is rendered that will do the
+  actual processing and return the image.
+- Later if the resource is already processed the _Resource-uri is rendered as previously.
+
+Fallback graph visualization
+============================
+The content repository is extended by two essential features,
+
+* The Intra Dimensional Fallback Graph
+* The Inter Dimensional Fallback Graph
+
+which are supposed to be used for graph-aware projections in future versions.
+
+These can be populated in-memory from the registered ``DimensionPresetSourceInterface`` by an application service and thus provide a read-only interface for applications in need of fallback logic.
+
+In addition, Neos is extended by a backend module that visualizes these fallbacks.
+They are displayed as an interactive graph using SVG and vanilla JS.
+
+This can be tested/verified by setting up an arbitrary dimension configuration and visiting the Dimensions administration module
+
+Add extension point for domain specific languages to fusion
+===========================================================
+DSLs are implemented for fusion-assignments using the tagged-template-string syntax of es6.
+DSL-identifiers are configured in the configuration key `Neos.Fusion.dsl`. The configured objects must satisfy the `DslInterface` and return fusion code that is parsed by the fusion-parser afterwards.
+```
+value = dslExample`... the code that is passed to the dsl ...`
+```
+In addition this pr adds a schema for the fusion part of the Settings and integrates it into the automatic schema-validation.
+
+FEATURE: Allow strings and arrays in ``CachingHelper::nodeTypeTag``
+===================================================================
+
+This makes the `CachingHelper::nodeTypeTag` method much more flexible
+for it's use case by allowing also strings and arrays (or `\\Traversable`) as
+input, always returning an array of tags to be applied and gracefully
+ignoring anything that won't result in a valid tag.
+
+~~~~~~~~~~~~~~~~~~~~
+Upgrade instructions
+~~~~~~~~~~~~~~~~~~~~
+See https://www.neos.io/download-and-extend/upgrade-instructions-3-1-3-2.html
+
+.. note::
+
+   Additionally all changes in Flow 4.2 apply, see the release notes to further information.
+   See http://flowframework.readthedocs.org/en/4.2/TheDefinitiveGuide/PartV/ReleaseNotes/420.html
