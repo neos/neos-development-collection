@@ -23,9 +23,9 @@
         "neos/imagine": "^3.0.2",
         "imagine/imagine": "*",
         "doctrine/dbal": "~2.5.0",
-        "neos/party": "dev-master",
-        "neos/setup": "dev-master",
-        "neos/twitter-bootstrap": "dev-master",
+        "neos/party": "~4.0",
+        "neos/setup": "~2.0",
+        "neos/twitter-bootstrap": "~3.0",
         "neos/form": "*",
         "neos/kickstarter": "~4.2.0"
     },
