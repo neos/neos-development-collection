@@ -1,0 +1,722 @@
+`3.2.0 (2017-08-30) <https://github.com/neos/neos-development-collection/releases/tag/3.2.0>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Remove old changelogs <https://github.com/neos/neos-development-collection/pull/1687>`_
+----------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Final release related adjustments for 3.2 <https://github.com/neos/neos-development-collection/pull/1686>`_
+------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``ContentRepository`` ``Fusion`` ``Neos``
+
+`TASK: Exchange login wallpaper for version 3.2 <https://github.com/neos/neos-development-collection/pull/1679>`_
+-----------------------------------------------------------------------------------------------------------------
+
+Exchange the login wallpaper vor version 3.2. 
+As the image is very good compressible, I chose a width of 2400 px this time.
+
+* Packages: ``Neos`` ``SiteKickstarter``
+
+`BUGFIX: Build correct paths to nodes with hidden parents <https://github.com/neos/neos-development-collection/pull/1654>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+If a node is visible but lies beneath a hidden parent, the URI path
+generated for that node had "holes" and did not work. This adjusts the
+route part handler to return the complete URI including the URI path
+segments of hidden nodes in the chain up to the site node.
+
+To disallow showing a node actually hidden itself has to be ensured
+in matching a request path, not in building one.
+
+`FEATURE: Allow non-uuid node identifiers <https://github.com/neos/neos-development-collection/pull/1477>`_
+-----------------------------------------------------------------------------------------------------------
+
+This replaces all occurrences of node identifier validation against the UUID pattern with a validation against a less restrictive NodeIdentifier pattern
+
+In addition to removing the restriction that characters have to appear in a specific order, it also allows all other lowercase characters.
+
+* Packages: ``ContentRepository`` ``Fusion``
+
+`BUGFIX: Allow Prototype names starting with digits <https://github.com/neos/neos-development-collection/pull/1656>`_
+---------------------------------------------------------------------------------------------------------------------
+
+Prototype declarations starting with digits previously were wrongly
+parsed and resulted in broken names, this change fixes it by only
+casting numeric strings to integers as object keys.
+
+Fixes: #1114 
+
+`BUGFIX: TypoScriptView should set response headers correctly <https://github.com/neos/neos-development-collection/pull/1653>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+The httpVersion which could be set in the `ResponseHeadImplementation`
+was not used.
+
+Additionally, if a header had multiple values (which can easily be done in
+TypoScript via RawArray) only the first header was actually transferred to
+the sent HTTP response.
+
+`TASK: Rework CacheSegmentParser to a recursive pattern <https://github.com/neos/neos-development-collection/pull/683>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Rewrite the internals of the CacheSegmentParser to use a recursive
+approach which should safe some memory and makes the code more readable.
+Also refactors common logic for fetching tokens and content to methods
+to avoid code duplication.
+
+Additionally adds calculation of uncached segments in the currently parsed
+content to make solid cache entries (full page cache) possible.
+
+* Packages: ``Fusion``
+
+`FEATURE: Allow to select all changes in a document with one click <https://github.com/neos/neos-development-collection/pull/1657>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+The workspace module shows changes grouped by document, but until now
+there it was only possible to select individual or all changes for
+further action.
+
+This change adds the possibility to select all changes on a document
+with a single click.
+
+* Packages: ``Neos``
+
+`FEATURE: Allow setting authentication provider on new user creation in user backend module <https://github.com/neos/neos-development-collection/pull/612>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Allow setting authentication provider on new user creation in user backend module.
+
+If less then two providers are given, the selector does not appear and the default authentication provider is used. Same as no authentication provider is explicit selected.
+
+* Packages: ``Media`` ``Neos``
+
+`TASK: Keep asset adjustments if asset size did not change <https://github.com/neos/neos-development-collection/pull/1597>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+This adds a condition to compare the size of the old and new asset in order to verify
+the size did not change. In this case the method `refit()` will not be executed to keep
+asset adjustments. This is very handy if you upload/replace a image with enriched
+meta data (eg. IPTC or Exif.)
+
+* Packages: ``ContentRepository`` ``Media``
+
+`BUGFIX: Fix nodetype thumbnail path in NodeTypeDefinition.rst <https://github.com/neos/neos-development-collection/pull/1652>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+corrected path in documentation for thumbnail of nodetype
+
+`TASK: Don't cache dynamic segments with disabled \`entryDiscriminator\` <https://github.com/neos/neos-development-collection/pull/1633>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+With this change the caching can be disabled by setting the `entryDiscriminator`
+to `false` when using Content Cache mode `dynamic`.
+
+Previously a cache entry was created anyways with the `entryDiscriminator` casted
+to an (in this case empty) string.
+
+Background:
+The Content Cache mode `dynamic` was introduced in order to allow for more flexible
+caching behaviors depending on the context.
+But one important feature did not work yet: Being able to *disable* the cache
+for certain requests.
+With this change performance can be improved by caching the display of an interactive
+element (i.e. cache Forms for GET requests)
+
+Related: #1630
+
+`TASK: Ignore preset value if \`\`false\`\` <https://github.com/neos/neos-development-collection/pull/1648>`_
+-------------------------------------------------------------------------------------------------------------
+
+Until now the ``ImageUri`` prototype would return no image if the preset was set to ``false`` (only accepted fallback until now was ``null``). With this change it's also possible to reset the preset with ``false``.
+
+* Packages: ``Neos``
+
+`BUGFIX: Moving node back and forth in nested workspace causes SQL error <https://github.com/neos/neos-development-collection/pull/1640>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+This change fixes a problem in the content repository which can lead to a uniqueness constraint error when a node is moved back and forth in a nested workspace.
+
+Fixes #1639 
+
+`BUGFIX: Prevent space if no css class is given <https://github.com/neos/neos-development-collection/pull/1650>`_
+-----------------------------------------------------------------------------------------------------------------
+
+If no `attributes.class` is given the attribute always starts with space. Like that the attributes get trimmed.
+
+### Output before:
+`class=" foo-bar-content"`
+
+### Output after:
+`class="foo-bar-content"`
+
+`BUGFIX: Valid URLs with \`supportEmptySegmentForDimensions\` <https://github.com/neos/neos-development-collection/pull/1645>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Makes sure that generated URLs observe the setting.
+
+Fixes: #1644
+
+`BUGFIX: cut off long-form processor syntax in ContentElementWrappingImplementation <https://github.com/neos/neos-development-collection/pull/1635>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+In the change https://github.com/neos/neos/commit/`c4f64615297503b5577e5c863758d2a9b480433d <https://github.com/neos/neos-development-collection/commit/c4f64615297503b5577e5c863758d2a9b480433d>`_,
+the default @process.contentElementWrapping on Neos.Neos:Content was changed from
+@process.contentElementWrapping to the long form
+"@process.contentElementWrapping.expression" (so it was possible to specify
+a position).
+
+However, this meant the Fusion path in Frontend for such an element was calculated wrongly;
+It appended __meta/process/contentElementWrapping/expression<Neos.Neos:ContentElementWrapping>
+to the fusionPath in the DOM.
+
+For the "old" Neos (ember-based) UI, everything works pretty much as expected (it's
+quite hard to construct a scenario where this would trigger an actual bug); but
+the new React UI gets confused with rendering the element when the Fusion path is wrong.
+And as it is a core bug, let's fix it in the core.
+
+* Packages: ``Neos``
+
+`BUGFIX: Trigger ContentCacheFlusher on asset update <https://github.com/neos/neos-development-collection/pull/1646>`_
+----------------------------------------------------------------------------------------------------------------------
+
+The content cache does not invalidate on changes to an asset. Expected behavior would be to flush the content cache on changes to an asset (e.g title, caption).
+
+Neos 2.3 PR of: https://github.com/neos/neos-development-collection/pull/1636
+
+`BUGFIX: Hide disabled modules in submodule overviews <https://github.com/neos/neos-development-collection/pull/1643>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+When a module has been disabled using the `disabled` flag, the module is hidden from the main menu and cannot be accessed, however it was still being displayed in submodule overviews.
+
+* Packages: ``Neos``
+
+`FEATURE: Add ModulePrivilege to protect Neos Backend modules <https://github.com/neos/neos-development-collection/pull/1542>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Introduces a new Privilege `ModulePrivilege` that should be used to
+access-protect Neos Backend modules.
+
+Usage:
+
+    privilegeTargets:
+
+      'Neos\\Neos\\Security\\Authorization\\Privilege\\ModulePrivilege':
+
+        'SomePrivilegeTargetIdentifier':
+          matcher: 'module/path'
+
+This new privilege will be used to hide links to inaccessible modules
+in the Backend. Furthermore they automatically protect access to all
+actions of the configured controller of the affected module.
+
+Setting a `privilegeTarget` in the module settings is still supported
+but deprecated as of Neos 3.2.
+
+Related: #964
+
+* Packages: ``Neos``
+
+`FEATURE: HtmlAugmenter will augment plaintext with the given fallback-tag <https://github.com/neos/neos-development-collection/pull/1638>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+If plaintext is given to the html augmenter now uses the fallback-tag
+as it already does if multiple tags are found on the same level.
+
+This fixed the problem of contents not beeing selectable in the backend 
+if no tags are found but just some text.
+
+* Packages: ``Neos``
+
+`BUGFIX: Trigger ContentCacheFlusher on asset update <https://github.com/neos/neos-development-collection/pull/1636>`_
+----------------------------------------------------------------------------------------------------------------------
+
+The content cache does not invalidate on changes to an asset. Expected behavior would
+be to flush the content cache on changes to an asset (e.g title, caption).
+
+* Packages: ``Neos``
+
+`FEATURE: Add \`async\` flag to the \`Neos.Neos:ImageUri\` and \`Neos.Neos:ImageTag\` fusion-objects <https://github.com/neos/neos-development-collection/pull/1637>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Adds support for generating asynchronous image URIs in case the requested image does
+not exist already. The feature is already supported in the `ImageViewHelper` but was missing
+in the fusion objects.
+
+This works as follows:
+
+- If a resource still has to be processed a /media/thumbnail-uri is rendered that will do the
+  actual processing and return the image.
+- Later if the resource is already processed the _Resource-uri is rendered as previously.
+
+* Packages: ``Neos``
+
+`BUGFIX: Set default value for event uid on PostgreSQL <https://github.com/neos/neos-development-collection/pull/1620>`_
+------------------------------------------------------------------------------------------------------------------------
+
+It seems that the default value set previously does not survive
+renaming the sequence. This leads to errors when events are to be
+persisted.
+
+This change adds the expected default value (back).
+
+* Packages: ``Neos``
+
+`BUGFIX: Use strict comparison to avoid nesting level error <https://github.com/neos/neos-development-collection/pull/1627>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+Comparing objects in Fluid templates using `==` may lead to "nesting
+level too deep" errors, depending on the objects being compared.
+
+This change adjusts all non-strict comparisons against strict ones.
+
+Fixes #1626
+
+* Packages: ``Browser`` ``Neos``
+
+`BUGFIX: Skip apply change handler if the editor is undefined <https://github.com/neos/neos-development-collection/pull/1628>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+This change fix a JS console error, when ember try to call _applyChangeHandler
+on property like _nodeType, because this property is not really an editor.
+
+`BUGFIX: Correct merge of RelatedNodes template/xliff <https://github.com/neos/neos-development-collection/pull/1624>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+This moves added labels to the Neos.Media.Browser package and adjusts
+the RelatedNodes.html template as needed.
+
+Some german translations are moved as well.
+
+Related to `d5824fd4097bb658d22d0abc633ce68341c735c1 <https://github.com/neos/neos-development-collection/commit/d5824fd4097bb658d22d0abc633ce68341c735c1>`_ and the merge in
+`00f07ee986fcecf284f3548dc8b687780ccdb272 <https://github.com/neos/neos-development-collection/commit/00f07ee986fcecf284f3548dc8b687780ccdb272>`_.
+
+* Packages: ``Browser`` ``Neos``
+
+`BUGFIX: Publish moved nodes in nested workspaces <https://github.com/neos/neos-development-collection/pull/1609>`_
+-------------------------------------------------------------------------------------------------------------------
+
+This change contains a fix and additional Behat tests which solves an issue with moving and publishing nodes in a nested workspace scenario which can lead to data corruption in the content repository.
+
+Resolves #1608 
+
+`BUGFIX: Fix missing translation for inspector file uploads <https://github.com/neos/neos-development-collection/pull/1621>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+This changes the occurrences of `Neos.Neos:Main:upload` to `Neos.Neos:Main:choose` in Settings.yaml, as this has been the label formerly used for upload-related Inspector editors.
+
+The label `Neos.Neos:Main:upload` does not seem to exist currently, so the tooltips above upload buttons in the Inspector haven't been translated.
+
+<!--
+Thanks for your contribution, we appreciate it!
+
+Please read through our pull request guidelines, there are some interesting things there:
+https://discuss.neos.io/t/creating-a-pull-request/506
+
+And one more thing... Don't forget about the tests!
+-->
+
+
+**What I did**
+Fix the missing translation for the upload buttons in the image and asset inspector editors.
+
+**How I did it**
+Change all occurrences of `Neos.Neos:Main:upload` to `Neos.Neos:Main:choose` in Settings.yaml.
+
+**How to verify it**
+
+Hover above the upload Button of the image editor. Without this change, the tooltip contains the fallback label "Upload file" in every language. 
+
+**Checklist**
+
+- [x] Code follows the PSR-2 coding style
+- [x] Tests have been created, run and adjusted as needed
+- [x] The PR is created against the [lowest maintained branch](https://www.neos.io/features/release-roadmap.html) **PR is against 3.0, since the problem doesn't seem to occur prior to that**
+
+* Packages: ``Neos``
+
+`BUGFIX: NodeData property exists even if set to NULL <https://github.com/neos/neos-development-collection/pull/1211>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Even if the property is set to `null` `AbstractNodeData::hasProperty()` should return `true`.
+
+`FEATURE: Fallback graph visualization <https://github.com/neos/neos-development-collection/pull/1476>`_
+--------------------------------------------------------------------------------------------------------
+
+The content repository is extended by two essential features,
+
+* The Intra Dimensional Fallback Graph
+* The Inter Dimensional Fallback Graph
+
+which are supposed to be used for graph-aware projections in future versions.
+
+These can be populated in-memory from the registered ``DimensionPresetSourceInterface`` by an application service and thus provide a read-only interface for applications in need of fallback logic.
+
+In addition, Neos is extended by a backend module that visualizes these fallbacks.
+They are displayed as an interactive graph using SVG and vanilla JS.
+
+This can be tested/verified by setting up an arbitrary dimension configuration and visiting the Dimensions administration module
+
+* Packages: ``Neos``
+
+`FEATURE: Add extension point for domain specific languages to fusion <https://github.com/neos/neos-development-collection/pull/1495>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+DSLs are implemented for fusion-assignments using the tagged-template-string syntax of es6.
+DSL-identifiers are configured in the configuration key `Neos.Fusion.dsl`. The configured objects must satisfy the `DslInterface` and return fusion code that is parsed by the fusion-parser afterwards.
+
+```
+value = dslExample`... the code that is passed to the dsl ...`
+```
+In addition this pr adds a schema for the fusion part of the Settings and integrates it into the automatic schema-validation.
+
+- [x] Code follows the PSR-2 coding style
+- [x] Tests have been created, run and adjusted as needed
+- [x] The PR is created against the [lowest maintained branch](https://www.neos.io/features/release-roadmap.html)
+
+* Packages: ``Neos``
+
+`BUGFIX: Detect asset://so-me-uu-id links in node properties <https://github.com/neos/neos-development-collection/pull/1576>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+To detect links to assets as "usage" in the media management, the
+search in the NodeDataRepository is amended as needed.
+
+Fixes #1575
+
+`BUGFIX: Only show link to accessible nodes <https://github.com/neos/neos-development-collection/pull/1579>`_
+-------------------------------------------------------------------------------------------------------------
+
+Fixed some misleading text on the listing page and added i18n.
+
+related to #1578.
+
+for 3.x upmerge have a look at https://github.com/ComiR/neos-development-collection/commit/`e2d0e44dd6f21179b2e9eeeac1481ae3a4f8a3f6 <https://github.com/neos/neos-development-collection/commit/e2d0e44dd6f21179b2e9eeeac1481ae3a4f8a3f6>`_.
+
+`BUGFIX: render asset changes correctly in workspaces overview <https://github.com/neos/neos-development-collection/pull/1605>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+This change fixes asset rendering in the workspace overview.
+
+Fixes #1592.
+
+`TASK: Fix code example in CustomTypoScriptObjects docs <https://github.com/neos/neos-development-collection/pull/1619>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Avoid orphaned content nodes when calling publishNode() <https://github.com/neos/neos-development-collection/pull/1618>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+This changes an issue with using the `PublishingService::publishNode()`
+which can result in an inconsistent structure in a user's workspace.
+
+This change also changes the behavior of `PublishingService::discardNode()`
+which now will also discard content of a given document node to protect
+consistency.
+
+Document nodes and their content must be published or discarded together
+in order to protect against inconsistencies when the document node is
+moved or removed in one of the base workspaces.
+
+Fixes #1617
+
+`BUGFIX: Behat tests fail with fresh checkout <https://github.com/neos/neos-development-collection/pull/1616>`_
+---------------------------------------------------------------------------------------------------------------
+
+This change fixes an issue with failing Behat tests caused by
+missing isolation between tests.
+
+When certain tests were run in a specific order, they might fail
+with an access denied error because no user is authenticated.
+
+Fixes #1613
+
+`BUGFIX: Use null, not empty string in Workspace->setOwner <https://github.com/neos/neos-development-collection/pull/1611>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+A workspace having an owner of `null` (plus some other factors) is considered
+an internal workspace. This change makes sure the owner is set to null if an
+empty string is passed to `setOwner()`.
+
+Fixes #1610
+
+`BUGFIX: Nodes are inaccessible after base workspace switch <https://github.com/neos/neos-development-collection/pull/1603>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+This change fixes a problem with the routing cache which results in
+inaccessible document nodes for cases where nodes with different
+identifiers but the same URI path exist in separate workspaces.
+
+Fixes #1602
+
+`TASK: Remove further TypoScript references <https://github.com/neos/neos-development-collection/pull/1583>`_
+-------------------------------------------------------------------------------------------------------------
+
+This removes even more uses of TypoScript from various places in the codebase:
+
+- TASK: Rename typoScriptPath to fusionPath in FE/BE interaction
+- TASK: Fusion RenderViewHelper adjustments
+- TASK: Rename BaseTypoScript.fusion test fixture to Base.fusion
+- TASK: Remove unused NoTypoScriptConfigurationException
+- TASK: Remove TypoScript from internal variable/function names
+
+* Packages: ``Neos``
+
+`BUGFIX: Reset broken properties to array <https://github.com/neos/neos-development-collection/pull/1601>`_
+-----------------------------------------------------------------------------------------------------------
+
+If the content of the `properties` property cannot be decoded from JSON
+correctly, it will be `null`. This leads to errors when any operation is done
+that expects it to always be an array.
+
+This change adds a PostLoad Doctrine lifecycle method to reset `properties`
+to an empty array if it is `null` after reconstitution.
+
+Fixes issue #1580
+
+`BUGFIX: Add missing namespace import in AssetService <https://github.com/neos/neos-development-collection/pull/1598>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+This adds a missing namespace import for `Uri` after the upmerge of #1574.
+
+* Packages: ``Media`` ``Neos``
+
+`BUGFIX: Fix sample code <https://github.com/neos/neos-development-collection/pull/1594>`_
+------------------------------------------------------------------------------------------
+
+The sample code inside the DocBlock used the wrong view helper
+
+`BUGFIX: Fix a typo in the docs <https://github.com/neos/neos-development-collection/pull/1590>`_
+-------------------------------------------------------------------------------------------------
+
+* Packages: ``ContentRepository`` ``Media`` ``Neos``
+
+`BUGFIX: Create resource redirects correctly <https://github.com/neos/neos-development-collection/pull/1574>`_
+--------------------------------------------------------------------------------------------------------------
+
+The redirects for replaced resources were created using full URLs,
+but the redirect handler expects relative URL paths to be given.
+
+Fixes #1573
+
+`BUGFIX: Add missing Noto Sans fonts to Media.Browser <https://github.com/neos/neos-development-collection/pull/1584>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Browser``
+
+`TASK: Correct kickstarter package name in documentation <https://github.com/neos/neos-development-collection/pull/1581>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+The kickstart package name is outdated in documentation (Creating a plugin: http://neos.readthedocs.io/en/stable/ExtendingNeos/CreatingAPlugin.html). I replaced it with the current and right one (https://packagist.org/packages/neos/kickstarter).
+
+* Packages: ``Fusion`` ``Neos``
+
+`!!!TASK: Replace occurrences of 'typoScript' with 'fusion' <https://github.com/neos/neos-development-collection/pull/1538>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+* Deprecates methods with 'TypoScript' in name
+* Replaces 'typoScript' with 'fusion' in variable names, doc blocks
+
+* Packages: ``Fusion``
+
+`TASK: Add functional-test that validates the integrity of the configuration and schemas in neos-packages <https://github.com/neos/neos-development-collection/pull/1521>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+This change adds a functional test to neos to validate that the configurations defined in the packages that are part of the flow base distribution are all valid and that the contained schema files are valid as well.
+
+This extends a flow test case with an extended set of packages and configurations that is taken into account.
+
+* Packages: ``Neos``
+
+`TASK: Remove comparison to TYPO3 CMS in documentation <https://github.com/neos/neos-development-collection/pull/1556>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Do we really need the comparison to TYPO3 CMS? I think this is a nice background information but not related anymore.
+
+http://neos.readthedocs.io/en/stable/CreatingASite/NodeTypes/ContentStructure.html#nodes-inside-the-neos-content-repository
+
+* Packages: ``Neos``
+
+`FEATURE: Evaluate \`@if\` in fusion as falsy or truthy values <https://github.com/neos/neos-development-collection/pull/1560>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+The behavior of `@if` is altered to make the distinction between falsy or truthy values
+and no longer check for an exactly `false` value in the condition-expression. For the
+distinction the php rules for casting to boolean are applied.
+
+Examples for falsy-values that are now detected in `@if`:
+- empty array
+- number zero
+- null
+- empty string
+
+* Packages: ``Fusion``
+
+`TASK: Update ViewHelper and Command references <https://github.com/neos/neos-development-collection/pull/1567>`_
+-----------------------------------------------------------------------------------------------------------------
+
+Replaces some left over occurrences of "typo3" and updates
+ViewHelper and Command references accordingly.
+
+Fixes: #1558
+
+* Packages: ``Fusion`` ``Media`` ``Neos``
+
+`BUGFIX: Asset list should be correctly converted for UI <https://github.com/neos/neos-development-collection/pull/1569>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Since PR #1472 was merged the asset list was not correctly converted anymore,
+this had two reasons, first the wrong converter was used for the array
+itself (``ArrayTypeConverter`` vs. ``TypedArrayConverter``). This is
+corrected by setting the correct converter for the respective node property
+data type in the settings.
+
+Note that user code should follow the added comment in settings on how to
+configure custom types, especially array of objects. It is important to define
+the ``TypedArrayConverter`` for the array data type.
+
+Additionally the ``PropertyMapper`` prevent conversion of the inner objects
+as with the change the targetType suddenly matched the expected type and so
+the PropertyMapper just skipped those objects. That was an unexpected side
+effect as the expectation was, that the configured type converter is used no
+matter what. By setting the inner target type to the dummy value "string" the
+``PropertyMapper`` will proceed with the configured ``TypeConverter``.
+
+Fixes: #1568
+Fixes: #1565
+
+* Packages: ``Neos``
+
+`FEATURE: Allow strings and arrays in \`\`CachingHelper::nodeTypeTag\`\` <https://github.com/neos/neos-development-collection/pull/1541>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+This makes the `CachingHelper::nodeTypeTag` method much more flexible
+for it's use case by allowing also strings and arrays (or `\\Traversable`) as
+input, always returning an array of tags to be applied and gracefully
+ignoring anything that won't result in a valid tag.
+
+Fixes: #871
+
+* Packages: ``Neos``
+
+`BUGFIX: An empty string is not rendered as a valid node name <https://github.com/neos/neos-development-collection/pull/1546>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Making sure that ``Utility::renderValidNodeName()`` actually only
+result in strings with length greater zero.
+
+Fixes: #1091
+
+`BUGFIX: Correctly require a stable version of neos/imagine <https://github.com/neos/neos-development-collection/pull/1570>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+The ``neos/image`` version should be a stable version. Additionally
+corrects the ``PHP`` version requirement to 7.0 an higher.
+
+* Packages: ``Media`` ``Neos``
+
+`BUGFIX: Avoid null being used in trimExplode() <https://github.com/neos/neos-development-collection/pull/1553>`_
+-----------------------------------------------------------------------------------------------------------------
+
+Fixes #1552
+
+* Packages: ``ContentRepository``
+
+`TASK: Corrected required php version in documentation <https://github.com/neos/neos-development-collection/pull/1555>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Replaced 5.5.0 with 7.0.0
+
+_Please note that this should be also changed in 3.1 and master branch_
+
+* Packages: ``Neos``
+
+`TASK: Rewrite Node Type Constraint docs for correctness and clarity <https://github.com/neos/neos-development-collection/pull/1492>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Completely rewrote that chapter of the docs in order to make it more explicit and understandable.
+
+* Packages: ``Neos``
+
+`BUGFIX: Context variable \`site\` is available in Plugin prototype <https://github.com/neos/neos-development-collection/pull/1544>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+As plugins are uncached the prototype defines which context variables
+will be available inside. As ``node``, ``documentNode`` and ``site`` are
+defaults that apply everywhere else, the missing ``site`` variable
+was added to the context for consistency.
+
+Fixes: #841
+
+`BUGFIX: Avoid loading original image unless cropping occurs <https://github.com/neos/neos-development-collection/pull/1460>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+The image inspector used to load the full image for preview. With this change a much smaller thumbnail will be loaded instead, unless the image has been cropped or is being cropped in the cropping editor. In that case we need to load the full image to give the user a crisp preview of the selected image segment.
+
+`TASK: Add content to 3.0.0 release notes <https://github.com/neos/neos-development-collection/pull/1548>`_
+-----------------------------------------------------------------------------------------------------------
+
+Fixes #1420
+
+* Packages: ``Neos``
+
+`BUGFIX: Typo in User Settings doc <https://github.com/neos/neos-development-collection/pull/1551>`_
+----------------------------------------------------------------------------------------------------
+
+Fixed a typo in documentation in the User Settings document.
+
+Can we verified using : https://neos.readthedocs.io/en/stable/UserGuide/UserSettings.html
+
+* Packages: ``Neos``
+
+`BUGFIX: Detect recursive prototype inheritance <https://github.com/neos/neos-development-collection/pull/1537>`_
+-----------------------------------------------------------------------------------------------------------------
+
+This throws an exception if there is a direct or indirect prototype inheritance recursion.
+
+Fix #1115
+
+* Packages: ``ContentRepository`` ``Fusion`` ``Neos``
+
+`BUGFIX: Clarified doc block for LiveViewHelper <https://github.com/neos/neos-development-collection/pull/1547>`_
+-----------------------------------------------------------------------------------------------------------------
+
+If the ``LiveViewHelper`` doesn't get a node as argument and neither
+there is a node in the template variables it will always return true.
+The adjusted doc block clarifies that you need either.
+
+Fixes: #1416
+
+`TASK: Remove un-necessary \`toString\` method in FusionPathProxy <https://github.com/neos/neos-development-collection/pull/1500>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+This was needed at some point to evaluate the proxy to a string in a Fluid template,
+but the way a proxy is handled was changed some time ago so that the respective
+methods are called to get the content of the proxy instead of just string casting,
+therefore it was no longer needed.
+
+And the exception handling in the toString is not a good idea anyway (but necessary
+because toString cannot raise exceptions) so all in all this method is undesirable and
+as we don't use it anymore it should be removed.
+
+This is basically the result of a long debugging session at the last sprint where we
+implemented a short term bugfix and figured that we don't need this method anymore
+and should remove it in one of the next releases.
+
+* Packages: ``Fusion``
+
+`BUGFIX: Clean TypoScript of windows line-breaks <https://github.com/neos/neos-development-collection/pull/1543>`_
+------------------------------------------------------------------------------------------------------------------
+
+Multi-line EEL expressions fail if the TypoScript file had
+Windows linebreaks as the explode on line feed leaves the
+carriage return in every line which then stops the parser
+from detecting the end of a multi-line EEL expression.
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/3.1.0...3.2.0>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
