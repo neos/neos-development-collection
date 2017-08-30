@@ -106,7 +106,7 @@ class RenderingTest extends AbstractNodeTest
         $this->assertTeaserConformsToBasicRendering($output);
         $this->assertMainContentConformsToBasicRendering($output);
 
-            // header is now wrapped in h3
+        // header is now wrapped in h3
         $this->assertSelectEquals('.sidebar > .neos-contentcollection > .neos-nodetypes-headline > header > h3', 'Last Commits', true, $output);
         $this->assertSelectEquals('.sidebar > .neos-contentcollection > .neos-nodetypes-text > div', 'Below, you\'ll see the most recent activity', true, $output);
     }
@@ -120,7 +120,7 @@ class RenderingTest extends AbstractNodeTest
         $this->assertSelectEquals('.teaser > .neos-contentcollection > .neos-nodetypes-headline > div > h1', 'Static Headline', true, $output);
         $this->assertSelectEquals('.main > .neos-contentcollection > .neos-nodetypes-headline > div > h1', 'Static Headline', true, $output);
 
-            // header is now wrapped in h3 (as set in the concrete template), AND is set to a static headline (as set in the abstract template)
+        // header is now wrapped in h3 (as set in the concrete template), AND is set to a static headline (as set in the abstract template)
         $this->assertSelectEquals('.sidebar > .neos-contentcollection > .neos-nodetypes-headline > div > h1', 'Static Headline', true, $output);
         $this->assertSelectEquals('.sidebar > .neos-contentcollection > .neos-nodetypes-text > div', 'Below, you\'ll see the most recent activity', true, $output);
     }
