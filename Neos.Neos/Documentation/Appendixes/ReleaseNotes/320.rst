@@ -40,7 +40,7 @@ actions of the configured controller of the affected module.
 Setting a `privilegeTarget` in the module settings is still supported
 but deprecated as of Neos 3.2.
 
-FEATURE: HtmlAugmenter will augment plaintext with the given fallback-tag
+HtmlAugmenter will augment plaintext with the given fallback-tag
 =========================================================================
 If plaintext is given to the html augmenter now uses the fallback-tag
 as it already does if multiple tags are found on the same level.
@@ -85,13 +85,24 @@ value = dslExample`... the code that is passed to the dsl ...`
 ```
 In addition this pr adds a schema for the fusion part of the Settings and integrates it into the automatic schema-validation.
 
-FEATURE: Allow strings and arrays in ``CachingHelper::nodeTypeTag``
+Allow strings and arrays in ``CachingHelper::nodeTypeTag``
 ===================================================================
-
 This makes the `CachingHelper::nodeTypeTag` method much more flexible
 for it's use case by allowing also strings and arrays (or `\\Traversable`) as
 input, always returning an array of tags to be applied and gracefully
 ignoring anything that won't result in a valid tag.
+
+Evaluate `@if` in fusion as falsy or truthy values
+==================================================
+The behavior of ``@if`` is altered to make the distinction between falsy or truthy 
+values and no longer check for an exactly false value in the condition-expression. 
+For the distinction the php rules for casting to boolean are applied.
+Examples for falsy-values that are now detected in ``@if``:
+
+- empty array
+- number zero
+- null
+- empty string
 
 ~~~~~~~~~~~~~~~~~~~~
 Upgrade instructions
