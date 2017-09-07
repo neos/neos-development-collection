@@ -94,6 +94,7 @@ prototype(Neos.NodeTypes:FourColumn) < prototype(Neos.NodeTypes:MultiColumn)
 # Form TS Object
 prototype(Neos.NodeTypes:Form) {
 	presetName = 'default'
+	overrideConfiguration = Neos.Fusion:RawArray
 	@cache {
 		mode = 'uncached'
 		context {
