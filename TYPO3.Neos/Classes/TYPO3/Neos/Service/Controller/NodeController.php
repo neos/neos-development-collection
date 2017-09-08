@@ -15,7 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Flow\Property\TypeConverter\PersistentObjectConverter;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
-use TYPO3\Neos\Domain\Service\NodeSearchService;
+use TYPO3\Neos\Domain\Service\NodeSearchServiceInterface;
 use TYPO3\Neos\Service\NodeOperations;
 use TYPO3\Neos\Service\View\NodeView;
 use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
@@ -65,7 +65,7 @@ class NodeController extends AbstractServiceController
 
     /**
      * @Flow\Inject
-     * @var NodeSearchService
+     * @var NodeSearchServiceInterface
      */
     protected $nodeSearchService;
 
