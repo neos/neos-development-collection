@@ -183,7 +183,7 @@ Shows the result of TypoScript Expressions directly.
 
 Example::
 
-  debugObject = Debug {
+  debugObject = TYPO3.TypoScript:Debug {
         title = 'Debug of hello world'
 
         # If only the "value"-key is given it is debugged directly,
