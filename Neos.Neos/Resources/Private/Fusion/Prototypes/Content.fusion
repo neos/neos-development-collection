@@ -1,4 +1,4 @@
-# This is the base Content TypoScript object
+# This is the base Content Fusion object
 # It must be extended by all elements that are selectable in the backend
 #
 # Note: This object inherits from Neos.Fusion:Template because most Content Elements are expected to contain a
@@ -11,13 +11,13 @@ prototype(Neos.Neos:Content) < prototype(Neos.Fusion:Template) {
 	attributes = Neos.Fusion:Attributes
 	attributes.class = ''
 
-	# The following is used to automatically append a class attribute that reflects the underlying node type of a TypoScript object,
+	# The following is used to automatically append a class attribute that reflects the underlying node type of a Fusion object,
 	# for example "neos-nodetypes-form", "neos-nodetypes-headline", "neos-nodetypes-html", "neos-nodetypes-image", "neos-nodetypes-menu" and "neos-nodetypes-text"
 	# You can disable the following line with:
 	# prototype(Neos.Neos:Content) {
 	#   attributes.class.@process.nodeType >
 	# }
-	# in your site's TypoScript if you don't need that behavior.
+	# in your site's Fusion if you don't need that behavior.
 	attributes.class.@process.nodeType = Neos.Fusion:Case {
 		@context.nodeTypeClassName = ${String.toLowerCase(String.pregReplace(q(node).property('_nodeType.name'), '/[[:^alnum:]]/', '-'))}
 
