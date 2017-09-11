@@ -8,10 +8,10 @@
       <language>en_US</language>
      </dimensions>
      <accessRoles __type="array"/>
-     <creationDateTime __type="object" __classname="DateTime">2015-02-23T14:09:49+01:00</creationDateTime>
-     <lastModificationDateTime __type="object" __classname="DateTime">2015-02-23T14:09:49+01:00</lastModificationDateTime>
+     <creationDateTime __type="object" __classname="DateTime"><![CDATA[2015-02-23T14:09:49+01:00]]></creationDateTime>
+     <lastModificationDateTime __type="object" __classname="DateTime"><![CDATA[2015-02-23T14:09:49+01:00]]></lastModificationDateTime>
      <properties>
-      <title __type="string">example.org</title>
+      <title __type="string"><![CDATA[example.org]]></title>
      </properties>
     </variant>
     <node identifier="b2e1b29c-0b33-455a-862b-88bbd09e5310" nodeName="home">
@@ -20,11 +20,11 @@
        <language>en_US</language>
       </dimensions>
       <accessRoles __type="array"/>
-      <creationDateTime __type="object" __classname="DateTime">2015-02-23T14:09:49+01:00</creationDateTime>
-      <lastModificationDateTime __type="object" __classname="DateTime">2015-02-23T14:09:49+01:00</lastModificationDateTime>
+      <creationDateTime __type="object" __classname="DateTime"><![CDATA[2015-02-23T14:09:49+01:00]]></creationDateTime>
+      <lastModificationDateTime __type="object" __classname="DateTime"><![CDATA[2015-02-23T14:09:49+01:00]]></lastModificationDateTime>
       <properties>
-       <title __type="string">&lt;h1&gt;Home&lt;/h1&gt;</title>
-       <uriPathSegment __type="string">home</uriPathSegment>
+       <title __type="string"><![CDATA[&lt;h1&gt;Home&lt;/h1&gt;]]></title>
+       <uriPathSegment __type="string"><![CDATA[home]]></uriPathSegment>
       </properties>
      </variant>
      <node identifier="94165d9e-1c0d-43ca-b172-7b867524f349" nodeName="protected">
@@ -33,14 +33,14 @@
         <language>en_US</language>
        </dimensions>
        <accessRoles __type="array">
-        <entry0 __type="string">TYPO3.Neos:Editor</entry0>
-        <entry1 __type="string">TYPO3.Neos:Administrator</entry1>
+        <entry0 __type="string"><![CDATA[TYPO3.Neos:Editor]]></entry0>
+        <entry1 __type="string"><![CDATA[TYPO3.Neos:Administrator]]></entry1>
        </accessRoles>
-       <creationDateTime __type="object" __classname="DateTime">2015-02-23T14:13:11+01:00</creationDateTime>
-       <lastModificationDateTime __type="object" __classname="DateTime">2015-02-23T14:13:11+01:00</lastModificationDateTime>
+       <creationDateTime __type="object" __classname="DateTime"><![CDATA[2015-02-23T14:13:11+01:00]]></creationDateTime>
+       <lastModificationDateTime __type="object" __classname="DateTime"><![CDATA[2015-02-23T14:13:11+01:00]]></lastModificationDateTime>
        <properties>
-        <title __type="string">&lt;h1&gt;This node is protected&lt;/h1&gt;</title>
-        <uriPathSegment __type="string">protected</uriPathSegment>
+        <title __type="string"><![CDATA[&lt;h1&gt;This node is protected&lt;/h1&gt;]]></title>
+        <uriPathSegment __type="string"><![CDATA[protected]]></uriPathSegment>
        </properties>
       </variant>
      </node>

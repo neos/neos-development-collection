@@ -21,6 +21,7 @@ use TYPO3\TYPO3CR\Domain\Model\ContentObjectProxy;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Exception\NodeException;
+use TYPO3\TYPO3CR\Utility;
 
 /**
  * Some NodeData (persisted or transient)
@@ -194,7 +195,7 @@ abstract class AbstractNodeData
                 return;
             }
 
-            $this->properties[$propertyName] = $value;
+            $this->properties[$propertyName] = is_string($value) ? Utility::removeControlCharactersFrom($value) : $value;
 
             $this->addOrUpdate();
         } elseif (ObjectAccess::isPropertySettable($this->contentObjectProxy->getObject(), $propertyName)) {

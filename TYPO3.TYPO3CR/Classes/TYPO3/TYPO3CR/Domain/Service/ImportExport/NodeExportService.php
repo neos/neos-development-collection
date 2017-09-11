@@ -22,6 +22,7 @@ use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Exception\ExportException;
+use TYPO3\TYPO3CR\Utility;
 
 /**
  * Service for exporting content repository nodes as an XML structure
@@ -394,7 +395,8 @@ class NodeExportService
                     if ($propertyValue instanceof \DateTimeInterface) {
                         $this->xmlWriter->writeAttribute('__classname', 'DateTime');
                     }
-                    $this->xmlWriter->text($this->propertyMapper->convert($propertyValue, 'string', $this->propertyMappingConfiguration));
+                    $text = $this->propertyMapper->convert($propertyValue, 'string', $this->propertyMappingConfiguration);
+                    $this->xmlWriter->writeCData(Utility::removeControlCharactersFrom($text));
                 }
             } catch (\Exception $exception) {
                 $this->xmlWriter->writeComment(sprintf('Could not convert property "%s" to string.', $propertyName));

@@ -89,4 +89,16 @@ class Utility
 
         return substr($hex, 0, 8) . '-' . substr($hex, 8, 4) . '-' . substr($hex, 12, 4) . '-' . substr($hex, 16, 4) . '-' . substr($hex, 20, 12);
     }
+
+    /**
+     * Removes control characters from a string.
+     * Multibyte safe.
+     *
+     * @param string $string
+     * @return string
+     */
+    public static function removeControlCharactersFrom($string)
+    {
+        return preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $string);
+    }
 }
