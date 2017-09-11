@@ -71,7 +71,7 @@ the configuration setting ``Neos.Neos.fusion.autoInclude``::
 
 Neos will then autoinclude *Root.fusion* files from these packages in the order defined by package management.
 Files with a name other than *Root.fusion* **will never be auto-included** even with that setting. You
-will need in include them manually in your *Root.fusion*.
+will need to include them manually in your *Root.fusion*.
 
 Manual Fusion file inclusion
 --------------------------------
