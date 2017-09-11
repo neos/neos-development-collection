@@ -305,11 +305,14 @@ class LinkingService
             })->toArray();
             if (!in_array($requestUriHost, $activeHostPatterns, true)) {
                 $uri = $this->createSiteUri($controllerContext, $site) . '/' . ltrim($uri, '/');
-            } elseif ($absolute === true) {
-                $uri = $request->getHttpRequest()->getBaseUri() . ltrim($uri, '/');
+                $absolute = false;
             }
-        } elseif ($absolute === true) {
-            $uri = $request->getHttpRequest()->getBaseUri() . ltrim($uri, '/');
+        }
+
+        if ($absolute === true) {
+          $httpRequest = $request->getHttpRequest();
+          $uri = substr($uri, strlen($httpRequest->getScriptRequestPath()));
+          $uri = $httpRequest->getBaseUri() . ltrim($uri, '/');
         }
 
         return $uri;
