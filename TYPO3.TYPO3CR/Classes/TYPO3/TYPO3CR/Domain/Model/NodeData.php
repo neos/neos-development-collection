@@ -283,7 +283,6 @@ class NodeData extends AbstractNodeData
         }
 
         if ($recursive === true) {
-            /** @var $childNodeData NodeData */
             foreach ($this->getChildNodeData() as $childNodeData) {
                 $childNodeData->setPath(NodePaths::addNodePathSegment($path, $childNodeData->getName()));
             }
@@ -535,13 +534,20 @@ class NodeData extends AbstractNodeData
     }
 
     /**
-     * Returns all direct child node data of this node data without reducing the result (multiple variants can be returned)
+     * Returns all direct child node data of this node data with reducing the result by dimensionHash only
      *
-     * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeData>
+     * Only used internally for setting the path of all child nodes.
+     *
+     * @return \TYPO3\TYPO3CR\Domain\Model\NodeData[]
      */
     protected function getChildNodeData()
     {
-        return $this->nodeDataRepository->findByParentWithoutReduce($this->path, $this->workspace);
+        return array_filter(
+            $this->nodeDataRepository->findByParentWithoutReduce($this->path, $this->workspace),
+            function ($childNodeData) {
+                return $childNodeData->dimensionsHash === $this->dimensionsHash;
+            }
+        );
     }
 
     /**
