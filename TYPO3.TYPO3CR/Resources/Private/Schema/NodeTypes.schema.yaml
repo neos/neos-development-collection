@@ -35,7 +35,7 @@ additionalProperties:
     'childNodes':
       type: dictionary
       additionalProperties:
-        type: dictionary
+        type: [dictionary, 'null']
         additionalProperties: FALSE
         properties:
           'type': { type: string, description: "Node Type of this child node." }
