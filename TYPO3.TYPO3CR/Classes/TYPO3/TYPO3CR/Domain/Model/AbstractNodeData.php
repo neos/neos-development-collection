@@ -17,7 +17,6 @@ use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\Flow\Validation\Validator\UuidValidator;
-use TYPO3\TYPO3CR\Domain\Model\ContentObjectProxy;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TYPO3CR\Exception\NodeException;
