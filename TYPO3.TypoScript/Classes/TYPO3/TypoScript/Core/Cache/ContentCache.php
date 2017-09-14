@@ -227,7 +227,7 @@ class ContentCache
             foreach ($segments as $segment) {
                 $metadata = explode(';', $segment['metadata']);
                 $tagsValue = $metadata[0] === '' ? [] : ($metadata[0] === '*' ? false : explode(',', $metadata[0]));
-                    // FALSE means we do not need to store the cache entry again (because it was previously fetched)
+                // FALSE means we do not need to store the cache entry again (because it was previously fetched)
                 if ($tagsValue !== false) {
                     $lifetime = isset($metadata[1]) ? (integer)$metadata[1] : null;
                     $this->cache->set($segment['identifier'], $segment['content'], $this->sanitizeTags($tagsValue), $lifetime);
