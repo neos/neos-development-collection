@@ -11,6 +11,7 @@
         "neos/utility-objecthandling": "*",
         "neos/utility-files": "*",
         "neos/utility-arrays": "*",
+        "neos/event-sourcing": "dev-master",
 
         "doctrine/orm": "~2.5.0",
         "gedmo/doctrine-extensions": "~2.3.0",
