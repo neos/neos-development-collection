@@ -10,6 +10,11 @@ final class PropertyWasSet
 {
 
     /**
+     * @var ContentStreamIdentifier
+     */
+    private $contentStreamIdentifier;
+
+    /**
      * @var NodeIdentifier
      */
     private $nodeIdentifier;
@@ -31,13 +36,23 @@ final class PropertyWasSet
      * @param PropertyValue $value
      */
     public function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
         NodeIdentifier $nodeIdentifier,
         $propertyName,
         PropertyValue $value
     ) {
+        $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;
         $this->propertyName = $propertyName;
         $this->value = $value;
+    }
+
+    /**
+     * @return ContentStreamIdentifier
+     */
+    public function getContentStreamIdentifier(): ContentStreamIdentifier
+    {
+        return $this->contentStreamIdentifier;
     }
 
     /**

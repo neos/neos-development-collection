@@ -67,6 +67,7 @@ final class NodeCommandHandler
         $events = [];
 
         $events[] = new ChildNodeWithVariantWasCreated(
+            $command->getContentStreamIdentifier(),
             $command->getParentNodeIdentifier(),
             $command->getNodeIdentifier(),
             $command->getNodeName(),
@@ -101,6 +102,7 @@ final class NodeCommandHandler
         $propertyValue = new PropertyValue($command->getValue(), $propertyType);
 
         $event = new PropertyWasSet(
+            $command->getContentStreamIdentifier(),
             $command->getNodeIdentifier(),
             $command->getPropertyName(),
             $propertyValue

@@ -2,6 +2,7 @@
 
 namespace Neos\ContentRepository\Domain\Context\Node\Event;
 
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcing\Event\EventInterface;
 use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
@@ -10,6 +11,11 @@ use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 
 final class ChildNodeWithVariantWasCreated implements EventInterface
 {
+
+    /**
+     * @var ContentStreamIdentifier
+     */
+    private $contentStreamIdentifier;
 
     /**
      * @var NodeIdentifier
@@ -46,6 +52,7 @@ final class ChildNodeWithVariantWasCreated implements EventInterface
     /**
      * ChildNodeWithVariantWasCreated constructor.
      *
+     * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeIdentifier $parentNodeIdentifier
      * @param NodeIdentifier $nodeIdentifier
      * @param NodeName $nodeName
@@ -54,6 +61,7 @@ final class ChildNodeWithVariantWasCreated implements EventInterface
      * @param array $propertyDefaultValuesAndTypes
      */
     public function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
         NodeIdentifier $parentNodeIdentifier,
         NodeIdentifier $nodeIdentifier,
         NodeName $nodeName,
@@ -61,12 +69,21 @@ final class ChildNodeWithVariantWasCreated implements EventInterface
         DimensionValues $dimensionValues,
         array $propertyDefaultValuesAndTypes
     ) {
+        $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->parentNodeIdentifier = $parentNodeIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;
         $this->nodeName = $nodeName;
         $this->nodeTypeName = $nodeTypeName;
         $this->dimensionValues = $dimensionValues;
         $this->propertyDefaultValuesAndTypes = $propertyDefaultValuesAndTypes;
+    }
+
+    /**
+     * @return ContentStreamIdentifier
+     */
+    public function getContentStreamIdentifier(): ContentStreamIdentifier
+    {
+        return $this->contentStreamIdentifier;
     }
 
     /**
