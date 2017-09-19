@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Domain\Model;
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateChildNodeWithVariant;
 use Neos\ContentRepository\Domain\Context\Node\Command\SetProperty;
 use Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler;
+use Neos\ContentRepository\Domain\Projection\Content\PropertyCollection;
 use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;

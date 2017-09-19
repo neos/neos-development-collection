@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\ContentRepository\Domain\Model;
+namespace Neos\ContentRepository\Domain\Projection\Content;
 
 /*
  * This file is part of the Neos.ContentRepository package.
