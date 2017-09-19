@@ -13,10 +13,10 @@ namespace Neos\ContentRepository\Domain\Service;
  */
 
 use Neos\ContentRepository\Domain\ValueObject\EditingSessionIdentifier;
+use Neos\ContentRepository\Domain;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
-use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
@@ -60,6 +60,12 @@ class Context
      * @var SystemLoggerInterface
      */
     protected $systemLogger;
+
+    /**
+     * @Flow\Inject
+     * @var Domain\Projection\Content\ContentGraphInterface
+     */
+    protected $contentGraph;
 
     /**
      * @var Workspace
@@ -119,6 +125,16 @@ class Context
     protected $editingSessionIdentifier;
 
     /**
+     * @var Domain\ValueObject\DimensionValueCombination
+     */
+    protected $dimensionValueCombination;
+
+    /**
+     * @var Domain\Projection\Content\ContentSubgraphInterface
+     */
+    protected $contentSubgraph;
+
+    /**
      * Creates a new Context object.
      *
      * NOTE: This is for internal use only, you should use the ContextFactory for creating Context instances.
@@ -130,10 +146,20 @@ class Context
      * @param boolean $invisibleContentShown If invisible content should be returned in query results
      * @param boolean $removedContentShown If removed content should be returned in query results
      * @param boolean $inaccessibleContentShown If inaccessible content should be returned in query results
+     * @param Domain\Projection\Content\ContentSubgraphInterface|null $contentSubgraph The content subgraph to fetch nodes from
+     *
      * @see ContextFactoryInterface
      */
-    public function __construct($workspaceName, \DateTimeInterface $currentDateTime, array $dimensions, array $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown)
-    {
+    public function __construct(
+        $workspaceName,
+        \DateTimeInterface $currentDateTime,
+        array $dimensions,
+        array $targetDimensions,
+        $invisibleContentShown,
+        $removedContentShown,
+        $inaccessibleContentShown,
+        Domain\Projection\Content\ContentSubgraphInterface $contentSubgraph = null
+    ) {
         $this->workspaceName = $workspaceName;
         $this->currentDateTime = $currentDateTime;
         $this->dimensions = $dimensions;
@@ -142,11 +168,23 @@ class Context
         $this->inaccessibleContentShown = $inaccessibleContentShown;
         $this->targetDimensions = $targetDimensions;
 
+        $this->dimensionValueCombination = Domain\ValueObject\DimensionValueCombination::fromLegacyDimensionArray($dimensions);
+        $this->contentSubgraph = $contentSubgraph;
+
         $this->firstLevelNodeCache = new FirstLevelNodeCache();
 
         // TODO Explicitly get or create the head editing session for the given workspace and user
         // TODO Get user identifier
         $this->editingSessionIdentifier = new EditingSessionIdentifier(Algorithms::generateUUID());
+    }
+
+    public function getSubgraph(): Domain\Projection\Content\ContentSubgraphInterface
+    {
+        if (!$this->contentSubgraph) {
+            $this->contentSubgraph = $this->contentGraph->getSubgraph($this->editingSessionIdentifier, $this->dimensionValueCombination);
+        }
+
+        return $this->contentSubgraph;
     }
 
     /**
@@ -233,60 +271,31 @@ class Context
      */
     public function getRootNode()
     {
-        return $this->getNode('/');
+        return $this->getSubgraph()->findRootNode();
     }
 
     /**
      * Returns a node specified by the given absolute path.
      *
      * @param string $path Absolute path specifying the node
-     * @return NodeInterface The specified node or NULL if no such node exists
+     * @return NodeInterface|null The specified node or NULL if no such node exists
      * @throws \InvalidArgumentException
      * @api
      */
     public function getNode($path)
     {
-        if (!is_string($path) || $path[0] !== '/') {
-            throw new \InvalidArgumentException('Only absolute paths are allowed for Context::getNode()', 1284975105);
-        }
-
-        $path = strtolower($path);
-
-        $workspaceRootNode = $this->getWorkspace()->getRootNodeData();
-        $rootNode = $this->nodeFactory->createFromNodeData($workspaceRootNode, $this);
-        if ($path !== '/') {
-            $node = $this->firstLevelNodeCache->getByPath($path);
-            if ($node === false) {
-                $node = $rootNode->getNode(substr($path, 1));
-                $this->firstLevelNodeCache->setByPath($path, $node);
-            }
-        } else {
-            $node = $rootNode;
-        }
-
-        return $node;
+        return $this->getSubgraph()->findByPath($path);
     }
 
     /**
      * Get a node by identifier and this context
      *
-     * @param string $identifier The identifier of a node
-     * @return NodeInterface The node with the given identifier or NULL if no such node exists
+     * @param Domain\ValueObject\NodeIdentifier $identifier The identifier of a node
+     * @return NodeInterface|null The node with the given identifier or NULL if no such node exists
      */
     public function getNodeByIdentifier($identifier)
     {
-        $node = $this->firstLevelNodeCache->getByIdentifier($identifier);
-        if ($node !== false) {
-            return $node;
-        }
-        $nodeData = $this->nodeDataRepository->findOneByIdentifier($identifier, $this->getWorkspace(), $this->dimensions);
-        if ($nodeData !== null) {
-            $node = $this->nodeFactory->createFromNodeData($nodeData, $this);
-        } else {
-            $node = null;
-        }
-        $this->firstLevelNodeCache->setByIdentifier($identifier, $node);
-        return $node;
+        return $this->getSubgraph()->findNodeByIdentifier($identifier);
     }
 
     /**
@@ -295,27 +304,20 @@ class Context
      * A variant of a node can have different dimension values and path (for non-aggregate nodes).
      * The resulting node instances might belong to a different context.
      *
-     * @param string $identifier The identifier of a node
-     * @return array<\Neos\ContentRepository\Domain\Model\NodeInterface>
+     * @param Domain\ValueObject\NodeIdentifier $identifier The identifier of a node
+     * @return array<\Neos\ContentRepository\Domain\Model\NodeInterface>|Domain\Model\NodeInterface[]
      */
-    public function getNodeVariantsByIdentifier($identifier)
+    public function getNodeVariantsByIdentifier(Domain\ValueObject\NodeIdentifier $identifier): array
     {
-        $nodeVariants = array();
-        $nodeDataElements = $this->nodeDataRepository->findByIdentifierWithoutReduce($identifier, $this->getWorkspace());
-        /** @var NodeData $nodeData */
-        foreach ($nodeDataElements as $nodeData) {
-            $contextProperties = $this->getProperties();
-            $contextProperties['dimensions'] = $nodeData->getDimensionValues();
-            unset($contextProperties['targetDimensions']);
-            $adjustedContext = $this->contextFactory->create($contextProperties);
-            $nodeVariant = $this->nodeFactory->createFromNodeData($nodeData, $adjustedContext);
-            $nodeVariants[] = $nodeVariant;
-        }
-        return $nodeVariants;
+        $nodeVariants = [];
+        foreach ($this->contentGraph->getSubgraphs() as $subgraph) {
+            $nodeVariant = $subgraph->findNodeByIdentifier($identifier);
+            if ($nodeVariant instanceof Domain\Model\NodeInterface) {
+                $nodeVariants[] = $nodeVariant;
             }
         }
 
-        return $nodes;
+        return $nodeVariants;
     }
 
     /**
