@@ -145,7 +145,7 @@ class Context
 
         // TODO Explicitly get or create the head editing session for the given workspace and user
         // TODO Get user identifier
-        $this->editingSessionIdentifier = new EditingSessionIdentifier(Algorithms::generateUUID();
+        $this->editingSessionIdentifier = new EditingSessionIdentifier(Algorithms::generateUUID());
     }
 
     /**
