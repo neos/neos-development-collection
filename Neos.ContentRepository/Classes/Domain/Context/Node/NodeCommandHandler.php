@@ -2,21 +2,22 @@
 
 namespace Neos\ContentRepository\Domain\Context\Node;
 
+use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
+use Neos\ContentRepository\Domain\Context\Node\Command\CreateChildNodeWithVariant;
+use Neos\ContentRepository\Domain\Context\Node\Command\CreateRootNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\SetProperty;
 use Neos\ContentRepository\Domain\Context\Node\Event\ChildNodeWithVariantWasCreated;
 use Neos\ContentRepository\Domain\Context\Node\Event\PropertyWasSet;
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Context\Node\Command\CreateChildNodeWithVariant;
 
 final class NodeCommandHandler
 {
-
     /**
      * @Flow\Inject
      * @var \Neos\EventSourcing\Event\EventPublisher
@@ -29,19 +30,13 @@ final class NodeCommandHandler
      */
     protected $nodeTypeManager;
 
-    private static function getStreamNameForContentStream(ContentStreamIdentifier $contentStreamIdentifier)
-    {
-        return 'contentstream:' . $contentStreamIdentifier;
-    }
-
     /**
      * @param CreateChildNodeWithVariant $command
      */
     public function handleCreateChildNodeWithVariant(CreateChildNodeWithVariant $command)
     {
         $events = $this->childNodeWithVariantWasCreatedFromCommand($command);
-
-        $this->eventPublisher->publishMany(self::getStreamNameForContentStream($command->getContentStreamIdentifier()), $events);
+        $this->eventPublisher->publishMany(ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier()), $events);
     }
 
     /**
@@ -94,6 +89,26 @@ final class NodeCommandHandler
         return $events;
     }
 
+    /**
+     * CreateRootNode
+     *
+     * @param CreateRootNode $command
+     */
+    public function handleCreateRootNode(CreateRootNode $command)
+    {
+        $this->eventPublisher->publish(
+            ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier()),
+            new RootNodeWasCreated(
+                $command->getContentStreamIdentifier(),
+                $command->getNodeIdentifier(),
+                $command->getInitiatingUserIdentifier()
+            )
+        );
+    }
+
+    /**
+     * @param SetProperty $command
+     */
     public function handleSetProperty(SetProperty $command)
     {
         $nodeType = $this->getNodeType($command->getNodeTypeName());
@@ -108,7 +123,7 @@ final class NodeCommandHandler
             $propertyValue
         );
 
-        $this->eventPublisher->publish(self::getStreamNameForContentStream($command->getContentStreamIdentifier()), $event);
+        $this->eventPublisher->publish(ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier()), $event);
     }
 
     /**

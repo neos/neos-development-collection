@@ -18,19 +18,14 @@ use Neos\ContentRepository\Domain\ValueObject\WorkspaceTitle;
 use Neos\EventSourcing\Event\EventInterface;
 
 /**
- * WorkspaceHasBeenCreated
+ * LiveWorkspaceWasCreated
  */
-class WorkspaceHasBeenCreated implements EventInterface
+class RootWorkspaceWasCreated implements EventInterface
 {
     /**
      * @var WorkspaceName
      */
     private $workspaceName;
-
-    /**
-     * @var WorkspaceName
-     */
-    private $baseWorkspaceName;
 
     /**
      * @var WorkspaceTitle
@@ -45,24 +40,22 @@ class WorkspaceHasBeenCreated implements EventInterface
     /**
      * @var UserIdentifier
      */
-    private $workspaceOwner;
+    private $initiatingUserIdentifier;
 
     /**
-     * Constructor.
+     * RootWorkspaceWasCreated constructor.
      *
      * @param WorkspaceName $workspaceName
-     * @param WorkspaceName $baseWorkspaceName
      * @param WorkspaceTitle $workspaceTitle
      * @param WorkspaceDescription $workspaceDescription
-     * @param UserIdentifier $workspaceOwner
+     * @param UserIdentifier $initiatingUserIdentifier
      */
-    public function __construct(WorkspaceName $workspaceName, WorkspaceName $baseWorkspaceName, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription, UserIdentifier $workspaceOwner)
+    public function __construct(WorkspaceName $workspaceName, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription, UserIdentifier $initiatingUserIdentifier)
     {
         $this->workspaceName = $workspaceName;
-        $this->baseWorkspaceName = $baseWorkspaceName;
         $this->workspaceTitle = $workspaceTitle;
         $this->workspaceDescription = $workspaceDescription;
-        $this->workspaceOwner = $workspaceOwner;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     /**
@@ -71,14 +64,6 @@ class WorkspaceHasBeenCreated implements EventInterface
     public function getWorkspaceName(): WorkspaceName
     {
         return $this->workspaceName;
-    }
-
-    /**
-     * @return WorkspaceName
-     */
-    public function getBaseWorkspaceName(): WorkspaceName
-    {
-        return $this->baseWorkspaceName;
     }
 
     /**
@@ -100,8 +85,8 @@ class WorkspaceHasBeenCreated implements EventInterface
     /**
      * @return UserIdentifier
      */
-    public function getWorkspaceOwner(): UserIdentifier
+    public function getInitiatingUserIdentifier(): UserIdentifier
     {
-        return $this->workspaceOwner;
+        return $this->initiatingUserIdentifier;
     }
 }

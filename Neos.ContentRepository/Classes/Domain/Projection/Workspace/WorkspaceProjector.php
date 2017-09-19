@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\Domain\Projection\Workspace;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Context\Workspace\Event\WorkspaceHasBeenCreated;
+use Neos\ContentRepository\Domain\Context\Workspace\Event\WorkspaceWasCreated;
 use Neos\EventSourcing\Projection\Doctrine\AbstractDoctrineProjector;
 
 /**
@@ -20,9 +20,9 @@ use Neos\EventSourcing\Projection\Doctrine\AbstractDoctrineProjector;
 final class WorkspaceProjector extends AbstractDoctrineProjector
 {
     /**
-     * @param WorkspaceHasBeenCreated $event
+     * @param WorkspaceWasCreated $event
      */
-    public function whenWorkspaceHasBeenCreated(WorkspaceHasBeenCreated $event)
+    public function whenWorkspaceWasCreated(WorkspaceWasCreated $event)
     {
         $workspace = new Workspace();
         $workspace->workspaceName = $event->getWorkspaceName();

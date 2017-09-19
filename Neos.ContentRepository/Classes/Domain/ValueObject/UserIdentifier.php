@@ -14,6 +14,23 @@ namespace Neos\ContentRepository\Domain\ValueObject;
 /**
  * User Identifier
  */
-class UserIdentifier extends AbstractIdentifier
+final class UserIdentifier extends AbstractIdentifier
 {
+    const SYSTEM_USER_IDENTIFIER = '00000000-0000-0000-0000-000000000000';
+
+    /**
+     * Creates a special user identifier which refers to the virtual "system" user.
+     */
+    static public function forSystemUser()
+    {
+        return self::fromString(self::SYSTEM_USER_IDENTIFIER);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSystemUser(): bool
+    {
+        return $this->uuid === self::SYSTEM_USER_IDENTIFIER;
+    }
 }

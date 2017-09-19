@@ -2,16 +2,16 @@
 
 namespace Neos\ContentRepository\Domain\Context\Node\Event;
 
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
+use Neos\ContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\EventInterface;
 
 /**
- * PropertyWasSet
+ * RootNodeWasCreated
  */
-final class PropertyWasSet implements EventInterface
+final class RootNodeWasCreated implements EventInterface
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -23,31 +23,22 @@ final class PropertyWasSet implements EventInterface
     private $nodeIdentifier;
 
     /**
-     * @var string
+     * @var UserIdentifier
      */
-    private $propertyName;
+    private $initiatingUserIdentifier;
 
     /**
-     * @var PropertyValue
-     */
-    private $value;
-
-    /**
+     * RootNodeWasCreated constructor.
      *
+     * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeIdentifier $nodeIdentifier
-     * @param string $propertyName
-     * @param PropertyValue $value
+     * @param UserIdentifier $initiatingUserIdentifier
      */
-    public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeIdentifier $nodeIdentifier,
-        $propertyName,
-        PropertyValue $value
-    ) {
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier, UserIdentifier $initiatingUserIdentifier)
+    {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;
-        $this->propertyName = $propertyName;
-        $this->value = $value;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     /**
@@ -67,18 +58,10 @@ final class PropertyWasSet implements EventInterface
     }
 
     /**
-     * @return string
+     * @return UserIdentifier
      */
-    public function getPropertyName(): string
+    public function getInitiatingUserIdentifier(): UserIdentifier
     {
-        return $this->propertyName;
-    }
-
-    /**
-     * @return PropertyValue
-     */
-    public function getValue(): PropertyValue
-    {
-        return $this->value;
+        return $this->initiatingUserIdentifier;
     }
 }

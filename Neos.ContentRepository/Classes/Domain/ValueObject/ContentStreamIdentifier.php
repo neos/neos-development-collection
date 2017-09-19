@@ -14,5 +14,4 @@ namespace Neos\ContentRepository\Domain\ValueObject;
 
 final class ContentStreamIdentifier extends AbstractIdentifier
 {
-
 }

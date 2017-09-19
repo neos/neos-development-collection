@@ -12,7 +12,9 @@ namespace Neos\Neos\Command;
  */
 
 use Neos\ContentRepository\Domain\Context\Workspace\Command\CreateWorkspace;
+use Neos\ContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
+use Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
@@ -58,6 +60,12 @@ class WorkspaceCommandController extends CommandController
      * @var WorkspaceCommandHandler
      */
     protected $workspaceCommandHandler;
+
+    /**
+     * @Flow\Inject
+     * @var WorkspaceFinder
+     */
+    protected $workspaceFinder;
 
     /**
      * @Flow\Inject
@@ -188,30 +196,30 @@ class WorkspaceCommandController extends CommandController
      *
      * This command creates a new workspace.
      *
-     * @param string $workspace Name of the workspace, for example "christmas-campaign"
-     * @param string $baseWorkspace Name of the base workspace. If none is specified, "live" is assumed.
-     * @param string $title Human friendly title of the workspace, for example "Christmas Campaign"
-     * @param string $description A description explaining the purpose of the new workspace
-     * @param string $owner The identifier of a User to own the workspace
+     * @param WorkspaceName $workspace Name of the workspace, for example "christmas-campaign"
+     * @param WorkspaceName $baseWorkspace Name of the base workspace
+     * @param WorkspaceTitle $title Human friendly title of the workspace, for example "Christmas Campaign"
+     * @param WorkspaceDescription $description A description explaining the purpose of the new workspace
+     * @param string  $owner The identifier of a User to own the workspace
      * @return void
      */
-    public function createCommand($workspace, $baseWorkspace = 'live', $title = null, $description = null, $owner = '')
+    public function createCommand(WorkspaceName $workspace, WorkspaceName $baseWorkspace, WorkspaceTitle $title = null, WorkspaceDescription $description = null, string $owner = null)
     {
         $workspaceName = $workspace;
-        $workspace = $this->workspaceRepository->findOneByName($workspaceName);
-        if ($workspace instanceof Workspace) {
-            $this->outputLine('Workspace "%s" already exists', [$workspaceName]);
+        $workspace = $this->workspaceFinder->findOneByName($workspace);
+        if ($workspace instanceof \Neos\ContentRepository\Domain\Projection\Workspace\Workspace) {
+            $this->outputLine('Workspace "%s" already exists', [$workspace->workspaceName]);
             $this->quit(1);
         }
 
         $baseWorkspaceName = $baseWorkspace;
-        $baseWorkspace = $this->workspaceRepository->findOneByName($baseWorkspaceName);
-        if (!$baseWorkspace instanceof Workspace) {
+        $baseWorkspace = $this->workspaceFinder->findOneByName($baseWorkspace);
+        if (!$baseWorkspace instanceof \Neos\ContentRepository\Domain\Projection\Workspace\Workspace) {
             $this->outputLine('The base workspace "%s" does not exist', [$baseWorkspaceName]);
             $this->quit(2);
         }
 
-        if ($owner === '') {
+        if ($owner === null) {
             $owningUser = null;
         } else {
             $owningUser = $this->userService->getUser($owner);
@@ -221,22 +229,9 @@ class WorkspaceCommandController extends CommandController
             }
         }
 
-        if ($title === null) {
-            $title = $workspaceName;
-        }
-
-        $workspace = new Workspace($workspaceName, $baseWorkspace, $owningUser);
-        $workspace->setTitle($title);
-        $workspace->setDescription($description);
-        $this->workspaceRepository->add($workspace);
-
         $this->workspaceCommandHandler->handleCreateWorkspace(
             new CreateWorkspace(
-                new WorkspaceName($workspaceName),
-                new WorkspaceName($baseWorkspaceName),
-                new WorkspaceTitle((string)$title),
-                new WorkspaceDescription((string)$description),
-                UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject($owningUser))
+                $workspaceName, $baseWorkspaceName, $title, $description, UserIdentifier::forSystemUser(), $owningUser ? UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject($owningUser)) : null
             )
         );
 
@@ -245,6 +240,37 @@ class WorkspaceCommandController extends CommandController
         } else {
             $this->outputLine('Created a new workspace "%s", based on workspace "%s".', [$workspaceName, $baseWorkspaceName]);
         }
+    }
+
+    /**
+     * Create a rootworkspace
+     *
+     * This command creates a special root workspace, such as "live"
+     *
+     * @param WorkspaceName $workspace Name of the workspace, for example "live"
+     * @param WorkspaceTitle $title Human friendly title of the workspace, for example "Christmas Campaign"
+     * @param WorkspaceDescription $description A description explaining the purpose of the new workspace
+     * @return void
+     */
+    public function createRootCommand(WorkspaceName $workspace, WorkspaceTitle $title = null, WorkspaceDescription $description = null)
+    {
+        $workspaceName = $workspace;
+        $workspace = $this->workspaceFinder->findOneByName($workspace);
+        if ($workspace instanceof \Neos\ContentRepository\Domain\Projection\Workspace\Workspace) {
+            $this->outputLine('Workspace "%s" already exists', [$workspace->workspaceName]);
+            $this->quit(1);
+        }
+
+        $this->workspaceCommandHandler->handleCreateRootWorkspace(
+            new CreateRootWorkspace(
+                $workspaceName,
+                $title ?: new WorkspaceTitle((string)$workspaceName),
+                $description ?: new WorkspaceDescription(''),
+                UserIdentifier::forSystemUser()
+            )
+        );
+
+        $this->outputLine('Created a new root workspace "%s".', [$workspaceName]);
     }
 
     /**

@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Domain\Context\Workspace\Command;
+namespace Neos\ContentRepository\Domain\Context\Workspace\Event;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -15,11 +15,12 @@ use Neos\ContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceTitle;
+use Neos\EventSourcing\Event\EventInterface;
 
 /**
- * Create a new workspace
+ * WorkspaceHasBeenCreated
  */
-final class CreateWorkspace
+class WorkspaceWasCreated implements EventInterface
 {
     /**
      * @var WorkspaceName
@@ -52,7 +53,7 @@ final class CreateWorkspace
     private $workspaceOwner;
 
     /**
-     * CreateWorkspace constructor.
+     * WorkspaceWasCreated constructor.
      *
      * @param WorkspaceName $workspaceName
      * @param WorkspaceName $baseWorkspaceName
@@ -118,5 +119,4 @@ final class CreateWorkspace
     {
         return $this->workspaceOwner;
     }
-
 }

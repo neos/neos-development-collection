@@ -17,19 +17,14 @@ use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceTitle;
 
 /**
- * Create a new workspace
+ * Create a root workspace
  */
-final class CreateWorkspace
+final class CreateRootWorkspace
 {
     /**
      * @var WorkspaceName
      */
     private $workspaceName;
-
-    /**
-     * @var WorkspaceName
-     */
-    private $baseWorkspaceName;
 
     /**
      * @var WorkspaceTitle
@@ -47,27 +42,18 @@ final class CreateWorkspace
     private $initiatingUserIdentifier;
 
     /**
-     * @var UserIdentifier
-     */
-    private $workspaceOwner;
-
-    /**
-     * CreateWorkspace constructor.
+     * CreateRootWorkspace constructor.
      *
      * @param WorkspaceName $workspaceName
-     * @param WorkspaceName $baseWorkspaceName
      * @param WorkspaceTitle $workspaceTitle
      * @param WorkspaceDescription $workspaceDescription
      * @param UserIdentifier $initiatingUserIdentifier
-     * @param UserIdentifier $workspaceOwner
      */
-    public function __construct(WorkspaceName $workspaceName, WorkspaceName $baseWorkspaceName = null, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription, UserIdentifier $initiatingUserIdentifier, UserIdentifier $workspaceOwner = null)
+    public function __construct(WorkspaceName $workspaceName, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription, UserIdentifier $initiatingUserIdentifier)
     {
         $this->workspaceName = $workspaceName;
-        $this->baseWorkspaceName = $baseWorkspaceName;
         $this->workspaceTitle = $workspaceTitle;
         $this->workspaceDescription = $workspaceDescription;
-        $this->workspaceOwner = $workspaceOwner;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
@@ -77,14 +63,6 @@ final class CreateWorkspace
     public function getWorkspaceName(): WorkspaceName
     {
         return $this->workspaceName;
-    }
-
-    /**
-     * @return WorkspaceName|null
-     */
-    public function getBaseWorkspaceName()
-    {
-        return $this->baseWorkspaceName;
     }
 
     /**
@@ -110,13 +88,4 @@ final class CreateWorkspace
     {
         return $this->initiatingUserIdentifier;
     }
-
-    /**
-     * @return UserIdentifier|null
-     */
-    public function getWorkspaceOwner()
-    {
-        return $this->workspaceOwner;
-    }
-
 }

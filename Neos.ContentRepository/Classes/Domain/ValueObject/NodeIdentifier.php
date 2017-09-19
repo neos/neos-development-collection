@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  */
 use Neos\Cache\CacheAwareInterface;
 use Neos\ContentRepository\Utility;
+use Ramsey\Uuid\Uuid;
 
 /**
  * NodeIdentifier
@@ -32,11 +33,15 @@ final class NodeIdentifier implements \JsonSerializable, CacheAwareInterface
     /**
      * NodeIdentifier constructor.
      *
-     * @param string $identifier
+     * @param string $existingIdentifier
      */
-    public function __construct(string $identifier = null)
+    public function __construct(string $existingIdentifier = null)
     {
-        $this->setIdentifier($identifier);
+        if ($existingIdentifier !== null) {
+            $this->setIdentifier($existingIdentifier);
+        } else {
+            $this->setIdentifier((string)Uuid::uuid4());
+        }
     }
 
     /**
