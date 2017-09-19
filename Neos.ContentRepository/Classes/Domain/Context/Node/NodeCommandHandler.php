@@ -2,7 +2,9 @@
 
 namespace Neos\ContentRepository\Domain\Context\Node;
 
+use Neos\ContentRepository\Domain\Context\Node\Command\SetProperty;
 use Neos\ContentRepository\Domain\Context\Node\Event\ChildNodeWithVariantWasCreated;
+use Neos\ContentRepository\Domain\ValueObject\EditingSessionIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
@@ -25,15 +27,19 @@ final class NodeCommandHandler
      */
     protected $nodeTypeManager;
 
+    private static function getStreamNameForEditingSession(EditingSessionIdentifier $editingSessionIdentifier)
+    {
+        return 'editingsession:' . $editingSessionIdentifier;
+    }
+
     /**
      * @param CreateChildNodeWithVariant $command
      */
     public function handleCreateChildNodeWithVariant(CreateChildNodeWithVariant $command)
     {
-        $streamName = 'editingsession:' . $command->getEditingSessionIdentifier();
         $events = $this->childNodeWithVariantWasCreatedFromCommand($command);
 
-        $this->eventPublisher->publishMany($streamName, $events);
+        $this->eventPublisher->publishMany(self::getStreamNameForEditingSession($command->getEditingSessionIdentifier()), $events);
     }
 
     /**
@@ -44,11 +50,14 @@ final class NodeCommandHandler
      */
     private function childNodeWithVariantWasCreatedFromCommand(CreateChildNodeWithVariant $command): array
     {
-        if (!$this->nodeTypeManager->hasNodeType($command->getNodeTypeName())) {
+        if (empty($command->getNodeTypeName())) {
+            throw new \InvalidArgumentException('TODO: Node type may not be null');
+        }
+        if (!$this->nodeTypeManager->hasNodeType((string)$command->getNodeTypeName())) {
             throw new \InvalidArgumentException('TODO: Node type ' . $command->getNodeTypeName() . ' not found.');
         }
 
-        $nodeType = $this->nodeTypeManager->getNodeType($command->getNodeTypeName());
+        $nodeType = $this->nodeTypeManager->getNodeType((string)$command->getNodeTypeName());
 
         $propertyDefaultValuesAndTypes = [];
         foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $propertyValue) {
@@ -82,5 +91,13 @@ final class NodeCommandHandler
         }
 
         return $events;
+    }
+
+    public function handleSetProperty(SetProperty $command)
+    {
+
+        // TODO continue
+
+        //$this->eventPublisher->publish(self::getStreamNameForEditingSession($command->getEditingSessionIdentifier()), $event);
     }
 }

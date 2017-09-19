@@ -12,6 +12,8 @@ namespace Neos\ContentRepository\Domain\Model;
  */
 
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateChildNodeWithVariant;
+use Neos\ContentRepository\Domain\Context\Node\Command\SetProperty;
+use Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
@@ -89,6 +91,11 @@ class Node implements NodeInterface, CacheAwareInterface
      * @var NodeServiceInterface
      */
     protected $nodeService;
+    /**
+     * @Flow\Inject
+     * @var NodeCommandHandler
+     */
+    protected $nodeCommandHandler;
 
     /**
      * @param NodeData $nodeData
@@ -894,6 +901,20 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setProperty($propertyName, $value)
     {
+        $command = new SetProperty(
+            $this->context->getEditingSessionIdentifier(),
+            new NodeIdentifier($this->getIdentifier()),
+            $propertyName,
+            $value
+        );
+
+        $this->nodeCommandHandler->handleSetProperty($command);
+
+        $this->legacySetProperty($propertyName, $value);
+    }
+
+    public function legacySetProperty($propertyName, $value)
+    {
         if (!$this->isNodeDataMatchingContext()) {
             $this->materializeNodeData();
         }
@@ -906,6 +927,7 @@ class Node implements NodeInterface, CacheAwareInterface
         $this->nodeData->setProperty($propertyName, $value);
 
         $this->context->getFirstLevelNodeCache()->flush();
+
         $this->emitNodePropertyChanged($this, $propertyName, $oldValue, $value);
         $this->emitNodeUpdated($this);
     }
@@ -1139,19 +1161,18 @@ class Node implements NodeInterface, CacheAwareInterface
 
 
         $nodeName = new NodeName($name);
-        $editingSessionIdentifier = $this->context->getEditingSessionIdentifier();
         $parentNodeIdentifier = new NodeIdentifier($this->getIdentifier());
         $nodeIdentifier = new NodeIdentifier();
         $command = new CreateChildNodeWithVariant(
-            $editingSessionIdentifier,
+            $this->context->getEditingSessionIdentifier(),
             $parentNodeIdentifier,
             $nodeIdentifier,
             $nodeName,
-            new NodeTypeName($nodeType->getName()),
+            new NodeTypeName(($nodeType ? $nodeType->getName() : 'unstructured')),
             new DimensionValues($this->context->getTargetDimensionValues())
         );
 
-//        $this->nodeCommandHandler->h
+        $this->nodeCommandHandler->handleCreateChildNodeWithVariant($command);
 
         $newNode = $this->legacyCreateNode($name, $nodeType, $identifier);
 
@@ -1167,7 +1188,7 @@ class Node implements NodeInterface, CacheAwareInterface
      * @param string $identifier
      * @return Node
      */
-    protected function legacyCreateNode($name, NodeType $nodeType, $identifier)
+    protected function legacyCreateNode($name, NodeType $nodeType = null, $identifier = null)
     {
         $newNode = $this->createSingleNode($name, $nodeType, $identifier);
         if ($nodeType !== null) {
