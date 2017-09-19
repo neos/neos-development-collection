@@ -314,7 +314,13 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         ContentRepository\Service\Context $context = null
     ) {
         $callback($parent);
-        foreach ($this->findNodesByParent(ContentRepository\ValueObject\NodeIdentifier::fromString($parent->getIdentifier())) as $childNode) {
+        foreach ($this->findChildNodes(
+            ContentRepository\ValueObject\NodeIdentifier::fromString($parent->getIdentifier()),
+            $nodeTypeConstraints,
+            null,
+            null,
+            $context
+        ) as $childNode) {
             $this->traverse($childNode, $nodeTypeConstraints, $callback, $context);
         }
     }
