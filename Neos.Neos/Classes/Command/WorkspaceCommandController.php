@@ -11,8 +11,15 @@ namespace Neos\Neos\Command;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Context\Workspace\Command\CreateWorkspace;
+use Neos\ContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
+use Neos\ContentRepository\Domain\ValueObject\UserIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\WorkspaceDescription;
+use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\ContentRepository\Domain\ValueObject\WorkspaceTitle;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\Service\PublishingService;
@@ -45,6 +52,18 @@ class WorkspaceCommandController extends CommandController
      * @var UserService
      */
     protected $userService;
+
+    /**
+     * @Flow\Inject
+     * @var WorkspaceCommandHandler
+     */
+    protected $workspaceCommandHandler;
+
+    /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
 
     /**
      * Publish changes of a workspace
@@ -210,6 +229,16 @@ class WorkspaceCommandController extends CommandController
         $workspace->setTitle($title);
         $workspace->setDescription($description);
         $this->workspaceRepository->add($workspace);
+
+        $this->workspaceCommandHandler->handleCreateWorkspace(
+            new CreateWorkspace(
+                new WorkspaceName($workspaceName),
+                new WorkspaceName($baseWorkspaceName),
+                new WorkspaceTitle((string)$title),
+                new WorkspaceDescription((string)$description),
+                UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject($owningUser))
+            )
+        );
 
         if ($owningUser instanceof User) {
             $this->outputLine('Created a new workspace "%s", based on workspace "%s", owned by "%s".', [$workspaceName, $baseWorkspaceName, $owner]);
