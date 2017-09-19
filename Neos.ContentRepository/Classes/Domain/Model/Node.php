@@ -1139,11 +1139,11 @@ class Node implements NodeInterface, CacheAwareInterface
 
 
         $nodeName = new NodeName($name);
-        $editingSession = $this->context->getEditingSession();
+        $editingSessionIdentifier = $this->context->getEditingSessionIdentifier();
         $parentNodeIdentifier = new NodeIdentifier($this->getIdentifier());
         $nodeIdentifier = NodeIdentifier::create();
         $command = new CreateChildNodeWithVariant(
-            $editingSession,
+            $editingSessionIdentifier,
             $parentNodeIdentifier,
             $nodeIdentifier,
             $nodeName,

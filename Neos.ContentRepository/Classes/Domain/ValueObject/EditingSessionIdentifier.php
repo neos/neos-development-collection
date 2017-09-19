@@ -12,43 +12,7 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  * source code.
  */
 
-final class EditingSessionIdentifier implements \JsonSerializable
+final class EditingSessionIdentifier extends AbstractIdentifier
 {
-
-    /**
-     * @var string
-     */
-    private $identifier;
-
-    /**
-     * @var string
-     */
-    private $workspaceName;
-
-    /**
-     * @var string
-     */
-    private $userIdentifier;
-
-    public function __construct(string $identifier, string $workspaceName, string $userIdentifier)
-    {
-        $this->identifier = $identifier;
-        $this->workspaceName = $workspaceName;
-        $this->userIdentifier = $userIdentifier;
-    }
-
-    function jsonSerialize()
-    {
-        return [
-            'identifier' => $this->identifier,
-            'workspaceName' => $this->workspaceName,
-            'userIdentifier' => $this->userIdentifier
-        ];
-    }
-
-    public function __toString()
-    {
-        return $this->identifier . ':' . $this->userIdentifier . '@' . $this->workspaceName;
-    }
 
 }

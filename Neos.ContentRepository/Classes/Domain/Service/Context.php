@@ -115,7 +115,7 @@ class Context
     /**
      * @var EditingSessionIdentifier
      */
-    protected $editingSession;
+    protected $editingSessionIdentifier;
 
     /**
      * Creates a new Context object.
@@ -145,7 +145,7 @@ class Context
 
         // TODO Explicitly get or create the head editing session for the given workspace and user
         // TODO Get user identifier
-        $this->editingSession = new EditingSessionIdentifier(Algorithms::generateUUID(), $this->workspaceName, 'admin');
+        $this->editingSessionIdentifier = new EditingSessionIdentifier(Algorithms::generateUUID();
     }
 
     /**
@@ -508,8 +508,8 @@ class Context
     /**
      * @return EditingSessionIdentifier
      */
-    public function getEditingSession()
+    public function getEditingSessionIdentifier()
     {
-        return $this->editingSession;
+        return $this->editingSessionIdentifier;
     }
 }
