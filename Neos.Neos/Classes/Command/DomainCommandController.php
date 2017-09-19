@@ -11,19 +11,20 @@ namespace Neos\Neos\Command;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Validation\ValidatorResolver;
 use Neos\Neos\Domain\Context\Domain\Command\AddDomain;
 use Neos\Neos\Domain\Context\Domain\DomainCommandHandler;
-use Neos\Neos\Domain\Context\Domain\DomainPort;
-use Neos\Neos\Domain\Context\Domain\HttpScheme;
 use Neos\Neos\Domain\Context\Domain\Command\ActivateDomain;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\ValueObject\DomainPort;
 use Neos\Neos\Domain\ValueObject\HostName;
+use Neos\Neos\Domain\ValueObject\HttpScheme;
 
 /**
  * Domain command controller for the Neos.Neos package
@@ -101,12 +102,22 @@ class DomainCommandController extends CommandController
 
         $this->domainRepository->add($domain);
 
+        $httpScheme = null;
+        if ($scheme) {
+            $httpScheme = new HttpScheme($scheme);
+        }
+
+        $domainPort = null;
+        if ($domainPort) {
+            new DomainPort($port);
+        }
+
         $this->domainCommandHandler->handleAddDomain(
             new AddDomain(
                 new NodeName($siteNodeName),
                 new HostName($hostname),
-                new HttpScheme($scheme),
-                new DomainPort($port)
+                $httpScheme,
+                $domainPort
             )
         );
 

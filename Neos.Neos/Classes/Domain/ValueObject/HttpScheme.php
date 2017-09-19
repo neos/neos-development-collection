@@ -35,6 +35,12 @@ class HttpScheme implements \JsonSerializable
      */
     protected function setScheme(string $scheme)
     {
+        // TODO: BAD TO SUPPORT EMPTY SCHEME; but otherwise type conversion error (found together with Sebastian)
+        if (!$scheme) {
+            $this->scheme = null;
+            return;
+        }
+
         if (preg_match('/http|https/', $scheme) !== 1) {
             throw new \InvalidArgumentException('Invalid scheme.', 1505831235);
         }

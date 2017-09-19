@@ -5,8 +5,9 @@ namespace Neos\ContentRepository\Domain\Context\Node\Event;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
+use Neos\EventSourcing\Event\EventInterface;
 
-final class PropertyWasSet
+final class PropertyWasSet implements EventInterface
 {
 
     /**

@@ -11,11 +11,11 @@ namespace Neos\Neos\Domain\Context\Domain;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Context\Workspace\Command\CreateWorkspace;
-use Neos\ContentRepository\Domain\Context\Workspace\Event\WorkspaceHasBeenCreated;
 use Neos\EventSourcing\Event\EventPublisher;
 use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Domain\Context\Domain\Command\ActivateDomain;
 use Neos\Neos\Domain\Context\Domain\Command\AddDomain;
+use Neos\Neos\Domain\Context\Domain\Event\DomainHasBeenActivated;
 use Neos\Neos\Domain\Context\Domain\Event\DomainHasBeenAdded;
 
 /**
@@ -52,7 +52,6 @@ final class DomainCommandHandler
      */
     public function handleActivateDomain(ActivateDomain $command)
     {
-
         $this->eventPublisher->publish(
             'Neos.Neos:Domain:' . $command->getHostName(),
             new DomainHasBeenActivated(

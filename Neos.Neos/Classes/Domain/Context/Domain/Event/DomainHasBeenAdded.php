@@ -14,9 +14,9 @@ namespace Neos\Neos\Domain\Context\Domain\Event;
 
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\EventSourcing\Event\EventInterface;
-use Neos\Neos\Domain\Context\Domain\DomainPort;
-use Neos\Neos\Domain\Context\Domain\HostName;
-use Neos\Neos\Domain\Context\Domain\HttpScheme;
+use Neos\Neos\Domain\ValueObject\DomainPort;
+use Neos\Neos\Domain\ValueObject\HostName;
+use Neos\Neos\Domain\ValueObject\HttpScheme;
 
 class DomainHasBeenAdded implements EventInterface
 {
@@ -47,7 +47,7 @@ class DomainHasBeenAdded implements EventInterface
      * @param HttpScheme $scheme
      * @param DomainPort $port
      */
-    public function __construct(NodeName $siteNodeName, HostName $domainHostname, HttpScheme $scheme, DomainPort $port)
+    public function __construct(NodeName $siteNodeName, HostName $domainHostname, HttpScheme $scheme = null, DomainPort $port = null)
     {
         $this->siteNodeName = $siteNodeName;
         $this->domainHostname = $domainHostname;
@@ -64,14 +64,6 @@ class DomainHasBeenAdded implements EventInterface
     }
 
     /**
-     * @param NodeName $siteNodeName
-     */
-    public function setSiteNodeName(NodeName $siteNodeName)
-    {
-        $this->siteNodeName = $siteNodeName;
-    }
-
-    /**
      * @return HostName
      */
     public function getDomainHostname(): HostName
@@ -80,42 +72,18 @@ class DomainHasBeenAdded implements EventInterface
     }
 
     /**
-     * @param HostName $domainHostname
-     */
-    public function setDomainHostname(HostName $domainHostname)
-    {
-        $this->domainHostname = $domainHostname;
-    }
-
-    /**
      * @return HttpScheme
      */
-    public function getScheme(): HttpScheme
+    public function getScheme(): ?HttpScheme
     {
         return $this->scheme;
     }
 
     /**
-     * @param HttpScheme $scheme
-     */
-    public function setScheme(HttpScheme $scheme)
-    {
-        $this->scheme = $scheme;
-    }
-
-    /**
      * @return DomainPort
      */
-    public function getPort(): DomainPort
+    public function getPort(): ?DomainPort
     {
         return $this->port;
-    }
-
-    /**
-     * @param DomainPort $port
-     */
-    public function setPort(DomainPort $port)
-    {
-        $this->port = $port;
     }
 }

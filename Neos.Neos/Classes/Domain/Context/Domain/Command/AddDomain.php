@@ -13,9 +13,9 @@ namespace Neos\Neos\Domain\Context\Domain\Command;
 
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Domain\Context\Domain\DomainPort;
-use Neos\Neos\Domain\Context\Domain\HostName;
-use Neos\Neos\Domain\Context\Domain\HttpScheme;
+use Neos\Neos\Domain\ValueObject\DomainPort;
+use Neos\Neos\Domain\ValueObject\HostName;
+use Neos\Neos\Domain\ValueObject\HttpScheme;
 
 
 class AddDomain
@@ -47,7 +47,7 @@ class AddDomain
      * @param HttpScheme $scheme
      * @param DomainPort $port
      */
-    public function __construct(NodeName $siteNodeName, HostName $domainHostname, HttpScheme $scheme, DomainPort $port)
+    public function __construct(NodeName $siteNodeName, HostName $domainHostname, HttpScheme $scheme = null, DomainPort $port = null)
     {
         $this->siteNodeName = $siteNodeName;
         $this->domainHostname = $domainHostname;
@@ -90,7 +90,7 @@ class AddDomain
     /**
      * @return HttpScheme
      */
-    public function getScheme(): HttpScheme
+    public function getScheme(): ?HttpScheme
     {
         return $this->scheme;
     }
@@ -98,7 +98,7 @@ class AddDomain
     /**
      * @param HttpScheme $scheme
      */
-    public function setScheme(HttpScheme $scheme)
+    public function setScheme(HttpScheme $scheme = null)
     {
         $this->scheme = $scheme;
     }
@@ -106,7 +106,7 @@ class AddDomain
     /**
      * @return DomainPort
      */
-    public function getPort(): DomainPort
+    public function getPort(): ?DomainPort
     {
         return $this->port;
     }
@@ -114,7 +114,7 @@ class AddDomain
     /**
      * @param DomainPort $port
      */
-    public function setPort(DomainPort $port)
+    public function setPort(DomainPort $port = null)
     {
         $this->port = $port;
     }
