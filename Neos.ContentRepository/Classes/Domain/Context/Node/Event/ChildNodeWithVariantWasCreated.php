@@ -8,39 +8,39 @@ use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 
-class ChildNodeWithVariantWasCreated implements EventInterface
+final class ChildNodeWithVariantWasCreated implements EventInterface
 {
 
     /**
      * @var NodeIdentifier
      */
-    protected $parentNodeIdentifier;
+    private $parentNodeIdentifier;
 
     /**
      * @var NodeIdentifier
      */
-    protected $nodeIdentifier;
+    private $nodeIdentifier;
 
     /**
      * @var NodeName
      */
-    protected $nodeName;
+    private $nodeName;
 
     /**
      * @var NodeTypeName
      */
-    protected $nodeTypeName;
+    private $nodeTypeName;
 
     /**
      * @var DimensionValues
      */
-    protected $dimensionValues;
+    private $dimensionValues;
 
     /**
      * (property name => PropertyValue)
      * @var array
      */
-    protected $propertyDefaultValuesAndTypes;
+    private $propertyDefaultValuesAndTypes;
 
     /**
      * ChildNodeWithVariantWasCreated constructor.
@@ -68,4 +68,51 @@ class ChildNodeWithVariantWasCreated implements EventInterface
         $this->propertyDefaultValuesAndTypes = $propertyDefaultValuesAndTypes;
     }
 
+    /**
+     * @return NodeIdentifier
+     */
+    public function getParentNodeIdentifier(): NodeIdentifier
+    {
+        return $this->parentNodeIdentifier;
+    }
+
+    /**
+     * @return NodeIdentifier
+     */
+    public function getNodeIdentifier(): NodeIdentifier
+    {
+        return $this->nodeIdentifier;
+    }
+
+    /**
+     * @return NodeName
+     */
+    public function getNodeName(): NodeName
+    {
+        return $this->nodeName;
+    }
+
+    /**
+     * @return NodeTypeName
+     */
+    public function getNodeTypeName(): NodeTypeName
+    {
+        return $this->nodeTypeName;
+    }
+
+    /**
+     * @return DimensionValues
+     */
+    public function getDimensionValues(): DimensionValues
+    {
+        return $this->dimensionValues;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPropertyDefaultValuesAndTypes(): array
+    {
+        return $this->propertyDefaultValuesAndTypes;
+    }
 }

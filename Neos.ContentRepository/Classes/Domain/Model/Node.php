@@ -1151,6 +1151,8 @@ class Node implements NodeInterface, CacheAwareInterface
             new DimensionValues($this->context->getTargetDimensionValues())
         );
 
+        $this->nodeCommandHandler->
+
         $newNode = $this->legacyCreateNode($name, $nodeType, $identifier);
 
         $this->emitNodeAdded($newNode);

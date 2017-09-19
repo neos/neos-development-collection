@@ -8,38 +8,38 @@ use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 
-class CreateChildNodeWithVariant
+final class CreateChildNodeWithVariant
 {
 
     /**
      * @var EditingSessionIdentifier
      */
-    protected $editingSessionIdentifier;
+    private $editingSessionIdentifier;
 
     /**
      * @var NodeIdentifier
      */
-    protected $parentNodeIdentifier;
+    private $parentNodeIdentifier;
 
     /**
      * @var NodeIdentifier
      */
-    protected $nodeIdentifier;
+    private $nodeIdentifier;
 
     /**
      * @var NodeName
      */
-    protected $nodeName;
+    private $nodeName;
 
     /**
      * @var NodeTypeName
      */
-    protected $nodeTypeName;
+    private $nodeTypeName;
 
     /**
      * @var DimensionValues
      */
-    protected $dimensionValues;
+    private $dimensionValues;
 
     public function __construct(
         EditingSessionIdentifier $editingSessionIdentifier,
