@@ -29,9 +29,9 @@ abstract class AbstractContentGraph implements ContentProjection\ContentGraphInt
 
     /**
      * @Flow\Inject
-     * @var ContentRepository\Repository\WorkspaceRepository
+     * @var ContentRepository\Projection\Workspace\WorkspaceFinder
      */
-    protected $workspaceRepository;
+    protected $workspaceFinder;
 
     /**
      * @var array|ContentProjection\ContentSubgraphInterface[]
@@ -41,25 +41,24 @@ abstract class AbstractContentGraph implements ContentProjection\ContentGraphInt
 
     final public function initializeObject()
     {
-        foreach ($this->workspaceRepository->findAll() as $workspace) {
-            /** @var ContentRepository\Model\Workspace $workspace */
-            $editingSessionName = $workspace->getName();
+        foreach ($this->workspaceFinder->findAll() as $workspace) {
+            $contentStreamIdentifier = null;
             foreach ($this->dimensionValueCombinationRepository->findAll() as $dimensionValueCombination) {
-                $subgraphIdentity = array_merge(['editingSession' => $editingSessionName], $dimensionValueCombination->toArray());
+                $subgraphIdentity = array_merge(['contentStreamIdentifier' => $contentStreamIdentifier], $dimensionValueCombination->toArray());
                 $identifier = ContentRepository\Utility\SubgraphUtility::hashIdentityComponents($subgraphIdentity);
-                $this->subgraphs[$identifier] = $this->createSubgraph($editingSessionName, $dimensionValueCombination);
+                $this->subgraphs[$identifier] = $this->createSubgraph($contentStreamIdentifier, $dimensionValueCombination);
             }
         }
     }
 
 
-    final public function getSubgraph(string $editingSessionName, ContentRepository\ValueObject\DimensionValueCombination $dimensionValues): ContentProjection\ContentSubgraphInterface
+    final public function getSubgraph(ContentRepository\ValueObject\ContentStreamIdentifier $contentStreamIdentifier, ContentRepository\ValueObject\DimensionValueCombination $dimensionValues): ContentProjection\ContentSubgraphInterface
     {
-        $subgraphIdentity = array_merge(['editingSession' => $editingSessionName], $dimensionValues->toArray());
+        $subgraphIdentity = array_merge(['contentStreamIdentifier' => $contentStreamIdentifier], $dimensionValues->toArray());
         $identifier = ContentRepository\Utility\SubgraphUtility::hashIdentityComponents($subgraphIdentity);
 
         if (!isset($this->subgraphs[$identifier])) {
-            \Neos\Flow\var_dump($dimensionValues, $editingSessionName);
+            \Neos\Flow\var_dump($dimensionValues, $contentStreamIdentifier);
             exit();
         }
         return $this->subgraphs[$identifier];
@@ -73,5 +72,5 @@ abstract class AbstractContentGraph implements ContentProjection\ContentGraphInt
         return $this->subgraphs;
     }
 
-    abstract protected function createSubgraph(string $editingSessionName, ContentRepository\ValueObject\DimensionValueCombination $dimensionValues): ContentProjection\ContentSubgraphInterface;
+    abstract protected function createSubgraph(ContentRepository\ValueObject\ContentStreamIdentifier $contentStreamIdentifier, ContentRepository\ValueObject\DimensionValueCombination $dimensionValues): ContentProjection\ContentSubgraphInterface;
 }

@@ -71,7 +71,7 @@ class Node
     public static function fromNodeWasInserted(Event\NodeWasInserted $event): Node
     {
         $subgraphIdentity = $event->getContentDimensionValues();
-        $subgraphIdentity['editingSession'] = 'live';
+        $subgraphIdentity['contentStreamIdentifier'] = 'live';
 
         return new Node(
             $event->getVariantIdentifier(),
@@ -85,7 +85,7 @@ class Node
     public static function fromNodeVariantWasCreated(Event\NodeVariantWasCreated $event, Node $fallbackNode): Node
     {
         $subgraphIdentity = $event->getContentDimensionValues();
-        $subgraphIdentity['editingSession'] = 'live';
+        $subgraphIdentity['contentStreamIdentifier'] = 'live';
 
         $properties = $event->getStrategy() === Event\NodeVariantWasCreated::STRATEGY_COPY
             ? Arrays::arrayMergeRecursiveOverrule($fallbackNode->properties, $event->getProperties())

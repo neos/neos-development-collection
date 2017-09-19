@@ -74,5 +74,5 @@ interface ContentSubgraphInterface
 
     public function getDimensionValues(): Domain\ValueObject\DimensionValueCombination;
 
-    public function getEditingSessionName(): string;
+    public function getContentStreamIdentifier(): Domain\ValueObject\ContentStreamIdentifier;
 }

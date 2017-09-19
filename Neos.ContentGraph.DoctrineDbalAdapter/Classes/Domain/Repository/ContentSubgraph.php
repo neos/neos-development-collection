@@ -51,9 +51,9 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     protected $nodeTypeConstraintService;
 
     /**
-     * @var string
+     * @var ContentRepository\ValueObject\ContentStreamIdentifier
      */
-    protected $editingSessionName;
+    protected $contentStreamIdentifier;
 
     /**
      * @var ContentRepository\ValueObject\DimensionValueCombination
@@ -66,11 +66,11 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     protected $identifier;
 
 
-    public function __construct(string $editingSessionName, ContentRepository\ValueObject\DimensionValueCombination $dimensionValues)
+    public function __construct(ContentRepository\ValueObject\ContentStreamIdentifier $contentStreamIdentifier, ContentRepository\ValueObject\DimensionValueCombination $dimensionValues)
     {
-        $this->editingSessionName = $editingSessionName;
+        $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionValues = $dimensionValues;
-        $this->identifier = ContentRepository\Utility\SubgraphUtility::hashIdentityComponents(array_merge($dimensionValues->toArray(), ['editingSession' => $editingSessionName]));
+        $this->identifier = ContentRepository\Utility\SubgraphUtility::hashIdentityComponents(array_merge($dimensionValues->toArray(), ['contentStreamIdentifier' => $contentStreamIdentifier]));
     }
 
 
@@ -84,9 +84,9 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         return $this->dimensionValues;
     }
 
-    public function getEditingSessionName(): string
+    public function getContentStreamIdentifier(): ContentRepository\ValueObject\ContentStreamIdentifier
     {
-        return $this->editingSessionName;
+        return $this->contentStreamIdentifier;
     }
 
     /**
@@ -293,7 +293,8 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         $node->properties = new ContentProjection\PropertyCollection(json_decode($nodeData['properties'], true));
         $node->name = $nodeData['name'];
         $node->index = $nodeData['index'];
-        $node->workspace = $this->workspaceRepository->findByIdentifier($this->editingSessionName);
+        #@todo fetch workspace from finder using the content stream identifier
+        #$node->workspace = $this->workspaceRepository->findByIdentifier($this->contentStreamIdentifier);
         $node->subgraphIdentifier = $nodeData['subgraphidentifier'];
 
         return $node;
