@@ -34,9 +34,9 @@ interface ContentSubgraphInterface
      * @param int|null $limit
      * @param int|null $offset
      * @param Domain\Service\Context|null $contentContext
-     * @return array
+     * @return array|Domain\Model\NodeInterface[]
      */
-    public function findNodesByParent(Domain\ValueObject\NodeIdentifier $parentIdentifier, Domain\ValueObject\NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null, Domain\Service\Context $contentContext = null): array;
+    public function findChildNodes(Domain\ValueObject\NodeIdentifier $parentIdentifier, Domain\ValueObject\NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null, Domain\Service\Context $contentContext = null): array;
 
     public function countChildNodes(Domain\ValueObject\NodeIdentifier $parentIdentifier, Domain\ValueObject\NodeTypeConstraints $nodeTypeConstraints = null): int;
 
@@ -52,13 +52,13 @@ interface ContentSubgraphInterface
      * @param Domain\Service\Context|null $contentContext
      * @return Domain\Model\NodeInterface|null
      */
-    public function findFirstChild(Domain\ValueObject\NodeIdentifier $parentIdentifier, Domain\Service\Context $contentContext = null);
+    public function findFirstChildNode(Domain\ValueObject\NodeIdentifier $parentIdentifier, Domain\Service\Context $contentContext = null);
 
     /**
      * @param string $path
      * @return Domain\Model\NodeInterface|null
      */
-    public function findByPath(string $path);
+    public function findNodeByPath(string $path);
 
     /**
      * @param Domain\ValueObject\NodeIdentifier $parentIdentifier
@@ -66,7 +66,7 @@ interface ContentSubgraphInterface
      * @param Domain\Service\Context|null $contentContext
      * @return Domain\Model\NodeInterface|null
      */
-    public function findNodeByParentAlongPath(Domain\ValueObject\NodeIdentifier $parentIdentifier, string $edgeName, Domain\Service\Context $contentContext = null);
+    public function findChildNodeAlongPath(Domain\ValueObject\NodeIdentifier $parentIdentifier, string $edgeName, Domain\Service\Context $contentContext = null);
 
     /**
      * @param string $nodeTypeName

@@ -284,7 +284,7 @@ class Context
      */
     public function getNode($path)
     {
-        return $this->getSubgraph()->findByPath($path);
+        return $this->getSubgraph()->findNodeByPath($path);
     }
 
     /**

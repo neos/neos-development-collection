@@ -133,7 +133,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
      * @param ContentRepository\Service\Context|null $context
      * @return array
      */
-    public function findNodesByParent(
+    public function findChildNodes(
         ContentRepository\ValueObject\NodeIdentifier $parentIdentifier,
         ContentRepository\ValueObject\NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
@@ -214,7 +214,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
      * @param ContentRepository\Service\Context|null $context
      * @return ContentRepository\Model\NodeInterface|null
      */
-    public function findFirstChild(ContentRepository\ValueObject\NodeIdentifier $parentIdentifier, ContentRepository\Service\Context $context = null)
+    public function findFirstChildNode(ContentRepository\ValueObject\NodeIdentifier $parentIdentifier, ContentRepository\Service\Context $context = null)
     {
         $nodeData = $this->getDatabaseConnection()->executeQuery(
             'SELECT c.* FROM neos_contentgraph_node p
@@ -236,7 +236,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
      * @param string $path
      * @return ContentRepository\Model\NodeInterface|null
      */
-    public function findByPath(string $path)
+    public function findNodeByPath(string $path)
     {
         $edgeNames = explode('/', trim($path, '/'));
         $currentNode = $this->findRootNode();
@@ -256,7 +256,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
      * @param ContentRepository\Service\Context|null $context
      * @return ContentRepository\Model\NodeInterface|null
      */
-    public function findNodeByParentAlongPath(ContentRepository\ValueObject\NodeIdentifier $parentIdentifier, string $edgeName, ContentRepository\Service\Context $context = null)
+    public function findChildNodeAlongPath(ContentRepository\ValueObject\NodeIdentifier $parentIdentifier, string $edgeName, ContentRepository\Service\Context $context = null)
     {
         $nodeData = $this->getDatabaseConnection()->executeQuery(
             'SELECT c.* FROM neos_contentgraph_node p
