@@ -36,6 +36,9 @@ class WorkspaceDescription implements \JsonSerializable
      */
     protected function setDescription(string $description)
     {
+        if (preg_match('/^[\p{L}\p{P}\d \.]{0,500}$/u', $description) !== 1) {
+            throw new \InvalidArgumentException('Invalid workspace description given.', 1505831660363);
+        }
         $this->description = $description;
     }
 

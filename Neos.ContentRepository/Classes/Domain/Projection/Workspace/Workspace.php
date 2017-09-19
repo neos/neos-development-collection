@@ -48,4 +48,24 @@ final class Workspace
      * @var string
      */
     public $workspaceOwner;
+
+    /**
+     * Checks if this workspace is shared across all editors
+     *
+     * @return boolean
+     */
+    public function isInternalWorkspace()
+    {
+        return $this->baseWorkspaceName !== null && $this->workspaceOwner === null;
+    }
+
+    /**
+     * Checks if this workspace is public to everyone, even without authentication
+     *
+     * @return boolean
+     */
+    public function isPublicWorkspace()
+    {
+        return $this->baseWorkspaceName === null && $this->workspaceOwner === null;
+    }
 }

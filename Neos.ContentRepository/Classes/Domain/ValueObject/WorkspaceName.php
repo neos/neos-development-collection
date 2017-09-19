@@ -36,7 +36,7 @@ class WorkspaceName implements \JsonSerializable
      */
     protected function setName(string $name)
     {
-        if (preg_match('/^[\p{L}\p{P}\d \.]{2,255}$/u', $name) !== 1) {
+        if (preg_match('/^[\p{L}\p{P}\d \.]{1,200}$/u', $name) !== 1) {
             throw new \InvalidArgumentException('Invalid workspace name given.', 1505826610318);
         }
         $this->name = $name;

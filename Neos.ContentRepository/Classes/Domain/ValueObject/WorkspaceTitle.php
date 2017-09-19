@@ -34,7 +34,7 @@ class WorkspaceTitle implements \JsonSerializable
      */
     protected function setTitle(string $title)
     {
-        if (preg_match('/^[\p{L}\p{P}\d \.]{2,255}$/u', $title) !== 1) {
+        if (preg_match('/^[\p{L}\p{P}\d \.]{1,200}$/u', $title) !== 1) {
             throw new \InvalidArgumentException('Invalid workspace title given.', 1505827170288);
         }
         $this->title = $title;
