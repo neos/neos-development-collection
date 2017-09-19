@@ -5,8 +5,8 @@
     "type": "neos-package-collection",
     "require": {
         "neos/flow-development-collection": "dev-master",
-        "neos/arboretum": "dev-master",
-        "neos/arboretum-doctrinedbaladapter": "dev-master",
+        "neos/contentgraph": "dev-master",
+        "neos/contentgraph-doctrinedbaladapter": "dev-master",
         "neos/flow": "*",
         "neos/cache": "*",
         "neos/eel": "*",
