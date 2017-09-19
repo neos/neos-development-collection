@@ -38,6 +38,7 @@ final class ChildNodeWithVariantWasCreated implements EventInterface
 
     /**
      * (property name => PropertyValue)
+     *
      * @var array
      */
     private $propertyDefaultValuesAndTypes;
@@ -50,7 +51,7 @@ final class ChildNodeWithVariantWasCreated implements EventInterface
      * @param NodeName $nodeName
      * @param NodeTypeName $nodeTypeName
      * @param DimensionValues $dimensionValues
-     * @param $propertyDefaultValuesAndTypes
+     * @param array $propertyDefaultValuesAndTypes
      */
     public function __construct(
         NodeIdentifier $parentNodeIdentifier,
@@ -58,7 +59,7 @@ final class ChildNodeWithVariantWasCreated implements EventInterface
         NodeName $nodeName,
         NodeTypeName $nodeTypeName,
         DimensionValues $dimensionValues,
-        $propertyDefaultValuesAndTypes
+        array $propertyDefaultValuesAndTypes
     ) {
         $this->parentNodeIdentifier = $parentNodeIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;

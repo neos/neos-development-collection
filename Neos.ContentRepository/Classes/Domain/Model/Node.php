@@ -1159,7 +1159,6 @@ class Node implements NodeInterface, CacheAwareInterface
     {
         $this->emitBeforeNodeCreate($this, $name, $nodeType, $identifier);
 
-
         $nodeName = new NodeName($name);
         $parentNodeIdentifier = new NodeIdentifier($this->getIdentifier());
         $nodeIdentifier = new NodeIdentifier();

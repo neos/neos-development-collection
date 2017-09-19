@@ -22,16 +22,25 @@ final class DimensionValues implements \JsonSerializable
      */
     private $values;
 
+    /**
+     * @param array $values
+     */
     public function __construct(array $values)
     {
         $this->values = $values;
     }
 
+    /**
+     * @return array
+     */
+    public function getValues(): array
+    {
+        return $this->values;
+    }
+
     function jsonSerialize()
     {
-        return [
-            'values' => $this->values
-        ];
+        return ['values' => $this->values];
     }
 
     public function __toString()
