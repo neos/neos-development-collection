@@ -50,6 +50,16 @@ final class DimensionValueCombination implements \JsonSerializable
         return $this->dimensionValues;
     }
 
+    public function toLegacyDimensionArray(): array
+    {
+        $legacyDimensions = [];
+        foreach ($this->dimensionValues as $dimensionName => $dimensionValue) {
+            $legacyDimensions[$dimensionName] = [$dimensionValue];
+        }
+
+        return $legacyDimensions;
+    }
+
     public function toArray(): array
     {
         return $this->dimensionValues;

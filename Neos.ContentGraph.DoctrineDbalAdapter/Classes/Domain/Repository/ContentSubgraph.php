@@ -51,6 +51,20 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     protected $nodeTypeConstraintService;
 
     /**
+     * @Flow\Inject
+     * @var ContentRepository\Repository\NodeDataRepository
+     * @todo get rid of this
+     */
+    protected $nodeDataRepository;
+
+    /**
+     * @Flow\Inject
+     * @var ContentProjection\ContentGraphInterface
+     * @todo get rid of this
+     */
+    protected $contentGraph;
+
+    /**
      * @var ContentRepository\ValueObject\ContentStreamIdentifier
      */
     protected $contentStreamIdentifier;
@@ -204,7 +218,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         $edgeNames = explode('/', trim($path, '/'));
         $currentNode = $this->findRootNode();
         foreach ($edgeNames as $edgeName) {
-            $currentNode = $this->findNodeByParentAlongPath($currentNode->getIdentifier(), $edgeName);
+            $currentNode = $this->findNodeByParentAlongPath(ContentRepository\ValueObject\NodeIdentifier::fromString($currentNode->getIdentifier()), $edgeName);
             if (!$currentNode) {
                 return null;
             }
@@ -277,7 +291,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         ContentRepository\Service\Context $context = null
     ) {
         $callback($parent);
-        foreach ($this->findNodesByParent($parent->getIdentifier()) as $childNode) {
+        foreach ($this->findNodesByParent(ContentRepository\ValueObject\NodeIdentifier::fromString($parent->getIdentifier())) as $childNode) {
             $this->traverse($childNode, $nodeTypeConstraints, $callback, $context);
         }
     }
@@ -287,7 +301,17 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         $nodeType = $this->nodeTypeManager->getNodeType($nodeData['nodetypename']);
         $className = $nodeType->getNodeInterfaceImplementationClassName();
 
-        $node = new $className(null, $context);
+        $subgraphWasCreatedIn = $this->contentGraph->getSubgraphByIdentifier($nodeData['subgraphidentifier']);
+        $legacyDimensionValues = $subgraphWasCreatedIn->getDimensionValues()->toLegacyDimensionArray();
+        $query = $this->nodeDataRepository->createQuery();
+        $nodeData = $query->matching(
+            $query->logicalAnd([
+                $query->equals('identifier', $nodeData['identifierinsubgraph']),
+                $query->equals('dimensionsHash', Utility::sortDimensionValueArrayAndReturnDimensionsHash($legacyDimensionValues))
+            ])
+        );
+
+        $node = new $className($nodeData, $context);
         $node->nodeType = $nodeType;
         $node->identifier = new ContentRepository\ValueObject\NodeIdentifier($nodeData['identifierinsubgraph']);
         $node->properties = new ContentProjection\PropertyCollection(json_decode($nodeData['properties'], true));

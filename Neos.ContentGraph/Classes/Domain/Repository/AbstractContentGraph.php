@@ -57,11 +57,12 @@ abstract class AbstractContentGraph implements ContentProjection\ContentGraphInt
         $subgraphIdentity = array_merge(['contentStreamIdentifier' => $contentStreamIdentifier], $dimensionValues->toArray());
         $identifier = ContentRepository\Utility\SubgraphUtility::hashIdentityComponents($subgraphIdentity);
 
-        if (!isset($this->subgraphs[$identifier])) {
-            \Neos\Flow\var_dump($dimensionValues, $contentStreamIdentifier);
-            exit();
-        }
-        return $this->subgraphs[$identifier];
+        return $this->getSubgraphByIdentifier($identifier);
+    }
+
+    final public function getSubgraphByIdentifier(string $subgraphIdentifier): ContentProjection\ContentSubgraphInterface
+    {
+        return $this->subgraphs[$subgraphIdentifier];
     }
 
     /**

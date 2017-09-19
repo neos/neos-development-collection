@@ -290,12 +290,13 @@ class Context
     /**
      * Get a node by identifier and this context
      *
-     * @param Domain\ValueObject\NodeIdentifier $identifier The identifier of a node
+     * @param string $identifier The identifier of a node
      * @return NodeInterface|null The node with the given identifier or NULL if no such node exists
      */
     public function getNodeByIdentifier($identifier)
     {
-        return $this->getSubgraph()->findNodeByIdentifier($identifier);
+        $nodeIdentifier = Domain\ValueObject\NodeIdentifier::fromString($identifier);
+        return $this->getSubgraph()->findNodeByIdentifier($nodeIdentifier);
     }
 
     /**
@@ -304,14 +305,15 @@ class Context
      * A variant of a node can have different dimension values and path (for non-aggregate nodes).
      * The resulting node instances might belong to a different context.
      *
-     * @param Domain\ValueObject\NodeIdentifier $identifier The identifier of a node
+     * @param string $identifier The identifier of a node
      * @return array<\Neos\ContentRepository\Domain\Model\NodeInterface>|Domain\Model\NodeInterface[]
      */
-    public function getNodeVariantsByIdentifier(Domain\ValueObject\NodeIdentifier $identifier): array
+    public function getNodeVariantsByIdentifier($identifier): array
     {
+        $nodeIdentifier = Domain\ValueObject\NodeIdentifier::fromString($identifier);
         $nodeVariants = [];
         foreach ($this->contentGraph->getSubgraphs() as $subgraph) {
-            $nodeVariant = $subgraph->findNodeByIdentifier($identifier);
+            $nodeVariant = $subgraph->findNodeByIdentifier($nodeIdentifier);
             if ($nodeVariant instanceof Domain\Model\NodeInterface) {
                 $nodeVariants[] = $nodeVariant;
             }

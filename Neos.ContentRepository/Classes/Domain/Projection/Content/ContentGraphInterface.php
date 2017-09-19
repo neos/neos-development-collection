@@ -21,6 +21,8 @@ interface ContentGraphInterface
 {
     public function getSubgraph(Domain\ValueObject\ContentStreamIdentifier $contentStreamIdentifier, Domain\ValueObject\DimensionValueCombination $dimensionValues): ContentSubgraphInterface;
 
+    public function getSubgraphByIdentifier(string $subgraphIdentifier): ContentSubgraphInterface;
+
     /**
      * @return array|ContentSubgraphInterface[]
      */

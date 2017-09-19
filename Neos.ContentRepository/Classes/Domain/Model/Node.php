@@ -146,11 +146,11 @@ class Node implements NodeInterface, CacheAwareInterface
     protected $nodeTypeConstraintService;
 
     /**
-     * @param NodeData|null $nodeData
+     * @param NodeData $nodeData
      * @param Context $context
      * @Flow\Autowiring(false)
      */
-    public function __construct(NodeData $nodeData = null, Context $context)
+    public function __construct(NodeData $nodeData, Context $context)
     {
         $this->nodeData = $nodeData;
         $this->context = $context;
@@ -406,8 +406,8 @@ class Node implements NodeInterface, CacheAwareInterface
     public function getOtherNodeVariants()
     {
         return array_filter(
-            $this->context->getNodeVariantsByIdentifier($this->getIdentifier()),
-            function ($node) {
+            $this->context->getNodeVariantsByIdentifier($this->identifier),
+            function (NodeInterface $node) {
                 return ($node->getNodeData() !== $this->nodeData);
             }
         );
@@ -477,7 +477,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getName(): string
     {
-        return $this->name;
+        return $this->name ?: $this->nodeData->getName();
     }
 
     /**
@@ -526,12 +526,12 @@ class Node implements NodeInterface, CacheAwareInterface
     /**
      * Returns the identifier of this node
      *
-     * @return NodeIdentifier
+     * @return string
      * @api
      */
-    public function getIdentifier(): NodeIdentifier
+    public function getIdentifier()
     {
-        return $this->identifier ?: new NodeIdentifier($this->nodeData->getIdentifier());
+        return $this->identifier ? (string)$this->identifier : $this->nodeData->getIdentifier();
     }
 
     /**
@@ -1389,7 +1389,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getNode($path)
     {
-        return $this->context->getSubgraph()->findNodeByParentAlongPath($this->getIdentifier(), $path, $this->context);
+        return $this->context->getSubgraph()->findNodeByParentAlongPath($this->identifier, $path, $this->context);
     }
 
     /**
@@ -1403,7 +1403,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getPrimaryChildNode()
     {
-        return $this->context->getSubgraph()->findFirstChild($this->getIdentifier(), $this->context);
+        return $this->context->getSubgraph()->findFirstChild($this->identifier, $this->context);
     }
 
     /**
@@ -1432,7 +1432,7 @@ class Node implements NodeInterface, CacheAwareInterface
     public function getNumberOfChildNodes($nodeTypeFilter = null)
     {
         $nodeTypeConstraints = $this->nodeTypeConstraintService->unserializeFilters($nodeTypeFilter);
-        return $this->context->getSubgraph()->countChildNodes($this->getIdentifier(), $nodeTypeConstraints);
+        return $this->context->getSubgraph()->countChildNodes($this->identifier, $nodeTypeConstraints);
     }
 
     /**
@@ -1502,7 +1502,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function isRemoved()
     {
-        return false;
+        return $this->nodeData->isRemoved();
     }
 
     /**
@@ -1541,8 +1541,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function isHidden()
     {
-        return false;
-        #return $this->nodeData->isHidden();
+        return $this->nodeData->isHidden();
     }
 
     /**
@@ -1581,8 +1580,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getHiddenBeforeDateTime()
     {
-        return null;
-        #return $this->nodeData->getHiddenBeforeDateTime();
+        return $this->nodeData->getHiddenBeforeDateTime();
     }
 
     /**
@@ -1621,8 +1619,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getHiddenAfterDateTime()
     {
-        return null;
-        #return $this->nodeData->getHiddenAfterDateTime();
+        return $this->nodeData->getHiddenAfterDateTime();
     }
 
     /**
@@ -1661,8 +1658,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function isHiddenInIndex()
     {
-        return false;
-        #return $this->nodeData->isHiddenInIndex();
+        return $this->nodeData->isHiddenInIndex();
     }
 
     /**
@@ -1701,8 +1697,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getAccessRoles()
     {
-        return [];
-        #return $this->nodeData->getAccessRoles();
+        return $this->nodeData->getAccessRoles();
     }
 
     /**
@@ -1714,8 +1709,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function hasAccessRestrictions()
     {
-        return false;
-        #return $this->nodeData->hasAccessRestrictions();
+        return $this->nodeData->hasAccessRestrictions();
     }
 
     /**
@@ -1729,8 +1723,6 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function isVisible()
     {
-        return true;
-        /*
         if ($this->nodeData->isVisible() === false) {
             return false;
         }
@@ -1743,7 +1735,6 @@ class Node implements NodeInterface, CacheAwareInterface
         }
 
         return true;
-        */
     }
 
     /**
@@ -1754,8 +1745,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function isAccessible()
     {
-        return true;
-        #return $this->nodeData->isAccessible();
+        return $this->nodeData->isAccessible();
     }
 
     /**
@@ -1876,6 +1866,7 @@ class Node implements NodeInterface, CacheAwareInterface
 
     /**
      * @return NodeData
+     * @todo this may lead to major problems regarding non-node data based implementations
      */
     public function getNodeData()
     {
@@ -1900,7 +1891,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getDimensions()
     {
-        return $this->nodeData->getDimensionValues();
+        return $this->contentDimensionValues->toLegacyDimensionArray();
     }
 
     /**
@@ -1982,6 +1973,7 @@ class Node implements NodeInterface, CacheAwareInterface
      *
      * TODO: As it is used in the Workspace this should become part of the interface in the next major release.
      *
+     * @todo this may lead to major problems regarding non-node data based implementations but luckily this is not part of the NodeInterface...
      * @param NodeData $nodeData
      * @return void
      */

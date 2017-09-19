@@ -353,7 +353,7 @@ interface NodeInterface
      * It is okay and recommended to use this identifier for synchronisation purposes
      * as it does not change even if all of the nodes content or its path changes.
      *
-     * @return Domain\ValueObject\NodeIdentifier the node's identifier
+     * @return string the node's identifier
      * @api
      */
     public function getIdentifier();
