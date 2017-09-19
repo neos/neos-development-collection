@@ -117,4 +117,9 @@ class PropertyCollection implements \ArrayAccess, \Iterator
     {
         return $this->properties;
     }
+
+    public function getPropertyNames(): array
+    {
+        return array_keys($this->properties);
+    }
 }
