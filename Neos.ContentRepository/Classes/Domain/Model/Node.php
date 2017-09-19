@@ -1559,7 +1559,7 @@ class Node implements NodeInterface, CacheAwareInterface
         $this->legacySetHiddenBeforeDateTime($dateTime);
     }
 
-    private function legacySetHiddenBeforeDateTime(?\DateTime $dateTime): void
+    private function legacySetHiddenBeforeDateTime(\DateTime $dateTime = null): void
     {
         if (!$this->isNodeDataMatchingContext()) {
             $this->materializeNodeData();
@@ -1599,7 +1599,7 @@ class Node implements NodeInterface, CacheAwareInterface
         $this->legacySetHiddenAfterDateTime($dateTime);
     }
 
-    private function legacySetHiddenAfterDateTime(?\DateTime $dateTime): void
+    private function legacySetHiddenAfterDateTime(\DateTime $dateTime = null): void
     {
         if (!$this->isNodeDataMatchingContext()) {
             $this->materializeNodeData();
