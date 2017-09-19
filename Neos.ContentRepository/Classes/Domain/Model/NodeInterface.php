@@ -14,6 +14,8 @@ use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain;
+use Neos\ContentRepository\Domain\Content;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\Exception\NodeExistsException;
@@ -351,7 +353,7 @@ interface NodeInterface
      * It is okay and recommended to use this identifier for synchronisation purposes
      * as it does not change even if all of the nodes content or its path changes.
      *
-     * @return string the node's UUID
+     * @return Domain\ValueObject\NodeIdentifier the node's identifier
      * @api
      */
     public function getIdentifier();
