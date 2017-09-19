@@ -15,6 +15,7 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Service\DbalClient;
 use Neos\ContentRepository\Domain as ContentRepository;
 use Neos\ContentRepository\Domain\Projection\Content as ContentProjection;
+use Neos\ContentRepository\Utility;
 use Neos\Flow\Annotations as Flow;
 
 /**
