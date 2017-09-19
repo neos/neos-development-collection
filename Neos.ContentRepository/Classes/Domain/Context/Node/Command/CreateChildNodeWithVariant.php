@@ -56,4 +56,54 @@ class CreateChildNodeWithVariant
         $this->nodeTypeName = $nodeTypeName;
         $this->dimensionValues = $dimensionValues;
     }
+
+    /**
+     * @return EditingSessionIdentifier
+     */
+    public function getEditingSessionIdentifier(): EditingSessionIdentifier
+    {
+        return $this->editingSessionIdentifier;
+    }
+
+    /**
+     * @return NodeIdentifier
+     */
+    public function getParentNodeIdentifier(): NodeIdentifier
+    {
+        return $this->parentNodeIdentifier;
+    }
+
+    /**
+     * @return NodeIdentifier
+     */
+    public function getNodeIdentifier(): NodeIdentifier
+    {
+        return $this->nodeIdentifier;
+    }
+
+    /**
+     * @return NodeName
+     */
+    public function getNodeName(): NodeName
+    {
+        return $this->nodeName;
+    }
+
+    /**
+     * @return NodeTypeName
+     */
+    public function getNodeTypeName(): NodeTypeName
+    {
+        return $this->nodeTypeName;
+    }
+
+    /**
+     * @return DimensionValues
+     */
+    public function getDimensionValues(): DimensionValues
+    {
+        return $this->dimensionValues;
+    }
+
+
 }

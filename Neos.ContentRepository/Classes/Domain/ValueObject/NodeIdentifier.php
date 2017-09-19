@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  * source code.
  */
 
+use Neos\ContentRepository\Utility;
 use Neos\Flow\Utility\Algorithms;
 
 final class NodeIdentifier implements \JsonSerializable
@@ -27,10 +28,16 @@ final class NodeIdentifier implements \JsonSerializable
         return new NodeIdentifier(Algorithms::generateUUID());
     }
 
+    public static function forAutoCreatedChildNode(NodeName $childNodeName, NodeIdentifier $nodeIdentifier): NodeIdentifier
+    {
+        return new NodeIdentifier(Utility::buildAutoCreatedChildNodeIdentifier((string)$childNodeName, (string)$nodeIdentifier));
+    }
+
     public function __construct(string $identifier)
     {
         $this->identifier = $identifier;
     }
+
 
     function jsonSerialize()
     {
