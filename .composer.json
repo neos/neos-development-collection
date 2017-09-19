@@ -4,9 +4,7 @@
   "license": "GPL-3.0+",
   "type": "neos-package-collection",
   "require": {
-    "neos/flow-development-collection": "dev-master",
-    "neos/arboretum": "dev-master",
-    "neos/arboretum-doctrinedbaladapter": "dev-master"
+    "neos/flow-development-collection": "dev-master"
   },
   "replace": {
   },
