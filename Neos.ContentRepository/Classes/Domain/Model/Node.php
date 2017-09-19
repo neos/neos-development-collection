@@ -19,12 +19,12 @@ use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\ContentRepository\Domain;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Utility\ObjectAccess;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
-use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
@@ -54,6 +54,46 @@ class Node implements NodeInterface, CacheAwareInterface
      * @var Context
      */
     protected $context;
+
+    /**
+     * @var NodeIdentifier
+     */
+    public $identifier;
+
+    /**
+     * @var string
+     */
+    public $index;
+
+    /**
+     * @var string
+     */
+    public $name;
+
+    /**
+     * @var NodeType
+     */
+    public $nodeType;
+
+    /**
+     * @var PropertyCollection
+     */
+    public $properties;
+
+    /**
+     * @var Workspace
+     */
+    public $workspace;
+
+    /**
+     * @var string
+     */
+    public $subgraphIdentifier;
+
+    /**
+     * @var Domain\ValueObject\DimensionValueCombination
+     */
+    public $contentDimensionValues;
 
     /**
      * Defines if the NodeData represented by this Node is already
@@ -99,11 +139,18 @@ class Node implements NodeInterface, CacheAwareInterface
     protected $nodeCommandHandler;
 
     /**
-     * @param NodeData $nodeData
+     * @Flow\Inject
+     * @var Domain\Service\NodeTypeConstraintService
+     * Dependency to be removed once the dependency on the context is removed as well
+     */
+    protected $nodeTypeConstraintService;
+
+    /**
+     * @param NodeData|null $nodeData
      * @param Context $context
      * @Flow\Autowiring(false)
      */
-    public function __construct(NodeData $nodeData, Context $context)
+    public function __construct(NodeData $nodeData = null, Context $context)
     {
         $this->nodeData = $nodeData;
         $this->context = $context;
@@ -431,9 +478,9 @@ class Node implements NodeInterface, CacheAwareInterface
      * @return string
      * @api
      */
-    public function getName()
+    public function getName(): string
     {
-        return $this->nodeData->getName();
+        return $this->name;
     }
 
     /**
@@ -476,18 +523,18 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getWorkspace()
     {
-        return $this->nodeData->getWorkspace();
+        return $this->workspace ?: $this->nodeData->getWorkspace();
     }
 
     /**
      * Returns the identifier of this node
      *
-     * @return string the node's UUID (unique within the workspace)
+     * @return NodeIdentifier
      * @api
      */
-    public function getIdentifier()
+    public function getIdentifier(): NodeIdentifier
     {
-        return $this->nodeData->getIdentifier();
+        return $this->identifier ?: new NodeIdentifier($this->nodeData->getIdentifier());
     }
 
     /**
@@ -945,7 +992,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function hasProperty($propertyName)
     {
-        return $this->nodeData->hasProperty($propertyName);
+        return $this->properties ? $this->properties->offsetExists($propertyName) : $this->nodeData->hasProperty($propertyName);
     }
 
     /**
@@ -961,38 +1008,42 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getProperty($propertyName, $returnNodesAsIdentifiers = false)
     {
-        $value = $this->nodeData->getProperty($propertyName);
-        $nodeType = $this->getNodeType();
+        if ($this->properties) {
+            return $this->properties[$propertyName];
+        } else {
+            $value = $this->nodeData->getProperty($propertyName);
+            $nodeType = $this->getNodeType();
 
-        if ($nodeType !== null) {
-            $expectedPropertyType = $nodeType->getPropertyType($propertyName);
+            if ($nodeType !== null) {
+                $expectedPropertyType = $nodeType->getPropertyType($propertyName);
+            }
+
+            if (
+                isset($expectedPropertyType) &&
+                $expectedPropertyType === 'Neos\Media\Domain\Model\ImageInterface' &&
+                empty($value)
+            ) {
+                return null;
+            }
+
+            if (empty($value)) {
+                return $value;
+            }
+
+            if (!$nodeType->hasConfiguration('properties.' . $propertyName)) {
+                return $value;
+            }
+
+            if ($expectedPropertyType === 'references') {
+                return ($returnNodesAsIdentifiers ? $value : $this->resolvePropertyReferences($value));
+            }
+
+            if ($expectedPropertyType === 'reference') {
+                return ($returnNodesAsIdentifiers ? $value : $this->context->getNodeByIdentifier($value));
+            }
+
+            return $this->propertyMapper->convert($value, $expectedPropertyType);
         }
-
-        if (
-            isset($expectedPropertyType) &&
-            $expectedPropertyType === 'Neos\Media\Domain\Model\ImageInterface' &&
-            empty($value)
-        ) {
-            return null;
-        }
-
-        if (empty($value)) {
-            return $value;
-        }
-
-        if (!$nodeType->hasConfiguration('properties.' . $propertyName)) {
-            return $value;
-        }
-
-        if ($expectedPropertyType === 'references') {
-            return ($returnNodesAsIdentifiers ? $value : $this->resolvePropertyReferences($value));
-        }
-
-        if ($expectedPropertyType === 'reference') {
-            return ($returnNodesAsIdentifiers ? $value : $this->context->getNodeByIdentifier($value));
-        }
-
-        return $this->propertyMapper->convert($value, $expectedPropertyType);
     }
 
     /**
@@ -1062,7 +1113,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getPropertyNames()
     {
-        return $this->nodeData->getPropertyNames();
+        return $this->properties ? $this->properties->getPropertyNames() : $this->nodeData->getPropertyNames();
     }
 
     /**
@@ -1089,12 +1140,12 @@ class Node implements NodeInterface, CacheAwareInterface
     /**
      * Returns the content object of this node (if any).
      *
-     * @return object
+     * @return object|null
      * @api
      */
     public function getContentObject()
     {
-        return $this->nodeData->getContentObject();
+        return $this->nodeData ? $this->nodeData->getContentObject() : null;
     }
 
     /**
@@ -1143,7 +1194,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getNodeType()
     {
-        return $this->nodeData->getNodeType();
+        return $this->nodeType ?: $this->nodeData->getNodeType();
     }
 
     /**
@@ -1280,20 +1331,12 @@ class Node implements NodeInterface, CacheAwareInterface
      * Returns a node specified by the given relative path.
      *
      * @param string $path Path specifying the node, relative to this node
-     * @return NodeInterface The specified node or NULL if no such node exists
+     * @return NodeInterface|null The specified node or NULL if no such node exists
      * @api
      */
     public function getNode($path)
     {
-        $absolutePath = $this->nodeService->normalizePath($path, $this->getPath());
-        $node = $this->context->getFirstLevelNodeCache()->getByPath($absolutePath);
-        if ($node !== false) {
-            return $node;
-        }
-        $node = $this->nodeDataRepository->findOneByPathInContext($absolutePath, $this->context);
-        $this->context->getFirstLevelNodeCache()->setByPath($absolutePath, $node);
-
-        return $node;
+        return $this->context->getSubgraph()->findNodeByParentAlongPath($this->getIdentifier(), $path, $this->context);
     }
 
     /**
@@ -1302,12 +1345,12 @@ class Node implements NodeInterface, CacheAwareInterface
      * Which node acts as a primary child node will in the future depend on the
      * node type. For now it is just the first child node.
      *
-     * @return Node The primary child node or NULL if no such node exists
+     * @return NodeInterface|null The primary child node or NULL if no such node exists
      * @api
      */
     public function getPrimaryChildNode()
     {
-        return $this->nodeDataRepository->findFirstByParentAndNodeTypeInContext($this->getPath(), null, $this->context);
+        return $this->context->getSubgraph()->findFirstChild($this->getIdentifier(), $this->context);
     }
 
     /**
@@ -1322,19 +1365,8 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getChildNodes($nodeTypeFilter = null, $limit = null, $offset = null)
     {
-        $nodes = $this->context->getFirstLevelNodeCache()->getChildNodesByPathAndNodeTypeFilter($this->getPath(), $nodeTypeFilter);
-        if ($nodes === false) {
-            $nodes = $this->nodeDataRepository->findByParentAndNodeTypeInContext($this->getPath(), $nodeTypeFilter, $this->context, false);
-            $this->context->getFirstLevelNodeCache()->setChildNodesByPathAndNodeTypeFilter($this->getPath(), $nodeTypeFilter, $nodes);
-        }
-
-        if ($offset !== null || $limit !== null) {
-            $offset = ($offset === null) ? 0 : $offset;
-
-            return array_slice($nodes, $offset, $limit);
-        }
-
-        return $nodes;
+        $nodeTypeConstraints = $this->nodeTypeConstraintService->unserializeFilters($nodeTypeFilter);
+        return $this->context->getSubgraph()->findNodesByParent($this->getIdentifier(), $nodeTypeConstraints, $limit, $offset, $this->context);
     }
 
     /**
@@ -1346,7 +1378,8 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getNumberOfChildNodes($nodeTypeFilter = null)
     {
-        return $this->nodeData->getNumberOfChildNodes($nodeTypeFilter, $this->context->getWorkspace(), $this->context->getDimensions());
+        $nodeTypeConstraints = $this->nodeTypeConstraintService->unserializeFilters($nodeTypeFilter);
+        return $this->context->getSubgraph()->countChildNodes($this->getIdentifier(), $nodeTypeConstraints);
     }
 
     /**
@@ -1409,7 +1442,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function isRemoved()
     {
-        return $this->nodeData->isRemoved();
+        return false;
     }
 
     /**
@@ -1441,7 +1474,8 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function isHidden()
     {
-        return $this->nodeData->isHidden();
+        return false;
+        #return $this->nodeData->isHidden();
     }
 
     /**
@@ -1473,7 +1507,8 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getHiddenBeforeDateTime()
     {
-        return $this->nodeData->getHiddenBeforeDateTime();
+        return null;
+        #return $this->nodeData->getHiddenBeforeDateTime();
     }
 
     /**
@@ -1505,7 +1540,8 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getHiddenAfterDateTime()
     {
-        return $this->nodeData->getHiddenAfterDateTime();
+        return null;
+        #return $this->nodeData->getHiddenAfterDateTime();
     }
 
     /**
@@ -1537,7 +1573,8 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function isHiddenInIndex()
     {
-        return $this->nodeData->isHiddenInIndex();
+        return false;
+        #return $this->nodeData->isHiddenInIndex();
     }
 
     /**
@@ -1569,7 +1606,8 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getAccessRoles()
     {
-        return $this->nodeData->getAccessRoles();
+        return [];
+        #return $this->nodeData->getAccessRoles();
     }
 
     /**
@@ -1581,7 +1619,8 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function hasAccessRestrictions()
     {
-        return $this->nodeData->hasAccessRestrictions();
+        return false;
+        #return $this->nodeData->hasAccessRestrictions();
     }
 
     /**
@@ -1595,6 +1634,8 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function isVisible()
     {
+        return true;
+        /*
         if ($this->nodeData->isVisible() === false) {
             return false;
         }
@@ -1607,6 +1648,7 @@ class Node implements NodeInterface, CacheAwareInterface
         }
 
         return true;
+        */
     }
 
     /**
@@ -1617,7 +1659,8 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function isAccessible()
     {
-        return $this->nodeData->isAccessible();
+        return true;
+        #return $this->nodeData->isAccessible();
     }
 
     /**
@@ -1713,12 +1756,15 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     protected function isNodeDataMatchingContext()
     {
+        return $this->context->getSubgraph()->getIdentifier() === $this->subgraphIdentifier;
+        /*
         if ($this->nodeDataIsMatchingContext === null) {
             $workspacesMatch = $this->nodeData->getWorkspace() !== null && $this->context->getWorkspace() !== null && $this->nodeData->getWorkspace()->getName() === $this->context->getWorkspace()->getName();
             $this->nodeDataIsMatchingContext = $workspacesMatch && $this->dimensionsAreMatchingTargetDimensionValues();
         }
 
         return $this->nodeDataIsMatchingContext;
+        */
     }
 
     /**
@@ -1822,32 +1868,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function dimensionsAreMatchingTargetDimensionValues()
     {
-        $dimensions = $this->getDimensions();
-        $contextDimensions = $this->context->getDimensions();
-        foreach ($this->context->getTargetDimensions() as $dimensionName => $targetDimensionValue) {
-            if (!isset($dimensions[$dimensionName])) {
-                if ($targetDimensionValue === null) {
-                    continue;
-                } else {
-                    return false;
-                }
-            } elseif ($targetDimensionValue === null && $dimensions[$dimensionName] === array()) {
-                continue;
-            } elseif (!in_array($targetDimensionValue, $dimensions[$dimensionName], true)) {
-                $contextDimensionValues = $contextDimensions[$dimensionName];
-                $targetPositionInContext = array_search($targetDimensionValue, $contextDimensionValues, true);
-                $nodePositionInContext = min(array_map(function ($value) use ($contextDimensionValues) {
-                    return array_search($value, $contextDimensionValues, true);
-                }, $dimensions[$dimensionName]));
-
-                $val = $targetPositionInContext !== false && $nodePositionInContext !== false && $targetPositionInContext >= $nodePositionInContext;
-                if ($val === false) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
+        return $this->contentDimensionValues->equals($this->context->getSubgraph()->getDimensionValues());
     }
 
     /**
