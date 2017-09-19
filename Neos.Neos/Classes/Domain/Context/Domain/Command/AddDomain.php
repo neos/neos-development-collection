@@ -17,7 +17,6 @@ use Neos\Neos\Domain\ValueObject\DomainPort;
 use Neos\Neos\Domain\ValueObject\HostName;
 use Neos\Neos\Domain\ValueObject\HttpScheme;
 
-
 class AddDomain
 {
     /**
@@ -118,6 +117,4 @@ class AddDomain
     {
         $this->port = $port;
     }
-
-
 }

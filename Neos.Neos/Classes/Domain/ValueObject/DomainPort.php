@@ -1,5 +1,6 @@
 <?php
 namespace Neos\Neos\Domain\ValueObject;
+
 /*
  * This file is part of the Neos.Neos package.
  *
