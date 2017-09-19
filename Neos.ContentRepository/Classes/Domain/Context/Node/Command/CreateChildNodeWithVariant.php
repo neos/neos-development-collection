@@ -3,7 +3,7 @@
 namespace Neos\ContentRepository\Domain\Context\Node\Command;
 
 use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
-use Neos\ContentRepository\Domain\ValueObject\EditingSession;
+use Neos\ContentRepository\Domain\ValueObject\EditingSessionIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
@@ -12,9 +12,9 @@ class CreateChildNodeWithVariant
 {
 
     /**
-     * @var EditingSession
+     * @var EditingSessionIdentifier
      */
-    protected $editingSession;
+    protected $editingSessionIdentifier;
 
     /**
      * @var NodeIdentifier
@@ -42,14 +42,14 @@ class CreateChildNodeWithVariant
     protected $dimensionValues;
 
     public function __construct(
-        EditingSession $editingSession,
+        EditingSessionIdentifier $editingSessionIdentifier,
         NodeIdentifier $parentNodeIdentifier,
         NodeIdentifier $nodeIdentifier,
         NodeName $nodeName,
         NodeTypeName $nodeTypeName,
         DimensionValues $dimensionValues
     ) {
-        $this->editingSession = $editingSession;
+        $this->editingSessionIdentifier = $editingSessionIdentifier;
         $this->parentNodeIdentifier = $parentNodeIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;
         $this->nodeName = $nodeName;

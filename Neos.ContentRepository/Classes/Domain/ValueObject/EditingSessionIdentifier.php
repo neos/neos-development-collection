@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  * source code.
  */
 
-final class EditingSession implements \JsonSerializable
+final class EditingSessionIdentifier implements \JsonSerializable
 {
 
     /**

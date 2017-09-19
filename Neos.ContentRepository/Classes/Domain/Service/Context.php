@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\Domain\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ValueObject\EditingSession;
+use Neos\ContentRepository\Domain\ValueObject\EditingSessionIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
@@ -113,7 +113,7 @@ class Context
     protected $firstLevelNodeCache;
 
     /**
-     * @var EditingSession
+     * @var EditingSessionIdentifier
      */
     protected $editingSession;
 
@@ -145,7 +145,7 @@ class Context
 
         // TODO Explicitly get or create the head editing session for the given workspace and user
         // TODO Get user identifier
-        $this->editingSession = new EditingSession(Algorithms::generateUUID(), $this->workspaceName, 'admin');
+        $this->editingSession = new EditingSessionIdentifier(Algorithms::generateUUID(), $this->workspaceName, 'admin');
     }
 
     /**
@@ -506,7 +506,7 @@ class Context
     }
 
     /**
-     * @return EditingSession
+     * @return EditingSessionIdentifier
      */
     public function getEditingSession()
     {
