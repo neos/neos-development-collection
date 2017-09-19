@@ -165,7 +165,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         return $result;
     }
 
-    public function countChildNodes(ContentRepository\ValueObject\NodeIdentifier $parentIdentifier, ContentRepository\ValueObject\NodeTypeConstraints $nodeTypeConstraints = null): int
+    public function countChildNodes(ContentRepository\ValueObject\NodeIdentifier $parentIdentifier, ContentRepository\ValueObject\NodeTypeConstraints $nodeTypeConstraints = null, ContentRepository\Service\Context $contentContext = null): int
     {
         $query = 'SELECT COUNT(identifieringraph) FROM neos_contentgraph_node p
  INNER JOIN neos_contentgraph_hierarchyedge h ON h.parentnodesidentifieringraph = p.identifieringraph
@@ -234,14 +234,15 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
 
     /**
      * @param string $path
+     * @param ContentRepository\Service\Context|null $contentContext
      * @return ContentRepository\Model\NodeInterface|null
      */
-    public function findNodeByPath(string $path)
+    public function findNodeByPath(string $path, ContentRepository\Service\Context $contentContext = null)
     {
         $edgeNames = explode('/', trim($path, '/'));
         $currentNode = $this->findRootNode();
         foreach ($edgeNames as $edgeName) {
-            $currentNode = $this->findChildNodeAlongPath(ContentRepository\ValueObject\NodeIdentifier::fromString($currentNode->getIdentifier()), $edgeName);
+            $currentNode = $this->findChildNodeAlongPath(ContentRepository\ValueObject\NodeIdentifier::fromString($currentNode->getIdentifier()), $edgeName, $contentContext);
             if (!$currentNode) {
                 return null;
             }

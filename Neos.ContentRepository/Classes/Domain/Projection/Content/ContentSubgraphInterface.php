@@ -38,7 +38,7 @@ interface ContentSubgraphInterface
      */
     public function findChildNodes(Domain\ValueObject\NodeIdentifier $parentIdentifier, Domain\ValueObject\NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null, Domain\Service\Context $contentContext = null): array;
 
-    public function countChildNodes(Domain\ValueObject\NodeIdentifier $parentIdentifier, Domain\ValueObject\NodeTypeConstraints $nodeTypeConstraints = null): int;
+    public function countChildNodes(Domain\ValueObject\NodeIdentifier $parentIdentifier, Domain\ValueObject\NodeTypeConstraints $nodeTypeConstraints = null, Domain\Service\Context $contentContext = null): int;
 
     /**
      * @param Domain\ValueObject\NodeIdentifier $childIdentifier
@@ -58,7 +58,7 @@ interface ContentSubgraphInterface
      * @param string $path
      * @return Domain\Model\NodeInterface|null
      */
-    public function findNodeByPath(string $path);
+    public function findNodeByPath(string $path, Domain\Service\Context $contentContext = null);
 
     /**
      * @param Domain\ValueObject\NodeIdentifier $parentIdentifier
