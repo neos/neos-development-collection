@@ -11,8 +11,10 @@ namespace Neos\ContentRepository\Domain\Model;
  * source code.
  */
 
+use Neos\ContentRepository\Exception\NodeConfigurationException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Reflection\ReflectionService;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\Arrays;
 use Neos\Utility\PositionalArraySorter;
@@ -79,6 +81,12 @@ class NodeType
      * @var ObjectManagerInterface
      */
     protected $objectManager;
+
+    /**
+     * @Flow\Inject
+     * @var ReflectionService
+     */
+    protected $reflectionService;
 
     /**
      * @Flow\Inject
@@ -553,6 +561,20 @@ class NodeType
         $constraints = Arrays::arrayMergeRecursiveOverrule($constraints, $childNodeConstraintConfiguration);
 
         return $this->isNodeTypeAllowedByConstraints($nodeType, $constraints);
+    }
+
+    public function getNodeInterfaceImplementationClassName(): string
+    {
+        $customClassName = $this->getConfiguration('class');
+        if (!empty($customClassName)) {
+            if (!class_exists($customClassName)) {
+                throw new NodeConfigurationException('The configured implementation class name "' . $customClassName . '" for NodeType "' . $this . '" does not exist.', 1505805774);
+            } elseif (!$this->reflectionService->isClassImplementationOf($customClassName, NodeInterface::class)) {
+                throw new NodeConfigurationException('The configured implementation class name "' . $customClassName . '" for NodeType "' . $this. '" does not inherit from ' . NodeInterface::class . '.', 1406884014);
+            }
+        } else {
+            return $this->objectManager->getClassNameByObjectName(NodeInterface::class);
+        }
     }
 
     /**
