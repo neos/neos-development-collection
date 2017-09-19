@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Domain\Service;
 
 /*
@@ -450,7 +451,7 @@ class Context
     public function getTargetDimensionValues()
     {
         return array_map(function ($value) {
-            return $value === null ? [] : [ $value ];
+            return $value === null ? [] : [$value];
         }, $this->getTargetDimensions());
     }
 
