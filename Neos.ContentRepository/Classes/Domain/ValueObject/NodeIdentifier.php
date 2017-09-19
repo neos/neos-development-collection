@@ -11,14 +11,12 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Cache\CacheAwareInterface;
 use Neos\ContentRepository\Utility;
 
 /**
  * NodeIdentifier
  */
-use Neos\Cache\CacheAwareInterface;
-use Neos\Flow\Utility\Algorithms;
-
 final class NodeIdentifier implements \JsonSerializable, CacheAwareInterface
 {
     /**
@@ -29,7 +27,37 @@ final class NodeIdentifier implements \JsonSerializable, CacheAwareInterface
     /**
      * @var string
      */
-    protected $identifier;
+    private $identifier;
+
+    /**
+     * NodeIdentifier constructor.
+     *
+     * @param string $identifier
+     */
+    public function __construct(string $identifier = null)
+    {
+        $this->setIdentifier($identifier);
+    }
+
+    /**
+     * @param string $identifier
+     */
+    private function setIdentifier(string $identifier)
+    {
+        if (!preg_match(self::PATTERN, $identifier)) {
+            throw new \InvalidArgumentException('Invalid node identifier "' . $identifier . '" (a node identifier must only contain lowercase characters, numbers and the "-" sign).', 1505840197862);
+        }
+        $this->identifier = $identifier;
+    }
+
+    /**
+     * @param string $identifier
+     * @return static
+     */
+    public static function fromString(string $identifier)
+    {
+        return new NodeIdentifier($identifier);
+    }
 
     /**
      * @param NodeName $childNodeName
@@ -41,24 +69,25 @@ final class NodeIdentifier implements \JsonSerializable, CacheAwareInterface
         return new NodeIdentifier(Utility::buildAutoCreatedChildNodeIdentifier((string)$childNodeName, (string)$nodeIdentifier));
     }
 
-    public function __construct(string $identifier)
-    {
-        if (!preg_match(self::PATTERN, $identifier)) {
-            throw new \InvalidArgumentException('Invalid node identifier "' . $identifier . '" (a node identifier must only contain lowercase characters, numbers and the "-" sign).', 1505805774);
-        }
-        $this->identifier = $identifier;
-    }
-
+    /**
+     * @return string
+     */
     function jsonSerialize()
     {
         return $this->identifier;
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return $this->identifier;
     }
 
+    /**
+     * @return string
+     */
     public function getCacheEntryIdentifier(): string
     {
         return $this->identifier;
