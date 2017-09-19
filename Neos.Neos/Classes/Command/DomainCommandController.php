@@ -14,10 +14,12 @@ namespace Neos\Neos\Command;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Validation\ValidatorResolver;
+use Neos\Neos\Domain\Context\Domain\Command\ActivateDomain;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\ValueObject\HostName;
 
 /**
  * Domain command controller for the Neos.Neos package
@@ -43,6 +45,12 @@ class DomainCommandController extends CommandController
      * @Flow\Inject
      */
     protected $validatorResolver;
+
+    /**
+     * @var \Neos\Neos\Domain\Context\Domain\DomainCommandHandler
+     * @Flow\Inject
+     */
+    protected $domainCommandHandler;
 
     /**
      * Add a domain record
@@ -158,6 +166,11 @@ class DomainCommandController extends CommandController
 
         $domain->setActive(true);
         $this->domainRepository->update($domain);
+        $this->domainCommandHandler->handleActivateDomain(
+            new ActivateDomain(
+                new HostName($hostname)
+            )
+        );
         $this->outputLine('Domain entry activated.');
     }
 
