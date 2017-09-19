@@ -140,11 +140,11 @@ class NodeTypeManager
         }
 
         if ($this->fallbackNodeTypeName === null) {
-            throw new NodeTypeNotFoundException(sprintf('The node type "%s" is not available and no fallback NodeType is configured.', $nodeTypeName), 1316598370);
+            throw new NodeTypeNotFoundException(sprintf('The node type "%s" is not available and no fallback NodeType is configured.', $nodeTypeName), 1316598370, $nodeTypeName);
         }
 
         if (!$this->hasNodeType($this->fallbackNodeTypeName)) {
-            throw new NodeTypeNotFoundException(sprintf('The node type "%s" is not available and the configured fallback NodeType "%s" is not available.', $nodeTypeName, $this->fallbackNodeTypeName), 1438166322);
+            throw new NodeTypeNotFoundException(sprintf('The node type "%s" is not available and the configured fallback NodeType "%s" is not available.', $nodeTypeName, $this->fallbackNodeTypeName), 1438166322, $nodeTypeName);
         }
         return $this->getNodeType($this->fallbackNodeTypeName);
     }

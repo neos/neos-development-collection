@@ -9,6 +9,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
+use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateChildNodeWithVariant;
 
@@ -43,27 +44,28 @@ final class NodeCommandHandler
     }
 
     /**
-     * create events for adding a node, including all subnodes (recursively)
+     * Create events for adding a node, including all auto-created child nodes (recursively)
      *
      * @param CreateChildNodeWithVariant $command
-     * @return array<ChildNodeWithVariantWasCreated>
+     * @return array <ChildNodeWithVariantWasCreated>
+     * @throws NodeTypeNotFoundException
      */
     private function childNodeWithVariantWasCreatedFromCommand(CreateChildNodeWithVariant $command): array
     {
-        if (empty($command->getNodeTypeName())) {
-            throw new \InvalidArgumentException('TODO: Node type may not be null');
-        }
-        if (!$this->nodeTypeManager->hasNodeType((string)$command->getNodeTypeName())) {
-            throw new \InvalidArgumentException('TODO: Node type ' . $command->getNodeTypeName() . ' not found.');
+        $nodeTypeNameAsString = (string)$command->getNodeTypeName();
+        if (!$this->nodeTypeManager->hasNodeType($nodeTypeNameAsString)) {
+            throw new NodeTypeNotFoundException(sprintf('Node type "%" not found', $nodeTypeNameAsString), 1505838774,
+                $nodeTypeNameAsString);
         }
 
-        $nodeType = $this->nodeTypeManager->getNodeType((string)$command->getNodeTypeName());
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeNameAsString);
 
         $propertyDefaultValuesAndTypes = [];
         foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $propertyValue) {
             $propertyDefaultValuesAndTypes[$propertyName] = new PropertyValue($propertyValue,
                 $nodeType->getPropertyType($propertyName));
         }
+
         $events = [];
 
         $events[] = new ChildNodeWithVariantWasCreated(

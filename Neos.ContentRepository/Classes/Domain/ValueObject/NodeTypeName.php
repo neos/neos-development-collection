@@ -22,6 +22,10 @@ final class NodeTypeName implements \JsonSerializable
 
     public function __construct(string $name)
     {
+        if ($name === '') {
+            throw new \InvalidArgumentException('Node type name must not be empty.', 1505835958);
+        }
+
         $this->name = $name;
     }
 

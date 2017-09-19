@@ -18,4 +18,24 @@ use Neos\ContentRepository\Exception;
  */
 class NodeTypeNotFoundException extends Exception
 {
+
+    /**
+     * @var string
+     */
+    protected $nodeTypeName;
+
+    public function __construct($message = "", $code = 0, string $nodeTypeName)
+    {
+        parent::__construct($message, $code);
+        $this->nodeTypeName = $nodeTypeName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNodeTypeName(): string
+    {
+        return $this->nodeTypeName;
+    }
+
 }
