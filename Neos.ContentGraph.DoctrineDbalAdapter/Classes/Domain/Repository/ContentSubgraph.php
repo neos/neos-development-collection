@@ -241,7 +241,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         $edgeNames = explode('/', trim($path, '/'));
         $currentNode = $this->findRootNode();
         foreach ($edgeNames as $edgeName) {
-            $currentNode = $this->findNodeByParentAlongPath(ContentRepository\ValueObject\NodeIdentifier::fromString($currentNode->getIdentifier()), $edgeName);
+            $currentNode = $this->findChildNodeAlongPath(ContentRepository\ValueObject\NodeIdentifier::fromString($currentNode->getIdentifier()), $edgeName);
             if (!$currentNode) {
                 return null;
             }
