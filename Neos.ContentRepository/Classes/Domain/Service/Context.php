@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Domain\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ValueObject\EditingSession;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
@@ -20,6 +21,7 @@ use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Domain\Service\Cache\FirstLevelNodeCache;
+use Neos\Flow\Utility\Algorithms;
 
 /**
  * Context
@@ -111,6 +113,11 @@ class Context
     protected $firstLevelNodeCache;
 
     /**
+     * @var EditingSession
+     */
+    protected $editingSession;
+
+    /**
      * Creates a new Context object.
      *
      * NOTE: This is for internal use only, you should use the ContextFactory for creating Context instances.
@@ -135,6 +142,10 @@ class Context
         $this->targetDimensions = $targetDimensions;
 
         $this->firstLevelNodeCache = new FirstLevelNodeCache();
+
+        // TODO Explicitly get or create the head editing session for the given workspace and user
+        // TODO Get user identifier
+        $this->editingSession = new EditingSession(Algorithms::generateUUID(), $this->workspaceName, 'admin');
     }
 
     /**
@@ -492,5 +503,13 @@ class Context
     public function getFirstLevelNodeCache()
     {
         return $this->firstLevelNodeCache;
+    }
+
+    /**
+     * @return EditingSession
+     */
+    public function getEditingSession()
+    {
+        return $this->editingSession;
     }
 }

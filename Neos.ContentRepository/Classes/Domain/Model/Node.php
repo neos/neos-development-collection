@@ -11,6 +11,11 @@ namespace Neos\ContentRepository\Domain\Model;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Context\Node\Command\CreateChildNodeWithVariant;
+use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Property\PropertyMapper;
@@ -124,18 +129,27 @@ class Node implements NodeInterface, CacheAwareInterface
             return;
         }
 
-        if (!is_string($newName) || preg_match(NodeInterface::MATCH_PATTERN_NAME, $newName) !== 1) {
-            throw new \InvalidArgumentException('Invalid node name "' . $newName . '" (a node name must only contain lowercase characters, numbers and the "-" sign).', 1364290748);
-        }
+        $nodeName = new NodeName($newName);
 
         if ($this->getPath() === '/') {
             throw new NodeException('The root node cannot be renamed.', 1346778388);
         }
 
+        // TODO Execute command ChangeNodeName
+
+        $this->legacySetName($newName);
+
+        $this->emitNodeUpdated($this);
+    }
+
+    /**
+     * @param string $newName
+     */
+    protected function legacySetName($newName)
+    {
         $this->setPath(NodePaths::addNodePathSegment($this->getParentPath(), $newName));
         $this->nodeDataRepository->persistEntities();
         $this->context->getFirstLevelNodeCache()->flush();
-        $this->emitNodeUpdated($this);
     }
 
     /**
@@ -607,10 +621,27 @@ class Node implements NodeInterface, CacheAwareInterface
             throw new NodeConstraintException('Cannot move ' . $this->__toString() . ' after ' . $referenceNode->__toString(), 1404648100);
         }
 
-        $name = $newName !== null ? $newName : $this->getName();
+        if ($newName !== null) {
+            throw new \InvalidArgumentException('Setting new node name while moving not supported', 1505809714);
+        }
+
         $this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_AFTER);
+
+        // TODO Execute command MoveNodeAfter
+
+        $this->legacyMoveAfter($referenceNode);
+
+        $this->emitAfterNodeMove($this, $referenceNode, NodeDataRepository::POSITION_AFTER);
+        $this->emitNodeUpdated($this);
+    }
+
+    /**
+     * @param NodeInterface $referenceNode
+     */
+    protected function legacyMoveAfter(NodeInterface $referenceNode)
+    {
         if ($referenceNode->getParentPath() !== $this->getParentPath()) {
-            $this->setPath(NodePaths::addNodePathSegment($referenceNode->getParentPath(), $name));
+            $this->setPath(NodePaths::addNodePathSegment($referenceNode->getParentPath(), $this->getName()));
             $this->nodeDataRepository->persistEntities();
         } else {
             if (!$this->isNodeDataMatchingContext()) {
@@ -620,8 +651,6 @@ class Node implements NodeInterface, CacheAwareInterface
 
         $this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_AFTER, $referenceNode);
         $this->context->getFirstLevelNodeCache()->flush();
-        $this->emitAfterNodeMove($this, $referenceNode, NodeDataRepository::POSITION_AFTER);
-        $this->emitNodeUpdated($this);
     }
 
     /**
@@ -652,15 +681,30 @@ class Node implements NodeInterface, CacheAwareInterface
             throw new NodeConstraintException('Cannot move ' . $this->__toString() . ' into ' . $referenceNode->__toString(), 1404648124);
         }
 
-        $name = $newName !== null ? $newName : $this->getName();
+        if ($newName !== null) {
+            throw new \InvalidArgumentException('Setting new node name while moving not supported', 1505809714);
+        }
+
         $this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_LAST);
-        $this->setPath(NodePaths::addNodePathSegment($referenceNode->getPath(), $name));
+
+        // TODO Execute command MoveNodeInto
+
+        $this->legacyMoveInto($referenceNode);
+
+        $this->emitAfterNodeMove($this, $referenceNode, NodeDataRepository::POSITION_LAST);
+        $this->emitNodeUpdated($this);
+    }
+
+    /**
+     * @param NodeInterface $referenceNode
+     */
+    protected function legacyMoveInto(NodeInterface $referenceNode)
+    {
+        $this->setPath(NodePaths::addNodePathSegment($referenceNode->getPath(), $this->getName()));
         $this->nodeDataRepository->persistEntities();
 
         $this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_LAST);
         $this->context->getFirstLevelNodeCache()->flush();
-        $this->emitAfterNodeMove($this, $referenceNode, NodeDataRepository::POSITION_LAST);
-        $this->emitNodeUpdated($this);
     }
 
     /**
@@ -705,14 +749,32 @@ class Node implements NodeInterface, CacheAwareInterface
             throw new NodeConstraintException('Cannot copy ' . $this->__toString() . ' before ' . $referenceNode->__toString(), 1402050232);
         }
 
+        $name = new NodeName($nodeName);
+
         $this->emitBeforeNodeCopy($this, $referenceNode->getParent());
+
+        // TODO Execute command CopyNodeBefore
+        // Separate events depending on isDocument
+
+        $copiedNode = $this->legacyCopyBefore($referenceNode, $nodeName);
+
+        $this->emitNodeAdded($copiedNode);
+        $this->emitAfterNodeCopy($copiedNode, $referenceNode->getParent());
+
+        return $copiedNode;
+    }
+
+    /**
+     * @param NodeInterface $referenceNode
+     * @param $nodeName
+     * @return NodeInterface
+     */
+    protected function legacyCopyBefore(NodeInterface $referenceNode, $nodeName)
+    {
         $copiedNode = $this->createRecursiveCopy($referenceNode->getParent(), $nodeName, $this->getNodeType()->isAggregate());
         $copiedNode->moveBefore($referenceNode);
 
         $this->context->getFirstLevelNodeCache()->flush();
-        $this->emitNodeAdded($copiedNode);
-        $this->emitAfterNodeCopy($copiedNode, $referenceNode->getParent());
-
         return $copiedNode;
     }
 
@@ -1074,6 +1136,37 @@ class Node implements NodeInterface, CacheAwareInterface
     public function createNode($name, NodeType $nodeType = null, $identifier = null)
     {
         $this->emitBeforeNodeCreate($this, $name, $nodeType, $identifier);
+
+
+        $nodeName = new NodeName($name);
+        $editingSession = $this->context->getEditingSession();
+        $parentNodeIdentifier = new NodeIdentifier($this->getIdentifier());
+        $nodeIdentifier = NodeIdentifier::create();
+        $command = new CreateChildNodeWithVariant(
+            $editingSession,
+            $parentNodeIdentifier,
+            $nodeIdentifier,
+            $nodeName,
+            new NodeTypeName($nodeType->getName()),
+            new DimensionValues($this->context->getTargetDimensionValues())
+        );
+
+        $newNode = $this->legacyCreateNode($name, $nodeType, $identifier);
+
+        $this->emitNodeAdded($newNode);
+        $this->emitAfterNodeCreate($newNode);
+
+        return $newNode;
+    }
+
+    /**
+     * @param string $name
+     * @param NodeType $nodeType
+     * @param string $identifier
+     * @return Node
+     */
+    protected function legacyCreateNode($name, NodeType $nodeType, $identifier)
+    {
         $newNode = $this->createSingleNode($name, $nodeType, $identifier);
         if ($nodeType !== null) {
             foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $propertyValue) {
@@ -1085,7 +1178,8 @@ class Node implements NodeInterface, CacheAwareInterface
             }
 
             foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeName => $childNodeType) {
-                $childNodeIdentifier = Utility::buildAutoCreatedChildNodeIdentifier($childNodeName, $newNode->getIdentifier());
+                $childNodeIdentifier = Utility::buildAutoCreatedChildNodeIdentifier($childNodeName,
+                    $newNode->getIdentifier());
                 $alreadyPresentChildNode = $newNode->getNode($childNodeName);
                 if ($alreadyPresentChildNode === null) {
                     $newNode->createNode($childNodeName, $childNodeType, $childNodeIdentifier);
@@ -1094,9 +1188,6 @@ class Node implements NodeInterface, CacheAwareInterface
         }
 
         $this->context->getFirstLevelNodeCache()->flush();
-        $this->emitNodeAdded($newNode);
-        $this->emitAfterNodeCreate($newNode);
-
         return $newNode;
     }
 
@@ -1898,4 +1989,5 @@ class Node implements NodeInterface, CacheAwareInterface
     protected function emitNodePathChanged(NodeInterface $node, $oldPath, $newPath, $recursion)
     {
     }
+
 }
