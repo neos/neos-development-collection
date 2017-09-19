@@ -19,7 +19,7 @@ use Neos\ContentRepository\Domain\ValueObject\WorkspaceTitle;
 /**
  * Create a new workspace
  */
-class CreateWorkspace
+final class CreateWorkspace
 {
     /**
      * @var WorkspaceName

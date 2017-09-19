@@ -13,6 +13,8 @@ namespace Neos\ContentRepository\Domain\Context\Workspace;
 
 use Neos\ContentRepository\Domain\Context\Workspace\Command\CreateWorkspace;
 use Neos\ContentRepository\Domain\Context\Workspace\Event\WorkspaceHasBeenCreated;
+use Neos\ContentRepository\Domain\Context\Workspace\Exception\WorkspaceAlreadyExists;
+use Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcing\Event\EventPublisher;
 use Neos\Flow\Annotations as Flow;
 
@@ -23,16 +25,26 @@ final class WorkspaceCommandHandler
 {
     /**
      * @Flow\Inject
+     * @var WorkspaceFinder
+     */
+    protected $workspaceFinder;
+
+    /**
+     * @Flow\Inject
      * @var EventPublisher
      */
     protected $eventPublisher;
 
     /**
      * @param CreateWorkspace $command
+     * @throws WorkspaceAlreadyExists
      */
     public function handleCreateWorkspace(CreateWorkspace $command)
     {
-        // TODO: Check if workspace already exists
+        $existingWorkspace = $this->workspaceFinder->findOneByName($command->getWorkspaceName());
+        if ($existingWorkspace !== null) {
+            throw new WorkspaceAlreadyExists(sprintf('The workspace %s already exists', $command->getWorkspaceName()), 1505830958921);
+        }
 
         $this->eventPublisher->publish(
             'Neos.ContentRepository:Workspace:' . $command->getWorkspaceName(),
@@ -45,5 +57,4 @@ final class WorkspaceCommandHandler
             )
         );
     }
-
 }
