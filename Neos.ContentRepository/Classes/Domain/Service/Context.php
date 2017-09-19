@@ -311,29 +311,6 @@ class Context
             $nodeVariants[] = $nodeVariant;
         }
         return $nodeVariants;
-    }
-
-    /**
-     * Finds all nodes lying on the path specified by (and including) the given
-     * starting point and end point.
-     *
-     * @param mixed $startingPoint Either an absolute path or an actual node specifying the starting point, for example /sites/mysitecom
-     * @param mixed $endPoint Either an absolute path or an actual node specifying the end point, for example /sites/mysitecom/homepage/subpage
-     * @return array<\Neos\ContentRepository\Domain\Model\NodeInterface> The nodes found between and including the given paths or an empty array of none were found
-     * @api
-     */
-    public function getNodesOnPath($startingPoint, $endPoint)
-    {
-        $startingPointPath = ($startingPoint instanceof NodeInterface) ? $startingPoint->getPath() : $startingPoint;
-        $endPointPath = ($endPoint instanceof NodeInterface) ? $endPoint->getPath() : $endPoint;
-
-        $nodeDataElements = $this->nodeDataRepository->findOnPath($startingPointPath, $endPointPath, $this->getWorkspace(), $this->getDimensions(), $this->isRemovedContentShown());
-        $nodes = array();
-        foreach ($nodeDataElements as $nodeData) {
-            $node = $this->nodeFactory->createFromNodeData($nodeData, $this);
-            if ($node !== null) {
-                $nodes[] = $node;
-                $this->firstLevelNodeCache->setByPath($node->getPath(), $node);
             }
         }
 

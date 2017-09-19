@@ -217,6 +217,7 @@ class NodesController extends ActionController
                 $pathSegments = $pathSegmentsToNodeVariant - $pathSegmentsToSites;
                 // Nodes between (and including) the site root node and the node variant (minimum 1)
                 $siteNodePath = NodePaths::addNodePathSegment(SiteService::SITES_ROOT_PATH, $context->getCurrentSite()->getNodeName());
+                /** @todo replace this */
                 $nodes = $context->getNodesOnPath($siteNodePath, $node->getPath());
                 $missingNodesOnRootline = $pathSegments - count($nodes);
                 if ($missingNodesOnRootline > 0) {
