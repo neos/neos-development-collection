@@ -13,40 +13,19 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  */
 
 use Neos\ContentRepository\Utility;
-use Neos\Flow\Utility\Algorithms;
 
-final class NodeIdentifier implements \JsonSerializable
+/**
+ * NodeIdentifier
+ */
+final class NodeIdentifier extends AbstractIdentifier
 {
-
     /**
-     * @var string
+     * @param NodeName $childNodeName
+     * @param NodeIdentifier $nodeIdentifier
+     * @return NodeIdentifier
      */
-    private $identifier;
-
-    public static function create(): NodeIdentifier
-    {
-        return new NodeIdentifier(Algorithms::generateUUID());
-    }
-
     public static function forAutoCreatedChildNode(NodeName $childNodeName, NodeIdentifier $nodeIdentifier): NodeIdentifier
     {
         return new NodeIdentifier(Utility::buildAutoCreatedChildNodeIdentifier((string)$childNodeName, (string)$nodeIdentifier));
     }
-
-    public function __construct(string $identifier)
-    {
-        $this->identifier = $identifier;
-    }
-
-
-    function jsonSerialize()
-    {
-        return $this->identifier;
-    }
-
-    public function __toString()
-    {
-        return $this->identifier;
-    }
-
 }

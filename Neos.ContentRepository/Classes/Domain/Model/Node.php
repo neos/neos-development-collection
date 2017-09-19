@@ -1141,7 +1141,7 @@ class Node implements NodeInterface, CacheAwareInterface
         $nodeName = new NodeName($name);
         $editingSessionIdentifier = $this->context->getEditingSessionIdentifier();
         $parentNodeIdentifier = new NodeIdentifier($this->getIdentifier());
-        $nodeIdentifier = NodeIdentifier::create();
+        $nodeIdentifier = new NodeIdentifier();
         $command = new CreateChildNodeWithVariant(
             $editingSessionIdentifier,
             $parentNodeIdentifier,
@@ -1151,7 +1151,7 @@ class Node implements NodeInterface, CacheAwareInterface
             new DimensionValues($this->context->getTargetDimensionValues())
         );
 
-        $this->nodeCommandHandler->
+//        $this->nodeCommandHandler->h
 
         $newNode = $this->legacyCreateNode($name, $nodeType, $identifier);
 
