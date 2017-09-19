@@ -574,19 +574,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getParent()
     {
-        if ($this->getPath() === '/') {
-            return null;
-        }
-
-        $parentPath = $this->getParentPath();
-        $node = $this->context->getFirstLevelNodeCache()->getByPath($parentPath);
-        if ($node !== false) {
-            return $node;
-        }
-        $node = $this->nodeDataRepository->findOneByPathInContext($parentPath, $this->context);
-        $this->context->getFirstLevelNodeCache()->setByPath($parentPath, $node);
-
-        return $node;
+        return $this->context->getSubgraph()->findParentNode($this->identifier, $this->context);
     }
 
     /**
@@ -1389,7 +1377,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getNode($path)
     {
-        return $this->context->getSubgraph()->findNodeByParentAlongPath($this->identifier, $path, $this->context);
+        return $this->context->getSubgraph()->findChildNodeAlongPath($this->identifier, $path, $this->context);
     }
 
     /**
@@ -1403,7 +1391,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getPrimaryChildNode()
     {
-        return $this->context->getSubgraph()->findFirstChild($this->identifier, $this->context);
+        return $this->context->getSubgraph()->findFirstChildNode($this->identifier, $this->context);
     }
 
     /**
@@ -1419,7 +1407,7 @@ class Node implements NodeInterface, CacheAwareInterface
     public function getChildNodes($nodeTypeFilter = null, $limit = null, $offset = null)
     {
         $nodeTypeConstraints = $this->nodeTypeConstraintService->unserializeFilters($nodeTypeFilter);
-        return $this->context->getSubgraph()->findNodesByParent($this->getIdentifier(), $nodeTypeConstraints, $limit, $offset, $this->context);
+        return $this->context->getSubgraph()->findChildNodes($this->identifier, $nodeTypeConstraints, $limit, $offset, $this->context);
     }
 
     /**
@@ -1842,14 +1830,6 @@ class Node implements NodeInterface, CacheAwareInterface
     protected function isNodeDataMatchingContext()
     {
         return $this->context->getSubgraph()->getIdentifier() === $this->subgraphIdentifier;
-        /*
-        if ($this->nodeDataIsMatchingContext === null) {
-            $workspacesMatch = $this->nodeData->getWorkspace() !== null && $this->context->getWorkspace() !== null && $this->nodeData->getWorkspace()->getName() === $this->context->getWorkspace()->getName();
-            $this->nodeDataIsMatchingContext = $workspacesMatch && $this->dimensionsAreMatchingTargetDimensionValues();
-        }
-
-        return $this->nodeDataIsMatchingContext;
-        */
     }
 
     /**

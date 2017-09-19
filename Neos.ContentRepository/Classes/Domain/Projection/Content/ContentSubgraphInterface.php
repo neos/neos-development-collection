@@ -41,6 +41,13 @@ interface ContentSubgraphInterface
     public function countChildNodes(Domain\ValueObject\NodeIdentifier $parentIdentifier, Domain\ValueObject\NodeTypeConstraints $nodeTypeConstraints = null): int;
 
     /**
+     * @param Domain\ValueObject\NodeIdentifier $childIdentifier
+     * @param Domain\Service\Context|null $contentContext
+     * @return Domain\Model\NodeInterface|null
+     */
+    public function findParentNode(Domain\ValueObject\NodeIdentifier $childIdentifier, Domain\Service\Context $contentContext = null);
+
+    /**
      * @param Domain\ValueObject\NodeIdentifier $parentIdentifier
      * @param Domain\Service\Context|null $contentContext
      * @return Domain\Model\NodeInterface|null

@@ -187,6 +187,28 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     }
 
     /**
+     * @param ContentRepository\ValueObject\NodeIdentifier $childIdentifier
+     * @param ContentRepository\Service\Context|null $context
+     * @return ContentRepository\Model\NodeInterface|null
+     */
+    public function findParentNode(ContentRepository\ValueObject\NodeIdentifier $childIdentifier, ContentRepository\Service\Context $context = null)
+    {
+        $nodeData = $this->getDatabaseConnection()->executeQuery(
+            'SELECT p.* FROM neos_contentgraph_node p
+ INNER JOIN neos_contentgraph_hierarchyedge h ON h.parentnodesidentifieringraph = p.identifieringraph
+ INNER JOIN neos_contentgraph_node c ON h.childnodesidentifieringraph = c.identifieringraph
+ WHERE c.identifierinsubgraph = :childIdentifier
+ AND h.subgraphidentifier = :subgraphIdentifier',
+            [
+                'childIdentifier' => $childIdentifier,
+                'subgraphIdentifier' => $this->identifier
+            ]
+        )->fetch();
+
+        return $nodeData ? $this->mapRawDataToNode($nodeData, $context) : null;
+    }
+
+    /**
      * @param ContentRepository\ValueObject\NodeIdentifier $parentIdentifier
      * @param ContentRepository\Service\Context|null $context
      * @return ContentRepository\Model\NodeInterface|null
