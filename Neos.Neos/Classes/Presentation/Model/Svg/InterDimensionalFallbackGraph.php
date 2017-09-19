@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Presentation\Model\Svg;
 
 /*
@@ -10,9 +11,8 @@ namespace Neos\Neos\Presentation\Model\Svg;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-use Neos\ContentRepository\Domain\Model\InterDimension;
-use Neos\ContentRepository\Domain\Model\IntraDimension;
+use Neos\ContentRepository\Domain\Context\Dimension;
+use Neos\ContentRepository\Domain\Context\DimensionCombination;
 
 /**
  * The InterDimensionalFallbackGraph presentation model for SVG
@@ -20,12 +20,12 @@ use Neos\ContentRepository\Domain\Model\IntraDimension;
 class InterDimensionalFallbackGraph
 {
     /**
-     * @var InterDimension\InterDimensionalFallbackGraph
+     * @var DimensionCombination\Repository\InterDimensionalFallbackGraph
      */
     protected $fallbackGraph;
 
     /**
-     * @var IntraDimension\IntraDimensionalFallbackGraph
+     * @var Dimension\Repository\IntraDimensionalFallbackGraph
      */
     protected $intraDimensionalFallbackGraph;
 
@@ -60,13 +60,13 @@ class InterDimensionalFallbackGraph
     protected $height;
 
     /**
-     * @param InterDimension\InterDimensionalFallbackGraph $fallbackGraph
-     * @param IntraDimension\IntraDimensionalFallbackGraph $intraDimensionalFallbackGraph
+     * @param DimensionCombination\Repository\InterDimensionalFallbackGraph $fallbackGraph
+     * @param Dimension\Repository\IntraDimensionalFallbackGraph $intraDimensionalFallbackGraph
      * @param string|null $rootSubgraphIdentifier
      */
     public function __construct(
-        InterDimension\InterDimensionalFallbackGraph $fallbackGraph,
-        IntraDimension\IntraDimensionalFallbackGraph $intraDimensionalFallbackGraph,
+        DimensionCombination\Repository\InterDimensionalFallbackGraph $fallbackGraph,
+        Dimension\Repository\IntraDimensionalFallbackGraph $intraDimensionalFallbackGraph,
         string $rootSubgraphIdentifier = null
     ) {
         $this->fallbackGraph = $fallbackGraph;
@@ -169,13 +169,13 @@ class InterDimensionalFallbackGraph
 
     /**
      * @param string $dimensionName
-     * @param IntraDimension\ContentDimensionValue $value
+     * @param Dimension\Model\ContentDimensionValue $value
      * @param int $depth
      * @param int $horizontalOffset
      * @param int $baseOffset
      * @return void
      */
-    protected function traverseDimension(string $dimensionName, IntraDimension\ContentDimensionValue $value, int $depth, int & $horizontalOffset, int $baseOffset)
+    protected function traverseDimension(string $dimensionName, Dimension\Model\ContentDimensionValue $value, int $depth, int & $horizontalOffset, int $baseOffset)
     {
         $leftOffset = $horizontalOffset;
         if ($value->getVariants()) {
@@ -219,10 +219,10 @@ class InterDimensionalFallbackGraph
     }
 
     /**
-     * @param InterDimension\ContentSubgraph $subgraph
+     * @param DimensionCombination\Repository\ContentSubgraph $subgraph
      * @return void
      */
-    protected function initializeFullGraphNode(InterDimension\ContentSubgraph $subgraph)
+    protected function initializeFullGraphNode(DimensionCombination\Repository\ContentSubgraph $subgraph)
     {
         $x = 0;
         $y = 0;
@@ -230,7 +230,7 @@ class InterDimensionalFallbackGraph
         $previousDepthFactor = 1;
         $previousWidthFactor = 1;
         foreach (array_reverse($subgraph->getDimensionValues()) as $dimensionName => $dimensionValue) {
-            /** @var IntraDimension\ContentDimensionValue $dimensionValue */
+            /** @var Dimension\Model\ContentDimensionValue $dimensionValue */
             $y += $dimensionValue->getDepth() * $previousDepthFactor;
             $previousDepthFactor *= $this->offsets[$dimensionName]['_height'];
 
@@ -239,7 +239,7 @@ class InterDimensionalFallbackGraph
         }
 
         $nameComponents = $subgraph->getDimensionValues();
-        array_walk($nameComponents, function (IntraDimension\ContentDimensionValue &$value) {
+        array_walk($nameComponents, function (Dimension\Model\ContentDimensionValue &$value) {
             $value = $value->getValue();
         });
 
@@ -261,15 +261,15 @@ class InterDimensionalFallbackGraph
     }
 
     /**
-     * @param InterDimension\ContentSubgraph $subgraph
+     * @param DimensionCombination\Repository\ContentSubgraph $subgraph
      * @param int $horizontalOffset
      * @param int $y
      * @return void
      */
-    protected function initializeSubgraphNode(InterDimension\ContentSubgraph $subgraph, int & $horizontalOffset, int & $y)
+    protected function initializeSubgraphNode(DimensionCombination\Repository\ContentSubgraph $subgraph, int & $horizontalOffset, int & $y)
     {
         $nameComponents = $subgraph->getDimensionValues();
-        array_walk($nameComponents, function (IntraDimension\ContentDimensionValue &$value) {
+        array_walk($nameComponents, function (Dimension\Model\ContentDimensionValue &$value) {
             $value = $value->getValue();
         });
         $depth = 0;
@@ -303,12 +303,12 @@ class InterDimensionalFallbackGraph
     protected function initializeEdges($hideInactive = true)
     {
         $subgraphs = $this->fallbackGraph->getSubgraphs();
-        usort($subgraphs, function (InterDimension\ContentSubgraph $subgraphA, InterDimension\ContentSubgraph $subgraphB) {
+        usort($subgraphs, function (DimensionCombination\Repository\ContentSubgraph $subgraphA, DimensionCombination\Repository\ContentSubgraph $subgraphB) {
             return $subgraphB->getWeight() <=> $subgraphA->getWeight();
         });
         foreach ($subgraphs as $subgraph) {
             $fallback = $subgraph->getFallback();
-            usort($fallback, function (InterDimension\ContentSubgraph $subgraphA, InterDimension\ContentSubgraph $subgraphB) {
+            usort($fallback, function (DimensionCombination\Repository\ContentSubgraph $subgraphA, DimensionCombination\Repository\ContentSubgraph $subgraphB) {
                 return $subgraphA->getWeight() <=> $subgraphB->getWeight();
             });
             $i = 1;
