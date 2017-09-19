@@ -14,6 +14,10 @@ namespace Neos\Neos\Command;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Validation\ValidatorResolver;
+use Neos\Neos\Domain\Context\Domain\Command\AddDomain;
+use Neos\Neos\Domain\Context\Domain\DomainCommandHandler;
+use Neos\Neos\Domain\Context\Domain\DomainPort;
+use Neos\Neos\Domain\Context\Domain\HttpScheme;
 use Neos\Neos\Domain\Context\Domain\Command\ActivateDomain;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
@@ -47,7 +51,7 @@ class DomainCommandController extends CommandController
     protected $validatorResolver;
 
     /**
-     * @var \Neos\Neos\Domain\Context\Domain\DomainCommandHandler
+     * @var DomainCommandHandler
      * @Flow\Inject
      */
     protected $domainCommandHandler;
@@ -96,6 +100,15 @@ class DomainCommandController extends CommandController
         }
 
         $this->domainRepository->add($domain);
+
+        $this->domainCommandHandler->handleAddDomain(
+            new AddDomain(
+                new NodeName($siteNodeName),
+                new HostName($hostname),
+                new HttpScheme($scheme),
+                new DomainPort($port)
+            )
+        );
 
         $this->outputLine('Domain entry created.');
     }

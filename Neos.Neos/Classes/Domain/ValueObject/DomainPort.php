@@ -13,12 +13,12 @@ namespace Neos\Neos\Domain\ValueObject;
 /**
  * Name of a workspace
  */
-class HostName implements \JsonSerializable
+class DomainPort implements \JsonSerializable
 {
     /**
      * @var string
      */
-    protected $name;
+    protected $port;
 
     /**
      * Name constructor.
@@ -27,19 +27,18 @@ class HostName implements \JsonSerializable
      */
     public function __construct(string $name)
     {
-        $this->setName($name);
+        $this->setPort($name);
     }
 
     /**
-     * @param string $name
+     * @param string $port
      */
-    protected function setName(string $name)
+    protected function setPort(string $port)
     {
-        // TODO: add validation
-//        if (preg_match('/^[\p{L}\p{P}\d \.]{2,255}$/u', $name) !== 1) {
-//            throw new \InvalidArgumentException('Invalid workspace name given.', 1505826610318);
-//        }
-        $this->name = $name;
+        if (preg_match('/\d*/', $port) !== 1) {
+            throw new \InvalidArgumentException('Invalid port.', 1505831415);
+        }
+        $this->port = $port;
     }
 
     /**
@@ -47,7 +46,7 @@ class HostName implements \JsonSerializable
      */
     public function __toString(): string
     {
-        return $this->name;
+        return $this->port;
     }
 
     /**
@@ -55,6 +54,6 @@ class HostName implements \JsonSerializable
      */
     public function jsonSerialize()
     {
-        return $this->name;
+        return $this->port;
     }
 }

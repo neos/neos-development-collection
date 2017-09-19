@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\Neos\Domain\Context\Domain;
 
 /*
@@ -11,18 +10,42 @@ namespace Neos\Neos\Domain\Context\Domain;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+use Neos\ContentRepository\Domain\Context\Workspace\Command\CreateWorkspace;
+use Neos\ContentRepository\Domain\Context\Workspace\Event\WorkspaceHasBeenCreated;
+use Neos\EventSourcing\Event\EventPublisher;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Domain\Context\Domain\Command\ActivateDomain;
-use Neos\Neos\Domain\Context\Domain\Event\DomainHasBeenActivated;
+use Neos\Neos\Domain\Context\Domain\Command\AddDomain;
+use Neos\Neos\Domain\Context\Domain\Event\DomainHasBeenAdded;
 
-class DomainCommandHandler
+/**
+ * WorkspaceCommandHandler
+ */
+final class DomainCommandHandler
 {
-
     /**
      * @Flow\Inject
-     * @var \Neos\EventSourcing\Event\EventPublisher
+     * @var EventPublisher
      */
     protected $eventPublisher;
+
+    /**
+     * @param AddDomain $command
+     */
+    public function handleAddDomain(AddDomain $command)
+    {
+        // TODO: Necessary checks
+
+        $this->eventPublisher->publish(
+            'Neos.Neos:Domain:' . $command->getDomainHostname(),
+            new DomainHasBeenAdded(
+                $command->getSiteNodeName(),
+                $command->getDomainHostname(),
+                $command->getScheme(),
+                $command->getPort()
+            )
+        );
+    }
 
     /**
      * @param ActivateDomain $command
