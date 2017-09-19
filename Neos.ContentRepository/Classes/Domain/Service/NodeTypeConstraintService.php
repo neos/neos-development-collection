@@ -18,7 +18,7 @@ use Neos\Utility\Arrays;
 /**
  * The node type constraints service
  *
- * @Flow\Scopt("singleton")
+ * @Flow\Scope("singleton")
  */
 class NodeTypeConstraintService
 {

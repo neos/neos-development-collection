@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Domain\Context\Dimension\Repository;
  */
 use Neos\ContentRepository\Domain;
 use Neos\ContentRepository\Service\Exception\InvalidDimensionConfigurationException;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * The intra dimensional fallback graph domain model

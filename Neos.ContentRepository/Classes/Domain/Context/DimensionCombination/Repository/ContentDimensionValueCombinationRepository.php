@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\ContentRepository\Domain\DimensionCombination\Repository;
+namespace Neos\ContentRepository\Domain\Context\DimensionCombination\Repository;
 
 /*
  * This file is part of the Neos.ContentRepository package.
