@@ -12,8 +12,8 @@ namespace Neos\ContentRepository\Domain\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ValueObject\EditingSessionIdentifier;
 use Neos\ContentRepository\Domain;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
@@ -120,9 +120,9 @@ class Context
     protected $firstLevelNodeCache;
 
     /**
-     * @var EditingSessionIdentifier
+     * @var ContentStreamIdentifier
      */
-    protected $editingSessionIdentifier;
+    protected $contentStreamIdentifier;
 
     /**
      * @var Domain\ValueObject\DimensionValueCombination
@@ -175,13 +175,13 @@ class Context
 
         // TODO Explicitly get or create the head editing session for the given workspace and user
         // TODO Get user identifier
-        $this->editingSessionIdentifier = new EditingSessionIdentifier(Algorithms::generateUUID());
+        $this->contentStreamIdentifier = new ContentStreamIdentifier(Algorithms::generateUUID());
     }
 
     public function getSubgraph(): Domain\Projection\Content\ContentSubgraphInterface
     {
         if (!$this->contentSubgraph) {
-            $this->contentSubgraph = $this->contentGraph->getSubgraph($this->editingSessionIdentifier, $this->dimensionValueCombination);
+            $this->contentSubgraph = $this->contentGraph->getSubgraph($this->contentStreamIdentifier, $this->dimensionValueCombination);
         }
 
         return $this->contentSubgraph;
@@ -486,10 +486,10 @@ class Context
     }
 
     /**
-     * @return EditingSessionIdentifier
+     * @return ContentStreamIdentifier
      */
-    public function getEditingSessionIdentifier()
+    public function getContentStreamIdentifier()
     {
-        return $this->editingSessionIdentifier;
+        return $this->contentStreamIdentifier;
     }
 }

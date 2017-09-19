@@ -3,7 +3,7 @@
 namespace Neos\ContentRepository\Domain\Context\Node\Command;
 
 use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
-use Neos\ContentRepository\Domain\ValueObject\EditingSessionIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
@@ -12,9 +12,9 @@ final class CreateChildNodeWithVariant
 {
 
     /**
-     * @var EditingSessionIdentifier
+     * @var ContentStreamIdentifier
      */
-    private $editingSessionIdentifier;
+    private $contentStreamIdentifier;
 
     /**
      * @var NodeIdentifier
@@ -42,14 +42,14 @@ final class CreateChildNodeWithVariant
     private $dimensionValues;
 
     public function __construct(
-        EditingSessionIdentifier $editingSessionIdentifier,
+        ContentStreamIdentifier $contentStreamIdentifier,
         NodeIdentifier $parentNodeIdentifier,
         NodeIdentifier $nodeIdentifier,
         NodeName $nodeName,
         NodeTypeName $nodeTypeName,
         DimensionValues $dimensionValues
     ) {
-        $this->editingSessionIdentifier = $editingSessionIdentifier;
+        $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->parentNodeIdentifier = $parentNodeIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;
         $this->nodeName = $nodeName;
@@ -58,11 +58,11 @@ final class CreateChildNodeWithVariant
     }
 
     /**
-     * @return EditingSessionIdentifier
+     * @return ContentStreamIdentifier
      */
-    public function getEditingSessionIdentifier(): EditingSessionIdentifier
+    public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
-        return $this->editingSessionIdentifier;
+        return $this->contentStreamIdentifier;
     }
 
     /**

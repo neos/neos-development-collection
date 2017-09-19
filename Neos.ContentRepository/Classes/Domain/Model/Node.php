@@ -950,10 +950,11 @@ class Node implements NodeInterface, CacheAwareInterface
     public function setProperty($propertyName, $value)
     {
         $command = new SetProperty(
-            $this->context->getEditingSessionIdentifier(),
+            $this->context->getContentStreamIdentifier(),
             new NodeIdentifier($this->getIdentifier()),
             $propertyName,
-            $value
+            $value,
+            new NodeTypeName($this->getNodeType()->getName())
         );
 
         $this->nodeCommandHandler->handleSetProperty($command);
@@ -1215,7 +1216,7 @@ class Node implements NodeInterface, CacheAwareInterface
         $parentNodeIdentifier = new NodeIdentifier($this->getIdentifier());
         $nodeIdentifier = new NodeIdentifier();
         $command = new CreateChildNodeWithVariant(
-            $this->context->getEditingSessionIdentifier(),
+            $this->context->getContentStreamIdentifier(),
             $parentNodeIdentifier,
             $nodeIdentifier,
             $nodeName,

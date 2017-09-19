@@ -2,7 +2,7 @@
 
 namespace Neos\ContentRepository\Domain\Context\Node\Event;
 
-use Neos\ContentRepository\Domain\ValueObject\EditingSessionIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
 
@@ -26,13 +26,11 @@ final class PropertyWasSet
 
     /**
      *
-     * @param EditingSessionIdentifier $editingSessionIdentifier
      * @param NodeIdentifier $nodeIdentifier
      * @param string $propertyName
      * @param PropertyValue $value
      */
     public function __construct(
-        EditingSessionIdentifier $editingSessionIdentifier,
         NodeIdentifier $nodeIdentifier,
         $propertyName,
         PropertyValue $value

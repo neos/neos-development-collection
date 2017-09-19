@@ -3,7 +3,7 @@
 namespace Neos\ContentRepository\Domain\Context\Node\Command;
 
 use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
-use Neos\ContentRepository\Domain\ValueObject\EditingSessionIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
@@ -13,9 +13,9 @@ final class SetProperty
 {
 
     /**
-     * @var EditingSessionIdentifier
+     * @var ContentStreamIdentifier
      */
-    private $editingSessionIdentifier;
+    private $contentStreamIdentifier;
 
     /**
      * @var NodeIdentifier
@@ -33,31 +33,39 @@ final class SetProperty
     private $value;
 
     /**
+     * @var NodeTypeName
+     */
+    private $nodeTypeName;
+
+    /**
      * SetProperty constructor.
      *
-     * @param EditingSessionIdentifier $editingSessionIdentifier
+     * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeIdentifier $nodeIdentifier
      * @param string $propertyName
      * @param mixed $value
+     * @param NodeTypeName $nodeTypeName
      */
     public function __construct(
-        EditingSessionIdentifier $editingSessionIdentifier,
+        ContentStreamIdentifier $contentStreamIdentifier,
         NodeIdentifier $nodeIdentifier,
         $propertyName,
-        $value
+        $value,
+        NodeTypeName $nodeTypeName
     ) {
-        $this->editingSessionIdentifier = $editingSessionIdentifier;
+        $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;
         $this->propertyName = $propertyName;
         $this->value = $value;
+        $this->nodeTypeName = $nodeTypeName;
     }
 
     /**
-     * @return EditingSessionIdentifier
+     * @return ContentStreamIdentifier
      */
-    public function getEditingSessionIdentifier(): EditingSessionIdentifier
+    public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
-        return $this->editingSessionIdentifier;
+        return $this->contentStreamIdentifier;
     }
 
     /**
@@ -82,5 +90,13 @@ final class SetProperty
     public function getValue()
     {
         return $this->value;
+    }
+
+    /**
+     * @return NodeTypeName
+     */
+    public function getNodeTypeName()
+    {
+        return $this->nodeTypeName;
     }
 }

@@ -4,7 +4,8 @@ namespace Neos\ContentRepository\Domain\Context\Node;
 
 use Neos\ContentRepository\Domain\Context\Node\Command\SetProperty;
 use Neos\ContentRepository\Domain\Context\Node\Event\ChildNodeWithVariantWasCreated;
-use Neos\ContentRepository\Domain\ValueObject\EditingSessionIdentifier;
+use Neos\ContentRepository\Domain\Context\Node\Event\PropertyWasSet;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
@@ -28,9 +29,9 @@ final class NodeCommandHandler
      */
     protected $nodeTypeManager;
 
-    private static function getStreamNameForEditingSession(EditingSessionIdentifier $editingSessionIdentifier)
+    private static function getStreamNameForContentStream(ContentStreamIdentifier $contentStreamIdentifier)
     {
-        return 'editingsession:' . $editingSessionIdentifier;
+        return 'contentstream:' . $contentStreamIdentifier;
     }
 
     /**
@@ -40,7 +41,7 @@ final class NodeCommandHandler
     {
         $events = $this->childNodeWithVariantWasCreatedFromCommand($command);
 
-        $this->eventPublisher->publishMany(self::getStreamNameForEditingSession($command->getEditingSessionIdentifier()), $events);
+        $this->eventPublisher->publishMany(self::getStreamNameForContentStream($command->getContentStreamIdentifier()), $events);
     }
 
     /**
@@ -52,13 +53,10 @@ final class NodeCommandHandler
      */
     private function childNodeWithVariantWasCreatedFromCommand(CreateChildNodeWithVariant $command): array
     {
-        $nodeTypeNameAsString = (string)$command->getNodeTypeName();
-        if (!$this->nodeTypeManager->hasNodeType($nodeTypeNameAsString)) {
-            throw new NodeTypeNotFoundException(sprintf('Node type "%" not found', $nodeTypeNameAsString), 1505838774,
-                $nodeTypeNameAsString);
+        if (empty($command->getNodeTypeName())) {
+            throw new \InvalidArgumentException('TODO: Node type may not be null');
         }
-
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeNameAsString);
+        $nodeType = $this->getNodeType($command->getNodeTypeName());
 
         $propertyDefaultValuesAndTypes = [];
         foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $propertyValue) {
@@ -83,7 +81,7 @@ final class NodeCommandHandler
                 $command->getNodeIdentifier());
 
             $events = array_merge($events, $this->childNodeWithVariantWasCreatedFromCommand(new CreateChildNodeWithVariant(
-                $command->getEditingSessionIdentifier(),
+                $command->getContentStreamIdentifier(),
                 $command->getNodeIdentifier(),
                 $childNodeIdentifier,
                 $childNodeName,
@@ -97,9 +95,31 @@ final class NodeCommandHandler
 
     public function handleSetProperty(SetProperty $command)
     {
+        $nodeType = $this->getNodeType($command->getNodeTypeName());
+        $propertyType = $nodeType->getPropertyType($command->getPropertyName());
 
-        // TODO continue
+        $propertyValue = new PropertyValue($command->getValue(), $propertyType);
 
-        //$this->eventPublisher->publish(self::getStreamNameForEditingSession($command->getEditingSessionIdentifier()), $event);
+        $event = new PropertyWasSet(
+            $command->getNodeIdentifier(),
+            $command->getPropertyName(),
+            $propertyValue
+        );
+
+        $this->eventPublisher->publish(self::getStreamNameForContentStream($command->getContentStreamIdentifier()), $event);
+    }
+
+    /**
+     * @param NodeTypeName $nodeTypeName
+     * @return \Neos\ContentRepository\Domain\Model\NodeType
+     */
+    private function getNodeType(NodeTypeName $nodeTypeName)
+    {
+        if (!$this->nodeTypeManager->hasNodeType((string)$nodeTypeName)) {
+            throw new \InvalidArgumentException('TODO: Node type ' . $nodeTypeName . ' not found.');
+        }
+
+        $nodeType = $this->nodeTypeManager->getNodeType((string)$nodeTypeName);
+        return $nodeType;
     }
 }

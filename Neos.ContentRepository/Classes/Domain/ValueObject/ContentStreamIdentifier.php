@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  * source code.
  */
 
-final class EditingSessionIdentifier extends AbstractIdentifier
+final class ContentStreamIdentifier extends AbstractIdentifier
 {
 
 }
