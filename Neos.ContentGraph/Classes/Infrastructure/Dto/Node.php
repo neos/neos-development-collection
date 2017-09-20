@@ -12,7 +12,6 @@ namespace Neos\ContentGraph\Infrastructure\Dto;
  * source code.
  */
 use Neos\ContentRepository\Domain\Context\Node\Event;
-use Neos\ContentRepository\Domain as ContentRepository;
 use Neos\ContentRepository\Domain\Context\Importing\Event\NodeWasImported;
 use Neos\Flow\Annotations as Flow;
 
@@ -29,7 +28,17 @@ class Node
     /**
      * @var string
      */
+    public $nodeAggregateIdentifier;
+
+    /**
+     * @var string
+     */
     public $subgraphIdentifier;
+
+    /**
+     * @var string
+     */
+    public $subgraphIdentityHash;
 
     /**
      * @var array
@@ -44,14 +53,18 @@ class Node
 
     /**
      * @param string $nodeIdentifier
-     * @param string $subgraphIdentifier
+     * @param string $nodeAggregateIdentifier
+     * @param array $subgraphIdentifier
+     * @param string $subgraphIdentityHash
      * @param array $properties
      * @param string $nodeTypeName
      */
-    public function __construct(string $nodeIdentifier, string $subgraphIdentifier, array $properties, string $nodeTypeName)
+    public function __construct(string $nodeIdentifier, string $nodeAggregateIdentifier, array $subgraphIdentifier, string $subgraphIdentityHash, array $properties, string $nodeTypeName)
     {
         $this->nodeIdentifier = $nodeIdentifier;
+        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->subgraphIdentifier = $subgraphIdentifier;
+        $this->subgraphIdentityHash = $subgraphIdentityHash;
         $this->properties = $properties;
         $this->nodeTypeName = $nodeTypeName;
     }
@@ -118,7 +131,9 @@ class Node
     {
         return array_merge($this->properties, [
             '_nodeIdentifier' => $this->nodeIdentifier,
+            '_nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
             '_subgraphIdentifier' => $this->subgraphIdentifier,
+            '_subgraphIdentityHash' => $this->subgraphIdentityHash,
             '_nodeTypeName' => $this->nodeTypeName
         ]);
     }

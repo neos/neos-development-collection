@@ -146,14 +146,16 @@ class GraphProjector extends AbstractGraphProjector
 
     protected function getNode(ContentRepository\ValueObject\NodeAggregateIdentifier $nodeIdentifier, ContentRepository\ValueObject\SubgraphIdentifier $subgraphIdentifier): Node
     {
-        return $this->contentGraph->getNode($nodeIdentifier, $subgraphIdentifier->getHash());
+        return $this->contentGraph->getNode((string) $nodeIdentifier, $subgraphIdentifier->getHash());
     }
 
     protected function addNode(Node $node)
     {
         $this->getDatabaseConnection()->insert('neos_contentgraph_node', [
+            'nodeaggregateidentifier' => $node->nodeAggregateIdentifier,
             'nodeidentifier' => $node->nodeIdentifier,
-            'subgraphidentifier' => $node->subgraphIdentifier,
+            'subgraphidentifier' => json_encode($node->subgraphIdentifier),
+            'subgraphidentityhash' => $node->subgraphIdentityHash,
             'properties' => json_encode($node->properties),
             'nodetypename' => $node->nodeTypeName
         ]);

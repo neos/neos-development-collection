@@ -15,7 +15,6 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Dto\HierarchyEdge;
 use Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Service\DbalClient;
 use Neos\ContentGraph\Infrastructure\Dto\Node;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -42,42 +41,42 @@ class ProjectionContentGraph
                 ->fetch()['count'] > 0;
     }
 
-    public function getNode(NodeAggregateIdentifier $nodeIdentifier, string $subgraphIdentifier): Node
+    public function getNode(string $nodeIdentifier, string $subgraphIdentityHash): Node
     {
         $nodeData = $this->getDatabaseConnection()->executeQuery(
             'SELECT n.* FROM neos_contentgraph_node n
  WHERE nodeidentifier = :nodeIdentifier
- AND subgraphidentifier = :subgraphIdentifier',
+ AND subgraphidentityhash = :subgraphIdentityHash',
             [
                 'nodeIdentifier' => $nodeIdentifier,
-                'subgraphIdentifier' => $subgraphIdentifier
+                'subgraphIdentityHash' => $subgraphIdentityHash
             ]
         )->fetch();
 
         return $this->mapRawDataToNode($nodeData);
     }
 
-    public function getEdgePosition(string $parentIdentifier, string $elderSiblingIdentifier = null, string $subgraphIdentifier)
+    public function getEdgePosition(string $parentIdentifier, string $elderSiblingIdentifier = null, string $subgraphIdentityHash)
     {
         if ($elderSiblingIdentifier) {
             $elderSiblingPosition = (int)$this->getDatabaseConnection()->executeQuery(
                 'SELECT h.position FROM neos_contentgraph_hierarchyedge h
  WHERE childnodesidentifieringraph = :elderSiblingIdentifier
- AND subgraphidentifier = :subgraphIdentifier',
+ AND subgraphIdentityHash = :subgraphIdentityHash',
                 [
                     'elderSiblingIdentifier' => $elderSiblingIdentifier,
-                    'subgraphIdentifier' => $subgraphIdentifier
+                    'subgraphIdentityHash' => $subgraphIdentityHash
                 ]
             )->fetch()['position'];
 
             $youngerSiblingEdge = $this->getDatabaseConnection()->executeQuery(
                 'SELECT MIN(h.position) AS `position` FROM neos_contentgraph_hierarchyedge h
  WHERE parentnodesidentifieringraph = :parentNodesIdentifierInGraph
- AND subgraphidentifier = :subgraphIdentifier
+ AND subgraphIdentityHash = :subgraphIdentityHash
  AND `position` > :position',
                 [
                     'parentNodesIdentifierInGraph' => $parentIdentifier,
-                    'subgraphIdentifier' => $subgraphIdentifier,
+                    'subgraphIdentityHash' => $subgraphIdentityHash,
                     'position' => $elderSiblingPosition
                 ]
             )->fetch();
@@ -91,11 +90,11 @@ class ProjectionContentGraph
             $eldestSiblingEdge = $this->getDatabaseConnection()->executeQuery(
                 'SELECT MIN(h.position) AS `position` FROM neos_contentgraph_hierarchyedge h
  WHERE parentnodesidentifieringraph = :parentNodesIdentifierInGraph
- AND subgraphidentifier = :subgraphIdentifier
+ AND subgraphIdentityHash = :subgraphIdentityHash
  ORDER BY `position` ASC',
                 [
                     'parentNodesIdentifierInGraph' => $parentIdentifier,
-                    'subgraphIdentifier' => $subgraphIdentifier
+                    'subgraphIdentityHash' => $subgraphIdentityHash
                 ]
             )->fetch();
 
@@ -111,19 +110,19 @@ class ProjectionContentGraph
 
     /**
      * @param string $parentNodesIdentifierInGraph
-     * @param string $subgraphIdentifier
+     * @param string $subgraphIdentityHash
      * @return array|HierarchyEdge[]
      */
-    public function getOutboundHierarchyEdgesForNodeAndSubgraph(string $parentNodesIdentifierInGraph, string $subgraphIdentifier): array
+    public function getOutboundHierarchyEdgesForNodeAndSubgraph(string $parentNodesIdentifierInGraph, string $subgraphIdentityHash): array
     {
         $edges = [];
         foreach ($this->getDatabaseConnection()->executeQuery(
             'SELECT h.* FROM neos_contentgraph_hierarchyedge h
  WHERE parentnodesidentifieringraph = :parentNodesIdentifierInGraph
- AND subgraphidentifier = :subgraphIdentifier',
+ AND subgraphIdentityHash = :subgraphIdentityHash',
             [
                 'parentNodesIdentifierInGraph' => $parentNodesIdentifierInGraph,
-                'subgraphIdentifier' => $subgraphIdentifier
+                'subgraphIdentityHash' => $subgraphIdentityHash
             ]
         )->fetchAll() as $edgeData) {
             $edges[] = $this->mapRawDataToHierarchyEdge($edgeData);
@@ -135,22 +134,22 @@ class ProjectionContentGraph
 
     /**
      * @param string $childNodesIdentifierInGraph
-     * @param array $subgraphIdentifiers
+     * @param array $subgraphIdentityHashs
      * @return array|HierarchyEdge[]
      */
-    public function findInboundHierarchyEdgesForNodeAndSubgraphs(string $childNodesIdentifierInGraph, array $subgraphIdentifiers): array
+    public function findInboundHierarchyEdgesForNodeAndSubgraphs(string $childNodesIdentifierInGraph, array $subgraphIdentityHashs): array
     {
         $edges = [];
         foreach ($this->getDatabaseConnection()->executeQuery(
             'SELECT h.* FROM neos_contentgraph_hierarchyedge h
  WHERE childnodesidentifieringraph = :childNodesIdentifierInGraph
- AND subgraphidentifier IN (:subgraphIdentifiers)',
+ AND subgraphIdentityHash IN (:subgraphIdentityHashs)',
             [
                 'childNodesIdentifierInGraph' => $childNodesIdentifierInGraph,
-                'subgraphIdentifiers' => $subgraphIdentifiers
+                'subgraphIdentityHashs' => $subgraphIdentityHashs
             ],
             [
-                'subgraphIdentifiers' => Connection::PARAM_STR_ARRAY
+                'subgraphIdentityHashs' => Connection::PARAM_STR_ARRAY
             ]
         )->fetchAll() as $edgeData) {
             $edges[] = $this->mapRawDataToHierarchyEdge($edgeData);
@@ -161,22 +160,22 @@ class ProjectionContentGraph
 
     /**
      * @param string $parentNodesIdentifierInGraph
-     * @param array $subgraphIdentifiers
+     * @param array $subgraphIdentityHashs
      * @return array|HierarchyEdge[]
      */
-    public function findOutboundHierarchyEdgesForNodeAndSubgraphs(string $parentNodesIdentifierInGraph, array $subgraphIdentifiers): array
+    public function findOutboundHierarchyEdgesForNodeAndSubgraphs(string $parentNodesIdentifierInGraph, array $subgraphIdentityHashs): array
     {
         $edges = [];
         foreach ($this->getDatabaseConnection()->executeQuery(
             'SELECT h.* FROM neos_contentgraph_hierarchyedge h
  WHERE parentnodesidentifieringraph = :parentNodesIdentifierInGraph
- AND subgraphidentifier IN (:subgraphIdentifiers)',
+ AND subgraphIdentityHash IN (:subgraphIdentityHashs)',
             [
                 'parentNodesIdentifierInGraph' => $parentNodesIdentifierInGraph,
-                'subgraphIdentifiers' => $subgraphIdentifiers
+                'subgraphIdentityHashs' => $subgraphIdentityHashs
             ],
             [
-                'subgraphIdentifiers' => Connection::PARAM_STR_ARRAY
+                'subgraphIdentityHashs' => Connection::PARAM_STR_ARRAY
             ]
         )->fetchAll() as $edgeData) {
             $edges[] = $this->mapRawDataToHierarchyEdge($edgeData);
@@ -191,7 +190,7 @@ class ProjectionContentGraph
             $rawData['parentnodesidentifieringraph'],
             $rawData['childnodesidentifieringraph'],
             $rawData['name'],
-            $rawData['subgraphidentifier'],
+            $rawData['subgraphidentityhash'],
             $rawData['position']
         );
     }
@@ -199,9 +198,10 @@ class ProjectionContentGraph
     protected function mapRawDataToNode(array $rawData): Node
     {
         return new Node(
-            $rawData['identifieringraph'],
-            $rawData['identifierinsubgraph'],
+            $rawData['nodeidentifier'],
+            $rawData['nodeaggregateidentifier'],
             $rawData['subgraphidentifier'],
+            $rawData['subgraphidentityhash'],
             json_decode($rawData['properties'], true),
             $rawData['nodetypename']
         );
