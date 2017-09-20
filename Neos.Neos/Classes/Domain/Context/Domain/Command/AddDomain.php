@@ -87,9 +87,9 @@ class AddDomain
     }
 
     /**
-     * @return HttpScheme
+     * @return HttpScheme (nullable)
      */
-    public function getScheme(): ?HttpScheme
+    public function getScheme()
     {
         return $this->scheme;
     }
@@ -103,9 +103,9 @@ class AddDomain
     }
 
     /**
-     * @return DomainPort
+     * @return DomainPort (nullable)
      */
-    public function getPort(): ?DomainPort
+    public function getPort()
     {
         return $this->port;
     }

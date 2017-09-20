@@ -74,7 +74,7 @@ class DomainHasBeenAdded implements EventInterface
     /**
      * @return HttpScheme
      */
-    public function getScheme(): ?HttpScheme
+    public function getScheme()
     {
         return $this->scheme;
     }
@@ -82,7 +82,7 @@ class DomainHasBeenAdded implements EventInterface
     /**
      * @return DomainPort
      */
-    public function getPort(): ?DomainPort
+    public function getPort()
     {
         return $this->port;
     }
