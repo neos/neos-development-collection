@@ -17,6 +17,7 @@ use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\Service\OldNodeStructureSiteImportService;
 use Neos\Neos\Domain\Service\SiteExportService;
 use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\Neos\Domain\Service\SiteService;
@@ -38,6 +39,12 @@ class SiteCommandController extends CommandController
      * @var SiteImportService
      */
     protected $siteImportService;
+
+    /**
+     * @Flow\Inject
+     * @var OldNodeStructureSiteImportService
+     */
+    protected $oldNodeStructureSiteImportService;
 
     /**
      * @Flow\Inject
@@ -215,6 +222,60 @@ class SiteCommandController extends CommandController
         }
         $this->outputLine('Import of site "%s" finished.', array($site->getName()));
     }
+
+    /**
+     * Import sites content
+     *
+     * This command allows for importing one or more sites or partial content from an XML source. The format must
+     * be identical to that produced by the export command.
+     *
+     * If a filename is specified, this command expects the corresponding file to contain the XML structure. The
+     * filename php://stdin can be used to read from standard input.
+     *
+     * If a package key is specified, this command expects a Sites.xml file to be located in the private resources
+     * directory of the given package (Resources/Private/Content/Sites.xml).
+     *
+     * @param string $packageKey Package key specifying the package containing the sites content
+     * @param string $filename relative path and filename to the XML file containing the sites content
+     * @return void
+     */
+    public function legacyImportCommand($packageKey = null, $filename = null)
+    {
+        $exceedingArguments = $this->request->getExceedingArguments();
+        if (isset($exceedingArguments[0]) && $packageKey === null && $filename === null) {
+            if (file_exists($exceedingArguments[0])) {
+                $filename = $exceedingArguments[0];
+            } elseif ($this->packageManager->isPackageAvailable($exceedingArguments[0])) {
+                $packageKey = $exceedingArguments[0];
+            }
+        }
+
+        if ($packageKey === null && $filename === null) {
+            $this->outputLine('You have to specify either "--package-key" or "--filename"');
+            $this->quit(1);
+        }
+        $site = null;
+        if ($filename !== null) {
+            try {
+                $site = $this->oldNodeStructureSiteImportService->importFromFile($filename);
+            } catch (\Exception $exception) {
+                $this->systemLogger->logException($exception);
+                $this->outputLine('<error>During the import of the file "%s" an exception occurred: %s, see log for further information.</error>', array($filename, $exception->getMessage()));
+                $this->quit(1);
+            }
+        } else {
+            try {
+                $site = $this->oldNodeStructureSiteImportService->importFromPackage($packageKey);
+            } catch (\Exception $exception) {
+                $this->systemLogger->logException($exception);
+                $this->outputLine('<error>During the import of the "Sites.xml" from the package "%s" an exception occurred: %s, see log for further information.</error>', array($packageKey, $exception->getMessage()));
+                $this->quit(1);
+            }
+        }
+        $this->outputLine('Import of site "%s" finished.', array($site->getName()));
+    }
+
+
 
     /**
      * Export sites content (e.g. site:export --package-key "Neos.Demo")
