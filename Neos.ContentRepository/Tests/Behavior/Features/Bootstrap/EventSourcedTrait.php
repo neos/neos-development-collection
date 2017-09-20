@@ -11,6 +11,7 @@
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
 use Neos\EventSourcing\Event\EventInterface;
 use Neos\EventSourcing\Event\EventPublisher;
 use Neos\EventSourcing\Event\EventTypeResolver;
@@ -50,18 +51,8 @@ trait EventSourcedTrait
 
     private $currentEventStreamAsArray;
 
-
     /**
-     * @Given /^The following Events where were published to stream "([^"]*)":$/
-     */
-    public function theFollowingEventsWhereWerePublished($streamName, TableNode $eventsTable)
-    {
-
-    }
-
-
-    /**
-     * @Given /^The Event "([^"]*)" was published to stream "([^"]*)" with payload:$/
+     * @Given /^the Event "([^"]*)" was published to stream "([^"]*)" with payload:$/
      */
     public function theEventWasPublishedToStreamWithPayload($eventType, $streamName, TableNode $payloadTable)
     {
@@ -77,8 +68,22 @@ trait EventSourcedTrait
     {
         $eventPayload = [];
         foreach ($payloadTable->getHash() as $line) {
-            $eventPayload[$line['Key']] = $line['Value'];
+            if (!empty($line['Type'])) {
+                switch ($line['Type']) {
+                    case 'json':
+                        $eventPayload[$line['Key']] = json_decode($line['Value'], true);
+                        break;
+                    case 'DimensionValues':
+                        $eventPayload[$line['Key']] = new DimensionValues(json_decode($line['Value'], true));
+                        break;
+                    default:
+                        throw new \Exception("TODO" . json_encode($line));
+                }
+            } else {
+                $eventPayload[$line['Key']] = $line['Value'];
+            }
         }
+
         return $eventPayload;
     }
 
@@ -106,6 +111,12 @@ trait EventSourcedTrait
                     \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
                     'handleCreateRootNode'
                 ];
+            case 'CreateChildNodeWithVariant':
+                return [
+                    \Neos\ContentRepository\Domain\Context\Node\Command\CreateChildNodeWithVariant::class,
+                    \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
+                    'handleCreateChildNodeWithVariant'
+                ];
             default:
                 throw new \Exception('The short command name "' . $shortCommandName . '" is currently not supported by the tests.');
         }
@@ -125,19 +136,21 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Then /^event number (\d+) is:$/
+     * @Then /^event number (\d+) is of type "([^"]*)" with payload:/
      */
-    public function eventNumberIs($eventNumber, TableNode $payloadTable)
+    public function eventNumberIs($eventNumber, $eventType, TableNode $payloadTable)
     {
         /* @var $actualEvent EventAndRawEvent */
         $actualEvent = $this->currentEventStreamAsArray[$eventNumber];
+        Assert::assertEquals($eventType, $actualEvent->getRawEvent()->getType(), 'Event Type does not match: "' . $actualEvent->getRawEvent()->getType() . '" !== "' . $eventType . '"');
+
         $actualEventPayload = $actualEvent->getRawEvent()->getPayload();
 
         foreach ($payloadTable->getHash() as $assertionTableRow) {
             $actualValue = \Neos\Utility\Arrays::getValueByPath($actualEventPayload, $assertionTableRow['Key']);
             $expectedValue = $assertionTableRow['Value'];
 
-            Assert::assertEquals($expectedValue, $actualValue, 'ERROR at ' . $assertionTableRow['Key'] . ': "' . $actualValue . '" !== "' . $expectedValue . '"');
+            Assert::assertEquals($expectedValue, $actualValue, 'ERROR at ' . $assertionTableRow['Key'] . ': ' . json_encode($actualValue) . ' !== ' . json_encode($expectedValue));
         }
     }
 
