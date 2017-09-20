@@ -200,12 +200,20 @@ class InterDimensionalFallbackGraph
     }
 
     /**
-     * @param string $identityHash
+     * @param Domain\ValueObject\DimensionSpacePoint $point
      * @return ContentSubgraph|null
-     * @api
      */
-    public function getSubgraph(string $identityHash)
+    public function getSubgraphByDimensionSpacePoint(Domain\ValueObject\DimensionSpacePoint $point): ?ContentSubgraph
     {
-        return $this->subgraphs[$identityHash] ?: null;
+        return $this->getSubgraphByDimensionSpacePointHash($point->getHash());
+    }
+
+    /**
+     * @param string $hash
+     * @return ContentSubgraph|null
+     */
+    public function getSubgraphByDimensionSpacePointHash(string $hash): ?ContentSubgraph
+    {
+        return $this->subgraphs[$hash] ?: null;
     }
 }
