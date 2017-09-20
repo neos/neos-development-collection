@@ -1,8 +1,8 @@
 <?php
-namespace Neos\Neos\Domain\Context\Domain\Command;
+namespace Neos\Neos\Domain\Context\Domain\Event;
 
 /*
- * This file is part of the Neos.Neos package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,9 +11,10 @@ namespace Neos\Neos\Domain\Context\Domain\Command;
  * source code.
  */
 
-use Neos\Neos\Domain\ValueOBject\HostName;
+use Neos\EventSourcing\Event\EventInterface;
+use Neos\Neos\Domain\ValueObject\HostName;
 
-class ActivateDomain
+class DomainHasBeenDeleted implements EventInterface
 {
     /**
      * @var HostName
@@ -21,7 +22,7 @@ class ActivateDomain
     private $hostName;
 
     /**
-     * ActivateDomain constructor.
+     * DeleteDomain constructor.
      * @param HostName $hostName
      */
     public function __construct(HostName $hostName)

@@ -16,9 +16,11 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Context\Domain\Command\ActivateDomain;
 use Neos\Neos\Domain\Context\Domain\Command\AddDomain;
 use Neos\Neos\Domain\Context\Domain\Command\DeactivateDomain;
+use Neos\Neos\Domain\Context\Domain\Command\DeleteDomain;
 use Neos\Neos\Domain\Context\Domain\Event\DomainHasBeenActivated;
 use Neos\Neos\Domain\Context\Domain\Event\DomainHasBeenAdded;
 use Neos\Neos\Domain\Context\Domain\Event\DomainHasBeenDeactivated;
+use Neos\Neos\Domain\Context\Domain\Event\DomainHasBeenDeleted;
 
 /**
  * WorkspaceCommandHandler
@@ -54,6 +56,8 @@ final class DomainCommandHandler
      */
     public function handleActivateDomain(ActivateDomain $command)
     {
+        // TODO: Necessary checks
+
         $this->eventPublisher->publish(
             'Neos.Neos:Domain:' . $command->getHostName(),
             new DomainHasBeenActivated(
@@ -63,13 +67,30 @@ final class DomainCommandHandler
     }
 
     /**
-     * @param ActivateDomain $command
+     * @param DeactivateDomain $command
      */
     public function handleDeactivateDomain(DeactivateDomain $command)
     {
+        // TODO: Necessary checks
+
         $this->eventPublisher->publish(
             'Neos.Neos:Domain:' . $command->getHostName(),
             new DomainHasBeenDeactivated(
+                $command->getHostName()
+            )
+        );
+    }
+
+    /**
+     * @param DeleteDomain $command
+     */
+    public function handleDeleteDomain(DeleteDomain $command)
+    {
+        // TODO: Necessary checks
+
+        $this->eventPublisher->publish(
+            'Neos.Neos:Domain:' . $command->getHostName(),
+            new DomainHasBeenDeleted(
                 $command->getHostName()
             )
         );
