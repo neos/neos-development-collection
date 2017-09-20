@@ -281,9 +281,16 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         return $result;
     }
 
-    public function findRootNode(): ContentRepository\Model\NodeInterface
+    public function findRootNode(ContentRepository\Service\Context $context = null): ContentRepository\Model\NodeInterface
     {
-        // TODO: Implement findRootNode() method.
+        $nodeData = $this->getDatabaseConnection()->executeQuery(
+            'SELECT n.* FROM neos_contentgraph_node n
+ WHERE n.nodetypename = :nodeTypeName',
+            [
+                'nodeTypeName' => 'Neos.ContentGraph:Root',
+            ]
+        )->fetch();
+        return $this->mapRawDataToNode($nodeData, $context);
     }
 
 

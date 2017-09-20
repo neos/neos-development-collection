@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Domain\Projection\Content;
  * source code.
  */
 use Neos\ContentRepository\Domain;
+use Neos\ContentRepository\Domain\Service\Context;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -75,7 +76,7 @@ interface ContentSubgraphInterface
      */
     public function findNodesByType(string $nodeTypeName, Domain\Service\Context $contentContext = null): array;
 
-    public function findRootNode(): Domain\Model\NodeInterface;
+    public function findRootNode(Context $context = null): Domain\Model\NodeInterface;
 
     public function getIdentifier(): Domain\ValueObject\SubgraphIdentifier;
 }

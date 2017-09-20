@@ -274,7 +274,7 @@ class Context
      */
     public function getRootNode()
     {
-        return $this->getSubgraph()->findRootNode();
+        return $this->getSubgraph()->findRootNode($this);
     }
 
     /**
