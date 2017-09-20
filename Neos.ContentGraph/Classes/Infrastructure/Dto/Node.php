@@ -13,6 +13,7 @@ namespace Neos\ContentGraph\Infrastructure\Dto;
  */
 use Neos\ContentRepository\Domain\Context\Node\Event;
 use Neos\ContentRepository\Domain as ContentRepository;
+use Neos\ContentRepository\Domain\Context\Importing\Event\NodeWasImported;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -21,7 +22,7 @@ use Neos\Flow\Annotations as Flow;
 class Node
 {
     /**
-     * @var ContentRepository\ValueObject\NodeAggregateIdentifier
+     * @var string
      */
     public $nodeIdentifier;
 
@@ -36,12 +37,18 @@ class Node
     public $properties;
 
     /**
-     * @var ContentRepository\ValueObject\NodeTypeName
+     * @var string
      */
     public $nodeTypeName;
 
 
-    public function __construct(ContentRepository\ValueObject\NodeAggregateIdentifier $nodeIdentifier, string $subgraphIdentifier, array $properties, ContentRepository\ValueObject\NodeTypeName $nodeTypeName)
+    /**
+     * @param string $nodeIdentifier
+     * @param string $subgraphIdentifier
+     * @param array $properties
+     * @param string $nodeTypeName
+     */
+    public function __construct(string $nodeIdentifier, string $subgraphIdentifier, array $properties, string $nodeTypeName)
     {
         $this->nodeIdentifier = $nodeIdentifier;
         $this->subgraphIdentifier = $subgraphIdentifier;
@@ -52,11 +59,15 @@ class Node
     public static function fromRootNodeWasCreated(Event\RootNodeWasCreated $event): Node
     {
         return new Node(
-            $event->getNodeIdentifier(),
+            (string) $event->getNodeIdentifier(),
             '_system',
             [],
-            new ContentRepository\ValueObject\NodeTypeName('Neos.ContentGraph:Root')
+            'Neos.ContentGraph:Root'
         );
+    }
+
+    public static function fromNodeWasImported(NodeWasImported $event): Node
+    {
     }
 
     /*
