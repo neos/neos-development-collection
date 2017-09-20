@@ -11,6 +11,7 @@
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
 use Neos\EventSourcing\Event\EventInterface;
 use Neos\EventSourcing\Event\EventPublisher;
@@ -73,8 +74,8 @@ trait EventSourcedTrait
                     case 'json':
                         $eventPayload[$line['Key']] = json_decode($line['Value'], true);
                         break;
-                    case 'DimensionValues':
-                        $eventPayload[$line['Key']] = new DimensionValues(json_decode($line['Value'], true));
+                    case 'DimensionSpacePoint':
+                        $eventPayload[$line['Key']] = new DimensionSpacePoint(json_decode($line['Value'], true));
                         break;
                     default:
                         throw new \Exception("TODO" . json_encode($line));
@@ -111,11 +112,11 @@ trait EventSourcedTrait
                     \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
                     'handleCreateRootNode'
                 ];
-            case 'CreateChildNodeWithVariant':
+            case 'CreateNodeAggregateWithNode':
                 return [
                     \Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode::class,
                     \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
-                    'handleCreateChildNodeWithVariant'
+                    'handleCreateNodeAggregateWithNode'
                 ];
             default:
                 throw new \Exception('The short command name "' . $shortCommandName . '" is currently not supported by the tests.');
@@ -148,7 +149,10 @@ trait EventSourcedTrait
 
         foreach ($payloadTable->getHash() as $assertionTableRow) {
             $actualValue = \Neos\Utility\Arrays::getValueByPath($actualEventPayload, $assertionTableRow['Key']);
-            $expectedValue = $assertionTableRow['Value'];
+            $expectedValue = $assertionTableRow['Expected'];
+            if (isset($assertionTableRow['AssertionType']) && $assertionTableRow['AssertionType'] === 'json') {
+                $expectedValue = json_decode($expectedValue, true);
+            }
 
             Assert::assertEquals($expectedValue, $actualValue, 'ERROR at ' . $assertionTableRow['Key'] . ': ' . json_encode($actualValue) . ' !== ' . json_encode($expectedValue));
         }
