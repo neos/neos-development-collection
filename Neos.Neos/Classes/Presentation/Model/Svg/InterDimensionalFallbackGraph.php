@@ -12,7 +12,7 @@ namespace Neos\Neos\Presentation\Model\Svg;
  * source code.
  */
 use Neos\ContentRepository\Domain\Context\Dimension;
-use Neos\ContentRepository\Domain\Context\DimensionCombination;
+use Neos\ContentRepository\Domain\Context\DimensionSpace;
 
 /**
  * The InterDimensionalFallbackGraph presentation model for SVG
@@ -20,7 +20,7 @@ use Neos\ContentRepository\Domain\Context\DimensionCombination;
 class InterDimensionalFallbackGraph
 {
     /**
-     * @var DimensionCombination\Repository\InterDimensionalFallbackGraph
+     * @var DimensionSpace\Repository\InterDimensionalFallbackGraph
      */
     protected $fallbackGraph;
 
@@ -60,12 +60,12 @@ class InterDimensionalFallbackGraph
     protected $height;
 
     /**
-     * @param DimensionCombination\Repository\InterDimensionalFallbackGraph $fallbackGraph
+     * @param DimensionSpace\Repository\InterDimensionalFallbackGraph $fallbackGraph
      * @param Dimension\Repository\IntraDimensionalFallbackGraph $intraDimensionalFallbackGraph
      * @param string|null $rootSubgraphIdentifier
      */
     public function __construct(
-        DimensionCombination\Repository\InterDimensionalFallbackGraph $fallbackGraph,
+        DimensionSpace\Repository\InterDimensionalFallbackGraph $fallbackGraph,
         Dimension\Repository\IntraDimensionalFallbackGraph $intraDimensionalFallbackGraph,
         string $rootSubgraphIdentifier = null
     ) {
@@ -219,10 +219,10 @@ class InterDimensionalFallbackGraph
     }
 
     /**
-     * @param DimensionCombination\Repository\ContentSubgraph $subgraph
+     * @param DimensionSpace\Repository\ContentSubgraph $subgraph
      * @return void
      */
-    protected function initializeFullGraphNode(DimensionCombination\Repository\ContentSubgraph $subgraph)
+    protected function initializeFullGraphNode(DimensionSpace\Repository\ContentSubgraph $subgraph)
     {
         $x = 0;
         $y = 0;
@@ -261,12 +261,12 @@ class InterDimensionalFallbackGraph
     }
 
     /**
-     * @param DimensionCombination\Repository\ContentSubgraph $subgraph
+     * @param DimensionSpace\Repository\ContentSubgraph $subgraph
      * @param int $horizontalOffset
      * @param int $y
      * @return void
      */
-    protected function initializeSubgraphNode(DimensionCombination\Repository\ContentSubgraph $subgraph, int & $horizontalOffset, int & $y)
+    protected function initializeSubgraphNode(DimensionSpace\Repository\ContentSubgraph $subgraph, int & $horizontalOffset, int & $y)
     {
         $nameComponents = $subgraph->getDimensionValues();
         array_walk($nameComponents, function (Dimension\Model\ContentDimensionValue &$value) {
@@ -303,12 +303,12 @@ class InterDimensionalFallbackGraph
     protected function initializeEdges($hideInactive = true)
     {
         $subgraphs = $this->fallbackGraph->getSubgraphs();
-        usort($subgraphs, function (DimensionCombination\Repository\ContentSubgraph $subgraphA, DimensionCombination\Repository\ContentSubgraph $subgraphB) {
+        usort($subgraphs, function (DimensionSpace\Repository\ContentSubgraph $subgraphA, DimensionSpace\Repository\ContentSubgraph $subgraphB) {
             return $subgraphB->getWeight() <=> $subgraphA->getWeight();
         });
         foreach ($subgraphs as $subgraph) {
             $fallback = $subgraph->getFallback();
-            usort($fallback, function (DimensionCombination\Repository\ContentSubgraph $subgraphA, DimensionCombination\Repository\ContentSubgraph $subgraphB) {
+            usort($fallback, function (DimensionSpace\Repository\ContentSubgraph $subgraphA, DimensionSpace\Repository\ContentSubgraph $subgraphB) {
                 return $subgraphA->getWeight() <=> $subgraphB->getWeight();
             });
             $i = 1;

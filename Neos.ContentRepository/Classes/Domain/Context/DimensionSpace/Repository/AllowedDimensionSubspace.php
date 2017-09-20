@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\ContentRepository\Domain\Context\DimensionCombination\Repository;
+namespace Neos\ContentRepository\Domain\Context\DimensionSpace\Repository;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -20,7 +20,7 @@ use Neos\Flow\Annotations as Flow;
  * @Flow\Scope("singleton")
  * @package Neos\ContentRepository
  */
-class ContentDimensionValueCombinationRepository
+class AllowedDimensionSubspace
 {
     /**
      * @Flow\Inject
