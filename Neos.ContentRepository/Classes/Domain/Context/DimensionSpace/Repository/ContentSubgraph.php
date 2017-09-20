@@ -10,6 +10,7 @@ namespace Neos\ContentRepository\Domain\Context\DimensionSpace\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\ContentRepository\Domain\Context\Dimension;
 use Neos\ContentRepository\Domain;
 
@@ -58,6 +59,13 @@ class ContentSubgraph
         $this->identifier = new Domain\ValueObject\DimensionSpacePoint($coordinates);
     }
 
+    /**
+     * @return Domain\ValueObject\DimensionSpacePoint
+     */
+    public function getIdentifier(): Domain\ValueObject\DimensionSpacePoint
+    {
+        return $this->identifier;
+    }
 
     /**
      * @return array|Dimension\Model\ContentDimensionValue[]

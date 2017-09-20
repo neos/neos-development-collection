@@ -41,6 +41,9 @@ class IntraDimensionalFallbackGraph
 
     public function initializeObject()
     {
+        $this->dimensions = [];
+        $this->prioritizedContentDimensions = [];
+
         foreach ($this->contentDimensionPresetSource->getAllPresets() as $dimensionName => $dimensionConfiguration) {
             $presetDimension = $this->createDimension($dimensionName, $dimensionConfiguration['label'] ?? null);
             foreach ($dimensionConfiguration['presets'] as $valueName => $valueConfiguration) {

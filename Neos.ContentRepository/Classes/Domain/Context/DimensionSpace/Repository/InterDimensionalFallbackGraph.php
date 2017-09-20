@@ -23,6 +23,7 @@ use Neos\Flow\Annotations as Flow;
  */
 class InterDimensionalFallbackGraph
 {
+
     /**
      * @Flow\Inject
      * @var Dimension\Repository\IntraDimensionalFallbackGraph
@@ -40,9 +41,10 @@ class InterDimensionalFallbackGraph
      */
     protected $subgraphs = [];
 
-
     public function initializeObject()
     {
+        $this->subgraphs = [];
+
         $dimensionValueCombinations = [[]];
         foreach ($this->intraDimensionalFallbackGraph->getPrioritizedContentDimensions() as $contentDimension) {
             $nextLevelValueCombinations = [];
@@ -214,6 +216,6 @@ class InterDimensionalFallbackGraph
      */
     public function getSubgraphByDimensionSpacePointHash(string $hash): ?ContentSubgraph
     {
-        return $this->subgraphs[$hash] ?: null;
+        return isset($this->subgraphs[$hash]) ? $this->subgraphs[$hash] : null;
     }
 }

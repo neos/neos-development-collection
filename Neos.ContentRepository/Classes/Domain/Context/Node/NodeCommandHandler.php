@@ -3,6 +3,7 @@
 namespace Neos\ContentRepository\Domain\Context\Node;
 
 use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
+use Neos\ContentRepository\Domain\Context\DimensionSpace\Repository\InterDimensionalFallbackGraph;
 use Neos\ContentRepository\Domain\Context\Importing\Command\FinalizeImportingSession;
 use Neos\ContentRepository\Domain\Context\Importing\Command\StartImportingSession;
 use Neos\ContentRepository\Domain\Context\Importing\Event\ImportingSessionWasFinalized;
@@ -15,13 +16,16 @@ use Neos\ContentRepository\Domain\Context\Node\Command\SetProperty;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Domain\Context\Node\Event\PropertyWasSet;
 use Neos\ContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
+use Neos\ContentRepository\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
+use Neos\EventSourcing\Event\EventPublisher;
 use Neos\EventSourcing\EventStore\ExpectedVersion;
 use Neos\Flow\Annotations as Flow;
 
@@ -29,15 +33,21 @@ final class NodeCommandHandler
 {
     /**
      * @Flow\Inject
-     * @var \Neos\EventSourcing\Event\EventPublisher
+     * @var EventPublisher
      */
     protected $eventPublisher;
 
     /**
      * @Flow\Inject
-     * @var \Neos\ContentRepository\Domain\Service\NodeTypeManager
+     * @var NodeTypeManager
      */
     protected $nodeTypeManager;
+
+    /**
+     * @Flow\Inject
+     * @var InterDimensionalFallbackGraph
+     */
+    protected $interDimensionalFallbackGraph;
 
     /**
      * @param CreateNodeAggregateWithNode $command
@@ -90,13 +100,10 @@ final class NodeCommandHandler
      *
      * @param CreateNodeAggregateWithNode $command
      * @return array
-     * @throws NodeTypeNotFoundException
+     * @throws DimensionSpacePointNotFound
      */
     private function nodeAggregateWithNodeWasCreatedFromCommand(CreateNodeAggregateWithNode $command): array
     {
-        if (empty($command->getNodeTypeName())) {
-            throw new \InvalidArgumentException('TODO: Node type may not be null');
-        }
         $nodeType = $this->getNodeType($command->getNodeTypeName());
 
         $propertyDefaultValuesAndTypes = [];
@@ -107,8 +114,16 @@ final class NodeCommandHandler
 
         $events = [];
 
-        // TODO Calculate dimension space point set from dimension space point
-        $dimensionSpacePointSet = new DimensionSpacePointSet([]);
+
+        $contentSubgraph = $this->interDimensionalFallbackGraph->getSubgraphByDimensionSpacePoint($command->getDimensionSpacePoint());
+        if ($contentSubgraph === null) {
+            throw new DimensionSpacePointNotFound(sprintf('%s was not found in the allowed dimension subspace', $command->getDimensionSpacePoint()), 1505929456);
+        }
+        $points = [$command->getDimensionSpacePoint()];
+        foreach ($contentSubgraph->getVariants() as $variant) {
+            $points[] = $variant->getIdentifier();
+        }
+        $dimensionSpacePointSet = new DimensionSpacePointSet($points);
 
         $events[] = new NodeAggregateWithNodeWasCreated(
             $command->getContentStreamIdentifier(),

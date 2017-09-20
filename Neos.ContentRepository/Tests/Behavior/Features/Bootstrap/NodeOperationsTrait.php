@@ -200,8 +200,35 @@ trait NodeOperationsTrait
                 $contentDimensionPresetSource = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface::class);
                 $contentDimensionPresetSource->setConfiguration($dimensions);
             }
+
+            $intraDimensionalFallbackGraph = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Context\Dimension\Repository\IntraDimensionalFallbackGraph::class);
+            $intraDimensionalFallbackGraph->initializeObject();
+
+            $interDimensionalFallbackGraph = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Context\DimensionSpace\Repository\InterDimensionalFallbackGraph::class);
+            $interDimensionalFallbackGraph->initializeObject();
         }
     }
+
+    /**
+     * @Given /^I have no content dimensions$/
+     */
+    public function iHaveNoContentDimensions()
+    {
+        $dimensions = [];
+
+        $contentDimensionRepository = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Repository\ContentDimensionRepository::class);
+        $contentDimensionRepository->setDimensionsConfiguration($dimensions);
+
+        $contentDimensionPresetSource = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface::class);
+        $contentDimensionPresetSource->setConfiguration($dimensions);
+
+        $intraDimensionalFallbackGraph = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Context\Dimension\Repository\IntraDimensionalFallbackGraph::class);
+        $intraDimensionalFallbackGraph->initializeObject();
+
+        $interDimensionalFallbackGraph = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Context\DimensionSpace\Repository\InterDimensionalFallbackGraph::class);
+        $interDimensionalFallbackGraph->initializeObject();
+    }
+
 
     /**
      * @When /^I copy the node (into|after|before) path "([^"]*)" with the following context:$/
@@ -973,7 +1000,17 @@ trait NodeOperationsTrait
             /** @var \Neos\ContentRepository\Domain\Repository\ContentDimensionRepository $contentDimensionRepository */
 
             // Set the content dimensions to a fixed value for Behat scenarios
-            $contentDimensionRepository->setDimensionsConfiguration(array('language' => array('default' => 'mul_ZZ')));
+            $dimensionConfiguration = array('language' => array('default' => 'mul_ZZ', 'defaultPreset' => 'mul', 'presets' => ['mul' => ['values' => ['mul']]]));
+            $contentDimensionRepository->setDimensionsConfiguration($dimensionConfiguration);
+
+            $contentDimensionPresetSource = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface::class);
+            $contentDimensionPresetSource->setConfiguration($dimensionConfiguration);
+
+            $intraDimensionalFallbackGraph = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Context\Dimension\Repository\IntraDimensionalFallbackGraph::class);
+            $intraDimensionalFallbackGraph->initializeObject();
+
+            $interDimensionalFallbackGraph = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Context\DimensionSpace\Repository\InterDimensionalFallbackGraph::class);
+            $interDimensionalFallbackGraph->initializeObject();
         }
     }
 

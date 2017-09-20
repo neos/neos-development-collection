@@ -21,15 +21,17 @@ final class DimensionSpacePointSet implements \JsonSerializable
 {
 
     /**
-     * @var array<DimensionSpacePoint>
+     * @var array
      */
     private $points;
 
     /**
-     * @param array<DimensionSpacePoint> $points Array of dimension space points
+     * @param array $points Array of dimension space points
      */
     public function __construct(array $points)
     {
+        // TODO Check that all points are DimensionSpacePoint objects
+
         $this->points = $points;
     }
 
