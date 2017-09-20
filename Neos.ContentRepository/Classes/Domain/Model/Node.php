@@ -1829,7 +1829,12 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     protected function isNodeDataMatchingContext()
     {
-        return $this->context->getSubgraph()->getIdentifier() === $this->subgraphIdentifier;
+        if ($this->nodeDataIsMatchingContext === null) {
+            $workspacesMatch = $this->nodeData->getWorkspace() !== null && $this->context->getWorkspace() !== null && $this->nodeData->getWorkspace()->getName() === $this->context->getWorkspace()->getName();
+            $this->nodeDataIsMatchingContext = $workspacesMatch && $this->dimensionsAreMatchingTargetDimensionValues();
+        }
+
+        return $this->nodeDataIsMatchingContext;
     }
 
     /**
@@ -1943,7 +1948,32 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function dimensionsAreMatchingTargetDimensionValues()
     {
-        return $this->contentDimensionValues->equals($this->context->getSubgraph()->getDimensionValues());
+        $dimensions = $this->getDimensions();
+        $contextDimensions = $this->context->getDimensions();
+        foreach ($this->context->getTargetDimensions() as $dimensionName => $targetDimensionValue) {
+            if (!isset($dimensions[$dimensionName])) {
+                if ($targetDimensionValue === null) {
+                    continue;
+                } else {
+                    return false;
+                }
+            } elseif ($targetDimensionValue === null && $dimensions[$dimensionName] === array()) {
+                continue;
+            } elseif (!in_array($targetDimensionValue, $dimensions[$dimensionName], true)) {
+                $contextDimensionValues = $contextDimensions[$dimensionName];
+                $targetPositionInContext = array_search($targetDimensionValue, $contextDimensionValues, true);
+                $nodePositionInContext = min(array_map(function ($value) use ($contextDimensionValues) {
+                    return array_search($value, $contextDimensionValues, true);
+                }, $dimensions[$dimensionName]));
+
+                $val = $targetPositionInContext !== false && $nodePositionInContext !== false && $targetPositionInContext >= $nodePositionInContext;
+                if ($val === false) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     /**
