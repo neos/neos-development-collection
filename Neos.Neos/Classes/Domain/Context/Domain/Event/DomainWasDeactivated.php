@@ -14,8 +14,7 @@ namespace Neos\Neos\Domain\Context\Domain\Event;
 use Neos\EventSourcing\Event\EventInterface;
 use Neos\Neos\Domain\ValueObject\HostName;
 
-
-class DomainHasBeenActivated implements EventInterface
+class DomainWasDeactivated implements EventInterface
 {
     /**
      * @var HostName

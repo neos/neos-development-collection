@@ -2,7 +2,7 @@
 namespace Neos\Neos\Domain\Context\Domain\Event;
 
 /*
- * This file is part of the Neos.Neos package.
+ * This file is part of the Neos.ContentRepository package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,7 +14,7 @@ namespace Neos\Neos\Domain\Context\Domain\Event;
 use Neos\EventSourcing\Event\EventInterface;
 use Neos\Neos\Domain\ValueObject\HostName;
 
-class DomainHasBeenDeactivated implements EventInterface
+class DomainWasDeleted implements EventInterface
 {
     /**
      * @var HostName
@@ -22,7 +22,7 @@ class DomainHasBeenDeactivated implements EventInterface
     private $hostName;
 
     /**
-     * ActivateDomain constructor.
+     * DeleteDomain constructor.
      * @param HostName $hostName
      */
     public function __construct(HostName $hostName)

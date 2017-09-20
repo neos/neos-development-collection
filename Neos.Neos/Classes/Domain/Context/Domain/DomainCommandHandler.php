@@ -17,10 +17,10 @@ use Neos\Neos\Domain\Context\Domain\Command\ActivateDomain;
 use Neos\Neos\Domain\Context\Domain\Command\AddDomain;
 use Neos\Neos\Domain\Context\Domain\Command\DeactivateDomain;
 use Neos\Neos\Domain\Context\Domain\Command\DeleteDomain;
-use Neos\Neos\Domain\Context\Domain\Event\DomainHasBeenActivated;
-use Neos\Neos\Domain\Context\Domain\Event\DomainHasBeenAdded;
-use Neos\Neos\Domain\Context\Domain\Event\DomainHasBeenDeactivated;
-use Neos\Neos\Domain\Context\Domain\Event\DomainHasBeenDeleted;
+use Neos\Neos\Domain\Context\Domain\Event\DomainWasActivated;
+use Neos\Neos\Domain\Context\Domain\Event\DomainWasAdded;
+use Neos\Neos\Domain\Context\Domain\Event\DomainWasDeactivated;
+use Neos\Neos\Domain\Context\Domain\Event\DomainWasDeleted;
 
 /**
  * WorkspaceCommandHandler
@@ -42,7 +42,7 @@ final class DomainCommandHandler
 
         $this->eventPublisher->publish(
             'Neos.Neos:Domain:' . $command->getDomainHostname(),
-            new DomainHasBeenAdded(
+            new DomainWasAdded(
                 $command->getSiteNodeName(),
                 $command->getDomainHostname(),
                 $command->getScheme(),
@@ -60,7 +60,7 @@ final class DomainCommandHandler
 
         $this->eventPublisher->publish(
             'Neos.Neos:Domain:' . $command->getHostName(),
-            new DomainHasBeenActivated(
+            new DomainWasActivated(
                 $command->getHostName()
             )
         );
@@ -75,7 +75,7 @@ final class DomainCommandHandler
 
         $this->eventPublisher->publish(
             'Neos.Neos:Domain:' . $command->getHostName(),
-            new DomainHasBeenDeactivated(
+            new DomainWasDeactivated(
                 $command->getHostName()
             )
         );
@@ -90,7 +90,7 @@ final class DomainCommandHandler
 
         $this->eventPublisher->publish(
             'Neos.Neos:Domain:' . $command->getHostName(),
-            new DomainHasBeenDeleted(
+            new DomainWasDeleted(
                 $command->getHostName()
             )
         );
