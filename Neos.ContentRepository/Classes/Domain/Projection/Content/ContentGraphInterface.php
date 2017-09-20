@@ -19,9 +19,17 @@ use Neos\ContentRepository\Domain;
  */
 interface ContentGraphInterface
 {
-    public function getSubgraph(Domain\ValueObject\ContentStreamIdentifier $contentStreamIdentifier, Domain\ValueObject\DimensionValueCombination $dimensionValues): ContentSubgraphInterface;
+    /**
+     * @param Domain\ValueObject\SubgraphIdentifier $identifier
+     * @return ContentSubgraphInterface|null
+     */
+    public function getSubgraphByIdentifier(Domain\ValueObject\SubgraphIdentifier $identifier);
 
-    public function getSubgraphByIdentifier(string $subgraphIdentifier): ContentSubgraphInterface;
+    /**
+     * @param string $identityHash
+     * @return ContentSubgraphInterface|null
+     */
+    public function getSubgraphByIdentityHash(string $identityHash);
 
     /**
      * @return array|ContentSubgraphInterface[]

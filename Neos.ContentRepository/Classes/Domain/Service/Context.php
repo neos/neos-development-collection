@@ -125,14 +125,14 @@ class Context
     protected $contentStreamIdentifier;
 
     /**
-     * @var Domain\ValueObject\DimensionValueCombination
-     */
-    protected $dimensionValueCombination;
-
-    /**
      * @var Domain\Projection\Content\ContentSubgraphInterface
      */
     protected $contentSubgraph;
+
+    /**
+     * @var Domain\ValueObject\SubgraphIdentifier
+     */
+    protected $subgraphIdentifier;
 
     /**
      * Creates a new Context object.
@@ -168,20 +168,23 @@ class Context
         $this->inaccessibleContentShown = $inaccessibleContentShown;
         $this->targetDimensions = $targetDimensions;
 
-        $this->dimensionValueCombination = Domain\ValueObject\DimensionValueCombination::fromLegacyDimensionArray($dimensions);
-        $this->contentSubgraph = $contentSubgraph;
-
         $this->firstLevelNodeCache = new FirstLevelNodeCache();
 
         // TODO Explicitly get or create the head editing session for the given workspace and user
         // TODO Get user identifier
         $this->contentStreamIdentifier = new ContentStreamIdentifier(Algorithms::generateUUID());
+
+        $this->contentSubgraph = $contentSubgraph;
+        $this->subgraphIdentifier = new Domain\ValueObject\SubgraphIdentifier(
+            $this->contentStreamIdentifier,
+            Domain\ValueObject\DimensionValueCombination::fromLegacyDimensionArray($dimensions)
+        );
     }
 
     public function getSubgraph(): Domain\Projection\Content\ContentSubgraphInterface
     {
         if (!$this->contentSubgraph) {
-            $this->contentSubgraph = $this->contentGraph->getSubgraph($this->contentStreamIdentifier, $this->dimensionValueCombination);
+            $this->contentSubgraph = $this->contentGraph->getSubgraphByIdentifier($this->subgraphIdentifier);
         }
 
         return $this->contentSubgraph;

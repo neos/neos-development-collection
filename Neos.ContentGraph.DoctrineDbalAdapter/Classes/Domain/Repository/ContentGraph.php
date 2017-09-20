@@ -26,8 +26,8 @@ use Neos\Flow\Annotations as Flow;
  */
 final class ContentGraph extends AbstractContentGraph
 {
-    protected function createSubgraph(ContentRepository\ValueObject\ContentStreamIdentifier $contentStreamIdentifier, ContentRepository\ValueObject\DimensionValueCombination $dimensionValues): ContentProjection\ContentSubgraphInterface
+    protected function createSubgraph(ContentRepository\ValueObject\SubgraphIdentifier $subgraphIdentifier): ContentProjection\ContentSubgraphInterface
     {
-        return new ContentSubgraph($contentStreamIdentifier, $dimensionValues);
+        return new ContentSubgraph($subgraphIdentifier);
     }
 }
