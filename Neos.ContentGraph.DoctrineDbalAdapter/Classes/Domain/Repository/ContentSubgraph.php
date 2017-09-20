@@ -66,43 +66,22 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     protected $contentGraph;
 
     /**
-     * @var ContentRepository\ValueObject\ContentStreamIdentifier
+     * @var ContentRepository\ValueObject\SubgraphIdentifier
      */
-    protected $contentStreamIdentifier;
-
-    /**
-     * @var ContentRepository\ValueObject\DimensionValueCombination
-     */
-    protected $dimensionValues;
-
-    /**
-     * @var string
-     */
-    protected $identifier;
+    protected $subgraphIdentifier;
 
 
-    public function __construct(ContentRepository\ValueObject\ContentStreamIdentifier $contentStreamIdentifier, ContentRepository\ValueObject\DimensionValueCombination $dimensionValues)
+    public function __construct(ContentRepository\ValueObject\SubgraphIdentifier $subgraphIdentifier)
     {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->dimensionValues = $dimensionValues;
-        $this->identifier = ContentRepository\Utility\SubgraphUtility::hashIdentityComponents(array_merge($dimensionValues->toArray(), ['contentStreamIdentifier' => $contentStreamIdentifier]));
+        $this->subgraphIdentifier = $subgraphIdentifier;
     }
 
 
-    public function getIdentifier(): string
+    public function getIdentifier(): ContentRepository\ValueObject\SubgraphIdentifier
     {
         return $this->identifier;
     }
 
-    public function getDimensionValues(): ContentRepository\ValueObject\DimensionValueCombination
-    {
-        return $this->dimensionValues;
-    }
-
-    public function getContentStreamIdentifier(): ContentRepository\ValueObject\ContentStreamIdentifier
-    {
-        return $this->contentStreamIdentifier;
-    }
 
     /**
      * @param ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier
@@ -331,8 +310,8 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         $nodeType = $this->nodeTypeManager->getNodeType($nodeData['nodetypename']);
         $className = $nodeType->getNodeInterfaceImplementationClassName();
 
-        $subgraphWasCreatedIn = $this->contentGraph->getSubgraphByIdentifier($nodeData['subgraphidentifier']);
-        $legacyDimensionValues = $subgraphWasCreatedIn->getDimensionValues()->toLegacyDimensionArray();
+        $subgraphWasCreatedIn = $this->contentGraph->getSubgraphByIdentityHash($nodeData['subgraphidentifier']);
+        $legacyDimensionValues = $subgraphWasCreatedIn->getIdentifier()->getDimensionValueCombination()->toLegacyDimensionArray();
         $query = $this->nodeDataRepository->createQuery();
         $nodeData = $query->matching(
             $query->logicalAnd([

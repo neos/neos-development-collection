@@ -77,9 +77,5 @@ interface ContentSubgraphInterface
 
     public function findRootNode(): Domain\Model\NodeInterface;
 
-    public function getIdentifier(): string;
-
-    public function getDimensionValues(): Domain\ValueObject\DimensionValueCombination;
-
-    public function getContentStreamIdentifier(): Domain\ValueObject\ContentStreamIdentifier;
+    public function getIdentifier(): Domain\ValueObject\SubgraphIdentifier;
 }

@@ -44,25 +44,28 @@ abstract class AbstractContentGraph implements ContentProjection\ContentGraphInt
         foreach ($this->workspaceFinder->findAll() as $workspace) {
             $contentStreamIdentifier = null;
             foreach ($this->dimensionValueCombinationRepository->findAll() as $dimensionValueCombination) {
-                $subgraphIdentity = array_merge(['contentStreamIdentifier' => $contentStreamIdentifier], $dimensionValueCombination->toArray());
-                $identifier = ContentRepository\Utility\SubgraphUtility::hashIdentityComponents($subgraphIdentity);
-                $this->subgraphs[$identifier] = $this->createSubgraph($contentStreamIdentifier, $dimensionValueCombination);
+                $subgraphIdentifier = new ContentRepository\ValueObject\SubgraphIdentifier($contentStreamIdentifier, $dimensionValueCombination);
+                $this->subgraphs[$subgraphIdentifier->getHash()] = $this->createSubgraph($subgraphIdentifier);
             }
         }
     }
 
-
-    final public function getSubgraph(ContentRepository\ValueObject\ContentStreamIdentifier $contentStreamIdentifier, ContentRepository\ValueObject\DimensionValueCombination $dimensionValues): ContentProjection\ContentSubgraphInterface
+    /**
+     * @param ContentRepository\ValueObject\SubgraphIdentifier $subgraphIdentifier
+     * @return ContentProjection\ContentSubgraphInterface|null
+     */
+    final public function getSubgraphByIdentifier(ContentRepository\ValueObject\SubgraphIdentifier $subgraphIdentifier)
     {
-        $subgraphIdentity = array_merge(['contentStreamIdentifier' => $contentStreamIdentifier], $dimensionValues->toArray());
-        $identifier = ContentRepository\Utility\SubgraphUtility::hashIdentityComponents($subgraphIdentity);
-
-        return $this->getSubgraphByIdentifier($identifier);
+        return $this->getSubgraphByIdentityHash($subgraphIdentifier->getHash());
     }
 
-    final public function getSubgraphByIdentifier(string $subgraphIdentifier): ContentProjection\ContentSubgraphInterface
+    /**
+     * @param string $identityHash
+     * @return ContentProjection\ContentSubgraphInterface|null
+     */
+    final public function getSubgraphByIdentityHash(string $identityHash)
     {
-        return $this->subgraphs[$subgraphIdentifier];
+        return $this->subgraphs[$identityHash] ?? null;
     }
 
     /**
@@ -73,5 +76,9 @@ abstract class AbstractContentGraph implements ContentProjection\ContentGraphInt
         return $this->subgraphs;
     }
 
-    abstract protected function createSubgraph(ContentRepository\ValueObject\ContentStreamIdentifier $contentStreamIdentifier, ContentRepository\ValueObject\DimensionValueCombination $dimensionValues): ContentProjection\ContentSubgraphInterface;
+    /**
+     * @param ContentRepository\ValueObject\SubgraphIdentifier $subgraphIdentifier
+     * @return ContentProjection\ContentSubgraphInterface
+     */
+    abstract protected function createSubgraph(ContentRepository\ValueObject\SubgraphIdentifier $subgraphIdentifier): ContentProjection\ContentSubgraphInterface;
 }
