@@ -44,7 +44,7 @@ class GraphProjector extends AbstractGraphProjector
     {
         $this->getDatabaseConnection()->transactional(function () {
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_node');
-            $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_hierarchyedge');
+            $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_hierarchyrelation');
         });
     }
 
@@ -233,13 +233,13 @@ class GraphProjector extends AbstractGraphProjector
 
     protected function addHierarchyEdge(HierarchyEdge $edge)
     {
-        $this->getDatabaseConnection()->insert('neos_contentgraph_hierarchyedge', $edge->toDatabaseArray());
+        $this->getDatabaseConnection()->insert('neos_contentgraph_hierarchyrelation', $edge->toDatabaseArray());
     }
 
     protected function assignNewPositionToHierarchyEdge(HierarchyEdge $edge, int $position)
     {
         $this->getDatabaseConnection()->update(
-            'neos_contentgraph_hierarchyedge',
+            'neos_contentgraph_hierarchyrelation',
             [
                 'position' => $position
             ],
@@ -250,7 +250,7 @@ class GraphProjector extends AbstractGraphProjector
     protected function assignNewChildNodeToHierarchyEdge(HierarchyEdge $edge, string $childNodeIdentifierInGraph)
     {
         $this->getDatabaseConnection()->update(
-            'neos_contentgraph_hierarchyedge',
+            'neos_contentgraph_hierarchyrelation',
             [
                 'childnodesidentifieringraph' => $childNodeIdentifierInGraph,
             ],
@@ -261,7 +261,7 @@ class GraphProjector extends AbstractGraphProjector
     protected function assignNewParentNodeToHierarchyEdge(HierarchyEdge $edge, string $parentNodeIdentifierInGraph)
     {
         $this->getDatabaseConnection()->update(
-            'neos_contentgraph_hierarchyedge',
+            'neos_contentgraph_hierarchyrelation',
             [
                 'parentnodesidentifieringraph' => $parentNodeIdentifierInGraph,
             ],

@@ -13,6 +13,7 @@ namespace Neos\ContentGraph\Infrastructure\Dto;
  */
 use Neos\ContentRepository\Domain\Context\Node\Event;
 use Neos\ContentRepository\Domain\Context\Importing\Event\NodeWasImported;
+use Neos\ContentRepository\Domain\ValueObject\SubgraphIdentifier;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -59,7 +60,7 @@ class Node
      * @param array $properties
      * @param string $nodeTypeName
      */
-    public function __construct(string $nodeIdentifier, string $nodeAggregateIdentifier, array $subgraphIdentifier, string $subgraphIdentityHash, array $properties, string $nodeTypeName)
+    public function __construct(string $nodeIdentifier, ?string $nodeAggregateIdentifier, array $subgraphIdentifier, ?string $subgraphIdentityHash, array $properties, string $nodeTypeName)
     {
         $this->nodeIdentifier = $nodeIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
@@ -73,7 +74,9 @@ class Node
     {
         return new Node(
             (string) $event->getNodeIdentifier(),
-            '_system',
+            null,
+            [],
+            null,
             [],
             'Neos.ContentGraph:Root'
         );

@@ -37,7 +37,7 @@ class ProjectionContentGraph
                 ->executeQuery('SELECT count(*) FROM neos_contentgraph_node')
                 ->fetch()['count'] > 0
             && (int)$this->getDatabaseConnection()
-                ->executeQuery('SELECT count(*) FROM neos_contentgraph_hierarchyedge')
+                ->executeQuery('SELECT count(*) FROM neos_contentgraph_hierarchyrelation')
                 ->fetch()['count'] > 0;
     }
 
@@ -60,7 +60,7 @@ class ProjectionContentGraph
     {
         if ($elderSiblingIdentifier) {
             $elderSiblingPosition = (int)$this->getDatabaseConnection()->executeQuery(
-                'SELECT h.position FROM neos_contentgraph_hierarchyedge h
+                'SELECT h.position FROM neos_contentgraph_hierarchyrelation h
  WHERE childnodesidentifieringraph = :elderSiblingIdentifier
  AND subgraphIdentityHash = :subgraphIdentityHash',
                 [
@@ -70,7 +70,7 @@ class ProjectionContentGraph
             )->fetch()['position'];
 
             $youngerSiblingEdge = $this->getDatabaseConnection()->executeQuery(
-                'SELECT MIN(h.position) AS `position` FROM neos_contentgraph_hierarchyedge h
+                'SELECT MIN(h.position) AS `position` FROM neos_contentgraph_hierarchyrelation h
  WHERE parentnodesidentifieringraph = :parentNodesIdentifierInGraph
  AND subgraphIdentityHash = :subgraphIdentityHash
  AND `position` > :position',
@@ -88,7 +88,7 @@ class ProjectionContentGraph
             }
         } else {
             $eldestSiblingEdge = $this->getDatabaseConnection()->executeQuery(
-                'SELECT MIN(h.position) AS `position` FROM neos_contentgraph_hierarchyedge h
+                'SELECT MIN(h.position) AS `position` FROM neos_contentgraph_hierarchyrelation h
  WHERE parentnodesidentifieringraph = :parentNodesIdentifierInGraph
  AND subgraphIdentityHash = :subgraphIdentityHash
  ORDER BY `position` ASC',
@@ -117,7 +117,7 @@ class ProjectionContentGraph
     {
         $edges = [];
         foreach ($this->getDatabaseConnection()->executeQuery(
-            'SELECT h.* FROM neos_contentgraph_hierarchyedge h
+            'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
  WHERE parentnodesidentifieringraph = :parentNodesIdentifierInGraph
  AND subgraphIdentityHash = :subgraphIdentityHash',
             [
@@ -141,7 +141,7 @@ class ProjectionContentGraph
     {
         $edges = [];
         foreach ($this->getDatabaseConnection()->executeQuery(
-            'SELECT h.* FROM neos_contentgraph_hierarchyedge h
+            'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
  WHERE childnodesidentifieringraph = :childNodesIdentifierInGraph
  AND subgraphIdentityHash IN (:subgraphIdentityHashs)',
             [
@@ -167,7 +167,7 @@ class ProjectionContentGraph
     {
         $edges = [];
         foreach ($this->getDatabaseConnection()->executeQuery(
-            'SELECT h.* FROM neos_contentgraph_hierarchyedge h
+            'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
  WHERE parentnodesidentifieringraph = :parentNodesIdentifierInGraph
  AND subgraphIdentityHash IN (:subgraphIdentityHashs)',
             [

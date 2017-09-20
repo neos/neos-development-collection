@@ -92,7 +92,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     {
         $nodeData = $this->getDatabaseConnection()->executeQuery(
             'SELECT n.* FROM neos_contentgraph_node n
- INNER JOIN neos_contentgraph_hierarchyedge h ON h.childnodesidentifieringraph = n.identifieringraph
+ INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodesidentifieringraph = n.identifieringraph
  WHERE n.identifierinsubgraph = :nodeIdentifier
  AND h.subgraphidentifier = :subgraphIdentifier',
             [
@@ -120,7 +120,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         ContentRepository\Service\Context $context = null
     ): array {
         $query = 'SELECT c.* FROM neos_contentgraph_node p
- INNER JOIN neos_contentgraph_hierarchyedge h ON h.parentnodesidentifieringraph = p.identifieringraph
+ INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodesidentifieringraph = p.identifieringraph
  INNER JOIN neos_contentgraph_node c ON h.childnodesidentifieringraph = c.identifieringraph
  WHERE p.identifierinsubgraph = :parentIdentifier
  AND h.subgraphidentifier = :subgraphIdentifier';
@@ -147,7 +147,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     public function countChildNodes(ContentRepository\ValueObject\NodeAggregateIdentifier $parentIdentifier, ContentRepository\ValueObject\NodeTypeConstraints $nodeTypeConstraints = null, ContentRepository\Service\Context $contentContext = null): int
     {
         $query = 'SELECT COUNT(identifieringraph) FROM neos_contentgraph_node p
- INNER JOIN neos_contentgraph_hierarchyedge h ON h.parentnodesidentifieringraph = p.identifieringraph
+ INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodesidentifieringraph = p.identifieringraph
  INNER JOIN neos_contentgraph_node c ON h.childnodesidentifieringraph = c.identifieringraph
  WHERE p.identifierinsubgraph = :parentIdentifier
  AND h.subgraphidentifier = :subgraphIdentifier';
@@ -175,7 +175,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     {
         $nodeData = $this->getDatabaseConnection()->executeQuery(
             'SELECT p.* FROM neos_contentgraph_node p
- INNER JOIN neos_contentgraph_hierarchyedge h ON h.parentnodesidentifieringraph = p.identifieringraph
+ INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodesidentifieringraph = p.identifieringraph
  INNER JOIN neos_contentgraph_node c ON h.childnodesidentifieringraph = c.identifieringraph
  WHERE c.identifierinsubgraph = :childIdentifier
  AND h.subgraphidentifier = :subgraphIdentifier',
@@ -197,7 +197,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     {
         $nodeData = $this->getDatabaseConnection()->executeQuery(
             'SELECT c.* FROM neos_contentgraph_node p
- INNER JOIN neos_contentgraph_hierarchyedge h ON h.parentnodesidentifieringraph = p.identifieringraph
+ INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodesidentifieringraph = p.identifieringraph
  INNER JOIN neos_contentgraph_node c ON h.childnodesidentifieringraph = c.identifieringraph
  WHERE p.identifierinsubgraph = :parentIdentifier
  AND h.subgraphidentifier = :subgraphIdentifier
@@ -240,7 +240,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     {
         $nodeData = $this->getDatabaseConnection()->executeQuery(
             'SELECT c.* FROM neos_contentgraph_node p
- INNER JOIN neos_contentgraph_hierarchyedge h ON h.parentnodesidentifieringraph = p.identifieringraph
+ INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodesidentifieringraph = p.identifieringraph
  INNER JOIN neos_contentgraph_node c ON h.childnodesidentifieringraph = c.identifieringraph
  WHERE p.identifierinsubgraph = :parentIdentifier
  AND h.subgraphidentifier = :subgraphIdentifier
@@ -266,7 +266,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         $result = [];
         foreach ($this->getDatabaseConnection()->executeQuery(
             'SELECT n.*, h.name, h.index FROM neos_contentgraph_node n
- INNER JOIN neos_contentgraph_hierarchyedge h ON h.childnodesidentifieringraph = n.identifieringraph
+ INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodesidentifieringraph = n.identifieringraph
  WHERE n.nodetypename = :nodeTypeName
  AND h.subgraphidentifier = :subgraphIdentifier
  ORDER BY h.position',
