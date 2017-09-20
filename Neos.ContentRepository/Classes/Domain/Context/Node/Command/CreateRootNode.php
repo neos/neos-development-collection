@@ -3,11 +3,13 @@
 namespace Neos\ContentRepository\Domain\Context\Node\Command;
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\UserIdentifier;
 
 /**
- * CreateRootNode
+ * Create root node command
+ *
+ * A root node has no aggregate (and is colorless in the content graph).
  */
 final class CreateRootNode
 {
@@ -17,7 +19,7 @@ final class CreateRootNode
     private $contentStreamIdentifier;
 
     /**
-     * @var NodeAggregateIdentifier
+     * @var NodeIdentifier
      */
     private $nodeIdentifier;
 
@@ -30,10 +32,10 @@ final class CreateRootNode
      * CreateRootNode constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeIdentifier
+     * @param NodeIdentifier $nodeIdentifier New node identifier
      * @param UserIdentifier $initiatingUserIdentifier
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeIdentifier, UserIdentifier $initiatingUserIdentifier)
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier, UserIdentifier $initiatingUserIdentifier)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;
@@ -49,9 +51,9 @@ final class CreateRootNode
     }
 
     /**
-     * @return NodeAggregateIdentifier
+     * @return NodeIdentifier
      */
-    public function getNodeIdentifier(): NodeAggregateIdentifier
+    public function getNodeIdentifier(): NodeIdentifier
     {
         return $this->nodeIdentifier;
     }

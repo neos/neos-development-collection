@@ -4,11 +4,12 @@ namespace Neos\ContentRepository\Domain\Context\Node\Event;
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\EventInterface;
 
 /**
- * RootNodeWasCreated
+ * Root node was created event
  */
 final class RootNodeWasCreated implements EventInterface
 {
@@ -18,7 +19,7 @@ final class RootNodeWasCreated implements EventInterface
     private $contentStreamIdentifier;
 
     /**
-     * @var NodeAggregateIdentifier
+     * @var NodeIdentifier
      */
     private $nodeIdentifier;
 
@@ -31,10 +32,10 @@ final class RootNodeWasCreated implements EventInterface
      * RootNodeWasCreated constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeIdentifier
+     * @param NodeIdentifier $nodeIdentifier New root node identifier
      * @param UserIdentifier $initiatingUserIdentifier
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeIdentifier, UserIdentifier $initiatingUserIdentifier)
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier, UserIdentifier $initiatingUserIdentifier)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;
@@ -50,9 +51,9 @@ final class RootNodeWasCreated implements EventInterface
     }
 
     /**
-     * @return NodeAggregateIdentifier
+     * @return NodeIdentifier
      */
-    public function getNodeIdentifier(): NodeAggregateIdentifier
+    public function getNodeIdentifier(): NodeIdentifier
     {
         return $this->nodeIdentifier;
     }

@@ -2,12 +2,9 @@
 
 namespace Neos\ContentRepository\Domain\Context\Node\Command;
 
-use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
-use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
 
 final class SetProperty
 {
@@ -18,7 +15,7 @@ final class SetProperty
     private $contentStreamIdentifier;
 
     /**
-     * @var NodeAggregateIdentifier
+     * @var NodeIdentifier
      */
     private $nodeIdentifier;
 
@@ -41,14 +38,14 @@ final class SetProperty
      * SetProperty constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeIdentifier
+     * @param NodeIdentifier $nodeIdentifier
      * @param string $propertyName
      * @param mixed $value
      * @param NodeTypeName $nodeTypeName
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeIdentifier,
+        NodeIdentifier $nodeIdentifier,
         $propertyName,
         $value,
         NodeTypeName $nodeTypeName
@@ -69,9 +66,9 @@ final class SetProperty
     }
 
     /**
-     * @return NodeAggregateIdentifier
+     * @return NodeIdentifier
      */
-    public function getNodeIdentifier(): NodeAggregateIdentifier
+    public function getNodeIdentifier(): NodeIdentifier
     {
         return $this->nodeIdentifier;
     }
