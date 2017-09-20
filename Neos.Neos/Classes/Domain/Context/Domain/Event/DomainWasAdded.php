@@ -18,7 +18,7 @@ use Neos\Neos\Domain\ValueObject\DomainPort;
 use Neos\Neos\Domain\ValueObject\HostName;
 use Neos\Neos\Domain\ValueObject\HttpScheme;
 
-class DomainHasBeenAdded implements EventInterface
+class DomainWasAdded implements EventInterface
 {
     /**
      * @var NodeName
