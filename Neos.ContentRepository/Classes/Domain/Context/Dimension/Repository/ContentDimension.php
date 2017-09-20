@@ -93,9 +93,9 @@ class ContentDimension
      * @param string $value
      * @return Dimension\Model\ContentDimensionValue|null
      */
-    public function getValue(string $value)
+    public function getValue(string $value): ?Dimension\Model\ContentDimensionValue
     {
-        return isset($this->valueRegistry[$value]) ? $this->valueRegistry[$value] : null;
+        return $this->valueRegistry[$value] ?? null;
     }
 
     /**

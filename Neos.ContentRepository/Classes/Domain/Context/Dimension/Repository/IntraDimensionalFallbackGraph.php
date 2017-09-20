@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Domain\Context\Dimension\Repository;
  * source code.
  */
 use Neos\ContentRepository\Domain;
-use Neos\ContentRepository\Service\Exception\InvalidDimensionConfigurationException;
+use Neos\ContentRepository\Domain\Context\Dimension;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -46,23 +46,50 @@ class IntraDimensionalFallbackGraph
 
         foreach ($this->contentDimensionPresetSource->getAllPresets() as $dimensionName => $dimensionConfiguration) {
             $presetDimension = $this->createDimension($dimensionName, $dimensionConfiguration['label'] ?? null);
+            $valueNodes = [];
+            $fallbackEdges = [];
             foreach ($dimensionConfiguration['presets'] as $valueName => $valueConfiguration) {
                 if (!isset($valueConfiguration['values'])) {
                     continue;
                 }
-                $fallbackConfiguration = array_slice($valueConfiguration['values'], 0, 2);
-                if (isset($fallbackConfiguration[1])) {
-                    if ($presetDimension->getValue($fallbackConfiguration[1])) {
-                        $fallbackValue = $presetDimension->getValue($fallbackConfiguration[1]);
-                    } else {
-                        throw new InvalidDimensionConfigurationException('Unknown fallback value ' . $fallbackConfiguration[1] . ' was for defined for value ' . $fallbackConfiguration[0], 1487617770);
+                $parent = null;
+                $values = array_reverse($valueConfiguration['values']);
+                foreach ($values as $dimensionValue) {
+                    $valueNodes[$dimensionValue] = $dimensionValue;
+                    if ($parent) {
+                        $fallbackEdges[$dimensionValue] = $parent;
                     }
-                } else {
-                    $fallbackValue = null;
+                    $parent = $dimensionValue;
                 }
-                $presetDimension->createValue($fallbackConfiguration[0], $fallbackValue);
             }
+            $rootValues = array_diff_key($valueNodes, $fallbackEdges);
+
+            $inverseFallbackEdges = [];
+            foreach ($fallbackEdges as $specialization => $generalization) {
+                $inverseFallbackEdges[$generalization][] = $specialization;
+            }
+
+            foreach ($rootValues as $rootValue) {
+                $this->traverseFallbackEdges($presetDimension, $inverseFallbackEdges, $rootValue);
+            }
+
             $this->prioritizedContentDimensions[] = $presetDimension;
+        }
+    }
+
+    /**
+     * @param ContentDimension $presetDimension
+     * @param array $fallbackEdges
+     * @param string $value
+     * @param Dimension\Model\ContentDimensionValue|null $parentValue
+     */
+    protected function traverseFallbackEdges(ContentDimension $presetDimension, array $fallbackEdges, string $value, Dimension\Model\ContentDimensionValue $parentValue = null)
+    {
+        $currentValue = $presetDimension->createValue($value, $parentValue);
+        if (isset($fallbackEdges[$value])) {
+            foreach ($fallbackEdges[$value] as $specializedValue) {
+                $this->traverseFallbackEdges($presetDimension, $fallbackEdges, $specializedValue, $currentValue);
+            }
         }
     }
 
@@ -91,9 +118,9 @@ class IntraDimensionalFallbackGraph
      * @param string $dimensionName
      * @return ContentDimension|null
      */
-    public function getDimension(string $dimensionName)
+    public function getDimension(string $dimensionName): ?ContentDimension
     {
-        return $this->dimensions[$dimensionName] ?: null;
+        return $this->dimensions[$dimensionName] ?? null;
     }
 
     /**
