@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Domain\Context\Domain;
 
 /*
@@ -21,6 +22,8 @@ use Neos\Neos\Domain\Context\Domain\Event\DomainWasActivated;
 use Neos\Neos\Domain\Context\Domain\Event\DomainWasAdded;
 use Neos\Neos\Domain\Context\Domain\Event\DomainWasDeactivated;
 use Neos\Neos\Domain\Context\Domain\Event\DomainWasDeleted;
+use Neos\Neos\Domain\Context\Domain\Exception\DomainAlreadyExists;
+use Neos\Neos\Domain\Projection\Domain\DomainFinder;
 
 /**
  * WorkspaceCommandHandler
@@ -34,17 +37,26 @@ final class DomainCommandHandler
     protected $eventPublisher;
 
     /**
+     * @var DomainFinder
+     * @Flow\Inject
+     */
+    protected $domainFinder;
+
+    /**
      * @param AddDomain $command
      */
     public function handleAddDomain(AddDomain $command)
     {
-        // TODO: Necessary checks
-
+        $hostname = $command->getDomainHostname();
+        $domain = $this->domainFinder->findOneByHostname($hostname);
+        if ($domain !== null) {
+            throw new DomainAlreadyExists($hostname, 1505918961915);
+        }
         $this->eventPublisher->publish(
-            'Neos.Neos:Domain:' . $command->getDomainHostname(),
+            'Neos.Neos:Domain:' . $hostname,
             new DomainWasAdded(
                 $command->getSiteNodeName(),
-                $command->getDomainHostname(),
+                $hostname,
                 $command->getScheme(),
                 $command->getPort()
             )

@@ -1,28 +1,27 @@
 <?php
-
-namespace Neos\ContentRepository\Domain\Context\Node\Command;
+namespace Neos\ContentRepository\Domain\Context\Importing\Command;
 
 use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\ImportingSessionIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\ContentRepository\Domain\ValueObject\PropertyValues;
 
-final class CreateChildNodeWithVariant
+final class ImportNode
 {
-
     /**
-     * @var ContentStreamIdentifier
+     * @var ImportingSessionIdentifier
      */
-    private $contentStreamIdentifier;
+    private $importingSessionIdentifier;
 
     /**
-     * @var NodeIdentifier
+     * @var NodeAggregateIdentifier
      */
     private $parentNodeIdentifier;
 
     /**
-     * @var NodeIdentifier
+     * @var NodeAggregateIdentifier
      */
     private $nodeIdentifier;
 
@@ -41,69 +40,62 @@ final class CreateChildNodeWithVariant
      */
     private $dimensionValues;
 
+    /**
+     * @var PropertyValues
+     */
+    private $propertyValues;
+
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeIdentifier $parentNodeIdentifier,
-        NodeIdentifier $nodeIdentifier,
+        ImportingSessionIdentifier $importingSessionIdentifier,
+        NodeAggregateIdentifier $parentNodeIdentifier,
+        NodeAggregateIdentifier $nodeIdentifier,
         NodeName $nodeName,
         NodeTypeName $nodeTypeName,
-        DimensionValues $dimensionValues
+        DimensionValues $dimensionValues,
+        PropertyValues $propertyValues
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
+        $this->importingSessionIdentifier = $importingSessionIdentifier;
         $this->parentNodeIdentifier = $parentNodeIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;
         $this->nodeName = $nodeName;
         $this->nodeTypeName = $nodeTypeName;
         $this->dimensionValues = $dimensionValues;
+        $this->propertyValues = $propertyValues;
     }
 
-    /**
-     * @return ContentStreamIdentifier
-     */
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
+    public function getImportingSessionIdentifier(): ImportingSessionIdentifier
     {
-        return $this->contentStreamIdentifier;
+        return $this->importingSessionIdentifier;
     }
 
-    /**
-     * @return NodeIdentifier
-     */
-    public function getParentNodeIdentifier(): NodeIdentifier
+    public function getParentNodeIdentifier(): NodeAggregateIdentifier
     {
         return $this->parentNodeIdentifier;
     }
 
-    /**
-     * @return NodeIdentifier
-     */
-    public function getNodeIdentifier(): NodeIdentifier
+    public function getNodeIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeIdentifier;
     }
 
-    /**
-     * @return NodeName
-     */
     public function getNodeName(): NodeName
     {
         return $this->nodeName;
     }
 
-    /**
-     * @return NodeTypeName
-     */
     public function getNodeTypeName(): NodeTypeName
     {
         return $this->nodeTypeName;
     }
 
-    /**
-     * @return DimensionValues
-     */
     public function getDimensionValues(): DimensionValues
     {
         return $this->dimensionValues;
     }
 
+    public function getPropertyValues(): PropertyValues
+    {
+        return $this->propertyValues;
+    }
 
 }

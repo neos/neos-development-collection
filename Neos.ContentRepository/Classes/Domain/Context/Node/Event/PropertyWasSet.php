@@ -2,12 +2,13 @@
 
 namespace Neos\ContentRepository\Domain\Context\Node\Event;
 
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcing\Event\EventInterface;
 
 /**
- * PropertyWasSet
+ * Property was set event
  */
 final class PropertyWasSet implements EventInterface
 {
@@ -33,7 +34,9 @@ final class PropertyWasSet implements EventInterface
     private $value;
 
     /**
+     * PropertyWasSet constructor.
      *
+     * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeIdentifier $nodeIdentifier
      * @param string $propertyName
      * @param PropertyValue $value
@@ -81,4 +84,5 @@ final class PropertyWasSet implements EventInterface
     {
         return $this->value;
     }
+
 }

@@ -2,12 +2,9 @@
 
 namespace Neos\ContentRepository\Domain\Context\Node\Command;
 
-use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
-use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
 
 final class SetProperty
 {

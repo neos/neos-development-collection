@@ -11,10 +11,9 @@ namespace Neos\ContentGraph\Infrastructure\Dto;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-use Neos\ContentRepository\Domain\Utility\SubgraphUtility;
+use Neos\ContentRepository\Domain\Context\Node\Event;
+use Neos\ContentRepository\Domain as ContentRepository;
 use Neos\Flow\Annotations as Flow;
-use Neos\Utility\Arrays;
 
 /**
  * Simple data model for writing nodes to the database
@@ -22,14 +21,9 @@ use Neos\Utility\Arrays;
 class Node
 {
     /**
-     * @var string
+     * @var ContentRepository\ValueObject\NodeAggregateIdentifier
      */
-    public $identifierInGraph;
-
-    /**
-     * @var string
-     */
-    public $identifierInSubgraph;
+    public $nodeIdentifier;
 
     /**
      * @var string
@@ -42,18 +36,27 @@ class Node
     public $properties;
 
     /**
-     * @var string
+     * @var ContentRepository\ValueObject\NodeTypeName
      */
     public $nodeTypeName;
 
 
-    public function __construct(string $identifierInGraph, string $identifierInSubgraph, string $subgraphIdentifier, array $properties, string $nodeTypeName)
+    public function __construct(ContentRepository\ValueObject\NodeAggregateIdentifier $nodeIdentifier, string $subgraphIdentifier, array $properties, ContentRepository\ValueObject\NodeTypeName $nodeTypeName)
     {
-        $this->identifierInGraph = $identifierInGraph;
-        $this->identifierInSubgraph = $identifierInSubgraph;
+        $this->nodeIdentifier = $nodeIdentifier;
         $this->subgraphIdentifier = $subgraphIdentifier;
         $this->properties = $properties;
         $this->nodeTypeName = $nodeTypeName;
+    }
+
+    public static function fromRootNodeWasCreated(Event\RootNodeWasCreated $event): Node
+    {
+        return new Node(
+            $event->getNodeIdentifier(),
+            '_system',
+            [],
+            new ContentRepository\ValueObject\NodeTypeName('Neos.ContentGraph:Root')
+        );
     }
 
     /*
@@ -103,8 +106,7 @@ class Node
     public function toArray(): array
     {
         return array_merge($this->properties, [
-            '_identifierInGraph' => $this->identifierInGraph,
-            '_identifierInSubgraph' => $this->identifierInSubgraph,
+            '_nodeIdentifier' => $this->nodeIdentifier,
             '_subgraphIdentifier' => $this->subgraphIdentifier,
             '_nodeTypeName' => $this->nodeTypeName
         ]);

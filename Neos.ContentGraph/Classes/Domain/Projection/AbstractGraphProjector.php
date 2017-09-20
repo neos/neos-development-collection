@@ -11,9 +11,9 @@ namespace Neos\ContentGraph\Domain\Projection;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\ContentGraph\Infrastructure\Dto\Node;
+use Neos\ContentGraph\Infrastructure;
 use Neos\ContentRepository\Domain\Context\Node\Event;
-use Neos\ContentRepository\Service\FallbackGraphService;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -22,14 +22,16 @@ use Neos\Flow\Annotations as Flow;
  */
 abstract class AbstractGraphProjector implements ProjectorInterface
 {
-    /**
-     * @Flow\Inject
-     * @var FallbackGraphService
-     */
-    protected $fallbackGraphService;
+    final public function whenRootNodeWasCreated(Event\RootNodeWasCreated $event)
+    {
+        $node = Infrastructure\Dto\Node::fromRootNodeWasCreated($event);
 
+        $this->transactional(function () use ($node) {
+            $this->addNode($node);
+        });
+    }
 
-    final public function whenChildNodeWithVariantWasCreated(Event\ChildNodeWithVariantWasCreated $event)
+    final public function whenChildNodeWithVariantWasCreated(Event\NodeAggregateWithNodeWasCreated $event)
     {
 
     }
@@ -90,9 +92,9 @@ final public function whenNodeVariantWasCreated(Event\NodeVariantWasCreated $eve
 
     abstract protected function transactional(callable $operations);
 
-    abstract protected function addNode(Node $node);
+    abstract protected function addNode(Infrastructure\Dto\Node $node);
 
-    abstract protected function getNode(string $identifierInGraph): Node;
+    abstract protected function getNode(NodeAggregateIdentifier $nodeIdentifier, string $subgraphIdentifier): Infrastructure\Dto\Node;
 
     abstract protected function connectHierarchy(
         string $parentNodesIdentifierInGraph,

@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Service;
  */
 
 use Neos\ContentRepository\Domain\Context\Dimension;
-use Neos\ContentRepository\Domain\Context\DimensionCombination;
+use Neos\ContentRepository\Domain\Context\DimensionSpace;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -36,7 +36,7 @@ class FallbackGraphService
 
     /**
      * @Flow\Inject
-     * @var DimensionCombination\Repository\InterDimensionalFallbackGraph
+     * @var DimensionSpace\Repository\InterDimensionalFallbackGraph
      */
     protected $interDimensionalFallbackGraph;
 
@@ -48,7 +48,7 @@ class FallbackGraphService
     public function determineAffectedVariantSubgraphIdentifiers(string $subgraphIdentifier): array
     {
         $affectedVariantIdentifiers = [$subgraphIdentifier];
-        $subgraph = $this->getInterDimensionalFallbackGraph()->getSubgraph($subgraphIdentifier);
+        $subgraph = $this->interDimensionalFallbackGraph->getSubgraph($subgraphIdentifier);
         foreach ($subgraph->getVariants() as $variantSubgraph) {
             $affectedVariantIdentifiers[] = $variantSubgraph->getIdentityHash();
         }
@@ -62,7 +62,7 @@ class FallbackGraphService
      */
     public function determineConnectedSubgraphIdentifiers(string $subgraphIdentifier): array
     {
-        $subgraph = $this->getInterDimensionalFallbackGraph()->getSubgraph($subgraphIdentifier);
+        $subgraph = $this->interDimensionalFallbackGraph->getSubgraph($subgraphIdentifier);
         while ($subgraph->getFallback()) {
             $subgraph = $subgraph->getFallback();
         }
@@ -83,10 +83,10 @@ class FallbackGraphService
     }
 
     /**
-     * @return DimensionCombination\Repository\InterDimensionalFallbackGraph
+     * @return DimensionSpace\Repository\InterDimensionalFallbackGraph
      * @api
      */
-    public function getInterDimensionalFallbackGraph(): DimensionCombination\Repository\InterDimensionalFallbackGraph
+    public function getInterDimensionalFallbackGraph(): DimensionSpace\Repository\InterDimensionalFallbackGraph
     {
         return $this->interDimensionalFallbackGraph;
     }

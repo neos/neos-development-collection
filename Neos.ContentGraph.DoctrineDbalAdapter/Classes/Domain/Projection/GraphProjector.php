@@ -18,6 +18,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Dto\HierarchyEdge;
 use Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Service\DbalClient;
 use Neos\ContentGraph\Domain\Projection\AbstractGraphProjector;
 use Neos\ContentGraph\Infrastructure\Dto\Node;
+use Neos\ContentRepository\Domain as ContentRepository;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -143,16 +144,15 @@ class GraphProjector extends AbstractGraphProjector
     }*/
 
 
-    protected function getNode(string $identifierInGraph): Node
+    protected function getNode(ContentRepository\ValueObject\NodeAggregateIdentifier $nodeIdentifier, string $subgraphIdentifier): Node
     {
-        return $this->contentGraph->getNode($identifierInGraph);
+        return $this->contentGraph->getNode($nodeIdentifier, $subgraphIdentifier);
     }
 
     protected function addNode(Node $node)
     {
         $this->getDatabaseConnection()->insert('neos_contentgraph_node', [
-            'identifieringraph' => $node->identifierInGraph,
-            'identifierinsubgraph' => $node->identifierInSubgraph,
+            'nodeidentifier' => $node->nodeIdentifier,
             'subgraphidentifier' => $node->subgraphIdentifier,
             'properties' => json_encode($node->properties),
             'nodetypename' => $node->nodeTypeName

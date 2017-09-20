@@ -25,6 +25,10 @@ final class PropertyValue implements \JsonSerializable
      */
     private $type;
 
+    /**
+     * @param mixed $value
+     * @param string $type
+     */
     public function __construct($value, string $type)
     {
         $this->value = $value;

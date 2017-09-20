@@ -13,19 +13,31 @@ namespace Neos\ContentRepository\Domain\Service\ImportExport;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Types\Type;
+use Neos\ContentRepository\Domain\Context\Importing\Command\FinalizeImportingSession;
+use Neos\ContentRepository\Domain\Context\Importing\Command\ImportNode;
+use Neos\ContentRepository\Domain\Context\Importing\Command\StartImportingSession;
+use Neos\ContentRepository\Domain\Context\Importing\Event\ImportingSessionWasStarted;
+use Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler;
+use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
+use Neos\ContentRepository\Domain\ValueObject\ImportingSessionIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\ValueObject\NodePath;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\ContentRepository\Domain\ValueObject\PropertyValues;
+use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\ContentRepository\Exception\ImportException;
+use Neos\ContentRepository\Utility;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Aspect\PersistenceMagicInterface;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Persistence\Doctrine\DataTypes\JsonArrayType;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Flow\Utility\Now;
 use Neos\Media\Domain\Model\ImageVariant;
-use Neos\ContentRepository\Domain\Model\NodeData;
-use Neos\ContentRepository\Exception\ImportException;
-use Neos\ContentRepository\Utility;
 
 /**
  * Service for importing nodes from an XML structure into the content repository
@@ -67,6 +79,12 @@ class NodeImportService
     protected $securityContext;
 
     /**
+     * @Flow\Inject
+     * @var NodeCommandHandler
+     */
+    protected $nodeCommandHandler;
+
+    /**
      * @var ImportExportPropertyMappingConfiguration
      */
     protected $propertyMappingConfiguration;
@@ -77,7 +95,7 @@ class NodeImportService
     protected $nodeDataStack = array();
 
     /**
-     * @var array
+     * @var NodeAggregateIdentifier[]
      */
     protected $nodeIdentifierStack = array();
 
@@ -87,55 +105,9 @@ class NodeImportService
     protected $nodeNameStack;
 
     /**
-     * the list of property names of NodeData. These are the keys inside the nodeData array which is built as intermediate
-     * representation while parsing the XML.
-     *
-     * For each element, an array of additional settings can be specified; currently the only setting is the following:
-     *
-     * - columnType => \PDO::PARAM_*
-     *
-     * @var array
+     * @var ImportingSessionIdentifier
      */
-    protected $nodeDataPropertyNames = array(
-        'Persistence_Object_Identifier' => array(),
-        'identifier' => array(),
-        'nodeType' => array(),
-        'workspace' => array(),
-        'sortingIndex' => array(),
-        'version' => array(),
-        'removed' => array(
-            'columnType' => \PDO::PARAM_BOOL
-        ),
-        'hidden' => array(
-            'columnType' => \PDO::PARAM_BOOL
-        ),
-        'hiddenInIndex' => array(
-            'columnType' => \PDO::PARAM_BOOL
-        ),
-        'path' => array(),
-        'pathHash' => array(),
-        'parentPath' => array(),
-        'parentPathHash' => array(),
-        'dimensionsHash' => array(),
-        'dimensionValues' => array(),
-        'properties' => array(),
-        'hiddenBeforeDateTime' => array(
-            'columnType' => Type::DATETIME
-        ),
-        'hiddenAfterDateTime' => array(
-            'columnType' => Type::DATETIME
-        ),
-        'creationDateTime' => array(
-            'columnType' => Type::DATETIME
-        ),
-        'lastModificationDateTime' => array(
-            'columnType' => Type::DATETIME
-        ),
-        'lastPublicationDateTime' => array(
-            'columnType' => Type::DATETIME
-        ),
-        'accessRoles' => array()
-    );
+    protected $importingSessionIdentifier;
 
     /**
      * Imports the sub-tree from the xml reader into the given target path.
@@ -179,6 +151,9 @@ class NodeImportService
      */
     public function import(\XMLReader $xmlReader, $targetPath, $resourceLoadPath = null)
     {
+        $this->importingSessionIdentifier = new ImportingSessionIdentifier();
+        $this->nodeCommandHandler->handleStartImportingSession(new StartImportingSession($this->importingSessionIdentifier));
+
         $this->propertyMappingConfiguration = new ImportExportPropertyMappingConfiguration($resourceLoadPath);
         $this->nodeNameStack = [];
 
@@ -202,6 +177,8 @@ class NodeImportService
             default:
                 throw new ImportException('Failed to import Node Data XML: The format with version ' . $formatVersion . ' is not supported, only version ' . self::SUPPORTED_FORMAT_VERSION . ' is supported.', 1409059352);
         }
+
+        $this->nodeCommandHandler->handleFinalizeImportingSession(new FinalizeImportingSession($this->importingSessionIdentifier));
     }
 
     /**
@@ -270,7 +247,7 @@ class NodeImportService
         switch ($elementName) {
             case 'node':
                 // update current node identifier
-                $this->nodeIdentifierStack[] = $xmlReader->getAttribute('identifier');
+                $this->nodeIdentifierStack[] = new NodeAggregateIdentifier($xmlReader->getAttribute('identifier'));
                 // update current path
                 $nodeName = $xmlReader->getAttribute('nodeName');
                 if ($nodeName !== '/' && $nodeName !== '') {
@@ -284,24 +261,21 @@ class NodeImportService
                 $now = new Now();
                 $currentNodeIdentifier = $this->nodeIdentifierStack[count($this->nodeIdentifierStack) - 1];
                 $this->nodeDataStack[] = array(
-                    'Persistence_Object_Identifier' => Algorithms::generateUUID(),
                     'identifier' => $currentNodeIdentifier,
-                    'nodeType' => $xmlReader->getAttribute('nodeType'),
-                    'workspace' => $xmlReader->getAttribute('workspace'),
-                    'sortingIndex' => $xmlReader->getAttribute('sortingIndex'),
-                    'version' => $xmlReader->getAttribute('version'),
+                    'nodeType' => new NodeTypeName($xmlReader->getAttribute('nodeType')),
+                    'workspace' => new WorkspaceName($xmlReader->getAttribute('workspace')),
+                    'sortingIndex' => (int)$xmlReader->getAttribute('sortingIndex'),
+                    'version' => (int)$xmlReader->getAttribute('version'),
                     'removed' => (boolean)$xmlReader->getAttribute('removed'),
                     'hidden' => (boolean)$xmlReader->getAttribute('hidden'),
                     'hiddenInIndex' => (boolean)$xmlReader->getAttribute('hiddenInIndex'),
                     'path' => $path,
-                    'pathHash' => md5($path),
                     'parentPath' => $parentPath,
-                    'parentPathHash' => md5($parentPath),
-                    'properties' => array(),
-                    'accessRoles' => array(),
+                    'properties' => [],
+                    'accessRoles' => [],
                     'creationDateTime' => $now,
                     'lastModificationDateTime' => $now,
-                    'dimensionValues' => array() // is post-processed before save in END_ELEMENT-case
+                    'dimensionValues' => [] // is post-processed before save in END_ELEMENT-case
                 );
                 break;
             case 'dimensions':
@@ -573,7 +547,20 @@ class NodeImportService
                     $nodeData['identifier'] = Algorithms::generateUUID();
                 }
 
-                $this->persistNodeData($nodeData);
+                $importNodeCommand = new ImportNode(
+                    $this->importingSessionIdentifier,
+                    // TODO
+                    new NodeAggregateIdentifier(Algorithms::generateUUID()),
+                    $nodeData['identifier'],
+                    new NodeName('todo'),
+                    $nodeData['nodeType'],
+                    new DimensionValues($nodeData['dimensionValues']),
+                    new PropertyValues($nodeData['properties'])
+                );
+                $this->nodeCommandHandler->handleImportNode($importNodeCommand);
+
+
+                #$this->persistNodeData($nodeData);
                 break;
             default:
                 throw new ImportException(sprintf('Unexpected end element <%s> ', $reader->name), 1423578066);
@@ -584,32 +571,32 @@ class NodeImportService
     /**
      * Provides the path for a NodeData according to the current stacks
      *
-     * @return string
+     * @return NodePath
      */
     protected function getCurrentPath()
     {
         $path = implode('/', $this->nodeNameStack);
-        return '/' . $path;
+        return new NodePath('/' . $path);
     }
 
     /**
      * Provides the parent of the given path
      *
-     * @param string $path path to get parent for
-     * @return string parent path
+     * @param NodePath $path path to get parent for
+     * @return NodePath|null parent path
      */
-    protected function getParentPath($path)
+    protected function getParentPath(NodePath $path)
     {
-        if ($path === '/') {
-            return '';
+        if ($path->isRoot()) {
+            return null;
         }
         $endIndex = strrpos($path, '/');
         $index = strpos($path, '/');
         // path is something like /nodeInRootSpace
         if ($index === $endIndex) {
-            return '/';
+            return new NodePath('/');
         } else { // node is something like /node/not/in/root/space
-            return substr($path, 0, $endIndex);
+            return new NodePath(substr($path, 0, $endIndex));
         }
     }
 
@@ -625,6 +612,7 @@ class NodeImportService
      */
     protected function persistNodeData($nodeData)
     {
+        die('obsolete');
         if ($nodeData['workspace'] !== 'live') {
             throw new ImportException('Saving NodeData with workspace != "live" using direct SQL not supported yet. Workspace is "' . $nodeData['workspace'] . '".');
         }

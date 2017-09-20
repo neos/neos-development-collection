@@ -17,7 +17,11 @@ require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Fe
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 
 use Neos\Behat\Tests\Behat\FlowContext;
+use Neos\EventSourcing\Event\EventPublisher;
+use Neos\EventSourcing\Event\EventTypeResolver;
+use Neos\EventSourcing\EventStore\EventStoreManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
 use Neos\Flow\Utility\Environment;
@@ -35,6 +39,7 @@ class FeatureContext extends \Behat\Behat\Context\BehatContext
     use NodeAuthorizationTrait;
     use SecurityOperationsTrait;
     use IsolatedBehatStepsTrait;
+    use EventSourcedTrait;
 
     /**
      * @var string
@@ -55,6 +60,10 @@ class FeatureContext extends \Behat\Behat\Context\BehatContext
         $this->environment = $this->objectManager->get(Environment::class);
         $this->nodeAuthorizationService = $this->objectManager->get(AuthorizationService::class);
         $this->nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
+        $this->eventTypeResolver = $this->objectManager->get(EventTypeResolver::class);
+        $this->propertyMapper = $this->objectManager->get(PropertyMapper::class);
+        $this->eventPublisher = $this->objectManager->get(EventPublisher::class);
+        $this->eventStoreManager = $this->objectManager->get(EventStoreManager::class);
         $this->setupSecurity();
     }
 

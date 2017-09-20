@@ -15,6 +15,7 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Dto\HierarchyEdge;
 use Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Service\DbalClient;
 use Neos\ContentGraph\Infrastructure\Dto\Node;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -41,20 +42,17 @@ class ProjectionContentGraph
                 ->fetch()['count'] > 0;
     }
 
-    public function getNode(string $identifierInGraph): Node
+    public function getNode(NodeAggregateIdentifier $nodeIdentifier, string $subgraphIdentifier): Node
     {
         $nodeData = $this->getDatabaseConnection()->executeQuery(
             'SELECT n.* FROM neos_contentgraph_node n
- WHERE identifieringraph = :identifierInGraph',
+ WHERE nodeidentifier = :nodeIdentifier
+ AND subgraphidentifier = :subgraphIdentifier',
             [
-                'identifierInGraph' => $identifierInGraph,
+                'nodeIdentifier' => $nodeIdentifier,
+                'subgraphIdentifier' => $subgraphIdentifier
             ]
         )->fetch();
-
-        if (!$nodeData) {
-            \Neos\Flow\var_dump($identifierInGraph);
-            exit();
-        }
 
         return $this->mapRawDataToNode($nodeData);
     }
