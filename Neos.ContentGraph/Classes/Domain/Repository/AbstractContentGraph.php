@@ -12,7 +12,7 @@ namespace Neos\ContentGraph\Domain\Repository;
  * source code.
  */
 use Neos\ContentRepository\Domain as ContentRepository;
-use Neos\ContentRepository\Domain\Context\DimensionCombination;
+use Neos\ContentRepository\Domain\Context\DimensionSpace;
 use Neos\ContentRepository\Domain\Projection\Content as ContentProjection;
 use Neos\Flow\Annotations as Flow;
 
@@ -23,7 +23,7 @@ abstract class AbstractContentGraph implements ContentProjection\ContentGraphInt
 {
     /**
      * @Flow\Inject
-     * @var DimensionCombination\Repository\ContentDimensionValueCombinationRepository
+     * @var DimensionSpace\Repository\AllowedDimensionSubspace
      */
     protected $dimensionValueCombinationRepository;
 
