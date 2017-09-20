@@ -21,7 +21,7 @@ use Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
 use Neos\ContentRepository\Domain\ValueObject\ImportingSessionIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodePath;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
@@ -95,7 +95,7 @@ class NodeImportService
     protected $nodeDataStack = array();
 
     /**
-     * @var NodeIdentifier[]
+     * @var NodeAggregateIdentifier[]
      */
     protected $nodeIdentifierStack = array();
 
@@ -247,7 +247,7 @@ class NodeImportService
         switch ($elementName) {
             case 'node':
                 // update current node identifier
-                $this->nodeIdentifierStack[] = new NodeIdentifier($xmlReader->getAttribute('identifier'));
+                $this->nodeIdentifierStack[] = new NodeAggregateIdentifier($xmlReader->getAttribute('identifier'));
                 // update current path
                 $nodeName = $xmlReader->getAttribute('nodeName');
                 if ($nodeName !== '/' && $nodeName !== '') {
@@ -550,7 +550,7 @@ class NodeImportService
                 $importNodeCommand = new ImportNode(
                     $this->importingSessionIdentifier,
                     // TODO
-                    new NodeIdentifier(Algorithms::generateUUID()),
+                    new NodeAggregateIdentifier(Algorithms::generateUUID()),
                     $nodeData['identifier'],
                     new NodeName('todo'),
                     $nodeData['nodeType'],

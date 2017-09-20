@@ -2,7 +2,7 @@
 
 namespace Neos\ContentRepository\Domain\Context\Node\Event;
 
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcing\Event\EventInterface;
 
@@ -18,7 +18,7 @@ final class PropertyWasSet implements EventInterface
     private $contentStreamIdentifier;
 
     /**
-     * @var NodeIdentifier
+     * @var NodeAggregateIdentifier
      */
     private $nodeIdentifier;
 
@@ -34,13 +34,13 @@ final class PropertyWasSet implements EventInterface
 
     /**
      *
-     * @param NodeIdentifier $nodeIdentifier
+     * @param NodeAggregateIdentifier $nodeIdentifier
      * @param string $propertyName
      * @param PropertyValue $value
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
-        NodeIdentifier $nodeIdentifier,
+        NodeAggregateIdentifier $nodeIdentifier,
         $propertyName,
         PropertyValue $value
     ) {
@@ -59,9 +59,9 @@ final class PropertyWasSet implements EventInterface
     }
 
     /**
-     * @return NodeIdentifier
+     * @return NodeAggregateIdentifier
      */
-    public function getNodeIdentifier(): NodeIdentifier
+    public function getNodeIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeIdentifier;
     }

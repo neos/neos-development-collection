@@ -5,7 +5,7 @@ namespace Neos\ContentRepository\Domain\Context\Node\Event;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcing\Event\EventInterface;
 use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 
@@ -18,12 +18,12 @@ final class ChildNodeWithVariantWasCreated implements EventInterface
     private $contentStreamIdentifier;
 
     /**
-     * @var NodeIdentifier
+     * @var NodeAggregateIdentifier
      */
     private $parentNodeIdentifier;
 
     /**
-     * @var NodeIdentifier
+     * @var NodeAggregateIdentifier
      */
     private $nodeIdentifier;
 
@@ -53,8 +53,8 @@ final class ChildNodeWithVariantWasCreated implements EventInterface
      * ChildNodeWithVariantWasCreated constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $parentNodeIdentifier
-     * @param NodeIdentifier $nodeIdentifier
+     * @param NodeAggregateIdentifier $parentNodeIdentifier
+     * @param NodeAggregateIdentifier $nodeIdentifier
      * @param NodeName $nodeName
      * @param NodeTypeName $nodeTypeName
      * @param DimensionValues $dimensionValues
@@ -62,8 +62,8 @@ final class ChildNodeWithVariantWasCreated implements EventInterface
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
-        NodeIdentifier $parentNodeIdentifier,
-        NodeIdentifier $nodeIdentifier,
+        NodeAggregateIdentifier $parentNodeIdentifier,
+        NodeAggregateIdentifier $nodeIdentifier,
         NodeName $nodeName,
         NodeTypeName $nodeTypeName,
         DimensionValues $dimensionValues,
@@ -87,17 +87,17 @@ final class ChildNodeWithVariantWasCreated implements EventInterface
     }
 
     /**
-     * @return NodeIdentifier
+     * @return NodeAggregateIdentifier
      */
-    public function getParentNodeIdentifier(): NodeIdentifier
+    public function getParentNodeIdentifier(): NodeAggregateIdentifier
     {
         return $this->parentNodeIdentifier;
     }
 
     /**
-     * @return NodeIdentifier
+     * @return NodeAggregateIdentifier
      */
-    public function getNodeIdentifier(): NodeIdentifier
+    public function getNodeIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeIdentifier;
     }

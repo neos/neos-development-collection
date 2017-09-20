@@ -4,7 +4,7 @@ namespace Neos\ContentRepository\Domain\Context\Node\Command;
 
 use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 
@@ -17,12 +17,12 @@ final class CreateChildNodeWithVariant
     private $contentStreamIdentifier;
 
     /**
-     * @var NodeIdentifier
+     * @var NodeAggregateIdentifier
      */
     private $parentNodeIdentifier;
 
     /**
-     * @var NodeIdentifier
+     * @var NodeAggregateIdentifier
      */
     private $nodeIdentifier;
 
@@ -43,8 +43,8 @@ final class CreateChildNodeWithVariant
 
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
-        NodeIdentifier $parentNodeIdentifier,
-        NodeIdentifier $nodeIdentifier,
+        NodeAggregateIdentifier $parentNodeIdentifier,
+        NodeAggregateIdentifier $nodeIdentifier,
         NodeName $nodeName,
         NodeTypeName $nodeTypeName,
         DimensionValues $dimensionValues
@@ -66,17 +66,17 @@ final class CreateChildNodeWithVariant
     }
 
     /**
-     * @return NodeIdentifier
+     * @return NodeAggregateIdentifier
      */
-    public function getParentNodeIdentifier(): NodeIdentifier
+    public function getParentNodeIdentifier(): NodeAggregateIdentifier
     {
         return $this->parentNodeIdentifier;
     }
 
     /**
-     * @return NodeIdentifier
+     * @return NodeAggregateIdentifier
      */
-    public function getNodeIdentifier(): NodeIdentifier
+    public function getNodeIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeIdentifier;
     }

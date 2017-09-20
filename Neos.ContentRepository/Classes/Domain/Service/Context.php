@@ -298,7 +298,7 @@ class Context
      */
     public function getNodeByIdentifier($identifier)
     {
-        $nodeIdentifier = Domain\ValueObject\NodeIdentifier::fromString($identifier);
+        $nodeIdentifier = Domain\ValueObject\NodeAggregateIdentifier::fromString($identifier);
         return $this->getSubgraph()->findNodeByIdentifier($nodeIdentifier, $this);
     }
 
@@ -313,7 +313,7 @@ class Context
      */
     public function getNodeVariantsByIdentifier($identifier): array
     {
-        $nodeIdentifier = Domain\ValueObject\NodeIdentifier::fromString($identifier);
+        $nodeIdentifier = Domain\ValueObject\NodeAggregateIdentifier::fromString($identifier);
         $nodeVariants = [];
         foreach ($this->contentGraph->getSubgraphs() as $subgraph) {
             $nodeVariant = $subgraph->findNodeByIdentifier($nodeIdentifier, $this);

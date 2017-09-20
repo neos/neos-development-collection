@@ -3,7 +3,7 @@ namespace Neos\ContentRepository\Domain\Context\Importing\Command;
 
 use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
 use Neos\ContentRepository\Domain\ValueObject\ImportingSessionIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\PropertyValues;
@@ -16,12 +16,12 @@ final class ImportNode
     private $importingSessionIdentifier;
 
     /**
-     * @var NodeIdentifier
+     * @var NodeAggregateIdentifier
      */
     private $parentNodeIdentifier;
 
     /**
-     * @var NodeIdentifier
+     * @var NodeAggregateIdentifier
      */
     private $nodeIdentifier;
 
@@ -47,8 +47,8 @@ final class ImportNode
 
     public function __construct(
         ImportingSessionIdentifier $importingSessionIdentifier,
-        NodeIdentifier $parentNodeIdentifier,
-        NodeIdentifier $nodeIdentifier,
+        NodeAggregateIdentifier $parentNodeIdentifier,
+        NodeAggregateIdentifier $nodeIdentifier,
         NodeName $nodeName,
         NodeTypeName $nodeTypeName,
         DimensionValues $dimensionValues,
@@ -68,12 +68,12 @@ final class ImportNode
         return $this->importingSessionIdentifier;
     }
 
-    public function getParentNodeIdentifier(): NodeIdentifier
+    public function getParentNodeIdentifier(): NodeAggregateIdentifier
     {
         return $this->parentNodeIdentifier;
     }
 
-    public function getNodeIdentifier(): NodeIdentifier
+    public function getNodeIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeIdentifier;
     }

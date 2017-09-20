@@ -16,12 +16,12 @@ use Neos\ContentRepository\Utility;
 use Ramsey\Uuid\Uuid;
 
 /**
- * NodeIdentifier
+ * NodeAggregateIdentifier
  */
-final class NodeIdentifier implements \JsonSerializable, CacheAwareInterface
+final class NodeAggregateIdentifier implements \JsonSerializable, CacheAwareInterface
 {
     /**
-     * A preg pattern to match against node identifiers
+     * A preg pattern to match against node aggregate identifiers
      */
     const PATTERN = '/^([a-z0-9\-]{1,255})$/';
 
@@ -31,7 +31,7 @@ final class NodeIdentifier implements \JsonSerializable, CacheAwareInterface
     private $identifier;
 
     /**
-     * NodeIdentifier constructor.
+     * NodeAggregateIdentifier constructor.
      *
      * @param string $existingIdentifier
      */
@@ -50,7 +50,7 @@ final class NodeIdentifier implements \JsonSerializable, CacheAwareInterface
     private function setIdentifier(string $identifier)
     {
         if (!preg_match(self::PATTERN, $identifier)) {
-            throw new \InvalidArgumentException('Invalid node identifier "' . $identifier . '" (a node identifier must only contain lowercase characters, numbers and the "-" sign).', 1505840197862);
+            throw new \InvalidArgumentException('Invalid node aggregate identifier "' . $identifier . '" (a node aggregate identifier must only contain lowercase characters, numbers and the "-" sign).', 1505840197862);
         }
         $this->identifier = $identifier;
     }
@@ -61,17 +61,17 @@ final class NodeIdentifier implements \JsonSerializable, CacheAwareInterface
      */
     public static function fromString(string $identifier)
     {
-        return new NodeIdentifier($identifier);
+        return new NodeAggregateIdentifier($identifier);
     }
 
     /**
      * @param NodeName $childNodeName
-     * @param NodeIdentifier $nodeIdentifier
-     * @return NodeIdentifier
+     * @param NodeAggregateIdentifier $nodeIdentifier
+     * @return static
      */
-    public static function forAutoCreatedChildNode(NodeName $childNodeName, NodeIdentifier $nodeIdentifier): NodeIdentifier
+    public static function forAutoCreatedChildNode(NodeName $childNodeName, NodeAggregateIdentifier $nodeIdentifier): NodeAggregateIdentifier
     {
-        return new NodeIdentifier(Utility::buildAutoCreatedChildNodeIdentifier((string)$childNodeName, (string)$nodeIdentifier));
+        return new NodeAggregateIdentifier(Utility::buildAutoCreatedChildNodeIdentifier((string)$childNodeName, (string)$nodeIdentifier));
     }
 
     /**

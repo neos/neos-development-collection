@@ -3,7 +3,7 @@
 namespace Neos\ContentRepository\Domain\Context\Node\Command;
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\UserIdentifier;
 
 /**
@@ -17,7 +17,7 @@ final class CreateRootNode
     private $contentStreamIdentifier;
 
     /**
-     * @var NodeIdentifier
+     * @var NodeAggregateIdentifier
      */
     private $nodeIdentifier;
 
@@ -30,10 +30,10 @@ final class CreateRootNode
      * CreateRootNode constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
+     * @param NodeAggregateIdentifier $nodeIdentifier
      * @param UserIdentifier $initiatingUserIdentifier
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier, UserIdentifier $initiatingUserIdentifier)
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeIdentifier, UserIdentifier $initiatingUserIdentifier)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;
@@ -49,9 +49,9 @@ final class CreateRootNode
     }
 
     /**
-     * @return NodeIdentifier
+     * @return NodeAggregateIdentifier
      */
-    public function getNodeIdentifier(): NodeIdentifier
+    public function getNodeIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeIdentifier;
     }

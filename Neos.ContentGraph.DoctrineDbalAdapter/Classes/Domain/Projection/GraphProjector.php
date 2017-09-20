@@ -144,7 +144,7 @@ class GraphProjector extends AbstractGraphProjector
     }*/
 
 
-    protected function getNode(ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier, string $subgraphIdentifier): Node
+    protected function getNode(ContentRepository\ValueObject\NodeAggregateIdentifier $nodeIdentifier, string $subgraphIdentifier): Node
     {
         return $this->contentGraph->getNode($nodeIdentifier, $subgraphIdentifier);
     }

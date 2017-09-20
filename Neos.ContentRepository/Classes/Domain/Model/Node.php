@@ -16,7 +16,7 @@ use Neos\ContentRepository\Domain\Context\Node\Command\SetProperty;
 use Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\ContentRepository\Domain\Projection\Content\PropertyCollection;
 use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain;
@@ -56,7 +56,7 @@ class Node implements NodeInterface, CacheAwareInterface
     protected $context;
 
     /**
-     * @var NodeIdentifier
+     * @var NodeAggregateIdentifier
      */
     public $identifier;
 
@@ -959,7 +959,7 @@ class Node implements NodeInterface, CacheAwareInterface
     {
         $command = new SetProperty(
             $this->context->getContentStreamIdentifier(),
-            new NodeIdentifier($this->getIdentifier()),
+            new NodeAggregateIdentifier($this->getIdentifier()),
             $propertyName,
             $value,
             new NodeTypeName($this->getNodeType()->getName())
@@ -1247,8 +1247,8 @@ class Node implements NodeInterface, CacheAwareInterface
     public function createNode($name, NodeType $nodeType = null, $identifier = null)
     {
         $nodeName = new NodeName($name);
-        $parentNodeIdentifier = new NodeIdentifier($this->getIdentifier());
-        $nodeIdentifier = new NodeIdentifier();
+        $parentNodeIdentifier = new NodeAggregateIdentifier($this->getIdentifier());
+        $nodeIdentifier = new NodeAggregateIdentifier();
         $command = new CreateChildNodeWithVariant(
             $this->context->getContentStreamIdentifier(),
             $parentNodeIdentifier,

@@ -15,7 +15,7 @@ use Neos\ContentRepository\Domain\Context\Node\Command\SetProperty;
 use Neos\ContentRepository\Domain\Context\Node\Event\ChildNodeWithVariantWasCreated;
 use Neos\ContentRepository\Domain\Context\Node\Event\PropertyWasSet;
 use Neos\ContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
@@ -117,7 +117,7 @@ final class NodeCommandHandler
 
         foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeNameStr => $childNodeType) {
             $childNodeName = new NodeName($childNodeNameStr);
-            $childNodeIdentifier = NodeIdentifier::forAutoCreatedChildNode($childNodeName,
+            $childNodeIdentifier = NodeAggregateIdentifier::forAutoCreatedChildNode($childNodeName,
                 $command->getNodeIdentifier());
 
             $events = array_merge($events, $this->childNodeWithVariantWasCreatedFromCommand(new CreateChildNodeWithVariant(

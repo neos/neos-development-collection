@@ -21,7 +21,7 @@ use Neos\Flow\Annotations as Flow;
 class Node
 {
     /**
-     * @var ContentRepository\ValueObject\NodeIdentifier
+     * @var ContentRepository\ValueObject\NodeAggregateIdentifier
      */
     public $nodeIdentifier;
 
@@ -41,7 +41,7 @@ class Node
     public $nodeTypeName;
 
 
-    public function __construct(ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier, string $subgraphIdentifier, array $properties, ContentRepository\ValueObject\NodeTypeName $nodeTypeName)
+    public function __construct(ContentRepository\ValueObject\NodeAggregateIdentifier $nodeIdentifier, string $subgraphIdentifier, array $properties, ContentRepository\ValueObject\NodeTypeName $nodeTypeName)
     {
         $this->nodeIdentifier = $nodeIdentifier;
         $this->subgraphIdentifier = $subgraphIdentifier;
