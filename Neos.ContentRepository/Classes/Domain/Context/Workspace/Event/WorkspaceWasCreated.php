@@ -18,7 +18,7 @@ use Neos\ContentRepository\Domain\ValueObject\WorkspaceTitle;
 use Neos\EventSourcing\Event\EventInterface;
 
 /**
- * WorkspaceHasBeenCreated
+ * WorkspaceWasCreated
  */
 class WorkspaceWasCreated implements EventInterface
 {

@@ -16,6 +16,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Validation\ValidatorResolver;
 use Neos\Neos\Domain\Context\Domain\Command\AddDomain;
+use Neos\Neos\Domain\Context\Domain\Command\DeleteDomain;
 use Neos\Neos\Domain\Context\Domain\DomainCommandHandler;
 use Neos\Neos\Domain\Context\Domain\Command\ActivateDomain;
 use Neos\Neos\Domain\Model\Domain;
@@ -172,6 +173,12 @@ class DomainCommandController extends CommandController
 
         $this->domainRepository->remove($domain);
         $this->outputLine('Domain entry deleted.');
+
+        $this->domainCommandHandler->handleDeleteDomain(
+            new DeleteDomain(
+                new HostName($hostname)
+            )
+        );
     }
 
     /**

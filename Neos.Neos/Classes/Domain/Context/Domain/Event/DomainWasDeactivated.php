@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Neos\Domain\Context\Domain\Command;
+namespace Neos\Neos\Domain\Context\Domain\Event;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,9 +11,10 @@ namespace Neos\Neos\Domain\Context\Domain\Command;
  * source code.
  */
 
-use Neos\Neos\Domain\ValueOBject\HostName;
+use Neos\EventSourcing\Event\EventInterface;
+use Neos\Neos\Domain\ValueObject\HostName;
 
-class ActivateDomain
+class DomainWasDeactivated implements EventInterface
 {
     /**
      * @var HostName
