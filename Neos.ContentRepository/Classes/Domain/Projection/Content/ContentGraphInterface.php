@@ -26,12 +26,6 @@ interface ContentGraphInterface
     public function getSubgraphByIdentifier(Domain\ValueObject\SubgraphIdentifier $identifier);
 
     /**
-     * @param string $identityHash
-     * @return ContentSubgraphInterface|null
-     */
-    public function getSubgraphByIdentityHash(string $identityHash);
-
-    /**
      * @return array|ContentSubgraphInterface[]
      */
     public function getSubgraphs(): array;

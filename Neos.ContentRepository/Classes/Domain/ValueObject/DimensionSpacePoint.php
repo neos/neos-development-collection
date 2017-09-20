@@ -34,6 +34,20 @@ final class DimensionSpacePoint implements \JsonSerializable
     }
 
     /**
+     * @param array $legacyDimensionValues
+     * @return DimensionSpacePoint
+     */
+    public static function fromLegacyDimensionArray(array $legacyDimensionValues): DimensionSpacePoint
+    {
+        $coordinates = [];
+        foreach ($legacyDimensionValues as $dimensionName => $rawDimensionValues) {
+            $coordinates[$dimensionName] = new DimensionValue(reset($rawDimensionValues));
+        }
+
+        return new DimensionSpacePoint($coordinates);
+    }
+
+    /**
      * @return array|DimensionValue[]
      */
     public function getCoordinates(): array
@@ -50,6 +64,19 @@ final class DimensionSpacePoint implements \JsonSerializable
         Arrays::sortKeysRecursively($identityComponents);
 
         return md5(json_encode($identityComponents));
+    }
+
+    /**
+     * @return array
+     */
+    public function toLegacyDimensionArray(): array
+    {
+        $legacyDimensions = [];
+        foreach ($this->coordinates as $dimensionName => $dimensionValue) {
+            $legacyDimensions[$dimensionName] = [$dimensionValue];
+        }
+
+        return $legacyDimensions;
     }
 
     /**
