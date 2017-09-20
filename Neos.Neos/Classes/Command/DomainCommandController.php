@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Command;
 
 /*
@@ -103,22 +104,12 @@ class DomainCommandController extends CommandController
 
         $this->domainRepository->add($domain);
 
-        $httpScheme = null;
-        if ($scheme) {
-            $httpScheme = new HttpScheme($scheme);
-        }
-
-        $domainPort = null;
-        if ($domainPort) {
-            new DomainPort($port);
-        }
-
         $this->domainCommandHandler->handleAddDomain(
             new AddDomain(
                 new NodeName($siteNodeName),
                 new HostName($hostname),
-                $httpScheme,
-                $domainPort
+                $scheme ? new HttpScheme($scheme) : null,
+                $port ? new DomainPort($port) : null
             )
         );
 

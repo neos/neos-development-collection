@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\Neos\Domain\Context\Domain;
+namespace Neos\Neos\Domain\Context\Site;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -28,7 +28,7 @@ use Neos\Neos\Domain\Projection\Domain\DomainFinder;
 /**
  * WorkspaceCommandHandler
  */
-final class DomainCommandHandler
+final class SiteCommandHandler
 {
     /**
      * @Flow\Inject
@@ -45,7 +45,7 @@ final class DomainCommandHandler
     /**
      * @param AddDomain $command
      */
-    public function handleAddDomain(AddDomain $command)
+    public function handleCreateSite(CreateSite $command)
     {
         $hostname = $command->getDomainHostname();
         $domain = $this->domainFinder->findOneByHostname($hostname);

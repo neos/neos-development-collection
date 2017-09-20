@@ -53,7 +53,7 @@ class HttpScheme implements \JsonSerializable
      */
     public function __toString(): string
     {
-        return $this->scheme;
+        return (string)$this->scheme;
     }
 
     /**
