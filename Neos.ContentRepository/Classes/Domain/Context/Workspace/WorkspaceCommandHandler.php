@@ -23,6 +23,7 @@ use Neos\ContentRepository\Domain\Context\Workspace\Exception\WorkspaceAlreadyEx
 use Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcing\Event\EventPublisher;
 use Neos\Flow\Annotations as Flow;
 
@@ -121,7 +122,7 @@ final class WorkspaceCommandHandler
         $this->nodeCommandHandler->handleCreateRootNode(
             new CreateRootNode(
                 $contentStreamIdentifier,
-                new NodeAggregateIdentifier(),
+                new NodeIdentifier(),
                 $command->getInitiatingUserIdentifier()
             )
         );

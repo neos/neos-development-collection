@@ -25,6 +25,6 @@ final class WorkspaceFinder extends AbstractDoctrineFinder
      */
     public function findOneByName(WorkspaceName $name)
     {
-        return $this->__call('findOneByName', [(string)$name]);
+        return $this->__call('findOneByWorkspaceName', [(string)$name]);
     }
 }

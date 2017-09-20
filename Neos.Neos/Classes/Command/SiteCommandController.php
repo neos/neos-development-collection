@@ -239,7 +239,7 @@ class SiteCommandController extends CommandController
      * @param string $filename relative path and filename to the XML file containing the sites content
      * @return void
      */
-    public function legacyImportCommand($packageKey = null, $filename = null)
+    public function importLegacyCommand($packageKey = null, $filename = null)
     {
         $exceedingArguments = $this->request->getExceedingArguments();
         if (isset($exceedingArguments[0]) && $packageKey === null && $filename === null) {

@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Domain\Projection\Workspace;
  */
 
 use Doctrine\ORM\Mapping as ORM;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcing\Annotations as CQRS;
 use Neos\Flow\Annotations as Flow;
 
@@ -25,12 +26,14 @@ use Neos\Flow\Annotations as Flow;
 final class Workspace
 {
     /**
+     * @ORM\Id
      * @var string
      */
     public $workspaceName;
 
     /**
      * @var string
+     * @ORM\Column(nullable=true)
      */
     public $baseWorkspaceName;
 
@@ -46,8 +49,15 @@ final class Workspace
 
     /**
      * @var string
+     * @ORM\Column(nullable=true)
      */
     public $workspaceOwner;
+
+    /**
+     * @var string
+     * @ORM\Column(nullable=true)
+     */
+    protected $currentContentStreamIdentifier;
 
     /**
      * Checks if this workspace is shared across all editors
@@ -67,5 +77,31 @@ final class Workspace
     public function isPublicWorkspace()
     {
         return $this->baseWorkspaceName === null && $this->workspaceOwner === null;
+    }
+
+    /**
+     * Checks if the workspace is the root workspace
+     *
+     * @return boolean
+     */
+    public function isRootWorkspace()
+    {
+        return $this->baseWorkspaceName === null;
+    }
+
+    /**
+     * @return string
+     */
+    public function _setCurrentContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier)
+    {
+        $this->currentContentStreamIdentifier = (string)$contentStreamIdentifier;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrentContentStreamIdentifier() : ContentStreamIdentifier
+    {
+        return new ContentStreamIdentifier($this->currentContentStreamIdentifier);
     }
 }
