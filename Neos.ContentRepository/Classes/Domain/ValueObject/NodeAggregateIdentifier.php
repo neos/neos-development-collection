@@ -16,7 +16,7 @@ use Neos\ContentRepository\Utility;
 use Ramsey\Uuid\Uuid;
 
 /**
- * NodeAggregateIdentifier
+ * A node aggregate identifier is a externally referenceable identifier of a node aggregate.
  */
 final class NodeAggregateIdentifier implements \JsonSerializable, CacheAwareInterface
 {
@@ -66,12 +66,12 @@ final class NodeAggregateIdentifier implements \JsonSerializable, CacheAwareInte
 
     /**
      * @param NodeName $childNodeName
-     * @param NodeAggregateIdentifier $nodeIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @return static
      */
-    public static function forAutoCreatedChildNode(NodeName $childNodeName, NodeAggregateIdentifier $nodeIdentifier): NodeAggregateIdentifier
+    public static function forAutoCreatedChildNode(NodeName $childNodeName, NodeAggregateIdentifier $nodeAggregateIdentifier): NodeAggregateIdentifier
     {
-        return new NodeAggregateIdentifier(Utility::buildAutoCreatedChildNodeIdentifier((string)$childNodeName, (string)$nodeIdentifier));
+        return new NodeAggregateIdentifier(Utility::buildAutoCreatedChildNodeIdentifier((string)$childNodeName, (string)$nodeAggregateIdentifier));
     }
 
     /**

@@ -7,15 +7,17 @@ use Neos\ContentRepository\Domain\Context\Importing\Command\FinalizeImportingSes
 use Neos\ContentRepository\Domain\Context\Importing\Command\StartImportingSession;
 use Neos\ContentRepository\Domain\Context\Importing\Event\ImportingSessionWasFinalized;
 use Neos\ContentRepository\Domain\Context\Importing\Event\ImportingSessionWasStarted;
-use Neos\ContentRepository\Domain\Context\Node\Command\CreateChildNodeWithVariant;
+use Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateRootNode;
 use Neos\ContentRepository\Domain\Context\Importing\Command\ImportNode;
 use Neos\ContentRepository\Domain\Context\Importing\Event\NodeWasImported;
 use Neos\ContentRepository\Domain\Context\Node\Command\SetProperty;
-use Neos\ContentRepository\Domain\Context\Node\Event\ChildNodeWithVariantWasCreated;
+use Neos\ContentRepository\Domain\Context\Node\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Domain\Context\Node\Event\PropertyWasSet;
 use Neos\ContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
+use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
@@ -38,11 +40,11 @@ final class NodeCommandHandler
     protected $nodeTypeManager;
 
     /**
-     * @param CreateChildNodeWithVariant $command
+     * @param CreateNodeAggregateWithNode $command
      */
-    public function handleCreateChildNodeWithVariant(CreateChildNodeWithVariant $command)
+    public function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command)
     {
-        $events = $this->childNodeWithVariantWasCreatedFromCommand($command);
+        $events = $this->nodeAggregateWithNodeWasCreatedFromCommand($command);
         $this->eventPublisher->publishMany(ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier()), $events);
     }
 
@@ -84,13 +86,13 @@ final class NodeCommandHandler
     }
 
     /**
-     * Create events for adding a node, including all auto-created child nodes (recursively)
+     * Create events for adding a node aggregate with node, including all auto-created child node aggregates with nodes (recursively)
      *
-     * @param CreateChildNodeWithVariant $command
-     * @return array <ChildNodeWithVariantWasCreated>
+     * @param CreateNodeAggregateWithNode $command
+     * @return array
      * @throws NodeTypeNotFoundException
      */
-    private function childNodeWithVariantWasCreatedFromCommand(CreateChildNodeWithVariant $command): array
+    private function nodeAggregateWithNodeWasCreatedFromCommand(CreateNodeAggregateWithNode $command): array
     {
         if (empty($command->getNodeTypeName())) {
             throw new \InvalidArgumentException('TODO: Node type may not be null');
@@ -105,28 +107,36 @@ final class NodeCommandHandler
 
         $events = [];
 
-        $events[] = new ChildNodeWithVariantWasCreated(
+        // TODO Calculate dimension space point set from dimension space point
+        $dimensionSpacePointSet = new DimensionSpacePointSet([]);
+
+        $events[] = new NodeAggregateWithNodeWasCreated(
             $command->getContentStreamIdentifier(),
-            $command->getParentNodeIdentifier(),
-            $command->getNodeIdentifier(),
-            $command->getNodeName(),
+            $command->getNodeAggregateIdentifier(),
             $command->getNodeTypeName(),
-            $command->getDimensionValues(),
+            $command->getDimensionSpacePoint(),
+            $dimensionSpacePointSet,
+            $command->getNodeIdentifier(),
+            $command->getParentNodeIdentifier(),
+            $command->getNodeName(),
             $propertyDefaultValuesAndTypes
         );
 
         foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeNameStr => $childNodeType) {
             $childNodeName = new NodeName($childNodeNameStr);
-            $childNodeIdentifier = NodeAggregateIdentifier::forAutoCreatedChildNode($childNodeName,
-                $command->getNodeIdentifier());
+            $childNodeAggregateIdentifier = NodeAggregateIdentifier::forAutoCreatedChildNode($childNodeName, $command->getNodeAggregateIdentifier());
+            // FIXME This auto-created child node identifier is random but should match the created child node persistence identifier of NodeData for the legacy layer
+            $childNodeIdentifier = new NodeIdentifier();
+            $childParentNodeIdentifier = $command->getNodeIdentifier();
 
-            $events = array_merge($events, $this->childNodeWithVariantWasCreatedFromCommand(new CreateChildNodeWithVariant(
+            $events = array_merge($events, $this->nodeAggregateWithNodeWasCreatedFromCommand(new CreateNodeAggregateWithNode(
                 $command->getContentStreamIdentifier(),
-                $command->getNodeIdentifier(),
-                $childNodeIdentifier,
-                $childNodeName,
+                $childNodeAggregateIdentifier,
                 new NodeTypeName($childNodeType),
-                $command->getDimensionValues()
+                $command->getDimensionSpacePoint(),
+                $childNodeIdentifier,
+                $childParentNodeIdentifier,
+                $childNodeName
             )));
         }
 

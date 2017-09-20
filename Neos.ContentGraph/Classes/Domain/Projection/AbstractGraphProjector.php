@@ -31,7 +31,7 @@ abstract class AbstractGraphProjector implements ProjectorInterface
         });
     }
 
-    final public function whenChildNodeWithVariantWasCreated(Event\ChildNodeWithVariantWasCreated $event)
+    final public function whenChildNodeWithVariantWasCreated(Event\NodeAggregateWithNodeWasCreated $event)
     {
 
     }

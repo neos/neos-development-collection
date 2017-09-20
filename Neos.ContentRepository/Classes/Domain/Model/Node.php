@@ -11,17 +11,20 @@ namespace Neos\ContentRepository\Domain\Model;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Context\Node\Command\CreateChildNodeWithVariant;
+use Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\SetProperty;
 use Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\ContentRepository\Domain\Projection\Content\PropertyCollection;
+use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Utility\ObjectAccess;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
@@ -144,6 +147,12 @@ class Node implements NodeInterface, CacheAwareInterface
      * Dependency to be removed once the dependency on the context is removed as well
      */
     protected $nodeTypeConstraintService;
+
+    /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
 
     /**
      * @param NodeData $nodeData
@@ -525,6 +534,8 @@ class Node implements NodeInterface, CacheAwareInterface
 
     /**
      * Returns the identifier of this node
+     *
+     * Note: (this is the node aggregate identifier in the event sourced CR)
      *
      * @return string
      * @api
@@ -1246,21 +1257,29 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function createNode($name, NodeType $nodeType = null, $identifier = null)
     {
+        $newNode = $this->legacyCreateNode($name, $nodeType, $identifier);
+
+        $nodeAggregateIdentifier = new NodeAggregateIdentifier();
+        $nodeTypeName = new NodeTypeName(($nodeType ? $nodeType->getName() : 'unstructured'));
+        $dimensionSpacePoint = new DimensionSpacePoint($this->context->getTargetDimensions());
+
+        // TODO Use random UUID when legacy layer is removed
+        $nodeIdentifier = new NodeIdentifier($this->persistenceManager->getIdentifierByObject($newNode->getNodeData()));
+        // TODO Use correct node identifier when legacy layer is removed
+        $parentNodeIdentifier = new NodeIdentifier($this->persistenceManager->getIdentifierByObject($this->nodeData));
         $nodeName = new NodeName($name);
-        $parentNodeIdentifier = new NodeAggregateIdentifier($this->getIdentifier());
-        $nodeIdentifier = new NodeAggregateIdentifier();
-        $command = new CreateChildNodeWithVariant(
+
+        $command = new CreateNodeAggregateWithNode(
             $this->context->getContentStreamIdentifier(),
-            $parentNodeIdentifier,
+            $nodeAggregateIdentifier,
+            $nodeTypeName,
+            $dimensionSpacePoint,
             $nodeIdentifier,
-            $nodeName,
-            new NodeTypeName(($nodeType ? $nodeType->getName() : 'unstructured')),
-            new DimensionValues($this->context->getTargetDimensionValues())
+            $parentNodeIdentifier,
+            $nodeName
         );
 
-        $this->nodeCommandHandler->handleCreateChildNodeWithVariant($command);
-
-        $newNode = $this->legacyCreateNode($name, $nodeType, $identifier);
+        $this->nodeCommandHandler->handleCreateNodeAggregateWithNode($command);
 
         return $newNode;
     }

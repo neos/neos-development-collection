@@ -113,7 +113,7 @@ trait EventSourcedTrait
                 ];
             case 'CreateChildNodeWithVariant':
                 return [
-                    \Neos\ContentRepository\Domain\Context\Node\Command\CreateChildNodeWithVariant::class,
+                    \Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode::class,
                     \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
                     'handleCreateChildNodeWithVariant'
                 ];
