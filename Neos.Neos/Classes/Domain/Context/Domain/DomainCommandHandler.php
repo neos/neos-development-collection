@@ -15,8 +15,10 @@ use Neos\EventSourcing\Event\EventPublisher;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Context\Domain\Command\ActivateDomain;
 use Neos\Neos\Domain\Context\Domain\Command\AddDomain;
+use Neos\Neos\Domain\Context\Domain\Command\DeactivateDomain;
 use Neos\Neos\Domain\Context\Domain\Event\DomainHasBeenActivated;
 use Neos\Neos\Domain\Context\Domain\Event\DomainHasBeenAdded;
+use Neos\Neos\Domain\Context\Domain\Event\DomainHasBeenDeactivated;
 
 /**
  * WorkspaceCommandHandler
@@ -55,6 +57,19 @@ final class DomainCommandHandler
         $this->eventPublisher->publish(
             'Neos.Neos:Domain:' . $command->getHostName(),
             new DomainHasBeenActivated(
+                $command->getHostName()
+            )
+        );
+    }
+
+    /**
+     * @param ActivateDomain $command
+     */
+    public function handleDeactivateDomain(DeactivateDomain $command)
+    {
+        $this->eventPublisher->publish(
+            'Neos.Neos:Domain:' . $command->getHostName(),
+            new DomainHasBeenDeactivated(
                 $command->getHostName()
             )
         );
