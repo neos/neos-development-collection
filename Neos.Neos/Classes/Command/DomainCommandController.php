@@ -214,6 +214,13 @@ class DomainCommandController extends CommandController
 
         $domain->setActive(false);
         $this->domainRepository->update($domain);
+
+        $this->domainCommandHandler->handleDeactivateDomain(
+            new \Neos\Neos\Domain\Context\Domain\Command\DeactivateDomain(
+                new HostName($hostname)
+            )
+        );
+
         $this->outputLine('Domain entry deactivated.');
     }
 }
