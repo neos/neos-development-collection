@@ -204,7 +204,7 @@ class InterDimensionalFallbackGraph
      */
     protected function initializeSubgraph()
     {
-        $subgraph = $this->fallbackGraph->getSubgraph($this->rootSubgraphIdentifier);
+        $subgraph = $this->fallbackGraph->getSubgraphByDimensionSpacePointHash($this->rootSubgraphIdentifier);
         $horizontalOffset = 0;
         $y = 0;
         foreach ($subgraph->getFallback() as $fallbackSubgraph) {

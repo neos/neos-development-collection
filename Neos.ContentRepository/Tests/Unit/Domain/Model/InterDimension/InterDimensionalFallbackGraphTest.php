@@ -29,7 +29,7 @@ class InterDimensionalFallbackGraphTest extends UnitTestCase
 
         $contentSubgraph = $graph->createContentSubgraph(['test' => new Dimension\Model\ContentDimensionValue('a')]);
 
-        $this->assertSame($contentSubgraph, $graph->getSubgraph($contentSubgraph->getIdentityHash()));
+        $this->assertSame($contentSubgraph, $graph->getSubgraphByDimensionSpacePointHash($contentSubgraph->getIdentityHash()));
     }
 
     /**
