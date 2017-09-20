@@ -11,44 +11,57 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Utility\Arrays;
 
 /**
- * A point in the dimension space.
+ * A point in the dimension space with coordinates DimensionName => DimensionValue.
  *
  * E.g.: [language => es, country => ar]
  */
 final class DimensionSpacePoint implements \JsonSerializable
 {
+    /**
+     * @var array|DimensionValue[]
+     */
+    private $coordinates;
 
     /**
-     * @var array
+     * @param array $coordinates
      */
-    private $point;
-
-    /**
-     * @param array $point
-     */
-    public function __construct(array $point)
+    public function __construct(array $coordinates)
     {
-        $this->point = $point;
+        $this->coordinates = $coordinates;
+    }
+
+    /**
+     * @return array|DimensionValue[]
+     */
+    public function getCoordinates(): array
+    {
+        return $this->coordinates;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHash(): string
+    {
+        $identityComponents = $this->coordinates;
+        Arrays::sortKeysRecursively($identityComponents);
+
+        return md5(json_encode($identityComponents));
     }
 
     /**
      * @return array
      */
-    public function getPoint(): array
+    public function jsonSerialize(): array
     {
-        return $this->point;
+        return ['coordinates' => $this->coordinates];
     }
 
-    function jsonSerialize()
+    public function __toString(): string
     {
-        return ['point' => $this->point];
+        return 'dimension space point:' . json_encode($this->coordinates);
     }
-
-    public function __toString()
-    {
-        return 'dimension space point:' . json_encode($this->point);
-    }
-
 }
