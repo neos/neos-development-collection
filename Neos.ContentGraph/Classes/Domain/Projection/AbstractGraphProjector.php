@@ -117,7 +117,7 @@ final public function whenNodeVariantWasCreated(Event\NodeVariantWasCreated $eve
 
     abstract protected function addNode(Infrastructure\Dto\Node $node);
 
-    abstract protected function getNode(ContentRepository\ValueObject\NodeAggregateIdentifier $nodeIdentifier, string $subgraphIdentifier): Infrastructure\Dto\Node;
+    abstract protected function getNode(ContentRepository\ValueObject\NodeAggregateIdentifier $nodeIdentifier, ContentRepository\ValueObject\SubgraphIdentifier $subgraphIdentifier): Infrastructure\Dto\Node;
 
     abstract protected function connectHierarchy(
         string $parentNodesIdentifierInGraph,
