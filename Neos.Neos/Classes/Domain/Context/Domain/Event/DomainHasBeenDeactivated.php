@@ -11,36 +11,30 @@ namespace Neos\Neos\Domain\Context\Domain\Event;
  * source code.
  */
 
+use Neos\EventSourcing\Event\EventInterface;
+use Neos\Neos\Domain\ValueObject\HostName;
 
-class DomainHasBeenDeactivated implements \Neos\EventSourcing\Event\EventInterface
+class DomainHasBeenDeactivated implements EventInterface
 {
     /**
-     * @var \Neos\Neos\Domain\ValueObject\HostName
+     * @var HostName
      */
     private $hostName;
 
     /**
      * ActivateDomain constructor.
-     * @param \Neos\Neos\Domain\ValueObject\HostName $hostName
+     * @param HostName $hostName
      */
-    public function __construct(\Neos\Neos\Domain\ValueObject\HostName $hostName)
+    public function __construct(HostName $hostName)
     {
         $this->hostName = $hostName;
     }
 
     /**
-     * @return \Neos\Neos\Domain\ValueObject\HostName
+     * @return HostName
      */
-    public function getHostName(): \Neos\Neos\Domain\ValueObject\HostName
+    public function getHostName(): HostName
     {
         return $this->hostName;
-    }
-
-    /**
-     * @param \Neos\Neos\Domain\ValueObject\HostName $hostName
-     */
-    public function setHostName(\Neos\Neos\Domain\ValueObject\HostName $hostName)
-    {
-        $this->hostName = $hostName;
     }
 }

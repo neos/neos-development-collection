@@ -63,27 +63,11 @@ class AddDomain
     }
 
     /**
-     * @param NodeName $siteNodeName
-     */
-    public function setSiteNodeName(NodeName $siteNodeName)
-    {
-        $this->siteNodeName = $siteNodeName;
-    }
-
-    /**
      * @return HostName
      */
     public function getDomainHostname(): HostName
     {
         return $this->domainHostname;
-    }
-
-    /**
-     * @param HostName $domainHostname
-     */
-    public function setDomainHostname(HostName $domainHostname)
-    {
-        $this->domainHostname = $domainHostname;
     }
 
     /**
@@ -95,26 +79,10 @@ class AddDomain
     }
 
     /**
-     * @param HttpScheme $scheme
-     */
-    public function setScheme(HttpScheme $scheme = null)
-    {
-        $this->scheme = $scheme;
-    }
-
-    /**
      * @return DomainPort (nullable)
      */
     public function getPort()
     {
         return $this->port;
-    }
-
-    /**
-     * @param DomainPort $port
-     */
-    public function setPort(DomainPort $port = null)
-    {
-        $this->port = $port;
     }
 }
