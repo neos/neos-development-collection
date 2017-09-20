@@ -177,7 +177,7 @@ class Context
         $this->contentSubgraph = $contentSubgraph;
         $this->subgraphIdentifier = new Domain\ValueObject\SubgraphIdentifier(
             $this->contentStreamIdentifier,
-            Domain\ValueObject\DimensionValueCombination::fromLegacyDimensionArray($dimensions)
+            Domain\ValueObject\DimensionSpacePoint::fromLegacyDimensionArray($dimensions)
         );
     }
 
