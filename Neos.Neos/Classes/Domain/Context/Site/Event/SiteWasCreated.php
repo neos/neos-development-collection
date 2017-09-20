@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Neos\Domain\Context\Site\Command;
+namespace Neos\Neos\Domain\Context\Site\Event;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,13 +11,14 @@ namespace Neos\Neos\Domain\Context\Site\Command;
  * source code.
  */
 
+use Neos\EventSourcing\Event\EventInterface;
 use Neos\Neos\Domain\ValueObject\NodeName;
 use Neos\Neos\Domain\ValueObject\NodeType;
 use Neos\Neos\Domain\ValueObject\PackageKey;
 use Neos\Neos\Domain\ValueObject\SiteActive;
 use Neos\Neos\Domain\ValueObject\SiteName;
 
-class CreateSite
+class SiteWasCreated implements EventInterface
 {
     /**
      * @var SiteName
