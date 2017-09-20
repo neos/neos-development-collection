@@ -3,8 +3,14 @@
 namespace Neos\ContentRepository\Domain\Context\Node;
 
 use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
+use Neos\ContentRepository\Domain\Context\Importing\Command\FinalizeImportingSession;
+use Neos\ContentRepository\Domain\Context\Importing\Command\StartImportingSession;
+use Neos\ContentRepository\Domain\Context\Importing\Event\ImportingSessionWasFinalized;
+use Neos\ContentRepository\Domain\Context\Importing\Event\ImportingSessionWasStarted;
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateChildNodeWithVariant;
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateRootNode;
+use Neos\ContentRepository\Domain\Context\Importing\Command\ImportNode;
+use Neos\ContentRepository\Domain\Context\Importing\Event\NodeWasImported;
 use Neos\ContentRepository\Domain\Context\Node\Command\SetProperty;
 use Neos\ContentRepository\Domain\Context\Node\Event\ChildNodeWithVariantWasCreated;
 use Neos\ContentRepository\Domain\Context\Node\Event\PropertyWasSet;
@@ -14,6 +20,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
+use Neos\EventSourcing\EventStore\ExpectedVersion;
 use Neos\Flow\Annotations as Flow;
 
 final class NodeCommandHandler
@@ -37,6 +44,43 @@ final class NodeCommandHandler
     {
         $events = $this->childNodeWithVariantWasCreatedFromCommand($command);
         $this->eventPublisher->publishMany(ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier()), $events);
+    }
+
+    /**
+     * @param StartImportingSession $command
+     */
+    public function handleStartImportingSession(StartImportingSession $command)
+    {
+        $streamName = 'Neos.ContentRepository:Importing:' . $command->getImportingSessionIdentifier();
+        $this->eventPublisher->publish($streamName, new ImportingSessionWasStarted($command->getImportingSessionIdentifier()), ExpectedVersion::NO_STREAM);
+    }
+
+    /**
+     * @param ImportNode $command
+     */
+    public function handleImportNode(ImportNode $command)
+    {
+        $this->validateNodeTypeName($command->getNodeTypeName());
+
+        $streamName = 'Neos.ContentRepository:Importing:' . $command->getImportingSessionIdentifier();
+        $this->eventPublisher->publish($streamName, new NodeWasImported(
+            $command->getImportingSessionIdentifier(),
+            $command->getParentNodeIdentifier(),
+            $command->getNodeIdentifier(),
+            $command->getNodeName(),
+            $command->getNodeTypeName(),
+            $command->getDimensionValues(),
+            $command->getPropertyValues()
+        ));
+    }
+
+    /**
+     * @param FinalizeImportingSession $command
+     */
+    public function handleFinalizeImportingSession(FinalizeImportingSession $command)
+    {
+        $streamName = 'Neos.ContentRepository:Importing:' . $command->getImportingSessionIdentifier();
+        $this->eventPublisher->publish($streamName, new ImportingSessionWasFinalized($command->getImportingSessionIdentifier()));
     }
 
     /**
@@ -132,11 +176,19 @@ final class NodeCommandHandler
      */
     private function getNodeType(NodeTypeName $nodeTypeName)
     {
-        if (!$this->nodeTypeManager->hasNodeType((string)$nodeTypeName)) {
-            throw new \InvalidArgumentException('TODO: Node type ' . $nodeTypeName . ' not found.');
-        }
+        $this->validateNodeTypeName($nodeTypeName);
 
         $nodeType = $this->nodeTypeManager->getNodeType((string)$nodeTypeName);
         return $nodeType;
+    }
+
+    /**
+     * @param NodeTypeName $nodeTypeName
+     */
+    private function validateNodeTypeName(NodeTypeName $nodeTypeName)
+    {
+        if (!$this->nodeTypeManager->hasNodeType((string)$nodeTypeName)) {
+            throw new \InvalidArgumentException('TODO: Node type ' . $nodeTypeName . ' not found.');
+        }
     }
 }

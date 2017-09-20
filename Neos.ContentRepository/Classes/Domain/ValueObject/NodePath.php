@@ -12,40 +12,32 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  * source code.
  */
 
-final class PropertyValue implements \JsonSerializable
+final class NodePath implements \JsonSerializable
 {
-
-    /**
-     * @var mixed
-     */
-    private $value;
 
     /**
      * @var string
      */
-    private $type;
+    private $path;
 
-    /**
-     * @param mixed $value
-     * @param string $type
-     */
-    public function __construct($value, string $type)
+    public function __construct(string $path)
     {
-        $this->value = $value;
-        $this->type = $type;
+        $this->path = $path;
+    }
+
+    public function isRoot(): bool
+    {
+        return $this->path === '/';
     }
 
     function jsonSerialize()
     {
-        return [
-            'value' => $this->value,
-            'type' => $this->type
-        ];
+        return $this->path;
     }
 
     public function __toString()
     {
-        return $this->value . '(' . $this->type . ')';
+        return $this->path;
     }
 
 }
