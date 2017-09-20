@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\Domain\Context\DimensionSpace\Repository;
  * source code.
  */
 use Neos\ContentRepository\Domain\Context\Dimension;
-use Neos\ContentRepository\Domain\Utility\SubgraphUtility;
+use Neos\ContentRepository\Domain;
 
 /**
  * The content subgraph domain model
@@ -24,9 +24,9 @@ class ContentSubgraph
     protected $dimensionValues = [];
 
     /**
-     * @var string
+     * @var Domain\ValueObject\DimensionSpacePoint
      */
-    protected $identityHash;
+    protected $identifier;
 
     /**
      * @var array
@@ -49,13 +49,13 @@ class ContentSubgraph
      */
     public function __construct(array $dimensionValues)
     {
-        $identityComponents = [];
+        $coordinates = [];
         foreach ($dimensionValues as $dimensionName => $dimensionValue) {
             $this->dimensionValues[$dimensionName] = $dimensionValue;
-            $identityComponents[$dimensionName] = $dimensionValue->getValue();
+            $coordinates[$dimensionName] = $dimensionValue->getValue();
             $this->weight[$dimensionName] = $dimensionValue->getDepth();
         }
-        $this->identityHash = SubgraphUtility::hashIdentityComponents($identityComponents);
+        $this->identifier = new Domain\ValueObject\DimensionSpacePoint($coordinates);
     }
 
 
@@ -81,7 +81,7 @@ class ContentSubgraph
      */
     public function getIdentityHash(): string
     {
-        return $this->identityHash;
+        return $this->identifier->getHash();
     }
 
     /**

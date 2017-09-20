@@ -12,7 +12,7 @@ namespace Neos\ContentGraph\Domain\Repository;
  * source code.
  */
 use Neos\ContentRepository\Domain as ContentRepository;
-use Neos\ContentRepository\Domain\Context\DimensionCombination;
+use Neos\ContentRepository\Domain\Context\DimensionSpace;
 use Neos\ContentRepository\Domain\Projection\Content as ContentProjection;
 use Neos\Flow\Annotations as Flow;
 
@@ -23,7 +23,7 @@ abstract class AbstractContentGraph implements ContentProjection\ContentGraphInt
 {
     /**
      * @Flow\Inject
-     * @var DimensionCombination\Repository\ContentDimensionValueCombinationRepository
+     * @var DimensionSpace\Repository\AllowedDimensionSubspace
      */
     protected $dimensionValueCombinationRepository;
 
@@ -38,34 +38,17 @@ abstract class AbstractContentGraph implements ContentProjection\ContentGraphInt
      */
     protected $subgraphs;
 
-
-    final public function initializeObject()
-    {
-        foreach ($this->workspaceFinder->findAll() as $workspace) {
-            $contentStreamIdentifier = null;
-            foreach ($this->dimensionValueCombinationRepository->findAll() as $dimensionValueCombination) {
-                $subgraphIdentifier = new ContentRepository\ValueObject\SubgraphIdentifier($contentStreamIdentifier, $dimensionValueCombination);
-                $this->subgraphs[$subgraphIdentifier->getHash()] = $this->createSubgraph($subgraphIdentifier);
-            }
-        }
-    }
-
     /**
      * @param ContentRepository\ValueObject\SubgraphIdentifier $subgraphIdentifier
      * @return ContentProjection\ContentSubgraphInterface|null
      */
     final public function getSubgraphByIdentifier(ContentRepository\ValueObject\SubgraphIdentifier $subgraphIdentifier)
     {
-        return $this->getSubgraphByIdentityHash($subgraphIdentifier->getHash());
-    }
+        if (!isset($this->subgraphs[$subgraphIdentifier->getHash()])) {
+            $this->subgraphs[$subgraphIdentifier->getHash()] = $this->createSubgraph($subgraphIdentifier);
+        }
 
-    /**
-     * @param string $identityHash
-     * @return ContentProjection\ContentSubgraphInterface|null
-     */
-    final public function getSubgraphByIdentityHash(string $identityHash)
-    {
-        return $this->subgraphs[$identityHash] ?? null;
+        return $this->subgraphs[$subgraphIdentifier->getHash()];
     }
 
     /**

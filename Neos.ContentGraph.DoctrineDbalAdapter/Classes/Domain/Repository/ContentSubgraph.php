@@ -281,9 +281,16 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         return $result;
     }
 
-    public function findRootNode(): ContentRepository\Model\NodeInterface
+    public function findRootNode(ContentRepository\Service\Context $context = null): ContentRepository\Model\NodeInterface
     {
-        // TODO: Implement findRootNode() method.
+        $nodeData = $this->getDatabaseConnection()->executeQuery(
+            'SELECT n.* FROM neos_contentgraph_node n
+ WHERE n.nodetypename = :nodeTypeName',
+            [
+                'nodeTypeName' => 'Neos.ContentGraph:Root',
+            ]
+        )->fetch();
+        return $this->mapRawDataToNode($nodeData, $context);
     }
 
 
@@ -310,25 +317,30 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         $nodeType = $this->nodeTypeManager->getNodeType($nodeData['nodetypename']);
         $className = $nodeType->getNodeInterfaceImplementationClassName();
 
-        $subgraphWasCreatedIn = $this->contentGraph->getSubgraphByIdentityHash($nodeData['subgraphidentifier']);
-        $legacyDimensionValues = $subgraphWasCreatedIn->getIdentifier()->getDimensionValueCombination()->toLegacyDimensionArray();
+        $serializedSubgraphIdentifier = json_decode($nodeData['subgraphidentifier'], true);
+        $subgraphIdentifier = new ContentRepository\ValueObject\SubgraphIdentifier(
+            new ContentRepository\ValueObject\ContentStreamIdentifier($serializedSubgraphIdentifier['contentStreamIdentifier']),
+            new ContentRepository\ValueObject\DimensionSpacePoint($serializedSubgraphIdentifier['dimensionSpacePoint'])
+        );
+        $legacyDimensionValues = $subgraphIdentifier->getDimensionSpacePoint()->toLegacyDimensionArray();
         $query = $this->nodeDataRepository->createQuery();
         $nodeData = $query->matching(
             $query->logicalAnd([
-                $query->equals('identifier', $nodeData['identifierinsubgraph']),
+                $query->equals('workspace', (string) $subgraphIdentifier->getContentStreamIdentifier()),
+                $query->equals('identifier', $nodeData['aggregateidentifier']),
                 $query->equals('dimensionsHash', Utility::sortDimensionValueArrayAndReturnDimensionsHash($legacyDimensionValues))
             ])
         );
 
         $node = new $className($nodeData, $context);
         $node->nodeType = $nodeType;
-        $node->identifier = new ContentRepository\ValueObject\NodeAggregateIdentifier($nodeData['identifierinsubgraph']);
+        $node->identifier = new ContentRepository\ValueObject\NodeAggregateIdentifier($nodeData['aggregateidentifier']);
         $node->properties = new ContentProjection\PropertyCollection(json_decode($nodeData['properties'], true));
         $node->name = $nodeData['name'];
         $node->index = $nodeData['index'];
         #@todo fetch workspace from finder using the content stream identifier
         #$node->workspace = $this->workspaceRepository->findByIdentifier($this->contentStreamIdentifier);
-        $node->subgraphIdentifier = $nodeData['subgraphidentifier'];
+        $node->subgraphIdentifier = $subgraphIdentifier;
 
         return $node;
     }

@@ -89,7 +89,7 @@ class Node implements NodeInterface, CacheAwareInterface
     public $workspace;
 
     /**
-     * @var string
+     * @var Domain\ValueObject\SubgraphIdentifier
      */
     public $subgraphIdentifier;
 

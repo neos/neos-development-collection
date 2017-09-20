@@ -11,44 +11,84 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Utility\Arrays;
 
 /**
- * A point in the dimension space.
+ * A point in the dimension space with coordinates DimensionName => DimensionValue.
  *
  * E.g.: [language => es, country => ar]
  */
 final class DimensionSpacePoint implements \JsonSerializable
 {
+    /**
+     * @var array|DimensionValue[]
+     */
+    private $coordinates;
 
     /**
-     * @var array
+     * @param array $coordinates
      */
-    private $point;
-
-    /**
-     * @param array $point
-     */
-    public function __construct(array $point)
+    public function __construct(array $coordinates)
     {
-        $this->point = $point;
+        $this->coordinates = $coordinates;
+    }
+
+    /**
+     * @param array $legacyDimensionValues
+     * @return DimensionSpacePoint
+     */
+    public static function fromLegacyDimensionArray(array $legacyDimensionValues): DimensionSpacePoint
+    {
+        $coordinates = [];
+        foreach ($legacyDimensionValues as $dimensionName => $rawDimensionValues) {
+            $coordinates[$dimensionName] = new DimensionValue(reset($rawDimensionValues));
+        }
+
+        return new DimensionSpacePoint($coordinates);
+    }
+
+    /**
+     * @return array|DimensionValue[]
+     */
+    public function getCoordinates(): array
+    {
+        return $this->coordinates;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHash(): string
+    {
+        $identityComponents = $this->coordinates;
+        Arrays::sortKeysRecursively($identityComponents);
+
+        return md5(json_encode($identityComponents));
     }
 
     /**
      * @return array
      */
-    public function getPoint(): array
+    public function toLegacyDimensionArray(): array
     {
-        return $this->point;
+        $legacyDimensions = [];
+        foreach ($this->coordinates as $dimensionName => $dimensionValue) {
+            $legacyDimensions[$dimensionName] = [$dimensionValue];
+        }
+
+        return $legacyDimensions;
     }
 
-    function jsonSerialize()
+    /**
+     * @return array
+     */
+    public function jsonSerialize(): array
     {
-        return ['point' => $this->point];
+        return ['coordinates' => $this->coordinates];
     }
 
-    public function __toString()
+    public function __toString(): string
     {
-        return 'dimension space point:' . json_encode($this->point);
+        return 'dimension space point:' . json_encode($this->coordinates);
     }
-
 }

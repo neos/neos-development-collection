@@ -23,19 +23,29 @@ final class SubgraphIdentifier implements \JsonSerializable, CacheAwareInterface
     protected $contentStreamIdentifier;
 
     /**
-     * @var DimensionValueCombination
+     * @var DimensionSpacePoint
      */
-    protected $dimensionValueCombination;
+    protected $dimensionSpacePoint;
+
+    /**
+     * @var string
+     */
+    protected $hash;
 
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param DimensionValueCombination $dimensionValueCombination
+     * @param DimensionSpacePoint $dimensionSpacePoint
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, DimensionValueCombination $dimensionValueCombination)
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->dimensionValueCombination = $dimensionValueCombination;
+        $this->dimensionSpacePoint = $dimensionSpacePoint;
+
+        $identityComponents = $this->jsonSerialize();
+        Arrays::sortKeysRecursively($identityComponents);
+
+        $this->hash = md5(json_encode($identityComponents));
     }
 
 
@@ -48,11 +58,11 @@ final class SubgraphIdentifier implements \JsonSerializable, CacheAwareInterface
     }
 
     /**
-     * @return DimensionValueCombination
+     * @return DimensionSpacePoint
      */
-    public function getDimensionValueCombination(): DimensionValueCombination
+    public function getDimensionSpacePoint(): DimensionSpacePoint
     {
-        return $this->dimensionValueCombination;
+        return $this->dimensionSpacePoint;
     }
 
     /**
@@ -60,10 +70,7 @@ final class SubgraphIdentifier implements \JsonSerializable, CacheAwareInterface
      */
     public function getHash(): string
     {
-        $identityComponents = $this->jsonSerialize();
-        Arrays::sortKeysRecursively($identityComponents);
-
-        return md5(json_encode($identityComponents));
+        return $this->hash;
     }
 
     /**
@@ -81,7 +88,7 @@ final class SubgraphIdentifier implements \JsonSerializable, CacheAwareInterface
     {
         return [
             'contentStreamIdentifier' => $this->contentStreamIdentifier,
-            'dimensionValueCombination' => $this->dimensionValueCombination
+            'dimensionSpacePoint' => $this->dimensionSpacePoint
         ];
     }
 }

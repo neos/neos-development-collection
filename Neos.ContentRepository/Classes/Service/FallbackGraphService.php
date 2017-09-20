@@ -48,7 +48,7 @@ class FallbackGraphService
     public function determineAffectedVariantSubgraphIdentifiers(string $subgraphIdentifier): array
     {
         $affectedVariantIdentifiers = [$subgraphIdentifier];
-        $subgraph = $this->interDimensionalFallbackGraph->getSubgraph($subgraphIdentifier);
+        $subgraph = $this->interDimensionalFallbackGraph->getSubgraphByDimensionSpacePointHash($subgraphIdentifier);
         foreach ($subgraph->getVariants() as $variantSubgraph) {
             $affectedVariantIdentifiers[] = $variantSubgraph->getIdentityHash();
         }
@@ -62,7 +62,7 @@ class FallbackGraphService
      */
     public function determineConnectedSubgraphIdentifiers(string $subgraphIdentifier): array
     {
-        $subgraph = $this->interDimensionalFallbackGraph->getSubgraph($subgraphIdentifier);
+        $subgraph = $this->interDimensionalFallbackGraph->getSubgraphByDimensionSpacePointHash($subgraphIdentifier);
         while ($subgraph->getFallback()) {
             $subgraph = $subgraph->getFallback();
         }
