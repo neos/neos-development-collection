@@ -192,17 +192,17 @@ class SiteImportService
             }
             $site->setSiteResourcesPackageKey($siteResourcesPackageKey);
 
-            $rootNode = $this->contextFactory->create()->getRootNode();
-            // We fetch the workspace to be sure it's known to the persistence manager and persist all
-            // so the workspace and site node are persisted before we import any nodes to it.
-            $rootNode->getContext()->getWorkspace();
-            $this->persistenceManager->persistAll();
-            $sitesNode = $rootNode->getNode(SiteService::SITES_ROOT_PATH);
-            if ($sitesNode === null) {
-                $sitesNode = $rootNode->createNode(NodePaths::getNodeNameFromPath(SiteService::SITES_ROOT_PATH));
-            }
+//            $rootNode = $this->contextFactory->create()->getRootNode();
+//            // We fetch the workspace to be sure it's known to the persistence manager and persist all
+//            // so the workspace and site node are persisted before we import any nodes to it.
+//            $rootNode->getContext()->getWorkspace();
+//            $this->persistenceManager->persistAll();
+//            $sitesNode = $rootNode->getNode(SiteService::SITES_ROOT_PATH);
+//            if ($sitesNode === null) {
+//                $sitesNode = $rootNode->createNode(NodePaths::getNodeNameFromPath(SiteService::SITES_ROOT_PATH));
+//            }
 
-            $this->nodeImportService->import($xmlReader, $sitesNode->getPath(), dirname($pathAndFilename) . '/Resources');
+            $this->nodeImportService->import($xmlReader, '/sites/todo', dirname($pathAndFilename) . '/Resources');
         }
 
         if ($site === null) {
