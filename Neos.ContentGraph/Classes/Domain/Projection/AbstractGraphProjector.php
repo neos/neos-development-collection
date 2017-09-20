@@ -12,8 +12,9 @@ namespace Neos\ContentGraph\Domain\Projection;
  * source code.
  */
 use Neos\ContentGraph\Infrastructure;
+use Neos\ContentRepository\Domain\Context\Importing\Event\NodeWasImported;
 use Neos\ContentRepository\Domain\Context\Node\Event;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain as ContentRepository;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -29,6 +30,28 @@ abstract class AbstractGraphProjector implements ProjectorInterface
         $this->transactional(function () use ($node) {
             $this->addNode($node);
         });
+    }
+
+    final public function whenNodeWasImported(NodeWasImported $event)
+    {
+        $node = Infrastructure\Dto\Node::fromNodeWasImported($event);
+
+        /*
+        $this->transactional(function () use ($node, $parentsIdentifierInGraph, $elderSiblingsIdentifierInGraph, $subgraphIdentifiers) {
+            $this->addNode($node);
+            $this->connectHierarchy(
+                $parentsIdentifierInGraph,
+                $node->identifierInGraph,
+                $elderSiblingsIdentifierInGraph,
+                null,
+                $subgraphIdentifiers
+            );
+        });
+
+        $this->transactional(function () use ($node) {
+            $this->addNode($node);
+        });
+        */
     }
 
     final public function whenChildNodeWithVariantWasCreated(Event\NodeAggregateWithNodeWasCreated $event)
@@ -94,7 +117,7 @@ final public function whenNodeVariantWasCreated(Event\NodeVariantWasCreated $eve
 
     abstract protected function addNode(Infrastructure\Dto\Node $node);
 
-    abstract protected function getNode(NodeAggregateIdentifier $nodeIdentifier, string $subgraphIdentifier): Infrastructure\Dto\Node;
+    abstract protected function getNode(ContentRepository\ValueObject\NodeAggregateIdentifier $nodeIdentifier, string $subgraphIdentifier): Infrastructure\Dto\Node;
 
     abstract protected function connectHierarchy(
         string $parentNodesIdentifierInGraph,
