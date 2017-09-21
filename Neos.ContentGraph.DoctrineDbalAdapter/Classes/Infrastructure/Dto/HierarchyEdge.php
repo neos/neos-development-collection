@@ -22,20 +22,25 @@ class HierarchyEdge
     /**
      * @var string
      */
-    protected $parentNodesIdentifierInGraph;
+    protected $parentNodeIdentifier;
 
     /**
      * @var string
      */
-    protected $childNodesIdentifierInGraph;
+    protected $childNodeIdentifier;
 
     /**
      * @var string
      */
-    protected $name;
+    protected $edgeName;
 
     /**
      * @var string
+     */
+    protected $subgraphIdentityHash;
+
+    /**
+     * @var array
      */
     protected $subgraphIdentifier;
 
@@ -46,65 +51,76 @@ class HierarchyEdge
 
 
     public function __construct(
-        string $parentNodesIdentifierInGraph,
-        string $childNodesIdentifierInGraph,
-        string $name = null,
-        string $subgraphIdentifier,
+        string $parentNodeIdentifier,
+        string $childNodeIdentifier,
+        string $edgeName = null,
+        string $subgraphIdentityHash,
+        array $subgraphIdentifier,
         int $position
     ) {
-        $this->parentNodesIdentifierInGraph = $parentNodesIdentifierInGraph;
-        $this->name = $name;
+        $this->parentNodeIdentifier = $parentNodeIdentifier;
+        $this->childNodeIdentifier = $childNodeIdentifier;
+        $this->edgeName = $edgeName;
+        $this->subgraphIdentityHash = $subgraphIdentityHash;
         $this->subgraphIdentifier = $subgraphIdentifier;
-        $this->childNodesIdentifierInGraph = $childNodesIdentifierInGraph;
         $this->position = $position;
     }
 
-
-    public function getParentNodesIdentifierInGraph(): string
+    /**
+     * @return string
+     */
+    public function getParentNodeIdentifier() : string
     {
-        return $this->parentNodesIdentifierInGraph;
-    }
-
-    public function getChildNodesIdentifierInGraph(): string
-    {
-        return $this->childNodesIdentifierInGraph;
+        return $this->parentNodeIdentifier;
     }
 
     /**
-     * @return string|null
+     * @return string
      */
-    public function getName()
+    public function getChildNodeIdentifier() : string
     {
-        return $this->name;
+        return $this->childNodeIdentifier;
     }
 
-    public function getSubgraphIdentifier(): string
+    /**
+     * @return string
+     */
+    public function getEdgeName() : string
+    {
+        return $this->edgeName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSubgraphIdentityHash() : string
+    {
+        return $this->subgraphIdentityHash;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSubgraphIdentifier() : array
     {
         return $this->subgraphIdentifier;
     }
 
-    public function getPosition(): int
+    /**
+     * @return int
+     */
+    public function getPosition() : int
     {
         return $this->position;
     }
 
+
     public function getDatabaseIdentifier(): array
     {
         return [
-            'parentnodesidentifieringraph' => $this->parentNodesIdentifierInGraph,
-            'childnodesidentifieringraph' => $this->childNodesIdentifierInGraph,
-            'subgraphidentifier' => $this->subgraphIdentifier
-        ];
-    }
-
-    public function toDatabaseArray(): array
-    {
-        return [
-            'parentnodesidentifieringraph' => $this->parentNodesIdentifierInGraph,
-            'childnodesidentifieringraph' => $this->childNodesIdentifierInGraph,
-            'name' => $this->name,
-            'subgraphidentifier' => $this->subgraphIdentifier,
-            'position' => $this->position
+            'parentnodeidentifier' => $this->parentNodeIdentifier,
+            'childnodeidentifier' => $this->childNodeIdentifier,
+            'subgraphidentityhash' => $this->subgraphIdentityHash
         ];
     }
 }

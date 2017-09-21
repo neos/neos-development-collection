@@ -82,9 +82,21 @@ class Node
         );
     }
 
-    public static function fromNodeWasImported(NodeWasImported $event): Node
+
+    public static function fromNodeAggregateWithNodeWasCreated(Event\NodeAggregateWithNodeWasCreated $event): Node
     {
+        $subgraphIdentifier = new SubgraphIdentifier($event->getContentStreamIdentifier(), $event->getDimensionSpacePoint());
+        return new Node(
+            (string) $event->getNodeIdentifier(),
+            (string) $event->getNodeAggregateIdentifier(),
+            $subgraphIdentifier->jsonSerialize(),
+            $subgraphIdentifier->getHash(),
+            $event->getPropertyDefaultValuesAndTypes(),
+            (string)$event->getNodeTypeName()
+        );
     }
+
+
 
     /*
     public static function fromSystemNodeWasInserted(Event\SystemNodeWasInserted $event): Node

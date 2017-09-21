@@ -15,6 +15,8 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Dto\HierarchyEdge;
 use Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Service\DbalClient;
 use Neos\ContentGraph\Infrastructure\Dto\Node;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\SubgraphIdentifier;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -56,50 +58,50 @@ class ProjectionContentGraph
         return $this->mapRawDataToNode($nodeData);
     }
 
-    public function getEdgePosition(string $parentIdentifier, string $elderSiblingIdentifier = null, string $subgraphIdentityHash)
+    public function getEdgePosition(NodeIdentifier $parentIdentifier, NodeIdentifier $precedingSiblingIdentifier = null, SubgraphIdentifier $subgraphIdentifier)
     {
-        if ($elderSiblingIdentifier) {
-            $elderSiblingPosition = (int)$this->getDatabaseConnection()->executeQuery(
+        if ($precedingSiblingIdentifier) {
+            $precedingSiblingPosition = (int)$this->getDatabaseConnection()->executeQuery(
                 'SELECT h.position FROM neos_contentgraph_hierarchyrelation h
- WHERE childnodesidentifieringraph = :elderSiblingIdentifier
- AND subgraphIdentityHash = :subgraphIdentityHash',
+                          WHERE h.childnodeidentifier = :precedingSiblingIdentifier
+                          AND subgraphIdentityHash = :subgraphIdentityHash',
                 [
-                    'elderSiblingIdentifier' => $elderSiblingIdentifier,
-                    'subgraphIdentityHash' => $subgraphIdentityHash
+                    'precedingSiblingIdentifier' => (string)$precedingSiblingIdentifier,
+                    'subgraphIdentityHash' => $subgraphIdentifier->getHash()
                 ]
             )->fetch()['position'];
 
             $youngerSiblingEdge = $this->getDatabaseConnection()->executeQuery(
                 'SELECT MIN(h.position) AS `position` FROM neos_contentgraph_hierarchyrelation h
- WHERE parentnodesidentifieringraph = :parentNodesIdentifierInGraph
- AND subgraphIdentityHash = :subgraphIdentityHash
- AND `position` > :position',
+ WHERE h.parentnodeidentifier = :parentNodeIdentifier
+ AND h.subgraphidentityhash = :subgraphIdentityHash
+ AND h.`position` > :position',
                 [
-                    'parentNodesIdentifierInGraph' => $parentIdentifier,
-                    'subgraphIdentityHash' => $subgraphIdentityHash,
-                    'position' => $elderSiblingPosition
+                    'parentNodeIdentifier' => (string)$parentIdentifier,
+                    'subgraphIdentityHash' => $subgraphIdentifier->getHash(),
+                    'position' => $precedingSiblingPosition
                 ]
             )->fetch();
 
             if (!is_null($youngerSiblingEdge['position'])) {
-                $position = ($elderSiblingPosition + (int)$youngerSiblingEdge['position']) / 2;
+                $position = ($precedingSiblingPosition + (int)$youngerSiblingEdge['position']) / 2;
             } else {
-                $position = $elderSiblingPosition + 128;
+                $position = $precedingSiblingPosition + 128;
             }
         } else {
-            $eldestSiblingEdge = $this->getDatabaseConnection()->executeQuery(
+            $leftmostPrecedingSiblingEdge = $this->getDatabaseConnection()->executeQuery(
                 'SELECT MIN(h.position) AS `position` FROM neos_contentgraph_hierarchyrelation h
- WHERE parentnodesidentifieringraph = :parentNodesIdentifierInGraph
- AND subgraphIdentityHash = :subgraphIdentityHash
- ORDER BY `position` ASC',
+ WHERE h.parentnodeidentifier = :parentNodeIdentifier
+ AND h.subgraphidentityhash = :subgraphIdentityHash
+ ORDER BY h.`position` ASC',
                 [
-                    'parentNodesIdentifierInGraph' => $parentIdentifier,
-                    'subgraphIdentityHash' => $subgraphIdentityHash
+                    'parentNodeIdentifier' => (string)$parentIdentifier,
+                    'subgraphIdentityHash' => $subgraphIdentifier->getHash(),
                 ]
             )->fetch();
 
-            if ($eldestSiblingEdge) {
-                $position = ((int)$eldestSiblingEdge['position']) - 128;
+            if ($leftmostPrecedingSiblingEdge) {
+                $position = ((int)$leftmostPrecedingSiblingEdge['position']) - 128;
             } else {
                 $position = 0;
             }

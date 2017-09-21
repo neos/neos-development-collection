@@ -59,9 +59,14 @@ class Node implements NodeInterface, CacheAwareInterface
     protected $context;
 
     /**
-     * @var NodeAggregateIdentifier
+     * @var NodeIdentifier
      */
     public $identifier;
+
+    /**
+     * @var NodeAggregateIdentifier
+     */
+    public $aggregateIdentifier;
 
     /**
      * @var string
@@ -1396,7 +1401,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getNode($path)
     {
-        return $this->context->getSubgraph()->findChildNodeAlongPath($this->identifier, $path, $this->context);
+        return $this->context->getSubgraph()->findChildNodeConnectedThroughEdgeName($this->identifier, $path, $this->context);
     }
 
     /**

@@ -15,6 +15,9 @@ use Neos\ContentGraph\Infrastructure;
 use Neos\ContentRepository\Domain\Context\Importing\Event\NodeWasImported;
 use Neos\ContentRepository\Domain\Context\Node\Event;
 use Neos\ContentRepository\Domain as ContentRepository;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\ValueObject\SubgraphIdentifierSet;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -32,7 +35,24 @@ abstract class AbstractGraphProjector implements ProjectorInterface
         });
     }
 
-    final public function whenNodeWasImported(NodeWasImported $event)
+    final public function whenNodeAggregateWithNodeWasCreated(Event\NodeAggregateWithNodeWasCreated $event)
+    {
+        $node = Infrastructure\Dto\Node::fromNodeAggregateWithNodeWasCreated($event);
+
+        $this->transactional(function () use ($node, $event) {
+            $this->addNode($node);
+            $this->connectHierarchy(
+                $event->getParentNodeIdentifier(),
+                $event->getNodeIdentifier(),
+                // TODO: position on insert is still missing
+                null,
+                $event->getNodeName(),
+                new SubgraphIdentifierSet($event->getContentStreamIdentifier(), $event->getDimensionSpacePointSet())
+            );
+        });
+    }
+
+    /*final public function whenNodeWasImported(NodeWasImported $event)
     {
         $node = Infrastructure\Dto\Node::fromNodeWasImported($event);
 
@@ -51,13 +71,8 @@ abstract class AbstractGraphProjector implements ProjectorInterface
         $this->transactional(function () use ($node) {
             $this->addNode($node);
         });
-        */
-    }
 
-    final public function whenNodeAggregateWithNodeWasCreated(Event\NodeAggregateWithNodeWasCreated $event)
-    {
-
-    }
+    }*/
 
     final public function whenPropertyWasSet(Event\PropertyWasSet $event)
     {
@@ -120,11 +135,11 @@ final public function whenNodeVariantWasCreated(Event\NodeVariantWasCreated $eve
     abstract protected function getNode(ContentRepository\ValueObject\NodeAggregateIdentifier $nodeIdentifier, ContentRepository\ValueObject\SubgraphIdentifier $subgraphIdentifier): Infrastructure\Dto\Node;
 
     abstract protected function connectHierarchy(
-        string $parentNodesIdentifierInGraph,
-        string $childNodeIdentifierInGraph,
-        string $elderSiblingsIdentifierInGraph = null,
-        string $name = null,
-        array $subgraphIdentifiers
+        NodeIdentifier $parentNodeIdentifier,
+        NodeIdentifier $childNodeIdentifier,
+        NodeIdentifier $preceedingSiblingNodeIdentifier = null,
+        NodeName $edgeName = null,
+        SubgraphIdentifierSet $subgraphIdentifierSet
     );
 
     abstract protected function connectRelation(string $startNodesIdentifierInGraph, string $endNodesIdentifierInGraph, string $relationshipName, array $properties, array $subgraphIdentifiers);
