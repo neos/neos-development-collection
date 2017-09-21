@@ -38,7 +38,7 @@ class BackendControllerSecurityTest extends FunctionalTestCase
         $account->setParty($user);
         $this->browser->request('http://localhost/neos/login');
 
-            // dummy assertion to avoid PHPUnit warning
+        // dummy assertion to avoid PHPUnit warning
         $this->assertTrue(true);
     }
 

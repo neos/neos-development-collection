@@ -113,7 +113,7 @@ class NodeDataTest extends UnitTestCase
     public function setPathAcceptsAValidPath($path)
     {
         $this->nodeData->_call('setPath', $path, false);
-            // dummy assertion to avoid PHPUnit warning in strict mode
+        // dummy assertion to avoid PHPUnit warning in strict mode
         $this->assertTrue(true);
     }
 
