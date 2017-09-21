@@ -125,7 +125,7 @@ class TemplateImplementation extends AbstractArrayFusionObject
             }
             if (!is_array($value)) {
                 // if a value is a SIMPLE TYPE, e.g. neither an Eel expression nor a Fusion object,
-                    // we can just evaluate it (to handle processors) and then assign it to the template.
+                // we can just evaluate it (to handle processors) and then assign it to the template.
                 $evaluatedValue = $this->fusionValue($key);
                 $fluidTemplate->assign($key, $evaluatedValue);
             } else {
