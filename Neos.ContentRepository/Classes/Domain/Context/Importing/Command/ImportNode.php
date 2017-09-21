@@ -97,5 +97,4 @@ final class ImportNode
     {
         return $this->propertyValues;
     }
-
 }

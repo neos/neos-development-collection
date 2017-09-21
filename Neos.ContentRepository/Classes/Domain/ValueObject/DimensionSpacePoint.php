@@ -16,12 +16,13 @@ use Neos\Utility\Arrays;
 /**
  * A point in the dimension space with coordinates DimensionName => DimensionValue.
  *
- * E.g.: [language => es, country => ar]
+ * E.g.: ["language" => "es", "country" => "ar"]
  */
 final class DimensionSpacePoint implements \JsonSerializable
 {
+
     /**
-     * @var array|DimensionValue[]
+     * @var array
      */
     private $coordinates;
 
@@ -30,25 +31,27 @@ final class DimensionSpacePoint implements \JsonSerializable
      */
     public function __construct(array $coordinates)
     {
+        // TODO Check that coordinates are non-empty strings
+
         $this->coordinates = $coordinates;
     }
 
     /**
      * @param array $legacyDimensionValues
-     * @return DimensionSpacePoint
+     * @return static
      */
     public static function fromLegacyDimensionArray(array $legacyDimensionValues): DimensionSpacePoint
     {
         $coordinates = [];
         foreach ($legacyDimensionValues as $dimensionName => $rawDimensionValues) {
-            $coordinates[$dimensionName] = new DimensionValue(reset($rawDimensionValues));
+            $coordinates[$dimensionName] = reset($rawDimensionValues);
         }
 
         return new DimensionSpacePoint($coordinates);
     }
 
     /**
-     * @return array|DimensionValue[]
+     * @return array
      */
     public function getCoordinates(): array
     {

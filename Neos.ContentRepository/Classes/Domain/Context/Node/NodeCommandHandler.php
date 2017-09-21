@@ -3,6 +3,7 @@
 namespace Neos\ContentRepository\Domain\Context\Node;
 
 use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
+use Neos\ContentRepository\Domain\Context\DimensionSpace\Repository\InterDimensionalFallbackGraph;
 use Neos\ContentRepository\Domain\Context\Importing\Command\FinalizeImportingSession;
 use Neos\ContentRepository\Domain\Context\Importing\Command\StartImportingSession;
 use Neos\ContentRepository\Domain\Context\Importing\Event\ImportingSessionWasFinalized;
@@ -11,17 +12,20 @@ use Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNo
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateRootNode;
 use Neos\ContentRepository\Domain\Context\Importing\Command\ImportNode;
 use Neos\ContentRepository\Domain\Context\Importing\Event\NodeWasImported;
-use Neos\ContentRepository\Domain\Context\Node\Command\SetProperty;
+use Neos\ContentRepository\Domain\Context\Node\Command\SetNodeProperty;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Domain\Context\Node\Event\PropertyWasSet;
+use Neos\ContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
 use Neos\ContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
+use Neos\ContentRepository\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
+use Neos\EventSourcing\Event\EventPublisher;
 use Neos\EventSourcing\EventStore\ExpectedVersion;
 use Neos\Flow\Annotations as Flow;
 
@@ -29,15 +33,21 @@ final class NodeCommandHandler
 {
     /**
      * @Flow\Inject
-     * @var \Neos\EventSourcing\Event\EventPublisher
+     * @var EventPublisher
      */
     protected $eventPublisher;
 
     /**
      * @Flow\Inject
-     * @var \Neos\ContentRepository\Domain\Service\NodeTypeManager
+     * @var NodeTypeManager
      */
     protected $nodeTypeManager;
+
+    /**
+     * @Flow\Inject
+     * @var InterDimensionalFallbackGraph
+     */
+    protected $interDimensionalFallbackGraph;
 
     /**
      * @param CreateNodeAggregateWithNode $command
@@ -90,13 +100,10 @@ final class NodeCommandHandler
      *
      * @param CreateNodeAggregateWithNode $command
      * @return array
-     * @throws NodeTypeNotFoundException
+     * @throws DimensionSpacePointNotFound
      */
     private function nodeAggregateWithNodeWasCreatedFromCommand(CreateNodeAggregateWithNode $command): array
     {
-        if (empty($command->getNodeTypeName())) {
-            throw new \InvalidArgumentException('TODO: Node type may not be null');
-        }
         $nodeType = $this->getNodeType($command->getNodeTypeName());
 
         $propertyDefaultValuesAndTypes = [];
@@ -107,15 +114,17 @@ final class NodeCommandHandler
 
         $events = [];
 
-        // TODO Calculate dimension space point set from dimension space point
-        $dimensionSpacePointSet = new DimensionSpacePointSet([]);
+        $dimensionSpacePoint = $command->getDimensionSpacePoint();
+        $visibleDimensionSpacePoints = $this->getVisibleDimensionSpacePoints($dimensionSpacePoint);
+
+        // TODO Check if parentNodeIdentifier is visible in the given dimensionSpaceNode
 
         $events[] = new NodeAggregateWithNodeWasCreated(
             $command->getContentStreamIdentifier(),
             $command->getNodeAggregateIdentifier(),
             $command->getNodeTypeName(),
-            $command->getDimensionSpacePoint(),
-            $dimensionSpacePointSet,
+            $dimensionSpacePoint,
+            $visibleDimensionSpacePoints,
             $command->getNodeIdentifier(),
             $command->getParentNodeIdentifier(),
             $command->getNodeName(),
@@ -133,7 +142,7 @@ final class NodeCommandHandler
                 $command->getContentStreamIdentifier(),
                 $childNodeAggregateIdentifier,
                 new NodeTypeName($childNodeType),
-                $command->getDimensionSpacePoint(),
+                $dimensionSpacePoint,
                 $childNodeIdentifier,
                 $childParentNodeIdentifier,
                 $childNodeName
@@ -161,16 +170,16 @@ final class NodeCommandHandler
     }
 
     /**
-     * @param SetProperty $command
+     * @param SetNodeProperty $command
      */
-    public function handleSetProperty(SetProperty $command)
+    public function handleSetNodeProperty(SetNodeProperty $command)
     {
         $nodeType = $this->getNodeType($command->getNodeTypeName());
         $propertyType = $nodeType->getPropertyType($command->getPropertyName());
 
         $propertyValue = new PropertyValue($command->getValue(), $propertyType);
 
-        $event = new PropertyWasSet(
+        $event = new NodePropertyWasSet(
             $command->getContentStreamIdentifier(),
             $command->getNodeIdentifier(),
             $command->getPropertyName(),
@@ -200,5 +209,25 @@ final class NodeCommandHandler
         if (!$this->nodeTypeManager->hasNodeType((string)$nodeTypeName)) {
             throw new \InvalidArgumentException('TODO: Node type ' . $nodeTypeName . ' not found.');
         }
+    }
+
+    /**
+     * @param $dimensionSpacePoint
+     * @return DimensionSpacePointSet
+     * @throws DimensionSpacePointNotFound
+     */
+    private function getVisibleDimensionSpacePoints($dimensionSpacePoint): DimensionSpacePointSet
+    {
+        $contentSubgraph = $this->interDimensionalFallbackGraph->getSubgraphByDimensionSpacePoint($dimensionSpacePoint);
+        if ($contentSubgraph === null) {
+            throw new DimensionSpacePointNotFound(sprintf('%s was not found in the allowed dimension subspace',
+                $dimensionSpacePoint), 1505929456);
+        }
+        $points = [$dimensionSpacePoint];
+        foreach ($contentSubgraph->getVariants() as $variant) {
+            $points[] = $variant->getIdentifier();
+        }
+        $visibleDimensionSpacePoints = new DimensionSpacePointSet($points);
+        return $visibleDimensionSpacePoints;
     }
 }

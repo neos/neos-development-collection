@@ -6,7 +6,7 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 	doctype = '<!DOCTYPE html>'
 	doctype.@position = 'start 100'
 
-	# Only the opening html tag for the page. This is done to avoid deep nesting of TypoScript paths for integrators.
+	# Only the opening html tag for the page. This is done to avoid deep nesting of Fusion paths for integrators.
 	htmlTag = Neos.Fusion:Tag {
 		@position = 'start'
 		tagName = 'html'
@@ -29,7 +29,7 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 		templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/NeosLicenseHeader.html'
 	}
 
-	# The opening head tag for the page. This is done to avoid deep nesting of TypoScript paths for integrators.
+	# The opening head tag for the page. This is done to avoid deep nesting of Fusion paths for integrators.
 	headTag = Neos.Fusion:Tag {
 		@position = 'after htmlTag'
 		tagName = 'head'
@@ -101,7 +101,7 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 	closingHeadTag = '</head>'
 	closingHeadTag.@position = 'after head'
 
-	# The opening body tag for the page. This is done to avoid deep nesting of TypoScript paths for integrators.
+	# The opening body tag for the page. This is done to avoid deep nesting of Fusion paths for integrators.
 	bodyTag = Neos.Fusion:Tag {
 		@position = '20'
 		tagName = 'body'

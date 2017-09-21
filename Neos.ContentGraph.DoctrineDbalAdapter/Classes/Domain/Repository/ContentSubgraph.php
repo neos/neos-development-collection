@@ -66,46 +66,74 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     protected $contentGraph;
 
     /**
-     * @var ContentRepository\ValueObject\SubgraphIdentifier
+     * @var ContentRepository\ValueObject\ContentStreamIdentifier
      */
-    protected $subgraphIdentifier;
-
-
-    public function __construct(ContentRepository\ValueObject\SubgraphIdentifier $subgraphIdentifier)
-    {
-        $this->subgraphIdentifier = $subgraphIdentifier;
-    }
-
-
-    public function getIdentifier(): ContentRepository\ValueObject\SubgraphIdentifier
-    {
-        return $this->identifier;
-    }
-
+    protected $contentStreamIdentifier;
 
     /**
-     * @param ContentRepository\ValueObject\NodeAggregateIdentifier $nodeIdentifier
+     * @var ContentRepository\ValueObject\DimensionSpacePoint
+     */
+    protected $dimensionSpacePoint;
+
+
+    public function __construct(ContentRepository\ValueObject\ContentStreamIdentifier $contentStreamIdentifier, ContentRepository\ValueObject\DimensionSpacePoint $dimensionSpacePoint)
+    {
+        $this->contentStreamIdentifier = $contentStreamIdentifier;
+        $this->dimensionSpacePoint = $dimensionSpacePoint;
+    }
+
+
+    public function getContentStreamIdentifier(): ContentRepository\ValueObject\ContentStreamIdentifier
+    {
+        return $this->contentStreamIdentifier;
+    }
+
+    public function getDimensionSpacePoint(): ContentRepository\ValueObject\DimensionSpacePoint
+    {
+        return $this->dimensionSpacePoint;
+    }
+
+    /**
+     * @param ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier
      * @param ContentRepository\Service\Context|null $context
      * @return ContentRepository\Model\NodeInterface|null
      */
-    public function findNodeByIdentifier(ContentRepository\ValueObject\NodeAggregateIdentifier $nodeIdentifier, ContentRepository\Service\Context $context = null)
+    public function findNodeByIdentifier(ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier, ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
     {
         $nodeData = $this->getDatabaseConnection()->executeQuery(
             'SELECT n.* FROM neos_contentgraph_node n
- INNER JOIN neos_contentgraph_hierarchyedge h ON h.childnodesidentifieringraph = n.identifieringraph
- WHERE n.identifierinsubgraph = :nodeIdentifier
- AND h.subgraphidentifier = :subgraphIdentifier',
+WHERE n.nodeidentifier = :nodeIdentifier',
             [
-                'nodeIdentifier' => $nodeIdentifier,
-                'subgraphIdentifier' => $this->identifier
+                'nodeIdentifier' => $nodeIdentifier
+            ]
+        )->fetch();
+        if (!$nodeData) {
+            return null;
+        }
+
+        // We always allow root nodes
+        if (empty($nodeData['dimensionspacepointhash'])) {
+            return $this->mapRawDataToNode($nodeData, $context);
+        }
+
+        $inboundEdgeData = $this->getDatabaseConnection()->executeQuery(
+            'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
+ WHERE h.childnodeidentifier = :nodeIdentifier
+ AND h.contentstreamidentifier = :contentStreamIdentifier       
+ AND h.dimensionspacepointhash = :dimensionSpacePointHash',
+            [
+                'nodeIdentifier' => (string)$nodeIdentifier,
+                'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
+                'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash()
             ]
         )->fetch();
 
-        return $nodeData ? $this->mapRawDataToNode($nodeData, $context) : null;
+        // we only allow nodes matching the content stream identifier and dimension space point
+        return $inboundEdgeData ? $this->mapRawDataToNode($nodeData, $context) : null;
     }
 
     /**
-     * @param ContentRepository\ValueObject\NodeAggregateIdentifier $parentIdentifier
+     * @param ContentRepository\ValueObject\NodeIdentifier $parentNodeIdentifier
      * @param ContentRepository\ValueObject\NodeTypeConstraints|null $nodeTypeConstraints
      * @param int|null $limit
      * @param int|null $offset
@@ -113,20 +141,22 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
      * @return array
      */
     public function findChildNodes(
-        ContentRepository\ValueObject\NodeAggregateIdentifier $parentIdentifier,
+        ContentRepository\ValueObject\NodeIdentifier $parentNodeIdentifier,
         ContentRepository\ValueObject\NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null,
         ContentRepository\Service\Context $context = null
     ): array {
         $query = 'SELECT c.* FROM neos_contentgraph_node p
- INNER JOIN neos_contentgraph_hierarchyedge h ON h.parentnodesidentifieringraph = p.identifieringraph
- INNER JOIN neos_contentgraph_node c ON h.childnodesidentifieringraph = c.identifieringraph
- WHERE p.identifierinsubgraph = :parentIdentifier
- AND h.subgraphidentifier = :subgraphIdentifier';
+ INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeidentifier = p.nodeidentifier
+ INNER JOIN neos_contentgraph_node c ON h.childnodeidentifier = c.nodeidentifier
+ WHERE p.nodeidentifier = :parentNodeIdentifier
+ AND h.contentstreamidentifier = :contentStreamIdentifier
+ AND h.dimensionspacepointhash = :dimensionSpacePointHash';
         $parameters = [
-            'parentIdentifier' => $parentIdentifier,
-            'subgraphIdentifier' => $this->identifier
+            'parentNodeIdentifier' => $parentNodeIdentifier,
+            'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
+            'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash()
         ];
         if ($nodeTypeConstraints) {
             // @todo apply constraints
@@ -144,16 +174,21 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         return $result;
     }
 
-    public function countChildNodes(ContentRepository\ValueObject\NodeAggregateIdentifier $parentIdentifier, ContentRepository\ValueObject\NodeTypeConstraints $nodeTypeConstraints = null, ContentRepository\Service\Context $contentContext = null): int
-    {
-        $query = 'SELECT COUNT(identifieringraph) FROM neos_contentgraph_node p
- INNER JOIN neos_contentgraph_hierarchyedge h ON h.parentnodesidentifieringraph = p.identifieringraph
- INNER JOIN neos_contentgraph_node c ON h.childnodesidentifieringraph = c.identifieringraph
- WHERE p.identifierinsubgraph = :parentIdentifier
- AND h.subgraphidentifier = :subgraphIdentifier';
+    public function countChildNodes(
+        ContentRepository\ValueObject\NodeIdentifier $parentNodeIdentifier,
+        ContentRepository\ValueObject\NodeTypeConstraints $nodeTypeConstraints = null,
+        ContentRepository\Service\Context $contentContext = null
+    ): int {
+        $query = 'SELECT COUNT(c.nodeidentifier) FROM neos_contentgraph_node p
+ INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeidentifier = p.nodeidentifier
+ INNER JOIN neos_contentgraph_node c ON h.childnodeidentifier = c.nodeidentifier
+ WHERE p.nodeidentifier = :parentNodeIdentifier
+ AND h.contentstreamidentifier = :contentStreamIdentifier
+ AND h.dimensionspacepointhash = :dimensionSpacePointHash';
         $parameters = [
-            'parentIdentifier' => $parentIdentifier,
-            'subgraphIdentifier' => $this->identifier
+            'parentNodeIdentifier' => $parentNodeIdentifier,
+            'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
+            'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash()
         ];
 
         if ($nodeTypeConstraints) {
@@ -167,21 +202,23 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     }
 
     /**
-     * @param ContentRepository\ValueObject\NodeAggregateIdentifier $childIdentifier
+     * @param ContentRepository\ValueObject\NodeIdentifier $childNodeIdentifier
      * @param ContentRepository\Service\Context|null $context
      * @return ContentRepository\Model\NodeInterface|null
      */
-    public function findParentNode(ContentRepository\ValueObject\NodeAggregateIdentifier $childIdentifier, ContentRepository\Service\Context $context = null)
+    public function findParentNode(ContentRepository\ValueObject\NodeIdentifier $childNodeIdentifier, ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
     {
         $nodeData = $this->getDatabaseConnection()->executeQuery(
             'SELECT p.* FROM neos_contentgraph_node p
- INNER JOIN neos_contentgraph_hierarchyedge h ON h.parentnodesidentifieringraph = p.identifieringraph
- INNER JOIN neos_contentgraph_node c ON h.childnodesidentifieringraph = c.identifieringraph
- WHERE c.identifierinsubgraph = :childIdentifier
- AND h.subgraphidentifier = :subgraphIdentifier',
+ INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeidentifier = p.nodeidentifier
+ INNER JOIN neos_contentgraph_node c ON h.childnodeidentifier = c.nodeidentifier
+ WHERE c.nodeidentifier = :childNodeIdentifier
+ AND h.contentstreamidentifier = :contentStreamIdentifier
+ AND h.dimensionspacepointhash = :dimensionSpacePointHash',
             [
-                'childIdentifier' => $childIdentifier,
-                'subgraphIdentifier' => $this->identifier
+                'childNodeIdentifier' => $childNodeIdentifier,
+                'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
+                'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash()
             ]
         )->fetch();
 
@@ -189,22 +226,24 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     }
 
     /**
-     * @param ContentRepository\ValueObject\NodeAggregateIdentifier $parentIdentifier
+     * @param ContentRepository\ValueObject\NodeIdentifier $parentNodeIdentifier
      * @param ContentRepository\Service\Context|null $context
      * @return ContentRepository\Model\NodeInterface|null
      */
-    public function findFirstChildNode(ContentRepository\ValueObject\NodeAggregateIdentifier $parentIdentifier, ContentRepository\Service\Context $context = null)
+    public function findFirstChildNode(ContentRepository\ValueObject\NodeIdentifier $parentNodeIdentifier, ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
     {
         $nodeData = $this->getDatabaseConnection()->executeQuery(
             'SELECT c.* FROM neos_contentgraph_node p
- INNER JOIN neos_contentgraph_hierarchyedge h ON h.parentnodesidentifieringraph = p.identifieringraph
- INNER JOIN neos_contentgraph_node c ON h.childnodesidentifieringraph = c.identifieringraph
- WHERE p.identifierinsubgraph = :parentIdentifier
- AND h.subgraphidentifier = :subgraphIdentifier
- ORDER BY h.position',
+ INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeidentifier = p.nodeidentifier
+ INNER JOIN neos_contentgraph_node c ON h.childnodeidentifier = c.nodeidentifier
+ WHERE p.nodeidentifier = :parentNodeIdentifier
+ AND h.contentstreamidentifier = :contentStreamIdentifier
+ AND h.dimensionspacepointhash = :dimensionSpacePointHash
+ ORDER BY h.position LIMIT 1',
             [
-                'parentIdentifier' => $parentIdentifier,
-                'subgraphIdentifier' => $this->identifier
+                'parentNodeIdentifier' => $parentNodeIdentifier,
+                'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
+                'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash()
             ]
         )->fetch();
 
@@ -216,12 +255,13 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
      * @param ContentRepository\Service\Context|null $contentContext
      * @return ContentRepository\Model\NodeInterface|null
      */
-    public function findNodeByPath(string $path, ContentRepository\Service\Context $contentContext = null)
+    public function findNodeByPath(string $path, ContentRepository\Service\Context $contentContext = null): ?ContentRepository\Model\NodeInterface
     {
         $edgeNames = explode('/', trim($path, '/'));
         $currentNode = $this->findRootNode();
         foreach ($edgeNames as $edgeName) {
-            $currentNode = $this->findChildNodeAlongPath(ContentRepository\ValueObject\NodeAggregateIdentifier::fromString($currentNode->getIdentifier()), $edgeName, $contentContext);
+            // identifier exists here :)
+            $currentNode = $this->findChildNodeConnectedThroughEdgeName($currentNode->identifier, $edgeName, $contentContext);
             if (!$currentNode) {
                 return null;
             }
@@ -231,25 +271,31 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     }
 
     /**
-     * @param ContentRepository\ValueObject\NodeAggregateIdentifier $parentIdentifier
-     * @param string $edgeName
+     * @param ContentRepository\ValueObject\NodeIdentifier $parentNodeIdentifier
+     * @param ContentRepository\ValueObject\NodeName $edgeName
      * @param ContentRepository\Service\Context|null $context
      * @return ContentRepository\Model\NodeInterface|null
      */
-    public function findChildNodeAlongPath(ContentRepository\ValueObject\NodeAggregateIdentifier $parentIdentifier, string $edgeName, ContentRepository\Service\Context $context = null)
+    public function findChildNodeConnectedThroughEdgeName(
+        ContentRepository\ValueObject\NodeIdentifier $parentNodeIdentifier,
+        ContentRepository\ValueObject\NodeName $edgeName,
+        ContentRepository\Service\Context $context = null
+    ): ?ContentRepository\Model\NodeInterface
     {
         $nodeData = $this->getDatabaseConnection()->executeQuery(
             'SELECT c.* FROM neos_contentgraph_node p
- INNER JOIN neos_contentgraph_hierarchyedge h ON h.parentnodesidentifieringraph = p.identifieringraph
- INNER JOIN neos_contentgraph_node c ON h.childnodesidentifieringraph = c.identifieringraph
- WHERE p.identifierinsubgraph = :parentIdentifier
- AND h.subgraphidentifier = :subgraphIdentifier
+ INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeidentifier = p.nodeidentifier
+ INNER JOIN neos_contentgraph_node c ON h.childnodeidentifier = c.nodeidentifier
+ WHERE p.nodeidentifier = :parentNodeIdentifier
+ AND h.contentstreamidentifier = :contentStreamIdentifier
+ AND h.dimensionspacepointhash = :dimensionSpacePointHash
  AND h.name = :edgeName
- ORDER BY h.position',
+ ORDER BY h.position LIMIT 1',
             [
-                'parentIdentifier' => $parentIdentifier,
-                'subgraphIdentifier' => $this->identifier,
-                'edgeName' => $edgeName
+                'parentNodeIdentifier' => (string)$parentNodeIdentifier,
+                'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
+                'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash(),
+                'edgeName' => (string)$edgeName
             ]
         )->fetch();
 
@@ -257,22 +303,26 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     }
 
     /**
-     * @param string $nodeTypeName
+     * @param ContentRepository\ValueObject\NodeTypeName $nodeTypeName
      * @param ContentRepository\Service\Context|null $context
      * @return array|ContentRepository\Model\NodeInterface[]
      */
-    public function findNodesByType(string $nodeTypeName, ContentRepository\Service\Context $context = null): array
+    public function findNodesByType(ContentRepository\ValueObject\NodeTypeName $nodeTypeName, ContentRepository\Service\Context $context = null): array
     {
         $result = [];
+
+        // "Node Type" is a concept of the Node Aggregate; but we can store the node type denormalized in the Node.
         foreach ($this->getDatabaseConnection()->executeQuery(
             'SELECT n.*, h.name, h.index FROM neos_contentgraph_node n
- INNER JOIN neos_contentgraph_hierarchyedge h ON h.childnodesidentifieringraph = n.identifieringraph
+ INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeidentifier = n.nodeidentifier
  WHERE n.nodetypename = :nodeTypeName
- AND h.subgraphidentifier = :subgraphIdentifier
+ AND h.contentstreamidentifier = :contentStreamIdentifier
+ AND h.dimensionspacepointhash = :dimensionSpacePointHash
  ORDER BY h.position',
             [
                 'nodeTypeName' => $nodeTypeName,
-                'subgraphIdentifier' => $this->identifier
+                'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
+                'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash(),
             ]
         )->fetchAll() as $nodeData) {
             $result[] = $this->mapRawDataToNode($nodeData, $context);
@@ -281,6 +331,12 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         return $result;
     }
 
+    /**
+     * Root Node by definition belongs to every subgraph (it is "colorless"); that's why we do not filter on subgraph here.
+     *
+     * @param ContentRepository\Service\Context|null $context
+     * @return ContentRepository\Model\NodeInterface
+     */
     public function findRootNode(ContentRepository\Service\Context $context = null): ContentRepository\Model\NodeInterface
     {
         $nodeData = $this->getDatabaseConnection()->executeQuery(
@@ -290,19 +346,26 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
                 'nodeTypeName' => 'Neos.ContentGraph:Root',
             ]
         )->fetch();
+
         return $this->mapRawDataToNode($nodeData, $context);
     }
 
 
+    /**
+     * @param ContentRepository\Model\NodeInterface $parent
+     * @param ContentRepository\ValueObject\NodeTypeConstraints|null $nodeTypeConstraints
+     * @param callable $callback
+     * @param ContentRepository\Service\Context|null $context
+     */
     public function traverse(
         ContentRepository\Model\NodeInterface $parent,
         ContentRepository\ValueObject\NodeTypeConstraints $nodeTypeConstraints = null,
         callable $callback,
         ContentRepository\Service\Context $context = null
-    ) {
+    ): void {
         $callback($parent);
         foreach ($this->findChildNodes(
-            ContentRepository\ValueObject\NodeAggregateIdentifier::fromString($parent->getIdentifier()),
+            $parent->identifier,
             $nodeTypeConstraints,
             null,
             null,
@@ -312,37 +375,59 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         }
     }
 
-    protected function mapRawDataToNode(array $nodeData, ContentRepository\Service\Context $context): ContentRepository\Model\NodeInterface
+    /**
+     * @param array $nodeDataArrayFromProjection
+     * @param ContentRepository\Service\Context $context
+     * @return ContentRepository\Model\NodeInterface
+     */
+    protected function mapRawDataToNode(array $nodeDataArrayFromProjection, ContentRepository\Service\Context $context): ContentRepository\Model\NodeInterface
     {
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeData['nodetypename']);
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeDataArrayFromProjection['nodetypename']);
         $className = $nodeType->getNodeInterfaceImplementationClassName();
 
-        $serializedSubgraphIdentifier = json_decode($nodeData['subgraphidentifier'], true);
-        $subgraphIdentifier = new ContentRepository\ValueObject\SubgraphIdentifier(
-            new ContentRepository\ValueObject\ContentStreamIdentifier($serializedSubgraphIdentifier['contentStreamIdentifier']),
-            new ContentRepository\ValueObject\DimensionSpacePoint($serializedSubgraphIdentifier['dimensionSpacePoint'])
-        );
-        $legacyDimensionValues = $subgraphIdentifier->getDimensionSpacePoint()->toLegacyDimensionArray();
-        $query = $this->nodeDataRepository->createQuery();
-        $nodeData = $query->matching(
-            $query->logicalAnd([
-                $query->equals('workspace', (string) $subgraphIdentifier->getContentStreamIdentifier()),
-                $query->equals('identifier', $nodeData['aggregateidentifier']),
-                $query->equals('dimensionsHash', Utility::sortDimensionValueArrayAndReturnDimensionsHash($legacyDimensionValues))
-            ])
-        );
+        // $serializedSubgraphIdentifier is empty for the root node
+        if (!empty($nodeDataArrayFromProjection['dimensionspacepointhash'])) {
+            $contentStreamIdentifier = new ContentRepository\ValueObject\ContentStreamIdentifier($nodeDataArrayFromProjection['contentstreamidentifier']);
+            $dimensionSpacePoint = new ContentRepository\ValueObject\DimensionSpacePoint(json_decode($nodeDataArrayFromProjection['dimensionspacepoint']));
 
-        $node = new $className($nodeData, $context);
-        $node->nodeType = $nodeType;
-        $node->identifier = new ContentRepository\ValueObject\NodeAggregateIdentifier($nodeData['aggregateidentifier']);
-        $node->properties = new ContentProjection\PropertyCollection(json_decode($nodeData['properties'], true));
-        $node->name = $nodeData['name'];
-        $node->index = $nodeData['index'];
-        #@todo fetch workspace from finder using the content stream identifier
-        #$node->workspace = $this->workspaceRepository->findByIdentifier($this->contentStreamIdentifier);
-        $node->subgraphIdentifier = $subgraphIdentifier;
+            $legacyDimensionValues = $dimensionSpacePoint->toLegacyDimensionArray();
+            $query = $this->nodeDataRepository->createQuery();
+            $nodeData = $query->matching(
+                $query->logicalAnd([
+                    $query->equals('workspace', (string) $contentStreamIdentifier),
+                    $query->equals('identifier', $nodeDataArrayFromProjection['aggregateidentifier']),
+                    $query->equals('dimensionsHash', Utility::sortDimensionValueArrayAndReturnDimensionsHash($legacyDimensionValues))
+                ])
+            );
 
-        return $node;
+            $node = new $className($nodeData, $context);
+            $node->nodeType = $nodeType;
+            $node->aggregateIdentifier = new ContentRepository\ValueObject\NodeAggregateIdentifier($nodeDataArrayFromProjection['nodeaggregateidentifier']);
+            $node->identifier = new ContentRepository\ValueObject\NodeIdentifier($nodeDataArrayFromProjection['nodeidentifier']);
+            $node->properties = new ContentProjection\PropertyCollection(json_decode($nodeDataArrayFromProjection['properties'], true));
+            $node->name = $nodeDataArrayFromProjection['name'];
+            $node->index = $nodeDataArrayFromProjection['index'];
+            #@todo fetch workspace from finder using the content stream identifier
+            #$node->workspace = $this->workspaceRepository->findByIdentifier($this->contentStreamIdentifier);
+            $node->dimensionSpacePoint = $dimensionSpacePoint;
+            $node->contentStreamIdentifier = $contentStreamIdentifier;
+
+            return $node;
+        } else {
+            // root node
+            $subgraphIdentifier = null;
+            $nodeData = $context->getWorkspace()->getRootNodeData();
+
+            $node = new $className($nodeData, $context);
+            $node->nodeType = $nodeType;
+            $node->identifier = new ContentRepository\ValueObject\NodeIdentifier($nodeDataArrayFromProjection['nodeidentifier']);
+            #@todo fetch workspace from finder using the content stream identifier
+            #$node->workspace = $this->workspaceRepository->findByIdentifier($this->contentStreamIdentifier);
+
+            $node->dimensionSpacePoint = null;
+
+            return $node;
+        }
     }
 
     protected function getDatabaseConnection(): Connection

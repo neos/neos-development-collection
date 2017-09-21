@@ -15,6 +15,11 @@ use Neos\ContentGraph\Infrastructure;
 use Neos\ContentRepository\Domain\Context\Importing\Event\NodeWasImported;
 use Neos\ContentRepository\Domain\Context\Node\Event;
 use Neos\ContentRepository\Domain as ContentRepository;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -25,14 +30,32 @@ abstract class AbstractGraphProjector implements ProjectorInterface
 {
     final public function whenRootNodeWasCreated(Event\RootNodeWasCreated $event)
     {
-        $node = Infrastructure\Dto\Node::fromRootNodeWasCreated($event);
+        $node = Node::fromRootNodeWasCreated($event);
 
         $this->transactional(function () use ($node) {
             $this->addNode($node);
         });
     }
 
-    final public function whenNodeWasImported(NodeWasImported $event)
+    final public function whenNodeAggregateWithNodeWasCreated(Event\NodeAggregateWithNodeWasCreated $event)
+    {
+        $node = Node::fromNodeAggregateWithNodeWasCreated($event);
+
+        $this->transactional(function () use ($node, $event) {
+            $this->addNode($node);
+            $this->connectHierarchy(
+                $event->getParentNodeIdentifier(),
+                $event->getNodeIdentifier(),
+                // TODO: position on insert is still missing
+                null,
+                $event->getNodeName(),
+                $event->getContentStreamIdentifier(),
+                $event->getVisibleDimensionSpacePoints()
+            );
+        });
+    }
+
+    /*final public function whenNodeWasImported(NodeWasImported $event)
     {
         $node = Infrastructure\Dto\Node::fromNodeWasImported($event);
 
@@ -51,15 +74,10 @@ abstract class AbstractGraphProjector implements ProjectorInterface
         $this->transactional(function () use ($node) {
             $this->addNode($node);
         });
-        */
-    }
 
-    final public function whenNodeAggregateWithNodeWasCreated(Event\NodeAggregateWithNodeWasCreated $event)
-    {
+    }*/
 
-    }
-
-    final public function whenPropertyWasSet(Event\PropertyWasSet $event)
+    final public function whenNodePropertyWasSet(Event\NodePropertyWasSet $event)
     {
 
     }
@@ -115,16 +133,17 @@ final public function whenNodeVariantWasCreated(Event\NodeVariantWasCreated $eve
 
     abstract protected function transactional(callable $operations);
 
-    abstract protected function addNode(Infrastructure\Dto\Node $node);
+    abstract protected function addNode(Node $node);
 
-    abstract protected function getNode(ContentRepository\ValueObject\NodeAggregateIdentifier $nodeIdentifier, ContentRepository\ValueObject\SubgraphIdentifier $subgraphIdentifier): Infrastructure\Dto\Node;
+    abstract protected function getNode(ContentRepository\ValueObject\NodeAggregateIdentifier $nodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): Node;
 
     abstract protected function connectHierarchy(
-        string $parentNodesIdentifierInGraph,
-        string $childNodeIdentifierInGraph,
-        string $elderSiblingsIdentifierInGraph = null,
-        string $name = null,
-        array $subgraphIdentifiers
+        NodeIdentifier $parentNodeIdentifier,
+        NodeIdentifier $childNodeIdentifier,
+        NodeIdentifier $preceedingSiblingNodeIdentifier = null,
+        NodeName $edgeName = null,
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePointSet $dimensionSpacePointSet
     );
 
     abstract protected function connectRelation(string $startNodesIdentifierInGraph, string $endNodesIdentifierInGraph, string $relationshipName, array $properties, array $subgraphIdentifiers);

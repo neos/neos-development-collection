@@ -8,9 +8,9 @@ use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcing\Event\EventInterface;
 
 /**
- * Property was set event
+ * Node property was set event
  */
-final class PropertyWasSet implements EventInterface
+final class NodePropertyWasSet implements EventInterface
 {
 
     /**
@@ -34,7 +34,7 @@ final class PropertyWasSet implements EventInterface
     private $value;
 
     /**
-     * PropertyWasSet constructor.
+     * NodePropertyWasSet constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeIdentifier $nodeIdentifier
@@ -84,5 +84,4 @@ final class PropertyWasSet implements EventInterface
     {
         return $this->value;
     }
-
 }

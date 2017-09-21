@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\ContentRepository\Domain\ValueObject;
+namespace Neos\ContentRepository\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,7 +11,11 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Flow\Exception;
 
-final class ImportingSessionIdentifier extends AbstractIdentifier
+/**
+ * A dimension space point was not found exception
+ */
+class DimensionSpacePointNotFound extends Exception
 {
 }

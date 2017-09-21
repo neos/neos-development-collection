@@ -9,6 +9,13 @@ use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 
+/**
+ * CreateNodeAggregateWithNode command
+ *
+ * Creates a new node aggregate with a new node with the given `nodeAggregateIdentifier` and `nodeIdentifier`.
+ * The node will be appended as child node of the given `parentNodeIdentifier` which must be visible in the given
+ * `dimensionSpacePoint`.
+ */
 final class CreateNodeAggregateWithNode
 {
 
@@ -28,6 +35,8 @@ final class CreateNodeAggregateWithNode
     private $nodeTypeName;
 
     /**
+     * Location of the node in the dimension space
+     *
      * @var DimensionSpacePoint
      */
     private $dimensionSpacePoint;
@@ -131,5 +140,4 @@ final class CreateNodeAggregateWithNode
     {
         return $this->nodeName;
     }
-
 }

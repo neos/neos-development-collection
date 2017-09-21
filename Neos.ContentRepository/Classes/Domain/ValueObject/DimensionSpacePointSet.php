@@ -26,22 +26,24 @@ final class DimensionSpacePointSet implements \JsonSerializable
     private $points;
 
     /**
-     * @param array<DimensionSpacePoint> $points Array of dimension space points
+     * @param array $points Array of dimension space points
      */
     public function __construct(array $points)
     {
+        // TODO Check that all points are DimensionSpacePoint objects
+
         $this->points = $points;
     }
 
     /**
-     * @return array
+     * @return array<DimensionSpacePoint>
      */
     public function getPoints(): array
     {
         return $this->points;
     }
 
-    function jsonSerialize()
+    public function jsonSerialize()
     {
         return ['points' => $this->points];
     }
@@ -50,5 +52,4 @@ final class DimensionSpacePointSet implements \JsonSerializable
     {
         return 'dimension space points:[' . implode(',', $this->points) . ']';
     }
-
 }

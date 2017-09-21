@@ -20,10 +20,14 @@ use Neos\ContentRepository\Domain;
 interface ContentGraphInterface
 {
     /**
-     * @param Domain\ValueObject\SubgraphIdentifier $identifier
+     * @param Domain\ValueObject\ContentStreamIdentifier $contentStreamIdentifier
+     * @param Domain\ValueObject\DimensionSpacePoint $dimensionSpacePoint
      * @return ContentSubgraphInterface|null
      */
-    public function getSubgraphByIdentifier(Domain\ValueObject\SubgraphIdentifier $identifier);
+    public function getSubgraphByIdentifier(
+        Domain\ValueObject\ContentStreamIdentifier $contentStreamIdentifier,
+        Domain\ValueObject\DimensionSpacePoint $dimensionSpacePoint
+    ): ?ContentSubgraphInterface;
 
     /**
      * @return array|ContentSubgraphInterface[]

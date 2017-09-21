@@ -21,7 +21,7 @@ final class UserIdentifier extends AbstractIdentifier
     /**
      * Creates a special user identifier which refers to the virtual "system" user.
      */
-    static public function forSystemUser()
+    public static function forSystemUser()
     {
         return self::fromString(self::SYSTEM_USER_IDENTIFIER);
     }

@@ -17,8 +17,13 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGra
 use Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Dto\HierarchyEdge;
 use Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Service\DbalClient;
 use Neos\ContentGraph\Domain\Projection\AbstractGraphProjector;
-use Neos\ContentGraph\Infrastructure\Dto\Node;
+use Neos\ContentGraph\Domain\Projection\Node;
 use Neos\ContentRepository\Domain as ContentRepository;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -44,7 +49,7 @@ class GraphProjector extends AbstractGraphProjector
     {
         $this->getDatabaseConnection()->transactional(function () {
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_node');
-            $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_hierarchyedge');
+            $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_hierarchyrelation');
         });
     }
 
@@ -144,61 +149,67 @@ class GraphProjector extends AbstractGraphProjector
     }*/
 
 
-    protected function getNode(ContentRepository\ValueObject\NodeAggregateIdentifier $nodeIdentifier, ContentRepository\ValueObject\SubgraphIdentifier $subgraphIdentifier): Node
+    protected function getNode(ContentRepository\ValueObject\NodeAggregateIdentifier $nodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): Node
     {
-        return $this->contentGraph->getNode($nodeIdentifier, $subgraphIdentifier->getHash());
+        return $this->contentGraph->getNode($nodeIdentifier, $contentStreamIdentifier, $dimensionSpacePoint);
     }
 
     protected function addNode(Node $node)
     {
         $this->getDatabaseConnection()->insert('neos_contentgraph_node', [
+            'nodeaggregateidentifier' => $node->nodeAggregateIdentifier,
             'nodeidentifier' => $node->nodeIdentifier,
-            'subgraphidentifier' => $node->subgraphIdentifier,
+            'contentstreamidentifier' => $node->contentStreamIdentifier,
+            'dimensionspacepoint' => json_encode($node->dimensionSpacePoint),
+            'dimensionspacepointhash' => $node->dimensionSpacePointHash,
             'properties' => json_encode($node->properties),
             'nodetypename' => $node->nodeTypeName
         ]);
     }
 
     protected function connectHierarchy(
-        string $parentNodesIdentifierInGraph,
-        string $childNodeIdentifierInGraph,
-        string $elderSiblingsIdentifierInGraph = null,
-        string $name = null,
-        array $subgraphIdentifiers
+        NodeIdentifier $parentNodeIdentifier,
+        NodeIdentifier $childNodeIdentifier,
+        NodeIdentifier $preceedingSiblingNodeIdentifier = null,
+        NodeName $edgeName = null,
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePointSet $dimensionSpacePointSet
     ) {
-        $position = $this->getEdgePosition($parentNodesIdentifierInGraph, $elderSiblingsIdentifierInGraph, reset($subgraphIdentifiers));
-
-        foreach ($subgraphIdentifiers as $subgraphIdentifier) {
+        foreach ($dimensionSpacePointSet->getPoints() as $dimensionSpacePoint) {
+            $position = $this->getEdgePosition($parentNodeIdentifier, $preceedingSiblingNodeIdentifier, $contentStreamIdentifier, $dimensionSpacePoint);
             $hierarchyEdge = new HierarchyEdge(
-                $parentNodesIdentifierInGraph,
-                $childNodeIdentifierInGraph,
-                $name,
-                $subgraphIdentifier,
+                (string)$parentNodeIdentifier,
+                (string)$childNodeIdentifier,
+                (string)$edgeName,
+                (string)$contentStreamIdentifier,
+                $dimensionSpacePoint->jsonSerialize(),
+                $dimensionSpacePoint->getHash(),
                 $position
             );
+
             $this->addHierarchyEdge($hierarchyEdge);
         }
     }
 
-    protected function getEdgePosition(string $parentIdentifier, string $elderSiblingIdentifier = null, string $subgraphIdentifier): int
+    protected function getEdgePosition(NodeIdentifier $parentIdentifier, NodeIdentifier $precedingSiblingIdentifier = null, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): int
     {
-        $position = $this->contentGraph->getEdgePosition($parentIdentifier, $elderSiblingIdentifier, $subgraphIdentifier);
+        $position = $this->contentGraph->getEdgePosition($parentIdentifier, $precedingSiblingIdentifier, $contentStreamIdentifier, $dimensionSpacePoint);
 
         if ($position % 2 !== 0) {
-            $position = $this->getEdgePositionAfterRecalculation($parentIdentifier, $elderSiblingIdentifier, $subgraphIdentifier);
+            $position = $this->getEdgePositionAfterRecalculation($parentIdentifier, $precedingSiblingIdentifier, $contentStreamIdentifier, $dimensionSpacePoint);
         }
 
         return $position;
     }
 
-    protected function getEdgePositionAfterRecalculation(string $parentIdentifier, string $elderSiblingIdentifier, string $subgraphIdentifier): int
+    protected function getEdgePositionAfterRecalculation(NodeIdentifier $parentIdentifier, NodeIdentifier $precedingSiblingIdentifier, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): int
     {
         $offset = 0;
         $position = 0;
-        foreach ($this->contentGraph->getOutboundHierarchyEdgesForNodeAndSubgraph($parentIdentifier, $subgraphIdentifier) as $edge) {
+        foreach ($this->contentGraph->getOutboundHierarchyEdgesForNodeAndSubgraph($parentIdentifier, $contentStreamIdentifier, $dimensionSpacePoint) as $edge) {
             $this->assignNewPositionToHierarchyEdge($edge, $offset);
             $offset += 128;
-            if ($edge->getChildNodesIdentifierInGraph() === $elderSiblingIdentifier) {
+            if ($edge->getChildNodeIdentifier() === (string)$precedingSiblingIdentifier) {
                 $position = $offset;
                 $offset += 128;
             }
@@ -207,6 +218,7 @@ class GraphProjector extends AbstractGraphProjector
         return $position;
     }
 
+    // TODO needs to be fixed
     protected function reconnectHierarchy(
         string $fallbackNodesIdentifierInGraph,
         string $newVariantNodesIdentifierInGraph,
@@ -231,13 +243,21 @@ class GraphProjector extends AbstractGraphProjector
 
     protected function addHierarchyEdge(HierarchyEdge $edge)
     {
-        $this->getDatabaseConnection()->insert('neos_contentgraph_hierarchyedge', $edge->toDatabaseArray());
+        $this->getDatabaseConnection()->insert('neos_contentgraph_hierarchyrelation', [
+            'parentNodeIdentifier' => $edge->getParentNodeIdentifier(),
+            'childNodeIdentifier' => $edge->getChildNodeIdentifier(),
+            'name' => $edge->getEdgeName(),
+            'contentstreamidentifier' => $edge->getContentStreamIdentifier(),
+            'dimensionspacepoint' => json_encode($edge->getDimensionSpacePoint()),
+            'dimensionspacepointhash' => $edge->getDimensionSpacePointHash(),
+            'position' => $edge->getPosition()
+        ]);
     }
 
     protected function assignNewPositionToHierarchyEdge(HierarchyEdge $edge, int $position)
     {
         $this->getDatabaseConnection()->update(
-            'neos_contentgraph_hierarchyedge',
+            'neos_contentgraph_hierarchyrelation',
             [
                 'position' => $position
             ],
@@ -248,7 +268,7 @@ class GraphProjector extends AbstractGraphProjector
     protected function assignNewChildNodeToHierarchyEdge(HierarchyEdge $edge, string $childNodeIdentifierInGraph)
     {
         $this->getDatabaseConnection()->update(
-            'neos_contentgraph_hierarchyedge',
+            'neos_contentgraph_hierarchyrelation',
             [
                 'childnodesidentifieringraph' => $childNodeIdentifierInGraph,
             ],
@@ -259,7 +279,7 @@ class GraphProjector extends AbstractGraphProjector
     protected function assignNewParentNodeToHierarchyEdge(HierarchyEdge $edge, string $parentNodeIdentifierInGraph)
     {
         $this->getDatabaseConnection()->update(
-            'neos_contentgraph_hierarchyedge',
+            'neos_contentgraph_hierarchyrelation',
             [
                 'parentnodesidentifieringraph' => $parentNodeIdentifierInGraph,
             ],

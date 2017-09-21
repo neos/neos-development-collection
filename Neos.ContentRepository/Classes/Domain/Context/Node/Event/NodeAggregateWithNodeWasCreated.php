@@ -11,6 +11,9 @@ use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 
+/**
+ * Node aggregate with node was created event
+ */
 final class NodeAggregateWithNodeWasCreated implements EventInterface
 {
 
@@ -30,18 +33,18 @@ final class NodeAggregateWithNodeWasCreated implements EventInterface
     private $nodeTypeName;
 
     /**
-     * Explicit dimension space point (color of node in content graph)
+     * Location of the node in the dimension space
      *
      * @var DimensionSpacePoint
      */
     private $dimensionSpacePoint;
 
     /**
-     * Explicit + implicit dimension space points from fallbacks (edge colors in content graph)
+     * Visibility of node in the dimension space
      *
      * @var DimensionSpacePointSet
      */
-    private $dimensionSpacePointSet;
+    private $visibleDimensionSpacePoints;
 
     /**
      * @var NodeIdentifier
@@ -72,7 +75,7 @@ final class NodeAggregateWithNodeWasCreated implements EventInterface
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param NodeTypeName $nodeTypeName
      * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param DimensionSpacePointSet $dimensionSpacePointSet
+     * @param DimensionSpacePointSet $visibleDimensionSpacePoints
      * @param NodeIdentifier $nodeIdentifier
      * @param NodeIdentifier $parentNodeIdentifier
      * @param NodeName $nodeName
@@ -83,7 +86,7 @@ final class NodeAggregateWithNodeWasCreated implements EventInterface
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         NodeTypeName $nodeTypeName,
         DimensionSpacePoint $dimensionSpacePoint,
-        DimensionSpacePointSet $dimensionSpacePointSet,
+        DimensionSpacePointSet $visibleDimensionSpacePoints,
         NodeIdentifier $nodeIdentifier,
         NodeIdentifier $parentNodeIdentifier,
         NodeName $nodeName,
@@ -93,7 +96,7 @@ final class NodeAggregateWithNodeWasCreated implements EventInterface
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->nodeTypeName = $nodeTypeName;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
-        $this->dimensionSpacePointSet = $dimensionSpacePointSet;
+        $this->visibleDimensionSpacePoints = $visibleDimensionSpacePoints;
         $this->nodeIdentifier = $nodeIdentifier;
         $this->parentNodeIdentifier = $parentNodeIdentifier;
         $this->nodeName = $nodeName;
@@ -135,9 +138,9 @@ final class NodeAggregateWithNodeWasCreated implements EventInterface
     /**
      * @return DimensionSpacePointSet
      */
-    public function getDimensionSpacePointSet(): DimensionSpacePointSet
+    public function getVisibleDimensionSpacePoints(): DimensionSpacePointSet
     {
-        return $this->dimensionSpacePointSet;
+        return $this->visibleDimensionSpacePoints;
     }
 
     /**
@@ -171,5 +174,4 @@ final class NodeAggregateWithNodeWasCreated implements EventInterface
     {
         return $this->propertyDefaultValuesAndTypes;
     }
-
 }

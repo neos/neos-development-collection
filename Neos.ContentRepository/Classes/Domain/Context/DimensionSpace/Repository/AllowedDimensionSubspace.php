@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Domain\Context\DimensionSpace\Repository;
  */
 use Neos\ContentRepository\Domain;
 use Neos\Flow\Annotations as Flow;
+use Neos\Utility\Arrays;
 
 /**
  * The repository for content dimension value combinations
@@ -29,23 +30,57 @@ class AllowedDimensionSubspace
     protected $contentDimensionCombinator;
 
     /**
-     * @var array
+     * @Flow\Inject
+     * @var Domain\Service\ContentDimensionPresetSourceInterface
      */
-    protected $contentDimensionValueCombinations;
-
+    protected $contentDimensionPresetSource;
 
     /**
-     * @return array|Domain\ValueObject\DimensionValueCombination[]
+     * @var array|Domain\ValueObject\DimensionSpacePoint[]
      */
-    public function findAll(): array
+    protected $points;
+
+    public function initializeObject()
     {
-        if (is_null($this->contentDimensionValueCombinations)) {
-            $this->contentDimensionValueCombinations = [];
-            foreach ($this->contentDimensionCombinator->getAllAllowedCombinations() as $rawDimensionCombination) {
-                $this->contentDimensionValueCombinations[] = new Domain\ValueObject\DimensionValueCombination($rawDimensionCombination);
-            }
+        $this->points = [];
+
+        if ($this->contentDimensionPresetSource->getAllPresets() === []) {
+            $emptyPoint = new Domain\ValueObject\DimensionSpacePoint([]);
+            $this->points[$emptyPoint->getHash()] = [$emptyPoint];
+            return;
         }
 
-        return $this->contentDimensionValueCombinations;
+        $coordinateSet = [];
+        foreach ($this->contentDimensionCombinator->getAllAllowedCombinations() as $dimensionPresetCombination) {
+            $presetCoordinateSet = [];
+            foreach ($dimensionPresetCombination as $dimensionName => $dimensionValues) {
+                if (empty($presetCoordinateSet)) {
+                    foreach ($dimensionValues as $dimensionValue) {
+                        $newCoordinateValues = [$dimensionName => $dimensionValue];
+                        $presetCoordinateSet[json_encode($newCoordinateValues)] = $newCoordinateValues;
+                    }
+                } else {
+                    $newCoordinates = [];
+                    foreach ($presetCoordinateSet as $coordinate) {
+                        foreach ($dimensionValues as $dimensionValue) {
+                            $newCoordinateValues = array_merge($coordinate, [$dimensionName => $dimensionValue]);
+                            $newCoordinates[json_encode($newCoordinateValues)] = $newCoordinateValues;
+                        }
+                    }
+                    $presetCoordinateSet = $newCoordinates;
+                }
+            }
+            $coordinateSet = Arrays::arrayMergeRecursiveOverrule($coordinateSet, $presetCoordinateSet);
+        }
+
+        foreach ($coordinateSet as $coordinates) {
+            $point = new Domain\ValueObject\DimensionSpacePoint($coordinates);
+            $this->points[$point->getHash()] = $point;
+        }
+    }
+
+    public function contains(Domain\ValueObject\DimensionSpacePoint $point): bool
+    {
+        return isset($this->points[$point->getHash()]);
     }
 }

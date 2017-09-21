@@ -31,7 +31,7 @@ final class NodeName implements \JsonSerializable
         $this->name = $name;
     }
 
-    function jsonSerialize()
+    public function jsonSerialize()
     {
         return $this->name;
     }
@@ -40,5 +40,4 @@ final class NodeName implements \JsonSerializable
     {
         return $this->name;
     }
-
 }

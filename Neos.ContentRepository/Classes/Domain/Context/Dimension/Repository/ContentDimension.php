@@ -10,6 +10,7 @@ namespace Neos\ContentRepository\Domain\Context\Dimension\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\ContentRepository\Domain\Context\Dimension;
 
 /**
@@ -92,9 +93,9 @@ class ContentDimension
      * @param string $value
      * @return Dimension\Model\ContentDimensionValue|null
      */
-    public function getValue(string $value)
+    public function getValue(string $value): ?Dimension\Model\ContentDimensionValue
     {
-        return $this->valueRegistry[$value] ?: null;
+        return $this->valueRegistry[$value] ?? null;
     }
 
     /**

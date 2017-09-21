@@ -29,7 +29,7 @@ class Version20170727150037 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql',
             'Migration can only be executed safely on "mysql".');
 
-        $this->addSql('DROP TABLE neos_contentgraph_hierarchyedge');
-        $this->addSql('DROP TABLE neos_contentgraph_node');
+        $this->addSql('DROP TABLE neos_arboretum_hierarchyedge');
+        $this->addSql('DROP TABLE neos_arboretum_node');
     }
 }

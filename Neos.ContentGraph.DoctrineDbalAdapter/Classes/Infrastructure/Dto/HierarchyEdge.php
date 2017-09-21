@@ -22,89 +22,123 @@ class HierarchyEdge
     /**
      * @var string
      */
-    protected $parentNodesIdentifierInGraph;
+    protected $parentNodeIdentifier;
 
     /**
      * @var string
      */
-    protected $childNodesIdentifierInGraph;
+    protected $childNodeIdentifier;
 
     /**
      * @var string
      */
-    protected $name;
+    protected $edgeName;
 
     /**
      * @var string
      */
-    protected $subgraphIdentifier;
+    protected $contentStreamIdentifier;
+
+    /**
+     * @var array
+     */
+    protected $dimensionSpacePoint;
+
+    /**
+     * @var string
+     */
+    protected $dimensionSpacePointHash;
 
     /**
      * @var int
      */
     protected $position;
 
-
-    public function __construct(
-        string $parentNodesIdentifierInGraph,
-        string $childNodesIdentifierInGraph,
-        string $name = null,
-        string $subgraphIdentifier,
-        int $position
-    ) {
-        $this->parentNodesIdentifierInGraph = $parentNodesIdentifierInGraph;
-        $this->name = $name;
-        $this->subgraphIdentifier = $subgraphIdentifier;
-        $this->childNodesIdentifierInGraph = $childNodesIdentifierInGraph;
+    /**
+     * HierarchyEdge constructor.
+     * @param string $parentNodeIdentifier
+     * @param string $childNodeIdentifier
+     * @param string $edgeName
+     * @param string $contentStreamIdentifier
+     * @param array $dimensionSpacePoint
+     * @param string $dimensionSpacePointHash
+     * @param int $position
+     */
+    public function __construct(string $parentNodeIdentifier, string $childNodeIdentifier, string $edgeName, string $contentStreamIdentifier, array $dimensionSpacePoint, string $dimensionSpacePointHash, int $position)
+    {
+        $this->parentNodeIdentifier = $parentNodeIdentifier;
+        $this->childNodeIdentifier = $childNodeIdentifier;
+        $this->edgeName = $edgeName;
+        $this->contentStreamIdentifier = $contentStreamIdentifier;
+        $this->dimensionSpacePoint = $dimensionSpacePoint;
+        $this->dimensionSpacePointHash = $dimensionSpacePointHash;
         $this->position = $position;
     }
 
-
-    public function getParentNodesIdentifierInGraph(): string
+    /**
+     * @return string
+     */
+    public function getParentNodeIdentifier(): string
     {
-        return $this->parentNodesIdentifierInGraph;
-    }
-
-    public function getChildNodesIdentifierInGraph(): string
-    {
-        return $this->childNodesIdentifierInGraph;
+        return $this->parentNodeIdentifier;
     }
 
     /**
-     * @return string|null
+     * @return string
      */
-    public function getName()
+    public function getChildNodeIdentifier(): string
     {
-        return $this->name;
+        return $this->childNodeIdentifier;
     }
 
-    public function getSubgraphIdentifier(): string
+    /**
+     * @return string
+     */
+    public function getEdgeName(): string
     {
-        return $this->subgraphIdentifier;
+        return $this->edgeName;
     }
 
+    /**
+     * @return string
+     */
+    public function getContentStreamIdentifier(): string
+    {
+        return $this->contentStreamIdentifier;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDimensionSpacePoint(): array
+    {
+        return $this->dimensionSpacePoint;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDimensionSpacePointHash(): string
+    {
+        return $this->dimensionSpacePointHash;
+    }
+
+    /**
+     * @return int
+     */
     public function getPosition(): int
     {
         return $this->position;
     }
 
+
     public function getDatabaseIdentifier(): array
     {
         return [
-            'parentnodesidentifieringraph' => $this->parentNodesIdentifierInGraph,
-            'childnodesidentifieringraph' => $this->childNodesIdentifierInGraph,
-            'subgraphidentifier' => $this->subgraphIdentifier
-        ];
-    }
-
-    public function toDatabaseArray(): array
-    {
-        return [
-            'parentnodesidentifieringraph' => $this->parentNodesIdentifierInGraph,
-            'childnodesidentifieringraph' => $this->childNodesIdentifierInGraph,
-            'name' => $this->name,
-            'subgraphidentifier' => $this->subgraphIdentifier,
-            'position' => $this->position
+            'parentnodeidentifier' => $this->parentNodeIdentifier,
+            'childnodeidentifier' => $this->childNodeIdentifier,
+            'contentstreamidentifier' => $this->contentStreamIdentifier,
+            'dimensionspacepointhash' => $this->dimensionSpacePointHash
         ];
     }
 }

@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Domain\Model;
  */
 
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode;
-use Neos\ContentRepository\Domain\Context\Node\Command\SetProperty;
+use Neos\ContentRepository\Domain\Context\Node\Command\SetNodeProperty;
 use Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\ContentRepository\Domain\Projection\Content\PropertyCollection;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
@@ -59,9 +59,14 @@ class Node implements NodeInterface, CacheAwareInterface
     protected $context;
 
     /**
-     * @var NodeAggregateIdentifier
+     * @var NodeIdentifier
      */
     public $identifier;
+
+    /**
+     * @var NodeAggregateIdentifier
+     */
+    public $aggregateIdentifier;
 
     /**
      * @var string
@@ -89,14 +94,14 @@ class Node implements NodeInterface, CacheAwareInterface
     public $workspace;
 
     /**
-     * @var Domain\ValueObject\SubgraphIdentifier
+     * @var Domain\ValueObject\DimensionSpacePoint
      */
-    public $subgraphIdentifier;
+    public $dimensionSpacePoint;
 
     /**
-     * @var Domain\ValueObject\DimensionValueCombination
+     * @var Domain\ValueObject\ContentStreamIdentifier
      */
-    public $contentDimensionValues;
+    public $contentStreamIdentifier;
 
     /**
      * Defines if the NodeData represented by this Node is already
@@ -968,7 +973,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setProperty($propertyName, $value)
     {
-        $command = new SetProperty(
+        $command = new SetNodeProperty(
             $this->context->getContentStreamIdentifier(),
             new NodeAggregateIdentifier($this->getIdentifier()),
             $propertyName,
@@ -1396,7 +1401,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getNode($path)
     {
-        return $this->context->getSubgraph()->findChildNodeAlongPath($this->identifier, $path, $this->context);
+        return $this->context->getSubgraph()->findChildNodeConnectedThroughEdgeName($this->identifier, $path, $this->context);
     }
 
     /**
@@ -1895,7 +1900,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getDimensions()
     {
-        return $this->contentDimensionValues->toLegacyDimensionArray();
+        return $this->dimensionSpacePoint->toLegacyDimensionArray();
     }
 
     /**
@@ -2158,5 +2163,4 @@ class Node implements NodeInterface, CacheAwareInterface
     protected function emitNodePathChanged(NodeInterface $node, $oldPath, $newPath, $recursion)
     {
     }
-
 }

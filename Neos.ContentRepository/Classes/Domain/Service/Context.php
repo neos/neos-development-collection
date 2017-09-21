@@ -130,9 +130,9 @@ class Context
     protected $contentSubgraph;
 
     /**
-     * @var Domain\ValueObject\SubgraphIdentifier
+     * @var Domain\ValueObject\DimensionSpacePoint
      */
-    protected $subgraphIdentifier;
+    protected $dimensionSpacePoint;
 
     /**
      * Creates a new Context object.
@@ -173,18 +173,18 @@ class Context
         // TODO Explicitly get or create the head editing session for the given workspace and user
         // TODO Get user identifier
         $this->contentStreamIdentifier = new ContentStreamIdentifier(Algorithms::generateUUID());
+        $this->dimensionSpacePoint = Domain\ValueObject\DimensionSpacePoint::fromLegacyDimensionArray($dimensions);
 
         $this->contentSubgraph = $contentSubgraph;
-        $this->subgraphIdentifier = new Domain\ValueObject\SubgraphIdentifier(
-            $this->contentStreamIdentifier,
-            Domain\ValueObject\DimensionSpacePoint::fromLegacyDimensionArray($dimensions)
-        );
     }
 
+    /**
+     * @return Domain\Projection\Content\ContentSubgraphInterface
+     */
     public function getSubgraph(): Domain\Projection\Content\ContentSubgraphInterface
     {
         if (!$this->contentSubgraph) {
-            $this->contentSubgraph = $this->contentGraph->getSubgraphByIdentifier($this->subgraphIdentifier);
+            $this->contentSubgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint);
         }
 
         return $this->contentSubgraph;
