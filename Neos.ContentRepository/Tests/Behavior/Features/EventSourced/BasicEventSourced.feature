@@ -51,7 +51,7 @@ Feature: Basic event source
       | nodeAggregateIdentifier                  | 35411439-94d1-4bd4-8fac-0646856c6a1f                            |               |
       | nodeTypeName                             | Neos.ContentRepository.Testing:NodeWithoutAutoCreatedChildNodes |               |
       | dimensionSpacePoint                      | {"coordinates": []}                                             | json          |
-      | dimensionSpacePointSet                   | {"points":[{"coordinates":[]}]}                                 | json          |
+      | visibleDimensionSpacePoints                   | {"points":[{"coordinates":[]}]}                                 | json          |
       | nodeIdentifier                           | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81                            |               |
       | parentNodeIdentifier                     | 5387cb08-2aaf-44dc-a8a1-483497aa0a03                            |               |
       | nodeName                                 | foo                                                             |               |
@@ -101,7 +101,7 @@ Feature: Basic event source
       | nodeAggregateIdentifier                  | 35411439-94d1-4bd4-8fac-0646856c6a1f                         |               |
       | nodeTypeName                             | Neos.ContentRepository.Testing:NodeWithAutoCreatedChildNodes |               |
       | dimensionSpacePoint                      | {"coordinates": []}                                          | json          |
-      | dimensionSpacePointSet                   | {"points":[{"coordinates":[]}]}                              | json          |
+      | visibleDimensionSpacePoints                   | {"points":[{"coordinates":[]}]}                              | json          |
       | nodeIdentifier                           | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81                         |               |
       | parentNodeIdentifier                     | 5387cb08-2aaf-44dc-a8a1-483497aa0a03                         |               |
       | nodeName                                 | foo                                                          |               |
@@ -113,7 +113,7 @@ Feature: Basic event source
       | contentStreamIdentifier | c75ae6a2-7254-4d42-a31b-a629e264069d   |               |
       | nodeTypeName            | Neos.ContentRepository.Testing:SubNode |               |
       | dimensionSpacePoint     | {"coordinates": []}                    | json          |
-      | dimensionSpacePointSet  | {"points":[{"coordinates":[]}]}        | json          |
+      | visibleDimensionSpacePoints  | {"points":[{"coordinates":[]}]}        | json          |
       | parentNodeIdentifier    | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81   |               |
       | nodeName                | main                                   |               |
 
@@ -123,7 +123,7 @@ Feature: Basic event source
       | nodeName                | foo                                       |               |
       | nodeTypeName            | Neos.ContentRepository.Testing:SubSubNode |               |
       | dimensionSpacePoint     | {"coordinates": []}                       | json          |
-      | dimensionSpacePointSet  | {"points":[{"coordinates":[]}]}           | json          |
+      | visibleDimensionSpacePoints  | {"points":[{"coordinates":[]}]}           | json          |
 
   Scenario: Create node aggregate with node with content dimensions
     Given I have the following content dimensions:
@@ -167,7 +167,7 @@ Feature: Basic event source
       | nodeAggregateIdentifier                  | 35411439-94d1-4bd4-8fac-0646856c6a1f                                             |               |
       | nodeTypeName                             | Neos.ContentRepository.Testing:NodeWithoutAutoCreatedChildNodes                  |               |
       | dimensionSpacePoint                      | {"coordinates":{"language":"de"}}                                                | json          |
-      | dimensionSpacePointSet                   | {"points":[{"coordinates":{"language":"de"}},{"coordinates":{"language":"ch"}}]} | json          |
+      | visibleDimensionSpacePoints                   | {"points":[{"coordinates":{"language":"de"}},{"coordinates":{"language":"ch"}}]} | json          |
       | nodeIdentifier                           | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81                                             |               |
       | parentNodeIdentifier                     | 5387cb08-2aaf-44dc-a8a1-483497aa0a03                                             |               |
       | nodeName                                 | foo                                                                              |               |

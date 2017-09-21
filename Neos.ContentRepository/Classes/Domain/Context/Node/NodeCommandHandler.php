@@ -114,23 +114,15 @@ final class NodeCommandHandler
 
         $events = [];
 
-
-        $contentSubgraph = $this->interDimensionalFallbackGraph->getSubgraphByDimensionSpacePoint($command->getDimensionSpacePoint());
-        if ($contentSubgraph === null) {
-            throw new DimensionSpacePointNotFound(sprintf('%s was not found in the allowed dimension subspace', $command->getDimensionSpacePoint()), 1505929456);
-        }
-        $points = [$command->getDimensionSpacePoint()];
-        foreach ($contentSubgraph->getVariants() as $variant) {
-            $points[] = $variant->getIdentifier();
-        }
-        $dimensionSpacePointSet = new DimensionSpacePointSet($points);
+        $dimensionSpacePoint = $command->getDimensionSpacePoint();
+        $visibleDimensionSpacePoints = $this->getVisibleDimensionSpacePoints($dimensionSpacePoint);
 
         $events[] = new NodeAggregateWithNodeWasCreated(
             $command->getContentStreamIdentifier(),
             $command->getNodeAggregateIdentifier(),
             $command->getNodeTypeName(),
-            $command->getDimensionSpacePoint(),
-            $dimensionSpacePointSet,
+            $dimensionSpacePoint,
+            $visibleDimensionSpacePoints,
             $command->getNodeIdentifier(),
             $command->getParentNodeIdentifier(),
             $command->getNodeName(),
@@ -148,7 +140,7 @@ final class NodeCommandHandler
                 $command->getContentStreamIdentifier(),
                 $childNodeAggregateIdentifier,
                 new NodeTypeName($childNodeType),
-                $command->getDimensionSpacePoint(),
+                $dimensionSpacePoint,
                 $childNodeIdentifier,
                 $childParentNodeIdentifier,
                 $childNodeName
@@ -215,5 +207,25 @@ final class NodeCommandHandler
         if (!$this->nodeTypeManager->hasNodeType((string)$nodeTypeName)) {
             throw new \InvalidArgumentException('TODO: Node type ' . $nodeTypeName . ' not found.');
         }
+    }
+
+    /**
+     * @param $dimensionSpacePoint
+     * @return DimensionSpacePointSet
+     * @throws DimensionSpacePointNotFound
+     */
+    private function getVisibleDimensionSpacePoints($dimensionSpacePoint): DimensionSpacePointSet
+    {
+        $contentSubgraph = $this->interDimensionalFallbackGraph->getSubgraphByDimensionSpacePoint($dimensionSpacePoint);
+        if ($contentSubgraph === null) {
+            throw new DimensionSpacePointNotFound(sprintf('%s was not found in the allowed dimension subspace',
+                $dimensionSpacePoint), 1505929456);
+        }
+        $points = [$dimensionSpacePoint];
+        foreach ($contentSubgraph->getVariants() as $variant) {
+            $points[] = $variant->getIdentifier();
+        }
+        $visibleDimensionSpacePoints = new DimensionSpacePointSet($points);
+        return $visibleDimensionSpacePoints;
     }
 }

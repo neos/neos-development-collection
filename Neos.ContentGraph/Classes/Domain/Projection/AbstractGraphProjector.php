@@ -47,7 +47,7 @@ abstract class AbstractGraphProjector implements ProjectorInterface
                 // TODO: position on insert is still missing
                 null,
                 $event->getNodeName(),
-                new SubgraphIdentifierSet($event->getContentStreamIdentifier(), $event->getDimensionSpacePointSet())
+                new SubgraphIdentifierSet($event->getContentStreamIdentifier(), $event->getVisibleDimensionSpacePoints())
             );
         });
     }

@@ -9,6 +9,12 @@ use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 
+/**
+ * CreateNodeAggregateWithNode command
+ *
+ * Creates a new node aggregate with a new node with the given `nodeAggregateIdentifier` and `nodeIdentifier`.
+ * The node will be a child node of the given `parentNodeIdentifier`.
+ */
 final class CreateNodeAggregateWithNode
 {
 
@@ -28,6 +34,8 @@ final class CreateNodeAggregateWithNode
     private $nodeTypeName;
 
     /**
+     * Location of the node in the dimension space
+     *
      * @var DimensionSpacePoint
      */
     private $dimensionSpacePoint;
