@@ -261,7 +261,7 @@ class NodeDataRepository extends Repository
             foreach ($this->addedNodes as $node) {
                 if (($node->getPath() === $path && $node->matchesWorkspaceAndDimensions($workspace, $dimensions)) && ($onlyShadowNodes === false || $node->isInternal())) {
                     $addedNodes[] = $node;
-            // removed nodes don't matter here because due to the identity map the right object will be returned from the query and will have "removed" set.
+                    // removed nodes don't matter here because due to the identity map the right object will be returned from the query and will have "removed" set.
                 }
             }
 
