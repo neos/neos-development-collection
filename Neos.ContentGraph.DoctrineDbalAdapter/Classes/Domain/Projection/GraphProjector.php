@@ -17,12 +17,14 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGra
 use Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Dto\HierarchyEdge;
 use Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Service\DbalClient;
 use Neos\ContentGraph\Domain\Projection\AbstractGraphProjector;
-use Neos\ContentGraph\Infrastructure\Dto\Node;
+use Neos\ContentGraph\Domain\Projection\Node;
 use Neos\ContentRepository\Domain as ContentRepository;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\SubgraphIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\SubgraphIdentifierSet;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -158,8 +160,9 @@ class GraphProjector extends AbstractGraphProjector
         $this->getDatabaseConnection()->insert('neos_contentgraph_node', [
             'nodeaggregateidentifier' => $node->nodeAggregateIdentifier,
             'nodeidentifier' => $node->nodeIdentifier,
-            'subgraphidentifier' => json_encode($node->subgraphIdentifier),
-            'subgraphidentityhash' => $node->subgraphIdentityHash,
+            'contentstreamidentifier' => $node->contentStreamIdentifier,
+            'dimensionspacepoint' => json_encode($node->dimensionSpacePoint),
+            'dimensionspacepointhash' => $node->dimensionSpacePointHash,
             'properties' => json_encode($node->properties),
             'nodetypename' => $node->nodeTypeName
         ]);
@@ -170,16 +173,18 @@ class GraphProjector extends AbstractGraphProjector
         NodeIdentifier $childNodeIdentifier,
         NodeIdentifier $preceedingSiblingNodeIdentifier = null,
         NodeName $edgeName = null,
-        SubgraphIdentifierSet $subgraphIdentifierSet
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePointSet $dimensionSpacePointSet
     ) {
-        foreach ($subgraphIdentifierSet->getSubgraphIdentifiers() as $subgraphIdentifier) {
-            $position = $this->getEdgePosition($parentNodeIdentifier, $preceedingSiblingNodeIdentifier, $subgraphIdentifier);
+        foreach ($dimensionSpacePointSet->getPoints() as $dimensionSpacePoint) {
+            $position = $this->getEdgePosition($parentNodeIdentifier, $preceedingSiblingNodeIdentifier, $contentStreamIdentifier, $dimensionSpacePoint);
             $hierarchyEdge = new HierarchyEdge(
                 (string)$parentNodeIdentifier,
                 (string)$childNodeIdentifier,
                 (string)$edgeName,
-                $subgraphIdentifier->getHash(),
-                $subgraphIdentifier->jsonSerialize(),
+                (string)$contentStreamIdentifier,
+                $dimensionSpacePoint->jsonSerialize(),
+                $dimensionSpacePoint->getHash(),
                 $position
             );
 
@@ -187,22 +192,22 @@ class GraphProjector extends AbstractGraphProjector
         }
     }
 
-    protected function getEdgePosition(NodeIdentifier $parentIdentifier, NodeIdentifier $precedingSiblingIdentifier = null, SubgraphIdentifier $subgraphIdentifier): int
+    protected function getEdgePosition(NodeIdentifier $parentIdentifier, NodeIdentifier $precedingSiblingIdentifier = null, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): int
     {
-        $position = $this->contentGraph->getEdgePosition($parentIdentifier, $precedingSiblingIdentifier, $subgraphIdentifier);
+        $position = $this->contentGraph->getEdgePosition($parentIdentifier, $precedingSiblingIdentifier, $contentStreamIdentifier, $dimensionSpacePoint);
 
         if ($position % 2 !== 0) {
-            $position = $this->getEdgePositionAfterRecalculation($parentIdentifier, $precedingSiblingIdentifier, $subgraphIdentifier);
+            $position = $this->getEdgePositionAfterRecalculation($parentIdentifier, $precedingSiblingIdentifier, $contentStreamIdentifier, $dimensionSpacePoint);
         }
 
         return $position;
     }
 
-    protected function getEdgePositionAfterRecalculation(NodeIdentifier $parentIdentifier, NodeIdentifier $precedingSiblingIdentifier, SubgraphIdentifier $subgraphIdentifier): int
+    protected function getEdgePositionAfterRecalculation(NodeIdentifier $parentIdentifier, NodeIdentifier $precedingSiblingIdentifier, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): int
     {
         $offset = 0;
         $position = 0;
-        foreach ($this->contentGraph->getOutboundHierarchyEdgesForNodeAndSubgraph($parentIdentifier, $subgraphIdentifier) as $edge) {
+        foreach ($this->contentGraph->getOutboundHierarchyEdgesForNodeAndSubgraph($parentIdentifier, $contentStreamIdentifier, $dimensionSpacePoint) as $edge) {
             $this->assignNewPositionToHierarchyEdge($edge, $offset);
             $offset += 128;
             if ($edge->getChildNodeIdentifier() === (string)$precedingSiblingIdentifier) {
@@ -242,8 +247,9 @@ class GraphProjector extends AbstractGraphProjector
             'parentNodeIdentifier' => $edge->getParentNodeIdentifier(),
             'childNodeIdentifier' => $edge->getChildNodeIdentifier(),
             'name' => $edge->getEdgeName(),
-            'subgraphidentityhash' => $edge->getSubgraphIdentityHash(),
-            'subgraphidentifier' => json_encode($edge->getSubgraphIdentifier()),
+            'contentstreamidentifier' => $edge->getContentStreamIdentifier(),
+            'dimensionspacepoint' => json_encode($edge->getDimensionSpacePoint()),
+            'dimensionspacepointhash' => $edge->getDimensionSpacePointHash(),
             'position' => $edge->getPosition()
         ]);
     }

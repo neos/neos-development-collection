@@ -14,7 +14,9 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Dto\HierarchyEdge;
 use Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Service\DbalClient;
-use Neos\ContentGraph\Infrastructure\Dto\Node;
+use Neos\ContentGraph\Domain\Projection\Node;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\SubgraphIdentifier;
 use Neos\Flow\Annotations as Flow;
@@ -58,7 +60,7 @@ class ProjectionContentGraph
         return $this->mapRawDataToNode($nodeData);
     }
 
-    public function getEdgePosition(NodeIdentifier $parentIdentifier, NodeIdentifier $precedingSiblingIdentifier = null, SubgraphIdentifier $subgraphIdentifier)
+    public function getEdgePosition(NodeIdentifier $parentIdentifier, NodeIdentifier $precedingSiblingIdentifier = null, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint)
     {
         if ($precedingSiblingIdentifier) {
             $precedingSiblingPosition = (int)$this->getDatabaseConnection()->executeQuery(
@@ -115,7 +117,7 @@ class ProjectionContentGraph
      * @param string $subgraphIdentityHash
      * @return array|HierarchyEdge[]
      */
-    public function getOutboundHierarchyEdgesForNodeAndSubgraph(string $parentNodesIdentifierInGraph, string $subgraphIdentityHash): array
+    public function getOutboundHierarchyEdgesForNodeAndSubgraph(string $parentNodesIdentifierInGraph, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): array
     {
         $edges = [];
         foreach ($this->getDatabaseConnection()->executeQuery(
@@ -189,10 +191,12 @@ class ProjectionContentGraph
     protected function mapRawDataToHierarchyEdge(array $rawData): HierarchyEdge
     {
         return new HierarchyEdge(
-            $rawData['parentnodesidentifieringraph'],
-            $rawData['childnodesidentifieringraph'],
+            $rawData['parentnodeidentifier'],
+            $rawData['childnodeidentifier'],
             $rawData['name'],
-            $rawData['subgraphidentityhash'],
+            $rawData['contentstreamidentifier'],
+            json_decode($rawData['dimensionspacepoint'], true),
+            $rawData['dimensionspacepointhash'],
             $rawData['position']
         );
     }
@@ -202,8 +206,9 @@ class ProjectionContentGraph
         return new Node(
             $rawData['nodeidentifier'],
             $rawData['nodeaggregateidentifier'],
-            $rawData['subgraphidentifier'],
-            $rawData['subgraphidentityhash'],
+            $rawData['contentstreamidentifier'],
+            json_decode($rawData['dimensionspacepoint'], true),
+            $rawData['dimensionspacepointhash'],
             json_decode($rawData['properties'], true),
             $rawData['nodetypename']
         );

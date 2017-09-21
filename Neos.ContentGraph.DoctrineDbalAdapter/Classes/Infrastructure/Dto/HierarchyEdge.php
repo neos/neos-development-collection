@@ -37,39 +37,48 @@ class HierarchyEdge
     /**
      * @var string
      */
-    protected $subgraphIdentityHash;
+    protected $contentStreamIdentifier;
 
     /**
      * @var array
      */
-    protected $subgraphIdentifier;
+    protected $dimensionSpacePoint;
+
+    /**
+     * @var string
+     */
+    protected $dimensionSpacePointHash;
 
     /**
      * @var int
      */
     protected $position;
 
-
-    public function __construct(
-        string $parentNodeIdentifier,
-        string $childNodeIdentifier,
-        string $edgeName = null,
-        string $subgraphIdentityHash,
-        array $subgraphIdentifier,
-        int $position
-    ) {
+    /**
+     * HierarchyEdge constructor.
+     * @param string $parentNodeIdentifier
+     * @param string $childNodeIdentifier
+     * @param string $edgeName
+     * @param string $contentStreamIdentifier
+     * @param array $dimensionSpacePoint
+     * @param string $dimensionSpacePointHash
+     * @param int $position
+     */
+    public function __construct(string $parentNodeIdentifier, string $childNodeIdentifier, string $edgeName, string $contentStreamIdentifier, array $dimensionSpacePoint, string $dimensionSpacePointHash, int $position)
+    {
         $this->parentNodeIdentifier = $parentNodeIdentifier;
         $this->childNodeIdentifier = $childNodeIdentifier;
         $this->edgeName = $edgeName;
-        $this->subgraphIdentityHash = $subgraphIdentityHash;
-        $this->subgraphIdentifier = $subgraphIdentifier;
+        $this->contentStreamIdentifier = $contentStreamIdentifier;
+        $this->dimensionSpacePoint = $dimensionSpacePoint;
+        $this->dimensionSpacePointHash = $dimensionSpacePointHash;
         $this->position = $position;
     }
 
     /**
      * @return string
      */
-    public function getParentNodeIdentifier() : string
+    public function getParentNodeIdentifier(): string
     {
         return $this->parentNodeIdentifier;
     }
@@ -77,7 +86,7 @@ class HierarchyEdge
     /**
      * @return string
      */
-    public function getChildNodeIdentifier() : string
+    public function getChildNodeIdentifier(): string
     {
         return $this->childNodeIdentifier;
     }
@@ -85,7 +94,7 @@ class HierarchyEdge
     /**
      * @return string
      */
-    public function getEdgeName() : string
+    public function getEdgeName(): string
     {
         return $this->edgeName;
     }
@@ -93,23 +102,31 @@ class HierarchyEdge
     /**
      * @return string
      */
-    public function getSubgraphIdentityHash() : string
+    public function getContentStreamIdentifier(): string
     {
-        return $this->subgraphIdentityHash;
+        return $this->contentStreamIdentifier;
     }
 
     /**
      * @return array
      */
-    public function getSubgraphIdentifier() : array
+    public function getDimensionSpacePoint(): array
     {
-        return $this->subgraphIdentifier;
+        return $this->dimensionSpacePoint;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDimensionSpacePointHash(): string
+    {
+        return $this->dimensionSpacePointHash;
     }
 
     /**
      * @return int
      */
-    public function getPosition() : int
+    public function getPosition(): int
     {
         return $this->position;
     }
@@ -120,7 +137,8 @@ class HierarchyEdge
         return [
             'parentnodeidentifier' => $this->parentNodeIdentifier,
             'childnodeidentifier' => $this->childNodeIdentifier,
-            'subgraphidentityhash' => $this->subgraphIdentityHash
+            'contentstreamidentifier' => $this->contentStreamIdentifier,
+            'dimensionspacepointhash' => $this->dimensionSpacePointHash
         ];
     }
 }

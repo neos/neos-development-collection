@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\ContentGraph\Infrastructure\Dto;
+namespace Neos\ContentGraph\Domain\Projection;
 
 /*
  * This file is part of the Neos.ContentGraph package.
@@ -12,8 +12,6 @@ namespace Neos\ContentGraph\Infrastructure\Dto;
  * source code.
  */
 use Neos\ContentRepository\Domain\Context\Node\Event;
-use Neos\ContentRepository\Domain\Context\Importing\Event\NodeWasImported;
-use Neos\ContentRepository\Domain\ValueObject\SubgraphIdentifier;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -34,12 +32,17 @@ class Node
     /**
      * @var string
      */
-    public $subgraphIdentifier;
+    public $contentStreamIdentifier;
+
+    /**
+     * @var array
+     */
+    public $dimensionSpacePoint;
 
     /**
      * @var string
      */
-    public $subgraphIdentityHash;
+    public $dimensionSpacePointHash;
 
     /**
      * @var array
@@ -53,19 +56,22 @@ class Node
 
 
     /**
+     * Node constructor.
      * @param string $nodeIdentifier
      * @param string $nodeAggregateIdentifier
-     * @param array $subgraphIdentifier
-     * @param string $subgraphIdentityHash
+     * @param string $contentStreamIdentifier
+     * @param array $dimensionSpacePoint
+     * @param string $dimensionSpacePointHash
      * @param array $properties
      * @param string $nodeTypeName
      */
-    public function __construct(string $nodeIdentifier, ?string $nodeAggregateIdentifier, array $subgraphIdentifier, ?string $subgraphIdentityHash, array $properties, string $nodeTypeName)
+    public function __construct(string $nodeIdentifier, ?string $nodeAggregateIdentifier, ?string $contentStreamIdentifier, ?array $dimensionSpacePoint, ?string $dimensionSpacePointHash, array $properties, string $nodeTypeName)
     {
         $this->nodeIdentifier = $nodeIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->subgraphIdentifier = $subgraphIdentifier;
-        $this->subgraphIdentityHash = $subgraphIdentityHash;
+        $this->contentStreamIdentifier = $contentStreamIdentifier;
+        $this->dimensionSpacePoint = $dimensionSpacePoint;
+        $this->dimensionSpacePointHash = $dimensionSpacePointHash;
         $this->properties = $properties;
         $this->nodeTypeName = $nodeTypeName;
     }
@@ -75,7 +81,8 @@ class Node
         return new Node(
             (string) $event->getNodeIdentifier(),
             null,
-            [],
+            (string) $event->getContentStreamIdentifier(),
+            null,
             null,
             [],
             'Neos.ContentGraph:Root'
@@ -85,12 +92,12 @@ class Node
 
     public static function fromNodeAggregateWithNodeWasCreated(Event\NodeAggregateWithNodeWasCreated $event): Node
     {
-        $subgraphIdentifier = new SubgraphIdentifier($event->getContentStreamIdentifier(), $event->getDimensionSpacePoint());
         return new Node(
             (string) $event->getNodeIdentifier(),
             (string) $event->getNodeAggregateIdentifier(),
-            $subgraphIdentifier->jsonSerialize(),
-            $subgraphIdentifier->getHash(),
+            (string) $event->getContentStreamIdentifier(),
+            $event->getDimensionSpacePoint()->jsonSerialize(),
+            $event->getDimensionSpacePoint()->getHash(),
             $event->getPropertyDefaultValuesAndTypes(),
             (string)$event->getNodeTypeName()
         );
@@ -141,15 +148,4 @@ class Node
             $fallbackNode->nodeTypeName
         );
     } */
-
-    public function toArray(): array
-    {
-        return array_merge($this->properties, [
-            '_nodeIdentifier' => $this->nodeIdentifier,
-            '_nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
-            '_subgraphIdentifier' => $this->subgraphIdentifier,
-            '_subgraphIdentityHash' => $this->subgraphIdentityHash,
-            '_nodeTypeName' => $this->nodeTypeName
-        ]);
-    }
 }

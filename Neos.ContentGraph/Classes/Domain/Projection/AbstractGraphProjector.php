@@ -15,6 +15,8 @@ use Neos\ContentGraph\Infrastructure;
 use Neos\ContentRepository\Domain\Context\Importing\Event\NodeWasImported;
 use Neos\ContentRepository\Domain\Context\Node\Event;
 use Neos\ContentRepository\Domain as ContentRepository;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\SubgraphIdentifierSet;
@@ -28,7 +30,7 @@ abstract class AbstractGraphProjector implements ProjectorInterface
 {
     final public function whenRootNodeWasCreated(Event\RootNodeWasCreated $event)
     {
-        $node = Infrastructure\Dto\Node::fromRootNodeWasCreated($event);
+        $node = Node::fromRootNodeWasCreated($event);
 
         $this->transactional(function () use ($node) {
             $this->addNode($node);
@@ -37,7 +39,7 @@ abstract class AbstractGraphProjector implements ProjectorInterface
 
     final public function whenNodeAggregateWithNodeWasCreated(Event\NodeAggregateWithNodeWasCreated $event)
     {
-        $node = Infrastructure\Dto\Node::fromNodeAggregateWithNodeWasCreated($event);
+        $node = Node::fromNodeAggregateWithNodeWasCreated($event);
 
         $this->transactional(function () use ($node, $event) {
             $this->addNode($node);
@@ -130,16 +132,17 @@ final public function whenNodeVariantWasCreated(Event\NodeVariantWasCreated $eve
 
     abstract protected function transactional(callable $operations);
 
-    abstract protected function addNode(Infrastructure\Dto\Node $node);
+    abstract protected function addNode(Node $node);
 
-    abstract protected function getNode(ContentRepository\ValueObject\NodeAggregateIdentifier $nodeIdentifier, ContentRepository\ValueObject\SubgraphIdentifier $subgraphIdentifier): Infrastructure\Dto\Node;
+    abstract protected function getNode(ContentRepository\ValueObject\NodeAggregateIdentifier $nodeIdentifier, ContentRepository\ValueObject\SubgraphIdentifier $subgraphIdentifier): Node;
 
     abstract protected function connectHierarchy(
         NodeIdentifier $parentNodeIdentifier,
         NodeIdentifier $childNodeIdentifier,
         NodeIdentifier $preceedingSiblingNodeIdentifier = null,
         NodeName $edgeName = null,
-        SubgraphIdentifierSet $subgraphIdentifierSet
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePointSet $dimensionSpacePointSet
     );
 
     abstract protected function connectRelation(string $startNodesIdentifierInGraph, string $endNodesIdentifierInGraph, string $relationshipName, array $properties, array $subgraphIdentifiers);

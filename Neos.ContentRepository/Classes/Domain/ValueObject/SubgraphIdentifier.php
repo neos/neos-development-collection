@@ -15,7 +15,7 @@ use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Arrays;
 
-final class SubgraphIdentifier implements \JsonSerializable, CacheAwareInterface
+final class SubgraphIdentifier implements \JsonSerializable
 {
     /**
      * @var ContentStreamIdentifier
@@ -41,11 +41,6 @@ final class SubgraphIdentifier implements \JsonSerializable, CacheAwareInterface
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
-
-        $identityComponents = $this->jsonSerialize();
-        Arrays::sortKeysRecursively($identityComponents);
-
-        $this->hash = md5(json_encode($identityComponents));
     }
 
 
@@ -63,22 +58,6 @@ final class SubgraphIdentifier implements \JsonSerializable, CacheAwareInterface
     public function getDimensionSpacePoint(): DimensionSpacePoint
     {
         return $this->dimensionSpacePoint;
-    }
-
-    /**
-     * @return string
-     */
-    public function getHash(): string
-    {
-        return $this->hash;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCacheEntryIdentifier(): string
-    {
-        return $this->getHash();
     }
 
     /**
