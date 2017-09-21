@@ -12,6 +12,7 @@
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
 use Neos\EventSourcing\Event\EventInterface;
 use Neos\EventSourcing\Event\EventPublisher;
@@ -20,6 +21,7 @@ use Neos\EventSourcing\EventStore\EventAndRawEvent;
 use Neos\EventSourcing\EventStore\EventStoreManager;
 use Neos\EventSourcing\EventStore\StreamNameFilter;
 use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Property\PropertyMappingConfiguration;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -61,7 +63,13 @@ trait EventSourcedTrait
         $eventPayload = $this->readPayloadTable($payloadTable);
 
         /** @var EventInterface $event */
-        $event = $this->propertyMapper->convert($eventPayload, $eventClassName);
+        $configuration = new PropertyMappingConfiguration();
+        $configuration->allowAllProperties();
+        $configuration->skipUnknownProperties();
+        $configuration->forProperty('*')->allowAllProperties()->skipUnknownProperties();
+
+        $event = $this->propertyMapper->convert($eventPayload, $eventClassName, $configuration);
+
         $this->eventPublisher->publish($streamName, $event);
     }
 
@@ -76,6 +84,16 @@ trait EventSourcedTrait
                         break;
                     case 'DimensionSpacePoint':
                         $eventPayload[$line['Key']] = new DimensionSpacePoint(json_decode($line['Value'], true));
+                        break;
+                    case 'DimensionSpacePointSet':
+                        $tmp = json_decode($line['Value'], true);
+                        $convertedPoints = [];
+                        if (isset($tmp['points'])) {
+                            foreach ($tmp['points'] as $point) {
+                                $convertedPoints[] = new DimensionSpacePoint($point['coordinates']);
+                            }
+                        }
+                        $eventPayload[$line['Key']] = new DimensionSpacePointSet($convertedPoints);
                         break;
                     default:
                         throw new \Exception("TODO" . json_encode($line));

@@ -21,7 +21,7 @@ final class DimensionSpacePointSet implements \JsonSerializable
 {
 
     /**
-     * @var array
+     * @var array<DimensionSpacePoint>
      */
     private $points;
 
@@ -36,7 +36,7 @@ final class DimensionSpacePointSet implements \JsonSerializable
     }
 
     /**
-     * @return array|DimensionSpacePoint[]
+     * @return array<DimensionSpacePoint>
      */
     public function getPoints(): array
     {
