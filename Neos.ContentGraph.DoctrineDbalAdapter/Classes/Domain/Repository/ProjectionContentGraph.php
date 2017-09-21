@@ -18,7 +18,6 @@ use Neos\ContentGraph\Domain\Projection\Node;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\SubgraphIdentifier;
 use Neos\Flow\Annotations as Flow;
 
 /**
