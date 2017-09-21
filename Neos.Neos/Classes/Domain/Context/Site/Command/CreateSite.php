@@ -15,45 +15,44 @@ use Neos\Neos\Domain\ValueObject\NodeName;
 use Neos\Neos\Domain\ValueObject\NodeType;
 use Neos\Neos\Domain\ValueObject\PackageKey;
 use Neos\Neos\Domain\ValueObject\SiteActive;
-use Neos\Neos\Domain\ValueObject\SiteName;
 
-class CreateSite
+final class CreateSite
 {
     /**
-     * @var SiteName
+     * @var NodeName
      */
-    protected $siteName;
+    private $siteName;
 
     /**
      * @var PackageKey
      */
-    protected $siteResourcesPackageKey;
+    private $siteResourcesPackageKey;
 
     /**
      * @var NodeType
      */
-    protected $nodeType;
+    private $nodeType;
 
     /**
      * @var NodeName
      */
-    protected $nodeName;
+    private $nodeName;
 
     /**
      * @var SiteActive
      */
-    protected $siteActive;
+    private $siteActive;
 
     /**
      * CreateSite constructor.
-     * @param SiteName $siteName
+     * @param NodeName $siteName
      * @param PackageKey $packageKey
      * @param NodeType $nodeType
      * @param NodeName $nodeName
      * @param SiteActive $siteActive
      */
     public function __construct(
-        SiteName $siteName,
+        NodeName $siteName,
         PackageKey $packageKey,
         NodeType $nodeType,
         NodeName $nodeName,
@@ -67,9 +66,9 @@ class CreateSite
     }
 
     /**
-     * @return SiteName
+     * @return NodeName
      */
-    public function getSiteName(): SiteName
+    public function getSiteName(): NodeName
     {
         return $this->siteName;
     }

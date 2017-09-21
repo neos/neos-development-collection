@@ -17,6 +17,8 @@ use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Domain\Context\Site\Command\CreateSite;
+use Neos\Neos\Domain\Context\Site\Command\ActivateSite;
+use Neos\Neos\Domain\Context\Site\Command\DeactivateSite;
 use Neos\Neos\Domain\Context\Site\SiteCommandHandler;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\OldNodeStructureSiteImportService;
@@ -27,12 +29,10 @@ use Neos\Neos\Domain\Model\Site;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\Service\NodeService;
-use Neos\ContentRepository\Domain\Utility\NodePaths;
-use Neos\Neos\Domain\ValueObject\NodeName;
 use Neos\Neos\Domain\ValueObject\NodeType;
 use Neos\Neos\Domain\ValueObject\PackageKey;
 use Neos\Neos\Domain\ValueObject\SiteActive;
-use Neos\Neos\Domain\ValueObject\SiteName;
+use Neos\Neos\Domain\ValueObject\NodeName;
 
 /**
  * The Site Command Controller
@@ -182,9 +182,9 @@ class SiteCommandController extends CommandController
 //        $this->siteRepository->add($site);
 
         try {
-            $this->siteCommandHandler->handleCreateSite(
+           $this->siteCommandHandler->handleCreateSite(
                 new CreateSite(
-                    new SiteName($name),
+                    new NodeName($name),
                     new PackageKey($packageKey),
                     new NodeType($nodeType),
                     new NodeName($nodeName),
@@ -435,14 +435,9 @@ class SiteCommandController extends CommandController
      */
     public function activateCommand($siteNode)
     {
-        $site = $this->siteRepository->findOneByNodeName($siteNode);
-        if (!$site instanceof Site) {
-            $this->outputLine('<error>Site not found.</error>');
-            $this->quit(1);
-        }
-
-        $site->setState(Site::STATE_ONLINE);
-        $this->siteRepository->update($site);
+        $this->siteCommandHandler->handleActivateSite(
+            new ActivateSite(new NodeName($siteNode))
+        );
         $this->outputLine('Site activated.');
     }
 
@@ -456,13 +451,9 @@ class SiteCommandController extends CommandController
      */
     public function deactivateCommand($siteNode)
     {
-        $site = $this->siteRepository->findOneByNodeName($siteNode);
-        if (!$site instanceof Site) {
-            $this->outputLine('<error>Site not found.</error>');
-            $this->quit(1);
-        }
-        $site->setState(Site::STATE_OFFLINE);
-        $this->siteRepository->update($site);
+        $this->siteCommandHandler->handleDeactivateSite(
+            new DeactivateSite(new NodeName($siteNode))
+        );
         $this->outputLine('Site deactivated.');
     }
 }

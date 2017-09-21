@@ -15,7 +15,9 @@ use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcing\Projection\Doctrine\AbstractDoctrineProjector;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Domain\Context\Domain\Event\DomainWasAdded;
+use Neos\Neos\Domain\Context\Site\Event\SiteWasActivated;
 use Neos\Neos\Domain\Context\Site\Event\SiteWasCreated;
+use Neos\Neos\Domain\Context\Site\Event\SiteWasDeactivated;
 use Neos\Neos\Domain\Projection\Domain\Domain;
 
 /**
@@ -75,4 +77,27 @@ final class SiteProjector extends AbstractDoctrineProjector
 
         $this->add($site);
     }
+
+    /**
+     * @param SiteWasActivated $event
+     */
+    public function whenSiteWasActivated(SiteWasActivated $event)
+    {
+        $site = $this->siteFinder->findOneByNodeName($event->getNodeName());
+        $site->active = true;
+
+        $this->update($site);
+    }
+
+    /**
+     * @param SiteWasDeactivated $event
+     */
+    public function whenSiteWasDeactivated(SiteWasDeactivated $event)
+    {
+        $site = $this->siteFinder->findOneByNodeName($event->getNodeName());
+        $site->active = false;
+
+        $this->update($site);
+    }
+
 }
