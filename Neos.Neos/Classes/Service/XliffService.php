@@ -104,20 +104,10 @@ class XliffService
                 }
 
                 $package = $this->packageManager->getPackage($packageKey);
-                $sources = $this->collectPackageSources($package);
-
-                //filter sources to be included
-                $relevantSources = array_filter($sources, function($source) use ($sourcesToBeIncluded) {
-                    foreach($sourcesToBeIncluded as $sourcePattern) {
-                        if (fnmatch($sourcePattern, $source)) {
-                            return true;
-                        }
-                    }
-                    return false;
-                });
+                $sources = $this->collectPackageSources($package, $sourcesToBeIncluded);
 
                 //get the xliff files for those sources
-                foreach ($relevantSources as $sourceName) {
+                foreach ($sources as $sourceName) {
                     $fileId = $packageKey . ':' . $sourceName;
                     $file = $this->xliffFileProvider->getFile($fileId, $locale);
 
@@ -152,30 +142,49 @@ class XliffService
     }
 
     /**
+     * Collect all sources found in the given package as array (key = source, value = true)
+     * If sourcecToBeIncluded is an array, only those sources are returned what match the wildcard-patterns in the
+     * array-values
+     *
      * @param PackageInterface $package
+     * @param array $sourcesToBeIncluded optional array of wildcard-patterns to filter the sources
      * @return array
      */
-    protected function collectPackageSources(PackageInterface $package)
+    protected function collectPackageSources(PackageInterface $package, $sourcesToBeIncluded = null)
     {
         $packageKey = $package->getPackageKey();
         $sources = [];
         $translationPath = $package->getResourcesPath() . $this->xliffBasePath;
         foreach (Files::readDirectoryRecursively($translationPath, '.xlf') as $filePath) {
+            //remove translation path from path
             $source = trim(str_replace($translationPath, '', $filePath), '/');
+            //remove language part from path
             $source = trim(substr($source, strpos($source, '/')), '/');
+            //remove file extension
             $source = substr($source, 0, strrpos($source, '.'));
 
             $this->xliffReader->readFiles($filePath,
-                function (\XMLReader $file, $offset, $version) use ($packageKey, &$sources, $source) {
-                    $packageName = $packageKey;
-                    switch ($version) {
-                        case '1.2':
-                            $packageName = $file->getAttribute('product-name') ?: $packageKey;
-                            $source = $file->getAttribute('original') ?: $source;
-                            break;
+                function (\XMLReader $file, $offset, $version) use ($packageKey, &$sources, $source, $sourcesToBeIncluded) {
+                    $targetPackageKey = $packageKey;
+                    if ($version === '1.2') {
+                        //in xliff v1.2 the packageKey or source can be overwritten via attributes
+                        $targetPackageKey = $file->getAttribute('product-name') ?: $packageKey;
+                        $source = $file->getAttribute('original') ?: $source;
                     }
-                    if ($packageKey !== $packageName) {
+                    if ($packageKey !== $targetPackageKey) {
                         return;
+                    }
+                    if (is_array($sourcesToBeIncluded)) {
+                        $addSource = false;
+                        foreach($sourcesToBeIncluded as $sourcePattern) {
+                            if (fnmatch($sourcePattern, $source)) {
+                                $addSource = true;
+                                break;
+                            }
+                        }
+                        if (!$addSource) {
+                            return;
+                        }
                     }
                     $sources[$source] = true;
                 }
