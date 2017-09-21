@@ -135,7 +135,7 @@ final public function whenNodeVariantWasCreated(Event\NodeVariantWasCreated $eve
 
     abstract protected function addNode(Node $node);
 
-    abstract protected function getNode(ContentRepository\ValueObject\NodeAggregateIdentifier $nodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): Node;
+    abstract protected function getNode(ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): Node;
 
     abstract protected function connectHierarchy(
         NodeIdentifier $parentNodeIdentifier,

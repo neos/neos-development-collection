@@ -57,13 +57,6 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
 
 
     /**
-     * @Flow\Inject
-     * @var ContentProjection\ContentGraphInterface
-     * @todo get rid of this
-     */
-    protected $contentGraph;
-
-    /**
      * @var ContentRepository\ValueObject\ContentStreamIdentifier
      */
     protected $contentStreamIdentifier;
@@ -344,7 +337,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
 
         // "Node Type" is a concept of the Node Aggregate; but we can store the node type denormalized in the Node.
         foreach ($this->getDatabaseConnection()->executeQuery(
-            'SELECT n.*, h.name, h.index FROM neos_contentgraph_node n
+            'SELECT n.*, h.name, h.position FROM neos_contentgraph_node n
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeidentifier = n.nodeidentifier
  WHERE n.nodetypename = :nodeTypeName
  AND h.contentstreamidentifier = :contentStreamIdentifier

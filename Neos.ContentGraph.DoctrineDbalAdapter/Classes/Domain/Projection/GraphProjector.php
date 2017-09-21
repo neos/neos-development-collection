@@ -149,7 +149,7 @@ class GraphProjector extends AbstractGraphProjector
     }*/
 
 
-    protected function getNode(ContentRepository\ValueObject\NodeAggregateIdentifier $nodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): Node
+    protected function getNode(ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): Node
     {
         return $this->contentGraph->getNode($nodeIdentifier, $contentStreamIdentifier, $dimensionSpacePoint);
     }
