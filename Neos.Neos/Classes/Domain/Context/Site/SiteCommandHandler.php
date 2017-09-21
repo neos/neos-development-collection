@@ -16,6 +16,8 @@ use Neos\EventSourcing\Event\EventPublisher;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Context\Site\Command\CreateSite;
 use Neos\Neos\Domain\Context\Site\Event\SiteWasCreated;
+use Neos\Neos\Domain\Context\Site\Exception\SiteAlreadyExists;
+use Neos\Neos\Domain\Projection\Site\SiteFinder;
 
 /**
  * SiteCommandHandler
@@ -29,19 +31,39 @@ final class SiteCommandHandler
     protected $eventPublisher;
 
     /**
+     * @Flow\Inject
+     * @var SiteFinder
+     */
+    protected $siteFinder;
+
+    /**
      * @param CreateSite $command
      */
     public function handleCreateSite(CreateSite $command)
     {
+        $this->validateSiteMustNotExistConstraint($command);
+
         $this->eventPublisher->publish(
             'Neos.Neos:Site:' . $command->getSiteName(),
             new SiteWasCreated(
                 $command->getSiteName(),
-                $command->getPackageKey(),
+                $command->getSiteResourcesPackageKey(),
                 $command->getNodeType(),
                 $command->getNodeName(),
                 $command->getSiteActive()
             )
         );
+    }
+
+    /**
+     * @param CreateSite $command
+     * @throws SiteAlreadyExists
+     */
+    private function validateSiteMustNotExistConstraint(CreateSite $command): void
+    {
+        $site = $this->siteFinder->findOneByNodeName($command->getNodeName());
+        if ($site !== null) {
+            throw new SiteAlreadyExists($command->getNodeName(), 1505997113974);
+        }
     }
 }

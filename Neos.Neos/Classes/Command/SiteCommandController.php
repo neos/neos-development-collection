@@ -136,9 +136,9 @@ class SiteCommandController extends CommandController
      */
     public function createCommand($name, $packageKey, $nodeType = 'Neos.NodeTypes:Page', $nodeName = null, $inactive = false)
     {
-//        if ($nodeName === null) {
-//            $nodeName = $this->nodeService->generateUniqueNodeName(SiteService::SITES_ROOT_PATH, $name);
-//        }
+        if ($nodeName === null) {
+            $nodeName = $this->nodeService->generateUniqueNodeName(SiteService::SITES_ROOT_PATH, $name);
+        }
 //
 //        if ($this->siteRepository->findOneByNodeName($nodeName)) {
 //            $this->outputLine('<error>A site with siteNodeName "%s" already exists</error>', [$nodeName]);
@@ -181,17 +181,20 @@ class SiteCommandController extends CommandController
 //
 //        $this->siteRepository->add($site);
 
-        $this->siteCommandHandler->handleCreateSite(
-            new CreateSite(
-                new SiteName($name),
-                new PackageKey($packageKey),
-                new NodeType($nodeType),
-                new NodeName($nodeName),
-                new SiteActive($inactive === false)
-            )
-        );
-
-        $this->outputLine('Successfully created site "%s" with siteNode "%s", type "%s", packageKey "%s" and state "%s"', [$name, $nodeName, $nodeType, $packageKey, $inactive ? 'offline' : 'online']);
+        try {
+            $this->siteCommandHandler->handleCreateSite(
+                new CreateSite(
+                    new SiteName($name),
+                    new PackageKey($packageKey),
+                    new NodeType($nodeType),
+                    new NodeName($nodeName),
+                    new SiteActive($inactive === false)
+                )
+            );
+            $this->outputLine('Successfully created site "%s" with siteNode "%s", type "%s", packageKey "%s" and state "%s"', [$name, $nodeName, $nodeType, $packageKey, $inactive ? 'offline' : 'online']);
+        } catch (\Exception $e) {
+            $this->outputLine('<error>' . $e->getMessage() . '</error>');
+        }
     }
 
     /**

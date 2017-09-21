@@ -28,7 +28,7 @@ class SiteWasCreated implements EventInterface
     /**
      * @var PackageKey
      */
-    protected $packageKey;
+    protected $siteResourcesPackageKey;
 
     /**
      * @var NodeType
@@ -48,20 +48,20 @@ class SiteWasCreated implements EventInterface
     /**
      * CreateSite constructor.
      * @param SiteName $siteName
-     * @param PackageKey $packageKey
+     * @param PackageKey $siteResourcesPackageKey
      * @param NodeType $nodeType
      * @param NodeName $nodeName
      * @param SiteActive $siteActive
      */
     public function __construct(
         SiteName $siteName,
-        PackageKey $packageKey,
+        PackageKey $siteResourcesPackageKey,
         NodeType $nodeType,
         NodeName $nodeName,
         SiteActive $siteActive
     ) {
         $this->siteName = $siteName;
-        $this->packageKey = $packageKey;
+        $this->siteResourcesPackageKey = $siteResourcesPackageKey;
         $this->nodeType = $nodeType;
         $this->nodeName = $nodeName;
         $this->siteActive = $siteActive;
@@ -78,9 +78,9 @@ class SiteWasCreated implements EventInterface
     /**
      * @return PackageKey
      */
-    public function getPackageKey(): PackageKey
+    public function getSiteResourcesPackageKey(): PackageKey
     {
-        return $this->packageKey;
+        return $this->siteResourcesPackageKey;
     }
 
     /**

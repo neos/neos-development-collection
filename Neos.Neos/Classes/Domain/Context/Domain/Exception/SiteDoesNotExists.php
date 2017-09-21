@@ -13,11 +13,11 @@ namespace Neos\Neos\Domain\Context\Domain\Exception;
 
 use Neos\Neos\Exception;
 
-final class DomainAlreadyExists extends Exception
+final class SiteDoesNotExists extends Exception
 {
-    public function __construct($hostName = "", $code = 0, \Throwable $previous = null)
+    public function __construct($siteNodeName = "", $code = 0, \Throwable $previous = null)
     {
-        $message = 'The domain already exists: ' . $hostName;
+        $message = 'The site does not exists: ' . $siteNodeName;
         parent::__construct($message, $code, $previous);
     }
 

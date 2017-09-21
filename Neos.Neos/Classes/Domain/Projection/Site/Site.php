@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Neos\Domain\Projection\Domain;
+namespace Neos\Neos\Domain\Projection\Site;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -15,30 +15,28 @@ use Doctrine\ORM\Mapping as ORM;
 use Neos\EventSourcing\Annotations as CQRS;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Context\Domain\Event\DomainWasAdded;
-use Neos\Neos\Domain\Projection\Site\Site;
 
 /**
  * Domain Read Model
  *
  * @Flow\Entity
  * @CQRS\ReadModel
- * @ORM\Table(name="neos_neos_projection_domain_v1")
+ * @ORM\Table(name="neos_neos_projection_site_v1")
  */
-final class Domain
+final class Site
 {
     /**
-     * @var Site
-     * @ORM\ManyToOne
+     * @var string
      */
-    public $site;
+    public $name;
 
     /**
      * @var string
      */
-    public $hostName;
+    public $nodeName;
 
     /**
-     * @var boolean
+     * @var bool
      */
     public $active;
 
@@ -46,11 +44,5 @@ final class Domain
      * @var string
      * @ORM\Column(nullable=true)
      */
-    public $uriScheme;
-
-    /**
-     * @var integer
-     * @ORM\Column(nullable=true)
-     */
-    public $domainPort;
+    public $siteResourcesPackageKey;
 }

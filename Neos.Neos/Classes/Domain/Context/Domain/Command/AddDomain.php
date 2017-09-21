@@ -11,11 +11,11 @@ namespace Neos\Neos\Domain\Context\Domain\Command;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ValueObject\NodeName;
+use Neos\Neos\Domain\ValueObject\NodeName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\ValueObject\DomainPort;
 use Neos\Neos\Domain\ValueObject\HostName;
-use Neos\Neos\Domain\ValueObject\HttpScheme;
+use Neos\Neos\Domain\ValueObject\UriScheme;
 
 class AddDomain
 {
@@ -30,7 +30,7 @@ class AddDomain
     private $domainHostname;
 
     /**
-     * @var HttpScheme
+     * @var UriScheme
      */
     private $scheme;
 
@@ -43,10 +43,10 @@ class AddDomain
      * CreateDomain constructor.
      * @param NodeName $siteNodeName
      * @param HostName $domainHostname
-     * @param HttpScheme $scheme
+     * @param UriScheme $scheme
      * @param DomainPort $port
      */
-    public function __construct(NodeName $siteNodeName, HostName $domainHostname, HttpScheme $scheme = null, DomainPort $port = null)
+    public function __construct(NodeName $siteNodeName, HostName $domainHostname, UriScheme $scheme = null, DomainPort $port = null)
     {
         $this->siteNodeName = $siteNodeName;
         $this->domainHostname = $domainHostname;
@@ -71,7 +71,7 @@ class AddDomain
     }
 
     /**
-     * @return HttpScheme (nullable)
+     * @return UriScheme (nullable)
      */
     public function getScheme()
     {

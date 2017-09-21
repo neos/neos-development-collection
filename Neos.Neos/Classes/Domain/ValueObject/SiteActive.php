@@ -16,7 +16,7 @@ class SiteActive implements \JsonSerializable
     /**
      * @var bool
      */
-    protected $isActive;
+    protected $active;
 
     /**
      * Name constructor.
@@ -25,15 +25,15 @@ class SiteActive implements \JsonSerializable
      */
     public function __construct(bool $isActive)
     {
-        $this->setIsActive($isActive);
+        $this->setActive($isActive);
     }
 
     /**
-     * @param bool $isActive
+     * @param bool $active
      */
-    protected function setIsActive(bool $isActive)
+    protected function setActive(bool $active)
     {
-        $this->isActive = $isActive;
+        $this->active = $active;
     }
 
     /**
@@ -41,14 +41,14 @@ class SiteActive implements \JsonSerializable
      */
     public function __toString(): string
     {
-        return $this->isActive;
+        return $this->active;
     }
 
     /**
-     * @return string
+     * @return bool
      */
     public function jsonSerialize()
     {
-        return $this->isActive;
+        return $this->active;
     }
 }

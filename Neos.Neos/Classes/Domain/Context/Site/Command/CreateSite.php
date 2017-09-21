@@ -27,7 +27,7 @@ class CreateSite
     /**
      * @var PackageKey
      */
-    protected $packageKey;
+    protected $siteResourcesPackageKey;
 
     /**
      * @var NodeType
@@ -60,7 +60,7 @@ class CreateSite
         SiteActive $siteActive
     ) {
         $this->siteName = $siteName;
-        $this->packageKey = $packageKey;
+        $this->siteResourcesPackageKey = $packageKey;
         $this->nodeType = $nodeType;
         $this->nodeName = $nodeName;
         $this->siteActive = $siteActive;
@@ -77,9 +77,9 @@ class CreateSite
     /**
      * @return PackageKey
      */
-    public function getPackageKey(): PackageKey
+    public function getSiteResourcesPackageKey(): PackageKey
     {
-        return $this->packageKey;
+        return $this->siteResourcesPackageKey;
     }
 
     /**
