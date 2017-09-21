@@ -170,13 +170,13 @@ class GraphProjector extends AbstractGraphProjector
     protected function connectHierarchy(
         NodeIdentifier $parentNodeIdentifier,
         NodeIdentifier $childNodeIdentifier,
-        NodeIdentifier $preceedingSiblingNodeIdentifier = null,
+        NodeIdentifier $precedingSiblingNodeIdentifier = null,
         NodeName $edgeName = null,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePointSet $dimensionSpacePointSet
     ) {
         foreach ($dimensionSpacePointSet->getPoints() as $dimensionSpacePoint) {
-            $position = $this->getEdgePosition($parentNodeIdentifier, $preceedingSiblingNodeIdentifier, $contentStreamIdentifier, $dimensionSpacePoint);
+            $position = $this->getEdgePosition($parentNodeIdentifier, $precedingSiblingNodeIdentifier, $contentStreamIdentifier, $dimensionSpacePoint);
             $hierarchyEdge = new HierarchyEdge(
                 (string)$parentNodeIdentifier,
                 (string)$childNodeIdentifier,

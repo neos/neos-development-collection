@@ -140,7 +140,7 @@ final public function whenNodeVariantWasCreated(Event\NodeVariantWasCreated $eve
     abstract protected function connectHierarchy(
         NodeIdentifier $parentNodeIdentifier,
         NodeIdentifier $childNodeIdentifier,
-        NodeIdentifier $preceedingSiblingNodeIdentifier = null,
+        NodeIdentifier $precedingSiblingNodeIdentifier = null,
         NodeName $edgeName = null,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePointSet $dimensionSpacePointSet
