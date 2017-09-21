@@ -12,7 +12,6 @@ namespace Neos\ContentGraph\Domain\Repository;
  * source code.
  */
 use Neos\ContentRepository\Domain as ContentRepository;
-use Neos\ContentRepository\Domain\Context\DimensionSpace;
 use Neos\ContentRepository\Domain\Projection\Content as ContentProjection;
 use Neos\Flow\Annotations as Flow;
 
@@ -22,33 +21,26 @@ use Neos\Flow\Annotations as Flow;
 abstract class AbstractContentGraph implements ContentProjection\ContentGraphInterface
 {
     /**
-     * @Flow\Inject
-     * @var DimensionSpace\Repository\AllowedDimensionSubspace
-     */
-    protected $dimensionValueCombinationRepository;
-
-    /**
-     * @Flow\Inject
-     * @var ContentRepository\Projection\Workspace\WorkspaceFinder
-     */
-    protected $workspaceFinder;
-
-    /**
      * @var array|ContentProjection\ContentSubgraphInterface[]
      */
     protected $subgraphs;
 
     /**
-     * @param ContentRepository\ValueObject\SubgraphIdentifier $subgraphIdentifier
+     * @param ContentRepository\ValueObject\ContentStreamIdentifier $contentStreamIdentifier
+     * @param ContentRepository\ValueObject\DimensionSpacePoint $dimensionSpacePoint
      * @return ContentProjection\ContentSubgraphInterface|null
      */
-    final public function getSubgraphByIdentifier(ContentRepository\ValueObject\SubgraphIdentifier $subgraphIdentifier)
+    final public function getSubgraphByIdentifier(
+        ContentRepository\ValueObject\ContentStreamIdentifier $contentStreamIdentifier,
+        ContentRepository\ValueObject\DimensionSpacePoint $dimensionSpacePoint
+    ): ?ContentProjection\ContentSubgraphInterface
     {
-        if (!isset($this->subgraphs[$subgraphIdentifier->getHash()])) {
-            $this->subgraphs[$subgraphIdentifier->getHash()] = $this->createSubgraph($subgraphIdentifier);
+        $index = (string)$contentStreamIdentifier . '-' . $dimensionSpacePoint->getHash();
+        if (!isset($index)) {
+            $this->subgraphs[$index] = $this->createSubgraph($contentStreamIdentifier, $dimensionSpacePoint);
         }
 
-        return $this->subgraphs[$subgraphIdentifier->getHash()];
+        return $this->subgraphs[$index];
     }
 
     /**
@@ -60,8 +52,9 @@ abstract class AbstractContentGraph implements ContentProjection\ContentGraphInt
     }
 
     /**
-     * @param ContentRepository\ValueObject\SubgraphIdentifier $subgraphIdentifier
+     * @param ContentRepository\ValueObject\ContentStreamIdentifier $contentStreamIdentifier
+     * @param ContentRepository\ValueObject\DimensionSpacePoint $dimensionSpacePoint
      * @return ContentProjection\ContentSubgraphInterface
      */
-    abstract protected function createSubgraph(ContentRepository\ValueObject\SubgraphIdentifier $subgraphIdentifier): ContentProjection\ContentSubgraphInterface;
+    abstract protected function createSubgraph(ContentRepository\ValueObject\ContentStreamIdentifier $contentStreamIdentifier, ContentRepository\ValueObject\DimensionSpacePoint $dimensionSpacePoint): ContentProjection\ContentSubgraphInterface;
 }

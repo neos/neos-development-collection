@@ -94,14 +94,14 @@ class Node implements NodeInterface, CacheAwareInterface
     public $workspace;
 
     /**
-     * @var Domain\ValueObject\SubgraphIdentifier
+     * @var Domain\ValueObject\DimensionSpacePoint
      */
-    public $subgraphIdentifier;
+    public $dimensionSpacePoint;
 
     /**
-     * @var Domain\ValueObject\DimensionValueCombination
+     * @var Domain\ValueObject\ContentStreamIdentifier
      */
-    public $contentDimensionValues;
+    public $contentStreamIdentifier;
 
     /**
      * Defines if the NodeData represented by this Node is already
@@ -1900,7 +1900,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getDimensions()
     {
-        return $this->contentDimensionValues->toLegacyDimensionArray();
+        return $this->dimensionSpacePoint->toLegacyDimensionArray();
     }
 
     /**
