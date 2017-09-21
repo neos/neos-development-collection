@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Domain\Model;
  */
 
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode;
-use Neos\ContentRepository\Domain\Context\Node\Command\SetProperty;
+use Neos\ContentRepository\Domain\Context\Node\Command\SetNodeProperty;
 use Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\ContentRepository\Domain\Projection\Content\PropertyCollection;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
@@ -973,7 +973,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setProperty($propertyName, $value)
     {
-        $command = new SetProperty(
+        $command = new SetNodeProperty(
             $this->context->getContentStreamIdentifier(),
             new NodeAggregateIdentifier($this->getIdentifier()),
             $propertyName,

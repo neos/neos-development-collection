@@ -6,7 +6,7 @@ use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 
-final class SetProperty
+final class SetNodeProperty
 {
 
     /**
@@ -35,7 +35,7 @@ final class SetProperty
     private $nodeTypeName;
 
     /**
-     * SetProperty constructor.
+     * SetNodeProperty constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeIdentifier $nodeIdentifier

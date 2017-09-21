@@ -12,7 +12,7 @@ use Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNo
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateRootNode;
 use Neos\ContentRepository\Domain\Context\Importing\Command\ImportNode;
 use Neos\ContentRepository\Domain\Context\Importing\Event\NodeWasImported;
-use Neos\ContentRepository\Domain\Context\Node\Command\SetProperty;
+use Neos\ContentRepository\Domain\Context\Node\Command\SetNodeProperty;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Domain\Context\Node\Event\PropertyWasSet;
 use Neos\ContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
@@ -117,6 +117,8 @@ final class NodeCommandHandler
         $dimensionSpacePoint = $command->getDimensionSpacePoint();
         $visibleDimensionSpacePoints = $this->getVisibleDimensionSpacePoints($dimensionSpacePoint);
 
+        // TODO Check if parentNodeIdentifier is visible in the given dimensionSpaceNode
+
         $events[] = new NodeAggregateWithNodeWasCreated(
             $command->getContentStreamIdentifier(),
             $command->getNodeAggregateIdentifier(),
@@ -168,9 +170,9 @@ final class NodeCommandHandler
     }
 
     /**
-     * @param SetProperty $command
+     * @param SetNodeProperty $command
      */
-    public function handleSetProperty(SetProperty $command)
+    public function handleSetNodeProperty(SetNodeProperty $command)
     {
         $nodeType = $this->getNodeType($command->getNodeTypeName());
         $propertyType = $nodeType->getPropertyType($command->getPropertyName());

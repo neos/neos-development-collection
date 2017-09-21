@@ -13,7 +13,8 @@ use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
  * CreateNodeAggregateWithNode command
  *
  * Creates a new node aggregate with a new node with the given `nodeAggregateIdentifier` and `nodeIdentifier`.
- * The node will be a child node of the given `parentNodeIdentifier`.
+ * The node will be appended as child node of the given `parentNodeIdentifier` which must be visible in the given
+ * `dimensionSpacePoint`.
  */
 final class CreateNodeAggregateWithNode
 {
