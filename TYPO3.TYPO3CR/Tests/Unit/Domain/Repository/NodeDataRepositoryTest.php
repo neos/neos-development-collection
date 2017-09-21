@@ -54,7 +54,7 @@ class NodeDataRepositoryTest extends UnitTestCase
         $this->nodeDataRepository->expects($this->any())->method('createQueryBuilder')->will($this->returnValue($this->mockQueryBuilder));
         $this->nodeDataRepository->expects($this->any())->method('filterNodeDataByBestMatchInContext')->will($this->returnArgument(0));
 
-            // The repository needs an explicit entity class name because of the generated mock class name
+        // The repository needs an explicit entity class name because of the generated mock class name
         $this->inject($this->nodeDataRepository, 'entityClassName', NodeData::class);
         $this->inject($this->nodeDataRepository, 'persistenceManager', $mockPersistenceManager);
     }

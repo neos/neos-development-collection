@@ -67,8 +67,8 @@ class IncludeJavaScriptViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractV
             }
         }
 
-            // Sadly, the aloha editor needs a predefined inclusion order, which right now matches
-            // the sorted URI list. that's why we sort here...
+        // Sadly, the aloha editor needs a predefined inclusion order, which right now matches
+        // the sorted URI list. that's why we sort here...
         asort($uris);
 
         $output = '';

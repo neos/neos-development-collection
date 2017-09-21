@@ -53,12 +53,12 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest
         $view->assign('object', $object);
         $view->setTypoScriptPath('contentCache/cachedSegment');
 
-            // This render call should create the cache entry
+        // This render call should create the cache entry
         $firstRenderResult = $view->render();
 
         $object->setValue('Object value 2');
 
-            // And this render call should use the existing cache entry
+        // And this render call should use the existing cache entry
         $secondRenderResult = $view->render();
 
         $this->assertSame('Cached segment|Object value 1', $firstRenderResult);
@@ -83,7 +83,7 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest
 
         $this->assertSame('Outer segment|site=site1|Inner segment|object=Object value 1|End inner|End outer', $firstRenderResult);
 
-            // This must not influence the output, since the inner segment should be fetched from cache
+        // This must not influence the output, since the inner segment should be fetched from cache
         $object->setValue('Object value 2');
 
         $view->assign('site', 'site2');
@@ -149,7 +149,7 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest
         $firstRenderResult = $view->render();
         $this->assertSame('Outer segment|object=Object value 1|Uncached segment|counter=1|End uncached|End outer', $firstRenderResult);
 
-            // Update the object value to see that the outer segment is really cached
+        // Update the object value to see that the outer segment is really cached
         $object->setValue('Object value 2');
 
         $secondRenderResult = $view->render();
@@ -172,7 +172,7 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest
         $firstRenderResult = $view->render();
         $this->assertSame('Outer segment|object=Object value 1|Uncached segment|counter=1|End uncached|End outer', $firstRenderResult);
 
-            // Assigning a new object changes the identifier and therefore a new outer cache segment is created
+        // Assigning a new object changes the identifier and therefore a new outer cache segment is created
         $newObject = new TestModel(21, 'New object value');
         $view->assign('object', $newObject);
 
@@ -205,10 +205,10 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest
         $secondRenderResult = $view->render();
         $this->assertSame($firstRenderResult, $secondRenderResult);
 
-            // This should flush "Inner segment 1"
+        // This should flush "Inner segment 1"
         $this->contentCache->flushByTag('Object_' . $object->getId());
 
-            // Since the cache entry for "Inner segment 1" is missing, the outer segment is also evaluated, but not "Inner segment 2"
+        // Since the cache entry for "Inner segment 1" is missing, the outer segment is also evaluated, but not "Inner segment 2"
         $secondRenderResult = $view->render();
         $this->assertSame('Outer segment|counter=2|Inner segment 1|object=Object value 2|End innerInner segment 2|object=Object value 1|End inner|End outer', $secondRenderResult);
     }
@@ -232,17 +232,17 @@ class ContentCacheTest extends AbstractTypoScriptObjectTest
 
         $object->setValue('Object value 2');
 
-            // This should flush "Inner segment 1"
+        // This should flush "Inner segment 1"
         $this->contentCache->flushByTag('NodeType_Acme.Demo:SampleNodeType');
 
-            // Since the cache entry for "Inner segment 1" is missing, the outer segment is also evaluated, but not "Inner segment 2"
+        // Since the cache entry for "Inner segment 1" is missing, the outer segment is also evaluated, but not "Inner segment 2"
         $secondRenderResult = $view->render();
         $this->assertSame('Outer segment|counter=2|Inner segment 1|object=Object value 2|End innerInner segment 2|object=Object value 1|End inner|End outer', $secondRenderResult);
 
-            // This should flush "Inner segment 2"
+        // This should flush "Inner segment 2"
         $this->contentCache->flushByTag('Node_47a6ee72-936a-4489-abc1-3666a63cdc4a');
 
-            // Since the cache entry for "Inner segment 2" is missing, the outer segment is also evaluated, but not "Inner segment 1"
+        // Since the cache entry for "Inner segment 2" is missing, the outer segment is also evaluated, but not "Inner segment 1"
         $secondRenderResult = $view->render();
         $this->assertSame('Outer segment|counter=3|Inner segment 1|object=Object value 2|End innerInner segment 2|object=Object value 2|End inner|End outer', $secondRenderResult);
     }

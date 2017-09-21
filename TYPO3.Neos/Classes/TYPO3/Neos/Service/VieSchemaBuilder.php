@@ -90,8 +90,8 @@ class VieSchemaBuilder
             }
         }
 
-            // Convert the TYPO3.Neos:ContentCollection element to support content-collection
-            // TODO Move to node type definition
+        // Convert the TYPO3.Neos:ContentCollection element to support content-collection
+        // TODO Move to node type definition
         if (isset($this->types['typo3:TYPO3.Neos:ContentCollection'])) {
             $this->addProperty('typo3:TYPO3.Neos:ContentCollection', 'typo3:content-collection', array());
             $this->types['typo3:TYPO3.Neos:ContentCollection']->specific_properties[] = 'typo3:content-collection';

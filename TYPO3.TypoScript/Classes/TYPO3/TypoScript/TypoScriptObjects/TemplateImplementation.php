@@ -107,7 +107,7 @@ class TemplateImplementation extends AbstractArrayTypoScriptObject
             $fluidTemplate->setLayoutRootPath($layoutRootPath);
         }
 
-            // Template resources need to be evaluated from the templates package not the requests package.
+        // Template resources need to be evaluated from the templates package not the requests package.
         if (strpos($templatePath, 'resource://') === 0) {
             $templateResourcePathParts = parse_url($templatePath);
             $fluidTemplate->setResourcePackage($templateResourcePathParts['host']);
@@ -119,12 +119,12 @@ class TemplateImplementation extends AbstractArrayTypoScriptObject
             }
             if (!is_array($value)) {
                 // if a value is a SIMPLE TYPE, e.g. neither an Eel expression nor a TypoScript object,
-                    // we can just evaluate it (to handle processors) and then assign it to the template.
+                // we can just evaluate it (to handle processors) and then assign it to the template.
                 $evaluatedValue = $this->tsValue($key);
                 $fluidTemplate->assign($key, $evaluatedValue);
             } else {
                 // It is an array; so we need to create a "proxy" for lazy evaluation, as it could be a
-                    // nested TypoScript object, Eel expression or simple value.
+                // nested TypoScript object, Eel expression or simple value.
                 $fluidTemplate->assign($key, new Helpers\TypoScriptPathProxy($this, $this->path . '/' . $key, $value));
             }
         }
