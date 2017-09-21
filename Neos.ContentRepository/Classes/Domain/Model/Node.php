@@ -2163,5 +2163,4 @@ class Node implements NodeInterface, CacheAwareInterface
     protected function emitNodePathChanged(NodeInterface $node, $oldPath, $newPath, $recursion)
     {
     }
-
 }

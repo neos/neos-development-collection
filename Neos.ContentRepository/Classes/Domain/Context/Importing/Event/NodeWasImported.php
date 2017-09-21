@@ -99,5 +99,4 @@ final class NodeWasImported implements EventInterface
     {
         return $this->propertyValues;
     }
-
 }

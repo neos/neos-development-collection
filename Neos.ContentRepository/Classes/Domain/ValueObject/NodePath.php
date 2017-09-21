@@ -30,7 +30,7 @@ final class NodePath implements \JsonSerializable
         return $this->path === '/';
     }
 
-    function jsonSerialize()
+    public function jsonSerialize()
     {
         return $this->path;
     }
@@ -39,5 +39,4 @@ final class NodePath implements \JsonSerializable
     {
         return $this->path;
     }
-
 }

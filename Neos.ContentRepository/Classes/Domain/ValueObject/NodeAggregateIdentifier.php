@@ -77,7 +77,7 @@ final class NodeAggregateIdentifier implements \JsonSerializable, CacheAwareInte
     /**
      * @return string
      */
-    function jsonSerialize()
+    public function jsonSerialize()
     {
         return $this->identifier;
     }

@@ -42,7 +42,7 @@ abstract class AbstractIdentifier implements \JsonSerializable
      * @param string $string
      * @return static
      */
-    static public function fromString(string $string)
+    public static function fromString(string $string)
     {
         $instance = new static();
         $instance->uuid = Uuid::fromString($string);
@@ -60,7 +60,7 @@ abstract class AbstractIdentifier implements \JsonSerializable
     /**
      * @return string
      */
-    function jsonSerialize()
+    public function jsonSerialize()
     {
         return $this->uuid->toString();
     }

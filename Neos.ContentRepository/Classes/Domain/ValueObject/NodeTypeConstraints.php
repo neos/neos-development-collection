@@ -35,7 +35,7 @@ final class NodeTypeConstraints implements \JsonSerializable
         return $this->constraints;
     }
 
-    function jsonSerialize(): array
+    public function jsonSerialize(): array
     {
         return $this->constraints;
     }

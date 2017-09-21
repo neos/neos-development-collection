@@ -140,5 +140,4 @@ final class CreateNodeAggregateWithNode
     {
         return $this->nodeName;
     }
-
 }

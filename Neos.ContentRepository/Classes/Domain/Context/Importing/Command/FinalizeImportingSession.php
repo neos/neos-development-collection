@@ -10,7 +10,8 @@ final class FinalizeImportingSession
      */
     private $importingSessionIdentifier;
 
-    public function __construct(ImportingSessionIdentifier $importingSessionIdentifier) {
+    public function __construct(ImportingSessionIdentifier $importingSessionIdentifier)
+    {
         $this->importingSessionIdentifier = $importingSessionIdentifier;
     }
 
@@ -18,5 +19,4 @@ final class FinalizeImportingSession
     {
         return $this->importingSessionIdentifier;
     }
-
 }

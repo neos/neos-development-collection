@@ -174,5 +174,4 @@ final class NodeAggregateWithNodeWasCreated implements EventInterface
     {
         return $this->propertyDefaultValuesAndTypes;
     }
-
 }

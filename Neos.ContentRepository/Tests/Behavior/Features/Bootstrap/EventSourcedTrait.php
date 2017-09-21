@@ -121,7 +121,7 @@ trait EventSourcedTrait
         $commandHandler->$commandHandlerMethod($command);
     }
 
-    static protected function resolveShortCommandName($shortCommandName)
+    protected static function resolveShortCommandName($shortCommandName)
     {
         switch ($shortCommandName) {
             case 'CreateRootNode':
@@ -147,7 +147,6 @@ trait EventSourcedTrait
      */
     public function iExpectExactlyEventToBePublishedOnStream($numberOfEvents, $streamName)
     {
-
         $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
         $stream = $eventStore->get(new StreamNameFilter($streamName));
         $this->currentEventStreamAsArray = iterator_to_array($stream);
@@ -175,5 +174,4 @@ trait EventSourcedTrait
             Assert::assertEquals($expectedValue, $actualValue, 'ERROR at ' . $assertionTableRow['Key'] . ': ' . json_encode($actualValue) . ' !== ' . json_encode($expectedValue));
         }
     }
-
 }

@@ -19,7 +19,6 @@ use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\SubgraphIdentifier;
 use Neos\Flow\Annotations as Flow;
 
-
 final class SubgraphIdentifierSet
 {
     /**

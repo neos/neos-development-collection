@@ -84,5 +84,4 @@ final class NodePropertyWasSet implements EventInterface
     {
         return $this->value;
     }
-
 }

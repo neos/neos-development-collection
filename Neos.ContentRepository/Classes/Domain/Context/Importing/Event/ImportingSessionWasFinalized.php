@@ -27,5 +27,4 @@ final class ImportingSessionWasFinalized implements EventInterface
     {
         return $this->importingSessionIdentifier;
     }
-
 }

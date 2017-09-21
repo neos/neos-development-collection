@@ -118,5 +118,4 @@ final class CreateWorkspace
     {
         return $this->workspaceOwner;
     }
-
 }

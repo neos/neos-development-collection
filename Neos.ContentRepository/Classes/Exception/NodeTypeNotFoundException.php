@@ -37,5 +37,4 @@ class NodeTypeNotFoundException extends Exception
     {
         return $this->nodeTypeName;
     }
-
 }

@@ -29,11 +29,10 @@ final class PropertyValues implements \JsonSerializable
         $this->values = $values;
     }
 
-    function jsonSerialize()
+    public function jsonSerialize()
     {
         return [
             'values' => $this->values,
         ];
     }
-
 }

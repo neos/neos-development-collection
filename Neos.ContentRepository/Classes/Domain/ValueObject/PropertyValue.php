@@ -35,7 +35,7 @@ final class PropertyValue implements \JsonSerializable
         $this->type = $type;
     }
 
-    function jsonSerialize()
+    public function jsonSerialize()
     {
         return [
             'value' => $this->value,
@@ -47,5 +47,4 @@ final class PropertyValue implements \JsonSerializable
     {
         return $this->value . '(' . $this->type . ')';
     }
-
 }

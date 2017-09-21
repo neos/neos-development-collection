@@ -43,7 +43,7 @@ final class DimensionSpacePointSet implements \JsonSerializable
         return $this->points;
     }
 
-    function jsonSerialize()
+    public function jsonSerialize()
     {
         return ['points' => $this->points];
     }
@@ -52,5 +52,4 @@ final class DimensionSpacePointSet implements \JsonSerializable
     {
         return 'dimension space points:[' . implode(',', $this->points) . ']';
     }
-
 }
