@@ -30,6 +30,12 @@ class AllowedDimensionSubspace
     protected $contentDimensionCombinator;
 
     /**
+     * @Flow\Inject
+     * @var Domain\Service\ContentDimensionPresetSourceInterface
+     */
+    protected $contentDimensionPresetSource;
+
+    /**
      * @var array|Domain\ValueObject\DimensionSpacePoint[]
      */
     protected $points;
@@ -37,6 +43,13 @@ class AllowedDimensionSubspace
     public function initializeObject()
     {
         $this->points = [];
+
+        if ($this->contentDimensionPresetSource->getAllPresets() === []) {
+            $emptyPoint = new Domain\ValueObject\DimensionSpacePoint([]);
+            $this->points[$emptyPoint->getHash()] = [$emptyPoint];
+            return;
+        }
+
         $coordinateSet = [];
         foreach ($this->contentDimensionCombinator->getAllAllowedCombinations() as $dimensionPresetCombination) {
             $presetCoordinateSet = [];

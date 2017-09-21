@@ -201,11 +201,7 @@ trait NodeOperationsTrait
                 $contentDimensionPresetSource->setConfiguration($dimensions);
             }
 
-            $intraDimensionalFallbackGraph = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Context\Dimension\Repository\IntraDimensionalFallbackGraph::class);
-            $intraDimensionalFallbackGraph->initializeObject();
-
-            $interDimensionalFallbackGraph = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Context\DimensionSpace\Repository\InterDimensionalFallbackGraph::class);
-            $interDimensionalFallbackGraph->initializeObject();
+            $this->resetDimensionSpaceRepositories();
         }
     }
 
@@ -222,11 +218,7 @@ trait NodeOperationsTrait
         $contentDimensionPresetSource = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface::class);
         $contentDimensionPresetSource->setConfiguration($dimensions);
 
-        $intraDimensionalFallbackGraph = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Context\Dimension\Repository\IntraDimensionalFallbackGraph::class);
-        $intraDimensionalFallbackGraph->initializeObject();
-
-        $interDimensionalFallbackGraph = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Context\DimensionSpace\Repository\InterDimensionalFallbackGraph::class);
-        $interDimensionalFallbackGraph->initializeObject();
+        $this->resetDimensionSpaceRepositories();
     }
 
 
@@ -1105,5 +1097,17 @@ trait NodeOperationsTrait
                 $this->resetNodeInstances();
             }
         }
+    }
+
+    private function resetDimensionSpaceRepositories()
+    {
+        $allowedDimensionSubspace = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Context\DimensionSpace\Repository\AllowedDimensionSubspace::class);
+        $allowedDimensionSubspace->initializeObject();
+
+        $intraDimensionalFallbackGraph = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Context\Dimension\Repository\IntraDimensionalFallbackGraph::class);
+        $intraDimensionalFallbackGraph->initializeObject();
+
+        $interDimensionalFallbackGraph = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Context\DimensionSpace\Repository\InterDimensionalFallbackGraph::class);
+        $interDimensionalFallbackGraph->initializeObject();
     }
 }
