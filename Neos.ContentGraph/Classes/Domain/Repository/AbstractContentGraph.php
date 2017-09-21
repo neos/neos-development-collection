@@ -13,6 +13,9 @@ namespace Neos\ContentGraph\Domain\Repository;
  */
 use Neos\ContentRepository\Domain as ContentRepository;
 use Neos\ContentRepository\Domain\Projection\Content as ContentProjection;
+use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -21,19 +24,19 @@ use Neos\Flow\Annotations as Flow;
 abstract class AbstractContentGraph implements ContentProjection\ContentGraphInterface
 {
     /**
-     * @var array|ContentProjection\ContentSubgraphInterface[]
+     * @var array|ContentSubgraphInterface[]
      */
     protected $subgraphs;
 
     /**
-     * @param ContentRepository\ValueObject\ContentStreamIdentifier $contentStreamIdentifier
-     * @param ContentRepository\ValueObject\DimensionSpacePoint $dimensionSpacePoint
-     * @return ContentProjection\ContentSubgraphInterface|null
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @return ContentSubgraphInterface|null
      */
     final public function getSubgraphByIdentifier(
-        ContentRepository\ValueObject\ContentStreamIdentifier $contentStreamIdentifier,
-        ContentRepository\ValueObject\DimensionSpacePoint $dimensionSpacePoint
-    ): ?ContentProjection\ContentSubgraphInterface
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint
+    ): ?ContentSubgraphInterface
     {
         $index = (string)$contentStreamIdentifier . '-' . $dimensionSpacePoint->getHash();
         if (!isset($index)) {
@@ -44,7 +47,7 @@ abstract class AbstractContentGraph implements ContentProjection\ContentGraphInt
     }
 
     /**
-     * @return array|ContentProjection\ContentSubgraphInterface[]
+     * @return array|ContentSubgraphInterface[]
      */
     final public function getSubgraphs(): array
     {
@@ -52,9 +55,9 @@ abstract class AbstractContentGraph implements ContentProjection\ContentGraphInt
     }
 
     /**
-     * @param ContentRepository\ValueObject\ContentStreamIdentifier $contentStreamIdentifier
-     * @param ContentRepository\ValueObject\DimensionSpacePoint $dimensionSpacePoint
-     * @return ContentProjection\ContentSubgraphInterface
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @return ContentSubgraphInterface
      */
-    abstract protected function createSubgraph(ContentRepository\ValueObject\ContentStreamIdentifier $contentStreamIdentifier, ContentRepository\ValueObject\DimensionSpacePoint $dimensionSpacePoint): ContentProjection\ContentSubgraphInterface;
+    abstract protected function createSubgraph(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): ContentSubgraphInterface;
 }

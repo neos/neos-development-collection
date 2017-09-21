@@ -11,7 +11,9 @@ namespace Neos\ContentRepository\Domain\Projection\Content;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain;
 
 /**
@@ -33,4 +35,11 @@ interface ContentGraphInterface
      * @return array|ContentSubgraphInterface[]
      */
     public function getSubgraphs(): array;
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeIdentifier $nodeIdentifier
+     * @return NodeInterface|null
+     */
+    public function findNodeByIdentifierInContentStream(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier): ?NodeInterface;
 }

@@ -33,11 +33,6 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
      */
     protected $client;
 
-    /**
-     * @Flow\Inject
-     * @var ContentRepository\Service\NodeTypeManager
-     */
-    protected $nodeTypeManager;
 
     /**
      * @Flow\Inject
@@ -53,10 +48,10 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
 
     /**
      * @Flow\Inject
-     * @var ContentRepository\Repository\NodeDataRepository
-     * @todo get rid of this
+     * @var NodeFactory
      */
-    protected $nodeDataRepository;
+    protected $nodeFactory;
+
 
     /**
      * @Flow\Inject
@@ -113,7 +108,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
 
         // We always allow root nodes
         if (empty($nodeData['dimensionspacepointhash'])) {
-            return $this->mapRawDataToNode($nodeData, $context);
+            return $this->nodeFactory->mapRawDataToNode($nodeData, $context);
         }
 
         $inboundEdgeData = $this->getDatabaseConnection()->executeQuery(
@@ -129,7 +124,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
         )->fetch();
 
         // we only allow nodes matching the content stream identifier and dimension space point
-        return $inboundEdgeData ? $this->mapRawDataToNode($nodeData, $context) : null;
+        return $inboundEdgeData ? $this->nodeFactory->mapRawDataToNode($nodeData, $context) : null;
     }
 
     /**
@@ -168,7 +163,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
             $query,
             $parameters
         )->fetchAll() as $nodeData) {
-            $result[] = $this->mapRawDataToNode($nodeData, $context);
+            $result[] = $this->nodeFactory->mapRawDataToNode($nodeData, $context);
         }
 
         return $result;
@@ -222,7 +217,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
             ]
         )->fetch();
 
-        return $nodeData ? $this->mapRawDataToNode($nodeData, $context) : null;
+        return $nodeData ? $this->nodeFactory->mapRawDataToNode($nodeData, $context) : null;
     }
 
     /**
@@ -247,7 +242,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
             ]
         )->fetch();
 
-        return $nodeData ? $this->mapRawDataToNode($nodeData, $context) : null;
+        return $nodeData ? $this->nodeFactory->mapRawDataToNode($nodeData, $context) : null;
     }
 
     /**
@@ -299,7 +294,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
             ]
         )->fetch();
 
-        return $nodeData ? $this->mapRawDataToNode($nodeData, $context) : null;
+        return $nodeData ? $this->nodeFactory->mapRawDataToNode($nodeData, $context) : null;
     }
 
     /**
@@ -325,7 +320,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
                 'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash(),
             ]
         )->fetchAll() as $nodeData) {
-            $result[] = $this->mapRawDataToNode($nodeData, $context);
+            $result[] = $this->nodeFactory->mapRawDataToNode($nodeData, $context);
         }
 
         return $result;
@@ -347,7 +342,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
             ]
         )->fetch();
 
-        return $this->mapRawDataToNode($nodeData, $context);
+        return $this->nodeFactory->mapRawDataToNode($nodeData, $context);
     }
 
 
@@ -375,60 +370,6 @@ WHERE n.nodeidentifier = :nodeIdentifier',
         }
     }
 
-    /**
-     * @param array $nodeDataArrayFromProjection
-     * @param ContentRepository\Service\Context $context
-     * @return ContentRepository\Model\NodeInterface
-     */
-    protected function mapRawDataToNode(array $nodeDataArrayFromProjection, ContentRepository\Service\Context $context): ContentRepository\Model\NodeInterface
-    {
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeDataArrayFromProjection['nodetypename']);
-        $className = $nodeType->getNodeInterfaceImplementationClassName();
-
-        // $serializedSubgraphIdentifier is empty for the root node
-        if (!empty($nodeDataArrayFromProjection['dimensionspacepointhash'])) {
-            $contentStreamIdentifier = new ContentRepository\ValueObject\ContentStreamIdentifier($nodeDataArrayFromProjection['contentstreamidentifier']);
-            $dimensionSpacePoint = new ContentRepository\ValueObject\DimensionSpacePoint(json_decode($nodeDataArrayFromProjection['dimensionspacepoint']));
-
-            $legacyDimensionValues = $dimensionSpacePoint->toLegacyDimensionArray();
-            $query = $this->nodeDataRepository->createQuery();
-            $nodeData = $query->matching(
-                $query->logicalAnd([
-                    $query->equals('workspace', (string) $contentStreamIdentifier),
-                    $query->equals('identifier', $nodeDataArrayFromProjection['aggregateidentifier']),
-                    $query->equals('dimensionsHash', Utility::sortDimensionValueArrayAndReturnDimensionsHash($legacyDimensionValues))
-                ])
-            );
-
-            $node = new $className($nodeData, $context);
-            $node->nodeType = $nodeType;
-            $node->aggregateIdentifier = new ContentRepository\ValueObject\NodeAggregateIdentifier($nodeDataArrayFromProjection['nodeaggregateidentifier']);
-            $node->identifier = new ContentRepository\ValueObject\NodeIdentifier($nodeDataArrayFromProjection['nodeidentifier']);
-            $node->properties = new ContentProjection\PropertyCollection(json_decode($nodeDataArrayFromProjection['properties'], true));
-            $node->name = $nodeDataArrayFromProjection['name'];
-            $node->index = $nodeDataArrayFromProjection['index'];
-            #@todo fetch workspace from finder using the content stream identifier
-            #$node->workspace = $this->workspaceRepository->findByIdentifier($this->contentStreamIdentifier);
-            $node->dimensionSpacePoint = $dimensionSpacePoint;
-            $node->contentStreamIdentifier = $contentStreamIdentifier;
-
-            return $node;
-        } else {
-            // root node
-            $subgraphIdentifier = null;
-            $nodeData = $context->getWorkspace()->getRootNodeData();
-
-            $node = new $className($nodeData, $context);
-            $node->nodeType = $nodeType;
-            $node->identifier = new ContentRepository\ValueObject\NodeIdentifier($nodeDataArrayFromProjection['nodeidentifier']);
-            #@todo fetch workspace from finder using the content stream identifier
-            #$node->workspace = $this->workspaceRepository->findByIdentifier($this->contentStreamIdentifier);
-
-            $node->dimensionSpacePoint = null;
-
-            return $node;
-        }
-    }
 
     protected function getDatabaseConnection(): Connection
     {
