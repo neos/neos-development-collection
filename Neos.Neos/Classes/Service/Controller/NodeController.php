@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Neos\Domain\Repository\DomainRepository;
-use Neos\Neos\Domain\Service\NodeSearchService;
+use Neos\Neos\Domain\Service\NodeSearchServiceInterface;
 use Neos\Neos\Service\NodeOperations;
 use Neos\Neos\Service\View\NodeView;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
@@ -65,7 +65,7 @@ class NodeController extends AbstractServiceController
 
     /**
      * @Flow\Inject
-     * @var NodeSearchService
+     * @var NodeSearchServiceInterface
      */
     protected $nodeSearchService;
 
