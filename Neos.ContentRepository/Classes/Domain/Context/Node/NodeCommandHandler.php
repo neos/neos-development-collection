@@ -14,7 +14,7 @@ use Neos\ContentRepository\Domain\Context\Importing\Command\ImportNode;
 use Neos\ContentRepository\Domain\Context\Importing\Event\NodeWasImported;
 use Neos\ContentRepository\Domain\Context\Node\Command\SetNodeProperty;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Domain\Context\Node\Event\PropertyWasSet;
+use Neos\ContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
 use Neos\ContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
@@ -179,7 +179,7 @@ final class NodeCommandHandler
 
         $propertyValue = new PropertyValue($command->getValue(), $propertyType);
 
-        $event = new PropertyWasSet(
+        $event = new NodePropertyWasSet(
             $command->getContentStreamIdentifier(),
             $command->getNodeIdentifier(),
             $command->getPropertyName(),

@@ -11,6 +11,9 @@ use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 
+/**
+ * Node aggregate with node was created event
+ */
 final class NodeAggregateWithNodeWasCreated implements EventInterface
 {
 

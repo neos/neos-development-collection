@@ -74,7 +74,7 @@ abstract class AbstractGraphProjector implements ProjectorInterface
 
     }*/
 
-    final public function whenPropertyWasSet(Event\PropertyWasSet $event)
+    final public function whenNodePropertyWasSet(Event\NodePropertyWasSet $event)
     {
 
     }
