@@ -176,7 +176,7 @@ class XliffService
                     }
                     if (is_array($sourcesToBeIncluded)) {
                         $addSource = false;
-                        foreach($sourcesToBeIncluded as $sourcePattern) {
+                        foreach ($sourcesToBeIncluded as $sourcePattern) {
                             if (fnmatch($sourcePattern, $source)) {
                                 $addSource = true;
                                 break;
