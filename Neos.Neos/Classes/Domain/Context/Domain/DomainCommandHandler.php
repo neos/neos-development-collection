@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Domain\Context\Domain;
 
 /*
@@ -15,8 +16,17 @@ use Neos\EventSourcing\Event\EventPublisher;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Context\Domain\Command\ActivateDomain;
 use Neos\Neos\Domain\Context\Domain\Command\AddDomain;
-use Neos\Neos\Domain\Context\Domain\Event\DomainHasBeenActivated;
-use Neos\Neos\Domain\Context\Domain\Event\DomainHasBeenAdded;
+use Neos\Neos\Domain\Context\Domain\Command\DeactivateDomain;
+use Neos\Neos\Domain\Context\Domain\Command\DeleteDomain;
+use Neos\Neos\Domain\Context\Domain\Event\DomainWasActivated;
+use Neos\Neos\Domain\Context\Domain\Event\DomainWasAdded;
+use Neos\Neos\Domain\Context\Domain\Event\DomainWasDeactivated;
+use Neos\Neos\Domain\Context\Domain\Event\DomainWasDeleted;
+use Neos\Neos\Domain\Context\Domain\Exception\DomainAlreadyExists;
+use Neos\Neos\Domain\Context\Domain\Exception\SiteDoesNotExists;
+use Neos\Neos\Domain\Projection\Domain\Domain;
+use Neos\Neos\Domain\Projection\Domain\DomainFinder;
+use Neos\Neos\Domain\Projection\Site\SiteFinder;
 
 /**
  * WorkspaceCommandHandler
@@ -30,17 +40,32 @@ final class DomainCommandHandler
     protected $eventPublisher;
 
     /**
+     * @var DomainFinder
+     * @Flow\Inject
+     */
+    protected $domainFinder;
+
+    /**
+     * @var SiteFinder
+     * @Flow\Inject
+     */
+    protected $siteFinder;
+
+    /**
      * @param AddDomain $command
      */
     public function handleAddDomain(AddDomain $command)
     {
-        // TODO: Necessary checks
+        $hostname = $command->getDomainHostname();
+
+        $this->validateSiteMustExistsConstraint($command);
+        $this->validateDomainMustNotExistConstraint($command);
 
         $this->eventPublisher->publish(
-            'Neos.Neos:Domain:' . $command->getDomainHostname(),
-            new DomainHasBeenAdded(
+            'Neos.Neos:Domain:' . $hostname,
+            new DomainWasAdded(
                 $command->getSiteNodeName(),
-                $command->getDomainHostname(),
+                $hostname,
                 $command->getScheme(),
                 $command->getPort()
             )
@@ -52,11 +77,74 @@ final class DomainCommandHandler
      */
     public function handleActivateDomain(ActivateDomain $command)
     {
+        // TODO: Necessary checks
+
         $this->eventPublisher->publish(
             'Neos.Neos:Domain:' . $command->getHostName(),
-            new DomainHasBeenActivated(
+            new DomainWasActivated(
                 $command->getHostName()
             )
         );
+    }
+
+    /**
+     * @param DeactivateDomain $command
+     */
+    public function handleDeactivateDomain(DeactivateDomain $command)
+    {
+        // TODO: Necessary checks
+
+        $this->eventPublisher->publish(
+            'Neos.Neos:Domain:' . $command->getHostName(),
+            new DomainWasDeactivated(
+                $command->getHostName()
+            )
+        );
+    }
+
+    /**
+     * @param DeleteDomain $command
+     */
+    public function handleDeleteDomain(DeleteDomain $command)
+    {
+        // TODO: Necessary checks
+
+        $this->eventPublisher->publish(
+            'Neos.Neos:Domain:' . $command->getHostName(),
+            new DomainWasDeleted(
+                $command->getHostName()
+            )
+        );
+    }
+
+    /**
+     * @param AddDomain $command
+     * @throws SiteDoesNotExists
+     */
+    private function validateSiteMustExistsConstraint(AddDomain $command): void
+    {
+        $site = $this->siteFinder->findOneByNodeName($command->getSiteNodeName());
+        if ($site === null) {
+            throw new SiteDoesNotExists($command->getSiteNodeName(), 1505992197238);
+        }
+    }
+
+    /**
+     * @param AddDomain $command
+     * @throws DomainAlreadyExists
+     */
+    private function validateDomainMustNotExistConstraint(AddDomain $command): void
+    {
+        $hostName = $command->getDomainHostname();
+        $scheme = $command->getScheme();
+        $port = $command->getPort();
+        $domain = $this->domainFinder->findOneByHostNameSchemeAndPort(
+            $hostName,
+            $scheme,
+            $port
+        );
+        if ($domain !== null) {
+            throw new DomainAlreadyExists($hostName, 1505918961915);
+        }
     }
 }

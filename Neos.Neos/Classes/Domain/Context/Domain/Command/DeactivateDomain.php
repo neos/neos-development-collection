@@ -11,9 +11,9 @@ namespace Neos\Neos\Domain\Context\Domain\Command;
  * source code.
  */
 
-use Neos\Neos\Domain\ValueOBject\HostName;
+use Neos\Neos\Domain\ValueObject\HostName;
 
-class ActivateDomain
+class DeactivateDomain
 {
     /**
      * @var HostName

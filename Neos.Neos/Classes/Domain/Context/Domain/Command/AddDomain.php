@@ -11,11 +11,11 @@ namespace Neos\Neos\Domain\Context\Domain\Command;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ValueObject\NodeName;
+use Neos\Neos\Domain\ValueObject\NodeName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\ValueObject\DomainPort;
 use Neos\Neos\Domain\ValueObject\HostName;
-use Neos\Neos\Domain\ValueObject\HttpScheme;
+use Neos\Neos\Domain\ValueObject\UriScheme;
 
 class AddDomain
 {
@@ -30,7 +30,7 @@ class AddDomain
     private $domainHostname;
 
     /**
-     * @var HttpScheme
+     * @var UriScheme
      */
     private $scheme;
 
@@ -43,10 +43,10 @@ class AddDomain
      * CreateDomain constructor.
      * @param NodeName $siteNodeName
      * @param HostName $domainHostname
-     * @param HttpScheme $scheme
+     * @param UriScheme $scheme
      * @param DomainPort $port
      */
-    public function __construct(NodeName $siteNodeName, HostName $domainHostname, HttpScheme $scheme = null, DomainPort $port = null)
+    public function __construct(NodeName $siteNodeName, HostName $domainHostname, UriScheme $scheme = null, DomainPort $port = null)
     {
         $this->siteNodeName = $siteNodeName;
         $this->domainHostname = $domainHostname;
@@ -63,14 +63,6 @@ class AddDomain
     }
 
     /**
-     * @param NodeName $siteNodeName
-     */
-    public function setSiteNodeName(NodeName $siteNodeName)
-    {
-        $this->siteNodeName = $siteNodeName;
-    }
-
-    /**
      * @return HostName
      */
     public function getDomainHostname(): HostName
@@ -79,27 +71,11 @@ class AddDomain
     }
 
     /**
-     * @param HostName $domainHostname
-     */
-    public function setDomainHostname(HostName $domainHostname)
-    {
-        $this->domainHostname = $domainHostname;
-    }
-
-    /**
-     * @return HttpScheme (nullable)
+     * @return UriScheme (nullable)
      */
     public function getScheme()
     {
         return $this->scheme;
-    }
-
-    /**
-     * @param HttpScheme $scheme
-     */
-    public function setScheme(HttpScheme $scheme = null)
-    {
-        $this->scheme = $scheme;
     }
 
     /**
@@ -108,13 +84,5 @@ class AddDomain
     public function getPort()
     {
         return $this->port;
-    }
-
-    /**
-     * @param DomainPort $port
-     */
-    public function setPort(DomainPort $port = null)
-    {
-        $this->port = $port;
     }
 }

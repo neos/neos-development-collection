@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Command;
 
 /*
@@ -11,11 +12,12 @@ namespace Neos\Neos\Command;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ValueObject\NodeName;
+use Neos\Neos\Domain\ValueObject\NodeName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Validation\ValidatorResolver;
 use Neos\Neos\Domain\Context\Domain\Command\AddDomain;
+use Neos\Neos\Domain\Context\Domain\Command\DeleteDomain;
 use Neos\Neos\Domain\Context\Domain\DomainCommandHandler;
 use Neos\Neos\Domain\Context\Domain\Command\ActivateDomain;
 use Neos\Neos\Domain\Model\Domain;
@@ -24,7 +26,7 @@ use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\ValueObject\DomainPort;
 use Neos\Neos\Domain\ValueObject\HostName;
-use Neos\Neos\Domain\ValueObject\HttpScheme;
+use Neos\Neos\Domain\ValueObject\UriScheme;
 
 /**
  * Domain command controller for the Neos.Neos package
@@ -68,60 +70,54 @@ class DomainCommandController extends CommandController
      */
     public function addCommand($siteNodeName, $hostname, $scheme = null, $port = null)
     {
-        $site = $this->siteRepository->findOneByNodeName($siteNodeName);
-        if (!$site instanceof Site) {
-            $this->outputLine('<error>No site found with nodeName "%s".</error>', [$siteNodeName]);
-            $this->quit(1);
+//        $site = $this->siteRepository->findOneByNodeName($siteNodeName);
+//        if (!$site instanceof Site) {
+//            $this->outputLine('<error>No site found with nodeName "%s".</error>', [$siteNodeName]);
+//            $this->quit(1);
+//        }
+//
+//        $domains = $this->domainRepository->findByHostname($hostname);
+//        if ($domains->count() > 0) {
+//            $this->outputLine('<error>The host name "%s" is not unique.</error>', [$hostname]);
+//            $this->quit(1);
+//        }
+//
+//        $domain = new Domain();
+//        if ($scheme !== null) {
+//            $domain->setScheme($scheme);
+//        }
+//        if ($port !== null) {
+//            $domain->setPort($port);
+//        }
+//        $domain->setSite($site);
+//        $domain->setHostname($hostname);
+//
+//        $domainValidator = $this->validatorResolver->getBaseValidatorConjunction(Domain::class);
+//        $result = $domainValidator->validate($domain);
+//        if ($result->hasErrors()) {
+//            foreach ($result->getFlattenedErrors() as $propertyName => $errors) {
+//                $firstError = array_pop($errors);
+//                $this->outputLine('<error>Validation failed for "' . $propertyName . '": ' . $firstError . '</error>');
+//                $this->quit(1);
+//            }
+//        }
+//
+//        $this->domainRepository->add($domain);
+
+        try {
+            $this->domainCommandHandler->handleAddDomain(
+                new AddDomain(
+                    new NodeName($siteNodeName),
+                    new HostName($hostname),
+                    $scheme ? new UriScheme($scheme) : null,
+                    $port ? new DomainPort($port) : null
+                )
+            );
+            $this->outputLine('Domain entry created.');
+        } catch (\Exception $e) {
+            $this->outputLine('<error>' . $e->getMessage() . '</error>');
         }
 
-        $domains = $this->domainRepository->findByHostname($hostname);
-        if ($domains->count() > 0) {
-            $this->outputLine('<error>The host name "%s" is not unique.</error>', [$hostname]);
-            $this->quit(1);
-        }
-
-        $domain = new Domain();
-        if ($scheme !== null) {
-            $domain->setScheme($scheme);
-        }
-        if ($port !== null) {
-            $domain->setPort($port);
-        }
-        $domain->setSite($site);
-        $domain->setHostname($hostname);
-
-        $domainValidator = $this->validatorResolver->getBaseValidatorConjunction(Domain::class);
-        $result = $domainValidator->validate($domain);
-        if ($result->hasErrors()) {
-            foreach ($result->getFlattenedErrors() as $propertyName => $errors) {
-                $firstError = array_pop($errors);
-                $this->outputLine('<error>Validation failed for "' . $propertyName . '": ' . $firstError . '</error>');
-                $this->quit(1);
-            }
-        }
-
-        $this->domainRepository->add($domain);
-
-        $httpScheme = null;
-        if ($scheme) {
-            $httpScheme = new HttpScheme($scheme);
-        }
-
-        $domainPort = null;
-        if ($domainPort) {
-            new DomainPort($port);
-        }
-
-        $this->domainCommandHandler->handleAddDomain(
-            new AddDomain(
-                new NodeName($siteNodeName),
-                new HostName($hostname),
-                $httpScheme,
-                $domainPort
-            )
-        );
-
-        $this->outputLine('Domain entry created.');
     }
 
     /**
@@ -172,6 +168,12 @@ class DomainCommandController extends CommandController
 
         $this->domainRepository->remove($domain);
         $this->outputLine('Domain entry deleted.');
+
+        $this->domainCommandHandler->handleDeleteDomain(
+            new DeleteDomain(
+                new HostName($hostname)
+            )
+        );
     }
 
     /**
@@ -214,6 +216,13 @@ class DomainCommandController extends CommandController
 
         $domain->setActive(false);
         $this->domainRepository->update($domain);
+
+        $this->domainCommandHandler->handleDeactivateDomain(
+            new \Neos\Neos\Domain\Context\Domain\Command\DeactivateDomain(
+                new HostName($hostname)
+            )
+        );
+
         $this->outputLine('Domain entry deactivated.');
     }
 }

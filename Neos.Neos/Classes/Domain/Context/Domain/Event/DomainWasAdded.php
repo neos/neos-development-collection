@@ -12,13 +12,13 @@ namespace Neos\Neos\Domain\Context\Domain\Event;
  */
 
 
-use Neos\ContentRepository\Domain\ValueObject\NodeName;
+use Neos\Neos\Domain\ValueObject\NodeName;
 use Neos\EventSourcing\Event\EventInterface;
 use Neos\Neos\Domain\ValueObject\DomainPort;
 use Neos\Neos\Domain\ValueObject\HostName;
-use Neos\Neos\Domain\ValueObject\HttpScheme;
+use Neos\Neos\Domain\ValueObject\UriScheme;
 
-class DomainHasBeenAdded implements EventInterface
+class DomainWasAdded implements EventInterface
 {
     /**
      * @var NodeName
@@ -28,10 +28,10 @@ class DomainHasBeenAdded implements EventInterface
     /**
      * @var HostName
      */
-    private $domainHostname;
+    private $domainHostName;
 
     /**
-     * @var HttpScheme
+     * @var UriScheme
      */
     private $scheme;
 
@@ -43,14 +43,14 @@ class DomainHasBeenAdded implements EventInterface
     /**
      * CreateDomain constructor.
      * @param NodeName $siteNodeName
-     * @param HostName $domainHostname
-     * @param HttpScheme $scheme
+     * @param HostName $domainHostName
+     * @param UriScheme $scheme
      * @param DomainPort $port
      */
-    public function __construct(NodeName $siteNodeName, HostName $domainHostname, HttpScheme $scheme = null, DomainPort $port = null)
+    public function __construct(NodeName $siteNodeName, HostName $domainHostName, UriScheme $scheme = null, DomainPort $port = null)
     {
         $this->siteNodeName = $siteNodeName;
-        $this->domainHostname = $domainHostname;
+        $this->domainHostName = $domainHostName;
         $this->scheme = $scheme;
         $this->port = $port;
     }
@@ -66,13 +66,13 @@ class DomainHasBeenAdded implements EventInterface
     /**
      * @return HostName
      */
-    public function getDomainHostname(): HostName
+    public function getDomainHostName(): HostName
     {
-        return $this->domainHostname;
+        return $this->domainHostName;
     }
 
     /**
-     * @return HttpScheme
+     * @return UriScheme
      */
     public function getScheme()
     {

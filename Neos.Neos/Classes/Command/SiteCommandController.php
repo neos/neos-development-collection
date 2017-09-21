@@ -16,6 +16,8 @@ use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Neos\Domain\Context\Site\Command\CreateSite;
+use Neos\Neos\Domain\Context\Site\SiteCommandHandler;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\OldNodeStructureSiteImportService;
 use Neos\Neos\Domain\Service\SiteExportService;
@@ -26,6 +28,11 @@ use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\Service\NodeService;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
+use Neos\Neos\Domain\ValueObject\NodeName;
+use Neos\Neos\Domain\ValueObject\NodeType;
+use Neos\Neos\Domain\ValueObject\PackageKey;
+use Neos\Neos\Domain\ValueObject\SiteActive;
+use Neos\Neos\Domain\ValueObject\SiteName;
 
 /**
  * The Site Command Controller
@@ -101,6 +108,12 @@ class SiteCommandController extends CommandController
     protected $persistenceManager;
 
     /**
+     * @Flow\Inject
+     * @var SiteCommandHandler
+     */
+    protected $siteCommandHandler;
+
+    /**
      * Create a new site
      *
      * This command allows to create a blank site with just a single empty document in the default dimension.
@@ -126,49 +139,62 @@ class SiteCommandController extends CommandController
         if ($nodeName === null) {
             $nodeName = $this->nodeService->generateUniqueNodeName(SiteService::SITES_ROOT_PATH, $name);
         }
+//
+//        if ($this->siteRepository->findOneByNodeName($nodeName)) {
+//            $this->outputLine('<error>A site with siteNodeName "%s" already exists</error>', [$nodeName]);
+//            $this->quit(1);
+//        }
+//
+//        if ($this->packageManager->isPackageAvailable($packageKey) === false) {
+//            $this->outputLine('<error>Could not find package "%s"</error>', [$packageKey]);
+//            $this->quit(1);
+//        }
+//
+//        $siteNodeType = $this->nodeTypeManager->getNodeType($nodeType);
+//
+//        if ($siteNodeType === null || $siteNodeType->getName() === 'Neos.Neos:FallbackNode') {
+//            $this->outputLine('<error>The given node type "%s" was not found</error>', [$nodeType]);
+//            $this->quit(1);
+//        }
+//        if ($siteNodeType->isOfType('Neos.Neos:Document') === false) {
+//            $this->outputLine('<error>The given node type "%s" is not based on the superType "%s"</error>', [$nodeType, 'Neos.Neos:Document']);
+//            $this->quit(1);
+//        }
+//
+//        $rootNode = $this->nodeContextFactory->create()->getRootNode();
+//        // We fetch the workspace to be sure it's known to the persistence manager and persist all
+//        // so the workspace and site node are persisted before we import any nodes to it.
+//        $rootNode->getContext()->getWorkspace();
+//        $this->persistenceManager->persistAll();
+//        $sitesNode = $rootNode->getNode(SiteService::SITES_ROOT_PATH);
+//        if ($sitesNode === null) {
+//            $sitesNode = $rootNode->createNode(NodePaths::getNodeNameFromPath(SiteService::SITES_ROOT_PATH));
+//        }
+//
+//        $siteNode = $sitesNode->createNode($nodeName, $siteNodeType);
+//        $siteNode->setProperty('title', $name);
+//
+//        $site = new Site($nodeName);
+//        $site->setSiteResourcesPackageKey($packageKey);
+//        $site->setState($inactive ? Site::STATE_OFFLINE : Site::STATE_ONLINE);
+//        $site->setName($name);
+//
+//        $this->siteRepository->add($site);
 
-        if ($this->siteRepository->findOneByNodeName($nodeName)) {
-            $this->outputLine('<error>A site with siteNodeName "%s" already exists</error>', [$nodeName]);
-            $this->quit(1);
+        try {
+            $this->siteCommandHandler->handleCreateSite(
+                new CreateSite(
+                    new SiteName($name),
+                    new PackageKey($packageKey),
+                    new NodeType($nodeType),
+                    new NodeName($nodeName),
+                    new SiteActive($inactive === false)
+                )
+            );
+            $this->outputLine('Successfully created site "%s" with siteNode "%s", type "%s", packageKey "%s" and state "%s"', [$name, $nodeName, $nodeType, $packageKey, $inactive ? 'offline' : 'online']);
+        } catch (\Exception $e) {
+            $this->outputLine('<error>' . $e->getMessage() . '</error>');
         }
-
-        if ($this->packageManager->isPackageAvailable($packageKey) === false) {
-            $this->outputLine('<error>Could not find package "%s"</error>', [$packageKey]);
-            $this->quit(1);
-        }
-
-        $siteNodeType = $this->nodeTypeManager->getNodeType($nodeType);
-
-        if ($siteNodeType === null || $siteNodeType->getName() === 'Neos.Neos:FallbackNode') {
-            $this->outputLine('<error>The given node type "%s" was not found</error>', [$nodeType]);
-            $this->quit(1);
-        }
-        if ($siteNodeType->isOfType('Neos.Neos:Document') === false) {
-            $this->outputLine('<error>The given node type "%s" is not based on the superType "%s"</error>', [$nodeType, 'Neos.Neos:Document']);
-            $this->quit(1);
-        }
-
-        $rootNode = $this->nodeContextFactory->create()->getRootNode();
-        // We fetch the workspace to be sure it's known to the persistence manager and persist all
-        // so the workspace and site node are persisted before we import any nodes to it.
-        $rootNode->getContext()->getWorkspace();
-        $this->persistenceManager->persistAll();
-        $sitesNode = $rootNode->getNode(SiteService::SITES_ROOT_PATH);
-        if ($sitesNode === null) {
-            $sitesNode = $rootNode->createNode(NodePaths::getNodeNameFromPath(SiteService::SITES_ROOT_PATH));
-        }
-
-        $siteNode = $sitesNode->createNode($nodeName, $siteNodeType);
-        $siteNode->setProperty('title', $name);
-
-        $site = new Site($nodeName);
-        $site->setSiteResourcesPackageKey($packageKey);
-        $site->setState($inactive ? Site::STATE_OFFLINE : Site::STATE_ONLINE);
-        $site->setName($name);
-
-        $this->siteRepository->add($site);
-
-        $this->outputLine('Successfully created site "%s" with siteNode "%s", type "%s", packageKey "%s" and state "%s"', [$name, $nodeName, $nodeType, $packageKey, $inactive ? 'offline' : 'online']);
     }
 
     /**
