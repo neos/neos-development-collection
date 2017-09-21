@@ -16,6 +16,7 @@ use Neos\ContentRepository\Domain\Context\Importing\Event\NodeWasImported;
 use Neos\ContentRepository\Domain\Context\Node\Event;
 use Neos\ContentRepository\Domain as ContentRepository;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
@@ -134,7 +135,7 @@ final public function whenNodeVariantWasCreated(Event\NodeVariantWasCreated $eve
 
     abstract protected function addNode(Node $node);
 
-    abstract protected function getNode(ContentRepository\ValueObject\NodeAggregateIdentifier $nodeIdentifier, ContentRepository\ValueObject\SubgraphIdentifier $subgraphIdentifier): Node;
+    abstract protected function getNode(ContentRepository\ValueObject\NodeAggregateIdentifier $nodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): Node;
 
     abstract protected function connectHierarchy(
         NodeIdentifier $parentNodeIdentifier,

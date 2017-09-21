@@ -150,9 +150,9 @@ class GraphProjector extends AbstractGraphProjector
     }*/
 
 
-    protected function getNode(ContentRepository\ValueObject\NodeAggregateIdentifier $nodeIdentifier, SubgraphIdentifier $subgraphIdentifier): Node
+    protected function getNode(ContentRepository\ValueObject\NodeAggregateIdentifier $nodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): Node
     {
-        return $this->contentGraph->getNode((string) $nodeIdentifier, $subgraphIdentifier->getHash());
+        return $this->contentGraph->getNode($nodeIdentifier, $contentStreamIdentifier, $dimensionSpacePoint);
     }
 
     protected function addNode(Node $node)
@@ -219,6 +219,7 @@ class GraphProjector extends AbstractGraphProjector
         return $position;
     }
 
+    // TODO needs to be fixed
     protected function reconnectHierarchy(
         string $fallbackNodesIdentifierInGraph,
         string $newVariantNodesIdentifierInGraph,
