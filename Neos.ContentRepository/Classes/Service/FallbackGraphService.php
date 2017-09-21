@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Service;
 
 /*
@@ -70,24 +71,7 @@ class FallbackGraphService
         foreach ($subgraph->getVariants() as $variantSubgraph) {
             $connectedVariantIdentifiers[] = $variantSubgraph->getIdentityHash();
         }
+
         return $connectedVariantIdentifiers;
-    }
-
-    /**
-     * @return Dimension\Repository\IntraDimensionalFallbackGraph
-     * @api
-     */
-    public function getIntraDimensionalFallbackGraph(): Dimension\Repository\IntraDimensionalFallbackGraph
-    {
-        return $this->intraDimensionalFallbackGraph;
-    }
-
-    /**
-     * @return DimensionSpace\Repository\InterDimensionalFallbackGraph
-     * @api
-     */
-    public function getInterDimensionalFallbackGraph(): DimensionSpace\Repository\InterDimensionalFallbackGraph
-    {
-        return $this->interDimensionalFallbackGraph;
     }
 }

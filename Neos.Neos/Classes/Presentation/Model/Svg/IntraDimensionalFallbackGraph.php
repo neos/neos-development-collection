@@ -11,7 +11,7 @@ namespace Neos\Neos\Presentation\Model\Svg;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\IntraDimension;
+use Neos\ContentRepository\Domain\Context\Dimension;
 
 /**
  * The IntraDimensionalFallbackGraph presentation model for SVG
@@ -19,7 +19,7 @@ use Neos\ContentRepository\Domain\Model\IntraDimension;
 class IntraDimensionalFallbackGraph
 {
     /**
-     * @var IntraDimension\IntraDimensionalFallbackGraph
+     * @var Dimension\Repository\IntraDimensionalFallbackGraph
      */
     protected $fallbackGraph;
 
@@ -39,9 +39,9 @@ class IntraDimensionalFallbackGraph
     protected $height;
 
     /**
-     * @param IntraDimension\IntraDimensionalFallbackGraph $fallbackGraph
+     * @param Dimension\Repository\IntraDimensionalFallbackGraph $fallbackGraph
      */
-    public function __construct(IntraDimension\IntraDimensionalFallbackGraph $fallbackGraph)
+    public function __construct(Dimension\Repository\IntraDimensionalFallbackGraph $fallbackGraph)
     {
         $this->fallbackGraph = $fallbackGraph;
     }
@@ -109,14 +109,14 @@ class IntraDimensionalFallbackGraph
 
     /**
      * @param string $dimensionName
-     * @param IntraDimension\ContentDimensionValue $value
+     * @param Dimension\Model\ContentDimensionValue $value
      * @param int $counter
      * @param int $depth
      * @param int $horizontalOffset
      * @param int $parent
      * @return void
      */
-    protected function traverseDimension(string $dimensionName, IntraDimension\ContentDimensionValue $value, int & $counter, int $depth, int & $horizontalOffset, int $parent)
+    protected function traverseDimension(string $dimensionName, Dimension\Model\ContentDimensionValue $value, int & $counter, int $depth, int & $horizontalOffset, int $parent)
     {
         $counter++;
         $nodeId = $counter;

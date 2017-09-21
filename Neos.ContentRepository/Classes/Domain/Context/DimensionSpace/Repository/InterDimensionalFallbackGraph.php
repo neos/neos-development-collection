@@ -23,7 +23,6 @@ use Neos\Flow\Annotations as Flow;
  */
 class InterDimensionalFallbackGraph
 {
-
     /**
      * @Flow\Inject
      * @var Dimension\Repository\IntraDimensionalFallbackGraph
@@ -32,9 +31,9 @@ class InterDimensionalFallbackGraph
 
     /**
      * @Flow\Inject
-     * @var Domain\Service\ContentDimensionPresetSourceInterface
+     * @var AllowedDimensionSubspace
      */
-    protected $contentDimensionPresetSource;
+    protected $allowedDimensionSubspace;
 
     /**
      * @var array
@@ -50,23 +49,27 @@ class InterDimensionalFallbackGraph
             $nextLevelValueCombinations = [];
             foreach ($dimensionValueCombinations as $previousCombination) {
                 foreach ($contentDimension->getValues() as $value) {
-                    $newCombination = $previousCombination;
-                    $newCombination[$contentDimension->getName()] = $value;
-                    if (!$this->contentDimensionPresetSource->isPresetCombinationAllowedByConstraints(
-                        $this->translateDimensionValueCombinationToPresetCombination($newCombination)
-                    )) {
-                        continue;
-                    }
+                    $combination = $previousCombination;
+                    $combination[$contentDimension->getName()] = $value;
 
-                    $nextLevelValueCombinations[] = $newCombination;
+                    $nextLevelValueCombinations[] = $combination;
                 }
             }
-
             $dimensionValueCombinations = $nextLevelValueCombinations;
         }
 
         $edgeCount = 0;
         foreach ($dimensionValueCombinations as $dimensionValues) {
+            /** @var Dimension\Model\ContentDimensionValue[] $dimensionValues */
+            $coordinates = [];
+            foreach ($dimensionValues as $dimensionName => $dimensionValue) {
+                $coordinates[$dimensionName] = $dimensionValue->getValue();
+            }
+            $dimensionSpacePoint = new Domain\ValueObject\DimensionSpacePoint($coordinates);
+            if (!$this->allowedDimensionSubspace->contains($dimensionSpacePoint)) {
+                continue;
+            }
+
             $newContentSubgraph = $this->createContentSubgraph($dimensionValues);
             foreach ($this->getSubgraphs() as $presentContentSubgraph) {
                 if ($presentContentSubgraph === $newContentSubgraph
@@ -83,20 +86,6 @@ class InterDimensionalFallbackGraph
                 }
             }
         }
-    }
-
-    /**
-     * @param array|Dimension\Model\ContentDimensionValue[] $dimensionValueCombination
-     * @return array
-     */
-    protected function translateDimensionValueCombinationToPresetCombination(array $dimensionValueCombination)
-    {
-        $presetCombination = [];
-        foreach ($dimensionValueCombination as $dimensionName => $dimensionValue) {
-            $presetCombination[$dimensionName] = $dimensionValue->getValue();
-        }
-
-        return $presetCombination;
     }
 
     /**
