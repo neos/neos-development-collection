@@ -68,39 +68,39 @@ class DomainCommandController extends CommandController
      */
     public function addCommand(string $siteNodeName, string $hostname, ?string $uriScheme = null, ?string $domainPort = null)
     {
-//        $site = $this->siteRepository->findOneByNodeName($siteNodeName);
-//        if (!$site instanceof Site) {
-//            $this->outputLine('<error>No site found with nodeName "%s".</error>', [$siteNodeName]);
-//            $this->quit(1);
-//        }
-//
-//        $domains = $this->domainRepository->findByHostname($hostname);
-//        if ($domains->count() > 0) {
-//            $this->outputLine('<error>The host name "%s" is not unique.</error>', [$hostname]);
-//            $this->quit(1);
-//        }
-//
-//        $domain = new Domain();
-//        if ($scheme !== null) {
-//            $domain->setScheme($scheme);
-//        }
-//        if ($port !== null) {
-//            $domain->setPort($port);
-//        }
-//        $domain->setSite($site);
-//        $domain->setHostname($hostname);
-//
-//        $domainValidator = $this->validatorResolver->getBaseValidatorConjunction(Domain::class);
-//        $result = $domainValidator->validate($domain);
-//        if ($result->hasErrors()) {
-//            foreach ($result->getFlattenedErrors() as $propertyName => $errors) {
-//                $firstError = array_pop($errors);
-//                $this->outputLine('<error>Validation failed for "' . $propertyName . '": ' . $firstError . '</error>');
-//                $this->quit(1);
-//            }
-//        }
-//
-//        $this->domainRepository->add($domain);
+        $site = $this->siteRepository->findOneByNodeName($siteNodeName);
+        if (!$site instanceof Site) {
+            $this->outputLine('<error>No site found with nodeName "%s".</error>', [$siteNodeName]);
+            $this->quit(1);
+        }
+
+        $domains = $this->domainRepository->findByHostname($hostname);
+        if ($domains->count() > 0) {
+            $this->outputLine('<error>The host name "%s" is not unique.</error>', [$hostname]);
+            $this->quit(1);
+        }
+
+        $domain = new Domain();
+        if ($uriScheme !== null) {
+            $domain->setScheme($uriScheme);
+        }
+        if ($domainPort !== null) {
+            $domain->setPort($domainPort);
+        }
+        $domain->setSite($site);
+        $domain->setHostname($hostname);
+
+        $domainValidator = $this->validatorResolver->getBaseValidatorConjunction(Domain::class);
+        $result = $domainValidator->validate($domain);
+        if ($result->hasErrors()) {
+            foreach ($result->getFlattenedErrors() as $propertyName => $errors) {
+                $firstError = array_pop($errors);
+                $this->outputLine('<error>Validation failed for "' . $propertyName . '": ' . $firstError . '</error>');
+                $this->quit(1);
+            }
+        }
+
+        $this->domainRepository->add($domain);
 
         try {
             $this->domainCommandHandler->handleAddDomain(
