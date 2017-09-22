@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Domain\Projection\Workspace;
 
 /*
@@ -21,9 +22,9 @@ final class WorkspaceFinder extends AbstractDoctrineFinder
 {
     /**
      * @param WorkspaceName $name
-     * @return mixed
+     * @return Workspace|null
      */
-    public function findOneByName(WorkspaceName $name)
+    public function findOneByName(WorkspaceName $name): ?Workspace
     {
         return $this->__call('findOneByWorkspaceName', [(string)$name]);
     }

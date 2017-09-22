@@ -98,7 +98,7 @@ final class Workspace
     }
 
     /**
-     * @return string
+     * @return ContentStreamIdentifier
      */
     public function getCurrentContentStreamIdentifier() : ContentStreamIdentifier
     {
