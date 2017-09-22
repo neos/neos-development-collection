@@ -51,6 +51,4 @@ final class ContentStreamWasForked implements EventInterface
     {
         return $this->sourceContentStreamIdentifier;
     }
-
-
 }
