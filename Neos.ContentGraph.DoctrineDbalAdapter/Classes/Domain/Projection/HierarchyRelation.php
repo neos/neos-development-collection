@@ -12,59 +12,69 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
  * source code.
  */
 
+use Doctrine\DBAL\Connection;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Simple data model for writing hierarchy relations to the database
+ * The active record for reading and writing hierarchy relations from and to the database
  */
 class HierarchyRelation
 {
     /**
-     * @var string
+     * @var NodeRelationAnchorPoint
      */
-    protected $parentNodeAnchor;
+    public $parentNodeAnchor;
 
     /**
-     * @var string
+     * @var NodeRelationAnchorPoint
      */
-    protected $childNodeAnchor;
+    public $childNodeAnchor;
 
     /**
-     * @var string
+     * @var NodeName
      */
-    protected $name;
+    public $name;
 
     /**
-     * @var string
+     * @var ContentStreamIdentifier
      */
-    protected $contentStreamIdentifier;
+    public $contentStreamIdentifier;
 
     /**
      * @var array
      */
-    protected $dimensionSpacePoint;
+    public $dimensionSpacePoint;
 
     /**
      * @var string
      */
-    protected $dimensionSpacePointHash;
+    public $dimensionSpacePointHash;
 
     /**
      * @var int
      */
-    protected $position;
+    public $position;
 
     /**
-     * @param string $parentNodeAnchor
-     * @param string $childNodeAnchor
-     * @param string $name
-     * @param string $contentStreamIdentifier
+     * @param NodeRelationAnchorPoint $parentNodeAnchor
+     * @param NodeRelationAnchorPoint $childNodeAnchor
+     * @param NodeName $name
+     * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param array $dimensionSpacePoint
      * @param string $dimensionSpacePointHash
      * @param int $position
      */
-    public function __construct(string $parentNodeAnchor, string $childNodeAnchor, string $name, string $contentStreamIdentifier, array $dimensionSpacePoint, string $dimensionSpacePointHash, int $position)
-    {
+    public function __construct(
+        NodeRelationAnchorPoint $parentNodeAnchor,
+        NodeRelationAnchorPoint $childNodeAnchor,
+        ?NodeName $name,
+        ContentStreamIdentifier $contentStreamIdentifier,
+        array $dimensionSpacePoint,
+        string $dimensionSpacePointHash,
+        int $position
+    ) {
         $this->parentNodeAnchor = $parentNodeAnchor;
         $this->childNodeAnchor = $childNodeAnchor;
         $this->name = $name;
@@ -75,62 +85,24 @@ class HierarchyRelation
     }
 
     /**
-     * @return string
+     * @param Connection $databaseConnection
      */
-    public function getParentNodeAnchor(): string
+    public function addToDatabase(Connection $databaseConnection): void
     {
-        return $this->parentNodeAnchor;
-    }
-
-    /**
-     * @return string
-     */
-    public function getChildNodeAnchor(): string
-    {
-        return $this->childNodeAnchor;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getContentStreamIdentifier(): string
-    {
-        return $this->contentStreamIdentifier;
+        $databaseConnection->insert('neos_contentgraph_hierarchyrelation', [
+            'parentnodeanchor' => $this->parentNodeAnchor,
+            'childnodeanchor' => $this->childNodeAnchor,
+            'name' => $this->name,
+            'contentstreamidentifier' => $this->contentStreamIdentifier,
+            'dimensionspacepoint' => json_encode($this->dimensionSpacePoint),
+            'dimensionspacepointhash' => $this->dimensionSpacePointHash,
+            'position' => $this->position
+        ]);
     }
 
     /**
      * @return array
      */
-    public function getDimensionSpacePoint(): array
-    {
-        return $this->dimensionSpacePoint;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDimensionSpacePointHash(): string
-    {
-        return $this->dimensionSpacePointHash;
-    }
-
-    /**
-     * @return int
-     */
-    public function getPosition(): int
-    {
-        return $this->position;
-    }
-
-
     public function getDatabaseIdentifier(): array
     {
         return [

@@ -20,7 +20,6 @@ use Neos\ContentRepository\Domain as ContentRepository;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcing\Projection\ProjectorInterface;
@@ -82,6 +81,9 @@ class GraphProjector implements ProjectorInterface
         });
     }
 
+    /**
+     * @param Event\NodeAggregateWithNodeWasCreated $event
+     */
     final public function whenNodeAggregateWithNodeWasCreated(Event\NodeAggregateWithNodeWasCreated $event)
     {
         $childNodeRelationAnchorPoint = new NodeRelationAnchorPoint();
@@ -134,9 +136,9 @@ class GraphProjector implements ProjectorInterface
     }
 
     /**
-     * @param NodeIdentifier $parentNodeIdentifier
-     * @param NodeIdentifier $childNodeIdentifier
-     * @param NodeIdentifier|null $precedingSiblingNodeIdentifier
+     * @param NodeRelationAnchorPoint $parentNodeAnchorPoint
+     * @param NodeRelationAnchorPoint $childNodeAnchorPoint
+     * @param NodeRelationAnchorPoint|null $precedingSiblingNodeAnchorPoint
      * @param NodeName|null $relationName
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePointSet $dimensionSpacePointSet
@@ -158,17 +160,16 @@ class GraphProjector implements ProjectorInterface
             );
 
             $hierarchyRelation = new HierarchyRelation(
-                (string)$parentNodeAnchorPoint,
-                (string)$childNodeAnchorPoint,
-                (string)$relationName,
-                (string)$contentStreamIdentifier,
+                $parentNodeAnchorPoint,
+                $childNodeAnchorPoint,
+                $relationName,
+                $contentStreamIdentifier,
                 $dimensionSpacePoint->jsonSerialize(),
                 $dimensionSpacePoint->getHash(),
                 $position
             );
 
-            // TODO: rewrite to $hierarchyRelation->saveToDatabase($db)
-            $this->addHierarchyRelation($hierarchyRelation);
+            $hierarchyRelation->addToDatabase($this->getDatabaseConnection());
         }
     }
 
@@ -212,7 +213,7 @@ class GraphProjector implements ProjectorInterface
         foreach ($this->projectionContentGraph->getOutboundHierarchyRelationsForNodeAndSubgraph($parentAnchorPoint, $contentStreamIdentifier, $dimensionSpacePoint) as $relation) {
             $this->assignNewPositionToHierarchyRelation($relation, $offset);
             $offset += 128;
-            if ($precedingSiblingAnchorPoint && $relation->getChildNodeAnchor() === (string)$precedingSiblingAnchorPoint) {
+            if ($precedingSiblingAnchorPoint && $relation->childNodeAnchor === (string)$precedingSiblingAnchorPoint) {
                 $position = $offset;
                 $offset += 128;
             }
@@ -248,22 +249,6 @@ class GraphProjector implements ProjectorInterface
         foreach ($outboundRelations as $outboundRelation) {
             $this->assignNewParentNodeToHierarchyRelation($outboundRelation, $newVariantNodesIdentifierInGraph);
         }*/
-    }
-
-    /**
-     * @param HierarchyRelation $relation
-     */
-    protected function addHierarchyRelation(HierarchyRelation $relation): void
-    {
-        $this->getDatabaseConnection()->insert('neos_contentgraph_hierarchyrelation', [
-            'parentnodeanchor' => $relation->getParentNodeAnchor(),
-            'childnodeanchor' => $relation->getChildNodeAnchor(),
-            'name' => $relation->getName(),
-            'contentstreamidentifier' => $relation->getContentStreamIdentifier(),
-            'dimensionspacepoint' => json_encode($relation->getDimensionSpacePoint()),
-            'dimensionspacepointhash' => $relation->getDimensionSpacePointHash(),
-            'position' => $relation->getPosition()
-        ]);
     }
 
     /**
