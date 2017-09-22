@@ -65,13 +65,19 @@ final class NodeFactory
 
             $legacyDimensionValues = $dimensionSpacePoint->toLegacyDimensionArray();
             $query = $this->nodeDataRepository->createQuery();
+            $dimensionsHash = Utility::sortDimensionValueArrayAndReturnDimensionsHash($legacyDimensionValues);
             $nodeData = $query->matching(
                 $query->logicalAnd([
-                    $query->equals('workspace', (string) $contentStreamIdentifier),
+                    // FIXME Get workspace name by content stream identifier
+                    // $query->equals('workspace', (string) $contentStreamIdentifier),
                     $query->equals('identifier', $nodeRow['nodeaggregateidentifier']),
-                    $query->equals('dimensionsHash', Utility::sortDimensionValueArrayAndReturnDimensionsHash($legacyDimensionValues))
+                    $query->equals('dimensionsHash', $dimensionsHash)
                 ])
             )->execute()->getFirst();
+
+            if ($nodeData === null) {
+                throw new \Exception(sprintf('No node data found for node aggregate identifier %s and dimensions hash %s', $nodeRow['nodeaggregateidentifier'], $dimensionsHash),1506086667392);
+            }
 
             $node = new $className($nodeData, $context);
             $node->nodeType = $nodeType;

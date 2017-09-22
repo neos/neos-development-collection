@@ -99,6 +99,11 @@ class GraphProjector implements ProjectorInterface
             $event->getNodeTypeName()
         );
         $parentNode = $this->projectionContentGraph->getNode($event->getParentNodeIdentifier(), $event->getContentStreamIdentifier(), $event->getDimensionSpacePoint());
+        if ($parentNode === null) {
+            // TODO Log error
+            return;
+        }
+
         #$precedingSiblingNode = $this->getNode(null, $event->getContentStreamIdentifier(), $event->getDimensionSpacePoint());
         $precedingSiblingNode = null;
 
@@ -327,6 +332,10 @@ class GraphProjector implements ProjectorInterface
 
             // TODO: does this always return a SINGLE anchor point??
             $anchorPointForNode = $this->projectionContentGraph->getAnchorPointForNodeAndContentStream($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
+            if ($anchorPointForNode === null) {
+                // TODO Log error
+                throw new \Exception(sprintf('anchro point for node identifier %s and stream %s not found', $event->getNodeIdentifier(), $event->getContentStreamIdentifier()), 1506085300325);
+            }
 
             $contentStreamIdentifiers = $this->projectionContentGraph->getAllContentStreamIdentifiersAnchorPointIsContainedIn($anchorPointForNode);
             if (count($contentStreamIdentifiers) > 1) {
