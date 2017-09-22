@@ -31,7 +31,14 @@ final class DimensionSpacePoint implements \JsonSerializable
      */
     public function __construct(array $coordinates)
     {
-        // TODO Check that coordinates are non-empty strings
+        foreach ($coordinates as $dimensionName => $dimensionValue) {
+            if (!is_string($dimensionValue)) {
+                throw new \InvalidArgumentException(sprintf('Dimension value for %s is not a string', $dimensionName), 1506076562);
+            }
+            if ($dimensionValue === '') {
+                throw new \InvalidArgumentException('Dimension value must not be empty', 1506076563);
+            }
+        }
 
         $this->coordinates = $coordinates;
     }

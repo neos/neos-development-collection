@@ -14,16 +14,16 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
-use Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Dto\HierarchyEdge;
 use Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Service\DbalClient;
-use Neos\ContentGraph\Domain\Projection\AbstractGraphProjector;
-use Neos\ContentGraph\Domain\Projection\Node;
+use Neos\ContentRepository\Domain\Context\Node\Event;
 use Neos\ContentRepository\Domain as ContentRepository;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -31,13 +31,13 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class GraphProjector extends AbstractGraphProjector
+class GraphProjector implements ProjectorInterface
 {
     /**
      * @Flow\Inject
      * @var ProjectionContentGraph
      */
-    protected $contentGraph;
+    protected $projectionContentGraph;
 
     /**
      * @Flow\Inject
@@ -45,7 +45,7 @@ class GraphProjector extends AbstractGraphProjector
      */
     protected $client;
 
-    public function reset()
+    public function reset(): void
     {
         $this->getDatabaseConnection()->transactional(function () {
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_node');
@@ -53,163 +53,166 @@ class GraphProjector extends AbstractGraphProjector
         });
     }
 
+    /**
+     * @return bool
+     */
     public function isEmpty(): bool
     {
-        return $this->contentGraph->isEmpty();
+        return $this->projectionContentGraph->isEmpty();
     }
 
+    /**
+     * @param Event\RootNodeWasCreated $event
+     */
+    final public function whenRootNodeWasCreated(Event\RootNodeWasCreated $event)
+    {
+        $nodeRelationAnchorPoint = new NodeRelationAnchorPoint();
+        $node = new Node(
+            $nodeRelationAnchorPoint,
+            $event->getNodeIdentifier(),
+            null,
+            null,
+            null,
+            [],
+            new NodeTypeName('Neos.ContentRepository:Root')
+        );
+
+        $this->transactional(function () use ($node) {
+            $node->addToDatabase($this->getDatabaseConnection());
+        });
+    }
+
+    final public function whenNodeAggregateWithNodeWasCreated(Event\NodeAggregateWithNodeWasCreated $event)
+    {
+        $childNodeRelationAnchorPoint = new NodeRelationAnchorPoint();
+
+        $childNode = new Node(
+            $childNodeRelationAnchorPoint,
+            $event->getNodeIdentifier(),
+            $event->getNodeAggregateIdentifier(),
+            $event->getDimensionSpacePoint()->jsonSerialize(),
+            $event->getDimensionSpacePoint()->getHash(),
+            $event->getPropertyDefaultValuesAndTypes(),
+            $event->getNodeTypeName()
+        );
+        $parentNode = $this->projectionContentGraph->getNode($event->getParentNodeIdentifier(), $event->getContentStreamIdentifier(), $event->getDimensionSpacePoint());
+        #$precedingSiblingNode = $this->getNode(null, $event->getContentStreamIdentifier(), $event->getDimensionSpacePoint());
+        $precedingSiblingNode = null;
+
+        $this->transactional(function () use ($childNode, $parentNode, $precedingSiblingNode, $event) {
+            // generate relation anchor point in $node
+            // fetch relation anchor point from parent
+            // connect hierarchy (relation anchor point A, rel A Point B)
+            $childNode->addToDatabase($this->getDatabaseConnection());
+            $this->connectHierarchy(
+                $parentNode->relationAnchorPoint,
+                $childNode->relationAnchorPoint,
+                // TODO: position on insert is still missing
+                null,
+                $event->getNodeName(),
+                $event->getContentStreamIdentifier(),
+                $event->getVisibleDimensionSpacePoints()
+            );
+        });
+    }
+
+    /**
+     * @param string $startNodesIdentifierInGraph
+     * @param string $endNodesIdentifierInGraph
+     * @param string $relationshipName
+     * @param array $properties
+     * @param array $subgraphIdentifiers
+     */
     protected function connectRelation(
         string $startNodesIdentifierInGraph,
         string $endNodesIdentifierInGraph,
         string $relationshipName,
         array $properties,
         array $subgraphIdentifiers
-    ) {
+    ): void {
         // TODO: Implement connectRelation() method.
     }
 
-
-    /*
-    public function whenPropertiesWereUpdated(Event\PropertiesWereUpdated $event)
-    {
-        $node = $this->nodeFinder->findOneByIdentifierInGraph($event->getVariantIdentifier());
-        $node->properties = Arrays::arrayMergeRecursiveOverrule($node->properties, $event->getProperties());
-        $this->update($node);
-
-        $this->projectionPersistenceManager->persistAll();
-    }*/
-
-    /*
-    public function whenNodeWasMoved(Event\NodeWasMoved $event)
-    {
-        $subgraphIdentifier = $this->extractSubgraphIdentifierFromEvent($event);
-        $affectedSubgraphIdentifiers = $event->getStrategy() === Event\NodeWasMoved::STRATEGY_CASCADE_TO_ALL_VARIANTS
-            ? $this->fallbackGraphService->determineAffectedVariantSubgraphIdentifiers($subgraphIdentifier)
-            : $this->fallbackGraphService->determineConnectedSubgraphIdentifiers($subgraphIdentifier);
-
-        foreach ($this->hierarchyEdgeFinder->findInboundByNodeAndSubgraphs($event->getVariantIdentifier(),
-            $affectedSubgraphIdentifiers) as $variantEdge) {
-            if ($event->getNewParentVariantIdentifier()) {
-                $variantEdge->parentNodesIdentifierInGraph = $event->getNewParentVariantIdentifier();
-            }
-            // @todo: handle new older sibling
-
-            $this->update($variantEdge);
-        }
-
-        $this->projectionPersistenceManager->persistAll();
-    }*/
-
-    /*
-    public function whenNodeWasRemoved(Event\NodeWasRemoved $event)
-    {
-        $node = $this->nodeFinder->findOneByIdentifierInGraph($event->getVariantIdentifier());
-        $subgraphIdentifier = $this->extractSubgraphIdentifierFromEvent($event);
-
-        if ($node->subgraphIdentifier === $subgraphIdentifier) {
-            foreach ($this->hierarchyEdgeFinder->findByChildNodeIdentifierInGraph($event->getVariantIdentifier()) as $inboundEdge) {
-                $this->remove($inboundEdge);
-            }
-            $this->remove($node);
-        } else {
-            $affectedSubgraphIdentifiers = $this->fallbackGraphService->determineAffectedVariantSubgraphIdentifiers($subgraphIdentifier);
-            foreach ($this->hierarchyEdgeFinder->findInboundByNodeAndSubgraphs($event->getVariantIdentifier(),
-                $affectedSubgraphIdentifiers) as $affectedInboundEdge) {
-                $this->remove($affectedInboundEdge);
-            }
-        }
-
-        // @todo handle reference edges
-
-        $this->projectionPersistenceManager->persistAll();
-    }*/
-
-    /*
-    public function whenNodeReferenceWasAdded(Event\NodeReferenceWasAdded $event)
-    {
-        $referencingNode = $this->nodeFinder->findOneByIdentifierInGraph($event->getReferencingNodeIdentifier());
-        $referencedNode = $this->nodeFinder->findOneByIdentifierInGraph($event->getReferencedNodeIdentifier());
-
-        $affectedSubgraphIdentifiers = [];
-        // Which variant reference edges are created alongside is determined by what subgraph this node belongs to
-        // @todo define a more fitting method in a service for this
-        $inboundHierarchyEdges = $this->hierarchyEdgeFinder->findByChildNodeIdentifierInGraph($event->getReferencingNodeIdentifier());
-
-        foreach ($inboundHierarchyEdges as $hierarchyEdge) {
-            $referencedNodeVariant = $this->nodeFinder->findInSubgraphByIdentifierInSubgraph($referencingNode->identifierInSubgraph,
-                $hierarchyEdge->subgraphIdentifier);
-            if ($referencedNodeVariant) {
-                $referenceEdge = new ReferenceEdge();
-                $referenceEdge->connect($referencingNode, $referencedNode, $hierarchyEdge->name,
-                    $event->getReferenceName());
-                // @todo fetch position among siblings
-                // @todo implement auto-triggering of position recalculation
-            }
-        }
-    }*/
-
-
-    protected function getNode(ContentRepository\ValueObject\NodeAggregateIdentifier $nodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): Node
-    {
-        return $this->contentGraph->getNode($nodeIdentifier, $contentStreamIdentifier, $dimensionSpacePoint);
-    }
-
-    protected function addNode(Node $node)
-    {
-        $this->getDatabaseConnection()->insert('neos_contentgraph_node', [
-            'nodeaggregateidentifier' => $node->nodeAggregateIdentifier,
-            'nodeidentifier' => $node->nodeIdentifier,
-            'contentstreamidentifier' => $node->contentStreamIdentifier,
-            'dimensionspacepoint' => json_encode($node->dimensionSpacePoint),
-            'dimensionspacepointhash' => $node->dimensionSpacePointHash,
-            'properties' => json_encode($node->properties),
-            'nodetypename' => $node->nodeTypeName
-        ]);
-    }
-
+    /**
+     * @param NodeIdentifier $parentNodeIdentifier
+     * @param NodeIdentifier $childNodeIdentifier
+     * @param NodeIdentifier|null $precedingSiblingNodeIdentifier
+     * @param NodeName|null $relationName
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param DimensionSpacePointSet $dimensionSpacePointSet
+     */
     protected function connectHierarchy(
-        NodeIdentifier $parentNodeIdentifier,
-        NodeIdentifier $childNodeIdentifier,
-        NodeIdentifier $preceedingSiblingNodeIdentifier = null,
-        NodeName $edgeName = null,
+        NodeRelationAnchorPoint $parentNodeAnchorPoint,
+        NodeRelationAnchorPoint $childNodeAnchorPoint,
+        ?NodeRelationAnchorPoint $precedingSiblingNodeAnchorPoint,
+        NodeName $relationName = null,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePointSet $dimensionSpacePointSet
-    ) {
+    ): void {
         foreach ($dimensionSpacePointSet->getPoints() as $dimensionSpacePoint) {
-            $position = $this->getEdgePosition($parentNodeIdentifier, $preceedingSiblingNodeIdentifier, $contentStreamIdentifier, $dimensionSpacePoint);
-            $hierarchyEdge = new HierarchyEdge(
-                (string)$parentNodeIdentifier,
-                (string)$childNodeIdentifier,
-                (string)$edgeName,
+            $position = $this->getRelationPosition(
+                $parentNodeAnchorPoint,
+                $precedingSiblingNodeAnchorPoint,
+                $contentStreamIdentifier,
+                $dimensionSpacePoint
+            );
+
+            $hierarchyRelation = new HierarchyRelation(
+                (string)$parentNodeAnchorPoint,
+                (string)$childNodeAnchorPoint,
+                (string)$relationName,
                 (string)$contentStreamIdentifier,
                 $dimensionSpacePoint->jsonSerialize(),
                 $dimensionSpacePoint->getHash(),
                 $position
             );
 
-            $this->addHierarchyEdge($hierarchyEdge);
+            // TODO: rewrite to $hierarchyRelation->saveToDatabase($db)
+            $this->addHierarchyRelation($hierarchyRelation);
         }
     }
 
-    protected function getEdgePosition(NodeIdentifier $parentIdentifier, NodeIdentifier $precedingSiblingIdentifier = null, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): int
-    {
-        $position = $this->contentGraph->getEdgePosition($parentIdentifier, $precedingSiblingIdentifier, $contentStreamIdentifier, $dimensionSpacePoint);
+    /**
+     * @param NodeRelationAnchorPoint $parentAnchorPoint
+     * @param NodeRelationAnchorPoint|null $precedingSiblingAnchorPoint
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @return int
+     */
+    protected function getRelationPosition(
+        NodeRelationAnchorPoint $parentAnchorPoint,
+        ?NodeRelationAnchorPoint $precedingSiblingAnchorPoint,
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint
+    ): int {
+        $position = $this->projectionContentGraph->getHierarchyRelationPosition($parentAnchorPoint, $precedingSiblingAnchorPoint, $contentStreamIdentifier, $dimensionSpacePoint);
 
         if ($position % 2 !== 0) {
-            $position = $this->getEdgePositionAfterRecalculation($parentIdentifier, $precedingSiblingIdentifier, $contentStreamIdentifier, $dimensionSpacePoint);
+            $position = $this->getRelationPositionAfterRecalculation($parentAnchorPoint, $precedingSiblingAnchorPoint, $contentStreamIdentifier, $dimensionSpacePoint);
         }
 
         return $position;
     }
 
-    protected function getEdgePositionAfterRecalculation(NodeIdentifier $parentIdentifier, NodeIdentifier $precedingSiblingIdentifier, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): int
-    {
+    /**
+     * @param NodeRelationAnchorPoint $parentAnchorPoint
+     * @param NodeRelationAnchorPoint|null $precedingSiblingAnchorPoint
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @return int
+     */
+    protected function getRelationPositionAfterRecalculation(
+        NodeRelationAnchorPoint $parentAnchorPoint,
+        ?NodeRelationAnchorPoint $precedingSiblingAnchorPoint,
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint
+    ): int {
         $offset = 0;
         $position = 0;
-        foreach ($this->contentGraph->getOutboundHierarchyEdgesForNodeAndSubgraph($parentIdentifier, $contentStreamIdentifier, $dimensionSpacePoint) as $edge) {
-            $this->assignNewPositionToHierarchyEdge($edge, $offset);
+        foreach ($this->projectionContentGraph->getOutboundHierarchyRelationsForNodeAndSubgraph($parentAnchorPoint, $contentStreamIdentifier, $dimensionSpacePoint) as $relation) {
+            $this->assignNewPositionToHierarchyRelation($relation, $offset);
             $offset += 128;
-            if ($edge->getChildNodeIdentifier() === (string)$precedingSiblingIdentifier) {
+            if ($precedingSiblingAnchorPoint && $relation->getChildNodeAnchor() === (string)$precedingSiblingAnchorPoint) {
                 $position = $offset;
                 $offset += 128;
             }
@@ -218,81 +221,129 @@ class GraphProjector extends AbstractGraphProjector
         return $position;
     }
 
-    // TODO needs to be fixed
+    /**
+     * @param string $fallbackNodesIdentifierInGraph
+     * @param string $newVariantNodesIdentifierInGraph
+     * @param array $subgraphIdentifiers
+     */
     protected function reconnectHierarchy(
         string $fallbackNodesIdentifierInGraph,
         string $newVariantNodesIdentifierInGraph,
         array $subgraphIdentifiers
-    ) {
-        $inboundEdges = $this->contentGraph->findInboundHierarchyEdgesForNodeAndSubgraphs(
+    ): void {
+        /*
+        // TODO needs to be fixed
+        $inboundRelations = $this->projectionContentGraph->findInboundHierarchyRelationsForNodeAndSubgraphs(
             $fallbackNodesIdentifierInGraph,
             $subgraphIdentifiers
         );
-        $outboundEdges = $this->contentGraph->findOutboundHierarchyEdgesForNodeAndSubgraphs(
+        $outboundRelations = $this->projectionContentGraph->findOutboundHierarchyRelationsForNodeAndSubgraphs(
             $fallbackNodesIdentifierInGraph,
             $subgraphIdentifiers
         );
 
-        foreach ($inboundEdges as $inboundEdge) {
-            $this->assignNewChildNodeToHierarchyEdge($inboundEdge, $newVariantNodesIdentifierInGraph);
+        foreach ($inboundRelations as $inboundRelation) {
+            $this->assignNewChildNodeToHierarchyRelation($inboundRelation, $newVariantNodesIdentifierInGraph);
         }
-        foreach ($outboundEdges as $outboundEdge) {
-            $this->assignNewParentNodeToHierarchyEdge($outboundEdge, $newVariantNodesIdentifierInGraph);
-        }
+        foreach ($outboundRelations as $outboundRelation) {
+            $this->assignNewParentNodeToHierarchyRelation($outboundRelation, $newVariantNodesIdentifierInGraph);
+        }*/
     }
 
-    protected function addHierarchyEdge(HierarchyEdge $edge)
+    /**
+     * @param HierarchyRelation $relation
+     */
+    protected function addHierarchyRelation(HierarchyRelation $relation): void
     {
         $this->getDatabaseConnection()->insert('neos_contentgraph_hierarchyrelation', [
-            'parentNodeIdentifier' => $edge->getParentNodeIdentifier(),
-            'childNodeIdentifier' => $edge->getChildNodeIdentifier(),
-            'name' => $edge->getEdgeName(),
-            'contentstreamidentifier' => $edge->getContentStreamIdentifier(),
-            'dimensionspacepoint' => json_encode($edge->getDimensionSpacePoint()),
-            'dimensionspacepointhash' => $edge->getDimensionSpacePointHash(),
-            'position' => $edge->getPosition()
+            'parentnodeanchor' => $relation->getParentNodeAnchor(),
+            'childnodeanchor' => $relation->getChildNodeAnchor(),
+            'name' => $relation->getName(),
+            'contentstreamidentifier' => $relation->getContentStreamIdentifier(),
+            'dimensionspacepoint' => json_encode($relation->getDimensionSpacePoint()),
+            'dimensionspacepointhash' => $relation->getDimensionSpacePointHash(),
+            'position' => $relation->getPosition()
         ]);
     }
 
-    protected function assignNewPositionToHierarchyEdge(HierarchyEdge $edge, int $position)
+    /**
+     * @param HierarchyRelation $relation
+     * @param int $position
+     */
+    protected function assignNewPositionToHierarchyRelation(HierarchyRelation $relation, int $position): void
     {
         $this->getDatabaseConnection()->update(
             'neos_contentgraph_hierarchyrelation',
             [
                 'position' => $position
             ],
-            $edge->getDatabaseIdentifier()
+            $relation->getDatabaseIdentifier()
         );
     }
 
-    protected function assignNewChildNodeToHierarchyEdge(HierarchyEdge $edge, string $childNodeIdentifierInGraph)
+    /*
+    protected function assignNewChildNodeToHierarchyRelation(HierarchyRelation $relation, string $childNodeIdentifierInGraph)
     {
         $this->getDatabaseConnection()->update(
             'neos_contentgraph_hierarchyrelation',
             [
                 'childnodesidentifieringraph' => $childNodeIdentifierInGraph,
             ],
-            $edge->getDatabaseIdentifier()
+            $relation->getDatabaseIdentifier()
         );
     }
 
-    protected function assignNewParentNodeToHierarchyEdge(HierarchyEdge $edge, string $parentNodeIdentifierInGraph)
+    protected function assignNewParentNodeToHierarchyRelation(HierarchyRelation $relation, string $parentNodeIdentifierInGraph)
     {
         $this->getDatabaseConnection()->update(
             'neos_contentgraph_hierarchyrelation',
             [
                 'parentnodesidentifieringraph' => $parentNodeIdentifierInGraph,
             ],
-            $edge->getDatabaseIdentifier()
+            $relation->getDatabaseIdentifier()
         );
+    }*/
+
+    public function whenContentStreamWasForked(ContentRepository\Context\ContentStream\Event\ContentStreamWasForked $event)
+    {
+        $this->transactional(function () use ($event) {
+            $this->getDatabaseConnection()->executeUpdate('
+                INSERT INTO neos_contentgraph_hierarchyrelation (
+                  parentnodeanchor,
+                  childnodeanchor,
+                  `name`,
+                  position,
+                  dimensionspacepoint,
+                  dimensionspacepointhash,
+                  contentstreamidentifier
+                )
+                SELECT
+                  h.parentnodeanchor,
+                  h.childnodeanchor, 
+                  h.name,
+                  h.position,
+                  h.dimensionspacepoint,
+                  h.dimensionspacepointhash, 
+                  "' . (string)$event->getContentStreamIdentifier() . '" AS contentstreamidentifier
+                FROM
+                    neos_contentgraph_hierarchyrelation h
+                    WHERE h.contentstreamidentifier = :sourceContentStreamIdentifier
+            ', [
+                'sourceContentStreamIdentifier' => (string)$event->getSourceContentStreamIdentifier()
+            ]);
+        });
     }
-
-
-    protected function transactional(callable $operations)
+    /**
+     * @param callable $operations
+     */
+    protected function transactional(callable $operations): void
     {
         $this->getDatabaseConnection()->transactional($operations);
     }
 
+    /**
+     * @return Connection
+     */
     protected function getDatabaseConnection(): Connection
     {
         return $this->client->getConnection();

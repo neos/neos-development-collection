@@ -4,7 +4,7 @@ Feature: Reading of our Graph Projection
   Background:
     Given I have no content dimensions
 
-  Scenario: Create root node
+  Scenario: Single node connected to root
     Given the Event "Neos.ContentRepository:RootNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d" with payload:
       | Key                      | Value                                |
       | contentStreamIdentifier  | c75ae6a2-7254-4d42-a31b-a629e264069d |
@@ -23,3 +23,22 @@ Feature: Reading of our Graph Projection
       | nodeName                      | foo                                                             |                        |
       | propertyDefaultValuesAndTypes | {}                                                              | json                   |
 
+    When the graph projection is fully up to date
+    And I am in content stream "c75ae6a2-7254-4d42-a31b-a629e264069d" and Dimension Space Point {"coordinates": []}
+
+    Then I expect a node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to exist in the graph projection
+
+    #
+    And I expect the node "5387cb08-2aaf-44dc-a8a1-483497aa0a03" to have the following child nodes:
+      | Name | NodeIdentifier                       |
+      | foo  | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81 |
+
+    Then I expect the Node Aggregate "35411439-94d1-4bd4-8fac-0646856c6a1f" to resolve to node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81"
+
+    Then I expect the Node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to have the type "Neos.ContentRepository.Testing:NodeWithoutAutoCreatedChildNodes"
+
+    Then I expect the Node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to have the properties:
+      | Key | Value |
+
+
+    Then I expect the path "/foo" to lead to the node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81"

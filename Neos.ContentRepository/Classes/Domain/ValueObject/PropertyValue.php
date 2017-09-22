@@ -35,6 +35,14 @@ final class PropertyValue implements \JsonSerializable
         $this->type = $type;
     }
 
+    /**
+     * @return string
+     */
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
     public function jsonSerialize()
     {
         return [

@@ -308,15 +308,15 @@ class Context
     }
 
     /**
-     * Get a node by identifier and this context
+     * Get a node by node aggregate identifier and this context
      *
-     * @param string $identifier The identifier of a node
+     * @param string $identifier The identifier of a node aggregate
      * @return NodeInterface|null The node with the given identifier or NULL if no such node exists
      */
     public function getNodeByIdentifier($identifier)
     {
-        $nodeIdentifier = Domain\ValueObject\NodeAggregateIdentifier::fromString($identifier);
-        return $this->getSubgraph()->findNodeByIdentifier($nodeIdentifier, $this);
+        $nodeAggregateIdentifier = Domain\ValueObject\NodeAggregateIdentifier::fromString($identifier);
+        return $this->getSubgraph()->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
     }
 
     /**

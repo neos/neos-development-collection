@@ -11,9 +11,13 @@
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcing\Event\EventInterface;
 use Neos\EventSourcing\Event\EventPublisher;
 use Neos\EventSourcing\Event\EventTypeResolver;
@@ -52,7 +56,15 @@ trait EventSourcedTrait
      */
     private $eventStoreManager;
 
-    private $currentEventStreamAsArray;
+    /**
+     * @var array
+     */
+    private $currentEventStreamAsArray = null;
+
+    /**
+     * @var \Exception
+     */
+    private $lastCommandException = null;
 
     /**
      * @Given /^the Event "([^"]*)" was published to stream "([^"]*)" with payload:$/
@@ -95,6 +107,10 @@ trait EventSourcedTrait
                         }
                         $eventPayload[$line['Key']] = new DimensionSpacePointSet($convertedPoints);
                         break;
+                    case 'PropertyValue':
+                        $tmp = json_decode($line['Value'], true);
+                        $eventPayload[$line['Key']] = new PropertyValue($tmp['value'], $tmp['type']);
+                        break;
                     default:
                         throw new \Exception("TODO" . json_encode($line));
                 }
@@ -121,6 +137,36 @@ trait EventSourcedTrait
         $commandHandler->$commandHandlerMethod($command);
     }
 
+    /**
+     * @When /^the command "([^"]*)" is executed with payload and exceptions are catched:$/
+     */
+    public function theCommandIsExecutedWithPayloadAndExceptionsAreCatched($shortCommandName, TableNode $payloadTable)
+    {
+        try {
+            $this->theCommandIsExecutedWithPayload($shortCommandName, $payloadTable);
+        } catch (\Exception $exception) {
+            $this->lastCommandException = $exception;
+        }
+    }
+
+    /**
+     * @Then /^the last command should have thrown an exception of type "([^"]*)"$/
+     */
+    public function theLastCommandShouldHaveThrown($shortExceptionName)
+    {
+        Assert::assertNotNull($this->lastCommandException, 'Command did not throw exception');
+
+        switch ($shortExceptionName) {
+            case 'Exception':
+                return;
+            case 'NodeNotFoundException':
+                Assert::assertInstanceOf(\Neos\ContentRepository\Exception\NodeNotFoundException::class, $this->lastCommandException);
+                return;
+            default:
+                throw new \Exception('The short exception name "' . $shortExceptionName . '" is currently not supported by the tests.');
+        }
+    }
+
     protected static function resolveShortCommandName($shortCommandName)
     {
         switch ($shortCommandName) {
@@ -135,6 +181,18 @@ trait EventSourcedTrait
                     \Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode::class,
                     \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
                     'handleCreateNodeAggregateWithNode'
+                ];
+            case 'ForkContentStream':
+                return [
+                    \Neos\ContentRepository\Domain\Context\ContentStream\Command\ForkContentStream::class,
+                    \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler::class,
+                    'handleForkContentStream'
+                ];
+            case 'MoveNode':
+                return [
+                    \Neos\ContentRepository\Domain\Context\Node\Command\MoveNode::class,
+                    \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
+                    'handleMoveNode'
                 ];
             default:
                 throw new \Exception('The short command name "' . $shortCommandName . '" is currently not supported by the tests.');
@@ -158,8 +216,14 @@ trait EventSourcedTrait
      */
     public function eventNumberIs($eventNumber, $eventType, TableNode $payloadTable)
     {
+        if ($this->currentEventStreamAsArray === null) {
+            Assert::fail('Step \'I expect exactly ? events to be published on stream "?"\' was not executed');
+        }
+
         /* @var $actualEvent EventAndRawEvent */
         $actualEvent = $this->currentEventStreamAsArray[$eventNumber];
+
+        Assert::assertNotNull($actualEvent, sprintf('Event with number %d not found', $eventNumber));
         Assert::assertEquals($eventType, $actualEvent->getRawEvent()->getType(), 'Event Type does not match: "' . $actualEvent->getRawEvent()->getType() . '" !== "' . $eventType . '"');
 
         $actualEventPayload = $actualEvent->getRawEvent()->getPayload();
@@ -173,5 +237,109 @@ trait EventSourcedTrait
 
             Assert::assertEquals($expectedValue, $actualValue, 'ERROR at ' . $assertionTableRow['Key'] . ': ' . json_encode($actualValue) . ' !== ' . json_encode($expectedValue));
         }
+    }
+
+
+
+
+    /**
+     * @When /^the graph projection is fully up to date$/
+     */
+    public function theGraphProjectionIsFullyUpToDate()
+    {
+        // we do not need to do anything here yet, as the graph projection is synchronous.
+    }
+
+    /**
+     * @var ContentStreamIdentifier
+     */
+    private $contentStreamIdentifier;
+
+    /**
+     * @var DimensionSpacePoint
+     */
+    private $dimensionSpacePoint;
+
+    /**
+     * @var ContentGraphInterface
+     */
+    private $contentGraphInterface;
+
+    /**
+     * @Given /^I am in content stream "([^"]*)" and Dimension Space Point (.*)$/
+     */
+    public function iAmInContentStreamAndDimensionSpacePointCoordinates(string $contentStreamIdentifier, string $dimensionSpacePoint)
+    {
+        $this->contentStreamIdentifier = new ContentStreamIdentifier($contentStreamIdentifier);
+        $this->dimensionSpacePoint = new DimensionSpacePoint(json_decode($dimensionSpacePoint, true)['coordinates']);
+    }
+
+    /**
+     * @Then /^I expect a node "([^"]*)" to exist in the graph projection$/
+     */
+    public function iExpectANodeToExistInTheGraphProjection($nodeIdentifier)
+    {
+        $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
+        Assert::assertNotNull($node, 'Node "' . $nodeIdentifier . '" was not found in the current Content Stream / Dimension Space Point.');
+    }
+
+    /**
+     * @Then /^I expect the node "([^"]*)" to have the following child nodes:$/
+     */
+    public function iExpectTheNodeToHaveTheFollowingChildNodes($nodeIdentifier, TableNode $expectedChildNodesTable)
+    {
+        $nodes = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findChildNodes(new NodeIdentifier($nodeIdentifier));
+
+        Assert::assertCount(count($expectedChildNodesTable->getHash()), $nodes, 'Child Node Count does not match');
+        foreach ($expectedChildNodesTable->getHash() as $index => $row) {
+            Assert::assertEquals($row['Name'], (string)$nodes[$index]->name, 'Node name in index ' . $index . ' does not match.');
+            Assert::assertEquals($row['NodeIdentifier'], (string)$nodes[$index]->identifier, 'Node identifier in index ' . $index . ' does not match.');
+        }
+    }
+
+    /**
+     * @Then /^I expect the Node Aggregate "([^"]*)" to resolve to node "([^"]*)"$/
+     */
+    public function iExpectTheNodeAggregateToHaveTheNodes($nodeAggregateIdentifier, $nodeIdentifier)
+    {
+        $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByNodeAggregateIdentifier(new \Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier($nodeAggregateIdentifier));
+
+        Assert::assertNotNull($node, 'Node with ID "' . $nodeIdentifier . '" not found!');
+        Assert::assertEquals($nodeIdentifier, (string)$node->identifier, 'Node ID does not match!');
+    }
+
+
+    /**
+     * @Then /^I expect the Node "([^"]*)" to have the type "([^"]*)"$/
+     */
+    public function iExpectTheNodeToHaveTheType($nodeIdentifier, $nodeType)
+    {
+        $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
+        Assert::assertEquals($nodeType, (string)$node->nodeTypeName, 'Node Type names do not match');
+    }
+
+    /**
+     * @Then /^I expect the Node "([^"]*)" to have the properties:$/
+     */
+    public function iExpectTheNodeToHaveTheProperties($nodeIdentifier, TableNode $expectedProperties)
+    {
+        $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
+        /* @var $properties \Neos\ContentRepository\Domain\Projection\Content\PropertyCollection */
+        $properties = $node->properties;
+        foreach ($expectedProperties->getHash() as $row) {
+            Assert::assertArrayHasKey($row['Key'], $properties, 'Property "' . $row['Key'] . '" not found');
+            $actualProperty = $properties[$row['Key']];
+            Assert::assertEquals($row['Value'], $actualProperty, 'Node property ' . $row['Key'] . ' does not match.');
+        }
+    }
+
+    /**
+     * @Then /^I expect the path "([^"]*)" to lead to the node "([^"]*)"$/
+     */
+    public function iExpectThePathToLeadToTheNode($nodePath, $nodeIdentifier)
+    {
+        $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByPath($nodePath);
+        Assert::assertNotNull($node, 'Did not find node at path "' . $nodePath . '"');
+        Assert::assertEquals($nodeIdentifier, (string)$node->identifier, 'Node identifier does not match.');
     }
 }

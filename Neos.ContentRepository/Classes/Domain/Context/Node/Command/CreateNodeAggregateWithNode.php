@@ -35,7 +35,7 @@ final class CreateNodeAggregateWithNode
     private $nodeTypeName;
 
     /**
-     * Location of the node in the dimension space
+     * Location of the new node in the dimension space
      *
      * @var DimensionSpacePoint
      */

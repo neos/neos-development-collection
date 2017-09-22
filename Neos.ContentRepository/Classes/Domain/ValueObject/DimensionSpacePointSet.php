@@ -26,17 +26,21 @@ final class DimensionSpacePointSet implements \JsonSerializable
     private $points;
 
     /**
-     * @param array $points Array of dimension space points
+     * @param array<DimensionSpacePoint> $points Array of dimension space points
      */
     public function __construct(array $points)
     {
-        // TODO Check that all points are DimensionSpacePoint objects
+        foreach ($points as $index => $point) {
+            if (!$point instanceof DimensionSpacePoint) {
+                throw new \InvalidArgumentException(sprintf('Point %s was not of type DimensionSpacePoint', $index));
+            }
+        }
 
         $this->points = $points;
     }
 
     /**
-     * @return array<DimensionSpacePoint>
+     * @return DimensionSpacePoint[]
      */
     public function getPoints(): array
     {

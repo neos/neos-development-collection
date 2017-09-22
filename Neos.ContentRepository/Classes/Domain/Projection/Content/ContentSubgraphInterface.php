@@ -45,6 +45,14 @@ interface ContentSubgraphInterface
     public function findChildNodes(Domain\ValueObject\NodeIdentifier $parentNodeIdentifier, Domain\ValueObject\NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null, Domain\Service\Context $contentContext = null): array;
 
     /**
+     * @param Domain\ValueObject\NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param Domain\Service\Context|null $contentContext
+     * @return Domain\Model\NodeInterface|null
+     */
+    public function findNodeByNodeAggregateIdentifier(Domain\ValueObject\NodeAggregateIdentifier $nodeAggregateIdentifier, Domain\Service\Context $contentContext = null): ?Domain\Model\NodeInterface;
+
+
+    /**
      * @param Domain\ValueObject\NodeIdentifier $parentIdentifier
      * @param Domain\ValueObject\NodeTypeConstraints|null $nodeTypeConstraints
      * @param Domain\Service\Context|null $contentContext
