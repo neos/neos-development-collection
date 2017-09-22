@@ -147,7 +147,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
         int $offset = null,
         ContentRepository\Service\Context $context = null
     ): array {
-        $query = 'SELECT c.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_contentgraph_node p
+        $query = 'SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
  INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
  WHERE p.nodeidentifier = :parentNodeIdentifier
@@ -177,7 +177,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
 
     public function findNodesBelongingToNodeAggregate(NodeAggregateIdentifier $nodeAggregateIdentifier, ContentRepository\Service\Context $context = null): array
     {
-        $query = 'SELECT n.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_contentgraph_node n
+        $query = 'SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
  WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
  AND h.contentstreamidentifier = :contentStreamIdentifier
@@ -309,7 +309,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
     ): ?ContentRepository\Model\NodeInterface
     {
         $nodeData = $this->getDatabaseConnection()->executeQuery(
-            'SELECT c.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_contentgraph_node p
+            'SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
  INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
  WHERE p.nodeidentifier = :parentNodeIdentifier
