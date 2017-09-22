@@ -111,7 +111,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
 
         // We always allow root nodes
         if (empty($nodeData['dimensionspacepointhash'])) {
-            return $this->nodeFactory->mapRawDataToNode($nodeData, $context);
+            return $this->nodeFactory->mapNodeRowToNode($nodeData, $context);
         }
 
         $inboundEdgeData = $this->getDatabaseConnection()->executeQuery(
@@ -129,7 +129,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
         if (is_array($inboundEdgeData)) {
             // we only allow nodes matching the content stream identifier and dimension space point
             $nodeData['name'] = $inboundEdgeData['name'];
-            return $this->nodeFactory->mapRawDataToNode($nodeData, $context);
+            return $this->nodeFactory->mapNodeRowToNode($nodeData, $context);
         } else {
             return null;
         }
@@ -173,7 +173,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
             $query,
             $parameters
         )->fetchAll() as $nodeData) {
-            $result[] = $this->nodeFactory->mapRawDataToNode($nodeData, $context);
+            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeData, $context);
         }
 
         return $result;
@@ -196,7 +196,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
             $query,
             $parameters
         )->fetchAll() as $nodeData) {
-            $result[] = $this->nodeFactory->mapRawDataToNode($nodeData, $context);
+            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeData, $context);
         }
 
         return $result;
@@ -252,7 +252,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
             ]
         )->fetch();
 
-        return $nodeData ? $this->nodeFactory->mapRawDataToNode($nodeData, $context) : null;
+        return $nodeData ? $this->nodeFactory->mapNodeRowToNode($nodeData, $context) : null;
     }
 
     /**
@@ -277,7 +277,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
             ]
         )->fetch();
 
-        return $nodeData ? $this->nodeFactory->mapRawDataToNode($nodeData, $context) : null;
+        return $nodeData ? $this->nodeFactory->mapNodeRowToNode($nodeData, $context) : null;
     }
 
     /**
@@ -330,7 +330,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
         )->fetch();
 
 
-        return $nodeData ? $this->nodeFactory->mapRawDataToNode($nodeData, $context) : null;
+        return $nodeData ? $this->nodeFactory->mapNodeRowToNode($nodeData, $context) : null;
     }
 
     /**
@@ -356,7 +356,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
                 'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash(),
             ]
         )->fetchAll() as $nodeData) {
-            $result[] = $this->nodeFactory->mapRawDataToNode($nodeData, $context);
+            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeData, $context);
         }
 
         return $result;
@@ -378,7 +378,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
             ]
         )->fetch();
 
-        return $this->nodeFactory->mapRawDataToNode($nodeData, $context);
+        return $this->nodeFactory->mapNodeRowToNode($nodeData, $context);
     }
 
 

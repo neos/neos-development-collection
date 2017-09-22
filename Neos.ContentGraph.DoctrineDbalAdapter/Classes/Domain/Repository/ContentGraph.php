@@ -71,7 +71,7 @@ final class ContentGraph extends AbstractContentGraph
             ]
         )->fetch();
 
-        return $nodeData ? $this->nodeFactory->mapRawDataToNode($nodeData, null) : null;
+        return $nodeData ? $this->nodeFactory->mapNodeRowToNode($nodeData, null) : null;
 
     }
 }

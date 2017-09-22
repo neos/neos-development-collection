@@ -7,7 +7,7 @@ use Neos\ContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 
 /**
- * CreateContentStream
+ * CreateContentStream for creating the FIRST content stream
  */
 final class CreateContentStream
 {
