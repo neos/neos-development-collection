@@ -17,6 +17,7 @@ use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcing\Event\EventInterface;
 use Neos\EventSourcing\Event\EventPublisher;
 use Neos\EventSourcing\Event\EventTypeResolver;
@@ -97,6 +98,10 @@ trait EventSourcedTrait
                             }
                         }
                         $eventPayload[$line['Key']] = new DimensionSpacePointSet($convertedPoints);
+                        break;
+                    case 'PropertyValue':
+                        $tmp = json_decode($line['Value'], true);
+                        $eventPayload[$line['Key']] = new PropertyValue($tmp['value'], $tmp['type']);
                         break;
                     default:
                         throw new \Exception("TODO" . json_encode($line));
@@ -274,6 +279,7 @@ trait EventSourcedTrait
         /* @var $properties \Neos\ContentRepository\Domain\Projection\Content\PropertyCollection */
         $properties = $node->properties;
         foreach ($expectedProperties->getHash() as $row) {
+            Assert::assertArrayHasKey($row['Key'], $properties, 'Property "' . $row['Key'] . '" not found');
             $actualProperty = $properties[$row['Key']];
             Assert::assertEquals($row['Value'], $actualProperty, 'Node property ' . $row['Key'] . ' does not match.');
         }

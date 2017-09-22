@@ -298,37 +298,35 @@ class GraphProjector implements ProjectorInterface
         );
     }*/
 
-
-    protected function copyEdgesFromOneContentStreamToTheNext(ContentRepository\Context\ContentStream\Event\ContentStreamWasForked $event)
+    public function whenContentStreamWasForked(ContentRepository\Context\ContentStream\Event\ContentStreamWasForked $event)
     {
-        $result = $this->getDatabaseConnection()->executeUpdate('
-            INSERT INTO neos_contentgraph_hierarchyrelation (
-              parentnodeanchor,
-              childnodeanchor,
-              `name`,
-              position,
-              dimensionspacepoint,
-              dimensionspacepointhash,
-              contentstreamidentifier
-            )
-            SELECT
-              h.parentnodeanchor,
-              h.childnodeanchor, 
-              h.name,
-              h.position,
-              h.dimensionspacepoint,
-              h.dimensionspacepointhash, 
-              "' . (string)$event->getContentStreamIdentifier() . '" AS contentstreamidentifier
-            FROM
-                neos_contentgraph_hierarchyrelation h
-                WHERE h.contentstreamidentifier = :sourceContentStreamIdentifier
-        ', [
-            'sourceContentStreamIdentifier' => (string) $event->getSourceContentStreamIdentifier()
-        ]);
-        var_dump($result);
+        $this->transactional(function () use ($event) {
+            $this->getDatabaseConnection()->executeUpdate('
+                INSERT INTO neos_contentgraph_hierarchyrelation (
+                  parentnodeanchor,
+                  childnodeanchor,
+                  `name`,
+                  position,
+                  dimensionspacepoint,
+                  dimensionspacepointhash,
+                  contentstreamidentifier
+                )
+                SELECT
+                  h.parentnodeanchor,
+                  h.childnodeanchor, 
+                  h.name,
+                  h.position,
+                  h.dimensionspacepoint,
+                  h.dimensionspacepointhash, 
+                  "' . (string)$event->getContentStreamIdentifier() . '" AS contentstreamidentifier
+                FROM
+                    neos_contentgraph_hierarchyrelation h
+                    WHERE h.contentstreamidentifier = :sourceContentStreamIdentifier
+            ', [
+                'sourceContentStreamIdentifier' => (string)$event->getSourceContentStreamIdentifier()
+            ]);
+        });
     }
-
-
     /**
      * @param callable $operations
      */
