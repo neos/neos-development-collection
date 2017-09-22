@@ -11,9 +11,12 @@
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcing\Event\EventInterface;
 use Neos\EventSourcing\Event\EventPublisher;
 use Neos\EventSourcing\Event\EventTypeResolver;
@@ -173,5 +176,110 @@ trait EventSourcedTrait
 
             Assert::assertEquals($expectedValue, $actualValue, 'ERROR at ' . $assertionTableRow['Key'] . ': ' . json_encode($actualValue) . ' !== ' . json_encode($expectedValue));
         }
+    }
+
+
+
+
+    /**
+     * @When /^the graph projection is fully up to date$/
+     */
+    public function theGraphProjectionIsFullyUpToDate()
+    {
+        // we do not need to do anything here yet, as the graph projection is synchronous.
+    }
+
+    /**
+     * @var ContentStreamIdentifier
+     */
+    private $contentStreamIdentifier;
+
+    /**
+     * @var DimensionSpacePoint
+     */
+    private $dimensionSpacePoint;
+
+    /**
+     * @var ContentGraphInterface
+     */
+    private $contentGraphInterface;
+
+    /**
+     * @Given /^I am in content stream "([^"]*)" and Dimension Space Point (.*)$/
+     */
+    public function iAmInContentStreamAndDimensionSpacePointCoordinates(string $contentStreamIdentifier, string $dimensionSpacePoint)
+    {
+        $this->contentStreamIdentifier = new ContentStreamIdentifier($contentStreamIdentifier);
+        $this->dimensionSpacePoint = new DimensionSpacePoint(json_decode($dimensionSpacePoint, true)['coordinates']);
+    }
+
+    /**
+     * @Then /^I expect a node "([^"]*)" to exist in the graph projection$/
+     */
+    public function iExpectANodeToExistInTheGraphProjection($nodeIdentifier)
+    {
+        $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
+        Assert::assertNotNull($node, 'Node "' . $nodeIdentifier . '" was not found in the current Content Stream / Dimension Space Point.');
+    }
+
+    /**
+     * @Then /^I expect the node "([^"]*)" to have the following child nodes:$/
+     */
+    public function iExpectTheNodeToHaveTheFollowingChildNodes($nodeIdentifier, TableNode $expectedChildNodesTable)
+    {
+        $nodes = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findChildNodes(new NodeIdentifier($nodeIdentifier));
+
+        Assert::assertCount(count($expectedChildNodesTable->getHash()), $nodes, 'Child Node Count does not match');
+        foreach ($expectedChildNodesTable->getHash() as $index => $row) {
+            Assert::assertEquals($row['Name'], (string)$nodes[$index]->name, 'Node name in index ' . $index . ' does not match.');
+            Assert::assertEquals($row['NodeIdentifier'], (string)$nodes[$index]->identifier, 'Node identifier in index ' . $index . ' does not match.');
+        }
+    }
+
+    /**
+     * @Then /^I expect the Node Aggregate "([^"]*)" to have the nodes:$/
+     */
+    public function iExpectTheNodeAggregateToHaveTheNodes($nodeAggregateIdentifier, TableNode $expectedNodesTable)
+    {
+        $nodes = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodesBelongingToNodeAggregate(new \Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier($nodeAggregateIdentifier));
+
+        Assert::assertCount(count($expectedNodesTable->getHash()), $nodes, 'Node Aggregate Count does not match');
+        foreach ($expectedNodesTable->getHash() as $index => $row) {
+            Assert::assertEquals($row['NodeIdentifier'], (string)$nodes[$index]->identifier, 'Node identifier in index ' . $index . ' does not match.');
+        }
+    }
+
+
+    /**
+     * @Then /^I expect the Node "([^"]*)" to have the type "([^"]*)"$/
+     */
+    public function iExpectTheNodeToHaveTheType($nodeIdentifier, $nodeType)
+    {
+        $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
+        Assert::assertEquals($nodeType, (string)$node->nodeTypeName, 'Node Type names do not match');
+    }
+
+    /**
+     * @Then /^I expect the Node "([^"]*)" to have the properties:$/
+     */
+    public function iExpectTheNodeToHaveTheProperties($nodeIdentifier, TableNode $expectedProperties)
+    {
+        $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
+        /* @var $properties \Neos\ContentRepository\Domain\Projection\Content\PropertyCollection */
+        $properties = $node->properties;
+        foreach ($expectedProperties->getHash() as $row) {
+            $actualProperty = $properties[$row['Key']];
+            Assert::assertEquals($row['Value'], $actualProperty, 'Node property ' . $row['Key'] . ' does not match.');
+        }
+    }
+
+    /**
+     * @Then /^I expect the path "([^"]*)" to lead to the node "([^"]*)"$/
+     */
+    public function iExpectThePathToLeadToTheNode($nodePath, $nodeIdentifier)
+    {
+        $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByPath($nodePath);
+        Assert::assertNotNull($node, 'Did not find node at path "' . $nodePath . '"');
+        Assert::assertEquals($nodeIdentifier, (string)$node->identifier, 'Node identifier does not match.');
     }
 }

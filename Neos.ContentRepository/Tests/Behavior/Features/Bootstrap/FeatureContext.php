@@ -17,6 +17,7 @@ require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Fe
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 
 use Neos\Behat\Tests\Behat\FlowContext;
+use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcing\Event\EventPublisher;
 use Neos\EventSourcing\Event\EventTypeResolver;
 use Neos\EventSourcing\EventStore\EventStoreManager;
@@ -64,6 +65,7 @@ class FeatureContext extends \Behat\Behat\Context\BehatContext
         $this->propertyMapper = $this->objectManager->get(PropertyMapper::class);
         $this->eventPublisher = $this->objectManager->get(EventPublisher::class);
         $this->eventStoreManager = $this->objectManager->get(EventStoreManager::class);
+        $this->contentGraphInterface = $this->objectManager->get(ContentGraphInterface::class);
         $this->setupSecurity();
     }
 

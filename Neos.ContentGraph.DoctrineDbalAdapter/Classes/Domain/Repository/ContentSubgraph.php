@@ -15,6 +15,9 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Service\DbalClient;
 use Neos\ContentRepository\Domain as ContentRepository;
 use Neos\ContentRepository\Domain\Projection\Content as ContentProjection;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
 use Neos\ContentRepository\Utility;
 use Neos\Flow\Annotations as Flow;
 
@@ -123,8 +126,13 @@ WHERE n.nodeidentifier = :nodeIdentifier',
             ]
         )->fetch();
 
-        // we only allow nodes matching the content stream identifier and dimension space point
-        return $inboundEdgeData ? $this->nodeFactory->mapRawDataToNode($nodeData, $context) : null;
+        if (is_array($inboundEdgeData)) {
+            // we only allow nodes matching the content stream identifier and dimension space point
+            $nodeData['name'] = $inboundEdgeData['name'];
+            return $this->nodeFactory->mapRawDataToNode($nodeData, $context);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -141,8 +149,9 @@ WHERE n.nodeidentifier = :nodeIdentifier',
         int $limit = null,
         int $offset = null,
         ContentRepository\Service\Context $context = null
-    ): array {
-        $query = 'SELECT c.* FROM neos_contentgraph_node p
+    ): array
+    {
+        $query = 'SELECT c.*, h.name FROM neos_contentgraph_node p
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeidentifier = p.nodeidentifier
  INNER JOIN neos_contentgraph_node c ON h.childnodeidentifier = c.nodeidentifier
  WHERE p.nodeidentifier = :parentNodeIdentifier
@@ -155,9 +164,33 @@ WHERE n.nodeidentifier = :nodeIdentifier',
         ];
         if ($nodeTypeConstraints) {
             // @todo apply constraints
+            throw new \Exception('TODO: Constraints not supported');
         }
         $query .= '
  ORDER BY h.position';
+        $result = [];
+        foreach ($this->getDatabaseConnection()->executeQuery(
+            $query,
+            $parameters
+        )->fetchAll() as $nodeData) {
+            $result[] = $this->nodeFactory->mapRawDataToNode($nodeData, $context);
+        }
+
+        return $result;
+    }
+
+    public function findNodesBelongingToNodeAggregate(NodeAggregateIdentifier $nodeAggregateIdentifier, ContentRepository\Service\Context $context = null): array
+    {
+        $query = 'SELECT n.*, h.name FROM neos_contentgraph_node n
+ INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeidentifier = n.nodeidentifier
+ WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
+ AND h.contentstreamidentifier = :contentStreamIdentifier
+ AND h.dimensionspacepointhash = :dimensionSpacePointHash';
+        $parameters = [
+            'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
+            'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
+            'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash()
+        ];
         $result = [];
         foreach ($this->getDatabaseConnection()->executeQuery(
             $query,
@@ -173,7 +206,8 @@ WHERE n.nodeidentifier = :nodeIdentifier',
         ContentRepository\ValueObject\NodeIdentifier $parentNodeIdentifier,
         ContentRepository\ValueObject\NodeTypeConstraints $nodeTypeConstraints = null,
         ContentRepository\Service\Context $contentContext = null
-    ): int {
+    ): int
+    {
         $query = 'SELECT COUNT(c.nodeidentifier) FROM neos_contentgraph_node p
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeidentifier = p.nodeidentifier
  INNER JOIN neos_contentgraph_node c ON h.childnodeidentifier = c.nodeidentifier
@@ -188,6 +222,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
 
         if ($nodeTypeConstraints) {
             // @todo apply constraints
+            throw new \Exception('TODO: Constraints not supported');
         }
 
         return $this->getDatabaseConnection()->executeQuery(
@@ -256,7 +291,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
         $currentNode = $this->findRootNode();
         foreach ($edgeNames as $edgeName) {
             // identifier exists here :)
-            $currentNode = $this->findChildNodeConnectedThroughEdgeName($currentNode->identifier, $edgeName, $contentContext);
+            $currentNode = $this->findChildNodeConnectedThroughEdgeName($currentNode->identifier, new NodeName($edgeName), $contentContext);
             if (!$currentNode) {
                 return null;
             }
@@ -278,7 +313,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
     ): ?ContentRepository\Model\NodeInterface
     {
         $nodeData = $this->getDatabaseConnection()->executeQuery(
-            'SELECT c.* FROM neos_contentgraph_node p
+            'SELECT c.*, h.name FROM neos_contentgraph_node p
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeidentifier = p.nodeidentifier
  INNER JOIN neos_contentgraph_node c ON h.childnodeidentifier = c.nodeidentifier
  WHERE p.nodeidentifier = :parentNodeIdentifier
@@ -293,6 +328,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
                 'edgeName' => (string)$edgeName
             ]
         )->fetch();
+
 
         return $nodeData ? $this->nodeFactory->mapRawDataToNode($nodeData, $context) : null;
     }
@@ -357,7 +393,8 @@ WHERE n.nodeidentifier = :nodeIdentifier',
         ContentRepository\ValueObject\NodeTypeConstraints $nodeTypeConstraints = null,
         callable $callback,
         ContentRepository\Service\Context $context = null
-    ): void {
+    ): void
+    {
         $callback($parent);
         foreach ($this->findChildNodes(
             $parent->identifier,

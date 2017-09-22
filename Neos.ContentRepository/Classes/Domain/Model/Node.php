@@ -164,7 +164,7 @@ class Node implements NodeInterface, CacheAwareInterface
      * @param Context $context
      * @Flow\Autowiring(false)
      */
-    public function __construct(NodeData $nodeData, Context $context)
+    public function __construct(NodeData $nodeData = null, Context $context = null)
     {
         $this->nodeData = $nodeData;
         $this->context = $context;

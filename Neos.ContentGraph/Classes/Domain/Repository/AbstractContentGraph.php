@@ -39,7 +39,7 @@ abstract class AbstractContentGraph implements ContentProjection\ContentGraphInt
     ): ?ContentSubgraphInterface
     {
         $index = (string)$contentStreamIdentifier . '-' . $dimensionSpacePoint->getHash();
-        if (!isset($index)) {
+        if (!isset($this->subgraphs[$index])) {
             $this->subgraphs[$index] = $this->createSubgraph($contentStreamIdentifier, $dimensionSpacePoint);
         }
 
