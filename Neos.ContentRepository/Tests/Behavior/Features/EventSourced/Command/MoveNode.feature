@@ -5,6 +5,12 @@ Feature: Move node before, into or after node
 
   Background:
     Given I have no content dimensions
+    And the command "CreateRootWorkspace" is executed with payload:
+      | Key                      | Value                                | Type |
+      | workspaceName            | live                                 |      |
+      | workspaceTitle           | Live                                 |      |
+      | workspaceDescription     | The live workspace                   |      |
+      | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000 |      |
 
   Scenario: Move node before node without dimensions
     Given I have the following NodeTypes configuration:
@@ -12,7 +18,7 @@ Feature: Move node before, into or after node
     'Neos.ContentRepository.Testing:Document':
       aggregate: true
     """
-    Given the Event "Neos.ContentRepository:RootNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d" with payload:
+    And the Event "Neos.ContentRepository:RootNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d" with payload:
       | Key                      | Value                                |
       | contentStreamIdentifier  | c75ae6a2-7254-4d42-a31b-a629e264069d |
       | nodeIdentifier           | 5387cb08-2aaf-44dc-a8a1-483497aa0a03 |

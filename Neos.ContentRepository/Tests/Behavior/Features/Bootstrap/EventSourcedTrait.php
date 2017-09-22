@@ -170,6 +170,12 @@ trait EventSourcedTrait
     protected static function resolveShortCommandName($shortCommandName)
     {
         switch ($shortCommandName) {
+            case 'CreateRootWorkspace':
+                return [
+                    \Neos\ContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace::class,
+                    \Neos\ContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler::class,
+                    'handleCreateRootWorkspace'
+                ];
             case 'CreateRootNode':
                 return [
                     \Neos\ContentRepository\Domain\Context\Node\Command\CreateRootNode::class,

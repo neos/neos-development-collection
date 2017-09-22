@@ -15,48 +15,73 @@ namespace Neos\ContentRepository\Domain\Projection\Workspace;
 use Neos\ContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Domain\Context\Workspace\Event\WorkspaceWasCreated;
-use Neos\EventSourcing\Projection\Doctrine\AbstractDoctrineProjector;
+use Doctrine\Common\Persistence\ObjectManager as DoctrineObjectManager;
+use Doctrine\ORM\EntityManager as DoctrineEntityManager;
+use Neos\EventSourcing\Projection\ProjectorInterface;
 
 /**
  * Workspace Projector
  */
-final class WorkspaceProjector extends AbstractDoctrineProjector
+final class WorkspaceProjector implements ProjectorInterface
 {
+
+    private const TABLE_NAME = 'neos_contentrepository_projection_workspace_v1';
+
+    /**
+     * @var \Doctrine\DBAL\Connection
+     */
+    private $dbal;
+
+    public function injectEntityManager(DoctrineObjectManager $entityManager): void
+    {
+        if ($entityManager instanceof DoctrineEntityManager) {
+            $this->dbal = $entityManager->getConnection();
+        }
+    }
+
+    public function isEmpty(): bool
+    {
+        return false;
+    }
+
     /**
      * @param WorkspaceWasCreated $event
      */
     public function whenWorkspaceWasCreated(WorkspaceWasCreated $event)
     {
-        $workspace = new Workspace();
-        $workspace->workspaceName = $event->getWorkspaceName();
-        $workspace->baseWorkspaceName = $event->getBaseWorkspaceName();
-        $workspace->workspaceTitle = $event->getWorkspaceTitle();
-        $workspace->workspaceDescription = $event->getWorkspaceDescription();
-        $workspace->workspaceOwner = $event->getWorkspaceOwner();
-
-        $this->add($workspace);
+        $this->dbal->insert(self::TABLE_NAME, [
+            'workspaceName' => $event->getWorkspaceName(),
+            'baseWorkspaceName' => $event->getBaseWorkspaceName(),
+            'workspaceTitle' => $event->getWorkspaceTitle(),
+            'workspaceDescription' => $event->getWorkspaceDescription(),
+            'workspaceOwner' => $event->getWorkspaceOwner()
+        ]);
     }
     /**
      * @param RootWorkspaceWasCreated $event
      */
     public function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event)
     {
-        $workspace = new Workspace();
-        $workspace->workspaceName = $event->getWorkspaceName();
-        $workspace->workspaceTitle = $event->getWorkspaceTitle();
-        $workspace->workspaceDescription = $event->getWorkspaceDescription();
-
-        $this->add($workspace);
+       $this->dbal->insert(self::TABLE_NAME, [
+            'workspaceName' => $event->getWorkspaceName(),
+            'workspaceTitle' => $event->getWorkspaceTitle(),
+            'workspaceDescription' => $event->getWorkspaceDescription(),
+        ]);
     }
 
     public function whenContentStreamWasCreated(ContentStreamWasCreated $event)
     {
-        // TODO: we need to change this code as soon as we have two content streams for a workspace, i.e. want to implement rebase.
-        /* @var $workspace Workspace */
-        $workspace = $this->get($event->getWorkspaceName());
-        if ($workspace !== null) {
-            $workspace->_setCurrentContentStreamIdentifier($event->getContentStreamIdentifier());
-            $this->update($workspace);
-        }
+        $this->dbal->transactional(function() use ($event) {
+            $this->dbal->update(self::TABLE_NAME, [
+                'currentContentStreamIdentifier' => $event->getContentStreamIdentifier()
+            ], ['workspaceName' => $event->getWorkspaceName()]);
+        });
+    }
+
+    public function reset(): void
+    {
+        $this->dbal->transactional(function() {
+            $this->dbal->exec('TRUNCATE ' . self::TABLE_NAME);
+        });
     }
 }

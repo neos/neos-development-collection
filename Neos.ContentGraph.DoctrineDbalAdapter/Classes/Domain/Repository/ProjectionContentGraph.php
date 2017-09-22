@@ -103,10 +103,6 @@ class ProjectionContentGraph
             ]
         )->fetch();
 
-        var_dump([
-            'nodeIdentifier' => (string)$nodeIdentifier,
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier
-        ]);
         return $nodeRow ? Node::fromDatabaseRow($nodeRow) : null;
     }
 
