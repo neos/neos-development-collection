@@ -288,6 +288,35 @@ class GraphProjector extends AbstractGraphProjector
     }
 
 
+    protected function copyEdgesFromOneContentStreamToTheNext(ContentRepository\Context\ContentStream\Event\ContentStreamWasForked $event)
+    {
+        $this->getDatabaseConnection()->executeUpdate('
+            INSERT INTO neos_contentgraph_hierarchyrelation (
+              parentnodeidentifier,
+              childnodeidentifier,
+              `name`,
+              position,
+              dimensionspacepoint,
+              dimensionspacepointhash,
+              contentstreamidentifier
+            )
+            SELECT
+              h.parentnodeidentifier,
+              h.childnodeidentifier, 
+              h.name,
+              h.position,
+              h.dimensionspacepoint,
+              h.dimensionspacepointhash, 
+              "' . (string)$event->getContentStreamIdentifier() . '" AS contentstreamidentifier
+            FROM
+                neos_contentgraph_hierarchyrelation h
+                WHERE h.contentstreamidentifier = :sourceContentStreamIdentifier
+        ', [
+            'sourceContentStreamIdentifier' => (string) $event->getSourceContentStreamIdentifier()
+        ]);
+    }
+
+
     protected function transactional(callable $operations)
     {
         $this->getDatabaseConnection()->transactional($operations);

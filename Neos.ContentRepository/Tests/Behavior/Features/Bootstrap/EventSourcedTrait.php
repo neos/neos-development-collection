@@ -139,6 +139,12 @@ trait EventSourcedTrait
                     \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
                     'handleCreateNodeAggregateWithNode'
                 ];
+            case 'ForkContentStream':
+                return [
+                    \Neos\ContentRepository\Domain\Context\ContentStream\Command\ForkContentStream::class,
+                    \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler::class,
+                    'handleForkContentStream'
+                ];
             default:
                 throw new \Exception('The short command name "' . $shortCommandName . '" is currently not supported by the tests.');
         }

@@ -13,7 +13,9 @@ namespace Neos\ContentRepository\Domain\Context\ContentStream;
  */
 
 use Neos\ContentRepository\Domain\Context\ContentStream\Command\CreateContentStream;
+use Neos\ContentRepository\Domain\Context\ContentStream\Command\ForkContentStream;
 use Neos\ContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasCreated;
+use Neos\ContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\Flow\Annotations as Flow;
 
@@ -48,6 +50,20 @@ final class ContentStreamCommandHandler
                 $command->getContentStreamIdentifier(),
                 $command->getWorkspaceName(),
                 $command->getInitiatingUserIdentifier()
+            )
+        );
+    }
+
+    /**
+     * @param ForkContentStream $command
+     */
+    public function handleForkContentStream(ForkContentStream $command)
+    {
+        $this->eventPublisher->publish(
+            self::getStreamNameForContentStream($command->getContentStreamIdentifier()),
+            new ContentStreamWasForked(
+                $command->getContentStreamIdentifier(),
+                $command->getSourceContentStreamIdentifier()
             )
         );
     }

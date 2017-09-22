@@ -12,6 +12,7 @@ namespace Neos\ContentGraph\Domain\Projection;
  * source code.
  */
 use Neos\ContentGraph\Infrastructure;
+use Neos\ContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Domain\Context\Importing\Event\NodeWasImported;
 use Neos\ContentRepository\Domain\Context\Node\Event;
 use Neos\ContentRepository\Domain as ContentRepository;
@@ -52,6 +53,13 @@ abstract class AbstractGraphProjector implements ProjectorInterface
                 $event->getContentStreamIdentifier(),
                 $event->getVisibleDimensionSpacePoints()
             );
+        });
+    }
+
+    final public function whenContentStreamWasForked(ContentStreamWasForked $event)
+    {
+        $this->transactional(function () use ($event) {
+            $this->copyEdgesFromOneContentStreamToTheNext($event);
         });
     }
 
@@ -149,4 +157,7 @@ final public function whenNodeVariantWasCreated(Event\NodeVariantWasCreated $eve
     abstract protected function connectRelation(string $startNodesIdentifierInGraph, string $endNodesIdentifierInGraph, string $relationshipName, array $properties, array $subgraphIdentifiers);
 
     abstract protected function reconnectHierarchy(string $fallbackNodesIdentifierInGraph, string $newVariantNodesIdentifierInGraph, array $subgraphIdentifiers);
+
+    abstract protected function copyEdgesFromOneContentStreamToTheNext(ContentStreamWasForked $event);
+
 }
