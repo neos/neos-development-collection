@@ -46,5 +46,4 @@ class NodeNotFoundException extends Exception
     {
         return $this->nodeIdentifier;
     }
-
 }
