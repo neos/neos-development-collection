@@ -33,6 +33,7 @@ class SiteActive implements \JsonSerializable
      */
     protected function setActive(bool $active)
     {
+        // TODO: add validation if needed
         $this->active = $active;
     }
 

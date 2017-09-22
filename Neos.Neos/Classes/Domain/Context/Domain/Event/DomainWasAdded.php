@@ -2,7 +2,7 @@
 namespace Neos\Neos\Domain\Context\Domain\Event;
 
 /*
- * This file is part of the Neos.ContentRepository package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,14 +11,11 @@ namespace Neos\Neos\Domain\Context\Domain\Event;
  * source code.
  */
 
-
-use Neos\Neos\Domain\ValueObject\NodeName;
 use Neos\EventSourcing\Event\EventInterface;
-use Neos\Neos\Domain\ValueObject\DomainPort;
-use Neos\Neos\Domain\ValueObject\HostName;
-use Neos\Neos\Domain\ValueObject\UriScheme;
+use Neos\Neos\Domain\ValueObject\SchemeHostPort;
+use Neos\Neos\Domain\ValueObject\NodeName;
 
-class DomainWasAdded implements EventInterface
+final class DomainWasAdded implements EventInterface
 {
     /**
      * @var NodeName
@@ -26,33 +23,19 @@ class DomainWasAdded implements EventInterface
     private $siteNodeName;
 
     /**
-     * @var HostName
+     * @var SchemeHostPort
      */
-    private $domainHostName;
+    private $schemeHostPort;
 
     /**
-     * @var UriScheme
-     */
-    private $scheme;
-
-    /**
-     * @var DomainPort
-     */
-    private $port;
-
-    /**
-     * CreateDomain constructor.
+     * ActivateDomain constructor.
      * @param NodeName $siteNodeName
-     * @param HostName $domainHostName
-     * @param UriScheme $scheme
-     * @param DomainPort $port
+     * @param SchemeHostPort $schemeHostPort
      */
-    public function __construct(NodeName $siteNodeName, HostName $domainHostName, UriScheme $scheme = null, DomainPort $port = null)
+    public function __construct(NodeName $siteNodeName, SchemeHostPort $schemeHostPort)
     {
         $this->siteNodeName = $siteNodeName;
-        $this->domainHostName = $domainHostName;
-        $this->scheme = $scheme;
-        $this->port = $port;
+        $this->schemeHostPort = $schemeHostPort;
     }
 
     /**
@@ -64,26 +47,10 @@ class DomainWasAdded implements EventInterface
     }
 
     /**
-     * @return HostName
+     * @return SchemeHostPort
      */
-    public function getDomainHostName(): HostName
+    public function getSchemeHostPort(): SchemeHostPort
     {
-        return $this->domainHostName;
-    }
-
-    /**
-     * @return UriScheme
-     */
-    public function getScheme()
-    {
-        return $this->scheme;
-    }
-
-    /**
-     * @return DomainPort
-     */
-    public function getPort()
-    {
-        return $this->port;
+        return $this->schemeHostPort;
     }
 }

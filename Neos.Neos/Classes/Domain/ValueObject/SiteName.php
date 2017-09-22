@@ -11,9 +11,6 @@ namespace Neos\Neos\Domain\ValueObject;
  * source code.
  */
 
-/**
- * Name of a workspace
- */
 class SiteName implements \JsonSerializable
 {
     /**
@@ -36,7 +33,7 @@ class SiteName implements \JsonSerializable
      */
     protected function setName(string $name)
     {
-        // TODO: add validation
+        // TODO: add validation if needed
 //        if (preg_match('/^[\p{L}\p{P}\d \.]{2,255}$/u', $name) !== 1) {
 //            throw new \InvalidArgumentException('Invalid workspace name given.', 1505826610318);
 //        }

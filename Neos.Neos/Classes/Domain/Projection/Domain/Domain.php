@@ -24,7 +24,7 @@ use Neos\Neos\Domain\Projection\Site\Site;
  * @CQRS\ReadModel
  * @ORM\Table(name="neos_neos_projection_domain_v1")
  */
-final class Domain
+class Domain
 {
     /**
      * @var Site

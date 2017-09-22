@@ -12,29 +12,29 @@ namespace Neos\Neos\Domain\Context\Domain\Event;
  */
 
 use Neos\EventSourcing\Event\EventInterface;
-use Neos\Neos\Domain\ValueObject\HostName;
+use Neos\Neos\Domain\ValueObject\SchemeHostPort;
 
-class DomainWasDeactivated implements EventInterface
+final class DomainWasDeactivated implements EventInterface
 {
     /**
-     * @var HostName
+     * @var SchemeHostPort
      */
-    private $hostName;
+    private $schemeHostPort;
 
     /**
      * ActivateDomain constructor.
-     * @param HostName $hostName
+     * @param SchemeHostPort $schemeHostPort
      */
-    public function __construct(HostName $hostName)
+    public function __construct(SchemeHostPort $schemeHostPort)
     {
-        $this->hostName = $hostName;
+        $this->schemeHostPort = $schemeHostPort;
     }
 
     /**
-     * @return HostName
+     * @return SchemeHostPort
      */
-    public function getHostName(): HostName
+    public function getSchemeHostPort(): SchemeHostPort
     {
-        return $this->hostName;
+        return $this->schemeHostPort;
     }
 }

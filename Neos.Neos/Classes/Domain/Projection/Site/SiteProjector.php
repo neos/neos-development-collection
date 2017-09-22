@@ -47,11 +47,15 @@ final class SiteProjector extends AbstractDoctrineProjector
             return;
         }
 
+        $uriScheme = $event->getSchemeHostPort()->getUriScheme();
+        $hostName = $event->getSchemeHostPort()->getHostName();
+        $domainPort = $event->getSchemeHostPort()->getDomainPort();
+
         $domain = new Domain();
         $domain->site = $site;
-        $domain->hostName = (string)$event->getDomainHostName();
-        $domain->domainPort = (string)$event->getPort() === '' ? null :(integer)(string)$event->getPort();
-        $domain->uriScheme = (string)$event->getScheme() === '' ? null: (string)$event->getScheme();
+        $domain->hostName = (string)$hostName;
+        $domain->domainPort = (string)$domainPort === '' ? null :(integer)(string)$domainPort;
+        $domain->uriScheme = (string)$uriScheme === '' ? null: (string)$uriScheme;
         $domain->active = true;
 
         $this->add($domain);

@@ -11,9 +11,6 @@ namespace Neos\Neos\Domain\ValueObject;
  * source code.
  */
 
-/**
- * Name of a workspace
- */
 class DomainPort implements \JsonSerializable
 {
     /**
@@ -24,11 +21,11 @@ class DomainPort implements \JsonSerializable
     /**
      * Name constructor.
      *
-     * @param string $name
+     * @param string $port
      */
-    public function __construct(string $name)
+    public function __construct(string $port)
     {
-        $this->setPort($name);
+        $this->setPort($port);
     }
 
     /**

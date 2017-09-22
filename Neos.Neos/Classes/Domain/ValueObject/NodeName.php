@@ -33,6 +33,7 @@ class NodeName implements \JsonSerializable
      */
     protected function setName(string $name)
     {
+        // TODO: add validation if needed
         $this->name = $name;
     }
 

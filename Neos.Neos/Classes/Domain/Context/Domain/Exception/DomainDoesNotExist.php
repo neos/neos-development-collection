@@ -11,13 +11,20 @@ namespace Neos\Neos\Domain\Context\Domain\Exception;
  * source code.
  */
 
+use Neos\Neos\Domain\ValueObject\SchemeHostPort;
 use Neos\Neos\Exception;
 
-final class SiteDoesNotExists extends Exception
+final class DomainDoesNotExist extends Exception
 {
-    public function __construct($siteNodeName = "", $code = 0, \Throwable $previous = null)
+    /**
+     * DomainDoesNotExist constructor.
+     * @param SchemeHostPort $schemeHostPort
+     * @param int $code
+     * @param \Throwable|null $previous
+     */
+    public function __construct(SchemeHostPort $schemeHostPort, $code = 0, \Throwable $previous = null)
     {
-        $message = 'The site does not exists: ' . $siteNodeName;
+        $message = 'The domain does not exists: ' . (string)$schemeHostPort;
         parent::__construct($message, $code, $previous);
     }
 
