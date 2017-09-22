@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Domain\Model;
  */
 
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode;
+use Neos\ContentRepository\Domain\Context\Node\Command\MoveNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\SetNodeProperty;
 use Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\ContentRepository\Domain\Projection\Content\PropertyCollection;
@@ -22,6 +23,8 @@ use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain;
+use Neos\ContentRepository\Domain\ValueObject\ReferencePosition;
+use Neos\ContentRepository\Exception;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -636,7 +639,18 @@ class Node implements NodeInterface, CacheAwareInterface
             throw new \InvalidArgumentException('Setting new node name while moving not supported', 1505840321);
         }
 
-        // TODO Execute command MoveNodeBefore
+        if (!$referenceNode instanceof Node) {
+            throw new Exception(sprintf('Unexpected NodeInterface implementation: %s', get_class($this)), 1506067144);
+        }
+
+        $moveNodeCommand = new MoveNode(
+            $this->context->getContentStreamIdentifier(),
+            $this->identifier,
+            ReferencePosition::before(),
+            $referenceNode->identifier
+        );
+
+        $this->nodeCommandHandler->handleMoveNode($moveNodeCommand);
 
         $this->legacyMoveBefore($referenceNode);
     }
@@ -691,7 +705,18 @@ class Node implements NodeInterface, CacheAwareInterface
             throw new \InvalidArgumentException('Setting new node name while moving not supported', 1505809714);
         }
 
-        // TODO Execute command MoveNodeAfter
+        if (!$referenceNode instanceof Node) {
+            throw new Exception(sprintf('Unexpected NodeInterface implementation: %s', get_class($this)), 1506067144);
+        }
+
+        $moveNodeCommand = new MoveNode(
+            $this->context->getContentStreamIdentifier(),
+            $this->identifier,
+            ReferencePosition::after(),
+            $referenceNode->identifier
+        );
+
+        $this->nodeCommandHandler->handleMoveNode($moveNodeCommand);
 
         $this->legacyMoveAfter($referenceNode);
     }
@@ -748,7 +773,18 @@ class Node implements NodeInterface, CacheAwareInterface
             throw new \InvalidArgumentException('Setting new node name while moving not supported', 1505809714);
         }
 
-        // TODO Execute command MoveNodeInto
+        if (!$referenceNode instanceof Node) {
+            throw new Exception(sprintf('Unexpected NodeInterface implementation: %s', get_class($this)), 1506067144);
+        }
+
+        $moveNodeCommand = new MoveNode(
+            $this->context->getContentStreamIdentifier(),
+            $this->identifier,
+            ReferencePosition::into(),
+            $referenceNode->identifier
+        );
+
+        $this->nodeCommandHandler->handleMoveNode($moveNodeCommand);
 
         $this->legacyMoveInto($referenceNode);
     }
@@ -975,13 +1011,13 @@ class Node implements NodeInterface, CacheAwareInterface
     {
         $command = new SetNodeProperty(
             $this->context->getContentStreamIdentifier(),
-            new NodeAggregateIdentifier($this->getIdentifier()),
+            new NodeIdentifier($this->getIdentifier()),
             $propertyName,
             $value,
             new NodeTypeName($this->getNodeType()->getName())
         );
 
-        $this->nodeCommandHandler->handleSetProperty($command);
+        $this->nodeCommandHandler->handleSetNodeProperty($command);
 
         $this->legacySetProperty($propertyName, $value);
     }

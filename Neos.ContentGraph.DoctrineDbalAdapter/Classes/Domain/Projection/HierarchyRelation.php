@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Dto;
+namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 /*
  * This file is part of the Neos.ContentGraph.DoctrineDbalAdapter package.
@@ -15,24 +15,24 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Dto;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Simple data model for writing hierarchy edges to the database
+ * Simple data model for writing hierarchy relations to the database
  */
-class HierarchyEdge
+class HierarchyRelation
 {
     /**
      * @var string
      */
-    protected $parentNodeIdentifier;
+    protected $parentNodeAnchor;
 
     /**
      * @var string
      */
-    protected $childNodeIdentifier;
+    protected $childNodeAnchor;
 
     /**
      * @var string
      */
-    protected $edgeName;
+    protected $name;
 
     /**
      * @var string
@@ -55,20 +55,19 @@ class HierarchyEdge
     protected $position;
 
     /**
-     * HierarchyEdge constructor.
-     * @param string $parentNodeIdentifier
-     * @param string $childNodeIdentifier
-     * @param string $edgeName
+     * @param string $parentNodeAnchor
+     * @param string $childNodeAnchor
+     * @param string $name
      * @param string $contentStreamIdentifier
      * @param array $dimensionSpacePoint
      * @param string $dimensionSpacePointHash
      * @param int $position
      */
-    public function __construct(string $parentNodeIdentifier, string $childNodeIdentifier, string $edgeName, string $contentStreamIdentifier, array $dimensionSpacePoint, string $dimensionSpacePointHash, int $position)
+    public function __construct(string $parentNodeAnchor, string $childNodeAnchor, string $name, string $contentStreamIdentifier, array $dimensionSpacePoint, string $dimensionSpacePointHash, int $position)
     {
-        $this->parentNodeIdentifier = $parentNodeIdentifier;
-        $this->childNodeIdentifier = $childNodeIdentifier;
-        $this->edgeName = $edgeName;
+        $this->parentNodeAnchor = $parentNodeAnchor;
+        $this->childNodeAnchor = $childNodeAnchor;
+        $this->name = $name;
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
         $this->dimensionSpacePointHash = $dimensionSpacePointHash;
@@ -78,25 +77,25 @@ class HierarchyEdge
     /**
      * @return string
      */
-    public function getParentNodeIdentifier(): string
+    public function getParentNodeAnchor(): string
     {
-        return $this->parentNodeIdentifier;
+        return $this->parentNodeAnchor;
     }
 
     /**
      * @return string
      */
-    public function getChildNodeIdentifier(): string
+    public function getChildNodeAnchor(): string
     {
-        return $this->childNodeIdentifier;
+        return $this->childNodeAnchor;
     }
 
     /**
      * @return string
      */
-    public function getEdgeName(): string
+    public function getName(): string
     {
-        return $this->edgeName;
+        return $this->name;
     }
 
     /**
@@ -135,8 +134,8 @@ class HierarchyEdge
     public function getDatabaseIdentifier(): array
     {
         return [
-            'parentnodeidentifier' => $this->parentNodeIdentifier,
-            'childnodeidentifier' => $this->childNodeIdentifier,
+            'parentnodeanchor' => $this->parentNodeAnchor,
+            'childnodeanchor' => $this->childNodeAnchor,
             'contentstreamidentifier' => $this->contentStreamIdentifier,
             'dimensionspacepointhash' => $this->dimensionSpacePointHash
         ];
