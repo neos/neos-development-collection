@@ -297,7 +297,7 @@ final class NodeCommandHandler
                 $dimensionSpacePoint), 1505929456);
         }
         $points = [$dimensionSpacePoint];
-        foreach ($contentSubgraph->getVariants() as $variant) {
+        foreach ($contentSubgraph->getSpecializations() as $variant) {
             $points[] = $variant->getIdentifier();
         }
         $visibleDimensionSpacePoints = new DimensionSpacePointSet($points);

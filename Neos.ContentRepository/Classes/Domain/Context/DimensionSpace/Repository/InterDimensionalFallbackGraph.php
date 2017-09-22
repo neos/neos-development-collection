@@ -92,7 +92,7 @@ class InterDimensionalFallbackGraph
      * @param array $dimensionValues
      * @return ContentSubgraph
      */
-    public function createContentSubgraph(array $dimensionValues): ContentSubgraph
+    protected function createContentSubgraph(array $dimensionValues): ContentSubgraph
     {
         $subgraph = new ContentSubgraph($dimensionValues);
         $this->subgraphs[$subgraph->getIdentityHash()] = $subgraph;
@@ -101,32 +101,32 @@ class InterDimensionalFallbackGraph
     }
 
     /**
-     * @param ContentSubgraph $variant
-     * @param ContentSubgraph $fallback
+     * @param ContentSubgraph $specialization
+     * @param ContentSubgraph $generalization
      * @return VariationEdge
      * @throws Dimension\Exception\InvalidFallbackException
      */
-    public function connectSubgraphs(ContentSubgraph $variant, ContentSubgraph $fallback): VariationEdge
+    protected function connectSubgraphs(ContentSubgraph $specialization, ContentSubgraph $generalization): VariationEdge
     {
-        if ($variant === $fallback) {
+        if ($specialization === $generalization) {
             throw new Dimension\Exception\InvalidFallbackException();
         }
 
-        return new VariationEdge($variant, $fallback, $this->calculateFallbackWeight($variant, $fallback));
+        return new VariationEdge($specialization, $generalization, $this->calculateFallbackWeight($specialization, $generalization));
     }
 
     /**
-     * @param ContentSubgraph $variant
-     * @param ContentSubgraph $fallback
+     * @param ContentSubgraph $specialization
+     * @param ContentSubgraph $generalization
      * @return array
      */
-    public function calculateFallbackWeight(ContentSubgraph $variant, ContentSubgraph $fallback)
+    protected function calculateFallbackWeight(ContentSubgraph $specialization, ContentSubgraph $generalization)
     {
         $weight = [];
         foreach ($this->intraDimensionalFallbackGraph->getPrioritizedContentDimensions() as $contentDimension) {
-            $weight[$contentDimension->getName()] = $variant
+            $weight[$contentDimension->getName()] = $specialization
                 ->getDimensionValue($contentDimension->getName())
-                ->calculateFallbackDepth($fallback->getDimensionValue($contentDimension->getName()));
+                ->calculateFallbackDepth($generalization->getDimensionValue($contentDimension->getName()));
         }
 
         return $weight;
@@ -136,7 +136,7 @@ class InterDimensionalFallbackGraph
      * @param array $weight
      * @return int
      */
-    public function normalizeWeight(array $weight): int
+    protected function normalizeWeight(array $weight): int
     {
         $base = $this->determineWeightNormalizationBase();
         $normalizedWeight = 0;
@@ -152,7 +152,7 @@ class InterDimensionalFallbackGraph
     /**
      * @return int
      */
-    public function determineWeightNormalizationBase(): int
+    protected function determineWeightNormalizationBase(): int
     {
         $base = 0;
         foreach ($this->intraDimensionalFallbackGraph->getPrioritizedContentDimensions() as $contentDimension) {
@@ -169,16 +169,16 @@ class InterDimensionalFallbackGraph
      */
     public function getPrimaryFallback(ContentSubgraph $contentSubgraph)
     {
-        $fallbackEdges = $contentSubgraph->getFallbackEdges();
-        if (empty($fallbackEdges)) {
+        $generalization = $contentSubgraph->getGeneralizationEdges();
+        if (empty($generalization)) {
             return null;
         }
 
-        uasort($fallbackEdges, function (VariationEdge $edgeA, VariationEdge $edgeB) {
+        uasort($generalization, function (VariationEdge $edgeA, VariationEdge $edgeB) {
             return $this->normalizeWeight($edgeA->getWeight()) <=> $this->normalizeWeight($edgeB->getWeight());
         });
 
-        return reset($fallbackEdges)->getFallback();
+        return reset($generalization)->getGeneralization();
     }
 
     /**

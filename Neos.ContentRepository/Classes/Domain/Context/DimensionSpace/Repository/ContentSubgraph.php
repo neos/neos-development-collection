@@ -27,23 +27,22 @@ class ContentSubgraph
     /**
      * @var Domain\ValueObject\DimensionSpacePoint
      */
-    protected $identifier;
+    protected $dimensionSpacePoint;
 
     /**
      * @var array
      */
-    protected $fallbackEdges = [];
+    protected $generalizationEdges = [];
 
     /**
      * @var array
      */
-    protected $variantEdges = [];
+    protected $specializationEdges = [];
 
     /**
      * @var array
      */
     protected $weight;
-
 
     /**
      * @param array|Dimension\Model\ContentDimensionValue[] $dimensionValues
@@ -56,7 +55,7 @@ class ContentSubgraph
             $coordinates[$dimensionName] = $dimensionValue->getValue();
             $this->weight[$dimensionName] = $dimensionValue->getDepth();
         }
-        $this->identifier = new Domain\ValueObject\DimensionSpacePoint($coordinates);
+        $this->dimensionSpacePoint = new Domain\ValueObject\DimensionSpacePoint($coordinates);
     }
 
     /**
@@ -64,7 +63,15 @@ class ContentSubgraph
      */
     public function getIdentifier(): Domain\ValueObject\DimensionSpacePoint
     {
-        return $this->identifier;
+        return $this->getDimensionSpacePoint();
+    }
+
+    /**
+     * @return Domain\ValueObject\DimensionSpacePoint
+     */
+    public function getDimensionSpacePoint(): Domain\ValueObject\DimensionSpacePoint
+    {
+        return $this->dimensionSpacePoint;
     }
 
     /**
@@ -89,7 +96,7 @@ class ContentSubgraph
      */
     public function getIdentityHash(): string
     {
-        return $this->identifier->getHash();
+        return $this->dimensionSpacePoint->getHash();
     }
 
     /**
@@ -101,62 +108,62 @@ class ContentSubgraph
     }
 
     /**
-     * @param VariationEdge $variant
+     * @param VariationEdge $specializationEdge
      * @return void
      */
-    public function registerVariantEdge(VariationEdge $variant)
+    public function registerSpecializationEdge(VariationEdge $specializationEdge)
     {
-        $this->variantEdges[$variant->getVariant()->getIdentityHash()] = $variant;
+        $this->specializationEdges[$specializationEdge->getSpecialization()->getIdentityHash()] = $specializationEdge;
     }
 
     /**
      * @return array|VariationEdge[]
      */
-    public function getVariantEdges(): array
+    public function getSpecializationEdges(): array
     {
-        return $this->variantEdges;
+        return $this->specializationEdges;
     }
 
     /**
-     * @param VariationEdge $fallback
+     * @param VariationEdge $generalizationEdge
      * @return void
      */
-    public function registerFallbackEdge(VariationEdge $fallback)
+    public function registerGeneralizationEdge(VariationEdge $generalizationEdge)
     {
-        $this->fallbackEdges[$fallback->getFallback()->getIdentityHash()] = $fallback;
+        $this->generalizationEdges[$generalizationEdge->getGeneralization()->getIdentityHash()] = $generalizationEdge;
     }
 
     /**
      * @return array|VariationEdge[]
      */
-    public function getFallbackEdges(): array
+    public function getGeneralizationEdges(): array
     {
-        return $this->fallbackEdges;
+        return $this->generalizationEdges;
     }
 
     /**
      * @return array|ContentSubgraph[]
      */
-    public function getVariants(): array
+    public function getSpecializations(): array
     {
-        $variants = [];
-        foreach ($this->getVariantEdges() as $variantEdge) {
-            $variants[$variantEdge->getVariant()->getIdentityHash()] = $variantEdge->getVariant();
+        $specializations = [];
+        foreach ($this->getSpecializationEdges() as $specializationEdge) {
+            $specializations[$specializationEdge->getSpecialization()->getIdentityHash()] = $specializationEdge->getSpecialization();
         }
 
-        return $variants;
+        return $specializations;
     }
 
     /**
      * @return array|ContentSubgraph[]
      */
-    public function getFallback(): array
+    public function getGeneralizations(): array
     {
-        $fallback = [];
-        foreach ($this->getFallbackEdges() as $fallbackEdge) {
-            $fallback[$fallbackEdge->getFallback()->getIdentityHash()] = $fallbackEdge->getFallback();
+        $generalizations = [];
+        foreach ($this->getGeneralizationEdges() as $generalizationEdge) {
+            $generalizations[$generalizationEdge->getGeneralization()->getIdentityHash()] = $generalizationEdge->getGeneralization();
         }
 
-        return $fallback;
+        return $generalizations;
     }
 }

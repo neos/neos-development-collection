@@ -20,12 +20,12 @@ class VariationEdge
     /**
      * @var ContentSubgraph
      */
-    protected $variant;
+    protected $specialization;
 
     /**
      * @var ContentSubgraph
      */
-    protected $fallback;
+    protected $generalization;
 
     /**
      * @var array
@@ -33,33 +33,33 @@ class VariationEdge
     protected $weight;
 
     /**
-     * @param ContentSubgraph $variant
-     * @param ContentSubgraph $fallback
+     * @param ContentSubgraph $specialization
+     * @param ContentSubgraph $generalization
      * @param array $weight
      */
-    public function __construct(ContentSubgraph $variant, ContentSubgraph $fallback, array $weight)
+    public function __construct(ContentSubgraph $specialization, ContentSubgraph $generalization, array $weight)
     {
-        $this->variant = $variant;
-        $this->fallback = $fallback;
+        $this->specialization = $specialization;
+        $this->generalization = $generalization;
         $this->weight = $weight;
-        $variant->registerFallbackEdge($this);
-        $fallback->registerVariantEdge($this);
+        $specialization->registerGeneralizationEdge($this);
+        $generalization->registerSpecializationEdge($this);
     }
 
     /**
      * @return ContentSubgraph
      */
-    public function getVariant(): ContentSubgraph
+    public function getSpecialization(): ContentSubgraph
     {
-        return $this->variant;
+        return $this->specialization;
     }
 
     /**
      * @return ContentSubgraph
      */
-    public function getFallback(): ContentSubgraph
+    public function getGeneralization(): ContentSubgraph
     {
-        return $this->fallback;
+        return $this->generalization;
     }
 
     /**

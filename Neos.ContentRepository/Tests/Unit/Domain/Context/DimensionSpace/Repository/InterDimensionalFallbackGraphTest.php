@@ -1,5 +1,6 @@
 <?php
-namespace Neos\ContentRepository\Tests\Unit\Domain\Model\InterDimension;
+
+namespace Neos\ContentRepository\Tests\Unit\Domain\Context\DimensionSpace\Repository;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -25,49 +26,54 @@ class InterDimensionalFallbackGraphTest extends UnitTestCase
      */
     public function createContentSubgraphRegistersSubgraph()
     {
-        $graph = new DimensionSpace\Repository\InterDimensionalFallbackGraph();
+        /** @var DimensionSpace\Repository\InterDimensionalFallbackGraph $graph */
+        $graph = $this->getAccessibleMock(DimensionSpace\Repository\InterDimensionalFallbackGraph::class, ['dummy']);
+        /** @var DimensionSpace\Repository\ContentSubgraph $contentSubgraph */
+        $contentSubgraph = $graph->_call('createContentSubgraph', ['test' => new Dimension\Model\ContentDimensionValue('a')]);
 
-        $contentSubgraph = $graph->createContentSubgraph(['test' => new Dimension\Model\ContentDimensionValue('a')]);
-
-        $this->assertSame($contentSubgraph, $graph->getSubgraphByDimensionSpacePointHash($contentSubgraph->getIdentityHash()));
+        $this->assertSame($contentSubgraph, $graph->getSubgraphByDimensionSpacePoint($contentSubgraph->getDimensionSpacePoint()));
     }
 
     /**
      * @test
      */
-    public function connectSubgraphsAddsFallbackToVariant()
+    public function connectSubgraphsAddsGeneralizationToSpecialization()
     {
         $contentDimension = new Dimension\Repository\ContentDimension('test');
-        $fallbackValue = $contentDimension->createValue('a');
-        $variantValue = $contentDimension->createValue('b', $fallbackValue);
-        #$graph = new DimensionCombination\Repository\InterDimensionalFallbackGraph([$contentDimension]);
-        $graph = new DimensionSpace\Repository\InterDimensionalFallbackGraph();
+        $generalizationValue = $contentDimension->createValue('a');
+        $specializationValue = $contentDimension->createValue('b', $generalizationValue);
 
-        $fallback = new DimensionSpace\Repository\ContentSubgraph(['test' => $fallbackValue]);
-        $variant = new DimensionSpace\Repository\ContentSubgraph(['test' => $variantValue]);
+        /** @var DimensionSpace\Repository\InterDimensionalFallbackGraph $graph */
+        $graph = $this->getAccessibleMock(DimensionSpace\Repository\InterDimensionalFallbackGraph::class, ['dummy']);
+        $this->inject($graph, 'intraDimensionalFallbackGraph', $this->createIntraDimensionalFallbackGraphMock([$contentDimension]));
 
-        $graph->connectSubgraphs($variant, $fallback);
+        $generalization = new DimensionSpace\Repository\ContentSubgraph(['test' => $generalizationValue]);
+        $specialization = new DimensionSpace\Repository\ContentSubgraph(['test' => $specializationValue]);
 
-        $this->assertContains($fallback, $variant->getFallback());
+        $graph->_call('connectSubgraphs', $specialization, $generalization);
+
+        $this->assertContains($generalization, $specialization->getGeneralizations());
     }
 
     /**
      * @test
      */
-    public function connectSubgraphsAddsVariantToFallback()
+    public function connectSubgraphsAddsSpecializationToGeneralization()
     {
         $contentDimension = new Dimension\Repository\ContentDimension('test');
-        $fallbackValue = $contentDimension->createValue('a');
-        $variantValue = $contentDimension->createValue('b', $fallbackValue);
-        #$graph = new DimensionCombination\Repository\InterDimensionalFallbackGraph([$contentDimension]);
-        $graph = new DimensionSpace\Repository\InterDimensionalFallbackGraph();
+        $generalizationValue = $contentDimension->createValue('a');
+        $specializationValue = $contentDimension->createValue('b', $generalizationValue);
 
-        $fallback = new DimensionSpace\Repository\ContentSubgraph(['test' => $fallbackValue]);
-        $variant = new DimensionSpace\Repository\ContentSubgraph(['test' => $variantValue]);
+        /** @var DimensionSpace\Repository\InterDimensionalFallbackGraph $graph */
+        $graph = $this->getAccessibleMock(DimensionSpace\Repository\InterDimensionalFallbackGraph::class, ['dummy']);
+        $this->inject($graph, 'intraDimensionalFallbackGraph', $this->createIntraDimensionalFallbackGraphMock([$contentDimension]));
 
-        $graph->connectSubgraphs($variant, $fallback);
+        $generalization = new DimensionSpace\Repository\ContentSubgraph(['test' => $generalizationValue]);
+        $specialization = new DimensionSpace\Repository\ContentSubgraph(['test' => $specializationValue]);
 
-        $this->assertContains($variant, $fallback->getVariants());
+        $graph->_call('connectSubgraphs', $specialization, $generalization);
+
+        $this->assertContains($specialization, $generalization->getSpecializations());
     }
 
     /**
@@ -79,26 +85,25 @@ class InterDimensionalFallbackGraphTest extends UnitTestCase
      */
     public function calculateFallbackWeightAggregatesCorrectWeightPerDimension(array $variantDimensionCombination, array $fallbackDimensionCombination, array $expectedWeight)
     {
-        $intraGraph = new Dimension\Repository\IntraDimensionalFallbackGraph();
-
         $availableDimensionValues = [];
 
-        $primaryDimension = $intraGraph->createDimension('primary');
+        $primaryDimension = new Dimension\Repository\ContentDimension('primary');
         $availableDimensionValues['primary0'] = $primaryDimension->createValue('0');
         $availableDimensionValues['primary1'] = $primaryDimension->createValue('1', $availableDimensionValues['primary0']);
         $availableDimensionValues['primary2'] = $primaryDimension->createValue('2', $availableDimensionValues['primary1']);
 
-        $secondaryDimension = $intraGraph->createDimension('secondary');
+        $secondaryDimension = new Dimension\Repository\ContentDimension('secondary');
         $availableDimensionValues['secondary0a'] = $secondaryDimension->createValue('0a');
         $availableDimensionValues['secondary0b'] = $secondaryDimension->createValue('0b');
 
-        $tertiaryDimension = $intraGraph->createDimension('tertiary');
+        $tertiaryDimension = new Dimension\Repository\ContentDimension('tertiary');
         $availableDimensionValues['tertiary0'] = $tertiaryDimension->createValue('0');
         $availableDimensionValues['tertiary1a'] = $tertiaryDimension->createValue('1a', $availableDimensionValues['tertiary0']);
         $availableDimensionValues['tertiary1b'] = $tertiaryDimension->createValue('1b', $availableDimensionValues['tertiary0']);
 
-        #$interGraph = new DimensionCombination\Repository\InterDimensionalFallbackGraph([$primaryDimension, $secondaryDimension, $tertiaryDimension]);
-        $interGraph = new DimensionSpace\Repository\InterDimensionalFallbackGraph();
+        /** @var DimensionSpace\Repository\InterDimensionalFallbackGraph $graph */
+        $graph = $this->getAccessibleMock(DimensionSpace\Repository\InterDimensionalFallbackGraph::class, ['dummy']);
+        $this->inject($graph, 'intraDimensionalFallbackGraph', $this->createIntraDimensionalFallbackGraphMock([$primaryDimension, $secondaryDimension, $tertiaryDimension]));
 
         array_walk($variantDimensionCombination, function (&$value) use ($availableDimensionValues) {
             $value = $availableDimensionValues[$value];
@@ -110,7 +115,7 @@ class InterDimensionalFallbackGraphTest extends UnitTestCase
         });
         $fallbackContentSubgraph = new DimensionSpace\Repository\ContentSubgraph($fallbackDimensionCombination);
 
-        $this->assertSame($expectedWeight, $interGraph->calculateFallbackWeight($variantContentSubgraph, $fallbackContentSubgraph));
+        $this->assertSame($expectedWeight, $graph->_call('calculateFallbackWeight', $variantContentSubgraph, $fallbackContentSubgraph));
     }
 
     public function dimensionValueCombinationProvider()
@@ -147,9 +152,11 @@ class InterDimensionalFallbackGraphTest extends UnitTestCase
         $secondDepth = random_int(0, 100);
         ObjectAccess::setProperty($secondDimension, 'depth', $secondDepth, true);
 
-        #$graph = new DimensionCombination\Repository\InterDimensionalFallbackGraph([$firstDimension, $secondDimension]);
-        $graph = new DimensionSpace\Repository\InterDimensionalFallbackGraph();
-        $this->assertSame(max($firstDepth, $secondDepth) + 1, $graph->determineWeightNormalizationBase());
+        /** @var DimensionSpace\Repository\InterDimensionalFallbackGraph $graph */
+        $graph = $this->getAccessibleMock(DimensionSpace\Repository\InterDimensionalFallbackGraph::class, ['dummy']);
+        $this->inject($graph, 'intraDimensionalFallbackGraph', $this->createIntraDimensionalFallbackGraphMock([$firstDimension, $secondDimension]));
+
+        $this->assertSame(max($firstDepth, $secondDepth) + 1, $graph->_call('determineWeightNormalizationBase'));
     }
 
 
@@ -169,14 +176,15 @@ class InterDimensionalFallbackGraphTest extends UnitTestCase
         $tertiaryDimension = new Dimension\Repository\ContentDimension('tertiary');
         ObjectAccess::setProperty($tertiaryDimension, 'depth', $dimensionDepth, true);
 
-        #$graph = new DimensionCombination\Repository\InterDimensionalFallbackGraph([$primaryDimension, $secondaryDimension, $tertiaryDimension]);
-        $graph = new DimensionSpace\Repository\InterDimensionalFallbackGraph();
+        /** @var DimensionSpace\Repository\InterDimensionalFallbackGraph $graph */
+        $graph = $this->getAccessibleMock(DimensionSpace\Repository\InterDimensionalFallbackGraph::class, ['dummy']);
+        $this->inject($graph, 'intraDimensionalFallbackGraph', $this->createIntraDimensionalFallbackGraphMock([$primaryDimension, $secondaryDimension, $tertiaryDimension]));
 
-        $variant = new DimensionSpace\Repository\ContentSubgraph([]);
-        $fallback = new DimensionSpace\Repository\ContentSubgraph([]);
-        $variationEdge = new DimensionSpace\Repository\VariationEdge($variant, $fallback, $weight);
+        $specialization = new DimensionSpace\Repository\ContentSubgraph([]);
+        $generalization = new DimensionSpace\Repository\ContentSubgraph([]);
+        $variationEdge = new DimensionSpace\Repository\VariationEdge($specialization, $generalization, $weight);
 
-        $this->assertSame($expectedNormalizedWeight, $graph->normalizeWeight($variationEdge->getWeight()));
+        $this->assertSame($expectedNormalizedWeight, $graph->_call('normalizeWeight', $variationEdge->getWeight()));
     }
 
     public function variationEdgeWeightNormalizationProvider()
@@ -208,8 +216,9 @@ class InterDimensionalFallbackGraphTest extends UnitTestCase
         $tertiaryDummyValue = $tertiaryDimension->createValue('dummy');
         ObjectAccess::setProperty($tertiaryDimension, 'depth', 5, true);
 
-        #$graph = new DimensionCombination\Repository\InterDimensionalFallbackGraph([$primaryDimension, $secondaryDimension, $tertiaryDimension]);
-        $graph = new DimensionSpace\Repository\InterDimensionalFallbackGraph();
+        /** @var DimensionSpace\Repository\InterDimensionalFallbackGraph $graph */
+        $graph = $this->getAccessibleMock(DimensionSpace\Repository\InterDimensionalFallbackGraph::class, ['dummy']);
+        $this->inject($graph, 'intraDimensionalFallbackGraph', $this->createIntraDimensionalFallbackGraphMock([$primaryDimension, $secondaryDimension, $tertiaryDimension]));
 
         $variant = new DimensionSpace\Repository\ContentSubgraph([
             'primary' => $primaryVariantValue,
@@ -248,5 +257,15 @@ class InterDimensionalFallbackGraphTest extends UnitTestCase
                 ['primary' => 1, 'secondary' => 0, 'tertiary' => 0]
             ]
         ];
+    }
+
+    protected function createIntraDimensionalFallbackGraphMock(array $contentDimensions)
+    {
+        $intraDimensionalFallbackGraphMock = $this->createMock(Dimension\Repository\IntraDimensionalFallbackGraph::class);
+        $intraDimensionalFallbackGraphMock->expects($this->any())
+            ->method('getPrioritizedContentDimensions')
+            ->will($this->returnValue($contentDimensions));
+
+        return $intraDimensionalFallbackGraphMock;
     }
 }

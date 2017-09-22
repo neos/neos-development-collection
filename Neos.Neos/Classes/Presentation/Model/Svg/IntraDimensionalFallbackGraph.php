@@ -121,8 +121,8 @@ class IntraDimensionalFallbackGraph
         $counter++;
         $nodeId = $counter;
         $leftOffset = $horizontalOffset + 42;
-        if ($value->getVariants()) {
-            foreach ($value->getVariants() as $variant) {
+        if ($value->getSpecializations()) {
+            foreach ($value->getSpecializations() as $variant) {
                 $this->traverseDimension($dimensionName, $variant, $counter, $depth + 1, $horizontalOffset, $nodeId);
             }
             $horizontalOffset -= 110;

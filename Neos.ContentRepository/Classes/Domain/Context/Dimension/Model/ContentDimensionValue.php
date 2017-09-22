@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Domain\Context\Dimension\Model;
 
 /*
@@ -25,12 +26,12 @@ class ContentDimensionValue
     /**
      * @var ContentDimensionValue
      */
-    protected $fallback;
+    protected $generalization;
 
     /**
      * @var array
      */
-    protected $variants = [];
+    protected $specializations = [];
 
     /**
      * @var int
@@ -39,40 +40,39 @@ class ContentDimensionValue
 
     /**
      * @param string $value
-     * @param ContentDimensionValue|null $fallback
+     * @param ContentDimensionValue|null $generalization
      */
-    public function __construct(string $value, ContentDimensionValue $fallback = null)
+    public function __construct(string $value, ?ContentDimensionValue $generalization = null)
     {
         $this->value = $value;
-        if ($fallback) {
-            $this->fallback = $fallback;
-            $this->depth = $fallback->getDepth() + 1;
+        if ($generalization) {
+            $this->generalization = $generalization;
+            $this->depth = $generalization->getDepth() + 1;
         }
     }
 
     /**
-     * @param ContentDimensionValue $variant
-     * @return void
+     * @param ContentDimensionValue $specialization
      */
-    public function registerVariant(ContentDimensionValue $variant)
+    public function registerSpecialization(ContentDimensionValue $specialization): void
     {
-        $this->variants[$variant->getValue()] = $variant;
+        $this->specializations[$specialization->getValue()] = $specialization;
     }
 
     /**
      * @return array|ContentDimensionValue[]
      */
-    public function getVariants(): array
+    public function getSpecializations(): array
     {
-        return $this->variants;
+        return $this->specializations;
     }
 
     /**
      * @return ContentDimensionValue|null
      */
-    public function getFallback()
+    public function getGeneralization(): ?ContentDimensionValue
     {
-        return $this->fallback;
+        return $this->generalization;
     }
 
     /**
@@ -100,12 +100,12 @@ class ContentDimensionValue
     {
         $fallbackDepth = 0;
         $fallbackFound = false;
-        $currentFallback = $this;
-        while ($currentFallback && !$fallbackFound) {
-            if ($currentFallback === $fallback) {
+        $currentGeneralization = $this;
+        while ($currentGeneralization && !$fallbackFound) {
+            if ($currentGeneralization === $fallback) {
                 $fallbackFound = true;
             } else {
-                $currentFallback = $currentFallback->getFallback();
+                $currentGeneralization = $currentGeneralization->getGeneralization();
                 $fallbackDepth++;
             }
         }

@@ -66,14 +66,14 @@ class ContentDimension
 
     /**
      * @param string $value
-     * @param Dimension\Model\ContentDimensionValue|null $fallback
+     * @param Dimension\Model\ContentDimensionValue|null $generalization
      * @return Dimension\Model\ContentDimensionValue
      */
-    public function createValue(string $value, Dimension\Model\ContentDimensionValue $fallback = null): Dimension\Model\ContentDimensionValue
+    public function createValue(string $value, ?Dimension\Model\ContentDimensionValue $generalization = null): Dimension\Model\ContentDimensionValue
     {
-        $contentDimensionValue = new Dimension\Model\ContentDimensionValue($value, $fallback);
-        if ($fallback) {
-            $fallback->registerVariant($contentDimensionValue);
+        $contentDimensionValue = new Dimension\Model\ContentDimensionValue($value, $generalization);
+        if ($generalization) {
+            $generalization->registerSpecialization($contentDimensionValue);
             $this->depth = max($this->depth, $contentDimensionValue->getDepth());
         }
         $this->valueRegistry[$contentDimensionValue->getValue()] = $contentDimensionValue;

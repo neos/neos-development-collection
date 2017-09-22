@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Tests\Unit\Domain\Model\IntraDimension;
+namespace Neos\ContentRepository\Tests\Unit\Domain\Context\Dimension\Repository;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -10,8 +10,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Model\IntraDimension;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-use Neos\ContentRepository\Domain\Model\IntraDimension;
+use Neos\ContentRepository\Domain\Context\Dimension;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -24,8 +23,9 @@ class IntraDimensionalFallbackGraphTest extends UnitTestCase
      */
     public function createDimensionRegistersDimension()
     {
-        $graph = new IntraDimension\IntraDimensionalFallbackGraph();
-        $dimension = $graph->createDimension('test');
+        /** @var Dimension\Repository\IntraDimensionalFallbackGraph $graph */
+        $graph = $this->getAccessibleMock(Dimension\Repository\IntraDimensionalFallbackGraph::class, ['dummy']);
+        $dimension = $graph->_call('createDimension', 'test');
 
         $this->assertSame($dimension, $graph->getDimension('test'));
     }

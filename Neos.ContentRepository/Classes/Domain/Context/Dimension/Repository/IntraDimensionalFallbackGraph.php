@@ -17,7 +17,7 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * The intra dimensional fallback graph domain model
- * Represents the fallback mechanism within each content subgraph dimension
+ * Represents the generalization/specialization mechanism within each content subgraph dimension
  *
  * @Flow\Scope("singleton")
  */
@@ -47,7 +47,7 @@ class IntraDimensionalFallbackGraph
         foreach ($this->contentDimensionPresetSource->getAllPresets() as $dimensionName => $dimensionConfiguration) {
             $presetDimension = $this->createDimension($dimensionName, $dimensionConfiguration['label'] ?? null);
             $valueNodes = [];
-            $fallbackEdges = [];
+            $generalizationEdges = [];
             foreach ($dimensionConfiguration['presets'] as $valueName => $valueConfiguration) {
                 if (!isset($valueConfiguration['values'])) {
                     continue;
@@ -57,20 +57,20 @@ class IntraDimensionalFallbackGraph
                 foreach ($values as $dimensionValue) {
                     $valueNodes[$dimensionValue] = $dimensionValue;
                     if ($parent) {
-                        $fallbackEdges[$dimensionValue] = $parent;
+                        $generalizationEdges[$dimensionValue] = $parent;
                     }
                     $parent = $dimensionValue;
                 }
             }
-            $rootValues = array_diff_key($valueNodes, $fallbackEdges);
+            $rootValues = array_diff_key($valueNodes, $generalizationEdges);
 
-            $inverseFallbackEdges = [];
-            foreach ($fallbackEdges as $specialization => $generalization) {
-                $inverseFallbackEdges[$generalization][] = $specialization;
+            $specializationEdges = [];
+            foreach ($generalizationEdges as $specialization => $generalization) {
+                $specializationEdges[$generalization][] = $specialization;
             }
 
             foreach ($rootValues as $rootValue) {
-                $this->traverseFallbackEdges($presetDimension, $inverseFallbackEdges, $rootValue);
+                $this->traverseSpecializationEdges($presetDimension, $specializationEdges, $rootValue);
             }
 
             $this->prioritizedContentDimensions[] = $presetDimension;
@@ -79,16 +79,16 @@ class IntraDimensionalFallbackGraph
 
     /**
      * @param ContentDimension $presetDimension
-     * @param array $fallbackEdges
+     * @param array $specializationEdges
      * @param string $value
      * @param Dimension\Model\ContentDimensionValue|null $parentValue
      */
-    protected function traverseFallbackEdges(ContentDimension $presetDimension, array $fallbackEdges, string $value, Dimension\Model\ContentDimensionValue $parentValue = null)
+    protected function traverseSpecializationEdges(ContentDimension $presetDimension, array $specializationEdges, string $value, Dimension\Model\ContentDimensionValue $parentValue = null)
     {
         $currentValue = $presetDimension->createValue($value, $parentValue);
-        if (isset($fallbackEdges[$value])) {
-            foreach ($fallbackEdges[$value] as $specializedValue) {
-                $this->traverseFallbackEdges($presetDimension, $fallbackEdges, $specializedValue, $currentValue);
+        if (isset($specializationEdges[$value])) {
+            foreach ($specializationEdges[$value] as $specializedValue) {
+                $this->traverseSpecializationEdges($presetDimension, $specializationEdges, $specializedValue, $currentValue);
             }
         }
     }
@@ -98,7 +98,7 @@ class IntraDimensionalFallbackGraph
      * @param string|null $label
      * @return ContentDimension
      */
-    public function createDimension(string $dimensionName, string $label = null): ContentDimension
+    protected function createDimension(string $dimensionName, string $label = null): ContentDimension
     {
         $dimension = new ContentDimension($dimensionName, $label);
         $this->dimensions[$dimension->getName()] = $dimension;

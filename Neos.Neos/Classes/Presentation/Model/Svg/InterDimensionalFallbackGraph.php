@@ -178,8 +178,8 @@ class InterDimensionalFallbackGraph
     protected function traverseDimension(string $dimensionName, Dimension\Model\ContentDimensionValue $value, int $depth, int & $horizontalOffset, int $baseOffset)
     {
         $leftOffset = $horizontalOffset;
-        if ($value->getVariants()) {
-            foreach ($value->getVariants() as $variant) {
+        if ($value->getSpecializations()) {
+            foreach ($value->getSpecializations() as $variant) {
                 $this->traverseDimension($dimensionName, $variant, $depth + 1, $horizontalOffset, $baseOffset);
             }
             $horizontalOffset--;
@@ -207,11 +207,11 @@ class InterDimensionalFallbackGraph
         $subgraph = $this->fallbackGraph->getSubgraphByDimensionSpacePointHash($this->rootSubgraphIdentifier);
         $horizontalOffset = 0;
         $y = 0;
-        foreach ($subgraph->getFallback() as $fallbackSubgraph) {
+        foreach ($subgraph->getGeneralizations() as $fallbackSubgraph) {
             $this->initializeSubgraphNode($fallbackSubgraph, $horizontalOffset, $y);
         }
         $this->initializeSubgraphNode($subgraph, $horizontalOffset, $y);
-        foreach ($subgraph->getVariants() as $variantSubgraph) {
+        foreach ($subgraph->getSpecializations() as $variantSubgraph) {
             $this->initializeSubgraphNode($variantSubgraph, $horizontalOffset, $y);
         }
 
@@ -307,7 +307,7 @@ class InterDimensionalFallbackGraph
             return $subgraphB->getWeight() <=> $subgraphA->getWeight();
         });
         foreach ($subgraphs as $subgraph) {
-            $fallback = $subgraph->getFallback();
+            $fallback = $subgraph->getGeneralizations();
             usort($fallback, function (DimensionSpace\Repository\ContentSubgraph $subgraphA, DimensionSpace\Repository\ContentSubgraph $subgraphB) {
                 return $subgraphA->getWeight() <=> $subgraphB->getWeight();
             });
