@@ -62,6 +62,11 @@ trait EventSourcedTrait
     private $currentEventStreamAsArray = null;
 
     /**
+     * @var \Exception
+     */
+    private $lastCommandException = null;
+
+    /**
      * @Given /^the Event "([^"]*)" was published to stream "([^"]*)" with payload:$/
      */
     public function theEventWasPublishedToStreamWithPayload($eventType, $streamName, TableNode $payloadTable)
@@ -130,6 +135,36 @@ trait EventSourcedTrait
         $commandHandler = $this->objectManager->get($commandHandlerClassName);
 
         $commandHandler->$commandHandlerMethod($command);
+    }
+
+    /**
+     * @When /^the command "([^"]*)" is executed with payload and exceptions are catched:$/
+     */
+    public function theCommandIsExecutedWithPayloadAndExceptionsAreCatched($shortCommandName, TableNode $payloadTable)
+    {
+        try {
+            $this->theCommandIsExecutedWithPayload($shortCommandName, $payloadTable);
+        } catch (\Exception $exception) {
+            $this->lastCommandException = $exception;
+        }
+    }
+
+    /**
+     * @Then /^the last command should have thrown an exception of type "([^"]*)"$/
+     */
+    public function theLastCommandShouldHaveThrown($shortExceptionName)
+    {
+        Assert::assertNotNull($this->lastCommandException, 'Command did not throw exception');
+
+        switch ($shortExceptionName) {
+            case 'Exception':
+                return;
+            case 'NodeNotFoundException':
+                Assert::assertInstanceOf(\Neos\ContentRepository\Exception\NodeNotFoundException::class, $this->lastCommandException);
+                return;
+            default:
+                throw new \Exception('The short exception name "' . $shortExceptionName . '" is currently not supported by the tests.');
+        }
     }
 
     protected static function resolveShortCommandName($shortCommandName)

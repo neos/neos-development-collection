@@ -84,9 +84,11 @@ Feature: Move node before, into or after node
       | propertyDefaultValuesAndTypes | {}                                      | json                   |
 
 
-    When the command "MoveNode" is executed with payload:
+    When the command "MoveNode" is executed with payload and exceptions are catched:
       | Key                     | Value                                | Type |
       | contentStreamIdentifier | c75ae6a2-7254-4d42-a31b-a629e264069d |      |
       | nodeIdentifier          | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81 |      |
       | referencePosition       | before                               |      |
-      | referenceNodeIdentifier | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81 |      |
+      | referenceNodeIdentifier | 5b854adc-9f83-11e7-875a-cb4bb2bcd0e9 |      |
+
+    Then the last command should have thrown an exception of type "NodeNotFoundException"
