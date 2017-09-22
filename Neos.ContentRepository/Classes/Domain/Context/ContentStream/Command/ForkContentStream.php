@@ -50,5 +50,4 @@ final class ForkContentStream
     {
         return $this->sourceContentStreamIdentifier;
     }
-
 }
