@@ -20,15 +20,20 @@ use Neos\ContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodesInAggregateWereMoved;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasMoved;
 use Neos\ContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
+use Neos\ContentRepository\Domain\Model\Node;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
+use Neos\ContentRepository\Exception;
 use Neos\ContentRepository\Exception\DimensionSpacePointNotFound;
+use Neos\ContentRepository\Exception\NodeNotFoundException;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcing\Event\EventPublisher;
 use Neos\EventSourcing\EventStore\ExpectedVersion;
@@ -54,6 +59,12 @@ final class NodeCommandHandler
      * @var InterDimensionalFallbackGraph
      */
     protected $interDimensionalFallbackGraph;
+
+    /**
+     * @Flow\Inject
+     * @var \Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface
+     */
+    protected $contentGraph;
 
     /**
      * @param CreateNodeAggregateWithNode $command
@@ -207,8 +218,20 @@ final class NodeCommandHandler
      */
     public function handleMoveNode(MoveNode $command): void
     {
-        // TODO Get node by contentStreamIdentifier, nodeIdentifier and get dimensionSpacePoint
-        // TODO Get subgraph for contentStreamIdentifier, dimensionSpacePoint and check if refrenceNodeIdentifier is visible
+        $contentStreamIdentifier = $command->getContentStreamIdentifier();
+
+        /** @var Node $node */
+        $node = $this->getNode($contentStreamIdentifier, $command->getNodeIdentifier());
+
+        $contentSubgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $node->dimensionSpacePoint);
+        if ($contentSubgraph === null) {
+            throw new Exception(sprintf('Content subgraph not found for content stream %s, %s', $contentStreamIdentifier, $node->dimensionSpacePoint), 1506074858);
+        }
+
+        $referenceNode = $contentSubgraph->findNodeByIdentifier($command->getReferenceNodeIdentifier());
+        if ($referenceNode === null) {
+            throw new NodeNotFoundException(sprintf('Reference node %s not found for content stream %s, %s', $command->getReferenceNodeIdentifier(), $contentStreamIdentifier, $node->dimensionSpacePoint), 1506075821, $command->getReferenceNodeIdentifier());
+        }
 
         $event = new NodeWasMoved(
             $command->getContentStreamIdentifier(),
@@ -278,5 +301,20 @@ final class NodeCommandHandler
         }
         $visibleDimensionSpacePoints = new DimensionSpacePointSet($points);
         return $visibleDimensionSpacePoints;
+    }
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeIdentifier $nodeIdentifier
+     * @return NodeInterface
+     * @throws NodeNotFoundException
+     */
+    private function getNode(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier): NodeInterface
+    {
+        $node = $this->contentGraph->findNodeByIdentifierInContentStream($contentStreamIdentifier, $nodeIdentifier);
+        if ($node === null) {
+            throw new NodeNotFoundException(sprintf('Node %s not found', $nodeIdentifier), 1506074496, $nodeIdentifier);
+        }
+        return $node;
     }
 }

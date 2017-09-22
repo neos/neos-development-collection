@@ -83,9 +83,9 @@ final class ContentGraph implements ContentGraphInterface
         $connection = $this->client->getConnection();
 
         // HINT: we check the ContentStreamIdentifier on the EDGE; as this is where we actually find out whether the node exists in the content stream
-        $nodeData = $connection->executeQuery(
-            'SELECT n.* FROM neos_contentgraph_node n
-                  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeidentifier = n.nodeidentifier
+        $nodeRow = $connection->executeQuery(
+            'SELECT n.*, h.contentstreamidentifier, h.name FROM neos_contentgraph_node n
+                  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
                   WHERE n.nodeidentifier = :nodeIdentifier
                   AND h.contentstreamidentifier = :contentStreamIdentifier',
             [
@@ -94,6 +94,6 @@ final class ContentGraph implements ContentGraphInterface
             ]
         )->fetch();
 
-        return $nodeData ? $this->nodeFactory->mapNodeRowToNode($nodeData, null) : null;
+        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow, null) : null;
     }
 }

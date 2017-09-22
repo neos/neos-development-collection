@@ -56,7 +56,10 @@ trait EventSourcedTrait
      */
     private $eventStoreManager;
 
-    private $currentEventStreamAsArray;
+    /**
+     * @var array
+     */
+    private $currentEventStreamAsArray = null;
 
     /**
      * @Given /^the Event "([^"]*)" was published to stream "([^"]*)" with payload:$/
@@ -150,6 +153,12 @@ trait EventSourcedTrait
                     \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler::class,
                     'handleForkContentStream'
                 ];
+            case 'MoveNode':
+                return [
+                    \Neos\ContentRepository\Domain\Context\Node\Command\MoveNode::class,
+                    \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
+                    'handleMoveNode'
+                ];
             default:
                 throw new \Exception('The short command name "' . $shortCommandName . '" is currently not supported by the tests.');
         }
@@ -172,8 +181,14 @@ trait EventSourcedTrait
      */
     public function eventNumberIs($eventNumber, $eventType, TableNode $payloadTable)
     {
+        if ($this->currentEventStreamAsArray === null) {
+            Assert::fail('Step \'I expect exactly ? events to be published on stream "?"\' was not executed');
+        }
+
         /* @var $actualEvent EventAndRawEvent */
         $actualEvent = $this->currentEventStreamAsArray[$eventNumber];
+
+        Assert::assertNotNull($actualEvent, sprintf('Event with number %d not found', $eventNumber));
         Assert::assertEquals($eventType, $actualEvent->getRawEvent()->getType(), 'Event Type does not match: "' . $actualEvent->getRawEvent()->getType() . '" !== "' . $eventType . '"');
 
         $actualEventPayload = $actualEvent->getRawEvent()->getPayload();
@@ -248,16 +263,14 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Then /^I expect the Node Aggregate "([^"]*)" to have the nodes:$/
+     * @Then /^I expect the Node Aggregate "([^"]*)" to resolve to node "([^"]*)"$/
      */
-    public function iExpectTheNodeAggregateToHaveTheNodes($nodeAggregateIdentifier, TableNode $expectedNodesTable)
+    public function iExpectTheNodeAggregateToHaveTheNodes($nodeAggregateIdentifier, $nodeIdentifier)
     {
-        $nodes = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodesBelongingToNodeAggregate(new \Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier($nodeAggregateIdentifier));
+        $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByNodeAggregateIdentifier(new \Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier($nodeAggregateIdentifier));
 
-        Assert::assertCount(count($expectedNodesTable->getHash()), $nodes, 'Node Aggregate Count does not match');
-        foreach ($expectedNodesTable->getHash() as $index => $row) {
-            Assert::assertEquals($row['NodeIdentifier'], (string)$nodes[$index]->identifier, 'Node identifier in index ' . $index . ' does not match.');
-        }
+        Assert::assertNotNull($node, 'Node with ID "' . $nodeIdentifier . '" not found!');
+        Assert::assertEquals($nodeIdentifier, (string)$node->identifier, 'Node ID does not match!');
     }
 
 

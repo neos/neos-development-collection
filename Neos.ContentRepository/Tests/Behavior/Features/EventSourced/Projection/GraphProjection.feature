@@ -33,9 +33,7 @@ Feature: Reading of our Graph Projection
       | Name | NodeIdentifier                       |
       | foo  | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81 |
 
-    Then I expect the Node Aggregate "35411439-94d1-4bd4-8fac-0646856c6a1f" to have the nodes:
-      | NodeIdentifier                       |
-      | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81 |
+    Then I expect the Node Aggregate "35411439-94d1-4bd4-8fac-0646856c6a1f" to resolve to node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81"
 
     Then I expect the Node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to have the type "Neos.ContentRepository.Testing:NodeWithoutAutoCreatedChildNodes"
 

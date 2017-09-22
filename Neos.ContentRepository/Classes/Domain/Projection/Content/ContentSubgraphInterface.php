@@ -47,10 +47,9 @@ interface ContentSubgraphInterface
     /**
      * @param Domain\ValueObject\NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param Domain\Service\Context|null $contentContext
-     * @return array
-     * @internal param Domain\ValueObject\NodeIdentifier $parentNodeIdentifier
+     * @return Domain\Model\NodeInterface|null
      */
-    public function findNodesBelongingToNodeAggregate(Domain\ValueObject\NodeAggregateIdentifier $nodeAggregateIdentifier, Domain\Service\Context $contentContext = null): array;
+    public function findNodeByNodeAggregateIdentifier(Domain\ValueObject\NodeAggregateIdentifier $nodeAggregateIdentifier, Domain\Service\Context $contentContext = null): ?Domain\Model\NodeInterface;
 
 
     /**

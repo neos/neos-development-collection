@@ -91,20 +91,20 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
      */
     public function findNodeByIdentifier(ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier, ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
     {
-        $nodeData = $this->getDatabaseConnection()->executeQuery(
+        $nodeRow = $this->getDatabaseConnection()->executeQuery(
             'SELECT n.* FROM neos_contentgraph_node n
 WHERE n.nodeidentifier = :nodeIdentifier',
             [
                 'nodeIdentifier' => $nodeIdentifier
             ]
         )->fetch();
-        if (!$nodeData) {
+        if (!$nodeRow) {
             return null;
         }
 
         // We always allow root nodes
-        if (empty($nodeData['dimensionspacepointhash'])) {
-            return $this->nodeFactory->mapNodeRowToNode($nodeData, $context);
+        if (empty($nodeRow['dimensionspacepointhash'])) {
+            return $this->nodeFactory->mapNodeRowToNode($nodeRow, $context);
         }
 
         $inboundEdgeData = $this->getDatabaseConnection()->executeQuery(
@@ -122,10 +122,10 @@ WHERE n.nodeidentifier = :nodeIdentifier',
 
         if (is_array($inboundEdgeData)) {
             // we only allow nodes matching the content stream identifier and dimension space point
-            $nodeData['name'] = $inboundEdgeData['name'];
-            $nodeData['contentstreamidentifier'] = $inboundEdgeData['contentstreamidentifier'];
-            $nodeData['dimensionspacepoint'] = $inboundEdgeData['dimensionspacepoint'];
-            return $this->nodeFactory->mapNodeRowToNode($nodeData, $context);
+            $nodeRow['name'] = $inboundEdgeData['name'];
+            $nodeRow['contentstreamidentifier'] = $inboundEdgeData['contentstreamidentifier'];
+            $nodeRow['dimensionspacepoint'] = $inboundEdgeData['dimensionspacepoint'];
+            return $this->nodeFactory->mapNodeRowToNode($nodeRow, $context);
         } else {
             return null;
         }
@@ -175,7 +175,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
         return $result;
     }
 
-    public function findNodesBelongingToNodeAggregate(NodeAggregateIdentifier $nodeAggregateIdentifier, ContentRepository\Service\Context $context = null): array
+    public function findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier, ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
     {
         $query = 'SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
@@ -187,15 +187,14 @@ WHERE n.nodeidentifier = :nodeIdentifier',
             'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
             'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash()
         ];
-        $result = [];
-        foreach ($this->getDatabaseConnection()->executeQuery(
+        $nodeRow = $this->getDatabaseConnection()->executeQuery(
             $query,
             $parameters
-        )->fetchAll() as $nodeData) {
-            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeData, $context);
+        )->fetch();
+        if ($nodeRow === false) {
+            return null;
         }
-
-        return $result;
+        return $this->nodeFactory->mapNodeRowToNode($nodeRow, $context);
     }
 
     public function countChildNodes(

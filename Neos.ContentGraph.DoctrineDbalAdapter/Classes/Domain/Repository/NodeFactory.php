@@ -60,7 +60,8 @@ final class NodeFactory
             }
 
             $contentStreamIdentifier = new ContentRepository\ValueObject\ContentStreamIdentifier($nodeRow['contentstreamidentifier']);
-            $dimensionSpacePoint = new ContentRepository\ValueObject\DimensionSpacePoint(json_decode($nodeRow['dimensionspacepoint'], true));
+            // FIXME Move to DimensionSpacePoint::fromJson
+            $dimensionSpacePoint = new ContentRepository\ValueObject\DimensionSpacePoint(json_decode($nodeRow['dimensionspacepoint'], true)['coordinates']);
 
             $legacyDimensionValues = $dimensionSpacePoint->toLegacyDimensionArray();
             $query = $this->nodeDataRepository->createQuery();
