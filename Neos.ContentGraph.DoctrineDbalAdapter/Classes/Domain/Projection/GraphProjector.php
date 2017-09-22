@@ -17,10 +17,10 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGra
 use Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Service\DbalClient;
 use Neos\ContentRepository\Domain\Context\Node\Event;
 use Neos\ContentRepository\Domain as ContentRepository;
+use Neos\ContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcing\Projection\ProjectorInterface;
@@ -82,6 +82,9 @@ class GraphProjector implements ProjectorInterface
         });
     }
 
+    /**
+     * @param Event\NodeAggregateWithNodeWasCreated $event
+     */
     final public function whenNodeAggregateWithNodeWasCreated(Event\NodeAggregateWithNodeWasCreated $event)
     {
         $childNodeRelationAnchorPoint = new NodeRelationAnchorPoint();
@@ -96,6 +99,11 @@ class GraphProjector implements ProjectorInterface
             $event->getNodeTypeName()
         );
         $parentNode = $this->projectionContentGraph->getNode($event->getParentNodeIdentifier(), $event->getContentStreamIdentifier(), $event->getDimensionSpacePoint());
+        if ($parentNode === null) {
+            // TODO Log error
+            return;
+        }
+
         #$precedingSiblingNode = $this->getNode(null, $event->getContentStreamIdentifier(), $event->getDimensionSpacePoint());
         $precedingSiblingNode = null;
 
@@ -134,9 +142,9 @@ class GraphProjector implements ProjectorInterface
     }
 
     /**
-     * @param NodeIdentifier $parentNodeIdentifier
-     * @param NodeIdentifier $childNodeIdentifier
-     * @param NodeIdentifier|null $precedingSiblingNodeIdentifier
+     * @param NodeRelationAnchorPoint $parentNodeAnchorPoint
+     * @param NodeRelationAnchorPoint $childNodeAnchorPoint
+     * @param NodeRelationAnchorPoint|null $precedingSiblingNodeAnchorPoint
      * @param NodeName|null $relationName
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePointSet $dimensionSpacePointSet
@@ -158,17 +166,16 @@ class GraphProjector implements ProjectorInterface
             );
 
             $hierarchyRelation = new HierarchyRelation(
-                (string)$parentNodeAnchorPoint,
-                (string)$childNodeAnchorPoint,
-                (string)$relationName,
-                (string)$contentStreamIdentifier,
+                $parentNodeAnchorPoint,
+                $childNodeAnchorPoint,
+                $relationName,
+                $contentStreamIdentifier,
                 $dimensionSpacePoint->jsonSerialize(),
                 $dimensionSpacePoint->getHash(),
                 $position
             );
 
-            // TODO: rewrite to $hierarchyRelation->saveToDatabase($db)
-            $this->addHierarchyRelation($hierarchyRelation);
+            $hierarchyRelation->addToDatabase($this->getDatabaseConnection());
         }
     }
 
@@ -212,7 +219,7 @@ class GraphProjector implements ProjectorInterface
         foreach ($this->projectionContentGraph->getOutboundHierarchyRelationsForNodeAndSubgraph($parentAnchorPoint, $contentStreamIdentifier, $dimensionSpacePoint) as $relation) {
             $this->assignNewPositionToHierarchyRelation($relation, $offset);
             $offset += 128;
-            if ($precedingSiblingAnchorPoint && $relation->getChildNodeAnchor() === (string)$precedingSiblingAnchorPoint) {
+            if ($precedingSiblingAnchorPoint && $relation->childNodeAnchor === (string)$precedingSiblingAnchorPoint) {
                 $position = $offset;
                 $offset += 128;
             }
@@ -248,22 +255,6 @@ class GraphProjector implements ProjectorInterface
         foreach ($outboundRelations as $outboundRelation) {
             $this->assignNewParentNodeToHierarchyRelation($outboundRelation, $newVariantNodesIdentifierInGraph);
         }*/
-    }
-
-    /**
-     * @param HierarchyRelation $relation
-     */
-    protected function addHierarchyRelation(HierarchyRelation $relation): void
-    {
-        $this->getDatabaseConnection()->insert('neos_contentgraph_hierarchyrelation', [
-            'parentnodeanchor' => $relation->getParentNodeAnchor(),
-            'childnodeanchor' => $relation->getChildNodeAnchor(),
-            'name' => $relation->getName(),
-            'contentstreamidentifier' => $relation->getContentStreamIdentifier(),
-            'dimensionspacepoint' => json_encode($relation->getDimensionSpacePoint()),
-            'dimensionspacepointhash' => $relation->getDimensionSpacePointHash(),
-            'position' => $relation->getPosition()
-        ]);
     }
 
     /**
@@ -333,6 +324,68 @@ class GraphProjector implements ProjectorInterface
             ]);
         });
     }
+
+    public function whenNodePropertyWasSet(NodePropertyWasSet $event)
+    {
+        $this->transactional(function () use ($event) {
+            // TODO: do this copy on write on every modification op concerning nodes
+
+            // TODO: does this always return a SINGLE anchor point??
+            $anchorPointForNode = $this->projectionContentGraph->getAnchorPointForNodeAndContentStream($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
+            if ($anchorPointForNode === null) {
+                // TODO Log error
+                throw new \Exception(sprintf('anchro point for node identifier %s and stream %s not found', $event->getNodeIdentifier(), $event->getContentStreamIdentifier()), 1506085300325);
+            }
+
+            $contentStreamIdentifiers = $this->projectionContentGraph->getAllContentStreamIdentifiersAnchorPointIsContainedIn($anchorPointForNode);
+            if (count($contentStreamIdentifiers) > 1) {
+                // Copy on Write needed!
+                // Copy on Write is a purely "Content Stream" related concept; thus we do not care about different DimensionSpacePoints here (but we copy all edges)
+
+                // 1) fetch node, adjust properties, assign new Relation Anchor Point
+                $copiedNode = $this->projectionContentGraph->getNodeByAnchorPoint($anchorPointForNode);
+                $copiedNode->properties[$event->getPropertyName()] = $event->getValue()->getValue();
+                $copiedNode->relationAnchorPoint = new NodeRelationAnchorPoint();
+                $copiedNode->addToDatabase($this->getDatabaseConnection());
+
+                // 2) reconnect all edges belonging to this content stream to the new "copied node"
+                $this->getDatabaseConnection()->executeUpdate('
+                UPDATE neos_contentgraph_hierarchyrelation h
+                    SET h.childnodeanchor = :newChildNodeAnchor
+                    WHERE
+                      h.childnodeanchor = :originalChildNodeAnchor
+                      AND h.contentstreamidentifier = :contentStreamIdentifier',
+                    [
+                        'newChildNodeAnchor' => (string)$copiedNode->relationAnchorPoint,
+                        'originalChildNodeAnchor' => (string)$anchorPointForNode,
+                        'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
+                    ]
+                );
+            } else {
+                // No copy on write needed :)
+
+                $node = $this->projectionContentGraph->getNodeByNodeIdentifierAndContentStream($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
+                if (!$node) {
+                    // TODO: ignore the SetProperty (if all other logic is correct)
+                    throw new \Exception("TODO NODE NOT FOUND");
+                }
+                $nodeProperties = $node->properties;
+                $nodeProperties[$event->getPropertyName()] = $event->getValue()->getValue();
+
+                $this->getDatabaseConnection()->executeUpdate('
+                    UPDATE neos_contentgraph_node n
+                    SET n.properties = :properties
+                    WHERE n.relationanchorpoint = :relationAnchorPoint
+                ', [
+                    'properties' => json_encode($nodeProperties),
+                    'relationAnchorPoint' => (string)$node->relationAnchorPoint
+                ]);
+
+            }
+
+        });
+    }
+
     /**
      * @param callable $operations
      */

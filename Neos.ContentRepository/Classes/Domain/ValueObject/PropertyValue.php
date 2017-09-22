@@ -43,6 +43,14 @@ final class PropertyValue implements \JsonSerializable
         return $this->type;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+
     public function jsonSerialize()
     {
         return [

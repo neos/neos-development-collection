@@ -107,8 +107,11 @@ WHERE n.nodeidentifier = :nodeIdentifier',
             return $this->nodeFactory->mapNodeRowToNode($nodeRow, $context);
         }
 
-        $inboundEdgeData = $this->getDatabaseConnection()->executeQuery(
-            'SELECT h.* FROM neos_contentgraph_node n
+        // We are NOT allowed at this point to access the $nodeRow above anymore; as we only fetched an *arbitrary* node with the identifier; but
+        // NOT the correct one taking content stream and dimension space point into account. In the query below, we fetch everything we need.
+
+        $nodeRow = $this->getDatabaseConnection()->executeQuery(
+            'SELECT n.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_contentgraph_node n
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
  WHERE n.nodeidentifier = :nodeIdentifier
  AND h.contentstreamidentifier = :contentStreamIdentifier       
@@ -120,11 +123,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
             ]
         )->fetch();
 
-        if (is_array($inboundEdgeData)) {
-            // we only allow nodes matching the content stream identifier and dimension space point
-            $nodeRow['name'] = $inboundEdgeData['name'];
-            $nodeRow['contentstreamidentifier'] = $inboundEdgeData['contentstreamidentifier'];
-            $nodeRow['dimensionspacepoint'] = $inboundEdgeData['dimensionspacepoint'];
+        if (is_array($nodeRow)) {
             return $this->nodeFactory->mapNodeRowToNode($nodeRow, $context);
         } else {
             return null;
@@ -233,8 +232,8 @@ WHERE n.nodeidentifier = :nodeIdentifier',
      */
     public function findParentNode(ContentRepository\ValueObject\NodeIdentifier $childNodeIdentifier, ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
     {
-        $nodeData = $this->getDatabaseConnection()->executeQuery(
-            'SELECT p.* FROM neos_contentgraph_node p
+        $nodeRow = $this->getDatabaseConnection()->executeQuery(
+            'SELECT p.*, h.contentstreamidentifier, h.name FROM neos_contentgraph_node p
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
  INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
  WHERE c.nodeidentifier = :childNodeIdentifier
@@ -247,7 +246,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
             ]
         )->fetch();
 
-        return $nodeData ? $this->nodeFactory->mapNodeRowToNode($nodeData, $context) : null;
+        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow, $context) : null;
     }
 
     /**

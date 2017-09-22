@@ -84,6 +84,57 @@ class ProjectionContentGraph
         return Node::fromDatabaseRow($nodeRow);
     }
 
+    /**
+     * @param NodeIdentifier $nodeIdentifier
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @return Node|null
+     */
+    public function getNodeByNodeIdentifierAndContentStream(NodeIdentifier $nodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier): ?Node
+    {
+        $nodeRow = $this->getDatabaseConnection()->executeQuery(
+            'SELECT n.* FROM neos_contentgraph_node n
+ INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+ WHERE n.nodeidentifier = :nodeIdentifier
+ AND h.contentstreamidentifier = :contentStreamIdentifier',
+            [
+                'nodeIdentifier' => (string)$nodeIdentifier,
+                'contentStreamIdentifier' => (string)$contentStreamIdentifier
+            ]
+        )->fetch();
+
+        var_dump([
+            'nodeIdentifier' => (string)$nodeIdentifier,
+            'contentStreamIdentifier' => (string)$contentStreamIdentifier
+        ]);
+        return $nodeRow ? Node::fromDatabaseRow($nodeRow) : null;
+    }
+
+
+    public function getAnchorPointForNodeAndContentStream(NodeIdentifier $nodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier): ?NodeRelationAnchorPoint
+    {
+        $rows = $this->getDatabaseConnection()->executeQuery(
+            'SELECT n.relationanchorpoint FROM neos_contentgraph_node n
+ INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+ WHERE n.nodeidentifier = :nodeIdentifier
+ AND h.contentstreamidentifier = :contentStreamIdentifier',
+            [
+                'nodeIdentifier' => (string)$nodeIdentifier,
+                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            ]
+        )->fetchAll();
+
+        if (count($rows) > 1) {
+            throw new \Exception('TODO: I believe this shall not happen; but we need to think this through in detail if it does!!!');
+        }
+
+        if (count($rows) === 1) {
+            return new NodeRelationAnchorPoint($rows[0]['relationanchorpoint']);
+        } else {
+            return null;
+        }
+    }
+
 
     public function getNodeByAnchorPoint(NodeRelationAnchorPoint $nodeRelationAnchorPoint): ?Node
     {
@@ -110,7 +161,8 @@ class ProjectionContentGraph
         ?NodeRelationAnchorPoint $precedingSiblingAnchorPoint,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
-    ): int {
+    ): int
+    {
         if ($precedingSiblingAnchorPoint) {
             $precedingSiblingPosition = (int)$this->getDatabaseConnection()->executeQuery(
                 'SELECT h.position FROM neos_contentgraph_hierarchyrelation h
@@ -271,5 +323,26 @@ class ProjectionContentGraph
     protected function getDatabaseConnection(): Connection
     {
         return $this->client->getConnection();
+    }
+
+    /**
+     * @param NodeRelationAnchorPoint $nodeRelationAnchorPoint
+     * @return array
+     */
+    public function getAllContentStreamIdentifiersAnchorPointIsContainedIn(NodeRelationAnchorPoint $nodeRelationAnchorPoint) : array
+    {
+        $contentStreamIdentifiers = [];
+        foreach ($this->getDatabaseConnection()->executeQuery(
+            'SELECT DISTINCT h.contentstreamidentifier
+                      FROM neos_contentgraph_hierarchyrelation h
+                      WHERE h.childnodeanchor = :nodeRelationAnchorPoint',
+            [
+                'nodeRelationAnchorPoint' => (string)$nodeRelationAnchorPoint,
+            ]
+        )->fetchAll() as $row) {
+            $contentStreamIdentifiers[] = new ContentStreamIdentifier($row['contentstreamidentifier']);
+        }
+
+        return $contentStreamIdentifiers;
     }
 }

@@ -503,6 +503,9 @@ class NodeData extends AbstractNodeData
         }
         $this->nodeDataRepository->setNewIndex($newNodeData, NodeDataRepository::POSITION_LAST);
 
+        // FIXME Check if we can find a better way of querying legacy NodeData from new NodeFactory while still creating nodes
+        $this->persistenceManager->persistAll();
+
         return $newNodeData;
     }
 

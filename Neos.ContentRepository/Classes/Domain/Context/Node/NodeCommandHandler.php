@@ -156,7 +156,6 @@ final class NodeCommandHandler
             $childNodeName = new NodeName($childNodeNameStr);
             $childNodeAggregateIdentifier = NodeAggregateIdentifier::forAutoCreatedChildNode($childNodeName,
                 $command->getNodeAggregateIdentifier());
-            // FIXME This auto-created child node identifier is random but should match the created child node persistence identifier of NodeData for the legacy layer
             $childNodeIdentifier = new NodeIdentifier();
             $childParentNodeIdentifier = $command->getNodeIdentifier();
 
@@ -197,6 +196,8 @@ final class NodeCommandHandler
      */
     public function handleSetNodeProperty(SetNodeProperty $command): void
     {
+        $node = $this->getNode($command->getContentStreamIdentifier(), $command->getNodeIdentifier());
+
         $nodeType = $this->getNodeType($command->getNodeTypeName());
         $propertyType = $nodeType->getPropertyType($command->getPropertyName());
 
