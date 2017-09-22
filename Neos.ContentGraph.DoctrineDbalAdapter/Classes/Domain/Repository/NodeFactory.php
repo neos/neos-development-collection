@@ -52,6 +52,13 @@ final class NodeFactory
         // $serializedSubgraphIdentifier is empty for the root node
         if (!empty($nodeRow['dimensionspacepointhash'])) {
             // NON-ROOT case
+            if (!array_key_exists('contentstreamidentifier', $nodeRow)) {
+                throw new \Exception('The "contentstreamidentifier" property was not found in the $nodeRow; you need to include the "contentstreamidentifier" field in the SQL result.');
+            }
+            if (!array_key_exists('dimensionspacepoint', $nodeRow)) {
+                throw new \Exception('The "dimensionspacepoint" property was not found in the $nodeRow; you need to include the "dimensionspacepoint" field in the SQL result.');
+            }
+
             $contentStreamIdentifier = new ContentRepository\ValueObject\ContentStreamIdentifier($nodeRow['contentstreamidentifier']);
             $dimensionSpacePoint = new ContentRepository\ValueObject\DimensionSpacePoint(json_decode($nodeRow['dimensionspacepoint'], true));
 

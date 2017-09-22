@@ -298,8 +298,10 @@ class Context
      */
     public function getNodeByIdentifier($identifier)
     {
-        $nodeIdentifier = Domain\ValueObject\NodeAggregateIdentifier::fromString($identifier);
-        return $this->getSubgraph()->findNodeByIdentifier($nodeIdentifier, $this);
+        return null; // TODO!!!!
+        $nodeIdentifier = Domain\ValueObject\NodeIden::fromString($identifier);
+
+        return $this->getSubgraph()->findNode($nodeIdentifier, $this);
     }
 
     /**

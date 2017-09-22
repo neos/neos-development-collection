@@ -12,9 +12,10 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  * source code.
  */
 use Doctrine\DBAL\Connection;
-use Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Dto\HierarchyEdge;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Node;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Service\DbalClient;
-use Neos\ContentGraph\Domain\Projection\Node;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
@@ -44,13 +45,20 @@ class ProjectionContentGraph
                 ->fetch()['count'] > 0;
     }
 
-    public function getNode(NodeIdentifier $nodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): Node
+    /**
+     * @param NodeIdentifier $nodeIdentifier
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @return Node|null
+     */
+    public function getNode(NodeIdentifier $nodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): ?Node
     {
-        $nodeData = $this->getDatabaseConnection()->executeQuery(
+        $nodeRow = $this->getDatabaseConnection()->executeQuery(
             'SELECT n.* FROM neos_contentgraph_node n
+ INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
  WHERE n.nodeidentifier = :nodeIdentifier
- AND n.contentstreamidentifier = :contentStreamIdentifier
- AND n.dimensionspacepointhash = :dimensionSpacePointHash',
+ AND h.contentstreamidentifier = :contentStreamIdentifier       
+ AND h.dimensionspacepointhash = :dimensionSpacePointHash',
             [
                 'nodeIdentifier' => (string)$nodeIdentifier,
                 'contentStreamIdentifier' => (string)$contentStreamIdentifier,
@@ -58,59 +66,99 @@ class ProjectionContentGraph
             ]
         )->fetch();
 
-        return $this->mapRawDataToNode($nodeData);
+        if (!$nodeRow) {
+            // Check for root node
+
+            $nodeRow = $this->getDatabaseConnection()->executeQuery(
+                'SELECT n.* FROM neos_contentgraph_node n
+ WHERE n.nodeidentifier = :nodeIdentifier',
+                [
+                    'nodeIdentifier' => $nodeIdentifier
+                ]
+            )->fetch();
+
+            // We always allow root nodes
+            return $nodeRow && empty($nodeRow['dimensionspacepointhash']) ? Node::fromDatabaseRow($nodeRow) : null;
+        }
+
+        return Node::fromDatabaseRow($nodeRow);
     }
 
-    public function getEdgePosition(NodeIdentifier $parentIdentifier, NodeIdentifier $precedingSiblingIdentifier = null, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint)
+
+    public function getNodeByAnchorPoint(NodeRelationAnchorPoint $nodeRelationAnchorPoint): ?Node
     {
-        if ($precedingSiblingIdentifier) {
+        $nodeRow = $this->getDatabaseConnection()->executeQuery(
+            'SELECT n.* FROM neos_contentgraph_node n
+ WHERE n.relationanchorpoint = :relationAnchorPoint',
+            [
+                'relationAnchorPoint' => (string)$nodeRelationAnchorPoint,
+            ]
+        )->fetch();
+
+        return $nodeRow ? Node::fromDatabaseRow($nodeRow) : null;
+    }
+
+    /**
+     * @param NodeRelationAnchorPoint $parentAnchorPoint
+     * @param NodeRelationAnchorPoint|null $precedingSiblingAnchorPoint
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @return int
+     */
+    public function getHierarchyRelationPosition(
+        NodeRelationAnchorPoint $parentAnchorPoint,
+        ?NodeRelationAnchorPoint $precedingSiblingAnchorPoint,
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint
+    ): int {
+        if ($precedingSiblingAnchorPoint) {
             $precedingSiblingPosition = (int)$this->getDatabaseConnection()->executeQuery(
                 'SELECT h.position FROM neos_contentgraph_hierarchyrelation h
-                          WHERE h.childnodeidentifier = :precedingSiblingIdentifier
+                          WHERE h.childnodeanchor = :precedingSiblingAnchorPoint
                           AND h.contentstreamidentifier = :contentStreamIdentifier
                           AND h.dimensionspacepointhash = :dimensionSpacePointHash',
                 [
-                    'precedingSiblingIdentifier' => (string)$precedingSiblingIdentifier,
+                    'precedingSiblingAnchorPoint' => (string)$precedingSiblingAnchorPoint,
                     'contentStreamIdentifier' => (string)$contentStreamIdentifier,
                     'dimensionSpacePointHash' => $dimensionSpacePoint->getHash()
                 ]
             )->fetch()['position'];
 
-            $youngerSiblingEdge = $this->getDatabaseConnection()->executeQuery(
+            $succeedingSiblingRelation = $this->getDatabaseConnection()->executeQuery(
                 'SELECT MIN(h.position) AS `position` FROM neos_contentgraph_hierarchyrelation h
-                          WHERE h.parentnodeidentifier = :parentNodeIdentifier
+                          WHERE h.parentnodeanchor = :parentAnchorPoint
                           AND h.contentstreamidentifier = :contentStreamIdentifier
                           AND h.dimensionspacepointhash = :dimensionSpacePointHash
                           AND h.`position` > :position',
                 [
-                    'parentNodeIdentifier' => (string)$parentIdentifier,
+                    'parentAnchorPoint' => $parentAnchorPoint,
                     'contentStreamIdentifier' => (string)$contentStreamIdentifier,
                     'dimensionSpacePointHash' => $dimensionSpacePoint->getHash(),
                     'position' => $precedingSiblingPosition
                 ]
             )->fetch();
 
-            if (!is_null($youngerSiblingEdge['position'])) {
-                $position = ($precedingSiblingPosition + (int)$youngerSiblingEdge['position']) / 2;
+            if (!is_null($succeedingSiblingRelation['position'])) {
+                $position = ($precedingSiblingPosition + (int)$succeedingSiblingRelation['position']) / 2;
             } else {
                 $position = $precedingSiblingPosition + 128;
             }
         } else {
-            $leftmostPrecedingSiblingEdge = $this->getDatabaseConnection()->executeQuery(
+            $leftmostPrecedingSiblingRelation = $this->getDatabaseConnection()->executeQuery(
                 'SELECT MIN(h.position) AS `position` FROM neos_contentgraph_hierarchyrelation h
-                          WHERE h.parentnodeidentifier = :parentNodeIdentifier
+                          WHERE h.parentnodeanchor = :parentAnchorPoint
                           AND h.contentstreamidentifier = :contentStreamIdentifier
                           AND h.dimensionspacepointhash = :dimensionSpacePointHash
                           ORDER BY h.`position` ASC',
                 [
-                    'parentNodeIdentifier' => (string)$parentIdentifier,
+                    'parentAnchorPoint' => (string)$parentAnchorPoint,
                     'contentStreamIdentifier' => (string)$contentStreamIdentifier,
                     'dimensionSpacePointHash' => $dimensionSpacePoint->getHash()
                 ]
             )->fetch();
 
-            if ($leftmostPrecedingSiblingEdge) {
-                $position = ((int)$leftmostPrecedingSiblingEdge['position']) - 128;
+            if ($leftmostPrecedingSiblingRelation) {
+                $position = ((int)$leftmostPrecedingSiblingRelation['position']) - 128;
             } else {
                 $position = 0;
             }
@@ -120,40 +168,41 @@ class ProjectionContentGraph
     }
 
     /**
-     * @param string $parentIdentifier
-     * @param string $subgraphIdentityHash
-     * @return array|HierarchyEdge[]
+     * @param NodeRelationAnchorPoint $parentAnchorPoint
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @return array|HierarchyRelation[]
      */
-    public function getOutboundHierarchyEdgesForNodeAndSubgraph(NodeIdentifier $parentIdentifier, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): array
+    public function getOutboundHierarchyRelationsForNodeAndSubgraph(NodeRelationAnchorPoint $parentAnchorPoint, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): array
     {
-        $edges = [];
+        $relations = [];
         foreach ($this->getDatabaseConnection()->executeQuery(
             'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
-                      WHERE h.parentnodeidentifier = :parentIdentifier
+                      WHERE h.parentnodeanchor = :parentAnchorPoint
                       AND h.contentstreamidentifier = :contentStreamIdentifier
                       AND h.dimensionspacepointhash = :dimensionSpacePointHash',
             [
-                'parentIdentifier' => (string)$parentIdentifier,
+                'parentAnchorPoint' => (string)$parentAnchorPoint,
                 'contentStreamIdentifier' => (string)$contentStreamIdentifier,
                 'dimensionSpacePointHash' => $dimensionSpacePoint->getHash()
             ]
-        )->fetchAll() as $edgeData) {
-            $edges[] = $this->mapRawDataToHierarchyEdge($edgeData);
+        )->fetchAll() as $relationData) {
+            $relations[] = $this->mapRawDataToHierarchyRelation($relationData);
         }
 
-        return $edges;
+        return $relations;
     }
 
 
     /**
      * @param string $childNodesIdentifierInGraph
      * @param array $subgraphIdentityHashs
-     * @return array|HierarchyEdge[]
+     * @return array|HierarchyRelation[]
      */
-    public function findInboundHierarchyEdgesForNodeAndSubgraphs(string $childNodesIdentifierInGraph, array $subgraphIdentityHashs): array
+    public function findInboundHierarchyRelationsForNodeAndSubgraphs(string $childNodesIdentifierInGraph, array $subgraphIdentityHashs): array
     {
         // TODO needs to be fixed
-        $edges = [];
+        $relations = [];
         foreach ($this->getDatabaseConnection()->executeQuery(
             'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
  WHERE childnodesidentifieringraph = :childNodesIdentifierInGraph
@@ -165,22 +214,22 @@ class ProjectionContentGraph
             [
                 'subgraphIdentityHashs' => Connection::PARAM_STR_ARRAY
             ]
-        )->fetchAll() as $edgeData) {
-            $edges[] = $this->mapRawDataToHierarchyEdge($edgeData);
+        )->fetchAll() as $relationData) {
+            $relations[] = $this->mapRawDataToHierarchyRelation($relationData);
         }
 
-        return $edges;
+        return $relations;
     }
 
     /**
      * @param string $parentNodesIdentifierInGraph
      * @param array $subgraphIdentityHashs
-     * @return array|HierarchyEdge[]
+     * @return array|HierarchyRelation[]
      */
-    public function findOutboundHierarchyEdgesForNodeAndSubgraphs(string $parentNodesIdentifierInGraph, array $subgraphIdentityHashs): array
+    public function findOutboundHierarchyRelationsForNodeAndSubgraphs(string $parentNodesIdentifierInGraph, array $subgraphIdentityHashs): array
     {
         // TODO needs to be fixed
-        $edges = [];
+        $relations = [];
         foreach ($this->getDatabaseConnection()->executeQuery(
             'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
  WHERE parentnodesidentifieringraph = :parentNodesIdentifierInGraph
@@ -192,18 +241,22 @@ class ProjectionContentGraph
             [
                 'subgraphIdentityHashs' => Connection::PARAM_STR_ARRAY
             ]
-        )->fetchAll() as $edgeData) {
-            $edges[] = $this->mapRawDataToHierarchyEdge($edgeData);
+        )->fetchAll() as $relationData) {
+            $relations[] = $this->mapRawDataToHierarchyRelation($relationData);
         }
 
-        return $edges;
+        return $relations;
     }
 
-    protected function mapRawDataToHierarchyEdge(array $rawData): HierarchyEdge
+    /**
+     * @param array $rawData
+     * @return HierarchyRelation
+     */
+    protected function mapRawDataToHierarchyRelation(array $rawData): HierarchyRelation
     {
-        return new HierarchyEdge(
-            $rawData['parentnodeidentifier'],
-            $rawData['childnodeidentifier'],
+        return new HierarchyRelation(
+            $rawData['parentnodeanchor'],
+            $rawData['childnodeanchor'],
             $rawData['name'],
             $rawData['contentstreamidentifier'],
             json_decode($rawData['dimensionspacepoint'], true),
@@ -212,19 +265,9 @@ class ProjectionContentGraph
         );
     }
 
-    protected function mapRawDataToNode(array $rawData): Node
-    {
-        return new Node(
-            $rawData['nodeidentifier'],
-            $rawData['nodeaggregateidentifier'],
-            $rawData['contentstreamidentifier'],
-            json_decode($rawData['dimensionspacepoint'], true),
-            $rawData['dimensionspacepointhash'],
-            json_decode($rawData['properties'], true),
-            $rawData['nodetypename']
-        );
-    }
-
+    /**
+     * @return Connection
+     */
     protected function getDatabaseConnection(): Connection
     {
         return $this->client->getConnection();
