@@ -80,8 +80,8 @@ final class NodeFactory
             $node->nodeType = $nodeType;
             $node->nodeTypeName = new ContentRepository\ValueObject\NodeTypeName($nodeRow['nodetypename']);
             $node->identifier = new ContentRepository\ValueObject\NodeIdentifier($nodeRow['nodeidentifier']);
-            #@todo fetch workspace from finder using the content stream identifier
-            #$node->workspace = $this->workspaceRepository->findByIdentifier($this->contentStreamIdentifier);
+            // TODO Add a projection from contentStreamIdentifier to workspaceName, join to the edges for less queries !!! Or just add the workspace name to the edge (more duplicated data).
+            // $node->workspace = $this->workspaceRepository->findByIdentifier($this->contentStreamIdentifier);
 
             $node->dimensionSpacePoint = null;
 
