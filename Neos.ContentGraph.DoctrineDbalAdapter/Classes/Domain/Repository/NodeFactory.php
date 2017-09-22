@@ -65,6 +65,7 @@ final class NodeFactory
                 throw new \Exception('The "name" property was not found in the $nodeRow; you need to include the "name" field in the SQL result.');
             }
             $node->name = $nodeRow['name'];
+            // $node->index = (int)$nodeRow['position'];
             $node->nodeTypeName = new ContentRepository\ValueObject\NodeTypeName($nodeRow['nodetypename']);
             // TODO Add a projection from contentStreamIdentifier to workspaceName, join to the edges for less queries !!! Or just add the workspace name to the edge (more duplicated data).
             // $node->workspace = $this->workspaceRepository->findByIdentifier($this->contentStreamIdentifier);

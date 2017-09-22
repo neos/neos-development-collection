@@ -71,9 +71,9 @@ class Node implements NodeInterface, CacheAwareInterface
     public $aggregateIdentifier;
 
     /**
-     * @var string
+     * @var int
      */
-    public $index;
+    public $index = 0;
 
     /**
      * @var string
@@ -104,20 +104,6 @@ class Node implements NodeInterface, CacheAwareInterface
      * @var Domain\ValueObject\ContentStreamIdentifier
      */
     public $contentStreamIdentifier;
-
-    /**
-     * Defines if the NodeData represented by this Node is already
-     * in the same context or if it is currently just "shining through".
-     *
-     * @var boolean
-     */
-    protected $nodeDataIsMatchingContext = null;
-
-    /**
-     * @Flow\Inject
-     * @var NodeDataRepository
-     */
-    protected $nodeDataRepository;
 
     /**
      * @Flow\Inject
@@ -200,214 +186,9 @@ class Node implements NodeInterface, CacheAwareInterface
             throw new NodeException('The root node cannot be renamed.', 1346778388);
         }
 
-        // TODO Execute command ChangeNodeName
-
-        $this->legacySetName($newName);
-    }
-
-    private function legacySetName(string $newName): void
-    {
-        $this->setPath(NodePaths::addNodePathSegment($this->getParentPath(), $newName));
-        $this->nodeDataRepository->persistEntities();
-        $this->context->getFirstLevelNodeCache()->flush();
+        // TODO CR rewrite: Execute command ChangeNodeName
 
         $this->emitNodeUpdated($this);
-    }
-
-    /**
-     * Sets the absolute path of this node.
-     *
-     * This method is only for internal use by the content repository or node methods. Changing
-     * the path of a node manually may lead to unexpected behavior.
-     *
-     * To achieve a correct behavior when changing the path (moving the node) in a workspace, a shadow node data that will
-     * hide the node data in the base workspace will be created. Thus queries do not need to worry about moved nodes.
-     * Through a movedTo reference the shadow node data will be removed when publishing the moved node.
-     *
-     * @param string $path
-     * @param boolean $checkForExistence Checks for existence at target path, internally used for recursions and shadow nodes.
-     * @return void
-     * @throws NodeException
-     */
-    protected function setPath($path, $checkForExistence = true)
-    {
-        $originalPath = $this->nodeData->getPath();
-        if ($originalPath === $path) {
-            return;
-        }
-
-        $pathAvailable = $checkForExistence ? $this->isNodePathAvailable($path) : true;
-        if (!$pathAvailable) {
-            throw new NodeException(sprintf('Can not rename the node "%s" as a node already exists on path "%s"', $this->getPath(), $path), 1414436551);
-        }
-
-        $changedNodePathsCollection = $this->setPathInternal($path, !$checkForExistence);
-        $this->nodeDataRepository->persistEntities();
-        array_walk($changedNodePathsCollection, function ($changedNodePathInformation) {
-            call_user_func_array([
-                $this,
-                'emitNodePathChanged'
-            ], $changedNodePathInformation);
-        });
-    }
-
-    /**
-     * Checks if the given node path is available for this node, so either no node with this path exists or an existing node has the same identifier.
-     *
-     * @param string $path
-     * @return boolean
-     */
-    protected function isNodePathAvailable($path)
-    {
-        $existingNodeDataArray = $this->nodeDataRepository->findByPathWithoutReduce($path, $this->context->getWorkspace());
-
-        $nonMatchingNodeData = array_filter($existingNodeDataArray, function (NodeData $nodeData) {
-            return ($nodeData->getIdentifier() !== $this->getIdentifier());
-        });
-
-        return ($nonMatchingNodeData === []);
-    }
-
-    /**
-     * Moves a node and sub nodes to the new path.
-     * This process is different depending on the fact if the node is an aggregate type or not.
-     *
-     * @param string $destinationPath the new node path
-     * @param boolean $recursiveCall is this a recursive call
-     * @return array NodeVariants and old and new paths
-     */
-    protected function setPathInternal($destinationPath, $recursiveCall)
-    {
-        if ($this->getNodeType()->isAggregate()) {
-            return $this->setPathInternalForAggregate($destinationPath, $recursiveCall);
-        }
-
-        $originalPath = $this->nodeData->getPath();
-
-        /** @var Node $childNode */
-        foreach ($this->getChildNodes() as $childNode) {
-            $childNode->setPath(NodePaths::addNodePathSegment($destinationPath, $childNode->getName()), false);
-        }
-
-        $this->moveNodeToDestinationPath($this, $destinationPath);
-
-        return [
-            [$this, $originalPath, $this->getNodeData()->getPath(), $recursiveCall]
-        ];
-    }
-
-    /**
-     * Moves a node and sub nodes to the new path given with special logic for aggregate node types.
-     *
-     * @param string $destinationPath the new node path
-     * @param boolean $recursiveCall is this a recursive call
-     * @return array of arrays with NodeVariant and old and new path and if this was a recursive call
-     */
-    protected function setPathInternalForAggregate($destinationPath, $recursiveCall)
-    {
-        $originalPath = $this->nodeData->getPath();
-        $nodeDataVariantsAndChildren = $this->nodeDataRepository->findByPathWithoutReduce($originalPath, $this->context->getWorkspace(), true, true);
-
-        $changedNodePathsCollection = array_map(function ($nodeData) use ($destinationPath, $originalPath, $recursiveCall) {
-            return $this->moveNodeData($nodeData, $originalPath, $destinationPath, $recursiveCall);
-        }, $nodeDataVariantsAndChildren);
-
-        return array_filter($changedNodePathsCollection);
-    }
-
-    /**
-     * Moves a NodeData object that is either a variant or child node to the given destination path.
-     *
-     * @param NodeData $nodeData
-     * @param string $originalPath
-     * @param string $destinationPath
-     * @param boolean $recursiveCall
-     * @return array|null
-     */
-    protected function moveNodeData($nodeData, $originalPath, $destinationPath, $recursiveCall)
-    {
-        $recursiveCall = $recursiveCall || ($this->nodeData !== $nodeData);
-        $nodeVariant = null;
-        // $nodeData at this point could contain *our own NodeData reference* ($this->nodeData), as we find all NodeData objects
-        // (across all dimensions) with the same path.
-        //
-        // We need to ensure that our own Node object's nodeData reference ($this->nodeData) is also updated correctly if a new NodeData object
-        // is returned; as we rely on the fact that $this->getPath() will return the new node path in all circumstances.
-        //
-        // However, $this->createNodeForVariant() only returns $this if the Context object is the same as $this->context; which is not
-        // the case if $this->context contains dimension fallbacks such as "Language: EN, DE".
-        //
-        // The "if" statement below is actually a workaround to ensure that if the NodeData object is our own one, we update *ourselves* correctly,
-        // and thus return the correct (new) Node Path when calling $this->getPath() afterwards.
-        // FIXME: This is dangerous and probably the NodeFactory should take care of globally tracking usage of NodeData objects and replacing them in Node objects
-
-        if ($this->nodeData === $nodeData) {
-            $nodeVariant = $this;
-        }
-
-        if ($nodeVariant === null) {
-            $nodeVariant = $this->createNodeForVariant($nodeData);
-        }
-
-        $moveVariantResult = $nodeVariant === null ? null : $this->moveVariantOrChild($originalPath, $destinationPath, $nodeVariant);
-        if ($moveVariantResult !== null) {
-            array_push($moveVariantResult, $recursiveCall);
-        }
-
-        return $moveVariantResult;
-    }
-
-    /**
-     * Create a node for the given NodeData, given that it is a variant of the current node
-     *
-     * @param NodeData $nodeData
-     * @return Node
-     */
-    protected function createNodeForVariant($nodeData)
-    {
-        $contextProperties = $this->context->getProperties();
-        $contextProperties['dimensions'] = $nodeData->getDimensionValues();
-        unset($contextProperties['targetDimensions']);
-        $adjustedContext = $this->contextFactory->create($contextProperties);
-
-        return $this->nodeFactory->createFromNodeData($nodeData, $adjustedContext);
-    }
-
-    /**
-     * Moves the given variant or child node to the destination defined by the given path which is
-     * the new path for the originally moved (parent|variant) node
-     *
-     * @param string $aggregateOriginalPath
-     * @param string $aggregateDestinationPath
-     * @param NodeInterface $nodeToMove
-     * @return array NodeVariant and old and new path
-     */
-    protected function moveVariantOrChild($aggregateOriginalPath, $aggregateDestinationPath, NodeInterface $nodeToMove = null)
-    {
-        if ($nodeToMove === null) {
-            return null;
-        }
-
-        $variantOriginalPath = $nodeToMove->getPath();
-        $relativePathSegment = NodePaths::getRelativePathBetween($aggregateOriginalPath, $variantOriginalPath);
-        $variantDestinationPath = NodePaths::addNodePathSegment($aggregateDestinationPath, $relativePathSegment);
-        $this->moveNodeToDestinationPath($nodeToMove, $variantDestinationPath);
-
-        return [$nodeToMove, $variantOriginalPath, $nodeToMove->getPath()];
-    }
-
-    /**
-     * Moves the given node to the destination path by modifying the underlaying NodeData object.
-     *
-     * @param NodeInterface $node
-     * @param string $destinationPath
-     * @return void
-     */
-    protected function moveNodeToDestinationPath(NodeInterface $node, $destinationPath)
-    {
-        $nodeData = $node->getNodeData();
-        $possibleShadowedNodeData = $nodeData->move($destinationPath, $this->context->getWorkspace());
-        $node->setNodeData($possibleShadowedNodeData);
     }
 
     /**
@@ -418,6 +199,7 @@ class Node implements NodeInterface, CacheAwareInterface
         return array_filter(
             $this->context->getNodeVariantsByIdentifier($this->identifier),
             function (NodeInterface $node) {
+                // FIXME CR rewrite: Do not use NodeData here
                 return ($node->getNodeData() !== $this->nodeData);
             }
         );
@@ -428,6 +210,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getCreationDateTime()
     {
+        // FIXME CR rewrite: Read from DTO
         return $this->nodeData->getCreationDateTime();
     }
 
@@ -436,6 +219,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getLastModificationDateTime()
     {
+        // FIXME CR rewrite: Read from DTO
         return $this->nodeData->getLastModificationDateTime();
     }
 
@@ -445,6 +229,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setLastPublicationDateTime(\DateTimeInterface $lastModificationDateTime)
     {
+        // FIXME CR rewrite: Read from DTO
         $this->nodeData->setLastPublicationDateTime($lastModificationDateTime);
     }
 
@@ -453,6 +238,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getLastPublicationDateTime()
     {
+        // FIXME CR rewrite: Read from DTO
         return $this->nodeData->getLastPublicationDateTime();
     }
 
@@ -464,6 +250,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getPath()
     {
+        // FIXME CR rewrite: Ask subgraph about path
         return $this->nodeData->getPath();
     }
 
@@ -476,6 +263,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getDepth()
     {
+        // FIXME CR rewrite: Ask subgraph about depth
         return $this->nodeData->getDepth();
     }
 
@@ -487,7 +275,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getName(): string
     {
-        return $this->name ?: $this->nodeData->getName();
+        return $this->name;
     }
 
     /**
@@ -501,25 +289,15 @@ class Node implements NodeInterface, CacheAwareInterface
     }
 
     /**
-     * Sets the workspace of this node.
-     *
-     * This method is only for internal use by the content repository. Changing
-     * the workspace of a node manually may lead to unexpected behavior.
+     * Unimplemented method
      *
      * @param Workspace $workspace
      * @return void
+     * @throws Exception
      */
     public function setWorkspace(Workspace $workspace)
     {
-        if (!$this->isNodeDataMatchingContext()) {
-            $this->materializeNodeData();
-        }
-        if ($this->getWorkspace()->getName() === $workspace->getName()) {
-            return;
-        }
-        $this->nodeData->setWorkspace($workspace);
-        $this->context->getFirstLevelNodeCache()->flush();
-        $this->emitNodeUpdated($this);
+        throw new Exception('Method setWorkspace not implemented', 1506096523);
     }
 
     /**
@@ -530,7 +308,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getWorkspace()
     {
-        return $this->workspace ?: $this->nodeData->getWorkspace();
+        return $this->workspace;
     }
 
     /**
@@ -543,28 +321,19 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getIdentifier()
     {
-        return $this->identifier ? (string)$this->identifier : $this->nodeData->getIdentifier();
+        return (string)$this->aggregateIdentifier;
     }
 
     /**
-     * Sets the index of this node
-     *
-     * NOTE: This method is meant for internal use and must only be used by other nodes.
+     * Unimplemented method
      *
      * @param integer $index The new index
      * @return void
+     * @throws Exception
      */
     public function setIndex($index)
     {
-        if (!$this->isNodeDataMatchingContext()) {
-            $this->materializeNodeData();
-        }
-        if ($this->getIndex() === $index) {
-            return;
-        }
-        $this->nodeData->setIndex($index);
-        $this->context->getFirstLevelNodeCache()->flush();
-        $this->emitNodeUpdated($this);
+        throw new Exception('Method setIndex not implemented', 1506096523);
     }
 
     /**
@@ -575,7 +344,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getIndex()
     {
-        return $this->nodeData->getIndex();
+        return $this->index;
     }
 
     /**
@@ -597,6 +366,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getParentPath()
     {
+        // FIXME CR rewrite: Ask subgraph about parent path
         return $this->nodeData->getParentPath();
     }
 
@@ -605,6 +375,7 @@ class Node implements NodeInterface, CacheAwareInterface
      *
      * @param NodeInterface $referenceNode
      * @param string $newName
+     * @throws Exception
      * @throws NodeConstraintException if a node constraint prevents moving the node
      * @throws NodeException if you try to move the root node
      * @throws NodeExistsException
@@ -636,6 +407,8 @@ class Node implements NodeInterface, CacheAwareInterface
             throw new Exception(sprintf('Unexpected NodeInterface implementation: %s', get_class($this)), 1506067144);
         }
 
+        $this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_BEFORE);
+
         $moveNodeCommand = new MoveNode(
             $this->context->getContentStreamIdentifier(),
             $this->identifier,
@@ -645,23 +418,6 @@ class Node implements NodeInterface, CacheAwareInterface
 
         $this->nodeCommandHandler->handleMoveNode($moveNodeCommand);
 
-        $this->legacyMoveBefore($referenceNode);
-    }
-
-    private function legacyMoveBefore(NodeInterface $referenceNode): void
-    {
-        $this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_BEFORE);
-        if ($referenceNode->getParentPath() !== $this->getParentPath()) {
-            $this->setPath(NodePaths::addNodePathSegment($referenceNode->getParentPath(), $this->getName()));
-            $this->nodeDataRepository->persistEntities();
-        } else {
-            if (!$this->isNodeDataMatchingContext()) {
-                $this->materializeNodeData();
-            }
-        }
-
-        $this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_BEFORE, $referenceNode);
-        $this->context->getFirstLevelNodeCache()->flush();
         $this->emitAfterNodeMove($this, $referenceNode, NodeDataRepository::POSITION_BEFORE);
         $this->emitNodeUpdated($this);
     }
@@ -671,6 +427,7 @@ class Node implements NodeInterface, CacheAwareInterface
      *
      * @param NodeInterface $referenceNode
      * @param string $newName
+     * @throws Exception
      * @throws NodeConstraintException if a node constraint prevents moving the node
      * @throws NodeException
      * @throws NodeExistsException
@@ -702,6 +459,8 @@ class Node implements NodeInterface, CacheAwareInterface
             throw new Exception(sprintf('Unexpected NodeInterface implementation: %s', get_class($this)), 1506067144);
         }
 
+        $this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_AFTER);
+
         $moveNodeCommand = new MoveNode(
             $this->context->getContentStreamIdentifier(),
             $this->identifier,
@@ -710,25 +469,6 @@ class Node implements NodeInterface, CacheAwareInterface
         );
 
         $this->nodeCommandHandler->handleMoveNode($moveNodeCommand);
-
-        $this->legacyMoveAfter($referenceNode);
-    }
-
-    private function legacyMoveAfter(NodeInterface $referenceNode): void
-    {
-        $this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_AFTER);
-
-        if ($referenceNode->getParentPath() !== $this->getParentPath()) {
-            $this->setPath(NodePaths::addNodePathSegment($referenceNode->getParentPath(), $this->getName()));
-            $this->nodeDataRepository->persistEntities();
-        } else {
-            if (!$this->isNodeDataMatchingContext()) {
-                $this->materializeNodeData();
-            }
-        }
-
-        $this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_AFTER, $referenceNode);
-        $this->context->getFirstLevelNodeCache()->flush();
 
         $this->emitAfterNodeMove($this, $referenceNode, NodeDataRepository::POSITION_AFTER);
         $this->emitNodeUpdated($this);
@@ -739,6 +479,7 @@ class Node implements NodeInterface, CacheAwareInterface
      *
      * @param NodeInterface $referenceNode
      * @param string $newName
+     * @throws Exception
      * @throws NodeConstraintException
      * @throws NodeException
      * @throws NodeExistsException
@@ -770,6 +511,8 @@ class Node implements NodeInterface, CacheAwareInterface
             throw new Exception(sprintf('Unexpected NodeInterface implementation: %s', get_class($this)), 1506067144);
         }
 
+        $this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_LAST);
+
         $moveNodeCommand = new MoveNode(
             $this->context->getContentStreamIdentifier(),
             $this->identifier,
@@ -778,19 +521,6 @@ class Node implements NodeInterface, CacheAwareInterface
         );
 
         $this->nodeCommandHandler->handleMoveNode($moveNodeCommand);
-
-        $this->legacyMoveInto($referenceNode);
-    }
-
-    private function legacyMoveInto(NodeInterface $referenceNode): void
-    {
-        $this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_LAST);
-
-        $this->setPath(NodePaths::addNodePathSegment($referenceNode->getPath(), $this->getName()));
-        $this->nodeDataRepository->persistEntities();
-
-        $this->nodeDataRepository->setNewIndex($this->nodeData, NodeDataRepository::POSITION_LAST);
-        $this->context->getFirstLevelNodeCache()->flush();
 
         $this->emitAfterNodeMove($this, $referenceNode, NodeDataRepository::POSITION_LAST);
         $this->emitNodeUpdated($this);
@@ -840,27 +570,17 @@ class Node implements NodeInterface, CacheAwareInterface
 
         $name = new NodeName($nodeName);
 
-        // TODO Execute command CopyNodeBefore
-        // TODO Separate commands depending on isDocument?
-
-        $copiedNode = $this->legacyCopyBefore($referenceNode, $nodeName);
-
-        return $copiedNode;
-    }
-
-    private function legacyCopyBefore(NodeInterface $referenceNode, string $nodeName): NodeInterface
-    {
         $this->emitBeforeNodeCopy($this, $referenceNode->getParent());
 
-        $copiedNode = $this->createRecursiveCopy($referenceNode->getParent(), $nodeName, $this->getNodeType()->isAggregate());
-        $copiedNode->moveBefore($referenceNode);
+        // TODO CR rewrite: Execute command CopyNodeBefore
+        // TODO CR rewrite: Separate commands depending on isAggregate (maybe rename to isDocument)?
 
-        $this->context->getFirstLevelNodeCache()->flush();
+        // TODO CR rewrite: Get copied node instance from subgraph and return that
+        // $this->emitNodeAdded($copiedNode);
+        // $this->emitAfterNodeCopy($copiedNode, $referenceNode->getParent());
+        // return $copiedNode;
 
-        $this->emitNodeAdded($copiedNode);
-        $this->emitAfterNodeCopy($copiedNode, $referenceNode->getParent());
-
-        return $copiedNode;
+        return $this;
     }
 
     /**
@@ -905,25 +625,17 @@ class Node implements NodeInterface, CacheAwareInterface
 
         $name = new NodeName($nodeName);
 
-        // TODO Execute command CopyNodeAfter
-        // TODO Separate commands depending on isAggregate (maybe rename to isDocument)?
-
-        $copiedNode = $this->legacyCopyAfter($referenceNode, $nodeName);
-
-        return $copiedNode;
-    }
-
-    private function legacyCopyAfter(NodeInterface $referenceNode, string $nodeName): NodeInterface
-    {
         $this->emitBeforeNodeCopy($this, $referenceNode->getParent());
-        $copiedNode = $this->createRecursiveCopy($referenceNode->getParent(), $nodeName,
-            $this->getNodeType()->isAggregate());
-        $copiedNode->moveAfter($referenceNode);
 
-        $this->context->getFirstLevelNodeCache()->flush();
-        $this->emitNodeAdded($copiedNode);
-        $this->emitAfterNodeCopy($copiedNode, $referenceNode->getParent());
-        return $copiedNode;
+        // TODO CR rewrite: Execute command CopyNodeAfter
+        // TODO CR rewrite: Separate commands depending on isAggregate (maybe rename to isDocument)?
+
+        // TODO CR rewrite: Get copied node instance from subgraph and return that
+        // $this->emitNodeAdded($copiedNode);
+        // $this->emitAfterNodeCopy($copiedNode, $referenceNode->getParent());
+        // return $copiedNode;
+
+        return $this;
     }
 
     /**
@@ -940,53 +652,17 @@ class Node implements NodeInterface, CacheAwareInterface
     {
         $name = new NodeName($nodeName);
 
-        // TODO Execute command CopyInto
-        // TODO Separate commands depending on isAggregate (maybe rename to isDocument)?
+        $this->emitBeforeNodeCopy($this, $referenceNode->getParent());
 
-        $copiedNode = $this->legacyCopyInto($referenceNode, $nodeName);
+        // TODO CR rewrite: Execute command CopyNodeInto
+        // TODO CR rewrite: Separate commands depending on isAggregate (maybe rename to isDocument)?
 
-        return $copiedNode;
-    }
+        // TODO CR rewrite: Get copied node instance from subgraph and return that, maybe also all recursively copied nodes!!!
+        // $this->emitNodeAdded($copiedNode);
+        // $this->emitAfterNodeCopy($copiedNode, $referenceNode->getParent());
+        // return $copiedNode;
 
-    private function legacyCopyInto(NodeInterface $referenceNode, string $nodeName): NodeInterface
-    {
-        $this->emitBeforeNodeCopy($this, $referenceNode);
-        $copiedNode = $this->copyIntoInternal($referenceNode, $nodeName, $this->getNodeType()->isAggregate());
-        $this->emitAfterNodeCopy($this, $referenceNode);
-        return $copiedNode;
-    }
-
-    /**
-     * Internal method to do the actual copying.
-     *
-     * For behavior of the $detachedCopy parameter, see method Node::createRecursiveCopy().
-     *
-     * @param NodeInterface $referenceNode
-     * @param $nodeName
-     * @param boolean $detachedCopy
-     * @return NodeInterface
-     * @throws NodeConstraintException
-     * @throws NodeExistsException
-     */
-    protected function copyIntoInternal(NodeInterface $referenceNode, $nodeName, $detachedCopy)
-    {
-        if ($referenceNode->getNode($nodeName) !== null) {
-            throw new NodeExistsException('Node with path "' . $referenceNode->getPath() . '/' . $nodeName . '" already exists.', 1292503467);
-        }
-
-        // On copy we basically re-recreate an existing node on a new location. As we skip the constraints check on
-        // node creation we should do the same while writing the node on the new location.
-        if (!$referenceNode->willChildNodeBeAutoCreated($nodeName) && !$referenceNode->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
-            throw new NodeConstraintException(sprintf('Cannot copy "%s" into "%s" due to node type constraints.', $this->__toString(), $referenceNode->__toString()), 1404648177);
-        }
-
-        $copiedNode = $this->createRecursiveCopy($referenceNode, $nodeName, $detachedCopy);
-
-        $this->context->getFirstLevelNodeCache()->flush();
-
-        $this->emitNodeAdded($copiedNode);
-
-        return $copiedNode;
+        return $this;
     }
 
     /**
@@ -1010,25 +686,10 @@ class Node implements NodeInterface, CacheAwareInterface
             new NodeTypeName($this->getNodeType()->getName())
         );
 
-        $this->nodeCommandHandler->handleSetNodeProperty($command);
-
-        $this->legacySetProperty($propertyName, $value);
-    }
-
-    private function legacySetProperty(string $propertyName, $value): void
-    {
-        if (!$this->isNodeDataMatchingContext()) {
-            $this->materializeNodeData();
-        }
-        // Arrays could potentially contain entities and objects could be entities. In that case even if the object is the same it needs to be persisted in NodeData.
-        if (!is_object($value) && !is_array($value) && $this->getProperty($propertyName) === $value) {
-            return;
-        }
         $oldValue = $this->hasProperty($propertyName) ? $this->getProperty($propertyName) : null;
         $this->emitBeforeNodePropertyChange($this, $propertyName, $oldValue, $value);
-        $this->nodeData->setProperty($propertyName, $value);
 
-        $this->context->getFirstLevelNodeCache()->flush();
+        $this->nodeCommandHandler->handleSetNodeProperty($command);
 
         $this->emitNodePropertyChanged($this, $propertyName, $oldValue, $value);
         $this->emitNodeUpdated($this);
@@ -1046,7 +707,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function hasProperty($propertyName)
     {
-        return $this->properties ? $this->properties->offsetExists($propertyName) : $this->nodeData->hasProperty($propertyName);
+        return $this->properties->offsetExists($propertyName);
     }
 
     /**
@@ -1062,57 +723,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getProperty($propertyName, $returnNodesAsIdentifiers = false)
     {
-        if ($this->properties) {
-            return $this->properties[$propertyName];
-        } else {
-            $value = $this->nodeData->getProperty($propertyName);
-            $nodeType = $this->getNodeType();
-
-            if ($nodeType !== null) {
-                $expectedPropertyType = $nodeType->getPropertyType($propertyName);
-            }
-
-            if (
-                isset($expectedPropertyType) &&
-                $expectedPropertyType === 'Neos\Media\Domain\Model\ImageInterface' &&
-                empty($value)
-            ) {
-                return null;
-            }
-
-            if (empty($value)) {
-                return $value;
-            }
-
-            if (!$nodeType->hasConfiguration('properties.' . $propertyName)) {
-                return $value;
-            }
-
-            if ($expectedPropertyType === 'references') {
-                return ($returnNodesAsIdentifiers ? $value : $this->resolvePropertyReferences($value));
-            }
-
-            if ($expectedPropertyType === 'reference') {
-                return ($returnNodesAsIdentifiers ? $value : $this->context->getNodeByIdentifier($value));
-            }
-
-            return $this->propertyMapper->convert($value, $expectedPropertyType);
-        }
-    }
-
-    /**
-     * Maps the property value (an array of node identifiers) to the Node objects if needed.
-     *
-     * @param array $value
-     * @return array
-     */
-    protected function resolvePropertyReferences($value = [])
-    {
-        $nodes = array_map(function ($nodeIdentifier) {
-            return $this->context->getNodeByIdentifier($nodeIdentifier);
-        }, $value);
-
-        return array_filter($nodes);
+        return $this->properties[$propertyName];
     }
 
     /**
@@ -1127,22 +738,12 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function removeProperty($propertyName)
     {
-        // TODO Execute command RemoveNodeProperty
-
-        $this->legacyRemoveProperty($propertyName);
-    }
-
-    private function legacyRemoveProperty(string $propertyName): void
-    {
-        if (!$this->isNodeDataMatchingContext()) {
-            $this->materializeNodeData();
-        }
         if (!$this->hasProperty($propertyName)) {
             return;
         }
-        $this->nodeData->removeProperty($propertyName);
 
-        $this->context->getFirstLevelNodeCache()->flush();
+        // TODO CR rewrite: Execute command RemoveNodeProperty
+
         $this->emitNodeUpdated($this);
     }
 
@@ -1153,17 +754,12 @@ class Node implements NodeInterface, CacheAwareInterface
      * there.
      *
      * @param boolean $returnNodesAsIdentifiers If enabled, references to nodes are returned as node identifiers instead of NodeData objects
-     * @return array Property values, indexed by their name
+     * @return array|\ArrayAccess Property values, indexed by their name
      * @api
      */
     public function getProperties($returnNodesAsIdentifiers = false)
     {
-        $properties = [];
-        foreach ($this->getPropertyNames() as $propertyName) {
-            $properties[$propertyName] = $this->getProperty($propertyName, $returnNodesAsIdentifiers);
-        }
-
-        return $properties;
+        return $this->properties;
     }
 
     /**
@@ -1174,7 +770,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getPropertyNames()
     {
-        return $this->properties ? $this->properties->getPropertyNames() : $this->nodeData->getPropertyNames();
+        return $this->properties->getPropertyNames();
     }
 
     /**
@@ -1186,22 +782,12 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setContentObject($contentObject)
     {
-        // TODO Execute command SetContentObject
-
-        $this->legacySetContentObject($contentObject);
-    }
-
-    private function legacySetContentObject(object $contentObject): void
-    {
-        if (!$this->isNodeDataMatchingContext()) {
-            $this->materializeNodeData();
-        }
         if ($this->getContentObject() === $contentObject) {
             return;
         }
-        $this->nodeData->setContentObject($contentObject);
 
-        $this->context->getFirstLevelNodeCache()->flush();
+        // TODO CR rewrite: Execute command SetNodeContentObject
+
         $this->emitNodeUpdated($this);
     }
 
@@ -1213,7 +799,8 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getContentObject()
     {
-        return $this->nodeData ? $this->nodeData->getContentObject() : null;
+        // TODO CR rewrite: Get content object
+        return null;
     }
 
     /**
@@ -1224,19 +811,8 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function unsetContentObject()
     {
-        // TODO Execute command UnsetContentObject
+        // TODO CR rewrite: Execute command UnsetNodeContentObject
 
-        $this->legacyUnsetContentObject();
-    }
-
-    private function legacyUnsetContentObject(): void
-    {
-        if (!$this->isNodeDataMatchingContext()) {
-            $this->materializeNodeData();
-        }
-        $this->nodeData->unsetContentObject();
-
-        $this->context->getFirstLevelNodeCache()->flush();
         $this->emitNodeUpdated($this);
     }
 
@@ -1249,22 +825,12 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setNodeType(NodeType $nodeType)
     {
-        // TODO Execute command SetNodeType
-
-        $this->legacySetNodeType($nodeType);
-    }
-
-    private function legacySetNodeType(NodeType $nodeType): void
-    {
-        if (!$this->isNodeDataMatchingContext()) {
-            $this->materializeNodeData();
-        }
         if ($this->getNodeType() === $nodeType) {
             return;
         }
-        $this->nodeData->setNodeType($nodeType);
 
-        $this->context->getFirstLevelNodeCache()->flush();
+        // TODO CR rewrite: Execute command SetNodeAggregateType
+
         $this->emitNodeUpdated($this);
     }
 
@@ -1276,7 +842,8 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getNodeType()
     {
-        return $this->nodeType ?: $this->nodeData->getNodeType();
+        // TODO CR rewrite: Lazily init the node type and only store node type name by default?
+        return $this->nodeType;
     }
 
     /**
@@ -1310,92 +877,20 @@ class Node implements NodeInterface, CacheAwareInterface
             $nodeName
         );
 
-        $this->nodeCommandHandler->handleCreateNodeAggregateWithNode($command);
-
-        $newNode = $this->legacyCreateNode($nodeIdentifier, $dimensionSpacePoint, $name, $nodeType, (string)$nodeAggregateIdentifier);
-
-        return $newNode;
-    }
-
-    private function legacyCreateNode(NodeIdentifier $nodeIdentifier, DimensionSpacePoint $dimensionSpacePoint, $name, NodeType $nodeType = null, string $identifier = null): Node
-    {
         $this->emitBeforeNodeCreate($this, $name, $nodeType, $identifier);
 
-        $newNode = $this->createSingleNode($nodeIdentifier, $dimensionSpacePoint, $name, $nodeType, $identifier);
-        if ($nodeType !== null) {
-            foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $propertyValue) {
-                if (substr($propertyName, 0, 1) === '_') {
-                    ObjectAccess::setProperty($newNode, substr($propertyName, 1), $propertyValue);
-                } else {
-                    $newNode->setProperty($propertyName, $propertyValue);
-                }
-            }
+        $this->nodeCommandHandler->handleCreateNodeAggregateWithNode($command);
 
-            foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeName => $childNodeType) {
-                $childNodeIdentifier = Utility::buildAutoCreatedChildNodeIdentifier($childNodeName,
-                    $newNode->getIdentifier());
-                $alreadyPresentChildNode = $newNode->getNode($childNodeName);
-                if ($alreadyPresentChildNode === null) {
-                    $newNode->createNode($childNodeName, $childNodeType, $childNodeIdentifier);
-                }
-            }
+        $newNode = $this->context->getSubgraph()->findNodeByIdentifier($nodeIdentifier, $this->context);
+        if ($newNode === null) {
+            throw new Exception\NodeNotFoundException(sprintf('Node with identifier %s created but not found in supgraph', $nodeIdentifier), 1506097675, $nodeIdentifier);
         }
 
-        $this->context->getFirstLevelNodeCache()->flush();
-
+        // TODO CR rewrite: Do we need to emit signals for all recursively created nodes, too? Then we need to have a "fat" command to know about all created nodes.
         $this->emitNodeAdded($newNode);
         $this->emitAfterNodeCreate($newNode);
 
         return $newNode;
-    }
-
-    /**
-     * Creates, adds and returns a child node of this node, without setting default
-     * properties or creating subnodes. Only used internally.
-     *
-     * For internal use only!
-     *
-     * @param NodeIdentifier $nodeIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param string $name Name of the new node
-     * @param NodeType $nodeType Node type of the new node (optional)
-     * @param string $identifier The identifier of the node, unique within the workspace, optional(!) -> node aggregate identifier
-     * @return Node
-     * @throws NodeConstraintException
-     */
-    protected function createSingleNode(NodeIdentifier $nodeIdentifier, DimensionSpacePoint $dimensionSpacePoint, $name, NodeType $nodeType = null, $identifier = null)
-    {
-        if ($nodeType !== null && !$this->willChildNodeBeAutoCreated($name) && !$this->isNodeTypeAllowedAsChildNode($nodeType)) {
-            throw new NodeConstraintException('Cannot create new node "' . $name . '" of Type "' . $nodeType->getName() . '" in ' . $this->__toString(), 1400782413);
-        }
-
-        $dimensions = $this->context->getTargetDimensionValues();
-
-        $nodeData = $this->nodeData->createSingleNodeData($name, $nodeType, $identifier, $this->context->getWorkspace(), $dimensions);
-        /** @var Node $node */
-        $node = $this->nodeFactory->createFromNodeData($nodeData, $this->context);
-
-        $node->identifier = $nodeIdentifier;
-        $node->dimensionSpacePoint = $dimensionSpacePoint;
-        $node->contentStreamIdentifier = $this->contentStreamIdentifier;
-
-        $this->context->getFirstLevelNodeCache()->flush();
-        $this->emitNodeAdded($node);
-
-        return $node;
-    }
-
-    /**
-     * Checks if the given Node $name is configured as auto-created childNode in the NodeType configuration.
-     *
-     * @param string $name The node name to check.
-     * @return boolean TRUE if the given nodeName is configured as auto-created child node.
-     */
-    protected function willChildNodeBeAutoCreated($name)
-    {
-        $autoCreatedChildNodes = $this->getNodeType()->getAutoCreatedChildNodes();
-
-        return isset($autoCreatedChildNodes[$name]);
     }
 
     /**
@@ -1408,22 +903,11 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function createNodeFromTemplate(NodeTemplate $nodeTemplate, $nodeName = null)
     {
-        // TODO Execute CreateChildNodeWithVariantFromTemplate command
-        // TODO Check if we still want to support this!
+        // TODO CR rewrite: Execute CreateChildNodeWithVariantFromTemplate command
+        // TODO CR rewrite: Check if we still want to support this!
 
-        $node = $this->legacyCreateNodeFromTemplate($nodeTemplate, $nodeName);
-
-        return $node;
-    }
-
-    private function legacyCreateNodeFromTemplate(NodeTemplate $nodeTemplate, string $nodeName): NodeInterface
-    {
-        $nodeData = $this->nodeData->createNodeDataFromTemplate($nodeTemplate, $nodeName,
-            $this->context->getWorkspace(), $this->context->getDimensions());
-        $node = $this->nodeFactory->createFromNodeData($nodeData, $this->context);
-
-        $this->context->getFirstLevelNodeCache()->flush();
         $this->emitNodeAdded($node);
+
         return $node;
     }
 
@@ -1436,6 +920,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getNode($path)
     {
+        // FIXME CR rewrite: the path must not necessarily be a single name!
         return $this->context->getSubgraph()->findChildNodeConnectedThroughEdgeName($this->identifier, new NodeName($path), $this->context);
     }
 
@@ -1514,31 +999,15 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setRemoved($removed)
     {
-        // TODO Execute command MarkAsRemoved / UnmarkAsRemoved
-
-        $this->legacySetRemoved($removed);
-    }
-
-    private function legacySetRemoved(bool $removed): void
-    {
-        if (!$this->isNodeDataMatchingContext()) {
-            $this->materializeNodeData();
-        }
+        // TODO CR rewrite: Execute command MarkAsRemoved / UnmarkAsRemoved
 
         if ($removed === true) {
-            /** @var $childNode Node */
-            foreach ($this->getChildNodes() as $childNode) {
-                $childNode->setRemoved(true);
-            }
-
-            $this->nodeData->setRemoved(true);
             $this->emitNodeRemoved($this);
         } else {
-            $this->nodeData->setRemoved(false);
             $this->emitNodeUpdated($this);
         }
 
-        $this->context->getFirstLevelNodeCache()->flush();
+        // TODO CR rewrite: Also recursively removed nodes need to be signaled for BC
     }
 
     /**
@@ -1549,6 +1018,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function isRemoved()
     {
+        // TODO CR rewrite: Get removed flag
         return $this->nodeData->isRemoved();
     }
 
@@ -1561,22 +1031,12 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setHidden($hidden)
     {
-        // TODO Execute command Hide / Unhide
-
-        $this->legacySetHidden($hidden);
-    }
-
-    private function legacySetHidden(bool $hidden): void
-    {
-        if (!$this->isNodeDataMatchingContext()) {
-            $this->materializeNodeData();
-        }
         if ($this->isHidden() === $hidden) {
             return;
         }
-        $this->nodeData->setHidden($hidden);
 
-        $this->context->getFirstLevelNodeCache()->flush();
+        // TODO CR rewrite: Execute command HideNode / UnhideNode
+
         $this->emitNodeUpdated($this);
     }
 
@@ -1588,6 +1048,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function isHidden()
     {
+        // TODO CR rewrite: Get hidden flag
         return $this->nodeData->isHidden();
     }
 
@@ -1600,22 +1061,12 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setHiddenBeforeDateTime(\DateTime $dateTime = null)
     {
-        // TODO Execute command SetHiddenBeforeDateTime
-
-        $this->legacySetHiddenBeforeDateTime($dateTime);
-    }
-
-    private function legacySetHiddenBeforeDateTime(\DateTime $dateTime = null): void
-    {
-        if (!$this->isNodeDataMatchingContext()) {
-            $this->materializeNodeData();
-        }
         if ($this->getHiddenBeforeDateTime() instanceof \DateTime && $dateTime instanceof \DateTime && $this->getHiddenBeforeDateTime()->format(\DateTime::W3C) === $dateTime->format(\DateTime::W3C)) {
             return;
         }
-        $this->nodeData->setHiddenBeforeDateTime($dateTime);
 
-        $this->context->getFirstLevelNodeCache()->flush();
+        // TODO CR rewrite: Execute command SetNodeHiddenBeforeDateTime
+
         $this->emitNodeUpdated($this);
     }
 
@@ -1627,6 +1078,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getHiddenBeforeDateTime()
     {
+        // TODO CR rewrite: Get hiddenBeforeDateTime
         return $this->nodeData->getHiddenBeforeDateTime();
     }
 
@@ -1639,22 +1091,12 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setHiddenAfterDateTime(\DateTime $dateTime = null)
     {
-        // TODO Execute command SetHiddenAfterDateTime
-
-        $this->legacySetHiddenAfterDateTime($dateTime);
-    }
-
-    private function legacySetHiddenAfterDateTime(\DateTime $dateTime = null): void
-    {
-        if (!$this->isNodeDataMatchingContext()) {
-            $this->materializeNodeData();
-        }
         if ($this->getHiddenAfterDateTime() instanceof \DateTimeInterface && $dateTime instanceof \DateTimeInterface && $this->getHiddenAfterDateTime()->format(\DateTime::W3C) === $dateTime->format(\DateTime::W3C)) {
             return;
         }
-        $this->nodeData->setHiddenAfterDateTime($dateTime);
 
-        $this->context->getFirstLevelNodeCache()->flush();
+        // TODO CR rewrite: Execute command SetNodeHiddenAfterDateTime
+
         $this->emitNodeUpdated($this);
     }
 
@@ -1666,6 +1108,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getHiddenAfterDateTime()
     {
+        // TODO CR rewrite: Get hiddenAfterDateTime
         return $this->nodeData->getHiddenAfterDateTime();
     }
 
@@ -1678,22 +1121,8 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setHiddenInIndex($hidden)
     {
-        // TODO Execute command SetHiddenInIndex
+        // TODO CR rewrite: Execute command SetNodeHiddenInIndex
 
-        $this->legacySetHiddenInIndex($hidden);
-    }
-
-    private function legacySetHiddenInIndex(bool $hidden): void
-    {
-        if (!$this->isNodeDataMatchingContext()) {
-            $this->materializeNodeData();
-        }
-        if ($this->isHiddenInIndex() === $hidden) {
-            return;
-        }
-        $this->nodeData->setHiddenInIndex($hidden);
-
-        $this->context->getFirstLevelNodeCache()->flush();
         $this->emitNodeUpdated($this);
     }
 
@@ -1705,6 +1134,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function isHiddenInIndex()
     {
+        // TODO CR rewrite: Get isHiddenInIndex
         return $this->nodeData->isHiddenInIndex();
     }
 
@@ -1717,22 +1147,12 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setAccessRoles(array $accessRoles)
     {
-        // TODO Execute command SetAccessRoles
-
-        $this->legacySetAccessRoles($accessRoles);
-    }
-
-    private function legacySetAccessRoles(array $accessRoles): void
-    {
-        if (!$this->isNodeDataMatchingContext()) {
-            $this->materializeNodeData();
-        }
         if ($this->getAccessRoles() === $accessRoles) {
             return;
         }
-        $this->nodeData->setAccessRoles($accessRoles);
 
-        $this->context->getFirstLevelNodeCache()->flush();
+        // TODO CR rewrite: Execute command SetNodeAccessRoles
+
         $this->emitNodeUpdated($this);
     }
 
@@ -1807,110 +1227,7 @@ class Node implements NodeInterface, CacheAwareInterface
     }
 
     /**
-     * Materializes the original node data (of a different workspace) into the current
-     * workspace.
-     *
-     * @return void
-     */
-    protected function materializeNodeData()
-    {
-        $dimensions = $this->context->getTargetDimensionValues();
-
-        $newNodeData = new NodeData($this->nodeData->getPath(), $this->context->getWorkspace(), $this->nodeData->getIdentifier(), $dimensions);
-        $this->nodeDataRepository->add($newNodeData);
-
-        $newNodeData->similarize($this->nodeData);
-
-        $this->nodeData = $newNodeData;
-        $this->nodeDataIsMatchingContext = true;
-
-        $nodeType = $this->getNodeType();
-        foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeName => $childNodeConfiguration) {
-            $childNode = $this->getNode($childNodeName);
-            if ($childNode instanceof Node && !$childNode->isNodeDataMatchingContext()) {
-                $childNode->materializeNodeData();
-            }
-        }
-    }
-
-    /**
-     * Create a recursive copy of this node below $referenceNode with $nodeName.
-     *
-     * $detachedCopy only has an influence if we are copying from one dimension to the other, possibly creating a new
-     * node variant:
-     *
-     * - If $detachedCopy is TRUE, the whole (recursive) copy is done without connecting original and copied node,
-     *   so NOT CREATING a new node variant.
-     * - If $detachedCopy is FALSE, and the node does not yet have a variant in the target dimension, we are CREATING
-     *   a new node variant.
-     *
-     * As a caller of this method, $detachedCopy should be TRUE if $this->getNodeType()->isAggregate() is TRUE, and FALSE
-     * otherwise.
-     *
-     * @param NodeInterface $referenceNode
-     * @param boolean $detachedCopy
-     * @param string $nodeName
-     * @return NodeInterface
-     */
-    protected function createRecursiveCopy(NodeInterface $referenceNode, $nodeName, $detachedCopy)
-    {
-        $identifier = null;
-
-        $referenceNodeDimensions = $referenceNode->getDimensions();
-        $referenceNodeDimensionsHash = Utility::sortDimensionValueArrayAndReturnDimensionsHash($referenceNodeDimensions);
-        $thisDimensions = $this->getDimensions();
-        $thisNodeDimensionsHash = Utility::sortDimensionValueArrayAndReturnDimensionsHash($thisDimensions);
-        if ($detachedCopy === false && $referenceNodeDimensionsHash !== $thisNodeDimensionsHash && $referenceNode->getContext()->getNodeByIdentifier($this->getIdentifier()) === null) {
-            // If the target dimensions are different than this one, and there is no node shadowing this one in the target dimension yet, we use the same
-            // node identifier, effectively creating a new node variant.
-            $identifier = $this->getIdentifier();
-        }
-
-        $copiedNode = $referenceNode->createSingleNode($nodeName, null, $identifier);
-
-        $copiedNode->similarize($this, true);
-        /** @var $childNode Node */
-        foreach ($this->getChildNodes() as $childNode) {
-            // Prevent recursive copy when copying into itself
-            if ($childNode->getIdentifier() !== $copiedNode->getIdentifier()) {
-                $childNode->copyIntoInternal($copiedNode, $childNode->getName(), $detachedCopy);
-            }
-        }
-
-        return $copiedNode;
-    }
-
-    /**
-     * The NodeData matches the context if the workspace matches exactly.
-     * Needs to be adjusted for further context dimensions.
-     *
-     * @return boolean
-     */
-    protected function isNodeDataMatchingContext()
-    {
-        if ($this->nodeDataIsMatchingContext === null) {
-            $workspacesMatch = $this->nodeData->getWorkspace() !== null && $this->context->getWorkspace() !== null && $this->nodeData->getWorkspace()->getName() === $this->context->getWorkspace()->getName();
-            $this->nodeDataIsMatchingContext = $workspacesMatch && $this->dimensionsAreMatchingTargetDimensionValues();
-        }
-
-        return $this->nodeDataIsMatchingContext;
-    }
-
-    /**
-     * For internal use in createRecursiveCopy.
-     *
-     * @param NodeInterface $sourceNode
-     * @param boolean $isCopy
-     * @return void
-     */
-    public function similarize(NodeInterface $sourceNode, $isCopy = false)
-    {
-        $this->nodeData->similarize($sourceNode->getNodeData(), $isCopy);
-    }
-
-    /**
      * @return NodeData
-     * @todo this may lead to major problems regarding non-node data based implementations
      */
     public function getNodeData()
     {
@@ -1957,99 +1274,20 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function createVariantForContext($context)
     {
-        // TODO Execute command CopyNodeVariant
+        // TODO Execute command CopyNodeFromNode
 
-        $node = $this->legacyCreateVariantForContext($context);
-
-        return $node;
-    }
-
-    private function legacyCreateVariantForContext(Context $context): NodeInterface
-    {
-        $autoCreatedChildNodes = [];
-        $nodeType = $this->getNodeType();
-        foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeName => $childNodeConfiguration) {
-            $childNode = $this->getNode($childNodeName);
-            if ($childNode !== null) {
-                $autoCreatedChildNodes[$childNodeName] = $childNode;
-            }
-        }
-
-        $nodeData = new NodeData($this->nodeData->getPath(), $context->getWorkspace(), $this->nodeData->getIdentifier(),
-            $context->getTargetDimensionValues());
-        $nodeData->similarize($this->nodeData);
-
-        if ($this->context !== $context) {
-            $node = $this->nodeFactory->createFromNodeData($nodeData, $context);
-        } else {
-            $this->setNodeData($nodeData);
-            $node = $this;
-        }
-
-        $this->context->getFirstLevelNodeCache()->flush();
         $this->emitNodeAdded($node);
 
-        /**
-         * @var $autoCreatedChildNode NodeInterface
-         */
-        foreach ($autoCreatedChildNodes as $autoCreatedChildNode) {
-            $autoCreatedChildNode->createVariantForContext($context);
-        }
         return $node;
     }
 
     /**
-     * Internal method
-     *
-     * The dimension value of this node has to match the current target dimension value (must be higher in priority or equal)
-     *
-     * @return boolean
-     */
-    public function dimensionsAreMatchingTargetDimensionValues()
-    {
-        $dimensions = $this->getDimensions();
-        $contextDimensions = $this->context->getDimensions();
-        foreach ($this->context->getTargetDimensions() as $dimensionName => $targetDimensionValue) {
-            if (!isset($dimensions[$dimensionName])) {
-                if ($targetDimensionValue === null) {
-                    continue;
-                } else {
-                    return false;
-                }
-            } elseif ($targetDimensionValue === null && $dimensions[$dimensionName] === array()) {
-                continue;
-            } elseif (!in_array($targetDimensionValue, $dimensions[$dimensionName], true)) {
-                $contextDimensionValues = $contextDimensions[$dimensionName];
-                $targetPositionInContext = array_search($targetDimensionValue, $contextDimensionValues, true);
-                $nodePositionInContext = min(array_map(function ($value) use ($contextDimensionValues) {
-                    return array_search($value, $contextDimensionValues, true);
-                }, $dimensions[$dimensionName]));
-
-                $val = $targetPositionInContext !== false && $nodePositionInContext !== false && $targetPositionInContext >= $nodePositionInContext;
-                if ($val === false) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Set the associated NodeData in regards to the Context.
-     *
-     * NOTE: This is internal only and should not be used outside of the ContentRepository.
-     *
-     * TODO: As it is used in the Workspace this should become part of the interface in the next major release.
-     *
-     * @todo this may lead to major problems regarding non-node data based implementations but luckily this is not part of the NodeInterface...
      * @param NodeData $nodeData
      * @return void
      */
     public function setNodeData(NodeData $nodeData)
     {
         $this->nodeData = $nodeData;
-        $this->nodeDataIsMatchingContext = null;
     }
 
     /**
@@ -2085,19 +1323,6 @@ class Node implements NodeInterface, CacheAwareInterface
         }
 
         return false;
-    }
-
-    /**
-     * Set the status of the associated NodeData in regards to the Context.
-     *
-     * NOTE: This is internal only and should not be used outside of the ContentRepository.
-     *
-     * @param boolean $status
-     * @return void
-     */
-    public function setNodeDataIsMatchingContext($status)
-    {
-        $this->nodeDataIsMatchingContext = $status;
     }
 
     /**
