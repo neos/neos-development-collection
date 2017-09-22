@@ -22,6 +22,7 @@ use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -60,31 +61,52 @@ class GraphProjector implements ProjectorInterface
         return $this->projectionContentGraph->isEmpty();
     }
 
+    /**
+     * @param Event\RootNodeWasCreated $event
+     */
     final public function whenRootNodeWasCreated(Event\RootNodeWasCreated $event)
     {
         $nodeRelationAnchorPoint = new NodeRelationAnchorPoint();
-        $node = Node::fromRootNodeWasCreated($nodeRelationAnchorPoint, $event);
+        $node = new Node(
+            $nodeRelationAnchorPoint,
+            $event->getNodeIdentifier(),
+            null,
+            null,
+            null,
+            [],
+            new NodeTypeName('Neos.ContentRepository:Root')
+        );
 
         $this->transactional(function () use ($node) {
-            $this->addNode($node);
+            $node->addToDatabase($this->getDatabaseConnection());
         });
     }
 
     final public function whenNodeAggregateWithNodeWasCreated(Event\NodeAggregateWithNodeWasCreated $event)
     {
         $childNodeRelationAnchorPoint = new NodeRelationAnchorPoint();
-        $childNode = Node::fromNodeAggregateWithNodeWasCreated($childNodeRelationAnchorPoint, $event);
+
+        $childNode = new Node(
+            $childNodeRelationAnchorPoint,
+            $event->getNodeIdentifier(),
+            $event->getNodeAggregateIdentifier(),
+            $event->getDimensionSpacePoint()->jsonSerialize(),
+            $event->getDimensionSpacePoint()->getHash(),
+            $event->getPropertyDefaultValuesAndTypes(),
+            $event->getNodeTypeName()
+        );
         $parentNode = $this->projectionContentGraph->getNode($event->getParentNodeIdentifier(), $event->getContentStreamIdentifier(), $event->getDimensionSpacePoint());
         #$precedingSiblingNode = $this->getNode(null, $event->getContentStreamIdentifier(), $event->getDimensionSpacePoint());
+        $precedingSiblingNode = null;
 
-        $this->transactional(function () use ($childNode, $parentNode, $event) {
+        $this->transactional(function () use ($childNode, $parentNode, $precedingSiblingNode, $event) {
             // generate relation anchor point in $node
             // fetch relation anchor point from parent
             // connect hierarchy (relation anchor point A, rel A Point B)
-            $this->addNode($childNode);
+            $childNode->addToDatabase($this->getDatabaseConnection());
             $this->connectHierarchy(
-                new NodeRelationAnchorPoint($parentNode->relationAnchorPoint),
-                new NodeRelationAnchorPoint($childNode->relationAnchorPoint),
+                $parentNode->relationAnchorPoint,
+                $childNode->relationAnchorPoint,
                 // TODO: position on insert is still missing
                 null,
                 $event->getNodeName(),
@@ -109,22 +131,6 @@ class GraphProjector implements ProjectorInterface
         array $subgraphIdentifiers
     ): void {
         // TODO: Implement connectRelation() method.
-    }
-
-    /**
-     * @param Node $node
-     */
-    protected function addNode(Node $node): void
-    {
-        $this->getDatabaseConnection()->insert('neos_contentgraph_node', [
-            'relationanchorpoint' => $node->relationAnchorPoint,
-            'nodeaggregateidentifier' => $node->nodeAggregateIdentifier,
-            'nodeidentifier' => $node->nodeIdentifier,
-            'dimensionspacepoint' => json_encode($node->dimensionSpacePoint),
-            'dimensionspacepointhash' => $node->dimensionSpacePointHash,
-            'properties' => json_encode($node->properties),
-            'nodetypename' => $node->nodeTypeName
-        ]);
     }
 
     /**

@@ -11,15 +11,14 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\ContentRepository\Domain\Context\Node\Event;
-use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
+use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Simple data model for writing nodes to the database
+ * The active record for reading and writing nodes from and to the database
  */
 class Node
 {
@@ -86,57 +85,36 @@ class Node
         $this->nodeTypeName = $nodeTypeName;
     }
 
-
-    public function addToDatabase($db) {
-        // TODO
+    /**
+     * @param Connection $databaseConnection
+     */
+    public function addToDatabase(Connection $databaseConnection): void
+    {
+        $databaseConnection->insert('neos_contentgraph_node', [
+            'relationanchorpoint' => (string) $this->relationAnchorPoint,
+            'nodeaggregateidentifier' => (string) $this->nodeAggregateIdentifier,
+            'nodeidentifier' => (string) $this->nodeIdentifier,
+            'dimensionspacepoint' => json_encode($this->dimensionSpacePoint),
+            'dimensionspacepointhash' => (string) $this->dimensionSpacePointHash,
+            'properties' => json_encode($this->properties),
+            'nodetypename' => (string) $this->nodeTypeName
+        ]);
     }
 
-    public static function fromDatabaseRow($databaseRow) {
+    /**
+     * @param array $databaseRow
+     * @return static
+     */
+    public static function fromDatabaseRow(array $databaseRow)
+    {
         return new static(
             new NodeRelationAnchorPoint($databaseRow['relationanchorpoint']),
             new NodeIdentifier($databaseRow['nodeidentifier']),
-            new NodeAggregateIdentifier($databaseRow['nodeaggregateidentifier']),
+            $databaseRow['nodeaggregateidentifier'] ? new NodeAggregateIdentifier($databaseRow['nodeaggregateidentifier']) : null,
             json_decode($databaseRow['dimensionspacepoint'], true),
             $databaseRow['dimensionspacepointhash'],
             json_decode($databaseRow['properties'], true),
             new NodeTypeName($databaseRow['nodetypename'])
-        );
-    }
-
-    // TODO MOVE OUT
-    /**
-     * @param NodeRelationAnchorPoint $relationAnchorPoint
-     * @param Event\RootNodeWasCreated $event
-     * @return Node
-     */
-    public static function fromRootNodeWasCreated(NodeRelationAnchorPoint $relationAnchorPoint, Event\RootNodeWasCreated $event): Node
-    {
-        return new Node(
-            $relationAnchorPoint,
-            $event->getNodeIdentifier(),
-            null,
-            null,
-            null,
-            [],
-            new NodeTypeName('Neos.ContentRepository:Root')
-        );
-    }
-
-    /**
-     * @param NodeRelationAnchorPoint $relationAnchorPoint
-     * @param Event\NodeAggregateWithNodeWasCreated $event
-     * @return Node
-     */
-    public static function fromNodeAggregateWithNodeWasCreated(NodeRelationAnchorPoint $relationAnchorPoint, Event\NodeAggregateWithNodeWasCreated $event): Node
-    {
-        return new Node(
-            $relationAnchorPoint,
-            $event->getNodeIdentifier(),
-            $event->getNodeAggregateIdentifier(),
-            $event->getDimensionSpacePoint()->jsonSerialize(),
-            $event->getDimensionSpacePoint()->getHash(),
-            $event->getPropertyDefaultValuesAndTypes(),
-            $event->getNodeTypeName()
         );
     }
 }
