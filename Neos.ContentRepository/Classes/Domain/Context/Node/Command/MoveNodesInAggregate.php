@@ -87,5 +87,4 @@ final class MoveNodesInAggregate
     {
         return $this->referenceNodeAggregateIdentifier;
     }
-
 }

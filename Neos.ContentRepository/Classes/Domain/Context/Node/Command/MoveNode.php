@@ -87,5 +87,4 @@ final class MoveNode
     {
         return $this->referenceNodeIdentifier;
     }
-
 }

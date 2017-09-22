@@ -84,5 +84,4 @@ final class NodeWasMoved implements EventInterface
     {
         return $this->referenceNodeIdentifier;
     }
-
 }

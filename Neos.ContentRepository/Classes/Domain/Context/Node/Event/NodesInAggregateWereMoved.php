@@ -84,5 +84,4 @@ final class NodesInAggregateWereMoved implements EventInterface
     {
         return $this->referenceNodeAggregateIdentifier;
     }
-
 }

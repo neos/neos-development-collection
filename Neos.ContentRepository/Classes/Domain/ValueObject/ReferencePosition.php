@@ -17,7 +17,6 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  */
 final class ReferencePosition implements \JsonSerializable
 {
-
     const BEFORE = 'before';
     const INTO = 'into';
     const AFTER = 'after';
