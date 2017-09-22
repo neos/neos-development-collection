@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Domain\Context\Domain;
 
 /*
@@ -15,8 +16,19 @@ use Neos\EventSourcing\Event\EventPublisher;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Context\Domain\Command\ActivateDomain;
 use Neos\Neos\Domain\Context\Domain\Command\AddDomain;
-use Neos\Neos\Domain\Context\Domain\Event\DomainHasBeenActivated;
-use Neos\Neos\Domain\Context\Domain\Event\DomainHasBeenAdded;
+use Neos\Neos\Domain\Context\Domain\Command\DeactivateDomain;
+use Neos\Neos\Domain\Context\Domain\Command\DeleteDomain;
+use Neos\Neos\Domain\Context\Domain\Event\DomainWasAdded;
+use Neos\Neos\Domain\Context\Domain\Event\DomainWasActivated;
+use Neos\Neos\Domain\Context\Domain\Event\DomainWasDeactivated;
+use Neos\Neos\Domain\Context\Domain\Event\DomainWasDeleted;
+use Neos\Neos\Domain\Context\Domain\Exception\DomainAlreadyExists;
+use Neos\Neos\Domain\Context\Domain\Exception\DomainDoesNotExist;
+use Neos\Neos\Domain\Context\Domain\Exception\SiteDoesNotExist;
+use Neos\Neos\Domain\Projection\Domain\DomainFinder;
+use Neos\Neos\Domain\Projection\Site\SiteFinder;
+use Neos\Neos\Domain\ValueObject\NodeName;
+use Neos\Neos\Domain\ValueObject\SchemeHostPort;
 
 /**
  * WorkspaceCommandHandler
@@ -30,19 +42,30 @@ final class DomainCommandHandler
     protected $eventPublisher;
 
     /**
+     * @var DomainFinder
+     * @Flow\Inject
+     */
+    protected $domainFinder;
+
+    /**
+     * @var SiteFinder
+     * @Flow\Inject
+     */
+    protected $siteFinder;
+
+    /**
      * @param AddDomain $command
      */
     public function handleAddDomain(AddDomain $command)
     {
-        // TODO: Necessary checks
+        $this->validateConstraintSiteMustExist($command->getSiteNodeName());
+        $this->validateConstraintDomainMustNotExist($command->getSchemeHostPort());
 
         $this->eventPublisher->publish(
-            'Neos.Neos:Domain:' . $command->getDomainHostname(),
-            new DomainHasBeenAdded(
+            'Neos.Neos:Domain:' . $command->getSchemeHostPort(),
+            new DomainWasAdded(
                 $command->getSiteNodeName(),
-                $command->getDomainHostname(),
-                $command->getScheme(),
-                $command->getPort()
+                $command->getSchemeHostPort()
             )
         );
     }
@@ -52,11 +75,81 @@ final class DomainCommandHandler
      */
     public function handleActivateDomain(ActivateDomain $command)
     {
+        $this->validateConstraintDomainMustExist($command->getSchemeHostPort());
+
         $this->eventPublisher->publish(
-            'Neos.Neos:Domain:' . $command->getHostName(),
-            new DomainHasBeenActivated(
-                $command->getHostName()
+            'Neos.Neos:Domain:' . $command->getSchemeHostPort(),
+            new DomainWasActivated(
+                $command->getSchemeHostPort()
             )
         );
+    }
+
+    /**
+     * @param DeactivateDomain $command
+     */
+    public function handleDeactivateDomain(DeactivateDomain $command)
+    {
+        $this->validateConstraintDomainMustExist($command->getSchemeHostPort());
+
+        $this->eventPublisher->publish(
+            'Neos.Neos:Domain:' . $command->getSchemeHostPort(),
+            new DomainWasDeactivated(
+                $command->getSchemeHostPort()
+            )
+        );
+    }
+
+    /**
+     * @param DeleteDomain $command
+     */
+    public function handleDeleteDomain(DeleteDomain $command)
+    {
+        $this->validateConstraintDomainMustExist($command->getSchemeHostPort());
+
+        $this->eventPublisher->publish(
+            'Neos.Neos:Domain:' . $command->getSchemeHostPort(),
+            new DomainWasDeleted(
+                $command->getSchemeHostPort()
+            )
+        );
+    }
+
+    /**
+     * @param NodeName $siteNodeName
+     * @throws SiteDoesNotExist
+     */
+    private function validateConstraintSiteMustExist(NodeName $siteNodeName): void
+    {
+        $site = $this->siteFinder->findOneByNodeName($siteNodeName);
+        if ($site === null) {
+            throw new SiteDoesNotExist($siteNodeName, 1505992197238);
+        }
+    }
+
+    /**
+     * @param SchemeHostPort $schemeHostPort
+     * @throws DomainDoesNotExist
+     * @internal param ActivateDomain $command
+     */
+    private function validateConstraintDomainMustExist(SchemeHostPort $schemeHostPort): void
+    {
+        $domain = $this->domainFinder->findOneBySchemeHostAndPort($schemeHostPort);
+        if ($domain === null) {
+            throw new DomainDoesNotExist($schemeHostPort, 1505992197238);
+        }
+    }
+
+    /**
+     * @param SchemeHostPort $schemeHostPort
+     * @throws DomainAlreadyExists
+     * @internal param AddDomain $command
+     */
+    private function validateConstraintDomainMustNotExist(SchemeHostPort $schemeHostPort): void
+    {
+        $domain = $this->domainFinder->findOneBySchemeHostAndPort($schemeHostPort);
+        if ($domain !== null) {
+            throw new DomainAlreadyExists($schemeHostPort, 1505918961915);
+        }
     }
 }

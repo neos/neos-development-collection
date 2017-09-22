@@ -27,7 +27,6 @@ use Neos\ContentRepository\Domain\ValueObject\ReferencePosition;
 use Neos\ContentRepository\Exception;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Utility\ObjectAccess;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
@@ -155,12 +154,6 @@ class Node implements NodeInterface, CacheAwareInterface
      * Dependency to be removed once the dependency on the context is removed as well
      */
     protected $nodeTypeConstraintService;
-
-    /**
-     * @Flow\Inject
-     * @var PersistenceManagerInterface
-     */
-    protected $persistenceManager;
 
     /**
      * @param NodeData $nodeData
@@ -1011,7 +1004,7 @@ class Node implements NodeInterface, CacheAwareInterface
     {
         $command = new SetNodeProperty(
             $this->context->getContentStreamIdentifier(),
-            new NodeIdentifier($this->getIdentifier()),
+            $this->identifier,
             $propertyName,
             $value,
             new NodeTypeName($this->getNodeType()->getName())
@@ -1022,7 +1015,7 @@ class Node implements NodeInterface, CacheAwareInterface
         $this->legacySetProperty($propertyName, $value);
     }
 
-    private function legacySetProperty(string $propertyName, mixed $value): void
+    private function legacySetProperty(string $propertyName, $value): void
     {
         if (!$this->isNodeDataMatchingContext()) {
             $this->materializeNodeData();
@@ -1292,22 +1285,19 @@ class Node implements NodeInterface, CacheAwareInterface
      *
      * @param string $name Name of the new node
      * @param NodeType $nodeType Node type of the new node (optional)
-     * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
+     * @param string $identifier The identifier of the node, unique within the workspace, optional(!) -> node aggregate identifier
      * @return NodeInterface
      * @api
      */
     public function createNode($name, NodeType $nodeType = null, $identifier = null)
     {
-        $newNode = $this->legacyCreateNode($name, $nodeType, $identifier);
-
-        $nodeAggregateIdentifier = new NodeAggregateIdentifier();
-        $nodeTypeName = new NodeTypeName(($nodeType ? $nodeType->getName() : 'unstructured'));
+        $nodeIdentifier = new NodeIdentifier();
         $dimensionSpacePoint = new DimensionSpacePoint($this->context->getTargetDimensions());
 
-        // TODO Use random UUID when legacy layer is removed
-        $nodeIdentifier = new NodeIdentifier($this->persistenceManager->getIdentifierByObject($newNode->getNodeData()));
-        // TODO Use correct node identifier when legacy layer is removed
-        $parentNodeIdentifier = new NodeIdentifier($this->persistenceManager->getIdentifierByObject($this->nodeData));
+        $nodeAggregateIdentifier = new NodeAggregateIdentifier($identifier);
+        $nodeTypeName = new NodeTypeName(($nodeType ? $nodeType->getName() : 'unstructured'));
+
+        $parentNodeIdentifier = $this->identifier;
         $nodeName = new NodeName($name);
 
         $command = new CreateNodeAggregateWithNode(
@@ -1322,14 +1312,16 @@ class Node implements NodeInterface, CacheAwareInterface
 
         $this->nodeCommandHandler->handleCreateNodeAggregateWithNode($command);
 
+        $newNode = $this->legacyCreateNode($nodeIdentifier, $dimensionSpacePoint, $name, $nodeType, (string)$nodeAggregateIdentifier);
+
         return $newNode;
     }
 
-    private function legacyCreateNode($name, NodeType $nodeType = null, $identifier = null): NodeInterface
+    private function legacyCreateNode(NodeIdentifier $nodeIdentifier, DimensionSpacePoint $dimensionSpacePoint, $name, NodeType $nodeType = null, string $identifier = null): Node
     {
         $this->emitBeforeNodeCreate($this, $name, $nodeType, $identifier);
 
-        $newNode = $this->createSingleNode($name, $nodeType, $identifier);
+        $newNode = $this->createSingleNode($nodeIdentifier, $dimensionSpacePoint, $name, $nodeType, $identifier);
         if ($nodeType !== null) {
             foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $propertyValue) {
                 if (substr($propertyName, 0, 1) === '_') {
@@ -1363,13 +1355,15 @@ class Node implements NodeInterface, CacheAwareInterface
      *
      * For internal use only!
      *
+     * @param NodeIdentifier $nodeIdentifier
+     * @param DimensionSpacePoint $dimensionSpacePoint
      * @param string $name Name of the new node
      * @param NodeType $nodeType Node type of the new node (optional)
-     * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
+     * @param string $identifier The identifier of the node, unique within the workspace, optional(!) -> node aggregate identifier
      * @return Node
      * @throws NodeConstraintException
      */
-    protected function createSingleNode($name, NodeType $nodeType = null, $identifier = null)
+    protected function createSingleNode(NodeIdentifier $nodeIdentifier, DimensionSpacePoint $dimensionSpacePoint, $name, NodeType $nodeType = null, $identifier = null)
     {
         if ($nodeType !== null && !$this->willChildNodeBeAutoCreated($name) && !$this->isNodeTypeAllowedAsChildNode($nodeType)) {
             throw new NodeConstraintException('Cannot create new node "' . $name . '" of Type "' . $nodeType->getName() . '" in ' . $this->__toString(), 1400782413);
@@ -1378,7 +1372,12 @@ class Node implements NodeInterface, CacheAwareInterface
         $dimensions = $this->context->getTargetDimensionValues();
 
         $nodeData = $this->nodeData->createSingleNodeData($name, $nodeType, $identifier, $this->context->getWorkspace(), $dimensions);
+        /** @var Node $node */
         $node = $this->nodeFactory->createFromNodeData($nodeData, $this->context);
+
+        $node->identifier = $nodeIdentifier;
+        $node->dimensionSpacePoint = $dimensionSpacePoint;
+        $node->contentStreamIdentifier = $this->contentStreamIdentifier;
 
         $this->context->getFirstLevelNodeCache()->flush();
         $this->emitNodeAdded($node);
@@ -1437,7 +1436,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getNode($path)
     {
-        return $this->context->getSubgraph()->findChildNodeConnectedThroughEdgeName($this->identifier, $path, $this->context);
+        return $this->context->getSubgraph()->findChildNodeConnectedThroughEdgeName($this->identifier, new NodeName($path), $this->context);
     }
 
     /**

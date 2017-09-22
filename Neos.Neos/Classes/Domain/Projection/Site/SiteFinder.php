@@ -1,6 +1,5 @@
 <?php
-
-namespace Neos\ContentRepository\Domain\Projection\Workspace;
+namespace Neos\Neos\Domain\Projection\Site;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,20 +11,21 @@ namespace Neos\ContentRepository\Domain\Projection\Workspace;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcing\Projection\Doctrine\AbstractDoctrineFinder;
+use Neos\Neos\Domain\ValueObject\HostName;
+use Neos\Neos\Domain\ValueObject\NodeName;
 
 /**
- * Workspace Finder
+ * Site Finder
  */
-final class WorkspaceFinder extends AbstractDoctrineFinder
+final class SiteFinder extends AbstractDoctrineFinder
 {
     /**
-     * @param WorkspaceName $name
-     * @return Workspace|null
+     * @param NodeName $nodeName
+     * @return Site|null
      */
-    public function findOneByName(WorkspaceName $name): ?Workspace
+    public function findOneByNodeName(NodeName $nodeName) : ?Site
     {
-        return $this->__call('findOneByWorkspaceName', [(string)$name]);
+        return $this->__call('findOneByNodeName', [(string)$nodeName]);
     }
 }

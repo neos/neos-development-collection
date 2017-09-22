@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Neos\Domain\Context\Domain\Command;
+namespace Neos\Neos\Domain\Context\Domain\Event;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -15,7 +15,7 @@ use Neos\EventSourcing\Event\EventInterface;
 use Neos\Neos\Domain\ValueObject\SchemeHostPort;
 use Neos\Neos\Domain\ValueObject\NodeName;
 
-final class AddDomain implements EventInterface
+final class DomainWasAdded implements EventInterface
 {
     /**
      * @var NodeName

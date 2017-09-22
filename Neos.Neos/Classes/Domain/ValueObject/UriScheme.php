@@ -11,41 +11,38 @@ namespace Neos\Neos\Domain\ValueObject;
  * source code.
  */
 
-/**
- * Name of a workspace
- */
-class HttpScheme implements \JsonSerializable
+class UriScheme implements \JsonSerializable
 {
     /**
      * @var string
      */
-    protected $scheme;
+    protected $uriScheme;
 
     /**
      * Name constructor.
      *
-     * @param string $name
+     * @param string $uriScheme
      */
-    public function __construct(string $name)
+    public function __construct(string $uriScheme)
     {
-        $this->setScheme($name);
+        $this->setUriScheme($uriScheme);
     }
 
     /**
-     * @param string $scheme
+     * @param string $uriScheme
      */
-    protected function setScheme(string $scheme)
+    protected function setUriScheme(string $uriScheme)
     {
         // TODO: BAD TO SUPPORT EMPTY SCHEME; but otherwise type conversion error (found together with Sebastian)
-        if (!$scheme) {
-            $this->scheme = null;
+        if (!$uriScheme) {
+            $this->uriScheme = null;
             return;
         }
 
-        if (preg_match('/http|https/', $scheme) !== 1) {
+        if (preg_match('/http|https/', $uriScheme) !== 1) {
             throw new \InvalidArgumentException('Invalid scheme.', 1505831235);
         }
-        $this->scheme = $scheme;
+        $this->uriScheme = $uriScheme;
     }
 
     /**
@@ -53,7 +50,7 @@ class HttpScheme implements \JsonSerializable
      */
     public function __toString(): string
     {
-        return $this->scheme;
+        return (string)$this->uriScheme;
     }
 
     /**
@@ -61,6 +58,6 @@ class HttpScheme implements \JsonSerializable
      */
     public function jsonSerialize()
     {
-        return $this->scheme;
+        return $this->uriScheme;
     }
 }

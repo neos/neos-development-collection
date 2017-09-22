@@ -232,8 +232,8 @@ WHERE n.nodeidentifier = :nodeIdentifier',
      */
     public function findParentNode(ContentRepository\ValueObject\NodeIdentifier $childNodeIdentifier, ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
     {
-        $nodeData = $this->getDatabaseConnection()->executeQuery(
-            'SELECT p.* FROM neos_contentgraph_node p
+        $nodeRow = $this->getDatabaseConnection()->executeQuery(
+            'SELECT p.*, h.contentstreamidentifier, h.name FROM neos_contentgraph_node p
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
  INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
  WHERE c.nodeidentifier = :childNodeIdentifier
@@ -246,7 +246,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
             ]
         )->fetch();
 
-        return $nodeData ? $this->nodeFactory->mapNodeRowToNode($nodeData, $context) : null;
+        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow, $context) : null;
     }
 
     /**

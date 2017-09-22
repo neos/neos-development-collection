@@ -11,32 +11,30 @@ namespace Neos\Neos\Domain\ValueObject;
  * source code.
  */
 
-class DomainPort implements \JsonSerializable
+class SiteActive implements \JsonSerializable
 {
     /**
-     * @var string
+     * @var bool
      */
-    protected $port;
+    protected $active;
 
     /**
      * Name constructor.
      *
-     * @param string $port
+     * @param bool $isActive
      */
-    public function __construct(string $port)
+    public function __construct(bool $isActive)
     {
-        $this->setPort($port);
+        $this->setActive($isActive);
     }
 
     /**
-     * @param string $port
+     * @param bool $active
      */
-    protected function setPort(string $port)
+    protected function setActive(bool $active)
     {
-        if (preg_match('/\d*/', $port) !== 1) {
-            throw new \InvalidArgumentException('Invalid port.', 1505831415);
-        }
-        $this->port = $port;
+        // TODO: add validation if needed
+        $this->active = $active;
     }
 
     /**
@@ -44,14 +42,14 @@ class DomainPort implements \JsonSerializable
      */
     public function __toString(): string
     {
-        return $this->port;
+        return $this->active;
     }
 
     /**
-     * @return string
+     * @return bool
      */
     public function jsonSerialize()
     {
-        return $this->port;
+        return $this->active;
     }
 }

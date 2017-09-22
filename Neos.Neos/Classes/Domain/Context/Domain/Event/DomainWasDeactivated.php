@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Neos\Domain\Context\Domain\Command;
+namespace Neos\Neos\Domain\Context\Domain\Event;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -13,15 +13,9 @@ namespace Neos\Neos\Domain\Context\Domain\Command;
 
 use Neos\EventSourcing\Event\EventInterface;
 use Neos\Neos\Domain\ValueObject\SchemeHostPort;
-use Neos\Neos\Domain\ValueObject\NodeName;
 
-final class AddDomain implements EventInterface
+final class DomainWasDeactivated implements EventInterface
 {
-    /**
-     * @var NodeName
-     */
-    private $siteNodeName;
-
     /**
      * @var SchemeHostPort
      */
@@ -29,21 +23,11 @@ final class AddDomain implements EventInterface
 
     /**
      * ActivateDomain constructor.
-     * @param NodeName $siteNodeName
      * @param SchemeHostPort $schemeHostPort
      */
-    public function __construct(NodeName $siteNodeName, SchemeHostPort $schemeHostPort)
+    public function __construct(SchemeHostPort $schemeHostPort)
     {
-        $this->siteNodeName = $siteNodeName;
         $this->schemeHostPort = $schemeHostPort;
-    }
-
-    /**
-     * @return NodeName
-     */
-    public function getSiteNodeName(): NodeName
-    {
-        return $this->siteNodeName;
     }
 
     /**

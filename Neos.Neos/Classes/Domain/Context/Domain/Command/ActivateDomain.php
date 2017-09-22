@@ -11,35 +11,30 @@ namespace Neos\Neos\Domain\Context\Domain\Command;
  * source code.
  */
 
-class ActivateDomain
+use Neos\EventSourcing\Event\EventInterface;
+use Neos\Neos\Domain\ValueObject\SchemeHostPort;
+
+final class ActivateDomain implements EventInterface
 {
     /**
-     * @var \Neos\Neos\Domain\ValueObject\HostName
+     * @var SchemeHostPort
      */
-    private $hostName;
+    private $schemeHostPort;
 
     /**
      * ActivateDomain constructor.
-     * @param \Neos\Neos\Domain\ValueObject\HostName $hostName
+     * @param SchemeHostPort $schemeHostPort
      */
-    public function __construct(\Neos\Neos\Domain\ValueObject\HostName $hostName)
+    public function __construct(SchemeHostPort $schemeHostPort)
     {
-        $this->hostName = $hostName;
+        $this->schemeHostPort = $schemeHostPort;
     }
 
     /**
-     * @return \Neos\Neos\Domain\ValueObject\HostName
+     * @return SchemeHostPort
      */
-    public function getHostName(): \Neos\Neos\Domain\ValueObject\HostName
+    public function getSchemeHostPort(): SchemeHostPort
     {
-        return $this->hostName;
-    }
-
-    /**
-     * @param \Neos\Neos\Domain\ValueObject\HostName $hostName
-     */
-    public function setHostName(\Neos\Neos\Domain\ValueObject\HostName $hostName)
-    {
-        $this->hostName = $hostName;
+        return $this->schemeHostPort;
     }
 }

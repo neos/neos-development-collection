@@ -135,6 +135,12 @@ class Context
     protected $dimensionSpacePoint;
 
     /**
+     * @var Domain\Projection\Workspace\WorkspaceFinder
+     * @Flow\Inject
+     */
+    protected $workspaceFinder;
+
+    /**
      * Creates a new Context object.
      *
      * NOTE: This is for internal use only, you should use the ContextFactory for creating Context instances.
@@ -147,7 +153,6 @@ class Context
      * @param boolean $removedContentShown If removed content should be returned in query results
      * @param boolean $inaccessibleContentShown If inaccessible content should be returned in query results
      * @param Domain\Projection\Content\ContentSubgraphInterface|null $contentSubgraph The content subgraph to fetch nodes from
-     *
      * @see ContextFactoryInterface
      */
     public function __construct(
@@ -169,22 +174,34 @@ class Context
         $this->targetDimensions = $targetDimensions;
 
         $this->firstLevelNodeCache = new FirstLevelNodeCache();
-
-        // TODO Explicitly get or create the head editing session for the given workspace and user
-        // TODO Get user identifier
-        $this->contentStreamIdentifier = new ContentStreamIdentifier(Algorithms::generateUUID());
         $this->dimensionSpacePoint = Domain\ValueObject\DimensionSpacePoint::fromLegacyDimensionArray($dimensions);
 
         $this->contentSubgraph = $contentSubgraph;
     }
 
+    public function initializeObject()
+    {
+        $workspace = $this->workspaceFinder->findOneByName(new Domain\ValueObject\WorkspaceName($this->workspaceName));
+
+        if ($workspace === null) {
+            throw new \Neos\ContentRepository\Exception(sprintf('Workspace not found: %s', $this->workspaceName), 1506073055929);
+        }
+
+        // TODO Get user identifier
+        $this->contentStreamIdentifier = $workspace->getCurrentContentStreamIdentifier();
+    }
+
     /**
      * @return Domain\Projection\Content\ContentSubgraphInterface
+     * @throws \Neos\ContentRepository\Exception
      */
     public function getSubgraph(): Domain\Projection\Content\ContentSubgraphInterface
     {
         if (!$this->contentSubgraph) {
             $this->contentSubgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint);
+            if ($this->contentSubgraph === null) {
+                throw new \Neos\ContentRepository\Exception(sprintf('No content subgraph found for %s, %s', $this->contentStreamIdentifier, $this->dimensionSpacePoint), 1506072243283);
+            }
         }
 
         return $this->contentSubgraph;
