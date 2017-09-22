@@ -58,7 +58,7 @@ Feature: Move node before, into or after node
 
 
     Then I expect exactly 4 events to be published on stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d"
-    And event number 4 is of type "Neos.ContentRepository:NodeWasMoved" with payload:
+    And event at index 3 is of type "Neos.ContentRepository:NodeWasMoved" with payload:
       | Key                     | Expected                             | AssertionType |
       | contentStreamIdentifier | c75ae6a2-7254-4d42-a31b-a629e264069d |               |
       | nodeIdentifier          | 8b9e720a-9f7b-11e7-a9a7-f3ba5243427a |               |

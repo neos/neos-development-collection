@@ -213,18 +213,20 @@ trait EventSourcedTrait
     {
         $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
         $stream = $eventStore->get(new StreamNameFilter($streamName));
-        $this->currentEventStreamAsArray = iterator_to_array($stream);
+        $this->currentEventStreamAsArray = iterator_to_array($stream, false);
         Assert::assertEquals($numberOfEvents, count($this->currentEventStreamAsArray), 'Number of events did not match');
     }
 
     /**
-     * @Then /^event number (\d+) is of type "([^"]*)" with payload:/
+     * @Then /^event at index (\d+) is of type "([^"]*)" with payload:/
      */
     public function eventNumberIs($eventNumber, $eventType, TableNode $payloadTable)
     {
         if ($this->currentEventStreamAsArray === null) {
             Assert::fail('Step \'I expect exactly ? events to be published on stream "?"\' was not executed');
         }
+
+        Assert::assertArrayHasKey($eventNumber, $this->currentEventStreamAsArray, 'Event at index does not exist');
 
         /* @var $actualEvent EventAndRawEvent */
         $actualEvent = $this->currentEventStreamAsArray[$eventNumber];

@@ -31,18 +31,11 @@ final class NodeFactory
      */
     protected $nodeTypeManager;
 
-
-    /**
-     * @Flow\Inject
-     * @var ContentRepository\Repository\NodeDataRepository
-     * @todo get rid of this
-     */
-    protected $nodeDataRepository;
-
     /**
      * @param array $nodeRow Node Row from projection (neos_contentgraph_node table)
      * @param ContentRepository\Service\Context $context
      * @return ContentRepository\Model\NodeInterface
+     * @throws \Exception
      */
     public function mapNodeRowToNode(array $nodeRow, ContentRepository\Service\Context $context = null): ContentRepository\Model\NodeInterface
     {
@@ -63,23 +56,7 @@ final class NodeFactory
             // FIXME Move to DimensionSpacePoint::fromJson
             $dimensionSpacePoint = new ContentRepository\ValueObject\DimensionSpacePoint(json_decode($nodeRow['dimensionspacepoint'], true)['coordinates']);
 
-            $legacyDimensionValues = $dimensionSpacePoint->toLegacyDimensionArray();
-            $query = $this->nodeDataRepository->createQuery();
-            $dimensionsHash = Utility::sortDimensionValueArrayAndReturnDimensionsHash($legacyDimensionValues);
-            $nodeData = $query->matching(
-                $query->logicalAnd([
-                    // FIXME Get workspace name by content stream identifier
-                    // $query->equals('workspace', (string) $contentStreamIdentifier),
-                    $query->equals('identifier', $nodeRow['nodeaggregateidentifier']),
-                    $query->equals('dimensionsHash', $dimensionsHash)
-                ])
-            )->execute()->getFirst();
-
-            if ($nodeData === null) {
-                throw new \Exception(sprintf('No node data found for node aggregate identifier %s and dimensions hash %s', $nodeRow['nodeaggregateidentifier'], $dimensionsHash),1506086667392);
-            }
-
-            $node = new $className($nodeData, $context);
+            $node = new $className(null, $context);
             $node->nodeType = $nodeType;
             $node->aggregateIdentifier = new ContentRepository\ValueObject\NodeAggregateIdentifier($nodeRow['nodeaggregateidentifier']);
             $node->identifier = new ContentRepository\ValueObject\NodeIdentifier($nodeRow['nodeidentifier']);
@@ -89,8 +66,8 @@ final class NodeFactory
             }
             $node->name = $nodeRow['name'];
             $node->nodeTypeName = new ContentRepository\ValueObject\NodeTypeName($nodeRow['nodetypename']);
-            #@todo fetch workspace from finder using the content stream identifier
-            #$node->workspace = $this->workspaceRepository->findByIdentifier($this->contentStreamIdentifier);
+            // TODO Add a projection from contentStreamIdentifier to workspaceName, join to the edges for less queries !!! Or just add the workspace name to the edge (more duplicated data).
+            // $node->workspace = $this->workspaceRepository->findByIdentifier($this->contentStreamIdentifier);
             $node->dimensionSpacePoint = $dimensionSpacePoint;
             $node->contentStreamIdentifier = $contentStreamIdentifier;
 
@@ -98,9 +75,7 @@ final class NodeFactory
         } else {
             // root node
             $subgraphIdentifier = null;
-            $nodeData = ($context ? $context->getWorkspace()->getRootNodeData() : null);
-
-            $node = new $className($nodeData, $context);
+            $node = new $className(null, $context);
             $node->nodeType = $nodeType;
             $node->nodeTypeName = new ContentRepository\ValueObject\NodeTypeName($nodeRow['nodetypename']);
             $node->identifier = new ContentRepository\ValueObject\NodeIdentifier($nodeRow['nodeidentifier']);
