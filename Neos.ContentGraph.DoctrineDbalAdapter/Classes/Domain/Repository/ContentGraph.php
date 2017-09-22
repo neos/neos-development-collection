@@ -12,10 +12,8 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  * source code.
  */
 use Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Service\DbalClient;
-use Neos\ContentGraph\Domain\Repository\AbstractContentGraph;
-use Neos\ContentRepository\Domain as ContentRepository;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Projection\Content as ContentProjection;
+use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
@@ -30,7 +28,7 @@ use Neos\Flow\Annotations as Flow;
  * @Flow\Scope("singleton")
  * @api
  */
-final class ContentGraph extends AbstractContentGraph
+final class ContentGraph implements ContentGraphInterface
 {
     /**
      * @Flow\Inject
@@ -38,16 +36,41 @@ final class ContentGraph extends AbstractContentGraph
      */
     protected $client;
 
-
     /**
      * @Flow\Inject
      * @var NodeFactory
      */
     protected $nodeFactory;
 
-    protected function createSubgraph(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): ContentSubgraphInterface
+    /**
+     * @var array|ContentSubgraphInterface[]
+     */
+    protected $subgraphs;
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @return ContentSubgraphInterface|null
+     */
+    final public function getSubgraphByIdentifier(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint
+    ): ?ContentSubgraphInterface
     {
-        return new ContentSubgraph($contentStreamIdentifier, $dimensionSpacePoint);
+        $index = (string)$contentStreamIdentifier . '-' . $dimensionSpacePoint->getHash();
+        if (!isset($this->subgraphs[$index])) {
+            $this->subgraphs[$index] = new ContentSubgraph($contentStreamIdentifier, $dimensionSpacePoint);
+        }
+
+        return $this->subgraphs[$index];
+    }
+
+    /**
+     * @return array|ContentSubgraphInterface[]
+     */
+    final public function getSubgraphs(): array
+    {
+        return $this->subgraphs;
     }
 
     /**
@@ -72,6 +95,5 @@ final class ContentGraph extends AbstractContentGraph
         )->fetch();
 
         return $nodeData ? $this->nodeFactory->mapNodeRowToNode($nodeData, null) : null;
-
     }
 }
