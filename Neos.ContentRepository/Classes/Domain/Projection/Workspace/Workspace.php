@@ -25,6 +25,7 @@ use Neos\Flow\Annotations as Flow;
  */
 final class Workspace
 {
+
     /**
      * @ORM\Id
      * @var string
@@ -90,17 +91,9 @@ final class Workspace
     }
 
     /**
-     * @return string
-     */
-    public function _setCurrentContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier)
-    {
-        $this->currentContentStreamIdentifier = (string)$contentStreamIdentifier;
-    }
-
-    /**
      * @return ContentStreamIdentifier
      */
-    public function getCurrentContentStreamIdentifier() : ContentStreamIdentifier
+    public function getCurrentContentStreamIdentifier(): ContentStreamIdentifier
     {
         return new ContentStreamIdentifier($this->currentContentStreamIdentifier);
     }
