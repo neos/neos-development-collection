@@ -33,6 +33,7 @@ class PackageKey implements \JsonSerializable
      */
     protected function setKey(string $key)
     {
+        // TODO: add validation if needed
         $this->key = $key;
     }
 

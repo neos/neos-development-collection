@@ -11,9 +11,6 @@ namespace Neos\Neos\Domain\ValueObject;
  * source code.
  */
 
-/**
- * Name of a workspace
- */
 class UriScheme implements \JsonSerializable
 {
     /**

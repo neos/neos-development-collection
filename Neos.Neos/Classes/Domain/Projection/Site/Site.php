@@ -23,7 +23,7 @@ use Neos\Neos\Domain\Context\Domain\Event\DomainWasAdded;
  * @CQRS\ReadModel
  * @ORM\Table(name="neos_neos_projection_site_v1")
  */
-final class Site
+class Site
 {
     /**
      * @var string

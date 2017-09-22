@@ -12,6 +12,8 @@ namespace Neos\Neos\Command;
  * source code.
  */
 
+use Neos\Neos\Domain\Context\Domain\Command\DeactivateDomain;
+use Neos\Neos\Domain\ValueObject\SchemeHostPort;
 use Neos\Neos\Domain\ValueObject\NodeName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
@@ -20,13 +22,9 @@ use Neos\Neos\Domain\Context\Domain\Command\AddDomain;
 use Neos\Neos\Domain\Context\Domain\Command\DeleteDomain;
 use Neos\Neos\Domain\Context\Domain\DomainCommandHandler;
 use Neos\Neos\Domain\Context\Domain\Command\ActivateDomain;
-use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\Domain\ValueObject\DomainPort;
-use Neos\Neos\Domain\ValueObject\HostName;
-use Neos\Neos\Domain\ValueObject\UriScheme;
 
 /**
  * Domain command controller for the Neos.Neos package
@@ -64,11 +62,11 @@ class DomainCommandController extends CommandController
      *
      * @param string $siteNodeName The nodeName of the site rootNode, e.g. "neostypo3org"
      * @param string $hostname The hostname to match on, e.g. "flow.neos.io"
-     * @param string $scheme The scheme for linking (http/https)
-     * @param integer $port The port for linking (0-49151)
+     * @param null|string $uriScheme The scheme for linking (http/https)
+     * @param null|string $domainPort The port for linking (0-49151)
      * @return void
      */
-    public function addCommand($siteNodeName, $hostname, $scheme = null, $port = null)
+    public function addCommand(string $siteNodeName, string $hostname, ?string $uriScheme = null, ?string $domainPort = null)
     {
 //        $site = $this->siteRepository->findOneByNodeName($siteNodeName);
 //        if (!$site instanceof Site) {
@@ -108,9 +106,7 @@ class DomainCommandController extends CommandController
             $this->domainCommandHandler->handleAddDomain(
                 new AddDomain(
                     new NodeName($siteNodeName),
-                    new HostName($hostname),
-                    $scheme ? new UriScheme($scheme) : null,
-                    $port ? new DomainPort($port) : null
+                    SchemeHostPort::fromStrings($uriScheme, $hostname, $domainPort)
                 )
             );
             $this->outputLine('Domain entry created.');
@@ -155,74 +151,91 @@ class DomainCommandController extends CommandController
     /**
      * Delete a domain record by hostname
      *
-     * @param string $hostname The hostname to remove
+     * @param string $hostname The hostname to match on, e.g. "flow.neos.io"
+     * @param null|string $uriScheme The scheme for linking (http/https)
+     * @param null|string $domainPort The port for linking (0-49151)
      * @return void
      */
-    public function deleteCommand($hostname)
+    public function deleteCommand(String $hostname, ?String $uriScheme = null, ?String $domainPort = null)
     {
-        $domain = $this->domainRepository->findOneByHostname($hostname);
-        if (!$domain instanceof Domain) {
-            $this->outputLine('<error>Domain not found.</error>');
-            $this->quit(1);
+//        $domain = $this->domainRepository->findOneByHostname($hostname);
+//        if (!$domain instanceof Domain) {
+//            $this->outputLine('<error>Domain not found.</error>');
+//            $this->quit(1);
+//        }
+//
+//        $this->domainRepository->remove($domain);
+
+        try {
+            $this->domainCommandHandler->handleDeleteDomain(
+                new DeleteDomain(
+                    SchemeHostPort::fromStrings($uriScheme, $hostname, $domainPort)
+                )
+            );
+            $this->outputLine('Domain entry deleted.');
+        } catch (\Exception $e) {
+            $this->outputLine('<error>' . $e->getMessage() . '</error>');
         }
-
-        $this->domainRepository->remove($domain);
-        $this->outputLine('Domain entry deleted.');
-
-        $this->domainCommandHandler->handleDeleteDomain(
-            new DeleteDomain(
-                new HostName($hostname)
-            )
-        );
     }
 
     /**
      * Activate a domain record by hostname
      *
      * @param string $hostname The hostname to activate
+     * @param string $uriScheme
+     * @param string $domainPort
      * @return void
      */
-    public function activateCommand($hostname)
+    public function activateCommand(string $hostname, ?string $uriScheme = null, ?string $domainPort = null)
     {
-        $domain = $this->domainRepository->findOneByHostname($hostname);
-        if (!$domain instanceof Domain) {
-            $this->outputLine('<error>Domain not found.</error>');
-            $this->quit(1);
-        }
+//        $domain = $this->domainRepository->findOneByHost($hostName);
+//        if (!$domain instanceof Domain) {
+//            $this->outputLine('<error>Domain not found.</error>');
+//            $this->quit(1);
+//        }
+//
+//        $domain->setActive(true);
+//        $this->domainRepository->update($domain);
 
-        $domain->setActive(true);
-        $this->domainRepository->update($domain);
-        $this->domainCommandHandler->handleActivateDomain(
-            new ActivateDomain(
-                new HostName($hostname)
-            )
-        );
-        $this->outputLine('Domain entry activated.');
+        try {
+            $this->domainCommandHandler->handleActivateDomain(
+                new ActivateDomain(
+                    SchemeHostPort::fromStrings($uriScheme, $hostname, $domainPort)
+                )
+            );
+            $this->outputLine('Domain entry activated.');
+        } catch (\Exception $e) {
+            $this->outputLine('<error>' . $e->getMessage() . '</error>');
+        }
     }
 
     /**
      * Deactivate a domain record by hostname
      *
-     * @param string $hostname The hostname to deactivate
-     * @return void
+     * @param $hostname
+     * @param $uriScheme
+     * @param $domainPort
      */
-    public function deactivateCommand($hostname)
+    public function deactivateCommand(string $hostname, ?string $uriScheme = null, ?string $domainPort = null)
     {
-        $domain = $this->domainRepository->findOneByHostname($hostname);
-        if (!$domain instanceof Domain) {
-            $this->outputLine('<error>Domain not found.</error>');
-            $this->quit(1);
+//        $domain = $this->domainRepository->findOneByHostname($hostName);
+//        if (!$domain instanceof Domain) {
+//            $this->outputLine('<error>Domain not found.</error>');
+//            $this->quit(1);
+//        }
+//
+//        $domain->setActive(false);
+//        $this->domainRepository->update($domain);
+
+        try {
+            $this->domainCommandHandler->handleDeactivateDomain(
+                new DeactivateDomain(
+                    SchemeHostPort::fromStrings($uriScheme, $hostname, $domainPort)
+                )
+            );
+            $this->outputLine('Domain entry deactivated.');
+        } catch (\Exception $e) {
+            $this->outputLine('<error>' . $e->getMessage() . '</error>');
         }
-
-        $domain->setActive(false);
-        $this->domainRepository->update($domain);
-
-        $this->domainCommandHandler->handleDeactivateDomain(
-            new \Neos\Neos\Domain\Context\Domain\Command\DeactivateDomain(
-                new HostName($hostname)
-            )
-        );
-
-        $this->outputLine('Domain entry deactivated.');
     }
 }

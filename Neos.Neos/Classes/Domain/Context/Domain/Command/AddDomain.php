@@ -11,13 +11,11 @@ namespace Neos\Neos\Domain\Context\Domain\Command;
  * source code.
  */
 
+use Neos\EventSourcing\Event\EventInterface;
+use Neos\Neos\Domain\ValueObject\SchemeHostPort;
 use Neos\Neos\Domain\ValueObject\NodeName;
-use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Domain\ValueObject\DomainPort;
-use Neos\Neos\Domain\ValueObject\HostName;
-use Neos\Neos\Domain\ValueObject\UriScheme;
 
-class AddDomain
+final class AddDomain implements EventInterface
 {
     /**
      * @var NodeName
@@ -25,33 +23,19 @@ class AddDomain
     private $siteNodeName;
 
     /**
-     * @var HostName
+     * @var SchemeHostPort
      */
-    private $domainHostname;
+    private $schemeHostPort;
 
     /**
-     * @var UriScheme
-     */
-    private $scheme;
-
-    /**
-     * @var DomainPort
-     */
-    private $port;
-
-    /**
-     * CreateDomain constructor.
+     * ActivateDomain constructor.
      * @param NodeName $siteNodeName
-     * @param HostName $domainHostname
-     * @param UriScheme $scheme
-     * @param DomainPort $port
+     * @param SchemeHostPort $schemeHostPort
      */
-    public function __construct(NodeName $siteNodeName, HostName $domainHostname, UriScheme $scheme = null, DomainPort $port = null)
+    public function __construct(NodeName $siteNodeName, SchemeHostPort $schemeHostPort)
     {
         $this->siteNodeName = $siteNodeName;
-        $this->domainHostname = $domainHostname;
-        $this->scheme = $scheme;
-        $this->port = $port;
+        $this->schemeHostPort = $schemeHostPort;
     }
 
     /**
@@ -63,26 +47,10 @@ class AddDomain
     }
 
     /**
-     * @return HostName
+     * @return SchemeHostPort
      */
-    public function getDomainHostname(): HostName
+    public function getSchemeHostPort(): SchemeHostPort
     {
-        return $this->domainHostname;
-    }
-
-    /**
-     * @return UriScheme (nullable)
-     */
-    public function getScheme()
-    {
-        return $this->scheme;
-    }
-
-    /**
-     * @return DomainPort (nullable)
-     */
-    public function getPort()
-    {
-        return $this->port;
+        return $this->schemeHostPort;
     }
 }

@@ -33,6 +33,7 @@ class NodeType implements \JsonSerializable
      */
     protected function setType(string $type)
     {
+        // TODO: add validation if needed
         $this->type = $type;
     }
 

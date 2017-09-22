@@ -14,6 +14,7 @@ namespace Neos\Neos\Domain\Projection\Domain;
 use Neos\EventSourcing\Projection\Doctrine\AbstractDoctrineFinder;
 use Neos\Neos\Domain\ValueObject\DomainPort;
 use Neos\Neos\Domain\ValueObject\HostName;
+use Neos\Neos\Domain\ValueObject\SchemeHostPort;
 use Neos\Neos\Domain\ValueObject\UriScheme;
 
 /**
@@ -31,19 +32,17 @@ final class DomainFinder extends AbstractDoctrineFinder
     }
 
     /**
-     * @param HostName $hostName
-     * @param UriScheme $uriScheme
-     * @param DomainPort $domainPort
+     * @param SchemeHostPort $schemeHostPort
      * @return Domain|null
      */
-    public function findOneByHostNameSchemeAndPort(HostName $hostName, UriScheme $uriScheme = null, DomainPort $domainPort = null): ?Domain
+    public function findOneBySchemeHostAndPort(SchemeHostPort $schemeHostPort): ?Domain
     {
         $query = $this->createQuery();
         $query->matching(
             $query->logicalAnd(
-                $query->equals('hostName', (string)$hostName),
-                $query->equals('uriScheme', $uriScheme),
-                $query->equals('domainPort', $domainPort)
+                $query->equals('hostName', $schemeHostPort->getHostName()),
+                $query->equals('uriScheme', $schemeHostPort->getUriScheme()),
+                $query->equals('domainPort', $schemeHostPort->getDomainPort())
             )
         );
 
