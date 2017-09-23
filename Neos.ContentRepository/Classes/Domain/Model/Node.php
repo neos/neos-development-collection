@@ -11,13 +11,11 @@ namespace Neos\ContentRepository\Domain\Model;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode;
-use Neos\ContentRepository\Domain\Context\Node\Command\MoveNode;
-use Neos\ContentRepository\Domain\Context\Node\Command\SetNodeProperty;
+use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Domain\Context\Node\Command;
 use Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\ContentRepository\Domain\Projection\Content\PropertyCollection;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
@@ -25,10 +23,8 @@ use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain;
 use Neos\ContentRepository\Domain\ValueObject\ReferencePosition;
 use Neos\ContentRepository\Exception;
-use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Property\PropertyMapper;
-use Neos\Utility\ObjectAccess;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\Context;
@@ -38,7 +34,6 @@ use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\ContentRepository\Exception\NodeConstraintException;
 use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\Exception\NodeExistsException;
-use Neos\ContentRepository\Utility;
 
 /**
  * This is the main API for storing and retrieving content in the system.
@@ -180,13 +175,15 @@ class Node implements NodeInterface, CacheAwareInterface
             return;
         }
 
-        $nodeName = new NodeName($newName);
+        $newNodeName = new NodeName($newName);
 
-        if ($this->getPath() === '/') {
-            throw new NodeException('The root node cannot be renamed.', 1346778388);
-        }
+        $command = new Command\ChangeNodeName(
+            $this->contentStreamIdentifier,
+            $this->identifier,
+            $newNodeName
+        );
 
-        // TODO CR rewrite: Execute command ChangeNodeName
+        $this->nodeCommandHandler->handleChangeNodeName($command);
 
         $this->emitNodeUpdated($this);
     }
@@ -419,14 +416,7 @@ class Node implements NodeInterface, CacheAwareInterface
 
         $this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_BEFORE);
 
-        $moveNodeCommand = new MoveNode(
-            $this->context->getContentStreamIdentifier(),
-            $this->identifier,
-            ReferencePosition::before(),
-            $referenceNode->identifier
-        );
-
-        $this->nodeCommandHandler->handleMoveNode($moveNodeCommand);
+        $this->executeMoveCommand($referenceNode, ReferencePosition::before());
 
         $this->emitAfterNodeMove($this, $referenceNode, NodeDataRepository::POSITION_BEFORE);
         $this->emitNodeUpdated($this);
@@ -471,14 +461,7 @@ class Node implements NodeInterface, CacheAwareInterface
 
         $this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_AFTER);
 
-        $moveNodeCommand = new MoveNode(
-            $this->context->getContentStreamIdentifier(),
-            $this->identifier,
-            ReferencePosition::after(),
-            $referenceNode->identifier
-        );
-
-        $this->nodeCommandHandler->handleMoveNode($moveNodeCommand);
+        $this->executeMoveCommand($referenceNode, ReferencePosition::after());
 
         $this->emitAfterNodeMove($this, $referenceNode, NodeDataRepository::POSITION_AFTER);
         $this->emitNodeUpdated($this);
@@ -523,17 +506,38 @@ class Node implements NodeInterface, CacheAwareInterface
 
         $this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_LAST);
 
-        $moveNodeCommand = new MoveNode(
-            $this->context->getContentStreamIdentifier(),
-            $this->identifier,
-            ReferencePosition::into(),
-            $referenceNode->identifier
-        );
-
-        $this->nodeCommandHandler->handleMoveNode($moveNodeCommand);
+        $this->executeMoveCommand($referenceNode, ReferencePosition::into());
 
         $this->emitAfterNodeMove($this, $referenceNode, NodeDataRepository::POSITION_LAST);
         $this->emitNodeUpdated($this);
+    }
+
+    /**
+     * @param Node $referenceNode
+     * @param ReferencePosition $referencePosition
+     */
+    private function executeMoveCommand(Node $referenceNode, ReferencePosition $referencePosition): void
+    {
+        // TODO CR rewrite: Add move strategy to node type instead of checking flag
+        if ($this->nodeType->isAggregate()) {
+            $command = new Command\MoveNodesInAggregate(
+                $this->context->getContentStreamIdentifier(),
+                $this->aggregateIdentifier,
+                $referencePosition,
+                $referenceNode->aggregateIdentifier
+            );
+
+            $this->nodeCommandHandler->handleMoveNodesInAggregate($command);
+        } else {
+            $command = new Command\MoveNode(
+                $this->context->getContentStreamIdentifier(),
+                $this->identifier,
+                $referencePosition,
+                $referenceNode->identifier
+            );
+
+            $this->nodeCommandHandler->handleMoveNode($command);
+        }
     }
 
     /**
@@ -688,7 +692,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setProperty($propertyName, $value)
     {
-        $command = new SetNodeProperty(
+        $command = new Command\SetNodeProperty(
             $this->context->getContentStreamIdentifier(),
             $this->identifier,
             $propertyName,
@@ -877,7 +881,7 @@ class Node implements NodeInterface, CacheAwareInterface
         $parentNodeIdentifier = $this->identifier;
         $nodeName = new NodeName($name);
 
-        $command = new CreateNodeAggregateWithNode(
+        $command = new Command\CreateNodeAggregateWithNode(
             $this->context->getContentStreamIdentifier(),
             $nodeAggregateIdentifier,
             $nodeTypeName,

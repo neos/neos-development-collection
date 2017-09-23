@@ -14,6 +14,8 @@ use Neos\ContentRepository\Domain\Context\Importing\Command\ImportNode;
 use Neos\ContentRepository\Domain\Context\Importing\Event\NodeWasImported;
 use Neos\ContentRepository\Domain\Context\Node\Command\MoveNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\MoveNodesInAggregate;
+use Neos\ContentRepository\Domain\Context\Node\Command\ChangeNodeName;
+use Neos\ContentRepository\Domain\Context\Node\Command\NodeNameWasChanged;
 use Neos\ContentRepository\Domain\Context\Node\Command\SetNodeProperty;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
@@ -21,7 +23,6 @@ use Neos\ContentRepository\Domain\Context\Node\Event\NodesInAggregateWereMoved;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasMoved;
 use Neos\ContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
 use Neos\ContentRepository\Domain\Model\Node;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
@@ -34,7 +35,6 @@ use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\ContentRepository\Exception;
 use Neos\ContentRepository\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Exception\NodeNotFoundException;
-use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcing\Event\EventPublisher;
 use Neos\EventSourcing\EventStore\ExpectedVersion;
 use Neos\Flow\Annotations as Flow;
@@ -224,14 +224,18 @@ final class NodeCommandHandler
         /** @var Node $node */
         $node = $this->getNode($contentStreamIdentifier, $command->getNodeIdentifier());
 
-        $contentSubgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $node->dimensionSpacePoint);
+        $contentSubgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier,
+            $node->dimensionSpacePoint);
         if ($contentSubgraph === null) {
-            throw new Exception(sprintf('Content subgraph not found for content stream %s, %s', $contentStreamIdentifier, $node->dimensionSpacePoint), 1506074858);
+            throw new Exception(sprintf('Content subgraph not found for content stream %s, %s',
+                $contentStreamIdentifier, $node->dimensionSpacePoint), 1506074858);
         }
 
         $referenceNode = $contentSubgraph->findNodeByIdentifier($command->getReferenceNodeIdentifier());
         if ($referenceNode === null) {
-            throw new NodeNotFoundException(sprintf('Reference node %s not found for content stream %s, %s', $command->getReferenceNodeIdentifier(), $contentStreamIdentifier, $node->dimensionSpacePoint), 1506075821, $command->getReferenceNodeIdentifier());
+            throw new NodeNotFoundException(sprintf('Reference node %s not found for content stream %s, %s',
+                $command->getReferenceNodeIdentifier(), $contentStreamIdentifier, $node->dimensionSpacePoint),
+                1506075821, $command->getReferenceNodeIdentifier());
         }
 
         $event = new NodeWasMoved(
@@ -241,7 +245,8 @@ final class NodeCommandHandler
             $command->getReferenceNodeIdentifier()
         );
 
-        $this->eventPublisher->publish(ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier()), $event);
+        $this->eventPublisher->publish(ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier()),
+            $event);
     }
 
     /**
@@ -253,13 +258,38 @@ final class NodeCommandHandler
         // TODO Check: foreach node we can find a node in the content subgraph with node.dimensionSpacePoint by referenced aggregated node identifier
 
         $event = new NodesInAggregateWereMoved(
-          $command->getContentStreamIdentifier(),
-          $command->getNodeAggregateIdentifier(),
-          $command->getReferencePosition(),
-          $command->getReferenceNodeAggregateIdentifier()
+            $command->getContentStreamIdentifier(),
+            $command->getNodeAggregateIdentifier(),
+            $command->getReferencePosition(),
+            $command->getReferenceNodeAggregateIdentifier()
         );
 
-        $this->eventPublisher->publish(ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier()), $event);
+        $this->eventPublisher->publish(ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier()),
+            $event);
+    }
+
+    /**
+     * @param ChangeNodeName $command
+     * @throws Exception\NodeException
+     */
+    public function handleChangeNodeName(ChangeNodeName $command)
+    {
+        $contentStreamIdentifier = $command->getContentStreamIdentifier();
+        /** @var Node $node */
+        $node = $this->getNode($contentStreamIdentifier, $command->getNodeIdentifier());
+
+        if ($node->getNodeType()->getName() === 'Neos.ContentRepository:Root') {
+            throw new Exception\NodeException('The root node cannot be renamed.', 1346778388);
+        }
+
+        $event = new NodeNameWasChanged(
+            $contentStreamIdentifier,
+            $command->getNodeIdentifier(),
+            $command->getNewNodeName()
+        );
+
+        $this->eventPublisher->publish(ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier()),
+            $event);
     }
 
     /**
@@ -307,15 +337,17 @@ final class NodeCommandHandler
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeIdentifier $nodeIdentifier
-     * @return NodeInterface
+     * @return Node
      * @throws NodeNotFoundException
      */
-    private function getNode(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier): NodeInterface
+    private function getNode(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier): Node
     {
+        /** @var Node $node */
         $node = $this->contentGraph->findNodeByIdentifierInContentStream($contentStreamIdentifier, $nodeIdentifier);
         if ($node === null) {
             throw new NodeNotFoundException(sprintf('Node %s not found', $nodeIdentifier), 1506074496, $nodeIdentifier);
         }
         return $node;
     }
+
 }
