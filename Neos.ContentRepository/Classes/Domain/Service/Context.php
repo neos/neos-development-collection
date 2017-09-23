@@ -304,7 +304,7 @@ class Context
      */
     public function getNode($path)
     {
-        return $this->getSubgraph()->findNodeByPath($path);
+        return $this->getSubgraph()->findNodeByPath($path, $this);
     }
 
     /**
@@ -316,7 +316,7 @@ class Context
     public function getNodeByIdentifier($identifier)
     {
         $nodeAggregateIdentifier = Domain\ValueObject\NodeAggregateIdentifier::fromString($identifier);
-        return $this->getSubgraph()->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
+        return $this->getSubgraph()->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier, $this);
     }
 
     /**
@@ -330,10 +330,10 @@ class Context
      */
     public function getNodeVariantsByIdentifier($identifier): array
     {
-        $nodeIdentifier = Domain\ValueObject\NodeAggregateIdentifier::fromString($identifier);
+        $nodeAggregateIdentifier = Domain\ValueObject\NodeAggregateIdentifier::fromString($identifier);
         $nodeVariants = [];
         foreach ($this->contentGraph->getSubgraphs() as $subgraph) {
-            $nodeVariant = $subgraph->findNodeByIdentifier($nodeIdentifier, $this);
+            $nodeVariant = $subgraph->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier, $this);
             if ($nodeVariant instanceof Domain\Model\NodeInterface) {
                 $nodeVariants[] = $nodeVariant;
             }
