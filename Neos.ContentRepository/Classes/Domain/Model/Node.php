@@ -250,8 +250,13 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getPath()
     {
-        // FIXME CR rewrite: Ask subgraph about path
-        return $this->nodeData->getPath();
+        // FIXME CR rewrite: Implement more efficient implementation to get path in subgraph (loop with stored routine?)
+        $path = $this->name;
+        $currentNode = $this;
+        while ($currentNode = $currentNode->getParent()) {
+            $path = $currentNode->name . '/' . $path;
+        }
+        return '/' . $path;
     }
 
     /**
@@ -263,8 +268,13 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getDepth()
     {
-        // FIXME CR rewrite: Ask subgraph about depth
-        return $this->nodeData->getDepth();
+        // FIXME CR rewrite: Implement more efficient implementation to get path in subgraph (loop with stored routine?)
+        $depth = 0;
+        $currentNode = $this;
+        while ($currentNode = $currentNode->getParent()) {
+            $depth += 1;
+        }
+        return $depth;
     }
 
     /**
@@ -950,7 +960,10 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getChildNodes($nodeTypeFilter = null, $limit = null, $offset = null)
     {
-        $nodeTypeConstraints = $this->nodeTypeConstraintService->unserializeFilters($nodeTypeFilter);
+        $nodeTypeConstraints = null;
+        if ($nodeTypeFilter !== null) {
+            $nodeTypeConstraints = $this->nodeTypeConstraintService->unserializeFilters($nodeTypeFilter);
+        }
         return $this->context->getSubgraph()->findChildNodes($this->identifier, $nodeTypeConstraints, $limit, $offset, $this->context);
     }
 
