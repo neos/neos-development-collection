@@ -276,18 +276,21 @@ WHERE n.nodeidentifier = :nodeIdentifier',
 
     /**
      * @param string $path
-     * @param ContentRepository\Service\Context|null $contentContext
+     * @param ContentRepository\Service\Context|null $context
      * @return ContentRepository\Model\NodeInterface|null
      */
-    public function findNodeByPath(string $path, ContentRepository\Service\Context $contentContext = null): ?ContentRepository\Model\NodeInterface
+    public function findNodeByPath(string $path, ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
     {
+        $currentNode = $this->findRootNode($context);
         $edgeNames = explode('/', trim($path, '/'));
-        $currentNode = $this->findRootNode();
-        foreach ($edgeNames as $edgeName) {
-            // identifier exists here :)
-            $currentNode = $this->findChildNodeConnectedThroughEdgeName($currentNode->identifier, new NodeName($edgeName), $contentContext);
-            if (!$currentNode) {
-                return null;
+        if ($edgeNames !== [""]) {
+            foreach ($edgeNames as $edgeName) {
+                // identifier exists here :)
+                $currentNode = $this->findChildNodeConnectedThroughEdgeName($currentNode->identifier,
+                    new NodeName($edgeName), $context);
+                if (!$currentNode) {
+                    return null;
+                }
             }
         }
 

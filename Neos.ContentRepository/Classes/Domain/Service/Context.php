@@ -325,7 +325,7 @@ class Context
      * A variant of a node can have different dimension values and path (for non-aggregate nodes).
      * The resulting node instances might belong to a different context.
      *
-     * @param string $identifier The identifier of a node
+     * @param string $identifier The identifier of a node -> node aggregate identifier
      * @return array<\Neos\ContentRepository\Domain\Model\NodeInterface>|Domain\Model\NodeInterface[]
      */
     public function getNodeVariantsByIdentifier($identifier): array

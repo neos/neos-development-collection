@@ -331,6 +331,7 @@ trait EventSourcedTrait
      */
     public function iExpectTheNodeToHaveTheProperties($nodeIdentifier, TableNode $expectedProperties)
     {
+        /** @var \Neos\ContentRepository\Domain\Model\Node $node */
         $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
         /* @var $properties \Neos\ContentRepository\Domain\Projection\Content\PropertyCollection */
         $properties = $node->properties;
@@ -350,4 +351,5 @@ trait EventSourcedTrait
         Assert::assertNotNull($node, 'Did not find node at path "' . $nodePath . '"');
         Assert::assertEquals($nodeIdentifier, (string)$node->identifier, 'Node identifier does not match.');
     }
+
 }

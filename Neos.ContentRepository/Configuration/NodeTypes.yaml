@@ -1,9 +1,14 @@
 #                                                                        #
-# ContentRepository Node Types                                                     #
+# ContentRepository Node Types                                           #
 #                                                                        #
+
+'Neos.ContentRepository:Root':
+  constraints:
+    nodeTypes:
+      '*': true
 
 'unstructured':
   abstract: false
   constraints:
     nodeTypes:
-      '*': TRUE
+      '*': true

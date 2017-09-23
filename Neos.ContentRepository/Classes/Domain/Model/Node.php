@@ -198,9 +198,8 @@ class Node implements NodeInterface, CacheAwareInterface
     {
         return array_filter(
             $this->context->getNodeVariantsByIdentifier($this->identifier),
-            function (NodeInterface $node) {
-                // FIXME CR rewrite: Do not use NodeData here
-                return ($node->getNodeData() !== $this->nodeData);
+            function (Node $node) {
+                return $node->identifier !== $this->identifier;
             }
         );
     }
@@ -252,6 +251,7 @@ class Node implements NodeInterface, CacheAwareInterface
     {
         // FIXME CR rewrite: Implement more efficient implementation to get path in subgraph (loop with stored routine?)
         $path = $this->name;
+        /** @var Node $currentNode */
         $currentNode = $this;
         while ($currentNode = $currentNode->getParent()) {
             $path = $currentNode->name . '/' . $path;
@@ -377,7 +377,7 @@ class Node implements NodeInterface, CacheAwareInterface
     public function getParentPath()
     {
         // FIXME CR rewrite: Ask subgraph about parent path
-        return $this->nodeData->getParentPath();
+        return $this->getParent()->getPath();
     }
 
     /**
@@ -1061,8 +1061,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function isHidden()
     {
-        // TODO CR rewrite: Get hidden flag
-        return $this->nodeData->isHidden();
+        return $this->properties['_hidden'] ?? false;
     }
 
     /**
@@ -1147,8 +1146,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function isHiddenInIndex()
     {
-        // TODO CR rewrite: Get isHiddenInIndex
-        return $this->nodeData->isHiddenInIndex();
+        return $this->properties['_hiddenInIndex'] ?? false;
     }
 
     /**
@@ -1436,4 +1434,5 @@ class Node implements NodeInterface, CacheAwareInterface
     protected function emitNodePathChanged(NodeInterface $node, $oldPath, $newPath, $recursion)
     {
     }
+
 }

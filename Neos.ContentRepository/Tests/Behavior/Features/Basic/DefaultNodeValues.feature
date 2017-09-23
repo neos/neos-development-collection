@@ -3,11 +3,26 @@ Feature: Set Default Node Values on node creation
   As an API user of the content repository
   I need support to configure the default properties of a node.
 
+  Background:
+    Given I have no content dimensions
+    And I have the following NodeTypes configuration:
+    """
+    unstructured: []
+    Neos.ContentRepository:Root: []
+    """
+    And the command "CreateRootWorkspace" is executed with payload:
+      | Key                      | Value                                | Type |
+      | workspaceName            | live                                 |      |
+      | workspaceTitle           | Live                                 |      |
+      | workspaceDescription     | The live workspace                   |      |
+      | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000 |      |
+
   @fixtures
   Scenario: default node values for public properties
     Given I have the following NodeTypes configuration:
     """
     unstructured: []
+    Neos.ContentRepository:Root: []
     'Neos.ContentRepository.Testing:DefaultProperties':
       properties:
         'text':
@@ -28,11 +43,12 @@ Feature: Set Default Node Values on node creation
     Given I have the following NodeTypes configuration:
     """
     unstructured: []
+    Neos.ContentRepository:Root: []
     'Neos.ContentRepository.Testing:DefaultProperties':
       properties:
         '_hiddenInIndex':
           type: boolean
-          defaultValue: TRUE
+          defaultValue: true
     """
     And I have the following nodes:
       | Identifier                           | Path   | Node Type                               |

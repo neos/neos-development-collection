@@ -74,6 +74,10 @@ final class ContentGraph implements ContentGraphInterface
     }
 
     /**
+     * Find a node by node identifier and content stream identifier
+     *
+     * Note: This does not pass the CR context to the node!!!
+     *
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeIdentifier $nodeIdentifier
      * @return NodeInterface|null

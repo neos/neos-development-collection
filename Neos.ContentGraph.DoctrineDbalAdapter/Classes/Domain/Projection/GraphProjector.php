@@ -95,7 +95,9 @@ class GraphProjector implements ProjectorInterface
             $event->getNodeAggregateIdentifier(),
             $event->getDimensionSpacePoint()->jsonSerialize(),
             $event->getDimensionSpacePoint()->getHash(),
-            $event->getPropertyDefaultValuesAndTypes(),
+            array_map(function(ContentRepository\ValueObject\PropertyValue $propertyValue) {
+                return $propertyValue->getValue();
+            }, $event->getPropertyDefaultValuesAndTypes()),
             $event->getNodeTypeName()
         );
         $parentNode = $this->projectionContentGraph->getNode($event->getParentNodeIdentifier(), $event->getContentStreamIdentifier(), $event->getDimensionSpacePoint());
