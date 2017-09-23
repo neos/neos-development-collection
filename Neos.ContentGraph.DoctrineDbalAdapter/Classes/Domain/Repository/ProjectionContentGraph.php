@@ -110,7 +110,7 @@ class ProjectionContentGraph
     public function getAnchorPointForNodeAndContentStream(NodeIdentifier $nodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier): ?NodeRelationAnchorPoint
     {
         $rows = $this->getDatabaseConnection()->executeQuery(
-            'SELECT n.relationanchorpoint FROM neos_contentgraph_node n
+            'SELECT DISTINCT n.relationanchorpoint FROM neos_contentgraph_node n
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
  WHERE n.nodeidentifier = :nodeIdentifier
  AND h.contentstreamidentifier = :contentStreamIdentifier',
