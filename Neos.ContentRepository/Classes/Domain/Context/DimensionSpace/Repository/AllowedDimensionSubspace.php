@@ -44,9 +44,9 @@ class AllowedDimensionSubspace
     {
         $this->points = [];
 
-        if ($this->contentDimensionPresetSource->getAllPresets() === []) {
-            $emptyPoint = new Domain\ValueObject\DimensionSpacePoint([]);
-            $this->points[$emptyPoint->getHash()] = [$emptyPoint];
+        if (empty($this->contentDimensionPresetSource->getAllPresets())) {
+            $zeroPoint = new Domain\ValueObject\DimensionSpacePoint([]);
+            $this->points[$zeroPoint->getHash()] = $zeroPoint;
             return;
         }
 
