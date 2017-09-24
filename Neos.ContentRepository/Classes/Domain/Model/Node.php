@@ -1205,7 +1205,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function isVisible()
     {
-        if ($this->nodeData->isVisible() === false) {
+        if ($this->isHidden()) {
             return false;
         }
         $currentDateTime = $this->context->getCurrentDateTime();
