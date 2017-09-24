@@ -321,17 +321,7 @@ final class NodeCommandHandler
      */
     private function getVisibleDimensionSpacePoints($dimensionSpacePoint): DimensionSpacePointSet
     {
-        $contentSubgraph = $this->interDimensionalFallbackGraph->getSubgraphByDimensionSpacePoint($dimensionSpacePoint);
-        if ($contentSubgraph === null) {
-            throw new DimensionSpacePointNotFound(sprintf('%s was not found in the allowed dimension subspace',
-                $dimensionSpacePoint), 1505929456);
-        }
-        $points = [$dimensionSpacePoint];
-        foreach ($contentSubgraph->getSpecializations() as $variant) {
-            $points[] = $variant->getIdentifier();
-        }
-        $visibleDimensionSpacePoints = new DimensionSpacePointSet($points);
-        return $visibleDimensionSpacePoints;
+        return $this->interDimensionalFallbackGraph->getSpecializationSet($dimensionSpacePoint);
     }
 
     /**

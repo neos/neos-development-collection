@@ -16,7 +16,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Arrays;
 
 /**
- * The repository for content dimension value combinations
+ * The repository for DimensionSpacePoints allowed by constraints
  *
  * @Flow\Scope("singleton")
  * @package Neos\ContentRepository
@@ -79,8 +79,20 @@ class AllowedDimensionSubspace
         }
     }
 
+    /**
+     * @param Domain\ValueObject\DimensionSpacePoint $point
+     * @return bool
+     */
     public function contains(Domain\ValueObject\DimensionSpacePoint $point): bool
     {
         return isset($this->points[$point->getHash()]);
+    }
+
+    /**
+     * @return array|Domain\ValueObject\DimensionSpacePoint[]
+     */
+    public function getPoints(): array
+    {
+        return $this->points;
     }
 }

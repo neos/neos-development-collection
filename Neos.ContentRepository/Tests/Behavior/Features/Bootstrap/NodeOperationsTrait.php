@@ -998,6 +998,9 @@ trait NodeOperationsTrait
             $contentDimensionPresetSource = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface::class);
             $contentDimensionPresetSource->setConfiguration($dimensionConfiguration);
 
+            $allowedDimensionSubspace = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Context\DimensionSpace\Repository\AllowedDimensionSubspace::class);
+            $allowedDimensionSubspace->initializeObject();
+
             $intraDimensionalFallbackGraph = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Context\Dimension\Repository\IntraDimensionalFallbackGraph::class);
             $intraDimensionalFallbackGraph->initializeObject();
 

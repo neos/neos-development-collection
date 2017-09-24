@@ -20,11 +20,15 @@ use Neos\Utility\Arrays;
  */
 final class DimensionSpacePoint implements \JsonSerializable
 {
-
     /**
      * @var array
      */
     private $coordinates;
+
+    /**
+     * @var string
+     */
+    protected $hash;
 
     /**
      * @param array $coordinates
@@ -41,6 +45,10 @@ final class DimensionSpacePoint implements \JsonSerializable
         }
 
         $this->coordinates = $coordinates;
+        $identityComponents = $coordinates;
+        Arrays::sortKeysRecursively($identityComponents);
+
+        $this->hash = md5(json_encode($identityComponents));
     }
 
     /**
@@ -70,10 +78,7 @@ final class DimensionSpacePoint implements \JsonSerializable
      */
     public function getHash(): string
     {
-        $identityComponents = $this->coordinates;
-        Arrays::sortKeysRecursively($identityComponents);
-
-        return md5(json_encode($identityComponents));
+        return $this->hash;
     }
 
     /**
