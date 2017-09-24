@@ -194,6 +194,12 @@ trait EventSourcedTrait
                     \Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler::class,
                     'handleForkContentStream'
                 ];
+            case 'ChangeNodeName':
+                return [
+                    \Neos\ContentRepository\Domain\Context\Node\Command\ChangeNodeName::class,
+                    \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
+                    'handleChangeNodeName'
+                ];
             case 'MoveNode':
                 return [
                     \Neos\ContentRepository\Domain\Context\Node\Command\MoveNode::class,

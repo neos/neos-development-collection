@@ -110,7 +110,7 @@ final class WorkspaceCommandHandler
             )
         );
 
-        $contentStreamIdentifier = new ContentStreamIdentifier();
+        $contentStreamIdentifier = $command->getContentStreamIdentifier();
         $this->contentStreamCommandHandler->handleCreateContentStream(
             new CreateContentStream(
                 $contentStreamIdentifier,
@@ -122,7 +122,7 @@ final class WorkspaceCommandHandler
         $this->nodeCommandHandler->handleCreateRootNode(
             new CreateRootNode(
                 $contentStreamIdentifier,
-                new NodeIdentifier(),
+                $command->getRootNodeIdentifier(),
                 $command->getInitiatingUserIdentifier()
             )
         );

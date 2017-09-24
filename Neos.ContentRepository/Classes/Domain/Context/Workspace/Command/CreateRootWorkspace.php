@@ -11,6 +11,8 @@ namespace Neos\ContentRepository\Domain\Context\Workspace\Command;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
@@ -21,6 +23,7 @@ use Neos\ContentRepository\Domain\ValueObject\WorkspaceTitle;
  */
 final class CreateRootWorkspace
 {
+
     /**
      * @var WorkspaceName
      */
@@ -42,19 +45,39 @@ final class CreateRootWorkspace
     private $initiatingUserIdentifier;
 
     /**
+     * @var ContentStreamIdentifier
+     */
+    private $contentStreamIdentifier;
+
+    /**
+     * @var NodeIdentifier
+     */
+    private $rootNodeIdentifier;
+
+    /**
      * CreateRootWorkspace constructor.
      *
      * @param WorkspaceName $workspaceName
      * @param WorkspaceTitle $workspaceTitle
      * @param WorkspaceDescription $workspaceDescription
      * @param UserIdentifier $initiatingUserIdentifier
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeIdentifier $rootNodeIdentifier
      */
-    public function __construct(WorkspaceName $workspaceName, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription, UserIdentifier $initiatingUserIdentifier)
-    {
+    public function __construct(
+        WorkspaceName $workspaceName,
+        WorkspaceTitle $workspaceTitle,
+        WorkspaceDescription $workspaceDescription,
+        UserIdentifier $initiatingUserIdentifier,
+        ContentStreamIdentifier $contentStreamIdentifier = null,
+        NodeIdentifier $rootNodeIdentifier = null
+    ) {
         $this->workspaceName = $workspaceName;
         $this->workspaceTitle = $workspaceTitle;
         $this->workspaceDescription = $workspaceDescription;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
+        $this->contentStreamIdentifier = $contentStreamIdentifier ?: new ContentStreamIdentifier();
+        $this->rootNodeIdentifier = $rootNodeIdentifier ?: new NodeIdentifier();
     }
 
     /**
@@ -88,4 +111,21 @@ final class CreateRootWorkspace
     {
         return $this->initiatingUserIdentifier;
     }
+
+    /**
+     * @return ContentStreamIdentifier
+     */
+    public function getContentStreamIdentifier(): ContentStreamIdentifier
+    {
+        return $this->contentStreamIdentifier;
+    }
+
+    /**
+     * @return NodeIdentifier
+     */
+    public function getRootNodeIdentifier(): NodeIdentifier
+    {
+        return $this->rootNodeIdentifier;
+    }
+
 }
