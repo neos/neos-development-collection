@@ -74,12 +74,8 @@ trait EventSourcedTrait
         $eventClassName = $this->eventTypeResolver->getEventClassNameByType($eventType);
         $eventPayload = $this->readPayloadTable($payloadTable);
 
+        $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
         /** @var EventInterface $event */
-        $configuration = new PropertyMappingConfiguration();
-        $configuration->allowAllProperties();
-        $configuration->skipUnknownProperties();
-        $configuration->forProperty('*')->allowAllProperties()->skipUnknownProperties();
-
         $event = $this->propertyMapper->convert($eventPayload, $eventClassName, $configuration);
 
         $this->eventPublisher->publish($streamName, $event);
@@ -130,8 +126,9 @@ trait EventSourcedTrait
         list($commandClassName, $commandHandlerClassName, $commandHandlerMethod) = self::resolveShortCommandName($shortCommandName);
         $commandArguments = $this->readPayloadTable($payloadTable);
 
+        $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
         /** @var EventInterface $event */
-        $command = $this->propertyMapper->convert($commandArguments, $commandClassName);
+        $command = $this->propertyMapper->convert($commandArguments, $commandClassName, $configuration);
         $commandHandler = $this->objectManager->get($commandHandlerClassName);
 
         $commandHandler->$commandHandlerMethod($command);
@@ -211,6 +208,12 @@ trait EventSourcedTrait
                     \Neos\ContentRepository\Domain\Context\Node\Command\MoveNode::class,
                     \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
                     'handleMoveNode'
+                ];
+            case 'TranslateNodeInAggregate':
+                return [
+                    \Neos\ContentRepository\Domain\Context\Node\Command\TranslateNodeInAggregate::class,
+                    \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
+                    'handleTranslateNodeInAggregate'
                 ];
             default:
                 throw new \Exception('The short command name "' . $shortCommandName . '" is currently not supported by the tests.');

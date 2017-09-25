@@ -34,23 +34,33 @@ final class NodesInAggregateWereMoved implements EventInterface
     private $referenceNodeAggregateIdentifier;
 
     /**
+     * Array from node identifier to reference node identifier
+     *
+     * @var array
+     */
+    private $nodesToReferenceNodes;
+
+    /**
      * NodesInAggregateWereMoved constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param ReferencePosition $referencePosition
      * @param NodeAggregateIdentifier $referenceNodeAggregateIdentifier
+     * @param array $nodesToReferenceNodes
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         ReferencePosition $referencePosition,
-        NodeAggregateIdentifier $referenceNodeAggregateIdentifier
+        NodeAggregateIdentifier $referenceNodeAggregateIdentifier,
+        array $nodesToReferenceNodes
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->referencePosition = $referencePosition;
         $this->referenceNodeAggregateIdentifier = $referenceNodeAggregateIdentifier;
+        $this->nodesToReferenceNodes = $nodesToReferenceNodes;
     }
 
     /**
@@ -84,4 +94,13 @@ final class NodesInAggregateWereMoved implements EventInterface
     {
         return $this->referenceNodeAggregateIdentifier;
     }
+
+    /**
+     * @return array
+     */
+    public function getNodesToReferenceNodes(): array
+    {
+        return $this->nodesToReferenceNodes;
+    }
+
 }

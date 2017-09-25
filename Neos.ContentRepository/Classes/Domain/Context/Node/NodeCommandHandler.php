@@ -8,6 +8,7 @@ use Neos\ContentRepository\Domain\Context\Importing\Command\FinalizeImportingSes
 use Neos\ContentRepository\Domain\Context\Importing\Command\StartImportingSession;
 use Neos\ContentRepository\Domain\Context\Importing\Event\ImportingSessionWasFinalized;
 use Neos\ContentRepository\Domain\Context\Importing\Event\ImportingSessionWasStarted;
+use Neos\ContentRepository\Domain\Context\Node\Command\TranslateNodeInAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateRootNode;
 use Neos\ContentRepository\Domain\Context\Importing\Command\ImportNode;
@@ -21,6 +22,7 @@ use Neos\ContentRepository\Domain\Context\Node\Event\NodeNameWasChanged;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodesInAggregateWereMoved;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasMoved;
+use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasTranslatedInAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeType;
@@ -251,13 +253,16 @@ final class NodeCommandHandler
     public function handleMoveNodesInAggregate(MoveNodesInAggregate $command): void
     {
         // TODO Get nodes in nodeAggregateIdentifier
+
         // TODO Check: foreach node we can find a node in the content subgraph with node.dimensionSpacePoint by referenced aggregated node identifier
+        $nodesToReferenceNodes = [];
 
         $event = new NodesInAggregateWereMoved(
             $command->getContentStreamIdentifier(),
             $command->getNodeAggregateIdentifier(),
             $command->getReferencePosition(),
-            $command->getReferenceNodeAggregateIdentifier()
+            $command->getReferenceNodeAggregateIdentifier(),
+            $nodesToReferenceNodes
         );
 
         $this->eventPublisher->publish(ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier()),
@@ -287,6 +292,46 @@ final class NodeCommandHandler
         $this->eventPublisher->publish(ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier()),
             $event);
     }
+
+    /**
+     * @param TranslateNodeInAggregate $command
+     */
+    public function handleTranslateNodeInAggregate(TranslateNodeInAggregate $command)
+    {
+        $sourceNodeIdentifier = $command->getSourceNodeIdentifier();
+        $sourceNode = $this->getNode($command->getContentStreamIdentifier(), $sourceNodeIdentifier);
+        $sourceContentSubgraph = $this->contentGraph->getSubgraphByIdentifier($command->getContentStreamIdentifier(), $sourceNode->dimensionSpacePoint);
+        /** @var Node $sourceParentNode */
+        $sourceParentNode = $sourceContentSubgraph->findParentNode($sourceNodeIdentifier);
+        if ($sourceParentNode === null) {
+            throw new Exception\NodeException(sprintf('Parent node for %s in %s not found',
+                $sourceNodeIdentifier, $sourceNode->dimensionSpacePoint), 1506354274);
+        }
+
+        $parentNodeAggregateIdentifier = $sourceParentNode->aggregateIdentifier;
+        $destinationContentSubgraph = $this->contentGraph->getSubgraphByIdentifier($command->getContentStreamIdentifier(), $command->getDimensionSpacePoint());
+        /** @var Node $destinationParentNode */
+        $destinationParentNode = $destinationContentSubgraph->findNodeByNodeAggregateIdentifier($parentNodeAggregateIdentifier);
+        if ($destinationParentNode === null) {
+            throw new Exception\NodeException(sprintf('Could not find suitable parent node for %s in %s',
+                $sourceNodeIdentifier, $destinationContentSubgraph->getDimensionSpacePoint()), 1506354275);
+        }
+
+        $dimensionSpacePointSet = $this->getVisibleDimensionSpacePoints($command->getDimensionSpacePoint());
+
+        $event = new NodeWasTranslatedInAggregate(
+            $command->getContentStreamIdentifier(),
+            $sourceNodeIdentifier,
+            $command->getDestinationNodeIdentifier(),
+            $destinationParentNode->identifier,
+            $command->getDimensionSpacePoint(),
+            $dimensionSpacePointSet
+        );
+
+        $this->eventPublisher->publish(ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier()),
+            $event);
+    }
+
 
     /**
      * @param NodeTypeName $nodeTypeName
