@@ -12,6 +12,9 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  * source code.
  */
 
+/**
+ * Property value with type
+ */
 final class PropertyValue implements \JsonSerializable
 {
 
@@ -61,6 +64,6 @@ final class PropertyValue implements \JsonSerializable
 
     public function __toString()
     {
-        return $this->value . '(' . $this->type . ')';
+        return $this->value . ' (' . $this->type . ')';
     }
 }

@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Domain\Model;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Context\Node\Command;
 use Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler;
@@ -692,12 +693,13 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function setProperty($propertyName, $value)
     {
+        $propertyType = $this->getNodeType()->getPropertyType($propertyName);
+
         $command = new Command\SetNodeProperty(
             $this->context->getContentStreamIdentifier(),
             $this->identifier,
             $propertyName,
-            $value,
-            new NodeTypeName($this->getNodeType()->getName())
+            new PropertyValue($value, $propertyType)
         );
 
         $oldValue = $this->hasProperty($propertyName) ? $this->getProperty($propertyName) : null;

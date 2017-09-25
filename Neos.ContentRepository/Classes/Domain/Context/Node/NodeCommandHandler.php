@@ -196,18 +196,14 @@ final class NodeCommandHandler
      */
     public function handleSetNodeProperty(SetNodeProperty $command): void
     {
-        $node = $this->getNode($command->getContentStreamIdentifier(), $command->getNodeIdentifier());
-
-        $nodeType = $this->getNodeType($command->getNodeTypeName());
-        $propertyType = $nodeType->getPropertyType($command->getPropertyName());
-
-        $propertyValue = new PropertyValue($command->getValue(), $propertyType);
+        // Check if node exists
+        $this->getNode($command->getContentStreamIdentifier(), $command->getNodeIdentifier());
 
         $event = new NodePropertyWasSet(
             $command->getContentStreamIdentifier(),
             $command->getNodeIdentifier(),
             $command->getPropertyName(),
-            $propertyValue
+            $command->getValue()
         );
 
         $this->eventPublisher->publish(ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier()),

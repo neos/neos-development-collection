@@ -4,7 +4,7 @@ namespace Neos\ContentRepository\Domain\Context\Node\Command;
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
 
 final class SetNodeProperty
 {
@@ -25,14 +25,9 @@ final class SetNodeProperty
     private $propertyName;
 
     /**
-     * @var mixed
+     * @var PropertyValue
      */
     private $value;
-
-    /**
-     * @var NodeTypeName
-     */
-    private $nodeTypeName;
 
     /**
      * SetNodeProperty constructor.
@@ -40,21 +35,18 @@ final class SetNodeProperty
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeIdentifier $nodeIdentifier
      * @param string $propertyName
-     * @param mixed $value
-     * @param NodeTypeName $nodeTypeName
+     * @param PropertyValue $value
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeIdentifier $nodeIdentifier,
         $propertyName,
-        $value,
-        NodeTypeName $nodeTypeName
+        PropertyValue $value
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;
         $this->propertyName = $propertyName;
         $this->value = $value;
-        $this->nodeTypeName = $nodeTypeName;
     }
 
     /**
@@ -82,18 +74,11 @@ final class SetNodeProperty
     }
 
     /**
-     * @return mixed
+     * @return PropertyValue
      */
-    public function getValue()
+    public function getValue(): PropertyValue
     {
         return $this->value;
     }
 
-    /**
-     * @return NodeTypeName
-     */
-    public function getNodeTypeName()
-    {
-        return $this->nodeTypeName;
-    }
 }

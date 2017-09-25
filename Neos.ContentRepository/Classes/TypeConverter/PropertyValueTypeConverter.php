@@ -11,15 +11,12 @@ namespace Neos\ContentRepository\TypeConverter;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 
 /**
- * An Object Converter for Nodes which can be used for routing (but also for other
- * purposes) as a plugin for the Property Mapper.
- *
  * @Flow\Scope("singleton")
  */
 class PropertyValueTypeConverter extends AbstractTypeConverter

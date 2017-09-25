@@ -200,6 +200,12 @@ trait EventSourcedTrait
                     \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
                     'handleChangeNodeName'
                 ];
+            case 'SetNodeProperty':
+                return [
+                    \Neos\ContentRepository\Domain\Context\Node\Command\SetNodeProperty::class,
+                    \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
+                    'handleSetNodeProperty'
+                ];
             case 'MoveNode':
                 return [
                     \Neos\ContentRepository\Domain\Context\Node\Command\MoveNode::class,
