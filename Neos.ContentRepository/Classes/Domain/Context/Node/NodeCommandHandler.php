@@ -300,6 +300,9 @@ final class NodeCommandHandler
     {
         $sourceNodeIdentifier = $command->getSourceNodeIdentifier();
         $sourceNode = $this->getNode($command->getContentStreamIdentifier(), $sourceNodeIdentifier);
+
+        // TODO Check that command->dimensionSpacePoint is not a generalization or specialization of sourceNode->dimensionSpacePoint!!! (translation)
+
         $sourceContentSubgraph = $this->contentGraph->getSubgraphByIdentifier($command->getContentStreamIdentifier(), $sourceNode->dimensionSpacePoint);
         /** @var Node $sourceParentNode */
         $sourceParentNode = $sourceContentSubgraph->findParentNode($sourceNodeIdentifier);
