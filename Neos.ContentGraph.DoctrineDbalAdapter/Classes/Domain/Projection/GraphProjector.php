@@ -388,6 +388,45 @@ class GraphProjector implements ProjectorInterface
         });
     }
 
+    public function whenNodeInAggregateWasTranslated(Event\NodeInAggregateWasTranslated $event)
+    {
+        $this->transactional(function () use ($event) {
+            $childNodeRelationAnchorPoint = new NodeRelationAnchorPoint();
+
+            $sourceNode = $this->projectionContentGraph->getNodeByNodeIdentifierAndContentStream($event->getSourceNodeIdentifier(), $event->getContentStreamIdentifier());
+            if ($sourceNode === null) {
+                // TODO Log error
+                return;
+            }
+
+            $translatedNode = new Node(
+                $childNodeRelationAnchorPoint,
+                $event->getDestinationNodeIdentifier(),
+                $sourceNode->nodeAggregateIdentifier,
+                $event->getDimensionSpacePoint()->jsonSerialize(),
+                $event->getDimensionSpacePoint()->getHash(),
+                $sourceNode->properties,
+                $sourceNode->nodeTypeName
+            );
+            $parentNode = $this->projectionContentGraph->getNodeByNodeIdentifierAndContentStream($event->getDestinationParentNodeIdentifier(), $event->getContentStreamIdentifier());
+            if ($parentNode === null) {
+                // TODO Log error
+                return;
+            }
+
+            $translatedNode->addToDatabase($this->getDatabaseConnection());
+            $this->connectHierarchy(
+                $parentNode->relationAnchorPoint,
+                $translatedNode->relationAnchorPoint,
+                // TODO: position on insert is still missing
+                null,
+                $sourceNode->nodeName,
+                $event->getContentStreamIdentifier(),
+                $event->getVisibleDimensionSpacePoints()
+            );
+        });
+    }
+
     /**
      * @param callable $operations
      */

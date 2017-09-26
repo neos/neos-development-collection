@@ -54,7 +54,7 @@ class ProjectionContentGraph
     public function getNode(NodeIdentifier $nodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): ?Node
     {
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
-            'SELECT n.* FROM neos_contentgraph_node n
+            'SELECT n.*, h.name FROM neos_contentgraph_node n
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
  WHERE n.nodeidentifier = :nodeIdentifier
  AND h.contentstreamidentifier = :contentStreamIdentifier       
@@ -87,13 +87,12 @@ class ProjectionContentGraph
     /**
      * @param NodeIdentifier $nodeIdentifier
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
      * @return Node|null
      */
     public function getNodeByNodeIdentifierAndContentStream(NodeIdentifier $nodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier): ?Node
     {
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
-            'SELECT n.* FROM neos_contentgraph_node n
+            'SELECT n.*, h.name FROM neos_contentgraph_node n
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
  WHERE n.nodeidentifier = :nodeIdentifier
  AND h.contentstreamidentifier = :contentStreamIdentifier',

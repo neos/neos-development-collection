@@ -14,6 +14,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\Flow\Annotations as Flow;
 
@@ -58,7 +59,15 @@ class Node
     public $nodeTypeName;
 
     /**
+     * Transient node name to store a node name after fetching a node with hierarchy (not always available)
+     *
+     * @var NodeName
+     */
+    public $nodeName;
+
+    /**
      * Node constructor.
+     *
      * @param NodeRelationAnchorPoint $relationAnchorPoint
      * @param NodeIdentifier $nodeIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
@@ -66,6 +75,7 @@ class Node
      * @param string $dimensionSpacePointHash
      * @param array $properties
      * @param NodeTypeName $nodeTypeName
+     * @param NodeName $nodeName
      */
     public function __construct(
         NodeRelationAnchorPoint $relationAnchorPoint,
@@ -74,7 +84,8 @@ class Node
         ?array $dimensionSpacePoint,
         ?string $dimensionSpacePointHash,
         ?array $properties,
-        NodeTypeName $nodeTypeName
+        NodeTypeName $nodeTypeName,
+        NodeName $nodeName = null
     ) {
         $this->relationAnchorPoint = $relationAnchorPoint;
         $this->nodeIdentifier = $nodeIdentifier;
@@ -83,6 +94,7 @@ class Node
         $this->dimensionSpacePointHash = $dimensionSpacePointHash;
         $this->properties = $properties;
         $this->nodeTypeName = $nodeTypeName;
+        $this->nodeName = $nodeName;
     }
 
     /**
@@ -114,7 +126,8 @@ class Node
             json_decode($databaseRow['dimensionspacepoint'], true),
             $databaseRow['dimensionspacepointhash'],
             json_decode($databaseRow['properties'], true),
-            new NodeTypeName($databaseRow['nodetypename'])
+            new NodeTypeName($databaseRow['nodetypename']),
+            isset($databaseRow['name']) ? new NodeName($databaseRow['name']) : null
         );
     }
 }
