@@ -56,7 +56,7 @@ Feature: Translate node in aggregate
       | dimensionSpacePoint       | {"coordinates":{"language":"en"}}    | json |
 
     Then I expect exactly 5 events to be published on stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d"
-    And event at index 4 is of type "Neos.ContentRepository:NodeWasTranslatedInAggregate" with payload:
+    And event at index 4 is of type "Neos.ContentRepository:NodeInAggregateWasTranslated" with payload:
       | Key                             | Expected                                       | AssertionType |
       | contentStreamIdentifier         | c75ae6a2-7254-4d42-a31b-a629e264069d           |               |
       | sourceNodeIdentifier            | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81           |               |

@@ -22,7 +22,7 @@ use Neos\ContentRepository\Domain\Context\Node\Event\NodeNameWasChanged;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodesInAggregateWereMoved;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasMoved;
-use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasTranslatedInAggregate;
+use Neos\ContentRepository\Domain\Context\Node\Event\NodeInAggregateWasTranslated;
 use Neos\ContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeType;
@@ -322,7 +322,7 @@ final class NodeCommandHandler
 
         $dimensionSpacePointSet = $this->getVisibleDimensionSpacePoints($command->getDimensionSpacePoint());
 
-        $event = new NodeWasTranslatedInAggregate(
+        $event = new NodeInAggregateWasTranslated(
             $command->getContentStreamIdentifier(),
             $sourceNodeIdentifier,
             $command->getDestinationNodeIdentifier(),

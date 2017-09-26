@@ -7,7 +7,7 @@ use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcing\Event\EventInterface;
 
-class NodeWasTranslatedInAggregate implements EventInterface
+class NodeInAggregateWasTranslated implements EventInterface
 {
 
     /**
@@ -49,7 +49,7 @@ class NodeWasTranslatedInAggregate implements EventInterface
     private $visibleDimensionSpacePoints;
 
     /**
-     * NodeWasTranslatedInAggregate constructor.
+     * NodeInAggregateWasTranslated constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeIdentifier $sourceNodeIdentifier
