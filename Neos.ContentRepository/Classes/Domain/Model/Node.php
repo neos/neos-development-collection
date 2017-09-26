@@ -878,6 +878,9 @@ class Node implements NodeInterface, CacheAwareInterface
         $dimensionSpacePoint = new DimensionSpacePoint($this->context->getTargetDimensions());
 
         $nodeAggregateIdentifier = new NodeAggregateIdentifier($identifier);
+
+        // TODO Check if a node aggregate already exists and then just add another node to the aggregate! (the old API allowed to specify the same identifier multiple times for different "node variants")
+
         $nodeTypeName = new NodeTypeName(($nodeType ? $nodeType->getName() : 'unstructured'));
 
         $parentNodeIdentifier = $this->identifier;
