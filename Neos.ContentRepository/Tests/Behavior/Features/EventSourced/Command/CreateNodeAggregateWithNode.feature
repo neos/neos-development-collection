@@ -94,7 +94,6 @@ Feature: Create node aggregate with node
       | nodeName                                 | foo                                                          |               |
       | propertyDefaultValuesAndTypes.text.value | my default                                                   |               |
       | propertyDefaultValuesAndTypes.text.type  | string                                                       |               |
-
     And event at index 3 is of type "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" with payload:
       | Key                         | Expected                               | AssertionType |
       | contentStreamIdentifier     | c75ae6a2-7254-4d42-a31b-a629e264069d   |               |
@@ -103,7 +102,6 @@ Feature: Create node aggregate with node
       | visibleDimensionSpacePoints | {"points":[{"coordinates":[]}]}        | json          |
       | parentNodeIdentifier        | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81   |               |
       | nodeName                    | main                                   |               |
-
     And event at index 4 is of type "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" with payload:
       | Key                         | Expected                                  | AssertionType |
       | contentStreamIdentifier     | c75ae6a2-7254-4d42-a31b-a629e264069d      |               |
@@ -122,7 +120,7 @@ Feature: Create node aggregate with node
 #      | Identifier | Default | Presets                            |
 #      | language   | mul     | de=de,mul; en=en,mul; ch=ch,de,mul |
 
-    Given I have the following NodeTypes configuration:
+    And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository.Testing:NodeWithoutAutoCreatedChildNodes':
       properties:
