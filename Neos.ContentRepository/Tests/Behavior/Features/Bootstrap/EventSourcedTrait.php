@@ -209,6 +209,12 @@ trait EventSourcedTrait
                     \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
                     'handleMoveNode'
                 ];
+            case 'MoveNodesInAggregate':
+                return [
+                    \Neos\ContentRepository\Domain\Context\Node\Command\MoveNodesInAggregate::class,
+                    \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
+                    'handleMoveNodesInAggregate'
+                ];
             case 'TranslateNodeInAggregate':
                 return [
                     \Neos\ContentRepository\Domain\Context\Node\Command\TranslateNodeInAggregate::class,

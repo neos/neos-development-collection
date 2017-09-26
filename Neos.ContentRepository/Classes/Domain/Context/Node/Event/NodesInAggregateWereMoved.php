@@ -34,7 +34,7 @@ final class NodesInAggregateWereMoved implements EventInterface
     private $referenceNodeAggregateIdentifier;
 
     /**
-     * Array from node identifier to reference node identifier
+     * Array from node identifier (string) to reference node identifier (string)
      *
      * @var array
      */

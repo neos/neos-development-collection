@@ -23,6 +23,7 @@ Feature: Translate node in aggregate
       | contentStreamIdentifier  | c75ae6a2-7254-4d42-a31b-a629e264069d |      |
       | rootNodeIdentifier       | 5387cb08-2aaf-44dc-a8a1-483497aa0a03 |      |
     # We have to add another node since the root node has no aggregate to find the new parent of the translated node
+    # Node /sites
     And the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d" with payload:
       | Key                           | Value                                                                                                                                                 | Type |
       | contentStreamIdentifier       | c75ae6a2-7254-4d42-a31b-a629e264069d                                                                                                                  |      |
@@ -36,7 +37,7 @@ Feature: Translate node in aggregate
       | propertyDefaultValuesAndTypes | {}                                                                                                                                                    | json |
 
   Scenario: Translate existing node with "mul" parent
-    # Node /text1
+    # Node /sites/text1
     Given the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d" with payload:
       | Key                           | Value                                                                            | Type |
       | contentStreamIdentifier       | c75ae6a2-7254-4d42-a31b-a629e264069d                                             |      |

@@ -252,10 +252,17 @@ final class NodeCommandHandler
      */
     public function handleMoveNodesInAggregate(MoveNodesInAggregate $command): void
     {
-        // TODO Get nodes in nodeAggregateIdentifier
-
-        // TODO Check: foreach node we can find a node in the content subgraph with node.dimensionSpacePoint by referenced aggregated node identifier
+        $sourceNodes = $this->contentGraph->findNodesByNodeAggregateIdentifier($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
         $nodesToReferenceNodes = [];
+
+        /** @var Node $sourceNode */
+        foreach ($sourceNodes as $sourceNode) {
+            $contentSubgraph = $this->contentGraph->getSubgraphByIdentifier($command->getContentStreamIdentifier(), $sourceNode->dimensionSpacePoint);
+            /** @var Node $referenceNode */
+            $referenceNode = $contentSubgraph->findNodeByNodeAggregateIdentifier($command->getReferenceNodeAggregateIdentifier());
+            // TODO Introduce a mapping value object with checks for uniqueness
+            $nodesToReferenceNodes[(string)$sourceNode->identifier] = (string)$referenceNode->identifier;
+        }
 
         $event = new NodesInAggregateWereMoved(
             $command->getContentStreamIdentifier(),
