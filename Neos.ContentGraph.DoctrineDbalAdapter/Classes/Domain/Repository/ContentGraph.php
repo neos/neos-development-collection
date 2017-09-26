@@ -17,6 +17,7 @@ use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\Flow\Annotations as Flow;
 
@@ -99,5 +100,34 @@ final class ContentGraph implements ContentGraphInterface
         )->fetch();
 
         return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow, null) : null;
+    }
+
+    /**
+     * Find all nodes of a node aggregate by node aggregate identifier and content stream identifier
+     *
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @return array<NodeInterface>
+     */
+    public function findNodesByNodeAggregateIdentifier(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): array
+    {
+        $connection = $this->client->getConnection();
+
+        $query = 'SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
+ INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+ WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
+ AND h.contentstreamidentifier = :contentStreamIdentifier';
+        $parameters = [
+            'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
+            'contentStreamIdentifier' => (string)$contentStreamIdentifier
+        ];
+        $result = [];
+        foreach ($connection->executeQuery(
+            $query,
+            $parameters
+        )->fetchAll() as $nodeRow) {
+            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeRow, null);
+        }
+        return $result;
     }
 }
