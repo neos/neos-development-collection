@@ -52,7 +52,7 @@ final class DimensionSpacePoint implements \JsonSerializable
     }
 
     /**
-     * @param array $legacyDimensionValues
+     * @param array $legacyDimensionValues Array from dimension name to dimension values
      * @return static
      */
     public static function fromLegacyDimensionArray(array $legacyDimensionValues): DimensionSpacePoint

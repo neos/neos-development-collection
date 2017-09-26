@@ -1291,20 +1291,20 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function createVariantForContext($context)
     {
-        // TODO Execute command CopyNodeFromNode
+        // TODO CR rewrite: Check if we need to specialize, generalize or translate!!!
 
+        $destinationNodeIdentifier = new NodeIdentifier();
+        $this->nodeCommandHandler->handleTranslateNodeInAggregate(new Command\TranslateNodeInAggregate(
+            $this->contentStreamIdentifier,
+            $this->identifier,
+            $destinationNodeIdentifier,
+            new DimensionSpacePoint($context->getTargetDimensions())
+        ));
+
+        $node = $context->getSubgraph()->findNodeByIdentifier($destinationNodeIdentifier, $context);
         $this->emitNodeAdded($node);
 
         return $node;
-    }
-
-    /**
-     * @param NodeData $nodeData
-     * @return void
-     */
-    public function setNodeData(NodeData $nodeData)
-    {
-        $this->nodeData = $nodeData;
     }
 
     /**
@@ -1341,6 +1341,16 @@ class Node implements NodeInterface, CacheAwareInterface
 
         return false;
     }
+
+    /**
+     * @return bool
+     */
+    public function dimensionsAreMatchingTargetDimensionValues(): bool
+    {
+        $targetDimensionSpacePoint = new DimensionSpacePoint($this->context->getTargetDimensions());
+        return $this->dimensionSpacePoint->getHash() === $targetDimensionSpacePoint->getHash();
+    }
+
 
     /**
      * Signals that a node will be created.
