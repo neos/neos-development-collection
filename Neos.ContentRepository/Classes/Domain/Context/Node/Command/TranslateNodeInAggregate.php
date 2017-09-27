@@ -41,23 +41,33 @@ final class TranslateNodeInAggregate
     private $dimensionSpacePoint;
 
     /**
+     * Parent node identifier of the translated node (optional, will be resolved if not given)
+     *
+     * @var NodeIdentifier
+     */
+    private $destinationParentNodeIdentifier;
+
+    /**
      * TranslateNodeInAggregate constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeIdentifier $sourceNodeIdentifier
      * @param NodeIdentifier $destinationNodeIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
+     * @param NodeIdentifier $destinationParentNodeIdentifier
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeIdentifier $sourceNodeIdentifier,
         NodeIdentifier $destinationNodeIdentifier,
-        DimensionSpacePoint $dimensionSpacePoint
+        DimensionSpacePoint $dimensionSpacePoint,
+        NodeIdentifier $destinationParentNodeIdentifier = null
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->sourceNodeIdentifier = $sourceNodeIdentifier;
         $this->destinationNodeIdentifier = $destinationNodeIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
+        $this->destinationParentNodeIdentifier = $destinationParentNodeIdentifier;
     }
 
     /**
@@ -92,4 +102,11 @@ final class TranslateNodeInAggregate
         return $this->dimensionSpacePoint;
     }
 
+    /**
+     * @return NodeIdentifier|null
+     */
+    public function getDestinationParentNodeIdentifier(): ?NodeIdentifier
+    {
+        return $this->destinationParentNodeIdentifier;
+    }
 }

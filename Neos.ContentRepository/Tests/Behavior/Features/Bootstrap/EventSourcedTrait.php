@@ -120,6 +120,7 @@ trait EventSourcedTrait
 
     /**
      * @When /^the command "([^"]*)" is executed with payload:$/
+     * @Given /^the command "([^"]*)" was executed with payload:$/
      */
     public function theCommandIsExecutedWithPayload($shortCommandName, TableNode $payloadTable)
     {

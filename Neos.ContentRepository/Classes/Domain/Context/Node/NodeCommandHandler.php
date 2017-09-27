@@ -183,8 +183,7 @@ final class NodeCommandHandler
 
         foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeNameStr => $childNodeType) {
             $childNodeName = new NodeName($childNodeNameStr);
-            $childNodeAggregateIdentifier = NodeAggregateIdentifier::forAutoCreatedChildNode($childNodeName,
-                $command->getNodeAggregateIdentifier());
+            $childNodeAggregateIdentifier = NodeAggregateIdentifier::forAutoCreatedChildNode($childNodeName, $command->getNodeAggregateIdentifier());
             $childNodeIdentifier = new NodeIdentifier();
             $childParentNodeIdentifier = $command->getNodeIdentifier();
 
@@ -359,14 +358,29 @@ final class NodeCommandHandler
      * @param TranslateNodeInAggregate $command
      * @throws Exception\NodeException
      */
-    public function handleTranslateNodeInAggregate(TranslateNodeInAggregate $command)
+    public function handleTranslateNodeInAggregate(TranslateNodeInAggregate $command): void
     {
+
+        $contentStreamIdentifier = $command->getContentStreamIdentifier();
+
+        $events = $this->nodeInAggregateWasTranslatedFromCommand($command);
+        $this->eventPublisher->publishMany(
+            ContentStreamCommandHandler::getStreamNameForContentStream($contentStreamIdentifier),
+            $events
+        );
+    }
+
+    private function nodeInAggregateWasTranslatedFromCommand(TranslateNodeInAggregate $command): array {
         $sourceNodeIdentifier = $command->getSourceNodeIdentifier();
-        $sourceNode = $this->getNode($command->getContentStreamIdentifier(), $sourceNodeIdentifier);
+        $contentStreamIdentifier = $command->getContentStreamIdentifier();
+        $dimensionSpacePoint = $command->getDimensionSpacePoint();
+        $destinationNodeIdentifier = $command->getDestinationNodeIdentifier();
+
+        $sourceNode = $this->getNode($contentStreamIdentifier, $sourceNodeIdentifier);
 
         // TODO Check that command->dimensionSpacePoint is not a generalization or specialization of sourceNode->dimensionSpacePoint!!! (translation)
 
-        $sourceContentSubgraph = $this->contentGraph->getSubgraphByIdentifier($command->getContentStreamIdentifier(), $sourceNode->dimensionSpacePoint);
+        $sourceContentSubgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $sourceNode->dimensionSpacePoint);
         /** @var Node $sourceParentNode */
         $sourceParentNode = $sourceContentSubgraph->findParentNode($sourceNodeIdentifier);
         if ($sourceParentNode === null) {
@@ -374,30 +388,54 @@ final class NodeCommandHandler
                 $sourceNodeIdentifier, $sourceNode->dimensionSpacePoint), 1506354274);
         }
 
-        $parentNodeAggregateIdentifier = $sourceParentNode->aggregateIdentifier;
-        $destinationContentSubgraph = $this->contentGraph->getSubgraphByIdentifier($command->getContentStreamIdentifier(), $command->getDimensionSpacePoint());
-        /** @var Node $destinationParentNode */
-        $destinationParentNode = $destinationContentSubgraph->findNodeByNodeAggregateIdentifier($parentNodeAggregateIdentifier);
-        if ($destinationParentNode === null) {
-            throw new Exception\NodeException(sprintf('Could not find suitable parent node for %s in %s',
-                $sourceNodeIdentifier, $destinationContentSubgraph->getDimensionSpacePoint()), 1506354275);
+        if ($command->getDestinationParentNodeIdentifier() !== null) {
+            $destinationParentNodeIdentifier = $command->getDestinationParentNodeIdentifier();
+        } else {
+            $parentNodeAggregateIdentifier = $sourceParentNode->aggregateIdentifier;
+            $destinationContentSubgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier,
+                $dimensionSpacePoint);
+            /** @var Node $destinationParentNode */
+            $destinationParentNode = $destinationContentSubgraph->findNodeByNodeAggregateIdentifier($parentNodeAggregateIdentifier);
+            if ($destinationParentNode === null) {
+                throw new Exception\NodeException(sprintf('Could not find suitable parent node for %s in %s',
+                    $sourceNodeIdentifier, $destinationContentSubgraph->getDimensionSpacePoint()), 1506354275);
+            }
+            $destinationParentNodeIdentifier = $destinationParentNode->identifier;
         }
 
-        $dimensionSpacePointSet = $this->getVisibleDimensionSpacePoints($command->getDimensionSpacePoint());
+        $dimensionSpacePointSet = $this->getVisibleDimensionSpacePoints($dimensionSpacePoint);
 
-        $event = new NodeInAggregateWasTranslated(
-            $command->getContentStreamIdentifier(),
+        $events[] = new NodeInAggregateWasTranslated(
+            $contentStreamIdentifier,
             $sourceNodeIdentifier,
-            $command->getDestinationNodeIdentifier(),
-            $destinationParentNode->identifier,
-            $command->getDimensionSpacePoint(),
+            $destinationNodeIdentifier,
+            $destinationParentNodeIdentifier,
+            $dimensionSpacePoint,
             $dimensionSpacePointSet
         );
 
-        $this->eventPublisher->publish(
-            ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier()),
-            $event
-        );
+        foreach ($sourceNode->getNodeType()->getAutoCreatedChildNodes() as $childNodeNameStr => $childNodeType) {
+            /** @var Node $childNode */
+            $childNode = $sourceContentSubgraph->findChildNodeConnectedThroughEdgeName($sourceNodeIdentifier, new NodeName($childNodeNameStr));
+            if ($childNode === null) {
+                throw new Exception\NodeException(sprintf('Could not find auto-created child node with name %s for %s in %s',
+                    $childNodeNameStr, $sourceNodeIdentifier, $sourceNode->dimensionSpacePoint), 1506506170);
+            }
+
+            $childDestinationNodeIdentifier = new NodeIdentifier();
+            $childDestinationParentNodeIdentifier = $destinationNodeIdentifier;
+            $events = array_merge($events,
+                $this->nodeInAggregateWasTranslatedFromCommand(new TranslateNodeInAggregate(
+                    $contentStreamIdentifier,
+                    $childNode->identifier,
+                    $childDestinationNodeIdentifier,
+                    $dimensionSpacePoint,
+                    $childDestinationParentNodeIdentifier
+                )));
+
+        }
+
+        return $events;
     }
 
 
