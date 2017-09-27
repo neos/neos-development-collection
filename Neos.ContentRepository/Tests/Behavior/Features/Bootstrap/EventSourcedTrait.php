@@ -24,6 +24,7 @@ use Neos\EventSourcing\Event\EventTypeResolver;
 use Neos\EventSourcing\EventStore\EventAndRawEvent;
 use Neos\EventSourcing\EventStore\EventStoreManager;
 use Neos\EventSourcing\EventStore\StreamNameFilter;
+use Neos\EventSourcing\EventStore\StreamNamePrefixFilter;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use PHPUnit\Framework\Assert;
@@ -227,7 +228,6 @@ trait EventSourcedTrait
         }
     }
 
-
     /**
      * @Then /^I expect exactly (\d+) events? to be published on stream "([^"]*)"$/
      */
@@ -235,6 +235,17 @@ trait EventSourcedTrait
     {
         $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
         $stream = $eventStore->get(new StreamNameFilter($streamName));
+        $this->currentEventStreamAsArray = iterator_to_array($stream, false);
+        Assert::assertEquals($numberOfEvents, count($this->currentEventStreamAsArray), 'Number of events did not match');
+    }
+
+    /**
+     * @Then /^I expect exactly (\d+) events? to be published on stream with prefix "([^"]*)"$/
+     */
+    public function iExpectExactlyEventToBePublishedOnStreamWithPrefix($numberOfEvents, $streamName)
+    {
+        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
+        $stream = $eventStore->get(new StreamNamePrefixFilter($streamName));
         $this->currentEventStreamAsArray = iterator_to_array($stream, false);
         Assert::assertEquals($numberOfEvents, count($this->currentEventStreamAsArray), 'Number of events did not match');
     }

@@ -24,7 +24,7 @@ Feature: Move nodes in aggregate before, into or after nodes in another aggregat
     """
     # We have to add another node since the root node has no aggregate to find the new parent of the translated node
     # Node /sites
-    And the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d" with payload:
+    And the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:c2037dc4-a20d-11e7-ba09-b3eb6d631979" with payload:
       | Key                           | Value                                                                                                                                                 | Type |
       | contentStreamIdentifier       | c75ae6a2-7254-4d42-a31b-a629e264069d                                                                                                                  |      |
       | nodeAggregateIdentifier       | c2037dc4-a20d-11e7-ba09-b3eb6d631979                                                                                                                  |      |
@@ -38,7 +38,7 @@ Feature: Move nodes in aggregate before, into or after nodes in another aggregat
 
   Scenario: Move nodes in aggregate into another node aggregate
     # Node /sites/home (language=de)
-    Given the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d" with payload:
+    Given the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:35411439-94d1-4bd4-8fac-0646856c6a1f" with payload:
       | Key                           | Value                                                                            | Type |
       | contentStreamIdentifier       | c75ae6a2-7254-4d42-a31b-a629e264069d                                             |      |
       | nodeAggregateIdentifier       | 35411439-94d1-4bd4-8fac-0646856c6a1f                                             |      |
@@ -50,7 +50,7 @@ Feature: Move nodes in aggregate before, into or after nodes in another aggregat
       | nodeName                      | home                                                                             |      |
       | propertyDefaultValuesAndTypes | {}                                                                               | json |
     # Translated node /sites/home (language=en)
-    And the Event "Neos.ContentRepository:NodeInAggregateWasTranslated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d" with payload:
+    And the Event "Neos.ContentRepository:NodeInAggregateWasTranslated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:35411439-94d1-4bd4-8fac-0646856c6a1f" with payload:
       | Key                             | Value                                          | Type |
       | contentStreamIdentifier         | c75ae6a2-7254-4d42-a31b-a629e264069d           |      |
       | sourceNodeIdentifier            | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81           |      |
@@ -59,7 +59,7 @@ Feature: Move nodes in aggregate before, into or after nodes in another aggregat
       | dimensionSpacePoint             | {"coordinates":{"language":"en"}}              | json |
       | visibleDimensionSpacePoints     | {"points":[{"coordinates":{"language":"en"}}]} | json |
     # Node /sites/contact (language=de)
-    And the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d" with payload:
+    And the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:4983ed6a-a2cc-11e7-9d06-fb695f94a9d8" with payload:
       | Key                           | Value                                                                            | Type |
       | contentStreamIdentifier       | c75ae6a2-7254-4d42-a31b-a629e264069d                                             |      |
       | nodeAggregateIdentifier       | 4983ed6a-a2cc-11e7-9d06-fb695f94a9d8                                             |      |
@@ -71,7 +71,7 @@ Feature: Move nodes in aggregate before, into or after nodes in another aggregat
       | nodeName                      | contact                                                                          |      |
       | propertyDefaultValuesAndTypes | {}                                                                               | json |
     # Translated node /sites/contact (language=en)
-    And the Event "Neos.ContentRepository:NodeInAggregateWasTranslated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d" with payload:
+    And the Event "Neos.ContentRepository:NodeInAggregateWasTranslated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:4983ed6a-a2cc-11e7-9d06-fb695f94a9d8" with payload:
       | Key                             | Value                                          | Type |
       | contentStreamIdentifier         | c75ae6a2-7254-4d42-a31b-a629e264069d           |      |
       | sourceNodeIdentifier            | 5a98db56-a2cc-11e7-8b35-634eadb201dd           |      |
@@ -88,7 +88,7 @@ Feature: Move nodes in aggregate before, into or after nodes in another aggregat
       | referenceNodeAggregateIdentifier | 35411439-94d1-4bd4-8fac-0646856c6a1f |      |
 
 
-    Then I expect exactly 8 events to be published on stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d"
+    Then I expect exactly 8 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d"
     And event at index 7 is of type "Neos.ContentRepository:NodesInAggregateWereMoved" with payload:
       | Key                                                        | Expected                             | AssertionType |
       | contentStreamIdentifier                                    | c75ae6a2-7254-4d42-a31b-a629e264069d |               |

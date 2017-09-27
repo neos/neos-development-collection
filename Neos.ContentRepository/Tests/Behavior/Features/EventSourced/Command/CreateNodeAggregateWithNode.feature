@@ -37,7 +37,7 @@ Feature: Create node aggregate with node
       | nodeName                | foo                                                             |      |
 
     # event 1 is the one from the "Given" part
-    Then I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d"
+    Then I expect exactly 3 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d"
     And event at index 2 is of type "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" with payload:
       | Key                                      | Expected                                                        | AssertionType |
       | contentStreamIdentifier                  | c75ae6a2-7254-4d42-a31b-a629e264069d                            |               |
@@ -83,7 +83,7 @@ Feature: Create node aggregate with node
       | nodeName                | foo                                                          |                     |
 
     # event 1 is the one from the "Given" part
-    Then I expect exactly 5 events to be published on stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d"
+    Then I expect exactly 5 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d"
     And event at index 2 is of type "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" with payload:
       | Key                                      | Expected                                                     | AssertionType |
       | contentStreamIdentifier                  | c75ae6a2-7254-4d42-a31b-a629e264069d                         |               |
@@ -143,7 +143,7 @@ Feature: Create node aggregate with node
       | nodeName                | foo                                                             |                     |
 
     # event 1 is the one from the "Given" part
-    Then I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d"
+    Then I expect exactly 3 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d"
     And event at index 2 is of type "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" with payload:
       | Key                                      | Expected                                                                         | AssertionType |
       | contentStreamIdentifier                  | c75ae6a2-7254-4d42-a31b-a629e264069d                                             |               |

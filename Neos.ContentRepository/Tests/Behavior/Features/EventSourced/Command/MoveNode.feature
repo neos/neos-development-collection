@@ -22,7 +22,7 @@ Feature: Move node before, into or after node
 
   Scenario: Move node before node without dimensions
     # Node /home
-    Given the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d" with payload:
+    Given the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:35411439-94d1-4bd4-8fac-0646856c6a1f" with payload:
       | Key                           | Value                                  | Type                   |
       | contentStreamIdentifier       | c75ae6a2-7254-4d42-a31b-a629e264069d   |                        |
       | nodeAggregateIdentifier       | 35411439-94d1-4bd4-8fac-0646856c6a1f   |                        |
@@ -34,7 +34,7 @@ Feature: Move node before, into or after node
       | nodeName                      | home                                   |                        |
       | propertyDefaultValuesAndTypes | {}                                     | json                   |
     # Node /contact
-    And the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d" with payload:
+    And the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:2382bc9e-9f7b-11e7-8cff-b7063b4f9dc0" with payload:
       | Key                           | Value                                  | Type                   |
       | contentStreamIdentifier       | c75ae6a2-7254-4d42-a31b-a629e264069d   |                        |
       | nodeAggregateIdentifier       | 2382bc9e-9f7b-11e7-8cff-b7063b4f9dc0   |                        |
@@ -55,7 +55,7 @@ Feature: Move node before, into or after node
       | referenceNodeIdentifier | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81 |      |
 
 
-    Then I expect exactly 5 events to be published on stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d"
+    Then I expect exactly 5 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d"
     And event at index 4 is of type "Neos.ContentRepository:NodeWasMoved" with payload:
       | Key                     | Expected                             | AssertionType |
       | contentStreamIdentifier | c75ae6a2-7254-4d42-a31b-a629e264069d |               |
@@ -65,7 +65,7 @@ Feature: Move node before, into or after node
 
   Scenario: Move node before node with missing reference node
     # Node /home
-    Given the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d" with payload:
+    Given the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:35411439-94d1-4bd4-8fac-0646856c6a1f" with payload:
       | Key                           | Value                                  | Type                   |
       | contentStreamIdentifier       | c75ae6a2-7254-4d42-a31b-a629e264069d   |                        |
       | nodeAggregateIdentifier       | 35411439-94d1-4bd4-8fac-0646856c6a1f   |                        |

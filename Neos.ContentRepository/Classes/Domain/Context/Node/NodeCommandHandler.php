@@ -73,11 +73,15 @@ final class NodeCommandHandler
      */
     public function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command): void
     {
+        $contentStreamStreamName = ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier());
+
         $events = $this->nodeAggregateWithNodeWasCreatedFromCommand($command);
-        $this->eventPublisher->publishMany(
-            ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier()),
-            $events
-        );
+
+        /** @var NodeAggregateWithNodeWasCreated $event */
+        foreach ($events as $event) {
+            // TODO Use a node aggregate aggregate and let that one publish the events
+            $this->eventPublisher->publish($contentStreamStreamName . ':NodeAggregate:' . $event->getNodeAggregateIdentifier(), $event, ExpectedVersion::NO_STREAM);
+        }
     }
 
     /**
@@ -151,6 +155,7 @@ final class NodeCommandHandler
         $dimensionSpacePoint = $command->getDimensionSpacePoint();
         $contentStreamIdentifier = $command->getContentStreamIdentifier();
         $parentNodeIdentifier = $command->getParentNodeIdentifier();
+        $nodeAggregateIdentifier = $command->getNodeAggregateIdentifier();
 
         if ($checkParent) {
             $contentSubgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier,
@@ -171,7 +176,7 @@ final class NodeCommandHandler
 
         $events[] = new NodeAggregateWithNodeWasCreated(
             $contentStreamIdentifier,
-            $command->getNodeAggregateIdentifier(),
+            $nodeAggregateIdentifier,
             $command->getNodeTypeName(),
             $dimensionSpacePoint,
             $visibleDimensionSpacePoints,
@@ -183,7 +188,8 @@ final class NodeCommandHandler
 
         foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeNameStr => $childNodeType) {
             $childNodeName = new NodeName($childNodeNameStr);
-            $childNodeAggregateIdentifier = NodeAggregateIdentifier::forAutoCreatedChildNode($childNodeName, $command->getNodeAggregateIdentifier());
+            $childNodeAggregateIdentifier = NodeAggregateIdentifier::forAutoCreatedChildNode($childNodeName,
+                $nodeAggregateIdentifier);
             $childNodeIdentifier = new NodeIdentifier();
             $childParentNodeIdentifier = $command->getNodeIdentifier();
 
