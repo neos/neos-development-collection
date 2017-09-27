@@ -21,6 +21,8 @@ use Neos\ContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcing\Projection\ProjectorInterface;
@@ -87,20 +89,73 @@ class GraphProjector implements ProjectorInterface
      */
     final public function whenNodeAggregateWithNodeWasCreated(Event\NodeAggregateWithNodeWasCreated $event)
     {
-        $childNodeRelationAnchorPoint = new NodeRelationAnchorPoint();
+        $this->transactional(function () use ($event) {
+            $this->createNodeWithHierarchy(
+                $event->getContentStreamIdentifier(),
+                $event->getNodeAggregateIdentifier(),
+                $event->getNodeTypeName(),
+                $event->getNodeIdentifier(),
+                $event->getParentNodeIdentifier(),
+                $event->getDimensionSpacePoint(),
+                $event->getVisibleDimensionSpacePoints(),
+                $event->getPropertyDefaultValuesAndTypes(),
+                $event->getNodeName()
+            );
+        });
+    }
 
+    /**
+     * @param Event\NodeWasAddedToAggregate $event
+     */
+    final public function whenNodeWasAddedToAggregate(Event\NodeWasAddedToAggregate $event)
+    {
+        $this->transactional(function () use ($event) {
+            $contentStreamIdentifier = $event->getContentStreamIdentifier();
+            $nodeAggregateIdentifier = $event->getNodeAggregateIdentifier();
+            $nodeAggregate = $this->projectionContentGraph->getNodeAggregate($contentStreamIdentifier, $nodeAggregateIdentifier);
+            if ($nodeAggregate === null) {
+                // TODO Log error
+                return;
+            }
+
+            $this->createNodeWithHierarchy(
+                $contentStreamIdentifier,
+                $nodeAggregateIdentifier,
+                $nodeAggregate->nodeTypeName,
+                $event->getNodeIdentifier(),
+                $event->getParentNodeIdentifier(),
+                $event->getDimensionSpacePoint(),
+                $event->getVisibleDimensionSpacePoints(),
+                $event->getPropertyDefaultValuesAndTypes(),
+                $event->getNodeName()
+            );
+        });
+    }
+
+    private function createNodeWithHierarchy(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        NodeTypeName $nodeTypeName,
+        NodeIdentifier $nodeIdentifier,
+        NodeIdentifier $parentNodeIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint,
+        DimensionSpacePointSet $visibleDimensionSpacePoints,
+        array $propertyDefaultValuesAndTypes,
+        NodeName $nodeName
+    ) {
+        $childNodeRelationAnchorPoint = new NodeRelationAnchorPoint();
         $childNode = new Node(
             $childNodeRelationAnchorPoint,
-            $event->getNodeIdentifier(),
-            $event->getNodeAggregateIdentifier(),
-            $event->getDimensionSpacePoint()->jsonSerialize(),
-            $event->getDimensionSpacePoint()->getHash(),
-            array_map(function(ContentRepository\ValueObject\PropertyValue $propertyValue) {
+            $nodeIdentifier,
+            $nodeAggregateIdentifier,
+            $dimensionSpacePoint->jsonSerialize(),
+            $dimensionSpacePoint->getHash(),
+            array_map(function (ContentRepository\ValueObject\PropertyValue $propertyValue) {
                 return $propertyValue->getValue();
-            }, $event->getPropertyDefaultValuesAndTypes()),
-            $event->getNodeTypeName()
+            }, $propertyDefaultValuesAndTypes),
+            $nodeTypeName
         );
-        $parentNode = $this->projectionContentGraph->getNode($event->getParentNodeIdentifier(), $event->getContentStreamIdentifier(), $event->getDimensionSpacePoint());
+        $parentNode = $this->projectionContentGraph->getNode($parentNodeIdentifier, $contentStreamIdentifier, $dimensionSpacePoint);
         if ($parentNode === null) {
             // TODO Log error
             return;
@@ -109,21 +164,19 @@ class GraphProjector implements ProjectorInterface
         #$precedingSiblingNode = $this->getNode(null, $event->getContentStreamIdentifier(), $event->getDimensionSpacePoint());
         $precedingSiblingNode = null;
 
-        $this->transactional(function () use ($childNode, $parentNode, $precedingSiblingNode, $event) {
-            // generate relation anchor point in $node
-            // fetch relation anchor point from parent
-            // connect hierarchy (relation anchor point A, rel A Point B)
-            $childNode->addToDatabase($this->getDatabaseConnection());
-            $this->connectHierarchy(
-                $parentNode->relationAnchorPoint,
-                $childNode->relationAnchorPoint,
-                // TODO: position on insert is still missing
-                null,
-                $event->getNodeName(),
-                $event->getContentStreamIdentifier(),
-                $event->getVisibleDimensionSpacePoints()
-            );
-        });
+        // generate relation anchor point in $node
+        // fetch relation anchor point from parent
+        // connect hierarchy (relation anchor point A, rel A Point B)
+        $childNode->addToDatabase($this->getDatabaseConnection());
+        $this->connectHierarchy(
+            $parentNode->relationAnchorPoint,
+            $childNode->relationAnchorPoint,
+            // TODO: position on insert is still missing
+            null,
+            $nodeName,
+            $contentStreamIdentifier,
+            $visibleDimensionSpacePoints
+        );
     }
 
     /**

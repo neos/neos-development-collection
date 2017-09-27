@@ -4,7 +4,18 @@ Feature: Matching most specific language
   I need a way to retrieve nodes matching an ordered list of languages
 
   Background:
-    Given I have the following nodes:
+    Given I have the following content dimensions:
+      | Identifier | Default | Presets                                                                                                |
+      | language   | mul     | mul=mul_ZZ; en=en_ZZ,mul_ZZ; en_US=en_US,en_ZZ,mul_ZZ; en_UK=en_UK,en_ZZ,mul_ZZ; de=de_DE,de_ZZ,mul_ZZ |
+    And the command "CreateRootWorkspace" is executed with payload:
+      | Key                      | Value                                | Type |
+      | workspaceName            | live                                 |      |
+      | workspaceTitle           | Live                                 |      |
+      | workspaceDescription     | The live workspace                   |      |
+      | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000 |      |
+      | contentStreamIdentifier  | c75ae6a2-7254-4d42-a31b-a629e264069d |      |
+      | rootNodeIdentifier       | 5387cb08-2aaf-44dc-a8a1-483497aa0a03 |      |
+    And I have the following nodes:
       | Path                      | Node Type                           | Properties        | Language |
       | /sites                    | unstructured                        |                   | mul_ZZ   |
       | /sites/content-repository | Neos.ContentRepository.Testing:Page | {"title": "Home"} | mul_ZZ   |

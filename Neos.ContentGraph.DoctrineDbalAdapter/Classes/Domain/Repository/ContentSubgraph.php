@@ -162,7 +162,7 @@ WHERE n.nodeidentifier = :nodeIdentifier',
             throw new \Exception('TODO: Constraints not supported');
         }
         $query .= '
- ORDER BY h.position';
+ ORDER BY h.position DESC';
         $result = [];
         foreach ($this->getDatabaseConnection()->executeQuery(
             $query,
@@ -232,18 +232,22 @@ WHERE n.nodeidentifier = :nodeIdentifier',
      */
     public function findParentNode(ContentRepository\ValueObject\NodeIdentifier $childNodeIdentifier, ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
     {
+        $params = [
+            'childNodeIdentifier' => (string)$childNodeIdentifier,
+            'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
+            'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash()
+        ];
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
-            'SELECT p.*, h.contentstreamidentifier, h.name FROM neos_contentgraph_node p
+            'SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
  INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
+ INNER JOIN neos_contentgraph_hierarchyrelation hp ON hp.childnodeanchor = p.relationanchorpoint
  WHERE c.nodeidentifier = :childNodeIdentifier
  AND h.contentstreamidentifier = :contentStreamIdentifier
- AND h.dimensionspacepointhash = :dimensionSpacePointHash',
-            [
-                'childNodeIdentifier' => $childNodeIdentifier,
-                'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
-                'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash()
-            ]
+ AND hp.contentstreamidentifier = :contentStreamIdentifier
+ AND h.dimensionspacepointhash = :dimensionSpacePointHash
+ AND hp.dimensionspacepointhash = :dimensionSpacePointHash',
+            $params
         )->fetch();
 
         return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow, $context) : null;

@@ -8,6 +8,7 @@ use Neos\ContentRepository\Domain\Context\Importing\Command\FinalizeImportingSes
 use Neos\ContentRepository\Domain\Context\Importing\Command\StartImportingSession;
 use Neos\ContentRepository\Domain\Context\Importing\Event\ImportingSessionWasFinalized;
 use Neos\ContentRepository\Domain\Context\Importing\Event\ImportingSessionWasStarted;
+use Neos\ContentRepository\Domain\Context\Node\Command\AddNodeToAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Command\TranslateNodeInAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateRootNode;
@@ -21,6 +22,7 @@ use Neos\ContentRepository\Domain\Context\Node\Event\NodeAggregateWithNodeWasCre
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeNameWasChanged;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodesInAggregateWereMoved;
+use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasAddedToAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasMoved;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeInAggregateWasTranslated;
 use Neos\ContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
@@ -82,53 +84,6 @@ final class NodeCommandHandler
             // TODO Use a node aggregate aggregate and let that one publish the events
             $this->eventPublisher->publish($contentStreamStreamName . ':NodeAggregate:' . $event->getNodeAggregateIdentifier(), $event, ExpectedVersion::NO_STREAM);
         }
-    }
-
-    /**
-     * @param StartImportingSession $command
-     */
-    public function handleStartImportingSession(StartImportingSession $command): void
-    {
-        $streamName = 'Neos.ContentRepository:Importing:' . $command->getImportingSessionIdentifier();
-        $this->eventPublisher->publish(
-            $streamName,
-            new ImportingSessionWasStarted($command->getImportingSessionIdentifier()),
-            ExpectedVersion::NO_STREAM
-        );
-    }
-
-    /**
-     * @param ImportNode $command
-     */
-    public function handleImportNode(ImportNode $command): void
-    {
-        $this->validateNodeTypeName($command->getNodeTypeName());
-
-        $streamName = 'Neos.ContentRepository:Importing:' . $command->getImportingSessionIdentifier();
-        $this->eventPublisher->publish(
-            $streamName,
-            new NodeWasImported(
-                $command->getImportingSessionIdentifier(),
-                $command->getParentNodeIdentifier(),
-                $command->getNodeIdentifier(),
-                $command->getNodeName(),
-                $command->getNodeTypeName(),
-                $command->getDimensionValues(),
-                $command->getPropertyValues()
-            )
-        );
-    }
-
-    /**
-     * @param FinalizeImportingSession $command
-     */
-    public function handleFinalizeImportingSession(FinalizeImportingSession $command): void
-    {
-        $streamName = 'Neos.ContentRepository:Importing:' . $command->getImportingSessionIdentifier();
-        $this->eventPublisher->publish(
-            $streamName,
-            new ImportingSessionWasFinalized($command->getImportingSessionIdentifier())
-        );
     }
 
     /**
@@ -206,6 +161,141 @@ final class NodeCommandHandler
         }
 
         return $events;
+    }
+
+    /**
+     * @param AddNodeToAggregate $command
+     */
+    public function handleAddNodeToAggregate(AddNodeToAggregate $command): void
+    {
+        $contentStreamStreamName = ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier());
+
+        $events = $this->nodeWasAddedToAggregateFromCommand($command);
+
+        /** @var NodeAggregateWithNodeWasCreated $event */
+        foreach ($events as $event) {
+            // TODO Use a node aggregate aggregate and let that one publish the events
+            $this->eventPublisher->publish($contentStreamStreamName . ':NodeAggregate:' . $event->getNodeAggregateIdentifier(), $event);
+        }
+    }
+
+    private function nodeWasAddedToAggregateFromCommand(AddNodeToAggregate $command, bool $checkParent = true): array
+    {
+        // TODO Get nodeType from node aggregate by nodeAggregateIdentifier
+
+        $propertyDefaultValuesAndTypes = [];
+        /*
+        foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $propertyValue) {
+            $propertyDefaultValuesAndTypes[$propertyName] = new PropertyValue($propertyValue,
+                $nodeType->getPropertyType($propertyName));
+        }
+        */
+
+        $events = [];
+
+        $dimensionSpacePoint = $command->getDimensionSpacePoint();
+        $contentStreamIdentifier = $command->getContentStreamIdentifier();
+        $parentNodeIdentifier = $command->getParentNodeIdentifier();
+        $nodeAggregateIdentifier = $command->getNodeAggregateIdentifier();
+
+        if ($checkParent) {
+            $contentSubgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $dimensionSpacePoint);
+            if ($contentSubgraph === null) {
+                throw new Exception(sprintf('Content subgraph not found for content stream %s, %s',
+                    $contentStreamIdentifier, $dimensionSpacePoint), 1506440320);
+            }
+            $parentNode = $contentSubgraph->findNodeByIdentifier($parentNodeIdentifier);
+            if ($parentNode === null) {
+                throw new NodeNotFoundException(sprintf('Parent node %s not found for content stream %s, %s',
+                    $parentNodeIdentifier, $contentStreamIdentifier, $dimensionSpacePoint),
+                    1506440451, $parentNodeIdentifier);
+            }
+        }
+
+        $visibleDimensionSpacePoints = $this->getVisibleDimensionSpacePoints($dimensionSpacePoint);
+
+        $events[] = new NodeWasAddedToAggregate(
+            $contentStreamIdentifier,
+            $nodeAggregateIdentifier,
+            $dimensionSpacePoint,
+            $visibleDimensionSpacePoints,
+            $command->getNodeIdentifier(),
+            $parentNodeIdentifier,
+            $command->getNodeName(),
+            $propertyDefaultValuesAndTypes
+        );
+
+        // TODO Add auto-created child nodes, too after we can resolve the node type
+
+        /*
+        foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeNameStr => $childNodeType) {
+            $childNodeName = new NodeName($childNodeNameStr);
+            $childNodeAggregateIdentifier = NodeAggregateIdentifier::forAutoCreatedChildNode($childNodeName,
+                $nodeAggregateIdentifier);
+            $childNodeIdentifier = new NodeIdentifier();
+            $childParentNodeIdentifier = $command->getNodeIdentifier();
+
+            $events = array_merge($events,
+                $this->nodeAggregateWithNodeWasCreatedFromCommand(new CreateNodeAggregateWithNode(
+                    $contentStreamIdentifier,
+                    $childNodeAggregateIdentifier,
+                    new NodeTypeName($childNodeType),
+                    $dimensionSpacePoint,
+                    $childNodeIdentifier,
+                    $childParentNodeIdentifier,
+                    $childNodeName
+                ), false));
+        }
+        */
+
+        return $events;
+    }
+
+    /**
+     * @param StartImportingSession $command
+     */
+    public function handleStartImportingSession(StartImportingSession $command): void
+    {
+        $streamName = 'Neos.ContentRepository:Importing:' . $command->getImportingSessionIdentifier();
+        $this->eventPublisher->publish(
+            $streamName,
+            new ImportingSessionWasStarted($command->getImportingSessionIdentifier()),
+            ExpectedVersion::NO_STREAM
+        );
+    }
+
+    /**
+     * @param ImportNode $command
+     */
+    public function handleImportNode(ImportNode $command): void
+    {
+        $this->validateNodeTypeName($command->getNodeTypeName());
+
+        $streamName = 'Neos.ContentRepository:Importing:' . $command->getImportingSessionIdentifier();
+        $this->eventPublisher->publish(
+            $streamName,
+            new NodeWasImported(
+                $command->getImportingSessionIdentifier(),
+                $command->getParentNodeIdentifier(),
+                $command->getNodeIdentifier(),
+                $command->getNodeName(),
+                $command->getNodeTypeName(),
+                $command->getDimensionValues(),
+                $command->getPropertyValues()
+            )
+        );
+    }
+
+    /**
+     * @param FinalizeImportingSession $command
+     */
+    public function handleFinalizeImportingSession(FinalizeImportingSession $command): void
+    {
+        $streamName = 'Neos.ContentRepository:Importing:' . $command->getImportingSessionIdentifier();
+        $this->eventPublisher->publish(
+            $streamName,
+            new ImportingSessionWasFinalized($command->getImportingSessionIdentifier())
+        );
     }
 
     /**

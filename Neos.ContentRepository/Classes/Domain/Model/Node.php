@@ -138,6 +138,12 @@ class Node implements NodeInterface, CacheAwareInterface
     protected $nodeTypeConstraintService;
 
     /**
+     * @Flow\Inject
+     * @var Domain\Projection\Content\ContentGraphInterface
+     */
+    protected $contentGraph;
+
+    /**
      * @param NodeData $nodeData
      * @param Context $context
      * @Flow\Autowiring(false)
@@ -248,11 +254,11 @@ class Node implements NodeInterface, CacheAwareInterface
     public function getPath()
     {
         // FIXME CR rewrite: Implement more efficient implementation to get path in subgraph (loop with stored routine?)
-        $path = $this->name;
+        $path = (string)$this->name;
         /** @var Node $currentNode */
         $currentNode = $this;
         while ($currentNode = $currentNode->getParent()) {
-            $path = $currentNode->name . '/' . $path;
+            $path = (string)$currentNode->name . '/' . $path;
         }
         return '/' . $path;
     }
@@ -874,31 +880,41 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function createNode($name, NodeType $nodeType = null, $identifier = null)
     {
-        $nodeIdentifier = new NodeIdentifier();
-        $dimensionSpacePoint = new DimensionSpacePoint($this->context->getTargetDimensions());
-
         $nodeAggregateIdentifier = new NodeAggregateIdentifier($identifier);
-
-        // TODO Check if a node aggregate already exists and then just add another node to the aggregate! (the old API allowed to specify the same identifier multiple times for different "node variants")
-
         $nodeTypeName = new NodeTypeName(($nodeType ? $nodeType->getName() : 'unstructured'));
-
+        $nodeIdentifier = new NodeIdentifier();
         $parentNodeIdentifier = $this->identifier;
+        $dimensionSpacePoint = new DimensionSpacePoint($this->context->getTargetDimensions());
         $nodeName = new NodeName($name);
-
-        $command = new Command\CreateNodeAggregateWithNode(
-            $this->context->getContentStreamIdentifier(),
-            $nodeAggregateIdentifier,
-            $nodeTypeName,
-            $dimensionSpacePoint,
-            $nodeIdentifier,
-            $parentNodeIdentifier,
-            $nodeName
-        );
 
         $this->emitBeforeNodeCreate($this, $name, $nodeType, $identifier);
 
-        $this->nodeCommandHandler->handleCreateNodeAggregateWithNode($command);
+        // If an identifier is given: Check if a node aggregate already exists and then just add another node to the aggregate.
+        // (the legacy API allows to specify the same identifier multiple times for different "node variants")
+            // TODO Add a contentGraph->hasNodeAggregateInContentStream method (or getNodeAggregateInContentStream)
+        if ($identifier !== null && !empty($this->contentGraph->findNodesByNodeAggregateIdentifier($this->contentStreamIdentifier, $nodeAggregateIdentifier))) {
+            $command = new Command\AddNodeToAggregate(
+                $this->contentStreamIdentifier,
+                $nodeAggregateIdentifier,
+                $dimensionSpacePoint,
+                $nodeIdentifier,
+                $parentNodeIdentifier,
+                $nodeName
+            );
+            $this->nodeCommandHandler->handleAddNodeToAggregate($command);
+        } else {
+            $command = new Command\CreateNodeAggregateWithNode(
+                $this->context->getContentStreamIdentifier(),
+                $nodeAggregateIdentifier,
+                $nodeTypeName,
+                $dimensionSpacePoint,
+                $nodeIdentifier,
+                $parentNodeIdentifier,
+                $nodeName
+            );
+
+            $this->nodeCommandHandler->handleCreateNodeAggregateWithNode($command);
+        }
 
         $newNode = $this->context->getSubgraph()->findNodeByIdentifier($nodeIdentifier, $this->context);
         if ($newNode === null) {
