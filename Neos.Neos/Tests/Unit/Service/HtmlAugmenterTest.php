@@ -220,6 +220,14 @@ class HtmlAugmenterTest extends UnitTestCase
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
                 'expectedResult' => '<p data-label="Cost $0.00">Simple HTML with unique root element</p>',
+            ),
+            // Real world example
+            array(
+                'html' => '<p><p>Eine m&ouml;g&shy;lichst umfassende&nbsp;<strong>Heizungswartung</strong>&nbsp;ge&shy;h&ouml;rt deshalb auch zu den Ma&szlig;nahmen, deren Umsetzung die Europ&auml;ische Union ihren Mitgliedsstaaten vorgegeben hat. Die regelm&auml;&szlig;ige<strong>Heizungswartung</strong>&nbsp;durch qualifiziertes Personal gew&auml;hr&shy;leistet &bdquo;eine optimale Leistung aus &ouml;kologischer, sicherheits&shy;tech&shy;nischer und energetischer Sicht&ldquo;, hei&szlig;t es in der EU-Richt&shy;linie 2010/31/EU, die eine europaweite Verbesserung der Ge&shy;samt&shy;energieeffizienz von Geb&auml;uden zum Ziel hat.</p></p>',
+                'attributes' => array('class' => 'neos-inline-editable'),
+                'fallbackTagName' => 'span',
+                'exclusiveAttributes' => null,
+                'expectedResult' => '<p class="neos-inline-editable"><p>Eine m&ouml;g&shy;lichst umfassende&nbsp;<strong>Heizungswartung</strong>&nbsp;ge&shy;h&ouml;rt deshalb auch zu den Ma&szlig;nahmen, deren Umsetzung die Europ&auml;ische Union ihren Mitgliedsstaaten vorgegeben hat. Die regelm&auml;&szlig;ige<strong>Heizungswartung</strong>&nbsp;durch qualifiziertes Personal gew&auml;hr&shy;leistet &bdquo;eine optimale Leistung aus &ouml;kologischer, sicherheits&shy;tech&shy;nischer und energetischer Sicht&ldquo;, hei&szlig;t es in der EU-Richt&shy;linie 2010/31/EU, die eine europaweite Verbesserung der Ge&shy;samt&shy;energieeffizienz von Geb&auml;uden zum Ziel hat.</p></p>',
             )
         );
     }
