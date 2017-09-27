@@ -414,6 +414,7 @@ final class NodeCommandHandler
             $dimensionSpacePointSet
         );
 
+        // TODO Add a recursive flag and translate _all_ child nodes in this case
         foreach ($sourceNode->getNodeType()->getAutoCreatedChildNodes() as $childNodeNameStr => $childNodeType) {
             /** @var Node $childNode */
             $childNode = $sourceContentSubgraph->findChildNodeConnectedThroughEdgeName($sourceNodeIdentifier, new NodeName($childNodeNameStr));
@@ -432,7 +433,6 @@ final class NodeCommandHandler
                     $dimensionSpacePoint,
                     $childDestinationParentNodeIdentifier
                 )));
-
         }
 
         return $events;
