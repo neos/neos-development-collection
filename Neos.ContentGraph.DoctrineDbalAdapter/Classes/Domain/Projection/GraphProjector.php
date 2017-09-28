@@ -23,6 +23,7 @@ use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifierAndDimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcing\Projection\ProjectorInterface;
@@ -124,6 +125,12 @@ class GraphProjector implements ProjectorInterface
                 $event->getPropertyDefaultValuesAndTypes(),
                 $event->getNodeName()
             );
+
+            $this->reconnectNodeVisibilities(
+                $contentStreamIdentifier,
+                $nodeAggregateIdentifier,
+                $event->getNodeVisibilityChanges()
+            );
         });
     }
 
@@ -175,6 +182,64 @@ class GraphProjector implements ProjectorInterface
     }
 
     /**
+     * Reconnect nodes in an aggregate based on the given node visibility changes
+     *
+     * Must be called in a transaction.
+     *
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param NodeIdentifierAndDimensionSpacePointSet[] $nodeVisibilityChanges
+     */
+    private function reconnectNodeVisibilities(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        array $nodeVisibilityChanges
+    ) {
+
+        // Iterate over all nodes in $nodeVisibilityChanges
+        foreach ($nodeVisibilityChanges as $nodeIdentifierAndDimensionSpacePointSet) {
+            $node = $this->projectionContentGraph->getNodeByNodeIdentifierAndContentStream($nodeIdentifierAndDimensionSpacePointSet->getNodeIdentifier(), $contentStreamIdentifier);
+
+            $originRelation = null;
+            $relations = $this->projectionContentGraph->findInboundHierarchyRelationsForNode($node->relationAnchorPoint,
+                $contentStreamIdentifier);
+            // Remove all other connections
+            foreach ($relations as $relation) {
+                if ($relation->dimensionSpacePointHash !== $node->dimensionSpacePointHash) {
+                    // TODO It would be more efficient to keep relations that should be added
+                    $relation->removeFromDatabase($this->getDatabaseConnection());
+                } else {
+                    // Get connection for origin dimension space point
+                    $originRelation = $relation;
+                }
+            }
+
+            if ($originRelation === null) {
+                // TODO Log error
+                break;
+            }
+
+            // Create connection for each point in $nodeVisibilityChanges except the origin
+            $pointsToAdd = $nodeIdentifierAndDimensionSpacePointSet->getDimensionSpacePointSet()->getPoints();
+            foreach ($pointsToAdd as $point) {
+                if ($point->getHash() !== $node->dimensionSpacePointHash) {
+                    $relation = new HierarchyRelation(
+                        $originRelation->parentNodeAnchor,
+                        $originRelation->childNodeAnchor,
+                        $originRelation->name,
+                        $contentStreamIdentifier,
+                        $point,
+                        $point->getHash(),
+                        // TODO Check if it's okay to copy this from the origin relation?
+                        $originRelation->position
+                    );
+                    $relation->addToDatabase($this->getDatabaseConnection());
+                }
+            }
+        }
+    }
+
+    /**
      * @param string $startNodesIdentifierInGraph
      * @param string $endNodesIdentifierInGraph
      * @param string $relationshipName
@@ -220,7 +285,7 @@ class GraphProjector implements ProjectorInterface
                 $childNodeAnchorPoint,
                 $relationName,
                 $contentStreamIdentifier,
-                $dimensionSpacePoint->jsonSerialize(),
+                $dimensionSpacePoint,
                 $dimensionSpacePoint->getHash(),
                 $position
             );
@@ -490,4 +555,5 @@ class GraphProjector implements ProjectorInterface
     {
         return $this->client->getConnection();
     }
+
 }

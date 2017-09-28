@@ -14,6 +14,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\Flow\Annotations as Flow;
 
@@ -43,7 +44,7 @@ class HierarchyRelation
     public $contentStreamIdentifier;
 
     /**
-     * @var array
+     * @var DimensionSpacePoint
      */
     public $dimensionSpacePoint;
 
@@ -62,7 +63,7 @@ class HierarchyRelation
      * @param NodeRelationAnchorPoint $childNodeAnchor
      * @param NodeName $name
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param array $dimensionSpacePoint
+     * @param DimensionSpacePoint $dimensionSpacePoint
      * @param string $dimensionSpacePointHash
      * @param int $position
      */
@@ -71,7 +72,7 @@ class HierarchyRelation
         NodeRelationAnchorPoint $childNodeAnchor,
         ?NodeName $name,
         ContentStreamIdentifier $contentStreamIdentifier,
-        array $dimensionSpacePoint,
+        DimensionSpacePoint $dimensionSpacePoint,
         string $dimensionSpacePointHash,
         int $position
     ) {
@@ -101,6 +102,14 @@ class HierarchyRelation
     }
 
     /**
+     * @param Connection $databaseConnection
+     */
+    public function removeFromDatabase(Connection $databaseConnection): void
+    {
+        $databaseConnection->delete('neos_contentgraph_hierarchyrelation', $this->getDatabaseIdentifier());
+    }
+
+    /**
      * @return array
      */
     public function getDatabaseIdentifier(): array
@@ -112,4 +121,5 @@ class HierarchyRelation
             'dimensionspacepointhash' => $this->dimensionSpacePointHash
         ];
     }
+
 }

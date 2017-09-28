@@ -10,6 +10,7 @@ use Neos\EventSourcing\Event\EventInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifierAndDimensionSpacePointSet;
 
 /**
  * Node was added to node aggregate event
@@ -69,6 +70,11 @@ final class NodeWasAddedToAggregate implements EventInterface
     private $propertyDefaultValuesAndTypes;
 
     /**
+     * @var array<NodeIdentifierAndDimensionSpacePointSet>
+     */
+    private $nodeVisibilityChanges;
+
+    /**
      * NodeWasAddedToAggregate constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
@@ -80,6 +86,7 @@ final class NodeWasAddedToAggregate implements EventInterface
      * @param NodeIdentifier $parentNodeIdentifier
      * @param NodeName $nodeName
      * @param array $propertyDefaultValuesAndTypes
+     * @param array<NodeIdentifierAndDimensionSpacePointSet> $nodeVisibilityChanges
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -90,7 +97,8 @@ final class NodeWasAddedToAggregate implements EventInterface
         NodeIdentifier $nodeIdentifier,
         NodeIdentifier $parentNodeIdentifier,
         NodeName $nodeName,
-        array $propertyDefaultValuesAndTypes
+        array $propertyDefaultValuesAndTypes,
+        array $nodeVisibilityChanges
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
@@ -101,6 +109,7 @@ final class NodeWasAddedToAggregate implements EventInterface
         $this->parentNodeIdentifier = $parentNodeIdentifier;
         $this->nodeName = $nodeName;
         $this->propertyDefaultValuesAndTypes = $propertyDefaultValuesAndTypes;
+        $this->nodeVisibilityChanges = $nodeVisibilityChanges;
     }
 
     /**
@@ -173,6 +182,14 @@ final class NodeWasAddedToAggregate implements EventInterface
     public function getPropertyDefaultValuesAndTypes(): array
     {
         return $this->propertyDefaultValuesAndTypes;
+    }
+
+    /**
+     * @return array<NodeIdentifierAndDimensionSpacePointSet>
+     */
+    public function getNodeVisibilityChanges(): array
+    {
+        return $this->nodeVisibilityChanges;
     }
 
 }

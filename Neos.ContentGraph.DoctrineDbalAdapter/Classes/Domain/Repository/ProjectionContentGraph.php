@@ -21,6 +21,7 @@ use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -220,7 +221,7 @@ class ProjectionContentGraph
      * @param NodeRelationAnchorPoint $parentAnchorPoint
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
-     * @return array|HierarchyRelation[]
+     * @return HierarchyRelation[]
      */
     public function getOutboundHierarchyRelationsForNodeAndSubgraph(NodeRelationAnchorPoint $parentAnchorPoint, ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint): array
     {
@@ -242,26 +243,21 @@ class ProjectionContentGraph
         return $relations;
     }
 
-
     /**
-     * @param string $childNodesIdentifierInGraph
-     * @param array $subgraphIdentityHashs
-     * @return array|HierarchyRelation[]
+     * @param NodeRelationAnchorPoint $childAnchorPoint
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @return HierarchyRelation[]
      */
-    public function findInboundHierarchyRelationsForNodeAndSubgraphs(string $childNodesIdentifierInGraph, array $subgraphIdentityHashs): array
+    public function findInboundHierarchyRelationsForNode(NodeRelationAnchorPoint $childAnchorPoint, ContentStreamIdentifier $contentStreamIdentifier): array
     {
-        // TODO needs to be fixed
         $relations = [];
         foreach ($this->getDatabaseConnection()->executeQuery(
             'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
- WHERE childnodesidentifieringraph = :childNodesIdentifierInGraph
- AND subgraphIdentityHash IN (:subgraphIdentityHashs)',
+                        WHERE h.childnodeanchor = :childAnchorPoint
+                        AND h.contentstreamidentifier = :contentStreamIdentifier',
             [
-                'childNodesIdentifierInGraph' => $childNodesIdentifierInGraph,
-                'subgraphIdentityHashs' => $subgraphIdentityHashs
-            ],
-            [
-                'subgraphIdentityHashs' => Connection::PARAM_STR_ARRAY
+                'childAnchorPoint' => (string)$childAnchorPoint,
+                'contentStreamIdentifier' => (string)$contentStreamIdentifier
             ]
         )->fetchAll() as $relationData) {
             $relations[] = $this->mapRawDataToHierarchyRelation($relationData);
@@ -303,12 +299,14 @@ class ProjectionContentGraph
      */
     protected function mapRawDataToHierarchyRelation(array $rawData): HierarchyRelation
     {
+        $dimensionSpacePointData = json_decode($rawData['dimensionspacepoint'], true);
+        $dimensionSpacePoint = new DimensionSpacePoint($dimensionSpacePointData['coordinates']);
         return new HierarchyRelation(
-            $rawData['parentnodeanchor'],
-            $rawData['childnodeanchor'],
-            $rawData['name'],
-            $rawData['contentstreamidentifier'],
-            json_decode($rawData['dimensionspacepoint'], true),
+            new NodeRelationAnchorPoint($rawData['parentnodeanchor']),
+            new NodeRelationAnchorPoint($rawData['childnodeanchor']),
+            $rawData['name'] ? new NodeName($rawData['name']) : null,
+            new ContentStreamIdentifier($rawData['contentstreamidentifier']),
+            $dimensionSpacePoint,
             $rawData['dimensionspacepointhash'],
             $rawData['position']
         );
