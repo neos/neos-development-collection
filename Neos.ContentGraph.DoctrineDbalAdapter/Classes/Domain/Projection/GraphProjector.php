@@ -126,11 +126,13 @@ class GraphProjector implements ProjectorInterface
                 $event->getNodeName()
             );
 
-            $this->reconnectNodeVisibilities(
+            $this->reconnectInboundHierarchyRelations(
                 $contentStreamIdentifier,
                 $nodeAggregateIdentifier,
                 $event->getNodeVisibilityChanges()
             );
+
+            // TODO Also outbound connections need to be reconnected!
         });
     }
 
@@ -193,7 +195,7 @@ class GraphProjector implements ProjectorInterface
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param NodeIdentifierAndDimensionSpacePointSet[] $nodeVisibilityChanges
      */
-    private function reconnectNodeVisibilities(
+    private function reconnectInboundHierarchyRelations(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         array $nodeVisibilityChanges

@@ -177,6 +177,26 @@ Feature: Matching most specific language
       | /sites/content-repository/features/navigation-elements/first-item | {"title": "Subpage #1"}       | en_ZZ    |
 
   @fixtures
+  Scenario: Multiple nodes on path and fallback to most specific language in list of languages (in other order)
+    Given I have the following nodes:
+      | Identifier                           | Path                                                              | Node Type                           | Properties                            | Language |
+      | a3474e1d-dd60-4a84-82b1-18d2f21891a3 | /sites/content-repository/features                                | Neos.ContentRepository.Testing:Page | {"title": "Features"}                 | mul_ZZ   |
+      | 452374b3-3580-2af3-71bd-f9932faea84d | /sites/content-repository/features/multiple-columns               | Neos.ContentRepository.Testing:Page | {"title": "Multiple columns"}         | en_ZZ    |
+      | a66ec7db-3459-b67b-7bcb-16e2508a89f0 | /sites/content-repository/features/navigation-elements            | Neos.ContentRepository.Testing:Page | {"title": "International navigation"} | en_ZZ    |
+      | 7c3e4946-d216-14d0-92c5-d7fa75163863 | /sites/content-repository/features/navigation-elements/first-item | Neos.ContentRepository.Testing:Page | {"title": "Subpage #1"}               | en_ZZ    |
+      | a66ec7db-3459-b67b-7bcb-16e2508a89f0 | /sites/content-repository/features/navigation-elements            | Neos.ContentRepository.Testing:Page | {"title": "Navigation items"}         | en_UK    |
+      | a66ec7db-3459-b67b-7bcb-16e2508a89f0 | /sites/content-repository/features/navigation-elements            | Neos.ContentRepository.Testing:Page | {"title": "Navigation elements"}      | en_US    |
+    When I get the nodes on path "/sites/content-repository/features" to "/sites/content-repository/features/navigation-elements/first-item" with the following context:
+      | Language             |
+      | en_UK, en_ZZ, mul_ZZ |
+    Then I should have 3 nodes
+    And I should have the following nodes:
+      | Path                                                              | Properties                    | Language |
+      | /sites/content-repository/features                                | {"title": "Features"}         | mul_ZZ   |
+      | /sites/content-repository/features/navigation-elements            | {"title": "Navigation items"} | en_UK    |
+      | /sites/content-repository/features/navigation-elements/first-item | {"title": "Subpage #1"}       | en_ZZ    |
+
+  @fixtures
   Scenario: One document node and specific languages by identifier
     Given I have the following nodes:
       | Identifier                           | Path                              | Node Type                           | Properties              | Language |
