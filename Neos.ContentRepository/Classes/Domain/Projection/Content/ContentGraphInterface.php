@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Domain\Projection\Content;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
@@ -50,4 +51,11 @@ interface ContentGraphInterface
      * @return array<NodeInterface>
      */
     public function findNodesByNodeAggregateIdentifier(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): array;
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @return NodeAggregate|null
+     */
+    public function findNodeAggregateByIdentifier(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodeAggregate;
 }

@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Domain\Context\DimensionSpace\Repository;
 
 use Neos\ContentRepository\Domain\Context\Dimension;
 use Neos\ContentRepository\Domain;
+use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 
 /**
  * The content subgraph domain model
@@ -25,7 +26,7 @@ class ContentSubgraph
     protected $dimensionValues = [];
 
     /**
-     * @var Domain\ValueObject\DimensionSpacePoint
+     * @var DimensionSpacePoint
      */
     protected $dimensionSpacePoint;
 
@@ -55,21 +56,21 @@ class ContentSubgraph
             $coordinates[$dimensionName] = $dimensionValue->getValue();
             $this->weight[$dimensionName] = $dimensionValue->getDepth();
         }
-        $this->dimensionSpacePoint = new Domain\ValueObject\DimensionSpacePoint($coordinates);
+        $this->dimensionSpacePoint = new DimensionSpacePoint($coordinates);
     }
 
     /**
-     * @return Domain\ValueObject\DimensionSpacePoint
+     * @return DimensionSpacePoint
      */
-    public function getIdentifier(): Domain\ValueObject\DimensionSpacePoint
+    public function getIdentifier(): DimensionSpacePoint
     {
         return $this->getDimensionSpacePoint();
     }
 
     /**
-     * @return Domain\ValueObject\DimensionSpacePoint
+     * @return DimensionSpacePoint
      */
-    public function getDimensionSpacePoint(): Domain\ValueObject\DimensionSpacePoint
+    public function getDimensionSpacePoint(): DimensionSpacePoint
     {
         return $this->dimensionSpacePoint;
     }
@@ -152,6 +153,14 @@ class ContentSubgraph
         }
 
         return $specializations;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasSpecialization(ContentSubgraph $specialization): bool
+    {
+        return isset($this->specializationEdges[$specialization->getIdentityHash()]);
     }
 
     /**

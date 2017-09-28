@@ -112,16 +112,11 @@ class GraphProjector implements ProjectorInterface
         $this->transactional(function () use ($event) {
             $contentStreamIdentifier = $event->getContentStreamIdentifier();
             $nodeAggregateIdentifier = $event->getNodeAggregateIdentifier();
-            $nodeAggregate = $this->projectionContentGraph->getNodeAggregate($contentStreamIdentifier, $nodeAggregateIdentifier);
-            if ($nodeAggregate === null) {
-                // TODO Log error
-                return;
-            }
 
             $this->createNodeWithHierarchy(
                 $contentStreamIdentifier,
                 $nodeAggregateIdentifier,
-                $nodeAggregate->nodeTypeName,
+                $event->getNodeTypeName(),
                 $event->getNodeIdentifier(),
                 $event->getParentNodeIdentifier(),
                 $event->getDimensionSpacePoint(),

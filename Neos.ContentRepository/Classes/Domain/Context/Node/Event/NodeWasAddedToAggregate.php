@@ -28,6 +28,11 @@ final class NodeWasAddedToAggregate implements EventInterface
     private $nodeAggregateIdentifier;
 
     /**
+     * @var NodeTypeName
+     */
+    private $nodeTypeName;
+
+    /**
      * Location of the node in the dimension space
      *
      * @var DimensionSpacePoint
@@ -68,6 +73,7 @@ final class NodeWasAddedToAggregate implements EventInterface
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param NodeTypeName $nodeTypeName
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param DimensionSpacePointSet $visibleDimensionSpacePoints
      * @param NodeIdentifier $nodeIdentifier
@@ -78,6 +84,7 @@ final class NodeWasAddedToAggregate implements EventInterface
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
+        NodeTypeName $nodeTypeName,
         DimensionSpacePoint $dimensionSpacePoint,
         DimensionSpacePointSet $visibleDimensionSpacePoints,
         NodeIdentifier $nodeIdentifier,
@@ -87,6 +94,7 @@ final class NodeWasAddedToAggregate implements EventInterface
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
+        $this->nodeTypeName= $nodeTypeName;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
         $this->visibleDimensionSpacePoints = $visibleDimensionSpacePoints;
         $this->nodeIdentifier = $nodeIdentifier;
@@ -109,6 +117,14 @@ final class NodeWasAddedToAggregate implements EventInterface
     public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
         return $this->nodeAggregateIdentifier;
+    }
+
+    /**
+     * @return NodeTypeName
+     */
+    public function getNodeTypeName(): NodeTypeName
+    {
+        return $this->nodeTypeName;
     }
 
     /**

@@ -354,7 +354,8 @@ class ProjectionContentGraph
             'SELECT n.nodetypename, n.nodeaggregateidentifier FROM neos_contentgraph_node n
                         INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
                         WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
-                        AND h.contentstreamidentifier = :contentStreamIdentifier',
+                        AND h.contentstreamidentifier = :contentStreamIdentifier
+                        LIMIT 1',
             [
                 'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
                 'contentStreamIdentifier' => (string)$contentStreamIdentifier

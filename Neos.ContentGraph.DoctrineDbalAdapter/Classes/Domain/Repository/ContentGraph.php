@@ -11,14 +11,17 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Service\DbalClient;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use Neos\ContentRepository\Domain\Projection\Content\NodeAggregate;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -130,4 +133,37 @@ final class ContentGraph implements ContentGraphInterface
         }
         return $result;
     }
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @return NodeAggregate|null
+     */
+    public function findNodeAggregateByIdentifier(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier
+    ): ?NodeAggregate
+    {
+        $connection = $this->client->getConnection();
+
+        $query = 'SELECT n.nodetypename, n.nodeaggregateidentifier FROM neos_contentgraph_node n
+                      INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                      WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
+                      AND h.contentstreamidentifier = :contentStreamIdentifier
+                      LIMIT 1';
+        $parameters = [
+            'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
+            'contentStreamIdentifier' => (string)$contentStreamIdentifier
+        ];
+
+        $nodeAggregateRow = $connection->executeQuery($query, $parameters)->fetch();
+        if ($nodeAggregateRow) {
+            return new NodeAggregate(
+                new NodeAggregateIdentifier($nodeAggregateRow['nodeaggregateidentifier']),
+                new NodeTypeName($nodeAggregateRow['nodetypename'])
+            );
+        }
+        return null;
+    }
+
 }

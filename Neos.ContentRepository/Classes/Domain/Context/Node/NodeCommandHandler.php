@@ -181,22 +181,28 @@ final class NodeCommandHandler
 
     private function nodeWasAddedToAggregateFromCommand(AddNodeToAggregate $command, bool $checkParent = true): array
     {
-        // TODO Get nodeType from node aggregate by nodeAggregateIdentifier
-
-        $propertyDefaultValuesAndTypes = [];
-        /*
-        foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $propertyValue) {
-            $propertyDefaultValuesAndTypes[$propertyName] = new PropertyValue($propertyValue,
-                $nodeType->getPropertyType($propertyName));
-        }
-        */
-
-        $events = [];
-
         $dimensionSpacePoint = $command->getDimensionSpacePoint();
         $contentStreamIdentifier = $command->getContentStreamIdentifier();
         $parentNodeIdentifier = $command->getParentNodeIdentifier();
         $nodeAggregateIdentifier = $command->getNodeAggregateIdentifier();
+
+        $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier);
+        if ($nodeAggregate === null) {
+            throw new Exception(sprintf('Node aggregate with identifier %s not found in %s',
+                $nodeAggregateIdentifier, $contentStreamIdentifier), 1506587828);
+        }
+
+        $propertyDefaultValuesAndTypes = [];
+
+        $nodeTypeName = $nodeAggregate->getNodeTypeName();
+        $nodeType = $this->getNodeType($nodeTypeName);
+
+        foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $propertyValue) {
+            $propertyDefaultValuesAndTypes[$propertyName] = new PropertyValue($propertyValue,
+                $nodeType->getPropertyType($propertyName));
+        }
+
+        $events = [];
 
         if ($checkParent) {
             $contentSubgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $dimensionSpacePoint);
@@ -217,6 +223,7 @@ final class NodeCommandHandler
         $events[] = new NodeWasAddedToAggregate(
             $contentStreamIdentifier,
             $nodeAggregateIdentifier,
+            $nodeTypeName,
             $dimensionSpacePoint,
             $visibleDimensionSpacePoints,
             $command->getNodeIdentifier(),
@@ -225,28 +232,23 @@ final class NodeCommandHandler
             $propertyDefaultValuesAndTypes
         );
 
-        // TODO Add auto-created child nodes, too after we can resolve the node type
-
-        /*
         foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeNameStr => $childNodeType) {
             $childNodeName = new NodeName($childNodeNameStr);
-            $childNodeAggregateIdentifier = NodeAggregateIdentifier::forAutoCreatedChildNode($childNodeName,
-                $nodeAggregateIdentifier);
+            // TODO Check if it is okay to "guess" the existing node aggregate identifier, should already be handled by a soft constraint check above
+            $childNodeAggregateIdentifier = NodeAggregateIdentifier::forAutoCreatedChildNode($childNodeName, $nodeAggregateIdentifier);
             $childNodeIdentifier = new NodeIdentifier();
             $childParentNodeIdentifier = $command->getNodeIdentifier();
 
             $events = array_merge($events,
-                $this->nodeAggregateWithNodeWasCreatedFromCommand(new CreateNodeAggregateWithNode(
+                $this->nodeWasAddedToAggregateFromCommand(new AddNodeToAggregate(
                     $contentStreamIdentifier,
                     $childNodeAggregateIdentifier,
-                    new NodeTypeName($childNodeType),
                     $dimensionSpacePoint,
                     $childNodeIdentifier,
                     $childParentNodeIdentifier,
                     $childNodeName
                 ), false));
         }
-        */
 
         return $events;
     }
