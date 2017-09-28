@@ -343,6 +343,38 @@ class Context
     }
 
     /**
+     * Finds all nodes lying on the path specified by (and including) the given
+     * starting point and end point.
+     *
+     * TODO Find a more efficient implementation in the graph!
+     *
+     * @param mixed $startingPoint Either an absolute path or an actual node specifying the starting point, for example /sites/mysitecom
+     * @param mixed $endPoint Either an absolute path or an actual node specifying the end point, for example /sites/mysitecom/homepage/subpage
+     * @return array<\Neos\ContentRepository\Domain\Model\NodeInterface> The nodes found between and including the given paths or an empty array of none were found
+     * @api
+     */
+    public function getNodesOnPath($startingPoint, $endPoint)
+    {
+        $startingPointPath = ($startingPoint instanceof NodeInterface) ? $startingPoint->getPath() : $startingPoint;
+        $endPointPath = ($endPoint instanceof NodeInterface) ? $endPoint->getPath() : $endPoint;
+
+        $nodes = [];
+        $currentNode = $this->getNode($endPointPath);
+        if ($currentNode !== null) {
+            $nodes[] = $currentNode;
+            while ($currentNode = $currentNode->getParent()) {
+                $nodes[] = $currentNode;
+                if ($startingPointPath === $currentNode->getPath()) {
+                    break;
+                }
+            }
+            $nodes = array_reverse($nodes);
+        }
+
+        return $nodes;
+    }
+
+    /**
      * Adopts a node from a (possibly) different context to this context
      *
      * Checks if a node variant matching the exact dimensions already exists for this context and

@@ -157,6 +157,9 @@ class GraphProjector implements ProjectorInterface
             }, $propertyDefaultValuesAndTypes),
             $nodeTypeName
         );
+
+        // TODO It is not sufficient to use the same parent node for all edges! See failing scenario MatchingMostSpecificLocale.feature:160
+
         $parentNode = $this->projectionContentGraph->getNode($parentNodeIdentifier, $contentStreamIdentifier, $dimensionSpacePoint);
         if ($parentNode === null) {
             // TODO Log error
@@ -201,8 +204,7 @@ class GraphProjector implements ProjectorInterface
             $node = $this->projectionContentGraph->getNodeByNodeIdentifierAndContentStream($nodeIdentifierAndDimensionSpacePointSet->getNodeIdentifier(), $contentStreamIdentifier);
 
             $originRelation = null;
-            $relations = $this->projectionContentGraph->findInboundHierarchyRelationsForNode($node->relationAnchorPoint,
-                $contentStreamIdentifier);
+            $relations = $this->projectionContentGraph->findInboundHierarchyRelationsForNode($node->relationAnchorPoint, $contentStreamIdentifier);
             // Remove all other connections
             foreach ($relations as $relation) {
                 if ($relation->dimensionSpacePointHash !== $node->dimensionSpacePointHash) {
