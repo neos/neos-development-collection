@@ -216,30 +216,57 @@ class InterDimensionalFallbackGraph
     /**
      * @param Domain\ValueObject\DimensionSpacePoint $origin
      * @param bool $includeOrigin
+     * @param Domain\ValueObject\DimensionSpacePointSet|null $excludedSet
      * @return Domain\ValueObject\DimensionSpacePointSet
      * @throws DimensionSpacePointNotFound
      * @throws DimensionSpace\Exception\FallbackInitializationException
      */
-    public function getSpecializationSet(Domain\ValueObject\DimensionSpacePoint $origin, bool $includeOrigin = true): Domain\ValueObject\DimensionSpacePointSet
-    {
+    public function getSpecializationSet(
+        Domain\ValueObject\DimensionSpacePoint $origin,
+        bool $includeOrigin = true,
+        Domain\ValueObject\DimensionSpacePointSet $excludedSet = null
+    ): Domain\ValueObject\DimensionSpacePointSet {
         if (!$this->allowedDimensionSubspace->contains($origin)) {
             throw new DimensionSpacePointNotFound(sprintf('%s was not found in the allowed dimension subspace', $origin), 1505929456);
         } else {
             $subgraph = $this->getSubgraphByDimensionSpacePointHash($origin->getHash());
             if (!$subgraph) {
-                throw new DimensionSpace\Exception\FallbackInitializationException(sprintf('Fallback initialization failed; %s was found in the allowed dimension subspace but was not initialized',
-                    $origin), 1506093011);
+                throw new DimensionSpace\Exception\FallbackInitializationException(
+                    sprintf('Fallback initialization failed; %s was found in the allowed dimension subspace but was not initialized', $origin),
+                    1506093011
+                );
             }
             $specializations = [];
             if ($includeOrigin) {
-                $specializations[] = $origin;
+                $specializations[$origin->getHash()] = $origin;
+            }
+            if ($excludedSet) {
+                $excludedSet = $this->completeSet($excludedSet);
             }
             foreach ($subgraph->getSpecializations() as $specialization) {
-                $specializations[] = $specialization->getDimensionSpacePoint();
+                if (!$excludedSet || !$excludedSet->contains($specialization->getDimensionSpacePoint())) {
+                    $specializations[$specialization->getDimensionSpacePoint()->getHash()] = $specialization->getDimensionSpacePoint();
+                }
             }
 
             return new Domain\ValueObject\DimensionSpacePointSet($specializations);
         }
+    }
+
+    /**
+     * @param Domain\ValueObject\DimensionSpacePointSet $set
+     * @return Domain\ValueObject\DimensionSpacePointSet
+     */
+    protected function completeSet(Domain\ValueObject\DimensionSpacePointSet $set): Domain\ValueObject\DimensionSpacePointSet
+    {
+        $completeSet = [];
+        foreach ($set->getPoints() as $point) {
+            foreach ($this->getSpecializationSet($point)->getPoints() as $specialization) {
+                $completeSet[$specialization->getHash()] = $specialization;
+            }
+        }
+
+        return new Domain\ValueObject\DimensionSpacePointSet($completeSet);
     }
 
     /**

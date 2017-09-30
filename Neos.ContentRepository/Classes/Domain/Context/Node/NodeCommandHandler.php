@@ -221,10 +221,9 @@ final class NodeCommandHandler
             }
         }
 
-        list($visibleDimensionSpacePoints, $nodeVisibilityChanges) = $this->calculateVisibilityForNewNodeInNodeAggregate(
+        $visibleDimensionSpacePoints = $this->calculateVisibilityForNewNodeInNodeAggregate(
             $contentStreamIdentifier,
             $nodeAggregateIdentifier,
-            $nodeIdentifier,
             $dimensionSpacePoint
         );
 
@@ -237,8 +236,7 @@ final class NodeCommandHandler
             $nodeIdentifier,
             $parentNodeIdentifier,
             $command->getNodeName(),
-            $propertyDefaultValuesAndTypes,
-            $nodeVisibilityChanges
+            $propertyDefaultValuesAndTypes
         );
 
         foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeNameStr => $childNodeType) {
@@ -477,7 +475,8 @@ final class NodeCommandHandler
         );
     }
 
-    private function nodeInAggregateWasTranslatedFromCommand(TranslateNodeInAggregate $command): array {
+    private function nodeInAggregateWasTranslatedFromCommand(TranslateNodeInAggregate $command): array
+    {
         $sourceNodeIdentifier = $command->getSourceNodeIdentifier();
         $contentStreamIdentifier = $command->getContentStreamIdentifier();
         $dimensionSpacePoint = $command->getDimensionSpacePoint();
@@ -555,6 +554,7 @@ final class NodeCommandHandler
         $this->validateNodeTypeName($nodeTypeName);
 
         $nodeType = $this->nodeTypeManager->getNodeType((string)$nodeTypeName);
+
         return $nodeType;
     }
 
@@ -591,86 +591,42 @@ final class NodeCommandHandler
         if ($node === null) {
             throw new NodeNotFoundException(sprintf('Node %s not found', $nodeIdentifier), 1506074496, $nodeIdentifier);
         }
+
         return $node;
     }
 
     /**
-     * TODO Work in progress method to re-calculate visibilites from fallback graph inside a node aggregate
-     *
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param NodeIdentifier $nodeIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
-     * @return array
-     * @throws Exception
+     * @return DimensionSpacePointSet
+     * @todo take parent node's visibility into account
+     *
+     * A node in an aggregate should be visible in all points that fulfill all of the following criteria
+     * - any node of the parent node aggregate is visible there
+     * - they are specializations of the node's original point
+     * - they are not occupied by specializations of the node
      */
     private function calculateVisibilityForNewNodeInNodeAggregate(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        NodeIdentifier $nodeIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
-    ): array {
-        $pointsByNodeIdentifier = [];
-        $nodeIdentifiersByPoint = [];
-        $existingNodesByNodeIdentifier = [];
-        $existingNodes = $this->contentGraph->findNodesByNodeAggregateIdentifier($contentStreamIdentifier,
-            $nodeAggregateIdentifier);
-        /** @var Node $existingNode */
-        foreach ($existingNodes as $existingNode) {
-            $pointsByNodeIdentifier[(string)$existingNode->identifier] = ['origin' => $existingNode->dimensionSpacePoint];
-            $nodeIdentifiersByPoint[$existingNode->dimensionSpacePoint->getHash()] = (string)$existingNode->identifier;
-            $existingNodesByNodeIdentifier[(string)$existingNode->identifier] = $existingNode;
+    ): DimensionSpacePointSet {
+        $existingNodes = $this->contentGraph->findNodesByNodeAggregateIdentifier(
+            $contentStreamIdentifier,
+            $nodeAggregateIdentifier
+        );
+        $dimensionSpacePoints = [];
+        foreach ($existingNodes as $node) {
+            $dimensionSpacePoints[] = $node->dimensionSpacePoint;
         }
-        // TODO This should be done by the node aggregate aggregate as a hard constraint
-        $pointsByNodeIdentifier[(string)$nodeIdentifier] = ['origin' => $dimensionSpacePoint];
-        if (isset($nodeIdentifiersByPoint[$dimensionSpacePoint->getHash()])) {
-            throw new Exception(sprintf('Node with %s already exists in node aggregate %s', $dimensionSpacePoint,
-                $nodeAggregateIdentifier), 1506591919);
-        }
-        $nodeIdentifiersByPoint[$dimensionSpacePoint->getHash()] = (string)$nodeIdentifier;
+        $occupiedDimensionSpacePoints = new DimensionSpacePointSet($dimensionSpacePoints);
 
-        // Order nodes in aggregate by specificity
-        uasort($pointsByNodeIdentifier, function (array $a, array $b) {
-            $subgraphA = $this->interDimensionalFallbackGraph->getSubgraphByDimensionSpacePoint($a['origin']);
-            $subgraphB = $this->interDimensionalFallbackGraph->getSubgraphByDimensionSpacePoint($b['origin']);
-            if ($subgraphA && $subgraphB) {
-                if ($subgraphA->hasSpecialization($subgraphB)) {
-                    return 1;
-                } else {
-                    return -1;
-                }
-            }
-            // FIXME Should not happen
-            return 0;
-        });
-
-        // Calculate visible points starting from the most specialized node, excluding all points already assigned!
-        foreach ($pointsByNodeIdentifier as $nodeIdentifierStr => $nodeDimensionality) {
-            $calculatedPoints = $this->getVisibleDimensionSpacePoints($nodeDimensionality['origin'])->getPoints();
-            $availablePoints = array_filter($calculatedPoints,
-                function (DimensionSpacePoint $point) use ($nodeIdentifiersByPoint) {
-                    return !isset($nodeIdentifiersByPoint[$point->getHash()]);
-                });
-            $pointsByNodeIdentifier[$nodeIdentifierStr]['visible'] = new DimensionSpacePointSet(array_merge([$nodeDimensionality['origin']],
-                $availablePoints));
-            foreach ($availablePoints as $point) {
-                // Mark point as not available for more general nodes
-                $nodeIdentifiersByPoint[$point->getHash()] = $nodeIdentifierStr;
-            }
-        }
-
-        $visibleDimensionSpacePoints = $pointsByNodeIdentifier[(string)$nodeIdentifier]['visible'];
-
-        $nodeVisibilityChanges = [];
-        foreach ($pointsByNodeIdentifier as $nodeIdentifierStr => $nodeDimensionality) {
-            if (isset($existingNodesByNodeIdentifier[$nodeIdentifierStr])) {
-                $nodeVisibilityChanges[] = new NodeIdentifierAndDimensionSpacePointSet(
-                    new NodeIdentifier($nodeIdentifierStr),
-                    $nodeDimensionality['visible']
-                );
-            }
-        }
-        return array($visibleDimensionSpacePoints, $nodeVisibilityChanges);
+        return $this->interDimensionalFallbackGraph->getSpecializationSet(
+            $dimensionSpacePoint,
+            true,
+            $occupiedDimensionSpacePoints
+        );
     }
 
 }

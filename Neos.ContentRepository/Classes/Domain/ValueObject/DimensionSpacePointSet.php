@@ -19,7 +19,6 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  */
 final class DimensionSpacePointSet implements \JsonSerializable
 {
-
     /**
      * @var array<DimensionSpacePoint>
      */
@@ -30,13 +29,13 @@ final class DimensionSpacePointSet implements \JsonSerializable
      */
     public function __construct(array $points)
     {
+        $this->points = [];
         foreach ($points as $index => $point) {
             if (!$point instanceof DimensionSpacePoint) {
                 throw new \InvalidArgumentException(sprintf('Point %s was not of type DimensionSpacePoint', $index));
             }
+            $this->points[$point->getHash()] = $point;
         }
-
-        $this->points = $points;
     }
 
     /**
@@ -47,9 +46,26 @@ final class DimensionSpacePointSet implements \JsonSerializable
         return $this->points;
     }
 
+    /**
+     * @return array
+     */
+    public function getPointHashes(): array
+    {
+        return array_keys($this->points);
+    }
+
+    /**
+     * @param DimensionSpacePoint $point
+     * @return bool
+     */
+    public function contains(DimensionSpacePoint $point): bool
+    {
+        return isset($this->points[$point->getHash()]);
+    }
+
     public function jsonSerialize()
     {
-        return ['points' => $this->points];
+        return ['points' => array_values($this->points)];
     }
 
     public function __toString()

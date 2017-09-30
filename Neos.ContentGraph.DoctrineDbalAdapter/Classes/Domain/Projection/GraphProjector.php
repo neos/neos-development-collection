@@ -23,7 +23,6 @@ use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifierAndDimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcing\Projection\ProjectorInterface;
@@ -125,14 +124,6 @@ class GraphProjector implements ProjectorInterface
                 $event->getPropertyDefaultValuesAndTypes(),
                 $event->getNodeName()
             );
-
-            $this->reconnectInboundHierarchyRelations(
-                $contentStreamIdentifier,
-                $nodeAggregateIdentifier,
-                $event->getNodeVisibilityChanges()
-            );
-
-            // TODO Also outbound connections need to be reconnected!
         });
     }
 
@@ -147,9 +138,9 @@ class GraphProjector implements ProjectorInterface
         array $propertyDefaultValuesAndTypes,
         NodeName $nodeName
     ) {
-        $childNodeRelationAnchorPoint = new NodeRelationAnchorPoint();
-        $childNode = new Node(
-            $childNodeRelationAnchorPoint,
+        $nodeRelationAnchorPoint = new NodeRelationAnchorPoint();
+        $node = new Node(
+            $nodeRelationAnchorPoint,
             $nodeIdentifier,
             $nodeAggregateIdentifier,
             $dimensionSpacePoint->jsonSerialize(),
@@ -160,104 +151,54 @@ class GraphProjector implements ProjectorInterface
             $nodeTypeName
         );
 
-        // TODO It is not sufficient to use the same parent node for all edges! See failing scenario MatchingMostSpecificLocale.feature:160
-
-        $parentNode = $this->projectionContentGraph->getNode($parentNodeIdentifier, $contentStreamIdentifier, $dimensionSpacePoint);
-        if ($parentNode === null) {
-            // TODO Log error
-            return;
-        }
-
-        #$precedingSiblingNode = $this->getNode(null, $event->getContentStreamIdentifier(), $event->getDimensionSpacePoint());
-        $precedingSiblingNode = null;
-
-        // generate relation anchor point in $node
-        // fetch relation anchor point from parent
-        // connect hierarchy (relation anchor point A, rel A Point B)
-        $childNode->addToDatabase($this->getDatabaseConnection());
-        $this->connectHierarchy(
-            $parentNode->relationAnchorPoint,
-            $childNode->relationAnchorPoint,
-            // TODO: position on insert is still missing
-            null,
-            $nodeName,
+        // reconnect parent relations
+        $missingParentRelations = $visibleDimensionSpacePoints->getPoints();
+        $existingParentRelations = $this->projectionContentGraph->findInboundHierarchyRelationsForNodeAggregate(
             $contentStreamIdentifier,
+            $nodeAggregateIdentifier,
             $visibleDimensionSpacePoints
         );
-    }
+        foreach ($existingParentRelations as $existingParentRelation) {
+            $existingParentRelation->assignNewChildNode($nodeRelationAnchorPoint, $this->getDatabaseConnection());
+            unset($missingParentRelations[$existingParentRelation->dimensionSpacePointHash]);
+        }
 
-    /**
-     * Reconnect nodes in an aggregate based on the given node visibility changes
-     *
-     * Must be called in a transaction.
-     *
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param NodeIdentifierAndDimensionSpacePointSet[] $nodeVisibilityChanges
-     */
-    private function reconnectInboundHierarchyRelations(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        array $nodeVisibilityChanges
-    ) {
-
-        // Iterate over all nodes in $nodeVisibilityChanges
-        foreach ($nodeVisibilityChanges as $nodeIdentifierAndDimensionSpacePointSet) {
-            $node = $this->projectionContentGraph->getNodeByNodeIdentifierAndContentStream($nodeIdentifierAndDimensionSpacePointSet->getNodeIdentifier(), $contentStreamIdentifier);
-
-            $originRelation = null;
-            $relations = $this->projectionContentGraph->findInboundHierarchyRelationsForNode($node->relationAnchorPoint, $contentStreamIdentifier);
-            // Remove all other connections
-            foreach ($relations as $relation) {
-                if ($relation->dimensionSpacePointHash !== $node->dimensionSpacePointHash) {
-                    // TODO It would be more efficient to keep relations that should be added
-                    $relation->removeFromDatabase($this->getDatabaseConnection());
+        if (!empty($missingParentRelations)) {
+            // add yet missing parent relations
+            $designatedParentNode = $this->projectionContentGraph->getNode($parentNodeIdentifier, $contentStreamIdentifier);
+            foreach ($missingParentRelations as $dimensionSpacePoint) {
+                if ((string) $designatedParentNode->nodeTypeName === 'Neos.ContentRepository:Root') {
+                    $parentNode = $designatedParentNode;
                 } else {
-                    // Get connection for origin dimension space point
-                    $originRelation = $relation;
-                }
-            }
-
-            if ($originRelation === null) {
-                // TODO Log error
-                break;
-            }
-
-            // Create connection for each point in $nodeVisibilityChanges except the origin
-            $pointsToAdd = $nodeIdentifierAndDimensionSpacePointSet->getDimensionSpacePointSet()->getPoints();
-            foreach ($pointsToAdd as $point) {
-                if ($point->getHash() !== $node->dimensionSpacePointHash) {
-                    $relation = new HierarchyRelation(
-                        $originRelation->parentNodeAnchor,
-                        $originRelation->childNodeAnchor,
-                        $originRelation->name,
+                    $parentNode = $this->projectionContentGraph->getNodeInAggregate(
+                        $designatedParentNode->nodeAggregateIdentifier,
                         $contentStreamIdentifier,
-                        $point,
-                        $point->getHash(),
-                        // TODO Check if it's okay to copy this from the origin relation?
-                        $originRelation->position
+                        $dimensionSpacePoint
                     );
-                    $relation->addToDatabase($this->getDatabaseConnection());
                 }
+
+                $this->connectHierarchy(
+                    $parentNode->relationAnchorPoint,
+                    $nodeRelationAnchorPoint,
+                    null,
+                    $nodeName,
+                    $contentStreamIdentifier,
+                    new DimensionSpacePointSet([$dimensionSpacePoint])
+                );
             }
         }
-    }
 
-    /**
-     * @param string $startNodesIdentifierInGraph
-     * @param string $endNodesIdentifierInGraph
-     * @param string $relationshipName
-     * @param array $properties
-     * @param array $subgraphIdentifiers
-     */
-    protected function connectRelation(
-        string $startNodesIdentifierInGraph,
-        string $endNodesIdentifierInGraph,
-        string $relationshipName,
-        array $properties,
-        array $subgraphIdentifiers
-    ): void {
-        // TODO: Implement connectRelation() method.
+        // reconnect child relations
+        $existingChildRelations = $this->projectionContentGraph->findOutboundHierarchyRelationsForNodeAggregate(
+            $contentStreamIdentifier,
+            $nodeAggregateIdentifier,
+            $visibleDimensionSpacePoints
+        );
+        foreach ($existingChildRelations as $existingChildRelation) {
+            $existingChildRelation->assignNewParentNode($nodeRelationAnchorPoint, $this->getDatabaseConnection());
+        }
+
+        $node->addToDatabase($this->getDatabaseConnection());
     }
 
     /**
@@ -336,7 +277,7 @@ class GraphProjector implements ProjectorInterface
         $offset = 0;
         $position = 0;
         foreach ($this->projectionContentGraph->getOutboundHierarchyRelationsForNodeAndSubgraph($parentAnchorPoint, $contentStreamIdentifier, $dimensionSpacePoint) as $relation) {
-            $this->assignNewPositionToHierarchyRelation($relation, $offset);
+            $relation->assignNewPosition($offset, $this->getDatabaseConnection());
             $offset += 128;
             if ($precedingSiblingAnchorPoint && $relation->childNodeAnchor === (string)$precedingSiblingAnchorPoint) {
                 $position = $offset;
@@ -375,44 +316,6 @@ class GraphProjector implements ProjectorInterface
             $this->assignNewParentNodeToHierarchyRelation($outboundRelation, $newVariantNodesIdentifierInGraph);
         }*/
     }
-
-    /**
-     * @param HierarchyRelation $relation
-     * @param int $position
-     */
-    protected function assignNewPositionToHierarchyRelation(HierarchyRelation $relation, int $position): void
-    {
-        $this->getDatabaseConnection()->update(
-            'neos_contentgraph_hierarchyrelation',
-            [
-                'position' => $position
-            ],
-            $relation->getDatabaseIdentifier()
-        );
-    }
-
-    /*
-    protected function assignNewChildNodeToHierarchyRelation(HierarchyRelation $relation, string $childNodeIdentifierInGraph)
-    {
-        $this->getDatabaseConnection()->update(
-            'neos_contentgraph_hierarchyrelation',
-            [
-                'childnodesidentifieringraph' => $childNodeIdentifierInGraph,
-            ],
-            $relation->getDatabaseIdentifier()
-        );
-    }
-
-    protected function assignNewParentNodeToHierarchyRelation(HierarchyRelation $relation, string $parentNodeIdentifierInGraph)
-    {
-        $this->getDatabaseConnection()->update(
-            'neos_contentgraph_hierarchyrelation',
-            [
-                'parentnodesidentifieringraph' => $parentNodeIdentifierInGraph,
-            ],
-            $relation->getDatabaseIdentifier()
-        );
-    }*/
 
     public function whenContentStreamWasForked(ContentRepository\Context\ContentStream\Event\ContentStreamWasForked $event)
     {

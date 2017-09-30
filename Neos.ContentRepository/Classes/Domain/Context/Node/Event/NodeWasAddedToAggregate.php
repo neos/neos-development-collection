@@ -17,7 +17,6 @@ use Neos\ContentRepository\Domain\ValueObject\NodeIdentifierAndDimensionSpacePoi
  */
 final class NodeWasAddedToAggregate implements EventInterface
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -70,11 +69,6 @@ final class NodeWasAddedToAggregate implements EventInterface
     private $propertyDefaultValuesAndTypes;
 
     /**
-     * @var array<NodeIdentifierAndDimensionSpacePointSet>
-     */
-    private $nodeVisibilityChanges;
-
-    /**
      * NodeWasAddedToAggregate constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
@@ -97,19 +91,17 @@ final class NodeWasAddedToAggregate implements EventInterface
         NodeIdentifier $nodeIdentifier,
         NodeIdentifier $parentNodeIdentifier,
         NodeName $nodeName,
-        array $propertyDefaultValuesAndTypes,
-        array $nodeVisibilityChanges
+        array $propertyDefaultValuesAndTypes
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->nodeTypeName= $nodeTypeName;
+        $this->nodeTypeName = $nodeTypeName;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
         $this->visibleDimensionSpacePoints = $visibleDimensionSpacePoints;
         $this->nodeIdentifier = $nodeIdentifier;
         $this->parentNodeIdentifier = $parentNodeIdentifier;
         $this->nodeName = $nodeName;
         $this->propertyDefaultValuesAndTypes = $propertyDefaultValuesAndTypes;
-        $this->nodeVisibilityChanges = $nodeVisibilityChanges;
     }
 
     /**
@@ -183,13 +175,4 @@ final class NodeWasAddedToAggregate implements EventInterface
     {
         return $this->propertyDefaultValuesAndTypes;
     }
-
-    /**
-     * @return array<NodeIdentifierAndDimensionSpacePointSet>
-     */
-    public function getNodeVisibilityChanges(): array
-    {
-        return $this->nodeVisibilityChanges;
-    }
-
 }

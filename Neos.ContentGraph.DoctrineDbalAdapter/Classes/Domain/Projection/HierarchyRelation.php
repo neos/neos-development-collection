@@ -110,6 +110,50 @@ class HierarchyRelation
     }
 
     /**
+     * @param NodeRelationAnchorPoint $childAnchorPoint
+     * @param Connection $databaseConnection
+     */
+    public function assignNewChildNode(NodeRelationAnchorPoint $childAnchorPoint, Connection $databaseConnection): void
+    {
+        $databaseConnection->update(
+            'neos_contentgraph_hierarchyrelation',
+            [
+                'childnodeanchor' => $childAnchorPoint
+            ],
+            $this->getDatabaseIdentifier()
+        );
+    }
+
+    /**
+     * @param NodeRelationAnchorPoint $parentAnchorPoint
+     * @param Connection $databaseConnection
+     */
+    public function assignNewParentNode(NodeRelationAnchorPoint $parentAnchorPoint, Connection $databaseConnection): void
+    {
+        $databaseConnection->update(
+            'neos_contentgraph_hierarchyrelation',
+            [
+                'parentnodeanchor' => $parentAnchorPoint
+            ],
+            $this->getDatabaseIdentifier()
+        );
+    }
+    /**
+     * @param int $position
+     * @param Connection $databaseConnection
+     */
+    public function assignNewPosition(int $position, Connection $databaseConnection): void
+    {
+        $databaseConnection->update(
+            'neos_contentgraph_hierarchyrelation',
+            [
+                'position' => $position
+            ],
+            $this->getDatabaseIdentifier()
+        );
+    }
+
+    /**
      * @return array
      */
     public function getDatabaseIdentifier(): array

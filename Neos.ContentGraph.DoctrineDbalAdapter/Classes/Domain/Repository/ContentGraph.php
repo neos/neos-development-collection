@@ -110,7 +110,7 @@ final class ContentGraph implements ContentGraphInterface
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return array<NodeInterface>
+     * @return array<NodeInterface>|NodeInterface[]
      */
     public function findNodesByNodeAggregateIdentifier(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): array
     {
