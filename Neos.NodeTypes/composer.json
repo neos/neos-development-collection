@@ -4,8 +4,12 @@
     "description": "Node type configuration for Neos",
     "license": "GPL-3.0+",
     "require": {
-        "neos/form": "~4.0",
-        "neos/neos": "~3.0.0"
+        "neos/form": "*",
+
+        "neos/media": "self.version",
+        "neos/content-repository": "self.version",
+        "neos/neos": "self.version",
+        "neos/fusion": "self.version"
     },
     "replace": {
         "typo3/neos-nodetypes": "self.version"

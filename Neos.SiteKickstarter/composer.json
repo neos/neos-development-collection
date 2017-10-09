@@ -4,10 +4,12 @@
     "description": "A simple generator for Neos assets, like sites and plugins.",
     "license": "GPL-3.0+",
     "require": {
-        "neos/neos": "~3.0.0",
-        "neos/kickstarter": "~4.0.0",
-        "neos/nodetypes": "~3.0.0",
-        "neos/fluid-adaptor": "~4.0.0"
+        "neos/flow": "*",
+        "neos/utility-files": "*",
+        "neos/fluid-adaptor": "*",
+        "neos/kickstarter": "*",
+
+        "neos/content-repository": "self.version"
     },
     "replace": {
         "typo3/neos-kickstarter": "self.version"

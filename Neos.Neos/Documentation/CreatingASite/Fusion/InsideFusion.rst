@@ -496,7 +496,9 @@ a property using the ``@if`` meta-property::
 	myObject = Menu {
 		@if.1 = ${q(node).property('showMenu') == true}
 	}
-	# results in the menu object only being evaluated if the node's showMenu property is ``true``
+	# results in the menu object only being evaluated if the node's showMenu property is not ``false``
+	# the php rules for mapping values to boolean are used internally so following values are
+	# considered beeing false: ``null, false, '', 0, []``
 
 Multiple conditions can be used, and if one of them doesn't return ``true`` the condition stops evaluation.
 
@@ -521,6 +523,29 @@ To show the result of Fusion Expressions directly you can use the Neos.Fusion:De
 		documentPath = ${documentNode.path}
 	}
 	# the value of this object is the formatted debug output of all keys given to the object
+
+
+Domain-specific languages in Fusion
+===================================
+
+Fusion allows the implementation of domain-specific sublanguages. Those DSLs can take a piece of code, that
+is optimized to express a specific class of problems, and return the equivalent fusion-code that is cached and executed
+by the Fusion-runtime afterwards.
+
+Fusion-DSLs use the syntax of tagged template literals from ES6 and can be used in all value assignments::
+
+	value = dslIdentifier`... the code that is passed to the dsl ...`
+
+If such a syntax-block is detected fusion will:
+
+* Lookup the key ``dslIdentifier`` in the Setting ``Neos.Fusion.dsl`` to find the matching dsl-implementation.
+* Instantiate the dsl-implementation class that was found registered.
+* Check that the dsl-implementation satisfies the interface ``\Neos\Fusion\Core\DslInterface``
+* Pass the code between the backticks to the dsl-implementation.
+* Finally parse the returned Fusion-code
+
+Fusion DSLs cannot extend the fusion-language and -runtime itself, they are meant to enable a more efficient syntax
+for specific problems.
 
 .. Important Fusion objects and patterns
 .. =========================================

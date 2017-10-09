@@ -191,6 +191,9 @@ class Parser implements ParserInterface
 		\s*$
 	/x';
 
+    const SCAN_PATTERN_DSL_EXPRESSION_START = '/^[a-zA-Z0-9\.]+`/';
+    const SPLIT_PATTERN_DSL_EXPRESSION = '/^(?P<identifier>[a-zA-Z0-9\.]+)`(?P<code>[^`]*)`$/';
+
     /**
      * Reserved parse tree keys for internal usage.
      *
@@ -203,6 +206,12 @@ class Parser implements ParserInterface
      * @var \Neos\Flow\ObjectManagement\ObjectManagerInterface
      */
     protected $objectManager;
+
+    /**
+     * @Flow\Inject
+     * @var DslFactory
+     */
+    protected $dslFactory;
 
     /**
      * The Fusion object tree, created by this parser.
@@ -785,10 +794,47 @@ class Parser implements ParserInterface
                     // if the last line we consumed is FALSE, we have consumed the end of the file.
                     throw new Fusion\Exception('Syntax error: A multi-line Eel expression starting with "' . $unparsedValue . '" was not closed.', 1417616064);
                 }
+            }
+            // Trying to match multiline dsl-expressions
+            elseif (preg_match(self::SCAN_PATTERN_DSL_EXPRESSION_START, $unparsedValue)) {
+                $dslExpressionSoFar = $unparsedValue;
+                // potential start of multiline dsl-expression; trying to consume next lines...
+                while (true) {
+                    if (substr($dslExpressionSoFar, -1) === '`') {
+                        // potential end-of-dsl-expression marker
+                        $matches = array();
+                        if (preg_match(self::SPLIT_PATTERN_DSL_EXPRESSION, $dslExpressionSoFar, $matches) === 1) {
+                            $processedValue = $this->invokeAndParseDsl($matches['identifier'], $matches['code']);
+                            break;
+                        }
+                    }
+                    $line = $this->getNextTypoScriptLine();
+                    if ($line === false) {
+                        // if the last line we consumed is FALSE, we have consumed the end of the file.
+                        throw new Fusion\Exception('Syntax error: A multi-line dsl expression starting with "' . $unparsedValue . '" was not closed.', 1490714685);
+                    }
+                    $dslExpressionSoFar .= chr(10) . $line;
+                }
             } else {
                 throw new Fusion\Exception('Syntax error: Invalid value "' . $unparsedValue . '" in value assignment.', 1180604192);
             }
         }
+        return $processedValue;
+    }
+
+    /**
+     * @param string $identifier
+     * @param strung $$code
+     * @return mixed
+     */
+    protected function invokeAndParseDsl($identifier, $code)
+    {
+        $dslObject = $this->dslFactory->create($identifier);
+        $transpiledFusion = $dslObject->transpile($code);
+
+        $parser = new Parser();
+        $temporaryAst = $parser->parse('value = ' . $transpiledFusion);
+        $processedValue = $temporaryAst['value'];
         return $processedValue;
     }
 

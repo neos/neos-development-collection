@@ -799,10 +799,9 @@ NodeUri
 Build a URI to a node. Accepts the same arguments as the node link/uri view helpers.
 
 :node: (string/Node) A node object or a node path (relative or absolute) or empty to resolve the current document node
-:arguments: (array) Additional arguments to be passed to the UriBuilder (for example pagination parameters)
 :format: (string) An optional request format (e.g. ``'html'``)
 :section: (string) An optional fragment (hash) for the URI
-:additionalParams: (array) Additional URI query parameters (overrule ``arguments``).
+:additionalParams: (array) Additional URI query parameters.
 :argumentsToBeExcludedFromQueryString: (array) Query parameters to exclude for ``addQueryString``
 :addQueryString: (boolean) Whether to keep current query parameters, defaults to ``FALSE``
 :absolute: (boolean) Whether to create an absolute URI, defaults to ``FALSE``
@@ -828,6 +827,8 @@ Get a URI to a (thumbnail) image for an asset.
 :maximumHeight: (integer) Desired maximum width of the image
 :allowCropping: (boolean) Whether the image should be cropped if the given sizes would hurt the aspect ratio, defaults to ``FALSE``
 :allowUpScaling: (boolean) Whether the resulting image size might exceed the size of the original image, defaults to ``FALSE``
+:async (boolean): Return asynchronous image URI in case the requested image does not exist already, defaults to ``FALSE``
+:preset: (string) Preset used to determine image configuration, if set all other resize attributes will be ignored
 
 Example::
 

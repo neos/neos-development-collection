@@ -200,7 +200,7 @@ define(
 
 					switch (protocol) {
 						case 'node':
-							nodeIdentifier = value.substr(7, 36);
+							nodeIdentifier = value.substr(7, 255);
 							parameters = {
 								workspaceName: $('#neos-document-metadata').data('neos-context-workspace-name'),
 								dimensions: $('#neos-document-metadata').data('neos-context-dimensions')

@@ -4,18 +4,30 @@
     "license": "GPL-3.0+",
     "type": "neos-package-collection",
     "require": {
-        "neos/flow-development-collection": "~4.0.0 || 4.0.x-dev",
-        "neos/flow": "~4.0.0",
-        "neos/fluid-adaptor": "~4.0.0",
+        "neos/flow-development-collection": "dev-master",
+        "neos/flow": "*",
+        "neos/cache": "*",
+        "neos/eel": "*",
+        "neos/fluid-adaptor": "*",
+        "neos/utility-objecthandling": "*",
+        "neos/utility-files": "*",
+        "neos/utility-arrays": "*",
+        "doctrine/orm": "~2.5.0",
         "gedmo/doctrine-extensions": "~2.3.0",
         "behat/transliterator": "~1.0",
-        "php": "~7.0",
-        "neos/imagine": "~3.0",
-        "neos/party": "~4.0",
-        "neos/setup": "~4.0",
-        "neos/twitter-bootstrap": "~3.0",
-        "neos/form": "~4.0",
-        "neos/kickstarter": "~4.0.0"
+        "php": ">=5.5.0",
+        "neos/utility-unicode": "dev-master",
+        "neos/utility-mediatypes": "dev-master",
+        "neos/error-messages": "dev-master",
+        "doctrine/common": "~2.7.0",
+        "neos/imagine": "dev-master",
+        "imagine/imagine": "*",
+        "doctrine/dbal": "~2.5.0",
+        "neos/party": "dev-master",
+        "neos/setup": "dev-master",
+        "neos/twitter-bootstrap": "dev-master",
+        "neos/form": "dev-master",
+        "neos/kickstarter": "dev-master"
     },
     "replace": {
         "typo3/typo3cr": "self.version",
@@ -34,6 +46,7 @@
         "neos/site-kickstarter": "self.version"
     },
     "suggest": {
+        "neos/utility-schema": "Validate NodeType schema.",
         "neos/site-kickstarter": "Helps with creating new site packages for Neos.",
         "neos/redirecthandler-neosadapter": "Adds automatic redirects for moved/renamed pages"
     },

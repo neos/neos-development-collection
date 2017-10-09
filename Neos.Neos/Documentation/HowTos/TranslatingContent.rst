@@ -45,10 +45,6 @@ is available for display on the website.
 As soon as a dimension with presets is configured, the content module will show a dimension selector to select presets
 for each dimension. This can be used in combination with a language menu on the website.
 
-.. note:: Neos 1.2 only supports translation of existing content by using *fallbacks*. In the example there is a fallback from
-          ``fr`` to ``en`` in the ``fr`` dimension preset. While it is possible to work without a default language and fallbacks,
-          no existing content can be translated in this case. This restriction is removed with Neos 1.3.
-
 Migration of existing content
 =============================
 
