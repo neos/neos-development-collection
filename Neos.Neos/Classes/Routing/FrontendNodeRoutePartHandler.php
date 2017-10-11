@@ -12,6 +12,7 @@ namespace Neos\Neos\Routing;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Request;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Mvc\Routing\DynamicRoutePart;
 use Neos\Flow\Security\Context;
@@ -74,6 +75,12 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * @var ContentDimensionPresetSourceInterface
      */
     protected $contentDimensionPresetSource;
+
+    /**
+     * @Flow\Inject
+     * @var ContentDimensionPresetDetectorInterface
+     */
+    protected $contentDimensionPresetDetector;
 
     const DIMENSION_REQUEST_PATH_MATCHER = '|^
         (?<firstUriPart>[^/@]+)                    # the first part of the URI, before the first slash, may contain the encoded dimension preset
@@ -253,8 +260,9 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      */
     protected function buildContextFromRequestPath(&$requestPath)
     {
+        $request = Request::createFromEnvironment();
+        $dimensionsAndDimensionValues = $this->contentDimensionPresetDetector->extractDimensionValues($request->getUri(), $requestPath, $this->supportEmptySegmentForDimensions);
         $workspaceName = 'live';
-        $dimensionsAndDimensionValues = $this->parseDimensionsAndNodePathFromRequestPath($requestPath);
 
         // This is a workaround as NodePaths::explodeContextPath() (correctly)
         // expects a context path to have something before the '@', but the requestPath
@@ -437,134 +445,6 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         }
 
         return implode('/', array_reverse($requestPathSegments));
-    }
-
-    /**
-    * Choose between default method for parsing dimensions or the one which allows uriSegment to be empty for default preset.
-    *
-    * @param string &$requestPath The request path currently being processed by this route part handler, e.g. "de_global/startseite/ueber-uns"
-    * @return array An array of dimension name => dimension values (array of string)
-    */
-    protected function parseDimensionsAndNodePathFromRequestPath(&$requestPath)
-    {
-        if ($this->supportEmptySegmentForDimensions) {
-            $dimensionsAndDimensionValues = $this->parseDimensionsAndNodePathFromRequestPathAllowingEmptySegment($requestPath);
-        } else {
-            $dimensionsAndDimensionValues = $this->parseDimensionsAndNodePathFromRequestPathAllowingNonUniqueSegment($requestPath);
-        }
-        return $dimensionsAndDimensionValues;
-    }
-
-    /**
-     * Parses the given request path and checks if the first path segment is one or a set of content dimension preset
-     * identifiers. If that is the case, the return value is an array of dimension names and their preset URI segments.
-     * Allows uriSegment to be empty for default dimension preset.
-     *
-     * If the first path segment contained content dimension information, it is removed from &$requestPath.
-     *
-     * @param string &$requestPath The request path currently being processed by this route part handler, e.g. "de_global/startseite/ueber-uns"
-     * @return array An array of dimension name => dimension values (array of string)
-     * @throws InvalidDimensionPresetCombinationException
-     */
-    protected function parseDimensionsAndNodePathFromRequestPathAllowingEmptySegment(&$requestPath)
-    {
-        $dimensionPresets = $this->contentDimensionPresetSource->getAllPresets();
-        if (count($dimensionPresets) === 0) {
-            return [];
-        }
-        $dimensionsAndDimensionValues = [];
-        $chosenDimensionPresets = [];
-        $matches = [];
-        preg_match(self::DIMENSION_REQUEST_PATH_MATCHER, $requestPath, $matches);
-        $firstUriPartIsValidDimension = true;
-        foreach ($dimensionPresets as $dimensionName => $dimensionPreset) {
-            $dimensionsAndDimensionValues[$dimensionName] = $dimensionPreset['presets'][$dimensionPreset['defaultPreset']]['values'];
-            $chosenDimensionPresets[$dimensionName] = $dimensionPreset['defaultPreset'];
-        }
-        if (isset($matches['firstUriPart'])) {
-            $firstUriPartExploded = explode('_', $matches['firstUriPart']);
-            foreach ($firstUriPartExploded as $uriSegment) {
-                $uriSegmentIsValid = false;
-                foreach ($dimensionPresets as $dimensionName => $dimensionPreset) {
-                    $preset = $this->contentDimensionPresetSource->findPresetByUriSegment($dimensionName, $uriSegment);
-                    if ($preset !== null) {
-                        $uriSegmentIsValid = true;
-                        $dimensionsAndDimensionValues[$dimensionName] = $preset['values'];
-                        $chosenDimensionPresets[$dimensionName] = $preset['identifier'];
-                        break;
-                    }
-                }
-                if (!$uriSegmentIsValid) {
-                    $firstUriPartIsValidDimension = false;
-                    break;
-                }
-            }
-            if ($firstUriPartIsValidDimension) {
-                $requestPath = (isset($matches['remainingRequestPath']) ? $matches['remainingRequestPath'] : '');
-            }
-        }
-        if (!$this->contentDimensionPresetSource->isPresetCombinationAllowedByConstraints($chosenDimensionPresets)) {
-            throw new InvalidDimensionPresetCombinationException(sprintf('The resolved content dimension preset combination (%s) is invalid or restricted by content dimension constraints. Check your content dimension settings if you think that this is an error.', implode(', ', array_keys($chosenDimensionPresets))), 1428657721);
-        }
-        return $dimensionsAndDimensionValues;
-    }
-
-    /**
-     * Parses the given request path and checks if the first path segment is one or a set of content dimension preset
-     * identifiers. If that is the case, the return value is an array of dimension names and their preset URI segments.
-     * Doesn't allow empty uriSegment, but allows uriSegment to be not unique across presets.
-     *
-     * If the first path segment contained content dimension information, it is removed from &$requestPath.
-     *
-     * @param string &$requestPath The request path currently being processed by this route part handler, e.g. "de_global/startseite/ueber-uns"
-     * @return array An array of dimension name => dimension values (array of string)
-     * @throws InvalidDimensionPresetCombinationException
-     * @throws InvalidRequestPathException
-     * @throws NoSuchDimensionValueException
-     */
-    protected function parseDimensionsAndNodePathFromRequestPathAllowingNonUniqueSegment(&$requestPath)
-    {
-        $dimensionPresets = $this->contentDimensionPresetSource->getAllPresets();
-        if (count($dimensionPresets) === 0) {
-            return [];
-        }
-
-        $dimensionsAndDimensionValues = [];
-        $chosenDimensionPresets = [];
-        $matches = [];
-
-        preg_match(self::DIMENSION_REQUEST_PATH_MATCHER, $requestPath, $matches);
-
-        if (!isset($matches['firstUriPart'])) {
-            foreach ($dimensionPresets as $dimensionName => $dimensionPreset) {
-                $dimensionsAndDimensionValues[$dimensionName] = $dimensionPreset['presets'][$dimensionPreset['defaultPreset']]['values'];
-                $chosenDimensionPresets[$dimensionName] = $dimensionPreset['defaultPreset'];
-            }
-        } else {
-            $firstUriPart = explode('_', $matches['firstUriPart']);
-
-            if (count($firstUriPart) !== count($dimensionPresets)) {
-                throw new InvalidRequestPathException(sprintf('The first path segment of the request URI (%s) does not contain the necessary content dimension preset identifiers for all configured dimensions. This might be an old URI which doesn\'t match the current dimension configuration anymore.', $requestPath), 1413389121);
-            }
-
-            foreach ($dimensionPresets as $dimensionName => $dimensionPreset) {
-                $uriSegment = array_shift($firstUriPart);
-                $preset = $this->contentDimensionPresetSource->findPresetByUriSegment($dimensionName, $uriSegment);
-                if ($preset === null) {
-                    throw new NoSuchDimensionValueException(sprintf('Could not find a preset for content dimension "%s" through the given URI segment "%s".', $dimensionName, $uriSegment), 1413389321);
-                }
-                $dimensionsAndDimensionValues[$dimensionName] = $preset['values'];
-                $chosenDimensionPresets[$dimensionName] = $preset['identifier'];
-            }
-
-            $requestPath = (isset($matches['remainingRequestPath']) ? $matches['remainingRequestPath'] : '');
-        }
-
-        if (!$this->contentDimensionPresetSource->isPresetCombinationAllowedByConstraints($chosenDimensionPresets)) {
-            throw new InvalidDimensionPresetCombinationException(sprintf('The resolved content dimension preset combination (%s) is invalid or restricted by content dimension constraints. Check your content dimension settings if you think that this is an error.', implode(', ', array_keys($chosenDimensionPresets))), 1462175794805);
-        }
-
-        return $dimensionsAndDimensionValues;
     }
 
     /**
