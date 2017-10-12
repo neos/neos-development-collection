@@ -23,9 +23,11 @@ use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ContentContext;
+use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\Exception as NeosException;
+use Neos\Neos\Routing\ContentDimensionPresetDetectorInterface;
 use Neos\Neos\TYPO3CR\NeosNodeServiceInterface;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
@@ -112,6 +114,12 @@ class LinkingService
      * @var SiteRepository
      */
     protected $siteRepository;
+
+    /**
+     * @Flow\Inject
+     * @var ContentDimensionPresetSourceInterface
+     */
+    protected $dimensionPresetSource;
 
     /**
      * @param string|Uri $uri
@@ -298,21 +306,73 @@ class LinkingService
             $site = $this->siteRepository->findOneByNodeName($siteNodeName);
         }
 
-        if ($site->hasActiveDomains()) {
-            $requestUriHost = $request->getHttpRequest()->getBaseUri()->getHost();
-            $activeHostPatterns = $site->getActiveDomains()->map(function ($domain) {
-                return $domain->getHostname();
-            })->toArray();
-            if (!in_array($requestUriHost, $activeHostPatterns, true)) {
-                $uri = $this->createSiteUri($controllerContext, $site) . '/' . ltrim($uri, '/');
+        $baseUri = $this->resolveDimensionBaseUri($request->getHttpRequest()->getBaseUri(), $node->getContext()->getDimensions());
+        if (!$baseUri) {
+            if ($site->hasActiveDomains()) {
+                $requestUriHost = $request->getHttpRequest()->getBaseUri()->getHost();
+                $activeHostPatterns = $site->getActiveDomains()->map(function ($domain) {
+                    return $domain->getHostname();
+                })->toArray();
+                if (!in_array($requestUriHost, $activeHostPatterns, true)) {
+                    $baseUri = new Uri($this->createSiteUri($controllerContext, $site) . '/');
+                } elseif ($absolute === true) {
+                    $baseUri = $request->getHttpRequest()->getBaseUri();
+                }
             } elseif ($absolute === true) {
-                $uri = $request->getHttpRequest()->getBaseUri() . ltrim($uri, '/');
+                $baseUri = $request->getHttpRequest()->getBaseUri();
             }
-        } elseif ($absolute === true) {
-            $uri = $request->getHttpRequest()->getBaseUri() . ltrim($uri, '/');
+        }
+
+        if ($baseUri) {
+            $uri = $baseUri . ltrim($uri, '/');
         }
 
         return $uri;
+    }
+
+    /**
+     * @param Uri $currentBaseUri
+     * @param array $dimensionValues
+     * @return Uri|null
+     */
+    protected function resolveDimensionBaseUri(Uri $currentBaseUri, array $dimensionValues)
+    {
+        $baseUri = clone $currentBaseUri;
+        $uriChanged = false;
+        $presets = $this->dimensionPresetSource->getAllPresets();
+        foreach ($dimensionValues as $dimensionName => $values) {
+            $detectionMode = $presets[$dimensionName]['detectionMode'] ?? ContentDimensionPresetDetectorInterface::DETECTION_MODE_URIPATHSEGMENT;
+            switch ($detectionMode) {
+                case ContentDimensionPresetDetectorInterface::DETECTION_MODE_SUBDOMAIN:
+                    break;
+                case ContentDimensionPresetDetectorInterface::DETECTION_MODE_DOMAINNAME:
+                    break;
+                case ContentDimensionPresetDetectorInterface::DETECTION_MODE_TOPLEVELDOMAIN:
+                    $currentValue = null;
+                    foreach ($presets[$dimensionName]['presets'] as $preset) {
+                        if (mb_substr($baseUri->getHost(), -mb_strlen($preset['detectionValue'])) === $preset['detectionValue']) {
+                            $currentValue = $preset['detectionValue'];
+                            break;
+                        }
+                    }
+
+                    $newValue = $this->dimensionPresetSource->findPresetByDimensionValues($dimensionName, $values)['detectionValue'];
+
+                    if ($newValue !== $currentValue) {
+                        $baseUri->setHost(mb_substr($baseUri->getHost(), 0, -mb_strlen($currentValue)) . $newValue);
+                        $uriChanged = true;
+                    }
+                    break;
+                case ContentDimensionPresetDetectorInterface::DETECTION_MODE_URIPATHSEGMENT:
+                default:
+                    continue;
+            }
+        }
+
+        if ($uriChanged) {
+            return $baseUri;
+        }
+        return null;
     }
 
     /**
