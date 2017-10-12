@@ -36,6 +36,8 @@ final class ContentDimensionPresetDetector implements ContentDimensionPresetDete
 
     /**
      * @inheritdoc
+     * @todo declare detection components, use them respecting the given dimensions reduce the host piece by piece
+     * @todo check if combination is allowed
      */
     public function extractDimensionValues(Http\Uri $uri, string & $requestPath, bool $allowEmptyValues = false): array
     {
@@ -51,7 +53,7 @@ final class ContentDimensionPresetDetector implements ContentDimensionPresetDete
         $pathSegmentNumber = 0;
         $pathSegmentUsed = false;
         foreach ($this->dimensionPresetSource->getAllPresets() as $dimensionName => $contentDimension) {
-            $detectionMode = $contentDimension['detectionMode'] ?? 'uriPathSegment';
+            $detectionMode = $contentDimension['detectionMode'] ?? self::DETECTION_MODE_URIPATHSEGMENT;
 
             switch ($detectionMode) {
                 case self::DETECTION_MODE_SUBDOMAIN:

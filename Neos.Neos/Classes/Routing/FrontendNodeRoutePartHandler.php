@@ -484,6 +484,10 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         $allDimensionPresetsAreDefault = true;
 
         foreach ($this->contentDimensionPresetSource->getAllPresets() as $dimensionName => $dimensionPresets) {
+            $detectionMode = $dimensionPresets['detectionMode'] ?? ContentDimensionPresetDetectorInterface::DETECTION_MODE_URIPATHSEGMENT;
+            if ($detectionMode !== ContentDimensionPresetDetectorInterface::DETECTION_MODE_URIPATHSEGMENT) {
+                continue;
+            }
             $preset = null;
             if (isset($dimensionsValues[$dimensionName])) {
                 $preset = $this->contentDimensionPresetSource->findPresetByDimensionValues($dimensionName, $dimensionsValues[$dimensionName]);
