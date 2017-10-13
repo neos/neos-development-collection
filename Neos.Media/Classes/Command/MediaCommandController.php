@@ -133,6 +133,8 @@ class MediaCommandController extends CommandController
      * This command iterates over all existing assets, checks their usage count
      * and lists the assets which are not reported as used by any AssetUsageStrategies.
      * The unused assets can than be removed.
+     *
+     * @return void
      */
     public function removeUnusedCommand()
     {
