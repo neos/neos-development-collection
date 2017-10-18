@@ -393,6 +393,129 @@ target is then granted for the "Editor" role.
           privilegeTarget: 'Neos.Demo:EditGerman'
           permission: GRANT
 
+Asset Privileges
+================
+
+Asset privileges define what can be restricted in relation to accessing Assets (images, documents, videos, ...),
+AssetCollections and Tags.
+
+.. note::
+  Like Node Privileges this is a blacklist by default, so the privilege won't match if one of the conditions don't match.
+
+ReadAssetPrivilege
+------------------
+
+A privilege that prevents reading assets depending on the following Privilege Matchers:
+
+Asset Title
+~~~~~~~~~~~
+
+This allows to match on the title (prefix) of the asset.
+
+Signature:
+  ``titleStartsWith(title-prefix)``
+Parameters:
+  * ``title-prefix`` (string) Beginning of or complete title of the asset to match
+
+Asset Media Type
+~~~~~~~~~~~~~~~~
+
+This allows to match on the media type of the asset.
+
+Signature:
+  ``hasMediaType(media-type)``
+Parameters:
+  * ``media-type`` (string) Media Type of the asset to match (for example "application/json")
+
+Tag
+~~~
+
+This allows to match on a label the asset is tagged with.
+
+Signature:
+  ``isTagged(tag-label)``
+Parameters:
+  * ``tag-label`` (string) Label of the Tag to match (for example "confidential")
+
+Asset Collection
+~~~~~~~~~~~~~~~~
+
+This allows to match on an asset collection the asset belongs to.
+
+Signature:
+  ``isInCollection(collection-title)``
+Parameters:
+  * ``collection-title`` (string) Title of the AssetCollection to match (for example "confidential-documents")
+
+Alternatively, the ``isWithoutCollection`` filter to match on assets that don't belong to any asset collection.
+
+Signature:
+  ``isWithoutCollection()``
+
+Usage example:
+
+.. code-block:: yaml
+
+  privilegeTargets:
+    'Neos\Media\Security\Authorization\Privilege\ReadAssetPrivilege':
+      'Some.Package:ReadAllPDFs':
+        matcher: 'hasMediaType("application/pdf")'
+
+      'Some.Package:ReadConfidentialPdfs':
+        matcher: 'hasMediaType("application/pdf") && isTagged("confidential")'
+
+ReadAssetCollectionPrivilege
+----------------------------
+
+A privilege that prevents reading asset collections depending on the following Privilege Matchers:
+
+Collection Title
+~~~~~~~~~~~~~~~~~
+
+This allows to match on the title of the asset collection.
+
+Signature:
+  ``isTitled(collection-title)``
+Parameters:
+  * ``collection-title`` (string) Complete title of the asset collection to match
+
+Usage example:
+
+.. code-block:: yaml
+
+  privilegeTargets:
+    'Neos\Media\Security\Authorization\Privilege\ReadAssetCollectionPrivilege':
+      'Some.Package:ReadSpecialAssetCollection':
+        matcher: 'isTitled("some-asset-collection")'
+
+ReadTagPrivilege
+----------------
+
+A privilege that prevents reading tags depending on the following Privilege Matchers:
+
+Tag Label
+~~~~~~~~~
+
+This allows to match on the label of the tag.
+
+Signature:
+  ``isLabeld(tag-label)``
+Parameters:
+  * ``tag-label`` (string) Complete label of the tag to match
+
+Usage example:
+
+.. code-block:: yaml
+
+  privilegeTargets:
+    'Neos\Media\Security\Authorization\Privilege\ReadTagPrivilege':
+      'Some.Package:ReadConfidentialTags':
+        matcher: 'isLabeled("confidential")'
+
+.. note::
+  You can find out more about the Asset Privileges in the `Neos Media documentation
+   <http://neos-media.readthedocs.io/en/stable/>`_
+
 Restricting Access to Backend Modules
 =====================================
 
