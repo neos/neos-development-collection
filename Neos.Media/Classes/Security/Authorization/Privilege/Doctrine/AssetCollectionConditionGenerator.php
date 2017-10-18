@@ -46,4 +46,15 @@ class AssetCollectionConditionGenerator extends EntityConditionGenerator
 
         return $propertyConditionGenerator->equals($collectionTitle);
     }
+
+    /**
+     * @param string $collectionIdentifier
+     * @return PropertyConditionGenerator
+     */
+    public function hasId($collectionIdentifier)
+    {
+        $propertyConditionGenerator = new PropertyConditionGenerator('Persistence_Object_Identifier');
+
+        return $propertyConditionGenerator->equals($collectionIdentifier);
+    }
 }

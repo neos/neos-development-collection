@@ -433,21 +433,21 @@ Tag
 This allows to match on a label the asset is tagged with.
 
 Signature:
-  ``isTagged(tag-label)``
+  ``isTagged(tag-label-or-id)``
 Parameters:
-  * ``tag-label`` (string) Label of the Tag to match (for example "confidential")
+  * ``tag-label-or-id`` (string) Label of the Tag to match (for example "confidential") or its technical identifier (UUID)
 
 Asset Collection
 ~~~~~~~~~~~~~~~~
 
-This allows to match on an asset collection the asset belongs to.
+This allows to match on an Asset Collection the asset belongs to.
 
 Signature:
-  ``isInCollection(collection-title)``
+  ``isInCollection(collection-title-or-id)``
 Parameters:
-  * ``collection-title`` (string) Title of the AssetCollection to match (for example "confidential-documents")
+  * ``collection-title-or-id`` (string) Title of the Asset Collection to match (for example "confidential-documents") or its technical identifier (UUID)
 
-Alternatively, the ``isWithoutCollection`` filter to match on assets that don't belong to any asset collection.
+Alternatively, the ``isWithoutCollection`` filter to match on assets that don't belong to any Asset Collection.
 
 Signature:
   ``isWithoutCollection()``
@@ -467,17 +467,17 @@ Usage example:
 ReadAssetCollectionPrivilege
 ----------------------------
 
-A privilege that prevents reading asset collections depending on the following Privilege Matchers:
+A privilege that prevents reading Asset Collections depending on the following Privilege Matchers:
 
 Collection Title
 ~~~~~~~~~~~~~~~~~
 
-This allows to match on the title of the asset collection.
+This allows to match on the title of the Asset Collection.
 
 Signature:
   ``isTitled(collection-title)``
 Parameters:
-  * ``collection-title`` (string) Complete title of the asset collection to match
+  * ``collection-title`` (string) Complete title of the Asset Collection to match
 
 Usage example:
 
@@ -487,6 +487,25 @@ Usage example:
     'Neos\Media\Security\Authorization\Privilege\ReadAssetCollectionPrivilege':
       'Some.Package:ReadSpecialAssetCollection':
         matcher: 'isTitled("some-asset-collection")'
+
+Collection Identifier
+~~~~~~~~~~~~~~~~~~~~~
+
+This allows to match on the technical identifier (UUID) of the Asset Collection.
+
+Signature:
+  ``hasId(collection-id)``
+Parameters:
+  * ``collection-id`` (string) Technical identifier (UUID) of the Asset Collection to match
+
+Usage example:
+
+.. code-block:: yaml
+
+  privilegeTargets:
+    'Neos\Media\Security\Authorization\Privilege\ReadAssetCollectionPrivilege':
+      'Some.Package:ReadSpecialAssetCollection':
+        matcher: 'hasId("9b13346d-960a-45e6-8e93-c2929373bc90")'
 
 ReadTagPrivilege
 ----------------
@@ -511,6 +530,25 @@ Usage example:
     'Neos\Media\Security\Authorization\Privilege\ReadTagPrivilege':
       'Some.Package:ReadConfidentialTags':
         matcher: 'isLabeled("confidential")'
+
+Tag Identifier
+~~~~~~~~~~~~~~
+
+This allows to match on the technical identifier (UUID) of the Tag.
+
+Signature:
+  ``hasId(tag-id)``
+Parameters:
+  * ``tag-id`` (string) Technical identifier (UUID) of the Tag to match
+
+Usage example:
+
+.. code-block:: yaml
+
+  privilegeTargets:
+    'Neos\Media\Security\Authorization\Privilege\ReadTagPrivilege':
+      'Some.Package:ReadConfidentialTags':
+        matcher: 'hasId("961c3c03-da50-4a77-a5b4-11d2bbab7197")'
 
 .. note::
   You can find out more about the Asset Privileges in the `Neos Media documentation

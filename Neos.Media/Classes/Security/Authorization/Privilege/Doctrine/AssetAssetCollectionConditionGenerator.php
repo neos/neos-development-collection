@@ -14,6 +14,7 @@ namespace Neos\Media\Security\Authorization\Privilege\Doctrine;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Query\Filter\SQLFilter as DoctrineSqlFilter;
+use Neos\ContentRepository\Validation\Validator\NodeIdentifierValidator;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\PropertyConditionGenerator;
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\SqlGeneratorInterface;
@@ -33,14 +34,14 @@ class AssetAssetCollectionConditionGenerator implements SqlGeneratorInterface
     /**
      * @var string
      */
-    protected $collectionTitle;
+    protected $collectionTitleOrIdentifier;
 
     /**
-     * @param string $collectionTitle
+     * @param string $collectionTitleOrIdentifier
      */
-    public function __construct($collectionTitle)
+    public function __construct($collectionTitleOrIdentifier)
     {
-        $this->collectionTitle = $collectionTitle;
+        $this->collectionTitleOrIdentifier = $collectionTitleOrIdentifier;
     }
 
     /**
@@ -52,14 +53,18 @@ class AssetAssetCollectionConditionGenerator implements SqlGeneratorInterface
     public function getSql(DoctrineSqlFilter $sqlFilter, ClassMetadata $targetEntity, $targetTableAlias)
     {
         $propertyConditionGenerator = new PropertyConditionGenerator('');
-        $collectionTitle = $propertyConditionGenerator->getValueForOperand($this->collectionTitle);
-        $quotedCollectionTitle = $this->entityManager->getConnection()->quote($collectionTitle);
+        $collectionTitleOrIdentifier = $propertyConditionGenerator->getValueForOperand($this->collectionTitleOrIdentifier);
+        if (preg_match(NodeIdentifierValidator::PATTERN_MATCH_NODE_IDENTIFIER, $collectionTitleOrIdentifier) === 1) {
+            $whereCondition = $targetTableAlias . '_ac.persistence_object_identifier = ' . $this->entityManager->getConnection()->quote($collectionTitleOrIdentifier);
+        } else {
+            $whereCondition = $targetTableAlias . '_ac.title = ' . $this->entityManager->getConnection()->quote($collectionTitleOrIdentifier);
+        }
 
         return $targetTableAlias . '.persistence_object_identifier IN (
             SELECT ' . $targetTableAlias . '_a.persistence_object_identifier
             FROM neos_media_domain_model_asset AS ' . $targetTableAlias . '_a
             LEFT JOIN neos_media_domain_model_assetcollection_assets_join ' . $targetTableAlias . '_acj ON ' . $targetTableAlias . '_a.persistence_object_identifier = ' . $targetTableAlias . '_acj.media_asset
             LEFT JOIN neos_media_domain_model_assetcollection ' . $targetTableAlias . '_ac ON ' . $targetTableAlias . '_ac.persistence_object_identifier = ' . $targetTableAlias . '_acj.media_assetcollection
-            WHERE ' . $targetTableAlias . '_ac.title = ' . $quotedCollectionTitle . ')';
+            WHERE ' . $whereCondition . ')';
     }
 }
