@@ -46,4 +46,15 @@ class TagConditionGenerator extends EntityConditionGenerator
 
         return $propertyConditionGenerator->equals($tagLabel);
     }
+
+    /**
+     * @param string $tagIdentifier
+     * @return PropertyConditionGenerator
+     */
+    public function hasId($tagIdentifier)
+    {
+        $propertyConditionGenerator = new PropertyConditionGenerator('Persistence_Object_Identifier');
+
+        return $propertyConditionGenerator->equals($tagIdentifier);
+    }
 }

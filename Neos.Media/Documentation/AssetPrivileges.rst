@@ -28,6 +28,10 @@ Restrict read access to *Assets* based on *Tag*
       'Some.Package:ReadConfidentialAssets':
         matcher: 'isTagged("confidential")'
 
+.. note:
+
+  Instead of the *label* the *technical identifier (UUID)* of the tag can be used, too
+
 Restrict read access to *Assets* based on *Asset Collection*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -38,6 +42,10 @@ Restrict read access to *Assets* based on *Asset Collection*
       'Some.Package:ReadSpecialAssets':
         matcher: 'isInCollection("some-collection")'
 
+.. note:
+
+  Instead of the *title* the *technical identifier (UUID)* of the asset collection can be used, too
+
 Of course you can combine the three matchers like:
 
 .. code-block:: yaml
@@ -47,8 +55,10 @@ Of course you can combine the three matchers like:
       'Some.Package:ReadConfidentialPdfs':
         matcher: 'hasMediaType("application/pdf") && isTagged("confidential")'
 
-Restrict read access to *Tags* based on *Tag label*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Restrict read access to *Tags* based on *Tag label* or *id*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can match on the *label* of a Tag:
 
 .. code-block:: yaml
 
@@ -57,8 +67,19 @@ Restrict read access to *Tags* based on *Tag label*
       'Some.Package:ReadConfidentialTags':
         matcher: 'isLabeled("confidential")'
 
-Restrict read access to *Asset Collections* based on *Collection title*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Or on its technical identifier (UUID):
+
+.. code-block:: yaml
+
+  privilegeTargets:
+    'Neos\Media\Security\Authorization\Privilege\ReadTagPrivilege':
+      'Some.Package:ReadConfidentialTags':
+        matcher: 'hasId("3e8300a6-e5a7-4c3f-aae6-4d7ce35f2caa")'
+
+Restrict read access to *Asset Collections* based on *Collection title* or *id*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can match on the *title* of an Asset Collection:
 
 .. code-block:: yaml
 
@@ -66,6 +87,15 @@ Restrict read access to *Asset Collections* based on *Collection title*
     'Neos\Media\Security\Authorization\Privilege\ReadAssetCollectionPrivilege':
       'Some.Package:ReadSpecialAssetCollection':
         matcher: 'isTitled("some-collection")'
+
+Or on its technical identifier (UUID):
+
+.. code-block:: yaml
+
+  privilegeTargets:
+    'Neos\Media\Security\Authorization\Privilege\ReadAssetCollectionPrivilege':
+      'Some.Package:ReadSpecialAssetCollection':
+        matcher: 'hasId("7c1e8cbc-9205-406d-a384-f8e9440531ad")'
 
 Complete Example:
 -----------------
