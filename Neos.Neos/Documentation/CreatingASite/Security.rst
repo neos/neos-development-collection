@@ -518,7 +518,7 @@ Tag Label
 This allows to match on the label of the tag.
 
 Signature:
-  ``isLabeld(tag-label)``
+  ``isLabeled(tag-label)``
 Parameters:
   * ``tag-label`` (string) Complete label of the tag to match
 
