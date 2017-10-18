@@ -14,10 +14,10 @@ namespace Neos\Media\Security\Authorization\Privilege\Doctrine;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Query\Filter\SQLFilter as DoctrineSqlFilter;
-use Neos\ContentRepository\Validation\Validator\NodeIdentifierValidator;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\PropertyConditionGenerator;
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\SqlGeneratorInterface;
+use Neos\Flow\Validation\Validator\UuidValidator;
 
 /**
  * Condition generator covering Asset <-> Tag relations (M:M relations are not supported by the Flow
@@ -54,7 +54,7 @@ class AssetTagConditionGenerator implements SqlGeneratorInterface
     {
         $propertyConditionGenerator = new PropertyConditionGenerator('');
         $tagLabelOrIdentifier = $propertyConditionGenerator->getValueForOperand($this->tagLabelOrIdentifier);
-        if (preg_match(NodeIdentifierValidator::PATTERN_MATCH_NODE_IDENTIFIER, $tagLabelOrIdentifier) === 1) {
+        if (preg_match(UuidValidator::PATTERN_MATCH_UUID, $tagLabelOrIdentifier) === 1) {
             $whereCondition = $targetTableAlias . '_t.persistence_object_identifier = ' . $this->entityManager->getConnection()->quote($tagLabelOrIdentifier);
         } else {
             $whereCondition = $targetTableAlias . '_t.label = ' . $this->entityManager->getConnection()->quote($tagLabelOrIdentifier);

@@ -14,10 +14,10 @@ namespace Neos\Media\Security\Authorization\Privilege\Doctrine;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Query\Filter\SQLFilter as DoctrineSqlFilter;
-use Neos\ContentRepository\Validation\Validator\NodeIdentifierValidator;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\PropertyConditionGenerator;
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\SqlGeneratorInterface;
+use Neos\Flow\Validation\Validator\UuidValidator;
 
 /**
  * Condition generator covering Asset <-> AssetCollection relations (M:M relations are not supported by the Flow
@@ -54,7 +54,7 @@ class AssetAssetCollectionConditionGenerator implements SqlGeneratorInterface
     {
         $propertyConditionGenerator = new PropertyConditionGenerator('');
         $collectionTitleOrIdentifier = $propertyConditionGenerator->getValueForOperand($this->collectionTitleOrIdentifier);
-        if (preg_match(NodeIdentifierValidator::PATTERN_MATCH_NODE_IDENTIFIER, $collectionTitleOrIdentifier) === 1) {
+        if (preg_match(UuidValidator::PATTERN_MATCH_UUID, $collectionTitleOrIdentifier) === 1) {
             $whereCondition = $targetTableAlias . '_ac.persistence_object_identifier = ' . $this->entityManager->getConnection()->quote($collectionTitleOrIdentifier);
         } else {
             $whereCondition = $targetTableAlias . '_ac.title = ' . $this->entityManager->getConnection()->quote($collectionTitleOrIdentifier);
