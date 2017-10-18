@@ -48,6 +48,28 @@ class AssetConditionGenerator extends EntityConditionGenerator
     }
 
     /**
+     * @param string $term
+     * @return PropertyConditionGenerator
+     */
+    public function titleEndsWith($term)
+    {
+        $propertyConditionGenerator = new PropertyConditionGenerator('title');
+
+        return $propertyConditionGenerator->like('%' . $term);
+    }
+
+    /**
+     * @param string $term
+     * @return PropertyConditionGenerator
+     */
+    public function titleContains($term)
+    {
+        $propertyConditionGenerator = new PropertyConditionGenerator('title');
+
+        return $propertyConditionGenerator->like('%' . $term . '%');
+    }
+
+    /**
      * @param string $mediaType
      * @return PropertyConditionGenerator
      */
