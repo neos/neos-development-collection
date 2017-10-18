@@ -410,12 +410,22 @@ A privilege that prevents reading assets depending on the following Privilege Ma
 Asset Title
 ~~~~~~~~~~~
 
-This allows to match on the title (prefix) of the asset.
+This allows to match on the title of the asset.
 
 Signature:
   ``titleStartsWith(title-prefix)``
 Parameters:
   * ``title-prefix`` (string) Beginning of or complete title of the asset to match
+
+Signature:
+  ``titleEndWith(title-suffix)``
+Parameters:
+  * ``title-suffix`` (string) End of title of the asset to match
+
+Signature:
+  ``titleContains(title-prefix)``
+Parameters:
+  * ``title-prefix`` (string) Part of title of the asset to match
 
 Asset Media Type
 ~~~~~~~~~~~~~~~~
