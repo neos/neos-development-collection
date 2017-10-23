@@ -155,7 +155,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
                         if (preg_match_all('~rel="(.*?)~i', $linkText, $relMatches)) {
                             $linkText = preg_replace('/rel=".*?"/', 'rel="noopener"', $linkText);
                         } else {
-                            $linkText = str_replace('<a', '<a rel="noopener"', $linkText);
+                            $linkText = preg_replace('/target="(.*?)"/', 'target="$1" rel="noopener"', $linkText);
                         }
                     }
                 }
