@@ -99,8 +99,8 @@ function(Ember, $, template, plupload, Notification, Configuration, I18n, Inspec
 
 			this._uploader.bind('BeforeUpload', function(uploader, file) {
 				uploader.settings.multipart_params['__csrfToken'] = Configuration.get('CsrfToken');
-				uploader.settings.multipart_params['__siteNodeName'] = $('link[rel="neos-site"]').data('node-name');
-				uploader.settings.multipart_params['__nodePath'] = InspectorController.nodeSelection.get('selectedNode.nodePath');
+				uploader.settings.multipart_params['siteNodeName'] = $('link[rel="neos-site"]').data('node-name');
+				uploader.settings.multipart_params['node'] = InspectorController.nodeSelection.get('selectedNode.nodePath');
 			});
 
 			this._uploader.bind('FileUploaded', function(uploader, file, response) {
