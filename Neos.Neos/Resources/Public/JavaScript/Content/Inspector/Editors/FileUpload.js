@@ -6,9 +6,10 @@ define(
 	'Library/plupload',
 	'Shared/Notification',
 	'Shared/Configuration',
-	'Shared/I18n'
+	'Shared/I18n',
+	'Content/Inspector/InspectorController'
 ],
-function(Ember, $, template, plupload, Notification, Configuration, I18n) {
+function(Ember, $, template, plupload, Notification, Configuration, I18n, InspectorController) {
 	return Ember.View.extend({
 		value: '',
 
@@ -99,6 +100,7 @@ function(Ember, $, template, plupload, Notification, Configuration, I18n) {
 			this._uploader.bind('BeforeUpload', function(uploader, file) {
 				uploader.settings.multipart_params['__csrfToken'] = Configuration.get('CsrfToken');
 				uploader.settings.multipart_params['__siteNodeName'] = $('link[rel="neos-site"]').data('node-name');
+				uploader.settings.multipart_params['__nodePath'] = InspectorController.nodeSelection.get('selectedNode.nodePath');
 			});
 
 			this._uploader.bind('FileUploaded', function(uploader, file, response) {
