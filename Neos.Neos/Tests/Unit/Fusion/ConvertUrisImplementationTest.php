@@ -273,7 +273,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
             }
         }));
 
-        $expectedResult = 'This string contains a link to a node: <a href="http://localhost/uri/01">node</a> and one to an external url with a target set <a target="' . $externalLinkTarget . '" href="http://www.example.org">example</a> and one without a target <a target="' . $externalLinkTarget . '" href="http://www.example.org">example2</a>';
+        $expectedResult = 'This string contains a link to a node: <a href="http://localhost/uri/01">node</a> and one to an external url with a target set <a target="' . $externalLinkTarget . '" rel="noopener" href="http://www.example.org">example</a> and one without a target <a target="' . $externalLinkTarget . '" rel="noopener" href="http://www.example.org">example2</a>';
         $actualResult = $this->convertUrisImplementation->evaluate();
         $this->assertSame($expectedResult, $actualResult);
     }
