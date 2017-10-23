@@ -128,6 +128,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
     /**
      * Replace the target attribute of link tags in processedContent with the target
      * specified by externalLinkTarget and resourceLinkTarget options.
+     * Additionally set rel="noopener" for links with target="_blank".
      *
      * @param string $processedContent
      * @return string
@@ -149,6 +150,14 @@ class ConvertUrisImplementation extends AbstractFusionObject
                 $target = null;
                 if ($externalLinkTarget !== '' && is_string($uriHost) && $uriHost !== $host) {
                     $target = $externalLinkTarget;
+
+                    if ($target === '_blank') {
+                        if (preg_match_all('~rel="(.*?)~i', $linkText, $relMatches)) {
+                            $linkText = preg_replace('/rel=".*?"/', 'rel="noopener"', $linkText);
+                        } else {
+                            $linkText = str_replace('<a', '<a rel="noopener"', $linkText);
+                        }
+                    }
                 }
                 if ($resourceLinkTarget !== '' && strpos($linkHref, '_Resources') !== false) {
                     $target = $resourceLinkTarget;
