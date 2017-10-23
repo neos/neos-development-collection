@@ -14,10 +14,14 @@
 	</div>
 
 	<div class="neos-inspector-image-upload" id="{{unbound view._containerId}}">
-		{{view view.SecondaryInspectorButton viewClassBinding="view._mediaBrowserView" class="neos-button-icon" titleBinding="view.mediaLabel" icon="camera" action="_beforeMediaBrowserIsShown" target="view" data-neos-tooltip=""}}
-		<button id="{{unbound view._browseButtonId}}" class="neos-button neos-button-icon neos-inspector-image-upload-files" {{bindAttr disabled="view._uploadInProgress:neos-disabled" title="view._fileUploadLabel"}} data-neos-tooltip>
-			<i class="icon-upload"></i>
-		</button>
+		{{#if view.shouldRenderMediaBrowser}}
+			{{view view.SecondaryInspectorButton viewClassBinding="view._mediaBrowserView" class="neos-button-icon" titleBinding="view.mediaLabel" icon="camera" action="_beforeMediaBrowserIsShown" target="view" data-neos-tooltip=""}}
+		{{/if}}
+		{{#if view.shouldRenderUpload}}
+			<button id="{{unbound view._browseButtonId}}" class="neos-button neos-button-icon neos-inspector-image-upload-files" {{bindAttr disabled="view._uploadInProgress:neos-disabled" title="view._fileUploadLabel"}} data-neos-tooltip>
+				<i class="icon-upload"></i>
+			</button>
+		{{/if}}
 		{{#if view.value}}
 			<button class="neos-button neos-button-icon neos-inspector-image-remove-button" {{bindAttr disabled="view._uploadInProgress" title="view.removeButtonLabel"}} {{action "remove" target="view"}} data-neos-tooltip>
 				<i class="icon-remove"></i>
