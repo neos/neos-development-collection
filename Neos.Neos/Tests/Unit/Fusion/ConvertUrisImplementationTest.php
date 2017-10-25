@@ -301,7 +301,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
             return 'http://localhost/_Resources/01';
         }));
 
-        $expectedResult = 'This string contains two asset links and an external link: one with a target set <a target="' . $resourceLinkTarget . '" href="http://localhost/_Resources/01">example</a> and one without a target <a target="' . $resourceLinkTarget . '" href="http://localhost/_Resources/01">example2</a> and an external link <a href="http://www.example.org">example3</a>';
+        $expectedResult = 'This string contains two asset links and an external link: one with a target set <a target="' . $resourceLinkTarget . '" rel="noopener" href="http://localhost/_Resources/01">example</a> and one without a target <a target="' . $resourceLinkTarget . '" rel="noopener" href="http://localhost/_Resources/01">example2</a> and an external link <a href="http://www.example.org">example3</a>';
         $actualResult = $this->convertUrisImplementation->evaluate();
         $this->assertSame($expectedResult, $actualResult);
     }
