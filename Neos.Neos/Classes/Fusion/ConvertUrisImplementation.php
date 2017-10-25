@@ -150,14 +150,6 @@ class ConvertUrisImplementation extends AbstractFusionObject
                 $target = null;
                 if ($externalLinkTarget !== '' && is_string($uriHost) && $uriHost !== $host) {
                     $target = $externalLinkTarget;
-
-                    if ($target === '_blank') {
-                        if (preg_match_all('~target="(.*?)~i', $linkText, $targetMatches)) {
-                            $linkText = preg_replace('/target="(.*?)"/', 'target="$1" rel="noopener"', $linkText);
-                        } else {
-                            $linkText = str_replace('<a', '<a rel="noopener"', $linkText);
-                        }
-                    }
                 }
                 if ($resourceLinkTarget !== '' && strpos($linkHref, '_Resources') !== false) {
                     $target = $resourceLinkTarget;
@@ -166,9 +158,9 @@ class ConvertUrisImplementation extends AbstractFusionObject
                     return $linkText;
                 }
                 if (preg_match_all('~target="(.*?)~i', $linkText, $targetMatches)) {
-                    return preg_replace('/target=".*?"/', sprintf('target="%s"', $target), $linkText);
+                    return preg_replace('/target=".*?"/', sprintf('target="%s"%s', $target, $target === '_blank' ? ' rel="noopener"' : ''), $linkText);
                 }
-                return str_replace('<a', sprintf('<a target="%s"', $target), $linkText);
+                return str_replace('<a', sprintf('<a target="%s"%s', $target, $target === '_blank' ? ' rel="noopener"' : ''), $linkText);
             },
             $processedContent
         );
