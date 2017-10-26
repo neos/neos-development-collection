@@ -468,6 +468,16 @@ This functionality is especially helpful if there are strong conventions regardi
 context variables. This is often the case in standalone Fusion applications, but for Neos, this
 functionality is hardly ever used.
 
+.. warning:: In order to prevent unwanted side effects, it is not possible to access context variables from within ``@context`` on the same level. This means that 
+
+	@context.contextOne = 'World!'
+
+	@context.contextTwo = ${'Hello ' + contextOne}
+
+	output = ${contextTwo}
+
+can never be ``Hello World!``
+
 Processors
 ==========
 
