@@ -474,7 +474,6 @@ functionality is hardly ever used.
 	@context.contextTwo = ${'Hello ' + contextOne}
 	output = ${contextTwo}
 
-
 Processors
 ==========
 
