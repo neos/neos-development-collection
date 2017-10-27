@@ -7,20 +7,20 @@ Feature List
 
 .. note::
 
-	The following list contains the key features of Neos technical wise. If you want to learn about the great
-	features and experience that neos offers to editors and visitors please have look at the `Neos Website
+	The following list contains the key technical features of Neos. If you want to learn about the great
+	features and experience that neos offers to editors and visitors please have a look at the `Neos Website
 	<http://www.neos.io>`_.
 
 
 ContentRepository and ContentElements
 =====================================
 
-The content repository is conceptual core of Neos. It can store arbitrary content by managing so called Nodes that can
-have custom properties and childNodes. The list of available NodeTypes is extensible and hirarchical so new NodeTypes
+The content repository is the conceptual core of Neos. It can store arbitrary content by managing so called Nodes that can
+have custom properties and ChildNodes. The list of available NodeTypes is extensible and hierarchical so new NodeTypes
 can be created by extending the existing ones.
 
 Neos already comes with a sophisticated list of ContentElements to cover the basic editing needs without further extension.
-The Standard ContentElements hat are implemented as NodeTypes from the Package TYPO3.Neos.NodeTypes and contain the elements
+The Standard ContentElements are implemented as NodeTypes from the Package TYPO3.Neos.NodeTypes and contain the elements
 Headline, Text, Image, Image with Text, 2- 3- 4-Columns, Download List, Forms and Menu.
 
 The List of ContentElements is easily extensible and the demo site already contains examples for YouTube and Flickr
@@ -49,7 +49,7 @@ called content dimensions.
 Workspaces and Publishing
 =========================
 
-Neos has workspaces build in. Every user works in his personal workspace and can publish his changes to make them public.
+Neos has workspaces built in. Every user works in his personal workspace and can publish his changes to make them public.
 Furthermore, there is a "Workspace" module which can be used for publishing individual nodes.
 
 .. note:: The concept of workspaces will be extended in future releases so shared editing workspaces between users and
@@ -58,8 +58,8 @@ Furthermore, there is a "Workspace" module which can be used for publishing indi
 Import Export
 =============
 
-Neos has full support for importing and exporting site content using content stored in XML files. That can be also used
-to regulary import external data into Neos or to migrate content from other systems to.
+Neos has full support for importing and exporting site content using content stored in XML files. That can also be used
+to regulary import external data into Neos or to migrate content from other systems.
 
 .. note:: The reference of the import and export command can be found in the  :ref:`Neos Command Reference`.
 
