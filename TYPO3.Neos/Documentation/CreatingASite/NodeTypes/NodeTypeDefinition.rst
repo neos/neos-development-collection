@@ -49,7 +49,7 @@ The following options are allowed:
   `TYPO3.Neos.NodeTypes:Page`.
 
 ``superTypes``
-  An array of parent node types inherited from as keys with a boolean values.::
+  An array of parent node types as keys with a boolean value::
 
     'TYPO3.Neos:Document':
       superTypes:
@@ -69,7 +69,7 @@ The following options are allowed:
         # ALLOW text, DISALLOW Image
         'TYPO3.Neos.NodeTypes:Text': true
         'TYPO3.Neos.NodeTypes:Image': false
-        # DISALLOW as Fallback (for not-explicitely-listed node types)
+        # DISALLOW as Fallback (for not-explicitly-listed node types)
         '*': false
 
 ``childNodes``
@@ -136,9 +136,9 @@ The following options are allowed:
     Small numbers are sorted on top.
 
   ``icon``
-    This setting define the icon to use in the Neos UI for the node type
+    This setting defines the icon that the Neos UI will use to display the node type.
 
-    Currently it's only possible to use a predefined selection of icons, which
+    Currently it is only possible to use a predefined selection of icons, which
     are available in Font Awesome http://fortawesome.github.io/Font-Awesome/3.2.1/icons/.
 
   ``help``
