@@ -10,7 +10,7 @@ and organized. These basics are explained in this section.
 Nodes inside the TYPO3 Content Repository
 =========================================
 
-The content in Neos is stored not inside tables of a relational database, but
+The content in Neos is not stored inside tables of a relational database, but
 inside a *tree-based* structure: the so-called TYPO3 Content Repository.
 
 To a certain extent, it is comparable to files in a file-system: They are also
@@ -59,7 +59,7 @@ a ``ContentCollection``, there could be another three-column element which again
 Predefined Node Types
 ---------------------
 
-Neos is shipped with a number of node types. It is helpful to know some of
+Neos is shipped with a number of predefined node types. It is helpful to know some of
 them, as they can be useful elements to extend, and Neos depends on some of them
 for proper behavior.
 
