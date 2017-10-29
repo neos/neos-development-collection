@@ -673,4 +673,23 @@ class ContentCacheTest extends AbstractFusionObjectTest
         $this->assertSame('Dynamic segment|counter=2', $thirdRenderResult);
         $this->assertSame('Dynamic segment|counter=3', $fourthRenderResult);
     }
+
+    /**
+     * @test
+     */
+    public function cachedSegmentsCanBeNestedWithinDynamicSegments()
+    {
+        $renderObject = new TestModel(42, 'Render object');
+
+        $view = $this->buildView();
+        $view->setOption('enableContentCache', true);
+        $view->assign('renderObject', $renderObject);
+        $view->setFusionPath('contentCache/dynamicSegmentWithNestedCachedSegment');
+
+        $firstRenderResult = $view->render();
+        $secondRenderResult = $view->render();
+
+        $this->assertSame('Cached segment|counter=1|Nested dynamic segment|counter=2|Nested cached segment|counter=3', $firstRenderResult);
+        $this->assertSame($firstRenderResult, $secondRenderResult);
+    }
 }
