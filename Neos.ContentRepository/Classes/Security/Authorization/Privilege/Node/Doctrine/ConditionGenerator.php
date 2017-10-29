@@ -69,6 +69,9 @@ class ConditionGenerator extends EntityConditionGenerator
      */
     public function isDescendantNodeOf($nodePathOrIdentifier)
     {
+        $propertyConditionGenerator1 = new PropertyConditionGenerator('path');
+        $propertyConditionGenerator2 = new PropertyConditionGenerator('path');
+
         if (preg_match(NodeIdentifierValidator::PATTERN_MATCH_NODE_IDENTIFIER, $nodePathOrIdentifier) === 1) {
             $node = $this->getNodeByIdentifier($nodePathOrIdentifier);
             if ($node === null) {
@@ -76,10 +79,9 @@ class ConditionGenerator extends EntityConditionGenerator
             }
             $nodePath = $node->getPath();
         } else {
+            $nodePathOrIdentifier = $propertyConditionGenerator1->getValueForOperand($nodePathOrIdentifier);
             $nodePath = rtrim($nodePathOrIdentifier, '/');
         }
-        $propertyConditionGenerator1 = new PropertyConditionGenerator('path');
-        $propertyConditionGenerator2 = new PropertyConditionGenerator('path');
 
         return new DisjunctionGenerator(array($propertyConditionGenerator1->like($nodePath . '/%'), $propertyConditionGenerator2->equals($nodePath)));
     }
@@ -91,6 +93,7 @@ class ConditionGenerator extends EntityConditionGenerator
     public function nodeIsOfType($nodeTypes)
     {
         $propertyConditionGenerator = new PropertyConditionGenerator('nodeType');
+        $nodeTypes = $propertyConditionGenerator->getValueForOperand($nodeTypes);
         if (!is_array($nodeTypes)) {
             $nodeTypes = array($nodeTypes);
         }
@@ -109,6 +112,7 @@ class ConditionGenerator extends EntityConditionGenerator
     public function isInWorkspace($workspaceNames)
     {
         $propertyConditionGenerator = new PropertyConditionGenerator('workspace');
+        $workspaceNames = $propertyConditionGenerator->getValueForOperand($workspaceNames);
         if (!is_array($workspaceNames)) {
             $workspaceNames = array($workspaceNames);
         }
