@@ -560,13 +560,13 @@ contentCache.dynamicSegmentWithDisabledDiscriminator = Neos.Fusion:Array {
 	}
 }
 
-contentCache.dynamicSegmentWithNestedCachedSegment = TYPO3.TypoScript:Array {
+contentCache.dynamicSegmentWithNestedCachedSegment = Neos.Fusion:Array {
 	5 = 'Cached segment|'
 	10 = ${'counter=' + renderObject.counter + '|'}
-	15 = TYPO3.TypoScript:Array {
+	15 = Neos.Fusion:Array {
 		5 = 'Nested dynamic segment|'
 		10 = ${'counter=' + renderObject.counter + '|'}
-		15 = TYPO3.TypoScript:Array {
+		15 = Neos.Fusion:Array {
 			5 = 'Nested cached segment|'
 			10 = ${'counter=' + renderObject.counter}
 			@cache {
