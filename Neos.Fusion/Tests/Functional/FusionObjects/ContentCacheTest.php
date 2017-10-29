@@ -684,7 +684,7 @@ class ContentCacheTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->setOption('enableContentCache', true);
         $view->assign('renderObject', $renderObject);
-        $view->setTypoScriptPath('contentCache/dynamicSegmentWithNestedCachedSegment');
+        $view->setFusionPath('contentCache/dynamicSegmentWithNestedCachedSegment');
 
         $firstRenderResult = $view->render();
         $secondRenderResult = $view->render();
