@@ -884,7 +884,7 @@ ContentElementWrapping
 ----------------------
 
 Processor to augment rendered HTML code with node metadata that allows the Neos UI to select the node and show
-node properties in the inspector. This is especially useful if your renderer prototype is not derived from ``TYPO3.Neos:Content``.
+node properties in the inspector. This is especially useful if your renderer prototype is not derived from ``Neos.Neos:Content``.
 
 The processor expects being applied on HTML code with a single container tag that is augmented.
 
@@ -897,7 +897,7 @@ Example::
 
 		# The following line must not be removed as it adds required meta data
 		# to edit content elements in the backend
-		@process.contentElementWrapping = TYPO3.Neos:ContentElementWrapping {
+		@process.contentElementWrapping = Neos.Neos:ContentElementWrapping {
 			@position = 'end'
 		}
 	}
@@ -917,10 +917,10 @@ The processor expects beeing applied to an HTML tag with the content of the edit
 
 Example::
 
-	renderer = TYPO3.TypoScript:Tag {
+	renderer = Neos.Fusion:Tag {
 		tagName = 'h1'
 		content = ${q(node).property('title')}
-		@process.contentElementEditableWrapping = TYPO3.Neos:ContentElementEditable {
+		@process.contentElementEditableWrapping = Neos.Neos:ContentElementEditable {
 			property = 'title'
 		}
 	}
