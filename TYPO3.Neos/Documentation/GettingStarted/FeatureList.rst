@@ -16,7 +16,7 @@ ContentRepository and ContentElements
 =====================================
 
 The content repository is the conceptual core of Neos. It can store arbitrary content by managing so called Nodes that can
-have custom properties and ChildNodes. The list of available NodeTypes is extensible and hierarchical so new NodeTypes
+have custom properties and child nodes. The list of available NodeTypes is extensible and hierarchical so new NodeTypes
 can be created by extending the existing ones.
 
 Neos already comes with a sophisticated list of ContentElements to cover the basic editing needs without further extension.
