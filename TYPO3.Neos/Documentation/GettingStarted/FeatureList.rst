@@ -59,7 +59,7 @@ Import Export
 =============
 
 Neos has full support for importing and exporting site content using content stored in XML files. That can also be used
-to regulary import external data into Neos or to migrate content from other systems.
+to regularly import external data into Neos or to migrate content from other systems.
 
 .. note:: The reference of the import and export command can be found in the  :ref:`Neos Command Reference`.
 
@@ -85,7 +85,7 @@ without having to worry about low level implementations.
 Surf Deployment and Cloud Support
 =================================
 
-The developers of Neos also created "Surf" a professional tool for downtime free server-deployment that is optimzed for
+The developers of Neos also created "Surf" a professional tool for downtime free server-deployment that is optimized for
 Neos. With Surf Neos can be easily deployed to all kinds of hosting environments being it dedicated servers, virtual-machines
 or cloud solutions of different flavours. The media handling of Neos is "cloud ready" by design and can handle external
 resources exceptionally well.
