@@ -462,6 +462,10 @@ define(
 				ContentModule.loadPage(node.data.href);
 			},
 
+			afterPaste: function(node) {
+				this.afterPersistNode(node);
+			},
+
 			refresh: function() {
 				this._updateMetaInformation();
 				this.filterTree();
