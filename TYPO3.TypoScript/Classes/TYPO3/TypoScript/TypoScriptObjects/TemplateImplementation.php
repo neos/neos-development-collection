@@ -93,7 +93,7 @@ class TemplateImplementation extends AbstractArrayTypoScriptObject
 				`prototype(%s) < prototype(TYPO3.TypoScript:Template) {
 					templatePath = 'resource://Vendor.Package/Private/Templates/MyObject.html'
 				}`
-			", $templatePath, $this->typoScriptObjectName));
+			", $this->typoScriptObjectName));
         }
         $fluidTemplate->setTemplatePathAndFilename($templatePath);
 
