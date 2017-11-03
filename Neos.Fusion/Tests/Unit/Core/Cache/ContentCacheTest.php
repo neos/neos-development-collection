@@ -11,8 +11,9 @@ namespace Neos\Fusion\Tests\Unit\Core\Cache;
  * source code.
  */
 
-use Neos\Flow\Cache\Backend\TransientMemoryBackend;
+use Neos\Cache\Backend\TransientMemoryBackend;
 use Neos\Cache\CacheAwareInterface;
+use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Flow\Core\ApplicationContext;
@@ -129,7 +130,6 @@ class ContentCacheTest extends UnitTestCase
         $contentCache = new ContentCache();
         $mockSecurityContext = $this->createMock(Context::class);
         $this->inject($contentCache, 'securityContext', $mockSecurityContext);
-        $this->inject($contentCache, 'parser', new CacheSegmentParser());
 
         $mockCache = $this->createMock(FrontendInterface::class);
         $this->inject($contentCache, 'cache', $mockCache);
@@ -150,7 +150,6 @@ class ContentCacheTest extends UnitTestCase
         $contentCache = new ContentCache();
         $mockSecurityContext = $this->createMock(Context::class);
         $this->inject($contentCache, 'securityContext', $mockSecurityContext);
-        $this->inject($contentCache, 'parser', new CacheSegmentParser());
 
         $mockCache = $this->createMock(FrontendInterface::class);
         $this->inject($contentCache, 'cache', $mockCache);
@@ -185,7 +184,6 @@ class ContentCacheTest extends UnitTestCase
         $mockPropertyMapper = $this->createMock(PropertyMapper::class);
         $mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnArgument(0));
         $this->inject($contentCache, 'propertyMapper', $mockPropertyMapper);
-        $this->inject($contentCache, 'parser', new CacheSegmentParser());
 
         $mockCache = $this->createMock(FrontendInterface::class);
         $this->inject($contentCache, 'cache', $mockCache);
@@ -214,9 +212,7 @@ class ContentCacheTest extends UnitTestCase
         $mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnArgument(0));
         $this->inject($contentCache, 'propertyMapper', $mockPropertyMapper);
 
-        $this->inject($contentCache, 'parser', new CacheSegmentParser());
-
-        $mockContext = $this->getMockBuilder(ApplicationContext::class)->disableOriginalConstructor()->getMock();
+        $mockContext = $this->getMockBuilder(EnvironmentConfiguration::class)->disableOriginalConstructor()->getMock();
         $cacheBackend = new TransientMemoryBackend($mockContext);
         $cacheFrontend = new StringFrontend('foo', $cacheBackend);
         $cacheBackend->setCache($cacheFrontend);

@@ -54,13 +54,24 @@ and Fusion files can be split into parts to organize things as needed.
 Automatic Fusion file inclusion
 -----------------------------------
 
-All Fusion files are expected to be in the folder *Resources/Private/Fusion* when it comes to
-automatic inclusion.
+All Fusion files are expected to be in the package subfolder *Resources/Private/Fusion*. Neos will
+automatically include the file *Root.fusion* for the current site package (package which resides in
+Packages/Sites and has the type "neos-site" in its composer manifest).
 
-Neos will include the *Root.fusion* file of all packages listed in the Setting ``Neos.Neos.fusion.autoInclude``
-in the order of packages as returned by the package management.
+To automatically include *Root.fusion* files from other packages, you will need to add those packages to
+the configuration setting ``Neos.Neos.fusion.autoInclude``::
 
-Neos will then always include the *Root.fusion* file of the current site package.
+  # Settings.yaml
+
+  Neos:
+    Neos:
+      fusion:
+        autoInclude:
+          Your.Package: true
+
+Neos will then autoinclude *Root.fusion* files from these packages in the order defined by package management.
+Files with a name other than *Root.fusion* **will never be auto-included** even with that setting. You
+will need to include them manually in your *Root.fusion*.
 
 Manual Fusion file inclusion
 --------------------------------
@@ -456,6 +467,12 @@ of ``foo``.
 This functionality is especially helpful if there are strong conventions regarding the Fusion
 context variables. This is often the case in standalone Fusion applications, but for Neos, this
 functionality is hardly ever used.
+
+.. warning:: In order to prevent unwanted side effects, it is not possible to access context variables from within ``@context`` on the same level. This means that the following will never return the string ``Hello World!``
+
+	@context.contextOne = 'World!'
+	@context.contextTwo = ${'Hello ' + contextOne}
+	output = ${contextTwo}
 
 Processors
 ==========

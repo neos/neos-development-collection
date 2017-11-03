@@ -11,13 +11,12 @@ namespace Neos\ContentRepository\Domain\Model;
  * source code.
  */
 
+use Neos\ContentRepository\Validation\Validator\NodeIdentifierValidator;
 use Neos\Flow\Persistence\Aspect\PersistenceMagicInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
-use Neos\Flow\Validation\Validator\UuidValidator;
-use Neos\ContentRepository\Domain\Model\ContentObjectProxy;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Exception\NodeException;
@@ -170,7 +169,7 @@ abstract class AbstractNodeData
                         foreach ($value as $nodeIdentifier) {
                             if ($nodeIdentifier instanceof NodeInterface || $nodeIdentifier instanceof AbstractNodeData) {
                                 $nodeIdentifiers[] = $nodeIdentifier->getIdentifier();
-                            } elseif (preg_match(UuidValidator::PATTERN_MATCH_UUID, $nodeIdentifier) !== 0) {
+                            } elseif (preg_match(NodeIdentifierValidator::PATTERN_MATCH_NODE_IDENTIFIER, $nodeIdentifier) !== 0) {
                                 $nodeIdentifiers[] = $nodeIdentifier;
                             }
                         }
@@ -181,7 +180,7 @@ abstract class AbstractNodeData
                     $nodeIdentifier = null;
                     if ($value instanceof NodeInterface || $value instanceof AbstractNodeData) {
                         $nodeIdentifier = $value->getIdentifier();
-                    } elseif (preg_match(UuidValidator::PATTERN_MATCH_UUID, $value) !== 0) {
+                    } elseif (preg_match(NodeIdentifierValidator::PATTERN_MATCH_NODE_IDENTIFIER, $value) !== 0) {
                         $nodeIdentifier = $value;
                     }
                     $value = $nodeIdentifier;
