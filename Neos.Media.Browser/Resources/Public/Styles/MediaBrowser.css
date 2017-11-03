@@ -802,9 +802,12 @@
   }
 }
 .neos.media-browser .neos-row-fluid [class*="neos-span"].neos-image-example .neos-preview-image {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
   height: 0;
   padding-bottom: 100%;
-  position: relative;
   background-color: #141414;
   background-image: url("../../Neos.Neos/Images/ajax-preloader-222222.gif");
   background-position: center center;
@@ -1023,4 +1026,14 @@
 }
 .neos.media-browser .icon-exclamation-sign {
   color: #ff8700;
+}
+.neos.media-browser .neos-preview-page-cursor span {
+  height: 40px;
+  line-height: 40px;
+}
+.neos.media-browser .neos-preview-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding-top: 16px;
 }
