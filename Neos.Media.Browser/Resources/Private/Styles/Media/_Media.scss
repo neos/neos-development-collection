@@ -714,9 +714,12 @@
 		}
 
 		.neos-preview-image {
+			position: relative;
+			display: flex;
+			justify-content: center;
+			align-items: flex-start;
 			height: 0;
 			padding-bottom: 100%;
-			position: relative;
 			background-color: $grayDarker;
 			background-image: url('../../Neos.Neos/Images/ajax-preloader-222222.gif');
 			background-position: center center;
@@ -969,5 +972,19 @@
 
 	.icon-exclamation-sign {
 		color: $orange;
+	}
+
+	.neos-preview-page-cursor {
+		span {
+			height: 40px;
+			line-height: 40px;
+		}
+	}
+
+	.neos-preview-actions {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		padding-top: 16px;
 	}
 }

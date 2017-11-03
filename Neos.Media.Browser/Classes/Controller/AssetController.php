@@ -354,9 +354,17 @@ class AssetController extends ActionController
      */
     public function editAction(Asset $asset)
     {
+        switch ($asset->getFileExtension()) {
+            case 'pdf':
+                $contentPreview = 'ContentPdf';
+                break;
+            default:
+                $contentPreview = 'ContentImage';
+        }
         $this->view->assignMultiple([
             'tags' => $asset->getAssetCollections()->count() > 0 ? $this->tagRepository->findByAssetCollections($asset->getAssetCollections()->toArray()) : $this->tagRepository->findAll(),
             'asset' => $asset,
+            'contentPreview' => $contentPreview,
             'assetCollections' => $this->assetCollectionRepository->findAll()
         ]);
     }
