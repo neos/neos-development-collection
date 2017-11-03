@@ -93,6 +93,9 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
 
         $relatedNodes = [];
         foreach ($this->getRelatedNodes($asset) as $relatedNodeData) {
+            if ($relatedNodeData->isInternal()) {
+                continue;
+            }
             $accessible = $this->domainUserService->currentUserCanReadWorkspace($relatedNodeData->getWorkspace());
             if ($accessible) {
                 $context = $this->createContextMatchingNodeData($relatedNodeData);
