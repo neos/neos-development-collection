@@ -1,4 +1,4 @@
-# This is a helper TypoScript object which is used to render all of the child elements
+# This is a helper Fusion object which is used to render all of the child elements
 # of a current node.
 prototype(Neos.Neos:ContentCollectionRenderer) < prototype(Neos.Fusion:Collection) {
 	@context.nodeAvailable = ${node && String.length(node.context.workspace.name)}
@@ -38,7 +38,7 @@ prototype(Neos.Neos:ContentCollection) < prototype(Neos.Fusion:Tag) {
 	# prototype(Neos.Neos:ContentCollection) {
 	#   attributes.class.@process.collectionClass >
 	# }
-	# in your site's TypoScript if you don't need that behavior.
+	# in your site's Fusion if you don't need that behavior.
 	attributes.class.@process.collectionClass = Neos.Fusion:Case {
 		@context.collectionClass = 'neos-contentcollection'
 

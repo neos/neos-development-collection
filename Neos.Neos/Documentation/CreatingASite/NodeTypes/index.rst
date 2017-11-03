@@ -11,3 +11,4 @@ These are the development guidelines of Neos.
 	NodeConstraints
 	TranslateNodeTypes
 	DependingProperties
+	DisableNodeTypes

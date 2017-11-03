@@ -17,6 +17,7 @@ use Doctrine\ORM\EntityManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\Image;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Repository\ThumbnailRepository;
@@ -124,6 +125,56 @@ class MediaCommandController extends CommandController
                 }
             }
         }
+    }
+
+    /**
+     * Remove unused assets
+     *
+     * This command iterates over all existing assets, checks their usage count
+     * and lists the assets which are not reported as used by any AssetUsageStrategies.
+     * The unused assets can than be removed.
+     *
+     * @return void
+     */
+    public function removeUnusedCommand()
+    {
+        $iterator = $this->assetRepository->findAllIterator();
+        $assetCount = $this->assetRepository->countAll();
+        $unusedAssets = [];
+        $unusedAssetInfo = [];
+        $unusedAssetCount = 0;
+
+        $this->outputLine('<b>Searching for unused assets:</b>');
+
+        $this->output->progressStart($assetCount);
+        /** @var AssetInterface $asset */
+        foreach ($this->assetRepository->iterate($iterator) as $asset) {
+            if ($asset->getUsageCount() === 0) {
+                $unusedAssets[] = $asset;
+                $unusedAssetInfo[] = sprintf('- %s (%s)', $asset->getIdentifier(), $asset->getResource()->getFilename());
+                $unusedAssetCount++;
+            }
+            $this->output->progressAdvance(1);
+        }
+
+        if ($unusedAssetCount === 0) {
+            $this->output->outputLine(PHP_EOL . sprintf('No unused assets found.', $unusedAssetCount));
+            $this->quit(0);
+        }
+
+        $this->outputLine(PHP_EOL . 'Found the following unused assets: ' . PHP_EOL . implode(PHP_EOL, $unusedAssetInfo));
+
+        $continue = $this->output->askConfirmation(sprintf('Do you want to remove <b>%s</b> unused assets?', $unusedAssetCount));
+        if ($continue !== true) {
+            $this->quit(0);
+        }
+
+        $this->output->progressStart($unusedAssetCount);
+        foreach ($unusedAssets as $asset) {
+            $this->output->progressAdvance(1);
+            $this->assetRepository->remove($asset);
+        }
+        $this->outputLine('');
     }
 
     /**

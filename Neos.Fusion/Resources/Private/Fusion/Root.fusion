@@ -62,7 +62,7 @@ prototype(Neos.Fusion:Attributes) {
 # Renders an HTML tag
 #
 # Usage:
-# tag = Neos.Fusion:Attributes {
+# tag = Neos.Fusion:Tag {
 #   tagName = 'h1'
 #   attributes = {
 #     class = 'some-class'
