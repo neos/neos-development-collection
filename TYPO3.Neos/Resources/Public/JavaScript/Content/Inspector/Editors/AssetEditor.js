@@ -126,6 +126,7 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 		 * On startup, we deserialize the JSON string and fill the "assets" property
 		 */
 		_readAndDeserializeValue: function() {
+			var csrfToken = $('meta[name="neos-csrf-token"]').attr('content');
 			var value = this.get('value');
 
 			if (!value || !Utility.isValidJsonString(value)) {
@@ -141,7 +142,9 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 
 			if (assetIdentifiers.length > 0) {
 				this.set('_showLoadingIndicator', true);
-				HttpClient.getResource(that.get('_assetMetadataEndpointUri') + '?' + $.param({assets: assetIdentifiers})).then(
+				// overriding the request method to POST, so too many assets do not cause "Request URI Too Large" errors.
+				// settings CSRF token manually, since getResource (naturally) does not add it.
+				HttpClient.getResource(that.get('_assetMetadataEndpointUri'), {type: 'POST', data: {__csrfToken: csrfToken, assets: assetIdentifiers}}).then(
 					function(result) {
 						that.get('assets').addObjects(result);
 						that.set('_showLoadingIndicator', false);
