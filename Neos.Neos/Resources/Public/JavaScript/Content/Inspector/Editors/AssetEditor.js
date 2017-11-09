@@ -8,9 +8,10 @@ define(
 	'Shared/Utility',
 	'Shared/HttpClient',
 	'Shared/I18n',
-	'Library/sortable/Sortable'
+	'Library/sortable/Sortable',
+	'Shared/Configuration'
 ],
-function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, HttpClient, I18n, Sortable) {
+function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, HttpClient, I18n, Sortable, Configuration) {
 
 	return FileUpload.extend({
 		removeButtonLabel: function() {
@@ -141,7 +142,9 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 
 			if (assetIdentifiers.length > 0) {
 				this.set('_showLoadingIndicator', true);
-				HttpClient.getResource(that.get('_assetMetadataEndpointUri') + '?' + $.param({assets: assetIdentifiers})).then(
+				// overriding the request method to POST, so too many assets do not cause "Request URI Too Large" errors.
+				// settings CSRF token manually, since getResource (naturally) does not add it.
+				HttpClient.getResource(that.get('_assetMetadataEndpointUri'), {type: 'POST', data: {__csrfToken: Configuration.get('CsrfToken'), assets: assetIdentifiers}}).then(
 					function(result) {
 						that.get('assets').addObjects(result);
 						that.set('_showLoadingIndicator', false);
