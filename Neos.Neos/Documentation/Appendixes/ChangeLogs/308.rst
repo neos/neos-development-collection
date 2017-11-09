@@ -1,0 +1,156 @@
+`3.0.8 (2017-11-09) <https://github.com/neos/neos-development-collection/releases/tag/3.0.8>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Avoid Request URI Too Large when loading asset metadata <https://github.com/neos/neos-development-collection/pull/1748>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+When using too many assets in the inspector (AssetEditor), an error is
+triggered, caused by the request URI becoming too long.
+
+This change switches the request to a POST request. The data is sent as
+the request body and the issue is solved.
+
+Fixes #1747
+
+`BUGFIX: Shortcut nodes result in 404 if target is unavailable <https://github.com/neos/neos-development-collection/pull/1669>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+A non existing (or hidden) target node would result in an infinite
+redirect chain but should actually result in a 404 error delivered.
+
+Fixes: #1668
+
+`TASK: improve language <https://github.com/neos/neos-development-collection/pull/1734>`_
+-----------------------------------------------------------------------------------------
+
+`Update FeatureList.rst <https://github.com/neos/neos-development-collection/pull/1724>`_
+-----------------------------------------------------------------------------------------
+
+fixed spelling
+
+* Packages: ``Neos``
+
+`BUGFIX: Show object in "missing template" message <https://github.com/neos/neos-development-collection/pull/1736>`_
+--------------------------------------------------------------------------------------------------------------------
+
+The sprintf() call should only get one parameter, usage of the first
+one was dropped inside the message text previously.
+
+`TASK: Fix content cache tests after upmerge from 2.3 <https://github.com/neos/neos-development-collection/pull/1737>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Fusion``
+
+`BUGFIX: Allow cached content segments to be nested within dynamic ones <https://github.com/neos/neos-development-collection/pull/1664>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+Previously when nesting content with Content Cache mode `cached` within
+segments with Content Cache mode `dynamic` the `CONTENT_CACHE` markers
+weren't replaced at the second rendering.
+
+Fixes: #1591
+
+`BUGFIX: Fixing wrong path in documentation to translations folder <https://github.com/neos/neos-development-collection/pull/1694>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+Like https://github.com/neos/neos-development-collection/pull/1566 but for older branch.
+
+* Packages: ``Neos``
+
+`TASK: Remove TYPO3 from Neos Fusion Reference <https://github.com/neos/neos-development-collection/pull/1725>`_
+----------------------------------------------------------------------------------------------------------------
+
+<!--
+Thanks for your contribution, we appreciate it!
+
+Please read through our pull request guidelines, there are some interesting things there:
+https://discuss.neos.io/t/creating-a-pull-request/506
+
+And one more thing... Don't forget about the tests!
+-->
+
+
+**What I did**
+
+Removed TYPO3 from fusion reference
+
+* Packages: ``Neos``
+
+`TASK: Update Code of Conduct <https://github.com/neos/neos-development-collection/pull/1722>`_
+-----------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Allow using the context variable in node privileges <https://github.com/neos/neos-development-collection/pull/1661>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+This makes it possible to access global objects via the context variable in node privileges.
+
+For example this can be used to hide nodes based on a node property which needs to
+match a username or group. One use case is to have several sites in one Neos and restrict
+each user to one site.
+
+How it works: The values given to the `ConditionGenerator` of the node privileges are
+first put through `getValueForOperand` instead of treating them just as string.
+
+* Packages: ``ContentRepository`` ``Neos``
+
+`BUGFIX: Fix NodeType schema to pass validation <https://github.com/neos/neos-development-collection/pull/1702>`_
+-----------------------------------------------------------------------------------------------------------------
+
+In #1678 childNodes were allowed to be nullable. But the way the schema
+was adjusted did not pass validation. This change fixes it.
+
+`BUGFIX: Allow childNode definitions to be reset <https://github.com/neos/neos-development-collection/pull/1678>`_
+------------------------------------------------------------------------------------------------------------------
+
+A NodeType can reset the `childNode` definitions of a
+superType by setting it to `null`:
+
+```yaml
+'Some:NodeType':
+  superTypes:
+    'Some:Other.NodeType': true
+  childNodes:
+    'someChildNodes': ~
+```
+
+But doing so lead to a schema error.
+This patch adjusts the schema accordingly.
+
+`TASK: Use interface to inject NodeSearchService in NodeController <https://github.com/neos/neos-development-collection/pull/1692>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+This makes it possible to use your own implementation of the NodeSearchService.
+
+`BUGFIX: Register pending change must be called during editor init <https://github.com/neos/neos-development-collection/pull/1629>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+This change makes sure editor listeners are called in the init of the editor. This can help in situations like hiding an editor based on depending properties on the first page load or inspector initialization.
+
+`TASK: Replace occurrences of TypoScript in fusion file comments <https://github.com/neos/neos-development-collection/pull/1693>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Fix documentation of Debug Object <https://github.com/neos/neos-development-collection/pull/1682>`_
+----------------------------------------------------------------------------------------------------------
+
+Example is missing the namespace.
+
+`BUGFIX: Set empty array for overrideConfiguration as default <https://github.com/neos/neos-development-collection/pull/1690>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+To prevent errors within the form view helper it's necessary to set `overrideConfiguration` as array per default instead of null. The change of the signature of the form view helper has made this change necessary:
+https://github.com/neos/form/commit/`0cac9ef02043c9ae5e25eb41a7f746ba75e80f2d <https://github.com/neos/neos-development-collection/commit/0cac9ef02043c9ae5e25eb41a7f746ba75e80f2d>`_
+
+The default tempate just by-pass the `overrideConfiguration`:
+https://github.com/neos/neos-development-collection/blob/3.0/Neos.NodeTypes/Resources/Private/Templates/NodeTypes/Form.html
+
+* Packages: ``Neos`` ``NodeTypes``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/3.0.7...3.0.8>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
