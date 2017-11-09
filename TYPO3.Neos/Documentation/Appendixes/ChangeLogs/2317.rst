@@ -1,0 +1,122 @@
+`2.3.17 (2017-11-09) <https://github.com/neos/neos-development-collection/releases/tag/2.3.17>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Assets used in moved nodes don't break media module asset view <https://github.com/neos/neos-development-collection/pull/1743>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+Prevent assets referenced in moved nodes from breaking the asset view in the media module.
+
+Fixes #1742
+
+* Packages: ``Neos``
+
+`BUGFIX: Update publish button when copying page in node tree <https://github.com/neos/neos-development-collection/pull/1740>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Make sure the publish button is updated so the new changes can be published.
+Additionally selects the newly copied page similar to when inserting a new document.
+
+Resolves #914
+
+* Packages: ``Neos``
+
+`BUGFIX: Avoid Request URI Too Large when loading asset metadata <https://github.com/neos/neos-development-collection/pull/1748>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+When using too many assets in the inspector (AssetEditor), an error is
+triggered, caused by the request URI becoming too long.
+
+This change switches the request to a POST request. The data is sent as
+the request body and the issue is solved.
+
+Fixes #1747
+
+* Packages: ``Neos``
+
+`BUGFIX: Shortcut nodes result in 404 if target is unavailable <https://github.com/neos/neos-development-collection/pull/1669>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+A non existing (or hidden) target node would result in an infinite
+redirect chain but should actually result in a 404 error delivered.
+
+Fixes: #1668
+
+* Packages: ``Neos``
+
+`TASK: improve language <https://github.com/neos/neos-development-collection/pull/1734>`_
+-----------------------------------------------------------------------------------------
+
+* Packages: ``Neos`` ``TypoScript``
+
+`BUGFIX: Show object in "missing template" message <https://github.com/neos/neos-development-collection/pull/1736>`_
+--------------------------------------------------------------------------------------------------------------------
+
+The sprintf() call should only get one parameter, usage of the first
+one was dropped inside the message text previously.
+
+* Packages: ``TypoScript``
+
+`BUGFIX: Allow cached content segments to be nested within dynamic ones <https://github.com/neos/neos-development-collection/pull/1664>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+Previously when nesting content with Content Cache mode `cached` within
+segments with Content Cache mode `dynamic` the `CONTENT_CACHE` markers
+weren't replaced at the second rendering.
+
+Fixes: #1591
+
+* Packages: ``TypoScript``
+
+`BUGFIX: Fix NodeType schema to pass validation <https://github.com/neos/neos-development-collection/pull/1702>`_
+-----------------------------------------------------------------------------------------------------------------
+
+In #1678 childNodes were allowed to be nullable. But the way the schema
+was adjusted did not pass validation. This change fixes it.
+
+* Packages: ``Neos`` ``TYPO3CR`` ``TypoScript``
+
+`BUGFIX: Allow childNode definitions to be reset <https://github.com/neos/neos-development-collection/pull/1678>`_
+------------------------------------------------------------------------------------------------------------------
+
+A NodeType can reset the `childNode` definitions of a
+superType by setting it to `null`:
+
+```yaml
+'Some:NodeType':
+  superTypes:
+    'Some:Other.NodeType': true
+  childNodes:
+    'someChildNodes': ~
+```
+
+But doing so lead to a schema error.
+This patch adjusts the schema accordingly.
+
+* Packages: ``TYPO3CR``
+
+`TASK: Use interface to inject NodeSearchService in NodeController <https://github.com/neos/neos-development-collection/pull/1692>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+This makes it possible to use your own implementation of the NodeSearchService.
+
+* Packages: ``Neos``
+
+`BUGFIX: Register pending change must be called during editor init <https://github.com/neos/neos-development-collection/pull/1629>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+This change makes sure editor listeners are called in the init of the editor. This can help in situations like hiding an editor based on depending properties on the first page load or inspector initialization.
+
+* Packages: ``Neos``
+
+`TASK: Fix documentation of Debug Object <https://github.com/neos/neos-development-collection/pull/1682>`_
+----------------------------------------------------------------------------------------------------------
+
+Example is missing the namespace.
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.3.16...2.3.17>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
