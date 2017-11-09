@@ -89,13 +89,13 @@ class TemplateImplementation extends AbstractArrayFusionObject
         $templatePath = $this->getTemplatePath();
         if ($templatePath === null) {
             throw new \Exception(sprintf("
-				No template path set.
-				Most likely you didn't configure `templatePath` in your Fusion object correctly.
-				For example you could add and adapt the following line to your Fusion:
-				`prototype(%s) < prototype(Neos.Fusion:Template) {
-					templatePath = 'resource://Vendor.Package/Private/Templates/MyObject.html'
-				}`
-			", $templatePath, $this->fusionObjectName));
+                No template path set.
+                Most likely you didn't configure `templatePath` in your Fusion object correctly.
+                For example you could add and adapt the following line to your Fusion:
+                `prototype(%s) < prototype(Neos.Fusion:Template) {
+                  templatePath = 'resource://Vendor.Package/Private/Templates/MyObject.html'
+                }`
+                ", $this->fusionObjectName));
         }
         $fluidTemplate->setTemplatePathAndFilename($templatePath);
 

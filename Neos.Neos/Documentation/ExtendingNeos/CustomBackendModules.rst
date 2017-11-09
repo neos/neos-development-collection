@@ -10,7 +10,7 @@ be created either by adding a overview module like the the existing ones or a no
 Some possible use cases would be the integrating of external web services, triggering of import or export
 actions or creating of editing interfaces for domain models from other packages.
 
-.. warning:: This is not public API yet due to it's unpolished state and is subjectable to change in the future.
+.. warning:: This is not public API yet due to it's unpolished state and is subject to change in the future.
 
 Controller Class
 ----------------
@@ -94,4 +94,4 @@ To show up in the management or the administration section the module is defined
 				icon: 'icon-star'
 				privilegeTarget: 'Vendor.Site:BackendModule'
 
-.. tip:: Neos contains several backend modules build with the same API which can be used for inspiration.
+.. tip:: Neos contains several backend modules built with the same API which can be used for inspiration.
