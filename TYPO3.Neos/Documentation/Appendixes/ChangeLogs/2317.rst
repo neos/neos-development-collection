@@ -4,25 +4,6 @@
 Overview of merged pull requests
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`BUGFIX: Assets used in moved nodes don't break media module asset view <https://github.com/neos/neos-development-collection/pull/1743>`_
------------------------------------------------------------------------------------------------------------------------------------------
-
-Prevent assets referenced in moved nodes from breaking the asset view in the media module.
-
-Fixes #1742
-
-* Packages: ``Neos``
-
-`BUGFIX: Update publish button when copying page in node tree <https://github.com/neos/neos-development-collection/pull/1740>`_
--------------------------------------------------------------------------------------------------------------------------------
-
-Make sure the publish button is updated so the new changes can be published.
-Additionally selects the newly copied page similar to when inserting a new document.
-
-Resolves #914
-
-* Packages: ``Neos``
-
 `BUGFIX: Avoid Request URI Too Large when loading asset metadata <https://github.com/neos/neos-development-collection/pull/1748>`_
 ----------------------------------------------------------------------------------------------------------------------------------
 
