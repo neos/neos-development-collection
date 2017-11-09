@@ -1,0 +1,13 @@
+`2.3.18 (2017-11-09) <https://github.com/neos/neos-development-collection/releases/tag/2.3.18>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Add 2.3.17 changelog <https://github.com/neos/neos-development-collection/pull/1749>`_
+---------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.3.17...2.3.18>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
