@@ -6,8 +6,8 @@
 
 <f:section name="Content">
 	<f:form method="post" action="update" object="{asset}" objectName="asset">
-		<div class="neos-row-fluid">
-			<div class="neos-span6 neos-image-inputs">
+		<div class="neos-media-content">
+			<div class="neos-image-inputs">
 				<fieldset>
 					<legend>{neos:backend.translate(id: 'basics', package: 'Neos.Media.Browser')}</legend>
 					<label for="title">{neos:backend.translate(id: 'field.title', package: 'Neos.Media.Browser')}</label>
@@ -68,7 +68,7 @@
 					</f:if>
 				</fieldset>
 			</div>
-			<div class="neos-span6 neos-image-example" data-file-extension={asset.fileExtension}>
+			<div class="neos-image-example" data-file-extension={asset.fileExtension}>
         <f:render partial="{contentPreview}Preview" arguments="{_all}" />
 			</div>
 		</div>

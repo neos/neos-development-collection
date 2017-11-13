@@ -5,8 +5,8 @@
 
 <f:section name="Content">
 	<f:form method="post" action="create" object="{asset}" objectName="asset" enctype="multipart/form-data">
-		<fieldset>
-			<div class="neos-span6 neos-image-inputs">
+		<fieldset class="neos-media-content">
+			<div class="neos-image-inputs">
 				<span class="neos-file-input">
 					<label class="neos-button neos-button-primary" for="resource" title="{neos:backend.translate(id: 'maxUploadSize', arguments: {0: humanReadableMaximumFileUploadSize}, package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip">
 						{neos:backend.translate(id: 'chooseFile', package: 'Neos.Media.Browser')} <i class="icon-file"></i>
