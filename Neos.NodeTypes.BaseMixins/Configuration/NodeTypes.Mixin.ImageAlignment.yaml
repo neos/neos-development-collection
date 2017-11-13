@@ -1,12 +1,12 @@
 'Neos.NodeTypes.BaseMixins:ImageAlignmentMixin':
-  abstract: TRUE
+  abstract: true
   properties:
     alignment:
       type: string
       defaultValue: ''
       ui:
         label: i18n
-        reloadIfChanged: TRUE
+        reloadIfChanged: true
         inspector:
           group: 'image'
           position: 400

@@ -1,31 +1,31 @@
 'Neos.NodeTypes.BaseMixins:TextMixin':
-  abstract: TRUE
+  abstract: true
   properties:
     text:
       type: string
       defaultValue: ''
       ui:
-        inlineEditable: TRUE
+        inlineEditable: true
         aloha:
           placeholder: i18n
-          autoparagraph: TRUE
+          autoparagraph: true
           'format':
-            'strong': TRUE
-            'em': TRUE
-            'u': FALSE
-            'sub': FALSE
-            'sup': FALSE
-            'del': FALSE
-            'p': TRUE
-            'h1': TRUE
-            'h2': TRUE
-            'h3': TRUE
-            'pre': TRUE
-            'removeFormat': TRUE
+            'strong': true
+            'em': true
+            'u': false
+            'sub': false
+            'sup': false
+            'del': false
+            'p': true
+            'h1': true
+            'h2': true
+            'h3': true
+            'pre': true
+            'removeFormat': true
           'table':
-            'table': TRUE
+            'table': true
           'list':
-            'ol': TRUE
-            'ul': TRUE
+            'ol': true
+            'ul': true
           'link':
-            'a': TRUE
+            'a': true

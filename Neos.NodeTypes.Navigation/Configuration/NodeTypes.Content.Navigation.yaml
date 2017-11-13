@@ -1,6 +1,6 @@
 'Neos.NodeTypes.Navigation:Navigation':
   superTypes:
-    'Neos.Neos:Content': TRUE
+    'Neos.Neos:Content': true
   ui:
     label: i18n
     group: 'structure'
@@ -17,7 +17,7 @@
       type: string
       defaultValue: '0'
       ui:
-        reloadIfChanged: TRUE
+        reloadIfChanged: true
         label: i18n
         inspector:
           group: 'options'
@@ -49,14 +49,14 @@
     selection:
       type: 'references'
       ui:
-        reloadIfChanged: TRUE
+        reloadIfChanged: true
         label: i18n
         inspector:
           group: 'options'
     startingPoint:
       type: 'reference'
       ui:
-        reloadIfChanged: TRUE
+        reloadIfChanged: true
         label: i18n
         inspector:
           group: 'options'
@@ -64,7 +64,7 @@
       type: string
       defaultValue: '1'
       ui:
-        reloadIfChanged: TRUE
+        reloadIfChanged: true
         label: i18n
         inspector:
           group: 'options'

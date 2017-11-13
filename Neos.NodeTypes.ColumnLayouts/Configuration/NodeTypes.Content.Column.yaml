@@ -1,12 +1,12 @@
 'Neos.NodeTypes.ColumnLayouts:Column':
   superTypes:
-    'Neos.Neos:Content': TRUE
-  abstract: TRUE
+    'Neos.Neos:Content': true
+  abstract: true
   ui:
     group: 'structure'
     label: i18n
     icon: 'icon-columns'
-    inlineEditable: TRUE
+    inlineEditable: true
     inspector:
       groups:
         column:
