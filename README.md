@@ -32,7 +32,7 @@ prototype(Vendor.Site:Example) < prototype(Neos.Fusion:Component) {
        <div>
          <h1 @key="headline" class="headline">{props.title}</h1>
          <h2 @key="subheadline" class="subheadline" @if.hasSubtitle={props.subtitle ? true : false}>{props.subtitle}</h2>
-         <PackageFactory.AtomicFusion.AFX:Image @key="image" uri={props.imageUri} />
+         <Vendor.Site:Image @key="image" uri={props.imageUri} />
        </div>
     `
 }
@@ -61,7 +61,7 @@ prototype(Vendor.Site:Example) < prototype(Neos.Fusion:Component) {
                 attributes.subheadline = 'subheadline'
                 @if.hasSubtitle = ${props.subtitle ? true : false}
             }
-            image = PackageFactory.AtomicFusion.AFX:Image {
+            image = Vendor.Site:Image {
                 uri = ${props.imageUri}
             }
         }
