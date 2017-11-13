@@ -1,4 +1,4 @@
-# PackageFactory.AtomicFusion.AFX
+# Neos.Fusion.Afx
 
 > JSX inspired compact syntax for Neos.Fusion
 
@@ -8,8 +8,8 @@ prototypes because the generated fusion-code can be overwritten and controlled f
 
 ## Installation
 
-PackageFactory.AtomicFusion.AFX is available via packagist. Just add `"packagefactory/atomicfusion-afx" : "~3.0.0"`
-to the require-section of the composer.json or run `composer require packagefactory/atomicfusion-afx`.
+PackageFactory.AtomicFusion.AFX is available via packagist. Just add `"neos/fusion-afx" : "~3.0.0"`
+to the require-section of the composer.json or run `composer require neos/fusion-afx`.
 
 __We use semantic-versioning so every breaking change will increase the major-version number.__
 

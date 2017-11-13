@@ -1,11 +1,11 @@
 <?php
-namespace PackageFactory\AtomicFusion\AFX\Dsl;
+namespace Neos\Fusion\Afx\Dsl;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion;
 use Neos\Fusion\Core\DslInterface;
-use PackageFactory\AtomicFusion\AFX\Service\AfxService;
-use PackageFactory\AtomicFusion\AFX\Exception\AfxException;
+use Neos\Fusion\Afx\Service\AfxService;
+use Neos\Fusion\Afx\Exception\AfxException;
 
 /**
  * Class Fusion AFX Dsl
