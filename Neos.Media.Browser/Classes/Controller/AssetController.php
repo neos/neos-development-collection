@@ -359,7 +359,7 @@ class AssetController extends ActionController
                 $contentPreview = 'ContentPdf';
                 break;
             default:
-                $contentPreview = 'ContentImage';
+                $contentPreview = 'ContentDefault';
         }
         $this->view->assignMultiple([
             'tags' => $asset->getAssetCollections()->count() > 0 ? $this->tagRepository->findByAssetCollections($asset->getAssetCollections()->toArray()) : $this->tagRepository->findAll(),

@@ -69,7 +69,7 @@
 				</fieldset>
 			</div>
 			<div class="neos-span6 neos-image-example" data-file-extension={asset.fileExtension}>
-				<f:render section="{contentPreview}" arguments="{_all}" />
+        <f:render partial="{contentPreview}Preview" arguments="{_all}" />
 			</div>
 		</div>
 		<div class="neos-footer">
@@ -118,41 +118,6 @@
 		</div>
 	</f:form>
 	<f:form action="index" id="postHelper" method="post"></f:form>
-</f:section>
-
-<f:section name="ContentImage">
-	<div class="neos-preview-image" id="neos-preview-image">
-		<a href="{f:uri.resource(resource: asset.resource)}" data-file-download="{f:uri.resource(resource: asset.resource)}" aria-label="{neos:backend.translate(id: 'preview', package: 'Neos.Media.Browser')}" target="_blank">
-			<m:thumbnail asset="{asset}" preset="Neos.Media.Browser:Preview" alt="{asset.label}" async="{settings.asyncThumbnails}" class="img-polaroid" />
-		</a>
-	</div>
-  <div class="neos-preview-actions">
-    <a class="neos-button pull-right" href="{f:uri.resource(resource: asset.resource)}" target="_blank">
-      <i class="icon-download"></i> {neos:backend.translate(id: 'download', package: 'Neos.Media.Browser')}
-    </a>
-  </div>
-</f:section>
-
-<f:section name="ContentPdf">
-  <div class="neos-preview-image" id="neos-preview-pdf" data-asset-preview-url="{f:uri.resource(resource: asset.resource)}">
-    <canvas id="pdf-canvas"></canvas>
-  </div>
-  <div class="neos-preview-actions">
-    <div class="neos-preview-action-pager">
-      <a class="neos-button" id="neos-preview-button-previous" href="{f:uri.resource(resource: asset.resource)}" target="_blank">
-        <i class="icon-arrow-left"></i>
-      </a>
-      <a class="neos-button" id="neos-preview-button-next" href="{f:uri.resource(resource: asset.resource)}" target="_blank">
-        <i class="icon-arrow-right"></i>
-      </a>
-    </div>
-    <div class="neos-preview-page-cursor">
-      <span id="neos-preview-pdf-page"></span>/<span id="neos-preview-pdf-page-count"></span>
-    </div>
-    <a class="neos-button neos-preview-action-download" href="{f:uri.resource(resource: asset.resource)}" target="_blank">
-      <i class="icon-download"></i> {neos:backend.translate(id: 'download', package: 'Neos.Media.Browser')}
-    </a>
-  </div>
 </f:section>
 
 <f:section name="Scripts">
