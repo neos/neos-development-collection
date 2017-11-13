@@ -202,7 +202,7 @@ class AfxService
             $fusion = 'Neos.Fusion:Array {' . PHP_EOL;
             foreach ($payload as $astNode) {
                 // detect key
-                $fusionName = $index;
+                $fusionName = 'item_' . $index;
                 if ($keyProperty = Arrays::getValueByPath($astNode, 'payload.props.@key')) {
                     if ($keyProperty['type'] == 'string') {
                         $fusionName = $keyProperty['payload'];

@@ -85,13 +85,13 @@ EOF;
         $afxCode = '<h1></h1><p></p><p></p>';
         $expectedFusion = <<<'EOF'
 Neos.Fusion:Array {
-    1 = Neos.Fusion:Tag {
+    item_1 = Neos.Fusion:Tag {
         tagName = 'h1'
     }
-    2 = Neos.Fusion:Tag {
+    item_2 = Neos.Fusion:Tag {
         tagName = 'p'
     }
-    3 = Neos.Fusion:Tag {
+    item_3 = Neos.Fusion:Tag {
         tagName = 'p'
     }
 }
@@ -107,15 +107,15 @@ EOF;
         $afxCode = 'Foo<h1></h1>Bar<p></p>Baz';
         $expectedFusion = <<<'EOF'
 Neos.Fusion:Array {
-    1 = 'Foo'
-    2 = Neos.Fusion:Tag {
+    item_1 = 'Foo'
+    item_2 = Neos.Fusion:Tag {
         tagName = 'h1'
     }
-    3 = 'Bar'
-    4 = Neos.Fusion:Tag {
+    item_3 = 'Bar'
+    item_4 = Neos.Fusion:Tag {
         tagName = 'p'
     }
-    5 = 'Baz'
+    item_5 = 'Baz'
 }
 EOF;
         $this->assertEquals($expectedFusion, AfxService::convertAfxToFusion($afxCode));
@@ -129,10 +129,10 @@ EOF;
         $afxCode = '  <h1></h1><p></p>  ';
         $expectedFusion = <<<'EOF'
 Neos.Fusion:Array {
-    1 = Neos.Fusion:Tag {
+    item_1 = Neos.Fusion:Tag {
         tagName = 'h1'
     }
-    2 = Neos.Fusion:Tag {
+    item_2 = Neos.Fusion:Tag {
         tagName = 'p'
     }
 }
@@ -147,13 +147,13 @@ EOF;
         $afxCode = '<h1></h1><p></p><p></p>';
         $expectedFusion = <<<'EOF'
 Neos.Fusion:Array {
-    1 = Neos.Fusion:Tag {
+    item_1 = Neos.Fusion:Tag {
         tagName = 'h1'
     }
-    2 = Neos.Fusion:Tag {
+    item_2 = Neos.Fusion:Tag {
         tagName = 'p'
     }
-    3 = Neos.Fusion:Tag {
+    item_3 = Neos.Fusion:Tag {
         tagName = 'p'
     }
 }
@@ -351,11 +351,11 @@ EOF;
 Neos.Fusion:Tag {
     tagName = 'h1'
     content = Neos.Fusion:Array {
-        1 = Neos.Fusion:Tag {
+        item_1 = Neos.Fusion:Tag {
             tagName = 'strong'
             content = 'foo'
         }
-        2 = Neos.Fusion:Tag {
+        item_2 = Neos.Fusion:Tag {
             tagName = 'i'
             content = 'bar'
         }
@@ -384,11 +384,11 @@ EOF;
 Neos.Fusion:Tag {
     tagName = 'h1'
     content = Neos.Fusion:Array {
-        1 = Neos.Fusion:Tag {
+        item_1 = Neos.Fusion:Tag {
             tagName = 'strong'
             content = 'foo'
         }
-        2 = Neos.Fusion:Tag {
+        item_2 = Neos.Fusion:Tag {
             tagName = 'i'
             content = 'bar'
         }
@@ -432,12 +432,12 @@ EOF;
 Neos.Fusion:Tag {
     tagName = 'h1'
     content = Neos.Fusion:Array {
-        1 = 'a string'
-        2 = Neos.Fusion:Tag {
+        item_1 = 'a string'
+        item_2 = Neos.Fusion:Tag {
             tagName = 'strong'
             content = 'a tag'
         }
-        3 = ${eelExpression()}
+        item_3 = ${eelExpression()}
     }
 }
 EOF;
@@ -459,9 +459,9 @@ EOF;
 Neos.Fusion:Tag {
     tagName = 'h1'
     content = Neos.Fusion:Array {
-        1 = ${eelExpression1}
-        2 = ${eelExpression2}
-        3 = ${eelExpression3}
+        item_1 = ${eelExpression1}
+        item_2 = ${eelExpression2}
+        item_3 = ${eelExpression3}
     }
 }
 EOF;
@@ -481,9 +481,9 @@ EOF;
 Neos.Fusion:Tag {
     tagName = 'h1'
     content = Neos.Fusion:Array {
-        1 = ${eelExpression1}
-        2 = ' '
-        3 = ${eelExpression2}
+        item_1 = ${eelExpression1}
+        item_2 = ' '
+        item_3 = ${eelExpression2}
     }
 }
 EOF;
@@ -503,9 +503,9 @@ EOF;
 Neos.Fusion:Tag {
     tagName = 'h1'
     content = Neos.Fusion:Array {
-        1 = 'String '
-        2 = ${eelExpression}
-        3 = ' String'
+        item_1 = 'String '
+        item_2 = ${eelExpression}
+        item_3 = ' String'
     }
 }
 EOF;
@@ -514,7 +514,7 @@ EOF;
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Exception
+     * @expectedException \PackageFactory\Afx\Exception
      */
     public function unclosedTagsRaisesException()
     {
@@ -524,7 +524,7 @@ EOF;
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Exception
+     * @expectedException \PackageFactory\Afx\Exception
      */
     public function unclosedAttributeRaisesException()
     {
@@ -534,7 +534,7 @@ EOF;
 
     /**
      * @test
-     * @expectedException \Neos\Fusion\Exception
+     * @expectedException \PackageFactory\Afx\Exception
      */
     public function unclosedExpressionRaisesException()
     {
