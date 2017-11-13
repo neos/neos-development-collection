@@ -233,6 +233,42 @@ Example::
   # the value of this object is the formatted debug output of all keys given to the object
 
 
+.. _Neos_Fusion__Component:
+
+Neos.Fusion:Component
+---------------------
+
+Create a component that adds all properties to the props context and afterward evaluates the renderer.
+
+:renderer: (mixed, **required**) The value which gets rendered
+
+Example::
+
+	prototype(Vendor.Site:Component) < prototype(Neos.Fusion:Component) {
+		title = 'Hello World'
+		titleTagName = 'h1'
+		description = 'Description of the Neos World'
+		bold = false
+
+		renderer = Neos.Fusion:Tag {
+			attributes.class = Neos.Fusion:RawArray {
+				component = 'component'
+				bold = ${props.bold ? 'component--bold' : false}
+			}
+			content = Neos.Fusion:Array {
+				headline = Neos.Fusion:Tag {
+					tagName = ${props.titleTagName}
+					content = ${props.title}
+				}
+
+				description = Neos.Fusion:Tag {
+						content = ${props.description}
+				}
+			}
+		}
+	}
+
+
 .. _Neos_Fusion__Template:
 
 Neos.Fusion:Template
@@ -613,6 +649,84 @@ Example::
 		# Auto-generated for all node type properties
 		# title = ${q(node).property('title')}
 	}
+
+
+.. _Neos_Neos__ContentComponent:
+
+ContentComponent
+----------------
+
+Base type to render component based content nodes, extends :ref:`Neos_Fusion__Component`.
+
+:renderer: (mixed, **required**) The value which gets rendered
+
+
+.. _Neos_Neos__Augmenter:
+
+Augmenter
+---------
+
+The Augmenter component can be used as processor or as a standalone prototype
+
+:content: (string) The content that shall be augmented
+:fallbackTagName: (string) If more than one tag is found the content is wrapped in the fallback tag before augmentation which has `div` as default
+:[key]: All other fusion properties are added to the html content as html attributes
+
+Example as a standalone augmenter::
+
+	augmentedContent = Neos.Neos:Augmenter {
+
+		content = Neos.Fusion:Array {
+			title = Neos.Fusion:Tag {
+				@if.hasContent = ${this.content}
+				tagName = 'h2'
+				content = ${q(node).property('title')}
+			}
+			text = Neos.Fusion:Tag {
+				@if.hasContent = ${this.content}
+				tagName = 'p'
+				content = ${q(node).property('text')}
+			}
+		}
+
+		fallbackTagName = 'header'
+
+		class = 'header'
+		data-foo = 'bar'
+	}
+
+
+Example as a processor augmenter::
+
+	augmentedContent = Neos.Fusion:Tag {
+		tagName = 'h2'
+		content = 'Hello World'
+		@process.augment = Neos.Neos:Augmenter {
+				class = 'header'
+				data-foo = 'bar'
+		}
+	}
+
+
+.. _Neos_Neos__Editable:
+
+Editable
+--------
+
+Create an editable tag for a property. In the frontend, only the content of the property gets rendered.
+
+:node: (node) A node instance that should be used to read the property. Default to `${node}`
+:property: (string) The name of the property which should be accessed
+:block: (boolean) Decides if the editable tag should be a block element (`div`) or an inline element (`span`). Default to `true`
+
+
+Example::
+
+	title = Neos.Neos:Editable {
+		property = 'title'
+		block = false
+	}
+
 
 .. _Neos_Neos__Plugin:
 
