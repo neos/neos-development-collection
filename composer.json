@@ -19,14 +19,31 @@
         "neos/fusion": "^3.2.0 || dev-master",
         "packagefactory/afx": "~2.0.1"
     },
+    "require-dev": {
+      "phpunit/phpunit": "~4.8 || ~5.4.0"
+    },
     "autoload": {
         "psr-4": {
             "PackageFactory\\AtomicFusion\\AFX\\": "Classes/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+          "PackageFactory\\AtomicFusion\\AFX\\Tests\\": "Tests/"
         }
     },
     "extra": {
         "neos": {
             "package-key": "PackageFactory.AtomicFusion.AFX"
         }
+    },
+    "scripts": {
+      "test:functional": [
+        "composer install",
+        "vendor/bin/phpunit Tests/Functional"
+      ],
+      "test": [
+        "composer test:functional"
+      ]
     }
 }

@@ -157,15 +157,15 @@ Is transpiled as:
 Neos.Fusion:Tag {
     tagName = 'h1'
     content = Neos.Fusion:Array {
-        1 = {props.title}
-        2 = ': '
-        3 = ${props.subtitle}
+        item_1 = {props.title}
+        item_2 = ': '
+        item_3 = ${props.subtitle}
     }
 }
 ```
 
 The `@key`-property of tag-children inside alters the name of the fusion-attribute to recive render the array-child into. 
-If no `@key`-property is given the numerical index starting with 1 is used.
+If no `@key`-property is given the string 'index_x' starting by 1 is used.
 
 ```
 <Vendor.Site:Prototype @children="text">
@@ -221,8 +221,8 @@ Is transpiled as:
 Neos.Fusion:Tag {
 	tagName = 'h1'
 	contents = Neos.Fusion:Array {
-		1 = ${'eelExpression 1'}
-		2 = ${'eelExpression 2'}   
+		item_1 = ${'eelExpression 1'}
+		item_2 = ${'eelExpression 2'}   
 	}
 }
 ```
@@ -239,9 +239,9 @@ Is transpiled as:
 Neos.Fusion:Tag {
 	tagName = 'h1'
 	contents = Neos.Fusion:Array {
-		1 = ${'eelExpression 1'}
-		2 = ' '
-		3 = ${'eelExpression 2'}   
+		item_1 = ${'eelExpression 1'}
+		item_2 = ' '
+		item_3 = ${'eelExpression 2'}   
 	}
 }
 ```
