@@ -5,7 +5,7 @@
 			pageNumPending = null,
 			pageRendering = false;
 
-		PDFJS.workerSrc = '//mozilla.github.io/pdf.js/build/pdf.worker.js';
+		PDFJS.workerSrc = '/_Resources/Static/Packages/Neos.Media.Browser/JavaScript/pdf.worker.js';
 
 		var url = $(wrapper).attr('data-asset-preview-url');
 
