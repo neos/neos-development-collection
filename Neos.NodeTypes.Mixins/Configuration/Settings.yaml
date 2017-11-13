@@ -1,0 +1,7 @@
+Neos:
+  Neos:
+    userInterface:
+      translation:
+        autoInclude:
+          Neos.NodeTypes.Mixins:
+            - 'NodeTypes/*'
