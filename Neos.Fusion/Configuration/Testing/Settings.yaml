@@ -9,5 +9,5 @@ Neos:
       Testing.Utility: Neos\Fusion\Tests\Functional\FusionObjects\Fixtures\Helper\UtilityHelper
     dsl:
       TestPassthroughDsl: Neos\Fusion\Tests\Functional\Parser\Fixtures\Dsl\PassthroughTestDslImplemenation
-      TestValueObjectDsl: Neos\Fusion\Tests\Functional\Parser\Fixtures\Dsl\ValueObjectExpressionTestDslImplemenation
+      TestFusionObjectDsl: Neos\Fusion\Tests\Functional\Parser\Fixtures\Dsl\FusionObjectExpressionTestDslImplemenation
 
