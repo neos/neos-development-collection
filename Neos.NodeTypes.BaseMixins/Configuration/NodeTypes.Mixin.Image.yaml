@@ -1,5 +1,5 @@
 'Neos.NodeTypes.BaseMixins:ImageMixin':
-  abstract: TRUE
+  abstract: true
   ui:
     inspector:
       groups:
@@ -12,7 +12,7 @@
       type: Neos\Media\Domain\Model\ImageInterface
       ui:
         label: i18n
-        reloadIfChanged: TRUE
+        reloadIfChanged: true
         inspector:
           group: 'image'
           position: 50
@@ -20,7 +20,7 @@
       type: string
       ui:
         label: i18n
-        reloadIfChanged: TRUE
+        reloadIfChanged: true
         inspector:
           group: 'image'
           position: 100
@@ -28,7 +28,7 @@
       type: string
       ui:
         label: i18n
-        reloadIfChanged: TRUE
+        reloadIfChanged: true
         inspector:
           group: 'image'
           position: 150

@@ -1,6 +1,6 @@
 'Neos.NodeTypes.Html:Html':
   superTypes:
-    'Neos.Neos:Content': TRUE
+    'Neos.Neos:Content': true
   ui:
     label: i18n
     icon: 'icon-code'
@@ -17,7 +17,7 @@
       defaultValue: '<p>Enter HTML here</p>'
       ui:
         label: i18n
-        reloadIfChanged: TRUE
+        reloadIfChanged: true
         inspector:
           group: 'html'
           editor: 'Neos.Neos/Inspector/Editors/CodeEditor'

@@ -1,6 +1,6 @@
 'Neos.NodeTypes:Page':
   superTypes:
-    'Neos.Neos:Document': TRUE
+    'Neos.Neos:Document': true
   childNodes:
     main:
       type: 'Neos.Neos:ContentCollection'
@@ -9,7 +9,7 @@
       type: string
       ui:
         label: i18n
-        reloadIfChanged: TRUE
+        reloadIfChanged: true
         inspector:
           group: ~
           position: 100

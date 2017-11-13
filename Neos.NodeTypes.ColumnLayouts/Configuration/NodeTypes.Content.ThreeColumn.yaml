@@ -1,6 +1,6 @@
 'Neos.NodeTypes.ColumnLayouts:ThreeColumn':
   superTypes:
-    'Neos.NodeTypes.ColumnLayouts:Column': TRUE
+    'Neos.NodeTypes.ColumnLayouts:Column': true
   ui:
     label: i18n
     position: 300
@@ -15,7 +15,7 @@
     layout:
       defaultValue: '33-33-33'
       ui:
-        reloadIfChanged: TRUE
+        reloadIfChanged: true
         inspector:
           editorOptions:
             values:

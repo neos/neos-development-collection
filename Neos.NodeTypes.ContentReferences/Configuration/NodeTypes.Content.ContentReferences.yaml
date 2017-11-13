@@ -1,6 +1,6 @@
 'Neos.NodeTypes.ContentReferences:ContentReferences':
   superTypes:
-    'Neos.Neos:Content': TRUE
+    'Neos.Neos:Content': true
   ui:
     label: i18n
     icon: 'icon-copy'
@@ -20,4 +20,4 @@
           editorOptions:
             nodeTypes: ['Neos.Neos:Content']
         label: i18n
-        reloadIfChanged: TRUE
+        reloadIfChanged: true

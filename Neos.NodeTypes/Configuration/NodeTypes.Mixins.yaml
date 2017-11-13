@@ -2,28 +2,28 @@
 
 'Neos.NodeTypes:ContentImageMixin':
   superTypes:
-    'Neos.NodeTypes.BaseMixins:ContentImageMixin': TRUE
+    'Neos.NodeTypes.BaseMixins:ContentImageMixin': true
 
 'Neos.NodeTypes:ImageMixin':
   superTypes:
-    'Neos.NodeTypes.BaseMixins:ImageMixin': TRUE
+    'Neos.NodeTypes.BaseMixins:ImageMixin': true
 
 'Neos.NodeTypes:ImageAlignmentMixin':
   superTypes:
-    'Neos.NodeTypes.BaseMixins:ImageAlignmentMixin': TRUE
+    'Neos.NodeTypes.BaseMixins:ImageAlignmentMixin': true
 
 'Neos.NodeTypes:ImageCaptionMixin':
   superTypes:
-    'Neos.NodeTypes.BaseMixins:ImageCaptionMixin': TRUE
+    'Neos.NodeTypes.BaseMixins:ImageCaptionMixin': true
 
 'Neos.NodeTypes:LinkMixin':
   superTypes:
-    'Neos.NodeTypes.BaseMixins:LinkMixin': TRUE
+    'Neos.NodeTypes.BaseMixins:LinkMixin': true
 
 'Neos.NodeTypes:TextMixin':
   superTypes:
-    'Neos.NodeTypes.BaseMixins:TextMixin': TRUE
+    'Neos.NodeTypes.BaseMixins:TextMixin': true
 
 'Neos.NodeTypes:TitleMixin':
   superTypes:
-    'Neos.NodeTypes.BaseMixins:TitleMixin': TRUE
+    'Neos.NodeTypes.BaseMixins:TitleMixin': true

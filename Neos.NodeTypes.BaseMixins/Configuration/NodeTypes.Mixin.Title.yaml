@@ -1,17 +1,17 @@
 'Neos.NodeTypes.BaseMixins:TitleMixin':
-  abstract: TRUE
+  abstract: true
   properties:
     title:
       type: string
       defaultValue: '<h1>Enter headline here</h1>'
       ui:
-        inlineEditable: TRUE
+        inlineEditable: true
         aloha:
           'format':
-            'p': FALSE
-            'h1': TRUE
-            'h2': TRUE
-            'h3': TRUE
-            'removeFormat': TRUE
+            'p': false
+            'h1': true
+            'h2': true
+            'h3': true
+            'removeFormat': true
           'link':
-            'a': TRUE
+            'a': true
