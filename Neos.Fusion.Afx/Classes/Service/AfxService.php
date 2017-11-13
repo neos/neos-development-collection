@@ -13,7 +13,6 @@ use PackageFactory\AtomicFusion\AFX\Exception\AfxException;
  */
 class AfxService
 {
-
     const INDENTATION = '    ';
 
     /**
