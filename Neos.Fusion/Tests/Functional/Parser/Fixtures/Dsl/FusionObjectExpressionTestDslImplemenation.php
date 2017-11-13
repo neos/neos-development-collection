@@ -14,7 +14,7 @@ namespace Neos\Fusion\Tests\Functional\Parser\Fixtures\Dsl;
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Core\DslInterface;
 
-class ValueObjectExpressionTestDslImplemenation implements DslInterface
+class FusionObjectExpressionTestDslImplemenation implements DslInterface
 {
     public function transpile($code)
     {
@@ -25,7 +25,7 @@ class ValueObjectExpressionTestDslImplemenation implements DslInterface
 
         $result = $objectName . ' {' . chr(10);
         foreach ($attributes as $key => $value) {
-            $result .= '   ' . $key . '= "' . $value . '"';
+            $result .= '    ' . $key . '= "' . $value . '"';
         }
         $result .= chr(10) . '}';
         return $result;
