@@ -18,8 +18,9 @@ class ValueObjectExpressionTestDslImplemenation implements DslInterface
 {
     public function transpile($code)
     {
-        return 'Neos.Fusion:Value {
-            value = "' . $code . '"
+        list($objectName, $key, $value) = explode('|', $code);
+        return $objectName . ' {
+            ' . $key . ' = "' . $value . '"
         }';
     }
 }
