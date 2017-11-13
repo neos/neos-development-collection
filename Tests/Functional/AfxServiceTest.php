@@ -1,9 +1,9 @@
 <?php
-namespace PackageFactory\AtomicFusion\AFX\Tests\Functional;
+namespace Neos\Fusion\Afx\Tests\Functional;
 
 use PHPUnit\Framework\TestCase;
-use PackageFactory\AtomicFusion\AFX\Service\AfxService;
-use PackageFactory\AtomicFusion\AFX\Exception;
+use Neos\Fusion\Afx\Service\AfxService;
+use Neos\Fusion\Afx\Exception;
 
 class AfxServiceTest extends TestCase
 {

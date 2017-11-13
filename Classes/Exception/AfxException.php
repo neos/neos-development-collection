@@ -1,5 +1,5 @@
 <?php
-namespace PackageFactory\AtomicFusion\AFX\Exception;
+namespace Neos\Fusion\Afx\Exception;
 
 class AfxException extends \Exception
 {

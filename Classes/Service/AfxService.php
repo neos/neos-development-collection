@@ -1,10 +1,10 @@
 <?php
-namespace PackageFactory\AtomicFusion\AFX\Service;
+namespace Neos\Fusion\Afx\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Arrays;
 use PackageFactory\Afx\Parser as AfxParser;
-use PackageFactory\AtomicFusion\AFX\Exception\AfxException;
+use Neos\Fusion\Afx\Exception\AfxException;
 
 /**
  * Class AfxService
