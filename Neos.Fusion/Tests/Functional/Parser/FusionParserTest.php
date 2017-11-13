@@ -112,7 +112,7 @@ class FusionParserTest extends FunctionalTestCase
     public function parserHandlesDslExpressionThatReturnsFusionObjects()
     {
         $parser = new Parser();
-        $actualAst = $parser->parse('value = TestValueObjectDsl`Neos.Fusion:Value|value|foo`');
+        $actualAst = $parser->parse('value = TestValueObjectDsl`{"objectName": "Neos.Fusion:Value", "attributes": { "value": "foo" }}`');
         $expectedAst = [
             'value' => ["__eelExpression" => null,"__value" => null, "__objectType" => 'Neos.Fusion:Value', 'value' => "foo"]
         ];
@@ -126,8 +126,8 @@ class FusionParserTest extends FunctionalTestCase
     {
         $parser = new Parser();
         $actualAst = $parser->parse('
-            namespace: Fusion=Neos.Fusion
-            value = TestValueObjectDsl`Fusion:Value|value|foo`'
+            namespace: F=Neos.Fusion
+            value = TestValueObjectDsl`{"objectName": "F:Value", "attributes": { "value": "foo" }}`'
         );
         $expectedAst = [
             'value' => ["__eelExpression" => null,"__value" => null, "__objectType" => 'Neos.Fusion:Value', 'value' => "foo"]
