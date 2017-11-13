@@ -1,7 +1,6 @@
 # Create an editable tag for a property. In the frontend,
 # only the content of the property gets rendered.
 
-
 prototype(Neos.Neos:Editable) < prototype(Neos.Fusion:Component) {
   node = ${node}
 
