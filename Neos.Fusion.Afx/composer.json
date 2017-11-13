@@ -15,12 +15,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Neos\\AFX\\": "Classes/"
+            "Neos\\Fusion\\Afx\\": "Classes/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-          "Neos\\AFX\\Tests\\": "Tests/"
+          "Neos\\Fusion\\Afx\\Tests\\": "Tests/"
         }
     },
     "extra": {
