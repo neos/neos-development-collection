@@ -1,7 +1,7 @@
 # The Augmenter-component can be used as processor or as a standalone prototype
 
 prototype(Neos.Neos:Augmenter) < prototype(Neos.Fusion:Component) {
-  @class = 'Neos\\Neos\\FusionObjects\\AugmenterImplementation'
+  @class = 'Neos\\Neos\\Fusion\\AugmenterImplementation'
 
   # If more than one tag is found the content is wrapped in the fallback tag before augmentation
   fallbackTagName = 'div'
