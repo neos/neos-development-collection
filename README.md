@@ -165,7 +165,7 @@ Neos.Fusion:Tag {
 ```
 
 The `@key`-property of tag-children inside alters the name of the fusion-attribute to recive render the array-child into. 
-If no `@key`-property is given the string 'index_x' starting by 1 is used.
+If no `@key`-property is given `index_x` is used starting by `x=1`.
 
 ```
 <Vendor.Site:Prototype @children="text">
@@ -197,7 +197,7 @@ The `@children`-attribute defined the property that is used to render the conten
 The default property name for the children is `content`.
 
 The `@key`-attribute can be used to define the property name of an item among its siblings if an array is rendered. 
-If no `@key` is defined the index is used starting at 1. 
+If no `@key` is defined `index_x` is used starting at `x=1. 
 
 All other meta attributes are directly added to the generated prototype and can be used for @if or @process statements. 
 
