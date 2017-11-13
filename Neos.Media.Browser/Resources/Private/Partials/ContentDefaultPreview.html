@@ -1,8 +1,6 @@
 {namespace neos=Neos\Neos\ViewHelpers}
 <div class="neos-preview-image" id="neos-preview-image">
-  <a href="{f:uri.resource(resource: asset.resource)}" data-file-download="{f:uri.resource(resource: asset.resource)}" aria-label="{neos:backend.translate(id: 'preview', package: 'Neos.Media.Browser')}" target="_blank">
-    <m:thumbnail asset="{asset}" preset="Neos.Media.Browser:Preview" alt="{asset.label}" async="{settings.asyncThumbnails}" class="img-polaroid" />
-  </a>
+  <m:thumbnail asset="{asset}" preset="Neos.Media.Browser:Preview" alt="{asset.label}" async="{settings.asyncThumbnails}" class="img-polaroid" />
 </div>
 <div class="neos-preview-actions">
   <a class="neos-button pull-right" href="{f:uri.resource(resource: asset.resource)}" target="_blank">
