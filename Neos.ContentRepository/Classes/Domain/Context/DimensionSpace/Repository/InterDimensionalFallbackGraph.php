@@ -240,9 +240,10 @@ class InterDimensionalFallbackGraph
             if ($includeOrigin) {
                 $specializations[$origin->getHash()] = $origin;
             }
-            if ($excludedSet) {
+            /* if ($excludedSet) {
+                @todo check whether this is necessary at all
                 $excludedSet = $this->completeSet($excludedSet);
-            }
+            }*/
             foreach ($subgraph->getSpecializations() as $specialization) {
                 if (!$excludedSet || !$excludedSet->contains($specialization->getDimensionSpacePoint())) {
                     $specializations[$specialization->getDimensionSpacePoint()->getHash()] = $specialization->getDimensionSpacePoint();
