@@ -8,7 +8,7 @@ prototypes because the generated fusion-code can be overwritten and controlled f
 
 ## Installation
 
-PackageFactory.AtomicFusion.AFX is available via packagist. Just add `"neos/fusion-afx" : "~3.0.0"`
+Neos.Fusion.AFX is available via packagist. Just add `"neos/fusion-afx" : "~1.0.0"`
 to the require-section of the composer.json or run `composer require neos/fusion-afx`.
 
 __We use semantic-versioning so every breaking change will increase the major-version number.__
@@ -18,7 +18,7 @@ __We use semantic-versioning so every breaking change will increase the major-ve
 With this package the following fusion code
 
 ```
-prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.AtomicFusion:Component) {
+prototype(Vendor.Site:Example) < prototype(Neos.Fusion:Component) {
 
     title = 'title text'
     subtitle = 'subtitle line'
@@ -41,7 +41,7 @@ prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.At
 Will be transpiled, parsed and then cached and evaluated as beeing equivalent to the following fusion-code
 
 ```
-prototype(PackageFactory.AtomicFusion.AFX:Example) < prototype(PackageFactory.AtomicFusion:Component) {
+prototype(Vendor.Site:Example) < prototype(Neos.Fusion:Component) {
 
     title = 'title text'
     subtitle = 'subtitle line'
@@ -255,7 +255,7 @@ preprocessed data as prop. To iterate over such an array the `Neos.Fusion:Collec
 can be used in afx.
 
 ```
-prototype(PackageFactory.AtomicFusion.AFX:IterationExample) < prototype(PackageFactory.AtomicFusion:Component) {
+prototype(Vendor.Site:IterationExample) < prototype(Neos.Fusion:Component) {
     
     # array {[href:'http://www.example_1.com', title:'Title 1'], [href:'http://example_2.com', title:'Title 2']}
     items = null
@@ -270,9 +270,9 @@ prototype(PackageFactory.AtomicFusion.AFX:IterationExample) < prototype(PackageF
 }
 ```
 
-### Augmentation of Child-Components with `PackageFactory.AtomicFusion:Augmenter`
+### Augmentation of Child-Components with `Neos.Neos:Augmenter`
 
-The `PackageFactory.AtomicFusion:Augmenter` can be used to add additional attributes to rendered content. 
+The `Neos.Neos:Augmenter` can be used to add additional attributes to rendered content. 
 This allows some rendering flexibility without extending the api of the component. This is a 
 useful pattern to avoid unneeded tag-wrapping in cases where only additional classes are needed.
 
@@ -282,17 +282,17 @@ prototype(PackageFactory.AtomicFusion.AFX:SliderExample) < prototype(Packagefact
   renderer = afx`
      <div class="slider">
         <Neos.Fusion:Collection collection={props.images} itemName="image" iterationName="iteration" @children="itemRenderer">
-            <PackageFactory.AtomicFusion:Augmenter class="slider__slide" data-index={iteration.index}>
-                <PackageFactory.AtomicFusion.AFX:ImageExample image={image} /> 
-            </PackageFactory.AtomicFusion:Augmenter>
+            <Neos.Neos:Augmenter class="slider__slide" data-index={iteration.index}>
+                <Vendor.Site:ImageExample image={image} /> 
+            </Neos.Neos:Augmenter>
         </Neos.Fusion:Collection>  
      </div>
   `
 }
 ```
 
-The example iterates over a list of images and uses the `PackageFactory.AtomicFusion.AFX:ImageExample` to render each one 
-while the `PackageFactory.AtomicFusion:Augmenter` adds a class- and data-attribute from outside.
+The example iterates over a list of images and uses the `Vendor.Site:ImageExample` to render each one 
+while the `Neos.Neos:Augmenter` adds a class- and data-attribute from outside.
 
 ## License
 
