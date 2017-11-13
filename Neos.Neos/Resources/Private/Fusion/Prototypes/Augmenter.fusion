@@ -1,0 +1,13 @@
+# The Augmenter-component can be used as processor or as a standalone prototype
+
+prototype(Neos.Neos:Augmenter) < prototype(Neos.Fusion:Component) {
+  @class = 'PackageFactory\\AtomicFusion\\FusionObjects\\AugmenterImplementation'
+
+  # If more than one tag is found the content is wrapped in the fallback tag before augmentation
+  fallbackTagName = 'div'
+
+  # The content that shall be augmented
+  content = ${value}
+
+  # All other fusion properties are added to the html content as html attributes
+}
