@@ -22,6 +22,7 @@ use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\ContentContextFactory;
 use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\Neos\Domain\Service\SiteService;
+use Neos\Neos\Http\DetectContentSubgraphComponent;
 use Neos\Neos\Routing\Exception\InvalidDimensionPresetCombinationException;
 use Neos\Neos\Routing\Exception\InvalidRequestPathException;
 use Neos\Neos\Routing\Exception\NoSuchDimensionValueException;
@@ -39,6 +40,13 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * @var SystemLoggerInterface
      */
     protected $systemLogger;
+
+    /**
+     * @Flow\Inject
+     * @var ContentContextContainer
+     * @todo remove once the content context is passed directly
+     */
+    protected $contentContextContainer;
 
     /**
      * @Flow\Inject
@@ -75,12 +83,6 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * @var ContentDimensionPresetSourceInterface
      */
     protected $contentDimensionPresetSource;
-
-    /**
-     * @Flow\Inject
-     * @var ContentDimensionPresetDetectorInterface
-     */
-    protected $contentDimensionPresetDetector;
 
     const DIMENSION_REQUEST_PATH_MATCHER = '|^
         (?<firstUriPart>[^/@]+)                    # the first part of the URI, before the first slash, may contain the encoded dimension preset
@@ -167,7 +169,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      */
     protected function convertRequestPathToNode($requestPath)
     {
-        $contentContext = $this->buildContextFromRequestPath($requestPath);
+        $contentContext = $this->contentContextContainer->getContentContext();
         $requestPathWithoutContext = $this->removeContextFromPath($requestPath);
 
         $workspace = $contentContext->getWorkspace();
@@ -222,6 +224,8 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         }
 
         if (is_string($node)) {
+            \Neos\Flow\var_dump('huhu');
+            exit();
             $nodeContextPath = $node;
             $contentContext = $this->buildContextFromPath($nodeContextPath, true);
             if ($contentContext->getWorkspace() === null) {
@@ -250,35 +254,6 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         $this->value = $routePath;
 
         return true;
-    }
-
-    /**
-     * Creates a content context from the given request path, considering possibly mentioned content dimension values.
-     *
-     * @param string &$requestPath The request path. If at least one content dimension is configured, the first path segment will identify the content dimension values
-     * @return ContentContext The built content context
-     */
-    protected function buildContextFromRequestPath(&$requestPath)
-    {
-        $request = Request::createFromEnvironment();
-        $dimensionsAndDimensionValues = $this->contentDimensionPresetDetector->extractDimensionValues($request->getUri(), $requestPath, $this->supportEmptySegmentForDimensions);
-        $workspaceName = 'live';
-
-        // This is a workaround as NodePaths::explodeContextPath() (correctly)
-        // expects a context path to have something before the '@', but the requestPath
-        // could potentially contain only the context information.
-        if (strpos($requestPath, '@') === 0) {
-            $requestPath = '/' . $requestPath;
-        }
-
-        if ($requestPath !== '' && NodePaths::isContextPath($requestPath)) {
-            try {
-                $nodePathAndContext = NodePaths::explodeContextPath($requestPath);
-                $workspaceName = $nodePathAndContext['workspaceName'];
-            } catch (\InvalidArgumentException $exception) {
-            }
-        }
-        return $this->buildContextFromWorkspaceNameAndDimensions($workspaceName, $dimensionsAndDimensionValues);
     }
 
     /**
@@ -329,10 +304,18 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      */
     protected function removeContextFromPath($path)
     {
+        if ($this->contentContextContainer->isUriPathSegmentUsed()) {
+            $pivot = mb_strpos($path, '/');
+            $path = $pivot === false ? '' : mb_substr($path, $pivot + 1);
+        }
         if ($path === '' || NodePaths::isContextPath($path) === false) {
             return $path;
         }
         try {
+
+            if (strpos($path, '@') === 0) {
+                $path = '/' . $path;
+            }
             $nodePathAndContext = NodePaths::explodeContextPath($path);
             // This is a workaround as we potentially prepend the context path with "/" in buildContextFromRequestPath to create a valid context path,
             // the code in this class expects an empty nodePath though for the site node, so we remove it again at this point.
@@ -484,8 +467,8 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         $allDimensionPresetsAreDefault = true;
 
         foreach ($this->contentDimensionPresetSource->getAllPresets() as $dimensionName => $dimensionPresets) {
-            $detectionMode = $dimensionPresets['detectionMode'] ?? ContentDimensionPresetDetectorInterface::DETECTION_MODE_URIPATHSEGMENT;
-            if ($detectionMode !== ContentDimensionPresetDetectorInterface::DETECTION_MODE_URIPATHSEGMENT) {
+            $detectionMode = $dimensionPresets['detectionMode'] ?? DetectContentSubgraphComponent::DETECTION_MODE_URIPATHSEGMENT;
+            if ($detectionMode !== DetectContentSubgraphComponent::DETECTION_MODE_URIPATHSEGMENT) {
                 continue;
             }
             $preset = null;

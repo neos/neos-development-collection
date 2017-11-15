@@ -378,6 +378,13 @@ Neos:
       applicationPackageKey: Neos.Neos
       applicationName: Neos
 
+    http:
+      chain:
+        preprocess:
+          chain:
+            detectContentSubgraph:
+              component: Neos\Neos\Http\DetectContentSubgraphComponent
+
     mvc:
       routes:
         'Neos.Neos':

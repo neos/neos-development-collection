@@ -27,6 +27,7 @@ use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\Exception as NeosException;
+use Neos\Neos\Http\DetectContentSubgraphComponent;
 use Neos\Neos\Routing\ContentDimensionPresetDetectorInterface;
 use Neos\Neos\TYPO3CR\NeosNodeServiceInterface;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -341,13 +342,13 @@ class LinkingService
         $uriChanged = false;
         $presets = $this->dimensionPresetSource->getAllPresets();
         foreach ($dimensionValues as $dimensionName => $values) {
-            $detectionMode = $presets[$dimensionName]['detectionMode'] ?? ContentDimensionPresetDetectorInterface::DETECTION_MODE_URIPATHSEGMENT;
+            $detectionMode = $presets[$dimensionName]['detectionMode'] ?? DetectContentSubgraphComponent::DETECTION_MODE_URIPATHSEGMENT;
             switch ($detectionMode) {
-                case ContentDimensionPresetDetectorInterface::DETECTION_MODE_SUBDOMAIN:
+                case DetectContentSubgraphComponent::DETECTION_MODE_SUBDOMAIN:
                     break;
-                case ContentDimensionPresetDetectorInterface::DETECTION_MODE_DOMAINNAME:
+                case DetectContentSubgraphComponent::DETECTION_MODE_DOMAINNAME:
                     break;
-                case ContentDimensionPresetDetectorInterface::DETECTION_MODE_TOPLEVELDOMAIN:
+                case DetectContentSubgraphComponent::DETECTION_MODE_TOPLEVELDOMAIN:
                     $currentValue = null;
                     foreach ($presets[$dimensionName]['presets'] as $preset) {
                         if (mb_substr($baseUri->getHost(), -mb_strlen($preset['detectionValue'])) === $preset['detectionValue']) {
@@ -363,7 +364,7 @@ class LinkingService
                         $uriChanged = true;
                     }
                     break;
-                case ContentDimensionPresetDetectorInterface::DETECTION_MODE_URIPATHSEGMENT:
+                case DetectContentSubgraphComponent::DETECTION_MODE_URIPATHSEGMENT:
                 default:
                     continue;
             }
