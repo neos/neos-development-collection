@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\Neos\Http;
+namespace Neos\Neos\Http\ContentDimensionDetection;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -15,9 +15,9 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http;
 
 /**
- * Subdomain based dimension preset detector
+ * Top level domain based dimension preset detector
  */
-class SubdomainDimensionPresetDetector implements ContentDimensionPresetDetectorInterface
+final class TopLevelDomainDimensionPresetDetector implements ContentDimensionPresetDetectorInterface
 {
     /**
      * @var array
@@ -35,10 +35,11 @@ class SubdomainDimensionPresetDetector implements ContentDimensionPresetDetector
     public function detectPreset(string $dimensionName, array $presets, Http\Component\ComponentContext $componentContext, array $overrideOptions = null)
     {
         $host = $componentContext->getHttpRequest()->getUri()->getHost();
+        $hostLength = mb_strlen($host);
         foreach ($presets as $preset) {
-            $valueLength = mb_strlen($preset['detectionValue']);
+            $pivot = $hostLength - mb_strlen($preset['detectionValue']);
 
-            if (mb_substr($host, 0, $valueLength) === $preset['detectionValue']) {
+            if (mb_substr($host, $pivot) === $preset['detectionValue']) {
                 return $preset;
             }
         }

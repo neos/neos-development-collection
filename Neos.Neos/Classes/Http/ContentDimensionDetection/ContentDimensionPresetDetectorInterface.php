@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\Neos\Http;
+namespace Neos\Neos\Http\ContentDimensionDetection;
 
 /*
  * This file is part of the Neos.Neos package.

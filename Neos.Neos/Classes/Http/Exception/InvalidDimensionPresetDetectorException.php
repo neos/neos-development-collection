@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Neos\Routing\Exception;
+namespace Neos\Neos\Http\Exception;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,11 +10,15 @@ namespace Neos\Neos\Routing\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Neos\Routing\Exception;
+use Neos\Neos\Exception;
 
 /**
  * An "invalid dimension preset detector" exception
  */
 class InvalidDimensionPresetDetectorException extends Exception
 {
+    /**
+     * @var integer
+     */
+    protected $statusCode = 500;
 }

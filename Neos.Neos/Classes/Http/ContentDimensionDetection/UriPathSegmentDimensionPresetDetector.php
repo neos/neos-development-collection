@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\Neos\Http;
+namespace Neos\Neos\Http\ContentDimensionDetection;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -18,7 +18,7 @@ use Neos\Utility\Arrays;
 /**
  * URI path segment based dimension preset detector
  */
-class UriPathSegmentDimensionPresetDetector implements ContentDimensionPresetDetectorInterface
+final class UriPathSegmentDimensionPresetDetector implements ContentDimensionPresetDetectorInterface
 {
     /**
      * @var array

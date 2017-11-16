@@ -17,20 +17,14 @@ use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http;
 use Neos\Neos\Domain\Service\ContentContext;
+use Neos\Neos\Http\ContentDimensionDetection\DimensionPresetDetectorResolver;
 use Neos\Neos\Routing\ContentContextContainer;
-use Neos\Neos\Routing\Exception\InvalidDimensionPresetDetectorException;
 
 /**
  * The HTTP component for detecting the requested dimension space point
  */
 final class DetectContentSubgraphComponent implements Http\Component\ComponentInterface
 {
-    const DETECTION_MODE_SUBDOMAIN = 'subdomain';
-    const DETECTION_MODE_DOMAINNAME = 'domainName';
-    const DETECTION_MODE_TOPLEVELDOMAIN = 'topLevelDomain';
-    const DETECTION_MODE_URIPATHSEGMENT = 'uriPathSegment';
-
-
     /**
      * @Flow\Inject
      * @var ContentDimensionPresetSourceInterface
@@ -48,6 +42,12 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
      * @var ContentContextContainer
      */
     protected $contentContextContainer;
+
+    /**
+     * @Flow\Inject
+     * @var DimensionPresetDetectorResolver
+     */
+    protected $contentDimensionPresetDetectorResolver;
 
     /**
      * @Flow\InjectConfiguration(path="routing.supportEmptySegmentForDimensions")
@@ -105,50 +105,36 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
     {
         $coordinates = [];
         $path = $componentContext->getHttpRequest()->getUri()->getPath();
-        // This is a workaround as NodePaths::explodeContextPath() (correctly)
-        // expects a context path to have something before the '@', but the requestPath
-        // could potentially contain only the context information.
-        if (strpos($path, '@') === 0) {
-            $path = '/' . $path;
-        }
 
         $isContextPath = NodePaths::isContextPath($path);
-        $backendUriDimensionPresetDetector = new BackendUriDimensionPresetDetector();
+        $backendUriDimensionPresetDetector = new ContentDimensionDetection\BackendUriDimensionPresetDetector();
         $uriPathSegmentOffset = 0;
         foreach ($this->dimensionPresetSource->getAllPresets() as $dimensionName => $presetConfiguration) {
-            $detector = $this->resolveDimensionPresetDetector($dimensionName, $presetConfiguration['detection']);
+            $detector = $this->contentDimensionPresetDetectorResolver->resolveDimensionPresetDetector($dimensionName, $presetConfiguration);
             $options = $presetConfiguration['detection']['options'] ?? $this->generateOptionsFromLegacyConfiguration($detector, $presetConfiguration);
 
             if ($isContextPath) {
                 $preset = $backendUriDimensionPresetDetector->detectPreset($dimensionName, $presetConfiguration['presets'], $componentContext);
                 if ($preset) {
                     $coordinates[$dimensionName] = $preset['values'];
-                    if ($detector instanceof UriPathSegmentDimensionPresetDetector) {
+                    if ($detector instanceof ContentDimensionDetection\UriPathSegmentDimensionPresetDetector) {
                         // we might have to remove the uri path segment anyway
                         $uriPathSegmentPreset = $detector->detectPreset($dimensionName, $presetConfiguration['presets'], $componentContext, $options);
                         if ($uriPathSegmentPreset) {
-                            $componentContext->setParameter(
-                                DetectContentSubgraphComponent::class,
-                                'uriPathSegmentUsed',
-                                true
-                            );
+                            $this->flagUriPathSegmentUsed($componentContext);
                         }
                     }
                     continue;
                 }
             }
 
-            if ($detector instanceof UriPathSegmentDimensionPresetDetector) {
+            if ($detector instanceof ContentDimensionDetection\UriPathSegmentDimensionPresetDetector) {
                 $options['offset'] = $uriPathSegmentOffset;
                 $uriPathSegmentOffset++;
             }
             $preset = $detector->detectPreset($dimensionName, $presetConfiguration['presets'], $componentContext, $options);
-            if ($preset && $detector instanceof UriPathSegmentDimensionPresetDetector) {
-                $componentContext->setParameter(
-                    DetectContentSubgraphComponent::class,
-                    'uriPathSegmentUsed',
-                    true
-                );
+            if ($preset && $detector instanceof ContentDimensionDetection\UriPathSegmentDimensionPresetDetector) {
+                $this->flagUriPathSegmentUsed($componentContext);
             }
             if (!$preset && $options && isset($options['allowEmptyValue']) && $options['allowEmptyValue']) {
                 if (isset($options['defaultPresetIdentifier']) && $options['defaultPresetIdentifier'] && isset($presetConfiguration['presets'][$options['defaultPresetIdentifier']])) {
@@ -164,16 +150,28 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
     }
 
     /**
+     * @param Http\Component\ComponentContext $componentContext
+     */
+    protected function flagUriPathSegmentUsed(Http\Component\ComponentContext $componentContext)
+    {
+        $componentContext->setParameter(
+            DetectContentSubgraphComponent::class,
+            'uriPathSegmentUsed',
+            true
+        );
+    }
+
+    /**
      * @todo remove once legacy configuration is removed (probably with 4.0)
-     * @param ContentDimensionPresetDetectorInterface $detector
+     * @param ContentDimensionDetection\ContentDimensionPresetDetectorInterface $detector
      * @param array $presetConfiguration
      * @return array|null
      */
-    protected function generateOptionsFromLegacyConfiguration(ContentDimensionPresetDetectorInterface $detector, array $presetConfiguration)
+    protected function generateOptionsFromLegacyConfiguration(ContentDimensionDetection\ContentDimensionPresetDetectorInterface $detector, array $presetConfiguration)
     {
         $options = null;
 
-        if ($detector instanceof UriPathSegmentDimensionPresetDetector) {
+        if ($detector instanceof ContentDimensionDetection\UriPathSegmentDimensionPresetDetector) {
             $options = [];
             if ($this->allowEmptyPathSegments) {
                 $options['allowEmptyValue'] = true;
@@ -205,35 +203,5 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
         }
 
         return $contentStreamIdentifier;
-    }
-
-    /**
-     * @param string $dimensionName
-     * @param array $detectionConfiguration
-     * @return ContentDimensionPresetDetectorInterface
-     * @throws InvalidDimensionPresetDetectorException
-     */
-    protected function resolveDimensionPresetDetector(string $dimensionName, array $detectionConfiguration): ContentDimensionPresetDetectorInterface
-    {
-        if (isset($detectionConfiguration['detector'])) {
-            return class_exists($detectionConfiguration['detector']) ? new $detectionConfiguration['detector']() : null;
-        }
-        if (isset($detectionConfiguration['mode'])) {
-            switch ($detectionConfiguration['mode']) {
-                case self::DETECTION_MODE_URIPATHSEGMENT:
-                    return new UriPathSegmentDimensionPresetDetector();
-                case self::DETECTION_MODE_TOPLEVELDOMAIN:
-                    return new TopLevelDomainDimensionPresetDetector();
-                case self::DETECTION_MODE_SUBDOMAIN:
-                    return new SubdomainDimensionPresetDetector();
-                default:
-                    throw new InvalidDimensionPresetDetectorException(
-                        'Could not resolve dimension preset detector for dimension "' . $dimensionName . '". Please check your dimension configuration.',
-                        1510750184
-                    );
-            }
-        } else {
-            return new UriPathSegmentDimensionPresetDetector();
-        }
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\Neos\Http;
+namespace Neos\Neos\Http\ContentDimensionDetection;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,14 +11,13 @@ namespace Neos\Neos\Http;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http;
 
 /**
- * Backend URI based dimension preset detector
+ * Subdomain based dimension preset detector
  */
-class BackendUriDimensionPresetDetector implements ContentDimensionPresetDetectorInterface
+final class SubdomainDimensionPresetDetector implements ContentDimensionPresetDetectorInterface
 {
     /**
      * @var array
@@ -35,13 +34,12 @@ class BackendUriDimensionPresetDetector implements ContentDimensionPresetDetecto
      */
     public function detectPreset(string $dimensionName, array $presets, Http\Component\ComponentContext $componentContext, array $overrideOptions = null)
     {
-        $path = $componentContext->getHttpRequest()->getUri()->getPath();
-        $nodePathAndContext = NodePaths::explodeContextPath($path);
-        if (isset($nodePathAndContext['dimensions'][$dimensionName])) {
-            foreach ($presets as $preset) {
-                if ($preset['values'] === $nodePathAndContext['dimensions'][$dimensionName]) {
-                    return $preset;
-                }
+        $host = $componentContext->getHttpRequest()->getUri()->getHost();
+        foreach ($presets as $preset) {
+            $valueLength = mb_strlen($preset['detectionValue']);
+
+            if (mb_substr($host, 0, $valueLength) === $preset['detectionValue']) {
+                return $preset;
             }
         }
 
