@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Service;
 
 /*
@@ -27,8 +28,8 @@ use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\Exception as NeosException;
-use Neos\Neos\Http\DetectContentSubgraphComponent;
-use Neos\Neos\Routing\ContentDimensionPresetDetectorInterface;
+use Neos\Neos\Http\ContentDimensionLinking;
+use Neos\Neos\Http\ContentDimensionResolutionMode;
 use Neos\Neos\TYPO3CR\NeosNodeServiceInterface;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
@@ -131,6 +132,7 @@ class LinkingService
         if ($uri instanceof Uri) {
             $uri = (string)$uri;
         }
+
         return preg_match(self::PATTERN_SUPPORTED_URIS, $uri) === 1;
     }
 
@@ -165,8 +167,10 @@ class LinkingService
         $targetObject = $this->convertUriToObject($uri, $contextNode);
         if ($targetObject === null) {
             $this->systemLogger->log(sprintf('Could not resolve "%s" to an existing node; The node was probably deleted.', $uri));
+
             return null;
         }
+
         return $this->createNodeUri($controllerContext, $targetObject, null, null, $absolute);
     }
 
@@ -181,8 +185,10 @@ class LinkingService
         $targetObject = $this->convertUriToObject($uri);
         if ($targetObject === null) {
             $this->systemLogger->log(sprintf('Could not resolve "%s" to an existing asset; The asset was probably deleted.', $uri));
+
             return null;
         }
+
         return $this->resourceManager->getPublicPersistentResourceUri($targetObject->getResource());
     }
 
@@ -232,8 +238,18 @@ class LinkingService
      * @throws \InvalidArgumentException if the given node/baseNode is not valid
      * @throws NeosException if no URI could be resolved for the given node
      */
-    public function createNodeUri(ControllerContext $controllerContext, $node = null, NodeInterface $baseNode = null, $format = null, $absolute = false, array $arguments = array(), $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = array(), $resolveShortcuts = true)
-    {
+    public function createNodeUri(
+        ControllerContext $controllerContext,
+        $node = null,
+        NodeInterface $baseNode = null,
+        $format = null,
+        $absolute = false,
+        array $arguments = array(),
+        $section = '',
+        $addQueryString = false,
+        array $argumentsToBeExcludedFromQueryString = array(),
+        $resolveShortcuts = true
+    ) {
         $this->lastLinkedNode = null;
         if (!($node instanceof NodeInterface || is_string($node) || $baseNode instanceof NodeInterface)) {
             throw new \InvalidArgumentException('Expected an instance of NodeInterface or a string for the node argument, or alternatively a baseNode argument.', 1373101025);
@@ -339,41 +355,27 @@ class LinkingService
     protected function resolveDimensionBaseUri(Uri $currentBaseUri, array $dimensionValues)
     {
         $baseUri = clone $currentBaseUri;
-        $uriChanged = false;
         $presets = $this->dimensionPresetSource->getAllPresets();
         foreach ($dimensionValues as $dimensionName => $values) {
-            $detectionMode = $presets[$dimensionName]['detectionMode'] ?? DetectContentSubgraphComponent::DETECTION_MODE_URIPATHSEGMENT;
-            switch ($detectionMode) {
-                case DetectContentSubgraphComponent::DETECTION_MODE_SUBDOMAIN:
-                    break;
-                case DetectContentSubgraphComponent::DETECTION_MODE_DOMAINNAME:
-                    break;
-                case DetectContentSubgraphComponent::DETECTION_MODE_TOPLEVELDOMAIN:
-                    $currentValue = null;
-                    foreach ($presets[$dimensionName]['presets'] as $preset) {
-                        if (mb_substr($baseUri->getHost(), -mb_strlen($preset['detectionValue'])) === $preset['detectionValue']) {
-                            $currentValue = $preset['detectionValue'];
-                            break;
-                        }
-                    }
+            $presetConfiguration = $presets[$dimensionName];
 
-                    $newValue = $this->dimensionPresetSource->findPresetByDimensionValues($dimensionName, $values)['detectionValue'];
-
-                    if ($newValue !== $currentValue) {
-                        $baseUri->setHost(mb_substr($baseUri->getHost(), 0, -mb_strlen($currentValue)) . $newValue);
-                        $uriChanged = true;
-                    }
+            $resolutionMode = new ContentDimensionResolutionMode($presetConfiguration['resolutionMode'] ?? ContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT);
+            switch ($resolutionMode->getMode()) {
+                case ContentDimensionResolutionMode::RESOLUTION_MODE_SUBDOMAIN:
+                    $linkProcessor = new ContentDimensionLinking\SubdomainDimensionPresetLinkProcessor();
                     break;
-                case DetectContentSubgraphComponent::DETECTION_MODE_URIPATHSEGMENT:
+                case ContentDimensionResolutionMode::RESOLUTION_MODE_TOPLEVELDOMAIN:
+                    $linkProcessor = new ContentDimensionLinking\TopLevelDomainDimensionPresetLinkProcessor();
+                    break;
+                case ContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT:
                 default:
-                    continue;
+                    $linkProcessor = new ContentDimensionLinking\UriPathSegmentDimensionPresetLinkProcessor();
             }
+
+            $linkProcessor->processDimensionBaseUri($baseUri, $dimensionName, $presetConfiguration, $values);
         }
 
-        if ($uriChanged) {
-            return $baseUri;
-        }
-        return null;
+        return (string)$baseUri !== (string)$currentBaseUri ? $baseUri : null;
     }
 
     /**
@@ -391,6 +393,7 @@ class LinkingService
         $requestUri = $controllerContext->getRequest()->getHttpRequest()->getUri();
         $baseUri = $controllerContext->getRequest()->getHttpRequest()->getBaseUri();
         $port = $primaryDomain->getPort() ?: $requestUri->getPort();
+
         return sprintf(
             '%s://%s%s%s',
             $primaryDomain->getScheme() ?: $requestUri->getScheme(),
