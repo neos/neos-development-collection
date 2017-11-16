@@ -311,7 +311,6 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             return $path;
         }
         try {
-
             if (strpos($path, '@') === 0) {
                 $path = '/' . $path;
             }
