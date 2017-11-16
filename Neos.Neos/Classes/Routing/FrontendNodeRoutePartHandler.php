@@ -22,6 +22,7 @@ use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\ContentContextFactory;
 use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\Neos\Domain\Service\SiteService;
+use Neos\Neos\Http\ContentDimensionResolutionMode;
 use Neos\Neos\Http\DetectContentSubgraphComponent;
 use Neos\Neos\Routing\Exception\InvalidDimensionPresetCombinationException;
 use Neos\Neos\Routing\Exception\InvalidRequestPathException;
@@ -224,8 +225,6 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         }
 
         if (is_string($node)) {
-            \Neos\Flow\var_dump('huhu');
-            exit();
             $nodeContextPath = $node;
             $contentContext = $this->buildContextFromPath($nodeContextPath, true);
             if ($contentContext->getWorkspace() === null) {
@@ -431,26 +430,6 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     }
 
     /**
-     * Sets context properties like "invisibleContentShown" according to the workspace (live or not) and returns a
-     * ContentContext object.
-     *
-     * @param string $workspaceName Name of the workspace to use in the context
-     * @param array $dimensionsAndDimensionValues An array of dimension names (index) and their values (array of strings). See also: ContextFactory
-     * @return ContentContext
-     */
-    protected function buildContextFromWorkspaceNameAndDimensions($workspaceName, array $dimensionsAndDimensionValues)
-    {
-        $contextProperties = [
-            'workspaceName' => $workspaceName,
-            'invisibleContentShown' => ($workspaceName !== 'live'),
-            'inaccessibleContentShown' => ($workspaceName !== 'live'),
-            'dimensions' => $dimensionsAndDimensionValues
-        ];
-
-        return $this->contextFactory->create($contextProperties);
-    }
-
-    /**
      * Find a URI segment in the content dimension presets for the given "language" dimension values
      *
      * This will do a reverse lookup from actual dimension values to a preset and fall back to the default preset if none
@@ -467,8 +446,8 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         $allDimensionPresetsAreDefault = true;
 
         foreach ($this->contentDimensionPresetSource->getAllPresets() as $dimensionName => $dimensionPresets) {
-            $detectionMode = $dimensionPresets['detectionMode'] ?? DetectContentSubgraphComponent::DETECTION_MODE_URIPATHSEGMENT;
-            if ($detectionMode !== DetectContentSubgraphComponent::DETECTION_MODE_URIPATHSEGMENT) {
+            $resolutionMode = new ContentDimensionResolutionMode($dimensionPresets['resolutionMode'] ?? ContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT);
+            if ($resolutionMode->getMode() !== ContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT) {
                 continue;
             }
             $preset = null;
