@@ -16,7 +16,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * The content dimension resolution mode value object
  */
-final class ContentDimensionResolutionMode
+final class ContentDimensionResolutionMode implements \JsonSerializable
 {
     const RESOLUTION_MODE_SUBDOMAIN = 'subdomain';
     const RESOLUTION_MODE_TOPLEVELDOMAIN = 'topLevelDomain';
@@ -51,5 +51,23 @@ final class ContentDimensionResolutionMode
     public function getMode(): string
     {
         return $this->mode;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->mode;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'mode' => $this->mode
+        ];
     }
 }
