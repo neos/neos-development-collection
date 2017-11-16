@@ -16,5 +16,6 @@ use Neos\Flow\Annotations as Flow;
 /**
  * Dummy dimension preset detector not implementing the required interface
  */
-final class InvalidDummyDimensionPresetDetector {
+final class InvalidDummyDimensionPresetDetector
+{
 }
