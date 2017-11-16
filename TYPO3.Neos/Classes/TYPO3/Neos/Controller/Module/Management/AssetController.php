@@ -39,6 +39,7 @@ use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 
 /**
  * Controller for asset handling
@@ -109,6 +110,12 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
      * @var ContentDimensionPresetSourceInterface
      */
     protected $contentDimensionPresetSource;
+
+    /**
+     * @Flow\Inject
+     * @var NodeTypeManager
+     */
+    protected $nodeTypeManager;
 
     /**
      * @return void
@@ -185,27 +192,71 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
 
         $usageReferences = $this->assetService->getUsageReferences($asset);
         $relatedNodes = [];
+        $inaccessibleRelations = [];
 
-        /** @var AssetUsageInNodeProperties $usage */
         foreach ($usageReferences as $usage) {
-            $documentNodeIdentifier = $usage->getDocumentNode() instanceof NodeInterface ? $usage->getDocumentNode()->getIdentifier() : null;
+            $inaccessibleRelation = [
+                'type' => get_class($usage),
+                'usage' => $usage
+            ];
 
-            $relatedNodes[$usage->getSite()->getNodeName()]['site'] = $usage->getSite();
-            $relatedNodes[$usage->getSite()->getNodeName()]['documentNodes'][$documentNodeIdentifier]['node'] = $usage->getDocumentNode();
-            $relatedNodes[$usage->getSite()->getNodeName()]['documentNodes'][$documentNodeIdentifier]['nodes'][] = [
-                'node' => $usage->getNode(),
-                'nodeData' => $usage->getNode()->getNodeData(),
-                'contextDocumentNode' => $usage->getDocumentNode(),
-                'accessible' => $usage->isAccessible()
+            if (!$usage instanceof AssetUsageInNodeProperties) {
+                $inaccessibleRelations[] = $inaccessibleRelation;
+                continue;
+            }
+
+            $nodeType = $this->nodeTypeManager->getNodeType($usage->getNodeTypeName());
+            $workspace = $this->workspaceRepository->findByIdentifier($usage->getWorkspaceName());
+            $accessible = $this->domainUserService->currentUserCanReadWorkspace($workspace);
+
+            $inaccessibleRelation['nodeIdentifier'] = $usage->getNodeIdentifier();
+            $inaccessibleRelation['workspaceName'] = $usage->getWorkspaceName();
+            $inaccessibleRelation['workspace'] = $workspace;
+            $inaccessibleRelation['nodeType'] = $nodeType;
+            $inaccessibleRelation['accessible'] = $accessible;
+
+            if (!$accessible) {
+                $inaccessibleRelations[] = $inaccessibleRelation;
+                continue;
+            }
+
+            $node = $this->getNodeFrom($usage);
+            // this should actually never happen.
+            if (!$node) {
+                $inaccessibleRelations[] = $inaccessibleRelation;
+                continue;
+            }
+
+            $site = $node->getContext()->getCurrentSite();
+            $flowQuery = new FlowQuery([$node]);
+            $documentNode = $flowQuery->closest('[instanceof TYPO3.Neos:Document]')->get(0);
+
+            $relatedNodes[$site->getNodeName()]['site'] = $site;
+            $relatedNodes[$site->getNodeName()]['nodes'][] = [
+                'node' => $node,
+                'documentNode' => $documentNode
             ];
         }
 
         $this->view->assignMultiple([
+            'totalUsageCount' => count($usageReferences),
+            'nodeUsageClass' => AssetUsageInNodeProperties::class,
             'asset' => $asset,
+            'inaccessibleRelations' => $inaccessibleRelations,
             'relatedNodes' => $relatedNodes,
             'contentDimensions' => $this->contentDimensionPresetSource->getAllPresets(),
             'userWorkspace' => $userWorkspace
         ]);
+    }
+
+    /**
+     * @param AssetUsageInNodeProperties $assetUsage
+     * @return NodeInterface
+     */
+    protected function getNodeFrom(AssetUsageInNodeProperties $assetUsage)
+    {
+        $context = $this->_contextFactory->create(['workspaceName' => $assetUsage->getWorkspaceName(), 'dimensions' => $assetUsage->getDimensionValues(), 'invisibleContentShown' => true, 'removedContentShown' => true]);
+        return $context->getNodeByIdentifier($assetUsage->getNodeIdentifier());
     }
 
     /**

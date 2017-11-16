@@ -10,10 +10,9 @@ namespace TYPO3\Neos\Domain\Model\Dto;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\Dto\UsageReference;
-use TYPO3\Neos\Domain\Model\Site;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * A DTO for storing information related to a usage of an asset in node properties.
@@ -21,78 +20,70 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 class AssetUsageInNodeProperties extends UsageReference
 {
     /**
-     * @var Site
+     * @var string
      */
-    protected $site;
+    protected $nodeIdentifier;
 
     /**
-     * @var NodeInterface
+     * @var string
      */
-    protected $documentNode;
+    protected $workspaceName;
 
     /**
-     * @var NodeInterface
+     * @var array
      */
-    protected $node;
+    protected $dimensionValues;
 
     /**
-     * @var boolean
+     * @var string
      */
-    protected $accessible;
+    protected $nodeTypeName;
 
     /**
      * @param AssetInterface $asset
-     * @param Site $site
-     * @param NodeInterface $documentNode
-     * @param NodeInterface $node
-     * @param boolean $accessible
+     * @param string $nodeIdentifier
+     * @param string $workspaceName
+     * @param array $dimensionValues
+     * @param string $nodeTypeName
      */
-    public function __construct(AssetInterface $asset, Site $site = null, NodeInterface $documentNode = null, NodeInterface $node = null, $accessible = false)
+    public function __construct(AssetInterface $asset, $nodeIdentifier, $workspaceName, $dimensionValues, $nodeTypeName)
     {
         parent::__construct($asset);
-        $this->site = $site;
-        $this->documentNode = $documentNode;
-        $this->node = $node;
-        $this->accessible = $accessible;
+        $this->nodeIdentifier = $nodeIdentifier;
+        $this->workspaceName = $workspaceName;
+        $this->dimensionValues = $dimensionValues;
+        $this->nodeTypeName = $nodeTypeName;
     }
 
     /**
-     * Returns the Site object of the site where the asset is in use.
-     *
-     * @return Site
+     * @return string
      */
-    public function getSite()
+    public function getNodeIdentifier()
     {
-        return $this->site;
+        return $this->nodeIdentifier;
     }
 
     /**
-     * Returns the parent document node of the node where the asset is used.
-     *
-     * @return NodeInterface
+     * @return string
      */
-    public function getDocumentNode()
+    public function getWorkspaceName()
     {
-        return $this->documentNode;
+        return $this->workspaceName;
     }
 
     /**
-     * Returns the node where the asset is in use.
-     *
-     * @return NodeInterface
+     * @return array
      */
-    public function getNode()
+    public function getDimensionValues()
     {
-        return $this->node;
+        return $this->dimensionValues;
     }
 
     /**
-     * Returns true if the node is accessible by the current user.
-     *
-     * @return boolean
+     * @return string
      */
-    public function isAccessible()
+    public function getNodeTypeName()
     {
-        return $this->accessible;
+        return $this->nodeTypeName;
     }
 }
