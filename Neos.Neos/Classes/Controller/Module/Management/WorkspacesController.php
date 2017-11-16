@@ -122,10 +122,13 @@ class WorkspacesController extends AbstractModuleController
      */
     public function indexAction()
     {
-        $currentAccount = $this->securityContext->getAccount();
-        $userWorkspace = $this->workspaceRepository->findOneByName(UserUtility::getPersonalWorkspaceNameForUsername($currentAccount->getAccountIdentifier()));
-        /** @var Workspace $userWorkspace */
+        $userWorkspace = $this->workspaceRepository->getPersonalWorkspaceByOwnerIdentifier(
+            $this->persistenceManager->getIdentifierByObject(
+                $this->userService->getCurrentUser()
+            )
+        );
 
+        /** @var Workspace $userWorkspace */
         $workspacesAndCounts = [
             $userWorkspace->getName() => [
                 'workspace' => $userWorkspace,
@@ -313,8 +316,11 @@ class WorkspacesController extends AbstractModuleController
      */
     public function rebaseAndRedirectAction(NodeInterface $targetNode, Workspace $targetWorkspace)
     {
-        $currentAccount = $this->securityContext->getAccount();
-        $personalWorkspace = $this->workspaceRepository->findOneByName(UserUtility::getPersonalWorkspaceNameForUsername($currentAccount->getAccountIdentifier()));
+        $personalWorkspace = $this->workspaceRepository->getPersonalWorkspaceByOwnerIdentifier(
+            $this->persistenceManager->getIdentifierByObject(
+                $this->userService->getCurrentUser()
+            )
+        );
         /** @var Workspace $personalWorkspace */
 
         if ($personalWorkspace !== $targetWorkspace) {

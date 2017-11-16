@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Domain\Repository;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\Repository;
@@ -29,4 +30,18 @@ class WorkspaceRepository extends Repository
         'baseWorkspace' => QueryInterface::ORDER_ASCENDING,
         'title' => QueryInterface::ORDER_ASCENDING
     );
+
+    public function getPersonalWorkspaceByOwnerIdentifier($ownerIdentifier)
+    {
+        $query = $this->createQuery();
+        $query->matching(
+            $query->logicalAnd(
+                $query->like('name', Workspace::PERSONAL_WORKSPACE_PREFIX . '%'),
+                $query->equals('owner', $ownerIdentifier)
+            )
+        );
+
+        return $query->execute()->getFirst();
+    }
+
 }

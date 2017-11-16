@@ -13,6 +13,7 @@ namespace Neos\Neos\Domain\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\AccountFactory;
 use Neos\Flow\Security\AccountRepository;
@@ -58,6 +59,12 @@ class UserService
      * @var WorkspaceRepository
      */
     protected $workspaceRepository;
+
+    /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
 
     /**
      * @Flow\Inject
@@ -215,7 +222,7 @@ class UserService
         if ($this->securityContext->canBeInitialized() === true) {
             $account = $this->securityContext->getAccount();
             if ($account !== null) {
-                return $this->getUser($account->getAccountIdentifier());
+                return $this->getUser($account->getAccountIdentifier(), $account->getAuthenticationProviderName());
             }
         }
 
@@ -303,8 +310,9 @@ class UserService
      */
     public function deleteUser(User $user)
     {
+        /** @var Account $account */
         foreach ($user->getAccounts() as $account) {
-            $this->deletePersonalWorkspace($account->getAccountIdentifier());
+            $this->deletePersonalWorkspace($user);
             $this->accountRepository->remove($account);
         }
 
@@ -768,20 +776,29 @@ class UserService
      */
     protected function createPersonalWorkspace(User $user, Account $account)
     {
-        $userWorkspaceName = UserUtility::getPersonalWorkspaceNameForUsername($account->getAccountIdentifier());
-        $userWorkspace = $this->workspaceRepository->findByIdentifier($userWorkspaceName);
-        if ($userWorkspace === null) {
-            $liveWorkspace = $this->workspaceRepository->findByIdentifier('live');
-            if (!($liveWorkspace instanceof Workspace)) {
-                $liveWorkspace = new Workspace('live');
-                $liveWorkspace->setTitle('Live');
-                $this->workspaceRepository->add($liveWorkspace);
-            }
-
-            $userWorkspace = new Workspace($userWorkspaceName, $liveWorkspace, $user);
-            $userWorkspace->setTitle((string)$user->getName());
-            $this->workspaceRepository->add($userWorkspace);
+        $userWorkspace = $this->workspaceRepository->getPersonalWorkspaceByOwnerIdentifier(
+            $this->persistenceManager->getIdentifierByObject($user)
+        );
+        if ($userWorkspace instanceof Workspace) {
+            return;
         }
+
+        $possibleUserWorkspaceName = $initialUserWorkspaceName = Workspace::PERSONAL_WORKSPACE_PREFIX . UserUtility::slugifyUsername($account->getAccountIdentifier());
+        $i = 1;
+        while ($this->workspaceRepository->countByName($possibleUserWorkspaceName) > 0) {
+            $possibleUserWorkspaceName = $initialUserWorkspaceName . '-' . $i++;
+        }
+
+        $liveWorkspace = $this->workspaceRepository->findByIdentifier('live');
+        if (!($liveWorkspace instanceof Workspace)) {
+            $liveWorkspace = new Workspace('live');
+            $liveWorkspace->setTitle('Live');
+            $this->workspaceRepository->add($liveWorkspace);
+        }
+
+        $userWorkspace = new Workspace($possibleUserWorkspaceName, $liveWorkspace, $user);
+        $userWorkspace->setTitle((string)$user->getName());
+        $this->workspaceRepository->add($userWorkspace);
     }
 
     /**
@@ -791,9 +808,12 @@ class UserService
      * @param string $accountIdentifier Identifier of the user's account
      * @return void
      */
-    protected function deletePersonalWorkspace($accountIdentifier)
+    protected function deletePersonalWorkspace(User $user)
     {
-        $userWorkspace = $this->workspaceRepository->findByIdentifier(UserUtility::getPersonalWorkspaceNameForUsername($accountIdentifier));
+        $userWorkspace = $this->workspaceRepository->getPersonalWorkspaceByOwnerIdentifier(
+            $this->persistenceManager->getIdentifierByObject($user)
+        );
+
         if ($userWorkspace instanceof Workspace) {
             $this->publishingService->discardAllNodes($userWorkspace);
             $this->workspaceRepository->remove($userWorkspace);

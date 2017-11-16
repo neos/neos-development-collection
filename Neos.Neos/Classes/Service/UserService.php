@@ -12,6 +12,7 @@ namespace Neos\Neos\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Domain\Model\User;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
@@ -44,6 +45,12 @@ class UserService
     protected $workspaceRepository;
 
     /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
+
+    /**
      * @Flow\InjectConfiguration("userInterface.defaultLanguage")
      * @var string
      */
@@ -66,12 +73,19 @@ class UserService
      * @return Workspace
      * @api
      */
-    public function getPersonalWorkspace()
+    public function getPersonalWorkspace(User $user = null)
     {
-        $workspaceName = $this->getPersonalWorkspaceName();
-        if ($workspaceName !== null) {
-            return $this->workspaceRepository->findOneByName($this->getPersonalWorkspaceName());
+        if ($user === null) {
+            $user = $this->userDomainService->getCurrentUser();
         }
+
+        if (!$user instanceof User) {
+            return null;
+        }
+
+        return $this->workspaceRepository->getPersonalWorkspaceByOwnerIdentifier(
+            $this->persistenceManager->getIdentifierByObject($user)
+        );
     }
 
     /**
@@ -83,14 +97,12 @@ class UserService
      */
     public function getPersonalWorkspaceName()
     {
-        $currentUser = $this->userDomainService->getCurrentUser();
-
-        if (!$currentUser instanceof User) {
+        $workspace = $this->getPersonalWorkspace();
+        if (!$workspace instanceof Workspace) {
             return null;
         }
 
-        $username = $this->userDomainService->getUsername($currentUser);
-        return ($username === null ? null : UserUtility::getPersonalWorkspaceNameForUsername($username));
+        return $workspace->getName();
     }
 
     /**
