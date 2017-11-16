@@ -28,8 +28,7 @@ use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\Exception as NeosException;
-use Neos\Neos\Http\ContentDimensionLinking;
-use Neos\Neos\Http\ContentDimensionResolutionMode;
+use Neos\Neos\Http\ContentDimensionLinking\DimensionPresetLinkProcessorResolver;
 use Neos\Neos\TYPO3CR\NeosNodeServiceInterface;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
@@ -122,6 +121,12 @@ class LinkingService
      * @var ContentDimensionPresetSourceInterface
      */
     protected $dimensionPresetSource;
+
+    /**
+     * @Flow\Inject
+     * @var DimensionPresetLinkProcessorResolver
+     */
+    protected $dimensionPresetLinkProcessorResolver;
 
     /**
      * @param string|Uri $uri
@@ -359,19 +364,7 @@ class LinkingService
         foreach ($dimensionValues as $dimensionName => $values) {
             $presetConfiguration = $presets[$dimensionName];
 
-            $resolutionMode = new ContentDimensionResolutionMode($presetConfiguration['resolutionMode'] ?? ContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT);
-            switch ($resolutionMode->getMode()) {
-                case ContentDimensionResolutionMode::RESOLUTION_MODE_SUBDOMAIN:
-                    $linkProcessor = new ContentDimensionLinking\SubdomainDimensionPresetLinkProcessor();
-                    break;
-                case ContentDimensionResolutionMode::RESOLUTION_MODE_TOPLEVELDOMAIN:
-                    $linkProcessor = new ContentDimensionLinking\TopLevelDomainDimensionPresetLinkProcessor();
-                    break;
-                case ContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT:
-                default:
-                    $linkProcessor = new ContentDimensionLinking\UriPathSegmentDimensionPresetLinkProcessor();
-            }
-
+            $linkProcessor = $this->dimensionPresetLinkProcessorResolver->resolveDimensionPresetLinkProcessor($dimensionName, $presetConfiguration);
             $linkProcessor->processDimensionBaseUri($baseUri, $dimensionName, $presetConfiguration, $values);
         }
 
