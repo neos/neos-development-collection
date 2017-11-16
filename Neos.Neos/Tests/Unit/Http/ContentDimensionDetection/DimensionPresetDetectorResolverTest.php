@@ -109,7 +109,7 @@ class DimensionPresetDetectorResolverTest extends UnitTestCase
 
         $resolver->resolveDimensionPresetDetector('dimensionName', [
             'detectionComponent' => [
-                'implementationClassName' => InvalidDummyDimensionPresetDetector::class
+                'implementationClassName' => 'Neos\Neos\Http\ContentDimensionDetection\NonExistingImplementation'
             ]
         ]);
     }
@@ -124,7 +124,7 @@ class DimensionPresetDetectorResolverTest extends UnitTestCase
 
         $resolver->resolveDimensionPresetDetector('dimensionName', [
             'detectionComponent' => [
-                'implementationClassName' => 'Neos\Neos\Http\ContentDimensionDetection\NonExistingImplementation'
+                'implementationClassName' => InvalidDummyDimensionPresetDetector::class
             ]
         ]);
     }
