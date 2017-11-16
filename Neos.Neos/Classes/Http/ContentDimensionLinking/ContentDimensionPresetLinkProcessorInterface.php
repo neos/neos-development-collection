@@ -25,7 +25,8 @@ interface ContentDimensionPresetLinkProcessorInterface
      * @param Http\Uri $baseUri
      * @param string $dimensionName
      * @param array $presetConfiguration
-     * @param array $dimensionValues
+     * @param array $preset
+     * @return void
      */
-    public function processDimensionBaseUri(Http\Uri $baseUri, string $dimensionName, array $presetConfiguration, array $dimensionValues);
+    public function processDimensionBaseUri(Http\Uri $baseUri, string $dimensionName, array $presetConfiguration, array $preset);
 }

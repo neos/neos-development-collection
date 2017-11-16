@@ -49,7 +49,7 @@ final class DimensionPresetLinkProcessorResolver
             }
         }
 
-        $resolutionMode = new ContentDimensionResolutionMode($presetConfiguration['resolutionMode'] ?? ContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT);
+        $resolutionMode = new ContentDimensionResolutionMode($presetConfiguration['resolution']['mode'] ?? ContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT);
 
         switch ($resolutionMode->getMode()) {
             case ContentDimensionResolutionMode::RESOLUTION_MODE_SUBDOMAIN:

@@ -21,14 +21,15 @@ use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ContentContext;
-use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\Exception as NeosException;
 use Neos\Neos\Http\ContentDimensionLinking\DimensionPresetLinkProcessorResolver;
+use Neos\Neos\Http\ContentSubgraphUriProcessorInterface;
 use Neos\Neos\TYPO3CR\NeosNodeServiceInterface;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
@@ -118,15 +119,15 @@ class LinkingService
 
     /**
      * @Flow\Inject
-     * @var ContentDimensionPresetSourceInterface
-     */
-    protected $dimensionPresetSource;
-
-    /**
-     * @Flow\Inject
      * @var DimensionPresetLinkProcessorResolver
      */
     protected $dimensionPresetLinkProcessorResolver;
+
+    /**
+     * @Flow\Inject
+     * @var ContentSubgraphUriProcessorInterface
+     */
+    protected $contentSubgraphUriProcessor;
 
     /**
      * @param string|Uri $uri
@@ -328,47 +329,30 @@ class LinkingService
             $site = $this->siteRepository->findOneByNodeName($siteNodeName);
         }
 
-        $baseUri = $this->resolveDimensionBaseUri($request->getHttpRequest()->getBaseUri(), $node->getContext()->getDimensions());
-        if (!$baseUri) {
+        $baseUri = $this->contentSubgraphUriProcessor->resolveDimensionBaseUri($request->getHttpRequest()->getBaseUri(), $node);
+        $modifiedBaseUri = (string) $baseUri !== (string) $request->getHttpRequest()->getBaseUri() ? $baseUri : null;
+        if (!$modifiedBaseUri) {
             if ($site->hasActiveDomains()) {
                 $requestUriHost = $request->getHttpRequest()->getBaseUri()->getHost();
                 $activeHostPatterns = $site->getActiveDomains()->map(function ($domain) {
+                    /** @var Domain $domain */
                     return $domain->getHostname();
                 })->toArray();
                 if (!in_array($requestUriHost, $activeHostPatterns, true)) {
-                    $baseUri = new Uri($this->createSiteUri($controllerContext, $site) . '/');
+                    $modifiedBaseUri = new Uri($this->createSiteUri($controllerContext, $site) . '/');
                 } elseif ($absolute === true) {
-                    $baseUri = $request->getHttpRequest()->getBaseUri();
+                    $modifiedBaseUri = $request->getHttpRequest()->getBaseUri();
                 }
             } elseif ($absolute === true) {
-                $baseUri = $request->getHttpRequest()->getBaseUri();
+                $modifiedBaseUri = $request->getHttpRequest()->getBaseUri();
             }
         }
 
-        if ($baseUri) {
-            $uri = $baseUri . ltrim($uri, '/');
+        if ($modifiedBaseUri) {
+            $uri = $modifiedBaseUri . ltrim($uri, '/');
         }
 
         return $uri;
-    }
-
-    /**
-     * @param Uri $currentBaseUri
-     * @param array $dimensionValues
-     * @return Uri|null
-     */
-    protected function resolveDimensionBaseUri(Uri $currentBaseUri, array $dimensionValues)
-    {
-        $baseUri = clone $currentBaseUri;
-        $presets = $this->dimensionPresetSource->getAllPresets();
-        foreach ($dimensionValues as $dimensionName => $values) {
-            $presetConfiguration = $presets[$dimensionName];
-
-            $linkProcessor = $this->dimensionPresetLinkProcessorResolver->resolveDimensionPresetLinkProcessor($dimensionName, $presetConfiguration);
-            $linkProcessor->processDimensionBaseUri($baseUri, $dimensionName, $presetConfiguration, $values);
-        }
-
-        return (string)$baseUri !== (string)$currentBaseUri ? $baseUri : null;
     }
 
     /**

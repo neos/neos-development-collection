@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http;
 
 /**
- * Top URI path segment dimension preset detector
+ * URI path segment dimension preset link processor
  */
 final class UriPathSegmentDimensionPresetLinkProcessor implements ContentDimensionPresetLinkProcessorInterface
 {
@@ -23,10 +23,16 @@ final class UriPathSegmentDimensionPresetLinkProcessor implements ContentDimensi
      * @param Http\Uri $baseUri
      * @param string $dimensionName
      * @param array $presetConfiguration
-     * @param array $dimensionValues
+     * @param array $preset
      */
-    public function processDimensionBaseUri(Http\Uri $baseUri, string $dimensionName, array $presetConfiguration, array $dimensionValues)
+    public function processDimensionBaseUri(Http\Uri $baseUri, string $dimensionName, array $presetConfiguration, array $preset)
     {
-        // no processing needs to be done here
+        if ($presetConfiguration[$dimensionName]['resolution']['options']['offset'] > 0) {
+            $pathSegmentPart = $presetConfiguration[$dimensionName]['resolution']['options']['delimiter'];
+        } else {
+            $pathSegmentPart = '/';
+        }
+        $pathSegmentPart .= $preset['resolutionValue'];
+        $baseUri->setPath($baseUri->getPath() . $pathSegmentPart);
     }
 }
