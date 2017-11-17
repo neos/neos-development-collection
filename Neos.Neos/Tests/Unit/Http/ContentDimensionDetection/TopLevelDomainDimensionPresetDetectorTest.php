@@ -45,7 +45,8 @@ class TopLevelDomainDimensionPresetDetectorTest extends UnitTestCase
     /**
      * @test
      */
-    public function detectPresetDetectsPresetFromComponentContextWithMatchingTopLevelDomain() {
+    public function detectPresetDetectsPresetFromComponentContextWithMatchingTopLevelDomain()
+    {
         $presetDetector = new ContentDimensionDetection\TopLevelDomainDimensionPresetDetector();
         $httpRequest = Http\Request::create(new Http\Uri('https://domain.de'));
         $httpResponse = new Http\Response();
@@ -63,7 +64,8 @@ class TopLevelDomainDimensionPresetDetectorTest extends UnitTestCase
     /**
      * @test
      */
-    public function detectPresetDetectsPresetFromComponentContextWithMatchingCompositeDomain() {
+    public function detectPresetDetectsPresetFromComponentContextWithMatchingCompositeDomain()
+    {
         $presetDetector = new ContentDimensionDetection\TopLevelDomainDimensionPresetDetector();
         $httpRequest = Http\Request::create(new Http\Uri('https://domain.co.uk'));
         $httpResponse = new Http\Response();
@@ -81,7 +83,8 @@ class TopLevelDomainDimensionPresetDetectorTest extends UnitTestCase
     /**
      * @test
      */
-    public function detectPresetDetectsNoPresetFromComponentContextWithNotMatchingTopLevelDomain() {
+    public function detectPresetDetectsNoPresetFromComponentContextWithNotMatchingTopLevelDomain()
+    {
         $presetDetector = new ContentDimensionDetection\TopLevelDomainDimensionPresetDetector();
         $httpRequest = Http\Request::create(new Http\Uri('https://domain.fr'));
         $httpResponse = new Http\Response();

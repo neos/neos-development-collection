@@ -61,7 +61,8 @@ class UriPathSegmentDimensionPresetDetectorTest extends UnitTestCase
     /**
      * @test
      */
-    public function detectPresetDetectsPresetSerializedInComponentContextsFirstUriPathSegmentPart() {
+    public function detectPresetDetectsPresetSerializedInComponentContextsFirstUriPathSegmentPart()
+    {
         $presetDetector = new ContentDimensionDetection\UriPathSegmentDimensionPresetDetector();
         $httpRequest = Http\Request::create(new Http\Uri('https://domain.com/en-GB'));
         $httpResponse = new Http\Response();
@@ -83,7 +84,8 @@ class UriPathSegmentDimensionPresetDetectorTest extends UnitTestCase
     /**
      * @test
      */
-    public function detectPresetDetectsPresetSerializedInComponentContextsSecondUriPathSegmentPart() {
+    public function detectPresetDetectsPresetSerializedInComponentContextsSecondUriPathSegmentPart()
+    {
         $presetDetector = new ContentDimensionDetection\UriPathSegmentDimensionPresetDetector();
         $httpRequest = Http\Request::create(new Http\Uri('https://domain.com/en-GB'));
         $httpResponse = new Http\Response();
@@ -105,7 +107,8 @@ class UriPathSegmentDimensionPresetDetectorTest extends UnitTestCase
     /**
      * @test
      */
-    public function detectPresetDetectsPresetSerializedInComponentContextsBackendUrisFirstUriPathSegmentPart() {
+    public function detectPresetDetectsPresetSerializedInComponentContextsBackendUrisFirstUriPathSegmentPart()
+    {
         $presetDetector = new ContentDimensionDetection\UriPathSegmentDimensionPresetDetector();
         $httpRequest = Http\Request::create(new Http\Uri('https://domain.com/en-GB@user-me'));
         $httpResponse = new Http\Response();
@@ -127,7 +130,8 @@ class UriPathSegmentDimensionPresetDetectorTest extends UnitTestCase
     /**
      * @test
      */
-    public function detectPresetDetectsPresetSerializedInComponentContextsBackendUrisSecondUriPathSegmentPart() {
+    public function detectPresetDetectsPresetSerializedInComponentContextsBackendUrisSecondUriPathSegmentPart()
+    {
         $presetDetector = new ContentDimensionDetection\UriPathSegmentDimensionPresetDetector();
         $httpRequest = Http\Request::create(new Http\Uri('https://domain.com/en-GB@user-me'));
         $httpResponse = new Http\Response();
@@ -149,7 +153,8 @@ class UriPathSegmentDimensionPresetDetectorTest extends UnitTestCase
     /**
      * @test
      */
-    public function detectPresetDoesNotDetectPresetFromComponentContextWithoutMatchingSerialization() {
+    public function detectPresetDoesNotDetectPresetFromComponentContextWithoutMatchingSerialization()
+    {
         $presetDetector = new ContentDimensionDetection\TopLevelDomainDimensionPresetDetector();
         $httpRequest = Http\Request::create(new Http\Uri('https://domain.com/wat'));
         $httpResponse = new Http\Response();
@@ -171,7 +176,8 @@ class UriPathSegmentDimensionPresetDetectorTest extends UnitTestCase
     /**
      * @test
      */
-    public function detectPresetDoesNotDetectPresetFromComponentContextWithoutUriPathSegment() {
+    public function detectPresetDoesNotDetectPresetFromComponentContextWithoutUriPathSegment()
+    {
         $presetDetector = new ContentDimensionDetection\TopLevelDomainDimensionPresetDetector();
         $httpRequest = Http\Request::create(new Http\Uri('https://domain.com'));
         $httpResponse = new Http\Response();

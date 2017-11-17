@@ -49,7 +49,8 @@ class BackendUriDimensionPresetDetectorTest extends UnitTestCase
     /**
      * @test
      */
-    public function detectPresetDetectsPresetFromComponentContextWithBackendUrlContainingSerializedPreset() {
+    public function detectPresetDetectsPresetFromComponentContextWithBackendUrlContainingSerializedPreset()
+    {
         $presetDetector = new ContentDimensionDetection\BackendUriDimensionPresetDetector();
         $httpRequest = Http\Request::create(new Http\Uri('https://domain.com/@user-me;language=nl,de'));
         $httpResponse = new Http\Response();
@@ -66,7 +67,8 @@ class BackendUriDimensionPresetDetectorTest extends UnitTestCase
     /**
      * @test
      */
-    public function detectPresetDetectsNoPresetFromComponentContextWithBackendUrlNotContainingSerializedPreset() {
+    public function detectPresetDetectsNoPresetFromComponentContextWithBackendUrlNotContainingSerializedPreset()
+    {
         $presetDetector = new ContentDimensionDetection\BackendUriDimensionPresetDetector();
         $httpRequest = Http\Request::create(new Http\Uri('https://domain.com/@user-me'));
         $httpResponse = new Http\Response();

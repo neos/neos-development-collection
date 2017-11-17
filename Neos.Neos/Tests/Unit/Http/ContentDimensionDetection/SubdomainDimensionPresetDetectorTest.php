@@ -45,7 +45,8 @@ class SubdomainDimensionPresetDetectorTest extends UnitTestCase
     /**
      * @test
      */
-    public function detectPresetDetectsPresetFromComponentContextWithMatchingSubdomain() {
+    public function detectPresetDetectsPresetFromComponentContextWithMatchingSubdomain()
+    {
         $presetDetector = new ContentDimensionDetection\SubdomainDimensionPresetDetector();
         $httpRequest = Http\Request::create(new Http\Uri('https://de.domain.com'));
         $httpResponse = new Http\Response();
@@ -63,7 +64,8 @@ class SubdomainDimensionPresetDetectorTest extends UnitTestCase
     /**
      * @test
      */
-    public function detectPresetDetectsNoPresetFromComponentContextWithoutSubdomain() {
+    public function detectPresetDetectsNoPresetFromComponentContextWithoutSubdomain()
+    {
         $presetDetector = new ContentDimensionDetection\SubdomainDimensionPresetDetector();
         $httpRequest = Http\Request::create(new Http\Uri('https://domain.com'));
         $httpResponse = new Http\Response();
@@ -81,7 +83,8 @@ class SubdomainDimensionPresetDetectorTest extends UnitTestCase
     /**
      * @test
      */
-    public function detectPresetDetectsNoPresetFromComponentContextWithNotMatchingSubdomain() {
+    public function detectPresetDetectsNoPresetFromComponentContextWithNotMatchingSubdomain()
+    {
         $presetDetector = new ContentDimensionDetection\SubdomainDimensionPresetDetector();
         $httpRequest = Http\Request::create(new Http\Uri('https://www.domain.com'));
         $httpResponse = new Http\Response();
