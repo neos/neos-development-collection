@@ -33,11 +33,11 @@ class TopLevelDomainDimensionPresetLinkProcessorTest extends UnitTestCase
         'presets' => [
             'en' => [
                 'values' => ['en'],
-                'detectionValue' => 'com'
+                'resolutionValue' => 'com'
             ],
             'fr' => [
                 'values' => ['fr'],
-                'detectionValue' => 'fr'
+                'resolutionValue' => 'fr'
             ]
         ]
     ];

@@ -51,8 +51,8 @@ final class UriPathSegmentDimensionPresetDetector implements ContentDimensionPre
             }
 
             foreach ($presets as $preset) {
-                $detectionValue = $preset['detectionValue'] ?? $preset['uriSegment'];
-                if ($detectionValue === $detectedValue) {
+                $resolutionValue = $preset['resolutionValue'] ?? $preset['uriSegment'];
+                if ($resolutionValue === $detectedValue) {
                     return $preset;
                 }
             }

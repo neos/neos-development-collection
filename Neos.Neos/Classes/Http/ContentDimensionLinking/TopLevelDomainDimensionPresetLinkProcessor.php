@@ -29,13 +29,13 @@ final class TopLevelDomainDimensionPresetLinkProcessor implements ContentDimensi
     {
         $currentValue = null;
         foreach ($presetConfiguration['presets'] as $availablePreset) {
-            if (mb_substr($baseUri->getHost(), -mb_strlen($availablePreset['detectionValue'])) === $availablePreset['detectionValue']) {
-                $currentValue = $availablePreset['detectionValue'];
+            if (mb_substr($baseUri->getHost(), -mb_strlen($availablePreset['resolutionValue'])) === $availablePreset['resolutionValue']) {
+                $currentValue = $availablePreset['resolutionValue'];
                 break;
             }
         }
 
-        $newValue = $preset['detectionValue'];
+        $newValue = $preset['resolutionValue'];
 
         if ($newValue !== $currentValue) {
             $baseUri->setHost(mb_substr($baseUri->getHost(), 0, -mb_strlen($currentValue)) . $newValue);

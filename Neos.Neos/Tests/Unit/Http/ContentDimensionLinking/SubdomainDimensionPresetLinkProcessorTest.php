@@ -33,15 +33,15 @@ class SubdomainDimensionPresetLinkProcessorTest extends UnitTestCase
         'presets' => [
             'en' => [
                 'values' => ['en'],
-                'detectionValue' => ''
+                'resolutionValue' => ''
             ],
             'de' => [
                 'values' => ['de'],
-                'detectionValue' => 'de'
+                'resolutionValue' => 'de'
             ],
             'fr' => [
                 'values' => ['fr'],
-                'detectionValue' => 'fr'
+                'resolutionValue' => 'fr'
             ]
         ]
     ];

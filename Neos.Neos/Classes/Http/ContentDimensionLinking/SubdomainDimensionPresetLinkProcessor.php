@@ -29,15 +29,15 @@ final class SubdomainDimensionPresetLinkProcessor implements ContentDimensionPre
     {
         $currentValue = null;
         foreach ($presetConfiguration['presets'] as $availablePreset) {
-            if (empty($availablePreset['detectionValue'])) {
-                $currentValue = $availablePreset['detectionValue'];
-            } elseif (mb_substr($baseUri->getHost(), 0, mb_strlen($availablePreset['detectionValue'] . '.')) === $availablePreset['detectionValue'] . '.') {
-                $currentValue = $availablePreset['detectionValue'];
+            if (empty($availablePreset['resolutionValue'])) {
+                $currentValue = $availablePreset['resolutionValue'];
+            } elseif (mb_substr($baseUri->getHost(), 0, mb_strlen($availablePreset['resolutionValue'] . '.')) === $availablePreset['resolutionValue'] . '.') {
+                $currentValue = $availablePreset['resolutionValue'];
                 break;
             }
         }
 
-        $newValue = $preset['detectionValue'];
+        $newValue = $preset['resolutionValue'];
 
         $pivot = mb_strlen($currentValue);
         if (empty($currentValue) && !empty($newValue)) {

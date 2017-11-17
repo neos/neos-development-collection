@@ -35,11 +35,15 @@ final class SubdomainDimensionPresetDetector implements ContentDimensionPresetDe
     public function detectPreset(string $dimensionName, array $presets, Http\Component\ComponentContext $componentContext, array $overrideOptions = null)
     {
         $host = $componentContext->getHttpRequest()->getUri()->getHost();
-        foreach ($presets as $preset) {
-            $valueLength = mb_strlen($preset['detectionValue']);
+        foreach ($presets as $availablePreset) {
+            if (empty($availablePreset['resolutionValue'])) {
+                // we leave the decision about how to handle empty values to the detection component
+                continue;
+            }
+            $valueLength = mb_strlen($availablePreset['resolutionValue']);
 
-            if (mb_substr($host, 0, $valueLength) === $preset['detectionValue']) {
-                return $preset;
+            if (mb_substr($host, 0, $valueLength) === $availablePreset['resolutionValue']) {
+                return $availablePreset;
             }
         }
 
