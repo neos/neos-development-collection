@@ -36,8 +36,7 @@ class UriPathSegmentDimensionPresetLinkProcessorTest extends UnitTestCase
             'resolution' => [
                 'mode' => ContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT,
                 'options' => [
-                    'offset' => 1,
-                    'delimiter' => '-'
+                    'offset' => 1
                 ]
             ]
         ],
@@ -66,11 +65,15 @@ class UriPathSegmentDimensionPresetLinkProcessorTest extends UnitTestCase
         $linkProcessor = new UriPathSegmentDimensionPresetLinkProcessor();
         $baseUri = new Http\Uri('https://domain.com');
 
+        $options = $this->dimensionConfiguration['language']['resolution']['options'];
+        $options['delimiter'] = '-';
+
         $linkProcessor->processDimensionBaseUri(
             $baseUri,
             'language',
-            $this->dimensionConfiguration,
-            $this->dimensionConfiguration['language']['presets']['en']
+            $this->dimensionConfiguration['language'],
+            $this->dimensionConfiguration['language']['presets']['en'],
+            $options
         );
 
         $this->assertSame(
@@ -87,11 +90,16 @@ class UriPathSegmentDimensionPresetLinkProcessorTest extends UnitTestCase
         $linkProcessor = new UriPathSegmentDimensionPresetLinkProcessor();
         $baseUri = new Http\Uri('https://domain.com/en');
 
+
+        $options = $this->dimensionConfiguration['market']['resolution']['options'];
+        $options['delimiter'] = '-';
+
         $linkProcessor->processDimensionBaseUri(
             $baseUri,
             'market',
-            $this->dimensionConfiguration,
-            $this->dimensionConfiguration['market']['presets']['GB']
+            $this->dimensionConfiguration['market'],
+            $this->dimensionConfiguration['market']['presets']['GB'],
+            $options
         );
 
         $this->assertSame(

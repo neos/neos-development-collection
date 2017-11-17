@@ -20,7 +20,7 @@ use Neos\Neos\Http\ContentDimensionLinking\ContentDimensionPresetLinkProcessorIn
  */
 final class ValidDummyDimensionPresetLinkProcessor implements ContentDimensionPresetLinkProcessorInterface
 {
-    public function processDimensionBaseUri(Http\Uri $baseUri, string $dimensionName, array $presetConfiguration, array $preset)
+    public function processDimensionBaseUri(Http\Uri $baseUri, string $dimensionName, array $presetConfiguration, array $preset, array $overrideOptions = null)
     {
     }
 }

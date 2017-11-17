@@ -24,8 +24,9 @@ final class SubdomainDimensionPresetLinkProcessor implements ContentDimensionPre
      * @param string $dimensionName
      * @param array $presetConfiguration
      * @param array $preset
+     * @param array|null $overrideOptions
      */
-    public function processDimensionBaseUri(Http\Uri $baseUri, string $dimensionName, array $presetConfiguration, array $preset)
+    public function processDimensionBaseUri(Http\Uri $baseUri, string $dimensionName, array $presetConfiguration, array $preset, array $overrideOptions = null)
     {
         $currentValue = null;
         foreach ($presetConfiguration['presets'] as $availablePreset) {

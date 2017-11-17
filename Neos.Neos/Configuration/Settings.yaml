@@ -31,6 +31,10 @@ Neos:
         Neos.Fusion: true
         Neos.Neos: true
 
+    contentDimensions:
+      detection:
+        uriPathSegmentDelimiter: '_'
+
     # If a node name is specified here it will be used as default siteNode
     # which is displayed if no domain pattern matches the current request
     defaultSiteNodeName: null

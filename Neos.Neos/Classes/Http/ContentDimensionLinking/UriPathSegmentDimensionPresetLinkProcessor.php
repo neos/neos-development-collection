@@ -13,6 +13,7 @@ namespace Neos\Neos\Http\ContentDimensionLinking;
  */
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http;
+use Neos\Utility\Arrays;
 
 /**
  * URI path segment dimension preset link processor
@@ -20,15 +21,26 @@ use Neos\Flow\Http;
 final class UriPathSegmentDimensionPresetLinkProcessor implements ContentDimensionPresetLinkProcessorInterface
 {
     /**
+     * @var array
+     */
+    protected $defaultOptions = [
+        'offset' => 0,
+        'delimiter' => '_'
+    ];
+
+
+    /**
      * @param Http\Uri $baseUri
      * @param string $dimensionName
      * @param array $presetConfiguration
      * @param array $preset
+     * @param array|null $overrideOptions
      */
-    public function processDimensionBaseUri(Http\Uri $baseUri, string $dimensionName, array $presetConfiguration, array $preset)
+    public function processDimensionBaseUri(Http\Uri $baseUri, string $dimensionName, array $presetConfiguration, array $preset, array $overrideOptions = null)
     {
-        if ($presetConfiguration[$dimensionName]['resolution']['options']['offset'] > 0) {
-            $pathSegmentPart = $presetConfiguration[$dimensionName]['resolution']['options']['delimiter'];
+        $options = $overrideOptions ? Arrays::arrayMergeRecursiveOverrule($this->defaultOptions, $overrideOptions) : $this->defaultOptions;
+        if ($options['offset'] > 0) {
+            $pathSegmentPart = $options['delimiter'];
         } else {
             $pathSegmentPart = '/';
         }
