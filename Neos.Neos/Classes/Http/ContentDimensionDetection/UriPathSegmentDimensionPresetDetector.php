@@ -41,9 +41,12 @@ final class UriPathSegmentDimensionPresetDetector implements ContentDimensionPre
         $options = $overrideOptions ? Arrays::arrayMergeRecursiveOverrule($this->defaultOptions, $overrideOptions) : $this->defaultOptions;
         $requestPath = $componentContext->getHttpRequest()->getUri()->getPath();
 
-        if (!empty($requestPath) && $requestPath !== '/') {
+        if (!empty($requestPath) && $requestPath !== '/' && mb_strpos($requestPath, '/') !== false) {
             $pathSegments = explode('/', ($requestPath));
             $detectedValues = explode($options['delimiter'], $pathSegments[1]);
+            if (!isset($detectedValues[$options['offset']])) {
+                return null;
+            }
             $detectedValue = $detectedValues[$options['offset']];
             $pivot = mb_strpos($detectedValue, '@');
             if ($pivot !== false) {

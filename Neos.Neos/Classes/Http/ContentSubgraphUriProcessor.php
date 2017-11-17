@@ -59,22 +59,30 @@ final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorIn
         $dimensionValues = $node->getContext()->getDimensions();
 
         $this->sortDimensionValuesByOffset($dimensionValues, $presets);
+        $uriPathSegmentOffset = 0;
 
         foreach ($dimensionValues as $dimensionName => $values) {
             $presetConfiguration = $presets[$dimensionName];
             $preset = $this->dimensionPresetSource->findPresetByDimensionValues($dimensionName, $values);
+            $options = $presets[$dimensionName]['resolution']['options'] ?? [];
 
             $resolutionMode = new ContentDimensionResolutionMode(
                 $presetConfiguration['resolution']['mode']
                 ?? ContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT
             );
-            if ($resolutionMode->getMode() === ContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT
-                && $presetConfiguration['defaultPreset'] !== $preset['identifier']) {
-                $allUriPathSegmentDetectableDimensionPresetsAreDefault = false;
+            if ($resolutionMode->getMode() === ContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT) {
+                if (!isset($options['offset'])) {
+                    $options['offset'] = $uriPathSegmentOffset;
+                }
+                $uriPathSegmentOffset++;
+
+                if ($presetConfiguration['defaultPreset'] !== $preset['identifier']) {
+                    $allUriPathSegmentDetectableDimensionPresetsAreDefault = false;
+                }
             }
 
             $linkProcessor = $this->dimensionPresetLinkProcessorResolver->resolveDimensionPresetLinkProcessor($dimensionName, $presetConfiguration);
-            $linkProcessor->processDimensionBaseUri($baseUri, $dimensionName, $presetConfiguration, $preset);
+            $linkProcessor->processDimensionBaseUri($baseUri, $dimensionName, $presetConfiguration, $preset, $options);
         }
 
         if ($this->supportEmptySegmentForDimensions
