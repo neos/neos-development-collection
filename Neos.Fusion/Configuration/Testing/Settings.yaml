@@ -8,6 +8,6 @@ Neos:
       Testing.String: Neos\Eel\Helper\StringHelper
       Testing.Utility: Neos\Fusion\Tests\Functional\FusionObjects\Fixtures\Helper\UtilityHelper
     dsl:
-      TestPassthroughDsl: Neos\Fusion\Tests\Functional\Parser\Fixtures\Dsl\PassthroughTestDslImplemenation
-      TestValueObjectDsl: Neos\Fusion\Tests\Functional\Parser\Fixtures\Dsl\ValueObjectExpressionTestDslImplemenation
+      TestPassthroughDsl: Neos\Fusion\Tests\Functional\Parser\Fixtures\Dsl\PassthroughTestDslImplementation
+      TestFusionObjectDsl: Neos\Fusion\Tests\Functional\Parser\Fixtures\Dsl\FusionObjectExpressionTestDslImplementation
 
