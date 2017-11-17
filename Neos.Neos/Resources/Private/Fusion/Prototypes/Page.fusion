@@ -121,6 +121,16 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 		}
 	}
 
+  neosBackendMetaData = Neos.Fusion:Tag {
+    tagName = 'div'
+    @position = 'before body'
+    attributes = Neos.Fusion:Attributes {
+      data-preview-uri = NodeUri {
+        node = ${q(documentNode).context({'workspaceName': documentNode.context.workspace.baseWorkspace.name}).get(0)}
+      }
+    }
+    @if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
+  }
 	# Required for the backend to work.
 	neosBackendDocumentNodeData = Neos.Neos:DocumentMetadata {
 		@position = 'before body'
