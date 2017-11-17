@@ -42,9 +42,9 @@ final class UriPathSegmentDimensionPresetLinkProcessor implements ContentDimensi
         if ($options['offset'] > 0) {
             $pathSegmentPart = $options['delimiter'];
         } else {
-            $pathSegmentPart = '/';
+            $pathSegmentPart = '';
         }
         $pathSegmentPart .= $preset['resolutionValue'];
-        $baseUri->setPath($baseUri->getPath() . $pathSegmentPart);
+        $baseUri->setPath('/' . ltrim($baseUri->getPath() . $pathSegmentPart, '/'));
     }
 }
