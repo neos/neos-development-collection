@@ -121,9 +121,15 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 		}
 	}
 
+
+	# Required for the backend to work.
+	neosBackendDocumentNodeData = Neos.Neos:DocumentMetadata {
+		@position = 'before body'
+		@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
+	}
   neosBackendMetaData = Neos.Fusion:Tag {
     tagName = 'div'
-    @position = 'before body'
+    @position = 'after neosBackendDocumentNodeData'
     attributes = Neos.Fusion:Attributes {
       data-preview-uri = NodeUri {
         node = ${q(documentNode).context({'workspaceName': documentNode.context.workspace.baseWorkspace.name}).get(0)}
@@ -131,11 +137,6 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
     }
     @if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
   }
-	# Required for the backend to work.
-	neosBackendDocumentNodeData = Neos.Neos:DocumentMetadata {
-		@position = 'before body'
-		@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
-	}
 
 	# Content of the body tag. To be defined by the integrator.
 	body = Neos.Fusion:Template {
