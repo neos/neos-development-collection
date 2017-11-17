@@ -14,20 +14,10 @@ namespace Neos\Fusion\Tests\Functional\Parser\Fixtures\Dsl;
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Core\DslInterface;
 
-class FusionObjectExpressionTestDslImplemenation implements DslInterface
+class PassthroughTestDslImplementation implements DslInterface
 {
     public function transpile($code)
     {
-        $config = json_decode($code, true);
-
-        $objectName = $config['objectName'] ?: 'Neos.Fusion:Value';
-        $attributes = $config['attributes'] ?: [];
-
-        $result = $objectName . ' {' . chr(10);
-        foreach ($attributes as $key => $value) {
-            $result .= '    ' . $key . '= "' . $value . '"';
-        }
-        $result .= chr(10) . '}';
-        return $result;
+        return $code;
     }
 }
