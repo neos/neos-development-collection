@@ -833,6 +833,10 @@ class Parser implements ParserInterface
         $transpiledFusion = $dslObject->transpile($code);
 
         $parser = new Parser();
+        // transfer current namespaces to new parser
+        foreach ($this->objectTypeNamespaces as $key => $objectTypeNamespace) {
+            $parser->setObjectTypeNamespace($key, $objectTypeNamespace);
+        }
         $temporaryAst = $parser->parse('value = ' . $transpiledFusion);
         $processedValue = $temporaryAst['value'];
         return $processedValue;

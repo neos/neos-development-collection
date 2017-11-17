@@ -14,7 +14,7 @@ namespace Neos\Fusion\Tests\Functional\Parser\Fixtures\Dsl;
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Core\DslInterface;
 
-class PassthroughTestDslImplemenation implements DslInterface
+class PassthroughTestDslImplementation implements DslInterface
 {
     public function transpile($code)
     {
