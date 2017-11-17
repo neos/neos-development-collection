@@ -12,7 +12,6 @@ namespace Neos\Neos\Routing;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Request;
 use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Mvc\Routing\DynamicRoutePart;
 use Neos\Flow\Security\Context;
@@ -22,11 +21,6 @@ use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\ContentContextFactory;
 use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\Neos\Domain\Service\SiteService;
-use Neos\Neos\Http\ContentDimensionResolutionMode;
-use Neos\Neos\Http\DetectContentSubgraphComponent;
-use Neos\Neos\Routing\Exception\InvalidDimensionPresetCombinationException;
-use Neos\Neos\Routing\Exception\InvalidRequestPathException;
-use Neos\Neos\Routing\Exception\NoSuchDimensionValueException;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
 
@@ -351,11 +345,9 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         $nodeContextPath = $node->getContextPath();
         $nodeContextPathSuffix = ($workspaceName !== 'live') ? substr($nodeContextPath, strpos($nodeContextPath, '@')) : '';
 
-        $currentNodeIsSiteNode = ($node->getParentPath() === SiteService::SITES_ROOT_PATH);
-        $dimensionsUriSegment = $this->getUriSegmentForDimensions($node->getContext()->getDimensions(), $currentNodeIsSiteNode);
         $requestPath = $this->getRequestPathByNode($node);
 
-        return trim($dimensionsUriSegment . $requestPath, '/') . $nodeContextPathSuffix;
+        return trim($requestPath, '/') . $nodeContextPathSuffix;
     }
 
     /**
@@ -426,50 +418,5 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         }
 
         return implode('/', array_reverse($requestPathSegments));
-    }
-
-    /**
-     * Find a URI segment in the content dimension presets for the given "language" dimension values
-     *
-     * This will do a reverse lookup from actual dimension values to a preset and fall back to the default preset if none
-     * can be found.
-     *
-     * @param array $dimensionsValues An array of dimensions and their values, indexed by dimension name
-     * @param boolean $currentNodeIsSiteNode If the current node is actually the site node
-     * @return string
-     * @throws \Exception
-     */
-    protected function getUriSegmentForDimensions(array $dimensionsValues, $currentNodeIsSiteNode)
-    {
-        $uriSegment = '';
-        $allDimensionPresetsAreDefault = true;
-
-        foreach ($this->contentDimensionPresetSource->getAllPresets() as $dimensionName => $dimensionPresets) {
-            $resolutionMode = new ContentDimensionResolutionMode($dimensionPresets['resolutionMode'] ?? ContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT);
-            if ($resolutionMode->getMode() !== ContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT) {
-                continue;
-            }
-            $preset = null;
-            if (isset($dimensionsValues[$dimensionName])) {
-                $preset = $this->contentDimensionPresetSource->findPresetByDimensionValues($dimensionName, $dimensionsValues[$dimensionName]);
-            }
-            $defaultPreset = $this->contentDimensionPresetSource->getDefaultPreset($dimensionName);
-            if ($preset === null) {
-                $preset = $defaultPreset;
-            }
-            if ($preset !== $defaultPreset) {
-                $allDimensionPresetsAreDefault = false;
-            }
-            if (!isset($preset['uriSegment'])) {
-                throw new \Exception(sprintf('No "uriSegment" configured for content dimension preset "%s" for dimension "%s". Please check the content dimension configuration in Settings.yaml', $preset['identifier'], $dimensionName), 1395824520);
-            }
-            $uriSegment .= $preset['uriSegment'] . '_';
-        }
-
-        if ($this->supportEmptySegmentForDimensions && $allDimensionPresetsAreDefault && $currentNodeIsSiteNode) {
-            return '/';
-        } else {
-            return ltrim(trim($uriSegment, '_') . '/', '/');
-        }
     }
 }
