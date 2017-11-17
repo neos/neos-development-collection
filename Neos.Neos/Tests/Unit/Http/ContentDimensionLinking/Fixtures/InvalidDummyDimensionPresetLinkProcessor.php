@@ -16,5 +16,6 @@ use Neos\Flow\Annotations as Flow;
 /**
  * Dummy dimension preset link processor not implementing the required interface
  */
-final class InvalidDummyDimensionPresetLinkProcessor {
+final class InvalidDummyDimensionPresetLinkProcessor
+{
 }
