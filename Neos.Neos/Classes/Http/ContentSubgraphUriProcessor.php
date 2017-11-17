@@ -50,6 +50,10 @@ final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorIn
     public function resolveDimensionBaseUri(Http\Uri $currentBaseUri, NodeInterface $node): Http\Uri
     {
         $baseUri = clone $currentBaseUri;
+        if ($node->getContext()->isInBackend()) {
+            return $baseUri;
+        }
+
         $presets = $this->dimensionPresetSource->getAllPresets();
         $allUriPathSegmentDetectableDimensionPresetsAreDefault = true;
         $dimensionValues = $node->getContext()->getDimensions();
