@@ -108,10 +108,11 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
 
         $isContextPath = NodePaths::isContextPath($path);
         $backendUriDimensionPresetDetector = new ContentDimensionDetection\BackendUriDimensionPresetDetector();
-        $uriPathSegmentOffset = 0;
-        foreach ($this->dimensionPresetSource->getAllPresets() as $dimensionName => $presetConfiguration) {
+        $presets = $this->dimensionPresetSource->getAllPresets();
+        $this->sortPresetsByOffset($presets);
+        foreach ($presets as $dimensionName => $presetConfiguration) {
             $detector = $this->contentDimensionPresetDetectorResolver->resolveDimensionPresetDetector($dimensionName, $presetConfiguration);
-            $options = $presetConfiguration['detection']['options'] ?? $this->generateOptionsFromLegacyConfiguration($detector, $presetConfiguration);
+            $options = $presetConfiguration['resolution']['options'] ?? $this->generateOptionsFromLegacyConfiguration($detector, $presetConfiguration);
 
             if ($isContextPath) {
                 $preset = $backendUriDimensionPresetDetector->detectPreset($dimensionName, $presetConfiguration['presets'], $componentContext);
@@ -128,10 +129,6 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
                 }
             }
 
-            if ($detector instanceof ContentDimensionDetection\UriPathSegmentDimensionPresetDetector) {
-                $options['offset'] = $uriPathSegmentOffset;
-                $uriPathSegmentOffset++;
-            }
             $preset = $detector->detectPreset($dimensionName, $presetConfiguration['presets'], $componentContext, $options);
             if ($preset && $detector instanceof ContentDimensionDetection\UriPathSegmentDimensionPresetDetector) {
                 $this->flagUriPathSegmentUsed($componentContext);
@@ -147,6 +144,22 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
         }
 
         return $coordinates;
+    }
+
+    /**
+     * @param array $presets
+     * @return void
+     */
+    protected function sortPresetsByOffset(array & $presets)
+    {
+        uasort($presets, function ($presetA, $presetB) use ($presets) {
+            if (isset($presetA['resolution']['options']['offset'])
+                && isset($presetB['resolution']['options']['offset'])) {
+                return $presetA['resolution']['options']['offset'] <=> $presetB['resolution']['options']['offset'];
+            }
+
+            return 0;
+        });
     }
 
     /**
