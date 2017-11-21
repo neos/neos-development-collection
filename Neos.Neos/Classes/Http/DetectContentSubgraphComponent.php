@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\Neos\Http;
 
 /*
@@ -11,6 +10,7 @@ namespace Neos\Neos\Http;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
@@ -55,9 +55,9 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
      */
     protected $allowEmptyPathSegments;
 
-
     /**
      * @param Http\Component\ComponentContext $componentContext
+     * @throws Exception\InvalidDimensionPresetDetectorException
      */
     public function handle(Http\Component\ComponentContext $componentContext)
     {
@@ -100,6 +100,7 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
     /**
      * @param Http\Component\ComponentContext $componentContext
      * @return array
+     * @throws Exception\InvalidDimensionPresetDetectorException
      */
     protected function detectDimensionSpacePoint(Http\Component\ComponentContext $componentContext): array
     {
@@ -164,6 +165,7 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
 
     /**
      * @param Http\Component\ComponentContext $componentContext
+     * @return void
      */
     protected function flagUriPathSegmentUsed(Http\Component\ComponentContext $componentContext)
     {

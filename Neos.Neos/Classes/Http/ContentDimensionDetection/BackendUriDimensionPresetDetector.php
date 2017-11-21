@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\Neos\Http\ContentDimensionDetection;
 
 /*
@@ -11,8 +10,8 @@ namespace Neos\Neos\Http\ContentDimensionDetection;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\ContentRepository\Domain\Utility\NodePaths;
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http;
 
 /**
@@ -24,7 +23,6 @@ final class BackendUriDimensionPresetDetector implements ContentDimensionPresetD
      * @var array
      */
     protected $defaultOptions = [];
-
 
     /**
      * @param string $dimensionName

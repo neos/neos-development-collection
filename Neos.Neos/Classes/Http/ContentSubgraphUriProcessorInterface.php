@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\Neos\Http;
 
 /*
@@ -11,8 +10,8 @@ namespace Neos\Neos\Http;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http;
 
 /**

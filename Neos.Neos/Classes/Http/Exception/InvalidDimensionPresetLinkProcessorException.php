@@ -10,6 +10,7 @@ namespace Neos\Neos\Http\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\Neos\Exception;
 
 /**

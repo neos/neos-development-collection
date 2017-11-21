@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\Neos\Http;
 
 /*
@@ -11,6 +10,7 @@ namespace Neos\Neos\Http;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\Flow\Annotations as Flow;
@@ -41,11 +41,11 @@ final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorIn
      */
     protected $supportEmptySegmentForDimensions;
 
-
     /**
      * @param Http\Uri $currentBaseUri
      * @param NodeInterface $node
      * @return Http\Uri
+     * @throws Exception\InvalidDimensionPresetLinkProcessorException
      */
     public function resolveDimensionBaseUri(Http\Uri $currentBaseUri, NodeInterface $node): Http\Uri
     {

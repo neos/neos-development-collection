@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\Neos\Http\ContentDimensionLinking;
 
 /*
@@ -11,6 +10,7 @@ namespace Neos\Neos\Http\ContentDimensionLinking;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Http\ContentDimensionResolutionMode;
 use Neos\Neos\Http\Exception\InvalidDimensionPresetLinkProcessorException;

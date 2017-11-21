@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\Neos\Http\ContentDimensionDetection;
 
 /*
@@ -11,7 +10,7 @@ namespace Neos\Neos\Http\ContentDimensionDetection;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Annotations as Flow;
+
 use Neos\Flow\Http;
 use Neos\Utility\Arrays;
 
@@ -27,7 +26,6 @@ final class UriPathSegmentDimensionPresetDetector implements ContentDimensionPre
         'delimiter' => '_',
         'offset' => 0
     ];
-
 
     /**
      * @param string $dimensionName

@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\Neos\Http;
 
 /*
@@ -11,7 +10,6 @@ namespace Neos\Neos\Http;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The content dimension resolution mode value object
@@ -22,12 +20,10 @@ final class ContentDimensionResolutionMode implements \JsonSerializable
     const RESOLUTION_MODE_TOPLEVELDOMAIN = 'topLevelDomain';
     const RESOLUTION_MODE_URIPATHSEGMENT = 'uriPathSegment';
 
-
     /**
      * @var string
      */
     protected $mode;
-
 
     /**
      * @param string $mode
@@ -43,7 +39,6 @@ final class ContentDimensionResolutionMode implements \JsonSerializable
 
         $this->mode = $mode;
     }
-
 
     /**
      * @return string

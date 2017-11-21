@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\Neos\Http\ContentDimensionLinking;
 
 /*
@@ -11,7 +10,7 @@ namespace Neos\Neos\Http\ContentDimensionLinking;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Annotations as Flow;
+
 use Neos\Flow\Http;
 
 /**
@@ -25,6 +24,7 @@ final class TopLevelDomainDimensionPresetLinkProcessor implements ContentDimensi
      * @param array $presetConfiguration
      * @param array $preset
      * @param array|null $overrideOptions
+     * @return void
      */
     public function processDimensionBaseUri(Http\Uri $baseUri, string $dimensionName, array $presetConfiguration, array $preset, array $overrideOptions = null)
     {
