@@ -496,6 +496,14 @@ Neos:
     #  'language':
     #    # The default dimension that is applied when creating nodes without specifying a dimension
     #    default: 'mul_ZZ'
+    #    # The resolution configuration that is used to read dimension values from the request.
+    #    resolution:
+    #      # The mode, defaults to uriPathSegment, can be any of the RESOLUTION_MODE_* values from ContentDimensionResolutionMode
+    #      mode: 'uriPathSegment'
+    #      # The options vary for each mode, defaults shown for uriPathSegment
+    #      options:
+    #        offset: 0
+    #        delimiter: '_'
     #    # The default preset to use if no URI segment was given when resolving languages in the router
     #    defaultPreset: 'all'
     #    label: 'Language'
@@ -504,17 +512,17 @@ Neos:
     #      'all':
     #        label: 'All languages'
     #        values: ['mul_ZZ']
-    #        uriSegment: 'all'
+    #        resolutionValue: 'all'
     #      # Example for additional languages:
     #
     #      'en_GB':
     #        label: 'English (Great Britain)'
     #        values: ['en_GB', 'en_ZZ', 'mul_ZZ']
-    #        uriSegment: 'gb'
+    #        resolutionValue: 'gb'
     #      'de':
     #        label: 'German (Germany)'
     #        values: ['de_DE', 'de_ZZ', 'mul_ZZ']
-    #        uriSegment: 'de'
+    #        resolutionValue: 'de'
 
   Fusion:
     rendering:

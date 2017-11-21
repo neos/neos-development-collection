@@ -33,34 +33,40 @@ The available dimensions and presets can be configured via settings:
 
 .. code-block:: yaml
 
-	Neos:
-	  ContentRepository:
-	    contentDimensions:
+   Neos:
+     ContentRepository:
+       contentDimensions:
 
-	      # Content dimension "language" serves for translation of content into different languages. Its value specifies
-	      # the language or language variant by means of a locale.
-	      'language':
-	        # The default dimension that is applied when creating nodes without specifying a dimension
-	        default: 'mul_ZZ'
-	        # The default preset to use if no URI segment was given when resolving languages in the router
-	        defaultPreset: 'all'
-	        label: 'Language'
-	        icon: 'icon-language'
-	        presets:
-	          'all':
-	            label: 'All languages'
-	            values: ['mul_ZZ']
-	            uriSegment: 'all'
-	          # Example for additional languages:
+         # Content dimension "language" serves for translation of content into different languages. Its value specifies
+         # the language or language variant by means of a locale.
+         'language':
+           # The detection mode that is used to read this from the request. Defaults to uriPathSegment, can be
+           # any of the RESOLUTION_MODE_* values from ContentDimensionResolutionMode
+           resolution:
+             mode: 'uriPathSegment'
+             options:
+               offset: 0
+           # The default dimension that is applied when creating nodes without specifying a dimension
+           default: 'mul_ZZ'
+           # The default preset to use if no URI segment was given when resolving languages in the router
+           defaultPreset: 'all'
+           label: 'Language'
+           icon: 'icon-language'
+           presets:
+             'all':
+               label: 'All languages'
+               values: ['mul_ZZ']
+               resolutionValue: 'all'
+             # Example for additional languages:
 
-	          'en_GB':
-	            label: 'English (Great Britain)'
-	            values: ['en_GB', 'en_ZZ', 'mul_ZZ']
-	            uriSegment: 'gb'
-	          'de':
-	            label: 'German (Germany)'
-	            values: ['de_DE', 'de_ZZ', 'mul_ZZ']
-	            uriSegment: 'de'
+             'en_GB':
+               label: 'English (Great Britain)'
+               values: ['en_GB', 'en_ZZ', 'mul_ZZ']
+               resolutionValue: 'gb'
+             'de':
+               label: 'German (Germany)'
+               values: ['de_DE', 'de_ZZ', 'mul_ZZ']
+               resolutionValue: 'de'
 
 The Neos ContentRepository and Neos packages don't provide any dimension configuration per default.
 
@@ -79,53 +85,61 @@ in English and their respective local language. The following configuration woul
 
 .. code-block:: yaml
 
-	Neos:
-	  ContentRepository:
-	    contentDimensions:
-	      'language':
-	        default: 'en'
-	        defaultPreset: 'en'
-	        label: 'Language'
-	        icon: 'icon-language'
-	        presets:
-	          'en':
-	            label: 'English'
-	            values: ['en']
-	            uriSegment: 'en'
-	          'de':
-	            label: 'German'
-	            values: ['de']
-	            uriSegment: 'de'
-	            constraints:
-	              country:
-	                'us': false
-	                'fr': false
-	          'fr':
-	            label: 'French'
-	            values: ['fr']
-	            uriSegment: 'fr'
-	            constraints:
-	              country:
-	                'us': false
-	                'de': false
-	      'country':
-	        default: 'us'
-	        defaultPreset: 'us'
-	        label: 'Country'
-	        icon: 'icon-globe'
-	        presets:
-	          'us':
-	            label: 'United States'
-	            values: ['us']
-	            uriSegment: 'us'
-	          'de':
-	            label: 'Germany'
-	            values: ['de']
-	            uriSegment: 'de'
-	          'fr':
-	            label: 'France'
-	            values: ['fr']
-	            uriSegment: 'fr'
+   Neos:
+     ContentRepository:
+       contentDimensions:
+         'language':
+           default: 'en'
+           resolution:
+             mode: 'uriPathSegment'
+             options:
+               offset: 0
+           defaultPreset: 'en'
+           label: 'Language'
+           icon: 'icon-language'
+           presets:
+             'en':
+               label: 'English'
+               values: ['en']
+               resolutionValue: 'en'
+             'de':
+               label: 'German'
+               values: ['de']
+               resolutionValue: 'de'
+               constraints:
+                 country:
+                   'us': false
+                   'fr': false
+             'fr':
+               label: 'French'
+               values: ['fr']
+               resolutionValue: 'fr'
+               constraints:
+                 country:
+                   'us': false
+                   'de': false
+         'country':
+           default: 'us'
+           resolution:
+             mode: 'uriPathSegment'
+             options:
+               offset: 1
+           defaultPreset: 'us'
+           label: 'Country'
+           icon: 'icon-globe'
+           presets:
+             'us':
+               label: 'United States'
+               values: ['us']
+               resolutionValue: 'us'
+             'de':
+               label: 'Germany'
+               values: ['de']
+               resolutionValue: 'de'
+             'fr':
+               label: 'France'
+               values: ['fr']
+               resolutionValue: 'fr'
 
 Instead of configuring every constraint preset explicitly, it is also possible to allow or disallow all presets of a
 given dimension by using the wildcard identifier. The following configuration has the same effect like in the previous
@@ -133,53 +147,61 @@ example:
 
 .. code-block:: yaml
 
-	Neos:
-	  ContentRepository:
-	    contentDimensions:
-	      'language':
-	        default: 'en'
-	        defaultPreset: 'en'
-	        label: 'Language'
-	        icon: 'icon-language'
-	        presets:
-	          'en':
-	            label: 'English'
-	            values: ['en']
-	            uriSegment: 'en'
-	          'de':
-	            label: 'German'
-	            values: ['de']
-	            uriSegment: 'de'
-	            constraints:
-	              country:
-	                'de': true
-	                '*': false
-	          'fr':
-	            label: 'French'
-	            values: ['fr']
-	            uriSegment: 'fr'
-	            constraints:
-	              country:
-	                'fr': true
-	                '*': false
-	      'country':
-	        default: 'us'
-	        defaultPreset: 'us'
-	        label: 'Country'
-	        icon: 'icon-globe'
-	        presets:
-	          'us':
-	            label: 'United States'
-	            values: ['us']
-	            uriSegment: 'us'
-	          'de':
-	            label: 'Germany'
-	            values: ['de']
-	            uriSegment: 'de'
-	          'fr':
-	            label: 'France'
-	            values: ['fr']
-	            uriSegment: 'fr'
+   Neos:
+     ContentRepository:
+       contentDimensions:
+         'language':
+           default: 'en'
+           resolution:
+             mode: 'uriPathSegment'
+             options:
+               offset: 0
+           defaultPreset: 'en'
+           label: 'Language'
+           icon: 'icon-language'
+           presets:
+             'en':
+               label: 'English'
+               values: ['en']
+               resolutionValue: 'en'
+             'de':
+               label: 'German'
+               values: ['de']
+               resolutionValue: 'de'
+               constraints:
+                 country:
+                   'de': true
+                   '*': false
+             'fr':
+               label: 'French'
+               values: ['fr']
+               resolutionValue: 'fr'
+               constraints:
+                 country:
+                   'fr': true
+                   '*': false
+         'country':
+           default: 'us'
+           resolution:
+             mode: 'uriPathSegment'
+             options:
+               offset: 1
+           defaultPreset: 'us'
+           label: 'Country'
+           icon: 'icon-globe'
+           presets:
+             'us':
+               label: 'United States'
+               values: ['us']
+               resolutionValue: 'us'
+             'de':
+               label: 'Germany'
+               values: ['de']
+               resolutionValue: 'de'
+             'fr':
+               label: 'France'
+               values: ['fr']
+               resolutionValue: 'fr'
 
 While the examples only defined constraints in the ``language`` dimension configuration, it is perfectly possible to
 additionally or exclusively define constraints in ``country`` or other dimensions.
@@ -201,46 +223,73 @@ Alternatively a custom node migration can be created allowing flexibility and co
 Routing
 =======
 
-Neos provides a route-part handler that will include a prefix with the value of the ``uriSegment`` setting of a
+Neos provides a route-part handler that will include a prefix with the value of the ``resolutionValue`` setting of a
 dimension preset for all configured dimensions. This means URIs will not contain any prefix by default as long as
-no content dimension is configured. Multiple dimensions are joined with a ``_`` character, so the ``uriSegment`` value
+no content dimension is configured. Multiple dimensions are joined with a ``_`` character, so the ``resolutionValue`` value
 must not include an underscore.
 
-The default preset can have an empty `uriSegment` value. The following example will lead to URLs that do not contain
-`en` if the `en_US` preset is active, but will show the `uriSegment` for other languages that are defined as well:
+The default preset can have an empty `resolutionValue` value. The following example will lead to URLs that do not contain
+`en` if the `en_US` preset is active, but will show the `resolutionValue` for other languages that are defined as well:
 
 .. code-block:: yaml
 
-  Neos:
-    ContentRepository:
-      contentDimensions:
+   Neos:
+     ContentRepository:
+       contentDimensions:
 
-        'language':
-          default: 'en'
-          defaultPreset: 'en_US'
-          label: 'Language'
-          icon: 'icon-language'
-          presets:
-            'en':
-              label: 'English (US)'
-              values: ['en_US']
-              uriSegment: ''
+         'language':
+           default: 'en'
+           resolution:
+             mode: 'uriPathSegment'
+           defaultPreset: 'en_US'
+           label: 'Language'
+           icon: 'icon-language'
+           presets:
+             'en':
+               label: 'English (US)'
+               values: ['en_US']
+               resolutionValue: ''
 
 The only limitation is that all segments must be unique across all dimensions. If you need non-unique segments, you can
 switch support for non-empty dimensions off:
 
 .. code-block:: yaml
 
-  Neos:
-    Neos:
-      routing:
-        supportEmptySegmentForDimensions: FALSE
+   Neos:
+     Neos:
+       routing:
+         supportEmptySegmentForDimensions: FALSE
 
-Limitations
-===========
+Dimension values not provided through the URI path
+==================================================
 
-In Neos 1.2 node variants can only be created by having a common fallback value in the presets. This means a node
-can only be translated to some other dimension value if it "shined" through from a fallback value.
+Fetching requested dimension values from other places than the URI path is possible with the provided route-part handler
+by setting the resolution mode to the desired value. Supported are the values of the `RESOLUTION_MODE_*` values from
+the `ContentDimensionResolutionMode` class.
 
-In Neos 2.0, it is possible to create node variants across dimension borders, i.e. to translate an English version
-of a Document to German, without having fall-backs from German to English or vice versa.
+Depending on the chosen mode the routing will fetch the requested dimension value from the URI path segment, subdomain
+or top-level domain.
+
+.. code-block:: yaml
+
+   Neos:
+     ContentRepository:
+       contentDimensions:
+
+         'country':
+           default: 'nz'
+           resolution:
+             mode: 'topLevelDomain'
+           defaultPreset: 'NZ'
+           label: 'Country'
+           icon: 'icon-globe'
+           presets:
+             'NZ':
+               label: 'New Zealand'
+               values: ['NZ']
+               resolutionValue: 'co.nz'
+             'GB':
+               label: 'Great Britain'
+               values: ['GB']
+               resolutionValue: 'co.uk'
+

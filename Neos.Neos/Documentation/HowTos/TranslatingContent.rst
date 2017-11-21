@@ -16,27 +16,27 @@ in the file ``Configuration/Settings.yaml`` of your site package:
 
 .. code-block:: yaml
 
-	Neos:
-	  ContentRepository:
-	    contentDimensions:
-	      'language':
-	        label: 'Language'
-	        icon: 'icon-language'
-	        default: 'en'
-	        defaultPreset: 'en'
-	        presets:
-	          'en':
-	            label: 'English'
-	            values: ['en']
-	            uriSegment: 'english'
-	          'fr':
-	            label: 'Français'
-	            values: ['fr', 'en']
-	            uriSegment: 'francais'
-	          'de':
-	            label: 'Deutsch'
-	            values: ['de', 'en']
-	            uriSegment: 'deutsch'
+   Neos:
+     ContentRepository:
+       contentDimensions:
+         'language':
+           label: 'Language'
+           icon: 'icon-language'
+           default: 'en'
+           defaultPreset: 'en'
+           presets:
+             'en':
+               label: 'English'
+               values: ['en']
+               resolutionValue: 'english'
+             'fr':
+               label: 'Français'
+               values: ['fr', 'en']
+               resolutionValue: 'francais'
+             'de':
+               label: 'Deutsch'
+               values: ['de', 'en']
+               resolutionValue: 'deutsch'
 
 This will configure a dimension ``language`` with a default dimension value of ``en``, a default preset ``en`` and
 some presets for the actual available dimension configurations. Each of these presets represents one language that
@@ -44,6 +44,8 @@ is available for display on the website.
 
 As soon as a dimension with presets is configured, the content module will show a dimension selector to select presets
 for each dimension. This can be used in combination with a language menu on the website.
+
+The language to be shown is encoded in the URI as a pat segment by default, using the `resolutionValue`.
 
 Migration of existing content
 =============================
@@ -60,15 +62,15 @@ Integrate Language Menu
 
 A simple language menu can be displayed on the site by using the ``Neos.Neos:DimensionsMenu`` Fusion object::
 
-	page {
-	    body {
-	        parts {
-	            languageMenu = Neos.Neos:DimensionsMenu {
-	                dimension = 'language'
-	            }
-	        }
-	    }
-	}
+  page {
+      body {
+          parts {
+              languageMenu = Neos.Neos:DimensionsMenu {
+                  dimension = 'language'
+              }
+          }
+      }
+  }
 
 This will render a ``<ul>`` with links to node variants in other languages of the current document node with a label
 from a dimension preset. Of course the template can be customized for custom output with the ``templatePath`` property.
