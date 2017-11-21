@@ -17,8 +17,4 @@ use Neos\Neos\Exception;
  */
 class InvalidDimensionPresetDetectorException extends Exception
 {
-    /**
-     * @var integer
-     */
-    protected $statusCode = 500;
 }

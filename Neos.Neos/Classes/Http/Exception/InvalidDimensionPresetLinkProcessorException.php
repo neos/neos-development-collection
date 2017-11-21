@@ -17,8 +17,4 @@ use Neos\Neos\Exception;
  */
 class InvalidDimensionPresetLinkProcessorException extends Exception
 {
-    /**
-     * @var integer
-     */
-    protected $statusCode = 500;
 }
