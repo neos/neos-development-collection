@@ -225,8 +225,8 @@ Routing
 
 Neos provides a route-part handler that will include a prefix with the value of the ``resolutionValue`` setting of a
 dimension preset for all configured dimensions. This means URIs will not contain any prefix by default as long as
-no content dimension is configured. Multiple dimensions are joined with a ``_`` character, so the ``resolutionValue`` value
-must not include an underscore.
+no content dimension is configured. Multiple dimensions are joined with a ``_`` character by default, so the
+``resolutionValue`` must not include an underscore unless that is changed.
 
 The default preset can have an empty `resolutionValue` value. The following example will lead to URLs that do not contain
 `en` if the `en_US` preset is active, but will show the `resolutionValue` for other languages that are defined as well:

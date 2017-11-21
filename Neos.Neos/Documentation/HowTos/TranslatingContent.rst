@@ -45,7 +45,7 @@ is available for display on the website.
 As soon as a dimension with presets is configured, the content module will show a dimension selector to select presets
 for each dimension. This can be used in combination with a language menu on the website.
 
-The language to be shown is encoded in the URI as a pat segment by default, using the `resolutionValue`.
+The language to be shown is encoded in the URI as a path segment by default, using the `resolutionValue`.
 
 Migration of existing content
 =============================
