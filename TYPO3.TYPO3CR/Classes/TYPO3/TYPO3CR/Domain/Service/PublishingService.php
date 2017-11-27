@@ -169,7 +169,8 @@ class PublishingService implements PublishingServiceInterface
     protected function doDiscardNode(NodeInterface $node, array &$alreadyDiscardedNodeIdentifiers = [])
     {
         if ($node->getWorkspace()->getBaseWorkspace() === null) {
-            throw new WorkspaceException('Nodes in a in a workspace without a base workspace cannot be discarded.', 1395841899);
+            // Nodes in a workspace without a base workspace cannot be discarded, so silently ignore
+            return;
         }
         if ($node->getPath() === '/') {
             return;
