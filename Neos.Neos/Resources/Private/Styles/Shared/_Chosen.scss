@@ -92,15 +92,13 @@
 		.chosen-search {
 			padding: 0;
 			color: $black;
-			@include fa-icon();
-			font-size: 0;
 
 			input {
 				min-width: 0px;
 				width: 100%;
 				height: $unit;
 				border: none;
-				color: $textOnGray;
+				// color: $textOnGray;
 				@include font;
 				font-size: 14px;
 				margin: 0;
@@ -113,6 +111,7 @@
 			}
 
 			&:after {
+				@include fa-icon();
 				position: absolute;
 				top: 14px;
 				right: 12px;
