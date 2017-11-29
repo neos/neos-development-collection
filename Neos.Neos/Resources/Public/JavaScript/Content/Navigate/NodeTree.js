@@ -164,7 +164,6 @@ define(
 					children: [
 						{
 							title: siteName,
-							tooltip: siteName + (nodeTypeConfiguration ? ' (' + I18n.translate(nodeTypeConfiguration.label) + ')' : ''),
 							href: $('link[rel="neos-site"]').attr('href'),
 							key: this.get('siteNodeContextPath'),
 							isFolder: true,
@@ -226,7 +225,6 @@ define(
 						if (PublishableNodes.get('workspaceWidePublishableEntitySubjects').findBy('documentNodeContextPath', node.data.key)) {
 							$(nodeSpan).addClass('neos-dynatree-dirty');
 						}
-						$('a[title]', nodeSpan).tooltip({container: '#neos-application', trigger: 'hover'});
 					}
 				}));
 
