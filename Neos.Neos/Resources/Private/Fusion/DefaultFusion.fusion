@@ -15,6 +15,7 @@ include: Prototypes/PluginView.fusion
 include: Prototypes/ConvertUris.fusion
 include: Prototypes/ConvertNodeUris.fusion
 include: Prototypes/DocumentMetadata.fusion
+include: Prototypes/Editable.fusion
 include: Prototypes/ContentElementWrapping.fusion
 include: Prototypes/ContentElementEditable.fusion
 include: Prototypes/NodeUri.fusion
