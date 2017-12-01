@@ -77,7 +77,7 @@ class NodeTemplateConverter extends NodeConverter
      * @return mixed An object or \Neos\Error\Messages\Error if the input format is not supported or could not be converted for other reasons
      * @throws \Exception
      */
-    public function convertFrom($source, $targetType, array $subProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType = null, array $subProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
     {
         $nodeTemplate = new NodeTemplate();
         $nodeType = $this->extractNodeType($targetType, $source);
