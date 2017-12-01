@@ -896,6 +896,18 @@ class ParserTest extends UnitTestCase
     }
 
     /**
+     * Checks if really long strings are parsed correctly
+     *
+     * @test
+     */
+    public function parserCorrectlyParsesFixture22()
+    {
+        $sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture22');
+        $actualParseTree = $this->parser->parse($sourceCode);
+        $this->assertArrayHasKey('longString', $actualParseTree);
+    }
+
+    /**
      * Checks if comments in comments are parsed correctly
      *
      * @test
