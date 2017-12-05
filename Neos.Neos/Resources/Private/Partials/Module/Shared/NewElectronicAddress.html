@@ -1,0 +1,47 @@
+{namespace neos=Neos\Neos\ViewHelpers}
+<f:form action="createElectronicAddress" name="electronicAddress" object="{electronicAddress}" arguments="{user: user}">
+	<div class="neos-row-fluid neos-module-container">
+		<fieldset class="neos-span5">
+			<legend>{neos:backend.translate(id: 'userSettings.electronicAddresses.addElectronicAddress', value: 'Add new electronic address', source: 'Modules')}</legend>
+			<div class="neos-control-group">
+				<label class="neos-control-label" for="electronicAddress">{neos:backend.translate(id: 'electronicAddress.type', package: 'Neos.Party', value: 'Type')}</label>
+				<div class="neos-controls">
+					<f:form.select name="type" property="type" id="electronicAddress" options="{electronicAddressTypes}" value="Email" class="neos-span12" />
+				</div>
+			</div>
+
+			<div class="neos-control-group{f:validation.ifHasErrors(for: 'electronicAddress.identifier', then: ' neos-error')}">
+				<label class="neos-control-label" for="addressIdentifier">{neos:backend.translate(id: 'electronicAddress.identifier', package: 'Neos.Party', value: 'Identifier (example: test@neos.io)')}</label>
+				<div class="neos-controls">
+					<f:form.textfield name="identifier" property="identifier" id="addressIdentifier" placeholder="{neos:backend.translate(id: 'electronicAddress.identifierPlaceholder', package: 'Neos.Party', value: 'Identifier')}" class="neos-span12" />
+					<f:render partial="Module/Shared/FieldValidationResults" arguments="{fieldname: 'electronicAddress.identifier'}"/>
+				</div>
+			</div>
+
+			<div class="neos-control-group">
+				<label class="neos-control-label">{neos:backend.translate(id: 'electronicAddress.usage', package: 'Neos.Party', value: 'Usage')}</label>
+				<div class="neos-controls">
+					<f:for each="{electronicAddressUsageTypes}" as="electronicAddressUsageType" iteration="iterator">
+						<f:if condition="{electronicAddressUsageType}">
+							<label class="neos-radio neos-inline">
+								<f:form.radio property="usage" value="{electronicAddressUsageType}" checked="{f:if(condition: '{iterator.index} === 1', then: 'checked')}" /><span></span>
+								{neos:backend.translate(id: 'users.electronicAddress.usage.type.{electronicAddressUsageType}', package: 'Neos.Neos', value: '{electronicAddressUsageType}')}
+							</label>
+						</f:if>
+					</f:for>
+				</div>
+			</div>
+		</fieldset>
+	</div>
+	<div class="neos-footer">
+		<f:if condition="{user}">
+			<f:then>
+				<f:link.action action="edit" arguments="{user: user}" class="neos-button">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</f:link.action>
+			</f:then>
+			<f:else>
+				<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'cancel', value: 'Cancel')}</f:link.action>
+			</f:else>
+		</f:if>
+		<f:form.submit value="{neos:backend.translate(id: 'save', value: 'Save')}" class="neos-button neos-button-primary" />
+	</div>
+</f:form>

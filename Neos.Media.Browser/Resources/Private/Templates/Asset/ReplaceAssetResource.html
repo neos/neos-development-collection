@@ -1,0 +1,80 @@
+{namespace m=Neos\Media\ViewHelpers}
+{namespace neos=Neos\Neos\ViewHelpers}
+<f:layout name="UploadImage" />
+
+<f:section name="Title">Replace view of AssetController</f:section>
+
+<f:section name="Content">
+	<f:form method="post" arguments="{asset: asset}" action="updateAssetResource" enctype="multipart/form-data">
+		<div class="neos-row-fluid">
+			<div class="neos-span8">
+				<fieldset>
+					<legend>{neos:backend.translate(id: 'replaceAsset.replaceFilename', package: 'Neos.Media.Browser', arguments: {filename: asset.resource.filename})}</legend>
+					<p class="neos-buffer-below">
+						{neos:backend.translate(id: 'replaceAsset.description', package: 'Neos.Media.Browser')}<br/>
+						<b>{neos:backend.translate(id: 'replaceAsset.note', package: 'Neos.Media.Browser')}: </b> {neos:backend.translate(id: 'replaceAsset.noteText', package: 'Neos.Media.Browser')}
+					</p>
+					<span class="neos-file-input">
+						<label class="neos-button neos-button-primary" for="resource" title="{neos:backend.translate(id: 'maxUploadSize', arguments: {0: humanReadableMaximumFileUploadSize}, package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip">{neos:backend.translate(id: 'replaceAsset.chooseNewFile', package: 'Neos.Media.Browser')} <i class="icon-file"></i></label>
+						<f:form.upload id="resource" name="resource" additionalAttributes="{required: 'required'}" />
+					</span>
+				</fieldset>
+				<fieldset>
+					<div>
+						<label class="neos-checkbox neos-inline">
+							<f:form.checkbox name="options[keepOriginalFilename]" value="1" /><span></span> {neos:backend.translate(id: 'replace.options.keepOriginalFilename', arguments: {0: asset.resource.filename}, package: 'Neos.Media.Browser')}
+						</label>
+					</div>
+					<f:if condition="{redirectPackageEnabled}">
+						<div>
+							<label class="neos-checkbox neos-inline">
+								<f:form.checkbox name="options[generateRedirects]" value="1" checked="true" /><span></span> {neos:backend.translate(id: 'replace.options.generateRedirects', package: 'Neos.Media.Browser')}
+							</label>
+						</div>
+					</f:if>
+				</fieldset>
+				<fieldset>
+					<legend>{neos:backend.translate(id: 'relatedNodes.referencesTo', package: 'Neos.Media.Browser', arguments: {asset: asset.label})}</legend>
+					<f:if condition="{asset.inUse}">
+						<f:then>
+							<p class="neos-buffer-below"><i class="icon-exclamation-sign"></i> {neos:backend.translate(id: 'replace.usageCount', arguments: {usageCount: asset.usageCount}, package: 'Neos.Media.Browser')}</p>
+							<f:link.action action="relatedNodes" arguments="{asset:asset}" class="neos-button">
+								{neos:backend.translate(id: 'replace.allUsages', package: 'Neos.Media.Browser')}
+							</f:link.action>
+						</f:then>
+						<f:else>
+							<p><i class="icon-ok-sign"></i> {neos:backend.translate(id: 'replace.notUsed', package: 'Neos.Media.Browser')}</p>
+						</f:else>
+					</f:if>
+				</fieldset>
+			</div>
+
+			<div class="neos-span4 neos-image-example">
+				<f:render section="ContentImage" arguments="{_all}" />
+			</div>
+		</div>
+		<div class="neos-footer">
+			<!-- TODO: Find a nicer way to send the referer for a get request -->
+			<a href="javascript:window.history.back(1);" class="neos-button">{neos:backend.translate(id: 'cancel', package: 'Neos.Neos')}</a>
+			<f:form.submit id="replace" class="neos-button neos-button-primary" value="{neos:backend.translate(id: 'replaceAssetResource', package: 'Neos.Media.Browser')}" />
+		</div>
+	</f:form>
+</f:section>
+
+<f:section name="ContentImage">
+	<label>{neos:backend.translate(id: 'replace.previewFile', package: 'Neos.Media.Browser')}</label>
+	<div class="neos-preview-image">
+		<a href="{f:uri.resource(resource: asset.resource)}" target="_blank">
+			<m:thumbnail asset="{asset}" maximumWidth="1000" maximumHeight="1000" alt="{asset.label}" class="img-polaroid" />
+		</a>
+	</div>
+</f:section>
+
+<f:section name="Scripts">
+	<script type="text/javascript">
+		var maximumFileUploadSize = {maximumFileUploadSize};
+	</script>
+	<script type="text/javascript" src="{f:uri.resource(package: 'Neos.Media.Browser', path: 'JavaScript/new.js')}"></script>
+</f:section>
+
+

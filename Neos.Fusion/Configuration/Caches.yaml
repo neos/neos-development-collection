@@ -1,0 +1,3 @@
+Neos_Fusion_Content:
+  frontend: Neos\Cache\Frontend\StringFrontend
+  backend: Neos\Cache\Backend\FileBackend

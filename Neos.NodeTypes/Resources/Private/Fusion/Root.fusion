@@ -1,0 +1,127 @@
+# Menu TS Object - extends Neos.Neos:Menu and is rendering menus inserted as content elements
+prototype(Neos.NodeTypes:Menu) {
+	@class = 'Neos\\Neos\\Fusion\\MenuImplementation'
+
+	startingPoint = ${q(node).property('startingPoint') ? q(node).property('startingPoint') : documentNode}
+
+	itemCollection = ${Array.isEmpty(q(node).property('selection') ? q(node).property('selection') : {}) ? null : q(node).property('selection')}
+
+	entryLevel = ${q(node).property('startLevel')}
+	entryLevel.@process.1 = ${String.toInteger(value)}
+
+	maximumLevels = ${q(node).property('maximumLevels')}
+	maximumLevels.@process.1 = ${String.toInteger(value)}
+
+	active.attributes = Neos.Fusion:Attributes {
+		class = 'active'
+	}
+	current.attributes = Neos.Fusion:Attributes {
+		class = 'current'
+	}
+	normal.attributes = Neos.Fusion:Attributes {
+		class = 'normal'
+	}
+
+	node = ${node}
+	items = ${this.items}
+
+	@cache {
+		mode = 'cached'
+		entryIdentifier {
+			documentNode = ${documentNode}
+			node = ${node}
+		}
+		entryTags {
+			1 = 'NodeType_Neos.Neos:Document'
+			2 = ${'Node_' + node.identifier}
+		}
+	}
+}
+
+# Image TS Object
+prototype(Neos.NodeTypes:Image) {
+	maximumWidth = 2560
+	width = null
+	maximumHeight = 2560
+	height = null
+  # "typo3-alignment-" deprecated since 3.3, removed in 4.0
+	imageClassName = ${q(node).property('alignment') ? ('typo3-neos-alignment-' + q(node).property('alignment') + ' neos-alignment-' + q(node).property('alignment')) : ''}
+	allowCropping = false
+	allowUpScaling = false
+	link.@process.convertUris = Neos.Neos:ConvertUris {
+		forceConversion = true
+	}
+	title = ${q(node).property('title') ? q(node).property('title') : q(node).property('image').title}
+	caption = ${String.trim(String.stripTags(q(node).property('caption'))) ? q(node).property('caption') : q(node).property('image').caption}
+}
+
+# TextWithImage TS Object
+prototype(Neos.NodeTypes:TextWithImage) < prototype(Neos.NodeTypes:Image)
+
+# Basic implementation of a flexible MultiColumn element, not exposed directly but inherited by all specific MultiColumn content elements
+prototype(Neos.NodeTypes:MultiColumn) < prototype(Neos.Neos:Content) {
+	templatePath = 'resource://Neos.NodeTypes/Private/Templates/NodeTypes/MultiColumn.html'
+	layout = ${q(node).property('layout')}
+	attributes.class = ${'container columns-' + q(node).property('layout')}
+	columns = Neos.Fusion:Collection {
+		@context.columnLayout = ${q(node).property('layout')}
+		collection = ${q(node).children('[instanceof Neos.Neos:ContentCollection]')}
+		itemRenderer = Neos.NodeTypes:MultiColumnItem
+		itemName = 'node'
+		iterationName = 'columnIteration'
+	}
+}
+
+# Abstract render definition for a single content column in a multi column element
+prototype(Neos.NodeTypes:MultiColumnItem) < prototype(Neos.Neos:ContentCollection) {
+	nodePath = '.'
+	attributes = Neos.Fusion:Attributes {
+		class = 'column'
+	}
+}
+
+# Two Column TS Object
+prototype(Neos.NodeTypes:TwoColumn) >
+prototype(Neos.NodeTypes:TwoColumn) < prototype(Neos.NodeTypes:MultiColumn)
+
+# Three Column TS Object
+prototype(Neos.NodeTypes:ThreeColumn) >
+prototype(Neos.NodeTypes:ThreeColumn) < prototype(Neos.NodeTypes:MultiColumn)
+
+# Four Column TS Object
+prototype(Neos.NodeTypes:FourColumn) >
+prototype(Neos.NodeTypes:FourColumn) < prototype(Neos.NodeTypes:MultiColumn)
+
+# Form TS Object
+prototype(Neos.NodeTypes:Form) {
+	presetName = 'default'
+	overrideConfiguration = Neos.Fusion:RawArray
+	@cache {
+		mode = 'uncached'
+		context {
+			1 = 'node'
+			2 = 'documentNode'
+		}
+	}
+}
+
+# "Insert content references" TS Object
+prototype(Neos.NodeTypes:ContentReferences) {
+	@context.referenceNodesArray = ${q(node).property('references')}
+	referenceNodes = Neos.Fusion:Collection {
+		collection = ${referenceNodesArray}
+		itemRenderer = Neos.Neos:ContentCase
+		itemName = 'node'
+	}
+	@cache {
+		mode = 'cached'
+		entryIdentifier {
+			node = ${node}
+		}
+		entryTags {
+			1 = ${'Node_' + node.identifier}
+			2 = ${Neos.Caching.nodeTag(referenceNodesArray)}
+			3 = ${Neos.Caching.descendantOfTag(referenceNodesArray)}
+		}
+	}
+}

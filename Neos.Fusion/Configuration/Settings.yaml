@@ -1,0 +1,40 @@
+Neos:
+  Fusion:
+    rendering:
+
+      # Default Exception Handler class which should be used when a Fusion object is rendered
+      # to a string. This happens e.g. if a content element is rendered or inside a "Case" matcher.
+      #
+      # Can be overridden on a Fusion-Object-level by setting the "@exceptionHandler" meta-property
+      # in Fusion.
+      exceptionHandler: 'Neos\Fusion\Core\ExceptionHandlers\XmlCommentHandler'
+
+      # Inner Exception Handler class which should be used when a Fusion object is evaluated,
+      # e.g. can return arbitrary types and not just strings. By default, the exception handler just
+      # continues throwing the exception upwards.
+      #
+      # However, this can be overridden on a Fusion-Object-level by setting the "@exceptionHandler"
+      # meta-property in Fusion, and it is especially useful for e.g. the "Neos.Fusion:ResourceUri"
+      # Fusion Object, which should just return NULL silently if an exception occurs.
+      innerExceptionHandler: 'Neos\Fusion\Core\ExceptionHandlers\BubblingHandler'
+    debugMode: FALSE
+    enableContentCache: TRUE
+
+    # Default context objects that are available in Eel expressions
+    #
+    # New variables should be added with a package key prefix. Example:
+    #
+    #   defaultContext:
+    #     'MyPackage.String': 'MyPackage\Helper\StringHelper'
+    #
+    defaultContext:
+      String: 'Neos\Eel\Helper\StringHelper'
+      Array: 'Neos\Eel\Helper\ArrayHelper'
+      Date: 'Neos\Eel\Helper\DateHelper'
+      Configuration: 'Neos\Eel\Helper\ConfigurationHelper'
+      Math: 'Neos\Eel\Helper\MathHelper'
+      Json: 'Neos\Eel\Helper\JsonHelper'
+      Security: 'Neos\Eel\Helper\SecurityHelper'
+      Translation: 'Neos\Flow\I18n\EelHelper\TranslationHelper'
+      Type: 'Neos\Eel\Helper\TypeHelper'
+      I18n: 'Neos\Flow\I18n\EelHelper\TranslationHelper'
