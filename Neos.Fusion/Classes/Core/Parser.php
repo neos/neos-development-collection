@@ -680,7 +680,7 @@ class Parser implements ParserInterface
                     $objectPathArray[] = '__prototypes';
 
                     $unexpandedObjectType = substr($objectPathSegment, 10, -1);
-                    $objectPathArray[] = $this->objectNamespace->fullyQualifiedObjectType($unexpandedObjectType);
+                    $objectPathArray[] = $this->objectNamespace->resolveFullyQualifiedObjectType($unexpandedObjectType);
                 } else {
                     $key = $objectPathSegment;
                     if (substr($key, 0, 2) === '__' && in_array($key, self::$reservedParseTreeKeys, true)) {
@@ -736,9 +736,9 @@ class Parser implements ParserInterface
             $processedValue = null;
         } elseif (preg_match(self::SCAN_PATTERN_VALUEOBJECTTYPE, $unparsedValue, $matches) === 1) {
             if (empty($matches['namespace'])) {
-                $objectTypeNamespace = $this->objectNamespace->defaultNamespace();
+                $objectTypeNamespace = $this->objectNamespace->resolveDefaultNamespace();
             } else {
-                $objectTypeNamespace = $this->objectNamespace->namespace($matches['namespace']);
+                $objectTypeNamespace = $this->objectNamespace->resolveNamespace($matches['namespace']);
             }
             $processedValue = array(
                 '__objectType' => $objectTypeNamespace . ':' . $matches['unqualifiedType'],

@@ -68,7 +68,7 @@ class RendererImplementation extends AbstractFusionObject
                 $renderedElement = $this->runtime->render($this->path . '/' . str_replace('.', '/', $renderPath));
             }
         } else {
-            $type = $this->objectNamespace->fullyQualifiedObjectType($this->getType());
+            $type = $this->objectNamespace->resolveFullyQualifiedObjectType($this->getType());
             $renderedElement = $this->runtime->render(
                 sprintf('%s/element<%s>', $this->path, $type)
             );

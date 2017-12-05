@@ -68,7 +68,7 @@ class ObjectNamespace
      * @param string $objectType
      * @return string
      */
-    public function fullyQualifiedObjectType(string $objectType): string
+    public function resolveFullyQualifiedObjectType(string $objectType): string
     {
         $objectTypeParts = explode(':', $objectType);
         if (!isset($objectTypeParts[1])) {
@@ -86,7 +86,7 @@ class ObjectNamespace
      * @param string $alias
      * @return string
      */
-    public function namespace(string $alias): string
+    public function resolveNamespace(string $alias): string
     {
         return (isset($this->mapping[$alias])) ? $this->mapping[$alias] : $alias;
     }
@@ -94,7 +94,7 @@ class ObjectNamespace
     /**
      * @return string
      */
-    public function defaultNamespace(): string
+    public function resolveDefaultNamespace(): string
     {
         return $this->mapping['default'];
     }
