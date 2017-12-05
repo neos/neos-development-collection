@@ -31,12 +31,6 @@ trait CreateContentContextTrait
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Domain\Repository\DomainRepository
-     */
-    protected $_domainRepository;
-
-    /**
-     * @Flow\Inject
      * @var \TYPO3\Neos\Domain\Repository\SiteRepository
      */
     protected $_siteRepository;
