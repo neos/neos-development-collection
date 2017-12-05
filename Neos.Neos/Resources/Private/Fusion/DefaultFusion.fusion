@@ -6,7 +6,6 @@ include: Prototypes/PrimaryContent.fusion
 include: Prototypes/ContentCollection.fusion
 include: Prototypes/Page.fusion
 include: Prototypes/Shortcut.fusion
-include: Prototypes/Augmenter.fusion
 include: Prototypes/BreadcrumbMenu.fusion
 include: Prototypes/DimensionsMenu.fusion
 include: Prototypes/Menu.fusion

@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Neos\Fusion;
+namespace Neos\Fusion\FusionObjects;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -12,7 +12,6 @@ namespace Neos\Neos\Fusion;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Fusion\FusionObjects\ArrayImplementation;
 use Neos\Neos\Service\HtmlAugmenter;
 
 /**
