@@ -268,6 +268,50 @@ Example::
 		}
 	}
 
+.. _Neos_Fusion__Augmenter:
+
+Neos.Fusion:Augmenter
+---------------------
+
+Modify given html content and add attributes. The augmenter can be used as processor or as a standalone prototype
+
+:content: (string) The content that shall be augmented
+:fallbackTagName: (string, defaults to ``div``) If no single tag that can be augmented is found the content is wrapped into the fallback-tag before augmentation
+:[key]: All other fusion properties are added to the html content as html attributes
+
+Example as a standalone augmenter::
+
+	augmentedContent = Neos.Fusion:Augmenter {
+
+		content = Neos.Fusion:Array {
+			title = Neos.Fusion:Tag {
+				@if.hasContent = ${this.content}
+				tagName = 'h2'
+				content = ${q(node).property('title')}
+			}
+			text = Neos.Fusion:Tag {
+				@if.hasContent = ${this.content}
+				tagName = 'p'
+				content = ${q(node).property('text')}
+			}
+		}
+
+		fallbackTagName = 'header'
+
+		class = 'header'
+		data-foo = 'bar'
+	}
+
+Example as a processor augmenter::
+
+	augmentedContent = Neos.Fusion:Tag {
+		tagName = 'h2'
+		content = 'Hello World'
+		@process.augment = Neos.Fusion:Augmenter {
+				class = 'header'
+				data-foo = 'bar'
+		}
+	}
 
 .. _Neos_Fusion__Template:
 
@@ -656,56 +700,9 @@ Example::
 ContentComponent
 ----------------
 
-Base type to render component based content nodes, extends :ref:`Neos_Fusion__Component`.
+Base type to render component based content-nodes, extends :ref:`Neos_Fusion__Component`.
 
 :renderer: (mixed, **required**) The value which gets rendered
-
-
-.. _Neos_Neos__Augmenter:
-
-Augmenter
----------
-
-The Augmenter component can be used as processor or as a standalone prototype
-
-:content: (string) The content that shall be augmented
-:fallbackTagName: (string) If more than one tag is found the content is wrapped in the fallback tag before augmentation which has `div` as default
-:[key]: All other fusion properties are added to the html content as html attributes
-
-Example as a standalone augmenter::
-
-	augmentedContent = Neos.Neos:Augmenter {
-
-		content = Neos.Fusion:Array {
-			title = Neos.Fusion:Tag {
-				@if.hasContent = ${this.content}
-				tagName = 'h2'
-				content = ${q(node).property('title')}
-			}
-			text = Neos.Fusion:Tag {
-				@if.hasContent = ${this.content}
-				tagName = 'p'
-				content = ${q(node).property('text')}
-			}
-		}
-
-		fallbackTagName = 'header'
-
-		class = 'header'
-		data-foo = 'bar'
-	}
-
-
-Example as a processor augmenter::
-
-	augmentedContent = Neos.Fusion:Tag {
-		tagName = 'h2'
-		content = 'Hello World'
-		@process.augment = Neos.Neos:Augmenter {
-				class = 'header'
-				data-foo = 'bar'
-		}
-	}
 
 
 .. _Neos_Neos__Editable:

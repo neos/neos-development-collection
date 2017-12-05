@@ -96,6 +96,32 @@ prototype(Neos.Fusion:UriBuilder) {
 	@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
 }
 
+# Modify given html content and add attributes
+#
+# Usage:
+# augmentedHtml = Neos.Fusion:Augmenter {
+#   class = 'some-class'
+#   content = '<h1>Header</h1>'
+# }
+#
+# Usage: as processor
+# augmentedHtml = '<h1>Header</h1>'
+# augmentedHtml.@process.augmenter = Neos.Fusion:Augmenter {
+#   class = 'some-class'
+# }
+#
+prototype(Neos.Fusion:Augmenter) < prototype(Neos.Fusion:Component) {
+  @class = 'Neos\\Fusion\\FusionObjects\\AugmenterImplementation'
+
+  # If more than one tag is found the content is wrapped in the fallback tag before augmentation
+  fallbackTagName = 'div'
+
+  # The content that shall be augmented
+  content = ${value}
+
+  # All other fusion properties are added to the html content as html attributes
+}
+
 # Renders an URI pointing to a resource
 #
 # Usage:
