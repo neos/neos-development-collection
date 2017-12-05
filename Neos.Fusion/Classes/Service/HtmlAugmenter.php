@@ -1,8 +1,8 @@
 <?php
-namespace Neos\Neos\Service;
+namespace Neos\Fusion\Service;
 
 /*
- * This file is part of the Neos.Neos package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
