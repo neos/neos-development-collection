@@ -115,7 +115,13 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
                 ];
             }, $allDimensionPresets);
 
-            if ($pinnedDimensionName === null) {
+            if ($nodeInDimensions === null) {
+                $itemLabel = '';
+                foreach ($targetDimensions as $item) {
+                    $itemLabel .= $item['label'] . ' - ';
+                }
+                $itemLabel = trim($itemLabel, ' -');
+            } elseif ($pinnedDimensionName === null) {
                 $itemLabel = $nodeInDimensions->getLabel();
             } else {
                 $itemLabel = $targetDimensions[$pinnedDimensionName]['label'];
