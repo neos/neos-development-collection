@@ -82,7 +82,11 @@
     text:
       ui:
         aloha:
-          fallbackCase: ['defined', 'as', 'plain', 'array']
+          alignment:
+            'left': TRUE
+            'center': TRUE
+            'right': TRUE
+            'justify': FALSE
 
 'Neos.Neos.BackendSchemaControllerTest:AlohaNodeType':
   superTypes:
@@ -91,7 +95,7 @@
     text:
       ui:
         aloha:
-          sampleCase:
+          format:
             'h3': TRUE
             'sup': TRUE
-            'shouldBeExcluded': FALSE
+            'code': FALSE

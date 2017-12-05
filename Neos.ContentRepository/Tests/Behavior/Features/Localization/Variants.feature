@@ -12,6 +12,7 @@ Feature: Node variants
       | 8ed74376-64d1-11e4-b98b-14109fd7a2dd | /sites/content-repository/company | Neos.ContentRepository.Testing:Page | {"title": "Unternehmen"} | live      | de       |
       | 8ed74376-64d1-11e4-b98b-14109fd7a2dd | /sites/content-repository/company | Neos.ContentRepository.Testing:Page | {"title": "Firma"}       | live      | de_CH    |
       | 8ed74376-64d1-11e4-b98b-14109fd7a2dd | /sites/content-repository/company | Neos.ContentRepository.Testing:Page | {"title": "Entreprise"}  | live      | fr       |
+    And I am authenticated with role "Neos.Neos:Editor"
 
   @fixtures
   Scenario: Get other node variants of an aggregate node

@@ -123,6 +123,8 @@ class NodePropertyConverterService
     }
 
     /**
+     * Convert the given value to a simple type or an array of simple types.
+     *
      * @param mixed $propertyValue
      * @param string $dataType
      * @return mixed
@@ -141,13 +143,14 @@ class NodePropertyConverterService
         if (!TypeHandling::isSimpleType($parsedType['type'])) {
             $conversionTargetType = 'array';
         }
+        // Technically the "string" hardcoded here is irrelevant as the configured type converter wins, but it cannot be the "elementType"
+        // because if the source is of the type $elementType then the PropertyMapper skips the type converter.
         if ($parsedType['type'] === 'array' && $parsedType['elementType'] !== null) {
-            $conversionTargetType .= '<' . $parsedType['elementType'] . '>';
+            $conversionTargetType .= '<' . (TypeHandling::isSimpleType($parsedType['elementType']) ? $parsedType['elementType'] : 'string') . '>';
         }
 
         $propertyMappingConfiguration = $this->createConfiguration($dataType);
         $convertedValue = $this->propertyMapper->convert($propertyValue, $conversionTargetType, $propertyMappingConfiguration);
-
         if ($convertedValue instanceof \Neos\Error\Messages\Error) {
             throw new PropertyException($convertedValue->getMessage(), $convertedValue->getCode());
         }

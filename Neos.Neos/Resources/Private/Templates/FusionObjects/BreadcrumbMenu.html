@@ -4,7 +4,7 @@
 	<ul{attributes -> f:format.raw()}>
 	<f:for each="{items}" as="item" reverse="TRUE">
 		<li{ts:render(path: '{item.state}.attributes', context: {item: item}) -> f:format.raw()}>
-			<f:if condition="{item.state} == 'current'">
+			<f:if condition="{item.state} === 'current'">
 				<f:then>
 					{item.label}
 				</f:then>

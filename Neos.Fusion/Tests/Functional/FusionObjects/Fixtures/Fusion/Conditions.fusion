@@ -89,7 +89,7 @@ conditions.supportForConditionInProcessWithAdvancedProcessFalse = Neos.Fusion:Va
 	}
 }
 
-conditions.supportForTypoScriptObjectWithSubEvaluationUsedInProcessor = Value {
+conditions.supportForFusionObjectWithSubEvaluationUsedInProcessor = Value {
 	value = 'basic'
 
 	theArray = Array {

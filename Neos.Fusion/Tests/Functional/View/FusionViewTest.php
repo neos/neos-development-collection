@@ -46,7 +46,7 @@ class FusionViewTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function typoScriptViewIsUsedForRendering()
+    public function fusionViewIsUsedForRendering()
     {
         $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
         $this->assertEquals('X', $view->render());
@@ -55,7 +55,7 @@ class FusionViewTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function typoScriptViewUsesGivenPathIfSet()
+    public function fusionViewUsesGivenPathIfSet()
     {
         $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
         $view->setFusionPath('foo/bar');
@@ -65,7 +65,7 @@ class FusionViewTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function ifNoTypoScriptViewIsFoundThenFallbackViewIsExecuted()
+    public function ifNoFusionViewIsFoundThenFallbackViewIsExecuted()
     {
         $view = $this->buildView('Foo\Bar\Controller\TestController', 'nonExisting');
         $this->mockFallbackView->expects($this->once())->method('render')->will($this->returnValue('FallbackView called'));
@@ -77,7 +77,7 @@ class FusionViewTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function typoScriptViewOutputsVariable()
+    public function fusionViewOutputsVariable()
     {
         $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
         $view->assign('test', 'Hallo Welt');

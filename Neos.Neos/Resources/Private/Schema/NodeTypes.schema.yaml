@@ -60,6 +60,7 @@ additionalProperties:
                           'h5': { type: boolean }
                           'h6': { type: boolean }
                           'pre': { type: boolean }
+                          'code': { type: boolean }
                           'removeFormat': { type: boolean }
 
                       'table':

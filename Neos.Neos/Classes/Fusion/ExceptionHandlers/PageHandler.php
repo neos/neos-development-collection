@@ -40,16 +40,16 @@ class PageHandler extends AbstractRenderingExceptionHandler
     /**
      * Handle an exception by displaying an error message inside the Neos backend, if logged in and not displaying the live workspace.
      *
-     * @param array $typoScriptPath path causing the exception
+     * @param array $fusionPath path causing the exception
      * @param \Exception $exception exception to handle
      * @param integer $referenceCode
      * @return string
      */
-    protected function handle($typoScriptPath, \Exception $exception, $referenceCode)
+    protected function handle($fusionPath, \Exception $exception, $referenceCode)
     {
         $handler = new ContextDependentHandler();
         $handler->setRuntime($this->runtime);
-        $output = $handler->handleRenderingException($typoScriptPath, $exception);
+        $output = $handler->handleRenderingException($fusionPath, $exception);
         $currentContext = $this->runtime->getCurrentContext();
         /** @var NodeInterface $documentNode */
         $documentNode = isset($currentContext['documentNode']) ? $currentContext['documentNode'] : null;
@@ -69,7 +69,7 @@ class PageHandler extends AbstractRenderingExceptionHandler
 
         if ($documentNode !== null && $documentNode->getContext()->getWorkspace()->getName() !== 'live' && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
             $isBackend = true;
-            $fluidView->assign('metaData', $this->contentElementWrappingService->wrapCurrentDocumentMetadata($documentNode, '<div id="neos-document-metadata"></div>', $typoScriptPath));
+            $fluidView->assign('metaData', $this->contentElementWrappingService->wrapCurrentDocumentMetadata($documentNode, '<div id="neos-document-metadata"></div>', $fusionPath));
         }
 
         $fluidView->assignMultiple(array(
