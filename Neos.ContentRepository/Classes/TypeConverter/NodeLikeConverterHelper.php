@@ -11,13 +11,27 @@ use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\TypeHandling;
+use Neos\Flow\Annotations as Flow;
 
 /**
- * A trait that abstracts functionality needed in various converters for models of the content repository.
+ * A helper that abstracts functionality needed in various converters for models of the content repository.
  *
+ * @Flow\Scope("singleton")
  */
-trait NodeLikeConverterHelperTrait
+class NodeLikeConverterHelper
 {
+    /**
+     * @var ObjectManagerInterface
+     * @Flow\Inject
+     */
+    protected $objectManager;
+
+    /**
+     * @var PropertyMapper
+     * @Flow\Inject
+     */
+    protected $propertyMapper;
+
     /**
      * Iterates through the given $properties setting them on the specified $node using the appropriate TypeConverters.
      *
@@ -25,13 +39,11 @@ trait NodeLikeConverterHelperTrait
      * @param NodeType $nodeType
      * @param array $properties
      * @param Context $context
-     * @param ObjectManagerInterface $objectManager
-     * @param PropertyMapper $propertyMapper
      * @param PropertyMappingConfigurationInterface $configuration
      * @return void
      * @throws TypeConverterException
      */
-    protected function _setNodeProperties(WriteablePropertiesInterface $node, NodeType $nodeType, array $properties, Context $context, ObjectManagerInterface $objectManager, PropertyMapper $propertyMapper, PropertyMappingConfigurationInterface $configuration = null)
+    public function setNodeProperties(WriteablePropertiesInterface $node, NodeType $nodeType, array $properties, Context $context, PropertyMappingConfigurationInterface $configuration = null)
     {
         $nodeTypeProperties = $nodeType->getProperties();
         unset($properties['_lastPublicationDateTime']);
@@ -100,8 +112,8 @@ trait NodeLikeConverterHelperTrait
                 }
             }
 
-            if (is_string($nodePropertyValue) && $objectManager->isRegistered($innerType) && $nodePropertyValue !== '') {
-                $nodePropertyValue = $propertyMapper->convert(json_decode($nodePropertyValue, true), $nodePropertyType, $configuration);
+            if (is_string($nodePropertyValue) && $this->objectManager->isRegistered($innerType) && $nodePropertyValue !== '') {
+                $nodePropertyValue = $this->propertyMapper->convert(json_decode($nodePropertyValue, true), $nodePropertyType, $configuration);
             }
             $node->setProperty($nodePropertyName, $nodePropertyValue);
         }
@@ -111,10 +123,11 @@ trait NodeLikeConverterHelperTrait
      * Prepares the context properties for the nodes based on the given workspace and dimensions
      *
      * @param array $source
+     * @param int $removedContentShown
      * @param PropertyMappingConfigurationInterface $configuration
      * @return array
      */
-    protected function prepareContextProperties(array $source, PropertyMappingConfigurationInterface $configuration = null)
+    public function prepareContextProperties(array $source, int $removedContentShown = 1, PropertyMappingConfigurationInterface $configuration = null)
     {
         $contextProperties = [
             'workspaceName' => $source['__workspaceName'] ?? 'live',
@@ -123,7 +136,7 @@ trait NodeLikeConverterHelperTrait
         ];
         if ($contextProperties['workspaceName'] !== 'live') {
             $contextProperties['invisibleContentShown'] = true;
-            if ($configuration !== null && $configuration->getConfigurationValue(self::class, self::REMOVED_CONTENT_SHOWN) === true) {
+            if ($configuration !== null && $configuration->getConfigurationValue(self::class, $removedContentShown) === true) {
                 $contextProperties['removedContentShown'] = true;
             }
         }

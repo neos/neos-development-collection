@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\TypeConverter;
 
 /*
@@ -11,14 +12,12 @@ namespace Neos\ContentRepository\TypeConverter;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
-use Neos\Flow\Annotations as Flow;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Property\PropertyMapper;
-use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\ContentRepository\Domain\Model\NodeTemplate;
 use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 
 /**
@@ -27,8 +26,6 @@ use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
  */
 class NodeTemplateConverter extends AbstractTypeConverter
 {
-    use NodeLikeConverterHelperTrait;
-
     /**
      * @var boolean
      */
@@ -38,6 +35,12 @@ class NodeTemplateConverter extends AbstractTypeConverter
      * A pattern that separates the node content object type from the node type
      */
     const EXTRACT_CONTENT_TYPE_PATTERN = '/^\\\\?(?P<type>Neos\\\ContentRepository\\\Domain\\\Model\\\NodeTemplate)(?:<\\\\?(?P<nodeType>[a-zA-Z0-9\\\\\:\.]+)>)?/';
+
+    /**
+     * @var NodeLikeConverterHelper
+     * @Flow\Inject
+     */
+    protected $nodeLikeConverterHelper;
 
     /**
      * @Flow\Inject
@@ -50,18 +53,6 @@ class NodeTemplateConverter extends AbstractTypeConverter
      * @var ContextFactoryInterface
      */
     protected $contextFactory;
-
-    /**
-     * @Flow\Inject
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
-
-    /**
-     * @Flow\Inject
-     * @var PropertyMapper
-     */
-    protected $propertyMapper;
 
     /**
      * @var array
@@ -99,7 +90,7 @@ class NodeTemplateConverter extends AbstractTypeConverter
      * @return mixed An object or \Neos\Error\Messages\Error if the input format is not supported or could not be converted for other reasons
      * @throws \Exception
      */
-    public function convertFrom($source, $targetType, array $subProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $subProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         $nodeTemplate = new NodeTemplate();
         $nodeType = $this->extractNodeType($targetType, $source);
@@ -107,9 +98,9 @@ class NodeTemplateConverter extends AbstractTypeConverter
 
         // we don't need a context or workspace for creating NodeTemplate objects, but in order to satisfy the method
         // signature of setNodeProperties(), we do need one:
-        $context = $this->contextFactory->create($this->prepareContextProperties(['__workspaceName' => 'live'], $configuration));
+        $context = $this->contextFactory->create($this->nodeLikeConverterHelper->prepareContextProperties(['__workspaceName' => 'live'], self::REMOVED_CONTENT_SHOWN, $configuration));
 
-        $this->_setNodeProperties($nodeTemplate, $nodeTemplate->getNodeType(), $source, $context, $this->objectManager, $this->propertyMapper, $configuration);
+        $this->nodeLikeConverterHelper->setNodeProperties($nodeTemplate, $nodeTemplate->getNodeType(), $source, $context, $configuration);
         return $nodeTemplate;
     }
 
@@ -125,7 +116,7 @@ class NodeTemplateConverter extends AbstractTypeConverter
         if (isset($source['__nodeType'])) {
             $nodeTypeName = $source['__nodeType'];
         } else {
-            $matches = array();
+            $matches = [];
             preg_match(self::EXTRACT_CONTENT_TYPE_PATTERN, $targetType, $matches);
             if (isset($matches['nodeType'])) {
                 $nodeTypeName = $matches['nodeType'];

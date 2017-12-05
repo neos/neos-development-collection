@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\TypeConverter;
 
 /*
@@ -11,13 +12,6 @@ namespace Neos\ContentRepository\TypeConverter;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-use Neos\Error\Messages\Error;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Property\Exception\TypeConverterException;
-use Neos\Flow\Property\PropertyMapper;
-use Neos\Flow\Property\PropertyMappingConfigurationInterface;
-use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Service\Context as ContentRepositoryContext;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
@@ -25,6 +19,10 @@ use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\ContentRepository\Exception\NodeException;
+use Neos\Error\Messages\Error;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Property\PropertyMappingConfigurationInterface;
+use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 
 /**
  * An Object Converter for Nodes which can be used for routing (but also for other
@@ -34,8 +32,6 @@ use Neos\ContentRepository\Exception\NodeException;
  */
 class NodeConverter extends AbstractTypeConverter
 {
-    use NodeLikeConverterHelperTrait;
-
     /**
      * @var boolean
      */
@@ -44,19 +40,13 @@ class NodeConverter extends AbstractTypeConverter
     /**
      * @var array
      */
-    protected $sourceTypes = array('string', 'array');
+    protected $sourceTypes = ['string', 'array'];
 
     /**
+     * @var NodeLikeConverterHelper
      * @Flow\Inject
-     * @var ObjectManagerInterface
      */
-    protected $objectManager;
-
-    /**
-     * @Flow\Inject
-     * @var PropertyMapper
-     */
-    protected $propertyMapper;
+    protected $nodeLikeConverterHelper;
 
     /**
      * @Flow\Inject
@@ -117,7 +107,7 @@ class NodeConverter extends AbstractTypeConverter
      * @return mixed An object or \Neos\Error\Messages\Error if the input format is not supported or could not be converted for other reasons
      * @throws NodeException
      */
-    public function convertFrom($source, $targetType = null, array $subProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType = null, array $subProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         if (is_string($source)) {
             try {
@@ -140,7 +130,7 @@ class NodeConverter extends AbstractTypeConverter
             return new Error('Could not convert ' . gettype($source) . ' to Node object, a valid absolute (context) node path or identifier as a string or an array is expected.', 1302879936);
         }
 
-        $context = $this->contextFactory->create($this->prepareContextProperties($source, $configuration));
+        $context = $this->contextFactory->create($this->nodeLikeConverterHelper->prepareContextProperties($source, self::REMOVED_CONTENT_SHOWN, $configuration));
 
         $workspace = $context->getWorkspace(false);
         if (!$workspace) {
@@ -150,13 +140,13 @@ class NodeConverter extends AbstractTypeConverter
         $node = $this->getNode($context, $source);
 
         if (!$node) {
-            return new Error(sprintf('Could not convert array to Node object because the node "%s" does not exist.', $nodePath), 1370502328);
+            return new Error(sprintf('Could not convert array to Node object because the node "%s" does not exist.', $source['__nodePath']), 1370502328);
         }
 
         $node = $this->changeNodeTypeIfRequested($node, $source);
         unset($source['_nodeType']);
 
-        $this->setNodeProperties($node, $source, $configuration);
+        $this->nodeLikeConverterHelper->setNodeProperties($node, $node->getNodeType(), $source, $node->getContext(), $configuration);
         return $node;
     }
 
@@ -241,19 +231,5 @@ class NodeConverter extends AbstractTypeConverter
         $this->nodeService->createChildNodes($node);
 
         return $node;
-    }
-
-    /**
-     * Iterates through the given $properties setting them on the specified $node using the appropriate TypeConverters.
-     *
-     * @param NodeInterface $node
-     * @param array $properties
-     * @param PropertyMappingConfigurationInterface $configuration
-     * @return void
-     * @throws TypeConverterException
-     */
-    protected function setNodeProperties(NodeInterface $node, array $properties, PropertyMappingConfigurationInterface $configuration = null)
-    {
-        $this->_setNodeProperties($node, $node->getNodeType(), $properties, $node->getContext(), $this->objectManager, $this->propertyMapper, $configuration);
     }
 }
