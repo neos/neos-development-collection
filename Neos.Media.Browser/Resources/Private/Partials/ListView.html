@@ -1,0 +1,122 @@
+{namespace m=Neos\Media\ViewHelpers}
+{namespace neos=Neos\Neos\ViewHelpers}
+<f:widget.paginate objects="{assets}" as="paginatedAssets" configuration="{itemsPerPage: 30, maximumNumberOfLinks: 7}">
+	<table class="neos-table asset-list">
+		<thead>
+			<tr>
+				<th></th>
+				<th>
+					<f:if condition="{sortBy} === 'Name'">
+						<f:then>
+							<f:if condition="{sortDirection} === 'ASC'">
+								<f:then>
+									<f:link.action action="index" title="{neos:backend.translate(id: 'sortByName', package: 'Neos.Media.Browser')} ({neos:backend.translate(id: 'sortdirection.desc', package: 'Neos.Media.Browser') -> f:format.case(mode: 'lower')})" data="{neos-toggle: 'tooltip'}" arguments="{sortDirection: 'DESC'}" addQueryString="TRUE">
+										{neos:backend.translate(id: 'field.name', package: 'Neos.Media.Browser')}
+									</f:link.action>
+									<i class="icon-caret-up"></i>
+								</f:then>
+								<f:else>
+									<f:link.action action="index" title="{neos:backend.translate(id: 'sortByName', package: 'Neos.Media.Browser')} ({neos:backend.translate(id: 'sortdirection.asc', package: 'Neos.Media.Browser') -> f:format.case(mode: 'lower')})" data="{neos-toggle: 'tooltip'}" arguments="{sortDirection: 'ASC'}" addQueryString="TRUE">
+										{neos:backend.translate(id: 'field.name', package: 'Neos.Media.Browser')}
+									</f:link.action>
+									<i class="icon-caret-down"></i>
+								</f:else>
+							</f:if>
+						</f:then>
+						<f:else>
+							<f:link.action action="index" title="{neos:backend.translate(id: 'sortByName', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip'}" arguments="{sortBy: 'Name'}" addQueryString="TRUE">
+								{neos:backend.translate(id: 'field.name', package: 'Neos.Media.Browser')}
+							</f:link.action>
+						</f:else>
+					</f:if>
+				</th>
+				<th>
+					<f:if condition="{sortBy} === 'Modified'">
+						<f:then>
+							<f:if condition="{sortDirection} === 'ASC'">
+								<f:then>
+									<f:link.action action="index" title="{neos:backend.translate(id: 'sortByLastModified', package: 'Neos.Media.Browser')} ({neos:backend.translate(id: 'sortdirection.desc', package: 'Neos.Media.Browser') -> f:format.case(mode: 'lower')})" data="{neos-toggle: 'tooltip'}" arguments="{sortDirection: 'DESC'}" addQueryString="TRUE">
+										{neos:backend.translate(id: 'field.lastModified', package: 'Neos.Media.Browser')}
+									</f:link.action>
+									<i class="icon-caret-up"></i>
+								</f:then>
+								<f:else>
+									<f:link.action action="index" title="{neos:backend.translate(id: 'sortByLastModified', package: 'Neos.Media.Browser')} ({neos:backend.translate(id: 'sortdirection.asc', package: 'Neos.Media.Browser') -> f:format.case(mode: 'lower')})" data="{neos-toggle: 'tooltip'}" arguments="{sortDirection: 'ASC'}" addQueryString="TRUE">
+										{neos:backend.translate(id: 'field.lastModified', package: 'Neos.Media.Browser')}
+									</f:link.action>
+									<i class="icon-caret-down"></i>
+								</f:else>
+							</f:if>
+						</f:then>
+						<f:else>
+							<f:link.action action="index" title="{neos:backend.translate(id: 'sortByLastModified', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip'}" arguments="{sortBy: 'Modified'}" addQueryString="TRUE">
+								{neos:backend.translate(id: 'field.lastModified', package: 'Neos.Media.Browser')}
+							</f:link.action>
+						</f:else>
+					</f:if>
+				</th>
+				<th>{neos:backend.translate(id: 'field.fileSize', package: 'Neos.Media.Browser')}</th>
+				<th>{neos:backend.translate(id: 'field.type', package: 'Neos.Media.Browser')}</th>
+				<th>{neos:backend.translate(id: 'field.tags', package: 'Neos.Media.Browser')}</th>
+				<th class="neos-action"></th>
+			</tr>
+		</thead>
+		<tbody>
+		<f:alias map="{
+			'editLabel': '{neos:backend.translate(id: \'edit\', package: \'Neos.Neos\')}',
+			'editAssetLabel': '{neos:backend.translate(id: \'editAsset\', package: \'Neos.Media.Browser\')}',
+			'replaceLabel': '{neos:backend.translate(id: \'replace\', package: \'Neos.Media.Browser\')}',
+			'replaceAssetResourceLabel': '{neos:backend.translate(id: \'replaceAssetResource\', package: \'Neos.Media.Browser\')}',
+			'deleteLabel': '{neos:backend.translate(id: \'delete\', package: \'Neos.Neos\')}',
+			'deleteAssetLabel': '{neos:backend.translate(id: \'deleteAsset\', package: \'Neos.Media.Browser\')}'
+		}">
+			<f:for each="{paginatedAssets}" as="asset" iteration="iterator">
+				<tr class="asset draggable-asset{f:if(condition: '{asset.tags -> f:count()} === 0', then: ' neos-media-untagged')}" data-asset-identifier="{asset -> f:format.identifier()}">
+					<td>
+						<div class="neos-list-thumbnail" data-neos-toggle="popover" data-placement="{f:if(condition: '{iterator.index} > 2', then: 'top', else: 'bottom')}" data-trigger="hover" data-title="{f:if(condition: asset.width, then: '{asset.width} x {asset.height}')}" data-html="true" data-content="{m:thumbnail(asset: asset, preset: 'Neos.Media.Browser:Thumbnail', alt: asset.label, async: settings.asyncThumbnails) -> f:format.htmlentities()}">
+							<m:thumbnail asset="{asset}" preset="Neos.Media.Browser:Thumbnail" alt="{asset.label}" async="{settings.asyncThumbnails}" />
+						</div>
+					</td>
+					<td class="asset-label"><span data-neos-toggle="tooltip" title="{asset.label}"><f:format.crop maxCharacters="50">{asset.label}</f:format.crop></span></td>
+					<td><span title="{asset.lastModified -> f:format.date(format: 'd-m-Y H:i')}" data-neos-toggle="tooltip">{asset.lastModified -> m:format.relativeDate()}</span></td>
+					<td>{asset.resource.fileSize -> f:format.bytes()}</td>
+					<td><span class="neos-label">{asset.resource.mediatype}</span></td>
+					<td class="tags">
+						<f:for each="{asset.tags}" as="tag">
+							<span class="neos-label">{tag.label}</span>
+						</f:for>
+					</td>
+					<td class="neos-action">
+						<div class="neos-dropdown" id="neos-asset-actionmenu-{asset -> f:format.identifier()}">
+							<a class="dropdown-toggle neos-button neos-button-mini" href="#" data-neos-toggle="dropdown" data-target="#neos-asset-actionmenu-{asset -> f:format.identifier()}">
+								<i class="icon-ellipsis-horizontal"></i>
+							</a>
+							<div class="neos-dropdown-menu-list neos-pull-right" role="menu">
+								<ul>
+									<li>
+										<f:link.action action="edit" arguments="{asset: asset}" title="{editAssetLabel}" data="{neos-toggle: 'tooltip', placement: 'left'}">
+											<i class="icon-edit icon-white"></i> {editLabel}
+										</f:link.action>
+									</li>
+									<f:security.ifAccess privilegeTarget="Neos.Media.Browser:ReplaceAssetResource">
+										<li>
+											<f:link.action action="replaceAssetResource" arguments="{asset: asset}" title="{replaceAssetResourceLabel}" data="{neos-toggle: 'tooltip', placement: 'left'}">
+												<i class="icon-random icon-white"></i> {replaceLabel}
+											</f:link.action>
+										</li>
+									</f:security.ifAccess>
+									<li>
+										<a href="#" class="neos-media-delete" title="{deleteAssetLabel}" data-neos-toggle="tooltip" data-placement="left" data-modal="delete-asset-modal" data-label="{asset.label -> f:format.crop(maxCharacters: 50)}" data-object-identifier="{asset -> f:format.identifier()}">
+											<i class="icon-trash icon-white"></i> {deleteLabel}
+										</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</td>
+				</tr>
+			</f:for>
+		</f:alias>
+		</tbody>
+	</table>
+</f:widget.paginate>

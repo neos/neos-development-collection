@@ -1,12 +1,12 @@
 # folder inside repository, branch, title - adjust per branch!
-branch: 'master'
-docs-path: 'neos/master'
-title: 'Neos (master branch)'
+branch: '3.2'
+docs-path: 'neos/3.2'
+title: 'Neos (3.2 branch)'
 
 # some project specific settings
 docs-repository: 'neos/neos.github.io'
 docs-branch: 'master'
-exclude: 'TYPO3.*/Tests/*,TYPO3.*/Resources/*,TYPO3.*/Migrations/*'
+exclude: 'Neos.*/Tests/*,Neos.*/Resources/*,Neos.*/Migrations/*'
 template-theme: 'bootstrap'
 annotation-groups: 'api,deprecated,todo'
 

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.NodeTypes" source-language="en" datatype="plaintext" target-language="zh-CN">
+    <body>
+      <trans-unit id="properties.alignment" xml:space="preserve">
+				<source>Alignment</source>
+			<target xml:lang="zh-CN" state="translated">对齐方式</target><alt-trans><target xml:lang="zh-CN">对齐</target></alt-trans></trans-unit>
+      <trans-unit id="properties.alignment.selectBoxEditor.placeholder" xml:space="preserve">
+				<source>Default</source>
+			<target xml:lang="zh-CN" state="translated">默认样式</target><alt-trans><target xml:lang="zh-CN">默认对齐</target></alt-trans><alt-trans><target xml:lang="zh-CN">默认</target></alt-trans></trans-unit>
+      <trans-unit id="properties.alignment.selectBoxEditor.values.center" xml:space="preserve">
+				<source>Center</source>
+			<target xml:lang="zh-CN" state="translated">居中对齐</target><alt-trans><target xml:lang="zh-CN">居中</target></alt-trans><alt-trans><target xml:lang="zh-CN">中间</target></alt-trans></trans-unit>
+      <trans-unit id="properties.alignment.selectBoxEditor.values.left" xml:space="preserve">
+				<source>Left</source>
+			<target xml:lang="zh-CN" state="translated">左对齐</target><alt-trans><target xml:lang="zh-CN">居左</target></alt-trans><alt-trans><target xml:lang="zh-CN">左</target></alt-trans></trans-unit>
+      <trans-unit id="properties.alignment.selectBoxEditor.values.right" xml:space="preserve">
+				<source>Right</source>
+			<target xml:lang="zh-CN" state="translated">右对齐</target><alt-trans><target xml:lang="zh-CN">右</target></alt-trans></trans-unit>
+    </body>
+  </file>
+</xliff>

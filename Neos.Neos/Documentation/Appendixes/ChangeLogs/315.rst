@@ -1,0 +1,62 @@
+`3.1.5 (2017-08-18) <https://github.com/neos/neos-development-collection/releases/tag/3.1.5>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Build correct paths to nodes with hidden parents <https://github.com/neos/neos-development-collection/pull/1654>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+If a node is visible but lies beneath a hidden parent, the URI path
+generated for that node had "holes" and did not work. This adjusts the
+route part handler to return the complete URI including the URI path
+segments of hidden nodes in the chain up to the site node.
+
+To disallow showing a node actually hidden itself has to be ensured
+in matching a request path, not in building one.
+
+`BUGFIX: Allow Prototype names starting with digits <https://github.com/neos/neos-development-collection/pull/1656>`_
+---------------------------------------------------------------------------------------------------------------------
+
+Prototype declarations starting with digits previously were wrongly
+parsed and resulted in broken names, this change fixes it by only
+casting numeric strings to integers as object keys.
+
+Fixes: #1114 
+
+`BUGFIX: TypoScriptView should set response headers correctly <https://github.com/neos/neos-development-collection/pull/1653>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+The httpVersion which could be set in the `ResponseHeadImplementation`
+was not used.
+
+Additionally, if a header had multiple values (which can easily be done in
+TypoScript via RawArray) only the first header was actually transferred to
+the sent HTTP response.
+
+`BUGFIX: Fix nodetype thumbnail path in NodeTypeDefinition.rst <https://github.com/neos/neos-development-collection/pull/1652>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+corrected path in documentation for thumbnail of nodetype
+
+`TASK: Don't cache dynamic segments with disabled \`entryDiscriminator\` <https://github.com/neos/neos-development-collection/pull/1633>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+With this change the caching can be disabled by setting the `entryDiscriminator`
+to `false` when using Content Cache mode `dynamic`.
+
+Previously a cache entry was created anyways with the `entryDiscriminator` casted
+to an (in this case empty) string.
+
+Background:
+The Content Cache mode `dynamic` was introduced in order to allow for more flexible
+caching behaviors depending on the context.
+But one important feature did not work yet: Being able to *disable* the cache
+for certain requests.
+With this change performance can be improved by caching the display of an interactive
+element (i.e. cache Forms for GET requests)
+
+Related: #1630
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/3.1.4...3.1.5>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

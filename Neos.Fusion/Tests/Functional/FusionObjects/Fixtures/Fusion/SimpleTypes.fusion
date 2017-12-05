@@ -1,0 +1,42 @@
+// Examples of a simple Value object
+prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
+
+simpleTypes.booleanTrue = Value {
+	value = TRUE
+}
+simpleTypes.booleanFalse = Value {
+	value = FALSE
+}
+simpleTypes.null = Value {
+	value = NULL
+}
+simpleTypes.wrappedString = Value {
+	value = 'Hello, '
+	value.@process.1 = ${value + 'Foo'}
+}
+
+
+// with the following lines, we test that Runtime::evaluate works on all three data types:
+// 1. Eel, 2. Plain Values, 3. Fusion Objects
+// (without processors. Processors are tested in Processor.fusion)
+simpleTypes.stringAsEel = ${'A simple string value is not a Fusion object'}
+simpleTypes.stringAsPlainValue = 'A simple string value is not a Fusion object'
+simpleTypes.stringAsFusion = Value {
+	value = 'A simple string value is not a Fusion object'
+}
+
+// with the following lines, we test that AbstractFusionObject::fusionObject works on all three
+// data types (without processors. Processors are tested in Processor.fusion)
+simpleTypes.valueWithNestedPlainValue = Value {
+	value = 'A simple value'
+}
+simpleTypes.valueWithNestedEel = Value {
+	value = ${'A simple value'}
+}
+simpleTypes.valueWithNestedFusion = Value {
+	value = Value {
+		value = 'A simple value'
+	}
+}
+
+simpleTypes.missingImplementation = Acme:Test

@@ -1,0 +1,29 @@
+privilegeTargets:
+  'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
+    'Neos.Media.Browser:ManageAssets':
+      matcher: 'method(Neos\Media\Browser\Controller\(Asset|Image)Controller->(index|new|edit|update|initializeCreate|create|replaceAssetResource|updateAssetResource|initializeUpload|upload|tagAsset|delete|createTag|editTag|updateTag|deleteTag|addAssetToCollection|relatedNodes)Action())'
+
+    'Neos.Media.Browser:ManageAssetCollections':
+      matcher: 'method(Neos\Media\Browser\Controller\(Asset|Image)Controller->(createAssetCollection|editAssetCollection|updateAssetCollection|deleteAssetCollection)Action())'
+
+    'Neos.Media.Browser:ReplaceAssetResource':
+      matcher: 'method(Neos\Media\Browser\Controller\(Asset|Image)Controller->(replaceAssetResource|updateAssetResource)Action())'
+
+roles:
+  'Neos.Neos:AbstractEditor':
+    privileges:
+      -
+        privilegeTarget: 'Neos.Media.Browser:ManageAssets'
+        permission: GRANT
+
+  'Neos.Neos:LivePublisher':
+    privileges:
+      -
+        privilegeTarget: 'Neos.Media.Browser:ReplaceAssetResource'
+        permission: GRANT
+
+  'Neos.Neos:Administrator':
+    privileges:
+      -
+        privilegeTarget: 'Neos.Media.Browser:ManageAssetCollections'
+        permission: GRANT

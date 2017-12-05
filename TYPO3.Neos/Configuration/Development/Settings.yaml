@@ -1,4 +1,0 @@
-TYPO3:
-  TypoScript:
-    rendering:
-      exceptionHandler: 'TYPO3\TypoScript\Core\ExceptionHandlers\ThrowingHandler'

@@ -1,0 +1,16 @@
+# Abstract Plugin Implementation
+# This should be extended by all plugin Content Elements
+#
+prototype(Neos.Neos:Plugin) >
+prototype(Neos.Neos:Plugin) < prototype(Neos.Neos:Content) {
+	@class = 'Neos\\Neos\\Fusion\\PluginImplementation'
+
+	@cache {
+		mode = 'uncached'
+		context {
+			1 = 'node'
+			2 = 'documentNode'
+			3 = 'site'
+		}
+	}
+}

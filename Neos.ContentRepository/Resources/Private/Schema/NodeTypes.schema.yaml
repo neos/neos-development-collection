@@ -1,0 +1,110 @@
+type: dictionary
+additionalProperties:
+  # every property here is a Node Type
+  type: dictionary
+  additionalProperties: FALSE
+  properties:
+    'class': { type: string, format: class-name }
+    'abstract': { type: boolean, description: "Abstract node type for default/mixin usage" }
+    'final': { type: boolean, description: "If final, this node type cannot be subclassed" }
+    'aggregate': { type: boolean, description: "INTERNAL. If aggregate, this node type is something like a Document. If not aggregate, it is seen as part of an aggregate node type - has influence on how e.g. moving of nodes across dimensions work." }
+
+    'superTypes':
+      type: dictionary
+      description: "List of Content Repository Node Types which are supertypes of this type"
+      # the "key" is the node type
+      additionalProperties:
+        type: boolean
+      # TODO: add validator which check that these are other Node Types.
+
+    'label':
+      type: ['string', 'array']
+      description: "An EEL expression for generating a node's of this node type's label. Alternatively an array with the key generatorClass and optional options."
+
+    'constraints': &constraints
+      type: dictionary
+      additionalProperties: FALSE
+      properties:
+
+        'nodeTypes':
+          type: dictionary
+          # the "key" is the node type
+          additionalProperties:
+            type: boolean
+
+    'childNodes':
+      type: dictionary
+      additionalProperties:
+        type:
+          -
+            type: 'null'
+          -
+            type: dictionary
+            additionalProperties: FALSE
+            properties:
+              'type': { type: string, description: "Node Type of this child node." }
+              'position':
+                type: ['string', 'null']
+                description: "Position of this child node."
+              'constraints': *constraints
+
+    'properties':
+      type: dictionary
+
+      # for each property...
+      additionalProperties:
+        type:
+          -
+            type: 'null'
+          -
+            type: dictionary
+            additionalProperties: FALSE
+            properties:
+
+              'type': { type: string, description: "PHP type of this property. Either simple type or fully qualified PHP class name." }
+              'defaultValue': { type: any, description: "Default value of this property. Used at node creation time. Type must match specified 'type'." }
+
+              'validation':
+                type: ['dictionary', 'null']
+
+              'ui':
+                type: dictionary
+                # we intentionally do not specify which properties are allowed here;
+                # as other packages (such as TYPO3.Neos) might do that instead.
+
+              'options':
+                type: dictionary
+                # we intentionally do not specify which properties are allowed here;
+                # as other packages might do that instead.
+
+              'search':
+                type: dictionary
+                # we intentionally do not specify which properties are allowed here;
+                # as other packages might do that instead.
+
+    'ui':
+      type: dictionary
+      # we intentionally do not specify which properties are allowed here (except the one expected in ContentRepository);
+      # as other packages (such as Neos.Neos) might do that instead.
+      properties:
+        'label': { type: string, description: "Human-readable label for this Node Type." }
+
+    'options':
+      type: dictionary
+      # we intentionally do not specify which properties are allowed here;
+      # as other packages might do that instead.
+
+    'search':
+      type: dictionary
+      # we intentionally do not specify which properties are allowed here;
+      # as other packages might do that instead.
+
+    'postprocessors':
+      type: dictionary
+      additionalProperties:
+        type: dictionary
+        additionalProperties: FALSE
+        properties:
+          'postprocessor': { type: string, format: class-name, required: TRUE }
+          'postprocessorOptions':
+            type: dictionary

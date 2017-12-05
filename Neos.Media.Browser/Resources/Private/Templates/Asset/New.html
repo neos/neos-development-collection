@@ -1,0 +1,50 @@
+{namespace neos=Neos\Neos\ViewHelpers}
+<f:layout name="UploadImage" />
+
+<f:section name="Title">Upload view</f:section>
+
+<f:section name="Content">
+	<f:form method="post" action="create" object="{asset}" objectName="asset" enctype="multipart/form-data">
+		<fieldset>
+			<div class="neos-span6 neos-image-inputs">
+				<span class="neos-file-input">
+					<label class="neos-button neos-button-primary" for="resource" title="{neos:backend.translate(id: 'maxUploadSize', arguments: {0: humanReadableMaximumFileUploadSize}, package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip">
+						{neos:backend.translate(id: 'chooseFile', package: 'Neos.Media.Browser')} <i class="icon-file"></i>
+					</label>
+					<f:form.upload id="resource" property="resource" additionalAttributes="{required: 'required'}" />
+				</span>
+				<label for="title">{neos:backend.translate(id: 'field.title', package: 'Neos.Media.Browser')}</label>
+				<f:form.textfield property="title" id="title" placeholder="{neos:backend.translate(id: 'field.title', package: 'Neos.Media.Browser')}" />
+				<label for="caption">{neos:backend.translate(id: 'field.caption', package: 'Neos.Media.Browser')}</label>
+				<f:form.textarea property="caption" rows="3" id="caption" placeholder="{neos:backend.translate(id: 'field.caption', package: 'Neos.Media.Browser')}" />
+				<f:if condition="{tags}">
+					<label>{neos:backend.translate(id: 'field.tags', package: 'Neos.Media.Browser')}</label>
+					<f:for each="{tags}" as="tag">
+						<label class="neos-checkbox neos-inline">
+							<f:form.checkbox name="asset[tags][]" value="{tag -> f:format.identifier()}" checked="{f:if(condition: '{tag} === {activeTag}', then: 'checked')}" /><span></span> {tag.label}
+						</label>
+					</f:for>
+				</f:if>
+				<f:if condition="{assetCollections}">
+					<label>{neos:backend.translate(id: 'collections', package: 'Neos.Media.Browser')}</label>
+					<f:for each="{assetCollections}" as="assetCollection">
+						<label class="neos-checkbox neos-inline">
+							<f:form.checkbox name="asset[assetCollections][]" value="{assetCollection -> f:format.identifier()}" checked="{f:if(condition: '{assetCollection} === {activeAssetCollection}', then: 'checked')}" /><span></span> {assetCollection.title}
+						</label>
+					</f:for>
+				</f:if>
+			</div>
+		</fieldset>
+		<div class="neos-footer">
+			<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'cancel', package: 'Neos.Neos')}</f:link.action>
+			<f:form.submit id="import" class="neos-button neos-button-primary" value="{neos:backend.translate(id: 'upload', package: 'Neos.Media.Browser')}" />
+		</div>
+	</f:form>
+</f:section>
+
+<f:section name="Scripts">
+	<script type="text/javascript">
+		var maximumFileUploadSize = {maximumFileUploadSize};
+	</script>
+	<script type="text/javascript" src="{f:uri.resource(package: 'Neos.Media.Browser', path: 'JavaScript/new.js')}"></script>
+</f:section>

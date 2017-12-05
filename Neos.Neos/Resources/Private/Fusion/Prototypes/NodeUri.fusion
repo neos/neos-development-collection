@@ -1,0 +1,9 @@
+# Renders an URI pointing to a node
+#
+prototype(Neos.Neos:NodeUri) {
+	@class = 'Neos\\Neos\\Fusion\\NodeUriImplementation'
+	additionalParams = Neos.Fusion:RawArray
+	arguments = Neos.Fusion:RawArray
+	argumentsToBeExcludedFromQueryString = Neos.Fusion:RawArray
+	@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
+}

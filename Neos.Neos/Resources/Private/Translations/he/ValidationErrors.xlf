@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="he">
+    <body>
+      <!-- UserDoesNotExistValidator -->
+      <trans-unit id="1325156008" xml:space="preserve">
+				<source>The username is already in use.</source>
+			<target xml:lang="he" state="needs-translation">The username is already in use.</target></trans-unit>
+      <!-- HostnameValidator -->
+      <trans-unit id="1415392993" xml:space="preserve">
+				<source>The hostname "{0}" was not valid.</source>
+			<target xml:lang="he" state="needs-translation">The hostname "{0}" was not valid.</target></trans-unit>
+      <!-- PasswordValidator -->
+      <trans-unit id="1324641097" xml:space="preserve">
+				<source>The given password was empty.</source>
+			<target xml:lang="he" state="needs-translation">The given password was empty.</target></trans-unit>
+      <trans-unit id="1324640997" xml:space="preserve">
+				<source>The passwords did not match.</source>
+			<target xml:lang="he" state="needs-translation">The passwords did not match.</target></trans-unit>
+    </body>
+  </file>
+</xliff>

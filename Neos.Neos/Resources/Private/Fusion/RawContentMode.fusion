@@ -1,0 +1,40 @@
+prototype(Neos.Neos:RawContent) >
+prototype(Neos.Neos:RawContent) < prototype(Neos.Fusion:Template) {
+	templatePath = 'resource://Neos.Neos/Private/Templates/RawContentMode/FusionObjects/GeneralContentCollectionRendering.html'
+	columns = Neos.Fusion:Collection {
+		collection = ${q(node).children('[instanceof Neos.Neos:ContentCollection]')}
+		itemName = 'node'
+		itemRenderer = Neos.Fusion:Template {
+			templatePath = 'resource://Neos.Neos/Private/Templates/RawContentMode/FusionObjects/ContentCollectionTemplate.html'
+			node = ${node}
+			attributes = Neos.Fusion:Attributes {
+				class = 'column'
+			}
+			columnContent = Neos.Neos:ContentCollection {
+				nodePath = '.'
+			}
+
+		}
+	}
+}
+
+rawContent = Neos.Neos:Page {
+	head {
+		stylesheets = Neos.Fusion:Template {
+			templatePath = 'resource://Neos.Neos/Private/Templates/RawContentMode/Page/Default.html'
+			sectionName = 'headerIncludes'
+		}
+	}
+
+	bodyTag.attributes.class = 'neos-raw-content-mode'
+
+	body {
+		templatePath = 'resource://Neos.Neos/Private/Templates/RawContentMode/Page/Default.html'
+		sectionName = 'body'
+
+		allContentCollections = Neos.Neos:PrimaryContent {
+			nodePath = '.'
+			default.renderer = Neos.Neos:RawContent
+		}
+	}
+}

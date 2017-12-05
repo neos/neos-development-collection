@@ -1,0 +1,17 @@
+/**
+ *  Fusion Fixture 03
+ *
+ *  This fixture serves for testing the object tree capabilities of the TS parser.
+ *
+ */
+
+object1.mySubObject.mySubSubObject = Text
+object1.mySubObject.mySubSubObject.value = "Espresso is a fine beverage."
+
+
+object2 = ObjectWithArrayProperty
+object2.theArray.theKey = "theValue"
+
+object3 = ObjectWithArrayProperty
+object3.theArray.theKey = Text
+object3.theArray.theKey.value = "theValue"
