@@ -1,0 +1,5 @@
+
+Neos:
+  Fusion:
+    rendering:
+      exceptionHandler: Neos\Fusion\Core\ExceptionHandlers\HtmlMessageHandler

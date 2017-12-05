@@ -1,0 +1,56 @@
+{namespace m=Neos\Media\ViewHelpers}
+{namespace neos=Neos\Neos\ViewHelpers}
+<f:widget.paginate objects="{assets}" as="paginatedAssets" configuration="{itemsPerPage: 30, maximumNumberOfLinks: 5}">
+	<ul class="neos-thumbnails asset-list">
+		<f:alias map="{
+			'editLabel': '{neos:backend.translate(id: \'edit\', package: \'Neos.Neos\')}',
+			'editAssetLabel': '{neos:backend.translate(id: \'editAsset\', package: \'Neos.Media.Browser\')}',
+			'replaceLabel': '{neos:backend.translate(id: \'replace\', package: \'Neos.Media.Browser\')}',
+			'replaceAssetResourceLabel': '{neos:backend.translate(id: \'replaceAssetResource\', package: \'Neos.Media.Browser\')}',
+			'deleteLabel': '{neos:backend.translate(id: \'delete\', package: \'Neos.Neos\')}',
+			'deleteAssetLabel': '{neos:backend.translate(id: \'deleteAsset\', package: \'Neos.Media.Browser\')}'
+		}">
+			<f:for each="{paginatedAssets}" as="asset">
+				<li class="asset">
+					<f:link.action action="edit" class="neos-thumbnail" arguments="{asset: asset}" data="{asset-identifier: '{asset -> f:format.identifier()}'}">
+						<div class="neos-img-container draggable-asset {f:if(condition: '{asset.tags -> f:count()} === 0', then: ' neos-media-untagged')}">
+							<m:thumbnail asset="{asset}" preset="Neos.Media.Browser:Thumbnail" alt="{asset.label}" async="{settings.asyncThumbnails}" />
+						</div>
+					</f:link.action>
+					<div class="neos-img-label">
+						<m:fileTypeIcon file="{asset}" height="32" />
+
+						<div class="neos-dropdown neos-pull-right" id="neos-asset-actionmenu-{asset -> f:format.identifier()}">
+							<a class="dropdown-toggle neos-button" href="#" data-neos-toggle="dropdown" data-target="#neos-asset-actionmenu-{asset -> f:format.identifier()}">
+								<i class="icon-ellipsis-horizontal"></i>
+							</a>
+							<div class="neos-dropdown-menu-list neos-pull-right" role="menu">
+								<ul>
+									<li>
+										<f:link.action action="edit" arguments="{asset: asset}" title="{editAssetLabel}" data="{neos-toggle: 'tooltip', placement: 'left'}">
+											<i class="icon-edit icon-white"></i> {editLabel}
+										</f:link.action>
+									</li>
+									<f:security.ifAccess privilegeTarget="Neos.Media.Browser:ReplaceAssetResource">
+										<li>
+											<f:link.action action="replaceAssetResource" arguments="{asset: asset}" title="{replaceAssetResourceLabel}" data="{neos-toggle: 'tooltip', placement: 'left'}">
+												<i class="icon-random icon-white"></i> {replaceLabel}
+											</f:link.action>
+										</li>
+									</f:security.ifAccess>
+									<li>
+										<a href="#" class="neos-media-delete" title="{deleteAssetLabel}" data-neos-toggle="tooltip" data-placement="left" data-modal="delete-asset-modal" data-label="{asset.label -> f:format.crop(maxCharacters: 50)}" data-object-identifier="{asset -> f:format.identifier()}">
+											<i class="icon-trash icon-white"></i> {deleteLabel}
+										</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+
+						<span class="neos-caption asset-label" title="{asset.label}" data-neos-toggle="tooltip"><f:format.crop maxCharacters="100">{asset.label}</f:format.crop></span>
+					</div>
+				</li>
+			</f:for>
+		</f:alias>
+	</ul>
+</f:widget.paginate>

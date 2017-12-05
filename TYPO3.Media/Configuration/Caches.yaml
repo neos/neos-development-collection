@@ -1,5 +1,0 @@
-TYPO3_Media_ImageSize:
-  frontend: TYPO3\Flow\Cache\Frontend\VariableFrontend
-  backend: TYPO3\Flow\Cache\Backend\SimpleFileBackend
-  backendOptions:
-    defaultLifetime: 0

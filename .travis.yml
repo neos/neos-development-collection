@@ -26,27 +26,33 @@ matrix:
       dist: trusty
       addons:
         postgresql: "9.5"
-    - php: 5.6
-      env: DB=sqlite
-    - php: 5.5
-      env: DB=sqlite
+    - php: 7.1
+      env: DB=mysql
+    - php: 7.1
+      env: DB=mysql BEHAT=true
 cache:
   directories:
     - $HOME/.composer/cache
 before_install:
+  - phpenv config-rm xdebug.ini
+  - export NEOS_TARGET_REPOSITORY=neos/neos-development-collection
+  - export NEOS_TARGET_VERSION=master
+  - env
+  - sudo add-apt-repository ppa:git-core/ppa -y
+  - sudo apt-get update
+  - sudo apt-get install git -y
+  - git checkout -b travis
   - cd ..
-  - git clone https://github.com/neos/neos-development-distribution.git -b master
+  - git clone https://github.com/neos/neos-development-distribution.git -b ${NEOS_TARGET_VERSION}
   - cd neos-development-distribution
 install:
   - composer self-update -q
   - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
-  - composer install --no-progress --no-interaction
   - composer update --no-progress --no-interaction
-  - rm -rf Packages/Neos
-  - mv ../neos-development-collection Packages/Neos
+  - php Build/BuildEssentials/TravisCi/ComposerManifestUpdater.php .
+  - composer update --no-progress --no-interaction
 before_script:
-  - phpenv config-rm xdebug.ini
-  - echo 'date.timezone = "Antarctica/Troll"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  - echo 'date.timezone = "Africa/Tunis"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - echo 'opcache.fast_shutdown = 0' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - echo 'opcache.enable_cli = 0' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - echo 'zend.enable_gc = 0' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
@@ -59,8 +65,8 @@ before_script:
 script:
   - if [ "$BEHAT" != "true" ]; then bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/UnitTests.xml; fi
   - if [ "$BEHAT" != "true" ]; then bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests"; fi
-  - if [ "$BEHAT" = "true" ]; then bin/behat --ansi --stop-on-failure -f progress -c Packages/Neos/TYPO3.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser; fi
-  - if [ "$BEHAT" = "true" ]; then bin/behat --ansi --stop-on-failure -f progress -c Packages/Neos/TYPO3.TYPO3CR/Tests/Behavior/behat.yml.dist; fi
+  - if [ "$BEHAT" = "true" ]; then bin/behat --ansi --stop-on-failure -f progress -c Packages/Neos/Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser; fi
+  - if [ "$BEHAT" = "true" ]; then bin/behat --ansi --stop-on-failure -f progress -c Packages/Neos/Neos.ContentRepository/Tests/Behavior/behat.yml.dist; fi
 notifications:
   email: false
   slack:

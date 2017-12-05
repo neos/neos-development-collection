@@ -1,0 +1,26 @@
+# Neos.Neos:DimensionsMenu provides dimension (e.g. language) menu rendering
+prototype(Neos.Neos:DimensionsMenu) < prototype(Neos.Neos:Menu) {
+	@class = 'Neos\\Neos\\Fusion\\DimensionsMenuImplementation'
+
+	templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/DimensionsMenu.html'
+
+	# the "absent" state is assigned to items for dimension (combinations) for which no node variant exists
+	absent.attributes = Neos.Fusion:Attributes {
+		class = 'normal'
+	}
+
+	# if documents which are hidden in index should be rendered or not
+	renderHiddenInIndex = TRUE
+
+	# name of the dimension to use (optional)
+	# dimension = 'language'
+
+	# list of presets, if the default order should be overridden, only used with "dimension" set
+	# presets = ${['en_US']}
+
+	# if true, items for all presets will be included, ignoring dimension constraints
+	includeAllPresets = FALSE
+}
+
+# included for backwards-compatibility only
+prototype(Neos.Neos:DimensionMenu) < prototype(Neos.Neos:DimensionsMenu)

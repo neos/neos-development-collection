@@ -1,0 +1,18 @@
+{namespace neos=Neos\Neos\ViewHelpers}
+{namespace ts=Neos\Fusion\ViewHelpers}
+<f:if condition="{items}">
+	<ul{attributes -> f:format.raw()}>
+	<f:for each="{items}" as="item" reverse="TRUE">
+		<li{ts:render(path: '{item.state}.attributes', context: {item: item}) -> f:format.raw()}>
+			<f:if condition="{item.state} === 'current'">
+				<f:then>
+					{item.label}
+				</f:then>
+				<f:else>
+					<neos:link.node node="{item.node}" />
+				</f:else>
+			</f:if>
+		</li>
+	</f:for>
+	</ul>
+</f:if>

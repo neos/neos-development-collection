@@ -1,0 +1,95 @@
+
+TYPO3:
+  DocTools:
+    collections:
+      Media:
+        commandReferences:
+          - 'Media:Commands'
+        references:
+          - 'Media:ViewHelpers'
+          - 'Media:Validators'
+    commandReferences:
+      'Media:Commands':
+        title: 'Media Command Reference'
+        packageKeys:
+          - Neos.Media
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Media/Documentation/References/Commands.rst'
+    references:
+      'Media:Validators':
+        title: 'Media Validator Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Media/Documentation/References/Validators.rst'
+        affectedClasses:
+          parentClassName: Neos\Flow\Validation\Validator\AbstractValidator
+          classNamePattern: '/^TYPO3\\Media\\Validator\\.*$/i'
+        parser:
+          implementationClassName: TYPO3\DocTools\Domain\Service\FlowValidatorClassParser
+      'Media:ViewHelpers':
+        title: 'Media ViewHelper Reference'
+        savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Media/Documentation/References/ViewHelpers.rst'
+        affectedClasses:
+          parentClassName: Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
+          classNamePattern: '/^TYPO3\\Media\\ViewHelpers\\.*$/i'
+        parser:
+          implementationClassName: TYPO3\DocTools\Domain\Service\FluidViewHelperClassParser
+          options:
+            namespaces:
+              typo3.media: Neos\Media\ViewHelpers
+
+Neos:
+  Flow:
+    persistence:
+      doctrine:
+        eventListeners:
+          Neos\Media\Domain\EventListener\ImageEventListener:
+            events:
+              - postRemove
+            listener: Neos\Media\Domain\EventListener\ImageEventListener
+    mvc:
+      routes:
+        Neos.Media:
+          position: 'before Neos.Neos'
+
+  Media:
+    # Enable asynchronous thumbnails
+    asyncThumbnails: true
+    # Thumbnail presets
+    thumbnailPresets: {  }
+    # Automatically create thumbnails for configured presets when assets are added
+    autoCreateThumbnailPresets: true
+
+    asset:
+      modelMappingStrategy:
+        default: Neos\Media\Domain\Model\Document
+        patterns:
+          '[image/.*]':
+            className: Neos\Media\Domain\Model\Image
+          '[audio/.*]':
+            className: Neos\Media\Domain\Model\Audio
+          '[video/.*]':
+            className: Neos\Media\Domain\Model\Video
+    image:
+      defaultOptions:
+        # Image quality, from 0 to 100
+        quality: 90
+        convertCMYKToRGB: true
+        # defines the filter to use for resize operations.
+        # Note that the default GD driver only supports the FILTER_UNDEFINED.
+        # Check the \Imagine\Image\ImageInterface class for a reference of all filters.
+        # They roughly line up with ImageMagick filters, so read up on those to see differences.
+        # A very cheap filter with reasonable quality would be "FILTER_BOX", alternative is "FILTER_CATROM".
+        resizeFilter: '%\Imagine\Image\ImageInterface::FILTER_UNDEFINED%'
+
+    thumbnailGenerators:
+
+      Neos\Media\Domain\Model\ThumbnailGenerator\DocumentThumbnailGenerator:
+        resolution: 120
+        supportedExtensions:
+          - pdf
+          - eps
+          - ai
+        paginableDocuments:
+          - pdf
+      Neos\Media\Domain\Model\ThumbnailGenerator\FontDocumentThumbnailGenerator:
+        supportedExtensions:
+          - ttf
+          - otf

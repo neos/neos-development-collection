@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="ar">
+    <body>
+      <trans-unit id="tabs.default" xml:space="preserve">
+				<source>General</source>
+			<target xml:lang="ar" state="needs-translation">General</target></trans-unit>
+      <trans-unit id="tabs.meta" xml:space="preserve">
+				<source>Metadata</source>
+			<target xml:lang="ar" state="needs-translation">Metadata</target></trans-unit>
+      <trans-unit id="views.nodeInfo" xml:space="preserve">
+				<source>Metadata</source>
+			<target xml:lang="ar" state="needs-translation">Metadata</target></trans-unit>
+      <trans-unit id="groups.nodeInfo" xml:space="preserve">
+				<source>Additional info</source>
+			<target xml:lang="ar" state="needs-translation">Additional info</target></trans-unit>
+      <trans-unit id="groups.type" xml:space="preserve">
+				<source>Change type</source>
+			<target xml:lang="ar" state="needs-translation">Change type</target></trans-unit>
+      <trans-unit id="properties._nodeType" xml:space="preserve">
+				<source>Type</source>
+			<target xml:lang="ar" state="needs-translation">Type</target></trans-unit>
+    </body>
+  </file>
+</xliff>

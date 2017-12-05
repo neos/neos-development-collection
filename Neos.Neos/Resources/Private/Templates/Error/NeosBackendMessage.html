@@ -1,0 +1,21 @@
+<f:layout name="Default" />
+
+<f:section name="head">
+	<title>Neos Error</title>
+	<link rel="stylesheet" href="{f:uri.resource(path: 'Styles/Error.css', package: 'Neos.Neos')}" />
+	<f:if condition="{isBackend}">
+		<f:render partial="NeosBackendHeaderData" arguments="{_all}" />
+		<f:render partial="NeosBackendEndpoints" arguments="{_all}" />
+	</f:if>
+</f:section>
+
+<f:section name="body">
+	<body class="neos">
+		<f:if condition="{isBackend}">{metaData -> f:format.raw()}</f:if>
+		<div class="neos-error-screen">{message -> f:format.raw()}</div>
+		<f:if condition="{isBackend}">
+			<f:render partial="NeosBackendContainer" arguments="{_all}" />
+			<f:render partial="NeosBackendFooterData" arguments="{_all}" />
+		</f:if>
+	</body>
+</f:section>
