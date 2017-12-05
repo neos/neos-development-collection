@@ -30,7 +30,7 @@ The image handling supports ImageMagick 7 now, but that breaks support for some 
 Menu content element allows setting of startingPoint
 ====================================================
 
-The menu content element (``Neos.Neos.NodeTypes:Menu``) now allows configuring a starting point for the rendered menu in the inspector, making this element more flexible to use.
+The menu content element (``TYPO3.Neos.NodeTypes:Menu``) now allows configuring a starting point for the rendered menu in the inspector, making this element more flexible to use.
 
 Kickstarted sites improved
 ==========================
@@ -40,13 +40,13 @@ The kickstarted site now contains only the homepage, no content element anymore.
 TypoScript and EEL
 ==================
 
-The new ``Neos.Neos:ContentElementWrapping`` prototype can be used as a processor to the same as the ``contentElement.editable`` ViewHelper of Neos. You don't need to do this for regular content elmeents, but for example to make properties of pages inline editable.
+The new ``TYPO3.Neos:ContentElementWrapping`` prototype can be used as a processor to the same as the ``contentElement.editable`` ViewHelper of Neos. You don't need to do this for regular content elmeents, but for example to make properties of pages inline editable.
 
 A ``TYPO3.TypoScript:Debug`` prototype allows to debug values inside TypoScript. You can set arbitrary key/value combinations which are output formatted.
 
 The ``TYPO3.TypoScript:Collection`` object now has ``itemName`` set to ``item`` as default. That means you can access the current element of the collection inside the renderer via ``item``, previously there was no default set.
 
-The ``Neos.Neos:DimensionsMenu`` replaces the ``Neos.Neos:DimensionMenu`` (note the "s"). For backwards compatibility reasons ``Neos.Neos:DimensionMenu`` still works but is deprecated. The new DimensionsMenu has much more features than the old one and can be used to render dimensions in various ways.
+The ``TYPO3.Neos:DimensionsMenu`` replaces the ``TYPO3.Neos:DimensionMenu`` (note the "s"). For backwards compatibility reasons ``TYPO3.Neos:DimensionMenu`` still works but is deprecated. The new DimensionsMenu has much more features than the old one and can be used to render dimensions in various ways.
 
 All multi column elements now automatically provide the ``columnIteration`` variable containing iteration information and the ``columnLayout`` variable containing the selected laoyut via TypoScript context to the children (the columns).
 

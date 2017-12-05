@@ -30,7 +30,7 @@
 			drop: function (event, ui) {
 				var tag = $(this),
 					asset = $(ui.draggable[0]),
-					assetIdentifier = asset.data('asset-identifier'),
+					assetIdentifier = asset.data('asset-identifier') || asset.parent().data('asset-identifier'),
 					countElement = tag.children('span'),
 					count = parseInt(countElement.text());
 				assetField.val(assetIdentifier);
@@ -79,7 +79,7 @@
 			drop: function (event, ui) {
 				var assetCollection = $(this),
 					asset = $(ui.draggable[0]),
-					assetIdentifier = asset.data('asset-identifier'),
+					assetIdentifier = asset.data('asset-identifier') || asset.parent().data('asset-identifier'),
 					countElement = assetCollection.children('span'),
 					count = parseInt(countElement.text());
 				linkAssetToCollectionAssetField.val(assetIdentifier);

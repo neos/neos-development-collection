@@ -48,25 +48,25 @@ Adjusting and defining roles
 
 Neos comes with a number of predefined roles that can be assigned to users:
 
-+-----------------------------+-----------------------------+--------------------------------------------------------+
-| Role                        | Parent role(s)              | Description                                            |
-+=============================+=============================+========================================================+
-| Neos.ContentRepository:Administrator |                             | A no-op role for future use                            |
-+-----------------------------+-----------------------------+--------------------------------------------------------+
-| Neos.Neos:AbstractEditor   | Neos.ContentRepository:Administrator | Grants the very basic things needed to use Neos at all |
-+-----------------------------+-----------------------------+--------------------------------------------------------+
-| Neos.Neos:LivePublisher    |                             | A "helper role" to allow publishing to the live        |
-|                             |                             | workspace                                              |
-+-----------------------------+-----------------------------+--------------------------------------------------------+
-| Neos.Neos:RestrictedEditor | Neos.Neos:AbstractEditor   | Allows to edit content but not publish to the live     |
-|                             |                             | workspace                                              |
-+-----------------------------+-----------------------------+--------------------------------------------------------+
-| Neos.Neos:Editor           | Neos.Neos:AbstractEditor   | Allows to edit and publish content                     |
-|                             |                             |                                                        |
-|                             | Neos.Neos:LivePublisher    |                                                        |
-+-----------------------------+-----------------------------+--------------------------------------------------------+
-| Neos.Neos:Administrator    | Neos.Neos:Editor           | Everything the Editor can do, plus admin things        |
-+-----------------------------+-----------------------------+--------------------------------------------------------+
++--------------------------------------+--------------------------------------+--------------------------------------------------------+
+| Role                                 | Parent role(s)                       | Description                                            |
++======================================+======================================+========================================================+
+| Neos.ContentRepository:Administrator |                                      | A no-op role for future use                            |
++--------------------------------------+--------------------------------------+--------------------------------------------------------+
+| Neos.Neos:AbstractEditor             | Neos.ContentRepository:Administrator | Grants the very basic things needed to use Neos at all |
++--------------------------------------+--------------------------------------+--------------------------------------------------------+
+| Neos.Neos:LivePublisher              |                                      | A "helper role" to allow publishing to the live        |
+|                                      |                                      | workspace                                              |
++--------------------------------------+--------------------------------------+--------------------------------------------------------+
+| Neos.Neos:RestrictedEditor           | Neos.Neos:AbstractEditor             | Allows to edit content but not publish to the live     |
+|                                      |                                      | workspace                                              |
++--------------------------------------+--------------------------------------+--------------------------------------------------------+
+| Neos.Neos:Editor                     | Neos.Neos:AbstractEditor             | Allows to edit and publish content                     |
+|                                      |                                      |                                                        |
+|                                      | Neos.Neos:LivePublisher              |                                                        |
++--------------------------------------+--------------------------------------+--------------------------------------------------------+
+| Neos.Neos:Administrator              | Neos.Neos:Editor                     | Everything the Editor can do, plus admin things        |
++--------------------------------------+--------------------------------------+--------------------------------------------------------+
 
 To adjust permissions for your editors, you can of course just adjust the existing roles (`Neos.Neos:RestrictedEditor`
 and `Neos.Neos:Editor` in most cases). If you need different sets of permissions, you will need to define your own
@@ -118,7 +118,7 @@ Node privileges define what can be restricted in relation to accessing and editi
         'Some.Package:SomeIdentifier':
           matcher: >-
             isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")
-            && createdNodeIsOfType("Neos.Neos.NodeTypes:Text")
+            && createdNodeIsOfType("Neos.NodeTypes:Text")
 
   will actually only affect nodes of that type (and subtypes). All users will still be able to create other node types,
   unless you also add a more generic privilege target:
@@ -215,7 +215,7 @@ Usage example:
       'Some.Package:SomeIdentifier':
         matcher: >-
           isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")
-          && createdNodeIsOfType("Neos.Neos.NodeTypes:Text")
+          && createdNodeIsOfType("Neos.NodeTypes:Text")
 
 This defines a privilege target that intercepts creation of Text nodes in the specified node (and all of its child
 nodes).
@@ -234,7 +234,7 @@ Usage example:
       'Some.Package:SomeIdentifier':
         matcher: >-
           isDescendantNodeOf("c1e528e2-b495-0622-e71c-f826614ef287")
-          && nodeIsOfType("Neos.Neos.NodeTypes:Text")
+          && nodeIsOfType("Neos.NodeTypes:Text")
 
 This defines a privilege target that intercepts editing of Text nodes on the specified node (and all of its child
 nodes).
@@ -266,6 +266,22 @@ Privilege Matchers
 
 The privileges need to be applied to certain nodes to be useful. For this, matchers are used in the policy, written
 using Eel. Depending on the privilege, various methods to address nodes are available.
+
+.. note::
+    **Global objects in matcher expressions**
+
+    Since the matchers are written using Eel, anything in the Eel context during evaluation is usable for matching.
+    This is done by using the ``context`` keyword, followed by dotted path to the value needed. E.g. to access the
+    personal workspace name of the currently logged in user, this can be used::
+
+      privilegeTargets:
+        'Neos\ContentRepository\Security\Authorization\Privilege\Node\ReadNodePrivilege':
+          'Neos.ContentRepository:Workspace':
+            matcher: 'isInWorkspace("context.userInformation.personalWorkspaceName“))’
+
+    These global objects available under ``context`` (by default the current ``SsecurityContext`` imported as
+    ``securityContext`` and the ``UserService`` imported as ``userInformation``) are registered in the *Settings.yaml*
+    file in section ``aop.globalObjects``. That way you can add your own as well.
 
 Position in the Node Tree
 -------------------------

@@ -8,9 +8,9 @@
       <trans-unit id="tabs.document" xml:space="preserve" approved="yes">
 				<source>Shortcut options</source>
 			<target xml:lang="ru">Настройки ярлыка</target></trans-unit>
-      <trans-unit id="groups.document" xml:space="preserve">
+      <trans-unit id="groups.document" xml:space="preserve" approved="yes">
 				<source>Shortcut options</source>
-			<target xml:lang="ru" state="translated">Настройки ярлыка</target></trans-unit>
+			<target xml:lang="ru">Настройки ярлыка</target></trans-unit>
       <trans-unit id="properties.targetMode" xml:space="preserve" approved="yes">
 				<source>Target mode</source>
 			<target xml:lang="ru">Целевой режим</target></trans-unit>

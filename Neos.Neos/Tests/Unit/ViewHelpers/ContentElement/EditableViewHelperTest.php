@@ -134,9 +134,9 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
     }
 
     /**
-     * Mocks access to the TypoScriptObject
+     * Mocks access to the FusionObject
      */
-    protected function injectTypoScriptObject()
+    protected function setUpViewMockAccess()
     {
         $this->viewHelperVariableContainer->expects($this->any())->method('getView')->will($this->returnValue($this->mockView));
     }
@@ -148,7 +148,7 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
     public function renderThrowsExceptionIfTheGivenPropertyIsNotAccessible()
     {
         $this->injectDependenciesIntoViewHelper($this->editableViewHelper);
-        $this->injectTypoScriptObject();
+        $this->setUpViewMockAccess();
         $this->editableViewHelper->render('someProperty');
     }
 
@@ -175,7 +175,7 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
         );
         $this->tagBuilder->expects($this->once())->method('setContent')->with('somePropertyValue');
         $this->injectDependenciesIntoViewHelper($this->editableViewHelper);
-        $this->injectTypoScriptObject();
+        $this->setUpViewMockAccess();
         $this->editableViewHelper->render('someProperty');
     }
 
@@ -191,7 +191,7 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
         $this->editableViewHelper->expects($this->atLeastOnce())->method('renderChildren')->will($this->returnValue('overriddenPropertyValue'));
         $this->tagBuilder->expects($this->once())->method('setContent')->with('overriddenPropertyValue');
         $this->injectDependenciesIntoViewHelper($this->editableViewHelper);
-        $this->injectTypoScriptObject();
+        $this->setUpViewMockAccess();
         $this->editableViewHelper->render('someProperty');
     }
 
@@ -206,7 +206,7 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
         $this->tagBuilder->expects($this->once())->method('render')->with()->willReturn('<div>somePropertyValue</div>');
         $this->mockContentElementEditableService->expects($this->once())->method('wrapContentProperty')->with($this->mockNode, 'someProperty', '<div>somePropertyValue</div>');
         $this->injectDependenciesIntoViewHelper($this->editableViewHelper);
-        $this->injectTypoScriptObject();
+        $this->setUpViewMockAccess();
         $this->editableViewHelper->render('someProperty');
     }
 

@@ -38,7 +38,7 @@
 			<target xml:lang="ru">Элемент</target><alt-trans><target xml:lang="ru">Узел</target></alt-trans></trans-unit>
       <trans-unit id="contentView" xml:space="preserve" approved="yes">
 				<source>Content View</source>
-			<target xml:lang="ru">Просмотр содержимого</target></trans-unit>
+			<target xml:lang="ru">Просмотр содержимого</target><alt-trans><target xml:lang="ru">Просмотр контента</target></alt-trans></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve" approved="yes">
 				<source>Create after</source>
 			<target xml:lang="ru">Создать после</target></trans-unit>
@@ -200,7 +200,7 @@
 			<target xml:lang="ru">Обозначение</target><alt-trans><target xml:lang="ru">Этикетка</target></alt-trans><alt-trans><target xml:lang="ru">Подпись</target></alt-trans><alt-trans><target xml:lang="ru">Метка</target></alt-trans></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve" approved="yes">
 				<source>Content Type</source>
-			<target xml:lang="ru">Тип содержимого</target><alt-trans><target xml:lang="ru">Тип узла</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Тип содержимого</target><alt-trans><target xml:lang="ru">Тип контента</target></alt-trans></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve" approved="yes">
 				<source>Path</source>
 			<target xml:lang="ru">Путь</target></trans-unit>
@@ -263,7 +263,7 @@
 			<target xml:lang="ru">Нельзя вырезать этот элемент</target><alt-trans><target xml:lang="ru">Нельзя вырезать этот узел</target></alt-trans></trans-unit>
       <trans-unit id="contentDimensions" xml:space="preserve" approved="yes">
 				<source>Content Dimensions</source>
-			<target xml:lang="ru">Измерения контента</target><alt-trans><target xml:lang="ru">Пространства содержимого</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Пространства содержимого</target><alt-trans><target xml:lang="ru">Пространства контента</target></alt-trans><alt-trans><target xml:lang="ru">Измерения содержимого</target></alt-trans><alt-trans><target xml:lang="ru">Измерения контента</target></alt-trans></trans-unit>
       <trans-unit id="site" xml:space="preserve" approved="yes">
 				<source>Site</source>
 			<target xml:lang="ru">Сайт</target></trans-unit>
@@ -480,16 +480,16 @@
 			<target xml:lang="ru">Значение не является допустимым UUID.</target></trans-unit>
       <trans-unit id="content.dimension.panel.toggle" xml:space="preserve" approved="yes">
 				<source>Toggle content dimensions selector</source>
-			<target xml:lang="ru">Переключить выбор измерений контента</target><alt-trans><target xml:lang="ru">Переключить выбор пространств содержимого</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Переключить выбор пространств содержимого</target><alt-trans><target xml:lang="ru">Переключить выбор измерений содержимого</target></alt-trans><alt-trans><target xml:lang="ru">Переключить выбор измерений контента</target></alt-trans></trans-unit>
       <trans-unit id="content.dimension.createDialog.header" xml:space="preserve" approved="yes">
 				<source>Start with an empty or pre-filled document?</source>
 			<target xml:lang="ru">Начинать с чистиго листа или с пред-заполненного документа?</target><alt-trans><target xml:lang="ru">Начинать с чистиго листа или открыть пред-заполненный документ?</target></alt-trans><alt-trans><target xml:lang="ru">Начинать с чистиго листа или открыть заполненный документ?</target></alt-trans></trans-unit>
       <trans-unit id="content.dimension.createDialog.nodeTypeDoesNotExistInDimension" xml:space="preserve" approved="yes">
 				<source>This {nodeTypeLabel} does not exist yet in {currentDimensionChoiceText}.</source>
-			<target xml:lang="ru">Этот {nodeTypeLabel} еще не существует в {currentDimensionChoiceText}.</target></trans-unit>
+			<target xml:lang="ru">Этот элемент ({nodeTypeLabel}) еще не существует в пространстве содержимого "{currentDimensionChoiceText}".</target><alt-trans><target xml:lang="ru">Этот {nodeTypeLabel} еще не существует в {currentDimensionChoiceText}.</target></alt-trans></trans-unit>
       <trans-unit id="content.dimension.createDialog.createEmptyOrCopy" xml:space="preserve" approved="yes">
 				<source>You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</source>
-			<target xml:lang="ru">Можно создать сейчас, начиная с пустого элемента {nodeTypeLabel} или путём копирования всего содержимого из открытого в данный момент элемента {nodeTypeLabel} в {currentDocumentDimensionChoiceText}.</target><alt-trans><target xml:lang="ru">Можно создать сейчас, начиная с пустого {nodeTypeLabel} элемента или путём копирования всего содержимого из открытого в данный момент {nodeTypeLabel} элемента в {currentDocumentDimensionChoiceText}.</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Можно создать сейчас, начиная с пустого элемента {nodeTypeLabel} или путём копирования всего содержимого из открытого в данный момент элемента {nodeTypeLabel} в {currentDocumentDimensionChoiceText}.</target><alt-trans><target xml:lang="ru">Можно создать сейчас, начиная с пустого элемента {nodeTypeLabel} или путём копирования всего контента из открытого в данный момент элемента {nodeTypeLabel} в {currentDocumentDimensionChoiceText}.</target></alt-trans></trans-unit>
       <trans-unit id="content.dimension.createDialog.existingAncestorDocuments" xml:space="preserve" approved="yes">
 				<source>Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</source>
 			<target xml:lang="ru">В выбранном варианте содержится {numberOfNodesMissingInRootline} не существующих родительских элементов, которые также будут созданы.</target></trans-unit>
@@ -501,7 +501,7 @@
 			<target xml:lang="ru">Создать и скопировать</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve" approved="yes">
 				<source>Content</source>
-			<target xml:lang="ru">Содержимое</target></trans-unit>
+			<target xml:lang="ru">Содержимое</target><alt-trans><target xml:lang="ru">Контент</target></alt-trans></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve" approved="yes">
 				<source>Toggle menu group</source>
 			<target xml:lang="ru">Скрыть/отобразить группу меню</target><alt-trans><target xml:lang="ru">Переключить группу меню</target></alt-trans><alt-trans><target xml:lang="ru">Скрыть/отобразить группы меню</target></alt-trans><alt-trans><target xml:lang="ru">Переключить группы меню</target></alt-trans></trans-unit>
@@ -534,7 +534,7 @@
 			<target xml:lang="ru">Это приведет к удалению элемента.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve" approved="yes">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="ru">Операцию можно отменить в меню управления Workspace.</target></trans-unit>
+			<target xml:lang="ru">Операцию можно отменить в меню управления рабочими областями.</target><alt-trans><target xml:lang="ru">Операцию можно отменить в меню управления рабочей областью.</target></alt-trans><alt-trans><target xml:lang="ru">Операцию можно отменить в меню управления Workspace.</target></alt-trans><alt-trans><target xml:lang="ru">Операцию можно отменить при управлении рабочей областью.</target></alt-trans></trans-unit>
       <trans-unit id="media" xml:space="preserve" approved="yes">
 				<source>Media</source>
 			<target xml:lang="ru">Медиатека</target></trans-unit>
@@ -571,10 +571,10 @@
 			<target xml:lang="ru">Правка напрямую</target><alt-trans><target xml:lang="ru">На месте</target></alt-trans></trans-unit>
       <trans-unit id="editPreviewModes.rawContent" xml:space="preserve" approved="yes">
 				<source>Raw Content</source>
-			<target xml:lang="ru">Исходное содержимое</target><alt-trans><target xml:lang="ru">Необработанное содержимое</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Необработанное содержимое</target><alt-trans><target xml:lang="ru">Исходный контент</target></alt-trans><alt-trans><target xml:lang="ru">Исходное содержимое</target></alt-trans></trans-unit>
       <trans-unit id="rawContentMode" xml:space="preserve" approved="yes">
 				<source>Raw Content Mode</source>
-			<target xml:lang="ru">Режим исходного содержимого</target><alt-trans><target xml:lang="ru">Режим необработанного содержимого</target></alt-trans></trans-unit>
+			<target xml:lang="ru">Режим необработанного содержимого</target><alt-trans><target xml:lang="ru">Режим необработанного контента</target></alt-trans><alt-trans><target xml:lang="ru">Режим исходного контента</target></alt-trans><alt-trans><target xml:lang="ru">Режим исходного содержимого</target></alt-trans></trans-unit>
       <trans-unit id="editPreviewModes.desktop" xml:space="preserve" approved="yes">
 				<source>Desktop</source>
 			<target xml:lang="ru">Настольный компьютер</target><alt-trans><target xml:lang="ru">Компьютер</target></alt-trans><alt-trans><target xml:lang="ru">Обычная версия</target></alt-trans></trans-unit>
@@ -646,7 +646,7 @@
       <!-- FlashMessages -->
       <trans-unit id="flashMessage.1222204027" xml:space="preserve" approved="yes">
 				<source>The entered username or password was wrong</source>
-			<target xml:lang="ru">Введенные имя пользователя или пароль неверные</target></trans-unit>
+			<target xml:lang="ru">Введенные имя пользователя или пароль неверные</target><alt-trans><target xml:lang="ru">Введенное имя пользователя или пароль был неправ</target></alt-trans></trans-unit>
       <!-- Miscellaneous -->
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve" approved="yes">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>

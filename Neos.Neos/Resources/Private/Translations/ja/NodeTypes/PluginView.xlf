@@ -4,16 +4,16 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Plugin View</source>
-			<target xml:lang="ja" state="needs-translation">Plugin View</target></trans-unit>
+			<target xml:lang="ja" state="translated">プラグイン表示</target></trans-unit>
       <trans-unit id="groups.pluginViews" xml:space="preserve">
 				<source>Plugin Views</source>
-			<target xml:lang="ja" state="needs-translation">Plugin Views</target></trans-unit>
+			<target xml:lang="ja" state="translated">プラグイン表示</target></trans-unit>
       <trans-unit id="properties.plugin" xml:space="preserve">
 				<source>Master View</source>
-			<target xml:lang="ja" state="needs-translation">Master View</target></trans-unit>
+			<target xml:lang="ja" state="translated">マスター表示</target></trans-unit>
       <trans-unit id="properties.view" xml:space="preserve">
 				<source>Plugin View</source>
-			<target xml:lang="ja" state="needs-translation">Plugin View</target></trans-unit>
+			<target xml:lang="ja" state="translated">プラグイン表示</target></trans-unit>
     </body>
   </file>
 </xliff>

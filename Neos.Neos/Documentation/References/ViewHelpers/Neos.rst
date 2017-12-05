@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 =========================
 
-This reference was automatically generated from code on 2016-06-07
+This reference was automatically generated from code on 2017-05-11
 
 
 .. _`Neos ViewHelper Reference: neos:backend.authenticationProviderLabel`:
@@ -379,7 +379,7 @@ Arguments
 
 * ``tag`` (string, *optional*): The name of the tag that should be wrapped around the property. By default this is a <div>
 
-* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*): The node of the content element. Optional, will be resolved from the TypoScript context by default.
+* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*): The node of the content element. Optional, will be resolved from the Fusion context by default.
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -424,7 +424,7 @@ templates. This is useful if you want to make properties of a custom document no
 Arguments
 *********
 
-* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*): The node of the content element. Optional, will be resolved from the TypoScript context by default.
+* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*): The node of the content element. Optional, will be resolved from the Fusion context by default.
 
 
 
@@ -471,34 +471,6 @@ Expected result::
 
 	string
 	(if myValue is a string)
-
-
-
-
-.. _`Neos ViewHelper Reference: neos:includeJavaScript`:
-
-neos:includeJavaScript
-----------------------
-
-A View Helper to include JavaScript files inside Resources/Public/JavaScript of the package.
-
-:Implementation: Neos\\Neos\\ViewHelpers\\IncludeJavaScriptViewHelper
-
-
-
-
-Arguments
-*********
-
-* ``include`` (string): Regular expression of files to include
-
-* ``exclude`` (string, *optional*): Regular expression of files to exclude
-
-* ``package`` (string, *optional*): The package key of the resources to include or current controller package if NULL
-
-* ``subpackage`` (string, *optional*): The subpackage key of the resources to include or current controller subpackage if NULL
-
-* ``directory`` (string, *optional*): The directory inside the current subpackage. By default, the "JavaScript" directory will be used.
 
 
 
@@ -590,7 +562,7 @@ neos:link.node
 A view helper for creating links with URIs pointing to nodes.
 
 The target node can be provided as string or as a Node object; if not specified
-at all, the generated URI will refer to the current document node inside the TypoScript context.
+at all, the generated URI will refer to the current document node inside the Fusion context.
 
 When specifying the ``node`` argument as string, the following conventions apply:
 
@@ -623,7 +595,7 @@ Arguments
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
 
-* ``node`` (mixed, *optional*): A node object or a string node path or NULL to resolve the current document node
+* ``node`` (mixed, *optional*): A node object, a string node path (absolute or relative), a string node://-uri or NULL
 
 * ``format`` (string, *optional*): Format to use for the URL, for example "html" or "json
 
@@ -639,7 +611,7 @@ Arguments
 
 * ``baseNodeName`` (string, *optional*): The variable the node will be assigned to for the rendered child content
 
-* ``nodeVariableName`` (string, *optional*): The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
+* ``nodeVariableName`` (string, *optional*): The name of the base node inside the Fusion context to use for the ContentContext or resolving relative paths
 
 * ``resolveShortcuts`` (boolean, *optional*): INTERNAL Parameter - if FALSE, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
 
@@ -708,6 +680,17 @@ Expected result::
 	(depending on current workspace, current node, format etc.)
 
 
+**Target node given as node://-uri**::
+
+	<neos:link.node node="node://30e893c1-caef-0ca5-b53d-e5699bb8e506">Corporate imprint</neos:link.node>
+
+
+Expected result::
+
+	<a href="contact/imprint.html">Corporate imprint</a>
+	(depending on current workspace, current node, format etc.)
+
+
 **Target node given as relative node path**::
 
 	<neos:link.node node="~/about/us">About us</neos:link.node>
@@ -730,7 +713,7 @@ Expected result::
 	(depending on current workspace, current node, format etc.)
 
 
-**Dynamic tag content involving the linked node's properties**::
+**Dynamic tag content involving the linked node&#039;s properties**::
 
 	<neos:link.node node="about-us">see our <span>{linkedNode.label}</span> page</neos:link.node>
 
@@ -933,6 +916,8 @@ neos:rendering.live
 -------------------
 
 ViewHelper to find out if Neos is rendering the live website.
+Make sure you either give a node from the current context to
+the ViewHelper or have "node" set as template variable at least.
 
 :Implementation: Neos\\Neos\\ViewHelpers\\Rendering\\LiveViewHelper
 
@@ -1068,7 +1053,7 @@ neos:uri.node
 A view helper for creating URIs pointing to nodes.
 
 The target node can be provided as string or as a Node object; if not specified
-at all, the generated URI will refer to the current document node inside the TypoScript context.
+at all, the generated URI will refer to the current document node inside the Fusion context.
 
 When specifying the ``node`` argument as string, the following conventions apply:
 
@@ -1097,7 +1082,7 @@ Example: given that the current node is ``/sites/acmecom/products/``,
 Arguments
 *********
 
-* ``node`` (mixed, *optional*): A node object or a string node path (absolute or relative) or NULL to resolve the current document node
+* ``node`` (mixed, *optional*): A node object, a string node path (absolute or relative), a string node://-uri or NULL
 
 * ``format`` (string, *optional*): Format to use for the URL, for example "html" or "json
 
@@ -1111,7 +1096,7 @@ Arguments
 
 * ``argumentsToBeExcludedFromQueryString`` (array, *optional*): arguments to be removed from the URI. Only active if $addQueryString = TRUE
 
-* ``baseNodeName`` (string, *optional*): The name of the base node inside the TypoScript context to use for the ContentContext or resolving relative paths
+* ``baseNodeName`` (string, *optional*): The name of the base node inside the Fusion context to use for the ContentContext or resolving relative paths
 
 * ``resolveShortcuts`` (boolean, *optional*): INTERNAL Parameter - if FALSE, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
 
@@ -1157,6 +1142,17 @@ Expected result::
 **Target node given as relative node path**::
 
 	<neos:uri.node node="~/about/us" />
+
+
+Expected result::
+
+	about/us.html
+	(depending on current workspace, current node, format etc.)
+
+
+**Target node given as node://-uri**::
+
+	<neos:uri.node node="node://30e893c1-caef-0ca5-b53d-e5699bb8e506" />
 
 
 Expected result::

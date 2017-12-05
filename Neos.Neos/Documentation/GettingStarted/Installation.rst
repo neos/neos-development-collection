@@ -18,10 +18,10 @@ The most important requirements are:
 * A Webserver (Apache and Nginx are preferred but others work as well)
 * A Database (MySQL and MariaDB are preferred but any `Database supported by Doctrine DBAL
   <http://www.doctrine-project.org/projects/dbal.html>`_ should work).
-* PHP >= 5.5.0 (make sure the PHP CLI has the same version)
+* PHP >= 7.0.0 (make sure the PHP CLI has the same version)
 
   * PHP modules mbstring, tokenizer and pdo_mysql
-  * PHP functions system(), shell_exec(), escapeshellcmd() and escapeshellarg()
+  * PHP functions exec(), shell_exec(), escapeshellcmd() and escapeshellarg()
   * It is recommended to install one of the PHP modules imagick or gmagick
 
 Fundamental Installation
@@ -147,7 +147,7 @@ The Neos Setup Tool
 
 #. If all went well you'll get a confirmation the setup is completed, and you can enter the
    frontend or backend of your Neos website.
-   
+
    .. warning::
       If you install the Neos demo site and it is publicly accessible, make sure the "Try me" page in
       the page tree is not publicly accessible because it has a form allowing you to create backend

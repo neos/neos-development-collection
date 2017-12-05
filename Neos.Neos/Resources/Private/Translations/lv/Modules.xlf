@@ -896,6 +896,9 @@
       <trans-unit id="media.cannotUploadFile" xml:space="preserve" approved="yes">
 				<source>Cannot upload the file</source>
 			<target xml:lang="lv">Nevar augšupielādēt failu</target></trans-unit>
+      <trans-unit id="media.noFileSelected" xml:space="preserve">
+				<source>No file selected</source>
+			<target xml:lang="lv" state="translated">Nav izvēlēts fails</target></trans-unit>
       <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve" approved="yes">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target xml:lang="lv">Faila lielums {0} pārsniedz pieļaujamo robežu {1}</target></trans-unit>
@@ -936,31 +939,31 @@
 			<target xml:lang="lv">Atsauces uz "{asset}"</target></trans-unit>
       <trans-unit id="media.replaceAsset.replaceFilename" xml:space="preserve">
 				<source>Replace "{filename}"</source>
-			<target xml:lang="lv" state="needs-translation">Replace "{filename}"</target></trans-unit>
+			<target xml:lang="lv" state="translated">Aizstāt "{filename}"</target></trans-unit>
       <trans-unit id="media.replaceAsset.description" xml:space="preserve">
         <source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
-      <target xml:lang="lv" state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
+      <target xml:lang="lv" state="translated">Jūs varat nomainīt šo aktīvu, augšupielādējot jaunu failu. Pēc tam jaunais aktīvs tiks izmantots visās vietās, kur tas bija lietots jūsu tīmekļa vietnē.</target></trans-unit>
       <trans-unit id="media.replaceAsset.note" xml:space="preserve">
         <source>Note</source>
-      <target xml:lang="lv" state="needs-translation">Note</target></trans-unit>
+      <target xml:lang="lv" state="translated">Piezīme</target></trans-unit>
       <trans-unit id="media.replaceAsset.noteText" xml:space="preserve">
         <source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
-      <target xml:lang="lv" state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
+      <target xml:lang="lv" state="translated">Šī darbība aizstās aktīvu visās publicētajās vai nepublicētajās darbvietās, ieskaitot tiešsaistes mājas lapā.</target></trans-unit>
       <trans-unit id="media.replaceAsset.chooseNewFile" xml:space="preserve">
         <source>Choose a new file</source>
-      <target xml:lang="lv" state="needs-translation">Choose a new file</target></trans-unit>
+      <target xml:lang="lv" state="translated">Izvēlēties jaunu failu</target></trans-unit>
       <trans-unit id="media.replace.usageCount" xml:space="preserve">
         <source>Currently the asset is used {usageCount} times.</source>
-      <target xml:lang="lv" state="needs-translation">Currently the asset is used {usageCount} times.</target></trans-unit>
+      <target xml:lang="lv" state="translated">Šobrīd aktīvs ir izmantots {usageCount} reizes.</target></trans-unit>
       <trans-unit id="media.replace.allUsages" xml:space="preserve">
         <source>Show all usages</source>
-      <target xml:lang="lv" state="needs-translation">Show all usages</target></trans-unit>
+      <target xml:lang="lv" state="translated">Rādīt visus lietojumus</target></trans-unit>
       <trans-unit id="media.replace.notUsed" xml:space="preserve">
         <source>Currently the asset is not in used anywhere on the website.</source>
-      <target xml:lang="lv" state="needs-translation">Currently the asset is not in used anywhere on the website.</target></trans-unit>
+      <target xml:lang="lv" state="translated">Šis aktīvs nav izmantots mājas lapā.</target></trans-unit>
       <trans-unit id="media.replace.previewFile" xml:space="preserve">
         <source>Preview current file</source>
-      <target xml:lang="lv" state="needs-translation">Preview current file</target></trans-unit>
+      <target xml:lang="lv" state="translated">Pašreizējā faila priekšskats</target></trans-unit>
     </body>
   </file>
 </xliff>

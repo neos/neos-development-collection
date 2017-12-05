@@ -58,6 +58,7 @@ abstract class AbstractNodeTest extends FunctionalTestCase
     {
         parent::setUp();
         $this->markSkippedIfNodeTypesPackageIsNotInstalled();
+
         $this->contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
         $contentContext = $this->contextFactory->create(array('workspaceName' => 'live'));
         $siteImportService = $this->objectManager->get(SiteImportService::class);
@@ -95,8 +96,8 @@ abstract class AbstractNodeTest extends FunctionalTestCase
     protected function markSkippedIfNodeTypesPackageIsNotInstalled()
     {
         $packageManager = $this->objectManager->get(PackageManagerInterface::class);
-        if (!$packageManager->isPackageActive('Neos.Neos.NodeTypes')) {
-            $this->markTestSkipped('This test needs the Neos.Neos.NodeTypes package.');
+        if (!$packageManager->isPackageActive('Neos.NodeTypes')) {
+            $this->markTestSkipped('This test needs the Neos.NodeTypes package.');
         }
     }
 }

@@ -135,6 +135,23 @@ abstract class AbstractNodeData
     }
 
     /**
+     * Make sure the properties are always an array.
+     *
+     * If the JSON in the DB is corrupted, decoding it can fail, leading to
+     * a null value. This may lead to errors later, when the value is used with
+     * functions that expect an array.
+     *
+     * @return void
+     * @ORM\PostLoad
+     */
+    public function ensurePropertiesIsNeverNull()
+    {
+        if (!is_array($this->properties)) {
+            $this->properties = [];
+        }
+    }
+
+    /**
      * Sets the specified property.
      * If the node has a content object attached, the property will be set there
      * if it is settable.
@@ -173,7 +190,7 @@ abstract class AbstractNodeData
 
             $this->persistRelatedEntities($value);
 
-            if (isset($this->properties[$propertyName]) && $this->properties[$propertyName] === $value) {
+            if (array_key_exists($propertyName, $this->properties) && $this->properties[$propertyName] === $value) {
                 return;
             }
 
@@ -218,7 +235,7 @@ abstract class AbstractNodeData
         if (is_object($this->contentObjectProxy)) {
             return ObjectAccess::isPropertyGettable($this->contentObjectProxy->getObject(), $propertyName);
         }
-        return isset($this->properties[$propertyName]);
+        return array_key_exists($propertyName, $this->properties);
     }
 
     /**
@@ -286,7 +303,7 @@ abstract class AbstractNodeData
         }
 
         $properties = array();
-        foreach (array_keys($this->properties) as $propertyName) {
+        foreach ($this->properties as $propertyName => $propertyValue) {
             $properties[$propertyName] = $this->getProperty($propertyName);
         }
         return $properties;

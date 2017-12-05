@@ -164,6 +164,26 @@ In the ``@cache`` meta property the following subproperties are allowed:
 	}
 
 
+When using ``dynamic`` as the cache mode, the cache can be *disabled* by setting the ``entryDiscriminator`` to ``false``.
+This can be used to make the cache behavior dependable on some context, i.e. the current request method::
+
+	prototype(TYPO3.Neos.NodeTypes:Form) {
+		@cache {
+			mode = 'dynamic'
+			entryIdentifier {
+			  node = ${node}
+			}
+			entryDiscriminator = ${request.httpRequest.methodSafe ? 'static' : false}
+			context {
+				1 = 'node'
+				2 = 'documentNode'
+			}
+		}
+	}
+
+In this example the Form will be ``cached`` unless the request method is unsafe (for example ``POST``) in which case it is
+switched to ``uncached``.
+
 .. _Cache Entry Tags:
 
 Cache Entry Tags
@@ -182,7 +202,7 @@ The following patterns of tags will be flushed by Neos:
 ``NodeType_[My.Package:NodeTypeName]``
   Flushes cache entries if any node with the given node type changes. ``[My.Package:NodeTypeName]`` needs to be
   replaced by any node type name. Inheritance will be taken into account, so for a changed node of type
-  ``Neos.Neos.NodeTypes:Page`` the tags ``NodeType_Neos.Neos.NodeTypes:Page`` and ``NodeType_Neos.Neos:Document``
+  ``Neos.NodeTypes:Page`` the tags ``NodeType_Neos.NodeTypes:Page`` and ``NodeType_Neos.Neos:Document``
   (and some more) will be flushed.
 
 ``Node_[Identifier]``
@@ -237,7 +257,7 @@ The following list of Fusion prototypes is cached by default:
 
 The following list of Fusion prototypes is uncached by default:
 
-* Neos.Neos.NodeTypes:Form
+* Neos.NodeTypes:Form
 * Neos.Neos:Plugin
 
 .. note::

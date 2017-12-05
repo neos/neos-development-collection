@@ -278,7 +278,7 @@ Methods should be documented the following way, with a blank line between method
 	}
 	...
 
-Contrary to what is defined in the TYPO3 Flow PHP Coding Guidelines, methods which are public
+Contrary to what is defined in the Neos Flow PHP Coding Guidelines, methods which are public
 **automatically belong to the public API**, without an ``@api`` annotation. Contrary,
 methods which do **not belong to the public API** need to begin with an underscore and
 have the ``@private`` annotation.
@@ -371,7 +371,7 @@ Code Style
 	}
 
 - Whitespace around control structures like ``if``, ``else``, ... should be inserted like
-  in the TYPO3 Flow CGLs::
+  in the Neos Flow CGLs::
 
 	if (myExpression) {
 		// if part

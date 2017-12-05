@@ -23,7 +23,7 @@ use Neos\Media\Domain\Model\ThumbnailConfiguration;
  * = Examples =
  *
  * <code title="Rendering an image as-is">
- * <typo3.media:image image="{imageObject}" alt="a sample image without scaling" />
+ * <neos.media:image image="{imageObject}" alt="a sample image without scaling" />
  * </code>
  * <output>
  * (depending on the image, no scaling applied)
@@ -32,7 +32,7 @@ use Neos\Media\Domain\Model\ThumbnailConfiguration;
  *
  *
  * <code title="Rendering an image with scaling at a given width only">
- * <typo3.media:image image="{imageObject}" maximumWidth="80" alt="sample" />
+ * <neos.media:image image="{imageObject}" maximumWidth="80" alt="sample" />
  * </code>
  * <output>
  * (depending on the image; scaled down to a maximum width of 80 pixels, keeping the aspect ratio)
@@ -41,7 +41,7 @@ use Neos\Media\Domain\Model\ThumbnailConfiguration;
  *
  *
  * <code title="Rendering an image with scaling at given width and height, keeping aspect ratio">
- * <typo3.media:image image="{imageObject}" maximumWidth="80" maximumHeight="80" alt="sample" />
+ * <neos.media:image image="{imageObject}" maximumWidth="80" maximumHeight="80" alt="sample" />
  * </code>
  * <output>
  * (depending on the image; scaled down to a maximum width and height of 80 pixels, keeping the aspect ratio)
@@ -50,7 +50,7 @@ use Neos\Media\Domain\Model\ThumbnailConfiguration;
  *
  *
  * <code title="Rendering an image with crop-scaling at given width and height">
- * <typo3.media:image image="{imageObject}" maximumWidth="80" maximumHeight="80" allowCropping="true" alt="sample" />
+ * <neos.media:image image="{imageObject}" maximumWidth="80" maximumHeight="80" allowCropping="true" alt="sample" />
  * </code>
  * <output>
  * (depending on the image; scaled down to a width and height of 80 pixels, possibly changing aspect ratio)
@@ -58,7 +58,7 @@ use Neos\Media\Domain\Model\ThumbnailConfiguration;
  * </output>
  *
  * <code title="Rendering an image with allowed up-scaling at given width and height">
- * <typo3.media:image image="{imageObject}" maximumWidth="5000" allowUpScaling="true" alt="sample" />
+ * <neos.media:image image="{imageObject}" maximumWidth="5000" allowUpScaling="true" alt="sample" />
  * </code>
  * <output>
  * (depending on the image; scaled up or down to a width 5000 pixels, keeping aspect ratio)
@@ -137,6 +137,12 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
                 'width' => $thumbnailData['width'],
                 'height' => $thumbnailData['height']
             ));
+        }
+
+        // alt argument must be set because it is required (see $this->initializeArguments())
+        if ($this->arguments['alt'] === '') {
+            // has to be added explicitly because empty strings won't be added as attributes in general (see parent::initialize())
+            $this->tag->addAttribute('alt', '');
         }
 
         return $this->tag->render();

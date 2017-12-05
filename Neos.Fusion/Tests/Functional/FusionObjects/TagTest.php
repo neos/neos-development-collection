@@ -20,7 +20,7 @@ class TagTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function tagWithAttributesFromNonTsObjectWorks()
+    public function tagWithAttributesFromNonFusionObjectWorks()
     {
         $view = $this->buildView();
         $view->setFusionPath('tag/plainAttributes');
@@ -30,7 +30,7 @@ class TagTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function tagWithAttributesFromTsObjectWorks()
+    public function tagWithAttributesFromFusionObjectWorks()
     {
         $view = $this->buildView();
         $view->setFusionPath('tag/objectAttributes');
@@ -50,7 +50,7 @@ class TagTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function tagWithContentFromNonTsObjectWorks()
+    public function tagWithContentFromNonFusionObjectWorks()
     {
         $view = $this->buildView();
         $view->setFusionPath('tag/plainContent');
@@ -60,7 +60,7 @@ class TagTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function tagWithContentFromTsObjectWorks()
+    public function tagWithContentFromFusionObjectWorks()
     {
         $view = $this->buildView();
         $view->setFusionPath('tag/objectContent');

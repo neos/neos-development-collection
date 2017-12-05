@@ -16,7 +16,7 @@
 			<target xml:lang="zh-CN" state="translated">选择表单标识符</target></trans-unit>
       <trans-unit id="content.noValidFormIdentifier" xml:space="preserve">
 				<source>Please select a valid Form identifier in the inspector.</source>
-			<target xml:lang="zh-CN" state="needs-translation">Please select a valid Form identifier in the inspector.</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">请在检查器中选择有效的表单标识符。</target></trans-unit>
     </body>
   </file>
 </xliff>

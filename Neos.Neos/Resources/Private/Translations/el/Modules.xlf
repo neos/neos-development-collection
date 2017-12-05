@@ -4,20 +4,20 @@
     <body>
       <trans-unit id="clickToEdit" xml:space="preserve">
 				<source>Click to edit</source>
-			<target xml:lang="el" state="needs-translation">Click to edit</target></trans-unit>
+			<target xml:lang="el" state="translated">Κάντε κλικ για επεξεργασία</target></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
 			<target xml:lang="el" state="needs-translation">Click to delete</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target xml:lang="el" state="needs-translation">Cancel</target></trans-unit>
+			<target xml:lang="el" state="translated">Άκυρο</target></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
-			<target xml:lang="el" state="needs-translation">Back</target></trans-unit>
+			<target xml:lang="el" state="translated">Επιστροφή</target></trans-unit>
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve">
 				<source>Management</source>
-			<target xml:lang="el" state="needs-translation">Management</target></trans-unit>
+			<target xml:lang="el" state="translated">Διαχείριση</target></trans-unit>
       <trans-unit id="management.description" xml:space="preserve">
 				<source>Contains multiple modules related to management of content</source>
 			<target xml:lang="el" state="needs-translation">Contains multiple modules related to management of content</target></trans-unit>
@@ -26,7 +26,7 @@
 			<target xml:lang="el" state="needs-translation">Workspaces</target></trans-unit>
       <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve">
 				<source>Details for "{0}"</source>
-			<target xml:lang="el" state="needs-translation">Details for "{0}"</target></trans-unit>
+			<target xml:lang="el" state="translated">Λεπτομέρειες για "{0}"</target></trans-unit>
       <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve">
 				<source>Create new workspace</source>
 			<target xml:lang="el" state="needs-translation">Create new workspace</target></trans-unit>
@@ -59,7 +59,7 @@
 			<target xml:lang="el" state="needs-translation">Read-only workspace</target></trans-unit>
       <trans-unit id="workspaces.workspace.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="el" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="el" state="translated">Τίτλος</target></trans-unit>
       <trans-unit id="workspaces.workspace.description" xml:space="preserve">
 				<source>Description</source>
 			<target xml:lang="el" state="needs-translation">Description</target></trans-unit>
@@ -68,25 +68,25 @@
 			<target xml:lang="el" state="needs-translation">Base workspace</target></trans-unit>
       <trans-unit id="workspaces.workspace.owner" xml:space="preserve">
 				<source>Owner</source>
-			<target xml:lang="el" state="needs-translation">Owner</target></trans-unit>
+			<target xml:lang="el" state="translated">Ιδιοκτήτης</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility" xml:space="preserve">
 				<source>Visibility</source>
-			<target xml:lang="el" state="needs-translation">Visibility</target></trans-unit>
+			<target xml:lang="el" state="translated">Ορατότητα</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private" xml:space="preserve">
 				<source>Private</source>
-			<target xml:lang="el" state="needs-translation">Private</target></trans-unit>
+			<target xml:lang="el" state="translated">Ιδιωτικό</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
 				<source>Only reviewers and administrators can access and modify this workspace</source>
 			<target xml:lang="el" state="needs-translation">Only reviewers and administrators can access and modify this workspace</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve">
 				<source>Internal</source>
-			<target xml:lang="el" state="needs-translation">Internal</target></trans-unit>
+			<target xml:lang="el" state="translated">Εσωτερικό</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve">
 				<source>Any logged in editor can see and modify this workspace.</source>
 			<target xml:lang="el" state="needs-translation">Any logged in editor can see and modify this workspace.</target></trans-unit>
       <trans-unit id="workspaces.workspace.changes" xml:space="preserve">
 				<source>Changes</source>
-			<target xml:lang="el" state="needs-translation">Changes</target></trans-unit>
+			<target xml:lang="el" state="translated">Αλλαγές</target></trans-unit>
       <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve">
 				<source>Open page in "{0}" workspace</source>
 			<target xml:lang="el" state="needs-translation">Open page in "{0}" workspace</target></trans-unit>
@@ -122,7 +122,7 @@
 			<target xml:lang="el" state="needs-translation">additions: {new}, changes: {changed}, removals: {removed}</target></trans-unit>
       <trans-unit id="workspaces.review" xml:space="preserve">
 				<source>Review</source>
-			<target xml:lang="el" state="needs-translation">Review</target></trans-unit>
+			<target xml:lang="el" state="translated">Επισκόπηση</target></trans-unit>
       <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve">
 				<source>Discard selected changes</source>
 			<target xml:lang="el" state="needs-translation">Discard selected changes</target></trans-unit>
@@ -140,22 +140,22 @@
 			<target xml:lang="el" state="needs-translation">Publish all changes to {0}</target></trans-unit>
       <trans-unit id="changedContentCaption" xml:space="preserve">
 				<source>Changed Content</source>
-			<target xml:lang="el" state="needs-translation">Changed Content</target></trans-unit>
+			<target xml:lang="el" state="translated">Τροποποιημένο Περιεχόμενο</target></trans-unit>
       <trans-unit id="workspaces.legend.deleted" xml:space="preserve">
 				<source>deleted</source>
-			<target xml:lang="el" state="needs-translation">deleted</target></trans-unit>
+			<target xml:lang="el" state="translated">διαγράφηκε</target><alt-trans><target xml:lang="el">διαγράφηκαν</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.legend.created" xml:space="preserve">
 				<source>created</source>
-			<target xml:lang="el" state="needs-translation">created</target></trans-unit>
+			<target xml:lang="el" state="translated">δημιουργήθηκε</target><alt-trans><target xml:lang="el">δημιουργήθηκαν</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.legend.moved" xml:space="preserve">
 				<source>moved</source>
-			<target xml:lang="el" state="needs-translation">moved</target></trans-unit>
+			<target xml:lang="el" state="translated">μετακινήθηκε</target><alt-trans><target xml:lang="el">μετακινήθηκαν</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.legend.hidden" xml:space="preserve">
 				<source>hidden</source>
-			<target xml:lang="el" state="needs-translation">hidden</target></trans-unit>
+			<target xml:lang="el" state="translated">κρυφό</target></trans-unit>
       <trans-unit id="workspaces.legend.edited" xml:space="preserve">
 				<source>edited</source>
-			<target xml:lang="el" state="needs-translation">edited</target></trans-unit>
+			<target xml:lang="el" state="translated">διορθώθηκε</target></trans-unit>
       <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve">
 				<source>There are no unpublished changes in this workspace.</source>
 			<target xml:lang="el" state="needs-translation">There are no unpublished changes in this workspace.</target></trans-unit>
@@ -304,7 +304,7 @@
 			<target xml:lang="el" state="needs-translation">New</target></trans-unit>
       <trans-unit id="users.action.edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="el" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="el" state="translated">Επεξεργασία</target></trans-unit>
       <trans-unit id="users.action.editAccount" xml:space="preserve">
 				<source>Edit account</source>
 			<target xml:lang="el" state="needs-translation">Edit account</target></trans-unit>
@@ -328,7 +328,7 @@
 			<target xml:lang="el" state="needs-translation">Username</target></trans-unit>
       <trans-unit id="users.new.userData.password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="el" state="needs-translation">Password</target></trans-unit>
+			<target xml:lang="el" state="translated">Κωδικός</target></trans-unit>
       <trans-unit id="users.new.userData.repeatPassword" xml:space="preserve">
 				<source>Repeat password</source>
 			<target xml:lang="el" state="needs-translation">Repeat password</target></trans-unit>
@@ -361,7 +361,7 @@
 			<target xml:lang="el" state="needs-translation">Personal Data</target></trans-unit>
       <trans-unit id="users.show.personalData.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="el" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="el" state="translated">Τίτλος</target></trans-unit>
       <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
 			<target xml:lang="el" state="translated">Όνομα</target></trans-unit>
@@ -572,10 +572,10 @@
 			<target xml:lang="el" state="needs-translation">This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</target></trans-unit>
       <trans-unit id="userSettings.action.index" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="el" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="el" state="translated">Επεξεργασία</target></trans-unit>
       <trans-unit id="userSettings.action.edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="el" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="el" state="translated">Επεξεργασία</target></trans-unit>
       <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve">
 				<source>New electronic address</source>
 			<target xml:lang="el" state="needs-translation">New electronic address</target></trans-unit>
@@ -639,7 +639,7 @@
 			<target xml:lang="el" state="needs-translation">Name</target></trans-unit>
       <trans-unit id="media.field.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="el" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="el" state="translated">Τίτλος</target></trans-unit>
       <trans-unit id="media.field.label" xml:space="preserve">
 				<source>Label</source>
 			<target xml:lang="el" state="needs-translation">Label</target></trans-unit>
@@ -711,7 +711,7 @@
 			<target xml:lang="el" state="needs-translation">This operation cannot be undone.</target></trans-unit>
       <trans-unit id="media.cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target xml:lang="el" state="needs-translation">Cancel</target></trans-unit>
+			<target xml:lang="el" state="translated">Άκυρο</target></trans-unit>
       <trans-unit id="media.replaceAssetResource" xml:space="preserve">
 				<source>Replace</source>
 			<target xml:lang="el" state="needs-translation">Replace</target></trans-unit>
@@ -858,7 +858,7 @@
 			<target xml:lang="el" state="needs-translation">Basics</target></trans-unit>
       <trans-unit id="media.delete" xml:space="preserve">
 				<source>Delete</source>
-			<target xml:lang="el" state="needs-translation">Delete</target></trans-unit>
+			<target xml:lang="el" state="translated">Διαγραφή</target></trans-unit>
       <trans-unit id="media.clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
 			<target xml:lang="el" state="needs-translation">Click to delete</target></trans-unit>
@@ -888,10 +888,13 @@
 			<target xml:lang="el" state="needs-translation">Identifier</target></trans-unit>
       <trans-unit id="media.preview" xml:space="preserve">
 				<source>Preview</source>
-			<target xml:lang="el" state="needs-translation">Preview</target></trans-unit>
+			<target xml:lang="el" state="translated">Προεπισκόπηση</target></trans-unit>
       <trans-unit id="media.cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>
 			<target xml:lang="el" state="needs-translation">Cannot upload the file</target></trans-unit>
+      <trans-unit id="media.noFileSelected" xml:space="preserve">
+				<source>No file selected</source>
+			<target xml:lang="el" state="needs-translation">No file selected</target></trans-unit>
       <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target xml:lang="el" state="needs-translation">The file size of {0} exceeds the allowed limit of {1}</target></trans-unit>
@@ -916,11 +919,11 @@
       <group id="media.relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="media.relatedNodes[0]">
           <source>{0} usages</source>
-          <target xml:lang="el" state="needs-translation">{0} usages</target>
+          <target xml:lang="el" state="translated">{0} χρήση</target>
         </trans-unit>
         <trans-unit id="media.relatedNodes[1]">
           <source>{0} usages</source>
-          <target xml:lang="el" state="needs-translation">{0} usages</target>
+          <target xml:lang="el" state="translated">{0} χρήσεις</target>
         </trans-unit>
       </group>
       <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve">

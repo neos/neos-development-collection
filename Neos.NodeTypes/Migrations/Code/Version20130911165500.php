@@ -2,7 +2,7 @@
 namespace Neos\Flow\Core\Migrations;
 
 /*
- * This file is part of the TYPO3.Neos.NodeTypes package.
+ * This file is part of the Neos.NodeTypes package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -45,18 +45,47 @@ class Version20130911165500 extends AbstractMigration
             function (&$configuration) {
                 foreach ($configuration as &$nodeType) {
                     if (isset($nodeType['superTypes'])) {
-                        foreach ($nodeType['superTypes'] as &$superType) {
-                            $superType = str_replace('TYPO3.Neos:Page', 'TYPO3.Neos.NodeTypes:Page', $superType);
-                        }
+                        $this->replaceArrayKeysOrValues($nodeType['superTypes'], 'TYPO3.Neos:Page', 'TYPO3.Neos.NodeTypes:Page');
                     }
                     if (isset($nodeType['childNodes'])) {
-                        foreach ($nodeType['childNodes'] as &$type) {
-                            $type = str_replace('TYPO3.Neos:Page', 'TYPO3.Neos.NodeTypes:Page', $type);
-                        }
+                        $this->replaceArrayKeysOrValues($nodeType['childNodes'], 'TYPO3.Neos:Page', 'TYPO3.Neos.NodeTypes:Page');
                     }
                 }
             },
             true
         );
+    }
+
+    /**
+     * Iterates through the given $array and replaces $oldValue by $newValue
+     * If the array is associative it will replace the keys, otherwise the values
+     *
+     * Example:
+     * ['some', '<oldValue>'] => ['some', '<newValue>']
+     * ['some' => 'foo', '<oldValue>' => 'bar'] => ['some' => 'foo', '<newValue>' => 'bar']
+     *
+     * @param array $array
+     * @param string $oldValue
+     * @param string $newValue
+     * @return void
+     */
+    private function replaceArrayKeysOrValues(array &$array, $oldValue, $newValue)
+    {
+        if ($array === []) {
+            return;
+        }
+        $isAssoc = array_keys($array) !== range(0, count($array) - 1);
+
+        if ($isAssoc) {
+            $keys = array_keys($array);
+            $index = array_search($oldValue, $keys, true);
+            if ($index === false) {
+                return;
+            }
+            $keys[$index] = $newValue;
+            $array = array_combine($keys, $array);
+        } else {
+            $array = str_replace($oldValue, $newValue, $array);
+        }
     }
 }

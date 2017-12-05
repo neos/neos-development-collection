@@ -24,19 +24,19 @@ use Neos\Fusion\FusionObjects\Helpers\FusionAwareViewInterface;
 abstract class AbstractRenderingStateViewHelper extends AbstractViewHelper
 {
     /**
-     * Get a node from the current TypoScript context if available.
+     * Get a node from the current Fusion context if available.
      *
      * @return NodeInterface|NULL
      *
-     * @TODO Refactor to a TypoScript Context trait (in Neos.Fusion) that can be used inside ViewHelpers to get variables from the TypoScript context.
+     * @TODO Refactor to a Fusion Context trait (in Neos.Fusion) that can be used inside ViewHelpers to get variables from the Fusion context.
      */
     protected function getContextNode()
     {
         $baseNode = null;
         $view = $this->viewHelperVariableContainer->getView();
         if ($view instanceof FusionAwareViewInterface) {
-            $typoScriptObject = $view->getFusionObject();
-            $currentContext = $typoScriptObject->getRuntime()->getCurrentContext();
+            $fusionObject = $view->getFusionObject();
+            $currentContext = $fusionObject->getRuntime()->getCurrentContext();
             if (isset($currentContext['node'])) {
                 $baseNode = $currentContext['node'];
             }

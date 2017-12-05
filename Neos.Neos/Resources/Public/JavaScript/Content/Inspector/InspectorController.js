@@ -389,7 +389,10 @@ define(
 					for (var listenerName in listenersInProperty) {
 						if (listenersInProperty.hasOwnProperty(listenerName)) {
 							var handlerConfiguration = listenersInProperty[listenerName];
-							this._applyChangeHandler(handlerConfiguration, this.get('registeredEditors.' + observerProperty + '.currentView'), listenerName, propertyName, value);
+							var observerEditor = this.get('registeredEditors.' + observerProperty + '.currentView');
+							if (observerEditor !== undefined) {
+								this._applyChangeHandler(handlerConfiguration, observerEditor, listenerName, propertyName, value);
+							}
 						}
 					}
 				}

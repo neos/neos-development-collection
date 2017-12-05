@@ -49,13 +49,13 @@
 			<target xml:lang="fr">Sélection</target></trans-unit>
       <trans-unit id="properties.startingPoint" xml:space="preserve">
 				<source>Starting Point</source>
-			<target xml:lang="fr" state="needs-translation">Starting Point</target></trans-unit>
+			<target xml:lang="fr" state="translated">Point de départ</target></trans-unit>
       <trans-unit id="properties.maximumLevels" xml:space="preserve" approved="yes">
 				<source>Maximum Levels</source>
 			<target xml:lang="fr">Niveaux maximum</target></trans-unit>
       <trans-unit id="content.emptyMenu" xml:space="preserve">
 				<source>Empty Menu</source>
-			<target xml:lang="fr" state="needs-translation">Empty Menu</target></trans-unit>
+			<target xml:lang="fr" state="translated">Menu vide</target></trans-unit>
     </body>
   </file>
 </xliff>

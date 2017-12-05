@@ -46,7 +46,7 @@ The following options are allowed:
   - Recursive copying only happens *inside* this aggregate, and stops at nested aggregates.
 
   The most prominent *aggregate* is `Neos.Neos:Document` and everything which inherits from it, like
-  `Neos.Neos.NodeTypes:Page`.
+  `Neos.NodeTypes:Page`.
 
 ``superTypes``
   An array of parent node types inherited from as keys with a boolean values.::
@@ -67,8 +67,8 @@ The following options are allowed:
     constraints:
       nodeTypes:
         # ALLOW text, DISALLOW Image
-        'Neos.Neos.NodeTypes:Text': true
-        'Neos.Neos.NodeTypes:Image': false
+        'Neos.NodeTypes:Text': true
+        'Neos.NodeTypes:Image': false
         # DISALLOW as Fallback (for not-explicitely-listed node types)
         '*': false
 
@@ -84,13 +84,13 @@ The following options are allowed:
         constraints:
           nodeTypes:
             # only allow images in this ContentCollection
-            'Neos.Neos.NodeTypes:Image': true
+            'Neos.NodeTypes:Image': true
             '*': false
 
   By using ``position``, it is possible to define the order in which child nodes appear in the structure tree.
   An example may look like::
 
-    'Neos.Neos.NodeTypes:Page':
+    'Neos.NodeTypes:Page':
       childNodes:
         'someChild':
           type: 'Neos.Neos:ContentCollection'
@@ -141,14 +141,14 @@ The following options are allowed:
 
       Example::
 
-      prototype(Vendor.Site:Content.SpecialNodeType) < prototype(Neos.Fusion:Content) {
-        templatePath = 'resource://Vendor.Site/Private/Templates/NodeTypes/Content.SpecialNodeType.html'
-        # all properties of the nodeType are passed to the template
-        date = ${q(node).property('date')}
-        # inline-editable strings additionally get the convertUris processor
-        title = ${q(node).property('title')}
-        title.@process.convertUris = Neos.Neos:ConvertUris
-      }
+        prototype(Vendor.Site:Content.SpecialNodeType) < prototype(Neos.Fusion:Content) {
+          templatePath = 'resource://Vendor.Site/Private/Templates/NodeTypes/Content.SpecialNodeType.html'
+          # all properties of the nodeType are passed to the template
+          date = ${q(node).property('date')}
+          # inline-editable strings additionally get the convertUris processor
+          title = ${q(node).property('title')}
+          title.@process.convertUris = Neos.Neos:ConvertUris
+        }
 
 ``ui``
   Configuration options related to the user interface representation of the node type
@@ -188,7 +188,7 @@ The following options are allowed:
 
       If the ``thumbnail`` setting is undefined but an image matching the nodetype name
        is found, it will be used automatically. It will be looked for in
-       ``<packageKey>/Resources/Public/Images/NodeTypes/<nodeTypeName>.png`` with
+       ``<packageKey>/Resources/Public/NodeTypes/Thumbnails/<nodeTypeName>.png`` with
        ``packageKey`` and ``nodeTypeName`` being extracted from the full nodetype name
        like this:
 
@@ -369,7 +369,7 @@ The following options are allowed:
 
 Here is one of the standard Neos node types (slightly shortened)::
 
-	'Neos.Neos.NodeTypes:Image':
+	'Neos.NodeTypes:Image':
 	  superTypes:
 	    'Neos.Neos:Content': true
 	  ui:

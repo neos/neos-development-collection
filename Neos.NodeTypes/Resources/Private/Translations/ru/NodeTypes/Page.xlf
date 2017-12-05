@@ -20,9 +20,9 @@
       <trans-unit id="properties.subpageLayout" xml:space="preserve" approved="yes">
 				<source>Layout for subpages of this page</source>
 			<target xml:lang="ru">Шаблон дочерних страниц</target><alt-trans><target xml:lang="ru">Макет для подстраниц данной страницы</target></alt-trans></trans-unit>
-      <trans-unit id="properties.subpageLayout.selectBoxEditor.placeholder" xml:space="preserve">
+      <trans-unit id="properties.subpageLayout.selectBoxEditor.placeholder" xml:space="preserve" approved="yes">
 				<source>Inherit from parent</source>
-			<target xml:lang="ru" state="translated">Наследовать от родительского элемента</target></trans-unit>
+			<target xml:lang="ru">Наследовать от родительского элемента</target><alt-trans><target xml:lang="ru">Наследовать от родительского объекта</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>

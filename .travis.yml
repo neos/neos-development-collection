@@ -34,16 +34,17 @@ cache:
   directories:
     - $HOME/.composer/cache
 before_install:
+  - phpenv config-rm xdebug.ini
+  - export NEOS_TARGET_REPOSITORY=neos/neos-development-collection
+  - export NEOS_TARGET_VERSION=3.0
+  - env
   - sudo add-apt-repository ppa:git-core/ppa -y
   - sudo apt-get update
   - sudo apt-get install git -y
   - git checkout -b travis
   - cd ..
-  - git clone https://github.com/neos/neos-development-distribution.git -b 3.0
+  - git clone https://github.com/neos/neos-development-distribution.git -b ${NEOS_TARGET_VERSION}
   - cd neos-development-distribution
-  - export NEOS_TARGET_REPOSITORY=neos/neos-development-collection
-  - export NEOS_TARGET_VERSION=master
-  - env
 install:
   - composer self-update -q
   - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
@@ -51,7 +52,6 @@ install:
   - php Build/BuildEssentials/TravisCi/ComposerManifestUpdater.php .
   - composer update --no-progress --no-interaction
 before_script:
-  - phpenv config-rm xdebug.ini
   - echo 'date.timezone = "Africa/Tunis"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - echo 'opcache.fast_shutdown = 0' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - echo 'opcache.enable_cli = 0' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini

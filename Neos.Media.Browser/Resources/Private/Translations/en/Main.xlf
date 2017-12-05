@@ -68,9 +68,6 @@
 			<trans-unit id="editAsset" xml:space="preserve">
 				<source>Edit asset</source>
 			</trans-unit>
-			<trans-unit id="replaceAssetResource" xml:space="preserve">
-				<source>Replace</source>
-			</trans-unit>
 			<trans-unit id="deleteAsset" xml:space="preserve">
 				<source>Delete asset</source>
 			</trans-unit>
@@ -361,9 +358,6 @@
 			<trans-unit id="assetCouldNotBeDeleted" xml:space="preserve">
 				<source>Asset could not be deleted.</source>
 			</trans-unit>
-			<trans-unit id="assetHasBeenReplaced" xml:space="preserve">
-				<source>Asset "{0}" has been replaced.</source>
-			</trans-unit>
 			<trans-unit id="tagAlreadyExistsAndAddedToCollection" xml:space="preserve">
 				<source>Tag "{0}" already exists and was added to collection.</source>
 			</trans-unit>
@@ -390,6 +384,12 @@
 			</trans-unit>
 			<trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve">
 				<source>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</source>
+			</trans-unit>
+			<trans-unit id="noAccessToWorkspace" xml:space="preserve">
+				<source>No access to workspace "{0}"</source>
+			</trans-unit>
+			<trans-unit id="missingDocumentNode" xml:space="preserve">
+				<source>No document node found for this node</source>
 			</trans-unit>
 		</body>
 	</file>

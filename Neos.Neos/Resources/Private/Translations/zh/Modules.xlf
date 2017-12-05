@@ -888,6 +888,9 @@
       <trans-unit id="media.cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>
 			<target xml:lang="zh-CN" state="translated">不能上传文件</target></trans-unit>
+      <trans-unit id="media.noFileSelected" xml:space="preserve">
+				<source>No file selected</source>
+			<target xml:lang="zh-CN" state="needs-translation">No file selected</target></trans-unit>
       <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target xml:lang="zh-CN" state="translated">文件大小不能超过{1}, 当前大小{0}</target></trans-unit>

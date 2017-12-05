@@ -2,7 +2,7 @@
 namespace Neos\Flow\Core\Migrations;
 
 /*
- * This file is part of the TYPO3.Neos package.
+ * This file is part of the Neos.Neos package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *

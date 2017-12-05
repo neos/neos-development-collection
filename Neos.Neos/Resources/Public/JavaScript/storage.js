@@ -28,11 +28,11 @@ define(
 				var nodeJson = this._convertModelToJson(model),
 					changedAttributes = Entity.extractAttributesFromVieEntity(model, model.changed),
 					method = options.render === true ? 'updateAndRender' : 'update',
-					typoScriptPath = options.render === true ? model._enclosingCollectionWidget.options.model.get('typo3:__typoscriptPath') : null;
+					fusionPath = options.render === true ? model._enclosingCollectionWidget.options.model.get('typo3:__fusionPath') : null;
 
 				var xhr = $.ajaxSettings.xhr();
 				NodeEndpoint.set('_saveRunning', true);
-				NodeEndpoint[method](nodeJson, typoScriptPath, {xhr: function() {
+				NodeEndpoint[method](nodeJson, fusionPath, {xhr: function() {
 					return xhr;
 				}}).then(
 					function(result) {

@@ -2,6 +2,9 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="uk">
     <body>
+      <trans-unit id="groups.document" xml:space="preserve">
+				<source>Document</source>
+			<target xml:lang="uk" state="translated">Документ</target></trans-unit>
       <trans-unit id="properties.title" xml:space="preserve">
 				<source>Title</source>
 			<target xml:lang="uk" state="translated">Заголовок</target><alt-trans><target xml:lang="uk">Назва</target></alt-trans></trans-unit>

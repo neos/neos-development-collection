@@ -103,7 +103,7 @@ contain a path of the format ``Vendor.Package:Xliff.Path.And.Filename:labelType.
 The string consists of three parts delimited by ``:``:
 
 * First, the *Package Key*
-* Second, the path towards the xliff file, replacing slashes by dots (relative to ``Resources/Private/Translation/<language>``).
+* Second, the path towards the xliff file, replacing slashes by dots (relative to ``Resources/Private/Translations/<language>``).
 * Third, the key inside the xliff file.
 
 For the example above that would be ``Vendor.Site:NodeTypes.YourContentElementName:properties.title``:
@@ -116,7 +116,7 @@ For the example above that would be ``Vendor.Site:NodeTypes.YourContentElementNa
           ui:
             label: 'Vendor.Site:NodeTypes.YourContentElementName:properties.title'
 
-If you e.g. want to *relabel* an existing node property of a different package (like the ``Neos.Neos.NodeTypes:Page``),
+If you e.g. want to *relabel* an existing node property of a different package (like the ``Neos.NodeTypes:Page``),
 you always have to specify the full translation key (pointing to your package's XLIFF files then).
 
 Validate Translations
@@ -124,10 +124,11 @@ Validate Translations
 
 To validate that all labels are translated Neos has the following setting in *Settings.yaml*::
 
+.. code-block:: yaml
 
   Neos:
     Neos:
-      UserInterface:
+      userInterface:
         scrambleTranslatedLabels: true
 
 If that setting is enabled all already translated labels are replaced with ###### -- that way you can easily identify the labels that still lack translations.

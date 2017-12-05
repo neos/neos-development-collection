@@ -92,9 +92,6 @@
       <trans-unit id="cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
 			<target xml:lang="da">Annullér</target><alt-trans><target xml:lang="da">Anuller</target></alt-trans></trans-unit>
-      <trans-unit id="replaceAssetResource" xml:space="preserve" approved="yes">
-				<source>Replace</source>
-			<target xml:lang="da">Erstat</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve" approved="yes">
 				<source>Save</source>
 			<target xml:lang="da">Gem</target></trans-unit>

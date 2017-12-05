@@ -4,7 +4,7 @@
     "description": "Node type configuration for Neos",
     "license": "GPL-3.0+",
     "require": {
-        "neos/form": "~3.0",
+        "neos/form": "~4.0",
         "neos/neos": "~3.0.0"
     },
     "replace": {

@@ -4,7 +4,6 @@ prototype(Neos.Neos:NodeUri) {
 	@class = 'Neos\\Neos\\Fusion\\NodeUriImplementation'
 	additionalParams = Neos.Fusion:RawArray
 	arguments = Neos.Fusion:RawArray
-	additionalParams = Neos.Fusion:RawArray
 	argumentsToBeExcludedFromQueryString = Neos.Fusion:RawArray
 	@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
 }

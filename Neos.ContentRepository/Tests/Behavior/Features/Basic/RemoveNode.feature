@@ -10,6 +10,7 @@ Feature: Remove node
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/content-repository               | Neos.ContentRepository.Testing:Page | {"title": "Home"}    |
       | 68ca0dcd-2afb-ef0e-1106-a5301e65b8a0 | /sites/content-repository/company       | Neos.ContentRepository.Testing:Page | {"title": "Company"} |
       | 52540602-b417-11e3-9358-14109fd7a2dd | /sites/content-repository/company/about | Neos.ContentRepository.Testing:Page | {"title": "About"}   |
+    And I am authenticated with role "Neos.Neos:Editor"
 
   @fixtures
   Scenario: Remove a node in user workspace and publish removes the node itself

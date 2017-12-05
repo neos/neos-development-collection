@@ -72,7 +72,7 @@ class ParserTest extends UnitTestCase
             case 'Neos\Fusion\Processors\WrapProcessor':
             case 'Neos\Fusion\Processors\SubstringProcessor':
             case 'Neos\Fusion\Processors\MultiplyProcessor':
-            case 'TYPO3\SomeOther\Namespace\MyWrapProcessor':
+            case 'Neos\SomeOther\Namespace\MyWrapProcessor':
                 return true;
             default:
                 return false;
@@ -86,7 +86,7 @@ class ParserTest extends UnitTestCase
      */
     public function parserCorrectlyParsesFixture01()
     {
-        $sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture01');
+        $sourceCode = $this->readFusionFixture('ParserTestFusionFixture01');
 
         $expectedParseTree = array(
             'test' => array(
@@ -116,9 +116,9 @@ class ParserTest extends UnitTestCase
      * @test
      * @expectedException \Neos\Fusion\Exception
      */
-    public function parserThrowsTypoScriptExceptionIfNamespaceDeclarationIsInvalid()
+    public function parserThrowsFusionExceptionIfNamespaceDeclarationIsInvalid()
     {
-        $sourceCode = 'namespace: cms=\-notvalid-\TypoScript\Fixtures';
+        $sourceCode = 'namespace: cms=\-notvalid-\Fusion\Fixtures';
         $this->parser->parse($sourceCode);
     }
 
@@ -129,7 +129,7 @@ class ParserTest extends UnitTestCase
      */
     public function parserCorrectlyParsesFixture02()
     {
-        $sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture02');
+        $sourceCode = $this->readFusionFixture('ParserTestFusionFixture02');
 
         $expectedParseTree = array(
             'myObject' => array(
@@ -164,7 +164,7 @@ class ParserTest extends UnitTestCase
      */
     public function parserCorrectlyParsesFixture03()
     {
-        $sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture03');
+        $sourceCode = $this->readFusionFixture('ParserTestFusionFixture03');
 
         $expectedParseTree = array(
             'object1' => array(
@@ -211,7 +211,7 @@ class ParserTest extends UnitTestCase
      */
     public function parserCorrectlyParsesFixture04()
     {
-        $sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture04');
+        $sourceCode = $this->readFusionFixture('ParserTestFusionFixture04');
 
         $expectedParseTree = array(
             'myArrayObject' => array(
@@ -280,7 +280,7 @@ class ParserTest extends UnitTestCase
      */
     public function parserCorrectlyParsesFixture05()
     {
-        $sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture05');
+        $sourceCode = $this->readFusionFixture('ParserTestFusionFixture05');
 
         $expectedParseTree = array(
             'firstObject' => array(
@@ -349,7 +349,7 @@ class ParserTest extends UnitTestCase
      */
     public function parserCorrectlyParsesFixture07()
     {
-        $sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture07');
+        $sourceCode = $this->readFusionFixture('ParserTestFusionFixture07');
 
         $expectedParseTree = array(
             'object3' => array(
@@ -371,7 +371,7 @@ class ParserTest extends UnitTestCase
      */
     public function parserCorrectlyParsesFixture08()
     {
-        $sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture08');
+        $sourceCode = $this->readFusionFixture('ParserTestFusionFixture08');
 
         $expectedParseTree = array(
             'object1' => array(
@@ -434,7 +434,7 @@ class ParserTest extends UnitTestCase
      */
     public function parserCorrectlyParsesFixture10()
     {
-        $sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture10');
+        $sourceCode = $this->readFusionFixture('ParserTestFusionFixture10');
 
         $expectedParseTree = array(
 
@@ -513,7 +513,7 @@ class ParserTest extends UnitTestCase
      */
     public function parserCorrectlyParsesFixture13()
     {
-        $sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture13');
+        $sourceCode = $this->readFusionFixture('ParserTestFusionFixture13');
 
         $expectedParseTree = array(
             'object1' => array(
@@ -565,7 +565,7 @@ class ParserTest extends UnitTestCase
      */
     public function parserCorrectlyParsesFixture14()
     {
-        $sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture14');
+        $sourceCode = $this->readFusionFixture('ParserTestFusionFixture14');
 
         $expectedParseTree = array(
             'object1' => array(
@@ -603,7 +603,7 @@ class ParserTest extends UnitTestCase
      */
     public function parserCorrectlyParsesFixture15()
     {
-        $sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture15');
+        $sourceCode = $this->readFusionFixture('ParserTestFusionFixture15');
 
         $expectedParseTree = array(
             'foo' => array(
@@ -622,10 +622,10 @@ class ParserTest extends UnitTestCase
     {
         $expectedParseTree = array(
             '__prototypes' => array(
-                'TYPO3.Foo:Bar' => array(
+                'Neos.Foo:Bar' => array(
                     'baz' => 'Hallo'
                 ),
-                'TYPO3.Foo:Bar2' => array(
+                'Neos.Foo:Bar2' => array(
                     'baz' => 'Foo',
                     'test2' => 42
                 ),
@@ -636,16 +636,16 @@ class ParserTest extends UnitTestCase
                         )
                     )
                 ),
-                'TYPO3.Foo:Bar3' => array(
-                    '__prototypeObjectName' => 'TYPO3.Foo:Bar2',
+                'Neos.Foo:Bar3' => array(
+                    '__prototypeObjectName' => 'Neos.Foo:Bar2',
                     '__prototypeChain' => array(
-                        'TYPO3.Foo:Bar2'
+                        'Neos.Foo:Bar2'
                     )
                 )
             ),
             'test' => array(
                 '__prototypes' => array(
-                    'TYPO3.Foo:Bar' => array(
+                    'Neos.Foo:Bar' => array(
                         'baz' => 'Hallo'
                     )
                 ),
@@ -653,7 +653,7 @@ class ParserTest extends UnitTestCase
             'foo' => array(
                 'bar' => array(
                     '__prototypes' => array(
-                        'TYPO3.Foo:Bar2' => array(
+                        'Neos.Foo:Bar2' => array(
                             'baz' => 'Foo',
                             'test2' => 42,
                             'blah' => array(
@@ -705,7 +705,7 @@ class ParserTest extends UnitTestCase
      */
     public function parserCorrectlyParsesFixture16()
     {
-        $fixture = __DIR__ . '/Fixtures/ParserTestTypoScriptFixture16.fusion';
+        $fixture = __DIR__ . '/Fixtures/ParserTestFusionFixture16.fusion';
         $sourceCode = file_get_contents($fixture, FILE_TEXT);
 
         $expectedParseTree = $this->getExpectedParseTreeForFixture16();
@@ -720,7 +720,7 @@ class ParserTest extends UnitTestCase
      */
     public function parserThrowsExceptionOnFixture16b()
     {
-        $fixture = __DIR__ . '/Fixtures/ParserTestTypoScriptFixture16b.fusion';
+        $fixture = __DIR__ . '/Fixtures/ParserTestFusionFixture16b.fusion';
         $sourceCode = file_get_contents($fixture, FILE_TEXT);
 
         $this->parser->parse($sourceCode, $fixture);
@@ -731,13 +731,13 @@ class ParserTest extends UnitTestCase
      */
     public function parserCorrectlyParsesFixture17()
     {
-        $fixture = __DIR__ . '/Fixtures/ParserTestTypoScriptFixture17.fusion';
+        $fixture = __DIR__ . '/Fixtures/ParserTestFusionFixture17.fusion';
         $sourceCode = file_get_contents($fixture, FILE_TEXT);
 
         $expectedParseTree = $this->getExpectedParseTreeForFixture16();
 
         // Check that values were overridden by fixture #17:
-        $expectedParseTree['__prototypes']['TYPO3.Foo:Bar2']['baz'] = 'New Value';
+        $expectedParseTree['__prototypes']['Neos.Foo:Bar2']['baz'] = 'New Value';
 
         // Set the default namespace to Neos.Neos - that's what Neos does as well in Domain\Service\FusionService:
         $this->parser->setObjectTypeNamespace('default', 'Neos.Neos');
@@ -771,7 +771,7 @@ class ParserTest extends UnitTestCase
      */
     public function parserCorrectlyParsesFixture18()
     {
-        $sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture18');
+        $sourceCode = $this->readFusionFixture('ParserTestFusionFixture18');
 
         $expectedParseTree = array(
             'object1' => array(
@@ -785,12 +785,12 @@ class ParserTest extends UnitTestCase
                 '__eelExpression' => null
             ),
             'object3' => array(
-                '__objectType' => 'TYPO3.Schirmchen:Text',
+                '__objectType' => 'Neos.Schirmchen:Text',
                 '__value' => null,
                 '__eelExpression' => null
             ),
             'object4' => array(
-                '__objectType' => 'TYPO3.Future:Text',
+                '__objectType' => 'Neos.Future:Text',
                 '__value' => null,
                 '__eelExpression' => null
             ),
@@ -805,12 +805,12 @@ class ParserTest extends UnitTestCase
                         'class' => ArrayImplementation::class
                     )
                 ),
-                'TYPO3.Schirmchen:Baz' => array(
+                'Neos.Schirmchen:Baz' => array(
                     '__meta' => array(
                         'class' => ArrayImplementation::class
                     )
                 ),
-                'TYPO3.Future:Quux' => array(
+                'Neos.Future:Quux' => array(
                     '__meta' => array(
                         'class' => ArrayImplementation::class
                     )
@@ -829,7 +829,7 @@ class ParserTest extends UnitTestCase
      */
     public function parserCorrectlyParsesFixture19()
     {
-        $sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture19');
+        $sourceCode = $this->readFusionFixture('ParserTestFusionFixture19');
 
         $expectedParseTree = array(
             'somepath' => array(
@@ -852,7 +852,7 @@ class ParserTest extends UnitTestCase
      */
     public function parserCorrectlyParsesFixture20()
     {
-        $sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptFixture20');
+        $sourceCode = $this->readFusionFixture('ParserTestFusionFixture20');
 
         $expectedParseTree = array(
             'somepath' => array(
@@ -872,23 +872,67 @@ class ParserTest extends UnitTestCase
     }
 
     /**
+     * @test
+     * @expectedException \Neos\Fusion\Exception
+     */
+    public function parserDetectsDirectRecursions()
+    {
+        $sourceCode = $this->readFusionFixture('ParserTestFusionFixture21');
+        $this->parser->parse($sourceCode);
+    }
+
+    /**
+     * @test
+     * @expectedException \Neos\Fusion\Exception
+     */
+    public function parserDetectsIndirectRecursions()
+    {
+        $sourceCode = $this->readFusionFixture('ParserTestFusionFixture22');
+        $this->parser->parse($sourceCode);
+    }
+
+    /**
+     * Checks if identifiers starting with digits are parsed correctly
+     *
+     * @test
+     */
+    public function parserCorrectlyParsesFixture21()
+    {
+        $sourceCode = $this->readFusionFixture('ParserTestFusionFixture23');
+
+        $expectedParseTree = array(
+            '__prototypes' => array(
+                '4Testing:Example' => array(
+                    'someValue' => true
+                )
+            ),
+            'somepath' => array(
+                '101Neos' => 'A string value',
+            ),
+        );
+
+        $actualParseTree = $this->parser->parse($sourceCode);
+        $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 21.');
+    }
+
+    /**
      * Checks if comments in comments are parsed correctly
      *
      * @test
      */
     public function parserCorrectlyParsesComments01()
     {
-        $sourceCode = $this->readTypoScriptFixture('ParserTestTypoScriptComments01');
+        $sourceCode = $this->readFusionFixture('ParserTestFusionComments01');
         $expected = array(); // Fixture contains only comments, so expect empty parse tree
         $actualParseTree = $this->parser->parse($sourceCode);
-        $this->assertEquals($expected, $actualParseTree, 'The parse tree was not as expected after parsing fixture `ParserTestTypoScriptComments01.fusion`');
+        $this->assertEquals($expected, $actualParseTree, 'The parse tree was not as expected after parsing fixture `ParserTestFusionComments01.fusion`');
     }
 
     /**
      * @param string $fixtureName File name of the Fusion fixture to be read (without .fusion)
      * @return string The content of the fixture
      */
-    protected function readTypoScriptFixture($fixtureName)
+    protected function readFusionFixture($fixtureName)
     {
         return file_get_contents(__DIR__ . '/Fixtures/' . $fixtureName . '.fusion', FILE_TEXT);
     }

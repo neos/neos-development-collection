@@ -183,13 +183,13 @@
         <target xml:lang="fi">Henkilökohtainen työtilasi sisältää muutoksia, julkaise tai hylkää ne ensin.</target>
       </trans-unit>
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
-        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]" approved="yes">
           <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
-          <target xml:lang="fi" state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} node.</target>
+          <target xml:lang="fi">Työtilaa "{0}" ei poistettu koska se sisältää {1} solmun.</target>
         </trans-unit>
-        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]" approved="yes">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target xml:lang="fi" state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} nodes.</target>
+          <target xml:lang="fi">Työtilaa "{0}" ei poistettu koska se sisältää {1} solmua.</target>
         </trans-unit>
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved" approved="yes">
@@ -220,12 +220,12 @@
         <source>All changes from workspace "{0}" have been discarded.</source>
         <target xml:lang="fi">Kaikki työtilan "{0}" muutokset on hylätty.</target>
       </trans-unit>
-      <trans-unit id="media.dragHelp" xml:space="preserve">
+      <trans-unit id="media.dragHelp" xml:space="preserve" approved="yes">
 				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
-			<target xml:lang="fi" state="needs-translation">Drag and drop an asset on a collection / tag to add them to it.</target></trans-unit>
-      <trans-unit id="media.replace.options.keepOriginalFilename" xml:space="preserve">
+			<target xml:lang="fi">Vedä ja pudota nimike kokoelmaan / tagiin lisätäksesi se siihen.</target></trans-unit>
+      <trans-unit id="media.replace.options.keepOriginalFilename" xml:space="preserve" approved="yes">
 				<source>Keep the filename "{0}"</source>
-			<target xml:lang="fi" state="needs-translation">Keep the filename "{0}"</target></trans-unit>
+			<target xml:lang="fi">Säilytä tiedostonimi "{0}"</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve" approved="yes">
 				<source>Media</source>
 			<target xml:lang="fi">Media</target></trans-unit>
@@ -682,9 +682,9 @@
       <trans-unit id="media.tooltip.editAsset" xml:space="preserve" approved="yes">
 				<source>Edit asset</source>
 			<target xml:lang="fi">Muokka nimikettä</target></trans-unit>
-      <trans-unit id="media.tooltip.replaceAssetResource" xml:space="preserve">
+      <trans-unit id="media.tooltip.replaceAssetResource" xml:space="preserve" approved="yes">
 				<source>Replace</source>
-			<target xml:lang="fi" state="needs-translation">Replace</target></trans-unit>
+			<target xml:lang="fi">Korvaa</target></trans-unit>
       <trans-unit id="media.tooltip.deleteAsset" xml:space="preserve" approved="yes">
 				<source>Delete asset</source>
 			<target xml:lang="fi">Poista nimike</target></trans-unit>
@@ -712,9 +712,9 @@
       <trans-unit id="media.cancel" xml:space="preserve" approved="yes">
 				<source>Cancel</source>
 			<target xml:lang="fi">Peruuta</target></trans-unit>
-      <trans-unit id="media.replaceAssetResource" xml:space="preserve">
+      <trans-unit id="media.replaceAssetResource" xml:space="preserve" approved="yes">
 				<source>Replace</source>
-			<target xml:lang="fi" state="needs-translation">Replace</target></trans-unit>
+			<target xml:lang="fi">Korvaa</target></trans-unit>
       <trans-unit id="media.saveEditing" xml:space="preserve" approved="yes">
 				<source>Save</source>
 			<target xml:lang="fi">Tallenna</target></trans-unit>
@@ -892,6 +892,9 @@
       <trans-unit id="media.cannotUploadFile" xml:space="preserve" approved="yes">
 				<source>Cannot upload the file</source>
 			<target xml:lang="fi">Tiedostoa ei voitu ladata</target></trans-unit>
+      <trans-unit id="media.noFileSelected" xml:space="preserve" approved="yes">
+				<source>No file selected</source>
+			<target xml:lang="fi">Ei tiedostoa valittuna</target></trans-unit>
       <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve" approved="yes">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target xml:lang="fi">Tiedoston koko {0} ylitää sallitun rajan {1}</target></trans-unit>
@@ -914,45 +917,45 @@
 				<source>Asset could not be deleted, because there are still Nodes using it</source>
 			<target xml:lang="fi">Nimikettä ei voitu poistaa koska jotkin solmut käyttävät vielä sitä</target></trans-unit>
       <group id="media.relatedNodes" restype="x-gettext-plurals">
-        <trans-unit id="media.relatedNodes[0]">
+        <trans-unit id="media.relatedNodes[0]" approved="yes">
           <source>{0} usages</source>
-          <target xml:lang="fi" state="needs-translation">{0} usages</target>
+          <target xml:lang="fi">{0} käyttökohde</target>
         </trans-unit>
-        <trans-unit id="media.relatedNodes[1]">
+        <trans-unit id="media.relatedNodes[1]" approved="yes">
           <source>{0} usages</source>
-          <target xml:lang="fi" state="needs-translation">{0} usages</target>
+          <target xml:lang="fi">{0} käyttökohdetta</target>
         </trans-unit>
       </group>
       <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve" approved="yes">
 				<source>References to "{asset}"</source>
 			<target xml:lang="fi">Viittaukset "{asset}"</target></trans-unit>
-      <trans-unit id="media.replaceAsset.replaceFilename" xml:space="preserve">
+      <trans-unit id="media.replaceAsset.replaceFilename" xml:space="preserve" approved="yes">
 				<source>Replace "{filename}"</source>
-			<target xml:lang="fi" state="needs-translation">Replace "{filename}"</target></trans-unit>
-      <trans-unit id="media.replaceAsset.description" xml:space="preserve">
+			<target xml:lang="fi">Korvaa "{filename}"</target></trans-unit>
+      <trans-unit id="media.replaceAsset.description" xml:space="preserve" approved="yes">
         <source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
-      <target xml:lang="fi" state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
-      <trans-unit id="media.replaceAsset.note" xml:space="preserve">
+      <target xml:lang="fi">Voit korvata nimikkeen lataamalla uuden tiedoston. Kun nimike on korvattu, sitä käytetään kaikissa nimikkeen käyttökohteissa sivustolla.</target></trans-unit>
+      <trans-unit id="media.replaceAsset.note" xml:space="preserve" approved="yes">
         <source>Note</source>
-      <target xml:lang="fi" state="needs-translation">Note</target></trans-unit>
-      <trans-unit id="media.replaceAsset.noteText" xml:space="preserve">
+      <target xml:lang="fi">Huomautus</target></trans-unit>
+      <trans-unit id="media.replaceAsset.noteText" xml:space="preserve" approved="yes">
         <source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
-      <target xml:lang="fi" state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
-      <trans-unit id="media.replaceAsset.chooseNewFile" xml:space="preserve">
+      <target xml:lang="fi">Tämä toiminto korvaa nimikkeen kaikissa julkaistuissa ja julkaisemattomissa työtiloissa, mukaanlukien näkyvä sivusto.</target></trans-unit>
+      <trans-unit id="media.replaceAsset.chooseNewFile" xml:space="preserve" approved="yes">
         <source>Choose a new file</source>
-      <target xml:lang="fi" state="needs-translation">Choose a new file</target></trans-unit>
-      <trans-unit id="media.replace.usageCount" xml:space="preserve">
+      <target xml:lang="fi">Valitse uusi tiedosto</target></trans-unit>
+      <trans-unit id="media.replace.usageCount" xml:space="preserve" approved="yes">
         <source>Currently the asset is used {usageCount} times.</source>
-      <target xml:lang="fi" state="needs-translation">Currently the asset is used {usageCount} times.</target></trans-unit>
-      <trans-unit id="media.replace.allUsages" xml:space="preserve">
+      <target xml:lang="fi">Nimike on käytössä {usageCount} kohteessa.</target></trans-unit>
+      <trans-unit id="media.replace.allUsages" xml:space="preserve" approved="yes">
         <source>Show all usages</source>
-      <target xml:lang="fi" state="needs-translation">Show all usages</target></trans-unit>
-      <trans-unit id="media.replace.notUsed" xml:space="preserve">
+      <target xml:lang="fi">Näytä kaikki käyttökohteet</target></trans-unit>
+      <trans-unit id="media.replace.notUsed" xml:space="preserve" approved="yes">
         <source>Currently the asset is not in used anywhere on the website.</source>
-      <target xml:lang="fi" state="needs-translation">Currently the asset is not in used anywhere on the website.</target></trans-unit>
-      <trans-unit id="media.replace.previewFile" xml:space="preserve">
+      <target xml:lang="fi">Nimike ei ole tällä hetkellä käytössä.</target></trans-unit>
+      <trans-unit id="media.replace.previewFile" xml:space="preserve" approved="yes">
         <source>Preview current file</source>
-      <target xml:lang="fi" state="needs-translation">Preview current file</target></trans-unit>
+      <target xml:lang="fi">Esikatsele nykyinen tiedosto</target></trans-unit>
     </body>
   </file>
 </xliff>

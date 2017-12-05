@@ -94,33 +94,6 @@ class UserService
     }
 
     /**
-     * Returns the current user's personal workspace or null if no user is logged in.
-     * Deprecated, use getPersonalWorkspace() instead.
-     *
-     * @return Workspace
-     * @api
-     * @deprecated 2.1
-     */
-    public function getUserWorkspace()
-    {
-        return $this->getPersonalWorkspace();
-    }
-
-    /**
-     * Returns the name of the currently logged in user's personal workspace (even if that might not exist at that time).
-     * If no user is logged in this method returns null.
-     * Deprecated, use getPersonalWorkspaceName() instead.
-     *
-     * @return string
-     * @api
-     * @deprecated 2.1
-     */
-    public function getUserWorkspaceName()
-    {
-        return $this->getPersonalWorkspaceName();
-    }
-
-    /**
      * Returns the stored preferences of a user
      *
      * @param string $preference

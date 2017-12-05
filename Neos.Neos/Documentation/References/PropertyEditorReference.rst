@@ -20,7 +20,8 @@ A ``boolean`` value is rendered using a checkbox in the inspector::
 
 Options Reference:
 
-* (no options)
+``disabled`` (boolean)
+	HTML ``disabled`` property. If ``TRUE``, disable this checkbox.
 
 Property Type: string ``TextFieldEditor`` -- Single-line Text Editor (default)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -31,6 +32,8 @@ Example::
       type: string
       ui:
         label: 'Subtitle'
+        help:
+          message: 'Enter some help text for the editors here. The text will be shown via click.'
         inspector:
           group: 'document'
           editorOptions:
@@ -317,9 +320,9 @@ If internal links to other nodes, external links or asset links shall be editabl
 
     myLink:
       type: string
-        ui:
-          inspector:
-            editor: 'Neos.Neos/Inspector/Editors/LinkEditor'
+      ui:
+        inspector:
+          editor: 'Neos.Neos/Inspector/Editors/LinkEditor'
 
 The searchbox will accept:
 
@@ -337,14 +340,14 @@ Furthermore, the placeholder text can be customized by setting the ``placeholder
 
     myExternalLink:
       type: string
-        ui:
-          inspector:
-            group: 'document'
-            editor: 'Neos.Neos/Inspector/Editors/LinkEditor'
-            editorOptions:
-              assets: FALSE
-              nodeTypes: ['Neos.Neos:Shortcut']
-              placeholder: 'Paste a link, or type to search for nodes'
+      ui:
+        inspector:
+          group: 'document'
+          editor: 'Neos.Neos/Inspector/Editors/LinkEditor'
+          editorOptions:
+            assets: FALSE
+            nodeTypes: ['Neos.Neos:Shortcut']
+            placeholder: 'Paste a link, or type to search for nodes'
 
 Property Type: integer ``TextFieldEditor``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -395,7 +398,7 @@ Options Reference:
 	the node path is shown instead of the url path.
 
 ``threshold`` (number)
-	Minimum amount of characters which trigger a search
+	Minimum amount of characters which trigger a search. Default is set to 2.
 
 Property Type: DateTime ``DateTimeEditor`` -- Date & Time Selection Editor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

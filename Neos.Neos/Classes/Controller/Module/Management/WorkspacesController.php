@@ -22,6 +22,7 @@ use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Context;
 use Neos\Media\Domain\Model\AssetInterface;
+use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Neos\Controller\Module\AbstractModuleController;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Repository\SiteRepository;
@@ -468,7 +469,8 @@ class WorkspacesController extends AbstractModuleController
         $siteChanges = [];
         foreach ($this->publishingService->getUnpublishedNodes($selectedWorkspace) as $node) {
             /** @var NodeInterface $node */
-            if (!$node->getNodeType()->isOfType('Neos.Neos:ContentCollection')) {
+            $skipCollectionChanges = $node->getNodeType()->isOfType('Neos.Neos:ContentCollection') && !$node->getNodeType()->isOfType('Neos.Neos:Content');
+            if (!$skipCollectionChanges) {
                 $pathParts = explode('/', $node->getPath());
                 if (count($pathParts) > 2) {
                     $siteNodeName = $pathParts[2];
@@ -486,7 +488,7 @@ class WorkspacesController extends AbstractModuleController
 
                         $change = [
                             'node' => $node,
-                            'contentChanges' => $this->renderContentChanges($node),
+                            'contentChanges' => $this->renderContentChanges($node)
                         ];
                         if ($node->getNodeType()->isOfType('Neos.Neos:Node')) {
                             $change['configuration'] = $node->getNodeType()->getFullConfiguration();
@@ -575,6 +577,13 @@ class WorkspacesController extends AbstractModuleController
                         'diff' => $diffArray
                     ];
                 }
+            } elseif ($originalPropertyValue instanceof ImageInterface || $changedPropertyValue instanceof ImageInterface) {
+                $contentChanges[$propertyName] = [
+                    'type' => 'image',
+                    'propertyLabel' => $this->getPropertyLabel($propertyName, $changedNode),
+                    'original' => $originalPropertyValue,
+                    'changed' => $changedPropertyValue
+                ];
             } elseif ($originalPropertyValue instanceof AssetInterface || $changedPropertyValue instanceof AssetInterface) {
                 $contentChanges[$propertyName] = [
                     'type' => 'asset',

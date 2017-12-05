@@ -1,0 +1,77 @@
+`3.0.1 (2017-02-15) <https://github.com/neos/neos-development-collection/releases/tag/3.0.1>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Adding media element to tag or asset collection <https://github.com/neos/neos-development-collection/pull/1414>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Adding a media asset to a tag or collection in the thumbnail in the media browser by dragging it fails.
+
+Resolves #1413
+
+* Packages: ``Browser``
+
+`TASK: Remove deprecated getters for \`\`userWorkspace\`\` and name <https://github.com/neos/neos-development-collection/pull/1393>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+These are fully replaced by
+``\\Neos\\Neos\\Service\UserService::getPersonalWorkspace``
+and
+``\\Neos\\Neos\\Service\UserService::getPersonalWorkspaceName``
+
+* Packages: ``Neos``
+
+`TASK: Remove TYPO3 & TypoScript in the Fusion documentation <https://github.com/neos/neos-development-collection/pull/1418>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+In the [documentation](https://neos.readthedocs.io/en/stable/References/) are still some references to TYPO3 and TypoScript. This PR fix it for the fusion part
+
+* Packages: ``Fusion`` ``Neos``
+
+`TASK: Replace leftover occurrence of \`\`typoScriptRenderingPath\`\` <https://github.com/neos/neos-development-collection/pull/1419>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Make fusion-parser aspectable <https://github.com/neos/neos-development-collection/pull/1410>`_
+--------------------------------------------------------------------------------------------------------
+
+The fusion parser cloned itself previously to handle includes but to keep the defined namespaces.
+That made the use of aspects impossible since they were only applied on the initially created instance of the parser.
+
+This change fixes this by using a new instance of the parser for each include and transfers the namespaces explicitly to the new parser.
+
+`BUGFIX: Correctly require \`\`exec\`\` instead of \`\`system\`\` <https://github.com/neos/neos-development-collection/pull/1415>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+The documentation requested ``system`` to be enabled but in fact ``exec``
+is used for proxy building in Flow.
+
+Related: neos/flow-development-collection#634
+
+* Packages: ``Neos``
+
+`BUGFIX: Use setFusionPathPattern() in HistoryController <https://github.com/neos/neos-development-collection/pull/1411>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+The view was updated to `FusionView`, but `setTypoScriptPathPattern` was still called.
+I updated it to the correct method `setFusionPathPattern`.
+
+* Packages: ``Neos``
+
+`BUGFIX: RemoveNodePrivilege blocks editing <https://github.com/neos/neos-development-collection/pull/341>`_
+------------------------------------------------------------------------------------------------------------
+
+The RemoveNodePrivilege would block editing of nodes completely, since
+the inspector would send all properties of a node, but the setter for
+"removed" was blocked by the privilege.
+
+Now the privilege only matches on setRemoved(true) and thus only blocks
+what it should block.
+
+Fixes #896 
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/3.0.0...3.0.1>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

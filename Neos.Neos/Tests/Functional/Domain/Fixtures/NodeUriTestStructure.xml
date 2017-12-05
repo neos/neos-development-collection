@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-	<site name="example.org" state="1" siteResourcesPackageKey="Neos.Fusion" siteNodeName="example">
+	<site name="example.org" state="1" siteResourcesPackageKey="Neos.Fusion" siteNodeName="uri-test">
 		<nodes formatVersion="2.0">
-			<node identifier="c7694f44-9e02-967a-2dfa-9160a73c9be4" nodeName="example">
+			<node nodeName="uri-test">
 				<variant sortingIndex="100" workspace="live" nodeType="Neos.Neos:Shortcut" version="2" removed="" hidden="" hiddenInIndex="1">
 					<dimensions>
 						<language>en_US</language>
@@ -27,7 +27,7 @@
 						<title __type="string">example.org</title>
 					</properties>
 				</variant>
-				<node identifier="3239baee-3e7f-785c-0853-f4302ef32570" nodeName="home">
+				<node nodeName="home">
 					<variant sortingIndex="100" workspace="live" nodeType="Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
 						<dimensions>
 							<language>en_US</language>
@@ -50,7 +50,7 @@
 							<uriPathSegment __type="string">home</uriPathSegment>
 						</properties>
 					</variant>
-					<node identifier="30e893c1-caef-0ca5-b53d-e5699bb8e506" nodeName="about-us">
+					<node nodeName="about-us">
 						<variant sortingIndex="400" workspace="live" nodeType="Neos.NodeTypes:Page" version="3" removed="" hidden="" hiddenInIndex="">
 							<dimensions>
 								<language>en_US</language>
@@ -71,7 +71,7 @@
 								<uriPathSegment __type="string">ueber-uns</uriPathSegment>
 							</properties>
 						</variant>
-						<node identifier="9abf48a7-b8a2-0896-7b42-754c23074a7b" nodeName="history">
+						<node nodeName="history">
 							<variant sortingIndex="100" workspace="live" nodeType="Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
 								<dimensions>
 									<language>en_US</language>
@@ -93,7 +93,7 @@
 								</properties>
 							</variant>
 						</node>
-						<node identifier="63b28f4d-8831-ecb0-f9a6-466d97ffe2c2" nodeName="mission">
+						<node nodeName="mission">
 							<variant sortingIndex="200" workspace="live" nodeType="Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
 								<dimensions>
 									<language>en_US</language>
@@ -116,7 +116,7 @@
 							</variant>
 						</node>
 					</node>
-					<node identifier="25eaba22-b8ed-11e3-a8b5-c82a1441d728" nodeName="products">
+					<node nodeName="products">
 						<variant sortingIndex="500" workspace="live" nodeType="Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
 							<dimensions>
 								<language>en_US</language>
@@ -137,7 +137,7 @@
 								<uriPathSegment __type="string">products</uriPathSegment>
 							</properties>
 						</variant>
-						<node identifier="bc488ff2-92ba-f2c5-f063-9a0fcbb90510" nodeName="neos">
+						<node nodeName="neos">
 							<variant sortingIndex="200" workspace="live" nodeType="Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
 								<dimensions>
 									<language>en_US</language>
@@ -159,7 +159,7 @@
 								</properties>
 							</variant>
 						</node>
-						<node identifier="1b2060e3-2e30-1ad0-83fd-7dcdd1e2d5fc" nodeName="flow">
+						<node nodeName="flow">
 							<variant sortingIndex="100" workspace="live" nodeType="Neos.NodeTypes:Page" version="2" removed="" hidden="" hiddenInIndex="">
 								<dimensions>
 									<language>en_US</language>

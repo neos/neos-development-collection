@@ -60,7 +60,7 @@ class TemplateTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function typoScriptExceptionInObjectAccessIsHandledCorrectly()
+    public function fusionExceptionInObjectAccessIsHandledCorrectly()
     {
         $view = $this->buildView();
         $view->setFusionPath('template/offsetAccessException');

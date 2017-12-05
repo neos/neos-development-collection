@@ -12,7 +12,7 @@ namespace Neos\Neos\Routing;
  */
 
 /**
- * A TYPO3 routing exception
+ * A Neos routing exception
  */
 class Exception extends \Neos\Neos\Exception
 {

@@ -892,6 +892,9 @@
       <trans-unit id="media.cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>
 			<target xml:lang="ca" state="needs-translation">Cannot upload the file</target></trans-unit>
+      <trans-unit id="media.noFileSelected" xml:space="preserve">
+				<source>No file selected</source>
+			<target xml:lang="ca" state="needs-translation">No file selected</target></trans-unit>
       <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target xml:lang="ca" state="needs-translation">The file size of {0} exceeds the allowed limit of {1}</target></trans-unit>

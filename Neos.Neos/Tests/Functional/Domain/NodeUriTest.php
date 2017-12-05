@@ -26,7 +26,7 @@ class NodeUriTest extends AbstractNodeTest
     /**
      * @var string the context path of the node to load initially
      */
-    protected $nodeContextPath = '/sites/example/home';
+    protected $nodeContextPath = '/sites/uri-test/home';
 
     /**
      * Note: You cannot hide a node in a context that doesn't show invisible content and afterwards move it because moving breaks then.

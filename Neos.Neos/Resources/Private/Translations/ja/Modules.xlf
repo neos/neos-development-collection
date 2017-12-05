@@ -10,7 +10,7 @@
 			<target xml:lang="ja" state="needs-translation">Click to delete</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target xml:lang="ja" state="needs-translation">Cancel</target></trans-unit>
+			<target xml:lang="ja" state="translated">キャンセル</target></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
 			<target xml:lang="ja" state="needs-translation">Back</target></trans-unit>
@@ -59,10 +59,10 @@
 			<target xml:lang="ja" state="needs-translation">Read-only workspace</target></trans-unit>
       <trans-unit id="workspaces.workspace.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="ja" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="ja" state="translated">タイトル</target></trans-unit>
       <trans-unit id="workspaces.workspace.description" xml:space="preserve">
 				<source>Description</source>
-			<target xml:lang="ja" state="translated">説明</target></trans-unit>
+			<target xml:lang="ja" state="translated">概要</target><alt-trans><target xml:lang="ja">説明</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.workspace.baseWorkspace" xml:space="preserve">
 				<source>Base workspace</source>
 			<target xml:lang="ja" state="needs-translation">Base workspace</target></trans-unit>
@@ -71,7 +71,7 @@
 			<target xml:lang="ja" state="needs-translation">Owner</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility" xml:space="preserve">
 				<source>Visibility</source>
-			<target xml:lang="ja" state="needs-translation">Visibility</target></trans-unit>
+			<target xml:lang="ja" state="translated">可視性</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private" xml:space="preserve">
 				<source>Private</source>
 			<target xml:lang="ja" state="needs-translation">Private</target></trans-unit>
@@ -300,7 +300,7 @@
 			<target xml:lang="ja" state="needs-translation">New</target></trans-unit>
       <trans-unit id="users.action.edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="ja" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="ja" state="translated">編集</target></trans-unit>
       <trans-unit id="users.action.editAccount" xml:space="preserve">
 				<source>Edit account</source>
 			<target xml:lang="ja" state="needs-translation">Edit account</target></trans-unit>
@@ -324,7 +324,7 @@
 			<target xml:lang="ja" state="needs-translation">Username</target></trans-unit>
       <trans-unit id="users.new.userData.password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="ja" state="needs-translation">Password</target></trans-unit>
+			<target xml:lang="ja" state="translated">パスワード</target></trans-unit>
       <trans-unit id="users.new.userData.repeatPassword" xml:space="preserve">
 				<source>Repeat password</source>
 			<target xml:lang="ja" state="needs-translation">Repeat password</target></trans-unit>
@@ -336,10 +336,10 @@
 			<target xml:lang="ja" state="needs-translation">Personal Data</target></trans-unit>
       <trans-unit id="users.new.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
-			<target xml:lang="ja" state="needs-translation">First Name</target></trans-unit>
+			<target xml:lang="ja" state="translated">ファーストネーム</target></trans-unit>
       <trans-unit id="users.new.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
-			<target xml:lang="ja" state="needs-translation">Last Name</target></trans-unit>
+			<target xml:lang="ja" state="translated">ラストネーム</target></trans-unit>
       <trans-unit id="users.new.userPreferences" xml:space="preserve">
 				<source>User Preferences</source>
 			<target xml:lang="ja" state="needs-translation">User Preferences</target></trans-unit>
@@ -357,19 +357,19 @@
 			<target xml:lang="ja" state="needs-translation">Personal Data</target></trans-unit>
       <trans-unit id="users.show.personalData.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="ja" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="ja" state="translated">タイトル</target></trans-unit>
       <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
-			<target xml:lang="ja" state="needs-translation">First Name</target></trans-unit>
+			<target xml:lang="ja" state="translated">ファーストネーム</target></trans-unit>
       <trans-unit id="users.show.personalData.middleName" xml:space="preserve">
 				<source>Middle Name</source>
-			<target xml:lang="ja" state="needs-translation">Middle Name</target></trans-unit>
+			<target xml:lang="ja" state="translated">ミドルネーム</target></trans-unit>
       <trans-unit id="users.show.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
-			<target xml:lang="ja" state="needs-translation">Last Name</target></trans-unit>
+			<target xml:lang="ja" state="translated">ラストネーム</target></trans-unit>
       <trans-unit id="users.show.personalData.otherName" xml:space="preserve">
 				<source>Other Name</source>
-			<target xml:lang="ja" state="needs-translation">Other Name</target></trans-unit>
+			<target xml:lang="ja" state="translated">別名</target></trans-unit>
       <trans-unit id="users.show.accounts" xml:space="preserve">
 				<source>Accounts</source>
 			<target xml:lang="ja" state="needs-translation">Accounts</target></trans-unit>
@@ -384,7 +384,7 @@
 			<target xml:lang="ja" state="needs-translation">Electronic Addresses</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.primary" xml:space="preserve">
 				<source>Primary</source>
-			<target xml:lang="ja" state="needs-translation">Primary</target></trans-unit>
+			<target xml:lang="ja" state="translated">プライマリ</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.notAvailable" xml:space="preserve">
 				<source>N/A</source>
 			<target xml:lang="ja" state="needs-translation">N/A</target></trans-unit>
@@ -568,10 +568,10 @@
 			<target xml:lang="ja" state="needs-translation">This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</target></trans-unit>
       <trans-unit id="userSettings.action.index" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="ja" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="ja" state="translated">編集</target></trans-unit>
       <trans-unit id="userSettings.action.edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="ja" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="ja" state="translated">編集</target></trans-unit>
       <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve">
 				<source>New electronic address</source>
 			<target xml:lang="ja" state="needs-translation">New electronic address</target></trans-unit>
@@ -635,7 +635,7 @@
 			<target xml:lang="ja" state="needs-translation">Name</target></trans-unit>
       <trans-unit id="media.field.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="ja" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="ja" state="translated">タイトル</target></trans-unit>
       <trans-unit id="media.field.label" xml:space="preserve">
 				<source>Label</source>
 			<target xml:lang="ja" state="needs-translation">Label</target></trans-unit>
@@ -650,7 +650,7 @@
 			<target xml:lang="ja" state="needs-translation">File size</target></trans-unit>
       <trans-unit id="media.field.type" xml:space="preserve">
 				<source>Type</source>
-			<target xml:lang="ja" state="needs-translation">Type</target></trans-unit>
+			<target xml:lang="ja" state="translated">種類</target></trans-unit>
       <trans-unit id="media.field.tags" xml:space="preserve">
 				<source>Tags</source>
 			<target xml:lang="ja" state="needs-translation">Tags</target></trans-unit>
@@ -707,7 +707,7 @@
 			<target xml:lang="ja" state="needs-translation">This operation cannot be undone.</target></trans-unit>
       <trans-unit id="media.cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target xml:lang="ja" state="needs-translation">Cancel</target></trans-unit>
+			<target xml:lang="ja" state="translated">キャンセル</target></trans-unit>
       <trans-unit id="media.replaceAssetResource" xml:space="preserve">
 				<source>Replace</source>
 			<target xml:lang="ja" state="needs-translation">Replace</target></trans-unit>
@@ -854,7 +854,7 @@
 			<target xml:lang="ja" state="needs-translation">Basics</target></trans-unit>
       <trans-unit id="media.delete" xml:space="preserve">
 				<source>Delete</source>
-			<target xml:lang="ja" state="needs-translation">Delete</target></trans-unit>
+			<target xml:lang="ja" state="translated">削除</target></trans-unit>
       <trans-unit id="media.clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
 			<target xml:lang="ja" state="needs-translation">Click to delete</target></trans-unit>
@@ -863,7 +863,7 @@
 			<target xml:lang="ja" state="needs-translation">Save</target></trans-unit>
       <trans-unit id="media.metadata" xml:space="preserve">
 				<source>Metadata</source>
-			<target xml:lang="ja" state="needs-translation">Metadata</target></trans-unit>
+			<target xml:lang="ja" state="translated">メタデータ</target></trans-unit>
       <trans-unit id="media.metadata.filename" xml:space="preserve">
 				<source>Filename</source>
 			<target xml:lang="ja" state="needs-translation">Filename</target></trans-unit>
@@ -878,16 +878,19 @@
 			<target xml:lang="ja" state="needs-translation">Dimensions</target></trans-unit>
       <trans-unit id="media.metadata.type" xml:space="preserve">
 				<source>Type</source>
-			<target xml:lang="ja" state="needs-translation">Type</target></trans-unit>
+			<target xml:lang="ja" state="translated">種類</target></trans-unit>
       <trans-unit id="media.metadata.identifier" xml:space="preserve">
 				<source>Identifier</source>
 			<target xml:lang="ja" state="needs-translation">Identifier</target></trans-unit>
       <trans-unit id="media.preview" xml:space="preserve">
 				<source>Preview</source>
-			<target xml:lang="ja" state="needs-translation">Preview</target></trans-unit>
+			<target xml:lang="ja" state="translated">プレビュー</target></trans-unit>
       <trans-unit id="media.cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>
 			<target xml:lang="ja" state="needs-translation">Cannot upload the file</target></trans-unit>
+      <trans-unit id="media.noFileSelected" xml:space="preserve">
+				<source>No file selected</source>
+			<target xml:lang="ja" state="needs-translation">No file selected</target></trans-unit>
       <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target xml:lang="ja" state="needs-translation">The file size of {0} exceeds the allowed limit of {1}</target></trans-unit>

@@ -12,6 +12,7 @@ Feature: Localized structure
       | /sites/content-repository         | Neos.ContentRepository.Testing:Page | {"title": "Home"}    | mul_ZZ   |
       | /sites/content-repository/company | Neos.ContentRepository.Testing:Page | {"title": "Company"} | mul_ZZ   |
       | /sites/content-repository/service | Neos.ContentRepository.Testing:Page | {"title": "Company"} | mul_ZZ   |
+    And I am authenticated with role "Neos.Neos:Editor"
 
   @fixtures
   Scenario: The same node can be fetched using different node paths in different languages

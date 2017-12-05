@@ -64,7 +64,7 @@ them, as they can be useful elements to extend, and Neos depends on some of them
 for proper behavior.
 
 There are a few core node types which are needed by Neos; these are shipped in ``Neos.Neos``
-directly. All other node types such as Text, Image, ... are shipped inside the ``Neos.Neos.NodeTypes``
+directly. All other node types such as Text, Image, ... are shipped inside the ``Neos.NodeTypes``
 package.
 
 Neos.Neos:Node
@@ -84,7 +84,7 @@ and "normal content" such as text, which is rendered inside a page. Nodes which
 behave like pages are called *Document Nodes* in Neos. This means they have a unique,
 externally visible URL by which they can be rendered.
 
-The standard *page* in Neos is implemented by ``Neos.Neos.NodeTypes:Page`` which directly extends from
+The standard *page* in Neos is implemented by ``Neos.NodeTypes:Page`` which directly extends from
 ``Neos.Neos:Document``.
 
 

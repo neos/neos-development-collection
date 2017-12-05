@@ -586,9 +586,9 @@
       <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve" approved="yes">
 				<source>New electronic address</source>
 			<target xml:lang="ru">Новый электронный адрес</target></trans-unit>
-      <trans-unit id="userSettings.action.editAccount" xml:space="preserve">
+      <trans-unit id="userSettings.action.editAccount" xml:space="preserve" approved="yes">
 				<source>Edit account</source>
-			<target xml:lang="ru" state="translated">Править учетную запись</target></trans-unit>
+			<target xml:lang="ru">Изменить учетную запись</target></trans-unit>
       <trans-unit id="userSettings.personalData" xml:space="preserve" approved="yes">
 				<source>Personal Data</source>
 			<target xml:lang="ru">Личные данные</target></trans-unit>
@@ -899,6 +899,9 @@
       <trans-unit id="media.cannotUploadFile" xml:space="preserve" approved="yes">
 				<source>Cannot upload the file</source>
 			<target xml:lang="ru">Не удается загрузить файл</target></trans-unit>
+      <trans-unit id="media.noFileSelected" xml:space="preserve" approved="yes">
+				<source>No file selected</source>
+			<target xml:lang="ru">Файл не выбран</target></trans-unit>
       <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve" approved="yes">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target xml:lang="ru">Размер файла {0} превышает допустимый предел в {1}</target></trans-unit>
@@ -925,45 +928,45 @@
           <source>{0} usages</source>
           <target xml:lang="ru">Используется {0} раз</target>
         </trans-unit>
-        <trans-unit id="media.relatedNodes[1]">
+        <trans-unit id="media.relatedNodes[1]" approved="yes">
           <source>{0} usages</source>
-          <target xml:lang="ru" state="translated">{0} использования</target>
+          <target xml:lang="ru">Используется {0} раз</target>
         </trans-unit>
-        <trans-unit id="media.relatedNodes[2]">
+        <trans-unit id="media.relatedNodes[2]" approved="yes">
           <source>{0} usages</source>
-          <target xml:lang="ru" state="translated">{0} использований</target>
+          <target xml:lang="ru">Используется {0} раз</target>
         </trans-unit>
       </group>
       <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve" approved="yes">
 				<source>References to "{asset}"</source>
 			<target xml:lang="ru">Ссылки на "{asset}"</target></trans-unit>
-      <trans-unit id="media.replaceAsset.replaceFilename" xml:space="preserve">
+      <trans-unit id="media.replaceAsset.replaceFilename" xml:space="preserve" approved="yes">
 				<source>Replace "{filename}"</source>
-			<target xml:lang="ru" state="needs-translation">Replace "{filename}"</target></trans-unit>
-      <trans-unit id="media.replaceAsset.description" xml:space="preserve">
+			<target xml:lang="ru">Заменить "{filename}"</target></trans-unit>
+      <trans-unit id="media.replaceAsset.description" xml:space="preserve" approved="yes">
         <source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
-      <target xml:lang="ru" state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
-      <trans-unit id="media.replaceAsset.note" xml:space="preserve">
+      <target xml:lang="ru">Вы можете заменить этот медиа-ресурс путем загрузки нового файла. Новый медиа-ресурс будет использоваться вместо старого повсеместно.</target></trans-unit>
+      <trans-unit id="media.replaceAsset.note" xml:space="preserve" approved="yes">
         <source>Note</source>
-      <target xml:lang="ru" state="needs-translation">Note</target></trans-unit>
-      <trans-unit id="media.replaceAsset.noteText" xml:space="preserve">
+      <target xml:lang="ru">Примечание</target></trans-unit>
+      <trans-unit id="media.replaceAsset.noteText" xml:space="preserve" approved="yes">
         <source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
-      <target xml:lang="ru" state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
-      <trans-unit id="media.replaceAsset.chooseNewFile" xml:space="preserve">
+      <target xml:lang="ru">Эта операция заменит медиа-ресурс во всех опубликованных или неопубликованных рабочих областях, включая публичную версию сайта.</target><alt-trans><target xml:lang="ru">Эта операция заменит медиа-ресурс во всех опубликованных или неопубликованных рабочих областях, включая Live сайт.</target></alt-trans><alt-trans><target xml:lang="ru">Эта операция заменит медиа-ресурс во всех опубликованных или неопубликованных рабочих областях, включая живой сайт.</target></alt-trans></trans-unit>
+      <trans-unit id="media.replaceAsset.chooseNewFile" xml:space="preserve" approved="yes">
         <source>Choose a new file</source>
-      <target xml:lang="ru" state="needs-translation">Choose a new file</target></trans-unit>
-      <trans-unit id="media.replace.usageCount" xml:space="preserve">
+      <target xml:lang="ru">Выбрать новый файл</target></trans-unit>
+      <trans-unit id="media.replace.usageCount" xml:space="preserve" approved="yes">
         <source>Currently the asset is used {usageCount} times.</source>
-      <target xml:lang="ru" state="needs-translation">Currently the asset is used {usageCount} times.</target></trans-unit>
-      <trans-unit id="media.replace.allUsages" xml:space="preserve">
+      <target xml:lang="ru">В настоящее время медиа-ресурс в употреблении {usageCount} раз.</target></trans-unit>
+      <trans-unit id="media.replace.allUsages" xml:space="preserve" approved="yes">
         <source>Show all usages</source>
-      <target xml:lang="ru" state="needs-translation">Show all usages</target></trans-unit>
-      <trans-unit id="media.replace.notUsed" xml:space="preserve">
+      <target xml:lang="ru">Показать где используется</target></trans-unit>
+      <trans-unit id="media.replace.notUsed" xml:space="preserve" approved="yes">
         <source>Currently the asset is not in used anywhere on the website.</source>
-      <target xml:lang="ru" state="needs-translation">Currently the asset is not in used anywhere on the website.</target></trans-unit>
-      <trans-unit id="media.replace.previewFile" xml:space="preserve">
+      <target xml:lang="ru">В настоящее время медиа-ресурс нигде не используется на веб-сайте.</target></trans-unit>
+      <trans-unit id="media.replace.previewFile" xml:space="preserve" approved="yes">
         <source>Preview current file</source>
-      <target xml:lang="ru" state="needs-translation">Preview current file</target></trans-unit>
+      <target xml:lang="ru">Предварительный просмотр текущего файла</target></trans-unit>
     </body>
   </file>
 </xliff>

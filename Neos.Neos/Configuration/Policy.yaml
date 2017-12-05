@@ -34,7 +34,7 @@ privilegeTargets:
       matcher: 'method(Neos\Neos\Controller\Backend\SchemaController->(nodeTypeSchema|vieSchema)Action()) || method(Neos\Neos\Controller\Backend\MenuController->indexAction()) || method(Neos\Neos\Controller\Backend\SettingsController->editPreviewAction())'
 
     'Neos.Neos:Backend.PersonalWorkspaceReadAccess.NodeConverter':
-      matcher: 'method(Neos\Neos\TypeConverter\NodeConverter->prepareContextProperties(workspaceName === current.userInformation.userWorkspaceName))'
+      matcher: 'method(Neos\Neos\TypeConverter\NodeConverter->prepareContextProperties(workspaceName === current.userInformation.personalWorkspaceName))'
 
     # No role should have this privilege assigned:
     'Neos.Neos:Backend.OtherUsersPersonalWorkspaceAccess':
@@ -50,10 +50,10 @@ privilegeTargets:
       matcher: 'method(Neos\Neos\Controller\Module\Management\WorkspacesController->publishWorkspaceAction(workspace.baseWorkspace.name === "live"))'
 
     'Neos.Neos:Backend.PublishOwnWorkspaceContent':
-      matcher: 'method(Neos\Neos\Service\Controller\WorkspaceController->(publishNode|publishNodes|error)Action()) || method(Neos\Neos\Service\Controller\WorkspaceController->publishAllAction(workspaceName = current.userInformation.userWorkspaceName)) || method(Neos\Neos\Service\Controller\WorkspaceController->getWorkspaceWideUnpublishedNodesAction(workspace.name = current.userInformation.userWorkspaceName)) || method(Neos\Neos\Service\Controller\AbstractServiceController->(error)Action())'
+      matcher: 'method(Neos\Neos\Service\Controller\WorkspaceController->(publishNode|publishNodes|error)Action()) || method(Neos\Neos\Service\Controller\WorkspaceController->publishAllAction(workspaceName = current.userInformation.personalWorkspaceName)) || method(Neos\Neos\Service\Controller\WorkspaceController->getWorkspaceWideUnpublishedNodesAction(workspace.name = current.userInformation.personalWorkspaceName)) || method(Neos\Neos\Service\Controller\AbstractServiceController->(error)Action())'
 
     'Neos.Neos:Backend.DiscardOwnWorkspaceContent':
-      matcher: 'method(Neos\Neos\Service\Controller\WorkspaceController->(discardNode|discardNodes|error)Action()) || method(Neos\Neos\Service\Controller\WorkspaceController->discardAllAction(workspace.name === current.userInformation.userWorkspaceName)) || method(Neos\Neos\Service\Controller\AbstractServiceController->(error)Action())'
+      matcher: 'method(Neos\Neos\Service\Controller\WorkspaceController->(discardNode|discardNodes|error)Action()) || method(Neos\Neos\Service\Controller\WorkspaceController->discardAllAction(workspace.name === current.userInformation.personalWorkspaceName)) || method(Neos\Neos\Service\Controller\AbstractServiceController->(error)Action())'
 
     #
     # Workspace management

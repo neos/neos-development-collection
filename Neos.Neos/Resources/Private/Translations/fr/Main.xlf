@@ -426,7 +426,7 @@
 			<target xml:lang="fr">Ce texte ne doit pas dépasser {{maximum}} caractères.</target></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve" approved="yes">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target xml:lang="fr">Seuls les caractères normaux (a à z, trémas,...) et les nombres sont autorisés.</target></trans-unit>
+			<target xml:lang="fr">Seuls les caractères a à z et les nombres sont autorisés</target><alt-trans><target xml:lang="fr">Seuls les caractères de A à Z et les nombres sont autorisés.</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve" approved="yes">
 				<source>The given subject was not countable.</source>
 			<target xml:lang="fr">Le sujet donné n'est pas dénombrable.</target></trans-unit>
@@ -495,7 +495,7 @@
 			<target xml:lang="fr" state="needs-translation">Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createEmpty" xml:space="preserve">
 				<source>Create empty</source>
-			<target xml:lang="fr" state="needs-translation">Create empty</target></trans-unit>
+			<target xml:lang="fr" state="translated">Créer un vide</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createAndCopy" xml:space="preserve" approved="yes">
 				<source>Create and copy</source>
 			<target xml:lang="fr">Créer et copier</target><alt-trans><target xml:lang="fr">Créer et copie</target></alt-trans></trans-unit>
