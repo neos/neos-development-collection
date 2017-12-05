@@ -25,6 +25,7 @@ use Neos\Neos\Service\Mapping\NodePropertyConverterService;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Service\AuthorizationService;
+use Neos\Fusion\Service\HtmlAugmenter;
 
 /**
  * The content element wrapping service adds the necessary markup around

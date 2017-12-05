@@ -12,7 +12,7 @@ namespace Neos\Fusion\FusionObjects;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Service\HtmlAugmenter;
+use Neos\Fusion\Service\HtmlAugmenter;
 
 /**
  * A Fusion Augmenter-Object
