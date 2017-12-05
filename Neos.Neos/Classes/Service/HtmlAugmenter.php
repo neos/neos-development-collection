@@ -23,5 +23,4 @@ use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
  */
 class HtmlAugmenter extends FusionHtmlAugmenter
 {
-
 }
