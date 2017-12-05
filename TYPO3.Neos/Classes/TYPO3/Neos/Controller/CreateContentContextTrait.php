@@ -31,12 +31,6 @@ trait CreateContentContextTrait
 
     /**
      * @Flow\Inject
-     * @var \TYPO3\Neos\Domain\Repository\DomainRepository
-     */
-    protected $_domainRepository;
-
-    /**
-     * @Flow\Inject
      * @var \TYPO3\Neos\Domain\Repository\SiteRepository
      */
     protected $_siteRepository;
@@ -76,7 +70,7 @@ trait CreateContentContextTrait
     {
         $nodePath = NodePaths::getRelativePathBetween(SiteService::SITES_ROOT_PATH, $nodeData->getPath());
         list($siteNodeName) = explode('/', $nodePath);
-        $site = $this->siteRepository->findOneByNodeName($siteNodeName);
+        $site = $this->_siteRepository->findOneByNodeName($siteNodeName);
 
         $contextProperties = [
             'workspaceName' => $nodeData->getWorkspace()->getName(),
