@@ -141,6 +141,8 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
     }
 
     /**
+     * Render and return a label for the $nodeInDimensions in the built menu item.
+     *
      * @param string $pinnedDimensionName
      * @param NodeInterface $nodeInDimensions
      * @param array $targetDimensions
