@@ -157,7 +157,7 @@ class Parser implements ParserInterface
 	/x';
     const SPLIT_PATTERN_VALUENUMBER = '/^\s*-?\d+\s*$/';
     const SPLIT_PATTERN_VALUEFLOATNUMBER = '/^\s*-?\d+(\.\d+)?\s*$/';
-    const SPLIT_PATTERN_VALUELITERAL = '/^"((?:\\\\.|[^\\\\"])*)"|\'((?:\\\\.|[^\\\\\'])*)\'$/';
+    const SPLIT_PATTERN_VALUELITERAL = '/^"([^"\\\\]*(?>\\\\.[^"\\\\]*)*)"|\'([^\'\\\\]*(?>\\\\.[^\'\\\\]*)*)\'$/';
     const SPLIT_PATTERN_VALUEMULTILINELITERAL = '/
 		^(
 			(?P<DoubleQuoteChar>")
@@ -833,6 +833,10 @@ class Parser implements ParserInterface
         $transpiledFusion = $dslObject->transpile($code);
 
         $parser = new Parser();
+        // transfer current namespaces to new parser
+        foreach ($this->objectTypeNamespaces as $key => $objectTypeNamespace) {
+            $parser->setObjectTypeNamespace($key, $objectTypeNamespace);
+        }
         $temporaryAst = $parser->parse('value = ' . $transpiledFusion);
         $processedValue = $temporaryAst['value'];
         return $processedValue;
