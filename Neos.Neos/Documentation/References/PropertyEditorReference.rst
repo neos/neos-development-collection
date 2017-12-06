@@ -551,6 +551,12 @@ Options Reference:
 	``crop`` (boolean)
 		If ``TRUE``, enable image cropping. Default ``TRUE``.
 
+	``upload`` (boolean)
+		If ``TRUE``, enable Upload button, allowing new files to be uploaded directly in the editor. Default ``TRUE``.
+
+	``mediaBrowser`` (boolean)
+		If ``TRUE``, enable Media Browser button. Default ``TRUE``.
+
 	``resize`` (boolean)
 		If ``TRUE``, enable image resizing. Default ``FALSE``.
 
@@ -617,7 +623,13 @@ Conversely, if multiple assets shall be uploaded, use ``array<Neos\Media\Domain\
 
 Options Reference:
 
-(no options)
+``features``
+
+	``upload`` (boolean)
+		If ``TRUE``, enable Upload button, allowing new files to be uploaded directly in the editor. Default ``TRUE``.
+
+	``mediaBrowser`` (boolean)
+		If ``TRUE``, enable Media Browser button. Default ``TRUE``.
 
 Property Validation
 -------------------
