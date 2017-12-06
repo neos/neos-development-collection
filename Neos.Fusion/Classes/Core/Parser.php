@@ -157,7 +157,7 @@ class Parser implements ParserInterface
 	/x';
     const SPLIT_PATTERN_VALUENUMBER = '/^\s*-?\d+\s*$/';
     const SPLIT_PATTERN_VALUEFLOATNUMBER = '/^\s*-?\d+(\.\d+)?\s*$/';
-    const SPLIT_PATTERN_VALUELITERAL = '/^"((?:\\\\.|[^\\\\"])*)"|\'((?:\\\\.|[^\\\\\'])*)\'$/';
+    const SPLIT_PATTERN_VALUELITERAL = '/^"([^"\\\\]*(?>\\\\.[^"\\\\]*)*)"|\'([^\'\\\\]*(?>\\\\.[^\'\\\\]*)*)\'$/';
     const SPLIT_PATTERN_VALUEMULTILINELITERAL = '/
 		^(
 			(?P<DoubleQuoteChar>")
