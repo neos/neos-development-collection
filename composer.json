@@ -24,11 +24,11 @@
         "neos/imagine": "^3.0.2",
         "imagine/imagine": "*",
         "doctrine/dbal": "~2.5.0",
-        "neos/party": "~4.0",
-        "neos/setup": "~4.0",
-        "neos/twitter-bootstrap": "~3.0",
+        "neos/party": "*",
+        "neos/setup": "*",
+        "neos/twitter-bootstrap": "*",
         "neos/form": "*",
-        "neos/kickstarter": "~4.2.0"
+        "neos/kickstarter": "*"
     },
     "replace": {
         "typo3/typo3cr": "self.version",
