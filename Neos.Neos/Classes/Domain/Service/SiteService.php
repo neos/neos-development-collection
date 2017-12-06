@@ -118,10 +118,11 @@ class SiteService
      *
      * @param Asset $asset
      * @param NodeInterface $node
+     * @param string $propertyName
      * @param string $siteNodeName
      * @return void
      */
-    public function assignUploadedAssetToSiteAssetCollection(Asset $asset, NodeInterface $node, string $siteNodeName)
+    public function assignUploadedAssetToSiteAssetCollection(Asset $asset, NodeInterface $node, string $propertyName, string $siteNodeName)
     {
         /** @var Site $site */
         $site = $this->siteRepository->findOneByNodeName($siteNodeName);
