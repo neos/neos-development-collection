@@ -95,7 +95,12 @@ prototype(Neos.NodeTypes:FourColumn) < prototype(Neos.NodeTypes:MultiColumn)
 # Form TS Object
 prototype(Neos.NodeTypes:Form) {
 	presetName = 'default'
-	overrideConfiguration = Neos.Fusion:RawArray
+	overrideConfiguration = Neos.Fusion:RawArray {
+		renderingOptions = Neos.Fusion:RawArray {
+			# Make the current FusionRuntime available to the Form Renderer
+			_fusionRuntime = ${this.runtime}
+		}
+	}
 	@cache {
 		mode = 'uncached'
 		context {
