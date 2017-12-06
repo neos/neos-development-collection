@@ -912,7 +912,19 @@ class ParserTest extends UnitTestCase
         );
 
         $actualParseTree = $this->parser->parse($sourceCode);
-        $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 21.');
+        $this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 23.');
+    }
+
+    /**
+     * Checks if really long strings are parsed correctly
+     *
+     * @test
+     */
+    public function parserCorrectlyParsesFixture24()
+    {
+        $sourceCode = $this->readFusionFixture('ParserTestFusionFixture24');
+        $actualParseTree = $this->parser->parse($sourceCode);
+        $this->assertArrayHasKey('longString', $actualParseTree);
     }
 
     /**
