@@ -1,8 +1,8 @@
 <?php
-namespace Neos\Neos\Tests\Unit\Service;
+namespace Neos\Fusion\Tests\Unit\Service;
 
 /*
- * This file is part of the Neos.Neos package.
+ * This file is part of the Neos.Fusion package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,7 @@ namespace Neos\Neos\Tests\Unit\Service;
  */
 
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Neos\Service\HtmlAugmenter;
+use Neos\Fusion\Service\HtmlAugmenter;
 
 /**
  * Testcase for the HTML Augmenter
