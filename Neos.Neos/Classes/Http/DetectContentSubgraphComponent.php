@@ -56,6 +56,12 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
     protected $allowEmptyPathSegments;
 
     /**
+     * @Flow\InjectConfiguration(path="contentDimensions.resolution.uriPathSegmentDelimiter")
+     * @var string
+     */
+    protected $uriPathSegmentDelimiter;
+
+    /**
      * @param Http\Component\ComponentContext $componentContext
      * @throws Exception\InvalidDimensionPresetDetectorException
      */
@@ -111,9 +117,11 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
         $backendUriDimensionPresetDetector = new ContentDimensionDetection\BackendUriDimensionPresetDetector();
         $presets = $this->dimensionPresetSource->getAllPresets();
         $this->sortPresetsByOffset($presets);
+        $uriPathSegmentOffset = 0;
         foreach ($presets as $dimensionName => $presetConfiguration) {
             $detector = $this->contentDimensionPresetDetectorResolver->resolveDimensionPresetDetector($dimensionName, $presetConfiguration);
-            $options = $presetConfiguration['resolution']['options'] ?? $this->generateOptionsFromLegacyConfiguration($detector, $presetConfiguration);
+
+            $options = $presetConfiguration['resolution']['options'] ?? $this->generateOptionsFromLegacyConfiguration($presetConfiguration, $uriPathSegmentOffset);
 
             if ($isContextPath) {
                 $preset = $backendUriDimensionPresetDetector->detectPreset($dimensionName, $presetConfiguration['presets'], $componentContext);
@@ -130,9 +138,14 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
                 }
             }
 
+            $resolutionMode = $presetConfiguration['resolution']['mode'] ?? ContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT;
+            if ($resolutionMode === ContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT) {
+                $options['delimiter'] = $this->uriPathSegmentDelimiter;
+            }
             $preset = $detector->detectPreset($dimensionName, $presetConfiguration['presets'], $componentContext, $options);
-            if ($preset && $detector instanceof ContentDimensionDetection\UriPathSegmentDimensionPresetDetector) {
+            if ($preset && $resolutionMode === ContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT) {
                 $this->flagUriPathSegmentUsed($componentContext);
+                $uriPathSegmentOffset++;
             }
             if (!$preset && $options && isset($options['allowEmptyValue']) && $options['allowEmptyValue']) {
                 if (isset($options['defaultPresetIdentifier']) && $options['defaultPresetIdentifier'] && isset($presetConfiguration['presets'][$options['defaultPresetIdentifier']])) {
@@ -178,16 +191,20 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
 
     /**
      * @todo remove once legacy configuration is removed (probably with 4.0)
-     * @param ContentDimensionDetection\ContentDimensionPresetDetectorInterface $detector
      * @param array $presetConfiguration
+     * @param int $uriPathSegmentOffset
      * @return array|null
      */
-    protected function generateOptionsFromLegacyConfiguration(ContentDimensionDetection\ContentDimensionPresetDetectorInterface $detector, array $presetConfiguration)
+    protected function generateOptionsFromLegacyConfiguration(array $presetConfiguration, int $uriPathSegmentOffset)
     {
         $options = null;
 
-        if ($detector instanceof ContentDimensionDetection\UriPathSegmentDimensionPresetDetector) {
+        $resolutionMode = $presetConfiguration['resolution']['mode'] ?? ContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT;
+        if ($resolutionMode === ContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT) {
             $options = [];
+            if (!isset($options['offset'])) {
+                $options['offset'] = $uriPathSegmentOffset;
+            }
             if ($this->allowEmptyPathSegments) {
                 $options['allowEmptyValue'] = true;
                 $options['defaultPresetIdentifier'] = $presetConfiguration['defaultPreset'];

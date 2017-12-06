@@ -32,7 +32,7 @@ Neos:
         Neos.Neos: true
 
     contentDimensions:
-      detection:
+      resolution:
         uriPathSegmentDelimiter: '_'
 
     # If a node name is specified here it will be used as default siteNode
