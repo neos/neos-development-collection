@@ -43,5 +43,4 @@ class WorkspaceRepository extends Repository
 
         return $query->execute()->getFirst();
     }
-
 }
