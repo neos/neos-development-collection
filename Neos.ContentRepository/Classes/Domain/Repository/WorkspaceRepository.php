@@ -31,7 +31,12 @@ class WorkspaceRepository extends Repository
         'title' => QueryInterface::ORDER_ASCENDING
     );
 
-    public function getPersonalWorkspaceByOwnerIdentifier($ownerIdentifier)
+    /**
+     * Returns the personal workspace with the owner matching the given $ownerIdentifier.
+     *
+     * @var string $ownerIdentifier
+     */
+    public function getPersonalWorkspaceByOwnerIdentifier(string $ownerIdentifier)
     {
         $query = $this->createQuery();
         $query->matching(
