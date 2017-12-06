@@ -64,6 +64,7 @@ class BackendUriDimensionPresetDetectorTest extends UnitTestCase
             )
         );
     }
+
     /**
      * @test
      */
@@ -75,6 +76,25 @@ class BackendUriDimensionPresetDetectorTest extends UnitTestCase
         $componentContext = new Http\Component\ComponentContext($httpRequest, $httpResponse);
 
         $this->assertSame(null,
+            $presetDetector->detectPreset(
+                'language',
+                $this->dimensionConfiguration['presets'],
+                $componentContext
+            )
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function detectPresetDetectsPresetFromComponentContextWithBackendUrlContainingSerializedPresetDifferentFromTheFrontendUrlPreset()
+    {
+        $presetDetector = new ContentDimensionDetection\BackendUriDimensionPresetDetector();
+        $httpRequest = Http\Request::create(new Http\Uri('https://domain.com/fr_EU/@user-me;language=nl,de'));
+        $httpResponse = new Http\Response();
+        $componentContext = new Http\Component\ComponentContext($httpRequest, $httpResponse);
+
+        $this->assertSame($this->dimensionConfiguration['presets']['nl'],
             $presetDetector->detectPreset(
                 'language',
                 $this->dimensionConfiguration['presets'],

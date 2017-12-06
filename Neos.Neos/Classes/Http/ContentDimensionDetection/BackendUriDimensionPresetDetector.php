@@ -34,6 +34,8 @@ final class BackendUriDimensionPresetDetector implements ContentDimensionPresetD
     public function detectPreset(string $dimensionName, array $presets, Http\Component\ComponentContext $componentContext, array $overrideOptions = null)
     {
         $path = $componentContext->getHttpRequest()->getUri()->getPath();
+        $path = '/' . mb_substr($path, mb_strpos($path, '@'));
+        $path = mb_substr($path, 0, mb_strrpos($path, '.'));
         $nodePathAndContext = NodePaths::explodeContextPath($path);
         if (isset($nodePathAndContext['dimensions'][$dimensionName])) {
             foreach ($presets as $preset) {
