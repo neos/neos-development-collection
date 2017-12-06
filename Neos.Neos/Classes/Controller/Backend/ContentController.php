@@ -127,10 +127,11 @@ class ContentController extends ActionController
      * @param Asset $asset
      * @param string $metadata Type of metadata to return ("Asset" or "Image")
      * @param NodeInterface $node The node the new asset should be assigned to
+     * @param string $propertyName The node property name the new asset should be assigned to
      * @param string $siteNodeName The node name of the site the asset belongs to
      * @return string
      */
-    public function uploadAssetAction(Asset $asset, string $metadata, NodeInterface $node, string $siteNodeName)
+    public function uploadAssetAction(Asset $asset, string $metadata, NodeInterface $node, string $propertyName, string $siteNodeName)
     {
         $this->response->setHeader('Content-Type', 'application/json');
 
@@ -146,7 +147,7 @@ class ContentController extends ActionController
             if ($this->persistenceManager->isNewObject($asset)) {
                 $this->assetRepository->add($asset);
             }
-            $this->emitAssetUploaded($asset, $node, $siteNodeName);
+            $this->emitAssetUploaded($asset, $node, $propertyName, $siteNodeName);
         }
         return json_encode($result);
     }
@@ -398,11 +399,12 @@ class ContentController extends ActionController
      *
      * @param Asset $asset The uploaded asset
      * @param NodeInterface $node The node the asset belongs to
+     * @param string $propertyName The node property name the asset is assigned to
      * @param string $siteNodeName Name of the Site Node in which the asset was uploaded
      * @return void
      * @Flow\Signal
      */
-    protected function emitAssetUploaded(Asset $asset, NodeInterface $node, string $siteNodeName)
+    protected function emitAssetUploaded(Asset $asset, NodeInterface $node, string $propertyName, string $siteNodeName)
     {
     }
 }
