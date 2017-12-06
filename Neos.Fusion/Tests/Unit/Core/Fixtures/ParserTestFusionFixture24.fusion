@@ -1,0 +1,10 @@
+//
+// Fusion Fixture 24
+//
+// Checks if path with an dsl is parsed handed over to the respective method
+
+somepath.dslValue1 = dsl1`example value`
+
+somepath.dslValue2 = dsl2`another
+multiline
+value`

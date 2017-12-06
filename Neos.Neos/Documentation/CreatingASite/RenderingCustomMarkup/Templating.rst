@@ -95,7 +95,7 @@ Namespaces can be defined in a template in two ways:
 {namespace f=Neos\FluidAdaptor\ViewHelpers}
   This is a non-standard way only understood by Fluid. It links the ``f``
   prefix to the PHP namespace ``\Neos\FluidAdaptor\ViewHelpers``.
-<html xmlns:foo=”http://some/unique/namespace”>
+<html xmlns:foo="http://some/unique/namespace">
   The standard for declaring a namespace in XML. This will link the ``foo``
   prefix to the URI ``http://some/unique/namespace`` and Fluid can look up
   the corresponding PHP namespace in your settings (so this is a two-piece
@@ -840,11 +840,11 @@ the render ViewHelper in order to only render the content of the partial.
 
 Partial::
 
-	<html xmlns:x=”http://typo3.org/ns/Your/Package/ViewHelpers”>
-	<f:section name=”content”>
+	<html xmlns:x="http://typo3.org/ns/Your/Package/ViewHelpers">
+	<f:section name="content">
 		<x:yourViewHelper />
 	</f:section>
 
 Template::
 
-	<f:render partial=”PartialName” section=”content” />
+	<f:render partial="PartialName" section="content" />

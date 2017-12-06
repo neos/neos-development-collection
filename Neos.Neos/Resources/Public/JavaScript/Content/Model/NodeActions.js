@@ -139,7 +139,7 @@ define(
 			var referenceNodeEntity = referenceNode.get('_vieEntity'),
 				collectionModel = referenceNodeEntity._enclosingCollectionWidget.options.model,
 				collection = referenceNodeEntity._enclosingCollectionWidget.options.collection,
-				typoScriptPath = collectionModel.get('typo3:__typoscriptPath'),
+				fusionPath = collectionModel.get('typo3:__fusionPath'),
 				nodeType = clipboard.nodeType,
 				localXhr = this._prepareXhr(),
 				action = 'moveAndRender',
@@ -147,7 +147,7 @@ define(
 					clipboard.nodePath,
 					referenceNode.get('nodePath'),
 					position,
-					typoScriptPath
+					fusionPath
 				];
 
 			if (clipboard.type === 'copy') {
@@ -239,13 +239,13 @@ define(
 				referenceNodeEntity = referenceNode.get('_vieEntity'),
 				collectionModel = referenceNodeEntity._enclosingCollectionWidget.options.model,
 				collection = referenceNodeEntity._enclosingCollectionWidget.options.collection,
-				typoScriptPath = collectionModel.get('typo3:__typoscriptPath'),
+				fusionPath = collectionModel.get('typo3:__fusionPath'),
 				localXhr = this._prepareXhr();
 
 			LoadingIndicator.start();
 			NodeEndpoint.createAndRender(
 				referenceNode.get('nodePath'),
-				typoScriptPath,
+				fusionPath,
 				{
 					nodeType: nodeType,
 					properties: {}

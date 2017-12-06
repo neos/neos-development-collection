@@ -38,8 +38,8 @@ trait FusionContextTrait
 
         $view = $this->viewHelperVariableContainer->getView();
         if ($view instanceof FusionAwareViewInterface) {
-            $typoScriptObject = $view->getFusionObject();
-            $currentContext = $typoScriptObject->getRuntime()->getCurrentContext();
+            $fusionObject = $view->getFusionObject();
+            $currentContext = $fusionObject->getRuntime()->getCurrentContext();
             if (isset($currentContext[$variableName])) {
                 $value = $currentContext[$variableName];
             }
@@ -59,8 +59,8 @@ trait FusionContextTrait
             return false;
         }
 
-        $typoScriptObject = $view->getFusionObject();
-        $currentContext = $typoScriptObject->getRuntime()->getCurrentContext();
+        $fusionObject = $view->getFusionObject();
+        $currentContext = $fusionObject->getRuntime()->getCurrentContext();
 
         return array_key_exists($variableName, $currentContext);
     }

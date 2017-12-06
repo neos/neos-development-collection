@@ -19,14 +19,14 @@ use Neos\FluidAdaptor\ViewHelpers\Form\AbstractFormFieldViewHelper;
  * = Examples =
  *
  * <code title="Example">
- * <typo3.media:form.checkbox name="myCheckBox" value="someValue" />
+ * <neos.media:form.checkbox name="myCheckBox" value="someValue" />
  * </code>
  * <output>
  * <input type="checkbox" name="myCheckBox" value="someValue" />
  * </output>
  *
  * <code title="Preselect">
- * <typo3.media:form.checkbox name="myCheckBox" value="someValue" checked="{object.value} == 5" />
+ * <neos.media:form.checkbox name="myCheckBox" value="someValue" checked="{object.value} == 5" />
  * </code>
  * <output>
  * <input type="checkbox" name="myCheckBox" value="someValue" checked="checked" />
@@ -34,7 +34,7 @@ use Neos\FluidAdaptor\ViewHelpers\Form\AbstractFormFieldViewHelper;
  * </output>
  *
  * <code title="Bind to object property">
- * <typo3.media:form.checkbox property="interests" value="TYPO3" />
+ * <neos.media:form.checkbox property="interests" value="TYPO3" />
  * </code>
  * <output>
  * <input type="checkbox" name="user[interests][]" value="TYPO3" checked="checked" />

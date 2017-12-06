@@ -69,6 +69,7 @@ Feature: ChildNode Constraints
       | ecf40ad1-3119-0a43-d02e-55f8b5aa3c70 | /sites              | unstructured                            |
       | fd5ba6e1-4313-b145-1004-dad2f1173a35 | /sites/content-repository      | Neos.ContentRepository.Testing:Page              |
       | 52540602-b417-11e3-9358-14109fd7a2dd | /sites/content-repository/main | Neos.ContentRepository.Testing:ContentCollection |
+    And I am authenticated with role "Neos.Neos:Editor"
 
   @fixtures
   Scenario: Allow node types for direct child nodes

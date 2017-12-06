@@ -178,8 +178,7 @@ class CacheSegmentParserTest extends UnitTestCase
      */
     public function getOutputAfterExtractReturnsOriginalTextWithoutAnnotations()
     {
-        $parser = new CacheSegmentParser();
-        $parser->extractRenderedSegments($this->content);
+        $parser = new CacheSegmentParser($this->content);
 
         $output = $parser->getOutput();
 
@@ -191,8 +190,8 @@ class CacheSegmentParserTest extends UnitTestCase
      */
     public function extractReturnsOuterContentWithPlaceholders()
     {
-        $parser = new CacheSegmentParser();
-        $outerContent = $parser->extractRenderedSegments($this->content);
+        $parser = new CacheSegmentParser($this->content);
+        $outerContent = $parser->getOuterSegmentContent();
 
         $this->assertEquals($this->expectedOuterContent, $outerContent);
     }
@@ -202,9 +201,7 @@ class CacheSegmentParserTest extends UnitTestCase
      */
     public function getCacheEntriesAfterExtractReturnsInnerContentWithPlaceholders()
     {
-        $parser = new CacheSegmentParser();
-        $parser->extractRenderedSegments($this->content);
-
+        $parser = new CacheSegmentParser($this->content);
         $entries = $parser->getCacheSegments();
 
         $this->assertEquals($this->expectedEntries, $entries);
@@ -213,12 +210,11 @@ class CacheSegmentParserTest extends UnitTestCase
     /**
      * @test
      * @expectedException \Neos\Fusion\Exception
-     * @expectedExceptionCode 1391853500
+     * @expectedExceptionCode 1391855139
      */
     public function invalidContentWithMissingEndThrowsException()
     {
-        $parser = new CacheSegmentParser();
-        $parser->extractRenderedSegments($this->invalidContentWithMissingEnd);
+        new CacheSegmentParser($this->invalidContentWithMissingEnd);
     }
 
     /**
@@ -228,8 +224,7 @@ class CacheSegmentParserTest extends UnitTestCase
      */
     public function invalidContentWithExceedingEndThrowsException()
     {
-        $parser = new CacheSegmentParser();
-        $parser->extractRenderedSegments($this->invalidContentWithExceedingEnd);
+        new CacheSegmentParser($this->invalidContentWithExceedingEnd);
     }
 
     /**
@@ -239,8 +234,7 @@ class CacheSegmentParserTest extends UnitTestCase
      */
     public function invalidContentWithMissingSeparatorThrowsException()
     {
-        $parser = new CacheSegmentParser();
-        $parser->extractRenderedSegments($this->invalidContentWithMissingSeparator);
+        new CacheSegmentParser($this->invalidContentWithMissingSeparator);
     }
 
     /**
@@ -248,8 +242,8 @@ class CacheSegmentParserTest extends UnitTestCase
      */
     public function extractWithUncachedSegmentsReturnsOuterContentWithPlaceholders()
     {
-        $parser = new CacheSegmentParser();
-        $outerContent = $parser->extractRenderedSegments($this->contentWithUncachedSegments);
+        $parser = new CacheSegmentParser($this->contentWithUncachedSegments);
+        $outerContent = $parser->getOuterSegmentContent();
 
         $this->assertEquals($this->expectedOuterContentWithUncachedSegments, $outerContent);
     }
@@ -259,9 +253,7 @@ class CacheSegmentParserTest extends UnitTestCase
      */
     public function getOutputAfterExtractWithUncachedSegmentsReturnsOriginalTextWithoutAnnotations()
     {
-        $parser = new CacheSegmentParser();
-        $parser->extractRenderedSegments($this->contentWithUncachedSegments);
-
+        $parser = new CacheSegmentParser($this->contentWithUncachedSegments);
         $output = $parser->getOutput();
 
         $this->assertEquals($this->expectedOutputWithUncachedSegments, $output);
@@ -272,9 +264,7 @@ class CacheSegmentParserTest extends UnitTestCase
      */
     public function getCacheSegmentsAfterExtractWithUncachedSegmentsReturnsContentWithPlaceholder()
     {
-        $parser = new CacheSegmentParser();
-        $parser->extractRenderedSegments($this->contentWithUncachedSegments);
-
+        $parser = new CacheSegmentParser($this->contentWithUncachedSegments);
         $entries = $parser->getCacheSegments();
 
         $this->assertEquals($this->expectedEntriesWithUncachedSegments, $entries);

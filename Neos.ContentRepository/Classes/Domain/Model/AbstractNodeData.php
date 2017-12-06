@@ -11,13 +11,12 @@ namespace Neos\ContentRepository\Domain\Model;
  * source code.
  */
 
+use Neos\ContentRepository\Validation\Validator\NodeIdentifierValidator;
 use Neos\Flow\Persistence\Aspect\PersistenceMagicInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
-use Neos\Flow\Validation\Validator\UuidValidator;
-use Neos\ContentRepository\Domain\Model\ContentObjectProxy;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Exception\NodeException;
@@ -135,6 +134,23 @@ abstract class AbstractNodeData implements ReadablePropertiesInterface, Writeabl
     }
 
     /**
+     * Make sure the properties are always an array.
+     *
+     * If the JSON in the DB is corrupted, decoding it can fail, leading to
+     * a null value. This may lead to errors later, when the value is used with
+     * functions that expect an array.
+     *
+     * @return void
+     * @ORM\PostLoad
+     */
+    public function ensurePropertiesIsNeverNull()
+    {
+        if (!is_array($this->properties)) {
+            $this->properties = [];
+        }
+    }
+
+    /**
      * Sets the specified property.
      * If the node has a content object attached, the property will be set there
      * if it is settable.
@@ -153,7 +169,7 @@ abstract class AbstractNodeData implements ReadablePropertiesInterface, Writeabl
                         foreach ($value as $nodeIdentifier) {
                             if ($nodeIdentifier instanceof NodeInterface || $nodeIdentifier instanceof AbstractNodeData) {
                                 $nodeIdentifiers[] = $nodeIdentifier->getIdentifier();
-                            } elseif (preg_match(UuidValidator::PATTERN_MATCH_UUID, $nodeIdentifier) !== 0) {
+                            } elseif (preg_match(NodeIdentifierValidator::PATTERN_MATCH_NODE_IDENTIFIER, $nodeIdentifier) !== 0) {
                                 $nodeIdentifiers[] = $nodeIdentifier;
                             }
                         }
@@ -164,7 +180,7 @@ abstract class AbstractNodeData implements ReadablePropertiesInterface, Writeabl
                     $nodeIdentifier = null;
                     if ($value instanceof NodeInterface || $value instanceof AbstractNodeData) {
                         $nodeIdentifier = $value->getIdentifier();
-                    } elseif (preg_match(UuidValidator::PATTERN_MATCH_UUID, $value) !== 0) {
+                    } elseif (preg_match(NodeIdentifierValidator::PATTERN_MATCH_NODE_IDENTIFIER, $value) !== 0) {
                         $nodeIdentifier = $value;
                     }
                     $value = $nodeIdentifier;
@@ -286,7 +302,7 @@ abstract class AbstractNodeData implements ReadablePropertiesInterface, Writeabl
         }
 
         $properties = array();
-        foreach (array_keys($this->properties) as $propertyName) {
+        foreach ($this->properties as $propertyName => $propertyValue) {
             $properties[$propertyName] = $this->getProperty($propertyName);
         }
         return $properties;

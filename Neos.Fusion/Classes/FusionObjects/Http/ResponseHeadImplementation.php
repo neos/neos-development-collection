@@ -11,7 +11,6 @@ namespace Neos\Fusion\FusionObjects\Http;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Headers;
 use Neos\Flow\Http\Response;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
@@ -71,6 +70,7 @@ class ResponseHeadImplementation extends AbstractFusionObject
     public function evaluate()
     {
         $httpResponse = new Response();
+        $httpResponse->setVersion($this->getHttpVersion());
         $httpResponse->setStatus($this->getStatusCode());
         $httpResponse->setHeaders(new Headers());
 

@@ -57,14 +57,14 @@
 							<tr>
 								<td>
 									{f:if(condition: domain.scheme, then: '{domain.scheme}://')}<b>{domain.hostname}</b>{f:if(condition: domain.port, then: ':{domain.port}')}
-									<f:if condition="{domain.active} == 0">
+									<f:if condition="{domain.active} === 0">
 										<span class="neos-badge neos-badge-warning">{neos:backend.translate(id: 'inactive', value: 'Inactive')}</span>
 									</f:if>
 								</td>
 								<td class="neos-aCenter check">
 									<f:if condition="{domain.active}">
 										<label class="neos-radio">
-											<f:form.radio property="primaryDomain" value="{domain}" checked="{f:if(condition: '{site.primaryDomain} == {domain}', then: 'checked')}" /><span></span>
+											<f:form.radio property="primaryDomain" value="{domain}" checked="{f:if(condition: '{site.primaryDomain} === {domain}', then: 'checked')}" /><span></span>
 										</label>
 									</f:if>
 								</td>
@@ -73,7 +73,7 @@
 										<f:link.action action="editDomain" arguments="{domain: domain}" class="neos-button" title="{neos:backend.translate(id: 'clickToEdit', value: 'Click to edit')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
 											<i class="icon-pencil icon-white"></i>
 										</f:link.action>
-										<f:if condition="{domain.active} == 1">
+										<f:if condition="{domain.active} === 1">
 											<f:then>
 												<button form="postHelper" formaction="{f:uri.action(action: 'deactivateDomain', arguments: {domain: domain})}" type="submit" class="neos-button neos-button-warning" title="{neos:backend.translate(id: 'clickToDeactivate', value: 'Click to deactivate')}" data-neos-toggle="tooltip">
 													<i class="icon-minus-sign icon-white"></i>
