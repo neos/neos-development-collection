@@ -14,7 +14,7 @@ class Version20170220155800 extends AbstractMigration
      */
     public function getDescription()
     {
-        return '';
+        return 'Add quality column to tables abstractimageadjustment and thumbnail.';
     }
 
     /**
