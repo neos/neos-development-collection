@@ -23,7 +23,8 @@ trait QualityTrait
      * @var integer
      * @ORM\Column(nullable=true)
      */
-    protected $quality = 90;
+    protected $quality = null;
+
     /**
      * Returns the quality of the image
      *
