@@ -11,13 +11,13 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
  * source code.
  */
 
-use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Utility\Arrays;
-use PHPUnit_Framework_Assert as Assert;
-use Symfony\Component\Yaml\Yaml;
-use Neos\ContentRepository\Domain\Service\PublishingServiceInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
+use Neos\ContentRepository\Domain\Service\PublishingServiceInterface;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Utility\Arrays;
+use PHPUnit\Framework\Assert as Assert;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * A trait with shared step definitions for common use by other contexts
@@ -130,6 +130,28 @@ trait NodeOperationsTrait
             // Make sure we do not use cached instances
             $this->objectManager->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->persistAll();
             $this->resetNodeInstances();
+        }
+    }
+
+    /**
+     * @Given /^I have the following workspaces:$/
+     */
+    public function iHaveTheFollowingWorkspaces($table)
+    {
+        if ($this->isolated === true) {
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg(\Neos\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))), true);
+        } else {
+            $rows = $table->getHash();
+            $workspaceRepository = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Repository\WorkspaceRepository::class);
+            foreach ($rows as $row) {
+                $name = $row['Name'];
+                $baseWorkspaceName = $row['Base Workspace'];
+
+                $baseWorkspace = $workspaceRepository->findOneByName($baseWorkspaceName);
+                $workspace = new Workspace($name, $baseWorkspace);
+                $workspaceRepository->add($workspace);
+                $this->objectManager->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->persistAll();
+            }
         }
     }
 
@@ -392,10 +414,7 @@ trait NodeOperationsTrait
             $sourceContext = $this->getContextForProperties(array('Workspace' => $sourceWorkspaceName));
             $sourceWorkspace = $sourceContext->getWorkspace();
 
-            $liveContext = $this->getContextForProperties(array('Workspace' => 'live'));
-            $liveWorkspace = $liveContext->getWorkspace();
-
-            $sourceWorkspace->publish($liveWorkspace);
+            $sourceWorkspace->publish($sourceWorkspace->getBaseWorkspace());
 
             $this->objectManager->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->persistAll();
             $this->resetNodeInstances();
@@ -418,6 +437,24 @@ trait NodeOperationsTrait
             $publishingService->discardNodes($publishingService->getUnpublishedNodes($workspace));
 
             $this->getSubcontext('flow')->persistAll();
+            $this->resetNodeInstances();
+        }
+    }
+
+    /**
+     * @When /^I discard the node$/
+     */
+    public function iDiscardTheNode()
+    {
+        if ($this->isolated === true) {
+            $this->callStepInSubProcess(__METHOD__);
+        } else {
+            $node = $this->iShouldHaveOneNode();
+
+            $publishingService = $this->getPublishingService();
+            $publishingService->discardNode($node);
+
+            $this->objectManager->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->persistAll();
             $this->resetNodeInstances();
         }
     }

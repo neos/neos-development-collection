@@ -172,7 +172,7 @@
         'Neos.Neos/Validation/StringLengthValidator':
           minimum: 1
           maximum: 255
-        regularExpression:
+        'Neos.Neos/Validation/RegularExpressionValidator':
           regularExpression: '/^[a-z0-9\-]+$/i'
     _hidden:
       ui:

@@ -8,9 +8,10 @@ define(
 	'Shared/Utility',
 	'Shared/HttpClient',
 	'Shared/I18n',
-	'Library/sortable/Sortable'
+	'Library/sortable/Sortable',
+	'Shared/Configuration'
 ],
-function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, HttpClient, I18n, Sortable) {
+function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, HttpClient, I18n, Sortable, Configuration) {
 
 	return FileUpload.extend({
 		removeButtonLabel: function() {
@@ -24,6 +25,14 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 		 * Whether to enable editing of multiple Assets
 		 */
 		multiple: false,
+
+		/**
+		 * Feature flags for this editor
+		 */
+		features: {
+			upload: true,
+			mediaBrowser: true
+		},
 
 		_assetMetadataEndpointUri: null,
 
@@ -141,7 +150,9 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 
 			if (assetIdentifiers.length > 0) {
 				this.set('_showLoadingIndicator', true);
-				HttpClient.getResource(that.get('_assetMetadataEndpointUri') + '?' + $.param({assets: assetIdentifiers})).then(
+				// overriding the request method to POST, so too many assets do not cause "Request URI Too Large" errors.
+				// settings CSRF token manually, since getResource (naturally) does not add it.
+				HttpClient.getResource(that.get('_assetMetadataEndpointUri'), {type: 'POST', data: {__csrfToken: Configuration.get('CsrfToken'), assets: assetIdentifiers}}).then(
 					function(result) {
 						that.get('assets').addObjects(result);
 						that.set('_showLoadingIndicator', false);
@@ -171,6 +182,13 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 				}
 			};
 		},
+
+		/**
+		 * Computed property to decide if the Media Browser button should be displayed in the editor
+		 */
+		shouldRenderMediaBrowser: function () {
+			return (this.get('features.mediaBrowser'));
+		}.property('features.mediaBrowser'),
 
 		/****************************************
 		 * FILE REMOVE
@@ -226,6 +244,13 @@ function(Ember, $, FileUpload, template, SecondaryInspectorController, Utility, 
 			this._uploader.bind('BeforeUpload', function(uploader, file) {
 				uploader.settings.multipart_params['metadata'] = 'Asset';
 			});
-		}
+		},
+
+		/**
+		 * Computed property to decide if the Upload button should be displayed in the editor
+		 */
+		shouldRenderUpload: function () {
+			return (this.get('features.upload'));
+		}.property('features.upload')
 	});
 });

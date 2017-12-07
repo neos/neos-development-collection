@@ -12,6 +12,7 @@ namespace Neos\Neos\Controller;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\ContentRepository\Domain\Model\NodeData;
@@ -27,12 +28,6 @@ trait CreateContentContextTrait
      * @var \Neos\Neos\Domain\Service\ContentContextFactory
      */
     protected $_contextFactory;
-
-    /**
-     * @Flow\Inject
-     * @var \Neos\Neos\Domain\Repository\DomainRepository
-     */
-    protected $_domainRepository;
 
     /**
      * @Flow\Inject
@@ -75,7 +70,7 @@ trait CreateContentContextTrait
     {
         $nodePath = NodePaths::getRelativePathBetween(SiteService::SITES_ROOT_PATH, $nodeData->getPath());
         list($siteNodeName) = explode('/', $nodePath);
-        $site = $this->siteRepository->findOneByNodeName($siteNodeName);
+        $site = $this->_siteRepository->findOneByNodeName($siteNodeName);
 
         $contextProperties = [
             'workspaceName' => $nodeData->getWorkspace()->getName(),
@@ -86,7 +81,7 @@ trait CreateContentContextTrait
             'currentSite' => $site
         ];
 
-        if ($domain = $site->getFirstActiveDomain()) {
+        if ($site instanceof Site && $domain = $site->getFirstActiveDomain()) {
             $contextProperties['currentDomain'] = $domain;
         }
 

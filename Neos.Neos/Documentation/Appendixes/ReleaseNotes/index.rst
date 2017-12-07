@@ -2,11 +2,11 @@ Release Notes
 =============
 
 .. toctree::
-	:maxdepth: 1
-	:reversed:
-	:glob:
+    :maxdepth: 1
+    :reversed:
+    :glob:
 
-	*
+    *
 
 Archived Release Notes
 ----------------------

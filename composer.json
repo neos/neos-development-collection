@@ -6,11 +6,23 @@
     "require": {
         "neos/flow-development-collection": "dev-master",
         "neos/flow": "*",
+        "neos/cache": "*",
+        "neos/eel": "*",
         "neos/fluid-adaptor": "*",
+        "neos/utility-objecthandling": "*",
+        "neos/utility-files": "*",
+        "neos/utility-arrays": "*",
+        "doctrine/orm": "~2.5.0",
         "gedmo/doctrine-extensions": "~2.3.0",
         "behat/transliterator": "~1.0",
         "php": ">=5.5.0",
-        "neos/imagine": "*",
+        "neos/utility-unicode": "*",
+        "neos/utility-mediatypes": "*",
+        "neos/error-messages": "*",
+        "doctrine/common": "~2.7.0",
+        "neos/imagine": "^3.0.2",
+        "imagine/imagine": "*",
+        "doctrine/dbal": "~2.5.0",
         "neos/party": "*",
         "neos/setup": "*",
         "neos/twitter-bootstrap": "*",
@@ -34,6 +46,7 @@
         "neos/site-kickstarter": "self.version"
     },
     "suggest": {
+        "neos/utility-schema": "Validate NodeType schema.",
         "neos/site-kickstarter": "Helps with creating new site packages for Neos.",
         "neos/redirecthandler-neosadapter": "Adds automatic redirects for moved/renamed pages"
     },

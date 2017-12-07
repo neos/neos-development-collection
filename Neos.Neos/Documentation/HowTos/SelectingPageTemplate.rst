@@ -74,12 +74,12 @@ your company. This page will have a different structure compared to your basic p
 The right approach would be to create a Fusion prototype for your default page and employee page like::
 
     prototype(VendorName.VendorSite:Page) < prototype(Neos.Neos:Page) {
-        body.templatePath = 'resource//VendorName.VendorSite/Private/Templates/Page/Default.html'
+        body.templatePath = 'resource://VendorName.VendorSite/Private/Templates/Page/Default.html'
         # Your further page configuration here
     }
 
     prototype(VendorName.VendorSite:EmployeePage) < prototype(VendorName.VendorSite:Page) {
-        body.templatePath = 'resource//VendorName.VendorSite/Private/Templates/Page/Employee.html'
+        body.templatePath = 'resource://VendorName.VendorSite/Private/Templates/Page/Employee.html'
         # Your further employee page configuration here
     }
 
@@ -122,7 +122,7 @@ Your basic `DefaultPage` prototype could look something like this::
         head {
             stylesheets {
                 site = Neos.Fusion:Template {
-                    templatePath = 'resource//VendorName.VendorSite/Private/Templates/Includes/InlineStyles.html'
+                    templatePath = 'resource://VendorName.VendorSite/Private/Templates/Includes/InlineStyles.html'
                     sectionName = 'stylesheets'
                 }
 
@@ -131,14 +131,14 @@ Your basic `DefaultPage` prototype could look something like this::
                     attributes {
                         rel = 'stylesheet'
                         href = Neos.Fusion:ResourceUri {
-                            path = 'resource//VendorName.VendorSite/Public/Styles/Styles.css'
+                            path = 'resource://VendorName.VendorSite/Public/Styles/Styles.css'
                         }
                     }
                 }
             }
         }
         body {
-            templatePath = 'resource//VendorName.VendorSite/Private/Templates/Page/Default.html'
+            templatePath = 'resource://VendorName.VendorSite/Private/Templates/Page/Default.html'
             sectionName = 'body'
         }
     }

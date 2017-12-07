@@ -23,8 +23,6 @@ use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Neos\Controller\Module\AbstractModuleController;
 
 /**
- * The TYPO3 Package Management module controller
- *
  * @Flow\Scope("singleton")
  */
 class PackagesController extends AbstractModuleController

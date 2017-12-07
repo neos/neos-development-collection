@@ -49,7 +49,7 @@ The following options are allowed:
   `Neos.NodeTypes:Page`.
 
 ``superTypes``
-  An array of parent node types inherited from as keys with a boolean values.::
+  An array of parent node types as keys with a boolean value::
 
     'Neos.Neos:Document':
       superTypes:
@@ -69,7 +69,7 @@ The following options are allowed:
         # ALLOW text, DISALLOW Image
         'Neos.NodeTypes:Text': true
         'Neos.NodeTypes:Image': false
-        # DISALLOW as Fallback (for not-explicitely-listed node types)
+        # DISALLOW as Fallback (for not-explicitly-listed node types)
         '*': false
 
 ``childNodes``
@@ -141,14 +141,14 @@ The following options are allowed:
 
       Example::
 
-      prototype(Vendor.Site:Content.SpecialNodeType) < prototype(Neos.Fusion:Content) {
-        templatePath = 'resource://Vendor.Site/Private/Templates/NodeTypes/Content.SpecialNodeType.html'
-        # all properties of the nodeType are passed to the template
-        date = ${q(node).property('date')}
-        # inline-editable strings additionally get the convertUris processor
-        title = ${q(node).property('title')}
-        title.@process.convertUris = Neos.Neos:ConvertUris
-      }
+        prototype(Vendor.Site:Content.SpecialNodeType) < prototype(Neos.Fusion:Content) {
+          templatePath = 'resource://Vendor.Site/Private/Templates/NodeTypes/Content.SpecialNodeType.html'
+          # all properties of the nodeType are passed to the template
+          date = ${q(node).property('date')}
+          # inline-editable strings additionally get the convertUris processor
+          title = ${q(node).property('title')}
+          title.@process.convertUris = Neos.Neos:ConvertUris
+        }
 
 ``ui``
   Configuration options related to the user interface representation of the node type
@@ -167,9 +167,9 @@ The following options are allowed:
     Small numbers are sorted on top.
 
   ``icon``
-    This setting define the icon to use in the Neos UI for the node type
+    This setting defines the icon that the Neos UI will use to display the node type.
 
-    Currently it's only possible to use a predefined selection of icons, which
+    Currently it is only possible to use a predefined selection of icons, which
     are available in Font Awesome http://fortawesome.github.io/Font-Awesome/3.2.1/icons/.
 
   ``help``
@@ -188,7 +188,7 @@ The following options are allowed:
 
       If the ``thumbnail`` setting is undefined but an image matching the nodetype name
        is found, it will be used automatically. It will be looked for in
-       ``<packageKey>/Resources/Public/Images/NodeTypes/<nodeTypeName>.png`` with
+       ``<packageKey>/Resources/Public/NodeTypes/Thumbnails/<nodeTypeName>.png`` with
        ``packageKey`` and ``nodeTypeName`` being extracted from the full nodetype name
        like this:
 

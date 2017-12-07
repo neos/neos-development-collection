@@ -223,18 +223,6 @@
         <source>All changes from workspace "{0}" have been discarded.</source>
         <target xml:lang="de">Alle Änderungen aus dem Arbeitsbereich "{0}" wurden verworfen.</target>
       </trans-unit>
-      <trans-unit id="media.dragHelp" xml:space="preserve" approved="yes">
-				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
-			<target xml:lang="de">Asset per Drag &amp; Drop auf eine Sammlung / einen Tag ziehen, um es hinzuzufügen.</target><alt-trans><target xml:lang="de">Drag&amp;Drop ein Asset auf eine Sammlung / Tag um sie hinzuzufügen.</target></alt-trans></trans-unit>
-      <trans-unit id="media.replace.options.keepOriginalFilename" xml:space="preserve" approved="yes">
-				<source>Keep the filename "{0}"</source>
-			<target xml:lang="de">Den Dateinamen "{0}" beibehalten</target></trans-unit>
-      <trans-unit id="media.label" xml:space="preserve" approved="yes">
-				<source>Media</source>
-			<target xml:lang="de">Medien</target></trans-unit>
-      <trans-unit id="media.description" xml:space="preserve" approved="yes">
-				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
-			<target xml:lang="de">Dieses Modul ermöglicht die Verwaltung von Medienelementen wie Bildern, Videos, Audios und Dokumenten.</target></trans-unit>
       <trans-unit id="history.label" xml:space="preserve" approved="yes">
 				<source>History</source>
 			<target xml:lang="de">Verlauf</target></trans-unit>
@@ -563,6 +551,43 @@
       <trans-unit id="configuration.description" xml:space="preserve" approved="yes">
 				<source>The Configuration module provides you with an overview of all configuration types.</source>
 			<target xml:lang="de">Das Konfigurations-Modul bietet Ihnen eine Übersicht aller Konfigurationstypen.</target></trans-unit>
+			<trans-unit id="dimensions.label" xml:space="preserve">
+				<source>Dimensions</source>
+        <target xml:lang="de">Dimensionen</target>
+			</trans-unit>
+			<trans-unit id="dimensions.description" xml:space="preserve">
+				<source>Grants a graphical overview over the configured fallbacks within each content dimension and across content dimensions.</source>
+        <target xml:lang="de">Bietet eine grafische Übersicht über die konfigurierten Fallbacks, sowohl innerhalb der Inhaltsdimensionen als auch dimensionsübergreifend</target>
+			</trans-unit>
+			<trans-unit id="dimensions.interDimension.legend" xml:space="preserve">
+				<source>Inter dimensional fallback graph</source>
+        <target xml:lang="de">Interdimensionaler Fallback-Graph</target>
+			</trans-unit>
+			<trans-unit id="dimensions.interDimension.short" xml:space="preserve">
+				<source>Inter dimensional</source>
+        <target xml:lang="de">Interdimensional</target>
+			</trans-unit>
+			<trans-unit id="dimensions.interDimension.description" xml:space="preserve">
+				<source>The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
+Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The lower the priority the lower the opacity.
+Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</source>
+        <target xml:lang="de">Der interdimensionale Fallback-Graph stellt alle möglichen Fallbacks (dargestellt als Kanten) zwischen Teilgraphen (Kombinationen von Dimensionswerten, dargestellt als Knoten) dar.
+Primäre fallbacks sind blau markiert und immer sichtbar, während Fallbacks niedrigerer Priorität bei Mouseover dargestellt werden. Je niedriger die Priorität desto durchsichtiger sind die Kanten.
+Auf einen Knoten klicken, um ausschließlich dessen Fallbacks und Varianten zu sehen. Erneut klicken um diesen Filter zurück zu setzen.
+        </target>
+			</trans-unit>
+			<trans-unit id="dimensions.intraDimension.legend" xml:space="preserve">
+				<source>Intra dimensional fallback graph</source>
+        <target xml:lang="de">Intradimensionaler Fallback-Graph</target>
+			</trans-unit>
+			<trans-unit id="dimensions.intraDimension.short" xml:space="preserve">
+				<source>Intra dimensional</source>
+        <target xml:lang="de">Intradimensional</target>
+			</trans-unit>
+			<trans-unit id="dimensions.intraDimension.description" xml:space="preserve">
+				<source>The intra dimensional fallback graph displays fallbacks within each content dimension.</source>
+        <target xml:lang="de">Der intradimensionale Fallback-Graph stellt Fallbacks innerhalb jeder Inhaltsdimension dar.</target>
+			</trans-unit>
       <!-- User -->
       <trans-unit id="user.label" xml:space="preserve" approved="yes">
 				<source>User</source>
@@ -636,329 +661,6 @@
       <trans-unit id="userSettings.editUser" xml:space="preserve" approved="yes">
 				<source>Edit User</source>
 			<target xml:lang="de">Benutzer bearbeiten</target></trans-unit>
-      <!-- Media -->
-      <trans-unit id="media.field.name" xml:space="preserve" approved="yes">
-				<source>Name</source>
-			<target xml:lang="de">Name</target></trans-unit>
-      <trans-unit id="media.field.title" xml:space="preserve" approved="yes">
-				<source>Title</source>
-			<target xml:lang="de">Titel</target></trans-unit>
-      <trans-unit id="media.field.label" xml:space="preserve" approved="yes">
-				<source>Label</source>
-			<target xml:lang="de">Bezeichnung</target></trans-unit>
-      <trans-unit id="media.field.caption" xml:space="preserve" approved="yes">
-				<source>Caption</source>
-			<target xml:lang="de">Beschriftung</target></trans-unit>
-      <trans-unit id="media.field.lastModified" xml:space="preserve" approved="yes">
-				<source>Last modified</source>
-			<target xml:lang="de">Zuletzt geändert</target></trans-unit>
-      <trans-unit id="media.field.fileSize" xml:space="preserve" approved="yes">
-				<source>File size</source>
-			<target xml:lang="de">Dateigröße</target></trans-unit>
-      <trans-unit id="media.field.type" xml:space="preserve" approved="yes">
-				<source>Type</source>
-			<target xml:lang="de">Typ</target></trans-unit>
-      <trans-unit id="media.field.tags" xml:space="preserve" approved="yes">
-				<source>Tags</source>
-			<target xml:lang="de">Tags</target></trans-unit>
-      <trans-unit id="media.sortByName" xml:space="preserve" approved="yes">
-				<source>Sort by name</source>
-			<target xml:lang="de">Nach Namen sortieren</target><alt-trans><target xml:lang="de">Nach Name sortieren</target></alt-trans></trans-unit>
-      <trans-unit id="media.sortByLastModified" xml:space="preserve" approved="yes">
-				<source>Sort by last modified</source>
-			<target xml:lang="de">Nach Änderungsdatum sortieren</target></trans-unit>
-      <trans-unit id="media.sortby" xml:space="preserve" approved="yes">
-				<source>Sort by</source>
-			<target xml:lang="de">Sortieren nach</target></trans-unit>
-      <trans-unit id="media.sortdirection" xml:space="preserve" approved="yes">
-				<source>Sort direction</source>
-			<target xml:lang="de">Sortierreihenfolge</target></trans-unit>
-      <trans-unit id="media.sortdirection.asc" xml:space="preserve" approved="yes">
-				<source>Ascending</source>
-			<target xml:lang="de">Aufsteigend</target></trans-unit>
-      <trans-unit id="media.sortdirection.desc" xml:space="preserve" approved="yes">
-				<source>Descending</source>
-			<target xml:lang="de">Absteigend</target><alt-trans><target xml:lang="de">Absteigende Reihenfolge</target></alt-trans></trans-unit>
-      <trans-unit id="media.tooltip.dragAndDropOnTagOrCollection" xml:space="preserve" approved="yes">
-				<source>Drag and drop on tag or collection</source>
-			<target xml:lang="de">Auf Tag oder Sammlung ziehen und loslassen</target></trans-unit>
-      <trans-unit id="media.tooltip.editAsset" xml:space="preserve" approved="yes">
-				<source>Edit asset</source>
-			<target xml:lang="de">Asset bearbeiten</target></trans-unit>
-      <trans-unit id="media.tooltip.replaceAssetResource" xml:space="preserve" approved="yes">
-				<source>Replace</source>
-			<target xml:lang="de">Ersetzen</target></trans-unit>
-      <trans-unit id="media.tooltip.deleteAsset" xml:space="preserve" approved="yes">
-				<source>Delete asset</source>
-			<target xml:lang="de">Asset löschen</target></trans-unit>
-      <trans-unit id="media.message.reallyDeleteAsset" xml:space="preserve" approved="yes">
-				<source>Do you really want to delete asset "{0}"?</source>
-			<target xml:lang="de">Wollen Sie das Asset "{0}" wirklich löschen?</target></trans-unit>
-      <trans-unit id="media.message.reallyDeleteCollection" xml:space="preserve" approved="yes">
-				<source>Do you really want to delete collection "{0}"?</source>
-			<target xml:lang="de">Wollen Sie die Sammlung "{0}" wirklich löschen?</target></trans-unit>
-      <trans-unit id="media.message.reallyDeleteTag" xml:space="preserve" approved="yes">
-				<source>Do you really want to delete tag "{0}"?</source>
-			<target xml:lang="de">Wollen Sie das Tag "{0}" wirklich löschen?</target></trans-unit>
-      <trans-unit id="media.message.willBeDeleted" xml:space="preserve" approved="yes">
-				<source>This will delete the asset.</source>
-			<target xml:lang="de">Dadurch wird das Asset gelöscht.</target></trans-unit>
-      <trans-unit id="media.message.willDeleteCollection" xml:space="preserve" approved="yes">
-				<source>This will delete the collection, but not the assets that it contains.</source>
-			<target xml:lang="de">Dadurch wird die Sammlung gelöscht, aber nicht die darin enthaltenen Assets.</target></trans-unit>
-      <trans-unit id="media.message.willDeleteTag" xml:space="preserve" approved="yes">
-				<source>This will delete the tag, but not the assets that has it.</source>
-			<target xml:lang="de">Dadurch wird das Tag gelöscht, aber nicht die Assets denen es zugeordnet wurde.</target><alt-trans><target xml:lang="de">Dadurch wird das Tag gelöscht, aber nicht die Assets, denen es zugeordnet wurde.</target></alt-trans></trans-unit>
-      <trans-unit id="media.message.operationCannotBeUndone" xml:space="preserve" approved="yes">
-				<source>This operation cannot be undone.</source>
-			<target xml:lang="de">Dieser Vorgang kann nicht rückgängig gemacht werden.</target></trans-unit>
-      <trans-unit id="media.cancel" xml:space="preserve" approved="yes">
-				<source>Cancel</source>
-			<target xml:lang="de">Abbrechen</target></trans-unit>
-      <trans-unit id="media.replaceAssetResource" xml:space="preserve" approved="yes">
-				<source>Replace</source>
-			<target xml:lang="de">Ersetzen</target></trans-unit>
-      <trans-unit id="media.saveEditing" xml:space="preserve" approved="yes">
-				<source>Save</source>
-			<target xml:lang="de">Speichern</target></trans-unit>
-      <trans-unit id="media.message.confirmDelete" xml:space="preserve" approved="yes">
-				<source>Yes, delete the asset</source>
-			<target xml:lang="de">Ja, Asset löschen</target><alt-trans><target xml:lang="de">Ja, bitte das Asset löschen</target></alt-trans></trans-unit>
-      <trans-unit id="media.message.confirmDeleteCollection" xml:space="preserve" approved="yes">
-				<source>Yes, delete the collection</source>
-			<target xml:lang="de">Ja, bitte die Sammlung löschen</target></trans-unit>
-      <trans-unit id="media.message.confirmDeleteTag" xml:space="preserve" approved="yes">
-				<source>Yes, delete the tag</source>
-			<target xml:lang="de">Ja, bitte das Tag löschen</target></trans-unit>
-      <trans-unit id="media.thumbnail.editTitle" xml:space="preserve" approved="yes">
-				<source>Edit {0}</source>
-			<target xml:lang="de">{0} bearbeiten</target></trans-unit>
-      <trans-unit id="media.search.title" xml:space="preserve" approved="yes">
-				<source>Search in assets</source>
-			<target xml:lang="de">Assets durchsuchen</target></trans-unit>
-      <trans-unit id="media.search.placeholder" xml:space="preserve" approved="yes">
-				<source>Search</source>
-			<target xml:lang="de">Suche</target></trans-unit>
-      <trans-unit id="media.search.itemCount" xml:space="preserve" approved="yes">
-				<source>{0} items</source>
-			<target xml:lang="de">{0} Elemente</target></trans-unit>
-      <trans-unit id="media.search.foundMatches" xml:space="preserve" approved="yes">
-				<source>found matching "{0}"</source>
-			<target xml:lang="de">"{0}" gefunden</target></trans-unit>
-      <trans-unit id="media.upload" xml:space="preserve" approved="yes">
-				<source>Upload</source>
-			<target xml:lang="de">Hochladen</target><alt-trans><target xml:lang="de">Upload</target></alt-trans></trans-unit>
-      <trans-unit id="media.filterOptions" xml:space="preserve" approved="yes">
-				<source>Filter options</source>
-			<target xml:lang="de">Filteroptionen</target></trans-unit>
-      <trans-unit id="media.filter.title.all" xml:space="preserve" approved="yes">
-				<source>Display all asset types</source>
-			<target xml:lang="de">Alle Asset-Typen anzeigen</target></trans-unit>
-      <trans-unit id="media.filter.title.images" xml:space="preserve" approved="yes">
-				<source>Only display image assets</source>
-			<target xml:lang="de">Nur Bilder anzeigen</target></trans-unit>
-      <trans-unit id="media.filter.title.documents" xml:space="preserve" approved="yes">
-				<source>Only display document assets</source>
-			<target xml:lang="de">Nur Dokumente anzeigen</target></trans-unit>
-      <trans-unit id="media.filter.title.video" xml:space="preserve" approved="yes">
-				<source>Only display video assets</source>
-			<target xml:lang="de">Nur Videos anzeigen</target></trans-unit>
-      <trans-unit id="media.filter.title.audio" xml:space="preserve" approved="yes">
-				<source>Only display audio assets</source>
-			<target xml:lang="de">Nur Audiodateien anzeigen</target></trans-unit>
-      <trans-unit id="media.filter.all" xml:space="preserve" approved="yes">
-				<source>All</source>
-			<target xml:lang="de">Alle</target></trans-unit>
-      <trans-unit id="media.filter.images" xml:space="preserve" approved="yes">
-				<source>Images</source>
-			<target xml:lang="de">Bilder</target></trans-unit>
-      <trans-unit id="media.filter.documents" xml:space="preserve" approved="yes">
-				<source>Documents</source>
-			<target xml:lang="de">Dokumente</target></trans-unit>
-      <trans-unit id="media.filter.video" xml:space="preserve" approved="yes">
-				<source>Video</source>
-			<target xml:lang="de">Video</target></trans-unit>
-      <trans-unit id="media.filter.audio" xml:space="preserve" approved="yes">
-				<source>Audio</source>
-			<target xml:lang="de">Audio</target></trans-unit>
-      <trans-unit id="media.tooltip.sortOptions" xml:space="preserve" approved="yes">
-				<source>Sort options</source>
-			<target xml:lang="de">Sortieroptionen</target></trans-unit>
-      <trans-unit id="media.tooltip.listView" xml:space="preserve" approved="yes">
-				<source>List view</source>
-			<target xml:lang="de">Listenansicht</target></trans-unit>
-      <trans-unit id="media.tooltip.thumbnailView" xml:space="preserve" approved="yes">
-				<source>Thumbnail view</source>
-			<target xml:lang="de">Miniaturansicht</target></trans-unit>
-      <trans-unit id="media.collections" xml:space="preserve" approved="yes">
-				<source>Collections</source>
-			<target xml:lang="de">Sammlungen</target></trans-unit>
-      <trans-unit id="media.editCollections" xml:space="preserve" approved="yes">
-				<source>Edit collections</source>
-			<target xml:lang="de">Sammlungen bearbeiten</target></trans-unit>
-      <trans-unit id="media.editCollection" xml:space="preserve" approved="yes">
-				<source>Edit collection</source>
-			<target xml:lang="de">Sammlung bearbeiten</target></trans-unit>
-      <trans-unit id="media.deleteCollection" xml:space="preserve" approved="yes">
-				<source>Delete collection</source>
-			<target xml:lang="de">Sammlung löschen</target></trans-unit>
-      <trans-unit id="media.createCollection" xml:space="preserve" approved="yes">
-				<source>Create collection</source>
-			<target xml:lang="de">Sammlung erstellen</target></trans-unit>
-      <trans-unit id="media.newCollection.placeholder" xml:space="preserve" approved="yes">
-				<source>Enter collection title</source>
-			<target xml:lang="de">Titel der Sammlung eingeben</target></trans-unit>
-      <trans-unit id="media.allCollections" xml:space="preserve" approved="yes">
-				<source>All collections</source>
-			<target xml:lang="de">Alle Sammlungen</target></trans-unit>
-      <trans-unit id="media.tags" xml:space="preserve" approved="yes">
-				<source>Tags</source>
-			<target xml:lang="de">Tags</target></trans-unit>
-      <trans-unit id="media.editTags" xml:space="preserve" approved="yes">
-				<source>Edit tags</source>
-			<target xml:lang="de">Tags bearbeiten</target></trans-unit>
-      <trans-unit id="media.editTag" xml:space="preserve" approved="yes">
-				<source>Edit tag</source>
-			<target xml:lang="de">Tag bearbeiten</target></trans-unit>
-      <trans-unit id="media.deleteTag" xml:space="preserve" approved="yes">
-				<source>Delete tag</source>
-			<target xml:lang="de">Tag löschen</target></trans-unit>
-      <trans-unit id="media.placeholder.createTag" xml:space="preserve" approved="yes">
-				<source>Enter tag label</source>
-			<target xml:lang="de">Tag-Label eingeben</target></trans-unit>
-      <trans-unit id="media.createTag" xml:space="preserve" approved="yes">
-				<source>Create tag</source>
-			<target xml:lang="de">Tag erstellen</target></trans-unit>
-      <trans-unit id="media.tags.title.all" xml:space="preserve" approved="yes">
-				<source>All assets</source>
-			<target xml:lang="de">Alle Assets</target></trans-unit>
-      <trans-unit id="media.tags.all" xml:space="preserve" approved="yes">
-				<source>All</source>
-			<target xml:lang="de">Alle</target></trans-unit>
-      <trans-unit id="media.untaggedAssets" xml:space="preserve" approved="yes">
-				<source>Untagged assets</source>
-			<target xml:lang="de">Assets ohne Tags</target></trans-unit>
-      <trans-unit id="media.untagged" xml:space="preserve" approved="yes">
-				<source>Untagged</source>
-			<target xml:lang="de">Ohne Tag</target></trans-unit>
-      <trans-unit id="media.maxUploadSize" xml:space="preserve" approved="yes">
-				<source>Max. upload size {0} per file</source>
-			<target xml:lang="de">Max. Uploadgröße {0} pro Datei</target></trans-unit>
-      <trans-unit id="media.dropFiles" xml:space="preserve" approved="yes">
-				<source>Drop files here</source>
-			<target xml:lang="de">Dateien hier ablegen</target></trans-unit>
-      <trans-unit id="media.clickToUpload" xml:space="preserve" approved="yes">
-				<source>or click to upload</source>
-			<target xml:lang="de">oder klicken, um Datei hochzuladen</target></trans-unit>
-      <trans-unit id="media.chooseFile" xml:space="preserve" approved="yes">
-				<source>Choose file</source>
-			<target xml:lang="de">Datei auswählen</target></trans-unit>
-      <trans-unit id="media.noAssetsFound" xml:space="preserve" approved="yes">
-				<source>No Assets found.</source>
-			<target xml:lang="de">Es wurden keine Assets gefunden.</target></trans-unit>
-      <trans-unit id="media.basics" xml:space="preserve" approved="yes">
-				<source>Basics</source>
-			<target xml:lang="de">Allgemeines</target><alt-trans><target xml:lang="de">Grundlagen</target></alt-trans></trans-unit>
-      <trans-unit id="media.delete" xml:space="preserve" approved="yes">
-				<source>Delete</source>
-			<target xml:lang="de">Löschen</target></trans-unit>
-      <trans-unit id="media.clickToDelete" xml:space="preserve" approved="yes">
-				<source>Click to delete</source>
-			<target xml:lang="de">Klicken zum Löschen</target></trans-unit>
-      <trans-unit id="media.save" xml:space="preserve" approved="yes">
-				<source>Save</source>
-			<target xml:lang="de">Speichern</target></trans-unit>
-      <trans-unit id="media.metadata" xml:space="preserve" approved="yes">
-				<source>Metadata</source>
-			<target xml:lang="de">Metadaten</target></trans-unit>
-      <trans-unit id="media.metadata.filename" xml:space="preserve" approved="yes">
-				<source>Filename</source>
-			<target xml:lang="de">Dateiname</target></trans-unit>
-      <trans-unit id="media.metadata.lastModified" xml:space="preserve" approved="yes">
-				<source>Last modified (resource)</source>
-			<target xml:lang="de">Zuletzt geändert (Ressource)</target></trans-unit>
-      <trans-unit id="media.metadata.fileSize" xml:space="preserve" approved="yes">
-				<source>File size</source>
-			<target xml:lang="de">Dateigröße</target></trans-unit>
-      <trans-unit id="media.metadata.dimensions" xml:space="preserve" approved="yes">
-				<source>Dimensions</source>
-			<target xml:lang="de">Dimensionen</target></trans-unit>
-      <trans-unit id="media.metadata.type" xml:space="preserve" approved="yes">
-				<source>Type</source>
-			<target xml:lang="de">Typ</target></trans-unit>
-      <trans-unit id="media.metadata.identifier" xml:space="preserve" approved="yes">
-				<source>Identifier</source>
-			<target xml:lang="de">Bezeichner</target><alt-trans><target xml:lang="de">Bezeichnung</target></alt-trans></trans-unit>
-      <trans-unit id="media.preview" xml:space="preserve" approved="yes">
-				<source>Preview</source>
-			<target xml:lang="de">Vorschau</target></trans-unit>
-      <trans-unit id="media.cannotUploadFile" xml:space="preserve" approved="yes">
-				<source>Cannot upload the file</source>
-			<target xml:lang="de">Datei kann nicht hochgeladen werden</target></trans-unit>
-      <trans-unit id="media.noFileSelected" xml:space="preserve">
-				<source>No file selected</source>
-			<target xml:lang="de" state="translated">Keine Datei ausgewählt</target></trans-unit>
-      <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve" approved="yes">
-				<source>The file size of {0} exceeds the allowed limit of {1}</source>
-			<target xml:lang="de">Die Dateigröße von {0} übersteigt das erlaubte Limit von {1}</target></trans-unit>
-      <trans-unit id="media.forTheFile" xml:space="preserve" approved="yes">
-				<source>for the file</source>
-			<target xml:lang="de">für die Datei</target></trans-unit>
-      <trans-unit id="media.onlySomeFilesWereUploaded" xml:space="preserve" approved="yes">
-				<source>Only some of the files were successfully uploaded. Refresh the page to see the those.</source>
-			<target xml:lang="de">Nur ein Teil der Dateien wurde erfolgreich hochgeladen. Aktualisieren Sie die Seite um zu sehen, welche.</target><alt-trans><target xml:lang="de">Nur ein Teil der Dateien wurde erfolgreich hochgeladen. Aktualisieren Sie die Seite, um zu sehen, welche.</target></alt-trans></trans-unit>
-      <trans-unit id="media.taggingAssetsFailed" xml:space="preserve" approved="yes">
-				<source>Tagging the asset failed.</source>
-			<target xml:lang="de">Beim Zuordnen des Tags ist ein Fehler aufgetreten.</target></trans-unit>
-      <trans-unit id="media.addingAssetsToCollectionFailed" xml:space="preserve" approved="yes">
-				<source>Adding the asset to the collection failed.</source>
-			<target xml:lang="de">Beim Hinzufügen des Assets zur Sammlung ist ein Fehler aufgetreten.</target></trans-unit>
-      <trans-unit id="media.creating" xml:space="preserve" approved="yes">
-				<source>Creating</source>
-			<target xml:lang="de">Erstelle</target></trans-unit>
-      <trans-unit id="media.deleteRelatedNodes" xml:space="preserve" approved="yes">
-				<source>Asset could not be deleted, because there are still Nodes using it</source>
-			<target xml:lang="de">Asset konnte nicht gelöscht werden, da es noch von Knoten verwendet wird</target></trans-unit>
-      <group id="media.relatedNodes" restype="x-gettext-plurals">
-        <trans-unit id="media.relatedNodes[0]" approved="yes">
-          <source>{0} usages</source>
-          <target xml:lang="de">{0} mal verwendet</target>
-        </trans-unit>
-        <trans-unit id="media.relatedNodes[1]" approved="yes">
-          <source>{0} usages</source>
-          <target xml:lang="de">{0} mal verwendet</target>
-        </trans-unit>
-      </group>
-      <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve" approved="yes">
-				<source>References to "{asset}"</source>
-			<target xml:lang="de">Verweise auf "{asset}"</target><alt-trans><target xml:lang="de">Verweist auf "{asset}"</target></alt-trans></trans-unit>
-      <trans-unit id="media.replaceAsset.replaceFilename" xml:space="preserve">
-				<source>Replace "{filename}"</source>
-			<target xml:lang="de" state="translated">Datei "{filename}" ersetzen</target></trans-unit>
-      <trans-unit id="media.replaceAsset.description" xml:space="preserve">
-        <source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
-      <target xml:lang="de" state="translated">Sie können durch hochladen einer neuen Datei die vorhandene ersetzen. Danach wird die neue Datei an allen Stellen verwendet, wo die Vorgängerversion verwendet wurde.</target></trans-unit>
-      <trans-unit id="media.replaceAsset.note" xml:space="preserve">
-        <source>Note</source>
-      <target xml:lang="de" state="translated">Hinweis</target></trans-unit>
-      <trans-unit id="media.replaceAsset.noteText" xml:space="preserve">
-        <source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
-      <target xml:lang="de" state="translated">Diese Aktion wird die Datei in allen veröffentlichten und unveröffentlichten Arbeitsbereichen ersetzen, genauso wie in der Live-Website.</target></trans-unit>
-      <trans-unit id="media.replaceAsset.chooseNewFile" xml:space="preserve">
-        <source>Choose a new file</source>
-      <target xml:lang="de" state="translated">Neue Datei auswählen</target><alt-trans><target xml:lang="de">Neue Datei wählen</target></alt-trans></trans-unit>
-      <trans-unit id="media.replace.usageCount" xml:space="preserve">
-        <source>Currently the asset is used {usageCount} times.</source>
-      <target xml:lang="de" state="translated">Derzeit wird die Datei {usageCount} Mal verwendet.</target></trans-unit>
-      <trans-unit id="media.replace.allUsages" xml:space="preserve">
-        <source>Show all usages</source>
-      <target xml:lang="de" state="translated">Zeige alle Verwendungen</target></trans-unit>
-      <trans-unit id="media.replace.notUsed" xml:space="preserve">
-        <source>Currently the asset is not in used anywhere on the website.</source>
-      <target xml:lang="de" state="translated">Derzeit wird die Datei auf der Website nicht verwendet.</target></trans-unit>
-      <trans-unit id="media.replace.previewFile" xml:space="preserve">
-        <source>Preview current file</source>
-      <target xml:lang="de" state="translated">Vorschau der aktuellen Datei</target></trans-unit>
     </body>
   </file>
 </xliff>

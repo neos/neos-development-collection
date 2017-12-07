@@ -11,8 +11,8 @@ namespace Neos\ContentRepository\Domain\Model;
  * source code.
  */
 
+use Neos\ContentRepository\Validation\Validator\NodeIdentifierValidator;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Validation\Validator\UuidValidator;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
 
 /**
@@ -47,7 +47,7 @@ class NodeTemplate extends AbstractNodeData
      */
     public function setIdentifier($identifier)
     {
-        if (preg_match(UuidValidator::PATTERN_MATCH_UUID, $identifier) !== 1) {
+        if (preg_match(NodeIdentifierValidator::PATTERN_MATCH_NODE_IDENTIFIER, $identifier) !== 1) {
             throw new \InvalidArgumentException(sprintf('Invalid UUID "%s" given.', $identifier), 1385026112);
         }
         $this->identifier = $identifier;

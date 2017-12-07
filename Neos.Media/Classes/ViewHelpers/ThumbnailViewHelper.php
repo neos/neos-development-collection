@@ -25,7 +25,7 @@ use Neos\Media\Domain\Service\ThumbnailService;
  * = Examples =
  *
  * <code title="Rendering an asset thumbnail">
- * <typo3.media:thumbnail asset="{assetObject}" alt="a sample asset without scaling" />
+ * <neos.media:thumbnail asset="{assetObject}" alt="a sample asset without scaling" />
  * </code>
  * <output>
  * (depending on the asset, no scaling applied)
@@ -34,7 +34,7 @@ use Neos\Media\Domain\Service\ThumbnailService;
  *
  *
  * <code title="Rendering an asset thumbnail with scaling at a given width only">
- * <typo3.media:thumbnail asset="{assetObject}" maximumWidth="80" alt="sample" />
+ * <neos.media:thumbnail asset="{assetObject}" maximumWidth="80" alt="sample" />
  * </code>
  * <output>
  * (depending on the asset; scaled down to a maximum width of 80 pixels, keeping the aspect ratio)
@@ -43,7 +43,7 @@ use Neos\Media\Domain\Service\ThumbnailService;
  *
  *
  * <code title="Rendering an asset thumbnail with scaling at given width and height, keeping aspect ratio">
- * <typo3.media:thumbnail asset="{assetObject}" maximumWidth="80" maximumHeight="80" alt="sample" />
+ * <neos.media:thumbnail asset="{assetObject}" maximumWidth="80" maximumHeight="80" alt="sample" />
  * </code>
  * <output>
  * (depending on the asset; scaled down to a maximum width and height of 80 pixels, keeping the aspect ratio)
@@ -52,7 +52,7 @@ use Neos\Media\Domain\Service\ThumbnailService;
  *
  *
  * <code title="Rendering an asset thumbnail with crop-scaling at given width and height">
- * <typo3.media:thumbnail asset="{assetObject}" maximumWidth="80" maximumHeight="80" allowCropping="true" alt="sample" />
+ * <neos.media:thumbnail asset="{assetObject}" maximumWidth="80" maximumHeight="80" allowCropping="true" alt="sample" />
  * </code>
  * <output>
  * (depending on the asset; scaled down to a width and height of 80 pixels, possibly changing aspect ratio)
@@ -60,7 +60,7 @@ use Neos\Media\Domain\Service\ThumbnailService;
  * </output>
  *
  * <code title="Rendering an asset thumbnail with allowed up-scaling at given width and height">
- * <typo3.media:thumbnail asset="{assetObject}" maximumWidth="5000" allowUpScaling="true" alt="sample" />
+ * <neos.media:thumbnail asset="{assetObject}" maximumWidth="5000" allowUpScaling="true" alt="sample" />
  * </code>
  * <output>
  * (depending on the asset; scaled up or down to a width 5000 pixels, keeping aspect ratio)
@@ -116,16 +116,16 @@ class ThumbnailViewHelper extends AbstractTagBasedViewHelper
      * @param boolean $allowCropping Whether the thumbnail should be cropped if the given sizes would hurt the aspect ratio
      * @param boolean $allowUpScaling Whether the resulting thumbnail size might exceed the size of the original asset
      * @param boolean $async Return asynchronous image URI in case the requested image does not exist already
-     * @param integer $quality Quality of the image
      * @param string $preset Preset used to determine image configuration
+     * @param integer $quality Quality of the image
      * @return string an <img...> html tag
      */
-    public function render(AssetInterface $asset = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $quality = null, $async = false, $preset = null)
+    public function render(AssetInterface $asset = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $preset = null, $quality = null)
     {
         if ($preset) {
             $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset, $async);
         } else {
-            $thumbnailConfiguration = new ThumbnailConfiguration($width, $maximumWidth, $height, $maximumHeight, $allowCropping, $allowUpScaling, $quality, $async);
+            $thumbnailConfiguration = new ThumbnailConfiguration($width, $maximumWidth, $height, $maximumHeight, $allowCropping, $allowUpScaling, $async, $quality);
         }
         $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($asset, $thumbnailConfiguration, $this->controllerContext->getRequest());
 

@@ -123,7 +123,7 @@ class FusionView extends AbstractView
                     $response = $fusionRuntime->getControllerContext()->getResponse();
                     $response->setStatus($renderedResponse->getStatusCode());
                     foreach ($renderedResponse->getHeaders()->getAll() as $headerName => $headerValues) {
-                        $response->setHeader($headerName, $headerValues[0]);
+                        $response->setHeader($headerName, $headerValues);
                     }
 
                     $output = substr($output, strlen($header));

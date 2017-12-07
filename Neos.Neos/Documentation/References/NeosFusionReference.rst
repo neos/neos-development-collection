@@ -233,6 +233,86 @@ Example::
   # the value of this object is the formatted debug output of all keys given to the object
 
 
+.. _Neos_Fusion__Component:
+
+Neos.Fusion:Component
+---------------------
+
+Create a component that adds all properties to the props context and afterward evaluates the renderer.
+
+:renderer: (mixed, **required**) The value which gets rendered
+
+Example::
+
+	prototype(Vendor.Site:Component) < prototype(Neos.Fusion:Component) {
+		title = 'Hello World'
+		titleTagName = 'h1'
+		description = 'Description of the Neos World'
+		bold = false
+
+		renderer = Neos.Fusion:Tag {
+			attributes.class = Neos.Fusion:RawArray {
+				component = 'component'
+				bold = ${props.bold ? 'component--bold' : false}
+			}
+			content = Neos.Fusion:Array {
+				headline = Neos.Fusion:Tag {
+					tagName = ${props.titleTagName}
+					content = ${props.title}
+				}
+
+				description = Neos.Fusion:Tag {
+						content = ${props.description}
+				}
+			}
+		}
+	}
+
+.. _Neos_Fusion__Augmenter:
+
+Neos.Fusion:Augmenter
+---------------------
+
+Modify given html content and add attributes. The augmenter can be used as processor or as a standalone prototype
+
+:content: (string) The content that shall be augmented
+:fallbackTagName: (string, defaults to ``div``) If no single tag that can be augmented is found the content is wrapped into the fallback-tag before augmentation
+:[key]: All other fusion properties are added to the html content as html attributes
+
+Example as a standalone augmenter::
+
+	augmentedContent = Neos.Fusion:Augmenter {
+
+		content = Neos.Fusion:Array {
+			title = Neos.Fusion:Tag {
+				@if.hasContent = ${this.content}
+				tagName = 'h2'
+				content = ${q(node).property('title')}
+			}
+			text = Neos.Fusion:Tag {
+				@if.hasContent = ${this.content}
+				tagName = 'p'
+				content = ${q(node).property('text')}
+			}
+		}
+
+		fallbackTagName = 'header'
+
+		class = 'header'
+		data-foo = 'bar'
+	}
+
+Example as a processor augmenter::
+
+	augmentedContent = Neos.Fusion:Tag {
+		tagName = 'h2'
+		content = 'Hello World'
+		@process.augment = Neos.Fusion:Augmenter {
+				class = 'header'
+				data-foo = 'bar'
+		}
+	}
+
 .. _Neos_Fusion__Template:
 
 Neos.Fusion:Template
@@ -614,6 +694,37 @@ Example::
 		# title = ${q(node).property('title')}
 	}
 
+
+.. _Neos_Neos__ContentComponent:
+
+ContentComponent
+----------------
+
+Base type to render component based content-nodes, extends :ref:`Neos_Fusion__Component`.
+
+:renderer: (mixed, **required**) The value which gets rendered
+
+
+.. _Neos_Neos__Editable:
+
+Editable
+--------
+
+Create an editable tag for a property. In the frontend, only the content of the property gets rendered.
+
+:node: (node) A node instance that should be used to read the property. Default to `${node}`
+:property: (string) The name of the property which should be accessed
+:block: (boolean) Decides if the editable tag should be a block element (`div`) or an inline element (`span`). Default to `true`
+
+
+Example::
+
+	title = Neos.Neos:Editable {
+		property = 'title'
+		block = false
+	}
+
+
 .. _Neos_Neos__Plugin:
 
 Plugin
@@ -799,10 +910,9 @@ NodeUri
 Build a URI to a node. Accepts the same arguments as the node link/uri view helpers.
 
 :node: (string/Node) A node object or a node path (relative or absolute) or empty to resolve the current document node
-:arguments: (array) Additional arguments to be passed to the UriBuilder (for example pagination parameters)
 :format: (string) An optional request format (e.g. ``'html'``)
 :section: (string) An optional fragment (hash) for the URI
-:additionalParams: (array) Additional URI query parameters (overrule ``arguments``).
+:additionalParams: (array) Additional URI query parameters.
 :argumentsToBeExcludedFromQueryString: (array) Query parameters to exclude for ``addQueryString``
 :addQueryString: (boolean) Whether to keep current query parameters, defaults to ``FALSE``
 :absolute: (boolean) Whether to create an absolute URI, defaults to ``FALSE``
@@ -822,17 +932,21 @@ ImageUri
 Get a URI to a (thumbnail) image for an asset.
 
 :asset: (Asset) An asset object (``Image``, ``ImageInterface`` or other ``AssetInterface``)
+:width: (integer) Desired width of the image
 :maximumWidth: (integer) Desired maximum height of the image
+:height: (integer) Desired height of the image
 :maximumHeight: (integer) Desired maximum width of the image
 :allowCropping: (boolean) Whether the image should be cropped if the given sizes would hurt the aspect ratio, defaults to ``FALSE``
 :allowUpScaling: (boolean) Whether the resulting image size might exceed the size of the original image, defaults to ``FALSE``
+:async (boolean): Return asynchronous image URI in case the requested image does not exist already, defaults to ``FALSE``
+:preset: (string) Preset used to determine image configuration, if set all other resize attributes will be ignored
 
 Example::
 
 	logoUri = Neos.Neos:ImageUri {
 		asset = ${q(node).property('image')}
-		maximumWidth = 100
-		maximumHeight = 100
+		width = 100
+		height = 100
 		allowCropping = TRUE
 		allowUpScaling = TRUE
 	}
@@ -874,4 +988,51 @@ Example::
 
 	prototype(My.Site:Special.Type) {
 		title.@process.convertUris = Neos.Neos:ConvertUris
+	}
+
+.. _TYPO3_Neos__ContentElementWrapping:
+
+ContentElementWrapping
+----------------------
+
+Processor to augment rendered HTML code with node metadata that allows the Neos UI to select the node and show
+node properties in the inspector. This is especially useful if your renderer prototype is not derived from ``Neos.Neos:Content``.
+
+The processor expects being applied on HTML code with a single container tag that is augmented.
+
+:node: (Node) The node of the content element. Optional, will use the Fusion context variable ``node`` by default.
+
+Example::
+
+	prototype(Vendor.Site:ExampleContent) {
+		value = '<div>Example</div>'
+
+		# The following line must not be removed as it adds required meta data
+		# to edit content elements in the backend
+		@process.contentElementWrapping = Neos.Neos:ContentElementWrapping {
+			@position = 'end'
+		}
+	}
+
+
+.. _TYPO3_Neos__ContentElementEditable:
+
+ContentElementEditable
+----------------------
+
+Processor to augment an HTML tag with metadata for inline editing to make a rendered representation of a property editable.
+
+The processor expects beeing applied to an HTML tag with the content of the edited property.
+
+:node: (Node) The node of the content element. Optional, will use the Fusion context variable ``node`` by default.
+:property: (string) Node property that should be editable
+
+Example::
+
+	renderer = Neos.Fusion:Tag {
+		tagName = 'h1'
+		content = ${q(node).property('title')}
+		@process.contentElementEditableWrapping = Neos.Neos:ContentElementEditable {
+			property = 'title'
+		}
 	}

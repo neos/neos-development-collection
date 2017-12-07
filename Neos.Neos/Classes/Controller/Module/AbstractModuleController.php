@@ -17,8 +17,6 @@ use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
 
 /**
- * The TYPO3 Abstract module controller
- *
  * @Flow\Scope("singleton")
  */
 abstract class AbstractModuleController extends ActionController

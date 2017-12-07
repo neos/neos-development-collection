@@ -32,6 +32,8 @@ Example::
       type: string
       ui:
         label: 'Subtitle'
+        help:
+          message: 'Enter some help text for the editors here. The text will be shown via click.'
         inspector:
           group: 'document'
           editorOptions:
@@ -320,7 +322,7 @@ If internal links to other nodes, external links or asset links shall be editabl
       type: string
       ui:
         inspector:
-          editor: 'TYPO3.Neos/Inspector/Editors/LinkEditor'
+          editor: 'Neos.Neos/Inspector/Editors/LinkEditor'
 
 The searchbox will accept:
 
@@ -341,10 +343,10 @@ Furthermore, the placeholder text can be customized by setting the ``placeholder
       ui:
         inspector:
           group: 'document'
-          editor: 'TYPO3.Neos/Inspector/Editors/LinkEditor'
+          editor: 'Neos.Neos/Inspector/Editors/LinkEditor'
           editorOptions:
             assets: FALSE
-            nodeTypes: ['TYPO3.Neos:Shortcut']
+            nodeTypes: ['Neos.Neos:Shortcut']
             placeholder: 'Paste a link, or type to search for nodes'
 
 Property Type: integer ``TextFieldEditor``
@@ -396,7 +398,7 @@ Options Reference:
 	the node path is shown instead of the url path.
 
 ``threshold`` (number)
-	Minimum amount of characters which trigger a search
+	Minimum amount of characters which trigger a search. Default is set to 2.
 
 Property Type: DateTime ``DateTimeEditor`` -- Date & Time Selection Editor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -549,6 +551,12 @@ Options Reference:
 	``crop`` (boolean)
 		If ``TRUE``, enable image cropping. Default ``TRUE``.
 
+	``upload`` (boolean)
+		If ``TRUE``, enable Upload button, allowing new files to be uploaded directly in the editor. Default ``TRUE``.
+
+	``mediaBrowser`` (boolean)
+		If ``TRUE``, enable Media Browser button. Default ``TRUE``.
+
 	``resize`` (boolean)
 		If ``TRUE``, enable image resizing. Default ``FALSE``.
 
@@ -615,7 +623,13 @@ Conversely, if multiple assets shall be uploaded, use ``array<Neos\Media\Domain\
 
 Options Reference:
 
-(no options)
+``features``
+
+	``upload`` (boolean)
+		If ``TRUE``, enable Upload button, allowing new files to be uploaded directly in the editor. Default ``TRUE``.
+
+	``mediaBrowser`` (boolean)
+		If ``TRUE``, enable Media Browser button. Default ``TRUE``.
 
 Property Validation
 -------------------

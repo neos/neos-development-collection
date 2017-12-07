@@ -14,6 +14,7 @@ namespace Neos\Media\Domain\Model\ThumbnailGenerator;
 use Neos\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\ResourceManagement\PersistentResource;
+use Neos\Flow\Utility\Algorithms;
 use Neos\Utility\Files;
 use Neos\Media\Domain\Model\Adjustment\ResizeImageAdjustment;
 use Neos\Media\Domain\Model\Thumbnail;
@@ -67,7 +68,7 @@ class FontDocumentThumbnailGenerator extends AbstractThumbnailGenerator
             $filename = pathinfo($thumbnail->getOriginalAsset()->getResource()->getFilename(), PATHINFO_FILENAME);
 
             $temporaryLocalCopyFilename = $thumbnail->getOriginalAsset()->getResource()->createTemporaryLocalCopy();
-            $temporaryPathAndFilename = $this->environment->getPathToTemporaryDirectory() . uniqid('ProcessedFontThumbnail-') . '.' . $filename . '.jpg';
+            $temporaryPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'ProcessedFontThumbnail-' . Algorithms::generateRandomString(13) . '.' . $filename . '.jpg';
 
             $width = 1000;
             $height = 1000;

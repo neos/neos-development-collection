@@ -13,6 +13,7 @@ namespace Neos\Neos\Domain\Strategy;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Neos\Domain\Service\SiteService;
 use Neos\Utility\TypeHandling;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\Image;
@@ -92,6 +93,9 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
 
         $relatedNodes = [];
         foreach ($this->getRelatedNodes($asset) as $relatedNodeData) {
+            if ($relatedNodeData->isInternal()) {
+                continue;
+            }
             $accessible = $this->domainUserService->currentUserCanReadWorkspace($relatedNodeData->getWorkspace());
             if ($accessible) {
                 $context = $this->createContextMatchingNodeData($relatedNodeData);
@@ -132,6 +136,6 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
             }
         }
 
-        return $this->nodeDataRepository->findNodesByRelatedEntities($relationMap);
+        return $this->nodeDataRepository->findNodesByPathPrefixAndRelatedEntities(SiteService::SITES_ROOT_PATH, $relationMap);
     }
 }

@@ -45,16 +45,6 @@ class NodeUriImplementation extends AbstractFusionObject
     }
 
     /**
-     * Additional arguments to be passed to the UriBuilder (for example pagination parameters)
-     *
-     * @return array
-     */
-    public function getArguments()
-    {
-        return $this->fusionValue('arguments');
-    }
-
-    /**
      * The requested format, for example "html"
      *
      * @return string
@@ -115,7 +105,7 @@ class NodeUriImplementation extends AbstractFusionObject
     }
 
     /**
-     * The name of the base node inside the TypoScript context to use for resolving relative paths.
+     * The name of the base node inside the Fusion context to use for resolving relative paths.
      *
      * @return string
      */
@@ -138,7 +128,7 @@ class NodeUriImplementation extends AbstractFusionObject
         if (isset($currentContext[$baseNodeName])) {
             $baseNode = $currentContext[$baseNodeName];
         } else {
-            throw new NeosException(sprintf('Could not find a node instance in TypoScript context with name "%s" and no node instance was given to the node argument. Set a node instance in the TypoScript context or pass a node object to resolve the URI.', $baseNodeName), 1373100400);
+            throw new NeosException(sprintf('Could not find a node instance in Fusion context with name "%s" and no node instance was given to the node argument. Set a node instance in the Fusion context or pass a node object to resolve the URI.', $baseNodeName), 1373100400);
         }
 
         try {

@@ -141,7 +141,12 @@ class ThumbnailService
             $this->persistenceManager->whiteListObject($thumbnail);
             $this->thumbnailCache[$assetIdentifier][$configurationHash] = $thumbnail;
         } elseif ($thumbnail->getResource() === null && $async === false) {
-            $this->refreshThumbnail($thumbnail);
+            try {
+                $this->refreshThumbnail($thumbnail);
+            } catch (NoThumbnailAvailableException $exception) {
+                $this->systemLogger->logException($exception);
+                return null;
+            }
         }
 
         return $thumbnail;
@@ -174,8 +179,8 @@ class ThumbnailService
             isset($presetConfiguration['maximumHeight']) ? $presetConfiguration['maximumHeight'] : null,
             isset($presetConfiguration['allowCropping']) ? $presetConfiguration['allowCropping'] : false,
             isset($presetConfiguration['allowUpScaling']) ? $presetConfiguration['allowUpScaling'] : false,
-            isset($presetConfiguration['quality']) ? $presetConfiguration['quality'] : null,
-            $async
+            $async,
+            isset($presetConfiguration['quality']) ? $presetConfiguration['quality'] : null
         );
         return $thumbnailConfiguration;
     }

@@ -54,13 +54,24 @@ and Fusion files can be split into parts to organize things as needed.
 Automatic Fusion file inclusion
 -----------------------------------
 
-All Fusion files are expected to be in the folder *Resources/Private/Fusion* when it comes to
-automatic inclusion.
+All Fusion files are expected to be in the package subfolder *Resources/Private/Fusion*. Neos will
+automatically include the file *Root.fusion* for the current site package (package which resides in
+Packages/Sites and has the type "neos-site" in its composer manifest).
 
-Neos will include the *Root.fusion* file of all packages listed in the Setting ``Neos.Neos.fusion.autoInclude``
-in the order of packages as returned by the package management.
+To automatically include *Root.fusion* files from other packages, you will need to add those packages to
+the configuration setting ``Neos.Neos.fusion.autoInclude``::
 
-Neos will then always include the *Root.fusion* file of the current site package.
+  # Settings.yaml
+
+  Neos:
+    Neos:
+      fusion:
+        autoInclude:
+          Your.Package: true
+
+Neos will then autoinclude *Root.fusion* files from these packages in the order defined by package management.
+Files with a name other than *Root.fusion* **will never be auto-included** even with that setting. You
+will need to include them manually in your *Root.fusion*.
 
 Manual Fusion file inclusion
 --------------------------------
@@ -457,6 +468,12 @@ This functionality is especially helpful if there are strong conventions regardi
 context variables. This is often the case in standalone Fusion applications, but for Neos, this
 functionality is hardly ever used.
 
+.. warning:: In order to prevent unwanted side effects, it is not possible to access context variables from within ``@context`` on the same level. This means that the following will never return the string ``Hello World!``
+
+	@context.contextOne = 'World!'
+	@context.contextTwo = ${'Hello ' + contextOne}
+	output = ${contextTwo}
+
 Processors
 ==========
 
@@ -496,7 +513,9 @@ a property using the ``@if`` meta-property::
 	myObject = Menu {
 		@if.1 = ${q(node).property('showMenu') == true}
 	}
-	# results in the menu object only being evaluated if the node's showMenu property is ``true``
+	# results in the menu object only being evaluated if the node's showMenu property is not ``false``
+	# the php rules for mapping values to boolean are used internally so following values are
+	# considered beeing false: ``null, false, '', 0, []``
 
 Multiple conditions can be used, and if one of them doesn't return ``true`` the condition stops evaluation.
 
@@ -505,7 +524,7 @@ Debugging
 
 To show the result of Fusion Expressions directly you can use the Neos.Fusion:Debug Fusion-Object::
 
-	debugObject = Debug {
+	debugObject = Neos.Fusion:Debug {
 		# optional: set title for the debug output
 		# title = 'Debug'
 
@@ -521,6 +540,29 @@ To show the result of Fusion Expressions directly you can use the Neos.Fusion:De
 		documentPath = ${documentNode.path}
 	}
 	# the value of this object is the formatted debug output of all keys given to the object
+
+
+Domain-specific languages in Fusion
+===================================
+
+Fusion allows the implementation of domain-specific sublanguages. Those DSLs can take a piece of code, that
+is optimized to express a specific class of problems, and return the equivalent fusion-code that is cached and executed
+by the Fusion-runtime afterwards.
+
+Fusion-DSLs use the syntax of tagged template literals from ES6 and can be used in all value assignments::
+
+	value = dslIdentifier`... the code that is passed to the dsl ...`
+
+If such a syntax-block is detected fusion will:
+
+* Lookup the key ``dslIdentifier`` in the Setting ``Neos.Fusion.dsl`` to find the matching dsl-implementation.
+* Instantiate the dsl-implementation class that was found registered.
+* Check that the dsl-implementation satisfies the interface ``\Neos\Fusion\Core\DslInterface``
+* Pass the code between the backticks to the dsl-implementation.
+* Finally parse the returned Fusion-code
+
+Fusion DSLs cannot extend the fusion-language and -runtime itself, they are meant to enable a more efficient syntax
+for specific problems.
 
 .. Important Fusion objects and patterns
 .. =========================================
