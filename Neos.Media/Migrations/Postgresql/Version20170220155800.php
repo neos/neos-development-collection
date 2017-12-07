@@ -14,7 +14,7 @@ class Version20170220155800 extends AbstractMigration
      */
     public function getDescription()
     {
-        return '';
+        return 'Add quality column to tables abstractimageadjustment and thumbnail.';
     }
 
     /**
@@ -23,7 +23,7 @@ class Version20170220155800 extends AbstractMigration
      */
     public function up(Schema $schema)
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on "postgresql".');
+        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on "postgresql".');
         $this->addSql('ALTER TABLE neos_media_domain_model_adjustment_abstractimageadjustment ADD quality INT DEFAULT NULL');
         $this->addSql('ALTER TABLE neos_media_domain_model_thumbnail ADD quality INT DEFAULT NULL');
     }
@@ -34,7 +34,7 @@ class Version20170220155800 extends AbstractMigration
      */
     public function down(Schema $schema)
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on "postgresql".');
+        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on "postgresql".');
         $this->addSql('ALTER TABLE neos_media_domain_model_adjustment_abstractimageadjustment DROP quality');
         $this->addSql('ALTER TABLE neos_media_domain_model_thumbnail DROP quality');
     }
