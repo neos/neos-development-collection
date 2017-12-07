@@ -193,7 +193,12 @@ class NodeDataRepository extends Repository
         $dimensions = $dimensions === null ? [] : $dimensions;
         $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($nodes, $workspaces, $dimensions);
         $foundNodes = $this->filterNodeDataByBestMatchInContext($foundNodes, $workspace, $dimensions, $removedNodes);
-        $foundNodes = $this->filterRemovedNodes($foundNodes, $removedNodes);
+
+        if ($removedNodes === true) {
+            $foundNodes = $this->onlyRemovedNodes($foundNodes);
+        } elseif ($removedNodes === false) {
+            $foundNodes = $this->withoutRemovedNodes($foundNodes);
+        }
 
         if ($foundNodes !== []) {
             return reset($foundNodes);
@@ -216,7 +221,7 @@ class NodeDataRepository extends Repository
         $nodes = $this->findRawNodesByPath($path, $workspace, $dimensions, true);
         $dimensions = $dimensions === null ? [] : $dimensions;
         $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($nodes, $workspaces, $dimensions);
-        $foundNodes = $this->filterRemovedNodes($foundNodes, true);
+        $foundNodes = $this->onlyRemovedNodes($foundNodes);
 
         if ($foundNodes !== []) {
             return reset($foundNodes);
@@ -256,7 +261,7 @@ class NodeDataRepository extends Repository
             foreach ($this->addedNodes as $node) {
                 if (($node->getPath() === $path && $node->matchesWorkspaceAndDimensions($workspace, $dimensions)) && ($onlyShadowNodes === false || $node->isInternal())) {
                     $addedNodes[] = $node;
-            // removed nodes don't matter here because due to the identity map the right object will be returned from the query and will have "removed" set.
+                    // removed nodes don't matter here because due to the identity map the right object will be returned from the query and will have "removed" set.
                 }
             }
 
@@ -314,9 +319,10 @@ class NodeDataRepository extends Repository
      * @param string $identifier Identifier of the node
      * @param Workspace $workspace The containing workspace
      * @param array $dimensions An array of dimensions with array of ordered values to use for fallback matching
+     * @param bool $removedNodes If shadow nodes should be considered while finding the specified node
      * @return NodeData The matching node if found, otherwise NULL
      */
-    public function findOneByIdentifier($identifier, Workspace $workspace, array $dimensions = null)
+    public function findOneByIdentifier($identifier, Workspace $workspace, array $dimensions = null, $removedNodes = false)
     {
         $workspaces = [];
         while ($workspace !== null) {
@@ -350,7 +356,9 @@ class NodeDataRepository extends Repository
         $nodes = $query->getResult();
 
         $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($nodes, $workspaces, $dimensions);
-        $foundNodes = $this->filterRemovedNodes($foundNodes, false);
+        if ($removedNodes === false) {
+            $foundNodes = $this->withoutRemovedNodes($foundNodes);
+        }
 
         if ($foundNodes !== []) {
             return reset($foundNodes);
@@ -482,7 +490,7 @@ class NodeDataRepository extends Repository
         $foundNodes = $this->getNodeDataForParentAndNodeType($parentPath, $nodeTypeFilter, $workspace, $dimensions, $removedNodes, $recursive);
 
         $childNodeDepth = NodePaths::getPathDepth($parentPath) + 1;
-        $constraints = $nodeTypeFilter !== '' ? $this->getNodeTypeFilterConstraintsForDql($nodeTypeFilter) : array();
+        $constraints = $this->getNodeTypeFilterConstraintsForDql($nodeTypeFilter);
         /** @var $addedNode NodeData */
         foreach ($this->addedNodes as $addedNode) {
             if (
@@ -555,7 +563,12 @@ class NodeDataRepository extends Repository
 
         $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($nodes, $workspaces, $dimensions);
         $foundNodes = $this->filterNodeDataByBestMatchInContext($foundNodes, $workspaces[0], $dimensions, $removedNodes);
-        $foundNodes = $this->filterRemovedNodes($foundNodes, $removedNodes);
+
+        if ($removedNodes === true) {
+            $foundNodes = $this->onlyRemovedNodes($foundNodes);
+        } elseif ($removedNodes === false) {
+            $foundNodes = $this->withoutRemovedNodes($foundNodes);
+        }
 
         return $foundNodes;
     }
@@ -943,7 +956,7 @@ class NodeDataRepository extends Repository
         $foundNodes = $this->filterNodeDataByBestMatchInContext($foundNodes, $workspaces[0], $dimensions, $includeRemovedNodes);
 
         if ($includeRemovedNodes === false) {
-            $foundNodes = $this->filterRemovedNodes($foundNodes, false);
+            $foundNodes = $this->withoutRemovedNodes($foundNodes);
         }
 
         $nodesByDepth = [];
@@ -1008,7 +1021,7 @@ class NodeDataRepository extends Repository
         $query = $queryBuilder->getQuery();
         $foundNodes = $query->getResult();
         $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($foundNodes, $workspaces, $dimensions);
-        $foundNodes = $this->filterRemovedNodes($foundNodes, false);
+        $foundNodes = $this->withoutRemovedNodes($foundNodes);
 
         return $foundNodes;
     }
@@ -1055,11 +1068,12 @@ class NodeDataRepository extends Repository
      *
      * Both are numeric arrays with the respective node types that are included or excluded.
      *
-     * @param string $nodeTypeFilter
+     * @param string|null $nodeTypeFilter
      * @return array
      */
-    protected function getNodeTypeFilterConstraintsForDql($nodeTypeFilter)
+    protected function getNodeTypeFilterConstraintsForDql($nodeTypeFilter = '')
     {
+        $nodeTypeFilter = empty($nodeTypeFilter) ? '' : $nodeTypeFilter;
         $constraints = [
             'excludeNodeTypes' => [],
             'includeNodeTypes' => []
@@ -1144,25 +1158,29 @@ class NodeDataRepository extends Repository
     }
 
     /**
-     * Removes NodeData with the removed property set from the given array.
+     * Returns a subset of $nodes which are not flagged as removed.
      *
      * @param array $nodes NodeData including removed entries
-     * @param boolean|NULL $removedNodes If TRUE the result has ONLY removed nodes. If FALSE removed nodes are NOT inside the result. If NULL the result contains BOTH removed and non-removed nodes.
-     * @return array NodeData with removed entries removed
+     * @return array Only those NodeData instances which are not flagged as removed
      */
-    protected function filterRemovedNodes($nodes, $removedNodes)
+    protected function withoutRemovedNodes(array $nodes)
     {
-        if ($removedNodes === true) {
-            return array_filter($nodes, function (NodeData $node) use ($removedNodes) {
-                return $node->isRemoved();
-            });
-        } elseif ($removedNodes === false) {
-            return array_filter($nodes, function (NodeData $node) use ($removedNodes) {
-                return !$node->isRemoved();
-            });
-        } else {
-            return $nodes;
-        }
+        return array_filter($nodes, function (NodeData $node) {
+            return !$node->isRemoved();
+        });
+    }
+
+    /**
+     * Returns a subset of $nodes which are flagged as removed.
+     *
+     * @param array $nodes NodeData including removed entries
+     * @return array Only those NodeData instances which are flagged as removed
+     */
+    protected function onlyRemovedNodes(array $nodes)
+    {
+        return array_filter($nodes, function (NodeData $node) {
+            return $node->isRemoved();
+        });
     }
 
     /**
@@ -1226,7 +1244,7 @@ class NodeDataRepository extends Repository
      */
     protected function reduceNodeVariantsByWorkspacesAndDimensions(array $nodes, array $workspaces, array $dimensions)
     {
-        $foundNodes = [];
+        $reducedNodes = [];
 
         $minimalDimensionPositionsByIdentifier = [];
         foreach ($nodes as $node) {
@@ -1271,12 +1289,12 @@ class NodeDataRepository extends Repository
             $identifier = $node->getIdentifier();
             // Yes, it seems to work comparing arrays that way!
             if (!isset($minimalDimensionPositionsByIdentifier[$identifier]) || $dimensionPositions < $minimalDimensionPositionsByIdentifier[$identifier]) {
-                $foundNodes[$identifier] = $node;
+                $reducedNodes[$identifier] = $node;
                 $minimalDimensionPositionsByIdentifier[$identifier] = $dimensionPositions;
             }
         }
 
-        return $foundNodes;
+        return $reducedNodes;
     }
 
     /**
@@ -1394,7 +1412,7 @@ class NodeDataRepository extends Repository
 
         $foundNodes = $this->reduceNodeVariantsByWorkspaces($foundNodes, $workspaces);
         if ($includeRemovedNodes === false) {
-            $foundNodes = $this->filterRemovedNodes($foundNodes, false);
+            $foundNodes = $this->withoutRemovedNodes($foundNodes);
         }
 
         return $foundNodes;
@@ -1403,38 +1421,39 @@ class NodeDataRepository extends Repository
     /**
      * Searches for possible relations to the given entity identifiers in NodeData.
      * Will return all possible NodeData objects that contain this identifiers.
+     * See buildQueryBuilderForRelationMap for the relationMap definition.
      *
      * Note: This is an internal method that is likely to be replaced in the future.
-     *
-     * $objectTypeMap = array(
-     *    'Neos\Media\Domain\Model\Asset' => array('some-uuid-here'),
-     *    'Neos\Media\Domain\Model\ImageVariant' => array('some-uuid-here', 'another-uuid-here')
-     * )
      *
      * @param array $relationMap
      * @return array
      */
     public function findNodesByRelatedEntities($relationMap)
     {
-        /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = $this->entityManager->createQueryBuilder();
+        return $this->buildQueryBuilderForRelationMap($relationMap)->getQuery()->getResult();
+    }
 
-        $queryBuilder->select('n')
-            ->from(NodeData::class, 'n');
+    /**
+     * Searches for possible relations to the given entity identifiers in NodeData using a path prefix.
+     * Will return all possible NodeData objects that contain this identifiers.
+     * See buildQueryBuilderForRelationMap for the relationMap definition.
+     *
+     * Note: This is an internal method that is likely to be replaced in the future.
+     *
+     * @param string $pathPrefix
+     * @param array $relationMap
+     * @return array
+     */
+    public function findNodesByPathPrefixAndRelatedEntities($pathPrefix, $relationMap)
+    {
+        $queryBuilder = $this->buildQueryBuilderForRelationMap($relationMap);
 
-        $constraints = [];
-        $parameters = [];
-        foreach ($relationMap as $relatedObjectType => $relatedIdentifiers) {
-            foreach ($relatedIdentifiers as $relatedIdentifier) {
-                $constraints[] = '(LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :entity' . md5($relatedIdentifier) . ' )';
-                $parameters['entity' . md5($relatedIdentifier)] = '%"__identifier": "' . strtolower($relatedIdentifier) . '"%';
-            }
+        if (trim($pathPrefix) !== '') {
+            $queryBuilder->andWhere('n.path LIKE :pathPrefix');
+            $queryBuilder->setParameter('pathPrefix', trim($pathPrefix) . '%');
         }
-        $queryBuilder->where(implode(' OR ', $constraints));
-        $queryBuilder->setParameters($parameters);
-        $possibleNodeData = $queryBuilder->getQuery()->getResult();
 
-        return $possibleNodeData;
+        return $queryBuilder->getQuery()->getResult();
     }
 
     /**
@@ -1578,7 +1597,12 @@ class NodeDataRepository extends Repository
         $nodes = $query->getResult();
         $foundNodes = array_merge($nodes, $nonPersistedNodes);
         $foundNodes = $this->reduceNodeVariantsByWorkspacesAndDimensions($foundNodes, $workspaces, $dimensions);
-        $foundNodes = $this->filterRemovedNodes($foundNodes, $includeRemovedNodes);
+
+        if ($includeRemovedNodes === true) {
+            $foundNodes = $this->onlyRemovedNodes($foundNodes);
+        } elseif ($includeRemovedNodes === false) {
+            $foundNodes = $this->withoutRemovedNodes($foundNodes);
+        }
 
         /** @var NodeData $nodeData */
         return array_filter($nodeDataObjects, function (NodeData $nodeData) use ($foundNodes) {
@@ -1601,5 +1625,54 @@ class NodeDataRepository extends Repository
         }
 
         return $workspaces;
+    }
+
+    /**
+     * Returns a query builder for a query on node data using the given
+     * relation map.
+     *
+     * $objectTypeMap = [
+     *    'Neos\Media\Domain\Model\Asset' => ['some-uuid-here'],
+     *    'Neos\Media\Domain\Model\ImageVariant' => ['some-uuid-here', 'another-uuid-here']
+     * ]
+     *
+     * @param array $relationMap
+     * @return QueryBuilder
+     */
+    protected function buildQueryBuilderForRelationMap($relationMap)
+    {
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+
+        $queryBuilder->select('n')
+            ->from(NodeData::class, 'n');
+
+        $constraints = [];
+        $parameters = [];
+
+        foreach ($relationMap as $relatedObjectType => $relatedIdentifiers) {
+            foreach ($relatedIdentifiers as $relatedIdentifier) {
+                // entity references like "__identifier": "so-me-uu-id"
+                $constraints[] = '(LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :entity' . md5($relatedIdentifier) . ' )';
+                $parameters['entity' . md5($relatedIdentifier)] = '%"__identifier": "' . strtolower($relatedIdentifier) . '"%';
+
+                // asset references in text like "asset://so-me-uu-id"
+                $constraints[] = '(LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :asset' . md5($relatedIdentifier) . ' )';
+                switch ($this->entityManager->getConnection()->getDatabasePlatform()->getName()) {
+                    case 'postgresql':
+                        $parameters['asset' . md5($relatedIdentifier)] = '%asset://' . strtolower($relatedIdentifier) . '%';
+                    break;
+                    case 'sqlite':
+                        $parameters['asset' . md5($relatedIdentifier)] = '%asset:\/\/' . strtolower($relatedIdentifier) . '%';
+                    break;
+                    default:
+                        $parameters['asset' . md5($relatedIdentifier)] = '%asset:\\\\/\\\\/' . strtolower($relatedIdentifier) . '%';
+                }
+            }
+        }
+
+        $queryBuilder->where(implode(' OR ', $constraints));
+        $queryBuilder->setParameters($parameters);
+        return $queryBuilder;
     }
 }

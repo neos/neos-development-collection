@@ -1,0 +1,33 @@
+# Create an editable tag for a property. In the frontend,
+# only the content of the property gets rendered.
+
+prototype(Neos.Neos:Editable) < prototype(Neos.Fusion:Component) {
+  node = ${node}
+
+  # The name of the property which should be accessed
+  property = null
+
+  # Decides if the editable tag should be a block element (`div`) or an inline element (`span`)
+  block = true
+
+  renderer = Neos.Fusion:Case {
+    editable {
+      condition = ${props.node.context.inBackend && props.node.context.currentRenderingMode.edit}
+      renderer = Neos.Fusion:Tag {
+        tagName = ${props.block ? 'div' : 'span'}
+        content = ${q(props.node).property(props.property)}
+        @process.contentElementEditableWrapping = Neos.Neos:ContentElementEditable {
+          property = ${props.property}
+          node = ${props.node}
+        }
+        @if.hasProperty = ${props.property ? true : false}
+      }
+    }
+
+    notEditable {
+      condition = true
+      renderer = ${q(props.node).property(props.property)}
+      @process.convertUris = Neos.Neos:ConvertUris
+    }
+  }
+}

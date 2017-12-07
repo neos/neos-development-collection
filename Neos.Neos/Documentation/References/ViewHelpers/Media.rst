@@ -3,17 +3,17 @@
 Media ViewHelper Reference
 ==========================
 
-This reference was automatically generated from code on 2016-06-07
+This reference was automatically generated from code on 2017-05-11
 
 
-.. _`Media ViewHelper Reference: typo3.media:fileTypeIcon`:
+.. _`Media ViewHelper Reference: neos.media:fileTypeIcon`:
 
-typo3.media:fileTypeIcon
-------------------------
+neos.media:fileTypeIcon
+-----------------------
 
-Renders an <img> HTML tag for a filetype icon for a given TYPO3.Media's asset instance
+Renders an <img> HTML tag for a filetype icon for a given Neos.Media's asset instance
 
-:Implementation: TYPO3\\Media\\ViewHelpers\\FileTypeIconViewHelper
+:Implementation: Neos\\Media\\ViewHelpers\\FileTypeIconViewHelper
 
 
 
@@ -25,11 +25,11 @@ Arguments
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
 
-* ``file`` (TYPO3\Media\Domain\Model\AssetInterface)
+* ``file`` (Neos\Media\Domain\Model\AssetInterface)
 
-* ``width`` (integer|null, *optional*)
+* ``width`` (mixed, *optional*)
 
-* ``height`` (integer|null, *optional*)
+* ``height`` (mixed, *optional*)
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -57,25 +57,25 @@ Examples
 
 **Rendering an asset filetype icon**::
 
-	<typo3.media:fileTypeIcon asset="{assetObject}" alt="a filetype icon" height="16" />
+	<neos.media:fileTypeIcon file="{assetObject}" height="16" />
 
 
 Expected result::
 
 	(depending on the asset, no scaling applied)
-	<img src="_Resources/Static/Packages/TYPO3/Media/Icons/16px/jpg.png" height="16" alt="a filetype icon" />
+	<img src="_Resources/Static/Packages/TYPO3/Media/Icons/16px/jpg.png" height="16" alt="filetype alt text" />
 
 
 
 
-.. _`Media ViewHelper Reference: typo3.media:form.checkbox`:
+.. _`Media ViewHelper Reference: neos.media:form.checkbox`:
 
-typo3.media:form.checkbox
--------------------------
+neos.media:form.checkbox
+------------------------
 
 View Helper which creates a simple checkbox (<input type="checkbox">).
 
-:Implementation: TYPO3\\Media\\ViewHelpers\\Form\\CheckboxViewHelper
+:Implementation: Neos\\Media\\ViewHelpers\\Form\\CheckboxViewHelper
 
 
 
@@ -93,7 +93,7 @@ Arguments
 
 * ``name`` (string, *optional*): Name of input tag
 
-* ``value`` (string): Value of input tag. Required for checkboxes
+* ``value`` (mixed): Value of input tag. Required for checkboxes
 
 * ``property`` (string, *optional*): Name of Object Property. If used in conjunction with <f:form object="...">, "name" and "value" properties will be ignored.
 
@@ -127,7 +127,7 @@ Examples
 
 **Example**::
 
-	<typo3.media:form.checkbox name="myCheckBox" value="someValue" />
+	<neos.media:form.checkbox name="myCheckBox" value="someValue" />
 
 
 Expected result::
@@ -137,7 +137,7 @@ Expected result::
 
 **Preselect**::
 
-	<typo3.media:form.checkbox name="myCheckBox" value="someValue" checked="{object.value} == 5" />
+	<neos.media:form.checkbox name="myCheckBox" value="someValue" checked="{object.value} == 5" />
 
 
 Expected result::
@@ -148,7 +148,7 @@ Expected result::
 
 **Bind to object property**::
 
-	<typo3.media:form.checkbox property="interests" value="TYPO3" />
+	<neos.media:form.checkbox property="interests" value="TYPO3" />
 
 
 Expected result::
@@ -159,14 +159,14 @@ Expected result::
 
 
 
-.. _`Media ViewHelper Reference: typo3.media:format.relativeDate`:
+.. _`Media ViewHelper Reference: neos.media:format.relativeDate`:
 
-typo3.media:format.relativeDate
--------------------------------
+neos.media:format.relativeDate
+------------------------------
 
 Renders a DateTime formatted relative to the current date
 
-:Implementation: TYPO3\\Media\\ViewHelpers\\Format\\RelativeDateViewHelper
+:Implementation: Neos\\Media\\ViewHelpers\\Format\\RelativeDateViewHelper
 
 
 
@@ -179,14 +179,14 @@ Arguments
 
 
 
-.. _`Media ViewHelper Reference: typo3.media:image`:
+.. _`Media ViewHelper Reference: neos.media:image`:
 
-typo3.media:image
------------------
+neos.media:image
+----------------
 
-Renders an <img> HTML tag from a given TYPO3.Media's image instance
+Renders an <img> HTML tag from a given Neos.Media's image instance
 
-:Implementation: TYPO3\\Media\\ViewHelpers\\ImageViewHelper
+:Implementation: Neos\\Media\\ViewHelpers\\ImageViewHelper
 
 
 
@@ -198,7 +198,7 @@ Arguments
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
 
-* ``image`` (TYPO3\Media\Domain\Model\ImageInterface, *optional*): The image to be rendered as an image
+* ``image`` (Neos\Media\Domain\Model\ImageInterface, *optional*): The image to be rendered as an image
 
 * ``width`` (integer, *optional*): Desired width of the image
 
@@ -240,8 +240,6 @@ Arguments
 
 * ``usemap`` (string, *optional*): Specifies an image as a client-side image-map
 
-* ``asset`` (TYPO3\Media\Domain\Model\AssetInterface, *optional*): The asset to be rendered - DEPRECATED, use the "image" argument instead
-
 
 
 
@@ -250,7 +248,7 @@ Examples
 
 **Rendering an image as-is**::
 
-	<typo3.media:image image="{imageObject}" alt="a sample image without scaling" />
+	<neos.media:image image="{imageObject}" alt="a sample image without scaling" />
 
 
 Expected result::
@@ -261,7 +259,7 @@ Expected result::
 
 **Rendering an image with scaling at a given width only**::
 
-	<typo3.media:image image="{imageObject}" maximumWidth="80" alt="sample" />
+	<neos.media:image image="{imageObject}" maximumWidth="80" alt="sample" />
 
 
 Expected result::
@@ -272,7 +270,7 @@ Expected result::
 
 **Rendering an image with scaling at given width and height, keeping aspect ratio**::
 
-	<typo3.media:image image="{imageObject}" maximumWidth="80" maximumHeight="80" alt="sample" />
+	<neos.media:image image="{imageObject}" maximumWidth="80" maximumHeight="80" alt="sample" />
 
 
 Expected result::
@@ -283,7 +281,7 @@ Expected result::
 
 **Rendering an image with crop-scaling at given width and height**::
 
-	<typo3.media:image image="{imageObject}" maximumWidth="80" maximumHeight="80" allowCropping="true" alt="sample" />
+	<neos.media:image image="{imageObject}" maximumWidth="80" maximumHeight="80" allowCropping="true" alt="sample" />
 
 
 Expected result::
@@ -294,7 +292,7 @@ Expected result::
 
 **Rendering an image with allowed up-scaling at given width and height**::
 
-	<typo3.media:image image="{imageObject}" maximumWidth="5000" allowUpScaling="true" alt="sample" />
+	<neos.media:image image="{imageObject}" maximumWidth="5000" allowUpScaling="true" alt="sample" />
 
 
 Expected result::
@@ -305,14 +303,14 @@ Expected result::
 
 
 
-.. _`Media ViewHelper Reference: typo3.media:thumbnail`:
+.. _`Media ViewHelper Reference: neos.media:thumbnail`:
 
-typo3.media:thumbnail
----------------------
+neos.media:thumbnail
+--------------------
 
-Renders an <img> HTML tag from a given TYPO3.Media's asset instance
+Renders an <img> HTML tag from a given Neos.Media's asset instance
 
-:Implementation: TYPO3\\Media\\ViewHelpers\\ThumbnailViewHelper
+:Implementation: Neos\\Media\\ViewHelpers\\ThumbnailViewHelper
 
 
 
@@ -324,7 +322,7 @@ Arguments
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
 
-* ``asset`` (TYPO3\Media\Domain\Model\AssetInterface, *optional*): The asset to be rendered as a thumbnail
+* ``asset`` (Neos\Media\Domain\Model\AssetInterface, *optional*): The asset to be rendered as a thumbnail
 
 * ``width`` (integer, *optional*): Desired width of the thumbnail
 
@@ -370,7 +368,7 @@ Examples
 
 **Rendering an asset thumbnail**::
 
-	<typo3.media:thumbnail asset="{assetObject}" alt="a sample asset without scaling" />
+	<neos.media:thumbnail asset="{assetObject}" alt="a sample asset without scaling" />
 
 
 Expected result::
@@ -381,7 +379,7 @@ Expected result::
 
 **Rendering an asset thumbnail with scaling at a given width only**::
 
-	<typo3.media:thumbnail asset="{assetObject}" maximumWidth="80" alt="sample" />
+	<neos.media:thumbnail asset="{assetObject}" maximumWidth="80" alt="sample" />
 
 
 Expected result::
@@ -392,7 +390,7 @@ Expected result::
 
 **Rendering an asset thumbnail with scaling at given width and height, keeping aspect ratio**::
 
-	<typo3.media:thumbnail asset="{assetObject}" maximumWidth="80" maximumHeight="80" alt="sample" />
+	<neos.media:thumbnail asset="{assetObject}" maximumWidth="80" maximumHeight="80" alt="sample" />
 
 
 Expected result::
@@ -403,7 +401,7 @@ Expected result::
 
 **Rendering an asset thumbnail with crop-scaling at given width and height**::
 
-	<typo3.media:thumbnail asset="{assetObject}" maximumWidth="80" maximumHeight="80" allowCropping="true" alt="sample" />
+	<neos.media:thumbnail asset="{assetObject}" maximumWidth="80" maximumHeight="80" allowCropping="true" alt="sample" />
 
 
 Expected result::
@@ -414,7 +412,7 @@ Expected result::
 
 **Rendering an asset thumbnail with allowed up-scaling at given width and height**::
 
-	<typo3.media:thumbnail asset="{assetObject}" maximumWidth="5000" allowUpScaling="true" alt="sample" />
+	<neos.media:thumbnail asset="{assetObject}" maximumWidth="5000" allowUpScaling="true" alt="sample" />
 
 
 Expected result::
@@ -425,14 +423,14 @@ Expected result::
 
 
 
-.. _`Media ViewHelper Reference: typo3.media:uri.image`:
+.. _`Media ViewHelper Reference: neos.media:uri.image`:
 
-typo3.media:uri.image
----------------------
+neos.media:uri.image
+--------------------
 
-Renders the src path of a thumbnail image of a given TYPO3.Media image instance
+Renders the src path of a thumbnail image of a given Neos.Media image instance
 
-:Implementation: TYPO3\\Media\\ViewHelpers\\Uri\\ImageViewHelper
+:Implementation: Neos\\Media\\ViewHelpers\\Uri\\ImageViewHelper
 
 
 
@@ -440,7 +438,7 @@ Renders the src path of a thumbnail image of a given TYPO3.Media image instance
 Arguments
 *********
 
-* ``image`` (TYPO3\Media\Domain\Model\ImageInterface, *optional*)
+* ``image`` (Neos\Media\Domain\Model\ImageInterface, *optional*): The image to retrieve the path from
 
 * ``width`` (integer, *optional*): Desired width of the image
 
@@ -458,8 +456,6 @@ Arguments
 
 * ``preset`` (string, *optional*): Preset used to determine image configuration
 
-* ``asset`` (TYPO3\Media\Domain\Model\AssetInterface, *optional*): The image to be rendered - DEPRECATED, use the "image" argument instead
-
 
 
 
@@ -468,7 +464,7 @@ Examples
 
 **Rendering an image path as-is**::
 
-	{typo3.media:uri.image(image: imageObject)}
+	{neos.media:uri.image(image: imageObject)}
 
 
 Expected result::
@@ -479,7 +475,7 @@ Expected result::
 
 **Rendering an image path with scaling at a given width only**::
 
-	{typo3.media:uri.image(image: imageObject, maximumWidth: 80)}
+	{neos.media:uri.image(image: imageObject, maximumWidth: 80)}
 
 
 Expected result::
@@ -490,14 +486,14 @@ Expected result::
 
 
 
-.. _`Media ViewHelper Reference: typo3.media:uri.thumbnail`:
+.. _`Media ViewHelper Reference: neos.media:uri.thumbnail`:
 
-typo3.media:uri.thumbnail
--------------------------
+neos.media:uri.thumbnail
+------------------------
 
-Renders the src path of a thumbnail image of a given TYPO3.Media asset instance
+Renders the src path of a thumbnail image of a given Neos.Media asset instance
 
-:Implementation: TYPO3\\Media\\ViewHelpers\\Uri\\ThumbnailViewHelper
+:Implementation: Neos\\Media\\ViewHelpers\\Uri\\ThumbnailViewHelper
 
 
 
@@ -505,7 +501,7 @@ Renders the src path of a thumbnail image of a given TYPO3.Media asset instance
 Arguments
 *********
 
-* ``asset`` (TYPO3\Media\Domain\Model\AssetInterface, *optional*)
+* ``asset`` (Neos\Media\Domain\Model\AssetInterface, *optional*)
 
 * ``width`` (integer, *optional*): Desired width of the thumbnail
 
@@ -531,7 +527,7 @@ Examples
 
 **Rendering an asset thumbnail path as-is**::
 
-	{typo3.media:uri.thumbnail(asset: assetObject)}
+	{neos.media:uri.thumbnail(asset: assetObject)}
 
 
 Expected result::
@@ -542,7 +538,7 @@ Expected result::
 
 **Rendering an asset thumbnail path with scaling at a given width only**::
 
-	{typo3.media:uri.thumbnail(asset: assetObject, maximumWidth: 80)}
+	{neos.media:uri.thumbnail(asset: assetObject, maximumWidth: 80)}
 
 
 Expected result::

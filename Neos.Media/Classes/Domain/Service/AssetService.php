@@ -12,6 +12,7 @@ namespace Neos\Media\Domain\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -20,7 +21,6 @@ use Neos\Flow\Persistence\RepositoryInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
-use Neos\Utility\Arrays;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetVariantInterface;
 use Neos\Media\Domain\Model\ImageInterface;
@@ -30,6 +30,8 @@ use Neos\Media\Domain\Model\ThumbnailConfiguration;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Strategy\AssetUsageStrategyInterface;
 use Neos\Media\Exception\AssetServiceException;
+use Neos\RedirectHandler\Storage\RedirectStorageInterface;
+use Neos\Utility\Arrays;
 
 /**
  * An asset service that handles for example commands on assets, retrieves information
@@ -72,7 +74,7 @@ class AssetService
     /**
      * @var array
      */
-    protected $usageStrategies = [];
+    protected $usageStrategies;
 
     /**
      * @Flow\Inject
@@ -125,18 +127,19 @@ class AssetService
                 $uri = $this->uriBuilder
                     ->reset()
                     ->setCreateAbsoluteUri(true)
-                    ->uriFor('thumbnail', array('thumbnail' => $thumbnailImage), 'Thumbnail', 'Neos.Media');
+                    ->uriFor('thumbnail', ['thumbnail' => $thumbnailImage], 'Thumbnail', 'Neos.Media');
             } else {
                 $uri = $this->thumbnailService->getUriForThumbnail($thumbnailImage);
             }
         } else {
             $uri = $this->resourceManager->getPublicPersistentResourceUri($resource);
         }
-        return array(
+
+        return [
             'width' => $thumbnailImage->getWidth(),
             'height' => $thumbnailImage->getHeight(),
             'src' => $uri
-        );
+        ];
     }
 
     /**
@@ -151,9 +154,10 @@ class AssetService
             return $this->usageStrategies;
         }
 
-        $assetUsageStrategieImplementations = $this->reflectionService->getAllImplementationClassNamesForInterface(AssetUsageStrategyInterface::class);
-        foreach ($assetUsageStrategieImplementations as $assetUsageStrategieImplementationClassName) {
-            $this->usageStrategies[] = $this->objectManager->get($assetUsageStrategieImplementationClassName);
+        $this->usageStrategies = [];
+        $assetUsageStrategyImplementations = $this->reflectionService->getAllImplementationClassNamesForInterface(AssetUsageStrategyInterface::class);
+        foreach ($assetUsageStrategyImplementations as $assetUsageStrategyImplementationClassName) {
+            $this->usageStrategies[] = $this->objectManager->get($assetUsageStrategyImplementationClassName);
         }
 
         return $this->usageStrategies;
@@ -248,9 +252,9 @@ class AssetService
         $uriMapping = [];
         $redirectHandlerEnabled = isset($options['generateRedirects']) && (boolean)$options['generateRedirects'] === true && $this->packageManager->isPackageAvailable('Neos.RedirectHandler');
         if ($redirectHandlerEnabled) {
-            $uriMapping[
-                $this->resourceManager->getPublicPersistentResourceUri($originalAssetResource)
-            ] = $this->resourceManager->getPublicPersistentResourceUri($asset->getResource());
+            $originalAssetResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($originalAssetResource));
+            $newAssetResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($asset->getResource()));
+            $uriMapping[$originalAssetResourceUri->getPath()] = $newAssetResourceUri->getPath();
         }
 
         if (method_exists($asset, 'getVariants')) {
@@ -262,16 +266,16 @@ class AssetService
 
                 if (method_exists($variant, 'getAdjustments')) {
                     foreach ($variant->getAdjustments() as $adjustment) {
-                        if (method_exists($adjustment, 'refit')) {
+                        if (method_exists($adjustment, 'refit') && $this->imageService->getImageSize($originalAssetResource) !== $this->imageService->getImageSize($resource)) {
                             $adjustment->refit($asset);
                         }
                     }
                 }
 
                 if ($redirectHandlerEnabled) {
-                    $uriMapping[
-                        $this->resourceManager->getPublicPersistentResourceUri($originalVariantResource)
-                    ] = $this->resourceManager->getPublicPersistentResourceUri($variant->getResource());
+                    $originalVariantResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($originalVariantResource));
+                    $newVariantResourceUri = new Uri($this->resourceManager->getPublicPersistentResourceUri($variant->getResource()));
+                    $uriMapping[$originalVariantResourceUri->getPath()] = $newVariantResourceUri->getPath();
                 }
 
                 $this->getRepository($variant)->update($variant);
@@ -279,8 +283,8 @@ class AssetService
         }
 
         if ($redirectHandlerEnabled) {
-            /** @var \Neos\RedirectHandler\Storage\RedirectStorageInterface $redirectStorage */
-            $redirectStorage = $this->objectManager->get(\Neos\RedirectHandler\Storage\RedirectStorageInterface::class);
+            /** @var RedirectStorageInterface $redirectStorage */
+            $redirectStorage = $this->objectManager->get(RedirectStorageInterface::class);
             foreach ($uriMapping as $originalUri => $newUri) {
                 $existingRedirect = $redirectStorage->getOneBySourceUriPathAndHost($originalUri);
                 if ($existingRedirect === null) {

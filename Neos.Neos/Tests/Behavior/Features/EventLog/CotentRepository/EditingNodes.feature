@@ -10,6 +10,7 @@ Feature: Editing Nodes
       | 49f324f2-6a65-11e4-a901-7831c1d118bc | /sites/content-repository/main/headline | Neos.ContentRepository.Testing:Headline | {"title": "Welcome"}            | live      |
       | be87d1dc-6a65-11e4-884b-7831c1d118bc | /sites/content-repository/main/text     | Neos.ContentRepository.Testing:Text     | {"text": "... to this website"} | live      |
     And I have an empty history
+    And I am authenticated with role "Neos.Neos:Editor"
 
   @fixtures
   Scenario: Change a Document node property in the live workspace (e.g. like an API)

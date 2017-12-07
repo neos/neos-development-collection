@@ -4,7 +4,18 @@
     "description": "This module allows managing of media assets including pictures, videos, audio and documents.",
     "license": "GPL-3.0+",
     "require": {
-        "neos/media": "*"
+        "neos/media": "self.version",
+        "neos/content-repository": "self.version",
+        "neos/neos": "self.version",
+
+        "neos/flow": "*",
+        "neos/fluid-adaptor": "*",
+        "neos/utility-files": "*",
+        "neos/utility-mediatypes": "*",
+        "neos/error-messages": "*",
+
+        "doctrine/common": "~2.7.0",
+        "doctrine/orm": "~2.5.0"
     },
     "autoload": {
         "psr-4": {

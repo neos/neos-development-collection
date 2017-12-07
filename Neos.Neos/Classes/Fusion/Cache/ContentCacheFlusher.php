@@ -21,10 +21,10 @@ use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\Fusion\Core\Cache\ContentCache;
 
 /**
- * This service flushes TypoScript content caches triggered by node changes.
+ * This service flushes Fusion content caches triggered by node changes.
  *
  * The method registerNodeChange() is triggered by a signal which is configured in the Package class of the Neos.Neos
- * package (this package). Information on changed nodes is collected by this method and the respective TypoScript content
+ * package (this package). Information on changed nodes is collected by this method and the respective Fusion content
  * cache entries are flushed in one operation during Flow's shutdown procedure.
  *
  * @Flow\Scope("singleton")
@@ -86,12 +86,24 @@ class ContentCacheFlusher
     }
 
     /**
+     * Deprecated. Please use ContentCacheFlush::registerAssetChange
+     *
+     * @deprecated
+     * @param AssetInterface $asset
+     * @return void
+     */
+    public function registerAssetResourceChange(AssetInterface $asset)
+    {
+        $this->registerAssetChange($asset);
+    }
+
+    /**
      * Fetches possible usages of the asset and registers nodes that use the asset as changed.
      *
      * @param AssetInterface $asset
      * @return void
      */
-    public function registerAssetResourceChange(AssetInterface $asset)
+    public function registerAssetChange(AssetInterface $asset)
     {
         if (!$asset->isInUse()) {
             return;

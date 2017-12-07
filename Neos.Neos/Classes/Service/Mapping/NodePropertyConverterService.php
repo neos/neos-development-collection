@@ -123,6 +123,8 @@ class NodePropertyConverterService
     }
 
     /**
+     * Convert the given value to a simple type or an array of simple types.
+     *
      * @param mixed $propertyValue
      * @param string $dataType
      * @return mixed
@@ -130,24 +132,25 @@ class NodePropertyConverterService
      */
     protected function convertValue($propertyValue, $dataType)
     {
-        $rawType = TypeHandling::truncateElementType($dataType);
+        $parsedType = TypeHandling::parseType($dataType);
 
         // This hardcoded handling is to circumvent rewriting PropertyMappers that convert objects. Usually they expect the source to be an object already and break if not.
-        if (!TypeHandling::isSimpleType($rawType) && !is_object($propertyValue) && !is_array($propertyValue)) {
+        if (!TypeHandling::isSimpleType($parsedType['type']) && !is_object($propertyValue) && !is_array($propertyValue)) {
             return null;
         }
 
-        if ($rawType === 'array') {
-            $conversionTargetType = 'array<string>';
-        } elseif (TypeHandling::isSimpleType($rawType)) {
-            $conversionTargetType = TypeHandling::normalizeType($rawType);
-        } else {
+        $conversionTargetType = $parsedType['type'];
+        if (!TypeHandling::isSimpleType($parsedType['type'])) {
             $conversionTargetType = 'array';
+        }
+        // Technically the "string" hardcoded here is irrelevant as the configured type converter wins, but it cannot be the "elementType"
+        // because if the source is of the type $elementType then the PropertyMapper skips the type converter.
+        if ($parsedType['type'] === 'array' && $parsedType['elementType'] !== null) {
+            $conversionTargetType .= '<' . (TypeHandling::isSimpleType($parsedType['elementType']) ? $parsedType['elementType'] : 'string') . '>';
         }
 
         $propertyMappingConfiguration = $this->createConfiguration($dataType);
         $convertedValue = $this->propertyMapper->convert($propertyValue, $conversionTargetType, $propertyMappingConfiguration);
-
         if ($convertedValue instanceof \Neos\Error\Messages\Error) {
             throw new PropertyException($convertedValue->getMessage(), $convertedValue->getCode());
         }
@@ -158,7 +161,7 @@ class NodePropertyConverterService
     /**
      * Tries to find a default value for the given property trying:
      * 1) The specific property configuration for the given NodeType
-     * 2) The generic configuration for the property type in setings.
+     * 2) The generic configuration for the property type in settings.
      *
      * @param NodeType $nodeType
      * @param string $propertyName

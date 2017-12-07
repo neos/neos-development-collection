@@ -27,7 +27,7 @@ class NodeTemplateConverter extends NodeConverter
     /**
      * A pattern that separates the node content object type from the node type
      */
-    const EXTRACT_CONTENT_TYPE_PATTERN = '/^\\\\?(?P<type>TYPO3\\\TYPO3CR\\\Domain\\\Model\\\NodeTemplate)(?:<\\\\?(?P<nodeType>[a-zA-Z0-9\\\\\:\.]+)>)?/';
+    const EXTRACT_CONTENT_TYPE_PATTERN = '/^\\\\?(?P<type>Neos\\\ContentRepository\\\Domain\\\Model\\\NodeTemplate)(?:<\\\\?(?P<nodeType>[a-zA-Z0-9\\\\\:\.]+)>)?/';
 
     /**
      * @var array

@@ -25,7 +25,7 @@ use Neos\Media\Domain\Service\ThumbnailService;
  * = Examples =
  *
  * <code title="Rendering an asset thumbnail path as-is">
- * {typo3.media:uri.thumbnail(asset: assetObject)}
+ * {neos.media:uri.thumbnail(asset: assetObject)}
  * </code>
  * <output>
  * (depending on the asset)
@@ -34,7 +34,7 @@ use Neos\Media\Domain\Service\ThumbnailService;
  *
  *
  * <code title="Rendering an asset thumbnail path with scaling at a given width only">
- * {typo3.media:uri.thumbnail(asset: assetObject, maximumWidth: 80)}
+ * {neos.media:uri.thumbnail(asset: assetObject, maximumWidth: 80)}
  * </code>
  * <output>
  * (depending on the asset; has scaled keeping the aspect ratio)
@@ -73,17 +73,17 @@ class ThumbnailViewHelper extends AbstractViewHelper
      * @param integer $maximumHeight Desired maximum height of the thumbnail
      * @param boolean $allowCropping Whether the thumbnail should be cropped if the given sizes would hurt the aspect ratio
      * @param boolean $allowUpScaling Whether the resulting thumbnail size might exceed the size of the original asset
-     * @param integer $quality Quality of the image
      * @param boolean $async Return asynchronous image URI in case the requested image does not exist already
      * @param string $preset Preset used to determine image configuration
+     * @param integer $quality Quality of the image
      * @return string the relative thumbnail path, to be used as src attribute for <img /> tags
      */
-    public function render(AssetInterface $asset = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $quality = null, $async = false, $preset = null)
+    public function render(AssetInterface $asset = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $preset = null, $quality = null)
     {
         if ($preset) {
             $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset, $async);
         } else {
-            $thumbnailConfiguration = new ThumbnailConfiguration($width, $maximumWidth, $height, $maximumHeight, $allowCropping, $allowUpScaling, $quality, $async);
+            $thumbnailConfiguration = new ThumbnailConfiguration($width, $maximumWidth, $height, $maximumHeight, $allowCropping, $allowUpScaling, $async, $quality);
         }
         return $this->assetService->getThumbnailUriAndSizeForAsset($asset, $thumbnailConfiguration, $this->controllerContext->getRequest())['src'];
     }

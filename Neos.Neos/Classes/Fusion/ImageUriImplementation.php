@@ -16,6 +16,7 @@ use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\ThumbnailConfiguration;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
+use Neos\Media\Domain\Service\ThumbnailService;
 
 /**
  * Render an AssetInterface: object. Accepts the same parameters as the uri.image ViewHelper of the Neos.Media package:
@@ -31,6 +32,12 @@ class ImageUriImplementation extends AbstractFusionObject
      * @var AssetService
      */
     protected $assetService;
+
+    /**
+     * @Flow\Inject
+     * @var ThumbnailService
+     */
+    protected $thumbnailService;
 
     /**
      * Asset
@@ -109,6 +116,26 @@ class ImageUriImplementation extends AbstractFusionObject
     }
 
     /**
+     * Async
+     *
+     * @return boolean
+     */
+    public function getAsync()
+    {
+        return $this->fusionValue('async');
+    }
+
+    /**
+     * Preset
+     *
+     * @return string
+     */
+    public function getPreset()
+    {
+        return $this->fusionValue('preset');
+    }
+
+    /**
      * Returns a processed image path
      *
      * @return string
@@ -117,11 +144,18 @@ class ImageUriImplementation extends AbstractFusionObject
     public function evaluate()
     {
         $asset = $this->getAsset();
+        $preset = $this->getPreset();
+
         if (!$asset instanceof AssetInterface) {
             throw new \Exception('No asset given for rendering.', 1415184217);
         }
-        $thumbnailConfiguration = new ThumbnailConfiguration($this->getWidth(), $this->getMaximumWidth(), $this->getHeight(), $this->getMaximumHeight(), $this->getAllowCropping(), $this->getAllowUpScaling(), $this->getQuality());
-        $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($asset, $thumbnailConfiguration);
+        if (!empty($preset)) {
+            $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset);
+        } else {
+            $thumbnailConfiguration = new ThumbnailConfiguration($this->getWidth(), $this->getMaximumWidth(), $this->getHeight(), $this->getMaximumHeight(), $this->getAllowCropping(), $this->getAllowUpScaling(), $this->getAsync(), $this->getQuality());
+        }
+        $request = $this->getRuntime()->getControllerContext()->getRequest();
+        $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($asset, $thumbnailConfiguration, $request);
         if ($thumbnailData === null) {
             return '';
         }

@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Domain\Utility;
  */
 
 use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\Flow\Utility\Algorithms;
 
 /**
  * Provides basic logic concerning node paths.
@@ -215,7 +216,7 @@ abstract class NodePaths
      */
     public static function generateRandomNodeName()
     {
-        return uniqid('node-');
+        return 'node-' . Algorithms::generateRandomString(13, 'abcdefghijklmnopqrstuvwxyz0123456789');
     }
 
     /**

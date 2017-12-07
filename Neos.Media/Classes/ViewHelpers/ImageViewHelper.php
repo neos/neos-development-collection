@@ -23,7 +23,7 @@ use Neos\Media\Domain\Model\ThumbnailConfiguration;
  * = Examples =
  *
  * <code title="Rendering an image as-is">
- * <typo3.media:image image="{imageObject}" alt="a sample image without scaling" />
+ * <neos.media:image image="{imageObject}" alt="a sample image without scaling" />
  * </code>
  * <output>
  * (depending on the image, no scaling applied)
@@ -32,7 +32,7 @@ use Neos\Media\Domain\Model\ThumbnailConfiguration;
  *
  *
  * <code title="Rendering an image with scaling at a given width only">
- * <typo3.media:image image="{imageObject}" maximumWidth="80" alt="sample" />
+ * <neos.media:image image="{imageObject}" maximumWidth="80" alt="sample" />
  * </code>
  * <output>
  * (depending on the image; scaled down to a maximum width of 80 pixels, keeping the aspect ratio)
@@ -41,7 +41,7 @@ use Neos\Media\Domain\Model\ThumbnailConfiguration;
  *
  *
  * <code title="Rendering an image with scaling at given width and height, keeping aspect ratio">
- * <typo3.media:image image="{imageObject}" maximumWidth="80" maximumHeight="80" alt="sample" />
+ * <neos.media:image image="{imageObject}" maximumWidth="80" maximumHeight="80" alt="sample" />
  * </code>
  * <output>
  * (depending on the image; scaled down to a maximum width and height of 80 pixels, keeping the aspect ratio)
@@ -50,7 +50,7 @@ use Neos\Media\Domain\Model\ThumbnailConfiguration;
  *
  *
  * <code title="Rendering an image with crop-scaling at given width and height">
- * <typo3.media:image image="{imageObject}" maximumWidth="80" maximumHeight="80" allowCropping="true" alt="sample" />
+ * <neos.media:image image="{imageObject}" maximumWidth="80" maximumHeight="80" allowCropping="true" alt="sample" />
  * </code>
  * <output>
  * (depending on the image; scaled down to a width and height of 80 pixels, possibly changing aspect ratio)
@@ -58,7 +58,7 @@ use Neos\Media\Domain\Model\ThumbnailConfiguration;
  * </output>
  *
  * <code title="Rendering an image with allowed up-scaling at given width and height">
- * <typo3.media:image image="{imageObject}" maximumWidth="5000" allowUpScaling="true" alt="sample" />
+ * <neos.media:image image="{imageObject}" maximumWidth="5000" allowUpScaling="true" alt="sample" />
  * </code>
  * <output>
  * (depending on the image; scaled up or down to a width 5000 pixels, keeping aspect ratio)
@@ -109,12 +109,12 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
      * @param integer $maximumHeight Desired maximum height of the image
      * @param boolean $allowCropping Whether the image should be cropped if the given sizes would hurt the aspect ratio
      * @param boolean $allowUpScaling Whether the resulting image size might exceed the size of the original image
-     * @param integer $quality Quality of the image
      * @param boolean $async Return asynchronous image URI in case the requested image does not exist already
      * @param string $preset Preset used to determine image configuration
+     * @param integer $quality Quality of the image
      * @return string an <img...> html tag
      */
-    public function render(ImageInterface $image = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $quality = null, $async = false, $preset = null)
+    public function render(ImageInterface $image = null, $width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $preset = null, $quality = null)
     {
         if ($image === null) {
             return '';
@@ -123,7 +123,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         if ($preset) {
             $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset, $async);
         } else {
-            $thumbnailConfiguration = new ThumbnailConfiguration($width, $maximumWidth, $height, $maximumHeight, $allowCropping, $allowUpScaling, $quality, $async);
+            $thumbnailConfiguration = new ThumbnailConfiguration($width, $maximumWidth, $height, $maximumHeight, $allowCropping, $allowUpScaling, $async, $quality);
         }
         $thumbnailData = $this->assetService->getThumbnailUriAndSizeForAsset($image, $thumbnailConfiguration, $this->controllerContext->getRequest());
 

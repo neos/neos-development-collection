@@ -12,7 +12,7 @@ namespace Neos\Neos\Domain;
  */
 
 /**
- * A generic TYPO3 Domain exception
+ * A generic Neos Domain exception
  *
  * @api
  */

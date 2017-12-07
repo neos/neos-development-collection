@@ -81,7 +81,7 @@ class ThumbnailConfiguration
      * @param integer $quality Quality of the processed image
      * @param boolean $async Whether the thumbnail can be generated asynchronously
      */
-    public function __construct($width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $quality = null, $async = false)
+    public function __construct($width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $quality = null)
     {
         $this->width = $width ? (integer)$width : null;
         $this->maximumWidth = $maximumWidth ? (integer)$maximumWidth : null;

@@ -19,6 +19,7 @@ use Imagine\Imagick\Imagine;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\ResourceManagement\Exception;
 use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Flow\Utility\Algorithms;
 use Neos\Flow\Utility\Environment;
 use Neos\Media\Domain\Model\Adjustment\QualityImageAdjustment;
 use Neos\Media\Domain\Repository\AssetRepository;
@@ -112,7 +113,7 @@ class ImageService
         $resourceUri = $originalResource->createTemporaryLocalCopy();
 
         $resultingFileExtension = $originalResource->getFileExtension();
-        $transformedImageTemporaryPathAndFilename = $this->environment->getPathToTemporaryDirectory() . uniqid('ProcessedImage-') . '.' . $resultingFileExtension;
+        $transformedImageTemporaryPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'ProcessedImage-' . Algorithms::generateRandomString(13) . '.' . $resultingFileExtension;
 
         if (!file_exists($resourceUri)) {
             throw new ImageFileException(sprintf('An error occurred while transforming an image: the resource data of the original image does not exist (%s, %s).', $originalResource->getSha1(), $resourceUri), 1374848224);
