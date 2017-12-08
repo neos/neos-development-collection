@@ -52,11 +52,10 @@ The slot gets called with the following arguments:
 * The ``Asset`` instance that is about to be persisted
 * The ``NodeInterface`` instance the asset has been attached to
 * The node property name (``string``) the asset has been assigned to
-* The node name (``string``) of the site the node belongs to
 
 So the signature of the slot method could look like this::
 
-	function theSlot(Asset $asset, NodeInterface $node, string $propertyName, string $siteNodeName)
+	function theSlot(Asset $asset, NodeInterface $node, string $propertyName)
 
 This allows for manipulation of the asset based on the node property it has been assigned to.
 

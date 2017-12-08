@@ -101,7 +101,6 @@ function(Ember, $, template, plupload, Notification, Configuration, I18n, Inspec
 				uploader.settings.multipart_params['__csrfToken'] = Configuration.get('CsrfToken');
 				uploader.settings.multipart_params['node'] = InspectorController.nodeSelection.get('selectedNode.nodePath');
 				uploader.settings.multipart_params['propertyName'] = that.get('property');
-				uploader.settings.multipart_params['siteNodeName'] = $('link[rel="neos-site"]').data('node-name');
 			});
 
 			this._uploader.bind('FileUploaded', function(uploader, file, response) {

@@ -119,13 +119,15 @@ class SiteService
      * @param Asset $asset
      * @param NodeInterface $node
      * @param string $propertyName
-     * @param string $siteNodeName
      * @return void
      */
-    public function assignUploadedAssetToSiteAssetCollection(Asset $asset, NodeInterface $node, string $propertyName, string $siteNodeName)
+    public function assignUploadedAssetToSiteAssetCollection(Asset $asset, NodeInterface $node, string $propertyName)
     {
-        /** @var Site $site */
-        $site = $this->siteRepository->findOneByNodeName($siteNodeName);
+        $contentContext = $node->getContext();
+        if (!$contentContext instanceof ContentContext) {
+            return;
+        }
+        $site = $contentContext->getCurrentSite();
         if ($site === null) {
             return;
         }
