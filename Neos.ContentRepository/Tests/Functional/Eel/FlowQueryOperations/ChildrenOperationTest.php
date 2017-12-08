@@ -35,9 +35,9 @@ class ChildrenOperationTest extends AbstractNodeTest
     public function propertyNameFilterIsSupported()
     {
         $q = new FlowQuery(array($this->node));
-        $foundNodes = $q->children('teaser')->get(0);
+        $foundNodes = $q->children('teaser')->get();
         $this->assertEquals(1, count($foundNodes));
-        $foundNodes = $q->children('x')->get(0);
+        $foundNodes = $q->children('x')->get();
         $this->assertEquals(0, count($foundNodes));
     }
 
