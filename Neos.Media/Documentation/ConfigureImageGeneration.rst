@@ -38,7 +38,7 @@ If you have configured a Imagine driver that support alternative filter (this th
 
 .. code-block:: yaml
 
-    TYPO3:
+    Neos:
       Media:
         image:
           defaultOptions:
@@ -54,7 +54,7 @@ To generate progressive images you can configure the driver within your Settings
 
 .. code-block:: yaml
 
-    TYPO3:
+    Neos:
       Media:
         image:
           defaultOptions:
