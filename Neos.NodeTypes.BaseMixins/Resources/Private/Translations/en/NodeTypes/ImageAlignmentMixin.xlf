@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+	<file original="" product-name="Neos.NodeTypes.BaseMixins" source-language="en" datatype="plaintext">
+		<body>
+			<trans-unit id="properties.alignment" xml:space="preserve">
+				<source>Alignment</source>
+			</trans-unit>
+			<trans-unit id="properties.alignment.selectBoxEditor.placeholder" xml:space="preserve">
+				<source>Default</source>
+			</trans-unit>
+			<trans-unit id="properties.alignment.selectBoxEditor.values.center" xml:space="preserve">
+				<source>Center</source>
+			</trans-unit>
+			<trans-unit id="properties.alignment.selectBoxEditor.values.left" xml:space="preserve">
+				<source>Left</source>
+			</trans-unit>
+			<trans-unit id="properties.alignment.selectBoxEditor.values.right" xml:space="preserve">
+				<source>Right</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>
