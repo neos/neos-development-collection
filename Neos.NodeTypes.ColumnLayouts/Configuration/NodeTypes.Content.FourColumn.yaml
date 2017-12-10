@@ -1,0 +1,25 @@
+'Neos.NodeTypes.ColumnLayouts:FourColumn':
+  superTypes:
+    'Neos.NodeTypes.ColumnLayouts:Column': true
+  ui:
+    label: i18n
+    position: 400
+  childNodes:
+    column0:
+      type: 'Neos.Neos:ContentCollection'
+    column1:
+      type: 'Neos.Neos:ContentCollection'
+    column2:
+      type: 'Neos.Neos:ContentCollection'
+    column3:
+      type: 'Neos.Neos:ContentCollection'
+  properties:
+    layout:
+      defaultValue: '25-25-25-25'
+      ui:
+        reloadIfChanged: true
+        inspector:
+          editorOptions:
+            values:
+              '25-25-25-25':
+                label: '25% / 25% / 25% / 25%'
