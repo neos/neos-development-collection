@@ -17,11 +17,12 @@ use Doctrine\ORM\EntityManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Media\Domain\Model\AssetInterface;
-use Neos\Media\Domain\Model\Image;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Repository\ThumbnailRepository;
 use Neos\Media\Domain\Service\ThumbnailService;
+use Neos\Media\Domain\Strategy\AssetModelMappingStrategyInterface;
 
 /**
  * @Flow\Scope("singleton")
@@ -35,7 +36,7 @@ class MediaCommandController extends CommandController
     protected $persistenceManager;
 
     /**
-     * @Flow\Inject
+     * @Flow\Inject(lazy=false)
      * @var ObjectManager
      */
     protected $entityManager;
@@ -71,6 +72,12 @@ class MediaCommandController extends CommandController
     protected $asyncThumbnails;
 
     /**
+     * @Flow\Inject
+     * @var AssetModelMappingStrategyInterface
+     */
+    protected $mappingStrategy;
+
+    /**
      * Import resources to asset management
      *
      * This command detects Flow "PersistentResource"s which are not yet available as "Asset" objects and thus don't appear
@@ -87,10 +94,10 @@ class MediaCommandController extends CommandController
         $sql = '
 			SELECT
 				r.persistence_object_identifier, r.filename, r.mediatype
-			FROM typo3_flow_resource_resource r
-			LEFT JOIN typo3_media_domain_model_asset a
+			FROM neos_flow_resourcemanagement_persistentresource r
+			LEFT JOIN neos_media_domain_model_asset a
 			ON a.resource = r.persistence_object_identifier
-			LEFT JOIN typo3_media_domain_model_thumbnail t
+			LEFT JOIN neos_media_domain_model_thumbnail t
 			ON t.resource = r.persistence_object_identifier
 			WHERE a.persistence_object_identifier IS NULL AND t.persistence_object_identifier IS NULL
 		';
@@ -104,25 +111,25 @@ class MediaCommandController extends CommandController
         }
 
         foreach ($resourceInfos as $resourceInfo) {
-            $mediaType = $resourceInfo['mediatype'];
+            $resource = $this->persistenceManager->getObjectByIdentifier($resourceInfo['persistence_object_identifier'], PersistentResource::class);
 
-            if (substr($mediaType, 0, 6) === 'image/') {
-                $resource = $this->persistenceManager->getObjectByIdentifier($resourceInfo['persistence_object_identifier'], \Neos\Flow\ResourceManagement\PersistentResource::class);
-                if ($resource === null) {
-                    $this->outputLine('Warning: PersistentResource for file "%s" seems to be corrupt. No resource object with identifier %s could be retrieved from the Persistence Manager.', array($resourceInfo['filename'], $resourceInfo['persistence_object_identifier']));
-                    continue;
-                }
-                if (!$resource->getStream()) {
-                    $this->outputLine('Warning: PersistentResource for file "%s" seems to be corrupt. The actual data of resource %s could not be found in the resource storage.', array($resourceInfo['filename'], $resourceInfo['persistence_object_identifier']));
-                    continue;
-                }
-                $image = new Image($resource);
-                if ($simulate) {
-                    $this->outputLine('Simulate: Adding new image "%s" (%sx%s px)', array($image->getResource()->getFilename(), $image->getWidth(), $image->getHeight()));
-                } else {
-                    $this->assetRepository->add($image);
-                    $this->outputLine('Adding new image "%s" (%sx%s px)', array($image->getResource()->getFilename(), $image->getWidth(), $image->getHeight()));
-                }
+            if ($resource === null) {
+                $this->outputLine('Warning: PersistentResource for file "%s" seems to be corrupt. No resource object with identifier %s could be retrieved from the Persistence Manager.', array($resourceInfo['filename'], $resourceInfo['persistence_object_identifier']));
+                continue;
+            }
+            if (!$resource->getStream()) {
+                $this->outputLine('Warning: PersistentResource for file "%s" seems to be corrupt. The actual data of resource %s could not be found in the resource storage.', array($resourceInfo['filename'], $resourceInfo['persistence_object_identifier']));
+                continue;
+            }
+
+            $className = $this->mappingStrategy->map($resource, $resourceInfos);
+            $resourceObj = new $className($resource);
+
+            if ($simulate) {
+                $this->outputLine('Simulate: Adding new resource "%s" (type: %s)', array($resourceObj->getResource()->getFilename(), $className));
+            } else {
+                $this->assetRepository->add($resourceObj);
+                $this->outputLine('Simulate: Adding new resource "%s" (type: %s)', array($resourceObj->getResource()->getFilename(), $className));
             }
         }
     }
