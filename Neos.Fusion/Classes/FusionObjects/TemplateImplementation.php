@@ -109,7 +109,7 @@ class TemplateImplementation extends AbstractArrayFusionObject
             $fluidTemplate->setLayoutRootPath($layoutRootPath);
         }
 
-            // Template resources need to be evaluated from the templates package not the requests package.
+        // Template resources need to be evaluated from the templates package not the requests package.
         if (strpos($templatePath, 'resource://') === 0) {
             $templateResourcePathParts = parse_url($templatePath);
             foreach ($fluidTemplate->getRenderingContext()->buildParserConfiguration()->getInterceptors(InterceptorInterface::INTERCEPT_TEXT) as $interceptor) {
@@ -125,12 +125,12 @@ class TemplateImplementation extends AbstractArrayFusionObject
             }
             if (!is_array($value)) {
                 // if a value is a SIMPLE TYPE, e.g. neither an Eel expression nor a Fusion object,
-                    // we can just evaluate it (to handle processors) and then assign it to the template.
+                // we can just evaluate it (to handle processors) and then assign it to the template.
                 $evaluatedValue = $this->fusionValue($key);
                 $fluidTemplate->assign($key, $evaluatedValue);
             } else {
                 // It is an array; so we need to create a "proxy" for lazy evaluation, as it could be a
-                    // nested Fusion object, Eel expression or simple value.
+                // nested Fusion object, Eel expression or simple value.
                 $fluidTemplate->assign($key, new Helpers\FusionPathProxy($this, $this->path . '/' . $key, $value));
             }
         }
