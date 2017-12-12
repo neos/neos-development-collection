@@ -25,6 +25,7 @@ use Neos\Neos\Service\Mapping\NodePropertyConverterService;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Service\AuthorizationService;
+use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
 
 /**
  * The content element wrapping service adds the necessary markup around
@@ -49,7 +50,7 @@ class ContentElementWrappingService
 
     /**
      * @Flow\Inject
-     * @var HtmlAugmenter
+     * @var FusionHtmlAugmenter
      */
     protected $htmlAugmenter;
 

@@ -145,6 +145,10 @@ class ImageService
         }
 
         if ($adjustmentsApplied === true) {
+            $interlace = Arrays::getValueByPath($this->settings, 'image.defaultOptions.interlace');
+            if ($interlace !== null) {
+                $imagineImage->interlace($interlace);
+            }
             $imagineImage->save($transformedImageTemporaryPathAndFilename, $this->getOptionsMergedWithDefaults($additionalOptions));
             $imageSize = $imagineImage->getSize();
 
