@@ -158,6 +158,8 @@ Neos:
               maximumFileSize: null
               features:
                 crop: true
+                upload: true
+                mediaBrowser: true
                 resize: false
               crop:
                 aspectRatio:
@@ -189,11 +191,18 @@ Neos:
           Neos\Media\Domain\Model\Asset:
             typeConverter: Neos\Neos\TypeConverter\EntityToIdentityConverter
             editor: Neos.Neos/Inspector/Editors/AssetEditor
+            editorOptions:
+              features:
+                upload: true
+                mediaBrowser: true
           array<Neos\Media\Domain\Model\Asset>:
             typeConverter: Neos\Flow\Property\TypeConverter\TypedArrayConverter
             editor: Neos.Neos/Inspector/Editors/AssetEditor
             editorOptions:
               multiple: true
+              features:
+                upload: true
+                mediaBrowser: true
           DateTime:
             typeConverter: Neos\Neos\Service\Mapping\DateStringConverter
             editor: Neos.Neos/Inspector/Editors/DateTimeEditor

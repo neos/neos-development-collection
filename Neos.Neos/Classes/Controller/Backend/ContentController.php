@@ -11,15 +11,17 @@ namespace Neos\Neos\Controller\Backend;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
+use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfiguration;
-use Neos\Flow\Property\TypeConverter\ObjectConverter;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\Asset;
-use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Media\Domain\Model\Image;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Domain\Model\ImageVariant;
@@ -27,17 +29,13 @@ use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Repository\ImageRepository;
 use Neos\Media\Domain\Service\ThumbnailService;
 use Neos\Media\TypeConverter\AssetInterfaceConverter;
-use Neos\Media\Domain\Repository\AssetCollectionRepository;
 use Neos\Media\TypeConverter\ImageInterfaceArrayPresenter;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
+use Neos\Neos\Controller\CreateContentContextTrait;
 use Neos\Neos\Domain\Model\PluginViewDefinition;
 use Neos\Neos\Domain\Model\Site;
-use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\Controller\CreateContentContextTrait;
 use Neos\Neos\Service\PluginService;
 use Neos\Neos\TypeConverter\EntityToIdentityConverter;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\Eel\FlowQuery\FlowQuery;
 
 /**
  * The Neos ContentModule controller; providing backend functionality for the Content Module.
@@ -60,18 +58,6 @@ class ContentController extends ActionController
      * @var ImageRepository
      */
     protected $imageRepository;
-
-    /**
-     * @Flow\Inject
-     * @var AssetCollectionRepository
-     */
-    protected $assetCollectionRepository;
-
-    /**
-     * @Flow\Inject
-     * @var SiteRepository
-     */
-    protected $siteRepository;
 
     /**
      * @Flow\Inject
@@ -112,6 +98,12 @@ class ContentController extends ActionController
     protected $thumbnailService;
 
     /**
+     * @Flow\Inject
+     * @var PropertyMapper
+     */
+    protected $propertyMapper;
+
+    /**
      * Initialize property mapping as the upload usually comes from the Inspector JavaScript
      */
     public function initializeUploadAssetAction()
@@ -129,37 +121,32 @@ class ContentController extends ActionController
      * Depending on the $metadata argument it will return asset metadata for the AssetEditor
      * or image metadata for the ImageEditor
      *
+     * Note: This action triggers the AssetUploaded signal that can be used to adjust the asset based on the
+     * (site) node it was attached to.
+     *
      * @param Asset $asset
      * @param string $metadata Type of metadata to return ("Asset" or "Image")
+     * @param NodeInterface $node The node the new asset should be assigned to
+     * @param string $propertyName The node property name the new asset should be assigned to
      * @return string
      */
-    public function uploadAssetAction(Asset $asset, $metadata)
+    public function uploadAssetAction(Asset $asset, string $metadata, NodeInterface $node, string $propertyName)
     {
         $this->response->setHeader('Content-Type', 'application/json');
 
-        /** @var Site $currentSite */
-        $currentSite = $this->siteRepository->findOneByNodeName($this->request->getInternalArgument('__siteNodeName'));
-        if ($currentSite !== null && $currentSite->getAssetCollection() !== null) {
-            $currentSite->getAssetCollection()->addAsset($asset);
-            $this->assetCollectionRepository->update($currentSite->getAssetCollection());
-        }
-
-        switch ($metadata) {
-            case 'Asset':
-                $result = $this->getAssetProperties($asset);
-                if ($this->persistenceManager->isNewObject($asset)) {
-                    $this->assetRepository->add($asset);
-                }
-                break;
-            case 'Image':
+        if ($metadata !== 'Asset' && $metadata !== 'Image') {
+            $this->response->setStatus(400);
+            $result = ['error' => 'Invalid "metadata" type: ' . $metadata];
+        } else {
+            if ($asset instanceof ImageInterface && $metadata === 'Image') {
                 $result = $this->getImageInterfacePreviewData($asset);
-                if ($this->persistenceManager->isNewObject($asset)) {
-                    $this->imageRepository->add($asset);
-                }
-                break;
-            default:
-                $this->response->setStatus(400);
-                $result = array('error' => 'Invalid "metadata" type: ' . $metadata);
+            } else {
+                $result = $this->getAssetProperties($asset);
+            }
+            if ($this->persistenceManager->isNewObject($asset)) {
+                $this->assetRepository->add($asset);
+            }
+            $this->emitAssetUploaded($asset, $node, $propertyName);
         }
         return json_encode($result);
     }
@@ -404,5 +391,18 @@ class ContentController extends ActionController
             }
         }
         return json_encode((object) $masterPlugins);
+    }
+
+    /**
+     * Signals that a new asset has been uploaded through the Neos Backend
+     *
+     * @param Asset $asset The uploaded asset
+     * @param NodeInterface $node The node the asset belongs to
+     * @param string $propertyName The node property name the asset is assigned to
+     * @return void
+     * @Flow\Signal
+     */
+    protected function emitAssetUploaded(Asset $asset, NodeInterface $node, string $propertyName)
+    {
     }
 }

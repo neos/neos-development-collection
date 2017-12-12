@@ -1,0 +1,15 @@
+prototype(Neos.NodeTypes:Image) {
+  maximumWidth = 2560
+  width = null
+  maximumHeight = 2560
+  height = null
+  # "typo3-alignment-" deprecated since 3.3, removed in 4.0
+  imageClassName = ${q(node).property('alignment') ? ('typo3-neos-alignment-' + q(node).property('alignment') + ' neos-alignment-' + q(node).property('alignment')) : ''}
+  allowCropping = false
+  allowUpScaling = false
+  link.@process.convertUris = Neos.Neos:ConvertUris {
+    forceConversion = true
+  }
+  title = ${q(node).property('title') ? q(node).property('title') : q(node).property('image').title}
+  caption = ${String.trim(String.stripTags(q(node).property('caption'))) ? q(node).property('caption') : q(node).property('image').caption}
+}
