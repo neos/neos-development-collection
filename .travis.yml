@@ -30,6 +30,10 @@ matrix:
       env: DB=mysql
     - php: 7.1
       env: DB=mysql BEHAT=true
+    - php: 7.2
+      env: DB=mysql
+    - php: 7.2
+      env: DB=mysql BEHAT=true
 cache:
   directories:
     - $HOME/.composer/cache
