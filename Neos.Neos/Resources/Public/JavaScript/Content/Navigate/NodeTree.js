@@ -164,6 +164,7 @@ define(
 					children: [
 						{
 							title: siteName,
+							tooltip: siteName + (nodeTypeConfiguration ? ' (' + I18n.translate(nodeTypeConfiguration.label) + ')' : ''),
 							href: $('link[rel="neos-site"]').attr('href'),
 							key: this.get('siteNodeContextPath'),
 							isFolder: true,
