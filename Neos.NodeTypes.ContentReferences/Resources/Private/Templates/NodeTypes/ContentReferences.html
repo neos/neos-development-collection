@@ -1,0 +1,15 @@
+{namespace neos=Neos\Neos\ViewHelpers}
+<f:if condition="{referenceNodes}">
+  <f:then>
+    <div{attributes -> f:format.raw()}>
+      {referenceNodes -> f:format.raw()}
+    </div>
+  </f:then>
+  <f:else>
+    <f:if condition="{neos:rendering.inEditMode()}">
+      <div{attributes -> f:format.raw()}>
+        <p>{f:translate(id: 'content.noReferencesSelected', package: 'Neos.NodeTypes.ContentReferences', source: 'NodeTypes/ContentReferences')}</p>
+      </div>
+    </f:if>
+  </f:else>
+</f:if>
