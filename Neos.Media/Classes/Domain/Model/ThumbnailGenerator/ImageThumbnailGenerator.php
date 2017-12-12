@@ -13,6 +13,7 @@ namespace Neos\Media\Domain\Model\ThumbnailGenerator;
 
 use Neos\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
+use Neos\Media\Domain\Model\Adjustment\QualityImageAdjustment;
 use Neos\Media\Domain\Model\Adjustment\ResizeImageAdjustment;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Domain\Model\Thumbnail;
@@ -57,24 +58,30 @@ class ImageThumbnailGenerator extends AbstractThumbnailGenerator
     public function refresh(Thumbnail $thumbnail)
     {
         try {
-            $adjustments = array(
+            $adjustments = [
                 new ResizeImageAdjustment(
-                    array(
+                    [
                         'width' => $thumbnail->getConfigurationValue('width'),
                         'maximumWidth' => $thumbnail->getConfigurationValue('maximumWidth'),
                         'height' => $thumbnail->getConfigurationValue('height'),
                         'maximumHeight' => $thumbnail->getConfigurationValue('maximumHeight'),
                         'ratioMode' => $thumbnail->getConfigurationValue('ratioMode'),
                         'allowUpScaling' => $thumbnail->getConfigurationValue('allowUpScaling'),
-                    )
+                    ]
+                ),
+                new QualityImageAdjustment(
+                    [
+                        'quality' => $thumbnail->getConfigurationValue('quality')
+                    ]
                 )
-            );
+            ];
 
             $processedImageInfo = $this->imageService->processImage($thumbnail->getOriginalAsset()->getResource(), $adjustments);
 
             $thumbnail->setResource($processedImageInfo['resource']);
             $thumbnail->setWidth($processedImageInfo['width']);
             $thumbnail->setHeight($processedImageInfo['height']);
+            $thumbnail->setQuality($processedImageInfo['quality']);
         } catch (\Exception $exception) {
             $message = sprintf('Unable to generate thumbnail for the given image (filename: %s, SHA1: %s)', $thumbnail->getOriginalAsset()->getResource()->getFilename(), $thumbnail->getOriginalAsset()->getResource()->getSha1());
             throw new Exception\NoThumbnailAvailableException($message, 1433109654, $exception);
