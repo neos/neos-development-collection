@@ -85,6 +85,14 @@ class NodePropertyConverterService
 
         if ($convertedValue === null) {
             $convertedValue = $this->getDefaultValueForProperty($node->getNodeType(), $propertyName);
+            if ($convertedValue !== null) {
+                try {
+                    $convertedValue = $this->convertValue($convertedValue, $dataType);
+                } catch (PropertyException $exception) {
+                    $this->systemLogger->logException($exception);
+                    $convertedValue = null;
+                }
+            }
         }
 
         return $convertedValue;
