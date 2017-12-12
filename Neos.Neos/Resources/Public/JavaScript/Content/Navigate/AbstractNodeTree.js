@@ -671,6 +671,7 @@ define(
 						node.data.key = result.data.key;
 						node.data.name = result.data.name;
 						node.data.title = result.data.title;
+						node.data.tooltip = result.data.tooltip;
 						node.data.href = result.data.href;
 						node.data.isFolder = result.data.isFolder;
 						node.data.isLazy = result.data.isLazy;
