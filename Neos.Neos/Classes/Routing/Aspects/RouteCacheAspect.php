@@ -47,7 +47,7 @@ class RouteCacheAspect
     public function addCurrentNodeIdentifier(JoinPointInterface $joinPoint)
     {
         $values = $joinPoint->getMethodArgument('values');
-        if (!isset($values['node']) || strpos($values['node'], '@') === false) {
+        if (!isset($values['node']) || !is_string($values['node']) || strpos($values['node'], '@') === false) {
             return;
         }
 

@@ -12,6 +12,7 @@ namespace Neos\Neos\Http\ContentDimensionLinking;
  */
 
 use Neos\Flow\Http;
+use Neos\Flow\Mvc\Routing;
 
 /**
  * Interface to detect the current request's dimension preset
@@ -29,4 +30,14 @@ interface ContentDimensionPresetLinkProcessorInterface
      * @return void
      */
     public function processDimensionBaseUri(Http\Uri $baseUri, string $dimensionName, array $presetConfiguration, array $preset, array $overrideOptions = null);
+
+    /**
+     * @param Routing\Dto\UriConstraints $uriConstraints
+     * @param string $dimensionName
+     * @param array $presetConfiguration
+     * @param array $preset
+     * @param array|null $overrideOptions
+     * @return Routing\Dto\UriConstraints
+     */
+    public function processUriConstraints(Routing\Dto\UriConstraints $uriConstraints, string $dimensionName, array $presetConfiguration, array $preset, array $overrideOptions = null): Routing\Dto\UriConstraints;
 }

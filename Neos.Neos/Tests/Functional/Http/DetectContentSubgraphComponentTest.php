@@ -15,6 +15,8 @@ use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
 use Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\ContentRepository\Domain\Service\Context as ContentContext;
 use Neos\Flow\Http;
+use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
+use Neos\Flow\Mvc\Routing\RoutingComponent;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Neos\Http\ContentDimensionResolutionMode;
 use Neos\Neos\Http\DetectContentSubgraphComponent;
@@ -80,6 +82,9 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
         'language' => [
             'resolution' => [
                 'mode' => ContentDimensionResolutionMode::RESOLUTION_MODE_SUBDOMAIN,
+                'options' => [
+                    'allowEmptyValue' => true
+                ]
             ],
             'default' => 'en',
             'defaultPreset' => 'en',
@@ -119,12 +124,11 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
         $contentDimensionRepository->setDimensionsConfiguration($this->dimensionPresets);
 
         $detectSubgraphComponent->handle($componentContext);
+        /** @var RouteParameters $routeParameters */
+        $routeParameters = $componentContext->getParameter(RoutingComponent::class,'parameters');
 
-        /** @var ContentContext $detectedContext */
-        $detectedContext = $componentContext->getParameter(DetectContentSubgraphComponent::class, 'detectedContentContext');
-
-        $this->assertSame('live', $detectedContext->getWorkspaceName());
-        $detectedDimensions = $detectedContext->getDimensions();
+        $this->assertSame('live', $routeParameters->getValue('workspaceName'));
+        $detectedDimensions = json_decode($routeParameters->getValue('dimensionValues'), true);
         $this->assertSame(['de'], $detectedDimensions['language']);
         $this->assertSame(['WORLD'], $detectedDimensions['market']);
         $this->assertSame(['sellerA', 'default'], $detectedDimensions['seller']);
@@ -153,13 +157,13 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
         $contentDimensionRepository->setDimensionsConfiguration($this->dimensionPresets);
 
         $this->inject($detectSubgraphComponent, 'uriPathSegmentDelimiter', '-');
+
         $detectSubgraphComponent->handle($componentContext);
+        /** @var RouteParameters $routeParameters */
+        $routeParameters = $componentContext->getParameter(RoutingComponent::class,'parameters');
 
-        /** @var ContentContext $detectedContext */
-        $detectedContext = $componentContext->getParameter(DetectContentSubgraphComponent::class, 'detectedContentContext');
-
-        $this->assertSame('live', $detectedContext->getWorkspaceName());
-        $detectedDimensions = $detectedContext->getDimensions();
+        $this->assertSame('live', $routeParameters->getValue('workspaceName'));
+        $detectedDimensions = json_decode($routeParameters->getValue('dimensionValues'), true);
         $this->assertSame(['de'], $detectedDimensions['language']);
         $this->assertSame(['WORLD'], $detectedDimensions['market']);
         $this->assertSame(['sellerA', 'default'], $detectedDimensions['seller']);
@@ -188,12 +192,11 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
         $contentDimensionRepository->setDimensionsConfiguration($this->dimensionPresets);
 
         $detectSubgraphComponent->handle($componentContext);
+        /** @var RouteParameters $routeParameters */
+        $routeParameters = $componentContext->getParameter(RoutingComponent::class,'parameters');
 
-        /** @var ContentContext $detectedContext */
-        $detectedContext = $componentContext->getParameter(DetectContentSubgraphComponent::class, 'detectedContentContext');
-
-        $this->assertSame('live', $detectedContext->getWorkspaceName());
-        $detectedDimensions = $detectedContext->getDimensions();
+        $this->assertSame('live', $routeParameters->getValue('workspaceName'));
+        $detectedDimensions = json_decode($routeParameters->getValue('dimensionValues'), true);
         $this->assertSame(['en'], $detectedDimensions['language']);
         $this->assertSame(['WORLD'], $detectedDimensions['market']);
         $this->assertSame(['default'], $detectedDimensions['seller']);
@@ -206,7 +209,7 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
      */
     public function handleAddsCorrectSubgraphIdentityToComponentContextWithDimensionValuesGivenButOverriddenViaContextPath()
     {
-        $uri = new Http\Uri('https://de.domain.com/sellerA_channelA/sol@user-bschmitt;language=en&market=GB,WORLD&seller=default&channel=default.html');
+        $uri = new Http\Uri('https://de.domain.com/sellerA_channelA/home@user-me;language=en&market=GB,WORLD&seller=default&channel=default.html');
         $request = Http\Request::create($uri);
         $componentContext = new Http\Component\ComponentContext($request, new Http\Response());
 
@@ -223,12 +226,11 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
         $contentDimensionRepository->setDimensionsConfiguration($this->dimensionPresets);
 
         $detectSubgraphComponent->handle($componentContext);
+        /** @var RouteParameters $routeParameters */
+        $routeParameters = $componentContext->getParameter(RoutingComponent::class,'parameters');
 
-        /** @var ContentContext $detectedContext */
-        $detectedContext = $componentContext->getParameter(DetectContentSubgraphComponent::class, 'detectedContentContext');
-
-        $this->assertSame('live', $detectedContext->getWorkspaceName());
-        $detectedDimensions = $detectedContext->getDimensions();
+        $this->assertSame('user-me', $routeParameters->getValue('workspaceName'));
+        $detectedDimensions = json_decode($routeParameters->getValue('dimensionValues'), true);
         $this->assertSame(['en'], $detectedDimensions['language']);
         $this->assertSame(['GB', 'WORLD'], $detectedDimensions['market']);
         $this->assertSame(['default'], $detectedDimensions['seller']);

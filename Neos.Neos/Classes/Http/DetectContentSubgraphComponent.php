@@ -16,9 +16,9 @@ use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http;
-use Neos\Neos\Domain\Service\ContentContext;
+use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
+use Neos\Flow\Mvc\Routing\RoutingComponent;
 use Neos\Neos\Http\ContentDimensionDetection\DimensionPresetDetectorResolver;
-use Neos\Neos\Routing\ContentContextContainer;
 
 /**
  * The HTTP component for detecting the requested dimension space point
@@ -36,12 +36,6 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
      * @var ContextFactoryInterface
      */
     protected $contextFactory;
-
-    /**
-     * @Flow\Inject
-     * @var ContentContextContainer
-     */
-    protected $contentContextContainer;
 
     /**
      * @Flow\Inject
@@ -67,48 +61,26 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
      */
     public function handle(Http\Component\ComponentContext $componentContext)
     {
-        $dimensionValues = $this->detectDimensionSpacePoint($componentContext);
+        $uriPathSegmentUsed = false;
+        $dimensionValues = $this->detectDimensionSpacePoint($componentContext, $uriPathSegmentUsed);
         $workspaceName = $this->detectContentStream($componentContext);
-        $contentContext = $this->buildContextFromWorkspaceNameAndDimensions($workspaceName, $dimensionValues);
 
-        $componentContext->setParameter(
-            DetectContentSubgraphComponent::class,
-            'detectedContentContext',
-            $contentContext
-        );
-        $this->contentContextContainer->setContentContext($componentContext->getParameter(DetectContentSubgraphComponent::class, 'detectedContentContext'));
-        $this->contentContextContainer->setUriPathSegmentUsed($componentContext->getParameter(DetectContentSubgraphComponent::class, 'uriPathSegmentUsed') ?? false);
-    }
 
-    /**
-     * Sets context properties like "invisibleContentShown" according to the workspace (live or not) and returns a
-     * ContentContext object.
-     *
-     * @param string $workspaceName Name of the workspace to use in the context
-     * @param array $dimensionsAndDimensionValues An array of dimension names (index) and their values (array of strings). See also: ContextFactory
-     * @return ContentContext
-     */
-    protected function buildContextFromWorkspaceNameAndDimensions(string $workspaceName, array $dimensionsAndDimensionValues): ContentContext
-    {
-        $contextProperties = [
-            'workspaceName' => $workspaceName,
-            'invisibleContentShown' => ($workspaceName !== 'live'),
-            'inaccessibleContentShown' => ($workspaceName !== 'live'),
-            'dimensions' => $dimensionsAndDimensionValues
-        ];
-
-        /** @var ContentContext $context */
-        $context = $this->contextFactory->create($contextProperties);
-
-        return $context;
+        $existingParameters = $componentContext->getParameter(RoutingComponent::class, 'parameters') ?? RouteParameters::createEmpty();
+        $parameters = $existingParameters
+            ->withParameter('dimensionValues', json_encode($dimensionValues))
+            ->withParameter('workspaceName', $workspaceName)
+            ->withParameter('uriPathSegmentUsed', $uriPathSegmentUsed);
+        $componentContext->setParameter(RoutingComponent::class, 'parameters', $parameters);
     }
 
     /**
      * @param Http\Component\ComponentContext $componentContext
+     * @param bool $uriPathSegmentUsed
      * @return array
      * @throws Exception\InvalidDimensionPresetDetectorException
      */
-    protected function detectDimensionSpacePoint(Http\Component\ComponentContext $componentContext): array
+    protected function detectDimensionSpacePoint(Http\Component\ComponentContext $componentContext, bool &$uriPathSegmentUsed): array
     {
         $coordinates = [];
         $path = $componentContext->getHttpRequest()->getUri()->getPath();
@@ -122,6 +94,7 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
             $detector = $this->contentDimensionPresetDetectorResolver->resolveDimensionPresetDetector($dimensionName, $presetConfiguration);
 
             $options = $presetConfiguration['resolution']['options'] ?? $this->generateOptionsFromLegacyConfiguration($presetConfiguration, $uriPathSegmentOffset);
+            $options['defaultPresetIdentifier'] = $presetConfiguration['defaultPreset'];
 
             if ($isContextPath) {
                 $preset = $backendUriDimensionPresetDetector->detectPreset($dimensionName, $presetConfiguration['presets'], $componentContext);
@@ -131,7 +104,7 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
                         // we might have to remove the uri path segment anyway
                         $uriPathSegmentPreset = $detector->detectPreset($dimensionName, $presetConfiguration['presets'], $componentContext, $options);
                         if ($uriPathSegmentPreset) {
-                            $this->flagUriPathSegmentUsed($componentContext);
+                            $uriPathSegmentUsed = true;
                         }
                     }
                     continue;
@@ -144,7 +117,7 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
             }
             $preset = $detector->detectPreset($dimensionName, $presetConfiguration['presets'], $componentContext, $options);
             if ($preset && $resolutionMode === ContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT) {
-                $this->flagUriPathSegmentUsed($componentContext);
+                $uriPathSegmentUsed = true;
                 $uriPathSegmentOffset++;
             }
             if (!$preset && $options && isset($options['allowEmptyValue']) && $options['allowEmptyValue']) {
@@ -177,19 +150,6 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
     }
 
     /**
-     * @param Http\Component\ComponentContext $componentContext
-     * @return void
-     */
-    protected function flagUriPathSegmentUsed(Http\Component\ComponentContext $componentContext)
-    {
-        $componentContext->setParameter(
-            DetectContentSubgraphComponent::class,
-            'uriPathSegmentUsed',
-            true
-        );
-    }
-
-    /**
      * @todo remove once legacy configuration is removed (probably with 4.0)
      * @param array $presetConfiguration
      * @param int $uriPathSegmentOffset
@@ -207,10 +167,8 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
             }
             if ($this->allowEmptyPathSegments) {
                 $options['allowEmptyValue'] = true;
-                $options['defaultPresetIdentifier'] = $presetConfiguration['defaultPreset'];
             } else {
                 $options['allowEmptyValue'] = false;
-                $options['defaultPresetIdentifier'] = null;
             }
         }
 
@@ -226,9 +184,10 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
         $contentStreamIdentifier = 'live';
 
         $requestPath = $componentContext->getHttpRequest()->getUri()->getPath();
+        $requestPath = mb_substr($requestPath, mb_strrpos($requestPath, '/') + 1);
         if ($requestPath !== '' && NodePaths::isContextPath($requestPath)) {
-            try {
                 $nodePathAndContext = NodePaths::explodeContextPath($requestPath);
+            try {
                 $contentStreamIdentifier = $nodePathAndContext['workspaceName'];
             } catch (\InvalidArgumentException $exception) {
             }

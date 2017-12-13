@@ -12,6 +12,7 @@ namespace Neos\Neos\Http\ContentDimensionLinking;
  */
 
 use Neos\Flow\Http;
+use Neos\Flow\Mvc\Routing;
 
 /**
  * Subdomain based dimension preset detector
@@ -48,5 +49,24 @@ final class SubdomainDimensionPresetLinkProcessor implements ContentDimensionPre
         }
 
         $baseUri->setHost($newValue . mb_substr($baseUri->getHost(), $pivot));
+    }
+
+    /**
+     * @param Routing\Dto\UriConstraints $uriConstraints
+     * @param string $dimensionName
+     * @param array $presetConfiguration
+     * @param array $preset
+     * @param array|null $overrideOptions
+     * @return Routing\Dto\UriConstraints
+     */
+    public function processUriConstraints(Routing\Dto\UriConstraints $uriConstraints, string $dimensionName, array $presetConfiguration, array $preset, array $overrideOptions = null): Routing\Dto\UriConstraints
+    {
+        $prefixesToBeReplaced = [];
+        foreach ($presetConfiguration['presets'] as $availablePreset) {
+            if ($availablePreset['resolutionValue']) {
+                $prefixesToBeReplaced[] = $availablePreset['resolutionValue'] . '.';
+            }
+        }
+        return $uriConstraints->withHostPrefix($preset['resolutionValue'] ? $preset['resolutionValue'] . '.' : '', $prefixesToBeReplaced);
     }
 }

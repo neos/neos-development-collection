@@ -12,6 +12,7 @@ namespace Neos\Neos\Http\ContentDimensionLinking;
  */
 
 use Neos\Flow\Http;
+use Neos\Flow\Mvc\Routing;
 use Neos\Utility\Arrays;
 
 /**
@@ -30,5 +31,18 @@ final class NullDimensionPresetLinkProcessor implements ContentDimensionPresetLi
     public function processDimensionBaseUri(Http\Uri $baseUri, string $dimensionName, array $presetConfiguration, array $preset, array $overrideOptions = null)
     {
         // nothing is going to happen here
+    }
+
+    /**
+     * @param Routing\Dto\UriConstraints $uriConstraints
+     * @param string $dimensionName
+     * @param array $presetConfiguration
+     * @param array $preset
+     * @param array|null $overrideOptions
+     * @return Routing\Dto\UriConstraints
+     */
+    public function processUriConstraints(Routing\Dto\UriConstraints $uriConstraints, string $dimensionName, array $presetConfiguration, array $preset, array $overrideOptions = null): Routing\Dto\UriConstraints
+    {
+        return $uriConstraints;
     }
 }

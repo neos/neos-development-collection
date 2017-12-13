@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Http\ContentDimensionLinking;
 
 /*
@@ -12,6 +13,7 @@ namespace Neos\Neos\Http\ContentDimensionLinking;
  */
 
 use Neos\Flow\Http;
+use Neos\Flow\Mvc\Routing;
 use Neos\Utility\Arrays;
 
 /**
@@ -45,5 +47,27 @@ final class UriPathSegmentDimensionPresetLinkProcessor implements ContentDimensi
         }
         $pathSegmentPart .= $preset['resolutionValue'];
         $baseUri->setPath('/' . ltrim($baseUri->getPath() . $pathSegmentPart, '/'));
+    }
+
+    /**
+     * @param Routing\Dto\UriConstraints $uriConstraints
+     * @param string $dimensionName
+     * @param array $presetConfiguration
+     * @param array $preset
+     * @param array|null $overrideOptions
+     * @return Routing\Dto\UriConstraints
+     */
+    public function processUriConstraints(
+        Routing\Dto\UriConstraints $uriConstraints,
+        string $dimensionName,
+        array $presetConfiguration,
+        array $preset,
+        array $overrideOptions = null
+    ): Routing\Dto\UriConstraints {
+        $options = $overrideOptions ? Arrays::arrayMergeRecursiveOverrule($this->defaultOptions, $overrideOptions) : $this->defaultOptions;
+        $pathSegmentPart = $options['offset'] > 0 ? $options['delimiter'] : '';
+        $pathSegmentPart .= $preset['resolutionValue'];
+
+        return $uriConstraints->withPathPrefix($pathSegmentPart, true);
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Http\ContentDimensionLinking;
 
 /*
@@ -12,6 +13,7 @@ namespace Neos\Neos\Http\ContentDimensionLinking;
  */
 
 use Neos\Flow\Http;
+use Neos\Flow\Mvc\Routing;
 
 /**
  * Top level domain based dimension preset detector
@@ -41,5 +43,28 @@ final class TopLevelDomainDimensionPresetLinkProcessor implements ContentDimensi
         if ($newValue !== $currentValue) {
             $baseUri->setHost(mb_substr($baseUri->getHost(), 0, -mb_strlen($currentValue)) . $newValue);
         }
+    }
+
+    /**
+     * @param Routing\Dto\UriConstraints $uriConstraints
+     * @param string $dimensionName
+     * @param array $presetConfiguration
+     * @param array $preset
+     * @param array|null $overrideOptions
+     * @return Routing\Dto\UriConstraints
+     */
+    public function processUriConstraints(
+        Routing\Dto\UriConstraints $uriConstraints,
+        string $dimensionName,
+        array $presetConfiguration,
+        array $preset,
+        array $overrideOptions = null
+    ): Routing\Dto\UriConstraints {
+        $hostSuffixesToBeReplaced = [];
+        foreach ($presetConfiguration['presets'] as $availablePreset) {
+            $hostSuffixesToBeReplaced[] = '.' . $availablePreset['resolutionValue'];
+        }
+
+        return $uriConstraints->withHostSuffix('.' . $preset['resolutionValue'], $hostSuffixesToBeReplaced);
     }
 }

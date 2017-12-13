@@ -167,6 +167,10 @@ class LinkingService
      * @param ControllerContext $controllerContext
      * @param bool $absolute
      * @return string
+     * @throws NeosException
+     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
      */
     public function resolveNodeUri($uri, NodeInterface $contextNode, ControllerContext $controllerContext, $absolute = false)
     {
@@ -241,8 +245,10 @@ class LinkingService
      * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
      * @param boolean $resolveShortcuts INTERNAL Parameter - if FALSE, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
      * @return string The rendered URI
-     * @throws \InvalidArgumentException if the given node/baseNode is not valid
      * @throws NeosException if no URI could be resolved for the given node
+     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
      */
     public function createNodeUri(
         ControllerContext $controllerContext,
@@ -319,37 +325,30 @@ class LinkingService
             ->setFormat($format ?: $request->getFormat())
             ->uriFor('show', array('node' => $resolvedNode), 'Frontend\Node', 'Neos.Neos');
 
-        $siteNode = $resolvedNode->getContext()->getCurrentSiteNode();
+        /** @var ContentContext $resolvedContentContext */
+        $resolvedContentContext = $resolvedNode->getContext();
+        $siteNode = $resolvedContentContext->getCurrentSiteNode();
         if (NodePaths::isSubPathOf($siteNode->getPath(), $resolvedNode->getPath())) {
             /** @var Site $site */
-            $site = $resolvedNode->getContext()->getCurrentSite();
+            $site = $resolvedContentContext->getCurrentSite();
         } else {
             $nodePath = NodePaths::getRelativePathBetween(SiteService::SITES_ROOT_PATH, $resolvedNode->getPath());
             list($siteNodeName) = explode('/', $nodePath);
             $site = $this->siteRepository->findOneByNodeName($siteNodeName);
         }
 
-        $baseUri = $this->contentSubgraphUriProcessor->resolveDimensionBaseUri($request->getHttpRequest()->getBaseUri(), $node);
-        $modifiedBaseUri = (string) $baseUri !== (string) $request->getHttpRequest()->getBaseUri() ? $baseUri : null;
-        if (!$modifiedBaseUri) {
-            if ($site->hasActiveDomains()) {
-                $requestUriHost = $request->getHttpRequest()->getBaseUri()->getHost();
-                $activeHostPatterns = $site->getActiveDomains()->map(function ($domain) {
-                    /** @var Domain $domain */
-                    return $domain->getHostname();
-                })->toArray();
-                if (!in_array($requestUriHost, $activeHostPatterns, true)) {
-                    $modifiedBaseUri = new Uri($this->createSiteUri($controllerContext, $site) . '/');
-                } elseif ($absolute === true) {
-                    $modifiedBaseUri = $request->getHttpRequest()->getBaseUri();
-                }
-            } elseif ($absolute === true) {
-                $modifiedBaseUri = $request->getHttpRequest()->getBaseUri();
+        if ($site->hasActiveDomains()) {
+            $requestUriHost = $request->getHttpRequest()->getBaseUri()->getHost();
+            $activeHostPatterns = $site->getActiveDomains()->map(function (Domain $domain) {
+                return $domain->getHostname();
+            })->toArray();
+            if (!in_array($requestUriHost, $activeHostPatterns, true)) {
+                $uri = $this->createSiteUri($controllerContext, $site) . '/' . ltrim($uri, '/');
+            } elseif ($absolute && !$uri->getHost()) {
+                $uri = $request->getHttpRequest()->getBaseUri() . ltrim($uri, '/');
             }
-        }
-
-        if ($modifiedBaseUri) {
-            $uri = $modifiedBaseUri . ltrim($uri, '/');
+        } elseif ($absolute && !$uri->getHost()) {
+            $uri = $request->getHttpRequest()->getBaseUri() . ltrim($uri, '/');
         }
 
         return $uri;
