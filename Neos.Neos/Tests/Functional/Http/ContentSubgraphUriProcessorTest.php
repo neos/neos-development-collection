@@ -125,7 +125,7 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
                     'seller' => 'sellerA',
                     'channel' => 'channelA',
                     'language' => 'en'
-                ], false, false , false
+                ], false, false, false
             )
         );
 

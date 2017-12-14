@@ -186,7 +186,7 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
         $requestPath = $componentContext->getHttpRequest()->getUri()->getPath();
         $requestPath = mb_substr($requestPath, mb_strrpos($requestPath, '/'));
         if ($requestPath !== '' && NodePaths::isContextPath($requestPath)) {
-                $nodePathAndContext = NodePaths::explodeContextPath($requestPath);
+            $nodePathAndContext = NodePaths::explodeContextPath($requestPath);
             try {
                 $contentStreamIdentifier = $nodePathAndContext['workspaceName'];
             } catch (\InvalidArgumentException $exception) {

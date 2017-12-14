@@ -90,7 +90,7 @@ final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorIn
             if ($this->supportEmptySegmentForDimensions
                 && $allUriPathSegmentDetectableDimensionPresetsAreDefault
                 && $node->getParentPath() === SiteService::SITES_ROOT_PATH) {
-                    $uriConstraints->withPath('/');
+                $uriConstraints->withPath('/');
             }
         }
 
