@@ -11,9 +11,15 @@ namespace Neos\Neos\Tests\Functional\Http;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Http;
+use Neos\ContentRepository\Domain\Model\Node;
+use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Http\ContentDimensionResolutionMode;
+use Neos\Neos\Http\ContentSubgraphUriProcessor;
+use Neos\Utility\ObjectAccess;
 
 /**
  * Test case for the ContentSubgraphUriProcessor
@@ -28,8 +34,8 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
             'resolution' => [
                 'mode' => ContentDimensionResolutionMode::RESOLUTION_MODE_TOPLEVELDOMAIN,
             ],
-            'defaultPreset' => 'EU',
-            'default' => 'EU',
+            'defaultPreset' => 'WORLD',
+            'default' => 'WORLD',
             'presets' => [
                 'WORLD' => [
                     'values' => ['WORLD'],
@@ -91,4 +97,58 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
             ]
         ]
     ];
+
+    /**
+     * @test
+     */
+    public function resolveDimensionUriConstraintsExtractsUriConstraintsFromSubgraph()
+    {
+        $uriProcessor = new ContentSubgraphUriProcessor();
+
+        $dimensionPresetSource = $this->objectManager->get(ContentDimensionPresetSourceInterface::class);
+        $dimensionPresetSource->setConfiguration($this->dimensionPresets);
+
+        $workspace = new Workspace('live');
+        $node = new Node(
+            new NodeData('/', $workspace),
+            new ContentContext(
+                'live',
+                new \DateTime(),
+                [
+                    'market' => ['GB', 'WORLD'],
+                    'seller' => ['sellerA', 'default'],
+                    'channel' => ['channelA', 'default'],
+                    'language' => ['en']
+                ],
+                [
+                    'market' => 'GB',
+                    'seller' => 'sellerA',
+                    'channel' => 'channelA',
+                    'language' => 'en'
+                ], false, false , false
+            )
+        );
+
+        $dimensionUriConstraints = $uriProcessor->resolveDimensionUriConstraints($node);
+        $constraints = ObjectAccess::getProperty($dimensionUriConstraints, 'constraints', true);
+
+        $this->assertSame(
+            [
+                'prefix' => '',
+                'replacePrefixes' => ['de.']
+            ],
+            $constraints['hostPrefix']
+        );
+        $this->assertSame(
+            [
+                'suffix' => '.co.uk',
+                'replaceSuffixes' => ['.com', '.co.uk', '.de']
+            ],
+            $constraints['hostSuffix']
+        );
+        $this->assertSame(
+            'sellerA_channelA',
+            $constraints['pathPrefix']
+        );
+    }
 }
