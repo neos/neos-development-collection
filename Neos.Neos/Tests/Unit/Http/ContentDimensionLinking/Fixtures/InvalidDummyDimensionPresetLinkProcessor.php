@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\Neos\Tests\Unit\Http\ContentDimensionLinking\Fixtures;
 
 /*
