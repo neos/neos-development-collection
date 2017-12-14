@@ -125,7 +125,7 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
 
         $detectSubgraphComponent->handle($componentContext);
         /** @var RouteParameters $routeParameters */
-        $routeParameters = $componentContext->getParameter(RoutingComponent::class,'parameters');
+        $routeParameters = $componentContext->getParameter(RoutingComponent::class, 'parameters');
 
         $this->assertSame('live', $routeParameters->getValue('workspaceName'));
         $detectedDimensions = json_decode($routeParameters->getValue('dimensionValues'), true);
@@ -160,7 +160,7 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
 
         $detectSubgraphComponent->handle($componentContext);
         /** @var RouteParameters $routeParameters */
-        $routeParameters = $componentContext->getParameter(RoutingComponent::class,'parameters');
+        $routeParameters = $componentContext->getParameter(RoutingComponent::class, 'parameters');
 
         $this->assertSame('live', $routeParameters->getValue('workspaceName'));
         $detectedDimensions = json_decode($routeParameters->getValue('dimensionValues'), true);
@@ -193,7 +193,7 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
 
         $detectSubgraphComponent->handle($componentContext);
         /** @var RouteParameters $routeParameters */
-        $routeParameters = $componentContext->getParameter(RoutingComponent::class,'parameters');
+        $routeParameters = $componentContext->getParameter(RoutingComponent::class, 'parameters');
 
         $this->assertSame('live', $routeParameters->getValue('workspaceName'));
         $detectedDimensions = json_decode($routeParameters->getValue('dimensionValues'), true);
@@ -227,7 +227,7 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
 
         $detectSubgraphComponent->handle($componentContext);
         /** @var RouteParameters $routeParameters */
-        $routeParameters = $componentContext->getParameter(RoutingComponent::class,'parameters');
+        $routeParameters = $componentContext->getParameter(RoutingComponent::class, 'parameters');
 
         $this->assertSame('user-me', $routeParameters->getValue('workspaceName'));
         $detectedDimensions = json_decode($routeParameters->getValue('dimensionValues'), true);
