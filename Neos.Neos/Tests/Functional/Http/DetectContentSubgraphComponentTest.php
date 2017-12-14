@@ -11,9 +11,7 @@ namespace Neos\Neos\Tests\Functional\Http;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
 use Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface;
-use Neos\ContentRepository\Domain\Service\Context as ContentContext;
 use Neos\Flow\Http;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\RoutingComponent;
@@ -34,8 +32,8 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
             'resolution' => [
                 'mode' => ContentDimensionResolutionMode::RESOLUTION_MODE_TOPLEVELDOMAIN,
             ],
-            'defaultPreset' => 'EU',
-            'default' => 'EU',
+            'defaultPreset' => 'WORLD',
+            'default' => 'WORLD',
             'presets' => [
                 'WORLD' => [
                     'values' => ['WORLD'],
@@ -111,17 +109,9 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
         $request = Http\Request::create($uri);
         $componentContext = new Http\Component\ComponentContext($request, new Http\Response());
 
+        $dimensionPresetSource = $this->objectManager->get(ContentDimensionPresetSourceInterface::class);
+        $dimensionPresetSource->setConfiguration($this->dimensionPresets);
         $detectSubgraphComponent = new DetectContentSubgraphComponent();
-        $mockDimensionPresetSource = $this->getMockBuilder(ContentDimensionPresetSourceInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $mockDimensionPresetSource->expects($this->any())
-            ->method('getAllPresets')
-            ->will($this->returnValue($this->dimensionPresets));
-        $this->inject($detectSubgraphComponent, 'dimensionPresetSource', $mockDimensionPresetSource);
-
-        $contentDimensionRepository = $this->objectManager->get(ContentDimensionRepository::class);
-        $contentDimensionRepository->setDimensionsConfiguration($this->dimensionPresets);
 
         $detectSubgraphComponent->handle($componentContext);
         /** @var RouteParameters $routeParameters */
@@ -144,17 +134,9 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
         $request = Http\Request::create($uri);
         $componentContext = new Http\Component\ComponentContext($request, new Http\Response());
 
+        $dimensionPresetSource = $this->objectManager->get(ContentDimensionPresetSourceInterface::class);
+        $dimensionPresetSource->setConfiguration($this->dimensionPresets);
         $detectSubgraphComponent = new DetectContentSubgraphComponent();
-        $mockDimensionPresetSource = $this->getMockBuilder(ContentDimensionPresetSourceInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $mockDimensionPresetSource->expects($this->any())
-            ->method('getAllPresets')
-            ->will($this->returnValue($this->dimensionPresets));
-        $this->inject($detectSubgraphComponent, 'dimensionPresetSource', $mockDimensionPresetSource);
-
-        $contentDimensionRepository = $this->objectManager->get(ContentDimensionRepository::class);
-        $contentDimensionRepository->setDimensionsConfiguration($this->dimensionPresets);
 
         $this->inject($detectSubgraphComponent, 'uriPathSegmentDelimiter', '-');
 
@@ -179,17 +161,9 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
         $request = Http\Request::create($uri);
         $componentContext = new Http\Component\ComponentContext($request, new Http\Response());
 
+        $dimensionPresetSource = $this->objectManager->get(ContentDimensionPresetSourceInterface::class);
+        $dimensionPresetSource->setConfiguration($this->dimensionPresets);
         $detectSubgraphComponent = new DetectContentSubgraphComponent();
-        $mockDimensionPresetSource = $this->getMockBuilder(ContentDimensionPresetSourceInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $mockDimensionPresetSource->expects($this->any())
-            ->method('getAllPresets')
-            ->will($this->returnValue($this->dimensionPresets));
-        $this->inject($detectSubgraphComponent, 'dimensionPresetSource', $mockDimensionPresetSource);
-
-        $contentDimensionRepository = $this->objectManager->get(ContentDimensionRepository::class);
-        $contentDimensionRepository->setDimensionsConfiguration($this->dimensionPresets);
 
         $detectSubgraphComponent->handle($componentContext);
         /** @var RouteParameters $routeParameters */
@@ -213,17 +187,9 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
         $request = Http\Request::create($uri);
         $componentContext = new Http\Component\ComponentContext($request, new Http\Response());
 
+        $dimensionPresetSource = $this->objectManager->get(ContentDimensionPresetSourceInterface::class);
+        $dimensionPresetSource->setConfiguration($this->dimensionPresets);
         $detectSubgraphComponent = new DetectContentSubgraphComponent();
-        $mockDimensionPresetSource = $this->getMockBuilder(ContentDimensionPresetSourceInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $mockDimensionPresetSource->expects($this->any())
-            ->method('getAllPresets')
-            ->will($this->returnValue($this->dimensionPresets));
-        $this->inject($detectSubgraphComponent, 'dimensionPresetSource', $mockDimensionPresetSource);
-
-        $contentDimensionRepository = $this->objectManager->get(ContentDimensionRepository::class);
-        $contentDimensionRepository->setDimensionsConfiguration($this->dimensionPresets);
 
         $detectSubgraphComponent->handle($componentContext);
         /** @var RouteParameters $routeParameters */
