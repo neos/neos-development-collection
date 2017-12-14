@@ -184,7 +184,7 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
         $contentStreamIdentifier = 'live';
 
         $requestPath = $componentContext->getHttpRequest()->getUri()->getPath();
-        $requestPath = mb_substr($requestPath, mb_strrpos($requestPath, '/') + 1);
+        $requestPath = mb_substr($requestPath, mb_strrpos($requestPath, '/'));
         if ($requestPath !== '' && NodePaths::isContextPath($requestPath)) {
                 $nodePathAndContext = NodePaths::explodeContextPath($requestPath);
             try {
