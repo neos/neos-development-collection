@@ -992,19 +992,35 @@ class NodeDataRepository extends Repository
         $this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
         $this->addNodeTypeFilterConstraintsToQueryBuilder($queryBuilder, $nodeTypeFilter);
 
-        if (is_array($term)) {
-            if (count($term) !== 1) {
-                throw new \InvalidArgumentException('Currently only a 1-dimensional key => value array term is supported.', 1460437584);
-            }
+        switch ($this->entityManager->getConnection()->getDatabasePlatform()->getName()) {
+            case 'postgresql':
+                if (is_array($term)) {
+                    foreach ($term as $property => $value) {
+                        $propertyPlaceHolder = ':property' . \uniqid();
+                        $valuePlaceHolder = ':value' . \uniqid();
+                        $queryBuilder->andWhere(sprintf("LOWER(NEOSCR_TOSTRING(JSONB_DGG(n.properties, %s))) = %s", $propertyPlaceHolder, $valuePlaceHolder))
+                            ->setParameter($propertyPlaceHolder, $property)
+                            ->setParameter($valuePlaceHolder, UnicodeFunctions::strtolower($value));
+                    }
+                } else {
+                    $likeParameter = '%' . trim(json_encode(UnicodeFunctions::strtolower($term), JSON_UNESCAPED_UNICODE), '"') . '%';
+                    $queryBuilder->andWhere("LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :term")->setParameter('term', $likeParameter);
+                }
+                break;
+            default:
+                if (is_array($term)) {
+                    if (count($term) !== 1) {
+                        throw new \InvalidArgumentException('Currently only a 1-dimensional key => value array term is supported by MySQL, use PostgreSQL to support multi terms search.', 1460437584);
+                    }
 
-            // Build the like parameter as "key": "value" to search by a specific key and value
-            $likeParameter = '%' . UnicodeFunctions::strtolower(trim(json_encode($term, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE), "{}\n\t ")) . '%';
-        } else {
-            // Convert to lowercase, then to json, and then trim quotes from json to have valid JSON escaping.
-            $likeParameter = '%' . trim(json_encode(UnicodeFunctions::strtolower($term), JSON_UNESCAPED_UNICODE), '"') . '%';
+                    // Build the like parameter as "key": "value" to search by a specific key and value
+                    $likeParameter = '%' . UnicodeFunctions::strtolower(trim(json_encode($term, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE), "{}\n\t ")) . '%';
+                } else {
+                    // Convert to lowercase, then to json, and then trim quotes from json to have valid JSON escaping.
+                    $likeParameter = '%' . trim(json_encode(UnicodeFunctions::strtolower($term), JSON_UNESCAPED_UNICODE), '"') . '%';
+                }
+                $queryBuilder->andWhere("LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :term")->setParameter('term', $likeParameter);
         }
-
-        $queryBuilder->andWhere("LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :term")->setParameter('term', $likeParameter);
 
         if (strlen($pathStartingPoint) > 0) {
             $pathStartingPoint = strtolower($pathStartingPoint);
