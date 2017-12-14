@@ -11,10 +11,11 @@ namespace Neos\Neos\Tests\Unit\Http\ContentDimensionDetection;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Http;
+use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Http\ContentDimensionLinking\UriPathSegmentDimensionPresetLinkProcessor;
 use Neos\Neos\Http\ContentDimensionResolutionMode;
+use Neos\Utility\ObjectAccess;
 
 /**
  * Test case for the SubdomainDimensionPresetLinkProcessor
@@ -60,51 +61,52 @@ class UriPathSegmentDimensionPresetLinkProcessorTest extends UnitTestCase
     /**
      * @test
      */
-    public function processDimensionBaseUriAddsFirstPathSegment()
+    public function processUriConstraintsAddsFirstPathPrefix()
     {
         $linkProcessor = new UriPathSegmentDimensionPresetLinkProcessor();
-        $baseUri = new Http\Uri('https://domain.com');
+        $uriConstraints = UriConstraints::create();
 
         $options = $this->dimensionConfiguration['language']['resolution']['options'];
         $options['delimiter'] = '-';
 
-        $linkProcessor->processDimensionBaseUri(
-            $baseUri,
+        $processedUriConstraints = $linkProcessor->processUriConstraints(
+            $uriConstraints,
             'language',
             $this->dimensionConfiguration['language'],
             $this->dimensionConfiguration['language']['presets']['en'],
             $options
         );
+        $constraints = ObjectAccess::getProperty($processedUriConstraints, 'constraints', true);
 
         $this->assertSame(
-            'https://domain.com/en',
-            (string)$baseUri
+            'en',
+            $constraints['pathPrefix']
         );
     }
 
     /**
      * @test
      */
-    public function processDimensionBaseUriAddsSecondPathSegment()
+    public function processUriConstraintsAddsSecondPathPrefixWithGivenDelimiter()
     {
         $linkProcessor = new UriPathSegmentDimensionPresetLinkProcessor();
-        $baseUri = new Http\Uri('https://domain.com/en');
-
+        $uriConstraints = UriConstraints::create();
 
         $options = $this->dimensionConfiguration['market']['resolution']['options'];
         $options['delimiter'] = '-';
 
-        $linkProcessor->processDimensionBaseUri(
-            $baseUri,
-            'market',
+        $processedUriConstraints = $linkProcessor->processUriConstraints(
+            $uriConstraints,
+            'language',
             $this->dimensionConfiguration['market'],
             $this->dimensionConfiguration['market']['presets']['GB'],
             $options
         );
+        $constraints = ObjectAccess::getProperty($processedUriConstraints, 'constraints', true);
 
         $this->assertSame(
-            'https://domain.com/en-GB',
-            (string)$baseUri
+            '-GB',
+            $constraints['pathPrefix']
         );
     }
 }

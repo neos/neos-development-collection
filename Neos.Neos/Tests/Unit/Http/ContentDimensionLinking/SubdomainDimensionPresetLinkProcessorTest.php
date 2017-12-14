@@ -11,10 +11,11 @@ namespace Neos\Neos\Tests\Unit\Http\ContentDimensionDetection;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Http;
+use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Http\ContentDimensionLinking\SubdomainDimensionPresetLinkProcessor;
 use Neos\Neos\Http\ContentDimensionResolutionMode;
+use Neos\Utility\ObjectAccess;
 
 /**
  * Test case for the SubdomainDimensionPresetLinkProcessor
@@ -50,80 +51,52 @@ class SubdomainDimensionPresetLinkProcessorTest extends UnitTestCase
     /**
      * @test
      */
-    public function processDimensionBaseUriAddsSubdomainIfNecessaryAndNoneYetPresent()
+    public function processUriConstraintsAddsHostPrefixWithReplacementsIfGiven()
     {
         $linkProcessor = new SubdomainDimensionPresetLinkProcessor();
-        $baseUri = new Http\Uri('https://domain.com');
-        $linkProcessor->processDimensionBaseUri(
-            $baseUri,
+        $uriConstraints = UriConstraints::create();
+
+        $processedUriConstraints = $linkProcessor->processUriConstraints(
+            $uriConstraints,
             'language',
             $this->dimensionConfiguration,
-            $this->dimensionConfiguration['presets']['fr']
+            $this->dimensionConfiguration['presets']['fr'],
+            []
         );
+        $constraints = ObjectAccess::getProperty($processedUriConstraints, 'constraints', true);
 
         $this->assertSame(
-            'https://fr.domain.com',
-            (string)$baseUri
+            [
+                'prefix' => 'fr.',
+                'replacePrefixes' => ['de.', 'fr.']
+            ],
+            $constraints['hostPrefix']
         );
     }
 
     /**
      * @test
      */
-    public function processDimensionBaseUriReplacesSubdomainIfDifferentOnePresent()
+    public function processUriConstraintsAddsEmptyHostPrefixWithReplacementsIfGiven()
     {
         $linkProcessor = new SubdomainDimensionPresetLinkProcessor();
-        $baseUri = new Http\Uri('https://de.domain.com');
-        $linkProcessor->processDimensionBaseUri(
-            $baseUri,
+        $uriConstraints = UriConstraints::create();
+
+        $processedUriConstraints = $linkProcessor->processUriConstraints(
+            $uriConstraints,
             'language',
             $this->dimensionConfiguration,
-            $this->dimensionConfiguration['presets']['fr']
+            $this->dimensionConfiguration['presets']['en'],
+            []
         );
+        $constraints = ObjectAccess::getProperty($processedUriConstraints, 'constraints', true);
 
         $this->assertSame(
-            'https://fr.domain.com',
-            (string)$baseUri
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function processDimensionBaseUriKeepsSubdomainIfAlreadyPresent()
-    {
-        $linkProcessor = new SubdomainDimensionPresetLinkProcessor();
-        $baseUri = new Http\Uri('https://fr.domain.com');
-        $linkProcessor->processDimensionBaseUri(
-            $baseUri,
-            'language',
-            $this->dimensionConfiguration,
-            $this->dimensionConfiguration['presets']['fr']
-        );
-
-        $this->assertSame(
-            'https://fr.domain.com',
-            (string)$baseUri
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function processDimensionBaseUriRemovesSubdomainIfPresentButNotNeeded()
-    {
-        $linkProcessor = new SubdomainDimensionPresetLinkProcessor();
-        $baseUri = new Http\Uri('https://fr.domain.com');
-        $linkProcessor->processDimensionBaseUri(
-            $baseUri,
-            'language',
-            $this->dimensionConfiguration,
-            $this->dimensionConfiguration['presets']['en']
-        );
-
-        $this->assertSame(
-            'https://domain.com',
-            (string)$baseUri
+            [
+                'prefix' => '',
+                'replacePrefixes' => ['de.', 'fr.']
+            ],
+            $constraints['hostPrefix']
         );
     }
 }

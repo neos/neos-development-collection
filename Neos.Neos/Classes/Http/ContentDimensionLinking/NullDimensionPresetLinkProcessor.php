@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Http\ContentDimensionLinking;
 
 /*
@@ -11,28 +12,13 @@ namespace Neos\Neos\Http\ContentDimensionLinking;
  * source code.
  */
 
-use Neos\Flow\Http;
 use Neos\Flow\Mvc\Routing;
-use Neos\Utility\Arrays;
 
 /**
  * URI path segment dimension preset link processor
  */
 final class NullDimensionPresetLinkProcessor implements ContentDimensionPresetLinkProcessorInterface
 {
-    /**
-     * @param Http\Uri $baseUri
-     * @param string $dimensionName
-     * @param array $presetConfiguration
-     * @param array $preset
-     * @param array|null $overrideOptions
-     * @return void
-     */
-    public function processDimensionBaseUri(Http\Uri $baseUri, string $dimensionName, array $presetConfiguration, array $preset, array $overrideOptions = null)
-    {
-        // nothing is going to happen here
-    }
-
     /**
      * @param Routing\Dto\UriConstraints $uriConstraints
      * @param string $dimensionName
@@ -41,8 +27,13 @@ final class NullDimensionPresetLinkProcessor implements ContentDimensionPresetLi
      * @param array|null $overrideOptions
      * @return Routing\Dto\UriConstraints
      */
-    public function processUriConstraints(Routing\Dto\UriConstraints $uriConstraints, string $dimensionName, array $presetConfiguration, array $preset, array $overrideOptions = null): Routing\Dto\UriConstraints
-    {
+    public function processUriConstraints(
+        Routing\Dto\UriConstraints $uriConstraints,
+        string $dimensionName,
+        array $presetConfiguration,
+        array $preset,
+        array $overrideOptions = null
+    ): Routing\Dto\UriConstraints {
         return $uriConstraints;
     }
 }

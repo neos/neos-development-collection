@@ -15,7 +15,6 @@ namespace Neos\Neos\Http;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\SiteService;
@@ -96,60 +95,6 @@ final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorIn
         }
 
         return $uriConstraints;
-    }
-
-    /**
-     * @param Http\Uri $currentBaseUri
-     * @param NodeInterface $node
-     * @return Http\Uri
-     * @throws Exception\InvalidDimensionPresetLinkProcessorException
-     */
-    public function resolveDimensionBaseUri(Http\Uri $currentBaseUri, NodeInterface $node): Http\Uri
-    {
-        $baseUri = clone $currentBaseUri;
-        if ($node->getContext()->isInBackend()) {
-            return $baseUri;
-        }
-
-        $presets = $this->dimensionPresetSource->getAllPresets();
-        $allUriPathSegmentDetectableDimensionPresetsAreDefault = true;
-        $dimensionValues = $node->getContext()->getDimensions();
-
-        $this->sortDimensionValuesByOffset($dimensionValues, $presets);
-        $dimensionValues = array_reverse($dimensionValues);
-        $uriPathSegmentOffset = 0;
-
-        foreach ($dimensionValues as $dimensionName => $values) {
-            $presetConfiguration = $presets[$dimensionName];
-            $preset = $this->dimensionPresetSource->findPresetByDimensionValues($dimensionName, $values);
-            $options = $presets[$dimensionName]['resolution']['options'] ?? [];
-
-            $resolutionMode = new ContentDimensionResolutionMode(
-                $presetConfiguration['resolution']['mode']
-                ?? ContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT
-            );
-            if ($resolutionMode->getMode() === ContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT) {
-                if (!isset($options['offset'])) {
-                    $options['offset'] = $uriPathSegmentOffset;
-                }
-                $uriPathSegmentOffset++;
-
-                if ($presetConfiguration['defaultPreset'] !== $preset['identifier']) {
-                    $allUriPathSegmentDetectableDimensionPresetsAreDefault = false;
-                }
-            }
-
-            $linkProcessor = $this->dimensionPresetLinkProcessorResolver->resolveDimensionPresetLinkProcessor($dimensionName, $presetConfiguration);
-            $linkProcessor->processDimensionBaseUri($baseUri, $dimensionName, $presetConfiguration, $preset, $options);
-        }
-
-        if ($this->supportEmptySegmentForDimensions
-            && $allUriPathSegmentDetectableDimensionPresetsAreDefault
-            && $node->getParentPath() === SiteService::SITES_ROOT_PATH) {
-            $baseUri->setPath('/');
-        }
-
-        return $baseUri;
     }
 
     /**

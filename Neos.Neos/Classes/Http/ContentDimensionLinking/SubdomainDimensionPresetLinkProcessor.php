@@ -11,46 +11,13 @@ namespace Neos\Neos\Http\ContentDimensionLinking;
  * source code.
  */
 
-use Neos\Flow\Http;
 use Neos\Flow\Mvc\Routing;
 
 /**
- * Subdomain based dimension preset detector
+ * Subdomain based dimension preset link processor
  */
 final class SubdomainDimensionPresetLinkProcessor implements ContentDimensionPresetLinkProcessorInterface
 {
-    /**
-     * @param Http\Uri $baseUri
-     * @param string $dimensionName
-     * @param array $presetConfiguration
-     * @param array $preset
-     * @param array|null $overrideOptions
-     * @return void
-     */
-    public function processDimensionBaseUri(Http\Uri $baseUri, string $dimensionName, array $presetConfiguration, array $preset, array $overrideOptions = null)
-    {
-        $currentValue = null;
-        foreach ($presetConfiguration['presets'] as $availablePreset) {
-            if (empty($availablePreset['resolutionValue'])) {
-                $currentValue = $availablePreset['resolutionValue'];
-            } elseif (mb_substr($baseUri->getHost(), 0, mb_strlen($availablePreset['resolutionValue'] . '.')) === $availablePreset['resolutionValue'] . '.') {
-                $currentValue = $availablePreset['resolutionValue'];
-                break;
-            }
-        }
-
-        $newValue = $preset['resolutionValue'];
-
-        $pivot = mb_strlen($currentValue);
-        if (empty($currentValue) && !empty($newValue)) {
-            $newValue .= '.';
-        } elseif (!empty($currentValue) && empty($newValue)) {
-            $pivot++;
-        }
-
-        $baseUri->setHost($newValue . mb_substr($baseUri->getHost(), $pivot));
-    }
-
     /**
      * @param Routing\Dto\UriConstraints $uriConstraints
      * @param string $dimensionName

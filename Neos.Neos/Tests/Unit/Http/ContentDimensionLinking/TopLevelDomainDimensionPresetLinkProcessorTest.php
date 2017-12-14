@@ -11,10 +11,11 @@ namespace Neos\Neos\Tests\Unit\Http\ContentDimensionDetection;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Http;
+use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Http\ContentDimensionLinking\TopLevelDomainDimensionPresetLinkProcessor;
 use Neos\Neos\Http\ContentDimensionResolutionMode;
+use Neos\Utility\ObjectAccess;
 
 /**
  * Test case for the SubdomainDimensionPresetLinkProcessor
@@ -46,40 +47,26 @@ class TopLevelDomainDimensionPresetLinkProcessorTest extends UnitTestCase
     /**
      * @test
      */
-    public function processDimensionBaseUriReplacesTopLevelDomainIfDifferentOnePresent()
+    public function processUriConstraintsAddsHostSuffixWithReplacementsIfGiven()
     {
         $linkProcessor = new TopLevelDomainDimensionPresetLinkProcessor();
-        $baseUri = new Http\Uri('https://domain.com');
-        $linkProcessor->processDimensionBaseUri(
-            $baseUri,
-            'language',
+        $uriConstraints = UriConstraints::create();
+
+        $processedUriConstraints = $linkProcessor->processUriConstraints(
+            $uriConstraints,
+            'market',
             $this->dimensionConfiguration,
-            $this->dimensionConfiguration['presets']['fr']
+            $this->dimensionConfiguration['presets']['fr'],
+            []
         );
+        $constraints = ObjectAccess::getProperty($processedUriConstraints, 'constraints', true);
 
         $this->assertSame(
-            'https://domain.fr',
-            (string)$baseUri
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function processDimensionBaseUriKeepsSubdomainIfAlreadyPresent()
-    {
-        $linkProcessor = new TopLevelDomainDimensionPresetLinkProcessor();
-        $baseUri = new Http\Uri('https://domain.fr');
-        $linkProcessor->processDimensionBaseUri(
-            $baseUri,
-            'language',
-            $this->dimensionConfiguration,
-            $this->dimensionConfiguration['presets']['fr']
-        );
-
-        $this->assertSame(
-            'https://domain.fr',
-            (string)$baseUri
+            [
+                'suffix' => '.fr',
+                'replaceSuffixes' => ['.com', '.fr']
+            ],
+            $constraints['hostSuffix']
         );
     }
 }

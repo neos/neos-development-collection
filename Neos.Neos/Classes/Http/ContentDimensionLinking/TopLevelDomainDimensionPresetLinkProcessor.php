@@ -12,7 +12,6 @@ namespace Neos\Neos\Http\ContentDimensionLinking;
  * source code.
  */
 
-use Neos\Flow\Http;
 use Neos\Flow\Mvc\Routing;
 
 /**
@@ -20,31 +19,6 @@ use Neos\Flow\Mvc\Routing;
  */
 final class TopLevelDomainDimensionPresetLinkProcessor implements ContentDimensionPresetLinkProcessorInterface
 {
-    /**
-     * @param Http\Uri $baseUri
-     * @param string $dimensionName
-     * @param array $presetConfiguration
-     * @param array $preset
-     * @param array|null $overrideOptions
-     * @return void
-     */
-    public function processDimensionBaseUri(Http\Uri $baseUri, string $dimensionName, array $presetConfiguration, array $preset, array $overrideOptions = null)
-    {
-        $currentValue = null;
-        foreach ($presetConfiguration['presets'] as $availablePreset) {
-            if (mb_substr($baseUri->getHost(), -mb_strlen($availablePreset['resolutionValue'])) === $availablePreset['resolutionValue']) {
-                $currentValue = $availablePreset['resolutionValue'];
-                break;
-            }
-        }
-
-        $newValue = $preset['resolutionValue'];
-
-        if ($newValue !== $currentValue) {
-            $baseUri->setHost(mb_substr($baseUri->getHost(), 0, -mb_strlen($currentValue)) . $newValue);
-        }
-    }
-
     /**
      * @param Routing\Dto\UriConstraints $uriConstraints
      * @param string $dimensionName
