@@ -157,13 +157,15 @@ class ImageService
                 $adjustmentsApplied = true;
             }
         }
+        
+        $additionalOptions = $this->getOptionsMergedWithDefaults($additionalOptions);
 
         if ($adjustmentsApplied === true) {
             $interlace = Arrays::getValueByPath($this->settings, 'image.defaultOptions.interlace');
             if ($interlace !== null) {
                 $imagineImage->interlace($interlace);
             }
-            $imagineImage->save($transformedImageTemporaryPathAndFilename, $this->getOptionsMergedWithDefaults($additionalOptions));
+            $imagineImage->save($transformedImageTemporaryPathAndFilename, $additionalOptions);
             $imageSize = $imagineImage->getSize();
 
             // TODO: In the future the collectionName of the new resource should be configurable.
