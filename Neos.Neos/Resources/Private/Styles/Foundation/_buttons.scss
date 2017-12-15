@@ -24,6 +24,7 @@ button,
 	background-color: $grayLight;
 	background-image: none;
 	border: none;
+	border-radius: 0;
 	@include text-shadow(none);
 	@include box-shadow(none);
 	@include box-sizing(border-box);
