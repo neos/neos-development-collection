@@ -677,6 +677,32 @@ class NodeDataRepository extends Repository
     }
 
     /**
+     * @param string $parentPath
+     * @param string $nodeType
+     * @param string $property
+     * @param mixed $value
+     * @return bool
+     * @throws Exception
+     */
+    public function isPropertyUnique($property, $value, NodeInterface $currentNode)
+    {
+        switch ($this->entityManager->getConnection()->getDatabasePlatform()->getName()) {
+            case 'postgresql':
+                /** @var Query $query */
+                $query = $this->entityManager->createQuery('SELECT count(n.identifier) c FROM Neos\ContentRepository\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash AND n.nodeType = :nodeType  AND JSONB_DGG(n.properties, :property) = :value AND n.identifier <> :identifier');
+                $query->setParameter('parentPathHash', md5($currentNode->getParentPath()));
+                $query->setParameter('property', $property);
+                $query->setParameter('value', $value);
+                $query->setParameter('nodeType', $currentNode->getNodeType()->getName());
+                $query->setParameter('identifier', $currentNode->getIdentifier());
+
+                return $query->execute()[0]['c'] !== 0;
+            default:
+                throw new Exception('Only postgresql platform is actually supported', 1513339225);
+        }
+    }
+
+    /**
      * Make room in the sortindex-index space of a given path in preparation to inserting a node.
      * All indices that are greater or equal to the given referenceIndex are incremented by 100
      *

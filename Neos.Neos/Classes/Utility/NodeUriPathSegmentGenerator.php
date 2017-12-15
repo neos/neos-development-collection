@@ -12,9 +12,11 @@ namespace Neos\Neos\Utility;
  */
 
 use Behat\Transliterator\Transliterator;
+use Doctrine\Common\Persistence\ObjectManager;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Locale;
+use Neos\Neos\Domain\Model\NodeUriPath;
 use Neos\Neos\Exception;
 use Neos\Neos\Service\TransliterationService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -33,6 +35,12 @@ class NodeUriPathSegmentGenerator
     protected $transliterationService;
 
     /**
+     * @var ObjectManager
+     * @Flow\Inject
+     */
+    protected $entityManager;
+
+    /**
      * Sets the best possible uriPathSegment for the given Node.
      * Will use an already set uriPathSegment or alternatively the node name as base,
      * then checks if the uriPathSegment already exists on the same level and appends a counter until a unique path segment was found.
@@ -42,17 +50,7 @@ class NodeUriPathSegmentGenerator
      */
     public static function setUniqueUriPathSegment(NodeInterface $node)
     {
-        if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
-            $q = new FlowQuery(array($node));
-            $q = $q->context(array('invisibleContentShown' => true, 'removedContentShown' => true, 'inaccessibleContentShown' => true));
-
-            $possibleUriPathSegment = $initialUriPathSegment = !$node->hasProperty('uriPathSegment') ? $node->getName() : $node->getProperty('uriPathSegment');
-            $i = 1;
-            while ($q->siblings('[instanceof Neos.Neos:Document][uriPathSegment="' . $possibleUriPathSegment . '"]')->count() > 0) {
-                $possibleUriPathSegment = $initialUriPathSegment . '-' . $i++;
-            }
-            $node->setProperty('uriPathSegment', $possibleUriPathSegment);
-        }
+        $node->setProperty('uriPathSegment', (new NodeUriPath($node))->find());
     }
 
     /**
@@ -67,7 +65,7 @@ class NodeUriPathSegmentGenerator
         if ($node) {
             $text = $text ?: $node->getLabel() ?: $node->getName();
             $dimensions = $node->getContext()->getDimensions();
-            if (array_key_exists('language', $dimensions) && $dimensions['language'] !== array()) {
+            if (array_key_exists('language', $dimensions) && $dimensions['language'] !== []) {
                 $locale = new Locale($dimensions['language'][0]);
                 $language = $locale->getLanguage();
             }
