@@ -68,7 +68,12 @@ class PublishingService extends \Neos\ContentRepository\Domain\Service\Publishin
         $nodeType = $node->getNodeType();
 
         if ($nodeType->isOfType('Neos.Neos:Document') || $nodeType->hasConfiguration('childNodes')) {
-            $nodes = array_merge($nodes, $this->collectAllContentChildNodes($node));
+            $nodes = array_filter(
+                array_merge($nodes, $this->collectAllContentChildNodes($node)),
+                function ($possiblyPublishableNode) use ($node) {
+                    return $possiblyPublishableNode->getWorkspace()->getName() === $node->getWorkspace()->getName();
+                }
+            );
         }
 
         $this->discardNodes($nodes);
