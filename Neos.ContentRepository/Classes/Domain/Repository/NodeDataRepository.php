@@ -686,15 +686,22 @@ class NodeDataRepository extends Repository
      */
     public function isPropertyUnique($property, $value, NodeInterface $currentNode)
     {
+        $workspaces = $this->collectWorkspaceAndAllBaseWorkspaces($currentNode->getWorkspace());
+        $queryBuilder = $this->createQueryBuilder($workspaces);
+        $this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $currentNode->getDimensions());
+
         switch ($this->entityManager->getConnection()->getDatabasePlatform()->getName()) {
             case 'postgresql':
-                /** @var Query $query */
-                $query = $this->entityManager->createQuery('SELECT count(n.identifier) c FROM Neos\ContentRepository\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash AND n.nodeType = :nodeType  AND JSONB_DGG(n.properties, :property) = :value AND n.identifier <> :identifier');
-                $query->setParameter('parentPathHash', md5($currentNode->getParentPath()));
-                $query->setParameter('property', $property);
-                $query->setParameter('value', $value);
-                $query->setParameter('nodeType', $currentNode->getNodeType()->getName());
-                $query->setParameter('identifier', $currentNode->getIdentifier());
+                $queryBuilder->select('count(n.identifier) c');
+                $queryBuilder->andWhere('n.parentPathHash = :parentPathHash AND n.nodeType = :nodeType  AND JSONB_DGG(n.properties, :property) = :value AND n.identifier <> :identifier');
+
+                $queryBuilder->setParameter('parentPathHash', md5($currentNode->getParentPath()));
+                $queryBuilder->setParameter('property', $property);
+                $queryBuilder->setParameter('value', $value);
+                $queryBuilder->setParameter('nodeType', $currentNode->getNodeType()->getName());
+                $queryBuilder->setParameter('identifier', $currentNode->getIdentifier());
+
+                $query = $queryBuilder->getQuery();
 
                 return $query->execute()[0]['c'] !== 0;
             default:
