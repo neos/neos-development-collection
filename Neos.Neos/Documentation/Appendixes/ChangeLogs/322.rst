@@ -1,0 +1,127 @@
+`3.2.2 (2017-12-15) <https://github.com/neos/neos-development-collection/releases/tag/3.2.2>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Avoid error if no dimension is set in DimensionsMenuImplementation <https://github.com/neos/neos-development-collection/pull/1777>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+When using the DimensionsMenuImplementation without a set `dimension`
+(yes, there are use cases for that, e.g. hreflang tags for language _and_
+country), the following could happen:
+
+    Call to a member function getLabel() on null
+
+This change avoids that.
+
+`TASK: Fix border-radius on button elements <https://github.com/neos/neos-development-collection/pull/1799>`_
+-------------------------------------------------------------------------------------------------------------
+
+On Chrome (macOS), all `<button>` elements had a `border-radius` of `4px`, which is now removed.
+
+
+`BUGFIX: Make sure nodes that are to be discarded are actually publishable <https://github.com/neos/neos-development-collection/pull/1711>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+`TYPO3\\Neos\\Service\\PublishingService` traverses all children of a node to discard that node recursively. Not all those nodes are actually publishable though, so the following batch discard operation fails with the Exception `#1395841899: Nodes in a in a workspace without a base workspace cannot be discarded`.
+
+So, I added a filter to `TYPO3\\Neos\\Service\\PublishingService::discardNode` that removes all nodes from the to-be-discarded list, that are in a different workspace than the given node.
+
+Resolves: #1710
+
+`BUGFIX: Fix wrong TS path in extending pages example <https://github.com/neos/neos-development-collection/pull/1754>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Fix exception when following documentation about extending pages.
+
+See detailed description and discussion on https://discuss.neos.io/t/1952
+
+`BUGFIX: \`\`NodePropertyConverterService\`\` converts default values <https://github.com/neos/neos-development-collection/pull/1782>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Apply property mapping to default value fallbacks in ``NodePropertyConverterService``
+
+Resolves #1781
+
+`TASK: Adjust Neos to work with PHP 7.2 <https://github.com/neos/neos-development-collection/pull/1789>`_
+---------------------------------------------------------------------------------------------------------
+
+This enables PHP 7.2 testing on Travis CI, fixes a functional test that broke
+and adjusts one actual code error.
+
+* Packages: ``ContentRepository`` ``Neos``
+
+`BUGFIX: CreateContentContextTrait should use the available SiteReposi… <https://github.com/neos/neos-development-collection/pull/1779>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+`TASK: Add generateUriPathSegments check identifier <https://github.com/neos/neos-development-collection/pull/1778>`_
+---------------------------------------------------------------------------------------------------------------------
+
+This adds the `generateUriPathSegments` identifier to the `node:repair`
+help text.
+
+`TASK: Make FusionRuntime available to Form Renderers <https://github.com/neos/neos-development-collection/pull/1765>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Adjusts the `Neos.NodeTypes:Form` Fusion prototype to make
+the current `Fusion\\Runtime` available to the Form renderer
+via the forms rendering options.
+
+Background:
+
+This is especially useful for forms that are rendererd with
+the `neos/form-fusionrenderer` which, otherwise, can't re-use
+Fusion prototypes that are not explicitly loaded.
+
+For forms rendered with the `neos/form-builder`, the runtime
+is already set.
+
+* Packages: ``Media`` ``NodeTypes``
+
+`TASK: Fix remove a selectbox option from an existing Node Type documentation <https://github.com/neos/neos-development-collection/pull/1761>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+Based on this post: https://discuss.neos.io/t/solved-remove-properties-from-nodetype-of-included-package/2751/6
+
+`BUGFIX: Long string literals should be supported in Fusion <https://github.com/neos/neos-development-collection/pull/1755>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+The regex matcher would halt with a catastrophic backtracing error 
+if a very long string was given as string literal.
+
+`BUGFIX: Fix wrong target class in RouteCacheAspect <https://github.com/neos/neos-development-collection/pull/1768>`_
+---------------------------------------------------------------------------------------------------------------------
+
+This fixes #1767 by changing the vendor name from TYPO3 to Neos in
+the `RouteCacheAspect` in one place where it was obviously overlooked.
+
+* Packages: ``Neos``
+
+`BUGFIX: Support namespaces in fusion-dsls <https://github.com/neos/neos-development-collection/pull/1753>`_
+------------------------------------------------------------------------------------------------------------
+
+The declared Namespaces are now transferred to the parser that handles fusion-dsl's. Previously the returned dsl-code could not use namespaces. 
+
+* Packages: ``Fusion``
+
+`TASK: Add 2.3.17 changelog <https://github.com/neos/neos-development-collection/pull/1749>`_
+---------------------------------------------------------------------------------------------
+
+`BUGFIX: Assets used in moved nodes don't break media module asset view <https://github.com/neos/neos-development-collection/pull/1743>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+Prevent assets referenced in moved nodes from breaking the asset view in the media module.
+
+Fixes #1742
+
+`BUGFIX: Update publish button when copying page in node tree <https://github.com/neos/neos-development-collection/pull/1740>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Make sure the publish button is updated so the new changes can be published.
+Additionally selects the newly copied page similar to when inserting a new document.
+
+Resolves #914
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/3.2.1...3.2.2>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
