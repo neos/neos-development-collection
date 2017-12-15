@@ -84,7 +84,7 @@ class NodeUriPath
     {
         $possibleUriPathSegment = $initialUriPathSegment = !$this->node->hasProperty('uriPathSegment') ? $this->node->getName() : $this->node->getProperty('uriPathSegment');
         $i = 1;
-        while ($this->nodeDataRepository->isPropertyUnique('uriPathSegment', $possibleUriPathSegment, $this->node) === true) {
+        while ($this->nodeDataRepository->isPropertyUniqueInCurrentPath('uriPathSegment', $possibleUriPathSegment, $this->node) === true) {
             $possibleUriPathSegment = $initialUriPathSegment . '-' . $i++;
         }
         return $possibleUriPathSegment;

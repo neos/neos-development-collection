@@ -684,7 +684,7 @@ class NodeDataRepository extends Repository
      * @return bool
      * @throws Exception
      */
-    public function isPropertyUnique($property, $value, NodeInterface $currentNode)
+    public function isPropertyUniqueInCurrentPath($property, $value, NodeInterface $currentNode)
     {
         $workspaces = $this->collectWorkspaceAndAllBaseWorkspaces($currentNode->getWorkspace());
         $queryBuilder = $this->createQueryBuilder($workspaces);
