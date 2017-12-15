@@ -111,6 +111,7 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
             case 'repair':
                 return <<<'HELPTEXT'
 <u>Generate missing URI path segments</u>
+generateUriPathSegments
 
 Generates URI path segment properties for all document nodes which don't have a path
 segment set yet.

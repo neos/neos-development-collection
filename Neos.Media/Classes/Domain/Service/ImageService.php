@@ -21,6 +21,7 @@ use Neos\Flow\ResourceManagement\Exception;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Flow\Utility\Environment;
+use Neos\Media\Domain\Model\Adjustment\QualityImageAdjustment;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Imagine\Box;
 use Neos\Flow\Annotations as Flow;
@@ -144,8 +145,27 @@ class ImageService
             $imagineImage = $this->applyAdjustments($imagineImage, $adjustments, $adjustmentsApplied);
         }
 
+        $qualityAdjustments = array_filter($adjustments, function ($v) {
+            return $v instanceof QualityImageAdjustment;
+        }, ARRAY_FILTER_USE_BOTH);
+        if (count($qualityAdjustments) > 0) {
+            /** @var QualityImageAdjustment $qualityAdjustment */
+            $qualityAdjustment = array_pop($qualityAdjustments);
+            $quality = $qualityAdjustment->getQuality();
+            if ($quality >= 1 && $quality <= 100) {
+                $additionalOptions['quality'] = $qualityAdjustment->getQuality();
+                $adjustmentsApplied = true;
+            }
+        }
+        
+        $additionalOptions = $this->getOptionsMergedWithDefaults($additionalOptions);
+
         if ($adjustmentsApplied === true) {
-            $imagineImage->save($transformedImageTemporaryPathAndFilename, $this->getOptionsMergedWithDefaults($additionalOptions));
+            $interlace = Arrays::getValueByPath($this->settings, 'image.defaultOptions.interlace');
+            if ($interlace !== null) {
+                $imagineImage->interlace($interlace);
+            }
+            $imagineImage->save($transformedImageTemporaryPathAndFilename, $additionalOptions);
             $imageSize = $imagineImage->getSize();
 
             // TODO: In the future the collectionName of the new resource should be configurable.
@@ -170,7 +190,8 @@ class ImageService
         $result = array(
             'width' => $imageSize->getWidth(),
             'height' => $imageSize->getHeight(),
-            'resource' => $resource
+            'resource' => $resource,
+            'quality' => $additionalOptions['quality']
         );
 
         return $result;

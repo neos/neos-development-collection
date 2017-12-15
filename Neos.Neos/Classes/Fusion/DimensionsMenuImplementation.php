@@ -150,9 +150,17 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
      */
     protected function itemLabel(string $pinnedDimensionName, NodeInterface $nodeInDimensions, array $targetDimensions): string
     {
-        if ($pinnedDimensionName === null) {
+        if ($nodeInDimensions === null && $pinnedDimensionName === null) {
+            $itemLabel = '';
+            foreach ($targetDimensions as $item) {
+                $itemLabel .= $item['label'] . ' - ';
+            }
+
+            return trim($itemLabel, ' -');
+        } elseif ($nodeInDimensions instanceof NodeInterface && $pinnedDimensionName === null) {
             return $nodeInDimensions->getLabel();
         }
+
         return $targetDimensions[$pinnedDimensionName]['label'];
     }
 
