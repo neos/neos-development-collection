@@ -1,0 +1,10 @@
+prototype(Neos.Neos:ContentComponent) < prototype(Neos.Fusion:Component) {
+
+  # The following line must not be removed as it adds required meta data to all content elements in backend
+  @process.contentElementWrapping {
+    expression = Neos.Neos:ContentElementWrapping
+    @position = 'end 999999999'
+  }
+
+  @exceptionHandler = 'Neos\\Neos\\Fusion\\ExceptionHandlers\\NodeWrappingHandler'
+}

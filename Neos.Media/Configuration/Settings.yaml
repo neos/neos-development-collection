@@ -72,6 +72,7 @@ Neos:
         # Image quality, from 0 to 100
         quality: 90
         convertCMYKToRGB: true
+        interlace: '%\Imagine\Image\ImageInterface::INTERLACE_NONE%'
         # defines the filter to use for resize operations.
         # Note that the default GD driver only supports the FILTER_UNDEFINED.
         # Check the \Imagine\Image\ImageInterface class for a reference of all filters.
