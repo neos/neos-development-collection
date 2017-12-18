@@ -122,14 +122,14 @@ The default preset can have an empty `resolutionValue` value. The following exam
        contentDimensions:
 
          'language':
-           default: 'en'
-           resolution:
-             mode: 'uriPathSegment'
-           defaultPreset: 'en_US'
            label: 'Language'
            icon: 'icon-language'
+           default: 'en_US'
+           defaultPreset: 'en_US'
+           resolution:
+             mode: 'uriPathSegment'
            presets:
-             'en':
+             'en_US':
                label: 'English (US)'
                values: ['en_US']
                resolutionValue: ''
