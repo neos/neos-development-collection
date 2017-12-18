@@ -109,7 +109,7 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
 
         $workspace = new Workspace('live');
         $node = new Node(
-            new NodeData('/', $workspace),
+            new NodeData('/sites/wat', $workspace),
             new ContentContext(
                 'live',
                 new \DateTime(),

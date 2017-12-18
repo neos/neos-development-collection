@@ -11,7 +11,10 @@ namespace Neos\Neos\Tests\Unit\Routing;
  * source code.
  */
 
+use Neos\Flow\Http\Uri;
 use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Mvc\Routing\Dto\MatchResult;
+use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
 use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Utility\Algorithms;
@@ -21,13 +24,14 @@ use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource;
 use Neos\Neos\Domain\Service\ContentContext;
-use Neos\Neos\Routing\Exception\NoHomepageException;
+use Neos\Neos\Http\ContentSubgraphUriProcessor;
 use Neos\Neos\Routing\FrontendNodeRoutePartHandler;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Service\ContextFactory;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\Neos\Tests\Unit\Routing\Fixtures\UriSegmentDimensionPresetLinkProcessorResolver;
 
 /**
  * Test case for the frontend node route part handler
@@ -70,9 +74,48 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     protected $contentDimensionPresetSource;
 
     /**
+     * @var ContentSubgraphUriProcessor
+     */
+    protected $contentSubgraphUriProcessor;
+
+    /**
      * @var FrontendNodeRoutePartHandler
      */
     protected $routePartHandler;
+
+    /**
+     * @var array
+     */
+    protected $dimensionPresets = [
+        'country' => [
+            'defaultPreset' => 'global',
+            'default' => 'global',
+            'presets' => [
+                'global' => [
+                    'values' => ['global'],
+                    'resolutionValue' => 'global'
+                ],
+                'de' => [
+                    'values' => ['de'],
+                    'resolutionValue' => 'de'
+                ]
+            ]
+        ],
+        'language' => [
+            'defaultPreset' => 'en_US',
+            'default' => 'en_US',
+            'presets' => [
+                'en_US' => [
+                    'values' => ['en_US'],
+                    'resolutionValue' => 'en'
+                ],
+                'de_DE' => [
+                    'values' => ['de_DE'],
+                    'resolutionValue' => 'de'
+                ]
+            ]
+        ]
+    ];
 
     /**
      * Setup the most commonly used mocks and a real FrontendRoutePartHandler. The mock objects created by this function
@@ -119,8 +162,13 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $this->inject($this->routePartHandler, 'siteRepository', $this->mockSiteRepository);
 
         $this->contentDimensionPresetSource = new ConfigurationContentDimensionPresetSource();
-        $this->contentDimensionPresetSource->setConfiguration(array());
+        $this->contentDimensionPresetSource->setConfiguration($this->dimensionPresets);
         $this->inject($this->routePartHandler, 'contentDimensionPresetSource', $this->contentDimensionPresetSource);
+
+        $this->contentSubgraphUriProcessor = new ContentSubgraphUriProcessor();
+        $this->inject($this->contentSubgraphUriProcessor, 'dimensionPresetSource', $this->contentDimensionPresetSource);
+        $this->inject($this->contentSubgraphUriProcessor, 'dimensionPresetLinkProcessorResolver', new UriSegmentDimensionPresetLinkProcessorResolver());
+        $this->inject($this->routePartHandler, 'contentSubgraphUriProcessor', $this->contentSubgraphUriProcessor);
     }
 
     /**
@@ -160,8 +208,9 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue($expectedContextPath));
 
         $routePath = 'home';
-        $this->assertTrue($this->routePartHandler->match($routePath));
-        $this->assertSame($expectedContextPath, $this->routePartHandler->getValue());
+        $matchResult = $this->routePartHandler->match($routePath);
+        $this->assertInstanceOf(MatchResult::class, $matchResult);
+        $this->assertSame($expectedContextPath, $matchResult->getMatchedValue());
     }
 
     /**
@@ -241,8 +290,9 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue('/sites/examplecom/features@user-robert'));
 
         $routePath = 'features';
-        $this->assertTrue($this->routePartHandler->match($routePath));
-        $this->assertEquals('/sites/examplecom/features@user-robert', $this->routePartHandler->getValue());
+        $matchResult = $this->routePartHandler->match($routePath);
+        $this->assertInstanceOf(MatchResult::class, $matchResult);
+        $this->assertEquals('/sites/examplecom/features@user-robert', $matchResult->getMatchedValue());
     }
 
     /**
@@ -264,119 +314,16 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubNode->mockProperties['uriPathSegment'] = 'features';
 
         $routePath = 'features';
-        $this->assertTrue($this->routePartHandler->match($routePath));
+        $this->assertInstanceOf(MatchResult::class, $this->routePartHandler->match($routePath));
         $routePath = '';
-        $this->assertTrue($this->routePartHandler->match($routePath));
+        $this->assertInstanceOf(MatchResult::class, $this->routePartHandler->match($routePath));
 
         $this->routePartHandler->setOptions(array('onlyMatchSiteNodes' => true));
 
         $routePath = 'features';
         $this->assertFalse($this->routePartHandler->match($routePath));
         $routePath = '';
-        $this->assertTrue($this->routePartHandler->match($routePath));
-    }
-
-
-    /**
-     * @test
-     */
-    public function matchCreatesContextForLiveWorkspaceByDefault()
-    {
-        $mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
-        $mockContext->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
-        $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
-
-        $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
-        $mockSubNode->mockProperties['uriPathSegment'] = 'home';
-
-        $that = $this;
-        $this->mockContextFactory->expects($this->once())->method('create')->will($this->returnCallback(function ($contextProperties) use ($that, $mockContext) {
-            $that->assertSame('live', $contextProperties['workspaceName']);
-            return $mockContext;
-        }));
-
-        $routePath = 'home';
-        $this->routePartHandler->match($routePath);
-    }
-
-    /**
-     * @test
-     */
-    public function matchCreatesContextForCustomWorkspaceIfSpecifiedInNodeContextPath()
-    {
-        $mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
-        $mockContext->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
-        $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
-
-        $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
-        $mockSubNode->mockProperties['uriPathSegment'] = 'home';
-
-        $that = $this;
-        $this->mockContextFactory->expects($this->once())->method('create')->will($this->returnCallback(function ($contextProperties) use ($that, $mockContext) {
-            $that->assertSame('user-john', $contextProperties['workspaceName']);
-            return $mockContext;
-        }));
-
-        $routePath = 'home@user-john';
-        $this->routePartHandler->match($routePath);
-    }
-
-    /**
-     * @test
-     * @dataProvider contextPathsAndRequestPathsDataProvider
-     */
-    public function matchConsidersDimensionValuePresetsSpecifiedInTheRequestUriWhileBuildingTheContext($expectedContextPath, $requestPath, $supportEmptySegmentForDimensions)
-    {
-        $this->contentDimensionPresetSource->setConfiguration(array(
-            'language' => array(
-                'default' => 'en_US',
-                'defaultPreset' => 'en_US',
-                'presets' => array(
-                    'en_US' => array(
-                        'label' => 'English (US)',
-                        'values' => array('en_US'),
-                        'uriSegment' => 'en'
-                    ),
-                    'de_DE' => array(
-                        'label' => 'Deutsch',
-                        'values' => array('de_DE', 'en_US'),
-                        'uriSegment' => 'de'
-                    )
-                )
-            ),
-            'country' => array(
-                'default' => 'global',
-                'defaultPreset' => 'global',
-                'presets' => array(
-                    'global' => array(
-                        'label' => 'Global',
-                        'values' => array('global'),
-                        'uriSegment' => 'global'
-                    ),
-                    'us' => array(
-                        'label' => 'USA',
-                        'values' => array('us'),
-                        'uriSegment' => 'us'
-                    ),
-                    'de' => array(
-                        'label' => 'Deutschland',
-                        'values' => array('de'),
-                        'uriSegment' => 'de'
-                    )
-                )
-            )
-        ));
-
-        $mockContext = $this->buildMockContext(array('workspaceName' => 'live'));
-        $mockContext->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
-        $mockContext->mockSiteNode = $this->buildSiteNode($mockContext, '/sites/examplecom');
-
-        $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'features');
-        $mockSubNode->mockProperties['uriPathSegment'] = 'features';
-
-        $this->inject($this->routePartHandler, 'supportEmptySegmentForDimensions', $supportEmptySegmentForDimensions);
-        $this->assertTrue($this->routePartHandler->match($requestPath));
-        $value = $this->routePartHandler->getValue();
+        $this->assertInstanceOf(MatchResult::class, $this->routePartHandler->match($routePath));
     }
 
     /**
@@ -433,8 +380,9 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue('/sites/examplecom/home/ae178bc9184@user-robert'));
 
         $routeValues = array('node' => $mockSubSubNode);
-        $this->assertTrue($this->routePartHandler->resolve($routeValues));
-        $this->assertSame('home/coffee-brands@user-robert', $this->routePartHandler->getValue());
+        $resolveResult = $this->routePartHandler->resolve($routeValues);
+        $this->assertInstanceOf(ResolveResult::class, $resolveResult);
+        $this->assertSame('home/coffee-brands@user-robert', $resolveResult->getResolvedValue());
     }
 
     /**
@@ -455,8 +403,9 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         $mockSubSubNode->expects($this->any())->method('getContextPath')->will($this->returnValue('/sites/otherdotcom/home/ae178bc9184@user-robert'));
 
         $routeValues = array('node' => $mockSubSubNode);
-        $this->assertTrue($this->routePartHandler->resolve($routeValues));
-        $this->assertSame('home/coffee-brands@user-robert', $this->routePartHandler->getValue());
+        $resolveResult = $this->routePartHandler->resolve($routeValues);
+        $this->assertInstanceOf(ResolveResult::class, $resolveResult);
+        $this->assertSame('home/coffee-brands@user-robert', $resolveResult->getResolvedValue());
     }
 
     /**
@@ -503,7 +452,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         }));
 
         $routeValues = array('node' => '/sites/examplecom/home');
-        $this->assertTrue($this->routePartHandler->resolve($routeValues));
+        $this->assertInstanceOf(ResolveResult::class, $this->routePartHandler->resolve($routeValues));
     }
 
     /**
@@ -531,7 +480,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
         }));
 
         $routeValues = array('node' => '/sites/examplecom/home@user-johndoe');
-        $this->assertTrue($this->routePartHandler->resolve($routeValues));
+        $this->assertInstanceOf(ResolveResult::class, $this->routePartHandler->resolve($routeValues));
     }
 
     /**
@@ -682,8 +631,10 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
 
         $routeValues = array('node' => $contextPath);
         $this->inject($this->routePartHandler, 'supportEmptySegmentForDimensions', $supportEmptySegmentForDimensions);
-        $this->assertTrue($this->routePartHandler->resolve($routeValues));
-        $this->assertSame($expectedUriPath, $this->routePartHandler->getValue());
+        $this->inject($this->contentSubgraphUriProcessor, 'supportEmptySegmentForDimensions', $supportEmptySegmentForDimensions);
+        $resolveResult = $this->routePartHandler->resolve($routeValues);
+        $this->assertInstanceOf(ResolveResult::class, $resolveResult);
+        $this->assertSame($expectedUriPath, (string) $resolveResult->getUriConstraints()->applyTo(new Uri($resolveResult->getResolvedValue()), false) . $resolveResult->getResolvedValue());
     }
 
     /**

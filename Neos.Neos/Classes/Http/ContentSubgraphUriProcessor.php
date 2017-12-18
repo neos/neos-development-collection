@@ -56,40 +56,50 @@ final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorIn
 
         if (!$contentContext->isInBackend()) {
             $presets = $this->dimensionPresetSource->getAllPresets();
-            $allUriPathSegmentDetectableDimensionPresetsAreDefault = true;
             $dimensionValues = $node->getContext()->getDimensions();
-
             $this->sortDimensionValuesByOffset($dimensionValues, $presets);
             $uriPathSegmentOffset = 0;
+            $uriPathSegmentConstraints = UriConstraints::create();
+            $allUriPathSegmentDetectableDimensionPresetsAreDefault = true;
 
-            foreach ($dimensionValues as $dimensionName => $values) {
-                $presetConfiguration = $presets[$dimensionName];
-                $preset = $this->dimensionPresetSource->findPresetByDimensionValues($dimensionName, $values);
-                $options = $presets[$dimensionName]['resolution']['options'] ?? [];
-
+            foreach ($presets as $dimensionName => $presetConfiguration) {
+                $options = $presetConfiguration['resolution']['options'] ?? [];
                 $resolutionMode = new ContentDimensionResolutionMode(
                     $presetConfiguration['resolution']['mode']
                     ?? ContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT
                 );
+
+                if (isset($dimensionValues[$dimensionName])) {
+                    $preset = $this->dimensionPresetSource->findPresetByDimensionValues($dimensionName, $dimensionValues[$dimensionName]);
+                } else {
+                    $preset = $presetConfiguration['presets'][$presetConfiguration['defaultPreset']];
+                    $preset['identifier'] = $presetConfiguration['defaultPreset'];
+                }
+
+                $linkProcessor = $this->dimensionPresetLinkProcessorResolver->resolveDimensionPresetLinkProcessor($dimensionName, $presetConfiguration);
                 if ($resolutionMode->getMode() === ContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT) {
                     if (!isset($options['offset'])) {
                         $options['offset'] = $uriPathSegmentOffset;
                     }
-                    $uriPathSegmentOffset++;
 
                     if ($presetConfiguration['defaultPreset'] !== $preset['identifier']) {
                         $allUriPathSegmentDetectableDimensionPresetsAreDefault = false;
                     }
+                    $uriPathSegmentOffset++;
+                    $uriPathSegmentConstraints = $linkProcessor->processUriConstraints($uriPathSegmentConstraints, $dimensionName, $presetConfiguration, $preset, $options);
+                } else {
+                    $uriConstraints = $linkProcessor->processUriConstraints($uriConstraints, $dimensionName, $presetConfiguration, $preset, $options);
                 }
 
-                $linkProcessor = $this->dimensionPresetLinkProcessorResolver->resolveDimensionPresetLinkProcessor($dimensionName, $presetConfiguration);
-                $uriConstraints = $linkProcessor->processUriConstraints($uriConstraints, $dimensionName, $presetConfiguration, $preset, $options);
             }
 
-            if ($this->supportEmptySegmentForDimensions
-                && $allUriPathSegmentDetectableDimensionPresetsAreDefault
-                && $node->getParentPath() === SiteService::SITES_ROOT_PATH) {
-                $uriConstraints->withPath('/');
+            if ((!$this->supportEmptySegmentForDimensions
+                || !$allUriPathSegmentDetectableDimensionPresetsAreDefault)
+                && $uriPathSegmentOffset > 0) {
+                $uriConstraints = $uriConstraints->merge($uriPathSegmentConstraints);
+                if ($node->getParentPath() !== SiteService::SITES_ROOT_PATH) {
+                    $uriConstraints = $uriConstraints->withPathPrefix('/', true);
+                }
             }
         }
 
