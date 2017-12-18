@@ -4,7 +4,7 @@
     "license": "GPL-3.0+",
     "type": "neos-package-collection",
     "require": {
-        "neos/flow-development-collection": "~4.2.0",
+        "neos/flow-development-collection": "dev-master",
         "neos/flow": "*",
         "neos/cache": "*",
         "neos/eel": "*",
@@ -23,11 +23,11 @@
         "neos/imagine": "^3.0.2",
         "imagine/imagine": "*",
         "doctrine/dbal": "~2.5.0",
-        "neos/party": "~4.0",
-        "neos/setup": "~4.0",
-        "neos/twitter-bootstrap": "~3.0",
+        "neos/party": "*",
+        "neos/setup": "*",
+        "neos/twitter-bootstrap": "*",
         "neos/form": "*",
-        "neos/kickstarter": "~4.2.0"
+        "neos/kickstarter": "*"
     },
     "replace": {
         "typo3/typo3cr": "self.version",
@@ -43,7 +43,14 @@
         "neos/media": "self.version",
         "neos/neos": "self.version",
         "neos/nodetypes": "self.version",
-        "neos/site-kickstarter": "self.version"
+        "neos/site-kickstarter": "self.version",
+        "neos/nodetypes-assetlist": "self.version",
+        "neos/nodetypes-basemixins": "self.version",
+        "neos/nodetypes-form": "self.version",
+        "neos/nodetypes-columnlayouts": "self.version",
+        "neos/nodetypes-contentreferences": "self.version",
+        "neos/nodetypes-html": "self.version",
+        "neos/nodetypes-navigation": "self.version"
     },
     "suggest": {
         "neos/utility-schema": "Validate NodeType schema.",
@@ -75,6 +82,27 @@
             ],
             "Neos\\SiteKickstarter\\": [
                 "Neos.SiteKickstarter/Classes"
+            ],
+            "Neos\\NodeTypes\\AssetList\\": [
+                "Neos.NodeTypes.AssetList/Classes"
+            ],
+            "Neos\\NodeTypes\\BaseMixins\\": [
+                "Neos.NodeTypes.BaseMixins/Classes"
+            ],
+            "Neos\\NodeTypes\\Form\\": [
+                "Neos.NodeTypes.Form/Classes"
+            ],
+            "Neos\\NodeTypes\\ColumnLayouts\\": [
+                "Neos.NodeTypes.ColumnLayouts/Classes"
+            ],
+            "Neos\\NodeTypes\\ContentReferences\\": [
+                "Neos.NodeTypes.ContentReferences/Classes"
+            ],
+            "Neos\\NodeTypes\\Html\\": [
+                "Neos.NodeTypes.Html/Classes"
+            ],
+            "Neos\\NodeTypes\\Navigation\\": [
+                "Neos.NodeTypes.Navigation/Classes"
             ]
         }
     },

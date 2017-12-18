@@ -1,0 +1,23 @@
+'Neos.NodeTypes.ContentReferences:ContentReferences':
+  superTypes:
+    'Neos.Neos:Content': true
+  ui:
+    label: i18n
+    icon: 'icon-copy'
+    position: 800
+    inspector:
+      groups:
+        references:
+          label: i18n
+          position: 10
+          icon: 'icon-copy'
+  properties:
+    references:
+      type: 'references'
+      ui:
+        inspector:
+          group: 'references'
+          editorOptions:
+            nodeTypes: ['Neos.Neos:Content']
+        label: i18n
+        reloadIfChanged: true

@@ -82,7 +82,7 @@ class RouteCacheAspect
     /**
      * Add the current workspace name as a tag for the route cache entry
      *
-     * @Flow\Around("method(TYPO3\Flow\Mvc\Routing\RouterCachingService->generateRouteTags())")
+     * @Flow\Around("method(Neos\Flow\Mvc\Routing\RouterCachingService->generateRouteTags())")
      * @param JoinPointInterface $joinPoint The current join point
      * @return array
      */

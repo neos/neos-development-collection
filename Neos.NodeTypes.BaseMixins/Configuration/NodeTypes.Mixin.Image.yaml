@@ -1,0 +1,34 @@
+'Neos.NodeTypes.BaseMixins:ImageMixin':
+  abstract: true
+  ui:
+    inspector:
+      groups:
+        image:
+          label: i18n
+          position: 5
+          icon: 'icon-image'
+  properties:
+    image:
+      type: Neos\Media\Domain\Model\ImageInterface
+      ui:
+        label: i18n
+        reloadIfChanged: true
+        inspector:
+          group: 'image'
+          position: 50
+    alternativeText:
+      type: string
+      ui:
+        label: i18n
+        reloadIfChanged: true
+        inspector:
+          group: 'image'
+          position: 100
+    title:
+      type: string
+      ui:
+        label: i18n
+        reloadIfChanged: true
+        inspector:
+          group: 'image'
+          position: 150
