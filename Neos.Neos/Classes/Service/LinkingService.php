@@ -337,6 +337,7 @@ class LinkingService
             $site = $this->siteRepository->findOneByNodeName($siteNodeName);
         }
 
+        $uriObject = new Uri($uri);
         if ($site->hasActiveDomains()) {
             $requestUriHost = $request->getHttpRequest()->getBaseUri()->getHost();
             $activeHostPatterns = $site->getActiveDomains()->map(function (Domain $domain) {
@@ -344,10 +345,10 @@ class LinkingService
             })->toArray();
             if (!in_array($requestUriHost, $activeHostPatterns, true)) {
                 $uri = $this->createSiteUri($controllerContext, $site) . '/' . ltrim($uri, '/');
-            } elseif ($absolute && !$uri->getHost()) {
+            } elseif ($absolute && !$uriObject->getHost()) {
                 $uri = $request->getHttpRequest()->getBaseUri() . ltrim($uri, '/');
             }
-        } elseif ($absolute && !$uri->getHost()) {
+        } elseif ($absolute && !$uriObject->getHost()) {
             $uri = $request->getHttpRequest()->getBaseUri() . ltrim($uri, '/');
         }
 
