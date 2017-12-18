@@ -90,7 +90,6 @@ final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorIn
                 } else {
                     $uriConstraints = $linkProcessor->processUriConstraints($uriConstraints, $dimensionName, $presetConfiguration, $preset, $options);
                 }
-
             }
 
             if ((!$this->supportEmptySegmentForDimensions
