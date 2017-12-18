@@ -90,11 +90,9 @@ final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorIn
                 } else {
                     $uriConstraints = $linkProcessor->processUriConstraints($uriConstraints, $dimensionName, $presetConfiguration, $preset, $options);
                 }
-
             }
 
-            if ((!$this->supportEmptySegmentForDimensions
-                || !$allUriPathSegmentDetectableDimensionPresetsAreDefault)
+            if ((!$this->supportEmptySegmentForDimensions || !$allUriPathSegmentDetectableDimensionPresetsAreDefault)
                 && $uriPathSegmentOffset > 0) {
                 $uriConstraints = $uriConstraints->merge($uriPathSegmentConstraints);
                 if ($node->getParentPath() !== SiteService::SITES_ROOT_PATH) {
