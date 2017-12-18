@@ -285,19 +285,19 @@ class SitesController extends AbstractModuleController
         $nodeName = $this->nodeService->generateUniqueNodeName(SiteService::SITES_ROOT_PATH, $siteName);
 
         if ($this->siteRepository->findOneByNodeName($nodeName)) {
-            $this->addFlashMessage('Error:A site with siteNodeName "%s" already exists', Message::SEVERITY_ERROR, [$nodeName], 1412372375);
+            $this->addFlashMessage('Error: A site with siteNodeName "%s" already exists', 'Site creation error', Message::SEVERITY_ERROR, [$nodeName], 1412372375);
             $this->redirect('createSiteNode');
         }
 
         $siteNodeType = $this->nodeTypeManager->getNodeType($nodeType);
 
         if ($siteNodeType === null || $siteNodeType->getName() === 'Neos.Neos:FallbackNode') {
-            $this->addFlashMessage('Error: The given node type "%s" was not found', 'Import error', Message::SEVERITY_ERROR, [$nodeType], 1412372375);
+            $this->addFlashMessage('Error: The given node type "%s" was not found', 'Site creation error', Message::SEVERITY_ERROR, [$nodeType], 1412372375);
             $this->redirect('createSiteNode');
         }
 
         if ($siteNodeType->isOfType('Neos.Neos:Document') === false) {
-            $this->addFlashMessage('Error: The given node type "%s" is not based on the superType "%s"', Message::SEVERITY_ERROR, [$nodeType, 'Neos.Neos:Document'], 1412372375);
+            $this->addFlashMessage('Error: The given node type "%s" is not based on the superType "%s"', 'Site creation error', Message::SEVERITY_ERROR, [$nodeType, 'Neos.Neos:Document'], 1412372375);
             $this->redirect('createSiteNode');
         }
 
