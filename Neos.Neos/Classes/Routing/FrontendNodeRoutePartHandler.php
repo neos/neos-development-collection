@@ -342,7 +342,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      */
     protected function wasUriPathSegmentUsedDuringSubgraphDetection(): bool
     {
-        return $this->parameters->getValue('uriPathSegmentUsed') ?? false;
+        return $this->parameters ? ($this->parameters->getValue('uriPathSegmentUsed') ?? false) : false;
     }
 
     /**
