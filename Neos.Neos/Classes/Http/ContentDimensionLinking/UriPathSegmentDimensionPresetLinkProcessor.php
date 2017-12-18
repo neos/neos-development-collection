@@ -44,7 +44,7 @@ final class UriPathSegmentDimensionPresetLinkProcessor implements ContentDimensi
     ): Routing\Dto\UriConstraints {
         $options = $overrideOptions ? Arrays::arrayMergeRecursiveOverrule($this->defaultOptions, $overrideOptions) : $this->defaultOptions;
         $pathSegmentPart = $options['offset'] > 0 ? $options['delimiter'] : '';
-        $pathSegmentPart .= $preset['resolutionValue'] ?? $preset['uriSegment'];
+        $pathSegmentPart .= ($preset['resolutionValue'] ?? $preset['uriSegment']) . '/';
 
         return $uriConstraints->withPathPrefix($pathSegmentPart, true);
     }
