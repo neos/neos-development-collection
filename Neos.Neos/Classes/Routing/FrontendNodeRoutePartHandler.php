@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Routing;
 
 /*
@@ -13,6 +14,9 @@ namespace Neos\Neos\Routing;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Mvc\Routing\Dto\MatchResult;
+use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
+use Neos\Flow\Mvc\Routing\Dto\RouteTags;
 use Neos\Flow\Mvc\Routing\DynamicRoutePart;
 use Neos\Flow\Security\Context;
 use Neos\Neos\Domain\Repository\DomainRepository;
@@ -21,18 +25,16 @@ use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\ContentContextFactory;
 use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\Neos\Domain\Service\SiteService;
-use Neos\Neos\Routing\Exception\InvalidDimensionPresetCombinationException;
-use Neos\Neos\Routing\Exception\InvalidRequestPathException;
-use Neos\Neos\Routing\Exception\NoSuchDimensionValueException;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
+use Neos\Neos\Http\ContentSubgraphUriProcessor;
+use Neos\Utility\ObjectAccess;
 
 /**
  * A route part handler for finding nodes specifically in the website's frontend.
  */
 class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendNodeRoutePartHandlerInterface
 {
-
     /**
      * @Flow\Inject
      * @var SystemLoggerInterface
@@ -62,6 +64,12 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * @var SiteRepository
      */
     protected $siteRepository;
+
+    /**
+     * @Flow\Inject
+     * @var ContentSubgraphUriProcessor
+     */
+    protected $contentSubgraphUriProcessor;
 
     /**
      * @Flow\InjectConfiguration("routing.supportEmptySegmentForDimensions")
@@ -112,12 +120,13 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * in time the route part handler is invoked, the security framework is not yet fully initialized.
      *
      * @param string $requestPath The request path (without leading "/", relative to the current Site Node)
-     * @return boolean true if the $requestPath could be matched, otherwise false
+     * @return bool|MatchResult An instance of MatchResult if value could be matched successfully, otherwise false.
      * @throws \Exception
      * @throws Exception\NoHomepageException if no node could be found on the homepage (empty $requestPath)
      */
     protected function matchValue($requestPath)
     {
+        $contentContext = $this->buildContentContextFromParameters();
         try {
             /** @var NodeInterface $node */
             $node = null;
@@ -139,9 +148,14 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             return false;
         }
 
-        $this->value = $node->getContextPath();
+        $tagArray = [$contentContext->getWorkspace()->getName(), $node->getIdentifier()];
+        $parent = $node->getParent();
+        while ($parent) {
+            $tagArray[] = $parent->getIdentifier();
+            $parent = $parent->getParent();
+        }
 
-        return true;
+        return new MatchResult($node->getContextPath(), RouteTags::createFromArray($tagArray));
     }
 
     /**
@@ -160,7 +174,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      */
     protected function convertRequestPathToNode($requestPath)
     {
-        $contentContext = $this->buildContextFromRequestPath($requestPath);
+        $contentContext = $this->buildContentContextFromParameters();
         $requestPathWithoutContext = $this->removeContextFromPath($requestPath);
 
         $workspace = $contentContext->getWorkspace();
@@ -206,7 +220,9 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * $this->value:       homepage/about@user-admin
      *
      * @param mixed $node Either a Node object or an absolute context node path
-     * @return boolean true if value could be resolved successfully, otherwise false.
+     * @return ResolveResult|false ResolveResult if value could be resolved successfully, otherwise false.
+     * @throws Exception\InvalidRequestPathException
+     * @throws \Neos\Neos\Http\Exception\InvalidDimensionPresetLinkProcessorException
      */
     protected function resolveValue($node)
     {
@@ -240,37 +256,9 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         }
 
         $routePath = $this->resolveRoutePathForNode($node);
-        $this->value = $routePath;
+        $uriConstraints = $this->contentSubgraphUriProcessor->resolveDimensionUriConstraints($node);
 
-        return true;
-    }
-
-    /**
-     * Creates a content context from the given request path, considering possibly mentioned content dimension values.
-     *
-     * @param string &$requestPath The request path. If at least one content dimension is configured, the first path segment will identify the content dimension values
-     * @return ContentContext The built content context
-     */
-    protected function buildContextFromRequestPath(&$requestPath)
-    {
-        $workspaceName = 'live';
-        $dimensionsAndDimensionValues = $this->parseDimensionsAndNodePathFromRequestPath($requestPath);
-
-        // This is a workaround as NodePaths::explodeContextPath() (correctly)
-        // expects a context path to have something before the '@', but the requestPath
-        // could potentially contain only the context information.
-        if (strpos($requestPath, '@') === 0) {
-            $requestPath = '/' . $requestPath;
-        }
-
-        if ($requestPath !== '' && NodePaths::isContextPath($requestPath)) {
-            try {
-                $nodePathAndContext = NodePaths::explodeContextPath($requestPath);
-                $workspaceName = $nodePathAndContext['workspaceName'];
-            } catch (\InvalidArgumentException $exception) {
-            }
-        }
-        return $this->buildContextFromWorkspaceNameAndDimensions($workspaceName, $dimensionsAndDimensionValues);
+        return new ResolveResult($routePath, $uriConstraints);
     }
 
     /**
@@ -316,15 +304,64 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     }
 
     /**
+     * Sets context properties like "invisibleContentShown" according to the workspace (live or not) and returns a
+     * ContentContext object.
+     *
+     * @param string $workspaceName Name of the workspace to use in the context
+     * @param array $dimensionsAndDimensionValues An array of dimension names (index) and their values (array of strings). See also: ContextFactory
+     * @return ContentContext
+     */
+    protected function buildContextFromWorkspaceNameAndDimensions(string $workspaceName, array $dimensionsAndDimensionValues): ContentContext
+    {
+        $contextProperties = [
+            'workspaceName' => $workspaceName,
+            'invisibleContentShown' => ($workspaceName !== 'live'),
+            'inaccessibleContentShown' => ($workspaceName !== 'live'),
+            'dimensions' => $dimensionsAndDimensionValues
+        ];
+
+        /** @var ContentContext $context */
+        $context = $this->contextFactory->create($contextProperties);
+
+        return $context;
+    }
+
+    /**
+     * @return ContentContext|null
+     */
+    protected function buildContentContextFromParameters()
+    {
+        return $this->buildContextFromWorkspaceNameAndDimensions(
+            $this->parameters->getValue('workspaceName') ?? 'live',
+            $this->parameters->getValue('dimensionValues') ? json_decode($this->parameters->getValue('dimensionValues'), true) : []
+        );
+    }
+
+    /**
+     * @return bool
+     */
+    protected function wasUriPathSegmentUsedDuringSubgraphDetection(): bool
+    {
+        return $this->parameters ? ($this->parameters->getValue('uriPathSegmentUsed') ?? false) : false;
+    }
+
+    /**
      * @param string $path an absolute or relative node path which possibly contains context information, for example "/sites/somesite/the/node/path@some-workspace"
      * @return string the same path without context information
      */
     protected function removeContextFromPath($path)
     {
+        if ($this->wasUriPathSegmentUsedDuringSubgraphDetection()) {
+            $pivot = mb_strpos($path, '/');
+            $path = $pivot === false ? '' : mb_substr($path, $pivot + 1);
+        }
         if ($path === '' || NodePaths::isContextPath($path) === false) {
             return $path;
         }
         try {
+            if (strpos($path, '@') === 0) {
+                $path = '/' . $path;
+            }
             $nodePathAndContext = NodePaths::explodeContextPath($path);
             // This is a workaround as we potentially prepend the context path with "/" in buildContextFromRequestPath to create a valid context path,
             // the code in this class expects an empty nodePath though for the site node, so we remove it again at this point.
@@ -362,11 +399,9 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         $nodeContextPath = $node->getContextPath();
         $nodeContextPathSuffix = ($workspaceName !== 'live') ? substr($nodeContextPath, strpos($nodeContextPath, '@')) : '';
 
-        $currentNodeIsSiteNode = ($node->getParentPath() === SiteService::SITES_ROOT_PATH);
-        $dimensionsUriSegment = $this->getUriSegmentForDimensions($node->getContext()->getDimensions(), $currentNodeIsSiteNode);
         $requestPath = $this->getRequestPathByNode($node);
 
-        return trim($dimensionsUriSegment . $requestPath, '/') . $nodeContextPathSuffix;
+        return trim($requestPath, '/') . $nodeContextPathSuffix;
     }
 
     /**
@@ -428,7 +463,8 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         $requestPathSegments = [];
         while ($currentNode instanceof NodeInterface && $currentNode->getParentPath() !== SiteService::SITES_ROOT_PATH) {
             if (!$currentNode->hasProperty('uriPathSegment')) {
-                throw new Exception\MissingNodePropertyException(sprintf('Missing "uriPathSegment" property for node "%s". Nodes can be migrated with the "flow node:repair" command.', $node->getPath()), 1415020326);
+                throw new Exception\MissingNodePropertyException(sprintf('Missing "uriPathSegment" property for node "%s". Nodes can be migrated with the "flow node:repair" command.',
+                    $node->getPath()), 1415020326);
             }
 
             $pathSegment = $currentNode->getProperty('uriPathSegment');
@@ -437,194 +473,5 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         }
 
         return implode('/', array_reverse($requestPathSegments));
-    }
-
-    /**
-    * Choose between default method for parsing dimensions or the one which allows uriSegment to be empty for default preset.
-    *
-    * @param string &$requestPath The request path currently being processed by this route part handler, e.g. "de_global/startseite/ueber-uns"
-    * @return array An array of dimension name => dimension values (array of string)
-    */
-    protected function parseDimensionsAndNodePathFromRequestPath(&$requestPath)
-    {
-        if ($this->supportEmptySegmentForDimensions) {
-            $dimensionsAndDimensionValues = $this->parseDimensionsAndNodePathFromRequestPathAllowingEmptySegment($requestPath);
-        } else {
-            $dimensionsAndDimensionValues = $this->parseDimensionsAndNodePathFromRequestPathAllowingNonUniqueSegment($requestPath);
-        }
-        return $dimensionsAndDimensionValues;
-    }
-
-    /**
-     * Parses the given request path and checks if the first path segment is one or a set of content dimension preset
-     * identifiers. If that is the case, the return value is an array of dimension names and their preset URI segments.
-     * Allows uriSegment to be empty for default dimension preset.
-     *
-     * If the first path segment contained content dimension information, it is removed from &$requestPath.
-     *
-     * @param string &$requestPath The request path currently being processed by this route part handler, e.g. "de_global/startseite/ueber-uns"
-     * @return array An array of dimension name => dimension values (array of string)
-     * @throws InvalidDimensionPresetCombinationException
-     */
-    protected function parseDimensionsAndNodePathFromRequestPathAllowingEmptySegment(&$requestPath)
-    {
-        $dimensionPresets = $this->contentDimensionPresetSource->getAllPresets();
-        if (count($dimensionPresets) === 0) {
-            return [];
-        }
-        $dimensionsAndDimensionValues = [];
-        $chosenDimensionPresets = [];
-        $matches = [];
-        preg_match(self::DIMENSION_REQUEST_PATH_MATCHER, $requestPath, $matches);
-        $firstUriPartIsValidDimension = true;
-        foreach ($dimensionPresets as $dimensionName => $dimensionPreset) {
-            $dimensionsAndDimensionValues[$dimensionName] = $dimensionPreset['presets'][$dimensionPreset['defaultPreset']]['values'];
-            $chosenDimensionPresets[$dimensionName] = $dimensionPreset['defaultPreset'];
-        }
-        if (isset($matches['firstUriPart'])) {
-            $firstUriPartExploded = explode('_', $matches['firstUriPart']);
-            foreach ($firstUriPartExploded as $uriSegment) {
-                $uriSegmentIsValid = false;
-                foreach ($dimensionPresets as $dimensionName => $dimensionPreset) {
-                    $preset = $this->contentDimensionPresetSource->findPresetByUriSegment($dimensionName, $uriSegment);
-                    if ($preset !== null) {
-                        $uriSegmentIsValid = true;
-                        $dimensionsAndDimensionValues[$dimensionName] = $preset['values'];
-                        $chosenDimensionPresets[$dimensionName] = $preset['identifier'];
-                        break;
-                    }
-                }
-                if (!$uriSegmentIsValid) {
-                    $firstUriPartIsValidDimension = false;
-                    break;
-                }
-            }
-            if ($firstUriPartIsValidDimension) {
-                $requestPath = (isset($matches['remainingRequestPath']) ? $matches['remainingRequestPath'] : '');
-            }
-        }
-        if (!$this->contentDimensionPresetSource->isPresetCombinationAllowedByConstraints($chosenDimensionPresets)) {
-            throw new InvalidDimensionPresetCombinationException(sprintf('The resolved content dimension preset combination (%s) is invalid or restricted by content dimension constraints. Check your content dimension settings if you think that this is an error.', implode(', ', array_keys($chosenDimensionPresets))), 1428657721);
-        }
-        return $dimensionsAndDimensionValues;
-    }
-
-    /**
-     * Parses the given request path and checks if the first path segment is one or a set of content dimension preset
-     * identifiers. If that is the case, the return value is an array of dimension names and their preset URI segments.
-     * Doesn't allow empty uriSegment, but allows uriSegment to be not unique across presets.
-     *
-     * If the first path segment contained content dimension information, it is removed from &$requestPath.
-     *
-     * @param string &$requestPath The request path currently being processed by this route part handler, e.g. "de_global/startseite/ueber-uns"
-     * @return array An array of dimension name => dimension values (array of string)
-     * @throws InvalidDimensionPresetCombinationException
-     * @throws InvalidRequestPathException
-     * @throws NoSuchDimensionValueException
-     */
-    protected function parseDimensionsAndNodePathFromRequestPathAllowingNonUniqueSegment(&$requestPath)
-    {
-        $dimensionPresets = $this->contentDimensionPresetSource->getAllPresets();
-        if (count($dimensionPresets) === 0) {
-            return [];
-        }
-
-        $dimensionsAndDimensionValues = [];
-        $chosenDimensionPresets = [];
-        $matches = [];
-
-        preg_match(self::DIMENSION_REQUEST_PATH_MATCHER, $requestPath, $matches);
-
-        if (!isset($matches['firstUriPart'])) {
-            foreach ($dimensionPresets as $dimensionName => $dimensionPreset) {
-                $dimensionsAndDimensionValues[$dimensionName] = $dimensionPreset['presets'][$dimensionPreset['defaultPreset']]['values'];
-                $chosenDimensionPresets[$dimensionName] = $dimensionPreset['defaultPreset'];
-            }
-        } else {
-            $firstUriPart = explode('_', $matches['firstUriPart']);
-
-            if (count($firstUriPart) !== count($dimensionPresets)) {
-                throw new InvalidRequestPathException(sprintf('The first path segment of the request URI (%s) does not contain the necessary content dimension preset identifiers for all configured dimensions. This might be an old URI which doesn\'t match the current dimension configuration anymore.', $requestPath), 1413389121);
-            }
-
-            foreach ($dimensionPresets as $dimensionName => $dimensionPreset) {
-                $uriSegment = array_shift($firstUriPart);
-                $preset = $this->contentDimensionPresetSource->findPresetByUriSegment($dimensionName, $uriSegment);
-                if ($preset === null) {
-                    throw new NoSuchDimensionValueException(sprintf('Could not find a preset for content dimension "%s" through the given URI segment "%s".', $dimensionName, $uriSegment), 1413389321);
-                }
-                $dimensionsAndDimensionValues[$dimensionName] = $preset['values'];
-                $chosenDimensionPresets[$dimensionName] = $preset['identifier'];
-            }
-
-            $requestPath = (isset($matches['remainingRequestPath']) ? $matches['remainingRequestPath'] : '');
-        }
-
-        if (!$this->contentDimensionPresetSource->isPresetCombinationAllowedByConstraints($chosenDimensionPresets)) {
-            throw new InvalidDimensionPresetCombinationException(sprintf('The resolved content dimension preset combination (%s) is invalid or restricted by content dimension constraints. Check your content dimension settings if you think that this is an error.', implode(', ', array_keys($chosenDimensionPresets))), 1462175794805);
-        }
-
-        return $dimensionsAndDimensionValues;
-    }
-
-    /**
-     * Sets context properties like "invisibleContentShown" according to the workspace (live or not) and returns a
-     * ContentContext object.
-     *
-     * @param string $workspaceName Name of the workspace to use in the context
-     * @param array $dimensionsAndDimensionValues An array of dimension names (index) and their values (array of strings). See also: ContextFactory
-     * @return ContentContext
-     */
-    protected function buildContextFromWorkspaceNameAndDimensions($workspaceName, array $dimensionsAndDimensionValues)
-    {
-        $contextProperties = [
-            'workspaceName' => $workspaceName,
-            'invisibleContentShown' => ($workspaceName !== 'live'),
-            'inaccessibleContentShown' => ($workspaceName !== 'live'),
-            'dimensions' => $dimensionsAndDimensionValues
-        ];
-
-        return $this->contextFactory->create($contextProperties);
-    }
-
-    /**
-     * Find a URI segment in the content dimension presets for the given "language" dimension values
-     *
-     * This will do a reverse lookup from actual dimension values to a preset and fall back to the default preset if none
-     * can be found.
-     *
-     * @param array $dimensionsValues An array of dimensions and their values, indexed by dimension name
-     * @param boolean $currentNodeIsSiteNode If the current node is actually the site node
-     * @return string
-     * @throws \Exception
-     */
-    protected function getUriSegmentForDimensions(array $dimensionsValues, $currentNodeIsSiteNode)
-    {
-        $uriSegment = '';
-        $allDimensionPresetsAreDefault = true;
-
-        foreach ($this->contentDimensionPresetSource->getAllPresets() as $dimensionName => $dimensionPresets) {
-            $preset = null;
-            if (isset($dimensionsValues[$dimensionName])) {
-                $preset = $this->contentDimensionPresetSource->findPresetByDimensionValues($dimensionName, $dimensionsValues[$dimensionName]);
-            }
-            $defaultPreset = $this->contentDimensionPresetSource->getDefaultPreset($dimensionName);
-            if ($preset === null) {
-                $preset = $defaultPreset;
-            }
-            if ($preset !== $defaultPreset) {
-                $allDimensionPresetsAreDefault = false;
-            }
-            if (!isset($preset['uriSegment'])) {
-                throw new \Exception(sprintf('No "uriSegment" configured for content dimension preset "%s" for dimension "%s". Please check the content dimension configuration in Settings.yaml', $preset['identifier'], $dimensionName), 1395824520);
-            }
-            $uriSegment .= $preset['uriSegment'] . '_';
-        }
-
-        if ($this->supportEmptySegmentForDimensions && $allDimensionPresetsAreDefault && $currentNodeIsSiteNode) {
-            return '/';
-        } else {
-            return ltrim(trim($uriSegment, '_') . '/', '/');
-        }
     }
 }

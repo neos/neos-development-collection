@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Service;
 
 /*
@@ -20,12 +21,15 @@ use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\Exception as NeosException;
+use Neos\Neos\Http\ContentDimensionLinking\DimensionPresetLinkProcessorResolver;
+use Neos\Neos\Http\ContentSubgraphUriProcessorInterface;
 use Neos\Neos\TYPO3CR\NeosNodeServiceInterface;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
@@ -114,6 +118,18 @@ class LinkingService
     protected $siteRepository;
 
     /**
+     * @Flow\Inject
+     * @var DimensionPresetLinkProcessorResolver
+     */
+    protected $dimensionPresetLinkProcessorResolver;
+
+    /**
+     * @Flow\Inject
+     * @var ContentSubgraphUriProcessorInterface
+     */
+    protected $contentSubgraphUriProcessor;
+
+    /**
      * @param string|Uri $uri
      * @return boolean
      */
@@ -122,6 +138,7 @@ class LinkingService
         if ($uri instanceof Uri) {
             $uri = (string)$uri;
         }
+
         return preg_match(self::PATTERN_SUPPORTED_URIS, $uri) === 1;
     }
 
@@ -150,14 +167,20 @@ class LinkingService
      * @param ControllerContext $controllerContext
      * @param bool $absolute
      * @return string
+     * @throws NeosException
+     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
      */
     public function resolveNodeUri($uri, NodeInterface $contextNode, ControllerContext $controllerContext, $absolute = false)
     {
         $targetObject = $this->convertUriToObject($uri, $contextNode);
         if ($targetObject === null) {
             $this->systemLogger->log(sprintf('Could not resolve "%s" to an existing node; The node was probably deleted.', $uri));
+
             return null;
         }
+
         return $this->createNodeUri($controllerContext, $targetObject, null, null, $absolute);
     }
 
@@ -172,8 +195,10 @@ class LinkingService
         $targetObject = $this->convertUriToObject($uri);
         if ($targetObject === null) {
             $this->systemLogger->log(sprintf('Could not resolve "%s" to an existing asset; The asset was probably deleted.', $uri));
+
             return null;
         }
+
         return $this->resourceManager->getPublicPersistentResourceUri($targetObject->getResource());
     }
 
@@ -220,11 +245,23 @@ class LinkingService
      * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
      * @param boolean $resolveShortcuts INTERNAL Parameter - if FALSE, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
      * @return string The rendered URI
-     * @throws \InvalidArgumentException if the given node/baseNode is not valid
      * @throws NeosException if no URI could be resolved for the given node
+     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
      */
-    public function createNodeUri(ControllerContext $controllerContext, $node = null, NodeInterface $baseNode = null, $format = null, $absolute = false, array $arguments = array(), $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = array(), $resolveShortcuts = true)
-    {
+    public function createNodeUri(
+        ControllerContext $controllerContext,
+        $node = null,
+        NodeInterface $baseNode = null,
+        $format = null,
+        $absolute = false,
+        array $arguments = array(),
+        $section = '',
+        $addQueryString = false,
+        array $argumentsToBeExcludedFromQueryString = array(),
+        $resolveShortcuts = true
+    ) {
         $this->lastLinkedNode = null;
         if (!($node instanceof NodeInterface || is_string($node) || $baseNode instanceof NodeInterface)) {
             throw new \InvalidArgumentException('Expected an instance of NodeInterface or a string for the node argument, or alternatively a baseNode argument.', 1373101025);
@@ -288,27 +325,30 @@ class LinkingService
             ->setFormat($format ?: $request->getFormat())
             ->uriFor('show', array('node' => $resolvedNode), 'Frontend\Node', 'Neos.Neos');
 
-        $siteNode = $resolvedNode->getContext()->getCurrentSiteNode();
+        /** @var ContentContext $resolvedContentContext */
+        $resolvedContentContext = $resolvedNode->getContext();
+        $siteNode = $resolvedContentContext->getCurrentSiteNode();
         if (NodePaths::isSubPathOf($siteNode->getPath(), $resolvedNode->getPath())) {
             /** @var Site $site */
-            $site = $resolvedNode->getContext()->getCurrentSite();
+            $site = $resolvedContentContext->getCurrentSite();
         } else {
             $nodePath = NodePaths::getRelativePathBetween(SiteService::SITES_ROOT_PATH, $resolvedNode->getPath());
             list($siteNodeName) = explode('/', $nodePath);
             $site = $this->siteRepository->findOneByNodeName($siteNodeName);
         }
 
+        $uriObject = new Uri($uri);
         if ($site->hasActiveDomains()) {
             $requestUriHost = $request->getHttpRequest()->getBaseUri()->getHost();
-            $activeHostPatterns = $site->getActiveDomains()->map(function ($domain) {
+            $activeHostPatterns = $site->getActiveDomains()->map(function (Domain $domain) {
                 return $domain->getHostname();
             })->toArray();
             if (!in_array($requestUriHost, $activeHostPatterns, true)) {
                 $uri = $this->createSiteUri($controllerContext, $site) . '/' . ltrim($uri, '/');
-            } elseif ($absolute === true) {
+            } elseif ($absolute && !$uriObject->getHost()) {
                 $uri = $request->getHttpRequest()->getBaseUri() . ltrim($uri, '/');
             }
-        } elseif ($absolute === true) {
+        } elseif ($absolute && !$uriObject->getHost()) {
             $uri = $request->getHttpRequest()->getBaseUri() . ltrim($uri, '/');
         }
 
@@ -330,6 +370,7 @@ class LinkingService
         $requestUri = $controllerContext->getRequest()->getHttpRequest()->getUri();
         $baseUri = $controllerContext->getRequest()->getHttpRequest()->getBaseUri();
         $port = $primaryDomain->getPort() ?: $requestUri->getPort();
+
         return sprintf(
             '%s://%s%s%s',
             $primaryDomain->getScheme() ?: $requestUri->getScheme(),
