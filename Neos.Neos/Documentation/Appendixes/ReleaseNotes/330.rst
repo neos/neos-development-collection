@@ -2,8 +2,8 @@
 3.3.0
 =====
 
-`FEATURE: Add new user-inteface written in ReactJS`_
-----------------------------------------------------
+`FEATURE: Add new user-inteface written in ReactJS <https://github.com/neos/neos-ui>`_
+--------------------------------------------------------------------------------------
 
 The Neos User-Interface was completely rewritten based on ReactJS.
 
@@ -114,13 +114,7 @@ In addition the class `\\Neos\\Neos\\Service\\HtmlAugmenter` was moved to `\\Neo
 `FEATURE: Asset Constraints <https://github.com/neos/neos-development-collection/pull/1723>`_
 ---------------------------------------------------------------------------------------------
 
-This introduces the following Privileges:
-
-* `ReadAssetPrivilege`
-* `ReadTagPrivilege`
-* `ReadAssetCollectionPrivilege`
-
-see added documentation.
+This change introduces the following Privileges: `ReadAssetPrivilege`, `ReadTagPrivilege`. `ReadAssetCollectionPrivilege`
 
 * Packages: ``Media`` ``Neos``
 
