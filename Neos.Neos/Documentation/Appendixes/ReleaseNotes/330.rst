@@ -2,6 +2,33 @@
 3.3.0
 =====
 
+`FEATURE: Add new user-inteface written in ReactJS`_
+----------------------------------------------------
+
+The Neos User-Interface was completely rewritten based on ReactJS.
+
+While we have been focussing on recreating the existing User-Interface,
+there are important changes under the hood and even some exiting new features:
+
+* Responsive preview modes, showcasing how the website looks e.g. on mobile.
+* New "create node" dialog, with the ability to select insertion positions
+  and enter required field values.
+* Faster backend-loading and way faster document switching and initialization.
+* The content area is now loaded into an iFrame, so CSS Media Queries will just
+  work properly in the backend as in the frontend. In addition this prevents
+  unplanned CSS or JavaScript interactions between the website and the Neos UI.
+* We integrated CKEditor providing a stable basis for inline-editing.
+  This brings an improved support for copy/pasting content from word or other websites.
+  The editor now support using keyboard shortcuts for basic editing operations
+  (bold/italic/...). On top of that it is now possible to add custom styles
+  and classes to the editor.
+
+The new UI is default for new projects and can be added to existing projects via composer::
+
+ composer require --no-update "neos/neos-ui:~1.0.0"
+ composer require --no-update "neos/neos-ui-compiled:~1.0.0"
+ composer update
+
 `FEATURE: Allow configuring route after login to backend <https://github.com/neos/neos-development-collection/pull/1794>`_
 --------------------------------------------------------------------------------------------------------------------------
 
@@ -70,10 +97,10 @@ editors.
 
 * Packages: ``Neos``
 
-`FEATURE: Add fusion-prototypes \`Component\`, \`Editable\`, \`ContentComponent\` and \`Augmenter\`  <https://github.com/neos/neos-development-collection/pull/1752>`_
+`FEATURE: Add Atomic.Fusion prototypes \`Component\`, \`Editable\`, \`ContentComponent\` and \`Augmenter\`  <https://github.com/neos/neos-development-collection/pull/1752>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-The prototypes `Component`, `Editable`, `ContentComponent` and `Augmenter` are transfered from the package PackageFactory.AtomicFusion (https://github.com/PackageFactory/atomic-fusion) into the Neos-core.
+The prototypes `Component`, `Editable`, `ContentComponent` and `Augmenter` are added the Neos-core.
 
 - `Neos.Fusion:Component`: Create a component that adds all properties to the props context and afterward evaluates the renderer.
 - `Neos.Neos:Editable`: Create an editable tag for a property. In the frontend, only the content of the property gets rendered.
@@ -94,10 +121,6 @@ This introduces the following Privileges:
 * `ReadAssetCollectionPrivilege`
 
 see added documentation.
-
-Note:
-The code for this change has been taken from
-https://github.com/bwaidelich/Wwwision.AssetConstraints
 
 * Packages: ``Media`` ``Neos``
 
