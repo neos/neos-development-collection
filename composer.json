@@ -27,7 +27,7 @@
         "neos/setup": "*",
         "neos/twitter-bootstrap": "*",
         "neos/form": "*",
-        "neos/kickstarter": "*"
+        "neos/kickstarter": "~4.3.0"
     },
     "replace": {
         "typo3/typo3cr": "self.version",
@@ -42,15 +42,15 @@
         "neos/media-browser": "self.version",
         "neos/media": "self.version",
         "neos/neos": "self.version",
-        "neos/nodetypes": "self.version",
-        "neos/site-kickstarter": "self.version",
         "neos/nodetypes-assetlist": "self.version",
         "neos/nodetypes-basemixins": "self.version",
-        "neos/nodetypes-form": "self.version",
         "neos/nodetypes-columnlayouts": "self.version",
         "neos/nodetypes-contentreferences": "self.version",
+        "neos/nodetypes-form": "self.version",
         "neos/nodetypes-html": "self.version",
-        "neos/nodetypes-navigation": "self.version"
+        "neos/nodetypes-navigation": "self.version",
+        "neos/nodetypes": "self.version",
+        "neos/site-kickstarter": "self.version"
     },
     "suggest": {
         "neos/utility-schema": "Validate NodeType schema.",
@@ -77,20 +77,11 @@
             "Neos\\Neos\\": [
                 "Neos.Neos/Classes"
             ],
-            "Neos\\NodeTypes\\": [
-                "Neos.NodeTypes/Classes"
-            ],
-            "Neos\\SiteKickstarter\\": [
-                "Neos.SiteKickstarter/Classes"
-            ],
             "Neos\\NodeTypes\\AssetList\\": [
                 "Neos.NodeTypes.AssetList/Classes"
             ],
             "Neos\\NodeTypes\\BaseMixins\\": [
                 "Neos.NodeTypes.BaseMixins/Classes"
-            ],
-            "Neos\\NodeTypes\\Form\\": [
-                "Neos.NodeTypes.Form/Classes"
             ],
             "Neos\\NodeTypes\\ColumnLayouts\\": [
                 "Neos.NodeTypes.ColumnLayouts/Classes"
@@ -98,11 +89,20 @@
             "Neos\\NodeTypes\\ContentReferences\\": [
                 "Neos.NodeTypes.ContentReferences/Classes"
             ],
+            "Neos\\NodeTypes\\Form\\": [
+                "Neos.NodeTypes.Form/Classes"
+            ],
             "Neos\\NodeTypes\\Html\\": [
                 "Neos.NodeTypes.Html/Classes"
             ],
             "Neos\\NodeTypes\\Navigation\\": [
                 "Neos.NodeTypes.Navigation/Classes"
+            ],
+            "Neos\\NodeTypes\\": [
+                "Neos.NodeTypes/Classes"
+            ],
+            "Neos\\SiteKickstarter\\": [
+                "Neos.SiteKickstarter/Classes"
             ]
         }
     },
