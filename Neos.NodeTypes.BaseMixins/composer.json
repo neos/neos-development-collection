@@ -4,7 +4,8 @@
     "description": "Base mixins which are useful across projects.",
     "license": "GPL-3.0+",
     "require": {
-        "neos/neos": "*"
+        "neos/neos": "*",
+        "neos/nodetypes-basemixins": "*"
     },
     "autoload": {
         "psr-4": {
