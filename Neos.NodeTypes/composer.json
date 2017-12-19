@@ -11,6 +11,7 @@
         "neos/neos": "self.version",
         "neos/fusion": "self.version",
 
+        "neos/nodetypes-basemixins": "self.version",
         "neos/nodetypes-assetlist": "self.version",
         "neos/nodetypes-columnlayouts": "self.version",
         "neos/nodetypes-contentreferences": "self.version",

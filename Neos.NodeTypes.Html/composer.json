@@ -4,7 +4,8 @@
     "description": "A simple html node type.",
     "license": "GPL-3.0+",
     "require": {
-        "neos/neos": "*"
+        "neos/neos": "*",
+        "neos/nodetypes-basemixins": "*"
     },
     "autoload": {
         "psr-4": {
