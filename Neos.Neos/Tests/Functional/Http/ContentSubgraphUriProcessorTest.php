@@ -26,6 +26,11 @@ use Neos\Utility\ObjectAccess;
 class ContentSubgraphUriProcessorTest extends FunctionalTestCase
 {
     /**
+     * @var boolean
+     */
+    protected static $testablePersistenceEnabled = true;
+
+    /**
      * @var array
      */
     protected $dimensionPresets = [
