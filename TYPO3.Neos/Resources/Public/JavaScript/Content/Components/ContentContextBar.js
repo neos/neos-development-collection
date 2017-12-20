@@ -45,12 +45,7 @@ define(
        * Update the preview uri
        */
       updatePreviewUri: function () {
-        var targetWorkspaceName = this.get('targetWorkspaceController.targetWorkspace.name');
-        if (targetWorkspaceName === 'live') {
-          this.set('previewUri', location.href.replace(/@[A-Za-z0-9;&,\-_=]+/g, ''));
-        } else {
-          this.set('previewUri', location.href.replace(/@[A-Za-z0-9;&,\-_=]+/g, '@' + targetWorkspaceName));
-        }
+        this.set('previewUri', document.querySelector('[data-preview-uri]').getAttribute('data-preview-uri'));
       }.observes('targetWorkspaceController.targetWorkspace', 'contentDimensionController.selectedDimensions'),
 
       /**
