@@ -892,7 +892,10 @@ class Node implements NodeInterface, CacheAwareInterface
         // If an identifier is given: Check if a node aggregate already exists and then just add another node to the aggregate.
         // (the legacy API allows to specify the same identifier multiple times for different "node variants")
             // TODO Add a contentGraph->hasNodeAggregateInContentStream method (or getNodeAggregateInContentStream)
-        if ($identifier !== null && !empty($this->contentGraph->findNodesByNodeAggregateIdentifier($this->contentStreamIdentifier, $nodeAggregateIdentifier))) {
+        // The root node does not have a content stream identifier --> and when adding a node directly next to the root node,
+        // it can never exist yet.
+        $isRootNode = $this->contentStreamIdentifier === null;
+        if (!$isRootNode && $identifier !== null && !empty($this->contentGraph->findNodesByNodeAggregateIdentifier($this->contentStreamIdentifier, $nodeAggregateIdentifier))) {
             $command = new Command\AddNodeToAggregate(
                 $this->contentStreamIdentifier,
                 $nodeAggregateIdentifier,
