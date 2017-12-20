@@ -42,7 +42,7 @@ class ContentSubgraph
     /**
      * @var array
      */
-    protected $weight;
+    protected $weight = [];
 
 
     /**
