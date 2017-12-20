@@ -1,3 +1,4 @@
+@skip
 Feature: Move node with dimension support
   In order to move nodes
   As an API user of the content repository

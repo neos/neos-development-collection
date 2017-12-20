@@ -1,3 +1,4 @@
+@skip
 Feature: Multi layered workspaces
   In order to publish nodes across nested workspaces
   As an API user of the content repository

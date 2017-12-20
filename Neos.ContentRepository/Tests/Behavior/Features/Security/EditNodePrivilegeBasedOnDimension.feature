@@ -1,3 +1,4 @@
+@skip
 Feature: Privilege to restrict editing of nodes for a single dimension only
 
   Background:

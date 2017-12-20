@@ -1,3 +1,4 @@
+@skip
 Feature: Set Default Node Values on node creation
   In order to create nodes with a certain set of default properties
   As an API user of the content repository

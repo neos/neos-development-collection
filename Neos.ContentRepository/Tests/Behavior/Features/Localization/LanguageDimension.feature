@@ -1,3 +1,4 @@
+@skip
 Feature: Multiple languages as content dimension
   In order to have content with multiple content dimensions and fallbacks
   As an API user of the content repository

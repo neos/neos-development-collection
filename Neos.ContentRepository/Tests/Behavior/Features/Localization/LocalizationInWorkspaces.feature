@@ -1,3 +1,4 @@
+@skip
 Feature: Localization in workspaces
   In order to have a publish workflow for translated content
   As an API user of the content repository

@@ -1,3 +1,4 @@
+@skip
 Feature: Publish user workspace
   In order to have changes in the live workspace
   As an API user of the content repository

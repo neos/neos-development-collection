@@ -1,3 +1,4 @@
+@skip
 Feature: Node variants
   In order to manage content with multiple content dimensions and fallbacks
   As an API user of the content repository

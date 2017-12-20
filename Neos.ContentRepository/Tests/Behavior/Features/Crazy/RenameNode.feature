@@ -1,3 +1,4 @@
+@skip
 Feature: Rename node
   In order to rename nodes
   As an API user of the content repository

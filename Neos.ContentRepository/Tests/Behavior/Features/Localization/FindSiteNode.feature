@@ -1,3 +1,4 @@
+@skip
 Feature: Find site node in non-default content dimension context
   In order to determine the full path leading to a node with non-default dimension values
   As an API user of the content repository

@@ -1,3 +1,4 @@
+@skip
 Feature: Translate existing node
   In order to translate existing content to new languages
   As an API user of the content repository

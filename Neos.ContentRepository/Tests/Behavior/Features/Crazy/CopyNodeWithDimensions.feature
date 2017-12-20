@@ -1,3 +1,4 @@
+@skip
 Feature: Copy node with dimension support
   In order to copy nodes
   As an API user of the content repository

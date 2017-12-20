@@ -1,3 +1,4 @@
+@skip
 Feature: Privilege to restrict editing of node properties
 
   Background:

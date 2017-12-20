@@ -1,3 +1,4 @@
+@skip
 Feature: Empty dimension values act as a fallback
   In order to have nodes without knowledge about particular dimensions
   As an API user of the content repository

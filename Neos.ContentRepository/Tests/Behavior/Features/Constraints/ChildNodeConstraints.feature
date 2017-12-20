@@ -1,3 +1,4 @@
+@skip
 Feature: ChildNode Constraints
   In order to have content with a defined structure
   As an API user of the content repository

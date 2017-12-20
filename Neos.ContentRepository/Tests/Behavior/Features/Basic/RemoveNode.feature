@@ -1,3 +1,4 @@
+@skip
 Feature: Remove node
   In order to remove nodes
   As an API user of the content repository
