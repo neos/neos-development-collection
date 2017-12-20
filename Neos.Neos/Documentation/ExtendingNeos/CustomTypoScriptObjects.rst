@@ -18,7 +18,7 @@ Create a Fusion Object Class
 
 To create a custom Fusion object the ``Neos\Fusion\FusionObjects\AbstractFusionObject`` class is
 extended. The only method that needs to be implemented is ``evaluate()``. To access values from Fusion the method
-``$this->tsValue('__ts_value_key__');`` is used:
+``$this->fusionValue('__fusion_value_key__');`` is used:
 
 .. code-block:: php
 
@@ -29,8 +29,8 @@ extended. The only method that needs to be implemented is ``evaluate()``. To acc
 
 	class GravatarImplementation extends AbstractFusionObject {
 		public function evaluate() {
-			$emailAddress = $this->tsValue('emailAddress');
-			$size = $this->tsValue('size') ? $this->tsValue('size') : 80;
+			$emailAddress = $this->fusionValue('emailAddress');
+			$size = $this->fusionValue('size') ? $this->fusionValue('size') : 80;
 			$gravatarImageSource = 'http://www.gravatar.com/avatar/' . md5( strtolower( trim( $emailAddress ) ) ) . "?s=$size&d=mm&r=g";
 			return '<img src="' . $gravatarImageSource . '" alt="" />';
 		}
