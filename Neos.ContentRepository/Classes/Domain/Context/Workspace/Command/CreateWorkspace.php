@@ -69,7 +69,7 @@ final class CreateWorkspace
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param UserIdentifier $workspaceOwner
      */
-    public function __construct(WorkspaceName $workspaceName, WorkspaceName $baseWorkspaceName = null, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $contentStreamIdentifier = null, UserIdentifier $workspaceOwner = null)
+    public function __construct(WorkspaceName $workspaceName, WorkspaceName $baseWorkspaceName, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $contentStreamIdentifier = null, UserIdentifier $workspaceOwner = null)
     {
         $this->workspaceName = $workspaceName;
         $this->baseWorkspaceName = $baseWorkspaceName;
@@ -90,7 +90,7 @@ final class CreateWorkspace
     }
 
     /**
-     * @return WorkspaceName|null
+     * @return WorkspaceName
      */
     public function getBaseWorkspaceName()
     {
