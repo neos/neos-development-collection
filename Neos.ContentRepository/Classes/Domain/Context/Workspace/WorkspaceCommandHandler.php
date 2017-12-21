@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Domain\Context\Workspace;
  */
 
 use Neos\ContentRepository\Domain\Context\ContentStream\Command\CreateContentStream;
+use Neos\ContentRepository\Domain\Context\ContentStream\Command\ForkContentStream;
 use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateRootNode;
 use Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler;
@@ -67,6 +68,16 @@ final class WorkspaceCommandHandler
             throw new WorkspaceAlreadyExists(sprintf('The workspace %s already exists', $command->getWorkspaceName()), 1505830958921);
         }
 
+        // TODO: CONCEPT OF EDITING SESSION IS TOTALLY MISSING SO FAR!!!!
+        // When the workspace is created, we first have to fork the content stream
+        $contentStreamIdentifier = new ContentStreamIdentifier();
+        $this->contentStreamCommandHandler->handleForkContentStream(
+            new ForkContentStream(
+                $contentStreamIdentifier,
+                $existingWorkspace->getCurrentContentStreamIdentifier()
+            )
+        );
+
         $this->eventPublisher->publish(
             'Neos.ContentRepository:Workspace:' . $command->getWorkspaceName(),
             new WorkspaceWasCreated(
@@ -75,16 +86,8 @@ final class WorkspaceCommandHandler
                 $command->getWorkspaceTitle(),
                 $command->getWorkspaceDescription(),
                 $command->getInitiatingUserIdentifier(),
-                $command->getWorkspaceOwner()
-            )
-        );
-
-        $contentStreamIdentifier = new ContentStreamIdentifier();
-        $this->contentStreamCommandHandler->handleCreateContentStream(
-            new CreateContentStream(
-                $contentStreamIdentifier,
-                $command->getWorkspaceName(),
-                $command->getInitiatingUserIdentifier()
+                $command->getWorkspaceOwner(),
+                $contentStreamIdentifier
             )
         );
     }
@@ -97,8 +100,17 @@ final class WorkspaceCommandHandler
     {
         $existingWorkspace = $this->workspaceFinder->findOneByName($command->getWorkspaceName());
         if ($existingWorkspace !== null) {
-            throw new WorkspaceAlreadyExists(sprintf('The workspace live already exists'), 1505848624450);
+            throw new WorkspaceAlreadyExists(sprintf('The workspace %s already exists', $command->getWorkspaceName()), 1505848624450);
         }
+
+        $contentStreamIdentifier = $command->getContentStreamIdentifier();
+        $this->contentStreamCommandHandler->handleCreateContentStream(
+            new CreateContentStream(
+                $contentStreamIdentifier,
+                $command->getInitiatingUserIdentifier()
+            )
+        );
+
 
         $this->eventPublisher->publish(
             'Neos.ContentRepository:Workspace:' . $command->getWorkspaceName(),
@@ -106,16 +118,8 @@ final class WorkspaceCommandHandler
                 $command->getWorkspaceName(),
                 $command->getWorkspaceTitle(),
                 $command->getWorkspaceDescription(),
-                $command->getInitiatingUserIdentifier()
-            )
-        );
-
-        $contentStreamIdentifier = $command->getContentStreamIdentifier();
-        $this->contentStreamCommandHandler->handleCreateContentStream(
-            new CreateContentStream(
-                $contentStreamIdentifier,
-                $command->getWorkspaceName(),
-                $command->getInitiatingUserIdentifier()
+                $command->getInitiatingUserIdentifier(),
+                $contentStreamIdentifier
             )
         );
 

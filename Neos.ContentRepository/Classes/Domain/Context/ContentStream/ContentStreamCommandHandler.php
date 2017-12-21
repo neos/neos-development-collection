@@ -48,7 +48,6 @@ final class ContentStreamCommandHandler
             self::getStreamNameForContentStream($command->getContentStreamIdentifier()),
             new ContentStreamWasCreated(
                 $command->getContentStreamIdentifier(),
-                $command->getWorkspaceName(),
                 $command->getInitiatingUserIdentifier()
             )
         );

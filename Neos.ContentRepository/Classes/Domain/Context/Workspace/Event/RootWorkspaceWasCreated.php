@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Domain\Context\Workspace\Event;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
@@ -43,19 +44,26 @@ class RootWorkspaceWasCreated implements EventInterface
     private $initiatingUserIdentifier;
 
     /**
+     * @var ContentStreamIdentifier
+     */
+    private $currentContentStreamIdentifier;
+
+    /**
      * RootWorkspaceWasCreated constructor.
      *
      * @param WorkspaceName $workspaceName
      * @param WorkspaceTitle $workspaceTitle
      * @param WorkspaceDescription $workspaceDescription
      * @param UserIdentifier $initiatingUserIdentifier
+     * @param ContentStreamIdentifier $currentContentStreamIdentifier
      */
-    public function __construct(WorkspaceName $workspaceName, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription, UserIdentifier $initiatingUserIdentifier)
+    public function __construct(WorkspaceName $workspaceName, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $currentContentStreamIdentifier)
     {
         $this->workspaceName = $workspaceName;
         $this->workspaceTitle = $workspaceTitle;
         $this->workspaceDescription = $workspaceDescription;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
+        $this->currentContentStreamIdentifier = $currentContentStreamIdentifier;
     }
 
     /**
@@ -88,5 +96,13 @@ class RootWorkspaceWasCreated implements EventInterface
     public function getInitiatingUserIdentifier(): UserIdentifier
     {
         return $this->initiatingUserIdentifier;
+    }
+
+    /**
+     * @return ContentStreamIdentifier
+     */
+    public function getCurrentContentStreamIdentifier(): ContentStreamIdentifier
+    {
+        return $this->currentContentStreamIdentifier;
     }
 }

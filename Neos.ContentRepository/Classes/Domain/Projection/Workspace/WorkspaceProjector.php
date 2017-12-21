@@ -54,7 +54,8 @@ final class WorkspaceProjector implements ProjectorInterface
             'baseWorkspaceName' => $event->getBaseWorkspaceName(),
             'workspaceTitle' => $event->getWorkspaceTitle(),
             'workspaceDescription' => $event->getWorkspaceDescription(),
-            'workspaceOwner' => $event->getWorkspaceOwner()
+            'workspaceOwner' => $event->getWorkspaceOwner(),
+            'currentContentStreamIdentifier' => $event->getCurrentContentStreamIdentifier()
         ]);
     }
     /**
@@ -66,16 +67,8 @@ final class WorkspaceProjector implements ProjectorInterface
             'workspaceName' => $event->getWorkspaceName(),
             'workspaceTitle' => $event->getWorkspaceTitle(),
             'workspaceDescription' => $event->getWorkspaceDescription(),
+            'currentContentStreamIdentifier' => $event->getCurrentContentStreamIdentifier()
         ]);
-    }
-
-    public function whenContentStreamWasCreated(ContentStreamWasCreated $event)
-    {
-        $this->dbal->transactional(function() use ($event) {
-            $this->dbal->update(self::TABLE_NAME, [
-                'currentContentStreamIdentifier' => $event->getContentStreamIdentifier()
-            ], ['workspaceName' => $event->getWorkspaceName()]);
-        });
     }
 
     public function reset(): void

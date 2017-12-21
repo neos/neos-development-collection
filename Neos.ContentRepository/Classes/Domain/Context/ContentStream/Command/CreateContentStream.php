@@ -17,11 +17,6 @@ final class CreateContentStream
     private $contentStreamIdentifier;
 
     /**
-     * @var WorkspaceName
-     */
-    private $workspaceName;
-
-    /**
      * @var UserIdentifier
      */
     private $initiatingUserIdentifier;
@@ -30,13 +25,11 @@ final class CreateContentStream
      * CreateContentStream constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param WorkspaceName $workspaceName
      * @param UserIdentifier $initiatingUserIdentifier
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, WorkspaceName $workspaceName, UserIdentifier $initiatingUserIdentifier)
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, UserIdentifier $initiatingUserIdentifier)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->workspaceName = $workspaceName;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
@@ -46,14 +39,6 @@ final class CreateContentStream
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
-    }
-
-    /**
-     * @return WorkspaceName
-     */
-    public function getWorkspaceName(): WorkspaceName
-    {
-        return $this->workspaceName;
     }
 
     /**
