@@ -298,18 +298,21 @@ class LinkingService
             $site = $this->siteRepository->findOneByNodeName($siteNodeName);
         }
 
-        if ($site->hasActiveDomains()) {
-            $requestUriHost = $request->getHttpRequest()->getBaseUri()->getHost();
-            $activeHostPatterns = $site->getActiveDomains()->map(function ($domain) {
-                return $domain->getHostname();
-            })->toArray();
-            if (!in_array($requestUriHost, $activeHostPatterns, true)) {
-                $uri = $this->createSiteUri($controllerContext, $site) . '/' . ltrim($uri, '/');
+        $uriObject = new Uri($uri);
+        if (!$uriObject->getHost()) {
+            if ($site->hasActiveDomains()) {
+                $requestUriHost = $request->getHttpRequest()->getBaseUri()->getHost();
+                $activeHostPatterns = $site->getActiveDomains()->map(function ($domain) {
+                    return $domain->getHostname();
+                })->toArray();
+                if (!in_array($requestUriHost, $activeHostPatterns, true)) {
+                    $uri = $this->createSiteUri($controllerContext, $site) . '/' . ltrim($uri, '/');
+                } elseif ($absolute === true) {
+                    $uri = $request->getHttpRequest()->getBaseUri() . ltrim($uri, '/');
+                }
             } elseif ($absolute === true) {
                 $uri = $request->getHttpRequest()->getBaseUri() . ltrim($uri, '/');
             }
-        } elseif ($absolute === true) {
-            $uri = $request->getHttpRequest()->getBaseUri() . ltrim($uri, '/');
         }
 
         return $uri;
