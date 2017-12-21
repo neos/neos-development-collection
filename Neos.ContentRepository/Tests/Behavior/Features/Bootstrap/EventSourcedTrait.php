@@ -175,6 +175,12 @@ trait EventSourcedTrait
                     \Neos\ContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler::class,
                     'handleCreateRootWorkspace'
                 ];
+            case 'CreateWorkspace':
+                return [
+                    \Neos\ContentRepository\Domain\Context\Workspace\Command\CreateWorkspace::class,
+                    \Neos\ContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler::class,
+                    'handleCreateWorkspace'
+                ];
             case 'CreateRootNode':
                 return [
                     \Neos\ContentRepository\Domain\Context\Node\Command\CreateRootNode::class,

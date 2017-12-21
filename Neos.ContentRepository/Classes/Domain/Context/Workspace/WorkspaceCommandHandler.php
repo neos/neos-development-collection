@@ -20,6 +20,7 @@ use Neos\ContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Domain\Context\Workspace\Command\CreateWorkspace;
 use Neos\ContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Domain\Context\Workspace\Event\WorkspaceWasCreated;
+use Neos\ContentRepository\Domain\Context\Workspace\Exception\BaseWorkspaceDoesNotExist;
 use Neos\ContentRepository\Domain\Context\Workspace\Exception\WorkspaceAlreadyExists;
 use Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
@@ -60,6 +61,7 @@ final class WorkspaceCommandHandler
     /**
      * @param CreateWorkspace $command
      * @throws WorkspaceAlreadyExists
+     * @throws BaseWorkspaceDoesNotExist
      */
     public function handleCreateWorkspace(CreateWorkspace $command)
     {
@@ -68,12 +70,17 @@ final class WorkspaceCommandHandler
             throw new WorkspaceAlreadyExists(sprintf('The workspace %s already exists', $command->getWorkspaceName()), 1505830958921);
         }
 
+        $baseWorkspace = $this->workspaceFinder->findOneByName($command->getBaseWorkspaceName());
+        if ($baseWorkspace === null) {
+            throw new BaseWorkspaceDoesNotExist(sprintf('The workspace %s (base workspace of %s) does not exist', $command->getBaseWorkspaceName(), $command->getWorkspaceName()), 1513890708);
+        }
+
         // TODO: CONCEPT OF EDITING SESSION IS TOTALLY MISSING SO FAR!!!!
         // When the workspace is created, we first have to fork the content stream
         $this->contentStreamCommandHandler->handleForkContentStream(
             new ForkContentStream(
                 $command->getContentStreamIdentifier(),
-                $existingWorkspace->getCurrentContentStreamIdentifier()
+                $baseWorkspace->getCurrentContentStreamIdentifier()
             )
         );
 
