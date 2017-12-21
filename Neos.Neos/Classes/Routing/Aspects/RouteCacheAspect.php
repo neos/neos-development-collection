@@ -47,7 +47,7 @@ class RouteCacheAspect
     public function addCurrentNodeIdentifier(JoinPointInterface $joinPoint)
     {
         $values = $joinPoint->getMethodArgument('values');
-        if (!isset($values['node']) || !is_string($values['node']) || strpos($values['node'], '@') === false) {
+        if (!isset($values['node']) || strpos($values['node'], '@') === false) {
             return;
         }
 
@@ -92,7 +92,7 @@ class RouteCacheAspect
 
         $values = $joinPoint->getMethodArgument('routeValues');
 
-        if (isset($values['node']) && is_string($values['node']) && strpos($values['node'], '@') !== false) {
+        if (isset($values['node']) && strpos($values['node'], '@') !== false) {
             // Build context explicitly without authorization checks because the security context isn't available yet
             // anyway and any Entity Privilege targeted on Workspace would fail at this point:
             $this->securityContext->withoutAuthorizationChecks(function () use ($joinPoint, $values, &$tags) {
