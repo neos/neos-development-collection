@@ -1,0 +1,42 @@
+`3.1.8 (2017-12-21) <https://github.com/neos/neos-development-collection/releases/tag/3.1.8>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Add index that should exist but does not <https://github.com/neos/neos-development-collection/pull/1786>`_
+-------------------------------------------------------------------------------------------------------------------
+
+Adds an index that should exist but is not picked up by Doctrine, and
+thus was deleted by accident in 20170110130253.
+
+See https://github.com/neos/neos-development-collection/pull/1375
+
+* Packages: ``Neos``
+
+`BUGFIX: Off-by-one error in FlashMessage parameters <https://github.com/neos/neos-development-collection/pull/1808>`_
+----------------------------------------------------------------------------------------------------------------------
+
+The title parameter was missing, so the other parameters were used in strange ways.
+
+* Packages: ``Neos``
+
+`Replace deprecated method tsValue with fusionValue <https://github.com/neos/neos-development-collection/pull/1817>`_
+---------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Synchronize \`\`.composer.json\`\` with \`\`composer.json\`\` <https://github.com/neos/neos-development-collection/pull/1805>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix Flow dev dependency for 3.1 <https://github.com/neos/neos-development-collection/pull/1803>`_
+----------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/3.1.7...3.1.8>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
