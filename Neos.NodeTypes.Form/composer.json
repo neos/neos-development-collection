@@ -4,7 +4,9 @@
     "description": "A simple form node type.",
     "license": "GPL-3.0+",
     "require": {
-        "neos/neos": "*"
+        "neos/neos": "*",
+        "neos/form": "*",
+        "neos/nodetypes-basemixins": "*"
     },
     "autoload": {
         "psr-4": {
