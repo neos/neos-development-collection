@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Domain\Context\Workspace\Command;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
@@ -47,6 +48,12 @@ final class CreateWorkspace
     private $initiatingUserIdentifier;
 
     /**
+     * the content stream identifier for the content stream which is created together with the to-be-created workspace
+     * @var ContentStreamIdentifier
+     */
+    private $contentStreamIdentifier;
+
+    /**
      * @var UserIdentifier
      */
     private $workspaceOwner;
@@ -59,17 +66,20 @@ final class CreateWorkspace
      * @param WorkspaceTitle $workspaceTitle
      * @param WorkspaceDescription $workspaceDescription
      * @param UserIdentifier $initiatingUserIdentifier
+     * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param UserIdentifier $workspaceOwner
      */
-    public function __construct(WorkspaceName $workspaceName, WorkspaceName $baseWorkspaceName = null, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription, UserIdentifier $initiatingUserIdentifier, UserIdentifier $workspaceOwner = null)
+    public function __construct(WorkspaceName $workspaceName, WorkspaceName $baseWorkspaceName = null, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $contentStreamIdentifier = null, UserIdentifier $workspaceOwner = null)
     {
         $this->workspaceName = $workspaceName;
         $this->baseWorkspaceName = $baseWorkspaceName;
         $this->workspaceTitle = $workspaceTitle;
         $this->workspaceDescription = $workspaceDescription;
-        $this->workspaceOwner = $workspaceOwner;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
+        $this->contentStreamIdentifier = $contentStreamIdentifier ?: new ContentStreamIdentifier();;
+        $this->workspaceOwner = $workspaceOwner;
     }
+
 
     /**
      * @return WorkspaceName
@@ -109,6 +119,14 @@ final class CreateWorkspace
     public function getInitiatingUserIdentifier(): UserIdentifier
     {
         return $this->initiatingUserIdentifier;
+    }
+
+    /**
+     * @return ContentStreamIdentifier
+     */
+    public function getContentStreamIdentifier(): ContentStreamIdentifier
+    {
+        return $this->contentStreamIdentifier;
     }
 
     /**

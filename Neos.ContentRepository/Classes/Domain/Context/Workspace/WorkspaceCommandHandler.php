@@ -70,10 +70,9 @@ final class WorkspaceCommandHandler
 
         // TODO: CONCEPT OF EDITING SESSION IS TOTALLY MISSING SO FAR!!!!
         // When the workspace is created, we first have to fork the content stream
-        $contentStreamIdentifier = new ContentStreamIdentifier();
         $this->contentStreamCommandHandler->handleForkContentStream(
             new ForkContentStream(
-                $contentStreamIdentifier,
+                $command->getContentStreamIdentifier(),
                 $existingWorkspace->getCurrentContentStreamIdentifier()
             )
         );
@@ -87,7 +86,7 @@ final class WorkspaceCommandHandler
                 $command->getWorkspaceDescription(),
                 $command->getInitiatingUserIdentifier(),
                 $command->getWorkspaceOwner(),
-                $contentStreamIdentifier
+                $command->getContentStreamIdentifier()
             )
         );
     }
