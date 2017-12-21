@@ -85,8 +85,8 @@ final class WorkspaceCommandHandler
                 $command->getWorkspaceTitle(),
                 $command->getWorkspaceDescription(),
                 $command->getInitiatingUserIdentifier(),
-                $command->getWorkspaceOwner(),
-                $command->getContentStreamIdentifier()
+                $command->getContentStreamIdentifier(),
+                $command->getWorkspaceOwner()
             )
         );
     }

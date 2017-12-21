@@ -49,14 +49,14 @@ class WorkspaceWasCreated implements EventInterface
     private $initiatingUserIdentifier;
 
     /**
-     * @var UserIdentifier
-     */
-    private $workspaceOwner;
-
-    /**
      * @var ContentStreamIdentifier
      */
     private $currentContentStreamIdentifier;
+
+    /**
+     * @var UserIdentifier
+     */
+    private $workspaceOwner;
 
     /**
      * WorkspaceWasCreated constructor.
@@ -65,18 +65,18 @@ class WorkspaceWasCreated implements EventInterface
      * @param WorkspaceTitle $workspaceTitle
      * @param WorkspaceDescription $workspaceDescription
      * @param UserIdentifier $initiatingUserIdentifier
-     * @param UserIdentifier $workspaceOwner
      * @param ContentStreamIdentifier $currentContentStreamIdentifier
+     * @param UserIdentifier $workspaceOwner
      */
-    public function __construct(WorkspaceName $workspaceName, WorkspaceName $baseWorkspaceName, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription, UserIdentifier $initiatingUserIdentifier, UserIdentifier $workspaceOwner, ContentStreamIdentifier $currentContentStreamIdentifier)
+    public function __construct(WorkspaceName $workspaceName, WorkspaceName $baseWorkspaceName, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $currentContentStreamIdentifier, UserIdentifier $workspaceOwner = null)
     {
         $this->workspaceName = $workspaceName;
         $this->baseWorkspaceName = $baseWorkspaceName;
         $this->workspaceTitle = $workspaceTitle;
         $this->workspaceDescription = $workspaceDescription;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
-        $this->workspaceOwner = $workspaceOwner;
         $this->currentContentStreamIdentifier = $currentContentStreamIdentifier;
+        $this->workspaceOwner = $workspaceOwner;
     }
 
     /**
@@ -120,14 +120,6 @@ class WorkspaceWasCreated implements EventInterface
     }
 
     /**
-     * @return UserIdentifier|null
-     */
-    public function getWorkspaceOwner()
-    {
-        return $this->workspaceOwner;
-    }
-
-    /**
      * @return ContentStreamIdentifier
      */
     public function getCurrentContentStreamIdentifier(): ContentStreamIdentifier
@@ -135,5 +127,11 @@ class WorkspaceWasCreated implements EventInterface
         return $this->currentContentStreamIdentifier;
     }
 
-
+    /**
+     * @return UserIdentifier|null
+     */
+    public function getWorkspaceOwner() : ?UserIdentifier
+    {
+        return $this->workspaceOwner;
+    }
 }
