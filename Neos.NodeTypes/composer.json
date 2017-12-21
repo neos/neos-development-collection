@@ -16,7 +16,8 @@
         "neos/nodetypes-columnlayouts": "self.version",
         "neos/nodetypes-contentreferences": "self.version",
         "neos/nodetypes-html": "self.version",
-        "neos/nodetypes-navigation": "self.version"
+        "neos/nodetypes-navigation": "self.version",
+        "neos/nodetypes-form": "self.version"
     },
     "replace": {
         "typo3/neos-nodetypes": "self.version"
