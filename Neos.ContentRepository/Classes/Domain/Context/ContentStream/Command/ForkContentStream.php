@@ -7,7 +7,7 @@ use Neos\ContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 
 /**
- * CreateContentStream for creating the FIRST content stream
+ * ForkContentStream for creating a new fork of a content stream.
  */
 final class ForkContentStream
 {

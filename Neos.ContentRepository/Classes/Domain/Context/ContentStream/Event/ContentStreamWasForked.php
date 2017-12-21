@@ -7,9 +7,6 @@ use Neos\ContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcing\Event\EventInterface;
 
-/**
- * CreateContentStream for creating the FIRST content stream
- */
 final class ContentStreamWasForked implements EventInterface
 {
 
