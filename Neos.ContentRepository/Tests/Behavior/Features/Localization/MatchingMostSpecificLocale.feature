@@ -1,4 +1,3 @@
-@skip
 Feature: Matching most specific language
   In order to have translated content with flexible fallback rules
   As an API user of the content repository

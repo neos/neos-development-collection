@@ -1,4 +1,3 @@
-@skip
 Feature: Localized structure
   In order to have nodes in different places for different languages
   As an API user of the content repository
