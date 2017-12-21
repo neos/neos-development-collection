@@ -18,6 +18,7 @@ require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Fe
 
 use Neos\Behat\Tests\Behat\FlowContext;
 use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcing\Event\EventPublisher;
 use Neos\EventSourcing\Event\EventTypeResolver;
 use Neos\EventSourcing\EventStore\EventStoreManager;
@@ -66,6 +67,7 @@ class FeatureContext extends \Behat\Behat\Context\BehatContext
         $this->eventPublisher = $this->objectManager->get(EventPublisher::class);
         $this->eventStoreManager = $this->objectManager->get(EventStoreManager::class);
         $this->contentGraphInterface = $this->objectManager->get(ContentGraphInterface::class);
+        $this->workspaceFinder = $this->objectManager->get(WorkspaceFinder::class);
         $this->setupSecurity();
     }
 

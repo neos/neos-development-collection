@@ -12,12 +12,14 @@
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
+use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcing\Event\EventInterface;
 use Neos\EventSourcing\Event\EventPublisher;
 use Neos\EventSourcing\Event\EventTypeResolver;
@@ -56,6 +58,11 @@ trait EventSourcedTrait
      * @var EventStoreManager
      */
     private $eventStoreManager;
+
+    /**
+     * @var WorkspaceFinder
+     */
+    private $workspaceFinder;
 
     /**
      * @var array
@@ -311,6 +318,16 @@ trait EventSourcedTrait
      * @var ContentGraphInterface
      */
     private $contentGraphInterface;
+
+    /**
+     * @Given /^I am in the active content stream of workspace "([^"]*)" and Dimension Space Point (.*)$/
+     */
+    public function iAmInTheActiveContentStreamOfWorkspaceAndDimensionSpacePointCoordinates(string $workspaceName, string $dimensionSpacePoint)
+    {
+        $workspaceName = new WorkspaceName($workspaceName);
+        $this->contentStreamIdentifier = $this->workspaceFinder->findOneByName($workspaceName)->getCurrentContentStreamIdentifier();
+        $this->dimensionSpacePoint = new DimensionSpacePoint(json_decode($dimensionSpacePoint, true)['coordinates']);
+    }
 
     /**
      * @Given /^I am in content stream "([^"]*)" and Dimension Space Point (.*)$/
