@@ -288,18 +288,18 @@ class LinkingService
             ->setFormat($format ?: $request->getFormat())
             ->uriFor('show', array('node' => $resolvedNode), 'Frontend\Node', 'Neos.Neos');
 
-        $siteNode = $resolvedNode->getContext()->getCurrentSiteNode();
-        if (NodePaths::isSubPathOf($siteNode->getPath(), $resolvedNode->getPath())) {
-            /** @var Site $site */
-            $site = $resolvedNode->getContext()->getCurrentSite();
-        } else {
-            $nodePath = NodePaths::getRelativePathBetween(SiteService::SITES_ROOT_PATH, $resolvedNode->getPath());
-            list($siteNodeName) = explode('/', $nodePath);
-            $site = $this->siteRepository->findOneByNodeName($siteNodeName);
-        }
-
         $uriObject = new Uri($uri);
         if (!$uriObject->getHost()) {
+            $siteNode = $resolvedNode->getContext()->getCurrentSiteNode();
+            if (NodePaths::isSubPathOf($siteNode->getPath(), $resolvedNode->getPath())) {
+                /** @var Site $site */
+                $site = $resolvedNode->getContext()->getCurrentSite();
+            } else {
+                $nodePath = NodePaths::getRelativePathBetween(SiteService::SITES_ROOT_PATH, $resolvedNode->getPath());
+                list($siteNodeName) = explode('/', $nodePath);
+                $site = $this->siteRepository->findOneByNodeName($siteNodeName);
+            }
+
             if ($site->hasActiveDomains()) {
                 $requestUriHost = $request->getHttpRequest()->getBaseUri()->getHost();
                 $activeHostPatterns = $site->getActiveDomains()->map(function ($domain) {
