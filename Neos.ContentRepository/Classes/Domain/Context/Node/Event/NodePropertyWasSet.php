@@ -10,7 +10,7 @@ use Neos\EventSourcing\Event\EventInterface;
 /**
  * Node property was set event
  */
-final class NodePropertyWasSet implements EventInterface
+final class NodePropertyWasSet implements EventInterface, CopyableAcrossContentStreamsInterface
 {
 
     /**
@@ -83,5 +83,15 @@ final class NodePropertyWasSet implements EventInterface
     public function getValue(): PropertyValue
     {
         return $this->value;
+    }
+
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
+    {
+        return new NodePropertyWasSet(
+            $targetContentStream,
+            $this->nodeIdentifier,
+            $this->propertyName,
+            $this->value
+        );
     }
 }

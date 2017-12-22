@@ -23,14 +23,21 @@ final class ContentStreamWasForked implements EventInterface
     private $sourceContentStreamIdentifier;
 
     /**
+     * @var integer
+     */
+    private $versionOfSourceContentStream;
+
+    /**
      * ContentStreamWasForked constructor.
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param ContentStreamIdentifier $sourceContentStreamIdentifier
+     * @param int $versionOfSourceContentStream
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, ContentStreamIdentifier $sourceContentStreamIdentifier)
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, ContentStreamIdentifier $sourceContentStreamIdentifier, int $versionOfSourceContentStream)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->sourceContentStreamIdentifier = $sourceContentStreamIdentifier;
+        $this->versionOfSourceContentStream = $versionOfSourceContentStream;
     }
 
     /**
@@ -47,5 +54,13 @@ final class ContentStreamWasForked implements EventInterface
     public function getSourceContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->sourceContentStreamIdentifier;
+    }
+
+    /**
+     * @return int
+     */
+    public function getVersionOfSourceContentStream(): int
+    {
+        return $this->versionOfSourceContentStream;
     }
 }

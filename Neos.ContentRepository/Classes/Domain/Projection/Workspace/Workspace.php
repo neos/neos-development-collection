@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Domain\Projection\Workspace;
 
 use Doctrine\ORM\Mapping as ORM;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcing\Annotations as CQRS;
 use Neos\Flow\Annotations as Flow;
 
@@ -97,4 +98,14 @@ final class Workspace
     {
         return new ContentStreamIdentifier($this->currentContentStreamIdentifier);
     }
+
+    /**
+     * @return WorkspaceName
+     */
+    public function getBaseWorkspaceName(): WorkspaceName
+    {
+        return new WorkspaceName($this->baseWorkspaceName);
+    }
+
+
 }

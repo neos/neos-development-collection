@@ -17,6 +17,8 @@ use Neos\ContentRepository\Domain\Context\ContentStream\Command\ForkContentStrea
 use Neos\ContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\EventSourcing\EventStore\EventStoreManager;
+use Neos\EventSourcing\EventStore\StreamNameFilter;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -29,6 +31,12 @@ final class ContentStreamCommandHandler
      * @var \Neos\EventSourcing\Event\EventPublisher
      */
     protected $eventPublisher;
+
+    /**
+     * @Flow\Inject
+     * @var EventStoreManager
+     */
+    protected $eventStoreManager;
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
@@ -58,11 +66,17 @@ final class ContentStreamCommandHandler
      */
     public function handleForkContentStream(ForkContentStream $command)
     {
+        $streamName = self::getStreamNameForContentStream($command->getContentStreamIdentifier());
+        $sourceContentStreamName = self::getStreamNameForContentStream($command->getSourceContentStreamIdentifier());
+
+        $store = $this->eventStoreManager->getEventStoreForStreamName($sourceContentStreamName);
+        $versionOfSourceContentStream = $store->getStreamVersion(new StreamNameFilter($sourceContentStreamName));
         $this->eventPublisher->publish(
-            self::getStreamNameForContentStream($command->getContentStreamIdentifier()),
+            $streamName,
             new ContentStreamWasForked(
                 $command->getContentStreamIdentifier(),
-                $command->getSourceContentStreamIdentifier()
+                $command->getSourceContentStreamIdentifier(),
+                $versionOfSourceContentStream
             )
         );
     }

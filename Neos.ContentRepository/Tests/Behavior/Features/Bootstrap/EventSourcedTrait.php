@@ -168,6 +168,9 @@ trait EventSourcedTrait
             case 'NodeNotFoundException':
                 Assert::assertInstanceOf(\Neos\ContentRepository\Exception\NodeNotFoundException::class, $this->lastCommandException);
                 return;
+            case 'BaseWorkspaceHasBeenModifiedInTheMeantime':
+                Assert::assertInstanceOf(\Neos\ContentRepository\Domain\Context\Workspace\Exception\BaseWorkspaceHasBeenModifiedInTheMeantime::class, $this->lastCommandException);
+                return;
             default:
                 throw new \Exception('The short exception name "' . $shortExceptionName . '" is currently not supported by the tests.');
         }
@@ -187,6 +190,12 @@ trait EventSourcedTrait
                     \Neos\ContentRepository\Domain\Context\Workspace\Command\CreateWorkspace::class,
                     \Neos\ContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler::class,
                     'handleCreateWorkspace'
+                ];
+            case 'PublishWorkspace':
+                return [
+                    \Neos\ContentRepository\Domain\Context\Workspace\Command\PublishWorkspace::class,
+                    \Neos\ContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler::class,
+                    'handlePublishWorkspace'
                 ];
             case 'CreateRootNode':
                 return [

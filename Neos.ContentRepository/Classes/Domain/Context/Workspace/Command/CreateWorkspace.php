@@ -18,7 +18,7 @@ use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceTitle;
 
 /**
- * Create a new workspace
+ * Create a new workspace, based on an existing baseWorkspace
  */
 final class CreateWorkspace
 {

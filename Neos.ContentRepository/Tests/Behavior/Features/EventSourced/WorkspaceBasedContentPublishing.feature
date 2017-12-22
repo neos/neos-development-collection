@@ -92,7 +92,7 @@ Feature: Workspace based content publishing
       | currentContentStreamIdentifier | 3e682506-ad16-40e7-bab1-b2022b72fb72 |
       | workspaceOwner                 | 00000000-0000-0000-0000-000000000000 |
 
-  Scenario: modify the property in the nested workspace
+  Scenario: modify the property in the nested workspace and publish afterwards works
 
     When the command "SetNodeProperty" is executed with payload:
       | Key                     | Value                                | Type |
@@ -116,4 +116,39 @@ Feature: Workspace based content publishing
       | text | Modified |
 
 
+    # PUBLISHING
+    When the command "PublishWorkspace" is executed with payload:
+      | Key           | Value     | Type |
+      | workspaceName | user-test |      |
 
+    And the graph projection is fully up to date
+
+    When I am in the active content stream of workspace "live" and Dimension Space Point {"coordinates": []}
+    Then I expect a node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to exist in the graph projection
+    And I expect the Node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to have the properties:
+      | Key  | Value    |
+      | text | Modified |
+
+  Scenario: modify the property in the nested workspace, do modification in live workspace; publish afterwards will not work because rebase is missing
+
+    When the command "SetNodeProperty" is executed with payload:
+      | Key                     | Value                                                  | Type |
+      | contentStreamIdentifier | 3e682506-ad16-40e7-bab1-b2022b72fb72                   |      |
+      | nodeIdentifier          | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81                   |      |
+      | propertyName            | text                                                   |      |
+      | value                   | {"value":"Modified in user workspace","type":"string"} | json |
+
+    When the command "SetNodeProperty" is executed with payload:
+      | Key                     | Value                                                  | Type |
+      | contentStreamIdentifier | c75ae6a2-7254-4d42-a31b-a629e264069d                   |      |
+      | nodeIdentifier          | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81                   |      |
+      | propertyName            | text                                                   |      |
+      | value                   | {"value":"Modified in live workspace","type":"string"} | json |
+
+
+    # PUBLISHING
+    When the command "PublishWorkspace" is executed with payload and exceptions are catched:
+      | Key           | Value     | Type |
+      | workspaceName | user-test |      |
+
+    Then the last command should have thrown an exception of type "BaseWorkspaceHasBeenModifiedInTheMeantime"

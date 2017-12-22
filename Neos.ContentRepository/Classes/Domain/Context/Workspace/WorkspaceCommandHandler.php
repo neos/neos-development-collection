@@ -14,19 +14,25 @@ namespace Neos\ContentRepository\Domain\Context\Workspace;
 use Neos\ContentRepository\Domain\Context\ContentStream\Command\CreateContentStream;
 use Neos\ContentRepository\Domain\Context\ContentStream\Command\ForkContentStream;
 use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
+use Neos\ContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateRootNode;
+use Neos\ContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
 use Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\ContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Domain\Context\Workspace\Command\CreateWorkspace;
+use Neos\ContentRepository\Domain\Context\Workspace\Command\PublishWorkspace;
 use Neos\ContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Domain\Context\Workspace\Event\WorkspaceWasCreated;
 use Neos\ContentRepository\Domain\Context\Workspace\Exception\BaseWorkspaceDoesNotExist;
+use Neos\ContentRepository\Domain\Context\Workspace\Exception\BaseWorkspaceHasBeenModifiedInTheMeantime;
 use Neos\ContentRepository\Domain\Context\Workspace\Exception\WorkspaceAlreadyExists;
+use Neos\ContentRepository\Domain\Context\Workspace\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcing\Event\EventPublisher;
+use Neos\EventSourcing\EventStore\EventAndRawEvent;
+use Neos\EventSourcing\EventStore\EventStoreManager;
+use Neos\EventSourcing\EventStore\Exception\ConcurrencyException;
+use Neos\EventSourcing\EventStore\StreamNameFilter;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -57,6 +63,12 @@ final class WorkspaceCommandHandler
      * @var EventPublisher
      */
     protected $eventPublisher;
+
+    /**
+     * @Flow\Inject
+     * @var EventStoreManager
+     */
+    protected $eventStoreManager;
 
     /**
      * @param CreateWorkspace $command
@@ -136,5 +148,76 @@ final class WorkspaceCommandHandler
                 $command->getInitiatingUserIdentifier()
             )
         );
+    }
+
+    /**
+     * @param PublishWorkspace $command
+     * @throws BaseWorkspaceDoesNotExist
+     * @throws WorkspaceDoesNotExist
+     * @throws \Neos\EventSourcing\EventStore\Exception\EventStreamNotFoundException
+     * @throws \Exception
+     */
+    public function handlePublishWorkspace(PublishWorkspace $command)
+    {
+        $workspace = $this->workspaceFinder->findOneByName($command->getWorkspaceName());
+        if ($workspace === null) {
+            throw new WorkspaceDoesNotExist(sprintf('The workspace %s does not exist', $command->getWorkspaceName()), 1513924741);
+        }
+        $baseWorkspace = $this->workspaceFinder->findOneByName($workspace->getBaseWorkspaceName());
+
+        if ($baseWorkspace === null) {
+            throw new BaseWorkspaceDoesNotExist(sprintf('The workspace %s (base workspace of %s) does not exist', $command->getBaseWorkspaceName(), $command->getWorkspaceName()), 1513924882);
+        }
+
+
+        // TODO: please check the code below in-depth. it does:
+        // - copy all events from the "user" content stream which implement "CopyableAcrossContentStreamsInterface"
+        // - extract the initial ContentStreamWasForked event, to read the version of the source content stream when the fork occurred
+        // - ensure that no other changes have been done in the meantime in the base content stream
+        $workspaceContentStreamName = ContentStreamCommandHandler::getStreamNameForContentStream($workspace->getCurrentContentStreamIdentifier());
+        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($workspaceContentStreamName);
+
+        /* @var $workspaceContentStream EventAndRawEvent[] */
+        $workspaceContentStream = iterator_to_array($eventStore->get(new StreamNameFilter($workspaceContentStreamName)));
+
+        $events = [];
+        foreach ($workspaceContentStream as $eventAndRawEvent) {
+            $event = $eventAndRawEvent->getEvent();
+            if ($event instanceof CopyableAcrossContentStreamsInterface) {
+                $events[] = $event->createCopyForContentStream($baseWorkspace->getCurrentContentStreamIdentifier());
+            }
+        }
+
+        // TODO: maybe we should also emit a "WorkspaceWasPublished" event? But on which content stream?
+
+        $contentStreamWasForked = $this->extractSingleForkedContentStreamEvent($workspaceContentStream);
+        try {
+            $baseWorkspaceContentStreamName = ContentStreamCommandHandler::getStreamNameForContentStream($baseWorkspace->getCurrentContentStreamIdentifier());
+            $this->eventPublisher->publishMany($baseWorkspaceContentStreamName, $events, $contentStreamWasForked->getVersionOfSourceContentStream());
+        } catch (ConcurrencyException $e) {
+            throw new BaseWorkspaceHasBeenModifiedInTheMeantime('The base workspace has been modified in the meantime; please rebase');
+        }
+    }
+
+    /**
+     * @param array $stream
+     * @return ContentStreamWasForked
+     * @throws \Exception
+     */
+    protected static function extractSingleForkedContentStreamEvent(array $stream) : ContentStreamWasForked
+    {
+        $contentStreamWasForkedEvents = array_filter($stream, function(EventAndRawEvent $eventAndRawEvent) {
+            return $eventAndRawEvent->getEvent() instanceof ContentStreamWasForked;
+        });
+
+        if (count($contentStreamWasForkedEvents) !== 1) {
+            throw new \Exception(sprintf('TODO: only can publish a content stream which has exactly one ContentStreamWasForked; we found %d', count($contentStreamWasForkedEvents)));
+        }
+
+        if (reset($contentStreamWasForkedEvents)->getEvent() !== reset($stream)->getEvent()) {
+            throw new \Exception(sprintf('TODO: stream has to start with a single ContentStreamWasForked event, found %s', get_class(reset($stream)->getEvent())));
+        }
+
+        return reset($contentStreamWasForkedEvents)->getEvent();
     }
 }
