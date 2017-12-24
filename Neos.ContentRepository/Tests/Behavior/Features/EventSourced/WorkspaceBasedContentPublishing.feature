@@ -129,7 +129,7 @@ Feature: Workspace based content publishing
       | Key  | Value    |
       | text | Modified |
 
-  Scenario: modify the property in the nested workspace, do modification in live workspace; publish afterwards will not work because rebase is missing
+  Scenario: modify the property in the nested workspace, do modification in live workspace; publish afterwards will not work because rebase is missing; then rebase and publish
 
     When the command "SetNodeProperty" is executed with payload:
       | Key                     | Value                                                  | Type |
@@ -146,9 +146,30 @@ Feature: Workspace based content publishing
       | value                   | {"value":"Modified in live workspace","type":"string"} | json |
 
 
-    # PUBLISHING
+    # PUBLISHING without rebase: error
     When the command "PublishWorkspace" is executed with payload and exceptions are catched:
       | Key           | Value     | Type |
       | workspaceName | user-test |      |
 
     Then the last command should have thrown an exception of type "BaseWorkspaceHasBeenModifiedInTheMeantime"
+
+    # REBASING + Publishing: works now (TODO soft constraint check for old value)
+    When the command "RebaseWorkspace" is executed with payload:
+      | Key           | Value     | Type |
+      | workspaceName | user-test |      |
+
+    And the command "PublishWorkspace" is executed with payload:
+      | Key           | Value     | Type |
+      | workspaceName | user-test |      |
+
+    And the graph projection is fully up to date
+
+    When I am in the active content stream of workspace "live" and Dimension Space Point {"coordinates": []}
+    Then I expect a node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to exist in the graph projection
+    And I expect the Node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to have the properties:
+      | Key  | Value                      |
+      | text | Modified in user workspace |
+
+
+
+

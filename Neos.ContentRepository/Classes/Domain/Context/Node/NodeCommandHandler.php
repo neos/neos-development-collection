@@ -45,14 +45,17 @@ use Neos\EventSourcing\Event\EventPublisher;
 use Neos\EventSourcing\EventStore\ExpectedVersion;
 use Neos\Flow\Annotations as Flow;
 
+/**
+ * @Flow\Scope("singleton")
+ */
 final class NodeCommandHandler
 {
 
     /**
      * @Flow\Inject
-     * @var EventPublisher
+     * @var NodeEventPublisher
      */
-    protected $eventPublisher;
+    protected $nodeEventPublisher;
 
     /**
      * @Flow\Inject
@@ -77,15 +80,17 @@ final class NodeCommandHandler
      */
     public function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command): void
     {
-        $contentStreamStreamName = ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier());
+        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+            $contentStreamStreamName = ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier());
 
-        $events = $this->nodeAggregateWithNodeWasCreatedFromCommand($command);
+            $events = $this->nodeAggregateWithNodeWasCreatedFromCommand($command);
 
-        /** @var NodeAggregateWithNodeWasCreated $event */
-        foreach ($events as $event) {
-            // TODO Use a node aggregate aggregate and let that one publish the events
-            $this->eventPublisher->publish($contentStreamStreamName . ':NodeAggregate:' . $event->getNodeAggregateIdentifier(), $event, ExpectedVersion::NO_STREAM);
-        }
+            /** @var NodeAggregateWithNodeWasCreated $event */
+            foreach ($events as $event) {
+                // TODO Use a node aggregate aggregate and let that one publish the events
+                $this->nodeEventPublisher->publish($contentStreamStreamName . ':NodeAggregate:' . $event->getNodeAggregateIdentifier(), $event, ExpectedVersion::NO_STREAM);
+            }
+        });
     }
 
     /**
@@ -93,7 +98,7 @@ final class NodeCommandHandler
      *
      * @param CreateNodeAggregateWithNode $command
      * @param bool $checkParent
-     * @return array
+     * @return array array of events
      * @throws Exception
      * @throws NodeNotFoundException
      */
@@ -170,15 +175,17 @@ final class NodeCommandHandler
      */
     public function handleAddNodeToAggregate(AddNodeToAggregate $command): void
     {
-        $contentStreamStreamName = ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier());
+        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+            $contentStreamStreamName = ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier());
 
-        $events = $this->nodeWasAddedToAggregateFromCommand($command);
+            $events = $this->nodeWasAddedToAggregateFromCommand($command);
 
-        /** @var NodeAggregateWithNodeWasCreated $event */
-        foreach ($events as $event) {
-            // TODO Use a node aggregate aggregate and let that one publish the events
-            $this->eventPublisher->publish($contentStreamStreamName . ':NodeAggregate:' . $event->getNodeAggregateIdentifier(), $event);
-        }
+            /** @var NodeAggregateWithNodeWasCreated $event */
+            foreach ($events as $event) {
+                // TODO Use a node aggregate aggregate and let that one publish the events
+                $this->nodeEventPublisher->publish($contentStreamStreamName . ':NodeAggregate:' . $event->getNodeAggregateIdentifier(), $event);
+            }
+        });
     }
 
     private function nodeWasAddedToAggregateFromCommand(AddNodeToAggregate $command, bool $checkParent = true): array
@@ -265,6 +272,7 @@ final class NodeCommandHandler
      */
     public function handleStartImportingSession(StartImportingSession $command): void
     {
+        // TODO: wrap with $this->nodeEventPublisher->withCommand($command, function() use ($command) {
         $streamName = 'Neos.ContentRepository:Importing:' . $command->getImportingSessionIdentifier();
         $this->eventPublisher->publish(
             $streamName,
@@ -278,6 +286,7 @@ final class NodeCommandHandler
      */
     public function handleImportNode(ImportNode $command): void
     {
+        // TODO: wrap with $this->nodeEventPublisher->withCommand($command, function() use ($command) {
         $this->validateNodeTypeName($command->getNodeTypeName());
 
         $streamName = 'Neos.ContentRepository:Importing:' . $command->getImportingSessionIdentifier();
@@ -300,6 +309,7 @@ final class NodeCommandHandler
      */
     public function handleFinalizeImportingSession(FinalizeImportingSession $command): void
     {
+        // TODO: wrap with $this->nodeEventPublisher->withCommand($command, function() use ($command) {
         $streamName = 'Neos.ContentRepository:Importing:' . $command->getImportingSessionIdentifier();
         $this->eventPublisher->publish(
             $streamName,
@@ -314,18 +324,20 @@ final class NodeCommandHandler
      */
     public function handleCreateRootNode(CreateRootNode $command): void
     {
-        $contentStreamIdentifier = $command->getContentStreamIdentifier();
+        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+            $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
-        $event = new RootNodeWasCreated(
-            $contentStreamIdentifier,
-            $command->getNodeIdentifier(),
-            $command->getInitiatingUserIdentifier()
-        );
+            $event = new RootNodeWasCreated(
+                $contentStreamIdentifier,
+                $command->getNodeIdentifier(),
+                $command->getInitiatingUserIdentifier()
+            );
 
-        $this->eventPublisher->publish(
-            ContentStreamCommandHandler::getStreamNameForContentStream($contentStreamIdentifier),
-            $event
-        );
+            $this->nodeEventPublisher->publish(
+                ContentStreamCommandHandler::getStreamNameForContentStream($contentStreamIdentifier),
+                $event
+            );
+        });
     }
 
     /**
@@ -333,22 +345,24 @@ final class NodeCommandHandler
      */
     public function handleSetNodeProperty(SetNodeProperty $command): void
     {
-        $contentStreamIdentifier = $command->getContentStreamIdentifier();
+        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+            $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
-        // Check if node exists
-        $this->getNode($contentStreamIdentifier, $command->getNodeIdentifier());
+            // Check if node exists
+            $this->getNode($contentStreamIdentifier, $command->getNodeIdentifier());
 
-        $event = new NodePropertyWasSet(
-            $contentStreamIdentifier,
-            $command->getNodeIdentifier(),
-            $command->getPropertyName(),
-            $command->getValue()
-        );
+            $event = new NodePropertyWasSet(
+                $contentStreamIdentifier,
+                $command->getNodeIdentifier(),
+                $command->getPropertyName(),
+                $command->getValue()
+            );
 
-        $this->eventPublisher->publish(
-            ContentStreamCommandHandler::getStreamNameForContentStream($contentStreamIdentifier),
-            $event
-        );
+            $this->nodeEventPublisher->publish(
+                ContentStreamCommandHandler::getStreamNameForContentStream($contentStreamIdentifier),
+                $event
+            );
+        });
     }
 
     /**
@@ -358,36 +372,38 @@ final class NodeCommandHandler
      */
     public function handleMoveNode(MoveNode $command): void
     {
-        $contentStreamIdentifier = $command->getContentStreamIdentifier();
+        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+            $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
-        /** @var Node $node */
-        $node = $this->getNode($contentStreamIdentifier, $command->getNodeIdentifier());
+            /** @var Node $node */
+            $node = $this->getNode($contentStreamIdentifier, $command->getNodeIdentifier());
 
-        $contentSubgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier,
-            $node->dimensionSpacePoint);
-        if ($contentSubgraph === null) {
-            throw new Exception(sprintf('Content subgraph not found for content stream %s, %s',
-                $contentStreamIdentifier, $node->dimensionSpacePoint), 1506074858);
-        }
+            $contentSubgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier,
+                $node->dimensionSpacePoint);
+            if ($contentSubgraph === null) {
+                throw new Exception(sprintf('Content subgraph not found for content stream %s, %s',
+                    $contentStreamIdentifier, $node->dimensionSpacePoint), 1506074858);
+            }
 
-        $referenceNode = $contentSubgraph->findNodeByIdentifier($command->getReferenceNodeIdentifier());
-        if ($referenceNode === null) {
-            throw new NodeNotFoundException(sprintf('Reference node %s not found for content stream %s, %s',
-                $command->getReferenceNodeIdentifier(), $contentStreamIdentifier, $node->dimensionSpacePoint),
-                1506075821, $command->getReferenceNodeIdentifier());
-        }
+            $referenceNode = $contentSubgraph->findNodeByIdentifier($command->getReferenceNodeIdentifier());
+            if ($referenceNode === null) {
+                throw new NodeNotFoundException(sprintf('Reference node %s not found for content stream %s, %s',
+                    $command->getReferenceNodeIdentifier(), $contentStreamIdentifier, $node->dimensionSpacePoint),
+                    1506075821, $command->getReferenceNodeIdentifier());
+            }
 
-        $event = new NodeWasMoved(
-            $command->getContentStreamIdentifier(),
-            $command->getNodeIdentifier(),
-            $command->getReferencePosition(),
-            $command->getReferenceNodeIdentifier()
-        );
+            $event = new NodeWasMoved(
+                $command->getContentStreamIdentifier(),
+                $command->getNodeIdentifier(),
+                $command->getReferencePosition(),
+                $command->getReferenceNodeIdentifier()
+            );
 
-        $this->eventPublisher->publish(
-            ContentStreamCommandHandler::getStreamNameForContentStream($contentStreamIdentifier),
-            $event
-        );
+            $this->nodeEventPublisher->publish(
+                ContentStreamCommandHandler::getStreamNameForContentStream($contentStreamIdentifier),
+                $event
+            );
+        });
     }
 
     /**
@@ -396,41 +412,43 @@ final class NodeCommandHandler
      */
     public function handleMoveNodesInAggregate(MoveNodesInAggregate $command): void
     {
-        $contentStreamIdentifier = $command->getContentStreamIdentifier();
-        $nodeAggregateIdentifier = $command->getNodeAggregateIdentifier();
-        $referenceNodeAggregateIdentifier = $command->getReferenceNodeAggregateIdentifier();
-        $sourceNodes = $this->contentGraph->findNodesByNodeAggregateIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier);
-        $nodesToReferenceNodes = [];
+        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+            $contentStreamIdentifier = $command->getContentStreamIdentifier();
+            $nodeAggregateIdentifier = $command->getNodeAggregateIdentifier();
+            $referenceNodeAggregateIdentifier = $command->getReferenceNodeAggregateIdentifier();
+            $sourceNodes = $this->contentGraph->findNodesByNodeAggregateIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier);
+            $nodesToReferenceNodes = [];
 
-        /** @var Node $sourceNode */
-        foreach ($sourceNodes as $sourceNode) {
-            $dimensionSpacePoint = $sourceNode->dimensionSpacePoint;
-            $contentSubgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $dimensionSpacePoint);
-            if ($contentSubgraph === null) {
-                throw new Exception(sprintf('Content subgraph not found for content stream %s, %s', $contentStreamIdentifier, $dimensionSpacePoint), 1506439819);
+            /** @var Node $sourceNode */
+            foreach ($sourceNodes as $sourceNode) {
+                $dimensionSpacePoint = $sourceNode->dimensionSpacePoint;
+                $contentSubgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $dimensionSpacePoint);
+                if ($contentSubgraph === null) {
+                    throw new Exception(sprintf('Content subgraph not found for content stream %s, %s', $contentStreamIdentifier, $dimensionSpacePoint), 1506439819);
+                }
+                /** @var Node $referenceNode */
+                $referenceNode = $contentSubgraph->findNodeByNodeAggregateIdentifier($referenceNodeAggregateIdentifier);
+                if ($referenceNode === null) {
+                    throw new Exception(sprintf('No node found for reference node aggregate %s in content stream %s, %s',
+                        $referenceNodeAggregateIdentifier, $contentStreamIdentifier, $dimensionSpacePoint), 1506439842);
+                }
+                // TODO Introduce a mapping value object with checks for uniqueness
+                $nodesToReferenceNodes[(string)$sourceNode->identifier] = (string)$referenceNode->identifier;
             }
-            /** @var Node $referenceNode */
-            $referenceNode = $contentSubgraph->findNodeByNodeAggregateIdentifier($referenceNodeAggregateIdentifier);
-            if ($referenceNode === null) {
-                throw new Exception(sprintf('No node found for reference node aggregate %s in content stream %s, %s',
-                    $referenceNodeAggregateIdentifier, $contentStreamIdentifier, $dimensionSpacePoint), 1506439842);
-            }
-            // TODO Introduce a mapping value object with checks for uniqueness
-            $nodesToReferenceNodes[(string)$sourceNode->identifier] = (string)$referenceNode->identifier;
-        }
 
-        $event = new NodesInAggregateWereMoved(
-            $contentStreamIdentifier,
-            $nodeAggregateIdentifier,
-            $command->getReferencePosition(),
-            $referenceNodeAggregateIdentifier,
-            $nodesToReferenceNodes
-        );
+            $event = new NodesInAggregateWereMoved(
+                $contentStreamIdentifier,
+                $nodeAggregateIdentifier,
+                $command->getReferencePosition(),
+                $referenceNodeAggregateIdentifier,
+                $nodesToReferenceNodes
+            );
 
-        $this->eventPublisher->publish(
-            ContentStreamCommandHandler::getStreamNameForContentStream($contentStreamIdentifier),
-            $event
-        );
+            $this->nodeEventPublisher->publish(
+                ContentStreamCommandHandler::getStreamNameForContentStream($contentStreamIdentifier),
+                $event
+            );
+        });
     }
 
     /**
@@ -439,24 +457,26 @@ final class NodeCommandHandler
      */
     public function handleChangeNodeName(ChangeNodeName $command)
     {
-        $contentStreamIdentifier = $command->getContentStreamIdentifier();
-        /** @var Node $node */
-        $node = $this->getNode($contentStreamIdentifier, $command->getNodeIdentifier());
+        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+            $contentStreamIdentifier = $command->getContentStreamIdentifier();
+            /** @var Node $node */
+            $node = $this->getNode($contentStreamIdentifier, $command->getNodeIdentifier());
 
-        if ($node->getNodeType()->getName() === 'Neos.ContentRepository:Root') {
-            throw new Exception\NodeException('The root node cannot be renamed.', 1346778388);
-        }
+            if ($node->getNodeType()->getName() === 'Neos.ContentRepository:Root') {
+                throw new Exception\NodeException('The root node cannot be renamed.', 1346778388);
+            }
 
-        $event = new NodeNameWasChanged(
-            $contentStreamIdentifier,
-            $command->getNodeIdentifier(),
-            $command->getNewNodeName()
-        );
+            $event = new NodeNameWasChanged(
+                $contentStreamIdentifier,
+                $command->getNodeIdentifier(),
+                $command->getNewNodeName()
+            );
 
-        $this->eventPublisher->publish(
-            ContentStreamCommandHandler::getStreamNameForContentStream($contentStreamIdentifier),
-            $event
-        );
+            $this->nodeEventPublisher->publish(
+                ContentStreamCommandHandler::getStreamNameForContentStream($contentStreamIdentifier),
+                $event
+            );
+        });
     }
 
     /**
@@ -465,14 +485,15 @@ final class NodeCommandHandler
      */
     public function handleTranslateNodeInAggregate(TranslateNodeInAggregate $command): void
     {
+        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+            $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
-        $contentStreamIdentifier = $command->getContentStreamIdentifier();
-
-        $events = $this->nodeInAggregateWasTranslatedFromCommand($command);
-        $this->eventPublisher->publishMany(
-            ContentStreamCommandHandler::getStreamNameForContentStream($contentStreamIdentifier),
-            $events
-        );
+            $events = $this->nodeInAggregateWasTranslatedFromCommand($command);
+            $this->nodeEventPublisher->publishMany(
+                ContentStreamCommandHandler::getStreamNameForContentStream($contentStreamIdentifier),
+                $events
+            );
+        });
     }
 
     private function nodeInAggregateWasTranslatedFromCommand(TranslateNodeInAggregate $command): array

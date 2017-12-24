@@ -10,7 +10,7 @@ use Neos\EventSourcing\Event\EventInterface;
 /**
  * Nodes in aggregate were moved after, into or before another node event
  */
-final class NodesInAggregateWereMoved implements EventInterface
+final class NodesInAggregateWereMoved implements EventInterface, CopyableAcrossContentStreamsInterface
 {
 
     /**
@@ -103,4 +103,14 @@ final class NodesInAggregateWereMoved implements EventInterface
         return $this->nodesToReferenceNodes;
     }
 
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
+    {
+        return new NodesInAggregateWereMoved(
+            $targetContentStream,
+            $this->nodeAggregateIdentifier,
+            $this->referencePosition,
+            $this->referenceNodeAggregateIdentifier,
+            $this->nodesToReferenceNodes
+        );
+    }
 }

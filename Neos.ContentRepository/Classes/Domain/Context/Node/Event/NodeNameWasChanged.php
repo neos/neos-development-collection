@@ -7,7 +7,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\EventSourcing\Event\EventInterface;
 
-final class NodeNameWasChanged implements EventInterface
+final class NodeNameWasChanged implements EventInterface, CopyableAcrossContentStreamsInterface
 {
 
     /**
@@ -66,4 +66,12 @@ final class NodeNameWasChanged implements EventInterface
         return $this->newNodeName;
     }
 
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
+    {
+        return new NodeNameWasChanged(
+            $targetContentStream,
+            $this->nodeIdentifier,
+            $this->newNodeName
+        );
+    }
 }

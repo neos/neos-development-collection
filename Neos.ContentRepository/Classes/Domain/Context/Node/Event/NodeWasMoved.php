@@ -10,7 +10,7 @@ use Neos\EventSourcing\Event\EventInterface;
 /**
  * Node was moved after, into or before another node event
  */
-final class NodeWasMoved implements EventInterface
+final class NodeWasMoved implements EventInterface, CopyableAcrossContentStreamsInterface
 {
 
     /**
@@ -83,5 +83,15 @@ final class NodeWasMoved implements EventInterface
     public function getReferenceNodeIdentifier(): NodeIdentifier
     {
         return $this->referenceNodeIdentifier;
+    }
+
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
+    {
+        return new NodeWasMoved(
+            $targetContentStream,
+            $this->nodeIdentifier,
+            $this->referencePosition,
+            $this->referenceNodeIdentifier
+        );
     }
 }

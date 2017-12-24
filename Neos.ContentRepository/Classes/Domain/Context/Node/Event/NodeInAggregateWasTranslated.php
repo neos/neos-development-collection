@@ -7,7 +7,7 @@ use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcing\Event\EventInterface;
 
-class NodeInAggregateWasTranslated implements EventInterface
+class NodeInAggregateWasTranslated implements EventInterface, CopyableAcrossContentStreamsInterface
 {
 
     /**
@@ -122,4 +122,15 @@ class NodeInAggregateWasTranslated implements EventInterface
         return $this->visibleDimensionSpacePoints;
     }
 
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
+    {
+        return new NodeInAggregateWasTranslated(
+            $targetContentStream,
+            $this->sourceNodeIdentifier,
+            $this->destinationNodeIdentifier,
+            $this->destinationParentNodeIdentifier,
+            $this->dimensionSpacePoint,
+            $this->visibleDimensionSpacePoints
+        );
+    }
 }

@@ -11,7 +11,7 @@ use Neos\EventSourcing\Event\EventInterface;
 /**
  * Root node was created event
  */
-final class RootNodeWasCreated implements EventInterface
+final class RootNodeWasCreated implements EventInterface, CopyableAcrossContentStreamsInterface
 {
     /**
      * @var ContentStreamIdentifier
@@ -64,5 +64,14 @@ final class RootNodeWasCreated implements EventInterface
     public function getInitiatingUserIdentifier(): UserIdentifier
     {
         return $this->initiatingUserIdentifier;
+    }
+
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
+    {
+        return new RootNodeWasCreated(
+            $targetContentStream,
+            $this->nodeIdentifier,
+            $this->initiatingUserIdentifier
+        );
     }
 }

@@ -11,12 +11,13 @@ namespace Neos\ContentRepository\Domain\Projection\Workspace;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Domain\Context\Workspace\Event\WorkspaceWasCreated;
 use Doctrine\Common\Persistence\ObjectManager as DoctrineObjectManager;
 use Doctrine\ORM\EntityManager as DoctrineEntityManager;
+use Neos\ContentRepository\Domain\Context\Workspace\Event\WorkspaceWasRebased;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 
 /**
@@ -26,6 +27,12 @@ final class WorkspaceProjector implements ProjectorInterface
 {
 
     private const TABLE_NAME = 'neos_contentrepository_projection_workspace_v1';
+
+    /**
+     * @Flow\Inject
+     * @var WorkspaceFinder
+     */
+    protected $workspaceFinder;
 
     /**
      * @var \Doctrine\DBAL\Connection
@@ -69,6 +76,18 @@ final class WorkspaceProjector implements ProjectorInterface
             'workspaceDescription' => $event->getWorkspaceDescription(),
             'currentContentStreamIdentifier' => $event->getCurrentContentStreamIdentifier()
         ]);
+    }
+
+    public function whenWorkspaceWasRebased(WorkspaceWasRebased $event)
+    {
+        $this->dbal->update(self::TABLE_NAME, [
+            'currentContentStreamIdentifier' => $event->getCurrentContentStreamIdentifier()
+        ], [
+            'workspaceName' => $event->getWorkspaceName()
+        ]);
+
+        // TODO: HACK to update in-memory projection(!!!!!!) nasty!!!
+        $this->workspaceFinder->findOneByName($event->getWorkspaceName())->currentContentStreamIdentifier = $event->getCurrentContentStreamIdentifier();
     }
 
     public function reset(): void

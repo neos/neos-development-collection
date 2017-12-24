@@ -197,6 +197,12 @@ trait EventSourcedTrait
                     \Neos\ContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler::class,
                     'handlePublishWorkspace'
                 ];
+            case 'RebaseWorkspace':
+                return [
+                    \Neos\ContentRepository\Domain\Context\Workspace\Command\RebaseWorkspace::class,
+                    \Neos\ContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler::class,
+                    'handleRebaseWorkspace'
+                ];
             case 'CreateRootNode':
                 return [
                     \Neos\ContentRepository\Domain\Context\Node\Command\CreateRootNode::class,

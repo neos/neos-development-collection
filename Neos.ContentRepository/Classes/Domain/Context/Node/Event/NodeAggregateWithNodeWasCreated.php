@@ -14,7 +14,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 /**
  * Node aggregate with node was created event
  */
-final class NodeAggregateWithNodeWasCreated implements EventInterface
+final class NodeAggregateWithNodeWasCreated implements EventInterface, CopyableAcrossContentStreamsInterface
 {
 
     /**
@@ -173,5 +173,20 @@ final class NodeAggregateWithNodeWasCreated implements EventInterface
     public function getPropertyDefaultValuesAndTypes(): array
     {
         return $this->propertyDefaultValuesAndTypes;
+    }
+
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
+    {
+        return new NodeAggregateWithNodeWasCreated(
+            $targetContentStream,
+            $this->nodeAggregateIdentifier,
+            $this->nodeTypeName,
+            $this->dimensionSpacePoint,
+            $this->visibleDimensionSpacePoints,
+            $this->nodeIdentifier,
+            $this->parentNodeIdentifier,
+            $this->nodeName,
+            $this->propertyDefaultValuesAndTypes
+        );
     }
 }

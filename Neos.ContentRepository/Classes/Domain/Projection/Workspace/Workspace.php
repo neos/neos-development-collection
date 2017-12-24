@@ -59,7 +59,7 @@ final class Workspace
      * @var string
      * @ORM\Column(nullable=true)
      */
-    protected $currentContentStreamIdentifier;
+    public $currentContentStreamIdentifier;
 
     /**
      * Checks if this workspace is shared across all editors

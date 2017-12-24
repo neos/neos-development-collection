@@ -15,25 +15,37 @@ use Neos\ContentRepository\Domain\Context\ContentStream\Command\CreateContentStr
 use Neos\ContentRepository\Domain\Context\ContentStream\Command\ForkContentStream;
 use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
 use Neos\ContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasForked;
+use Neos\ContentRepository\Domain\Context\Node\Command\AddNodeToAggregate;
+use Neos\ContentRepository\Domain\Context\Node\Command\ChangeNodeName;
+use Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateRootNode;
+use Neos\ContentRepository\Domain\Context\Node\Command\MoveNode;
+use Neos\ContentRepository\Domain\Context\Node\Command\MoveNodesInAggregate;
+use Neos\ContentRepository\Domain\Context\Node\Command\SetNodeProperty;
+use Neos\ContentRepository\Domain\Context\Node\Command\TranslateNodeInAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
 use Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\ContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Domain\Context\Workspace\Command\CreateWorkspace;
 use Neos\ContentRepository\Domain\Context\Workspace\Command\PublishWorkspace;
+use Neos\ContentRepository\Domain\Context\Workspace\Command\RebaseWorkspace;
 use Neos\ContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Domain\Context\Workspace\Event\WorkspaceWasCreated;
+use Neos\ContentRepository\Domain\Context\Workspace\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Domain\Context\Workspace\Exception\BaseWorkspaceDoesNotExist;
 use Neos\ContentRepository\Domain\Context\Workspace\Exception\BaseWorkspaceHasBeenModifiedInTheMeantime;
 use Neos\ContentRepository\Domain\Context\Workspace\Exception\WorkspaceAlreadyExists;
 use Neos\ContentRepository\Domain\Context\Workspace\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcing\Event\EventPublisher;
 use Neos\EventSourcing\EventStore\EventAndRawEvent;
 use Neos\EventSourcing\EventStore\EventStoreManager;
 use Neos\EventSourcing\EventStore\Exception\ConcurrencyException;
 use Neos\EventSourcing\EventStore\StreamNameFilter;
+use Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Property\PropertyMapper;
 
 /**
  * WorkspaceCommandHandler
@@ -69,6 +81,13 @@ final class WorkspaceCommandHandler
      * @var EventStoreManager
      */
     protected $eventStoreManager;
+
+    /**
+     * @Flow\Inject
+     * @var PropertyMapper
+     */
+    protected $propertyMapper;
+
 
     /**
      * @param CreateWorkspace $command
@@ -195,7 +214,7 @@ final class WorkspaceCommandHandler
             $baseWorkspaceContentStreamName = ContentStreamCommandHandler::getStreamNameForContentStream($baseWorkspace->getCurrentContentStreamIdentifier());
             $this->eventPublisher->publishMany($baseWorkspaceContentStreamName, $events, $contentStreamWasForked->getVersionOfSourceContentStream());
         } catch (ConcurrencyException $e) {
-            throw new BaseWorkspaceHasBeenModifiedInTheMeantime('The base workspace has been modified in the meantime; please rebase');
+            throw new BaseWorkspaceHasBeenModifiedInTheMeantime(sprintf('The base workspace has been modified in the meantime; please rebase. Expected version %d of source content stream %s', $contentStreamWasForked->getVersionOfSourceContentStream(), $baseWorkspace->getCurrentContentStreamIdentifier()));
         }
     }
 
@@ -219,5 +238,87 @@ final class WorkspaceCommandHandler
         }
 
         return reset($contentStreamWasForkedEvents)->getEvent();
+    }
+
+    public function handleRebaseWorkspace(RebaseWorkspace $command)
+    {
+        $workspace = $this->workspaceFinder->findOneByName($command->getWorkspaceName());
+        if ($workspace === null) {
+            throw new WorkspaceDoesNotExist(sprintf('The workspace %s does not exist', $command->getWorkspaceName()), 1513924741);
+        }
+        $baseWorkspace = $this->workspaceFinder->findOneByName($workspace->getBaseWorkspaceName());
+
+        if ($baseWorkspace === null) {
+            throw new BaseWorkspaceDoesNotExist(sprintf('The workspace %s (base workspace of %s) does not exist', $command->getBaseWorkspaceName(), $command->getWorkspaceName()), 1513924882);
+        }
+
+
+        // TODO: please check the code below in-depth. it does:
+        // - fork a new content stream
+        // - extract the commands from the to-be-rebased content stream; and applies them on the new content stream
+        $rebasedContentStream = new ContentStreamIdentifier();
+        $this->contentStreamCommandHandler->handleForkContentStream(
+            new ForkContentStream(
+                $rebasedContentStream,
+                $baseWorkspace->getCurrentContentStreamIdentifier()
+            )
+        );
+
+        $workspaceContentStreamName = ContentStreamCommandHandler::getStreamNameForContentStream($workspace->getCurrentContentStreamIdentifier());
+        $eventStore = $this->eventStoreManager->getEventStoreForStreamName($workspaceContentStreamName);
+
+        $workspaceContentStream = $eventStore->get(new StreamNameFilter($workspaceContentStreamName));
+        foreach ($workspaceContentStream as $eventAndRawEvent) {
+            $metadata = $eventAndRawEvent->getRawEvent()->getMetadata();
+            if (isset($metadata['commandClass'])) {
+                $commandToRebaseClass = $metadata['commandClass'];
+                $commandToRebasePayload = $metadata['commandPayload'];
+
+                // try to apply the command on the rebased content stream
+                $commandToRebasePayload['contentStreamIdentifier'] = (string)$rebasedContentStream;
+
+                $commandToRebase = $this->propertyMapper->convert($commandToRebasePayload, $commandToRebaseClass, new AllowAllPropertiesPropertyMappingConfiguration());
+
+                // TODO: use a more clever dispatching mechanism than the hard coded switch!!
+                switch (get_class($commandToRebase)) {
+                    case AddNodeToAggregate::class:
+                        $this->nodeCommandHandler->handleAddNodeToAggregate($commandToRebase);
+                        break;
+                    case ChangeNodeName::class:
+                        $this->nodeCommandHandler->handleChangeNodeName($commandToRebase);
+                        break;
+                    case CreateNodeAggregateWithNode::class:
+                        $this->nodeCommandHandler->handleCreateNodeAggregateWithNode($commandToRebase);
+                        break;
+                    case CreateRootNode::class:
+                        $this->nodeCommandHandler->handleCreateRootNode($commandToRebase);
+                        break;
+                    case MoveNode::class:
+                        $this->nodeCommandHandler->handleMoveNode($commandToRebase);
+                        break;
+                    case MoveNodesInAggregate::class:
+                        $this->nodeCommandHandler->handleMoveNodesInAggregate($commandToRebase);
+                        break;
+                    case SetNodeProperty::class:
+                        $this->nodeCommandHandler->handleSetNodeProperty($commandToRebase);
+                        break;
+                    case TranslateNodeInAggregate::class:
+                        $this->nodeCommandHandler->handleTranslateNodeInAggregate($commandToRebase);
+                        break;
+                    default:
+                        throw new \Exception(sprintf('TODO: Command %s is not supported by handleRebaseWorkspace() currently... Please implement it there.', get_class($commandToRebase)));
+                }
+
+            }
+        }
+
+        // if we got so far without an Exception, we can switch the Workspace's active Content stream.
+        $this->eventPublisher->publish(
+            'Neos.ContentRepository:Workspace:' . $command->getWorkspaceName(),
+            new WorkspaceWasRebased(
+                $command->getWorkspaceName(),
+                $rebasedContentStream
+            )
+        );
     }
 }

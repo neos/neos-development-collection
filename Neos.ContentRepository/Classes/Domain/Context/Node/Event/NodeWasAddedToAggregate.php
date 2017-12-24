@@ -15,7 +15,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeIdentifierAndDimensionSpacePoi
 /**
  * Node was added to node aggregate event
  */
-final class NodeWasAddedToAggregate implements EventInterface
+final class NodeWasAddedToAggregate implements EventInterface, CopyableAcrossContentStreamsInterface
 {
     /**
      * @var ContentStreamIdentifier
@@ -174,5 +174,20 @@ final class NodeWasAddedToAggregate implements EventInterface
     public function getPropertyDefaultValuesAndTypes(): array
     {
         return $this->propertyDefaultValuesAndTypes;
+    }
+
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
+    {
+        return new NodeWasAddedToAggregate(
+            $targetContentStream,
+            $this->nodeAggregateIdentifier,
+            $this->nodeTypeName,
+            $this->dimensionSpacePoint,
+            $this->visibleDimensionSpacePoints,
+            $this->nodeIdentifier,
+            $this->parentNodeIdentifier,
+            $this->nodeName,
+            $this->propertyDefaultValuesAndTypes
+        );
     }
 }
