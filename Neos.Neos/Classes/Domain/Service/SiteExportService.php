@@ -90,7 +90,7 @@ class SiteExportService
      */
     public function exportToPackage(array $sites, $tidy = false, $packageKey, $nodeTypeFilter = null)
     {
-        if (!$this->packageManager->isPackageActive($packageKey)) {
+        if (!$this->packageManager->isPackageAvailable($packageKey)) {
             throw new NeosException(sprintf('Error: Package "%s" is not active.', $packageKey), 1404375719);
         }
         $contentPathAndFilename = sprintf('resource://%s/Private/Content/Sites.xml', $packageKey);
