@@ -222,6 +222,34 @@ additionalProperties:
 
                   'position': { type: integer, description: 'Position of the view, small numbers are sorted on top' }
 
+        'creationDialog':
+          type: dictionary
+          additionalProperties: FALSE
+          properties:
+            'elements':
+              -
+                type: 'null'
+              -
+                type: dictionary
+                additionalProperties:
+                  type: dictionary
+                  additionalProperties: FALSE
+                  properties:
+                    'type': { type: string, description: "Type of the element" }
+                    'ui':
+                      type: dictionary
+                      additionalProperties: FALSE
+                      properties:
+
+                        'label': { type: string, description: "Human-readable label for this element." }
+
+                        'editor': { type: string, description: "Name of the Editor Component which is instanciated to edit this element." }
+
+                        'editorOptions': { type: dictionary, description: "Options for the given editor" }
+
+                    'validation':
+                      type: ['dictionary', 'null']
+
         'search':
           type: dictionary
           additionalProperties: FALSE
