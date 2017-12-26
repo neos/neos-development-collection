@@ -45,7 +45,9 @@ class NodeTypeConstraintService
             } else {
                 $negate = false;
             }
-            $nodeTypeFilterPartSubTypes = array_merge([$nodeTypeFilterPart], $this->nodeTypeManager->getSubNodeTypes($nodeTypeFilterPart));
+            $nodeTypeFilterPartSubTypes = array_merge([$nodeTypeFilterPart], array_map(function(Domain\Model\NodeType $nodeType) {
+                return $nodeType->getName();
+            }, $this->nodeTypeManager->getSubNodeTypes($nodeTypeFilterPart)));
 
             foreach ($nodeTypeFilterPartSubTypes as $nodeTypeFilterPartSubType) {
                 if ($negate === true) {

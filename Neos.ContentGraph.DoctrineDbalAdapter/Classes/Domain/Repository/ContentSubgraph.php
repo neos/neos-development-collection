@@ -157,16 +157,28 @@ WHERE n.nodeidentifier = :nodeIdentifier',
             'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
             'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash()
         ];
+        $types = [];
+
         if ($nodeTypeConstraints) {
             // @todo apply constraints
-            throw new \Exception('TODO: Constraints not supported');
+            if (count($nodeTypeConstraints->getConstraints()['includeNodeTypes']) > 0) {
+                $query .= ' AND c.nodetypename IN (:includeNodeTypes)';
+                $parameters['includeNodeTypes'] = $nodeTypeConstraints->getConstraints()['includeNodeTypes'];
+                $types['includeNodeTypes'] = Connection::PARAM_STR_ARRAY;
+            }
+            if (count($nodeTypeConstraints->getConstraints()['excludeNodeTypes']) > 0) {
+                $query .= ' AND c.nodetypename NOT IN (:excludeNodeTypes)';
+                $parameters['excludeNodeTypes'] = $nodeTypeConstraints->getConstraints()['excludeNodeTypes'];
+                $types['excludeNodeTypes'] = Connection::PARAM_STR_ARRAY;
+            }
         }
         $query .= '
  ORDER BY h.position DESC';
         $result = [];
         foreach ($this->getDatabaseConnection()->executeQuery(
             $query,
-            $parameters
+            $parameters,
+            $types
         )->fetchAll() as $nodeData) {
             $result[] = $this->nodeFactory->mapNodeRowToNode($nodeData, $context);
         }
