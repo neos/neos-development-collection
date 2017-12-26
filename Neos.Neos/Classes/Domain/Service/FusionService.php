@@ -150,7 +150,7 @@ class FusionService
     public function getMergedFusionObjectTree(NodeInterface $startNode)
     {
         $contentContext = $startNode->getContext();
-        $siteResourcesPackageKey = $contentContext->getCurrentSite()->getSiteResourcesPackageKey();
+        $siteResourcesPackageKey = $contentContext->getCurrentSite()->siteResourcesPackageKey;
 
         $siteRootFusionPathAndFilename = sprintf($this->siteRootFusionPattern, $siteResourcesPackageKey);
         $siteRootFusionCode = $this->readExternalFusionFile($siteRootFusionPathAndFilename);

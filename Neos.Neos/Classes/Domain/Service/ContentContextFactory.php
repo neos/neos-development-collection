@@ -12,9 +12,10 @@ namespace Neos\Neos\Domain\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Domain\Projection\Site\Site;
+use Neos\Neos\Domain\Projection\Site\SiteFinder;
 use Neos\Utility\Arrays;
 use Neos\Neos\Domain\Model\Domain;
-use Neos\Neos\Domain\Model\Site;
 use Neos\ContentRepository\Domain\Service\ContextFactory;
 use Neos\ContentRepository\Exception\InvalidNodeContextException;
 
@@ -37,9 +38,9 @@ class ContentContextFactory extends ContextFactory
 
     /**
      * @Flow\Inject
-     * @var \Neos\Neos\Domain\Repository\SiteRepository
+     * @var SiteFinder
      */
-    protected $siteRepository;
+    protected $siteFinder;
 
     /**
      * The context implementation this factory will create
@@ -120,7 +121,7 @@ class ContentContextFactory extends ContextFactory
             $defaultContextProperties['currentSite'] = $currentDomain->getSite();
             $defaultContextProperties['currentDomain'] = $currentDomain;
         } else {
-            $defaultContextProperties['currentSite'] = $this->siteRepository->findDefault();
+            $defaultContextProperties['currentSite'] = $this->siteFinder->findDefault();
         }
 
         return $defaultContextProperties;
@@ -153,7 +154,7 @@ class ContentContextFactory extends ContextFactory
             } elseif ($propertyValue instanceof \DateTimeInterface) {
                 $stringValue = $propertyValue->getTimestamp();
             } elseif ($propertyValue instanceof Site) {
-                $stringValue = $propertyValue->getNodeName();
+                $stringValue = $propertyValue->nodeName;
             } elseif ($propertyValue instanceof Domain) {
                 $stringValue = $propertyValue->getHostname();
             } else {
