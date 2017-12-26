@@ -47,9 +47,17 @@ class RouteCacheAspect
     public function addCurrentNodeIdentifier(JoinPointInterface $joinPoint)
     {
         $values = $joinPoint->getMethodArgument('values');
+        if (!isset($values['node'])) {
+            return;
+        }
+        if ($values['node'] instanceof  NodeInterface) {
+            $values['node'] = $values['node']->getContextPath();
+        }
+
         if (!isset($values['node']) || strpos($values['node'], '@') === false) {
             return;
         }
+
 
         // Build context explicitly without authorization checks because the security context isn't available yet
         // anyway and any Entity Privilege targeted on Workspace would fail at this point:
@@ -89,8 +97,15 @@ class RouteCacheAspect
     public function addWorkspaceName(JoinPointInterface $joinPoint)
     {
         $tags = $joinPoint->getAdviceChain()->proceed($joinPoint);
-
         $values = $joinPoint->getMethodArgument('routeValues');
+
+        if (!isset($values['node'])) {
+            return $tags;
+        }
+        if ($values['node'] instanceof  NodeInterface) {
+            $values['node'] = $values['node']->getContextPath();
+        }
+
         if (isset($values['node']) && strpos($values['node'], '@') !== false) {
             // Build context explicitly without authorization checks because the security context isn't available yet
             // anyway and any Entity Privilege targeted on Workspace would fail at this point:
