@@ -150,7 +150,8 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function __construct(NodeData $nodeData = null, Context $context = null)
     {
-        $this->nodeData = $nodeData;
+        // NodeData is OLD code; so we do not set it anymore to make the system crash if one tries to access it
+        //$this->nodeData = $nodeData;
         $this->context = $context;
     }
 
@@ -1119,6 +1120,7 @@ class Node implements NodeInterface, CacheAwareInterface
     public function getHiddenBeforeDateTime()
     {
         // TODO CR rewrite: Get hiddenBeforeDateTime
+        return null;
         return $this->nodeData->getHiddenBeforeDateTime();
     }
 
@@ -1148,6 +1150,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getHiddenAfterDateTime()
     {
+        return null;
         // TODO CR rewrite: Get hiddenAfterDateTime
         return $this->nodeData->getHiddenAfterDateTime();
     }
@@ -1251,6 +1254,8 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function isAccessible()
     {
+        // TODO: fix with CR rewrite
+        return true;
         return $this->nodeData->isAccessible();
     }
 

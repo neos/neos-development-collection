@@ -51,6 +51,9 @@ class PropertyCollection implements \ArrayAccess, \Iterator
 
     public function offsetGet($offset)
     {
+        if (!isset($this->properties[$offset])) {
+            return null;
+        }
         if (is_array($this->properties[$offset]) && !isset($this->resolvedProperties[$offset])) {
             if (isset($this->properties[$offset]['__flow_object_type'])) {
                 $this->resolveObject($this->properties[$offset]);
