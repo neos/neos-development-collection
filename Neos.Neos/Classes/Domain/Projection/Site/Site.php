@@ -15,6 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Neos\EventSourcing\Annotations as CQRS;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Context\Domain\Event\DomainWasAdded;
+use Neos\Neos\Domain\Projection\Domain\DomainFinder;
 
 /**
  * Domain Read Model
@@ -45,4 +46,19 @@ class Site
      * @ORM\Column(nullable=true)
      */
     public $siteResourcesPackageKey;
+
+    /**
+     * @Flow\Inject
+     * @var DomainFinder
+     */
+    protected $domainFinder;
+
+    /**
+     * @return boolean TRUE if the site has at least one active domain assigned
+     * @api
+     */
+    public function hasActiveDomains()
+    {
+        return $this->domainFinder->findActiveBySite($this)->count() > 0;
+    }
 }

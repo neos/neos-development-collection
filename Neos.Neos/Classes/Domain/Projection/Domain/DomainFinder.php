@@ -12,6 +12,7 @@ namespace Neos\Neos\Domain\Projection\Domain;
  */
 
 use Neos\EventSourcing\Projection\Doctrine\AbstractDoctrineFinder;
+use Neos\Neos\Domain\Projection\Site\Site;
 use Neos\Neos\Domain\ValueObject\DomainPort;
 use Neos\Neos\Domain\ValueObject\HostName;
 use Neos\Neos\Domain\ValueObject\SchemeHostPort;
@@ -29,6 +30,19 @@ final class DomainFinder extends AbstractDoctrineFinder
     public function findOneByHostName(HostName $name) : ?Domain
     {
         return $this->__call('findOneByHostName', [(string)$name]);
+    }
+
+    public function findActiveBySite(Site $site)
+    {
+        $query = $this->createQuery();
+        $query->matching(
+            $query->logicalAnd(
+                $query->equals('active', true),
+                $query->equals('site', $site)
+            )
+        );
+
+        return $query->execute();
     }
 
     /**
