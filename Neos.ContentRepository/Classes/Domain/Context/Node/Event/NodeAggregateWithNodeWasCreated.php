@@ -6,6 +6,7 @@ use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcing\Event\EventInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
@@ -64,7 +65,7 @@ final class NodeAggregateWithNodeWasCreated implements EventInterface, CopyableA
     /**
      * (property name => PropertyValue)
      *
-     * @var array
+     * @var array<PropertyValue>
      */
     private $propertyDefaultValuesAndTypes;
 
@@ -79,7 +80,7 @@ final class NodeAggregateWithNodeWasCreated implements EventInterface, CopyableA
      * @param NodeIdentifier $nodeIdentifier
      * @param NodeIdentifier $parentNodeIdentifier
      * @param NodeName $nodeName
-     * @param array $propertyDefaultValuesAndTypes
+     * @param array<Neos\ContentRepository\Domain\ValueObject\PropertyValue> $propertyDefaultValuesAndTypes
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -101,6 +102,11 @@ final class NodeAggregateWithNodeWasCreated implements EventInterface, CopyableA
         $this->parentNodeIdentifier = $parentNodeIdentifier;
         $this->nodeName = $nodeName;
         $this->propertyDefaultValuesAndTypes = $propertyDefaultValuesAndTypes;
+        foreach ($propertyDefaultValuesAndTypes as $propertyName => $property) {
+            if (!$property instanceof PropertyValue) {
+                throw new \InvalidArgumentException(sprintf('Property %s was not of type PropertyValue', $propertyName));
+            }
+        }
     }
 
     /**
