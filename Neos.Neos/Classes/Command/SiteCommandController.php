@@ -151,37 +151,6 @@ class SiteCommandController extends CommandController
             $this->quit(1);
         }
 
-        $siteNodeType = $this->nodeTypeManager->getNodeType($nodeType);
-
-        if ($siteNodeType === null || $siteNodeType->getName() === 'Neos.Neos:FallbackNode') {
-            $this->outputLine('<error>The given node type "%s" was not found</error>', [$nodeType]);
-            $this->quit(1);
-        }
-        if ($siteNodeType->isOfType('Neos.Neos:Document') === false) {
-            $this->outputLine('<error>The given node type "%s" is not based on the superType "%s"</error>', [$nodeType, 'Neos.Neos:Document']);
-            $this->quit(1);
-        }
-
-        $rootNode = $this->nodeContextFactory->create()->getRootNode();
-        // We fetch the workspace to be sure it's known to the persistence manager and persist all
-        // so the workspace and site node are persisted before we import any nodes to it.
-        $rootNode->getContext()->getWorkspace();
-        $this->persistenceManager->persistAll();
-        $sitesNode = $rootNode->getNode(ltrim(SiteService::SITES_ROOT_PATH, '/'));
-        if ($sitesNode === null) {
-            $sitesNode = $rootNode->createNode(NodePaths::getNodeNameFromPath(SiteService::SITES_ROOT_PATH));
-        }
-
-        $siteNode = $sitesNode->createNode($nodeName, $siteNodeType);
-        $siteNode->setProperty('title', $name);
-
-        $site = new Site($nodeName);
-        $site->setSiteResourcesPackageKey($packageKey);
-        $site->setState($inactive ? Site::STATE_OFFLINE : Site::STATE_ONLINE);
-        $site->setName($name);
-
-        $this->siteRepository->add($site);
-
         try {
            $this->siteCommandHandler->handleCreateSite(
                 new CreateSite(
