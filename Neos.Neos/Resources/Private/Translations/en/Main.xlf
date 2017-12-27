@@ -725,6 +725,86 @@
 			<trans-unit id="service.nodes.nodeProperties" xml:space="preserve">
 				<source>Node Properties</source>
 			</trans-unit>
+
+      <!-- New UI labels -->
+			<trans-unit id="copy__from__to--title" xml:space="preserve">
+				<source>Copy {source} to {target}</source>
+			</trans-unit>
+			<trans-unit id="move__from__to--title" xml:space="preserve">
+				<source>Move {source} to {target}</source>
+			</trans-unit>
+			<trans-unit id="copy__from__to--description" xml:space="preserve">
+				<source>Please select the position at which you want {source} inserted relative to {target}.</source>
+			</trans-unit>
+			<trans-unit id="insert" xml:space="preserve">
+				<source>Insert</source>
+			</trans-unit>
+			<trans-unit id="insertMode" xml:space="preserve">
+				<source>Insert mode</source>
+			</trans-unit>
+			<trans-unit id="imageCropper__aspect-ratio-placeholder" xml:space="preserve">
+				<source>Choose an Aspect Ratio</source>
+			</trans-unit>
+			<trans-unit id="ckeditor__toolbar__bold" xml:space="preserve">
+				<source>Bold</source>
+			</trans-unit>
+			<trans-unit id="ckeditor__toolbar__italic" xml:space="preserve">
+				<source>Italic</source>
+			</trans-unit>
+			<trans-unit id="ckeditor__toolbar__underline" xml:space="preserve">
+				<source>Underline</source>
+			</trans-unit>
+			<trans-unit id="ckeditor__toolbar__subscript" xml:space="preserve">
+				<source>Subscript</source>
+			</trans-unit>
+			<trans-unit id="ckeditor__toolbar__superscript" xml:space="preserve">
+				<source>Superscript</source>
+			</trans-unit>
+			<trans-unit id="ckeditor__toolbar__strikethrough" xml:space="preserve">
+				<source>Strikethrough</source>
+			</trans-unit>
+			<trans-unit id="ckeditor__toolbar__link" xml:space="preserve">
+				<source>Link</source>
+			</trans-unit>
+			<trans-unit id="ckeditor__toolbar__ordered-list" xml:space="preserve">
+				<source>Ordered list</source>
+			</trans-unit>
+			<trans-unit id="ckeditor__toolbar__unordered-list" xml:space="preserve">
+				<source>Unordered list</source>
+			</trans-unit>
+			<trans-unit id="ckeditor__toolbar__align-left" xml:space="preserve">
+				<source>Align left</source>
+			</trans-unit>
+			<trans-unit id="ckeditor__toolbar__align-right" xml:space="preserve">
+				<source>Align right</source>
+			</trans-unit>
+			<trans-unit id="ckeditor__toolbar__align-center" xml:space="preserve">
+				<source>Align center</source>
+			</trans-unit>
+			<trans-unit id="ckeditor__toolbar__align-justify" xml:space="preserve">
+				<source>Align justify</source>
+			</trans-unit>
+			<trans-unit id="ckeditor__toolbar__table" xml:space="preserve">
+				<source>Table</source>
+			</trans-unit>
+			<trans-unit id="ckeditor__toolbar__remove-format" xml:space="preserve">
+				<source>Remove format</source>
+			</trans-unit>
+			<trans-unit id="ckeditor__toolbar__outdent" xml:space="preserve">
+				<source>Outdent</source>
+			</trans-unit>
+			<trans-unit id="ckeditor__toolbar__indent" xml:space="preserve">
+				<source>Indent</source>
+			</trans-unit>
+			<trans-unit id="createNew" xml:space="preserve">
+				<source>Create new</source>
+			</trans-unit>
+			<trans-unit id="noMatchesFound" xml:space="preserve">
+				<source>No matches found</source>
+			</trans-unit>
+			<trans-unit id="searchBoxLeftToType" xml:space="preserve">
+				<source>Please enter ###CHARACTERS### more character</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
