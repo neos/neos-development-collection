@@ -30,6 +30,27 @@ final class NodePath implements \JsonSerializable
         return $this->path === '/';
     }
 
+    public function isAbsolute(): bool
+    {
+        return $this->path{0} === '/';
+    }
+
+    /**
+     * @return NodeName[]
+     */
+    public function getParts() : array
+    {
+        $path = $this->path;
+        if ($this->isAbsolute()) {
+            $path = substr($path, 1);
+        }
+        $pathParts = explode('/', $path);
+
+        return array_map(function($pathPart) {
+            return new NodeName($pathPart);
+        }, $pathParts);
+    }
+
     public function jsonSerialize()
     {
         return $this->path;
@@ -39,4 +60,5 @@ final class NodePath implements \JsonSerializable
     {
         return $this->path;
     }
+
 }
