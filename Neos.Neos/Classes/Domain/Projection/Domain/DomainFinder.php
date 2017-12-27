@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Domain\Projection\Domain;
 
 /*
@@ -27,7 +28,7 @@ final class DomainFinder extends AbstractDoctrineFinder
      * @param HostName $name
      * @return mixed
      */
-    public function findOneByHostName(HostName $name) : ?Domain
+    public function findOneByHostName(HostName $name): ?Domain
     {
         return $this->__call('findOneByHostName', [(string)$name]);
     }
@@ -61,5 +62,10 @@ final class DomainFinder extends AbstractDoctrineFinder
         );
 
         return $query->execute()->getFirst();
+    }
+
+    public function getDefaultOrderings()
+    {
+        return $this->defaultOrderings;
     }
 }
