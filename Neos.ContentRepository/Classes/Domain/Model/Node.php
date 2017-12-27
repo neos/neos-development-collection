@@ -254,14 +254,8 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getPath()
     {
-        // FIXME CR rewrite: Implement more efficient implementation to get path in subgraph (loop with stored routine?)
-        $path = (string)$this->name;
-        /** @var Node $currentNode */
-        $currentNode = $this;
-        while ($currentNode = $currentNode->getParent()) {
-            $path = (string)$currentNode->name . '/' . $path;
-        }
-        return '/' . $path;
+        // TODO: is a CTE safe to use?? It's quite efficient, though :)
+        return (string)$this->context->getSubgraph()->findNodePath($this->identifier);
     }
 
     /**

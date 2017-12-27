@@ -102,6 +102,8 @@ interface ContentSubgraphInterface
      */
     public function findRootNode(Domain\Service\Context $context = null): ?Domain\Model\NodeInterface;
 
+    public function findNodePath(Domain\ValueObject\NodeIdentifier $nodeIdentifier): Domain\ValueObject\NodePath;
+
     /**
      * @return Domain\ValueObject\ContentStreamIdentifier
      */

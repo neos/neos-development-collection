@@ -425,4 +425,38 @@ WHERE n.nodeidentifier = :nodeIdentifier',
     {
         return $this->client->getConnection();
     }
+
+    public function findNodePath(ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier): ContentRepository\ValueObject\NodePath
+    {
+
+        $result = $this->getDatabaseConnection()->executeQuery(
+            'with recursive nodePath as (
+                SELECT h.name, h.parentnodeanchor FROM neos_contentgraph_node n
+                     INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                     AND h.contentstreamidentifier = :contentStreamIdentifier
+                     AND h.dimensionspacepointhash = :dimensionSpacePointHash
+                     AND n.nodeidentifier = :nodeIdentifier
+ 
+                UNION
+                
+                    SELECT h.name, h.parentnodeanchor FROM neos_contentgraph_hierarchyrelation h
+                        INNER JOIN nodePath as np ON h.childnodeanchor = np.parentnodeanchor
+            )
+            select * from nodePath',
+            [
+                'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
+                'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash(),
+                'nodeIdentifier' => (string) $nodeIdentifier
+            ]
+        )->fetchAll();
+
+        $nodePath = [];
+
+        foreach ($result as $r) {
+            $nodePath[] = $r['name'];
+        }
+
+        $nodePath = array_reverse($nodePath);
+        return new ContentRepository\ValueObject\NodePath('/' . implode('/', $nodePath));
+    }
 }
