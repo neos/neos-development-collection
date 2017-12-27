@@ -959,8 +959,20 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getNode($path)
     {
-        // FIXME CR rewrite: the path must not necessarily be a single name!
-        return $this->context->getSubgraph()->findChildNodeConnectedThroughEdgeName($this->identifier, new NodeName($path), $this->context);
+        $path = new Domain\ValueObject\NodePath($path);
+        $node = $this;
+        if ($path->isAbsolute()) {
+            $node = $this->context->getSubgraph()->findRootNode($this->context);
+        }
+
+        foreach ($path->getParts() as $nodeName) {
+            $node = $this->context->getSubgraph()->findChildNodeConnectedThroughEdgeName($node->identifier, $nodeName, $this->context);
+            if (!$node) {
+                return null;
+            }
+        }
+
+        return $node;
     }
 
     /**

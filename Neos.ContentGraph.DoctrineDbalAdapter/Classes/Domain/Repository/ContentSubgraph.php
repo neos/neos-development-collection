@@ -160,7 +160,6 @@ WHERE n.nodeidentifier = :nodeIdentifier',
         $types = [];
 
         if ($nodeTypeConstraints) {
-            // @todo apply constraints
             if (count($nodeTypeConstraints->getConstraints()['includeNodeTypes']) > 0) {
                 $query .= ' AND c.nodetypename IN (:includeNodeTypes)';
                 $parameters['includeNodeTypes'] = $nodeTypeConstraints->getConstraints()['includeNodeTypes'];
