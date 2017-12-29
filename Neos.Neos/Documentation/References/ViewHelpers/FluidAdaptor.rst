@@ -478,12 +478,12 @@ Expected result::
 
 **Bind to object property**::
 
-	<f:form.checkbox property="interests" value="TYPO3" />
+	<f:form.checkbox property="interests" value="Neos" />
 
 
 Expected result::
 
-	<input type="checkbox" name="user[interests][]" value="TYPO3" checked="checked" />
+	<input type="checkbox" name="user[interests][]" value="Neos" checked="checked" />
 	(depending on property "interests")
 
 

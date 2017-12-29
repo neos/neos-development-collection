@@ -114,7 +114,7 @@ For styling you can simply include the styles provided in bootstrap into your pa
 
 Html ::
 
-	<link rel="stylesheet" href="{f:uri.resource(path: '3/css/bootstrap.min.css', package: 'TYPO3.Twitter.Bootstrap')}" media="all" />
+	<link rel="stylesheet" href="{f:uri.resource(path: '3/css/bootstrap.min.css', package: 'Neos.Twitter.Bootstrap')}" media="all" />
 
 If you want to hide specific parts of a plugin while in backend you can use the provided neos-backend class.
 
@@ -128,6 +128,6 @@ Don't forget to include the javascript for the plugin from the bootstrap package
 
 Html ::
 
-	<script src="{f:uri.resource(path: '3/js/bootstrap.min.js', package: 'TYPO3.Twitter.Bootstrap')}"></script>
+	<script src="{f:uri.resource(path: '3/js/bootstrap.min.js', package: 'Neos.Twitter.Bootstrap')}"></script>
 
 Now, you should be able to add the new 'Carousel' node type as content element.
