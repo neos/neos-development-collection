@@ -149,6 +149,12 @@ class AssetController extends ActionController
     protected $translator;
 
     /**
+     * @Flow\InjectConfiguration(package="Neos.Media", path="asyncThumbnails")
+     * @var boolean
+     */
+    protected $asyncThumbnails;
+
+    /**
      * @return void
      */
     public function initializeObject()
@@ -175,7 +181,8 @@ class AssetController extends ActionController
             'sortDirection' => $this->browserState->get('sortDirection'),
             'filter' => $this->browserState->get('filter'),
             'activeTag' => $this->browserState->get('activeTag'),
-            'activeAssetCollection' => $this->browserState->get('activeAssetCollection')
+            'activeAssetCollection' => $this->browserState->get('activeAssetCollection'),
+            'asyncThumbnails' => $this->asyncThumbnails
         ]);
     }
 
