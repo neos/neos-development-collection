@@ -2,13 +2,13 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="km">
     <body>
-      <trans-unit id="groups.visibility" xml:space="preserve">
+      <trans-unit id="groups.visibility" xml:space="preserve" approved="yes">
 				<source>Visibility</source>
-			<target xml:lang="km" state="translated">
+			<target xml:lang="km">
 ដែលអាចមើលឃើញ</target></trans-unit>
-      <trans-unit id="groups.document" xml:space="preserve">
+      <trans-unit id="groups.document" xml:space="preserve" approved="yes">
 				<source>Document</source>
-			<target xml:lang="km" state="translated">ឯកសារ</target></trans-unit>
+			<target xml:lang="km">ឯកសារ</target></trans-unit>
     </body>
   </file>
 </xliff>
