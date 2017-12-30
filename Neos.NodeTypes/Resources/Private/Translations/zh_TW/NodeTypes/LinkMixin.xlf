@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="properties.link" xml:space="preserve">
 				<source>Link</source>
-			<target xml:lang="zh-TW" state="needs-translation">Link</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">連結</target></trans-unit>
     </body>
   </file>
 </xliff>

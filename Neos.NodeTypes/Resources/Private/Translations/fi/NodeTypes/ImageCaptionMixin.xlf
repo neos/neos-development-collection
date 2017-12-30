@@ -5,9 +5,9 @@
       <trans-unit id="properties.hasCaption" xml:space="preserve" approved="yes">
 				<source>Enable caption</source>
 			<target xml:lang="fi">Käytä kuvatekstiä</target></trans-unit>
-      <trans-unit id="properties.caption.aloha.placeholder" xml:space="preserve" approved="yes">
+      <trans-unit id="properties.caption.aloha.placeholder" xml:space="preserve">
 				<source><![CDATA[<p>Enter caption here</p>]]></source>
-			<target xml:lang="fi"><![CDATA[<p>Kirjoita kuvateksti tähän</p>]]></target></trans-unit>
+			<target xml:lang="fi" state="needs-translation"><![CDATA[<p>Enter caption here</p>]]></target></trans-unit>
     </body>
   </file>
 </xliff>
