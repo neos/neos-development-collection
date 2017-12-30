@@ -2,48 +2,397 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="Neos.Media.Browser" source-language="en" datatype="plaintext" target-language="la-LA">
     <body>
+      <trans-unit id="dragHelp" xml:space="preserve">
+				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
+			<target xml:lang="la-LA">crwdns3941:0crwdne3941:0</target></trans-unit>
+      <trans-unit id="replace.options.keepOriginalFilename" xml:space="preserve">
+				<source>Keep the filename "{0}"</source>
+			<target xml:lang="la-LA">crwdns3942:0{0}crwdne3942:0</target></trans-unit>
+      <trans-unit id="module.label" xml:space="preserve">
+				<source>Media</source>
+			<target xml:lang="la-LA">crwdns3943:0crwdne3943:0</target></trans-unit>
+      <trans-unit id="module.description" xml:space="preserve">
+				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
+			<target xml:lang="la-LA">crwdns3944:0crwdne3944:0</target></trans-unit>
+      <trans-unit id="field.name" xml:space="preserve">
+				<source>Name</source>
+			<target xml:lang="la-LA">crwdns3945:0crwdne3945:0</target></trans-unit>
+      <trans-unit id="field.title" xml:space="preserve">
+				<source>Title</source>
+			<target xml:lang="la-LA">crwdns3946:0crwdne3946:0</target></trans-unit>
+      <trans-unit id="field.label" xml:space="preserve">
+				<source>Label</source>
+			<target xml:lang="la-LA">crwdns3947:0crwdne3947:0</target></trans-unit>
+      <trans-unit id="field.caption" xml:space="preserve">
+				<source>Caption</source>
+			<target xml:lang="la-LA">crwdns3948:0crwdne3948:0</target></trans-unit>
+      <trans-unit id="field.lastModified" xml:space="preserve">
+				<source>Last modified</source>
+			<target xml:lang="la-LA">crwdns3949:0crwdne3949:0</target></trans-unit>
+      <trans-unit id="field.fileSize" xml:space="preserve">
+				<source>File size</source>
+			<target xml:lang="la-LA">crwdns3950:0crwdne3950:0</target></trans-unit>
+      <trans-unit id="field.type" xml:space="preserve">
+				<source>Type</source>
+			<target xml:lang="la-LA">crwdns3951:0crwdne3951:0</target></trans-unit>
+      <trans-unit id="field.tags" xml:space="preserve">
+				<source>Tags</source>
+			<target xml:lang="la-LA">crwdns3952:0crwdne3952:0</target></trans-unit>
+      <trans-unit id="sortByName" xml:space="preserve">
+				<source>Sort by name</source>
+			<target xml:lang="la-LA">crwdns3953:0crwdne3953:0</target></trans-unit>
+      <trans-unit id="sortByLastModified" xml:space="preserve">
+				<source>Sort by last modified</source>
+			<target xml:lang="la-LA">crwdns3954:0crwdne3954:0</target></trans-unit>
+      <trans-unit id="sortby" xml:space="preserve">
+				<source>Sort by</source>
+			<target xml:lang="la-LA">crwdns3955:0crwdne3955:0</target></trans-unit>
+      <trans-unit id="sortDirection" xml:space="preserve">
+				<source>Sort direction</source>
+			<target xml:lang="la-LA">crwdns3956:0crwdne3956:0</target></trans-unit>
+      <trans-unit id="sortDirection.asc" xml:space="preserve">
+				<source>Ascending</source>
+			<target xml:lang="la-LA">crwdns3957:0crwdne3957:0</target></trans-unit>
+      <trans-unit id="sortDirection.desc" xml:space="preserve">
+				<source>Descending</source>
+			<target xml:lang="la-LA">crwdns3958:0crwdne3958:0</target></trans-unit>
+      <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
+				<source>Sort direction Ascending</source>
+			<target xml:lang="la-LA">crwdns3959:0crwdne3959:0</target></trans-unit>
+      <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
+				<source>Sort direction Descending</source>
+			<target xml:lang="la-LA">crwdns3960:0crwdne3960:0</target></trans-unit>
+      <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve">
+				<source>Drag and drop on tag or collection</source>
+			<target xml:lang="la-LA">crwdns3961:0crwdne3961:0</target></trans-unit>
+      <trans-unit id="editAsset" xml:space="preserve">
+				<source>Edit asset</source>
+			<target xml:lang="la-LA">crwdns3962:0crwdne3962:0</target></trans-unit>
+      <trans-unit id="deleteAsset" xml:space="preserve">
+				<source>Delete asset</source>
+			<target xml:lang="la-LA">crwdns3963:0crwdne3963:0</target></trans-unit>
+      <trans-unit id="message.reallyDeleteAsset" xml:space="preserve">
+				<source>Do you really want to delete asset "{0}"?</source>
+			<target xml:lang="la-LA">crwdns3964:0{0}crwdne3964:0</target></trans-unit>
+      <trans-unit id="message.reallyDeleteCollection" xml:space="preserve">
+				<source>Do you really want to delete collection "{0}"?</source>
+			<target xml:lang="la-LA">crwdns3965:0{0}crwdne3965:0</target></trans-unit>
+      <trans-unit id="message.reallyDeleteTag" xml:space="preserve">
+				<source>Do you really want to delete tag "{0}"?</source>
+			<target xml:lang="la-LA">crwdns3966:0{0}crwdne3966:0</target></trans-unit>
+      <trans-unit id="message.willBeDeleted" xml:space="preserve">
+				<source>This will delete the asset.</source>
+			<target xml:lang="la-LA">crwdns3967:0crwdne3967:0</target></trans-unit>
+      <trans-unit id="message.willDeleteCollection" xml:space="preserve">
+				<source>This will delete the collection, but not the assets that it contains.</source>
+			<target xml:lang="la-LA">crwdns3968:0crwdne3968:0</target></trans-unit>
+      <trans-unit id="message.willDeleteTag" xml:space="preserve">
+				<source>This will delete the tag, but not the assets that has it.</source>
+			<target xml:lang="la-LA">crwdns3969:0crwdne3969:0</target></trans-unit>
+      <trans-unit id="message.operationCannotBeUndone" xml:space="preserve">
+				<source>This operation cannot be undone.</source>
+			<target xml:lang="la-LA">crwdns3970:0crwdne3970:0</target></trans-unit>
+      <trans-unit id="cancel" xml:space="preserve">
+				<source>Cancel</source>
+			<target xml:lang="la-LA">crwdns3971:0crwdne3971:0</target></trans-unit>
+      <trans-unit id="replace" xml:space="preserve">
+				<source>Replace</source>
+			<target xml:lang="la-LA">crwdns3972:0crwdne3972:0</target></trans-unit>
+      <trans-unit id="replaceAssetResource" xml:space="preserve">
+				<source>Replace asset resource</source>
+			<target xml:lang="la-LA">crwdns3973:0crwdne3973:0</target></trans-unit>
+      <trans-unit id="saveEditing" xml:space="preserve">
+				<source>Save</source>
+			<target xml:lang="la-LA">crwdns3974:0crwdne3974:0</target></trans-unit>
+      <trans-unit id="message.confirmDelete" xml:space="preserve">
+				<source>Yes, delete the asset</source>
+			<target xml:lang="la-LA">crwdns3975:0crwdne3975:0</target></trans-unit>
+      <trans-unit id="message.confirmDeleteCollection" xml:space="preserve">
+				<source>Yes, delete the collection</source>
+			<target xml:lang="la-LA">crwdns3976:0crwdne3976:0</target></trans-unit>
+      <trans-unit id="message.confirmDeleteTag" xml:space="preserve">
+				<source>Yes, delete the tag</source>
+			<target xml:lang="la-LA">crwdns3977:0crwdne3977:0</target></trans-unit>
+      <trans-unit id="thumbnail.editTitle" xml:space="preserve">
+				<source>Edit {0}</source>
+			<target xml:lang="la-LA">crwdns3978:0{0}crwdne3978:0</target></trans-unit>
+      <trans-unit id="search.title" xml:space="preserve">
+				<source>Search in assets</source>
+			<target xml:lang="la-LA">crwdns3979:0crwdne3979:0</target></trans-unit>
+      <trans-unit id="search.placeholder" xml:space="preserve">
+				<source>Search</source>
+			<target xml:lang="la-LA">crwdns3980:0crwdne3980:0</target></trans-unit>
+      <trans-unit id="search.itemCount" xml:space="preserve">
+				<source>{0} items</source>
+			<target xml:lang="la-LA">crwdns3981:0{0}crwdne3981:0</target></trans-unit>
+      <trans-unit id="search.foundMatches" xml:space="preserve">
+				<source>found matching "{0}"</source>
+			<target xml:lang="la-LA">crwdns3982:0{0}crwdne3982:0</target></trans-unit>
+      <trans-unit id="upload" xml:space="preserve">
+				<source>Upload</source>
+			<target xml:lang="la-LA">crwdns3983:0crwdne3983:0</target></trans-unit>
+      <trans-unit id="filterOptions" xml:space="preserve">
+				<source>Filter options</source>
+			<target xml:lang="la-LA">crwdns3984:0crwdne3984:0</target></trans-unit>
+      <trans-unit id="filter.title.all" xml:space="preserve">
+				<source>Display all asset types</source>
+			<target xml:lang="la-LA">crwdns3985:0crwdne3985:0</target></trans-unit>
+      <trans-unit id="filter.title.images" xml:space="preserve">
+				<source>Only display image assets</source>
+			<target xml:lang="la-LA">crwdns3986:0crwdne3986:0</target></trans-unit>
+      <trans-unit id="filter.title.documents" xml:space="preserve">
+				<source>Only display document assets</source>
+			<target xml:lang="la-LA">crwdns3987:0crwdne3987:0</target></trans-unit>
+      <trans-unit id="filter.title.video" xml:space="preserve">
+				<source>Only display video assets</source>
+			<target xml:lang="la-LA">crwdns3988:0crwdne3988:0</target></trans-unit>
+      <trans-unit id="filter.title.audio" xml:space="preserve">
+				<source>Only display audio assets</source>
+			<target xml:lang="la-LA">crwdns3989:0crwdne3989:0</target></trans-unit>
+      <trans-unit id="filter.all" xml:space="preserve">
+				<source>All</source>
+			<target xml:lang="la-LA">crwdns3990:0crwdne3990:0</target></trans-unit>
+      <trans-unit id="filter.images" xml:space="preserve">
+				<source>Images</source>
+			<target xml:lang="la-LA">crwdns3991:0crwdne3991:0</target></trans-unit>
+      <trans-unit id="filter.documents" xml:space="preserve">
+				<source>Documents</source>
+			<target xml:lang="la-LA">crwdns3992:0crwdne3992:0</target></trans-unit>
+      <trans-unit id="filter.video" xml:space="preserve">
+				<source>Video</source>
+			<target xml:lang="la-LA">crwdns3993:0crwdne3993:0</target></trans-unit>
+      <trans-unit id="filter.audio" xml:space="preserve">
+				<source>Audio</source>
+			<target xml:lang="la-LA">crwdns3994:0crwdne3994:0</target></trans-unit>
+      <trans-unit id="tooltip.sortOptions" xml:space="preserve">
+				<source>Sort options</source>
+			<target xml:lang="la-LA">crwdns3995:0crwdne3995:0</target></trans-unit>
+      <trans-unit id="tooltip.listView" xml:space="preserve">
+				<source>List view</source>
+			<target xml:lang="la-LA">crwdns3996:0crwdne3996:0</target></trans-unit>
+      <trans-unit id="tooltip.thumbnailView" xml:space="preserve">
+				<source>Thumbnail view</source>
+			<target xml:lang="la-LA">crwdns3997:0crwdne3997:0</target></trans-unit>
+      <trans-unit id="collections" xml:space="preserve">
+				<source>Collections</source>
+			<target xml:lang="la-LA">crwdns3998:0crwdne3998:0</target></trans-unit>
+      <trans-unit id="editCollections" xml:space="preserve">
+				<source>Edit collections</source>
+			<target xml:lang="la-LA">crwdns3999:0crwdne3999:0</target></trans-unit>
+      <trans-unit id="editCollection" xml:space="preserve">
+				<source>Edit collection</source>
+			<target xml:lang="la-LA">crwdns4000:0crwdne4000:0</target></trans-unit>
+      <trans-unit id="deleteCollection" xml:space="preserve">
+				<source>Delete collection</source>
+			<target xml:lang="la-LA">crwdns4001:0crwdne4001:0</target></trans-unit>
+      <trans-unit id="createCollection" xml:space="preserve">
+				<source>Create collection</source>
+			<target xml:lang="la-LA">crwdns4002:0crwdne4002:0</target></trans-unit>
+      <trans-unit id="newCollection.placeholder" xml:space="preserve">
+				<source>Enter collection title</source>
+			<target xml:lang="la-LA">crwdns4003:0crwdne4003:0</target></trans-unit>
+      <trans-unit id="allCollections" xml:space="preserve">
+				<source>All collections</source>
+			<target xml:lang="la-LA">crwdns4004:0crwdne4004:0</target></trans-unit>
+      <trans-unit id="tags" xml:space="preserve">
+				<source>Tags</source>
+			<target xml:lang="la-LA">crwdns4005:0crwdne4005:0</target></trans-unit>
+      <trans-unit id="editTags" xml:space="preserve">
+				<source>Edit tags</source>
+			<target xml:lang="la-LA">crwdns4006:0crwdne4006:0</target></trans-unit>
+      <trans-unit id="editTag" xml:space="preserve">
+				<source>Edit tag</source>
+			<target xml:lang="la-LA">crwdns4007:0crwdne4007:0</target></trans-unit>
+      <trans-unit id="deleteTag" xml:space="preserve">
+				<source>Delete tag</source>
+			<target xml:lang="la-LA">crwdns4008:0crwdne4008:0</target></trans-unit>
+      <trans-unit id="placeholder.createTag" xml:space="preserve">
+				<source>Enter tag label</source>
+			<target xml:lang="la-LA">crwdns4009:0crwdne4009:0</target></trans-unit>
+      <trans-unit id="createTag" xml:space="preserve">
+				<source>Create tag</source>
+			<target xml:lang="la-LA">crwdns4010:0crwdne4010:0</target></trans-unit>
+      <trans-unit id="tags.title.all" xml:space="preserve">
+				<source>All assets</source>
+			<target xml:lang="la-LA">crwdns4011:0crwdne4011:0</target></trans-unit>
+      <trans-unit id="tags.all" xml:space="preserve">
+				<source>All</source>
+			<target xml:lang="la-LA">crwdns4012:0crwdne4012:0</target></trans-unit>
+      <trans-unit id="untaggedAssets" xml:space="preserve">
+				<source>Untagged assets</source>
+			<target xml:lang="la-LA">crwdns4013:0crwdne4013:0</target></trans-unit>
+      <trans-unit id="untagged" xml:space="preserve">
+				<source>Untagged</source>
+			<target xml:lang="la-LA">crwdns4014:0crwdne4014:0</target></trans-unit>
+      <trans-unit id="maxUploadSize" xml:space="preserve">
+				<source>Max. upload size {0} per file</source>
+			<target xml:lang="la-LA">crwdns4015:0{0}crwdne4015:0</target></trans-unit>
+      <trans-unit id="dropFiles" xml:space="preserve">
+				<source>Drop files here</source>
+			<target xml:lang="la-LA">crwdns4016:0crwdne4016:0</target></trans-unit>
+      <trans-unit id="clickToUpload" xml:space="preserve">
+				<source>or click to upload</source>
+			<target xml:lang="la-LA">crwdns4017:0crwdne4017:0</target></trans-unit>
+      <trans-unit id="chooseFile" xml:space="preserve">
+				<source>Choose file</source>
+			<target xml:lang="la-LA">crwdns4018:0crwdne4018:0</target></trans-unit>
+      <trans-unit id="noAssetsFound" xml:space="preserve">
+				<source>No Assets found.</source>
+			<target xml:lang="la-LA">crwdns4019:0crwdne4019:0</target></trans-unit>
+      <trans-unit id="basics" xml:space="preserve">
+				<source>Basics</source>
+			<target xml:lang="la-LA">crwdns4020:0crwdne4020:0</target></trans-unit>
+      <trans-unit id="delete" xml:space="preserve">
+				<source>Delete</source>
+			<target xml:lang="la-LA">crwdns4021:0crwdne4021:0</target></trans-unit>
+      <trans-unit id="clickToDelete" xml:space="preserve">
+				<source>Click to delete</source>
+			<target xml:lang="la-LA">crwdns4022:0crwdne4022:0</target></trans-unit>
+      <trans-unit id="save" xml:space="preserve">
+				<source>Save</source>
+			<target xml:lang="la-LA">crwdns4023:0crwdne4023:0</target></trans-unit>
+      <trans-unit id="metadata" xml:space="preserve">
+				<source>Metadata</source>
+			<target xml:lang="la-LA">crwdns4024:0crwdne4024:0</target></trans-unit>
+      <trans-unit id="metadata.filename" xml:space="preserve">
+				<source>Filename</source>
+			<target xml:lang="la-LA">crwdns4025:0crwdne4025:0</target></trans-unit>
+      <trans-unit id="metadata.lastModified" xml:space="preserve">
+				<source>Last modified (resource)</source>
+			<target xml:lang="la-LA">crwdns4026:0crwdne4026:0</target></trans-unit>
+      <trans-unit id="metadata.fileSize" xml:space="preserve">
+				<source>File size</source>
+			<target xml:lang="la-LA">crwdns4027:0crwdne4027:0</target></trans-unit>
+      <trans-unit id="metadata.dimensions" xml:space="preserve">
+				<source>Dimensions</source>
+			<target xml:lang="la-LA">crwdns4028:0crwdne4028:0</target></trans-unit>
+      <trans-unit id="metadata.type" xml:space="preserve">
+				<source>Type</source>
+			<target xml:lang="la-LA">crwdns4029:0crwdne4029:0</target></trans-unit>
+      <trans-unit id="metadata.identifier" xml:space="preserve">
+				<source>Identifier</source>
+			<target xml:lang="la-LA">crwdns4030:0crwdne4030:0</target></trans-unit>
+      <trans-unit id="preview" xml:space="preserve">
+				<source>Preview</source>
+			<target xml:lang="la-LA">crwdns4031:0crwdne4031:0</target></trans-unit>
+      <trans-unit id="cannotUploadFile" xml:space="preserve">
+				<source>Cannot upload the file</source>
+			<target xml:lang="la-LA">crwdns4032:0crwdne4032:0</target></trans-unit>
+      <trans-unit id="noFileSelected" xml:space="preserve">
+				<source>No file selected</source>
+			<target xml:lang="la-LA">crwdns4033:0crwdne4033:0</target></trans-unit>
+      <trans-unit id="fileSizeExceedsAllowedLimit" xml:space="preserve">
+				<source>The file size of {0} exceeds the allowed limit of {1}</source>
+			<target xml:lang="la-LA">crwdns4034:0{0}crwdnd4034:0{1}crwdne4034:0</target></trans-unit>
+      <trans-unit id="forTheFile" xml:space="preserve">
+				<source>for the file</source>
+			<target xml:lang="la-LA">crwdns4035:0crwdne4035:0</target></trans-unit>
+      <trans-unit id="onlySomeFilesWereUploaded" xml:space="preserve">
+				<source>Only some of the files were successfully uploaded. Refresh the page to see the those.</source>
+			<target xml:lang="la-LA">crwdns4036:0crwdne4036:0</target></trans-unit>
+      <trans-unit id="taggingAssetsFailed" xml:space="preserve">
+				<source>Tagging the asset failed.</source>
+			<target xml:lang="la-LA">crwdns4037:0crwdne4037:0</target></trans-unit>
+      <trans-unit id="addingAssetsToCollectionFailed" xml:space="preserve">
+				<source>Adding the asset to the collection failed.</source>
+			<target xml:lang="la-LA">crwdns4038:0crwdne4038:0</target></trans-unit>
+      <trans-unit id="creating" xml:space="preserve">
+				<source>Creating</source>
+			<target xml:lang="la-LA">crwdns4039:0crwdne4039:0</target></trans-unit>
+      <trans-unit id="deleteRelatedNodes" xml:space="preserve">
+				<source>Asset could not be deleted, because there are still Nodes using it</source>
+			<target xml:lang="la-LA">crwdns4040:0crwdne4040:0</target></trans-unit>
+      <group id="relatedNodes" restype="x-gettext-plurals">
+        <trans-unit id="relatedNodes[0]">
+          <source>{0} usages</source>
+          <target xml:lang="la-LA">crwdns4068:0{0}crwdne4068:0</target>
+        </trans-unit>
+        <trans-unit id="relatedNodes[1]">
+          <source>{0} usages</source>
+          <target xml:lang="la-LA">crwdns4068:1{0}crwdne4068:1</target>
+        </trans-unit>
+      </group>
+      <trans-unit id="relatedNodes.referencesTo" xml:space="preserve">
+				<source>References to "{asset}"</source>
+			<target xml:lang="la-LA">crwdns4041:0{asset}crwdne4041:0</target></trans-unit>
+      <trans-unit id="replaceAsset.replaceFilename" xml:space="preserve">
+				<source>Replace "{filename}"</source>
+			<target xml:lang="la-LA">crwdns4042:0{filename}crwdne4042:0</target></trans-unit>
+      <trans-unit id="replaceAsset.description" xml:space="preserve">
+				<source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
+			<target xml:lang="la-LA">crwdns4043:0crwdne4043:0</target></trans-unit>
+      <trans-unit id="replaceAsset.note" xml:space="preserve">
+				<source>Note</source>
+			<target xml:lang="la-LA">crwdns4044:0crwdne4044:0</target></trans-unit>
+      <trans-unit id="replaceAsset.noteText" xml:space="preserve">
+				<source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
+			<target xml:lang="la-LA">crwdns4045:0crwdne4045:0</target></trans-unit>
+      <trans-unit id="replaceAsset.chooseNewFile" xml:space="preserve">
+				<source>Choose a new file</source>
+			<target xml:lang="la-LA">crwdns4046:0crwdne4046:0</target></trans-unit>
+      <trans-unit id="replace.usageCount" xml:space="preserve">
+				<source>Currently the asset is used {usageCount} times.</source>
+			<target xml:lang="la-LA">crwdns4047:0{usageCount}crwdne4047:0</target></trans-unit>
+      <trans-unit id="replace.allUsages" xml:space="preserve">
+				<source>Show all usages</source>
+			<target xml:lang="la-LA">crwdns4048:0crwdne4048:0</target></trans-unit>
+      <trans-unit id="replace.notUsed" xml:space="preserve">
+				<source>Currently the asset is not in used anywhere on the website.</source>
+			<target xml:lang="la-LA">crwdns4049:0crwdne4049:0</target></trans-unit>
+      <trans-unit id="replace.previewFile" xml:space="preserve">
+				<source>Preview current file</source>
+			<target xml:lang="la-LA">crwdns4050:0crwdne4050:0</target></trans-unit>
       <trans-unit id="couldNotReplaceAsset" xml:space="preserve">
 				<source>Could not replace asset</source>
-			<target xml:lang="la-LA">crwdns914:0crwdne914:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns4051:0crwdne4051:0</target></trans-unit>
       <trans-unit id="assetHasBeenReplaced" xml:space="preserve">
 				<source>Asset "{0}" has been replaced.</source>
-			<target xml:lang="la-LA">crwdns915:0{0}crwdne915:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns4052:0{0}crwdne4052:0</target></trans-unit>
       <trans-unit id="assetHasBeenUpdated" xml:space="preserve">
 				<source>Asset "{0}" has been updated.</source>
-			<target xml:lang="la-LA">crwdns916:0{0}crwdne916:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns4053:0{0}crwdne4053:0</target></trans-unit>
       <trans-unit id="assetHasBeenAdded" xml:space="preserve">
 				<source>Asset "{0}" has been added.</source>
-			<target xml:lang="la-LA">crwdns917:0{0}crwdne917:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns4054:0{0}crwdne4054:0</target></trans-unit>
       <trans-unit id="assetHasBeenDeleted" xml:space="preserve">
 				<source>Asset "{0}" has been deleted.</source>
-			<target xml:lang="la-LA">crwdns918:0{0}crwdne918:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns4055:0{0}crwdne4055:0</target></trans-unit>
       <trans-unit id="assetCouldNotBeDeleted" xml:space="preserve">
 				<source>Asset could not be deleted.</source>
-			<target xml:lang="la-LA">crwdns919:0crwdne919:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns4056:0crwdne4056:0</target></trans-unit>
       <trans-unit id="tagAlreadyExistsAndAddedToCollection" xml:space="preserve">
 				<source>Tag "{0}" already exists and was added to collection.</source>
-			<target xml:lang="la-LA">crwdns921:0{0}crwdne921:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns4057:0{0}crwdne4057:0</target></trans-unit>
       <trans-unit id="tagHasBeenCreated" xml:space="preserve">
 				<source>Tag "{0}" has been created.</source>
-			<target xml:lang="la-LA">crwdns922:0{0}crwdne922:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns4058:0{0}crwdne4058:0</target></trans-unit>
       <trans-unit id="tagHasBeenUpdated" xml:space="preserve">
 				<source>Tag "{0}" has been updated.</source>
-			<target xml:lang="la-LA">crwdns923:0{0}crwdne923:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns4059:0{0}crwdne4059:0</target></trans-unit>
       <trans-unit id="tagHasBeenDeleted" xml:space="preserve">
 				<source>Tag "{0}" has been deleted.</source>
-			<target xml:lang="la-LA">crwdns924:0{0}crwdne924:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns4060:0{0}crwdne4060:0</target></trans-unit>
       <trans-unit id="collectionHasBeenCreated" xml:space="preserve">
 				<source>Collection "{0}" has been created.</source>
-			<target xml:lang="la-LA">crwdns925:0{0}crwdne925:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns4061:0{0}crwdne4061:0</target></trans-unit>
       <trans-unit id="collectionHasBeenUpdated" xml:space="preserve">
 				<source>Collection "{0}" has been updated.</source>
-			<target xml:lang="la-LA">crwdns926:0{0}crwdne926:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns4062:0{0}crwdne4062:0</target></trans-unit>
       <trans-unit id="collectionHasBeenDeleted" xml:space="preserve">
 				<source>Collection "{0}" has been deleted.</source>
-			<target xml:lang="la-LA">crwdns927:0{0}crwdne927:0</target></trans-unit>
-      <trans-unit id="media.replace.options.generateRedirects" xml:space="preserve">
+			<target xml:lang="la-LA">crwdns4063:0{0}crwdne4063:0</target></trans-unit>
+      <trans-unit id="replace.options.generateRedirects" xml:space="preserve">
 				<source>Generate redirects from original file url to the new url</source>
-			<target xml:lang="la-LA">crwdns928:0crwdne928:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns4064:0crwdne4064:0</target></trans-unit>
+      <trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve">
+				<source>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</source>
+			<target xml:lang="la-LA">crwdns4065:0{0}crwdnd4065:0{1}crwdne4065:0</target></trans-unit>
+      <trans-unit id="noAccessToWorkspace" xml:space="preserve">
+				<source>No access to workspace "{0}"</source>
+			<target xml:lang="la-LA">crwdns4066:0{0}crwdne4066:0</target></trans-unit>
+      <trans-unit id="missingDocumentNode" xml:space="preserve">
+				<source>No document node found for this node</source>
+			<target xml:lang="la-LA">crwdns4067:0crwdne4067:0</target></trans-unit>
     </body>
   </file>
 </xliff>

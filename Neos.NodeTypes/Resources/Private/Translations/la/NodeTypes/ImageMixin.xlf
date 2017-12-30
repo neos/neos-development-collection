@@ -4,16 +4,16 @@
     <body>
       <trans-unit id="groups.image" xml:space="preserve">
 				<source>Image</source>
-			<target xml:lang="la-LA">crwdns1520:0crwdne1520:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns4599:0crwdne4599:0</target></trans-unit>
       <trans-unit id="properties.image" xml:space="preserve">
 				<source>Image</source>
-			<target xml:lang="la-LA">crwdns1521:0crwdne1521:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns4600:0crwdne4600:0</target></trans-unit>
       <trans-unit id="properties.alternativeText" xml:space="preserve">
 				<source>Alternative text</source>
-			<target xml:lang="la-LA">crwdns1522:0crwdne1522:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns4601:0crwdne4601:0</target></trans-unit>
       <trans-unit id="properties.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="la-LA">crwdns1523:0crwdne1523:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns4602:0crwdne4602:0</target></trans-unit>
     </body>
   </file>
 </xliff>
