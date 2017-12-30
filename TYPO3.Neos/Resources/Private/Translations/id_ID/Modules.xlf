@@ -202,50 +202,62 @@
       </trans-unit>
       <trans-unit id="workspaces.selectedChangesHaveBeenPublished">
         <source>The selected changes have been published.</source>
-        <target xml:lang="id" state="translated">Perubahan dipilih telah diterbitkan.</target>
+        <target xml:lang="id" state="translated">Perubahan yang dipilih telah dipublikasikan.</target>
+        <alt-trans>
+          <target xml:lang="id">Perubahan dipilih telah diterbitkan.</target>
+        </alt-trans>
       </trans-unit>
       <trans-unit id="workspaces.selectedChangesHaveBeenDiscarded">
         <source>The selected changes have been discarded.</source>
-        <target xml:lang="id" state="translated">Perubahan dipilih telah dibuang.</target>
+        <target xml:lang="id" state="translated">The selected changes have been discarded.</target>
+        <alt-trans>
+          <target xml:lang="id">Perubahan dipilih telah dibuang.</target>
+        </alt-trans>
       </trans-unit>
       <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenPublished">
         <source>All changes from workspace "{0}" have been published to {1}.</source>
-        <target xml:lang="id" state="translated">Semua perubahan dari bidang kerja "{0}" telah diterbitkan ke {1}.</target>
+        <target xml:lang="id" state="translated">All changes from workspace "{0}" have been published to {1}.</target>
+        <alt-trans>
+          <target xml:lang="id">Semua perubahan dari bidang kerja "{0}" telah diterbitkan ke {1}.</target>
+        </alt-trans>
       </trans-unit>
       <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenDiscarded">
         <source>All changes from workspace "{0}" have been discarded.</source>
-        <target xml:lang="id" state="translated">Semua perubahan dari bidang kerja "{0}" telah dibuang.</target>
+        <target xml:lang="id" state="translated">Semua perubahan dari ruang kerja " {0} " telah dibuang.</target>
+        <alt-trans>
+          <target xml:lang="id">Semua perubahan dari bidang kerja "{0}" telah dibuang.</target>
+        </alt-trans>
       </trans-unit>
       <trans-unit id="media.dragHelp" xml:space="preserve">
 				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
-			<target xml:lang="id" state="translated">Drag dan drop aset pada koleksi / tag untuk menambahkannya.</target></trans-unit>
+			<target xml:lang="id" state="translated">Seret dan lepaskan aset di koleksi / tag untuk menambahkannya ke tag.</target><alt-trans><target xml:lang="id">Drag dan drop aset pada koleksi / tag untuk menambahkannya.</target></alt-trans></trans-unit>
       <trans-unit id="media.replace.options.keepOriginalFilename" xml:space="preserve">
 				<source>Keep the filename "{0}"</source>
-			<target xml:lang="id" state="translated">Menjaga nama file "{0}"</target></trans-unit>
+			<target xml:lang="id" state="translated">Simpan nama file " {0} "</target><alt-trans><target xml:lang="id">Menjaga nama file "{0}"</target></alt-trans></trans-unit>
       <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
 			<target xml:lang="id" state="translated">Media</target></trans-unit>
       <trans-unit id="media.description" xml:space="preserve">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
-			<target xml:lang="id" state="translated">Modul ini memungkinkan pengelolaan aset media termasuk gambar, video, audio dan dokumen.</target></trans-unit>
+			<target xml:lang="id" state="translated">This module allows managing of media assets including pictures, videos, audio and documents.</target><alt-trans><target xml:lang="id">Modul ini memungkinkan pengelolaan aset media termasuk gambar, video, audio dan dokumen.</target></alt-trans></trans-unit>
       <trans-unit id="history.label" xml:space="preserve">
 				<source>History</source>
-			<target xml:lang="id" state="translated">Riwayat</target></trans-unit>
+			<target xml:lang="id" state="translated">Sejarah</target><alt-trans><target xml:lang="id">History</target></alt-trans><alt-trans><target xml:lang="id">Riwayat</target></alt-trans></trans-unit>
       <trans-unit id="history.description" xml:space="preserve">
 				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
-			<target xml:lang="id" state="translated">Modul ini memberikan gambaran dari semua peristiwa yang relevan yang mempengaruhi instalasi Neos ini.</target></trans-unit>
+			<target xml:lang="id" state="translated">Modul ini memberikan gambaran umum tentang semua peristiwa yang relevan yang mempengaruhi pemasangan Neos ini.</target><alt-trans><target xml:lang="id">Modul ini memberikan gambaran dari semua peristiwa yang relevan yang mempengaruhi instalasi Neos ini.</target></alt-trans></trans-unit>
       <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve">
 				<source>Here's what happened recently in Neos</source>
-			<target xml:lang="id" state="translated">Inilah yang baru hadir di Neos</target></trans-unit>
+			<target xml:lang="id" state="translated">Inilah yang terjadi baru-baru ini di Neos</target><alt-trans><target xml:lang="id">Inilah yang baru hadir di Neos</target></alt-trans></trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
-			<target xml:lang="id" state="translated">Ada belum mencatat peristiwa yang bisa ditampilkan di riwayat ini.</target><alt-trans><target xml:lang="id">Ada belum mencatat peristiw yang bisa ditampilkan di riwayat ini.</target></alt-trans></trans-unit>
+			<target xml:lang="id" state="translated">Belum ada rekaman acara yang bisa ditampilkan dalam sejarah ini.</target><alt-trans><target xml:lang="id">Ada belum mencatat peristiwa yang bisa ditampilkan di riwayat ini.</target></alt-trans><alt-trans><target xml:lang="id">Ada belum mencatat peristiw yang bisa ditampilkan di riwayat ini.</target></alt-trans></trans-unit>
       <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
 				<source>{0} created the {1} {2}.</source>
-			<target xml:lang="id" state="translated">{0} dibuat {1} {2}.</target></trans-unit>
+			<target xml:lang="id" state="translated">{0} created the {1} {2}.</target><alt-trans><target xml:lang="id">{0} dibuat {1} {2}.</target></alt-trans></trans-unit>
       <trans-unit id="history.eventDescription.node.removed" xml:space="preserve">
 				<source>{0} removed the {1} {2}.</source>
-			<target xml:lang="id" state="translated">{0} dihapus {1} {2}.</target></trans-unit>
+			<target xml:lang="id" state="translated">{0} menghapus {1} {2} .</target><alt-trans><target xml:lang="id">{0} dihapus {1} {2}.</target></alt-trans></trans-unit>
       <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
 				<source>{0} created the variant {1} of {2} {3}.</source>
 			<target xml:lang="id" state="translated">{0} menciptakan {1} varian dari {2} {3}.</target></trans-unit>
@@ -888,9 +900,9 @@
       <trans-unit id="media.cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>
 			<target xml:lang="id" state="translated">Tidak dapat meng-upload file</target></trans-unit>
-      <trans-unit id="media.noFileSelected" xml:space="preserve">
+      <trans-unit id="media.noFileSelected" xml:space="preserve" approved="yes">
 				<source>No file selected</source>
-			<target xml:lang="id" state="needs-translation">No file selected</target></trans-unit>
+			<target xml:lang="id">Tidak ada file yang dipilih</target></trans-unit>
       <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target xml:lang="id" state="translated">Ukuran file {0} melampaui batas yang diperbolehkan dari {1}</target></trans-unit>
@@ -923,31 +935,37 @@
 			<target xml:lang="id" state="translated">Referensi untuk "{asset}"</target></trans-unit>
       <trans-unit id="media.replaceAsset.replaceFilename" xml:space="preserve">
 				<source>Replace "{filename}"</source>
-			<target xml:lang="id" state="needs-translation">Replace "{filename}"</target></trans-unit>
+			<target xml:lang="id" state="translated">Ganti " {nama} "</target><alt-trans><target xml:lang="id">Ganti " {filename} "</target></alt-trans></trans-unit>
       <trans-unit id="media.replaceAsset.description" xml:space="preserve">
         <source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
-      <target xml:lang="id" state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
+      <target xml:lang="id" state="translated">Anda dapat mengganti aset ini dengan mengupload file baru. Setelah diganti, aset baru akan digunakan di semua tempat di mana aset tersebut digunakan di situs web Anda.</target></trans-unit>
       <trans-unit id="media.replaceAsset.note" xml:space="preserve">
         <source>Note</source>
-      <target xml:lang="id" state="needs-translation">Note</target></trans-unit>
+      <target xml:lang="id" state="translated">Catatan</target></trans-unit>
       <trans-unit id="media.replaceAsset.noteText" xml:space="preserve">
         <source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
-      <target xml:lang="id" state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
+      <target xml:lang="id" state="translated">Operasi ini akan mengganti aset di semua area kerja yang diterbitkan atau tidak dipublikasikan, termasuk situs web live.</target></trans-unit>
       <trans-unit id="media.replaceAsset.chooseNewFile" xml:space="preserve">
         <source>Choose a new file</source>
-      <target xml:lang="id" state="needs-translation">Choose a new file</target></trans-unit>
+      <target xml:lang="id" state="translated">Pilih file baru</target></trans-unit>
       <trans-unit id="media.replace.usageCount" xml:space="preserve">
         <source>Currently the asset is used {usageCount} times.</source>
-      <target xml:lang="id" state="needs-translation">Currently the asset is used {usageCount} times.</target></trans-unit>
+      <target xml:lang="id" state="translated">Saat ini aset tersebut digunakan {usageCount} kali.</target></trans-unit>
       <trans-unit id="media.replace.allUsages" xml:space="preserve">
         <source>Show all usages</source>
-      <target xml:lang="id" state="needs-translation">Show all usages</target></trans-unit>
+      <target xml:lang="id" state="translated">Tampilkan semua penggunaan</target></trans-unit>
       <trans-unit id="media.replace.notUsed" xml:space="preserve">
         <source>Currently the asset is not in used anywhere on the website.</source>
-      <target xml:lang="id" state="needs-translation">Currently the asset is not in used anywhere on the website.</target></trans-unit>
+      <target xml:lang="id" state="translated">Saat ini aset tersebut tidak digunakan dimanapun di website.</target></trans-unit>
       <trans-unit id="media.replace.previewFile" xml:space="preserve">
         <source>Preview current file</source>
-      <target xml:lang="id" state="needs-translation">Preview current file</target></trans-unit>
+      <target xml:lang="id" state="translated">Pratinjau file saat ini</target></trans-unit>
+      <trans-unit id="media.noAccessToWorkspace" xml:space="preserve">
+        <source>No access to workspace "{0}"</source>
+      <target xml:lang="id" state="translated">Tidak ada akses ke ruang kerja " {0} "</target></trans-unit>
+      <trans-unit id="media.missingDocumentNode" xml:space="preserve">
+        <source>No document node found for this node</source>
+      <target xml:lang="id" state="translated">Tidak ada simpul dokumen yang ditemukan untuk node ini</target></trans-unit>
     </body>
   </file>
 </xliff>

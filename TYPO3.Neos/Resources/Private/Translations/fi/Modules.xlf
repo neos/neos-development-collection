@@ -894,7 +894,7 @@
 			<target xml:lang="fi">Tiedostoa ei voitu ladata</target></trans-unit>
       <trans-unit id="media.noFileSelected" xml:space="preserve" approved="yes">
 				<source>No file selected</source>
-			<target xml:lang="fi">Ei tiedostoa valittuna</target></trans-unit>
+			<target xml:lang="fi">Ei tiedostoa valittuna</target><alt-trans><target xml:lang="fi">Ei valittua tiedostoa</target></alt-trans></trans-unit>
       <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve" approved="yes">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target xml:lang="fi">Tiedoston koko {0} ylitää sallitun rajan {1}</target></trans-unit>
@@ -956,6 +956,12 @@
       <trans-unit id="media.replace.previewFile" xml:space="preserve" approved="yes">
         <source>Preview current file</source>
       <target xml:lang="fi">Esikatsele nykyinen tiedosto</target></trans-unit>
+      <trans-unit id="media.noAccessToWorkspace" xml:space="preserve">
+        <source>No access to workspace "{0}"</source>
+      <target xml:lang="fi" state="needs-translation">No access to workspace "{0}"</target></trans-unit>
+      <trans-unit id="media.missingDocumentNode" xml:space="preserve">
+        <source>No document node found for this node</source>
+      <target xml:lang="fi" state="needs-translation">No document node found for this node</target></trans-unit>
     </body>
   </file>
 </xliff>

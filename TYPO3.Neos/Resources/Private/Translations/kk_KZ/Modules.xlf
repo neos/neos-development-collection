@@ -10,7 +10,7 @@
 			<target xml:lang="kk" state="needs-translation">Click to delete</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target xml:lang="kk" state="needs-translation">Cancel</target></trans-unit>
+			<target xml:lang="kk" state="translated">Бас тарту</target></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
 			<target xml:lang="kk" state="needs-translation">Back</target></trans-unit>
@@ -300,7 +300,7 @@
 			<target xml:lang="kk" state="needs-translation">New</target></trans-unit>
       <trans-unit id="users.action.edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="kk" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="kk" state="translated">Түзету</target></trans-unit>
       <trans-unit id="users.action.editAccount" xml:space="preserve">
 				<source>Edit account</source>
 			<target xml:lang="kk" state="needs-translation">Edit account</target></trans-unit>
@@ -568,10 +568,10 @@
 			<target xml:lang="kk" state="needs-translation">This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</target></trans-unit>
       <trans-unit id="userSettings.action.index" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="kk" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="kk" state="translated">Түзету</target></trans-unit>
       <trans-unit id="userSettings.action.edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="kk" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="kk" state="translated">Түзету</target></trans-unit>
       <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve">
 				<source>New electronic address</source>
 			<target xml:lang="kk" state="needs-translation">New electronic address</target></trans-unit>
@@ -707,7 +707,7 @@
 			<target xml:lang="kk" state="needs-translation">This operation cannot be undone.</target></trans-unit>
       <trans-unit id="media.cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target xml:lang="kk" state="needs-translation">Cancel</target></trans-unit>
+			<target xml:lang="kk" state="translated">Бас тарту</target></trans-unit>
       <trans-unit id="media.replaceAssetResource" xml:space="preserve">
 				<source>Replace</source>
 			<target xml:lang="kk" state="needs-translation">Replace</target></trans-unit>
@@ -854,7 +854,7 @@
 			<target xml:lang="kk" state="needs-translation">Basics</target></trans-unit>
       <trans-unit id="media.delete" xml:space="preserve">
 				<source>Delete</source>
-			<target xml:lang="kk" state="needs-translation">Delete</target></trans-unit>
+			<target xml:lang="kk" state="translated">Жою</target></trans-unit>
       <trans-unit id="media.clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
 			<target xml:lang="kk" state="needs-translation">Click to delete</target></trans-unit>
@@ -948,6 +948,12 @@
       <trans-unit id="media.replace.previewFile" xml:space="preserve">
         <source>Preview current file</source>
       <target xml:lang="kk" state="needs-translation">Preview current file</target></trans-unit>
+      <trans-unit id="media.noAccessToWorkspace" xml:space="preserve">
+        <source>No access to workspace "{0}"</source>
+      <target xml:lang="kk" state="needs-translation">No access to workspace "{0}"</target></trans-unit>
+      <trans-unit id="media.missingDocumentNode" xml:space="preserve">
+        <source>No document node found for this node</source>
+      <target xml:lang="kk" state="needs-translation">No document node found for this node</target></trans-unit>
     </body>
   </file>
 </xliff>

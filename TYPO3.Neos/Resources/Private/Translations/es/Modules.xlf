@@ -442,13 +442,13 @@
 			<target xml:lang="es-ES" state="translated">Nombre</target></trans-unit>
       <trans-unit id="users.accountsAndRoles" xml:space="preserve">
 				<source>Accounts and Roles</source>
-			<target xml:lang="es-ES" state="needs-translation">Accounts and Roles</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Cuentas y Roles</target></trans-unit>
       <trans-unit id="users.tooltip.view" xml:space="preserve">
 				<source>View user</source>
-			<target xml:lang="es-ES" state="needs-translation">View user</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Ver usuario</target></trans-unit>
       <trans-unit id="users.tooltip.edit" xml:space="preserve">
 				<source>Edit user</source>
-			<target xml:lang="es-ES" state="needs-translation">Edit user</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Editar Usuario</target></trans-unit>
       <trans-unit id="users.tooltip.delete" xml:space="preserve">
 				<source>Delete user</source>
 			<target xml:lang="es-ES" state="translated">Eliminar usuario</target></trans-unit>
@@ -894,7 +894,7 @@
 			<target xml:lang="es-ES" state="translated">No se puede cargar el archivo</target></trans-unit>
       <trans-unit id="media.noFileSelected" xml:space="preserve">
 				<source>No file selected</source>
-			<target xml:lang="es-ES" state="needs-translation">No file selected</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Ningún archivo seleccionado</target></trans-unit>
       <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target xml:lang="es-ES" state="translated">El tamaño del archivo de {0} supera el límite permitido de {1}</target></trans-unit>
@@ -931,31 +931,37 @@
 			<target xml:lang="es-ES" state="needs-translation">References to "{asset}"</target></trans-unit>
       <trans-unit id="media.replaceAsset.replaceFilename" xml:space="preserve">
 				<source>Replace "{filename}"</source>
-			<target xml:lang="es-ES" state="needs-translation">Replace "{filename}"</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Reemplazar "{filename}"</target></trans-unit>
       <trans-unit id="media.replaceAsset.description" xml:space="preserve">
         <source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
       <target xml:lang="es-ES" state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
       <trans-unit id="media.replaceAsset.note" xml:space="preserve">
         <source>Note</source>
-      <target xml:lang="es-ES" state="needs-translation">Note</target></trans-unit>
+      <target xml:lang="es-ES" state="translated">Nota</target></trans-unit>
       <trans-unit id="media.replaceAsset.noteText" xml:space="preserve">
         <source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
       <target xml:lang="es-ES" state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
       <trans-unit id="media.replaceAsset.chooseNewFile" xml:space="preserve">
         <source>Choose a new file</source>
-      <target xml:lang="es-ES" state="needs-translation">Choose a new file</target></trans-unit>
+      <target xml:lang="es-ES" state="translated">Seleccione un nuevo archivo</target></trans-unit>
       <trans-unit id="media.replace.usageCount" xml:space="preserve">
         <source>Currently the asset is used {usageCount} times.</source>
       <target xml:lang="es-ES" state="needs-translation">Currently the asset is used {usageCount} times.</target></trans-unit>
       <trans-unit id="media.replace.allUsages" xml:space="preserve">
         <source>Show all usages</source>
-      <target xml:lang="es-ES" state="needs-translation">Show all usages</target></trans-unit>
+      <target xml:lang="es-ES" state="translated">Mostrar todos los usos</target></trans-unit>
       <trans-unit id="media.replace.notUsed" xml:space="preserve">
         <source>Currently the asset is not in used anywhere on the website.</source>
       <target xml:lang="es-ES" state="needs-translation">Currently the asset is not in used anywhere on the website.</target></trans-unit>
       <trans-unit id="media.replace.previewFile" xml:space="preserve">
         <source>Preview current file</source>
-      <target xml:lang="es-ES" state="needs-translation">Preview current file</target></trans-unit>
+      <target xml:lang="es-ES" state="translated">Vista previa del archivo actual</target></trans-unit>
+      <trans-unit id="media.noAccessToWorkspace" xml:space="preserve">
+        <source>No access to workspace "{0}"</source>
+      <target xml:lang="es-ES" state="needs-translation">No access to workspace "{0}"</target></trans-unit>
+      <trans-unit id="media.missingDocumentNode" xml:space="preserve">
+        <source>No document node found for this node</source>
+      <target xml:lang="es-ES" state="needs-translation">No document node found for this node</target></trans-unit>
     </body>
   </file>
 </xliff>

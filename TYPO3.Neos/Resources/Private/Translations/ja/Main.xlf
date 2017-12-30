@@ -161,70 +161,70 @@
 			<target xml:lang="ja" state="translated">公開メニューを切り替え</target></trans-unit>
       <trans-unit id="targetWorkspace" xml:space="preserve">
 				<source>Target workspace</source>
-			<target xml:lang="ja" state="needs-translation">Target workspace</target></trans-unit>
+			<target xml:lang="ja" state="translated">ターゲットワークスペース</target></trans-unit>
       <trans-unit id="currentWorkspace" xml:space="preserve">
 				<source>Current workspace</source>
-			<target xml:lang="ja" state="needs-translation">Current workspace</target></trans-unit>
+			<target xml:lang="ja" state="translated">現在のワークスペース</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve">
 				<source>Remove</source>
-			<target xml:lang="ja" state="needs-translation">Remove</target></trans-unit>
+			<target xml:lang="ja" state="translated">削除する</target></trans-unit>
       <trans-unit id="refresh" xml:space="preserve">
 				<source>Refresh</source>
-			<target xml:lang="ja" state="needs-translation">Refresh</target></trans-unit>
+			<target xml:lang="ja" state="translated">リフレッシュ</target></trans-unit>
       <trans-unit id="save" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="ja" state="needs-translation">Save</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve">
 				<source>Saving</source>
-			<target xml:lang="ja" state="needs-translation">Saving</target></trans-unit>
+			<target xml:lang="ja" state="translated">保存する</target></trans-unit>
       <trans-unit id="saved" xml:space="preserve">
 				<source>Saved</source>
-			<target xml:lang="ja" state="needs-translation">Saved</target></trans-unit>
+			<target xml:lang="ja" state="translated">保存された</target></trans-unit>
       <trans-unit id="search" xml:space="preserve">
 				<source>Search</source>
-			<target xml:lang="ja" state="needs-translation">Search</target></trans-unit>
+			<target xml:lang="ja" state="translated">サーチ</target></trans-unit>
       <trans-unit id="toggleInspector" xml:space="preserve">
 				<source>Toggle inspector</source>
-			<target xml:lang="ja" state="needs-translation">Toggle inspector</target></trans-unit>
+			<target xml:lang="ja" state="translated">インスペクタを切り替える</target></trans-unit>
       <trans-unit id="username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ja" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="ja" state="translated">ユーザー名</target></trans-unit>
       <trans-unit id="you" xml:space="preserve">
 				<source>You</source>
-			<target xml:lang="ja" state="needs-translation">You</target></trans-unit>
+			<target xml:lang="ja" state="translated">君は</target></trans-unit>
       <trans-unit id="noTitle" xml:space="preserve">
 				<source>[no title]</source>
-			<target xml:lang="ja" state="needs-translation">[no title]</target></trans-unit>
+			<target xml:lang="ja" state="translated">[タイトルなし]</target></trans-unit>
       <trans-unit id="labelCaption" xml:space="preserve">
 				<source>Label</source>
-			<target xml:lang="ja" state="needs-translation">Label</target></trans-unit>
+			<target xml:lang="ja" state="translated">ラベル</target></trans-unit>
       <trans-unit id="nodeTypeCaption" xml:space="preserve">
 				<source>Content Type</source>
-			<target xml:lang="ja" state="needs-translation">Content Type</target></trans-unit>
+			<target xml:lang="ja" state="translated">コンテンツタイプ</target></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
 				<source>Path</source>
-			<target xml:lang="ja" state="needs-translation">Path</target></trans-unit>
+			<target xml:lang="ja" state="translated">パス</target></trans-unit>
       <trans-unit id="relativePathCaption" xml:space="preserve">
 				<source>Relative Path</source>
-			<target xml:lang="ja" state="needs-translation">Relative Path</target></trans-unit>
+			<target xml:lang="ja" state="translated">相対パス</target></trans-unit>
       <trans-unit id="version" xml:space="preserve">
 				<source>Version</source>
-			<target xml:lang="ja" state="needs-translation">Version</target></trans-unit>
+			<target xml:lang="ja" state="translated">バージョン</target></trans-unit>
       <trans-unit id="operationCannotBeUndone" xml:space="preserve">
 				<source>This operation cannot be undone.</source>
 			<target xml:lang="ja" state="needs-translation">This operation cannot be undone.</target></trans-unit>
       <trans-unit id="asset" xml:space="preserve">
 				<source>Asset</source>
-			<target xml:lang="ja" state="needs-translation">Asset</target></trans-unit>
+			<target xml:lang="ja" state="translated">資産</target></trans-unit>
       <trans-unit id="created" xml:space="preserve">
 				<source>Created</source>
-			<target xml:lang="ja" state="needs-translation">Created</target></trans-unit>
+			<target xml:lang="ja" state="translated">作成した</target></trans-unit>
       <trans-unit id="lastModification" xml:space="preserve">
 				<source>Last modification</source>
-			<target xml:lang="ja" state="needs-translation">Last modification</target></trans-unit>
+			<target xml:lang="ja" state="translated">最終変更</target></trans-unit>
       <trans-unit id="lastPublication" xml:space="preserve">
 				<source>Last publication</source>
-			<target xml:lang="ja" state="needs-translation">Last publication</target></trans-unit>
+			<target xml:lang="ja" state="translated">最後の刊行物</target></trans-unit>
       <trans-unit id="identifier" xml:space="preserve">
 				<source>Identifier</source>
 			<target xml:lang="ja" state="needs-translation">Identifier</target></trans-unit>
@@ -236,52 +236,52 @@
 			<target xml:lang="ja" state="needs-translation">Workspace</target></trans-unit>
       <trans-unit id="structure.label" xml:space="preserve">
 				<source>Structure</source>
-			<target xml:lang="ja" state="needs-translation">Structure</target></trans-unit>
+			<target xml:lang="ja" state="translated">構造</target></trans-unit>
       <trans-unit id="structure.toggle" xml:space="preserve">
 				<source>Toggle context structure</source>
-			<target xml:lang="ja" state="needs-translation">Toggle context structure</target></trans-unit>
+			<target xml:lang="ja" state="translated">コンテキスト構造の切り替え</target></trans-unit>
       <trans-unit id="filter" xml:space="preserve">
 				<source>Filter</source>
-			<target xml:lang="ja" state="needs-translation">Filter</target></trans-unit>
+			<target xml:lang="ja" state="translated">フィルタ</target></trans-unit>
       <trans-unit id="toggleMenu" xml:space="preserve">
 				<source>Toggle menu</source>
-			<target xml:lang="ja" state="needs-translation">Toggle menu</target></trans-unit>
+			<target xml:lang="ja" state="translated">トグルメニュー</target></trans-unit>
       <trans-unit id="loadError" xml:space="preserve">
 				<source>Load error!</source>
-			<target xml:lang="ja" state="needs-translation">Load error!</target></trans-unit>
+			<target xml:lang="ja" state="translated">読み込みエラー！</target></trans-unit>
       <trans-unit id="aNodeMustBeSelected" xml:space="preserve">
 				<source>You have to select a node</source>
-			<target xml:lang="ja" state="needs-translation">You have to select a node</target></trans-unit>
+			<target xml:lang="ja" state="translated">ノードを選択する必要があります</target></trans-unit>
       <trans-unit id="rootNodeCannotBeDeleted" xml:space="preserve">
 				<source>The Root node cannot be deleted.</source>
-			<target xml:lang="ja" state="needs-translation">The Root node cannot be deleted.</target></trans-unit>
+			<target xml:lang="ja" state="translated">ルートノードは削除できません。</target></trans-unit>
       <trans-unit id="cannotCopyNode" xml:space="preserve">
 				<source>You cannot copy this node</source>
-			<target xml:lang="ja" state="needs-translation">You cannot copy this node</target></trans-unit>
+			<target xml:lang="ja" state="translated">このノードをコピーすることはできません</target></trans-unit>
       <trans-unit id="cannotCutNode" xml:space="preserve">
 				<source>You cannot cut this node</source>
-			<target xml:lang="ja" state="needs-translation">You cannot cut this node</target></trans-unit>
+			<target xml:lang="ja" state="translated">このノードを切断することはできません</target></trans-unit>
       <trans-unit id="contentDimensions" xml:space="preserve">
 				<source>Content Dimensions</source>
-			<target xml:lang="ja" state="needs-translation">Content Dimensions</target></trans-unit>
+			<target xml:lang="ja" state="translated">コンテンツ次元</target></trans-unit>
       <trans-unit id="site" xml:space="preserve">
 				<source>Site</source>
-			<target xml:lang="ja" state="needs-translation">Site</target></trans-unit>
+			<target xml:lang="ja" state="translated">サイト</target></trans-unit>
       <trans-unit id="document" xml:space="preserve">
 				<source>Document</source>
 			<target xml:lang="ja" state="translated">ドキュメント</target></trans-unit>
       <trans-unit id="reference" xml:space="preserve">
 				<source>Reference</source>
-			<target xml:lang="ja" state="needs-translation">Reference</target></trans-unit>
+			<target xml:lang="ja" state="translated">参照</target></trans-unit>
       <trans-unit id="host" xml:space="preserve">
 				<source>Host</source>
-			<target xml:lang="ja" state="needs-translation">Host</target></trans-unit>
+			<target xml:lang="ja" state="translated">ホスト</target></trans-unit>
       <trans-unit id="scheme" xml:space="preserve">
 				<source>Scheme</source>
-			<target xml:lang="ja" state="needs-translation">Scheme</target></trans-unit>
+			<target xml:lang="ja" state="translated">スキーム</target></trans-unit>
       <trans-unit id="port" xml:space="preserve">
 				<source>Port</source>
-			<target xml:lang="ja" state="needs-translation">Port</target></trans-unit>
+			<target xml:lang="ja" state="translated">ポート</target></trans-unit>
       <trans-unit id="primary" xml:space="preserve">
 				<source>Primary</source>
 			<target xml:lang="ja" state="translated">プライマリ</target></trans-unit>
@@ -291,23 +291,23 @@
 			<target xml:lang="ja" state="translated">一般設定</target></trans-unit>
       <trans-unit id="nodeTypes.groups.structure" xml:space="preserve">
 				<source>Structure</source>
-			<target xml:lang="ja" state="needs-translation">Structure</target></trans-unit>
+			<target xml:lang="ja" state="translated">構造</target></trans-unit>
       <trans-unit id="nodeTypes.groups.plugins" xml:space="preserve">
 				<source>Plugins</source>
-			<target xml:lang="ja" state="needs-translation">Plugins</target></trans-unit>
+			<target xml:lang="ja" state="translated">プラグイン</target></trans-unit>
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
 				<source>Click {0} to continue to the page.</source>
-			<target xml:lang="ja" state="needs-translation">Click {0} to continue to the page.</target></trans-unit>
+			<target xml:lang="ja" state="translated">ページに進むには{0} をクリックしてください。</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToAsset" xml:space="preserve">
 				<source>Click {0} to see the file.</source>
-			<target xml:lang="ja" state="needs-translation">Click {0} to see the file.</target></trans-unit>
+			<target xml:lang="ja" state="translated">ファイルを表示するには{0} をクリックしてください。</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToExternalUrl" xml:space="preserve">
 				<source>Click {0} to open the link.</source>
-			<target xml:lang="ja" state="needs-translation">Click {0} to open the link.</target></trans-unit>
+			<target xml:lang="ja" state="translated">{0} をクリックしてリンクを開きます。</target></trans-unit>
       <trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
 				<source>(no target has been selected)</source>
-			<target xml:lang="ja" state="needs-translation">(no target has been selected)</target></trans-unit>
+			<target xml:lang="ja" state="translated">(ターゲットが選択されていない)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
 			<target xml:lang="ja" state="needs-translation">This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</target></trans-unit>
@@ -317,29 +317,29 @@
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>
-			<target xml:lang="ja" state="needs-translation">Full Screen</target></trans-unit>
+			<target xml:lang="ja" state="translated">全画面表示</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
 				<source>Open page in live workspace</source>
         <note>Deprecated, replaced by previewShortcutButton.title</note>
-			<target xml:lang="ja" state="needs-translation">Open page in live workspace</target></trans-unit>
+			<target xml:lang="ja" state="translated">ライブ作業領域のページを開く</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.previewShortcutButton.title" xml:space="preserve">
 				<source>Open page in target workspace</source>
-			<target xml:lang="ja" state="needs-translation">Open page in target workspace</target></trans-unit>
+			<target xml:lang="ja" state="translated">ターゲット・ワークスペースのページを開く</target></trans-unit>
       <trans-unit id="discardAll" xml:space="preserve">
 				<source>Discard all</source>
-			<target xml:lang="ja" state="needs-translation">Discard all</target></trans-unit>
+			<target xml:lang="ja" state="translated">すべてを破棄する</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
 				<source>Discard all changes</source>
-			<target xml:lang="ja" state="needs-translation">Discard all changes</target></trans-unit>
+			<target xml:lang="ja" state="translated">すべての変更を破棄する</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
-			<target xml:lang="ja" state="needs-translation">Are you sure that you want to discard all changes in this workspace?</target></trans-unit>
+			<target xml:lang="ja" state="translated">このワークスペース内のすべての変更を破棄してもよろしいですか？</target></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve">
 				<source>Publish all</source>
-			<target xml:lang="ja" state="needs-translation">Publish all</target></trans-unit>
+			<target xml:lang="ja" state="translated">すべてを公開</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
 				<source>Publish all changes</source>
-			<target xml:lang="ja" state="needs-translation">Publish all changes</target></trans-unit>
+			<target xml:lang="ja" state="translated">すべての変更を公開する</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
 				<source>Are you sure that you want to publish all changes?</source>
 			<target xml:lang="ja" state="translated">すべての変更を公開してもよろしいでしょうか？</target></trans-unit>
@@ -348,25 +348,25 @@
 			<target xml:lang="ja" state="translated">変更を保留中</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspaceContainsChanges" xml:space="preserve">
 				<source>Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</source>
-			<target xml:lang="ja" state="needs-translation">Your personal workspace currently contains unpublished changes. In order to switch to a different target workspace you need to either publish or discard pending changes first.</target></trans-unit>
+			<target xml:lang="ja" state="translated">あなたのパーソナルワークスペースには現在未発表の変更が含まれています。別のターゲットワークスペースに切り替えるには、最初に保留中の変更をパブリッシュまたは破棄する必要があります。</target></trans-unit>
       <trans-unit id="content.components.dirtyWorkspaceDialog.dirtyWorkspacePleaseReviewChanges" xml:space="preserve">
 				<source>Please review your changes, publish or discard them, and then choose a new target workspace again.</source>
-			<target xml:lang="ja" state="needs-translation">Please review your changes, publish or discard them, and then choose a new target workspace again.</target></trans-unit>
+			<target xml:lang="ja" state="translated">変更内容を確認し、パブリッシュまたは破棄してから、新しいターゲットワークスペースを再度選択してください。</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.modes" xml:space="preserve">
 				<source>Editing Modes</source>
-			<target xml:lang="ja" state="needs-translation">Editing Modes</target></trans-unit>
+			<target xml:lang="ja" state="translated">モードの編集</target></trans-unit>
       <trans-unit id="content.components.editPreviewPanel.previewCentral" xml:space="preserve">
 				<source>Preview Central</source>
-			<target xml:lang="ja" state="needs-translation">Preview Central</target></trans-unit>
+			<target xml:lang="ja" state="translated">中央をプレビュー</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.header" xml:space="preserve">
 				<source>You still have changes. What do you want to do with them?</source>
-			<target xml:lang="ja" state="needs-translation">You still have changes. What do you want to do with them?</target></trans-unit>
+			<target xml:lang="ja" state="translated">まだ変更があります。あなたは彼らと何をしたいですか？</target></trans-unit>
       <trans-unit id="content.inspector.inspectorView.selectedElement" xml:space="preserve">
 				<source>Selected element</source>
-			<target xml:lang="ja" state="needs-translation">Selected element</target></trans-unit>
+			<target xml:lang="ja" state="translated">選択された要素</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.title" xml:space="preserve">
 				<source>There are fields that are not correctly filled in.</source>
-			<target xml:lang="ja" state="needs-translation">There are fields that are not correctly filled in.</target></trans-unit>
+			<target xml:lang="ja" state="translated">正しく記入されていないフィールドがあります。</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.alert.content" xml:space="preserve">
 				<source>The fields marked with an error are not yet correctly filled in. Please complete them properly.</source>
 			<target xml:lang="ja" state="needs-translation">The fields marked with an error are not yet correctly filled in. Please complete them properly.</target></trans-unit>
@@ -426,7 +426,7 @@
 			<target xml:lang="ja" state="needs-translation">This text may not exceed {maximum} characters.</target></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target xml:lang="ja" state="needs-translation">Only regular characters (a to z, umlauts, ...) and numbers are allowed.</target></trans-unit>
+			<target xml:lang="ja" state="translated">通常の文字(a〜z、ウムラウト、...) と数字のみが許されます。</target></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve">
 				<source>The given subject was not countable.</source>
 			<target xml:lang="ja" state="needs-translation">The given subject was not countable.</target></trans-unit>
@@ -531,7 +531,7 @@
 			<target xml:lang="ja" state="needs-translation">this element</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve">
 				<source>This will delete the element.</source>
-			<target xml:lang="ja" state="needs-translation">This will delete the element.</target></trans-unit>
+			<target xml:lang="ja" state="translated">これにより、要素が削除されます。</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
 			<target xml:lang="ja" state="needs-translation">This action can be undone in the workspace management.</target></trans-unit>
