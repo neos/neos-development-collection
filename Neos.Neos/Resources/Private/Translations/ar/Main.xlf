@@ -5,148 +5,148 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve">
 				<source>Auto-Publish</source>
-			<target xml:lang="ar" state="needs-translation">Auto-Publish</target></trans-unit>
+			<target xml:lang="ar" state="translated">نشر تلقائي</target></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
-			<target xml:lang="ar" state="needs-translation">Auto-Publish to {0}</target></trans-unit>
+			<target xml:lang="ar" state="translated">نشر تلقائي إلى {0}</target></trans-unit>
       <trans-unit id="reviewChanges" xml:space="preserve">
 				<source>Review changes</source>
-			<target xml:lang="ar" state="needs-translation">Review changes</target></trans-unit>
+			<target xml:lang="ar" state="translated">مراجعة التغييرات</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
-			<target xml:lang="ar" state="needs-translation">Apply</target></trans-unit>
+			<target xml:lang="ar" state="translated">تطبيق</target></trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
 				<source>Apply changes</source>
-			<target xml:lang="ar" state="needs-translation">Apply changes</target></trans-unit>
+			<target xml:lang="ar" state="translated">أعتماد التغيرات</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target xml:lang="ar" state="needs-translation">Cancel</target></trans-unit>
+			<target xml:lang="ar" state="translated">إلغاء</target></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
-			<target xml:lang="ar" state="needs-translation">Back</target></trans-unit>
+			<target xml:lang="ar" state="translated">رجوع</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
-			<target xml:lang="ar" state="needs-translation">Choose</target></trans-unit>
+			<target xml:lang="ar" state="translated">إختيار</target></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve">
 				<source>Type to search</source>
-			<target xml:lang="ar" state="needs-translation">Type to search</target></trans-unit>
+			<target xml:lang="ar" state="translated">اكتب الذي تبحث عنه</target></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="ar" state="needs-translation">Content</target></trans-unit>
+			<target xml:lang="ar" state="translated">المحتوى</target></trans-unit>
       <trans-unit id="node" xml:space="preserve">
 				<source>Node</source>
-			<target xml:lang="ar" state="needs-translation">Node</target></trans-unit>
+			<target xml:lang="ar" state="translated">عقدة</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve">
 				<source>Content View</source>
-			<target xml:lang="ar" state="needs-translation">Content View</target></trans-unit>
+			<target xml:lang="ar" state="translated">عرض المحتوى</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
-			<target xml:lang="ar" state="needs-translation">Create after</target></trans-unit>
+			<target xml:lang="ar" state="translated">إنشاء بعد</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
-			<target xml:lang="ar" state="needs-translation">Create new</target></trans-unit>
+			<target xml:lang="ar" state="translated">إنشاء جديد</target></trans-unit>
       <trans-unit id="close" xml:space="preserve">
 				<source>Close</source>
-			<target xml:lang="ar" state="needs-translation">Close</target></trans-unit>
+			<target xml:lang="ar" state="translated">إغلاق</target></trans-unit>
       <trans-unit id="copy" xml:space="preserve">
 				<source>Copy</source>
-			<target xml:lang="ar" state="needs-translation">Copy</target></trans-unit>
+			<target xml:lang="ar" state="translated">نسخ</target></trans-unit>
       <trans-unit id="cut" xml:space="preserve">
 				<source>Cut</source>
-			<target xml:lang="ar" state="needs-translation">Cut</target></trans-unit>
+			<target xml:lang="ar" state="translated">قصّ</target></trans-unit>
       <trans-unit id="delete" xml:space="preserve">
 				<source>Delete</source>
-			<target xml:lang="ar" state="needs-translation">Delete</target></trans-unit>
+			<target xml:lang="ar" state="translated">حذف</target></trans-unit>
       <trans-unit id="deleteElement" xml:space="preserve">
 				<source>Yes, delete the element</source>
-			<target xml:lang="ar" state="needs-translation">Yes, delete the element</target></trans-unit>
+			<target xml:lang="ar" state="translated">نعم، إحذف العنصر</target></trans-unit>
       <trans-unit id="deleteElementTitle" xml:space="preserve">
 				<source>Delete the element</source>
-			<target xml:lang="ar" state="needs-translation">Delete the element</target></trans-unit>
+			<target xml:lang="ar" state="translated">إحذف العنصر</target></trans-unit>
       <trans-unit id="discard" xml:space="preserve">
 				<source>Discard</source>
-			<target xml:lang="ar" state="needs-translation">Discard</target></trans-unit>
+			<target xml:lang="ar" state="translated">تجاهل</target></trans-unit>
       <trans-unit id="discardChanges" xml:space="preserve">
 				<source>Discard changes</source>
-			<target xml:lang="ar" state="needs-translation">Discard changes</target></trans-unit>
+			<target xml:lang="ar" state="translated">تجاهل التغييرات</target></trans-unit>
       <trans-unit id="editTitle" xml:space="preserve">
 				<source>Edit title</source>
-			<target xml:lang="ar" state="needs-translation">Edit title</target></trans-unit>
+			<target xml:lang="ar" state="translated">تعديل العنوان</target></trans-unit>
       <trans-unit id="editPreview" xml:space="preserve">
 				<source>Edit / Preview</source>
-			<target xml:lang="ar" state="needs-translation">Edit / Preview</target></trans-unit>
+			<target xml:lang="ar" state="translated">تعديل/معاينة</target></trans-unit>
       <trans-unit id="edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="ar" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="ar" state="translated">عدل</target></trans-unit>
       <trans-unit id="hideUnhide" xml:space="preserve">
 				<source>Hide / Unhide</source>
-			<target xml:lang="ar" state="needs-translation">Hide / Unhide</target></trans-unit>
+			<target xml:lang="ar" state="translated">إخفاء/إظهار</target></trans-unit>
       <trans-unit id="hide" xml:space="preserve">
 				<source>Hide</source>
-			<target xml:lang="ar" state="needs-translation">Hide</target></trans-unit>
+			<target xml:lang="ar" state="translated">إخفاء</target></trans-unit>
       <trans-unit id="unhide" xml:space="preserve">
 				<source>Unhide</source>
-			<target xml:lang="ar" state="needs-translation">Unhide</target></trans-unit>
+			<target xml:lang="ar" state="translated">إلغاء الاخفاء</target></trans-unit>
       <trans-unit id="into" xml:space="preserve">
 				<source>into</source>
-			<target xml:lang="ar" state="needs-translation">into</target></trans-unit>
+			<target xml:lang="ar" state="translated">إلى</target></trans-unit>
       <trans-unit id="before" xml:space="preserve">
 				<source>before</source>
-			<target xml:lang="ar" state="needs-translation">before</target></trans-unit>
+			<target xml:lang="ar" state="translated">قبل</target></trans-unit>
       <trans-unit id="after" xml:space="preserve">
 				<source>after</source>
-			<target xml:lang="ar" state="needs-translation">after</target></trans-unit>
+			<target xml:lang="ar" state="translated">بعد</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve">
 				<source>Loading</source>
-			<target xml:lang="ar" state="needs-translation">Loading</target></trans-unit>
+			<target xml:lang="ar" state="translated">جاري التحميل</target></trans-unit>
       <trans-unit id="newAfter" xml:space="preserve">
 				<source>New After</source>
-			<target xml:lang="ar" state="needs-translation">New After</target></trans-unit>
+			<target xml:lang="ar" state="translated">جديد بعد</target><alt-trans><target xml:lang="ar">جديدة بعد</target></alt-trans></trans-unit>
       <trans-unit id="newBefore" xml:space="preserve">
 				<source>New Before</source>
-			<target xml:lang="ar" state="needs-translation">New Before</target></trans-unit>
+			<target xml:lang="ar" state="translated">جديد قبل</target><alt-trans><target xml:lang="ar">جديدة قبل</target></alt-trans></trans-unit>
       <trans-unit id="newInto" xml:space="preserve">
 				<source>New Into</source>
-			<target xml:lang="ar" state="needs-translation">New Into</target></trans-unit>
+			<target xml:lang="ar" state="translated">الجديد في</target></trans-unit>
       <trans-unit id="navigate" xml:space="preserve">
 				<source>Navigate</source>
-			<target xml:lang="ar" state="needs-translation">Navigate</target></trans-unit>
+			<target xml:lang="ar" state="translated">تصفح</target></trans-unit>
       <trans-unit id="okay" xml:space="preserve">
 				<source>OK</source>
-			<target xml:lang="ar" state="needs-translation">OK</target></trans-unit>
+			<target xml:lang="ar" state="translated">OK</target></trans-unit>
       <trans-unit id="page" xml:space="preserve">
 				<source>Page</source>
-			<target xml:lang="ar" state="needs-translation">Page</target></trans-unit>
+			<target xml:lang="ar" state="translated">صفحة</target></trans-unit>
       <trans-unit id="paste" xml:space="preserve">
 				<source>Paste</source>
-			<target xml:lang="ar" state="needs-translation">Paste</target></trans-unit>
+			<target xml:lang="ar" state="translated">لصق</target></trans-unit>
       <trans-unit id="pasteAfter" xml:space="preserve">
 				<source>Paste After</source>
-			<target xml:lang="ar" state="needs-translation">Paste After</target></trans-unit>
+			<target xml:lang="ar" state="translated">لصق بعد</target><alt-trans><target xml:lang="ar">ألصق بعد</target></alt-trans></trans-unit>
       <trans-unit id="pasteBefore" xml:space="preserve">
 				<source>Paste Before</source>
-			<target xml:lang="ar" state="needs-translation">Paste Before</target></trans-unit>
+			<target xml:lang="ar" state="translated">لصق قبل</target></trans-unit>
       <trans-unit id="pasteInto" xml:space="preserve">
 				<source>Paste Into</source>
-			<target xml:lang="ar" state="needs-translation">Paste Into</target></trans-unit>
+			<target xml:lang="ar" state="translated">لصق في</target></trans-unit>
       <trans-unit id="password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="ar" state="needs-translation">Password</target></trans-unit>
+			<target xml:lang="ar" state="translated">كلمة السر</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve">
 				<source>Preview</source>
-			<target xml:lang="ar" state="needs-translation">Preview</target></trans-unit>
+			<target xml:lang="ar" state="translated">معاينة</target></trans-unit>
       <trans-unit id="publish" xml:space="preserve">
 				<source>Publish</source>
-			<target xml:lang="ar" state="needs-translation">Publish</target></trans-unit>
+			<target xml:lang="ar" state="translated">انشر</target></trans-unit>
       <trans-unit id="publishTo" xml:space="preserve">
 				<source>Publish to {0}</source>
-			<target xml:lang="ar" state="needs-translation">Publish to {0}</target></trans-unit>
+			<target xml:lang="ar" state="translated">نشر إلى {0}</target></trans-unit>
       <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
 				<source>Publish all changes for current page</source>
-			<target xml:lang="ar" state="needs-translation">Publish all changes for current page</target></trans-unit>
+			<target xml:lang="ar" state="translated">نشر كافة التغييرات للصفحة الحالية</target></trans-unit>
       <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
 				<source>Can't publish because the target workspace is read-only</source>
-			<target xml:lang="ar" state="needs-translation">Can't publish because the target workspace is read-only</target></trans-unit>
+			<target xml:lang="ar" state="translated">لا يمكن نشر نظراً لفضاء العمل المستهدف للقراءة فقط</target></trans-unit>
       <trans-unit id="selectTargetWorkspace" xml:space="preserve">
 				<source>Select target workspace</source>
 			<target xml:lang="ar" state="needs-translation">Select target workspace</target></trans-unit>
@@ -155,7 +155,7 @@
 			<target xml:lang="ar" state="needs-translation">Publishing</target></trans-unit>
       <trans-unit id="published" xml:space="preserve">
 				<source>Published</source>
-			<target xml:lang="ar" state="needs-translation">Published</target></trans-unit>
+			<target xml:lang="ar" state="translated">تم النشر</target></trans-unit>
       <trans-unit id="togglePublishMenu" xml:space="preserve">
 				<source>Toggle publish menu</source>
 			<target xml:lang="ar" state="needs-translation">Toggle publish menu</target></trans-unit>
@@ -173,7 +173,7 @@
 			<target xml:lang="ar" state="needs-translation">Refresh</target></trans-unit>
       <trans-unit id="save" xml:space="preserve">
 				<source>Save</source>
-			<target xml:lang="ar" state="needs-translation">Save</target></trans-unit>
+			<target xml:lang="ar" state="translated">حفظ</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve">
 				<source>Saving</source>
 			<target xml:lang="ar" state="needs-translation">Saving</target></trans-unit>
@@ -227,10 +227,10 @@
 			<target xml:lang="ar" state="needs-translation">Last publication</target></trans-unit>
       <trans-unit id="identifier" xml:space="preserve">
 				<source>Identifier</source>
-			<target xml:lang="ar" state="needs-translation">Identifier</target></trans-unit>
+			<target xml:lang="ar" state="translated">رمز التعريف</target></trans-unit>
       <trans-unit id="name" xml:space="preserve">
 				<source>Name</source>
-			<target xml:lang="ar" state="needs-translation">Name</target></trans-unit>
+			<target xml:lang="ar" state="translated">الاسم</target></trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
 			<target xml:lang="ar" state="needs-translation">Workspace</target></trans-unit>
@@ -269,7 +269,7 @@
 			<target xml:lang="ar" state="needs-translation">Site</target></trans-unit>
       <trans-unit id="document" xml:space="preserve">
 				<source>Document</source>
-			<target xml:lang="ar" state="needs-translation">Document</target></trans-unit>
+			<target xml:lang="ar" state="translated">المستند</target></trans-unit>
       <trans-unit id="reference" xml:space="preserve">
 				<source>Reference</source>
 			<target xml:lang="ar" state="needs-translation">Reference</target></trans-unit>
@@ -284,11 +284,11 @@
 			<target xml:lang="ar" state="needs-translation">Port</target></trans-unit>
       <trans-unit id="primary" xml:space="preserve">
 				<source>Primary</source>
-			<target xml:lang="ar" state="needs-translation">Primary</target></trans-unit>
+			<target xml:lang="ar" state="translated">الرئيسي</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>
-			<target xml:lang="ar" state="needs-translation">General</target></trans-unit>
+			<target xml:lang="ar" state="translated">العام</target></trans-unit>
       <trans-unit id="nodeTypes.groups.structure" xml:space="preserve">
 				<source>Structure</source>
 			<target xml:lang="ar" state="needs-translation">Structure</target></trans-unit>
@@ -378,7 +378,7 @@
 			<target xml:lang="ar" state="needs-translation">Throw away</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
-			<target xml:lang="ar" state="needs-translation">Apply</target></trans-unit>
+			<target xml:lang="ar" state="translated">تطبيق</target></trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
 				<source>Select a Plugin</source>
 			<target xml:lang="ar" state="needs-translation">Select a Plugin</target></trans-unit>
@@ -408,10 +408,10 @@
 			<target xml:lang="ar" state="needs-translation">Change type</target></trans-unit>
       <trans-unit id="content.inspector.groups.nodeInfo" xml:space="preserve">
 				<source>Additional info</source>
-			<target xml:lang="ar" state="needs-translation">Additional info</target></trans-unit>
+			<target xml:lang="ar" state="translated">معلومات إضافية</target></trans-unit>
       <trans-unit id="content.inspector.groups.visibility" xml:space="preserve">
 				<source>Visibility</source>
-			<target xml:lang="ar" state="needs-translation">Visibility</target></trans-unit>
+			<target xml:lang="ar" state="translated">الظهور</target></trans-unit>
       <trans-unit id="content.inspector.groups.document" xml:space="preserve">
 				<source>Document options</source>
 			<target xml:lang="ar" state="needs-translation">Document options</target></trans-unit>
@@ -501,7 +501,7 @@
 			<target xml:lang="ar" state="needs-translation">Create and copy</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="ar" state="needs-translation">Content</target></trans-unit>
+			<target xml:lang="ar" state="translated">المحتوى</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve">
 				<source>Toggle menu group</source>
 			<target xml:lang="ar" state="needs-translation">Toggle menu group</target></trans-unit>
@@ -587,7 +587,7 @@
 			<target xml:lang="ar" state="needs-translation">Authenticating</target></trans-unit>
       <trans-unit id="logout" xml:space="preserve">
 				<source>Logout</source>
-			<target xml:lang="ar" state="needs-translation">Logout</target></trans-unit>
+			<target xml:lang="ar" state="translated">تسجيل الخروج</target></trans-unit>
       <trans-unit id="wrongCredentials" xml:space="preserve">
 				<source>The entered username or password was wrong</source>
 			<target xml:lang="ar" state="needs-translation">The entered username or password was wrong</target></trans-unit>
@@ -657,7 +657,7 @@
 			<target xml:lang="ar" state="needs-translation">Nodes</target></trans-unit>
       <trans-unit id="service.nodes.show" xml:space="preserve">
 				<source>Show</source>
-			<target xml:lang="ar" state="needs-translation">Show</target></trans-unit>
+			<target xml:lang="ar" state="translated">عرض</target></trans-unit>
       <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve">
 				<source>This node cannot be accessed through a public URL</source>
 			<target xml:lang="ar" state="needs-translation">This node cannot be accessed through a public URL</target></trans-unit>

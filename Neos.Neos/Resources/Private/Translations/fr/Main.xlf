@@ -492,7 +492,7 @@
 			<target xml:lang="fr">Vous pouvez le créer maintenant, en démarrant soir d'un {nodeTypeLabel} vide ou copier tout le contenu du {nodeTypeLabel} actuellement visible dans {currentDocumentDimensionChoiceText}.</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.existingAncestorDocuments" xml:space="preserve">
 				<source>Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</source>
-			<target xml:lang="fr" state="needs-translation">Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</target></trans-unit>
+			<target xml:lang="fr" state="translated">En outre, on compte {numberOfNodesMissingInRootline} anciens documents qui n’existent pas non plus selon la variante choisie, et qui sera ainsi créé.</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createEmpty" xml:space="preserve">
 				<source>Create empty</source>
 			<target xml:lang="fr" state="translated">Créer un vide</target></trans-unit>
@@ -504,7 +504,7 @@
 			<target xml:lang="fr">Contenu</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve">
 				<source>Toggle menu group</source>
-			<target xml:lang="fr" state="needs-translation">Toggle menu group</target></trans-unit>
+			<target xml:lang="fr" state="translated">Activer/Désactiver le groupe de menu</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve" approved="yes">
 				<source>Toggle sticky menu mode</source>
 			<target xml:lang="fr">Basculer le menu "sticky"</target></trans-unit>
@@ -593,7 +593,7 @@
 			<target xml:lang="fr">Le nom d'utilisateur ou mot de passe entré est inconnu</target></trans-unit>
       <trans-unit id="login.expired" xml:space="preserve" approved="yes">
 				<source>Your login has expired. Please log in again.</source>
-			<target xml:lang="fr">Votre connexion a expiré. S'il vous plaît vous connecter à nouveau.</target></trans-unit>
+			<target xml:lang="fr">Votre connexion a expiré. S'il vous plaît vous connecter à nouveau.</target><alt-trans><target xml:lang="fr">Votre session a expiré. Veuillez vous reconnecter.</target></alt-trans></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve" approved="yes">
 				<source>Go to setup</source>

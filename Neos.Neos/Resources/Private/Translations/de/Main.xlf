@@ -417,13 +417,13 @@
 			<target xml:lang="de">Dokumentoptionen</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve" approved="yes">
 				<source>The length of this text must be between {minimum} and {maximum} characters.</source>
-			<target xml:lang="de">Die Länge dieses Textes muss zwischen {{minimum}} und {{maximum}} Zeichen sein.</target></trans-unit>
+			<target xml:lang="de">Die Länge dieses Textes muss zwischen {{minimum}} und {{maximum}} Zeichen sein.</target><alt-trans><target xml:lang="de">Die Länge dieses Textes muss zwischen {minimum} und {maximum} Zeichen sein.</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.smallerThanMinimum" xml:space="preserve" approved="yes">
 				<source>This field must contain at least {minimum} characters.</source>
-			<target xml:lang="de">Dieses Feld muss mindestens {{minimum}} Zeichen enthalten.</target></trans-unit>
+			<target xml:lang="de">Dieses Feld muss mindestens {{minimum}} Zeichen enthalten.</target><alt-trans><target xml:lang="de">Dieses Feld muss mindestens {minimum} Zeichen enthalten.</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.greaterThanMaximum" xml:space="preserve" approved="yes">
 				<source>This text may not exceed {maximum} characters.</source>
-			<target xml:lang="de">Dieser Text darf {{maximum}} Zeichen nicht überschreiten.</target></trans-unit>
+			<target xml:lang="de">Dieser Text darf {{maximum}} Zeichen nicht überschreiten.</target><alt-trans><target xml:lang="de">Dieser Text darf {maximum} Zeichen nicht überschreiten.</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve" approved="yes">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
 			<target xml:lang="de">Nur Buchstaben (A-Z, Umlaute usw.) und Ziffern sind erlaubt.</target><alt-trans><target xml:lang="de">Nur Buchstaben (A-Z sowie Umlaute) und Ziffern sind erlaubt.</target></alt-trans><alt-trans><target xml:lang="de">Nur Buchstaben a-z und Ziffern sind erlaubt</target></alt-trans></trans-unit>
@@ -432,7 +432,7 @@
 			<target xml:lang="de">Das Objekt ist nicht zählbar.</target></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.countBetween" xml:space="preserve" approved="yes">
 				<source>The count must be between {minimum} and {maximum}.</source>
-			<target xml:lang="de">Die Anzahl muss zwischen {{minimum}} und {{maximum}} liegen.</target></trans-unit>
+			<target xml:lang="de">Die Anzahl muss zwischen {{minimum}} und {{maximum}} liegen.</target><alt-trans><target xml:lang="de">Die Anzahl muss zwischen {minimum} und {maximum} liegen.</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.invalidDate" xml:space="preserve" approved="yes">
 				<source>The given value was not a valid date.</source>
 			<target xml:lang="de">Der angegebene Wert ist kein gültiges Datum.</target></trans-unit>
@@ -465,10 +465,10 @@
 			<target xml:lang="de">Eine gültige Zahl wird erwartet.</target></trans-unit>
       <trans-unit id="content.inspector.validators.numberRangeValidator.numberShouldBeInRange" xml:space="preserve" approved="yes">
 				<source>Please enter a valid number between {minimum} and {maximum}</source>
-			<target xml:lang="de">Bitte geben Sie eine gültige Zahl zwischen {{minimum}} und {{maximum}} ein.</target></trans-unit>
+			<target xml:lang="de">Bitte geben Sie eine gültige Zahl zwischen {{minimum}} und {{maximum}} ein.</target><alt-trans><target xml:lang="de">Bitte geben Sie eine gültige Zahl zwischen {minimum} und {maximum} ein.</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve" approved="yes">
 				<source>The given subject did not match the pattern ({pattern})</source>
-			<target xml:lang="de">Der angegebene Wert stimmt nicht mit dem Muster ({{pattern}}) überein</target><alt-trans><target xml:lang="de">Das gegebene Thema stimmt nicht mit dem Muster ({{pattern}}) überein</target></alt-trans></trans-unit>
+			<target xml:lang="de">Der angegebene Wert stimmt nicht mit dem Muster ({{pattern}}) überein</target><alt-trans><target xml:lang="de">Der angegebene Wert stimmt nicht mit dem Muster ({pattern}) überein</target></alt-trans><alt-trans><target xml:lang="de">Das gegebene Thema stimmt nicht mit dem Muster ({{pattern}}) überein</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.validators.stringValidator.stringIsExpected" xml:space="preserve" approved="yes">
 				<source>A valid string is expected.</source>
 			<target xml:lang="de">Eine gültige Zeichenfolge wird erwartet.</target></trans-unit>

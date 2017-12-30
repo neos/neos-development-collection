@@ -4,16 +4,16 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Insert content references</source>
-			<target xml:lang="la-LA">crwdns1497:0crwdne1497:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2187:0crwdne2187:0</target></trans-unit>
       <trans-unit id="groups.references" xml:space="preserve">
 				<source>References</source>
-			<target xml:lang="la-LA">crwdns1498:0crwdne1498:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2188:0crwdne2188:0</target></trans-unit>
       <trans-unit id="properties.references" xml:space="preserve">
 				<source>Select</source>
-			<target xml:lang="la-LA">crwdns1499:0crwdne1499:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2189:0crwdne2189:0</target></trans-unit>
       <trans-unit id="content.noReferencesSelected" xml:space="preserve">
 				<source>No references selected</source>
-			<target xml:lang="la-LA">crwdns1500:0crwdne1500:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2190:0crwdne2190:0</target></trans-unit>
     </body>
   </file>
 </xliff>

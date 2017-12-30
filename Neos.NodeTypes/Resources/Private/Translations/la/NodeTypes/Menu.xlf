@@ -4,58 +4,58 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Menu</source>
-			<target xml:lang="la-LA">crwdns1525:0crwdne1525:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2229:0crwdne2229:0</target></trans-unit>
       <trans-unit id="groups.options" xml:space="preserve">
 				<source>Options</source>
-			<target xml:lang="la-LA">crwdns1526:0crwdne1526:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2230:0crwdne2230:0</target></trans-unit>
       <trans-unit id="properties.startLevel" xml:space="preserve">
 				<source>Starting Level</source>
-			<target xml:lang="la-LA">crwdns1527:0crwdne1527:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2231:0crwdne2231:0</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-4" xml:space="preserve">
 				<source>Four Levels Above Current Page</source>
-			<target xml:lang="la-LA">crwdns1528:0crwdne1528:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2232:0crwdne2232:0</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-3" xml:space="preserve">
 				<source>Three Levels Above Current Page</source>
-			<target xml:lang="la-LA">crwdns1529:0crwdne1529:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2233:0crwdne2233:0</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-2" xml:space="preserve">
 				<source>Two Levels Above Current Page</source>
-			<target xml:lang="la-LA">crwdns1530:0crwdne1530:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2234:0crwdne2234:0</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-1" xml:space="preserve">
 				<source>One Level Above Current Page</source>
-			<target xml:lang="la-LA">crwdns1531:0crwdne1531:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2235:0crwdne2235:0</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.0" xml:space="preserve">
 				<source>Same Level As Current Page</source>
-			<target xml:lang="la-LA">crwdns1532:0crwdne1532:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2236:0crwdne2236:0</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.1" xml:space="preserve">
 				<source>First Level Of Website</source>
-			<target xml:lang="la-LA">crwdns1533:0crwdne1533:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2237:0crwdne2237:0</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.2" xml:space="preserve">
 				<source>Second Level Of Website</source>
-			<target xml:lang="la-LA">crwdns1534:0crwdne1534:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2238:0crwdne2238:0</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.3" xml:space="preserve">
 				<source>Third Level Of Website</source>
-			<target xml:lang="la-LA">crwdns1535:0crwdne1535:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2239:0crwdne2239:0</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.4" xml:space="preserve">
 				<source>Fourth Level Of Website</source>
-			<target xml:lang="la-LA">crwdns1536:0crwdne1536:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2240:0crwdne2240:0</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.5" xml:space="preserve">
 				<source>Fifth Level Of Website</source>
-			<target xml:lang="la-LA">crwdns1537:0crwdne1537:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2241:0crwdne2241:0</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.6" xml:space="preserve">
 				<source>Sixth Level Of Website</source>
-			<target xml:lang="la-LA">crwdns1538:0crwdne1538:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2242:0crwdne2242:0</target></trans-unit>
       <trans-unit id="properties.selection" xml:space="preserve">
 				<source>Selection</source>
-			<target xml:lang="la-LA">crwdns1539:0crwdne1539:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2243:0crwdne2243:0</target></trans-unit>
       <trans-unit id="properties.startingPoint" xml:space="preserve">
 				<source>Starting Point</source>
-			<target xml:lang="la-LA">crwdns1540:0crwdne1540:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2244:0crwdne2244:0</target></trans-unit>
       <trans-unit id="properties.maximumLevels" xml:space="preserve">
 				<source>Maximum Levels</source>
-			<target xml:lang="la-LA">crwdns1541:0crwdne1541:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2245:0crwdne2245:0</target></trans-unit>
       <trans-unit id="content.emptyMenu" xml:space="preserve">
 				<source>Empty Menu</source>
-			<target xml:lang="la-LA">crwdns1542:0crwdne1542:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2246:0crwdne2246:0</target></trans-unit>
     </body>
   </file>
 </xliff>
