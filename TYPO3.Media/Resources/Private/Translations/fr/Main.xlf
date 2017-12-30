@@ -25,22 +25,22 @@
 			<target xml:lang="fr" state="translated">La ressource "{0}" a été remplacée.</target></trans-unit>
       <trans-unit id="tagAlreadyExistsAndAddedToCollection" xml:space="preserve">
 				<source>Tag "{0}" already exists and was added to collection.</source>
-			<target xml:lang="fr" state="needs-translation">Tag "{0}" already exists and was added to collection.</target></trans-unit>
+			<target xml:lang="fr" state="translated">Le mot-clé "{0}" existe déjà et a été ajouté à la collection.</target></trans-unit>
       <trans-unit id="tagHasBeenCreated" xml:space="preserve">
 				<source>Tag "{0}" has been created.</source>
-			<target xml:lang="fr" state="needs-translation">Tag "{0}" has been created.</target></trans-unit>
+			<target xml:lang="fr" state="translated">Le mot-clé "{0}" a été créé.</target></trans-unit>
       <trans-unit id="tagHasBeenUpdated" xml:space="preserve">
 				<source>Tag "{0}" has been updated.</source>
-			<target xml:lang="fr" state="needs-translation">Tag "{0}" has been updated.</target></trans-unit>
+			<target xml:lang="fr" state="translated">Le mot-clé "{0}" a été modifié.</target></trans-unit>
       <trans-unit id="tagHasBeenDeleted" xml:space="preserve">
 				<source>Tag "{0}" has been deleted.</source>
-			<target xml:lang="fr" state="needs-translation">Tag "{0}" has been deleted.</target></trans-unit>
+			<target xml:lang="fr" state="translated">Le mot-clé "{0}" a été supprimé.</target></trans-unit>
       <trans-unit id="collectionHasBeenCreated" xml:space="preserve">
 				<source>Collection "{0}" has been created.</source>
-			<target xml:lang="fr" state="needs-translation">Collection "{0}" has been created.</target></trans-unit>
+			<target xml:lang="fr" state="translated">La collection "{0}" a été créée.</target></trans-unit>
       <trans-unit id="collectionHasBeenUpdated" xml:space="preserve">
 				<source>Collection "{0}" has been updated.</source>
-			<target xml:lang="fr" state="needs-translation">Collection "{0}" has been updated.</target></trans-unit>
+			<target xml:lang="fr" state="translated">La collection "{0}" a été mise à jour.</target></trans-unit>
       <trans-unit id="collectionHasBeenDeleted" xml:space="preserve">
 				<source>Collection "{0}" has been deleted.</source>
 			<target xml:lang="fr" state="translated">La collection "{0}" a été supprimée.</target><alt-trans><target xml:lang="fr">La collection « {0} » a été supprimée.</target></alt-trans></trans-unit>

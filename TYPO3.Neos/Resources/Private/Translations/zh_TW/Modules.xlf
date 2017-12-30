@@ -10,7 +10,7 @@
 			<target xml:lang="zh-TW" state="needs-translation">Click to delete</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target xml:lang="zh-TW" state="needs-translation">Cancel</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">取消</target></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
 			<target xml:lang="zh-TW" state="needs-translation">Back</target></trans-unit>
@@ -23,7 +23,7 @@
 			<target xml:lang="zh-TW" state="needs-translation">Contains multiple modules related to management of content</target></trans-unit>
       <trans-unit id="workspaces.label" xml:space="preserve">
 				<source>Workspaces</source>
-			<target xml:lang="zh-TW" state="needs-translation">Workspaces</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">工作區</target></trans-unit>
       <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve">
 				<source>Details for "{0}"</source>
 			<target xml:lang="zh-TW" state="needs-translation">Details for "{0}"</target></trans-unit>
@@ -59,10 +59,10 @@
 			<target xml:lang="zh-TW" state="needs-translation">Read-only workspace</target></trans-unit>
       <trans-unit id="workspaces.workspace.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="zh-TW" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">標題</target></trans-unit>
       <trans-unit id="workspaces.workspace.description" xml:space="preserve">
 				<source>Description</source>
-			<target xml:lang="zh-TW" state="needs-translation">Description</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">描述</target></trans-unit>
       <trans-unit id="workspaces.workspace.baseWorkspace" xml:space="preserve">
 				<source>Base workspace</source>
 			<target xml:lang="zh-TW" state="needs-translation">Base workspace</target></trans-unit>
@@ -71,7 +71,7 @@
 			<target xml:lang="zh-TW" state="needs-translation">Owner</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility" xml:space="preserve">
 				<source>Visibility</source>
-			<target xml:lang="zh-TW" state="needs-translation">Visibility</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">能見度</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private" xml:space="preserve">
 				<source>Private</source>
 			<target xml:lang="zh-TW" state="needs-translation">Private</target></trans-unit>
@@ -131,10 +131,10 @@
 			<target xml:lang="zh-TW" state="needs-translation">Publish selected changes</target></trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve">
 				<source>Discard all changes</source>
-			<target xml:lang="zh-TW" state="needs-translation">Discard all changes</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">捨棄全部變更</target></trans-unit>
       <trans-unit id="workspaces.publishAllChanges" xml:space="preserve">
 				<source>Publish all changes</source>
-			<target xml:lang="zh-TW" state="needs-translation">Publish all changes</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">發布全部變更</target></trans-unit>
       <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve">
 				<source>Publish all changes to {0}</source>
 			<target xml:lang="zh-TW" state="needs-translation">Publish all changes to {0}</target></trans-unit>
@@ -224,7 +224,7 @@
 			<target xml:lang="zh-TW" state="needs-translation">Keep the filename "{0}"</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="zh-TW" state="needs-translation">Media</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">媒體</target></trans-unit>
       <trans-unit id="media.description" xml:space="preserve">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
 			<target xml:lang="zh-TW" state="needs-translation">This module allows managing of media assets including pictures, videos, audio and documents.</target></trans-unit>
@@ -300,7 +300,7 @@
 			<target xml:lang="zh-TW" state="needs-translation">New</target></trans-unit>
       <trans-unit id="users.action.edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="zh-TW" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">編輯</target></trans-unit>
       <trans-unit id="users.action.editAccount" xml:space="preserve">
 				<source>Edit account</source>
 			<target xml:lang="zh-TW" state="needs-translation">Edit account</target></trans-unit>
@@ -321,10 +321,10 @@
 			<target xml:lang="zh-TW" state="needs-translation">User Data</target></trans-unit>
       <trans-unit id="users.new.userData.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="zh-TW" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">使用者名稱</target></trans-unit>
       <trans-unit id="users.new.userData.password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="zh-TW" state="needs-translation">Password</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">密碼</target></trans-unit>
       <trans-unit id="users.new.userData.repeatPassword" xml:space="preserve">
 				<source>Repeat password</source>
 			<target xml:lang="zh-TW" state="needs-translation">Repeat password</target></trans-unit>
@@ -336,10 +336,10 @@
 			<target xml:lang="zh-TW" state="needs-translation">Personal Data</target></trans-unit>
       <trans-unit id="users.new.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
-			<target xml:lang="zh-TW" state="needs-translation">First Name</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">名字</target></trans-unit>
       <trans-unit id="users.new.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
-			<target xml:lang="zh-TW" state="needs-translation">Last Name</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">姓氏</target></trans-unit>
       <trans-unit id="users.new.userPreferences" xml:space="preserve">
 				<source>User Preferences</source>
 			<target xml:lang="zh-TW" state="needs-translation">User Preferences</target></trans-unit>
@@ -357,25 +357,25 @@
 			<target xml:lang="zh-TW" state="needs-translation">Personal Data</target></trans-unit>
       <trans-unit id="users.show.personalData.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="zh-TW" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">標題</target></trans-unit>
       <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
-			<target xml:lang="zh-TW" state="needs-translation">First Name</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">名字</target></trans-unit>
       <trans-unit id="users.show.personalData.middleName" xml:space="preserve">
 				<source>Middle Name</source>
-			<target xml:lang="zh-TW" state="needs-translation">Middle Name</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">中間名</target></trans-unit>
       <trans-unit id="users.show.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
-			<target xml:lang="zh-TW" state="needs-translation">Last Name</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">姓氏</target></trans-unit>
       <trans-unit id="users.show.personalData.otherName" xml:space="preserve">
 				<source>Other Name</source>
-			<target xml:lang="zh-TW" state="needs-translation">Other Name</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">其他名稱</target></trans-unit>
       <trans-unit id="users.show.accounts" xml:space="preserve">
 				<source>Accounts</source>
 			<target xml:lang="zh-TW" state="needs-translation">Accounts</target></trans-unit>
       <trans-unit id="users.show.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="zh-TW" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">使用者名稱</target></trans-unit>
       <trans-unit id="users.show.roles" xml:space="preserve">
 				<source>Roles</source>
 			<target xml:lang="zh-TW" state="needs-translation">Roles</target></trans-unit>
@@ -384,7 +384,7 @@
 			<target xml:lang="zh-TW" state="needs-translation">Electronic Addresses</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.primary" xml:space="preserve">
 				<source>Primary</source>
-			<target xml:lang="zh-TW" state="needs-translation">Primary</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">主要的</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.notAvailable" xml:space="preserve">
 				<source>N/A</source>
 			<target xml:lang="zh-TW" state="needs-translation">N/A</target></trans-unit>
@@ -420,7 +420,7 @@
 			<target xml:lang="zh-TW" state="needs-translation">Account</target></trans-unit>
       <trans-unit id="users.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="zh-TW" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">使用者名稱</target></trans-unit>
       <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve">
 				<source>The username can't be changed via the user interface</source>
 			<target xml:lang="zh-TW" state="needs-translation">The username can't be changed via the user interface</target></trans-unit>
@@ -568,10 +568,10 @@
 			<target xml:lang="zh-TW" state="needs-translation">This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</target></trans-unit>
       <trans-unit id="userSettings.action.index" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="zh-TW" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">編輯</target></trans-unit>
       <trans-unit id="userSettings.action.edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="zh-TW" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">編輯</target></trans-unit>
       <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve">
 				<source>New electronic address</source>
 			<target xml:lang="zh-TW" state="needs-translation">New electronic address</target></trans-unit>
@@ -601,7 +601,7 @@
 			<target xml:lang="zh-TW" state="needs-translation">Accounts</target></trans-unit>
       <trans-unit id="userSettings.accounts.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="zh-TW" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">使用者名稱</target></trans-unit>
       <trans-unit id="userSettings.accounts.roles" xml:space="preserve">
 				<source>Roles</source>
 			<target xml:lang="zh-TW" state="needs-translation">Roles</target></trans-unit>
@@ -613,7 +613,7 @@
 			<target xml:lang="zh-TW" state="needs-translation">Electronic addresses</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="zh-TW" state="needs-translation">Do you really want to delete</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">您確定想要刪除</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete.confirmation" xml:space="preserve">
 				<source>Yes, delete electronic address</source>
 			<target xml:lang="zh-TW" state="needs-translation">Yes, delete electronic address</target></trans-unit>
@@ -635,10 +635,10 @@
 			<target xml:lang="zh-TW" state="needs-translation">Name</target></trans-unit>
       <trans-unit id="media.field.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="zh-TW" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">標題</target></trans-unit>
       <trans-unit id="media.field.label" xml:space="preserve">
 				<source>Label</source>
-			<target xml:lang="zh-TW" state="needs-translation">Label</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">標籤</target></trans-unit>
       <trans-unit id="media.field.caption" xml:space="preserve">
 				<source>Caption</source>
 			<target xml:lang="zh-TW" state="needs-translation">Caption</target></trans-unit>
@@ -650,7 +650,7 @@
 			<target xml:lang="zh-TW" state="needs-translation">File size</target></trans-unit>
       <trans-unit id="media.field.type" xml:space="preserve">
 				<source>Type</source>
-			<target xml:lang="zh-TW" state="needs-translation">Type</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">類型</target></trans-unit>
       <trans-unit id="media.field.tags" xml:space="preserve">
 				<source>Tags</source>
 			<target xml:lang="zh-TW" state="needs-translation">Tags</target></trans-unit>
@@ -707,7 +707,7 @@
 			<target xml:lang="zh-TW" state="needs-translation">This operation cannot be undone.</target></trans-unit>
       <trans-unit id="media.cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target xml:lang="zh-TW" state="needs-translation">Cancel</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">取消</target></trans-unit>
       <trans-unit id="media.replaceAssetResource" xml:space="preserve">
 				<source>Replace</source>
 			<target xml:lang="zh-TW" state="needs-translation">Replace</target></trans-unit>
@@ -731,7 +731,7 @@
 			<target xml:lang="zh-TW" state="needs-translation">Search in assets</target></trans-unit>
       <trans-unit id="media.search.placeholder" xml:space="preserve">
 				<source>Search</source>
-			<target xml:lang="zh-TW" state="needs-translation">Search</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">搜尋</target></trans-unit>
       <trans-unit id="media.search.itemCount" xml:space="preserve">
 				<source>{0} items</source>
 			<target xml:lang="zh-TW" state="needs-translation">{0} items</target></trans-unit>
@@ -854,7 +854,7 @@
 			<target xml:lang="zh-TW" state="needs-translation">Basics</target></trans-unit>
       <trans-unit id="media.delete" xml:space="preserve">
 				<source>Delete</source>
-			<target xml:lang="zh-TW" state="needs-translation">Delete</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">刪除</target></trans-unit>
       <trans-unit id="media.clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
 			<target xml:lang="zh-TW" state="needs-translation">Click to delete</target></trans-unit>
@@ -863,7 +863,7 @@
 			<target xml:lang="zh-TW" state="needs-translation">Save</target></trans-unit>
       <trans-unit id="media.metadata" xml:space="preserve">
 				<source>Metadata</source>
-			<target xml:lang="zh-TW" state="needs-translation">Metadata</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">Metadata</target></trans-unit>
       <trans-unit id="media.metadata.filename" xml:space="preserve">
 				<source>Filename</source>
 			<target xml:lang="zh-TW" state="needs-translation">Filename</target></trans-unit>
@@ -878,19 +878,19 @@
 			<target xml:lang="zh-TW" state="needs-translation">Dimensions</target></trans-unit>
       <trans-unit id="media.metadata.type" xml:space="preserve">
 				<source>Type</source>
-			<target xml:lang="zh-TW" state="needs-translation">Type</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">類型</target></trans-unit>
       <trans-unit id="media.metadata.identifier" xml:space="preserve">
 				<source>Identifier</source>
 			<target xml:lang="zh-TW" state="needs-translation">Identifier</target></trans-unit>
       <trans-unit id="media.preview" xml:space="preserve">
 				<source>Preview</source>
-			<target xml:lang="zh-TW" state="needs-translation">Preview</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">預覽</target></trans-unit>
       <trans-unit id="media.cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>
 			<target xml:lang="zh-TW" state="needs-translation">Cannot upload the file</target></trans-unit>
       <trans-unit id="media.noFileSelected" xml:space="preserve">
 				<source>No file selected</source>
-			<target xml:lang="zh-TW" state="needs-translation">No file selected</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">尚未選擇檔案</target></trans-unit>
       <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target xml:lang="zh-TW" state="needs-translation">The file size of {0} exceeds the allowed limit of {1}</target></trans-unit>
@@ -948,6 +948,12 @@
       <trans-unit id="media.replace.previewFile" xml:space="preserve">
         <source>Preview current file</source>
       <target xml:lang="zh-TW" state="needs-translation">Preview current file</target></trans-unit>
+      <trans-unit id="media.noAccessToWorkspace" xml:space="preserve">
+        <source>No access to workspace "{0}"</source>
+      <target xml:lang="zh-TW" state="translated">無法連線至工作區"{0}"</target></trans-unit>
+      <trans-unit id="media.missingDocumentNode" xml:space="preserve">
+        <source>No document node found for this node</source>
+      <target xml:lang="zh-TW" state="translated">找不到文件節點於此節點</target></trans-unit>
     </body>
   </file>
 </xliff>

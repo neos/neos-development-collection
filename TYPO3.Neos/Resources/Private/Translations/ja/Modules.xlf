@@ -131,10 +131,10 @@
 			<target xml:lang="ja" state="needs-translation">Publish selected changes</target></trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve">
 				<source>Discard all changes</source>
-			<target xml:lang="ja" state="needs-translation">Discard all changes</target></trans-unit>
+			<target xml:lang="ja" state="translated">すべての変更を破棄する</target></trans-unit>
       <trans-unit id="workspaces.publishAllChanges" xml:space="preserve">
 				<source>Publish all changes</source>
-			<target xml:lang="ja" state="needs-translation">Publish all changes</target></trans-unit>
+			<target xml:lang="ja" state="translated">すべての変更を公開する</target></trans-unit>
       <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve">
 				<source>Publish all changes to {0}</source>
 			<target xml:lang="ja" state="needs-translation">Publish all changes to {0}</target></trans-unit>
@@ -321,7 +321,7 @@
 			<target xml:lang="ja" state="needs-translation">User Data</target></trans-unit>
       <trans-unit id="users.new.userData.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ja" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="ja" state="translated">ユーザー名</target></trans-unit>
       <trans-unit id="users.new.userData.password" xml:space="preserve">
 				<source>Password</source>
 			<target xml:lang="ja" state="translated">パスワード</target></trans-unit>
@@ -375,7 +375,7 @@
 			<target xml:lang="ja" state="needs-translation">Accounts</target></trans-unit>
       <trans-unit id="users.show.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ja" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="ja" state="translated">ユーザー名</target></trans-unit>
       <trans-unit id="users.show.roles" xml:space="preserve">
 				<source>Roles</source>
 			<target xml:lang="ja" state="needs-translation">Roles</target></trans-unit>
@@ -420,7 +420,7 @@
 			<target xml:lang="ja" state="needs-translation">Account</target></trans-unit>
       <trans-unit id="users.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ja" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="ja" state="translated">ユーザー名</target></trans-unit>
       <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve">
 				<source>The username can't be changed via the user interface</source>
 			<target xml:lang="ja" state="needs-translation">The username can't be changed via the user interface</target></trans-unit>
@@ -601,7 +601,7 @@
 			<target xml:lang="ja" state="needs-translation">Accounts</target></trans-unit>
       <trans-unit id="userSettings.accounts.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ja" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="ja" state="translated">ユーザー名</target></trans-unit>
       <trans-unit id="userSettings.accounts.roles" xml:space="preserve">
 				<source>Roles</source>
 			<target xml:lang="ja" state="needs-translation">Roles</target></trans-unit>
@@ -638,7 +638,7 @@
 			<target xml:lang="ja" state="translated">タイトル</target></trans-unit>
       <trans-unit id="media.field.label" xml:space="preserve">
 				<source>Label</source>
-			<target xml:lang="ja" state="needs-translation">Label</target></trans-unit>
+			<target xml:lang="ja" state="translated">ラベル</target></trans-unit>
       <trans-unit id="media.field.caption" xml:space="preserve">
 				<source>Caption</source>
 			<target xml:lang="ja" state="needs-translation">Caption</target></trans-unit>
@@ -731,7 +731,7 @@
 			<target xml:lang="ja" state="needs-translation">Search in assets</target></trans-unit>
       <trans-unit id="media.search.placeholder" xml:space="preserve">
 				<source>Search</source>
-			<target xml:lang="ja" state="needs-translation">Search</target></trans-unit>
+			<target xml:lang="ja" state="translated">サーチ</target></trans-unit>
       <trans-unit id="media.search.itemCount" xml:space="preserve">
 				<source>{0} items</source>
 			<target xml:lang="ja" state="needs-translation">{0} items</target></trans-unit>
@@ -948,6 +948,12 @@
       <trans-unit id="media.replace.previewFile" xml:space="preserve">
         <source>Preview current file</source>
       <target xml:lang="ja" state="needs-translation">Preview current file</target></trans-unit>
+      <trans-unit id="media.noAccessToWorkspace" xml:space="preserve">
+        <source>No access to workspace "{0}"</source>
+      <target xml:lang="ja" state="needs-translation">No access to workspace "{0}"</target></trans-unit>
+      <trans-unit id="media.missingDocumentNode" xml:space="preserve">
+        <source>No document node found for this node</source>
+      <target xml:lang="ja" state="translated">このノードのドキュメントノードが見つかりません</target></trans-unit>
     </body>
   </file>
 </xliff>
