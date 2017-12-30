@@ -6,12 +6,12 @@
       <trans-unit id="autoPublish" xml:space="preserve" approved="yes">
 				<source>Auto-Publish</source>
 			<target xml:lang="lv">Automātiska publicēšana</target><alt-trans><target xml:lang="lv">Automātiski publicēt</target></alt-trans></trans-unit>
-      <trans-unit id="autoPublishTo" xml:space="preserve">
+      <trans-unit id="autoPublishTo" xml:space="preserve" approved="yes">
 				<source>Auto-Publish to {0}</source>
-			<target xml:lang="lv" state="translated">{0} publicēt automātiski</target><alt-trans><target xml:lang="lv">Publicēt automātiski</target></alt-trans></trans-unit>
-      <trans-unit id="reviewChanges" xml:space="preserve">
+			<target xml:lang="lv">{0} publicēt automātiski</target><alt-trans><target xml:lang="lv">Publicēt automātiski</target></alt-trans></trans-unit>
+      <trans-unit id="reviewChanges" xml:space="preserve" approved="yes">
 				<source>Review changes</source>
-			<target xml:lang="lv" state="translated">Izmaiņu pārskatīšana</target></trans-unit>
+			<target xml:lang="lv">Izmaiņu pārskatīšana</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve" approved="yes">
 				<source>Apply</source>
 			<target xml:lang="lv">Apstiprināt</target></trans-unit>
@@ -36,9 +36,9 @@
       <trans-unit id="node" xml:space="preserve">
 				<source>Node</source>
 			<target xml:lang="lv" state="translated">Mezgls</target></trans-unit>
-      <trans-unit id="contentView" xml:space="preserve">
+      <trans-unit id="contentView" xml:space="preserve" approved="yes">
 				<source>Content View</source>
-			<target xml:lang="lv" state="translated">Satura skats</target></trans-unit>
+			<target xml:lang="lv">Satura skats</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve" approved="yes">
 				<source>Create after</source>
 			<target xml:lang="lv">Izveidot pēc</target><alt-trans><target xml:lang="lv">Izveidot aiz</target></alt-trans></trans-unit>
@@ -84,18 +84,18 @@
       <trans-unit id="hide" xml:space="preserve" approved="yes">
 				<source>Hide</source>
 			<target xml:lang="lv">Paslēpt</target></trans-unit>
-      <trans-unit id="unhide" xml:space="preserve">
+      <trans-unit id="unhide" xml:space="preserve" approved="yes">
 				<source>Unhide</source>
-			<target xml:lang="lv" state="translated">Atklāt</target></trans-unit>
+			<target xml:lang="lv">Atklāt</target></trans-unit>
       <trans-unit id="into" xml:space="preserve">
 				<source>into</source>
 			<target xml:lang="lv" state="translated">uz</target></trans-unit>
-      <trans-unit id="before" xml:space="preserve">
+      <trans-unit id="before" xml:space="preserve" approved="yes">
 				<source>before</source>
-			<target xml:lang="lv" state="translated">pirms</target></trans-unit>
-      <trans-unit id="after" xml:space="preserve">
+			<target xml:lang="lv">pirms</target></trans-unit>
+      <trans-unit id="after" xml:space="preserve" approved="yes">
 				<source>after</source>
-			<target xml:lang="lv" state="translated">pēc</target></trans-unit>
+			<target xml:lang="lv">pēc</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve" approved="yes">
 				<source>Loading</source>
 			<target xml:lang="lv">Lejupielāde</target></trans-unit>
@@ -147,9 +147,9 @@
       <trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve" approved="yes">
 				<source>Can't publish because the target workspace is read-only</source>
 			<target xml:lang="lv">Nevar publicēt, jo izvēlētā darba virsma ļauj tikai lasīt</target></trans-unit>
-      <trans-unit id="selectTargetWorkspace" xml:space="preserve">
+      <trans-unit id="selectTargetWorkspace" xml:space="preserve" approved="yes">
 				<source>Select target workspace</source>
-			<target xml:lang="lv" state="translated">Izvēlēties darba virsmu</target></trans-unit>
+			<target xml:lang="lv">Izvēlēties darba virsmu</target></trans-unit>
       <trans-unit id="publishing" xml:space="preserve" approved="yes">
 				<source>Publishing</source>
 			<target xml:lang="lv">Publicēšana</target></trans-unit>
@@ -207,9 +207,9 @@
       <trans-unit id="relativePathCaption" xml:space="preserve" approved="yes">
 				<source>Relative Path</source>
 			<target xml:lang="lv">Relatīvais ceļš</target></trans-unit>
-      <trans-unit id="version" xml:space="preserve">
+      <trans-unit id="version" xml:space="preserve" approved="yes">
 				<source>Version</source>
-			<target xml:lang="lv" state="translated">Versija</target></trans-unit>
+			<target xml:lang="lv">Versija</target></trans-unit>
       <trans-unit id="operationCannotBeUndone" xml:space="preserve" approved="yes">
 				<source>This operation cannot be undone.</source>
 			<target xml:lang="lv">Šo darbību nevar atsaukt.</target></trans-unit>
@@ -219,9 +219,9 @@
       <trans-unit id="created" xml:space="preserve">
 				<source>Created</source>
 			<target xml:lang="lv" state="translated">Izveidots</target></trans-unit>
-      <trans-unit id="lastModification" xml:space="preserve">
+      <trans-unit id="lastModification" xml:space="preserve" approved="yes">
 				<source>Last modification</source>
-			<target xml:lang="lv" state="translated">Pēdējās izmaiņas</target></trans-unit>
+			<target xml:lang="lv">Pēdējās izmaiņas</target></trans-unit>
       <trans-unit id="lastPublication" xml:space="preserve">
 				<source>Last publication</source>
 			<target xml:lang="lv" state="translated">Pēdējā publikācija</target></trans-unit>

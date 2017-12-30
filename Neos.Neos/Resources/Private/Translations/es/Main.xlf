@@ -587,7 +587,7 @@
 			<target xml:lang="es-ES" state="translated">Autenticando</target></trans-unit>
       <trans-unit id="logout" xml:space="preserve">
 				<source>Logout</source>
-			<target xml:lang="es-ES" state="translated">Salir</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Salir</target><alt-trans><target xml:lang="es-ES">Cerrar sesión</target></alt-trans></trans-unit>
       <trans-unit id="wrongCredentials" xml:space="preserve">
 				<source>The entered username or password was wrong</source>
 			<target xml:lang="es-ES" state="translated">El nombre de usuario o la contraseña introducido estaba mal</target></trans-unit>

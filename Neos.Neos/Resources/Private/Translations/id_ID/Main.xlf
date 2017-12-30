@@ -5,7 +5,7 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve">
 				<source>Auto-Publish</source>
-			<target xml:lang="id" state="translated">Publikasi Otomatis</target></trans-unit>
+			<target xml:lang="id" state="translated">Auto-Publish</target><alt-trans><target xml:lang="id">Publikasi Otomatis</target></alt-trans></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
 			<target xml:lang="id" state="translated">Publikasikan otomatis ke {0}</target></trans-unit>
@@ -426,7 +426,7 @@
 			<target xml:lang="id" state="translated">Teks ini tidak boleh melebihi {maximum} karakter.</target></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target xml:lang="id" state="translated">Hanya biasa karakter (sampai z, umlauts,...) dan angka yang diperbolehkan.</target></trans-unit>
+			<target xml:lang="id" state="translated">Hanya karakter biasa (A sampai z, umlauts,...) dan angka yang diperbolehkan.</target><alt-trans><target xml:lang="id">Hanya biasa karakter (sampai z, umlauts,...) dan angka yang diperbolehkan.</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve">
 				<source>The given subject was not countable.</source>
 			<target xml:lang="id" state="translated">Subjek tertentu itu tidak dihitung.</target></trans-unit>

@@ -4,16 +4,16 @@
     <body>
       <trans-unit id="groups.document" xml:space="preserve">
 				<source>Document</source>
-			<target xml:lang="la-LA">crwdns1459:0crwdne1459:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2167:0crwdne2167:0</target></trans-unit>
       <trans-unit id="properties.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="la-LA">crwdns1460:0crwdne1460:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2168:0crwdne2168:0</target></trans-unit>
       <trans-unit id="properties.uriPathSegment" xml:space="preserve">
 				<source>URL path segment</source>
-			<target xml:lang="la-LA">crwdns1461:0crwdne1461:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2169:0crwdne2169:0</target></trans-unit>
       <trans-unit id="properties._hiddenInIndex" xml:space="preserve">
 				<source>Hide in menus</source>
-			<target xml:lang="la-LA">crwdns1462:0crwdne1462:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2170:0crwdne2170:0</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -4,25 +4,25 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Page</source>
-			<target xml:lang="la-LA">crwdns1543:0crwdne1543:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2213:0crwdne2213:0</target></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="la-LA">crwdns1544:0crwdne1544:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2214:0crwdne2214:0</target></trans-unit>
       <trans-unit id="groups.layout" xml:space="preserve">
 				<source>Layout</source>
-			<target xml:lang="la-LA">crwdns1545:0crwdne1545:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2215:0crwdne2215:0</target></trans-unit>
       <trans-unit id="properties.layout" xml:space="preserve">
 				<source>Layout for this page only</source>
-			<target xml:lang="la-LA">crwdns1546:0crwdne1546:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2216:0crwdne2216:0</target></trans-unit>
       <trans-unit id="properties.layout.selectBoxEditor.placeholder" xml:space="preserve">
 				<source>Inherit from parent</source>
-			<target xml:lang="la-LA">crwdns1547:0crwdne1547:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2217:0crwdne2217:0</target></trans-unit>
       <trans-unit id="properties.subpageLayout" xml:space="preserve">
 				<source>Layout for subpages of this page</source>
-			<target xml:lang="la-LA">crwdns1548:0crwdne1548:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2218:0crwdne2218:0</target></trans-unit>
       <trans-unit id="properties.subpageLayout.selectBoxEditor.placeholder" xml:space="preserve">
 				<source>Inherit from parent</source>
-			<target xml:lang="la-LA">crwdns1549:0crwdne1549:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns2219:0crwdne2219:0</target></trans-unit>
     </body>
   </file>
 </xliff>
