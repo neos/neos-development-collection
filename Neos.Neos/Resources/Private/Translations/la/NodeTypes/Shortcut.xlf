@@ -4,28 +4,28 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Shortcut</source>
-			<target xml:lang="la-LA">crwdns1476:0crwdne1476:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns3722:0crwdne3722:0</target></trans-unit>
       <trans-unit id="tabs.document" xml:space="preserve">
 				<source>Shortcut options</source>
-			<target xml:lang="la-LA">crwdns1477:0crwdne1477:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns3723:0crwdne3723:0</target></trans-unit>
       <trans-unit id="groups.document" xml:space="preserve">
 				<source>Shortcut options</source>
-			<target xml:lang="la-LA">crwdns1478:0crwdne1478:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns3724:0crwdne3724:0</target></trans-unit>
       <trans-unit id="properties.targetMode" xml:space="preserve">
 				<source>Target mode</source>
-			<target xml:lang="la-LA">crwdns1479:0crwdne1479:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns3725:0crwdne3725:0</target></trans-unit>
       <trans-unit id="properties.target" xml:space="preserve">
 				<source>Target</source>
-			<target xml:lang="la-LA">crwdns1480:0crwdne1480:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns3726:0crwdne3726:0</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.firstChildNode" xml:space="preserve">
 				<source>First child node</source>
-			<target xml:lang="la-LA">crwdns1481:0crwdne1481:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns3727:0crwdne3727:0</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.parentNode" xml:space="preserve">
 				<source>Parent node</source>
-			<target xml:lang="la-LA">crwdns1482:0crwdne1482:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns3728:0crwdne3728:0</target></trans-unit>
       <trans-unit id="properties.targetMode.selectBoxEditor.values.selectedTarget" xml:space="preserve">
 				<source>Selected target</source>
-			<target xml:lang="la-LA">crwdns1483:0crwdne1483:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns3729:0crwdne3729:0</target></trans-unit>
     </body>
   </file>
 </xliff>
