@@ -2,9 +2,9 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="Neos.NodeTypes.BaseMixins" source-language="en" datatype="plaintext" target-language="lv">
     <body>
-      <trans-unit id="properties.text.aloha.placeholder" xml:space="preserve" approved="yes">
+      <trans-unit id="properties.text.aloha.placeholder" xml:space="preserve">
 				<source><![CDATA[<p>Enter text here</p>]]></source>
-			<target xml:lang="lv"><![CDATA[<p>Ievadiet tekstu šeit</p>]]></target></trans-unit>
+			<target xml:lang="lv" state="translated"><![CDATA[<p>Ievadiet šeit tekstu</p>]]></target></trans-unit>
     </body>
   </file>
 </xliff>

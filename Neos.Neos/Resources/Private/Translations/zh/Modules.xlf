@@ -2,18 +2,12 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="zh-CN">
     <body>
-      <trans-unit id="clickToEdit" xml:space="preserve">
-				<source>Click to edit</source>
-			<target xml:lang="zh-CN" state="translated">点击编辑</target></trans-unit>
-      <trans-unit id="clickToDelete" xml:space="preserve">
-				<source>Click to delete</source>
-			<target xml:lang="zh-CN" state="translated">点击删除</target></trans-unit>
-      <trans-unit id="cancel" xml:space="preserve">
-				<source>Cancel</source>
-			<target xml:lang="zh-CN" state="translated">取消</target></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
 			<target xml:lang="zh-CN" state="translated">返回</target><alt-trans><target xml:lang="zh-CN">后退</target></alt-trans></trans-unit>
+      <trans-unit id="cancel" xml:space="preserve">
+				<source>Cancel</source>
+			<target xml:lang="zh-CN" state="translated">取消</target></trans-unit>
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve">
 				<source>Management</source>
@@ -26,37 +20,37 @@
 			<target xml:lang="zh-CN" state="translated">工作区</target></trans-unit>
       <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve">
 				<source>Details for "{0}"</source>
-			<target xml:lang="zh-CN" state="needs-translation">Details for "{0}"</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">"{0}" 的详细信息</target></trans-unit>
       <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve">
 				<source>Create new workspace</source>
-			<target xml:lang="zh-CN" state="needs-translation">Create new workspace</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">创建新工作区</target></trans-unit>
       <trans-unit id="workspaces.createWorkspace" xml:space="preserve">
 				<source>Create workspace</source>
-			<target xml:lang="zh-CN" state="needs-translation">Create workspace</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">创建工作区</target></trans-unit>
       <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve">
 				<source>Delete workspace</source>
-			<target xml:lang="zh-CN" state="needs-translation">Delete workspace</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">删除工作区</target></trans-unit>
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve">
 				<source>Edit workspace</source>
-			<target xml:lang="zh-CN" state="needs-translation">Edit workspace</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">编辑工作区</target></trans-unit>
       <trans-unit id="workspaces.yesDeleteWorkspace" xml:space="preserve">
 				<source>Yes, delete the workspace</source>
-			<target xml:lang="zh-CN" state="needs-translation">Yes, delete the workspace</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">是，删除工作区</target></trans-unit>
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve">
 				<source>Edit workspace "{0}"</source>
-			<target xml:lang="zh-CN" state="needs-translation">Edit workspace</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">编辑工作区</target></trans-unit>
       <trans-unit id="workspaces.personalWorkspace" xml:space="preserve">
 				<source>Personal workspace</source>
-			<target xml:lang="zh-CN" state="needs-translation">Personal workspace</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">个人工作区</target></trans-unit>
       <trans-unit id="workspaces.privateWorkspace" xml:space="preserve">
 				<source>Private workspace</source>
-			<target xml:lang="zh-CN" state="needs-translation">Private workspace</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">私有工作区</target></trans-unit>
       <trans-unit id="workspaces.internalWorkspace" xml:space="preserve">
 				<source>Internal workspace</source>
-			<target xml:lang="zh-CN" state="needs-translation">Internal workspace</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">内部工作区</target></trans-unit>
       <trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve">
 				<source>Read-only workspace</source>
-			<target xml:lang="zh-CN" state="needs-translation">Read-only workspace</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">只读的工作区</target></trans-unit>
       <trans-unit id="workspaces.workspace.title" xml:space="preserve">
 				<source>Title</source>
 			<target xml:lang="zh-CN" state="translated">标题</target></trans-unit>
@@ -68,7 +62,7 @@
 			<target xml:lang="zh-CN" state="needs-translation">Base workspace</target></trans-unit>
       <trans-unit id="workspaces.workspace.owner" xml:space="preserve">
 				<source>Owner</source>
-			<target xml:lang="zh-CN" state="needs-translation">Owner</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">所有者</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility" xml:space="preserve">
 				<source>Visibility</source>
 			<target xml:lang="zh-CN" state="translated">可见性</target></trans-unit>
@@ -77,7 +71,7 @@
 			<target xml:lang="zh-CN" state="needs-translation">Private</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
 				<source>Only reviewers and administrators can access and modify this workspace</source>
-			<target xml:lang="zh-CN" state="needs-translation">Only reviewers and administrators can access and modify this workspace</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">只有审阅者和管理员可以访问和修改此工作区</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve">
 				<source>Internal</source>
 			<target xml:lang="zh-CN" state="needs-translation">Internal</target></trans-unit>
@@ -86,31 +80,31 @@
 			<target xml:lang="zh-CN" state="needs-translation">Any logged in editor can see and modify this workspace.</target></trans-unit>
       <trans-unit id="workspaces.workspace.changes" xml:space="preserve">
 				<source>Changes</source>
-			<target xml:lang="zh-CN" state="needs-translation">Changes</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">变更</target></trans-unit>
       <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve">
 				<source>Open page in "{0}" workspace</source>
-			<target xml:lang="zh-CN" state="needs-translation">Open page in "{0}" workspace</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">在 "{0}" 工作区中打开页</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve">
 				<source>This is your personal workspace which you can't delete.</source>
-			<target xml:lang="zh-CN" state="needs-translation">This is your personal workspace which you can't delete.</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">这是你个人的工作区，不能删除。</target></trans-unit>
       <trans-unit id="workspaces.help.workspaceContainsChanges" xml:space="preserve">
 				<source>The workspace contains changes. To delete, discard the changes first.</source>
-			<target xml:lang="zh-CN" state="needs-translation">The workspace contains changes. To delete, discard the changes first.</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">工作区中包含更改。若要删除，请先放弃更改。</target></trans-unit>
       <trans-unit id="workspaces.help.cantRebaseWorkspaceContainsChanges" xml:space="preserve">
 				<source>Workspace can't be rebased on a different workspace because it still contains changes.</source>
 			<target xml:lang="zh-CN" state="needs-translation">Workspace can't be rebased on a different workspace because it still contains changes.</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeleteWorkspaceHasDependencies" xml:space="preserve">
 				<source>The workspace cannot be deleted because other workspaces depend on it.</source>
-			<target xml:lang="zh-CN" state="needs-translation">The workspace cannot be deleted because other workspaces depend on it.</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">不能删除工作区，因为其他工作区依赖于它。</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeleteNoPermission" xml:space="preserve">
 				<source>You don't have the permissions for deleting this workspace.</source>
-			<target xml:lang="zh-CN" state="needs-translation">You don't have the permissions for deleting this workspace.</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">您没有删除此工作区的权限。</target></trans-unit>
       <trans-unit id="workspaces.dialog.confirmWorkspaceDeletion" xml:space="preserve">
 				<source>Do you really want to delete the workspace "{0}"?</source>
-			<target xml:lang="zh-CN" state="needs-translation">Do you really want to delete the workspace "{0}"?</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">你真的想要删除工作区 "{0}"?</target></trans-unit>
       <trans-unit id="workspaces.dialog.thisWillDeleteTheWorkspace" xml:space="preserve">
 				<source>This will delete the workspace including all unpublished content. This operation cannot be undone.</source>
-			<target xml:lang="zh-CN" state="needs-translation">This will delete the workspace including all unpublished content. This operation cannot be undone.</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">此操作将删除工作区，包括所有未发布的内容。此操作无法撤消。</target></trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
 			<target xml:lang="zh-CN" state="translated">此模块包含当前工作区所有元素的概述性描述、你也可以使用该模块继续审阅当前工作区的所有元素和实施发布流程中设定的步骤</target></trans-unit>
@@ -119,10 +113,10 @@
 			<target xml:lang="zh-CN" state="translated">未发布的更改</target></trans-unit>
       <trans-unit id="workspaces.changesCounts" xml:space="preserve">
 				<source>additions: {new}, changes: {changed}, removals: {removed}</source>
-			<target xml:lang="zh-CN" state="needs-translation">additions: {new}, changes: {changed}, removals: {removed}</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">补充︰ {new}，变化︰ {changed}，移除︰ {removed}</target></trans-unit>
       <trans-unit id="workspaces.review" xml:space="preserve">
 				<source>Review</source>
-			<target xml:lang="zh-CN" state="needs-translation">Review</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">审查</target></trans-unit>
       <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve">
 				<source>Discard selected changes</source>
 			<target xml:lang="zh-CN" state="translated">放弃所选的更改</target><alt-trans><target xml:lang="zh-CN">舍弃选择的更改</target></alt-trans></trans-unit>
@@ -137,10 +131,10 @@
 			<target xml:lang="zh-CN" state="translated">发布所有更改</target></trans-unit>
       <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve">
 				<source>Publish all changes to {0}</source>
-			<target xml:lang="zh-CN" state="needs-translation">Publish all changes to {0}</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">发布所有更改到 {0}</target></trans-unit>
       <trans-unit id="changedContentCaption" xml:space="preserve">
 				<source>Changed Content</source>
-			<target xml:lang="zh-CN" state="needs-translation">Changed Content</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">已更改的内容</target></trans-unit>
       <trans-unit id="workspaces.legend.deleted" xml:space="preserve">
 				<source>deleted</source>
 			<target xml:lang="zh-CN" state="translated">已删除</target></trans-unit>
@@ -164,15 +158,18 @@
 			<target xml:lang="zh-CN" state="translated">你真的想要放弃"{0}"工作区中的所有更改?</target></trans-unit>
       <trans-unit id="workspaces.workspaceWithThisTitleAlreadyExists">
         <source>A workspace with this title already exists.</source>
-        <target xml:lang="zh-CN" state="needs-translation">A workspace with this title already exists.</target>
+        <target xml:lang="zh-CN" state="translated">工作区已存在这个标题。</target>
       </trans-unit>
       <trans-unit id="workspaces.workspaceHasBeenUpdated">
         <source>The workspace "{0}" has been updated.</source>
-        <target xml:lang="zh-CN" state="needs-translation">The workspace "{0}" has been updated.</target>
+        <target xml:lang="zh-CN" state="translated">工作区 "{0}" 已更新。</target>
+        <alt-trans>
+          <target xml:lang="zh-CN">工作区 {0} 已更新。</target>
+        </alt-trans>
       </trans-unit>
       <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfDependencies">
         <source>Workspace "{0}" cannot be deleted because the following workspaces are based on it: {1}</source>
-        <target xml:lang="zh-CN" state="needs-translation">Workspace "{0}" cannot be deleted because the following workspaces are based on it: {1}</target>
+        <target xml:lang="zh-CN" state="translated">不能删除工作区 "{0}"，因为以下工作区基于此工作区︰ {1}</target>
       </trans-unit>
       <trans-unit id="workspaces.notDeletedErrorWhileFetchingUnpublishedNodes">
         <source>An error occurred while fetching unpublished nodes from workspace "{0}", nothing was deleted.</source>
@@ -185,49 +182,37 @@
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target xml:lang="zh-CN" state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} nodes.</target>
+          <target xml:lang="zh-CN" state="translated">没有删除工作区"{0}"，因为它目前包含 {1} 节点。</target>
         </trans-unit>
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved">
         <source>The workspace "{0}" has been removed.</source>
-        <target xml:lang="zh-CN" state="needs-translation">The workspace "{0}" has been removed.</target>
+        <target xml:lang="zh-CN" state="translated">工作区 "{0}" 已被删除。</target>
       </trans-unit>
       <trans-unit id="workspaces.selectedChangeHasBeenPublished">
         <source>The selected change has been published.</source>
-        <target xml:lang="zh-CN" state="needs-translation">The selected change has been published.</target>
+        <target xml:lang="zh-CN" state="translated">所选的更改已发布。</target>
       </trans-unit>
       <trans-unit id="workspaces.selectedChangeHasBeenDiscarded">
         <source>The selected change has been discarded.</source>
-        <target xml:lang="zh-CN" state="needs-translation">The selected change has been discarded.</target>
+        <target xml:lang="zh-CN" state="translated">所选的更改已丢弃。</target>
       </trans-unit>
       <trans-unit id="workspaces.selectedChangesHaveBeenPublished">
         <source>The selected changes have been published.</source>
-        <target xml:lang="zh-CN" state="needs-translation">The selected changes have been published.</target>
+        <target xml:lang="zh-CN" state="translated">所选的更改已发布。</target>
       </trans-unit>
       <trans-unit id="workspaces.selectedChangesHaveBeenDiscarded">
         <source>The selected changes have been discarded.</source>
-        <target xml:lang="zh-CN" state="needs-translation">The selected changes have been discarded.</target>
+        <target xml:lang="zh-CN" state="translated">所选的更改已丢弃。</target>
       </trans-unit>
       <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenPublished">
         <source>All changes from workspace "{0}" have been published to {1}.</source>
-        <target xml:lang="zh-CN" state="needs-translation">All changes from workspace "{0}" have been published to {1}.</target>
+        <target xml:lang="zh-CN" state="translated">工作区 "{0}" 中的所有更改已都发布到 {1}。</target>
       </trans-unit>
       <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenDiscarded">
         <source>All changes from workspace "{0}" have been discarded.</source>
-        <target xml:lang="zh-CN" state="needs-translation">All changes from workspace "{0}" have been discarded.</target>
+        <target xml:lang="zh-CN" state="translated">工作区 "{0}" 中的所有更改已丢弃。</target>
       </trans-unit>
-      <trans-unit id="media.dragHelp" xml:space="preserve">
-				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
-			<target xml:lang="zh-CN" state="needs-translation">Drag and drop an asset on a collection / tag to add them to it.</target></trans-unit>
-      <trans-unit id="media.replace.options.keepOriginalFilename" xml:space="preserve">
-				<source>Keep the filename "{0}"</source>
-			<target xml:lang="zh-CN" state="needs-translation">Keep the filename "{0}"</target></trans-unit>
-      <trans-unit id="media.label" xml:space="preserve">
-				<source>Media</source>
-			<target xml:lang="zh-CN" state="translated">多媒体</target></trans-unit>
-      <trans-unit id="media.description" xml:space="preserve">
-				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
-			<target xml:lang="zh-CN" state="translated">使用该模块管理图片、 视频、 音频和文档文件。</target></trans-unit>
       <trans-unit id="history.label" xml:space="preserve">
 				<source>History</source>
 			<target xml:lang="zh-CN" state="translated">历史</target></trans-unit>
@@ -272,10 +257,10 @@
 			<target xml:lang="zh-CN" state="translated">{0} 删除了 {2} 的帐户"{1}"。</target></trans-unit>
       <trans-unit id="history.loadMore.label" xml:space="preserve">
 				<source>Load More</source>
-			<target xml:lang="zh-CN" state="needs-translation">Load More</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">载入更多</target></trans-unit>
       <trans-unit id="history.nodeRemovedInMeantime" xml:space="preserve">
 				<source>This node has been removed in the meantime</source>
-			<target xml:lang="zh-CN" state="needs-translation">This node has been removed in the meantime</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">在此期间此节点已删除</target></trans-unit>
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve">
 				<source>Administration</source>
@@ -315,7 +300,7 @@
 			<target xml:lang="zh-CN" state="translated">创建用户</target></trans-unit>
       <trans-unit id="users.actions.new.title" xml:space="preserve">
 				<source>Create a new user</source>
-			<target xml:lang="zh-CN" state="needs-translation">Create a new user</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">创建新用户</target></trans-unit>
       <trans-unit id="users.new.userData" xml:space="preserve">
 				<source>User Data</source>
 			<target xml:lang="zh-CN" state="translated">用户数据</target></trans-unit>
@@ -331,6 +316,12 @@
       <trans-unit id="users.new.userData.roles" xml:space="preserve">
 				<source>Role(s)</source>
 			<target xml:lang="zh-CN" state="translated">角色</target></trans-unit>
+      <trans-unit id="users.new.userData.authenticationProviderName" xml:space="preserve">
+				<source>Authentication Provider</source>
+			<target xml:lang="zh-CN" state="translated">身份验证提供程序</target></trans-unit>
+      <trans-unit id="users.new.userData.authenticationProviderName.useDefault" xml:space="preserve">
+				<source>Use system default</source>
+			<target xml:lang="zh-CN" state="translated">使用系统默认值</target></trans-unit>
       <trans-unit id="users.new.personalData" xml:space="preserve">
 				<source>Personal Data</source>
 			<target xml:lang="zh-CN" state="translated">个人资料</target></trans-unit>
@@ -438,7 +429,7 @@
 			<target xml:lang="zh-CN" state="translated">姓名</target></trans-unit>
       <trans-unit id="users.accountsAndRoles" xml:space="preserve">
 				<source>Accounts and Roles</source>
-			<target xml:lang="zh-CN" state="needs-translation">Accounts and Roles</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">帐户和角色</target></trans-unit>
       <trans-unit id="users.tooltip.view" xml:space="preserve">
 				<source>View user</source>
 			<target xml:lang="zh-CN" state="needs-translation">View user</target></trans-unit>
@@ -544,18 +535,121 @@
       <trans-unit id="sites.description" xml:space="preserve">
 				<source>The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</source>
 			<target xml:lang="zh-CN" state="translated">站点管理模块为您提供了所有站点的概览。你可以编辑、 添加和删除信息关于您的站点，如添加新的域。</target></trans-unit>
+      <trans-unit id="sites.add" xml:space="preserve">
+				<source>Add new site</source>
+			<target xml:lang="zh-CN" state="needs-translation">Add new site</target></trans-unit>
       <trans-unit id="sites.actions.newSite.label" xml:space="preserve">
 				<source>Create site</source>
 			<target xml:lang="zh-CN" state="translated">创建站点</target></trans-unit>
       <trans-unit id="sites.actions.newSite.title" xml:space="preserve">
 				<source>Create a new site</source>
 			<target xml:lang="zh-CN" state="translated">创建一个新的网站</target></trans-unit>
+      <trans-unit id="sites.rootNodeName" xml:space="preserve">
+				<source>Root node name</source>
+			<target xml:lang="zh-CN" state="needs-translation">Root node name</target></trans-unit>
+      <trans-unit id="sites.domains" xml:space="preserve">
+				<source>Domains</source>
+			<target xml:lang="zh-CN" state="needs-translation">Domains</target></trans-unit>
+      <trans-unit id="sites" xml:space="preserve">
+				<source>Site</source>
+			<target xml:lang="zh-CN" state="translated">站点</target></trans-unit>
+      <trans-unit id="site.name" xml:space="preserve">
+				<source>Name</source>
+			<target xml:lang="zh-CN" state="translated">姓名</target></trans-unit>
+      <trans-unit id="sites.defaultAssetCollection" xml:space="preserve">
+				<source>Default asset collection</source>
+			<target xml:lang="zh-CN" state="needs-translation">Default asset collection</target></trans-unit>
+      <trans-unit id="sites.sitePackage" xml:space="preserve">
+				<source>Site package</source>
+			<target xml:lang="zh-CN" state="needs-translation">Site package</target></trans-unit>
+      <trans-unit id="sites.delete" xml:space="preserve">
+				<source>Delete this site</source>
+			<target xml:lang="zh-CN" state="needs-translation">Delete this site</target></trans-unit>
+      <trans-unit id="sites.deactivate" xml:space="preserve">
+				<source>Deactivate site</source>
+			<target xml:lang="zh-CN" state="needs-translation">Deactivate site</target></trans-unit>
+      <trans-unit id="sites.activate" xml:space="preserve">
+				<source>Activate site</source>
+			<target xml:lang="zh-CN" state="needs-translation">Activate site</target></trans-unit>
+      <trans-unit id="sites.confirmDeleteQuestion" xml:space="preserve">
+				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
+			<target xml:lang="zh-CN" state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
+      <trans-unit id="sites.confirmDelete" xml:space="preserve">
+				<source>Yes, delete the site</source>
+			<target xml:lang="zh-CN" state="needs-translation">Yes, delete the site</target></trans-unit>
+      <trans-unit id="sites.import" xml:space="preserve">
+				<source>Import a site</source>
+			<target xml:lang="zh-CN" state="needs-translation">Import a site</target></trans-unit>
+      <trans-unit id="sites.select" xml:space="preserve">
+				<source>Select a site package</source>
+			<target xml:lang="zh-CN" state="needs-translation">Select a site package</target></trans-unit>
+      <trans-unit id="sites.noPackackeInfo" xml:space="preserve">
+				<source>No site packages are available. Make sure you have an active site package.</source>
+			<target xml:lang="zh-CN" state="needs-translation">No site packages are available. Make sure you have an active site package.</target></trans-unit>
+      <trans-unit id="sites.createBlank" xml:space="preserve">
+				<source>Create a blank site</source>
+			<target xml:lang="zh-CN" state="needs-translation">Create a blank site</target></trans-unit>
+      <trans-unit id="sites.documentType" xml:space="preserve">
+				<source>Select a document nodeType</source>
+			<target xml:lang="zh-CN" state="needs-translation">Select a document nodeType</target></trans-unit>
+      <trans-unit id="sites.name" xml:space="preserve">
+				<source>Site name</source>
+			<target xml:lang="zh-CN" state="needs-translation">Site name</target></trans-unit>
+      <trans-unit id="sites.createNode" xml:space="preserve">
+				<source>Create empty site</source>
+			<target xml:lang="zh-CN" state="needs-translation">Create empty site</target></trans-unit>
+      <trans-unit id="sites.createPackage" xml:space="preserve">
+				<source>Create a new site package</source>
+			<target xml:lang="zh-CN" state="needs-translation">Create a new site package</target></trans-unit>
+      <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
+				<source>VendorName.MyPackageKey</source>
+			<target xml:lang="zh-CN" state="needs-translation">VendorName.MyPackageKey</target></trans-unit>
+      <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
+				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
+			<target xml:lang="zh-CN" state="needs-translation">The &lt;em&gt;Neos Kickstarter&lt;/em&gt; package is not installed, install it to kickstart new sites.</target></trans-unit>
+      <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
+				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
+			<target xml:lang="zh-CN" state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
+      <trans-unit id="domain.new" xml:space="preserve">
+				<source>New domain</source>
+			<target xml:lang="zh-CN" state="needs-translation">New domain</target></trans-unit>
+      <trans-unit id="domain.edit" xml:space="preserve">
+				<source>Edit domain</source>
+			<target xml:lang="zh-CN" state="needs-translation">Edit domain</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve">
 				<source>Configuration</source>
 			<target xml:lang="zh-CN" state="translated">配置</target></trans-unit>
       <trans-unit id="configuration.description" xml:space="preserve">
 				<source>The Configuration module provides you with an overview of all configuration types.</source>
 			<target xml:lang="zh-CN" state="translated">配置模块为您提供了所有配置类型的概览。</target></trans-unit>
+      <trans-unit id="dimensions.label" xml:space="preserve">
+				<source>Dimensions</source>
+			<target xml:lang="zh-CN" state="translated">大小</target></trans-unit>
+      <trans-unit id="dimensions.description" xml:space="preserve">
+				<source>Grants a graphical overview over the configured fallbacks within each content dimension and across content dimensions.</source>
+			<target xml:lang="zh-CN" state="needs-translation">Grants a graphical overview over the configured fallbacks within each content dimension and across content dimensions.</target></trans-unit>
+      <trans-unit id="dimensions.interDimension.legend" xml:space="preserve">
+				<source>Inter dimensional fallback graph</source>
+			<target xml:lang="zh-CN" state="needs-translation">Inter dimensional fallback graph</target></trans-unit>
+      <trans-unit id="dimensions.interDimension.short" xml:space="preserve">
+				<source>Inter dimensional</source>
+			<target xml:lang="zh-CN" state="needs-translation">Inter dimensional</target></trans-unit>
+      <trans-unit id="dimensions.interDimension.description" xml:space="preserve">
+				<source>The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
+Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The higher the priority the higher the opacity.
+Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</source>
+			<target xml:lang="zh-CN" state="needs-translation">The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
+Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The higher the priority the higher the opacity.
+Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</target></trans-unit>
+      <trans-unit id="dimensions.intraDimension.legend" xml:space="preserve">
+				<source>Intra dimensional fallback graph</source>
+			<target xml:lang="zh-CN" state="needs-translation">Intra dimensional fallback graph</target></trans-unit>
+      <trans-unit id="dimensions.intraDimension.short" xml:space="preserve">
+				<source>Intra dimensional</source>
+			<target xml:lang="zh-CN" state="needs-translation">Intra dimensional</target></trans-unit>
+      <trans-unit id="dimensions.intraDimension.description" xml:space="preserve">
+				<source>The intra dimensional fallback graph displays fallbacks within each content dimension.</source>
+			<target xml:lang="zh-CN" state="needs-translation">The intra dimensional fallback graph displays fallbacks within each content dimension.</target></trans-unit>
       <!-- User -->
       <trans-unit id="user.label" xml:space="preserve">
 				<source>User</source>
@@ -629,325 +723,6 @@
       <trans-unit id="userSettings.editUser" xml:space="preserve">
 				<source>Edit User</source>
 			<target xml:lang="zh-CN" state="translated">编辑用户</target></trans-unit>
-      <!-- Media -->
-      <trans-unit id="media.field.name" xml:space="preserve">
-				<source>Name</source>
-			<target xml:lang="zh-CN" state="translated">姓名</target></trans-unit>
-      <trans-unit id="media.field.title" xml:space="preserve">
-				<source>Title</source>
-			<target xml:lang="zh-CN" state="translated">标题</target></trans-unit>
-      <trans-unit id="media.field.label" xml:space="preserve">
-				<source>Label</source>
-			<target xml:lang="zh-CN" state="translated">标签</target></trans-unit>
-      <trans-unit id="media.field.caption" xml:space="preserve">
-				<source>Caption</source>
-			<target xml:lang="zh-CN" state="translated">标题</target></trans-unit>
-      <trans-unit id="media.field.lastModified" xml:space="preserve">
-				<source>Last modified</source>
-			<target xml:lang="zh-CN" state="translated">上次修改</target></trans-unit>
-      <trans-unit id="media.field.fileSize" xml:space="preserve">
-				<source>File size</source>
-			<target xml:lang="zh-CN" state="translated">文件大小</target></trans-unit>
-      <trans-unit id="media.field.type" xml:space="preserve">
-				<source>Type</source>
-			<target xml:lang="zh-CN" state="translated">类型</target></trans-unit>
-      <trans-unit id="media.field.tags" xml:space="preserve">
-				<source>Tags</source>
-			<target xml:lang="zh-CN" state="translated">标签</target></trans-unit>
-      <trans-unit id="media.sortByName" xml:space="preserve">
-				<source>Sort by name</source>
-			<target xml:lang="zh-CN" state="translated">按名称排序</target></trans-unit>
-      <trans-unit id="media.sortByLastModified" xml:space="preserve">
-				<source>Sort by last modified</source>
-			<target xml:lang="zh-CN" state="translated">按排序最后修改</target></trans-unit>
-      <trans-unit id="media.sortby" xml:space="preserve">
-				<source>Sort by</source>
-			<target xml:lang="zh-CN" state="needs-translation">Sort by</target></trans-unit>
-      <trans-unit id="media.sortdirection" xml:space="preserve">
-				<source>Sort direction</source>
-			<target xml:lang="zh-CN" state="needs-translation">Sort direction</target></trans-unit>
-      <trans-unit id="media.sortdirection.asc" xml:space="preserve">
-				<source>Ascending</source>
-			<target xml:lang="zh-CN" state="needs-translation">Ascending</target></trans-unit>
-      <trans-unit id="media.sortdirection.desc" xml:space="preserve">
-				<source>Descending</source>
-			<target xml:lang="zh-CN" state="needs-translation">Descending</target></trans-unit>
-      <trans-unit id="media.tooltip.dragAndDropOnTagOrCollection" xml:space="preserve">
-				<source>Drag and drop on tag or collection</source>
-			<target xml:lang="zh-CN" state="translated">拖放式操作标记或集合</target></trans-unit>
-      <trans-unit id="media.tooltip.editAsset" xml:space="preserve">
-				<source>Edit asset</source>
-			<target xml:lang="zh-CN" state="translated">编辑素材</target></trans-unit>
-      <trans-unit id="media.tooltip.replaceAssetResource" xml:space="preserve">
-				<source>Replace</source>
-			<target xml:lang="zh-CN" state="needs-translation">Replace</target></trans-unit>
-      <trans-unit id="media.tooltip.deleteAsset" xml:space="preserve">
-				<source>Delete asset</source>
-			<target xml:lang="zh-CN" state="translated">删除素材</target></trans-unit>
-      <trans-unit id="media.message.reallyDeleteAsset" xml:space="preserve">
-				<source>Do you really want to delete asset "{0}"?</source>
-			<target xml:lang="zh-CN" state="translated">你真的想要删除的素材"{0}"?</target></trans-unit>
-      <trans-unit id="media.message.reallyDeleteCollection" xml:space="preserve">
-				<source>Do you really want to delete collection "{0}"?</source>
-			<target xml:lang="zh-CN" state="translated">你真的想要删除集合"{0}"吗?</target></trans-unit>
-      <trans-unit id="media.message.reallyDeleteTag" xml:space="preserve">
-				<source>Do you really want to delete tag "{0}"?</source>
-			<target xml:lang="zh-CN" state="translated">你真的想要删除标签"{0}"吗?</target><alt-trans><target xml:lang="zh-CN">你真的想要删除标记"{0}"吗?</target></alt-trans></trans-unit>
-      <trans-unit id="media.message.willBeDeleted" xml:space="preserve">
-				<source>This will delete the asset.</source>
-			<target xml:lang="zh-CN" state="translated">这将删除该素材。</target></trans-unit>
-      <trans-unit id="media.message.willDeleteCollection" xml:space="preserve">
-				<source>This will delete the collection, but not the assets that it contains.</source>
-			<target xml:lang="zh-CN" state="translated">这将删除集合，但不是包含的素材。</target></trans-unit>
-      <trans-unit id="media.message.willDeleteTag" xml:space="preserve">
-				<source>This will delete the tag, but not the assets that has it.</source>
-			<target xml:lang="zh-CN" state="translated">这将删除标签，但不是具有它的素材。</target></trans-unit>
-      <trans-unit id="media.message.operationCannotBeUndone" xml:space="preserve">
-				<source>This operation cannot be undone.</source>
-			<target xml:lang="zh-CN" state="translated">该操作无法撤消。</target></trans-unit>
-      <trans-unit id="media.cancel" xml:space="preserve">
-				<source>Cancel</source>
-			<target xml:lang="zh-CN" state="translated">取消</target></trans-unit>
-      <trans-unit id="media.replaceAssetResource" xml:space="preserve">
-				<source>Replace</source>
-			<target xml:lang="zh-CN" state="needs-translation">Replace</target></trans-unit>
-      <trans-unit id="media.saveEditing" xml:space="preserve">
-				<source>Save</source>
-			<target xml:lang="zh-CN" state="translated">保存​​</target></trans-unit>
-      <trans-unit id="media.message.confirmDelete" xml:space="preserve">
-				<source>Yes, delete the asset</source>
-			<target xml:lang="zh-CN" state="translated">是的，删除素材</target></trans-unit>
-      <trans-unit id="media.message.confirmDeleteCollection" xml:space="preserve">
-				<source>Yes, delete the collection</source>
-			<target xml:lang="zh-CN" state="translated">是的，删除集合</target></trans-unit>
-      <trans-unit id="media.message.confirmDeleteTag" xml:space="preserve">
-				<source>Yes, delete the tag</source>
-			<target xml:lang="zh-CN" state="translated">是的，删除标签</target></trans-unit>
-      <trans-unit id="media.thumbnail.editTitle" xml:space="preserve">
-				<source>Edit {0}</source>
-			<target xml:lang="zh-CN" state="translated">编辑 {0}</target></trans-unit>
-      <trans-unit id="media.search.title" xml:space="preserve">
-				<source>Search in assets</source>
-			<target xml:lang="zh-CN" state="translated">在素材中搜索</target></trans-unit>
-      <trans-unit id="media.search.placeholder" xml:space="preserve">
-				<source>Search</source>
-			<target xml:lang="zh-CN" state="translated">搜索</target></trans-unit>
-      <trans-unit id="media.search.itemCount" xml:space="preserve">
-				<source>{0} items</source>
-			<target xml:lang="zh-CN" state="translated">{0} 项目</target></trans-unit>
-      <trans-unit id="media.search.foundMatches" xml:space="preserve">
-				<source>found matching "{0}"</source>
-			<target xml:lang="zh-CN" state="translated">找到匹配的"{0}"</target></trans-unit>
-      <trans-unit id="media.upload" xml:space="preserve">
-				<source>Upload</source>
-			<target xml:lang="zh-CN" state="translated">上传</target></trans-unit>
-      <trans-unit id="media.filterOptions" xml:space="preserve">
-				<source>Filter options</source>
-			<target xml:lang="zh-CN" state="translated">过滤选项</target></trans-unit>
-      <trans-unit id="media.filter.title.all" xml:space="preserve">
-				<source>Display all asset types</source>
-			<target xml:lang="zh-CN" state="translated">显示所有素材类型</target></trans-unit>
-      <trans-unit id="media.filter.title.images" xml:space="preserve">
-				<source>Only display image assets</source>
-			<target xml:lang="zh-CN" state="translated">仅显示图像素材</target></trans-unit>
-      <trans-unit id="media.filter.title.documents" xml:space="preserve">
-				<source>Only display document assets</source>
-			<target xml:lang="zh-CN" state="translated">仅显示文档素材</target></trans-unit>
-      <trans-unit id="media.filter.title.video" xml:space="preserve">
-				<source>Only display video assets</source>
-			<target xml:lang="zh-CN" state="translated">仅显示视频素材</target></trans-unit>
-      <trans-unit id="media.filter.title.audio" xml:space="preserve">
-				<source>Only display audio assets</source>
-			<target xml:lang="zh-CN" state="translated">仅显示音频素材</target></trans-unit>
-      <trans-unit id="media.filter.all" xml:space="preserve">
-				<source>All</source>
-			<target xml:lang="zh-CN" state="translated">所有</target></trans-unit>
-      <trans-unit id="media.filter.images" xml:space="preserve">
-				<source>Images</source>
-			<target xml:lang="zh-CN" state="translated">图像</target></trans-unit>
-      <trans-unit id="media.filter.documents" xml:space="preserve">
-				<source>Documents</source>
-			<target xml:lang="zh-CN" state="translated">文档</target></trans-unit>
-      <trans-unit id="media.filter.video" xml:space="preserve">
-				<source>Video</source>
-			<target xml:lang="zh-CN" state="translated">视频</target></trans-unit>
-      <trans-unit id="media.filter.audio" xml:space="preserve">
-				<source>Audio</source>
-			<target xml:lang="zh-CN" state="translated">音频</target></trans-unit>
-      <trans-unit id="media.tooltip.sortOptions" xml:space="preserve">
-				<source>Sort options</source>
-			<target xml:lang="zh-CN" state="translated">排序选项</target></trans-unit>
-      <trans-unit id="media.tooltip.listView" xml:space="preserve">
-				<source>List view</source>
-			<target xml:lang="zh-CN" state="translated">列表视图</target></trans-unit>
-      <trans-unit id="media.tooltip.thumbnailView" xml:space="preserve">
-				<source>Thumbnail view</source>
-			<target xml:lang="zh-CN" state="translated">缩略视图</target></trans-unit>
-      <trans-unit id="media.collections" xml:space="preserve">
-				<source>Collections</source>
-			<target xml:lang="zh-CN" state="translated">集合</target></trans-unit>
-      <trans-unit id="media.editCollections" xml:space="preserve">
-				<source>Edit collections</source>
-			<target xml:lang="zh-CN" state="translated">编辑集合</target></trans-unit>
-      <trans-unit id="media.editCollection" xml:space="preserve">
-				<source>Edit collection</source>
-			<target xml:lang="zh-CN" state="translated">编辑集合</target></trans-unit>
-      <trans-unit id="media.deleteCollection" xml:space="preserve">
-				<source>Delete collection</source>
-			<target xml:lang="zh-CN" state="translated">删除集合</target></trans-unit>
-      <trans-unit id="media.createCollection" xml:space="preserve">
-				<source>Create collection</source>
-			<target xml:lang="zh-CN" state="translated">创建集合</target></trans-unit>
-      <trans-unit id="media.newCollection.placeholder" xml:space="preserve">
-				<source>Enter collection title</source>
-			<target xml:lang="zh-CN" state="translated">输入集合标题</target></trans-unit>
-      <trans-unit id="media.allCollections" xml:space="preserve">
-				<source>All collections</source>
-			<target xml:lang="zh-CN" state="translated">所有集合</target></trans-unit>
-      <trans-unit id="media.tags" xml:space="preserve">
-				<source>Tags</source>
-			<target xml:lang="zh-CN" state="translated">标签</target></trans-unit>
-      <trans-unit id="media.editTags" xml:space="preserve">
-				<source>Edit tags</source>
-			<target xml:lang="zh-CN" state="translated">编辑标签</target></trans-unit>
-      <trans-unit id="media.editTag" xml:space="preserve">
-				<source>Edit tag</source>
-			<target xml:lang="zh-CN" state="translated">编辑标签</target></trans-unit>
-      <trans-unit id="media.deleteTag" xml:space="preserve">
-				<source>Delete tag</source>
-			<target xml:lang="zh-CN" state="translated">删除标签</target></trans-unit>
-      <trans-unit id="media.placeholder.createTag" xml:space="preserve">
-				<source>Enter tag label</source>
-			<target xml:lang="zh-CN" state="needs-translation">Enter tag label</target></trans-unit>
-      <trans-unit id="media.createTag" xml:space="preserve">
-				<source>Create tag</source>
-			<target xml:lang="zh-CN" state="translated">创建标签</target></trans-unit>
-      <trans-unit id="media.tags.title.all" xml:space="preserve">
-				<source>All assets</source>
-			<target xml:lang="zh-CN" state="needs-translation">All assets</target></trans-unit>
-      <trans-unit id="media.tags.all" xml:space="preserve">
-				<source>All</source>
-			<target xml:lang="zh-CN" state="translated">所有</target></trans-unit>
-      <trans-unit id="media.untaggedAssets" xml:space="preserve">
-				<source>Untagged assets</source>
-			<target xml:lang="zh-CN" state="translated">未加标签的素材</target></trans-unit>
-      <trans-unit id="media.untagged" xml:space="preserve">
-				<source>Untagged</source>
-			<target xml:lang="zh-CN" state="translated">未加标签</target></trans-unit>
-      <trans-unit id="media.maxUploadSize" xml:space="preserve">
-				<source>Max. upload size {0} per file</source>
-			<target xml:lang="zh-CN" state="translated">最大值。上传的每个文件的大小 {0}</target></trans-unit>
-      <trans-unit id="media.dropFiles" xml:space="preserve">
-				<source>Drop files here</source>
-			<target xml:lang="zh-CN" state="translated">将文件拖至此处</target></trans-unit>
-      <trans-unit id="media.clickToUpload" xml:space="preserve">
-				<source>or click to upload</source>
-			<target xml:lang="zh-CN" state="translated">或点击上传</target></trans-unit>
-      <trans-unit id="media.chooseFile" xml:space="preserve">
-				<source>Choose file</source>
-			<target xml:lang="zh-CN" state="translated">选择文件</target></trans-unit>
-      <trans-unit id="media.noAssetsFound" xml:space="preserve">
-				<source>No Assets found.</source>
-			<target xml:lang="zh-CN" state="translated">发现没有素材。</target></trans-unit>
-      <trans-unit id="media.basics" xml:space="preserve">
-				<source>Basics</source>
-			<target xml:lang="zh-CN" state="translated">基本</target></trans-unit>
-      <trans-unit id="media.delete" xml:space="preserve">
-				<source>Delete</source>
-			<target xml:lang="zh-CN" state="translated">删除</target></trans-unit>
-      <trans-unit id="media.clickToDelete" xml:space="preserve">
-				<source>Click to delete</source>
-			<target xml:lang="zh-CN" state="translated">点击删除</target></trans-unit>
-      <trans-unit id="media.save" xml:space="preserve">
-				<source>Save</source>
-			<target xml:lang="zh-CN" state="translated">保存​​</target></trans-unit>
-      <trans-unit id="media.metadata" xml:space="preserve">
-				<source>Metadata</source>
-			<target xml:lang="zh-CN" state="translated">元数据</target></trans-unit>
-      <trans-unit id="media.metadata.filename" xml:space="preserve">
-				<source>Filename</source>
-			<target xml:lang="zh-CN" state="translated">文件名</target></trans-unit>
-      <trans-unit id="media.metadata.lastModified" xml:space="preserve">
-				<source>Last modified (resource)</source>
-			<target xml:lang="zh-CN" state="translated">上次修改时间 (资源)</target></trans-unit>
-      <trans-unit id="media.metadata.fileSize" xml:space="preserve">
-				<source>File size</source>
-			<target xml:lang="zh-CN" state="translated">文件大小</target></trans-unit>
-      <trans-unit id="media.metadata.dimensions" xml:space="preserve">
-				<source>Dimensions</source>
-			<target xml:lang="zh-CN" state="translated">大小</target></trans-unit>
-      <trans-unit id="media.metadata.type" xml:space="preserve">
-				<source>Type</source>
-			<target xml:lang="zh-CN" state="translated">类型</target></trans-unit>
-      <trans-unit id="media.metadata.identifier" xml:space="preserve">
-				<source>Identifier</source>
-			<target xml:lang="zh-CN" state="translated">标识符</target></trans-unit>
-      <trans-unit id="media.preview" xml:space="preserve">
-				<source>Preview</source>
-			<target xml:lang="zh-CN" state="translated">预览</target></trans-unit>
-      <trans-unit id="media.cannotUploadFile" xml:space="preserve">
-				<source>Cannot upload the file</source>
-			<target xml:lang="zh-CN" state="translated">不能上传文件</target></trans-unit>
-      <trans-unit id="media.noFileSelected" xml:space="preserve">
-				<source>No file selected</source>
-			<target xml:lang="zh-CN" state="needs-translation">No file selected</target></trans-unit>
-      <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve">
-				<source>The file size of {0} exceeds the allowed limit of {1}</source>
-			<target xml:lang="zh-CN" state="translated">文件大小不能超过{1}, 当前大小{0}</target></trans-unit>
-      <trans-unit id="media.forTheFile" xml:space="preserve">
-				<source>for the file</source>
-			<target xml:lang="zh-CN" state="translated">为文件</target></trans-unit>
-      <trans-unit id="media.onlySomeFilesWereUploaded" xml:space="preserve">
-				<source>Only some of the files were successfully uploaded. Refresh the page to see the those.</source>
-			<target xml:lang="zh-CN" state="translated">部分文件上传成功, 请刷新页面查看</target><alt-trans><target xml:lang="zh-CN">部分文件上传成功,请刷新页面查看</target></alt-trans></trans-unit>
-      <trans-unit id="media.taggingAssetsFailed" xml:space="preserve">
-				<source>Tagging the asset failed.</source>
-			<target xml:lang="zh-CN" state="translated">标记素材失败。</target></trans-unit>
-      <trans-unit id="media.addingAssetsToCollectionFailed" xml:space="preserve">
-				<source>Adding the asset to the collection failed.</source>
-			<target xml:lang="zh-CN" state="translated">向集合中添加素材失败。</target></trans-unit>
-      <trans-unit id="media.creating" xml:space="preserve">
-				<source>Creating</source>
-			<target xml:lang="zh-CN" state="translated">创建</target></trans-unit>
-      <trans-unit id="media.deleteRelatedNodes" xml:space="preserve">
-				<source>Asset could not be deleted, because there are still Nodes using it</source>
-			<target xml:lang="zh-CN" state="needs-translation">Asset could not be deleted, because there are still Nodes using it</target></trans-unit>
-      <group id="media.relatedNodes" restype="x-gettext-plurals">
-        <trans-unit id="media.relatedNodes[0]">
-          <source>{0} usages</source>
-          <target xml:lang="zh-CN" state="needs-translation">{0} usages</target>
-        </trans-unit>
-      </group>
-      <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve">
-				<source>References to "{asset}"</source>
-			<target xml:lang="zh-CN" state="needs-translation">References to "{asset}"</target></trans-unit>
-      <trans-unit id="media.replaceAsset.replaceFilename" xml:space="preserve">
-				<source>Replace "{filename}"</source>
-			<target xml:lang="zh-CN" state="needs-translation">Replace "{filename}"</target></trans-unit>
-      <trans-unit id="media.replaceAsset.description" xml:space="preserve">
-        <source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
-      <target xml:lang="zh-CN" state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
-      <trans-unit id="media.replaceAsset.note" xml:space="preserve">
-        <source>Note</source>
-      <target xml:lang="zh-CN" state="needs-translation">Note</target></trans-unit>
-      <trans-unit id="media.replaceAsset.noteText" xml:space="preserve">
-        <source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
-      <target xml:lang="zh-CN" state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
-      <trans-unit id="media.replaceAsset.chooseNewFile" xml:space="preserve">
-        <source>Choose a new file</source>
-      <target xml:lang="zh-CN" state="needs-translation">Choose a new file</target></trans-unit>
-      <trans-unit id="media.replace.usageCount" xml:space="preserve">
-        <source>Currently the asset is used {usageCount} times.</source>
-      <target xml:lang="zh-CN" state="needs-translation">Currently the asset is used {usageCount} times.</target></trans-unit>
-      <trans-unit id="media.replace.allUsages" xml:space="preserve">
-        <source>Show all usages</source>
-      <target xml:lang="zh-CN" state="needs-translation">Show all usages</target></trans-unit>
-      <trans-unit id="media.replace.notUsed" xml:space="preserve">
-        <source>Currently the asset is not in used anywhere on the website.</source>
-      <target xml:lang="zh-CN" state="needs-translation">Currently the asset is not in used anywhere on the website.</target></trans-unit>
-      <trans-unit id="media.replace.previewFile" xml:space="preserve">
-        <source>Preview current file</source>
-      <target xml:lang="zh-CN" state="needs-translation">Preview current file</target></trans-unit>
     </body>
   </file>
 </xliff>
