@@ -540,87 +540,87 @@
       <trans-unit id="sites.description" xml:space="preserve" approved="yes">
 				<source>The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</source>
 			<target xml:lang="pl">Moduł Zarządzania Stronami umożliwia przegląd wszystkich stron. Można edytować, dodawać i usuwać informacje o witrynach, takie jak przypisana domena.</target><alt-trans><target xml:lang="pl">Moduł zarządzania stronami umożliwia przegląd wszystkich stron. Można edytować, dodawać i usuwać informacje o witrynach, takie jak przypisana domena.</target></alt-trans></trans-unit>
-      <trans-unit id="sites.add" xml:space="preserve">
+      <trans-unit id="sites.add" xml:space="preserve" approved="yes">
 				<source>Add new site</source>
-			<target xml:lang="pl" state="needs-translation">Add new site</target></trans-unit>
+			<target xml:lang="pl">Dodaj nową stronę</target></trans-unit>
       <trans-unit id="sites.actions.newSite.label" xml:space="preserve" approved="yes">
 				<source>Create site</source>
 			<target xml:lang="pl">Utwórz stronę</target></trans-unit>
       <trans-unit id="sites.actions.newSite.title" xml:space="preserve" approved="yes">
 				<source>Create a new site</source>
 			<target xml:lang="pl">Utwórz nową stronę</target></trans-unit>
-      <trans-unit id="sites.rootNodeName" xml:space="preserve">
+      <trans-unit id="sites.rootNodeName" xml:space="preserve" approved="yes">
 				<source>Root node name</source>
-			<target xml:lang="pl" state="needs-translation">Root node name</target></trans-unit>
-      <trans-unit id="sites.domains" xml:space="preserve">
+			<target xml:lang="pl">Nazwa węzła głównego</target></trans-unit>
+      <trans-unit id="sites.domains" xml:space="preserve" approved="yes">
 				<source>Domains</source>
-			<target xml:lang="pl" state="needs-translation">Domains</target></trans-unit>
+			<target xml:lang="pl">Domeny</target></trans-unit>
       <trans-unit id="sites" xml:space="preserve" approved="yes">
 				<source>Site</source>
 			<target xml:lang="pl">Strona</target></trans-unit>
       <trans-unit id="site.name" xml:space="preserve" approved="yes">
 				<source>Name</source>
 			<target xml:lang="pl">Nazwa</target></trans-unit>
-      <trans-unit id="sites.defaultAssetCollection" xml:space="preserve">
+      <trans-unit id="sites.defaultAssetCollection" xml:space="preserve" approved="yes">
 				<source>Default asset collection</source>
-			<target xml:lang="pl" state="needs-translation">Default asset collection</target></trans-unit>
-      <trans-unit id="sites.sitePackage" xml:space="preserve">
+			<target xml:lang="pl">Domyślna kolekcja zasobów</target></trans-unit>
+      <trans-unit id="sites.sitePackage" xml:space="preserve" approved="yes">
 				<source>Site package</source>
-			<target xml:lang="pl" state="needs-translation">Site package</target></trans-unit>
-      <trans-unit id="sites.delete" xml:space="preserve">
+			<target xml:lang="pl">Pakiet strony</target></trans-unit>
+      <trans-unit id="sites.delete" xml:space="preserve" approved="yes">
 				<source>Delete this site</source>
-			<target xml:lang="pl" state="needs-translation">Delete this site</target></trans-unit>
-      <trans-unit id="sites.deactivate" xml:space="preserve">
+			<target xml:lang="pl">Usuń tą stronę</target></trans-unit>
+      <trans-unit id="sites.deactivate" xml:space="preserve" approved="yes">
 				<source>Deactivate site</source>
-			<target xml:lang="pl" state="needs-translation">Deactivate site</target></trans-unit>
-      <trans-unit id="sites.activate" xml:space="preserve">
+			<target xml:lang="pl">Deaktywuj stronę</target></trans-unit>
+      <trans-unit id="sites.activate" xml:space="preserve" approved="yes">
 				<source>Activate site</source>
-			<target xml:lang="pl" state="needs-translation">Activate site</target></trans-unit>
-      <trans-unit id="sites.confirmDeleteQuestion" xml:space="preserve">
+			<target xml:lang="pl">Aktywuj stronę</target></trans-unit>
+      <trans-unit id="sites.confirmDeleteQuestion" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
-			<target xml:lang="pl" state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
-      <trans-unit id="sites.confirmDelete" xml:space="preserve">
+			<target xml:lang="pl">Czy na pewno chcesz usunąć "{0}"? Tej akcji nie można cofnąć.</target></trans-unit>
+      <trans-unit id="sites.confirmDelete" xml:space="preserve" approved="yes">
 				<source>Yes, delete the site</source>
-			<target xml:lang="pl" state="needs-translation">Yes, delete the site</target></trans-unit>
-      <trans-unit id="sites.import" xml:space="preserve">
+			<target xml:lang="pl">Tak, usuń stronę</target></trans-unit>
+      <trans-unit id="sites.import" xml:space="preserve" approved="yes">
 				<source>Import a site</source>
-			<target xml:lang="pl" state="needs-translation">Import a site</target></trans-unit>
-      <trans-unit id="sites.select" xml:space="preserve">
+			<target xml:lang="pl">Importuj stronę</target></trans-unit>
+      <trans-unit id="sites.select" xml:space="preserve" approved="yes">
 				<source>Select a site package</source>
-			<target xml:lang="pl" state="needs-translation">Select a site package</target></trans-unit>
-      <trans-unit id="sites.noPackackeInfo" xml:space="preserve">
+			<target xml:lang="pl">Wybierz pakiet strony</target></trans-unit>
+      <trans-unit id="sites.noPackackeInfo" xml:space="preserve" approved="yes">
 				<source>No site packages are available. Make sure you have an active site package.</source>
-			<target xml:lang="pl" state="needs-translation">No site packages are available. Make sure you have an active site package.</target></trans-unit>
-      <trans-unit id="sites.createBlank" xml:space="preserve">
+			<target xml:lang="pl">Brak dostępnych pakietów stron. Upewnij się, że masz aktywny pakiet strony.</target></trans-unit>
+      <trans-unit id="sites.createBlank" xml:space="preserve" approved="yes">
 				<source>Create a blank site</source>
-			<target xml:lang="pl" state="needs-translation">Create a blank site</target></trans-unit>
-      <trans-unit id="sites.documentType" xml:space="preserve">
+			<target xml:lang="pl">Utwórz pustą stronę</target></trans-unit>
+      <trans-unit id="sites.documentType" xml:space="preserve" approved="yes">
 				<source>Select a document nodeType</source>
-			<target xml:lang="pl" state="needs-translation">Select a document nodeType</target></trans-unit>
-      <trans-unit id="sites.name" xml:space="preserve">
+			<target xml:lang="pl">Wybierz nodeType dokumentu</target></trans-unit>
+      <trans-unit id="sites.name" xml:space="preserve" approved="yes">
 				<source>Site name</source>
-			<target xml:lang="pl" state="needs-translation">Site name</target></trans-unit>
-      <trans-unit id="sites.createNode" xml:space="preserve">
+			<target xml:lang="pl">Nazwa strony</target></trans-unit>
+      <trans-unit id="sites.createNode" xml:space="preserve" approved="yes">
 				<source>Create empty site</source>
-			<target xml:lang="pl" state="needs-translation">Create empty site</target></trans-unit>
-      <trans-unit id="sites.createPackage" xml:space="preserve">
+			<target xml:lang="pl">Utwórz pustą stronę</target></trans-unit>
+      <trans-unit id="sites.createPackage" xml:space="preserve" approved="yes">
 				<source>Create a new site package</source>
-			<target xml:lang="pl" state="needs-translation">Create a new site package</target></trans-unit>
-      <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
+			<target xml:lang="pl">Utwórz nowy pakiet strony</target></trans-unit>
+      <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve" approved="yes">
 				<source>VendorName.MyPackageKey</source>
-			<target xml:lang="pl" state="needs-translation">VendorName.MyPackageKey</target></trans-unit>
-      <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
+			<target xml:lang="pl">NazwaTworcy.KluczMojegoPakietu</target></trans-unit>
+      <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve" approved="yes">
 				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
-			<target xml:lang="pl" state="needs-translation">The &lt;em&gt;Neos Kickstarter&lt;/em&gt; package is not installed, install it to kickstart new sites.</target></trans-unit>
-      <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
+			<target xml:lang="pl">Pakiet &lt;em&gt;Neos Kickstarter&lt;/em&gt; nie jest zainstalowany, zainstaluj go aby wygenerować nowe strony.</target></trans-unit>
+      <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
-			<target xml:lang="pl" state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
-      <trans-unit id="domain.new" xml:space="preserve">
+			<target xml:lang="pl">Czy na pewno chcesz usunąć "{0}"? Tej akcji nie można cofnąć.</target></trans-unit>
+      <trans-unit id="domain.new" xml:space="preserve" approved="yes">
 				<source>New domain</source>
-			<target xml:lang="pl" state="needs-translation">New domain</target></trans-unit>
-      <trans-unit id="domain.edit" xml:space="preserve">
+			<target xml:lang="pl">Nowa domena</target></trans-unit>
+      <trans-unit id="domain.edit" xml:space="preserve" approved="yes">
 				<source>Edit domain</source>
-			<target xml:lang="pl" state="needs-translation">Edit domain</target></trans-unit>
+			<target xml:lang="pl">Edytuj domenę</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve" approved="yes">
 				<source>Configuration</source>
 			<target xml:lang="pl">Konfiguracja</target></trans-unit>
