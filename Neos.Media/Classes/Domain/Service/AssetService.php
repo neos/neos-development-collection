@@ -83,7 +83,7 @@ class AssetService
     protected $packageManager;
 
     /**
-     * @Flow\Inject()
+     * @Flow\Inject
      * @var ImageService
      */
     protected $imageService;
