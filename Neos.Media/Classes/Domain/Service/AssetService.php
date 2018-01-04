@@ -83,6 +83,12 @@ class AssetService
     protected $packageManager;
 
     /**
+     * @Flow\Inject()
+     * @var ImageService
+     */
+    protected $imageService;
+    
+    /**
      * Returns the repository for an asset
      *
      * @param AssetInterface $asset
