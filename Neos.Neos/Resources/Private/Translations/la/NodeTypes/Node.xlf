@@ -4,22 +4,22 @@
     <body>
       <trans-unit id="tabs.default" xml:space="preserve">
 				<source>General</source>
-			<target xml:lang="la-LA">crwdns5405:0crwdne5405:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns6240:0crwdne6240:0</target></trans-unit>
       <trans-unit id="tabs.meta" xml:space="preserve">
 				<source>Metadata</source>
-			<target xml:lang="la-LA">crwdns5406:0crwdne5406:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns6241:0crwdne6241:0</target></trans-unit>
       <trans-unit id="views.nodeInfo" xml:space="preserve">
 				<source>Metadata</source>
-			<target xml:lang="la-LA">crwdns5407:0crwdne5407:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns6242:0crwdne6242:0</target></trans-unit>
       <trans-unit id="groups.nodeInfo" xml:space="preserve">
 				<source>Additional info</source>
-			<target xml:lang="la-LA">crwdns5408:0crwdne5408:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns6243:0crwdne6243:0</target></trans-unit>
       <trans-unit id="groups.type" xml:space="preserve">
 				<source>Change type</source>
-			<target xml:lang="la-LA">crwdns5409:0crwdne5409:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns6244:0crwdne6244:0</target></trans-unit>
       <trans-unit id="properties._nodeType" xml:space="preserve">
 				<source>Type</source>
-			<target xml:lang="la-LA">crwdns5410:0crwdne5410:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns6245:0crwdne6245:0</target></trans-unit>
     </body>
   </file>
 </xliff>
