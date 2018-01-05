@@ -287,46 +287,46 @@
 			<target xml:lang="tr" state="translated">Birincil</target></trans-unit>
       <trans-unit id="package" xml:space="preserve">
 				<source>Package</source>
-			<target xml:lang="tr" state="needs-translation">Package</target></trans-unit>
+			<target xml:lang="tr" state="translated">Paket</target></trans-unit>
       <trans-unit id="deactivated" xml:space="preserve">
 				<source>Deactivated</source>
 			<target xml:lang="tr" state="translated">Devre dışı</target></trans-unit>
       <trans-unit id="unavailable" xml:space="preserve">
 				<source>Unavailable</source>
-			<target xml:lang="tr" state="needs-translation">Unavailable</target></trans-unit>
+			<target xml:lang="tr" state="translated">Kullanım dışı</target></trans-unit>
       <trans-unit id="inactive" xml:space="preserve">
 				<source>Inactive</source>
-			<target xml:lang="tr" state="needs-translation">Inactive</target></trans-unit>
+			<target xml:lang="tr" state="translated">Aktif Değil</target></trans-unit>
       <trans-unit id="clickToEdit" xml:space="preserve">
 				<source>Click to edit</source>
 			<target xml:lang="tr" state="translated">Düzenlemek için tıkla</target></trans-unit>
       <trans-unit id="clickToDeactivate" xml:space="preserve">
 				<source>Click to deactivate</source>
-			<target xml:lang="tr" state="needs-translation">Click to deactivate</target></trans-unit>
+			<target xml:lang="tr" state="translated">Devre dışı bırakmak için tıklayın</target></trans-unit>
       <trans-unit id="clickToActivate" xml:space="preserve">
 				<source>Click to activate</source>
-			<target xml:lang="tr" state="needs-translation">Click to activate</target></trans-unit>
+			<target xml:lang="tr" state="translated">Aktif hale getirmek için tıklayın</target></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
 			<target xml:lang="tr" state="translated">Silmek için tıklayın</target></trans-unit>
       <trans-unit id="clickToCreate" xml:space="preserve">
 				<source>Click to create new</source>
-			<target xml:lang="tr" state="needs-translation">Click to create new</target></trans-unit>
+			<target xml:lang="tr" state="translated">Yeni oluşturmak için tıklayın</target></trans-unit>
       <trans-unit id="state" xml:space="preserve">
 				<source>Status</source>
-			<target xml:lang="tr" state="needs-translation">Status</target></trans-unit>
+			<target xml:lang="tr" state="translated">Durum</target></trans-unit>
       <trans-unit id="active" xml:space="preserve">
 				<source>Active</source>
-			<target xml:lang="tr" state="needs-translation">Active</target></trans-unit>
+			<target xml:lang="tr" state="translated">Aktif</target></trans-unit>
       <trans-unit id="domains" xml:space="preserve">
 				<source>Domains</source>
-			<target xml:lang="tr" state="needs-translation">Domains</target></trans-unit>
+			<target xml:lang="tr" state="translated">Alan adları</target></trans-unit>
       <trans-unit id="domain" xml:space="preserve">
 				<source>Domain</source>
-			<target xml:lang="tr" state="needs-translation">Domain</target></trans-unit>
+			<target xml:lang="tr" state="translated">Alan adı</target></trans-unit>
       <trans-unit id="deleteConfirm" xml:space="preserve">
 				<source>Yes, delete it!</source>
-			<target xml:lang="tr" state="needs-translation">Yes, delete it!</target></trans-unit>
+			<target xml:lang="tr" state="translated">Evet, sil!</target></trans-unit>
       <trans-unit id="packageKey" xml:space="preserve">
 				<source>Package Key</source>
 			<target xml:lang="tr" state="translated">Paket anahtarı</target></trans-unit>
