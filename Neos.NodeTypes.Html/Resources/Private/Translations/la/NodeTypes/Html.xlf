@@ -4,16 +4,16 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>HTML</source>
-			<target xml:lang="la-LA">crwdns6309:0crwdne6309:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns5474:0crwdne5474:0</target></trans-unit>
       <trans-unit id="groups.html" xml:space="preserve">
 				<source>HTML</source>
-			<target xml:lang="la-LA">crwdns6310:0crwdne6310:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns5475:0crwdne5475:0</target></trans-unit>
       <trans-unit id="properties.source" xml:space="preserve">
 				<source>HTML Content</source>
-			<target xml:lang="la-LA">crwdns6311:0crwdne6311:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns5476:0crwdne5476:0</target></trans-unit>
       <trans-unit id="properties.source.codeEditor.buttonLabel" xml:space="preserve">
 				<source>Edit HTML source</source>
-			<target xml:lang="la-LA">crwdns6312:0crwdne6312:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns5477:0crwdne5477:0</target></trans-unit>
     </body>
   </file>
 </xliff>
