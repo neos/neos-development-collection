@@ -4,10 +4,10 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="la-LA">crwdns6262:0crwdne6262:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns5427:0crwdne5427:0</target></trans-unit>
       <trans-unit id="groups.type" xml:space="preserve">
 				<source>Change type</source>
-			<target xml:lang="la-LA">crwdns6263:0crwdne6263:0</target></trans-unit>
+			<target xml:lang="la-LA">crwdns5428:0crwdne5428:0</target></trans-unit>
     </body>
   </file>
 </xliff>
