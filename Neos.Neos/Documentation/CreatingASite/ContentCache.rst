@@ -167,7 +167,7 @@ In the ``@cache`` meta property the following subproperties are allowed:
 When using ``dynamic`` as the cache mode, the cache can be *disabled* by setting the ``entryDiscriminator`` to ``false``.
 This can be used to make the cache behavior dependable on some context, i.e. the current request method::
 
-	prototype(TYPO3.Neos.NodeTypes:Form) {
+	prototype(Neos.NodeTypes:Form) {
 		@cache {
 			mode = 'dynamic'
 			entryIdentifier {
