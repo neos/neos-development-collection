@@ -53,6 +53,6 @@ Afterwards the prototype can be used in Fusion::
 
 	garavatarImage = Vendor.Site:Gravatar
 	garavatarImage {
-		emailAddress = 'kasper@typo3.org'
+		emailAddress = 'hello@neos.io'
 		size = 120
 	}
