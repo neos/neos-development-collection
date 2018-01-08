@@ -41,19 +41,12 @@ is rendered inside the ``<body>`` of the resulting HTML page.
 If this is an empty file, the output shows how minimal Neos impacts the generated
 markup::
 
-	<!DOCTYPE html>
-	<html version="HTML+RDFa 1.1"
-	    xmlns="http://www.w3.org/1999/xhtml"
-	    xmlns:typo3="http://www.typo3.org/ns/2012/Flow/Packages/Neos/Content/"
-	    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-	    >
-	  <!--
-	    This website is powered by Neos, the next generation CMS, a free Open
-	    Source Enterprise Content Management System licensed under the GNU/GPL.
 
-	    Neos is based on Flow, a powerful PHP application framework licensed under the GNU/LGPL.
+	<!DOCTYPE html><html><!--
+	      This website is powered by Neos, the Open Source Content Application Platform licensed under the GNU/GPL.
+	      Neos is based on Flow, a powerful PHP application framework licensed under the MIT license.
 
-	    More information and contribution opportunities at http://neos.typo3.org and http://flow.typo3.org
+	      More information and contribution opportunities at https://www.neos.io
 	  -->
 	  <head>
 	    <meta charset="UTF-8" />
