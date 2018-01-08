@@ -255,7 +255,7 @@ In Neos content elements are grouped by type. By default the following groups ar
 It is possible to create new groups by using the `Neos.Neos.nodeTypes.groups` settings.
 Registering 2 new groups could look like::
 
-	TYPO3:
+	Neos:
 	  Neos:
 	    nodeTypes:
 	      groups:
