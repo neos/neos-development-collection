@@ -1,0 +1,34 @@
+`3.0.11 (2018-01-09) <https://github.com/neos/neos-development-collection/releases/tag/3.0.11>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Tweak Travis CI build matrix <https://github.com/neos/neos-development-collection/pull/1841>`_
+-----------------------------------------------------------------------------------------------------
+
+This removes some options no longer needed, since the required PostgreSQL
+versions are meanwhile available without any use of sudo in the default
+container infrastructure, as shown in
+
+- https://docs.travis-ci.com/user/reference/overview/#Virtualization-environments
+- https://docs.travis-ci.com/user/database-setup/#Using-a-different-PostgreSQL-Version
+
+`TASK: Fix legacy mentions of TYPO3 in the documentation <https://github.com/neos/neos-development-collection/pull/1824>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Fixes documentation examples.
+
+* Packages: ``Neos``
+
+`BUGFIX: Load thumbs in media browser asynchronous <https://github.com/neos/neos-development-collection/pull/1825>`_
+--------------------------------------------------------------------------------------------------------------------
+
+When you open the media module with a lot of high-res images while the thumbnails are not already generated and cached, loading can take a long time without noticable feedback.
+
+The templates use a setting not available since the media browser was split into it's own package. Instead the setting needs to be read from the Media package.
+
+* Packages: ``Browser`` ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/3.0.10...3.0.11>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
