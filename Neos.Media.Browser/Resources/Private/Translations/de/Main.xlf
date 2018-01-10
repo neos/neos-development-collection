@@ -58,10 +58,10 @@
 			<target xml:lang="de">Absteigend</target><alt-trans><target xml:lang="de">Absteigende Reihenfolge</target></alt-trans></trans-unit>
       <trans-unit id="sortDirection.asc.tooltip" xml:space="preserve">
 				<source>Sort direction Ascending</source>
-			<target xml:lang="de" state="needs-translation">Sort direction Ascending</target></trans-unit>
+			<target xml:lang="de" state="translated">Sortierrichtung Aufsteigend</target></trans-unit>
       <trans-unit id="sortDirection.desc.tooltip" xml:space="preserve">
 				<source>Sort direction Descending</source>
-			<target xml:lang="de" state="needs-translation">Sort direction Descending</target></trans-unit>
+			<target xml:lang="de" state="translated">Sortierrichtung Absteigend</target></trans-unit>
       <trans-unit id="dragAndDropOnTagOrCollection" xml:space="preserve" approved="yes">
 				<source>Drag and drop on tag or collection</source>
 			<target xml:lang="de">Auf Tag oder Sammlung ziehen und loslassen</target></trans-unit>
