@@ -270,9 +270,9 @@ prototype(Vendor.Site:IterationExample) < prototype(Neos.Fusion:Component) {
 }
 ```
 
-### Augmentation of Child-Components with `Neos.Neos:Augmenter`
+### Augmentation of Child-Components with `Neos.Fusion:Augmenter`
 
-The `Neos.Neos:Augmenter` can be used to add additional attributes to rendered content. 
+The `Neos.Fusion:Augmenter` can be used to add additional attributes to rendered content. 
 This allows some rendering flexibility without extending the api of the component. This is a 
 useful pattern to avoid unneeded tag-wrapping in cases where only additional classes are needed.
 
@@ -282,9 +282,9 @@ prototype(PackageFactory.AtomicFusion.AFX:SliderExample) < prototype(Packagefact
   renderer = afx`
      <div class="slider">
         <Neos.Fusion:Collection collection={props.images} itemName="image" iterationName="iteration" @children="itemRenderer">
-            <Neos.Neos:Augmenter class="slider__slide" data-index={iteration.index}>
+            <Neos.Fusion:Augmenter class="slider__slide" data-index={iteration.index}>
                 <Vendor.Site:ImageExample image={image} /> 
-            </Neos.Neos:Augmenter>
+            </Neos.Fusion:Augmenter>
         </Neos.Fusion:Collection>  
      </div>
   `
@@ -292,7 +292,7 @@ prototype(PackageFactory.AtomicFusion.AFX:SliderExample) < prototype(Packagefact
 ```
 
 The example iterates over a list of images and uses the `Vendor.Site:ImageExample` to render each one 
-while the `Neos.Neos:Augmenter` adds a class- and data-attribute from outside.
+while the `Neos.Fusion:Augmenter` adds a class- and data-attribute from outside.
 
 ## License
 
