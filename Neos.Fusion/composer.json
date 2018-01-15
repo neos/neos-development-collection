@@ -8,7 +8,6 @@
         "neos/fluid-adaptor": "*",
         "neos/cache": "*",
         "neos/eel": "*",
-        "neos/fluid-adaptor": "*",
         "neos/utility-arrays": "*",
         "neos/utility-objecthandling": "*",
         "neos/utility-unicode": "*",
