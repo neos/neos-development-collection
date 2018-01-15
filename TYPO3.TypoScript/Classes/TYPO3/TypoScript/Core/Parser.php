@@ -607,7 +607,7 @@ class Parser implements ParserInterface
             }
             $recursiveDirectoryIterator = new \RecursiveDirectoryIterator($basePath);
             $iterator = new \RecursiveIteratorIterator($recursiveDirectoryIterator);
-            // Match simple wildcard globbing "*"
+        // Match simple wildcard globbing "*"
         } elseif (preg_match('#([^\*]*)\*#', $include, $matches) === 1) {
             $basePath = $matches['1'];
             if (!is_dir($basePath)) {
