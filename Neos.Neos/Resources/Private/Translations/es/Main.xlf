@@ -489,10 +489,10 @@
 			<target xml:lang="es-ES" state="translated">Este {nodeTypeLabel} aún no existe en {currentDimensionChoiceText}.</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createEmptyOrCopy" xml:space="preserve">
 				<source>You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</source>
-			<target xml:lang="es-ES" state="needs-translation">You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Puedes crear ahora, puedes comenzE con {nodeTypeLabel} vacío o copiar todo el contenido visible {nodeTypeLabel} en {currentDocumentDimensionChoiceText}.</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.existingAncestorDocuments" xml:space="preserve">
 				<source>Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</source>
-			<target xml:lang="es-ES" state="needs-translation">Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Adicionalmente, hay {numberOfNodesMissingInRootline} documentos pasados que no existen ya sea en la variante solicitada, y que se crearán así.</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createEmpty" xml:space="preserve">
 				<source>Create empty</source>
 			<target xml:lang="es-ES" state="translated">Crear vacío</target></trans-unit>
@@ -574,7 +574,7 @@
 			<target xml:lang="es-ES" state="translated">Contenido sin formato</target></trans-unit>
       <trans-unit id="rawContentMode" xml:space="preserve">
 				<source>Raw Content Mode</source>
-			<target xml:lang="es-ES" state="needs-translation">Raw Content Mode</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Modo contenido</target></trans-unit>
       <trans-unit id="editPreviewModes.desktop" xml:space="preserve">
 				<source>Desktop</source>
 			<target xml:lang="es-ES" state="translated">Escritorio</target></trans-unit>
@@ -642,7 +642,7 @@
 			<target xml:lang="es-ES" state="translated">Error inesperado mientras se muevía de nodo</target></trans-unit>
       <trans-unit id="error.nodeTree.load" xml:space="preserve">
 				<source>Node Tree loading error.</source>
-			<target xml:lang="es-ES" state="needs-translation">Node Tree loading error.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Error cargando el árbol de nodos.</target></trans-unit>
       <!-- FlashMessages -->
       <trans-unit id="flashMessage.1222204027" xml:space="preserve">
 				<source>The entered username or password was wrong</source>
