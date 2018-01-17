@@ -386,10 +386,10 @@
 			<target xml:lang="es-ES" state="translated">Generar redirecciones de la url del archivo original a la nueva url</target></trans-unit>
       <trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve">
 				<source>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</source>
-			<target xml:lang="es-ES" state="needs-translation">'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">' Recursos de tipo "{0}" sólo pueden ser sustituidos por un recurso similar. Tiene tipo "{1}" '</target></trans-unit>
       <trans-unit id="noAccessToWorkspace" xml:space="preserve">
 				<source>No access to workspace "{0}"</source>
-			<target xml:lang="es-ES" state="needs-translation">No access to workspace "{0}"</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Sin acceso al espacio de trabajo "{0}"</target></trans-unit>
       <trans-unit id="missingDocumentNode" xml:space="preserve">
 				<source>No document node found for this node</source>
 			<target xml:lang="es-ES" state="needs-translation">No document node found for this node</target></trans-unit>

@@ -721,7 +721,7 @@
 			<target xml:lang="es-ES" state="translated">Mover {source} a {target}</target></trans-unit>
       <trans-unit id="copy__from__to--description" xml:space="preserve">
 				<source>Please select the position at which you want {source} inserted relative to {target}.</source>
-			<target xml:lang="es-ES" state="needs-translation">Please select the position at which you want {source} inserted relative to {target}.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Por favor, seleccione la posición en que desea {source} insertado en relación con {target}.</target></trans-unit>
       <trans-unit id="insert" xml:space="preserve">
 				<source>Insert</source>
 			<target xml:lang="es-ES" state="translated">Insertar</target></trans-unit>
@@ -733,19 +733,19 @@
 			<target xml:lang="es-ES" state="needs-translation">Choose an Aspect Ratio</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__bold" xml:space="preserve">
 				<source>Bold</source>
-			<target xml:lang="es-ES" state="needs-translation">Bold</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Negrita</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__italic" xml:space="preserve">
 				<source>Italic</source>
-			<target xml:lang="es-ES" state="needs-translation">Italic</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Italica</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__underline" xml:space="preserve">
 				<source>Underline</source>
-			<target xml:lang="es-ES" state="needs-translation">Underline</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Subrayar</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__subscript" xml:space="preserve">
 				<source>Subscript</source>
-			<target xml:lang="es-ES" state="needs-translation">Subscript</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Subscript</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__superscript" xml:space="preserve">
 				<source>Superscript</source>
-			<target xml:lang="es-ES" state="needs-translation">Superscript</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Superscript</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__strikethrough" xml:space="preserve">
 				<source>Strikethrough</source>
 			<target xml:lang="es-ES" state="needs-translation">Strikethrough</target></trans-unit>
@@ -772,22 +772,22 @@
 			<target xml:lang="es-ES" state="needs-translation">Align justify</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__table" xml:space="preserve">
 				<source>Table</source>
-			<target xml:lang="es-ES" state="needs-translation">Table</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Tabla</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__remove-format" xml:space="preserve">
 				<source>Remove format</source>
-			<target xml:lang="es-ES" state="needs-translation">Remove format</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Eliminar formato</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__outdent" xml:space="preserve">
 				<source>Outdent</source>
 			<target xml:lang="es-ES" state="needs-translation">Outdent</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__indent" xml:space="preserve">
 				<source>Indent</source>
-			<target xml:lang="es-ES" state="needs-translation">Indent</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Sangría</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
 			<target xml:lang="es-ES" state="translated">Crear nuevo</target></trans-unit>
       <trans-unit id="noMatchesFound" xml:space="preserve">
 				<source>No matches found</source>
-			<target xml:lang="es-ES" state="needs-translation">No matches found</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">No se encuentran coincidencias</target></trans-unit>
       <trans-unit id="searchBoxLeftToType" xml:space="preserve">
 				<source>Please enter ###CHARACTERS### more character</source>
 			<target xml:lang="es-ES" state="needs-translation">Please enter ###CHARACTERS### more character</target></trans-unit>

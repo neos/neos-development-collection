@@ -7,7 +7,7 @@
 			<target xml:lang="es-ES" state="translated">Habilitar leyenda</target><alt-trans><target xml:lang="es-ES">Habilitar subtítulo</target></alt-trans><alt-trans><target xml:lang="es-ES">Habilitar pie de foto</target></alt-trans></trans-unit>
       <trans-unit id="properties.caption.aloha.placeholder" xml:space="preserve">
 				<source><![CDATA[<p>Enter caption here</p>]]></source>
-			<target xml:lang="es-ES" state="needs-translation"><![CDATA[<p>Enter caption here</p>]]></target></trans-unit>
+			<target xml:lang="es-ES" state="translated"><![CDATA[<p>Ingrese la leyenda aquí</p>]]></target></trans-unit>
     </body>
   </file>
 </xliff>
