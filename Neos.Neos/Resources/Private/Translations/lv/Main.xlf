@@ -287,46 +287,46 @@
 			<target xml:lang="lv">Galvenais</target></trans-unit>
       <trans-unit id="package" xml:space="preserve">
 				<source>Package</source>
-			<target xml:lang="lv" state="needs-translation">Package</target></trans-unit>
+			<target xml:lang="lv" state="translated">Pakotne</target></trans-unit>
       <trans-unit id="deactivated" xml:space="preserve">
 				<source>Deactivated</source>
 			<target xml:lang="lv" state="translated">Deaktivizēt</target></trans-unit>
       <trans-unit id="unavailable" xml:space="preserve">
 				<source>Unavailable</source>
-			<target xml:lang="lv" state="needs-translation">Unavailable</target></trans-unit>
+			<target xml:lang="lv" state="translated">Nav pieejams</target></trans-unit>
       <trans-unit id="inactive" xml:space="preserve">
 				<source>Inactive</source>
-			<target xml:lang="lv" state="needs-translation">Inactive</target></trans-unit>
+			<target xml:lang="lv" state="translated">Neaktīvs</target></trans-unit>
       <trans-unit id="clickToEdit" xml:space="preserve" approved="yes">
 				<source>Click to edit</source>
 			<target xml:lang="lv">Uzklikšķiniet, lai rediģētu</target></trans-unit>
       <trans-unit id="clickToDeactivate" xml:space="preserve">
 				<source>Click to deactivate</source>
-			<target xml:lang="lv" state="needs-translation">Click to deactivate</target></trans-unit>
+			<target xml:lang="lv" state="translated">Noklikšķiniet lai deaktivizētu</target></trans-unit>
       <trans-unit id="clickToActivate" xml:space="preserve">
 				<source>Click to activate</source>
-			<target xml:lang="lv" state="needs-translation">Click to activate</target></trans-unit>
+			<target xml:lang="lv" state="translated">Noklikšķiniet lai aktivizētu</target><alt-trans><target xml:lang="lv">Noklikšķiniet, lai aktivizētu</target></alt-trans></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve" approved="yes">
 				<source>Click to delete</source>
 			<target xml:lang="lv">Uzklikšķiniet, lai izdzēstu</target></trans-unit>
       <trans-unit id="clickToCreate" xml:space="preserve">
 				<source>Click to create new</source>
-			<target xml:lang="lv" state="needs-translation">Click to create new</target></trans-unit>
+			<target xml:lang="lv" state="translated">Noklikšķiniet lai izveidotu jaunu</target></trans-unit>
       <trans-unit id="state" xml:space="preserve">
 				<source>Status</source>
-			<target xml:lang="lv" state="needs-translation">Status</target></trans-unit>
+			<target xml:lang="lv" state="translated">Statuss</target></trans-unit>
       <trans-unit id="active" xml:space="preserve">
 				<source>Active</source>
-			<target xml:lang="lv" state="needs-translation">Active</target></trans-unit>
+			<target xml:lang="lv" state="translated">Aktīvs</target></trans-unit>
       <trans-unit id="domains" xml:space="preserve">
 				<source>Domains</source>
-			<target xml:lang="lv" state="needs-translation">Domains</target></trans-unit>
+			<target xml:lang="lv" state="translated">Domēns</target></trans-unit>
       <trans-unit id="domain" xml:space="preserve">
 				<source>Domain</source>
-			<target xml:lang="lv" state="needs-translation">Domain</target></trans-unit>
+			<target xml:lang="lv" state="translated">Domēns</target></trans-unit>
       <trans-unit id="deleteConfirm" xml:space="preserve">
 				<source>Yes, delete it!</source>
-			<target xml:lang="lv" state="needs-translation">Yes, delete it!</target></trans-unit>
+			<target xml:lang="lv" state="translated">Jā, izdzēst to!</target></trans-unit>
       <trans-unit id="packageKey" xml:space="preserve" approved="yes">
 				<source>Package Key</source>
 			<target xml:lang="lv">Pakotnes atslēga</target></trans-unit>
