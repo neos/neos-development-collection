@@ -961,10 +961,10 @@
       <target xml:lang="de" state="translated">Vorschau der aktuellen Datei</target></trans-unit>
       <trans-unit id="media.noAccessToWorkspace" xml:space="preserve">
         <source>No access to workspace "{0}"</source>
-      <target xml:lang="de" state="needs-translation">No access to workspace "{0}"</target></trans-unit>
+      <target xml:lang="de" state="translated">Kein Zugriff auf den Arbeitsbereich "{0}"</target></trans-unit>
       <trans-unit id="media.missingDocumentNode" xml:space="preserve">
         <source>No document node found for this node</source>
-      <target xml:lang="de" state="needs-translation">No document node found for this node</target></trans-unit>
+      <target xml:lang="de" state="translated">Kein Dokumentknoten für diesen Knoten gefunden</target></trans-unit>
     </body>
   </file>
 </xliff>
