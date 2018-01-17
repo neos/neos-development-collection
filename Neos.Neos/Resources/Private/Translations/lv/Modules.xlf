@@ -536,7 +536,7 @@
 			<target xml:lang="lv">Vietņu pārvaldības modulis sniedz apskatu par visām vietām. Jūs varat rediģēt, pievienot vai dzēst informāciju par jūsu vietnēm, piemēram, pievienojot jaunu domēnu.</target></trans-unit>
       <trans-unit id="sites.add" xml:space="preserve">
 				<source>Add new site</source>
-			<target xml:lang="lv" state="needs-translation">Add new site</target></trans-unit>
+			<target xml:lang="lv" state="translated">Pievienot jaunu vietni</target></trans-unit>
       <trans-unit id="sites.actions.newSite.label" xml:space="preserve" approved="yes">
 				<source>Create site</source>
 			<target xml:lang="lv">Vietnes izveide</target></trans-unit>
@@ -545,10 +545,10 @@
 			<target xml:lang="lv">Izveidot jaunu vietni</target></trans-unit>
       <trans-unit id="sites.rootNodeName" xml:space="preserve">
 				<source>Root node name</source>
-			<target xml:lang="lv" state="needs-translation">Root node name</target></trans-unit>
+			<target xml:lang="lv" state="translated">Saknes mezgla nosaukums</target></trans-unit>
       <trans-unit id="sites.domains" xml:space="preserve">
 				<source>Domains</source>
-			<target xml:lang="lv" state="needs-translation">Domains</target></trans-unit>
+			<target xml:lang="lv" state="translated">Domēns</target></trans-unit>
       <trans-unit id="sites" xml:space="preserve">
 				<source>Site</source>
 			<target xml:lang="lv" state="translated">Vietne</target></trans-unit>
@@ -557,64 +557,64 @@
 			<target xml:lang="lv">Vārds</target></trans-unit>
       <trans-unit id="sites.defaultAssetCollection" xml:space="preserve">
 				<source>Default asset collection</source>
-			<target xml:lang="lv" state="needs-translation">Default asset collection</target></trans-unit>
+			<target xml:lang="lv" state="translated">Noklusētā mediju kolekcija</target></trans-unit>
       <trans-unit id="sites.sitePackage" xml:space="preserve">
 				<source>Site package</source>
-			<target xml:lang="lv" state="needs-translation">Site package</target></trans-unit>
+			<target xml:lang="lv" state="translated">Vietnes pakotne</target></trans-unit>
       <trans-unit id="sites.delete" xml:space="preserve">
 				<source>Delete this site</source>
-			<target xml:lang="lv" state="needs-translation">Delete this site</target></trans-unit>
+			<target xml:lang="lv" state="translated">Izdzēsiet šo vietni</target></trans-unit>
       <trans-unit id="sites.deactivate" xml:space="preserve">
 				<source>Deactivate site</source>
-			<target xml:lang="lv" state="needs-translation">Deactivate site</target></trans-unit>
+			<target xml:lang="lv" state="translated">Deaktivizēt vietni</target></trans-unit>
       <trans-unit id="sites.activate" xml:space="preserve">
 				<source>Activate site</source>
-			<target xml:lang="lv" state="needs-translation">Activate site</target></trans-unit>
+			<target xml:lang="lv" state="translated">Aktivizēt vietni</target></trans-unit>
       <trans-unit id="sites.confirmDeleteQuestion" xml:space="preserve">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
-			<target xml:lang="lv" state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Vai jūs tiešām vēlaties dzēst "{0}"? Šo darbību nav iespējams atsaukt.</target></trans-unit>
       <trans-unit id="sites.confirmDelete" xml:space="preserve">
 				<source>Yes, delete the site</source>
-			<target xml:lang="lv" state="needs-translation">Yes, delete the site</target></trans-unit>
+			<target xml:lang="lv" state="translated">Jā, dzēst vietni</target><alt-trans><target xml:lang="lv">Jā, dzēst pakotni</target></alt-trans></trans-unit>
       <trans-unit id="sites.import" xml:space="preserve">
 				<source>Import a site</source>
-			<target xml:lang="lv" state="needs-translation">Import a site</target></trans-unit>
+			<target xml:lang="lv" state="translated">Importēt vietni</target></trans-unit>
       <trans-unit id="sites.select" xml:space="preserve">
 				<source>Select a site package</source>
-			<target xml:lang="lv" state="needs-translation">Select a site package</target></trans-unit>
+			<target xml:lang="lv" state="translated">Izvēlieties vietnes pakotni</target></trans-unit>
       <trans-unit id="sites.noPackackeInfo" xml:space="preserve">
 				<source>No site packages are available. Make sure you have an active site package.</source>
-			<target xml:lang="lv" state="needs-translation">No site packages are available. Make sure you have an active site package.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Nav pieejamas vietnes pakotnes. Pārliecinieties, vai jums ir aktīva vietnes pakotne.</target></trans-unit>
       <trans-unit id="sites.createBlank" xml:space="preserve">
 				<source>Create a blank site</source>
-			<target xml:lang="lv" state="needs-translation">Create a blank site</target></trans-unit>
+			<target xml:lang="lv" state="translated">Izveidot jaunu vietni</target></trans-unit>
       <trans-unit id="sites.documentType" xml:space="preserve">
 				<source>Select a document nodeType</source>
-			<target xml:lang="lv" state="needs-translation">Select a document nodeType</target></trans-unit>
+			<target xml:lang="lv" state="translated">Iezīmējiet dokumenta nodeType</target></trans-unit>
       <trans-unit id="sites.name" xml:space="preserve">
 				<source>Site name</source>
-			<target xml:lang="lv" state="needs-translation">Site name</target></trans-unit>
+			<target xml:lang="lv" state="translated">Vietnes nosaukums</target></trans-unit>
       <trans-unit id="sites.createNode" xml:space="preserve">
 				<source>Create empty site</source>
-			<target xml:lang="lv" state="needs-translation">Create empty site</target></trans-unit>
+			<target xml:lang="lv" state="translated">Izveidot tukšu vietni</target></trans-unit>
       <trans-unit id="sites.createPackage" xml:space="preserve">
 				<source>Create a new site package</source>
-			<target xml:lang="lv" state="needs-translation">Create a new site package</target></trans-unit>
+			<target xml:lang="lv" state="translated">Izveidot jaunu vietnes pakotni</target></trans-unit>
       <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
 				<source>VendorName.MyPackageKey</source>
-			<target xml:lang="lv" state="needs-translation">VendorName.MyPackageKey</target></trans-unit>
+			<target xml:lang="lv" state="translated">Izstradatajs.ManaPakotnesAtslega</target></trans-unit>
       <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
 				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
-			<target xml:lang="lv" state="needs-translation">The &lt;em&gt;Neos Kickstarter&lt;/em&gt; package is not installed, install it to kickstart new sites.</target></trans-unit>
+			<target xml:lang="lv" state="translated">&lt;em&gt;Neos Kickstarter&lt;/em&gt; pakotne nav instalēta, vispirms instalējiet to izmantojot kickstart komandu veidojot jaunu pakotni.</target></trans-unit>
       <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
-			<target xml:lang="lv" state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
+			<target xml:lang="lv" state="translated">Vai jūs tiešām vēlaties dzēst "{0}"? Šo darbību nav iespējams atsaukt.</target></trans-unit>
       <trans-unit id="domain.new" xml:space="preserve">
 				<source>New domain</source>
-			<target xml:lang="lv" state="needs-translation">New domain</target></trans-unit>
+			<target xml:lang="lv" state="translated">Jauns domēns</target></trans-unit>
       <trans-unit id="domain.edit" xml:space="preserve">
 				<source>Edit domain</source>
-			<target xml:lang="lv" state="needs-translation">Edit domain</target></trans-unit>
+			<target xml:lang="lv" state="translated">Rediģēt domēnu</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve" approved="yes">
 				<source>Configuration</source>
 			<target xml:lang="lv">Konfigurācija</target><alt-trans><target xml:lang="lv">Iestatījumi</target></alt-trans></trans-unit>
