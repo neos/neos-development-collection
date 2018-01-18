@@ -1,7 +1,7 @@
 {
     "name": "neos/neos-development-collection",
     "description": "Neos packages in a joined repository for pull requests.",
-    "license": "GPL-3.0+",
+    "license": "GPL-3.0-or-later",
     "type": "neos-package-collection",
     "require": {
         "neos/flow-development-collection": "dev-master",
@@ -13,7 +13,7 @@
         "neos/utility-files": "*",
         "neos/utility-arrays": "*",
         "doctrine/orm": "~2.5.0",
-        "gedmo/doctrine-extensions": "~2.3.0",
+        "gedmo/doctrine-extensions": "~2.4.0",
         "behat/transliterator": "~1.0",
         "php": ">=5.5.0",
         "neos/utility-unicode": "*",
