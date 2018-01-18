@@ -100,7 +100,7 @@
 			<target xml:lang="de">Ersetzen</target></trans-unit>
       <trans-unit id="replaceAssetResource" xml:space="preserve">
 				<source>Replace asset resource</source>
-			<target xml:lang="de" state="needs-translation">Replace asset resource</target></trans-unit>
+			<target xml:lang="de" state="translated">Ressource ersetzen</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve" approved="yes">
 				<source>Save</source>
 			<target xml:lang="de">Speichern</target></trans-unit>
@@ -386,13 +386,13 @@
 			<target xml:lang="de">Erstelle Weiterleitungen vom ursprünglichen Dateipfad auf die neue URL</target><alt-trans><target xml:lang="de">Erstelle Redirects von der Original-URL auf die Neue</target></alt-trans></trans-unit>
       <trans-unit id="resourceCanOnlyBeReplacedBySimilarResource" xml:space="preserve">
 				<source>'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</source>
-			<target xml:lang="de" state="needs-translation">'Resources of type "{0}" can only be replaced by a similar resource. Got type "{1}"'</target></trans-unit>
+			<target xml:lang="de" state="translated">'Eine Ressource vom Typ "{0}" kann nur mit einer Ressource ähnlichen Typs ersetzt werden. Typ "{1}" erkannt'</target></trans-unit>
       <trans-unit id="noAccessToWorkspace" xml:space="preserve">
 				<source>No access to workspace "{0}"</source>
-			<target xml:lang="de" state="needs-translation">No access to workspace "{0}"</target></trans-unit>
+			<target xml:lang="de" state="translated">Kein Zugriff auf den Arbeitsbereich "{0}"</target></trans-unit>
       <trans-unit id="missingDocumentNode" xml:space="preserve">
 				<source>No document node found for this node</source>
-			<target xml:lang="de" state="needs-translation">No document node found for this node</target></trans-unit>
+			<target xml:lang="de" state="translated">Kein Dokumentknoten für diesen Knoten gefunden</target></trans-unit>
     </body>
   </file>
 </xliff>
