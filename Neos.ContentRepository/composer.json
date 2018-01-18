@@ -13,7 +13,7 @@
         "neos/utility-arrays": "*",
 
         "doctrine/orm": "~2.5.0",
-        "gedmo/doctrine-extensions": "~2.3.0",
+        "gedmo/doctrine-extensions": "~2.4.0",
         "behat/transliterator": "~1.0"
     },
     "replace": {
