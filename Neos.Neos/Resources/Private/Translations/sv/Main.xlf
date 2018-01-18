@@ -287,46 +287,46 @@
 			<target xml:lang="sv-SE" state="translated">Primärt</target></trans-unit>
       <trans-unit id="package" xml:space="preserve">
 				<source>Package</source>
-			<target xml:lang="sv-SE" state="needs-translation">Package</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Paket</target></trans-unit>
       <trans-unit id="deactivated" xml:space="preserve">
 				<source>Deactivated</source>
 			<target xml:lang="sv-SE" state="translated">Deaktiverat</target></trans-unit>
       <trans-unit id="unavailable" xml:space="preserve">
 				<source>Unavailable</source>
-			<target xml:lang="sv-SE" state="needs-translation">Unavailable</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Otillänglig</target></trans-unit>
       <trans-unit id="inactive" xml:space="preserve">
 				<source>Inactive</source>
-			<target xml:lang="sv-SE" state="needs-translation">Inactive</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Ej aktiv</target></trans-unit>
       <trans-unit id="clickToEdit" xml:space="preserve">
 				<source>Click to edit</source>
 			<target xml:lang="sv-SE" state="translated">Klicka för att redigera</target></trans-unit>
       <trans-unit id="clickToDeactivate" xml:space="preserve">
 				<source>Click to deactivate</source>
-			<target xml:lang="sv-SE" state="needs-translation">Click to deactivate</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Klicka för att inaktivera</target></trans-unit>
       <trans-unit id="clickToActivate" xml:space="preserve">
 				<source>Click to activate</source>
-			<target xml:lang="sv-SE" state="needs-translation">Click to activate</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Klicka för att aktivera</target></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
 			<target xml:lang="sv-SE" state="translated">Klicka för att radera</target></trans-unit>
       <trans-unit id="clickToCreate" xml:space="preserve">
 				<source>Click to create new</source>
-			<target xml:lang="sv-SE" state="needs-translation">Click to create new</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Klicka för att skapa ny</target></trans-unit>
       <trans-unit id="state" xml:space="preserve">
 				<source>Status</source>
-			<target xml:lang="sv-SE" state="needs-translation">Status</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Status</target></trans-unit>
       <trans-unit id="active" xml:space="preserve">
 				<source>Active</source>
-			<target xml:lang="sv-SE" state="needs-translation">Active</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Aktiv</target></trans-unit>
       <trans-unit id="domains" xml:space="preserve">
 				<source>Domains</source>
-			<target xml:lang="sv-SE" state="needs-translation">Domains</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Domäner</target></trans-unit>
       <trans-unit id="domain" xml:space="preserve">
 				<source>Domain</source>
-			<target xml:lang="sv-SE" state="needs-translation">Domain</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Domän</target></trans-unit>
       <trans-unit id="deleteConfirm" xml:space="preserve">
 				<source>Yes, delete it!</source>
-			<target xml:lang="sv-SE" state="needs-translation">Yes, delete it!</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Ja, radera!</target></trans-unit>
       <trans-unit id="packageKey" xml:space="preserve">
 				<source>Package Key</source>
 			<target xml:lang="sv-SE" state="translated">Paketnyckel</target></trans-unit>
@@ -715,82 +715,82 @@
       <!-- New UI labels -->
       <trans-unit id="copy__from__to--title" xml:space="preserve">
 				<source>Copy {source} to {target}</source>
-			<target xml:lang="sv-SE" state="needs-translation">Copy {source} to {target}</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Kopiera {source} till {target}</target></trans-unit>
       <trans-unit id="move__from__to--title" xml:space="preserve">
 				<source>Move {source} to {target}</source>
-			<target xml:lang="sv-SE" state="needs-translation">Move {source} to {target}</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Flytta {source} till {target}</target></trans-unit>
       <trans-unit id="copy__from__to--description" xml:space="preserve">
 				<source>Please select the position at which you want {source} inserted relative to {target}.</source>
-			<target xml:lang="sv-SE" state="needs-translation">Please select the position at which you want {source} inserted relative to {target}.</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Välj vart {source} ska sättas in relativt till {target}.</target></trans-unit>
       <trans-unit id="insert" xml:space="preserve">
 				<source>Insert</source>
-			<target xml:lang="sv-SE" state="needs-translation">Insert</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Infoga</target></trans-unit>
       <trans-unit id="insertMode" xml:space="preserve">
 				<source>Insert mode</source>
-			<target xml:lang="sv-SE" state="needs-translation">Insert mode</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Infogningsläge</target></trans-unit>
       <trans-unit id="imageCropper__aspect-ratio-placeholder" xml:space="preserve">
 				<source>Choose an Aspect Ratio</source>
-			<target xml:lang="sv-SE" state="needs-translation">Choose an Aspect Ratio</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Välj bildförhållande</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__bold" xml:space="preserve">
 				<source>Bold</source>
-			<target xml:lang="sv-SE" state="needs-translation">Bold</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Fetstil</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__italic" xml:space="preserve">
 				<source>Italic</source>
-			<target xml:lang="sv-SE" state="needs-translation">Italic</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Kursiv</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__underline" xml:space="preserve">
 				<source>Underline</source>
-			<target xml:lang="sv-SE" state="needs-translation">Underline</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Understrykning</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__subscript" xml:space="preserve">
 				<source>Subscript</source>
-			<target xml:lang="sv-SE" state="needs-translation">Subscript</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Nedsänkt</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__superscript" xml:space="preserve">
 				<source>Superscript</source>
-			<target xml:lang="sv-SE" state="needs-translation">Superscript</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Upphöjt</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__strikethrough" xml:space="preserve">
 				<source>Strikethrough</source>
-			<target xml:lang="sv-SE" state="needs-translation">Strikethrough</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Genomstruken</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__link" xml:space="preserve">
 				<source>Link</source>
 			<target xml:lang="sv-SE" state="translated">Länk</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__ordered-list" xml:space="preserve">
 				<source>Ordered list</source>
-			<target xml:lang="sv-SE" state="needs-translation">Ordered list</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Sorterad lista</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__unordered-list" xml:space="preserve">
 				<source>Unordered list</source>
-			<target xml:lang="sv-SE" state="needs-translation">Unordered list</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Osorterad lista</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-left" xml:space="preserve">
 				<source>Align left</source>
-			<target xml:lang="sv-SE" state="needs-translation">Align left</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Vänsterjustera</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-right" xml:space="preserve">
 				<source>Align right</source>
-			<target xml:lang="sv-SE" state="needs-translation">Align right</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Högerjustera</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-center" xml:space="preserve">
 				<source>Align center</source>
-			<target xml:lang="sv-SE" state="needs-translation">Align center</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Centrera</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-justify" xml:space="preserve">
 				<source>Align justify</source>
-			<target xml:lang="sv-SE" state="needs-translation">Align justify</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Justera</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__table" xml:space="preserve">
 				<source>Table</source>
-			<target xml:lang="sv-SE" state="needs-translation">Table</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Tabell</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__remove-format" xml:space="preserve">
 				<source>Remove format</source>
-			<target xml:lang="sv-SE" state="needs-translation">Remove format</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Ta bort formatering</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__outdent" xml:space="preserve">
 				<source>Outdent</source>
-			<target xml:lang="sv-SE" state="needs-translation">Outdent</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Minska indrag</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__indent" xml:space="preserve">
 				<source>Indent</source>
-			<target xml:lang="sv-SE" state="needs-translation">Indent</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Indrag</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
 			<target xml:lang="sv-SE" state="translated">Skapa ny</target></trans-unit>
       <trans-unit id="noMatchesFound" xml:space="preserve">
 				<source>No matches found</source>
-			<target xml:lang="sv-SE" state="needs-translation">No matches found</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Inga träffar hittades</target></trans-unit>
       <trans-unit id="searchBoxLeftToType" xml:space="preserve">
 				<source>Please enter ###CHARACTERS### more character</source>
-			<target xml:lang="sv-SE" state="needs-translation">Please enter ###CHARACTERS### more character</target></trans-unit>
+			<target xml:lang="sv-SE" state="translated">Vänligen ange ## #CHARACTERS### fler tecken</target></trans-unit>
     </body>
   </file>
 </xliff>
