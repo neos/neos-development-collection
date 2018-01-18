@@ -287,46 +287,46 @@
 			<target xml:lang="de">Primär</target></trans-unit>
       <trans-unit id="package" xml:space="preserve">
 				<source>Package</source>
-			<target xml:lang="de" state="needs-translation">Package</target></trans-unit>
+			<target xml:lang="de" state="translated">Paket</target></trans-unit>
       <trans-unit id="deactivated" xml:space="preserve" approved="yes">
 				<source>Deactivated</source>
 			<target xml:lang="de">Deaktiviert</target></trans-unit>
       <trans-unit id="unavailable" xml:space="preserve">
 				<source>Unavailable</source>
-			<target xml:lang="de" state="needs-translation">Unavailable</target></trans-unit>
+			<target xml:lang="de" state="translated">Nicht verfügbar</target></trans-unit>
       <trans-unit id="inactive" xml:space="preserve">
 				<source>Inactive</source>
-			<target xml:lang="de" state="needs-translation">Inactive</target></trans-unit>
+			<target xml:lang="de" state="translated">Deaktiviert</target></trans-unit>
       <trans-unit id="clickToEdit" xml:space="preserve" approved="yes">
 				<source>Click to edit</source>
 			<target xml:lang="de">Zum Bearbeiten klicken</target></trans-unit>
       <trans-unit id="clickToDeactivate" xml:space="preserve">
 				<source>Click to deactivate</source>
-			<target xml:lang="de" state="needs-translation">Click to deactivate</target></trans-unit>
+			<target xml:lang="de" state="translated">Klicken zum Deaktivieren</target></trans-unit>
       <trans-unit id="clickToActivate" xml:space="preserve">
 				<source>Click to activate</source>
-			<target xml:lang="de" state="needs-translation">Click to activate</target></trans-unit>
+			<target xml:lang="de" state="translated">Klicken zum Aktivieren</target></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve" approved="yes">
 				<source>Click to delete</source>
 			<target xml:lang="de">Klicken zum Löschen</target></trans-unit>
       <trans-unit id="clickToCreate" xml:space="preserve">
 				<source>Click to create new</source>
-			<target xml:lang="de" state="needs-translation">Click to create new</target></trans-unit>
+			<target xml:lang="de" state="translated">Klicken zur Neuerstellung</target></trans-unit>
       <trans-unit id="state" xml:space="preserve">
 				<source>Status</source>
-			<target xml:lang="de" state="needs-translation">Status</target></trans-unit>
+			<target xml:lang="de" state="translated">Status</target></trans-unit>
       <trans-unit id="active" xml:space="preserve">
 				<source>Active</source>
-			<target xml:lang="de" state="needs-translation">Active</target></trans-unit>
+			<target xml:lang="de" state="translated">Aktiv</target></trans-unit>
       <trans-unit id="domains" xml:space="preserve">
 				<source>Domains</source>
-			<target xml:lang="de" state="needs-translation">Domains</target></trans-unit>
+			<target xml:lang="de" state="translated">Domains</target></trans-unit>
       <trans-unit id="domain" xml:space="preserve">
 				<source>Domain</source>
-			<target xml:lang="de" state="needs-translation">Domain</target></trans-unit>
+			<target xml:lang="de" state="translated">Domain</target></trans-unit>
       <trans-unit id="deleteConfirm" xml:space="preserve">
 				<source>Yes, delete it!</source>
-			<target xml:lang="de" state="needs-translation">Yes, delete it!</target></trans-unit>
+			<target xml:lang="de" state="translated">Ja, wirklich löschen!</target></trans-unit>
       <trans-unit id="packageKey" xml:space="preserve" approved="yes">
 				<source>Package Key</source>
 			<target xml:lang="de">Paket-Schlüssel</target><alt-trans><target xml:lang="de">Schlüssel vom Package</target></alt-trans></trans-unit>
