@@ -5,7 +5,7 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve">
 				<source>Auto-Publish</source>
-			<target xml:lang="id" state="translated">Publikasi Otomatis</target></trans-unit>
+			<target xml:lang="id" state="translated">Auto-Publish</target><alt-trans><target xml:lang="id">Publikasi Otomatis</target></alt-trans></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
 			<target xml:lang="id" state="translated">Publikasikan otomatis ke {0}</target></trans-unit>
@@ -285,6 +285,54 @@
       <trans-unit id="primary" xml:space="preserve">
 				<source>Primary</source>
 			<target xml:lang="id" state="translated">Utama</target></trans-unit>
+      <trans-unit id="package" xml:space="preserve">
+				<source>Package</source>
+			<target xml:lang="id" state="translated">Paket</target></trans-unit>
+      <trans-unit id="deactivated" xml:space="preserve">
+				<source>Deactivated</source>
+			<target xml:lang="id" state="translated">Dinonaktifkan</target></trans-unit>
+      <trans-unit id="unavailable" xml:space="preserve">
+				<source>Unavailable</source>
+			<target xml:lang="id" state="translated">Tidak tersedia</target></trans-unit>
+      <trans-unit id="inactive" xml:space="preserve">
+				<source>Inactive</source>
+			<target xml:lang="id" state="translated">Tidak aktif</target></trans-unit>
+      <trans-unit id="clickToEdit" xml:space="preserve">
+				<source>Click to edit</source>
+			<target xml:lang="id" state="translated">Klik untuk mengubah</target></trans-unit>
+      <trans-unit id="clickToDeactivate" xml:space="preserve">
+				<source>Click to deactivate</source>
+			<target xml:lang="id" state="translated">Klik untuk menonaktifkan</target></trans-unit>
+      <trans-unit id="clickToActivate" xml:space="preserve">
+				<source>Click to activate</source>
+			<target xml:lang="id" state="translated">Klik untuk mengaktifkan</target></trans-unit>
+      <trans-unit id="clickToDelete" xml:space="preserve">
+				<source>Click to delete</source>
+			<target xml:lang="id" state="translated">Klik untuk menghapus</target></trans-unit>
+      <trans-unit id="clickToCreate" xml:space="preserve">
+				<source>Click to create new</source>
+			<target xml:lang="id" state="translated">Klik untuk membuat yang baru</target></trans-unit>
+      <trans-unit id="state" xml:space="preserve">
+				<source>Status</source>
+			<target xml:lang="id" state="translated">Status</target></trans-unit>
+      <trans-unit id="active" xml:space="preserve">
+				<source>Active</source>
+			<target xml:lang="id" state="translated">Aktif</target></trans-unit>
+      <trans-unit id="domains" xml:space="preserve">
+				<source>Domains</source>
+			<target xml:lang="id" state="translated">Domain</target></trans-unit>
+      <trans-unit id="domain" xml:space="preserve">
+				<source>Domain</source>
+			<target xml:lang="id" state="translated">Domain</target></trans-unit>
+      <trans-unit id="deleteConfirm" xml:space="preserve">
+				<source>Yes, delete it!</source>
+			<target xml:lang="id" state="translated">Ya, hapus saja!</target></trans-unit>
+      <trans-unit id="packageKey" xml:space="preserve">
+				<source>Package Key</source>
+			<target xml:lang="id" state="translated">Kunci paket</target></trans-unit>
+      <trans-unit id="description" xml:space="preserve">
+				<source>Description</source>
+			<target xml:lang="id" state="translated">Deskripsi</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>
@@ -426,7 +474,7 @@
 			<target xml:lang="id" state="translated">Teks ini tidak boleh melebihi {maximum} karakter.</target></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target xml:lang="id" state="translated">Hanya biasa karakter (sampai z, umlauts,...) dan angka yang diperbolehkan.</target></trans-unit>
+			<target xml:lang="id" state="translated">Hanya karakter biasa (A sampai z, umlauts,...) dan angka yang diperbolehkan.</target><alt-trans><target xml:lang="id">Hanya biasa karakter (sampai z, umlauts,...) dan angka yang diperbolehkan.</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve">
 				<source>The given subject was not countable.</source>
 			<target xml:lang="id" state="translated">Subjek tertentu itu tidak dihitung.</target></trans-unit>

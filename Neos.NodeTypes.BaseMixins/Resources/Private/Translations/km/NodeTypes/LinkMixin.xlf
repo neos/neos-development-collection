@@ -2,9 +2,9 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="Neos.NodeTypes.BaseMixins" source-language="en" datatype="plaintext" target-language="km">
     <body>
-      <trans-unit id="properties.link" xml:space="preserve">
+      <trans-unit id="properties.link" xml:space="preserve" approved="yes">
 				<source>Link</source>
-			<target xml:lang="km" state="translated">តំណភ្ជាប់</target></trans-unit>
+			<target xml:lang="km">តំណភ្ជាប់</target></trans-unit>
     </body>
   </file>
 </xliff>
