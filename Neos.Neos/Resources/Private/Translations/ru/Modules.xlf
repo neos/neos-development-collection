@@ -2,18 +2,12 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="ru">
     <body>
-      <trans-unit id="clickToEdit" xml:space="preserve" approved="yes">
-				<source>Click to edit</source>
-			<target xml:lang="ru">Нажмите для редактирования</target></trans-unit>
-      <trans-unit id="clickToDelete" xml:space="preserve" approved="yes">
-				<source>Click to delete</source>
-			<target xml:lang="ru">Нажмите, чтобы удалить</target></trans-unit>
-      <trans-unit id="cancel" xml:space="preserve" approved="yes">
-				<source>Cancel</source>
-			<target xml:lang="ru">Отмена</target></trans-unit>
       <trans-unit id="back" xml:space="preserve" approved="yes">
 				<source>Back</source>
 			<target xml:lang="ru">Назад</target></trans-unit>
+      <trans-unit id="cancel" xml:space="preserve" approved="yes">
+				<source>Cancel</source>
+			<target xml:lang="ru">Отмена</target></trans-unit>
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve" approved="yes">
 				<source>Management</source>
@@ -227,18 +221,6 @@
         <source>All changes from workspace "{0}" have been discarded.</source>
         <target xml:lang="ru">Все изменения из рабочей области "{0}" были отменены.</target>
       </trans-unit>
-      <trans-unit id="media.dragHelp" xml:space="preserve" approved="yes">
-				<source>Drag and drop an asset on a collection / tag to add them to it.</source>
-			<target xml:lang="ru">Перетащите медиа-ресурс на коллекцию или тег, чтоб добавить его туда.</target><alt-trans><target xml:lang="ru">Перетащите ассет на коллекцию или тег, чтоб добавить его туда.</target></alt-trans></trans-unit>
-      <trans-unit id="media.replace.options.keepOriginalFilename" xml:space="preserve" approved="yes">
-				<source>Keep the filename "{0}"</source>
-			<target xml:lang="ru">Оставить имя файла "{0}" без изменений</target></trans-unit>
-      <trans-unit id="media.label" xml:space="preserve" approved="yes">
-				<source>Media</source>
-			<target xml:lang="ru">Медиатека</target></trans-unit>
-      <trans-unit id="media.description" xml:space="preserve" approved="yes">
-				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
-			<target xml:lang="ru">Модуль позволяет управлять медиа-ресурсами, включая фото, видео, аудио и документы.</target></trans-unit>
       <trans-unit id="history.label" xml:space="preserve" approved="yes">
 				<source>History</source>
 			<target xml:lang="ru">История изменений</target></trans-unit>
@@ -342,6 +324,12 @@
       <trans-unit id="users.new.userData.roles" xml:space="preserve" approved="yes">
 				<source>Role(s)</source>
 			<target xml:lang="ru">Роли</target></trans-unit>
+      <trans-unit id="users.new.userData.authenticationProviderName" xml:space="preserve" approved="yes">
+				<source>Authentication Provider</source>
+			<target xml:lang="ru">Поставщик проверки подлинности</target></trans-unit>
+      <trans-unit id="users.new.userData.authenticationProviderName.useDefault" xml:space="preserve" approved="yes">
+				<source>Use system default</source>
+			<target xml:lang="ru">Установки по умолчанию</target></trans-unit>
       <trans-unit id="users.new.personalData" xml:space="preserve" approved="yes">
 				<source>Personal Data</source>
 			<target xml:lang="ru">Личные данные</target></trans-unit>
@@ -555,18 +543,121 @@
       <trans-unit id="sites.description" xml:space="preserve" approved="yes">
 				<source>The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</source>
 			<target xml:lang="ru">Модуль управления сайтами даёт представление обо всех сайтах. Можно редактировать, добавлять и удалять информацию о сайтах, например добавить новый домен.</target></trans-unit>
+      <trans-unit id="sites.add" xml:space="preserve">
+				<source>Add new site</source>
+			<target xml:lang="ru" state="needs-translation">Add new site</target></trans-unit>
       <trans-unit id="sites.actions.newSite.label" xml:space="preserve" approved="yes">
 				<source>Create site</source>
 			<target xml:lang="ru">Создать сайт</target></trans-unit>
       <trans-unit id="sites.actions.newSite.title" xml:space="preserve" approved="yes">
 				<source>Create a new site</source>
 			<target xml:lang="ru">Создать новый сайт</target></trans-unit>
+      <trans-unit id="sites.rootNodeName" xml:space="preserve">
+				<source>Root node name</source>
+			<target xml:lang="ru" state="needs-translation">Root node name</target></trans-unit>
+      <trans-unit id="sites.domains" xml:space="preserve">
+				<source>Domains</source>
+			<target xml:lang="ru" state="needs-translation">Domains</target></trans-unit>
+      <trans-unit id="sites" xml:space="preserve" approved="yes">
+				<source>Site</source>
+			<target xml:lang="ru">Сайт</target></trans-unit>
+      <trans-unit id="site.name" xml:space="preserve" approved="yes">
+				<source>Name</source>
+			<target xml:lang="ru">Имя</target></trans-unit>
+      <trans-unit id="sites.defaultAssetCollection" xml:space="preserve">
+				<source>Default asset collection</source>
+			<target xml:lang="ru" state="needs-translation">Default asset collection</target></trans-unit>
+      <trans-unit id="sites.sitePackage" xml:space="preserve">
+				<source>Site package</source>
+			<target xml:lang="ru" state="needs-translation">Site package</target></trans-unit>
+      <trans-unit id="sites.delete" xml:space="preserve">
+				<source>Delete this site</source>
+			<target xml:lang="ru" state="needs-translation">Delete this site</target></trans-unit>
+      <trans-unit id="sites.deactivate" xml:space="preserve">
+				<source>Deactivate site</source>
+			<target xml:lang="ru" state="needs-translation">Deactivate site</target></trans-unit>
+      <trans-unit id="sites.activate" xml:space="preserve">
+				<source>Activate site</source>
+			<target xml:lang="ru" state="needs-translation">Activate site</target></trans-unit>
+      <trans-unit id="sites.confirmDeleteQuestion" xml:space="preserve">
+				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
+			<target xml:lang="ru" state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
+      <trans-unit id="sites.confirmDelete" xml:space="preserve">
+				<source>Yes, delete the site</source>
+			<target xml:lang="ru" state="needs-translation">Yes, delete the site</target></trans-unit>
+      <trans-unit id="sites.import" xml:space="preserve">
+				<source>Import a site</source>
+			<target xml:lang="ru" state="needs-translation">Import a site</target></trans-unit>
+      <trans-unit id="sites.select" xml:space="preserve">
+				<source>Select a site package</source>
+			<target xml:lang="ru" state="needs-translation">Select a site package</target></trans-unit>
+      <trans-unit id="sites.noPackackeInfo" xml:space="preserve">
+				<source>No site packages are available. Make sure you have an active site package.</source>
+			<target xml:lang="ru" state="needs-translation">No site packages are available. Make sure you have an active site package.</target></trans-unit>
+      <trans-unit id="sites.createBlank" xml:space="preserve">
+				<source>Create a blank site</source>
+			<target xml:lang="ru" state="needs-translation">Create a blank site</target></trans-unit>
+      <trans-unit id="sites.documentType" xml:space="preserve">
+				<source>Select a document nodeType</source>
+			<target xml:lang="ru" state="needs-translation">Select a document nodeType</target></trans-unit>
+      <trans-unit id="sites.name" xml:space="preserve">
+				<source>Site name</source>
+			<target xml:lang="ru" state="needs-translation">Site name</target></trans-unit>
+      <trans-unit id="sites.createNode" xml:space="preserve">
+				<source>Create empty site</source>
+			<target xml:lang="ru" state="needs-translation">Create empty site</target></trans-unit>
+      <trans-unit id="sites.createPackage" xml:space="preserve">
+				<source>Create a new site package</source>
+			<target xml:lang="ru" state="needs-translation">Create a new site package</target></trans-unit>
+      <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
+				<source>VendorName.MyPackageKey</source>
+			<target xml:lang="ru" state="needs-translation">VendorName.MyPackageKey</target></trans-unit>
+      <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
+				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
+			<target xml:lang="ru" state="needs-translation">The &lt;em&gt;Neos Kickstarter&lt;/em&gt; package is not installed, install it to kickstart new sites.</target></trans-unit>
+      <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
+				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
+			<target xml:lang="ru" state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
+      <trans-unit id="domain.new" xml:space="preserve">
+				<source>New domain</source>
+			<target xml:lang="ru" state="needs-translation">New domain</target></trans-unit>
+      <trans-unit id="domain.edit" xml:space="preserve">
+				<source>Edit domain</source>
+			<target xml:lang="ru" state="needs-translation">Edit domain</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve" approved="yes">
 				<source>Configuration</source>
 			<target xml:lang="ru">Конфигурация</target></trans-unit>
       <trans-unit id="configuration.description" xml:space="preserve" approved="yes">
 				<source>The Configuration module provides you with an overview of all configuration types.</source>
 			<target xml:lang="ru">Модуль Конфигурации предоставляет вам обзор всех типов конфигурации.</target></trans-unit>
+      <trans-unit id="dimensions.label" xml:space="preserve" approved="yes">
+				<source>Dimensions</source>
+			<target xml:lang="ru">Размеры</target><alt-trans><target xml:lang="ru">Измерения</target></alt-trans></trans-unit>
+      <trans-unit id="dimensions.description" xml:space="preserve">
+				<source>Grants a graphical overview over the configured fallbacks within each content dimension and across content dimensions.</source>
+			<target xml:lang="ru" state="needs-translation">Grants a graphical overview over the configured fallbacks within each content dimension and across content dimensions.</target></trans-unit>
+      <trans-unit id="dimensions.interDimension.legend" xml:space="preserve">
+				<source>Inter dimensional fallback graph</source>
+			<target xml:lang="ru" state="needs-translation">Inter dimensional fallback graph</target></trans-unit>
+      <trans-unit id="dimensions.interDimension.short" xml:space="preserve">
+				<source>Inter dimensional</source>
+			<target xml:lang="ru" state="needs-translation">Inter dimensional</target></trans-unit>
+      <trans-unit id="dimensions.interDimension.description" xml:space="preserve">
+				<source>The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
+Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The higher the priority the higher the opacity.
+Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</source>
+			<target xml:lang="ru" state="needs-translation">The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
+Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The higher the priority the higher the opacity.
+Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</target></trans-unit>
+      <trans-unit id="dimensions.intraDimension.legend" xml:space="preserve">
+				<source>Intra dimensional fallback graph</source>
+			<target xml:lang="ru" state="needs-translation">Intra dimensional fallback graph</target></trans-unit>
+      <trans-unit id="dimensions.intraDimension.short" xml:space="preserve">
+				<source>Intra dimensional</source>
+			<target xml:lang="ru" state="needs-translation">Intra dimensional</target></trans-unit>
+      <trans-unit id="dimensions.intraDimension.description" xml:space="preserve">
+				<source>The intra dimensional fallback graph displays fallbacks within each content dimension.</source>
+			<target xml:lang="ru" state="needs-translation">The intra dimensional fallback graph displays fallbacks within each content dimension.</target></trans-unit>
       <!-- User -->
       <trans-unit id="user.label" xml:space="preserve" approved="yes">
 				<source>User</source>
@@ -640,333 +731,6 @@
       <trans-unit id="userSettings.editUser" xml:space="preserve" approved="yes">
 				<source>Edit User</source>
 			<target xml:lang="ru">Редактирование пользователя</target></trans-unit>
-      <!-- Media -->
-      <trans-unit id="media.field.name" xml:space="preserve" approved="yes">
-				<source>Name</source>
-			<target xml:lang="ru">Имя</target></trans-unit>
-      <trans-unit id="media.field.title" xml:space="preserve" approved="yes">
-				<source>Title</source>
-			<target xml:lang="ru">Название</target></trans-unit>
-      <trans-unit id="media.field.label" xml:space="preserve" approved="yes">
-				<source>Label</source>
-			<target xml:lang="ru">Обозначение</target><alt-trans><target xml:lang="ru">Этикетка</target></alt-trans><alt-trans><target xml:lang="ru">Подпись</target></alt-trans><alt-trans><target xml:lang="ru">Метка</target></alt-trans></trans-unit>
-      <trans-unit id="media.field.caption" xml:space="preserve" approved="yes">
-				<source>Caption</source>
-			<target xml:lang="ru">Подпись</target></trans-unit>
-      <trans-unit id="media.field.lastModified" xml:space="preserve" approved="yes">
-				<source>Last modified</source>
-			<target xml:lang="ru">Дата последнего изменения</target></trans-unit>
-      <trans-unit id="media.field.fileSize" xml:space="preserve" approved="yes">
-				<source>File size</source>
-			<target xml:lang="ru">Размер файла</target></trans-unit>
-      <trans-unit id="media.field.type" xml:space="preserve" approved="yes">
-				<source>Type</source>
-			<target xml:lang="ru">Тип</target></trans-unit>
-      <trans-unit id="media.field.tags" xml:space="preserve" approved="yes">
-				<source>Tags</source>
-			<target xml:lang="ru">Теги</target></trans-unit>
-      <trans-unit id="media.sortByName" xml:space="preserve" approved="yes">
-				<source>Sort by name</source>
-			<target xml:lang="ru">Сортировать по имени</target></trans-unit>
-      <trans-unit id="media.sortByLastModified" xml:space="preserve" approved="yes">
-				<source>Sort by last modified</source>
-			<target xml:lang="ru">Сортировать по дате последнего изменения</target></trans-unit>
-      <trans-unit id="media.sortby" xml:space="preserve" approved="yes">
-				<source>Sort by</source>
-			<target xml:lang="ru">Сортировать по</target></trans-unit>
-      <trans-unit id="media.sortdirection" xml:space="preserve" approved="yes">
-				<source>Sort direction</source>
-			<target xml:lang="ru">Порядок сортировки</target></trans-unit>
-      <trans-unit id="media.sortdirection.asc" xml:space="preserve" approved="yes">
-				<source>Ascending</source>
-			<target xml:lang="ru">По возрастанию</target></trans-unit>
-      <trans-unit id="media.sortdirection.desc" xml:space="preserve" approved="yes">
-				<source>Descending</source>
-			<target xml:lang="ru">По убыванию</target></trans-unit>
-      <trans-unit id="media.tooltip.dragAndDropOnTagOrCollection" xml:space="preserve" approved="yes">
-				<source>Drag and drop on tag or collection</source>
-			<target xml:lang="ru">Перетащите на тег или коллекцию</target></trans-unit>
-      <trans-unit id="media.tooltip.editAsset" xml:space="preserve" approved="yes">
-				<source>Edit asset</source>
-			<target xml:lang="ru">Редактировать медиа-ресурс</target><alt-trans><target xml:lang="ru">Редактировать ресурс</target></alt-trans><alt-trans><target xml:lang="ru">Править медиа-ресурс</target></alt-trans></trans-unit>
-      <trans-unit id="media.tooltip.replaceAssetResource" xml:space="preserve" approved="yes">
-				<source>Replace</source>
-			<target xml:lang="ru">Заменить</target></trans-unit>
-      <trans-unit id="media.tooltip.deleteAsset" xml:space="preserve" approved="yes">
-				<source>Delete asset</source>
-			<target xml:lang="ru">Удалить медиа-ресурс</target><alt-trans><target xml:lang="ru">Удалить ресурс</target></alt-trans></trans-unit>
-      <trans-unit id="media.message.reallyDeleteAsset" xml:space="preserve" approved="yes">
-				<source>Do you really want to delete asset "{0}"?</source>
-			<target xml:lang="ru">Вы действительно хотите удалить медиа-ресурс "{0}"?</target><alt-trans><target xml:lang="ru">Вы действительно хотите удалить ресурс "{0}"?</target></alt-trans></trans-unit>
-      <trans-unit id="media.message.reallyDeleteCollection" xml:space="preserve" approved="yes">
-				<source>Do you really want to delete collection "{0}"?</source>
-			<target xml:lang="ru">Вы действительно хотите удалить коллекцию "{0}"?</target><alt-trans><target xml:lang="ru">Вы действительно хотите удалить коллекции "{0}"?</target></alt-trans></trans-unit>
-      <trans-unit id="media.message.reallyDeleteTag" xml:space="preserve" approved="yes">
-				<source>Do you really want to delete tag "{0}"?</source>
-			<target xml:lang="ru">Вы действительно хотите удалить тег "{0}"?</target></trans-unit>
-      <trans-unit id="media.message.willBeDeleted" xml:space="preserve" approved="yes">
-				<source>This will delete the asset.</source>
-			<target xml:lang="ru">Это приведет к удалению медиа-ресурса.</target><alt-trans><target xml:lang="ru">Это приведет к удалению ресурса.</target></alt-trans><alt-trans><target xml:lang="ru">Это приведет к удалению ресурсу.</target></alt-trans></trans-unit>
-      <trans-unit id="media.message.willDeleteCollection" xml:space="preserve" approved="yes">
-				<source>This will delete the collection, but not the assets that it contains.</source>
-			<target xml:lang="ru">Это приведет к удалению коллекции, но не медиа-ресурсов, которые она содержит.</target><alt-trans><target xml:lang="ru">Это приведет к удалению коллекции, но не ресурсов, которые она содержит.</target></alt-trans></trans-unit>
-      <trans-unit id="media.message.willDeleteTag" xml:space="preserve" approved="yes">
-				<source>This will delete the tag, but not the assets that has it.</source>
-			<target xml:lang="ru">Это приведет к удалению тега, но не медиа-ресурсов, которые он содержит.</target><alt-trans><target xml:lang="ru">Это будет удаление тега, а не ресурсов, которые он содержит.</target></alt-trans></trans-unit>
-      <trans-unit id="media.message.operationCannotBeUndone" xml:space="preserve" approved="yes">
-				<source>This operation cannot be undone.</source>
-			<target xml:lang="ru">Эта операция не может быть отменена.</target></trans-unit>
-      <trans-unit id="media.cancel" xml:space="preserve" approved="yes">
-				<source>Cancel</source>
-			<target xml:lang="ru">Отмена</target></trans-unit>
-      <trans-unit id="media.replaceAssetResource" xml:space="preserve" approved="yes">
-				<source>Replace</source>
-			<target xml:lang="ru">Заменить</target></trans-unit>
-      <trans-unit id="media.saveEditing" xml:space="preserve" approved="yes">
-				<source>Save</source>
-			<target xml:lang="ru">Сохранить</target></trans-unit>
-      <trans-unit id="media.message.confirmDelete" xml:space="preserve" approved="yes">
-				<source>Yes, delete the asset</source>
-			<target xml:lang="ru">Да, удалить медиа-ресурс</target><alt-trans><target xml:lang="ru">Да, удалить ресурс</target></alt-trans></trans-unit>
-      <trans-unit id="media.message.confirmDeleteCollection" xml:space="preserve" approved="yes">
-				<source>Yes, delete the collection</source>
-			<target xml:lang="ru">Да, удалить коллекцию</target><alt-trans><target xml:lang="ru">Да, удалить коллекции</target></alt-trans></trans-unit>
-      <trans-unit id="media.message.confirmDeleteTag" xml:space="preserve" approved="yes">
-				<source>Yes, delete the tag</source>
-			<target xml:lang="ru">Да, удалить тег</target></trans-unit>
-      <trans-unit id="media.thumbnail.editTitle" xml:space="preserve" approved="yes">
-				<source>Edit {0}</source>
-			<target xml:lang="ru">Редактировать {0}</target><alt-trans><target xml:lang="ru">Править {0}</target></alt-trans></trans-unit>
-      <trans-unit id="media.search.title" xml:space="preserve" approved="yes">
-				<source>Search in assets</source>
-			<target xml:lang="ru">Поиск в медиа-ресурсах</target><alt-trans><target xml:lang="ru">Поиск в ресурсах</target></alt-trans></trans-unit>
-      <trans-unit id="media.search.placeholder" xml:space="preserve" approved="yes">
-				<source>Search</source>
-			<target xml:lang="ru">Поиск</target></trans-unit>
-      <trans-unit id="media.search.itemCount" xml:space="preserve" approved="yes">
-				<source>{0} items</source>
-			<target xml:lang="ru">{0} элементов</target></trans-unit>
-      <trans-unit id="media.search.foundMatches" xml:space="preserve" approved="yes">
-				<source>found matching "{0}"</source>
-			<target xml:lang="ru">найдено "{0}" результатов</target></trans-unit>
-      <trans-unit id="media.upload" xml:space="preserve" approved="yes">
-				<source>Upload</source>
-			<target xml:lang="ru">Загрузить</target></trans-unit>
-      <trans-unit id="media.filterOptions" xml:space="preserve" approved="yes">
-				<source>Filter options</source>
-			<target xml:lang="ru">Параметры фильтра</target></trans-unit>
-      <trans-unit id="media.filter.title.all" xml:space="preserve" approved="yes">
-				<source>Display all asset types</source>
-			<target xml:lang="ru">Отображать все типы ресурсов</target><alt-trans><target xml:lang="ru">Отобразить все типы ресурсов</target></alt-trans><alt-trans><target xml:lang="ru">Отображает все типы ресурсов</target></alt-trans></trans-unit>
-      <trans-unit id="media.filter.title.images" xml:space="preserve" approved="yes">
-				<source>Only display image assets</source>
-			<target xml:lang="ru">Отображать только изображения</target></trans-unit>
-      <trans-unit id="media.filter.title.documents" xml:space="preserve" approved="yes">
-				<source>Only display document assets</source>
-			<target xml:lang="ru">Отображать только документы</target></trans-unit>
-      <trans-unit id="media.filter.title.video" xml:space="preserve" approved="yes">
-				<source>Only display video assets</source>
-			<target xml:lang="ru">Отображать только видео</target></trans-unit>
-      <trans-unit id="media.filter.title.audio" xml:space="preserve" approved="yes">
-				<source>Only display audio assets</source>
-			<target xml:lang="ru">Отображать только аудио</target></trans-unit>
-      <trans-unit id="media.filter.all" xml:space="preserve" approved="yes">
-				<source>All</source>
-			<target xml:lang="ru">Все</target></trans-unit>
-      <trans-unit id="media.filter.images" xml:space="preserve" approved="yes">
-				<source>Images</source>
-			<target xml:lang="ru">Изображения</target></trans-unit>
-      <trans-unit id="media.filter.documents" xml:space="preserve" approved="yes">
-				<source>Documents</source>
-			<target xml:lang="ru">Документы</target></trans-unit>
-      <trans-unit id="media.filter.video" xml:space="preserve" approved="yes">
-				<source>Video</source>
-			<target xml:lang="ru">Видео</target></trans-unit>
-      <trans-unit id="media.filter.audio" xml:space="preserve" approved="yes">
-				<source>Audio</source>
-			<target xml:lang="ru">Аудио</target></trans-unit>
-      <trans-unit id="media.tooltip.sortOptions" xml:space="preserve" approved="yes">
-				<source>Sort options</source>
-			<target xml:lang="ru">Параметры сортировки</target></trans-unit>
-      <trans-unit id="media.tooltip.listView" xml:space="preserve" approved="yes">
-				<source>List view</source>
-			<target xml:lang="ru">Отобразить в виде списка</target></trans-unit>
-      <trans-unit id="media.tooltip.thumbnailView" xml:space="preserve" approved="yes">
-				<source>Thumbnail view</source>
-			<target xml:lang="ru">Отображать в виде миниатюр</target></trans-unit>
-      <trans-unit id="media.collections" xml:space="preserve" approved="yes">
-				<source>Collections</source>
-			<target xml:lang="ru">Коллекции</target></trans-unit>
-      <trans-unit id="media.editCollections" xml:space="preserve" approved="yes">
-				<source>Edit collections</source>
-			<target xml:lang="ru">Редактирование коллекции</target><alt-trans><target xml:lang="ru">Правка коллекций</target></alt-trans></trans-unit>
-      <trans-unit id="media.editCollection" xml:space="preserve" approved="yes">
-				<source>Edit collection</source>
-			<target xml:lang="ru">Редактировать коллекцию</target><alt-trans><target xml:lang="ru">Править коллекцию</target></alt-trans></trans-unit>
-      <trans-unit id="media.deleteCollection" xml:space="preserve" approved="yes">
-				<source>Delete collection</source>
-			<target xml:lang="ru">Удалить коллекцию</target></trans-unit>
-      <trans-unit id="media.createCollection" xml:space="preserve" approved="yes">
-				<source>Create collection</source>
-			<target xml:lang="ru">Создать коллекцию</target></trans-unit>
-      <trans-unit id="media.newCollection.placeholder" xml:space="preserve" approved="yes">
-				<source>Enter collection title</source>
-			<target xml:lang="ru">Введите название коллекции</target></trans-unit>
-      <trans-unit id="media.allCollections" xml:space="preserve" approved="yes">
-				<source>All collections</source>
-			<target xml:lang="ru">Все коллекции</target></trans-unit>
-      <trans-unit id="media.tags" xml:space="preserve" approved="yes">
-				<source>Tags</source>
-			<target xml:lang="ru">Теги</target></trans-unit>
-      <trans-unit id="media.editTags" xml:space="preserve" approved="yes">
-				<source>Edit tags</source>
-			<target xml:lang="ru">Редактирование тегов</target><alt-trans><target xml:lang="ru">Правка тегов</target></alt-trans></trans-unit>
-      <trans-unit id="media.editTag" xml:space="preserve" approved="yes">
-				<source>Edit tag</source>
-			<target xml:lang="ru">Редактировать тег</target><alt-trans><target xml:lang="ru">Править тег</target></alt-trans></trans-unit>
-      <trans-unit id="media.deleteTag" xml:space="preserve" approved="yes">
-				<source>Delete tag</source>
-			<target xml:lang="ru">Удалить тег</target></trans-unit>
-      <trans-unit id="media.placeholder.createTag" xml:space="preserve" approved="yes">
-				<source>Enter tag label</source>
-			<target xml:lang="ru">Введите метку тега</target></trans-unit>
-      <trans-unit id="media.createTag" xml:space="preserve" approved="yes">
-				<source>Create tag</source>
-			<target xml:lang="ru">Создать тег</target></trans-unit>
-      <trans-unit id="media.tags.title.all" xml:space="preserve" approved="yes">
-				<source>All assets</source>
-			<target xml:lang="ru">Все медиа-ассеты</target><alt-trans><target xml:lang="ru">Все ессеты</target></alt-trans></trans-unit>
-      <trans-unit id="media.tags.all" xml:space="preserve" approved="yes">
-				<source>All</source>
-			<target xml:lang="ru">Все</target></trans-unit>
-      <trans-unit id="media.untaggedAssets" xml:space="preserve" approved="yes">
-				<source>Untagged assets</source>
-			<target xml:lang="ru">Непомеченные медиа-ресурсы</target><alt-trans><target xml:lang="ru">Непомеченные ресурсы</target></alt-trans><alt-trans><target xml:lang="ru">Непомеченным ресурсы</target></alt-trans></trans-unit>
-      <trans-unit id="media.untagged" xml:space="preserve" approved="yes">
-				<source>Untagged</source>
-			<target xml:lang="ru">Без тегов</target><alt-trans><target xml:lang="ru">Непомеченные тэгами</target></alt-trans></trans-unit>
-      <trans-unit id="media.maxUploadSize" xml:space="preserve" approved="yes">
-				<source>Max. upload size {0} per file</source>
-			<target xml:lang="ru">Максимальный размер каждого файла {0}</target><alt-trans><target xml:lang="ru">Максимальный размер загрузки: {0} для каждого файла</target></alt-trans><alt-trans><target xml:lang="ru">Максимальный размер для каждого файла {0}</target></alt-trans></trans-unit>
-      <trans-unit id="media.dropFiles" xml:space="preserve" approved="yes">
-				<source>Drop files here</source>
-			<target xml:lang="ru">Перетащите файлы сюда</target><alt-trans><target xml:lang="ru">Перетащите сюда файлы</target></alt-trans></trans-unit>
-      <trans-unit id="media.clickToUpload" xml:space="preserve" approved="yes">
-				<source>or click to upload</source>
-			<target xml:lang="ru">или нажмите кнопку для загрузки</target></trans-unit>
-      <trans-unit id="media.chooseFile" xml:space="preserve" approved="yes">
-				<source>Choose file</source>
-			<target xml:lang="ru">Выберите файл</target></trans-unit>
-      <trans-unit id="media.noAssetsFound" xml:space="preserve" approved="yes">
-				<source>No Assets found.</source>
-			<target xml:lang="ru">Медиа-ресурсы не найдены.</target><alt-trans><target xml:lang="ru">Ресурсы не найдены.</target></alt-trans><alt-trans><target xml:lang="ru">Ассеты не найдены.</target></alt-trans></trans-unit>
-      <trans-unit id="media.basics" xml:space="preserve" approved="yes">
-				<source>Basics</source>
-			<target xml:lang="ru">Основные</target></trans-unit>
-      <trans-unit id="media.delete" xml:space="preserve" approved="yes">
-				<source>Delete</source>
-			<target xml:lang="ru">Удалить</target></trans-unit>
-      <trans-unit id="media.clickToDelete" xml:space="preserve" approved="yes">
-				<source>Click to delete</source>
-			<target xml:lang="ru">Нажмите, чтобы удалить</target></trans-unit>
-      <trans-unit id="media.save" xml:space="preserve" approved="yes">
-				<source>Save</source>
-			<target xml:lang="ru">Сохранить</target></trans-unit>
-      <trans-unit id="media.metadata" xml:space="preserve" approved="yes">
-				<source>Metadata</source>
-			<target xml:lang="ru">Метаданные</target></trans-unit>
-      <trans-unit id="media.metadata.filename" xml:space="preserve" approved="yes">
-				<source>Filename</source>
-			<target xml:lang="ru">Имя файла</target></trans-unit>
-      <trans-unit id="media.metadata.lastModified" xml:space="preserve" approved="yes">
-				<source>Last modified (resource)</source>
-			<target xml:lang="ru">Последнее изменение (ресурса)</target></trans-unit>
-      <trans-unit id="media.metadata.fileSize" xml:space="preserve" approved="yes">
-				<source>File size</source>
-			<target xml:lang="ru">Размер файла</target></trans-unit>
-      <trans-unit id="media.metadata.dimensions" xml:space="preserve" approved="yes">
-				<source>Dimensions</source>
-			<target xml:lang="ru">Размеры</target><alt-trans><target xml:lang="ru">Измерения</target></alt-trans></trans-unit>
-      <trans-unit id="media.metadata.type" xml:space="preserve" approved="yes">
-				<source>Type</source>
-			<target xml:lang="ru">Тип</target></trans-unit>
-      <trans-unit id="media.metadata.identifier" xml:space="preserve" approved="yes">
-				<source>Identifier</source>
-			<target xml:lang="ru">Идентификатор</target></trans-unit>
-      <trans-unit id="media.preview" xml:space="preserve" approved="yes">
-				<source>Preview</source>
-			<target xml:lang="ru">Предпросмотр</target><alt-trans><target xml:lang="ru">Просмотр</target></alt-trans><alt-trans><target xml:lang="ru">Предв. Просмотр</target></alt-trans></trans-unit>
-      <trans-unit id="media.cannotUploadFile" xml:space="preserve" approved="yes">
-				<source>Cannot upload the file</source>
-			<target xml:lang="ru">Не удается загрузить файл</target></trans-unit>
-      <trans-unit id="media.noFileSelected" xml:space="preserve" approved="yes">
-				<source>No file selected</source>
-			<target xml:lang="ru">Файл не выбран</target></trans-unit>
-      <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve" approved="yes">
-				<source>The file size of {0} exceeds the allowed limit of {1}</source>
-			<target xml:lang="ru">Размер файла {0} превышает допустимый предел в {1}</target></trans-unit>
-      <trans-unit id="media.forTheFile" xml:space="preserve" approved="yes">
-				<source>for the file</source>
-			<target xml:lang="ru">для файла</target></trans-unit>
-      <trans-unit id="media.onlySomeFilesWereUploaded" xml:space="preserve" approved="yes">
-				<source>Only some of the files were successfully uploaded. Refresh the page to see the those.</source>
-			<target xml:lang="ru">Только некоторые файлы были успешно загружены. Обновите страницу, чтобы увидеть то, что удалось загрузить.</target></trans-unit>
-      <trans-unit id="media.taggingAssetsFailed" xml:space="preserve" approved="yes">
-				<source>Tagging the asset failed.</source>
-			<target xml:lang="ru">Не удалось присвоить тэг к медиа-ресурсу.</target><alt-trans><target xml:lang="ru">Не удалось присвоить тэг к ресурсу.</target></alt-trans></trans-unit>
-      <trans-unit id="media.addingAssetsToCollectionFailed" xml:space="preserve" approved="yes">
-				<source>Adding the asset to the collection failed.</source>
-			<target xml:lang="ru">Не удалось добавить медиа-ресурс в коллекцию.</target><alt-trans><target xml:lang="ru">Не удалось добавить ресурс в коллекцию.</target></alt-trans></trans-unit>
-      <trans-unit id="media.creating" xml:space="preserve" approved="yes">
-				<source>Creating</source>
-			<target xml:lang="ru">Создаётся</target><alt-trans><target xml:lang="ru">Создание</target></alt-trans></trans-unit>
-      <trans-unit id="media.deleteRelatedNodes" xml:space="preserve" approved="yes">
-				<source>Asset could not be deleted, because there are still Nodes using it</source>
-			<target xml:lang="ru">Ассет не может быть удален, потому что его использует как минимум один элемент</target></trans-unit>
-      <group id="media.relatedNodes" restype="x-gettext-plurals">
-        <trans-unit id="media.relatedNodes[0]" approved="yes">
-          <source>{0} usages</source>
-          <target xml:lang="ru">Используется {0} раз</target>
-        </trans-unit>
-        <trans-unit id="media.relatedNodes[1]" approved="yes">
-          <source>{0} usages</source>
-          <target xml:lang="ru">Используется {0} раз</target>
-        </trans-unit>
-        <trans-unit id="media.relatedNodes[2]" approved="yes">
-          <source>{0} usages</source>
-          <target xml:lang="ru">Используется {0} раз</target>
-        </trans-unit>
-      </group>
-      <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve" approved="yes">
-				<source>References to "{asset}"</source>
-			<target xml:lang="ru">Ссылки на "{asset}"</target></trans-unit>
-      <trans-unit id="media.replaceAsset.replaceFilename" xml:space="preserve" approved="yes">
-				<source>Replace "{filename}"</source>
-			<target xml:lang="ru">Заменить "{filename}"</target></trans-unit>
-      <trans-unit id="media.replaceAsset.description" xml:space="preserve" approved="yes">
-        <source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
-      <target xml:lang="ru">Вы можете заменить этот медиа-ресурс путем загрузки нового файла. Новый медиа-ресурс будет использоваться вместо старого повсеместно.</target></trans-unit>
-      <trans-unit id="media.replaceAsset.note" xml:space="preserve" approved="yes">
-        <source>Note</source>
-      <target xml:lang="ru">Примечание</target></trans-unit>
-      <trans-unit id="media.replaceAsset.noteText" xml:space="preserve" approved="yes">
-        <source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
-      <target xml:lang="ru">Эта операция заменит медиа-ресурс во всех опубликованных или неопубликованных рабочих областях, включая публичную версию сайта.</target><alt-trans><target xml:lang="ru">Эта операция заменит медиа-ресурс во всех опубликованных или неопубликованных рабочих областях, включая Live сайт.</target></alt-trans><alt-trans><target xml:lang="ru">Эта операция заменит медиа-ресурс во всех опубликованных или неопубликованных рабочих областях, включая живой сайт.</target></alt-trans></trans-unit>
-      <trans-unit id="media.replaceAsset.chooseNewFile" xml:space="preserve" approved="yes">
-        <source>Choose a new file</source>
-      <target xml:lang="ru">Выбрать новый файл</target></trans-unit>
-      <trans-unit id="media.replace.usageCount" xml:space="preserve" approved="yes">
-        <source>Currently the asset is used {usageCount} times.</source>
-      <target xml:lang="ru">В настоящее время медиа-ресурс в употреблении {usageCount} раз.</target></trans-unit>
-      <trans-unit id="media.replace.allUsages" xml:space="preserve" approved="yes">
-        <source>Show all usages</source>
-      <target xml:lang="ru">Показать где используется</target></trans-unit>
-      <trans-unit id="media.replace.notUsed" xml:space="preserve" approved="yes">
-        <source>Currently the asset is not in used anywhere on the website.</source>
-      <target xml:lang="ru">В настоящее время медиа-ресурс нигде не используется на веб-сайте.</target></trans-unit>
-      <trans-unit id="media.replace.previewFile" xml:space="preserve" approved="yes">
-        <source>Preview current file</source>
-      <target xml:lang="ru">Предварительный просмотр текущего файла</target></trans-unit>
     </body>
   </file>
 </xliff>

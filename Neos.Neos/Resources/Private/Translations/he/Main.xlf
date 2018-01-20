@@ -285,6 +285,54 @@
       <trans-unit id="primary" xml:space="preserve">
 				<source>Primary</source>
 			<target xml:lang="he" state="needs-translation">Primary</target></trans-unit>
+      <trans-unit id="package" xml:space="preserve">
+				<source>Package</source>
+			<target xml:lang="he" state="needs-translation">Package</target></trans-unit>
+      <trans-unit id="deactivated" xml:space="preserve">
+				<source>Deactivated</source>
+			<target xml:lang="he" state="needs-translation">Deactivated</target></trans-unit>
+      <trans-unit id="unavailable" xml:space="preserve">
+				<source>Unavailable</source>
+			<target xml:lang="he" state="needs-translation">Unavailable</target></trans-unit>
+      <trans-unit id="inactive" xml:space="preserve">
+				<source>Inactive</source>
+			<target xml:lang="he" state="needs-translation">Inactive</target></trans-unit>
+      <trans-unit id="clickToEdit" xml:space="preserve">
+				<source>Click to edit</source>
+			<target xml:lang="he" state="needs-translation">Click to edit</target></trans-unit>
+      <trans-unit id="clickToDeactivate" xml:space="preserve">
+				<source>Click to deactivate</source>
+			<target xml:lang="he" state="needs-translation">Click to deactivate</target></trans-unit>
+      <trans-unit id="clickToActivate" xml:space="preserve">
+				<source>Click to activate</source>
+			<target xml:lang="he" state="needs-translation">Click to activate</target></trans-unit>
+      <trans-unit id="clickToDelete" xml:space="preserve">
+				<source>Click to delete</source>
+			<target xml:lang="he" state="needs-translation">Click to delete</target></trans-unit>
+      <trans-unit id="clickToCreate" xml:space="preserve">
+				<source>Click to create new</source>
+			<target xml:lang="he" state="needs-translation">Click to create new</target></trans-unit>
+      <trans-unit id="state" xml:space="preserve">
+				<source>Status</source>
+			<target xml:lang="he" state="needs-translation">Status</target></trans-unit>
+      <trans-unit id="active" xml:space="preserve">
+				<source>Active</source>
+			<target xml:lang="he" state="needs-translation">Active</target></trans-unit>
+      <trans-unit id="domains" xml:space="preserve">
+				<source>Domains</source>
+			<target xml:lang="he" state="needs-translation">Domains</target></trans-unit>
+      <trans-unit id="domain" xml:space="preserve">
+				<source>Domain</source>
+			<target xml:lang="he" state="needs-translation">Domain</target></trans-unit>
+      <trans-unit id="deleteConfirm" xml:space="preserve">
+				<source>Yes, delete it!</source>
+			<target xml:lang="he" state="needs-translation">Yes, delete it!</target></trans-unit>
+      <trans-unit id="packageKey" xml:space="preserve">
+				<source>Package Key</source>
+			<target xml:lang="he" state="needs-translation">Package Key</target></trans-unit>
+      <trans-unit id="description" xml:space="preserve">
+				<source>Description</source>
+			<target xml:lang="he" state="needs-translation">Description</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>

@@ -3,14 +3,14 @@
   <file original="" product-name="Neos.NodeTypes.ColumnLayouts" source-language="en" datatype="plaintext" target-language="sv-SE">
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
-				<source>Column</source>
-			<target xml:lang="sv-SE" state="needs-translation">Column</target></trans-unit>
+                <source>Column</source>
+            <target xml:lang="sv-SE" state="translated">Kolumn</target></trans-unit>
       <trans-unit id="groups.column" xml:space="preserve">
-				<source>Columns</source>
-			<target xml:lang="sv-SE" state="needs-translation">Columns</target></trans-unit>
+                <source>Columns</source>
+            <target xml:lang="sv-SE" state="translated">Kolumner</target></trans-unit>
       <trans-unit id="properties.layout" xml:space="preserve">
-				<source>Layout</source>
-			<target xml:lang="sv-SE" state="needs-translation">Layout</target></trans-unit>
+                <source>Layout</source>
+            <target xml:lang="sv-SE" state="translated">Layout</target></trans-unit>
     </body>
   </file>
 </xliff>

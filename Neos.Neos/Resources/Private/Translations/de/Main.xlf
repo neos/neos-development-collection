@@ -285,6 +285,54 @@
       <trans-unit id="primary" xml:space="preserve" approved="yes">
 				<source>Primary</source>
 			<target xml:lang="de">Primär</target></trans-unit>
+      <trans-unit id="package" xml:space="preserve">
+				<source>Package</source>
+			<target xml:lang="de" state="needs-translation">Package</target></trans-unit>
+      <trans-unit id="deactivated" xml:space="preserve" approved="yes">
+				<source>Deactivated</source>
+			<target xml:lang="de">Deaktiviert</target></trans-unit>
+      <trans-unit id="unavailable" xml:space="preserve">
+				<source>Unavailable</source>
+			<target xml:lang="de" state="needs-translation">Unavailable</target></trans-unit>
+      <trans-unit id="inactive" xml:space="preserve">
+				<source>Inactive</source>
+			<target xml:lang="de" state="needs-translation">Inactive</target></trans-unit>
+      <trans-unit id="clickToEdit" xml:space="preserve" approved="yes">
+				<source>Click to edit</source>
+			<target xml:lang="de">Zum Bearbeiten klicken</target></trans-unit>
+      <trans-unit id="clickToDeactivate" xml:space="preserve">
+				<source>Click to deactivate</source>
+			<target xml:lang="de" state="needs-translation">Click to deactivate</target></trans-unit>
+      <trans-unit id="clickToActivate" xml:space="preserve">
+				<source>Click to activate</source>
+			<target xml:lang="de" state="needs-translation">Click to activate</target></trans-unit>
+      <trans-unit id="clickToDelete" xml:space="preserve" approved="yes">
+				<source>Click to delete</source>
+			<target xml:lang="de">Klicken zum Löschen</target></trans-unit>
+      <trans-unit id="clickToCreate" xml:space="preserve">
+				<source>Click to create new</source>
+			<target xml:lang="de" state="needs-translation">Click to create new</target></trans-unit>
+      <trans-unit id="state" xml:space="preserve">
+				<source>Status</source>
+			<target xml:lang="de" state="needs-translation">Status</target></trans-unit>
+      <trans-unit id="active" xml:space="preserve">
+				<source>Active</source>
+			<target xml:lang="de" state="needs-translation">Active</target></trans-unit>
+      <trans-unit id="domains" xml:space="preserve">
+				<source>Domains</source>
+			<target xml:lang="de" state="needs-translation">Domains</target></trans-unit>
+      <trans-unit id="domain" xml:space="preserve">
+				<source>Domain</source>
+			<target xml:lang="de" state="needs-translation">Domain</target></trans-unit>
+      <trans-unit id="deleteConfirm" xml:space="preserve">
+				<source>Yes, delete it!</source>
+			<target xml:lang="de" state="needs-translation">Yes, delete it!</target></trans-unit>
+      <trans-unit id="packageKey" xml:space="preserve" approved="yes">
+				<source>Package Key</source>
+			<target xml:lang="de">Paket-Schlüssel</target><alt-trans><target xml:lang="de">Schlüssel vom Package</target></alt-trans></trans-unit>
+      <trans-unit id="description" xml:space="preserve" approved="yes">
+				<source>Description</source>
+			<target xml:lang="de">Beschreibung</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
 				<source>General</source>
@@ -417,13 +465,13 @@
 			<target xml:lang="de">Dokumentoptionen</target></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve" approved="yes">
 				<source>The length of this text must be between {minimum} and {maximum} characters.</source>
-			<target xml:lang="de">Die Länge dieses Textes muss zwischen {{minimum}} und {{maximum}} Zeichen sein.</target></trans-unit>
+			<target xml:lang="de">Die Länge dieses Textes muss zwischen {{minimum}} und {{maximum}} Zeichen sein.</target><alt-trans><target xml:lang="de">Die Länge dieses Textes muss zwischen {minimum} und {maximum} Zeichen sein.</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.smallerThanMinimum" xml:space="preserve" approved="yes">
 				<source>This field must contain at least {minimum} characters.</source>
-			<target xml:lang="de">Dieses Feld muss mindestens {{minimum}} Zeichen enthalten.</target></trans-unit>
+			<target xml:lang="de">Dieses Feld muss mindestens {{minimum}} Zeichen enthalten.</target><alt-trans><target xml:lang="de">Dieses Feld muss mindestens {minimum} Zeichen enthalten.</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.validators.stringLength.greaterThanMaximum" xml:space="preserve" approved="yes">
 				<source>This text may not exceed {maximum} characters.</source>
-			<target xml:lang="de">Dieser Text darf {{maximum}} Zeichen nicht überschreiten.</target></trans-unit>
+			<target xml:lang="de">Dieser Text darf {{maximum}} Zeichen nicht überschreiten.</target><alt-trans><target xml:lang="de">Dieser Text darf {maximum} Zeichen nicht überschreiten.</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve" approved="yes">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
 			<target xml:lang="de">Nur Buchstaben (A-Z, Umlaute usw.) und Ziffern sind erlaubt.</target><alt-trans><target xml:lang="de">Nur Buchstaben (A-Z sowie Umlaute) und Ziffern sind erlaubt.</target></alt-trans><alt-trans><target xml:lang="de">Nur Buchstaben a-z und Ziffern sind erlaubt</target></alt-trans></trans-unit>
@@ -432,7 +480,7 @@
 			<target xml:lang="de">Das Objekt ist nicht zählbar.</target></trans-unit>
       <trans-unit id="content.inspector.validators.countValidator.countBetween" xml:space="preserve" approved="yes">
 				<source>The count must be between {minimum} and {maximum}.</source>
-			<target xml:lang="de">Die Anzahl muss zwischen {{minimum}} und {{maximum}} liegen.</target></trans-unit>
+			<target xml:lang="de">Die Anzahl muss zwischen {{minimum}} und {{maximum}} liegen.</target><alt-trans><target xml:lang="de">Die Anzahl muss zwischen {minimum} und {maximum} liegen.</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.invalidDate" xml:space="preserve" approved="yes">
 				<source>The given value was not a valid date.</source>
 			<target xml:lang="de">Der angegebene Wert ist kein gültiges Datum.</target></trans-unit>
@@ -465,10 +513,10 @@
 			<target xml:lang="de">Eine gültige Zahl wird erwartet.</target></trans-unit>
       <trans-unit id="content.inspector.validators.numberRangeValidator.numberShouldBeInRange" xml:space="preserve" approved="yes">
 				<source>Please enter a valid number between {minimum} and {maximum}</source>
-			<target xml:lang="de">Bitte geben Sie eine gültige Zahl zwischen {{minimum}} und {{maximum}} ein.</target></trans-unit>
+			<target xml:lang="de">Bitte geben Sie eine gültige Zahl zwischen {{minimum}} und {{maximum}} ein.</target><alt-trans><target xml:lang="de">Bitte geben Sie eine gültige Zahl zwischen {minimum} und {maximum} ein.</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve" approved="yes">
 				<source>The given subject did not match the pattern ({pattern})</source>
-			<target xml:lang="de">Der angegebene Wert stimmt nicht mit dem Muster ({{pattern}}) überein</target><alt-trans><target xml:lang="de">Das gegebene Thema stimmt nicht mit dem Muster ({{pattern}}) überein</target></alt-trans></trans-unit>
+			<target xml:lang="de">Der angegebene Wert stimmt nicht mit dem Muster ({{pattern}}) überein</target><alt-trans><target xml:lang="de">Der angegebene Wert stimmt nicht mit dem Muster ({pattern}) überein</target></alt-trans><alt-trans><target xml:lang="de">Das gegebene Thema stimmt nicht mit dem Muster ({{pattern}}) überein</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.validators.stringValidator.stringIsExpected" xml:space="preserve" approved="yes">
 				<source>A valid string is expected.</source>
 			<target xml:lang="de">Eine gültige Zeichenfolge wird erwartet.</target></trans-unit>
