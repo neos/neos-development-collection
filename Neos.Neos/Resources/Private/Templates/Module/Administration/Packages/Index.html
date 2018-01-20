@@ -11,7 +11,6 @@
       <th>{neos:backend.translate(id: 'version', package: 'Neos.Neos')}</th>
       <th>{neos:backend.translate(id: 'packages.key', source: 'Modules', package: 'Neos.Neos')}</th>
       <th>{neos:backend.translate(id: 'packages.type', source: 'Modules', package: 'Neos.Neos')}</th>
-      <th class="neos-aCenter neos-span1">Active</th>
       <th class="neos-aCenter neos-span1">Frozen</th>
       <th class="neos-aCenter neos-span1">Protected</th>
     </thead>
@@ -29,15 +28,10 @@
           <td class="neos-priority1"> </td>
         </tr>
         <f:for each="{packages}" key="packageKey" as="package">
-          <tr class="fold-{packageGroup}{f:if(condition: package.isActive, else: ' muted')}"{f:if(condition: package.description, then: ' title="{package.description}"')} data-neos-toggle="tooltip">
+          <tr class="fold-{packageGroup}"{f:if(condition: package.description, then: ' title="{package.description}"')} data-neos-toggle="tooltip">
             <td class="package-name neos-priority1">
               <label for="{packageKey}">
                 <span class="neos-label">{package.name}</span>
-                <f:if condition="{package.isActive}">
-                  <f:else>
-                    <span class="neos-badge neos-badge-warning">{neos:backend.translate(id: 'packages.deactivated', source: 'Modules', package: 'Neos.Neos')}</span>
-                  </f:else>
-                </f:if>
               </label>
             </td>
             <td class="package-version neos-priority2">
@@ -55,7 +49,6 @@
                 <span class="neos-label">{package.type}</span>
               </label>
             </td>
-            <td class="neos-priority1 neos-aCenter"><i class="icon-{f:if(condition: package.isActive, then: 'check', else: 'times')}"></i></td>
             <td class="neos-priority1 neos-aCenter"><i class="icon-{f:if(condition: package.isFrozen, then: 'check', else: 'times')}"></i></td>
             <td class="neos-priority1 neos-aCenter"><i class="icon-{f:if(condition: package.isProtected, then: 'check', else: 'times')}"></i></td>
           </tr>
