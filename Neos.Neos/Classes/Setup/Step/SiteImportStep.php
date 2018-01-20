@@ -153,7 +153,7 @@ class SiteImportStep extends AbstractStep
             $error->setProperty('elementClassAttribute', 'alert alert-warning');
         }
 
-        if ($this->packageManager->isPackageActive('Neos.SiteKickstarter')) {
+        if ($this->packageManager->isPackageAvailable('Neos.SiteKickstarter')) {
             $separator = $page1->createElement('separator', 'Neos.Form:StaticText');
             $separator->setProperty('elementClassAttribute', 'section-separator');
 
