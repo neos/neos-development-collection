@@ -249,7 +249,7 @@ class FusionService
     protected function prepareAutoIncludeFusion()
     {
         $autoIncludeFusion = array();
-        foreach (array_keys($this->packageManager->getActivePackages()) as $packageKey) {
+        foreach (array_keys($this->packageManager->getAvailablePackages()) as $packageKey) {
             if (isset($this->autoIncludeConfiguration[$packageKey]) && $this->autoIncludeConfiguration[$packageKey] === true) {
                 $autoIncludeFusionFile = sprintf($this->autoIncludeFusionPattern, $packageKey);
                 if (is_file($autoIncludeFusionFile)) {

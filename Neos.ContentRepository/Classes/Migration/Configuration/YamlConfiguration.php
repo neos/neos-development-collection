@@ -44,7 +44,7 @@ class YamlConfiguration extends Configuration
     protected function registerAvailableVersions()
     {
         $this->availableVersions = array();
-        foreach ($this->packageManager->getActivePackages() as $package) {
+        foreach ($this->packageManager->getAvailablePackages() as $package) {
             $possibleMigrationsPath = Files::concatenatePaths(array(
                 $package->getPackagePath(),
                 'Migrations/TYPO3CR'
