@@ -826,7 +826,7 @@ A XSD schema file for your ViewHelpers can be created by executing
 		--target-file /some/directory/your.package.xsd
 
 Then import the XSD file in your favorite IDE and map it to the namespace
-``http://typo3.org/ns/<Your/Package>/ViewHelpers``. Add the namespace to your
+``http://neos.io/ns/<Your/Package>/ViewHelpers``. Add the namespace to your
 Fluid template by adding the ``xmlns`` attribute to the root tag (usually
 ``<xml …>`` or ``<html …>``).
 
@@ -840,7 +840,7 @@ the render ViewHelper in order to only render the content of the partial.
 
 Partial::
 
-	<html xmlns:x="http://typo3.org/ns/Your/Package/ViewHelpers">
+	<html xmlns:x="http://neos.io/ns/Your/Package/ViewHelpers">
 	<f:section name="content">
 		<x:yourViewHelper />
 	</f:section>
