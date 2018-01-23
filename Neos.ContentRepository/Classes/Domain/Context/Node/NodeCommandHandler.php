@@ -3,7 +3,7 @@
 namespace Neos\ContentRepository\Domain\Context\Node;
 
 use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
-use Neos\ContentRepository\Domain\Context\DimensionSpace\Repository\InterDimensionalFallbackGraph;
+use Neos\ContentRepository\Domain\Context\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Domain\Context\Importing\Command\FinalizeImportingSession;
 use Neos\ContentRepository\Domain\Context\Importing\Command\StartImportingSession;
 use Neos\ContentRepository\Domain\Context\Importing\Event\ImportingSessionWasFinalized;
@@ -65,9 +65,9 @@ final class NodeCommandHandler
 
     /**
      * @Flow\Inject
-     * @var InterDimensionalFallbackGraph
+     * @var InterDimensionalVariationGraph
      */
-    protected $interDimensionalFallbackGraph;
+    protected $interDimensionalVariationGraph;
 
     /**
      * @Flow\Inject
@@ -596,7 +596,7 @@ final class NodeCommandHandler
      */
     private function getVisibleDimensionSpacePoints($dimensionSpacePoint): DimensionSpacePointSet
     {
-        return $this->interDimensionalFallbackGraph->getSpecializationSet($dimensionSpacePoint);
+        return $this->interDimensionalVariationGraph->getSpecializationSet($dimensionSpacePoint);
     }
 
     /**
@@ -643,7 +643,7 @@ final class NodeCommandHandler
         }
         $occupiedDimensionSpacePoints = new DimensionSpacePointSet($dimensionSpacePoints);
 
-        return $this->interDimensionalFallbackGraph->getSpecializationSet(
+        return $this->interDimensionalVariationGraph->getSpecializationSet(
             $dimensionSpacePoint,
             true,
             $occupiedDimensionSpacePoints

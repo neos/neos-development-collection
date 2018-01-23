@@ -1,6 +1,5 @@
 <?php
-
-namespace Neos\ContentRepository\Domain\Context\DimensionSpace\Exception;
+namespace Neos\ContentRepository\Domain\Context\Dimension\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,11 +10,12 @@ namespace Neos\ContentRepository\Domain\Context\DimensionSpace\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\Flow\Exception;
 
 /**
- * The fallback initialization has failed for some reason
+ * The invalid generalization exception
  */
-class FallbackInitializationException extends Exception
+class InvalidGeneralizationException extends Exception
 {
 }

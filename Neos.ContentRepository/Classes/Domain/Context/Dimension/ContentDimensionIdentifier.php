@@ -1,0 +1,47 @@
+<?php
+namespace Neos\ContentRepository\Domain\Context\Dimension;
+
+/*
+ * This file is part of the Neos.ContentRepository package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
+/**
+ * The content dimension identifier value object
+ */
+final class ContentDimensionIdentifier implements \JsonSerializable
+{
+    /**
+     * @var string
+     */
+    protected $identifier;
+
+
+    /**
+     * @param string $identifier
+     * @throws Exception\InvalidContentDimensionIdentifierException
+     */
+    public function __construct(string $identifier)
+    {
+        if (empty($identifier)) {
+            throw new Exception\InvalidContentDimensionIdentifierException('Content dimension identifiers must not be empty.', 1515166615);
+        }
+        $this->identifier = $identifier;
+    }
+
+
+    public function __toString(): string
+    {
+        return $this->identifier;
+    }
+
+    public function jsonSerialize(): string
+    {
+        return $this->identifier;
+    }
+}

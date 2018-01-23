@@ -14,8 +14,8 @@ namespace Neos\ContentRepository\Domain\Context\Dimension\Exception;
 use Neos\Flow\Exception;
 
 /**
- * The invalid fallback exception
+ * The missing content dimension default value exception
  */
-class InvalidFallbackException extends Exception
+class MissingContentDimensionDefaultValueException extends Exception
 {
 }

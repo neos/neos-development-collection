@@ -12,7 +12,6 @@ namespace Neos\ContentRepository\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Context\Dimension;
 use Neos\ContentRepository\Domain\Context\DimensionSpace;
 use Neos\Flow\Annotations as Flow;
 
@@ -31,13 +30,7 @@ class FallbackGraphService
 {
     /**
      * @Flow\Inject
-     * @var Dimension\Repository\IntraDimensionalFallbackGraph
-     */
-    protected $intraDimensionalFallbackGraph;
-
-    /**
-     * @Flow\Inject
-     * @var DimensionSpace\Repository\InterDimensionalFallbackGraph
+     * @var DimensionSpace\InterDimensionalVariationGraph
      */
     protected $interDimensionalFallbackGraph;
 

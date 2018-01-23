@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\ContentRepository\Domain\Context\DimensionSpace\Repository;
+namespace Neos\ContentRepository\Domain\Context\DimensionSpace;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -18,18 +18,18 @@ use Neos\ContentRepository\Exception\DimensionSpacePointNotFound;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * The inter dimensional fallback graph domain model
- * Represents the fallback mechanism between content subgraphs
+ * The inter dimensional variation graph domain model
+ * Represents the specialization and generalization mechanism between content subgraphs
  *
  * @Flow\Scope("singleton")
  */
-class InterDimensionalFallbackGraph
+class InterDimensionalVariationGraph
 {
     /**
      * @Flow\Inject
-     * @var Dimension\Repository\IntraDimensionalFallbackGraph
+     * @var Dimension\ContentDimensionZookeeper
      */
-    protected $intraDimensionalFallbackGraph;
+    protected $contentDimensionZookeeper;
 
     /**
      * @Flow\Inject
@@ -38,66 +38,37 @@ class InterDimensionalFallbackGraph
     protected $allowedDimensionSubspace;
 
     /**
+     * @Flow\Inject
+     * @var Dimension\ContentDimensionSourceInterface
+     */
+    protected $contentDimensionSource;
+
+    /**
      * @var array|ContentSubgraph[]
      */
     protected $subgraphs = [];
+
 
     public function initializeObject()
     {
         $this->subgraphs = [];
 
-        $dimensionValueCombinations = [[]];
-        if (empty($this->intraDimensionalFallbackGraph->getPrioritizedContentDimensions())) {
-            $this->createContentSubgraph([]);
-        } else {
-            foreach ($this->intraDimensionalFallbackGraph->getPrioritizedContentDimensions() as $contentDimension) {
-                $nextLevelValueCombinations = [];
-                foreach ($dimensionValueCombinations as $previousCombination) {
-                    foreach ($contentDimension->getValues() as $value) {
-                        $combination = $previousCombination;
-                        $combination[$contentDimension->getName()] = $value;
-
-                        $nextLevelValueCombinations[] = $combination;
-                    }
+        $edgeCount = 0;
+        foreach ($this->contentDimensionZookeeper->getAllowedCombinations() as $dimensionValues) {
+            $newContentSubgraph = $this->createContentSubgraph($dimensionValues);
+            foreach ($this->getSubgraphs() as $presentContentSubgraph) {
+                if ($presentContentSubgraph === $newContentSubgraph
+                    || $this->normalizeWeight($newContentSubgraph->getWeight())
+                    < $this->normalizeWeight($presentContentSubgraph->getWeight())
+                ) {
+                    continue 2;
                 }
-                $dimensionValueCombinations = $nextLevelValueCombinations;
-            }
-
-            $edgeCount = 0;
-            foreach ($dimensionValueCombinations as $dimensionValues) {
-                /** @var Dimension\Model\ContentDimensionValue[] $dimensionValues */
-                $coordinates = [];
-                foreach ($dimensionValues as $dimensionName => $dimensionValue) {
-                    $coordinates[$dimensionName] = $dimensionValue->getValue();
-                }
-                $dimensionSpacePoint = new Domain\ValueObject\DimensionSpacePoint($coordinates);
-                if (!$this->allowedDimensionSubspace->contains($dimensionSpacePoint)) {
+                try {
+                    $this->connectSubgraphs($newContentSubgraph, $presentContentSubgraph);
+                    $edgeCount++;
+                } catch (Dimension\Exception\InvalidGeneralizationException $e) {
                     continue;
                 }
-
-                $newContentSubgraph = $this->createContentSubgraph($dimensionValues);
-                foreach ($this->getSubgraphs() as $presentContentSubgraph) {
-                    if ($presentContentSubgraph === $newContentSubgraph
-                        || $this->normalizeWeight($newContentSubgraph->getWeight())
-                        < $this->normalizeWeight($presentContentSubgraph->getWeight())
-                    ) {
-                        continue 2;
-                    }
-                    try {
-                        $this->connectSubgraphs($newContentSubgraph, $presentContentSubgraph);
-                        $edgeCount++;
-                    } catch (Dimension\Exception\InvalidFallbackException $e) {
-                        continue;
-                    }
-                }
-            }
-        }
-
-
-        foreach ($this->allowedDimensionSubspace->getPoints() as $allowedDimensionSpacePoint) {
-            if (!isset($this->subgraphs[$allowedDimensionSpacePoint->getHash()])) {
-                throw new DimensionSpace\Exception\FallbackInitializationException(sprintf('Fallback initialization failed; %s (%s) was found in the allowed dimension subspace but was not initialized',
-                    $allowedDimensionSpacePoint, $allowedDimensionSpacePoint->getHash()), 1506093011);
             }
         }
     }
@@ -118,29 +89,31 @@ class InterDimensionalFallbackGraph
      * @param ContentSubgraph $specialization
      * @param ContentSubgraph $generalization
      * @return VariationEdge
-     * @throws Dimension\Exception\InvalidFallbackException
+     * @throws Dimension\Exception\InvalidGeneralizationException
      */
     protected function connectSubgraphs(ContentSubgraph $specialization, ContentSubgraph $generalization): VariationEdge
     {
         if ($specialization === $generalization) {
-            throw new Dimension\Exception\InvalidFallbackException();
+            throw new Dimension\Exception\InvalidGeneralizationException();
         }
 
-        return new VariationEdge($specialization, $generalization, $this->calculateFallbackWeight($specialization, $generalization));
+        return new VariationEdge($specialization, $generalization, $this->calculateSpecializationWeight($specialization, $generalization));
     }
 
     /**
      * @param ContentSubgraph $specialization
      * @param ContentSubgraph $generalization
      * @return array
+     * @throws Dimension\Exception\InvalidGeneralizationException
      */
-    protected function calculateFallbackWeight(ContentSubgraph $specialization, ContentSubgraph $generalization)
+    protected function calculateSpecializationWeight(ContentSubgraph $specialization, ContentSubgraph $generalization)
     {
         $weight = [];
-        foreach ($this->intraDimensionalFallbackGraph->getPrioritizedContentDimensions() as $contentDimension) {
-            $weight[$contentDimension->getName()] = $specialization
-                ->getDimensionValue($contentDimension->getName())
-                ->calculateFallbackDepth($generalization->getDimensionValue($contentDimension->getName()));
+        foreach ($this->contentDimensionSource->getContentDimensionsOrderedByPriority() as $contentDimension) {
+            $weight[(string) $contentDimension->getIdentifier()] = $contentDimension->calculateSpecializationDepth(
+                $specialization->getDimensionValue($contentDimension->getIdentifier()),
+                $generalization->getDimensionValue($contentDimension->getIdentifier())
+            );
         }
 
         return $weight;
@@ -155,8 +128,8 @@ class InterDimensionalFallbackGraph
         $base = $this->determineWeightNormalizationBase();
         $normalizedWeight = 0;
         $exponent = 0;
-        foreach (array_reverse($weight) as $dimensionName => $dimensionFallbackWeight) {
-            $normalizedWeight += pow($base, $exponent) * $dimensionFallbackWeight;
+        foreach (array_reverse($weight) as $dimensionName => $dimensionSpecializationWeight) {
+            $normalizedWeight += pow($base, $exponent) * $dimensionSpecializationWeight;
             $exponent++;
         }
 
@@ -168,9 +141,10 @@ class InterDimensionalFallbackGraph
      */
     protected function determineWeightNormalizationBase(): int
     {
+
         $base = 0;
-        foreach ($this->intraDimensionalFallbackGraph->getPrioritizedContentDimensions() as $contentDimension) {
-            $base = max($base, $contentDimension->getDepth() + 1);
+        foreach ($this->contentDimensionSource->getContentDimensionsOrderedByPriority() as $contentDimension) {
+            $base = max($base, $contentDimension->getMaximumDepth()->getDepth() + 1);
         }
 
         return $base;
@@ -181,7 +155,7 @@ class InterDimensionalFallbackGraph
      * @return ContentSubgraph|null
      * @api
      */
-    public function getPrimaryFallback(ContentSubgraph $contentSubgraph): ?ContentSubgraph
+    public function getPrimaryGeneralization(ContentSubgraph $contentSubgraph): ?ContentSubgraph
     {
         $generalizations = $contentSubgraph->getGeneralizationEdges();
         if (empty($generalizations)) {
@@ -219,7 +193,7 @@ class InterDimensionalFallbackGraph
      * @param Domain\ValueObject\DimensionSpacePointSet|null $excludedSet
      * @return Domain\ValueObject\DimensionSpacePointSet
      * @throws DimensionSpacePointNotFound
-     * @throws DimensionSpace\Exception\FallbackInitializationException
+     * @throws DimensionSpace\Exception\GeneralizationInitializationException
      */
     public function getSpecializationSet(
         Domain\ValueObject\DimensionSpacePoint $origin,
@@ -231,8 +205,8 @@ class InterDimensionalFallbackGraph
         } else {
             $subgraph = $this->getSubgraphByDimensionSpacePointHash($origin->getHash());
             if (!$subgraph) {
-                throw new DimensionSpace\Exception\FallbackInitializationException(
-                    sprintf('Fallback initialization failed; %s was found in the allowed dimension subspace but was not initialized', $origin),
+                throw new DimensionSpace\Exception\GeneralizationInitializationException(
+                    sprintf('Generalization initialization failed; %s was found in the allowed dimension subspace but was not initialized', $origin),
                     1506093011
                 );
             }
@@ -257,6 +231,8 @@ class InterDimensionalFallbackGraph
     /**
      * @param Domain\ValueObject\DimensionSpacePointSet $set
      * @return Domain\ValueObject\DimensionSpacePointSet
+     * @throws DimensionSpacePointNotFound
+     * @throws Exception\GeneralizationInitializationException
      */
     protected function completeSet(Domain\ValueObject\DimensionSpacePointSet $set): Domain\ValueObject\DimensionSpacePointSet
     {

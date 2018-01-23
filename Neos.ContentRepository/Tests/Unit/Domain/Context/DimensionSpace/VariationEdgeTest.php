@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Tests\Unit\Domain\Context\DimensionSpace\Repository;
+namespace Neos\ContentRepository\Tests\Unit\Domain\Context\DimensionSpace;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -22,12 +22,12 @@ class VariationEdgeTest extends UnitTestCase
     /**
      * @test
      */
-    public function variationEdgesAreRegisteredInFallbackAndVariantUponCreation()
+    public function variationEdgesAreRegisteredInGeneralizationAndSpecializationUponCreation()
     {
-        $specialization = new DimensionSpace\Repository\ContentSubgraph(['test' => new Dimension\Model\ContentDimensionValue('a')]);
-        $generalization = new DimensionSpace\Repository\ContentSubgraph(['test' => new Dimension\Model\ContentDimensionValue('b')]);
+        $specialization = new DimensionSpace\ContentSubgraph(['test' => new Dimension\ContentDimensionValue('a')]);
+        $generalization = new DimensionSpace\ContentSubgraph(['test' => new Dimension\ContentDimensionValue('b')]);
 
-        $variationEdge = new DimensionSpace\Repository\VariationEdge($specialization, $generalization, [1]);
+        $variationEdge = new DimensionSpace\VariationEdge($specialization, $generalization, [1]);
 
         $this->assertContains($variationEdge, $specialization->getGeneralizationEdges());
         $this->assertContains($variationEdge, $generalization->getSpecializationEdges());

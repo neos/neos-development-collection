@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Domain\Context\DimensionSpace\Repository;
+namespace Neos\ContentRepository\Domain\Context\DimensionSpace;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,20 +13,19 @@ namespace Neos\ContentRepository\Domain\Context\DimensionSpace\Repository;
 
 use Neos\ContentRepository\Domain\Context\Dimension;
 use Neos\ContentRepository\Domain;
-use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 
 /**
  * The content subgraph domain model
  */
-class ContentSubgraph
+final class ContentSubgraph
 {
     /**
-     * @var array|Dimension\Model\ContentDimensionValue[]
+     * @var array|Dimension\ContentDimensionValue[]
      */
     protected $dimensionValues = [];
 
     /**
-     * @var DimensionSpacePoint
+     * @var Domain\ValueObject\DimensionSpacePoint
      */
     protected $dimensionSpacePoint;
 
@@ -46,7 +45,7 @@ class ContentSubgraph
     protected $weight;
 
     /**
-     * @param array|Dimension\Model\ContentDimensionValue[] $dimensionValues
+     * @param array|Dimension\ContentDimensionValue[] $dimensionValues
      */
     public function __construct(array $dimensionValues)
     {
@@ -54,29 +53,29 @@ class ContentSubgraph
         foreach ($dimensionValues as $dimensionName => $dimensionValue) {
             $this->dimensionValues[$dimensionName] = $dimensionValue;
             $coordinates[$dimensionName] = $dimensionValue->getValue();
-            $this->weight[$dimensionName] = $dimensionValue->getDepth();
+            $this->weight[$dimensionName] = $dimensionValue->getSpecializationDepth();
         }
-        $this->dimensionSpacePoint = new DimensionSpacePoint($coordinates);
+        $this->dimensionSpacePoint = new Domain\ValueObject\DimensionSpacePoint($coordinates);
     }
 
     /**
-     * @return DimensionSpacePoint
+     * @return Domain\ValueObject\DimensionSpacePoint
      */
-    public function getIdentifier(): DimensionSpacePoint
+    public function getIdentifier():Domain\ValueObject\ DimensionSpacePoint
     {
         return $this->getDimensionSpacePoint();
     }
 
     /**
-     * @return DimensionSpacePoint
+     * @return Domain\ValueObject\DimensionSpacePoint
      */
-    public function getDimensionSpacePoint(): DimensionSpacePoint
+    public function getDimensionSpacePoint(): Domain\ValueObject\DimensionSpacePoint
     {
         return $this->dimensionSpacePoint;
     }
 
     /**
-     * @return array|Dimension\Model\ContentDimensionValue[]
+     * @return array|Dimension\ContentDimensionValue[]
      */
     public function getDimensionValues(): array
     {
@@ -84,12 +83,12 @@ class ContentSubgraph
     }
 
     /**
-     * @param string $dimensionName
-     * @return Dimension\Model\ContentDimensionValue
+     * @param Dimension\ContentDimensionIdentifier $dimensionIdentifier
+     * @return Dimension\ContentDimensionValue
      */
-    public function getDimensionValue($dimensionName): Dimension\Model\ContentDimensionValue
+    public function getDimensionValue(Dimension\ContentDimensionIdentifier $dimensionIdentifier): ?Dimension\ContentDimensionValue
     {
-        return $this->dimensionValues[$dimensionName];
+        return $this->dimensionValues[(string) $dimensionIdentifier] ?? null;
     }
 
     /**
@@ -156,6 +155,7 @@ class ContentSubgraph
     }
 
     /**
+     * @param ContentSubgraph $specialization
      * @return bool
      */
     public function hasSpecialization(ContentSubgraph $specialization): bool

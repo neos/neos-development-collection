@@ -62,7 +62,7 @@ final class CreateNodeAggregateWithNode
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier New node aggregate identifier
      * @param NodeTypeName $nodeTypeName
-     * @param DimensionSpacePoint $dimensionSpacePoint The dimension space point of the node, will be used to calculate a set of dimension points from the configured fallbacks
+     * @param DimensionSpacePoint $dimensionSpacePoint The dimension space point of the node, will be used to calculate a set of dimension points from the configured generalizations
      * @param NodeIdentifier $nodeIdentifier New node identifier
      * @param NodeIdentifier $parentNodeIdentifier Parent node of the created node
      * @param NodeName $nodeName

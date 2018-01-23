@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\ContentRepository\Command;
+namespace Neos\ContentRepository\Domain\Context\DimensionSpace\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,15 +11,11 @@ namespace Neos\ContentRepository\Command;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Cli\CommandController;
+use Neos\Flow\Exception;
 
 /**
- * Node command controller for the Neos.ContentRepository package
- *
- * @Flow\Scope("singleton")
+ * The generalization initialization has failed for some reason
  */
-class TestCommandController extends CommandController
+class GeneralizationInitializationException extends Exception
 {
 }

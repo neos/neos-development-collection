@@ -1,6 +1,5 @@
 <?php
-
-namespace Neos\ContentRepository\Command;
+namespace Neos\ContentRepository\Domain\Context\Dimension\Exception;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,14 +11,11 @@ namespace Neos\ContentRepository\Command;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Cli\CommandController;
+use Neos\Flow\Exception;
 
 /**
- * Node command controller for the Neos.ContentRepository package
- *
- * @Flow\Scope("singleton")
+ * The missing content dimension values exception
  */
-class TestCommandController extends CommandController
+class MissingContentDimensionValuesException extends Exception
 {
 }

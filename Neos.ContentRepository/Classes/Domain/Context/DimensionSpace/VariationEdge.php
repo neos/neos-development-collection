@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Domain\Context\DimensionSpace\Repository;
+namespace Neos\ContentRepository\Domain\Context\DimensionSpace;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -13,9 +13,9 @@ namespace Neos\ContentRepository\Domain\Context\DimensionSpace\Repository;
 
 /**
  * The variation edge domain model
- * May serve as a fallback edge for variants or as a variant edge for fallbacks
+ * May serve as a generalization edge for specializations or as a specialization edge for generalizations
  */
-class VariationEdge
+final class VariationEdge
 {
     /**
      * @var ContentSubgraph
