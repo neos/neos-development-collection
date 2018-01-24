@@ -2,7 +2,7 @@
     "name": "neos/nodetypes-html",
     "type": "neos-package",
     "description": "A simple html node type.",
-    "license": "GPL-3.0+",
+    "license": ["GPL-3.0-or-later"],
     "require": {
         "neos/neos": "*",
         "neos/nodetypes-basemixins": "*"

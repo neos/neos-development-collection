@@ -2,7 +2,7 @@
     "name": "neos/nodetypes-contentreferences",
     "type": "neos-package",
     "description": "A simple content reference node type.",
-    "license": "GPL-3.0+",
+    "license": ["GPL-3.0-or-later"],
     "require": {
         "neos/neos": "*",
         "neos/nodetypes-basemixins": "*"
