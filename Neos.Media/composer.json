@@ -2,7 +2,7 @@
     "name": "neos/media",
     "type": "neos-package",
     "description": "The Media package",
-    "license": "GPL-3.0+",
+    "license": ["GPL-3.0-or-later"],
     "require": {
         "neos/imagine": "^3.0.2",
 

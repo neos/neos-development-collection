@@ -1,7 +1,7 @@
 {
   "name": "neos/neos-development-collection",
   "description": "Neos packages in a joined repository for pull requests.",
-  "license": "GPL-3.0+",
+  "license": ["GPL-3.0-or-later"],
   "type": "neos-package-collection",
   "require": {
     "neos/flow-development-collection": "~4.2.0 || 4.2.x-dev"
