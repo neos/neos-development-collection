@@ -1,7 +1,7 @@
 {
     "name": "typo3/neos",
     "type": "typo3-flow-package",
-    "license": "GPL-3.0+",
+    "license": ["GPL-3.0-or-later"],
     "description": "An open source Content Application Platform based on Flow. A set of core Content Management features is resting within a larger context that allows you to build a perfectly customized experience for your users.",
     "require": {
         "neos/diff": "~2.3.0",
