@@ -13,9 +13,9 @@ namespace Neos\ContentRepository\Migration\Configuration;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Source\YamlSource;
+use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Utility\Files as Files;
-use Neos\ContentRepository\Migration\Configuration\Configuration;
 use Neos\ContentRepository\Migration\Exception\MigrationException;
 
 /**
@@ -45,39 +45,47 @@ class YamlConfiguration extends Configuration
     {
         $this->availableVersions = array();
         foreach ($this->packageManager->getActivePackages() as $package) {
-            $possibleMigrationsPath = Files::concatenatePaths(array(
-                $package->getPackagePath(),
-                'Migrations/TYPO3CR'
-            ));
-            if (!is_dir($possibleMigrationsPath)) {
-                continue;
-            }
-            $directoryIterator = new \DirectoryIterator($possibleMigrationsPath);
-            foreach ($directoryIterator as $fileInfo) {
-                $filename = $fileInfo->getFilename();
-                if ($fileInfo->isFile() && $filename[0] !== '.' && (substr($filename, -5) === '.yaml')) {
-                    if (preg_match('/^Version[0-9]{14}.yaml$/', $filename) !== 1) {
-                        throw new MigrationException('The migration file ' . $filename . ' is named wrong, expected format is "VersionYYYYMMDDHHmmss.yaml".', 1515752616793);
-                    }
-                    $versionNumber = substr(substr($filename, 7), 0, -5);
-                    if (array_key_exists($versionNumber, $this->availableVersions)) {
-                        throw new MigrationException('The migration version ' . $versionNumber . ' exists twice, that is not supported.', 1345823182);
-                    }
-                    $versionFile = Files::getUnixStylePath($fileInfo->getPathname());
-                    $this->availableVersions[$versionNumber] = array(
-                        'filePathAndName' => $versionFile,
-                        'package' => $package,
-                        'formattedVersionNumber' =>
-                                // DD-MM-YYYY HH:MM:SS
-                            $versionNumber[6] . $versionNumber[7] . '-' .
-                            $versionNumber[4] . $versionNumber[5] . '-' .
-                            $versionNumber[0] . $versionNumber[1] . $versionNumber[2] . $versionNumber[3] . ' ' .
-                            $versionNumber[8] . $versionNumber[9] . ':' . $versionNumber[10] . $versionNumber[11] . ':' . $versionNumber[12] . $versionNumber[13]
-                    );
-                }
-            }
+            $this->registerVersionInDirectory($package, 'TYPO3CR');
+            $this->registerVersionInDirectory($package, 'NeosCR');
         }
         ksort($this->availableVersions);
+    }
+
+    /**
+     * @param PackageInterface $package
+     * @param string $directoryName
+     * @throws MigrationException
+     */
+    protected function registerVersionInDirectory(PackageInterface $package, string $directoryName)
+    {
+        $possibleMigrationsPath = Files::concatenatePaths([$package->getPackagePath(), 'Migrations', $directoryName]);
+        if (!is_dir($possibleMigrationsPath)) {
+            return;
+        }
+        $directoryIterator = new \DirectoryIterator($possibleMigrationsPath);
+        foreach ($directoryIterator as $fileInfo) {
+            $filename = $fileInfo->getFilename();
+            if ($fileInfo->isFile() && $filename[0] !== '.' && (substr($filename, -5) === '.yaml')) {
+                if (preg_match('/^Version[0-9]{14}.yaml$/', $filename) !== 1) {
+                    throw new MigrationException('The migration file ' . $filename . ' is named wrong, expected format is "VersionYYYYMMDDHHmmss.yaml".', 1515752616793);
+                }
+                $versionNumber = substr(substr($filename, 7), 0, -5);
+                if (array_key_exists($versionNumber, $this->availableVersions)) {
+                    throw new MigrationException('The migration version ' . $versionNumber . ' exists twice, that is not supported.', 1345823182);
+                }
+                $versionFile = Files::getUnixStylePath($fileInfo->getPathname());
+                $this->availableVersions[$versionNumber] = array(
+                    'filePathAndName' => $versionFile,
+                    'package' => $package,
+                    'formattedVersionNumber' =>
+                            // DD-MM-YYYY HH:MM:SS
+                        $versionNumber[6] . $versionNumber[7] . '-' .
+                        $versionNumber[4] . $versionNumber[5] . '-' .
+                        $versionNumber[0] . $versionNumber[1] . $versionNumber[2] . $versionNumber[3] . ' ' .
+                        $versionNumber[8] . $versionNumber[9] . ':' . $versionNumber[10] . $versionNumber[11] . ':' . $versionNumber[12] . $versionNumber[13]
+                );
+            }
+        }
     }
 
     /**
