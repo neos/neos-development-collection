@@ -2,7 +2,7 @@
     "name": "neos/nodetypes-columnlayouts",
     "type": "neos-package",
     "description": "Various simple column layouts node type.",
-    "license": "GPL-3.0+",
+    "license": ["GPL-3.0-or-later"],
     "require": {
         "neos/neos": "*",
         "neos/nodetypes-basemixins": "*"

@@ -2,7 +2,7 @@
     "name": "neos/content-repository",
     "type": "neos-package",
     "description": "Content repository based on Flow, specifically made for Neos.",
-    "license": "GPL-3.0+",
+    "license": ["GPL-3.0-or-later"],
     "require": {
         "neos/flow": "*",
         "neos/cache": "*",
