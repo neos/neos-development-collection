@@ -85,9 +85,11 @@ class NodeTransformation
         $transformationClassName = $this->resolveTransformationClassName($transformationConfiguration['type']);
         $transformation = new $transformationClassName();
 
-        foreach ($transformationConfiguration['settings'] as $settingName => $settingValue) {
-            if (!ObjectAccess::setProperty($transformation, $settingName, $settingValue)) {
-                throw new MigrationException('Cannot set setting "' . $settingName . '" on transformation "' . $transformationClassName . '" , check your configuration.', 1343293094);
+        if (isset($transformationConfiguration['settings']) && is_array($transformationConfiguration['settings'])) {
+            foreach ($transformationConfiguration['settings'] as $settingName => $settingValue) {
+                if (!ObjectAccess::setProperty($transformation, $settingName, $settingValue)) {
+                    throw new MigrationException('Cannot set setting "' . $settingName . '" on transformation "' . $transformationClassName . '" , check your configuration.', 1343293094);
+                }
             }
         }
 
