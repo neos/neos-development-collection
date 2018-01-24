@@ -2,7 +2,7 @@
     "name": "typo3/neos-nodetypes",
     "type": "typo3-flow-package",
     "description": "Node type configuration for Neos",
-    "license": "GPL-3.0+",
+    "license": ["GPL-3.0-or-later"],
     "require": {
         "typo3/form": "~2.0",
         "typo3/neos": "*"
