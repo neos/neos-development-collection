@@ -78,7 +78,7 @@ Workspace Management
 The commands to manage workspaces reflect what is possible in the Neos user interface. They allow to list,
 create and delete workspaces as well as publish and discard changes.
 
-One notable difference is that rebasing a workspace is possivle from the command line *even if it contains
+One notable difference is that rebasing a workspace is possible from the command line *even if it contains
 unpublished changes*.
 
 =======================================  ========================================
