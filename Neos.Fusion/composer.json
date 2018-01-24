@@ -2,7 +2,7 @@
     "name": "neos/fusion",
     "type": "neos-package",
     "description": "Fusion is a hierarchical, prototype based processing language",
-    "license": "GPL-3.0+",
+    "license": ["GPL-3.0-or-later"],
     "require": {
         "neos/flow": "~4.0.0",
         "neos/fluid-adaptor": "~4.0.0"
