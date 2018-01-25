@@ -924,6 +924,24 @@ Example::
 		node = ${q(node).parent().get(0)}
 	}
 
+.. _Neos_Neos__NodeLink:
+
+NodeLink
+-------
+
+Render a hyperlink to a node.
+
+:\*: All :ref:`Neos_Neos__NodeUri` properties
+:content: (string) The inner content of the link
+:attributes: (:ref:`Neos_Fusion__Attributes`) Image tag attributes
+
+Example::
+
+	backLink = Neos.Neos:NodeLink {
+		node = ${q(node).parent().get(0)}
+		content = 'Return to previous page'
+	}
+
 .. _Neos_Neos__ImageUri:
 
 ImageUri
