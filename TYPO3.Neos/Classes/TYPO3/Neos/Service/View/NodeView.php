@@ -236,14 +236,18 @@ class NodeView extends JsonView
             /** @var NodeInterface $node */
             $parent = $node->getParent();
             if ($parent !== null) {
-                $addNode($parent, false);
-                $findParent($parent);
+                if ($this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($parent))) {
+                    $addNode($parent, false);
+                    $findParent($parent);
+                }
             }
         };
 
         foreach ($nodes as $node) {
-            $addNode($node, true);
-            $findParent($node);
+            if ($this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($node))) {
+                $addNode($node, true);
+                $findParent($node);
+            }
         }
 
         $treeNodes = array();
