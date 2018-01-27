@@ -733,16 +733,16 @@
 			<target xml:lang="nl" state="needs-translation">Choose an Aspect Ratio</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__bold" xml:space="preserve">
 				<source>Bold</source>
-			<target xml:lang="nl" state="needs-translation">Bold</target></trans-unit>
+			<target xml:lang="nl" state="translated">Dikgedrukt</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__italic" xml:space="preserve">
 				<source>Italic</source>
 			<target xml:lang="nl" state="needs-translation">Italic</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__underline" xml:space="preserve">
 				<source>Underline</source>
-			<target xml:lang="nl" state="needs-translation">Underline</target></trans-unit>
+			<target xml:lang="nl" state="translated">Onderstreept</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__subscript" xml:space="preserve">
 				<source>Subscript</source>
-			<target xml:lang="nl" state="needs-translation">Subscript</target></trans-unit>
+			<target xml:lang="nl" state="translated">Inschrijven</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__superscript" xml:space="preserve">
 				<source>Superscript</source>
 			<target xml:lang="nl" state="needs-translation">Superscript</target></trans-unit>
@@ -775,7 +775,7 @@
 			<target xml:lang="nl" state="needs-translation">Table</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__remove-format" xml:space="preserve">
 				<source>Remove format</source>
-			<target xml:lang="nl" state="needs-translation">Remove format</target></trans-unit>
+			<target xml:lang="nl" state="translated">Opmaak Verwijderen</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__outdent" xml:space="preserve">
 				<source>Outdent</source>
 			<target xml:lang="nl" state="needs-translation">Outdent</target></trans-unit>
@@ -787,7 +787,7 @@
 			<target xml:lang="nl">Maak nieuw</target></trans-unit>
       <trans-unit id="noMatchesFound" xml:space="preserve">
 				<source>No matches found</source>
-			<target xml:lang="nl" state="needs-translation">No matches found</target></trans-unit>
+			<target xml:lang="nl" state="translated">Geen overeenkomsten gevonden</target></trans-unit>
       <trans-unit id="searchBoxLeftToType" xml:space="preserve">
 				<source>Please enter ###CHARACTERS### more character</source>
 			<target xml:lang="nl" state="needs-translation">Please enter ###CHARACTERS### more character</target></trans-unit>
