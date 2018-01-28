@@ -541,7 +541,7 @@
 			<target xml:lang="tr" state="translated">Yeni site oluştur</target></trans-unit>
       <trans-unit id="sites.rootNodeName" xml:space="preserve">
 				<source>Root node name</source>
-			<target xml:lang="tr" state="needs-translation">Root node name</target></trans-unit>
+			<target xml:lang="tr" state="translated">Kök düğüm adı</target></trans-unit>
       <trans-unit id="sites.domains" xml:space="preserve">
 				<source>Domains</source>
 			<target xml:lang="tr" state="translated">Alan adları</target></trans-unit>
@@ -598,10 +598,10 @@
 			<target xml:lang="tr" state="translated">Yeni bir site paketi oluştur</target></trans-unit>
       <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
 				<source>VendorName.MyPackageKey</source>
-			<target xml:lang="tr" state="needs-translation">VendorName.MyPackageKey</target></trans-unit>
+			<target xml:lang="tr" state="translated">VendorName.MyPackageKey</target></trans-unit>
       <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
 				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
-			<target xml:lang="tr" state="needs-translation">The &lt;em&gt;Neos Kickstarter&lt;/em&gt; package is not installed, install it to kickstart new sites.</target></trans-unit>
+			<target xml:lang="tr" state="translated">&lt;em&gt;Neos Kickstarter&lt;/em&gt;paketi yüklenmedi, başlatmak için yeni siteleri yükleyin.</target></trans-unit>
       <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
 			<target xml:lang="tr" state="translated">Bu {0} gönderiyi gerçekten kaldırmak istiyor musun? Bu eylem geri alınamaz.</target></trans-unit>
