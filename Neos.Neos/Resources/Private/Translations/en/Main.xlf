@@ -445,6 +445,12 @@
 			<trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve">
 				<source>No date set</source>
 			</trans-unit>
+      <trans-unit id="content.inspector.editors.dateTimeEditor.today" xml:space="preserve">
+				<source>Today</source>
+			</trans-unit>
+      <trans-unit id="content.inspector.editors.dateTimeEditor.apply" xml:space="preserve">
+				<source>Apply</source>
+			</trans-unit>
 			<trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve">
 				<source>Edit code</source>
 			</trans-unit>
