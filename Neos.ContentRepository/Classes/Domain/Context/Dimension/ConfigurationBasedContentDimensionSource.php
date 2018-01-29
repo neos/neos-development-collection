@@ -15,6 +15,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * The configuration based content dimension source
+ *
+ * @Flow\Scope("singleton")
  */
 final class ConfigurationBasedContentDimensionSource implements ContentDimensionSourceInterface
 {
