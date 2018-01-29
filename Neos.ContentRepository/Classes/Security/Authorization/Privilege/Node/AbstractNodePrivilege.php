@@ -40,6 +40,11 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
     protected $nodeContextClassName = NodePrivilegeContext::class;
 
     /**
+     * @var NodePrivilegeContext
+     */
+    protected $nodeContext;
+
+    /**
      * @var MethodPrivilegeInterface
      */
     protected $methodPrivilege;
@@ -59,6 +64,7 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
         }
         $this->initialized = true;
         $this->eelCompilingEvaluator = $this->objectManager->get(CompilingEvaluator::class);
+        $this->nodeContext = new $this->nodeContextClassName();
         $this->initializeMethodPrivilege();
     }
 
