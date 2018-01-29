@@ -48,6 +48,8 @@ class CreateNodePrivilege extends AbstractNodePrivilege
                 return false;
             }
 
+            $this->eelCompilingEvaluator->evaluate($this->getParsedMatcher(), new Context($this->nodeContext));
+
             $joinPoint = $subject->getJoinPoint();
             $allowedCreationNodeTypes = $this->nodeContext->getCreationNodeTypes();
             $actualNodeType = $joinPoint->getMethodName() === 'createNodeFromTemplate' ? $joinPoint->getMethodArgument('nodeTemplate')->getNodeType()->getName() : $joinPoint->getMethodArgument('nodeType')->getName();
