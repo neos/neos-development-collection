@@ -442,6 +442,12 @@
       <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve">
 				<source>No date set</source>
 			<target xml:lang="sv-SE" state="translated">Inget datum har ställts in</target></trans-unit>
+      <trans-unit id="content.inspector.editors.dateTimeEditor.today" xml:space="preserve">
+				<source>Today</source>
+			<target xml:lang="sv-SE" state="needs-translation">Today</target></trans-unit>
+      <trans-unit id="content.inspector.editors.dateTimeEditor.apply" xml:space="preserve">
+				<source>Apply</source>
+			<target xml:lang="sv-SE" state="translated">Tillämpa</target><alt-trans><target xml:lang="sv-SE">Utför</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve">
 				<source>Edit code</source>
 			<target xml:lang="sv-SE" state="translated">Redigera kod</target></trans-unit>

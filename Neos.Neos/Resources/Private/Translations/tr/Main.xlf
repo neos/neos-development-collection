@@ -442,6 +442,12 @@
       <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve">
 				<source>No date set</source>
 			<target xml:lang="tr" state="translated">Tarih ayarlanmadı</target></trans-unit>
+      <trans-unit id="content.inspector.editors.dateTimeEditor.today" xml:space="preserve">
+				<source>Today</source>
+			<target xml:lang="tr" state="needs-translation">Today</target></trans-unit>
+      <trans-unit id="content.inspector.editors.dateTimeEditor.apply" xml:space="preserve">
+				<source>Apply</source>
+			<target xml:lang="tr" state="translated">Uygula</target></trans-unit>
       <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve">
 				<source>Edit code</source>
 			<target xml:lang="tr" state="translated">Kodu düzenle</target></trans-unit>
@@ -721,7 +727,7 @@
 			<target xml:lang="tr" state="translated">{source}'ı, {target}'e taşı</target></trans-unit>
       <trans-unit id="copy__from__to--description" xml:space="preserve">
 				<source>Please select the position at which you want {source} inserted relative to {target}.</source>
-			<target xml:lang="tr" state="needs-translation">Please select the position at which you want {source} inserted relative to {target}.</target></trans-unit>
+			<target xml:lang="tr" state="translated">Lütfen {source} öğesinin {target} ile ilişkili olarak yerleştirilmesini istediğiniz konumu seçin.</target></trans-unit>
       <trans-unit id="insert" xml:space="preserve">
 				<source>Insert</source>
 			<target xml:lang="tr" state="translated">Ekle</target></trans-unit>
@@ -778,10 +784,10 @@
 			<target xml:lang="tr" state="translated">Biçimi Sil</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__outdent" xml:space="preserve">
 				<source>Outdent</source>
-			<target xml:lang="tr" state="needs-translation">Outdent</target></trans-unit>
+			<target xml:lang="tr" state="translated">Girintiyi azalt</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__indent" xml:space="preserve">
 				<source>Indent</source>
-			<target xml:lang="tr" state="needs-translation">Indent</target></trans-unit>
+			<target xml:lang="tr" state="translated">Girinti</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
 			<target xml:lang="tr" state="translated">Yeni Oluştur</target></trans-unit>
