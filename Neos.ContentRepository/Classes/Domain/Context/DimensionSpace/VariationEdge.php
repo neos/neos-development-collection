@@ -42,8 +42,6 @@ final class VariationEdge
         $this->specialization = $specialization;
         $this->generalization = $generalization;
         $this->weight = $weight;
-        $specialization->registerGeneralizationEdge($this);
-        $generalization->registerSpecializationEdge($this);
     }
 
     /**

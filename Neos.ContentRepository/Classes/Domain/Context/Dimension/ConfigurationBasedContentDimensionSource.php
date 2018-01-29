@@ -46,7 +46,9 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
                     throw new MissingContentDimensionDefaultValueException('Content dimension ' . $rawDimensionIdentifier . ' has no default value defined.', 1516639042);
                 }
                 foreach ($dimensionConfiguration['values'] as $rawValue => $configuration) {
-                    $this->extractDimensionValuesAndVariations($rawValue, $values, $variationEdges, $configuration, null, new ContentDimensionValueSpecializationDepth(0));
+                    if (is_array($configuration)) {
+                        $this->extractDimensionValuesAndVariations($rawValue, $values, $variationEdges, $configuration, null, new ContentDimensionValueSpecializationDepth(0));
+                    }
                 }
                 if (!isset($values[$dimensionConfiguration['defaultValue']])) {
                     throw new MissingContentDimensionDefaultValueException('Content dimension ' . $rawDimensionIdentifier . ' has the undefined value ' . $dimensionConfiguration['defaultValue'] . ' declared as default value.', 1516639145);

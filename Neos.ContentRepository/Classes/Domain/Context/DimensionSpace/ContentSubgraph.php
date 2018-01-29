@@ -30,17 +30,7 @@ final class ContentSubgraph
     protected $dimensionSpacePoint;
 
     /**
-     * @var array
-     */
-    protected $generalizationEdges = [];
-
-    /**
-     * @var array
-     */
-    protected $specializationEdges = [];
-
-    /**
-     * @var array
+     * @var array|Dimension\ContentDimensionValueSpecializationDepth[]
      */
     protected $weight;
 
@@ -100,79 +90,10 @@ final class ContentSubgraph
     }
 
     /**
-     * @return array
+     * @return array|Dimension\ContentDimensionValueSpecializationDepth[]
      */
     public function getWeight(): array
     {
         return $this->weight;
-    }
-
-    /**
-     * @param VariationEdge $specializationEdge
-     * @return void
-     */
-    public function registerSpecializationEdge(VariationEdge $specializationEdge)
-    {
-        $this->specializationEdges[$specializationEdge->getSpecialization()->getIdentityHash()] = $specializationEdge;
-    }
-
-    /**
-     * @return array|VariationEdge[]
-     */
-    public function getSpecializationEdges(): array
-    {
-        return $this->specializationEdges;
-    }
-
-    /**
-     * @param VariationEdge $generalizationEdge
-     * @return void
-     */
-    public function registerGeneralizationEdge(VariationEdge $generalizationEdge)
-    {
-        $this->generalizationEdges[$generalizationEdge->getGeneralization()->getIdentityHash()] = $generalizationEdge;
-    }
-
-    /**
-     * @return array|VariationEdge[]
-     */
-    public function getGeneralizationEdges(): array
-    {
-        return $this->generalizationEdges;
-    }
-
-    /**
-     * @return array|ContentSubgraph[]
-     */
-    public function getSpecializations(): array
-    {
-        $specializations = [];
-        foreach ($this->getSpecializationEdges() as $specializationEdge) {
-            $specializations[$specializationEdge->getSpecialization()->getIdentityHash()] = $specializationEdge->getSpecialization();
-        }
-
-        return $specializations;
-    }
-
-    /**
-     * @param ContentSubgraph $specialization
-     * @return bool
-     */
-    public function hasSpecialization(ContentSubgraph $specialization): bool
-    {
-        return isset($this->specializationEdges[$specialization->getIdentityHash()]);
-    }
-
-    /**
-     * @return array|ContentSubgraph[]
-     */
-    public function getGeneralizations(): array
-    {
-        $generalizations = [];
-        foreach ($this->getGeneralizationEdges() as $generalizationEdge) {
-            $generalizations[$generalizationEdge->getGeneralization()->getIdentityHash()] = $generalizationEdge->getGeneralization();
-        }
-
-        return $generalizations;
     }
 }

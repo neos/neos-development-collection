@@ -72,6 +72,16 @@ class ConfigurationBasedContentDimensionSourceTest extends FunctionalTestCase
     }
 
     /**
+     * @throws Dimension\Exception\MissingContentDimensionDefaultValueException
+     */
+    public function emptyDimensionConfigurationIsCorrectlyInitialized()
+    {
+        $this->inject($this->subject, 'dimensionConfiguration', []);
+
+        $this->assertSame([], $this->subject->getContentDimensionsOrderedByPriority());
+    }
+
+    /**
      * @test
      * @throws Dimension\Exception\MissingContentDimensionDefaultValueException
      */
