@@ -442,6 +442,12 @@
       <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve">
 				<source>No date set</source>
 			<target xml:lang="es-ES" state="translated">No hay fecha fijada</target></trans-unit>
+      <trans-unit id="content.inspector.editors.dateTimeEditor.today" xml:space="preserve">
+				<source>Today</source>
+			<target xml:lang="es-ES" state="needs-translation">Today</target></trans-unit>
+      <trans-unit id="content.inspector.editors.dateTimeEditor.apply" xml:space="preserve">
+				<source>Apply</source>
+			<target xml:lang="es-ES" state="translated">Aplicar</target></trans-unit>
       <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve">
 				<source>Edit code</source>
 			<target xml:lang="es-ES" state="translated">Editar código</target></trans-unit>

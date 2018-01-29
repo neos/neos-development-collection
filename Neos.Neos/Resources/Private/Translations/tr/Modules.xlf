@@ -547,7 +547,7 @@
 			<target xml:lang="tr" state="translated">Yeni site oluştur</target></trans-unit>
       <trans-unit id="sites.rootNodeName" xml:space="preserve">
 				<source>Root node name</source>
-			<target xml:lang="tr" state="needs-translation">Root node name</target></trans-unit>
+			<target xml:lang="tr" state="translated">Kök düğüm adı</target></trans-unit>
       <trans-unit id="sites.domains" xml:space="preserve">
 				<source>Domains</source>
 			<target xml:lang="tr" state="translated">Alan adları</target></trans-unit>
@@ -604,10 +604,10 @@
 			<target xml:lang="tr" state="translated">Yeni bir site paketi oluştur</target></trans-unit>
       <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
 				<source>VendorName.MyPackageKey</source>
-			<target xml:lang="tr" state="needs-translation">VendorName.MyPackageKey</target></trans-unit>
+			<target xml:lang="tr" state="translated">VendorName.MyPackageKey</target></trans-unit>
       <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
 				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
-			<target xml:lang="tr" state="needs-translation">The &lt;em&gt;Neos Kickstarter&lt;/em&gt; package is not installed, install it to kickstart new sites.</target></trans-unit>
+			<target xml:lang="tr" state="translated">&lt;em&gt;Neos Kickstarter&lt;/em&gt;paketi yüklenmedi, başlatmak için yeni siteleri yükleyin.</target></trans-unit>
       <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
 			<target xml:lang="tr" state="translated">Bu {0} gönderiyi gerçekten kaldırmak istiyor musun? Bu eylem geri alınamaz.</target></trans-unit>
@@ -628,29 +628,29 @@
 			<target xml:lang="tr" state="translated">Boyutlar</target></trans-unit>
       <trans-unit id="dimensions.description" xml:space="preserve">
 				<source>Grants a graphical overview over the configured fallbacks within each content dimension and across content dimensions.</source>
-			<target xml:lang="tr" state="needs-translation">Grants a graphical overview over the configured fallbacks within each content dimension and across content dimensions.</target></trans-unit>
+			<target xml:lang="tr" state="translated">Her içerik boyutu ve içerik boyutları arasında yapılandırılan geri dönüşleri üzerinde grafiksel bir genel bakış verir.</target></trans-unit>
       <trans-unit id="dimensions.interDimension.legend" xml:space="preserve">
 				<source>Inter dimensional fallback graph</source>
-			<target xml:lang="tr" state="needs-translation">Inter dimensional fallback graph</target></trans-unit>
+			<target xml:lang="tr" state="translated">Boyutlararası düşüş grafiği</target></trans-unit>
       <trans-unit id="dimensions.interDimension.short" xml:space="preserve">
 				<source>Inter dimensional</source>
-			<target xml:lang="tr" state="needs-translation">Inter dimensional</target></trans-unit>
+			<target xml:lang="tr" state="translated">Boyutlararası</target></trans-unit>
       <trans-unit id="dimensions.interDimension.description" xml:space="preserve">
 				<source>The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
 Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The higher the priority the higher the opacity.
 Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</source>
-			<target xml:lang="tr" state="needs-translation">The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
-Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The higher the priority the higher the opacity.
-Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</target></trans-unit>
+			<target xml:lang="tr" state="translated">Boyutlararası geri dönüş grafiği, alt grafikler (düğüm olarak görüntülenen içerik boyutu değeri kombinasyonları) arasında olası tüm geri dönüşleri (kenar olarak görüntülenir) görüntüler.
+Birincil yedekler mavi olarak işaretlenir ve her zaman görünür olurken, daha düşük önceliğe sahip yedekler fareyle üzerine gelinir. Öncelikle ne kadar yüksek olursa opaklık o kadar yüksek olur.
+Yalnızca geri dönüşünü ve değişkenlerini görmek için düğümlerden birini tıklayın. Filtreyi kaldırmak için tekrar tıklayın.</target></trans-unit>
       <trans-unit id="dimensions.intraDimension.legend" xml:space="preserve">
 				<source>Intra dimensional fallback graph</source>
-			<target xml:lang="tr" state="needs-translation">Intra dimensional fallback graph</target></trans-unit>
+			<target xml:lang="tr" state="translated">Boyutlararası düşüş grafiği</target></trans-unit>
       <trans-unit id="dimensions.intraDimension.short" xml:space="preserve">
 				<source>Intra dimensional</source>
-			<target xml:lang="tr" state="needs-translation">Intra dimensional</target></trans-unit>
+			<target xml:lang="tr" state="translated">Boyutlararası</target></trans-unit>
       <trans-unit id="dimensions.intraDimension.description" xml:space="preserve">
 				<source>The intra dimensional fallback graph displays fallbacks within each content dimension.</source>
-			<target xml:lang="tr" state="needs-translation">The intra dimensional fallback graph displays fallbacks within each content dimension.</target></trans-unit>
+			<target xml:lang="tr" state="translated">İç boyutsal geri dönüşüm grafiği her içerik boyutu içinde geri düşümü görüntüler.</target></trans-unit>
       <!-- User -->
       <trans-unit id="user.label" xml:space="preserve">
 				<source>User</source>

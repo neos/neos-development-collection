@@ -442,6 +442,12 @@
       <trans-unit id="content.inspector.editors.dateTimeEditor.noDateSet" xml:space="preserve">
 				<source>No date set</source>
 			<target xml:lang="zh-CN" state="translated">没有设置日期</target></trans-unit>
+      <trans-unit id="content.inspector.editors.dateTimeEditor.today" xml:space="preserve">
+				<source>Today</source>
+			<target xml:lang="zh-CN" state="needs-translation">Today</target></trans-unit>
+      <trans-unit id="content.inspector.editors.dateTimeEditor.apply" xml:space="preserve">
+				<source>Apply</source>
+			<target xml:lang="zh-CN" state="translated">应用</target><alt-trans><target xml:lang="zh-CN">发布</target></alt-trans></trans-unit>
       <trans-unit id="content.inspector.editors.codeEditor.editCode" xml:space="preserve">
 				<source>Edit code</source>
 			<target xml:lang="zh-CN" state="translated">编辑代码</target></trans-unit>
