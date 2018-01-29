@@ -1,8 +1,0 @@
-'Neos.NodeTypes:Text':
-  superTypes:
-    'Neos.Neos:Content': true
-    'Neos.NodeTypes:TextMixin': true
-  ui:
-    label: i18n
-    icon: 'icon-file-text'
-    position: 200

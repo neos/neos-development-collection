@@ -1,1 +1,0 @@
-prototype(Neos.NodeTypes:TextWithImage) < prototype(Neos.NodeTypes:Image)

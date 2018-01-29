@@ -34,7 +34,6 @@
         "typo3/typoscript": "self.version",
         "typo3/media": "self.version",
         "typo3/neos": "self.version",
-        "typo3/neos-nodetypes": "self.version",
         "typo3/neos-kickstarter": "self.version",
         "neos/content-repository": "self.version",
         "neos/diff": "self.version",
@@ -42,14 +41,6 @@
         "neos/media-browser": "self.version",
         "neos/media": "self.version",
         "neos/neos": "self.version",
-        "neos/nodetypes-assetlist": "self.version",
-        "neos/nodetypes-basemixins": "self.version",
-        "neos/nodetypes-columnlayouts": "self.version",
-        "neos/nodetypes-contentreferences": "self.version",
-        "neos/nodetypes-form": "self.version",
-        "neos/nodetypes-html": "self.version",
-        "neos/nodetypes-navigation": "self.version",
-        "neos/nodetypes": "self.version",
         "neos/site-kickstarter": "self.version"
     },
     "suggest": {
@@ -76,30 +67,6 @@
             ],
             "Neos\\Neos\\": [
                 "Neos.Neos/Classes"
-            ],
-            "Neos\\NodeTypes\\AssetList\\": [
-                "Neos.NodeTypes.AssetList/Classes"
-            ],
-            "Neos\\NodeTypes\\BaseMixins\\": [
-                "Neos.NodeTypes.BaseMixins/Classes"
-            ],
-            "Neos\\NodeTypes\\ColumnLayouts\\": [
-                "Neos.NodeTypes.ColumnLayouts/Classes"
-            ],
-            "Neos\\NodeTypes\\ContentReferences\\": [
-                "Neos.NodeTypes.ContentReferences/Classes"
-            ],
-            "Neos\\NodeTypes\\Form\\": [
-                "Neos.NodeTypes.Form/Classes"
-            ],
-            "Neos\\NodeTypes\\Html\\": [
-                "Neos.NodeTypes.Html/Classes"
-            ],
-            "Neos\\NodeTypes\\Navigation\\": [
-                "Neos.NodeTypes.Navigation/Classes"
-            ],
-            "Neos\\NodeTypes\\": [
-                "Neos.NodeTypes/Classes"
             ],
             "Neos\\SiteKickstarter\\": [
                 "Neos.SiteKickstarter/Classes"
