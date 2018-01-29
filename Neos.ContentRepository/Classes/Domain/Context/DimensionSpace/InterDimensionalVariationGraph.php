@@ -160,15 +160,21 @@ class InterDimensionalVariationGraph
         $lowestWeights = [];
         foreach ($this->getSubgraphs() as $generalizationHash => $generalization) {
             foreach ($this->getSubgraphs() as $specializationHash => $specialization) {
-                $weights[$specializationHash] = $this->normalizeWeight($specialization->getWeight());
-                if ($generalizationHash === $specializationHash || $weights[$generalizationHash] >= $weights[$specializationHash]) {
+                if (!isset($weights[$specializationHash])) {
+                    $weights[$specializationHash] = $this->normalizeWeight($specialization->getWeight());
+                }
+                if ($generalizationHash === $specializationHash || $weights[$generalizationHash] > $weights[$specializationHash]) {
                     continue;
                 }
+
                 foreach ($generalization->getDimensionValues() as $rawDimensionIdentifier => $rawDimensionValue) {
                     $dimensionIdentifier = new Dimension\ContentDimensionIdentifier($rawDimensionIdentifier);
                     $dimension = $this->contentDimensionSource->getDimension($dimensionIdentifier);
                     try {
-                        $dimension->calculateSpecializationDepth($specialization->getDimensionValue($dimensionIdentifier), $generalization->getDimensionValue($dimensionIdentifier));
+                        $dimension->calculateSpecializationDepth(
+                            $specialization->getDimensionValue($dimensionIdentifier),
+                            $generalization->getDimensionValue($dimensionIdentifier)
+                        );
                     } catch (Dimension\Exception\InvalidGeneralizationException $exception) {
                         continue 2;
                     }

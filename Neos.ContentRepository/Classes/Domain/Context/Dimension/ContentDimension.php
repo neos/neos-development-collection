@@ -159,6 +159,7 @@ final class ContentDimension
     {
         $specializationDepth = 0;
         $currentGeneralization = $specialization;
+
         while ($currentGeneralization) {
             if ($currentGeneralization === $generalization) {
                 return new ContentDimensionValueSpecializationDepth($specializationDepth);
