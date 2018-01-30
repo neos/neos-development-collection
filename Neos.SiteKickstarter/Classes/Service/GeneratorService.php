@@ -120,7 +120,7 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
      */
     protected function generateSitesPageFusion($packageKey, $siteName)
     {
-        $templatePathAndFilename = 'resource://Neos.SiteKickstarter/Private/Generator/Fusion/NodeTypes/Pages/Page.ts2';
+        $templatePathAndFilename = 'resource://Neos.SiteKickstarter/Private/Generator/Fusion/NodeTypes/Pages/Page.fusion';
 
         $contextVariables = array();
         $contextVariables['packageKey'] = $packageKey;
@@ -130,7 +130,7 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
 
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
-        $sitesPageFusionPathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/TypoScript/NodeTypes/Page.ts2';
+        $sitesPageFusionPathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/Fusion/NodeTypes/Page.fusion';
         $this->generateFile($sitesPageFusionPathAndFilename, $fileContent);
     }
 
