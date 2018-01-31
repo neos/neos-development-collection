@@ -538,7 +538,7 @@
 			<target xml:lang="es-ES" state="translated">El módulo de administración de sitios web le proporciona una visión general de todos los sitios. Puede editar, agregar y eliminar información sobre sus sitios, por ejemplo, agregar un nuevo dominio.</target></trans-unit>
       <trans-unit id="sites.add" xml:space="preserve">
 				<source>Add new site</source>
-			<target xml:lang="es-ES" state="needs-translation">Add new site</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Agregar nuevo sitio</target></trans-unit>
       <trans-unit id="sites.actions.newSite.label" xml:space="preserve">
 				<source>Create site</source>
 			<target xml:lang="es-ES" state="translated">Crear sitio</target></trans-unit>
@@ -550,7 +550,7 @@
 			<target xml:lang="es-ES" state="translated">Nombre del nodo raíz</target></trans-unit>
       <trans-unit id="sites.domains" xml:space="preserve">
 				<source>Domains</source>
-			<target xml:lang="es-ES" state="needs-translation">Domains</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Dominios</target></trans-unit>
       <trans-unit id="sites" xml:space="preserve">
 				<source>Site</source>
 			<target xml:lang="es-ES" state="translated">Sitio web</target></trans-unit>

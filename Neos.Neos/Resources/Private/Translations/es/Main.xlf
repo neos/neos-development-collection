@@ -287,43 +287,43 @@
 			<target xml:lang="es-ES" state="translated">Primario</target></trans-unit>
       <trans-unit id="package" xml:space="preserve">
 				<source>Package</source>
-			<target xml:lang="es-ES" state="needs-translation">Package</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Paquete</target></trans-unit>
       <trans-unit id="deactivated" xml:space="preserve">
 				<source>Deactivated</source>
 			<target xml:lang="es-ES" state="translated">Desactivado</target></trans-unit>
       <trans-unit id="unavailable" xml:space="preserve">
 				<source>Unavailable</source>
-			<target xml:lang="es-ES" state="needs-translation">Unavailable</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">No disponible</target></trans-unit>
       <trans-unit id="inactive" xml:space="preserve">
 				<source>Inactive</source>
-			<target xml:lang="es-ES" state="needs-translation">Inactive</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Inactivo</target></trans-unit>
       <trans-unit id="clickToEdit" xml:space="preserve">
 				<source>Click to edit</source>
 			<target xml:lang="es-ES" state="translated">Haga clic para editar</target></trans-unit>
       <trans-unit id="clickToDeactivate" xml:space="preserve">
 				<source>Click to deactivate</source>
-			<target xml:lang="es-ES" state="needs-translation">Click to deactivate</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Haz click para desactivar</target></trans-unit>
       <trans-unit id="clickToActivate" xml:space="preserve">
 				<source>Click to activate</source>
-			<target xml:lang="es-ES" state="needs-translation">Click to activate</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Haz click para activar</target></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
 			<target xml:lang="es-ES" state="translated">Haga clic para borrar</target></trans-unit>
       <trans-unit id="clickToCreate" xml:space="preserve">
 				<source>Click to create new</source>
-			<target xml:lang="es-ES" state="needs-translation">Click to create new</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Haz click para crear nuevo</target></trans-unit>
       <trans-unit id="state" xml:space="preserve">
 				<source>Status</source>
-			<target xml:lang="es-ES" state="needs-translation">Status</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Estado</target></trans-unit>
       <trans-unit id="active" xml:space="preserve">
 				<source>Active</source>
-			<target xml:lang="es-ES" state="needs-translation">Active</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Activo</target></trans-unit>
       <trans-unit id="domains" xml:space="preserve">
 				<source>Domains</source>
-			<target xml:lang="es-ES" state="needs-translation">Domains</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Dominios</target></trans-unit>
       <trans-unit id="domain" xml:space="preserve">
 				<source>Domain</source>
-			<target xml:lang="es-ES" state="needs-translation">Domain</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Dominio</target></trans-unit>
       <trans-unit id="deleteConfirm" xml:space="preserve">
 				<source>Yes, delete it!</source>
 			<target xml:lang="es-ES" state="translated">Si, ¡Eliminalo!</target></trans-unit>
