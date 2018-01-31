@@ -2,7 +2,7 @@
   "name": "neos/fusion-afx",
   "description": "JSX inspired compact syntax for Neos.Fusion",
   "type": "neos-package",
-  "license": "GPL-3.0-only",
+  "license": "GPL-3.0-or-later",
   "replace": {
     "packagefactory/atomicfusion-afx": "*"
   },
