@@ -498,18 +498,23 @@ class InterDimensionalVariationGraphTest extends FunctionalTestCase
             $specializationCoordinates = $variationData[0];
             $primaryGeneralizationCoordinates = $variationData[1];
 
-            $this->assertSame(
-                ($primaryGeneralizationCoordinates
-                    ? $this->subject->getSubgraphByDimensionSpacePoint(new Domain\ValueObject\DimensionSpacePoint([
-                        'dimensionA' => $primaryGeneralizationCoordinates[0],
-                        'dimensionB' => $primaryGeneralizationCoordinates[1]
-                    ]))
+            $specializationDimensionSpacePoint = new Domain\ValueObject\DimensionSpacePoint([
+                'dimensionA' => $specializationCoordinates[0],
+                'dimensionB' => $specializationCoordinates[1]
+            ]);
+            $expectedPrimaryGeneralizationSpacePoint = $primaryGeneralizationCoordinates
+                ? new Domain\ValueObject\DimensionSpacePoint([
+                    'dimensionA' => $primaryGeneralizationCoordinates[0],
+                    'dimensionB' => $primaryGeneralizationCoordinates[1]
+                ])
+                : null;
+
+            $this->assertEquals(
+                ($expectedPrimaryGeneralizationSpacePoint
+                    ? $this->subject->getSubgraphByDimensionSpacePoint($expectedPrimaryGeneralizationSpacePoint)
                     : null),
                 $this->subject->getPrimaryGeneralization(
-                    $this->subject->getSubgraphByDimensionSpacePoint(new Domain\ValueObject\DimensionSpacePoint([
-                        'dimensionA' => $specializationCoordinates[0],
-                        'dimensionB' => $specializationCoordinates[1]
-                    ]))
+                    $this->subject->getSubgraphByDimensionSpacePoint($specializationDimensionSpacePoint)
                 )
             );
         }

@@ -29,7 +29,7 @@ final class ContentDimensionValueSpecializationDepth implements \JsonSerializabl
     public function __construct(int $depth)
     {
         if ($depth < 0) {
-            throw new Exception\InvalidContentDimensionValueSpecializationDepthException('Content dimension values cannot have negative specialization depths.', 1516573132);
+            throw new Exception\InvalidContentDimensionValueSpecializationDepthException('Specialization depths cannot be negative.', 1516573132);
         }
         $this->depth = $depth;
     }
@@ -67,6 +67,16 @@ final class ContentDimensionValueSpecializationDepth implements \JsonSerializabl
     {
         return new ContentDimensionValueSpecializationDepth($this->depth + 1);
     }
+
+    /**
+     * @param ContentDimensionValueSpecializationDepth $otherDepth
+     * @return ContentDimensionValueSpecializationDepth
+     */
+    public function decreaseBy(ContentDimensionValueSpecializationDepth $otherDepth)
+    {
+        return new ContentDimensionValueSpecializationDepth($this->depth - $otherDepth->getDepth());
+    }
+
 
     /**
      * @return int

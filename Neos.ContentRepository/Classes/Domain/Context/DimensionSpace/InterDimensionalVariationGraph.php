@@ -48,12 +48,12 @@ class InterDimensionalVariationGraph
     protected $subgraphs;
 
     /**
-     * @var array|VariationEdge[][]
+     * @var array|ContentSubgraphVariationEdge[][]
      */
     protected $generalizations;
 
     /**
-     * @var array|VariationEdge[][]
+     * @var array|ContentSubgraphVariationEdge[][]
      */
     protected $specializations;
 
@@ -115,7 +115,6 @@ class InterDimensionalVariationGraph
         return isset($this->subgraphs[$hash]) ? $this->subgraphs[$hash] : null;
     }
 
-
     /**
      * @return int
      */
@@ -134,18 +133,17 @@ class InterDimensionalVariationGraph
     }
 
     /**
-     * @param array|Dimension\ContentDimensionValueSpecializationDepth[] $weight
+     * @param ContentSubgraphVariationWeight $weight
      * @return int
      */
-    protected function normalizeWeight(array $weight): int
+    protected function normalizeWeight(ContentSubgraphVariationWeight $weight): int
     {
         $base = $this->determineWeightNormalizationBase();
         $normalizedWeight = 0;
-        $exponent = 0;
-        foreach (array_reverse($weight) as $dimensionName => $dimensionSpecializationWeight) {
-            /** @var Dimension\ContentDimensionValueSpecializationDepth $dimensionSpecializationWeight */
-            $normalizedWeight += pow($base, $exponent) * $dimensionSpecializationWeight->getDepth();
-            $exponent++;
+        $exponent = count($weight) - 1;
+        foreach ($weight->getWeight() as $dimensionIdentifier => $specializationDepth) {
+            $normalizedWeight += pow($base, $exponent) * $specializationDepth->getDepth();
+            $exponent--;
         }
 
         return $normalizedWeight;
@@ -156,42 +154,56 @@ class InterDimensionalVariationGraph
      */
     protected function initializeVariations()
     {
-        $weights = [];
-        $lowestWeights = [];
-        foreach ($this->getSubgraphs() as $generalizationHash => $generalization) {
-            foreach ($this->getSubgraphs() as $specializationHash => $specialization) {
-                if (!isset($weights[$specializationHash])) {
-                    $weights[$specializationHash] = $this->normalizeWeight($specialization->getWeight());
-                }
-                if ($generalizationHash === $specializationHash || $weights[$generalizationHash] > $weights[$specializationHash]) {
-                    continue;
-                }
+        $normalizedVariationWeights = [];
+        $lowestVariationWeights = [];
 
-                foreach ($generalization->getDimensionValues() as $rawDimensionIdentifier => $rawDimensionValue) {
-                    $dimensionIdentifier = new Dimension\ContentDimensionIdentifier($rawDimensionIdentifier);
-                    $dimension = $this->contentDimensionSource->getDimension($dimensionIdentifier);
-                    try {
-                        $dimension->calculateSpecializationDepth(
-                            $specialization->getDimensionValue($dimensionIdentifier),
-                            $generalization->getDimensionValue($dimensionIdentifier)
-                        );
-                    } catch (Dimension\Exception\InvalidGeneralizationException $exception) {
-                        continue 2;
+        foreach ($this->getSubgraphs() as $generalizationHash => $generalization) {
+            if (!isset($normalizedVariationWeights[$generalizationHash])) {
+                $normalizedVariationWeights[$generalizationHash] = $this->normalizeWeight($generalization->getWeight());
+            }
+
+            foreach ($generalization->getDimensionValues() as $rawDimensionIdentifier => $contentDimensionValue) {
+                $dimensionIdentifier = new Dimension\ContentDimensionIdentifier($rawDimensionIdentifier);
+                $dimension = $this->contentDimensionSource->getDimension($dimensionIdentifier);
+                foreach ($dimension->getSpecializations($contentDimensionValue) as $specializedValue) {
+                    $specializedDimensionSpacePoint = $generalization->getDimensionSpacePoint()->vary($dimensionIdentifier, $specializedValue);
+                    if (!$this->allowedDimensionSubspace->contains($specializedDimensionSpacePoint)) {
+                        continue;
+                    }
+                    $specialization = $this->getSubgraphByDimensionSpacePoint($specializedDimensionSpacePoint);
+
+                    $this->initializeVariationsForSubgraphPair($specialization, $generalization);
+
+                    if (!isset($normalizedVariationWeights[$specialization->getIdentityHash()])) {
+                        $normalizedVariationWeights[$specialization->getIdentityHash()] = $this->normalizeWeight($specialization->getWeight());
+                    }
+                    $normalizedVariationWeight = $normalizedVariationWeights[$specialization->getIdentityHash()] - $normalizedVariationWeights[$generalizationHash];
+                    if (!isset($lowestVariationWeights[$specialization->getIdentityHash()]) || $normalizedVariationWeight < $lowestVariationWeights[$specialization->getIdentityHash()]) {
+                        $this->primaryGeneralizations[$specialization->getIdentityHash()] = $generalization;
                     }
                 }
-
-                $specializationWeight = [];
-                foreach ($specialization->getWeight() as $dimensionIdentifier => $weightInDimension) {
-                    $specializationWeight[$dimensionIdentifier] = $weightInDimension->getDepth() - $generalization->getWeight()[$dimensionIdentifier]->getDepth();
-                }
-                $variationEdge = new VariationEdge($specialization, $generalization, $specializationWeight);
-                $this->generalizations[$specializationHash][$generalizationHash] = $variationEdge;
-                $this->specializations[$generalizationHash][$specializationHash] = $variationEdge;
-                if (!isset($lowestWeights[$specializationHash]) || $specializationWeight < $lowestWeights[$specializationHash]) {
-                    $lowestWeights[$specializationHash] = $specializationWeight;
-                    $this->primaryGeneralizations[$specializationHash] = $generalization;
-                }
             }
+        }
+    }
+
+    /**
+     * @param ContentSubgraph $specialization
+     * @param ContentSubgraph $generalization
+     */
+    protected function initializeVariationsForSubgraphPair(ContentSubgraph $specialization, ContentSubgraph $generalization)
+    {
+        /** @var array|ContentSubgraph[] $generalizationsToProcess */
+        $generalizationsToProcess = [$generalization->getIdentityHash() => $generalization];
+        if (isset($this->generalizations[$generalization->getIdentityHash()])) {
+            foreach ($this->generalizations[$generalization->getIdentityHash()] as $parentGeneralizationHash => $parentGeneralizationEdge) {
+                $generalizationsToProcess[$parentGeneralizationHash] = $parentGeneralizationEdge->getGeneralization();
+            }
+        }
+
+        foreach ($generalizationsToProcess as $generalizationHashToProcess => $generalizationToProcess) {
+            $variationEdge = new ContentSubgraphVariationEdge($specialization, $generalizationToProcess);
+            $this->generalizations[$specialization->getIdentityHash()][$generalizationToProcess->getIdentityHash()] = $variationEdge;
+            $this->specializations[$generalizationToProcess->getIdentityHash()][$specialization->getIdentityHash()] = $variationEdge;
         }
     }
 

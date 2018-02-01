@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\ContentRepository\Domain\Context\Dimension\ContentDimensionIdentifier;
 use Neos\Utility\Arrays;
 
 /**
@@ -63,6 +64,19 @@ final class DimensionSpacePoint implements \JsonSerializable
         }
 
         return new DimensionSpacePoint($coordinates);
+    }
+
+    /**
+     * @param ContentDimensionIdentifier $dimensionIdentifier
+     * @param string $value
+     * @return DimensionSpacePoint
+     */
+    public function vary(ContentDimensionIdentifier $dimensionIdentifier, string $value): DimensionSpacePoint
+    {
+        $variedCoordinates = $this->coordinates;
+        $variedCoordinates[(string)$dimensionIdentifier] = $value;
+
+        return new DimensionSpacePoint($variedCoordinates);
     }
 
     /**

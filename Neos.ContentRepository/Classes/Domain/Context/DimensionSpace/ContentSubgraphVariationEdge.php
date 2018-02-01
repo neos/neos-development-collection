@@ -15,7 +15,7 @@ namespace Neos\ContentRepository\Domain\Context\DimensionSpace;
  * The variation edge domain model
  * May serve as a generalization edge for specializations or as a specialization edge for generalizations
  */
-final class VariationEdge
+final class ContentSubgraphVariationEdge
 {
     /**
      * @var ContentSubgraph
@@ -28,20 +28,20 @@ final class VariationEdge
     protected $generalization;
 
     /**
-     * @var array
+     * @var ContentSubgraphVariationWeight
      */
     protected $weight;
 
     /**
      * @param ContentSubgraph $specialization
      * @param ContentSubgraph $generalization
-     * @param array $weight
+     * @throws Exception\IncomparableContentSubgraphVariationWeightsException
      */
-    public function __construct(ContentSubgraph $specialization, ContentSubgraph $generalization, array $weight)
+    public function __construct(ContentSubgraph $specialization, ContentSubgraph $generalization)
     {
         $this->specialization = $specialization;
         $this->generalization = $generalization;
-        $this->weight = $weight;
+        $this->weight = $specialization->getWeight()->decreaseBy($generalization->getWeight());
     }
 
     /**
@@ -61,9 +61,9 @@ final class VariationEdge
     }
 
     /**
-     * @return array
+     * @return ContentSubgraphVariationWeight
      */
-    public function getWeight(): array
+    public function getWeight(): ContentSubgraphVariationWeight
     {
         return $this->weight;
     }
