@@ -11,11 +11,10 @@ namespace Neos\ContentRepository\Tests\Unit\Transformations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Context\Dimension;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\ContentRepository\Domain\Model\ContentDimension;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Model\NodeDimension;
-use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
 use Neos\ContentRepository\Migration\Transformations\SetDimensions;
 
 /**
@@ -28,50 +27,50 @@ class SetDimensionsTest extends UnitTestCase
      */
     public function setDimensionsInput()
     {
-        return array(
+        return [
             // single dimension, single value
-            array(
-                array(
-                    'language' => array('en')
-                ),
-                array(
-                    array('language' => 'en')
-                )
-            ),
+            [
+                [
+                    'language' => ['en']
+                ],
+                [
+                    ['language' => 'en']
+                ]
+            ],
             // single dimension, two values
-            array(
-                array(
-                    'system' => array('iOS', 'Android')
-                ),
-                array(
-                    array('system' => 'iOS'),
-                    array('system' => 'Android')
-                )
-            ),
+            [
+                [
+                    'system' => ['iOS', 'Android']
+                ],
+                [
+                    ['system' => 'iOS'],
+                    ['system' => 'Android']
+                ]
+            ],
             // two dimension, single values
-            array(
-                array(
-                    'language' => array('lv'),
-                    'system' => array('Neos')
-                ),
-                array(
-                    array('language' => 'lv'),
-                    array('system' => 'Neos')
-                )
-            ),
+            [
+                [
+                    'language' => ['lv'],
+                    'system' => ['Neos']
+                ],
+                [
+                    ['language' => 'lv'],
+                    ['system' => 'Neos']
+                ]
+            ],
             // two dimension, multiple values
-            array(
-                array(
-                    'language' => array('lv'),
-                    'system' => array('Neos', 'Flow')
-                ),
-                array(
-                    array('language' => 'lv'),
-                    array('system' => 'Neos'),
-                    array('system' => 'Flow')
-                )
-            ),
-        );
+            [
+                [
+                    'language' => ['lv'],
+                    'system' => ['Neos', 'Flow']
+                ],
+                [
+                    ['language' => 'lv'],
+                    ['system' => 'Neos'],
+                    ['system' => 'Flow']
+                ]
+            ],
+        ];
     }
 
     /**
@@ -89,14 +88,19 @@ class SetDimensionsTest extends UnitTestCase
         $transformation->setDimensionValues($setValues);
 
         if ($configuredDimensions !== null) {
-            $configuredDimensionObjects = array();
+            $contentDimensions = [];
             foreach ($configuredDimensions as $dimensionIdentifier => $dimensionDefault) {
-                $configuredDimensionObjects[] = new ContentDimension($dimensionIdentifier, $dimensionDefault);
+                $defaultValue = new Dimension\ContentDimensionValue($dimensionDefault);
+                $contentDimensions[] = new Dimension\ContentDimension(
+                    new Dimension\ContentDimensionIdentifier($dimensionIdentifier),
+                    [$defaultValue],
+                    $defaultValue
+                );
             }
 
-            $mockContentDimensionRepository = $this->getMockBuilder(ContentDimensionRepository::class)->getMock();
-            $mockContentDimensionRepository->expects($this->atLeastOnce())->method('findAll')->will($this->returnValue($configuredDimensionObjects));
-            $this->inject($transformation, 'contentDimensionRepository', $mockContentDimensionRepository);
+            $mockContentDimensionSource = $this->getMockBuilder(Dimension\ContentDimensionSourceInterface::class)->getMock();
+            $mockContentDimensionSource->expects($this->atLeastOnce())->method('getContentDimensionsOrderedByPriority')->will($this->returnValue($contentDimensions));
+            $this->inject($transformation, 'contentDimensionSource', $mockContentDimensionSource);
         }
 
         $expected = array(

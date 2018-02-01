@@ -13,7 +13,6 @@ namespace Neos\ContentRepository\Tests\Functional\Domain;
 
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Domain\Service\Context;
@@ -52,11 +51,6 @@ class NodeServiceTest extends FunctionalTestCase
     protected $nodeTypeManager;
 
     /**
-     * @var ContentDimensionRepository
-     */
-    protected $contentDimensionRepository;
-
-    /**
      * @var WorkspaceRepository
      */
     protected $workspaceRepository;
@@ -76,7 +70,6 @@ class NodeServiceTest extends FunctionalTestCase
         $this->contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
         $this->context = $this->contextFactory->create(array('workspaceName' => 'live'));
         $this->nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
-        $this->contentDimensionRepository = $this->objectManager->get(ContentDimensionRepository::class);
         $this->workspaceRepository = $this->objectManager->get(WorkspaceRepository::class);
         $this->nodeService = $this->objectManager->get(NodeService::class);
     }
@@ -88,7 +81,6 @@ class NodeServiceTest extends FunctionalTestCase
     {
         parent::tearDown();
         $this->inject($this->contextFactory, 'contextInstances', array());
-        $this->contentDimensionRepository->setDimensionsConfiguration(array());
     }
 
     /**

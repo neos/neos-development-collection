@@ -15,8 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Utility\Arrays;
 use Neos\Flow\Utility\Now;
-use Neos\ContentRepository\Domain\Model\ContentDimension;
-use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
+use Neos\ContentRepository\Domain\Context\Dimension;
 use Neos\ContentRepository\Exception\InvalidNodeContextException;
 
 /**
@@ -44,9 +43,9 @@ class ContextFactory implements ContextFactoryInterface
 
     /**
      * @Flow\Inject
-     * @var ContentDimensionRepository
+     * @var Dimension\ContentDimensionSourceInterface
      */
-    protected $contentDimensionRepository;
+    protected $contentDimensionSource;
 
     /**
      * @Flow\Inject(lazy=FALSE)
@@ -82,6 +81,7 @@ class ContextFactory implements ContextFactoryInterface
      * @param array $contextProperties
      * @return Context
      * @api
+     * @throws InvalidNodeContextException
      */
     public function create(array $contextProperties = array())
     {
@@ -114,6 +114,7 @@ class ContextFactory implements ContextFactoryInterface
      *
      * @param array $contextProperties
      * @return array
+     * @throws InvalidNodeContextException
      */
     protected function mergeContextPropertiesWithDefaults(array $contextProperties)
     {
@@ -214,11 +215,11 @@ class ContextFactory implements ContextFactoryInterface
         }
 
         $dimensions = $this->getAvailableDimensions();
-        /** @var ContentDimension $dimension */
+        /** @var Dimension\ContentDimension $dimension */
         foreach ($dimensions as $dimension) {
-            if (!isset($contextProperties['dimensions'][$dimension->getIdentifier()])
-                || !is_array($contextProperties['dimensions'][$dimension->getIdentifier()])
-                || $contextProperties['dimensions'][$dimension->getIdentifier()] === array()
+            if (!isset($contextProperties['dimensions'][(string) $dimension->getIdentifier()])
+                || !is_array($contextProperties['dimensions'][(string) $dimension->getIdentifier()])
+                || $contextProperties['dimensions'][(string) $dimension->getIdentifier()] === []
             ) {
                 throw new InvalidNodeContextException(sprintf('You have to set a non-empty array with one or more values for content dimension "%s" in the context', $dimension->getIdentifier()), 1390300646);
             }
@@ -250,11 +251,11 @@ class ContextFactory implements ContextFactoryInterface
     }
 
     /**
-     * @return array<\Neos\ContentRepository\Domain\Model\ContentDimension>
+     * @return array<\Neos\ContentRepository\Domain\Context\Dimension\ContentDimension>|Dimension\ContentDimension[]
      */
     protected function getAvailableDimensions()
     {
-        return $this->contentDimensionRepository->findAll();
+        return $this->contentDimensionSource->getContentDimensionsOrderedByPriority();
     }
 
     /**
@@ -281,6 +282,7 @@ class ContextFactory implements ContextFactoryInterface
             $contextProperties['targetDimensions'] = array();
         }
         $mergedProperties['targetDimensions'] = Arrays::arrayMergeRecursiveOverrule($defaultContextProperties['targetDimensions'], $contextProperties['targetDimensions']);
+        return;
     }
 
     /**
@@ -293,9 +295,9 @@ class ContextFactory implements ContextFactoryInterface
     {
         $dimensions = $this->getAvailableDimensions();
         foreach ($dimensions as $dimension) {
-            /** @var ContentDimension $dimension */
-            $identifier = $dimension->getIdentifier();
-            $values = array($dimension->getDefault());
+            /** @var Dimension\ContentDimension $dimension */
+            $identifier = (string) $dimension->getIdentifier();
+            $values = [(string) $dimension->getDefaultValue()];
             if (isset($contextProperties['dimensions'][$identifier])) {
                 if (!is_array($contextProperties['dimensions'][$identifier])) {
                     throw new InvalidNodeContextException(sprintf('The given dimension fallback chain for "%s" should be an array of string, but "%s" was given.', $identifier, gettype($contextProperties['dimensions'][$identifier])), 1407417930);

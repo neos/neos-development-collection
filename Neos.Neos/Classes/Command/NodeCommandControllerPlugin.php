@@ -21,7 +21,6 @@ use Neos\Neos\Utility\NodeUriPathSegmentGenerator;
 use Neos\ContentRepository\Command\NodeCommandControllerPluginInterface;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Domain\Service\ContentDimensionCombinator;
@@ -49,12 +48,6 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
      * @var WorkspaceRepository
      */
     protected $workspaceRepository;
-
-    /**
-     * @Flow\Inject
-     * @var ContentDimensionRepository
-     */
-    protected $contentDimensionRepository;
 
     /**
      * @Flow\Inject
@@ -96,6 +89,8 @@ class NodeCommandControllerPlugin implements NodeCommandControllerPluginInterfac
         switch ($controllerCommandName) {
             case 'repair':
                 return 'Run integrity checks related to Neos features';
+            default:
+                return '';
         }
     }
 
@@ -122,6 +117,8 @@ removeContentDimensionsFromRootAndSitesNode
 Removes content dimensions from the root and sites nodes
 
 HELPTEXT;
+            default:
+                return '';
         }
     }
 
@@ -211,6 +208,8 @@ HELPTEXT;
      * @param NodeInterface $node The node where the traversal starts
      * @param boolean $dryRun
      * @return void
+     * @throws \Neos\ContentRepository\Exception\NodeException
+     * @throws \Neos\Neos\Exception
      */
     protected function generateUriPathSegmentsForNode(NodeInterface $node, $dryRun)
     {
@@ -238,6 +237,7 @@ HELPTEXT;
      * @param string $workspaceName
      * @param boolean $dryRun
      * @return void
+     * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
     public function removeContentDimensionsFromRootAndSitesNode($workspaceName, $dryRun)
     {

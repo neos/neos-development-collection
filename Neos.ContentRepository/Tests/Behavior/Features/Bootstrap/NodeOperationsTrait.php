@@ -11,11 +11,14 @@ namespace Neos\ContentRepository\Tests\Behavior\Features\Bootstrap;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Context\Dimension;
+use Neos\ContentRepository\Domain\Context\DimensionSpace;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Domain\Service\PublishingServiceInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\Arrays;
+use Neos\Utility\ObjectAccess;
 use PHPUnit\Framework\Assert as Assert;
 use Symfony\Component\Yaml\Yaml;
 
@@ -163,43 +166,18 @@ trait NodeOperationsTrait
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg(\Neos\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))));
         } else {
-            $dimensions = array();
-            $presetsFound = false;
+            $dimensionConfiguration = [];
             foreach ($table->getHash() as $row) {
-                $dimensions[$row['Identifier']] = array(
-                    'default' => $row['Default']
-                );
-
-                $defaultPreset = '';
-                if (isset($row['Presets'])) {
-                    $presetsFound = true;
-                    // parse a preset string like:
-                    // preset1=dimensionValue1,dimensionValue2; preset2=dimensionValue3
-                    $presetStrings = Arrays::trimExplode(';', $row['Presets']);
-                    $presets = array();
-                    foreach ($presetStrings as $presetString) {
-                        list($presetName, $presetValues) = Arrays::trimExplode('=', $presetString);
-                        $presets[$presetName] = array(
-                            'values' => Arrays::trimExplode(',', $presetValues),
-                            'uriSegment' => $presetName
-                        );
-
-                        if ($defaultPreset === '') {
-                            $defaultPreset = $presetName;
-                        }
-                    }
-
-                    $dimensions[$row['Identifier']]['presets'] = $presets;
-                    $dimensions[$row['Identifier']]['defaultPreset'] = $defaultPreset;
-                }
+                $dimensionConfiguration[$row['Identifier']] = [
+                    'defaultValue' => $row['Default'],
+                    'values' => $row['Values']
+                ];
             }
-            $contentDimensionRepository = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Repository\ContentDimensionRepository::class);
-            $contentDimensionRepository->setDimensionsConfiguration($dimensions);
 
-            if ($presetsFound === true) {
-                $contentDimensionPresetSource = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface::class);
-                $contentDimensionPresetSource->setConfiguration($dimensions);
-            }
+            /** @var Dimension\ConfigurationBasedContentDimensionSource $contentDimensionSource */
+            $contentDimensionSource = $this->getObjectManager()->get(Dimension\ContentDimensionSourceInterface::class);
+            ObjectAccess::setProperty($contentDimensionSource, 'dimensionConfiguration', $dimensionConfiguration, true);
+            $contentDimensionSource->reset();
 
             $this->resetDimensionSpaceRepositories();
         }
@@ -210,13 +188,10 @@ trait NodeOperationsTrait
      */
     public function iHaveNoContentDimensions()
     {
-        $dimensions = [];
-
-        $contentDimensionRepository = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Repository\ContentDimensionRepository::class);
-        $contentDimensionRepository->setDimensionsConfiguration($dimensions);
-
-        $contentDimensionPresetSource = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface::class);
-        $contentDimensionPresetSource->setConfiguration($dimensions);
+        /** @var Dimension\ConfigurationBasedContentDimensionSource $contentDimensionSource */
+        $contentDimensionSource = $this->getObjectManager()->get(Dimension\ContentDimensionSourceInterface::class);
+        ObjectAccess::setProperty($contentDimensionSource, 'dimensionConfiguration', [], true);
+        $contentDimensionSource->reset();
 
         $this->resetDimensionSpaceRepositories();
     }
@@ -981,31 +956,29 @@ trait NodeOperationsTrait
 
     /**
      * @return void
-     * @throws Exception
      */
     public function resetContentDimensions()
     {
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__);
         } else {
-            $contentDimensionRepository = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Repository\ContentDimensionRepository::class);
-            /** @var \Neos\ContentRepository\Domain\Repository\ContentDimensionRepository $contentDimensionRepository */
-
             // Set the content dimensions to a fixed value for Behat scenarios
-            $dimensionConfiguration = array('language' => array('default' => 'mul_ZZ', 'defaultPreset' => 'mul', 'presets' => ['mul' => ['values' => ['mul']]]));
-            $contentDimensionRepository->setDimensionsConfiguration($dimensionConfiguration);
+            $dimensionConfiguration = [
+                'language' => [
+                    'defaultValue' => 'mul',
+                    'values' => [
+                        'mul' => []
+                    ]
+                ]
+            ];
 
-            $contentDimensionPresetSource = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface::class);
-            $contentDimensionPresetSource->setConfiguration($dimensionConfiguration);
+            /** @var Dimension\ConfigurationBasedContentDimensionSource $contentDimensionSource */
+            $contentDimensionSource = $this->getObjectManager()->get(Dimension\ContentDimensionSourceInterface::class);
 
-            $allowedDimensionSubspace = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Context\DimensionSpace\AllowedDimensionSubspace::class);
-            $allowedDimensionSubspace->initializeObject();
+            ObjectAccess::setProperty($contentDimensionSource, 'dimensionConfiguration', $dimensionConfiguration, true);
+            $contentDimensionSource->reset();
 
-            $intraDimensionalFallbackGraph = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Context\Dimension\Repository\IntraDimensionalFallbackGraph::class);
-            $intraDimensionalFallbackGraph->initializeObject();
-
-            $interDimensionalFallbackGraph = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Context\DimensionSpace\InterDimensionalVariationGraph::class);
-            $interDimensionalFallbackGraph->initializeObject();
+            $this->resetDimensionSpaceRepositories();
         }
     }
 
@@ -1057,11 +1030,12 @@ trait NodeOperationsTrait
             }
 
             if ($addDimensionDefaults) {
-                $contentDimensionRepository = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Repository\ContentDimensionRepository::class);
-                $availableDimensions = $contentDimensionRepository->findAll();
-                foreach ($availableDimensions as $dimension) {
-                    if (isset($contextProperties['dimensions'][$dimension->getIdentifier()]) && !in_array($dimension->getDefault(), $contextProperties['dimensions'][$dimension->getIdentifier()])) {
-                        $contextProperties['dimensions'][$dimension->getIdentifier()][] = $dimension->getDefault();
+                /** @var Dimension\ConfigurationBasedContentDimensionSource $contentDimensionSource */
+                $contentDimensionSource = $this->getObjectManager()->get(Dimension\ContentDimensionSourceInterface::class);
+                $availableDimensions = $contentDimensionSource->getContentDimensionsOrderedByPriority();
+                foreach ($availableDimensions as $rawDimensionIdentifier => $dimension) {
+                    if (isset($contextProperties['dimensions'][$rawDimensionIdentifier]) && !in_array((string) $dimension->getDefaultValue(), $contextProperties['dimensions'][$rawDimensionIdentifier])) {
+                        $contextProperties['dimensions'][$rawDimensionIdentifier][] = (string) $dimension->getDefaultValue();
                     }
                 }
             }

@@ -10,9 +10,9 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\ContentRepository\Domain\Context\Dimension;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
 use Neos\ContentRepository\Domain\Service\ContextFactory;
 
 /**
@@ -32,9 +32,9 @@ class ContextTest extends UnitTestCase
         $this->inject($this->contextFactory, 'now', new \Neos\Flow\Utility\Now());
         $this->inject($this->contextFactory, 'securityContext', $this->createMock(Context::class));
 
-        $mockContentDimensionRepository = $this->createMock(ContentDimensionRepository::class);
-        $mockContentDimensionRepository->expects($this->any())->method('findAll')->will($this->returnValue(array()));
-        $this->inject($this->contextFactory, 'contentDimensionRepository', $mockContentDimensionRepository);
+        $mockContentDimensionSource = $this->createMock(Dimension\ContentDimensionSourceInterface::class);
+        $mockContentDimensionSource->expects($this->any())->method('getContentDimensionsOrderedByPriority')->will($this->returnValue([]));
+        $this->inject($this->contextFactory, 'contentDimensionSource', $mockContentDimensionSource);
     }
 
     /**

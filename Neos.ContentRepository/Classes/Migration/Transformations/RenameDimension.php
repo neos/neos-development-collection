@@ -14,19 +14,12 @@ namespace Neos\ContentRepository\Migration\Transformations;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Model\NodeDimension;
-use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
 
 /**
  * Rename a dimension.
  */
 class RenameDimension extends AbstractTransformation
 {
-    /**
-     * @Flow\Inject
-     * @var ContentDimensionRepository
-     */
-    protected $contentDimensionRepository;
-
     /**
      * The old name for the dimension.
      *
