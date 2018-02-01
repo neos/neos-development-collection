@@ -30,9 +30,10 @@ final class ContentSubgraph
     protected $dimensionSpacePoint;
 
     /**
-     * @var array|Dimension\ContentDimensionValueSpecializationDepth[]
+     * @var ContentSubgraphVariationWeight
      */
     protected $weight;
+
 
     /**
      * @param array|Dimension\ContentDimensionValue[] $dimensionValues
@@ -40,12 +41,14 @@ final class ContentSubgraph
     public function __construct(array $dimensionValues)
     {
         $coordinates = [];
+        $weightInDimensions = [];
         foreach ($dimensionValues as $dimensionName => $dimensionValue) {
             $this->dimensionValues[$dimensionName] = $dimensionValue;
             $coordinates[$dimensionName] = $dimensionValue->getValue();
-            $this->weight[$dimensionName] = $dimensionValue->getSpecializationDepth();
+            $weightInDimensions[$dimensionName] = $dimensionValue->getSpecializationDepth();
         }
         $this->dimensionSpacePoint = new Domain\ValueObject\DimensionSpacePoint($coordinates);
+        $this->weight = new ContentSubgraphVariationWeight($weightInDimensions);
     }
 
     /**
@@ -90,9 +93,9 @@ final class ContentSubgraph
     }
 
     /**
-     * @return array|Dimension\ContentDimensionValueSpecializationDepth[]
+     * @return ContentSubgraphVariationWeight
      */
-    public function getWeight(): array
+    public function getWeight(): ContentSubgraphVariationWeight
     {
         return $this->weight;
     }
