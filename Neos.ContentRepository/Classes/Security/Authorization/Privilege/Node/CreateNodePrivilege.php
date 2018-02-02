@@ -44,12 +44,11 @@ class CreateNodePrivilege extends AbstractNodePrivilege
         }
 
         $this->initialize();
+        $this->evaluateNodeContext();
         if ($subject instanceof MethodPrivilegeSubject) {
             if ($this->methodPrivilege->matchesSubject($subject) === false) {
                 return false;
             }
-
-            $this->eelCompilingEvaluator->evaluate($this->getParsedMatcher(), new Context($this->nodeContext));
 
             $joinPoint = $subject->getJoinPoint();
             $allowedCreationNodeTypes = $this->nodeContext->getCreationNodeTypes();
