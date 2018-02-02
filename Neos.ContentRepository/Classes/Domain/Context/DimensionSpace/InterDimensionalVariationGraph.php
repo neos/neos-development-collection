@@ -48,12 +48,12 @@ class InterDimensionalVariationGraph
     protected $subgraphs;
 
     /**
-     * @var array|ContentSubgraphVariationEdge[][]
+     * @var array|ContentSubgraph[][]
      */
     protected $generalizations;
 
     /**
-     * @var array|ContentSubgraphVariationEdge[][]
+     * @var array|ContentSubgraph[][]
      */
     protected $specializations;
 
@@ -195,15 +195,14 @@ class InterDimensionalVariationGraph
         /** @var array|ContentSubgraph[] $generalizationsToProcess */
         $generalizationsToProcess = [$generalization->getIdentityHash() => $generalization];
         if (isset($this->generalizations[$generalization->getIdentityHash()])) {
-            foreach ($this->generalizations[$generalization->getIdentityHash()] as $parentGeneralizationHash => $parentGeneralizationEdge) {
-                $generalizationsToProcess[$parentGeneralizationHash] = $parentGeneralizationEdge->getGeneralization();
+            foreach ($this->generalizations[$generalization->getIdentityHash()] as $parentGeneralizationHash => $parentGeneralization) {
+                $generalizationsToProcess[$parentGeneralizationHash] = $parentGeneralization;
             }
         }
 
         foreach ($generalizationsToProcess as $generalizationHashToProcess => $generalizationToProcess) {
-            $variationEdge = new ContentSubgraphVariationEdge($specialization, $generalizationToProcess);
-            $this->generalizations[$specialization->getIdentityHash()][$generalizationToProcess->getIdentityHash()] = $variationEdge;
-            $this->specializations[$generalizationToProcess->getIdentityHash()][$specialization->getIdentityHash()] = $variationEdge;
+            $this->generalizations[$specialization->getIdentityHash()][$generalizationToProcess->getIdentityHash()] = $generalizationToProcess;
+            $this->specializations[$generalizationToProcess->getIdentityHash()][$specialization->getIdentityHash()] = $specialization;
         }
     }
 
@@ -219,8 +218,8 @@ class InterDimensionalVariationGraph
 
         $specializations = [];
         if (isset($this->specializations[$generalization->getIdentityHash()])) {
-            foreach ($this->specializations[$generalization->getIdentityHash()] as $variationEdge) {
-                $specializations[$variationEdge->getSpecialization()->getIdentityHash()] = $variationEdge->getSpecialization();
+            foreach ($this->specializations[$generalization->getIdentityHash()] as $specialization) {
+                $specializations[$specialization->getIdentityHash()] = $specialization;
             }
         }
 
@@ -239,8 +238,8 @@ class InterDimensionalVariationGraph
 
         $generalizations = [];
         if (isset($this->generalizations[$specialization->getIdentityHash()])) {
-            foreach ($this->generalizations[$specialization->getIdentityHash()] as $variationEdge) {
-                $generalizations[$variationEdge->getGeneralization()->getIdentityHash()] = $variationEdge->getGeneralization();
+            foreach ($this->generalizations[$specialization->getIdentityHash()] as $generalization) {
+                $generalizations[$generalization->getIdentityHash()] = $generalization;
             }
         }
 
@@ -273,9 +272,9 @@ class InterDimensionalVariationGraph
                 $specializations[$origin->getHash()] = $origin;
             }
             if (isset($this->specializations[$subgraph->getIdentityHash()])) {
-                foreach ($this->specializations[$subgraph->getIdentityHash()] as $variationEdge) {
-                    if (!$excludedSet || !$excludedSet->contains($variationEdge->getSpecialization()->getDimensionSpacePoint())) {
-                        $specializations[$variationEdge->getSpecialization()->getDimensionSpacePoint()->getHash()] = $variationEdge->getSpecialization()->getDimensionSpacePoint();
+                foreach ($this->specializations[$subgraph->getIdentityHash()] as $specialization) {
+                    if (!$excludedSet || !$excludedSet->contains($specialization->getDimensionSpacePoint())) {
+                        $specializations[$specialization->getDimensionSpacePoint()->getHash()] = $specialization->getDimensionSpacePoint();
                     }
                 }
             }
