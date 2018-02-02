@@ -133,23 +133,6 @@ class InterDimensionalVariationGraph
     }
 
     /**
-     * @param ContentSubgraphVariationWeight $weight
-     * @return int
-     */
-    protected function normalizeWeight(ContentSubgraphVariationWeight $weight): int
-    {
-        $base = $this->determineWeightNormalizationBase();
-        $normalizedWeight = 0;
-        $exponent = count($weight) - 1;
-        foreach ($weight->getWeight() as $dimensionIdentifier => $specializationDepth) {
-            $normalizedWeight += pow($base, $exponent) * $specializationDepth->getDepth();
-            $exponent--;
-        }
-
-        return $normalizedWeight;
-    }
-
-    /**
      * @return void
      */
     protected function initializeVariations()
@@ -159,7 +142,7 @@ class InterDimensionalVariationGraph
 
         foreach ($this->getSubgraphs() as $generalizationHash => $generalization) {
             if (!isset($normalizedVariationWeights[$generalizationHash])) {
-                $normalizedVariationWeights[$generalizationHash] = $this->normalizeWeight($generalization->getWeight());
+                $normalizedVariationWeights[$generalizationHash] = $generalization->getWeight()->normalize($this->determineWeightNormalizationBase());
             }
 
             foreach ($generalization->getDimensionValues() as $rawDimensionIdentifier => $contentDimensionValue) {
@@ -175,7 +158,7 @@ class InterDimensionalVariationGraph
                     $this->initializeVariationsForSubgraphPair($specialization, $generalization);
 
                     if (!isset($normalizedVariationWeights[$specialization->getIdentityHash()])) {
-                        $normalizedVariationWeights[$specialization->getIdentityHash()] = $this->normalizeWeight($specialization->getWeight());
+                        $normalizedVariationWeights[$specialization->getIdentityHash()] = $specialization->getWeight()->normalize($this->determineWeightNormalizationBase());
                     }
                     $normalizedVariationWeight = $normalizedVariationWeights[$specialization->getIdentityHash()] - $normalizedVariationWeights[$generalizationHash];
                     if (!isset($lowestVariationWeights[$specialization->getIdentityHash()]) || $normalizedVariationWeight < $lowestVariationWeights[$specialization->getIdentityHash()]) {

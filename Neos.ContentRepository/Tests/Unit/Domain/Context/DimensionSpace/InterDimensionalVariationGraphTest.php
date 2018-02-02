@@ -43,58 +43,6 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
         $this->assertSame(max($firstDepth->getDepth(), $secondDepth->getDepth()) + 1, $graph->_call('determineWeightNormalizationBase'));
     }
 
-
-    /**
-     * @test
-     * @dataProvider variationEdgeWeightNormalizationProvider
-     * @param int $weightNormalizationBase
-     * @param DimensionSpace\ContentSubgraphVariationWeight $weight
-     * @param int $expectedNormalizedWeight
-     */
-    public function normalizeWeightCorrectlyCalculatesNormalizedWeight(int $weightNormalizationBase, DimensionSpace\ContentSubgraphVariationWeight $weight, int $expectedNormalizedWeight)
-    {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DimensionSpace\InterDimensionalVariationGraph $graph */
-        $graph = $this->getAccessibleMock(DimensionSpace\InterDimensionalVariationGraph::class, ['determineWeightNormalizationBase']);
-        $graph->method('determineWeightNormalizationBase')
-            ->willReturn($weightNormalizationBase);
-
-        $this->assertSame($expectedNormalizedWeight, $graph->_call('normalizeWeight', $weight));
-    }
-
-    public function variationEdgeWeightNormalizationProvider()
-    {
-        return [
-            [
-                6,
-                new DimensionSpace\ContentSubgraphVariationWeight([
-                    'primary' => new Dimension\ContentDimensionValueSpecializationDepth(5),
-                    'secondary' => new Dimension\ContentDimensionValueSpecializationDepth(4),
-                    'tertiary' => new Dimension\ContentDimensionValueSpecializationDepth(0)
-                ]),
-                204
-            ],
-            [
-                7,
-                new DimensionSpace\ContentSubgraphVariationWeight([
-                    'primary' => new Dimension\ContentDimensionValueSpecializationDepth(0),
-                    'secondary' => new Dimension\ContentDimensionValueSpecializationDepth(3),
-                    'tertiary' => new Dimension\ContentDimensionValueSpecializationDepth(6)
-                ]),
-                27
-            ],
-            [
-                4,
-                new DimensionSpace\ContentSubgraphVariationWeight([
-                    'primary' => new Dimension\ContentDimensionValueSpecializationDepth(1),
-                    'secondary' => new Dimension\ContentDimensionValueSpecializationDepth(3),
-                    'tertiary' => new Dimension\ContentDimensionValueSpecializationDepth(0)
-                ]),
-                28
-            ],
-        ];
-    }
-
-
     /**
      * @param array|Dimension\ContentDimension[] $contentDimensions
      * @return Dimension\ContentDimensionSourceInterface

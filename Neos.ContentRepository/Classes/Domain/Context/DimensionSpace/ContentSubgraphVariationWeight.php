@@ -26,7 +26,7 @@ use Neos\ContentRepository\Domain\Context\Dimension;
  *
  * @see Dimension\ContentDimensionValueSpecializationDepth
  */
-final class ContentSubgraphVariationWeight implements \Countable, \JsonSerializable
+final class ContentSubgraphVariationWeight implements \JsonSerializable
 {
     /**
      * @var array
@@ -87,11 +87,19 @@ final class ContentSubgraphVariationWeight implements \Countable, \JsonSerializa
     }
 
     /**
+     * @param int $normalizationBase
      * @return int
      */
-    public function count(): int
+    public function normalize(int $normalizationBase): int
     {
-        return count($this->weight);
+        $normalizedWeight = 0;
+        $exponent = count($this->getWeight()) - 1;
+        foreach ($this->getWeight() as $dimensionIdentifier => $specializationDepth) {
+            $normalizedWeight += pow($normalizationBase, $exponent) * $specializationDepth->getDepth();
+            $exponent--;
+        }
+
+        return $normalizedWeight;
     }
 
     /**

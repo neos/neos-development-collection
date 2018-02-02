@@ -126,4 +126,49 @@ class ContentSubgraphVariationWeightTest extends UnitTestCase
             'dimensionC' => new Dimension\ContentDimensionValueSpecializationDepth(0)
         ]), $weight->decreaseBy($weightToDecreaseBy));
     }
+
+    /**
+     * @test
+     * @dataProvider normalizationProvider
+     * @param int $weightNormalizationBase
+     * @param DimensionSpace\ContentSubgraphVariationWeight $weight
+     * @param int $expectedNormalizedWeight
+     */
+    public function normalizeCorrectlyCalculatesNormalizedWeight(int $weightNormalizationBase, DimensionSpace\ContentSubgraphVariationWeight $weight, int $expectedNormalizedWeight)
+    {
+        $this->assertSame($expectedNormalizedWeight, $weight->normalize($weightNormalizationBase));
+    }
+
+    public function normalizationProvider()
+    {
+        return [
+            [
+                6,
+                new DimensionSpace\ContentSubgraphVariationWeight([
+                    'primary' => new Dimension\ContentDimensionValueSpecializationDepth(5),
+                    'secondary' => new Dimension\ContentDimensionValueSpecializationDepth(4),
+                    'tertiary' => new Dimension\ContentDimensionValueSpecializationDepth(0)
+                ]),
+                204
+            ],
+            [
+                7,
+                new DimensionSpace\ContentSubgraphVariationWeight([
+                    'primary' => new Dimension\ContentDimensionValueSpecializationDepth(0),
+                    'secondary' => new Dimension\ContentDimensionValueSpecializationDepth(3),
+                    'tertiary' => new Dimension\ContentDimensionValueSpecializationDepth(6)
+                ]),
+                27
+            ],
+            [
+                4,
+                new DimensionSpace\ContentSubgraphVariationWeight([
+                    'primary' => new Dimension\ContentDimensionValueSpecializationDepth(1),
+                    'secondary' => new Dimension\ContentDimensionValueSpecializationDepth(3),
+                    'tertiary' => new Dimension\ContentDimensionValueSpecializationDepth(0)
+                ]),
+                28
+            ],
+        ];
+    }
 }
