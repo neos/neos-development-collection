@@ -51,7 +51,7 @@ abstract class AbstractNodePropertyPrivilege extends AbstractNodePrivilege
         }
 
         if ($subject instanceof MethodPrivilegeSubject) {
-            $this->initializeMethodPrivilege();
+            $this->initialize();
             if ($this->methodPrivilege->matchesSubject($subject) === false) {
                 return false;
             }
