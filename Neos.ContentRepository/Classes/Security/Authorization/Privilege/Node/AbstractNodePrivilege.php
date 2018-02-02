@@ -95,11 +95,11 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
             return $this->methodPrivilege->matchesSubject($subject);
         }
 
-        $evaluator = $this->objectManager->get(CompilingEvaluator::class);
+        $this->initialize();
         $nodeContext = new $this->nodeContextClassName($subject->getNode());
         $eelContext = new Context($nodeContext);
 
-        return $evaluator->evaluate($this->getParsedMatcher(), $eelContext);
+        return $this->eelCompilingEvaluator->evaluate($this->getParsedMatcher(), $eelContext);
     }
 
     /**
@@ -134,6 +134,17 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
         $methodPrivilegeTarget = new PrivilegeTarget($this->privilegeTarget->getIdentifier() . '__methodPrivilege', MethodPrivilege::class, $methodPrivilegeMatcher);
         $methodPrivilegeTarget->injectObjectManager($this->objectManager);
         $this->methodPrivilege = $methodPrivilegeTarget->createPrivilege($this->getPermission(), $this->getParameters());
+    }
+
+    /**
+     * Evaluates the matcher with this objects nodeContext and returns the result.
+     *
+     * @return mixed
+     */
+    protected function evaluateNodeContext()
+    {
+        $eelContext = new Context($this->nodeContext);
+        return $this->eelCompilingEvaluator->evaluate($this->getParsedMatcher(), $eelContext);
     }
 
     /**
