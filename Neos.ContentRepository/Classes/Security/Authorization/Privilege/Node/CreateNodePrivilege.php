@@ -43,8 +43,8 @@ class CreateNodePrivilege extends AbstractNodePrivilege
             throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "%s" only support subjects of type "%s" or "%s", but we got a subject of type: "%s".', CreateNodePrivilege::class, CreateNodePrivilegeSubject::class, MethodPrivilegeSubject::class, get_class($subject)), 1417014353);
         }
 
+        $this->initialize();
         if ($subject instanceof MethodPrivilegeSubject) {
-            $this->initialize();
             if ($this->methodPrivilege->matchesSubject($subject) === false) {
                 return false;
             }
