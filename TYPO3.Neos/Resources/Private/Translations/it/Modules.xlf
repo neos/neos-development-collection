@@ -894,7 +894,7 @@
 			<target xml:lang="it" state="needs-translation">Cannot upload the file</target></trans-unit>
       <trans-unit id="media.noFileSelected" xml:space="preserve">
 				<source>No file selected</source>
-			<target xml:lang="it" state="needs-translation">No file selected</target></trans-unit>
+			<target xml:lang="it" state="translated">Nessun file selezionato</target></trans-unit>
       <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target xml:lang="it" state="needs-translation">The file size of {0} exceeds the allowed limit of {1}</target></trans-unit>
@@ -958,10 +958,10 @@
       <target xml:lang="it" state="needs-translation">Preview current file</target></trans-unit>
       <trans-unit id="media.noAccessToWorkspace" xml:space="preserve">
         <source>No access to workspace "{0}"</source>
-      <target xml:lang="it" state="needs-translation">No access to workspace "{0}"</target></trans-unit>
+      <target xml:lang="it" state="translated">Nessun accesso all'area di lavoro "{0}"</target></trans-unit>
       <trans-unit id="media.missingDocumentNode" xml:space="preserve">
         <source>No document node found for this node</source>
-      <target xml:lang="it" state="needs-translation">No document node found for this node</target></trans-unit>
+      <target xml:lang="it" state="translated">Nessun nodo del documento trovato per questo nodo</target></trans-unit>
     </body>
   </file>
 </xliff>
