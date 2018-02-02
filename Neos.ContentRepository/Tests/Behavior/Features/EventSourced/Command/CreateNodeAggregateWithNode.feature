@@ -114,8 +114,8 @@ Feature: Create node aggregate with node
 
   Scenario: Create node aggregate with node with content dimensions
     Given I have the following content dimensions:
-      | Identifier | Default | Presets                                     |
-      | language   | mul     | mul=mul; de=de,mul; en=en,mul; ch=ch,de,mul |
+      | Identifier | Default | Values          | Generalizations      |
+      | language   | mul     | mul, de, en, ch | ch->de->mul, en->mul |
 
 # FIXME This is not supported yet in IntraDimensionalFallbackGraph (missing mul preset)
 #    Given I have the following content dimensions:

@@ -6,8 +6,8 @@ Feature: Translate node in aggregate
 
   Background:
     Given I have the following content dimensions:
-      | Identifier | Default | Presets                                     |
-      | language   | mul     | mul=mul; de=de,mul; en=en,mul; ch=ch,de,mul |
+      | Identifier | Default | Values          | Generalizations      |
+      | language   | mul     | mul, de, en, ch | ch->de->mul, en->mul |
     And I have the following NodeTypes configuration:
     """
     unstructured: []
