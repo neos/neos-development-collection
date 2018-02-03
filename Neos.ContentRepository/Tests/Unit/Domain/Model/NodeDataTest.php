@@ -493,7 +493,7 @@ class NodeDataTest extends UnitTestCase
         $workspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
 
         $nodeDataRepository = $this->getAccessibleMock(NodeDataRepository::class, array('setRemoved', 'update', 'remove'), array(), '', false);
-        $this->inject($nodeDataRepository, 'entityClassName', NodeData::class);
+        $this->inject($nodeDataRepository, 'objectType', NodeData::class);
         $this->inject($nodeDataRepository, 'persistenceManager', $mockPersistenceManager);
 
         $currentNode = $this->getAccessibleMock(NodeData::class, array('addOrUpdate'), array('/foo', $workspace));
@@ -517,7 +517,7 @@ class NodeDataTest extends UnitTestCase
         $workspace->expects($this->once())->method('getBaseWorkspace')->will($this->returnValue(null));
 
         $nodeDataRepository = $this->getAccessibleMock(NodeDataRepository::class, array('remove', 'update'), array(), '', false);
-        $this->inject($nodeDataRepository, 'entityClassName', NodeData::class);
+        $this->inject($nodeDataRepository, 'objectType', NodeData::class);
         $this->inject($nodeDataRepository, 'persistenceManager', $mockPersistenceManager);
 
         $currentNode = $this->getAccessibleMock(NodeData::class, null, array('/foo', $workspace));

@@ -12,13 +12,13 @@ namespace Neos\ContentRepository\Domain\Repository;
  */
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\Internal\Hydration\IterableResult;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Persistence\Doctrine\Mapping\ClassMetadata;
 use Neos\Flow\Persistence\QueryInterface;
-use Neos\Flow\Persistence\Repository;
+use Neos\Flow\Persistence\Doctrine\Repository;
 use Neos\Utility\Arrays;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
@@ -68,15 +68,6 @@ class NodeDataRepository extends Repository
     protected $removedNodes;
 
     /**
-     * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related
-     * interface ...
-     *
-     * @Flow\Inject
-     * @var ObjectManager
-     */
-    protected $entityManager;
-
-    /**
      * @Flow\Inject
      * @var NodeTypeManager
      */
@@ -113,13 +104,16 @@ class NodeDataRepository extends Repository
     ];
 
     /**
-     * Constructor
+     * NodeDataRepository constructor.
+     * @param ObjectManager $entityManager
+     * @param ClassMetadata|null $classMetadata
      */
-    public function __construct()
+    public function __construct(ObjectManager $entityManager, ClassMetadata $classMetadata = null)
     {
         $this->addedNodes = new \SplObjectStorage();
         $this->removedNodes = new \SplObjectStorage();
-        parent::__construct();
+
+        parent::__construct($entityManager, $classMetadata);
     }
 
     /**
@@ -269,7 +263,7 @@ class NodeDataRepository extends Repository
             $workspaces[] = $workspace;
             $workspace = $workspace->getBaseWorkspace();
         }
-        $queryBuilder = $this->createQueryBuilder($workspaces);
+        $queryBuilder = $this->createQueryBuilderForWorkspaces($workspaces);
         if ($dimensions !== null) {
             $this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
         }
@@ -345,7 +339,7 @@ class NodeDataRepository extends Repository
             $workspace = $workspace->getBaseWorkspace();
         }
 
-        $queryBuilder = $this->createQueryBuilder($workspaces);
+        $queryBuilder = $this->createQueryBuilderForWorkspaces($workspaces);
         if ($dimensions !== null) {
             $this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
         } else {
@@ -366,44 +360,6 @@ class NodeDataRepository extends Repository
         }
 
         return null;
-    }
-
-    /**
-     * Find all objects and return an IterableResult
-     *
-     * @return IterableResult
-     */
-    public function findAllIterator()
-    {
-        /** @var \Doctrine\ORM\QueryBuilder $queryBuilder */
-        $queryBuilder = $this->entityManager->createQueryBuilder();
-        return $queryBuilder
-            ->select('node')
-            ->from($this->getEntityClassName(), 'node')
-            ->getQuery()->iterate();
-    }
-
-    /**
-     * Iterate over an IterableResult and return a Generator
-     *
-     * This method is useful for batch processing a huge result set.
-     *
-     * @param IterableResult $iterator
-     * @param callable $callback
-     * @return \Generator
-     */
-    public function iterate(IterableResult $iterator, callable $callback = null)
-    {
-        $iteration = 0;
-        foreach ($iterator as $object) {
-            $object = current($object);
-            yield $object;
-            if ($callback !== null) {
-                call_user_func($callback, $iteration, $object);
-            }
-
-            $iteration++;
-        }
     }
 
     /**
@@ -586,7 +542,7 @@ class NodeDataRepository extends Repository
     {
         $workspaces = $this->collectWorkspaceAndAllBaseWorkspaces($workspace);
 
-        $queryBuilder = $this->createQueryBuilder($workspaces);
+        $queryBuilder = $this->createQueryBuilderForWorkspaces($workspaces);
         if ($dimensions !== null) {
             $this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
         } else {
@@ -626,7 +582,7 @@ class NodeDataRepository extends Repository
         $parentPath = strtolower($parentPath);
         $workspaces = $this->collectWorkspaceAndAllBaseWorkspaces($workspace);
 
-        $queryBuilder = $this->createQueryBuilder($workspaces);
+        $queryBuilder = $this->createQueryBuilderForWorkspaces($workspaces);
         $this->addParentPathConstraintToQueryBuilder($queryBuilder, $parentPath);
 
         $query = $queryBuilder->getQuery();
@@ -664,7 +620,7 @@ class NodeDataRepository extends Repository
     {
         $workspaces = $this->collectWorkspaceAndAllBaseWorkspaces($workspace);
 
-        $queryBuilder = $this->createQueryBuilder($workspaces);
+        $queryBuilder = $this->createQueryBuilderForWorkspaces($workspaces);
         $this->addIdentifierConstraintToQueryBuilder($queryBuilder, $identifier);
 
         $query = $queryBuilder->getQuery();
@@ -728,7 +684,7 @@ class NodeDataRepository extends Repository
         $this->systemLogger->log(sprintf('Opening sortindex space after index %s at path %s.', $referenceIndex, $parentPath), LOG_INFO);
 
         /** @var Query $query */
-        $query = $this->entityManager->createQuery('SELECT n.Persistence_Object_Identifier identifier, n.index, n.path FROM Neos\ContentRepository\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash ORDER BY n.index ASC');
+        $query = $this->_em->createQuery('SELECT n.Persistence_Object_Identifier identifier, n.index, n.path FROM Neos\ContentRepository\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash ORDER BY n.index ASC');
         $query->setParameter('parentPathHash', md5($parentPath));
 
         $nodesOnLevel = [];
@@ -752,7 +708,7 @@ class NodeDataRepository extends Repository
             }
         }
 
-        $query = $this->entityManager->createQuery('UPDATE Neos\ContentRepository\Domain\Model\NodeData n SET n.index = :index WHERE n.Persistence_Object_Identifier = :identifier');
+        $query = $this->_em->createQuery('UPDATE Neos\ContentRepository\Domain\Model\NodeData n SET n.index = :index WHERE n.Persistence_Object_Identifier = :identifier');
         foreach ($nodesOnLevel as $node) {
             if ($node['index'] < $referenceIndex) {
                 continue;
@@ -764,7 +720,7 @@ class NodeDataRepository extends Repository
             if (isset($node['addedNode'])) {
                 $node['addedNode']->setIndex($newIndex);
             } else {
-                if ($entity = $this->entityManager->getUnitOfWork()->tryGetById($node['identifier'], NodeData::class)) {
+                if ($entity = $this->_em->getUnitOfWork()->tryGetById($node['identifier'], NodeData::class)) {
                     $entity->setIndex($newIndex);
                 }
                 $query->setParameter('index', $newIndex);
@@ -785,7 +741,7 @@ class NodeDataRepository extends Repository
     {
         if (!isset($this->highestIndexCache[$parentPath])) {
             /** @var \Doctrine\ORM\Query $query */
-            $query = $this->entityManager->createQuery('SELECT MAX(n.index) FROM Neos\ContentRepository\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash');
+            $query = $this->_em->createQuery('SELECT MAX(n.index) FROM Neos\ContentRepository\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash');
             $query->setParameter('parentPathHash', md5($parentPath));
             $this->highestIndexCache[$parentPath] = $query->getSingleScalarResult() ?: 0;
         }
@@ -820,7 +776,7 @@ class NodeDataRepository extends Repository
     {
         $this->persistEntities();
         /** @var \Doctrine\ORM\Query $query */
-        $query = $this->entityManager->createQuery('SELECT MAX(n.index) FROM Neos\ContentRepository\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash AND n.index < :referenceIndex');
+        $query = $this->_em->createQuery('SELECT MAX(n.index) FROM Neos\ContentRepository\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash AND n.index < :referenceIndex');
         $query->setParameter('parentPathHash', md5($parentPath));
         $query->setParameter('referenceIndex', $referenceIndex);
 
@@ -845,7 +801,7 @@ class NodeDataRepository extends Repository
         }
         $this->persistEntities();
         /** @var \Doctrine\ORM\Query $query */
-        $query = $this->entityManager->createQuery('SELECT MIN(n.index) FROM Neos\ContentRepository\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash AND n.index > :referenceIndex');
+        $query = $this->_em->createQuery('SELECT MIN(n.index) FROM Neos\ContentRepository\Domain\Model\NodeData n WHERE n.parentPathHash = :parentPathHash AND n.index > :referenceIndex');
         $query->setParameter('parentPathHash', md5($parentPath));
         $query->setParameter('referenceIndex', $referenceIndex);
 
@@ -964,7 +920,7 @@ class NodeDataRepository extends Repository
 
         $workspaces = $this->collectWorkspaceAndAllBaseWorkspaces($workspace);
 
-        $queryBuilder = $this->createQueryBuilder($workspaces);
+        $queryBuilder = $this->createQueryBuilderForWorkspaces($workspaces);
 
         if ($dimensions !== null) {
             $this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
@@ -1027,7 +983,7 @@ class NodeDataRepository extends Repository
         }
         $workspaces = $this->collectWorkspaceAndAllBaseWorkspaces($workspace);
 
-        $queryBuilder = $this->createQueryBuilder($workspaces);
+        $queryBuilder = $this->createQueryBuilderForWorkspaces($workspaces);
         $this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
         $this->addNodeTypeFilterConstraintsToQueryBuilder($queryBuilder, $nodeTypeFilter);
 
@@ -1229,10 +1185,10 @@ class NodeDataRepository extends Repository
      */
     public function persistEntities()
     {
-        foreach ($this->entityManager->getUnitOfWork()->getIdentityMap() as $className => $entities) {
-            if ($className === $this->entityClassName) {
+        foreach ($this->_em->getUnitOfWork()->getIdentityMap() as $className => $entities) {
+            if ($className === $this->objectType) {
                 foreach ($entities as $entityToPersist) {
-                    $this->entityManager->flush($entityToPersist);
+                    $this->_em->flush($entityToPersist);
                 }
                 $this->emitRepositoryObjectsPersisted();
                 break;
@@ -1379,10 +1335,10 @@ class NodeDataRepository extends Repository
      * @param Workspace $workspace
      * @return array<NodeData>
      */
-    public function findByWorkspace(Workspace $workspace)
+    public function findByWorkspace(Workspace $workspace): array
     {
         /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = $this->entityManager->createQueryBuilder();
+        $queryBuilder = $this->_em->createQueryBuilder();
 
         $queryBuilder->select('n')
             ->from(NodeData::class, 'n')
@@ -1408,7 +1364,7 @@ class NodeDataRepository extends Repository
         $result = null;
 
         /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = $this->entityManager->createQueryBuilder();
+        $queryBuilder = $this->_em->createQueryBuilder();
 
         $this->securityContext->withoutAuthorizationChecks(function () use ($nodePath, $queryBuilder, &$result) {
             $queryBuilder->select('n.identifier')
@@ -1437,7 +1393,7 @@ class NodeDataRepository extends Repository
         $path = strtolower($path);
         $workspaces = $this->collectWorkspaceAndAllBaseWorkspaces($workspace);
 
-        $queryBuilder = $this->createQueryBuilder($workspaces);
+        $queryBuilder = $this->createQueryBuilderForWorkspaces($workspaces);
         $this->addPathConstraintToQueryBuilder($queryBuilder, $path, $recursive);
 
         $query = $queryBuilder->getQuery();
@@ -1504,7 +1460,7 @@ class NodeDataRepository extends Repository
     public function removeAllInPath($path)
     {
         $path = strtolower($path);
-        $query = $this->entityManager->createQuery('DELETE FROM Neos\ContentRepository\Domain\Model\NodeData n WHERE n.path LIKE :path');
+        $query = $this->_em->createQuery('DELETE FROM Neos\ContentRepository\Domain\Model\NodeData n WHERE n.path LIKE :path');
         $query->setParameter('path', $path . '/%');
         $query->execute();
     }
@@ -1521,14 +1477,13 @@ class NodeDataRepository extends Repository
     }
 
     /**
-     *
      * @param array $workspaces
      * @return QueryBuilder
      */
-    protected function createQueryBuilder(array $workspaces)
+    protected function createQueryBuilderForWorkspaces(array $workspaces): QueryBuilder
     {
         /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = $this->entityManager->createQueryBuilder();
+        $queryBuilder = $this->_em->createQueryBuilder();
 
         $queryBuilder->select('n')
             ->from(NodeData::class, 'n')
@@ -1619,7 +1574,7 @@ class NodeDataRepository extends Repository
             }
         }
 
-        $queryBuilder = $this->createQueryBuilder($workspaces);
+        $queryBuilder = $this->createQueryBuilderForWorkspaces($workspaces);
         if ($dimensions !== null) {
             $this->addDimensionJoinConstraintsToQueryBuilder($queryBuilder, $dimensions);
         } else {
@@ -1681,7 +1636,7 @@ class NodeDataRepository extends Repository
     protected function buildQueryBuilderForRelationMap($relationMap)
     {
         /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = $this->entityManager->createQueryBuilder();
+        $queryBuilder = $this->_em->createQueryBuilder();
 
         $queryBuilder->select('n')
             ->from(NodeData::class, 'n');
@@ -1697,7 +1652,7 @@ class NodeDataRepository extends Repository
 
                 // asset references in text like "asset://so-me-uu-id"
                 $constraints[] = '(LOWER(NEOSCR_TOSTRING(n.properties)) LIKE :asset' . md5($relatedIdentifier) . ' )';
-                switch ($this->entityManager->getConnection()->getDatabasePlatform()->getName()) {
+                switch ($this->_em->getConnection()->getDatabasePlatform()->getName()) {
                     case 'postgresql':
                         $parameters['asset' . md5($relatedIdentifier)] = '%asset://' . strtolower($relatedIdentifier) . '%';
                     break;

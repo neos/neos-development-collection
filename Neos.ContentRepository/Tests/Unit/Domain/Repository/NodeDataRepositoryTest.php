@@ -11,7 +11,9 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Repository;
  * source code.
  */
 
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
+use Neos\Flow\Persistence\Doctrine\Mapping\ClassMetadata;
 use Neos\Flow\Persistence\Doctrine\Query;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
@@ -47,15 +49,18 @@ class NodeDataRepositoryTest extends UnitTestCase
         $this->mockQueryBuilder = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
         $this->mockQueryBuilder->expects($this->any())->method('getQuery')->will($this->returnValue($this->mockQuery));
 
-        $this->nodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->setMethods(array('getNodeDataForParentAndNodeType', 'filterNodesOverlaidInBaseWorkspace', 'getNodeTypeFilterConstraintsForDql', 'createQueryBuilder', 'addPathConstraintToQueryBuilder', 'filterNodeDataByBestMatchInContext'))->getMock();
+        $mockEntityManager = $this->createMock(EntityManager::class);
+        $mockClassMetaData = $this->createMock(ClassMetadata::class);
+
+        $this->nodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->setConstructorArgs([$mockEntityManager, $mockClassMetaData])->setMethods(array('getNodeDataForParentAndNodeType', 'filterNodesOverlaidInBaseWorkspace', 'getNodeTypeFilterConstraintsForDql', 'createQueryBuilderForWorkspaces', 'addPathConstraintToQueryBuilder', 'filterNodeDataByBestMatchInContext'))->getMock();
         $this->nodeDataRepository->expects($this->any())->method('filterNodesOverlaidInBaseWorkspace')->will($this->returnCallback(function (array $foundNodes, Workspace $baseWorkspace, $dimensions) {
             return $foundNodes;
         }));
-        $this->nodeDataRepository->expects($this->any())->method('createQueryBuilder')->will($this->returnValue($this->mockQueryBuilder));
+        $this->nodeDataRepository->expects($this->any())->method('createQueryBuilderForWorkspaces')->will($this->returnValue($this->mockQueryBuilder));
         $this->nodeDataRepository->expects($this->any())->method('filterNodeDataByBestMatchInContext')->will($this->returnArgument(0));
 
         // The repository needs an explicit entity class name because of the generated mock class name
-        $this->inject($this->nodeDataRepository, 'entityClassName', NodeData::class);
+        $this->inject($this->nodeDataRepository, 'objectType', NodeData::class);
         $this->inject($this->nodeDataRepository, 'persistenceManager', $mockPersistenceManager);
     }
 
