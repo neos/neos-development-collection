@@ -736,7 +736,7 @@
 			<target xml:lang="es-ES" state="translated">Insertar modo</target></trans-unit>
       <trans-unit id="imageCropper__aspect-ratio-placeholder" xml:space="preserve">
 				<source>Choose an Aspect Ratio</source>
-			<target xml:lang="es-ES" state="needs-translation">Choose an Aspect Ratio</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Elija una proporción</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__bold" xml:space="preserve">
 				<source>Bold</source>
 			<target xml:lang="es-ES" state="translated">Negrita</target></trans-unit>
@@ -754,28 +754,28 @@
 			<target xml:lang="es-ES" state="translated">Superscript</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__strikethrough" xml:space="preserve">
 				<source>Strikethrough</source>
-			<target xml:lang="es-ES" state="needs-translation">Strikethrough</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Tachado</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__link" xml:space="preserve">
 				<source>Link</source>
 			<target xml:lang="es-ES" state="translated">Enlace</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__ordered-list" xml:space="preserve">
 				<source>Ordered list</source>
-			<target xml:lang="es-ES" state="needs-translation">Ordered list</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Lista ordenada</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__unordered-list" xml:space="preserve">
 				<source>Unordered list</source>
-			<target xml:lang="es-ES" state="needs-translation">Unordered list</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Lista desordenada</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-left" xml:space="preserve">
 				<source>Align left</source>
-			<target xml:lang="es-ES" state="needs-translation">Align left</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Alinear a la izq.</target><alt-trans><target xml:lang="es-ES">Alinear a la izq</target></alt-trans></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-right" xml:space="preserve">
 				<source>Align right</source>
-			<target xml:lang="es-ES" state="needs-translation">Align right</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Alinear a la der.</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-center" xml:space="preserve">
 				<source>Align center</source>
-			<target xml:lang="es-ES" state="needs-translation">Align center</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Centrar</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__align-justify" xml:space="preserve">
 				<source>Align justify</source>
-			<target xml:lang="es-ES" state="needs-translation">Align justify</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Justificar</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__table" xml:space="preserve">
 				<source>Table</source>
 			<target xml:lang="es-ES" state="translated">Tabla</target></trans-unit>
@@ -784,7 +784,7 @@
 			<target xml:lang="es-ES" state="translated">Eliminar formato</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__outdent" xml:space="preserve">
 				<source>Outdent</source>
-			<target xml:lang="es-ES" state="needs-translation">Outdent</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Anular sangría</target></trans-unit>
       <trans-unit id="ckeditor__toolbar__indent" xml:space="preserve">
 				<source>Indent</source>
 			<target xml:lang="es-ES" state="translated">Sangría</target></trans-unit>
@@ -796,7 +796,7 @@
 			<target xml:lang="es-ES" state="translated">No se encuentran coincidencias</target></trans-unit>
       <trans-unit id="searchBoxLeftToType" xml:space="preserve">
 				<source>Please enter ###CHARACTERS### more character</source>
-			<target xml:lang="es-ES" state="needs-translation">Please enter ###CHARACTERS### more character</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Introduzca ###CHARACTERS### caràcteres más</target></trans-unit>
     </body>
   </file>
 </xliff>
