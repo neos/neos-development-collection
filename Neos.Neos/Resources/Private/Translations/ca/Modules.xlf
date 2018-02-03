@@ -532,7 +532,7 @@
 			<target xml:lang="ca" state="needs-translation">The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</target></trans-unit>
       <trans-unit id="sites.add" xml:space="preserve">
 				<source>Add new site</source>
-			<target xml:lang="ca" state="needs-translation">Add new site</target></trans-unit>
+			<target xml:lang="ca" state="translated">Afegeix un lloc nou</target></trans-unit>
       <trans-unit id="sites.actions.newSite.label" xml:space="preserve">
 				<source>Create site</source>
 			<target xml:lang="ca" state="needs-translation">Create site</target></trans-unit>
