@@ -100,7 +100,7 @@
 			<target xml:lang="es-ES" state="translated">Reemplazar</target></trans-unit>
       <trans-unit id="replaceAssetResource" xml:space="preserve">
 				<source>Replace asset resource</source>
-			<target xml:lang="es-ES" state="needs-translation">Replace asset resource</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Sustituir recursos activos</target></trans-unit>
       <trans-unit id="saveEditing" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="es-ES" state="translated">Guardar</target></trans-unit>
@@ -392,7 +392,7 @@
 			<target xml:lang="es-ES" state="translated">Sin acceso al espacio de trabajo "{0}"</target></trans-unit>
       <trans-unit id="missingDocumentNode" xml:space="preserve">
 				<source>No document node found for this node</source>
-			<target xml:lang="es-ES" state="needs-translation">No document node found for this node</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">No se ha encpntrado ningún nodo del documento para este nodo</target></trans-unit>
     </body>
   </file>
 </xliff>
