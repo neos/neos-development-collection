@@ -32,8 +32,8 @@ class EditNodePrivilege extends AbstractNodePrivilege
             throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "%s" only support subjects of type "%s" or "%s", but we got a subject of type: "%s".', EditNodePrivilege::class, NodePrivilegeSubject::class, MethodPrivilegeSubject::class, get_class($subject)), 1417017239);
         }
 
-        $this->initializeMethodPrivilege();
         if ($subject instanceof MethodPrivilegeSubject === true) {
+            $this->initializeMethodPrivilege();
             if ($this->methodPrivilege->matchesSubject($subject) === false) {
                 return false;
             }
