@@ -580,28 +580,28 @@
 			<target xml:lang="es-ES" state="translated">Seleccionar sitio del paquete</target></trans-unit>
       <trans-unit id="sites.noPackackeInfo" xml:space="preserve">
 				<source>No site packages are available. Make sure you have an active site package.</source>
-			<target xml:lang="es-ES" state="needs-translation">No site packages are available. Make sure you have an active site package.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">No hay espacio disponible para los paquetes. Asegúrese de que usted tiene un paquete de sitio activo.</target></trans-unit>
       <trans-unit id="sites.createBlank" xml:space="preserve">
 				<source>Create a blank site</source>
-			<target xml:lang="es-ES" state="needs-translation">Create a blank site</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Crear un sitio en blanco</target></trans-unit>
       <trans-unit id="sites.documentType" xml:space="preserve">
 				<source>Select a document nodeType</source>
-			<target xml:lang="es-ES" state="needs-translation">Select a document nodeType</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Selecciona el tipo de documento</target></trans-unit>
       <trans-unit id="sites.name" xml:space="preserve">
 				<source>Site name</source>
-			<target xml:lang="es-ES" state="needs-translation">Site name</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Nombre del sitio</target></trans-unit>
       <trans-unit id="sites.createNode" xml:space="preserve">
 				<source>Create empty site</source>
-			<target xml:lang="es-ES" state="needs-translation">Create empty site</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Crear un archivo nuevo</target></trans-unit>
       <trans-unit id="sites.createPackage" xml:space="preserve">
 				<source>Create a new site package</source>
-			<target xml:lang="es-ES" state="needs-translation">Create a new site package</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Crear un nuevo paquete</target></trans-unit>
       <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
 				<source>VendorName.MyPackageKey</source>
-			<target xml:lang="es-ES" state="needs-translation">VendorName.MyPackageKey</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">ProveerNombre.MiPaqueteClave</target></trans-unit>
       <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
 				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
-			<target xml:lang="es-ES" state="needs-translation">The &lt;em&gt;Neos Kickstarter&lt;/em&gt; package is not installed, install it to kickstart new sites.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">El paquete&lt;em&gt;Kickstarter de Neos&lt;/em&gt; no se ha instalado, ponlo en los nuevos sitios de kickstart.</target></trans-unit>
       <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
 			<target xml:lang="es-ES" state="translated">¿Seguro que quieres eliminar "{0}"? Esta acción no se podrá deshacer.</target></trans-unit>
