@@ -179,13 +179,13 @@ trait NodeOperationsTrait
                 $dimensionValues = [];
                 $variationEdges = [];
                 foreach (Arrays::trimExplode(',', $row['Generalizations']) as $variationExpression) {
-                    $currentSpecialization = null;
+                    $currentGeneralization = null;
                     foreach (array_reverse(Arrays::trimExplode('->', $variationExpression)) as $specializationDepth => $rawDimensionValue) {
                         $specializationDepths[$rawDimensionValue] = $specializationDepth;
-                        if ($currentSpecialization) {
-                            $rawGeneralizations[$currentSpecialization] = $rawDimensionValue;
+                        if ($currentGeneralization) {
+                            $rawGeneralizations[$rawDimensionValue] = $currentGeneralization;
                         }
-                        $currentSpecialization = $rawDimensionValue;
+                        $currentGeneralization = $rawDimensionValue;
                     }
                 }
 

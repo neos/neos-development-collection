@@ -117,11 +117,6 @@ Feature: Create node aggregate with node
       | Identifier | Default | Values          | Generalizations      |
       | language   | mul     | mul, de, en, ch | ch->de->mul, en->mul |
 
-# FIXME This is not supported yet in IntraDimensionalFallbackGraph (missing mul preset)
-#    Given I have the following content dimensions:
-#      | Identifier | Default | Presets                            |
-#      | language   | mul     | de=de,mul; en=en,mul; ch=ch,de,mul |
-
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository:Root': []
