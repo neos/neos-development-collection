@@ -34,14 +34,12 @@ use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifierAndDimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\ContentRepository\Exception;
 use Neos\ContentRepository\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Exception\NodeNotFoundException;
-use Neos\EventSourcing\Event\EventPublisher;
 use Neos\EventSourcing\EventStore\ExpectedVersion;
 use Neos\Flow\Annotations as Flow;
 
@@ -50,7 +48,6 @@ use Neos\Flow\Annotations as Flow;
  */
 final class NodeCommandHandler
 {
-
     /**
      * @Flow\Inject
      * @var NodeEventPublisher
@@ -274,7 +271,7 @@ final class NodeCommandHandler
     {
         // TODO: wrap with $this->nodeEventPublisher->withCommand($command, function() use ($command) {
         $streamName = 'Neos.ContentRepository:Importing:' . $command->getImportingSessionIdentifier();
-        $this->eventPublisher->publish(
+        $this->nodeEventPublisher->publish(
             $streamName,
             new ImportingSessionWasStarted($command->getImportingSessionIdentifier()),
             ExpectedVersion::NO_STREAM
@@ -290,7 +287,7 @@ final class NodeCommandHandler
         $this->validateNodeTypeName($command->getNodeTypeName());
 
         $streamName = 'Neos.ContentRepository:Importing:' . $command->getImportingSessionIdentifier();
-        $this->eventPublisher->publish(
+        $this->nodeEventPublisher->publish(
             $streamName,
             new NodeWasImported(
                 $command->getImportingSessionIdentifier(),
@@ -311,7 +308,7 @@ final class NodeCommandHandler
     {
         // TODO: wrap with $this->nodeEventPublisher->withCommand($command, function() use ($command) {
         $streamName = 'Neos.ContentRepository:Importing:' . $command->getImportingSessionIdentifier();
-        $this->eventPublisher->publish(
+        $this->nodeEventPublisher->publish(
             $streamName,
             new ImportingSessionWasFinalized($command->getImportingSessionIdentifier())
         );
