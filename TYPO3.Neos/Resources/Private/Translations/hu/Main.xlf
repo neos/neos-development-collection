@@ -233,7 +233,7 @@
 			<target xml:lang="hu" state="needs-translation">Name</target></trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
-			<target xml:lang="hu" state="needs-translation">Workspace</target></trans-unit>
+			<target xml:lang="hu" state="translated">Munkaterület</target></trans-unit>
       <trans-unit id="structure.label" xml:space="preserve">
 				<source>Structure</source>
 			<target xml:lang="hu" state="translated">Struktúra</target></trans-unit>
@@ -489,139 +489,139 @@
 			<target xml:lang="hu" state="translated">Ez a {nodeTypeLabel} még nem létezik a {currentDimensionChoiceText}.</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createEmptyOrCopy" xml:space="preserve">
 				<source>You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</source>
-			<target xml:lang="hu" state="needs-translation">You can create it now, either starting with an empty {nodeTypeLabel} or copying all content from the currently visible {nodeTypeLabel} in {currentDocumentDimensionChoiceText}.</target></trans-unit>
+			<target xml:lang="hu" state="translated">Tudod teremt ez most, vagy egy üres kezdve {nodeTypeLabel} vagy minden tartalom másolása a jelenleg látható {nodeTypeLabel} a {currentDocumentDimensionChoiceText}.</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.existingAncestorDocuments" xml:space="preserve">
 				<source>Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</source>
-			<target xml:lang="hu" state="needs-translation">Additionally, there are {numberOfNodesMissingInRootline} ancestor documents which do not exist in the chosen variant either, and which will be created as well.</target></trans-unit>
+			<target xml:lang="hu" state="translated">Ezen kívül, vannak {numberOfNodesMissingInRootline} őse a dokumentumokat, amelyek nem találhatók meg a választott változatra sem, és ami jön létre is.</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createEmpty" xml:space="preserve">
 				<source>Create empty</source>
-			<target xml:lang="hu" state="needs-translation">Create empty</target></trans-unit>
+			<target xml:lang="hu" state="translated">Üres fájl létrehozása</target></trans-unit>
       <trans-unit id="content.dimension.createDialog.createAndCopy" xml:space="preserve">
 				<source>Create and copy</source>
-			<target xml:lang="hu" state="needs-translation">Create and copy</target></trans-unit>
+			<target xml:lang="hu" state="translated">Létrehozása és másolása</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
 			<target xml:lang="hu" state="translated">Tartalom</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve">
 				<source>Toggle menu group</source>
-			<target xml:lang="hu" state="needs-translation">Toggle menu group</target></trans-unit>
+			<target xml:lang="hu" state="translated">Toggle menü csoport</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleStickyMode" xml:space="preserve">
 				<source>Toggle sticky menu mode</source>
-			<target xml:lang="hu" state="needs-translation">Toggle sticky menu mode</target></trans-unit>
+			<target xml:lang="hu" state="translated">Váltás ragacsos menüt mode</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.header" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="hu" state="needs-translation">Do you really want to delete</target></trans-unit>
+			<target xml:lang="hu" state="translated">Biztosan törlöd</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1a" xml:space="preserve">
 				<source>This will delete the element</source>
-			<target xml:lang="hu" state="needs-translation">This will delete the element</target></trans-unit>
+			<target xml:lang="hu" state="translated">Igen, törlöm az elemet</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.1b" xml:space="preserve">
 				<source>and it's children</source>
-			<target xml:lang="hu" state="needs-translation">and it's children</target></trans-unit>
+			<target xml:lang="hu" state="translated">és ez a gyermek</target></trans-unit>
       <trans-unit id="content.navigate.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="hu" state="needs-translation">This action can be undone in the workspace management.</target></trans-unit>
+			<target xml:lang="hu" state="translated">Ez a művelet lehet visszafordítani a munkaterület kezelését.</target></trans-unit>
       <trans-unit id="height" xml:space="preserve">
 				<source>Height</source>
-			<target xml:lang="hu" state="needs-translation">Height</target></trans-unit>
+			<target xml:lang="hu" state="translated">Magasság</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1a" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="hu" state="needs-translation">Do you really want to delete</target></trans-unit>
+			<target xml:lang="hu" state="translated">Biztosan törlöd</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.header.1b" xml:space="preserve">
 				<source>this element</source>
-			<target xml:lang="hu" state="needs-translation">this element</target></trans-unit>
+			<target xml:lang="hu" state="translated">ez az elem</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.1" xml:space="preserve">
 				<source>This will delete the element.</source>
-			<target xml:lang="hu" state="needs-translation">This will delete the element.</target></trans-unit>
+			<target xml:lang="hu" state="translated">Igen, törlöm az elemet.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.deleteNodeDialog.subheader.2" xml:space="preserve">
 				<source>This action can be undone in the workspace management.</source>
-			<target xml:lang="hu" state="needs-translation">This action can be undone in the workspace management.</target></trans-unit>
+			<target xml:lang="hu" state="translated">Ez a művelet lehet visszafordítani a munkaterület kezelését.</target></trans-unit>
       <trans-unit id="media" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="hu" state="needs-translation">Media</target></trans-unit>
+			<target xml:lang="hu" state="translated">Média</target></trans-unit>
       <trans-unit id="crop" xml:space="preserve">
 				<source>Crop</source>
-			<target xml:lang="hu" state="needs-translation">Crop</target></trans-unit>
+			<target xml:lang="hu" state="translated">Vágás</target></trans-unit>
       <trans-unit id="width" xml:space="preserve">
 				<source>Width</source>
-			<target xml:lang="hu" state="needs-translation">Width</target></trans-unit>
+			<target xml:lang="hu" state="translated">Szélesség</target></trans-unit>
       <trans-unit id="translate.requiredProperty" xml:space="preserve">
 				<source>Missing required property: </source>
-			<target xml:lang="hu" state="needs-translation">Missing required property: </target></trans-unit>
+			<target xml:lang="hu" state="translated">Ez a kötelező mező nincs kitöltve: </target></trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
-			<target xml:lang="hu" state="needs-translation">Workspace</target></trans-unit>
+			<target xml:lang="hu" state="translated">Munkaterület</target></trans-unit>
       <trans-unit id="workspaces" xml:space="preserve">
 				<source>Workspaces</source>
-			<target xml:lang="hu" state="needs-translation">Workspaces</target></trans-unit>
+			<target xml:lang="hu" state="translated">Munkaterület</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.header" xml:space="preserve">
 				<source>An error occurred during saving</source>
-			<target xml:lang="hu" state="needs-translation">An error occurred during saving</target></trans-unit>
+			<target xml:lang="hu" state="translated">Hiba történt mentés közben</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.subheader" xml:space="preserve">
 				<source>Reload the page to attempt to fix the problem.</source>
-			<target xml:lang="hu" state="needs-translation">Reload the page to attempt to fix the problem.</target></trans-unit>
+			<target xml:lang="hu" state="translated">Újratölti az oldalt, hogy megpróbálja megoldani a problémát.</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonTitle" xml:space="preserve">
 				<source>Reload the backend</source>
-			<target xml:lang="hu" state="needs-translation">Reload the backend</target></trans-unit>
+			<target xml:lang="hu" state="translated">Újratölti a háttér</target></trans-unit>
       <trans-unit id="inlineEditing.dialogs.nodeUpdateFailureDialog.reloadButtonLabel" xml:space="preserve">
 				<source>Reload</source>
-			<target xml:lang="hu" state="needs-translation">Reload</target></trans-unit>
+			<target xml:lang="hu" state="translated">Újratöltés</target></trans-unit>
       <!-- Edit / preview modes -->
       <trans-unit id="editPreviewModes.inPlace" xml:space="preserve">
 				<source>In-Place</source>
-			<target xml:lang="hu" state="needs-translation">In-Place</target></trans-unit>
+			<target xml:lang="hu" state="translated">-Ban-hely</target></trans-unit>
       <trans-unit id="editPreviewModes.rawContent" xml:space="preserve">
 				<source>Raw Content</source>
-			<target xml:lang="hu" state="needs-translation">Raw Content</target></trans-unit>
+			<target xml:lang="hu" state="translated">Nyers tartalom</target></trans-unit>
       <trans-unit id="rawContentMode" xml:space="preserve">
 				<source>Raw Content Mode</source>
-			<target xml:lang="hu" state="needs-translation">Raw Content Mode</target></trans-unit>
+			<target xml:lang="hu" state="translated">Nyers tartalom mód</target></trans-unit>
       <trans-unit id="editPreviewModes.desktop" xml:space="preserve">
 				<source>Desktop</source>
-			<target xml:lang="hu" state="needs-translation">Desktop</target></trans-unit>
+			<target xml:lang="hu" state="translated">Asztal</target></trans-unit>
       <!-- Login -->
       <trans-unit id="login.index.title" xml:space="preserve">
 				<source>Login to</source>
-			<target xml:lang="hu" state="needs-translation">Login to</target></trans-unit>
+			<target xml:lang="hu" state="translated">Logika-hoz</target></trans-unit>
       <trans-unit id="authenticating" xml:space="preserve">
 				<source>Authenticating</source>
-			<target xml:lang="hu" state="needs-translation">Authenticating</target></trans-unit>
+			<target xml:lang="hu" state="translated">Hitelesítés</target></trans-unit>
       <trans-unit id="logout" xml:space="preserve">
 				<source>Logout</source>
 			<target xml:lang="hu" state="translated">Kijelentkezés</target></trans-unit>
       <trans-unit id="wrongCredentials" xml:space="preserve">
 				<source>The entered username or password was wrong</source>
-			<target xml:lang="hu" state="needs-translation">The entered username or password was wrong</target></trans-unit>
+			<target xml:lang="hu" state="translated">A megadott Felhasználónév vagy jelszó volt a baj</target></trans-unit>
       <trans-unit id="login.expired" xml:space="preserve">
 				<source>Your login has expired. Please log in again.</source>
-			<target xml:lang="hu" state="needs-translation">Your login has expired. Please log in again.</target></trans-unit>
+			<target xml:lang="hu" state="translated">Lejárt a bejelentkezési adatait. Kérjük, jelentkezzen be újra.</target></trans-unit>
       <!-- Error handlers -->
       <trans-unit id="error.exception.goToSetup" xml:space="preserve">
 				<source>Go to setup</source>
-			<target xml:lang="hu" state="needs-translation">Go to setup</target></trans-unit>
+			<target xml:lang="hu" state="translated">Kattintsona a beállításhoz</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.title" xml:space="preserve">
 				<source>Missing Homepage</source>
-			<target xml:lang="hu" state="needs-translation">Missing Homepage</target></trans-unit>
+			<target xml:lang="hu" state="translated">Hiányzó honlap</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.description" xml:space="preserve">
 				<source>Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</source>
-			<target xml:lang="hu" state="needs-translation">Either no site has been defined, the site does not contain a homepage or the active site couldn't be determined.</target></trans-unit>
+			<target xml:lang="hu" state="translated">Nem a helyszínen definiálva van, a webhely nem tartalmaz egy honlap vagy az aktív webhely nem kell meghatározni.</target></trans-unit>
       <trans-unit id="error.exception.noHomepageException.setupMessage" xml:space="preserve">
 				<source>You might want to set the site's domain or import a new site in the setup.</source>
-			<target xml:lang="hu" state="needs-translation">You might want to set the site's domain or import a new site in the setup.</target></trans-unit>
+			<target xml:lang="hu" state="translated">Érdemes az oldal domain vagy importálhatja egy új oldal a telepítés.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.title" xml:space="preserve">
 				<source>Database Error</source>
-			<target xml:lang="hu" state="needs-translation">Database Error</target></trans-unit>
+			<target xml:lang="hu" state="translated">Adatbázis hiba</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.description" xml:space="preserve">
 				<source>Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</source>
-			<target xml:lang="hu" state="needs-translation">Sorry, we detected an error with your database. Check your log files in Data/Logs/* for more information.</target></trans-unit>
+			<target xml:lang="hu" state="translated">Sajnáljuk, de mi hibát észlelt az adatbázissal. Ellenőrizze a naplófájlokat, az adatok/Logs / * további információért.</target></trans-unit>
       <trans-unit id="error.exception.databaseConnectionExceptions.setupMessage" xml:space="preserve">
 				<source>You might want to configure or check your database configuration in the setup.</source>
 			<target xml:lang="hu" state="needs-translation">You might want to configure or check your database configuration in the setup.</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.title" xml:space="preserve">
 				<source>Page Not Found</source>
-			<target xml:lang="hu" state="needs-translation">Page Not Found</target></trans-unit>
+			<target xml:lang="hu" state="translated">Az oldal nem található</target></trans-unit>
       <trans-unit id="error.exception.notFoundExceptions.description" xml:space="preserve">
 				<source>Sorry, the page you requested was not found.</source>
-			<target xml:lang="hu" state="needs-translation">Sorry, the page you requested was not found.</target></trans-unit>
+			<target xml:lang="hu" state="translated">Nem található a kért cikk. (Automatic Translation).</target></trans-unit>
       <trans-unit id="error.invalidNodeType.title" xml:space="preserve">
 				<source>Invalid NodeType</source>
 			<target xml:lang="hu" state="needs-translation">Invalid NodeType</target></trans-unit>
@@ -646,7 +646,7 @@
       <!-- FlashMessages -->
       <trans-unit id="flashMessage.1222204027" xml:space="preserve">
 				<source>The entered username or password was wrong</source>
-			<target xml:lang="hu" state="needs-translation">The entered username or password was wrong</target></trans-unit>
+			<target xml:lang="hu" state="translated">A megadott Felhasználónév vagy jelszó volt a baj</target></trans-unit>
       <!-- Miscellaneous -->
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
@@ -654,13 +654,13 @@
       <!-- Service output -->
       <trans-unit id="service.nodes.title" xml:space="preserve">
 				<source>Nodes</source>
-			<target xml:lang="hu" state="needs-translation">Nodes</target></trans-unit>
+			<target xml:lang="hu" state="translated">Csomópontok</target></trans-unit>
       <trans-unit id="service.nodes.show" xml:space="preserve">
 				<source>Show</source>
 			<target xml:lang="hu" state="needs-translation">Show</target></trans-unit>
       <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve">
 				<source>This node cannot be accessed through a public URL</source>
-			<target xml:lang="hu" state="needs-translation">This node cannot be accessed through a public URL</target></trans-unit>
+			<target xml:lang="hu" state="translated">Ez a csomópont nem érhető el nyilvános URL-címen</target></trans-unit>
       <trans-unit id="service.nodes.nodeProperties" xml:space="preserve">
 				<source>Node Properties</source>
 			<target xml:lang="hu" state="needs-translation">Node Properties</target></trans-unit>
