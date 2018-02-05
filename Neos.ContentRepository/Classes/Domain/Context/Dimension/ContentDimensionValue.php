@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Domain\Context\Dimension;
  */
 
 use Neos\ContentRepository\Domain\Context\Dimension\Exception\InvalidContentDimensionValueException;
+use Neos\Utility\Arrays;
 
 /**
  * The content dimension value domain model
@@ -33,14 +34,21 @@ final class ContentDimensionValue
      */
     protected $constraints;
 
+    /**
+     * General configuration like UI, detection etc.
+     * @var array
+     */
+    protected $configuration;
+
 
     /**
      * @param string $value
      * @param ContentDimensionValueSpecializationDepth $specializationDepth
      * @param array|ContentDimensionConstraints[] $constraints
+     * @param array $configuration
      * @throws InvalidContentDimensionValueException
      */
-    public function __construct(string $value, ContentDimensionValueSpecializationDepth $specializationDepth = null, array $constraints = [])
+    public function __construct(string $value, ContentDimensionValueSpecializationDepth $specializationDepth = null, array $constraints = [], array $configuration = [])
     {
         if (empty($value)) {
             throw new InvalidContentDimensionValueException('Content dimension values must not be empty.', 1516573481);
@@ -48,6 +56,7 @@ final class ContentDimensionValue
         $this->value = $value;
         $this->specializationDepth = $specializationDepth ?: new ContentDimensionValueSpecializationDepth(0);
         $this->constraints = $constraints;
+        $this->configuration = $configuration;
     }
 
 
@@ -94,6 +103,15 @@ final class ContentDimensionValue
         return isset($this->constraints[(string)$dimensionIdentifier])
             ? $this->constraints[(string)$dimensionIdentifier]->allowsCombinationWith($otherDimensionValue)
             : true;
+    }
+
+    /**
+     * @param string $path
+     * @return mixed
+     */
+    public function getConfigurationValue(string $path)
+    {
+        return Arrays::getValueByPath($this->configuration, $path);
     }
 
     /**
