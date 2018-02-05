@@ -23,7 +23,7 @@
 			<target xml:lang="zh-TW" state="translated">取消</target></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
-			<target xml:lang="zh-TW" state="needs-translation">Back</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">返回</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
 			<target xml:lang="zh-TW" state="translated">選擇</target></trans-unit>
