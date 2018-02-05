@@ -10,7 +10,7 @@
 			<target xml:lang="hu" state="needs-translation">Keep the filename "{0}"</target></trans-unit>
       <trans-unit id="module.label" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="hu" state="needs-translation">Media</target></trans-unit>
+			<target xml:lang="hu" state="translated">Média</target></trans-unit>
       <trans-unit id="module.description" xml:space="preserve">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
 			<target xml:lang="hu" state="needs-translation">This module allows managing of media assets including pictures, videos, audio and documents.</target></trans-unit>
