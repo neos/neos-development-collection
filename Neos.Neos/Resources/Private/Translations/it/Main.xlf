@@ -284,55 +284,55 @@
 			<target xml:lang="it" state="needs-translation">Port</target></trans-unit>
       <trans-unit id="primary" xml:space="preserve">
 				<source>Primary</source>
-			<target xml:lang="it" state="needs-translation">Primary</target></trans-unit>
+			<target xml:lang="it" state="translated">Primario</target></trans-unit>
       <trans-unit id="package" xml:space="preserve">
 				<source>Package</source>
-			<target xml:lang="it" state="needs-translation">Package</target></trans-unit>
+			<target xml:lang="it" state="translated">Pacchetto</target></trans-unit>
       <trans-unit id="deactivated" xml:space="preserve">
 				<source>Deactivated</source>
 			<target xml:lang="it" state="needs-translation">Deactivated</target></trans-unit>
       <trans-unit id="unavailable" xml:space="preserve">
 				<source>Unavailable</source>
-			<target xml:lang="it" state="needs-translation">Unavailable</target></trans-unit>
+			<target xml:lang="it" state="translated">Non disponibile</target></trans-unit>
       <trans-unit id="inactive" xml:space="preserve">
 				<source>Inactive</source>
-			<target xml:lang="it" state="needs-translation">Inactive</target></trans-unit>
+			<target xml:lang="it" state="translated">Inattivo</target></trans-unit>
       <trans-unit id="clickToEdit" xml:space="preserve">
 				<source>Click to edit</source>
 			<target xml:lang="it" state="needs-translation">Click to edit</target></trans-unit>
       <trans-unit id="clickToDeactivate" xml:space="preserve">
 				<source>Click to deactivate</source>
-			<target xml:lang="it" state="needs-translation">Click to deactivate</target></trans-unit>
+			<target xml:lang="it" state="translated">Fare clic per disattivare</target></trans-unit>
       <trans-unit id="clickToActivate" xml:space="preserve">
 				<source>Click to activate</source>
-			<target xml:lang="it" state="needs-translation">Click to activate</target></trans-unit>
+			<target xml:lang="it" state="translated">Fare clic per attivare</target></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
 			<target xml:lang="it" state="needs-translation">Click to delete</target></trans-unit>
       <trans-unit id="clickToCreate" xml:space="preserve">
 				<source>Click to create new</source>
-			<target xml:lang="it" state="needs-translation">Click to create new</target></trans-unit>
+			<target xml:lang="it" state="translated">Clicca per creare</target></trans-unit>
       <trans-unit id="state" xml:space="preserve">
 				<source>Status</source>
-			<target xml:lang="it" state="needs-translation">Status</target></trans-unit>
+			<target xml:lang="it" state="translated">Stato</target></trans-unit>
       <trans-unit id="active" xml:space="preserve">
 				<source>Active</source>
-			<target xml:lang="it" state="needs-translation">Active</target></trans-unit>
+			<target xml:lang="it" state="translated">Attivo</target></trans-unit>
       <trans-unit id="domains" xml:space="preserve">
 				<source>Domains</source>
-			<target xml:lang="it" state="needs-translation">Domains</target></trans-unit>
+			<target xml:lang="it" state="translated">Domini</target></trans-unit>
       <trans-unit id="domain" xml:space="preserve">
 				<source>Domain</source>
-			<target xml:lang="it" state="needs-translation">Domain</target></trans-unit>
+			<target xml:lang="it" state="translated">Dominio</target></trans-unit>
       <trans-unit id="deleteConfirm" xml:space="preserve">
 				<source>Yes, delete it!</source>
-			<target xml:lang="it" state="needs-translation">Yes, delete it!</target></trans-unit>
+			<target xml:lang="it" state="translated">Sì, cancellalo!</target></trans-unit>
       <trans-unit id="packageKey" xml:space="preserve">
 				<source>Package Key</source>
 			<target xml:lang="it" state="needs-translation">Package Key</target></trans-unit>
       <trans-unit id="description" xml:space="preserve">
 				<source>Description</source>
-			<target xml:lang="it" state="needs-translation">Description</target></trans-unit>
+			<target xml:lang="it" state="translated">Descrizione</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>
@@ -635,7 +635,7 @@
 			<target xml:lang="it" state="translated">Autenticazione</target></trans-unit>
       <trans-unit id="logout" xml:space="preserve">
 				<source>Logout</source>
-			<target xml:lang="it" state="needs-translation">Logout</target></trans-unit>
+			<target xml:lang="it" state="translated">Logout</target></trans-unit>
       <trans-unit id="wrongCredentials" xml:space="preserve">
 				<source>The entered username or password was wrong</source>
 			<target xml:lang="it" state="needs-translation">The entered username or password was wrong</target></trans-unit>
