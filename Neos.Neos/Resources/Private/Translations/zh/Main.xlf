@@ -379,6 +379,9 @@
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
 				<source>Discard all changes</source>
 			<target xml:lang="zh-CN" state="translated">舍弃所有更改</target><alt-trans><target xml:lang="zh-CN">放弃所有更改</target></alt-trans></trans-unit>
+      <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve">
+				<source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
+			<target xml:lang="zh-CN" state="needs-translation">Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
 			<target xml:lang="zh-CN" state="translated">你确定要舍弃此工作区中的所有更改吗?</target></trans-unit>

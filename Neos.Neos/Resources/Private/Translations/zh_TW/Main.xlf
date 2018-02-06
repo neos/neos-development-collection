@@ -23,7 +23,7 @@
 			<target xml:lang="zh-TW" state="translated">取消</target></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
-			<target xml:lang="zh-TW" state="needs-translation">Back</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">返回</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
 			<target xml:lang="zh-TW" state="translated">選擇</target></trans-unit>
@@ -287,46 +287,46 @@
 			<target xml:lang="zh-TW" state="translated">主要的</target></trans-unit>
       <trans-unit id="package" xml:space="preserve">
 				<source>Package</source>
-			<target xml:lang="zh-TW" state="needs-translation">Package</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">套件</target></trans-unit>
       <trans-unit id="deactivated" xml:space="preserve">
 				<source>Deactivated</source>
 			<target xml:lang="zh-TW" state="needs-translation">Deactivated</target></trans-unit>
       <trans-unit id="unavailable" xml:space="preserve">
 				<source>Unavailable</source>
-			<target xml:lang="zh-TW" state="needs-translation">Unavailable</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">無法使用</target></trans-unit>
       <trans-unit id="inactive" xml:space="preserve">
 				<source>Inactive</source>
-			<target xml:lang="zh-TW" state="needs-translation">Inactive</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">停用</target></trans-unit>
       <trans-unit id="clickToEdit" xml:space="preserve">
 				<source>Click to edit</source>
-			<target xml:lang="zh-TW" state="needs-translation">Click to edit</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">點此編輯</target></trans-unit>
       <trans-unit id="clickToDeactivate" xml:space="preserve">
 				<source>Click to deactivate</source>
-			<target xml:lang="zh-TW" state="needs-translation">Click to deactivate</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">點此停用</target></trans-unit>
       <trans-unit id="clickToActivate" xml:space="preserve">
 				<source>Click to activate</source>
-			<target xml:lang="zh-TW" state="needs-translation">Click to activate</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">點此啟用</target></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
 			<target xml:lang="zh-TW" state="needs-translation">Click to delete</target></trans-unit>
       <trans-unit id="clickToCreate" xml:space="preserve">
 				<source>Click to create new</source>
-			<target xml:lang="zh-TW" state="needs-translation">Click to create new</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">點此新增</target></trans-unit>
       <trans-unit id="state" xml:space="preserve">
 				<source>Status</source>
-			<target xml:lang="zh-TW" state="needs-translation">Status</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">狀態</target></trans-unit>
       <trans-unit id="active" xml:space="preserve">
 				<source>Active</source>
-			<target xml:lang="zh-TW" state="needs-translation">Active</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">啟用</target></trans-unit>
       <trans-unit id="domains" xml:space="preserve">
 				<source>Domains</source>
-			<target xml:lang="zh-TW" state="needs-translation">Domains</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">網域名稱</target></trans-unit>
       <trans-unit id="domain" xml:space="preserve">
 				<source>Domain</source>
-			<target xml:lang="zh-TW" state="needs-translation">Domain</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">網域名稱</target></trans-unit>
       <trans-unit id="deleteConfirm" xml:space="preserve">
 				<source>Yes, delete it!</source>
-			<target xml:lang="zh-TW" state="needs-translation">Yes, delete it!</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">是的，刪除它！</target></trans-unit>
       <trans-unit id="packageKey" xml:space="preserve">
 				<source>Package Key</source>
 			<target xml:lang="zh-TW" state="needs-translation">Package Key</target></trans-unit>
@@ -379,6 +379,9 @@
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve">
 				<source>Discard all changes</source>
 			<target xml:lang="zh-TW" state="translated">捨棄全部變更</target></trans-unit>
+      <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve">
+				<source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
+			<target xml:lang="zh-TW" state="needs-translation">Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
 			<target xml:lang="zh-TW" state="needs-translation">Are you sure that you want to discard all changes in this workspace?</target></trans-unit>
@@ -444,7 +447,7 @@
 			<target xml:lang="zh-TW" state="translated">沒有設定日期</target></trans-unit>
       <trans-unit id="content.inspector.editors.dateTimeEditor.today" xml:space="preserve">
 				<source>Today</source>
-			<target xml:lang="zh-TW" state="needs-translation">Today</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">今日</target></trans-unit>
       <trans-unit id="content.inspector.editors.dateTimeEditor.apply" xml:space="preserve">
 				<source>Apply</source>
 			<target xml:lang="zh-TW" state="translated">套用</target></trans-unit>
