@@ -379,6 +379,9 @@
       <trans-unit id="content.components.discardAllDialog.discardAllChangesHeader" xml:space="preserve" approved="yes">
 				<source>Discard all changes</source>
 			<target xml:lang="fr">Ignorer toutes les modifications</target></trans-unit>
+      <trans-unit id="content.components.discardAllDialog.discardXChangesSubheader" xml:space="preserve">
+				<source>Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</source>
+			<target xml:lang="fr" state="needs-translation">Are you sure that you want to discard {numberOfChanges} change(s) in this workspace?</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve" approved="yes">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
 			<target xml:lang="fr">Êtes-vous sûr de vouloir ignorer toutes les modifications dans cet espace de travail ?</target><alt-trans><target xml:lang="fr">Etes-vous sûr de vouloir ignorer toutes les modifications dans cet espace de travail ?</target></alt-trans></trans-unit>
