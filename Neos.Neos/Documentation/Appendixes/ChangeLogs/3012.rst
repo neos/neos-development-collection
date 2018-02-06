@@ -1,0 +1,64 @@
+`3.0.12 (2018-02-06) <https://github.com/neos/neos-development-collection/releases/tag/3.0.12>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: \`\`ReadNodePrivilege\`\` evaluates EEL expression only once <https://github.com/neos/neos-development-collection/pull/1874>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+The ``ReadNodePrivilege`` evaluates it's EEL evaluator twice unnecessarily,
+there's some caching however it should optimize some cases.
+
+`BUGFIX: Context structure tree only shows content <https://github.com/neos/neos-development-collection/pull/1785>`_
+--------------------------------------------------------------------------------------------------------------------
+
+Changes the base node type filter used in the context structure tree to explicitly include content collections and content elements instead of everything that's not a document node type.
+
+Resolves #1784
+
+`BUGFIX: Let fusion render preview URIs for the Neos backend <https://github.com/neos/neos-development-collection/pull/1815>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+Preview links are now generated via Fusion instead of Javascript
+
+`TASK: Rename folder for Node Migrations <https://github.com/neos/neos-development-collection/pull/1863>`_
+----------------------------------------------------------------------------------------------------------
+
+With this change node migrations are expected to be located
+in a directory `Migrations/NeosCR`.
+
+For backwards compatibility migrations in `Migrations/TYPO3CR` are
+still supported.
+
+Fixes: #1861
+
+* Packages: ``Browser`` ``ContentRepository`` ``Fusion`` ``Media`` ``Neos`` ``NodeTypes`` ``SiteKickstarter``
+
+`TASK: Update SPDX license identifier in composer.json <https://github.com/neos/neos-development-collection/pull/1862>`_
+------------------------------------------------------------------------------------------------------------------------
+
+`TASK: Display changes in workspaces module when setting/unsetting a DateTime values <https://github.com/neos/neos-development-collection/pull/1783>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+When a DateTime property value is either set for the first time or unset the workspace module will now show that change. Previously it would only display the change if the time was set changed to a different time.
+
+`BUGFIX: Allow node transformations without setting <https://github.com/neos/neos-development-collection/pull/1849>`_
+---------------------------------------------------------------------------------------------------------------------
+
+This change allows to create/use node transformations that do not use settings.
+
+Without this change, one always had to provide dummy settings.
+
+* Packages: ``Browser`` ``ContentRepository`` ``NodeTypes``
+
+`TASK: Check node migration filename before use <https://github.com/neos/neos-development-collection/pull/1845>`_
+-----------------------------------------------------------------------------------------------------------------
+
+This makes sure node migrations not named as expected are detected
+and rejected properly.
+
+* Packages: ``Browser`` ``ContentRepository``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/3.0.11...3.0.12>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
