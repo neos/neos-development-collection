@@ -59,7 +59,7 @@ class XliffServiceTest extends FunctionalTestCase
             ->disableOriginalConstructor()
             ->getMock();
         $mockPackageManager->expects($this->any())
-            ->method('getActivePackages')
+            ->method('getAvailablePackages')
             ->will($this->returnValue($this->packages));
         $mockPackageManager->expects($this->any())
             ->method('getPackage')
