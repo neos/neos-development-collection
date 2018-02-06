@@ -72,7 +72,7 @@ that are marked as removed and applies the ``RemoveNode`` transformation on them
   down:
     comments: 'No down migration available'
 
-Like all migrations the file should be placed in a package inside the ``Migrations/TYPO3CR`` folder where it will be picked
+Like all migrations the file should be placed in a package inside the ``Migrations/ContentRepository`` folder where it will be picked
 up by the CLI tools provided with the content repository:
 
 - ``./flow node:migrationstatus``
@@ -81,6 +81,7 @@ up by the CLI tools provided with the content repository:
 Use ``./flow help <command>`` to get detailed instructions. The ``migrationstatus`` command also prints a short description
 for each migration.
 
+.. note:: Node migrations in ``Migrations/TYPO3CR`` directories are also supported for historic reasons
 
 
 Transformations Reference
