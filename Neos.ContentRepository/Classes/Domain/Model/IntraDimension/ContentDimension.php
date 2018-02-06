@@ -93,7 +93,7 @@ class ContentDimension
      */
     public function getValue(string $value)
     {
-        return $this->valueRegistry[$value] ?: null;
+        return $this->valueRegistry[$value] ?? null;
     }
 
     /**

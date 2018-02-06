@@ -71,6 +71,7 @@ class NodeCommandController extends CommandController
      * @param boolean $confirmation Confirm application of this migration, only needed if the given migration contains any warnings.
      * @param string $direction The direction to work in, MigrationStatus::DIRECTION_UP or MigrationStatus::DIRECTION_DOWN
      * @return void
+     * @see neos.contentrepository.migration:node:migrationstatus
      */
     public function migrateCommand($version, $confirmation = false, $direction = MigrationStatus::DIRECTION_UP)
     {
@@ -107,7 +108,7 @@ class NodeCommandController extends CommandController
      * List available and applied migrations
      *
      * @return void
-     * @see typo3.typo3cr.migration:node:listavailablemigrations
+     * @see neos.contentrepository.migration:node:migrate
      */
     public function migrationStatusCommand()
     {
