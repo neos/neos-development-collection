@@ -56,7 +56,7 @@
 			<target xml:lang="it" state="translated">Titolo</target></trans-unit>
       <trans-unit id="workspaces.workspace.description" xml:space="preserve">
 				<source>Description</source>
-			<target xml:lang="it" state="needs-translation">Description</target></trans-unit>
+			<target xml:lang="it" state="translated">Descrizione</target></trans-unit>
       <trans-unit id="workspaces.workspace.baseWorkspace" xml:space="preserve">
 				<source>Base workspace</source>
 			<target xml:lang="it" state="needs-translation">Base workspace</target></trans-unit>
@@ -322,10 +322,10 @@
 			<target xml:lang="it" state="needs-translation">Personal Data</target></trans-unit>
       <trans-unit id="users.new.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
-			<target xml:lang="it" state="needs-translation">First Name</target></trans-unit>
+			<target xml:lang="it" state="translated">Nome</target></trans-unit>
       <trans-unit id="users.new.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
-			<target xml:lang="it" state="needs-translation">Last Name</target></trans-unit>
+			<target xml:lang="it" state="translated">Cognome</target></trans-unit>
       <trans-unit id="users.new.userPreferences" xml:space="preserve">
 				<source>User Preferences</source>
 			<target xml:lang="it" state="needs-translation">User Preferences</target></trans-unit>
@@ -346,16 +346,16 @@
 			<target xml:lang="it" state="translated">Titolo</target></trans-unit>
       <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
-			<target xml:lang="it" state="needs-translation">First Name</target></trans-unit>
+			<target xml:lang="it" state="translated">Nome</target></trans-unit>
       <trans-unit id="users.show.personalData.middleName" xml:space="preserve">
 				<source>Middle Name</source>
-			<target xml:lang="it" state="needs-translation">Middle Name</target></trans-unit>
+			<target xml:lang="it" state="translated">Secondo Nome</target></trans-unit>
       <trans-unit id="users.show.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
-			<target xml:lang="it" state="needs-translation">Last Name</target></trans-unit>
+			<target xml:lang="it" state="translated">Cognome</target></trans-unit>
       <trans-unit id="users.show.personalData.otherName" xml:space="preserve">
 				<source>Other Name</source>
-			<target xml:lang="it" state="needs-translation">Other Name</target></trans-unit>
+			<target xml:lang="it" state="translated">Altro nome</target></trans-unit>
       <trans-unit id="users.show.accounts" xml:space="preserve">
 				<source>Accounts</source>
 			<target xml:lang="it" state="needs-translation">Accounts</target></trans-unit>
@@ -370,7 +370,7 @@
 			<target xml:lang="it" state="needs-translation">Electronic Addresses</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.primary" xml:space="preserve">
 				<source>Primary</source>
-			<target xml:lang="it" state="needs-translation">Primary</target></trans-unit>
+			<target xml:lang="it" state="translated">Primario</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.notAvailable" xml:space="preserve">
 				<source>N/A</source>
 			<target xml:lang="it" state="needs-translation">N/A</target></trans-unit>
@@ -544,7 +544,7 @@
 			<target xml:lang="it" state="translated">Nome Cartella Madre</target></trans-unit>
       <trans-unit id="sites.domains" xml:space="preserve">
 				<source>Domains</source>
-			<target xml:lang="it" state="needs-translation">Domains</target></trans-unit>
+			<target xml:lang="it" state="translated">Domini</target></trans-unit>
       <trans-unit id="sites" xml:space="preserve">
 				<source>Site</source>
 			<target xml:lang="it" state="needs-translation">Site</target></trans-unit>
@@ -586,7 +586,7 @@
 			<target xml:lang="it" state="translated">Creare un sito vuoto</target></trans-unit>
       <trans-unit id="sites.documentType" xml:space="preserve">
 				<source>Select a document nodeType</source>
-			<target xml:lang="it" state="needs-translation">Select a document nodeType</target></trans-unit>
+			<target xml:lang="it" state="translated">Selezionare un documento nodeType</target></trans-unit>
       <trans-unit id="sites.name" xml:space="preserve">
 				<source>Site name</source>
 			<target xml:lang="it" state="translated">Nome Sito</target></trans-unit>
@@ -598,10 +598,10 @@
 			<target xml:lang="it" state="translated">Creare un nuovo pacchetto di siti</target></trans-unit>
       <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
 				<source>VendorName.MyPackageKey</source>
-			<target xml:lang="it" state="needs-translation">VendorName.MyPackageKey</target></trans-unit>
+			<target xml:lang="it" state="translated">VendorName.MyPackageKey</target></trans-unit>
       <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
 				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
-			<target xml:lang="it" state="needs-translation">The &lt;em&gt;Neos Kickstarter&lt;/em&gt; package is not installed, install it to kickstart new sites.</target></trans-unit>
+			<target xml:lang="it" state="translated">Non è installato il pacchetto di &lt;em&gt;Neos Kickstarter&lt;/em&gt;, installarlo per fare il kickstart di nuovi siti.</target></trans-unit>
       <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
 			<target xml:lang="it" state="translated">Vuoi veramente cancellare "{0}"? Questa azione non può essere annullata.</target></trans-unit>
@@ -610,7 +610,7 @@
 			<target xml:lang="it" state="translated">Nuovo dominio</target></trans-unit>
       <trans-unit id="domain.edit" xml:space="preserve">
 				<source>Edit domain</source>
-			<target xml:lang="it" state="translated">Modifica domini</target></trans-unit>
+			<target xml:lang="it" state="translated">Modifica dominio</target><alt-trans><target xml:lang="it">Modifica domini</target></alt-trans></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve">
 				<source>Configuration</source>
 			<target xml:lang="it" state="needs-translation">Configuration</target></trans-unit>

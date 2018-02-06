@@ -13,19 +13,19 @@
 			<target xml:lang="zh-TW" state="translated">起始層級</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-4" xml:space="preserve">
 				<source>Four Levels Above Current Page</source>
-			<target xml:lang="zh-TW" state="needs-translation">Four Levels Above Current Page</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">比目前頁面高四層</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-3" xml:space="preserve">
 				<source>Three Levels Above Current Page</source>
-			<target xml:lang="zh-TW" state="needs-translation">Three Levels Above Current Page</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">比目前頁面高三層</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-2" xml:space="preserve">
 				<source>Two Levels Above Current Page</source>
-			<target xml:lang="zh-TW" state="needs-translation">Two Levels Above Current Page</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">比目前頁面高二層</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-1" xml:space="preserve">
 				<source>One Level Above Current Page</source>
-			<target xml:lang="zh-TW" state="needs-translation">One Level Above Current Page</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">比目前頁面高一層</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.0" xml:space="preserve">
 				<source>Same Level As Current Page</source>
-			<target xml:lang="zh-TW" state="needs-translation">Same Level As Current Page</target></trans-unit>
+			<target xml:lang="zh-TW" state="translated">與目前頁面同層</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.1" xml:space="preserve">
 				<source>First Level Of Website</source>
 			<target xml:lang="zh-TW" state="translated">此網站第一層</target></trans-unit>
