@@ -54,7 +54,16 @@ abstract class AbstractNodePrivilege extends AbstractPrivilege implements Method
      */
     protected $initialized = false;
 
-    public function __construct(PrivilegeTarget $privilegeTarget, string $matcher, string $permission, $parameters) {
+    /**
+     * Constructor
+     *
+     * @param PrivilegeTarget $privilegeTarget
+     * @param string $matcher
+     * @param string $permission
+     * @param $parameters
+     */
+    public function __construct(PrivilegeTarget $privilegeTarget, string $matcher, string $permission, $parameters)
+    {
         parent::__construct($privilegeTarget, $matcher, $permission, $parameters);
         $this->cacheEntryIdentifier = null;
     }
