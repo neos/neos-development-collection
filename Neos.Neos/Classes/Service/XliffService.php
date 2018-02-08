@@ -143,18 +143,23 @@ class XliffService
 
     /**
      * Collect all sources found in the given package as array (key = source, value = true)
-     * If sourcecToBeIncluded is an array, only those sources are returned what match the wildcard-patterns in the
+     * If sourcesToBeIncluded is an array, only those sources are returned what match the wildcard-patterns in the
      * array-values
      *
      * @param PackageInterface $package
      * @param array $sourcesToBeIncluded optional array of wildcard-patterns to filter the sources
      * @return array
      */
-    protected function collectPackageSources(PackageInterface $package, $sourcesToBeIncluded = null)
+    protected function collectPackageSources(PackageInterface $package, $sourcesToBeIncluded = null): array
     {
         $packageKey = $package->getPackageKey();
         $sources = [];
         $translationPath = $package->getResourcesPath() . $this->xliffBasePath;
+
+        if (!is_dir($translationPath)) {
+            return [];
+        }
+
         foreach (Files::readDirectoryRecursively($translationPath, '.xlf') as $filePath) {
             //remove translation path from path
             $source = trim(str_replace($translationPath, '', $filePath), '/');
