@@ -275,21 +275,16 @@ class SiteCommandController extends CommandController
      * @param string $siteNode Name for site root nodes to clear only content of this sites (globbing is supported)
      * @return void
      */
-    public function pruneCommand($siteNode = null)
+    public function pruneCommand($siteNode)
     {
-        if ($siteNode !== null) {
-            $sites = $this->findSitesByNodeNamePattern($siteNode);
-            if (empty($sites)) {
-                $this->outputLine('<error>No Site found for pattern "%s".</error>', [$siteNode]);
-                $this->quit(1);
-            }
-            foreach ($sites as $site) {
-                $this->siteService->pruneSite($site);
-                $this->outputLine('Site with root "%s" matched pattern "%s" and has been removed.', [$site->getNodeName(), $siteNode]);
-            }
-        } else {
-            $this->siteService->pruneAll();
-            $this->outputLine('All sites and content have been removed.');
+        $sites = $this->findSitesByNodeNamePattern($siteNode);
+        if (empty($sites)) {
+            $this->outputLine('<error>No Site found for pattern "%s".</error>', [$siteNode]);
+            $this->quit(1);
+        }
+        foreach ($sites as $site) {
+            $this->siteService->pruneSite($site);
+            $this->outputLine('Site with root "%s" matched pattern "%s" and has been removed.', [$site->getNodeName(), $siteNode]);
         }
     }
 
