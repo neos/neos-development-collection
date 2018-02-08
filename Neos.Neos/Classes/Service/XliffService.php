@@ -143,7 +143,7 @@ class XliffService
 
     /**
      * Collect all sources found in the given package as array (key = source, value = true)
-     * If sourceToBeIncluded is an array, only those sources are returned what match the wildcard-patterns in the
+     * If sourcesToBeIncluded is an array, only those sources are returned what match the wildcard-patterns in the
      * array-values
      *
      * @param PackageInterface $package
