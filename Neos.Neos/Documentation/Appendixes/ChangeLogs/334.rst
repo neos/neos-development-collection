@@ -63,7 +63,7 @@ Preview links are now generated via Fusion instead of Javascript
 ----------------------------------------------------------------------------------------------------------
 
 With this change node migrations are expected to be located
-in a directory `Migrations/NeosCR`.
+in a directory `Migrations/ContentRepository`.
 
 For backwards compatibility migrations in `Migrations/TYPO3CR` are
 still supported.
