@@ -359,8 +359,8 @@ Fully qualified identifiers can be used everywhere an identifier is used::
 
 	prototype(Neos.Neos:ContentCollection) < prototype(Neos.Neos:Collection)
 
-In Neos Fusion a ``default`` namespace of ``Neos.Neos`` is set. So whenever ``Page`` is used in
-Fusion within Neos, it is a shortcut for ``Neos.Neos:Page``.
+In Fusion a ``default`` namespace of ``Neos.Fusion`` is set. So whenever ``Value`` is used in
+Fusion, it is a shortcut for ``Neos.Fusion:Value``.
 
 Custom namespace aliases can be defined using the following syntax::
 
@@ -370,7 +370,7 @@ Custom namespace aliases can be defined using the following syntax::
 	video = Acme.Demo:YouTube
 	video = Foo:YouTube
 
-.. warning:: These declarations are not scoped to the file they are in, but apply globally (at least currently, we plan to change that in the future). So you should be careful there!
+.. warning:: These declarations are scoped to the file they are in and have to be declared in every fusion file where they shall be used.
 
 Setting Properties On a Fusion Object
 =========================================
