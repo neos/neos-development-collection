@@ -263,9 +263,13 @@ class UserCommandController extends CommandController
      */
     public function setPasswordCommand($username, $password, $authenticationProvider = null)
     {
-        $user = $this->getUserOrFail($username, $authenticationProvider);
+        $user = $this->userService->getUser($username, $authenticationProvider);
+        if (!$user instanceof User) {
+            $this->outputLine('The user "%s" does not exist.', [$username]);
+            $this->quit(1);
+        }
         $this->userService->setUserPassword($user, $password);
-        $this->outputLine('The new password for user "%s" was set.', array($username));
+        $this->outputLine('The new password for user "%s" was set.', [$username]);
     }
 
     /**
@@ -360,24 +364,6 @@ class UserCommandController extends CommandController
                 return fnmatch($usernamePattern, $this->userService->getUsername($user, $authenticationProviderName));
             }
         );
-    }
-
-    /**
-     * Retrieves the given user or fails by exiting with code 1 and a message
-     *
-     * @param string $username Username of the user to find
-     * @param string $authenticationProviderName Name of the authentication provider to use
-     * @return User The user
-     * @throws Exception
-     */
-    protected function getUserOrFail($username, $authenticationProviderName = null)
-    {
-        $user = $this->userService->getUser($username, $authenticationProviderName);
-        if (!$user instanceof User) {
-            $this->outputLine('The user "%s" does not exist.', array($username));
-            $this->quit(1);
-        }
-        return $user;
     }
 
     /**
