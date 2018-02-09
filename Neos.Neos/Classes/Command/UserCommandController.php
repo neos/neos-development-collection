@@ -358,12 +358,20 @@ class UserCommandController extends CommandController
      */
     protected function findUsersByUsernamePattern($usernamePattern, $authenticationProviderName = null)
     {
-        return array_filter(
-            $this->userService->getUsers()->toArray(),
-            function ($user) use ($usernamePattern, $authenticationProviderName) {
-                return fnmatch($usernamePattern, $this->userService->getUsername($user, $authenticationProviderName));
+        if (preg_match('/[\\?\\*\\{\\[]/u', $usernamePattern)) {
+            return array_filter(
+                $this->userService->getUsers()->toArray(),
+                function ($user) use ($usernamePattern, $authenticationProviderName) {
+                    return fnmatch($usernamePattern, $this->userService->getUsername($user, $authenticationProviderName));
+                }
+            );
+        } else {
+            $user = $this->userService->getUser($usernamePattern, $authenticationProviderName);
+            if ($user instanceof User) {
+                return [$user];
             }
-        );
+        }
+        return [];
     }
 
     /**
