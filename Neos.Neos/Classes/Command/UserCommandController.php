@@ -150,7 +150,7 @@ class UserCommandController extends CommandController
     }
 
     /**
-     * Delete a user
+     * Delete a user (with globbing)
      *
      * This command deletes an existing Neos user. All content and data directly related to this user, including but
      * not limited to draft workspace contents, will be removed as well.
@@ -192,7 +192,7 @@ class UserCommandController extends CommandController
     }
 
     /**
-     * Activate a user
+     * Activate a user (with globbing)
      *
      * This command reactivates possibly expired accounts for the given user.
      *
@@ -220,7 +220,7 @@ class UserCommandController extends CommandController
     }
 
     /**
-     * Deactivate a user
+     * Deactivate a user (with globbing)
      *
      * This command deactivates a user by flagging all of its accounts as expired.
      *
