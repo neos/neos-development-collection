@@ -125,7 +125,7 @@ class DomainCommandController extends CommandController
     }
 
     /**
-     * Delete a domain record by hostname
+     * Delete a domain record by hostname (with globbing)
      *
      * @param string $hostname The hostname to remove (globbing is supported)
      * @return void
@@ -144,7 +144,7 @@ class DomainCommandController extends CommandController
     }
 
     /**
-     * Activate a domain record by hostname
+     * Activate a domain record by hostname (with globbing)
      *
      * @param string $hostname The hostname to activate (globbing is supported)
      * @return void
@@ -164,7 +164,7 @@ class DomainCommandController extends CommandController
     }
 
     /**
-     * Deactivate a domain record by hostname
+     * Deactivate a domain record by hostname (with globbing)
      *
      * @param string $hostname The hostname to deactivate (globbing is supported)
      * @return void

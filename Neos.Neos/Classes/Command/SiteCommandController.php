@@ -270,7 +270,9 @@ class SiteCommandController extends CommandController
     }
 
     /**
-     * Remove all content and related data - for now. In the future we need some more sophisticated cleanup.
+     * Remove site with content and related data (with globbing)
+     *
+     * In the future we need some more sophisticated cleanup.
      *
      * @param string $siteNode Name for site root nodes to clear only content of this sites (globbing is supported)
      * @return void
@@ -336,7 +338,7 @@ class SiteCommandController extends CommandController
     }
 
     /**
-     * Activate a site
+     * Activate a site (with globbing)
      *
      * This command activates the specified site.
      *
@@ -358,7 +360,7 @@ class SiteCommandController extends CommandController
     }
 
     /**
-     * Deactivate a site
+     * Deactivate a site (with globbing)
      *
      * This command deactivates the specified site.
      *
