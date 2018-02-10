@@ -10,5 +10,6 @@ These are the development guidelines of Neos.
 	NodeTypeDefinition
 	NodeConstraints
 	TranslateNodeTypes
+	DynamicConfigurationProcessing
 	DependingProperties
 	DisableNodeTypes
