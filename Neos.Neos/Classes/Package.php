@@ -17,7 +17,9 @@ use Neos\Flow\Monitor\FileMonitor;
 use Neos\Flow\Mvc\Routing\RouterCachingService;
 use Neos\Flow\Package\Package as BasePackage;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
+use Neos\Flow\Security\Authentication\AuthenticationProviderManager;
 use Neos\Media\Domain\Service\AssetService;
+use Neos\Neos\Domain\Context\ContentStream\EditorContentStreamZookeeper;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\Neos\Domain\Service\SiteService;
@@ -139,5 +141,7 @@ class Package extends BasePackage
 
         $dispatcher->connect(PersistenceManager::class, 'allObjectsPersisted', ContentRepositoryIntegrationService::class, 'updateEventsAfterPublish');
         $dispatcher->connect(NodeDataRepository::class, 'repositoryObjectsPersisted', ContentRepositoryIntegrationService::class, 'updateEventsAfterPublish');
+
+        $dispatcher->connect(AuthenticationProviderManager::class, 'authenticatedToken', EditorContentStreamZookeeper::class, 'relayEditorAuthentication');
     }
 }

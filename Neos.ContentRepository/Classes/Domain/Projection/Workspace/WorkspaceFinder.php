@@ -28,4 +28,23 @@ final class WorkspaceFinder extends AbstractDoctrineFinder
     {
         return $this->__call('findOneByWorkspaceName', [(string)$name]);
     }
+
+    /**
+     * @param WorkspaceName $prefix
+     * @return array|Workspace[]
+     * @throws \Neos\Flow\Persistence\Exception\InvalidQueryException
+     */
+    public function findByPrefix(WorkspaceName $prefix): array
+    {
+        $result = [];
+        $query = $this->createQuery();
+        foreach ($query->matching(
+            $query->like('workspaceName', (string) $prefix . '%')
+        )->execute() as $similarlyNamedWorkspace) {
+            /** @var Workspace $similarlyNamedWorkspace */
+            $result[(string) $similarlyNamedWorkspace->getWorkspaceName()] = $similarlyNamedWorkspace;
+        }
+
+        return $result;
+    }
 }

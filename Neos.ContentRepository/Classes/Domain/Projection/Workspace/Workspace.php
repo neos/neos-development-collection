@@ -107,5 +107,11 @@ final class Workspace
         return new WorkspaceName($this->baseWorkspaceName);
     }
 
-
+    /**
+     * @return WorkspaceName
+     */
+    public function getWorkspaceName(): WorkspaceName
+    {
+        return new WorkspaceName($this->workspaceName);
+    }
 }

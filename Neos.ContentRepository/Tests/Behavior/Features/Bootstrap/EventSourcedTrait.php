@@ -16,7 +16,7 @@ use Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
-use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
@@ -167,9 +167,11 @@ trait EventSourcedTrait
                 return;
             case 'NodeNotFoundException':
                 Assert::assertInstanceOf(\Neos\ContentRepository\Exception\NodeNotFoundException::class, $this->lastCommandException);
+
                 return;
             case 'BaseWorkspaceHasBeenModifiedInTheMeantime':
                 Assert::assertInstanceOf(\Neos\ContentRepository\Domain\Context\Workspace\Exception\BaseWorkspaceHasBeenModifiedInTheMeantime::class, $this->lastCommandException);
+
                 return;
             default:
                 throw new \Exception('The short exception name "' . $shortExceptionName . '" is currently not supported by the tests.');
@@ -309,8 +311,6 @@ trait EventSourcedTrait
     }
 
 
-
-
     /**
      * @When /^the graph projection is fully up to date$/
      */
@@ -354,12 +354,76 @@ trait EventSourcedTrait
     }
 
     /**
+     * @Then /^workspace "([^"]*)" points to another content stream than workspace "([^"]*)"$/
+     * @param string $rawWorkspaceNameA
+     * @param string $rawWorkspaceNameB
+     */
+    public function workspacesPointToDifferentContentStreams(string $rawWorkspaceNameA, string $rawWorkspaceNameB)
+    {
+        $workspaceA = $this->workspaceFinder->findOneByName(new WorkspaceName($rawWorkspaceNameA));
+        Assert::assertInstanceOf(\Neos\ContentRepository\Domain\Projection\Workspace\Workspace::class, $workspaceA, 'Workspace "' . $rawWorkspaceNameA . '" does not exist.');
+        $workspaceB = $this->workspaceFinder->findOneByName(new WorkspaceName($rawWorkspaceNameB));
+        Assert::assertInstanceOf(\Neos\ContentRepository\Domain\Projection\Workspace\Workspace::class, $workspaceB, 'Workspace "' . $rawWorkspaceNameB . '" does not exist.');
+        if ($workspaceA && $workspaceB) {
+            Assert::assertNotEquals(
+                $workspaceA->getCurrentContentStreamIdentifier(),
+                $workspaceB->getCurrentContentStreamIdentifier(),
+                'Workspace "' . $rawWorkspaceNameA . '" points to the same content stream as "' . $rawWorkspaceNameB . '"');
+        }
+    }
+
+    /**
+     * @Then /^workspace "([^"]*)" does not point to content stream "([^"]*)"$/
+     * @param string $rawWorkspaceName
+     * @param string $rawContentStreamIdentifier
+     */
+    public function workspaceDoesNotPointToContentStream(string $rawWorkspaceName, string $rawContentStreamIdentifier)
+    {
+        $workspace = $this->workspaceFinder->findOneByName(new WorkspaceName($rawWorkspaceName));
+
+        Assert::assertNotEquals($rawContentStreamIdentifier, (string) $workspace->getCurrentContentStreamIdentifier());
+    }
+
+    /**
      * @Then /^I expect a node "([^"]*)" to exist in the graph projection$/
      */
     public function iExpectANodeToExistInTheGraphProjection($nodeIdentifier)
     {
         $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
         Assert::assertNotNull($node, 'Node "' . $nodeIdentifier . '" was not found in the current Content Stream / Dimension Space Point.');
+    }
+
+    /**
+     * @Then /^I expect a node "([^"]*)" not to exist in the graph projection$/
+     */
+    public function iExpectANodeNotToExistInTheGraphProjection($nodeIdentifier)
+    {
+        $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
+        Assert::assertNull($node, 'Node "' . $nodeIdentifier . '" was found in the current Content Stream / Dimension Space Point.');
+    }
+
+    /**
+     * @Then /^I expect a node identified by aggregate identifier "([^"]*)" to exist in the subgraph$/
+     * @param string $nodeAggregateIdentifier
+     */
+    public function iExpectANodeIdentifiedByAggregateIdentifierToExistInTheSubgraph(string $nodeAggregateIdentifier)
+    {
+        $node = $this->contentGraphInterface
+            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)
+            ->findNodeByNodeAggregateIdentifier(new NodeAggregateIdentifier($nodeAggregateIdentifier));
+        Assert::assertNotNull($node, 'Node with aggregate identifier "' . $nodeAggregateIdentifier . '" was not found in the current Content Stream / Dimension Space Point.');
+    }
+
+    /**
+     * @Then /^I expect a node identified by aggregate identifier "([^"]*)" not to exist in the subgraph$/
+     * @param string $nodeAggregateIdentifier
+     */
+    public function iExpectANodeIdentifiedByAggregateIdentifierNotToExistInTheSubgraph(string $nodeAggregateIdentifier)
+    {
+        $node = $this->contentGraphInterface
+            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)
+            ->findNodeByNodeAggregateIdentifier(new NodeAggregateIdentifier($nodeAggregateIdentifier));
+        Assert::assertNotNull($node, 'Node with aggregate identifier "' . $nodeAggregateIdentifier . '" was not found in the current Content Stream / Dimension Space Point.');
     }
 
     /**
@@ -381,7 +445,8 @@ trait EventSourcedTrait
      */
     public function iExpectTheNodeAggregateToHaveTheNodes($nodeAggregateIdentifier, $nodeIdentifier)
     {
-        $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByNodeAggregateIdentifier(new \Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier($nodeAggregateIdentifier));
+        $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier,
+            $this->dimensionSpacePoint)->findNodeByNodeAggregateIdentifier(new NodeAggregateIdentifier($nodeAggregateIdentifier));
 
         Assert::assertNotNull($node, 'Node with ID "' . $nodeIdentifier . '" not found!');
         Assert::assertEquals($nodeIdentifier, (string)$node->identifier, 'Node ID does not match!');

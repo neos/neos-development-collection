@@ -17,17 +17,20 @@ use Behat\Mink\Element\ElementInterface;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\MinkContext;
 use Neos\Behat\Tests\Behat\FlowContext;
+use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Service\AuthorizationService;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
+use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\AccountRepository;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
 use Neos\Flow\Utility\Environment;
 use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\SiteExportService;
 use Neos\Neos\Domain\Service\SiteImportService;
@@ -46,6 +49,7 @@ require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Fe
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/EventSourcedTrait.php');
 require_once(__DIR__ . '/HistoryDefinitionsTrait.php');
 
 /**
@@ -54,6 +58,7 @@ require_once(__DIR__ . '/HistoryDefinitionsTrait.php');
 class FeatureContext extends MinkContext
 {
     use NodeOperationsTrait;
+    use EventSourcedTrait;
     use NodeAuthorizationTrait;
     use SecurityOperationsTrait;
     use IsolatedBehatStepsTrait;
@@ -80,6 +85,11 @@ class FeatureContext extends MinkContext
     protected $lastExportedSiteXmlPathAndFilename = '';
 
     /**
+     * @var array|User[]
+     */
+    protected $users;
+
+    /**
      * Initializes the context
      *
      * @param array $parameters Context parameters (configured through behat.yml)
@@ -90,6 +100,10 @@ class FeatureContext extends MinkContext
         $this->objectManager = $this->getSubcontext('flow')->getObjectManager();
         $this->environment = $this->objectManager->get(Environment::class);
         $this->nodeAuthorizationService = $this->objectManager->get(AuthorizationService::class);
+        $this->propertyMapper = $this->objectManager->get(PropertyMapper::class);
+        $this->workspaceFinder = $this->objectManager->get(\Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceFinder::class);
+        $this->eventStoreManager = $this->objectManager->get(\Neos\EventSourcing\EventStore\EventStoreManager::class);
+        $this->contentGraphInterface = $this->objectManager->get(ContentGraphInterface::class);
         $this->setupSecurity();
     }
 
@@ -134,15 +148,12 @@ class FeatureContext extends MinkContext
         $rows = $table->getHash();
         /** @var UserService $userService */
         $userService = $this->objectManager->get(UserService::class);
-        /** @var PartyRepository $partyRepository */
-        $partyRepository = $this->objectManager->get(PartyRepository::class);
-        /** @var AccountRepository $accountRepository */
-        $accountRepository = $this->objectManager->get(AccountRepository::class);
         foreach ($rows as $row) {
             $roleIdentifiers = array_map(function ($role) {
                 return 'Neos.Neos:' . $role;
             }, Arrays::trimExplode(',', $row['roles']));
-            $userService->createUser($row['username'], $row['password'], $row['firstname'], $row['lastname'], $roleIdentifiers);
+            $user = $userService->createUser($row['username'], $row['password'], $row['firstname'], $row['lastname'], $roleIdentifiers);
+            $this->users[$row['username']] = $user;
         }
         $this->getSubcontext('flow')->persistAll();
     }
@@ -156,6 +167,18 @@ class FeatureContext extends MinkContext
         $this->fillField('Username', $username);
         $this->fillField('Password', $password);
         $this->pressButton('Login');
+    }
+
+    /**
+     * @When /^the workspace command "([^"]*)" is executed for user "([^"]*)" with payload:$/
+     * @Given /^the workspace command "([^"]*)" was executed for user "([^"]*)" with payload:$/
+     */
+    public function theWorkspaceCommandIsExecutedForUserWithPayload($shortCommandName, $username, TableNode $payloadTable)
+    {
+        $userIdentifier = $this->getPersistenceManager()->getIdentifierByObject($this->users[$username]);
+        $payloadTable->addRow(['initiatingUserIdentifier', $userIdentifier, '']);
+        $payloadTable->addRow(['workspaceOwner', $userIdentifier, '']);
+        $this->theCommandIsExecutedWithPayload($shortCommandName, $payloadTable);
     }
 
     /**
