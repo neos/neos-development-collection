@@ -16,6 +16,8 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  */
 final class WorkspaceName implements \JsonSerializable
 {
+    const WORKSPACE_NAME_LIVE = 'live';
+
     /**
      * @var string
      */
@@ -40,6 +42,14 @@ final class WorkspaceName implements \JsonSerializable
             throw new \InvalidArgumentException('Invalid workspace name given.', 1505826610318);
         }
         $this->name = $name;
+    }
+
+    /**
+     * @return WorkspaceName
+     */
+    public static function forLive(): WorkspaceName
+    {
+        return new WorkspaceName(self::WORKSPACE_NAME_LIVE);
     }
 
     /**
