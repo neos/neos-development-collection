@@ -161,11 +161,12 @@ class Node implements NodeInterface, CacheAwareInterface
      * Example: /sites/mysitecom/homepage/about@user-admin
      *
      * @return string Node path with context information
+     * @deprecated directly use node's identifier, which is unique within the whole content graph
      * @api
      */
     public function getContextPath()
     {
-        return NodePaths::generateContextPath($this->getPath(), $this->context->getWorkspaceName(), $this->context->getDimensions());
+        return $this->identifier;
     }
 
     /**
