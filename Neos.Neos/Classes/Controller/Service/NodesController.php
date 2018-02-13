@@ -107,9 +107,21 @@ class NodesController extends ActionController
             }
         }
 
+
+
         $contentContext = $this->createContentContext($workspaceName, $dimensions);
+        $nodes = [];
+        
+        //If there is a Node with $searchTerm as identifier, also return it.
+        if($contentContext->getNodeByIdentifier($searchTerm) instanceof NodeInterface) {
+            $nodes[] = $contentContext->getNodeByIdentifier($searchTerm);
+        }
+
         if ($nodeIdentifiers === array()) {
-            $nodes = $this->nodeSearchService->findByProperties($searchTerm, $searchableNodeTypeNames, $contentContext, $contextNode);
+            $nodes = array_merge(
+                $nodes, 
+                $this->nodeSearchService->findByProperties($searchTerm, $searchableNodeTypeNames, $contentContext, $contextNode)
+            );
         } else {
             $nodes = array_map(function ($identifier) use ($contentContext) {
                 return $contentContext->getNodeByIdentifier($identifier);
