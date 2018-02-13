@@ -111,15 +111,15 @@ class NodesController extends ActionController
 
         $contentContext = $this->createContentContext($workspaceName, $dimensions);
         $nodes = [];
-        
+
         //If there is a Node with $searchTerm as identifier, also return it.
-        if($contentContext->getNodeByIdentifier($searchTerm) instanceof NodeInterface) {
+        if ($contentContext->getNodeByIdentifier($searchTerm) instanceof NodeInterface) {
             $nodes[] = $contentContext->getNodeByIdentifier($searchTerm);
         }
 
         if ($nodeIdentifiers === array()) {
             $nodes = array_merge(
-                $nodes, 
+                $nodes,
                 $this->nodeSearchService->findByProperties($searchTerm, $searchableNodeTypeNames, $contentContext, $contextNode)
             );
         } else {
