@@ -18,33 +18,33 @@ the user interface.
 A few Practical Examples
 ========================
 
-Hiding one property when other is not set
------------------------------------------
+Hiding one property when the other one is not set
+-------------------------------------------------
 
-Here is an example how to hide the property ``border-color`` if ``border-width`` is empty
+Here is an example how to hide the property ``borderColor`` if ``borderWidth`` is empty
 by changing its group name to a non-existant value:
 
 .. code-block:: yaml
 
   'Some.Package:NodeType':
     properties:
-      border-width:
+      borderWidth:
         type: integer
         ui:
           inspector:
             group: 'style'
-      border-color:
+      borderColor:
         type: string
         ui:
           inspector:
-            group: 'ClientEval:node.properties["border-width"] ? "style" : "invalid-group"'
+            group: 'ClientEval:node.properties.borderWidth ? "style" : "invalid-group"'
 
-Dependant SelectBoxes
+Dependent SelectBoxes
 ---------------------
 
 If you are using select box editors with *data sources* (see :ref:`data-sources` for more details) you can use
 client-side processing to adjust ``dataSourceAdditionalData`` when properties are changed in the inspector. The
-following example shows this. It defines two properties (*serviceType* and *contractType*) where changes to the
+following example demonstrates this. It defines two properties (*serviceType* and *contractType*) where changes to the
 first property cause the ``searchTerm`` on the second properties' data source to be updated. That in turn triggers
 a refresh of the available options from the data source.
 
