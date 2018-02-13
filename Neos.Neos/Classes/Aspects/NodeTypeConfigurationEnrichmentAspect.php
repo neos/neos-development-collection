@@ -271,6 +271,16 @@ class NodeTypeConfigurationEnrichmentAspect
                 }
             }
         }
+
+        $creationDialogConfiguration = Arrays::getValueByPath($configuration, 'ui.creationDialog.elements');
+        if (is_array($creationDialogConfiguration)) {
+            foreach ($creationDialogConfiguration as $elementName => $elementConfiguration) {
+                if (!is_array($elementConfiguration) || !$this->shouldFetchTranslation($elementConfiguration['ui'])) {
+                    continue;
+                }
+                $configuration['ui']['creationDialog']['elements'][$elementName]['ui']['label'] = $this->getInspectorElementTranslationId($nodeTypeLabelIdPrefix, 'creationDialog', $elementName);
+            }
+        }
     }
 
     /**
