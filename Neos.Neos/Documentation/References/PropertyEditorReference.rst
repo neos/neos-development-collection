@@ -6,6 +6,9 @@ Property Editor Reference
 For each property which is defined in ``NodeTypes.yaml``, the editor inside the Neos inspector can be customized
 using various options. Here follows the reference for each property type.
 
+.. note:: All NodeType inspector configuration values are dynamically evaluated on the client-side, see
+   :ref:`dynamic-configuration-processing` for more details.
+
 Property Type: boolean ``BooleanEditor`` -- Checkbox editor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
