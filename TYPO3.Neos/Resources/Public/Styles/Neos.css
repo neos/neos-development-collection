@@ -13882,6 +13882,9 @@
 .neos.media-browser .neos-upload-area.neos-upload-area-active {
   border-color: #fff;
 }
+.neos.media-browser .neos-upload-area.neos-upload-area-active div {
+  pointer-events: none;
+}
 .neos.media-browser .neos-upload-area.neos-upload-area-active i {
   display: inline;
 }
