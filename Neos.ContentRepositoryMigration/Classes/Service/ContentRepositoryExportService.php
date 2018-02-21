@@ -330,7 +330,7 @@ class ContentRepositoryExportService
     {
         $this->exportNodeOrNodeAggregate(
             $this->nodeAggregateIdentifierForSitesNode,
-            new NodeTypeName('unstructured'),
+            new NodeTypeName('Neos.Neos:Sites'),
             $dimensionSpacePoint,
             new DimensionSpacePointSet([]), // TODO: I'd say it is OK to create too-many site nodes now; as it does not contain any properties
             new NodeIdentifier(),
