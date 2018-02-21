@@ -18,14 +18,10 @@ use TYPO3\Media\Domain\Model\AssetInterface;
 use TYPO3\Media\Domain\Model\Image;
 use TYPO3\Media\Domain\Strategy\AbstractAssetUsageStrategy;
 use TYPO3\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
-use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\SiteService;
-use TYPO3\Neos\Service\UserService;
-use TYPO3\Eel\FlowQuery\FlowQuery;
 use TYPO3\Neos\Controller\CreateContentContextTrait;
-use TYPO3\TYPO3CR\Domain\Factory\NodeFactory;
+use TYPO3\TYPO3CR\Domain\Model\NodeData;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
-use TYPO3\Neos\Domain\Service\UserService as DomainUserService;
 
 /**
  * @Flow\Scope("singleton")
@@ -39,30 +35,6 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
      * @var NodeDataRepository
      */
     protected $nodeDataRepository;
-
-    /**
-     * @Flow\Inject
-     * @var SiteRepository
-     */
-    protected $siteRepository;
-
-    /**
-     * @Flow\Inject
-     * @var NodeFactory
-     */
-    protected $nodeFactory;
-
-    /**
-     * @Flow\Inject
-     * @var UserService
-     */
-    protected $userService;
-
-    /**
-     * @Flow\Inject
-     * @var DomainUserService
-     */
-    protected $domainUserService;
 
     /**
      * @var array
@@ -89,27 +61,14 @@ class AssetUsageInNodePropertiesStrategy extends AbstractAssetUsageStrategy
             return $this->firstlevelCache[$assetIdentifier];
         }
 
-        $userWorkspace = $this->userService->getPersonalWorkspace();
-
-        $relatedNodes = [];
-        foreach ($this->getRelatedNodes($asset) as $relatedNodeData) {
-            if ($relatedNodeData->isInternal()) {
-                continue;
-            }
-            $accessible = $this->domainUserService->currentUserCanReadWorkspace($relatedNodeData->getWorkspace());
-            if ($accessible) {
-                $context = $this->createContextMatchingNodeData($relatedNodeData);
-            } else {
-                $context = $this->createContentContext($userWorkspace->getName());
-            }
-            $site = $context->getCurrentSite();
-            $node = $this->nodeFactory->createFromNodeData($relatedNodeData, $context);
-            $flowQuery = new FlowQuery([$node]);
-            /** @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface $documentNode */
-            $documentNode = $flowQuery->closest('[instanceof TYPO3.Neos:Document]')->get(0);
-
-            $relatedNodes[] = new AssetUsageInNodeProperties($asset, $site, $documentNode, $node, $accessible);
-        }
+        $relatedNodes = array_map(function (NodeData $relatedNodeData) use ($asset) {
+            return new AssetUsageInNodeProperties($asset,
+                $relatedNodeData->getIdentifier(),
+                $relatedNodeData->getWorkspace()->getName(),
+                $relatedNodeData->getDimensionValues(),
+                $relatedNodeData->getNodeType()->getName()
+            );
+        }, $this->getRelatedNodes($asset));
 
         $this->firstlevelCache[$assetIdentifier] = $relatedNodes;
         return $this->firstlevelCache[$assetIdentifier];
