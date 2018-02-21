@@ -11,6 +11,8 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Context\Parameters\ContextParameters;
+use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Exception;
@@ -70,11 +72,13 @@ class ContentContext extends Context
      * @param boolean $inaccessibleContentShown If inaccessible content should be returned in query results
      * @param Site $currentSite The current Site object
      * @param Domain $currentDomain The current Domain object
+     * @param ContentSubgraphInterface|null $contentSubgraph
+     * @param ContextParameters|null $contextParameters
      * @see ContextFactoryInterface
      */
-    public function __construct($workspaceName, \DateTimeInterface $currentDateTime, array $dimensions, array $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown, Site $currentSite = null, Domain $currentDomain = null)
+    public function __construct($workspaceName, \DateTimeInterface $currentDateTime, array $dimensions, array $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown, Site $currentSite = null, Domain $currentDomain = null, ContentSubgraphInterface $contentSubgraph = null, ContextParameters $contextParameters = null)
     {
-        parent::__construct($workspaceName, $currentDateTime, $dimensions, $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown);
+        parent::__construct($workspaceName, $currentDateTime, $dimensions, $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown, $contentSubgraph, $contextParameters);
         $this->currentSite = $currentSite;
         $this->currentDomain = $currentDomain;
         $this->targetDimensions = $targetDimensions;
