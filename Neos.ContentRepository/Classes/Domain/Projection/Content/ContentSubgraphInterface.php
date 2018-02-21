@@ -21,11 +21,12 @@ interface ContentSubgraphInterface
 {
     /**
      * @param Domain\Model\NodeInterface $startNode
+     * @param HierarchyTraversalDirection $direction
      * @param Domain\ValueObject\NodeTypeConstraints $nodeTypeConstraints
      * @param callable $callback
      * @param Domain\Service\Context|null $contentContext
      */
-    public function traverse(Domain\Model\NodeInterface $startNode, Domain\ValueObject\NodeTypeConstraints $nodeTypeConstraints, callable $callback, Domain\Service\Context $contentContext = null): void;
+    public function traverseHierarchy(Domain\Model\NodeInterface $startNode, HierarchyTraversalDirection $direction, Domain\ValueObject\NodeTypeConstraints $nodeTypeConstraints, callable $callback, Domain\Service\Context $contentContext = null): void;
 
     /**
      * @param Domain\ValueObject\NodeIdentifier $nodeIdentifier

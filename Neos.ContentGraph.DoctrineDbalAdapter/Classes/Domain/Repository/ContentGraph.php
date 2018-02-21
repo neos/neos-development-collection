@@ -13,6 +13,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  */
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Service\DbalClient;
+use Neos\ContentRepository\Domain;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
@@ -23,6 +24,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Domain\ValueObject\NodeName;
 
 /**
  * The Doctrine DBAL adapter content graph
@@ -166,4 +168,30 @@ final class ContentGraph implements ContentGraphInterface
         return null;
     }
 
+    /**
+     * @param NodeTypeName $nodeTypeName
+     * @param Domain\ValueObject\NodeName $nodeNameToAssign
+     * @return NodeInterface|null
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Exception
+     */
+    public function findRootNodeByType(Domain\ValueObject\NodeTypeName $nodeTypeName, Domain\ValueObject\NodeName $nodeNameToAssign): ?NodeInterface
+    {
+        $connection = $this->client->getConnection();
+
+        // HINT: we check the ContentStreamIdentifier on the EDGE; as this is where we actually find out whether the node exists in the content stream
+        $nodeRow = $connection->executeQuery(
+            'SELECT n.* FROM neos_contentgraph_node n
+                  WHERE n.nodetypename = :nodeTypeName',
+            [
+                'nodeTypeName' => (string)$nodeTypeName,
+            ]
+        )->fetch();
+
+        if ($nodeRow) {
+            $nodeRow['name'] = (string) $nodeNameToAssign;
+        }
+
+        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow, null) : null;
+    }
 }

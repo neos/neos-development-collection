@@ -44,9 +44,11 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
                 $dimensionIdentifier = new ContentDimensionIdentifier($rawDimensionIdentifier);
                 $values = [];
                 $variationEdges = [];
+                $additionalConfiguration = $dimensionConfiguration;
                 if (!isset($dimensionConfiguration['defaultValue'])) {
                     throw new MissingContentDimensionDefaultValueException('Content dimension ' . $rawDimensionIdentifier . ' has no default value defined.', 1516639042);
                 }
+
                 foreach ($dimensionConfiguration['values'] as $rawValue => $configuration) {
                     if (is_array($configuration)) {
                         $this->extractDimensionValuesAndVariations($rawValue, $values, $variationEdges, $configuration, null, new ContentDimensionValueSpecializationDepth(0));
@@ -55,13 +57,15 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
                 if (!isset($values[$dimensionConfiguration['defaultValue']])) {
                     throw new MissingContentDimensionDefaultValueException('Content dimension ' . $rawDimensionIdentifier . ' has the undefined value ' . $dimensionConfiguration['defaultValue'] . ' declared as default value.', 1516639145);
                 }
+                unset($additionalConfiguration['values']);
+                unset($additionalConfiguration['defaultValue']);
 
                 $this->contentDimensions[$rawDimensionIdentifier] = new ContentDimension(
                     $dimensionIdentifier,
                     $values,
                     $values[$dimensionConfiguration['defaultValue']],
                     $variationEdges,
-                    $dimensionConfiguration['configuration'] ?? []
+                    $additionalConfiguration
                 );
             }
         } else {
@@ -81,6 +85,7 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
     protected function extractDimensionValuesAndVariations(string $rawValue, array & $values, array & $variationEdges, array $configuration, ?ContentDimensionValue $generalization, ContentDimensionValueSpecializationDepth $specializationDepth)
     {
         $constraints = [];
+        $additionalConfiguration = $configuration;
         if (isset($configuration['constraints'])) {
             foreach ($configuration['constraints'] as $rawDimensionIdentifier => $currentConstraints) {
                 $wildcardAllowed = true;
@@ -95,7 +100,9 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
                 $constraints[$rawDimensionIdentifier] = new ContentDimensionConstraints($wildcardAllowed, $identifierRestrictions);
             }
         }
-        $value = new ContentDimensionValue($rawValue, $specializationDepth, $constraints);
+        unset($additionalConfiguration['constraints']);
+        unset($additionalConfiguration['specializations']);
+        $value = new ContentDimensionValue($rawValue, $specializationDepth, $constraints, $additionalConfiguration);
         $values[$rawValue] = $value;
         if ($generalization) {
             $variationEdges[] = new ContentDimensionValueVariationEdge($value, $generalization);

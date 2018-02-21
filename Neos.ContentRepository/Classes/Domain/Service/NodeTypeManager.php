@@ -19,6 +19,7 @@ use Neos\ContentRepository\Exception;
 use Neos\ContentRepository\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Exception\NodeTypeIsFinalException;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
+use Neos\Utility\Arrays;
 
 /**
  * Manager for node types
@@ -94,32 +95,38 @@ class NodeTypeManager
      *
      * @param string $superTypeName
      * @param boolean $includeAbstractNodeTypes Whether to include abstract node types, defaults to TRUE
-     * @return array<NodeType> Sub node types of the given super type, indexed by node type name
+     * @param bool $recursive
+     * @return array<NodeType>|NodeType[] Sub node types of the given super type, indexed by node type name
      * @api
      */
-    public function getSubNodeTypes($superTypeName, $includeAbstractNodeTypes = true)
+    public function getSubNodeTypes(string $superTypeName, bool $includeAbstractNodeTypes = true, bool $recursive = false)
     {
         if ($this->cachedNodeTypes === array()) {
             $this->loadNodeTypes();
         }
 
-        if (isset($this->cachedSubNodeTypes[$superTypeName])) {
-            return $this->cachedSubNodeTypes[$superTypeName];
+        if (!isset($this->cachedSubNodeTypes[$superTypeName])) {
+            $filteredNodeTypes = [];
+            /** @var NodeType $nodeType */
+            foreach ($this->cachedNodeTypes as $nodeTypeName => $nodeType) {
+                if ($includeAbstractNodeTypes === false && $nodeType->isAbstract()) {
+                    continue;
+                }
+                if ($nodeType->isOfType($superTypeName) && $nodeTypeName !== $superTypeName) {
+                    $filteredNodeTypes[$nodeTypeName] = $nodeType;
+                }
+            }
+            $this->cachedSubNodeTypes[$superTypeName] = $filteredNodeTypes;
         }
 
-        $filteredNodeTypes = [];
-        /** @var NodeType $nodeType */
-        foreach ($this->cachedNodeTypes as $nodeTypeName => $nodeType) {
-            if ($includeAbstractNodeTypes === false && $nodeType->isAbstract()) {
-                continue;
-            }
-            if ($nodeType->isOfType($superTypeName) && $nodeTypeName !== $superTypeName) {
-                $filteredNodeTypes[$nodeTypeName] = $nodeType;
+        $nodeTypes = $this->cachedSubNodeTypes[$superTypeName];
+        if ($recursive) {
+            foreach ($nodeTypes as $nodeTypeName => $nodeType) {
+                $nodeTypes = Arrays::arrayMergeRecursiveOverrule($nodeTypes, $this->getSubNodeTypes($nodeTypeName, $includeAbstractNodeTypes, $recursive));
             }
         }
-        $this->cachedSubNodeTypes[$superTypeName] = $filteredNodeTypes;
 
-        return $this->cachedSubNodeTypes[$superTypeName];
+        return $nodeTypes;
     }
 
     /**
