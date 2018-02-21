@@ -16,6 +16,6 @@ use Neos\Neos\Exception;
 /**
  * An "invalid dimension value detector" exception
  */
-class InvalidDimensionValueDetectorException extends Exception
+class InvalidContentDimensionValueDetectorException extends Exception
 {
 }

@@ -25,23 +25,23 @@ final class ContentDimensionValueDetectorResolver
     /**
      * @param Dimension\ContentDimension $contentDimension
      * @return ContentDimensionValueDetectorInterface
-     * @throws Exception\InvalidDimensionValueDetectorException
+     * @throws Exception\InvalidContentDimensionValueDetectorException
      */
     public function resolveContentDimensionValueDetector(Dimension\ContentDimension $contentDimension): ContentDimensionValueDetectorInterface
     {
-        $detectorClassName = $contentDimension->getConfigurationValue('detectionComponent.implementationClassName');
+        $detectorClassName = $contentDimension->getConfigurationValue('resolution.detectionComponent.implementationClassName');
         if ($detectorClassName) {
             if (class_exists($detectorClassName)) {
                 $detector = new $detectorClassName();
                 if (!$detector instanceof ContentDimensionValueDetectorInterface) {
-                    throw new Exception\InvalidDimensionValueDetectorException(
+                    throw new Exception\InvalidContentDimensionValueDetectorException(
                         '"' . $detectorClassName . '", configured as content dimension value detector for content dimension "' . $contentDimension->getIdentifier() . '", does not implement ' . ContentDimensionValueDetectorInterface::class . '. Please check your dimension configuration.',
                         1510826082
                     );
                 }
                 return $detector;
             } else {
-                throw new Exception\InvalidDimensionValueDetectorException(
+                throw new Exception\InvalidContentDimensionValueDetectorException(
                     'Could not resolve dimension preset detection component for dimension "' . $contentDimension->getIdentifier() . '". Please check your dimension configuration.',
                     1510750184
                 );

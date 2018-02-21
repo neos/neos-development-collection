@@ -12,6 +12,7 @@ namespace Neos\Neos\Tests\Functional\Http;
  */
 use Neos\ContentRepository\Domain\Context\Dimension;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Http;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\RoutingComponent;
@@ -122,7 +123,7 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
 
     /**
      * @test
-     * @throws \Neos\Neos\Http\ContentDimensionDetection\Exception\InvalidDimensionValueDetectorException
+     * @throws \Neos\Neos\Http\ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException
      */
     public function handleAddsCorrectSubgraphIdentityToComponentContextWithAllDimensionValuesGivenLiveWorkspaceAndDefaultDelimiter()
     {
@@ -152,7 +153,7 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
 
     /**
      * @test
-     * @throws \Neos\Neos\Http\ContentDimensionDetection\Exception\InvalidDimensionValueDetectorException
+     * @throws \Neos\Neos\Http\ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException
      */
     public function handleAddsCorrectSubgraphIdentityToComponentContextWithAllDimensionValuesGivenLiveWorkspaceAndModifiedDelimiter()
     {
@@ -183,7 +184,7 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
 
     /**
      * @test
-     * @throws \Neos\Neos\Http\ContentDimensionDetection\Exception\InvalidDimensionValueDetectorException
+     * @throws \Neos\Neos\Http\ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException
      */
     public function handleAddsCorrectSubgraphIdentityToComponentContextWithMinimalDimensionValuesGivenLiveWorkspaceAndModifiedDelimiter()
     {
@@ -213,8 +214,7 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
 
     /**
      * @test
-     * @throws \Neos\Neos\Http\ContentDimensionDetection\Exception\InvalidDimensionValueDetectorException
-     * @todo test content stream identifier as soon as CSI handling is defined
+     * @throws \Neos\Neos\Http\ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException
      */
     public function handleAddsCorrectSubgraphIdentityToComponentContextWithDimensionValuesGivenButOverriddenViaContextPath()
     {
@@ -227,7 +227,7 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
         /** @var RouteParameters $routeParameters */
         $routeParameters = $componentContext->getParameter(RoutingComponent::class, 'parameters');
 
-        #$this->assertSame('edcf9368-8fac-4207-89fc-77b37293ae15', (string) $routeParameters->getValue('contentStreamIdentifier'));
+        $this->assertEquals(new WorkspaceName('user-me'), $routeParameters->getValue('workspaceName'));
         $this->assertSame(true, $routeParameters->getValue('uriPathSegmentUsed'));
 
         $expectedDimensionSpacePoint = new DimensionSpacePoint([

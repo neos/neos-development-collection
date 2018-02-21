@@ -13,8 +13,8 @@ namespace Neos\Neos\Http;
 
 use Neos\ContentRepository\Domain\Context\Dimension;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
@@ -46,7 +46,7 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
 
     /**
      * @param Http\Component\ComponentContext $componentContext
-     * @throws ContentDimensionDetection\Exception\InvalidDimensionValueDetectorException
+     * @throws ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException
      */
     public function handle(Http\Component\ComponentContext $componentContext)
     {
@@ -55,11 +55,8 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
         $existingParameters = $componentContext->getParameter(RoutingComponent::class, 'parameters') ?? RouteParameters::createEmpty();
         $parameters = $existingParameters
             ->withParameter('dimensionSpacePoint', $this->detectDimensionSpacePoint($componentContext, $uriPathSegmentUsed))
-            ->withParameter('uriPathSegmentUsed', $uriPathSegmentUsed);
-        $contentStreamIdentifier = $this->detectContentStreamIdentifier($componentContext);
-        if ($contentStreamIdentifier) {
-            $parameters->withParameter('contentStreamIdentifier', $contentStreamIdentifier);
-        }
+            ->withParameter('uriPathSegmentUsed', $uriPathSegmentUsed)
+            ->withParameter('workspaceName', $this->detectWorkspaceName($componentContext) ?: WorkspaceName::forLive());
 
         $componentContext->setParameter(RoutingComponent::class, 'parameters', $parameters);
     }
@@ -68,13 +65,14 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
      * @param Http\Component\ComponentContext $componentContext
      * @param bool $uriPathSegmentUsed
      * @return DimensionSpacePoint
-     * @throws ContentDimensionDetection\Exception\InvalidDimensionValueDetectorException
+     * @throws ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException
      */
     protected function detectDimensionSpacePoint(Http\Component\ComponentContext $componentContext, bool &$uriPathSegmentUsed): DimensionSpacePoint
     {
         $coordinates = [];
         $path = $componentContext->getHttpRequest()->getUri()->getPath();
 
+        /** @todo no more paths! */
         $isContextPath = NodePaths::isContextPath($path);
         $backendUriDimensionPresetDetector = new ContentDimensionDetection\BackendUriContentDimensionValueDetector();
         $dimensions = $this->dimensionSource->getContentDimensionsOrderedByPriority();
@@ -137,16 +135,16 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
 
     /**
      * @param Http\Component\ComponentContext $componentContext
-     * @return ContentStreamIdentifier|null
+     * @return WorkspaceName|null
      */
-    protected function detectContentStreamIdentifier(Http\Component\ComponentContext $componentContext): ?ContentStreamIdentifier
+    protected function detectWorkspaceName(Http\Component\ComponentContext $componentContext): ?WorkspaceName
     {
         $requestPath = $componentContext->getHttpRequest()->getUri()->getPath();
         $requestPath = mb_substr($requestPath, mb_strrpos($requestPath, '/'));
         if ($requestPath !== '' && NodePaths::isContextPath($requestPath)) {
             $nodePathAndContext = NodePaths::explodeContextPath($requestPath);
             try {
-                return new ContentStreamIdentifier($nodePathAndContext['workspaceName']);
+                return new WorkspaceName($nodePathAndContext['workspaceName']);
             } catch (\InvalidArgumentException $exception) {
             }
         }

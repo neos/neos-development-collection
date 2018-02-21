@@ -23,7 +23,7 @@ class ContentDimensionValueDetectorResolverTest extends UnitTestCase
 {
     /**
      * @test
-     * @throws ContentDimensionDetection\Exception\InvalidDimensionValueDetectorException
+     * @throws ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException
      */
     public function resolveContentDimensionValueDetectorReturnsHostPrefixDetectorForMatchingResolutionMode()
     {
@@ -50,7 +50,7 @@ class ContentDimensionValueDetectorResolverTest extends UnitTestCase
 
     /**
      * @test
-     * @throws ContentDimensionDetection\Exception\InvalidDimensionValueDetectorException
+     * @throws ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException
      */
     public function resolveContentDimensionValueDetectorReturnsHostSuffixDetectorForMatchingResolutionMode()
     {
@@ -77,7 +77,7 @@ class ContentDimensionValueDetectorResolverTest extends UnitTestCase
 
     /**
      * @test
-     * @throws ContentDimensionDetection\Exception\InvalidDimensionValueDetectorException
+     * @throws ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException
      */
     public function resolveContentDimensionValueDetectorReturnsUriPathSegmentDetectorForMatchingResolutionMode()
     {
@@ -104,7 +104,7 @@ class ContentDimensionValueDetectorResolverTest extends UnitTestCase
 
     /**
      * @test
-     * @throws ContentDimensionDetection\Exception\InvalidDimensionValueDetectorException
+     * @throws ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException
      */
     public function resolveDimensionPresetDetectorReturnsUriPathSegmentDetectorIfNothingWasConfigured()
     {
@@ -127,7 +127,7 @@ class ContentDimensionValueDetectorResolverTest extends UnitTestCase
 
     /**
      * @test
-     * @throws ContentDimensionDetection\Exception\InvalidDimensionValueDetectorException
+     * @throws ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException
      */
     public function resolveDimensionPresetDetectorReturnsConfiguredDetectorIfImplementationClassExistsAndImplementsTheDetectorInterface()
     {
@@ -156,8 +156,8 @@ class ContentDimensionValueDetectorResolverTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Neos\Http\ContentDimensionDetection\Exception\InvalidDimensionValueDetectorException
-     * @throws ContentDimensionDetection\Exception\InvalidDimensionValueDetectorException
+     * @expectedException \Neos\Neos\Http\ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException
+     * @throws ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException
      */
     public function resolveDimensionPresetDetectorThrowsExceptionWithNotExistingDetectorImplementationClassConfigured()
     {
@@ -183,8 +183,8 @@ class ContentDimensionValueDetectorResolverTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Neos\Http\ContentDimensionDetection\Exception\InvalidDimensionValueDetectorException
-     * @throws ContentDimensionDetection\Exception\InvalidDimensionValueDetectorException
+     * @expectedException \Neos\Neos\Http\ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException
+     * @throws ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException
      */
     public function resolveDimensionPresetDetectorThrowsExceptionWithImplementationClassNotImplementingTheDetectorInterfaceConfigured()
     {
