@@ -59,6 +59,8 @@
             placeholder: 'Loading ...'
             baseNodeType: ''
 
+'Neos.Neos:Sites': []
+
 # Hidable Mixin
 'Neos.Neos:Hidable':
   abstract: TRUE
@@ -185,6 +187,10 @@
         inspector:
           group: 'visibility'
           position: 40
+
+'Neos.Neos:Site':
+  superTypes:
+    'Neos.Neos:Document': TRUE
 
 # A shortcut.
 # "Shortcuts" can be linked to but instead of displaying content themselves they redirect to another "Document" node
