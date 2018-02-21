@@ -403,6 +403,35 @@ Options Reference:
 ``threshold`` (number)
 	Minimum amount of characters which trigger a search. Default is set to 2.
 
+``createNew`` (array)
+    It is also possible to create new selectable nodes directly from the reference editor.
+    This can come in handy for example if you reference tag nodes and want to add new tags on the fly.
+
+    The given string is passed to the title property of the new node.
+
+    ``path`` (string)
+        The path to the node in which the new nodes should be created.
+
+    ``type`` (string)
+        The type of the nodes to be created.
+
+    .. code-block:: yaml
+
+        tags:
+          type: references
+          ui:
+            label: 'Tags'
+            inspector:
+              group: document
+              editorOptions:
+                nodeTypes: ['My.Website:Tag']
+                createNew:
+                  path: /sites/yoursite/tags
+                  type: 'My.Website:Tag'
+
+
+
+
 Property Type: DateTime ``DateTimeEditor`` -- Date & Time Selection Editor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
