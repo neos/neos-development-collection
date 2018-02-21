@@ -295,7 +295,7 @@ final class NodeCommandHandler
                 $command->getNodeIdentifier(),
                 $command->getNodeName(),
                 $command->getNodeTypeName(),
-                $command->getDimensionValues(),
+                $command->getDimensionSpacePoint(),
                 $command->getPropertyValues()
             )
         );

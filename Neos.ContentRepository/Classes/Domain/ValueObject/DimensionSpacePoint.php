@@ -89,6 +89,15 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
     }
 
     /**
+     * @param ContentDimensionIdentifier $dimensionIdentifier
+     * @return bool
+     */
+    public function hasCoordinate(ContentDimensionIdentifier $dimensionIdentifier): bool
+    {
+        return isset($this->coordinates[(string)$dimensionIdentifier]);
+    }
+
+    /**
      * @return string
      */
     public function getHash(): string

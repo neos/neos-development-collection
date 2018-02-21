@@ -1,7 +1,9 @@
 <?php
 namespace Neos\ContentRepository\Domain\Context\Importing\Event;
 
-use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
 use Neos\ContentRepository\Domain\ValueObject\ImportingSessionIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
@@ -9,7 +11,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcing\Event\EventInterface;
 
-final class NodeWasImported implements EventInterface
+final class NodeWasImported implements EventInterface, CopyableAcrossContentStreamsInterface
 {
 
     /**
@@ -38,9 +40,9 @@ final class NodeWasImported implements EventInterface
     private $nodeTypeName;
 
     /**
-     * @var DimensionValues
+     * @var DimensionSpacePoint
      */
-    private $dimensionValues;
+    private $dimensionSpacePoint;
 
     /**
      * @var PropertyValues
@@ -53,7 +55,7 @@ final class NodeWasImported implements EventInterface
         NodeAggregateIdentifier $nodeIdentifier,
         NodeName $nodeName,
         NodeTypeName $nodeTypeName,
-        DimensionValues $dimensionValues,
+        DimensionSpacePoint $dimensionSpacePoint,
         PropertyValues $propertyValues
     ) {
         $this->importingSessionIdentifier = $importingSessionIdentifier;
@@ -61,7 +63,7 @@ final class NodeWasImported implements EventInterface
         $this->nodeIdentifier = $nodeIdentifier;
         $this->nodeName = $nodeName;
         $this->nodeTypeName = $nodeTypeName;
-        $this->dimensionValues = $dimensionValues;
+        $this->dimensionSpacePoint = $dimensionSpacePoint;
         $this->propertyValues = $propertyValues;
     }
 
@@ -90,13 +92,18 @@ final class NodeWasImported implements EventInterface
         return $this->nodeTypeName;
     }
 
-    public function getDimensionValues(): DimensionValues
+    public function getDimensionSpacePoint(): DimensionSpacePoint
     {
-        return $this->dimensionValues;
+        return $this->dimensionSpacePoint;
     }
 
     public function getPropertyValues(): PropertyValues
     {
         return $this->propertyValues;
+    }
+
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
+    {
+        // nothing to copy here
     }
 }

@@ -150,6 +150,18 @@ final class ContentDimension
     }
 
     /**
+     * @param ContentDimensionValue $dimensionValue
+     * @param callable $callback
+     */
+    public function traverseGeneralizations(ContentDimensionValue $dimensionValue, callable $callback)
+    {
+        $callback($dimensionValue);
+        if ($this->getGeneralization($dimensionValue)) {
+            $this->traverseGeneralizations($this->getGeneralization($dimensionValue), $callback);
+        }
+    }
+
+    /**
      * @param ContentDimensionValue $generalization
      * @param ContentDimensionValue $specialization
      * @return ContentDimensionValueSpecializationDepth
