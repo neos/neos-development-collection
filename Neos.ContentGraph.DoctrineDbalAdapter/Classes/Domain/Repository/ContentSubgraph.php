@@ -409,30 +409,41 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
 
 
     /**
-     * @param ContentRepository\Model\NodeInterface $parent
+     * @param ContentRepository\Model\NodeInterface $startNode
+     * @param ContentProjection\HierarchyTraversalDirection $direction
      * @param ContentRepository\ValueObject\NodeTypeConstraints|null $nodeTypeConstraints
      * @param callable $callback
      * @param ContentRepository\Service\Context|null $context
+     * @throws \Exception
      */
-    public function traverse(
-        ContentRepository\Model\NodeInterface $parent,
+    public function traverseHierarchy(
+        ContentRepository\Model\NodeInterface $startNode,
+        ContentProjection\HierarchyTraversalDirection $direction = null,
         ContentRepository\ValueObject\NodeTypeConstraints $nodeTypeConstraints = null,
         callable $callback,
         ContentRepository\Service\Context $context = null
     ): void
     {
-        $callback($parent);
-        foreach ($this->findChildNodes(
-            $parent->identifier,
-            $nodeTypeConstraints,
-            null,
-            null,
-            $context
-        ) as $childNode) {
-            $this->traverse($childNode, $nodeTypeConstraints, $callback, $context);
+        if (is_null($direction)) {
+            $direction = ContentProjection\HierarchyTraversalDirection::down();
+        }
+
+        $callback($startNode);
+        if ($direction->isUp()) {
+            $parentNode = $this->findParentNode($startNode->identifier);
+            $this->traverseHierarchy($parentNode, $direction, $nodeTypeConstraints, $callback, $context);
+        } elseif ($direction->isDown()) {
+            foreach ($this->findChildNodes(
+                $startNode->identifier,
+                $nodeTypeConstraints,
+                null,
+                null,
+                $context
+            ) as $childNode) {
+                $this->traverseHierarchy($childNode, $direction, $nodeTypeConstraints, $callback, $context);
+            }
         }
     }
-
 
     protected function getDatabaseConnection(): Connection
     {
