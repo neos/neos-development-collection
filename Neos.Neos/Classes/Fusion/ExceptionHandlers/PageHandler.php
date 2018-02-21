@@ -11,6 +11,7 @@ namespace Neos\Neos\Fusion\ExceptionHandlers;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\FluidAdaptor\View\StandaloneView;
@@ -44,6 +45,7 @@ class PageHandler extends AbstractRenderingExceptionHandler
      * @param \Exception $exception exception to handle
      * @param integer $referenceCode
      * @return string
+     * @throws \Neos\Flow\Mvc\Exception\StopActionException|\Neos\Flow\Security\Exception
      */
     protected function handle($fusionPath, \Exception $exception, $referenceCode)
     {
@@ -67,7 +69,7 @@ class PageHandler extends AbstractRenderingExceptionHandler
             $documentNode = $siteNode ? $siteNode : $node;
         }
 
-        if ($documentNode !== null && $documentNode->getContext()->getWorkspace()->getName() !== 'live' && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
+        if ($documentNode !== null && $this->getCurrentWorkspaceName() && !$this->getCurrentWorkspaceName()->isLive() && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
             $isBackend = true;
             $fluidView->assign('metaData', $this->contentElementWrappingService->wrapCurrentDocumentMetadata($documentNode, '<div id="neos-document-metadata"></div>', $fusionPath));
         }
@@ -79,6 +81,14 @@ class PageHandler extends AbstractRenderingExceptionHandler
         ));
 
         return $fluidView->render();
+    }
+
+    /**
+     * @return WorkspaceName|null
+     */
+    protected function getCurrentWorkspaceName(): ?WorkspaceName
+    {
+        return $this->runtime->getCurrentContext()['workspaceName'] ?? null;
     }
 
     /**
@@ -95,6 +105,7 @@ class PageHandler extends AbstractRenderingExceptionHandler
         $fluidView->setLayoutRootPath('resource://Neos.Neos/Private/Layouts/');
         // FIXME find a better way than using templates as partials
         $fluidView->setPartialRootPath('resource://Neos.Neos/Private/Templates/FusionObjects/');
+
         return $fluidView;
     }
 }
