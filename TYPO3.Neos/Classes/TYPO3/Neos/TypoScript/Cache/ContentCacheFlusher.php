@@ -18,6 +18,7 @@ use TYPO3\Media\Domain\Service\AssetService;
 use TYPO3\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Model\NodeType;
+use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
 use TYPO3\TypoScript\Core\Cache\ContentCache;
 
 /**
@@ -55,6 +56,12 @@ class ContentCacheFlusher
     protected $assetService;
 
     /**
+     * @Flow\Inject()
+     * @var NodeTypeManager
+     */
+    protected $nodeTypeManager;
+
+    /**
      * Register a node change for a later cache flush. This method is triggered by a signal sent via TYPO3CR's Node
      * model or the Neos Publishing Service.
      *
@@ -65,13 +72,8 @@ class ContentCacheFlusher
     {
         $this->tagsToFlush[ContentCache::TAG_EVERYTHING] = 'which were tagged with "Everything".';
 
-        $nodeTypesToFlush = $this->getAllImplementedNodeTypes($node->getNodeType());
-        foreach ($nodeTypesToFlush as $nodeType) {
-            $nodeTypeName = $nodeType->getName();
-            $this->tagsToFlush['NodeType_' . $nodeTypeName] = sprintf('which were tagged with "NodeType_%s" because node "%s" has changed and was of type "%s".', $nodeTypeName, $node->getPath(), $node->getNodeType()->getName());
-        }
-
-        $this->tagsToFlush['Node_' . $node->getIdentifier()] = sprintf('which were tagged with "Node_%s" because node "%s" has changed.', $node->getIdentifier(), $node->getPath());
+        $this->registerChangeOnNodeType($node->getNodeType()->getName(), $node->getIdentifier());
+        $this->registerChangeOnNodeIdentifier($node->getIdentifier());
 
         $originalNode = $node;
         while ($node->getDepth() > 1) {
@@ -82,6 +84,33 @@ class ContentCacheFlusher
             }
             $tagName = 'DescendantOf_' . $node->getIdentifier();
             $this->tagsToFlush[$tagName] = sprintf('which were tagged with "%s" because node "%s" has changed.', $tagName, $originalNode->getPath());
+        }
+    }
+
+    /**
+     * @param string $nodeIdentifier
+     */
+    public function registerChangeOnNodeIdentifier($nodeIdentifier)
+    {
+        $this->tagsToFlush[ContentCache::TAG_EVERYTHING] = 'which were tagged with "Everything".';
+        $this->tagsToFlush['Node_' . $nodeIdentifier] = sprintf('which were tagged with "Node_%s" because that identifier has changed.', $nodeIdentifier);
+
+        // Note, as we don't have a node here we cannot go up the structure.
+        $tagName = 'DescendantOf_' . $nodeIdentifier;
+        $this->tagsToFlush[$tagName] = sprintf('which were tagged with "%s" because node "%s" has changed.', $tagName, $nodeIdentifier);
+    }
+
+    /**
+     * @param string $nodeTypeName
+     * @param string $referenceNodeIdentifier
+     */
+    public function registerChangeOnNodeType($nodeTypeName, $referenceNodeIdentifier = null)
+    {
+        $this->tagsToFlush[ContentCache::TAG_EVERYTHING] = 'which were tagged with "Everything".';
+
+        $nodeTypesToFlush = $this->getAllImplementedNodeTypeNames($this->nodeTypeManager->getNodeType($nodeTypeName));
+        foreach ($nodeTypesToFlush as $nodeTypeNameToFlush) {
+            $this->tagsToFlush['NodeType_' . $nodeTypeNameToFlush] = sprintf('which were tagged with "NodeType_%s" because node "%s" has changed and was of type "%s".', $nodeTypeNameToFlush, ($referenceNodeIdentifier ? $referenceNodeIdentifier : ''), $nodeTypeName);
         }
     }
 
@@ -114,7 +143,8 @@ class ContentCacheFlusher
                 continue;
             }
 
-            $this->registerNodeChange($reference->getNode());
+            $this->registerChangeOnNodeIdentifier($reference->getNodeIdentifier());
+            $this->registerChangeOnNodeType($reference->getNodeTypeName(), $reference->getNodeIdentifier());
         }
     }
 
@@ -137,14 +167,16 @@ class ContentCacheFlusher
 
     /**
      * @param NodeType $nodeType
-     * @return array<NodeType>
+     * @return array<string>
      */
-    protected function getAllImplementedNodeTypes(NodeType $nodeType)
+    protected function getAllImplementedNodeTypeNames(NodeType $nodeType)
     {
-        $types = array($nodeType);
-        foreach ($nodeType->getDeclaredSuperTypes() as $superType) {
-            $types = array_merge($types, $this->getAllImplementedNodeTypes($superType));
-        }
+        $self = $this;
+        $types = array_reduce($nodeType->getDeclaredSuperTypes(), function (array $types, NodeType $superType) use ($self) {
+            return array_merge($types, $self->getAllImplementedNodeTypeNames($superType));
+        }, [$nodeType->getName()]);
+
+        $types = array_unique($types);
         return $types;
     }
 }
