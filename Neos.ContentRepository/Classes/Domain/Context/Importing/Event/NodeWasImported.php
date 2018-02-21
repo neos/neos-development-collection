@@ -3,6 +3,7 @@ namespace Neos\ContentRepository\Domain\Context\Importing\Event;
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
 use Neos\ContentRepository\Domain\ValueObject\ImportingSessionIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
@@ -10,7 +11,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcing\Event\EventInterface;
 
-final class NodeWasImported implements EventInterface
+final class NodeWasImported implements EventInterface, CopyableAcrossContentStreamsInterface
 {
 
     /**
@@ -99,5 +100,10 @@ final class NodeWasImported implements EventInterface
     public function getPropertyValues(): PropertyValues
     {
         return $this->propertyValues;
+    }
+
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
+    {
+        // nothing to copy here
     }
 }
