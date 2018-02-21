@@ -136,6 +136,7 @@ class ContentRepositoryExportService
 
         $this->contentStreamIdentifier = new ContentStreamIdentifier();
         $this->rootNodeIdentifier = new NodeIdentifier();
+        $this->nodeAggregateIdentifierForSitesNode = new NodeAggregateIdentifier();
 
         $this->eventPublisher->publish($this->contentStreamName(), new ContentStreamWasCreated(
             $this->contentStreamIdentifier,
