@@ -11,10 +11,13 @@ namespace Neos\Neos\ViewHelpers\Link;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
+use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
-use Neos\Neos\Exception as NeosException;
+use Neos\Neos\Domain\Context\Content\ContentQuery;
+use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\Service\LinkingService;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -121,6 +124,12 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
     protected $linkingService;
 
     /**
+     * @Flow\Inject
+     * @var NodeShortcutResolver
+     */
+    protected $nodeShortcutResolver;
+
+    /**
      * Initialize arguments
      *
      * @return void
@@ -149,6 +158,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
      * @param boolean $resolveShortcuts INTERNAL Parameter - if FALSE, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
      * @return string The rendered link
      * @throws ViewHelperException
+     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      */
     public function render($node = null, $format = null, $absolute = false, array $arguments = array(), $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = array(), $baseNodeName = 'documentNode', $nodeVariableName = 'linkedNode', $resolveShortcuts = true)
     {
@@ -156,37 +166,59 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         if (!$node instanceof NodeInterface) {
             $baseNode = $this->getContextVariable($baseNodeName);
             if (is_string($node) && substr($node, 0, 7) === 'node://') {
-                $node = $this->linkingService->convertUriToObject($node, $baseNode);
+                \Neos\Flow\var_dump($node);
+                exit();
+                #$node = $this->linkingService->convertUriToObject($node, $baseNode);
             }
         }
 
-        try {
-            $uri = $this->linkingService->createNodeUri(
-                $this->controllerContext,
-                $node,
-                $baseNode,
-                $format,
-                $absolute,
-                $arguments,
-                $section,
-                $addQueryString,
-                $argumentsToBeExcludedFromQueryString,
-                $resolveShortcuts
-            );
-            $this->tag->addAttribute('href', $uri);
-        } catch (NeosException $exception) {
-            $this->systemLogger->logException($exception);
-        } catch (NoMatchingRouteException $exception) {
-            $this->systemLogger->logException($exception);
+        if ($resolveShortcuts) {
+            $resolvedNode = $this->nodeShortcutResolver->resolveShortcutTarget($node);
+        } else {
+            // this case is only relevant in extremely rare occasions in the Neos Backend, when we want to generate
+            // a link towards the *shortcut itself*, and not to its target.
+            $resolvedNode = $node;
         }
 
-        $linkedNode = $this->linkingService->getLastLinkedNode();
-        $this->templateVariableContainer->add($nodeVariableName, $linkedNode);
+        /** @var ContentSubgraphInterface $subgraph */
+        $subgraph = $this->getContextVariable('subgraph');
+        /** @var NodeInterface $site */
+        $site = $this->getContextVariable('site');
+        /** @var WorkspaceName $workspaceName */
+        $workspaceName = $this->getContextVariable('workspaceName');
+
+        $contentQuery = new ContentQuery(
+            $resolvedNode->aggregateIdentifier,
+            $workspaceName,
+            $subgraph->getDimensionSpacePoint(),
+            $site->aggregateIdentifier
+        );
+
+        $uriBuilder = new UriBuilder();
+        $uriBuilder->setRequest($this->controllerContext->getRequest());
+        $uriBuilder->setFormat($format)
+            ->setCreateAbsoluteUri($absolute)
+            ->setArguments($arguments)
+            ->setSection($section)
+            ->setAddQueryString($addQueryString)
+            ->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString);
+
+        $uri = $uriBuilder->uriFor(
+            'show',
+            [
+                'node' => $contentQuery
+            ],
+            'Frontend\Node',
+            'Neos.Neos'
+        );
+        $this->tag->addAttribute('href', $uri);
+
+        $this->templateVariableContainer->add($nodeVariableName, $resolvedNode);
         $content = $this->renderChildren();
         $this->templateVariableContainer->remove($nodeVariableName);
 
-        if ($content === null && $linkedNode !== null) {
-            $content = $linkedNode->getLabel();
+        if ($content === null && $resolvedNode !== null) {
+            $content = $resolvedNode->getLabel();
         }
 
         $this->tag->setContent($content);
