@@ -101,16 +101,16 @@
 			<target xml:lang="es-ES" state="needs-translation">Workspace can't be rebased on a different workspace because it still contains changes.</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeleteWorkspaceHasDependencies" xml:space="preserve">
 				<source>The workspace cannot be deleted because other workspaces depend on it.</source>
-			<target xml:lang="es-ES" state="needs-translation">The workspace cannot be deleted because other workspaces depend on it.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">El espacio de trabajo no se puede eliminar porque otros espacios de trabajo dependen de el.</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeleteNoPermission" xml:space="preserve">
 				<source>You don't have the permissions for deleting this workspace.</source>
-			<target xml:lang="es-ES" state="needs-translation">You don't have the permissions for deleting this workspace.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">No tienes los permisos para eliminar esta área de trabajo.</target></trans-unit>
       <trans-unit id="workspaces.dialog.confirmWorkspaceDeletion" xml:space="preserve">
 				<source>Do you really want to delete the workspace "{0}"?</source>
-			<target xml:lang="es-ES" state="needs-translation">Do you really want to delete the workspace "{0}"?</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">¿Realmente deseas eliminar el espacio de trabajo "{0}"?</target></trans-unit>
       <trans-unit id="workspaces.dialog.thisWillDeleteTheWorkspace" xml:space="preserve">
 				<source>This will delete the workspace including all unpublished content. This operation cannot be undone.</source>
-			<target xml:lang="es-ES" state="needs-translation">This will delete the workspace including all unpublished content. This operation cannot be undone.</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Esto eliminará el espacio de trabajo incluyendo contenido todo inédito. Esta operación no se puede deshacer.</target></trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
 			<target xml:lang="es-ES" state="translated">Este módulo contiene el resumen de todos los elementos dentro del espacio de trabajo actual y permite seguir el flujo de trabajo de revisión y publicación para ellos.</target></trans-unit>
@@ -164,15 +164,15 @@
 			<target xml:lang="es-ES" state="translated">¿Desea descartar todos los cambios en el espacio de trabajo "{0}"?</target></trans-unit>
       <trans-unit id="workspaces.workspaceWithThisTitleAlreadyExists">
         <source>A workspace with this title already exists.</source>
-        <target xml:lang="es-ES" state="needs-translation">A workspace with this title already exists.</target>
+        <target xml:lang="es-ES" state="translated">Un espacio de trabajo con este título ya existe.</target>
       </trans-unit>
       <trans-unit id="workspaces.workspaceHasBeenUpdated">
         <source>The workspace "{0}" has been updated.</source>
-        <target xml:lang="es-ES" state="needs-translation">The workspace "{0}" has been updated.</target>
+        <target xml:lang="es-ES" state="translated">Se ha actualizado el espacio de trabajo "{0}".</target>
       </trans-unit>
       <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfDependencies">
         <source>Workspace "{0}" cannot be deleted because the following workspaces are based on it: {1}</source>
-        <target xml:lang="es-ES" state="needs-translation">Workspace "{0}" cannot be deleted because the following workspaces are based on it: {1}</target>
+        <target xml:lang="es-ES" state="translated">Espacio de trabajo "{0}" no se puede eliminar porque las siguientes áreas de trabajo se basan en él: {1}</target>
       </trans-unit>
       <trans-unit id="workspaces.notDeletedErrorWhileFetchingUnpublishedNodes">
         <source>An error occurred while fetching unpublished nodes from workspace "{0}", nothing was deleted.</source>
@@ -189,7 +189,7 @@
         </trans-unit>
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target xml:lang="es-ES" state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} nodes.</target>
+          <target xml:lang="es-ES" state="translated">No puedes borrar el espacio se trabajo "{0}" porque actualmente contiene los nodos "{1}".</target>
         </trans-unit>
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved">
@@ -442,13 +442,13 @@
 			<target xml:lang="es-ES" state="translated">Nombre</target></trans-unit>
       <trans-unit id="users.accountsAndRoles" xml:space="preserve">
 				<source>Accounts and Roles</source>
-			<target xml:lang="es-ES" state="needs-translation">Accounts and Roles</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Cuentas y Roles</target></trans-unit>
       <trans-unit id="users.tooltip.view" xml:space="preserve">
 				<source>View user</source>
-			<target xml:lang="es-ES" state="needs-translation">View user</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Ver usuario</target></trans-unit>
       <trans-unit id="users.tooltip.edit" xml:space="preserve">
 				<source>Edit user</source>
-			<target xml:lang="es-ES" state="needs-translation">Edit user</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Editar Usuario</target></trans-unit>
       <trans-unit id="users.tooltip.delete" xml:space="preserve">
 				<source>Delete user</source>
 			<target xml:lang="es-ES" state="translated">Eliminar usuario</target></trans-unit>
@@ -894,7 +894,7 @@
 			<target xml:lang="es-ES" state="translated">No se puede cargar el archivo</target></trans-unit>
       <trans-unit id="media.noFileSelected" xml:space="preserve">
 				<source>No file selected</source>
-			<target xml:lang="es-ES" state="needs-translation">No file selected</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Ningún archivo seleccionado</target></trans-unit>
       <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target xml:lang="es-ES" state="translated">El tamaño del archivo de {0} supera el límite permitido de {1}</target></trans-unit>
@@ -931,31 +931,37 @@
 			<target xml:lang="es-ES" state="needs-translation">References to "{asset}"</target></trans-unit>
       <trans-unit id="media.replaceAsset.replaceFilename" xml:space="preserve">
 				<source>Replace "{filename}"</source>
-			<target xml:lang="es-ES" state="needs-translation">Replace "{filename}"</target></trans-unit>
+			<target xml:lang="es-ES" state="translated">Reemplazar "{filename}"</target></trans-unit>
       <trans-unit id="media.replaceAsset.description" xml:space="preserve">
         <source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
       <target xml:lang="es-ES" state="needs-translation">You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</target></trans-unit>
       <trans-unit id="media.replaceAsset.note" xml:space="preserve">
         <source>Note</source>
-      <target xml:lang="es-ES" state="needs-translation">Note</target></trans-unit>
+      <target xml:lang="es-ES" state="translated">Nota</target></trans-unit>
       <trans-unit id="media.replaceAsset.noteText" xml:space="preserve">
         <source>This operation will replace the asset in all published or unpublished workspaces, including the live website.</source>
       <target xml:lang="es-ES" state="needs-translation">This operation will replace the asset in all published or unpublished workspaces, including the live website.</target></trans-unit>
       <trans-unit id="media.replaceAsset.chooseNewFile" xml:space="preserve">
         <source>Choose a new file</source>
-      <target xml:lang="es-ES" state="needs-translation">Choose a new file</target></trans-unit>
+      <target xml:lang="es-ES" state="translated">Seleccione un nuevo archivo</target></trans-unit>
       <trans-unit id="media.replace.usageCount" xml:space="preserve">
         <source>Currently the asset is used {usageCount} times.</source>
       <target xml:lang="es-ES" state="needs-translation">Currently the asset is used {usageCount} times.</target></trans-unit>
       <trans-unit id="media.replace.allUsages" xml:space="preserve">
         <source>Show all usages</source>
-      <target xml:lang="es-ES" state="needs-translation">Show all usages</target></trans-unit>
+      <target xml:lang="es-ES" state="translated">Mostrar todos los usos</target></trans-unit>
       <trans-unit id="media.replace.notUsed" xml:space="preserve">
         <source>Currently the asset is not in used anywhere on the website.</source>
       <target xml:lang="es-ES" state="needs-translation">Currently the asset is not in used anywhere on the website.</target></trans-unit>
       <trans-unit id="media.replace.previewFile" xml:space="preserve">
         <source>Preview current file</source>
-      <target xml:lang="es-ES" state="needs-translation">Preview current file</target></trans-unit>
+      <target xml:lang="es-ES" state="translated">Vista previa del archivo actual</target></trans-unit>
+      <trans-unit id="media.noAccessToWorkspace" xml:space="preserve">
+        <source>No access to workspace "{0}"</source>
+      <target xml:lang="es-ES" state="translated">Sin acceso al espacio de trabajo "{0}"</target></trans-unit>
+      <trans-unit id="media.missingDocumentNode" xml:space="preserve">
+        <source>No document node found for this node</source>
+      <target xml:lang="es-ES" state="translated">No se ha encpntrado ningún nodo del documento para este nodo</target></trans-unit>
     </body>
   </file>
 </xliff>

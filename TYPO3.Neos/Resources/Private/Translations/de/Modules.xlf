@@ -934,10 +934,10 @@
 			<target xml:lang="de">Verweise auf "{asset}"</target><alt-trans><target xml:lang="de">Verweist auf "{asset}"</target></alt-trans></trans-unit>
       <trans-unit id="media.replaceAsset.replaceFilename" xml:space="preserve">
 				<source>Replace "{filename}"</source>
-			<target xml:lang="de" state="translated">Datei "{filename}" ersetzen</target></trans-unit>
+			<target xml:lang="de" state="translated">Datei "{filename}" ersetzen</target><alt-trans><target xml:lang="de">"{filename}" ersetzen</target></alt-trans></trans-unit>
       <trans-unit id="media.replaceAsset.description" xml:space="preserve">
         <source>You can replace this asset by uploading a new file. Once replaced, the new asset will be used on all places where the asset is used on your website.</source>
-      <target xml:lang="de" state="translated">Sie können durch hochladen einer neuen Datei die vorhandene ersetzen. Danach wird die neue Datei an allen Stellen verwendet, wo die Vorgängerversion verwendet wurde.</target></trans-unit>
+      <target xml:lang="de" state="translated">Sie können durch Hochladen einer neuen Datei die Vorhandene ersetzen. Danach wird die neue Datei an allen Stellen verwendet, wo die Vorgängerversion verwendet wurde.</target><alt-trans><target xml:lang="de">Sie können durch hochladen einer neuen Datei die vorhandene ersetzen. Danach wird die neue Datei an allen Stellen verwendet, wo die Vorgängerversion verwendet wurde.</target></alt-trans></trans-unit>
       <trans-unit id="media.replaceAsset.note" xml:space="preserve">
         <source>Note</source>
       <target xml:lang="de" state="translated">Hinweis</target></trans-unit>
@@ -959,12 +959,12 @@
       <trans-unit id="media.replace.previewFile" xml:space="preserve">
         <source>Preview current file</source>
       <target xml:lang="de" state="translated">Vorschau der aktuellen Datei</target></trans-unit>
-      <trans-unit id="media.noAccessToWorkspace" xml:space="preserve" approved="yes">
+      <trans-unit id="media.noAccessToWorkspace" xml:space="preserve">
         <source>No access to workspace "{0}"</source>
-      <target xml:lang="de">Kein Zugriff auf Arbeitsbereich "{0}"</target></trans-unit>
+      <target xml:lang="de" state="translated">Kein Zugriff auf den Arbeitsbereich "{0}"</target></trans-unit>
       <trans-unit id="media.missingDocumentNode" xml:space="preserve">
         <source>No document node found for this node</source>
-      <target xml:lang="de">Für diesen Knoten wurde kein Dokumentknoten gefunden</target></trans-unit>
+      <target xml:lang="de" state="translated">Kein Dokumentknoten für diesen Knoten gefunden</target></trans-unit>
     </body>
   </file>
 </xliff>

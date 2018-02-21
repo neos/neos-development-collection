@@ -4,49 +4,49 @@
     <body>
       <trans-unit id="couldNotReplaceAsset" xml:space="preserve">
 				<source>Could not replace asset</source>
-			<target xml:lang="tr" state="needs-translation">Could not replace asset</target></trans-unit>
+			<target xml:lang="tr" state="translated">Öğe değiştirilemedi</target></trans-unit>
       <trans-unit id="assetHasBeenReplaced" xml:space="preserve">
 				<source>Asset "{0}" has been replaced.</source>
-			<target xml:lang="tr" state="needs-translation">Asset "{0}" has been replaced.</target></trans-unit>
+			<target xml:lang="tr" state="translated">Varlık "{0}" değiştirildi.</target></trans-unit>
       <trans-unit id="assetHasBeenUpdated" xml:space="preserve">
 				<source>Asset "{0}" has been updated.</source>
-			<target xml:lang="tr" state="needs-translation">Asset "{0}" has been updated.</target></trans-unit>
+			<target xml:lang="tr" state="translated">Varlık "{0}" güncellendi.</target></trans-unit>
       <trans-unit id="assetHasBeenAdded" xml:space="preserve">
 				<source>Asset "{0}" has been added.</source>
-			<target xml:lang="tr" state="needs-translation">Asset "{0}" has been added.</target></trans-unit>
+			<target xml:lang="tr" state="translated">Varlık "{0}" eklendi.</target></trans-unit>
       <trans-unit id="assetHasBeenDeleted" xml:space="preserve">
 				<source>Asset "{0}" has been deleted.</source>
-			<target xml:lang="tr" state="needs-translation">Asset "{0}" has been deleted.</target></trans-unit>
+			<target xml:lang="tr" state="translated">Varlık "{0}" silindi.</target></trans-unit>
       <trans-unit id="assetCouldNotBeDeleted" xml:space="preserve">
 				<source>Asset could not be deleted.</source>
-			<target xml:lang="tr" state="needs-translation">Asset could not be deleted.</target></trans-unit>
+			<target xml:lang="tr" state="translated">Öğe silinemedi.</target></trans-unit>
       <trans-unit id="assetHasBeenReplaced" xml:space="preserve">
 				<source>Asset "{0}" has been replaced.</source>
-			<target xml:lang="tr" state="needs-translation">Asset "{0}" has been replaced.</target></trans-unit>
+			<target xml:lang="tr" state="translated">Varlık "{0}" değiştirildi.</target></trans-unit>
       <trans-unit id="tagAlreadyExistsAndAddedToCollection" xml:space="preserve">
 				<source>Tag "{0}" already exists and was added to collection.</source>
-			<target xml:lang="tr" state="needs-translation">Tag "{0}" already exists and was added to collection.</target></trans-unit>
+			<target xml:lang="tr" state="translated">"{0}" etiketi zaten mevcut ve koleksiyona eklendi.</target></trans-unit>
       <trans-unit id="tagHasBeenCreated" xml:space="preserve">
 				<source>Tag "{0}" has been created.</source>
-			<target xml:lang="tr" state="needs-translation">Tag "{0}" has been created.</target></trans-unit>
+			<target xml:lang="tr" state="translated">"{0}" etiketi oluşturuldu.</target></trans-unit>
       <trans-unit id="tagHasBeenUpdated" xml:space="preserve">
 				<source>Tag "{0}" has been updated.</source>
-			<target xml:lang="tr" state="needs-translation">Tag "{0}" has been updated.</target></trans-unit>
+			<target xml:lang="tr" state="translated">"{0}" etiketi güncellendi.</target></trans-unit>
       <trans-unit id="tagHasBeenDeleted" xml:space="preserve">
 				<source>Tag "{0}" has been deleted.</source>
-			<target xml:lang="tr" state="needs-translation">Tag "{0}" has been deleted.</target></trans-unit>
+			<target xml:lang="tr" state="translated">"{0}" etiketi silindi.</target></trans-unit>
       <trans-unit id="collectionHasBeenCreated" xml:space="preserve">
 				<source>Collection "{0}" has been created.</source>
-			<target xml:lang="tr" state="needs-translation">Collection "{0}" has been created.</target></trans-unit>
+			<target xml:lang="tr" state="translated">"{0}" koleksiyonu oluşturuldu.</target></trans-unit>
       <trans-unit id="collectionHasBeenUpdated" xml:space="preserve">
 				<source>Collection "{0}" has been updated.</source>
-			<target xml:lang="tr" state="needs-translation">Collection "{0}" has been updated.</target></trans-unit>
+			<target xml:lang="tr" state="translated">"{0}" koleksiyonu güncellendi.</target></trans-unit>
       <trans-unit id="collectionHasBeenDeleted" xml:space="preserve">
 				<source>Collection "{0}" has been deleted.</source>
-			<target xml:lang="tr" state="needs-translation">Collection "{0}" has been deleted.</target></trans-unit>
+			<target xml:lang="tr" state="translated">"{0}" koleksiyonu silindi.</target></trans-unit>
       <trans-unit id="media.replace.options.generateRedirects" xml:space="preserve">
 				<source>Generate redirects from original file url to the new url</source>
-			<target xml:lang="tr" state="needs-translation">Generate redirects from original file url to the new url</target></trans-unit>
+			<target xml:lang="tr" state="translated">Özgün dosya Url'sinden yeni Url'ye yönlendirme oluştur</target></trans-unit>
     </body>
   </file>
 </xliff>

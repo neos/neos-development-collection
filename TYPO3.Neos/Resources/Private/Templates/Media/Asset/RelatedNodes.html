@@ -93,7 +93,7 @@
 						<tr >
 							<td>
 								<f:if condition="{nodeInformation.documentNode.nodeType.ui.icon}">
-									<i class="{nodeInformation.documentNode.nodeType.ui.icon}" title="{f:if(condition: nodeInformation.documentNode.nodeType.label, then: '{neos:backend.translate(id: nodeInformation.documentNode.nodeType.label, package: 'TYPO3.Neos')}', else: nodeInformation.documentNode.nodeType.name)}" data-neos-toggle="tooltip"></i>
+									<i class="{nodeInformation.documentNode.nodeType.ui.icon}" title="{f:if(condition: nodeInformation.documentNode.nodeType.label, then: '{neos:backend.translate(id: nodeInformation.documentNode.nodeType.label, package: \'TYPO3.Neos\')}', else: nodeInformation.documentNode.nodeType.name)}" data-neos-toggle="tooltip"></i>
 								</f:if>
 								<f:if condition="{nodeInformation.documentNode}">
 									<f:then>
@@ -113,7 +113,7 @@
 							<td>
 								<f:if condition="{nodeInformation.node.nodeType.ui.icon}">
 									<i class="{nodeInformation.node.nodeType.ui.icon}"
-									   title="{f:if(condition: nodeInformation.node.nodeType.label, then: '{neos:backend.translate(id: nodeInformation.node.nodeType.label, package: 'TYPO3.Neos')}', else: '{nodeInformation.node.nodeType.name}')}"
+									   title="{f:if(condition: nodeInformation.node.nodeType.label, then: '{neos:backend.translate(id: nodeInformation.node.nodeType.label, package: \'TYPO3.Neos\')}', else: '{nodeInformation.node.nodeType.name}')}"
 									   data-neos-toggle="tooltip" data-placement="left"></i>
 								</f:if>
 								<span title="{nodeInformation.node.path}" data-neos-toggle="tooltip" data-placement="left">{nodeInformation.node.label}</span>

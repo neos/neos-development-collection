@@ -20,43 +20,43 @@
 			<target xml:lang="ja" state="needs-translation">Management</target></trans-unit>
       <trans-unit id="management.description" xml:space="preserve">
 				<source>Contains multiple modules related to management of content</source>
-			<target xml:lang="ja" state="needs-translation">Contains multiple modules related to management of content</target></trans-unit>
+			<target xml:lang="ja" state="translated">複数のモジュール管理に関するコンテンツ</target></trans-unit>
       <trans-unit id="workspaces.label" xml:space="preserve">
 				<source>Workspaces</source>
-			<target xml:lang="ja" state="needs-translation">Workspaces</target></trans-unit>
+			<target xml:lang="ja" state="translated">ワークスペース</target></trans-unit>
       <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve">
 				<source>Details for "{0}"</source>
 			<target xml:lang="ja" state="needs-translation">Details for "{0}"</target></trans-unit>
       <trans-unit id="workspaces.createNewWorkspace" xml:space="preserve">
 				<source>Create new workspace</source>
-			<target xml:lang="ja" state="needs-translation">Create new workspace</target></trans-unit>
+			<target xml:lang="ja" state="translated">新しいワークスペース</target></trans-unit>
       <trans-unit id="workspaces.createWorkspace" xml:space="preserve">
 				<source>Create workspace</source>
-			<target xml:lang="ja" state="needs-translation">Create workspace</target></trans-unit>
+			<target xml:lang="ja" state="translated">作成ワークスペース</target></trans-unit>
       <trans-unit id="workspaces.deleteWorkspace" xml:space="preserve">
 				<source>Delete workspace</source>
-			<target xml:lang="ja" state="needs-translation">Delete workspace</target></trans-unit>
+			<target xml:lang="ja" state="translated">ワークスペース削除</target></trans-unit>
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve">
 				<source>Edit workspace</source>
-			<target xml:lang="ja" state="needs-translation">Edit workspace</target></trans-unit>
+			<target xml:lang="ja" state="translated">編集ワークスペース</target></trans-unit>
       <trans-unit id="workspaces.yesDeleteWorkspace" xml:space="preserve">
 				<source>Yes, delete the workspace</source>
-			<target xml:lang="ja" state="needs-translation">Yes, delete the workspace</target></trans-unit>
+			<target xml:lang="ja" state="translated">はい、削除のワークスペース</target></trans-unit>
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve">
 				<source>Edit workspace "{0}"</source>
-			<target xml:lang="ja" state="needs-translation">Edit workspace</target></trans-unit>
+			<target xml:lang="ja" state="translated">編集ワークスペース</target></trans-unit>
       <trans-unit id="workspaces.personalWorkspace" xml:space="preserve">
 				<source>Personal workspace</source>
-			<target xml:lang="ja" state="needs-translation">Personal workspace</target></trans-unit>
+			<target xml:lang="ja" state="translated">個人ワークスペース</target></trans-unit>
       <trans-unit id="workspaces.privateWorkspace" xml:space="preserve">
 				<source>Private workspace</source>
-			<target xml:lang="ja" state="needs-translation">Private workspace</target></trans-unit>
+			<target xml:lang="ja" state="translated">民間のワークスペース</target></trans-unit>
       <trans-unit id="workspaces.internalWorkspace" xml:space="preserve">
 				<source>Internal workspace</source>
-			<target xml:lang="ja" state="needs-translation">Internal workspace</target></trans-unit>
+			<target xml:lang="ja" state="translated">内部のワークスペース</target></trans-unit>
       <trans-unit id="workspaces.readonlyWorkspace" xml:space="preserve">
 				<source>Read-only workspace</source>
-			<target xml:lang="ja" state="needs-translation">Read-only workspace</target></trans-unit>
+			<target xml:lang="ja" state="translated">読み取り専用ワークスペース</target></trans-unit>
       <trans-unit id="workspaces.workspace.title" xml:space="preserve">
 				<source>Title</source>
 			<target xml:lang="ja" state="translated">タイトル</target></trans-unit>
@@ -65,55 +65,55 @@
 			<target xml:lang="ja" state="translated">概要</target><alt-trans><target xml:lang="ja">説明</target></alt-trans></trans-unit>
       <trans-unit id="workspaces.workspace.baseWorkspace" xml:space="preserve">
 				<source>Base workspace</source>
-			<target xml:lang="ja" state="needs-translation">Base workspace</target></trans-unit>
+			<target xml:lang="ja" state="translated">ベースとなるワークスペース</target></trans-unit>
       <trans-unit id="workspaces.workspace.owner" xml:space="preserve">
 				<source>Owner</source>
-			<target xml:lang="ja" state="needs-translation">Owner</target></trans-unit>
+			<target xml:lang="ja" state="translated">オーナー</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility" xml:space="preserve">
 				<source>Visibility</source>
 			<target xml:lang="ja" state="translated">可視性</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private" xml:space="preserve">
 				<source>Private</source>
-			<target xml:lang="ja" state="needs-translation">Private</target></trans-unit>
+			<target xml:lang="ja" state="translated">民間</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
 				<source>Only reviewers and administrators can access and modify this workspace</source>
-			<target xml:lang="ja" state="needs-translation">Only reviewers and administrators can access and modify this workspace</target></trans-unit>
+			<target xml:lang="ja" state="translated">のみ応募には管理者アクセスし、修正するこのワークスペース</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve">
 				<source>Internal</source>
-			<target xml:lang="ja" state="needs-translation">Internal</target></trans-unit>
+			<target xml:lang="ja" state="translated">内部</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve">
 				<source>Any logged in editor can see and modify this workspace.</source>
-			<target xml:lang="ja" state="needs-translation">Any logged in editor can see and modify this workspace.</target></trans-unit>
+			<target xml:lang="ja" state="translated">他のログインエディタで見をいつでも変更することが含まれます。</target></trans-unit>
       <trans-unit id="workspaces.workspace.changes" xml:space="preserve">
 				<source>Changes</source>
-			<target xml:lang="ja" state="needs-translation">Changes</target></trans-unit>
+			<target xml:lang="ja" state="translated">変化</target></trans-unit>
       <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve">
 				<source>Open page in "{0}" workspace</source>
 			<target xml:lang="ja" state="needs-translation">Open page in "{0}" workspace</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve">
 				<source>This is your personal workspace which you can't delete.</source>
-			<target xml:lang="ja" state="needs-translation">This is your personal workspace which you can't delete.</target></trans-unit>
+			<target xml:lang="ja" state="translated">これはお客様の個人ワークスペースを削除できませんです。</target></trans-unit>
       <trans-unit id="workspaces.help.workspaceContainsChanges" xml:space="preserve">
 				<source>The workspace contains changes. To delete, discard the changes first.</source>
-			<target xml:lang="ja" state="needs-translation">The workspace contains changes. To delete, discard the changes first.</target></trans-unit>
+			<target xml:lang="ja" state="translated">ワークスペースに含まれ変わります。 削除、破棄に変更します。</target></trans-unit>
       <trans-unit id="workspaces.help.cantRebaseWorkspaceContainsChanges" xml:space="preserve">
 				<source>Workspace can't be rebased on a different workspace because it still contains changes.</source>
 			<target xml:lang="ja" state="needs-translation">Workspace can't be rebased on a different workspace because it still contains changes.</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeleteWorkspaceHasDependencies" xml:space="preserve">
 				<source>The workspace cannot be deleted because other workspaces depend on it.</source>
-			<target xml:lang="ja" state="needs-translation">The workspace cannot be deleted because other workspaces depend on it.</target></trans-unit>
+			<target xml:lang="ja" state="translated">ワークスペースの削除はできませんのでそのワークスペースに依存します。</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeleteNoPermission" xml:space="preserve">
 				<source>You don't have the permissions for deleting this workspace.</source>
-			<target xml:lang="ja" state="needs-translation">You don't have the permissions for deleting this workspace.</target></trans-unit>
+			<target xml:lang="ja" state="translated">んのアクセス権を削除するこのスペースが活用できます。</target></trans-unit>
       <trans-unit id="workspaces.dialog.confirmWorkspaceDeletion" xml:space="preserve">
 				<source>Do you really want to delete the workspace "{0}"?</source>
 			<target xml:lang="ja" state="needs-translation">Do you really want to delete the workspace "{0}"?</target></trans-unit>
       <trans-unit id="workspaces.dialog.thisWillDeleteTheWorkspace" xml:space="preserve">
 				<source>This will delete the workspace including all unpublished content. This operation cannot be undone.</source>
-			<target xml:lang="ja" state="needs-translation">This will delete the workspace including all unpublished content. This operation cannot be undone.</target></trans-unit>
+			<target xml:lang="ja" state="translated">この削除は、ワークスペースを含む全ての未発表の内容です。 この操作はできません下記のいずれかから選択します。</target></trans-unit>
       <trans-unit id="workspaces.description" xml:space="preserve">
 				<source>This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</source>
-			<target xml:lang="ja" state="needs-translation">This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them.</target></trans-unit>
+			<target xml:lang="ja" state="translated">このモジュールの概要のすべての要素内で現在のワークスペースとすることができ続きの見直し、ワークフロー出版しています。</target></trans-unit>
       <trans-unit id="workspaces.unpublishedChanges" xml:space="preserve">
 				<source>Unpublished changes in workspace "{0}"</source>
 			<target xml:lang="ja" state="needs-translation">Unpublished changes in workspace "{0}"</target></trans-unit>
@@ -122,49 +122,49 @@
 			<target xml:lang="ja" state="needs-translation">additions: {new}, changes: {changed}, removals: {removed}</target></trans-unit>
       <trans-unit id="workspaces.review" xml:space="preserve">
 				<source>Review</source>
-			<target xml:lang="ja" state="needs-translation">Review</target></trans-unit>
+			<target xml:lang="ja" state="translated">見直し</target></trans-unit>
       <trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve">
 				<source>Discard selected changes</source>
-			<target xml:lang="ja" state="needs-translation">Discard selected changes</target></trans-unit>
+			<target xml:lang="ja" state="translated">捨選択の変更</target></trans-unit>
       <trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve">
 				<source>Publish selected changes</source>
-			<target xml:lang="ja" state="needs-translation">Publish selected changes</target></trans-unit>
+			<target xml:lang="ja" state="translated">公開選択の変更</target></trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve">
 				<source>Discard all changes</source>
-			<target xml:lang="ja" state="needs-translation">Discard all changes</target></trans-unit>
+			<target xml:lang="ja" state="translated">すべての変更を破棄する</target></trans-unit>
       <trans-unit id="workspaces.publishAllChanges" xml:space="preserve">
 				<source>Publish all changes</source>
-			<target xml:lang="ja" state="needs-translation">Publish all changes</target></trans-unit>
+			<target xml:lang="ja" state="translated">すべての変更を公開する</target></trans-unit>
       <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve">
 				<source>Publish all changes to {0}</source>
 			<target xml:lang="ja" state="needs-translation">Publish all changes to {0}</target></trans-unit>
       <trans-unit id="changedContentCaption" xml:space="preserve">
 				<source>Changed Content</source>
-			<target xml:lang="ja" state="needs-translation">Changed Content</target></trans-unit>
+			<target xml:lang="ja" state="translated">変更内容</target></trans-unit>
       <trans-unit id="workspaces.legend.deleted" xml:space="preserve">
 				<source>deleted</source>
-			<target xml:lang="ja" state="needs-translation">deleted</target></trans-unit>
+			<target xml:lang="ja" state="translated">削除</target></trans-unit>
       <trans-unit id="workspaces.legend.created" xml:space="preserve">
 				<source>created</source>
-			<target xml:lang="ja" state="needs-translation">created</target></trans-unit>
+			<target xml:lang="ja" state="translated">作成した</target></trans-unit>
       <trans-unit id="workspaces.legend.moved" xml:space="preserve">
 				<source>moved</source>
-			<target xml:lang="ja" state="needs-translation">moved</target></trans-unit>
+			<target xml:lang="ja" state="translated">移転</target></trans-unit>
       <trans-unit id="workspaces.legend.hidden" xml:space="preserve">
 				<source>hidden</source>
-			<target xml:lang="ja" state="needs-translation">hidden</target></trans-unit>
+			<target xml:lang="ja" state="translated">隠れた</target></trans-unit>
       <trans-unit id="workspaces.legend.edited" xml:space="preserve">
 				<source>edited</source>
-			<target xml:lang="ja" state="needs-translation">edited</target></trans-unit>
+			<target xml:lang="ja" state="translated">編集</target></trans-unit>
       <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve">
 				<source>There are no unpublished changes in this workspace.</source>
-			<target xml:lang="ja" state="needs-translation">There are no unpublished changes in this workspace.</target></trans-unit>
+			<target xml:lang="ja" state="translated">ありません未発表の変更にこのワークスペースです。</target></trans-unit>
       <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve">
 				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
 			<target xml:lang="ja" state="needs-translation">Do you really want to discard all changes in the "{0}" workspace?</target></trans-unit>
       <trans-unit id="workspaces.workspaceWithThisTitleAlreadyExists">
         <source>A workspace with this title already exists.</source>
-        <target xml:lang="ja" state="needs-translation">A workspace with this title already exists.</target>
+        <target xml:lang="ja" state="translated">ワークスペースタイルは既に存在しています。</target>
       </trans-unit>
       <trans-unit id="workspaces.workspaceHasBeenUpdated">
         <source>The workspace "{0}" has been updated.</source>
@@ -224,7 +224,7 @@
 			<target xml:lang="ja" state="needs-translation">Keep the filename "{0}"</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="ja" state="needs-translation">Media</target></trans-unit>
+			<target xml:lang="ja" state="translated">メディア</target></trans-unit>
       <trans-unit id="media.description" xml:space="preserve">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
 			<target xml:lang="ja" state="needs-translation">This module allows managing of media assets including pictures, videos, audio and documents.</target></trans-unit>
@@ -297,43 +297,43 @@
 			<target xml:lang="ja" state="needs-translation">Show</target></trans-unit>
       <trans-unit id="users.action.new" xml:space="preserve">
 				<source>New</source>
-			<target xml:lang="ja" state="needs-translation">New</target></trans-unit>
+			<target xml:lang="ja" state="translated">新しい</target></trans-unit>
       <trans-unit id="users.action.edit" xml:space="preserve">
 				<source>Edit</source>
 			<target xml:lang="ja" state="translated">編集</target></trans-unit>
       <trans-unit id="users.action.editAccount" xml:space="preserve">
 				<source>Edit account</source>
-			<target xml:lang="ja" state="needs-translation">Edit account</target></trans-unit>
+			<target xml:lang="ja" state="translated">アカウント編集</target></trans-unit>
       <trans-unit id="users.action.newElectronicAddress" xml:space="preserve">
 				<source>New electronic address</source>
-			<target xml:lang="ja" state="needs-translation">New electronic address</target></trans-unit>
+			<target xml:lang="ja" state="translated">新しい電子アドレス</target></trans-unit>
       <trans-unit id="user.preferences.useDefaultInterfaceLanguage" xml:space="preserve">
 				<source>Use system default</source>
-			<target xml:lang="ja" state="needs-translation">Use system default</target></trans-unit>
+			<target xml:lang="ja" state="translated">システムデフォルトを使用</target></trans-unit>
       <trans-unit id="users.actions.new.label" xml:space="preserve">
 				<source>Create user</source>
-			<target xml:lang="ja" state="needs-translation">Create user</target></trans-unit>
+			<target xml:lang="ja" state="translated">ユーザの作成</target></trans-unit>
       <trans-unit id="users.actions.new.title" xml:space="preserve">
 				<source>Create a new user</source>
-			<target xml:lang="ja" state="needs-translation">Create a new user</target></trans-unit>
+			<target xml:lang="ja" state="translated">新規ユーザー</target></trans-unit>
       <trans-unit id="users.new.userData" xml:space="preserve">
 				<source>User Data</source>
-			<target xml:lang="ja" state="needs-translation">User Data</target></trans-unit>
+			<target xml:lang="ja" state="translated">ユーザデータ</target></trans-unit>
       <trans-unit id="users.new.userData.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ja" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="ja" state="translated">ユーザー名</target></trans-unit>
       <trans-unit id="users.new.userData.password" xml:space="preserve">
 				<source>Password</source>
 			<target xml:lang="ja" state="translated">パスワード</target></trans-unit>
       <trans-unit id="users.new.userData.repeatPassword" xml:space="preserve">
 				<source>Repeat password</source>
-			<target xml:lang="ja" state="needs-translation">Repeat password</target></trans-unit>
+			<target xml:lang="ja" state="translated">繰り返しパスワード</target></trans-unit>
       <trans-unit id="users.new.userData.roles" xml:space="preserve">
 				<source>Role(s)</source>
 			<target xml:lang="ja" state="needs-translation">Role(s)</target></trans-unit>
       <trans-unit id="users.new.personalData" xml:space="preserve">
 				<source>Personal Data</source>
-			<target xml:lang="ja" state="needs-translation">Personal Data</target></trans-unit>
+			<target xml:lang="ja" state="translated">個人データ</target></trans-unit>
       <trans-unit id="users.new.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
 			<target xml:lang="ja" state="translated">ファーストネーム</target></trans-unit>
@@ -342,19 +342,19 @@
 			<target xml:lang="ja" state="translated">ラストネーム</target></trans-unit>
       <trans-unit id="users.new.userPreferences" xml:space="preserve">
 				<source>User Preferences</source>
-			<target xml:lang="ja" state="needs-translation">User Preferences</target></trans-unit>
+			<target xml:lang="ja" state="translated">ユーザーの嗜好</target></trans-unit>
       <trans-unit id="users.new.userPreferences.interfaceLanguage" xml:space="preserve">
 				<source>Interface Language</source>
-			<target xml:lang="ja" state="needs-translation">Interface Language</target></trans-unit>
+			<target xml:lang="ja" state="translated">インターフェイスの言語</target></trans-unit>
       <trans-unit id="users.new.createButton" xml:space="preserve">
 				<source>Create user</source>
-			<target xml:lang="ja" state="needs-translation">Create user</target></trans-unit>
+			<target xml:lang="ja" state="translated">ユーザの作成</target></trans-unit>
       <trans-unit id="users.show.subtitle" xml:space="preserve">
 				<source>Details for user</source>
-			<target xml:lang="ja" state="needs-translation">Details for user</target></trans-unit>
+			<target xml:lang="ja" state="translated">詳細はユーザー</target></trans-unit>
       <trans-unit id="users.show.personalData" xml:space="preserve">
 				<source>Personal Data</source>
-			<target xml:lang="ja" state="needs-translation">Personal Data</target></trans-unit>
+			<target xml:lang="ja" state="translated">個人データ</target></trans-unit>
       <trans-unit id="users.show.personalData.title" xml:space="preserve">
 				<source>Title</source>
 			<target xml:lang="ja" state="translated">タイトル</target></trans-unit>
@@ -375,7 +375,7 @@
 			<target xml:lang="ja" state="needs-translation">Accounts</target></trans-unit>
       <trans-unit id="users.show.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ja" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="ja" state="translated">ユーザー名</target></trans-unit>
       <trans-unit id="users.show.roles" xml:space="preserve">
 				<source>Roles</source>
 			<target xml:lang="ja" state="needs-translation">Roles</target></trans-unit>
@@ -396,22 +396,22 @@
 			<target xml:lang="ja" state="needs-translation">Edit User</target></trans-unit>
       <trans-unit id="users.show.cannotDeleteYourself" xml:space="preserve">
 				<source>You are logged in as this user and you cannot delete yourself.</source>
-			<target xml:lang="ja" state="needs-translation">You are logged in as this user and you cannot delete yourself.</target></trans-unit>
+			<target xml:lang="ja" state="translated">ログインしているとしてこのユーザーを削除することはできません。</target></trans-unit>
       <trans-unit id="users.show.clickToDeleteUser" xml:space="preserve">
 				<source>Click here to delete this user</source>
-			<target xml:lang="ja" state="needs-translation">Click here to delete this user</target></trans-unit>
+			<target xml:lang="ja" state="translated">ここをクリックし削除ユーザー</target></trans-unit>
       <trans-unit id="users.show.buttonDelete" xml:space="preserve">
 				<source>Do you really want to delete the user "{0}"?</source>
 			<target xml:lang="ja" state="needs-translation">Do you really want to delete the user "{0}"?</target></trans-unit>
       <trans-unit id="users.show.confirmDeleteButton" xml:space="preserve">
 				<source>Yes, delete the user</source>
-			<target xml:lang="ja" state="needs-translation">Yes, delete the user</target></trans-unit>
+			<target xml:lang="ja" state="translated">はい、削除、ユーザー</target></trans-unit>
       <trans-unit id="users.show.confirmDeleteWarning" xml:space="preserve">
 				<source>This will delete the user, the related accounts and his personal workspace, including all unpublished content.</source>
-			<target xml:lang="ja" state="needs-translation">This will delete the user, the related accounts and his personal workspace, including all unpublished content.</target></trans-unit>
+			<target xml:lang="ja" state="translated">この削除、ユーザーの関係勘定、個人ワークスペースを含む全ての未発表の内容です。</target></trans-unit>
       <trans-unit id="users.show.operationCannotBeUndone" xml:space="preserve">
 				<source>This operation cannot be undone</source>
-			<target xml:lang="ja" state="needs-translation">This operation cannot be undone</target></trans-unit>
+			<target xml:lang="ja" state="translated">この操作はできません下記のいずれかから選択</target></trans-unit>
       <trans-unit id="users.editAccount.title" xml:space="preserve">
 				<source>Edit account "{accountIdentifier}"</source>
 			<target xml:lang="ja" state="needs-translation">Edit account "{accountIdentifier}"</target></trans-unit>
@@ -420,16 +420,16 @@
 			<target xml:lang="ja" state="needs-translation">Account</target></trans-unit>
       <trans-unit id="users.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ja" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="ja" state="translated">ユーザー名</target></trans-unit>
       <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve">
 				<source>The username can't be changed via the user interface</source>
-			<target xml:lang="ja" state="needs-translation">The username can't be changed via the user interface</target></trans-unit>
+			<target xml:lang="ja" state="translated">のユーザー名の変更はできませんのユーザインタフェース</target></trans-unit>
       <trans-unit id="users.saveAccount" xml:space="preserve">
 				<source>Save account</source>
-			<target xml:lang="ja" state="needs-translation">Save account</target></trans-unit>
+			<target xml:lang="ja" state="translated">保存座</target></trans-unit>
       <trans-unit id="users.repeatPassword" xml:space="preserve">
 				<source>Repeat password</source>
-			<target xml:lang="ja" state="needs-translation">Repeat password</target></trans-unit>
+			<target xml:lang="ja" state="translated">繰り返しパスワード</target></trans-unit>
       <trans-unit id="users.roles" xml:space="preserve">
 				<source>Roles</source>
 			<target xml:lang="ja" state="needs-translation">Roles</target></trans-unit>
@@ -438,28 +438,28 @@
 			<target xml:lang="ja" state="needs-translation">Name</target></trans-unit>
       <trans-unit id="users.accountsAndRoles" xml:space="preserve">
 				<source>Accounts and Roles</source>
-			<target xml:lang="ja" state="needs-translation">Accounts and Roles</target></trans-unit>
+			<target xml:lang="ja" state="translated">座の役割</target></trans-unit>
       <trans-unit id="users.tooltip.view" xml:space="preserve">
 				<source>View user</source>
-			<target xml:lang="ja" state="needs-translation">View user</target></trans-unit>
+			<target xml:lang="ja" state="translated">ビューのユーザー</target></trans-unit>
       <trans-unit id="users.tooltip.edit" xml:space="preserve">
 				<source>Edit user</source>
-			<target xml:lang="ja" state="needs-translation">Edit user</target></trans-unit>
+			<target xml:lang="ja" state="translated">編集ユーザー</target></trans-unit>
       <trans-unit id="users.tooltip.delete" xml:space="preserve">
 				<source>Delete user</source>
-			<target xml:lang="ja" state="needs-translation">Delete user</target></trans-unit>
+			<target xml:lang="ja" state="translated">ユーザー削除</target></trans-unit>
       <trans-unit id="users.tooltip.cannotDeleteYourself" xml:space="preserve">
 				<source>You are logged in as this user and you cannot delete yourself.</source>
-			<target xml:lang="ja" state="needs-translation">You are logged in as this user and you cannot delete yourself.</target></trans-unit>
+			<target xml:lang="ja" state="translated">ログインしているとしてこのユーザーを削除することはできません。</target></trans-unit>
       <trans-unit id="users.message.reallyDelete" xml:space="preserve">
 				<source>Do you really want to delete the user "{0}"?</source>
 			<target xml:lang="ja" state="needs-translation">Do you really want to delete the user "{0}"?</target></trans-unit>
       <trans-unit id="users.message.willBeDeleted" xml:space="preserve">
 				<source>This will delete the user, the related accounts and his personal workspace, including all unpublished content.</source>
-			<target xml:lang="ja" state="needs-translation">This will delete the user, the related accounts and his personal workspace, including all unpublished content.</target></trans-unit>
+			<target xml:lang="ja" state="translated">この削除、ユーザーの関係勘定、個人ワークスペースを含む全ての未発表の内容です。</target></trans-unit>
       <trans-unit id="users.message.confirmDelete" xml:space="preserve">
 				<source>Yes, delete the user</source>
-			<target xml:lang="ja" state="needs-translation">Yes, delete the user</target></trans-unit>
+			<target xml:lang="ja" state="translated">はい、削除、ユーザー</target></trans-unit>
       <trans-unit id="users.editUser" xml:space="preserve">
 				<source>Edit user "{0}"</source>
 			<target xml:lang="ja" state="needs-translation">Edit user "{0}"</target></trans-unit>
@@ -574,34 +574,34 @@
 			<target xml:lang="ja" state="translated">編集</target></trans-unit>
       <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve">
 				<source>New electronic address</source>
-			<target xml:lang="ja" state="needs-translation">New electronic address</target></trans-unit>
+			<target xml:lang="ja" state="translated">新しい電子アドレス</target></trans-unit>
       <trans-unit id="userSettings.action.editAccount" xml:space="preserve">
 				<source>Edit account</source>
-			<target xml:lang="ja" state="needs-translation">Edit account</target></trans-unit>
+			<target xml:lang="ja" state="translated">アカウント編集</target></trans-unit>
       <trans-unit id="userSettings.personalData" xml:space="preserve">
 				<source>Personal Data</source>
-			<target xml:lang="ja" state="needs-translation">Personal Data</target></trans-unit>
+			<target xml:lang="ja" state="translated">個人データ</target></trans-unit>
       <trans-unit id="userSettings.userData" xml:space="preserve">
 				<source>User Data</source>
-			<target xml:lang="ja" state="needs-translation">User Data</target></trans-unit>
+			<target xml:lang="ja" state="translated">ユーザデータ</target></trans-unit>
       <trans-unit id="userSettings.usermenu" xml:space="preserve">
 				<source>User Menu</source>
 			<target xml:lang="ja" state="needs-translation">User Menu</target></trans-unit>
       <trans-unit id="userSettings.preferences" xml:space="preserve">
 				<source>User Preferences</source>
-			<target xml:lang="ja" state="needs-translation">User Preferences</target></trans-unit>
+			<target xml:lang="ja" state="translated">ユーザーの嗜好</target></trans-unit>
       <trans-unit id="userSettings.preferences.interfaceLanguage" xml:space="preserve">
 				<source>Interface Language</source>
-			<target xml:lang="ja" state="needs-translation">Interface Language</target></trans-unit>
+			<target xml:lang="ja" state="translated">インターフェイスの言語</target></trans-unit>
       <trans-unit id="userSettings.preferences.useDefaultInterfaceLanguage" xml:space="preserve">
 				<source>Use system default</source>
-			<target xml:lang="ja" state="needs-translation">Use system default</target></trans-unit>
+			<target xml:lang="ja" state="translated">システムデフォルトを使用</target></trans-unit>
       <trans-unit id="userSettings.accounts" xml:space="preserve">
 				<source>Accounts</source>
 			<target xml:lang="ja" state="needs-translation">Accounts</target></trans-unit>
       <trans-unit id="userSettings.accounts.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="ja" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="ja" state="translated">ユーザー名</target></trans-unit>
       <trans-unit id="userSettings.accounts.roles" xml:space="preserve">
 				<source>Roles</source>
 			<target xml:lang="ja" state="needs-translation">Roles</target></trans-unit>
@@ -613,7 +613,7 @@
 			<target xml:lang="ja" state="needs-translation">Electronic addresses</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="ja" state="needs-translation">Do you really want to delete</target></trans-unit>
+			<target xml:lang="ja" state="translated">いったい削除</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete.confirmation" xml:space="preserve">
 				<source>Yes, delete electronic address</source>
 			<target xml:lang="ja" state="needs-translation">Yes, delete electronic address</target></trans-unit>
@@ -638,7 +638,7 @@
 			<target xml:lang="ja" state="translated">タイトル</target></trans-unit>
       <trans-unit id="media.field.label" xml:space="preserve">
 				<source>Label</source>
-			<target xml:lang="ja" state="needs-translation">Label</target></trans-unit>
+			<target xml:lang="ja" state="translated">ラベル</target></trans-unit>
       <trans-unit id="media.field.caption" xml:space="preserve">
 				<source>Caption</source>
 			<target xml:lang="ja" state="needs-translation">Caption</target></trans-unit>
@@ -731,7 +731,7 @@
 			<target xml:lang="ja" state="needs-translation">Search in assets</target></trans-unit>
       <trans-unit id="media.search.placeholder" xml:space="preserve">
 				<source>Search</source>
-			<target xml:lang="ja" state="needs-translation">Search</target></trans-unit>
+			<target xml:lang="ja" state="translated">サーチ</target></trans-unit>
       <trans-unit id="media.search.itemCount" xml:space="preserve">
 				<source>{0} items</source>
 			<target xml:lang="ja" state="needs-translation">{0} items</target></trans-unit>
@@ -890,7 +890,7 @@
 			<target xml:lang="ja" state="needs-translation">Cannot upload the file</target></trans-unit>
       <trans-unit id="media.noFileSelected" xml:space="preserve">
 				<source>No file selected</source>
-			<target xml:lang="ja" state="needs-translation">No file selected</target></trans-unit>
+			<target xml:lang="ja" state="translated">ファイルが選択されていません</target></trans-unit>
       <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target xml:lang="ja" state="needs-translation">The file size of {0} exceeds the allowed limit of {1}</target></trans-unit>
@@ -948,6 +948,12 @@
       <trans-unit id="media.replace.previewFile" xml:space="preserve">
         <source>Preview current file</source>
       <target xml:lang="ja" state="needs-translation">Preview current file</target></trans-unit>
+      <trans-unit id="media.noAccessToWorkspace" xml:space="preserve">
+        <source>No access to workspace "{0}"</source>
+      <target xml:lang="ja" state="needs-translation">No access to workspace "{0}"</target></trans-unit>
+      <trans-unit id="media.missingDocumentNode" xml:space="preserve">
+        <source>No document node found for this node</source>
+      <target xml:lang="ja" state="translated">このノードのドキュメントノードが見つかりません</target></trans-unit>
     </body>
   </file>
 </xliff>

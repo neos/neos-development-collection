@@ -16,7 +16,7 @@
 			<target xml:lang="ja" state="translated">追加情報</target></trans-unit>
       <trans-unit id="groups.type" xml:space="preserve">
 				<source>Change type</source>
-			<target xml:lang="ja" state="needs-translation">Change type</target></trans-unit>
+			<target xml:lang="ja" state="translated">タイプを変更</target></trans-unit>
       <trans-unit id="properties._nodeType" xml:space="preserve">
 				<source>Type</source>
 			<target xml:lang="ja" state="translated">種類</target></trans-unit>
