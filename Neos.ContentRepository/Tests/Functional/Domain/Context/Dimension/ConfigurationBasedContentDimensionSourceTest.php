@@ -43,6 +43,9 @@ class ConfigurationBasedContentDimensionSourceTest extends FunctionalTestCase
                             'valueA1.1' => [
                                 'constraints' => []
                             ]
+                        ],
+                        'dimensionValueConfiguration' => [
+                            'key' => 'value'
                         ]
                     ],
                     'valueA2' => [
@@ -55,7 +58,10 @@ class ConfigurationBasedContentDimensionSourceTest extends FunctionalTestCase
                         ],
                     ]
                 ],
-                'defaultValue' => 'valueA1'
+                'defaultValue' => 'valueA1',
+                'dimensionConfiguration' => [
+                    'anotherKey' => 'anotherValue'
+                ]
             ],
             'dimensionB' => [
                 'values' => [
@@ -115,6 +121,11 @@ class ConfigurationBasedContentDimensionSourceTest extends FunctionalTestCase
                             'valueB2' => false
                         ]
                     )
+                ],
+                [
+                    'dimensionValueConfiguration' => [
+                        'key' => 'value'
+                    ]
                 ]
             ),
             $dimensionA->getValue('valueA1')
@@ -329,5 +340,28 @@ class ConfigurationBasedContentDimensionSourceTest extends FunctionalTestCase
             [],
             $valueB3->getAllConstraints()
         );
+    }
+
+    /**
+     * @test
+     * @throws Dimension\Exception\MissingContentDimensionDefaultValueException
+     */
+    public function dimensionConfigurationValuesAreCorrectlyInitialized()
+    {
+        $dimensionA = $this->subject->getDimension(new Dimension\ContentDimensionIdentifier('dimensionA'));
+
+        $this->assertSame('anotherValue', $dimensionA->getConfigurationValue('dimensionConfiguration.anotherKey'));
+    }
+
+    /**
+     * @test
+     * @throws Dimension\Exception\MissingContentDimensionDefaultValueException
+     */
+    public function dimensionValueConfigurationValuesAreCorrectlyInitialized()
+    {
+        $dimensionA = $this->subject->getDimension(new Dimension\ContentDimensionIdentifier('dimensionA'));
+        $dimensionValueA1 = $dimensionA->getValue('valueA1');
+
+        $this->assertSame('value', $dimensionValueA1->getConfigurationValue('dimensionValueConfiguration.key'));
     }
 }
