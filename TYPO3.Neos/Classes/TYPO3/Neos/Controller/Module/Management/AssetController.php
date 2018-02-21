@@ -30,6 +30,7 @@ use TYPO3\Media\Exception\AssetServiceException;
 use TYPO3\Neos\Controller\BackendUserTranslationTrait;
 use TYPO3\Neos\Controller\CreateContentContextTrait;
 use TYPO3\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
+use TYPO3\Neos\Domain\Model\Site;
 use TYPO3\Neos\Domain\Repository\DomainRepository;
 use TYPO3\Neos\Domain\Repository\SiteRepository;
 use TYPO3\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
@@ -40,6 +41,7 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 use TYPO3\TYPO3CR\Domain\Repository\NodeDataRepository;
 use TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository;
 use TYPO3\TYPO3CR\Domain\Service\NodeTypeManager;
+use TYPO3\TYPO3CR\Exception\NodeTypeNotFoundException;
 
 /**
  * Controller for asset handling
@@ -194,6 +196,8 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
         $relatedNodes = [];
         $inaccessibleRelations = [];
 
+        $existingSites = $this->siteRepository->findAll();
+
         foreach ($usageReferences as $usage) {
             $inaccessibleRelation = [
                 'type' => get_class($usage),
@@ -205,7 +209,11 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
                 continue;
             }
 
-            $nodeType = $this->nodeTypeManager->getNodeType($usage->getNodeTypeName());
+            try {
+                $nodeType = $this->nodeTypeManager->getNodeType($usage->getNodeTypeName());
+            } catch (NodeTypeNotFoundException $e) {
+                $nodeType = null;
+            }
             $workspace = $this->workspaceRepository->findByIdentifier($usage->getWorkspaceName());
             $accessible = $this->domainUserService->currentUserCanReadWorkspace($workspace);
 
@@ -228,6 +236,14 @@ class AssetController extends \TYPO3\Media\Controller\AssetController
             }
 
             $site = $node->getContext()->getCurrentSite();
+            foreach ($existingSites as $existingSite) {
+                /** @var Site $existingSite **/
+                $siteNodePath = '/sites/' . $existingSite->getNodeName();
+                if ($siteNodePath === $node->getPAth() || strpos($node->getPath(), $siteNodePath . '/') === 0) {
+                    $site = $existingSite;
+                }
+            }
+
             $flowQuery = new FlowQuery([$node]);
             $documentNode = $flowQuery->closest('[instanceof TYPO3.Neos:Document]')->get(0);
 
