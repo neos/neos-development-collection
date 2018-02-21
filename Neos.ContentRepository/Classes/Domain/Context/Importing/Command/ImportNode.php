@@ -1,7 +1,7 @@
 <?php
 namespace Neos\ContentRepository\Domain\Context\Importing\Command;
 
-use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
+use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\ImportingSessionIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
@@ -36,9 +36,9 @@ final class ImportNode
     private $nodeTypeName;
 
     /**
-     * @var DimensionValues
+     * @var DimensionSpacePoint
      */
-    private $dimensionValues;
+    private $dimensionSpacePoint;
 
     /**
      * @var PropertyValues
@@ -51,7 +51,7 @@ final class ImportNode
         NodeAggregateIdentifier $nodeIdentifier,
         NodeName $nodeName,
         NodeTypeName $nodeTypeName,
-        DimensionValues $dimensionValues,
+        DimensionSpacePoint $dimensionValues,
         PropertyValues $propertyValues
     ) {
         $this->importingSessionIdentifier = $importingSessionIdentifier;
@@ -59,7 +59,7 @@ final class ImportNode
         $this->nodeIdentifier = $nodeIdentifier;
         $this->nodeName = $nodeName;
         $this->nodeTypeName = $nodeTypeName;
-        $this->dimensionValues = $dimensionValues;
+        $this->dimensionSpacePoint = $dimensionValues;
         $this->propertyValues = $propertyValues;
     }
 
@@ -88,9 +88,9 @@ final class ImportNode
         return $this->nodeTypeName;
     }
 
-    public function getDimensionValues(): DimensionValues
+    public function getDimensionSpacePoint(): DimensionSpacePoint
     {
-        return $this->dimensionValues;
+        return $this->dimensionSpacePoint;
     }
 
     public function getPropertyValues(): PropertyValues
