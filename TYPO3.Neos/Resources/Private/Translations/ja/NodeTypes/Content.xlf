@@ -7,7 +7,7 @@
 			<target xml:lang="ja" state="translated">コンテンツ</target></trans-unit>
       <trans-unit id="groups.type" xml:space="preserve">
 				<source>Change type</source>
-			<target xml:lang="ja" state="needs-translation">Change type</target></trans-unit>
+			<target xml:lang="ja" state="translated">タイプを変更</target></trans-unit>
     </body>
   </file>
 </xliff>

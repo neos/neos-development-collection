@@ -881,6 +881,10 @@
 		&.neos-upload-area-active {
 			border-color: #fff;
 
+			div {
+				pointer-events: none;
+			}
+
 			i {
 				display: inline;
 			}

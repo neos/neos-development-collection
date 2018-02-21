@@ -923,7 +923,7 @@
       <group id="media.relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="media.relatedNodes[0]">
           <source>{0} usages</source>
-          <target xml:lang="lv" state="translated">{0} lietojums</target>
+          <target xml:lang="lv" state="translated">{0} lietojumi</target>
         </trans-unit>
         <trans-unit id="media.relatedNodes[1]">
           <source>{0} usages</source>
@@ -931,7 +931,7 @@
         </trans-unit>
         <trans-unit id="media.relatedNodes[2]">
           <source>{0} usages</source>
-          <target xml:lang="lv" state="needs-translation">{0} usages</target>
+          <target xml:lang="lv" state="translated">{0} lietojumi</target>
         </trans-unit>
       </group>
       <trans-unit id="media.relatedNodes.referencesTo" xml:space="preserve" approved="yes">
@@ -964,6 +964,12 @@
       <trans-unit id="media.replace.previewFile" xml:space="preserve">
         <source>Preview current file</source>
       <target xml:lang="lv" state="translated">Pašreizējā faila priekšskats</target></trans-unit>
+      <trans-unit id="media.noAccessToWorkspace" xml:space="preserve">
+        <source>No access to workspace "{0}"</source>
+      <target xml:lang="lv" state="translated">Nav piekļuves darba virsmai "{0}"</target><alt-trans><target xml:lang="lv">Nav piekļuves darba virsmā "{0}"</target></alt-trans></trans-unit>
+      <trans-unit id="media.missingDocumentNode" xml:space="preserve">
+        <source>No document node found for this node</source>
+      <target xml:lang="lv" state="translated">Nav atrasts dokumenta mezgls šim mezglam</target><alt-trans><target xml:lang="lv">Nav atrasta dokumenta mezgls šim mezglam</target></alt-trans></trans-unit>
     </body>
   </file>
 </xliff>

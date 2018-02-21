@@ -896,9 +896,9 @@
       <trans-unit id="media.cannotUploadFile" xml:space="preserve" approved="yes">
 				<source>Cannot upload the file</source>
 			<target xml:lang="pl">Nie można załadować pliku</target></trans-unit>
-      <trans-unit id="media.noFileSelected" xml:space="preserve">
+      <trans-unit id="media.noFileSelected" xml:space="preserve" approved="yes">
 				<source>No file selected</source>
-			<target xml:lang="pl" state="needs-translation">No file selected</target></trans-unit>
+			<target xml:lang="pl">Nie wybrano pliku</target></trans-unit>
       <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve" approved="yes">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target xml:lang="pl">Rozmiar pliku {0} przekracza dozwolony limit {1}</target></trans-unit>
@@ -964,6 +964,12 @@
       <trans-unit id="media.replace.previewFile" xml:space="preserve" approved="yes">
         <source>Preview current file</source>
       <target xml:lang="pl">Podgląd bieżącego pliku</target></trans-unit>
+      <trans-unit id="media.noAccessToWorkspace" xml:space="preserve" approved="yes">
+        <source>No access to workspace "{0}"</source>
+      <target xml:lang="pl">Brak dostępu do obszaru roboczego "{0}"</target></trans-unit>
+      <trans-unit id="media.missingDocumentNode" xml:space="preserve" approved="yes">
+        <source>No document node found for this node</source>
+      <target xml:lang="pl">Nie znaleziono węzła dokumentu dla tego węzła</target></trans-unit>
     </body>
   </file>
 </xliff>

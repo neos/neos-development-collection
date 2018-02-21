@@ -23,7 +23,7 @@
 			<target xml:lang="hu" state="needs-translation">Contains multiple modules related to management of content</target></trans-unit>
       <trans-unit id="workspaces.label" xml:space="preserve">
 				<source>Workspaces</source>
-			<target xml:lang="hu" state="needs-translation">Workspaces</target></trans-unit>
+			<target xml:lang="hu" state="translated">Munkaterület</target></trans-unit>
       <trans-unit id="workspaces.detailsForWorkspace" xml:space="preserve">
 				<source>Details for "{0}"</source>
 			<target xml:lang="hu" state="needs-translation">Details for "{0}"</target></trans-unit>
@@ -228,7 +228,7 @@
 			<target xml:lang="hu" state="needs-translation">Keep the filename "{0}"</target></trans-unit>
       <trans-unit id="media.label" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="hu" state="needs-translation">Media</target></trans-unit>
+			<target xml:lang="hu" state="translated">Média</target></trans-unit>
       <trans-unit id="media.description" xml:space="preserve">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
 			<target xml:lang="hu" state="needs-translation">This module allows managing of media assets including pictures, videos, audio and documents.</target></trans-unit>
@@ -617,7 +617,7 @@
 			<target xml:lang="hu" state="needs-translation">Electronic addresses</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete" xml:space="preserve">
 				<source>Do you really want to delete</source>
-			<target xml:lang="hu" state="needs-translation">Do you really want to delete</target></trans-unit>
+			<target xml:lang="hu" state="translated">Biztosan törlöd</target></trans-unit>
       <trans-unit id="userSettings.electronicAddresses.buttonDelete.confirmation" xml:space="preserve">
 				<source>Yes, delete electronic address</source>
 			<target xml:lang="hu" state="needs-translation">Yes, delete electronic address</target></trans-unit>
@@ -956,6 +956,12 @@
       <trans-unit id="media.replace.previewFile" xml:space="preserve">
         <source>Preview current file</source>
       <target xml:lang="hu" state="needs-translation">Preview current file</target></trans-unit>
+      <trans-unit id="media.noAccessToWorkspace" xml:space="preserve">
+        <source>No access to workspace "{0}"</source>
+      <target xml:lang="hu" state="needs-translation">No access to workspace "{0}"</target></trans-unit>
+      <trans-unit id="media.missingDocumentNode" xml:space="preserve">
+        <source>No document node found for this node</source>
+      <target xml:lang="hu" state="needs-translation">No document node found for this node</target></trans-unit>
     </body>
   </file>
 </xliff>

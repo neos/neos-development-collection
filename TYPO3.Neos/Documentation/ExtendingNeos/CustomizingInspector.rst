@@ -197,6 +197,6 @@ Yaml (Sites/Vendor.Site/Configuration/NodeTypes.yaml):
           inspector:
             editorOptions:
               values:
-                parentNode: [ ]
+                parentNode: ~
 
 It is also possible to add :ref:`custom-editors` and use :ref:`custom-validators`.

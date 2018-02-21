@@ -32,7 +32,7 @@ in the below example:
 TypoScript (Sites/Vendor.Site/Resources/Private/TypoScripts/Library/Root.ts2) ::
 
 	prototype(TYPO3.Neos:Page) {
-		backgroundImage = ${q(node).property('backgroundImage')}
+		body.backgroundImage = ${q(node).property('backgroundImage')}
 	}
 
 With TYPO3.Media ViewHelper you can display the Image with the follwing HTML snippet:

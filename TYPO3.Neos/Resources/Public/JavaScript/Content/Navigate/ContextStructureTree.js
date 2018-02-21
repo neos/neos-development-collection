@@ -38,7 +38,7 @@ define(
 		template: Ember.Handlebars.compile(template),
 		controller: NavigatePanelController,
 		nodeSelection: NodeSelection,
-		baseNodeType: '!TYPO3.Neos:Document',
+		baseNodeType: 'TYPO3.Neos:ContentCollection,TYPO3.Neos:Content',
 		treeSelector: '#neos-context-structure-tree',
 		desiredNewPosition: 'inside',
 		desiredPastePosition: 'inside',

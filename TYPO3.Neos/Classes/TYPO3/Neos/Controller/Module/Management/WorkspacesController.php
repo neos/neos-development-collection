@@ -598,8 +598,14 @@ class WorkspacesController extends AbstractModuleController
                     'original' => $originalPropertyValue,
                     'changed' => $changedPropertyValue
                 ];
-            } elseif ($originalPropertyValue instanceof \DateTime && $changedPropertyValue instanceof \DateTime) {
-                if ($changedPropertyValue->getTimestamp() !== $originalPropertyValue->getTimestamp()) {
+            } elseif ($originalPropertyValue instanceof \DateTime || $changedPropertyValue instanceof \DateTime) {
+                $changed = false;
+                if (!$changedPropertyValue instanceof \DateTime || !$originalPropertyValue instanceof \DateTime) {
+                    $changed = true;
+                } elseif ($changedPropertyValue->getTimestamp() !== $originalPropertyValue->getTimestamp()) {
+                    $changed = true;
+                }
+                if ($changed) {
                     $contentChanges[$propertyName] = [
                         'type' => 'datetime',
                         'propertyLabel' => $this->getPropertyLabel($propertyName, $changedNode),

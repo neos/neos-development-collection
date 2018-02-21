@@ -62,7 +62,7 @@
 			<target xml:lang="it" state="translated">Titolo</target></trans-unit>
       <trans-unit id="workspaces.workspace.description" xml:space="preserve">
 				<source>Description</source>
-			<target xml:lang="it" state="needs-translation">Description</target></trans-unit>
+			<target xml:lang="it" state="translated">Descrizione</target></trans-unit>
       <trans-unit id="workspaces.workspace.baseWorkspace" xml:space="preserve">
 				<source>Base workspace</source>
 			<target xml:lang="it" state="needs-translation">Base workspace</target></trans-unit>
@@ -340,10 +340,10 @@
 			<target xml:lang="it" state="needs-translation">Personal Data</target></trans-unit>
       <trans-unit id="users.new.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
-			<target xml:lang="it" state="needs-translation">First Name</target></trans-unit>
+			<target xml:lang="it" state="translated">Nome</target></trans-unit>
       <trans-unit id="users.new.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
-			<target xml:lang="it" state="needs-translation">Last Name</target></trans-unit>
+			<target xml:lang="it" state="translated">Cognome</target></trans-unit>
       <trans-unit id="users.new.userPreferences" xml:space="preserve">
 				<source>User Preferences</source>
 			<target xml:lang="it" state="needs-translation">User Preferences</target></trans-unit>
@@ -364,16 +364,16 @@
 			<target xml:lang="it" state="translated">Titolo</target></trans-unit>
       <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
-			<target xml:lang="it" state="needs-translation">First Name</target></trans-unit>
+			<target xml:lang="it" state="translated">Nome</target></trans-unit>
       <trans-unit id="users.show.personalData.middleName" xml:space="preserve">
 				<source>Middle Name</source>
-			<target xml:lang="it" state="needs-translation">Middle Name</target></trans-unit>
+			<target xml:lang="it" state="translated">Secondo Nome</target></trans-unit>
       <trans-unit id="users.show.personalData.lastName" xml:space="preserve">
 				<source>Last Name</source>
-			<target xml:lang="it" state="needs-translation">Last Name</target></trans-unit>
+			<target xml:lang="it" state="translated">Cognome</target></trans-unit>
       <trans-unit id="users.show.personalData.otherName" xml:space="preserve">
 				<source>Other Name</source>
-			<target xml:lang="it" state="needs-translation">Other Name</target></trans-unit>
+			<target xml:lang="it" state="translated">Altro nome</target></trans-unit>
       <trans-unit id="users.show.accounts" xml:space="preserve">
 				<source>Accounts</source>
 			<target xml:lang="it" state="needs-translation">Accounts</target></trans-unit>
@@ -388,7 +388,7 @@
 			<target xml:lang="it" state="needs-translation">Electronic Addresses</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.primary" xml:space="preserve">
 				<source>Primary</source>
-			<target xml:lang="it" state="needs-translation">Primary</target></trans-unit>
+			<target xml:lang="it" state="translated">Primario</target></trans-unit>
       <trans-unit id="users.show.electronicAddresses.notAvailable" xml:space="preserve">
 				<source>N/A</source>
 			<target xml:lang="it" state="needs-translation">N/A</target></trans-unit>
@@ -894,7 +894,7 @@
 			<target xml:lang="it" state="needs-translation">Cannot upload the file</target></trans-unit>
       <trans-unit id="media.noFileSelected" xml:space="preserve">
 				<source>No file selected</source>
-			<target xml:lang="it" state="needs-translation">No file selected</target></trans-unit>
+			<target xml:lang="it" state="translated">Nessun file selezionato</target></trans-unit>
       <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target xml:lang="it" state="needs-translation">The file size of {0} exceeds the allowed limit of {1}</target></trans-unit>
@@ -956,6 +956,12 @@
       <trans-unit id="media.replace.previewFile" xml:space="preserve">
         <source>Preview current file</source>
       <target xml:lang="it" state="needs-translation">Preview current file</target></trans-unit>
+      <trans-unit id="media.noAccessToWorkspace" xml:space="preserve">
+        <source>No access to workspace "{0}"</source>
+      <target xml:lang="it" state="translated">Nessun accesso all'area di lavoro "{0}"</target></trans-unit>
+      <trans-unit id="media.missingDocumentNode" xml:space="preserve">
+        <source>No document node found for this node</source>
+      <target xml:lang="it" state="translated">Nessun nodo del documento trovato per questo nodo</target></trans-unit>
     </body>
   </file>
 </xliff>

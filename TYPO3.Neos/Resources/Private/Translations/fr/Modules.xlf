@@ -894,7 +894,7 @@
 			<target xml:lang="fr">Impossible de charger le fichier</target></trans-unit>
       <trans-unit id="media.noFileSelected" xml:space="preserve">
 				<source>No file selected</source>
-			<target xml:lang="fr" state="needs-translation">No file selected</target></trans-unit>
+			<target xml:lang="fr" state="translated">Aucun fichier sélectionné</target></trans-unit>
       <trans-unit id="media.fileSizeExceedsAllowedLimit" xml:space="preserve" approved="yes">
 				<source>The file size of {0} exceeds the allowed limit of {1}</source>
 			<target xml:lang="fr">La taille du fichier {0} dépasse la limite autorisée de {1}</target></trans-unit>
@@ -956,6 +956,12 @@
       <trans-unit id="media.replace.previewFile" xml:space="preserve">
         <source>Preview current file</source>
       <target xml:lang="fr" state="translated">Visualiser le fichier courrant</target></trans-unit>
+      <trans-unit id="media.noAccessToWorkspace" xml:space="preserve">
+        <source>No access to workspace "{0}"</source>
+      <target xml:lang="fr" state="translated">Pas d’accès à l’espace de travail "{0}"</target></trans-unit>
+      <trans-unit id="media.missingDocumentNode" xml:space="preserve">
+        <source>No document node found for this node</source>
+      <target xml:lang="fr" state="needs-translation">No document node found for this node</target></trans-unit>
     </body>
   </file>
 </xliff>

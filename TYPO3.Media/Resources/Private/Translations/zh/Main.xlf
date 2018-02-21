@@ -4,49 +4,49 @@
     <body>
       <trans-unit id="couldNotReplaceAsset" xml:space="preserve">
 				<source>Could not replace asset</source>
-			<target xml:lang="zh-CN" state="translated">无法替换资产</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">无法替换素材</target><alt-trans><target xml:lang="zh-CN">无法替换资产</target></alt-trans></trans-unit>
       <trans-unit id="assetHasBeenReplaced" xml:space="preserve">
 				<source>Asset "{0}" has been replaced.</source>
-			<target xml:lang="zh-CN" state="translated">资产"{0}"已被替换。</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">素材 "{0}" 已被替换。</target><alt-trans><target xml:lang="zh-CN">资产"{0}"已被替换。</target></alt-trans></trans-unit>
       <trans-unit id="assetHasBeenUpdated" xml:space="preserve">
 				<source>Asset "{0}" has been updated.</source>
-			<target xml:lang="zh-CN" state="translated">资产"{0}"已更新。</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">素材 "{0}" 已更新。</target><alt-trans><target xml:lang="zh-CN">素材 "{0}" 已被更新。</target></alt-trans><alt-trans><target xml:lang="zh-CN">资产"{0}"已更新。</target></alt-trans></trans-unit>
       <trans-unit id="assetHasBeenAdded" xml:space="preserve">
 				<source>Asset "{0}" has been added.</source>
-			<target xml:lang="zh-CN" state="translated">资产"{0}"已添加。</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">素材 "{0}" 已添加。</target><alt-trans><target xml:lang="zh-CN">资产"{0}"已添加。</target></alt-trans></trans-unit>
       <trans-unit id="assetHasBeenDeleted" xml:space="preserve">
 				<source>Asset "{0}" has been deleted.</source>
-			<target xml:lang="zh-CN" state="translated">资产"{0}"已被删除。</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">素材 "{0}" 已删除。</target><alt-trans><target xml:lang="zh-CN">素材 "{0}" 已被删除。</target></alt-trans><alt-trans><target xml:lang="zh-CN">资产"{0}"已被删除。</target></alt-trans></trans-unit>
       <trans-unit id="assetCouldNotBeDeleted" xml:space="preserve">
 				<source>Asset could not be deleted.</source>
-			<target xml:lang="zh-CN" state="translated">无法删除资产。</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">无法删除素材。</target><alt-trans><target xml:lang="zh-CN">无法删除资产。</target></alt-trans></trans-unit>
       <trans-unit id="assetHasBeenReplaced" xml:space="preserve">
 				<source>Asset "{0}" has been replaced.</source>
-			<target xml:lang="zh-CN" state="translated">资产"{0}"已被替换。</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">素材 "{0}" 已被替换。</target><alt-trans><target xml:lang="zh-CN">资产"{0}"已被替换。</target></alt-trans></trans-unit>
       <trans-unit id="tagAlreadyExistsAndAddedToCollection" xml:space="preserve">
 				<source>Tag "{0}" already exists and was added to collection.</source>
 			<target xml:lang="zh-CN" state="translated">"{0}"标签已经存在，并且被添加到集合。</target></trans-unit>
       <trans-unit id="tagHasBeenCreated" xml:space="preserve">
 				<source>Tag "{0}" has been created.</source>
-			<target xml:lang="zh-CN" state="needs-translation">Tag "{0}" has been created.</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">标签 {0} 已创建。</target></trans-unit>
       <trans-unit id="tagHasBeenUpdated" xml:space="preserve">
 				<source>Tag "{0}" has been updated.</source>
-			<target xml:lang="zh-CN" state="needs-translation">Tag "{0}" has been updated.</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">标签 {0} 已更新。</target></trans-unit>
       <trans-unit id="tagHasBeenDeleted" xml:space="preserve">
 				<source>Tag "{0}" has been deleted.</source>
-			<target xml:lang="zh-CN" state="needs-translation">Tag "{0}" has been deleted.</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">标签 {0} 已删除。</target></trans-unit>
       <trans-unit id="collectionHasBeenCreated" xml:space="preserve">
 				<source>Collection "{0}" has been created.</source>
-			<target xml:lang="zh-CN" state="needs-translation">Collection "{0}" has been created.</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">收藏 “{0}” 已建立。</target><alt-trans><target xml:lang="zh-CN">收藏 “{{0}” 已建立。</target></alt-trans></trans-unit>
       <trans-unit id="collectionHasBeenUpdated" xml:space="preserve">
 				<source>Collection "{0}" has been updated.</source>
-			<target xml:lang="zh-CN" state="needs-translation">Collection "{0}" has been updated.</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">收藏 “{0}” 已更新。</target></trans-unit>
       <trans-unit id="collectionHasBeenDeleted" xml:space="preserve">
 				<source>Collection "{0}" has been deleted.</source>
-			<target xml:lang="zh-CN" state="needs-translation">Collection "{0}" has been deleted.</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">收藏 “{0}” 已删除。</target></trans-unit>
       <trans-unit id="media.replace.options.generateRedirects" xml:space="preserve">
 				<source>Generate redirects from original file url to the new url</source>
-			<target xml:lang="zh-CN" state="needs-translation">Generate redirects from original file url to the new url</target></trans-unit>
+			<target xml:lang="zh-CN" state="translated">生成从原文件url到新的url的重定向</target></trans-unit>
     </body>
   </file>
 </xliff>

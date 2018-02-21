@@ -1,0 +1,44 @@
+`2.3.21 (2018-02-06) <https://github.com/neos/neos-development-collection/releases/tag/2.3.21>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: \`\`ReadNodePrivilege\`\` evaluates EEL expression only once <https://github.com/neos/neos-development-collection/pull/1874>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+The ``ReadNodePrivilege`` evaluates it's EEL evaluator twice unnecessarily,
+there's some caching however it should optimize some cases.
+
+* Packages: ``Neos`` ``TYPO3CR``
+
+`BUGFIX: Context structure tree only shows content <https://github.com/neos/neos-development-collection/pull/1785>`_
+--------------------------------------------------------------------------------------------------------------------
+
+Changes the base node type filter used in the context structure tree to explicitly include content collections and content elements instead of everything that's not a document node type.
+
+Resolves #1784
+
+* Packages: ``Neos``
+
+`BUGFIX: Let fusion render preview URIs for the Neos backend <https://github.com/neos/neos-development-collection/pull/1815>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+Preview links are now generated via Fusion instead of Javascript
+
+* Packages: ``Neos``
+
+`TASK: Update SPDX license identifier in composer.json <https://github.com/neos/neos-development-collection/pull/1862>`_
+------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Kickstarter`` ``Media`` ``Neos`` ``NodeTypes`` ``TYPO3CR`` ``TypoScript``
+
+`TASK: Display changes in workspaces module when setting/unsetting a DateTime values <https://github.com/neos/neos-development-collection/pull/1783>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+When a DateTime property value is either set for the first time or unset the workspace module will now show that change. Previously it would only display the change if the time was set changed to a different time.
+
+* Packages: ``Neos`` ``NodeTypes``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.3.20...2.3.21>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

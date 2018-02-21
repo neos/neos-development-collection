@@ -1,0 +1,86 @@
+`2.3.19 (2017-12-15) <https://github.com/neos/neos-development-collection/releases/tag/2.3.19>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Avoid error if no dimension is set in DimensionsMenuImplementation <https://github.com/neos/neos-development-collection/pull/1777>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+When using the DimensionsMenuImplementation without a set `dimension`
+(yes, there are use cases for that, e.g. hreflang tags for language _and_
+country), the following could happen:
+
+    Call to a member function getLabel() on null
+
+This change avoids that.
+
+* Packages: ``Neos``
+
+`TASK: Fix border-radius on button elements <https://github.com/neos/neos-development-collection/pull/1799>`_
+-------------------------------------------------------------------------------------------------------------
+
+On Chrome (macOS), all `<button>` elements had a `border-radius` of `4px`, which is now removed.
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Make sure nodes that are to be discarded are actually publishable <https://github.com/neos/neos-development-collection/pull/1711>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+`TYPO3\\Neos\\Service\\PublishingService` traverses all children of a node to discard that node recursively. Not all those nodes are actually publishable though, so the following batch discard operation fails with the Exception `#1395841899: Nodes in a in a workspace without a base workspace cannot be discarded`.
+
+So, I added a filter to `TYPO3\\Neos\\Service\\PublishingService::discardNode` that removes all nodes from the to-be-discarded list, that are in a different workspace than the given node.
+
+Resolves: #1710
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix wrong TS path in extending pages example <https://github.com/neos/neos-development-collection/pull/1754>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Fix exception when following documentation about extending pages.
+
+See detailed description and discussion on https://discuss.neos.io/t/1952
+
+* Packages: ``Neos``
+
+`BUGFIX: \`\`NodePropertyConverterService\`\` converts default values <https://github.com/neos/neos-development-collection/pull/1782>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Apply property mapping to default value fallbacks in ``NodePropertyConverterService``
+
+Resolves #1781
+
+* Packages: ``Neos``
+
+`BUGFIX: CreateContentContextTrait should use the available SiteReposi… <https://github.com/neos/neos-development-collection/pull/1779>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Neos``
+
+`TASK: Add generateUriPathSegments check identifier <https://github.com/neos/neos-development-collection/pull/1778>`_
+---------------------------------------------------------------------------------------------------------------------
+
+This adds the `generateUriPathSegments` identifier to the `node:repair`
+help text.
+
+* Packages: ``Neos``
+
+`TASK: Fix remove a selectbox option from an existing Node Type documentation <https://github.com/neos/neos-development-collection/pull/1761>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+Based on this post: https://discuss.neos.io/t/solved-remove-properties-from-nodetype-of-included-package/2751/6
+
+* Packages: ``Neos``
+
+`BUGFIX: Long string literals should be supported in Fusion <https://github.com/neos/neos-development-collection/pull/1755>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+The regex matcher would halt with a catastrophic backtracing error 
+if a very long string was given as string literal.
+
+* Packages: ``Neos`` ``TypoScript``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/2.3.18...2.3.19>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
