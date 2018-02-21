@@ -100,11 +100,11 @@ final class Workspace
     }
 
     /**
-     * @return WorkspaceName
+     * @return WorkspaceName|null
      */
-    public function getBaseWorkspaceName(): WorkspaceName
+    public function getBaseWorkspaceName(): ?WorkspaceName
     {
-        return new WorkspaceName($this->baseWorkspaceName);
+        return $this->baseWorkspaceName ? new WorkspaceName($this->baseWorkspaceName) : null;
     }
 
     /**
