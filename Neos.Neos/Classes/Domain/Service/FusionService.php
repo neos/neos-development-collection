@@ -14,6 +14,8 @@ namespace Neos\Neos\Domain\Service;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Neos\Domain\Projection\Site\SiteFinder;
+use Neos\Neos\Domain\ValueObject\NodeName;
 use Neos\Utility\Files;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
@@ -33,6 +35,12 @@ class FusionService
      * @var Parser
      */
     protected $fusionParser;
+
+    /**
+     * @Flow\Inject
+     * @var SiteFinder
+     */
+    protected $siteFinder;
 
     /**
      * @Flow\Inject
@@ -137,6 +145,7 @@ class FusionService
     {
         $fusionObjectTree = $this->getMergedFusionObjectTree($currentSiteNode);
         $fusionRuntime = new Runtime($fusionObjectTree, $controllerContext);
+
         return $fusionRuntime;
     }
 
@@ -149,8 +158,7 @@ class FusionService
      */
     public function getMergedFusionObjectTree(NodeInterface $startNode)
     {
-        $contentContext = $startNode->getContext();
-        $siteResourcesPackageKey = $contentContext->getCurrentSite()->siteResourcesPackageKey;
+        $siteResourcesPackageKey = $this->getCurrentSite($startNode)->siteResourcesPackageKey;
 
         $siteRootFusionPathAndFilename = sprintf($this->siteRootFusionPattern, $siteResourcesPackageKey);
         $siteRootFusionCode = $this->readExternalFusionFile($siteRootFusionPathAndFilename);
@@ -168,6 +176,11 @@ class FusionService
         $mergedFusionCode .= $this->getFusionIncludes($this->appendFusionIncludes);
 
         return $this->fusionParser->parse($mergedFusionCode, $siteRootFusionPathAndFilename);
+    }
+
+    protected function getCurrentSite(NodeInterface $siteNode)
+    {
+        return $this->siteFinder->findOneByNodeName(new NodeName($siteNode->getName()));
     }
 
     /**
@@ -196,6 +209,7 @@ class FusionService
         foreach ($this->nodeTypeManager->getNodeTypes(false) as $nodeType) {
             $code .= $this->generateFusionForNodeType($nodeType);
         }
+
         return $code;
     }
 
@@ -220,8 +234,10 @@ class FusionService
             if (!$generator instanceof DefaultPrototypeGeneratorInterface) {
                 throw new \Neos\Neos\Domain\Exception('Fusion prototype-generator Class ' . $generatorClassName . ' does not implement interface ' . DefaultPrototypeGeneratorInterface::class);
             }
+
             return $generator->generate($nodeType);
         }
+
         return '';
     }
 
@@ -238,6 +254,7 @@ class FusionService
             $code .= 'include: ' . (string)$fusionResource . chr(10);
         }
         $code .= chr(10);
+
         return $code;
     }
 

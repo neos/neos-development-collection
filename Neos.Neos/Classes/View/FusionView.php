@@ -11,6 +11,12 @@ namespace Neos\Neos\View;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Context\Dimension\ContentDimensionIdentifier;
+use Neos\ContentRepository\Domain\Context\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\Domain\Context\Dimension\ContentDimensionValue;
+use Neos\ContentRepository\Domain\Context\Parameters\ContextParameters;
+use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Response;
 use Neos\Flow\I18n\Locale;
@@ -18,7 +24,6 @@ use Neos\Flow\I18n\Service;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Exception;
-use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception\RuntimeException;
@@ -34,6 +39,12 @@ class FusionView extends AbstractView
      * @var Service
      */
     protected $i18nService;
+
+    /**
+     * @Flow\Inject
+     * @var ContentDimensionSourceInterface
+     */
+    protected $contentDimensionSource;
 
     /**
      * This contains the supported options, their default values, descriptions and types.
@@ -77,23 +88,21 @@ class FusionView extends AbstractView
      */
     public function render()
     {
+        $currentSite = $this->getCurrentSite();
+        $fusionRuntime = $this->getFusionRuntime($currentSite);
+
+        $this->initializeLanguage();
+
         $currentNode = $this->getCurrentNode();
-        $currentSiteNode = $currentNode->getContext()->getCurrentSiteNode();
-        $fusionRuntime = $this->getFusionRuntime($currentSiteNode);
-
-        $dimensions = $currentNode->getContext()->getDimensions();
-        if (array_key_exists('language', $dimensions) && $dimensions['language'] !== array()) {
-            $currentLocale = new Locale($dimensions['language'][0]);
-            $this->i18nService->getConfiguration()->setCurrentLocale($currentLocale);
-            $this->i18nService->getConfiguration()->setFallbackRule(array('strict' => false, 'order' => array_reverse($dimensions['language'])));
-        }
-
-        $fusionRuntime->pushContextArray(array(
+        $fusionRuntime->pushContextArray([
             'node' => $currentNode,
             'documentNode' => $this->getClosestDocumentNode($currentNode) ?: $currentNode,
-            'site' => $currentSiteNode,
+            'site' => $currentSite,
+            'subgraph' => $this->getCurrentSubgraph(),
+            'workspaceName' => $this->getCurrentWorkspaceName(),
+            'contextParameters' => $this->getCurrentContextParameters(),
             'editPreviewMode' => isset($this->variables['editPreviewMode']) ? $this->variables['editPreviewMode'] : null
-        ));
+        ]);
         try {
             $output = $fusionRuntime->render($this->fusionPath);
             $output = $this->mergeHttpResponseFromOutput($output, $fusionRuntime);
@@ -103,6 +112,24 @@ class FusionView extends AbstractView
         $fusionRuntime->popContext();
 
         return $output;
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function initializeLanguage() {
+        $languageIdentifier = new ContentDimensionIdentifier('language');
+        if ($this->getCurrentSubgraph()->getDimensionSpacePoint()->hasCoordinate($languageIdentifier)) {
+            $language = $this->contentDimensionSource->getDimension($languageIdentifier);
+            $requestedLanguage = $language->getValue($this->getCurrentSubgraph()->getDimensionSpacePoint()->getCoordinates()['language']);
+            $currentLocale = new Locale((string) $requestedLanguage);
+            $fallbackOrder = [];
+            $language->traverseGeneralizations($requestedLanguage, function(ContentDimensionValue $generalization) use(&$fallbackOrder) {
+                $fallbackOrder[] = (string) $generalization;
+            });
+            $this->i18nService->getConfiguration()->setCurrentLocale($currentLocale);
+            $this->i18nService->getConfiguration()->setFallbackRule(array('strict' => false, 'order' => array_reverse($fallbackOrder)));
+        }
     }
 
     /**
@@ -144,9 +171,7 @@ class FusionView extends AbstractView
      */
     public function canRenderWithNodeAndPath()
     {
-        $currentNode = $this->getCurrentNode();
-        $currentSiteNode = $currentNode->getContext()->getCurrentSiteNode();
-        $fusionRuntime = $this->getFusionRuntime($currentSiteNode);
+        $fusionRuntime = $this->getFusionRuntime($this->getCurrentSite());
 
         return $fusionRuntime->canRender($this->fusionPath);
     }
@@ -186,13 +211,65 @@ class FusionView extends AbstractView
      * @return NodeInterface
      * @throws Exception
      */
-    protected function getCurrentNode()
+    protected function getCurrentNode(): NodeInterface
     {
         $currentNode = isset($this->variables['value']) ? $this->variables['value'] : null;
-        if (!$currentNode instanceof Node) {
-            throw new Exception('FusionView needs a variable \'value\' set with a Node object.', 1329736456);
+        if (!$currentNode instanceof NodeInterface) {
+            throw new Exception('FusionView needs a variable \'value\' set with a NodeInterface object.', 1329736456);
         }
         return $currentNode;
+    }
+
+    /**
+     * @return ContentSubgraphInterface
+     * @throws Exception
+     */
+    protected function getCurrentSubgraph(): ContentSubgraphInterface
+    {
+        $currentSubgraph = $this->variables['subgraph'] ?? null;
+        if (!$currentSubgraph instanceof ContentSubgraphInterface) {
+            throw new Exception('FusionView needs a variable \'subgraph\' set with a ContentSubgraphInterface object.', 1519167201);
+        }
+        return $currentSubgraph;
+    }
+
+    /**
+     * @return NodeInterface
+     * @throws Exception
+     */
+    protected function getCurrentSite(): NodeInterface
+    {
+        $currentSite = $this->variables['site'] ?? null;
+        if (!$currentSite instanceof NodeInterface) {
+            throw new Exception('FusionView needs a variable \'site\' set with a NodeInterface object.', 1329736456);
+        }
+        return $currentSite;
+    }
+
+    /**
+     * @return WorkspaceName
+     * @throws Exception
+     */
+    protected function getCurrentWorkspaceName(): WorkspaceName
+    {
+        $currentWorkspaceName = $this->variables['workspaceName'] ?? null;
+        if (!$currentWorkspaceName instanceof WorkspaceName) {
+            throw new Exception('FusionView needs a variable \'workspaceName\' set with a WorkspaceName object.', 1519167174);
+        }
+        return $currentWorkspaceName;
+    }
+
+    /**
+     * @return ContextParameters
+     * @throws Exception
+     */
+    protected function getCurrentContextParameters(): ContextParameters
+    {
+        $currentWorkspaceName = $this->variables['contextParameters'] ?? null;
+        if (!$currentWorkspaceName instanceof ContextParameters) {
+            throw new Exception('FusionView needs a variable \'contextParameters\' set with a ContextParameters object.', 1519167300);
+        }
+        return $currentWorkspaceName;
     }
 
     /**
