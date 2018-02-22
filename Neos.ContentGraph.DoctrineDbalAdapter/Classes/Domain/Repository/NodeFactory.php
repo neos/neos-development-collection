@@ -36,6 +36,8 @@ final class NodeFactory
      * @param ContentRepository\Service\Context $context
      * @return ContentRepository\Model\NodeInterface
      * @throws \Exception
+     * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
+     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
     public function mapNodeRowToNode(array $nodeRow, ContentRepository\Service\Context $context = null): ContentRepository\Model\NodeInterface
     {
@@ -71,7 +73,6 @@ final class NodeFactory
             // $node->workspace = $this->workspaceRepository->findByIdentifier($this->contentStreamIdentifier);
             $node->dimensionSpacePoint = $dimensionSpacePoint;
             $node->contentStreamIdentifier = $contentStreamIdentifier;
-
             return $node;
         } else {
             // root node
@@ -84,7 +85,6 @@ final class NodeFactory
             // $node->workspace = $this->workspaceRepository->findByIdentifier($this->contentStreamIdentifier);
 
             $node->dimensionSpacePoint = null;
-
             return $node;
         }
     }
