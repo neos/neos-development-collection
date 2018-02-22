@@ -52,16 +52,19 @@ class NodeSearchService implements NodeSearchServiceInterface
      * @param array $searchNodeTypes
      * @param Context $context
      * @param NodeInterface $startingPoint
+     * @param int|null $maxResults
      * @return array <\Neos\ContentRepository\Domain\Model\NodeInterface>
+     * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
+     * @throws \Neos\ContentRepository\Exception\NodeException
      */
-    public function findByProperties($term, array $searchNodeTypes, Context $context, NodeInterface $startingPoint = null)
+    public function findByProperties($term, array $searchNodeTypes, Context $context, NodeInterface $startingPoint = null, ?int $maxResults = 0)
     {
         if (empty($term)) {
             throw new \InvalidArgumentException('"term" cannot be empty: provide a term to search for.', 1421329285);
         }
         $searchResult = array();
         $nodeTypeFilter = implode(',', $searchNodeTypes);
-        $nodeDataRecords = $this->nodeDataRepository->findByProperties($term, $nodeTypeFilter, $context->getWorkspace(), $context->getDimensions(), $startingPoint ? $startingPoint->getPath() : null);
+        $nodeDataRecords = $this->nodeDataRepository->findByProperties($term, $nodeTypeFilter, $context->getWorkspace(), $context->getDimensions(), $startingPoint ? $startingPoint->getPath() : null, $maxResults);
         foreach ($nodeDataRecords as $nodeData) {
             $node = $this->nodeFactory->createFromNodeData($nodeData, $context);
             if ($node !== null) {

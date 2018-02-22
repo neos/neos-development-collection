@@ -1018,9 +1018,11 @@ class NodeDataRepository extends Repository
      * @param Workspace $workspace
      * @param array $dimensions
      * @param string $pathStartingPoint
+     * @param int|null $maxResults
      * @return array<\Neos\ContentRepository\Domain\Model\NodeData>
+     * @throws Exception\NodeException
      */
-    public function findByProperties($term, $nodeTypeFilter, $workspace, $dimensions, $pathStartingPoint = null)
+    public function findByProperties($term, $nodeTypeFilter, $workspace, $dimensions, $pathStartingPoint = null, ?int $maxResults = 0)
     {
         if (empty($term)) {
             throw new \InvalidArgumentException('"term" cannot be empty: provide a term to search for.', 1421329285);
@@ -1055,6 +1057,10 @@ class NodeDataRepository extends Repository
                 ->setParameter('parentPathHash', md5($pathStartingPoint))
                 ->setParameter('pathHash', md5($pathStartingPoint))
                 ->setParameter('parentPath', rtrim($pathStartingPoint, '/') . '/%');
+        }
+
+        if($maxResults > 0) {
+            $queryBuilder->setMaxResults($maxResults);
         }
 
         $query = $queryBuilder->getQuery();
