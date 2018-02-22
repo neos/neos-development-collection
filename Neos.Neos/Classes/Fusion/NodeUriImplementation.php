@@ -11,29 +11,18 @@ namespace Neos\Neos\Fusion;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
-use Neos\Neos\Service\LinkingService;
+use Neos\Flow\Mvc\Routing\UriBuilder;
+use Neos\Neos\Domain\Context\Content\ContentQuery;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
-use Neos\Neos\Exception as NeosException;
-
 /**
  * Create a link to a node
  */
 class NodeUriImplementation extends AbstractFusionObject
 {
-    /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
-     */
-    protected $systemLogger;
-
-    /**
-     * @Flow\Inject
-     * @var LinkingService
-     */
-    protected $linkingService;
-
     /**
      * A node object or a string node path or NULL to resolve the current document node
      *
@@ -118,34 +107,39 @@ class NodeUriImplementation extends AbstractFusionObject
      * Render the Uri.
      *
      * @return string The rendered URI or NULL if no URI could be resolved for the given node
-     * @throws NeosException
+     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      */
     public function evaluate()
     {
-        $baseNode = null;
-        $baseNodeName = $this->getBaseNodeName() ?: 'documentNode';
-        $currentContext = $this->runtime->getCurrentContext();
-        if (isset($currentContext[$baseNodeName])) {
-            $baseNode = $currentContext[$baseNodeName];
-        } else {
-            throw new NeosException(sprintf('Could not find a node instance in Fusion context with name "%s" and no node instance was given to the node argument. Set a node instance in the Fusion context or pass a node object to resolve the URI.', $baseNodeName), 1373100400);
-        }
-
-        try {
-            return $this->linkingService->createNodeUri(
-                $this->runtime->getControllerContext(),
-                $this->getNode(),
-                $baseNode,
-                $this->getFormat(),
-                $this->isAbsolute(),
-                $this->getAdditionalParams(),
-                $this->getSection(),
-                $this->getAddQueryString(),
-                $this->getArgumentsToBeExcludedFromQueryString()
-            );
-        } catch (NeosException $exception) {
-            $this->systemLogger->logException($exception);
-            return '';
-        }
+        $node = $this->getNode();
+        /** @var ContentSubgraphInterface $subgraph */
+        $subgraph = $this->runtime->getCurrentContext()['subgraph'];
+        /** @var NodeInterface $site */
+        $site = $this->runtime->getCurrentContext()['site'];
+        /** @var WorkspaceName $workspaceName */
+        $workspaceName = $this->runtime->getCurrentContext()['workspaceName'];
+        $contentQuery = new ContentQuery(
+            $node->aggregateIdentifier,
+            $workspaceName,
+            $subgraph->getDimensionSpacePoint(),
+            $site->aggregateIdentifier
+        );
+        $uriBuilder = new UriBuilder();
+        $uriBuilder->setRequest($this->runtime->getControllerContext()->getRequest());
+        $uriBuilder
+            ->setAddQueryString($this->getAddQueryString())
+            ->setArguments($this->getAdditionalParams())
+            ->setArgumentsToBeExcludedFromQueryString($this->getArgumentsToBeExcludedFromQueryString())
+            ->setCreateAbsoluteUri($this->isAbsolute())
+            ->setFormat($this->getFormat())
+            ->setSection($this->getSection());
+        return $uriBuilder->uriFor(
+            'show',
+            [
+                'node' => $contentQuery
+            ],
+            'Frontend/Node',
+            'Neos.Neos'
+        );
     }
 }

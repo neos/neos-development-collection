@@ -534,6 +534,7 @@ Neos:
       Neos.Array: Neos\Neos\Fusion\Helper\ArrayHelper
       Neos.Rendering: Neos\Neos\Fusion\Helper\RenderingHelper
       Neos.Caching: Neos\Neos\Fusion\Helper\CachingHelper
+      Neos.Workspace: Neos\Neos\Fusion\Helper\WorkspaceHelper
 
   Setup:
     stepOrder:

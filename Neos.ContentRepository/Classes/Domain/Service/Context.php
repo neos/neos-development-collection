@@ -23,6 +23,7 @@ use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Domain\Service\Cache\FirstLevelNodeCache;
 use Neos\Flow\Utility\Algorithms;
+use Neos\Flow\Security\Context as SecurityContext;
 
 /**
  * Context
@@ -68,6 +69,12 @@ class Context
     protected $contentGraph;
 
     /**
+     * @Flow\Inject
+     * @var SecurityContext
+     */
+    protected $securityContext;
+
+    /**
      * @var Workspace
      */
     protected $workspace;
@@ -78,7 +85,7 @@ class Context
     protected $workspaceName;
 
     /**
-     * @var \DateTime
+     * @var \DateTimeImmutable
      */
     protected $currentDateTime;
 
@@ -130,6 +137,11 @@ class Context
     protected $contentSubgraph;
 
     /**
+     * @var Domain\Context\Parameters\ContextParameters
+     */
+    protected $contextParameters;
+
+    /**
      * @var Domain\ValueObject\DimensionSpacePoint
      */
     protected $dimensionSpacePoint;
@@ -153,6 +165,7 @@ class Context
      * @param boolean $removedContentShown If removed content should be returned in query results
      * @param boolean $inaccessibleContentShown If inaccessible content should be returned in query results
      * @param Domain\Projection\Content\ContentSubgraphInterface|null $contentSubgraph The content subgraph to fetch nodes from
+     * @param Domain\Context\Parameters\ContextParameters|null $contextParameters
      * @see ContextFactoryInterface
      */
     public function __construct(
@@ -163,7 +176,8 @@ class Context
         $invisibleContentShown,
         $removedContentShown,
         $inaccessibleContentShown,
-        Domain\Projection\Content\ContentSubgraphInterface $contentSubgraph = null
+        Domain\Projection\Content\ContentSubgraphInterface $contentSubgraph = null,
+        Domain\Context\Parameters\ContextParameters $contextParameters = null
     ) {
         $this->workspaceName = $workspaceName;
         $this->currentDateTime = $currentDateTime;
@@ -177,8 +191,12 @@ class Context
         $this->dimensionSpacePoint = Domain\ValueObject\DimensionSpacePoint::fromLegacyDimensionArray($dimensions);
 
         $this->contentSubgraph = $contentSubgraph;
+        $this->contextParameters = $contextParameters;
     }
 
+    /**
+     * @throws \Neos\ContentRepository\Exception
+     */
     public function initializeObject()
     {
         $workspace = $this->workspaceFinder->findOneByName(new Domain\ValueObject\WorkspaceName($this->workspaceName));
@@ -195,7 +213,7 @@ class Context
      * @return Domain\Projection\Content\ContentSubgraphInterface
      * @throws \Neos\ContentRepository\Exception
      */
-    public function getSubgraph(): Domain\Projection\Content\ContentSubgraphInterface
+    public function getContentSubgraph(): Domain\Projection\Content\ContentSubgraphInterface
     {
         if (!$this->contentSubgraph) {
             $this->contentSubgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint);
@@ -205,6 +223,26 @@ class Context
         }
 
         return $this->contentSubgraph;
+    }
+
+    /**
+     * @return Domain\Context\Parameters\ContextParameters|null
+     */
+    public function getContextParameters(): ?Domain\Context\Parameters\ContextParameters
+    {
+        if (!$this->contextParameters) {
+            if ($this->securityContext->canBeInitialized()) {
+                $this->contextParameters = new Domain\Context\Parameters\ContextParameters(
+                    $this->currentDateTime,
+                    $this->securityContext->getRoles(),
+                    $this->invisibleContentShown,
+                    $this->removedContentShown,
+                    $this->inaccessibleContentShown
+                );
+            }
+        }
+
+        return $this->contextParameters;
     }
 
     /**
@@ -225,7 +263,8 @@ class Context
             $liveWorkspace = $this->workspaceRepository->findByIdentifier('live');
             $this->workspace = new Workspace($this->workspaceName, $liveWorkspace);
             $this->workspaceRepository->add($this->workspace);
-            $this->systemLogger->log(sprintf('Notice: %s::getWorkspace() implicitly created the new workspace "%s". This behaviour is discouraged and will be removed in future versions. Make sure to create workspaces explicitly by adding a new workspace to the Workspace Repository.', __CLASS__, $this->workspaceName), LOG_NOTICE);
+            $this->systemLogger->log(sprintf('Notice: %s::getWorkspace() implicitly created the new workspace "%s". This behaviour is discouraged and will be removed in future versions. Make sure to create workspaces explicitly by adding a new workspace to the Workspace Repository.',
+                __CLASS__, $this->workspaceName), LOG_NOTICE);
         }
 
         if ($this->workspace !== null) {
@@ -291,7 +330,7 @@ class Context
      */
     public function getRootNode()
     {
-        return $this->getSubgraph()->findRootNode($this);
+        return $this->getContentSubgraph()->findRootNode($this);
     }
 
     /**
@@ -304,7 +343,7 @@ class Context
      */
     public function getNode($path)
     {
-        return $this->getSubgraph()->findNodeByPath($path, $this);
+        return $this->getContentSubgraph()->findNodeByPath($path, $this);
     }
 
     /**
@@ -316,7 +355,8 @@ class Context
     public function getNodeByIdentifier($identifier)
     {
         $nodeAggregateIdentifier = Domain\ValueObject\NodeAggregateIdentifier::fromString($identifier);
-        return $this->getSubgraph()->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier, $this);
+
+        return $this->getContentSubgraph()->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier, $this);
     }
 
     /**
