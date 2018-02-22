@@ -1059,7 +1059,7 @@ class NodeDataRepository extends Repository
                 ->setParameter('parentPath', rtrim($pathStartingPoint, '/') . '/%');
         }
 
-        if($maxResults > 0) {
+        if ($maxResults > 0) {
             $queryBuilder->setMaxResults($maxResults);
         }
 
