@@ -11,10 +11,10 @@ namespace Neos\SiteKickstarter\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Context\Dimension;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Utility\Files;
-use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
 use Neos\ContentRepository\Utility;
 
 /**
@@ -30,9 +30,9 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
 
     /**
      * @Flow\Inject
-     * @var ContentDimensionRepository
+     * @var Dimension\ContentDimensionSourceInterface
      */
-    protected $contentDimensionRepository;
+    protected $contentDimensionSource;
 
     /**
      * Generate a site package and fill it with boilerplate data.
@@ -40,6 +40,7 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
      * @param string $packageKey
      * @param string $siteName
      * @return array
+     * @throws \Neos\Utility\Exception\FilesException
      */
     public function generateSitePackage($packageKey, $siteName)
     {
@@ -69,6 +70,7 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
      * @param string $packageKey
      * @param string $siteName
      * @return void
+     * @throws \Neos\Utility\Exception\FilesException
      */
     protected function generateSitesXml($packageKey, $siteName)
     {
@@ -78,7 +80,7 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
             'packageKey' => $packageKey,
             'siteName' => htmlspecialchars($siteName),
             'siteNodeName' => $this->generateSiteNodeName($packageKey),
-            'dimensions' => $this->contentDimensionRepository->findAll()
+            'dimensions' => $this->contentDimensionSource->getContentDimensionsOrderedByPriority()
         ];
 
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
@@ -93,6 +95,7 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
      * @param string $packageKey
      * @param string $siteName
      * @return void
+     * @throws \Neos\Utility\Exception\FilesException
      */
     protected function generateSitesFusion($packageKey, $siteName)
     {
@@ -116,6 +119,7 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
      * @param string $packageKey
      * @param string $siteName
      * @return void
+     * @throws \Neos\Utility\Exception\FilesException
      */
     protected function generateDefaultTemplate($packageKey, $siteName)
     {
@@ -150,6 +154,7 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
      *
      * @param string $packageKey
      * @return void
+     * @throws \Neos\Utility\Exception\FilesException
      */
     protected function generateNodeTypesConfiguration($packageKey)
     {
@@ -165,6 +170,7 @@ class GeneratorService extends \Neos\Kickstarter\Service\GeneratorService
      * Generate additional folders for site packages.
      *
      * @param string $packageKey
+     * @throws \Neos\Utility\Exception\FilesException
      */
     protected function generateAdditionalFolders($packageKey)
     {

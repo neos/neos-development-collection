@@ -6,8 +6,8 @@ Feature: Move nodes in aggregate before, into or after nodes in another aggregat
 
   Background:
     Given I have the following content dimensions:
-      | Identifier | Default | Presets                                     |
-      | language   | mul     | mul=mul; de=de,mul; en=en,mul; ch=ch,de,mul |
+      | Identifier | Default | Values          | Generalizations      |
+      | language   | mul     | mul, de, en, ch | ch->de->mul, en->mul |
     And the command "CreateRootWorkspace" is executed with payload:
       | Key                      | Value                                | Type |
       | workspaceName            | live                                 |      |

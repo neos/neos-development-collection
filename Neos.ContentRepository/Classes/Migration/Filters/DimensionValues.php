@@ -11,9 +11,9 @@ namespace Neos\ContentRepository\Migration\Filters;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Context\Dimension;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeData;
-use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
 
 /**
  * Filter nodes by their dimensions.
@@ -22,9 +22,9 @@ class DimensionValues implements FilterInterface
 {
     /**
      * @Flow\Inject
-     * @var ContentDimensionRepository
+     * @var Dimension\ContentDimensionSourceInterface
      */
-    protected $contentDimensionRepository;
+    protected $contentDimensionSource;
 
     /**
      * The array of dimension values to filter for.
@@ -65,9 +65,9 @@ class DimensionValues implements FilterInterface
     public function matches(NodeData $node)
     {
         if ($this->filterForDefaultDimensionValues === true) {
-            $configuredDimensions = $this->contentDimensionRepository->findAll();
+            $configuredDimensions = $this->contentDimensionSource->getContentDimensionsOrderedByPriority();
             foreach ($configuredDimensions as $dimension) {
-                $this->dimensionValues[$dimension->getIdentifier()] = array($dimension->getDefault());
+                $this->dimensionValues[(string) $dimension->getIdentifier()] = [(string) $dimension->getDefaultValue()];
             }
         }
 

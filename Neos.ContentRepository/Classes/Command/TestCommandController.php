@@ -12,7 +12,6 @@ namespace Neos\ContentRepository\Command;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Context\Dimension\Repository\IntraDimensionalFallbackGraph;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 
@@ -23,15 +22,4 @@ use Neos\Flow\Cli\CommandController;
  */
 class TestCommandController extends CommandController
 {
-    /**
-     * @Flow\Inject
-     * @var IntraDimensionalFallbackGraph
-     */
-    protected $intraDimensionalFallbackGraph;
-
-
-    public function testFallbackGraphsCommand()
-    {
-        $this->intraDimensionalFallbackGraph->getDimensions();
-    }
 }

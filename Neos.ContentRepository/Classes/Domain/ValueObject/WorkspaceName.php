@@ -11,11 +11,15 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  * source code.
  */
 
+use Neos\Cache\CacheAwareInterface;
+
 /**
  * Name of a workspace
  */
-final class WorkspaceName implements \JsonSerializable
+final class WorkspaceName implements \JsonSerializable, CacheAwareInterface
 {
+    const WORKSPACE_NAME_LIVE = 'live';
+
     /**
      * @var string
      */
@@ -43,6 +47,22 @@ final class WorkspaceName implements \JsonSerializable
     }
 
     /**
+     * @return WorkspaceName
+     */
+    public static function forLive(): WorkspaceName
+    {
+        return new WorkspaceName(self::WORKSPACE_NAME_LIVE);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isLive(): bool
+    {
+        return $this->name === self::WORKSPACE_NAME_LIVE;
+    }
+
+    /**
      * @return string
      */
     public function __toString(): string
@@ -53,7 +73,15 @@ final class WorkspaceName implements \JsonSerializable
     /**
      * @return string
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCacheEntryIdentifier(): string
     {
         return $this->name;
     }

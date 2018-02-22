@@ -11,10 +11,10 @@ namespace Neos\ContentRepository\Migration\Transformations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Context\Dimension;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Model\NodeDimension;
-use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
 
 /**
  * Add dimensions on a node. This adds to the existing dimensions, if you need to
@@ -24,9 +24,9 @@ class AddDimensions extends AbstractTransformation
 {
     /**
      * @Flow\Inject
-     * @var ContentDimensionRepository
+     * @var Dimension\ContentDimensionSourceInterface
      */
-    protected $contentDimensionRepository;
+    protected $contentDimensionSource;
 
     /**
      * If you omit a configured dimension this transformation will add the default value for that dimension.
@@ -79,10 +79,10 @@ class AddDimensions extends AbstractTransformation
         }
 
         if ($this->addDefaultDimensionValues === true) {
-            $configuredDimensions = $this->contentDimensionRepository->findAll();
+            $configuredDimensions = $this->contentDimensionSource->getContentDimensionsOrderedByPriority();
             foreach ($configuredDimensions as $configuredDimension) {
-                if (!isset($dimensionValuesToBeAdded[$configuredDimension->getIdentifier()])) {
-                    $dimensionValuesToBeAdded[$configuredDimension->getIdentifier()] = array($configuredDimension->getDefault());
+                if (!isset($dimensionValuesToBeAdded[(string)$configuredDimension->getIdentifier()])) {
+                    $dimensionValuesToBeAdded[(string)$configuredDimension->getIdentifier()] = [(string)$configuredDimension->getDefaultValue()];
                 }
             }
         }

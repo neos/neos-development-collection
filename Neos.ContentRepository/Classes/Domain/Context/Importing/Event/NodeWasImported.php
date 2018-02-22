@@ -1,9 +1,9 @@
 <?php
 namespace Neos\ContentRepository\Domain\Context\Importing\Event;
 
-use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
-use Neos\ContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
 use Neos\ContentRepository\Domain\ValueObject\ImportingSessionIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
@@ -40,9 +40,9 @@ final class NodeWasImported implements EventInterface, CopyableAcrossContentStre
     private $nodeTypeName;
 
     /**
-     * @var DimensionValues
+     * @var DimensionSpacePoint
      */
-    private $dimensionValues;
+    private $dimensionSpacePoint;
 
     /**
      * @var PropertyValues
@@ -55,7 +55,7 @@ final class NodeWasImported implements EventInterface, CopyableAcrossContentStre
         NodeAggregateIdentifier $nodeIdentifier,
         NodeName $nodeName,
         NodeTypeName $nodeTypeName,
-        DimensionValues $dimensionValues,
+        DimensionSpacePoint $dimensionSpacePoint,
         PropertyValues $propertyValues
     ) {
         $this->importingSessionIdentifier = $importingSessionIdentifier;
@@ -63,7 +63,7 @@ final class NodeWasImported implements EventInterface, CopyableAcrossContentStre
         $this->nodeIdentifier = $nodeIdentifier;
         $this->nodeName = $nodeName;
         $this->nodeTypeName = $nodeTypeName;
-        $this->dimensionValues = $dimensionValues;
+        $this->dimensionSpacePoint = $dimensionSpacePoint;
         $this->propertyValues = $propertyValues;
     }
 
@@ -92,9 +92,9 @@ final class NodeWasImported implements EventInterface, CopyableAcrossContentStre
         return $this->nodeTypeName;
     }
 
-    public function getDimensionValues(): DimensionValues
+    public function getDimensionSpacePoint(): DimensionSpacePoint
     {
-        return $this->dimensionValues;
+        return $this->dimensionSpacePoint;
     }
 
     public function getPropertyValues(): PropertyValues

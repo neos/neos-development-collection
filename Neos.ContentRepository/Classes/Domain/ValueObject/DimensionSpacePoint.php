@@ -11,6 +11,8 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Cache\CacheAwareInterface;
+use Neos\ContentRepository\Domain\Context\Dimension\ContentDimensionIdentifier;
 use Neos\Utility\Arrays;
 
 /**
@@ -18,7 +20,7 @@ use Neos\Utility\Arrays;
  *
  * E.g.: ["language" => "es", "country" => "ar"]
  */
-final class DimensionSpacePoint implements \JsonSerializable
+final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterface
 {
     /**
      * @var array
@@ -66,11 +68,33 @@ final class DimensionSpacePoint implements \JsonSerializable
     }
 
     /**
+     * @param ContentDimensionIdentifier $dimensionIdentifier
+     * @param string $value
+     * @return DimensionSpacePoint
+     */
+    public function vary(ContentDimensionIdentifier $dimensionIdentifier, string $value): DimensionSpacePoint
+    {
+        $variedCoordinates = $this->coordinates;
+        $variedCoordinates[(string)$dimensionIdentifier] = $value;
+
+        return new DimensionSpacePoint($variedCoordinates);
+    }
+
+    /**
      * @return array
      */
     public function getCoordinates(): array
     {
         return $this->coordinates;
+    }
+
+    /**
+     * @param ContentDimensionIdentifier $dimensionIdentifier
+     * @return bool
+     */
+    public function hasCoordinate(ContentDimensionIdentifier $dimensionIdentifier): bool
+    {
+        return isset($this->coordinates[(string)$dimensionIdentifier]);
     }
 
     /**
@@ -102,8 +126,19 @@ final class DimensionSpacePoint implements \JsonSerializable
         return ['coordinates' => $this->coordinates];
     }
 
+    /**
+     * @return string
+     */
     public function __toString(): string
     {
         return 'dimension space point:' . json_encode($this->coordinates);
+    }
+
+    /**
+     * @return string
+     */
+    public function getCacheEntryIdentifier(): string
+    {
+        return $this->getHash();
     }
 }

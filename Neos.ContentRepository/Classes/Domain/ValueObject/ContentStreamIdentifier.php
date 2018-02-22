@@ -12,6 +12,15 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  * source code.
  */
 
-final class ContentStreamIdentifier extends AbstractIdentifier
+use Neos\Cache\CacheAwareInterface;
+
+final class ContentStreamIdentifier extends AbstractIdentifier implements CacheAwareInterface
 {
+    /**
+     * @return string
+     */
+    public function getCacheEntryIdentifier(): string
+    {
+        return $this->uuid->toString();
+    }
 }

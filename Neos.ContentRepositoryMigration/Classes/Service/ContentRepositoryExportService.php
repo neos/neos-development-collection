@@ -16,7 +16,7 @@ use Doctrine\Common\Persistence\ObjectManager as DoctrineObjectManager;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\QueryBuilder;
 use Neos\ContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasCreated;
-use Neos\ContentRepository\Domain\Context\DimensionSpace\Repository\InterDimensionalFallbackGraph;
+use Neos\ContentRepository\Domain\Context\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasAddedToAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
@@ -63,7 +63,7 @@ class ContentRepositoryExportService
 
     /**
      * @Flow\Inject
-     * @var InterDimensionalFallbackGraph
+     * @var InterDimensionalVariationGraph
      */
     protected $interDimensionalFallbackGraph;
 
@@ -312,7 +312,7 @@ class ContentRepositoryExportService
                 return $this->nodeIdentifiers[$key];
             }
 
-            $subgraph = $this->interDimensionalFallbackGraph->getPrimaryFallback($subgraph);
+            $subgraph = $this->interDimensionalFallbackGraph->getPrimaryGeneralization($subgraph);
         }
 
         // if we did not find a node at this point, we need to check if the parentPath is "/sites" --> as there is an error

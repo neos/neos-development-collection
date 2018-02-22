@@ -3,9 +3,8 @@ Feature: Reading of our Graph Projection
 
   Background:
     Given I have the following content dimensions:
-      | Identifier | Default | Presets                                     |
-      | language   | mul     | mul=mul; de=de,mul; en=en,mul; ch=ch,de,mul |
-
+      | Identifier | Default | Values          | Generalizations      |
+      | language   | mul     | mul, de, en, ch | ch->de->mul, en->mul |
 
   Scenario: Property Changes with two dimensions
     Given the Event "Neos.ContentRepository:RootNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d" with payload:

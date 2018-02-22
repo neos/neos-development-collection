@@ -11,16 +11,15 @@ namespace Neos\ContentRepository\Tests\Functional\TypeConverter;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Context\Dimension;
 use Neos\Error\Messages\Error;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
-use Neos\ContentRepository\Domain\Service\Context;
 use Neos\ContentRepository\Domain\Service\ContextFactory;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
@@ -87,12 +86,21 @@ class NodeConverterTest extends FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
-        $contentDimensionRepository = $this->objectManager->get(ContentDimensionRepository::class);
-        $contentDimensionRepository->setDimensionsConfiguration(array(
-            'language' => array(
-                'default' => 'mul_ZZ'
+
+        $value = new Dimension\ContentDimensionValue('mul_ZZ');
+        $contentDimensions = [
+            'language' => new Dimension\ContentDimension(
+                new Dimension\ContentDimensionIdentifier('language'),
+                [
+                    $value->getValue() => $value
+                ],
+                $value
             )
-        ));
+        ];
+
+        $contentDimensionSource = $this->objectManager->get(Dimension\ContentDimensionSourceInterface::class);
+        $this->inject($contentDimensionSource, 'contentDimensions', $contentDimensions);
+
         $this->currentTestWorkspaceName = uniqid('user-');
         $this->contextFactory = $this->objectManager->get(ContextFactory::class);
 
@@ -113,8 +121,8 @@ class NodeConverterTest extends FunctionalTestCase
 
     public function tearDown()
     {
-        $contentDimensionRepository = $this->objectManager->get(ContentDimensionRepository::class);
-        $contentDimensionRepository->setDimensionsConfiguration(array());
+        $contentDimensionSource = $this->objectManager->get(Dimension\ContentDimensionSourceInterface::class);
+        $this->inject($contentDimensionSource, 'contentDimensions', []);
         parent::tearDown();
     }
 

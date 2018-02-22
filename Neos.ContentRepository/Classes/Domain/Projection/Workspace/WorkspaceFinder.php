@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Domain\Projection\Workspace;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcing\Projection\Doctrine\AbstractDoctrineFinder;
 
@@ -27,5 +28,33 @@ final class WorkspaceFinder extends AbstractDoctrineFinder
     public function findOneByName(WorkspaceName $name): ?Workspace
     {
         return $this->__call('findOneByWorkspaceName', [(string)$name]);
+    }
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @return Workspace|null
+     */
+    public function findOneByCurrentContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier): ?Workspace
+    {
+        return $this->__call('findOneByCurrentContentStreamIdentifier', [(string)$contentStreamIdentifier]);
+    }
+
+    /**
+     * @param WorkspaceName $prefix
+     * @return array|Workspace[]
+     * @throws \Neos\Flow\Persistence\Exception\InvalidQueryException
+     */
+    public function findByPrefix(WorkspaceName $prefix): array
+    {
+        $result = [];
+        $query = $this->createQuery();
+        foreach ($query->matching(
+            $query->like('workspaceName', (string) $prefix . '%')
+        )->execute() as $similarlyNamedWorkspace) {
+            /** @var Workspace $similarlyNamedWorkspace */
+            $result[(string) $similarlyNamedWorkspace->getWorkspaceName()] = $similarlyNamedWorkspace;
+        }
+
+        return $result;
     }
 }

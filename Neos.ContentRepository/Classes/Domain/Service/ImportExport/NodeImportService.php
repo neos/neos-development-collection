@@ -19,6 +19,7 @@ use Neos\ContentRepository\Domain\Context\Importing\Command\StartImportingSessio
 use Neos\ContentRepository\Domain\Context\Importing\Event\ImportingSessionWasStarted;
 use Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\DimensionValues;
 use Neos\ContentRepository\Domain\ValueObject\ImportingSessionIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
@@ -554,7 +555,7 @@ class NodeImportService
                     $nodeData['identifier'],
                     new NodeName('todo'),
                     $nodeData['nodeType'],
-                    new DimensionValues($nodeData['dimensionValues']),
+                    DimensionSpacePoint::fromLegacyDimensionArray($nodeData['dimensionValues']),
                     new PropertyValues($nodeData['properties'])
                 );
                 $this->nodeCommandHandler->handleImportNode($importNodeCommand);

@@ -12,6 +12,8 @@
       setting: 'Neos.ContentRepository.contentDimensions'
 'Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface':
   className: Neos\ContentRepository\Domain\Service\ConfigurationContentDimensionPresetSource
+'Neos\ContentRepository\Domain\Context\Dimension\ContentDimensionSourceInterface':
+  className: Neos\ContentRepository\Domain\Context\Dimension\ConfigurationBasedContentDimensionSource
 'Neos\ContentRepository\Domain\Model\NodeLabelGeneratorInterface':
   className: Neos\ContentRepository\Domain\Model\ExpressionBasedNodeLabelGenerator
 'Neos\ContentRepository\Domain\Service\NodeServiceInterface':

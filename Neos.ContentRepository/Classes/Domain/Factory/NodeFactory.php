@@ -82,7 +82,8 @@ class NodeFactory
             // Warning: Alternative node implementations are considered internal for now, feature can change or be removed anytime. We want to be sure it works well and makes sense before declaring it public.
             $class = $nodeData->getNodeType()->getConfiguration('class') ?: $this->objectManager->getClassNameByObjectName(NodeInterface::class);
             if (!in_array($class, static::getNodeInterfaceImplementations($this->objectManager))) {
-                throw new NodeConfigurationException('The configured implementation class name "' . $class . '" for NodeType "' . $nodeData->getNodeType() . '" does not inherit from ' .NodeInterface::class.'.', 1406884014);
+                throw new NodeConfigurationException('The configured implementation class name "' . $class . '" for NodeType "' . $nodeData->getNodeType() . '" does not inherit from ' . NodeInterface::class . '.',
+                    1406884014);
             }
             $this->nodes[$internalNodeIdentifier] = new $class($nodeData, $context);
         }
@@ -102,6 +103,7 @@ class NodeFactory
     {
         $reflectionService = $objectManager->get(ReflectionService::class);
         $nodeImplementations = $reflectionService->getAllImplementationClassNamesForInterface(NodeInterface::class);
+
         return $nodeImplementations;
     }
 
@@ -118,16 +120,19 @@ class NodeFactory
         $this->securityContext->withoutAuthorizationChecks(function () use (&$node, $context) {
             if (!$context->isRemovedContentShown() && $node->isRemoved()) {
                 $node = null;
+
                 return;
             }
             if (!$context->isInvisibleContentShown() && !$node->isVisible()) {
                 $node = null;
+
                 return;
             }
             if (!$context->isInaccessibleContentShown() && !$node->isAccessible()) {
                 $node = null;
             }
         });
+
         return $node;
     }
 

@@ -31,10 +31,10 @@ use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
-use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\ContentRepository\Exception\NodeConstraintException;
 use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\Exception\NodeExistsException;
+use Neos\Flow\Utility\Now;
 
 /**
  * This is the main API for storing and retrieving content in the system.
@@ -144,6 +144,12 @@ class Node implements NodeInterface, CacheAwareInterface
     protected $contentGraph;
 
     /**
+     * @Flow\Inject(lazy=false)
+     * @var Now
+     */
+    protected $now;
+
+    /**
      * @param NodeData $nodeData
      * @param Context $context
      * @Flow\Autowiring(false)
@@ -161,11 +167,12 @@ class Node implements NodeInterface, CacheAwareInterface
      * Example: /sites/mysitecom/homepage/about@user-admin
      *
      * @return string Node path with context information
+     * @deprecated directly use node's identifier, which is unique within the whole content graph
      * @api
      */
     public function getContextPath()
     {
-        return NodePaths::generateContextPath($this->getPath(), $this->context->getWorkspaceName(), $this->context->getDimensions());
+        return $this->identifier . '@' . $this->contentStreamIdentifier;
     }
 
     /**
@@ -202,7 +209,7 @@ class Node implements NodeInterface, CacheAwareInterface
     public function getOtherNodeVariants()
     {
         return array_filter(
-            $this->context->getNodeVariantsByIdentifier($this->identifier),
+            $this->contentGraph->findNodesByNodeAggregateIdentifier($this->context->getContentSubgraph()->getContentStreamIdentifier(), $this->aggregateIdentifier),
             function (Node $node) {
                 return $node->identifier !== $this->identifier;
             }
@@ -255,7 +262,7 @@ class Node implements NodeInterface, CacheAwareInterface
     public function getPath()
     {
         // TODO: is a CTE safe to use?? It's quite efficient, though :)
-        return (string)$this->context->getSubgraph()->findNodePath($this->identifier);
+        return $this->context->getContentSubgraph() ? (string)$this->context->getContentSubgraph()->findNodePath($this->identifier) : '/' . $this->name;
     }
 
     /**
@@ -359,12 +366,12 @@ class Node implements NodeInterface, CacheAwareInterface
     /**
      * Returns the parent node of this node
      *
-     * @return NodeInterface The parent node or NULL if this is the root node
+     * @return NodeInterface|null The parent node or NULL if this is the root node
      * @api
      */
-    public function getParent()
+    public function getParent(): ?NodeInterface
     {
-        return $this->context->getSubgraph()->findParentNode($this->identifier, $this->context);
+        return $this->context->getContentSubgraph() ? $this->context->getContentSubgraph()->findParentNode($this->identifier, $this->context) : null;
     }
 
     /**
@@ -523,7 +530,7 @@ class Node implements NodeInterface, CacheAwareInterface
         // TODO CR rewrite: Add move strategy to node type instead of checking flag
         if ($this->nodeType->isAggregate()) {
             $command = new Command\MoveNodesInAggregate(
-                $this->context->getContentStreamIdentifier(),
+                $this->context->getContentSubgraph()->getContentStreamIdentifier(),
                 $this->aggregateIdentifier,
                 $referencePosition,
                 $referenceNode->aggregateIdentifier
@@ -532,7 +539,7 @@ class Node implements NodeInterface, CacheAwareInterface
             $this->nodeCommandHandler->handleMoveNodesInAggregate($command);
         } else {
             $command = new Command\MoveNode(
-                $this->context->getContentStreamIdentifier(),
+                $this->context->getContentSubgraph()->getContentStreamIdentifier(),
                 $this->identifier,
                 $referencePosition,
                 $referenceNode->identifier
@@ -697,7 +704,7 @@ class Node implements NodeInterface, CacheAwareInterface
         $propertyType = $this->getNodeType()->getPropertyType($propertyName);
 
         $command = new Command\SetNodeProperty(
-            $this->context->getContentStreamIdentifier(),
+            $this->context->getContentSubgraph()->getContentStreamIdentifier(),
             $this->identifier,
             $propertyName,
             new PropertyValue($value, $propertyType)
@@ -879,7 +886,7 @@ class Node implements NodeInterface, CacheAwareInterface
         $nodeTypeName = new NodeTypeName(($nodeType ? $nodeType->getName() : 'unstructured'));
         $nodeIdentifier = new NodeIdentifier();
         $parentNodeIdentifier = $this->identifier;
-        $dimensionSpacePoint = new DimensionSpacePoint($this->context->getTargetDimensions());
+        $dimensionSpacePoint = $this->context->getContentSubgraph()->getDimensionSpacePoint();
         $nodeName = new NodeName($name);
 
         $this->emitBeforeNodeCreate($this, $name, $nodeType, $identifier);
@@ -902,7 +909,7 @@ class Node implements NodeInterface, CacheAwareInterface
             $this->nodeCommandHandler->handleAddNodeToAggregate($command);
         } else {
             $command = new Command\CreateNodeAggregateWithNode(
-                $this->context->getContentStreamIdentifier(),
+                $this->context->getContentSubgraph()->getContentStreamIdentifier(),
                 $nodeAggregateIdentifier,
                 $nodeTypeName,
                 $dimensionSpacePoint,
@@ -914,7 +921,7 @@ class Node implements NodeInterface, CacheAwareInterface
             $this->nodeCommandHandler->handleCreateNodeAggregateWithNode($command);
         }
 
-        $newNode = $this->context->getSubgraph()->findNodeByIdentifier($nodeIdentifier, $this->context);
+        $newNode = $this->context->getContentSubgraph()->findNodeByIdentifier($nodeIdentifier, $this->context);
         if ($newNode === null) {
             throw new Exception\NodeNotFoundException(sprintf('Node with identifier %s created but not found in supgraph', $nodeIdentifier), 1506097675, $nodeIdentifier);
         }
@@ -956,11 +963,11 @@ class Node implements NodeInterface, CacheAwareInterface
         $path = new Domain\ValueObject\NodePath($path);
         $node = $this;
         if ($path->isAbsolute()) {
-            $node = $this->context->getSubgraph()->findRootNode($this->context);
+            $node = $this->context->getContentSubgraph()->findRootNode($this->context);
         }
 
         foreach ($path->getParts() as $nodeName) {
-            $node = $this->context->getSubgraph()->findChildNodeConnectedThroughEdgeName($node->identifier, $nodeName, $this->context);
+            $node = $this->context->getContentSubgraph()->findChildNodeConnectedThroughEdgeName($node->identifier, $nodeName, $this->context);
             if (!$node) {
                 return null;
             }
@@ -980,7 +987,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getPrimaryChildNode()
     {
-        return $this->context->getSubgraph()->findFirstChildNode($this->identifier, $this->context);
+        return $this->context->getContentSubgraph()->findFirstChildNode($this->identifier, $this->context);
     }
 
     /**
@@ -999,7 +1006,7 @@ class Node implements NodeInterface, CacheAwareInterface
         if ($nodeTypeFilter !== null) {
             $nodeTypeConstraints = $this->nodeTypeConstraintService->unserializeFilters($nodeTypeFilter);
         }
-        return $this->context->getSubgraph()->findChildNodes($this->identifier, $nodeTypeConstraints, $limit, $offset, $this->context);
+        return $this->context->getContentSubgraph()->findChildNodes($this->identifier, $nodeTypeConstraints, $limit, $offset, $this->context);
     }
 
     /**
@@ -1012,7 +1019,7 @@ class Node implements NodeInterface, CacheAwareInterface
     public function getNumberOfChildNodes($nodeTypeFilter = null)
     {
         $nodeTypeConstraints = $this->nodeTypeConstraintService->unserializeFilters($nodeTypeFilter);
-        return $this->context->getSubgraph()->countChildNodes($this->identifier, $nodeTypeConstraints);
+        return $this->context->getContentSubgraph()->countChildNodes($this->identifier, $nodeTypeConstraints);
     }
 
     /**
@@ -1241,7 +1248,7 @@ class Node implements NodeInterface, CacheAwareInterface
         if ($this->isHidden()) {
             return false;
         }
-        $currentDateTime = $this->context->getCurrentDateTime();
+        $currentDateTime = $this->context ? $this->context->getCurrentDateTime() : $this->now;
         if ($this->getHiddenBeforeDateTime() !== null && $this->getHiddenBeforeDateTime() > $currentDateTime) {
             return false;
         }
@@ -1334,7 +1341,7 @@ class Node implements NodeInterface, CacheAwareInterface
             new DimensionSpacePoint($context->getTargetDimensions())
         ));
 
-        $node = $context->getSubgraph()->findNodeByIdentifier($destinationNodeIdentifier, $context);
+        $node = $context->getContentSubgraph()->findNodeByIdentifier($destinationNodeIdentifier, $context);
         $this->emitNodeAdded($node);
 
         return $node;
@@ -1380,8 +1387,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function dimensionsAreMatchingTargetDimensionValues(): bool
     {
-        $targetDimensionSpacePoint = new DimensionSpacePoint($this->context->getTargetDimensions());
-        return $this->dimensionSpacePoint->getHash() === $targetDimensionSpacePoint->getHash();
+        return $this->dimensionSpacePoint->getHash() === $this->context->getContentSubgraph()->getDimensionSpacePoint()->getHash();
     }
 
 

@@ -11,13 +11,14 @@ namespace Neos\ContentRepository\Tests\Functional\Domain;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Context\Dimension;
+use Neos\ContentRepository\Domain\Context\DimensionSpace;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Domain\Service\Context;
@@ -67,11 +68,6 @@ class NodesTest extends FunctionalTestCase
     protected $nodeTypeManager;
 
     /**
-     * @var ContentDimensionRepository
-     */
-    protected $contentDimensionRepository;
-
-    /**
      * @return void
      */
     public function setUp()
@@ -93,7 +89,6 @@ class NodesTest extends FunctionalTestCase
         $this->contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
         $this->context = $this->contextFactory->create(['workspaceName' => 'live']);
         $this->nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
-        $this->contentDimensionRepository = $this->objectManager->get(ContentDimensionRepository::class);
     }
 
     /**
@@ -103,7 +98,6 @@ class NodesTest extends FunctionalTestCase
     {
         parent::tearDown();
         $this->inject($this->contextFactory, 'contextInstances', []);
-        $this->contentDimensionRepository->setDimensionsConfiguration([]);
     }
 
     /**
@@ -966,11 +960,7 @@ class NodesTest extends FunctionalTestCase
      */
     public function nodeDataRepositoryRenumbersNodesIfNoFreeSortingIndexesAreAvailableAcrossDimensions()
     {
-        $this->contentDimensionRepository->setDimensionsConfiguration(array(
-            'test' => array(
-                'default' => 'a'
-            )
-        ));
+        $this->setUpExampleDimensions();
 
         $variantContextA = $this->contextFactory->create(array(
             'dimensions' => array('test' => array('a')),
@@ -1429,11 +1419,7 @@ class NodesTest extends FunctionalTestCase
      */
     public function createVariantForContextMatchesTargetContextDimensions()
     {
-        $this->contentDimensionRepository->setDimensionsConfiguration([
-            'test' => [
-                'default' => 'a'
-            ]
-        ]);
+        $this->setUpExampleDimensions();
 
         $variantContextA = $this->contextFactory->create([
             'dimensions' => ['test' => ['a']],
@@ -1457,11 +1443,7 @@ class NodesTest extends FunctionalTestCase
      */
     public function createVariantForContextAlsoWorksIfTheTargetWorkspaceDiffersFromTheSourceWorkspace()
     {
-        $this->contentDimensionRepository->setDimensionsConfiguration([
-            'test' => [
-                'default' => 'a'
-            ]
-        ]);
+        $this->setUpExampleDimensions();
 
         $variantContextA = $this->contextFactory->create([
             'dimensions' => ['test' => ['a']],
@@ -1487,11 +1469,7 @@ class NodesTest extends FunctionalTestCase
      */
     public function adoptNodeReturnsExistingNodeWithMatchingDimensionsIfPossible()
     {
-        $this->contentDimensionRepository->setDimensionsConfiguration([
-            'test' => [
-                'default' => 'a'
-            ]
-        ]);
+        $this->setUpExampleDimensions();
 
         $variantContextA = $this->contextFactory->create([
             'dimensions' => ['test' => ['a']],
@@ -1517,11 +1495,7 @@ class NodesTest extends FunctionalTestCase
      */
     public function adoptNodeMatchesTargetContextDimensions()
     {
-        $this->contentDimensionRepository->setDimensionsConfiguration([
-            'test' => [
-                'default' => 'a'
-            ]
-        ]);
+        $this->setUpExampleDimensions();
 
         $variantContextA = $this->contextFactory->create([
             'dimensions' => ['test' => ['a']],
@@ -1543,11 +1517,7 @@ class NodesTest extends FunctionalTestCase
      */
     public function adoptNodeWithExistingNodeMatchingTargetDimensionValuesWillReuseNode()
     {
-        $this->contentDimensionRepository->setDimensionsConfiguration([
-            'test' => [
-                'default' => 'a'
-            ]
-        ]);
+        $this->setUpExampleDimensions();
 
         $variantContextA = $this->contextFactory->create([
             'dimensions' => ['test' => ['a']],
@@ -1614,11 +1584,7 @@ class NodesTest extends FunctionalTestCase
      */
     public function nodesInPathAreHiddenIfBetterVariantInOtherPathExists()
     {
-        $this->contentDimensionRepository->setDimensionsConfiguration([
-            'test' => [
-                'default' => 'a'
-            ]
-        ]);
+        $this->setUpExampleDimensions();
 
         $variantContextA = $this->contextFactory->create([
             'dimensions' => ['test' => ['a']],
@@ -1654,5 +1620,36 @@ class NodesTest extends FunctionalTestCase
         $this->assertCount(0, $variantContextB->getNode('/container1')->getChildNodes());
         // This is the better matching variant and should be found.
         $this->assertCount(1, $variantContextB->getNode('/container2')->getChildNodes());
+    }
+
+    protected function setUpExampleDimensions()
+    {
+        $valueA = new Dimension\ContentDimensionValue('a');
+        $valueB = new Dimension\ContentDimensionValue('b');
+        $testDimension = new Dimension\ContentDimension(
+            new Dimension\ContentDimensionIdentifier('test'),
+            [
+                $valueA,
+                $valueB
+            ],
+            $valueA
+        );
+        $dimensions = [
+            (string) $testDimension->getIdentifier() => $testDimension
+        ];
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Dimension\ContentDimensionSourceInterface $mockDimensionSource */
+        $mockDimensionSource = $this->createMock(Dimension\ContentDimensionSourceInterface::class);
+        $mockDimensionSource->method('getContentDimensionsOrderedByPriority')
+            ->willReturn($dimensions);
+
+        $graph = $this->objectManager->get(DimensionSpace\InterDimensionalVariationGraph::class);
+        $this->inject($graph, 'contentDimensionSource', $mockDimensionSource);
+        $zookeeper = new Dimension\ContentDimensionZookeeper();
+        $this->inject($zookeeper, 'contentDimensionSource', $mockDimensionSource);
+        $this->inject($graph, 'contentDimensionZookeeper', $zookeeper);
+        $subspace = new DimensionSpace\AllowedDimensionSubspace();
+        $this->inject($subspace, 'contentDimensionZookeeper', $zookeeper);
+        $this->inject($graph, 'allowedDimensionSubspace', $subspace);
     }
 }
