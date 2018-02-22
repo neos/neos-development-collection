@@ -16,27 +16,58 @@ use Neos\Flow\Annotations as Flow;
 /**
  * The node type constraints value object
  */
-final class NodeTypeConstraints implements \JsonSerializable
+final class NodeTypeConstraints
 {
     /**
-     * @var array
+     * @var bool
      */
-    protected $constraints;
+    protected $wildcardAllowed;
+
+    /**
+     * @var array|NodeTypeName[]
+     */
+    protected $explicitlyAllowedNodeTypeNames;
+
+    /**
+     * @var array|NodeTypeName[]
+     */
+    protected $explicitlyDisallowedNodeTypeNames;
 
 
-    public function __construct(array $constraints)
+    /**
+     * @param bool $wildCardAllowed
+     * @param array $explicitlyAllowedNodeTypeNames
+     * @param array $explicitlyDisallowedNodeTypeNames
+     */
+    public function __construct(bool $wildCardAllowed, array $explicitlyAllowedNodeTypeNames = [], array $explicitlyDisallowedNodeTypeNames = [])
     {
-        $this->constraints = $constraints;
+        $this->wildcardAllowed = $wildCardAllowed;
+        $this->explicitlyAllowedNodeTypeNames = $explicitlyAllowedNodeTypeNames;
+        $this->explicitlyDisallowedNodeTypeNames = $explicitlyDisallowedNodeTypeNames;
     }
 
 
-    public function getConstraints(): array
+    /**
+     * @return bool
+     */
+    public function isWildcardAllowed(): bool
     {
-        return $this->constraints;
+        return $this->wildcardAllowed;
     }
 
-    public function jsonSerialize(): array
+    /**
+     * @return array|NodeTypeName[]
+     */
+    public function getExplicitlyAllowedNodeTypeNames(): array
     {
-        return $this->constraints;
+        return $this->explicitlyAllowedNodeTypeNames;
+    }
+
+    /**
+     * @return array|NodeTypeName[]
+     */
+    public function getExplicitlyDisallowedNodeTypeNames(): array
+    {
+        return $this->explicitlyDisallowedNodeTypeNames;
     }
 }

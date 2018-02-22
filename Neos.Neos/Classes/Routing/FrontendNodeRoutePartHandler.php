@@ -172,7 +172,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     {
         $remainingUriPathSegments = explode('/', $requestPath);
 
-        $subgraph->traverseHierarchy($site, HierarchyTraversalDirection::down(), new NodeTypeConstraints(['includeNodeTypes' => ['Neos.Neos:Document']]), function (Node $node) use (&$remainingUriPathSegments, &$matchingNode, &$tagArray) {
+        $subgraph->traverseHierarchy($site, HierarchyTraversalDirection::down(), new NodeTypeConstraints(false, ['Neos.Neos:Document']), function (Node $node) use (&$remainingUriPathSegments, &$matchingNode, &$tagArray) {
             $currentPathSegment = array_shift($remainingUriPathSegments);
             $continueTraversal = false;
             if ($node->getProperty('uriPathSegment') === $currentPathSegment) {
@@ -343,7 +343,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         // a request path, not in building one.
         $requestPathSegments = [];
         $this->securityContext->withoutAuthorizationChecks(function() use($contentSubgraph, $node, &$requestPathSegments) {
-            $contentSubgraph->traverseHierarchy($node, HierarchyTraversalDirection::up(), new NodeTypeConstraints(['includeNodeTypes' => ['Neos.Neos:Document']]), function(NodeInterface $node) {
+            $contentSubgraph->traverseHierarchy($node, HierarchyTraversalDirection::up(), new NodeTypeConstraints(false, ['Neos.Neos:Document']), function(NodeInterface $node) {
                 if (!$node->hasProperty('uriPathSegment')) {
                     throw new Exception\MissingNodePropertyException(sprintf('Missing "uriPathSegment" property for node "%s". Nodes can be migrated with the "flow node:repair" command.', $node->getPath()), 1415020326);
                 }

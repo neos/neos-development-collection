@@ -31,33 +31,31 @@ class NodeTypeConstraintService
 
     public function unserializeFilters(string $serializedFilters): Domain\ValueObject\NodeTypeConstraints
     {
-        $constraints = [
-            'excludeNodeTypes' => [],
-            'includeNodeTypes' => []
-        ];
+        $wildcardAllowed = empty($serializedFilters);
+        $explicitlyAllowedNodeTypeNames = [];
+        $explicitlyDisallowedNodeTypeNames = [];
 
         $nodeTypeFilterParts = Arrays::trimExplode(',', $serializedFilters);
         foreach ($nodeTypeFilterParts as $nodeTypeFilterPart) {
-            $nodeTypeFilterPart = trim($nodeTypeFilterPart);
-            if (strpos($nodeTypeFilterPart, '!') === 0) {
+            if (\mb_strpos($nodeTypeFilterPart, '!') === 0) {
                 $negate = true;
-                $nodeTypeFilterPart = substr($nodeTypeFilterPart, 1);
+                $nodeTypeFilterPart = \mb_substr($nodeTypeFilterPart, 1);
             } else {
                 $negate = false;
             }
             $nodeTypeFilterPartSubTypes = array_merge([$nodeTypeFilterPart], array_map(function(Domain\Model\NodeType $nodeType) {
                 return $nodeType->getName();
-            }, $this->nodeTypeManager->getSubNodeTypes($nodeTypeFilterPart)));
+            }, $this->nodeTypeManager->getSubNodeTypes($nodeTypeFilterPart, false, true)));
 
             foreach ($nodeTypeFilterPartSubTypes as $nodeTypeFilterPartSubType) {
-                if ($negate === true) {
-                    $constraints['excludeNodeTypes'][] = $nodeTypeFilterPartSubType;
+                if ($negate) {
+                    $explicitlyDisallowedNodeTypeNames[] = $nodeTypeFilterPartSubType;
                 } else {
-                    $constraints['includeNodeTypes'][] = $nodeTypeFilterPartSubType;
+                    $explicitlyAllowedNodeTypeNames[] = $nodeTypeFilterPartSubType;
                 }
             }
         }
 
-        return new Domain\ValueObject\NodeTypeConstraints($constraints);
+        return new Domain\ValueObject\NodeTypeConstraints($wildcardAllowed, $explicitlyAllowedNodeTypeNames, $explicitlyDisallowedNodeTypeNames);
     }
 }

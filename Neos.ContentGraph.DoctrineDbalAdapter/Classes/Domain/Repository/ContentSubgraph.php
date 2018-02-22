@@ -149,7 +149,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
      * @param int|null $limit
      * @param int|null $offset
      * @param ContentRepository\Service\Context|null $context
-     * @return array
+     * @return array|ContentRepository\Model\NodeInterface[]
      * @throws \Exception
      */
     public function findChildNodes(
@@ -173,19 +173,31 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         $types = [];
 
         if ($nodeTypeConstraints) {
-            if (count($nodeTypeConstraints->getConstraints()['includeNodeTypes']) > 0) {
-                $query .= ' AND c.nodetypename IN (:includeNodeTypes)';
-                $parameters['includeNodeTypes'] = $nodeTypeConstraints->getConstraints()['includeNodeTypes'];
-                $types['includeNodeTypes'] = Connection::PARAM_STR_ARRAY;
+            if (!empty ($nodeTypeConstraints->getExplicitlyAllowedNodeTypeNames())) {
+                $allowanceQueryPart = 'c.nodetypename IN (:explicitlyAllowedNodeTypeNames)';
+                $parameters['explicitlyAllowedNodeTypeNames'] = $nodeTypeConstraints->getExplicitlyAllowedNodeTypeNames();
+                $types['explicitlyAllowedNodeTypeNames'] = Connection::PARAM_STR_ARRAY;
+            } else {
+                $allowanceQueryPart = '';
             }
-            if (count($nodeTypeConstraints->getConstraints()['excludeNodeTypes']) > 0) {
-                $query .= ' AND c.nodetypename NOT IN (:excludeNodeTypes)';
-                $parameters['excludeNodeTypes'] = $nodeTypeConstraints->getConstraints()['excludeNodeTypes'];
-                $types['excludeNodeTypes'] = Connection::PARAM_STR_ARRAY;
+            if (!empty ($nodeTypeConstraints->getExplicitlyDisallowedNodeTypeNames())) {
+                $disAllowanceQueryPart = 'c.nodetypename NOT IN (:explicitlyDisallowedNodeTypeNames)';
+                $parameters['explicitlyDisallowedNodeTypeNames'] = $nodeTypeConstraints->getExplicitlyDisallowedNodeTypeNames();
+                $types['explicitlyDisallowedNodeTypeNames'] = Connection::PARAM_STR_ARRAY;
+            } else {
+                $disAllowanceQueryPart = '';
+            }
+            if ($allowanceQueryPart && $disAllowanceQueryPart) {
+                $query .= ' AND (' . $allowanceQueryPart . ($nodeTypeConstraints->isWildcardAllowed() ? ' OR ' : ' AND ') . $disAllowanceQueryPart . ')';
+            } elseif ($allowanceQueryPart && !$nodeTypeConstraints->isWildcardAllowed()) {
+                $query .= ' AND ' . $allowanceQueryPart;
+            } elseif ($disAllowanceQueryPart) {
+                $query .= ' AND ' . $disAllowanceQueryPart;
             }
         }
         $query .= '
  ORDER BY h.position DESC';
+
         $result = [];
         foreach ($this->getDatabaseConnection()->executeQuery(
             $query,
@@ -454,7 +466,6 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
 
     public function findNodePath(ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier): ContentRepository\ValueObject\NodePath
     {
-
         $result = $this->getDatabaseConnection()->executeQuery(
             'with recursive nodePath as (
                 SELECT h.name, h.parentnodeanchor FROM neos_contentgraph_node n
