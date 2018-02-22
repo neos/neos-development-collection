@@ -428,19 +428,21 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
             $direction = ContentProjection\HierarchyTraversalDirection::down();
         }
 
-        $callback($startNode);
-        if ($direction->isUp()) {
-            $parentNode = $this->findParentNode($startNode->identifier);
-            $this->traverseHierarchy($parentNode, $direction, $nodeTypeConstraints, $callback, $context);
-        } elseif ($direction->isDown()) {
-            foreach ($this->findChildNodes(
-                $startNode->identifier,
-                $nodeTypeConstraints,
-                null,
-                null,
-                $context
-            ) as $childNode) {
-                $this->traverseHierarchy($childNode, $direction, $nodeTypeConstraints, $callback, $context);
+        $continueTraversal = $callback($startNode);
+        if ($continueTraversal) {
+            if ($direction->isUp()) {
+                $parentNode = $this->findParentNode($startNode->identifier);
+                $this->traverseHierarchy($parentNode, $direction, $nodeTypeConstraints, $callback, $context);
+            } elseif ($direction->isDown()) {
+                foreach ($this->findChildNodes(
+                    $startNode->identifier,
+                    $nodeTypeConstraints,
+                    null,
+                    null,
+                    $context
+                ) as $childNode) {
+                    $this->traverseHierarchy($childNode, $direction, $nodeTypeConstraints, $callback, $context);
+                }
             }
         }
     }
