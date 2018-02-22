@@ -34,6 +34,15 @@ final class ContentDimensionIdentifier implements \JsonSerializable
         $this->identifier = $identifier;
     }
 
+    /**
+     * @param ContentDimensionIdentifier $otherContentDimensionIdentifier
+     * @return bool
+     */
+    public function equals(ContentDimensionIdentifier $otherContentDimensionIdentifier): bool
+    {
+        return $this->__toString() === $otherContentDimensionIdentifier->__toString();
+    }
+
 
     public function __toString(): string
     {

@@ -359,6 +359,16 @@ interface NodeInterface
     public function getIdentifier();
 
     /**
+     * @return Domain\ValueObject\ContentStreamIdentifier
+     */
+    public function getContentStreamIdentifier(): Domain\ValueObject\ContentStreamIdentifier;
+
+    /**
+     * @return Domain\ValueObject\NodeAggregateIdentifier
+     */
+    public function getAggregateIdentifier(): Domain\ValueObject\NodeAggregateIdentifier;
+
+    /**
      * Sets the index of this node
      *
      * This method is for internal use and must only be used by other nodes!

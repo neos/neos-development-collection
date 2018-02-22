@@ -19,7 +19,6 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\Neos\Domain\Context\Content\ContentQuery;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\Service\LinkingService;
-use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
 
@@ -153,14 +152,14 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
      * @param string $section The anchor to be added to the URI
      * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
      * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
-     * @param string $nodeVariableName The variable the node will be assigned to for the rendered child content
      * @param string $baseNodeName The name of the base node inside the Fusion context to use for the ContentContext or resolving relative paths
+     * @param string $nodeVariableName The variable the node will be assigned to for the rendered child content
      * @param boolean $resolveShortcuts INTERNAL Parameter - if FALSE, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
+     * @param ContentSubgraphInterface|null $subgraph
      * @return string The rendered link
-     * @throws ViewHelperException
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      */
-    public function render($node = null, $format = null, $absolute = false, array $arguments = array(), $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = array(), $baseNodeName = 'documentNode', $nodeVariableName = 'linkedNode', $resolveShortcuts = true)
+    public function render($node = null, $format = null, $absolute = false, array $arguments = array(), $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = array(), $baseNodeName = 'documentNode', $nodeVariableName = 'linkedNode', $resolveShortcuts = true, ContentSubgraphInterface $subgraph = null)
     {
         $baseNode = null;
         if (!$node instanceof NodeInterface) {
@@ -180,8 +179,9 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             $resolvedNode = $node;
         }
 
-        /** @var ContentSubgraphInterface $subgraph */
-        $subgraph = $this->getContextVariable('subgraph');
+        if (!$subgraph) {
+            $subgraph = $this->getContextVariable('subgraph');
+        }
         /** @var NodeInterface $site */
         $site = $this->getContextVariable('site');
         /** @var WorkspaceName $workspaceName */

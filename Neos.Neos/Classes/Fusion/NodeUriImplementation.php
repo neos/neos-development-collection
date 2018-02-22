@@ -18,6 +18,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Neos\Domain\Context\Content\ContentQuery;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
+
 /**
  * Create a link to a node
  */
@@ -104,6 +105,14 @@ class NodeUriImplementation extends AbstractFusionObject
     }
 
     /**
+     * @return ContentSubgraphInterface
+     */
+    public function getSubgraph()
+    {
+        return $this->fusionValue('subgraph') ?: $this->runtime->getCurrentContext()['subgraph'];
+    }
+
+    /**
      * Render the Uri.
      *
      * @return string The rendered URI or NULL if no URI could be resolved for the given node
@@ -112,8 +121,7 @@ class NodeUriImplementation extends AbstractFusionObject
     public function evaluate()
     {
         $node = $this->getNode();
-        /** @var ContentSubgraphInterface $subgraph */
-        $subgraph = $this->runtime->getCurrentContext()['subgraph'];
+        $subgraph = $this->getSubgraph();
         /** @var NodeInterface $site */
         $site = $this->runtime->getCurrentContext()['site'];
         /** @var WorkspaceName $workspaceName */
@@ -133,6 +141,7 @@ class NodeUriImplementation extends AbstractFusionObject
             ->setCreateAbsoluteUri($this->isAbsolute())
             ->setFormat($this->getFormat())
             ->setSection($this->getSection());
+
         return $uriBuilder->uriFor(
             'show',
             [

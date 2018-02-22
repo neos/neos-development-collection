@@ -17,7 +17,6 @@ use Neos\ContentRepository\Domain\Context\Node\Command;
 use Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\ContentRepository\Domain\Projection\Content\PropertyCollection;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
@@ -62,7 +61,7 @@ class Node implements NodeInterface, CacheAwareInterface
     public $identifier;
 
     /**
-     * @var NodeAggregateIdentifier
+     * @var Domain\ValueObject\NodeAggregateIdentifier
      */
     public $aggregateIdentifier;
 
@@ -338,6 +337,22 @@ class Node implements NodeInterface, CacheAwareInterface
     public function getIdentifier()
     {
         return (string)$this->aggregateIdentifier;
+    }
+
+    /**
+     * @return Domain\ValueObject\ContentStreamIdentifier
+     */
+    public function getContentStreamIdentifier(): Domain\ValueObject\ContentStreamIdentifier
+    {
+        return $this->contentStreamIdentifier;
+    }
+
+    /**
+     * @return Domain\ValueObject\NodeAggregateIdentifier
+     */
+    public function getAggregateIdentifier(): Domain\ValueObject\NodeAggregateIdentifier
+    {
+        return $this->aggregateIdentifier;
     }
 
     /**

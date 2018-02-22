@@ -55,9 +55,10 @@ interface ContentGraphInterface
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param Domain\ValueObject\DimensionSpacePointSet|null $dimensionSpacePointSet
      * @return array<NodeInterface>|NodeInterface[]
      */
-    public function findNodesByNodeAggregateIdentifier(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): array;
+    public function findNodesByNodeAggregateIdentifier(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, Domain\ValueObject\DimensionSpacePointSet $dimensionSpacePointSet = null): array;
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier

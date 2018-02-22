@@ -81,6 +81,28 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
     }
 
     /**
+     * @param DimensionSpacePoint $otherDimensionSpacePoint
+     * @param ContentDimensionIdentifier $contentDimensionIdentifier
+     * @return bool
+     */
+    public function isDirectVariantInDimension(DimensionSpacePoint $otherDimensionSpacePoint, ContentDimensionIdentifier $contentDimensionIdentifier): bool
+    {
+        if (!$this->hasCoordinate($contentDimensionIdentifier) || !$otherDimensionSpacePoint->hasCoordinate($contentDimensionIdentifier)) {
+            return false;
+        }
+        if ($this->coordinates[(string) $contentDimensionIdentifier] === $otherDimensionSpacePoint->getCoordinates()[(string) $contentDimensionIdentifier]) {
+            return false;
+        }
+
+        $theseCoordinates = $this->coordinates;
+        $otherCoordinates = $otherDimensionSpacePoint->getCoordinates();
+        unset($theseCoordinates[(string)$contentDimensionIdentifier]);
+        unset($otherCoordinates[(string)$contentDimensionIdentifier]);
+
+        return $theseCoordinates === $otherCoordinates;
+    }
+
+    /**
      * @return array
      */
     public function getCoordinates(): array
@@ -95,6 +117,15 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
     public function hasCoordinate(ContentDimensionIdentifier $dimensionIdentifier): bool
     {
         return isset($this->coordinates[(string)$dimensionIdentifier]);
+    }
+
+    /**
+     * @param DimensionSpacePoint $otherDimensionSpacePoint
+     * @return bool
+     */
+    public function equals(DimensionSpacePoint $otherDimensionSpacePoint): bool
+    {
+        return $this->coordinates === $otherDimensionSpacePoint->getCoordinates();
     }
 
     /**

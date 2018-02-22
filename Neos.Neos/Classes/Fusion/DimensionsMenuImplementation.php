@@ -1,11 +1,13 @@
 <?php
 namespace Neos\Neos\Fusion;
 
-use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\ContentRepository\Domain\Context\Dimension;
+use Neos\ContentRepository\Domain\Context\DimensionSpace;
+use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use Neos\ContentRepository\Domain;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Service\ContentDimensionCombinator;
 
 /**
  * Fusion implementation for a dimensions menu.
@@ -22,33 +24,38 @@ use Neos\ContentRepository\Domain\Service\ContentDimensionCombinator;
  */
 class DimensionsMenuImplementation extends AbstractMenuImplementation
 {
+    /**
+     * @Flow\Inject
+     * @var DimensionSpace\AllowedDimensionSubspace
+     */
+    protected $allowedDimensionSubspace;
 
     /**
      * @Flow\Inject
-     * @var ConfigurationContentDimensionPresetSource
+     * @var Dimension\ContentDimensionSourceInterface
      */
-    protected $configurationContentDimensionPresetSource;
+    protected $contentDimensionSource;
 
     /**
      * @Flow\Inject
-     * @var ContentDimensionCombinator
+     * @var ContentGraphInterface
      */
-    protected $contentDimensionCombinator;
+    protected $contentGraph;
 
     /**
-     * @return string
+     * @return Dimension\ContentDimensionIdentifier|null
      */
-    public function getDimension()
+    public function getDimension(): ?Dimension\ContentDimensionIdentifier
     {
-        return $this->fusionValue('dimension');
+        return $this->fusionValue('dimension') ? new Dimension\ContentDimensionIdentifier($this->fusionValue('dimension')) : null;
     }
 
     /**
      * @return array
      */
-    public function getPresets()
+    public function getPresets(): array
     {
-        return $this->fusionValue('presets');
+        return $this->fusionValue('presets') ?? [];
     }
 
     /**
@@ -65,142 +72,87 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
     protected function buildItems()
     {
         $menuItems = [];
-        $targetDimensionsToMatch = [];
-        $allDimensionPresets = $this->configurationContentDimensionPresetSource->getAllPresets();
-        $includeAllPresets = $this->getIncludeAllPresets();
-        $pinnedDimensionValues = $this->getPresets();
 
-        $pinnedDimensionName = $this->getDimension();
-        if ($pinnedDimensionName !== null) {
-            $targetDimensionsToMatch = $this->currentNode->getContext()->getTargetDimensions();
-            unset($targetDimensionsToMatch[$pinnedDimensionName]);
-        }
-
-        foreach ($this->contentDimensionCombinator->getAllAllowedCombinations() as $allowedCombination) {
-            $targetDimensions = $this->calculateTargetDimensionsForCombination($allowedCombination);
-
-            if ($pinnedDimensionName !== null && is_array($pinnedDimensionValues)) {
-                if (!in_array($targetDimensions[$pinnedDimensionName], $pinnedDimensionValues)) {
-                    continue;
+        $currentDimensionSpacePoint = $this->getSubgraph()->getDimensionSpacePoint();
+        foreach ($this->allowedDimensionSubspace->getPoints() as $dimensionSpacePoint) {
+            if ($this->isDimensionSpacePointRelevant($dimensionSpacePoint)) {
+                if ($dimensionSpacePoint->equals($currentDimensionSpacePoint)) {
+                    $subgraph = $this->getSubgraph();
+                    $variant = $this->currentNode;
+                } else {
+                    $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->currentNode->getContentStreamIdentifier(), $dimensionSpacePoint);
+                    $variant = $subgraph->findNodeByNodeAggregateIdentifier($this->currentNode->getAggregateIdentifier(), $this->currentNode->getContext());
                 }
-            }
 
-            // skip variants not matching the current target dimensions (except the dimension this menu covers)
-            if ($targetDimensionsToMatch !== []) {
-                foreach ($targetDimensionsToMatch as $dimensionName => $dimensionValue) {
-                    if ($targetDimensions[$dimensionName] !== $dimensionValue) {
-                        continue 2;
-                    }
-                }
-            }
-
-            $nodeInDimensions = $this->getNodeInDimensions($allowedCombination, $targetDimensions);
-
-            // no match, so we look further...
-            if ($nodeInDimensions === null && $includeAllPresets) {
-                $nodeInDimensions = $this->findAcceptableNode($allowedCombination, $allDimensionPresets);
-            }
-
-            if ($nodeInDimensions !== null && $this->isNodeHidden($nodeInDimensions)) {
-                $nodeInDimensions = null;
-            }
-
-            // determine metadata for target dimensions of node
-            array_walk($targetDimensions, function (&$dimensionValue, $dimensionName, $allDimensionPresets) use ($pinnedDimensionName) {
-                $dimensionValue = [
-                    'value' => $dimensionValue,
-                    'label' => $allDimensionPresets[$dimensionName]['presets'][$dimensionValue]['label'],
-                    'isPinnedDimension' => ($pinnedDimensionName === null || $dimensionName == $pinnedDimensionName) ? true : false
+                $metadata = $this->determineMetadata($dimensionSpacePoint);
+                $menuItems[] = [
+                    'subgraph' => $subgraph,
+                    'node' => $variant,
+                    'state' => $this->calculateItemState($variant),
+                    'label' => array_reduce($metadata, function($carry, $item) {
+                        return $carry . (empty($carry) ? '' : '-') . $item['label'];
+                    }, ''),
+                    'targetDimensions' => $metadata
                 ];
-            }, $allDimensionPresets);
-
-            if ($pinnedDimensionName === null) {
-                $itemLabel = $nodeInDimensions->getLabel();
-            } else {
-                $itemLabel = $targetDimensions[$pinnedDimensionName]['label'];
             }
-
-            $menuItems[] = [
-                'node' => $nodeInDimensions,
-                'state' => $this->calculateItemState($nodeInDimensions),
-                'label' => $itemLabel,
-                'dimensions' => $allowedCombination,
-                'targetDimensions' => $targetDimensions
-            ];
-        }
-
-        // sort/limit according to configured "presets" if needed
-        if ($pinnedDimensionName !== null && is_array($pinnedDimensionValues)) {
-            $sortedMenuItems = [];
-            foreach ($pinnedDimensionValues as $pinnedDimensionValue) {
-                foreach ($menuItems as $menuItemKey => $menuItem) {
-                    if ($menuItem['targetDimensions'][$pinnedDimensionName]['value'] === $pinnedDimensionValue) {
-                        $sortedMenuItems[$menuItemKey] = $menuItem;
-                    }
-                }
-            }
-
-            return $sortedMenuItems;
         }
 
         return $menuItems;
     }
 
     /**
-     * Get the current node in the given dimensions.
-     * If it doesn't exist the method returns null.
-     *
-     * @param array $dimensions
-     * @param array $targetDimensions
-     * @return NodeInterface|null
+     * @param Domain\ValueObject\DimensionSpacePoint $dimensionSpacePoint
+     * @return bool
      */
-    protected function getNodeInDimensions(array $dimensions, array $targetDimensions)
+    protected function isDimensionSpacePointRelevant(Domain\ValueObject\DimensionSpacePoint $dimensionSpacePoint): bool
     {
-        $q = new FlowQuery([$this->currentNode]);
-
-        return $q->context([
-            'dimensions' => $dimensions,
-            'targetDimensions' => $targetDimensions
-        ])->get(0);
+        return !$this->getDimension()
+            || $dimensionSpacePoint->equals($this->getSubgraph()->getDimensionSpacePoint())
+            || $dimensionSpacePoint->isDirectVariantInDimension($this->getSubgraph()->getDimensionSpacePoint(), $this->getDimension())
+            && (!$this->getPresets() || in_array($dimensionSpacePoint->getCoordinates()[(string)$this->getDimension()], $this->getPresets()));
     }
 
     /**
-     *
-     * @param array $allowedCombination
-     * @param $allDimensionPresets
-     * @return null|NodeInterface
-     */
-    protected function findAcceptableNode(array $allowedCombination, array $allDimensionPresets)
-    {
-        $pinnedDimensionName = $this->getDimension();
-        foreach ($allowedCombination[$pinnedDimensionName] as $allowedPresetIdentifier) {
-            $acceptableCombination = [$pinnedDimensionName => $allDimensionPresets[$pinnedDimensionName]['presets'][$allowedPresetIdentifier]['values']];
-            $allowedAdditionalPresets = $this->configurationContentDimensionPresetSource->getAllowedDimensionPresetsAccordingToPreselection('country', [$pinnedDimensionName => $allowedPresetIdentifier]);
-            foreach ($allowedAdditionalPresets as $allowedAdditionalDimensionName => $allowedAdditionalPreset) {
-                $acceptableCombination[$allowedAdditionalDimensionName] = $allowedAdditionalPreset['presets'][$allowedAdditionalPreset['defaultPreset']]['values'];
-            }
-            $nodeInDimensions = $this->getNodeInDimensions($acceptableCombination, []);
-            if ($nodeInDimensions !== null) {
-                return $nodeInDimensions;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Calculates the target dimensions for a given dimension combination.
-     *
-     * @param array $dimensionCombination
+     * @param Domain\ValueObject\DimensionSpacePoint $dimensionSpacePoint
      * @return array
      */
-    protected function calculateTargetDimensionsForCombination(array $dimensionCombination)
+    protected function determineMetadata(Domain\ValueObject\DimensionSpacePoint $dimensionSpacePoint): array
     {
-        $targetDimensions = [];
-        foreach ($dimensionCombination as $dimensionName => $dimensionValues) {
-            $targetDimensions[$dimensionName] = reset($dimensionValues);
+        $metadata = $dimensionSpacePoint->getCoordinates();
+        array_walk($metadata, function (&$dimensionValue, $rawDimensionIdentifier) {
+            $dimensionIdentifier = new Dimension\ContentDimensionIdentifier($rawDimensionIdentifier);
+            $dimensionValue = [
+                'value' => $dimensionValue,
+                'label' => $this->contentDimensionSource->getDimension($dimensionIdentifier)->getValue($dimensionValue)->getConfigurationValue('label'),
+                'isPinnedDimension' => (!$this->getDimension() || $dimensionIdentifier->equals($this->getDimension()))
+            ];
+        });
+
+        return $metadata;
+    }
+
+    /**
+     * @param NodeInterface|null $variant
+     * @return string
+     */
+    protected function calculateItemState(NodeInterface $variant = null): string
+    {
+        if (is_null($variant)) {
+            return self::STATE_ABSENT;
         }
 
-        return $targetDimensions;
+        if ($variant === $this->currentNode) {
+            return self::STATE_CURRENT;
+        }
+
+        return self::STATE_NORMAL;
+    }
+
+    /**
+     * @return ContentSubgraphInterface
+     */
+    protected function getSubgraph(): ContentSubgraphInterface
+    {
+        return $this->runtime->getCurrentContext()['subgraph'];
     }
 }

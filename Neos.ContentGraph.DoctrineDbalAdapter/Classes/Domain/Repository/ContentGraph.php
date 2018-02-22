@@ -12,6 +12,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  * source code.
  */
 
+use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Service\DbalClient;
 use Neos\ContentRepository\Domain;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -24,7 +25,6 @@ use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Domain\ValueObject\NodeName;
 
 /**
  * The Doctrine DBAL adapter content graph
@@ -112,9 +112,14 @@ final class ContentGraph implements ContentGraphInterface
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param Domain\ValueObject\DimensionSpacePointSet|null $dimensionSpacePointSet
      * @return array<NodeInterface>|NodeInterface[]
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Exception
+     * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
+     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
-    public function findNodesByNodeAggregateIdentifier(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): array
+    public function findNodesByNodeAggregateIdentifier(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, Domain\ValueObject\DimensionSpacePointSet $dimensionSpacePointSet = null): array
     {
         $connection = $this->client->getConnection();
 
@@ -126,10 +131,18 @@ final class ContentGraph implements ContentGraphInterface
             'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
             'contentStreamIdentifier' => (string)$contentStreamIdentifier
         ];
+        $types = [];
+        if ($dimensionSpacePointSet) {
+            $query .= ' AND h.dimensionspacepointhash IN (:dimensionSpacePointHashes)';
+            $parameters['dimensionSpacePointHashes'] = $dimensionSpacePointSet->getPointHashes();
+            $types['dimensionSpacePointHashes'] = Connection::PARAM_STR_ARRAY;
+        }
+
         $result = [];
         foreach ($connection->executeQuery(
             $query,
-            $parameters
+            $parameters,
+            $types
         )->fetchAll() as $nodeRow) {
             $result[] = $this->nodeFactory->mapNodeRowToNode($nodeRow, null);
         }
