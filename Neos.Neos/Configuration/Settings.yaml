@@ -8,9 +8,13 @@
 # possible configuration options.                                        #
 #                                                                        #
 
+
 Neos:
 
   Neos:
+    contentDimensions:
+      resolution:
+        uriPathSegmentDelimiter: '_'
     fusion:
       # if set to TRUE, Fusion is cached on a per-site basis.
       # Depending on the size of your Fusion, will improve rendering times 20-100+ ms.
@@ -386,6 +390,13 @@ Neos:
     core:
       applicationPackageKey: Neos.Neos
       applicationName: Neos
+
+    http:
+      chain:
+        preprocess:
+          chain:
+            detectContentSubgraph:
+              component: Neos\Neos\Http\DetectContentSubgraphComponent
 
     mvc:
       routes:
