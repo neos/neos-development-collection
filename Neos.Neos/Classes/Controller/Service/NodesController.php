@@ -111,7 +111,6 @@ class NodesController extends ActionController
         $contentContext = $this->createContentContext($workspaceName, $dimensions);
         $nodes = [];
 
-        //If there is a Node with $searchTerm as identifier, also return it.
         if (preg_match(NodeIdentifierValidator::PATTERN_MATCH_NODE_IDENTIFIER, $searchTerm) !== 0
             && $contentContext->getNodeByIdentifier($searchTerm) instanceof NodeInterface
         ) {
