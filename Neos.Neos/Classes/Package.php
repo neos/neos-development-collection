@@ -20,6 +20,7 @@ use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Security\Authentication\AuthenticationProviderManager;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Neos\Domain\Context\ContentStream\EditorContentStreamZookeeper;
+use Neos\Neos\Controller\Backend\ContentController;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\Neos\Domain\Service\SiteService;
@@ -80,6 +81,8 @@ class Package extends BasePackage
 
         $dispatcher->connect(AssetService::class, 'assetUpdated', ContentCacheFlusher::class, 'registerAssetChange');
         $dispatcher->connect(AssetService::class, 'assetResourceReplaced', ContentCacheFlusher::class, 'registerAssetChange');
+
+        $dispatcher->connect(ContentController::class, 'assetUploaded', SiteService::class, 'assignUploadedAssetToSiteAssetCollection');
 
         $dispatcher->connect(Node::class, 'nodeAdded', NodeUriPathSegmentGenerator::class, '::setUniqueUriPathSegment');
         $dispatcher->connect(Node::class, 'nodePropertyChanged', Service\ImageVariantGarbageCollector::class, 'removeUnusedImageVariant');

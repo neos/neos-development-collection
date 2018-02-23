@@ -15,7 +15,9 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Error\Messages\Result;
 use Neos\Flow\I18n\Exception;
-use Neos\Flow\I18n\Xliff\XliffParser;
+use Neos\Flow\I18n\Xliff\Service\XliffFileProvider;
+use Neos\Flow\I18n\Xliff\Service\XliffReader;
+use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Utility\Arrays;
 use Neos\Utility\Files;
@@ -39,9 +41,9 @@ class XliffService
 
     /**
      * @Flow\Inject
-     * @var XliffParser
+     * @var XliffReader
      */
-    protected $xliffParser;
+    protected $xliffReader;
 
     /**
      * @Flow\Inject
@@ -69,6 +71,12 @@ class XliffService
 
     /**
      * @Flow\Inject
+     * @var XliffFileProvider
+     */
+    protected $xliffFileProvider;
+
+    /**
+     * @Flow\Inject
      * @var PackageManagerInterface
      */
     protected $packageManager;
@@ -89,27 +97,26 @@ class XliffService
             $json = $this->xliffToJsonTranslationsCache->get($cacheIdentifier);
         } else {
             $labels = [];
-            $localeChain = $this->localizationService->getLocaleChain($locale);
 
             foreach ($this->packagesRegisteredForAutoInclusion as $packageKey => $sourcesToBeIncluded) {
                 if (!is_array($sourcesToBeIncluded)) {
                     continue;
                 }
 
-                $translationBasePath = Files::concatenatePaths([
-                    $this->packageManager->getPackage($packageKey)->getResourcesPath(),
-                    $this->xliffBasePath
-                ]);
+                $package = $this->packageManager->getPackage($packageKey);
+                $sources = $this->collectPackageSources($package, $sourcesToBeIncluded);
 
-                // We merge labels in the chain from the worst choice to best choice
-                foreach (array_reverse($localeChain) as $allowedLocale) {
-                    $localeSourcePath = Files::getNormalizedPath(Files::concatenatePaths([$translationBasePath, $allowedLocale]));
-                    foreach ($sourcesToBeIncluded as $sourceName) {
-                        foreach (glob($localeSourcePath . $sourceName . '.xlf') as $xliffPathAndFilename) {
-                            $xliffPathInfo = pathinfo($xliffPathAndFilename);
-                            $sourceName = str_replace($localeSourcePath, '', $xliffPathInfo['dirname'] . '/' . $xliffPathInfo['filename']);
-                            $labels = Arrays::arrayMergeRecursiveOverrule($labels, $this->parseXliffToArray($xliffPathAndFilename, $packageKey, $sourceName));
+                //get the xliff files for those sources
+                foreach ($sources as $sourceName) {
+                    $fileId = $packageKey . ':' . $sourceName;
+                    $file = $this->xliffFileProvider->getFile($fileId, $locale);
+
+                    foreach ($file->getTranslationUnits() as $key => $value) {
+                        $valueToStore = !empty($value[0]['target']) ? $value[0]['target'] : $value[0]['source'];
+                        if ($this->scrambleTranslatedLabels) {
+                            $valueToStore = str_repeat('#', UnicodeFunctions::strlen($valueToStore));
                         }
+                        $this->setArrayDataValue($labels, str_replace('.', '_', $packageKey) . '.' . str_replace('/', '_', $sourceName) . '.' . str_replace('.', '_', $key), $valueToStore);
                     }
                 }
             }
@@ -119,34 +126,6 @@ class XliffService
         }
 
         return $json;
-    }
-
-    /**
-     * Read the xliff file and create the desired json
-     *
-     * @param string $xliffPathAndFilename The file to read
-     * @param string $packageKey
-     * @param string $sourceName
-     * @return array
-     *
-     * @todo remove the override handling once Flow takes care of that, see FLOW-61
-     */
-    public function parseXliffToArray($xliffPathAndFilename, $packageKey, $sourceName)
-    {
-        /** @var array $parsedData */
-        $parsedData = $this->xliffParser->getParsedData($xliffPathAndFilename);
-        $arrayData = array();
-        foreach ($parsedData['translationUnits'] as $key => $value) {
-            $valueToStore = !empty($value[0]['target']) ? $value[0]['target'] : $value[0]['source'];
-
-            if ($this->scrambleTranslatedLabels) {
-                $valueToStore = str_repeat('#', UnicodeFunctions::strlen($valueToStore));
-            }
-
-            $this->setArrayDataValue($arrayData, str_replace('.', '_', $packageKey) . '.' . str_replace('/', '_', $sourceName) . '.' . str_replace('.', '_', $key), $valueToStore);
-        }
-
-        return $arrayData;
     }
 
     /**
@@ -160,6 +139,63 @@ class XliffService
             $this->xliffToJsonTranslationsCache->set('ConfigurationVersion', (string)$version);
         }
         return $version;
+    }
+
+    /**
+     * Collect all sources found in the given package as array (key = source, value = true)
+     * If sourcesToBeIncluded is an array, only those sources are returned what match the wildcard-patterns in the
+     * array-values
+     *
+     * @param PackageInterface $package
+     * @param array $sourcesToBeIncluded optional array of wildcard-patterns to filter the sources
+     * @return array
+     */
+    protected function collectPackageSources(PackageInterface $package, $sourcesToBeIncluded = null): array
+    {
+        $packageKey = $package->getPackageKey();
+        $sources = [];
+        $translationPath = $package->getResourcesPath() . $this->xliffBasePath;
+
+        if (!is_dir($translationPath)) {
+            return [];
+        }
+
+        foreach (Files::readDirectoryRecursively($translationPath, '.xlf') as $filePath) {
+            //remove translation path from path
+            $source = trim(str_replace($translationPath, '', $filePath), '/');
+            //remove language part from path
+            $source = trim(substr($source, strpos($source, '/')), '/');
+            //remove file extension
+            $source = substr($source, 0, strrpos($source, '.'));
+
+            $this->xliffReader->readFiles($filePath,
+                function (\XMLReader $file, $offset, $version) use ($packageKey, &$sources, $source, $sourcesToBeIncluded) {
+                    $targetPackageKey = $packageKey;
+                    if ($version === '1.2') {
+                        //in xliff v1.2 the packageKey or source can be overwritten via attributes
+                        $targetPackageKey = $file->getAttribute('product-name') ?: $packageKey;
+                        $source = $file->getAttribute('original') ?: $source;
+                    }
+                    if ($packageKey !== $targetPackageKey) {
+                        return;
+                    }
+                    if (is_array($sourcesToBeIncluded)) {
+                        $addSource = false;
+                        foreach ($sourcesToBeIncluded as $sourcePattern) {
+                            if (fnmatch($sourcePattern, $source)) {
+                                $addSource = true;
+                                break;
+                            }
+                        }
+                        if (!$addSource) {
+                            return;
+                        }
+                    }
+                    $sources[$source] = true;
+                }
+            );
+        }
+        return array_keys($sources);
     }
 
     /**

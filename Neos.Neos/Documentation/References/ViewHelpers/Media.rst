@@ -63,7 +63,7 @@ Examples
 Expected result::
 
 	(depending on the asset, no scaling applied)
-	<img src="_Resources/Static/Packages/TYPO3/Media/Icons/16px/jpg.png" height="16" alt="filetype alt text" />
+	<img src="_Resources/Static/Packages/Neos/Media/Icons/16px/jpg.png" height="16" alt="filetype alt text" />
 
 
 
@@ -148,12 +148,12 @@ Expected result::
 
 **Bind to object property**::
 
-	<neos.media:form.checkbox property="interests" value="TYPO3" />
+	<neos.media:form.checkbox property="interests" value="Neos" />
 
 
 Expected result::
 
-	<input type="checkbox" name="user[interests][]" value="TYPO3" checked="checked" />
+	<input type="checkbox" name="user[interests][]" value="Neos" checked="checked" />
 	(depending on property "interests")
 
 

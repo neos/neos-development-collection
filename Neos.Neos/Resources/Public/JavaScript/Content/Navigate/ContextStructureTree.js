@@ -38,7 +38,7 @@ define(
 		template: Ember.Handlebars.compile(template),
 		controller: NavigatePanelController,
 		nodeSelection: NodeSelection,
-		baseNodeType: '!Neos.Neos:Document',
+		baseNodeType: 'Neos.Neos:ContentCollection,Neos.Neos:Content',
 		treeSelector: '#neos-context-structure-tree',
 		desiredNewPosition: 'inside',
 		desiredPastePosition: 'inside',
@@ -169,7 +169,6 @@ define(
 					if (PublishableNodes.get('publishableEntitySubjects').indexOf('<' + node.data.key + '>') !== -1) {
 						$(nodeSpan).addClass('neos-dynatree-dirty');
 					}
-					$('a[title]', nodeSpan).tooltip({container: '#neos-application', trigger: 'hover'});
 				}
 			}));
 
