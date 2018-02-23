@@ -1,0 +1,8 @@
+'Neos.NodeTypes:Image':
+  superTypes:
+    'Neos.Neos:Content': true
+    'Neos.NodeTypes:ContentImageMixin': true
+  ui:
+    label: i18n
+    icon: 'icon-picture'
+    position: 300

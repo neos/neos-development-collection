@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="" product-name="Neos.NodeTypes.ContentReferences" source-language="en" datatype="plaintext" target-language="la-LA">
+    <body>
+      <trans-unit id="ui.label" xml:space="preserve">
+				<source>Insert content references</source>
+			<target xml:lang="la-LA">crwdns6300:0crwdne6300:0</target></trans-unit>
+      <trans-unit id="groups.references" xml:space="preserve">
+				<source>References</source>
+			<target xml:lang="la-LA">crwdns6301:0crwdne6301:0</target></trans-unit>
+      <trans-unit id="properties.references" xml:space="preserve">
+				<source>Select</source>
+			<target xml:lang="la-LA">crwdns6302:0crwdne6302:0</target></trans-unit>
+      <trans-unit id="content.noReferencesSelected" xml:space="preserve">
+				<source>No references selected</source>
+			<target xml:lang="la-LA">crwdns6303:0crwdne6303:0</target></trans-unit>
+    </body>
+  </file>
+</xliff>

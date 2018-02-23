@@ -2,18 +2,12 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="de">
     <body>
-      <trans-unit id="clickToEdit" xml:space="preserve" approved="yes">
-				<source>Click to edit</source>
-			<target xml:lang="de">Zum Bearbeiten klicken</target></trans-unit>
-      <trans-unit id="clickToDelete" xml:space="preserve" approved="yes">
-				<source>Click to delete</source>
-			<target xml:lang="de">Klicken zum Löschen</target></trans-unit>
-      <trans-unit id="cancel" xml:space="preserve" approved="yes">
-				<source>Cancel</source>
-			<target xml:lang="de">Abbrechen</target></trans-unit>
       <trans-unit id="back" xml:space="preserve" approved="yes">
 				<source>Back</source>
 			<target xml:lang="de">Zurück</target></trans-unit>
+      <trans-unit id="cancel" xml:space="preserve" approved="yes">
+				<source>Cancel</source>
+			<target xml:lang="de">Abbrechen</target></trans-unit>
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve" approved="yes">
 				<source>Management</source>
@@ -326,6 +320,12 @@
       <trans-unit id="users.new.userData.roles" xml:space="preserve" approved="yes">
 				<source>Role(s)</source>
 			<target xml:lang="de">Rolle(n)</target></trans-unit>
+      <trans-unit id="users.new.userData.authenticationProviderName" xml:space="preserve" approved="yes">
+				<source>Authentication Provider</source>
+			<target xml:lang="de">Authentifizierungsdienst</target></trans-unit>
+      <trans-unit id="users.new.userData.authenticationProviderName.useDefault" xml:space="preserve" approved="yes">
+				<source>Use system default</source>
+			<target xml:lang="de">Systemstandard verwenden</target></trans-unit>
       <trans-unit id="users.new.personalData" xml:space="preserve" approved="yes">
 				<source>Personal Data</source>
 			<target xml:lang="de">Persönliche Daten</target></trans-unit>
@@ -539,55 +539,121 @@
       <trans-unit id="sites.description" xml:space="preserve" approved="yes">
 				<source>The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</source>
 			<target xml:lang="de">Das Modul zur Website-Verwaltung gibt einen Überblick über alle vorhandenen Websites. Hier können Informationen über Websites bearbeitet, hinzugefügt und gelöscht, sowie Domains den verschiedenen Websites zugeordnet werden.</target><alt-trans><target xml:lang="de">Das Modul zur Websiteverwaltung gibt einen Überblick über alle vorhandenen Websites. Hier können Informationen über Websites bearbeitet, hinzugefügt und gelöscht, sowie Domains den verschiedenen Websites zugeordnet werden.</target></alt-trans></trans-unit>
+      <trans-unit id="sites.add" xml:space="preserve">
+				<source>Add new site</source>
+			<target xml:lang="de" state="needs-translation">Add new site</target></trans-unit>
       <trans-unit id="sites.actions.newSite.label" xml:space="preserve" approved="yes">
 				<source>Create site</source>
 			<target xml:lang="de">Website erstellen</target><alt-trans><target xml:lang="de">Seite erstellen</target></alt-trans></trans-unit>
       <trans-unit id="sites.actions.newSite.title" xml:space="preserve" approved="yes">
 				<source>Create a new site</source>
 			<target xml:lang="de">Neue Webseite erstellen</target><alt-trans><target xml:lang="de">Eine neue Seite erstellen</target></alt-trans></trans-unit>
+      <trans-unit id="sites.rootNodeName" xml:space="preserve">
+				<source>Root node name</source>
+			<target xml:lang="de" state="needs-translation">Root node name</target></trans-unit>
+      <trans-unit id="sites.domains" xml:space="preserve">
+				<source>Domains</source>
+			<target xml:lang="de" state="needs-translation">Domains</target></trans-unit>
+      <trans-unit id="sites" xml:space="preserve" approved="yes">
+				<source>Site</source>
+			<target xml:lang="de">Site</target><alt-trans><target xml:lang="de">Seite</target></alt-trans></trans-unit>
+      <trans-unit id="site.name" xml:space="preserve" approved="yes">
+				<source>Name</source>
+			<target xml:lang="de">Name</target></trans-unit>
+      <trans-unit id="sites.defaultAssetCollection" xml:space="preserve">
+				<source>Default asset collection</source>
+			<target xml:lang="de" state="needs-translation">Default asset collection</target></trans-unit>
+      <trans-unit id="sites.sitePackage" xml:space="preserve">
+				<source>Site package</source>
+			<target xml:lang="de" state="needs-translation">Site package</target></trans-unit>
+      <trans-unit id="sites.delete" xml:space="preserve">
+				<source>Delete this site</source>
+			<target xml:lang="de" state="needs-translation">Delete this site</target></trans-unit>
+      <trans-unit id="sites.deactivate" xml:space="preserve">
+				<source>Deactivate site</source>
+			<target xml:lang="de" state="needs-translation">Deactivate site</target></trans-unit>
+      <trans-unit id="sites.activate" xml:space="preserve">
+				<source>Activate site</source>
+			<target xml:lang="de" state="needs-translation">Activate site</target></trans-unit>
+      <trans-unit id="sites.confirmDeleteQuestion" xml:space="preserve">
+				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
+			<target xml:lang="de" state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
+      <trans-unit id="sites.confirmDelete" xml:space="preserve">
+				<source>Yes, delete the site</source>
+			<target xml:lang="de" state="needs-translation">Yes, delete the site</target></trans-unit>
+      <trans-unit id="sites.import" xml:space="preserve">
+				<source>Import a site</source>
+			<target xml:lang="de" state="needs-translation">Import a site</target></trans-unit>
+      <trans-unit id="sites.select" xml:space="preserve">
+				<source>Select a site package</source>
+			<target xml:lang="de" state="needs-translation">Select a site package</target></trans-unit>
+      <trans-unit id="sites.noPackackeInfo" xml:space="preserve">
+				<source>No site packages are available. Make sure you have an active site package.</source>
+			<target xml:lang="de" state="needs-translation">No site packages are available. Make sure you have an active site package.</target></trans-unit>
+      <trans-unit id="sites.createBlank" xml:space="preserve">
+				<source>Create a blank site</source>
+			<target xml:lang="de" state="needs-translation">Create a blank site</target></trans-unit>
+      <trans-unit id="sites.documentType" xml:space="preserve">
+				<source>Select a document nodeType</source>
+			<target xml:lang="de" state="needs-translation">Select a document nodeType</target></trans-unit>
+      <trans-unit id="sites.name" xml:space="preserve">
+				<source>Site name</source>
+			<target xml:lang="de" state="needs-translation">Site name</target></trans-unit>
+      <trans-unit id="sites.createNode" xml:space="preserve">
+				<source>Create empty site</source>
+			<target xml:lang="de" state="needs-translation">Create empty site</target></trans-unit>
+      <trans-unit id="sites.createPackage" xml:space="preserve">
+				<source>Create a new site package</source>
+			<target xml:lang="de" state="needs-translation">Create a new site package</target></trans-unit>
+      <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
+				<source>VendorName.MyPackageKey</source>
+			<target xml:lang="de" state="needs-translation">VendorName.MyPackageKey</target></trans-unit>
+      <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
+				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
+			<target xml:lang="de" state="needs-translation">The &lt;em&gt;Neos Kickstarter&lt;/em&gt; package is not installed, install it to kickstart new sites.</target></trans-unit>
+      <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
+				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
+			<target xml:lang="de" state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
+      <trans-unit id="domain.new" xml:space="preserve">
+				<source>New domain</source>
+			<target xml:lang="de" state="needs-translation">New domain</target></trans-unit>
+      <trans-unit id="domain.edit" xml:space="preserve">
+				<source>Edit domain</source>
+			<target xml:lang="de" state="needs-translation">Edit domain</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve" approved="yes">
 				<source>Configuration</source>
 			<target xml:lang="de">Konfiguration</target></trans-unit>
       <trans-unit id="configuration.description" xml:space="preserve" approved="yes">
 				<source>The Configuration module provides you with an overview of all configuration types.</source>
 			<target xml:lang="de">Das Konfigurations-Modul bietet Ihnen eine Übersicht aller Konfigurationstypen.</target></trans-unit>
-			<trans-unit id="dimensions.label" xml:space="preserve">
+      <trans-unit id="dimensions.label" xml:space="preserve" approved="yes">
 				<source>Dimensions</source>
-        <target xml:lang="de">Dimensionen</target>
-			</trans-unit>
-			<trans-unit id="dimensions.description" xml:space="preserve">
+			<target xml:lang="de">Dimensionen</target></trans-unit>
+      <trans-unit id="dimensions.description" xml:space="preserve">
 				<source>Grants a graphical overview over the configured fallbacks within each content dimension and across content dimensions.</source>
-        <target xml:lang="de">Bietet eine grafische Übersicht über die konfigurierten Fallbacks, sowohl innerhalb der Inhaltsdimensionen als auch dimensionsübergreifend</target>
-			</trans-unit>
-			<trans-unit id="dimensions.interDimension.legend" xml:space="preserve">
+			<target xml:lang="de" state="needs-translation">Grants a graphical overview over the configured fallbacks within each content dimension and across content dimensions.</target></trans-unit>
+      <trans-unit id="dimensions.interDimension.legend" xml:space="preserve">
 				<source>Inter dimensional fallback graph</source>
-        <target xml:lang="de">Interdimensionaler Fallback-Graph</target>
-			</trans-unit>
-			<trans-unit id="dimensions.interDimension.short" xml:space="preserve">
+			<target xml:lang="de" state="needs-translation">Inter dimensional fallback graph</target></trans-unit>
+      <trans-unit id="dimensions.interDimension.short" xml:space="preserve">
 				<source>Inter dimensional</source>
-        <target xml:lang="de">Interdimensional</target>
-			</trans-unit>
-			<trans-unit id="dimensions.interDimension.description" xml:space="preserve">
+			<target xml:lang="de" state="needs-translation">Inter dimensional</target></trans-unit>
+      <trans-unit id="dimensions.interDimension.description" xml:space="preserve">
 				<source>The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
-Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The lower the priority the lower the opacity.
+Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The higher the priority the higher the opacity.
 Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</source>
-        <target xml:lang="de">Der interdimensionale Fallback-Graph stellt alle möglichen Fallbacks (dargestellt als Kanten) zwischen Teilgraphen (Kombinationen von Dimensionswerten, dargestellt als Knoten) dar.
-Primäre fallbacks sind blau markiert und immer sichtbar, während Fallbacks niedrigerer Priorität bei Mouseover dargestellt werden. Je niedriger die Priorität desto durchsichtiger sind die Kanten.
-Auf einen Knoten klicken, um ausschließlich dessen Fallbacks und Varianten zu sehen. Erneut klicken um diesen Filter zurück zu setzen.
-        </target>
-			</trans-unit>
-			<trans-unit id="dimensions.intraDimension.legend" xml:space="preserve">
+			<target xml:lang="de" state="needs-translation">The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
+Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The higher the priority the higher the opacity.
+Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</target></trans-unit>
+      <trans-unit id="dimensions.intraDimension.legend" xml:space="preserve">
 				<source>Intra dimensional fallback graph</source>
-        <target xml:lang="de">Intradimensionaler Fallback-Graph</target>
-			</trans-unit>
-			<trans-unit id="dimensions.intraDimension.short" xml:space="preserve">
+			<target xml:lang="de" state="needs-translation">Intra dimensional fallback graph</target></trans-unit>
+      <trans-unit id="dimensions.intraDimension.short" xml:space="preserve">
 				<source>Intra dimensional</source>
-        <target xml:lang="de">Intradimensional</target>
-			</trans-unit>
-			<trans-unit id="dimensions.intraDimension.description" xml:space="preserve">
+			<target xml:lang="de" state="needs-translation">Intra dimensional</target></trans-unit>
+      <trans-unit id="dimensions.intraDimension.description" xml:space="preserve">
 				<source>The intra dimensional fallback graph displays fallbacks within each content dimension.</source>
-        <target xml:lang="de">Der intradimensionale Fallback-Graph stellt Fallbacks innerhalb jeder Inhaltsdimension dar.</target>
-			</trans-unit>
+			<target xml:lang="de" state="needs-translation">The intra dimensional fallback graph displays fallbacks within each content dimension.</target></trans-unit>
       <!-- User -->
       <trans-unit id="user.label" xml:space="preserve" approved="yes">
 				<source>User</source>

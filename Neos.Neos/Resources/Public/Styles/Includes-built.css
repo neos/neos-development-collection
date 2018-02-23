@@ -5354,6 +5354,7 @@
   background-color: #3f3f3f;
   background-image: none;
   border: none;
+  border-radius: 0;
   text-shadow: none;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;

@@ -241,7 +241,7 @@
 			<div class="neos-media-content-help">
 				<i class="icon-info-circle"></i> {neos:backend.translate(id: 'dragHelp', package: 'Neos.Media.Browser')}
 			</div>
-			<f:render partial="{view}View" arguments="{assets: assets, sortBy: sortBy, sortDirection: sortDirection}" />
+			<f:render partial="{view}View" arguments="{assets: assets, sortBy: sortBy, sortDirection: sortDirection, asyncThumbnails: asyncThumbnails}" />
 
 			<div class="neos-hide" id="delete-asset-modal">
 				<div class="neos-modal-centered">

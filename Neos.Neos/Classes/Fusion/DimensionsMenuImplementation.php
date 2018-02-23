@@ -95,6 +95,21 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
                 }
 
                 $metadata = $this->determineMetadata($dimensionSpacePoint);
+
+                /*
+                 *
+            if ($nodeInDimensions === null && $pinnedDimensionName === null) {
+                $itemLabel = '';
+                foreach ($targetDimensions as $item) {
+                    $itemLabel .= $item['label'] . ' - ';
+                }
+                $itemLabel = trim($itemLabel, ' -');
+            } elseif ($nodeInDimensions instanceof NodeInterface && $pinnedDimensionName === null) {
+                $itemLabel = $nodeInDimensions->getLabel();
+            } else {
+                $itemLabel = $targetDimensions[$pinnedDimensionName]['label'];
+            }
+                 */
                 $menuItems[] = [
                     'subgraph' => $subgraph,
                     'node' => $variant,
@@ -106,6 +121,8 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
                 ];
             }
         }
+
+        // @todo sort by configured "presets" if present
 
         return $menuItems;
     }

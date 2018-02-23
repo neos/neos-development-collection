@@ -125,7 +125,7 @@ class SitesController extends AbstractModuleController
         $sitePackagesAndSites = array();
         foreach ($this->packageManager->getFilteredPackages('available', null, 'neos-site') as $sitePackageKey => $sitePackage) {
             /** @var PackageInterface $sitePackage */
-            $sitePackagesAndSites[strtolower(str_replace('.', '_', $sitePackageKey))] = array('package' => $sitePackage, 'packageKey' => $sitePackage->getPackageKey(), 'packageIsActive' => $this->packageManager->isPackageActive($sitePackage->getPackageKey()));
+            $sitePackagesAndSites[strtolower(str_replace('.', '_', $sitePackageKey))] = array('package' => $sitePackage, 'packageKey' => $sitePackage->getPackageKey());
         }
         $sites = $this->siteRepository->findAll();
         foreach ($sites as $site) {
@@ -207,13 +207,13 @@ class SitesController extends AbstractModuleController
      */
     public function newSiteAction(Site $site = null)
     {
-        $sitePackages = $this->packageManager->getFilteredPackages('active', null, 'neos-site');
+        $sitePackages = $this->packageManager->getFilteredPackages('available', null, 'neos-site');
         $documentNodeTypes = $this->nodeTypeManager->getSubNodeTypes('Neos.Neos:Document', false);
         $this->view->assignMultiple(array(
             'sitePackages' => $sitePackages,
             'documentNodeTypes' => $documentNodeTypes,
             'site' => $site,
-            'generatorServiceIsAvailable' => $this->packageManager->isPackageActive('Neos.SiteKickstarter')
+            'generatorServiceIsAvailable' => $this->packageManager->isPackageAvailable('Neos.SiteKickstarter')
         ));
     }
 
@@ -227,7 +227,7 @@ class SitesController extends AbstractModuleController
      */
     public function createSitePackageAction($packageKey, $siteName)
     {
-        if ($this->packageManager->isPackageActive('Neos.SiteKickstarter') === false) {
+        if ($this->packageManager->isPackageAvailable('Neos.SiteKickstarter') === false) {
             $this->addFlashMessage('The package "%s" is required to create new site packages.', 'Missing Package', Message::SEVERITY_ERROR, array('Neos.SiteKickstarter'), 1475736232);
             $this->redirect('index');
         }
@@ -241,14 +241,6 @@ class SitesController extends AbstractModuleController
         $generatorService->generateSitePackage($packageKey, $siteName);
 
         $this->flashMessageContainer->addMessage(new Message(sprintf('Site Packages "%s" was created.', htmlspecialchars($packageKey))));
-
-        $deactivatedSitePackages = $this->deactivateAllOtherSitePackages($packageKey);
-        if (count($deactivatedSitePackages) > 0) {
-            $this->flashMessageContainer->addMessage(new Message(sprintf('The existing Site Packages "%s" were deactivated, in order to prevent interactions with the newly created package "%s".', htmlspecialchars(implode(', ', $deactivatedSitePackages)), htmlspecialchars($packageKey))));
-        }
-
-        $this->packageManager->activatePackage($packageKey);
-
         $this->forward('importSite', null, null, ['packageKey' => $packageKey]);
     }
 
@@ -285,19 +277,19 @@ class SitesController extends AbstractModuleController
         $nodeName = $this->nodeService->generateUniqueNodeName(SiteService::SITES_ROOT_PATH, $siteName);
 
         if ($this->siteRepository->findOneByNodeName($nodeName)) {
-            $this->addFlashMessage('Error:A site with siteNodeName "%s" already exists', Message::SEVERITY_ERROR, [$nodeName], 1412372375);
+            $this->addFlashMessage('Error: A site with siteNodeName "%s" already exists', 'Site creation error', Message::SEVERITY_ERROR, [$nodeName], 1412372375);
             $this->redirect('createSiteNode');
         }
 
         $siteNodeType = $this->nodeTypeManager->getNodeType($nodeType);
 
         if ($siteNodeType === null || $siteNodeType->getName() === 'Neos.Neos:FallbackNode') {
-            $this->addFlashMessage('Error: The given node type "%s" was not found', 'Import error', Message::SEVERITY_ERROR, [$nodeType], 1412372375);
+            $this->addFlashMessage('Error: The given node type "%s" was not found', 'Site creation error', Message::SEVERITY_ERROR, [$nodeType], 1412372375);
             $this->redirect('createSiteNode');
         }
 
         if ($siteNodeType->isOfType('Neos.Neos:Document') === false) {
-            $this->addFlashMessage('Error: The given node type "%s" is not based on the superType "%s"', Message::SEVERITY_ERROR, [$nodeType, 'Neos.Neos:Document'], 1412372375);
+            $this->addFlashMessage('Error: The given node type "%s" is not based on the superType "%s"', 'Site creation error', Message::SEVERITY_ERROR, [$nodeType, 'Neos.Neos:Document'], 1412372375);
             $this->redirect('createSiteNode');
         }
 
@@ -485,27 +477,5 @@ class SitesController extends AbstractModuleController
     {
         $this->session->putData('lastVisitedNode', null);
         parent::redirect($actionName, $controllerName, $packageKey, $arguments, $delay, $statusCode, $format);
-    }
-
-    /**
-     * If site packages already exist and are active, we will deactivate them in order to prevent
-     * interactions with the newly created or imported package (like Content Dimensions being used).
-     *
-     * @param string $activePackageKey Package key of one package which should stay active
-     * @return array deactivated site packages
-     */
-    protected function deactivateAllOtherSitePackages($activePackageKey)
-    {
-        $sitePackagesToDeactivate = $this->packageManager->getFilteredPackages('active', null, 'neos-site');
-        $deactivatedSitePackages = array();
-
-        foreach (array_keys($sitePackagesToDeactivate) as $packageKey) {
-            if ($packageKey !== $activePackageKey) {
-                $this->packageManager->deactivatePackage($packageKey);
-                $deactivatedSitePackages[] = $packageKey;
-            }
-        }
-
-        return $deactivatedSitePackages;
     }
 }

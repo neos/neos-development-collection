@@ -18,7 +18,7 @@ Create a Fusion Object Class
 
 To create a custom Fusion object the ``Neos\Fusion\FusionObjects\AbstractFusionObject`` class is
 extended. The only method that needs to be implemented is ``evaluate()``. To access values from Fusion the method
-``$this->tsValue('__ts_value_key__');`` is used:
+``$this->fusionValue('__fusion_value_key__');`` is used:
 
 .. code-block:: php
 
@@ -53,6 +53,6 @@ Afterwards the prototype can be used in Fusion::
 
 	garavatarImage = Vendor.Site:Gravatar
 	garavatarImage {
-		emailAddress = 'kasper@typo3.org'
+		emailAddress = 'hello@neos.io'
 		size = 120
 	}
