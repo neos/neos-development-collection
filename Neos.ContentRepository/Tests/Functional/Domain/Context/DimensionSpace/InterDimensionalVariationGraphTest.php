@@ -114,95 +114,95 @@ class InterDimensionalVariationGraphTest extends FunctionalTestCase
                      [
                          ['value1', 'value1'],
                          [
-                             ['value1', 'value1.1'],
-                             ['value1', 'value1.2'],
-                             ['value1', 'value1.1.1'],
-                             ['value1.1', 'value1'],
-                             ['value1.1', 'value1.1'],
-                             ['value1.1', 'value1.2'],
-                             ['value1.1', 'value1.1.1'],
-                             ['value1.2', 'value1'],
-                             ['value1.2', 'value1.1'],
-                             ['value1.2', 'value1.2'],
-                             ['value1.2', 'value1.1.1'],
-                             ['value1.1.1', 'value1'],
-                             ['value1.1.1', 'value1.1'],
-                             ['value1.1.1', 'value1.2'],
-                             ['value1.1.1', 'value1.1.1']
+                             ['value1', 'value1.1', 1],
+                             ['value1', 'value1.2', 1],
+                             ['value1', 'value1.1.1', 2],
+                             ['value1.1', 'value1', 3],
+                             ['value1.1', 'value1.1', 4],
+                             ['value1.1', 'value1.2', 4],
+                             ['value1.1', 'value1.1.1', 5],
+                             ['value1.2', 'value1', 3],
+                             ['value1.2', 'value1.1', 4],
+                             ['value1.2', 'value1.2', 4],
+                             ['value1.2', 'value1.1.1', 5],
+                             ['value1.1.1', 'value1', 6],
+                             ['value1.1.1', 'value1.1', 7],
+                             ['value1.1.1', 'value1.2', 7],
+                             ['value1.1.1', 'value1.1.1', 8]
                          ]
                      ],
                      [
                          ['value1', 'value1.1'],
                          [
-                             ['value1', 'value1.1.1'],
-                             ['value1.1', 'value1.1'],
-                             ['value1.1', 'value1.1.1'],
-                             ['value1.2', 'value1.1'],
-                             ['value1.2', 'value1.1.1'],
-                             ['value1.1.1', 'value1.1'],
-                             ['value1.1.1', 'value1.1.1']
+                             ['value1', 'value1.1.1', 1],
+                             ['value1.1', 'value1.1', 3],
+                             ['value1.1', 'value1.1.1', 4],
+                             ['value1.2', 'value1.1', 3],
+                             ['value1.2', 'value1.1.1', 4],
+                             ['value1.1.1', 'value1.1', 6],
+                             ['value1.1.1', 'value1.1.1', 7]
                          ],
                      ],
                      [
                          ['value1', 'value1.2'],
                          [
-                             ['value1.1', 'value1.2'],
-                             ['value1.2', 'value1.2'],
-                             ['value1.1.1', 'value1.2']
+                             ['value1.1', 'value1.2', 3],
+                             ['value1.2', 'value1.2', 3],
+                             ['value1.1.1', 'value1.2', 6]
                          ],
                      ],
                      [
                          ['value1', 'value1.1.1'],
                          [
-                             ['value1.1', 'value1.1.1'],
-                             ['value1.2', 'value1.1.1'],
-                             ['value1.1.1', 'value1.1.1']
+                             ['value1.1', 'value1.1.1', 3],
+                             ['value1.2', 'value1.1.1', 3],
+                             ['value1.1.1', 'value1.1.1', 6]
                          ],
                      ],
                      [
                          ['value1.1', 'value1'],
                          [
-                             ['value1.1', 'value1.1'],
-                             ['value1.1', 'value1.2'],
-                             ['value1.1', 'value1.1.1'],
-                             ['value1.1.1', 'value1'],
-                             ['value1.1.1', 'value1.1'],
-                             ['value1.1.1', 'value1.2'],
-                             ['value1.1.1', 'value1.1.1']
+                             ['value1.1', 'value1.1', 1],
+                             ['value1.1', 'value1.2', 1],
+                             ['value1.1', 'value1.1.1', 2],
+                             ['value1.1.1', 'value1', 3],
+                             ['value1.1.1', 'value1.1', 4],
+                             ['value1.1.1', 'value1.2', 4],
+                             ['value1.1.1', 'value1.1.1', 5]
                          ],
                      ],
                      [
                          ['value1.1', 'value1.1'],
                          [
-                             ['value1.1', 'value1.1.1'],
-                             ['value1.1.1', 'value1.1'],
-                             ['value1.1.1', 'value1.1.1']
+                             ['value1.1', 'value1.1.1', 1],
+                             ['value1.1.1', 'value1.1', 3],
+                             ['value1.1.1', 'value1.1.1', 4]
                          ]
                      ],
                      [
                          ['value1.1', 'value1.2'],
                          [
-                             ['value1.1.1', 'value1.2']
+                             ['value1.1.1', 'value1.2', 3]
                          ]
                      ],
                      [
                          ['value1.1', 'value1.1.1'],
                          [
-                             ['value1.1.1', 'value1.1.1']
+                             ['value1.1.1', 'value1.1.1', 3]
                          ]
                      ],
                      [
                          ['value1.2', 'value1'],
                          [
-                             ['value1.2', 'value1.1'],
-                             ['value1.2', 'value1.2'],
-                             ['value1.2', 'value1.1.1']
+                             ['value1.2', 'value1.1', 1],
+                             ['value1.2', 'value1.2', 1],
+                             ['value1.2', 'value1.1.1', 2]
                          ]
                      ],
                      [
                          ['value1.2', 'value1.1'],
                          [
-                             ['value1.2', 'value1.1.1']
+                             ['value1.2', 'value1.1.1', 1]
                          ]
                      ],
                      [
@@ -216,15 +216,15 @@ class InterDimensionalVariationGraphTest extends FunctionalTestCase
                      [
                          ['value1.1.1', 'value1'],
                          [
-                             ['value1.1.1', 'value1.1'],
-                             ['value1.1.1', 'value1.2'],
-                             ['value1.1.1', 'value1.1.1']
+                             ['value1.1.1', 'value1.1', 1],
+                             ['value1.1.1', 'value1.2', 1],
+                             ['value1.1.1', 'value1.1.1', 2]
                          ]
                      ],
                      [
                          ['value1.1.1', 'value1.1'],
                          [
-                             ['value1.1.1', 'value1.1.1']
+                             ['value1.1.1', 'value1.1.1', 1]
                          ]
                      ],
                      [
@@ -237,25 +237,32 @@ class InterDimensionalVariationGraphTest extends FunctionalTestCase
                      ]
                  ] as $variationData) {
             $generalizationCoordinates = $variationData[0];
-            $specializationCoordinateSet = $variationData[1];
+            $specializationRecordSet = $variationData[1];
 
-            $expectedSpecializations = [];
-            foreach ($specializationCoordinateSet as $specializationCoordinates) {
+            $expectedIndexedSpecializations = [];
+            $expectedWeighedSpecializations = [];
+            foreach ($specializationRecordSet as $specializationRecord) {
                 $specialization = $this->subject->getSubgraphByDimensionSpacePoint(new Domain\ValueObject\DimensionSpacePoint([
-                    'dimensionA' => $specializationCoordinates[0],
-                    'dimensionB' => $specializationCoordinates[1]
+                    'dimensionA' => $specializationRecord[0],
+                    'dimensionB' => $specializationRecord[1]
                 ]));
-                $expectedSpecializations[$specialization->getIdentityHash()] = $specialization;
+                $expectedIndexedSpecializations[$specialization->getIdentityHash()] = $specialization;
+                $expectedWeighedSpecializations[$specializationRecord[2]] = $specialization;
             }
 
-            $actualSpecializations = $this->subject->getSpecializations($this->subject->getSubgraphByDimensionSpacePoint(new Domain\ValueObject\DimensionSpacePoint([
+            $generalization = $this->subject->getSubgraphByDimensionSpacePoint(new Domain\ValueObject\DimensionSpacePoint([
                 'dimensionA' => $generalizationCoordinates[0],
                 'dimensionB' => $generalizationCoordinates[1]
-            ])));
+            ]));
 
             $this->assertEquals(
-                $expectedSpecializations,
-                $actualSpecializations
+                $expectedIndexedSpecializations,
+                $this->subject->getIndexedSpecializations($generalization)
+            );
+
+            $this->assertEquals(
+                $expectedWeighedSpecializations,
+                $this->subject->getWeighedSpecializations($generalization)
             );
         }
     }
@@ -276,147 +283,154 @@ class InterDimensionalVariationGraphTest extends FunctionalTestCase
                      [
                          ['value1', 'value1.1'],
                          [
-                             ['value1', 'value1']
+                             ['value1', 'value1', 1]
                          ],
                      ],
                      [
                          ['value1', 'value1.2'],
                          [
-                             ['value1', 'value1']
+                             ['value1', 'value1', 1]
                          ],
                      ],
                      [
                          ['value1', 'value1.1.1'],
                          [
-                             ['value1', 'value1.1'],
-                             ['value1', 'value1']
+                             ['value1', 'value1.1', 1],
+                             ['value1', 'value1', 2]
                          ],
                      ],
                      [
                          ['value1.1', 'value1'],
                          [
-                             ['value1', 'value1']
+                             ['value1', 'value1', 3]
                          ],
                      ],
                      [
                          ['value1.1', 'value1.1'],
                          [
-                             ['value1.1', 'value1'],
-                             ['value1', 'value1.1'],
-                             ['value1', 'value1']
+                             ['value1.1', 'value1', 1],
+                             ['value1', 'value1.1', 3],
+                             ['value1', 'value1', 4]
                          ]
                      ],
                      [
                          ['value1.1', 'value1.2'],
                          [
-                             ['value1.1', 'value1'],
-                             ['value1', 'value1.2'],
-                             ['value1', 'value1']
+                             ['value1.1', 'value1', 1],
+                             ['value1', 'value1.2', 3],
+                             ['value1', 'value1', 4]
                          ]
                      ],
                      [
                          ['value1.1', 'value1.1.1'],
                          [
-                             ['value1.1', 'value1.1'],
-                             ['value1.1', 'value1'],
-                             ['value1', 'value1.1.1'],
-                             ['value1', 'value1.1'],
-                             ['value1', 'value1']
+                             ['value1.1', 'value1.1', 1],
+                             ['value1.1', 'value1', 2],
+                             ['value1', 'value1.1.1', 3],
+                             ['value1', 'value1.1', 4],
+                             ['value1', 'value1', 5]
                          ]
                      ],
                      [
                          ['value1.2', 'value1'],
                          [
-                             ['value1', 'value1']
+                             ['value1', 'value1', 3]
                          ]
                      ],
                      [
                          ['value1.2', 'value1.1'],
                          [
-                             ['value1.2', 'value1'],
-                             ['value1', 'value1.1'],
-                             ['value1', 'value1']
+                             ['value1.2', 'value1', 1],
+                             ['value1', 'value1.1', 3],
+                             ['value1', 'value1', 4]
                          ]
                      ],
                      [
                          ['value1.2', 'value1.2'],
                          [
-                             ['value1.2', 'value1'],
-                             ['value1', 'value1.2'],
-                             ['value1', 'value1']
+                             ['value1.2', 'value1', 1],
+                             ['value1', 'value1.2', 3],
+                             ['value1', 'value1', 4]
                          ]
                      ],
                      [
                          ['value1.2', 'value1.1.1'],
                          [
-                             ['value1.2', 'value1.1'],
-                             ['value1.2', 'value1'],
-                             ['value1', 'value1.1.1'],
-                             ['value1', 'value1.1'],
-                             ['value1', 'value1']
+                             ['value1.2', 'value1.1', 1],
+                             ['value1.2', 'value1', 2],
+                             ['value1', 'value1.1.1', 3],
+                             ['value1', 'value1.1', 4],
+                             ['value1', 'value1', 5]
                          ]
                      ],
                      [
                          ['value1.1.1', 'value1'],
                          [
-                             ['value1.1', 'value1'],
-                             ['value1', 'value1'],
+                             ['value1.1', 'value1', 3],
+                             ['value1', 'value1', 6],
                          ]
                      ],
                      [
                          ['value1.1.1', 'value1.1'],
                          [
-                             ['value1.1.1', 'value1'],
-                             ['value1.1', 'value1.1'],
-                             ['value1.1', 'value1'],
-                             ['value1', 'value1.1'],
-                             ['value1', 'value1']
+                             ['value1.1.1', 'value1', 1],
+                             ['value1.1', 'value1.1', 3],
+                             ['value1.1', 'value1', 4],
+                             ['value1', 'value1.1', 6],
+                             ['value1', 'value1', 7]
                          ]
                      ],
                      [
                          ['value1.1.1', 'value1.2'],
                          [
-                             ['value1.1.1', 'value1'],
-                             ['value1.1', 'value1.2'],
-                             ['value1.1', 'value1'],
-                             ['value1', 'value1.2'],
-                             ['value1', 'value1']
+                             ['value1.1.1', 'value1', 1],
+                             ['value1.1', 'value1.2', 3],
+                             ['value1.1', 'value1', 4],
+                             ['value1', 'value1.2', 6],
+                             ['value1', 'value1', 7]
                          ]
                      ],
                      [
                          ['value1.1.1', 'value1.1.1'],
                          [
-                             ['value1.1.1', 'value1.1'],
-                             ['value1.1.1', 'value1'],
-                             ['value1.1', 'value1.1.1'],
-                             ['value1.1', 'value1.1'],
-                             ['value1.1', 'value1'],
-                             ['value1', 'value1.1.1'],
-                             ['value1', 'value1.1'],
-                             ['value1', 'value1']
+                             ['value1.1.1', 'value1.1', 1],
+                             ['value1.1.1', 'value1', 2],
+                             ['value1.1', 'value1.1.1', 3],
+                             ['value1.1', 'value1.1', 4],
+                             ['value1.1', 'value1', 5],
+                             ['value1', 'value1.1.1', 6],
+                             ['value1', 'value1.1', 7],
+                             ['value1', 'value1', 8]
                          ]
                      ]
                  ] as $variationData) {
             $specializationCoordinates = $variationData[0];
-            $generalizationCoordinateSet = $variationData[1];
+            $generalizationRecordSet = $variationData[1];
 
-            $expectedGeneralizations = [];
-            foreach ($generalizationCoordinateSet as $generalizationCoordinates) {
+            $expectedIndexedGeneralizations = [];
+            $expectedWeighedGeneralizations = [];
+            foreach ($generalizationRecordSet as $generalizationRecord) {
                 $generalization = $this->subject->getSubgraphByDimensionSpacePoint(new Domain\ValueObject\DimensionSpacePoint([
-                    'dimensionA' => $generalizationCoordinates[0],
-                    'dimensionB' => $generalizationCoordinates[1]
+                    'dimensionA' => $generalizationRecord[0],
+                    'dimensionB' => $generalizationRecord[1]
                 ]));
-                $expectedGeneralizations[$generalization->getIdentityHash()] = $generalization;
+                $expectedIndexedGeneralizations[$generalization->getIdentityHash()] = $generalization;
+                $expectedWeighedGeneralizations[$generalizationRecord[2]] = $generalization;
             }
 
-            $actualGeneralizations = $this->subject->getGeneralizations($this->subject->getSubgraphByDimensionSpacePoint(new Domain\ValueObject\DimensionSpacePoint([
+            $subgraph = $this->subject->getSubgraphByDimensionSpacePoint(new Domain\ValueObject\DimensionSpacePoint([
                 'dimensionA' => $specializationCoordinates[0],
                 'dimensionB' => $specializationCoordinates[1]
-            ])));
+            ]));
 
             $this->assertEquals(
-                $expectedGeneralizations,
-                $actualGeneralizations
+                $expectedIndexedGeneralizations,
+                $this->subject->getIndexedGeneralizations($subgraph)
+            );
+
+            $this->assertEquals(
+                $expectedWeighedGeneralizations,
+                $this->subject->getWeighedGeneralizations($subgraph)
             );
         }
     }
