@@ -38,6 +38,12 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
 
     /**
      * @Flow\Inject
+     * @var DimensionSpace\InterDimensionalVariationGraph
+     */
+    protected $interDimensionalVariationGraph;
+
+    /**
+     * @Flow\Inject
      * @var ContentGraphInterface
      */
     protected $contentGraph;
@@ -59,11 +65,11 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
     }
 
     /**
-     * @return array
+     * @return bool
      */
-    public function getIncludeAllPresets()
+    public function getIncludeAllPresets(): bool
     {
-        return $this->fusionValue('includeAllPresets');
+        return $this->fusionValue('includeAllPresets') ?: false;
     }
 
     /**
@@ -84,12 +90,16 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
                     $variant = $subgraph->findNodeByNodeAggregateIdentifier($this->currentNode->getAggregateIdentifier(), $this->currentNode->getContext());
                 }
 
+                if (!$variant && $this->getDimension() && $this->getIncludeAllPresets()) {
+                    $variant = $this->findClosestGeneralization($dimensionSpacePoint, $this->currentNode->getAggregateIdentifier());
+                }
+
                 $metadata = $this->determineMetadata($dimensionSpacePoint);
                 $menuItems[] = [
                     'subgraph' => $subgraph,
                     'node' => $variant,
                     'state' => $this->calculateItemState($variant),
-                    'label' => array_reduce($metadata, function($carry, $item) {
+                    'label' => array_reduce($metadata, function ($carry, $item) {
                         return $carry . (empty($carry) ? '' : '-') . $item['label'];
                     }, ''),
                     'targetDimensions' => $metadata
@@ -106,10 +116,21 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
      */
     protected function isDimensionSpacePointRelevant(Domain\ValueObject\DimensionSpacePoint $dimensionSpacePoint): bool
     {
-        return !$this->getDimension()
-            || $dimensionSpacePoint->equals($this->getSubgraph()->getDimensionSpacePoint())
+        return !$this->getDimension() // no limit to one dimension, so all DSPs are relevant
+            || $dimensionSpacePoint->equals($this->getSubgraph()->getDimensionSpacePoint()) // always include the current variant
+            // include all direct variants in the dimension we're limited to unless their values in that dimension are missing in the specified list
             || $dimensionSpacePoint->isDirectVariantInDimension($this->getSubgraph()->getDimensionSpacePoint(), $this->getDimension())
             && (!$this->getPresets() || in_array($dimensionSpacePoint->getCoordinates()[(string)$this->getDimension()], $this->getPresets()));
+    }
+
+    /**
+     * @param Domain\ValueObject\DimensionSpacePoint $dimensionSpacePoint
+     * @param Domain\ValueObject\NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @return NodeInterface|null
+     */
+    protected function findClosestGeneralization(Domain\ValueObject\DimensionSpacePoint $dimensionSpacePoint, Domain\ValueObject\NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodeInterface
+    {
+        return null;
     }
 
     /**
