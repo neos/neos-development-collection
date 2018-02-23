@@ -11,17 +11,17 @@ namespace Neos\Neos\Domain\Strategy;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\NodeData;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Neos\Domain\Service\SiteService;
-use Neos\Utility\TypeHandling;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\Image;
 use Neos\Media\Domain\Strategy\AbstractAssetUsageStrategy;
-use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
-use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Controller\CreateContentContextTrait;
-use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
+use Neos\Neos\Domain\Service\SiteService;
+use Neos\Utility\TypeHandling;
 
 /**
  * @Flow\Scope("singleton")
