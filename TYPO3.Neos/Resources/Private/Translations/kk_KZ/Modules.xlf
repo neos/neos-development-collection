@@ -184,6 +184,10 @@
       </trans-unit>
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
+          <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
+          <target xml:lang="kk" state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} node.</target>
+        </trans-unit>
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
           <target xml:lang="kk" state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} nodes.</target>
         </trans-unit>
@@ -914,6 +918,10 @@
 			<target xml:lang="kk" state="needs-translation">Asset could not be deleted, because there are still Nodes using it</target></trans-unit>
       <group id="media.relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="media.relatedNodes[0]">
+          <source>{0} usages</source>
+          <target xml:lang="kk" state="needs-translation">{0} usages</target>
+        </trans-unit>
+        <trans-unit id="media.relatedNodes[1]">
           <source>{0} usages</source>
           <target xml:lang="kk" state="needs-translation">{0} usages</target>
         </trans-unit>
