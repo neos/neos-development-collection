@@ -12,6 +12,7 @@ namespace TYPO3\Neos\EventLog\Domain\Service;
  */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Security\Context;
 use TYPO3\Neos\EventLog\Domain\Model\Event;
 use TYPO3\Neos\EventLog\Domain\Repository\EventRepository;
 use TYPO3\Neos\Exception;
@@ -51,6 +52,12 @@ class EventEmittingService
      * @var EventRepository
      */
     protected $eventRepository;
+
+    /**
+     * @Flow\Inject
+     * @var Context
+     */
+    protected $securityContext;
 
     /**
      * @Flow\InjectConfiguration("eventLog.enabled")
@@ -100,6 +107,7 @@ class EventEmittingService
      */
     public function generate($eventType, array $data, $eventClassName = Event::class)
     {
+        $this->initializeAccountIdentifier();
         $event = new $eventClassName($eventType, $data, $this->currentAccountIdentifier, $this->getCurrentContext());
         $this->lastGeneratedEvent = $event;
 
@@ -171,13 +179,20 @@ class EventEmittingService
     }
 
     /**
-     * Set the current account identifier
+     * Try to set the current account identifier emitting the events, if possible
      *
-     * @param string $accountIdentifier
      * @return void
      */
-    public function setCurrentAccountIdentifier($accountIdentifier)
+    protected function initializeAccountIdentifier()
     {
-        $this->currentAccountIdentifier = $accountIdentifier;
+        if (isset($this->currentAccountIdentifier)) {
+            return;
+        }
+        if ($this->securityContext->canBeInitialized()) {
+            $account = $this->securityContext->getAccount();
+            if ($account !== null) {
+                $this->currentAccountIdentifier = $account->getAccountIdentifier();
+            }
+        }
     }
 }
