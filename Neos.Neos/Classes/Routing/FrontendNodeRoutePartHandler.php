@@ -132,7 +132,10 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             $matchingSubgraph = $this->fetchSubgraphForParameters($requestPath);
 
             /** @var Node $matchingSite */
-            $matchingSite = $this->fetchSiteFromRequest($matchingSubgraph, $requestPath);
+            $matchingSite = $this->fetchSiteFromRequest($matchingSubgraph);
+            if (!$matchingSite) {
+                return;
+            }
             $tagArray[] = (string) $matchingSite->identifier;
             if ($requestPath === '') {
                 $matchingNode = $matchingSite;
@@ -214,11 +217,9 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 
     /**
      * @param ContentSubgraphInterface $contentSubgraph
-     * @param string $requestPath
      * @return NodeInterface
-     * @throws Exception\NoSiteException
      */
-    protected function fetchSiteFromRequest(ContentSubgraphInterface $contentSubgraph, string $requestPath): NodeInterface
+    protected function fetchSiteFromRequest(ContentSubgraphInterface $contentSubgraph): ?NodeInterface
     {
         /** @var Node $sites */
         $sites = $this->contentGraph->findRootNodeByType(new NodeTypeName('Neos.Neos:Sites'), new NodeName('sites'));
@@ -231,10 +232,6 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             );
         } else {
             $site = $contentSubgraph->findChildNodes($sites->identifier, null, 1)[0] ?? null;
-        }
-
-        if (!$site) {
-            throw new Exception\NoSiteException(sprintf('No site found for request path "%s"', $requestPath), 1346949693);
         }
 
         return $site;
