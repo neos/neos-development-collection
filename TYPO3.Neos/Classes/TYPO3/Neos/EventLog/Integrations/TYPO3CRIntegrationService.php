@@ -340,7 +340,6 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService
             return;
         }
 
-        $this->initializeAccountIdentifier();
         if ($this->currentlyAdopting === 0) {
             /* @var $nodeEvent NodeEvent */
             $nodeEvent = $this->eventEmittingService->emit(self::NODE_ADOPT, array(
@@ -387,8 +386,6 @@ class TYPO3CRIntegrationService extends AbstractIntegrationService
         if (count($this->currentNodeAddEvents) > 0) {
             return;
         }
-
-        $this->initializeAccountIdentifier();
 
         foreach ($this->changedNodes as $nodePath => $data) {
             $node = $data['node'];
