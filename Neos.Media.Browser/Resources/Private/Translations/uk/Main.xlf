@@ -315,6 +315,10 @@
           <source>{0} usages</source>
           <target xml:lang="uk" state="needs-translation">{0} usages</target>
         </trans-unit>
+        <trans-unit id="relatedNodes[3]">
+          <source>{0} usages</source>
+          <target xml:lang="uk" state="needs-translation">{0} usages</target>
+        </trans-unit>
       </group>
       <trans-unit id="relatedNodes.referencesTo" xml:space="preserve">
 				<source>References to "{asset}"</source>
