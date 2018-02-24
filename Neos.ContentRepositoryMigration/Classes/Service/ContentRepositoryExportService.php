@@ -298,13 +298,11 @@ class ContentRepositoryExportService
             \Neos\Flow\var_dump('-------------');
         }
 
-        $subgraph = $this->interDimensionalFallbackGraph->getSubgraphByDimensionSpacePoint($dimensionSpacePoint);
-
-        while ($subgraph !== null) {
+        while ($dimensionSpacePoint !== null) {
             if ($dimensionSpacePoint->getCoordinates()['language'] !== 'en_US') {
-                \Neos\Flow\var_dump($subgraph->getDimensionSpacePoint()->getCoordinates());
+                \Neos\Flow\var_dump($dimensionSpacePoint->getCoordinates());
             }
-            $key = $parentPath . '__' . $subgraph->getDimensionSpacePoint()->getHash();
+            $key = $parentPath . '__' . $dimensionSpacePoint->getHash();
             if (isset($this->nodeIdentifiers[$key])) {
                 if ($dimensionSpacePoint->getCoordinates()['language'] !== 'en_US') {
                     \Neos\Flow\var_dump("FOUND");
@@ -312,7 +310,7 @@ class ContentRepositoryExportService
                 return $this->nodeIdentifiers[$key];
             }
 
-            $subgraph = $this->interDimensionalFallbackGraph->getPrimaryGeneralization($subgraph);
+            $dimensionSpacePoint = $this->interDimensionalFallbackGraph->getPrimaryGeneralization($dimensionSpacePoint);
         }
 
         // if we did not find a node at this point, we need to check if the parentPath is "/sites" --> as there is an error

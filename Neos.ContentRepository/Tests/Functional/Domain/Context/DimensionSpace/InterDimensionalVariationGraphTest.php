@@ -29,12 +29,12 @@ class InterDimensionalVariationGraphTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function initializeSubgraphsCorrectlyInitializesAllAvailableSubgraphsWithDimensionsWithVariationsGiven()
+    public function initializeWeightedDimensionSpacePointsCorrectlyInitializesAllAvailableWeightedDimensionSpacePointsWithDimensionsWithVariationsGiven()
     {
         $this->setUpVariationExample();
-        $this->subject->_call('initializeSubgraphs');
+        $this->subject->_call('initializeWeightedDimensionSpacePoints');
 
-        $expectedSubgraphCoordinates = [
+        $expectedWeightedDimensionSpacePointsCoordinates = [
             ['value1', 'value1', 0, 0],
             ['value1', 'value1.1', 0, 1],
             ['value1', 'value1.2', 0, 1],
@@ -53,50 +53,50 @@ class InterDimensionalVariationGraphTest extends FunctionalTestCase
             ['value1.1.1', 'value1.1.1', 2, 2]
         ];
 
-        $expectedSubgraphs = [];
-        foreach ($expectedSubgraphCoordinates as $coordinates) {
-            $subgraph = new DimensionSpace\ContentSubgraph([
+        $expectedWeightedDimensionSpacePoints = [];
+        foreach ($expectedWeightedDimensionSpacePointsCoordinates as $coordinates) {
+            $weightedDimensionSpacePoints = new DimensionSpace\WeightedDimensionSpacePoint([
                 'dimensionA' => new Dimension\ContentDimensionValue($coordinates[0], new Dimension\ContentDimensionValueSpecializationDepth($coordinates[2])),
                 'dimensionB' => new Dimension\ContentDimensionValue($coordinates[1], new Dimension\ContentDimensionValueSpecializationDepth($coordinates[3]))
             ]);
-            $expectedSubgraphs[$subgraph->getIdentityHash()] = $subgraph;
+            $expectedWeightedDimensionSpacePoints[$weightedDimensionSpacePoints->getIdentityHash()] = $weightedDimensionSpacePoints;
         }
 
         $this->assertEquals(
-            $expectedSubgraphs,
-            $this->subject->getSubgraphs()
+            $expectedWeightedDimensionSpacePoints,
+            $this->subject->getWeightedDimensionSpacePoints()
         );
 
-        foreach ($expectedSubgraphs as $subgraphIdentifier => $subgraph) {
-            $this->assertEquals($subgraph, $this->subject->getSubgraphByDimensionSpacePointHash($subgraphIdentifier));
+        foreach ($expectedWeightedDimensionSpacePoints as $weightedDimensionSpacePointsIdentifier => $weightedDimensionSpacePoints) {
+            $this->assertEquals($weightedDimensionSpacePoints, $this->subject->getWeightedDimensionSpacePointByHash($weightedDimensionSpacePointsIdentifier));
         }
     }
 
     /**
      * @test
      */
-    public function initializeSubgraphsCorrectlyInitializesSingularSubgraphWithNoDimensionsGiven()
+    public function initializeWeightedDimensionSpacePointsCorrectlyInitializesSingularWeightedDimensionSpacePointsWithNoDimensionsGiven()
     {
         $this->setUpNullExample();
-        $this->subject->_call('initializeSubgraphs');
+        $this->subject->_call('initializeWeightedDimensionSpacePoints');
 
-        $singularSubgraph = new DimensionSpace\ContentSubgraph([]);
+        $singularWeightedDimensionSpacePoints = new DimensionSpace\WeightedDimensionSpacePoint([]);
         $this->assertEquals(
-            [$singularSubgraph->getIdentityHash() => $singularSubgraph],
-            $this->subject->getSubgraphs()
+            [$singularWeightedDimensionSpacePoints->getIdentityHash() => $singularWeightedDimensionSpacePoints],
+            $this->subject->getWeightedDimensionSpacePoints()
         );
     }
 
     /**
      * @test
      */
-    public function getSubgraphByDimensionSpacePointReturnsNullForPointOutsideTheAllowedDimensionSpace()
+    public function getWeightedDimensionSpacePointsByDimensionSpacePointReturnsNullForPointOutsideTheAllowedDimensionSpace()
     {
         $this->setUpVariationExample();
 
         $this->assertSame(
             null,
-            $this->subject->getSubgraphByDimensionSpacePoint(new Domain\ValueObject\DimensionSpacePoint([
+            $this->subject->getWeightedDimensionSpacePointByDimensionSpacePoint(new Domain\ValueObject\DimensionSpacePoint([
                 'undefinedDimension' => 'undefinedDimensionValue'
             ]))
         );
@@ -240,20 +240,20 @@ class InterDimensionalVariationGraphTest extends FunctionalTestCase
             $specializationRecordSet = $variationData[1];
 
             $expectedIndexedSpecializations = [];
-            $expectedWeighedSpecializations = [];
+            $expectedWeightedSpecializations = [];
             foreach ($specializationRecordSet as $specializationRecord) {
-                $specialization = $this->subject->getSubgraphByDimensionSpacePoint(new Domain\ValueObject\DimensionSpacePoint([
+                $specialization = new Domain\ValueObject\DimensionSpacePoint([
                     'dimensionA' => $specializationRecord[0],
                     'dimensionB' => $specializationRecord[1]
-                ]));
-                $expectedIndexedSpecializations[$specialization->getIdentityHash()] = $specialization;
-                $expectedWeighedSpecializations[$specializationRecord[2]] = $specialization;
+                ]);
+                $expectedIndexedSpecializations[$specialization->getHash()] = $specialization;
+                $expectedWeightedSpecializations[$specializationRecord[2]][$specialization->getHash()] = $specialization;
             }
 
-            $generalization = $this->subject->getSubgraphByDimensionSpacePoint(new Domain\ValueObject\DimensionSpacePoint([
+            $generalization = new Domain\ValueObject\DimensionSpacePoint([
                 'dimensionA' => $generalizationCoordinates[0],
                 'dimensionB' => $generalizationCoordinates[1]
-            ]));
+            ]);
 
             $this->assertEquals(
                 $expectedIndexedSpecializations,
@@ -261,8 +261,8 @@ class InterDimensionalVariationGraphTest extends FunctionalTestCase
             );
 
             $this->assertEquals(
-                $expectedWeighedSpecializations,
-                $this->subject->getWeighedSpecializations($generalization)
+                $expectedWeightedSpecializations,
+                $this->subject->getWeightedSpecializations($generalization)
             );
         }
     }
@@ -408,29 +408,29 @@ class InterDimensionalVariationGraphTest extends FunctionalTestCase
             $generalizationRecordSet = $variationData[1];
 
             $expectedIndexedGeneralizations = [];
-            $expectedWeighedGeneralizations = [];
+            $expectedWeightedGeneralizations = [];
             foreach ($generalizationRecordSet as $generalizationRecord) {
-                $generalization = $this->subject->getSubgraphByDimensionSpacePoint(new Domain\ValueObject\DimensionSpacePoint([
+                $generalization = new Domain\ValueObject\DimensionSpacePoint([
                     'dimensionA' => $generalizationRecord[0],
                     'dimensionB' => $generalizationRecord[1]
-                ]));
-                $expectedIndexedGeneralizations[$generalization->getIdentityHash()] = $generalization;
-                $expectedWeighedGeneralizations[$generalizationRecord[2]] = $generalization;
+                ]);
+                $expectedIndexedGeneralizations[$generalization->getHash()] = $generalization;
+                $expectedWeightedGeneralizations[$generalizationRecord[2]] = $generalization;
             }
 
-            $subgraph = $this->subject->getSubgraphByDimensionSpacePoint(new Domain\ValueObject\DimensionSpacePoint([
+            $specializedDimensionSpacePoint = new Domain\ValueObject\DimensionSpacePoint([
                 'dimensionA' => $specializationCoordinates[0],
                 'dimensionB' => $specializationCoordinates[1]
-            ]));
+            ]);
 
             $this->assertEquals(
                 $expectedIndexedGeneralizations,
-                $this->subject->getIndexedGeneralizations($subgraph)
+                $this->subject->getIndexedGeneralizations($specializedDimensionSpacePoint)
             );
 
             $this->assertEquals(
-                $expectedWeighedGeneralizations,
-                $this->subject->getWeighedGeneralizations($subgraph)
+                $expectedWeightedGeneralizations,
+                $this->subject->getWeightedGeneralizations($specializedDimensionSpacePoint)
             );
         }
     }
@@ -524,12 +524,8 @@ class InterDimensionalVariationGraphTest extends FunctionalTestCase
                 : null;
 
             $this->assertEquals(
-                ($expectedPrimaryGeneralizationSpacePoint
-                    ? $this->subject->getSubgraphByDimensionSpacePoint($expectedPrimaryGeneralizationSpacePoint)
-                    : null),
-                $this->subject->getPrimaryGeneralization(
-                    $this->subject->getSubgraphByDimensionSpacePoint($specializationDimensionSpacePoint)
-                )
+                $expectedPrimaryGeneralizationSpacePoint,
+                $this->subject->getPrimaryGeneralization($specializationDimensionSpacePoint)
             );
         }
     }

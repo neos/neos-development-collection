@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\ContentRepository\Domain\Context\DimensionSpace;
 
 /*
@@ -18,7 +17,7 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * The inter dimensional variation graph domain model
- * Represents the specialization and generalization mechanism between content subgraphs
+ * Represents the specialization and generalization mechanism between dimension space points
  *
  * @Flow\Scope("singleton")
  */
@@ -43,32 +42,32 @@ class InterDimensionalVariationGraph
     protected $contentDimensionSource;
 
     /**
-     * @var array|ContentSubgraph[]
+     * @var array|WeightedDimensionSpacePoint[]
      */
-    protected $subgraphs;
+    protected $weightedDimensionSpacePoints;
 
     /**
-     * @var array|ContentSubgraph[][]
+     * @var array|Domain\ValueObject\DimensionSpacePoint[][]
      */
     protected $indexedGeneralizations;
 
     /**
-     * @var array|ContentSubgraph[][]
+     * @var array|Domain\ValueObject\DimensionSpacePoint[][]
      */
     protected $indexedSpecializations;
 
     /**
-     * @var array|ContentSubgraph[][]
+     * @var array|Domain\ValueObject\DimensionSpacePoint[][]
      */
-    protected $weighedGeneralizations;
+    protected $weightedGeneralizations;
 
     /**
-     * @var array|ContentSubgraph[][]
+     * @var array|Domain\ValueObject\DimensionSpacePoint[][]
      */
-    protected $weighedSpecializations;
+    protected $weightedSpecializations;
 
     /**
-     * @var array|ContentSubgraph[]
+     * @var array|Domain\ValueObject\DimensionSpacePoint[]
      */
     protected $primaryGeneralizations;
 
@@ -81,48 +80,48 @@ class InterDimensionalVariationGraph
     /**
      * @return void
      */
-    protected function initializeSubgraphs()
+    protected function initializeWeightedDimensionSpacePoints()
     {
-        $this->subgraphs = [];
+        $this->weightedDimensionSpacePoints = [];
         foreach ($this->contentDimensionZookeeper->getAllowedCombinations() as $dimensionValues) {
-            $subgraph = new ContentSubgraph($dimensionValues);
-            $this->subgraphs[$subgraph->getIdentityHash()] = $subgraph;
+            $subgraph = new WeightedDimensionSpacePoint($dimensionValues);
+            $this->weightedDimensionSpacePoints[$subgraph->getIdentityHash()] = $subgraph;
         }
     }
 
     /**
-     * @return array|ContentSubgraph[]
+     * @return array|WeightedDimensionSpacePoint[]
      * @api
      */
-    public function getSubgraphs(): array
+    public function getWeightedDimensionSpacePoints(): array
     {
-        if (is_null($this->subgraphs)) {
-            $this->initializeSubgraphs();
+        if (is_null($this->weightedDimensionSpacePoints)) {
+            $this->initializeWeightedDimensionSpacePoints();
         }
 
-        return $this->subgraphs;
+        return $this->weightedDimensionSpacePoints;
     }
 
     /**
      * @param Domain\ValueObject\DimensionSpacePoint $point
-     * @return ContentSubgraph|null
+     * @return WeightedDimensionSpacePoint|null
      */
-    public function getSubgraphByDimensionSpacePoint(Domain\ValueObject\DimensionSpacePoint $point): ?ContentSubgraph
+    public function getWeightedDimensionSpacePointByDimensionSpacePoint(Domain\ValueObject\DimensionSpacePoint $point): ?WeightedDimensionSpacePoint
     {
-        return $this->getSubgraphByDimensionSpacePointHash($point->getHash());
+        return $this->getWeightedDimensionSpacePointByHash($point->getHash());
     }
 
     /**
      * @param string $hash
-     * @return ContentSubgraph|null
+     * @return WeightedDimensionSpacePoint|null
      */
-    public function getSubgraphByDimensionSpacePointHash(string $hash): ?ContentSubgraph
+    public function getWeightedDimensionSpacePointByHash(string $hash): ?WeightedDimensionSpacePoint
     {
-        if (is_null($this->subgraphs)) {
-            $this->initializeSubgraphs();
+        if (is_null($this->weightedDimensionSpacePoints)) {
+            $this->initializeWeightedDimensionSpacePoints();
         }
 
-        return isset($this->subgraphs[$hash]) ? $this->subgraphs[$hash] : null;
+        return isset($this->weightedDimensionSpacePoints[$hash]) ? $this->weightedDimensionSpacePoints[$hash] : null;
     }
 
     /**
@@ -150,7 +149,7 @@ class InterDimensionalVariationGraph
         $normalizedVariationWeights = [];
         $lowestVariationWeights = [];
 
-        foreach ($this->getSubgraphs() as $generalizationHash => $generalization) {
+        foreach ($this->getWeightedDimensionSpacePoints() as $generalizationHash => $generalization) {
             if (!isset($normalizedVariationWeights[$generalizationHash])) {
                 $normalizedVariationWeights[$generalizationHash] = $generalization->getWeight()->normalize($this->determineWeightNormalizationBase());
             }
@@ -159,20 +158,19 @@ class InterDimensionalVariationGraph
                 $dimensionIdentifier = new Dimension\ContentDimensionIdentifier($rawDimensionIdentifier);
                 $dimension = $this->contentDimensionSource->getDimension($dimensionIdentifier);
                 foreach ($dimension->getSpecializations($contentDimensionValue) as $specializedValue) {
-                    $specializedDimensionSpacePoint = $generalization->getDimensionSpacePoint()->vary($dimensionIdentifier, $specializedValue);
+                    $specializedDimensionSpacePoint = $generalization->getDimensionSpacePoint()->vary($dimensionIdentifier, (string) $specializedValue);
                     if (!$this->allowedDimensionSubspace->contains($specializedDimensionSpacePoint)) {
                         continue;
                     }
-                    $specialization = $this->getSubgraphByDimensionSpacePoint($specializedDimensionSpacePoint);
-
+                    $specialization = $this->getWeightedDimensionSpacePointByDimensionSpacePoint($specializedDimensionSpacePoint);
 
                     if (!isset($normalizedVariationWeights[$specialization->getIdentityHash()])) {
                         $normalizedVariationWeights[$specialization->getIdentityHash()] = $specialization->getWeight()->normalize($this->determineWeightNormalizationBase());
                     }
-                    $this->initializeVariationsForSubgraphPair($specialization, $generalization, $normalizedVariationWeights);
+                    $this->initializeVariationsForDimensionSpacePointPair($specialization, $generalization, $normalizedVariationWeights);
                     $normalizedVariationWeight = $normalizedVariationWeights[$specialization->getIdentityHash()] - $normalizedVariationWeights[$generalizationHash];
                     if (!isset($lowestVariationWeights[$specialization->getIdentityHash()]) || $normalizedVariationWeight < $lowestVariationWeights[$specialization->getIdentityHash()]) {
-                        $this->primaryGeneralizations[$specialization->getIdentityHash()] = $generalization;
+                        $this->primaryGeneralizations[$specialization->getIdentityHash()] = $generalization->getDimensionSpacePoint();
                     }
                 }
             }
@@ -180,88 +178,88 @@ class InterDimensionalVariationGraph
     }
 
     /**
-     * @param ContentSubgraph $specialization
-     * @param ContentSubgraph $generalization
+     * @param WeightedDimensionSpacePoint $specialization
+     * @param WeightedDimensionSpacePoint $generalization
      * @param array $normalizedVariationWeights
      */
-    protected function initializeVariationsForSubgraphPair(ContentSubgraph $specialization, ContentSubgraph $generalization, array $normalizedVariationWeights)
+    protected function initializeVariationsForDimensionSpacePointPair(WeightedDimensionSpacePoint $specialization, WeightedDimensionSpacePoint $generalization, array $normalizedVariationWeights)
     {
-        /** @var array|ContentSubgraph[] $generalizationsToProcess */
+        /** @var array|WeightedDimensionSpacePoint[] $generalizationsToProcess */
         $generalizationsToProcess = [$generalization->getIdentityHash() => $generalization];
         if (isset($this->indexedGeneralizations[$generalization->getIdentityHash()])) {
             foreach ($this->indexedGeneralizations[$generalization->getIdentityHash()] as $parentGeneralizationHash => $parentGeneralization) {
-                $generalizationsToProcess[$parentGeneralizationHash] = $parentGeneralization;
+                $generalizationsToProcess[$parentGeneralizationHash] = $this->getWeightedDimensionSpacePointByHash($parentGeneralizationHash);
             }
         }
 
         foreach ($generalizationsToProcess as $generalizationHashToProcess => $generalizationToProcess) {
             $normalizedWeightDifference = abs($normalizedVariationWeights[$generalizationHashToProcess] - $normalizedVariationWeights[$specialization->getIdentityHash()]);
-            $this->indexedGeneralizations[$specialization->getIdentityHash()][$generalizationToProcess->getIdentityHash()] = $generalizationToProcess;
-            $this->weighedGeneralizations[$specialization->getIdentityHash()][$normalizedWeightDifference] = $generalizationToProcess;
+            $this->indexedGeneralizations[$specialization->getIdentityHash()][$generalizationToProcess->getIdentityHash()] = $generalizationToProcess->getDimensionSpacePoint();
+            $this->weightedGeneralizations[$specialization->getIdentityHash()][$normalizedWeightDifference] = $generalizationToProcess->getDimensionSpacePoint();
 
-            $this->indexedSpecializations[$generalizationToProcess->getIdentityHash()][$specialization->getIdentityHash()] = $specialization;
-            $this->weighedSpecializations[$generalizationToProcess->getIdentityHash()][$normalizedWeightDifference] = $specialization;
+            $this->indexedSpecializations[$generalizationToProcess->getIdentityHash()][$specialization->getIdentityHash()] = $specialization->getDimensionSpacePoint();
+            $this->weightedSpecializations[$generalizationToProcess->getIdentityHash()][$normalizedWeightDifference][$specialization->getIdentityHash()] = $specialization->getDimensionSpacePoint();
         }
     }
 
     /**
      * Returns specializations of a subgraph indexed by hash
      *
-     * @param ContentSubgraph $generalization
-     * @return array|ContentSubgraph[]
+     * @param Domain\ValueObject\DimensionSpacePoint $generalization
+     * @return array|Domain\ValueObject\DimensionSpacePoint[]
      */
-    public function getIndexedSpecializations(ContentSubgraph $generalization): array
+    public function getIndexedSpecializations(Domain\ValueObject\DimensionSpacePoint $generalization): array
     {
         if (is_null($this->indexedSpecializations)) {
             $this->initializeVariations();
         }
 
-        return $this->indexedSpecializations[$generalization->getIdentityHash()] ?? [];
+        return $this->indexedSpecializations[$generalization->getHash()] ?? [];
     }
 
     /**
      * Returns generalizations of a subgraph indexed by hash
      *
-     * @param ContentSubgraph $specialization
-     * @return array|ContentSubgraph[]
+     * @param Domain\ValueObject\DimensionSpacePoint $specialization
+     * @return array|Domain\ValueObject\DimensionSpacePoint[]
      */
-    public function getIndexedGeneralizations(ContentSubgraph $specialization): array
+    public function getIndexedGeneralizations(Domain\ValueObject\DimensionSpacePoint $specialization): array
     {
         if (is_null($this->indexedGeneralizations)) {
             $this->initializeVariations();
         }
 
-        return $this->indexedGeneralizations[$specialization->getIdentityHash()] ?? [];
+        return $this->indexedGeneralizations[$specialization->getHash()] ?? [];
     }
 
     /**
      * Returns specializations of a subgraph indexed by relative weight
      *
-     * @param ContentSubgraph $generalization
-     * @return array|ContentSubgraph[]
+     * @param Domain\ValueObject\DimensionSpacePoint $generalization
+     * @return array|Domain\ValueObject\DimensionSpacePoint[]
      */
-    public function getWeighedSpecializations(ContentSubgraph $generalization): array
+    public function getWeightedSpecializations(Domain\ValueObject\DimensionSpacePoint $generalization): array
     {
-        if (is_null($this->weighedSpecializations)) {
+        if (is_null($this->weightedSpecializations)) {
             $this->initializeVariations();
         }
 
-        return $this->weighedSpecializations[$generalization->getIdentityHash()] ?? [];
+        return $this->weightedSpecializations[$generalization->getHash()] ?? [];
     }
 
     /**
      * Returns generalizations of a subgraph indexed by relative weight
      *
-     * @param ContentSubgraph $specialization
-     * @return array|ContentSubgraph[]
+     * @param Domain\ValueObject\DimensionSpacePoint $specialization
+     * @return array|Domain\ValueObject\DimensionSpacePoint[]
      */
-    public function getWeighedGeneralizations(ContentSubgraph $specialization): array
+    public function getWeightedGeneralizations(Domain\ValueObject\DimensionSpacePoint $specialization): array
     {
-        if (is_null($this->weighedGeneralizations)) {
+        if (is_null($this->weightedGeneralizations)) {
             $this->initializeVariations();
         }
 
-        return $this->weighedGeneralizations[$specialization->getIdentityHash()] ?? [];
+        return $this->weightedGeneralizations[$specialization->getHash()] ?? [];
     }
 
     /**
@@ -279,21 +277,14 @@ class InterDimensionalVariationGraph
         if (!$this->allowedDimensionSubspace->contains($origin)) {
             throw new DimensionSpacePointNotFound(sprintf('%s was not found in the allowed dimension subspace', $origin), 1505929456);
         } else {
-            $subgraph = $this->getSubgraphByDimensionSpacePointHash($origin->getHash());
-
-            if (is_null($this->indexedSpecializations)) {
-                $this->initializeVariations();
-            }
-
             $specializations = [];
             if ($includeOrigin) {
                 $specializations[$origin->getHash()] = $origin;
             }
-            if (isset($this->indexedSpecializations[$subgraph->getIdentityHash()])) {
-                foreach ($this->indexedSpecializations[$subgraph->getIdentityHash()] as $specialization) {
-                    if (!$excludedSet || !$excludedSet->contains($specialization->getDimensionSpacePoint())) {
-                        $specializations[$specialization->getDimensionSpacePoint()->getHash()] = $specialization->getDimensionSpacePoint();
-                    }
+
+            foreach ($this->getIndexedSpecializations($origin) as $specialization) {
+                if (!$excludedSet || !$excludedSet->contains($specialization)) {
+                    $specializations[$specialization->getHash()] = $specialization;
                 }
             }
 
@@ -302,16 +293,16 @@ class InterDimensionalVariationGraph
     }
 
     /**
-     * @param ContentSubgraph $contentSubgraph
-     * @return ContentSubgraph|null
+     * @param Domain\ValueObject\DimensionSpacePoint $specialization
+     * @return Domain\ValueObject\DimensionSpacePoint|null
      * @api
      */
-    public function getPrimaryGeneralization(ContentSubgraph $contentSubgraph): ?ContentSubgraph
+    public function getPrimaryGeneralization(Domain\ValueObject\DimensionSpacePoint $specialization): ?Domain\ValueObject\DimensionSpacePoint
     {
         if (is_null($this->indexedGeneralizations)) {
             $this->initializeVariations();
         }
 
-        return $this->primaryGeneralizations[$contentSubgraph->getIdentityHash()] ?? null;
+        return $this->primaryGeneralizations[$specialization->getHash()] ?? null;
     }
 }

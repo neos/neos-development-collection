@@ -15,9 +15,9 @@ use Neos\ContentRepository\Domain\Context\Dimension;
 use Neos\ContentRepository\Domain;
 
 /**
- * The content subgraph domain model
+ * A weighted dimension space point
  */
-final class ContentSubgraph
+final class WeightedDimensionSpacePoint
 {
     /**
      * @var array|Dimension\ContentDimensionValue[]
@@ -54,7 +54,7 @@ final class ContentSubgraph
     /**
      * @return Domain\ValueObject\DimensionSpacePoint
      */
-    public function getIdentifier():Domain\ValueObject\ DimensionSpacePoint
+    public function getIdentifier():Domain\ValueObject\DimensionSpacePoint
     {
         return $this->getDimensionSpacePoint();
     }

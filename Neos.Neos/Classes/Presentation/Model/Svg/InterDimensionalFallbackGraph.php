@@ -143,7 +143,7 @@ class InterDimensionalFallbackGraph
     protected function initializeFullGraph()
     {
         $this->initializeOffsets();
-        foreach ($this->fallbackGraph->getSubgraphs() as $subgraphIdentifier => $subgraph) {
+        foreach ($this->fallbackGraph->getWeightedDimensionSpacePoints() as $subgraphIdentifier => $subgraph) {
             $this->initializeFullGraphNode($subgraph);
         }
 
@@ -204,7 +204,7 @@ class InterDimensionalFallbackGraph
      */
     protected function initializeSubgraph()
     {
-        $subgraph = $this->fallbackGraph->getSubgraphByDimensionSpacePointHash($this->rootSubgraphIdentifier);
+        $subgraph = $this->fallbackGraph->getWeightedDimensionSpacePointByHash($this->rootSubgraphIdentifier);
         $horizontalOffset = 0;
         $y = 0;
         foreach ($subgraph->getGeneralizations() as $fallbackSubgraph) {
@@ -219,10 +219,10 @@ class InterDimensionalFallbackGraph
     }
 
     /**
-     * @param DimensionSpace\ContentSubgraph $subgraph
+     * @param DimensionSpace\WeightedDimensionSpacePoint $subgraph
      * @return void
      */
-    protected function initializeFullGraphNode(DimensionSpace\ContentSubgraph $subgraph)
+    protected function initializeFullGraphNode(DimensionSpace\WeightedDimensionSpacePoint $subgraph)
     {
         $x = 0;
         $y = 0;
@@ -261,12 +261,12 @@ class InterDimensionalFallbackGraph
     }
 
     /**
-     * @param DimensionSpace\ContentSubgraph $subgraph
+     * @param DimensionSpace\WeightedDimensionSpacePoint $subgraph
      * @param int $horizontalOffset
      * @param int $y
      * @return void
      */
-    protected function initializeSubgraphNode(DimensionSpace\ContentSubgraph $subgraph, int & $horizontalOffset, int & $y)
+    protected function initializeSubgraphNode(DimensionSpace\WeightedDimensionSpacePoint $subgraph, int & $horizontalOffset, int & $y)
     {
         $nameComponents = $subgraph->getDimensionValues();
         array_walk($nameComponents, function (Dimension\Model\ContentDimensionValue &$value) {
@@ -302,13 +302,13 @@ class InterDimensionalFallbackGraph
      */
     protected function initializeEdges($hideInactive = true)
     {
-        $subgraphs = $this->fallbackGraph->getSubgraphs();
-        usort($subgraphs, function (DimensionSpace\ContentSubgraph $subgraphA, DimensionSpace\ContentSubgraph $subgraphB) {
+        $subgraphs = $this->fallbackGraph->getWeightedDimensionSpacePoints();
+        usort($subgraphs, function (DimensionSpace\WeightedDimensionSpacePoint $subgraphA, DimensionSpace\WeightedDimensionSpacePoint $subgraphB) {
             return $subgraphB->getWeight() <=> $subgraphA->getWeight();
         });
         foreach ($subgraphs as $subgraph) {
             $fallback = $subgraph->getGeneralizations();
-            usort($fallback, function (DimensionSpace\ContentSubgraph $subgraphA, DimensionSpace\ContentSubgraph $subgraphB) {
+            usort($fallback, function (DimensionSpace\WeightedDimensionSpacePoint $subgraphA, DimensionSpace\WeightedDimensionSpacePoint $subgraphB) {
                 return $subgraphA->getWeight() <=> $subgraphB->getWeight();
             });
             $i = 1;
