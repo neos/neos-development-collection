@@ -77,7 +77,7 @@ class UserInitialsViewHelper extends AbstractViewHelper
             case 'initials':
                 return mb_substr($requestedUser->getName()->getFirstName(), 0, 1) . mb_substr($requestedUser->getName()->getLastName(), 0, 1);
             case 'fullFirstName':
-                return isset($you) ? $you : $requestedUser->getName()->getFirstName() . ' ' . mb_substr($requestedUser->getName()->getLastName(), 0, 1) . '.';
+                return isset($you) ? $you : trim($requestedUser->getName()->getFirstName() . ' ' . ltrim(mb_substr($requestedUser->getName()->getLastName(), 0, 1) . '.', '.'));
             case 'fullName':
                 return isset($you) ? $you : $requestedUser->getName()->getFullName();
         }
