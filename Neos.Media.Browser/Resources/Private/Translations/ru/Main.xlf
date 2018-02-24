@@ -311,7 +311,11 @@
           <source>{0} usages</source>
           <target xml:lang="ru">Используется {0} раз</target>
         </trans-unit>
-        <trans-unit id="relatedNodes[2]" approved="yes">
+        <trans-unit id="relatedNodes[2]">
+          <source>{0} usages</source>
+          <target xml:lang="ru" state="needs-translation">{0} usages</target>
+        </trans-unit>
+        <trans-unit id="relatedNodes[3]" approved="yes">
           <source>{0} usages</source>
           <target xml:lang="ru">Используется {0} раз</target>
         </trans-unit>
