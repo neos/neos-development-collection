@@ -106,15 +106,17 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
             }
 
             $dimensionValue = $detector->detectValue($contentDimension, $componentContext, $detectorOverrideOptions);
-            if ($dimensionValue && $resolutionMode === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT) {
-                $uriPathSegmentUsed = true;
-                $uriPathSegmentOffset++;
-            }
-            if (!$dimensionValue && $detectorOverrideOptions && isset($detectorOverrideOptions['allowEmptyValue']) && $detectorOverrideOptions['allowEmptyValue']) {
-                $dimensionValue = $contentDimension->getDefaultValue();
-            }
             if ($dimensionValue) {
                 $coordinates[$rawDimensionIdentifier] = (string)$dimensionValue;
+                if ($resolutionMode === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT) {
+                    $uriPathSegmentUsed = true;
+                    $uriPathSegmentOffset++;
+                }
+            } else {
+                $allowEmptyValue = $detectorOverrideOptions['allowEmptyValue'] ?? false;
+                if ($allowEmptyValue || $resolutionMode === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT && $path === '/') {
+                    $coordinates[$rawDimensionIdentifier] = (string) $contentDimension->getDefaultValue();
+                }
             }
         }
 
