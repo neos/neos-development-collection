@@ -195,6 +195,10 @@
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
           <target xml:lang="cs" state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} nodes.</target>
         </trans-unit>
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[3]">
+          <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
+          <target xml:lang="cs" state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} nodes.</target>
+        </trans-unit>
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved">
         <source>The workspace "{0}" has been removed.</source>
@@ -930,6 +934,10 @@
           <target xml:lang="cs" state="needs-translation">{0} usages</target>
         </trans-unit>
         <trans-unit id="media.relatedNodes[2]">
+          <source>{0} usages</source>
+          <target xml:lang="cs" state="needs-translation">{0} usages</target>
+        </trans-unit>
+        <trans-unit id="media.relatedNodes[3]">
           <source>{0} usages</source>
           <target xml:lang="cs" state="needs-translation">{0} usages</target>
         </trans-unit>
