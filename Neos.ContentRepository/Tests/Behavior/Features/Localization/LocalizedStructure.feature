@@ -7,8 +7,8 @@ Feature: Localized structure
 
   Background:
     Given I have the following content dimensions:
-      | Identifier | Default | Presets                                      |
-      | language   | mul     | mul=mul_ZZ; en=en_US,mul_ZZ; de=de_DE,mul_ZZ |
+      | Identifier | Default | Values               | Generalizations              |
+      | language   | mul_ZZ  | en_US, de_DE, mul_ZZ | en_US->mul_ZZ, de_DE->mul_ZZ |
     And the command "CreateRootWorkspace" is executed with payload:
       | Key                      | Value                                | Type |
       | workspaceName            | live                                 |      |

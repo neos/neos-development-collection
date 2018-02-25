@@ -5,8 +5,9 @@ Feature: Matching most specific language
 
   Background:
     Given I have the following content dimensions:
-      | Identifier | Default | Presets                                                                                                |
-      | language   | mul     | mul=mul_ZZ; en=en_ZZ,mul_ZZ; en_US=en_US,en_ZZ,mul_ZZ; en_UK=en_UK,en_ZZ,mul_ZZ; de=de_DE,de_ZZ,mul_ZZ |
+      | Identifier | Default | Values                                    | Generalizations                                                                 |
+      | language   | mul_ZZ  | mul_ZZ, en_ZZ, en_US, en_UK, de_DE, de_ZZ | en_ZZ->mul_ZZ, en_US->en_ZZ->mul_ZZ, en_UK->en_ZZ->mul_ZZ, de_DE->de_ZZ->mul_ZZ |
+
     And the command "CreateRootWorkspace" is executed with payload:
       | Key                      | Value                                | Type |
       | workspaceName            | live                                 |      |
