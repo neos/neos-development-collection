@@ -57,6 +57,7 @@ final class ContentQuery implements \JsonSerializable, CacheAwareInterface
      * @param WorkspaceName $workspaceName
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param NodeAggregateIdentifier $siteIdentifier
+     * @internal -> use the builder methods instead!
      */
     public function __construct(NodeAggregateIdentifier $nodeAggregateIdentifier, WorkspaceName $workspaceName, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateIdentifier $siteIdentifier)
     {

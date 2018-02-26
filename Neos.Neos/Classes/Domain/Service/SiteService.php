@@ -33,7 +33,7 @@ class SiteService
     /**
      * This is the node path of the root for all sites in neos.
      */
-    const SITES_ROOT_PATH = '/sites';
+    const SITES_ROOT_PATH = '';
 
     /**
      * @Flow\Inject
