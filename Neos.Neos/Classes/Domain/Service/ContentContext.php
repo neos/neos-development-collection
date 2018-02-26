@@ -13,6 +13,7 @@ namespace Neos\Neos\Domain\Service;
 
 use Neos\ContentRepository\Domain\Context\Parameters\ContextParameters;
 use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Exception;
@@ -20,7 +21,6 @@ use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\UserInterfaceMode;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Service\Context;
-use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\Neos\Domain\Projection\Site\Site;
 
 /**
@@ -70,15 +70,30 @@ class ContentContext extends Context
      * @param boolean $invisibleContentShown If invisible content should be returned in query results
      * @param boolean $removedContentShown If removed content should be returned in query results
      * @param boolean $inaccessibleContentShown If inaccessible content should be returned in query results
+     * @param NodeIdentifier $rootNodeIdentifier
      * @param Site $currentSite The current Site object
      * @param Domain $currentDomain The current Domain object
      * @param ContentSubgraphInterface|null $contentSubgraph
      * @param ContextParameters|null $contextParameters
      * @see ContextFactoryInterface
      */
-    public function __construct($workspaceName, \DateTimeInterface $currentDateTime, array $dimensions, array $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown, Site $currentSite = null, Domain $currentDomain = null, ContentSubgraphInterface $contentSubgraph = null, ContextParameters $contextParameters = null)
-    {
-        parent::__construct($workspaceName, $currentDateTime, $dimensions, $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown, $contentSubgraph, $contextParameters);
+    public function __construct(
+        $workspaceName,
+        \DateTimeInterface $currentDateTime,
+        array $dimensions,
+        array $targetDimensions,
+        $invisibleContentShown,
+        $removedContentShown,
+        $inaccessibleContentShown,
+        NodeIdentifier $rootNodeIdentifier,
+        ContentSubgraphInterface $contentSubgraph = null,
+        ContextParameters $contextParameters = null,
+        Site $currentSite = null,
+        Domain $currentDomain = null
+    ) {
+        parent::__construct($workspaceName, $currentDateTime, $dimensions, $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown, $rootNodeIdentifier,
+            $contentSubgraph,
+            $contextParameters);
         $this->currentSite = $currentSite;
         $this->currentDomain = $currentDomain;
         $this->targetDimensions = $targetDimensions;
@@ -116,9 +131,11 @@ class ContentContext extends Context
             $siteNodePath = $this->currentSite->nodeName;
             $this->currentSiteNode = $this->getNode($siteNodePath);
             if (!($this->currentSiteNode instanceof NodeInterface)) {
-                $this->systemLogger->log(sprintf('Warning: %s::getCurrentSiteNode() couldn\'t load the site node for path "%s" in workspace "%s". This is probably due to a missing baseworkspace for the workspace of the current user.', __CLASS__, $siteNodePath, $this->workspaceName), LOG_WARNING);
+                $this->systemLogger->log(sprintf('Warning: %s::getCurrentSiteNode() couldn\'t load the site node for path "%s" in workspace "%s". This is probably due to a missing baseworkspace for the workspace of the current user.',
+                    __CLASS__, $siteNodePath, $this->workspaceName), LOG_WARNING);
             }
         }
+
         return $this->currentSiteNode;
     }
 

@@ -13,6 +13,7 @@ namespace Neos\Neos\Domain\Context\Content;
  */
 
 use Neos\Cache\CacheAwareInterface;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
@@ -28,6 +29,7 @@ use Neos\Neos\Domain\Context\Content\Exception\InvalidContentQuerySerializationE
  *  in site $siteIdentifier
  *  in dimensions $dimensionSpacePoint
  *  in workspace $workspaceName
+ *  belonging to the graph segment below $rootNodeIdentifier
  */
 final class ContentQuery implements \JsonSerializable, CacheAwareInterface
 {
@@ -51,20 +53,32 @@ final class ContentQuery implements \JsonSerializable, CacheAwareInterface
      */
     protected $siteIdentifier;
 
+    /**
+     * @var NodeIdentifier
+     */
+    protected $rootNodeIdentifier;
+
 
     /**
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param WorkspaceName $workspaceName
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param NodeAggregateIdentifier $siteIdentifier
-     * @internal -> use the builder methods instead!
+     * @param NodeIdentifier $rootNodeIdentifier
+     * @internal
      */
-    public function __construct(NodeAggregateIdentifier $nodeAggregateIdentifier, WorkspaceName $workspaceName, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateIdentifier $siteIdentifier)
-    {
+    public function __construct(
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        WorkspaceName $workspaceName,
+        DimensionSpacePoint $dimensionSpacePoint,
+        NodeAggregateIdentifier $siteIdentifier,
+        NodeIdentifier $rootNodeIdentifier
+    ) {
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->workspaceName = $workspaceName;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
-        $this->siteIdentifier = $nodeAggregateIdentifier;
+        $this->siteIdentifier = $siteIdentifier;
+        $this->rootNodeIdentifier = $rootNodeIdentifier;
     }
 
     /**
@@ -90,12 +104,16 @@ final class ContentQuery implements \JsonSerializable, CacheAwareInterface
         if (!isset($rawComponents['siteIdentifier'])) {
             throw new InvalidContentQuerySerializationException('The given serialized content request "' . $jsonSerialization . '" does not contain a site identifier.', 1518868937);
         }
+        if (!isset($rawComponents['rootNodeIdentifier'])) {
+            throw new InvalidContentQuerySerializationException('The given serialized content request "' . $jsonSerialization . '" does not contain a root node identifier.', 1519659517);
+        }
 
         return new ContentQuery(
             new NodeAggregateIdentifier($rawComponents['nodeAggregateIdentifier']),
             new WorkspaceName($rawComponents['workspaceName']),
             new DimensionSpacePoint($rawComponents['dimensionSpacePoint']['coordinates']),
-            new NodeAggregateIdentifier($rawComponents['siteIdentifier'])
+            new NodeAggregateIdentifier($rawComponents['siteIdentifier']),
+            new NodeIdentifier($rawComponents['rootNodeIdentifier'])
         );
     }
 
@@ -133,6 +151,15 @@ final class ContentQuery implements \JsonSerializable, CacheAwareInterface
     }
 
     /**
+     * @return NodeIdentifier
+     */
+    public function getRootNodeIdentifier(): NodeIdentifier
+    {
+        return $this->rootNodeIdentifier;
+    }
+
+
+    /**
      * @return string
      */
     public function __toString(): string
@@ -149,7 +176,8 @@ final class ContentQuery implements \JsonSerializable, CacheAwareInterface
             'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
             'workspaceName' => $this->workspaceName,
             'dimensionSpacePoint' => $this->dimensionSpacePoint,
-            'siteIdentifier' => $this->siteIdentifier
+            'siteIdentifier' => $this->siteIdentifier,
+            'rootNodeIdentifier' => $this->rootNodeIdentifier
         ];
     }
 
@@ -158,6 +186,6 @@ final class ContentQuery implements \JsonSerializable, CacheAwareInterface
      */
     public function getCacheEntryIdentifier(): string
     {
-        return (string) $this;
+        return (string)$this;
     }
 }

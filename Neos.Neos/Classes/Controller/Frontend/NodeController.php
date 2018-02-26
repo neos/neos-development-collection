@@ -181,10 +181,11 @@ class NodeController extends ActionController
             $contextParameters->isInvisibleContentShown(),
             $contextParameters->isRemovedContentShown(),
             $contextParameters->isInaccessibleContentShown(),
-            $site,
-            null,
+            $contentQuery->getRootNodeIdentifier(),
             $subgraph,
-            $contextParameters
+            $contextParameters,
+            $site,
+            null
         );
     }
 
