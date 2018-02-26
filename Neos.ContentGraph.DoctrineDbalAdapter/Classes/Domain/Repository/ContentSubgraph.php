@@ -444,7 +444,9 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         if ($continueTraversal) {
             if ($direction->isUp()) {
                 $parentNode = $this->findParentNode($startNode->identifier);
-                $this->traverseHierarchy($parentNode, $direction, $nodeTypeConstraints, $callback, $context);
+                if ($parentNode) {
+                    $this->traverseHierarchy($parentNode, $direction, $nodeTypeConstraints, $callback, $context);
+                }
             } elseif ($direction->isDown()) {
                 foreach ($this->findChildNodes(
                     $startNode->identifier,
