@@ -393,7 +393,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
      * @param ContentRepository\Service\Context|null $context
      * @return ContentRepository\Model\NodeInterface
      */
-    public function findRootNode(ContentRepository\Service\Context $context = null): ContentRepository\Model\NodeInterface
+    public function findRootNode(ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
     {
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
             'SELECT n.* FROM neos_contentgraph_node n
