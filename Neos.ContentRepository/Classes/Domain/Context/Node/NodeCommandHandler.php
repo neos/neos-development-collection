@@ -9,6 +9,8 @@ use Neos\ContentRepository\Domain\Context\Importing\Command\StartImportingSessio
 use Neos\ContentRepository\Domain\Context\Importing\Event\ImportingSessionWasFinalized;
 use Neos\ContentRepository\Domain\Context\Importing\Event\ImportingSessionWasStarted;
 use Neos\ContentRepository\Domain\Context\Node\Command\AddNodeToAggregate;
+use Neos\ContentRepository\Domain\Context\Node\Command\HideNode;
+use Neos\ContentRepository\Domain\Context\Node\Command\ShowNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\TranslateNodeInAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateRootNode;
@@ -23,8 +25,10 @@ use Neos\ContentRepository\Domain\Context\Node\Event\NodeNameWasChanged;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodesInAggregateWereMoved;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasAddedToAggregate;
+use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasHidden;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasMoved;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeInAggregateWasTranslated;
+use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasShown;
 use Neos\ContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeType;
@@ -354,6 +358,52 @@ final class NodeCommandHandler
                 $command->getNodeIdentifier(),
                 $command->getPropertyName(),
                 $command->getValue()
+            );
+
+            $this->nodeEventPublisher->publish(
+                ContentStreamCommandHandler::getStreamNameForContentStream($contentStreamIdentifier),
+                $event
+            );
+        });
+    }
+
+    /**
+     * @param HideNode $command
+     */
+    public function handleHideNode(HideNode $command): void
+    {
+        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+            $contentStreamIdentifier = $command->getContentStreamIdentifier();
+
+            // Check if node exists
+            $this->getNode($contentStreamIdentifier, $command->getNodeIdentifier());
+
+            $event = new NodeWasHidden(
+                $contentStreamIdentifier,
+                $command->getNodeIdentifier()
+            );
+
+            $this->nodeEventPublisher->publish(
+                ContentStreamCommandHandler::getStreamNameForContentStream($contentStreamIdentifier),
+                $event
+            );
+        });
+    }
+
+    /**
+     * @param ShowNode $command
+     */
+    public function handleShowNode(ShowNode $command): void
+    {
+        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+            $contentStreamIdentifier = $command->getContentStreamIdentifier();
+
+            // Check if node exists
+            $this->getNode($contentStreamIdentifier, $command->getNodeIdentifier());
+
+            $event = new NodeWasShown(
+                $contentStreamIdentifier,
+                $command->getNodeIdentifier()
             );
 
             $this->nodeEventPublisher->publish(

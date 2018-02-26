@@ -276,6 +276,18 @@ trait EventSourcedTrait
                     \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
                     'handleSetNodeProperty'
                 ];
+            case 'HideNode':
+                return [
+                    \Neos\ContentRepository\Domain\Context\Node\Command\HideNode::class,
+                    \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
+                    'handleHideNode'
+                ];
+            case 'ShowNode':
+                return [
+                    \Neos\ContentRepository\Domain\Context\Node\Command\ShowNode::class,
+                    \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
+                    'handleShowNode'
+                ];
             case 'MoveNode':
                 return [
                     \Neos\ContentRepository\Domain\Context\Node\Command\MoveNode::class,
@@ -535,6 +547,16 @@ trait EventSourcedTrait
             $actualProperty = $properties[$row['Key']];
             Assert::assertEquals($row['Value'], $actualProperty, 'Node property ' . $row['Key'] . ' does not match. Expected: ' . $row['Value'] . '; Actual: ' . $actualProperty);
         }
+    }
+
+    /**
+     * @Then /^I expect the property "([^"]*)" of Node "([^"]*)" is "([^"]*)"$/
+     */
+    public function iExpectThePropertyOfNodeIs($propertyName, $nodeIdentifier, $value)
+    {
+        /** @var \Neos\ContentRepository\Domain\Model\Node $node */
+        $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
+        Assert::assertEquals($node->$propertyName, $value, 'Node property ' . $propertyName . ' does not match. Expected: ' . $value . '; Actual: ' . $node->$propertyName);
     }
 
     /**

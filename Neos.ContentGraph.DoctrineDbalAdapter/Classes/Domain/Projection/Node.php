@@ -59,6 +59,11 @@ class Node
     public $nodeTypeName;
 
     /**
+     * @var bool
+     */
+    public $hidden;
+
+    /**
      * Transient node name to store a node name after fetching a node with hierarchy (not always available)
      *
      * @var NodeName
@@ -75,6 +80,7 @@ class Node
      * @param string $dimensionSpacePointHash
      * @param array $properties
      * @param NodeTypeName $nodeTypeName
+     * @param bool $hidden
      * @param NodeName $nodeName
      */
     public function __construct(
@@ -85,6 +91,7 @@ class Node
         ?string $dimensionSpacePointHash,
         ?array $properties,
         NodeTypeName $nodeTypeName,
+        bool $hidden = false,
         NodeName $nodeName = null
     ) {
         $this->relationAnchorPoint = $relationAnchorPoint;
@@ -95,6 +102,7 @@ class Node
         $this->properties = $properties;
         $this->nodeTypeName = $nodeTypeName;
         $this->nodeName = $nodeName;
+        $this->hidden = $hidden;
     }
 
     /**
@@ -109,7 +117,8 @@ class Node
             'dimensionspacepoint' => json_encode($this->dimensionSpacePoint),
             'dimensionspacepointhash' => (string) $this->dimensionSpacePointHash,
             'properties' => json_encode($this->properties),
-            'nodetypename' => (string) $this->nodeTypeName
+            'nodetypename' => (string) $this->nodeTypeName,
+            'hidden' => (int)$this->hidden
         ]);
     }
 
@@ -127,6 +136,7 @@ class Node
             $databaseRow['dimensionspacepointhash'],
             json_decode($databaseRow['properties'], true),
             new NodeTypeName($databaseRow['nodetypename']),
+            (bool)$databaseRow['hidden'],
             isset($databaseRow['name']) ? new NodeName($databaseRow['name']) : null
         );
     }
