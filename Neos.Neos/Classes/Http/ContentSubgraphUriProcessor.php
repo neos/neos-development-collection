@@ -65,7 +65,7 @@ final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorIn
 
                 $contentDimensionValue = $contentDimension->getValue($contentQuery->getDimensionSpacePoint()->getCoordinates()[$rawContentDimensionIdentifier]);
                 $linkProcessor = $this->contentDimensionValueUriProcessorResolver->resolveContentDimensionLinkProcessor($contentDimension);
-                if ($resolutionMode->getMode() === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT) {
+                if ($resolutionMode !== null && $resolutionMode->getMode() === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT) {
                     if (!isset($resolutionOptions['offset'])) {
                         $resolutionOptions['offset'] = $uriPathSegmentOffset;
                     }
