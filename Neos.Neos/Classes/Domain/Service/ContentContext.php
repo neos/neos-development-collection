@@ -85,11 +85,11 @@ class ContentContext extends Context
         $invisibleContentShown,
         $removedContentShown,
         $inaccessibleContentShown,
+        Site $currentSite = null,
+        Domain $currentDomain = null,
         NodeIdentifier $rootNodeIdentifier,
         ContentSubgraphInterface $contentSubgraph = null,
-        ContextParameters $contextParameters = null,
-        Site $currentSite = null,
-        Domain $currentDomain = null
+        ContextParameters $contextParameters = null
     ) {
         parent::__construct($workspaceName, $currentDateTime, $dimensions, $targetDimensions, $invisibleContentShown, $removedContentShown, $inaccessibleContentShown, $rootNodeIdentifier,
             $contentSubgraph,
