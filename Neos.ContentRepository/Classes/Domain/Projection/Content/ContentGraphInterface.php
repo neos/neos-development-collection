@@ -41,9 +41,10 @@ interface ContentGraphInterface
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeIdentifier $nodeIdentifier
+     * @param Domain\Service\Context|null $context
      * @return NodeInterface|null
      */
-    public function findNodeByIdentifierInContentStream(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier): ?NodeInterface;
+    public function findNodeByIdentifierInContentStream(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier, Domain\Service\Context $context = null): ?NodeInterface;
 
     /**
      * @param Domain\ValueObject\NodeTypeName $nodeTypeName

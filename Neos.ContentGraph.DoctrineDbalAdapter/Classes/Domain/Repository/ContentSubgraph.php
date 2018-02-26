@@ -498,4 +498,14 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     {
         $this->inMemorySubgraph = [];
     }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'dimensionSpacePoint' => $this->dimensionSpacePoint
+        ];
+    }
+
+
 }

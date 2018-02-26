@@ -11,6 +11,11 @@ namespace Neos\ContentRepository\TypeConverter;
  * source code.
  */
 
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
+use Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Error;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -55,6 +60,18 @@ class NodeConverter extends AbstractTypeConverter
      * @var Context
      */
     protected $securityContext;
+
+    /**
+     * @Flow\Inject
+     * @var ContentGraph
+     */
+    protected $contentGraph;
+
+    /**
+     * @Flow\Inject
+     * @var WorkspaceFinder
+     */
+    protected $workspaceFinder;
 
     /**
      * @Flow\Inject
@@ -132,9 +149,29 @@ class NodeConverter extends AbstractTypeConverter
      * @param PropertyMappingConfigurationInterface $configuration
      * @return mixed An object or \Neos\Error\Messages\Error if the input format is not supported or could not be converted for other reasons
      * @throws NodeException
+     * @throws TypeConverterException
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Exception
+     * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
+     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
     public function convertFrom($source, $targetType = null, array $subProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
     {
+        if (is_string($source) && \mb_substr_count($source, '@') === 2) {
+            list($rawNodeIdentifier, $rawContentStreamIdentifier, $rawDimensionSpacePoint) = explode('@', $source);
+            $contentStreamIdentifier = new ContentStreamIdentifier($rawContentStreamIdentifier);
+            $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier);
+            $coordinates = json_decode($rawDimensionSpacePoint, true)['coordinates'] ?? [];
+            $dimensionSpacePoint = new DimensionSpacePoint($coordinates);
+
+            $context = $this->contextFactory->create($this->prepareContextProperties((string) $workspace->getWorkspaceName(), $configuration, $dimensionSpacePoint->toLegacyDimensionArray()));
+
+            return $this->contentGraph->findNodeByIdentifierInContentStream(
+                $contentStreamIdentifier,
+                new NodeIdentifier($rawNodeIdentifier),
+                $context
+            );
+        }
         if (is_string($source)) {
             $source = array('__contextNodePath' => $source);
         }
@@ -178,6 +215,7 @@ class NodeConverter extends AbstractTypeConverter
         unset($source['_nodeType']);
 
         $this->setNodeProperties($node, $node->getNodeType(), $source, $context, $configuration);
+
         return $node;
     }
 

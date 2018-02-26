@@ -17,7 +17,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * The interface to be implemented by content subgraphs
  */
-interface ContentSubgraphInterface
+interface ContentSubgraphInterface extends \JsonSerializable
 {
     /**
      * @param Domain\Model\NodeInterface $startNode
