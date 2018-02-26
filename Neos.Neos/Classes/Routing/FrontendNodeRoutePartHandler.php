@@ -172,6 +172,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     {
         $remainingUriPathSegments = explode('/', $requestPath);
 
+        $matchingNode = $site;
         $subgraph->traverseHierarchy($site, HierarchyTraversalDirection::down(), new NodeTypeConstraints(['includeNodeTypes' => ['Neos.Neos:Document']]), function (Node $node) use (&$remainingUriPathSegments, &$matchingNode, &$tagArray) {
             $currentPathSegment = array_shift($remainingUriPathSegments);
             $continueTraversal = false;
