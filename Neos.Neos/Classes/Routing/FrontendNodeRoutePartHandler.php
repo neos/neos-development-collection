@@ -221,7 +221,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     protected function fetchSiteFromRequest(ContentSubgraphInterface $contentSubgraph, string $requestPath): NodeInterface
     {
         /** @var Node $sites */
-        $sites = $this->contentGraph->findRootNodeByType(new NodeTypeName('Neos.Neos:Sites'), new NodeName('sites'));
+        $sites = $this->contentGraph->findRootNodeByType(new NodeTypeName('Neos.Neos:Sites'));
         /** @var Node $site */
         $domain = $this->domainRepository->findOneByActiveRequest();
         if ($domain) {
@@ -234,6 +234,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         }
 
         if (!$site) {
+
             throw new Exception\NoSiteException(sprintf('No site found for request path "%s"', $requestPath), 1346949693);
         }
 

@@ -327,6 +327,7 @@ final class NodeCommandHandler
             $event = new RootNodeWasCreated(
                 $contentStreamIdentifier,
                 $command->getNodeIdentifier(),
+                $command->getNodeTypeName(),
                 $command->getInitiatingUserIdentifier()
             );
 

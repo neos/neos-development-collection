@@ -5,6 +5,7 @@ namespace Neos\ContentRepository\Domain\Context\Node\Event;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\EventInterface;
 
@@ -24,6 +25,11 @@ final class RootNodeWasCreated implements EventInterface, CopyableAcrossContentS
     private $nodeIdentifier;
 
     /**
+     * @var NodeTypeName
+     */
+    protected $nodeTypeName;
+
+    /**
      * @var UserIdentifier
      */
     private $initiatingUserIdentifier;
@@ -32,15 +38,18 @@ final class RootNodeWasCreated implements EventInterface, CopyableAcrossContentS
      * RootNodeWasCreated constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier New root node identifier
+     * @param NodeIdentifier $nodeIdentifier
+     * @param NodeTypeName $nodeTypeName
      * @param UserIdentifier $initiatingUserIdentifier
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier, UserIdentifier $initiatingUserIdentifier)
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, UserIdentifier $initiatingUserIdentifier)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;
+        $this->nodeTypeName = $nodeTypeName;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
+
 
     /**
      * @return ContentStreamIdentifier
@@ -59,6 +68,17 @@ final class RootNodeWasCreated implements EventInterface, CopyableAcrossContentS
     }
 
     /**
+     * Getter for NodeTypeName
+     *
+     * @return NodeTypeName
+     */
+    public function getNodeTypeName(): NodeTypeName
+    {
+        return $this->nodeTypeName;
+    }
+
+
+    /**
      * @return UserIdentifier
      */
     public function getInitiatingUserIdentifier(): UserIdentifier
@@ -71,6 +91,7 @@ final class RootNodeWasCreated implements EventInterface, CopyableAcrossContentS
         return new RootNodeWasCreated(
             $targetContentStream,
             $this->nodeIdentifier,
+            $this->nodeTypeName,
             $this->initiatingUserIdentifier
         );
     }
