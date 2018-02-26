@@ -117,6 +117,36 @@ final class ContentQuery implements \JsonSerializable, CacheAwareInterface
         );
     }
 
+    /**
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @return ContentQuery
+     */
+    public function withNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ContentQuery
+    {
+        return new ContentQuery(
+            $nodeAggregateIdentifier,
+            $this->workspaceName,
+            $this->dimensionSpacePoint,
+            $this->siteIdentifier,
+            $this->rootNodeIdentifier
+        );
+    }
+
+    /**
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @return ContentQuery
+     */
+    public function withDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): ContentQuery
+    {
+        return new ContentQuery(
+            $this->nodeAggregateIdentifier,
+            $this->workspaceName,
+            $dimensionSpacePoint,
+            $this->siteIdentifier,
+            $this->rootNodeIdentifier
+        );
+    }
+
 
     /**
      * @return NodeAggregateIdentifier

@@ -111,19 +111,10 @@ class NodeUriImplementation extends AbstractFusionObject
      */
     public function evaluate()
     {
-        $node = $this->getNode();
-        /** @var ContentSubgraphInterface $subgraph */
-        $subgraph = $this->runtime->getCurrentContext()['subgraph'];
-        /** @var NodeInterface $site */
-        $site = $this->runtime->getCurrentContext()['site'];
-        /** @var WorkspaceName $workspaceName */
-        $workspaceName = $this->runtime->getCurrentContext()['workspaceName'];
-        $contentQuery = new ContentQuery(
-            $node->aggregateIdentifier,
-            $workspaceName,
-            $subgraph->getDimensionSpacePoint(),
-            $site->aggregateIdentifier
-        );
+        /** @var ContentQuery $contentQuery */
+        $contentQuery = $this->runtime->getCurrentContext()['contentQuery'];
+        $contentQuery = $contentQuery->withNodeAggregateIdentifier($this->getNode()->aggregateIdentifier);
+
         $uriBuilder = new UriBuilder();
         $uriBuilder->setRequest($this->runtime->getControllerContext()->getRequest());
         $uriBuilder

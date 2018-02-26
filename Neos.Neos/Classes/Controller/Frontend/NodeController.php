@@ -140,7 +140,7 @@ class NodeController extends ActionController
             'subgraph' => $subgraph,
             'site' => $siteNode,
             'contextParameters' => $contextParameters,
-            'workspaceName' => $workspace->getWorkspaceName()
+            'contentQuery' => $contentQuery
         ]);
 
         if ($inBackend) {
