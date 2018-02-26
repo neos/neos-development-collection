@@ -134,6 +134,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
                 )->fetch();
 
                 if (is_array($nodeRow)) {
+                    return $this->nodeFactory->mapNodeRowToNode($nodeRow, $context);
                     $this->inMemorySubgraph[(string) $nodeIdentifier] = $this->nodeFactory->mapNodeRowToNode($nodeRow, $context);
                 } else {
                     $this->inMemorySubgraph[(string) $nodeIdentifier] = null;
