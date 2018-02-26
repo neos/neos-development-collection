@@ -47,10 +47,9 @@ interface ContentGraphInterface
 
     /**
      * @param Domain\ValueObject\NodeTypeName $nodeTypeName
-     * @param Domain\ValueObject\NodeName $nodeNameToAssign
      * @return NodeInterface|null
      */
-    public function findRootNodeByType(Domain\ValueObject\NodeTypeName $nodeTypeName, Domain\ValueObject\NodeName $nodeNameToAssign): ?NodeInterface;
+    public function findRootNodeByType(Domain\ValueObject\NodeTypeName $nodeTypeName): ?NodeInterface;
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier

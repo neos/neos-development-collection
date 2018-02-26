@@ -120,22 +120,24 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      */
     protected function matchValue($requestPath)
     {
+        /** @var Node $matchingRootNode */
+        $matchingRootNode = null;
         /** @var Node $matchingNode */
         $matchingNode = null;
         /** @var Node $matchingSite */
         $matchingSite = null;
         $tagArray = [];
 
-        $this->securityContext->withoutAuthorizationChecks(function () use (&$matchingNode, &$matchingSite, $requestPath, &$tagArray) {
+        $this->securityContext->withoutAuthorizationChecks(function () use (&$matchingRootNode, &$matchingNode, &$matchingSite, $requestPath, &$tagArray) {
             // fetch subgraph explicitly without authorization checks because the security context isn't available yet
             // anyway and any Entity Privilege targeted on Workspace would fail at this point:
             $matchingSubgraph = $this->fetchSubgraphForParameters($requestPath);
 
+            /** @var Node $matchingRootNode */
+            $matchingRootNode = $this->contentGraph->findRootNodeByType(new NodeTypeName('Neos.Neos:Sites'));
+
             /** @var Node $matchingSite */
-            $matchingSite = $this->fetchSiteFromRequest($matchingSubgraph);
-            if (!$matchingSite) {
-                return;
-            }
+            $matchingSite = $this->fetchSiteFromRequest($matchingRootNode, $matchingSubgraph, $requestPath);
             $tagArray[] = (string) $matchingSite->identifier;
             if ($requestPath === '') {
                 $matchingNode = $matchingSite;
@@ -156,7 +158,8 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             $matchingNode->aggregateIdentifier,
             $this->getWorkspaceNameFromParameters(),
             $this->getDimensionSpacePointFromParameters(),
-            $matchingSite->aggregateIdentifier
+            $matchingSite->aggregateIdentifier,
+            $matchingRootNode->identifier
         ), RouteTags::createFromArray($tagArray));
     }
 
@@ -175,6 +178,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     {
         $remainingUriPathSegments = explode('/', $requestPath);
 
+        $matchingNode = $site;
         $subgraph->traverseHierarchy($site, HierarchyTraversalDirection::down(), new NodeTypeConstraints(false, ['Neos.Neos:Document']), function (Node $node) use (&$remainingUriPathSegments, &$matchingNode, &$tagArray) {
             $currentPathSegment = array_shift($remainingUriPathSegments);
             $continueTraversal = false;
@@ -216,22 +220,28 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     }
 
     /**
+     * @param NodeInterface $rootNode
      * @param ContentSubgraphInterface $contentSubgraph
+     * @param string $requestPath
      * @return NodeInterface
+     * @throws Exception\NoSiteException
      */
-    protected function fetchSiteFromRequest(ContentSubgraphInterface $contentSubgraph): ?NodeInterface
+    protected function fetchSiteFromRequest(NodeInterface $rootNode, ContentSubgraphInterface $contentSubgraph, string $requestPath): NodeInterface
     {
-        /** @var Node $sites */
-        $sites = $this->contentGraph->findRootNodeByType(new NodeTypeName('Neos.Neos:Sites'), new NodeName('sites'));
         /** @var Node $site */
+        /** @var Node $rootNode */
         $domain = $this->domainRepository->findOneByActiveRequest();
         if ($domain) {
             $site = $contentSubgraph->findChildNodeConnectedThroughEdgeName(
-                $sites->identifier,
+                $rootNode->identifier,
                 new NodeName($domain->getSite()->getNodeName())
             );
         } else {
-            $site = $contentSubgraph->findChildNodes($sites->identifier, null, 1)[0] ?? null;
+            $site = $contentSubgraph->findChildNodes($rootNode->identifier, null, 1)[0] ?? null;
+        }
+
+        if (!$site) {
+            throw new Exception\NoSiteException(sprintf('No site found for request path "%s"', $requestPath), 1346949693);
         }
 
         return $site;

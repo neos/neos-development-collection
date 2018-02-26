@@ -183,12 +183,11 @@ final class ContentGraph implements ContentGraphInterface
 
     /**
      * @param NodeTypeName $nodeTypeName
-     * @param Domain\ValueObject\NodeName $nodeNameToAssign
      * @return NodeInterface|null
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
      */
-    public function findRootNodeByType(Domain\ValueObject\NodeTypeName $nodeTypeName, Domain\ValueObject\NodeName $nodeNameToAssign): ?NodeInterface
+    public function findRootNodeByType(Domain\ValueObject\NodeTypeName $nodeTypeName): ?NodeInterface
     {
         $connection = $this->client->getConnection();
 
@@ -201,10 +200,15 @@ final class ContentGraph implements ContentGraphInterface
             ]
         )->fetch();
 
-        if ($nodeRow) {
-            $nodeRow['name'] = (string) $nodeNameToAssign;
-        }
-
         return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow, null) : null;
+    }
+
+    public function resetCache()
+    {
+        if (is_array($this->subgraphs)) {
+            foreach ($this->subgraphs as $subgraph) {
+                $subgraph->resetCache();
+            }
+        }
     }
 }

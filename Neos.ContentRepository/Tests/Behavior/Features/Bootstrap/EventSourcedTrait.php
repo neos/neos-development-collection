@@ -474,7 +474,7 @@ trait EventSourcedTrait
         foreach ($expectedProperties->getHash() as $row) {
             Assert::assertArrayHasKey($row['Key'], $properties, 'Property "' . $row['Key'] . '" not found');
             $actualProperty = $properties[$row['Key']];
-            Assert::assertEquals($row['Value'], $actualProperty, 'Node property ' . $row['Key'] . ' does not match.');
+            Assert::assertEquals($row['Value'], $actualProperty, 'Node property ' . $row['Key'] . ' does not match. Expected: ' . $row['Value'] . '; Actual: ' . $actualProperty);
         }
     }
 

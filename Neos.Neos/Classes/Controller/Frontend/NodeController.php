@@ -24,6 +24,7 @@ use Neos\Flow\Utility\Now;
 use Neos\Neos\Controller\Exception\NodeNotFoundException;
 use Neos\Neos\Controller\Exception\UnresolvableShortcutException;
 use Neos\Neos\Domain\Context\Content\ContentQuery;
+use Neos\Neos\Domain\Projection\Site\Site;
 use Neos\Neos\Domain\Projection\Site\SiteFinder;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
@@ -117,9 +118,13 @@ class NodeController extends ActionController
 
         $contextParameters = $this->createContextParameters($inBackend);
 
-        $contentContext = $this->createContentContext($contentQuery, $subgraph, $contextParameters);
+        $siteNode = $subgraph->findNodeByNodeAggregateIdentifier($contentQuery->getSiteIdentifier());
+        // TODO CACHE
+        $site = $this->siteFinder->findOneByNodeName(new NodeName($siteNode->getName()));
 
-        $site = $subgraph->findNodeByNodeAggregateIdentifier($contentQuery->getSiteIdentifier(), $contentContext);
+        $contentContext = $this->createContentContext($contentQuery, $subgraph, $contextParameters, $site);
+
+        $siteNode = $subgraph->findNodeByNodeAggregateIdentifier($contentQuery->getSiteIdentifier(), $contentContext);
         $node = $subgraph->findNodeByNodeAggregateIdentifier($contentQuery->getNodeAggregateIdentifier(), $contentContext);
         if (is_null($node)) {
             throw new NodeNotFoundException('The requested node does not exist or isn\'t accessible to the current user', 1430218623);
@@ -132,9 +137,9 @@ class NodeController extends ActionController
         $this->view->assignMultiple([
             'value' => $node,
             'subgraph' => $subgraph,
-            'site' => $site,
+            'site' => $siteNode,
             'contextParameters' => $contextParameters,
-            'workspaceName' => $workspace->getWorkspaceName()
+            'contentQuery' => $contentQuery
         ]);
 
         if ($inBackend) {
@@ -165,7 +170,7 @@ class NodeController extends ActionController
      * @param ContextParameters $contextParameters
      * @return ContentContext
      */
-    protected function createContentContext(ContentQuery $contentQuery, ContentSubgraphInterface $subgraph, ContextParameters $contextParameters): ContentContext
+    protected function createContentContext(ContentQuery $contentQuery, ContentSubgraphInterface $subgraph, ContextParameters $contextParameters, Site $site): ContentContext
     {
         return new ContentContext(
             (string)$contentQuery->getWorkspaceName(),
@@ -175,8 +180,9 @@ class NodeController extends ActionController
             $contextParameters->isInvisibleContentShown(),
             $contextParameters->isRemovedContentShown(),
             $contextParameters->isInaccessibleContentShown(),
+            $site,
             null,
-            null,
+            $contentQuery->getRootNodeIdentifier(),
             $subgraph,
             $contextParameters
         );

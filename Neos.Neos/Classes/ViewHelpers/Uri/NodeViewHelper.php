@@ -122,8 +122,18 @@ class NodeViewHelper extends AbstractViewHelper
      * @return string The rendered URI or NULL if no URI could be resolved for the given node
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      */
-    public function render($node = null, $format = null, $absolute = false, array $arguments = array(), $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = array(), $baseNodeName = 'documentNode', $resolveShortcuts = true, ContentSubgraphInterface $subgraph = null)
-    {
+    public function render(
+        $node = null,
+        $format = null,
+        $absolute = false,
+        array $arguments = array(),
+        $section = '',
+        $addQueryString = false,
+        array $argumentsToBeExcludedFromQueryString = array(),
+        $baseNodeName = 'documentNode',
+        $resolveShortcuts = true,
+        ContentSubgraphInterface $subgraph = null
+    ) {
         $baseNode = null;
         if (!$node instanceof NodeInterface) {
             $baseNode = $this->getContextVariable($baseNodeName);
@@ -144,22 +154,12 @@ class NodeViewHelper extends AbstractViewHelper
             $resolvedNode = $node;
         }
 
-
-        if (!$subgraph) {
-            $subgraph = $this->getContextVariable('subgraph');
+        /** @var ContentQuery $contentQuery */
+        $contentQuery = $this->getContextVariable('contentQuery');
+        $contentQuery = $contentQuery->withNodeAggregateIdentifier($resolvedNode->aggregateIdentifier);
+        if ($subgraph) {
+            $contentQuery->withDimensionSpacePoint($subgraph->getDimensionSpacePoint());
         }
-        /** @var NodeInterface $site */
-        $site = $this->getContextVariable('site');
-        /** @var WorkspaceName $workspaceName */
-        $workspaceName = $this->getContextVariable('workspaceName');
-
-        $contentQuery = new ContentQuery(
-            $resolvedNode->aggregateIdentifier,
-            $workspaceName,
-            $subgraph->getDimensionSpacePoint(),
-            $site->aggregateIdentifier
-        );
-
         $uriBuilder = new UriBuilder();
         $uriBuilder->setRequest($this->controllerContext->getRequest());
         $uriBuilder->setFormat($format)

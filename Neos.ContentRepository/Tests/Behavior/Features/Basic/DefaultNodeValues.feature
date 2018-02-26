@@ -16,6 +16,7 @@ Feature: Set Default Node Values on node creation
       | workspaceTitle           | Live                                 |      |
       | workspaceDescription     | The live workspace                   |      |
       | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000 |      |
+      | rootNodeTypeName         | Neos.ContentRepository:Root          |      |
 
   @fixtures
   Scenario: default node values for public properties

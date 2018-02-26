@@ -46,6 +46,7 @@ Feature: Reading of our Graph Projection
       | contentStreamIdentifier  | c75ae6a2-7254-4d42-a31b-a629e264069d |
       | nodeIdentifier           | 5387cb08-2aaf-44dc-a8a1-483497aa0a03 |
       | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000 |
+      | nodeTypeName             | Neos.ContentRepository:Root          |
     # Node /sites
     And the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:c2037dc4-a20d-11e7-ba09-b3eb6d631979" with payload:
       | Key                           | Value                                                                                                                                                 | Type |

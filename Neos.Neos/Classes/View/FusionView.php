@@ -16,12 +16,12 @@ use Neos\ContentRepository\Domain\Context\Dimension\ContentDimensionSourceInterf
 use Neos\ContentRepository\Domain\Context\Dimension\ContentDimensionValue;
 use Neos\ContentRepository\Domain\Context\Parameters\ContextParameters;
 use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
-use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Response;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Service;
 use Neos\Flow\Mvc\View\AbstractView;
+use Neos\Neos\Domain\Context\Content\ContentQuery;
 use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Exception;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -99,7 +99,7 @@ class FusionView extends AbstractView
             'documentNode' => $this->getClosestDocumentNode($currentNode) ?: $currentNode,
             'site' => $currentSite,
             'subgraph' => $this->getCurrentSubgraph(),
-            'workspaceName' => $this->getCurrentWorkspaceName(),
+            'contentQuery' => $this->getCurrentContentQuery(),
             'contextParameters' => $this->getCurrentContextParameters(),
             'editPreviewMode' => isset($this->variables['editPreviewMode']) ? $this->variables['editPreviewMode'] : null
         ]);
@@ -247,16 +247,16 @@ class FusionView extends AbstractView
     }
 
     /**
-     * @return WorkspaceName
+     * @return ContentQuery
      * @throws Exception
      */
-    protected function getCurrentWorkspaceName(): WorkspaceName
+    protected function getCurrentContentQuery(): ContentQuery
     {
-        $currentWorkspaceName = $this->variables['workspaceName'] ?? null;
-        if (!$currentWorkspaceName instanceof WorkspaceName) {
-            throw new Exception('FusionView needs a variable \'workspaceName\' set with a WorkspaceName object.', 1519167174);
+        $currentContentQuery = $this->variables['contentQuery'] ?? null;
+        if (!$currentContentQuery instanceof ContentQuery) {
+            throw new Exception('FusionView needs a variable \'contentQuery\' set with a ContentQuery object.', 1519167174);
         }
-        return $currentWorkspaceName;
+        return $currentContentQuery;
     }
 
     /**
@@ -265,11 +265,11 @@ class FusionView extends AbstractView
      */
     protected function getCurrentContextParameters(): ContextParameters
     {
-        $currentWorkspaceName = $this->variables['contextParameters'] ?? null;
-        if (!$currentWorkspaceName instanceof ContextParameters) {
+        $currentContextParameters = $this->variables['contextParameters'] ?? null;
+        if (!$currentContextParameters instanceof ContextParameters) {
             throw new Exception('FusionView needs a variable \'contextParameters\' set with a ContextParameters object.', 1519167300);
         }
-        return $currentWorkspaceName;
+        return $currentContextParameters;
     }
 
     /**

@@ -164,6 +164,7 @@ final class WorkspaceCommandHandler
             new CreateRootNode(
                 $contentStreamIdentifier,
                 $command->getRootNodeIdentifier(),
+                $command->getRootNodeTypeName(),
                 $command->getInitiatingUserIdentifier()
             )
         );

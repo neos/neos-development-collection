@@ -978,10 +978,11 @@ class Node implements NodeInterface, CacheAwareInterface
         $path = new Domain\ValueObject\NodePath($path);
         $node = $this;
         if ($path->isAbsolute()) {
-            $node = $this->context->getContentSubgraph()->findRootNode($this->context);
+            $node = $this->context->getRootNode();
         }
 
         foreach ($path->getParts() as $nodeName) {
+            // TODO: replace by CTE and make performant
             $node = $this->context->getContentSubgraph()->findChildNodeConnectedThroughEdgeName($node->identifier, $nodeName, $this->context);
             if (!$node) {
                 return null;

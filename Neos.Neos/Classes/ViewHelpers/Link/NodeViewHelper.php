@@ -179,20 +179,12 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             $resolvedNode = $node;
         }
 
-        if (!$subgraph) {
-            $subgraph = $this->getContextVariable('subgraph');
+        /** @var ContentQuery $contentQuery */
+        $contentQuery = $this->getContextVariable('contentQuery');
+        $contentQuery = $contentQuery->withNodeAggregateIdentifier($resolvedNode->aggregateIdentifier);
+        if ($subgraph) {
+            $contentQuery = $contentQuery->withDimensionSpacePoint($subgraph->getDimensionSpacePoint());
         }
-        /** @var NodeInterface $site */
-        $site = $this->getContextVariable('site');
-        /** @var WorkspaceName $workspaceName */
-        $workspaceName = $this->getContextVariable('workspaceName');
-
-        $contentQuery = new ContentQuery(
-            $resolvedNode->aggregateIdentifier,
-            $workspaceName,
-            $subgraph->getDimensionSpacePoint(),
-            $site->aggregateIdentifier
-        );
 
         $uriBuilder = new UriBuilder();
         $uriBuilder->setRequest($this->controllerContext->getRequest());

@@ -11,9 +11,7 @@ namespace Neos\Neos\Fusion;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
-use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Neos\Domain\Context\Content\ContentQuery;
@@ -120,18 +118,10 @@ class NodeUriImplementation extends AbstractFusionObject
      */
     public function evaluate()
     {
-        $node = $this->getNode();
-        $subgraph = $this->getSubgraph();
-        /** @var NodeInterface $site */
-        $site = $this->runtime->getCurrentContext()['site'];
-        /** @var WorkspaceName $workspaceName */
-        $workspaceName = $this->runtime->getCurrentContext()['workspaceName'];
-        $contentQuery = new ContentQuery(
-            $node->aggregateIdentifier,
-            $workspaceName,
-            $subgraph->getDimensionSpacePoint(),
-            $site->aggregateIdentifier
-        );
+        /** @var ContentQuery $contentQuery */
+        $contentQuery = $this->runtime->getCurrentContext()['contentQuery'];
+        $contentQuery = $contentQuery->withNodeAggregateIdentifier($this->getNode()->aggregateIdentifier);
+
         $uriBuilder = new UriBuilder();
         $uriBuilder->setRequest($this->runtime->getControllerContext()->getRequest());
         $uriBuilder

@@ -90,7 +90,7 @@ class ContentRepositoryExportService
     /**
      * @var NodeIdentifier
      */
-    protected $rootNodeIdentifier;
+    protected $sitesRootNodeIdentifier;
 
     /**
      * @var NodeAggregateIdentifier
@@ -135,7 +135,7 @@ class ContentRepositoryExportService
         $this->alreadyCreatedNodeAggregateIdentifiers = [];
 
         $this->contentStreamIdentifier = new ContentStreamIdentifier();
-        $this->rootNodeIdentifier = new NodeIdentifier();
+        $this->sitesRootNodeIdentifier = new NodeIdentifier();
         $this->nodeAggregateIdentifierForSitesNode = new NodeAggregateIdentifier();
 
         $this->eventPublisher->publish($this->contentStreamName(), new ContentStreamWasCreated(
@@ -153,6 +153,7 @@ class ContentRepositoryExportService
             ->from(NodeData::class, 'n')
             ->where('n.workspace = :workspace')
             ->andWhere('n.movedTo IS NULL OR n.removed = :removed')
+            ->andWhere('n.path NOT IN(\'/sites\', \'/\')')
             ->orderBy('n.parentPath', 'ASC')
             ->addOrderBy('n.index', 'ASC')
             ->setParameter('workspace', 'live')
@@ -179,10 +180,8 @@ class ContentRepositoryExportService
 
     protected function exportNodeData(NodeData $nodeData, DimensionSpacePoint $dimensionRestriction = null, &$nodeDatasToExportAtNextIteration)
     {
-        if ($nodeData->getPath() === '/') {
-            // the root node has already been created and does not need to be exported
-            return;
-        }
+
+        $nodePath = new NodePath($nodeData->getPath());
 
         $dimensionSpacePoint = DimensionSpacePoint::fromLegacyDimensionArray($nodeData->getDimensionValues());
         if ($dimensionRestriction !== null && $dimensionSpacePoint->getHash() !== $dimensionRestriction->getHash()) {
@@ -197,12 +196,9 @@ class ContentRepositoryExportService
             return;
         }
 
-        $nodePath = new NodePath($nodeData->getPath());
+
         $nodeAggregateIdentifier = new NodeAggregateIdentifier($nodeData->getIdentifier());
 
-        if ((string)$nodePath === '/sites') {
-            $this->nodeAggregateIdentifierForSitesNode = $nodeAggregateIdentifier;
-        }
 
 
         $excludedSet = $this->findOtherExistingDimensionSpacePointsForNodeData($nodeData);
@@ -289,13 +285,8 @@ class ContentRepositoryExportService
 
     private function findParentNodeIdentifier($parentPath, DimensionSpacePoint $dimensionSpacePoint): ?NodeIdentifier
     {
-        if ($parentPath === '/') {
-            return $this->rootNodeIdentifier;
-        }
-
-
-        if ($dimensionSpacePoint->getCoordinates()['language'] !== 'en_US') {
-            \Neos\Flow\var_dump('-------------');
+        if ($parentPath === '/sites') {
+            return $this->sitesRootNodeIdentifier;
         }
 
         while ($dimensionSpacePoint !== null) {
@@ -304,22 +295,11 @@ class ContentRepositoryExportService
             }
             $key = $parentPath . '__' . $dimensionSpacePoint->getHash();
             if (isset($this->nodeIdentifiers[$key])) {
-                if ($dimensionSpacePoint->getCoordinates()['language'] !== 'en_US') {
-                    \Neos\Flow\var_dump("FOUND");
-                }
                 return $this->nodeIdentifiers[$key];
             }
 
             $dimensionSpacePoint = $this->interDimensionalFallbackGraph->getPrimaryGeneralization($dimensionSpacePoint);
         }
-
-        // if we did not find a node at this point, we need to check if the parentPath is "/sites" --> as there is an error
-        // in the old CR implementation leading to the "/sites" node which might exist only in a single dimension
-        if ($parentPath === '/sites') {
-            $this->createSitesNodeForDimensionSpacePoint($dimensionSpacePoint);
-            return $this->findParentNodeIdentifier($parentPath, $dimensionSpacePoint);
-        }
-
 
         return null;
     }
@@ -332,7 +312,7 @@ class ContentRepositoryExportService
             $dimensionSpacePoint,
             new DimensionSpacePointSet([]), // TODO: I'd say it is OK to create too-many site nodes now; as it does not contain any properties
             new NodeIdentifier(),
-            $this->rootNodeIdentifier,
+            $this->sitesRootNodeIdentifier,
             new NodeName('sites'),
             [],
             new NodePath('/sites') // TODO: probably pass last path-part only?
@@ -388,9 +368,11 @@ class ContentRepositoryExportService
 
         $this->eventPublisher->publish($this->contentStreamName(), new RootNodeWasCreated(
             $this->contentStreamIdentifier,
-            $this->rootNodeIdentifier,
+            $this->sitesRootNodeIdentifier,
+            new NodeTypeName('Neos.Neos:Sites'),
             UserIdentifier::forSystemUser()
         ));
+
     }
 
     private function migrateSites()
@@ -407,7 +389,7 @@ class ContentRepositoryExportService
             $this->eventPublisher->publish('Neos.Neos:Site:' . $site->getNodeName(), new SiteWasCreated(
                 new \Neos\Neos\Domain\ValueObject\NodeName($site->getNodeName()),
                 new PackageKey($site->getSiteResourcesPackageKey()),
-                new NodeType('unstructured'), // TODO
+                new NodeType('Neos.Neos:Site'), // TODO
                 new \Neos\Neos\Domain\ValueObject\NodeName($site->getNodeName()),
                 new SiteActive(true)
             ));

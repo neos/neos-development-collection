@@ -399,13 +399,14 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
      * @param ContentRepository\Service\Context|null $context
      * @return ContentRepository\Model\NodeInterface
      */
-    public function findRootNode(ContentRepository\Service\Context $context = null): ContentRepository\Model\NodeInterface
+    public function findRootNode(ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
     {
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
             'SELECT n.* FROM neos_contentgraph_node n
  WHERE n.nodetypename = :nodeTypeName',
             [
-                'nodeTypeName' => 'Neos.ContentRepository:Root',
+                // TODO: NOT ALLOWED TO BE HARDCODED!!!
+                'nodeTypeName' => 'Neos.Neos:Sites',
             ]
         )->fetch();
 
@@ -491,5 +492,10 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
 
         $nodePath = array_reverse($nodePath);
         return new ContentRepository\ValueObject\NodePath('/' . implode('/', $nodePath));
+    }
+
+    public function resetCache()
+    {
+        $this->inMemorySubgraph = [];
     }
 }

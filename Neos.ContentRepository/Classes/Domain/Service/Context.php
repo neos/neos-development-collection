@@ -132,6 +132,11 @@ class Context
     protected $contentStreamIdentifier;
 
     /**
+     * @var Domain\ValueObject\NodeIdentifier
+     */
+    protected $rootNodeIdentifier;
+
+    /**
      * @var Domain\Projection\Content\ContentSubgraphInterface
      */
     protected $contentSubgraph;
@@ -166,6 +171,7 @@ class Context
      * @param boolean $inaccessibleContentShown If inaccessible content should be returned in query results
      * @param Domain\Projection\Content\ContentSubgraphInterface|null $contentSubgraph The content subgraph to fetch nodes from
      * @param Domain\Context\Parameters\ContextParameters|null $contextParameters
+     * @param Domain\ValueObject\NodeIdentifier $rootNodeIdentifier
      * @see ContextFactoryInterface
      */
     public function __construct(
@@ -176,6 +182,7 @@ class Context
         $invisibleContentShown,
         $removedContentShown,
         $inaccessibleContentShown,
+        Domain\ValueObject\NodeIdentifier $rootNodeIdentifier,
         Domain\Projection\Content\ContentSubgraphInterface $contentSubgraph = null,
         Domain\Context\Parameters\ContextParameters $contextParameters = null
     ) {
@@ -189,7 +196,8 @@ class Context
 
         $this->firstLevelNodeCache = new FirstLevelNodeCache();
         $this->dimensionSpacePoint = Domain\ValueObject\DimensionSpacePoint::fromLegacyDimensionArray($dimensions);
-
+        $this->rootNodeIdentifier = $rootNodeIdentifier;
+        
         $this->contentSubgraph = $contentSubgraph;
         $this->contextParameters = $contextParameters;
     }

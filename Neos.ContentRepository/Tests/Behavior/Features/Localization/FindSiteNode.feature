@@ -6,9 +6,9 @@ Feature: Find site node in non-default content dimension context
 
   Background:
     Given I have the following content dimensions:
-      | Identifier | Default | Presets                                                                                        |
-      | language   | en      | de=de; fr=fr; nl=nl; es=es; it=it                                                              |
-      | country    | int     | be=be,int; de=de,int; fr=fr,int lu=lu,int; nl=nl,int; ch=ch,int; gb=gb,int; us=us,int; int=int |
+      | Identifier | Default | Values                              | Generalizations                                                        |
+      | language   | en      | de, fr, nl, es, it                  | de, fr, nl, es, it                                                     |
+      | country    | int     | be, de, fr, lu, nl, ch, gb, us, int | be->int, de->int, fr->int, lu->int, nl->int, ch->int, gb->int, us->int |
 
     And I have the following nodes:
       | Identifier                           | Path                                    | Node Type                  | Properties                         | Dimension: language | Target dimension: language | Dimension: country | Target dimension: country |

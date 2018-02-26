@@ -7,8 +7,8 @@ Feature: Localized structure
 
   Background:
     Given I have the following content dimensions:
-      | Identifier | Default | Presets                                      |
-      | language   | mul     | mul=mul_ZZ; en=en_US,mul_ZZ; de=de_DE,mul_ZZ |
+      | Identifier | Default | Values               | Generalizations              |
+      | language   | mul_ZZ  | en_US, de_DE, mul_ZZ | en_US->mul_ZZ, de_DE->mul_ZZ |
     And the command "CreateRootWorkspace" is executed with payload:
       | Key                      | Value                                | Type |
       | workspaceName            | live                                 |      |
@@ -17,6 +17,7 @@ Feature: Localized structure
       | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000 |      |
       | contentStreamIdentifier  | c75ae6a2-7254-4d42-a31b-a629e264069d |      |
       | rootNodeIdentifier       | 5387cb08-2aaf-44dc-a8a1-483497aa0a03 |      |
+      | rootNodeTypeName         | Neos.ContentRepository:Root          |      |
     And I have the following nodes:
       | Path                              | Node Type                           | Properties           | Language |
       | /sites                            | unstructured                        |                      | mul_ZZ   |
