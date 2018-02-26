@@ -24,7 +24,7 @@ use Neos\Flow\Annotations as Flow;
 class DbalClient
 {
     /**
-     * @Flow\InjectConfiguration(path="persistence.backendOptions")
+     * @Flow\InjectConfiguration(package="Neos.Flow", path="persistence.backendOptions")
      * @var array
      */
     protected $backendOptions;
