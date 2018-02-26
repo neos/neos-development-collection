@@ -47,6 +47,12 @@ class GraphProjector implements ProjectorInterface
      */
     protected $client;
 
+    /**
+     * @Flow\Signal
+     */
+    public function emitProjectionUpdated() {
+    }
+
     public function reset(): void
     {
         $this->getDatabaseConnection()->transactional(function () {
@@ -454,6 +460,7 @@ class GraphProjector implements ProjectorInterface
     protected function transactional(callable $operations): void
     {
         $this->getDatabaseConnection()->transactional($operations);
+        $this->emitProjectionUpdated();
     }
 
     /**

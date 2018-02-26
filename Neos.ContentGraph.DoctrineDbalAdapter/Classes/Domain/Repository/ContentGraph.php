@@ -189,4 +189,13 @@ final class ContentGraph implements ContentGraphInterface
 
         return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow, null) : null;
     }
+
+    public function resetCache()
+    {
+        if (is_array($this->subgraphs)) {
+            foreach ($this->subgraphs as $subgraph) {
+                $subgraph->resetCache();
+            }
+        }
+    }
 }

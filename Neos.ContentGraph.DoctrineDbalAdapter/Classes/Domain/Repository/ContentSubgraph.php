@@ -134,7 +134,6 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
                 )->fetch();
 
                 if (is_array($nodeRow)) {
-                    return $this->nodeFactory->mapNodeRowToNode($nodeRow, $context);
                     $this->inMemorySubgraph[(string) $nodeIdentifier] = $this->nodeFactory->mapNodeRowToNode($nodeRow, $context);
                 } else {
                     $this->inMemorySubgraph[(string) $nodeIdentifier] = null;
@@ -486,5 +485,10 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
 
         $nodePath = array_reverse($nodePath);
         return new ContentRepository\ValueObject\NodePath('/' . implode('/', $nodePath));
+    }
+
+    public function resetCache()
+    {
+        $this->inMemorySubgraph = [];
     }
 }
