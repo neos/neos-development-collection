@@ -39,12 +39,6 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
 
     /**
      * @Flow\Inject
-     * @var ContentRepository\Repository\WorkspaceRepository
-     */
-    protected $workspaceRepository;
-
-    /**
-     * @Flow\Inject
      * @var ContentRepository\Service\NodeTypeConstraintService
      */
     protected $nodeTypeConstraintService;
