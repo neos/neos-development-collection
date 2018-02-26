@@ -106,7 +106,7 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
             || $dimensionSpacePoint->equals($this->getSubgraph()->getDimensionSpacePoint()) // always include the current variant
             // include all direct variants in the dimension we're limited to unless their values in that dimension are missing in the specified list
             || $dimensionSpacePoint->isDirectVariantInDimension($this->getSubgraph()->getDimensionSpacePoint(), $this->getContentDimensionIdentifierToLimitTo())
-            && (empty($this->getValuesToRestrictTo()) || in_array($dimensionSpacePoint->getCoordinates()[(string)$this->getContentDimensionIdentifierToLimitTo()], $this->getValuesToRestrictTo()));
+            && (empty($this->getValuesToRestrictTo()) || in_array($dimensionSpacePoint->getCoordinate($this->getContentDimensionIdentifierToLimitTo()), $this->getValuesToRestrictTo()));
     }
 
     /**
@@ -123,7 +123,7 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
         $generalizations = $this->interDimensionalVariationGraph->getWeightedGeneralizations($dimensionSpacePoint);
         ksort($generalizations);
         foreach ($generalizations as $generalization) {
-            if ($generalization->getCoordinates()[(string)$contentDimensionIdentifier] === $dimensionSpacePoint->getCoordinates()[(string)$contentDimensionIdentifier]) {
+            if ($generalization->getCoordinate($contentDimensionIdentifier) === $dimensionSpacePoint->getCoordinate($contentDimensionIdentifier)) {
                 $contentSubgraph = $this->contentGraph->getSubgraphByIdentifier($this->currentNode->getContentStreamIdentifier(), $generalization);
                 $variant = $contentSubgraph->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
                 if ($variant) {
@@ -162,10 +162,10 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
     protected function determineLabel(NodeInterface $variant = null, array $metadata): string
     {
         if ($this->getContentDimensionIdentifierToLimitTo()) {
-            return $metadata[(string)$this->getContentDimensionIdentifierToLimitTo()]['label'];
+            return $metadata[(string)$this->getContentDimensionIdentifierToLimitTo()]['label'] ?: '';
         } else {
             if ($variant) {
-                return $variant->getLabel();
+                return $variant->getLabel() ?: '';
             } else {
                 return array_reduce($metadata, function ($carry, $item) {
                     return $carry . (empty($carry) ? '' : '-') . $item['label'];
