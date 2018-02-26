@@ -84,15 +84,6 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     protected $nodeTypeManager;
 
 
-    const DIMENSION_REQUEST_PATH_MATCHER = '|^
-        (?<firstUriPart>[^/@]+)                    # the first part of the URI, before the first slash, may contain the encoded dimension preset
-        (?:                                        # start of non-capturing submatch for the remaining URL
-            /?                                     # a "/"; optional. it must also match en@user-admin
-            (?<remainingRequestPath>.*)            # the remaining request path
-        )?                                         # ... and this whole remaining URL is optional
-        $                                          # make sure we consume the full string
-    |x';
-
     /**
      * Extracts the node path from the request path.
      *
@@ -148,7 +139,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 
             /** @var Node $matchingSite */
             $matchingSite = $this->fetchSiteFromRequest($matchingRootNode, $matchingSubgraph, $requestPath);
-            $tagArray[] = (string) $matchingSite->identifier;
+            $tagArray[] = (string)$matchingSite->identifier;
             if ($requestPath === '') {
                 $matchingNode = $matchingSite;
 
@@ -164,7 +155,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             throw new Exception\NoHomepageException('Homepage could not be loaded. Probably you haven\'t imported a site yet', 1346950755);
         }
 
-        return new MatchResult((string) new ContentQuery(
+        return new MatchResult((string)new ContentQuery(
             $matchingNode->aggregateIdentifier,
             $this->getWorkspaceNameFromParameters(),
             $this->getDimensionSpacePointFromParameters(),
@@ -191,25 +182,26 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 
         $matchingNode = $site;
         $documentNodeTypes = $this->nodeTypeManager->getSubNodeTypes('Neos.Neos:Document', true, true);
-        $subgraph->traverseHierarchy($site, HierarchyTraversalDirection::down(), new NodeTypeConstraints(false, array_keys($documentNodeTypes)), function (Node $node) use (&$remainingUriPathSegments, &$matchingNode, &$tagArray) {
-            $currentPathSegment = reset($remainingUriPathSegments);
-            $pivot = \mb_strpos($currentPathSegment, '.');
-            if ($pivot !== false) {
-                $currentPathSegment = \mb_substr($currentPathSegment, 0, $pivot);
-            }
-            $continueTraversal = false;
-            if ($node->getProperty('uriPathSegment') === $currentPathSegment) {
-                $tagArray[] = (string) $node->identifier;
-                array_shift($remainingUriPathSegments);
-                if (empty($remainingUriPathSegments)) {
-                    $matchingNode = $node;
-                } else {
-                    $continueTraversal = true;
+        $subgraph->traverseHierarchy($site, HierarchyTraversalDirection::down(), new NodeTypeConstraints(false, array_keys($documentNodeTypes)),
+            function (Node $node) use (&$remainingUriPathSegments, &$matchingNode, &$tagArray) {
+                $currentPathSegment = reset($remainingUriPathSegments);
+                $pivot = \mb_strpos($currentPathSegment, '.');
+                if ($pivot !== false) {
+                    $currentPathSegment = \mb_substr($currentPathSegment, 0, $pivot);
                 }
-            }
+                $continueTraversal = false;
+                if ($node->getProperty('uriPathSegment') === $currentPathSegment) {
+                    $tagArray[] = (string)$node->identifier;
+                    array_shift($remainingUriPathSegments);
+                    if (empty($remainingUriPathSegments)) {
+                        $matchingNode = $node;
+                    } else {
+                        $continueTraversal = true;
+                    }
+                }
 
-            return $continueTraversal;
-        }, $site->getContext());
+                return $continueTraversal;
+            }, $site->getContext());
 
         if (!$matchingNode instanceof NodeInterface) {
             throw new Exception\NoSuchNodeException(sprintf('No node found on request path "%s"', $requestPath), 1346949857);
@@ -317,6 +309,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
                 $contentQuery = ContentQuery::fromJson($contentQuery);
             } catch (InvalidContentQuerySerializationException $exception) {
                 $this->exceptionLogger->logThrowable($exception);
+
                 return false;
             }
         }
@@ -374,14 +367,17 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         // To disallow showing a node actually hidden itself has to be ensured in matching
         // a request path, not in building one.
         $requestPathSegments = [];
-        $this->securityContext->withoutAuthorizationChecks(function() use($contentSubgraph, $node, &$requestPathSegments) {
-            $contentSubgraph->traverseHierarchy($node, HierarchyTraversalDirection::up(), new NodeTypeConstraints(false, ['Neos.Neos:Document']), function(NodeInterface $node) use(&$requestPathSegments) {
-                if (!$node->hasProperty('uriPathSegment')) {
-                    throw new Exception\MissingNodePropertyException(sprintf('Missing "uriPathSegment" property for node "%s". Nodes can be migrated with the "flow node:repair" command.', $node->getPath()), 1415020326);
-                }
-                $requestPathSegments[] = $node->getProperty('uriPathSegment');
-                return true;
-            });
+        $this->securityContext->withoutAuthorizationChecks(function () use ($contentSubgraph, $node, &$requestPathSegments) {
+            $contentSubgraph->traverseHierarchy($node, HierarchyTraversalDirection::up(), new NodeTypeConstraints(false, ['Neos.Neos:Document']),
+                function (NodeInterface $node) use (&$requestPathSegments) {
+                    if (!$node->hasProperty('uriPathSegment')) {
+                        throw new Exception\MissingNodePropertyException(sprintf('Missing "uriPathSegment" property for node "%s". Nodes can be migrated with the "flow node:repair" command.',
+                            $node->getPath()), 1415020326);
+                    }
+                    $requestPathSegments[] = $node->getProperty('uriPathSegment');
+
+                    return true;
+                });
         });
 
         return implode('/', array_reverse($requestPathSegments));
