@@ -16,6 +16,7 @@ use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\ContentRepository\Domain\Projection\Content\HierarchyTraversalDirection;
 use Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
@@ -76,6 +77,12 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      */
     protected $contentSubgraphUriProcessor;
 
+    /**
+     * @Flow\Inject
+     * @var NodeTypeManager
+     */
+    protected $nodeTypeManager;
+
 
     const DIMENSION_REQUEST_PATH_MATCHER = '|^
         (?<firstUriPart>[^/@]+)                    # the first part of the URI, before the first slash, may contain the encoded dimension preset
@@ -120,6 +127,9 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      */
     protected function matchValue($requestPath)
     {
+        if ($this->onlyMatchSiteNodes() && \mb_substr_count($requestPath, '/') > $this->getUriPathSegmentOffset()) {
+            return false;
+        }
         /** @var Node $matchingRootNode */
         $matchingRootNode = null;
         /** @var Node $matchingNode */
@@ -177,13 +187,20 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     protected function fetchNodeForRequestPath(ContentSubgraphInterface $subgraph, Node $site, string $requestPath, array &$tagArray): NodeInterface
     {
         $remainingUriPathSegments = explode('/', $requestPath);
+        $remainingUriPathSegments = array_slice($remainingUriPathSegments, $this->getUriPathSegmentOffset());
 
         $matchingNode = $site;
-        $subgraph->traverseHierarchy($site, HierarchyTraversalDirection::down(), new NodeTypeConstraints(false, ['Neos.Neos:Document']), function (Node $node) use (&$remainingUriPathSegments, &$matchingNode, &$tagArray) {
-            $currentPathSegment = array_shift($remainingUriPathSegments);
+        $documentNodeTypes = $this->nodeTypeManager->getSubNodeTypes('Neos.Neos:Document', true, true);
+        $subgraph->traverseHierarchy($site, HierarchyTraversalDirection::down(), new NodeTypeConstraints(false, array_keys($documentNodeTypes)), function (Node $node) use (&$remainingUriPathSegments, &$matchingNode, &$tagArray) {
+            $currentPathSegment = reset($remainingUriPathSegments);
+            $pivot = \mb_strpos($currentPathSegment, '.');
+            if ($pivot !== false) {
+                $currentPathSegment = \mb_substr($currentPathSegment, 0, $pivot);
+            }
             $continueTraversal = false;
             if ($node->getProperty('uriPathSegment') === $currentPathSegment) {
                 $tagArray[] = (string) $node->identifier;
+                array_shift($remainingUriPathSegments);
                 if (empty($remainingUriPathSegments)) {
                     $matchingNode = $node;
                 } else {
@@ -192,7 +209,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             }
 
             return $continueTraversal;
-        });
+        }, $site->getContext());
 
         if (!$matchingNode instanceof NodeInterface) {
             throw new Exception\NoSuchNodeException(sprintf('No node found on request path "%s"', $requestPath), 1346949857);
@@ -261,6 +278,14 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     protected function getDimensionSpacePointFromParameters(): DimensionSpacePoint
     {
         return $this->parameters->getValue('dimensionSpacePoint');
+    }
+
+    /**
+     * @return int
+     */
+    protected function getUriPathSegmentOffset(): int
+    {
+        return $this->parameters->getValue('uriPathSegmentOffset');
     }
 
     /**

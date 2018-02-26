@@ -55,7 +55,7 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
         $existingParameters = $componentContext->getParameter(RoutingComponent::class, 'parameters') ?? RouteParameters::createEmpty();
         $parameters = $existingParameters
             ->withParameter('dimensionSpacePoint', $this->detectDimensionSpacePoint($componentContext, $uriPathSegmentUsed))
-            ->withParameter('uriPathSegmentUsed', $uriPathSegmentUsed)
+            ->withParameter('uriPathSegmentOffset', $uriPathSegmentUsed ? 1 : 0)
             ->withParameter('workspaceName', $this->detectWorkspaceName($componentContext) ?: WorkspaceName::forLive());
 
         $componentContext->setParameter(RoutingComponent::class, 'parameters', $parameters);
