@@ -28,6 +28,7 @@ use Neos\Neos\Domain\Projection\Site\Site;
 use Neos\Neos\Domain\Projection\Site\SiteFinder;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
+use Neos\Neos\Domain\ValueObject\NodeName;
 use Neos\Neos\View\FusionView;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 

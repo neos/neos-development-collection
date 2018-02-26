@@ -350,7 +350,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         // a request path, not in building one.
         $requestPathSegments = [];
         $this->securityContext->withoutAuthorizationChecks(function() use($contentSubgraph, $node, &$requestPathSegments) {
-            $contentSubgraph->traverseHierarchy($node, HierarchyTraversalDirection::up(), new NodeTypeConstraints(false, ['Neos.Neos:Document']), function(NodeInterface $node) {
+            $contentSubgraph->traverseHierarchy($node, HierarchyTraversalDirection::up(), new NodeTypeConstraints(false, ['Neos.Neos:Document']), function(NodeInterface $node) use(&$requestPathSegments) {
                 if (!$node->hasProperty('uriPathSegment')) {
                     throw new Exception\MissingNodePropertyException(sprintf('Missing "uriPathSegment" property for node "%s". Nodes can be migrated with the "flow node:repair" command.', $node->getPath()), 1415020326);
                 }
