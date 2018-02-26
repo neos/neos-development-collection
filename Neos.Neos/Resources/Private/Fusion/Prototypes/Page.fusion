@@ -200,6 +200,7 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 	@cache {
 		mode = 'cached'
 		entryIdentifier {
+			dimensionSpacePoint = ${subgraph.dimensionSpacePoint}
 			documentNode = ${node}
 		}
 		entryTags {

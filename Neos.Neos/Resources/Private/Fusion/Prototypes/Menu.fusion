@@ -27,6 +27,7 @@ prototype(Neos.Neos:Menu) < prototype(Neos.Fusion:Template) {
 	@cache {
 		mode = 'cached'
 		entryIdentifier {
+			dimensionSpacePoint = ${subgraph.dimensionSpacePoint}
 			documentNode = ${documentNode}
 		}
 		entryTags {
