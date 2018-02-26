@@ -76,7 +76,7 @@ class GraphProjector implements ProjectorInterface
             null,
             null,
             [],
-            new NodeTypeName('Neos.ContentRepository:Root')
+            $event->getNodeTypeName()
         );
 
         $this->transactional(function () use ($node) {
@@ -166,8 +166,9 @@ class GraphProjector implements ProjectorInterface
         if (!empty($missingParentRelations)) {
             // add yet missing parent relations
             $designatedParentNode = $this->projectionContentGraph->getNode($parentNodeIdentifier, $contentStreamIdentifier);
+            $parentIsRootNode = count($this->projectionContentGraph->findInboundHierarchyRelationsForNode($designatedParentNode->relationAnchorPoint, $contentStreamIdentifier)) === 0;
             foreach ($missingParentRelations as $dimensionSpacePoint) {
-                if ((string) $designatedParentNode->nodeTypeName === 'Neos.ContentRepository:Root') {
+                if ($parentIsRootNode) {
                     $parentNode = $designatedParentNode;
                 } else {
                     $parentNode = $this->projectionContentGraph->getNodeInAggregate(

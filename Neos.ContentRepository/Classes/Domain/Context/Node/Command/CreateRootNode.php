@@ -4,6 +4,7 @@ namespace Neos\ContentRepository\Domain\Context\Node\Command;
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\UserIdentifier;
 
 /**
@@ -24,6 +25,11 @@ final class CreateRootNode
     private $nodeIdentifier;
 
     /**
+     * @var NodeTypeName
+     */
+    protected $nodeTypeName;
+
+    /**
      * @var UserIdentifier
      */
     private $initiatingUserIdentifier;
@@ -32,15 +38,18 @@ final class CreateRootNode
      * CreateRootNode constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier New node identifier
+     * @param NodeIdentifier $nodeIdentifier
+     * @param NodeTypeName $nodeTypeName
      * @param UserIdentifier $initiatingUserIdentifier
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier, UserIdentifier $initiatingUserIdentifier)
+    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, UserIdentifier $initiatingUserIdentifier)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;
+        $this->nodeTypeName = $nodeTypeName;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
+
 
     /**
      * @return ContentStreamIdentifier
@@ -56,6 +65,16 @@ final class CreateRootNode
     public function getNodeIdentifier(): NodeIdentifier
     {
         return $this->nodeIdentifier;
+    }
+
+    /**
+     * Getter for NodeTypeName
+     *
+     * @return NodeTypeName
+     */
+    public function getNodeTypeName(): NodeTypeName
+    {
+        return $this->nodeTypeName;
     }
 
     /**

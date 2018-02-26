@@ -172,6 +172,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     {
         $remainingUriPathSegments = explode('/', $requestPath);
 
+        $matchingNode = $site;
         $subgraph->traverseHierarchy($site, HierarchyTraversalDirection::down(), new NodeTypeConstraints(['includeNodeTypes' => ['Neos.Neos:Document']]), function (Node $node) use (&$remainingUriPathSegments, &$matchingNode, &$tagArray) {
             $currentPathSegment = array_shift($remainingUriPathSegments);
             $continueTraversal = false;
@@ -221,7 +222,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     protected function fetchSiteFromRequest(ContentSubgraphInterface $contentSubgraph, string $requestPath): NodeInterface
     {
         /** @var Node $sites */
-        $sites = $this->contentGraph->findRootNodeByType(new NodeTypeName('Neos.Neos:Sites'), new NodeName('sites'));
+        $sites = $this->contentGraph->findRootNodeByType(new NodeTypeName('Neos.Neos:Sites'));
         /** @var Node $site */
         $domain = $this->domainRepository->findOneByActiveRequest();
         if ($domain) {
@@ -234,6 +235,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         }
 
         if (!$site) {
+
             throw new Exception\NoSiteException(sprintf('No site found for request path "%s"', $requestPath), 1346949693);
         }
 

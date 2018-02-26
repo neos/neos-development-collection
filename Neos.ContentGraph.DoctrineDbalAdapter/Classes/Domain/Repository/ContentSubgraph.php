@@ -178,7 +178,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
                 $parameters['includeNodeTypes'] = $nodeTypeConstraints->getConstraints()['includeNodeTypes'];
                 $types['includeNodeTypes'] = Connection::PARAM_STR_ARRAY;
             }
-            if (count($nodeTypeConstraints->getConstraints()['excludeNodeTypes']) > 0) {
+            if (array_key_exists('excludeNodeTypes', $nodeTypeConstraints->getConstraints()) && count($nodeTypeConstraints->getConstraints()['excludeNodeTypes']) > 0) {
                 $query .= ' AND c.nodetypename NOT IN (:excludeNodeTypes)';
                 $parameters['excludeNodeTypes'] = $nodeTypeConstraints->getConstraints()['excludeNodeTypes'];
                 $types['excludeNodeTypes'] = Connection::PARAM_STR_ARRAY;
