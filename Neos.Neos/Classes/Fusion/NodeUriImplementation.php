@@ -11,7 +11,9 @@ namespace Neos\Neos\Fusion;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Neos\Domain\Context\Content\ContentQuery;
@@ -103,9 +105,9 @@ class NodeUriImplementation extends AbstractFusionObject
     }
 
     /**
-     * @return ContentSubgraphInterface
+     * @return ContentSubgraphInterface|null
      */
-    public function getSubgraph()
+    public function getSubgraph(): ?ContentSubgraphInterface
     {
         return $this->fusionValue('subgraph') ?: $this->runtime->getCurrentContext()['subgraph'];
     }
@@ -120,7 +122,19 @@ class NodeUriImplementation extends AbstractFusionObject
     {
         /** @var ContentQuery $contentQuery */
         $contentQuery = $this->runtime->getCurrentContext()['contentQuery'];
-        $contentQuery = $contentQuery->withNodeAggregateIdentifier($this->getNode()->aggregateIdentifier);
+        $node = $this->getNode();
+        if ($node instanceof NodeInterface) {
+            $contentQuery = $contentQuery->withNodeAggregateIdentifier($node->aggregateIdentifier);
+        } elseif ($node === '~') {
+            $contentQuery = $contentQuery->withNodeAggregateIdentifier($contentQuery->getSiteIdentifier());
+        } elseif (is_string($node) && substr($node, 0, 7) === 'node://') {
+            $contentQuery = $contentQuery->withNodeAggregateIdentifier(new NodeAggregateIdentifier(\mb_substr($node, 7)));
+        } else {
+            return '';
+        }
+        if ($this->getSubgraph()) {
+            $contentQuery = $contentQuery->withDimensionSpacePoint($this->getSubgraph()->getDimensionSpacePoint());
+        }
 
         $uriBuilder = new UriBuilder();
         $uriBuilder->setRequest($this->runtime->getControllerContext()->getRequest());

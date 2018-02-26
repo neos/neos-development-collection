@@ -12,13 +12,12 @@ namespace Neos\Neos\ViewHelpers\Link;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
-use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\Neos\Domain\Context\Content\ContentQuery;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
-use Neos\Neos\Service\LinkingService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
 
@@ -118,12 +117,6 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
 
     /**
      * @Flow\Inject
-     * @var LinkingService
-     */
-    protected $linkingService;
-
-    /**
-     * @Flow\Inject
      * @var NodeShortcutResolver
      */
     protected $nodeShortcutResolver;
@@ -152,36 +145,30 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
      * @param string $section The anchor to be added to the URI
      * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
      * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
-     * @param string $baseNodeName The name of the base node inside the Fusion context to use for the ContentContext or resolving relative paths
      * @param string $nodeVariableName The variable the node will be assigned to for the rendered child content
      * @param boolean $resolveShortcuts INTERNAL Parameter - if FALSE, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
      * @param ContentSubgraphInterface|null $subgraph
      * @return string The rendered link
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      */
-    public function render($node = null, $format = null, $absolute = false, array $arguments = array(), $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = array(), $baseNodeName = 'documentNode', $nodeVariableName = 'linkedNode', $resolveShortcuts = true, ContentSubgraphInterface $subgraph = null)
+    public function render($node = null, $format = null, $absolute = false, array $arguments = array(), $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = array(), $nodeVariableName = 'linkedNode', $resolveShortcuts = true, ContentSubgraphInterface $subgraph = null)
     {
-        $baseNode = null;
-        if (!$node instanceof NodeInterface) {
-            $baseNode = $this->getContextVariable($baseNodeName);
-            if (is_string($node) && substr($node, 0, 7) === 'node://') {
-                \Neos\Flow\var_dump($node);
-                exit();
-                #$node = $this->linkingService->convertUriToObject($node, $baseNode);
-            }
-        }
-
-        if ($resolveShortcuts) {
-            $resolvedNode = $this->nodeShortcutResolver->resolveShortcutTarget($node);
-        } else {
-            // this case is only relevant in extremely rare occasions in the Neos Backend, when we want to generate
-            // a link towards the *shortcut itself*, and not to its target.
-            $resolvedNode = $node;
-        }
-
         /** @var ContentQuery $contentQuery */
         $contentQuery = $this->getContextVariable('contentQuery');
-        $contentQuery = $contentQuery->withNodeAggregateIdentifier($resolvedNode->aggregateIdentifier);
+
+        if ($node instanceof NodeInterface) {
+            // the latter case is only relevant in extremely rare occasions in the Neos Backend, when we want to generate
+            // a link towards the *shortcut itself*, and not to its target.
+            $resolvedNode = $resolveShortcuts ? $resolvedNode = $this->nodeShortcutResolver->resolveShortcutTarget($node) : $node;
+            $contentQuery = $contentQuery->withNodeAggregateIdentifier($resolvedNode->aggregateIdentifier);
+        } elseif ($node === '~') {
+            $contentQuery = $contentQuery->withNodeAggregateIdentifier($contentQuery->getSiteIdentifier());
+        } elseif (is_string($node) && substr($node, 0, 7) === 'node://') {
+            $contentQuery = $contentQuery->withNodeAggregateIdentifier(new NodeAggregateIdentifier(\mb_substr($node, 7)));
+        } else {
+            // @todo add path support
+            return '';
+        }
         if ($subgraph) {
             $contentQuery = $contentQuery->withDimensionSpacePoint($subgraph->getDimensionSpacePoint());
         }
