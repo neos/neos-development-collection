@@ -90,4 +90,5 @@ root {
 prototype(Neos.Fusion:GlobalCacheIdentifiers) {
 	workspaceChain = ${Array.join(Array.keys(Neos.Workspace.getWorkspaceChain(subgraph)), ',')}
 	editPreviewMode = ${editPreviewMode}
+	dimensionSpacePoint = ${subgraph.dimensionSpacePoint}
 }

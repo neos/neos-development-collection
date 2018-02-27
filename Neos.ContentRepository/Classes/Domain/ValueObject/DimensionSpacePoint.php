@@ -81,6 +81,11 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
     }
 
     /**
+     * A variant VarA is a "Direct Variant in Dimension Dim" of another variant VarB, if VarA and VarB are sharing all dimension values except in "Dim",
+     * AND they have differing dimension values in "Dim". Thus, VarA and VarB only vary in the given "Dim".
+     *
+     * It does not say anything about how VarA and VarB relate (if it is specialization, lateral shift/translation or generalization).
+     *
      * @param DimensionSpacePoint $otherDimensionSpacePoint
      * @param ContentDimensionIdentifier $contentDimensionIdentifier
      * @return bool
