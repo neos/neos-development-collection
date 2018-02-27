@@ -54,12 +54,14 @@ class Version20180226141853 extends AbstractMigration
     {
         if (array_key_exists('presets', $dimensionConfiguration)) {
             $unconvertedDimensionPresets = [];
+            $dimensionValueConfiguration = [];
+            $allowedDimensionValues = [];
 
             // presets ordered by length of fallback chain
             $presets = array_filter($dimensionConfiguration['presets']);
-            uasort (
+            uasort(
                 $presets,
-                function($item1, $item2) {
+                function ($item1, $item2) {
                     return count($item1['values']) <=> count($item2['values']);
                 }
             );
@@ -70,17 +72,32 @@ class Version20180226141853 extends AbstractMigration
                 $valueConfiguration = $this->convertDimensionPresetConfigurationToDimensionValueConfiguration($presetConfiguration);
                 $path = implode('.specializations.', $values);
                 $parentPath = implode('.specializations.', array_slice($values,0, -1));
-                if ($parentPath && Arrays::getValueByPath($dimensionConfiguration, 'values.' . $parentPath) === null) {
+                if ($parentPath && Arrays::getValueByPath($dimensionValueConfiguration, $parentPath) === null) {
                     $unconvertedDimensionPresets[] = $presetName;
                 } else {
-                    $dimensionConfiguration = Arrays::setValueByPath($dimensionConfiguration, 'values.' . $path, $valueConfiguration);
+                    $dimensionValueConfiguration = Arrays::setValueByPath($dimensionValueConfiguration, $path, $valueConfiguration);
+                    $allowedDimensionValues[] = array_values($presetConfiguration['values'])[0];
                 }
             }
 
+            // set defaultValue
+            $defaultValue =  Arrays::getValueByPath($dimensionConfiguration,'default');
+            if ($defaultValue && in_array($defaultValue, $allowedDimensionValues)) {
+                $dimensionConfiguration = Arrays::setValueByPath($dimensionConfiguration, 'defaultValue', $defaultValue);
+                unset($dimensionConfiguration['default']);
+                unset($dimensionConfiguration['defaultPreset']);
+            } else {
+                throw new Exception(sprintf('The defaultValue %s for dimension %s was not found in the dimension-values.', $defaultValue, $dimensionName));
+            }
+
+            // set resolution mode to uri path segment
+            $dimensionConfiguration = Arrays::setValueByPath($dimensionConfiguration, 'resolution.mode', 'uriPathSegment');
+
             // delete presets or throw exception if unhandled dimension presets are detected#
             if ($unconvertedDimensionPresets) {
-                throw new Exception(sprintf('The content dimension preset-configurations %s could not be converted to dimension value configurations.', implode (', ', $unconvertedDimensionPresets)));
+                throw new Exception(sprintf('The preset-configurations %s of content dimension scould not be converted to dimension value configurations.', implode (', ', $unconvertedDimensionPresets), $dimensionName));
             } else {
+                $dimensionConfiguration = Arrays::setValueByPath($dimensionConfiguration, 'values', $dimensionValueConfiguration);
                 unset($dimensionConfiguration['presets']);
             }
         }
