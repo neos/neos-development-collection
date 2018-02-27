@@ -19,6 +19,7 @@ final class BasicContentDimensionResolutionMode implements \JsonSerializable
     const RESOLUTION_MODE_HOSTPREFIX = 'hostPrefix';
     const RESOLUTION_MODE_HOSTSUFFIX = 'hostSuffix';
     const RESOLUTION_MODE_URIPATHSEGMENT = 'uriPathSegment';
+    const RESOLUTION_MODE_NULL = 'null';
 
     /**
      * @var string
@@ -33,6 +34,7 @@ final class BasicContentDimensionResolutionMode implements \JsonSerializable
         if ($mode !== self::RESOLUTION_MODE_HOSTPREFIX
             && $mode !== self::RESOLUTION_MODE_HOSTSUFFIX
             && $mode !== self::RESOLUTION_MODE_URIPATHSEGMENT
+            && $mode !== self::RESOLUTION_MODE_NULL
         ) {
             throw new \InvalidArgumentException('Invalid basic content dimension resolution mode "' . $mode . '", must be one of the defined constants.', 1510778102);
         }

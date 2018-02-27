@@ -44,7 +44,7 @@ final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorIn
      * @param ContentQuery $contentQuery
      * @param bool $currentNodeIsSiteNode
      * @return UriConstraints
-     * @throws Exception\InvalidContentDimensionValueUriProcessorException
+     * @throws ContentDimensionLinking\Exception\InvalidContentDimensionValueUriProcessorException
      */
     public function resolveDimensionUriConstraints(ContentQuery $contentQuery, bool $currentNodeIsSiteNode = false): UriConstraints
     {
@@ -64,7 +64,7 @@ final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorIn
                     : null;
 
                 $contentDimensionValue = $contentDimension->getValue($contentQuery->getDimensionSpacePoint()->getCoordinates()[$rawContentDimensionIdentifier]);
-                $linkProcessor = $this->contentDimensionValueUriProcessorResolver->resolveContentDimensionLinkProcessor($contentDimension);
+                $linkProcessor = $this->contentDimensionValueUriProcessorResolver->resolveContentDimensionValueUriProcessor($contentDimension);
                 if ($resolutionMode !== null && $resolutionMode->getMode() === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT) {
                     if (!isset($resolutionOptions['offset'])) {
                         $resolutionOptions['offset'] = $uriPathSegmentOffset;

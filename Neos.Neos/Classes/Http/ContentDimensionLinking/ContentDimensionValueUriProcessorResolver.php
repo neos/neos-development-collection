@@ -14,7 +14,6 @@ namespace Neos\Neos\Http\ContentDimensionLinking;
 use Neos\ContentRepository\Domain\Context\Dimension;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Http\BasicContentDimensionResolutionMode;
-use Neos\Neos\Http\Exception\InvalidContentDimensionValueUriProcessorException;
 
 /**
  * The resolver for content dimension value uri processors
@@ -26,9 +25,9 @@ final class ContentDimensionValueUriProcessorResolver
     /**
      * @param Dimension\ContentDimension $contentDimension
      * @return ContentDimensionValueUriProcessorInterface
-     * @throws InvalidContentDimensionValueUriProcessorException
+     * @throws Exception\InvalidContentDimensionValueUriProcessorException
      */
-    public function resolveContentDimensionLinkProcessor(Dimension\ContentDimension $contentDimension): ContentDimensionValueUriProcessorInterface
+    public function resolveContentDimensionValueUriProcessor(Dimension\ContentDimension $contentDimension): ContentDimensionValueUriProcessorInterface
     {
         $linkProcessorClassName = $contentDimension->getConfigurationValue('resolution.linkProcessorComponent.implementationClassName');
         if ($linkProcessorClassName) {
@@ -36,7 +35,7 @@ final class ContentDimensionValueUriProcessorResolver
                 $linkProcessor = new $linkProcessorClassName();
 
                 if (!$linkProcessor instanceof ContentDimensionValueUriProcessorInterface) {
-                    throw new InvalidContentDimensionValueUriProcessorException(
+                    throw new Exception\InvalidContentDimensionValueUriProcessorException(
                         'Configured content dimension preset link processor "' . $linkProcessorClassName . '" does not implement ' . ContentDimensionValueUriProcessorInterface::class . '. Please check your dimension configuration.',
                         1510839085
                     );
@@ -44,7 +43,7 @@ final class ContentDimensionValueUriProcessorResolver
 
                 return $linkProcessor;
             } else {
-                throw new InvalidContentDimensionValueUriProcessorException(
+                throw new Exception\InvalidContentDimensionValueUriProcessorException(
                     'Could not resolve dimension preset detection component for dimension "' . $contentDimension->getIdentifier() . '". Class "' . $linkProcessorClassName . '" does not exist. Please check your dimension configuration.',
                     1510839089
                 );
@@ -52,7 +51,7 @@ final class ContentDimensionValueUriProcessorResolver
         }
 
         $rawResolutionMode = $contentDimension->getConfigurationValue('resolution.mode');
-        $resolutionMode = $rawResolutionMode ? new BasicContentDimensionResolutionMode($rawResolutionMode) : new BasicContentDimensionResolutionMode(BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT);
+        $resolutionMode = $rawResolutionMode ? new BasicContentDimensionResolutionMode($rawResolutionMode) : new BasicContentDimensionResolutionMode(BasicContentDimensionResolutionMode::RESOLUTION_MODE_NULL);
 
         switch ($resolutionMode->getMode()) {
             case BasicContentDimensionResolutionMode::RESOLUTION_MODE_HOSTPREFIX:
@@ -62,8 +61,10 @@ final class ContentDimensionValueUriProcessorResolver
                 return new HostSuffixContentDimensionValueUriProcessor();
                 break;
             case BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT:
-            default:
                 return new UriPathSegmentContentDimensionValueUriProcessor();
+            case BasicContentDimensionResolutionMode::RESOLUTION_MODE_NULL:
+            default:
+                return new NullContentDimensionValueUriProcessor();
         }
     }
 }

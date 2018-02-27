@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Neos\Http\ContentDimensionLinking\Exception;
+namespace Neos\Neos\Tests\Unit\Http\ContentDimensionLinking\Fixtures;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,12 +10,11 @@ namespace Neos\Neos\Http\ContentDimensionLinking\Exception;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-use Neos\Neos\Exception;
+use Neos\Flow\Annotations as Flow;
 
 /**
- * An exception to be thrown if an invalid content dimension value uri processor has been configured
+ * Dummy dimension value uri processor not implementing the required interface
  */
-class InvalidContentDimensionValueUriProcessorException extends Exception
+final class InvalidDummyDimensionValueUriProcessor
 {
 }
