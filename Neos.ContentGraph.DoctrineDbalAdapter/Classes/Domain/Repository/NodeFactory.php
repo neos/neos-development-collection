@@ -70,6 +70,7 @@ final class NodeFactory
                 $contentStreamIdentifier,
                 new ContentProjection\PropertyCollection(json_decode($nodeRow['properties'], true)),
                 new ContentRepository\ValueObject\NodeName($nodeRow['name']),
+                $nodeRow['hidden'],
                 $context
             );
 
@@ -88,6 +89,7 @@ final class NodeFactory
                 null,
                 null,
                 null,
+                false,
                 $context);
 
             return $node;
