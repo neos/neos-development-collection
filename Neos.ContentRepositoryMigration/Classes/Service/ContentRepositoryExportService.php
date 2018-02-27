@@ -45,6 +45,7 @@ use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\ValueObject\NodeType;
 use Neos\Neos\Domain\ValueObject\PackageKey;
 use Neos\Neos\Domain\ValueObject\SiteActive;
+use Neos\Utility\TypeHandling;
 
 
 /**
@@ -211,7 +212,7 @@ class ContentRepositoryExportService
             $nodeIdentifier,
             $parentNodeIdentifier,
             new NodeName($nodeData->getName()),
-            self::processPropertyValues($nodeData),
+            $this->processPropertyValues($nodeData),
             $nodePath // TODO: probably pass last path-part only?
         );
     }
@@ -267,21 +268,51 @@ class ContentRepositoryExportService
         return 'Neos.ContentRepository:ContentStream:' . $this->contentStreamIdentifier . ($suffix ? ':' . $suffix : '');
     }
 
-    private static function processPropertyValues(NodeData $nodeData)
+    private function processPropertyValues(NodeData $nodeData)
     {
         $properties = [];
         foreach ($nodeData->getProperties() as $propertyName => $propertyValue) {
             $type = $nodeData->getNodeType()->getPropertyType($propertyName);
 
-            if ($type !== 'string') {
+            if ($type == 'reference' || $type == 'references') {
+                \Neos\Flow\var_dump([$type, $propertyName, $propertyValue]);
                 // TODO: support other types than string
                 continue;
             }
+            $this->encodeObjectReference($propertyValue);
             $properties[$propertyName] = new PropertyValue($propertyValue, $type);
         }
+
         return $properties;
     }
 
+    protected function encodeObjectReference(&$value)
+    {
+        if (is_array($value)) {
+            foreach ($value as &$item) {
+                $this->encodeObjectReference($item);
+            }
+        }
+
+        if (!is_object($value)) {
+            return;
+        }
+
+        $propertyClassName = TypeHandling::getTypeForValue($value);
+
+        if ($value instanceof \DateTimeInterface) {
+            $value = [
+                'date' => $value->format('Y-m-d H:i:s.u'),
+                'timezone' => $value->format('e'),
+                'dateFormat' => 'Y-m-d H:i:s.u'
+            ];
+        } else {
+            $value = [
+                '__flow_object_type' => $propertyClassName,
+                '__identifier' => $this->persistenceManager->getIdentifierByObject($value)
+            ];
+        }
+    }
 
     private function findParentNodeIdentifier($parentPath, DimensionSpacePoint $dimensionSpacePoint): ?NodeIdentifier
     {
