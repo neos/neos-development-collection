@@ -19,6 +19,7 @@ use Neos\ContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasCr
 use Neos\ContentRepository\Domain\Context\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasAddedToAggregate;
+use Neos\ContentRepository\Domain\Context\Node\Event\ReferenceBetweenNodesWasCreated;
 use Neos\ContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
 use Neos\ContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Domain\Model\NodeData;
@@ -31,6 +32,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodePath;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\ContentRepository\Domain\ValueObject\PropertyName;
 use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\ContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceDescription;
@@ -212,6 +214,7 @@ class ContentRepositoryExportService
             $parentNodeIdentifier,
             new NodeName($nodeData->getName()),
             self::processPropertyValues($nodeData),
+            $this->processPropertyReferences($nodeData),
             $nodePath // TODO: probably pass last path-part only?
         );
     }
@@ -225,6 +228,7 @@ class ContentRepositoryExportService
         NodeIdentifier $parentNodeIdentifier,
         NodeName $nodeName,
         array $propertyValues,
+        array $propertyReferences,
         NodePath $nodePath
     )
     {
@@ -259,6 +263,19 @@ class ContentRepositoryExportService
             ));
         }
 
+        // publish reference edges
+        foreach ($propertyReferences as $propertyName => $references) {
+            foreach ($references as $reference) {
+                $this->eventPublisher->publish($this->contentStreamName('NodeAggregate:' . $nodeIdentifier), new ReferenceBetweenNodesWasCreated(
+                    $this->contentStreamIdentifier,
+                    $visibleDimensionSpacePoints,
+                    new NodeAggregateIdentifier($nodeIdentifier),
+                    new NodeAggregateIdentifier($reference),
+                    new PropertyName($propertyName)
+                ));
+            }
+        }
+
         $this->alreadyCreatedNodeAggregateIdentifiers[(string)$nodeAggregateIdentifier] = true;
     }
 
@@ -282,6 +299,21 @@ class ContentRepositoryExportService
         return $properties;
     }
 
+
+    private function processPropertyReferences(NodeData $nodeData)
+    {
+        $references = [];
+        foreach ($nodeData->getProperties() as $propertyName => $propertyValue) {
+            $type = $nodeData->getNodeType()->getPropertyType($propertyName);
+            if ($type == 'reference') {
+                $references[$propertyName][] = $propertyValue;
+            }
+            if ($type == 'references') {
+                $references[$propertyName] = $propertyValue;
+            }
+        }
+        return $references;
+    }
 
     private function findParentNodeIdentifier($parentPath, DimensionSpacePoint $dimensionSpacePoint): ?NodeIdentifier
     {

@@ -11,6 +11,7 @@ use Neos\ContentRepository\Domain\Context\Importing\Event\ImportingSessionWasSta
 use Neos\ContentRepository\Domain\Context\Node\Command\AddNodeToAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Command\HideNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\ShowNode;
+use Neos\ContentRepository\Domain\Context\Node\Command\CreateReferenceBetweenNodes;
 use Neos\ContentRepository\Domain\Context\Node\Command\TranslateNodeInAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateRootNode;
@@ -23,6 +24,7 @@ use Neos\ContentRepository\Domain\Context\Node\Command\SetNodeProperty;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeNameWasChanged;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
+use Neos\ContentRepository\Domain\Context\Node\Event\ReferenceBetweenNodesWasCreated;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodesInAggregateWereMoved;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasAddedToAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasHidden;
@@ -612,7 +614,42 @@ final class NodeCommandHandler
 
         return $events;
     }
+    
+    /**
+     * @param CreateReferenceBetweenNodes $command
+     * @throws Exception\NodeException
+     */
+    public function handleCreateReferenceBetweenNodes(CreateReferenceBetweenNodes $command): void
+    {
+        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+            $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
+            $events = $this->referenceBetweenNodesWasCreated($command);
+            $this->nodeEventPublisher->publishMany(
+                ContentStreamCommandHandler::getStreamNameForContentStream($contentStreamIdentifier),
+                $events
+            );
+        });
+    }
+
+    private function referenceBetweenNodesWasCreated(CreateReferenceBetweenNodes $command): array
+    {
+        $contentStreamIdentifier = $command->getContentStreamIdentifier();
+        $dimensionSpacePointSet = $command->getDimensionSpacePointSet();
+        $sourceNodeIdentifier = $command->getSourceNodeIdentifier();
+        $destinationNodeIdentifier = $command->getDestinationNodeIdentifier();
+        $propertyName = $command->getPropertyName();
+
+        $events[] = new ReferenceBetweenNodesWasCreated(
+            $contentStreamIdentifier,
+            $dimensionSpacePointSet,
+            $sourceNodeIdentifier,
+            $destinationNodeIdentifier,
+            $propertyName
+        );
+
+        return $events;
+    }
 
     /**
      * @param NodeTypeName $nodeTypeName
