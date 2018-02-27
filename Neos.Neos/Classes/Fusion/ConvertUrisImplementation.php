@@ -11,7 +11,10 @@ namespace Neos\Neos\Fusion;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\Routing\UriBuilder;
+use Neos\Neos\Domain\Context\Content\ContentQuery;
 use Neos\Neos\Domain\Exception;
 use Neos\Neos\Service\LinkingService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -83,24 +86,40 @@ class ConvertUrisImplementation extends AbstractFusionObject
             throw new Exception(sprintf('The current node must be an instance of NodeInterface, given: "%s".', gettype($text)), 1382624087);
         }
 
-        if ($node->getContext()->getWorkspace()->getName() !== 'live' && !($this->fusionValue('forceConversion'))) {
+        /** @var ContentQuery $contentQuery */
+        $contentQuery = $this->getRuntime()->getCurrentContext()['contentQuery'];
+        if (!$contentQuery) {
+            throw new Exception(sprintf('The request content query must be available in the current Fusion runtime.'), 1519740215);
+        }
+
+        if (!$contentQuery->getWorkspaceName()->isLive() && !($this->fusionValue('forceConversion'))) {
             return $text;
         }
 
-        $unresolvedUris = array();
-        $linkingService = $this->linkingService;
-        $controllerContext = $this->runtime->getControllerContext();
-
+        $unresolvedUris = [];
         $absolute = $this->fusionValue('absolute');
 
-        $processedContent = preg_replace_callback(LinkingService::PATTERN_SUPPORTED_URIS, function (array $matches) use ($node, $linkingService, $controllerContext, &$unresolvedUris, $absolute) {
+        $processedContent = preg_replace_callback(LinkingService::PATTERN_SUPPORTED_URIS, function (array $matches) use (&$unresolvedUris, $absolute, $contentQuery) {
             switch ($matches[1]) {
                 case 'node':
-                    $resolvedUri = $linkingService->resolveNodeUri($matches[0], $node, $controllerContext, $absolute);
+                    $contentQuery = $contentQuery->withNodeAggregateIdentifier(new NodeAggregateIdentifier($matches[2]));
+                    $uriBuilder = new UriBuilder();
+                    $uriBuilder->setRequest($this->runtime->getControllerContext()->getRequest());
+                    $uriBuilder->setCreateAbsoluteUri($absolute);
+
+                    $resolvedUri = $uriBuilder->uriFor(
+                        'show',
+                        [
+                            'node' => $contentQuery
+                        ],
+                        'Frontend\Node',
+                        'Neos.Neos'
+                    );
+
                     $this->runtime->addCacheTag('node', $matches[2]);
                     break;
                 case 'asset':
-                    $resolvedUri = $linkingService->resolveAssetUri($matches[0]);
+                    $resolvedUri = $this->linkingService->resolveAssetUri($matches[0]);
                     $this->runtime->addCacheTag('asset', $matches[2]);
                     break;
                 default:
