@@ -11,8 +11,10 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Node;
 use Neos\ContentRepository\Domain as ContentRepository;
 use Neos\ContentRepository\Domain\Projection\Content as ContentProjection;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Utility;
 use Neos\Flow\Annotations as Flow;
 
@@ -58,33 +60,36 @@ final class NodeFactory
             // FIXME Move to DimensionSpacePoint::fromJson
             $dimensionSpacePoint = new ContentRepository\ValueObject\DimensionSpacePoint(json_decode($nodeRow['dimensionspacepoint'], true)['coordinates']);
 
-            $node = new $className(null, $context);
-            $node->nodeType = $nodeType;
-            $node->aggregateIdentifier = new ContentRepository\ValueObject\NodeAggregateIdentifier($nodeRow['nodeaggregateidentifier']);
-            $node->identifier = new ContentRepository\ValueObject\NodeIdentifier($nodeRow['nodeidentifier']);
-            $node->properties = new ContentProjection\PropertyCollection(json_decode($nodeRow['properties'], true));
+            /* @var $node \Neos\ContentRepository\Domain\Model\NodeInterface */
+            $node = new $className(
+                new ContentRepository\ValueObject\NodeIdentifier($nodeRow['nodeidentifier']),
+                new NodeTypeName($nodeRow['nodetypename']),
+                $nodeType,
+                $dimensionSpacePoint,
+                new ContentRepository\ValueObject\NodeAggregateIdentifier($nodeRow['nodeaggregateidentifier']),
+                $contentStreamIdentifier,
+                new ContentProjection\PropertyCollection(json_decode($nodeRow['properties'], true)),
+                new ContentRepository\ValueObject\NodeName($nodeRow['name']),
+                $context
+            );
+
             if (!array_key_exists('name', $nodeRow)) {
                 throw new \Exception('The "name" property was not found in the $nodeRow; you need to include the "name" field in the SQL result.');
             }
-            $node->name = $nodeRow['name'];
-            // $node->index = (int)$nodeRow['position'];
-            $node->nodeTypeName = new ContentRepository\ValueObject\NodeTypeName($nodeRow['nodetypename']);
-            // TODO Add a projection from contentStreamIdentifier to workspaceName, join to the edges for less queries !!! Or just add the workspace name to the edge (more duplicated data).
-            // $node->workspace = $this->workspaceRepository->findByIdentifier($this->contentStreamIdentifier);
-            $node->dimensionSpacePoint = $dimensionSpacePoint;
-            $node->contentStreamIdentifier = $contentStreamIdentifier;
             return $node;
         } else {
-            // root node
-            $subgraphIdentifier = null;
-            $node = new $className(null, $context);
-            $node->nodeType = $nodeType;
-            $node->nodeTypeName = new ContentRepository\ValueObject\NodeTypeName($nodeRow['nodetypename']);
-            $node->identifier = new ContentRepository\ValueObject\NodeIdentifier($nodeRow['nodeidentifier']);
-            // TODO Add a projection from contentStreamIdentifier to workspaceName, join to the edges for less queries !!! Or just add the workspace name to the edge (more duplicated data).
-            // $node->workspace = $this->workspaceRepository->findByIdentifier($this->contentStreamIdentifier);
+            /* @var $node \Neos\ContentRepository\Domain\Model\NodeInterface */
+            $node = new $className(
+                new ContentRepository\ValueObject\NodeIdentifier($nodeRow['nodeidentifier']),
+                new NodeTypeName($nodeRow['nodetypename']),
+                $nodeType,
+                null,
+                null,
+                null,
+                null,
+                null,
+                $context);
 
-            $node->dimensionSpacePoint = null;
             return $node;
         }
     }

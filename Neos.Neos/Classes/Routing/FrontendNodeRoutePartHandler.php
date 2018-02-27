@@ -11,6 +11,7 @@ namespace Neos\Neos\Routing;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Context\Node\ReadOnlyNodeInterface;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
@@ -139,7 +140,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 
             /** @var Node $matchingSite */
             $matchingSite = $this->fetchSiteFromRequest($matchingRootNode, $matchingSubgraph, $requestPath);
-            $tagArray[] = (string)$matchingSite->identifier;
+            $tagArray[] = (string)$matchingSite->getNodeIdentifier();
             if ($requestPath === '') {
                 $matchingNode = $matchingSite;
 
@@ -156,11 +157,11 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         }
 
         return new MatchResult((string)new ContentQuery(
-            $matchingNode->aggregateIdentifier,
+            $matchingNode->getNodeAggregateIdentifier(),
             $this->getWorkspaceNameFromParameters() ?: WorkspaceName::forLive(),
             $this->getDimensionSpacePointFromParameters(),
-            $matchingSite->aggregateIdentifier,
-            $matchingRootNode->identifier
+            $matchingSite->getNodeAggregateIdentifier(),
+            $matchingRootNode->getNodeIdentifier()
         ), RouteTags::createFromArray($tagArray));
     }
 
@@ -191,7 +192,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
                 }
                 $continueTraversal = false;
                 if ($node->getProperty('uriPathSegment') === $currentPathSegment) {
-                    $tagArray[] = (string)$node->identifier;
+                    $tagArray[] = (string)$node->getNodeIdentifier();
                     array_shift($remainingUriPathSegments);
                     if (empty($remainingUriPathSegments)) {
                         $matchingNode = $node;
@@ -235,18 +236,18 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * @return NodeInterface
      * @throws Exception\NoSiteException
      */
-    protected function fetchSiteFromRequest(NodeInterface $rootNode, ContentSubgraphInterface $contentSubgraph, string $requestPath): NodeInterface
+    protected function fetchSiteFromRequest(ReadOnlyNodeInterface $rootNode, ContentSubgraphInterface $contentSubgraph, string $requestPath): NodeInterface
     {
         /** @var Node $site */
         /** @var Node $rootNode */
         $domain = $this->domainRepository->findOneByActiveRequest();
         if ($domain) {
             $site = $contentSubgraph->findChildNodeConnectedThroughEdgeName(
-                $rootNode->identifier,
+                $rootNode->getNodeIdentifier(),
                 new NodeName($domain->getSite()->getNodeName())
             );
         } else {
-            $site = $contentSubgraph->findChildNodes($rootNode->identifier, null, 1)[0] ?? null;
+            $site = $contentSubgraph->findChildNodes($rootNode->getNodeIdentifier(), null, 1)[0] ?? null;
         }
 
         if (!$site) {

@@ -21,11 +21,13 @@ use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\Exception\NodeExistsException;
 
 /**
- * Interface for a Node
+ * LEGACY (non-event-sourced) Interface for a Node.
+ *
+ * For the read-only (event-sourced) Node Interface, use the ReadOnlyNodeInterface instead.
  *
  * @api
  */
-interface NodeInterface
+interface NodeInterface extends Domain\Context\Node\ReadOnlyNodeInterface
 {
     /**
      * Regex pattern which matches a node path without any context information
@@ -122,19 +124,6 @@ interface NodeInterface
     public function hasProperty($propertyName);
 
     /**
-     * Returns the specified property.
-     *
-     * If the node has a content object attached, the property will be fetched
-     * there if it is gettable.
-     *
-     * @param string $propertyName Name of the property
-     * @return mixed value of the property
-     * @throws NodeException if the node does not contain the specified property
-     * @api
-     */
-    public function getProperty($propertyName);
-
-    /**
      * Removes the specified property.
      *
      * If the node has a content object attached, the property will not be removed on
@@ -147,16 +136,6 @@ interface NodeInterface
      */
     public function removeProperty($propertyName);
 
-    /**
-     * Returns all properties of this node.
-     *
-     * If the node has a content object attached, the properties will be fetched
-     * there.
-     *
-     * @return array Property values, indexed by their name
-     * @api
-     */
-    public function getProperties();
 
     /**
      * Returns the names of all properties of this node.
@@ -355,18 +334,9 @@ interface NodeInterface
      *
      * @return string the node's identifier
      * @api
+     * @deprecated use getNodeIdentifier() instead
      */
     public function getIdentifier();
-
-    /**
-     * @return Domain\ValueObject\ContentStreamIdentifier
-     */
-    public function getContentStreamIdentifier(): Domain\ValueObject\ContentStreamIdentifier;
-
-    /**
-     * @return Domain\ValueObject\NodeAggregateIdentifier
-     */
-    public function getAggregateIdentifier(): Domain\ValueObject\NodeAggregateIdentifier;
 
     /**
      * Sets the index of this node

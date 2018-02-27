@@ -162,7 +162,7 @@ class MenuImplementation extends AbstractMenuImplementation
             if (!$entryParentNode) {
                 return $items;
             }
-            $menuLevelCollection = $this->getSubgraph()->findChildNodes($entryParentNode->identifier, $this->getNodeTypeConstraints(), null, null, $entryParentNode->getContext());
+            $menuLevelCollection = $this->getSubgraph()->findChildNodes($entryParentNode->getNodeIdentifier(), $this->getNodeTypeConstraints(), null, null, $entryParentNode->getContext());
         }
 
         foreach ($menuLevelCollection as $startNode) {
@@ -185,7 +185,7 @@ class MenuImplementation extends AbstractMenuImplementation
     {
         $children = [];
         if ($currentLevel <= $this->getLastLevel()) {
-            foreach ($this->getSubgraph()->findChildNodes($parentNode->identifier, $nodeTypeConstraints, null, null, $parentNode->getContext()) as $childNode) {
+            foreach ($this->getSubgraph()->findChildNodes($parentNode->getNodeIdentifier(), $nodeTypeConstraints, null, null, $parentNode->getContext()) as $childNode) {
                 if (!$this->isNodeHidden($childNode)) {
                     $children[] = $this->traverseChildren($childNode, $nodeTypeConstraints, $currentLevel + 1);
                 }

@@ -124,7 +124,7 @@ class NodeUriImplementation extends AbstractFusionObject
         $contentQuery = $this->runtime->getCurrentContext()['contentQuery'];
         $node = $this->getNode();
         if ($node instanceof NodeInterface) {
-            $contentQuery = $contentQuery->withNodeAggregateIdentifier($node->aggregateIdentifier);
+            $contentQuery = $contentQuery->withNodeAggregateIdentifier($node->getNodeAggregateIdentifier());
         } elseif ($node === '~') {
             $contentQuery = $contentQuery->withNodeAggregateIdentifier($contentQuery->getSiteIdentifier());
         } elseif (is_string($node) && substr($node, 0, 7) === 'node://') {

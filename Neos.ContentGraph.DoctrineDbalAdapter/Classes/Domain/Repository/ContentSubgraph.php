@@ -327,7 +327,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         if ($edgeNames !== [""]) {
             foreach ($edgeNames as $edgeName) {
                 // identifier exists here :)
-                $currentNode = $this->findChildNodeConnectedThroughEdgeName($currentNode->identifier,
+                $currentNode = $this->findChildNodeConnectedThroughEdgeName($currentNode->getNodeIdentifier(),
                     new NodeName($edgeName), $context);
                 if (!$currentNode) {
                     return null;
@@ -423,13 +423,13 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         $continueTraversal = $callback($startNode);
         if ($continueTraversal) {
             if ($direction->isUp()) {
-                $parentNode = $this->findParentNode($startNode->identifier);
+                $parentNode = $this->findParentNode($startNode->getNodeIdentifier());
                 if ($parentNode) {
                     $this->traverseHierarchy($parentNode, $direction, $nodeTypeConstraints, $callback, $context);
                 }
             } elseif ($direction->isDown()) {
                 foreach ($this->findChildNodes(
-                    $startNode->identifier,
+                    $startNode->getNodeIdentifier(),
                     $nodeTypeConstraints,
                     null,
                     null,

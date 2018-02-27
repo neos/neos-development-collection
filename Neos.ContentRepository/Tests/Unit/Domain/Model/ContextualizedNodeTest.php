@@ -43,7 +43,7 @@ class ContextualizedNodeTest extends UnitTestCase
     {
         $context = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
         $nodeData = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
-        $node = new Node($nodeData, $context);
+        $node = new Node(, , , $context, , $nodeData,);
         $this->assertSame($nodeData, $node->getNodeData());
     }
 
@@ -80,12 +80,12 @@ class ContextualizedNodeTest extends UnitTestCase
         $context = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
         $context->expects($this->any())->method('getWorkspace')->will($this->returnValue($userWorkspace));
 
-        $contextualizedNode = new Node($originalNode, $context);
+        $contextualizedNode = new Node(, , , $context, , $originalNode,);
         $this->inject($contextualizedNode, 'propertyMapper', $propertyMapper);
 
         $this->assertEquals('originalNodeResult', $contextualizedNode->$methodName($argument1));
 
-        $contextualizedNode = new Node($newNode, $context);
+        $contextualizedNode = new Node(, , , $context, , $newNode,);
         $this->inject($contextualizedNode, 'propertyMapper', $propertyMapper);
 
         $this->assertEquals('newNodeResult', $contextualizedNode->$methodName($argument1));
@@ -125,7 +125,7 @@ class ContextualizedNodeTest extends UnitTestCase
 
         $context = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
-        $contextualizedNode = new Node($nodeData, $context);
+        $contextualizedNode = new Node(, , , $context, , $nodeData,);
 
         $this->assertEquals('theidentifier', $contextualizedNode->getIdentifier());
     }
@@ -290,7 +290,7 @@ class ContextualizedNodeTest extends UnitTestCase
         $context->expects($this->any())->method('getFirstLevelNodeCache')->will($this->returnValue($mockFirstLevelNodeCache));
 
         $expectedParentNodeData = new NodeData('/foo', $currentNodeWorkspace);
-        $expectedContextualizedParentNode = new Node($expectedParentNodeData, $context);
+        $expectedContextualizedParentNode = new Node(, , , $context, , $expectedParentNodeData,);
 
         $nodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->setMethods(array('findOneByPathInContext'))->getMock();
         $nodeDataRepository->expects($this->once())->method('findOneByPathInContext')->with('/foo', $context)->will($this->returnValue($expectedContextualizedParentNode));
@@ -318,7 +318,7 @@ class ContextualizedNodeTest extends UnitTestCase
         $context->expects($this->any())->method('getFirstLevelNodeCache')->will($this->returnValue($mockFirstLevelNodeCache));
 
         $expectedNodeData = $this->getMockBuilder(NodeData::class)->setConstructorArgs(array('/foo/bar', $currentNodeWorkspace))->getMock();
-        $expectedContextualizedNode = new Node($expectedNodeData, $context);
+        $expectedContextualizedNode = new Node(, , , $context, , $expectedNodeData,);
 
         $nodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->setMethods(array('findOneByPathInContext'))->getMock();
         $nodeDataRepository->expects($this->once())->method('findOneByPathInContext')->with('/foo/bar', $context)->will($this->returnValue($expectedContextualizedNode));

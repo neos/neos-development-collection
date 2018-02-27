@@ -65,12 +65,12 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
                     $variant = $this->currentNode;
                 } else {
                     $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->currentNode->getContentStreamIdentifier(), $dimensionSpacePoint);
-                    $variant = $subgraph->findNodeByNodeAggregateIdentifier($this->currentNode->getAggregateIdentifier(), $this->currentNode->getContext());
+                    $variant = $subgraph->findNodeByNodeAggregateIdentifier($this->currentNode->getNodeAggregateIdentifier(), $this->currentNode->getContext());
                 }
 
                 if (!$variant && $this->includeGeneralizations()) {
                     $variant = $this->findClosestGeneralizationMatchingDimensionValue($dimensionSpacePoint, $this->getContentDimensionIdentifierToLimitTo(),
-                        $this->currentNode->getAggregateIdentifier());
+                        $this->currentNode->getNodeAggregateIdentifier());
                 }
 
                 $metadata = $this->determineMetadata($dimensionSpacePoint);

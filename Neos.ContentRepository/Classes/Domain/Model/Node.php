@@ -34,6 +34,7 @@ use Neos\ContentRepository\Exception\NodeConstraintException;
 use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\Exception\NodeExistsException;
 use Neos\Flow\Utility\Now;
+use Neos\Neos\Ui\Domain\Model\Changes\Property;
 
 /**
  * This is the main API for storing and retrieving content in the system.
@@ -58,12 +59,12 @@ class Node implements NodeInterface, CacheAwareInterface
     /**
      * @var NodeIdentifier
      */
-    public $identifier;
+    protected $nodeIdentifier;
 
     /**
      * @var Domain\ValueObject\NodeAggregateIdentifier
      */
-    public $aggregateIdentifier;
+    protected $nodeAggregateIdentifier;
 
     /**
      * @var int
@@ -81,24 +82,35 @@ class Node implements NodeInterface, CacheAwareInterface
     public $nodeType;
 
     /**
+     * @var NodeTypeName
+     */
+    protected $nodeTypeName;
+
+    /**
      * @var PropertyCollection
      */
-    public $properties;
+    protected $properties;
 
     /**
      * @var Workspace
      */
-    public $workspace;
+    protected $workspace;
 
     /**
      * @var Domain\ValueObject\DimensionSpacePoint
      */
-    public $dimensionSpacePoint;
+    protected $dimensionSpacePoint;
 
     /**
      * @var Domain\ValueObject\ContentStreamIdentifier
      */
-    public $contentStreamIdentifier;
+    protected $contentStreamIdentifier;
+
+
+    /**
+     * @var NodeName
+     */
+    protected $nodeName;
 
     /**
      * @Flow\Inject
@@ -148,13 +160,31 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     protected $now;
 
+
     /**
-     * @param NodeData $nodeData
-     * @param Context $context
+     * Node constructor.
+     * @param NodeIdentifier $nodeIdentifier
+     * @param NodeTypeName $nodeTypeName
+     * @param NodeType $nodeType
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @param Domain\ValueObject\NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param Domain\ValueObject\ContentStreamIdentifier $contentStreamIdentifier
+     * @param PropertyCollection $properties
+     * @param NodeName $nodeName
+     * @param Context|null $context
      * @Flow\Autowiring(false)
      */
-    public function __construct(NodeData $nodeData = null, Context $context = null)
+    public function __construct(NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, NodeType $nodeType, ?DimensionSpacePoint $dimensionSpacePoint, ?Domain\ValueObject\NodeAggregateIdentifier $nodeAggregateIdentifier, ?Domain\ValueObject\ContentStreamIdentifier $contentStreamIdentifier, ?PropertyCollection $properties, ?NodeName $nodeName, Context $context = null)
     {
+        $this->contentStreamIdentifier = $contentStreamIdentifier;
+        $this->dimensionSpacePoint = $dimensionSpacePoint;
+        $this->nodeTypeName = $nodeTypeName;
+        $this->nodeType = $nodeType;
+        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
+        $this->nodeIdentifier = $nodeIdentifier;
+        $this->properties = $properties;
+        $this->nodeName = $nodeName;
+
         // NodeData is OLD code; so we do not set it anymore to make the system crash if one tries to access it
         //$this->nodeData = $nodeData;
         $this->context = $context;
@@ -171,7 +201,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getContextPath()
     {
-        return $this->identifier . '@' . $this->contentStreamIdentifier . '@' . ($this->context ? json_encode($this->context->getContentSubgraph()->getDimensionSpacePoint()) : '');
+        return $this->getNodeIdentifier() . '@' . $this->getContentStreamIdentifier() . '@' . ($this->context ? json_encode($this->context->getContentSubgraph()->getDimensionSpacePoint()) : '');
     }
 
     /**
@@ -192,8 +222,8 @@ class Node implements NodeInterface, CacheAwareInterface
         $newNodeName = new NodeName($newName);
 
         $command = new Command\ChangeNodeName(
-            $this->contentStreamIdentifier,
-            $this->identifier,
+            $this->getContentStreamIdentifier(),
+            $this->getNodeIdentifier(),
             $newNodeName
         );
 
@@ -208,9 +238,9 @@ class Node implements NodeInterface, CacheAwareInterface
     public function getOtherNodeVariants()
     {
         return array_filter(
-            $this->contentGraph->findNodesByNodeAggregateIdentifier($this->context->getContentSubgraph()->getContentStreamIdentifier(), $this->aggregateIdentifier),
+            $this->contentGraph->findNodesByNodeAggregateIdentifier($this->context->getContentSubgraph()->getContentStreamIdentifier(), $this->getNodeAggregateIdentifier()),
             function (Node $node) {
-                return $node->identifier !== $this->identifier;
+                return $node->getNodeIdentifier() !== $this->getNodeIdentifier();
             }
         );
     }
@@ -261,7 +291,7 @@ class Node implements NodeInterface, CacheAwareInterface
     public function getPath()
     {
         // TODO: is a CTE safe to use?? It's quite efficient, though :)
-        return $this->context->getContentSubgraph() ? (string)$this->context->getContentSubgraph()->findNodePath($this->identifier) : '/' . $this->name;
+        return $this->context->getContentSubgraph() ? (string)$this->context->getContentSubgraph()->findNodePath($this->getNodeIdentifier()) : '/' . $this->getName();
     }
 
     /**
@@ -287,10 +317,11 @@ class Node implements NodeInterface, CacheAwareInterface
      *
      * @return string
      * @api
+     * @deprecated
      */
     public function getName(): string
     {
-        return $this->name;
+        return (string)$this->getNodeName();
     }
 
     /**
@@ -333,10 +364,11 @@ class Node implements NodeInterface, CacheAwareInterface
      *
      * @return string
      * @api
+     * @deprecated
      */
     public function getIdentifier()
     {
-        return (string)$this->aggregateIdentifier;
+        return (string)$this->getNodeAggregateIdentifier();
     }
 
     /**
@@ -350,9 +382,9 @@ class Node implements NodeInterface, CacheAwareInterface
     /**
      * @return Domain\ValueObject\NodeAggregateIdentifier
      */
-    public function getAggregateIdentifier(): Domain\ValueObject\NodeAggregateIdentifier
+    public function getNodeAggregateIdentifier(): Domain\ValueObject\NodeAggregateIdentifier
     {
-        return $this->aggregateIdentifier;
+        return $this->nodeAggregateIdentifier;
     }
 
     /**
@@ -386,7 +418,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getParent(): ?NodeInterface
     {
-        return $this->context->getContentSubgraph() ? $this->context->getContentSubgraph()->findParentNode($this->identifier, $this->context) : null;
+        return $this->context->getContentSubgraph() ? $this->context->getContentSubgraph()->findParentNode($this->getNodeIdentifier(), $this->context) : null;
     }
 
     /**
@@ -546,18 +578,18 @@ class Node implements NodeInterface, CacheAwareInterface
         if ($this->nodeType->isAggregate()) {
             $command = new Command\MoveNodesInAggregate(
                 $this->context->getContentSubgraph()->getContentStreamIdentifier(),
-                $this->aggregateIdentifier,
+                $this->getNodeAggregateIdentifier(),
                 $referencePosition,
-                $referenceNode->aggregateIdentifier
+                $referenceNode->getNodeAggregateIdentifier()
             );
 
             $this->nodeCommandHandler->handleMoveNodesInAggregate($command);
         } else {
             $command = new Command\MoveNode(
                 $this->context->getContentSubgraph()->getContentStreamIdentifier(),
-                $this->identifier,
+                $this->getNodeIdentifier(),
                 $referencePosition,
-                $referenceNode->identifier
+                $referenceNode->getNodeIdentifier()
             );
 
             $this->nodeCommandHandler->handleMoveNode($command);
@@ -720,7 +752,7 @@ class Node implements NodeInterface, CacheAwareInterface
 
         $command = new Command\SetNodeProperty(
             $this->context->getContentSubgraph()->getContentStreamIdentifier(),
-            $this->identifier,
+            $this->getNodeIdentifier(),
             $propertyName,
             new PropertyValue($value, $propertyType)
         );
@@ -792,11 +824,10 @@ class Node implements NodeInterface, CacheAwareInterface
      * If the node has a content object attached, the properties will be fetched
      * there.
      *
-     * @param boolean $returnNodesAsIdentifiers If enabled, references to nodes are returned as node identifiers instead of NodeData objects
      * @return array|\ArrayAccess Property values, indexed by their name
      * @api
      */
-    public function getProperties($returnNodesAsIdentifiers = false)
+    public function getProperties(): PropertyCollection
     {
         return $this->properties;
     }
@@ -900,7 +931,7 @@ class Node implements NodeInterface, CacheAwareInterface
         $nodeAggregateIdentifier = new NodeAggregateIdentifier($identifier);
         $nodeTypeName = new NodeTypeName(($nodeType ? $nodeType->getName() : 'unstructured'));
         $nodeIdentifier = new NodeIdentifier();
-        $parentNodeIdentifier = $this->identifier;
+        $parentNodeIdentifier = $this->getNodeIdentifier();
         $dimensionSpacePoint = $this->context->getContentSubgraph()->getDimensionSpacePoint();
         $nodeName = new NodeName($name);
 
@@ -983,7 +1014,7 @@ class Node implements NodeInterface, CacheAwareInterface
 
         foreach ($path->getParts() as $nodeName) {
             // TODO: replace by CTE and make performant
-            $node = $this->context->getContentSubgraph()->findChildNodeConnectedThroughEdgeName($node->identifier, $nodeName, $this->context);
+            $node = $this->context->getContentSubgraph()->findChildNodeConnectedThroughEdgeName($node->getNodeIdentifier(), $nodeName, $this->context);
             if (!$node) {
                 return null;
             }
@@ -1003,7 +1034,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getPrimaryChildNode()
     {
-        return $this->context->getContentSubgraph()->findFirstChildNode($this->identifier, $this->context);
+        return $this->context->getContentSubgraph()->findFirstChildNode($this->getNodeIdentifier(), $this->context);
     }
 
     /**
@@ -1022,7 +1053,7 @@ class Node implements NodeInterface, CacheAwareInterface
         if ($nodeTypeFilter !== null) {
             $nodeTypeConstraints = $this->nodeTypeConstraintService->unserializeFilters($nodeTypeFilter);
         }
-        return $this->context->getContentSubgraph()->findChildNodes($this->identifier, $nodeTypeConstraints, $limit, $offset, $this->context);
+        return $this->context->getContentSubgraph()->findChildNodes($this->getNodeIdentifier(), $nodeTypeConstraints, $limit, $offset, $this->context);
     }
 
     /**
@@ -1035,7 +1066,7 @@ class Node implements NodeInterface, CacheAwareInterface
     public function getNumberOfChildNodes($nodeTypeFilter = null)
     {
         $nodeTypeConstraints = $this->nodeTypeConstraintService->unserializeFilters($nodeTypeFilter);
-        return $this->context->getContentSubgraph()->countChildNodes($this->identifier, $nodeTypeConstraints);
+        return $this->context->getContentSubgraph()->countChildNodes($this->getNodeIdentifier(), $nodeTypeConstraints);
     }
 
     /**
@@ -1352,7 +1383,7 @@ class Node implements NodeInterface, CacheAwareInterface
         $destinationNodeIdentifier = new NodeIdentifier();
         $this->nodeCommandHandler->handleTranslateNodeInAggregate(new Command\TranslateNodeInAggregate(
             $this->contentStreamIdentifier,
-            $this->identifier,
+            $this->getNodeIdentifier(),
             $destinationNodeIdentifier,
             new DimensionSpacePoint($context->getTargetDimensions())
         ));
@@ -1506,4 +1537,23 @@ class Node implements NodeInterface, CacheAwareInterface
     {
     }
 
+    public function getNodeIdentifier(): NodeIdentifier
+    {
+        return $this->nodeIdentifier;
+    }
+
+    public function getNodeTypeName(): NodeTypeName
+    {
+        return $this->nodeTypeName;
+    }
+
+    public function getNodeName(): NodeName
+    {
+        return $this->nodeName;
+    }
+
+    public function getDimensionSpacePoint(): DimensionSpacePoint
+    {
+        return $this->dimensionSpacePoint;
+    }
 }

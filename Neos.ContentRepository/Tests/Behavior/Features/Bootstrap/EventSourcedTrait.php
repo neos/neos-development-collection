@@ -458,8 +458,8 @@ trait EventSourcedTrait
 
         Assert::assertCount(count($expectedChildNodesTable->getHash()), $nodes, 'Child Node Count does not match');
         foreach ($expectedChildNodesTable->getHash() as $index => $row) {
-            Assert::assertEquals($row['Name'], (string)$nodes[$index]->name, 'Node name in index ' . $index . ' does not match.');
-            Assert::assertEquals($row['NodeIdentifier'], (string)$nodes[$index]->identifier, 'Node identifier in index ' . $index . ' does not match.');
+            Assert::assertEquals($row['Name'], (string)$nodes[$index]->getNodeName(), 'Node name in index ' . $index . ' does not match. Actual: ' . $nodes[$index]->getNodeTypeName());
+            Assert::assertEquals($row['NodeIdentifier'], (string)$nodes[$index]->getNodeIdentifier(), 'Node identifier in index ' . $index . ' does not match.');
         }
     }
 
@@ -472,7 +472,7 @@ trait EventSourcedTrait
             $this->dimensionSpacePoint)->findNodeByNodeAggregateIdentifier(new NodeAggregateIdentifier($nodeAggregateIdentifier));
 
         Assert::assertNotNull($node, 'Node with ID "' . $nodeIdentifier . '" not found!');
-        Assert::assertEquals($nodeIdentifier, (string)$node->identifier, 'Node ID does not match!');
+        Assert::assertEquals($nodeIdentifier, (string)$node->getNodeIdentifier(), 'Node ID does not match!');
     }
 
 
@@ -482,7 +482,7 @@ trait EventSourcedTrait
     public function iExpectTheNodeToHaveTheType($nodeIdentifier, $nodeType)
     {
         $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
-        Assert::assertEquals($nodeType, (string)$node->nodeTypeName, 'Node Type names do not match');
+        Assert::assertEquals($nodeType, (string)$node->getNodeTypeName(), 'Node Type names do not match');
     }
 
     /**
@@ -492,8 +492,7 @@ trait EventSourcedTrait
     {
         /** @var \Neos\ContentRepository\Domain\Model\Node $node */
         $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
-        /* @var $properties \Neos\ContentRepository\Domain\Projection\Content\PropertyCollection */
-        $properties = $node->properties;
+        $properties = $node->getProperties();
         foreach ($expectedProperties->getHash() as $row) {
             Assert::assertArrayHasKey($row['Key'], $properties, 'Property "' . $row['Key'] . '" not found');
             $actualProperty = $properties[$row['Key']];
@@ -511,7 +510,7 @@ trait EventSourcedTrait
         }
         $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByPath($nodePath, $this->rootNodeIdentifier);
         Assert::assertNotNull($node, 'Did not find node at path "' . $nodePath . '"');
-        Assert::assertEquals($nodeIdentifier, (string)$node->identifier, 'Node identifier does not match.');
+        Assert::assertEquals($nodeIdentifier, (string)$node->getNodeIdentifier(), 'Node identifier does not match.');
     }
 
 }

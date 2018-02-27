@@ -46,7 +46,7 @@ class NodeTest extends UnitTestCase
 
         $nodeFactory = $this->createMock(NodeFactory::class);
 
-        $parentNode = new Node($parentNodeData, $context);
+        $parentNode = new Node(, , , $context, , $parentNodeData,);
 
         $this->inject($parentNode, 'nodeFactory', $nodeFactory);
 
@@ -67,7 +67,7 @@ class NodeTest extends UnitTestCase
         $mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
 
-        $node = new Node($mockNodeData, $mockContext);
+        $node = new Node(, , , $mockContext, , $mockNodeData,);
 
         $mockNodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->getMock();
         $this->inject($node, 'nodeDataRepository', $mockNodeDataRepository);

@@ -377,16 +377,16 @@ final class NodeCommandHandler
             $node = $this->getNode($contentStreamIdentifier, $command->getNodeIdentifier());
 
             $contentSubgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier,
-                $node->dimensionSpacePoint);
+                $node->getDimensionSpacePoint());
             if ($contentSubgraph === null) {
                 throw new Exception(sprintf('Content subgraph not found for content stream %s, %s',
-                    $contentStreamIdentifier, $node->dimensionSpacePoint), 1506074858);
+                    $contentStreamIdentifier, $node->getDimensionSpacePoint()), 1506074858);
             }
 
             $referenceNode = $contentSubgraph->findNodeByIdentifier($command->getReferenceNodeIdentifier());
             if ($referenceNode === null) {
                 throw new NodeNotFoundException(sprintf('Reference node %s not found for content stream %s, %s',
-                    $command->getReferenceNodeIdentifier(), $contentStreamIdentifier, $node->dimensionSpacePoint),
+                    $command->getReferenceNodeIdentifier(), $contentStreamIdentifier, $node->getDimensionSpacePoint()),
                     1506075821, $command->getReferenceNodeIdentifier());
             }
 
@@ -419,7 +419,7 @@ final class NodeCommandHandler
 
             /** @var Node $sourceNode */
             foreach ($sourceNodes as $sourceNode) {
-                $dimensionSpacePoint = $sourceNode->dimensionSpacePoint;
+                $dimensionSpacePoint = $sourceNode->getDimensionSpacePoint();
                 $contentSubgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $dimensionSpacePoint);
                 if ($contentSubgraph === null) {
                     throw new Exception(sprintf('Content subgraph not found for content stream %s, %s', $contentStreamIdentifier, $dimensionSpacePoint), 1506439819);
@@ -431,7 +431,7 @@ final class NodeCommandHandler
                         $referenceNodeAggregateIdentifier, $contentStreamIdentifier, $dimensionSpacePoint), 1506439842);
                 }
                 // TODO Introduce a mapping value object with checks for uniqueness
-                $nodesToReferenceNodes[(string)$sourceNode->identifier] = (string)$referenceNode->identifier;
+                $nodesToReferenceNodes[(string)$sourceNode->getNodeIdentifier()] = (string)$referenceNode->getNodeIdentifier();
             }
 
             $event = new NodesInAggregateWereMoved(
@@ -505,18 +505,18 @@ final class NodeCommandHandler
 
         // TODO Check that command->dimensionSpacePoint is not a generalization or specialization of sourceNode->dimensionSpacePoint!!! (translation)
 
-        $sourceContentSubgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $sourceNode->dimensionSpacePoint);
+        $sourceContentSubgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $sourceNode->getDimensionSpacePoint());
         /** @var Node $sourceParentNode */
         $sourceParentNode = $sourceContentSubgraph->findParentNode($sourceNodeIdentifier);
         if ($sourceParentNode === null) {
             throw new Exception\NodeException(sprintf('Parent node for %s in %s not found',
-                $sourceNodeIdentifier, $sourceNode->dimensionSpacePoint), 1506354274);
+                $sourceNodeIdentifier, $sourceNode->getDimensionSpacePoint()), 1506354274);
         }
 
         if ($command->getDestinationParentNodeIdentifier() !== null) {
             $destinationParentNodeIdentifier = $command->getDestinationParentNodeIdentifier();
         } else {
-            $parentNodeAggregateIdentifier = $sourceParentNode->aggregateIdentifier;
+            $parentNodeAggregateIdentifier = $sourceParentNode->getNodeAggregateIdentifier();
             $destinationContentSubgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier,
                 $dimensionSpacePoint);
             /** @var Node $destinationParentNode */
@@ -525,7 +525,7 @@ final class NodeCommandHandler
                 throw new Exception\NodeException(sprintf('Could not find suitable parent node for %s in %s',
                     $sourceNodeIdentifier, $destinationContentSubgraph->getDimensionSpacePoint()), 1506354275);
             }
-            $destinationParentNodeIdentifier = $destinationParentNode->identifier;
+            $destinationParentNodeIdentifier = $destinationParentNode->getNodeIdentifier();
         }
 
         $dimensionSpacePointSet = $this->getVisibleDimensionSpacePoints($dimensionSpacePoint);
@@ -545,7 +545,7 @@ final class NodeCommandHandler
             $childNode = $sourceContentSubgraph->findChildNodeConnectedThroughEdgeName($sourceNodeIdentifier, new NodeName($childNodeNameStr));
             if ($childNode === null) {
                 throw new Exception\NodeException(sprintf('Could not find auto-created child node with name %s for %s in %s',
-                    $childNodeNameStr, $sourceNodeIdentifier, $sourceNode->dimensionSpacePoint), 1506506170);
+                    $childNodeNameStr, $sourceNodeIdentifier, $sourceNode->getDimensionSpacePoint()), 1506506170);
             }
 
             $childDestinationNodeIdentifier = new NodeIdentifier();
@@ -553,7 +553,7 @@ final class NodeCommandHandler
             $events = array_merge($events,
                 $this->nodeInAggregateWasTranslatedFromCommand(new TranslateNodeInAggregate(
                     $contentStreamIdentifier,
-                    $childNode->identifier,
+                    $childNode->getNodeIdentifier(),
                     $childDestinationNodeIdentifier,
                     $dimensionSpacePoint,
                     $childDestinationParentNodeIdentifier
@@ -637,7 +637,7 @@ final class NodeCommandHandler
         );
         $dimensionSpacePoints = [];
         foreach ($existingNodes as $node) {
-            $dimensionSpacePoints[] = $node->dimensionSpacePoint;
+            $dimensionSpacePoints[] = $node->getDimensionSpacePoint();
         }
         $occupiedDimensionSpacePoints = new DimensionSpacePointSet($dimensionSpacePoints);
 

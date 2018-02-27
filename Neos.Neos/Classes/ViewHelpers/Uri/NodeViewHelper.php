@@ -132,7 +132,7 @@ class NodeViewHelper extends AbstractViewHelper
             // the latter case is only relevant in extremely rare occasions in the Neos Backend, when we want to generate
             // a link towards the *shortcut itself*, and not to its target.
             $resolvedNode = $resolveShortcuts ? $resolvedNode = $this->nodeShortcutResolver->resolveShortcutTarget($node) : $node;
-            $contentQuery = $contentQuery->withNodeAggregateIdentifier($resolvedNode->aggregateIdentifier);
+            $contentQuery = $contentQuery->withNodeAggregateIdentifier($resolvedNode->getNodeAggregateIdentifier());
         } elseif ($node === '~') {
             $contentQuery = $contentQuery->withNodeAggregateIdentifier($contentQuery->getSiteIdentifier());
         } elseif (is_string($node) && substr($node, 0, 7) === 'node://') {
