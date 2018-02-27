@@ -201,7 +201,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getContextPath()
     {
-        return $this->getNodeIdentifier() . '@' . $this->getContentStreamIdentifier() . '@' . ($this->context ? json_encode($this->context->getContentSubgraph()->getDimensionSpacePoint()) : '');
+        return $this->getNodeIdentifier() . '@' . $this->getContentStreamIdentifier() . '@' . ($this->context ? $this->context->getContentSubgraph()->getDimensionSpacePoint()->serializeForUri() : '');
     }
 
     /**
@@ -1057,10 +1057,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getChildNodes($nodeTypeFilter = null, $limit = null, $offset = null)
     {
-        $nodeTypeConstraints = null;
-        if ($nodeTypeFilter !== null) {
-            $nodeTypeConstraints = $this->nodeTypeConstraintService->unserializeFilters($nodeTypeFilter);
-        }
+        $nodeTypeConstraints = ($nodeTypeFilter ? $this->nodeTypeConstraintService->unserializeFilters($nodeTypeFilter) : null);
         return $this->context->getContentSubgraph()->findChildNodes($this->getNodeIdentifier(), $nodeTypeConstraints, $limit, $offset, $this->context);
     }
 
@@ -1073,7 +1070,8 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getNumberOfChildNodes($nodeTypeFilter = null)
     {
-        $nodeTypeConstraints = $this->nodeTypeConstraintService->unserializeFilters($nodeTypeFilter);
+        $nodeTypeConstraints = ($nodeTypeFilter ? $this->nodeTypeConstraintService->unserializeFilters($nodeTypeFilter) : null);
+
         return $this->context->getContentSubgraph()->countChildNodes($this->getNodeIdentifier(), $nodeTypeConstraints);
     }
 

@@ -12,13 +12,13 @@ namespace Neos\Neos\Http;
  */
 
 use Neos\ContentRepository\Domain\Context\Dimension;
-use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\RoutingComponent;
+use Neos\Neos\Routing\WorkspaceNameAndDimensionSpacePointForUriSerialization;
 
 /**
  * The HTTP component for detecting the requested dimension space point
@@ -82,7 +82,7 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
         $path = $componentContext->getHttpRequest()->getUri()->getPath();
 
         /** @todo no more paths! */
-        $isContextPath = NodePaths::isContextPath($path);
+        $isContextPath = WorkspaceNameAndDimensionSpacePointForUriSerialization::isParseablebackendUri($path);
         $backendUriDimensionPresetDetector = new ContentDimensionDetection\BackendUriContentDimensionValueDetector();
         $dimensions = $this->dimensionSource->getContentDimensionsOrderedByPriority();
         $this->sortDimensionsByOffset($dimensions);
@@ -153,10 +153,10 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
     {
         $requestPath = $componentContext->getHttpRequest()->getUri()->getPath();
         $requestPath = mb_substr($requestPath, mb_strrpos($requestPath, '/'));
-        if ($requestPath !== '' && NodePaths::isContextPath($requestPath)) {
-            $nodePathAndContext = NodePaths::explodeContextPath($requestPath);
+        if ($requestPath !== '' && WorkspaceNameAndDimensionSpacePointForUriSerialization::isParseablebackendUri($requestPath)) {
+            $nodePathAndContext = WorkspaceNameAndDimensionSpacePointForUriSerialization::fromBackendUri($requestPath);
             try {
-                return new WorkspaceName($nodePathAndContext['workspaceName']);
+                return $nodePathAndContext->getWorkspaceName();
             } catch (\InvalidArgumentException $exception) {
             }
         }

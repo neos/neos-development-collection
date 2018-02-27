@@ -70,6 +70,10 @@ abstract class NodePaths
      */
     public static function explodeContextPath($contextPath)
     {
+        //$contextPathParts = explode('@', $contextPath);
+        //$nodePath = $contextPathParts[0];
+        //$workspaceName = $contextPathParts[1];
+        //$dimensions = (isset($contextPathParts[2]) ? $contextPathParts[2] : []);
         preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $contextPath, $matches);
         if (!isset($matches['NodePath'])) {
             throw new \InvalidArgumentException('The given string was not a valid contextPath.', 1431281250);
@@ -83,11 +87,15 @@ abstract class NodePaths
             $dimensions = [];
         }
 
-        return array(
+        $res = array(
             'nodePath' => $nodePath,
             'workspaceName' => $workspaceName,
             'dimensions' => $dimensions
         );
+        var_dump($contextPath);
+        var_dump($res);
+        throw new \Exception("TODO");
+        return $res;
     }
 
     /**

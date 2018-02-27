@@ -14,6 +14,7 @@ namespace Neos\Neos\Http\ContentDimensionDetection;
 use Neos\ContentRepository\Domain\Context\Dimension;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\Flow\Http;
+use Neos\Neos\Routing\WorkspaceNameAndDimensionSpacePointForUriSerialization;
 use Neos\Utility\Arrays;
 
 /**
@@ -39,8 +40,8 @@ final class BackendUriContentDimensionValueDetector implements ContentDimensionV
         if (mb_strpos($path, '.') !== false) {
             $path = mb_substr($path, 0, mb_strrpos($path, '.'));
         }
-        $nodePathAndContext = NodePaths::explodeContextPath($path);
-        $detectedValue = Arrays::getValueByPath($nodePathAndContext, 'dimensions.' . $contentDimension->getIdentifier());
+        $nodePathAndContext = WorkspaceNameAndDimensionSpacePointForUriSerialization::fromBackendUri($path);
+        $detectedValue = $nodePathAndContext->getDimensionSpacePoint()->getCoordinate($contentDimension->getIdentifier());
 
         return $detectedValue
             ? $contentDimension->getValue($detectedValue)

@@ -172,6 +172,15 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
     }
 
     /**
+     * serialize to URI
+     * @return string
+     */
+    public function serializeForUri(): string
+    {
+        return base64_encode(json_encode($this->coordinates));
+    }
+
+    /**
      * @return string
      */
     public function __toString(): string

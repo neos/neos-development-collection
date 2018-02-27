@@ -332,7 +332,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 
         $routePath = $isSiteNode ? '' : $this->getRequestPathByNode($subgraph, $node);
         if (!$contentQuery->getWorkspaceName()->isLive()) {
-            $routePath .= ContentSubgraphBackendRouteSuffix::fromWorkspaceAndDimensionSpacePoint($workspace->getWorkspaceName(), $subgraph->getDimensionSpacePoint());
+            $routePath .= WorkspaceNameAndDimensionSpacePointForUriSerialization::fromWorkspaceAndDimensionSpacePoint($workspace->getWorkspaceName(), $subgraph->getDimensionSpacePoint())->toBackendUriSuffix();
         }
         $uriConstraints = $this->contentSubgraphUriProcessor->resolveDimensionUriConstraints($contentQuery, $isSiteNode);
 
