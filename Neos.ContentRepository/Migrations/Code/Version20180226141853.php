@@ -52,8 +52,6 @@ class Version20180226141853 extends AbstractMigration
      */
     protected function updateDimensionConfiguration($dimensionName, $dimensionConfiguration)
     {
-        //if (array_key_exists('presets', $dimensionConfiguration) && !array_key_exists('values', $dimensionConfiguration)) {
-
         if (array_key_exists('presets', $dimensionConfiguration)) {
             $unconvertedDimensionPresets = [];
 
