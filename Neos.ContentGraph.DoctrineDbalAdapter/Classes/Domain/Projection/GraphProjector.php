@@ -18,6 +18,8 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Service\DbalClient;
 use Neos\ContentRepository\Domain\Context\Node\Event;
 use Neos\ContentRepository\Domain as ContentRepository;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
+use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasHidden;
+use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasShown;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
@@ -363,7 +365,7 @@ class GraphProjector implements ProjectorInterface
             $anchorPointForNode = $this->projectionContentGraph->getAnchorPointForNodeAndContentStream($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
             if ($anchorPointForNode === null) {
                 // TODO Log error
-                throw new \Exception(sprintf('anchro point for node identifier %s and stream %s not found', $event->getNodeIdentifier(), $event->getContentStreamIdentifier()), 1506085300325);
+                throw new \Exception(sprintf('anchor point for node identifier %s and stream %s not found', $event->getNodeIdentifier(), $event->getContentStreamIdentifier()), 1506085300325);
             }
 
             $contentStreamIdentifiers = $this->projectionContentGraph->getAllContentStreamIdentifiersAnchorPointIsContainedIn($anchorPointForNode);
@@ -407,6 +409,124 @@ class GraphProjector implements ProjectorInterface
                     WHERE n.relationanchorpoint = :relationAnchorPoint
                 ', [
                     'properties' => json_encode($nodeProperties),
+                    'relationAnchorPoint' => (string)$node->relationAnchorPoint
+                ]);
+
+            }
+
+        });
+    }
+
+    public function whenNodeWasHidden(NodeWasHidden $event)
+    {
+        $this->transactional(function () use ($event) {
+            // TODO: do this copy on write on every modification op concerning nodes
+
+            // TODO: does this always return a SINGLE anchor point??
+            $anchorPointForNode = $this->projectionContentGraph->getAnchorPointForNodeAndContentStream($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
+            if ($anchorPointForNode === null) {
+                // TODO Log error
+                throw new \Exception(sprintf('anchor point for node identifier %s and stream %s not found', $event->getNodeIdentifier(), $event->getContentStreamIdentifier()), 1519681259000);
+            }
+
+            $contentStreamIdentifiers = $this->projectionContentGraph->getAllContentStreamIdentifiersAnchorPointIsContainedIn($anchorPointForNode);
+            if (count($contentStreamIdentifiers) > 1) {
+                // Copy on Write needed!
+                // Copy on Write is a purely "Content Stream" related concept; thus we do not care about different DimensionSpacePoints here (but we copy all edges)
+
+                // 1) fetch node, adjust properties, assign new Relation Anchor Point
+                $copiedNode = $this->projectionContentGraph->getNodeByAnchorPoint($anchorPointForNode);
+                $copiedNode->hidden = true;
+                $copiedNode->relationAnchorPoint = new NodeRelationAnchorPoint();
+                $copiedNode->addToDatabase($this->getDatabaseConnection());
+
+                // 2) reconnect all edges belonging to this content stream to the new "copied node"
+                $this->getDatabaseConnection()->executeUpdate('
+                UPDATE neos_contentgraph_hierarchyrelation h
+                    SET h.childnodeanchor = :newChildNodeAnchor
+                    WHERE
+                      h.childnodeanchor = :originalChildNodeAnchor
+                      AND h.contentstreamidentifier = :contentStreamIdentifier',
+                    [
+                        'newChildNodeAnchor' => (string)$copiedNode->relationAnchorPoint,
+                        'originalChildNodeAnchor' => (string)$anchorPointForNode,
+                        'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
+                    ]
+                );
+            } else {
+                // No copy on write needed :)
+
+                $node = $this->projectionContentGraph->getNodeByNodeIdentifierAndContentStream($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
+                if (!$node) {
+                    // TODO: ignore the HideNode (if all other logic is correct)
+                    throw new \Exception("TODO NODE NOT FOUND");
+                }
+
+                $this->getDatabaseConnection()->executeUpdate('
+                    UPDATE neos_contentgraph_node n
+                    SET n.hidden = :hidden
+                    WHERE n.relationanchorpoint = :relationAnchorPoint
+                ', [
+                    'hidden' => 1,
+                    'relationAnchorPoint' => (string)$node->relationAnchorPoint
+                ]);
+
+            }
+
+        });
+    }
+
+    public function whenNodeWasShown(NodeWasShown $event)
+    {
+        $this->transactional(function () use ($event) {
+            // TODO: do this copy on write on every modification op concerning nodes
+
+            // TODO: does this always return a SINGLE anchor point??
+            $anchorPointForNode = $this->projectionContentGraph->getAnchorPointForNodeAndContentStream($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
+            if ($anchorPointForNode === null) {
+                // TODO Log error
+                throw new \Exception(sprintf('anchor point for node identifier %s and stream %s not found', $event->getNodeIdentifier(), $event->getContentStreamIdentifier()), 1519681260000);
+            }
+
+            $contentStreamIdentifiers = $this->projectionContentGraph->getAllContentStreamIdentifiersAnchorPointIsContainedIn($anchorPointForNode);
+            if (count($contentStreamIdentifiers) > 1) {
+                // Copy on Write needed!
+                // Copy on Write is a purely "Content Stream" related concept; thus we do not care about different DimensionSpacePoints here (but we copy all edges)
+
+                // 1) fetch node, adjust properties, assign new Relation Anchor Point
+                $copiedNode = $this->projectionContentGraph->getNodeByAnchorPoint($anchorPointForNode);
+                $copiedNode->hidden = false;
+                $copiedNode->relationAnchorPoint = new NodeRelationAnchorPoint();
+                $copiedNode->addToDatabase($this->getDatabaseConnection());
+
+                // 2) reconnect all edges belonging to this content stream to the new "copied node"
+                $this->getDatabaseConnection()->executeUpdate('
+                UPDATE neos_contentgraph_hierarchyrelation h
+                    SET h.childnodeanchor = :newChildNodeAnchor
+                    WHERE
+                      h.childnodeanchor = :originalChildNodeAnchor
+                      AND h.contentstreamidentifier = :contentStreamIdentifier',
+                    [
+                        'newChildNodeAnchor' => (string)$copiedNode->relationAnchorPoint,
+                        'originalChildNodeAnchor' => (string)$anchorPointForNode,
+                        'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
+                    ]
+                );
+            } else {
+                // No copy on write needed :)
+
+                $node = $this->projectionContentGraph->getNodeByNodeIdentifierAndContentStream($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
+                if (!$node) {
+                    // TODO: ignore the ShowNode (if all other logic is correct)
+                    throw new \Exception("TODO NODE NOT FOUND");
+                }
+
+                $this->getDatabaseConnection()->executeUpdate('
+                    UPDATE neos_contentgraph_node n
+                    SET n.hidden = :hidden
+                    WHERE n.relationanchorpoint = :relationAnchorPoint
+                ', [
+                    'hidden' => 0,
                     'relationAnchorPoint' => (string)$node->relationAnchorPoint
                 ]);
 

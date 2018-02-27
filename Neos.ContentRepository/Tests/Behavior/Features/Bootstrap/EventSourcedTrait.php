@@ -31,6 +31,7 @@ use Neos\EventSourcing\EventStore\StreamNamePrefixFilter;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use PHPUnit\Framework\Assert;
+use Ramsey\Uuid\Uuid;
 
 /**
  * Features context
@@ -96,6 +97,9 @@ trait EventSourcedTrait
      */
     public function theEventWasPublishedToStreamWithPayload($eventType, $streamName, TableNode $payloadTable)
     {
+        $streamName = $this->replaceUuidIdentifiers($streamName);
+
+        $eventClassName = $this->eventTypeResolver->getEventClassNameByType($eventType);
         $eventPayload = $this->readPayloadTable($payloadTable);
         $this->publishEvent($eventType, $streamName, $eventPayload);
     }
@@ -138,6 +142,9 @@ trait EventSourcedTrait
                         $tmp = json_decode($line['Value'], true);
                         $eventPayload[$line['Key']] = new PropertyValue($tmp['value'], $tmp['type']);
                         break;
+                    case 'Uuid':
+                        $eventPayload[$line['Key']] = $this->replaceUuidIdentifiers('[' . $line['Value'] . ']');
+                        break;
                     default:
                         throw new \Exception("TODO" . json_encode($line));
                 }
@@ -147,6 +154,17 @@ trait EventSourcedTrait
         }
 
         return $eventPayload;
+    }
+
+    protected function replaceUuidIdentifiers($identifierString)
+    {
+        return preg_replace_callback(
+            '#\[[0-9a-zA-Z\-]+\]#',
+            function ($matches) {
+                return (string)Uuid::uuid5('00000000-0000-0000-0000-000000000000', $matches[0]);
+            },
+            $identifierString
+        );
     }
 
     /**
@@ -258,6 +276,18 @@ trait EventSourcedTrait
                     \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
                     'handleSetNodeProperty'
                 ];
+            case 'HideNode':
+                return [
+                    \Neos\ContentRepository\Domain\Context\Node\Command\HideNode::class,
+                    \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
+                    'handleHideNode'
+                ];
+            case 'ShowNode':
+                return [
+                    \Neos\ContentRepository\Domain\Context\Node\Command\ShowNode::class,
+                    \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
+                    'handleShowNode'
+                ];
             case 'MoveNode':
                 return [
                     \Neos\ContentRepository\Domain\Context\Node\Command\MoveNode::class,
@@ -286,6 +316,8 @@ trait EventSourcedTrait
      */
     public function iExpectExactlyEventToBePublishedOnStream($numberOfEvents, $streamName)
     {
+        $streamName = $this->replaceUuidIdentifiers($streamName);
+
         $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
         $stream = $eventStore->get(new StreamNameFilter($streamName));
         $this->currentEventStreamAsArray = iterator_to_array($stream, false);
@@ -297,6 +329,8 @@ trait EventSourcedTrait
      */
     public function iExpectExactlyEventToBePublishedOnStreamWithPrefix($numberOfEvents, $streamName)
     {
+        $streamName = $this->replaceUuidIdentifiers($streamName);
+
         $eventStore = $this->eventStoreManager->getEventStoreForStreamName($streamName);
         $stream = $eventStore->get(new StreamNamePrefixFilter($streamName));
         $this->currentEventStreamAsArray = iterator_to_array($stream, false);
@@ -324,7 +358,11 @@ trait EventSourcedTrait
 
         foreach ($payloadTable->getHash() as $assertionTableRow) {
             $actualValue = \Neos\Utility\Arrays::getValueByPath($actualEventPayload, $assertionTableRow['Key']);
-            $expectedValue = $assertionTableRow['Expected'];
+            if (isset($assertionTableRow['Type']) && $assertionTableRow['Type'] == 'Uuid') {
+                $expectedValue = $this->replaceUuidIdentifiers('[' . $assertionTableRow['Expected'] . ']');
+            } else {
+                $expectedValue = $assertionTableRow['Expected'];
+            }
             if (isset($assertionTableRow['AssertionType']) && $assertionTableRow['AssertionType'] === 'json') {
                 $expectedValue = json_decode($expectedValue, true);
             }
@@ -372,6 +410,7 @@ trait EventSourcedTrait
      */
     public function iAmInContentStreamAndDimensionSpacePointCoordinates(string $contentStreamIdentifier, string $dimensionSpacePoint)
     {
+        $contentStreamIdentifier = $this->replaceUuidIdentifiers($contentStreamIdentifier);
         $this->contentStreamIdentifier = new ContentStreamIdentifier($contentStreamIdentifier);
         $this->dimensionSpacePoint = new DimensionSpacePoint(json_decode($dimensionSpacePoint, true)['coordinates']);
     }
@@ -402,6 +441,7 @@ trait EventSourcedTrait
      */
     public function workspaceDoesNotPointToContentStream(string $rawWorkspaceName, string $rawContentStreamIdentifier)
     {
+        $rawContentStreamIdentifier = $this->replaceUuidIdentifiers($rawContentStreamIdentifier);
         $workspace = $this->workspaceFinder->findOneByName(new WorkspaceName($rawWorkspaceName));
 
         Assert::assertNotEquals($rawContentStreamIdentifier, (string)$workspace->getCurrentContentStreamIdentifier());
@@ -412,6 +452,7 @@ trait EventSourcedTrait
      */
     public function iExpectANodeToExistInTheGraphProjection($nodeIdentifier)
     {
+        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
         $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
         Assert::assertNotNull($node, 'Node "' . $nodeIdentifier . '" was not found in the current Content Stream / Dimension Space Point.');
     }
@@ -421,6 +462,7 @@ trait EventSourcedTrait
      */
     public function iExpectANodeNotToExistInTheGraphProjection($nodeIdentifier)
     {
+        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
         $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
         Assert::assertNull($node, 'Node "' . $nodeIdentifier . '" was found in the current Content Stream / Dimension Space Point.');
     }
@@ -431,6 +473,7 @@ trait EventSourcedTrait
      */
     public function iExpectANodeIdentifiedByAggregateIdentifierToExistInTheSubgraph(string $nodeAggregateIdentifier)
     {
+        $nodeAggregateIdentifier = $this->replaceUuidIdentifiers($nodeAggregateIdentifier);
         $node = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)
             ->findNodeByNodeAggregateIdentifier(new NodeAggregateIdentifier($nodeAggregateIdentifier));
@@ -443,6 +486,7 @@ trait EventSourcedTrait
      */
     public function iExpectANodeIdentifiedByAggregateIdentifierNotToExistInTheSubgraph(string $nodeAggregateIdentifier)
     {
+        $nodeAggregateIdentifier = $this->replaceUuidIdentifiers($nodeAggregateIdentifier);
         $node = $this->contentGraphInterface
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)
             ->findNodeByNodeAggregateIdentifier(new NodeAggregateIdentifier($nodeAggregateIdentifier));
@@ -454,6 +498,7 @@ trait EventSourcedTrait
      */
     public function iExpectTheNodeToHaveTheFollowingChildNodes($nodeIdentifier, TableNode $expectedChildNodesTable)
     {
+        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
         $nodes = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findChildNodes(new NodeIdentifier($nodeIdentifier));
 
         Assert::assertCount(count($expectedChildNodesTable->getHash()), $nodes, 'Child Node Count does not match');
@@ -468,6 +513,8 @@ trait EventSourcedTrait
      */
     public function iExpectTheNodeAggregateToHaveTheNodes($nodeAggregateIdentifier, $nodeIdentifier)
     {
+        $nodeAggregateIdentifier = $this->replaceUuidIdentifiers($nodeAggregateIdentifier);
+        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
         $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier,
             $this->dimensionSpacePoint)->findNodeByNodeAggregateIdentifier(new NodeAggregateIdentifier($nodeAggregateIdentifier));
 
@@ -481,6 +528,7 @@ trait EventSourcedTrait
      */
     public function iExpectTheNodeToHaveTheType($nodeIdentifier, $nodeType)
     {
+        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
         $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
         Assert::assertEquals($nodeType, (string)$node->getNodeTypeName(), 'Node Type names do not match');
     }
@@ -490,6 +538,7 @@ trait EventSourcedTrait
      */
     public function iExpectTheNodeToHaveTheProperties($nodeIdentifier, TableNode $expectedProperties)
     {
+        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
         /** @var \Neos\ContentRepository\Domain\Model\Node $node */
         $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
         $properties = $node->getProperties();
@@ -501,10 +550,21 @@ trait EventSourcedTrait
     }
 
     /**
+     * @Then /^I expect the property "([^"]*)" of Node "([^"]*)" is "([^"]*)"$/
+     */
+    public function iExpectThePropertyOfNodeIs($propertyName, $nodeIdentifier, $value)
+    {
+        /** @var \Neos\ContentRepository\Domain\Model\Node $node */
+        $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
+        Assert::assertEquals($node->$propertyName, $value, 'Node property ' . $propertyName . ' does not match. Expected: ' . $value . '; Actual: ' . $node->$propertyName);
+    }
+
+    /**
      * @Then /^I expect the path "([^"]*)" to lead to the node "([^"]*)"$/
      */
     public function iExpectThePathToLeadToTheNode($nodePath, $nodeIdentifier)
     {
+        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
         if (!$this->rootNodeIdentifier) {
             throw new \Exception('ERROR: RootNodeIdentifier needed for running this step. You need to use "the Event RootNodeWasCreated was published with payload" to create a root node..');
         }
