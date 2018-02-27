@@ -241,6 +241,17 @@ final class WorkspaceCommandHandler
         return reset($contentStreamWasForkedEvents)->getEvent();
     }
 
+    /**
+     * @param RebaseWorkspace $command
+     * @throws BaseWorkspaceDoesNotExist
+     * @throws WorkspaceDoesNotExist
+     * @throws \Exception
+     * @throws \Neos\ContentRepository\Exception
+     * @throws \Neos\ContentRepository\Exception\NodeException
+     * @throws \Neos\ContentRepository\Exception\NodeNotFoundException
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
+     */
     public function handleRebaseWorkspace(RebaseWorkspace $command)
     {
         $workspace = $this->workspaceFinder->findOneByName($command->getWorkspaceName());

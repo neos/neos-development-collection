@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\ContentRepository\Domain\ValueObject;
 
 /*
@@ -31,11 +30,17 @@ final class NodeName implements \JsonSerializable
         $this->name = $name;
     }
 
+    /**
+     * @return string
+     */
     public function jsonSerialize()
     {
         return $this->name;
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return $this->name;

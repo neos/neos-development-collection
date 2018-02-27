@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\ContentRepository\Domain\Projection\Content;
 
 /*
@@ -11,6 +10,7 @@ namespace Neos\ContentRepository\Domain\Projection\Content;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 
@@ -36,19 +36,29 @@ class PropertyCollection implements \ArrayAccess, \Iterator
      * @var array
      */
     protected $resolvedProperties;
-
-
+    
+    /**
+     * PropertyCollection constructor.
+     * @param array $properties
+     */
     public function __construct(array $properties)
     {
         $this->properties = $properties;
     }
 
-
+    /**
+     * @param mixed $offset
+     * @return bool
+     */
     public function offsetExists($offset)
     {
         return isset($this->properties[$offset]);
     }
 
+    /**
+     * @param mixed $offset
+     * @return mixed|null
+     */
     public function offsetGet($offset)
     {
         if (!isset($this->properties[$offset])) {
@@ -81,46 +91,71 @@ class PropertyCollection implements \ArrayAccess, \Iterator
         );
     }
 
+    /**
+     * @param mixed $offset
+     * @param mixed $value
+     */
     public function offsetSet($offset, $value)
     {
         $this->properties[$offset] = $value;
     }
 
+    /**
+     * @param mixed $offset
+     */
     public function offsetUnset($offset)
     {
         unset($this->properties);
     }
 
+    /**
+     * @return mixed|null
+     */
     public function current()
     {
         return $this->offsetGet($this->key());
     }
-
+    
     public function next()
     {
         next($this->properties);
     }
 
+    /**
+     * @return int|mixed|null|string
+     */
     public function key()
     {
         return key($this->properties);
     }
 
+    /**
+     * @return bool
+     */
     public function valid()
     {
         return current($this->properties) !== false;
     }
 
+    /**
+     * 
+     */
     public function rewind()
     {
         reset($this->properties);
     }
 
+    /**
+     * @return array
+     */
     public function toArray(): array
     {
         return $this->properties;
     }
 
+    /**
+     * @return array
+     */
     public function getPropertyNames(): array
     {
         return array_keys($this->properties);

@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\ContentRepository\Domain\Projection\Content;
 
 /*
@@ -11,6 +10,7 @@ namespace Neos\ContentRepository\Domain\Projection\Content;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\ContentRepository\Domain;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\Flow\Annotations as Flow;
@@ -99,6 +99,10 @@ interface ContentSubgraphInterface extends \JsonSerializable
      */
     public function findNodesByType(Domain\ValueObject\NodeTypeName $nodeTypeName, Domain\Service\Context $contentContext = null): array;
 
+    /**
+     * @param NodeIdentifier $nodeIdentifier
+     * @return Domain\ValueObject\NodePath
+     */
     public function findNodePath(Domain\ValueObject\NodeIdentifier $nodeIdentifier): Domain\ValueObject\NodePath;
 
     /**

@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\ContentRepository\Domain\ValueObject;
 
 /*
@@ -11,6 +10,7 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\Cache\CacheAwareInterface;
 use Neos\ContentRepository\Domain\Context\Dimension\ContentDimensionIdentifier;
 use Neos\Utility\Arrays;
