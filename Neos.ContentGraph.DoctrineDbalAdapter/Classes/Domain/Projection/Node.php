@@ -122,6 +122,22 @@ class Node
         ]);
     }
 
+    public function updateToDatabase(Connection $databaseConnection): void
+    {
+        $databaseConnection->update('neos_contentgraph_node', [
+            'nodeaggregateidentifier' => (string) $this->nodeAggregateIdentifier,
+            'nodeidentifier' => (string) $this->nodeIdentifier,
+            'dimensionspacepoint' => json_encode($this->dimensionSpacePoint),
+            'dimensionspacepointhash' => (string) $this->dimensionSpacePointHash,
+            'properties' => json_encode($this->properties),
+            'nodetypename' => (string) $this->nodeTypeName,
+            'hidden' => (int)$this->hidden
+        ],
+        [
+            'relationanchorpoint' => $this->relationAnchorPoint
+        ]);
+    }
+
     /**
      * @param array $databaseRow
      * @return static
