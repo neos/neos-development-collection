@@ -557,7 +557,7 @@ trait EventSourcedTrait
         $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
         /** @var \Neos\ContentRepository\Domain\Model\Node $node */
         $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
-        Assert::assertEquals(true, $node->hidden, 'Node is visible. Expected: hidden;');
+        Assert::assertEquals(true, $node->isHidden(), 'Node is visible. Expected: hidden;');
     }
 
     /**
@@ -568,7 +568,7 @@ trait EventSourcedTrait
         $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
         /** @var \Neos\ContentRepository\Domain\Model\Node $node */
         $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
-        Assert::assertEquals(false, $node->hidden, 'Node is hidden. Expected: shown;');
+        Assert::assertEquals(false, $node->isHidden(), 'Node is hidden. Expected: shown;');
     }
 
     /**
