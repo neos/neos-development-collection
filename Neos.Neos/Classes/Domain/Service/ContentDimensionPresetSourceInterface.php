@@ -26,6 +26,7 @@ use Neos\Flow\Annotations as Flow;
  * icon and further options for routing.
  *
  * The default implementation ConfigurationContentDimensionPresetSource will read the available presets from settings.
+ * @deprecated
  */
 interface ContentDimensionPresetSourceInterface extends \Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface
 {

@@ -594,4 +594,12 @@ class Context
     {
         return $this->contentStreamIdentifier;
     }
+
+    /**
+     * @return Domain\ValueObject\DimensionSpacePoint
+     */
+    public function getDimensionSpacePoint(): Domain\ValueObject\DimensionSpacePoint
+    {
+        return $this->dimensionSpacePoint;
+    }
 }
