@@ -258,7 +258,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         return $this->getDatabaseConnection()->executeQuery(
             $query,
             $parameters
-        )->fetch();
+        )->rowCount();
     }
 
     /**
