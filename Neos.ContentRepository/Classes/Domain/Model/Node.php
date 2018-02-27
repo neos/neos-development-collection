@@ -69,22 +69,22 @@ class Node implements NodeInterface, CacheAwareInterface
     /**
      * @var int
      */
-    public $index = 0;
+    protected $index = 0;
 
     /**
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * @var NodeType
      */
-    public $nodeType;
+    protected $nodeType;
 
     /**
      * @var bool
      */
-    public $hidden;
+    protected $hidden;
 
     /**
      * @var NodeTypeName
