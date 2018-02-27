@@ -26,7 +26,13 @@ class DimensionController extends AbstractModuleController
      * @Flow\Inject(lazy=false)
      * @var DimensionSpace\InterDimensionalVariationGraph
      */
-    protected $interDimensionalFallbackGraph;
+    protected $interDimensionalVariationGraph;
+
+    /**
+     * @Flow\Inject(lazy=false)
+     * @var Dimension\ContentDimensionSourceInterface
+     */
+    protected $contentDimensionSource;
 
 
     /**
@@ -37,22 +43,20 @@ class DimensionController extends AbstractModuleController
      */
     public function indexAction(string $type = 'intraDimension', string $subgraphIdentifier = null)
     {
-        /**
         switch ($type) {
             case 'intraDimension':
-                $graph = new Svg\IntraDimensionalFallbackGraph($this->intraDimensionalFallbackGraph);
+                $graph = new Svg\IntraDimensionalVariationGraph($this->contentDimensionSource);
                 break;
             case 'interDimension':
                 $graph = new Svg\InterDimensionalFallbackGraph(
-                    $this->interDimensionalFallbackGraph,
-                    $this->intraDimensionalFallbackGraph,
+                    $this->interDimensionalVariationGraph,
+                    $this->contentDimensionSource,
                     $subgraphIdentifier
                 );
                 break;
             default:
-        }
-         */
                 $graph = null;
+        }
         $this->view->assignMultiple([
             'availableGraphTypes' => ['intraDimension', 'interDimension'],
             'type' => $type,

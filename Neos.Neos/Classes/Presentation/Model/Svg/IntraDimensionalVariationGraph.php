@@ -16,12 +16,12 @@ use Neos\ContentRepository\Domain\Context\Dimension;
 /**
  * The IntraDimensionalFallbackGraph presentation model for SVG
  */
-class IntraDimensionalFallbackGraph
+class IntraDimensionalVariationGraph
 {
     /**
-     * @var Dimension\Repository\IntraDimensionalFallbackGraph
+     * @var Dimension\ContentDimensionSourceInterface
      */
-    protected $fallbackGraph;
+    protected $contentDimensionSource;
 
     /**
      * @var array
@@ -39,11 +39,11 @@ class IntraDimensionalFallbackGraph
     protected $height;
 
     /**
-     * @param Dimension\Repository\IntraDimensionalFallbackGraph $fallbackGraph
+     * @param Dimension\ContentDimensionSourceInterface $contentDimensionSource
      */
-    public function __construct(Dimension\Repository\IntraDimensionalFallbackGraph $fallbackGraph)
+    public function __construct(Dimension\ContentDimensionSourceInterface $contentDimensionSource)
     {
-        $this->fallbackGraph = $fallbackGraph;
+        $this->contentDimensionSource = $contentDimensionSource;
     }
 
     /**
@@ -91,16 +91,16 @@ class IntraDimensionalFallbackGraph
         $counter = 0;
         $horizontalOffset = 0;
         $parent = 0;
-        foreach ($this->fallbackGraph->getDimensions() as $contentDimension) {
-            $this->dimensions[$contentDimension->getName()] = [
+        foreach ($this->contentDimensionSource->getContentDimensionsOrderedByPriority() as $rawDimensionIdentifier => $contentDimension) {
+            $this->dimensions[(string) $contentDimension->getIdentifier()] = [
                 'offset' => $horizontalOffset,
-                'name' => $contentDimension->getName(),
-                'label' => $contentDimension->getLabel(),
+                'name' => $contentDimension->getIdentifier(),
+                'label' => $contentDimension->getConfigurationValue('label'),
                 'nodes' => [],
                 'edges' => []
             ];
             foreach ($contentDimension->getRootValues() as $rootValue) {
-                $this->traverseDimension($contentDimension->getName(), $rootValue, $counter, 0, $horizontalOffset, $parent);
+                $this->traverseDimension($contentDimension, $rootValue, $counter, 0, $horizontalOffset, $parent);
                 $horizontalOffset += 30;
             }
             $horizontalOffset += 30;
@@ -108,22 +108,22 @@ class IntraDimensionalFallbackGraph
     }
 
     /**
-     * @param string $dimensionName
-     * @param Dimension\Model\ContentDimensionValue $value
+     * @param Dimension\ContentDimension $contentDimension
+     * @param Dimension\ContentDimensionValue $value
      * @param int $counter
      * @param int $depth
      * @param int $horizontalOffset
      * @param int $parent
      * @return void
      */
-    protected function traverseDimension(string $dimensionName, Dimension\Model\ContentDimensionValue $value, int & $counter, int $depth, int & $horizontalOffset, int $parent)
+    protected function traverseDimension(Dimension\ContentDimension $contentDimension, Dimension\ContentDimensionValue $value, int & $counter, int $depth, int & $horizontalOffset, int $parent)
     {
         $counter++;
         $nodeId = $counter;
         $leftOffset = $horizontalOffset + 42;
-        if ($value->getSpecializations()) {
-            foreach ($value->getSpecializations() as $variant) {
-                $this->traverseDimension($dimensionName, $variant, $counter, $depth + 1, $horizontalOffset, $nodeId);
+        if (!empty($contentDimension->getSpecializations($value))) {
+            foreach ($contentDimension->getSpecializations($value) as $specialization) {
+                $this->traverseDimension($contentDimension, $specialization, $counter, $depth + 1, $horizontalOffset, $nodeId);
             }
             $horizontalOffset -= 110;
         }
@@ -145,11 +145,11 @@ class IntraDimensionalFallbackGraph
             'y' => $y
         ];
 
-        $this->dimensions[$dimensionName]['nodes'][] = $currentNode;
+        $this->dimensions[(string) $contentDimension->getIdentifier()]['nodes'][] = $currentNode;
 
-        foreach ($this->dimensions[$dimensionName]['nodes'] as $node) {
+        foreach ($this->dimensions[(string) $contentDimension->getIdentifier()]['nodes'] as $node) {
             if ($node['parent'] === $nodeId) {
-                $this->dimensions[$dimensionName]['edges'][] = [
+                $this->dimensions[(string) $contentDimension->getIdentifier()]['edges'][] = [
                     'x1' => $node['x'],
                     'y1' => $node['y'] - 40,
                     'x2' => $currentNode['x'],

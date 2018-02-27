@@ -62,7 +62,7 @@ class InterDimensionalVariationGraph
     protected $weightedGeneralizations;
 
     /**
-     * @var array|Domain\ValueObject\DimensionSpacePoint[][]
+     * @var array|Domain\ValueObject\DimensionSpacePoint[][][]
      */
     protected $weightedSpecializations;
 
@@ -236,7 +236,7 @@ class InterDimensionalVariationGraph
      * Returns specializations of a subgraph indexed by relative weight
      *
      * @param Domain\ValueObject\DimensionSpacePoint $generalization
-     * @return array|Domain\ValueObject\DimensionSpacePoint[]
+     * @return array|Domain\ValueObject\DimensionSpacePoint[][]
      */
     public function getWeightedSpecializations(Domain\ValueObject\DimensionSpacePoint $generalization): array
     {

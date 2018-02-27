@@ -22,12 +22,12 @@ class InterDimensionalFallbackGraph
     /**
      * @var DimensionSpace\InterDimensionalVariationGraph
      */
-    protected $fallbackGraph;
+    protected $interDimensionalVariationGraph;
 
     /**
-     * @var Dimension\Repository\IntraDimensionalFallbackGraph
+     * @var Dimension\ContentDimensionSourceInterface
      */
-    protected $intraDimensionalFallbackGraph;
+    protected $contentDimensionSource;
 
     /**
      * @var string
@@ -60,17 +60,17 @@ class InterDimensionalFallbackGraph
     protected $height;
 
     /**
-     * @param DimensionSpace\InterDimensionalVariationGraph $fallbackGraph
-     * @param Dimension\Repository\IntraDimensionalFallbackGraph $intraDimensionalFallbackGraph
+     * @param DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph
+     * @param Dimension\ContentDimensionSourceInterface $contentDimensionSource
      * @param string|null $rootSubgraphIdentifier
      */
     public function __construct(
-        DimensionSpace\InterDimensionalVariationGraph $fallbackGraph,
-        Dimension\Repository\IntraDimensionalFallbackGraph $intraDimensionalFallbackGraph,
+        DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
+        Dimension\ContentDimensionSourceInterface $contentDimensionSource,
         string $rootSubgraphIdentifier = null
     ) {
-        $this->fallbackGraph = $fallbackGraph;
-        $this->intraDimensionalFallbackGraph = $intraDimensionalFallbackGraph;
+        $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
+        $this->contentDimensionSource = $contentDimensionSource;
         $this->rootSubgraphIdentifier = $rootSubgraphIdentifier;
     }
 
@@ -131,7 +131,7 @@ class InterDimensionalFallbackGraph
         $this->edges = [];
 
         if ($this->rootSubgraphIdentifier) {
-            $this->initializeSubgraph();
+            $this->initializeDimensionSpacePoints();
         } else {
             $this->initializeFullGraph();
         }
@@ -143,7 +143,7 @@ class InterDimensionalFallbackGraph
     protected function initializeFullGraph()
     {
         $this->initializeOffsets();
-        foreach ($this->fallbackGraph->getWeightedDimensionSpacePoints() as $subgraphIdentifier => $subgraph) {
+        foreach ($this->interDimensionalVariationGraph->getWeightedDimensionSpacePoints() as $subgraphIdentifier => $subgraph) {
             $this->initializeFullGraphNode($subgraph);
         }
 
@@ -155,32 +155,32 @@ class InterDimensionalFallbackGraph
      */
     protected function initializeOffsets()
     {
-        foreach ($this->intraDimensionalFallbackGraph->getDimensions() as $contentDimension) {
+        foreach ($this->contentDimensionSource->getContentDimensionsOrderedByPriority() as $contentDimension) {
             $horizontalOffset = 0;
-            $this->offsets[$contentDimension->getName()] = [
+            $this->offsets[(string) $contentDimension->getIdentifier()] = [
                 '_height' => 0,
                 '_width' => 0
             ];
             foreach ($contentDimension->getRootValues() as $rootValue) {
-                $this->traverseDimension($contentDimension->getName(), $rootValue, 0, $horizontalOffset, 0);
+                $this->traverseDimension($contentDimension, $rootValue, 0, $horizontalOffset, 0);
             }
         }
     }
 
     /**
-     * @param string $dimensionName
-     * @param Dimension\Model\ContentDimensionValue $value
+     * @param Dimension\ContentDimension $contentDimension
+     * @param Dimension\ContentDimensionValue $value
      * @param int $depth
      * @param int $horizontalOffset
      * @param int $baseOffset
      * @return void
      */
-    protected function traverseDimension(string $dimensionName, Dimension\Model\ContentDimensionValue $value, int $depth, int & $horizontalOffset, int $baseOffset)
+    protected function traverseDimension(Dimension\ContentDimension $contentDimension, Dimension\ContentDimensionValue $value, int $depth, int & $horizontalOffset, int $baseOffset)
     {
         $leftOffset = $horizontalOffset;
-        if ($value->getSpecializations()) {
-            foreach ($value->getSpecializations() as $variant) {
-                $this->traverseDimension($dimensionName, $variant, $depth + 1, $horizontalOffset, $baseOffset);
+        if (!empty($contentDimension->getSpecializations($value))) {
+            foreach ($contentDimension->getSpecializations($value) as $specialization) {
+                $this->traverseDimension($contentDimension, $specialization, $depth + 1, $horizontalOffset, $baseOffset);
             }
             $horizontalOffset--;
         }
@@ -189,9 +189,9 @@ class InterDimensionalFallbackGraph
         $x = $baseOffset + $leftOffset + ($rightOffset - $leftOffset) / 2;
         $y = $depth;
 
-        $this->offsets[$dimensionName]['_width'] = max($this->offsets[$dimensionName]['_width'], $x + 1);
-        $this->offsets[$dimensionName]['_height'] = max($this->offsets[$dimensionName]['_height'], $y + 1);
-        $this->offsets[$dimensionName][$value->getValue()] = [
+        $this->offsets[(string) $contentDimension->getIdentifier()]['_width'] = max($this->offsets[(string) $contentDimension->getIdentifier()]['_width'], $x + 1);
+        $this->offsets[(string) $contentDimension->getIdentifier()]['_height'] = max($this->offsets[(string) $contentDimension->getIdentifier()]['_height'], $y + 1);
+        $this->offsets[(string) $contentDimension->getIdentifier()][$value->getValue()] = [
             'x' => $x,
             'y' => $y
         ];
@@ -202,56 +202,63 @@ class InterDimensionalFallbackGraph
     /**
      * @return void
      */
-    protected function initializeSubgraph()
+    protected function initializeDimensionSpacePoints()
     {
-        $subgraph = $this->fallbackGraph->getWeightedDimensionSpacePointByHash($this->rootSubgraphIdentifier);
+        $dimensionSpacePoint = $this->interDimensionalVariationGraph->getWeightedDimensionSpacePointByHash($this->rootSubgraphIdentifier);
         $horizontalOffset = 0;
         $y = 0;
-        foreach ($subgraph->getGeneralizations() as $fallbackSubgraph) {
-            $this->initializeSubgraphNode($fallbackSubgraph, $horizontalOffset, $y);
+
+        $generalizations = $this->interDimensionalVariationGraph->getWeightedGeneralizations($dimensionSpacePoint->getDimensionSpacePoint());
+        ksort($generalizations);
+        foreach ($generalizations as $generalization) {
+            $this->initializeSubgraphNode($this->interDimensionalVariationGraph->getWeightedDimensionSpacePointByHash($generalization->getHash()), $horizontalOffset, $y);
         }
-        $this->initializeSubgraphNode($subgraph, $horizontalOffset, $y);
-        foreach ($subgraph->getSpecializations() as $variantSubgraph) {
-            $this->initializeSubgraphNode($variantSubgraph, $horizontalOffset, $y);
+
+        $specializations = $this->interDimensionalVariationGraph->getWeightedSpecializations($dimensionSpacePoint->getDimensionSpacePoint());
+        ksort($specializations);
+        foreach ($specializations as $weight => $specializationsOfSameWeight) {
+            foreach ($specializationsOfSameWeight as $specialization) {
+                $this->initializeSubgraphNode($this->interDimensionalVariationGraph->getWeightedDimensionSpacePointByHash($specialization->getHash()), $horizontalOffset, $y);
+            }
         }
 
         $this->initializeEdges(false);
     }
 
     /**
-     * @param DimensionSpace\WeightedDimensionSpacePoint $subgraph
+     * @param DimensionSpace\WeightedDimensionSpacePoint $weightedDimensionSpacePoint
      * @return void
      */
-    protected function initializeFullGraphNode(DimensionSpace\WeightedDimensionSpacePoint $subgraph)
+    protected function initializeFullGraphNode(DimensionSpace\WeightedDimensionSpacePoint $weightedDimensionSpacePoint)
     {
         $x = 0;
         $y = 0;
 
         $previousDepthFactor = 1;
         $previousWidthFactor = 1;
-        foreach (array_reverse($subgraph->getDimensionValues()) as $dimensionName => $dimensionValue) {
-            /** @var Dimension\Model\ContentDimensionValue $dimensionValue */
-            $y += $dimensionValue->getDepth() * $previousDepthFactor;
-            $previousDepthFactor *= $this->offsets[$dimensionName]['_height'];
+        foreach (array_reverse($weightedDimensionSpacePoint->getDimensionValues()) as $rawDimensionIdentifier => $dimensionValue) {
+            /** @var Dimension\ContentDimensionValue $dimensionValue */
+            $y += $dimensionValue->getSpecializationDepth()->getDepth() * $previousDepthFactor;
+            $previousDepthFactor *= $this->offsets[$rawDimensionIdentifier]['_height'];
 
-            $x += $this->offsets[$dimensionName][$dimensionValue->getValue()]['x'] * $previousWidthFactor;
-            $previousWidthFactor *= $this->offsets[$dimensionName]['_width'];
+            $x += $this->offsets[$rawDimensionIdentifier][(string) $dimensionValue]['x'] * $previousWidthFactor;
+            $previousWidthFactor *= $this->offsets[$rawDimensionIdentifier]['_width'];
         }
 
-        $nameComponents = $subgraph->getDimensionValues();
-        array_walk($nameComponents, function (Dimension\Model\ContentDimensionValue &$value) {
+        $nameComponents = $weightedDimensionSpacePoint->getDimensionValues();
+        array_walk($nameComponents, function (Dimension\ContentDimensionValue &$value) {
             $value = $value->getValue();
         });
 
         $x *= 110;
         $y *= 110;
 
-        $this->nodes[$subgraph->getIdentityHash()] = [
-            'id' => $subgraph->getIdentityHash(),
+        $this->nodes[$weightedDimensionSpacePoint->getIdentityHash()] = [
+            'id' => $weightedDimensionSpacePoint->getIdentityHash(),
             'name' => implode(', ', $nameComponents),
             'textX' => $x,
             'textY' => $y + 42 + 50, // 50 for padding
-            'color' => $subgraph->getIdentityHash() === $this->rootSubgraphIdentifier ? '#00B5FF' : '#3F3F3F',
+            'color' => $weightedDimensionSpacePoint->getIdentityHash() === $this->rootSubgraphIdentifier ? '#00B5FF' : '#3F3F3F',
             'x' => $x + 42,
             'y' => $y + 42
         ];
@@ -261,20 +268,20 @@ class InterDimensionalFallbackGraph
     }
 
     /**
-     * @param DimensionSpace\WeightedDimensionSpacePoint $subgraph
+     * @param DimensionSpace\WeightedDimensionSpacePoint $weightedDimensionSpacePoint
      * @param int $horizontalOffset
      * @param int $y
      * @return void
      */
-    protected function initializeSubgraphNode(DimensionSpace\WeightedDimensionSpacePoint $subgraph, int & $horizontalOffset, int & $y)
+    protected function initializeSubgraphNode(DimensionSpace\WeightedDimensionSpacePoint $weightedDimensionSpacePoint, int & $horizontalOffset, int & $y)
     {
-        $nameComponents = $subgraph->getDimensionValues();
-        array_walk($nameComponents, function (Dimension\Model\ContentDimensionValue &$value) {
+        $nameComponents = $weightedDimensionSpacePoint->getDimensionValues();
+        array_walk($nameComponents, function (Dimension\ContentDimensionValue &$value) {
             $value = $value->getValue();
         });
         $depth = 0;
-        foreach ($subgraph->getDimensionValues() as $dimensionValue) {
-            $depth += $dimensionValue->getDepth();
+        foreach ($weightedDimensionSpacePoint->getDimensionValues() as $dimensionValue) {
+            $depth += $dimensionValue->getSpecializationDepth()->getDepth();
         }
         $previousY = $y;
         $y = $depth * 110 + 42;
@@ -282,12 +289,12 @@ class InterDimensionalFallbackGraph
             $horizontalOffset += 110;
         }
         $x = $horizontalOffset + 42;
-        $this->nodes[$subgraph->getIdentityHash()] = [
-            'id' => $subgraph->getIdentityHash(),
+        $this->nodes[$weightedDimensionSpacePoint->getIdentityHash()] = [
+            'id' => $weightedDimensionSpacePoint->getIdentityHash(),
             'name' => implode(', ', $nameComponents),
             'textX' => $x - 40,
             'textY' => $y - 5 + 50, // 50 for padding
-            'color' => $subgraph->getIdentityHash() === $this->rootSubgraphIdentifier ? '#00B5FF' : '#3F3F3F',
+            'color' => $weightedDimensionSpacePoint->getIdentityHash() === $this->rootSubgraphIdentifier ? '#00B5FF' : '#3F3F3F',
             'x' => $x,
             'y' => $y
         ];
@@ -302,34 +309,32 @@ class InterDimensionalFallbackGraph
      */
     protected function initializeEdges($hideInactive = true)
     {
-        $subgraphs = $this->fallbackGraph->getWeightedDimensionSpacePoints();
-        usort($subgraphs, function (DimensionSpace\WeightedDimensionSpacePoint $subgraphA, DimensionSpace\WeightedDimensionSpacePoint $subgraphB) {
+        $weightedDimensionSpacePoints = $this->interDimensionalVariationGraph->getWeightedDimensionSpacePoints();
+        usort($weightedDimensionSpacePoints, function (DimensionSpace\WeightedDimensionSpacePoint $subgraphA, DimensionSpace\WeightedDimensionSpacePoint $subgraphB) {
             return $subgraphB->getWeight() <=> $subgraphA->getWeight();
         });
-        foreach ($subgraphs as $subgraph) {
-            $fallback = $subgraph->getGeneralizations();
-            usort($fallback, function (DimensionSpace\WeightedDimensionSpacePoint $subgraphA, DimensionSpace\WeightedDimensionSpacePoint $subgraphB) {
-                return $subgraphA->getWeight() <=> $subgraphB->getWeight();
-            });
+        foreach ($weightedDimensionSpacePoints as $weightedDimensionSpacePoint) {
+            $generalizations = $this->interDimensionalVariationGraph->getWeightedGeneralizations($weightedDimensionSpacePoint->getDimensionSpacePoint());
+            ksort($generalizations);
             $i = 1;
-            foreach ($fallback as $fallbackSubgraph) {
+            foreach ($generalizations as $generalization) {
                 if (
-                    isset($this->nodes[$fallbackSubgraph->getIdentityHash()])
-                    && isset($this->nodes[$subgraph->getIdentityHash()])
+                    isset($this->nodes[$generalization->getHash()])
+                    && isset($this->nodes[$weightedDimensionSpacePoint->getIdentityHash()])
                 ) {
-                    $isPrimary = ($fallbackSubgraph === $this->fallbackGraph->getPrimaryGeneralization($subgraph));
+                    $isPrimary = ($generalization === $this->interDimensionalVariationGraph->getPrimaryGeneralization($weightedDimensionSpacePoint->getDimensionSpacePoint()));
                     $edge = [
-                        'x1' => $this->nodes[$subgraph->getIdentityHash()]['x'],
-                        'y1' => $this->nodes[$subgraph->getIdentityHash()]['y'] - 40,
-                        'x2' => $this->nodes[$fallbackSubgraph->getIdentityHash()]['x'],
-                        'y2' => $this->nodes[$fallbackSubgraph->getIdentityHash()]['y'] + 40,
+                        'x1' => $this->nodes[$weightedDimensionSpacePoint->getIdentityHash()]['x'],
+                        'y1' => $this->nodes[$weightedDimensionSpacePoint->getIdentityHash()]['y'] - 40,
+                        'x2' => $this->nodes[$generalization->getHash()]['x'],
+                        'y2' => $this->nodes[$generalization->getHash()]['y'] + 40,
                         'color' => $isPrimary ? '#00B5FF' : '#FFFFFF',
-                        'opacity' => round(($i / count($fallback)), 2)
+                        'opacity' => round(($i / count($generalizations)), 2)
                     ];
                     if ($hideInactive && !$isPrimary) {
-                        $edge['from'] = $subgraph->getIdentityHash();
+                        $edge['from'] = $weightedDimensionSpacePoint->getIdentityHash();
                         $edge['style'] = 'display: none';
-                        $edge['to'] = $fallbackSubgraph->getIdentityHash();
+                        $edge['to'] = $generalization->getHash();
                     }
                     $this->edges[] = $edge;
                 }
