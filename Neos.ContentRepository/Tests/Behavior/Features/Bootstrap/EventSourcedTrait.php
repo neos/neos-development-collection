@@ -550,13 +550,25 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Then /^I expect the property "([^"]*)" of Node "([^"]*)" is "([^"]*)"$/
+     * @Then /^I expect the Node "([^"]*)" is hidden$/
      */
-    public function iExpectThePropertyOfNodeIs($propertyName, $nodeIdentifier, $value)
+    public function iExpectTheNodeIsHidden($nodeIdentifier)
     {
+        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
         /** @var \Neos\ContentRepository\Domain\Model\Node $node */
         $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
-        Assert::assertEquals($node->$propertyName, $value, 'Node property ' . $propertyName . ' does not match. Expected: ' . $value . '; Actual: ' . $node->$propertyName);
+        Assert::assertEquals(true, $node->hidden, 'Node is visible. Expected: hidden;');
+    }
+
+    /**
+     * @Then /^I expect the Node "([^"]*)" is shown/
+     */
+    public function iExpectTheNodeIsShown($nodeIdentifier)
+    {
+        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
+        /** @var \Neos\ContentRepository\Domain\Model\Node $node */
+        $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
+        Assert::assertEquals(false, $node->hidden, 'Node is hidden. Expected: shown;');
     }
 
     /**

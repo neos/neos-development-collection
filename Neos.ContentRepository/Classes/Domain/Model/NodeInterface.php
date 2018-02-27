@@ -198,14 +198,6 @@ interface NodeInterface extends Domain\Context\Node\ReadOnlyNodeInterface
     public function setHidden($hidden);
 
     /**
-     * Returns the current state of the hidden flag
-     *
-     * @return boolean
-     * @api
-     */
-    public function isHidden();
-
-    /**
      * Sets the date and time when this node becomes potentially visible.
      *
      * @param \DateTime $dateTime Date before this node should be hidden

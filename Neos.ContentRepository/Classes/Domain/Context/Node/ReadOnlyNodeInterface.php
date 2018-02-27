@@ -62,5 +62,11 @@ interface ReadOnlyNodeInterface
      */
     public function getProperty($propertyName);
 
-
+    /**
+     * Returns the current state of the hidden flag
+     *
+     * @return boolean
+     * @api
+     */
+    public function isHidden();
 }

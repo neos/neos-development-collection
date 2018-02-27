@@ -75,7 +75,7 @@ Feature: Single Node operations on live workspace
 
     When I am in the active content stream of workspace "live" and Dimension Space Point {"coordinates": []}
     Then I expect a node "[node-identifier]" to exist in the graph projection
-    And I expect the property "hidden" of Node "[node-identifier]" is "1"
+    And I expect the Node "[node-identifier]" is hidden
 
   Scenario: Show a node
     Given the command "ShowNode" is executed with payload:
@@ -94,4 +94,4 @@ Feature: Single Node operations on live workspace
 
     When I am in the active content stream of workspace "live" and Dimension Space Point {"coordinates": []}
     Then I expect a node "[node-identifier]" to exist in the graph projection
-    And I expect the property "hidden" of Node "[node-identifier]" is "0"
+    And I expect the Node "[node-identifier]" is shown

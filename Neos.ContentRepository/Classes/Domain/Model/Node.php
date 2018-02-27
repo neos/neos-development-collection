@@ -82,6 +82,11 @@ class Node implements NodeInterface, CacheAwareInterface
     public $nodeType;
 
     /**
+     * @var bool
+     */
+    public $hidden;
+
+    /**
      * @var NodeTypeName
      */
     protected $nodeTypeName;
@@ -171,10 +176,11 @@ class Node implements NodeInterface, CacheAwareInterface
      * @param Domain\ValueObject\ContentStreamIdentifier $contentStreamIdentifier
      * @param PropertyCollection $properties
      * @param NodeName $nodeName
+     * @param bool $hidden
      * @param Context|null $context
      * @Flow\Autowiring(false)
      */
-    public function __construct(NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, NodeType $nodeType, ?DimensionSpacePoint $dimensionSpacePoint, ?Domain\ValueObject\NodeAggregateIdentifier $nodeAggregateIdentifier, ?Domain\ValueObject\ContentStreamIdentifier $contentStreamIdentifier, ?PropertyCollection $properties, ?NodeName $nodeName, Context $context = null)
+    public function __construct(NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, NodeType $nodeType, ?DimensionSpacePoint $dimensionSpacePoint, ?Domain\ValueObject\NodeAggregateIdentifier $nodeAggregateIdentifier, ?Domain\ValueObject\ContentStreamIdentifier $contentStreamIdentifier, ?PropertyCollection $properties, ?NodeName $nodeName, bool $hidden = false, Context $context = null)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
@@ -184,6 +190,7 @@ class Node implements NodeInterface, CacheAwareInterface
         $this->nodeIdentifier = $nodeIdentifier;
         $this->properties = $properties;
         $this->nodeName = $nodeName;
+        $this->hidden = $hidden;
 
         // NodeData is OLD code; so we do not set it anymore to make the system crash if one tries to access it
         //$this->nodeData = $nodeData;
@@ -1158,7 +1165,7 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function isHidden()
     {
-        return $this->properties['_hidden'] ?? false;
+        return $this->hidden;
     }
 
     /**
