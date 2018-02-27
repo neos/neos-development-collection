@@ -275,7 +275,6 @@ class ContentRepositoryExportService
             $type = $nodeData->getNodeType()->getPropertyType($propertyName);
 
             if ($type == 'reference' || $type == 'references') {
-                \Neos\Flow\var_dump([$type, $propertyName, $propertyValue]);
                 // TODO: support other types than string
                 continue;
             }
