@@ -196,7 +196,6 @@ final class ContentGraph implements ContentGraphInterface
     {
         $connection = $this->client->getConnection();
 
-        // HINT: we check the ContentStreamIdentifier on the EDGE; as this is where we actually find out whether the node exists in the content stream
         $nodeRow = $connection->executeQuery(
             'SELECT n.* FROM neos_contentgraph_node n
                   WHERE n.nodetypename = :nodeTypeName',

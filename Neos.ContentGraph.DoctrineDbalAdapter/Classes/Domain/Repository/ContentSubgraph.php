@@ -16,6 +16,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Service\DbalClient;
 use Neos\ContentRepository\Domain as ContentRepository;
 use Neos\ContentRepository\Domain\Projection\Content as ContentProjection;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
 use Neos\ContentRepository\Utility;
@@ -24,7 +25,12 @@ use Neos\Flow\Annotations as Flow;
 /**
  * The content subgraph application repository
  *
- * To be used as a read-only source of nodes
+ * To be used as a read-only source of nodes.
+ *
+ *
+ * ## Backwards Compatibility
+ *
+ * The *Context* argument in all methods is only used to create legacy Node instances; so it should NEVER be used except inside mapNodeRowToNode.
  *
  * @api
  */
@@ -310,12 +316,13 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
 
     /**
      * @param string $path
+     * @param NodeIdentifier $rootNodeIdentifier
      * @param ContentRepository\Service\Context|null $context
      * @return ContentRepository\Model\NodeInterface|null
      */
-    public function findNodeByPath(string $path, ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
+    public function findNodeByPath(string $path, NodeIdentifier $rootNodeIdentifier, ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
     {
-        $currentNode = $this->findRootNode($context);
+        $currentNode = $this->findNodeByIdentifier($rootNodeIdentifier, $context);
         $edgeNames = explode('/', trim($path, '/'));
         if ($edgeNames !== [""]) {
             foreach ($edgeNames as $edgeName) {
@@ -392,28 +399,6 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
 
         return $result;
     }
-
-    /**
-     * Root Node by definition belongs to every subgraph (it is "colorless"); that's why we do not filter on subgraph here.
-     *
-     * @param ContentRepository\Service\Context|null $context
-     * @return ContentRepository\Model\NodeInterface
-     */
-    public function findRootNode(ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
-    {
-        $nodeRow = $this->getDatabaseConnection()->executeQuery(
-            'SELECT n.* FROM neos_contentgraph_node n
- WHERE n.nodetypename = :nodeTypeName',
-            [
-                // TODO: NOT ALLOWED TO BE HARDCODED!!!
-                'nodeTypeName' => 'Neos.Neos:Sites',
-            ]
-        )->fetch();
-
-
-        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow, $context) : null;
-    }
-
 
     /**
      * @param ContentRepository\Model\NodeInterface $startNode

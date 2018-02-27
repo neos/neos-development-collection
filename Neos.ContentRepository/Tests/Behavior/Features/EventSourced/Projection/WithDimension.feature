@@ -12,6 +12,7 @@ Feature: Reading of our Graph Projection
       | contentStreamIdentifier  | c75ae6a2-7254-4d42-a31b-a629e264069d |
       | nodeIdentifier           | 5387cb08-2aaf-44dc-a8a1-483497aa0a03 |
       | initiatingUserIdentifier | 00000000-0000-0000-0000-000000000000 |
+      | nodeTypeName             | Neos.ContentRepository:Root          |
     And the Event "Neos.ContentRepository:NodeAggregateWithNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d:NodeAggregate:35411439-94d1-4bd4-8fac-0646856c6a1f" with payload:
       | Key                           | Value                                                                                | Type                   |
       | contentStreamIdentifier       | c75ae6a2-7254-4d42-a31b-a629e264069d                                                 |                        |
@@ -41,7 +42,7 @@ Feature: Reading of our Graph Projection
   Scenario: Translation of node in aggregate
 
     # Node /
-    Given the Event "Neos.ContentRepository:RootNodeWasCreated" was published to stream "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d" with payload:
+    Given the Event RootNodeWasCreated was published with payload:
       | Key                      | Value                                |
       | contentStreamIdentifier  | c75ae6a2-7254-4d42-a31b-a629e264069d |
       | nodeIdentifier           | 5387cb08-2aaf-44dc-a8a1-483497aa0a03 |

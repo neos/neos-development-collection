@@ -11,6 +11,7 @@
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
 use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
@@ -75,12 +76,33 @@ trait EventSourcedTrait
     private $lastCommandException = null;
 
     /**
+     * @var NodeIdentifier
+     */
+    protected $rootNodeIdentifier;
+
+    /**
+     * @Given /^the Event RootNodeWasCreated was published with payload:$/
+     */
+    public function theEventRootNodeWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
+    {
+        $eventPayload = $this->readPayloadTable($payloadTable);
+        $streamName = ContentStreamCommandHandler::getStreamNameForContentStream(new ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
+        $this->publishEvent('Neos.ContentRepository:RootNodeWasCreated', $streamName, $eventPayload);
+        $this->rootNodeIdentifier = new NodeIdentifier($eventPayload['nodeIdentifier']);
+    }
+
+    /**
      * @Given /^the Event "([^"]*)" was published to stream "([^"]*)" with payload:$/
      */
     public function theEventWasPublishedToStreamWithPayload($eventType, $streamName, TableNode $payloadTable)
     {
-        $eventClassName = $this->eventTypeResolver->getEventClassNameByType($eventType);
         $eventPayload = $this->readPayloadTable($payloadTable);
+        $this->publishEvent($eventType, $streamName, $eventPayload);
+    }
+
+    protected function publishEvent($eventType, $streamName, $eventPayload)
+    {
+        $eventClassName = $this->eventTypeResolver->getEventClassNameByType($eventType);
 
         $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
         /** @var EventInterface $event */
@@ -88,6 +110,7 @@ trait EventSourcedTrait
 
         $this->eventPublisher->publish($streamName, $event);
     }
+
 
     protected function readPayloadTable(TableNode $payloadTable)
     {
@@ -381,7 +404,7 @@ trait EventSourcedTrait
     {
         $workspace = $this->workspaceFinder->findOneByName(new WorkspaceName($rawWorkspaceName));
 
-        Assert::assertNotEquals($rawContentStreamIdentifier, (string) $workspace->getCurrentContentStreamIdentifier());
+        Assert::assertNotEquals($rawContentStreamIdentifier, (string)$workspace->getCurrentContentStreamIdentifier());
     }
 
     /**
@@ -483,7 +506,10 @@ trait EventSourcedTrait
      */
     public function iExpectThePathToLeadToTheNode($nodePath, $nodeIdentifier)
     {
-        $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByPath($nodePath);
+        if (!$this->rootNodeIdentifier) {
+            throw new \Exception('ERROR: RootNodeIdentifier needed for running this step. You need to use "the Event RootNodeWasCreated was published with payload" to create a root node..');
+        }
+        $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByPath($nodePath, $this->rootNodeIdentifier);
         Assert::assertNotNull($node, 'Did not find node at path "' . $nodePath . '"');
         Assert::assertEquals($nodeIdentifier, (string)$node->identifier, 'Node identifier does not match.');
     }

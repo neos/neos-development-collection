@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Domain\Projection\Content;
  * source code.
  */
 use Neos\ContentRepository\Domain;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -77,10 +78,11 @@ interface ContentSubgraphInterface extends \JsonSerializable
 
     /**
      * @param string $path
+     * @param NodeIdentifier $rootNodeIdentifier
      * @param Domain\Service\Context|null $contentContext
      * @return Domain\Model\NodeInterface|null
      */
-    public function findNodeByPath(string $path, Domain\Service\Context $contentContext = null): ?Domain\Model\NodeInterface;
+    public function findNodeByPath(string $path, NodeIdentifier $rootNodeIdentifier, Domain\Service\Context $contentContext = null): ?Domain\Model\NodeInterface;
 
     /**
      * @param Domain\ValueObject\NodeIdentifier $parentIdentifier
@@ -96,12 +98,6 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @return array|Domain\Model\NodeInterface[]
      */
     public function findNodesByType(Domain\ValueObject\NodeTypeName $nodeTypeName, Domain\Service\Context $contentContext = null): array;
-
-    /**
-     * @param Domain\Service\Context|null $context
-     * @return Domain\Model\NodeInterface|null
-     */
-    public function findRootNode(Domain\Service\Context $context = null): ?Domain\Model\NodeInterface;
 
     public function findNodePath(Domain\ValueObject\NodeIdentifier $nodeIdentifier): Domain\ValueObject\NodePath;
 

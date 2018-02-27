@@ -197,7 +197,7 @@ class Context
         $this->firstLevelNodeCache = new FirstLevelNodeCache();
         $this->dimensionSpacePoint = Domain\ValueObject\DimensionSpacePoint::fromLegacyDimensionArray($dimensions);
         $this->rootNodeIdentifier = $rootNodeIdentifier;
-        
+
         $this->contentSubgraph = $contentSubgraph;
         $this->contextParameters = $contextParameters;
     }
@@ -338,7 +338,7 @@ class Context
      */
     public function getRootNode()
     {
-        return $this->getContentSubgraph()->findRootNode($this);
+        return $this->getContentSubgraph()->findNodeByIdentifier($this->rootNodeIdentifier, $this);
     }
 
     /**
@@ -351,7 +351,7 @@ class Context
      */
     public function getNode($path)
     {
-        return $this->getContentSubgraph()->findNodeByPath($path, $this);
+        return $this->getContentSubgraph()->findNodeByPath($path, $this->rootNodeIdentifier, $this);
     }
 
     /**
