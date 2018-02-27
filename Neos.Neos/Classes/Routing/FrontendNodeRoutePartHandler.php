@@ -329,7 +329,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             return false;
         }
 
-        $routePath = '/' . ($isSiteNode ? '' : $this->getRequestPathByNode($subgraph, $node));
+        $routePath = $isSiteNode ? '' : $this->getRequestPathByNode($subgraph, $node);
         if (!$contentQuery->getWorkspaceName()->isLive()) {
             $routePath .= ContentSubgraphBackendRouteSuffix::fromWorkspaceAndDimensionSpacePoint($workspace->getWorkspaceName(), $subgraph->getDimensionSpacePoint());
         }

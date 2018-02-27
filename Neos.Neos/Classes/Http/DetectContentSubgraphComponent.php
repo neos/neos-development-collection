@@ -43,6 +43,12 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
      */
     protected $uriPathSegmentDelimiter;
 
+    /**
+     * @Flow\InjectConfiguration("routing.supportEmptySegmentForDimensions")
+     * @var boolean
+     */
+    protected $supportEmptySegmentForDimensions;
+
 
     /**
      * @param Http\Component\ComponentContext $componentContext
@@ -113,7 +119,8 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
                     $uriPathSegmentOffset++;
                 }
             } else {
-                $allowEmptyValue = $detectorOverrideOptions['allowEmptyValue'] ?? false;
+                $allowEmptyValue = ($detectorOverrideOptions['allowEmptyValue'] ?? false)
+                    || $resolutionMode === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT && $this->supportEmptySegmentForDimensions;
                 if ($allowEmptyValue || $resolutionMode === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT && $path === '/') {
                     $coordinates[$rawDimensionIdentifier] = (string) $contentDimension->getDefaultValue();
                 }
