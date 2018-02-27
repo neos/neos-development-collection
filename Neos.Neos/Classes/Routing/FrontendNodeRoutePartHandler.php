@@ -157,7 +157,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
 
         return new MatchResult((string)new ContentQuery(
             $matchingNode->aggregateIdentifier,
-            $this->getWorkspaceNameFromParameters(),
+            $this->getWorkspaceNameFromParameters() ?: WorkspaceName::forLive(),
             $this->getDimensionSpacePointFromParameters(),
             $matchingSite->aggregateIdentifier,
             $matchingRootNode->identifier
@@ -217,7 +217,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      */
     protected function fetchSubgraphForParameters(string $requestPath): ContentSubgraphInterface
     {
-        $workspace = $this->workspaceFinder->findOneByName($this->getWorkspaceNameFromParameters());
+        $workspace = $this->workspaceFinder->findOneByName($this->getWorkspaceNameFromParameters() ?: WorkspaceName::forLive());
         if (!$workspace) {
             throw new Exception\NoWorkspaceException(sprintf('No workspace found for request path "%s"', $requestPath), 1346949318);
         }
@@ -259,7 +259,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     /**
      * @return WorkspaceName
      */
-    protected function getWorkspaceNameFromParameters(): WorkspaceName
+    protected function getWorkspaceNameFromParameters(): ?WorkspaceName
     {
         return $this->parameters->getValue('workspaceName');
     }

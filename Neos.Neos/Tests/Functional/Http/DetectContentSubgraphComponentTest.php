@@ -136,8 +136,8 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
         /** @var RouteParameters $routeParameters */
         $routeParameters = $componentContext->getParameter(RoutingComponent::class, 'parameters');
 
-        $this->assertSame(null, $routeParameters->getValue('contentStreamIdentifier'));
-        $this->assertSame(true, $routeParameters->getValue('uriPathSegmentUsed'));
+        $this->assertSame(null, $routeParameters->getValue('workspaceName'));
+        $this->assertSame(1, $routeParameters->getValue('uriPathSegmentOffset'));
 
         $expectedDimensionSpacePoint = new DimensionSpacePoint([
             'market' => 'WORLD',
@@ -167,8 +167,8 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
         /** @var RouteParameters $routeParameters */
         $routeParameters = $componentContext->getParameter(RoutingComponent::class, 'parameters');
 
-        $this->assertSame(null, $routeParameters->getValue('contentStreamIdentifier'));
-        $this->assertSame(true, $routeParameters->getValue('uriPathSegmentUsed'));
+        $this->assertSame(null, $routeParameters->getValue('workspaceName'));
+        $this->assertSame(1, $routeParameters->getValue('uriPathSegmentOffset'));
 
         $expectedDimensionSpacePoint = new DimensionSpacePoint([
             'market' => 'WORLD',
@@ -197,8 +197,8 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
         /** @var RouteParameters $routeParameters */
         $routeParameters = $componentContext->getParameter(RoutingComponent::class, 'parameters');
 
-        $this->assertSame(null, $routeParameters->getValue('contentStreamIdentifier'));
-        $this->assertSame(false, $routeParameters->getValue('uriPathSegmentUsed'));
+        $this->assertSame(null, $routeParameters->getValue('workspaceName'));
+        $this->assertSame(0, $routeParameters->getValue('uriPathSegmentOffset'));
 
         $expectedDimensionSpacePoint = new DimensionSpacePoint([
             'market' => 'WORLD',
@@ -228,7 +228,7 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
         $routeParameters = $componentContext->getParameter(RoutingComponent::class, 'parameters');
 
         $this->assertEquals(new WorkspaceName('user-me'), $routeParameters->getValue('workspaceName'));
-        $this->assertSame(true, $routeParameters->getValue('uriPathSegmentUsed'));
+        $this->assertSame(1, $routeParameters->getValue('uriPathSegmentOffset'));
 
         $expectedDimensionSpacePoint = new DimensionSpacePoint([
             'market' => 'GB',

@@ -10,7 +10,6 @@ namespace Neos\Neos\Tests\Unit\Http\ContentDimensionDetection;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Flowpack\Neos\DimensionResolver\Tests\Unit\Http\ContentDimensionDetection\Fixtures\InvalidDummyDimensionPresetDetector;
 use Neos\ContentRepository\Domain\Context\Dimension;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Http\BasicContentDimensionResolutionMode;
@@ -142,8 +141,10 @@ class ContentDimensionValueDetectorResolverTest extends UnitTestCase
             $defaultValue,
             [],
             [
-                'detectionComponent' => [
-                    'implementationClassName' => Fixtures\ValidDummyContentDimensionValueDetector::class
+                'resolution' => [
+                    'detectionComponent' => [
+                        'implementationClassName' => Fixtures\ValidDummyContentDimensionValueDetector::class
+                    ]
                 ]
             ]
         );
@@ -172,8 +173,10 @@ class ContentDimensionValueDetectorResolverTest extends UnitTestCase
             $defaultValue,
             [],
             [
-                'detectionComponent' => [
-                    'implementationClassName' => 'Neos\Neos\Http\ContentDimensionDetection\NonExistingImplementation'
+                'resolution' => [
+                    'detectionComponent' => [
+                        'implementationClassName' => 'Neos\Neos\Http\ContentDimensionDetection\NonExistingImplementation'
+                    ]
                 ]
             ]
         );
@@ -199,8 +202,10 @@ class ContentDimensionValueDetectorResolverTest extends UnitTestCase
             $defaultValue,
             [],
             [
-                'detectionComponent' => [
-                    'implementationClassName' => InvalidDummyDimensionPresetDetector::class
+                'resolution' => [
+                    'detectionComponent' => [
+                        'implementationClassName' => Fixtures\InvalidDummyContentDimensionValueDetector::class
+                    ]
                 ]
             ]
         );

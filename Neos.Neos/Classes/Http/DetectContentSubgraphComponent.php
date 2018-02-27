@@ -61,8 +61,11 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
         $existingParameters = $componentContext->getParameter(RoutingComponent::class, 'parameters') ?? RouteParameters::createEmpty();
         $parameters = $existingParameters
             ->withParameter('dimensionSpacePoint', $this->detectDimensionSpacePoint($componentContext, $uriPathSegmentUsed))
-            ->withParameter('uriPathSegmentOffset', $uriPathSegmentUsed ? 1 : 0)
-            ->withParameter('workspaceName', $this->detectWorkspaceName($componentContext) ?: WorkspaceName::forLive());
+            ->withParameter('uriPathSegmentOffset', $uriPathSegmentUsed ? 1 : 0);
+        $workspaceName = $this->detectWorkspaceName($componentContext);
+        if ($workspaceName) {
+            $parameters = $parameters->withParameter('workspaceName', $workspaceName);
+        }
 
         $componentContext->setParameter(RoutingComponent::class, 'parameters', $parameters);
     }
@@ -122,7 +125,7 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
                 $allowEmptyValue = ($detectorOverrideOptions['allowEmptyValue'] ?? false)
                     || $resolutionMode === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT && $this->supportEmptySegmentForDimensions;
                 if ($allowEmptyValue || $resolutionMode === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT && $path === '/') {
-                    $coordinates[$rawDimensionIdentifier] = (string) $contentDimension->getDefaultValue();
+                    $coordinates[$rawDimensionIdentifier] = (string)$contentDimension->getDefaultValue();
                 }
             }
         }
