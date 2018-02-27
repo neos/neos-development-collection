@@ -155,12 +155,18 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
     {
         /** @var ContentQuery $contentQuery */
         $contentQuery = $this->getContextVariable('contentQuery');
+        $uri = null;
 
+        $resolvedNode = null;
         if ($node instanceof NodeInterface) {
             // the latter case is only relevant in extremely rare occasions in the Neos Backend, when we want to generate
             // a link towards the *shortcut itself*, and not to its target.
             $resolvedNode = $resolveShortcuts ? $resolvedNode = $this->nodeShortcutResolver->resolveShortcutTarget($node) : $node;
-            $contentQuery = $contentQuery->withNodeAggregateIdentifier($resolvedNode->getNodeAggregateIdentifier());
+            if ($resolvedNode instanceof NodeInterface) {
+                $contentQuery = $contentQuery->withNodeAggregateIdentifier($resolvedNode->getNodeAggregateIdentifier());
+            } else {
+                $uri = $resolvedNode;
+            }
         } elseif ($node === '~') {
             $contentQuery = $contentQuery->withNodeAggregateIdentifier($contentQuery->getSiteIdentifier());
         } elseif (is_string($node) && substr($node, 0, 7) === 'node://') {
@@ -169,27 +175,31 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             // @todo add path support
             return '';
         }
-        if ($subgraph) {
-            $contentQuery = $contentQuery->withDimensionSpacePoint($subgraph->getDimensionSpacePoint());
+
+        if (!$uri) {
+            if ($subgraph) {
+                $contentQuery = $contentQuery->withDimensionSpacePoint($subgraph->getDimensionSpacePoint());
+            }
+
+            $uriBuilder = new UriBuilder();
+            $uriBuilder->setRequest($this->controllerContext->getRequest());
+            $uriBuilder->setFormat($format)
+                ->setCreateAbsoluteUri($absolute)
+                ->setArguments($arguments)
+                ->setSection($section)
+                ->setAddQueryString($addQueryString)
+                ->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString);
+
+            $uri = $uriBuilder->uriFor(
+                'show',
+                [
+                    'node' => $contentQuery
+                ],
+                'Frontend\Node',
+                'Neos.Neos'
+            );
         }
 
-        $uriBuilder = new UriBuilder();
-        $uriBuilder->setRequest($this->controllerContext->getRequest());
-        $uriBuilder->setFormat($format)
-            ->setCreateAbsoluteUri($absolute)
-            ->setArguments($arguments)
-            ->setSection($section)
-            ->setAddQueryString($addQueryString)
-            ->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString);
-
-        $uri = $uriBuilder->uriFor(
-            'show',
-            [
-                'node' => $contentQuery
-            ],
-            'Frontend\Node',
-            'Neos.Neos'
-        );
         $this->tag->addAttribute('href', $uri);
 
         $this->templateVariableContainer->add($nodeVariableName, $resolvedNode);
