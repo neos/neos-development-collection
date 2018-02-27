@@ -13,12 +13,14 @@ namespace Neos\Neos\Domain\Context\Content;
  */
 
 use Neos\Cache\CacheAwareInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Context\Content\Exception\InvalidContentQuerySerializationException;
+use Neos\Neos\Domain\Service\ContentContext;
 
 /**
  * The content request data transfer object
@@ -114,6 +116,23 @@ final class ContentQuery implements \JsonSerializable, CacheAwareInterface
             new DimensionSpacePoint($rawComponents['dimensionSpacePoint']['coordinates']),
             new NodeAggregateIdentifier($rawComponents['siteIdentifier']),
             new NodeIdentifier($rawComponents['rootNodeIdentifier'])
+        );
+    }
+
+    /**
+     * @deprecated legacy
+     */
+    public static function fromNode(NodeInterface $node, NodeIdentifier $rootNodeIdentifier)
+    {
+        /** @var ContentContext $contentContext */
+        $contentContext = $node->getContext();
+
+        return new ContentQuery(
+            $node->getNodeAggregateIdentifier(),
+            new WorkspaceName($node->getContext()->getWorkspaceName()),
+            $node->getContext()->getContentSubgraph()->getDimensionSpacePoint(),
+            $contentContext->getCurrentSiteNode()->getNodeAggregateIdentifier(),
+            $rootNodeIdentifier
         );
     }
 

@@ -76,6 +76,7 @@ class ContentContext extends Context
      * @param ContentSubgraphInterface|null $contentSubgraph
      * @param ContextParameters|null $contextParameters
      * @see ContextFactoryInterface
+     * @Flow\Autowiring(false)
      */
     public function __construct(
         $workspaceName,
@@ -155,7 +156,8 @@ class ContentContext extends Context
             'removedContentShown' => $this->removedContentShown,
             'inaccessibleContentShown' => $this->inaccessibleContentShown,
             'currentSite' => $this->currentSite,
-            'currentDomain' => $this->currentDomain
+            'currentDomain' => $this->currentDomain,
+            'rootNodeIdentifier' => $this->rootNodeIdentifier
         );
     }
 

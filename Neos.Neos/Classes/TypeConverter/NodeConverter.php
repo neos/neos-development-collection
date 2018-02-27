@@ -11,9 +11,10 @@ namespace Neos\Neos\TypeConverter;
  * source code.
  */
 
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Domain\Repository\DomainRepository;
-use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 
 /**
  * An Object Converter for nodes which can be used for routing (but also for other
@@ -25,18 +26,19 @@ class NodeConverter extends \Neos\ContentRepository\TypeConverter\NodeConverter
 {
     /**
      * @Flow\Inject
-     * @var DomainRepository
+     * @var ContentGraph
      */
-    protected $domainRepository;
-
-    /**
-     * @Flow\Inject
-     * @var SiteRepository
-     */
-    protected $siteRepository;
+    protected $contentGraph;
 
     /**
      * @var integer
      */
     protected $priority = 3;
+
+    protected function prepareContextProperties($workspaceName, PropertyMappingConfigurationInterface $configuration = null, array $dimensions = null)
+    {
+        $contextProperties = parent::prepareContextProperties($workspaceName, $configuration, $dimensions);
+        $contextProperties['rootNodeIdentifier'] = $this->contentGraph->findRootNodeByType(new NodeTypeName('Neos.Neos:Sites'))->getNodeIdentifier();
+        return $contextProperties;
+    }
 }

@@ -316,13 +316,16 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
 
     /**
      * @param string $path
-     * @param NodeIdentifier $rootNodeIdentifier
+     * @param NodeIdentifier $startingNodeIdentifier
      * @param ContentRepository\Service\Context|null $context
      * @return ContentRepository\Model\NodeInterface|null
      */
-    public function findNodeByPath(string $path, NodeIdentifier $rootNodeIdentifier, ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
+    public function findNodeByPath(string $path, NodeIdentifier $startingNodeIdentifier, ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
     {
-        $currentNode = $this->findNodeByIdentifier($rootNodeIdentifier, $context);
+        $currentNode = $this->findNodeByIdentifier($startingNodeIdentifier, $context);
+        if (!$currentNode) {
+            throw new \RuntimeException('Starting Node (identified by ' . $startingNodeIdentifier . ') does not exist.');
+        }
         $edgeNames = explode('/', trim($path, '/'));
         if ($edgeNames !== [""]) {
             foreach ($edgeNames as $edgeName) {

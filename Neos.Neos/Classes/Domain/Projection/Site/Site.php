@@ -61,4 +61,10 @@ class Site
     {
         return $this->domainFinder->findActiveBySite($this)->count() > 0;
     }
+
+    public function isOnline()
+    {
+        // TODO: figure out what to do here
+        return true;
+    }
 }

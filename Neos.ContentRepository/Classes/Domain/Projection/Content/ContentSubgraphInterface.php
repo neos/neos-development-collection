@@ -78,11 +78,11 @@ interface ContentSubgraphInterface extends \JsonSerializable
 
     /**
      * @param string $path
-     * @param NodeIdentifier $rootNodeIdentifier
+     * @param NodeIdentifier $startingNodeIdentifier
      * @param Domain\Service\Context|null $contentContext
      * @return Domain\Model\NodeInterface|null
      */
-    public function findNodeByPath(string $path, NodeIdentifier $rootNodeIdentifier, Domain\Service\Context $contentContext = null): ?Domain\Model\NodeInterface;
+    public function findNodeByPath(string $path, NodeIdentifier $startingNodeIdentifier, Domain\Service\Context $contentContext = null): ?Domain\Model\NodeInterface;
 
     /**
      * @param Domain\ValueObject\NodeIdentifier $parentIdentifier

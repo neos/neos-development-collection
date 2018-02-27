@@ -69,7 +69,8 @@ class ContentContextFactory extends ContextFactory
             $contextProperties['removedContentShown'],
             $contextProperties['inaccessibleContentShown'],
             $contextProperties['currentSite'],
-            $contextProperties['currentDomain']
+            $contextProperties['currentDomain'],
+            $contextProperties['rootNodeIdentifier']
         );
     }
 
@@ -92,7 +93,8 @@ class ContentContextFactory extends ContextFactory
             'removedContentShown' => false,
             'inaccessibleContentShown' => false,
             'currentSite' => null,
-            'currentDomain' => null
+            'currentDomain' => null,
+            'rootNodeIdentifier' => null
         );
 
         if (!isset($contextProperties['currentSite'])) {
@@ -177,7 +179,7 @@ class ContentContextFactory extends ContextFactory
 
         if (isset($contextProperties['currentSite'])) {
             if (!$contextProperties['currentSite'] instanceof Site) {
-                throw new InvalidNodeContextException('You tried to set currentSite in the context and did not provide a \\Neos\Neos\\Domain\\Model\\Site object as value.', 1373145297);
+                throw new InvalidNodeContextException('You tried to set currentSite in the context and did not provide a ' . Site::class . ' object as value. You provided: ' . get_class($contextProperties['currentSite']), 1373145297);
             }
         }
         if (isset($contextProperties['currentDomain'])) {

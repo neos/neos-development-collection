@@ -250,6 +250,8 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getCreationDateTime()
     {
+        // TODO!!!
+        return new \DateTimeImmutable();
         // FIXME CR rewrite: Read from DTO
         return $this->nodeData->getCreationDateTime();
     }
@@ -259,6 +261,9 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getLastModificationDateTime()
     {
+        // TODO!!!
+        return new \DateTimeImmutable();
+
         // FIXME CR rewrite: Read from DTO
         return $this->nodeData->getLastModificationDateTime();
     }
@@ -278,6 +283,9 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function getLastPublicationDateTime()
     {
+        // TODO!!!
+        return new \DateTimeImmutable();
+
         // FIXME CR rewrite: Read from DTO
         return $this->nodeData->getLastPublicationDateTime();
     }
@@ -1120,6 +1128,8 @@ class Node implements NodeInterface, CacheAwareInterface
      */
     public function isRemoved()
     {
+        // TODO!!!!
+        return false;
         // TODO CR rewrite: Get removed flag
         return $this->nodeData->isRemoved();
     }
