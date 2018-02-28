@@ -11,6 +11,8 @@ namespace Neos\Neos\Service;
  * source code.
  */
 
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
@@ -93,6 +95,13 @@ class BackendRedirectionService
     protected $routingValuesAfterLogin;
 
     /**
+     * @Flow\Inject
+     * @var ContentGraph
+     */
+    protected $contentGraph;
+
+
+    /**
      * Returns a specific URI string to redirect to after the login; or NULL if there is none.
      *
      * @param ActionRequest $actionRequest
@@ -106,7 +115,6 @@ class BackendRedirectionService
         }
 
         $workspaceName = $this->userService->getPersonalWorkspaceName();
-        $this->createWorkspaceAndRootNodeIfNecessary($workspaceName);
 
         $uriBuilder = new UriBuilder();
         $uriBuilder->setRequest($actionRequest);
@@ -175,37 +183,11 @@ class BackendRedirectionService
         $contextProperties = array(
             'workspaceName' => $workspaceName,
             'invisibleContentShown' => true,
-            'inaccessibleContentShown' => true
+            'inaccessibleContentShown' => true,
+            'rootNodeIdentifier' => $this->contentGraph->findRootNodeByType(new NodeTypeName('Neos.Neos:Sites'))->getNodeIdentifier()
         );
 
         return $this->contextFactory->create($contextProperties);
     }
 
-    /**
-     * If the specified workspace or its root node does not exist yet, the workspace and root node will be created.
-     *
-     * This method is basically a safeguard for legacy and potentially broken websites where users might not have
-     * their own workspace yet. In a normal setup, the Domain User Service is responsible for creating and deleting
-     * user workspaces.
-     *
-     * @param string $workspaceName Name of the workspace
-     * @return void
-     */
-    protected function createWorkspaceAndRootNodeIfNecessary($workspaceName)
-    {
-        $workspace = $this->workspaceRepository->findOneByName($workspaceName);
-        if ($workspace === null) {
-            $liveWorkspace = $this->workspaceRepository->findOneByName('live');
-            $owner = $this->userService->getBackendUser();
-            $workspace = new Workspace($workspaceName, $liveWorkspace, $owner);
-            $this->workspaceRepository->add($workspace);
-            $this->persistenceManager->whitelistObject($workspace);
-        }
-
-        $contentContext = $this->createContext($workspaceName);
-        $rootNode = $contentContext->getRootNode();
-        $this->persistenceManager->whitelistObject($rootNode);
-        $this->persistenceManager->whitelistObject($rootNode->getNodeData());
-        $this->persistenceManager->persistAll(true);
-    }
 }
