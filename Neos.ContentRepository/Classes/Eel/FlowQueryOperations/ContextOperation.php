@@ -82,7 +82,7 @@ class ContextOperation extends AbstractOperation
 
             $nodeInModifiedContext = $modifiedContext->getNodeByIdentifier($contextNode->getIdentifier());
             if ($nodeInModifiedContext !== null) {
-                $output[$nodeInModifiedContext->getPath()] = $nodeInModifiedContext;
+                $output[(string)$nodeInModifiedContext->getNodeIdentifier()] = $nodeInModifiedContext;
             }
         }
 

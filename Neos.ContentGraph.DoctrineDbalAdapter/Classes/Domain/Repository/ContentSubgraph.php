@@ -63,6 +63,12 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     protected $inMemorySubgraph;
 
     /**
+     * Node Path Cache
+     * @var array
+     */
+    protected $inMemoryNodePaths;
+
+    /**
      * @var ContentRepository\ValueObject\ContentStreamIdentifier
      */
     protected $contentStreamIdentifier;
@@ -159,7 +165,9 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         int $offset = null,
         ContentRepository\Service\Context $context = null
     ): array {
-        $query = 'SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
+        $query = '
+-- ContentSubgraph::findChildNodes
+SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
  INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
  WHERE p.nodeidentifier = :parentNodeIdentifier
@@ -212,7 +220,9 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
 
     public function findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier, ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
     {
-        $query = 'SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
+        $query = '
+-- ContentSubgraph::findNodeByNodeAggregateIdentifier
+SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
  WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
  AND h.contentstreamidentifier = :contentStreamIdentifier
@@ -274,7 +284,9 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
             'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash()
         ];
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
-            'SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
+            '
+-- ContentSubgraph::findParentNode
+SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
  INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
  INNER JOIN neos_contentgraph_hierarchyrelation hp ON hp.childnodeanchor = p.relationanchorpoint
@@ -297,7 +309,9 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     public function findFirstChildNode(ContentRepository\ValueObject\NodeIdentifier $parentNodeIdentifier, ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
     {
         $nodeData = $this->getDatabaseConnection()->executeQuery(
-            'SELECT c.* FROM neos_contentgraph_node p
+            '
+-- ContentSubgraph::findFirstChildNode
+SELECT c.* FROM neos_contentgraph_node p
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
  INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
  WHERE p.nodeidentifier = :parentNodeIdentifier
@@ -354,7 +368,9 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     ): ?ContentRepository\Model\NodeInterface
     {
         $nodeData = $this->getDatabaseConnection()->executeQuery(
-            'SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
+            '
+-- ContentGraph::findChildNodeConnectedThroughEdgeName
+SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
  INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
  WHERE p.nodeidentifier = :parentNodeIdentifier
@@ -385,7 +401,9 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
 
         // "Node Type" is a concept of the Node Aggregate; but we can store the node type denormalized in the Node.
         foreach ($this->getDatabaseConnection()->executeQuery(
-            'SELECT n.*, h.name, h.position FROM neos_contentgraph_node n
+            '
+-- ContentSubgraph::findNodesByType
+SELECT n.*, h.name, h.position FROM neos_contentgraph_node n
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = n.relationanchorpoint
  WHERE n.nodetypename = :nodeTypeName
  AND h.contentstreamidentifier = :contentStreamIdentifier
@@ -449,10 +467,16 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         return $this->client->getConnection();
     }
 
+
     public function findNodePath(ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier): ContentRepository\ValueObject\NodePath
     {
-        $result = $this->getDatabaseConnection()->executeQuery(
-            'with recursive nodePath as (
+        $nodeIdentifierString = (string)$nodeIdentifier;
+
+        if (!isset($this->inMemoryNodePaths[$nodeIdentifierString])) {
+            $result = $this->getDatabaseConnection()->executeQuery(
+                '
+                -- ContentSubgraph::findNodePath
+                with recursive nodePath as (
                 SELECT h.name, h.parentnodeanchor FROM neos_contentgraph_node n
                      INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
                      AND h.contentstreamidentifier = :contentStreamIdentifier
@@ -465,26 +489,30 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
                         INNER JOIN nodePath as np ON h.childnodeanchor = np.parentnodeanchor
             )
             select * from nodePath',
-            [
-                'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
-                'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash(),
-                'nodeIdentifier' => (string) $nodeIdentifier
-            ]
-        )->fetchAll();
+                [
+                    'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
+                    'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash(),
+                    'nodeIdentifier' => (string) $nodeIdentifier
+                ]
+            )->fetchAll();
 
-        $nodePath = [];
+            $nodePath = [];
 
-        foreach ($result as $r) {
-            $nodePath[] = $r['name'];
+            foreach ($result as $r) {
+                $nodePath[] = $r['name'];
+            }
+
+            $nodePath = array_reverse($nodePath);
+            $this->inMemoryNodePaths[$nodeIdentifierString] = new ContentRepository\ValueObject\NodePath('/' . implode('/', $nodePath));
         }
 
-        $nodePath = array_reverse($nodePath);
-        return new ContentRepository\ValueObject\NodePath('/' . implode('/', $nodePath));
+        return $this->inMemoryNodePaths[$nodeIdentifierString];
     }
 
     public function resetCache()
     {
         $this->inMemorySubgraph = [];
+        $this->inMemoryNodePaths = [];
     }
 
     public function jsonSerialize(): array
