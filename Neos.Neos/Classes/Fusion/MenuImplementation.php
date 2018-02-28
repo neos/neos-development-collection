@@ -11,6 +11,10 @@ namespace Neos\Neos\Fusion;
  * source code.
  */
 
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\SubtreeInterface;
+use Neos\ContentRepository\Domain\Context\Node\ReadOnlyNodeInterface;
+use Neos\ContentRepository\Domain\Context\Parameters\ContextParameters;
+use Neos\ContentRepository\Domain\Context\Parameters\ContextParametersFactory;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\ContentRepository\Domain\Projection\Content\HierarchyTraversalDirection;
@@ -62,6 +66,12 @@ class MenuImplementation extends AbstractMenuImplementation
      * @var NodeTypeConstraints
      */
     protected $nodeTypeConstraints;
+
+    /**
+     * @Flow\Inject
+     * @var ContextParametersFactory
+     */
+    protected $contextParametersFactory;
 
     /**
      * The last navigation level which should be rendered.
@@ -153,46 +163,47 @@ class MenuImplementation extends AbstractMenuImplementation
      */
     protected function buildItems()
     {
-        $items = [];
-
         if (!is_null($this->getItemCollection())) {
             $menuLevelCollection = $this->getItemCollection();
+            $entryNodeIdentifiers = array_map(function(ReadOnlyNodeInterface $node) { return $node->getNodeIdentifier(); }, $menuLevelCollection);
+            $context = reset($menuLevelCollection)->getContext();
+
+            $subtree = $this->getSubgraph()->findSubtrees($entryNodeIdentifiers, $this->getMaximumLevels(), $this->contextParametersFactory->createDefaultParameters(), $this->getNodeTypeConstraints(), $context);
+
         } else {
             $entryParentNode = $this->findMenuStartingPoint();
             if (!$entryParentNode) {
-                return $items;
+                return [];
             }
-            $menuLevelCollection = $this->getSubgraph()->findChildNodes($entryParentNode->getNodeIdentifier(), $this->getNodeTypeConstraints(), null, null, $entryParentNode->getContext());
+
+            $entryNodeIdentifiers = [$entryParentNode->getNodeIdentifier()];
+            $context = $entryParentNode->getContext();
+
+            $subtree = $this->getSubgraph()->findSubtrees($entryNodeIdentifiers, $this->getMaximumLevels(), $this->contextParametersFactory->createDefaultParameters(), $this->getNodeTypeConstraints(), $context);
+            $subtree = $subtree->getChildren()[0];
         }
 
-        foreach ($menuLevelCollection as $startNode) {
-            if ($this->isNodeHidden($startNode)) {
-                continue;
-            }
-            $items[] = $this->traverseChildren($startNode, $this->getNodeTypeConstraints(), $this->getEntryLevel());
+        $items = [];
+        foreach ($subtree->getChildren() as $subtree) {
+            $items[] = $this->traverseChildren($subtree);
         }
 
         return $items;
     }
 
     /**
-     * @param NodeInterface $parentNode
-     * @param NodeTypeConstraints $nodeTypeConstraints
-     * @param int $currentLevel
+     * @param SubtreeInterface $subtree
      * @return MenuItem
      */
-    protected function traverseChildren(NodeInterface $parentNode, NodeTypeConstraints $nodeTypeConstraints, int $currentLevel): MenuItem
+    protected function traverseChildren(SubtreeInterface $subtree): MenuItem
     {
         $children = [];
-        if ($currentLevel <= $this->getLastLevel()) {
-            foreach ($this->getSubgraph()->findChildNodes($parentNode->getNodeIdentifier(), $nodeTypeConstraints, null, null, $parentNode->getContext()) as $childNode) {
-                if (!$this->isNodeHidden($childNode)) {
-                    $children[] = $this->traverseChildren($childNode, $nodeTypeConstraints, $currentLevel + 1);
-                }
-            }
+
+        foreach ($subtree->getChildren() as $childNode) {
+            $children[] = $this->traverseChildren($childNode);
         }
 
-        return new MenuItem($parentNode, MenuItemState::normal(), $parentNode->getLabel(), $currentLevel, $children);
+        return new MenuItem($subtree->getNode(), MenuItemState::normal(), $subtree->getNode()->getLabel(), $subtree->getLevel(), $children);
     }
 
 
@@ -238,6 +249,7 @@ class MenuImplementation extends AbstractMenuImplementation
             $this->getSubgraph()->traverseHierarchy($traversalStartingPoint, HierarchyTraversalDirection::up(), $this->getNodeTypeConstraints(),
                 function (NodeInterface $traversedNode) use (&$traversedHierarchy) {
                     $traversedHierarchy[] = $traversedNode;
+                    return true;
                 }, $traversalStartingPoint->getContext());
             $traversedHierarchy = array_reverse($traversedHierarchy);
             $entryParentNode = $traversedHierarchy[$this->getEntryLevel() - 1] ?? null;
