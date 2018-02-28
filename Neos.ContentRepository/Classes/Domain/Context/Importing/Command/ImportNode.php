@@ -1,6 +1,16 @@
 <?php
 namespace Neos\ContentRepository\Domain\Context\Importing\Command;
 
+/*
+ * This file is part of the Neos.ContentRepository package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\ImportingSessionIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;

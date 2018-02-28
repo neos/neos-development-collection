@@ -33,13 +33,15 @@ final class ContentSubgraphVariationWeight implements \JsonSerializable
      */
     protected $weight;
 
-
+    /**
+     * ContentSubgraphVariationWeight constructor.
+     * @param array $weight
+     */
     public function __construct(array $weight)
     {
         // @todo: validate
         $this->weight = $weight;
     }
-
 
     /**
      * @return array|Dimension\ContentDimensionValueSpecializationDepth[]

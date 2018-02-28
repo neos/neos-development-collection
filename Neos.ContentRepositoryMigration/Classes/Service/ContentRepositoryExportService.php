@@ -1,9 +1,8 @@
 <?php
-
 namespace Neos\ContentRepositoryMigration\Service;
 
 /*
- * This file is part of the Neos.Behat package.
+ * This file is part of the Neos.ContentRepositoryMigration package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -45,7 +44,6 @@ use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\ValueObject\NodeType;
 use Neos\Neos\Domain\ValueObject\PackageKey;
 use Neos\Neos\Domain\ValueObject\SiteActive;
-
 
 /**
  * @Flow\Scope("singleton")

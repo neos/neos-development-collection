@@ -59,7 +59,6 @@ final class ContentDimensionValue
         $this->configuration = $configuration;
     }
 
-
     /**
      * @return string
      */

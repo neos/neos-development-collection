@@ -21,7 +21,6 @@ final class ContentDimensionIdentifier implements \JsonSerializable
      */
     protected $identifier;
 
-
     /**
      * @param string $identifier
      * @throws Exception\InvalidContentDimensionIdentifierException
@@ -43,12 +42,17 @@ final class ContentDimensionIdentifier implements \JsonSerializable
         return $this->__toString() === $otherContentDimensionIdentifier->__toString();
     }
 
-
+    /**
+     * @return string
+     */
     public function __toString(): string
     {
         return $this->identifier;
     }
 
+    /**
+     * @return string
+     */
     public function jsonSerialize(): string
     {
         return $this->identifier;

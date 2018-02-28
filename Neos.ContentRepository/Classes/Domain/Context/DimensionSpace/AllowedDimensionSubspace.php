@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\ContentRepository\Domain\Context\DimensionSpace;
 
 /*
@@ -33,7 +32,6 @@ final class AllowedDimensionSubspace
      * @var array|Domain\ValueObject\DimensionSpacePoint[]
      */
     protected $points;
-
 
     public function initializeObject()
     {

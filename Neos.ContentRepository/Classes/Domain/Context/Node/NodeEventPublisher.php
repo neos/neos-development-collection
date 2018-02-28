@@ -1,6 +1,15 @@
 <?php
-
 namespace Neos\ContentRepository\Domain\Context\Node;
+
+/*
+ * This file is part of the Neos.ContentRepository package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use Neos\ContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcing\Event\Decorator\EventWithMetadata;
@@ -44,6 +53,11 @@ final class NodeEventPublisher
 
     private $command;
 
+    /**
+     * @param $command
+     * @param $callback
+     * @return mixed
+     */
     public function withCommand($command, $callback)
     {
         if ($this->currentlyInCommandClosure) {
@@ -71,11 +85,25 @@ final class NodeEventPublisher
 
     }
 
+    /**
+     * @param string $streamName
+     * @param EventInterface $event
+     * @param int $expectedVersion
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
+     */
     public function publish(string $streamName, EventInterface $event, int $expectedVersion = ExpectedVersion::ANY)
     {
         $this->publishMany($streamName, [$event], $expectedVersion);
     }
 
+    /**
+     * @param string $streamName
+     * @param array $events
+     * @param int $expectedVersion
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
+     */
     public function publishMany(string $streamName, array $events, int $expectedVersion = ExpectedVersion::ANY)
     {
         if (count($events) === 0) {

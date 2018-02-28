@@ -2,7 +2,7 @@
 namespace Neos\ContentRepositoryMigration\Command;
 
 /*
- * This file is part of the Neos.Behat package.
+ * This file is part of the Neos.ContentRepositoryMigration package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
