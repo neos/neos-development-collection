@@ -81,6 +81,7 @@ class Event
      *
      * @var ArrayCollection<TYPO3\Neos\EventLog\Domain\Model\Event>
      * @ORM\OneToMany(targetEntity="TYPO3\Neos\EventLog\Domain\Model\Event", mappedBy="parentEvent", cascade="persist")
+     * @ORM\OrderBy({"uid"="DESC"})
      */
     protected $childEvents;
 
