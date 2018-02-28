@@ -11,8 +11,12 @@ namespace Neos\ContentRepository\Domain\Projection\Content;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\Node;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\PropertyName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 
 /**
  * The property collection implementation
@@ -36,14 +40,53 @@ class PropertyCollection implements \ArrayAccess, \Iterator
      * @var array
      */
     protected $resolvedProperties;
-    
+
+    /**
+     * @var NodeIdentifier
+     * @deprecated
+     */
+    protected $nodeIdentifier;
+
+    /**
+     * @var ContentSubgraphInterface
+     * @deprecated
+     */
+    protected $contentSubgraph;
+
+    /**
+     * @var array
+     * @deprecated
+     */
+    protected $references;
+
+    /**
+     * @var array
+     * @deprecated
+     */
+    protected $referenceProperties;
+
+    /**
+     * @var array
+     * @deprecated
+     */
+    protected $referencesProperties;
+
     /**
      * PropertyCollection constructor.
      * @param array $properties
+     * @param array $referenceProperties @deprecated
+     * @param array $referencesProperties @deprecated
+     * @param NodeIdentifier $contentSubgraph @deprecated
+     * @param ContentSubgraphInterface $contentSubgraph @deprecated
      */
-    public function __construct(array $properties)
+    public function __construct(array $properties, array $referenceProperties = [], array $referencesProperties = [], NodeIdentifier $nodeIdentifier = null, ContentSubgraphInterface $contentSubgraph = null)
     {
         $this->properties = $properties;
+
+        $this->referenceProperties = array_fill_keys($referenceProperties, true);
+        $this->referencesProperties = array_fill_keys($referencesProperties, true);
+        $this->nodeIdentifier = $nodeIdentifier;
+        $this->contentSubgraph = $contentSubgraph;
     }
 
     /**
@@ -52,7 +95,13 @@ class PropertyCollection implements \ArrayAccess, \Iterator
      */
     public function offsetExists($offset)
     {
-        return isset($this->properties[$offset]);
+        if (isset($this->properties[$offset])) {
+            return true;
+        }
+        if (isset($this->referenceProperties[$offset]) || isset($this->referencesProperties[$offset])) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -61,23 +110,35 @@ class PropertyCollection implements \ArrayAccess, \Iterator
      */
     public function offsetGet($offset)
     {
-        if (!isset($this->properties[$offset])) {
-            return null;
-        }
-        if (is_array($this->properties[$offset]) && !isset($this->resolvedProperties[$offset])) {
-            if (isset($this->properties[$offset]['__flow_object_type'])) {
-                $this->resolveObject($this->properties[$offset]);
-            } else {
-                foreach ($this->properties[$offset] as $i => $propertyValue) {
-                    if (isset($this->properties[$offset][$i]['__flow_object_type'])) {
-                        $this->resolveObject($this->properties[$offset][$i]);
+        if (isset($this->properties[$offset])) {
+            if (is_array($this->properties[$offset]) && !isset($this->resolvedProperties[$offset])) {
+                if (isset($this->properties[$offset]['__flow_object_type'])) {
+                    $this->resolveObject($this->properties[$offset]);
+                } else {
+                    foreach ($this->properties[$offset] as $i => $propertyValue) {
+                        if (isset($this->properties[$offset][$i]['__flow_object_type'])) {
+                            $this->resolveObject($this->properties[$offset][$i]);
+                        }
                     }
                 }
+                $this->resolvedProperties[$offset] = true;
             }
-            $this->resolvedProperties[$offset] = true;
+            return $this->properties[$offset];
         }
 
-        return $this->properties[$offset];
+        if (isset($this->referenceProperties[$offset]) || isset($this->referencesProperties[$offset])) {
+            if (!isset($this->references[$offset])) {
+                $propertyReferences = $this->contentSubgraph->findReferencedNodes($this->nodeIdentifier, new PropertyName($offset));
+                if (isset($this->referenceProperties[$offset])) {
+                    $this->references[$offset] = count($propertyReferences) ? reset($propertyReferences) : null;
+                } else {
+                    $this->references[$offset] = $propertyReferences;
+                }
+            }
+            return $this->references[$offset];
+        }
+
+        return null;
     }
 
     /**

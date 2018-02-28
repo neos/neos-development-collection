@@ -46,6 +46,9 @@ final class NodeFactory
         $nodeType = $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']);
         $className = $nodeType->getNodeInterfaceImplementationClassName();
 
+        $referenceProperties = array_keys(array_filter($nodeType->getProperties(), function($propertyConfiguration) {return $propertyConfiguration['type'] == 'reference';}));
+        $referencesProperties = array_keys(array_filter($nodeType->getProperties(), function($propertyConfiguration) {return $propertyConfiguration['type'] == 'references';}));
+
         // $serializedSubgraphIdentifier is empty for the root node
         if (!empty($nodeRow['dimensionspacepointhash'])) {
             // NON-ROOT case
@@ -60,15 +63,18 @@ final class NodeFactory
             // FIXME Move to DimensionSpacePoint::fromJson
             $dimensionSpacePoint = new ContentRepository\ValueObject\DimensionSpacePoint(json_decode($nodeRow['dimensionspacepoint'], true)['coordinates']);
 
+            $contentSubgraph = $context ? $context->getContentSubgraph() : null;
+            $nodeIdentifier = new ContentRepository\ValueObject\NodeIdentifier($nodeRow['nodeidentifier']);
+
             /* @var $node \Neos\ContentRepository\Domain\Model\NodeInterface */
             $node = new $className(
-                new ContentRepository\ValueObject\NodeIdentifier($nodeRow['nodeidentifier']),
+                $nodeIdentifier,
                 new NodeTypeName($nodeRow['nodetypename']),
                 $nodeType,
                 $dimensionSpacePoint,
                 new ContentRepository\ValueObject\NodeAggregateIdentifier($nodeRow['nodeaggregateidentifier']),
                 $contentStreamIdentifier,
-                new ContentProjection\PropertyCollection(json_decode($nodeRow['properties'], true)),
+                new ContentProjection\PropertyCollection(json_decode($nodeRow['properties'], true), $referenceProperties, $referencesProperties, $nodeIdentifier, $contentSubgraph),
                 new ContentRepository\ValueObject\NodeName($nodeRow['name']),
                 $nodeRow['hidden'],
                 $context
