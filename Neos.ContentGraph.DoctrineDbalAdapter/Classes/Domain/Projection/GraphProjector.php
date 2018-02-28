@@ -20,6 +20,7 @@ use Neos\ContentRepository\Domain as ContentRepository;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasHidden;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasShown;
+use Neos\ContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
@@ -27,6 +28,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\ContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -60,6 +62,7 @@ class GraphProjector implements ProjectorInterface
         $this->getDatabaseConnection()->transactional(function () {
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_node');
             $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_hierarchyrelation');
+            $this->getDatabaseConnection()->executeQuery('TRUNCATE table neos_contentgraph_referencerelation');
         });
     }
 
@@ -362,6 +365,30 @@ class GraphProjector implements ProjectorInterface
             $this->updateNodeWithCopyOnWrite($event, function (Node $node) use ($event) {
                 $node->properties[$event->getPropertyName()] = $event->getValue()->getValue();
             });
+        });
+    }
+
+    public function whenNodeReferencesWereSet(NodeReferencesWereSet $event)
+    {
+        $this->transactional(function () use ($event) {
+            $this->updateNodeWithCopyOnWrite($event, function (Node $node) use ($event) {});
+            $nodeAnchorPoint = $this->projectionContentGraph->getAnchorPointForNodeAndContentStream($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
+
+            // remove old
+            $this->getDatabaseConnection()->delete('neos_contentgraph_referencerelation', [
+                'nodeanchorpoint' => $nodeAnchorPoint,
+                'name' => $event->getPropertyName()
+            ]);
+
+            // set new
+            foreach ($event->getDestinationtNodeAggregateIdentifiers() as $position => $destinationtNodeIdentifier) {
+                $this->getDatabaseConnection()->insert('neos_contentgraph_referencerelation', [
+                    'name' => $event->getPropertyName(),
+                    'position' => $position,
+                    'nodeanchorpoint' => $nodeAnchorPoint,
+                    'destinationnodeaggregateidentifier' => $destinationtNodeIdentifier,
+                ]);
+            }
         });
     }
 
