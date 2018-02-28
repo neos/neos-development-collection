@@ -12,6 +12,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Service;
  * source code.
  */
 
+use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Neos\Flow\Annotations as Flow;
@@ -30,6 +31,12 @@ class DbalClient
     protected $backendOptions;
 
     /**
+     * @Flow\InjectConfiguration(package="Neos.Flow", path="persistence.doctrine.sqlLogger")
+     * @var string
+     */
+    protected $sqlLogger;
+
+    /**
      * @var Connection
      */
     protected $connection;
@@ -37,7 +44,12 @@ class DbalClient
 
     public function initializeObject()
     {
-        $this->connection = DriverManager::getConnection($this->backendOptions);
+        $configuration = new Configuration();
+        if (!empty($this->sqlLogger)) {
+            $configuredSqlLogger = $this->sqlLogger;
+            $configuration->setSQLLogger(new $configuredSqlLogger());
+        }
+        $this->connection = DriverManager::getConnection($this->backendOptions, $configuration);
     }
 
 
