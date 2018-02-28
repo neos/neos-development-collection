@@ -18,7 +18,7 @@ use Neos\ContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasCr
 use Neos\ContentRepository\Domain\Context\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasAddedToAggregate;
-use Neos\ContentRepository\Domain\Context\Node\Event\ReferenceBetweenNodesWasCreated;
+use Neos\ContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
 use Neos\ContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Domain\Model\NodeData;
@@ -264,15 +264,14 @@ class ContentRepositoryExportService
 
         // publish reference edges
         foreach ($propertyReferences as $propertyName => $references) {
-            foreach ($references as $reference) {
-                $this->eventPublisher->publish($this->contentStreamName('NodeAggregate:' . $nodeIdentifier), new ReferenceBetweenNodesWasCreated(
-                    $this->contentStreamIdentifier,
-                    $visibleDimensionSpacePoints,
-                    new NodeAggregateIdentifier($nodeIdentifier),
-                    new NodeAggregateIdentifier($reference),
-                    new PropertyName($propertyName)
-                ));
-            }
+            $this->eventPublisher->publish($this->contentStreamName('NodeAggregate:' . $nodeIdentifier), new NodeReferencesWereSet(
+                $this->contentStreamIdentifier,
+                $visibleDimensionSpacePoints,
+                new NodeIdentifier($nodeIdentifier),
+                $references,
+                new PropertyName($propertyName)
+            ));
+
         }
 
         $this->alreadyCreatedNodeAggregateIdentifiers[(string)$nodeAggregateIdentifier] = true;
@@ -334,10 +333,10 @@ class ContentRepositoryExportService
         foreach ($nodeData->getProperties() as $propertyName => $propertyValue) {
             $type = $nodeData->getNodeType()->getPropertyType($propertyName);
             if ($type == 'reference') {
-                $references[$propertyName][] = $propertyValue;
+               $references[$propertyName] = [new NodeAggregateIdentifier($propertyValue)];
             }
-            if ($type == 'references') {
-                $references[$propertyName] = $propertyValue;
+            if ($type == 'references' && is_array($propertyValue)) {
+               $references[$propertyName] = array_map(function($identifier) { return new NodeAggregateIdentifier($identifier); }, $propertyValue);
             }
         }
         return $references;

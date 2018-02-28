@@ -1,17 +1,18 @@
 <?php
 
-namespace Neos\ContentRepository\Domain\Context\Node\Command;
+namespace Neos\ContentRepository\Domain\Context\Node\Event;
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\ReferencePosition;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\PropertyName;
+use Neos\EventSourcing\Event\EventInterface;
 
 /**
- * Create a named reference from source- to destination-node
+ * A named reference from source- to destination-node was created
  */
-final class CreateReferenceBetweenNodes
+final class NodeReferencesWereSet implements EventInterface, CopyableAcrossContentStreamsInterface
 {
 
     /**
@@ -25,14 +26,14 @@ final class CreateReferenceBetweenNodes
     private $dimensionSpacePointSet;
 
     /**
-     * @var NodeAggregateIdentifier
+     * @var NodeIdentifier
      */
-    private $sourceNodeIdentifier;
+    private $nodeIdentifier;
 
     /**
-     * @var NodeAggregateIdentifier
+     * @var NodeAggregateIdentifier[]
      */
-    private $destinationtNodeIdentifier;
+    private $destinationtNodeAggregateIdentifiers;
 
     /**
      * @var PropertyName
@@ -40,25 +41,25 @@ final class CreateReferenceBetweenNodes
     private $propertyName;
 
     /**
-     * CreateReferenceBetweenNodes constructor.
+     * ReferenceBetweenNodesWasCreated constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePointSet $dimensionSpacePointSet
-     * @param NodeAggregateIdentifier $sourceNodeIdentifier
-     * @param NodeAggregateIdentifier $destinationtNodeIdentifier
-     * @param PropertyName $propertyName
+     * @param NodeIdentifier $nodeIdentifier
+     * @param array $destinationtNodeIdentifiers
+     * @param PropertyName $referenceNodeIdentifier
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePointSet $dimensionSpacePointSet,
-        NodeIdentifier $sourceNodeIdentifier,
-        NodeIdentifier $destinationtNodeIdentifier,
+        NodeIdentifier $nodeIdentifier,
+        array $destinationtNodeAggregateIdentifiers,
         PropertyName $propertyName
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePointSet = $dimensionSpacePointSet;
-        $this->sourceNodeIdentifier = $sourceNodeIdentifier;
-        $this->destinationtNodeIdentifier = $destinationtNodeIdentifier;
+        $this->nodeIdentifier = $nodeIdentifier;
+        $this->destinationtNodeAggregateIdentifiers = $destinationtNodeAggregateIdentifiers;
         $this->propertyName = $propertyName;
     }
 
@@ -81,17 +82,17 @@ final class CreateReferenceBetweenNodes
     /**
      * @return NodeIdentifier
      */
-    public function getSourceNodeIdentifier(): NodeIdentifier
+    public function getNodeIdentifier(): NodeIdentifier
     {
-        return $this->sourceNodeIdentifier;
+        return $this->nodeIdentifier;
     }
 
     /**
-     * @return NodeIdentifier
+     * @return array
      */
-    public function getDestinationtNodeIdentifier(): NodeIdentifier
+    public function getDestinationtNodeAggregateIdentifiers(): array
     {
-        return $this->destinationtNodeIdentifier;
+        return $this->destinationtNodeAggregateIdentifiers;
     }
 
     /**
@@ -103,4 +104,15 @@ final class CreateReferenceBetweenNodes
     }
 
 
+
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
+    {
+        return new NodeReferencesWereSet(
+            $targetContentStream,
+            $this->dimensionSpacePointSet,
+            $this->nodeIdentifier,
+            $this->destinationtNodeAggregateIdentifiers,
+            $this->propertyName
+        );
+    }
 }

@@ -1,17 +1,17 @@
 <?php
 
-namespace Neos\ContentRepository\Domain\Context\Node\Event;
+namespace Neos\ContentRepository\Domain\Context\Node\Command;
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\PropertyName;
-use Neos\EventSourcing\Event\EventInterface;
 
 /**
- * A named reference from source- to destination-node was created
+ * Create a named reference from source- to destination-node
  */
-final class ReferenceBetweenNodesWasCreated implements EventInterface, CopyableAcrossContentStreamsInterface
+final class SetNodeReferences
 {
 
     /**
@@ -25,14 +25,14 @@ final class ReferenceBetweenNodesWasCreated implements EventInterface, CopyableA
     private $dimensionSpacePointSet;
 
     /**
-     * @var NodeAggregateIdentifier
+     * @var NodeIdentifier
      */
-    private $sourceNodeIdentifier;
+    private $nodeIdentifier;
 
     /**
-     * @var NodeAggregateIdentifier
+     * @var NodeAggregateIdentifier[]
      */
-    private $destinationtNodeIdentifier;
+    private $destinationtNodeAggregateIdentifiers;
 
     /**
      * @var PropertyName
@@ -40,25 +40,25 @@ final class ReferenceBetweenNodesWasCreated implements EventInterface, CopyableA
     private $propertyName;
 
     /**
-     * ReferenceBetweenNodesWasCreated constructor.
+     * CreateReferenceBetweenNodes constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePointSet $dimensionSpacePointSet
-     * @param NodeAggregateIdentifier $nodeIdentifier
-     * @param NodeAggregateIdentifier $referencePosition
-     * @param PropertyName $referenceNodeIdentifier
+     * @param NodeIdentifier $nodeIdentifier
+     * @param NodeAggregateIdentifier[] $destinationtNodeAggregateIdentifiers
+     * @param PropertyName $propertyName
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePointSet $dimensionSpacePointSet,
-        NodeAggregateIdentifier $sourceNodeIdentifier,
-        NodeAggregateIdentifier $destinationtNodeIdentifier,
+        NodeIdentifier $nodeIdentifier,
+        array $destinationtNodeAggregateIdentifiers,
         PropertyName $propertyName
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePointSet = $dimensionSpacePointSet;
-        $this->sourceNodeIdentifier = $sourceNodeIdentifier;
-        $this->destinationtNodeIdentifier = $destinationtNodeIdentifier;
+        $this->nodeIdentifier = $nodeIdentifier;
+        $this->destinationtNodeAggregateIdentifiers = $destinationtNodeAggregateIdentifiers;
         $this->propertyName = $propertyName;
     }
 
@@ -79,19 +79,19 @@ final class ReferenceBetweenNodesWasCreated implements EventInterface, CopyableA
     }
 
     /**
-     * @return NodeAggregateIdentifier
+     * @return NodeIdentifier
      */
-    public function getSourceNodeIdentifier(): NodeAggregateIdentifier
+    public function getNodeIdentifier(): NodeIdentifier
     {
-        return $this->sourceNodeIdentifier;
+        return $this->nodeIdentifier;
     }
 
     /**
-     * @return NodeAggregateIdentifier
+     * @return NodeAggregateIdentifier[]
      */
-    public function getDestinationtNodeIdentifier(): NodeAggregateIdentifier
+    public function getDestinationtNodeAggregateIdentifiers(): array
     {
-        return $this->destinationtNodeIdentifier;
+        return $this->destinationtNodeAggregateIdentifiers;
     }
 
     /**
@@ -103,15 +103,4 @@ final class ReferenceBetweenNodesWasCreated implements EventInterface, CopyableA
     }
 
 
-
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
-    {
-        return new ReferenceBetweenNodesWasCreated(
-            $targetContentStream,
-            $this->dimensionSpacePointSet,
-            $this->sourceNodeIdentifier,
-            $this->destinationtNodeIdentifier,
-            $this->propertyName
-        );
-    }
 }
