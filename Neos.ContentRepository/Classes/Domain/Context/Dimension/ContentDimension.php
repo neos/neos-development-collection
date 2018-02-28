@@ -10,6 +10,7 @@ namespace Neos\ContentRepository\Domain\Context\Dimension;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\ContentRepository\Domain\Context\Dimension\Exception\MissingContentDimensionValuesException;
 use Neos\Utility\Arrays;
 

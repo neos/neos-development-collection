@@ -21,7 +21,6 @@ final class ContentDimensionValueSpecializationDepth implements \JsonSerializabl
      */
     protected $depth;
 
-
     /**
      * @param int $depth
      * @throws Exception\InvalidContentDimensionValueSpecializationDepthException
@@ -33,7 +32,6 @@ final class ContentDimensionValueSpecializationDepth implements \JsonSerializabl
         }
         $this->depth = $depth;
     }
-
 
     /**
      * @param ContentDimensionValueSpecializationDepth $otherDepth
@@ -76,7 +74,6 @@ final class ContentDimensionValueSpecializationDepth implements \JsonSerializabl
     {
         return new ContentDimensionValueSpecializationDepth($this->depth - $otherDepth->getDepth());
     }
-
 
     /**
      * @return int

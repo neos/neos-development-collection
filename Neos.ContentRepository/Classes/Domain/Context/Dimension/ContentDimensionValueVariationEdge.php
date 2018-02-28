@@ -37,7 +37,6 @@ final class ContentDimensionValueVariationEdge
         $this->generalization = $generalization;
     }
 
-
     /**
      * @return ContentDimensionValue
      */

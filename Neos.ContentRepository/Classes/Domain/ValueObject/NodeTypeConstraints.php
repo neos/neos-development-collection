@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\ContentRepository\Domain\ValueObject;
 
 /*
@@ -45,7 +44,6 @@ final class NodeTypeConstraints
         $this->explicitlyAllowedNodeTypeNames = $explicitlyAllowedNodeTypeNames;
         $this->explicitlyDisallowedNodeTypeNames = $explicitlyDisallowedNodeTypeNames;
     }
-
 
     /**
      * @return bool

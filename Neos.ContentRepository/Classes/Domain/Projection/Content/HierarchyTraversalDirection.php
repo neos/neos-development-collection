@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\ContentRepository\Domain\Projection\Content;
 
 /*
@@ -11,6 +10,7 @@ namespace Neos\ContentRepository\Domain\Projection\Content;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -39,7 +39,6 @@ final class HierarchyTraversalDirection
         $this->direction = $direction;
     }
 
-
     /**
      * @return HierarchyTraversalDirection
      */
@@ -55,7 +54,6 @@ final class HierarchyTraversalDirection
     {
         return new HierarchyTraversalDirection(self::DIRECTION_DOWN);
     }
-
 
     /**
      * @return bool

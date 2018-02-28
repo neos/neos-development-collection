@@ -160,7 +160,11 @@ class NodeConverter extends AbstractTypeConverter
         if (is_string($source) && \mb_substr_count($source, '@') === 2) {
             list($rawNodeIdentifier, $rawContentStreamIdentifier, $rawDimensionSpacePoint) = explode('@', $source);
             $contentStreamIdentifier = new ContentStreamIdentifier($rawContentStreamIdentifier);
+
             $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier);
+            if (!$workspace) {
+                throw new \Exception('Workspace for content stream ' . $contentStreamIdentifier . ' not found.');
+            }
             $coordinates = json_decode($rawDimensionSpacePoint, true)['coordinates'] ?? [];
             $dimensionSpacePoint = new DimensionSpacePoint($coordinates);
 

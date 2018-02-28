@@ -10,6 +10,7 @@ namespace Neos\ContentRepository\Domain\Context\DimensionSpace;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\ContentRepository\Domain\Context\Dimension;
 use Neos\ContentRepository\Domain;
 use Neos\ContentRepository\Exception\DimensionSpacePointNotFound;

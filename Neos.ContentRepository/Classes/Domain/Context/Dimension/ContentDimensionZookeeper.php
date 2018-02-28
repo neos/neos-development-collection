@@ -10,6 +10,7 @@ namespace Neos\ContentRepository\Domain\Context\Dimension;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\ContentRepository\Domain;
 use Neos\Flow\Annotations as Flow;
 
@@ -30,7 +31,6 @@ final class ContentDimensionZookeeper
      * @var array|ContentDimensionValue[][]
      */
     protected $allowedCombinations;
-
 
     /**
      * @return void
