@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Domain\Projection\Content;
  * source code.
  */
 
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\SubtreeInterface;
 use Neos\ContentRepository\Domain;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\Flow\Annotations as Flow;
@@ -121,4 +122,14 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @return Domain\ValueObject\DimensionSpacePoint
      */
     public function getDimensionSpacePoint(): Domain\ValueObject\DimensionSpacePoint;
+
+    /**
+     * @param NodeIdentifier[] $entryNodeIdentifiers
+     * @param int $maximumLevels
+     * @param Domain\Context\Parameters\ContextParameters $contextParameters
+     * @param Domain\ValueObject\NodeTypeConstraints $nodeTypeConstraints
+     * @param Domain\Service\Context|null $context
+     * @return mixed
+     */
+    public function findSubtrees(array $entryNodeIdentifiers, int $maximumLevels, Domain\Context\Parameters\ContextParameters $contextParameters, Domain\ValueObject\NodeTypeConstraints $nodeTypeConstraints, Domain\Service\Context $context = null): SubtreeInterface;
 }

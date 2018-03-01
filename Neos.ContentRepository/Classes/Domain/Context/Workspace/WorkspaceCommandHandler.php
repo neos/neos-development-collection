@@ -19,9 +19,11 @@ use Neos\ContentRepository\Domain\Context\Node\Command\AddNodeToAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Command\ChangeNodeName;
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateRootNode;
+use Neos\ContentRepository\Domain\Context\Node\Command\HideNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\MoveNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\MoveNodesInAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Command\SetNodeProperty;
+use Neos\ContentRepository\Domain\Context\Node\Command\ShowNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\TranslateNodeInAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
 use Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler;
@@ -313,6 +315,12 @@ final class WorkspaceCommandHandler
                         break;
                     case SetNodeProperty::class:
                         $this->nodeCommandHandler->handleSetNodeProperty($commandToRebase);
+                        break;
+                    case HideNode::class:
+                        $this->nodeCommandHandler->handleHideNode($commandToRebase);
+                        break;
+                    case ShowNode::class:
+                        $this->nodeCommandHandler->handleShowNode($commandToRebase);
                         break;
                     case TranslateNodeInAggregate::class:
                         $this->nodeCommandHandler->handleTranslateNodeInAggregate($commandToRebase);

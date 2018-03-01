@@ -34,6 +34,8 @@ use Neos\Party\Domain\Service\PartyService;
  * The service for keeping track of editors' content streams
  *
  * On authentication, workspaces may have to be created and content streams may have to be forked from live or rebased from older ones
+ *
+ * @Flow\Scope("singleton")
  */
 final class EditorContentStreamZookeeper
 {
@@ -69,6 +71,9 @@ final class EditorContentStreamZookeeper
 
 
     /**
+     * This method is called whenever a login happens (AuthenticationProviderManager::class, 'authenticatedToken'), using
+     * Signal/Slot
+     *
      * @param Authentication\TokenInterface $token
      * @throws \Exception
      * @throws \Neos\ContentRepository\Domain\Context\Workspace\Exception\BaseWorkspaceDoesNotExist

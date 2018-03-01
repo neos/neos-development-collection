@@ -63,6 +63,12 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     protected $inMemorySubgraph;
 
     /**
+     * Node Path Cache
+     * @var array
+     */
+    protected $inMemoryNodePaths;
+
+    /**
      * @var ContentRepository\ValueObject\ContentStreamIdentifier
      */
     protected $contentStreamIdentifier;
@@ -77,6 +83,35 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
+    }
+
+    /**
+     * @param NodeTypeConstraints $nodeTypeConstraints
+     * @param $query
+     */
+    protected static function addNodeTypeConstraintsToQuery(ContentRepository\ValueObject\NodeTypeConstraints $nodeTypeConstraints = null, SqlQueryBuilder $query, string $markerToReplaceInQuery = null): void
+    {
+        if ($nodeTypeConstraints) {
+            if (!empty ($nodeTypeConstraints->getExplicitlyAllowedNodeTypeNames())) {
+                $allowanceQueryPart = 'c.nodetypename IN (:explicitlyAllowedNodeTypeNames)';
+                $query->parameter('explicitlyAllowedNodeTypeNames', $nodeTypeConstraints->getExplicitlyAllowedNodeTypeNames(), Connection::PARAM_STR_ARRAY);
+            } else {
+                $allowanceQueryPart = '';
+            }
+            if (!empty ($nodeTypeConstraints->getExplicitlyDisallowedNodeTypeNames())) {
+                $disAllowanceQueryPart = 'c.nodetypename NOT IN (:explicitlyDisallowedNodeTypeNames)';
+                $query->parameter('explicitlyDisallowedNodeTypeNames', $nodeTypeConstraints->getExplicitlyDisallowedNodeTypeNames(), Connection::PARAM_STR_ARRAY);
+            } else {
+                $disAllowanceQueryPart = '';
+            }
+            if ($allowanceQueryPart && $disAllowanceQueryPart) {
+                $query->addToQuery(' AND (' . $allowanceQueryPart . ($nodeTypeConstraints->isWildcardAllowed() ? ' OR ' : ' AND ') . $disAllowanceQueryPart . ')', $markerToReplaceInQuery);
+            } elseif ($allowanceQueryPart && !$nodeTypeConstraints->isWildcardAllowed()) {
+                $query->addToQuery(' AND ' . $allowanceQueryPart, $markerToReplaceInQuery);
+            } elseif ($disAllowanceQueryPart) {
+                $query->addToQuery(' AND ' . $disAllowanceQueryPart, $markerToReplaceInQuery);
+            }
+        }
     }
 
 
@@ -159,51 +194,24 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         int $offset = null,
         ContentRepository\Service\Context $context = null
     ): array {
-        $query = 'SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
+        $query = new SqlQueryBuilder();
+        $query->addToQuery('
+-- ContentSubgraph::findChildNodes
+SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
  INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
  WHERE p.nodeidentifier = :parentNodeIdentifier
  AND h.contentstreamidentifier = :contentStreamIdentifier
- AND h.dimensionspacepointhash = :dimensionSpacePointHash';
-        $parameters = [
-            'parentNodeIdentifier' => $parentNodeIdentifier,
-            'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
-            'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash()
-        ];
-        $types = [];
+ AND h.dimensionspacepointhash = :dimensionSpacePointHash')
+            ->parameter('parentNodeIdentifier', $parentNodeIdentifier)
+            ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
+            ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
 
-        if ($nodeTypeConstraints) {
-            if (!empty ($nodeTypeConstraints->getExplicitlyAllowedNodeTypeNames())) {
-                $allowanceQueryPart = 'c.nodetypename IN (:explicitlyAllowedNodeTypeNames)';
-                $parameters['explicitlyAllowedNodeTypeNames'] = $nodeTypeConstraints->getExplicitlyAllowedNodeTypeNames();
-                $types['explicitlyAllowedNodeTypeNames'] = Connection::PARAM_STR_ARRAY;
-            } else {
-                $allowanceQueryPart = '';
-            }
-            if (!empty ($nodeTypeConstraints->getExplicitlyDisallowedNodeTypeNames())) {
-                $disAllowanceQueryPart = 'c.nodetypename NOT IN (:explicitlyDisallowedNodeTypeNames)';
-                $parameters['explicitlyDisallowedNodeTypeNames'] = $nodeTypeConstraints->getExplicitlyDisallowedNodeTypeNames();
-                $types['explicitlyDisallowedNodeTypeNames'] = Connection::PARAM_STR_ARRAY;
-            } else {
-                $disAllowanceQueryPart = '';
-            }
-            if ($allowanceQueryPart && $disAllowanceQueryPart) {
-                $query .= ' AND (' . $allowanceQueryPart . ($nodeTypeConstraints->isWildcardAllowed() ? ' OR ' : ' AND ') . $disAllowanceQueryPart . ')';
-            } elseif ($allowanceQueryPart && !$nodeTypeConstraints->isWildcardAllowed()) {
-                $query .= ' AND ' . $allowanceQueryPart;
-            } elseif ($disAllowanceQueryPart) {
-                $query .= ' AND ' . $disAllowanceQueryPart;
-            }
-        }
-        $query .= '
- ORDER BY h.position DESC';
+        self::addNodeTypeConstraintsToQuery($nodeTypeConstraints, $query);
+        $query->addToQuery('ORDER BY h.position DESC');
 
         $result = [];
-        foreach ($this->getDatabaseConnection()->executeQuery(
-            $query,
-            $parameters,
-            $types
-        )->fetchAll() as $nodeData) {
+        foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeData) {
             $result[] = $this->nodeFactory->mapNodeRowToNode($nodeData, $context);
         }
 
@@ -212,7 +220,9 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
 
     public function findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier, ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
     {
-        $query = 'SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
+        $query = '
+-- ContentSubgraph::findNodeByNodeAggregateIdentifier
+SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
  WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
  AND h.contentstreamidentifier = :contentStreamIdentifier
@@ -238,27 +248,22 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         ContentRepository\Service\Context $contentContext = null
     ): int
     {
-        $query = 'SELECT COUNT(c.nodeidentifier) FROM neos_contentgraph_node p
+        $query = new SqlQueryBuilder();
+        $query->addToQuery('SELECT COUNT(c.nodeidentifier) FROM neos_contentgraph_node p
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
  INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
  WHERE p.nodeidentifier = :parentNodeIdentifier
  AND h.contentstreamidentifier = :contentStreamIdentifier
- AND h.dimensionspacepointhash = :dimensionSpacePointHash';
-        $parameters = [
-            'parentNodeIdentifier' => $parentNodeIdentifier,
-            'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
-            'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash()
-        ];
+ AND h.dimensionspacepointhash = :dimensionSpacePointHash')
+            ->parameter('parentNodeIdentifier', $parentNodeIdentifier)
+            ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
+            ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
 
         if ($nodeTypeConstraints) {
-            // @todo apply constraints
-            throw new \Exception('TODO: Constraints not supported');
+            self::addNodeTypeConstraintsToQuery($nodeTypeConstraints, $query);
         }
 
-        return $this->getDatabaseConnection()->executeQuery(
-            $query,
-            $parameters
-        )->rowCount();
+        return $query->execute($this->getDatabaseConnection())->rowCount();
     }
 
     /**
@@ -317,7 +322,9 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
             'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash()
         ];
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
-            'SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
+            '
+-- ContentSubgraph::findParentNode
+SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
  INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
  INNER JOIN neos_contentgraph_hierarchyrelation hp ON hp.childnodeanchor = p.relationanchorpoint
@@ -340,7 +347,9 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     public function findFirstChildNode(ContentRepository\ValueObject\NodeIdentifier $parentNodeIdentifier, ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
     {
         $nodeData = $this->getDatabaseConnection()->executeQuery(
-            'SELECT c.* FROM neos_contentgraph_node p
+            '
+-- ContentSubgraph::findFirstChildNode
+SELECT c.* FROM neos_contentgraph_node p
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
  INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
  WHERE p.nodeidentifier = :parentNodeIdentifier
@@ -397,7 +406,9 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     ): ?ContentRepository\Model\NodeInterface
     {
         $nodeData = $this->getDatabaseConnection()->executeQuery(
-            'SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
+            '
+-- ContentGraph::findChildNodeConnectedThroughEdgeName
+SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
  INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
  WHERE p.nodeidentifier = :parentNodeIdentifier
@@ -428,7 +439,9 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
 
         // "Node Type" is a concept of the Node Aggregate; but we can store the node type denormalized in the Node.
         foreach ($this->getDatabaseConnection()->executeQuery(
-            'SELECT n.*, h.name, h.position FROM neos_contentgraph_node n
+            '
+-- ContentSubgraph::findNodesByType
+SELECT n.*, h.name, h.position FROM neos_contentgraph_node n
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = n.relationanchorpoint
  WHERE n.nodetypename = :nodeTypeName
  AND h.contentstreamidentifier = :contentStreamIdentifier
@@ -469,7 +482,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         $continueTraversal = $callback($startNode);
         if ($continueTraversal) {
             if ($direction->isUp()) {
-                $parentNode = $this->findParentNode($startNode->getNodeIdentifier());
+                $parentNode = $this->findParentNode($startNode->getNodeIdentifier(), $context);
                 if ($parentNode) {
                     $this->traverseHierarchy($parentNode, $direction, $nodeTypeConstraints, $callback, $context);
                 }
@@ -492,10 +505,16 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         return $this->client->getConnection();
     }
 
+
     public function findNodePath(ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier): ContentRepository\ValueObject\NodePath
     {
-        $result = $this->getDatabaseConnection()->executeQuery(
-            'with recursive nodePath as (
+        $nodeIdentifierString = (string)$nodeIdentifier;
+
+        if (!isset($this->inMemoryNodePaths[$nodeIdentifierString])) {
+            $result = $this->getDatabaseConnection()->executeQuery(
+                '
+                -- ContentSubgraph::findNodePath
+                with recursive nodePath as (
                 SELECT h.name, h.parentnodeanchor FROM neos_contentgraph_node n
                      INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
                      AND h.contentstreamidentifier = :contentStreamIdentifier
@@ -508,26 +527,30 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
                         INNER JOIN nodePath as np ON h.childnodeanchor = np.parentnodeanchor
             )
             select * from nodePath',
-            [
-                'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
-                'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash(),
-                'nodeIdentifier' => (string) $nodeIdentifier
-            ]
-        )->fetchAll();
+                [
+                    'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
+                    'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash(),
+                    'nodeIdentifier' => (string) $nodeIdentifier
+                ]
+            )->fetchAll();
 
-        $nodePath = [];
+            $nodePath = [];
 
-        foreach ($result as $r) {
-            $nodePath[] = $r['name'];
+            foreach ($result as $r) {
+                $nodePath[] = $r['name'];
+            }
+
+            $nodePath = array_reverse($nodePath);
+            $this->inMemoryNodePaths[$nodeIdentifierString] = new ContentRepository\ValueObject\NodePath('/' . implode('/', $nodePath));
         }
 
-        $nodePath = array_reverse($nodePath);
-        return new ContentRepository\ValueObject\NodePath('/' . implode('/', $nodePath));
+        return $this->inMemoryNodePaths[$nodeIdentifierString];
     }
 
     public function resetCache()
     {
         $this->inMemorySubgraph = [];
+        $this->inMemoryNodePaths = [];
     }
 
     public function jsonSerialize(): array
@@ -538,5 +561,99 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         ];
     }
 
+    /**
+     * @param array $menuLevelNodeIdentifiers
+     * @param int $maximumLevels
+     * @param ContentRepository\Context\Parameters\ContextParameters $contextParameters
+     * @param NodeTypeConstraints $nodeTypeConstraints
+     * @param ContentRepository\Service\Context|null $context
+     * @return mixed|void
+     */
+    public function findSubtrees(array $entryNodeIdentifiers, int $maximumLevels, ContentRepository\Context\Parameters\ContextParameters $contextParameters, NodeTypeConstraints $nodeTypeConstraints, ContentRepository\Service\Context $context = null): SubtreeInterface
+    {
+        // TODO: evaluate ContextParameters
 
+        $query = new SqlQueryBuilder();
+        $query->addToQuery('
+-- ContentSubgraph::findSubtrees
+
+-- we build a set of recursive trees, ready to be rendered e.g. in a menu. Because the menu supports starting at multiple nodes, we also support starting at multiple nodes at once.
+with recursive tree as (
+     -- --------------------------------
+     -- INITIAL query: select the root nodes of the tree; as given in $menuLevelNodeIdentifiers
+     -- --------------------------------
+     select
+     	n.*,
+     	h.contentstreamidentifier,
+     	h.name,
+
+     	-- see https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/#cast-to-avoid-data-truncation
+     	CAST("ROOT" AS CHAR(50)) as parentNodeIdentifier,
+     	0 as level,
+     	0 as position
+     from
+        neos_contentgraph_node n
+     -- we need to join with the hierarchy relation, because we need the node name.
+     inner join neos_contentgraph_hierarchyrelation h
+        on h.childnodeanchor = n.relationanchorpoint
+     where
+        n.nodeidentifier in (:entryNodeIdentifiers)
+        and n.hidden = false             -- TODO - add ContextParameters query part
+        and h.contentstreamidentifier = :contentStreamIdentifier
+		AND h.dimensionspacepointhash = :dimensionSpacePointHash
+union
+     -- --------------------------------
+     -- RECURSIVE query: do one "child" query step, taking into account the depth and node type constraints
+     -- --------------------------------	
+     select
+        c.*,
+        h.contentstreamidentifier,
+        h.name,
+        
+     	p.nodeidentifier as parentNodeIdentifier,
+     	p.level + 1 as level,
+     	h.position
+     from
+        tree p
+	 inner join neos_contentgraph_hierarchyrelation h 
+        on h.parentnodeanchor = p.relationanchorpoint
+	 inner join neos_contentgraph_node c 
+	    on h.childnodeanchor = c.relationanchorpoint
+	 where
+	 	h.contentstreamidentifier = :contentStreamIdentifier
+		AND h.dimensionspacepointhash = :dimensionSpacePointHash
+		and p.level + 1 <= :maximumLevels -- MAXIMUM LEVELS -- TODO - off by one errors?
+	    and c.hidden = false -- TODO - add ContextParameters query part
+        ###NODE_TYPE_CONSTRAINTS###
+ 
+   -- select relationanchorpoint from neos_contentgraph_node
+) 
+select * from tree
+order by level, position desc;')
+        ->parameter('entryNodeIdentifiers', array_map(function(NodeIdentifier $nodeIdentifier) { return (string) $nodeIdentifier; }, $entryNodeIdentifiers), Connection::PARAM_STR_ARRAY)
+        ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
+        ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash())
+        ->parameter('maximumLevels', $maximumLevels);
+
+        self::addNodeTypeConstraintsToQuery($nodeTypeConstraints, $query, '###NODE_TYPE_CONSTRAINTS###');
+
+        $result = $query->execute($this->getDatabaseConnection())->fetchAll();
+
+        $subtreesByNodeIdentifier = [];
+        $subtreesByNodeIdentifier['ROOT'] = new Subtree(0);
+
+        foreach ($result as $nodeData) {
+            $node = $this->nodeFactory->mapNodeRowToNode($nodeData, $context);
+            if (!isset($subtreesByNodeIdentifier[$nodeData['parentNodeIdentifier']])) {
+                throw new \Exception('TODO: must not happen');
+            }
+
+            $subtree = new Subtree($nodeData['level'], $node);
+            $subtreesByNodeIdentifier[$nodeData['parentNodeIdentifier']]->add($subtree);
+            $subtreesByNodeIdentifier[$nodeData['nodeidentifier']] = $subtree;
+        }
+
+        return $subtreesByNodeIdentifier['ROOT'];
+
+    }
 }

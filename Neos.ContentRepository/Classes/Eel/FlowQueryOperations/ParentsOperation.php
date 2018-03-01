@@ -58,13 +58,13 @@ class ParentsOperation extends AbstractOperation
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         $output = array();
-        $outputNodePaths = array();
+        $outputNodeIdentifiers = array();
         foreach ($flowQuery->getContext() as $contextNode) {
             while ($contextNode->getParent() !== null) {
                 $contextNode = $contextNode->getParent();
-                if (!isset($outputNodePaths[$contextNode->getPath()])) {
+                if (!isset($outputNodeIdentifiers[(string)$contextNode->getNodeIdentifier()])) {
                     $output[] = $contextNode;
-                    $outputNodePaths[$contextNode->getPath()] = true;
+                    $outputNodeIdentifiers[(string)$contextNode->getNodeIdentifier()] = true;
                 }
             }
         }

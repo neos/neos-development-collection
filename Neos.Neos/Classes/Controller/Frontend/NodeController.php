@@ -166,6 +166,8 @@ class NodeController extends ActionController
     }
 
     /**
+     * Create a (legacy) Content Context for backwards compatibility reasons
+     *
      * @param ContentQuery $contentQuery
      * @param ContentSubgraphInterface $subgraph
      * @param ContextParameters $contextParameters

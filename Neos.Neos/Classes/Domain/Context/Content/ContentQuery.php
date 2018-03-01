@@ -31,7 +31,9 @@ use Neos\Neos\Domain\Service\ContentContext;
  *  in site $siteIdentifier
  *  in dimensions $dimensionSpacePoint
  *  in workspace $workspaceName
- *  belonging to the graph segment below $rootNodeIdentifier
+ *  belonging to the graph segment below $rootNodeIdentifier.
+ *
+ * It is used in Neos Routing to build a URI to a node.
  */
 final class ContentQuery implements \JsonSerializable, CacheAwareInterface
 {

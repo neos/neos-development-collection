@@ -59,7 +59,7 @@ class ChildrenOperation extends AbstractOperation
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         $output = array();
-        $outputNodePaths = array();
+        $outputNodeIdentifiers = array();
         if (isset($arguments[0]) && !empty($arguments[0])) {
             $parsedFilter = FizzleParser::parseFilterGroup($arguments[0]);
             if ($this->earlyOptimizationOfFilters($flowQuery, $parsedFilter)) {
@@ -71,9 +71,9 @@ class ChildrenOperation extends AbstractOperation
         foreach ($flowQuery->getContext() as $contextNode) {
             /** @var NodeInterface $childNode */
             foreach ($contextNode->getChildNodes() as $childNode) {
-                if (!isset($outputNodePaths[$childNode->getPath()])) {
+                if (!isset($outputNodeIdentifiers[(string)$childNode->getNodeIdentifier()])) {
                     $output[] = $childNode;
-                    $outputNodePaths[$childNode->getPath()] = true;
+                    $outputNodeIdentifiers[(string)$childNode->getNodeIdentifier()] = true;
                 }
             }
         }
@@ -97,7 +97,7 @@ class ChildrenOperation extends AbstractOperation
     {
         $optimized = false;
         $output = array();
-        $outputNodePaths = array();
+        $outputNodeIdentifiers = array();
         foreach ($parsedFilter['Filters'] as $filter) {
             $instanceOfFilters = array();
             $attributeFilters = array();
@@ -115,16 +115,16 @@ class ChildrenOperation extends AbstractOperation
             if ((isset($filter['PropertyNameFilter']) || isset($filter['PathFilter'])) || count($instanceOfFilters) > 0 || $optimized === true) {
                 $optimized = true;
                 $filteredOutput = array();
-                $filteredOutputNodePaths = array();
+                $filteredOutputNodeIdentifiers = array();
                 // Optimize property name filter if present
                 if (isset($filter['PropertyNameFilter']) || isset($filter['PathFilter'])) {
                     $nodePath = isset($filter['PropertyNameFilter']) ? $filter['PropertyNameFilter'] : $filter['PathFilter'];
                     /** @var NodeInterface $contextNode */
                     foreach ($flowQuery->getContext() as $contextNode) {
                         $childNode = $contextNode->getNode($nodePath);
-                        if ($childNode !== null && !isset($filteredOutputNodePaths[$childNode->getPath()])) {
+                        if ($childNode !== null && !isset($filteredOutputNodeIdentifiers[(string)$childNode->getNodeIdentifier()])) {
                             $filteredOutput[] = $childNode;
-                            $filteredOutputNodePaths[$childNode->getPath()] = true;
+                            $filteredOutputNodeIdentifiers[(string)$childNode->getNodeIdentifier()] = true;
                         }
                     }
                 } elseif (count($instanceOfFilters) > 0) {
@@ -136,9 +136,9 @@ class ChildrenOperation extends AbstractOperation
                     foreach ($flowQuery->getContext() as $contextNode) {
                         /** @var NodeInterface $childNode */
                         foreach ($contextNode->getChildNodes(implode($allowedNodeTypes, ',')) as $childNode) {
-                            if (!isset($filteredOutputNodePaths[$childNode->getPath()])) {
+                            if (!isset($filteredOutputNodeIdentifiers[(string)$childNode->getNodeIdentifier()])) {
                                 $filteredOutput[] = $childNode;
-                                $filteredOutputNodePaths[$childNode->getPath()] = true;
+                                $filteredOutputNodeIdentifiers[(string)$childNode->getNodeIdentifier()] = true;
                             }
                         }
                     }
@@ -156,7 +156,8 @@ class ChildrenOperation extends AbstractOperation
 
                 // Add filtered nodes to output
                 foreach ($filteredOutput as $filteredNode) {
-                    if (!isset($outputNodePaths[$filteredNode->getPath()])) {
+                    if (!isset($outputNodeIdentifiers[(string)$filteredNode->getNodeIdentifier()])) {
+                        // ??? TODO $outputNodeIdentifiers[(string)$filteredNode->getNodeIdentifier()] = true;
                         $output[] = $filteredNode;
                     }
                 }

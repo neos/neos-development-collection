@@ -26,7 +26,7 @@ use Neos\Flow\Utility\Algorithms;
 use Neos\Flow\Security\Context as SecurityContext;
 
 /**
- * Context
+ * Context. Only part of Legacy (non-event-sourced) compatibility layer.
  *
  * @api
  */
