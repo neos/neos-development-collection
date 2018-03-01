@@ -11,8 +11,8 @@ namespace Neos\Neos\Fusion;
  * source code.
  */
 
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\SubtreeInterface;
 use Neos\ContentRepository\Domain\Context\Node\ReadOnlyNodeInterface;
+use Neos\ContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\ContentRepository\Domain\Context\Parameters\ContextParameters;
 use Neos\ContentRepository\Domain\Context\Parameters\ContextParametersFactory;
 use Neos\ContentRepository\Domain\Model\NodeInterface;

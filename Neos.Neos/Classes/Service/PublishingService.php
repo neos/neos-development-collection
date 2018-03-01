@@ -50,7 +50,8 @@ class PublishingService extends \Neos\ContentRepository\Domain\Service\Publishin
             $nodes = array_merge($nodes, $this->collectAllContentChildNodes($node));
         }
         $sourceWorkspace = $node->getWorkspace();
-        $sourceWorkspace->publishNodes($nodes, $targetWorkspace);
+        $sourceWorkspace = $node->getContext()->getWorkspace();
+        $sourceWorkspace->publish($targetWorkspace);
 
         $this->emitNodePublished($node, $targetWorkspace);
     }
