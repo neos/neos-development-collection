@@ -28,16 +28,6 @@ include: Prototypes/FallbackNode.fusion
 #
 root = Neos.Fusion:Case
 root {
-	shortcut {
-		prototype(Neos.Neos:Page) {
-			body = Neos.Neos:Shortcut
-		}
-
-		@position = 'start'
-		condition = ${q(node).is('[instanceof Neos.Neos:Shortcut]')}
-		type = 'Neos.Neos:Page'
-	}
-
 	editPreviewMode {
 		@position = 'end 9996'
 		possibleEditPreviewModePath = ${documentNode.context.currentRenderingMode.fusionPath}

@@ -87,53 +87,11 @@ class NodeController extends ActionController
             throw new NodeNotFoundException('The requested node does not exist or isn\'t accessible to the current user', 1430218623);
         }
 
-        $inBackend = $node->getContext()->isInBackend();
-
-        if ($node->getNodeType()->isOfType('Neos.Neos:Shortcut') && !$inBackend) {
+        if ($node->getNodeType()->isOfType('Neos.Neos:Shortcut')) {
             $this->handleShortcutNode($node);
         }
 
         $this->view->assign('value', $node);
-
-        if ($inBackend) {
-            $this->overrideViewVariablesFromInternalArguments();
-            $this->response->setHeader('Cache-Control', 'no-cache');
-            if (!$this->view->canRenderWithNodeAndPath()) {
-                $this->view->setFusionPath('rawContent');
-            }
-        }
-
-        if ($this->session->isStarted() && $inBackend) {
-            $this->session->putData('lastVisitedNode', $node->getContextPath());
-        }
-    }
-
-    /**
-     * Checks if the optionally given node context path, affected node context path and Fusion path are set
-     * and overrides the rendering to use those. Will also add a "X-Neos-AffectedNodePath" header in case the
-     * actually affected node is different from the one routing resolved.
-     * This is used in out of band rendering for the backend.
-     *
-     * @return void
-     * @throws NodeNotFoundException
-     */
-    protected function overrideViewVariablesFromInternalArguments()
-    {
-        if (($nodeContextPath = $this->request->getInternalArgument('__nodeContextPath')) !== null) {
-            $node = $this->propertyMapper->convert($nodeContextPath, NodeInterface::class);
-            if (!$node instanceof NodeInterface) {
-                throw new NodeNotFoundException(sprintf('The node with context path "%s" could not be resolved', $nodeContextPath), 1437051934);
-            }
-            $this->view->assign('value', $node);
-        }
-
-        if (($affectedNodeContextPath = $this->request->getInternalArgument('__affectedNodeContextPath')) !== null) {
-            $this->response->setHeader('X-Neos-AffectedNodePath', $affectedNodeContextPath);
-        }
-
-        if (($fusionPath = $this->request->getInternalArgument('__fusionPath')) !== null) {
-            $this->view->setFusionPath($fusionPath);
-        }
     }
 
     /**
