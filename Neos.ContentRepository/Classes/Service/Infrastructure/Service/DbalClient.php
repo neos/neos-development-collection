@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Service;
+namespace Neos\ContentRepository\Service\Infrastructure\Service;
 
 /*
  * This file is part of the Neos.ContentGraph.DoctrineDbalAdapter package.

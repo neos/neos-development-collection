@@ -12,7 +12,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  * source code.
  */
 use Doctrine\DBAL\Connection;
-use Neos\ContentGraph\DoctrineDbalAdapter\Infrastructure\Service\DbalClient;
+use Neos\ContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\ContentRepository\Domain as ContentRepository;
 use Neos\ContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\ContentRepository\Domain\Projection\Content as ContentProjection;
