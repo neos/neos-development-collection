@@ -44,13 +44,19 @@ class EventEmittingService
     /**
      * @var string
      */
-    protected $currentAccountIdentifier = null;
+    protected $currentUsername = null;
 
     /**
      * @Flow\Inject
      * @var EventRepository
      */
     protected $eventRepository;
+
+    /**
+     * @Flow\Inject
+     * @var UserService
+     */
+    protected $userDomainService;
 
     /**
      * @Flow\InjectConfiguration("eventLog.enabled")
@@ -100,7 +106,8 @@ class EventEmittingService
      */
     public function generate($eventType, array $data, $eventClassName = Event::class)
     {
-        $event = new $eventClassName($eventType, $data, $this->currentAccountIdentifier, $this->getCurrentContext());
+        $this->initializeCurrentUsername();
+        $event = new $eventClassName($eventType, $data, $this->currentUsername, $this->getCurrentContext());
         $this->lastGeneratedEvent = $event;
 
         return $event;
@@ -171,13 +178,21 @@ class EventEmittingService
     }
 
     /**
-     * Set the current account identifier
+     * Try to set the current username emitting the events, if possible
      *
-     * @param string $accountIdentifier
      * @return void
      */
-    public function setCurrentAccountIdentifier($accountIdentifier)
+    protected function initializeCurrentUsername()
     {
-        $this->currentAccountIdentifier = $accountIdentifier;
+        if (isset($this->currentUsername)) {
+            return;
+        }
+
+        $currentUser = $this->userDomainService->getCurrentUser();
+        if (!$currentUser instanceof User) {
+            return;
+        }
+
+        $this->currentUsername = $this->userDomainService->getUsername($currentUser);
     }
 }
