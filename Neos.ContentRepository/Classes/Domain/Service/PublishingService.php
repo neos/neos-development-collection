@@ -11,6 +11,10 @@ namespace Neos\ContentRepository\Domain\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Changes\ChangeFinder;
+use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Factory\NodeFactory;
 use Neos\ContentRepository\Domain\Model\NodeData;
@@ -62,6 +66,24 @@ class PublishingService implements PublishingServiceInterface
     protected $contentDimensionPresetSource;
 
     /**
+     * @Flow\Inject
+     * @var ContentGraphInterface
+     */
+    protected $contentGraph;
+
+    /**
+     * @Flow\Inject
+     * @var WorkspaceFinder
+     */
+    protected $workspaceFinder;
+
+    /**
+     * @Flow\Inject
+     * @var ChangeFinder
+     */
+    protected $changeFinder;
+
+    /**
      * Returns a list of nodes contained in the given workspace which are not yet published
      *
      * @param Workspace $workspace
@@ -74,22 +96,18 @@ class PublishingService implements PublishingServiceInterface
             return array();
         }
 
-        $nodeData = $this->nodeDataRepository->findByWorkspace($workspace);
-        $unpublishedNodes = array();
-        foreach ($nodeData as $singleNodeData) {
-            /** @var NodeData $singleNodeData */
-            // Skip the root entry from the workspace as it can't be published
-            if ($singleNodeData->getPath() === '/') {
-                continue;
-            }
-            $node = $this->nodeFactory->createFromNodeData($singleNodeData, $this->createContext($workspace, $singleNodeData->getDimensionValues()));
-            if ($node !== null) {
+        $workspace = $this->workspaceFinder->findOneByName(new WorkspaceName($workspace->getName()));
+        $changes = $this->changeFinder->findByContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier());
+        $unpublishedNodes = [];
+        foreach ($changes as $change) {
+            $node = $this->contentGraph->findNodeByIdentifierInContentStream(
+                $workspace->getCurrentContentStreamIdentifier(),
+                $change->nodeIdentifier
+            );
+            if ($node instanceof NodeInterface) {
                 $unpublishedNodes[] = $node;
             }
         }
-
-        $unpublishedNodes = $this->sortNodesForPublishing($unpublishedNodes);
-
         return $unpublishedNodes;
     }
 
@@ -102,7 +120,8 @@ class PublishingService implements PublishingServiceInterface
      */
     public function getUnpublishedNodesCount(Workspace $workspace)
     {
-        return $workspace->getNodeCount() - 1;
+        $workspace = $this->workspaceFinder->findOneByName(new WorkspaceName($workspace->getName()));
+        return $this->changeFinder->countByContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier());
     }
 
     /**

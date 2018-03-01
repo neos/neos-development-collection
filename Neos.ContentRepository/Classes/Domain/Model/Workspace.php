@@ -12,6 +12,10 @@ namespace Neos\ContentRepository\Domain\Model;
  */
 
 use Doctrine\ORM\Mapping as ORM;
+use Neos\ContentRepository\Domain\Context\Workspace\Command\PublishWorkspace;
+use Neos\ContentRepository\Domain\Context\Workspace\Command\RebaseWorkspace;
+use Neos\ContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
+use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -131,6 +135,12 @@ class Workspace
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
+
+    /**
+     * @Flow\Inject
+     * @var WorkspaceCommandHandler
+     */
+    protected $workspaceCommandHandler;
 
     /**
      * Constructs a new workspace
@@ -376,8 +386,15 @@ class Workspace
      */
     public function publish(Workspace $targetWorkspace)
     {
-        $sourceNodes = $this->publishingService->getUnpublishedNodes($this);
-        $this->publishNodes($sourceNodes, $targetWorkspace);
+        $command = new RebaseWorkspace(
+            new WorkspaceName($this->name)
+        );
+        $this->workspaceCommandHandler->handleRebaseWorkspace($command);
+
+        $command = new PublishWorkspace(
+            new WorkspaceName($this->name)
+        );
+        $this->workspaceCommandHandler->handlePublishWorkspace($command);
     }
 
     /**

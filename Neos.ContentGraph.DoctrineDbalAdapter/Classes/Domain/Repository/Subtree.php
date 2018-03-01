@@ -9,9 +9,14 @@
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 
+use Neos\ContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 
-final class Subtree implements SubtreeInterface
+
+/**
+ * Class Subtree
+ */
+class Subtree implements SubtreeInterface
 {
 
     /**

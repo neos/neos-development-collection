@@ -6,11 +6,16 @@
  * Time: 15:04
  */
 
-namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
+namespace Neos\ContentRepository\Domain\Context\Node;
 
 
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 
+/**
+ * Interface SubtreeInterface
+ *
+ * @package Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository
+ */
 interface SubtreeInterface
 {
     public function getLevel(): int;
