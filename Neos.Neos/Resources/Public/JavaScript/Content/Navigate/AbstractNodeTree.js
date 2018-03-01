@@ -569,24 +569,29 @@ define(
 					parentNode = activeNode;
 				}
 
-				allowedNodeTypes = this._getAllowedChildNodeTypesForNode(parentNode);
+				allowedChildNodeTypes = this._getAllowedChildNodeTypesForNode(parentNode);
 
 				// Only show node types which inherit from the base node type(s).
 				// If the base node type is prefixed with "!", it is seen as negated.
+				var allowedNodeTypes = [];
+				var disallowedNodeTypes = [];
 				this.get('baseNodeType').split(',').forEach(function(nodeTypeFilter) {
 					nodeTypeFilter = nodeTypeFilter.trim();
-
-					allowedNodeTypes = allowedNodeTypes.filter(function (nodeTypeName) {
-						if (nodeTypeFilter[0] === '!') {
-							return !NodeTypeService.isOfType(nodeTypeName, nodeTypeFilter.substring(1));
-						} else {
-							return NodeTypeService.isOfType(nodeTypeName, nodeTypeFilter);
-						}
-					});
+					var nodeType = nodeTypeFilter[0] === '!' ? nodeTypeFilter.substring(1) : nodeTypeFilter;
+					var nodeTypes = Object.keys(NodeTypeService.getSubNodeTypes(nodeType));
+					nodeTypes.push(nodeType);
+					if (nodeTypeFilter[0] === '!') {
+						disallowedNodeTypes = disallowedNodeTypes.concat(nodeTypes);
+					} else {
+						allowedNodeTypes = allowedNodeTypes.concat(nodeTypes);
+					}
+				});
+				allowedChildNodeTypes = allowedChildNodeTypes.filter(function (nodeTypeName) {
+					return allowedNodeTypes.indexOf(nodeTypeName) !== -1 && disallowedNodeTypes.indexOf(nodeTypeName) === -1;
 				});
 
 				InsertNodePanel.create({
-					allowedNodeTypes: allowedNodeTypes,
+					allowedNodeTypes: allowedChildNodeTypes,
 					_position: position,
 					insertNode: function(nodeType, icon) {
 						that.set('insertNodePanelShown', false);
