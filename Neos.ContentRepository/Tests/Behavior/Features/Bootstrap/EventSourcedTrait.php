@@ -12,6 +12,7 @@
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
+use Neos\ContentRepository\Domain\Context\Node\RelationDistributionStrategy;
 use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
@@ -30,7 +31,6 @@ use Neos\EventSourcing\EventStore\EventStoreManager;
 use Neos\EventSourcing\EventStore\StreamNameFilter;
 use Neos\EventSourcing\EventStore\StreamNamePrefixFilter;
 use Neos\Flow\Property\PropertyMapper;
-use Neos\Flow\Property\PropertyMappingConfiguration;
 use PHPUnit\Framework\Assert;
 use Ramsey\Uuid\Uuid;
 
@@ -39,18 +39,15 @@ use Ramsey\Uuid\Uuid;
  */
 trait EventSourcedTrait
 {
-
     /**
      * @var EventTypeResolver
      */
     private $eventTypeResolver;
 
-
     /**
      * @var PropertyMapper
      */
     private $propertyMapper;
-
 
     /**
      * @var EventPublisher
@@ -89,6 +86,7 @@ trait EventSourcedTrait
 
     /**
      * @Given /^the Event RootNodeWasCreated was published with payload:$/
+     * @throws Exception
      */
     public function theEventRootNodeWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
@@ -99,17 +97,36 @@ trait EventSourcedTrait
     }
 
     /**
+     * @Given /^the Event NodeAggregateWithNodeWasCreated was published with payload:$/
+     * @throws Exception
+     */
+    public function theEventNodeAggregateWithNodeWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
+    {
+        $eventPayload = $this->readPayloadTable($payloadTable);
+        $streamName = ContentStreamCommandHandler::getStreamNameForContentStream(new ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
+        $streamName = $this->replaceUuidIdentifiers($streamName);
+        $this->publishEvent('Neos.ContentRepository:NodeAggregateWithNodeWasCreated', $streamName, $eventPayload);
+    }
+
+    /**
      * @Given /^the Event "([^"]*)" was published to stream "([^"]*)" with payload:$/
+     * @throws Exception
      */
     public function theEventWasPublishedToStreamWithPayload($eventType, $streamName, TableNode $payloadTable)
     {
         $streamName = $this->replaceUuidIdentifiers($streamName);
 
-        $eventClassName = $this->eventTypeResolver->getEventClassNameByType($eventType);
         $eventPayload = $this->readPayloadTable($payloadTable);
         $this->publishEvent($eventType, $streamName, $eventPayload);
     }
 
+    /**
+     * @param $eventType
+     * @param $streamName
+     * @param $eventPayload
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
+     */
     protected function publishEvent($eventType, $streamName, $eventPayload)
     {
         $eventClassName = $this->eventTypeResolver->getEventClassNameByType($eventType);
@@ -122,6 +139,11 @@ trait EventSourcedTrait
     }
 
 
+    /**
+     * @param TableNode $payloadTable
+     * @return array
+     * @throws Exception
+     */
     protected function readPayloadTable(TableNode $payloadTable)
     {
         $eventPayload = [];
@@ -163,6 +185,9 @@ trait EventSourcedTrait
                             $eventPayload[$line['Key']] = [];
                         }
                         break;
+                    case 'null':
+                        $eventPayload[$line['Key']] = null;
+                        break;
                     default:
                         throw new \Exception("TODO" . json_encode($line));
                 }
@@ -188,15 +213,29 @@ trait EventSourcedTrait
     /**
      * @When /^the command "([^"]*)" is executed with payload:$/
      * @Given /^the command "([^"]*)" was executed with payload:$/
+     * @throws Exception
      */
     public function theCommandIsExecutedWithPayload($shortCommandName, TableNode $payloadTable)
     {
         list($commandClassName, $commandHandlerClassName, $commandHandlerMethod) = self::resolveShortCommandName($shortCommandName);
         $commandArguments = $this->readPayloadTable($payloadTable);
 
-        $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
-        /** @var EventInterface $event */
-        $command = $this->propertyMapper->convert($commandArguments, $commandClassName, $configuration);
+        switch ($commandClassName) {
+            case \Neos\ContentRepository\Domain\Context\Node\Command\MoveNode::class:
+                $command = new \Neos\ContentRepository\Domain\Context\Node\Command\MoveNode(
+                    is_string($commandArguments['contentStreamIdentifier']) ? new ContentStreamIdentifier($commandArguments['contentStreamIdentifier']) : $commandArguments['contentStreamIdentifier'],
+                    $commandArguments['dimensionSpacePoint'],
+                    is_string($commandArguments['nodeAggregateIdentifier']) ? new NodeAggregateIdentifier($commandArguments['nodeAggregateIdentifier']) : $commandArguments['nodeAggregateIdentifier'],
+                    is_string($commandArguments['newParentNodeAggregateIdentifier']) ? new NodeAggregateIdentifier($commandArguments['newParentNodeAggregateIdentifier']) : $commandArguments['newParentNodeAggregateIdentifier'],
+                    is_string($commandArguments['newSucceedingSiblingNodeAggregateIdentifier']) ? new NodeAggregateIdentifier($commandArguments['newSucceedingSiblingNodeAggregateIdentifier']) : $commandArguments['newSucceedingSiblingNodeAggregateIdentifier'],
+                    is_string($commandArguments['relationDistributionStrategy']) ? RelationDistributionStrategy::fromConfigurationValue($commandArguments['relationDistributionStrategy']) : $commandArguments['relationDistributionStrategy']
+                );
+            break;
+            default:
+                $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
+                $command = $this->propertyMapper->convert($commandArguments, $commandClassName, $configuration);
+        }
+
         $commandHandler = $this->objectManager->get($commandHandlerClassName);
 
         $commandHandler->$commandHandlerMethod($command);
@@ -207,7 +246,7 @@ trait EventSourcedTrait
     }
 
     /**
-     * @When /^the command "([^"]*)" is executed with payload and exceptions are catched:$/
+     * @When /^the command "([^"]*)" is executed with payload and exceptions are caught:$/
      */
     public function theCommandIsExecutedWithPayloadAndExceptionsAreCatched($shortCommandName, TableNode $payloadTable)
     {
@@ -220,6 +259,7 @@ trait EventSourcedTrait
 
     /**
      * @Then /^the last command should have thrown an exception of type "([^"]*)"$/
+     * @throws Exception
      */
     public function theLastCommandShouldHaveThrown($shortExceptionName)
     {
@@ -236,11 +276,28 @@ trait EventSourcedTrait
                 Assert::assertInstanceOf(\Neos\ContentRepository\Domain\Context\Workspace\Exception\BaseWorkspaceHasBeenModifiedInTheMeantime::class, $this->lastCommandException);
 
                 return;
+            case 'NodeAggregateNotFound':
+                Assert::assertInstanceOf(\Neos\ContentRepository\Domain\Context\Node\NodeAggregateNotFound::class, $this->lastCommandException);
+
+                return;
+            case 'NodeExistsException':
+
+                Assert::assertInstanceOf(\Neos\ContentRepository\Exception\NodeExistsException::class, $this->lastCommandException);
+                return;
+            case 'NodeConstraintException':
+
+                Assert::assertInstanceOf(\Neos\ContentRepository\Exception\NodeConstraintException::class, $this->lastCommandException);
+                return;
             default:
                 throw new \Exception('The short exception name "' . $shortExceptionName . '" is currently not supported by the tests.');
         }
     }
 
+    /**
+     * @param $shortCommandName
+     * @return array
+     * @throws Exception
+     */
     protected static function resolveShortCommandName($shortCommandName)
     {
         switch ($shortCommandName) {
@@ -316,12 +373,6 @@ trait EventSourcedTrait
                     \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
                     'handleMoveNode'
                 ];
-            case 'MoveNodesInAggregate':
-                return [
-                    \Neos\ContentRepository\Domain\Context\Node\Command\MoveNodesInAggregate::class,
-                    \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
-                    'handleMoveNodesInAggregate'
-                ];
             case 'TranslateNodeInAggregate':
                 return [
                     \Neos\ContentRepository\Domain\Context\Node\Command\TranslateNodeInAggregate::class,
@@ -342,6 +393,7 @@ trait EventSourcedTrait
 
     /**
      * @Then /^I expect exactly (\d+) events? to be published on stream "([^"]*)"$/
+     * @throws \Neos\EventSourcing\EventStore\Exception\EventStreamNotFoundException
      */
     public function iExpectExactlyEventToBePublishedOnStream($numberOfEvents, $streamName)
     {
@@ -355,6 +407,7 @@ trait EventSourcedTrait
 
     /**
      * @Then /^I expect exactly (\d+) events? to be published on stream with prefix "([^"]*)"$/
+     * @throws \Neos\EventSourcing\EventStore\Exception\EventStreamNotFoundException
      */
     public function iExpectExactlyEventToBePublishedOnStreamWithPrefix($numberOfEvents, $streamName)
     {
@@ -427,21 +480,21 @@ trait EventSourcedTrait
     /**
      * @Given /^I am in the active content stream of workspace "([^"]*)" and Dimension Space Point (.*)$/
      */
-    public function iAmInTheActiveContentStreamOfWorkspaceAndDimensionSpacePointCoordinates(string $workspaceName, string $dimensionSpacePoint)
+    public function iAmInTheActiveContentStreamOfWorkspaceAndDimensionSpacePoint(string $workspaceName, string $dimensionSpacePoint)
     {
         $workspaceName = new WorkspaceName($workspaceName);
         $this->contentStreamIdentifier = $this->workspaceFinder->findOneByName($workspaceName)->getCurrentContentStreamIdentifier();
-        $this->dimensionSpacePoint = new DimensionSpacePoint(json_decode($dimensionSpacePoint, true)['coordinates']);
+        $this->dimensionSpacePoint = new DimensionSpacePoint(json_decode($dimensionSpacePoint, true));
     }
 
     /**
      * @Given /^I am in content stream "([^"]*)" and Dimension Space Point (.*)$/
      */
-    public function iAmInContentStreamAndDimensionSpacePointCoordinates(string $contentStreamIdentifier, string $dimensionSpacePoint)
+    public function iAmInContentStreamAndDimensionSpacePoint(string $contentStreamIdentifier, string $dimensionSpacePoint)
     {
         $contentStreamIdentifier = $this->replaceUuidIdentifiers($contentStreamIdentifier);
         $this->contentStreamIdentifier = new ContentStreamIdentifier($contentStreamIdentifier);
-        $this->dimensionSpacePoint = new DimensionSpacePoint(json_decode($dimensionSpacePoint, true)['coordinates']);
+        $this->dimensionSpacePoint = new DimensionSpacePoint(json_decode($dimensionSpacePoint, true));
     }
 
     /**
@@ -641,6 +694,7 @@ trait EventSourcedTrait
 
     /**
      * @Then /^I expect the path "([^"]*)" to lead to the node "([^"]*)"$/
+     * @throws Exception
      */
     public function iExpectThePathToLeadToTheNode($nodePath, $nodeIdentifier)
     {

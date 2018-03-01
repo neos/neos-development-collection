@@ -466,22 +466,53 @@ final class NodeCommandHandler
 
     /**
      * @param MoveNode $command
-     * @throws Exception
-     * @throws NodeNotFoundException
      */
     public function handleMoveNode(MoveNode $command): void
     {
-        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
-            $contentStreamIdentifier = $command->getContentStreamIdentifier();
-
-            /** @var Node $node */
-            $node = $this->getNode($contentStreamIdentifier, $command->getNodeIdentifier());
-
-            $contentSubgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier,
-                $node->getDimensionSpacePoint());
+        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
+            $contentSubgraph = $this->contentGraph->getSubgraphByIdentifier($command->getContentStreamIdentifier(), $command->getDimensionSpacePoint());
             if ($contentSubgraph === null) {
-                throw new Exception(sprintf('Content subgraph not found for content stream %s, %s',
-                    $contentStreamIdentifier, $node->getDimensionSpacePoint()), 1506074858);
+                throw new Exception(sprintf('Content subgraph not found for content stream %s, %s', $command->getContentStreamIdentifier(), $command->getDimensionSpacePoint()), 1506074858);
+            }
+            // this excludes root nodes as they do not have node aggregate identifiers
+            $node = $contentSubgraph->findNodeByNodeAggregateIdentifier($command->getNodeAggregateIdentifier());
+            $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
+            if (!$nodeAggregate) {
+                throw new NodeAggregateNotFound('Node aggregate "' . $command->getNodeAggregateIdentifier() . '" not found.', 1519822991);
+            }
+
+            if ($command->getNewParentNodeAggregateIdentifier()) {
+                $newParentAggregate = $this->contentGraph->findNodeAggregateByIdentifier($command->getContentStreamIdentifier(), $command->getNewParentNodeAggregateIdentifier());
+                if (!$newParentAggregate) {
+                    throw new NodeAggregateNotFound('Parent node aggregate "' . $command->getNewParentNodeAggregateIdentifier() . '" not found.', 1519822625);
+                }
+                if ($contentSubgraph->findChildNodeByNodeAggregateIdentifierConnectedThroughEdgeName($command->getNewParentNodeAggregateIdentifier(), $node->getNodeName())) {
+                    throw new NodeExistsException('Node with name "' . $node->getNodeName() . '" already exists in parent "' . $command->getNewParentNodeAggregateIdentifier() . '".', 1292503469);
+                }
+                $newParentsNodeType = $this->nodeTypeManager->getNodeType((string)$newParentAggregate->getNodeTypeName());
+                $nodesNodeType = $this->nodeTypeManager->getNodeType((string)$nodeAggregate->getNodeTypeName());
+                if (!$newParentsNodeType->allowsChildNodeType($nodesNodeType)) {
+                    throw new NodeConstraintException('Cannot move node "' . $command->getNodeAggregateIdentifier() . '" into node "' . $command->getNewParentNodeAggregateIdentifier() . '"', 1404648100);
+                }
+
+                $oldParentAggregates = $this->contentGraph->findParentAggregates($command->getContentStreamIdentifier(), $nodeAggregate);
+                foreach ($oldParentAggregates as $oldParentAggregate) {
+                    $oldParentAggregatesNodeType = $this->nodeTypeManager->getNodeType((string)$oldParentAggregate->getNodeTypeName());
+                    if (isset($oldParentAggregatesNodeType->getAutoCreatedChildNodes()[(string) $node->getName()])) {
+                        throw new NodeConstraintException('Cannot move auto-generated node "' . $command->getNodeAggregateIdentifier() . '" into new parent "' . $newParentAggregate->getNodeAggregateIdentifier() . '"', 1519920594);
+                    }
+                }
+                foreach ($this->contentGraph->findParentAggregates($command->getContentStreamIdentifier(), $newParentAggregate) as $grandParentAggregate) {
+                    $grandParentsNodeType = $this->nodeTypeManager->getNodeType((string)$grandParentAggregate->getNodeTypeName());
+                    if (isset($grandParentsNodeType->getAutoCreatedChildNodes()[(string)$newParentAggregate->getNodeName()]) && !$grandParentsNodeType->allowsGrandchildNodeType((string)$newParentAggregate->getNodeName(), $nodesNodeType)) {
+                        throw new NodeConstraintException('Cannot move node "' . $command->getNodeAggregateIdentifier() . '" into grand parent node "' . $grandParentAggregate->getNodeAggregateIdentifier() . '"', 1519828263);
+                    }
+                }
+            }
+            if ($command->getNewSucceedingSiblingNodeAggregateIdentifier()) {
+                if (!$this->contentGraph->findNodeAggregateByIdentifier($command->getContentStreamIdentifier(), $command->getNewSucceedingSiblingNodeAggregateIdentifier())) {
+                    throw new NodeAggregateNotFound('Succeeding sibling node aggregate "' . $command->getNewParentNodeAggregateIdentifier() . '" not found.', 1519900842);
+                }
             }
 
             $referenceNode = $contentSubgraph->findNodeByIdentifier($command->getReferenceNodeIdentifier());
@@ -556,7 +587,7 @@ final class NodeCommandHandler
      */
     public function handleChangeNodeName(ChangeNodeName $command)
     {
-        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
             /** @var Node $node */
             $node = $this->getNode($contentStreamIdentifier, $command->getNodeIdentifier());
@@ -584,7 +615,7 @@ final class NodeCommandHandler
      */
     public function handleTranslateNodeInAggregate(TranslateNodeInAggregate $command): void
     {
-        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
             $events = $this->nodeInAggregateWasTranslatedFromCommand($command);

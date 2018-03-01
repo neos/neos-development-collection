@@ -21,7 +21,6 @@ use Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNo
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateRootNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\HideNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\MoveNode;
-use Neos\ContentRepository\Domain\Context\Node\Command\MoveNodesInAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Command\SetNodeProperty;
 use Neos\ContentRepository\Domain\Context\Node\Command\ShowNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\TranslateNodeInAggregate;
@@ -309,9 +308,6 @@ final class WorkspaceCommandHandler
                         break;
                     case MoveNode::class:
                         $this->nodeCommandHandler->handleMoveNode($commandToRebase);
-                        break;
-                    case MoveNodesInAggregate::class:
-                        $this->nodeCommandHandler->handleMoveNodesInAggregate($commandToRebase);
                         break;
                     case SetNodeProperty::class:
                         $this->nodeCommandHandler->handleSetNodeProperty($commandToRebase);

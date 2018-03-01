@@ -57,12 +57,25 @@ interface ContentGraphInterface
      * @param Domain\ValueObject\DimensionSpacePointSet|null $dimensionSpacePointSet
      * @return array|NodeInterface[]
      */
-    public function findNodesByNodeAggregateIdentifier(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, Domain\ValueObject\DimensionSpacePointSet $dimensionSpacePointSet = null): array;
+    public function findNodesByNodeAggregateIdentifier(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        Domain\ValueObject\DimensionSpacePointSet $dimensionSpacePointSet = null
+    ): array;
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @return NodeAggregate|null
+     * @throws Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
      */
     public function findNodeAggregateByIdentifier(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodeAggregate;
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregate $nodeAggregate
+     * @return array|NodeAggregate[]
+     * @throws Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
+     */
+    public function findParentAggregates(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregate $nodeAggregate): array;
 }
