@@ -148,7 +148,7 @@ Feature: Workspace based content publishing
 
 
     # PUBLISHING without rebase: error
-    When the command "PublishWorkspace" is executed with payload and exceptions are catched:
+    When the command "PublishWorkspace" is executed with payload and exceptions are caught:
       | Key           | Value     | Type |
       | workspaceName | user-test |      |
 

@@ -137,6 +137,8 @@ Feature: Create node aggregate with node
       | nodeIdentifier          | 75106e9a-7dfb-4b48-8b7a-3c4ab2546b81                            |                     |
       | parentNodeIdentifier    | 5387cb08-2aaf-44dc-a8a1-483497aa0a03                            |                     |
       | nodeName                | foo                                                             |                     |
+    And the graph projection is fully up to date
+    And I am in content stream "c75ae6a2-7254-4d42-a31b-a629e264069d" and Dimension Space Point {"language": "de"}
 
     # event 1 is the one from the "Given" part
     Then I expect exactly 3 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:c75ae6a2-7254-4d42-a31b-a629e264069d"
@@ -152,3 +154,4 @@ Feature: Create node aggregate with node
       | nodeName                                 | foo                                                                              |               |
       | propertyDefaultValuesAndTypes.text.value | my default                                                                       |               |
       | propertyDefaultValuesAndTypes.text.type  | string                                                                           |               |
+    And I expect a node identified by aggregate identifier "35411439-94d1-4bd4-8fac-0646856c6a1f" to exist in the subgraph

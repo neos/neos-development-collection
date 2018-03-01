@@ -1124,8 +1124,11 @@ trait NodeOperationsTrait
         /** @var DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph */
         $interDimensionalVariationGraph = $this->getObjectManager()->get(DimensionSpace\InterDimensionalVariationGraph::class);
         ObjectAccess::setProperty($interDimensionalVariationGraph, 'subgraphs', null, true);
-        ObjectAccess::setProperty($interDimensionalVariationGraph, 'generalizations', null, true);
-        ObjectAccess::setProperty($interDimensionalVariationGraph, 'specializations', null, true);
+        ObjectAccess::setProperty($interDimensionalVariationGraph, 'weightedDimensionSpacePoints', null, true);
+        ObjectAccess::setProperty($interDimensionalVariationGraph, 'indexedGeneralizations', null, true);
+        ObjectAccess::setProperty($interDimensionalVariationGraph, 'indexedSpecializations', null, true);
+        ObjectAccess::setProperty($interDimensionalVariationGraph, 'weightedGeneralizations', null, true);
+        ObjectAccess::setProperty($interDimensionalVariationGraph, 'weightedSpecializations', null, true);
         ObjectAccess::setProperty($interDimensionalVariationGraph, 'primaryGeneralizations', null, true);
         ObjectAccess::setProperty($interDimensionalVariationGraph, 'weightNormalizationBase', null, true);
     }

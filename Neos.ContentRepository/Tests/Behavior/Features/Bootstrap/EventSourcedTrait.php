@@ -131,9 +131,15 @@ trait EventSourcedTrait
     {
         $eventClassName = $this->eventTypeResolver->getEventClassNameByType($eventType);
 
-        $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
         /** @var EventInterface $event */
-        $event = $this->propertyMapper->convert($eventPayload, $eventClassName, $configuration);
+        switch ($eventClassName) {
+            case \Neos\ContentRepository\Domain\Context\Node\Event\NodesWereMoved::class:
+                \Neos\Flow\var_dump($eventPayload, 'hello from publishEvent');
+            exit();
+            default:
+                $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
+                $event = $this->propertyMapper->convert($eventPayload, $eventClassName, $configuration);
+        }
 
         $this->eventPublisher->publish($streamName, $event);
     }

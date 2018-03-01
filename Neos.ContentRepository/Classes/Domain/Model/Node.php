@@ -1007,9 +1007,9 @@ class Node implements NodeInterface, CacheAwareInterface
         // TODO CR rewrite: Execute CreateChildNodeWithVariantFromTemplate command
         // TODO CR rewrite: Check if we still want to support this!
 
-        $this->emitNodeAdded($node);
+        #$this->emitNodeAdded($node);
 
-        return $node;
+        #return $node;
     }
 
     /**

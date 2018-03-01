@@ -78,4 +78,10 @@ interface ContentGraphInterface
      * @throws Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
      */
     public function findParentAggregates(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregate $nodeAggregate): array;
+
+    /**
+     * @param Domain\Context\Node\ReadOnlyNodeInterface $node
+     * @return Domain\ValueObject\DimensionSpacePointSet
+     */
+    public function findVisibleDimensionSpacePointsOfNode(Domain\Context\Node\ReadOnlyNodeInterface $node): Domain\ValueObject\DimensionSpacePointSet;
 }

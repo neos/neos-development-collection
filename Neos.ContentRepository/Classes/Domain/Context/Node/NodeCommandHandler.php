@@ -27,17 +27,17 @@ use Neos\ContentRepository\Domain\Context\Node\Command\CreateRootNode;
 use Neos\ContentRepository\Domain\Context\Importing\Command\ImportNode;
 use Neos\ContentRepository\Domain\Context\Importing\Event\NodeWasImported;
 use Neos\ContentRepository\Domain\Context\Node\Command\MoveNode;
-use Neos\ContentRepository\Domain\Context\Node\Command\MoveNodesInAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Command\ChangeNodeName;
 use Neos\ContentRepository\Domain\Context\Node\Command\SetNodeProperty;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\Domain\Context\Node\Event\NodeMoveMapping;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeNameWasChanged;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodesInAggregateWereMoved;
+use Neos\ContentRepository\Domain\Context\Node\Event\NodesWereMoved;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasAddedToAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasHidden;
-use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasMoved;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeInAggregateWasTranslated;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasShown;
 use Neos\ContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
@@ -54,6 +54,8 @@ use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\ContentRepository\Exception;
 use Neos\ContentRepository\Exception\DimensionSpacePointNotFound;
+use Neos\ContentRepository\Exception\NodeConstraintException;
+use Neos\ContentRepository\Exception\NodeExistsException;
 use Neos\ContentRepository\Exception\NodeNotFoundException;
 use Neos\EventSourcing\EventStore\ExpectedVersion;
 use Neos\Flow\Annotations as Flow;
@@ -92,7 +94,7 @@ final class NodeCommandHandler
      */
     public function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command): void
     {
-        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
             $contentStreamStreamName = ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier());
 
             $events = $this->nodeAggregateWithNodeWasCreatedFromCommand($command);
@@ -187,7 +189,7 @@ final class NodeCommandHandler
      */
     public function handleAddNodeToAggregate(AddNodeToAggregate $command): void
     {
-        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
             $contentStreamStreamName = ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier());
 
             $events = $this->nodeWasAddedToAggregateFromCommand($command);
@@ -343,7 +345,7 @@ final class NodeCommandHandler
      */
     public function handleCreateRootNode(CreateRootNode $command): void
     {
-        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
             $event = new RootNodeWasCreated(
@@ -365,7 +367,7 @@ final class NodeCommandHandler
      */
     public function handleSetNodeProperty(SetNodeProperty $command): void
     {
-        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
             // Check if node exists
@@ -423,7 +425,7 @@ final class NodeCommandHandler
      */
     public function handleHideNode(HideNode $command): void
     {
-        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
             // Check if node exists
@@ -446,7 +448,7 @@ final class NodeCommandHandler
      */
     public function handleShowNode(ShowNode $command): void
     {
-        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
             // Check if node exists
@@ -515,70 +517,72 @@ final class NodeCommandHandler
                 }
             }
 
-            $referenceNode = $contentSubgraph->findNodeByIdentifier($command->getReferenceNodeIdentifier());
-            if ($referenceNode === null) {
-                throw new NodeNotFoundException(sprintf('Reference node %s not found for content stream %s, %s',
-                    $command->getReferenceNodeIdentifier(), $contentStreamIdentifier, $node->getDimensionSpacePoint()),
-                    1506075821, $command->getReferenceNodeIdentifier());
+            $nodeMoveMappings = [];
+            switch ($command->getRelationDistributionStrategy()->getStrategy()) {
+                case RelationDistributionStrategy::STRATEGY_SCATTER:
+                    $nodeMoveMappings = $this->getMoveNodeMappings($node, $command);
+                    break;
+                case RelationDistributionStrategy::STRATEGY_GATHER_SPECIALIZATIONS:
+                    $specializationSet = $this->interDimensionalVariationGraph->getSpecializationSet($command->getDimensionSpacePoint());
+                    $nodesInSpecializationSet = $this->contentGraph->findNodesByNodeAggregateIdentifier(
+                        $command->getContentStreamIdentifier(),
+                        $command->getNodeAggregateIdentifier(),
+                        $specializationSet
+                    );
+
+                    foreach ($nodesInSpecializationSet as $nodeInSpecializationSet) {
+                        $nodeMoveMappings = array_merge($nodeMoveMappings, $this->getMoveNodeMappings($nodeInSpecializationSet, $command));
+                    }
+                    break;
+                case RelationDistributionStrategy::STRATEGY_GATHER_ALL:
+                default:
+                    $nodesInSpecializationSet = $this->contentGraph->findNodesByNodeAggregateIdentifier(
+                        $command->getContentStreamIdentifier(),
+                        $command->getNodeAggregateIdentifier()
+                    );
+
+                    foreach ($nodesInSpecializationSet as $nodeInSpecializationSet) {
+                        $nodeMoveMappings = array_merge($nodeMoveMappings, $this->getMoveNodeMappings($nodeInSpecializationSet, $command));
+                    }
             }
 
-            $event = new NodeWasMoved(
+            $nodesWereMoved = new NodesWereMoved(
                 $command->getContentStreamIdentifier(),
-                $command->getNodeIdentifier(),
-                $command->getReferencePosition(),
-                $command->getReferenceNodeIdentifier()
+                $nodeMoveMappings
             );
 
             $this->nodeEventPublisher->publish(
-                ContentStreamCommandHandler::getStreamNameForContentStream($contentStreamIdentifier),
-                $event
+                ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier()),
+                $nodesWereMoved
             );
         });
     }
 
     /**
-     * @param MoveNodesInAggregate $command
-     * @throws Exception
+     * @param ReadOnlyNodeInterface $node
+     * @param MoveNode $command
+     * @return array|NodeMoveMapping[]
      */
-    public function handleMoveNodesInAggregate(MoveNodesInAggregate $command): void
+    protected function getMoveNodeMappings(ReadOnlyNodeInterface $node, MoveNode $command): array
     {
-        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
-            $contentStreamIdentifier = $command->getContentStreamIdentifier();
-            $nodeAggregateIdentifier = $command->getNodeAggregateIdentifier();
-            $referenceNodeAggregateIdentifier = $command->getReferenceNodeAggregateIdentifier();
-            $sourceNodes = $this->contentGraph->findNodesByNodeAggregateIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier);
-            $nodesToReferenceNodes = [];
+        $nodeMoveMappings = [];
+        $visibleDimensionSpacePoints = $this->contentGraph->findVisibleDimensionSpacePointsOfNode($node);
+        foreach ($visibleDimensionSpacePoints->getPoints() as $visibleDimensionSpacePoint) {
+            $variantSubgraph = $this->contentGraph->getSubgraphByIdentifier($command->getContentStreamIdentifier(), $visibleDimensionSpacePoint);
 
-            /** @var Node $sourceNode */
-            foreach ($sourceNodes as $sourceNode) {
-                $dimensionSpacePoint = $sourceNode->getDimensionSpacePoint();
-                $contentSubgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $dimensionSpacePoint);
-                if ($contentSubgraph === null) {
-                    throw new Exception(sprintf('Content subgraph not found for content stream %s, %s', $contentStreamIdentifier, $dimensionSpacePoint), 1506439819);
-                }
-                /** @var Node $referenceNode */
-                $referenceNode = $contentSubgraph->findNodeByNodeAggregateIdentifier($referenceNodeAggregateIdentifier);
-                if ($referenceNode === null) {
-                    throw new Exception(sprintf('No node found for reference node aggregate %s in content stream %s, %s',
-                        $referenceNodeAggregateIdentifier, $contentStreamIdentifier, $dimensionSpacePoint), 1506439842);
-                }
-                // TODO Introduce a mapping value object with checks for uniqueness
-                $nodesToReferenceNodes[(string)$sourceNode->getNodeIdentifier()] = (string)$referenceNode->getNodeIdentifier();
-            }
+            $newParentVariant = $command->getNewParentNodeAggregateIdentifier() ? $variantSubgraph->findNodeByNodeAggregateIdentifier($command->getNewParentNodeAggregateIdentifier()) : null;
+            $newSucceedingSiblingVariant = $command->getNewSucceedingSiblingNodeAggregateIdentifier() ? $variantSubgraph->findNodeByNodeAggregateIdentifier($command->getNewSucceedingSiblingNodeAggregateIdentifier()) : null;
+            $mappingDimensionSpacePointSet = $newParentVariant ? $this->contentGraph->findVisibleDimensionSpacePointsOfNode($newParentVariant) : $visibleDimensionSpacePoints;
 
-            $event = new NodesInAggregateWereMoved(
-                $contentStreamIdentifier,
-                $nodeAggregateIdentifier,
-                $command->getReferencePosition(),
-                $referenceNodeAggregateIdentifier,
-                $nodesToReferenceNodes
+            $nodeMoveMappings[] = new NodeMoveMapping(
+                $node->getNodeIdentifier(),
+                $newParentVariant ? $newParentVariant->getNodeIdentifier() : null,
+                $newSucceedingSiblingVariant ? $newSucceedingSiblingVariant->getNodeIdentifier() : null,
+                $mappingDimensionSpacePointSet
             );
+        }
 
-            $this->nodeEventPublisher->publish(
-                ContentStreamCommandHandler::getStreamNameForContentStream($contentStreamIdentifier),
-                $event
-            );
-        });
+        return $nodeMoveMappings;
     }
 
     /**
