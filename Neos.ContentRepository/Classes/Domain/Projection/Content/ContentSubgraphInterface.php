@@ -11,8 +11,8 @@ namespace Neos\ContentRepository\Domain\Projection\Content;
  * source code.
  */
 
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\SubtreeInterface;
 use Neos\ContentRepository\Domain;
+use Neos\ContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\Flow\Annotations as Flow;
 
