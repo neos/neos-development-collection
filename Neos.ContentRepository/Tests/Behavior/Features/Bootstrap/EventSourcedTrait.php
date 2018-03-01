@@ -19,6 +19,7 @@ use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\PropertyName;
 use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcing\Event\EventInterface;
@@ -145,6 +146,18 @@ trait EventSourcedTrait
                     case 'Uuid':
                         $eventPayload[$line['Key']] = $this->replaceUuidIdentifiers('[' . $line['Value'] . ']');
                         break;
+                    case 'Uuid[]':
+                        if ($line['Value']) {
+                            $eventPayload[$line['Key']] = array_map(
+                                function ($part) {
+                                    return $this->replaceUuidIdentifiers('[' . trim($part) . ']');
+                                },
+                                explode(',', $line['Value'])
+                            );
+                        } else {
+                            $eventPayload[$line['Key']] = [];
+                        }
+                        break;
                     default:
                         throw new \Exception("TODO" . json_encode($line));
                 }
@@ -182,6 +195,10 @@ trait EventSourcedTrait
         $commandHandler = $this->objectManager->get($commandHandlerClassName);
 
         $commandHandler->$commandHandlerMethod($command);
+
+        if (isset($commandArguments['rootNodeIdentifier'])) {
+            $this->rootNodeIdentifier = new NodeIdentifier($commandArguments['rootNodeIdentifier']);
+        }
     }
 
     /**
@@ -306,6 +323,13 @@ trait EventSourcedTrait
                     \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
                     'handleTranslateNodeInAggregate'
                 ];
+            case 'SetNodeReferences':
+                return [
+                    \Neos\ContentRepository\Domain\Context\Node\Command\SetNodeReferences::class,
+                    \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class,
+                    'handleSetNodeReferences'
+                ];
+
             default:
                 throw new \Exception('The short command name "' . $shortCommandName . '" is currently not supported by the tests.');
         }
@@ -546,6 +570,37 @@ trait EventSourcedTrait
             Assert::assertArrayHasKey($row['Key'], $properties, 'Property "' . $row['Key'] . '" not found');
             $actualProperty = $properties[$row['Key']];
             Assert::assertEquals($row['Value'], $actualProperty, 'Node property ' . $row['Key'] . ' does not match. Expected: ' . $row['Value'] . '; Actual: ' . $actualProperty);
+        }
+    }
+
+    /**
+     * @Then /^I expect the Node "([^"]*)" to have the references:$/
+     */
+    public function iExpectTheNodeToHaveTheReferences($nodeIdentifier, TableNode $expectedReferences)
+    {
+        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
+        $expectedReferences = $this->readPayloadTable($expectedReferences);
+
+        /** @var \Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface $subgraph */
+        $subgraph = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint);
+
+        /** @var \Neos\ContentRepository\Domain\Service\ContextFactoryInterface $contextFactory */
+        $contextFactory = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\ContextFactoryInterface::class);
+        $context = $contextFactory->create(['rootNodeIdentifier' => $this->rootNodeIdentifier, 'subgraph' => $subgraph]);
+
+        foreach ($expectedReferences as $propertyName => $expectedDestinationNodeAggregateIdentifiers) {
+            $destinationNodes = $subgraph->findReferencedNodes(new NodeIdentifier($nodeIdentifier), new PropertyName($propertyName), $context);
+            $destinationNodeAggregateIdentifiers = array_map(
+                function ($item) {
+                    if ($item instanceof \Neos\ContentRepository\Domain\Model\NodeInterface) {
+                        return (string)$item->getNodeAggregateIdentifier();
+                    } else {
+                        return $item;
+                    }
+                },
+                $destinationNodes
+            );
+            Assert::assertEquals($expectedDestinationNodeAggregateIdentifiers, $destinationNodeAggregateIdentifiers, 'Node references ' . $propertyName . ' does not match. Expected: ' . json_encode($expectedDestinationNodeAggregateIdentifiers) . '; Actual: ' . json_encode($destinationNodeAggregateIdentifiers));
         }
     }
 
