@@ -32,12 +32,20 @@ final class ContentDimension
     protected $values = [];
 
     /**
+     * all Content Dimension Values indexed by "specialization", so
+     * you can answer questions like "what's the next-most generic value for the given value"
+     *
      * @var array|ContentDimensionValue[]
      */
     protected $generalizations;
 
     /**
-     * @var array|ContentDimensionValue[]
+     * all Content Dimension Values indexed by "generalization", so
+     * you can answer questions like "what are the next-most specialized values for the given value"
+     *
+     * returns an *array* of specializations for each key; so this is effectively an array of arrays
+     *
+     * @var array|ContentDimensionValue[][]
      */
     protected $specializations;
 
