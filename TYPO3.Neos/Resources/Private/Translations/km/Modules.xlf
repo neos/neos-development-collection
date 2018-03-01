@@ -241,30 +241,30 @@
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve" approved="yes">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
 			<target xml:lang="km">មិនត្រូវបានកត់ត្រាព្រឹត្តិការណ៍​​​​​​​ដែលអាចត្រូវបានបង្ហាញនៅក្នុងប្រវត្តិសាស្រ្តនេះនៅឡើយទេ។</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.added" xml:space="preserve" approved="yes">
-				<source>{0} created the {1} {2}.</source>
-			<target xml:lang="km">{0} បាន​បង្កើត {1} {2}។</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.removed" xml:space="preserve" approved="yes">
-				<source>{0} removed the {1} {2}.</source>
-			<target xml:lang="km">{0} បាន​លុប {1} {2}។</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve" approved="yes">
-				<source>{0} created the variant {1} of {2} {3}.</source>
-			<target xml:lang="km">{0}បង្កើតវាដ្យង់នៃ{1}{2}{3}</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.changed" xml:space="preserve" approved="yes">
-				<source>{0} changed {1} {2}.</source>
-			<target xml:lang="km">{0} បាន​ផ្លាស់ប្តូរ {1} {2}។</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.moved" xml:space="preserve" approved="yes">
-				<source>{0} moved {1} {2}.</source>
-			<target xml:lang="km">{0} បាន​រំកិល {1} {2}។</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.copied" xml:space="preserve" approved="yes">
-				<source>{0} copied {1} {2}.</source>
-			<target xml:lang="km">{0} បានចម្លង {1} {2}។</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.renamed" xml:space="preserve" approved="yes">
-				<source>{0} renamed {1} "{2}" to "{3}".</source>
-			<target xml:lang="km">{0} បាន​ប្តូរ​ឈ្មោះ {1} "{2}" ទៅជា "{3}"។</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve" approved="yes">
-				<source>{0} changed content on {1} {2}.</source>
-			<target xml:lang="km">{0} បាន​ផ្លាស់​ប្តូរ​អត្ថបទ​លើ {1} {2}។</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
+				<source>{0} created the {1} "{2}".</source>
+			<target xml:lang="km" state="needs-translation">{0} created the {1} "{2}".</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.removed" xml:space="preserve">
+				<source>{0} removed the {1} "{2}".</source>
+			<target xml:lang="km" state="needs-translation">{0} removed the {1} "{2}".</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
+				<source>{0} created the variant {1} of the {2} "{3}".</source>
+			<target xml:lang="km" state="needs-translation">{0} created the variant {1} of the {2} "{3}".</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.changed" xml:space="preserve">
+				<source>{0} modified the {1} "{2}".</source>
+			<target xml:lang="km" state="needs-translation">{0} modified the {1} "{2}".</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.moved" xml:space="preserve">
+				<source>{0} moved the {1} "{2}".</source>
+			<target xml:lang="km" state="needs-translation">{0} moved the {1} "{2}".</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.copied" xml:space="preserve">
+				<source>{0} copied the {1} "{2}".</source>
+			<target xml:lang="km" state="needs-translation">{0} copied the {1} "{2}".</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.renamed" xml:space="preserve">
+				<source>{0} renamed the {1} "{2}" to "{3}".</source>
+			<target xml:lang="km" state="needs-translation">{0} renamed the {1} "{2}" to "{3}".</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve">
+				<source>{0} modified content on the {1} "{2}".</source>
+			<target xml:lang="km" state="needs-translation">{0} modified content on the {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.account.created" xml:space="preserve" approved="yes">
 				<source>{0} created a new user "{1}" for {2}.</source>
 			<target xml:lang="km">{0} បាន​បង្កើត​អ្នក​ប្រើ​ប្រាស់​ថ្មី "{1}" ដើម្បី {2}។</target></trans-unit>

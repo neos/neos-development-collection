@@ -253,29 +253,29 @@
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
 			<target xml:lang="id" state="translated">Belum ada rekaman acara yang bisa ditampilkan dalam sejarah ini.</target><alt-trans><target xml:lang="id">Ada belum mencatat peristiwa yang bisa ditampilkan di riwayat ini.</target></alt-trans><alt-trans><target xml:lang="id">Ada belum mencatat peristiw yang bisa ditampilkan di riwayat ini.</target></alt-trans></trans-unit>
       <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
-				<source>{0} created the {1} {2}.</source>
-			<target xml:lang="id" state="translated">{0} created the {1} {2}.</target><alt-trans><target xml:lang="id">{0} dibuat {1} {2}.</target></alt-trans></trans-unit>
+				<source>{0} created the {1} "{2}".</source>
+			<target xml:lang="id" state="needs-translation">{0} created the {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.removed" xml:space="preserve">
-				<source>{0} removed the {1} {2}.</source>
-			<target xml:lang="id" state="translated">{0} menghapus {1} {2} .</target><alt-trans><target xml:lang="id">{0} dihapus {1} {2}.</target></alt-trans></trans-unit>
+				<source>{0} removed the {1} "{2}".</source>
+			<target xml:lang="id" state="needs-translation">{0} removed the {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
-				<source>{0} created the variant {1} of {2} {3}.</source>
-			<target xml:lang="id" state="translated">{0} menciptakan {1} varian dari {2} {3}.</target></trans-unit>
+				<source>{0} created the variant {1} of the {2} "{3}".</source>
+			<target xml:lang="id" state="needs-translation">{0} created the variant {1} of the {2} "{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changed" xml:space="preserve">
-				<source>{0} changed {1} {2}.</source>
-			<target xml:lang="id" state="translated">{0} berubah {1} {2}.</target></trans-unit>
+				<source>{0} modified the {1} "{2}".</source>
+			<target xml:lang="id" state="needs-translation">{0} modified the {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.moved" xml:space="preserve">
-				<source>{0} moved {1} {2}.</source>
-			<target xml:lang="id" state="translated">{0} pindah {1} {2}.</target></trans-unit>
+				<source>{0} moved the {1} "{2}".</source>
+			<target xml:lang="id" state="needs-translation">{0} moved the {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.copied" xml:space="preserve">
-				<source>{0} copied {1} {2}.</source>
-			<target xml:lang="id" state="translated">{2} {1} {0} yang disalin.</target></trans-unit>
+				<source>{0} copied the {1} "{2}".</source>
+			<target xml:lang="id" state="needs-translation">{0} copied the {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.renamed" xml:space="preserve">
-				<source>{0} renamed {1} "{2}" to "{3}".</source>
-			<target xml:lang="id" state="translated">{0} berganti nama menjadi {1} "{2}" untuk "{3}".</target></trans-unit>
+				<source>{0} renamed the {1} "{2}" to "{3}".</source>
+			<target xml:lang="id" state="needs-translation">{0} renamed the {1} "{2}" to "{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve">
-				<source>{0} changed content on {1} {2}.</source>
-			<target xml:lang="id" state="translated">{0} mengubah konten pada {1} {2}.</target></trans-unit>
+				<source>{0} modified content on the {1} "{2}".</source>
+			<target xml:lang="id" state="needs-translation">{0} modified content on the {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.account.created" xml:space="preserve">
 				<source>{0} created a new user "{1}" for {2}.</source>
 			<target xml:lang="id" state="translated">{0} membuat pengguna baru "{1}" untuk {2}.</target></trans-unit>
