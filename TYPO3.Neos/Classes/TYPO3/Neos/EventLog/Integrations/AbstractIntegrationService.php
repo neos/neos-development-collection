@@ -12,35 +12,13 @@ namespace TYPO3\Neos\EventLog\Integrations;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Security\Context;
 use TYPO3\Neos\EventLog\Domain\Service\EventEmittingService;
 
 abstract class AbstractIntegrationService
 {
     /**
      * @Flow\Inject
-     * @var Context
-     */
-    protected $securityContext;
-
-    /**
-     * @Flow\Inject
      * @var EventEmittingService
      */
     protected $eventEmittingService;
-
-    /**
-     * Try to set the current account identifier emitting the events, if possible
-     *
-     * @return void
-     */
-    protected function initializeAccountIdentifier()
-    {
-        if ($this->securityContext->canBeInitialized()) {
-            $account = $this->securityContext->getAccount();
-            if ($account !== null) {
-                $this->eventEmittingService->setCurrentAccountIdentifier($account->getAccountIdentifier());
-            }
-        }
-    }
 }
