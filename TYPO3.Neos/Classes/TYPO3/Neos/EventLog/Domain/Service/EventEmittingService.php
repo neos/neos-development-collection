@@ -12,7 +12,8 @@ namespace TYPO3\Neos\EventLog\Domain\Service;
  */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Security\Context;
+use TYPO3\Neos\Domain\Model\User;
+use TYPO3\Neos\Domain\Service\UserService;
 use TYPO3\Neos\EventLog\Domain\Model\Event;
 use TYPO3\Neos\EventLog\Domain\Repository\EventRepository;
 use TYPO3\Neos\Exception;
@@ -45,7 +46,7 @@ class EventEmittingService
     /**
      * @var string
      */
-    protected $currentAccountIdentifier = null;
+    protected $currentUsername = null;
 
     /**
      * @Flow\Inject
@@ -55,9 +56,9 @@ class EventEmittingService
 
     /**
      * @Flow\Inject
-     * @var Context
+     * @var UserService
      */
-    protected $securityContext;
+    protected $userDomainService;
 
     /**
      * @Flow\InjectConfiguration("eventLog.enabled")
@@ -107,8 +108,8 @@ class EventEmittingService
      */
     public function generate($eventType, array $data, $eventClassName = Event::class)
     {
-        $this->initializeAccountIdentifier();
-        $event = new $eventClassName($eventType, $data, $this->currentAccountIdentifier, $this->getCurrentContext());
+        $this->initializeCurrentUsername();
+        $event = new $eventClassName($eventType, $data, $this->currentUsername, $this->getCurrentContext());
         $this->lastGeneratedEvent = $event;
 
         return $event;
@@ -179,20 +180,21 @@ class EventEmittingService
     }
 
     /**
-     * Try to set the current account identifier emitting the events, if possible
+     * Try to set the current username emitting the events, if possible
      *
      * @return void
      */
-    protected function initializeAccountIdentifier()
+    protected function initializeCurrentUsername()
     {
-        if (isset($this->currentAccountIdentifier)) {
+        if (isset($this->currentUsername)) {
             return;
         }
-        if ($this->securityContext->canBeInitialized()) {
-            $account = $this->securityContext->getAccount();
-            if ($account !== null) {
-                $this->currentAccountIdentifier = $account->getAccountIdentifier();
-            }
+
+        $currentUser = $this->userDomainService->getCurrentUser();
+        if (!$currentUser instanceof User) {
+            return;
         }
+
+        $this->currentUsername = $this->userDomainService->getUsername($currentUser);
     }
 }
