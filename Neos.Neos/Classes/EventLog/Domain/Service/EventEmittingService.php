@@ -12,6 +12,8 @@ namespace Neos\Neos\EventLog\Domain\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Domain\Model\User;
+use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\EventLog\Domain\Model\Event;
 use Neos\Neos\EventLog\Domain\Repository\EventRepository;
 use Neos\Neos\Exception;
