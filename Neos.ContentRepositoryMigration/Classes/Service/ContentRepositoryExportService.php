@@ -415,10 +415,10 @@ class ContentRepositoryExportService
             /* @var $site Site */
             // TODO: move Site Handling to Neos!!
             $this->eventPublisher->publish('Neos.Neos:Site:' . $site->getNodeName(), new SiteWasCreated(
-                new \Neos\Neos\Domain\ValueObject\NodeName($site->getNodeName()),
+                new \Neos\ContentRepository\Domain\ValueObject\NodeName($site->getNodeName()),
                 new PackageKey($site->getSiteResourcesPackageKey()),
                 new NodeType('Neos.Neos:Site'), // TODO
-                new \Neos\Neos\Domain\ValueObject\NodeName($site->getNodeName()),
+                new \Neos\ContentRepository\Domain\ValueObject\NodeName($site->getNodeName()),
                 new SiteActive(true)
             ));
         }

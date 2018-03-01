@@ -14,7 +14,7 @@ namespace Neos\Neos\Command;
 
 use Neos\Neos\Domain\Context\Domain\Command\DeactivateDomain;
 use Neos\Neos\Domain\ValueObject\SchemeHostPort;
-use Neos\Neos\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Validation\ValidatorResolver;

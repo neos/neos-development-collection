@@ -33,7 +33,7 @@ use Neos\ContentRepository\Domain\Service\NodeService;
 use Neos\Neos\Domain\ValueObject\NodeType;
 use Neos\Neos\Domain\ValueObject\PackageKey;
 use Neos\Neos\Domain\ValueObject\SiteActive;
-use Neos\Neos\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 
 /**
  * The Site Command Controller

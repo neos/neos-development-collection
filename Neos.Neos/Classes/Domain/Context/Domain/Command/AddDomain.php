@@ -13,7 +13,7 @@ namespace Neos\Neos\Domain\Context\Domain\Command;
 
 use Neos\EventSourcing\Event\EventInterface;
 use Neos\Neos\Domain\ValueObject\SchemeHostPort;
-use Neos\Neos\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 
 final class AddDomain implements EventInterface
 {
