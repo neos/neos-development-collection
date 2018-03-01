@@ -19,28 +19,7 @@ abstract class AbstractIntegrationService
 {
     /**
      * @Flow\Inject
-     * @var Context
-     */
-    protected $securityContext;
-
-    /**
-     * @Flow\Inject
      * @var EventEmittingService
      */
     protected $eventEmittingService;
-
-    /**
-     * Try to set the current account identifier emitting the events, if possible
-     *
-     * @return void
-     */
-    protected function initializeAccountIdentifier()
-    {
-        if ($this->securityContext->canBeInitialized()) {
-            $account = $this->securityContext->getAccount();
-            if ($account !== null) {
-                $this->eventEmittingService->setCurrentAccountIdentifier($account->getAccountIdentifier());
-            }
-        }
-    }
 }
