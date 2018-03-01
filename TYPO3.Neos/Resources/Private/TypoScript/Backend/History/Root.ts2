@@ -64,47 +64,46 @@ prototype(TYPO3.Neos:History.PublishedNode.AbstractSubEvent) < prototype(Templat
 		templatePath = 'resource://TYPO3.Neos/Private/Templates/Module/Management/History/User.html'
 		event = ${event}
 	}
-
 }
 
 prototype(TYPO3.Neos:History.PublishedNode.Node.Adopt) < prototype(TYPO3.Neos:History.PublishedNode.AbstractSubEvent) {
 	descriptionTranslationId = 'history.eventDescription.node.adopted'
-	descriptionTranslationArguments = ${[this.user, Neos.Rendering.renderDimensions(eventsOfMatchedType[0].data.targetDimensions), I18n.translate(Neos.Rendering.labelForNodeType(event.data.documentNodeType)), this.linkedNode]}
+	descriptionTranslationArguments = ${[this.user, Neos.Rendering.renderDimensions(eventsOfMatchedType[0].data.targetDimensions), String.firstLetterToLowerCase(I18n.translate(Neos.Rendering.labelForNodeType(event.data.documentNodeType))), this.linkedNode]}
 }
 
 prototype(TYPO3.Neos:History.PublishedNode.Node.LabelChanged) < prototype(TYPO3.Neos:History.PublishedNode.AbstractSubEvent) {
 	descriptionTranslationId = 'history.eventDescription.node.renamed'
-	descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.documentNodeType)), eventsOfMatchedType[0].data.oldLabel, this.linkedNode]}
+	descriptionTranslationArguments = ${[this.user, String.firstLetterToLowerCase(I18n.translate(Neos.Rendering.labelForNodeType(event.data.documentNodeType))), eventsOfMatchedType[0].data.oldLabel, this.linkedNode]}
 }
 
 prototype(TYPO3.Neos:History.PublishedNode.Node.Added) < prototype(TYPO3.Neos:History.PublishedNode.AbstractSubEvent) {
 	descriptionTranslationId = 'history.eventDescription.node.added'
-	descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.documentNodeType)), this.linkedNode]}
+	descriptionTranslationArguments = ${[this.user, String.firstLetterToLowerCase(I18n.translate(Neos.Rendering.labelForNodeType(event.data.documentNodeType))), this.linkedNode]}
 }
 
 prototype(TYPO3.Neos:History.PublishedNode.Node.Removed) < prototype(TYPO3.Neos:History.PublishedNode.AbstractSubEvent) {
 	descriptionTranslationId = 'history.eventDescription.node.removed'
-	descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.documentNodeType)), this.linkedNode]}
+	descriptionTranslationArguments = ${[this.user, String.firstLetterToLowerCase(I18n.translate(Neos.Rendering.labelForNodeType(event.data.documentNodeType))), this.linkedNode]}
 }
 
 prototype(TYPO3.Neos:History.PublishedNode.Node.Copy) < prototype(TYPO3.Neos:History.PublishedNode.AbstractSubEvent) {
 	descriptionTranslationId = 'history.eventDescription.node.copied'
-	descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.documentNodeType)), this.linkedNode]}
+	descriptionTranslationArguments = ${[this.user, String.firstLetterToLowerCase(I18n.translate(Neos.Rendering.labelForNodeType(event.data.documentNodeType))), this.linkedNode]}
 }
 
 prototype(TYPO3.Neos:History.PublishedNode.Node.Move) < prototype(TYPO3.Neos:History.PublishedNode.AbstractSubEvent) {
 	descriptionTranslationId = 'history.eventDescription.node.moved'
-	descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.documentNodeType)), this.linkedNode]}
+	descriptionTranslationArguments = ${[this.user, String.firstLetterToLowerCase(I18n.translate(Neos.Rendering.labelForNodeType(event.data.documentNodeType))), this.linkedNode]}
 }
 
 prototype(TYPO3.Neos:History.PublishedNode.Node.Updated) < prototype(TYPO3.Neos:History.PublishedNode.AbstractSubEvent) {
 	descriptionTranslationId = 'history.eventDescription.node.changed'
-	descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.documentNodeType)), this.linkedNode]}
+	descriptionTranslationArguments = ${[this.user, String.firstLetterToLowerCase(I18n.translate(Neos.Rendering.labelForNodeType(event.data.documentNodeType))), this.linkedNode]}
 }
 
 prototype(TYPO3.Neos:History.PublishedNode.ContentChanged) < prototype(TYPO3.Neos:History.PublishedNode.AbstractSubEvent) {
 	descriptionTranslationId = 'history.eventDescription.node.changedContent'
-	descriptionTranslationArguments = ${[this.user, I18n.translate(Neos.Rendering.labelForNodeType(event.data.documentNodeType)), this.linkedNode]}
+	descriptionTranslationArguments = ${[this.user, String.firstLetterToLowerCase(I18n.translate(Neos.Rendering.labelForNodeType(event.data.documentNodeType))), this.linkedNode]}
 }
 
 prototype(TYPO3.Neos:History.PublishedNode.MissingEvent) < prototype(TYPO3.Neos:History.PublishedNode.AbstractSubEvent) {
