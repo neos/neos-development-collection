@@ -180,13 +180,16 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
     {
         $remainingUriPathSegments = explode('/', $requestPath);
         $remainingUriPathSegments = array_slice($remainingUriPathSegments, $this->getUriPathSegmentOffset());
-
         $matchingNode = $site;
         $documentNodeTypes = $this->nodeTypeManager->getSubNodeTypes('Neos.Neos:Document', true, true);
         $subgraph->traverseHierarchy($site, HierarchyTraversalDirection::down(), new NodeTypeConstraints(false, array_keys($documentNodeTypes)),
             function (Node $node) use (&$remainingUriPathSegments, &$matchingNode, &$tagArray) {
                 $currentPathSegment = reset($remainingUriPathSegments);
                 $pivot = \mb_strpos($currentPathSegment, '.');
+                if ($pivot !== false) {
+                    $currentPathSegment = \mb_substr($currentPathSegment, 0, $pivot);
+                }
+                $pivot = \mb_strpos($currentPathSegment, '@');
                 if ($pivot !== false) {
                     $currentPathSegment = \mb_substr($currentPathSegment, 0, $pivot);
                 }
@@ -207,7 +210,6 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
         if (!$matchingNode instanceof NodeInterface) {
             throw new Exception\NoSuchNodeException(sprintf('No node found on request path "%s"', $requestPath), 1346949857);
         }
-
         return $matchingNode;
     }
 
