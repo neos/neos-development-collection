@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Domain\ValueObject;
 
 use Neos\Cache\CacheAwareInterface;
 use Neos\ContentRepository\Domain\Context\Dimension\ContentDimensionIdentifier;
+use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Utility\Arrays;
 
 /**
@@ -22,7 +23,7 @@ use Neos\Utility\Arrays;
  *
  * Implements CacheAwareInterface because of Fusion Runtime caching and Routing
  */
-final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterface
+final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterface, ProtectedContextAwareInterface
 {
     /**
      * @var array
@@ -196,5 +197,14 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
     public function getCacheEntryIdentifier(): string
     {
         return $this->getHash();
+    }
+
+    /**
+     * @param string $methodName
+     * @return boolean
+     */
+    public function allowsCallOfMethod($methodName)
+    {
+        return true;
     }
 }
