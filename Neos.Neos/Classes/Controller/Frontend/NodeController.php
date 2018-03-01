@@ -11,24 +11,16 @@ namespace Neos\Neos\Controller\Frontend;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Context\Parameters\ContextParameters;
-use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
-use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
-use Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Property\PropertyMapper;
-use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Session\SessionInterface;
-use Neos\Flow\Utility\Now;
 use Neos\Neos\Controller\Exception\NodeNotFoundException;
 use Neos\Neos\Controller\Exception\UnresolvableShortcutException;
 use Neos\Neos\Domain\Context\Content\ContentQuery;
-use Neos\Neos\Domain\Projection\Site\Site;
-use Neos\Neos\Domain\Projection\Site\SiteFinder;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
-use Neos\Neos\Domain\ValueObject\NodeName;
 use Neos\Neos\View\FusionView;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 
@@ -39,23 +31,6 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
  */
 class NodeController extends ActionController
 {
-    /**
-     * @Flow\Inject
-     * @var ContentGraphInterface
-     */
-    protected $contentGraph;
-
-    /**
-     * @Flow\Inject
-     * @var WorkspaceFinder
-     */
-    protected $workspaceFinder;
-
-    /**
-     * @Flow\Inject
-     * @var SiteFinder
-     */
-    protected $siteFinder;
 
     /**
      * @Flow\Inject
@@ -70,16 +45,10 @@ class NodeController extends ActionController
     protected $nodeShortcutResolver;
 
     /**
-     * @Flow\Inject(lazy=false)
-     * @var Now
-     */
-    protected $now;
-
-    /**
      * @Flow\Inject
-     * @var SecurityContext
+     * @var NodeFactory
      */
-    protected $securityContext;
+    protected $nodeFactory;
 
     /**
      * @Flow\Inject
@@ -110,36 +79,25 @@ class NodeController extends ActionController
     public function showAction(ContentQuery $node)
     {
         $contentQuery = $node;
-        $workspace = $this->workspaceFinder->findOneByName($contentQuery->getWorkspaceName());
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier(
-            $workspace->getCurrentContentStreamIdentifier(),
-            $contentQuery->getDimensionSpacePoint()
-        );
-        $inBackend = !$workspace->getWorkspaceName()->isLive();
 
-        $contextParameters = $this->createContextParameters($inBackend);
+        $node = $this->nodeFactory->findNodeForContentQuery($contentQuery);
 
-        $siteNode = $subgraph->findNodeByNodeAggregateIdentifier($contentQuery->getSiteIdentifier());
-        // TODO CACHE
-        $site = $this->siteFinder->findOneByNodeName(new NodeName($siteNode->getName()));
-
-        $contentContext = $this->createContentContext($contentQuery, $subgraph, $contextParameters, $site);
-
-        $siteNode = $subgraph->findNodeByNodeAggregateIdentifier($contentQuery->getSiteIdentifier(), $contentContext);
-        $node = $subgraph->findNodeByNodeAggregateIdentifier($contentQuery->getNodeAggregateIdentifier(), $contentContext);
         if (is_null($node)) {
             throw new NodeNotFoundException('The requested node does not exist or isn\'t accessible to the current user', 1430218623);
         }
+        /* @var ContentContext $context */
+        $context = $node->getContext();
 
+        $inBackend = !$contentQuery->getWorkspaceName()->isLive();
         if ($node->getNodeType()->isOfType('Neos.Neos:Shortcut') && !$inBackend) {
             $this->handleShortcutNode($node);
         }
 
         $this->view->assignMultiple([
             'value' => $node,
-            'subgraph' => $subgraph,
-            'site' => $siteNode,
-            'contextParameters' => $contextParameters,
+            'subgraph' => $context->getContentSubgraph(),
+            'site' => $context->getCurrentSiteNode(),
+            'contextParameters' => $context->getContextParameters(),
             'contentQuery' => $contentQuery
         ]);
 
@@ -156,38 +114,6 @@ class NodeController extends ActionController
         }
     }
 
-    /**
-     * @param bool $inBackend
-     * @return ContextParameters
-     */
-    protected function createContextParameters(bool $inBackend): ContextParameters
-    {
-        return new ContextParameters($this->now, $this->securityContext->getRoles(), $inBackend, $inBackend, $inBackend);
-    }
-
-    /**
-     * @param ContentQuery $contentQuery
-     * @param ContentSubgraphInterface $subgraph
-     * @param ContextParameters $contextParameters
-     * @return ContentContext
-     */
-    protected function createContentContext(ContentQuery $contentQuery, ContentSubgraphInterface $subgraph, ContextParameters $contextParameters, Site $site): ContentContext
-    {
-        return new ContentContext(
-            (string)$contentQuery->getWorkspaceName(),
-            $contextParameters->getCurrentDateTime(),
-            $subgraph->getDimensionSpacePoint()->toLegacyDimensionArray(),
-            $subgraph->getDimensionSpacePoint()->getCoordinates(),
-            $contextParameters->isInvisibleContentShown(),
-            $contextParameters->isRemovedContentShown(),
-            $contextParameters->isInaccessibleContentShown(),
-            $site,
-            null,
-            $contentQuery->getRootNodeIdentifier(),
-            $subgraph,
-            $contextParameters
-        );
-    }
 
     /**
      * Checks if the optionally given node context path, affected node context path and Fusion path are set

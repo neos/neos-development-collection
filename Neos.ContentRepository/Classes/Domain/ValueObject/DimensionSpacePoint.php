@@ -13,14 +13,14 @@ namespace Neos\ContentRepository\Domain\ValueObject;
 
 use Neos\Cache\CacheAwareInterface;
 use Neos\ContentRepository\Domain\Context\Dimension\ContentDimensionIdentifier;
+use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Utility\Arrays;
 
 /**
  * A point in the dimension space with coordinates DimensionName => DimensionValue.
- *
  * E.g.: ["language" => "es", "country" => "ar"]
  */
-final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterface
+final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterface, ProtectedContextAwareInterface
 {
     /**
      * @var array
@@ -83,7 +83,6 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
     /**
      * A variant VarA is a "Direct Variant in Dimension Dim" of another variant VarB, if VarA and VarB are sharing all dimension values except in "Dim",
      * AND they have differing dimension values in "Dim". Thus, VarA and VarB only vary in the given "Dim".
-     *
      * It does not say anything about how VarA and VarB relate (if it is specialization, lateral shift/translation or generalization).
      *
      * @param DimensionSpacePoint $otherDimensionSpacePoint
@@ -95,7 +94,7 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
         if (!$this->hasCoordinate($contentDimensionIdentifier) || !$otherDimensionSpacePoint->hasCoordinate($contentDimensionIdentifier)) {
             return false;
         }
-        if ($this->coordinates[(string) $contentDimensionIdentifier] === $otherDimensionSpacePoint->getCoordinates()[(string) $contentDimensionIdentifier]) {
+        if ($this->coordinates[(string)$contentDimensionIdentifier] === $otherDimensionSpacePoint->getCoordinates()[(string)$contentDimensionIdentifier]) {
             return false;
         }
 
@@ -173,11 +172,17 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
 
     /**
      * serialize to URI
+     *
      * @return string
      */
     public function serializeForUri(): string
     {
         return base64_encode(json_encode($this->coordinates));
+    }
+
+    public static function fromUriRepresentation(string $encoded): DimensionSpacePoint
+    {
+        return new DimensionSpacePoint(json_decode(base64_decode($encoded), true));
     }
 
     /**
@@ -194,5 +199,14 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
     public function getCacheEntryIdentifier(): string
     {
         return $this->getHash();
+    }
+
+    /**
+     * @param string $methodName
+     * @return boolean
+     */
+    public function allowsCallOfMethod($methodName)
+    {
+        return true;
     }
 }
