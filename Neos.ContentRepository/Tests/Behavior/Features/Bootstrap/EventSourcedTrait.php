@@ -336,6 +336,18 @@ trait EventSourcedTrait
                 Assert::assertInstanceOf(\Neos\ContentRepository\Domain\Context\DimensionSpace\DimensionSpacePointIsNoSpecialization::class, $this->lastCommandException);
 
                 return;
+            case 'NodeAggregateNotFound':
+                Assert::assertInstanceOf(\Neos\ContentRepository\Domain\Context\Node\NodeAggregateNotFound::class, $this->lastCommandException);
+
+                return;
+            case 'NodeExistsException':
+
+                Assert::assertInstanceOf(\Neos\ContentRepository\Exception\NodeExistsException::class, $this->lastCommandException);
+                return;
+            case 'NodeConstraintException':
+
+                Assert::assertInstanceOf(\Neos\ContentRepository\Exception\NodeConstraintException::class, $this->lastCommandException);
+                return;
             default:
                 throw new \Exception('The short exception name "' . $shortExceptionName . '" is currently not supported by the tests.');
         }
