@@ -49,7 +49,7 @@ interface ContentSubgraphInterface extends \JsonSerializable
 
     /**
      * @param Domain\ValueObject\NodeIdentifier $nodeIdentifier
-     * @param Domain\ValueObject\PropertyName $nodeTypeConstraints
+     * @param Domain\ValueObject\PropertyName $name
      * @param Domain\Service\Context|null $contentContext
      * @return Domain\Model\NodeInterface[]
      */
@@ -107,6 +107,20 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @return Domain\Model\NodeInterface|null
      */
     public function findChildNodeByNodeAggregateIdentifierConnectedThroughEdgeName(Domain\ValueObject\NodeAggregateIdentifier $parentAggregateIdentifier, Domain\ValueObject\NodeName $edgeName, Domain\Service\Context $contentContext = null): ?Domain\Model\NodeInterface;
+
+    /**
+     * @param Domain\ValueObject\NodeIdentifier $sibling
+     * @param Domain\Service\Context|null $contentContext
+     * @return Domain\Model\NodeInterface|null
+     */
+    public function findSucceedingSibling(Domain\ValueObject\NodeIdentifier $sibling, Domain\Service\Context $contentContext = null): ?Domain\Model\NodeInterface;
+
+    /**
+     * @param NodeIdentifier $sibling
+     * @param Domain\Service\Context|null $contentContext
+     * @return Domain\Model\NodeInterface|null
+     */
+    public function findPrecedingSibling(Domain\ValueObject\NodeIdentifier $sibling, Domain\Service\Context $contentContext = null): ?Domain\Model\NodeInterface;
 
     /**
      * @param Domain\ValueObject\NodeTypeName $nodeTypeName

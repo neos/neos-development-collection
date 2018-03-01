@@ -463,9 +463,31 @@ class GraphProjector implements ProjectorInterface
     }
 
     /**
-     * @param Event\NodeInAggregateWasTranslated $event
-     * @throws \Exception
+     * @param Event\NodeWasSpecialized $event
      */
+    public function whenNodeWasSpecialized(Event\NodeWasSpecialized $event): void
+    {
+        $this->transactional(function () use ($event) {
+            $sourceNode = $this->projectionContentGraph->getNode($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
+
+            $specializedNodeRelationAnchorPoint = new NodeRelationAnchorPoint();
+            $specializedNode = new Node(
+                $specializedNodeRelationAnchorPoint,
+                $event->getSpecializationIdentifier(),
+                $sourceNode->nodeAggregateIdentifier,
+                $event->getTargetDimensionSpacePoint()->jsonSerialize(),
+                $event->getTargetDimensionSpacePoint()->getHash(),
+                $sourceNode->properties,
+                $sourceNode->nodeTypeName
+            );
+            $specializedNode->addToDatabase($this->getDatabaseConnection());
+
+            foreach ($event->getMappings() as $nodeReassignmentMapping) {
+                /** @todo reassign hierarchy relations */
+            }
+        });
+    }
+
     public function whenNodeInAggregateWasTranslated(Event\NodeInAggregateWasTranslated $event)
     {
         $this->transactional(function () use ($event) {

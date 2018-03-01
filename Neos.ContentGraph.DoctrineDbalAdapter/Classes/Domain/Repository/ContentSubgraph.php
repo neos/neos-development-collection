@@ -84,8 +84,11 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
      * @param NodeTypeConstraints $nodeTypeConstraints
      * @param $query
      */
-    protected static function addNodeTypeConstraintsToQuery(ContentRepository\ValueObject\NodeTypeConstraints $nodeTypeConstraints = null, SqlQueryBuilder $query, string $markerToReplaceInQuery = null): void
-    {
+    protected static function addNodeTypeConstraintsToQuery(
+        ContentRepository\ValueObject\NodeTypeConstraints $nodeTypeConstraints = null,
+        SqlQueryBuilder $query,
+        string $markerToReplaceInQuery = null
+    ): void {
         if ($nodeTypeConstraints) {
             if (!empty ($nodeTypeConstraints->getExplicitlyAllowedNodeTypeNames())) {
                 $allowanceQueryPart = 'c.nodetypename IN (:explicitlyAllowedNodeTypeNames)';
@@ -179,7 +182,6 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
                 }
             }
         }
-
     }
 
     /**
@@ -258,6 +260,7 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
         if ($nodeRow === false) {
             return null;
         }
+
         return $this->nodeFactory->mapNodeRowToNode($nodeRow, $context);
     }
 
@@ -265,8 +268,7 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
         ContentRepository\ValueObject\NodeIdentifier $parentNodeIdentifier,
         ContentRepository\ValueObject\NodeTypeConstraints $nodeTypeConstraints = null,
         ContentRepository\Service\Context $contentContext = null
-    ): int
-    {
+    ): int {
         $query = new SqlQueryBuilder();
         $query->addToQuery('SELECT COUNT(c.nodeidentifier) FROM neos_contentgraph_node p
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
@@ -432,6 +434,10 @@ SELECT c.* FROM neos_contentgraph_node p
      * @param ContentRepository\ValueObject\NodeName $edgeName
      * @param ContentRepository\Service\Context|null $context
      * @return ContentRepository\Model\NodeInterface|null
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Exception
+     * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
+     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
     public function findChildNodeConnectedThroughEdgeName(
         ContentRepository\ValueObject\NodeIdentifier $parentNodeIdentifier,
@@ -452,7 +458,6 @@ SELECT c.* FROM neos_contentgraph_node p
 
             $nodeData = $this->getDatabaseConnection()->executeQuery(
                 '
--- ContentGraph::findChildNodeConnectedThroughEdgeName
 SELECT
     c.*,
     hc.name, 
@@ -520,9 +525,91 @@ ORDER BY hc.position LIMIT 1',
 
 
     /**
+     * @param NodeIdentifier $sibling
+     * @param ContentRepository\Service\Context|null $context
+     * @return ContentRepository\Model\NodeInterface|null
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Exception
+     * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
+     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     */
+    public function findSucceedingSibling(ContentRepository\ValueObject\NodeIdentifier $sibling, ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
+    {
+        $nodeRow = $this->getDatabaseConnection()->executeQuery($this->getSiblingBaseQuery() . '
+  AND h.position > (
+      SELECT sibh.position FROM neos_contentgraph_hierarchyrelation sibh
+      INNER JOIN neos_contentgraph_node sib ON sibh.childnodeanchor = sib.relationanchorpoint
+      WHERE sib.nodeidentifier = :siblingNodeIdentifier
+      AND sibh.contentstreamidentifier = :contentStreamIdentifier AND sibh.dimensionspacepointhash = :dimensionSpacePointHash
+  )
+  ORDER BY h.position ASC
+  LIMIT 1',
+            [
+                'contentStreamIdentifier' => $this->getContentStreamIdentifier(),
+                'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash(),
+                'siblingNodeIdentifier' => (string) $sibling
+            ]
+        )->fetch();
+
+        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow, $context) : null;
+    }
+
+    /**
+     * @param NodeIdentifier $sibling
+     * @param ContentRepository\Service\Context|null $context
+     * @return ContentRepository\Model\NodeInterface|null
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Exception
+     * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
+     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     */
+    public function findPrecedingSibling(ContentRepository\ValueObject\NodeIdentifier $sibling, ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
+    {
+        $nodeRow = $this->getDatabaseConnection()->executeQuery($this->getSiblingBaseQuery() . '
+  AND h.position < (
+      SELECT sibh.position FROM neos_contentgraph_hierarchyrelation sibh
+      INNER JOIN neos_contentgraph_node sib ON sibh.childnodeanchor = sib.relationanchorpoint
+      WHERE sib.nodeidentifier = :siblingNodeIdentifier
+      AND sibh.contentstreamidentifier = :contentStreamIdentifier AND sibh.dimensionspacepointhash = :dimensionSpacePointHash
+  )
+  ORDER BY h.position DESC
+  LIMIT 1',
+            [
+                'contentStreamIdentifier' => $this->getContentStreamIdentifier(),
+                'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash(),
+                'siblingNodeIdentifier' => (string) $sibling
+            ]
+        )->fetch();
+
+        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow, $context) : null;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getSiblingBaseQuery(): string
+    {
+        return '
+  SELECT n.*, h.contentstreamidentifier, h.name FROM neos_contentgraph_node n
+  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+  WHERE h.contentstreamidentifier = :contentStreamIdentifier AND h.dimensionspacepointhash = :dimensionSpacePointHash
+  AND h.parentnodeanchor = (
+      SELECT sibh.parentnodeanchor FROM neos_contentgraph_hierarchyrelation sibh
+      INNER JOIN neos_contentgraph_node sib ON sibh.childnodeanchor = sib.relationanchorpoint
+      WHERE sib.nodeidentifier = :siblingNodeIdentifier
+      AND sibh.contentstreamidentifier = :contentStreamIdentifier AND sibh.dimensionspacepointhash = :dimensionSpacePointHash
+  )';
+    }
+
+
+    /**
      * @param ContentRepository\ValueObject\NodeTypeName $nodeTypeName
      * @param ContentRepository\Service\Context|null $context
      * @return array|ContentRepository\Model\NodeInterface[]
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Exception
+     * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
+     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
     public function findNodesByType(ContentRepository\ValueObject\NodeTypeName $nodeTypeName, ContentRepository\Service\Context $context = null): array
     {
@@ -604,13 +691,13 @@ SELECT n.*, h.name, h.position FROM neos_contentgraph_node n
         if (!$cache->contains($nodeIdentifier)) {
             $result = $this->getDatabaseConnection()->executeQuery(
                 '
-                -- ContentSubgraph::findNodePath
+    -- ContentSubgraph::findNodePath
                 with recursive nodePath as (
-                SELECT h.name, h.parentnodeanchor FROM neos_contentgraph_node n
-                     INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
-                     AND h.contentstreamidentifier = :contentStreamIdentifier
-                     AND h.dimensionspacepointhash = :dimensionSpacePointHash
-                     AND n.nodeidentifier = :nodeIdentifier
+    SELECT h . name, h . parentnodeanchor FROM neos_contentgraph_node n
+                     INNER JOIN neos_contentgraph_hierarchyrelation h ON h . childnodeanchor = n . relationanchorpoint
+    AND h . contentstreamidentifier = :contentStreamIdentifier
+    AND h . dimensionspacepointhash = :dimensionSpacePointHash
+    AND n . nodeidentifier = :nodeIdentifier
  
                 UNION
                 
@@ -619,7 +706,7 @@ SELECT n.*, h.name, h.position FROM neos_contentgraph_node n
                         WHERE
                             h.contentstreamidentifier = :contentStreamIdentifier
                             AND h.dimensionspacepointhash = :dimensionSpacePointHash
-                      
+
             )
             select * from nodePath',
                 [
@@ -665,58 +752,58 @@ SELECT n.*, h.name, h.position FROM neos_contentgraph_node n
 
         $query = new SqlQueryBuilder();
         $query->addToQuery('
--- ContentSubgraph::findSubtrees
+    -- ContentSubgraph::findSubtrees
 
--- we build a set of recursive trees, ready to be rendered e.g. in a menu. Because the menu supports starting at multiple nodes, we also support starting at multiple nodes at once.
-with recursive tree as (
-     -- --------------------------------
-     -- INITIAL query: select the root nodes of the tree; as given in $menuLevelNodeIdentifiers
-     -- --------------------------------
-     select
-     	n.*,
-     	h.contentstreamidentifier,
-     	h.name,
+    -- we build a set of recursive trees, ready to be rendered e . g . in a menu . Because the menu supports starting at multiple nodes, we also support starting at multiple nodes at once .
+    with recursive tree as (
+    -- --------------------------------
+     --INITIAL query: select the root nodes of the tree; as given in $menuLevelNodeIdentifiers
+    -- --------------------------------
+    select
+     	n .*,
+     	h . contentstreamidentifier,
+     	h . name,
 
-     	-- see https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/#cast-to-avoid-data-truncation
+     	--see https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/#cast-to-avoid-data-truncation
      	CAST("ROOT" AS CHAR(50)) as parentNodeIdentifier,
      	0 as level,
      	0 as position
      from
         neos_contentgraph_node n
-     -- we need to join with the hierarchy relation, because we need the node name.
-     inner join neos_contentgraph_hierarchyrelation h
-        on h.childnodeanchor = n.relationanchorpoint
+    -- we need to join with the hierarchy relation, because we need the node name .
+    inner join neos_contentgraph_hierarchyrelation h
+        on h . childnodeanchor = n . relationanchorpoint
      where
-        n.nodeidentifier in (:entryNodeIdentifiers)
-        and n.hidden = false             -- TODO - add ContextParameters query part
-        and h.contentstreamidentifier = :contentStreamIdentifier
-		AND h.dimensionspacepointhash = :dimensionSpacePointHash
+        n . nodeidentifier in(:entryNodeIdentifiers)
+        and n . hidden = false-- TODO - add ContextParameters query part
+    and h . contentstreamidentifier = :contentStreamIdentifier
+    AND h . dimensionspacepointhash = :dimensionSpacePointHash
 union
-     -- --------------------------------
-     -- RECURSIVE query: do one "child" query step, taking into account the depth and node type constraints
-     -- --------------------------------	
-     select
-        c.*,
-        h.contentstreamidentifier,
-        h.name,
+-- --------------------------------
+     --RECURSIVE query: do one "child" query step, taking into account the depth and node type constraints
+    -- --------------------------------
+    select
+        c .*,
+        h . contentstreamidentifier,
+        h . name,
         
-     	p.nodeidentifier as parentNodeIdentifier,
-     	p.level + 1 as level,
-     	h.position
+     	p . nodeidentifier as parentNodeIdentifier,
+     	p . level + 1 as level,
+     	h . position
      from
         tree p
 	 inner join neos_contentgraph_hierarchyrelation h 
-        on h.parentnodeanchor = p.relationanchorpoint
+        on h . parentnodeanchor = p . relationanchorpoint
 	 inner join neos_contentgraph_node c 
-	    on h.childnodeanchor = c.relationanchorpoint
+	    on h . childnodeanchor = c . relationanchorpoint
 	 where
 	 	h.contentstreamidentifier = :contentStreamIdentifier
 		AND h.dimensionspacepointhash = :dimensionSpacePointHash
 		and p.level + 1 <= :maximumLevels
 	    and c.hidden = false -- TODO - add ContextParameters query part
         ###NODE_TYPE_CONSTRAINTS###
- 
-   -- select relationanchorpoint from neos_contentgraph_node
+
+    -- select relationanchorpoint from neos_contentgraph_node
 ) 
 select * from tree
 order by level, position desc;')

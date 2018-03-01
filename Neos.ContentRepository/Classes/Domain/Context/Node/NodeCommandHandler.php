@@ -37,12 +37,14 @@ use Neos\ContentRepository\Domain\Context\Node\Event\NodeMoveMapping;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeNameWasChanged;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
+use Neos\ContentRepository\Domain\Context\Node\Event\NodeReassignmentMapping;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodesInAggregateWereMoved;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodesWereMoved;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasAddedToAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasHidden;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeInAggregateWasTranslated;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasShown;
+use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasSpecialized;
 use Neos\ContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeType;
@@ -618,14 +620,53 @@ final class NodeCommandHandler
 
     /**
      * @param SpecializeNode $command
-     * @throws DimensionSpacePointNotFound
-     * @throws DimensionSpacePointIsNoSpecialization
      */
     public function handleSpecializeNode(SpecializeNode $command): void
     {
-        if (!$this->interDimensionalVariationGraph->getSpecializationSet($command->getSourceDimensionSpacePoint())->contains($command->getTargetDimensionSpacePoint())) {
-            throw new DimensionSpacePointIsNoSpecialization((string) $command->getTargetDimensionSpacePoint() . ' is no specialization of ' . (string) $command->getSourceDimensionSpacePoint(), 1519931770);
-        }
+        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
+            if (!$this->interDimensionalVariationGraph->getSpecializationSet($command->getSourceDimensionSpacePoint())->contains($command->getTargetDimensionSpacePoint())) {
+                throw new DimensionSpacePointIsNoSpecialization((string) $command->getTargetDimensionSpacePoint() . ' is no specialization of ' . (string) $command->getSourceDimensionSpacePoint(), 1519931770);
+            }
+
+            $sourceSubgraph = $this->contentGraph->getSubgraphByIdentifier($command->getContentStreamIdentifier(), $command->getSourceDimensionSpacePoint());
+            $sourceNode = $sourceSubgraph->findNodeByNodeAggregateIdentifier($command->getNodeAggregateIdentifier());
+            $sourceParentNode = $sourceSubgraph->findParentNode($sourceNode->getNodeIdentifier());
+
+            $precedingSourceSibling = $sourceSubgraph->findPrecedingSibling($sourceNode->getNodeIdentifier());
+            $succeedingSourceSibling = $sourceSubgraph->findSucceedingSibling($sourceNode->getNodeIdentifier());
+
+            $reassignmentMappings = [];
+            foreach ($this->interDimensionalVariationGraph->getSpecializationSet($command->getTargetDimensionSpacePoint())->getPoints() as $specializedPoint)
+            {
+                $specializedSubgraph = $this->contentGraph->getSubgraphByIdentifier($command->getContentStreamIdentifier(), $specializedPoint);
+                $succeedingSpecializationSibling = $succeedingSourceSibling ? $specializedSubgraph->findNodeByNodeAggregateIdentifier($succeedingSourceSibling->getNodeAggregateIdentifier()) : null;
+                if (!$succeedingSpecializationSibling) {
+                    $precedingSpecializationSibling = $precedingSourceSibling ? $specializedSubgraph->findNodeByNodeAggregateIdentifier($precedingSourceSibling->getNodeAggregateIdentifier()) : null;
+                    if ($precedingSpecializationSibling) {
+                        $succeedingSpecializationSibling = $specializedSubgraph->findSucceedingSibling($precedingSpecializationSibling->getNodeIdentifier());
+                    }
+                }
+                $reassignmentMappings[] = new NodeReassignmentMapping(
+                    $command->getSpecializationIdentifier(),
+                    $sourceParentNode->getNodeIdentifier(),
+                    $succeedingSpecializationSibling->getNodeIdentifier(),
+                    $specializedPoint
+                );
+            }
+
+            $event = new NodeWasSpecialized(
+                $command->getContentStreamIdentifier(),
+                $command->getSpecializationIdentifier(),
+                $command->getTargetDimensionSpacePoint(),
+                $command->getSpecializationIdentifier(),
+                $reassignmentMappings
+            );
+
+            $this->nodeEventPublisher->publish(
+                ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier()),
+                $event
+            );
+        });
     }
 
     /**
