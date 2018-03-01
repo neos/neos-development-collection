@@ -114,7 +114,6 @@ class NodeController extends ActionController
         }
     }
 
-
     /**
      * Checks if the optionally given node context path, affected node context path and Fusion path are set
      * and overrides the rendering to use those. Will also add a "X-Neos-AffectedNodePath" header in case the

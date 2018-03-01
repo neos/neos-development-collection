@@ -15,7 +15,7 @@ use Neos\ContentRepository\Domain\Context\Dimension\Exception\InvalidContentDime
 use Neos\Utility\Arrays;
 
 /**
- * The content dimension value domain model
+ * A content dimension value in a single ContentDimension; e.g. the value "de" in the dimension "language".
  */
 final class ContentDimensionValue
 {

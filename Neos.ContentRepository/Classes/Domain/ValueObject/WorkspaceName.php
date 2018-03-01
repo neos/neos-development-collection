@@ -14,7 +14,9 @@ namespace Neos\ContentRepository\Domain\ValueObject;
 use Neos\Cache\CacheAwareInterface;
 
 /**
- * Name of a workspace
+ * Name of a workspace.
+ *
+ * Implements CacheAwareInterface because of Fusion Runtime caching and Routing
  */
 final class WorkspaceName implements \JsonSerializable, CacheAwareInterface
 {

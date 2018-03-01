@@ -19,6 +19,8 @@ use Neos\Utility\Arrays;
 /**
  * A point in the dimension space with coordinates DimensionName => DimensionValue.
  * E.g.: ["language" => "es", "country" => "ar"]
+ *
+ * Implements CacheAwareInterface because of Fusion Runtime caching and Routing
  */
 final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterface, ProtectedContextAwareInterface
 {

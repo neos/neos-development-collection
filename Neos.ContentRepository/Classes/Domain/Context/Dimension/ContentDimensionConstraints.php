@@ -12,11 +12,13 @@ namespace Neos\ContentRepository\Domain\Context\Dimension;
  */
 
 /**
- * The content dimension constraints model
+ * content dimension constraints across multiple dimensions
  */
 final class ContentDimensionConstraints
 {
     /**
+     * if TRUE, the logic is "all allowed, except..." (blacklist approach).
+     * if FALSE, the logic is "nothing allowed, except..." (whitelist approach).
      * @var bool
      */
     protected $wildcardAllowed;

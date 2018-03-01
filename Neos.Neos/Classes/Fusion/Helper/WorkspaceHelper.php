@@ -37,6 +37,7 @@ class WorkspaceHelper implements ProtectedContextAwareInterface
         /** @var Workspace $currentWorkspace */
         $currentWorkspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentSubgraph->getContentStreamIdentifier());
         $workspaceChain = [];
+        // TODO: Maybe write CTE here
         while ($currentWorkspace instanceof Workspace) {
             $workspaceChain[(string)$currentWorkspace->getWorkspaceName()] = $currentWorkspace;
             $currentWorkspace = $currentWorkspace->getBaseWorkspaceName() ? $this->workspaceFinder->findOneByName($currentWorkspace->getBaseWorkspaceName()) : null;
