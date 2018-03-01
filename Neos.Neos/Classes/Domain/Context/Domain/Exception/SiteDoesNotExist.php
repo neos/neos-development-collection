@@ -11,7 +11,7 @@ namespace Neos\Neos\Domain\Context\Domain\Exception;
  * source code.
  */
 
-use Neos\Neos\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\Neos\Exception;
 
 final class SiteDoesNotExist extends Exception

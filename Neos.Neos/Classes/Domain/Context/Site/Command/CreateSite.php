@@ -11,7 +11,7 @@ namespace Neos\Neos\Domain\Context\Site\Command;
  * source code.
  */
 
-use Neos\Neos\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\Neos\Domain\ValueObject\NodeType;
 use Neos\Neos\Domain\ValueObject\PackageKey;
 use Neos\Neos\Domain\ValueObject\SiteActive;

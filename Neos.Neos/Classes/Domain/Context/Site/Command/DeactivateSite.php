@@ -12,7 +12,7 @@ namespace Neos\Neos\Domain\Context\Site\Command;
  * source code.
  */
 
-use Neos\Neos\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 
 final class DeactivateSite
 {

@@ -11,8 +11,8 @@ namespace Neos\Neos\Domain\Projection\Site;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\EventSourcing\Projection\Doctrine\AbstractDoctrineFinder;
-use Neos\Neos\Domain\ValueObject\NodeName;
 use Neos\Flow\Annotations as Flow;
 
 

@@ -27,7 +27,7 @@ use Neos\Neos\Domain\Context\Domain\Exception\DomainDoesNotExist;
 use Neos\Neos\Domain\Context\Domain\Exception\SiteDoesNotExist;
 use Neos\Neos\Domain\Projection\Domain\DomainFinder;
 use Neos\Neos\Domain\Projection\Site\SiteFinder;
-use Neos\Neos\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\Neos\Domain\ValueObject\SchemeHostPort;
 
 /**
