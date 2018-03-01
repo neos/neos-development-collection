@@ -20,11 +20,6 @@ final class SetNodeReferences
     private $contentStreamIdentifier;
 
     /**
-     * @var DimensionSpacePointSet
-     */
-    private $dimensionSpacePointSet;
-
-    /**
      * @var NodeIdentifier
      */
     private $nodeIdentifier;
@@ -43,23 +38,20 @@ final class SetNodeReferences
      * CreateReferenceBetweenNodes constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param DimensionSpacePointSet $dimensionSpacePointSet
      * @param NodeIdentifier $nodeIdentifier
-     * @param NodeAggregateIdentifier[] $destinationtNodeAggregateIdentifiers
      * @param PropertyName $propertyName
+     * @param array $destinationtNodeAggregateIdentifiers
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
-        DimensionSpacePointSet $dimensionSpacePointSet,
         NodeIdentifier $nodeIdentifier,
-        array $destinationtNodeAggregateIdentifiers,
-        PropertyName $propertyName
+        PropertyName $propertyName,
+        array $destinationtNodeAggregateIdentifiers
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->dimensionSpacePointSet = $dimensionSpacePointSet;
         $this->nodeIdentifier = $nodeIdentifier;
-        $this->destinationtNodeAggregateIdentifiers = $destinationtNodeAggregateIdentifiers;
         $this->propertyName = $propertyName;
+        $this->destinationtNodeAggregateIdentifiers = $destinationtNodeAggregateIdentifiers;
     }
 
     /**
@@ -68,14 +60,6 @@ final class SetNodeReferences
     public function getContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->contentStreamIdentifier;
-    }
-
-    /**
-     * @return DimensionSpacePointSet
-     */
-    public function getDimensionSpacePointSet(): DimensionSpacePointSet
-    {
-        return $this->dimensionSpacePointSet;
     }
 
     /**

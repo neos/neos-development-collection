@@ -46,21 +46,21 @@ final class NodeReferencesWereSet implements EventInterface, CopyableAcrossConte
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePointSet $dimensionSpacePointSet
      * @param NodeIdentifier $nodeIdentifier
-     * @param array $destinationtNodeIdentifiers
      * @param PropertyName $referenceNodeIdentifier
+     * @param array $destinationtNodeIdentifiers
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePointSet $dimensionSpacePointSet,
         NodeIdentifier $nodeIdentifier,
-        array $destinationtNodeAggregateIdentifiers,
-        PropertyName $propertyName
+        PropertyName $propertyName,
+        array $destinationtNodeAggregateIdentifiers
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePointSet = $dimensionSpacePointSet;
         $this->nodeIdentifier = $nodeIdentifier;
-        $this->destinationtNodeAggregateIdentifiers = $destinationtNodeAggregateIdentifiers;
         $this->propertyName = $propertyName;
+        $this->destinationtNodeAggregateIdentifiers = $destinationtNodeAggregateIdentifiers;
     }
 
     /**
@@ -111,8 +111,8 @@ final class NodeReferencesWereSet implements EventInterface, CopyableAcrossConte
             $targetContentStream,
             $this->dimensionSpacePointSet,
             $this->nodeIdentifier,
-            $this->destinationtNodeAggregateIdentifiers,
-            $this->propertyName
+            $this->propertyName,
+            $this->destinationtNodeAggregateIdentifiers
         );
     }
 }

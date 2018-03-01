@@ -391,18 +391,24 @@ final class NodeCommandHandler
      */
     public function handleSetNodeReferences(SetNodeReferences $command): void
     {
-        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
+            $nodeIdentifier = $command->getNodeIdentifier();
 
-            // Check if node exists
-            $this->getNode($contentStreamIdentifier, $command->getNodeIdentifier());
+            $node = $this->getNode($contentStreamIdentifier, $nodeIdentifier);
+
+            $dimensionSpacePointsSet = $this->calculateVisibilityForNewNodeInNodeAggregate(
+                $contentStreamIdentifier,
+                $node->getNodeAggregateIdentifier(),
+                $node->getDimensionSpacePoint()
+            );
 
             $events[] = new NodeReferencesWereSet(
                 $contentStreamIdentifier,
-                $command->getDimensionSpacePointSet(),
+                $dimensionSpacePointsSet,
                 $command->getNodeIdentifier(),
-                $command->getDestinationtNodeAggregateIdentifiers(),
-                $command->getPropertyName()
+                $command->getPropertyName(),
+                $command->getDestinationtNodeAggregateIdentifiers()
             );
 
             $this->nodeEventPublisher->publishMany(

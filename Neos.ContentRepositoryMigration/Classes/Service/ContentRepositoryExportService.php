@@ -122,6 +122,7 @@ class ContentRepositoryExportService
             TRUNCATE neos_eventsourcing_eventstore_events;
             
             TRUNCATE neos_contentgraph_hierarchyrelation;
+            TRUNCATE neos_contentgraph_referencerelation;
             TRUNCATE neos_contentgraph_node;
             TRUNCATE neos_neos_projection_site_v1;
             TRUNCATE neos_neos_projection_domain_v1;
@@ -268,8 +269,8 @@ class ContentRepositoryExportService
                 $this->contentStreamIdentifier,
                 $visibleDimensionSpacePoints,
                 new NodeIdentifier($nodeIdentifier),
-                $references,
-                new PropertyName($propertyName)
+                new PropertyName($propertyName),
+                $references
             ));
 
         }
