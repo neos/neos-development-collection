@@ -98,6 +98,9 @@ class NodeEvent extends Event
         return $this->workspaceName;
     }
 
+    /**
+     * @return bool
+     */
     public function isDocumentEvent()
     {
         return $this->documentNodeIdentifier === $this->nodeIdentifier;
@@ -198,7 +201,7 @@ class NodeEvent extends Event
     {
         try {
             $context = $this->contextFactory->create(array(
-                'workspaceName' => $this->userService->getUserWorkspace()->getName(),
+                'workspaceName' => $this->userService->getPersonalWorkspaceName(),
                 'dimensions' => $this->dimension,
                 'currentSite' => $this->getCurrentSite(),
                 'invisibleContentShown' => true
@@ -222,7 +225,7 @@ class NodeEvent extends Event
     {
         try {
             $context = $this->contextFactory->create(array(
-                'workspaceName' => $this->userService->getUserWorkspace()->getName(),
+                'workspaceName' => $this->userService->getPersonalWorkspaceName(),
                 'dimensions' => $this->dimension,
                 'currentSite' => $this->getCurrentSite(),
                 'invisibleContentShown' => true
@@ -234,7 +237,7 @@ class NodeEvent extends Event
     }
 
     /**
-     * Prevents invalid calls to the site respository in case the site data property is not available.
+     * Prevents invalid calls to the site repository in case the site data property is not available.
      *
      * @return null|object
      */
