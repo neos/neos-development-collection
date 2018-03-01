@@ -12,6 +12,8 @@ namespace Neos\ContentRepository\Domain\Context\Node;
  */
 
 use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
+use Neos\ContentRepository\Domain\Context\Dimension\Exception\GeneralizationIsInvalid;
+use Neos\ContentRepository\Domain\Context\DimensionSpace\DimensionSpacePointIsNoSpecialization;
 use Neos\ContentRepository\Domain\Context\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Domain\Context\Importing\Command\FinalizeImportingSession;
 use Neos\ContentRepository\Domain\Context\Importing\Command\StartImportingSession;
@@ -21,6 +23,7 @@ use Neos\ContentRepository\Domain\Context\Node\Command\AddNodeToAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Command\HideNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\ShowNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\SetNodeReferences;
+use Neos\ContentRepository\Domain\Context\Node\Command\SpecializeNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\TranslateNodeInAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateRootNode;
@@ -611,6 +614,18 @@ final class NodeCommandHandler
                 $event
             );
         });
+    }
+
+    /**
+     * @param SpecializeNode $command
+     * @throws DimensionSpacePointNotFound
+     * @throws DimensionSpacePointIsNoSpecialization
+     */
+    public function handleSpecializeNode(SpecializeNode $command): void
+    {
+        if (!$this->interDimensionalVariationGraph->getSpecializationSet($command->getSourceDimensionSpacePoint())->contains($command->getTargetDimensionSpacePoint())) {
+            throw new DimensionSpacePointIsNoSpecialization((string) $command->getTargetDimensionSpacePoint() . ' is no specialization of ' . (string) $command->getSourceDimensionSpacePoint(), 1519931770);
+        }
     }
 
     /**

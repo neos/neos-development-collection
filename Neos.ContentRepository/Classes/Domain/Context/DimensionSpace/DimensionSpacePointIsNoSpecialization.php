@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Domain\Context\Dimension\Exception;
+namespace Neos\ContentRepository\Domain\Context\DimensionSpace;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -14,8 +14,8 @@ namespace Neos\ContentRepository\Domain\Context\Dimension\Exception;
 use Neos\Flow\Exception;
 
 /**
- * The invalid generalization exception
+ * The exception to be thrown if a dimension space point is tried to be used as a specialization of another one but isn't
  */
-class InvalidGeneralizationException extends Exception
+class DimensionSpacePointIsNoSpecialization extends Exception
 {
 }

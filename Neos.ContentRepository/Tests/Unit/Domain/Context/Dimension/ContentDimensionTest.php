@@ -117,7 +117,7 @@ class ContentDimensionTest extends UnitTestCase
 
     /**
      * @test
-     * @throws Dimension\Exception\InvalidGeneralizationException
+     * @throws Dimension\Exception\GeneralizationIsInvalid
      */
     public function calculateSpecializationDepthReturnsZeroForValueItself()
     {
@@ -129,7 +129,7 @@ class ContentDimensionTest extends UnitTestCase
 
     /**
      * @test
-     * @throws Dimension\Exception\InvalidGeneralizationException
+     * @throws Dimension\Exception\GeneralizationIsInvalid
      */
     public function calculateSpecializationDepthCalculatesCorrectDepthForSpecialization()
     {
@@ -145,8 +145,8 @@ class ContentDimensionTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\ContentRepository\Domain\Context\Dimension\Exception\InvalidGeneralizationException
-     * @throws Dimension\Exception\InvalidGeneralizationException
+     * @expectedException \Neos\ContentRepository\Domain\Context\Dimension\Exception\GeneralizationIsInvalid
+     * @throws Dimension\Exception\GeneralizationIsInvalid
      */
     public function calculateSpecializationDepthThrowsExceptionForDisconnectedValues()
     {

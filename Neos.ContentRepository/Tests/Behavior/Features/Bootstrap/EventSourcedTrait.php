@@ -40,6 +40,11 @@ use Ramsey\Uuid\Uuid;
 trait EventSourcedTrait
 {
     /**
+     * @var \Neos\Flow\ObjectManagement\ObjectManager
+     */
+    private $objectManager;
+
+    /**
      * @var EventTypeResolver
      */
     private $eventTypeResolver;
@@ -217,6 +222,39 @@ trait EventSourcedTrait
     }
 
     /**
+     * @Given /^the command SpecializeNode was published with payload:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
+     */
+    public function theCommandSpecializeNodeIsExecutedWithPayload(TableNode $payloadTable)
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+
+        $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
+        $command = $this->propertyMapper->convert($commandArguments, \Neos\ContentRepository\Domain\Context\Node\Command\SpecializeNode::class, $configuration);
+        /** @var \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler $commandHandler */
+        $commandHandler = $this->objectManager->get(\Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class);
+
+        $commandHandler->handleSpecializeNode($command);
+    }
+
+    /**
+     * @Given /^the command SpecializeNode was published with payload and exceptions are caught:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theCommandSpecializeNodeIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
+    {
+        try {
+            $this->theCommandSpecializeNodeIsExecutedWithPayload($payloadTable);
+        } catch (\Exception $exception) {
+            $this->lastCommandException = $exception;
+        }
+    }
+
+    /**
      * @When /^the command "([^"]*)" is executed with payload:$/
      * @Given /^the command "([^"]*)" was executed with payload:$/
      * @throws Exception
@@ -287,12 +325,16 @@ trait EventSourcedTrait
 
                 return;
             case 'NodeExistsException':
-
                 Assert::assertInstanceOf(\Neos\ContentRepository\Exception\NodeExistsException::class, $this->lastCommandException);
+
                 return;
             case 'NodeConstraintException':
-
                 Assert::assertInstanceOf(\Neos\ContentRepository\Exception\NodeConstraintException::class, $this->lastCommandException);
+
+                return;
+            case 'DimensionSpacePointIsNoSpecialization':
+                Assert::assertInstanceOf(\Neos\ContentRepository\Domain\Context\DimensionSpace\DimensionSpacePointIsNoSpecialization::class, $this->lastCommandException);
+
                 return;
             default:
                 throw new \Exception('The short exception name "' . $shortExceptionName . '" is currently not supported by the tests.');
@@ -721,5 +763,4 @@ trait EventSourcedTrait
         $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
         $this->currentNode = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findParentNode(new NodeIdentifier($nodeIdentifier));
     }
-
 }
