@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Domain\Projection\Content;
 
 /*
@@ -63,13 +64,13 @@ class PropertyCollection implements \ArrayAccess, \Iterator
      * @var array
      * @deprecated
      */
-    protected $referenceProperties;
+    protected $referenceProperties = [];
 
     /**
      * @var array
      * @deprecated
      */
-    protected $referencesProperties;
+    protected $referencesProperties = [];
 
     /**
      * PropertyCollection constructor.
@@ -83,10 +84,12 @@ class PropertyCollection implements \ArrayAccess, \Iterator
     {
         $this->properties = $properties;
 
-        $this->referenceProperties = array_fill_keys($referenceProperties, true);
-        $this->referencesProperties = array_fill_keys($referencesProperties, true);
-        $this->nodeIdentifier = $nodeIdentifier;
-        $this->contentSubgraph = $contentSubgraph;
+        if ($contentSubgraph && $nodeIdentifier) {
+            $this->referenceProperties = array_fill_keys($referenceProperties, true);
+            $this->referencesProperties = array_fill_keys($referencesProperties, true);
+            $this->nodeIdentifier = $nodeIdentifier;
+            $this->contentSubgraph = $contentSubgraph;
+        }
     }
 
     /**
@@ -176,7 +179,7 @@ class PropertyCollection implements \ArrayAccess, \Iterator
     {
         return $this->offsetGet($this->key());
     }
-    
+
     public function next()
     {
         next($this->properties);
@@ -199,7 +202,7 @@ class PropertyCollection implements \ArrayAccess, \Iterator
     }
 
     /**
-     * 
+     *
      */
     public function rewind()
     {
