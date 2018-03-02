@@ -33,7 +33,7 @@ final class NodeReferencesWereSet implements EventInterface, CopyableAcrossConte
     /**
      * @var NodeAggregateIdentifier[]
      */
-    private $destinationtNodeAggregateIdentifiers;
+    private $destinationtNodesAggregateIdentifiers;
 
     /**
      * @var PropertyName
@@ -47,20 +47,20 @@ final class NodeReferencesWereSet implements EventInterface, CopyableAcrossConte
      * @param DimensionSpacePointSet $dimensionSpacePointSet
      * @param NodeIdentifier $nodeIdentifier
      * @param PropertyName $referenceNodeIdentifier
-     * @param array $destinationtNodeIdentifiers
+     * @param array $destinationtNodesAggregateIdentifiers
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePointSet $dimensionSpacePointSet,
         NodeIdentifier $nodeIdentifier,
         PropertyName $propertyName,
-        array $destinationtNodeAggregateIdentifiers
+        array $destinationtNodesAggregateIdentifiers
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePointSet = $dimensionSpacePointSet;
         $this->nodeIdentifier = $nodeIdentifier;
         $this->propertyName = $propertyName;
-        $this->destinationtNodeAggregateIdentifiers = $destinationtNodeAggregateIdentifiers;
+        $this->destinationtNodesAggregateIdentifiers = $destinationtNodesAggregateIdentifiers;
     }
 
     /**
@@ -90,9 +90,9 @@ final class NodeReferencesWereSet implements EventInterface, CopyableAcrossConte
     /**
      * @return array
      */
-    public function getDestinationtNodeAggregateIdentifiers(): array
+    public function getDestinationtNodesAggregateIdentifiers(): array
     {
-        return $this->destinationtNodeAggregateIdentifiers;
+        return $this->destinationtNodesAggregateIdentifiers;
     }
 
     /**
@@ -112,7 +112,7 @@ final class NodeReferencesWereSet implements EventInterface, CopyableAcrossConte
             $this->dimensionSpacePointSet,
             $this->nodeIdentifier,
             $this->propertyName,
-            $this->destinationtNodeAggregateIdentifiers
+            $this->destinationtNodesAggregateIdentifiers
         );
     }
 }
