@@ -381,7 +381,7 @@ class GraphProjector implements ProjectorInterface
             ]);
 
             // set new
-            foreach ($event->getDestinationtNodeAggregateIdentifiers() as $position => $destinationtNodeIdentifier) {
+            foreach ($event->getDestinationtNodesAggregateIdentifiers() as $position => $destinationtNodeIdentifier) {
                 $this->getDatabaseConnection()->insert('neos_contentgraph_referencerelation', [
                     'name' => $event->getPropertyName(),
                     'position' => $position,
