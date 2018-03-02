@@ -480,16 +480,22 @@ class GraphProjector implements ProjectorInterface
             $operations($copiedNode);
             $copiedNode->addToDatabase($this->getDatabaseConnection());
 
-            // 2) reconnect all edges belonging to this content stream to the new "copied node"
+            // 2) reconnect all edges belonging to this content stream to the new "copied node". IMPORTANT: We need to reconnect
+            // BOTH the incoming and outgoing edges.
             $this->getDatabaseConnection()->executeUpdate('
                 UPDATE neos_contentgraph_hierarchyrelation h
-                    SET h.childnodeanchor = :newChildNodeAnchor
+                    SET 
+                        -- if our (copied) node is the child, we update h.childNodeAnchor
+                        h.childnodeanchor = IF(h.childnodeanchor = :originalNodeAnchor, :newNodeAnchor, h.childnodeanchor),
+                        
+                        -- if our (copied) node is the parent, we update h.parentNodeAnchor
+                        h.parentnodeanchor = IF(h.parentnodeanchor = :originalNodeAnchor, :newNodeAnchor, h.parentnodeanchor)
                     WHERE
-                      h.childnodeanchor = :originalChildNodeAnchor
+                      :originalNodeAnchor IN (h.childnodeanchor, h.parentnodeanchor)
                       AND h.contentstreamidentifier = :contentStreamIdentifier',
                 [
-                    'newChildNodeAnchor' => (string)$copiedNode->relationAnchorPoint,
-                    'originalChildNodeAnchor' => (string)$anchorPointForNode,
+                    'newNodeAnchor' => (string)$copiedNode->relationAnchorPoint,
+                    'originalNodeAnchor' => (string)$anchorPointForNode,
                     'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
                 ]
             );
