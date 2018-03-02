@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Domain\Service;
 
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\ContentRepository\Exception\WorkspaceException;
 
 /**
@@ -22,14 +23,8 @@ use Neos\ContentRepository\Exception\WorkspaceException;
  */
 interface PublishingServiceInterface
 {
-    /**
-     * Returns a list of nodes contained in the given workspace which are not yet published
-     *
-     * @param Workspace $workspace
-     * @return array<\Neos\ContentRepository\Domain\Model\NodeInterface>
-     */
-    public function getUnpublishedNodes(Workspace $workspace);
 
+    public function getUnpublishedNodes(WorkspaceName $workspaceName);
     /**
      * Returns the number of unpublished nodes contained in the given workspace
      *

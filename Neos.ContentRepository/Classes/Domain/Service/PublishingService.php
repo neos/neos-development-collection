@@ -90,13 +90,12 @@ class PublishingService implements PublishingServiceInterface
      * @return array<\Neos\ContentRepository\Domain\Model\NodeInterface>
      * @api
      */
-    public function getUnpublishedNodes(Workspace $workspace)
+    public function getUnpublishedNodes(WorkspaceName $workspaceName)
     {
-        if ($workspace->getBaseWorkspace() === null) {
+        $workspace = $this->workspaceFinder->findOneByName($workspaceName);
+        if ($workspace->getBaseWorkspaceName() === null) {
             return array();
         }
-
-        $workspace = $this->workspaceFinder->findOneByName(new WorkspaceName($workspace->getName()));
         $changes = $this->changeFinder->findByContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier());
         $unpublishedNodes = [];
         foreach ($changes as $change) {
@@ -249,7 +248,7 @@ class PublishingService implements PublishingServiceInterface
             throw new WorkspaceException('Nodes in the live workspace cannot be discarded.', 1428937112);
         }
 
-        foreach ($this->getUnpublishedNodes($workspace) as $node) {
+        foreach ($this->getUnpublishedNodes(new WorkspaceName($workspace->getName())) as $node) {
             /** @var NodeInterface $node */
             if ($node->getPath() !== '/') {
                 $this->discardNode($node);
