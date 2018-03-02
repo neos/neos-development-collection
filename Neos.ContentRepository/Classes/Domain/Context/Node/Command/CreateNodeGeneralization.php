@@ -14,11 +14,11 @@ namespace Neos\ContentRepository\Domain\Context\Node\Command;
 use Neos\ContentRepository\Domain;
 
 /**
- * Specialize node
+ * Create a generalization of a node in a content stream
  *
- * Copy a node to a specialized dimension space point respecting further specialization mechanisms
+ * Copy a node to a generalized dimension space point respecting further generalization mechanisms
  */
-final class SpecializeNode
+final class CreateNodeGeneralization
 {
     /**
      * @var Domain\ValueObject\ContentStreamIdentifier
@@ -26,14 +26,9 @@ final class SpecializeNode
     protected $contentStreamIdentifier;
 
     /**
-     * @var Domain\ValueObject\NodeAggregateIdentifier
+     * @var Domain\ValueObject\NodeIdentifier
      */
-    protected $nodeAggregateIdentifier;
-
-    /**
-     * @var Domain\ValueObject\DimensionSpacePoint
-     */
-    protected $sourceDimensionSpacePoint;
+    protected $nodeIdentifier;
 
     /**
      * @var Domain\ValueObject\DimensionSpacePoint
@@ -43,28 +38,25 @@ final class SpecializeNode
     /**
      * @var Domain\ValueObject\NodeIdentifier
      */
-    protected $specializationIdentifier;
+    protected $generalizationIdentifier;
 
 
     /**
      * @param Domain\ValueObject\ContentStreamIdentifier $contentStreamIdentifier
-     * @param Domain\ValueObject\NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param Domain\ValueObject\DimensionSpacePoint $sourceDimensionSpacePoint
+     * @param Domain\ValueObject\NodeIdentifier $nodeIdentifier
      * @param Domain\ValueObject\DimensionSpacePoint $targetDimensionSpacePoint
-     * @param Domain\ValueObject\NodeIdentifier $specializationIdentifier
+     * @param Domain\ValueObject\NodeIdentifier $generalizationIdentifier
      */
     public function __construct(
         Domain\ValueObject\ContentStreamIdentifier $contentStreamIdentifier,
-        Domain\ValueObject\NodeAggregateIdentifier $nodeAggregateIdentifier,
-        Domain\ValueObject\DimensionSpacePoint $sourceDimensionSpacePoint,
+        Domain\ValueObject\NodeIdentifier $nodeIdentifier,
         Domain\ValueObject\DimensionSpacePoint $targetDimensionSpacePoint,
-        Domain\ValueObject\NodeIdentifier $specializationIdentifier
+        Domain\ValueObject\NodeIdentifier $generalizationIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
-        $this->sourceDimensionSpacePoint = $sourceDimensionSpacePoint;
+        $this->nodeIdentifier = $nodeIdentifier;
         $this->targetDimensionSpacePoint = $targetDimensionSpacePoint;
-        $this->specializationIdentifier = $specializationIdentifier;
+        $this->generalizationIdentifier = $generalizationIdentifier;
     }
 
     /**
@@ -76,19 +68,11 @@ final class SpecializeNode
     }
 
     /**
-     * @return Domain\ValueObject\NodeAggregateIdentifier
+     * @return Domain\ValueObject\NodeIdentifier
      */
-    public function getNodeAggregateIdentifier(): Domain\ValueObject\NodeAggregateIdentifier
+    public function getNodeIdentifier(): Domain\ValueObject\NodeIdentifier
     {
-        return $this->nodeAggregateIdentifier;
-    }
-
-    /**
-     * @return Domain\ValueObject\DimensionSpacePoint
-     */
-    public function getSourceDimensionSpacePoint(): Domain\ValueObject\DimensionSpacePoint
-    {
-        return $this->sourceDimensionSpacePoint;
+        return $this->nodeIdentifier;
     }
 
     /**
@@ -102,8 +86,8 @@ final class SpecializeNode
     /**
      * @return Domain\ValueObject\NodeIdentifier
      */
-    public function getSpecializationIdentifier(): Domain\ValueObject\NodeIdentifier
+    public function getGeneralizationIdentifier(): Domain\ValueObject\NodeIdentifier
     {
-        return $this->specializationIdentifier;
+        return $this->generalizationIdentifier;
     }
 }

@@ -114,6 +114,30 @@ trait EventSourcedTrait
     }
 
     /**
+     * @Given /^the event NodeSpecializationWasCreated was published with payload:$/
+     * @throws Exception
+     */
+    public function theEventNodeSpecializationWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
+    {
+        $eventPayload = $this->readPayloadTable($payloadTable);
+        $streamName = ContentStreamCommandHandler::getStreamNameForContentStream(new ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
+        $streamName = $this->replaceUuidIdentifiers($streamName);
+        $this->publishEvent('Neos.ContentRepository:NodeSpecializationWasCreated', $streamName, $eventPayload);
+    }
+
+    /**
+     * @Given /^the event NodeGeneralizationWasCreated was published with payload:$/
+     * @throws Exception
+     */
+    public function theEventNodeGeneralizationWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
+    {
+        $eventPayload = $this->readPayloadTable($payloadTable);
+        $streamName = ContentStreamCommandHandler::getStreamNameForContentStream(new ContentStreamIdentifier($eventPayload['contentStreamIdentifier']));
+        $streamName = $this->replaceUuidIdentifiers($streamName);
+        $this->publishEvent('Neos.ContentRepository:NodeGeneralizationWasCreated', $streamName, $eventPayload);
+    }
+
+    /**
      * @Given /^the Event "([^"]*)" was published to stream "([^"]*)" with payload:$/
      * @throws Exception
      */
@@ -222,33 +246,66 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Given /^the command SpecializeNode was published with payload:$/
+     * @Given /^the command CreateNodeSpecialization was published with payload:$/
      * @param TableNode $payloadTable
      * @throws Exception
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    public function theCommandSpecializeNodeIsExecutedWithPayload(TableNode $payloadTable)
+    public function theCommandCreateNodeSpecializationIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
 
         $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
-        $command = $this->propertyMapper->convert($commandArguments, \Neos\ContentRepository\Domain\Context\Node\Command\SpecializeNode::class, $configuration);
+        $command = $this->propertyMapper->convert($commandArguments, \Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeSpecialization::class, $configuration);
         /** @var \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler $commandHandler */
         $commandHandler = $this->objectManager->get(\Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class);
 
-        $commandHandler->handleSpecializeNode($command);
+        $commandHandler->handleCreateNodeSpecialization($command);
     }
 
     /**
-     * @Given /^the command SpecializeNode was published with payload and exceptions are caught:$/
+     * @Given /^the command CreateNodeSpecialization was published with payload and exceptions are caught:$/
      * @param TableNode $payloadTable
      * @throws Exception
      */
-    public function theCommandSpecializeNodeIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
+    public function theCommandCreateNodeSpecializationIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
     {
         try {
-            $this->theCommandSpecializeNodeIsExecutedWithPayload($payloadTable);
+            $this->theCommandCreateNodeSpecializationIsExecutedWithPayload($payloadTable);
+        } catch (\Exception $exception) {
+            $this->lastCommandException = $exception;
+        }
+    }
+
+    /**
+     * @Given /^the command CreateNodeGeneralization was published with payload:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     * @throws \Neos\Flow\Property\Exception
+     * @throws \Neos\Flow\Security\Exception
+     */
+    public function theCommandCreateNodeGeneralizationIsExecutedWithPayload(TableNode $payloadTable)
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+
+        $configuration = new \Neos\EventSourcing\Property\AllowAllPropertiesPropertyMappingConfiguration();
+        $command = $this->propertyMapper->convert($commandArguments, \Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeGeneralization::class, $configuration);
+        /** @var \Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler $commandHandler */
+        $commandHandler = $this->objectManager->get(\Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler::class);
+
+        $commandHandler->handleCreateNodeGeneralization($command);
+    }
+
+    /**
+     * @Given /^the command CreateNodeGeneralization was published with payload and exceptions are caught:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theCommandCreateNodeGeneralizationIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
+    {
+        try {
+            $this->theCommandCreateNodeGeneralizationIsExecutedWithPayload($payloadTable);
         } catch (\Exception $exception) {
             $this->lastCommandException = $exception;
         }
@@ -341,12 +398,20 @@ trait EventSourcedTrait
 
                 return;
             case 'NodeExistsException':
-
                 Assert::assertInstanceOf(\Neos\ContentRepository\Exception\NodeExistsException::class, $this->lastCommandException);
+
                 return;
             case 'NodeConstraintException':
-
                 Assert::assertInstanceOf(\Neos\ContentRepository\Exception\NodeConstraintException::class, $this->lastCommandException);
+
+                return;
+            case 'DimensionSpacePointIsAlreadyOccupiedInNodeAggregate':
+                Assert::assertInstanceOf(\Neos\ContentRepository\Domain\Context\Node\DimensionSpacePointIsAlreadyOccupiedInNodeAggregate::class, $this->lastCommandException);
+
+                return;
+            case 'DimensionSpacePointIsNoGeneralization':
+                Assert::assertInstanceOf(\Neos\ContentRepository\Domain\Context\DimensionSpace\DimensionSpacePointIsNoGeneralization::class, $this->lastCommandException);
+
                 return;
             default:
                 throw new \Exception('The short exception name "' . $shortExceptionName . '" is currently not supported by the tests.');
@@ -774,5 +839,18 @@ trait EventSourcedTrait
     {
         $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
         $this->currentNode = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findParentNode(new NodeIdentifier($nodeIdentifier));
+    }
+
+    /**
+     * @Then /^I expect the path "([^"]*)" to lead to no node$/
+     * @throws Exception
+     */
+    public function iExpectThePathToLeadToNoNode($nodePath)
+    {
+        if (!$this->rootNodeIdentifier) {
+            throw new \Exception('ERROR: RootNodeIdentifier needed for running this step. You need to use "the Event RootNodeWasCreated was published with payload" to create a root node..');
+        }
+        $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByPath($nodePath, $this->rootNodeIdentifier);
+        Assert::assertNull($node, 'Did find node at path "' . $nodePath . '"');
     }
 }

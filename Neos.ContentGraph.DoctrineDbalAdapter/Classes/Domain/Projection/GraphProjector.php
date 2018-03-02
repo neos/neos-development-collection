@@ -463,9 +463,10 @@ class GraphProjector implements ProjectorInterface
     }
 
     /**
-     * @param Event\NodeWasSpecialized $event
+     * @param Event\NodeSpecializationWasCreated $event
+     * @throws \Exception
      */
-    public function whenNodeWasSpecialized(Event\NodeWasSpecialized $event): void
+    public function whenNodeSpecializationWasCreated(Event\NodeSpecializationWasCreated $event): void
     {
         $this->transactional(function () use ($event) {
             $sourceNode = $this->projectionContentGraph->getNode($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
@@ -475,15 +476,76 @@ class GraphProjector implements ProjectorInterface
                 $specializedNodeRelationAnchorPoint,
                 $event->getSpecializationIdentifier(),
                 $sourceNode->nodeAggregateIdentifier,
-                $event->getTargetDimensionSpacePoint()->jsonSerialize(),
-                $event->getTargetDimensionSpacePoint()->getHash(),
+                $event->getSpecializationLocation()->jsonSerialize(),
+                $event->getSpecializationLocation()->getHash(),
                 $sourceNode->properties,
                 $sourceNode->nodeTypeName
             );
             $specializedNode->addToDatabase($this->getDatabaseConnection());
 
-            foreach ($event->getMappings() as $nodeReassignmentMapping) {
-                /** @todo reassign hierarchy relations */
+            foreach ($this->projectionContentGraph->findInboundHierarchyRelationsForNode(
+                $sourceNode->relationAnchorPoint,
+                $event->getContentStreamIdentifier(),
+                $event->getSpecializationVisibility()
+            ) as $hierarchyRelation) {
+                $hierarchyRelation->assignNewChildNode($specializedNodeRelationAnchorPoint, $this->getDatabaseConnection());
+            }
+            foreach ($this->projectionContentGraph->findOutboundHierarchyRelationsForNode(
+                $sourceNode->relationAnchorPoint,
+                $event->getContentStreamIdentifier(),
+                $event->getSpecializationVisibility()
+            ) as $hierarchyRelation) {
+                $hierarchyRelation->assignNewParentNode($specializedNodeRelationAnchorPoint, $this->getDatabaseConnection());
+            }
+        });
+    }
+
+    /**
+     * @param Event\NodeGeneralizationWasCreated $event
+     * @throws \Exception
+     */
+    public function whenNodeGeneralizationWasCreated(Event\NodeGeneralizationWasCreated $event): void
+    {
+        $this->transactional(function () use ($event) {
+            $sourceNode = $this->projectionContentGraph->getNode($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
+            $sourceHierarchyRelation = $this->projectionContentGraph->findInboundHierarchyRelationsForNode(
+                $sourceNode->relationAnchorPoint,
+                $event->getContentStreamIdentifier(),
+                new DimensionSpacePointSet([$event->getSourceLocation()])
+            )[$event->getSourceLocation()->getHash()] ?? null;
+            if (is_null($sourceHierarchyRelation)) {
+                throw new \Exception('Seems someone tried to generalize a root node and I don\'t have a proper name yet', 1519995795);
+            }
+
+            $generalizedNodeRelationAnchorPoint = new NodeRelationAnchorPoint();
+            $generalizedNode = new Node(
+                $generalizedNodeRelationAnchorPoint,
+                $event->getGeneralizationIdentifier(),
+                $sourceNode->nodeAggregateIdentifier,
+                $event->getGeneralizationLocation()->jsonSerialize(),
+                $event->getGeneralizationLocation()->getHash(),
+                $sourceNode->properties,
+                $sourceNode->nodeTypeName
+            );
+            $generalizedNode->addToDatabase($this->getDatabaseConnection());
+
+            foreach ($event->getGeneralizationVisibility()->getPoints() as $newRelationDimensionSpacePoint) {
+                $newHierarchyRelation = new HierarchyRelation(
+                    $sourceHierarchyRelation->parentNodeAnchor,
+                    $generalizedNodeRelationAnchorPoint,
+                    $sourceHierarchyRelation->name,
+                    $event->getContentStreamIdentifier(),
+                    $newRelationDimensionSpacePoint,
+                    $newRelationDimensionSpacePoint->getHash(),
+                    $this->getRelationPosition(
+                        $sourceHierarchyRelation->parentNodeAnchor,
+                        $generalizedNodeRelationAnchorPoint,
+                        null, // todo: find proper sibling
+                        $event->getContentStreamIdentifier(),
+                        $newRelationDimensionSpacePoint
+                    )
+                );
+                $newHierarchyRelation->addToDatabase($this->getDatabaseConnection());
             }
         });
     }

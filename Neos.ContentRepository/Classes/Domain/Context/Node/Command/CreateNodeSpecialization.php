@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Domain\Context\Node\Event;
+namespace Neos\ContentRepository\Domain\Context\Node\Command;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,12 +12,13 @@ namespace Neos\ContentRepository\Domain\Context\Node\Event;
  */
 
 use Neos\ContentRepository\Domain;
-use Neos\EventSourcing\Event\EventInterface;
 
 /**
- * A node was specialized
+ * Create a specialization of a node in a content stream
+ *
+ * Copy a node to a specialized dimension space point respecting further specialization mechanisms
  */
-final class NodeWasSpecialized implements EventInterface, CopyableAcrossContentStreamsInterface
+final class CreateNodeSpecialization
 {
     /**
      * @var Domain\ValueObject\ContentStreamIdentifier
@@ -39,32 +40,24 @@ final class NodeWasSpecialized implements EventInterface, CopyableAcrossContentS
      */
     protected $specializationIdentifier;
 
-    /**
-     * @var array|NodeReassignmentMapping[]
-     */
-    protected $mappings;
-
 
     /**
      * @param Domain\ValueObject\ContentStreamIdentifier $contentStreamIdentifier
      * @param Domain\ValueObject\NodeIdentifier $nodeIdentifier
      * @param Domain\ValueObject\DimensionSpacePoint $targetDimensionSpacePoint
      * @param Domain\ValueObject\NodeIdentifier $specializationIdentifier
-     * @param array|NodeReassignmentMapping[] $mappings
      */
     public function __construct(
         Domain\ValueObject\ContentStreamIdentifier $contentStreamIdentifier,
         Domain\ValueObject\NodeIdentifier $nodeIdentifier,
         Domain\ValueObject\DimensionSpacePoint $targetDimensionSpacePoint,
-        Domain\ValueObject\NodeIdentifier $specializationIdentifier,
-        array $mappings
+        Domain\ValueObject\NodeIdentifier $specializationIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;
         $this->targetDimensionSpacePoint = $targetDimensionSpacePoint;
-        $this->mappings = $mappings;
+        $this->specializationIdentifier = $specializationIdentifier;
     }
-
 
     /**
      * @return Domain\ValueObject\ContentStreamIdentifier
@@ -96,28 +89,5 @@ final class NodeWasSpecialized implements EventInterface, CopyableAcrossContentS
     public function getSpecializationIdentifier(): Domain\ValueObject\NodeIdentifier
     {
         return $this->specializationIdentifier;
-    }
-
-    /**
-     * @return array|NodeReassignmentMapping[]
-     */
-    public function getMappings()
-    {
-        return $this->mappings;
-    }
-
-    /**
-     * @param Domain\ValueObject\ContentStreamIdentifier $targetContentStream
-     * @return NodeWasSpecialized
-     */
-    public function createCopyForContentStream(Domain\ValueObject\ContentStreamIdentifier $targetContentStream): NodeWasSpecialized
-    {
-        return new NodeWasSpecialized(
-            $targetContentStream,
-            $this->nodeIdentifier,
-            $this->targetDimensionSpacePoint,
-            $this->specializationIdentifier,
-            $this->mappings
-        );
     }
 }

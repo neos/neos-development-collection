@@ -316,6 +316,32 @@ final class ContentGraph implements ContentGraphInterface
         return new Domain\ValueObject\DimensionSpacePointSet($dimensionSpacePoints);
     }
 
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @return Domain\ValueObject\DimensionSpacePointSet
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function findVisibleDimensionSpacePointsOfNodeAggregate(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): Domain\ValueObject\DimensionSpacePointSet
+    {
+        $connection = $this->client->getConnection();
+
+        $query = 'SELECT h.dimensionspacepoint, h.dimensionspacepointhash FROM neos_contentgraph_node n
+                      INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                      WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
+                      AND h.contentstreamidentifier = :contentStreamIdentifier';
+        $parameters = [
+            'nodeAggregateIdentifier' => $nodeAggregateIdentifier,
+            'contentStreamIdentifier' => $contentStreamIdentifier
+        ];
+        $dimensionSpacePoints = [];
+        foreach ($connection->executeQuery($query, $parameters)->fetchAll() as $hierarchyRelationData) {
+            $dimensionSpacePoints[$hierarchyRelationData['dimensionspacepointhash']] = new DimensionSpacePoint(json_decode($hierarchyRelationData['dimensionspacepoint'], true)['coordinates']);
+        }
+
+        return new Domain\ValueObject\DimensionSpacePointSet($dimensionSpacePoints);
+    }
+
     public function resetCache()
     {
         if (is_array($this->subgraphs)) {

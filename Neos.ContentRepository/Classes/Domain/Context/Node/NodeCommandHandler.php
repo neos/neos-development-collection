@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Domain\Context\Node;
  */
 
 use Neos\ContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
-use Neos\ContentRepository\Domain\Context\Dimension\Exception\GeneralizationIsInvalid;
+use Neos\ContentRepository\Domain\Context\DimensionSpace\DimensionSpacePointIsNoGeneralization;
 use Neos\ContentRepository\Domain\Context\DimensionSpace\DimensionSpacePointIsNoSpecialization;
 use Neos\ContentRepository\Domain\Context\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Domain\Context\Importing\Command\FinalizeImportingSession;
@@ -20,10 +20,11 @@ use Neos\ContentRepository\Domain\Context\Importing\Command\StartImportingSessio
 use Neos\ContentRepository\Domain\Context\Importing\Event\ImportingSessionWasFinalized;
 use Neos\ContentRepository\Domain\Context\Importing\Event\ImportingSessionWasStarted;
 use Neos\ContentRepository\Domain\Context\Node\Command\AddNodeToAggregate;
+use Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeSpecialization;
 use Neos\ContentRepository\Domain\Context\Node\Command\HideNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\ShowNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\SetNodeReferences;
-use Neos\ContentRepository\Domain\Context\Node\Command\SpecializeNode;
+use Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeGeneralization;
 use Neos\ContentRepository\Domain\Context\Node\Command\TranslateNodeInAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateRootNode;
@@ -33,18 +34,17 @@ use Neos\ContentRepository\Domain\Context\Node\Command\MoveNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\ChangeNodeName;
 use Neos\ContentRepository\Domain\Context\Node\Command\SetNodeProperty;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\Domain\Context\Node\Event\NodeGeneralizationWasCreated;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeMoveMapping;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeNameWasChanged;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
-use Neos\ContentRepository\Domain\Context\Node\Event\NodeReassignmentMapping;
-use Neos\ContentRepository\Domain\Context\Node\Event\NodesInAggregateWereMoved;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodesWereMoved;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasAddedToAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasHidden;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeInAggregateWasTranslated;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasShown;
-use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasSpecialized;
+use Neos\ContentRepository\Domain\Context\Node\Event\NodeSpecializationWasCreated;
 use Neos\ContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeType;
@@ -587,8 +587,31 @@ final class NodeCommandHandler
             );
         }
 
+        /**
+        $reassignmentMappings = [];
+        foreach ($this->interDimensionalVariationGraph->getSpecializationSet($command->getTargetDimensionSpacePoint())->getPoints() as $specializedPoint)
+        {
+        $specializedSubgraph = $this->contentGraph->getSubgraphByIdentifier($command->getContentStreamIdentifier(), $specializedPoint);
+        $succeedingSpecializationSibling = $succeedingSourceSibling ? $specializedSubgraph->findNodeByNodeAggregateIdentifier($succeedingSourceSibling->getNodeAggregateIdentifier()) : null;
+        if (!$succeedingSpecializationSibling) {
+        $precedingSpecializationSibling = $precedingSourceSibling ? $specializedSubgraph->findNodeByNodeAggregateIdentifier($precedingSourceSibling->getNodeAggregateIdentifier()) : null;
+        if ($precedingSpecializationSibling) {
+        $succeedingSpecializationSibling = $specializedSubgraph->findSucceedingSibling($precedingSpecializationSibling->getNodeIdentifier());
+        }
+        }
+        $reassignmentMappings[] = new NodeReassignmentMapping(
+        $command->getSpecializationIdentifier(),
+        $sourceParentNode->getNodeIdentifier(),
+        $succeedingSpecializationSibling->getNodeIdentifier(),
+        $specializedPoint
+        );
+        }
+         */
+
         return $nodeMoveMappings;
     }
+
+
 
     /**
      * @param ChangeNodeName $command
@@ -619,47 +642,65 @@ final class NodeCommandHandler
     }
 
     /**
-     * @param SpecializeNode $command
+     * @param CreateNodeSpecialization $command
      */
-    public function handleSpecializeNode(SpecializeNode $command): void
+    public function handleCreateNodeSpecialization(CreateNodeSpecialization $command): void
     {
         $this->nodeEventPublisher->withCommand($command, function () use ($command) {
-            if (!$this->interDimensionalVariationGraph->getSpecializationSet($command->getSourceDimensionSpacePoint())->contains($command->getTargetDimensionSpacePoint())) {
-                throw new DimensionSpacePointIsNoSpecialization((string) $command->getTargetDimensionSpacePoint() . ' is no specialization of ' . (string) $command->getSourceDimensionSpacePoint(), 1519931770);
+            $sourceNode = $this->contentGraph->findNodeByIdentifierInContentStream($command->getContentStreamIdentifier(), $command->getNodeIdentifier());
+            if (!$this->interDimensionalVariationGraph->getSpecializationSet($sourceNode->getDimensionSpacePoint())->contains($command->getTargetDimensionSpacePoint())) {
+                throw new DimensionSpacePointIsNoSpecialization($command->getTargetDimensionSpacePoint() . ' is no specialization of ' . $sourceNode->getDimensionSpacePoint(), 1519931770);
             }
-
-            $sourceSubgraph = $this->contentGraph->getSubgraphByIdentifier($command->getContentStreamIdentifier(), $command->getSourceDimensionSpacePoint());
-            $sourceNode = $sourceSubgraph->findNodeByNodeAggregateIdentifier($command->getNodeAggregateIdentifier());
-            $sourceParentNode = $sourceSubgraph->findParentNode($sourceNode->getNodeIdentifier());
-
-            $precedingSourceSibling = $sourceSubgraph->findPrecedingSibling($sourceNode->getNodeIdentifier());
-            $succeedingSourceSibling = $sourceSubgraph->findSucceedingSibling($sourceNode->getNodeIdentifier());
-
-            $reassignmentMappings = [];
-            foreach ($this->interDimensionalVariationGraph->getSpecializationSet($command->getTargetDimensionSpacePoint())->getPoints() as $specializedPoint)
-            {
-                $specializedSubgraph = $this->contentGraph->getSubgraphByIdentifier($command->getContentStreamIdentifier(), $specializedPoint);
-                $succeedingSpecializationSibling = $succeedingSourceSibling ? $specializedSubgraph->findNodeByNodeAggregateIdentifier($succeedingSourceSibling->getNodeAggregateIdentifier()) : null;
-                if (!$succeedingSpecializationSibling) {
-                    $precedingSpecializationSibling = $precedingSourceSibling ? $specializedSubgraph->findNodeByNodeAggregateIdentifier($precedingSourceSibling->getNodeAggregateIdentifier()) : null;
-                    if ($precedingSpecializationSibling) {
-                        $succeedingSpecializationSibling = $specializedSubgraph->findSucceedingSibling($precedingSpecializationSibling->getNodeIdentifier());
-                    }
-                }
-                $reassignmentMappings[] = new NodeReassignmentMapping(
-                    $command->getSpecializationIdentifier(),
-                    $sourceParentNode->getNodeIdentifier(),
-                    $succeedingSpecializationSibling->getNodeIdentifier(),
-                    $specializedPoint
-                );
+            // @todo hard constraint
+            $targetSubgraph = $this->contentGraph->getSubgraphByIdentifier($command->getContentStreamIdentifier(), $command->getTargetDimensionSpacePoint());
+            $occupant = $targetSubgraph->findNodeByNodeAggregateIdentifier($sourceNode->getNodeAggregateIdentifier());
+            if ($occupant->getDimensionSpacePoint()->equals($command->getTargetDimensionSpacePoint())) {
+                throw new DimensionSpacePointIsAlreadyOccupiedInNodeAggregate($command->getTargetDimensionSpacePoint() . ' is already occupied by node ' . $occupant->getNodeIdentifier(), 1519986184);
             }
-
-            $event = new NodeWasSpecialized(
+            // @todo filter specialization set with occupied DSPs
+            $event = new NodeSpecializationWasCreated(
                 $command->getContentStreamIdentifier(),
+                $command->getNodeIdentifier(),
                 $command->getSpecializationIdentifier(),
                 $command->getTargetDimensionSpacePoint(),
-                $command->getSpecializationIdentifier(),
-                $reassignmentMappings
+                $this->interDimensionalVariationGraph->getSpecializationSet($command->getTargetDimensionSpacePoint())
+            );
+
+            $this->nodeEventPublisher->publish(
+                ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier()),
+                $event
+            );
+        });
+    }
+
+    /**
+     * @param CreateNodeGeneralization $command
+     */
+    public function handleCreateNodeGeneralization(CreateNodeGeneralization $command): void
+    {
+        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
+            $sourceNode = $this->contentGraph->findNodeByIdentifierInContentStream($command->getContentStreamIdentifier(), $command->getNodeIdentifier());
+            if (!$this->interDimensionalVariationGraph->getSpecializationSet($command->getTargetDimensionSpacePoint())->contains($sourceNode->getDimensionSpacePoint())) {
+                throw new DimensionSpacePointIsNoGeneralization($command->getTargetDimensionSpacePoint() . ' is no generalization of ' . $sourceNode->getDimensionSpacePoint(), 1519989009);
+            }
+            // @todo hard constraint
+            $targetSubgraph = $this->contentGraph->getSubgraphByIdentifier($command->getContentStreamIdentifier(), $command->getTargetDimensionSpacePoint());
+            $occupant = $targetSubgraph->findNodeByNodeAggregateIdentifier($sourceNode->getNodeAggregateIdentifier());
+            if ($occupant && $occupant->getDimensionSpacePoint()->equals($command->getTargetDimensionSpacePoint())) {
+                throw new DimensionSpacePointIsAlreadyOccupiedInNodeAggregate($command->getTargetDimensionSpacePoint() . ' is already occupied by node ' . $occupant->getNodeIdentifier(), 1519986184);
+            }
+
+            $event = new NodeGeneralizationWasCreated(
+                $command->getContentStreamIdentifier(),
+                $command->getNodeIdentifier(),
+                $sourceNode->getDimensionSpacePoint(),
+                $command->getGeneralizationIdentifier(),
+                $command->getTargetDimensionSpacePoint(),
+                $this->interDimensionalVariationGraph->getSpecializationSet(
+                    $command->getTargetDimensionSpacePoint(),
+                    true,
+                    $this->contentGraph->findVisibleDimensionSpacePointsOfNodeAggregate($command->getContentStreamIdentifier(), $sourceNode->getNodeAggregateIdentifier())
+                )
             );
 
             $this->nodeEventPublisher->publish(

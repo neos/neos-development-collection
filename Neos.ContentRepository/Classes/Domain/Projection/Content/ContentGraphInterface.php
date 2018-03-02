@@ -84,4 +84,11 @@ interface ContentGraphInterface
      * @return Domain\ValueObject\DimensionSpacePointSet
      */
     public function findVisibleDimensionSpacePointsOfNode(Domain\Context\Node\ReadOnlyNodeInterface $node): Domain\ValueObject\DimensionSpacePointSet;
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @return Domain\ValueObject\DimensionSpacePointSet
+     */
+    public function findVisibleDimensionSpacePointsOfNodeAggregate(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): Domain\ValueObject\DimensionSpacePointSet;
 }
