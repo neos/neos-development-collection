@@ -342,7 +342,7 @@ class Node implements NodeInterface, CacheAwareInterface
         return array_filter(
             $this->context->getNodeVariantsByIdentifier($this->getIdentifier()),
             function ($node) {
-                return ($node->getNodeData() !== $this->nodeData);
+                return ($node instanceof NodeInterface && $node->getNodeData() !== $this->nodeData);
             }
         );
     }
