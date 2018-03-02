@@ -59,16 +59,6 @@
 			<f:if condition="{moduleContents}">
 				{moduleContents -> f:format.raw()}
 			</f:if>
-			<div id="neos-application" class="neos">
-				<div id="neos-top-bar">
-					<div id="neos-top-bar-right">
-						<div id="neos-user-actions">
-							<f:render partial="Backend/UserMenu" arguments="{_all}" />
-						</div>
-					</div>
-				</div>
-				<f:render partial="Backend/Menu" arguments="{sites: sites, modules: modules, modulePath: moduleConfiguration.path}" />
-			</div>
 		</div>
 		<script src="{f:uri.resource(path: '2/js/bootstrap.min.js', package: 'Neos.Twitter.Bootstrap')}"></script>
 		<script src="{f:uri.resource(path: 'Library/fixedsticky/fixedsticky.js', package: 'Neos.Neos')}"></script>
