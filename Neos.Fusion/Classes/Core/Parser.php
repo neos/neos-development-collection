@@ -618,10 +618,6 @@ class Parser implements ParserInterface
     {
         $include = trim($include);
         $parser = new Parser();
-        // transfer current namespaces to new parser
-        foreach ($this->objectTypeNamespaces as $key => $objectTypeNamespace) {
-            $parser->setObjectTypeNamespace($key, $objectTypeNamespace);
-        }
 
         if (strpos($include, 'resource://') !== 0) {
             // Resolve relative paths
