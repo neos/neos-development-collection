@@ -20,6 +20,7 @@ use Neos\ContentRepository\Domain\Context\Importing\Event\ImportingSessionWasSta
 use Neos\ContentRepository\Domain\Context\Node\Command\AddNodeToAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Command\HideNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\ShowNode;
+use Neos\ContentRepository\Domain\Context\Node\Command\SetNodeReferences;
 use Neos\ContentRepository\Domain\Context\Node\Command\TranslateNodeInAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateNodeAggregateWithNode;
 use Neos\ContentRepository\Domain\Context\Node\Command\CreateRootNode;
@@ -32,6 +33,7 @@ use Neos\ContentRepository\Domain\Context\Node\Command\SetNodeProperty;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeNameWasChanged;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
+use Neos\ContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodesInAggregateWereMoved;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasAddedToAggregate;
 use Neos\ContentRepository\Domain\Context\Node\Event\NodeWasHidden;
@@ -384,6 +386,39 @@ final class NodeCommandHandler
     }
 
     /**
+     * @param SetNodeReferences $command
+     * @throws Exception\NodeException
+     */
+    public function handleSetNodeReferences(SetNodeReferences $command): void
+    {
+        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
+            $contentStreamIdentifier = $command->getContentStreamIdentifier();
+            $nodeIdentifier = $command->getNodeIdentifier();
+
+            $node = $this->getNode($contentStreamIdentifier, $nodeIdentifier);
+
+            $dimensionSpacePointsSet = $this->calculateVisibilityForNewNodeInNodeAggregate(
+                $contentStreamIdentifier,
+                $node->getNodeAggregateIdentifier(),
+                $node->getDimensionSpacePoint()
+            );
+
+            $events[] = new NodeReferencesWereSet(
+                $contentStreamIdentifier,
+                $dimensionSpacePointsSet,
+                $command->getNodeIdentifier(),
+                $command->getPropertyName(),
+                $command->getDestinationtNodeAggregateIdentifiers()
+            );
+
+            $this->nodeEventPublisher->publishMany(
+                ContentStreamCommandHandler::getStreamNameForContentStream($contentStreamIdentifier),
+                $events
+            );
+        });
+    }
+
+    /**
      * @param HideNode $command
      */
     public function handleHideNode(HideNode $command): void
@@ -628,7 +663,7 @@ final class NodeCommandHandler
 
         return $events;
     }
-
+    
 
     /**
      * @param NodeTypeName $nodeTypeName

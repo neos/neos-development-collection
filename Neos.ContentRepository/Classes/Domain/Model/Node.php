@@ -764,18 +764,45 @@ class Node implements NodeInterface, CacheAwareInterface
     public function setProperty($propertyName, $value)
     {
         $propertyType = $this->getNodeType()->getPropertyType($propertyName);
-
-        $command = new Command\SetNodeProperty(
-            $this->context->getContentSubgraph()->getContentStreamIdentifier(),
-            $this->getNodeIdentifier(),
-            $propertyName,
-            new PropertyValue($value, $propertyType)
-        );
-
         $oldValue = $this->hasProperty($propertyName) ? $this->getProperty($propertyName) : null;
         $this->emitBeforeNodePropertyChange($this, $propertyName, $oldValue, $value);
 
-        $this->nodeCommandHandler->handleSetNodeProperty($command);
+        switch ($propertyType) {
+            case 'reference':
+            case 'references':
+
+                if ($propertyType == 'reference') {
+                    $nodes = [$value];
+                } else {
+                    $nodes = $value;
+                }
+
+                $destinationNodeAggregateIdentifiers = array_filter(array_map(
+                    function($node) {
+                        if ($node instanceof NodeInterface) {
+                            return $node->getNodeAggregateIdentifier();
+                        }
+                    },
+                    $nodes
+                ));
+
+                $command = new Command\SetNodeReferences(
+                    $this->context->getContentSubgraph()->getContentStreamIdentifier(),
+                    $this->getNodeIdentifier(),
+                    new PropertyName($propertyName),
+                    $destinationNodeAggregateIdentifiers
+                );
+                $this->nodeCommandHandler->handleSetNodeReferences($command);
+                break;
+            default:
+                $command = new Command\SetNodeProperty(
+                    $this->context->getContentSubgraph()->getContentStreamIdentifier(),
+                    $this->getNodeIdentifier(),
+                    $propertyName,
+                    new PropertyValue($value, $propertyType)
+                );
+                $this->nodeCommandHandler->handleSetNodeProperty($command);
+        }
 
         $this->emitNodePropertyChanged($this, $propertyName, $oldValue, $value);
         $this->emitNodeUpdated($this);

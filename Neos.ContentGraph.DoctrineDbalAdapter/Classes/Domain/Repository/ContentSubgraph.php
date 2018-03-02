@@ -280,6 +280,49 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
     }
 
     /**
+     * @param ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier
+     * @param ContentRepository\ValueObject\PropertyName $nodeTypeConstraints
+     * @param ContentRepository\Service\Context|null $contentContext
+     * @return ContentRepository\Model\NodeInterface[]
+     */
+    public function findReferencedNodes(ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier, ContentRepository\ValueObject\PropertyName $name = null, ContentRepository\Service\Context $context = null) :array
+    {
+        $params = [
+            'nodeIdentifier' => (string)$nodeIdentifier,
+            'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
+            'dimensionSpacePointHash' => (string)$this->getDimensionSpacePoint()->getHash(),
+            'name' => (string)$name
+        ];
+
+        $query = 'SELECT d.*, dh.contentstreamidentifier, dh.name FROM neos_contentgraph_hierarchyrelation sh
+ INNER JOIN neos_contentgraph_node s ON sh.childnodeanchor = s.relationanchorpoint 
+ INNER JOIN neos_contentgraph_referencerelation r ON s.relationanchorpoint = r.nodeanchorpoint
+ INNER JOIN neos_contentgraph_node d ON r.destinationnodeaggregateidentifier = d.nodeaggregateidentifier
+ INNER JOIN neos_contentgraph_hierarchyrelation dh ON dh.childnodeanchor = d.relationanchorpoint  
+ WHERE s.nodeidentifier = :nodeIdentifier
+ AND dh.dimensionspacepointhash = :dimensionSpacePointHash
+ AND sh.dimensionspacepointhash = :dimensionSpacePointHash
+ AND dh.contentstreamidentifier = :contentStreamIdentifier
+ AND sh.contentstreamidentifier = :contentStreamIdentifier
+';
+
+        if ($name) {
+            $query .= '
+ AND r.name = :name
+ ORDER BY r.position';
+        } else {
+            $query .= '
+ ORDER BY r.name, r.position';
+        }
+
+        $result = [];
+        foreach ($this->getDatabaseConnection()->executeQuery($query, $params)->fetchAll() as $nodeData) {
+            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeData, $context);
+        }
+        return $result;
+    }
+
+    /**
      * @param ContentRepository\ValueObject\NodeIdentifier $childNodeIdentifier
      * @param ContentRepository\Service\Context|null $context
      * @return ContentRepository\Model\NodeInterface|null
