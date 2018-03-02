@@ -14,7 +14,6 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Node;
 use Neos\ContentRepository\Domain as ContentRepository;
 use Neos\ContentRepository\Domain\Context\Parameters\ContextParameters;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content as ContentProjection;
 use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
@@ -80,7 +79,7 @@ final class NodeFactory
      * @param $contentQuery
      * @return array
      */
-    public function findNodeForContentQuery(ContentQuery $contentQuery): NodeInterface
+    public function findNodeForContentQuery(ContentQuery $contentQuery): ContentProjection\NodeInterface
     {
         $inBackend = !$contentQuery->getWorkspaceName()->isLive();
         $workspace = $this->workspaceFinder->findOneByName($contentQuery->getWorkspaceName());
@@ -97,7 +96,7 @@ final class NodeFactory
 
         $contentContext = $this->createContentContext($contentQuery, $subgraph, $contextParameters, $site);
 
-        $node = $subgraph->findNodeByNodeAggregateIdentifier($contentQuery->getNodeAggregateIdentifier(), $contentContext);
+        $node = $subgraph->findNodeByNodeAggregateIdentifier($contentQuery->getNodeAggregateIdentifier());
 
         return $node;
     }
@@ -138,13 +137,12 @@ final class NodeFactory
 
     /**
      * @param array $nodeRow Node Row from projection (neos_contentgraph_node table)
-     * @param ContentRepository\Service\Context $context
-     * @return ContentRepository\Model\NodeInterface
+     * @return ContentProjection\NodeInterface
      * @throws \Exception
      * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
      * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
-    public function mapNodeRowToNode(array $nodeRow, ContentRepository\Service\Context $context = null): ContentRepository\Model\NodeInterface
+    public function mapNodeRowToNode(array $nodeRow, ContentSubgraphInterface $subgraph): ContentProjection\NodeInterface
     {
         $nodeType = $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']);
         $className = $nodeType->getNodeInterfaceImplementationClassName();

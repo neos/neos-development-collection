@@ -86,14 +86,13 @@ final class ContentGraph implements ContentGraphInterface
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeIdentifier $nodeIdentifier
-     * @param Domain\Service\Context|null $context
      * @return NodeInterface|null
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
      * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
      * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
-    public function findNodeByIdentifierInContentStream(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier, Domain\Service\Context $context = null): ?NodeInterface
+    public function findNodeByIdentifierInContentStream(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier): ?NodeInterface
     {
         $connection = $this->client->getConnection();
 
@@ -109,7 +108,7 @@ final class ContentGraph implements ContentGraphInterface
             ]
         )->fetch();
 
-        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow, $context) : null;
+        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow) : null;
     }
 
     /**

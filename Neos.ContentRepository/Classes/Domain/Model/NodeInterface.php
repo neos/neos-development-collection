@@ -26,6 +26,7 @@ use Neos\ContentRepository\Exception\NodeExistsException;
  * For the read-only (event-sourced) Node Interface, use the ReadOnlyNodeInterface instead.
  *
  * @api
+ * @deprecated
  */
 interface NodeInterface extends Domain\Context\Node\ReadOnlyNodeInterface
 {

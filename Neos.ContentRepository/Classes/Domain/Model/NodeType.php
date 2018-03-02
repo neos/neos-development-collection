@@ -569,8 +569,8 @@ class NodeType
         if (!empty($customClassName)) {
             if (!class_exists($customClassName)) {
                 throw new NodeConfigurationException('The configured implementation class name "' . $customClassName . '" for NodeType "' . $this . '" does not exist.', 1505805774);
-            } elseif (!$this->reflectionService->isClassImplementationOf($customClassName, NodeInterface::class)) {
-                throw new NodeConfigurationException('The configured implementation class name "' . $customClassName . '" for NodeType "' . $this. '" does not inherit from ' . NodeInterface::class . '.', 1406884014);
+            } elseif (!$this->reflectionService->isClassImplementationOf($customClassName, \Neos\ContentRepository\Domain\Projection\Content\NodeInterface::class)) {
+                throw new NodeConfigurationException('The configured implementation class name "' . $customClassName . '" for NodeType "' . $this. '" does not inherit from ' . \Neos\ContentRepository\Domain\Projection\Content\NodeInterface::class . '.', 1406884014);
             }
         } else {
             return $this->objectManager->getClassNameByObjectName(NodeInterface::class);

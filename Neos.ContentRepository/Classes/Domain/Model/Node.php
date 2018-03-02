@@ -41,6 +41,7 @@ use Neos\Neos\Ui\Domain\Model\Changes\Property;
  *
  * @Flow\Scope("prototype")
  * @api
+ * @deprecated
  */
 class Node implements NodeInterface, CacheAwareInterface
 {

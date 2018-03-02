@@ -20,7 +20,7 @@ use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 
 /**
- * The property collection implementation
+ * The property collection implementation --> TODO: Move to TraversableNode!!
  *
  * Takes care of lazily resolving entity properties
  */
@@ -129,6 +129,7 @@ class PropertyCollection implements \ArrayAccess, \Iterator
             return $this->properties[$offset];
         }
 
+        // TODO: reference properties resolvinf
         if (isset($this->referenceProperties[$offset]) || isset($this->referencesProperties[$offset])) {
             if (!isset($this->references[$offset])) {
                 $propertyReferences = $this->contentSubgraph->findReferencedNodes($this->nodeIdentifier, new PropertyName($offset));
