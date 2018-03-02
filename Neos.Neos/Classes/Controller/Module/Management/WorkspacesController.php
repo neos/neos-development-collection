@@ -11,6 +11,7 @@ namespace Neos\Neos\Controller\Module\Management;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Diff\Diff;
 use Neos\Diff\Renderer\Html\HtmlArrayRenderer;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -412,7 +413,7 @@ class WorkspacesController extends AbstractModuleController
         if (($targetWorkspace = $workspace->getBaseWorkspace()) === null) {
             $targetWorkspace = $this->workspaceRepository->findOneByName('live');
         }
-        $this->publishingService->publishNodes($this->publishingService->getUnpublishedNodes($workspace), $targetWorkspace);
+        $this->publishingService->publishNodes($this->publishingService->getUnpublishedNodes(new WorkspaceName($workspace->getName())), $targetWorkspace);
         $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenPublished', [htmlspecialchars($workspace->getTitle()), htmlspecialchars($targetWorkspace->getTitle())], null, null, 'Modules', 'Neos.Neos'));
         $this->redirect('index');
     }
@@ -425,7 +426,7 @@ class WorkspacesController extends AbstractModuleController
      */
     public function discardWorkspaceAction(Workspace $workspace)
     {
-        $unpublishedNodes = $this->publishingService->getUnpublishedNodes($workspace);
+        $unpublishedNodes = $this->publishingService->getUnpublishedNodes(new WorkspaceName($workspace->getName()));
         $this->publishingService->discardNodes($unpublishedNodes);
         $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenDiscarded', [htmlspecialchars($workspace->getTitle())], null, null, 'Modules', 'Neos.Neos'));
         $this->redirect('index');
@@ -467,7 +468,7 @@ class WorkspacesController extends AbstractModuleController
     protected function computeSiteChanges(Workspace $selectedWorkspace)
     {
         $siteChanges = [];
-        foreach ($this->publishingService->getUnpublishedNodes($selectedWorkspace) as $node) {
+        foreach ($this->publishingService->getUnpublishedNodes(new WorkspaceName($selectedWorkspace->getName())) as $node) {
             /** @var NodeInterface $node */
             $skipCollectionChanges = $node->getNodeType()->isOfType('Neos.Neos:ContentCollection') && !$node->getNodeType()->isOfType('Neos.Neos:Content');
             if (!$skipCollectionChanges) {

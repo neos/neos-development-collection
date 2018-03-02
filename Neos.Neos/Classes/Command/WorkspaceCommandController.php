@@ -123,7 +123,7 @@ class WorkspaceCommandController extends CommandController
         }
 
         try {
-            $nodes = $this->publishingService->getUnpublishedNodes($workspace);
+            $nodes = $this->publishingService->getUnpublishedNodes(new WorkspaceName($workspace->getName()));
         } catch (\Exception $exception) {
             $this->outputLine('An error occurred while fetching unpublished nodes from workspace %s, publish aborted.', [$workspaceName]);
             $this->quit(1);
@@ -166,7 +166,7 @@ class WorkspaceCommandController extends CommandController
         }
 
         try {
-            $nodes = $this->publishingService->getUnpublishedNodes($workspace);
+            $nodes = $this->publishingService->getUnpublishedNodes(new WorkspaceName($workspace->getName()));
         } catch (\Exception $exception) {
             $this->outputLine('An error occurred while fetching unpublished nodes from workspace %s, discard aborted.', [$workspaceName]);
             $this->quit(1);

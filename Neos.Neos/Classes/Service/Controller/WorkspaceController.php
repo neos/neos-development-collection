@@ -11,6 +11,7 @@ namespace Neos\Neos\Service\Controller;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Neos\Service\PublishingService;
@@ -156,7 +157,7 @@ class WorkspaceController extends AbstractServiceController
         if ($targetWorkspace === null) {
             $this->throwStatus(400, 'Invalid target workspace');
         }
-        $this->publishingService->publishNodes($this->publishingService->getUnpublishedNodes($sourceWorkspace), $targetWorkspace);
+        $this->publishingService->publishNodes($this->publishingService->getUnpublishedNodes(new WorkspaceName($sourceWorkspace->getName())), $targetWorkspace);
 
         $this->throwStatus(204, sprintf('All changes in workspace %s have been published to %s', $sourceWorkspaceName, $targetWorkspaceName), '');
     }
@@ -169,7 +170,7 @@ class WorkspaceController extends AbstractServiceController
      */
     public function getWorkspaceWideUnpublishedNodesAction($workspace)
     {
-        $this->view->assignNodes($this->publishingService->getUnpublishedNodes($workspace));
+        $this->view->assignNodes($this->publishingService->getUnpublishedNodes(new WorkspaceName($workspace->getName())));
     }
 
     /**

@@ -11,6 +11,10 @@ namespace Neos\Neos\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Context\Workspace\Command\PublishWorkspace;
+use Neos\ContentRepository\Domain\Context\Workspace\Command\RebaseWorkspace;
+use Neos\ContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
+use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\Workspace;
@@ -24,6 +28,28 @@ use Neos\ContentRepository\Domain\Model\Workspace;
  */
 class PublishingService extends \Neos\ContentRepository\Domain\Service\PublishingService
 {
+    /**
+     * @Flow\Inject
+     * @var WorkspaceCommandHandler
+     */
+    protected $workspaceCommandHandler;
+
+    /**
+     * @param WorkspaceName $workspaceName
+     */
+    public function publishWorkspace(WorkspaceName $workspaceName)
+    {
+        $command = new RebaseWorkspace(
+            $workspaceName
+        );
+        $this->workspaceCommandHandler->handleRebaseWorkspace($command);
+
+        $command = new PublishWorkspace(
+            $workspaceName
+        );
+        $this->workspaceCommandHandler->handlePublishWorkspace($command);
+    }
+
     /**
      * Publishes the given node to the specified target workspace. If no workspace is specified, the base workspace
      * is assumed.

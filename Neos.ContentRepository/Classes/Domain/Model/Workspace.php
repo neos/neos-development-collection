@@ -376,28 +376,6 @@ class Workspace
     }
 
     /**
-     * Publishes the content of this workspace to another workspace.
-     *
-     * The specified workspace must be a base workspace of this workspace.
-     *
-     * @param Workspace $targetWorkspace The workspace to publish to
-     * @return void
-     * @api
-     */
-    public function publish(Workspace $targetWorkspace)
-    {
-        $command = new RebaseWorkspace(
-            new WorkspaceName($this->name)
-        );
-        $this->workspaceCommandHandler->handleRebaseWorkspace($command);
-
-        $command = new PublishWorkspace(
-            new WorkspaceName($this->name)
-        );
-        $this->workspaceCommandHandler->handlePublishWorkspace($command);
-    }
-
-    /**
      * Publishes the given nodes to the target workspace.
      *
      * The specified workspace must be a base workspace of this workspace.

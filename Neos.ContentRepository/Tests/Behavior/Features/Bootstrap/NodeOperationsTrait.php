@@ -16,6 +16,7 @@ use Neos\ContentRepository\Domain\Context\DimensionSpace;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Domain\Service\PublishingServiceInterface;
+use Neos\ContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\Arrays;
 use Neos\Utility\ObjectAccess;
@@ -460,7 +461,7 @@ trait NodeOperationsTrait
 
             /** @var PublishingServiceInterface $publishingService */
             $publishingService = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\PublishingServiceInterface::class);
-            $publishingService->discardNodes($publishingService->getUnpublishedNodes($workspace));
+            $publishingService->discardNodes($publishingService->getUnpublishedNodes(new WorkspaceName($workspace->getName())));
 
             $this->getSubcontext('flow')->persistAll();
             $this->resetNodeInstances();
@@ -502,7 +503,7 @@ trait NodeOperationsTrait
             $sourceContext = $this->getContextForProperties($rows[0]);
             $sourceWorkspace = $sourceContext->getWorkspace();
 
-            $publishingService->publishNodes($publishingService->getUnpublishedNodes($sourceWorkspace));
+            $publishingService->publishNodes($publishingService->getUnpublishedNodes(new WorkspaceName($sourceWorkspace->getName())));
 
             $this->objectManager->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->persistAll();
             $this->resetNodeInstances();
@@ -941,7 +942,7 @@ trait NodeOperationsTrait
             $context = $this->getContextForProperties($rows[0]);
 
             $publishingService = $this->getPublishingService();
-            Assert::assertEquals((int)$nodeCount, count($publishingService->getUnpublishedNodes($context->getWorkspace())));
+            Assert::assertEquals((int)$nodeCount, count($publishingService->getUnpublishedNodes(new WorkspaceName($context->getWorkspace()->getName()))));
         }
     }
 
