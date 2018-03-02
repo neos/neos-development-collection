@@ -71,7 +71,7 @@ Feature: Node References without Dimensions
       | nodeTypeName                  | Neos.ContentRepository:NodeWithReferences |                        |
       | dimensionSpacePoint           | {"coordinates": []}                       | json                   |
       | visibleDimensionSpacePoints   | {"points":[{"coordinates":[]}]}           | DimensionSpacePointSet |
-      | nodeIdentifier                | dest-2-node-identifier                    | Uuid                   |
+      | nodeIdentifier                | dest-3-node-identifier                    | Uuid                   |
       | parentNodeIdentifier          | rn-identifier                             | Uuid                   |
       | nodeName                      | dest-3                                    |                        |
       | propertyDefaultValuesAndTypes | {}                                        | json                   |
@@ -91,6 +91,34 @@ Feature: Node References without Dimensions
     Then I expect the Node "[source-node-identifier]" to have the references:
       | Key               | Value                     | Type   |
       | referenceProperty | dest-1-nodeAgg-identifier | Uuid[] |
+
+    And I expect the Node "[dest-1-node-identifier]" to be referenced by:
+      | Key               | Value                     | Type   |
+      | referenceProperty | source-nodeAgg-identifier | Uuid[] |
+
+  Scenario: Ensure that references between nodes can be set and red
+
+    When the command "SetNodeReferences" is executed with payload:
+      | Key                                 | Value                                               | Type   |
+      | contentStreamIdentifier             | cs-identifier                                       | Uuid   |
+      | nodeIdentifier                      | source-node-identifier                              | Uuid   |
+      | propertyName                        | referencesProperty                                  |        |
+      | destinationNodeAggregateIdentifiers | dest-2-nodeAgg-identifier,dest-3-nodeAgg-identifier | Uuid[] |
+
+    And the graph projection is fully up to date
+    And I am in content stream "[cs-identifier]" and Dimension Space Point {}
+
+    Then I expect the Node "[source-node-identifier]" to have the references:
+      | Key                | Value                                               | Type   |
+      | referencesProperty | dest-2-nodeAgg-identifier,dest-3-nodeAgg-identifier | Uuid[] |
+
+    And I expect the Node "[dest-2-node-identifier]" to be referenced by:
+      | Key                | Value                     | Type   |
+      | referencesProperty | source-nodeAgg-identifier | Uuid[] |
+
+    And I expect the Node "[dest-3-node-identifier]" to be referenced by:
+      | Key                | Value                     | Type   |
+      | referencesProperty | source-nodeAgg-identifier | Uuid[] |
 
   Scenario: Ensure that references between nodes can be set and overwritten
 
@@ -181,3 +209,28 @@ Feature: Node References without Dimensions
     Then I expect the Node "[source-node-identifier]" to have the references:
       | Key                | Value | Type   |
       | referencesProperty |       | Uuid[] |
+
+  Scenario: Ensure that references from multiple nodes read from the opposing side
+
+    When the command "SetNodeReferences" is executed with payload:
+      | Key                                 | Value                     | Type   |
+      | contentStreamIdentifier             | cs-identifier             | Uuid   |
+      | nodeIdentifier                      | source-node-identifier    | Uuid   |
+      | propertyName                        | referenceProperty         |        |
+      | destinationNodeAggregateIdentifiers | dest-1-nodeAgg-identifier | Uuid[] |
+
+    And the command "SetNodeReferences" is executed with payload:
+      | Key                                 | Value                     | Type   |
+      | contentStreamIdentifier             | cs-identifier             | Uuid   |
+      | nodeIdentifier                      | dest-2-node-identifier    | Uuid   |
+      | propertyName                        | referenceProperty         |        |
+      | destinationNodeAggregateIdentifiers | dest-1-nodeAgg-identifier | Uuid[] |
+
+    And the graph projection is fully up to date
+
+    And I am in content stream "[cs-identifier]" and Dimension Space Point {}
+
+    Then I expect the Node "[dest-1-node-identifier]" to be referenced by:
+      | Key               | Value                                               | Type   |
+      | referenceProperty | source-nodeAgg-identifier,dest-2-nodeAgg-identifier | Uuid[] |
+

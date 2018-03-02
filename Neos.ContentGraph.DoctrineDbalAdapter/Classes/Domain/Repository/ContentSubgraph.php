@@ -298,7 +298,7 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
 
     /**
      * @param ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier
-     * @param ContentRepository\ValueObject\PropertyName $nodeTypeConstraints
+     * @param ContentRepository\ValueObject\PropertyName $name
      * @return NodeInterface[]
      */
     public function findReferencedNodes(ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier, ContentRepository\ValueObject\PropertyName $name = null): array
@@ -310,7 +310,9 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
             'name' => (string)$name
         ];
 
-        $query = 'SELECT d.*, dh.contentstreamidentifier, dh.name FROM neos_contentgraph_hierarchyrelation sh
+        $query = '
+-- ContentSubgraph::findReferencedNodes
+SELECT d.*, dh.contentstreamidentifier, dh.name FROM neos_contentgraph_hierarchyrelation sh
  INNER JOIN neos_contentgraph_node s ON sh.childnodeanchor = s.relationanchorpoint 
  INNER JOIN neos_contentgraph_referencerelation r ON s.relationanchorpoint = r.nodeanchorpoint
  INNER JOIN neos_contentgraph_node d ON r.destinationnodeaggregateidentifier = d.nodeaggregateidentifier
@@ -329,6 +331,49 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
         } else {
             $query .= '
  ORDER BY r.name, r.position';
+        }
+
+        $result = [];
+        foreach ($this->getDatabaseConnection()->executeQuery($query, $params)->fetchAll() as $nodeData) {
+            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeData);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier
+     * @param ContentRepository\ValueObject\PropertyName $name
+     * @return NodeInterface[]
+     */
+    public function findReferencingNodes(ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier, ContentRepository\ValueObject\PropertyName $name = null) :array
+    {
+        $node = $this->findNodeByIdentifier($nodeIdentifier);
+
+        $params = [
+            'destinationnodeaggregateidentifier' => (string)$node->getNodeAggregateIdentifier(),
+            'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
+            'dimensionSpacePointHash' => (string)$this->getDimensionSpacePoint()->getHash(),
+            'name' => (string)$name
+        ];
+
+        $query = '
+-- ContentSubgraph::findReferencingNodes
+SELECT s.*, sh.contentstreamidentifier, sh.name FROM neos_contentgraph_hierarchyrelation sh
+ INNER JOIN neos_contentgraph_node s ON sh.childnodeanchor = s.relationanchorpoint 
+ INNER JOIN neos_contentgraph_referencerelation r ON s.relationanchorpoint = r.nodeanchorpoint
+ INNER JOIN neos_contentgraph_node d ON r.destinationnodeaggregateidentifier = d.nodeaggregateidentifier
+ INNER JOIN neos_contentgraph_hierarchyrelation dh ON dh.childnodeanchor = d.relationanchorpoint  
+ WHERE d.nodeaggregateidentifier = :destinationnodeaggregateidentifier
+ AND dh.dimensionspacepointhash = :dimensionSpacePointHash
+ AND sh.dimensionspacepointhash = :dimensionSpacePointHash
+ AND dh.contentstreamidentifier = :contentStreamIdentifier
+ AND sh.contentstreamidentifier = :contentStreamIdentifier
+';
+
+        if ($name) {
+            $query .= '
+ AND r.name = :name';
         }
 
         $result = [];

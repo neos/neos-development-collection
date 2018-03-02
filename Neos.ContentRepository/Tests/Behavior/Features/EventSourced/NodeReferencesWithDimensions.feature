@@ -77,6 +77,10 @@ Feature: Node References with Dimensions
       | Key               | Value                   | Type   |
       | referenceProperty | dest-nodeAgg-identifier | Uuid[] |
 
+    And I expect the Node "[dest-node-identifier]" to be referenced by:
+      | Key               | Value                     | Type   |
+      | referenceProperty | source-nodeAgg-identifier | Uuid[] |
+
   Scenario: Ensure that the reference can be read in fallback dimension
 
     And I am in content stream "[cs-identifier]" and Dimension Space Point {"language": "ch"}
@@ -85,11 +89,19 @@ Feature: Node References with Dimensions
       | Key               | Value                   | Type   |
       | referenceProperty | dest-nodeAgg-identifier | Uuid[] |
 
+    And I expect the Node "[dest-node-identifier]" to be referenced by:
+      | Key               | Value                     | Type   |
+      | referenceProperty | source-nodeAgg-identifier | Uuid[] |
+
   Scenario: Ensure that the reference cannot be read in independent dimension
 
     And I am in content stream "[cs-identifier]" and Dimension Space Point {"language": "en"}
 
     Then I expect the Node "[source-node-identifier]" to have the references:
+      | Key               | Value | Type   |
+      | referenceProperty |       | Uuid[] |
+
+    And I expect the Node "[dest-node-identifier]" to be referenced by:
       | Key               | Value | Type   |
       | referenceProperty |       | Uuid[] |
 
