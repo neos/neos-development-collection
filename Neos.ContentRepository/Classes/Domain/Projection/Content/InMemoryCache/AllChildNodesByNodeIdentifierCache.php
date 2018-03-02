@@ -26,6 +26,10 @@ final class AllChildNodesByNodeIdentifierCache
     public function add(NodeIdentifier $parentNodeIdentifier, array $allChildNodes)
     {
         $key = (string)$parentNodeIdentifier;
+        if (count($allChildNodes) > 0 && !(reset($allChildNodes)->getContext())) {
+            // we have child nodes, but they do not have a context -> we are not allowed to store them
+            return;
+        }
         $this->childNodes[$key] = $allChildNodes;
     }
 
