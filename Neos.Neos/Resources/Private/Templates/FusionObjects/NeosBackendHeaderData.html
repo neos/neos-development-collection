@@ -1,14 +1,12 @@
 {namespace neos=Neos\Neos\ViewHelpers}
 <script type="text/javascript">
 			// TODO Get rid of those global variables
-		{neos:backend.javascriptConfiguration()}
-		var Aloha,
-			alohaBaseUrl = '{f:uri.resource(path: 'Library/aloha', package: 'Neos.Neos')}';
+		{neos:backend.javascriptConfiguration()->f:format-raw()}
 </script>
 
 <f:if condition="{neos:backend.shouldLoadMinifiedJavascript()}">
 	<f:then>
-		<link rel="stylesheet" type="text/css" class="neos-ui-asset" href="{f:uri.resource(path: 'Styles/Includes-built.css', package: 'Neos.Neos')}?bust={neos:backend.cssBuiltVersion()}" />
+		<link rel="stylesheet" type="text/css" class="neos-ui-asset" href="{f:uri.resource(path: 'Styles/Includes-built.css', package: 'Neos.Neos')}" />
 	</f:then>
 	<f:else>
 		<link rel="stylesheet" type="text/css" class="neos-ui-asset" href="{f:uri.resource(path: 'Styles/Includes.css', package: 'Neos.Neos')}" />

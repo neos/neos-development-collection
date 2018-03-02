@@ -46,24 +46,4 @@ class BackendAssetsUtility
         }
         return true;
     }
-
-    /**
-     * Returns a shortened md5 of the built JavaScript file
-     *
-     * @return string
-     */
-    public function getJavascriptBuiltVersion()
-    {
-        return substr(md5_file('resource://Neos.Neos/Public/JavaScript/ContentModule-built.js'), 0, 12);
-    }
-
-    /**
-     * Returns a shortened md5 of the built CSS file
-     *
-     * @return string
-     */
-    public function getCssBuiltVersion()
-    {
-        return substr(md5_file('resource://Neos.Neos/Public/Styles/Includes-built.css'), 0, 12);
-    }
 }

@@ -98,9 +98,6 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
     {
         $configuration = array(
             'window.T3Configuration = {};',
-            'window.T3Configuration.UserInterface = ' . json_encode($this->settings['userInterface']) . ';',
-            'window.T3Configuration.nodeTypes = {};',
-            'window.T3Configuration.nodeTypes.groups = ' . json_encode($this->getNodeTypeGroupsSettings()) . ';',
             'window.T3Configuration.requirejs = {};',
             'window.T3Configuration.neosStaticResourcesBaseUri = ' . json_encode($this->resourceManager->getPublicPackageResourceUri('Neos.Neos', '')) . ';',
             'window.T3Configuration.requirejs.paths = ' . json_encode($this->getRequireJsPathMapping()) . ';',
@@ -110,16 +107,9 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
         $neosJavaScriptBasePath = $this->getStaticResourceWebBaseUri('resource://Neos.Neos/Public/JavaScript');
 
         $configuration[] = 'window.T3Configuration.neosJavascriptBasePath = ' . json_encode($neosJavaScriptBasePath) . ';';
-        if ($this->backendAssetsUtility->shouldLoadMinifiedJavascript()) {
-            $configuration[] = 'window.T3Configuration.neosJavascriptVersion = ' . json_encode($this->backendAssetsUtility->getJavascriptBuiltVersion()) . ';';
-        }
 
         if ($this->bootstrap->getContext()->isDevelopment()) {
             $configuration[] = 'window.T3Configuration.DevelopmentMode = true;';
-        }
-
-        if ($activeDomain = $this->domainRepository->findOneByActiveRequest()) {
-            $configuration[] = 'window.T3Configuration.site = "' . $activeDomain->getSite()->getNodeName() . '";';
         }
 
         return implode("\n", $configuration);
@@ -153,24 +143,6 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
     {
         $pathMappings = array();
 
-        $validatorSettings = ObjectAccess::getPropertyPath($this->settings, 'userInterface.validators');
-        if (is_array($validatorSettings)) {
-            foreach ($validatorSettings as $validatorName => $validatorConfiguration) {
-                if (isset($validatorConfiguration['path'])) {
-                    $pathMappings[$validatorName] = $this->getStaticResourceWebBaseUri($validatorConfiguration['path']);
-                }
-            }
-        }
-
-        $editorSettings = ObjectAccess::getPropertyPath($this->settings, 'userInterface.inspector.editors');
-        if (is_array($editorSettings)) {
-            foreach ($editorSettings as $editorName => $editorConfiguration) {
-                if (isset($editorConfiguration['path'])) {
-                    $pathMappings[$editorName] = $this->getStaticResourceWebBaseUri($editorConfiguration['path']);
-                }
-            }
-        }
-
         $requireJsPathMappingSettings = ObjectAccess::getPropertyPath($this->settings, 'userInterface.requireJsPathMapping');
         if (is_array($requireJsPathMappingSettings)) {
             foreach ($requireJsPathMappingSettings as $namespace => $path) {
@@ -179,27 +151,6 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
         }
 
         return $pathMappings;
-    }
-
-    /**
-     * @return array
-     */
-    protected function getNodeTypeGroupsSettings()
-    {
-        $settings = array();
-        $nodeTypeGroupsSettings = new PositionalArraySorter($this->settings['nodeTypes']['groups']);
-        foreach ($nodeTypeGroupsSettings->toArray() as $nodeTypeGroupName => $nodeTypeGroupSettings) {
-            if (!isset($nodeTypeGroupSettings['label'])) {
-                continue;
-            }
-            $settings[] = array(
-                'name' => $nodeTypeGroupName,
-                'label' => $nodeTypeGroupSettings['label'],
-                'collapsed' => isset($nodeTypeGroupSettings['collapsed']) ? $nodeTypeGroupSettings['collapsed'] : true
-            );
-        }
-
-        return $settings;
     }
 
     /**

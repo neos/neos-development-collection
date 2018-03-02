@@ -7,7 +7,7 @@
 	<f:if condition="{neos:backend.shouldLoadMinifiedJavascript()}">
 		<f:then>
 			<link rel="stylesheet" type="text/css"
-				  href="{f:uri.resource(path: 'Styles/Includes-built.css', package: 'Neos.Neos')}?bust={neos:backend.cssBuiltVersion()}"/>
+				  href="{f:uri.resource(path: 'Styles/Includes-built.css', package: 'Neos.Neos')}"/>
 		</f:then>
 		<f:else>
 			<link rel="stylesheet" type="text/css"
@@ -82,16 +82,11 @@
 		</script>
 
 		<script src="{f:uri.resource(path: 'Library/requirejs/require.js', package: 'Neos.Neos')}"></script>
-		<f:if condition="{neos:backend.shouldLoadMinifiedJavascript()}">
-			<f:then>
-				<script src="{f:uri.resource(path: 'JavaScript/ContentModule-built.js', package: 'Neos.Neos')}?bust={neos:backend.javascriptBuiltVersion()}"></script>
-			</f:then>
-			<f:else>
-				<script src="{f:uri.resource(path: 'JavaScript/ContentModuleBootstrap.js', package: 'Neos.Neos')}"></script>
-			</f:else>
-		</f:if>
-
 		<script>
+			var requirePaths = window.T3Configuration.requirejs.paths || {};
+			requirePaths['Library'] = '../Library';
+			requirePaths['text'] = '../Library/requirejs/text';
+			console.log(requirePaths);
 			$(function() {
 				require(
 					{
@@ -110,5 +105,6 @@
 				)
 			});
 		</script>
+
 	</body>
 </f:section>

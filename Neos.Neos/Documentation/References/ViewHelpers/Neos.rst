@@ -39,6 +39,7 @@ changes done to something. Created for use in workspace management.
 
 
 
+
 Arguments
 *********
 
@@ -125,20 +126,6 @@ Arguments
 
 
 
-
-.. _`Neos ViewHelper Reference: neos:backend.cssBuiltVersion`:
-
-neos:backend.cssBuiltVersion
-----------------------------
-
-Returns a shortened md5 of the built CSS file
-
-:Implementation: Neos\\Neos\\ViewHelpers\\Backend\\CssBuiltVersionViewHelper
-
-
-
-
-
 .. _`Neos ViewHelper Reference: neos:backend.documentBreadcrumbPath`:
 
 neos:backend.documentBreadcrumbPath
@@ -167,22 +154,6 @@ neos:backend.interfaceLanguage
 ViewHelper for rendering the current backend users interface language.
 
 :Implementation: Neos\\Neos\\ViewHelpers\\Backend\\InterfaceLanguageViewHelper
-
-
-
-
-
-.. _`Neos ViewHelper Reference: neos:backend.javascriptBuiltVersion`:
-
-neos:backend.javascriptBuiltVersion
------------------------------------
-
-Returns a shortened md5 of the built JavaScript file
-
-:Implementation: Neos\\Neos\\ViewHelpers\\Backend\\JavascriptBuiltVersionViewHelper
-
-
-
 
 
 .. _`Neos ViewHelper Reference: neos:backend.javascriptConfiguration`:
