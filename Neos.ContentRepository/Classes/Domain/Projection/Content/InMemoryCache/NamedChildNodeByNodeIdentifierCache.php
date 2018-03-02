@@ -33,6 +33,9 @@ final class NamedChildNodeByNodeIdentifierCache
 
     public function add(NodeIdentifier $parentNodeIdentifier, NodeName $nodeName, NodeInterface $node): void
     {
+        if (!$node->getContext()) {
+            return;
+        }
         $this->nodes[(string)$parentNodeIdentifier][(string)$nodeName] = $node;
     }
 
