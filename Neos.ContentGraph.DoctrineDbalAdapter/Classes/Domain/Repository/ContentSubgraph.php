@@ -132,7 +132,9 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     public function findNodeByIdentifier(ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier, ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
     {
         $cache = $this->inMemoryCache->getNodeByNodeIdentifierCache();
-        if (!$cache->knowsAbout($nodeIdentifier)) {
+        if ($cache->knowsAbout($nodeIdentifier)) {
+            return $cache->get($nodeIdentifier);
+        } else {
             $nodeRow = $this->getDatabaseConnection()->executeQuery(
                 'SELECT n.* FROM neos_contentgraph_node n
     WHERE n.nodeidentifier = :nodeIdentifier',
@@ -147,7 +149,9 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
 
             // We always allow root nodes
             if (empty($nodeRow['dimensionspacepointhash'])) {
-                $cache->add($nodeIdentifier, $this->nodeFactory->mapNodeRowToNode($nodeRow, $context));
+                $node = $this->nodeFactory->mapNodeRowToNode($nodeRow, $context);
+                $cache->add($nodeIdentifier, $node);
+                return $node;
             } else {
                 // We are NOT allowed at this point to access the $nodeRow above anymore; as we only fetched an *arbitrary* node with the identifier; but
                 // NOT the correct one taking content stream and dimension space point into account. In the query below, we fetch everything we need.
@@ -166,14 +170,16 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
                 )->fetch();
 
                 if (is_array($nodeRow)) {
-                    $cache->add($nodeIdentifier, $this->nodeFactory->mapNodeRowToNode($nodeRow, $context));
+                    $node = $this->nodeFactory->mapNodeRowToNode($nodeRow, $context);
+                    $cache->add($nodeIdentifier, $node);
+                    return $node;
                 } else {
                     $cache->rememberNonExistingNodeIdentifier($nodeIdentifier);
+                    return null;
                 }
             }
         }
 
-        return $cache->get($nodeIdentifier);
     }
 
     /**
