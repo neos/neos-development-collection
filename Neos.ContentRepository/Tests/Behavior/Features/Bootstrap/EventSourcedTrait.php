@@ -83,6 +83,11 @@ trait EventSourcedTrait
     protected $rootNodeIdentifier;
 
     /**
+     * @var \Neos\ContentRepository\Domain\Model\NodeInterface
+     */
+    protected $currentNode;
+
+    /**
      * @Given /^the Event RootNodeWasCreated was published with payload:$/
      */
     public function theEventRootNodeWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
@@ -564,8 +569,16 @@ trait EventSourcedTrait
     {
         $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
         /** @var \Neos\ContentRepository\Domain\Model\Node $node */
-        $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
-        $properties = $node->getProperties();
+        $this->currentNode = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByIdentifier(new NodeIdentifier($nodeIdentifier));
+        $this->iExpectTheCurrentNodeToHaveTheProperties($expectedProperties);
+    }
+
+    /**
+     * @Then /^I expect the current Node to have the properties:$/
+     */
+    public function iExpectTheCurrentNodeToHaveTheProperties(TableNode $expectedProperties)
+    {
+        $properties = $this->currentNode->getProperties();
         foreach ($expectedProperties->getHash() as $row) {
             Assert::assertArrayHasKey($row['Key'], $properties, 'Property "' . $row['Key'] . '" not found');
             $actualProperty = $properties[$row['Key']];
@@ -635,9 +648,18 @@ trait EventSourcedTrait
         if (!$this->rootNodeIdentifier) {
             throw new \Exception('ERROR: RootNodeIdentifier needed for running this step. You need to use "the Event RootNodeWasCreated was published with payload" to create a root node..');
         }
-        $node = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByPath($nodePath, $this->rootNodeIdentifier);
-        Assert::assertNotNull($node, 'Did not find node at path "' . $nodePath . '"');
-        Assert::assertEquals($nodeIdentifier, (string)$node->getNodeIdentifier(), 'Node identifier does not match.');
+        $this->currentNode = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findNodeByPath($nodePath, $this->rootNodeIdentifier);
+        Assert::assertNotNull($this->currentNode, 'Did not find node at path "' . $nodePath . '"');
+        Assert::assertEquals($nodeIdentifier, (string)$this->currentNode->getNodeIdentifier(), 'Node identifier does not match.');
+    }
+
+    /**
+     * @When /^I go to the parent node of node "([^"]*)"$/
+     */
+    public function iGoToTheParentNodeOfNode($nodeIdentifier)
+    {
+        $nodeIdentifier = $this->replaceUuidIdentifiers($nodeIdentifier);
+        $this->currentNode = $this->contentGraphInterface->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint)->findParentNode(new NodeIdentifier($nodeIdentifier));
     }
 
 }

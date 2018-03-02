@@ -1,7 +1,5 @@
 @fixtures
-Feature: Single Node operations on live workspace
-
-  As a user of the CR I want to execute operations on a node in live workspace.
+Feature: Single Node operations on multiple workspaces/content streams; e.g. copy on write!
 
   Background:
     Given I have no content dimensions
@@ -102,6 +100,14 @@ Feature: Single Node operations on live workspace
 
     When I am in the active content stream of workspace "live" and Dimension Space Point {"coordinates": []}
     Then I expect the path "/text1/text2" to lead to the node "[node-2-identifier]"
+    When I go to the parent node of node "[node-2-identifier]"
+    Then I expect the current Node to have the properties:
+      | Key  | Value   |
+      | text | Original |
 
     When I am in the active content stream of workspace "user-test" and Dimension Space Point {"coordinates": []}
     Then I expect the path "/text1/text2" to lead to the node "[node-2-identifier]"
+    When I go to the parent node of node "[node-2-identifier]"
+    Then I expect the current Node to have the properties:
+      | Key  | Value   |
+      | text | Changed |
