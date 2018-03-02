@@ -125,4 +125,6 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @return mixed
      */
     public function findSubtrees(array $entryNodeIdentifiers, int $maximumLevels, Domain\Context\Parameters\ContextParameters $contextParameters, Domain\ValueObject\NodeTypeConstraints $nodeTypeConstraints, Domain\Service\Context $context = null): SubtreeInterface;
+
+    public function getInMemoryCache(): InMemoryCache;
 }

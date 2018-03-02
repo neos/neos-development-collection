@@ -12,6 +12,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  * source code.
  */
 use Doctrine\DBAL\Connection;
+use Neos\ContentRepository\Domain\Projection\Content\InMemoryCache;
 use Neos\ContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\ContentRepository\Domain as ContentRepository;
 use Neos\ContentRepository\Domain\Context\Node\SubtreeInterface;
@@ -56,18 +57,10 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
      */
     protected $nodeFactory;
 
-
     /**
-     * Runtime cache, to be extended to a fully fledged graph
-     * @var array
+     * @var InMemoryCache
      */
-    protected $inMemorySubgraph;
-
-    /**
-     * Node Path Cache
-     * @var array
-     */
-    protected $inMemoryNodePaths;
+    protected $inMemoryCache;
 
     /**
      * @var ContentRepository\ValueObject\ContentStreamIdentifier
@@ -84,6 +77,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
+        $this->inMemoryCache = new InMemoryCache();
     }
 
     /**
@@ -137,7 +131,8 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
      */
     public function findNodeByIdentifier(ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier, ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
     {
-        if (!isset($this->inMemorySubgraph[(string) $nodeIdentifier])) {
+        $cache = $this->inMemoryCache->getNodeByNodeIdentifierCache();
+        if (!$cache->knowsAbout($nodeIdentifier)) {
             $nodeRow = $this->getDatabaseConnection()->executeQuery(
                 'SELECT n.* FROM neos_contentgraph_node n
     WHERE n.nodeidentifier = :nodeIdentifier',
@@ -146,12 +141,13 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
                 ]
             )->fetch();
             if (!$nodeRow) {
+                $cache->rememberNonExistingNodeIdentifier($nodeIdentifier);
                 return null;
             }
 
             // We always allow root nodes
             if (empty($nodeRow['dimensionspacepointhash'])) {
-                $this->inMemorySubgraph[(string) $nodeIdentifier] = $this->nodeFactory->mapNodeRowToNode($nodeRow, $context);
+                $cache->add($nodeIdentifier, $this->nodeFactory->mapNodeRowToNode($nodeRow, $context));
             } else {
                 // We are NOT allowed at this point to access the $nodeRow above anymore; as we only fetched an *arbitrary* node with the identifier; but
                 // NOT the correct one taking content stream and dimension space point into account. In the query below, we fetch everything we need.
@@ -170,13 +166,14 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
                 )->fetch();
 
                 if (is_array($nodeRow)) {
-                    $this->inMemorySubgraph[(string) $nodeIdentifier] = $this->nodeFactory->mapNodeRowToNode($nodeRow, $context);
+                    $cache->add($nodeIdentifier, $this->nodeFactory->mapNodeRowToNode($nodeRow, $context));
                 } else {
-                    $this->inMemorySubgraph[(string) $nodeIdentifier] = null;
+                    $cache->rememberNonExistingNodeIdentifier($nodeIdentifier);
                 }
             }
         }
-        return $this->inMemorySubgraph[(string) $nodeIdentifier];
+
+        return $cache->get($nodeIdentifier);
     }
 
     /**
@@ -194,7 +191,15 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
         int $limit = null,
         int $offset = null,
         ContentRepository\Service\Context $context = null
-    ): array {
+    ): array
+    {
+        $cache = $this->inMemoryCache->getAllChildNodesByNodeIdentifierCache();
+        $namedChildNodeCache = $this->inMemoryCache->getNamedChildNodeByNodeIdentifierCache();
+        $parentNodeIdentifierCache = $this->inMemoryCache->getParentNodeIdentifierByChildNodeIdentifierCache();
+
+        if ($cache->contains($parentNodeIdentifier)) {
+            return $cache->findChildNodes($parentNodeIdentifier, $nodeTypeConstraints, $limit, $offset);
+        }
         $query = new SqlQueryBuilder();
         $query->addToQuery('
 -- ContentSubgraph::findChildNodes
@@ -213,7 +218,14 @@ SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
 
         $result = [];
         foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeData) {
-            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeData, $context);
+            $node = $this->nodeFactory->mapNodeRowToNode($nodeData, $context);
+            $result[] = $node;
+            $namedChildNodeCache->add($parentNodeIdentifier, $node->getNodeName(), $node);
+            $parentNodeIdentifierCache->add($node->getNodeIdentifier(), $parentNodeIdentifier);
+        }
+
+        if ($nodeTypeConstraints === null && $limit === null && $offset === null) {
+            $cache->add($parentNodeIdentifier, $result);
         }
 
         return $result;
@@ -274,6 +286,14 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
      */
     public function findParentNode(ContentRepository\ValueObject\NodeIdentifier $childNodeIdentifier, ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
     {
+        $cache = $this->inMemoryCache->getParentNodeIdentifierByChildNodeIdentifierCache();
+
+        $possibleParentIdentifier = $cache->get($childNodeIdentifier);
+        if ($possibleParentIdentifier) {
+            // we here trigger findNodeByIdentifier, as this might retrieve the Parent Node from the in-memory cache.
+            return $this->findNodeByIdentifier($possibleParentIdentifier, $context);
+        }
+
         $params = [
             'childNodeIdentifier' => (string)$childNodeIdentifier,
             'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
@@ -294,7 +314,14 @@ SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
             $params
         )->fetch();
 
-        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow, $context) : null;
+        $node = $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow, $context) : null;
+        if ($node) {
+            $cache->add($childNodeIdentifier, $node->getNodeIdentifier());
+
+            // we also add the parent node to the NodeIdentifier => Node cache; as this might improve cache hit rates as well.
+            $this->inMemoryCache->getNodeByNodeIdentifierCache()->add($node->getNodeIdentifier(), $node);
+        }
+        return $node;
     }
 
     /**
@@ -363,8 +390,10 @@ SELECT c.* FROM neos_contentgraph_node p
         ContentRepository\Service\Context $context = null
     ): ?ContentRepository\Model\NodeInterface
     {
-        $nodeData = $this->getDatabaseConnection()->executeQuery(
-            '
+        $cache = $this->inMemoryCache->getNamedChildNodeByNodeIdentifierCache();
+        if (!$cache->contains($parentNodeIdentifier, $edgeName)) {
+            $nodeData = $this->getDatabaseConnection()->executeQuery(
+                '
 -- ContentGraph::findChildNodeConnectedThroughEdgeName
 SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
@@ -374,16 +403,23 @@ SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
  AND h.dimensionspacepointhash = :dimensionSpacePointHash
  AND h.name = :edgeName
  ORDER BY h.position LIMIT 1',
-            [
-                'parentNodeIdentifier' => (string)$parentNodeIdentifier,
-                'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
-                'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash(),
-                'edgeName' => (string)$edgeName
-            ]
-        )->fetch();
+                [
+                    'parentNodeIdentifier' => (string)$parentNodeIdentifier,
+                    'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
+                    'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash(),
+                    'edgeName' => (string)$edgeName
+                ]
+            )->fetch();
 
 
-        return $nodeData ? $this->nodeFactory->mapNodeRowToNode($nodeData, $context) : null;
+            if ($nodeData) {
+                $node = $this->nodeFactory->mapNodeRowToNode($nodeData, $context);
+                if ($node) {
+                    $cache->add($parentNodeIdentifier, $edgeName, $node);
+                }
+            }
+        }
+        return $cache->get($parentNodeIdentifier, $edgeName);
     }
 
     /**
@@ -466,9 +502,9 @@ SELECT n.*, h.name, h.position FROM neos_contentgraph_node n
 
     public function findNodePath(ContentRepository\ValueObject\NodeIdentifier $nodeIdentifier): ContentRepository\ValueObject\NodePath
     {
-        $nodeIdentifierString = (string)$nodeIdentifier;
+        $cache = $this->inMemoryCache->getNodePathCache();
 
-        if (!isset($this->inMemoryNodePaths[$nodeIdentifierString])) {
+        if (!$cache->contains($nodeIdentifier)) {
             $result = $this->getDatabaseConnection()->executeQuery(
                 '
                 -- ContentSubgraph::findNodePath
@@ -488,7 +524,7 @@ SELECT n.*, h.name, h.position FROM neos_contentgraph_node n
                 [
                     'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
                     'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash(),
-                    'nodeIdentifier' => (string) $nodeIdentifier
+                    'nodeIdentifier' => (string)$nodeIdentifier
                 ]
             )->fetchAll();
 
@@ -499,16 +535,11 @@ SELECT n.*, h.name, h.position FROM neos_contentgraph_node n
             }
 
             $nodePath = array_reverse($nodePath);
-            $this->inMemoryNodePaths[$nodeIdentifierString] = new ContentRepository\ValueObject\NodePath('/' . implode('/', $nodePath));
+            $nodePath = new ContentRepository\ValueObject\NodePath('/' . implode('/', $nodePath));
+            $cache->add($nodeIdentifier, $nodePath);
         }
 
-        return $this->inMemoryNodePaths[$nodeIdentifierString];
-    }
-
-    public function resetCache()
-    {
-        $this->inMemorySubgraph = [];
-        $this->inMemoryNodePaths = [];
+        return $cache->get($nodeIdentifier);
     }
 
     public function jsonSerialize(): array
@@ -588,10 +619,12 @@ union
 ) 
 select * from tree
 order by level, position desc;')
-        ->parameter('entryNodeIdentifiers', array_map(function(NodeIdentifier $nodeIdentifier) { return (string) $nodeIdentifier; }, $entryNodeIdentifiers), Connection::PARAM_STR_ARRAY)
-        ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
-        ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash())
-        ->parameter('maximumLevels', $maximumLevels);
+            ->parameter('entryNodeIdentifiers', array_map(function (NodeIdentifier $nodeIdentifier) {
+                return (string)$nodeIdentifier;
+            }, $entryNodeIdentifiers), Connection::PARAM_STR_ARRAY)
+            ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
+            ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash())
+            ->parameter('maximumLevels', $maximumLevels);
 
         self::addNodeTypeConstraintsToQuery($nodeTypeConstraints, $query, '###NODE_TYPE_CONSTRAINTS###');
 
@@ -613,5 +646,10 @@ order by level, position desc;')
 
         return $subtreesByNodeIdentifier['ROOT'];
 
+    }
+
+    public function getInMemoryCache(): InMemoryCache
+    {
+        return $this->inMemoryCache;
     }
 }

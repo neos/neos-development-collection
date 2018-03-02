@@ -68,4 +68,24 @@ final class NodeTypeConstraints
     {
         return $this->explicitlyDisallowedNodeTypeNames;
     }
+
+    public function matches(NodeTypeName $nodeTypeName)
+    {
+        // if $nodeTypeName is explicitely blacklisted, it is DENIED.
+        foreach ($this->explicitlyDisallowedNodeTypeNames as $disallowed) {
+            if ((string)$nodeTypeName === (string) $disallowed) {
+                return false;
+            }
+        }
+
+        // if $nodeTypeName is explicitely whitelisted, it is ALLOWED.
+        foreach ($this->explicitlyAllowedNodeTypeNames as $allowed) {
+            if ((string)$nodeTypeName === (string) $allowed) {
+                return true;
+            }
+        }
+
+        // otherwise, we return $wildcardAllowed.
+        return $this->wildcardAllowed;
+    }
 }

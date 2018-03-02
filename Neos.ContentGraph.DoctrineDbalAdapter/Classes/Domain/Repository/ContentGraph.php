@@ -211,7 +211,7 @@ final class ContentGraph implements ContentGraphInterface
     {
         if (is_array($this->subgraphs)) {
             foreach ($this->subgraphs as $subgraph) {
-                $subgraph->resetCache();
+                $subgraph->getInMemoryCache()->reset();
             }
         }
     }
