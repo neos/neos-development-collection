@@ -37,5 +37,4 @@ final class ActivateSite
     {
         return $this->nodeName;
     }
-
 }

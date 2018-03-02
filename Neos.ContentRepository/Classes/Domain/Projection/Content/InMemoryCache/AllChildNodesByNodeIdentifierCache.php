@@ -15,7 +15,6 @@ namespace Neos\ContentRepository\Domain\Projection\Content\InMemoryCache;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
 
-
 /**
  * This cache is only filled for a $parentNodeIdentifier if we have retrieved *all* childNodes, without any restriction.
  */

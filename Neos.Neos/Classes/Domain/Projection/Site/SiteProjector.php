@@ -103,5 +103,4 @@ final class SiteProjector extends AbstractDoctrineProjector
 
         $this->update($site);
     }
-
 }

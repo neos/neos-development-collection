@@ -165,11 +165,12 @@ class MenuImplementation extends AbstractMenuImplementation
     {
         if (!is_null($this->getItemCollection())) {
             $menuLevelCollection = $this->getItemCollection();
-            $entryNodeIdentifiers = array_map(function(ReadOnlyNodeInterface $node) { return $node->getNodeIdentifier(); }, $menuLevelCollection);
+            $entryNodeIdentifiers = array_map(function (ReadOnlyNodeInterface $node) {
+                return $node->getNodeIdentifier();
+            }, $menuLevelCollection);
             $context = reset($menuLevelCollection)->getContext();
 
             $subtree = $this->getSubgraph()->findSubtrees($entryNodeIdentifiers, $this->getMaximumLevels(), $this->contextParametersFactory->createDefaultParameters(), $this->getNodeTypeConstraints(), $context);
-
         } else {
             $entryParentNode = $this->findMenuStartingPoint();
             if (!$entryParentNode) {

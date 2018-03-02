@@ -92,7 +92,7 @@ final class NodeCommandHandler
      */
     public function handleCreateNodeAggregateWithNode(CreateNodeAggregateWithNode $command): void
     {
-        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
             $contentStreamStreamName = ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier());
 
             $events = $this->nodeAggregateWithNodeWasCreatedFromCommand($command);
@@ -187,7 +187,7 @@ final class NodeCommandHandler
      */
     public function handleAddNodeToAggregate(AddNodeToAggregate $command): void
     {
-        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
             $contentStreamStreamName = ContentStreamCommandHandler::getStreamNameForContentStream($command->getContentStreamIdentifier());
 
             $events = $this->nodeWasAddedToAggregateFromCommand($command);
@@ -343,7 +343,7 @@ final class NodeCommandHandler
      */
     public function handleCreateRootNode(CreateRootNode $command): void
     {
-        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
             $event = new RootNodeWasCreated(
@@ -365,7 +365,7 @@ final class NodeCommandHandler
      */
     public function handleSetNodeProperty(SetNodeProperty $command): void
     {
-        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
             // Check if node exists
@@ -423,7 +423,7 @@ final class NodeCommandHandler
      */
     public function handleHideNode(HideNode $command): void
     {
-        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
             // Check if node exists
@@ -446,7 +446,7 @@ final class NodeCommandHandler
      */
     public function handleShowNode(ShowNode $command): void
     {
-        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
             // Check if node exists
@@ -471,7 +471,7 @@ final class NodeCommandHandler
      */
     public function handleMoveNode(MoveNode $command): void
     {
-        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
             /** @var Node $node */
@@ -511,7 +511,7 @@ final class NodeCommandHandler
      */
     public function handleMoveNodesInAggregate(MoveNodesInAggregate $command): void
     {
-        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
             $nodeAggregateIdentifier = $command->getNodeAggregateIdentifier();
             $referenceNodeAggregateIdentifier = $command->getReferenceNodeAggregateIdentifier();
@@ -556,7 +556,7 @@ final class NodeCommandHandler
      */
     public function handleChangeNodeName(ChangeNodeName $command)
     {
-        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
             /** @var Node $node */
             $node = $this->getNode($contentStreamIdentifier, $command->getNodeIdentifier());
@@ -584,7 +584,7 @@ final class NodeCommandHandler
      */
     public function handleTranslateNodeInAggregate(TranslateNodeInAggregate $command): void
     {
-        $this->nodeEventPublisher->withCommand($command, function() use ($command) {
+        $this->nodeEventPublisher->withCommand($command, function () use ($command) {
             $contentStreamIdentifier = $command->getContentStreamIdentifier();
 
             $events = $this->nodeInAggregateWasTranslatedFromCommand($command);
@@ -748,5 +748,4 @@ final class NodeCommandHandler
             $occupiedDimensionSpacePoints
         );
     }
-
 }

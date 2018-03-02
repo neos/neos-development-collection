@@ -27,5 +27,4 @@ final class DomainDoesNotExist extends Exception
         $message = 'The domain does not exists: ' . (string)$schemeHostPort;
         parent::__construct($message, $code, $previous);
     }
-
 }

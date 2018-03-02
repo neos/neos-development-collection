@@ -15,13 +15,11 @@ namespace Neos\ContentRepository\Domain\Projection\Content\InMemoryCache;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodePath;
 
-
 /**
  * Node Identifier -> Node Path cache
  */
 final class NodePathCache
 {
-
     protected $nodePaths = [];
 
     public function contains(NodeIdentifier $nodeIdentifier): bool

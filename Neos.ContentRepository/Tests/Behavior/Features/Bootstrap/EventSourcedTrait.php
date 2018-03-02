@@ -639,5 +639,4 @@ trait EventSourcedTrait
         Assert::assertNotNull($node, 'Did not find node at path "' . $nodePath . '"');
         Assert::assertEquals($nodeIdentifier, (string)$node->getNodeIdentifier(), 'Node identifier does not match.');
     }
-
 }

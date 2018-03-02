@@ -15,7 +15,6 @@ namespace Neos\ContentRepository\Domain\Projection\Content\InMemoryCache;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
 
-
 /**
  * NOTE: we do NOT directly cache the Parent Node; but only the Parent Node Identifier; as then, the NodeByNodeIdentifierCache can be used properly - thus
  * it might increase the cache hit rate to split this apart.

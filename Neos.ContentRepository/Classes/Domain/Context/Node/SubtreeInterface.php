@@ -8,7 +8,6 @@
 
 namespace Neos\ContentRepository\Domain\Context\Node;
 
-
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**

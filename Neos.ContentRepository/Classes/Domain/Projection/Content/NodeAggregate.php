@@ -58,5 +58,4 @@ final class NodeAggregate
     {
         return $this->nodeTypeName;
     }
-
 }
