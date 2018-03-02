@@ -207,6 +207,7 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
             return $cache->findChildNodes($parentNodeIdentifier, $nodeTypeConstraints, $limit, $offset);
         }
         $query = new SqlQueryBuilder();
+        // TODO Check parent hierarchyrelation
         $query->addToQuery('
 -- ContentSubgraph::findChildNodes
 SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
@@ -380,6 +381,7 @@ SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
      */
     public function findFirstChildNode(ContentRepository\ValueObject\NodeIdentifier $parentNodeIdentifier, ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
     {
+        // TODO Check parent hierarchyrelation
         $nodeData = $this->getDatabaseConnection()->executeQuery(
             '
 -- ContentSubgraph::findFirstChildNode
@@ -440,35 +442,61 @@ SELECT c.* FROM neos_contentgraph_node p
     ): ?ContentRepository\Model\NodeInterface
     {
         $cache = $this->inMemoryCache->getNamedChildNodeByNodeIdentifierCache();
-        if (!$cache->contains($parentNodeIdentifier, $edgeName)) {
+        if ($cache->contains($parentNodeIdentifier, $edgeName)) {
+            return $cache->get($parentNodeIdentifier, $edgeName);
+        } else {
+            $params = [
+                'parentNodeIdentifier' => (string)$parentNodeIdentifier,
+                'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
+                'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash(),
+                'edgeName' => (string)$edgeName
+            ];
+
             $nodeData = $this->getDatabaseConnection()->executeQuery(
                 '
 -- ContentGraph::findChildNodeConnectedThroughEdgeName
-SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
- INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
- INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
- WHERE p.nodeidentifier = :parentNodeIdentifier
- AND h.contentstreamidentifier = :contentStreamIdentifier
- AND h.dimensionspacepointhash = :dimensionSpacePointHash
- AND h.name = :edgeName
- ORDER BY h.position LIMIT 1',
-                [
-                    'parentNodeIdentifier' => (string)$parentNodeIdentifier,
-                    'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
-                    'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash(),
-                    'edgeName' => (string)$edgeName
-                ]
+SELECT
+    c.*,
+    hc.name, 
+    hc.contentstreamidentifier
+FROM
+    neos_contentgraph_node p
+LEFT JOIN neos_contentgraph_hierarchyrelation hp 
+    ON hp.childnodeanchor = p.relationanchorpoint
+INNER JOIN neos_contentgraph_hierarchyrelation hc
+    ON hc.parentnodeanchor = p.relationanchorpoint
+INNER JOIN neos_contentgraph_node c
+    ON hc.childnodeanchor = c.relationanchorpoint
+WHERE
+    p.nodeidentifier = :parentNodeIdentifier
+    AND hc.contentstreamidentifier = :contentStreamIdentifier
+    AND hc.dimensionspacepointhash = :dimensionSpacePointHash
+    AND 
+    (
+        (
+            hp.contentstreamidentifier = :contentStreamIdentifier
+            AND hp.dimensionspacepointhash = :dimensionSpacePointHash
+        )
+        OR
+        (
+            hp.contentstreamidentifier IS NULL
+            AND hp.dimensionspacepointhash IS NULL
+        )
+    )
+    AND hc.name = :edgeName
+ORDER BY hc.position LIMIT 1',
+                $params
             )->fetch();
-
 
             if ($nodeData) {
                 $node = $this->nodeFactory->mapNodeRowToNode($nodeData, $context);
                 if ($node) {
                     $cache->add($parentNodeIdentifier, $edgeName, $node);
+                    return $node;
                 }
             }
         }
-        return $cache->get($parentNodeIdentifier, $edgeName);
+        return null;
     }
 
     /**
@@ -485,7 +513,7 @@ SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
             '
 -- ContentSubgraph::findNodesByType
 SELECT n.*, h.name, h.position FROM neos_contentgraph_node n
- INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = n.relationanchorpoint
+ INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
  WHERE n.nodetypename = :nodeTypeName
  AND h.contentstreamidentifier = :contentStreamIdentifier
  AND h.dimensionspacepointhash = :dimensionSpacePointHash
@@ -554,6 +582,7 @@ SELECT n.*, h.name, h.position FROM neos_contentgraph_node n
         $cache = $this->inMemoryCache->getNodePathCache();
 
         if (!$cache->contains($nodeIdentifier)) {
+            // TODO Check parent hierarchyrelation (Recursive part of CTE)
             $result = $this->getDatabaseConnection()->executeQuery(
                 '
                 -- ContentSubgraph::findNodePath
