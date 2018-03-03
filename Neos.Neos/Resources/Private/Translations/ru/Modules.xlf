@@ -188,9 +188,9 @@
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
           <target xml:lang="ru">Рабочая область "{0}" не была удалена, потому что она содержит {1} элемента.</target>
         </trans-unit>
-        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[2]">
+        <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[2]" approved="yes">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target xml:lang="ru" state="needs-translation">Did not delete workspace "{0}" because it currently contains {1} nodes.</target>
+          <target xml:lang="ru">Рабочая область "{0}" не была удалена, потому что она содержит {1} элементов.</target>
         </trans-unit>
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[3]" approved="yes">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
@@ -237,30 +237,30 @@
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve" approved="yes">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
 			<target xml:lang="ru">Не было событий, которые могли бы быть отображены в данном журнале изменений.</target><alt-trans><target xml:lang="ru">Пока не были зарегистрированы события, которые могли бы быть отображены в данном журнале изменений.</target></alt-trans></trans-unit>
-      <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
+      <trans-unit id="history.eventDescription.node.added" xml:space="preserve" approved="yes">
 				<source>{0} created the {1} "{2}".</source>
-			<target xml:lang="ru" state="needs-translation">{0} created the {1} "{2}".</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.removed" xml:space="preserve">
+			<target xml:lang="ru">{0} создал {1} "{2}".</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.removed" xml:space="preserve" approved="yes">
 				<source>{0} removed the {1} "{2}".</source>
-			<target xml:lang="ru" state="needs-translation">{0} removed the {1} "{2}".</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
+			<target xml:lang="ru">{0} удалил {1} "{2}".</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve" approved="yes">
 				<source>{0} created the variant {1} of the {2} "{3}".</source>
-			<target xml:lang="ru" state="needs-translation">{0} created the variant {1} of the {2} "{3}".</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.changed" xml:space="preserve">
+			<target xml:lang="ru">{0} создал вариант {1} из {2} "{3}".</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.changed" xml:space="preserve" approved="yes">
 				<source>{0} modified the {1} "{2}".</source>
-			<target xml:lang="ru" state="needs-translation">{0} modified the {1} "{2}".</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.moved" xml:space="preserve">
+			<target xml:lang="ru">{0} изменил {1} "{2}".</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.moved" xml:space="preserve" approved="yes">
 				<source>{0} moved the {1} "{2}".</source>
-			<target xml:lang="ru" state="needs-translation">{0} moved the {1} "{2}".</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.copied" xml:space="preserve">
+			<target xml:lang="ru">{0} переместил {1} "{2}".</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.copied" xml:space="preserve" approved="yes">
 				<source>{0} copied the {1} "{2}".</source>
-			<target xml:lang="ru" state="needs-translation">{0} copied the {1} "{2}".</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.renamed" xml:space="preserve">
+			<target xml:lang="ru">{0} скопировал {1} "{2}".</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.renamed" xml:space="preserve" approved="yes">
 				<source>{0} renamed the {1} "{2}" to "{3}".</source>
-			<target xml:lang="ru" state="needs-translation">{0} renamed the {1} "{2}" to "{3}".</target></trans-unit>
-      <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve">
+			<target xml:lang="ru">{0} переименовал {1} "{2}" в "{3}".</target></trans-unit>
+      <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve" approved="yes">
 				<source>{0} modified content on the {1} "{2}".</source>
-			<target xml:lang="ru" state="needs-translation">{0} modified content on the {1} "{2}".</target></trans-unit>
+			<target xml:lang="ru">{0} изменил контент на {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.account.created" xml:space="preserve" approved="yes">
 				<source>{0} created a new user "{1}" for {2}.</source>
 			<target xml:lang="ru">{0} создал нового пользователя "{1}" для {2}.</target><alt-trans><target xml:lang="ru">{0} создал нового пользователя «{1}» для {2}.</target></alt-trans></trans-unit>
@@ -547,87 +547,87 @@
       <trans-unit id="sites.description" xml:space="preserve" approved="yes">
 				<source>The Sites Management module provides you with an overview of all sites. You can edit, add and delete information about your sites, such as adding a new domain.</source>
 			<target xml:lang="ru">Модуль управления сайтами даёт представление обо всех сайтах. Можно редактировать, добавлять и удалять информацию о сайтах, например добавить новый домен.</target></trans-unit>
-      <trans-unit id="sites.add" xml:space="preserve">
+      <trans-unit id="sites.add" xml:space="preserve" approved="yes">
 				<source>Add new site</source>
-			<target xml:lang="ru" state="needs-translation">Add new site</target></trans-unit>
+			<target xml:lang="ru">Добавить новый сайт</target></trans-unit>
       <trans-unit id="sites.actions.newSite.label" xml:space="preserve" approved="yes">
 				<source>Create site</source>
 			<target xml:lang="ru">Создать сайт</target></trans-unit>
       <trans-unit id="sites.actions.newSite.title" xml:space="preserve" approved="yes">
 				<source>Create a new site</source>
 			<target xml:lang="ru">Создать новый сайт</target></trans-unit>
-      <trans-unit id="sites.rootNodeName" xml:space="preserve">
+      <trans-unit id="sites.rootNodeName" xml:space="preserve" approved="yes">
 				<source>Root node name</source>
-			<target xml:lang="ru" state="needs-translation">Root node name</target></trans-unit>
-      <trans-unit id="sites.domains" xml:space="preserve">
+			<target xml:lang="ru">Имя корневого элемента</target></trans-unit>
+      <trans-unit id="sites.domains" xml:space="preserve" approved="yes">
 				<source>Domains</source>
-			<target xml:lang="ru" state="needs-translation">Domains</target></trans-unit>
+			<target xml:lang="ru">Домены</target></trans-unit>
       <trans-unit id="sites" xml:space="preserve" approved="yes">
 				<source>Site</source>
 			<target xml:lang="ru">Сайт</target></trans-unit>
       <trans-unit id="site.name" xml:space="preserve" approved="yes">
 				<source>Name</source>
 			<target xml:lang="ru">Имя</target></trans-unit>
-      <trans-unit id="sites.defaultAssetCollection" xml:space="preserve">
+      <trans-unit id="sites.defaultAssetCollection" xml:space="preserve" approved="yes">
 				<source>Default asset collection</source>
-			<target xml:lang="ru" state="needs-translation">Default asset collection</target></trans-unit>
-      <trans-unit id="sites.sitePackage" xml:space="preserve">
+			<target xml:lang="ru">Коллекция медиа-ресурсов по умолчанию</target></trans-unit>
+      <trans-unit id="sites.sitePackage" xml:space="preserve" approved="yes">
 				<source>Site package</source>
-			<target xml:lang="ru" state="needs-translation">Site package</target></trans-unit>
-      <trans-unit id="sites.delete" xml:space="preserve">
+			<target xml:lang="ru">Пакет сайта</target></trans-unit>
+      <trans-unit id="sites.delete" xml:space="preserve" approved="yes">
 				<source>Delete this site</source>
-			<target xml:lang="ru" state="needs-translation">Delete this site</target></trans-unit>
-      <trans-unit id="sites.deactivate" xml:space="preserve">
+			<target xml:lang="ru">Удалить этот сайт</target></trans-unit>
+      <trans-unit id="sites.deactivate" xml:space="preserve" approved="yes">
 				<source>Deactivate site</source>
-			<target xml:lang="ru" state="needs-translation">Deactivate site</target></trans-unit>
-      <trans-unit id="sites.activate" xml:space="preserve">
+			<target xml:lang="ru">Отключить сайт</target></trans-unit>
+      <trans-unit id="sites.activate" xml:space="preserve" approved="yes">
 				<source>Activate site</source>
-			<target xml:lang="ru" state="needs-translation">Activate site</target></trans-unit>
-      <trans-unit id="sites.confirmDeleteQuestion" xml:space="preserve">
+			<target xml:lang="ru">Включить сайт</target></trans-unit>
+      <trans-unit id="sites.confirmDeleteQuestion" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
-			<target xml:lang="ru" state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
-      <trans-unit id="sites.confirmDelete" xml:space="preserve">
+			<target xml:lang="ru">Вы действительно хотите удалить "{0}"? Это действие безвозвратное.</target></trans-unit>
+      <trans-unit id="sites.confirmDelete" xml:space="preserve" approved="yes">
 				<source>Yes, delete the site</source>
-			<target xml:lang="ru" state="needs-translation">Yes, delete the site</target></trans-unit>
-      <trans-unit id="sites.import" xml:space="preserve">
+			<target xml:lang="ru">Да, удалить сайт</target></trans-unit>
+      <trans-unit id="sites.import" xml:space="preserve" approved="yes">
 				<source>Import a site</source>
-			<target xml:lang="ru" state="needs-translation">Import a site</target></trans-unit>
-      <trans-unit id="sites.select" xml:space="preserve">
+			<target xml:lang="ru">Импортировать сайт</target></trans-unit>
+      <trans-unit id="sites.select" xml:space="preserve" approved="yes">
 				<source>Select a site package</source>
-			<target xml:lang="ru" state="needs-translation">Select a site package</target></trans-unit>
-      <trans-unit id="sites.noPackackeInfo" xml:space="preserve">
+			<target xml:lang="ru">Выберите пакет сайта</target></trans-unit>
+      <trans-unit id="sites.noPackackeInfo" xml:space="preserve" approved="yes">
 				<source>No site packages are available. Make sure you have an active site package.</source>
-			<target xml:lang="ru" state="needs-translation">No site packages are available. Make sure you have an active site package.</target></trans-unit>
-      <trans-unit id="sites.createBlank" xml:space="preserve">
+			<target xml:lang="ru">Нет пакетов сайтов. Убедитесь, что у вас есть пакет с активным сайтом.</target></trans-unit>
+      <trans-unit id="sites.createBlank" xml:space="preserve" approved="yes">
 				<source>Create a blank site</source>
-			<target xml:lang="ru" state="needs-translation">Create a blank site</target></trans-unit>
-      <trans-unit id="sites.documentType" xml:space="preserve">
+			<target xml:lang="ru">Создать пустой сайт</target></trans-unit>
+      <trans-unit id="sites.documentType" xml:space="preserve" approved="yes">
 				<source>Select a document nodeType</source>
-			<target xml:lang="ru" state="needs-translation">Select a document nodeType</target></trans-unit>
-      <trans-unit id="sites.name" xml:space="preserve">
+			<target xml:lang="ru">Выберите документ nodeType</target></trans-unit>
+      <trans-unit id="sites.name" xml:space="preserve" approved="yes">
 				<source>Site name</source>
-			<target xml:lang="ru" state="needs-translation">Site name</target></trans-unit>
-      <trans-unit id="sites.createNode" xml:space="preserve">
+			<target xml:lang="ru">Название сайта</target></trans-unit>
+      <trans-unit id="sites.createNode" xml:space="preserve" approved="yes">
 				<source>Create empty site</source>
-			<target xml:lang="ru" state="needs-translation">Create empty site</target></trans-unit>
-      <trans-unit id="sites.createPackage" xml:space="preserve">
+			<target xml:lang="ru">Создать пустой сайт</target></trans-unit>
+      <trans-unit id="sites.createPackage" xml:space="preserve" approved="yes">
 				<source>Create a new site package</source>
-			<target xml:lang="ru" state="needs-translation">Create a new site package</target></trans-unit>
-      <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve">
+			<target xml:lang="ru">Создать новый пакет сайта</target></trans-unit>
+      <trans-unit id="sites.validPackageKeyInfo" xml:space="preserve" approved="yes">
 				<source>VendorName.MyPackageKey</source>
-			<target xml:lang="ru" state="needs-translation">VendorName.MyPackageKey</target></trans-unit>
-      <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve">
+			<target xml:lang="ru">НазваниеФирмы.КолонтитулПакета</target></trans-unit>
+      <trans-unit id="sites.noNeosKickstarterInfo" xml:space="preserve" approved="yes">
 				<source>The <em>Neos Kickstarter</em> package is not installed, install it to kickstart new sites.</source>
-			<target xml:lang="ru" state="needs-translation">The &lt;em&gt;Neos Kickstarter&lt;/em&gt; package is not installed, install it to kickstart new sites.</target></trans-unit>
-      <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve">
+			<target xml:lang="ru">Пакет &lt;em&gt;Neos Kickstarter&lt;/em&gt; не установлен, установите его для кикстарта новых сайтов.</target></trans-unit>
+      <trans-unit id="domain.deleteConfirmQuestion" xml:space="preserve" approved="yes">
 				<source>Do you really want to delete "{0}"? This action cannot be undone.</source>
-			<target xml:lang="ru" state="needs-translation">Do you really want to delete "{0}"? This action cannot be undone.</target></trans-unit>
-      <trans-unit id="domain.new" xml:space="preserve">
+			<target xml:lang="ru">Вы действительно хотите удалить "{0}"? Это действие безвозвратное.</target></trans-unit>
+      <trans-unit id="domain.new" xml:space="preserve" approved="yes">
 				<source>New domain</source>
-			<target xml:lang="ru" state="needs-translation">New domain</target></trans-unit>
-      <trans-unit id="domain.edit" xml:space="preserve">
+			<target xml:lang="ru">Новый домен</target></trans-unit>
+      <trans-unit id="domain.edit" xml:space="preserve" approved="yes">
 				<source>Edit domain</source>
-			<target xml:lang="ru" state="needs-translation">Edit domain</target></trans-unit>
+			<target xml:lang="ru">Править домен</target></trans-unit>
       <trans-unit id="configuration.label" xml:space="preserve" approved="yes">
 				<source>Configuration</source>
 			<target xml:lang="ru">Конфигурация</target></trans-unit>
@@ -637,31 +637,31 @@
       <trans-unit id="dimensions.label" xml:space="preserve" approved="yes">
 				<source>Dimensions</source>
 			<target xml:lang="ru">Размеры</target><alt-trans><target xml:lang="ru">Измерения</target></alt-trans></trans-unit>
-      <trans-unit id="dimensions.description" xml:space="preserve">
+      <trans-unit id="dimensions.description" xml:space="preserve" approved="yes">
 				<source>Grants a graphical overview over the configured fallbacks within each content dimension and across content dimensions.</source>
-			<target xml:lang="ru" state="needs-translation">Grants a graphical overview over the configured fallbacks within each content dimension and across content dimensions.</target></trans-unit>
-      <trans-unit id="dimensions.interDimension.legend" xml:space="preserve">
+			<target xml:lang="ru">Предоставляет графический обзор настроек резервного поведения внутри одного измерения контента и между ними.</target><alt-trans><target xml:lang="ru">Предоставляет графический обзор настроек резервного поведения внутри каждого измерения контента и между измерениями контента.</target></alt-trans></trans-unit>
+      <trans-unit id="dimensions.interDimension.legend" xml:space="preserve" approved="yes">
 				<source>Inter dimensional fallback graph</source>
-			<target xml:lang="ru" state="needs-translation">Inter dimensional fallback graph</target></trans-unit>
-      <trans-unit id="dimensions.interDimension.short" xml:space="preserve">
+			<target xml:lang="ru">Междименсиональная диаграмма резервного поведения</target></trans-unit>
+      <trans-unit id="dimensions.interDimension.short" xml:space="preserve" approved="yes">
 				<source>Inter dimensional</source>
-			<target xml:lang="ru" state="needs-translation">Inter dimensional</target></trans-unit>
-      <trans-unit id="dimensions.interDimension.description" xml:space="preserve">
+			<target xml:lang="ru">Междименсиональные</target><alt-trans><target xml:lang="ru">Междименсионально</target></alt-trans></trans-unit>
+      <trans-unit id="dimensions.interDimension.description" xml:space="preserve" approved="yes">
 				<source>The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
 Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The higher the priority the higher the opacity.
 Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</source>
-			<target xml:lang="ru" state="needs-translation">The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
-Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The higher the priority the higher the opacity.
-Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</target></trans-unit>
-      <trans-unit id="dimensions.intraDimension.legend" xml:space="preserve">
+			<target xml:lang="ru">Междименсиональная диаграмма резервного поведения отображает все возможные поведения(изображены как грани) между вложенными диаграммами(изображены как элементы).
+Основные резервные поведения помечены синим и отображаются всегда. Вторичные отображаются только при наведении курсора мыши. Чем выше приоритет, тем выше затененность. 
+Щёлкните на одно из измерений, чтобы увидеть только его резервные поведения и варианты. Щёлкните снова, чтобы удалить этот фильтр.</target></trans-unit>
+      <trans-unit id="dimensions.intraDimension.legend" xml:space="preserve" approved="yes">
 				<source>Intra dimensional fallback graph</source>
-			<target xml:lang="ru" state="needs-translation">Intra dimensional fallback graph</target></trans-unit>
-      <trans-unit id="dimensions.intraDimension.short" xml:space="preserve">
+			<target xml:lang="ru">Внутри-дименсиональная диаграмма резервного поведения</target></trans-unit>
+      <trans-unit id="dimensions.intraDimension.short" xml:space="preserve" approved="yes">
 				<source>Intra dimensional</source>
-			<target xml:lang="ru" state="needs-translation">Intra dimensional</target></trans-unit>
-      <trans-unit id="dimensions.intraDimension.description" xml:space="preserve">
+			<target xml:lang="ru">Внутри-дименсиональные</target></trans-unit>
+      <trans-unit id="dimensions.intraDimension.description" xml:space="preserve" approved="yes">
 				<source>The intra dimensional fallback graph displays fallbacks within each content dimension.</source>
-			<target xml:lang="ru" state="needs-translation">The intra dimensional fallback graph displays fallbacks within each content dimension.</target></trans-unit>
+			<target xml:lang="ru">Внутри-дименсиональная диаграмма отображает резервные поведения в рамках одного измерения контента.</target></trans-unit>
       <!-- User -->
       <trans-unit id="user.label" xml:space="preserve" approved="yes">
 				<source>User</source>
