@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="couldNotReplaceAsset" xml:space="preserve">
 				<source>Could not replace asset</source>
-			<target xml:lang="tl" state="needs-translation">Could not replace asset</target></trans-unit>
+			<target xml:lang="tl" state="translated">Hindi mapapalitan ang asset</target></trans-unit>
       <trans-unit id="assetHasBeenReplaced" xml:space="preserve">
 				<source>Asset "{0}" has been replaced.</source>
 			<target xml:lang="tl" state="needs-translation">Asset "{0}" has been replaced.</target></trans-unit>

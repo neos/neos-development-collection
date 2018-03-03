@@ -10,10 +10,10 @@
 			<target xml:lang="tl" state="needs-translation">Click to delete</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target xml:lang="tl" state="needs-translation">Cancel</target></trans-unit>
+			<target xml:lang="tl" state="translated">Kanselahin</target></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
-			<target xml:lang="tl" state="needs-translation">Back</target></trans-unit>
+			<target xml:lang="tl" state="translated">Ibalik</target></trans-unit>
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve">
 				<source>Management</source>
@@ -41,7 +41,7 @@
 			<target xml:lang="tl" state="needs-translation">Edit workspace</target></trans-unit>
       <trans-unit id="workspaces.yesDeleteWorkspace" xml:space="preserve">
 				<source>Yes, delete the workspace</source>
-			<target xml:lang="tl" state="needs-translation">Yes, delete the workspace</target></trans-unit>
+			<target xml:lang="tl" state="translated">Oo, burahin ang workspace</target></trans-unit>
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve">
 				<source>Edit workspace "{0}"</source>
 			<target xml:lang="tl" state="needs-translation">Edit workspace</target></trans-unit>
@@ -59,7 +59,7 @@
 			<target xml:lang="tl" state="needs-translation">Read-only workspace</target></trans-unit>
       <trans-unit id="workspaces.workspace.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="tl" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="tl" state="translated">Pamagat</target></trans-unit>
       <trans-unit id="workspaces.workspace.description" xml:space="preserve">
 				<source>Description</source>
 			<target xml:lang="tl" state="needs-translation">Description</target></trans-unit>
@@ -68,31 +68,31 @@
 			<target xml:lang="tl" state="needs-translation">Base workspace</target></trans-unit>
       <trans-unit id="workspaces.workspace.owner" xml:space="preserve">
 				<source>Owner</source>
-			<target xml:lang="tl" state="needs-translation">Owner</target></trans-unit>
+			<target xml:lang="tl" state="translated">May-ari</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility" xml:space="preserve">
 				<source>Visibility</source>
-			<target xml:lang="tl" state="needs-translation">Visibility</target></trans-unit>
+			<target xml:lang="tl" state="translated">Bisibilidad</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private" xml:space="preserve">
 				<source>Private</source>
-			<target xml:lang="tl" state="needs-translation">Private</target></trans-unit>
+			<target xml:lang="tl" state="translated">Pribado</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
 				<source>Only reviewers and administrators can access and modify this workspace</source>
 			<target xml:lang="tl" state="needs-translation">Only reviewers and administrators can access and modify this workspace</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve">
 				<source>Internal</source>
-			<target xml:lang="tl" state="needs-translation">Internal</target></trans-unit>
+			<target xml:lang="tl" state="translated">Panloob</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve">
 				<source>Any logged in editor can see and modify this workspace.</source>
 			<target xml:lang="tl" state="needs-translation">Any logged in editor can see and modify this workspace.</target></trans-unit>
       <trans-unit id="workspaces.workspace.changes" xml:space="preserve">
 				<source>Changes</source>
-			<target xml:lang="tl" state="needs-translation">Changes</target></trans-unit>
+			<target xml:lang="tl" state="translated">Mga pagbabago</target></trans-unit>
       <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve">
 				<source>Open page in "{0}" workspace</source>
 			<target xml:lang="tl" state="needs-translation">Open page in "{0}" workspace</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve">
 				<source>This is your personal workspace which you can't delete.</source>
-			<target xml:lang="tl" state="needs-translation">This is your personal workspace which you can't delete.</target></trans-unit>
+			<target xml:lang="tl" state="translated">Ito ay iyong personal na workspace na kung saan ito ay hindi mabubura.</target></trans-unit>
       <trans-unit id="workspaces.help.workspaceContainsChanges" xml:space="preserve">
 				<source>The workspace contains changes. To delete, discard the changes first.</source>
 			<target xml:lang="tl" state="needs-translation">The workspace contains changes. To delete, discard the changes first.</target></trans-unit>
@@ -134,7 +134,7 @@
 			<target xml:lang="tl" state="needs-translation">Discard all changes</target></trans-unit>
       <trans-unit id="workspaces.publishAllChanges" xml:space="preserve">
 				<source>Publish all changes</source>
-			<target xml:lang="tl" state="needs-translation">Publish all changes</target></trans-unit>
+			<target xml:lang="tl" state="translated">Ilathala lahat ng mga pagbabago</target></trans-unit>
       <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve">
 				<source>Publish all changes to {0}</source>
 			<target xml:lang="tl" state="needs-translation">Publish all changes to {0}</target></trans-unit>
@@ -143,19 +143,19 @@
 			<target xml:lang="tl" state="needs-translation">Changed Content</target></trans-unit>
       <trans-unit id="workspaces.legend.deleted" xml:space="preserve">
 				<source>deleted</source>
-			<target xml:lang="tl" state="needs-translation">deleted</target></trans-unit>
+			<target xml:lang="tl" state="translated">nabura</target></trans-unit>
       <trans-unit id="workspaces.legend.created" xml:space="preserve">
 				<source>created</source>
-			<target xml:lang="tl" state="needs-translation">created</target></trans-unit>
+			<target xml:lang="tl" state="translated">nagawa</target></trans-unit>
       <trans-unit id="workspaces.legend.moved" xml:space="preserve">
 				<source>moved</source>
-			<target xml:lang="tl" state="needs-translation">moved</target></trans-unit>
+			<target xml:lang="tl" state="translated">inilipat</target></trans-unit>
       <trans-unit id="workspaces.legend.hidden" xml:space="preserve">
 				<source>hidden</source>
-			<target xml:lang="tl" state="needs-translation">hidden</target></trans-unit>
+			<target xml:lang="tl" state="translated">nakatago</target></trans-unit>
       <trans-unit id="workspaces.legend.edited" xml:space="preserve">
 				<source>edited</source>
-			<target xml:lang="tl" state="needs-translation">edited</target></trans-unit>
+			<target xml:lang="tl" state="translated">na-edit</target></trans-unit>
       <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve">
 				<source>There are no unpublished changes in this workspace.</source>
 			<target xml:lang="tl" state="needs-translation">There are no unpublished changes in this workspace.</target></trans-unit>
@@ -304,7 +304,7 @@
 			<target xml:lang="tl" state="needs-translation">New</target></trans-unit>
       <trans-unit id="users.action.edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="tl" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="tl" state="translated">Edit</target></trans-unit>
       <trans-unit id="users.action.editAccount" xml:space="preserve">
 				<source>Edit account</source>
 			<target xml:lang="tl" state="needs-translation">Edit account</target></trans-unit>
@@ -325,10 +325,10 @@
 			<target xml:lang="tl" state="needs-translation">User Data</target></trans-unit>
       <trans-unit id="users.new.userData.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="tl" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="tl" state="translated">Username</target></trans-unit>
       <trans-unit id="users.new.userData.password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="tl" state="needs-translation">Password</target></trans-unit>
+			<target xml:lang="tl" state="translated">Password</target></trans-unit>
       <trans-unit id="users.new.userData.repeatPassword" xml:space="preserve">
 				<source>Repeat password</source>
 			<target xml:lang="tl" state="needs-translation">Repeat password</target></trans-unit>
@@ -361,7 +361,7 @@
 			<target xml:lang="tl" state="needs-translation">Personal Data</target></trans-unit>
       <trans-unit id="users.show.personalData.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="tl" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="tl" state="translated">Pamagat</target></trans-unit>
       <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
 			<target xml:lang="tl" state="needs-translation">First Name</target></trans-unit>
@@ -379,7 +379,7 @@
 			<target xml:lang="tl" state="needs-translation">Accounts</target></trans-unit>
       <trans-unit id="users.show.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="tl" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="tl" state="translated">Username</target></trans-unit>
       <trans-unit id="users.show.roles" xml:space="preserve">
 				<source>Roles</source>
 			<target xml:lang="tl" state="needs-translation">Roles</target></trans-unit>
@@ -424,7 +424,7 @@
 			<target xml:lang="tl" state="needs-translation">Account</target></trans-unit>
       <trans-unit id="users.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="tl" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="tl" state="translated">Username</target></trans-unit>
       <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve">
 				<source>The username can't be changed via the user interface</source>
 			<target xml:lang="tl" state="needs-translation">The username can't be changed via the user interface</target></trans-unit>
@@ -572,10 +572,10 @@
 			<target xml:lang="tl" state="needs-translation">This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</target></trans-unit>
       <trans-unit id="userSettings.action.index" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="tl" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="tl" state="translated">Edit</target></trans-unit>
       <trans-unit id="userSettings.action.edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="tl" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="tl" state="translated">Edit</target></trans-unit>
       <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve">
 				<source>New electronic address</source>
 			<target xml:lang="tl" state="needs-translation">New electronic address</target></trans-unit>
@@ -605,7 +605,7 @@
 			<target xml:lang="tl" state="needs-translation">Accounts</target></trans-unit>
       <trans-unit id="userSettings.accounts.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="tl" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="tl" state="translated">Username</target></trans-unit>
       <trans-unit id="userSettings.accounts.roles" xml:space="preserve">
 				<source>Roles</source>
 			<target xml:lang="tl" state="needs-translation">Roles</target></trans-unit>
@@ -639,7 +639,7 @@
 			<target xml:lang="tl" state="needs-translation">Name</target></trans-unit>
       <trans-unit id="media.field.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="tl" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="tl" state="translated">Pamagat</target></trans-unit>
       <trans-unit id="media.field.label" xml:space="preserve">
 				<source>Label</source>
 			<target xml:lang="tl" state="needs-translation">Label</target></trans-unit>
@@ -654,7 +654,7 @@
 			<target xml:lang="tl" state="needs-translation">File size</target></trans-unit>
       <trans-unit id="media.field.type" xml:space="preserve">
 				<source>Type</source>
-			<target xml:lang="tl" state="needs-translation">Type</target></trans-unit>
+			<target xml:lang="tl" state="translated">Uri</target></trans-unit>
       <trans-unit id="media.field.tags" xml:space="preserve">
 				<source>Tags</source>
 			<target xml:lang="tl" state="needs-translation">Tags</target></trans-unit>
@@ -711,7 +711,7 @@
 			<target xml:lang="tl" state="needs-translation">This operation cannot be undone.</target></trans-unit>
       <trans-unit id="media.cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target xml:lang="tl" state="needs-translation">Cancel</target></trans-unit>
+			<target xml:lang="tl" state="translated">Kanselahin</target></trans-unit>
       <trans-unit id="media.replaceAssetResource" xml:space="preserve">
 				<source>Replace</source>
 			<target xml:lang="tl" state="needs-translation">Replace</target></trans-unit>
@@ -735,7 +735,7 @@
 			<target xml:lang="tl" state="needs-translation">Search in assets</target></trans-unit>
       <trans-unit id="media.search.placeholder" xml:space="preserve">
 				<source>Search</source>
-			<target xml:lang="tl" state="needs-translation">Search</target></trans-unit>
+			<target xml:lang="tl" state="translated">Maghanap</target></trans-unit>
       <trans-unit id="media.search.itemCount" xml:space="preserve">
 				<source>{0} items</source>
 			<target xml:lang="tl" state="needs-translation">{0} items</target></trans-unit>
@@ -771,13 +771,13 @@
 			<target xml:lang="tl" state="needs-translation">Images</target></trans-unit>
       <trans-unit id="media.filter.documents" xml:space="preserve">
 				<source>Documents</source>
-			<target xml:lang="tl" state="needs-translation">Documents</target></trans-unit>
+			<target xml:lang="tl" state="translated">Mga dokyumento</target></trans-unit>
       <trans-unit id="media.filter.video" xml:space="preserve">
 				<source>Video</source>
-			<target xml:lang="tl" state="needs-translation">Video</target></trans-unit>
+			<target xml:lang="tl" state="translated">Video</target></trans-unit>
       <trans-unit id="media.filter.audio" xml:space="preserve">
 				<source>Audio</source>
-			<target xml:lang="tl" state="needs-translation">Audio</target></trans-unit>
+			<target xml:lang="tl" state="translated">Audio</target></trans-unit>
       <trans-unit id="media.tooltip.sortOptions" xml:space="preserve">
 				<source>Sort options</source>
 			<target xml:lang="tl" state="needs-translation">Sort options</target></trans-unit>
@@ -789,7 +789,7 @@
 			<target xml:lang="tl" state="needs-translation">Thumbnail view</target></trans-unit>
       <trans-unit id="media.collections" xml:space="preserve">
 				<source>Collections</source>
-			<target xml:lang="tl" state="needs-translation">Collections</target></trans-unit>
+			<target xml:lang="tl" state="translated">Mga koleksiyon</target></trans-unit>
       <trans-unit id="media.editCollections" xml:space="preserve">
 				<source>Edit collections</source>
 			<target xml:lang="tl" state="needs-translation">Edit collections</target></trans-unit>
@@ -858,7 +858,7 @@
 			<target xml:lang="tl" state="needs-translation">Basics</target></trans-unit>
       <trans-unit id="media.delete" xml:space="preserve">
 				<source>Delete</source>
-			<target xml:lang="tl" state="needs-translation">Delete</target></trans-unit>
+			<target xml:lang="tl" state="translated">Burahin</target></trans-unit>
       <trans-unit id="media.clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
 			<target xml:lang="tl" state="needs-translation">Click to delete</target></trans-unit>
@@ -867,7 +867,7 @@
 			<target xml:lang="tl" state="needs-translation">Save</target></trans-unit>
       <trans-unit id="media.metadata" xml:space="preserve">
 				<source>Metadata</source>
-			<target xml:lang="tl" state="needs-translation">Metadata</target></trans-unit>
+			<target xml:lang="tl" state="translated">Metadata</target></trans-unit>
       <trans-unit id="media.metadata.filename" xml:space="preserve">
 				<source>Filename</source>
 			<target xml:lang="tl" state="needs-translation">Filename</target></trans-unit>
@@ -882,13 +882,13 @@
 			<target xml:lang="tl" state="needs-translation">Dimensions</target></trans-unit>
       <trans-unit id="media.metadata.type" xml:space="preserve">
 				<source>Type</source>
-			<target xml:lang="tl" state="needs-translation">Type</target></trans-unit>
+			<target xml:lang="tl" state="translated">Uri</target></trans-unit>
       <trans-unit id="media.metadata.identifier" xml:space="preserve">
 				<source>Identifier</source>
 			<target xml:lang="tl" state="needs-translation">Identifier</target></trans-unit>
       <trans-unit id="media.preview" xml:space="preserve">
 				<source>Preview</source>
-			<target xml:lang="tl" state="needs-translation">Preview</target></trans-unit>
+			<target xml:lang="tl" state="translated">Preview</target></trans-unit>
       <trans-unit id="media.cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>
 			<target xml:lang="tl" state="needs-translation">Cannot upload the file</target></trans-unit>
