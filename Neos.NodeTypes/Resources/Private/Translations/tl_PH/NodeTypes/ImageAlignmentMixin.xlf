@@ -7,16 +7,16 @@
 			<target xml:lang="tl" state="needs-translation">Alignment</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.placeholder" xml:space="preserve">
 				<source>Default</source>
-			<target xml:lang="tl" state="needs-translation">Default</target></trans-unit>
+			<target xml:lang="tl" state="translated">Default</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.center" xml:space="preserve">
 				<source>Center</source>
-			<target xml:lang="tl" state="needs-translation">Center</target></trans-unit>
+			<target xml:lang="tl" state="translated">Gitna</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.left" xml:space="preserve">
 				<source>Left</source>
-			<target xml:lang="tl" state="needs-translation">Left</target></trans-unit>
+			<target xml:lang="tl" state="translated">Kaliwa</target></trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.right" xml:space="preserve">
 				<source>Right</source>
-			<target xml:lang="tl" state="needs-translation">Right</target></trans-unit>
+			<target xml:lang="tl" state="translated">Kanan</target></trans-unit>
     </body>
   </file>
 </xliff>
