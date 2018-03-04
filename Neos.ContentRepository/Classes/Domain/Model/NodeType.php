@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Domain\Model;
  */
 
 use Neos\ContentRepository\Domain\Context\Node\RelationDistributionStrategy;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Exception\NodeConfigurationException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -534,6 +535,27 @@ class NodeType
         }
 
         return $autoCreatedChildNodes;
+    }
+
+    /**
+     * @param NodeName $nodeName
+     * @return bool
+     */
+    public function hasAutoCreatedChildNodeWithNodeName(NodeName $nodeName): bool
+    {
+        return isset($this->fullConfiguration['childNodes'][(string)$nodeName]);
+    }
+
+    /**
+     * @param NodeName $nodeName
+     * @return NodeType|null
+     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     */
+    public function getTypeOfAutoCreatedChildNodeWithNodeName(NodeName $nodeName): ?NodeType
+    {
+        return isset($this->fullConfiguration['childNodes'][(string)$nodeName]['type'])
+            ? $this->nodeTypeManager->getNodeType($this->fullConfiguration['childNodes'][(string)$nodeName]['type'])
+            : null;
     }
 
     /**

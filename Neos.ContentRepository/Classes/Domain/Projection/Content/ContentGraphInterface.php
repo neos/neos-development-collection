@@ -73,11 +73,17 @@ interface ContentGraphInterface
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregate $nodeAggregate
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @return array|NodeAggregate[]
-     * @throws Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
      */
-    public function findParentAggregates(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregate $nodeAggregate): array;
+    public function findParentAggregates(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): array;
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @return array|NodeAggregate[]
+     */
+    public function findChildAggregates(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): array;
 
     /**
      * @param Domain\Context\Node\ReadOnlyNodeInterface $node

@@ -232,17 +232,19 @@ final class ContentGraph implements ContentGraphInterface
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregate $nodeAggregate
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @return array|NodeAggregate[]
+     * @throws Domain\Context\Node\NodeAggregatesNameIsAmbiguous
+     * @throws Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
      * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
      * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
-    public function findParentAggregates(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregate $nodeAggregate): array
+    public function findParentAggregates(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): array
     {
         $nodeIdentifiers = [];
-        foreach ($nodeAggregate->getNodes() as $node) {
+        foreach ($this->findNodesByNodeAggregateIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier) as $node) {
             $nodeIdentifiers[] = (string)$node->getNodeIdentifier();
         }
 
@@ -289,6 +291,69 @@ final class ContentGraph implements ContentGraphInterface
         }
 
         return $parentAggregates;
+    }
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @return array
+     * @throws Domain\Context\Node\NodeAggregatesNameIsAmbiguous
+     * @throws Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Exception
+     * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
+     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     */
+    public function findChildAggregates(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): array
+    {
+        $nodeIdentifiers = [];
+        foreach ($this->findNodesByNodeAggregateIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier) as $node) {
+            $nodeIdentifiers[] = (string)$node->getNodeIdentifier();
+        }
+
+        $connection = $this->client->getConnection();
+
+        $query = 'SELECT c.*, ch.name, ch.contentstreamidentifier FROM neos_contentgraph_node p
+                      INNER JOIN neos_contentgraph_hierarchyrelation ph ON ph.childnodeanchor = p.relationanchorpoint
+                      INNER JOIN neos_contentgraph_hierarchyrelation ch ON ch.parentnodeanchor = p.relationanchorpoint
+                      INNER JOIN neos_contentgraph_node c ON ch.childnodeanchor = c.relationanchorpoint 
+                      WHERE p.nodeidentifier IN (:nodeIdentifiers)
+                      AND ph.contentstreamidentifier = :contentStreamIdentifier
+                      AND ch.contentstreamidentifier = :contentStreamIdentifier';
+        $parameters = [
+            'nodeIdentifiers' => $nodeIdentifiers,
+            'contentStreamIdentifier' => $contentStreamIdentifier
+        ];
+        $types['nodeIdentifiers'] = Connection::PARAM_STR_ARRAY;
+
+        $childAggregates = [];
+        $rawNodeTypeNames = [];
+        $rawNodeNames = [];
+        $nodesByAggregate = [];
+        foreach ($connection->executeQuery($query, $parameters, $types)->fetchAll() as $nodeRow) {
+            $rawNodeAggregateIdentifier = $nodeRow['nodeaggregateidentifier'];
+            $nodesByAggregate[$rawNodeAggregateIdentifier][$nodeRow['nodeidentifier']] = $this->nodeFactory->mapNodeRowToNode($nodeRow, null);
+            if (!isset($rawNodeTypeNames[$rawNodeAggregateIdentifier])) {
+                $rawNodeTypeNames[$rawNodeAggregateIdentifier] = $nodeRow['nodetypename'];
+            } elseif ($nodeRow['nodetypename'] !== $rawNodeTypeNames[$rawNodeAggregateIdentifier]) {
+                throw new Domain\Context\Node\NodeAggregatesTypeIsAmbiguous('Node aggregate "' . $rawNodeAggregateIdentifier . '" has an ambiguous node type.', 1519815810);
+            }
+            if (!isset($rawNodeNames[$rawNodeAggregateIdentifier])) {
+                $rawNodeNames[$rawNodeAggregateIdentifier] = $nodeRow['name'];
+            } elseif ($nodeRow['name'] !== $rawNodeNames[$rawNodeAggregateIdentifier]) {
+                throw new Domain\Context\Node\NodeAggregatesNameIsAmbiguous('Node aggregate "' . $rawNodeAggregateIdentifier . '" has an ambiguous name.', 1519918382);
+            }
+        }
+        foreach ($nodesByAggregate as $rawNodeAggregateIdentifier => $nodes) {
+            $childAggregates[$rawNodeAggregateIdentifier] = new NodeAggregate(
+                new NodeAggregateIdentifier($rawNodeAggregateIdentifier),
+                new NodeTypeName($rawNodeTypeNames[$rawNodeAggregateIdentifier]),
+                new Domain\ValueObject\NodeName($rawNodeNames[$rawNodeAggregateIdentifier]),
+                $nodesByAggregate[$rawNodeAggregateIdentifier]
+            );
+        }
+
+        return $childAggregates;
     }
 
     /**

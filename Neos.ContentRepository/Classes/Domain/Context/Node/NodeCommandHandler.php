@@ -502,14 +502,14 @@ final class NodeCommandHandler
                     throw new NodeConstraintException('Cannot move node "' . $command->getNodeAggregateIdentifier() . '" into node "' . $command->getNewParentNodeAggregateIdentifier() . '"', 1404648100);
                 }
 
-                $oldParentAggregates = $this->contentGraph->findParentAggregates($command->getContentStreamIdentifier(), $nodeAggregate);
+                $oldParentAggregates = $this->contentGraph->findParentAggregates($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
                 foreach ($oldParentAggregates as $oldParentAggregate) {
                     $oldParentAggregatesNodeType = $this->nodeTypeManager->getNodeType((string)$oldParentAggregate->getNodeTypeName());
                     if (isset($oldParentAggregatesNodeType->getAutoCreatedChildNodes()[(string) $node->getName()])) {
                         throw new NodeConstraintException('Cannot move auto-generated node "' . $command->getNodeAggregateIdentifier() . '" into new parent "' . $newParentAggregate->getNodeAggregateIdentifier() . '"', 1519920594);
                     }
                 }
-                foreach ($this->contentGraph->findParentAggregates($command->getContentStreamIdentifier(), $newParentAggregate) as $grandParentAggregate) {
+                foreach ($this->contentGraph->findParentAggregates($command->getContentStreamIdentifier(), $command->getNewParentNodeAggregateIdentifier()) as $grandParentAggregate) {
                     $grandParentsNodeType = $this->nodeTypeManager->getNodeType((string)$grandParentAggregate->getNodeTypeName());
                     if (isset($grandParentsNodeType->getAutoCreatedChildNodes()[(string)$newParentAggregate->getNodeName()]) && !$grandParentsNodeType->allowsGrandchildNodeType((string)$newParentAggregate->getNodeName(), $nodesNodeType)) {
                         throw new NodeConstraintException('Cannot move node "' . $command->getNodeAggregateIdentifier() . '" into grand parent node "' . $grandParentAggregate->getNodeAggregateIdentifier() . '"', 1519828263);

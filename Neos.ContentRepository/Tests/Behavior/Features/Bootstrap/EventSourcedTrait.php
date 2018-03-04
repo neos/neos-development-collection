@@ -312,6 +312,42 @@ trait EventSourcedTrait
     }
 
     /**
+     * @Given /^the command ChangeNodeAggregateType was published with payload:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theCommandChangeNodeAggregateTypeIsExecutedWithPayload(TableNode $payloadTable)
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+
+        $command = new \Neos\ContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType(
+            new ContentStreamIdentifier($commandArguments['contentStreamIdentifier']),
+            new NodeAggregateIdentifier($commandArguments['nodeAggregateIdentifier']),
+            new \Neos\ContentRepository\Domain\ValueObject\NodeTypeName($commandArguments['newNodeTypeName']),
+            $commandArguments['strategy'] ? new \Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy($commandArguments['strategy']) : null
+        );
+        /** @var \Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler $commandHandler */
+        $commandHandler = $this->objectManager->get(\Neos\ContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler::class);
+
+        $commandHandler->handleChangeNodeAggregateType($command);
+    }
+
+    /**
+     * @Given /^the command ChangeNodeAggregateType was published with payload and exceptions are caught:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theCommandChangeNodeAggregateTypeIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
+    {
+        try {
+            $this->theCommandChangeNodeAggregateTypeIsExecutedWithPayload($payloadTable);
+        } catch (\Exception $exception) {
+            $this->lastCommandException = $exception;
+        }
+    }
+
+
+    /**
      * @When /^the command "([^"]*)" is executed with payload:$/
      * @Given /^the command "([^"]*)" was executed with payload:$/
      * @throws Exception
@@ -411,6 +447,10 @@ trait EventSourcedTrait
                 return;
             case 'DimensionSpacePointIsNoGeneralization':
                 Assert::assertInstanceOf(\Neos\ContentRepository\Domain\Context\DimensionSpace\DimensionSpacePointIsNoGeneralization::class, $this->lastCommandException);
+
+                return;
+            case 'NodeTypeNotFound':
+                Assert::assertInstanceOf(\Neos\ContentRepository\Domain\Context\NodeAggregate\NodeTypeNotFound::class, $this->lastCommandException);
 
                 return;
             default:
