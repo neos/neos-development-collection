@@ -5,85 +5,85 @@
       <!-- general translations like button -->
       <trans-unit id="autoPublish" xml:space="preserve">
 				<source>Auto-Publish</source>
-			<target xml:lang="tl" state="needs-translation">Auto-Publish</target></trans-unit>
+			<target xml:lang="tl" state="translated">Auto-Publish</target></trans-unit>
       <trans-unit id="autoPublishTo" xml:space="preserve">
 				<source>Auto-Publish to {0}</source>
-			<target xml:lang="tl" state="needs-translation">Auto-Publish to {0}</target></trans-unit>
+			<target xml:lang="tl" state="translated">Auto-Publish to {0}</target></trans-unit>
       <trans-unit id="reviewChanges" xml:space="preserve">
 				<source>Review changes</source>
-			<target xml:lang="tl" state="needs-translation">Review changes</target></trans-unit>
+			<target xml:lang="tl" state="translated">Suriin ang mga pagbabago</target></trans-unit>
       <trans-unit id="apply" xml:space="preserve">
 				<source>Apply</source>
-			<target xml:lang="tl" state="needs-translation">Apply</target></trans-unit>
+			<target xml:lang="tl" state="translated">Ilapat</target></trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
 				<source>Apply changes</source>
-			<target xml:lang="tl" state="needs-translation">Apply changes</target></trans-unit>
+			<target xml:lang="tl" state="translated">Ilapat ang mga pagbabago</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target xml:lang="tl" state="needs-translation">Cancel</target></trans-unit>
+			<target xml:lang="tl" state="translated">Kanselahin</target></trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
-			<target xml:lang="tl" state="needs-translation">Back</target></trans-unit>
+			<target xml:lang="tl" state="translated">Ibalik</target></trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
-			<target xml:lang="tl" state="needs-translation">Choose</target></trans-unit>
+			<target xml:lang="tl" state="translated">Pumili</target></trans-unit>
       <trans-unit id="typeToSearch" xml:space="preserve">
 				<source>Type to search</source>
-			<target xml:lang="tl" state="needs-translation">Type to search</target></trans-unit>
+			<target xml:lang="tl" state="translated">I-type upang maghanap</target></trans-unit>
       <trans-unit id="content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="tl" state="needs-translation">Content</target></trans-unit>
+			<target xml:lang="tl" state="translated">Nilalaman</target></trans-unit>
       <trans-unit id="node" xml:space="preserve">
 				<source>Node</source>
-			<target xml:lang="tl" state="needs-translation">Node</target></trans-unit>
+			<target xml:lang="tl" state="translated">Node</target></trans-unit>
       <trans-unit id="contentView" xml:space="preserve">
 				<source>Content View</source>
-			<target xml:lang="tl" state="needs-translation">Content View</target></trans-unit>
+			<target xml:lang="tl" state="translated">Tingnan ang nilalaman</target></trans-unit>
       <trans-unit id="createAfter" xml:space="preserve">
 				<source>Create after</source>
-			<target xml:lang="tl" state="needs-translation">Create after</target></trans-unit>
+			<target xml:lang="tl" state="translated">Lumikha pagkatapos</target></trans-unit>
       <trans-unit id="createNew" xml:space="preserve">
 				<source>Create new</source>
-			<target xml:lang="tl" state="needs-translation">Create new</target></trans-unit>
+			<target xml:lang="tl" state="translated">Lumikha ng bago</target></trans-unit>
       <trans-unit id="close" xml:space="preserve">
 				<source>Close</source>
-			<target xml:lang="tl" state="needs-translation">Close</target></trans-unit>
+			<target xml:lang="tl" state="translated">Sarado</target></trans-unit>
       <trans-unit id="copy" xml:space="preserve">
 				<source>Copy</source>
-			<target xml:lang="tl" state="needs-translation">Copy</target></trans-unit>
+			<target xml:lang="tl" state="translated">Kopya</target></trans-unit>
       <trans-unit id="cut" xml:space="preserve">
 				<source>Cut</source>
-			<target xml:lang="tl" state="needs-translation">Cut</target></trans-unit>
+			<target xml:lang="tl" state="translated">Putulin</target></trans-unit>
       <trans-unit id="delete" xml:space="preserve">
 				<source>Delete</source>
-			<target xml:lang="tl" state="needs-translation">Delete</target></trans-unit>
+			<target xml:lang="tl" state="translated">Burahin</target></trans-unit>
       <trans-unit id="deleteElement" xml:space="preserve">
 				<source>Yes, delete the element</source>
-			<target xml:lang="tl" state="needs-translation">Yes, delete the element</target></trans-unit>
+			<target xml:lang="tl" state="translated">Oo, burahin ang elemento</target></trans-unit>
       <trans-unit id="deleteElementTitle" xml:space="preserve">
 				<source>Delete the element</source>
-			<target xml:lang="tl" state="needs-translation">Delete the element</target></trans-unit>
+			<target xml:lang="tl" state="translated">Burahin ang elemento</target></trans-unit>
       <trans-unit id="discard" xml:space="preserve">
 				<source>Discard</source>
-			<target xml:lang="tl" state="needs-translation">Discard</target></trans-unit>
+			<target xml:lang="tl" state="translated">Itapon</target></trans-unit>
       <trans-unit id="discardChanges" xml:space="preserve">
 				<source>Discard changes</source>
-			<target xml:lang="tl" state="needs-translation">Discard changes</target></trans-unit>
+			<target xml:lang="tl" state="translated">Itapon ang mga pagbabago</target></trans-unit>
       <trans-unit id="editTitle" xml:space="preserve">
 				<source>Edit title</source>
-			<target xml:lang="tl" state="needs-translation">Edit title</target></trans-unit>
+			<target xml:lang="tl" state="translated">I-edit ang pamagat</target></trans-unit>
       <trans-unit id="editPreview" xml:space="preserve">
 				<source>Edit / Preview</source>
-			<target xml:lang="tl" state="needs-translation">Edit / Preview</target></trans-unit>
+			<target xml:lang="tl" state="translated">Iedit / tignan</target></trans-unit>
       <trans-unit id="edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="tl" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="tl" state="translated">Edit</target></trans-unit>
       <trans-unit id="hideUnhide" xml:space="preserve">
 				<source>Hide / Unhide</source>
-			<target xml:lang="tl" state="needs-translation">Hide / Unhide</target></trans-unit>
+			<target xml:lang="tl" state="translated">Itago / Ipakita</target></trans-unit>
       <trans-unit id="hide" xml:space="preserve">
 				<source>Hide</source>
-			<target xml:lang="tl" state="needs-translation">Hide</target></trans-unit>
+			<target xml:lang="tl" state="translated">Itago</target></trans-unit>
       <trans-unit id="unhide" xml:space="preserve">
 				<source>Unhide</source>
 			<target xml:lang="tl" state="needs-translation">Unhide</target></trans-unit>
@@ -92,19 +92,19 @@
 			<target xml:lang="tl" state="needs-translation">into</target></trans-unit>
       <trans-unit id="before" xml:space="preserve">
 				<source>before</source>
-			<target xml:lang="tl" state="needs-translation">before</target></trans-unit>
+			<target xml:lang="tl" state="translated">dati</target></trans-unit>
       <trans-unit id="after" xml:space="preserve">
 				<source>after</source>
-			<target xml:lang="tl" state="needs-translation">after</target></trans-unit>
+			<target xml:lang="tl" state="translated">pagkatapos</target></trans-unit>
       <trans-unit id="loading" xml:space="preserve">
 				<source>Loading</source>
-			<target xml:lang="tl" state="needs-translation">Loading</target></trans-unit>
+			<target xml:lang="tl" state="translated">Naglo-load</target></trans-unit>
       <trans-unit id="newAfter" xml:space="preserve">
 				<source>New After</source>
-			<target xml:lang="tl" state="needs-translation">New After</target></trans-unit>
+			<target xml:lang="tl" state="translated">Bago Pagkatapos</target></trans-unit>
       <trans-unit id="newBefore" xml:space="preserve">
 				<source>New Before</source>
-			<target xml:lang="tl" state="needs-translation">New Before</target></trans-unit>
+			<target xml:lang="tl" state="translated">Bago Dati</target></trans-unit>
       <trans-unit id="newInto" xml:space="preserve">
 				<source>New Into</source>
 			<target xml:lang="tl" state="needs-translation">New Into</target></trans-unit>
@@ -113,34 +113,34 @@
 			<target xml:lang="tl" state="needs-translation">Navigate</target></trans-unit>
       <trans-unit id="okay" xml:space="preserve">
 				<source>OK</source>
-			<target xml:lang="tl" state="needs-translation">OK</target></trans-unit>
+			<target xml:lang="tl" state="translated">OK</target></trans-unit>
       <trans-unit id="page" xml:space="preserve">
 				<source>Page</source>
-			<target xml:lang="tl" state="needs-translation">Page</target></trans-unit>
+			<target xml:lang="tl" state="translated">Pahina</target></trans-unit>
       <trans-unit id="paste" xml:space="preserve">
 				<source>Paste</source>
-			<target xml:lang="tl" state="needs-translation">Paste</target></trans-unit>
+			<target xml:lang="tl" state="translated">Idikit</target></trans-unit>
       <trans-unit id="pasteAfter" xml:space="preserve">
 				<source>Paste After</source>
-			<target xml:lang="tl" state="needs-translation">Paste After</target></trans-unit>
+			<target xml:lang="tl" state="translated">Idikit Pagkatapos</target><alt-trans><target xml:lang="tl">Idikit pagkatapos</target></alt-trans></trans-unit>
       <trans-unit id="pasteBefore" xml:space="preserve">
 				<source>Paste Before</source>
-			<target xml:lang="tl" state="needs-translation">Paste Before</target></trans-unit>
+			<target xml:lang="tl" state="translated">Idikit Bago</target></trans-unit>
       <trans-unit id="pasteInto" xml:space="preserve">
 				<source>Paste Into</source>
-			<target xml:lang="tl" state="needs-translation">Paste Into</target></trans-unit>
+			<target xml:lang="tl" state="translated">Idikit sa</target></trans-unit>
       <trans-unit id="password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="tl" state="needs-translation">Password</target></trans-unit>
+			<target xml:lang="tl" state="translated">Password</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve">
 				<source>Preview</source>
-			<target xml:lang="tl" state="needs-translation">Preview</target></trans-unit>
+			<target xml:lang="tl" state="translated">Preview</target></trans-unit>
       <trans-unit id="publish" xml:space="preserve">
 				<source>Publish</source>
-			<target xml:lang="tl" state="needs-translation">Publish</target></trans-unit>
+			<target xml:lang="tl" state="translated">Ilathala</target></trans-unit>
       <trans-unit id="publishTo" xml:space="preserve">
 				<source>Publish to {0}</source>
-			<target xml:lang="tl" state="needs-translation">Publish to {0}</target></trans-unit>
+			<target xml:lang="tl" state="translated">Ilathala sa {0}</target></trans-unit>
       <trans-unit id="publishAllChangesForCurrentPage" xml:space="preserve">
 				<source>Publish all changes for current page</source>
 			<target xml:lang="tl" state="needs-translation">Publish all changes for current page</target></trans-unit>
@@ -167,31 +167,31 @@
 			<target xml:lang="tl" state="needs-translation">Current workspace</target></trans-unit>
       <trans-unit id="remove" xml:space="preserve">
 				<source>Remove</source>
-			<target xml:lang="tl" state="needs-translation">Remove</target></trans-unit>
+			<target xml:lang="tl" state="translated">Tanggalin</target></trans-unit>
       <trans-unit id="refresh" xml:space="preserve">
 				<source>Refresh</source>
-			<target xml:lang="tl" state="needs-translation">Refresh</target></trans-unit>
+			<target xml:lang="tl" state="translated">Refresh</target></trans-unit>
       <trans-unit id="save" xml:space="preserve">
 				<source>Save</source>
 			<target xml:lang="tl" state="needs-translation">Save</target></trans-unit>
       <trans-unit id="saving" xml:space="preserve">
 				<source>Saving</source>
-			<target xml:lang="tl" state="needs-translation">Saving</target></trans-unit>
+			<target xml:lang="tl" state="translated">Pag iipon</target></trans-unit>
       <trans-unit id="saved" xml:space="preserve">
 				<source>Saved</source>
-			<target xml:lang="tl" state="needs-translation">Saved</target></trans-unit>
+			<target xml:lang="tl" state="translated">Na-save</target></trans-unit>
       <trans-unit id="search" xml:space="preserve">
 				<source>Search</source>
-			<target xml:lang="tl" state="needs-translation">Search</target></trans-unit>
+			<target xml:lang="tl" state="translated">Maghanap</target></trans-unit>
       <trans-unit id="toggleInspector" xml:space="preserve">
 				<source>Toggle inspector</source>
 			<target xml:lang="tl" state="needs-translation">Toggle inspector</target></trans-unit>
       <trans-unit id="username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="tl" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="tl" state="translated">Username</target></trans-unit>
       <trans-unit id="you" xml:space="preserve">
 				<source>You</source>
-			<target xml:lang="tl" state="needs-translation">You</target></trans-unit>
+			<target xml:lang="tl" state="translated">Ikaw</target></trans-unit>
       <trans-unit id="noTitle" xml:space="preserve">
 				<source>[no title]</source>
 			<target xml:lang="tl" state="needs-translation">[no title]</target></trans-unit>
@@ -203,13 +203,13 @@
 			<target xml:lang="tl" state="needs-translation">Content Type</target></trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
 				<source>Path</source>
-			<target xml:lang="tl" state="needs-translation">Path</target></trans-unit>
+			<target xml:lang="tl" state="translated">Daan</target></trans-unit>
       <trans-unit id="relativePathCaption" xml:space="preserve">
 				<source>Relative Path</source>
-			<target xml:lang="tl" state="needs-translation">Relative Path</target></trans-unit>
+			<target xml:lang="tl" state="translated">Kaugnay na daan</target></trans-unit>
       <trans-unit id="version" xml:space="preserve">
 				<source>Version</source>
-			<target xml:lang="tl" state="needs-translation">Version</target></trans-unit>
+			<target xml:lang="tl" state="translated">Bersyon</target></trans-unit>
       <trans-unit id="operationCannotBeUndone" xml:space="preserve">
 				<source>This operation cannot be undone.</source>
 			<target xml:lang="tl" state="needs-translation">This operation cannot be undone.</target></trans-unit>
@@ -218,7 +218,7 @@
 			<target xml:lang="tl" state="needs-translation">Asset</target></trans-unit>
       <trans-unit id="created" xml:space="preserve">
 				<source>Created</source>
-			<target xml:lang="tl" state="needs-translation">Created</target></trans-unit>
+			<target xml:lang="tl" state="translated">Nagawa</target></trans-unit>
       <trans-unit id="lastModification" xml:space="preserve">
 				<source>Last modification</source>
 			<target xml:lang="tl" state="needs-translation">Last modification</target></trans-unit>
@@ -236,7 +236,7 @@
 			<target xml:lang="tl" state="needs-translation">Workspace</target></trans-unit>
       <trans-unit id="structure.label" xml:space="preserve">
 				<source>Structure</source>
-			<target xml:lang="tl" state="needs-translation">Structure</target></trans-unit>
+			<target xml:lang="tl" state="translated">Istraktura</target></trans-unit>
       <trans-unit id="structure.toggle" xml:space="preserve">
 				<source>Toggle context structure</source>
 			<target xml:lang="tl" state="needs-translation">Toggle context structure</target></trans-unit>
@@ -248,7 +248,7 @@
 			<target xml:lang="tl" state="needs-translation">Toggle menu</target></trans-unit>
       <trans-unit id="loadError" xml:space="preserve">
 				<source>Load error!</source>
-			<target xml:lang="tl" state="needs-translation">Load error!</target></trans-unit>
+			<target xml:lang="tl" state="translated">Error ang pag-load!</target></trans-unit>
       <trans-unit id="aNodeMustBeSelected" xml:space="preserve">
 				<source>You have to select a node</source>
 			<target xml:lang="tl" state="needs-translation">You have to select a node</target></trans-unit>
@@ -257,10 +257,10 @@
 			<target xml:lang="tl" state="needs-translation">The Root node cannot be deleted.</target></trans-unit>
       <trans-unit id="cannotCopyNode" xml:space="preserve">
 				<source>You cannot copy this node</source>
-			<target xml:lang="tl" state="needs-translation">You cannot copy this node</target></trans-unit>
+			<target xml:lang="tl" state="translated">Hindi mo maaaring kopyahin itong node</target></trans-unit>
       <trans-unit id="cannotCutNode" xml:space="preserve">
 				<source>You cannot cut this node</source>
-			<target xml:lang="tl" state="needs-translation">You cannot cut this node</target></trans-unit>
+			<target xml:lang="tl" state="translated">Hindi mo maaaring putulin itong node</target></trans-unit>
       <trans-unit id="contentDimensions" xml:space="preserve">
 				<source>Content Dimensions</source>
 			<target xml:lang="tl" state="needs-translation">Content Dimensions</target></trans-unit>
@@ -269,32 +269,32 @@
 			<target xml:lang="tl" state="needs-translation">Site</target></trans-unit>
       <trans-unit id="document" xml:space="preserve">
 				<source>Document</source>
-			<target xml:lang="tl" state="needs-translation">Document</target></trans-unit>
+			<target xml:lang="tl" state="translated">Dokumento</target></trans-unit>
       <trans-unit id="reference" xml:space="preserve">
 				<source>Reference</source>
 			<target xml:lang="tl" state="needs-translation">Reference</target></trans-unit>
       <trans-unit id="host" xml:space="preserve">
 				<source>Host</source>
-			<target xml:lang="tl" state="needs-translation">Host</target></trans-unit>
+			<target xml:lang="tl" state="translated">Host</target></trans-unit>
       <trans-unit id="scheme" xml:space="preserve">
 				<source>Scheme</source>
 			<target xml:lang="tl" state="needs-translation">Scheme</target></trans-unit>
       <trans-unit id="port" xml:space="preserve">
 				<source>Port</source>
-			<target xml:lang="tl" state="needs-translation">Port</target></trans-unit>
+			<target xml:lang="tl" state="translated">Port</target></trans-unit>
       <trans-unit id="primary" xml:space="preserve">
 				<source>Primary</source>
 			<target xml:lang="tl" state="needs-translation">Primary</target></trans-unit>
       <!-- node types -->
       <trans-unit id="nodeTypes.groups.general" xml:space="preserve">
 				<source>General</source>
-			<target xml:lang="tl" state="needs-translation">General</target></trans-unit>
+			<target xml:lang="tl" state="translated">Pangkalahatan</target></trans-unit>
       <trans-unit id="nodeTypes.groups.structure" xml:space="preserve">
 				<source>Structure</source>
-			<target xml:lang="tl" state="needs-translation">Structure</target></trans-unit>
+			<target xml:lang="tl" state="translated">Istraktura</target></trans-unit>
       <trans-unit id="nodeTypes.groups.plugins" xml:space="preserve">
 				<source>Plugins</source>
-			<target xml:lang="tl" state="needs-translation">Plugins</target></trans-unit>
+			<target xml:lang="tl" state="translated">Mga plugin</target></trans-unit>
       <!-- shortcuts -->
       <trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
 				<source>Click {0} to continue to the page.</source>
@@ -307,7 +307,7 @@
 			<target xml:lang="tl" state="needs-translation">Click {0} to open the link.</target></trans-unit>
       <trans-unit id="shortcut.noTargetSelected" xml:space="preserve">
 				<source>(no target has been selected)</source>
-			<target xml:lang="tl" state="needs-translation">(no target has been selected)</target></trans-unit>
+			<target xml:lang="tl" state="translated">(walang target ang napili)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
 			<target xml:lang="tl" state="needs-translation">This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</target></trans-unit>
@@ -317,14 +317,14 @@
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>
-			<target xml:lang="tl" state="needs-translation">Full Screen</target></trans-unit>
+			<target xml:lang="tl" state="translated">Full Screen</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.liveShortcutButton.title" xml:space="preserve">
 				<source>Open page in live workspace</source>
         <note>Deprecated, replaced by previewShortcutButton.title</note>
-			<target xml:lang="tl" state="needs-translation">Open page in live workspace</target></trans-unit>
+			<target xml:lang="tl" state="translated">Buksan ang pahina sa live na workspace</target></trans-unit>
       <trans-unit id="content.components.contentContextBar.previewShortcutButton.title" xml:space="preserve">
 				<source>Open page in target workspace</source>
-			<target xml:lang="tl" state="needs-translation">Open page in target workspace</target></trans-unit>
+			<target xml:lang="tl" state="translated">Buksan ang pahina sa target na workspace</target></trans-unit>
       <trans-unit id="discardAll" xml:space="preserve">
 				<source>Discard all</source>
 			<target xml:lang="tl" state="needs-translation">Discard all</target></trans-unit>
@@ -333,13 +333,13 @@
 			<target xml:lang="tl" state="needs-translation">Discard all changes</target></trans-unit>
       <trans-unit id="content.components.discardAllDialog.discardAllChangesSubheader" xml:space="preserve">
 				<source>Are you sure that you want to discard all changes in this workspace?</source>
-			<target xml:lang="tl" state="needs-translation">Are you sure that you want to discard all changes in this workspace?</target></trans-unit>
+			<target xml:lang="tl" state="translated">Sigurado kaba na gusto mong itapon ang lahat na mga pagbabago sa workspace na ito?</target></trans-unit>
       <trans-unit id="publishAll" xml:space="preserve">
 				<source>Publish all</source>
-			<target xml:lang="tl" state="needs-translation">Publish all</target></trans-unit>
+			<target xml:lang="tl" state="translated">Ilathala lahat</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.header" xml:space="preserve">
 				<source>Publish all changes</source>
-			<target xml:lang="tl" state="needs-translation">Publish all changes</target></trans-unit>
+			<target xml:lang="tl" state="translated">Ilathala lahat ng mga pagbabago</target></trans-unit>
       <trans-unit id="content.components.publishAllDialog.subheader" xml:space="preserve">
 				<source>Are you sure that you want to publish all changes?</source>
 			<target xml:lang="tl" state="needs-translation">Are you sure that you want to publish all changes?</target></trans-unit>
@@ -378,7 +378,7 @@
 			<target xml:lang="tl" state="needs-translation">Throw away</target></trans-unit>
       <trans-unit id="content.inspector.unappliedChangesDialog.button.success" xml:space="preserve">
 				<source>Apply</source>
-			<target xml:lang="tl" state="needs-translation">Apply</target></trans-unit>
+			<target xml:lang="tl" state="translated">Ilapat</target></trans-unit>
       <trans-unit id="content.inspector.editors.masterPluginEditor.selectPlugin" xml:space="preserve">
 				<source>Select a Plugin</source>
 			<target xml:lang="tl" state="needs-translation">Select a Plugin</target></trans-unit>
@@ -408,10 +408,10 @@
 			<target xml:lang="tl" state="needs-translation">Change type</target></trans-unit>
       <trans-unit id="content.inspector.groups.nodeInfo" xml:space="preserve">
 				<source>Additional info</source>
-			<target xml:lang="tl" state="needs-translation">Additional info</target></trans-unit>
+			<target xml:lang="tl" state="translated">Karagdagang impormasyon</target></trans-unit>
       <trans-unit id="content.inspector.groups.visibility" xml:space="preserve">
 				<source>Visibility</source>
-			<target xml:lang="tl" state="needs-translation">Visibility</target></trans-unit>
+			<target xml:lang="tl" state="translated">Bisibilidad</target></trans-unit>
       <trans-unit id="content.inspector.groups.document" xml:space="preserve">
 				<source>Document options</source>
 			<target xml:lang="tl" state="needs-translation">Document options</target></trans-unit>
@@ -438,13 +438,13 @@
 			<target xml:lang="tl" state="needs-translation">The given value was not a valid date.</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBetween" xml:space="preserve">
 				<source>The given date must be between {formatEarliestDate} and {formatLatestDate}</source>
-			<target xml:lang="tl" state="needs-translation">The given date must be between {formatEarliestDate} and {formatLatestDate}</target></trans-unit>
+			<target xml:lang="tl" state="translated">Ang binigay na petsa ay dapat sa gitna ng {formatEarliestDate} at {formatLatestDate}</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeAfter" xml:space="preserve">
 				<source>The given date must be after {formatEarliestDate}</source>
-			<target xml:lang="tl" state="needs-translation">The given date must be after {formatEarliestDate}</target></trans-unit>
+			<target xml:lang="tl" state="translated">Ang binigay na petsa ay dapat sa pagkatapos ng {formatEarliestDate}</target></trans-unit>
       <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBefore" xml:space="preserve">
 				<source>The given date must be before {formatLatestDate}</source>
-			<target xml:lang="tl" state="needs-translation">The given date must be before {formatLatestDate}</target></trans-unit>
+			<target xml:lang="tl" state="translated">Ang binigay na petsa ay dapat sa bagong {formatLatestDate}</target></trans-unit>
       <trans-unit id="content.inspector.validators.emailAddressValidator.invalidEmail" xml:space="preserve">
 				<source>Please specify a valid email address.</source>
 			<target xml:lang="tl" state="needs-translation">Please specify a valid email address.</target></trans-unit>
@@ -501,7 +501,7 @@
 			<target xml:lang="tl" state="needs-translation">Create and copy</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.content" xml:space="preserve">
 				<source>Content</source>
-			<target xml:lang="tl" state="needs-translation">Content</target></trans-unit>
+			<target xml:lang="tl" state="translated">Nilalaman</target></trans-unit>
       <trans-unit id="content.menu.menuPanel.toggleMenuGroup" xml:space="preserve">
 				<source>Toggle menu group</source>
 			<target xml:lang="tl" state="needs-translation">Toggle menu group</target></trans-unit>
