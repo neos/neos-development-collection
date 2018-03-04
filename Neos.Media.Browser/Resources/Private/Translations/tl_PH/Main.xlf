@@ -19,7 +19,7 @@
 			<target xml:lang="tl" state="needs-translation">Name</target></trans-unit>
       <trans-unit id="field.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="tl" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="tl" state="translated">Pamagat</target></trans-unit>
       <trans-unit id="field.label" xml:space="preserve">
 				<source>Label</source>
 			<target xml:lang="tl" state="needs-translation">Label</target></trans-unit>
@@ -34,7 +34,7 @@
 			<target xml:lang="tl" state="needs-translation">File size</target></trans-unit>
       <trans-unit id="field.type" xml:space="preserve">
 				<source>Type</source>
-			<target xml:lang="tl" state="needs-translation">Type</target></trans-unit>
+			<target xml:lang="tl" state="translated">Uri</target></trans-unit>
       <trans-unit id="field.tags" xml:space="preserve">
 				<source>Tags</source>
 			<target xml:lang="tl" state="needs-translation">Tags</target></trans-unit>
@@ -94,7 +94,7 @@
 			<target xml:lang="tl" state="needs-translation">This operation cannot be undone.</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target xml:lang="tl" state="needs-translation">Cancel</target></trans-unit>
+			<target xml:lang="tl" state="translated">Kanselahin</target></trans-unit>
       <trans-unit id="replace" xml:space="preserve">
 				<source>Replace</source>
 			<target xml:lang="tl" state="needs-translation">Replace</target></trans-unit>
@@ -121,7 +121,7 @@
 			<target xml:lang="tl" state="needs-translation">Search in assets</target></trans-unit>
       <trans-unit id="search.placeholder" xml:space="preserve">
 				<source>Search</source>
-			<target xml:lang="tl" state="needs-translation">Search</target></trans-unit>
+			<target xml:lang="tl" state="translated">Maghanap</target></trans-unit>
       <trans-unit id="search.itemCount" xml:space="preserve">
 				<source>{0} items</source>
 			<target xml:lang="tl" state="needs-translation">{0} items</target></trans-unit>
@@ -157,13 +157,13 @@
 			<target xml:lang="tl" state="needs-translation">Images</target></trans-unit>
       <trans-unit id="filter.documents" xml:space="preserve">
 				<source>Documents</source>
-			<target xml:lang="tl" state="needs-translation">Documents</target></trans-unit>
+			<target xml:lang="tl" state="translated">Mga dokyumento</target></trans-unit>
       <trans-unit id="filter.video" xml:space="preserve">
 				<source>Video</source>
-			<target xml:lang="tl" state="needs-translation">Video</target></trans-unit>
+			<target xml:lang="tl" state="translated">Video</target></trans-unit>
       <trans-unit id="filter.audio" xml:space="preserve">
 				<source>Audio</source>
-			<target xml:lang="tl" state="needs-translation">Audio</target></trans-unit>
+			<target xml:lang="tl" state="translated">Audio</target></trans-unit>
       <trans-unit id="tooltip.sortOptions" xml:space="preserve">
 				<source>Sort options</source>
 			<target xml:lang="tl" state="needs-translation">Sort options</target></trans-unit>
@@ -175,7 +175,7 @@
 			<target xml:lang="tl" state="needs-translation">Thumbnail view</target></trans-unit>
       <trans-unit id="collections" xml:space="preserve">
 				<source>Collections</source>
-			<target xml:lang="tl" state="needs-translation">Collections</target></trans-unit>
+			<target xml:lang="tl" state="translated">Mga koleksiyon</target></trans-unit>
       <trans-unit id="editCollections" xml:space="preserve">
 				<source>Edit collections</source>
 			<target xml:lang="tl" state="needs-translation">Edit collections</target></trans-unit>
@@ -244,7 +244,7 @@
 			<target xml:lang="tl" state="needs-translation">Basics</target></trans-unit>
       <trans-unit id="delete" xml:space="preserve">
 				<source>Delete</source>
-			<target xml:lang="tl" state="needs-translation">Delete</target></trans-unit>
+			<target xml:lang="tl" state="translated">Burahin</target></trans-unit>
       <trans-unit id="clickToDelete" xml:space="preserve">
 				<source>Click to delete</source>
 			<target xml:lang="tl" state="needs-translation">Click to delete</target></trans-unit>
@@ -253,7 +253,7 @@
 			<target xml:lang="tl" state="needs-translation">Save</target></trans-unit>
       <trans-unit id="metadata" xml:space="preserve">
 				<source>Metadata</source>
-			<target xml:lang="tl" state="needs-translation">Metadata</target></trans-unit>
+			<target xml:lang="tl" state="translated">Metadata</target></trans-unit>
       <trans-unit id="metadata.filename" xml:space="preserve">
 				<source>Filename</source>
 			<target xml:lang="tl" state="needs-translation">Filename</target></trans-unit>
@@ -268,13 +268,13 @@
 			<target xml:lang="tl" state="needs-translation">Dimensions</target></trans-unit>
       <trans-unit id="metadata.type" xml:space="preserve">
 				<source>Type</source>
-			<target xml:lang="tl" state="needs-translation">Type</target></trans-unit>
+			<target xml:lang="tl" state="translated">Uri</target></trans-unit>
       <trans-unit id="metadata.identifier" xml:space="preserve">
 				<source>Identifier</source>
 			<target xml:lang="tl" state="needs-translation">Identifier</target></trans-unit>
       <trans-unit id="preview" xml:space="preserve">
 				<source>Preview</source>
-			<target xml:lang="tl" state="needs-translation">Preview</target></trans-unit>
+			<target xml:lang="tl" state="translated">Preview</target></trans-unit>
       <trans-unit id="cannotUploadFile" xml:space="preserve">
 				<source>Cannot upload the file</source>
 			<target xml:lang="tl" state="needs-translation">Cannot upload the file</target></trans-unit>
@@ -344,7 +344,7 @@
 			<target xml:lang="tl" state="needs-translation">Preview current file</target></trans-unit>
       <trans-unit id="couldNotReplaceAsset" xml:space="preserve">
 				<source>Could not replace asset</source>
-			<target xml:lang="tl" state="needs-translation">Could not replace asset</target></trans-unit>
+			<target xml:lang="tl" state="translated">Hindi mapapalitan ang asset</target></trans-unit>
       <trans-unit id="assetHasBeenReplaced" xml:space="preserve">
 				<source>Asset "{0}" has been replaced.</source>
 			<target xml:lang="tl" state="needs-translation">Asset "{0}" has been replaced.</target></trans-unit>

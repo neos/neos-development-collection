@@ -4,13 +4,13 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Menu</source>
-			<target xml:lang="tl" state="needs-translation">Menu</target></trans-unit>
+			<target xml:lang="tl" state="translated">Menu</target></trans-unit>
       <trans-unit id="groups.options" xml:space="preserve">
 				<source>Options</source>
-			<target xml:lang="tl" state="needs-translation">Options</target></trans-unit>
+			<target xml:lang="tl" state="translated">Mga pagpilian</target></trans-unit>
       <trans-unit id="properties.startLevel" xml:space="preserve">
 				<source>Starting Level</source>
-			<target xml:lang="tl" state="needs-translation">Starting Level</target></trans-unit>
+			<target xml:lang="tl" state="translated">Simulang antas</target></trans-unit>
       <trans-unit id="properties.startLevel.selectBoxEditor.values.-4" xml:space="preserve">
 				<source>Four Levels Above Current Page</source>
 			<target xml:lang="tl" state="translated">Apat na mga antas sa itaas ng kasalukuyang pahina</target></trans-unit>
@@ -55,7 +55,7 @@
 			<target xml:lang="tl" state="translated">Pinakamataas na mga antas</target></trans-unit>
       <trans-unit id="content.emptyMenu" xml:space="preserve">
 				<source>Empty Menu</source>
-			<target xml:lang="tl" state="needs-translation">Empty Menu</target></trans-unit>
+			<target xml:lang="tl" state="translated">Walang laman na Menu</target></trans-unit>
     </body>
   </file>
 </xliff>
