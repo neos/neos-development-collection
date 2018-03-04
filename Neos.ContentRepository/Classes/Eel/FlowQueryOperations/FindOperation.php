@@ -17,7 +17,7 @@ use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 
 /**
@@ -88,7 +88,7 @@ class FindOperation extends AbstractOperation
         }
 
         foreach ($context as $contextNode) {
-            if (!$contextNode instanceof NodeInterface) {
+            if (!$contextNode instanceof TraversableNodeInterface) {
                 return false;
             }
         }
@@ -119,7 +119,7 @@ class FindOperation extends AbstractOperation
             foreach ($parsedFilter['Filters'] as $filter) {
                 $nodeTypes[] = $filter['AttributeFilters'][0]['Operand'];
             }
-            /** @var NodeInterface $contextNode */
+            /** @var TraversableNodeInterface $contextNode */
             foreach ($context as $contextNode) {
                 $result = array_merge($result, $this->nodeDataRepository->findByParentAndNodeTypeInContext($contextNode->getPath(), implode(',', $nodeTypes), $contextNode->getContext(), true));
             }
@@ -131,7 +131,7 @@ class FindOperation extends AbstractOperation
                     if (!preg_match(NodeIdentifierValidator::PATTERN_MATCH_NODE_IDENTIFIER, $filter['IdentifierFilter'])) {
                         throw new FlowQueryException('find() requires a valid node identifier', 1489921359);
                     }
-                    /** @var NodeInterface $contextNode */
+                    /** @var TraversableNodeInterface $contextNode */
                     foreach ($context as $contextNode) {
                         $filterResults = array($contextNode->getContext()->getNodeByIdentifier($filter['IdentifierFilter']));
                     }

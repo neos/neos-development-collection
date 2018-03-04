@@ -429,7 +429,7 @@ SELECT c.* FROM neos_contentgraph_node p
      */
     public function findChildNodeConnectedThroughEdgeName(
         ContentRepository\ValueObject\NodeIdentifier $parentNodeIdentifier,
-        ContentRepository\ValueObject\NodeName $edgeName,
+        ContentRepository\ValueObject\NodeName $edgeName
     ): ?NodeInterface
     {
         $cache = $this->inMemoryCache->getNamedChildNodeByNodeIdentifierCache();

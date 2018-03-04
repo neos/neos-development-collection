@@ -11,9 +11,11 @@ namespace Neos\Neos\Fusion\Helper;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
+use Neos\ContentRepository\Domain\ValueObject\NodePath;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Neos\Domain\Exception;
 
 /**
@@ -25,12 +27,12 @@ class NodeHelper implements ProtectedContextAwareInterface
      * Check if the given node is already a collection, find collection by nodePath otherwise, throw exception
      * if no content collection could be found
      *
-     * @param NodeInterface $node
+     * @param TraversableNodeInterface $node
      * @param string $nodePath
-     * @return NodeInterface
+     * @return TraversableNodeInterface
      * @throws Exception
      */
-    public function nearestContentCollection(NodeInterface $node, $nodePath)
+    public function nearestContentCollection(TraversableNodeInterface $node, $nodePath)
     {
         $contentCollectionType = 'Neos.Neos:ContentCollection';
         if ($node->getNodeType()->isOfType($contentCollectionType)) {
@@ -39,7 +41,8 @@ class NodeHelper implements ProtectedContextAwareInterface
             if ((string)$nodePath === '') {
                 throw new Exception(sprintf('No content collection of type %s could be found in the current node and no node path was provided. You might want to configure the nodePath property with a relative path to the content collection.', $contentCollectionType), 1409300545);
             }
-            $subNode = $node->getNode($nodePath);
+            // TODO: support NodePath here??
+                $subNode = $node->findNamedChildNode(new NodeName($nodePath));
             if ($subNode !== null && $subNode->getNodeType()->isOfType($contentCollectionType)) {
                 return $subNode;
             } else {

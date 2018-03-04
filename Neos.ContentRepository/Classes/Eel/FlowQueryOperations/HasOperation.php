@@ -15,10 +15,10 @@ use Neos\Eel\FlowQuery\FizzleException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 
 /**
- * "has" operation working on NodeInterface. Reduce the set of matched elements
+ * "has" operation working on TraversableNodeInterface. Reduce the set of matched elements
  * to those that have a child node that matches the selector or given subject.
  *
  * Accepts a selector, an array, an object, a traversable object & a FlowQuery
@@ -48,7 +48,7 @@ class HasOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
     }
 
     /**
@@ -89,11 +89,11 @@ class HasOperation extends AbstractOperation
                 throw new FizzleException('supplied argument for has operation not supported', 1332489625);
             }
             foreach ($elements as $element) {
-                if ($element instanceof NodeInterface) {
+                if ($element instanceof TraversableNodeInterface) {
                     $parentsQuery = new FlowQuery(array($element));
-                    /** @var NodeInterface $parent */
+                    /** @var TraversableNodeInterface $parent */
                     foreach ($parentsQuery->parents(array())->get() as $parent) {
-                        /** @var NodeInterface $contextElement */
+                        /** @var TraversableNodeInterface $contextElement */
                         foreach ($context as $contextElement) {
                             if ($contextElement->getIdentifier() === $parent->getIdentifier()) {
                                 $filteredContext[] = $contextElement;

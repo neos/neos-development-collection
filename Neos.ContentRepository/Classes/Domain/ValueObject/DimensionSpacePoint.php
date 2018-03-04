@@ -24,6 +24,26 @@ use Neos\Utility\Arrays;
  */
 final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterface, ProtectedContextAwareInterface
 {
+
+    /**
+     * @var DimensionSpacePoint
+     */
+    private static $rootDimensionSpacePoint;
+
+    /**
+     * the Root node is part of *every* dimension; thus the Root node is assigned a special
+     * "root" dimension.
+     *
+     * @return DimensionSpacePoint
+     */
+    public static function root(): DimensionSpacePoint
+    {
+        if (!self::$rootDimensionSpacePoint) {
+            self::$rootDimensionSpacePoint = new DimensionSpacePoint([]);
+        }
+        return self::$rootDimensionSpacePoint;
+    }
+
     /**
      * @var array
      */
@@ -210,5 +230,11 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
     public function allowsCallOfMethod($methodName)
     {
         return true;
+    }
+
+
+    public function isRoot(): bool
+    {
+        return $this === self::$rootDimensionSpacePoint;
     }
 }

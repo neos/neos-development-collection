@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\Domain\Projection\Content\InMemoryCache;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 
@@ -33,9 +33,6 @@ final class NamedChildNodeByNodeIdentifierCache
 
     public function add(NodeIdentifier $parentNodeIdentifier, NodeName $nodeName, NodeInterface $node): void
     {
-        if (!$node->getContext()) {
-            return;
-        }
         $this->nodes[(string)$parentNodeIdentifier][(string)$nodeName] = $node;
     }
 

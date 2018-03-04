@@ -6,6 +6,9 @@
   className: Neos\ContentRepository\Domain\Service\PublishingService
 'Neos\ContentRepository\Domain\Model\NodeInterface':
   className: Neos\ContentRepository\Domain\Model\Node
+'Neos\ContentRepository\Domain\Projection\Content\NodeInterface':
+  className: Neos\ContentRepository\Domain\Projection\Content\Node
+
 'Neos\ContentRepository\Domain\Service\ConfigurationContentDimensionPresetSource':
   properties:
     configuration:

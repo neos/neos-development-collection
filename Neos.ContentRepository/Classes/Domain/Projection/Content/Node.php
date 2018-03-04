@@ -17,7 +17,6 @@ use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 
@@ -164,7 +163,7 @@ class Node implements NodeInterface
 
     /**
      * @return array
-     * 
+     *
      */
     public function getProperties(): array
     {
@@ -185,6 +184,28 @@ class Node implements NodeInterface
      */
     public function getProperty($propertyName)
     {
-        return $this->properties[$propertyName];
+        return $this->properties[$propertyName] ?? null;
     }
+
+    public function hasProperty($propertyName): bool
+    {
+        return isset($this->properties[$propertyName]);
+    }
+    /**
+     * Returns a string which distinctly identifies this object and thus can be used as an identifier for cache entries
+     * related to this object.
+     *
+     * @return string
+     */
+    public function getCacheEntryIdentifier()
+    {
+        return (string)$this->getNodeIdentifier() . '@' . (string)$this->getContentStreamIdentifier() . '@' . $this->getDimensionSpacePoint()->serializeForUri();
+    }
+
+
+    public function getLabel(): string
+    {
+        return $this->getNodeType()->getNodeLabelGenerator()->getLabel($this);
+    }
+
 }

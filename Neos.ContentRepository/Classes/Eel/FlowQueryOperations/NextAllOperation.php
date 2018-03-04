@@ -14,7 +14,7 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 
 /**
  * "nextAll" operation working on ContentRepository nodes. It iterates over all
@@ -45,7 +45,7 @@ class NextAllOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
     }
 
     /**
@@ -78,10 +78,10 @@ class NextAllOperation extends AbstractOperation
     }
 
     /**
-     * @param NodeInterface $contextNode The node for which the preceding node should be found
-     * @return NodeInterface The preceding nodes of $contextNode or NULL
+     * @param TraversableNodeInterface $contextNode The node for which the preceding node should be found
+     * @return TraversableNodeInterface The preceding nodes of $contextNode or NULL
      */
-    protected function getNextForNode(NodeInterface $contextNode)
+    protected function getNextForNode(TraversableNodeInterface $contextNode)
     {
         $nodesInContext = $contextNode->getParent()->getChildNodes();
         $count = count($nodesInContext);

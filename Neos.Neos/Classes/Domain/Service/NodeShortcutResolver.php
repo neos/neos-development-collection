@@ -11,9 +11,10 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Neos\Service\LinkingService;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -44,7 +45,7 @@ class NodeShortcutResolver
      * @param NodeInterface $node
      * @return NodeInterface|string|NULL
      */
-    public function resolveShortcutTarget(NodeInterface $node)
+    public function resolveShortcutTarget(NodeInterface $node, ContentSubgraphInterface $subgraph)
     {
         $infiniteLoopPrevention = 0;
         while ($node->getNodeType()->isOfType('Neos.Neos:Shortcut') && $infiniteLoopPrevention < 50) {

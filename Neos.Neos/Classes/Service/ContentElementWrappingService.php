@@ -11,6 +11,7 @@ namespace Neos\Neos\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -22,8 +23,6 @@ use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Service\Mapping\NodePropertyConverterService;
-use Neos\ContentRepository\Domain\Model\Node;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Service\AuthorizationService;
 use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
 
@@ -70,6 +69,9 @@ class ContentElementWrappingService
      */
     public function wrapContentObject(NodeInterface $node, $content, $fusionPath)
     {
+        // TODO: directly use UI ContentElementWrappingService
+        return $content;
+
         if ($this->needsMetadata($node, false) === false) {
             return $content;
         }
@@ -93,6 +95,7 @@ class ContentElementWrappingService
      */
     public function wrapCurrentDocumentMetadata(NodeInterface $node, $content, $fusionPath)
     {
+        return $content;
         if ($this->needsMetadata($node, true) === false) {
             return $content;
         }
@@ -317,6 +320,8 @@ class ContentElementWrappingService
      */
     protected function needsMetadata(NodeInterface $node, $renderCurrentDocumentMetadata)
     {
+
+        return false;
         /** @var $contentContext ContentContext */
         $contentContext = $node->getContext();
         return ($contentContext->isInBackend() === true && ($renderCurrentDocumentMetadata === true || $this->nodeAuthorizationService->isGrantedToEditNode($node) === true));

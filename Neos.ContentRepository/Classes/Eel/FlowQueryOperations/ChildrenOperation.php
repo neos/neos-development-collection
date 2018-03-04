@@ -11,11 +11,13 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Service\NodeTypeConstraintService;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\Eel\FlowQuery\FizzleParser;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 
 /**
  * "children" operation working on ContentRepository nodes. It iterates over all
@@ -38,6 +40,13 @@ class ChildrenOperation extends AbstractOperation
      */
     protected static $priority = 100;
 
+
+    /**
+     * @Flow\Inject
+     * @var NodeTypeConstraintService
+     */
+    protected $nodeTypeConstraintService;
+
     /**
      * {@inheritdoc}
      *
@@ -46,7 +55,7 @@ class ChildrenOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return isset($context[0]) && ($context[0] instanceof NodeInterface);
+        return isset($context[0]) && ($context[0] instanceof TraversableNodeInterface);
     }
 
     /**
@@ -67,9 +76,9 @@ class ChildrenOperation extends AbstractOperation
             }
         }
 
-        /** @var NodeInterface $contextNode */
+        /** @var TraversableNodeInterface $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
-            /** @var NodeInterface $childNode */
+            /** @var TraversableNodeInterface $childNode */
             foreach ($contextNode->getChildNodes() as $childNode) {
                 if (!isset($outputNodeIdentifiers[(string)$childNode->getNodeIdentifier()])) {
                     $output[] = $childNode;
@@ -119,9 +128,9 @@ class ChildrenOperation extends AbstractOperation
                 // Optimize property name filter if present
                 if (isset($filter['PropertyNameFilter']) || isset($filter['PathFilter'])) {
                     $nodePath = isset($filter['PropertyNameFilter']) ? $filter['PropertyNameFilter'] : $filter['PathFilter'];
-                    /** @var NodeInterface $contextNode */
+                    /** @var TraversableNodeInterface $contextNode */
                     foreach ($flowQuery->getContext() as $contextNode) {
-                        $childNode = $contextNode->getNode($nodePath);
+                        $childNode = $contextNode->findNamedChildNode(new NodeName($nodePath));
                         if ($childNode !== null && !isset($filteredOutputNodeIdentifiers[(string)$childNode->getNodeIdentifier()])) {
                             $filteredOutput[] = $childNode;
                             $filteredOutputNodeIdentifiers[(string)$childNode->getNodeIdentifier()] = true;
@@ -132,10 +141,11 @@ class ChildrenOperation extends AbstractOperation
                     $allowedNodeTypes = array_map(function ($instanceOfFilter) {
                         return $instanceOfFilter['Operand'];
                     }, $instanceOfFilters);
-                    /** @var NodeInterface $contextNode */
+                    $nodeTypeConstraints = $this->nodeTypeConstraintService->unserializeFilters(implode($allowedNodeTypes, ','));
+                    /** @var TraversableNodeInterface $contextNode */
                     foreach ($flowQuery->getContext() as $contextNode) {
-                        /** @var NodeInterface $childNode */
-                        foreach ($contextNode->getChildNodes(implode($allowedNodeTypes, ',')) as $childNode) {
+                        /** @var TraversableNodeInterface $childNode */
+                        foreach ($contextNode->getChildNodes($nodeTypeConstraints) as $childNode) {
                             if (!isset($filteredOutputNodeIdentifiers[(string)$childNode->getNodeIdentifier()])) {
                                 $filteredOutput[] = $childNode;
                                 $filteredOutputNodeIdentifiers[(string)$childNode->getNodeIdentifier()] = true;

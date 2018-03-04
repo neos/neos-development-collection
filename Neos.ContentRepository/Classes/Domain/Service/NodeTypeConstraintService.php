@@ -19,6 +19,7 @@ use Neos\Utility\Arrays;
  * The node type constraints service
  *
  * @Flow\Scope("singleton")
+ * TODO: rename to ..."Factory"
  */
 class NodeTypeConstraintService
 {

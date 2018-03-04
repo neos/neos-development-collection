@@ -11,10 +11,10 @@ namespace Neos\Neos\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Neos\Domain\Service\ContentContext;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Service\AuthorizationService;
 use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
 
@@ -56,6 +56,8 @@ class ContentElementEditableService
      */
     public function wrapContentProperty(NodeInterface $node, $property, $content)
     {
+        // TODO FIX!!
+        return $content;
         /** @var $contentContext ContentContext */
         $contentContext = $node->getContext();
         if ($contentContext->getWorkspaceName() === 'live' || !$this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {

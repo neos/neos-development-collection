@@ -14,7 +14,7 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 
 /**
  * "parentsUntil" operation working on ContentRepository nodes. It iterates over all
@@ -46,7 +46,7 @@ class ParentsUntilOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
     }
 
     /**
@@ -90,10 +90,10 @@ class ParentsUntilOperation extends AbstractOperation
     }
 
     /**
-     * @param NodeInterface $contextNode
+     * @param TraversableNodeInterface $contextNode
      * @return array
      */
-    protected function getParents(NodeInterface $contextNode)
+    protected function getParents(TraversableNodeInterface $contextNode)
     {
         $parents = array();
         while ($contextNode->getParent() !== null) {
@@ -105,10 +105,10 @@ class ParentsUntilOperation extends AbstractOperation
 
     /**
      * @param array $parentNodes the parent nodes
-     * @param NodeInterface $until
+     * @param TraversableNodeInterface $until
      * @return array
      */
-    protected function getNodesUntil($parentNodes, NodeInterface $until)
+    protected function getNodesUntil($parentNodes, TraversableNodeInterface $until)
     {
         $count = count($parentNodes) - 1;
 

@@ -570,10 +570,14 @@ class NodeType
             if (!class_exists($customClassName)) {
                 throw new NodeConfigurationException('The configured implementation class name "' . $customClassName . '" for NodeType "' . $this . '" does not exist.', 1505805774);
             } elseif (!$this->reflectionService->isClassImplementationOf($customClassName, \Neos\ContentRepository\Domain\Projection\Content\NodeInterface::class)) {
+                if ($this->reflectionService->isClassImplementationOf($customClassName, NodeInterface::class)) {
+                    throw new NodeConfigurationException('The configured implementation class name "' . $customClassName . '" for NodeType "' . $this. '" inherits from the OLD (pre-event-sourced) NodeInterface; which is not supported anymore. Your custom Node class now needs to implement ' . \Neos\ContentRepository\Domain\Projection\Content\NodeInterface::class . '.', 1520069750);
+                }
                 throw new NodeConfigurationException('The configured implementation class name "' . $customClassName . '" for NodeType "' . $this. '" does not inherit from ' . \Neos\ContentRepository\Domain\Projection\Content\NodeInterface::class . '.', 1406884014);
             }
+            return $customClassName;
         } else {
-            return $this->objectManager->getClassNameByObjectName(NodeInterface::class);
+            return $this->objectManager->getClassNameByObjectName(\Neos\ContentRepository\Domain\Projection\Content\NodeInterface::class);
         }
     }
 

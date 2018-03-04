@@ -11,13 +11,13 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Neos\Domain\Projection\Site\SiteFinder;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\Utility\Files;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\Runtime;
@@ -180,7 +180,7 @@ class FusionService
 
     protected function getCurrentSite(NodeInterface $siteNode)
     {
-        return $this->siteFinder->findOneByNodeName(new NodeName($siteNode->getName()));
+        return $this->siteFinder->findOneByNodeName($siteNode->getNodeName());
     }
 
     /**

@@ -1,8 +1,8 @@
 <?php
 namespace Neos\Neos\Fusion;
 
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * A menu item

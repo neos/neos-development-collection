@@ -6,8 +6,8 @@ use Neos\ContentRepository\Domain\Context\DimensionSpace;
 use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\ContentRepository\Domain;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * Fusion implementation for a dimensions menu.
@@ -65,7 +65,7 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
                     $variant = $this->currentNode;
                 } else {
                     $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->currentNode->getContentStreamIdentifier(), $dimensionSpacePoint);
-                    $variant = $subgraph->findNodeByNodeAggregateIdentifier($this->currentNode->getNodeAggregateIdentifier(), $this->currentNode->getContext());
+                    $variant = $subgraph->findNodeByNodeAggregateIdentifier($this->currentNode->getNodeAggregateIdentifier());
                 }
 
                 if (!$variant && $this->includeGeneralizations()) {
@@ -84,6 +84,7 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
                 ];
             }
         }
+
 
         if ($this->getContentDimensionIdentifierToLimitTo() && $this->getValuesToRestrictTo()) {
             $order = array_flip($this->getValuesToRestrictTo());
@@ -196,7 +197,7 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
      */
     protected function getSubgraph(): ContentSubgraphInterface
     {
-        return $this->runtime->getCurrentContext()['subgraph'];
+        return $this->fusionValue('subgraph');
     }
 
     /**

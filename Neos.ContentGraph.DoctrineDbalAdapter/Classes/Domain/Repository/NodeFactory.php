@@ -27,7 +27,7 @@ use Neos\Neos\Domain\Context\Content\ContentQuery;
 use Neos\Neos\Domain\Projection\Site\Site;
 use Neos\Neos\Domain\Projection\Site\SiteFinder;
 use Neos\Neos\Domain\Service\ContentContext;
-use Neos\Flow\Security\Context as SecurityContext;
+
 
 
 /**
@@ -57,17 +57,6 @@ final class NodeFactory
      */
     protected $siteFinder;
 
-    /**
-     * @Flow\Inject(lazy=false)
-     * @var Now
-     */
-    protected $now;
-
-    /**
-     * @Flow\Inject
-     * @var SecurityContext
-     */
-    protected $securityContext;
 
     /**
      * @Flow\Inject
@@ -88,50 +77,12 @@ final class NodeFactory
             $contentQuery->getDimensionSpacePoint()
         );
 
+        // todo move out of here
         $contextParameters = $this->createContextParameters($inBackend);
-
-        $siteNode = $subgraph->findNodeByNodeAggregateIdentifier($contentQuery->getSiteIdentifier());
-        // TODO CACHE
-        $site = $this->siteFinder->findOneByNodeName(new NodeName($siteNode->getName()));
-
-        $contentContext = $this->createContentContext($contentQuery, $subgraph, $contextParameters, $site);
 
         $node = $subgraph->findNodeByNodeAggregateIdentifier($contentQuery->getNodeAggregateIdentifier());
 
         return $node;
-    }
-
-    /**
-     * @param bool $inBackend
-     * @return ContextParameters
-     */
-    protected function createContextParameters(bool $inBackend): ContextParameters
-    {
-        return new ContextParameters($this->now, $this->securityContext->getRoles(), $inBackend, $inBackend, $inBackend);
-    }
-
-    /**
-     * @param ContentQuery $contentQuery
-     * @param ContentSubgraphInterface $subgraph
-     * @param ContextParameters $contextParameters
-     * @return ContentContext
-     */
-    protected function createContentContext(ContentQuery $contentQuery, ContentSubgraphInterface $subgraph, ContextParameters $contextParameters, Site $site): ContentContext
-    {
-        return new ContentContext(
-            (string)$contentQuery->getWorkspaceName(),
-            $contextParameters->getCurrentDateTime(),
-            $subgraph->getDimensionSpacePoint()->toLegacyDimensionArray(),
-            $subgraph->getDimensionSpacePoint()->getCoordinates(),
-            $contextParameters->isInvisibleContentShown(),
-            $contextParameters->isRemovedContentShown(),
-            $contextParameters->isInaccessibleContentShown(),
-            $site,
-            null,
-            $contentQuery->getRootNodeIdentifier(),
-            $subgraph,
-            $contextParameters
-        );
     }
 
 
@@ -142,13 +93,13 @@ final class NodeFactory
      * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
      * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
-    public function mapNodeRowToNode(array $nodeRow, ContentSubgraphInterface $subgraph): ContentProjection\NodeInterface
+    public function mapNodeRowToNode(array $nodeRow): ContentProjection\NodeInterface
     {
         $nodeType = $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']);
         $className = $nodeType->getNodeInterfaceImplementationClassName();
 
-        $referenceProperties = array_keys(array_filter($nodeType->getProperties(), function($propertyConfiguration) {return $propertyConfiguration['type'] == 'reference';}));
-        $referencesProperties = array_keys(array_filter($nodeType->getProperties(), function($propertyConfiguration) {return $propertyConfiguration['type'] == 'references';}));
+        //$referenceProperties = array_keys(array_filter($nodeType->getProperties(), function($propertyConfiguration) {return $propertyConfiguration['type'] == 'reference';}));
+        //$referencesProperties = array_keys(array_filter($nodeType->getProperties(), function($propertyConfiguration) {return $propertyConfiguration['type'] == 'references';}));
 
         // $serializedSubgraphIdentifier is empty for the root node
         if (!empty($nodeRow['dimensionspacepointhash'])) {
@@ -164,41 +115,40 @@ final class NodeFactory
             // FIXME Move to DimensionSpacePoint::fromJson
             $dimensionSpacePoint = new ContentRepository\ValueObject\DimensionSpacePoint(json_decode($nodeRow['dimensionspacepoint'], true)['coordinates']);
 
-            $contentSubgraph = $context ? $context->getContentSubgraph() : null;
             $nodeIdentifier = new ContentRepository\ValueObject\NodeIdentifier($nodeRow['nodeidentifier']);
 
-            /* @var $node \Neos\ContentRepository\Domain\Model\NodeInterface */
+            /* @var $node ContentProjection\NodeInterface */
             $node = new $className(
+                $contentStreamIdentifier,
+                $dimensionSpacePoint,
+                new ContentRepository\ValueObject\NodeAggregateIdentifier($nodeRow['nodeaggregateidentifier']),
                 $nodeIdentifier,
                 new NodeTypeName($nodeRow['nodetypename']),
                 $nodeType,
-                $dimensionSpacePoint,
-                new ContentRepository\ValueObject\NodeAggregateIdentifier($nodeRow['nodeaggregateidentifier']),
-                $contentStreamIdentifier,
-                new ContentProjection\PropertyCollection(json_decode($nodeRow['properties'], true), $referenceProperties, $referencesProperties, $nodeIdentifier, $contentSubgraph),
                 new ContentRepository\ValueObject\NodeName($nodeRow['name']),
                 $nodeRow['hidden'],
-                $context
+                json_decode($nodeRow['properties'], true)
             );
+                //new ContentProjection\PropertyCollection(, $referenceProperties, $referencesProperties, $nodeIdentifier, $contentSubgraph),
 
             if (!array_key_exists('name', $nodeRow)) {
                 throw new \Exception('The "name" property was not found in the $nodeRow; you need to include the "name" field in the SQL result.');
             }
             return $node;
         } else {
-            /* @var $node \Neos\ContentRepository\Domain\Model\NodeInterface */
+            // ROOT node!
+            /* @var $node \Neos\ContentRepository\Domain\Projection\Content\NodeInterface */
             $node = new $className(
+                ContentRepository\ValueObject\ContentStreamIdentifier::root(),
+                ContentRepository\ValueObject\DimensionSpacePoint::root(),
+                ContentRepository\ValueObject\NodeAggregateIdentifier::root(),
                 new ContentRepository\ValueObject\NodeIdentifier($nodeRow['nodeidentifier']),
                 new NodeTypeName($nodeRow['nodetypename']),
                 $nodeType,
-                null,
-                null,
-                null,
-                null,
-                null,
+                NodeName::root(),
                 false,
-                $context);
-
+                []
+            );
             return $node;
         }
     }
