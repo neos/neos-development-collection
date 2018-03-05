@@ -13,29 +13,10 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  */
 
 use Neos\Cache\CacheAwareInterface;
+use Neos\ContentRepository\Domain\Projection\Content\RootNodeIdentifiers;
 
 final class ContentStreamIdentifier extends AbstractIdentifier implements CacheAwareInterface
 {
-
-    /**
-     * @var ContentStreamIdentifier
-     */
-    private static $rootIdentifier;
-
-    /**
-     * the Root node is part of *every* content stream; thus the Root node is assigned a special
-     * "root" content stream.
-     *
-     * @return ContentStreamIdentifier
-     */
-    public static function root(): ContentStreamIdentifier
-    {
-        if (!self::$rootIdentifier) {
-            self::$rootIdentifier = new ContentStreamIdentifier('00000000-0000-0000-0000-000000000000');
-        }
-        return self::$rootIdentifier;
-    }
-
     /**
      * @return string
      */
@@ -46,6 +27,6 @@ final class ContentStreamIdentifier extends AbstractIdentifier implements CacheA
 
     public function isRoot(): bool
     {
-        return $this === self::$rootIdentifier;
+        return $this === RootNodeIdentifiers::rootContentStreamIdentifier();
     }
 }

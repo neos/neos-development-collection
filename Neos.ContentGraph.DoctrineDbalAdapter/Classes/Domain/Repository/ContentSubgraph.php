@@ -611,7 +611,7 @@ SELECT n.*, h.name, h.position FROM neos_contentgraph_node n
      * @param NodeTypeConstraints $nodeTypeConstraints
      * @return mixed|void
      */
-    public function findSubtrees(array $entryNodeIdentifiers, int $maximumLevels, ContentRepository\Context\Parameters\ContextParameters $contextParameters, NodeTypeConstraints $nodeTypeConstraints): SubtreeInterface
+    public function findSubtrees(array $entryNodeAggregateIdentifiers, int $maximumLevels, ContentRepository\Context\Parameters\ContextParameters $contextParameters, NodeTypeConstraints $nodeTypeConstraints): SubtreeInterface
     {
         // TODO: evaluate ContextParameters
 
@@ -639,7 +639,7 @@ with recursive tree as (
      inner join neos_contentgraph_hierarchyrelation h
         on h.childnodeanchor = n.relationanchorpoint
      where
-        n.nodeidentifier in (:entryNodeIdentifiers)
+        n.nodeaggregateidentifier in (:entryNodeAggregateIdentifiers)
         and n.hidden = false             -- TODO - add ContextParameters query part
         and h.contentstreamidentifier = :contentStreamIdentifier
 		AND h.dimensionspacepointhash = :dimensionSpacePointHash
@@ -672,9 +672,9 @@ union
 )
 select * from tree
 order by level, position desc;')
-            ->parameter('entryNodeIdentifiers', array_map(function (NodeIdentifier $nodeIdentifier) {
-                return (string)$nodeIdentifier;
-            }, $entryNodeIdentifiers), Connection::PARAM_STR_ARRAY)
+            ->parameter('entryNodeAggregateIdentifiers', array_map(function (NodeAggregateIdentifier $nodeAggregateIdentifier) {
+                return (string)$nodeAggregateIdentifier;
+            }, $entryNodeAggregateIdentifiers), Connection::PARAM_STR_ARRAY)
             ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash())
             ->parameter('maximumLevels', $maximumLevels);

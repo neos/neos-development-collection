@@ -14,9 +14,11 @@ namespace Neos\Neos\Controller\Frontend;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\Domain\Context\Parameters\ContextParameters;
 use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Domain\Service\NodeTypeConstraintService;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Property\PropertyMapper;
@@ -99,6 +101,12 @@ class NodeController extends ActionController
     protected $view;
 
     /**
+     * @Flow\Inject
+     * @var NodeTypeConstraintService
+     */
+    protected $nodeTypeConstraintService;
+
+    /**
      * Initializes the view with the necessary parameters encoded in the given ContentQuery
      *
      * @param ContentQuery $node Legacy name for backwards compatibility of route components
@@ -122,6 +130,8 @@ class NodeController extends ActionController
         $contextParameters = $this->createContextParameters($inBackend);
 
         $site = $subgraph->findNodeByNodeAggregateIdentifier($contentQuery->getSiteIdentifier());
+
+        $this->fillCacheWithContentNodes($subgraph, $contentQuery, $contextParameters);
         $node = $subgraph->findNodeByNodeAggregateIdentifier($contentQuery->getNodeAggregateIdentifier());
 
         if (is_null($node)) {
@@ -216,6 +226,26 @@ class NodeController extends ActionController
         } else {
             throw new UnresolvableShortcutException(sprintf('The shortcut node target of node "%s" resolves to an unsupported type "%s"', $node->getPath(),
                 is_object($resolvedNode) ? get_class($resolvedNode) : gettype($resolvedNode)), 1430218738);
+        }
+    }
+
+    private function fillCacheWithContentNodes(ContentSubgraphInterface $subgraph, ContentQuery $contentQuery, ContextParameters $contextParameters)
+    {
+        $subtree = $subgraph->findSubtrees([$contentQuery->getNodeAggregateIdentifier()], 10, $contextParameters, $this->nodeTypeConstraintService->unserializeFilters('!Neos.Neos:Document'));
+        $subtree = $subtree->getChildren()[0];
+
+        $parentNodeIdentifierByChildNodeIdentifierCache = $subgraph->getInMemoryCache()->getParentNodeIdentifierByChildNodeIdentifierCache();
+        $nodeByNodeIdentifierCache = $subgraph->getInMemoryCache()->getNodeByNodeIdentifierCache();
+        $namedChildNodeByNodeIdentifierCache = $subgraph->getInMemoryCache()->getNamedChildNodeByNodeIdentifierCache();
+        $allChildNodesByNodeIdentifierCache = $subgraph->getInMemoryCache()->getAllChildNodesByNodeIdentifierCache();
+        $nodePathCache = $subgraph->getInMemoryCache()->getNodePathCache();
+
+
+        $currentDocumentNode = $subtree->getNode();
+        $nodeByNodeIdentifierCache->add($currentDocumentNode->getNodeIdentifier(), $currentDocumentNode);
+
+        foreach ($subtree->getChildren() as $childSubtree) {
+            $this->fillCache($childSubtree, $subgraph);
         }
     }
 }

@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Domain\Projection\Content;
 
 use Neos\ContentRepository\Domain;
 use Neos\ContentRepository\Domain\Context\Node\SubtreeInterface;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\Flow\Annotations as Flow;
 
@@ -113,13 +114,13 @@ interface ContentSubgraphInterface extends \JsonSerializable
     public function getDimensionSpacePoint(): Domain\ValueObject\DimensionSpacePoint;
 
     /**
-     * @param NodeIdentifier[] $entryNodeIdentifiers
+     * @param NodeAggregateIdentifier[] $entryNodeAggregateIdentifiers
      * @param int $maximumLevels
      * @param Domain\Context\Parameters\ContextParameters $contextParameters
      * @param Domain\ValueObject\NodeTypeConstraints $nodeTypeConstraints
      * @return mixed
      */
-    public function findSubtrees(array $entryNodeIdentifiers, int $maximumLevels, Domain\Context\Parameters\ContextParameters $contextParameters, Domain\ValueObject\NodeTypeConstraints $nodeTypeConstraints): SubtreeInterface;
+    public function findSubtrees(array $entryNodeAggregateIdentifiers, int $maximumLevels, Domain\Context\Parameters\ContextParameters $contextParameters, Domain\ValueObject\NodeTypeConstraints $nodeTypeConstraints): SubtreeInterface;
 
     public function getInMemoryCache(): InMemoryCache;
 }

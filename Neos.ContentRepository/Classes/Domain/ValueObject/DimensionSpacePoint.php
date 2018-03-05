@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Domain\ValueObject;
 
 use Neos\Cache\CacheAwareInterface;
 use Neos\ContentRepository\Domain\Context\Dimension\ContentDimensionIdentifier;
+use Neos\ContentRepository\Domain\Projection\Content\RootNodeIdentifiers;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Utility\Arrays;
 
@@ -24,25 +25,6 @@ use Neos\Utility\Arrays;
  */
 final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterface, ProtectedContextAwareInterface
 {
-
-    /**
-     * @var DimensionSpacePoint
-     */
-    private static $rootDimensionSpacePoint;
-
-    /**
-     * the Root node is part of *every* dimension; thus the Root node is assigned a special
-     * "root" dimension.
-     *
-     * @return DimensionSpacePoint
-     */
-    public static function root(): DimensionSpacePoint
-    {
-        if (!self::$rootDimensionSpacePoint) {
-            self::$rootDimensionSpacePoint = new DimensionSpacePoint([]);
-        }
-        return self::$rootDimensionSpacePoint;
-    }
 
     /**
      * @var array
@@ -235,6 +217,6 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
 
     public function isRoot(): bool
     {
-        return $this === self::$rootDimensionSpacePoint;
+        return $this === RootNodeIdentifiers::rootDimensionSpacePoint();
     }
 }
