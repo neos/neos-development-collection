@@ -4,10 +4,10 @@
     <body>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
-			<target xml:lang="tl" state="needs-translation">Back</target></trans-unit>
+			<target xml:lang="tl" state="translated">Ibalik</target></trans-unit>
       <trans-unit id="cancel" xml:space="preserve">
 				<source>Cancel</source>
-			<target xml:lang="tl" state="needs-translation">Cancel</target></trans-unit>
+			<target xml:lang="tl" state="translated">Kanselahin</target></trans-unit>
       <!-- Management -->
       <trans-unit id="management.label" xml:space="preserve">
 				<source>Management</source>
@@ -35,7 +35,7 @@
 			<target xml:lang="tl" state="needs-translation">Edit workspace</target></trans-unit>
       <trans-unit id="workspaces.yesDeleteWorkspace" xml:space="preserve">
 				<source>Yes, delete the workspace</source>
-			<target xml:lang="tl" state="needs-translation">Yes, delete the workspace</target></trans-unit>
+			<target xml:lang="tl" state="translated">Oo, burahin ang workspace</target></trans-unit>
       <trans-unit id="workspaces.editWorkspace" xml:space="preserve">
 				<source>Edit workspace "{0}"</source>
 			<target xml:lang="tl" state="needs-translation">Edit workspace</target></trans-unit>
@@ -53,7 +53,7 @@
 			<target xml:lang="tl" state="needs-translation">Read-only workspace</target></trans-unit>
       <trans-unit id="workspaces.workspace.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="tl" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="tl" state="translated">Pamagat</target></trans-unit>
       <trans-unit id="workspaces.workspace.description" xml:space="preserve">
 				<source>Description</source>
 			<target xml:lang="tl" state="needs-translation">Description</target></trans-unit>
@@ -62,31 +62,31 @@
 			<target xml:lang="tl" state="needs-translation">Base workspace</target></trans-unit>
       <trans-unit id="workspaces.workspace.owner" xml:space="preserve">
 				<source>Owner</source>
-			<target xml:lang="tl" state="needs-translation">Owner</target></trans-unit>
+			<target xml:lang="tl" state="translated">May-ari</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility" xml:space="preserve">
 				<source>Visibility</source>
-			<target xml:lang="tl" state="needs-translation">Visibility</target></trans-unit>
+			<target xml:lang="tl" state="translated">Bisibilidad</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private" xml:space="preserve">
 				<source>Private</source>
-			<target xml:lang="tl" state="needs-translation">Private</target></trans-unit>
+			<target xml:lang="tl" state="translated">Pribado</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
 				<source>Only reviewers and administrators can access and modify this workspace</source>
 			<target xml:lang="tl" state="needs-translation">Only reviewers and administrators can access and modify this workspace</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.internal" xml:space="preserve">
 				<source>Internal</source>
-			<target xml:lang="tl" state="needs-translation">Internal</target></trans-unit>
+			<target xml:lang="tl" state="translated">Panloob</target></trans-unit>
       <trans-unit id="workspaces.workspace.visibility.internal.help" xml:space="preserve">
 				<source>Any logged in editor can see and modify this workspace.</source>
 			<target xml:lang="tl" state="needs-translation">Any logged in editor can see and modify this workspace.</target></trans-unit>
       <trans-unit id="workspaces.workspace.changes" xml:space="preserve">
 				<source>Changes</source>
-			<target xml:lang="tl" state="needs-translation">Changes</target></trans-unit>
+			<target xml:lang="tl" state="translated">Mga pagbabago</target></trans-unit>
       <trans-unit id="workspaces.openPageInWorkspace" xml:space="preserve">
 				<source>Open page in "{0}" workspace</source>
 			<target xml:lang="tl" state="needs-translation">Open page in "{0}" workspace</target></trans-unit>
       <trans-unit id="workspaces.help.cantDeletePersonalWorkspace" xml:space="preserve">
 				<source>This is your personal workspace which you can't delete.</source>
-			<target xml:lang="tl" state="needs-translation">This is your personal workspace which you can't delete.</target></trans-unit>
+			<target xml:lang="tl" state="translated">Ito ay iyong personal na workspace na kung saan ito ay hindi mabubura.</target></trans-unit>
       <trans-unit id="workspaces.help.workspaceContainsChanges" xml:space="preserve">
 				<source>The workspace contains changes. To delete, discard the changes first.</source>
 			<target xml:lang="tl" state="needs-translation">The workspace contains changes. To delete, discard the changes first.</target></trans-unit>
@@ -128,7 +128,7 @@
 			<target xml:lang="tl" state="needs-translation">Discard all changes</target></trans-unit>
       <trans-unit id="workspaces.publishAllChanges" xml:space="preserve">
 				<source>Publish all changes</source>
-			<target xml:lang="tl" state="needs-translation">Publish all changes</target></trans-unit>
+			<target xml:lang="tl" state="translated">Ilathala lahat ng mga pagbabago</target></trans-unit>
       <trans-unit id="workspaces.publishAllChangesTo" xml:space="preserve">
 				<source>Publish all changes to {0}</source>
 			<target xml:lang="tl" state="needs-translation">Publish all changes to {0}</target></trans-unit>
@@ -137,19 +137,19 @@
 			<target xml:lang="tl" state="needs-translation">Changed Content</target></trans-unit>
       <trans-unit id="workspaces.legend.deleted" xml:space="preserve">
 				<source>deleted</source>
-			<target xml:lang="tl" state="needs-translation">deleted</target></trans-unit>
+			<target xml:lang="tl" state="translated">nabura</target></trans-unit>
       <trans-unit id="workspaces.legend.created" xml:space="preserve">
 				<source>created</source>
-			<target xml:lang="tl" state="needs-translation">created</target></trans-unit>
+			<target xml:lang="tl" state="translated">nagawa</target></trans-unit>
       <trans-unit id="workspaces.legend.moved" xml:space="preserve">
 				<source>moved</source>
-			<target xml:lang="tl" state="needs-translation">moved</target></trans-unit>
+			<target xml:lang="tl" state="translated">inilipat</target></trans-unit>
       <trans-unit id="workspaces.legend.hidden" xml:space="preserve">
 				<source>hidden</source>
-			<target xml:lang="tl" state="needs-translation">hidden</target></trans-unit>
+			<target xml:lang="tl" state="translated">nakatago</target></trans-unit>
       <trans-unit id="workspaces.legend.edited" xml:space="preserve">
 				<source>edited</source>
-			<target xml:lang="tl" state="needs-translation">edited</target></trans-unit>
+			<target xml:lang="tl" state="translated">na-edit</target></trans-unit>
       <trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve">
 				<source>There are no unpublished changes in this workspace.</source>
 			<target xml:lang="tl" state="needs-translation">There are no unpublished changes in this workspace.</target></trans-unit>
@@ -227,29 +227,29 @@
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
 			<target xml:lang="tl" state="needs-translation">There have not been recorded any events yet which could be displayed in this history.</target></trans-unit>
       <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
-				<source>{0} created the {1} {2}.</source>
-			<target xml:lang="tl" state="needs-translation">{0} created the {1} {2}.</target></trans-unit>
+				<source>{0} created the {1} "{2}".</source>
+			<target xml:lang="tl" state="needs-translation">{0} created the {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.removed" xml:space="preserve">
-				<source>{0} removed the {1} {2}.</source>
-			<target xml:lang="tl" state="needs-translation">{0} removed the {1} {2}.</target></trans-unit>
+				<source>{0} removed the {1} "{2}".</source>
+			<target xml:lang="tl" state="needs-translation">{0} removed the {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
-				<source>{0} created the variant {1} of {2} {3}.</source>
-			<target xml:lang="tl" state="needs-translation">{0} created the variant {1} of {2} {3}.</target></trans-unit>
+				<source>{0} created the variant {1} of the {2} "{3}".</source>
+			<target xml:lang="tl" state="needs-translation">{0} created the variant {1} of the {2} "{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changed" xml:space="preserve">
-				<source>{0} changed {1} {2}.</source>
-			<target xml:lang="tl" state="needs-translation">{0} changed {1} {2}.</target></trans-unit>
+				<source>{0} modified the {1} "{2}".</source>
+			<target xml:lang="tl" state="needs-translation">{0} modified the {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.moved" xml:space="preserve">
-				<source>{0} moved {1} {2}.</source>
-			<target xml:lang="tl" state="needs-translation">{0} moved {1} {2}.</target></trans-unit>
+				<source>{0} moved the {1} "{2}".</source>
+			<target xml:lang="tl" state="needs-translation">{0} moved the {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.copied" xml:space="preserve">
-				<source>{0} copied {1} {2}.</source>
-			<target xml:lang="tl" state="needs-translation">{0} copied {1} {2}.</target></trans-unit>
+				<source>{0} copied the {1} "{2}".</source>
+			<target xml:lang="tl" state="needs-translation">{0} copied the {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.renamed" xml:space="preserve">
-				<source>{0} renamed {1} "{2}" to "{3}".</source>
-			<target xml:lang="tl" state="needs-translation">{0} renamed {1} "{2}" to "{3}".</target></trans-unit>
+				<source>{0} renamed the {1} "{2}" to "{3}".</source>
+			<target xml:lang="tl" state="needs-translation">{0} renamed the {1} "{2}" to "{3}".</target></trans-unit>
       <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve">
-				<source>{0} changed content on {1} {2}.</source>
-			<target xml:lang="tl" state="needs-translation">{0} changed content on {1} {2}.</target></trans-unit>
+				<source>{0} modified content on the {1} "{2}".</source>
+			<target xml:lang="tl" state="needs-translation">{0} modified content on the {1} "{2}".</target></trans-unit>
       <trans-unit id="history.eventDescription.account.created" xml:space="preserve">
 				<source>{0} created a new user "{1}" for {2}.</source>
 			<target xml:lang="tl" state="needs-translation">{0} created a new user "{1}" for {2}.</target></trans-unit>
@@ -286,7 +286,7 @@
 			<target xml:lang="tl" state="needs-translation">New</target></trans-unit>
       <trans-unit id="users.action.edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="tl" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="tl" state="translated">Edit</target></trans-unit>
       <trans-unit id="users.action.editAccount" xml:space="preserve">
 				<source>Edit account</source>
 			<target xml:lang="tl" state="needs-translation">Edit account</target></trans-unit>
@@ -307,10 +307,10 @@
 			<target xml:lang="tl" state="needs-translation">User Data</target></trans-unit>
       <trans-unit id="users.new.userData.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="tl" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="tl" state="translated">Username</target></trans-unit>
       <trans-unit id="users.new.userData.password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="tl" state="needs-translation">Password</target></trans-unit>
+			<target xml:lang="tl" state="translated">Password</target></trans-unit>
       <trans-unit id="users.new.userData.repeatPassword" xml:space="preserve">
 				<source>Repeat password</source>
 			<target xml:lang="tl" state="needs-translation">Repeat password</target></trans-unit>
@@ -349,7 +349,7 @@
 			<target xml:lang="tl" state="needs-translation">Personal Data</target></trans-unit>
       <trans-unit id="users.show.personalData.title" xml:space="preserve">
 				<source>Title</source>
-			<target xml:lang="tl" state="needs-translation">Title</target></trans-unit>
+			<target xml:lang="tl" state="translated">Pamagat</target></trans-unit>
       <trans-unit id="users.show.personalData.firstName" xml:space="preserve">
 				<source>First Name</source>
 			<target xml:lang="tl" state="needs-translation">First Name</target></trans-unit>
@@ -367,7 +367,7 @@
 			<target xml:lang="tl" state="needs-translation">Accounts</target></trans-unit>
       <trans-unit id="users.show.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="tl" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="tl" state="translated">Username</target></trans-unit>
       <trans-unit id="users.show.roles" xml:space="preserve">
 				<source>Roles</source>
 			<target xml:lang="tl" state="needs-translation">Roles</target></trans-unit>
@@ -412,7 +412,7 @@
 			<target xml:lang="tl" state="needs-translation">Account</target></trans-unit>
       <trans-unit id="users.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="tl" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="tl" state="translated">Username</target></trans-unit>
       <trans-unit id="users.usernameCannotBeChanged" xml:space="preserve">
 				<source>The username can't be changed via the user interface</source>
 			<target xml:lang="tl" state="needs-translation">The username can't be changed via the user interface</target></trans-unit>
@@ -663,10 +663,10 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 			<target xml:lang="tl" state="needs-translation">This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system.</target></trans-unit>
       <trans-unit id="userSettings.action.index" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="tl" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="tl" state="translated">Edit</target></trans-unit>
       <trans-unit id="userSettings.action.edit" xml:space="preserve">
 				<source>Edit</source>
-			<target xml:lang="tl" state="needs-translation">Edit</target></trans-unit>
+			<target xml:lang="tl" state="translated">Edit</target></trans-unit>
       <trans-unit id="userSettings.action.newElectronicAddress" xml:space="preserve">
 				<source>New electronic address</source>
 			<target xml:lang="tl" state="needs-translation">New electronic address</target></trans-unit>
@@ -696,7 +696,7 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 			<target xml:lang="tl" state="needs-translation">Accounts</target></trans-unit>
       <trans-unit id="userSettings.accounts.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="tl" state="needs-translation">Username</target></trans-unit>
+			<target xml:lang="tl" state="translated">Username</target></trans-unit>
       <trans-unit id="userSettings.accounts.roles" xml:space="preserve">
 				<source>Roles</source>
 			<target xml:lang="tl" state="needs-translation">Roles</target></trans-unit>
