@@ -61,11 +61,11 @@ Feature: Node References with Dimensions
 
 
     And the command "SetNodeReferences" is executed with payload:
-      | Key                                  | Value                   | Type   |
-      | contentStreamIdentifier              | cs-identifier           | Uuid   |
-      | nodeIdentifier                       | source-node-identifier  | Uuid   |
-      | propertyName                         | referenceProperty       |        |
-      | destinationtNodeAggregateIdentifiers | dest-nodeAgg-identifier | Uuid[] |
+      | Key                                 | Value                   | Type   |
+      | contentStreamIdentifier             | cs-identifier           | Uuid   |
+      | nodeIdentifier                      | source-node-identifier  | Uuid   |
+      | propertyName                        | referenceProperty       |        |
+      | destinationNodeAggregateIdentifiers | dest-nodeAgg-identifier | Uuid[] |
 
     And the graph projection is fully up to date
 
