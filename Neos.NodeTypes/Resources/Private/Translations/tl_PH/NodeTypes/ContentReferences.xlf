@@ -10,7 +10,7 @@
 			<target xml:lang="tl" state="needs-translation">References</target></trans-unit>
       <trans-unit id="properties.references" xml:space="preserve">
 				<source>Select</source>
-			<target xml:lang="tl" state="needs-translation">Select</target></trans-unit>
+			<target xml:lang="tl" state="translated">Pumii</target></trans-unit>
       <trans-unit id="content.noReferencesSelected" xml:space="preserve">
 				<source>No references selected</source>
 			<target xml:lang="tl" state="needs-translation">No references selected</target></trans-unit>

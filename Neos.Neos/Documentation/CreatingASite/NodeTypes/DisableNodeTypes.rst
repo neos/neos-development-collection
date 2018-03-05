@@ -6,7 +6,7 @@ Disable NodeTypes
 To hide an existing NodeType (e.g. one that comes with Neos already) you have 2 options.
 
 Hide the NodeType from the user interface
-=========================================
+-----------------------------------------
 
 *NodeTypes.yaml*
 
@@ -19,7 +19,7 @@ Nodes of this type will still remain valid in the database and being rendered to
 shown anymore in the dialog for adding nodes.
 
 Completely disallow the direct usage of a NodeType
-==================================================
+--------------------------------------------------
 
 *NodeTypes.yaml*
 
