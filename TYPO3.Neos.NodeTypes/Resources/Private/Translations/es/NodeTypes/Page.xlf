@@ -5,9 +5,9 @@
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Page</source>
 			<target xml:lang="es-ES" state="translated">Página</target></trans-unit>
-      <trans-unit id="groups.document" xml:space="preserve">
+      <trans-unit id="groups.document" xml:space="preserve" approved="yes">
 				<source>Title</source>
-			<target xml:lang="es-ES" state="translated">Título</target></trans-unit>
+			<target xml:lang="es-ES">Título</target></trans-unit>
       <trans-unit id="groups.layout" xml:space="preserve">
 				<source>Layout</source>
 			<target xml:lang="es-ES" state="translated">Apariencia</target></trans-unit>
