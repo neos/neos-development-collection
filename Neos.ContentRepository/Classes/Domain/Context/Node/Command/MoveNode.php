@@ -11,59 +11,81 @@ namespace Neos\ContentRepository\Domain\Context\Node\Command;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Context\Node\RelationDistributionStrategy;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\ReferencePosition;
+use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Move node command
  *
- * Moves a node before, into or after another node.
+ * In `contentStreamIdentifier`
+ * and `dimensionSpacePoint`,
+ * move node `nodeAggregateIdentifier`
+ * into `newParentNodeAggregateIdentifier` (or keep the current parent)
+ * before `newSucceedingSiblingIdentifier` (or as last of all siblings)
+ * using `relationDistributionStrategy`
  *
- * This is only allowed if the node type of the node allows a single move and the node would be
+ * This is only allowed if both nodes exist and the new parent aggregate's type allows children of the given aggregate's type
  */
 final class MoveNode
 {
-
     /**
      * @var ContentStreamIdentifier
      */
     private $contentStreamIdentifier;
 
     /**
-     * @var NodeIdentifier
+     * @var DimensionSpacePoint
      */
-    private $nodeIdentifier;
+    private $dimensionSpacePoint;
 
     /**
-     * @var ReferencePosition
+     * @var NodeAggregateIdentifier
      */
-    private $referencePosition;
+    private $nodeAggregateIdentifier;
 
     /**
-     * @var NodeIdentifier
+     * @var NodeAggregateIdentifier
      */
-    private $referenceNodeIdentifier;
+    private $newParentNodeAggregateIdentifier;
 
     /**
-     * MoveNode constructor.
-     *
+     * @var NodeAggregateIdentifier
+     */
+    private $newSucceedingSiblingNodeAggregateIdentifier;
+
+    /**
+     * @var RelationDistributionStrategy
+     */
+    private $relationDistributionStrategy;
+
+
+    /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
-     * @param ReferencePosition $referencePosition
-     * @param NodeIdentifier $referenceNodeIdentifier
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param NodeAggregateIdentifier|null $newParentNodeAggregateIdentifier
+     * @param NodeAggregateIdentifier|null $newSucceedingSiblingNodeAggregateIdentifier
+     * @param RelationDistributionStrategy $relationDistributionStrategy
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
-        NodeIdentifier $nodeIdentifier,
-        ReferencePosition $referencePosition,
-        NodeIdentifier $referenceNodeIdentifier
+        DimensionSpacePoint $dimensionSpacePoint,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ?NodeAggregateIdentifier $newParentNodeAggregateIdentifier,
+        ?NodeAggregateIdentifier $newSucceedingSiblingNodeAggregateIdentifier,
+        RelationDistributionStrategy $relationDistributionStrategy
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeIdentifier = $nodeIdentifier;
-        $this->referencePosition = $referencePosition;
-        $this->referenceNodeIdentifier = $referenceNodeIdentifier;
+        $this->dimensionSpacePoint = $dimensionSpacePoint;
+        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
+        $this->newParentNodeAggregateIdentifier = $newParentNodeAggregateIdentifier;
+        $this->newSucceedingSiblingNodeAggregateIdentifier = $newSucceedingSiblingNodeAggregateIdentifier;
+        $this->relationDistributionStrategy = $relationDistributionStrategy;
     }
+
 
     /**
      * @return ContentStreamIdentifier
@@ -74,26 +96,42 @@ final class MoveNode
     }
 
     /**
-     * @return NodeIdentifier
+     * @return DimensionSpacePoint
      */
-    public function getNodeIdentifier(): NodeIdentifier
+    public function getDimensionSpacePoint(): DimensionSpacePoint
     {
-        return $this->nodeIdentifier;
+        return $this->dimensionSpacePoint;
     }
 
     /**
-     * @return ReferencePosition
+     * @return NodeAggregateIdentifier
      */
-    public function getReferencePosition(): ReferencePosition
+    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
     {
-        return $this->referencePosition;
+        return $this->nodeAggregateIdentifier;
     }
 
     /**
-     * @return NodeIdentifier
+     * @return NodeAggregateIdentifier|null
      */
-    public function getReferenceNodeIdentifier(): NodeIdentifier
+    public function getNewParentNodeAggregateIdentifier(): ?NodeAggregateIdentifier
     {
-        return $this->referenceNodeIdentifier;
+        return $this->newParentNodeAggregateIdentifier;
+    }
+
+    /**
+     * @return NodeAggregateIdentifier|null
+     */
+    public function getNewSucceedingSiblingNodeAggregateIdentifier(): ?NodeAggregateIdentifier
+    {
+        return $this->newSucceedingSiblingNodeAggregateIdentifier;
+    }
+
+    /**
+     * @return RelationDistributionStrategy
+     */
+    public function getRelationDistributionStrategy(): RelationDistributionStrategy
+    {
+        return $this->relationDistributionStrategy;
     }
 }

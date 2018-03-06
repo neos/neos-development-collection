@@ -174,7 +174,7 @@ final class ContentDimension
      * @param ContentDimensionValue $generalization
      * @param ContentDimensionValue $specialization
      * @return ContentDimensionValueSpecializationDepth
-     * @throws Exception\InvalidGeneralizationException
+     * @throws Exception\GeneralizationIsInvalid
      */
     public function calculateSpecializationDepth(ContentDimensionValue $specialization, ContentDimensionValue $generalization): ContentDimensionValueSpecializationDepth
     {
@@ -190,7 +190,7 @@ final class ContentDimension
             }
         }
 
-        throw new Exception\InvalidGeneralizationException('"' . $specialization . '" is no specialization of "' . $generalization . '" in dimension "' . $this->getIdentifier() . '".');
+        throw new Exception\GeneralizationIsInvalid('"' . $specialization . '" is no specialization of "' . $generalization . '" in dimension "' . $this->getIdentifier() . '".');
     }
 
     /**

@@ -11,6 +11,8 @@ namespace Neos\ContentRepository\Domain\Model;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Context\Node\RelationDistributionStrategyIsInvalid;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Context\Node\Command;
@@ -34,7 +36,6 @@ use Neos\ContentRepository\Exception\NodeConstraintException;
 use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\Exception\NodeExistsException;
 use Neos\Flow\Utility\Now;
-use Neos\Neos\Ui\Domain\Model\Changes\Property;
 
 /**
  * This is the main API for storing and retrieving content in the system.
@@ -303,6 +304,7 @@ class Node implements NodeInterface, CacheAwareInterface
      *
      * @return string
      * @api
+     * @throws Exception
      */
     public function getPath()
     {
@@ -316,6 +318,7 @@ class Node implements NodeInterface, CacheAwareInterface
      *
      * @return integer
      * @api
+     * @throws Exception
      */
     public function getDepth()
     {
@@ -431,6 +434,7 @@ class Node implements NodeInterface, CacheAwareInterface
      *
      * @return NodeInterface|null The parent node or NULL if this is the root node
      * @api
+     * @throws Exception
      */
     public function getParent(): ?NodeInterface
     {
@@ -442,6 +446,7 @@ class Node implements NodeInterface, CacheAwareInterface
      *
      * @return string Absolute node path of the parent node
      * @api
+     * @throws Exception
      */
     public function getParentPath()
     {
@@ -450,14 +455,12 @@ class Node implements NodeInterface, CacheAwareInterface
     }
 
     /**
-     * Moves this node before the given node
+     * Moves this node before the given node (always used except for moving to the last position)
      *
      * @param NodeInterface $referenceNode
      * @param string $newName
      * @throws Exception
-     * @throws NodeConstraintException if a node constraint prevents moving the node
-     * @throws NodeException if you try to move the root node
-     * @throws NodeExistsException
+     * @throws RelationDistributionStrategyIsInvalid
      * @api
      */
     public function moveBefore(NodeInterface $referenceNode, $newName = null)
@@ -466,17 +469,8 @@ class Node implements NodeInterface, CacheAwareInterface
             return;
         }
 
-        if ($this->getPath() === '/') {
-            throw new NodeException('The root node cannot be moved.', 1285005924);
-        }
-
-        if ($referenceNode->getParent() !== $this->getParent() && $referenceNode->getParent()->getNode($this->getName()) !== null) {
-            throw new NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503468);
-        }
-
-        if (!$referenceNode->getParent()->willChildNodeBeAutoCreated($this->getName()) && !$referenceNode->getParent()->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
-            throw new NodeConstraintException('Cannot move ' . $this->__toString() . ' before ' . $referenceNode->__toString(), 1400782413);
-        }
+        $newParentAggregateIdentifier = ($referenceNode->getParent() === $this->getParent() ? null : $referenceNode->getParent()->getNodeAggregateIdentifier());
+        $newSucceedingSiblingIdentifier = $referenceNode->getNodeAggregateIdentifier();
 
         if ($newName !== null) {
             throw new \InvalidArgumentException('Setting new node name while moving not supported', 1505840321);
@@ -488,21 +482,19 @@ class Node implements NodeInterface, CacheAwareInterface
 
         $this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_BEFORE);
 
-        $this->executeMoveCommand($referenceNode, ReferencePosition::before());
+        $this->executeMoveCommand($this->getNodeAggregateIdentifier(), $newParentAggregateIdentifier, $newSucceedingSiblingIdentifier);
 
         $this->emitAfterNodeMove($this, $referenceNode, NodeDataRepository::POSITION_BEFORE);
         $this->emitNodeUpdated($this);
     }
 
     /**
-     * Moves this node after the given node
+     * Moves this node after the given node (only used for moving to the last position)
      *
      * @param NodeInterface $referenceNode
      * @param string $newName
      * @throws Exception
-     * @throws NodeConstraintException if a node constraint prevents moving the node
-     * @throws NodeException
-     * @throws NodeExistsException
+     * @throws RelationDistributionStrategyIsInvalid
      * @api
      */
     public function moveAfter(NodeInterface $referenceNode, $newName = null)
@@ -511,17 +503,7 @@ class Node implements NodeInterface, CacheAwareInterface
             return;
         }
 
-        if ($this->getPath() === '/') {
-            throw new NodeException('The root node cannot be moved.', 1316361483);
-        }
-
-        if ($referenceNode->getParent() !== $this->getParent() && $referenceNode->getParent()->getNode($this->getName()) !== null) {
-            throw new NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503469);
-        }
-
-        if (!$referenceNode->getParent()->willChildNodeBeAutoCreated($this->getName()) && !$referenceNode->getParent()->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
-            throw new NodeConstraintException('Cannot move ' . $this->__toString() . ' after ' . $referenceNode->__toString(), 1404648100);
-        }
+        $newParentAggregateIdentifier = ($referenceNode->getParent() === $this->getParent() ? null : $referenceNode->getParent()->getNodeAggregateIdentifier());
 
         if ($newName !== null) {
             throw new \InvalidArgumentException('Setting new node name while moving not supported', 1505809714);
@@ -533,21 +515,23 @@ class Node implements NodeInterface, CacheAwareInterface
 
         $this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_AFTER);
 
-        $this->executeMoveCommand($referenceNode, ReferencePosition::after());
+        $this->executeMoveCommand(
+            $this->getNodeAggregateIdentifier(),
+            $newParentAggregateIdentifier,
+            null
+        );
 
         $this->emitAfterNodeMove($this, $referenceNode, NodeDataRepository::POSITION_AFTER);
         $this->emitNodeUpdated($this);
     }
 
     /**
-     * Moves this node into the given node
+     * Moves this node into the given node (at last position)
      *
      * @param NodeInterface $referenceNode
      * @param string $newName
      * @throws Exception
-     * @throws NodeConstraintException
-     * @throws NodeException
-     * @throws NodeExistsException
+     * @throws RelationDistributionStrategyIsInvalid
      * @api
      */
     public function moveInto(NodeInterface $referenceNode, $newName = null)
@@ -556,17 +540,7 @@ class Node implements NodeInterface, CacheAwareInterface
             return;
         }
 
-        if ($this->getPath() === '/') {
-            throw new NodeException('The root node cannot be moved.', 1346769001);
-        }
-
-        if ($referenceNode !== $this->getParent() && $referenceNode->getNode($this->getName()) !== null) {
-            throw new NodeExistsException('Node with path "' . $this->getName() . '" already exists.', 1292503470);
-        }
-
-        if (!$referenceNode->willChildNodeBeAutoCreated($this->getName()) && !$referenceNode->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
-            throw new NodeConstraintException('Cannot move ' . $this->__toString() . ' into ' . $referenceNode->__toString(), 1404648124);
-        }
+        $newParentAggregateIdentifier = $referenceNode->getNodeAggregateIdentifier();
 
         if ($newName !== null) {
             throw new \InvalidArgumentException('Setting new node name while moving not supported', 1505809714);
@@ -578,38 +552,35 @@ class Node implements NodeInterface, CacheAwareInterface
 
         $this->emitBeforeNodeMove($this, $referenceNode, NodeDataRepository::POSITION_LAST);
 
-        $this->executeMoveCommand($referenceNode, ReferencePosition::into());
+        $this->executeMoveCommand(
+            $this->getNodeAggregateIdentifier(),
+            $newParentAggregateIdentifier,
+            null
+        );
 
         $this->emitAfterNodeMove($this, $referenceNode, NodeDataRepository::POSITION_LAST);
         $this->emitNodeUpdated($this);
     }
 
     /**
-     * @param Node $referenceNode
-     * @param ReferencePosition $referencePosition
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param NodeAggregateIdentifier|null $newParentAggregateIdentifier
+     * @param NodeAggregateIdentifier|null $newSucceedingSiblingAggregateIdentifier
+     * @throws Exception
+     * @throws RelationDistributionStrategyIsInvalid
      */
-    private function executeMoveCommand(Node $referenceNode, ReferencePosition $referencePosition): void
+    private function executeMoveCommand(NodeAggregateIdentifier $nodeAggregateIdentifier, ?NodeAggregateIdentifier $newParentAggregateIdentifier, ?NodeAggregateIdentifier $newSucceedingSiblingAggregateIdentifier): void
     {
-        // TODO CR rewrite: Add move strategy to node type instead of checking flag
-        if ($this->nodeType->isAggregate()) {
-            $command = new Command\MoveNodesInAggregate(
-                $this->context->getContentSubgraph()->getContentStreamIdentifier(),
-                $this->getNodeAggregateIdentifier(),
-                $referencePosition,
-                $referenceNode->getNodeAggregateIdentifier()
-            );
+        $moveNode = new Command\MoveNode(
+            $this->context->getContentSubgraph()->getContentStreamIdentifier(),
+            $this->context->getContentSubgraph()->getDimensionSpacePoint(),
+            $nodeAggregateIdentifier,
+            $newParentAggregateIdentifier,
+            $newSucceedingSiblingAggregateIdentifier,
+            $this->nodeType->getRelationDistributionStrategy()
+        );
 
-            $this->nodeCommandHandler->handleMoveNodesInAggregate($command);
-        } else {
-            $command = new Command\MoveNode(
-                $this->context->getContentSubgraph()->getContentStreamIdentifier(),
-                $this->getNodeIdentifier(),
-                $referencePosition,
-                $referenceNode->getNodeIdentifier()
-            );
-
-            $this->nodeCommandHandler->handleMoveNode($command);
-        }
+        $this->nodeCommandHandler->handleMoveNode($moveNode);
     }
 
     /**
@@ -643,6 +614,7 @@ class Node implements NodeInterface, CacheAwareInterface
      * @throws NodeExistsException
      * @throws NodeConstraintException
      * @api
+     * @throws Exception
      */
     public function copyBefore(NodeInterface $referenceNode, $nodeName)
     {
@@ -698,6 +670,7 @@ class Node implements NodeInterface, CacheAwareInterface
      * @throws NodeExistsException
      * @throws NodeConstraintException
      * @api
+     * @throws Exception
      */
     public function copyAfter(NodeInterface $referenceNode, $nodeName)
     {
@@ -730,8 +703,6 @@ class Node implements NodeInterface, CacheAwareInterface
      * @param NodeInterface $referenceNode
      * @param string $nodeName
      * @return NodeInterface
-     * @throws NodeExistsException
-     * @throws NodeConstraintException
      * @api
      */
     public function copyInto(NodeInterface $referenceNode, $nodeName)
@@ -761,6 +732,7 @@ class Node implements NodeInterface, CacheAwareInterface
      * @param mixed $value Value of the property
      * @return mixed
      * @api
+     * @throws Exception
      */
     public function setProperty($propertyName, $value)
     {
@@ -848,7 +820,6 @@ class Node implements NodeInterface, CacheAwareInterface
      *
      * @param string $propertyName Name of the property
      * @return void
-     * @throws NodeException if the node does not contain the specified property
      */
     public function removeProperty($propertyName)
     {
@@ -867,7 +838,7 @@ class Node implements NodeInterface, CacheAwareInterface
      * If the node has a content object attached, the properties will be fetched
      * there.
      *
-     * @return array|\ArrayAccess Property values, indexed by their name
+     * @return PropertyCollection Property values, indexed by their name
      * @api
      */
     public function getProperties(): NodePropertyCollection
@@ -967,6 +938,8 @@ class Node implements NodeInterface, CacheAwareInterface
      * @param NodeType $nodeType Node type of the new node (optional)
      * @param string $identifier The identifier of the node, unique within the workspace, optional(!) -> node aggregate identifier
      * @return NodeInterface
+     * @throws Exception
+     * @throws Exception\NodeNotFoundException
      * @api
      */
     public function createNode($name, NodeType $nodeType = null, $identifier = null)
@@ -1035,9 +1008,9 @@ class Node implements NodeInterface, CacheAwareInterface
         // TODO CR rewrite: Execute CreateChildNodeWithVariantFromTemplate command
         // TODO CR rewrite: Check if we still want to support this!
 
-        $this->emitNodeAdded($node);
+        #$this->emitNodeAdded($node);
 
-        return $node;
+        #return $node;
     }
 
     /**
@@ -1046,6 +1019,7 @@ class Node implements NodeInterface, CacheAwareInterface
      * @param string $path Path specifying the node, relative to this node
      * @return NodeInterface|null The specified node or NULL if no such node exists
      * @api
+     * @throws Exception
      */
     public function getNode($path)
     {
@@ -1074,6 +1048,7 @@ class Node implements NodeInterface, CacheAwareInterface
      *
      * @return NodeInterface|null The primary child node or NULL if no such node exists
      * @api
+     * @throws Exception
      */
     public function getPrimaryChildNode()
     {
@@ -1089,6 +1064,7 @@ class Node implements NodeInterface, CacheAwareInterface
      * @param integer $offset An optional offset for the query
      * @return array<\Neos\ContentRepository\Domain\Model\NodeInterface> An array of nodes or an empty array if no child nodes matched
      * @api
+     * @throws Exception
      */
     public function getChildNodes($nodeTypeFilter = null, $limit = null, $offset = null)
     {
@@ -1102,6 +1078,7 @@ class Node implements NodeInterface, CacheAwareInterface
      * @param string $nodeTypeFilter If specified, only nodes with that node type are considered
      * @return integer The number of child nodes
      * @api
+     * @throws Exception
      */
     public function getNumberOfChildNodes($nodeTypeFilter = null)
     {
@@ -1116,6 +1093,7 @@ class Node implements NodeInterface, CacheAwareInterface
      * @param string $nodeTypeFilter If specified, only nodes with that node type are considered
      * @return boolean TRUE if this node has child nodes, otherwise FALSE
      * @api
+     * @throws Exception
      */
     public function hasChildNodes($nodeTypeFilter = null)
     {
@@ -1386,6 +1364,7 @@ class Node implements NodeInterface, CacheAwareInterface
      * related to this object.
      *
      * @return string
+     * @throws Exception
      */
     public function getCacheEntryIdentifier()
     {
@@ -1406,6 +1385,7 @@ class Node implements NodeInterface, CacheAwareInterface
      * For debugging purposes, the node can be converted to a string.
      *
      * @return string
+     * @throws Exception
      */
     public function __toString()
     {
@@ -1418,6 +1398,8 @@ class Node implements NodeInterface, CacheAwareInterface
      *
      * @param Context $context
      * @return NodeInterface
+     * @throws Exception
+     * @throws NodeException
      */
     public function createVariantForContext($context)
     {
@@ -1442,6 +1424,7 @@ class Node implements NodeInterface, CacheAwareInterface
      *
      * @param NodeType $nodeType
      * @return boolean TRUE if the passed $nodeType is allowed as child node
+     * @throws Exception
      */
     public function isNodeTypeAllowedAsChildNode(NodeType $nodeType)
     {
@@ -1457,6 +1440,7 @@ class Node implements NodeInterface, CacheAwareInterface
      * should not be deleted.
      *
      * @return boolean TRUE if this node is auto-created by the parent.
+     * @throws Exception
      */
     public function isAutoCreated()
     {
@@ -1474,6 +1458,7 @@ class Node implements NodeInterface, CacheAwareInterface
 
     /**
      * @return bool
+     * @throws Exception
      */
     public function dimensionsAreMatchingTargetDimensionValues(): bool
     {

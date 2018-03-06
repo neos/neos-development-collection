@@ -12,7 +12,9 @@ namespace Neos\ContentRepository\Domain\Projection\Content;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Context\Node\ReadOnlyNodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 
 /**
@@ -20,7 +22,6 @@ use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
  */
 final class NodeAggregate
 {
-
     /**
      * @var NodeAggregateIdentifier
      */
@@ -32,15 +33,27 @@ final class NodeAggregate
     private $nodeTypeName;
 
     /**
-     * NodeAggregate constructor.
-     *
+     * @var NodeName
+     */
+    private $nodeName;
+
+    /**
+     * @var array|ReadOnlyNodeInterface[]
+     */
+    private $nodes;
+
+    /**
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param NodeTypeName $nodeTypeName
+     * @param NodeName $nodeName
+     * @param array $nodes
      */
-    public function __construct(NodeAggregateIdentifier $nodeAggregateIdentifier, NodeTypeName $nodeTypeName)
+    public function __construct(NodeAggregateIdentifier $nodeAggregateIdentifier, NodeTypeName $nodeTypeName, NodeName $nodeName, array $nodes)
     {
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->nodeTypeName = $nodeTypeName;
+        $this->nodeName = $nodeName;
+        $this->nodes = $nodes;
     }
 
     /**
@@ -59,4 +72,19 @@ final class NodeAggregate
         return $this->nodeTypeName;
     }
 
+    /**
+     * @return NodeName
+     */
+    public function getNodeName(): NodeName
+    {
+        return $this->nodeName;
+    }
+
+    /**
+     * @return array|ReadOnlyNodeInterface[]
+     */
+    public function getNodes(): array
+    {
+        return $this->nodes;
+    }
 }

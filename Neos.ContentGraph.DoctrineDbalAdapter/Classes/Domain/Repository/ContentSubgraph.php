@@ -179,7 +179,6 @@ final class ContentSubgraph implements ContentProjection\ContentSubgraphInterfac
                 }
             }
         }
-
     }
 
     /**
@@ -477,8 +476,125 @@ ORDER BY hc.position LIMIT 1',
     }
 
     /**
+     * @param NodeAggregateIdentifier $parentAggregateIdentifier
+     * @param NodeName $edgeName
+     * @param ContentRepository\Service\Context|null $contentContext
+     * @return ContentRepository\Model\NodeInterface|null
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Exception
+     * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
+     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     */
+    public function findChildNodeByNodeAggregateIdentifierConnectedThroughEdgeName(
+        ContentRepository\ValueObject\NodeAggregateIdentifier $parentAggregateIdentifier,
+        ContentRepository\ValueObject\NodeName $edgeName,
+    ): ?NodeInterface {
+        $nodeData = $this->getDatabaseConnection()->executeQuery(
+            'SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
+ INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
+ INNER JOIN neos_contentgraph_node c ON h.childnodeanchor = c.relationanchorpoint
+ WHERE p.nodeaggregateidentifier = :parentNodeAggregateIdentifier
+ AND h.contentstreamidentifier = :contentStreamIdentifier
+ AND h.dimensionspacepointhash = :dimensionSpacePointHash
+ AND h.name = :edgeName
+ ORDER BY h.position LIMIT 1',
+            [
+                'parentNodeAggregateIdentifier' => (string)$parentAggregateIdentifier,
+                'contentStreamIdentifier' => (string)$this->getContentStreamIdentifier(),
+                'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash(),
+                'edgeName' => (string)$edgeName
+            ]
+        )->fetch();
+
+        return $nodeData ? $this->nodeFactory->mapNodeRowToNode($nodeData, $contentContext) : null;
+    }
+
+
+    /**
+     * @param NodeIdentifier $sibling
+     * @param ContentRepository\Service\Context|null $context
+     * @return ContentRepository\Model\NodeInterface|null
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Exception
+     * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
+     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     */
+    public function findSucceedingSibling(ContentRepository\ValueObject\NodeIdentifier $sibling, ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
+    {
+        $nodeRow = $this->getDatabaseConnection()->executeQuery($this->getSiblingBaseQuery() . '
+  AND h.position > (
+      SELECT sibh.position FROM neos_contentgraph_hierarchyrelation sibh
+      INNER JOIN neos_contentgraph_node sib ON sibh.childnodeanchor = sib.relationanchorpoint
+      WHERE sib.nodeidentifier = :siblingNodeIdentifier
+      AND sibh.contentstreamidentifier = :contentStreamIdentifier AND sibh.dimensionspacepointhash = :dimensionSpacePointHash
+  )
+  ORDER BY h.position ASC
+  LIMIT 1',
+            [
+                'contentStreamIdentifier' => $this->getContentStreamIdentifier(),
+                'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash(),
+                'siblingNodeIdentifier' => (string) $sibling
+            ]
+        )->fetch();
+
+        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow, $context) : null;
+    }
+
+    /**
+     * @param NodeIdentifier $sibling
+     * @param ContentRepository\Service\Context|null $context
+     * @return ContentRepository\Model\NodeInterface|null
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Exception
+     * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
+     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     */
+    public function findPrecedingSibling(ContentRepository\ValueObject\NodeIdentifier $sibling, ContentRepository\Service\Context $context = null): ?ContentRepository\Model\NodeInterface
+    {
+        $nodeRow = $this->getDatabaseConnection()->executeQuery($this->getSiblingBaseQuery() . '
+  AND h.position < (
+      SELECT sibh.position FROM neos_contentgraph_hierarchyrelation sibh
+      INNER JOIN neos_contentgraph_node sib ON sibh.childnodeanchor = sib.relationanchorpoint
+      WHERE sib.nodeidentifier = :siblingNodeIdentifier
+      AND sibh.contentstreamidentifier = :contentStreamIdentifier AND sibh.dimensionspacepointhash = :dimensionSpacePointHash
+  )
+  ORDER BY h.position DESC
+  LIMIT 1',
+            [
+                'contentStreamIdentifier' => $this->getContentStreamIdentifier(),
+                'dimensionSpacePointHash' => $this->getDimensionSpacePoint()->getHash(),
+                'siblingNodeIdentifier' => (string) $sibling
+            ]
+        )->fetch();
+
+        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow, $context) : null;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getSiblingBaseQuery(): string
+    {
+        return '
+  SELECT n.*, h.contentstreamidentifier, h.name FROM neos_contentgraph_node n
+  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+  WHERE h.contentstreamidentifier = :contentStreamIdentifier AND h.dimensionspacepointhash = :dimensionSpacePointHash
+  AND h.parentnodeanchor = (
+      SELECT sibh.parentnodeanchor FROM neos_contentgraph_hierarchyrelation sibh
+      INNER JOIN neos_contentgraph_node sib ON sibh.childnodeanchor = sib.relationanchorpoint
+      WHERE sib.nodeidentifier = :siblingNodeIdentifier
+      AND sibh.contentstreamidentifier = :contentStreamIdentifier AND sibh.dimensionspacepointhash = :dimensionSpacePointHash
+  )';
+    }
+
+
+    /**
      * @param ContentRepository\ValueObject\NodeTypeName $nodeTypeName
      * @return array|NodeInterface[]
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Exception
+     * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
+     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
      */
     public function findNodesByType(ContentRepository\ValueObject\NodeTypeName $nodeTypeName): array
     {

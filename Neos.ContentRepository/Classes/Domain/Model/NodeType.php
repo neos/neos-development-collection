@@ -11,6 +11,8 @@ namespace Neos\ContentRepository\Domain\Model;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Context\Node\RelationDistributionStrategy;
+use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Exception\NodeConfigurationException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -315,6 +317,17 @@ class NodeType
     }
 
     /**
+     * Returns the relation distribution strategy to be applied to nodes of this type.
+     *
+     * @return RelationDistributionStrategy
+     * @throws \Neos\ContentRepository\Domain\Context\Node\RelationDistributionStrategyIsInvalid
+     */
+    public function getRelationDistributionStrategy(): RelationDistributionStrategy
+    {
+        return RelationDistributionStrategy::fromConfigurationValue($this->getConfiguration('relationDistributionStrategy'));
+    }
+
+    /**
      * If this node type or any of the direct or indirect super types
      * has the given name.
      *
@@ -332,6 +345,7 @@ class NodeType
                 return true;
             }
         }
+
         return false;
     }
 
@@ -357,6 +371,7 @@ class NodeType
     public function getFullConfiguration()
     {
         $this->initialize();
+
         return $this->fullConfiguration;
     }
 
@@ -382,6 +397,7 @@ class NodeType
     public function getConfiguration($configurationPath)
     {
         $this->initialize();
+
         return ObjectAccess::getPropertyPath($this->fullConfiguration, $configurationPath);
     }
 
@@ -394,6 +410,7 @@ class NodeType
     public function getLabel()
     {
         $this->initialize();
+
         return isset($this->fullConfiguration['ui']['label']) ? $this->fullConfiguration['ui']['label'] : '';
     }
 
@@ -406,6 +423,7 @@ class NodeType
     public function getOptions()
     {
         $this->initialize();
+
         return (isset($this->fullConfiguration['options']) ? $this->fullConfiguration['options'] : array());
     }
 
@@ -445,6 +463,7 @@ class NodeType
     public function getProperties()
     {
         $this->initialize();
+
         return (isset($this->fullConfiguration['properties']) ? $this->fullConfiguration['properties'] : array());
     }
 
@@ -459,6 +478,7 @@ class NodeType
         if (!isset($this->fullConfiguration['properties']) || !isset($this->fullConfiguration['properties'][$propertyName]) || !isset($this->fullConfiguration['properties'][$propertyName]['type'])) {
             return 'string';
         }
+
         return $this->fullConfiguration['properties'][$propertyName]['type'];
     }
 
@@ -518,6 +538,27 @@ class NodeType
     }
 
     /**
+     * @param NodeName $nodeName
+     * @return bool
+     */
+    public function hasAutoCreatedChildNodeWithNodeName(NodeName $nodeName): bool
+    {
+        return isset($this->fullConfiguration['childNodes'][(string)$nodeName]);
+    }
+
+    /**
+     * @param NodeName $nodeName
+     * @return NodeType|null
+     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     */
+    public function getTypeOfAutoCreatedChildNodeWithNodeName(NodeName $nodeName): ?NodeType
+    {
+        return isset($this->fullConfiguration['childNodes'][(string)$nodeName]['type'])
+            ? $this->nodeTypeManager->getNodeType($this->fullConfiguration['childNodes'][(string)$nodeName]['type'])
+            : null;
+    }
+
+    /**
      * Checks if the given NodeType is acceptable as sub-node with the configured constraints,
      * not taking constraints of auto-created nodes into account. Thus, this method only returns
      * the correct result if called on NON-AUTO-CREATED nodes!
@@ -530,6 +571,7 @@ class NodeType
     public function allowsChildNodeType(NodeType $nodeType)
     {
         $constraints = $this->getConfiguration('constraints.nodeTypes') ?: array();
+
         return $this->isNodeTypeAllowedByConstraints($nodeType, $constraints);
     }
 

@@ -55,12 +55,44 @@ interface ContentGraphInterface
      * @param Domain\ValueObject\DimensionSpacePointSet|null $dimensionSpacePointSet
      * @return array|NodeInterface[]
      */
-    public function findNodesByNodeAggregateIdentifier(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, Domain\ValueObject\DimensionSpacePointSet $dimensionSpacePointSet = null): array;
+    public function findNodesByNodeAggregateIdentifier(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        Domain\ValueObject\DimensionSpacePointSet $dimensionSpacePointSet = null
+    ): array;
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @return NodeAggregate|null
+     * @throws Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
      */
     public function findNodeAggregateByIdentifier(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodeAggregate;
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @return array|NodeAggregate[]
+     */
+    public function findParentAggregates(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): array;
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @return array|NodeAggregate[]
+     */
+    public function findChildAggregates(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): array;
+
+    /**
+     * @param Domain\Context\Node\ReadOnlyNodeInterface $node
+     * @return Domain\ValueObject\DimensionSpacePointSet
+     */
+    public function findVisibleDimensionSpacePointsOfNode(Domain\Context\Node\ReadOnlyNodeInterface $node): Domain\ValueObject\DimensionSpacePointSet;
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @return Domain\ValueObject\DimensionSpacePointSet
+     */
+    public function findVisibleDimensionSpacePointsOfNodeAggregate(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): Domain\ValueObject\DimensionSpacePointSet;
 }

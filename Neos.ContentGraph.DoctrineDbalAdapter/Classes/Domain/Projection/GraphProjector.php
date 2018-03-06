@@ -39,6 +39,8 @@ use Neos\Flow\Annotations as Flow;
  */
 class GraphProjector implements ProjectorInterface
 {
+    const RELATION_DEFAULT_OFFSET = 128;
+
     /**
      * @Flow\Inject
      * @var ProjectionContentGraph
@@ -54,9 +56,13 @@ class GraphProjector implements ProjectorInterface
     /**
      * @Flow\Signal
      */
-    public function emitProjectionUpdated() {
+    public function emitProjectionUpdated()
+    {
     }
 
+    /**
+     * @throws \Exception
+     */
     public function reset(): void
     {
         $this->getDatabaseConnection()->transactional(function () {
@@ -76,6 +82,7 @@ class GraphProjector implements ProjectorInterface
 
     /**
      * @param Event\RootNodeWasCreated $event
+     * @throws \Exception
      */
     final public function whenRootNodeWasCreated(Event\RootNodeWasCreated $event)
     {
@@ -97,6 +104,7 @@ class GraphProjector implements ProjectorInterface
 
     /**
      * @param Event\NodeAggregateWithNodeWasCreated $event
+     * @throws \Exception
      */
     final public function whenNodeAggregateWithNodeWasCreated(Event\NodeAggregateWithNodeWasCreated $event)
     {
@@ -117,6 +125,7 @@ class GraphProjector implements ProjectorInterface
 
     /**
      * @param Event\NodeWasAddedToAggregate $event
+     * @throws \Exception
      */
     final public function whenNodeWasAddedToAggregate(Event\NodeWasAddedToAggregate $event)
     {
@@ -138,6 +147,18 @@ class GraphProjector implements ProjectorInterface
         });
     }
 
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param NodeTypeName $nodeTypeName
+     * @param NodeIdentifier $nodeIdentifier
+     * @param NodeIdentifier $parentNodeIdentifier
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @param DimensionSpacePointSet $visibleDimensionSpacePoints
+     * @param array $propertyDefaultValuesAndTypes
+     * @param NodeName $nodeName
+     * @throws \Doctrine\DBAL\DBALException
+     */
     private function createNodeWithHierarchy(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
@@ -216,15 +237,16 @@ class GraphProjector implements ProjectorInterface
     /**
      * @param NodeRelationAnchorPoint $parentNodeAnchorPoint
      * @param NodeRelationAnchorPoint $childNodeAnchorPoint
-     * @param NodeRelationAnchorPoint|null $precedingSiblingNodeAnchorPoint
+     * @param NodeRelationAnchorPoint|null $succeedingSiblingNodeAnchorPoint
      * @param NodeName|null $relationName
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePointSet $dimensionSpacePointSet
+     * @throws \Doctrine\DBAL\DBALException
      */
     protected function connectHierarchy(
         NodeRelationAnchorPoint $parentNodeAnchorPoint,
         NodeRelationAnchorPoint $childNodeAnchorPoint,
-        ?NodeRelationAnchorPoint $precedingSiblingNodeAnchorPoint,
+        ?NodeRelationAnchorPoint $succeedingSiblingNodeAnchorPoint,
         NodeName $relationName = null,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePointSet $dimensionSpacePointSet
@@ -232,7 +254,8 @@ class GraphProjector implements ProjectorInterface
         foreach ($dimensionSpacePointSet->getPoints() as $dimensionSpacePoint) {
             $position = $this->getRelationPosition(
                 $parentNodeAnchorPoint,
-                $precedingSiblingNodeAnchorPoint,
+                null,
+                $succeedingSiblingNodeAnchorPoint,
                 $contentStreamIdentifier,
                 $dimensionSpacePoint
             );
@@ -252,49 +275,62 @@ class GraphProjector implements ProjectorInterface
     }
 
     /**
-     * @param NodeRelationAnchorPoint $parentAnchorPoint
-     * @param NodeRelationAnchorPoint|null $precedingSiblingAnchorPoint
+     * @param NodeRelationAnchorPoint|null $parentAnchorPoint
+     * @param NodeRelationAnchorPoint|null $childAnchorPoint
+     * @param NodeRelationAnchorPoint|null $succeedingSiblingAnchorPoint
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @return int
+     * @throws \Doctrine\DBAL\DBALException
      */
     protected function getRelationPosition(
-        NodeRelationAnchorPoint $parentAnchorPoint,
-        ?NodeRelationAnchorPoint $precedingSiblingAnchorPoint,
+        ?NodeRelationAnchorPoint $parentAnchorPoint,
+        ?NodeRelationAnchorPoint $childAnchorPoint,
+        ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
     ): int {
-        $position = $this->projectionContentGraph->getHierarchyRelationPosition($parentAnchorPoint, $precedingSiblingAnchorPoint, $contentStreamIdentifier, $dimensionSpacePoint);
+        $position = $this->projectionContentGraph->determineHierarchyRelationPosition($parentAnchorPoint, $childAnchorPoint, $succeedingSiblingAnchorPoint, $contentStreamIdentifier, $dimensionSpacePoint);
 
         if ($position % 2 !== 0) {
-            $position = $this->getRelationPositionAfterRecalculation($parentAnchorPoint, $precedingSiblingAnchorPoint, $contentStreamIdentifier, $dimensionSpacePoint);
+            $position = $this->getRelationPositionAfterRecalculation($parentAnchorPoint, $childAnchorPoint, $succeedingSiblingAnchorPoint, $contentStreamIdentifier, $dimensionSpacePoint);
         }
 
         return $position;
     }
 
     /**
-     * @param NodeRelationAnchorPoint $parentAnchorPoint
-     * @param NodeRelationAnchorPoint|null $precedingSiblingAnchorPoint
+     * @param NodeRelationAnchorPoint|null $parentAnchorPoint
+     * @param NodeRelationAnchorPoint|null $childAnchorPoint
+     * @param NodeRelationAnchorPoint|null $succeedingSiblingAnchorPoint
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @return int
+     * @throws \Doctrine\DBAL\DBALException
      */
     protected function getRelationPositionAfterRecalculation(
-        NodeRelationAnchorPoint $parentAnchorPoint,
-        ?NodeRelationAnchorPoint $precedingSiblingAnchorPoint,
+        ?NodeRelationAnchorPoint $parentAnchorPoint,
+        ?NodeRelationAnchorPoint $childAnchorPoint,
+        ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
     ): int {
+        if (!$childAnchorPoint && !$parentAnchorPoint) {
+            throw new \InvalidArgumentException('You must either specify a parent or child node anchor to get relation positions after recalculation.', 1519847858);
+        }
         $offset = 0;
         $position = 0;
-        foreach ($this->projectionContentGraph->getOutboundHierarchyRelationsForNodeAndSubgraph($parentAnchorPoint, $contentStreamIdentifier, $dimensionSpacePoint) as $relation) {
-            $relation->assignNewPosition($offset, $this->getDatabaseConnection());
-            $offset += 128;
-            if ($precedingSiblingAnchorPoint && $relation->childNodeAnchor === (string)$precedingSiblingAnchorPoint) {
+        $hierarchyRelations = $parentAnchorPoint
+            ? $this->projectionContentGraph->getOutboundHierarchyRelationsForNodeAndSubgraph($parentAnchorPoint, $contentStreamIdentifier, $dimensionSpacePoint)
+            : $this->projectionContentGraph->getInboundHierarchyRelationsForNodeAndSubgraph($childAnchorPoint, $contentStreamIdentifier, $dimensionSpacePoint);
+
+        foreach ($hierarchyRelations as $relation) {
+            $offset += self::RELATION_DEFAULT_OFFSET;
+            if ($succeedingSiblingAnchorPoint && $relation->childNodeAnchor === (string)$succeedingSiblingAnchorPoint) {
                 $position = $offset;
-                $offset += 128;
+                $offset += self::RELATION_DEFAULT_OFFSET;
             }
+            $relation->assignNewPosition($offset, $this->getDatabaseConnection());
         }
 
         return $position;
@@ -329,6 +365,10 @@ class GraphProjector implements ProjectorInterface
         }*/
     }
 
+    /**
+     * @param ContentRepository\Context\ContentStream\Event\ContentStreamWasForked $event
+     * @throws \Exception
+     */
     public function whenContentStreamWasForked(ContentRepository\Context\ContentStream\Event\ContentStreamWasForked $event)
     {
         $this->transactional(function () use ($event) {
@@ -359,6 +399,10 @@ class GraphProjector implements ProjectorInterface
         });
     }
 
+    /**
+     * @param NodePropertyWasSet $event
+     * @throws \Exception
+     */
     public function whenNodePropertyWasSet(NodePropertyWasSet $event)
     {
         $this->transactional(function () use ($event) {
@@ -392,6 +436,10 @@ class GraphProjector implements ProjectorInterface
         });
     }
 
+    /**
+     * @param NodeWasHidden $event
+     * @throws \Exception
+     */
     public function whenNodeWasHidden(NodeWasHidden $event)
     {
         $this->transactional(function () use ($event) {
@@ -401,12 +449,104 @@ class GraphProjector implements ProjectorInterface
         });
     }
 
+    /**
+     * @param NodeWasShown $event
+     * @throws \Exception
+     */
     public function whenNodeWasShown(NodeWasShown $event)
     {
         $this->transactional(function () use ($event) {
             $this->updateNodeWithCopyOnWrite($event, function (Node $node) {
                 $node->hidden = false;
             });
+        });
+    }
+
+    /**
+     * @param Event\NodeSpecializationWasCreated $event
+     * @throws \Exception
+     */
+    public function whenNodeSpecializationWasCreated(Event\NodeSpecializationWasCreated $event): void
+    {
+        $this->transactional(function () use ($event) {
+            $sourceNode = $this->projectionContentGraph->getNode($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
+
+            $specializedNodeRelationAnchorPoint = new NodeRelationAnchorPoint();
+            $specializedNode = new Node(
+                $specializedNodeRelationAnchorPoint,
+                $event->getSpecializationIdentifier(),
+                $sourceNode->nodeAggregateIdentifier,
+                $event->getSpecializationLocation()->jsonSerialize(),
+                $event->getSpecializationLocation()->getHash(),
+                $sourceNode->properties,
+                $sourceNode->nodeTypeName
+            );
+            $specializedNode->addToDatabase($this->getDatabaseConnection());
+
+            foreach ($this->projectionContentGraph->findInboundHierarchyRelationsForNode(
+                $sourceNode->relationAnchorPoint,
+                $event->getContentStreamIdentifier(),
+                $event->getSpecializationVisibility()
+            ) as $hierarchyRelation) {
+                $hierarchyRelation->assignNewChildNode($specializedNodeRelationAnchorPoint, $this->getDatabaseConnection());
+            }
+            foreach ($this->projectionContentGraph->findOutboundHierarchyRelationsForNode(
+                $sourceNode->relationAnchorPoint,
+                $event->getContentStreamIdentifier(),
+                $event->getSpecializationVisibility()
+            ) as $hierarchyRelation) {
+                $hierarchyRelation->assignNewParentNode($specializedNodeRelationAnchorPoint, $this->getDatabaseConnection());
+            }
+        });
+    }
+
+    /**
+     * @param Event\NodeGeneralizationWasCreated $event
+     * @throws \Exception
+     */
+    public function whenNodeGeneralizationWasCreated(Event\NodeGeneralizationWasCreated $event): void
+    {
+        $this->transactional(function () use ($event) {
+            $sourceNode = $this->projectionContentGraph->getNode($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
+            $sourceHierarchyRelation = $this->projectionContentGraph->findInboundHierarchyRelationsForNode(
+                $sourceNode->relationAnchorPoint,
+                $event->getContentStreamIdentifier(),
+                new DimensionSpacePointSet([$event->getSourceLocation()])
+            )[$event->getSourceLocation()->getHash()] ?? null;
+            if (is_null($sourceHierarchyRelation)) {
+                throw new \Exception('Seems someone tried to generalize a root node and I don\'t have a proper name yet', 1519995795);
+            }
+
+            $generalizedNodeRelationAnchorPoint = new NodeRelationAnchorPoint();
+            $generalizedNode = new Node(
+                $generalizedNodeRelationAnchorPoint,
+                $event->getGeneralizationIdentifier(),
+                $sourceNode->nodeAggregateIdentifier,
+                $event->getGeneralizationLocation()->jsonSerialize(),
+                $event->getGeneralizationLocation()->getHash(),
+                $sourceNode->properties,
+                $sourceNode->nodeTypeName
+            );
+            $generalizedNode->addToDatabase($this->getDatabaseConnection());
+
+            foreach ($event->getGeneralizationVisibility()->getPoints() as $newRelationDimensionSpacePoint) {
+                $newHierarchyRelation = new HierarchyRelation(
+                    $sourceHierarchyRelation->parentNodeAnchor,
+                    $generalizedNodeRelationAnchorPoint,
+                    $sourceHierarchyRelation->name,
+                    $event->getContentStreamIdentifier(),
+                    $newRelationDimensionSpacePoint,
+                    $newRelationDimensionSpacePoint->getHash(),
+                    $this->getRelationPosition(
+                        $sourceHierarchyRelation->parentNodeAnchor,
+                        $generalizedNodeRelationAnchorPoint,
+                        null, // todo: find proper sibling
+                        $event->getContentStreamIdentifier(),
+                        $newRelationDimensionSpacePoint
+                    )
+                );
+                $newHierarchyRelation->addToDatabase($this->getDatabaseConnection());
+            }
         });
     }
 
@@ -450,7 +590,75 @@ class GraphProjector implements ProjectorInterface
     }
 
     /**
+     * @param Event\NodesWereMoved $event
+     * @throws \Exception
+     */
+    public function whenNodesWereMoved(Event\NodesWereMoved $event)
+    {
+        $this->transactional(function () use ($event) {
+            foreach ($event->getNodeMoveMappings() as $moveNodeMapping) {
+                $nodeToBeMoved = $this->projectionContentGraph->getNode($moveNodeMapping->getNodeIdentifier(), $event->getContentStreamIdentifier());
+                $newSucceedingSibling = $moveNodeMapping->getNewSucceedingSiblingIdentifier()
+                    ? $this->projectionContentGraph->getNode($moveNodeMapping->getNewSucceedingSiblingIdentifier(), $event->getContentStreamIdentifier())
+                    : null;
+                $inboundHierarchyRelations = $this->projectionContentGraph->findInboundHierarchyRelationsForNode($nodeToBeMoved->relationAnchorPoint, $event->getContentStreamIdentifier());
+                if ($moveNodeMapping->getNewParentNodeIdentifier()) {
+                    $newParentNode = $this->projectionContentGraph->getNode($moveNodeMapping->getNewParentNodeIdentifier(), $event->getContentStreamIdentifier());
+                    foreach ($moveNodeMapping->getDimensionSpacePointSet()->getPoints() as $dimensionSpacePoint) {
+                        $newPosition = $this->getRelationPosition(
+                            $newParentNode->relationAnchorPoint,
+                            null,
+                            $newSucceedingSibling ? $newSucceedingSibling->relationAnchorPoint : null,
+                            $event->getContentStreamIdentifier(),
+                            $dimensionSpacePoint
+                        );
+                        $this->assignHierarchyRelationToNewParent($inboundHierarchyRelations[$dimensionSpacePoint->getHash()], $newParentNode->nodeIdentifier, $event->getContentStreamIdentifier(), $newPosition);
+                    }
+                } else {
+                    foreach ($moveNodeMapping->getDimensionSpacePointSet()->getPoints() as $dimensionSpacePoint) {
+                        $newPosition = $this->getRelationPosition(
+                            null,
+                            $nodeToBeMoved->relationAnchorPoint,
+                            $newSucceedingSibling ? $newSucceedingSibling->relationAnchorPoint : null,
+                            $event->getContentStreamIdentifier(),
+                            $dimensionSpacePoint
+                        );
+                        $inboundHierarchyRelations[$dimensionSpacePoint->getHash()]->assignNewPosition($newPosition, $this->getDatabaseConnection());
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * @param HierarchyRelation $hierarchyRelation
+     * @param NodeIdentifier $newParentNodeIdentifier
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param int $position
+     * @throws \Exception
+     */
+    protected function assignHierarchyRelationToNewParent(HierarchyRelation $hierarchyRelation, NodeIdentifier $newParentNodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier, int $position)
+    {
+        $newParentNode = $this->projectionContentGraph->getNode($newParentNodeIdentifier, $contentStreamIdentifier);
+        if (!$newParentNode) {
+            throw new \Exception(sprintf('new parent %s for hierarchy relation in content stream %s not found.', $newParentNodeIdentifier, $contentStreamIdentifier), 1519768028);
+        }
+        $newHierarchyRelation = new HierarchyRelation(
+            $newParentNode->relationAnchorPoint,
+            $hierarchyRelation->childNodeAnchor,
+            $hierarchyRelation->name,
+            $hierarchyRelation->contentStreamIdentifier,
+            $hierarchyRelation->dimensionSpacePoint,
+            $hierarchyRelation->dimensionSpacePointHash,
+            $position
+        );
+        $newHierarchyRelation->addToDatabase($this->getDatabaseConnection());
+        $hierarchyRelation->removeFromDatabase($this->getDatabaseConnection());
+    }
+
+    /**
      * @param callable $operations
+     * @throws \Exception
      */
     protected function transactional(callable $operations): void
     {
