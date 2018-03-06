@@ -274,7 +274,7 @@ class NodeDataRepository extends Repository
         }
         $this->addPathConstraintToQueryBuilder($queryBuilder, $path);
         if ($onlyShadowNodes) {
-            $queryBuilder->andWhere('n.movedTo IS NOT NULL AND n.removed = TRUE');
+            $queryBuilder->andWhere('n.isMoved = TRUE AND n.removed = TRUE');
         }
 
         $query = $queryBuilder->getQuery();
@@ -1347,7 +1347,7 @@ class NodeDataRepository extends Repository
         $queryBuilder->select('n')
             ->from(NodeData::class, 'n')
             ->where('n.workspace = :workspace')
-            ->andWhere('n.movedTo IS NULL OR n.removed = :removed')
+            ->andWhere('n.isMoved = FALSE OR n.removed = :removed')
             ->orderBy('n.path', 'ASC')
             ->setParameter('workspace', $workspace)
             ->setParameter('removed', false, \PDO::PARAM_BOOL);
@@ -1586,9 +1586,9 @@ class NodeDataRepository extends Repository
             $dimensions = [];
         }
         if ($includeRemovedNodes === false) {
-            $queryBuilder->andWhere('n.movedTo IS NULL OR n.removed = FALSE');
+            $queryBuilder->andWhere('n.isMoved = FALSE OR n.removed = FALSE');
         } else {
-            $queryBuilder->andWhere('n.movedTo IS NULL');
+            $queryBuilder->andWhere('n.isMoved = FALSE');
         }
         $queryBuilder->andWhere('n.identifier IN (:identifier)')
             ->setParameter('identifier', $nodeIdentifier);

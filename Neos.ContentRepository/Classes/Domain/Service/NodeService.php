@@ -172,7 +172,7 @@ class NodeService implements NodeServiceInterface
         /** @var NodeData $existingNodeData */
         $existingNodeDataObjects = $this->nodeDataRepository->findByPathWithoutReduce($nodePath, $node->getWorkspace(), true);
         foreach ($existingNodeDataObjects as $existingNodeData) {
-            if ($existingNodeData->getMovedTo() !== null && $existingNodeData->getMovedTo() === $node->getNodeData()) {
+            if ($existingNodeData->isMoved() && $existingNodeData->getMovedTo() === $node->getNodeData()) {
                 return true;
             }
         }

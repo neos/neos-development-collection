@@ -242,6 +242,7 @@ class LayeredWorkspacesTest extends FunctionalTestCase
         $shadowNode = $this->nodeDataRepository->findShadowNodeByPath('/foo/bar/baz', $this->groupWorkspace, $groupContext->getDimensions());
         $this->assertInstanceOf(NodeData::class, $shadowNode);
         $this->assertNotNull($shadowNode->getMovedTo());
+        $this->assertTrue($shadowNode->isMoved());
         $this->assertTrue($shadowNode->isRemoved());
     }
 }

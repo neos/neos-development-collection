@@ -893,7 +893,7 @@ HELPTEXT;
             ->from(NodeData::class, 'n')
             ->where('n.nodeType = :nodeType')
             ->andWhere('n.workspace = :workspace')
-            ->andWhere('n.movedTo IS NULL OR n.removed = :removed')
+            ->andWhere('n.isMoved = FALSE OR n.removed = :removed')
             ->setParameter('nodeType', $nodeType)
             ->setParameter('workspace', $workspaceName)
             ->setParameter('removed', false, \PDO::PARAM_BOOL);

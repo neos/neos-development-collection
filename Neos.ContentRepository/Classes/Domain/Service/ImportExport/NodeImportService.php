@@ -106,6 +106,9 @@ class NodeImportService
         'removed' => array(
             'columnType' => \PDO::PARAM_BOOL
         ),
+        'ismoved' => array(
+            'columnType' => \PDO::PARAM_BOOL
+        ),
         'hidden' => array(
             'columnType' => \PDO::PARAM_BOOL
         ),
@@ -291,6 +294,7 @@ class NodeImportService
                     'sortingIndex' => $xmlReader->getAttribute('sortingIndex'),
                     'version' => $xmlReader->getAttribute('version'),
                     'removed' => (boolean)$xmlReader->getAttribute('removed'),
+                    'ismoved' => false,
                     'hidden' => (boolean)$xmlReader->getAttribute('hidden'),
                     'hiddenInIndex' => (boolean)$xmlReader->getAttribute('hiddenInIndex'),
                     'path' => $path,

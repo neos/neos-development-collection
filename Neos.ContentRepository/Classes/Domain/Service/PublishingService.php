@@ -182,7 +182,7 @@ class PublishingService implements PublishingServiceInterface
 
         $possibleShadowNodeData = $this->nodeDataRepository->findOneByMovedTo($node->getNodeData());
         if ($possibleShadowNodeData instanceof NodeData) {
-            if ($possibleShadowNodeData->getMovedTo() !== null) {
+            if ($possibleShadowNodeData->isMoved()) {
                 $parentBasePath = $node->getPath();
                 $affectedChildNodeDataInSameWorkspace = $this->nodeDataRepository->findByParentAndNodeType($parentBasePath, null, $node->getWorkspace(), null, false, true);
                 foreach ($affectedChildNodeDataInSameWorkspace as $affectedChildNodeData) {

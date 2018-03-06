@@ -88,6 +88,7 @@ class NodePublishingDependencySolverTest extends UnitTestCase
     {
         $mockNodeData = $this->getMockBuilder(NodeData::class)->setConstructorArgs(array($path, $this->mockWorkspace))->getMock();
         $mockNodeData->expects($this->any())->method('getMovedTo')->will($this->returnValue($movedTo));
+        $mockNodeData->expects($this->any())->method('isMoved')->will($this->returnValue($movedTo !== null));
         $mockNodeData->expects($this->any())->method('getPath')->will($this->returnValue($path));
         $mockNode = $this->getMockBuilder(Node::class)->setConstructorArgs(array($mockNodeData, $this->mockContext))->getMock();
         $mockNode->expects($this->any())->method('getNodeData')->will($this->returnValue($mockNodeData));

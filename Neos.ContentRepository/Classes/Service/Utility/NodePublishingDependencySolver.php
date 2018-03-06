@@ -109,8 +109,8 @@ class NodePublishingDependencySolver
             }
 
             // Add a dependency for a moved-to reference
-            $movedToNodeData = $node->getNodeData()->getMovedTo();
-            if ($movedToNodeData !== null) {
+            if ($node->getNodeData()->isMoved()) {
+                $movedToNodeData = $node->getNodeData()->getMovedTo();
                 $movedToHash = spl_object_hash($movedToNodeData);
                 if (!isset($this->nodesByNodeData[$movedToHash])) {
                     throw new WorkspaceException('Cannot publish a list of nodes with missing dependency (' . $node->getPath() . ' needs ' . $movedToNodeData->getPath() . ' to be published)', 1416483470);

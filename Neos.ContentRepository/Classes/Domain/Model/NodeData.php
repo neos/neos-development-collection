@@ -40,7 +40,7 @@ use Neos\ContentRepository\Utility;
  * @ORM\Table(
  *    uniqueConstraints={
  *      @ORM\UniqueConstraint(name="path_workspace_dimensions",columns={"pathhash", "workspace", "dimensionshash"}),
- *      @ORM\UniqueConstraint(name="identifier_workspace_dimensions_movedto",columns={"identifier", "workspace", "dimensionshash", "movedto"})
+ *      @ORM\UniqueConstraint(name="identifier_workspace_dimensions_ismoved",columns={"identifier", "workspace", "dimensionshash", "ismoved"})
  *    },
  *    indexes={
  *      @ORM\Index(name="parentpath_sortingindex",columns={"parentpathhash", "sortingindex"}),
@@ -206,10 +206,23 @@ class NodeData extends AbstractNodeData
     protected $dimensionValues;
 
     /**
+     * If a node data is moved a "shadow" node data is inserted that references the new node data.
+     *
+     * If this is such a moved node, the flag is set to true. This flag can and is only used in
+     * workspaces which do have a base workspace. In a bottom level workspace nodes are really
+     * really moved, in other workspaces, moving is realized by this flag.
+     *
+     * @var boolean
+     * @see $movedTo
+     */
+    protected $isMoved = false;
+
+    /**
      * If a node data is moved a "shadow" node data is inserted that references the new node data
      *
      * @var NodeData
-     * @ORM\ManyToOne
+     * @ORM\Column(unique=true)
+     * @ORM\OneToOne
      * @ORM\JoinColumn(onDelete="SET NULL")
      */
     protected $movedTo;
@@ -721,6 +734,14 @@ class NodeData extends AbstractNodeData
     }
 
     /**
+     * @return bool
+     */
+    public function isMoved()
+    {
+        return $this->isMoved;
+    }
+
+    /**
      * @return NodeData
      */
     public function getMovedTo()
@@ -734,6 +755,7 @@ class NodeData extends AbstractNodeData
      */
     public function setMovedTo(NodeData $nodeData = null)
     {
+        $this->isMoved = ($nodeData !== null);
         $this->movedTo = $nodeData;
     }
 
@@ -851,7 +873,7 @@ class NodeData extends AbstractNodeData
      */
     public function isInternal()
     {
-        return $this->movedTo !== null && $this->removed === true;
+        return $this->isMoved === true && $this->removed === true;
     }
 
     /**
@@ -1050,7 +1072,7 @@ class NodeData extends AbstractNodeData
 
         // If the node is marked to be removed but didn't exist in a base workspace yet, we can delete it for real, without creating a shadow node.
         // This optimization cannot be made for shadow nodes which are moved.
-        if ($nodeData->isRemoved() && $nodeData->getMovedTo() === null && $this->nodeDataRepository->findOneByIdentifier($nodeData->getIdentifier(), $this->workspace->getBaseWorkspace()) === null) {
+        if ($nodeData->isRemoved() && $nodeData->isMoved() === false && $this->nodeDataRepository->findOneByIdentifier($nodeData->getIdentifier(), $this->workspace->getBaseWorkspace()) === null) {
             if ($this->persistenceManager->isNewObject($nodeData) === false) {
                 $this->nodeDataRepository->remove($nodeData);
             }

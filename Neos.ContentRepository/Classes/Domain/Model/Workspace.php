@@ -475,7 +475,7 @@ class Workspace
         $sourceNodeData = $sourceNode->getNodeData();
 
         // The source node is a regular, not moved node and the target node is a moved shadow node
-        if (!$sourceNode->getNodeData()->isRemoved() && $sourceNode->getNodeData()->getMovedTo() === null && $targetNodeData->isRemoved() && $targetNodeData->getMovedTo() !== null) {
+        if (!$sourceNode->getNodeData()->isRemoved() && $sourceNode->getNodeData()->isMoved() === false && $targetNodeData->isRemoved() && $targetNodeData->isMoved()) {
             $sourceNodeData->move($sourceNodeData->getPath(), $targetNodeData->getWorkspace());
             return;
         }

@@ -80,7 +80,8 @@ class NodeImportServiceTest extends UnitTestCase
                     'en_US',
                     'en_UK'
                 )
-            )
+            ),
+            'ismoved' => false
         );
         $nodeImportService->expects($this->once())->method('persistNodeData')->will($this->returnCallback(function ($nodeData) use (&$actualNodeData) {
             unset($nodeData['Persistence_Object_Identifier']);
@@ -136,7 +137,8 @@ class NodeImportServiceTest extends UnitTestCase
             ),
             'accessRoles' => array(),
             'dimensionValues' => array(
-            )
+            ),
+            'ismoved' => false
         );
         $actualIdentifier = null;
         $nodeImportService->expects($this->once())->method('persistNodeData')->will($this->returnCallback(function ($nodeData) use (&$actualNodeData, &$actualIdentifier) {
@@ -248,6 +250,7 @@ class NodeImportServiceTest extends UnitTestCase
                 'dimensionValues' => array(
                     'language' => array('en_US')
                 ),
+                'ismoved' => false
             ),
             array(
                 'identifier' => 'e45e3b2c-3f14-2c14-6230-687fa4696504',
@@ -296,7 +299,8 @@ class NodeImportServiceTest extends UnitTestCase
                 'accessRoles' => array(),
                 'dimensionValues' => array(
                     'language' => array('en_US')
-                )
+                ),
+                'ismoved' => false
             )
         );
         $nodeImportService->expects($this->atLeastOnce())->method('persistNodeData')->will($this->returnCallback(function ($nodeData) use (&$actualNodeDatas) {
@@ -367,7 +371,8 @@ class NodeImportServiceTest extends UnitTestCase
                 'accessRoles' => array(),
                 'dimensionValues' => array(
                     'language' => array('en_US')
-                )
+                ),
+                'ismoved' => false
             )
         );
         $nodeImportService->expects($this->atLeastOnce())->method('persistNodeData')->will($this->returnCallback(function ($nodeData) use (&$actualNodeDatas) {
