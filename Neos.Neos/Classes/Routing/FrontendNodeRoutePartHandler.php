@@ -11,11 +11,10 @@ namespace Neos\Neos\Routing;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Context\Node\ReadOnlyNodeInterface;
-use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\ContentRepository\Domain\Projection\Content\HierarchyTraversalDirection;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
@@ -34,7 +33,6 @@ use Neos\Flow\Security\Context;
 use Neos\Neos\Domain\Context\Content\ContentQuery;
 use Neos\Neos\Domain\Context\Content\Exception\InvalidContentQuerySerializationException;
 use Neos\Neos\Domain\Repository\DomainRepository;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Neos\Http\ContentSubgraphUriProcessor;
 
 /**
@@ -135,10 +133,8 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
             // anyway and any Entity Privilege targeted on Workspace would fail at this point:
             $matchingSubgraph = $this->fetchSubgraphForParameters($requestPath);
 
-            /** @var Node $matchingRootNode */
             $matchingRootNode = $this->contentGraph->findRootNodeByType(new NodeTypeName('Neos.Neos:Sites'));
 
-            /** @var Node $matchingSite */
             $matchingSite = $this->fetchSiteFromRequest($matchingRootNode, $matchingSubgraph, $requestPath);
             $tagArray[] = (string)$matchingSite->getNodeIdentifier();
             if ($requestPath === '') {
@@ -176,14 +172,14 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * @return NodeInterface
      * @throws Exception\NoSuchNodeException
      */
-    protected function fetchNodeForRequestPath(ContentSubgraphInterface $subgraph, Node $site, string $requestPath, array &$tagArray): NodeInterface
+    protected function fetchNodeForRequestPath(ContentSubgraphInterface $subgraph, NodeInterface $site, string $requestPath, array &$tagArray): NodeInterface
     {
         $remainingUriPathSegments = explode('/', $requestPath);
         $remainingUriPathSegments = array_slice($remainingUriPathSegments, $this->getUriPathSegmentOffset());
         $matchingNode = $site;
         $documentNodeTypes = $this->nodeTypeManager->getSubNodeTypes('Neos.Neos:Document', true, true);
         $subgraph->traverseHierarchy($site, HierarchyTraversalDirection::down(), new NodeTypeConstraints(false, array_keys($documentNodeTypes)),
-            function (Node $node) use (&$remainingUriPathSegments, &$matchingNode, &$tagArray) {
+            function (NodeInterface $node) use (&$remainingUriPathSegments, &$matchingNode, &$tagArray) {
                 $currentPathSegment = reset($remainingUriPathSegments);
                 $pivot = \mb_strpos($currentPathSegment, '.');
                 if ($pivot !== false) {
@@ -205,7 +201,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
                 }
 
                 return $continueTraversal;
-            }, $site->getContext());
+            });
 
         if (!$matchingNode instanceof NodeInterface) {
             throw new Exception\NoSuchNodeException(sprintf('No node found on request path "%s"', $requestPath), 1346949857);
@@ -238,7 +234,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
      * @return NodeInterface
      * @throws Exception\NoSiteException
      */
-    protected function fetchSiteFromRequest(ReadOnlyNodeInterface $rootNode, ContentSubgraphInterface $contentSubgraph, string $requestPath): NodeInterface
+    protected function fetchSiteFromRequest(NodeInterface $rootNode, ContentSubgraphInterface $contentSubgraph, string $requestPath): NodeInterface
     {
         /** @var Node $site */
         /** @var Node $rootNode */
@@ -375,7 +371,7 @@ class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendN
                 function (NodeInterface $node) use (&$requestPathSegments) {
                     if (!$node->hasProperty('uriPathSegment')) {
                         throw new Exception\MissingNodePropertyException(sprintf('Missing "uriPathSegment" property for node "%s". Nodes can be migrated with the "flow node:repair" command.',
-                            $node->getPath()), 1415020326);
+                            $node->getNodeIdentifier()), 1415020326);
                     }
                     $requestPathSegments[] = $node->getProperty('uriPathSegment');
 

@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  */
 
 use Neos\Cache\CacheAwareInterface;
+use Neos\ContentRepository\Domain\Projection\Content\RootNodeIdentifiers;
 use Neos\ContentRepository\Utility;
 use Ramsey\Uuid\Uuid;
 
@@ -96,5 +97,10 @@ final class NodeAggregateIdentifier implements \JsonSerializable, CacheAwareInte
     public function getCacheEntryIdentifier(): string
     {
         return $this->identifier;
+    }
+
+    public function isRoot(): bool
+    {
+        return $this === RootNodeIdentifiers::rootNodeAggregateIdentifier();
     }
 }

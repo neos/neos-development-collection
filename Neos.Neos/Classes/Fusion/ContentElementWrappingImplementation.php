@@ -11,11 +11,12 @@ namespace Neos\Neos\Fusion;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Neos\Domain\Service\ContentContext;
-use Neos\Neos\Service\ContentElementWrappingService;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\Neos\Service\ContentElementWrappingServiceInterface;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
 
 /**
@@ -31,7 +32,7 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
 
     /**
      * @Flow\Inject
-     * @var ContentElementWrappingService
+     * @var ContentElementWrappingServiceInterface
      */
     protected $contentElementWrappingService;
 
@@ -44,6 +45,12 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
     {
         return $this->fusionValue('value');
     }
+
+    public function getSubgraph(): ContentSubgraphInterface
+    {
+        return $this->fusionValue('subgraph');
+    }
+
 
     /**
      * Evaluate this Fusion object and return the result
@@ -60,25 +67,16 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
             return $content;
         }
 
-        /** @var $contentContext ContentContext */
-        $contentContext = $node->getContext();
-        if ($contentContext->getWorkspaceName() === 'live') {
-            return $content;
-        }
+        // TODO permissions
+        //if (!$this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
+        //    return $content;
+        //}
 
-        if (!$this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
-            return $content;
-        }
+        //if ($node->isRemoved()) {
+        //    $content = '';
+        //}
 
-        if ($node->isRemoved()) {
-            $content = '';
-        }
-
-        if ($this->fusionValue('renderCurrentDocumentMetadata')) {
-            return $this->contentElementWrappingService->wrapCurrentDocumentMetadata($node, $content, $this->getContentElementFusionPath());
-        }
-
-        return $this->contentElementWrappingService->wrapContentObject($node, $content, $this->getContentElementFusionPath());
+        return $this->contentElementWrappingService->wrapContentObject($node, $this->getSubgraph(), $content, $this->getContentElementFusionPath());
     }
 
     /**

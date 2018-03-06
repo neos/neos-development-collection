@@ -15,7 +15,7 @@ use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 
 /**
@@ -59,7 +59,7 @@ class ContextOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
     }
 
     /**
@@ -75,8 +75,9 @@ class ContextOperation extends AbstractOperation
             throw new FlowQueryException('context() requires an array argument of context properties', 1398030427);
         }
 
-        $output = array();
+        /*$output = array();
         foreach ($flowQuery->getContext() as $contextNode) {
+
             $contextProperties = $contextNode->getContext()->getProperties();
             $modifiedContext = $this->contextFactory->create(array_merge($contextProperties, $arguments[0]));
 
@@ -86,6 +87,8 @@ class ContextOperation extends AbstractOperation
             }
         }
 
-        $flowQuery->setContext(array_values($output));
+        $flowQuery->setContext(array_values($output));*/
+
+        // TODO: implement context() operation
     }
 }

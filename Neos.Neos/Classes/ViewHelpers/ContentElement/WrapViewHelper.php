@@ -14,7 +14,7 @@ namespace Neos\Neos\ViewHelpers\ContentElement;
 use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
-use Neos\Neos\Service\ContentElementWrappingService;
+use Neos\Neos\Service\ContentElementWrappingServiceInterface;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Fusion\FusionObjects\Helpers\FusionAwareViewInterface;
 
@@ -45,7 +45,7 @@ class WrapViewHelper extends AbstractViewHelper
 
     /**
      * @Flow\Inject
-     * @var ContentElementWrappingService
+     * @var ContentElementWrappingServiceInterface
      */
     protected $contentElementWrappingService;
 

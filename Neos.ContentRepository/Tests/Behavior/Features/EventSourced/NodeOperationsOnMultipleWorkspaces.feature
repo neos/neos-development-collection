@@ -64,7 +64,7 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
 
   Scenario: Set property of a node
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {"coordinates": []}
+    When I am in the active content stream of workspace "live" and Dimension Space Point {}
     Then I expect the path "/text1/text2" to lead to the node "[node-2-identifier]"
 
 
@@ -86,26 +86,26 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
 
     And the graph projection is fully up to date
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {"coordinates": []}
+    When I am in the active content stream of workspace "live" and Dimension Space Point {}
     Then I expect a node "[node-identifier]" to exist in the graph projection
     And I expect the Node "[node-identifier]" to have the properties:
       | Key  | Value    |
       | text | Original |
 
-    When I am in the active content stream of workspace "user-test" and Dimension Space Point {"coordinates": []}
+    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
     Then I expect a node "[node-identifier]" to exist in the graph projection
     And I expect the Node "[node-identifier]" to have the properties:
       | Key  | Value   |
       | text | Changed |
 
-    When I am in the active content stream of workspace "live" and Dimension Space Point {"coordinates": []}
+    When I am in the active content stream of workspace "live" and Dimension Space Point {}
     Then I expect the path "/text1/text2" to lead to the node "[node-2-identifier]"
     When I go to the parent node of node "[node-2-identifier]"
     Then I expect the current Node to have the properties:
       | Key  | Value   |
       | text | Original |
 
-    When I am in the active content stream of workspace "user-test" and Dimension Space Point {"coordinates": []}
+    When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
     Then I expect the path "/text1/text2" to lead to the node "[node-2-identifier]"
     When I go to the parent node of node "[node-2-identifier]"
     Then I expect the current Node to have the properties:

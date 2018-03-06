@@ -17,7 +17,7 @@ use Neos\ContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Context\Node\Command;
 use Neos\ContentRepository\Domain\Context\Node\NodeCommandHandler;
-use Neos\ContentRepository\Domain\Projection\Content\PropertyCollection;
+use Neos\ContentRepository\Domain\Projection\Content\NodePropertyCollection;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
@@ -42,6 +42,7 @@ use Neos\Flow\Utility\Now;
  *
  * @Flow\Scope("prototype")
  * @api
+ * @deprecated
  */
 class Node implements NodeInterface, CacheAwareInterface
 {
@@ -93,7 +94,7 @@ class Node implements NodeInterface, CacheAwareInterface
     protected $nodeTypeName;
 
     /**
-     * @var PropertyCollection
+     * @var NodePropertyCollection
      */
     protected $properties;
 
@@ -175,13 +176,13 @@ class Node implements NodeInterface, CacheAwareInterface
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param Domain\ValueObject\NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param Domain\ValueObject\ContentStreamIdentifier $contentStreamIdentifier
-     * @param PropertyCollection $properties
+     * @param NodePropertyCollection $properties
      * @param NodeName $nodeName
      * @param bool $hidden
      * @param Context|null $context
      * @Flow\Autowiring(false)
      */
-    public function __construct(NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, NodeType $nodeType, ?DimensionSpacePoint $dimensionSpacePoint, ?Domain\ValueObject\NodeAggregateIdentifier $nodeAggregateIdentifier, ?Domain\ValueObject\ContentStreamIdentifier $contentStreamIdentifier, ?PropertyCollection $properties, ?NodeName $nodeName, bool $hidden = false, Context $context = null)
+    public function __construct(NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, NodeType $nodeType, ?DimensionSpacePoint $dimensionSpacePoint, ?Domain\ValueObject\NodeAggregateIdentifier $nodeAggregateIdentifier, ?Domain\ValueObject\ContentStreamIdentifier $contentStreamIdentifier, ?NodePropertyCollection $properties, ?NodeName $nodeName, bool $hidden = false, Context $context = null)
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
@@ -840,7 +841,7 @@ class Node implements NodeInterface, CacheAwareInterface
      * @return PropertyCollection Property values, indexed by their name
      * @api
      */
-    public function getProperties(): PropertyCollection
+    public function getProperties(): NodePropertyCollection
     {
         return $this->properties;
     }

@@ -10,7 +10,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 
 use Neos\ContentRepository\Domain\Context\Node\SubtreeInterface;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 
 
 /**

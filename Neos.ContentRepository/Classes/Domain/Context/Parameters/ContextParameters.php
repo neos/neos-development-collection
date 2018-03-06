@@ -39,21 +39,14 @@ final class ContextParameters
      * @var boolean
      * @deprecated evaluate roles instead
      */
-    protected $removedContentShown = false;
-
-    /**
-     * @var boolean
-     * @deprecated evaluate roles instead
-     */
     protected $inaccessibleContentShown = false;
 
 
-    public function __construct(\DateTimeImmutable $currentDateTime, array $roles, bool $invisibleContentShown, bool $removedContentShown, bool $inaccessibleContentShown)
+    public function __construct(\DateTimeImmutable $currentDateTime, array $roles, bool $invisibleContentShown, bool $inaccessibleContentShown)
     {
         $this->currentDateTime = $currentDateTime;
         $this->roles = $roles;
         $this->invisibleContentShown = $invisibleContentShown;
-        $this->removedContentShown = $removedContentShown;
         $this->inaccessibleContentShown = $invisibleContentShown;
     }
 
@@ -81,15 +74,6 @@ final class ContextParameters
     public function isInvisibleContentShown(): bool
     {
         return $this->invisibleContentShown;
-    }
-
-    /**
-     * @return bool
-     * @deprecated evaluate roles instead
-     */
-    public function isRemovedContentShown(): bool
-    {
-        return $this->removedContentShown;
     }
 
     /**

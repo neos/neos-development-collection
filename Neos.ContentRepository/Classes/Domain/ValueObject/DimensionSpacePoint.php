@@ -13,6 +13,7 @@ namespace Neos\ContentRepository\Domain\ValueObject;
 
 use Neos\Cache\CacheAwareInterface;
 use Neos\ContentRepository\Domain\Context\Dimension\ContentDimensionIdentifier;
+use Neos\ContentRepository\Domain\Projection\Content\RootNodeIdentifiers;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Utility\Arrays;
 
@@ -24,6 +25,7 @@ use Neos\Utility\Arrays;
  */
 final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterface, ProtectedContextAwareInterface
 {
+
     /**
      * @var array
      */
@@ -210,5 +212,11 @@ final class DimensionSpacePoint implements \JsonSerializable, CacheAwareInterfac
     public function allowsCallOfMethod($methodName)
     {
         return true;
+    }
+
+
+    public function isRoot(): bool
+    {
+        return $this === RootNodeIdentifiers::rootDimensionSpacePoint();
     }
 }

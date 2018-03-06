@@ -36,6 +36,7 @@ final class WorkspaceFinder extends AbstractDoctrineFinder
      */
     public function findOneByCurrentContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier): ?Workspace
     {
+        // TODO: in-memory cache! called often in BE!
         return $this->__call('findOneByCurrentContentStreamIdentifier', [(string)$contentStreamIdentifier]);
     }
 

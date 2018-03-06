@@ -12,10 +12,8 @@ namespace Neos\Neos\Http\ContentDimensionDetection;
  */
 
 use Neos\ContentRepository\Domain\Context\Dimension;
-use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\Flow\Http;
 use Neos\Neos\Routing\WorkspaceNameAndDimensionSpacePointForUriSerialization;
-use Neos\Utility\Arrays;
 
 /**
  * A content dimension preset detector that evaluates backend URIs, i.e. component contexts containing context paths

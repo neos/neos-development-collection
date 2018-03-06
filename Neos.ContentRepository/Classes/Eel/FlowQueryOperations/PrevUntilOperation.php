@@ -14,7 +14,7 @@ namespace Neos\ContentRepository\Eel\FlowQueryOperations;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 
 /**
  * "prevUntil" operation working on ContentRepository nodes. It iterates over all context elements
@@ -46,7 +46,7 @@ class PrevUntilOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
     }
 
     /**
@@ -94,10 +94,10 @@ class PrevUntilOperation extends AbstractOperation
     }
 
     /**
-     * @param NodeInterface $contextNode The node for which the previous nodes should be found
+     * @param TraversableNodeInterface $contextNode The node for which the previous nodes should be found
      * @return array|NULL The previous nodes of $contextNode or NULL
      */
-    protected function getPrevForNode(NodeInterface $contextNode)
+    protected function getPrevForNode(TraversableNodeInterface $contextNode)
     {
         $nodesInContext = $contextNode->getParent()->getChildNodes();
         $count = count($nodesInContext) - 1;
@@ -115,10 +115,10 @@ class PrevUntilOperation extends AbstractOperation
 
     /**
      * @param array $prevNodes the remaining nodes
-     * @param NodeInterface $until
+     * @param TraversableNodeInterface $until
      * @return array
      */
-    protected function getNodesUntil($prevNodes, NodeInterface $until)
+    protected function getNodesUntil($prevNodes, TraversableNodeInterface $until)
     {
         $count = count($prevNodes);
 

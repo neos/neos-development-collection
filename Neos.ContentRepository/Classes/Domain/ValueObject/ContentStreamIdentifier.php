@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Domain\ValueObject;
 
 /*
@@ -12,6 +13,7 @@ namespace Neos\ContentRepository\Domain\ValueObject;
  */
 
 use Neos\Cache\CacheAwareInterface;
+use Neos\ContentRepository\Domain\Projection\Content\RootNodeIdentifiers;
 
 final class ContentStreamIdentifier extends AbstractIdentifier implements CacheAwareInterface
 {
@@ -21,5 +23,10 @@ final class ContentStreamIdentifier extends AbstractIdentifier implements CacheA
     public function getCacheEntryIdentifier(): string
     {
         return $this->uuid->toString();
+    }
+
+    public function isRoot(): bool
+    {
+        return $this === RootNodeIdentifiers::rootContentStreamIdentifier();
     }
 }

@@ -48,6 +48,7 @@ use Neos\ContentRepository\Domain\Context\Node\Event\NodeSpecializationWasCreate
 use Neos\ContentRepository\Domain\Context\Node\Event\RootNodeWasCreated;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\DimensionSpacePoint;
@@ -505,7 +506,7 @@ final class NodeCommandHandler
                 $oldParentAggregates = $this->contentGraph->findParentAggregates($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
                 foreach ($oldParentAggregates as $oldParentAggregate) {
                     $oldParentAggregatesNodeType = $this->nodeTypeManager->getNodeType((string)$oldParentAggregate->getNodeTypeName());
-                    if (isset($oldParentAggregatesNodeType->getAutoCreatedChildNodes()[(string) $node->getName()])) {
+                    if (isset($oldParentAggregatesNodeType->getAutoCreatedChildNodes()[(string) $node->getNodeName()])) {
                         throw new NodeConstraintException('Cannot move auto-generated node "' . $command->getNodeAggregateIdentifier() . '" into new parent "' . $newParentAggregate->getNodeAggregateIdentifier() . '"', 1519920594);
                     }
                 }
@@ -795,7 +796,7 @@ final class NodeCommandHandler
 
         return $events;
     }
-    
+
 
     /**
      * @param NodeTypeName $nodeTypeName
@@ -836,7 +837,7 @@ final class NodeCommandHandler
      * @return Node
      * @throws NodeNotFoundException
      */
-    private function getNode(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier): Node
+    private function getNode(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier): NodeInterface
     {
         /** @var Node $node */
         $node = $this->contentGraph->findNodeByIdentifierInContentStream($contentStreamIdentifier, $nodeIdentifier);

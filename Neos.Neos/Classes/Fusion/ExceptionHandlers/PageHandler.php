@@ -17,7 +17,7 @@ use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\FluidAdaptor\View\StandaloneView;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Fusion\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
-use Neos\Neos\Service\ContentElementWrappingService;
+use Neos\Neos\Service\ContentElementWrappingServiceInterface;
 use Neos\Fusion\Core\ExceptionHandlers\ContextDependentHandler;
 
 /**
@@ -34,7 +34,7 @@ class PageHandler extends AbstractRenderingExceptionHandler
 
     /**
      * @Flow\Inject
-     * @var ContentElementWrappingService
+     * @var ContentElementWrappingServiceInterface
      */
     protected $contentElementWrappingService;
 

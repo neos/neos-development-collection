@@ -12,13 +12,13 @@ namespace Neos\Neos\ViewHelpers\Link;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\Neos\Domain\Context\Content\ContentQuery;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
 
 /**
@@ -161,7 +161,9 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         if ($node instanceof NodeInterface) {
             // the latter case is only relevant in extremely rare occasions in the Neos Backend, when we want to generate
             // a link towards the *shortcut itself*, and not to its target.
-            $resolvedNode = $resolveShortcuts ? $resolvedNode = $this->nodeShortcutResolver->resolveShortcutTarget($node) : $node;
+            // TODO: fix shortcuts!
+            //$resolvedNode = $resolveShortcuts ? $resolvedNode = $this->nodeShortcutResolver->resolveShortcutTarget($node) : $node;
+            $resolvedNode = $node;
             if ($resolvedNode instanceof NodeInterface) {
                 $contentQuery = $contentQuery->withNodeAggregateIdentifier($resolvedNode->getNodeAggregateIdentifier());
             } else {

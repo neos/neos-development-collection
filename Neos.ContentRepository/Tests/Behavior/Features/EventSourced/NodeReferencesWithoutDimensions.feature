@@ -86,7 +86,7 @@ Feature: Node References without Dimensions
       | destinationtNodeAggregateIdentifiers | dest-1-nodeAgg-identifier | Uuid[] |
 
     And the graph projection is fully up to date
-    And I am in content stream "[cs-identifier]" and Dimension Space Point {"coordinates": []}
+    And I am in content stream "[cs-identifier]" and Dimension Space Point {}
 
     Then I expect the Node "[source-node-identifier]" to have the references:
       | Key               | Value                     | Type   |
@@ -102,7 +102,7 @@ Feature: Node References without Dimensions
       | destinationtNodeAggregateIdentifiers | dest-2-nodeAgg-identifier,dest-3-nodeAgg-identifier | Uuid[] |
 
     And the graph projection is fully up to date
-    And I am in content stream "[cs-identifier]" and Dimension Space Point {"coordinates": []}
+    And I am in content stream "[cs-identifier]" and Dimension Space Point {}
 
     Then I expect the Node "[source-node-identifier]" to have the references:
       | Key                | Value                                               | Type   |
@@ -116,7 +116,7 @@ Feature: Node References without Dimensions
       | destinationtNodeAggregateIdentifiers | dest-1-nodeAgg-identifier | Uuid[] |
 
     And the graph projection is fully up to date
-    And I am in content stream "[cs-identifier]" and Dimension Space Point {"coordinates": []}
+    And I am in content stream "[cs-identifier]" and Dimension Space Point {}
 
     Then I expect the Node "[source-node-identifier]" to have the references:
       | Key                | Value                     | Type   |
@@ -132,7 +132,7 @@ Feature: Node References without Dimensions
       | destinationtNodeAggregateIdentifiers | dest-2-nodeAgg-identifier,dest-3-nodeAgg-identifier | Uuid[] |
 
     And the graph projection is fully up to date
-    And I am in content stream "[cs-identifier]" and Dimension Space Point {"coordinates": []}
+    And I am in content stream "[cs-identifier]" and Dimension Space Point {}
 
     Then I expect the Node "[source-node-identifier]" to have the references:
       | Key                | Value                                               | Type   |
@@ -146,7 +146,7 @@ Feature: Node References without Dimensions
       | destinationtNodeAggregateIdentifiers | dest-3-nodeAgg-identifier,dest-2-nodeAgg-identifier | Uuid[] |
 
     And the graph projection is fully up to date
-    And I am in content stream "[cs-identifier]" and Dimension Space Point {"coordinates": []}
+    And I am in content stream "[cs-identifier]" and Dimension Space Point {}
 
     Then I expect the Node "[source-node-identifier]" to have the references:
       | Key                | Value                                               | Type   |
@@ -162,7 +162,7 @@ Feature: Node References without Dimensions
       | destinationtNodeAggregateIdentifiers | dest-2-nodeAgg-identifier,dest-3-nodeAgg-identifier | Uuid[] |
 
     And the graph projection is fully up to date
-    And I am in content stream "[cs-identifier]" and Dimension Space Point {"coordinates": []}
+    And I am in content stream "[cs-identifier]" and Dimension Space Point {}
 
     Then I expect the Node "[source-node-identifier]" to have the references:
       | Key                | Value                                               | Type   |
@@ -176,7 +176,7 @@ Feature: Node References without Dimensions
       | destinationtNodeAggregateIdentifiers |                        | Uuid[] |
 
     And the graph projection is fully up to date
-    And I am in content stream "[cs-identifier]" and Dimension Space Point {"coordinates": []}
+    And I am in content stream "[cs-identifier]" and Dimension Space Point {}
 
     Then I expect the Node "[source-node-identifier]" to have the references:
       | Key                | Value | Type   |

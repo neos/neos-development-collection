@@ -15,7 +15,7 @@ use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Utility\Now;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 
 /**
  * "cacheLifetime" operation working on ContentRepository nodes. Will get the minimum of all allowed cache lifetimes for the
@@ -68,7 +68,7 @@ class CacheLifetimeOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof TraversableNodeInterface));
     }
 
     /**
@@ -80,6 +80,9 @@ class CacheLifetimeOperation extends AbstractOperation
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
+        // TODO: Cache Lifetime Operation!!
+        return null;
+
         $minimumDateTime = null;
         foreach ($flowQuery->getContext() as $contextNode) {
             $hiddenBeforeDateTime = $contextNode->getHiddenBeforeDateTime();

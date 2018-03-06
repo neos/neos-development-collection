@@ -24,7 +24,7 @@ Feature: Reading of our Graph Projection
       | propertyDefaultValuesAndTypes | {}                                                              | json                   |
 
     When the graph projection is fully up to date
-    And I am in content stream "c75ae6a2-7254-4d42-a31b-a629e264069d" and Dimension Space Point {"coordinates": []}
+    And I am in content stream "c75ae6a2-7254-4d42-a31b-a629e264069d" and Dimension Space Point {}
 
     Then I expect a node "75106e9a-7dfb-4b48-8b7a-3c4ab2546b81" to exist in the graph projection
     And I expect the node "5387cb08-2aaf-44dc-a8a1-483497aa0a03" to have the following child nodes:

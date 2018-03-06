@@ -16,6 +16,7 @@ use Neos\ContentRepository\Domain\Context\Dimension\ContentDimensionSourceInterf
 use Neos\ContentRepository\Domain\Context\Dimension\ContentDimensionValue;
 use Neos\ContentRepository\Domain\Context\Parameters\ContextParameters;
 use Neos\ContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Response;
 use Neos\Flow\I18n\Locale;
@@ -24,7 +25,6 @@ use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Neos\Domain\Context\Content\ContentQuery;
 use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Exception;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception\RuntimeException;
 use Neos\Flow\Security\Context;
