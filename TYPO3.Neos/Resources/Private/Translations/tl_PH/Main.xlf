@@ -230,7 +230,7 @@
 			<target xml:lang="tl" state="needs-translation">Identifier</target></trans-unit>
       <trans-unit id="name" xml:space="preserve">
 				<source>Name</source>
-			<target xml:lang="tl" state="needs-translation">Name</target></trans-unit>
+			<target xml:lang="tl" state="translated">Pangalan</target></trans-unit>
       <trans-unit id="workspace" xml:space="preserve">
 				<source>Workspace</source>
 			<target xml:lang="tl" state="translated">Workspace</target></trans-unit>
