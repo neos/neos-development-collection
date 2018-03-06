@@ -895,7 +895,7 @@ class NodeData extends AbstractNodeData
     {
         $sourceNodeData = $this;
         $originalPath = $this->path;
-        if ($originalPath === $targetPath && $this->workspace->getName() === $targetWorkspace) {
+        if ($originalPath === $targetPath && $this->workspace->getName() === $targetWorkspace->getName()) {
             return $this;
         }
 
