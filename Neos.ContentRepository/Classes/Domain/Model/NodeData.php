@@ -899,6 +899,12 @@ class NodeData extends AbstractNodeData
             return $this;
         }
 
+        if ($this->workspace->getBaseWorkspace() === null && $this->workspace->getName() === $targetWorkspace->getName()) {
+            $sourceNodeData->setPath($targetPath, false);
+            $this->addOrUpdate($sourceNodeData);
+            return $sourceNodeData;
+        }
+
         $targetPathShadowNodeData = $this->getExistingShadowNodeDataInExactWorkspace($targetPath, $targetWorkspace, $sourceNodeData->getDimensionValues());
 
         if ($this->workspace->getName() !== $targetWorkspace->getName()) {
