@@ -10,7 +10,7 @@
 			<target xml:lang="tl" state="needs-translation">Keep the filename "{0}"</target></trans-unit>
       <trans-unit id="module.label" xml:space="preserve">
 				<source>Media</source>
-			<target xml:lang="tl" state="needs-translation">Media</target></trans-unit>
+			<target xml:lang="tl" state="translated">Mamamahayag</target></trans-unit>
       <trans-unit id="module.description" xml:space="preserve">
 				<source>This module allows managing of media assets including pictures, videos, audio and documents.</source>
 			<target xml:lang="tl" state="needs-translation">This module allows managing of media assets including pictures, videos, audio and documents.</target></trans-unit>
@@ -155,15 +155,15 @@
       <trans-unit id="filter.images" xml:space="preserve">
 				<source>Images</source>
 			<target xml:lang="tl" state="needs-translation">Images</target></trans-unit>
-      <trans-unit id="filter.documents" xml:space="preserve">
+      <trans-unit id="filter.documents" xml:space="preserve" approved="yes">
 				<source>Documents</source>
-			<target xml:lang="tl" state="translated">Mga dokyumento</target></trans-unit>
-      <trans-unit id="filter.video" xml:space="preserve">
+			<target xml:lang="tl">Mga dokyumento</target></trans-unit>
+      <trans-unit id="filter.video" xml:space="preserve" approved="yes">
 				<source>Video</source>
-			<target xml:lang="tl" state="translated">Video</target></trans-unit>
-      <trans-unit id="filter.audio" xml:space="preserve">
+			<target xml:lang="tl">Video</target></trans-unit>
+      <trans-unit id="filter.audio" xml:space="preserve" approved="yes">
 				<source>Audio</source>
-			<target xml:lang="tl" state="translated">Audio</target></trans-unit>
+			<target xml:lang="tl">Audio</target></trans-unit>
       <trans-unit id="tooltip.sortOptions" xml:space="preserve">
 				<source>Sort options</source>
 			<target xml:lang="tl" state="needs-translation">Sort options</target></trans-unit>
@@ -173,9 +173,9 @@
       <trans-unit id="tooltip.thumbnailView" xml:space="preserve">
 				<source>Thumbnail view</source>
 			<target xml:lang="tl" state="needs-translation">Thumbnail view</target></trans-unit>
-      <trans-unit id="collections" xml:space="preserve">
+      <trans-unit id="collections" xml:space="preserve" approved="yes">
 				<source>Collections</source>
-			<target xml:lang="tl" state="translated">Mga koleksiyon</target></trans-unit>
+			<target xml:lang="tl">Mga koleksiyon</target></trans-unit>
       <trans-unit id="editCollections" xml:space="preserve">
 				<source>Edit collections</source>
 			<target xml:lang="tl" state="needs-translation">Edit collections</target></trans-unit>
@@ -305,11 +305,11 @@
       <group id="relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="relatedNodes[0]">
           <source>{0} usages</source>
-          <target xml:lang="tl" state="needs-translation">{0} usages</target>
+          <target xml:lang="tl" state="translated">{0} mga gamit</target>
         </trans-unit>
         <trans-unit id="relatedNodes[1]">
           <source>{0} usages</source>
-          <target xml:lang="tl" state="needs-translation">{0} usages</target>
+          <target xml:lang="tl" state="translated">{0} mga gamit</target>
         </trans-unit>
       </group>
       <trans-unit id="relatedNodes.referencesTo" xml:space="preserve">
